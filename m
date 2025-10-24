@@ -1,182 +1,211 @@
-Return-Path: <linux-kernel+bounces-868137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A8AC04733
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:10:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A749C0473A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41A63AE4F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:10:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92ED04E244C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E99E219A8A;
-	Fri, 24 Oct 2025 06:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27442255F2C;
+	Fri, 24 Oct 2025 06:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hV/iQ0Ve"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Cl/DE0vm"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010020.outbound.protection.outlook.com [52.101.193.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1F2242D6C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761286245; cv=none; b=dXUswZR6HtUof6AybxmFboxnKQqljbKTK3ALasiNRKp6gSbTF/UupWo/sZuCKmgoQb94B7jXgTNwQP0s/DzE34iQ/E01YD5P5gSMX2Z7nfnK6DuFMAO8wSEij53EI1adGWPHMviLMW1XX+EVyD5tvqQB5MNJoCJ6kBxxX4JAJ+k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761286245; c=relaxed/simple;
-	bh=Uflu6VZJJ5Inn7mIJ0KBnxD7bYqrB+u8/dlCHjMtfto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HI3C09WAzoBSF2pSabA2dpdxLwnYByDXqAp7q/urchxm3BZqpcmbpZAru/WZM8W8r52TKYoLdyydqrbhaG2r895mTK/Oitj++/RaeEHxl3y5xY95sI9N1LZPkYXhY+XnBH9fAWbKwE4vICnJbFth2nE3l0oCXWXr3uhinQRjbSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hV/iQ0Ve; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3FQ0a001156
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:10:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=iPDyisl44Ds/H4LrsIWE8heq
-	Yin0PT0m3dP+JNRSHeI=; b=hV/iQ0VeW4QjxbWm9Z8aa1teHm+fAYtwOBru/D+u
-	pN+54kTGbayJ6FViPbZT1uY9Yg33/T5rzquz//sIlwCumVOqXeE/MLjjCBPzwkEE
-	eXRezn091PeuNcxYpdQRZaVxzP8wNTo3hWQSJ+U4VHHqJIPxhX0QGQSrf1tRfHCy
-	3Pf+9PTcT5v1GPFtQRD7K3gR2uKIxv7crkRiDRzVdVVK3JhbWaRfMVv6WLSuOESV
-	D8kZckRAB9VIvxbhuTecApkFcDFv3pkZwZzrfFGoA4qWIpexxWBl6m5f2oYemGJ4
-	oWqZcu5Lh/In0a2ifFQfkQIr/r632CmX7xjMJb0Jxc2IhQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ym9j2ksh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:10:43 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e8adba545aso56262431cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:10:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761286242; x=1761891042;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iPDyisl44Ds/H4LrsIWE8heqYin0PT0m3dP+JNRSHeI=;
-        b=vUL/wbRj47Exfmo3mdvKbbnVh6Dl60XCSKdYz/LurybO3g0YB/kHCkfNeUEwUjY/7+
-         jU8pq0BvaV4O7zkoQtlnQSUB9ryRGlURFCeC2f2g4n4ub5NWf7Oem6aW+JBMFInA/baK
-         CNhRYKndm4/N353AHaGeCh0lApxXpySJartF5Gn7+dF+zFvK6ZBtE+6RIjsY4JNmqsks
-         603mMknKWz3JvH7NOnzLbYVHorIgdL1uHyGCHPg2eZNYdwyYQ2ROGFZlGPtc/FY+vdUG
-         q1ejlPymg1PQsT5Zd+TwAVfblkv3sHIxDXQhkOZH/o8NlFgFp+DNmuzZOxmNB1+JWoEO
-         jM+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRuuxlrxKMxBYYSSV7XVjEMuuyipECuN1+3/ynl7F1HJ9+TpxECZkG3bPhOziAhKgIPm2emU6vyw9Ue8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxKcxTJH7nh4rWoTi3lye5FacbmNIWQwGTnW417c2aD4Flm8lU
-	CW424zlOyfPz4hAQpXhcdsPxdtxke0IaFJGYtiVwK2A7EST9TvLYVY5iegyuu5TBPwqubj2i+oM
-	cD1zSxUWdkAVT7PUEYaJmknsSDJZ7+ECOutC6FGlgGqYix9dXahYoeRuNBHdYe3L1EBY=
-X-Gm-Gg: ASbGncteBf/ezchP3mee1Uv+rOWilt4OUidxuA7gsRjbmJ092xl5fErAgqncXAsUDZh
-	4EKYo6mWzwcYR6BdmKbtgBM31GNcIenf64qmAj0IoZebeZpxDYHbT5BFIbnETOyxC2Jx6Kq3tCB
-	V56pNN1z6UgvIfRNUAHsiLekwDGAz4Q3vKS/Zw++2/HqZ8fcIplfyeeLIVBQ2zsO3YvLKp+ykhy
-	zvpnnR0BuMhxTmG/m5PzH3h/y1gfGQ/7FcxIoPl+amY1JJNn8v6fvgBgPRy9donfgDwM2F0VO+f
-	cVKBpBswJJxMjJPXIz5oiDMTa+1NobCf7iJPJmwGjOmUwrflXHGrkxWkJbpAweVNreYsXpqKutG
-	L4Ujwm/FIeaI0If9zFKe+zrChhKsOp41tQhvOUyT+VZcIybVVjbL1ORpAbrRl
-X-Received: by 2002:ac8:590a:0:b0:4b0:677d:d8e1 with SMTP id d75a77b69052e-4eb947d0b75mr10195071cf.17.1761286242096;
-        Thu, 23 Oct 2025 23:10:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEtR9U1iGlrQGZPr6uA0Clma7yT4910fb9qum1J+IWWzJ2J/Ji+vn8lfUnOE0P2SRWMpyyYA==
-X-Received: by 2002:ac8:590a:0:b0:4b0:677d:d8e1 with SMTP id d75a77b69052e-4eb947d0b75mr10194911cf.17.1761286241626;
-        Thu, 23 Oct 2025 23:10:41 -0700 (PDT)
-Received: from yuanjiey.ap.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c120567b1sm320507385a.51.2025.10.23.23.10.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 23:10:41 -0700 (PDT)
-Date: Fri, 24 Oct 2025 14:10:29 +0800
-From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 10/12] dt-bindings: display/msm: dsi-phy-7nm: Add
- Kaanapali DSi PHY
-Message-ID: <aPsYVUjyPru5FwPe@yuanjiey.ap.qualcomm.com>
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-5-yuanjie.yang@oss.qualcomm.com>
- <em666johhzrluo5z4t2nu5jo4yuowegaemlrursvczx2zze5o5@uakt5j22ygwm>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82E1219A8A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761286286; cv=fail; b=rmgcSX5OdctZ7ePjoxTSGnbbLHiUzRdabZSzpAQk2yzh+FcEpMFjG3H9bRyBgyEcejTc9nbcvb2cvkq2v8RUuF4QFGhKsxwoNLXbWxwuGiyzuAXNAzLfqlb+8vTwHmqu+9Ayf91DhcWBpPCHhX6CRaKZoK90WGAEg6HZ4SFX7sA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761286286; c=relaxed/simple;
+	bh=ytpUdtV4vpK9hhp+O3Vv6xz4ohXkvYGlKVcDNSqoHIU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tTPuDEu1oVQcnpFdkAqC6t5vxNTI9gmqqszBX5nEmSDM1Uc2H3Asi0qt9Ss7wVTU6MO8AU8JPnAao3wDcW7Tzcb7wcojhLZ4jrGw7zPOaX0UAEKK0ZwBXQDp7VotzMdckgfNQ6ubkvtr4Mnt2Kwl7zLx05uFRRKVcRSZmFttYFk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Cl/DE0vm; arc=fail smtp.client-ip=52.101.193.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z1EsRLs37MF0ioQfbUXcw9RjoDt6gRolbz0lU5NI6HHIhwJ3yPq1m06kN3RE50x0k4yjLTudJrc6EhDWduoQMGiE3HwZhhLV/DSsC+WiO6JrIMgz2Wd5mZ+Qp3mC+U1KdEjiTS8brJ4e5vePTyDBFHXoRaIEkyk4hxZieySngo2KfzkwbGTO52Xwh62SeNxk6Yo+QS+NvS3TySWTuOUNnFoOt5ZiXTB0hlJHe3lpCJvtqdUkHzPYzdYWONnJqgvroLaL5UrpINk7/GOn3CF2+cADzNWLq/cXgdsK7euVcaijUw4zO8uH+1Q9EGV+re3iJ2jZGriH6ResAqXQp6+noA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vkGP5cr6dq54GVjVTgSLUm28RtPeQfLy0sS3t3Le2Jw=;
+ b=Xvz/LWZND5yu06b0HH3krb0BLE3Ka8hTJA0++H6FFO66f50Kd7vw/lSY28y8mOuUqHDFWsyvlmCOS5UVLs8Q46j3JPEFK7HD4wKRYqPhupKCIsdGyl+qjvD5QQXTS5cIOo5rGOoI+Z6RRzRrU75aoLMssRO3FCQz+YNBuKdWCfeB4I7KUlaJ3HUOh6FCQMUTXHSpUO62Gs+nWkKX9TqoirAk6EVjp08fwr/7a53Lvg+LnLzQp/yUF+4Iia11jRgA6gYw9qdycbachXcmZ1RSJvUGLm+52v02PggN65bYKw1XX1T6kXoHTs0hG2rI9T7LzKm6oKwvOA+NhtZrDqqgeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vkGP5cr6dq54GVjVTgSLUm28RtPeQfLy0sS3t3Le2Jw=;
+ b=Cl/DE0vmTTOWhyV3JzeVP4+RLBoDvHu7nU8iqSIm/5nZ3opcIEF1g2k0NAtRi9AfZNCXloKyE+NTvSzvj6c/FxNPlFEt0J/rGStLx7sQBoz9iv5TBcZVWo5yQzyi4cjTcpMcGCvLtr39pz8bPCV2DeRifWL78tR0iXzdncyuFlM=
+Received: from CH0PR07CA0012.namprd07.prod.outlook.com (2603:10b6:610:32::17)
+ by CH3PR12MB7547.namprd12.prod.outlook.com (2603:10b6:610:147::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 06:11:18 +0000
+Received: from DS3PEPF000099E0.namprd04.prod.outlook.com
+ (2603:10b6:610:32:cafe::e3) by CH0PR07CA0012.outlook.office365.com
+ (2603:10b6:610:32::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Fri,
+ 24 Oct 2025 06:11:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS3PEPF000099E0.mail.protection.outlook.com (10.167.17.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Fri, 24 Oct 2025 06:11:17 +0000
+Received: from BLRDHSRIVAS.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 23 Oct
+ 2025 23:11:14 -0700
+From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: <suravee.suthikulpanit@amd.com>, <Vasant.Hegde@amd.com>,
+	<Santosh.Shukla@amd.com>, Dheeraj Kumar Srivastava
+	<dheerajkumar.srivastava@amd.com>
+Subject: [PATCH v2] iommu/amd: Enhance "Completion-wait Time-out" error message
+Date: Fri, 24 Oct 2025 11:40:41 +0530
+Message-ID: <20251024061041.707-1-dheerajkumar.srivastava@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <em666johhzrluo5z4t2nu5jo4yuowegaemlrursvczx2zze5o5@uakt5j22ygwm>
-X-Authority-Analysis: v=2.4 cv=CLknnBrD c=1 sm=1 tr=0 ts=68fb1863 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=WIVAG7BfrJY6p4e7JxwA:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExMiBTYWx0ZWRfXzwjjI7BkCd5Q
- OCqJ0k1zVzmRcqkv6SoFC6IwCi9BEWFXILWokGxDlJ2Y5gPyRlFV+U450/v0VQlS3POfI+WPS0M
- pvbZ57MXlG/nc3XQTb2osA0s3CZx7wyON7a67lypKXVl6FuyCctO3TdUmrzZ3buXav+vgeaUAE7
- la7kGeF4+/tehNzUAbf77V5gVAUU/25DQOmZqD39gKfv7QWlMkP9ao/e3BqrCvTMXAUdrTdwILh
- 3nbSkkPc54yRB/lnzBYmhi4g9n6tliuV2mpbYwkM6kKsDBRGf7P7I+QF8xQNwUFdgSe9f9PU6aJ
- OMKQquY1iQCiAUBFsLUISP9tTfbngDWhOXIP3r99RVW9vfdSeH/Cr3+Bm56PCHf3+jB259y4qzR
- VJYxdsh714KHgBaGoPOASCDv0xlsOw==
-X-Proofpoint-GUID: gYKinMo5-M2tKNVUkzvNntxDExmyRpDY
-X-Proofpoint-ORIG-GUID: gYKinMo5-M2tKNVUkzvNntxDExmyRpDY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510230112
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099E0:EE_|CH3PR12MB7547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1847124c-d16a-4ceb-705d-08de12c4251e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YHnk5zc1WHqEQwchyH0mAvfc+dA4+6MMdeph/G4y0UtHKYFdLdMqWVj0pfSV?=
+ =?us-ascii?Q?NClRb4a/QRQo5xwBGhrFJVyYwa3jdeTJyQP7zHlzt3N0jDZ3bXN1D+qkYcp4?=
+ =?us-ascii?Q?M8nyBtfDjgd6X135H1h5jBXuz0r0P9SbNQeiArC3t4oolw4VjdCjX5JQCd1X?=
+ =?us-ascii?Q?4/Em9TcVUNxiNIvVeJg/RLNliIO3LFhlPeCHSGHetvV8xCJ3tU0lIb96tTxQ?=
+ =?us-ascii?Q?y6OMFjPGF4vFUU5ystk79RJWrJdN/dK9zmhkY4E4hR7dtefPNEoHIP6/NpJR?=
+ =?us-ascii?Q?iUvOqiGGgKuKXcf065GuW5SK80481+tO3bM1IK45Gccd1WD/JC3wpMTpzCDY?=
+ =?us-ascii?Q?TiZkpM32i4MveqSU4Z0oNpvI7cuyM85pDBC2gczjWFPCKukCLvzM+66RsEo9?=
+ =?us-ascii?Q?Ya6ZQS1qrrEbMi7s46VtUbSoBbaqTlDq0YrOoQEGoSqD2pCGi//tUv41lsT5?=
+ =?us-ascii?Q?QDumiSX8dINQ+XAbHg2qj+5m6cZeEG68zi1XmmKfFT/KdnrtARWGGNMWb2MK?=
+ =?us-ascii?Q?Cfho3TQ0QHcriXLYEZ8xij6699WozM7OqLng1VxQf5NP1Cu9sNtMMVFWKpTC?=
+ =?us-ascii?Q?mjyBY6gNz7iDf7k7RFXsHHx3gP28Y3yyUIhUBBRX2V6QltLa9KkvKS0pJrtd?=
+ =?us-ascii?Q?SXZex8Lyx2s09QMr0G+2ECKfoAcG1fAkTwjMh3SLGece9CEyEowZIWC6roOm?=
+ =?us-ascii?Q?oz3j1/WNMvQwHqvjIRNPBh0pryznfW0aEVjVrinrDUgltjJ1BizDo7/4Td6F?=
+ =?us-ascii?Q?VoXIOgwFAbJiyM0dJfK7vAvH8kYw/nHyf+vYEjmBZluogv955fLgJK+z+DUB?=
+ =?us-ascii?Q?faQsX0QWOkSy/h3z940P3yxAF2A56cS8bB5AWt2P+oO4AOWInMSzzMRGXa52?=
+ =?us-ascii?Q?SB/rr7FYL4q6yu2es8GJoyIFbLP2KkhQDhywDaiB8uKjJ1+tDYXNlNgLh7WC?=
+ =?us-ascii?Q?F8acd292egRTihWIOKoHvWZsvnMBgWosbtCmsuRQtRytLa3OUiPLIIsvGhJ1?=
+ =?us-ascii?Q?L5XIN95daUnyVxVG2gSLgqmBtzg4IHYSpRN4FbleByibcEK6gn01YKp3T34g?=
+ =?us-ascii?Q?kHQg+n8uJDuQMQsMpKluAWrGk9GTUfOMuypUGcuAeQIl8qRF+qmAiEQa327b?=
+ =?us-ascii?Q?uKkz8JhB2InI2csXGNjMcifuExWiyHPC/F6KBJZbqChUJng72Zvz4/31JPhf?=
+ =?us-ascii?Q?31Xz+xSnB7Fnp3VUuUFfm8DCz9iiz7Qk8g5tz1/La6DmoVsuzOzPOjkRCAwO?=
+ =?us-ascii?Q?QiTXN8ZtSWsbZJ7+GnLOW4/uilvmTrdPGzPo+lEMVLSUgtmcO+GBRoRHvPGo?=
+ =?us-ascii?Q?IS0yjWQndL7tNSZWtN7vYXmrE/LqAkhf7zwHC9/CHLpnZliu3EvIKJbwQlAZ?=
+ =?us-ascii?Q?NoPi8/PNIFPHRV8PQ2CM5hB2TgJ39ClhAQii8uHmN603XWqKvpZWCp6drok5?=
+ =?us-ascii?Q?SdWn8ZPCUeaRPyriYTMn1TKZFKrvqo9FPK9eM2riMtJsgSzZWfYB58/lTQ3m?=
+ =?us-ascii?Q?jcYU86s9isbV32pzGAdPjp7bJ6R4h4sT2crBbPT19He4G7oaDgRUpoYiApKu?=
+ =?us-ascii?Q?E0Exor0pFEzFDPz3HSo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 06:11:17.8091
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1847124c-d16a-4ceb-705d-08de12c4251e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099E0.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7547
 
-On Thu, Oct 23, 2025 at 03:16:31PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Oct 23, 2025 at 04:06:07PM +0800, yuanjie yang wrote:
-> > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> 
-> In the subject: DSI, not DSi
-OK will note.
+Current IOMMU driver prints "Completion-wait Time-out" error message with
+insufficient information to further debug the issue.
 
+Enhancing the error message as following:
+1. Log IOMMU PCI device ID in the error message.
+2. Also dump the command immediately preceding the COMPLETION_WAIT
+   command to identify what the IOMMU is waiting for.
+
+Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+---
+Changes since v1:
+-> Remove the code that dumps the entire command buffer on each
+   completion wait timeout when amd_iommu_dump=1. [Suravee and Vasant]
+
+ drivers/iommu/amd/amd_iommu_types.h |  2 ++
+ drivers/iommu/amd/iommu.c           | 18 +++++++++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+index 95f63c5f6159..d495e5e4a9a2 100644
+--- a/drivers/iommu/amd/amd_iommu_types.h
++++ b/drivers/iommu/amd/amd_iommu_types.h
+@@ -247,6 +247,8 @@
+ #define CMD_BUFFER_ENTRIES 512
+ #define MMIO_CMD_SIZE_SHIFT 56
+ #define MMIO_CMD_SIZE_512 (0x9ULL << MMIO_CMD_SIZE_SHIFT)
++#define MMIO_CMD_TAIL_MASK	GENMASK_ULL(18, 4)
++#define MMIO_CMD_BUFFER_TAIL(x)	FIELD_GET(MMIO_CMD_TAIL_MASK, (x))
  
-> > 
-> > Add DSI PHY for Kaanapali.
-> 
-> Why?
+ /* constants for event buffer handling */
+ #define EVT_BUFFER_SIZE		8192 /* 512 entries */
+diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+index eb348c63a8d0..89f7f6b01cad 100644
+--- a/drivers/iommu/amd/iommu.c
++++ b/drivers/iommu/amd/iommu.c
+@@ -1158,6 +1158,7 @@ irqreturn_t amd_iommu_int_handler(int irq, void *data)
+ 
+ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
+ {
++	struct iommu_cmd *cmd;
+ 	int i = 0;
+ 
+ 	while (*iommu->cmd_sem != data && i < LOOP_TIMEOUT) {
+@@ -1166,7 +1167,22 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
+ 	}
+ 
+ 	if (i == LOOP_TIMEOUT) {
+-		pr_alert("Completion-Wait loop timed out\n");
++		int head, tail;
++
++		head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
++		tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
++
++		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
++			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
++			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
++		/*
++		 * On command buffer completion timeout, step back by 2 commands
++		 * to locate the actual command that is causing the issue.
++		 */
++		tail = (MMIO_CMD_BUFFER_TAIL(tail) - 2) & (CMD_BUFFER_ENTRIES - 1);
++		cmd = (struct iommu_cmd *)(iommu->cmd_buf + tail * sizeof(*cmd));
++		dump_command(iommu_virt_to_phys(cmd));
++
+ 		return -EIO;
+ 	}
+ 
+-- 
+2.25.1
 
-DSI phy for Kaanapali have no significant diiference with previous version(SM8750).
-But some register change make it imcompatible with previous version(SM8750).
-
-I will give this reason in my next patch.
-
-Thanks
-Yuanjie.
-
-> 
-> > 
-> > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > ---
-> >  Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
-> > index 1ca820a500b7..a6e044eed3df 100644
-> > --- a/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
-> > +++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
-> > @@ -17,6 +17,7 @@ properties:
-> >      enum:
-> >        - qcom,dsi-phy-7nm
-> >        - qcom,dsi-phy-7nm-8150
-> > +      - qcom,kaanapali-dsi-phy-3nm
-> >        - qcom,sa8775p-dsi-phy-5nm
-> >        - qcom,sar2130p-dsi-phy-5nm
-> >        - qcom,sc7280-dsi-phy-7nm
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
 
