@@ -1,87 +1,149 @@
-Return-Path: <linux-kernel+bounces-868630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA1DC05A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A83C05A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75D5D4FADF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:49:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5779119A8663
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547CE311C15;
-	Fri, 24 Oct 2025 10:49:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6B0266B46;
+	Fri, 24 Oct 2025 10:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FQ09UUna"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3C63115A1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECD3306B0D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302946; cv=none; b=meTVifa3+Mqb2wUnEnI6o1h3CcDTaedZWkwVXxe45uRWwDnMm/17JK7H7t69SjTknpPvF+9UW57bdN0Fq288/zvu752/7ISiloAggCPKqYfJ70GrRCPOUZiykoNmdNjQ1JG+5Lg8TV7eQpgweClQsigyzZjFFeePbTet91qn5F0=
+	t=1761302994; cv=none; b=sI5LGN6AcCfk/zh5AXQPjgdU0kBOflQQ8kAbYxv3HHehFmc0r1YQZ9hW9Mk1u6GV463ZmB0RauazgINTlJYqvH45g2lGpJQc3cQVz3JdpJEG0NVz82krlI16jjk6dXLeSNkvfZ2HdSifcJjRWkZX6rGvsFlzyXOophNBXryWnbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302946; c=relaxed/simple;
-	bh=9fngBIQe3OpsV47v8Y0BqVZBxS4b6qTRcX+0B1cBQ48=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eVwmK+4mT+8IO97U99KLy6117hVFOno20tm33T+8S2jKueLi7nZjXYZXBL9IXVZiCev9m15X1bzQ+CccLgyCXuuQkH/QjQo+jB+JElpN6iyJbLwRc5jsWFd3PBW2qrjblQX6z6hcmNDRh3a/Sk1NNfQK1yGJ6lnVgmVc+AsK8+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430c3232caeso24254525ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:49:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761302944; x=1761907744;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WxuV7ZrBtoLq7TPCj/t4AiQxV1AR/uLspKAVkWl+hMs=;
-        b=ERObzd60Ea5M6k2Fq+oEymGCEvLq8hoOiuTZSML5pv4WoCglbV8vayridsPn1IqKDP
-         N92tp7pJC0VUKbZWrCv5VNtPlSEqqCOryYYxUnLhb8py45OO7lk+B5CckkqIk9wm0ilX
-         I4vgkFOTICDT1fKcGp7gNrwZDhAUJw2ChII+ZlFnktjLkbH512Gu4bwn4VEAcVc8JNBw
-         WgHIgYP7kulFJAYtcwj2DWO7rnAmhqqy6uyMJ6c4r35H4UKb6b67j0BAqPFQg3ELRXPL
-         QT6e+4bYo/Xa0WKfTMSwcFJIHfuhPSOyq5svazrhwRhhlJe1qFej8micq5CELkvxsns4
-         Ba6w==
-X-Forwarded-Encrypted: i=1; AJvYcCW6H3Bq/QILx/nzmPiTkgj00h+bJv6Q/GEhlKqKYE8YJbly85sUzKTMgL3sNKDfR3tQfezldHVF7KzfFcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQHWqpeDzCBLfNuXntTzNQ0UZWczllP26gESbvE79GXQ/mT48m
-	D3O/4n9mb8Xwb8DMEsI/w//2SaaWSXAdEj23KWin7OzZCtQASr12/6nLwWoZlmvK+BQnx7rAr+V
-	xeleJCnI0fA79BdCfzpTwViXiS5QBkJsYESs/mMKIjQ3m7fiBy/kiRTaNB3o=
-X-Google-Smtp-Source: AGHT+IHSWJ5xtfU9Cpb0K8WrQA8SCLUF0UO7Q6hToqG1i0xl4Pa5/uA9TDWUjLg/e3iYqFJ18ojil8Y8Li7gG3TaRt2O+ysQ2mZm
+	s=arc-20240116; t=1761302994; c=relaxed/simple;
+	bh=0xJzT9HOFA/wzQA9PIEVIRkd3/izvnGDUDaNuOAhYnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MycaF5vRDArwvOpYhsYXQpHSBSYsRZGOPBwhPm73UnTK54mx8rgTB1+Apo9MUZHwnyr6vX3OE9sO9trUuLj5IjNmfD87p6bUeAUEYBVPnnFf2fkHJ2buRIFZFA+WKHfDEppyJ0z9s72FBzi3+YVd83OAVNNCGIqxOcqezJ5175k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FQ09UUna; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761302989;
+	bh=0xJzT9HOFA/wzQA9PIEVIRkd3/izvnGDUDaNuOAhYnU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FQ09UUnaQFSpk/V8t8j35ER2UrKefovK8sNoJWCvS6uYsz6Skm1EmvT7vUyxeY7YI
+	 1mI7vvm9vZ8SQt95xIPEBmbTSquqVhjZxAYJmG/FoBHMf9iiM6guG+SweRnu5i2/JX
+	 rV6evrk8W0nxyB4z3hzTowtUUzXhQF6H+NhLUzdZloAgiW6kucjWa7VNV8/vFhKHMs
+	 3YPH/tHpQwY9TbDOWadlBpJeByS/3D8IZ48xF1w53QSh76ezSE+2rnuwOVfSF9i2WJ
+	 KPXLQfmHJJquA0Gz9a2b0DiGncrjF8vKMkYtGoLBEl1iYBkZiiIrMBj3oT/pmJx8JG
+	 dw6o0nWY2eE5g==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3FF2717E127F;
+	Fri, 24 Oct 2025 12:49:49 +0200 (CEST)
+Date: Fri, 24 Oct 2025 12:49:41 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 03/10] drm/panthor: Introduce framework for
+ architecture-specific features
+Message-ID: <20251024124941.124a50aa@fedora>
+In-Reply-To: <f2a05393-b3d4-47e2-be17-248880d97d49@arm.com>
+References: <20251014094337.1009601-1-karunika.choo@arm.com>
+	<20251014094337.1009601-4-karunika.choo@arm.com>
+	<20251024084327.3332d548@fedora>
+	<f2a05393-b3d4-47e2-be17-248880d97d49@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3086:b0:431:d83a:9a8 with SMTP id
- e9e14a558f8ab-431d83a0c8cmr109385125ab.25.1761302944469; Fri, 24 Oct 2025
- 03:49:04 -0700 (PDT)
-Date: Fri, 24 Oct 2025 03:49:04 -0700
-In-Reply-To: <20251024071531.TCWyW%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb59a0.050a0220.346f24.00c0.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
-From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, 24 Oct 2025 10:26:16 +0100
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On 24/10/2025 07:43, Boris Brezillon wrote:
+> > On Tue, 14 Oct 2025 10:43:30 +0100
+> > Karunika Choo <karunika.choo@arm.com> wrote:
+> >  =20
+> >> Add a framework to support architecture-specific features. This allows
+> >> other parts of the driver to adjust their behaviour based on the featu=
+re
+> >> bits enabled for a given architecture. =20
+> >=20
+> > I'm not convinced we need this just yet. AFAICT, the only feature flag
+> > being added in this patchset is PANTHOR_HW_FEATURE_PWR_CONTROL, and
+> > most of this is abstracted away with function pointers already. The
+> > only part that tests this FEATURE_PWR_CONTROL flag is the
+> > initialization, which could very much be abstracted away with a
+> > function pointer (NULL meaning no PWR block present). There might be
+> > other use cases you're planning to use this for, so I'd like to hear
+> > about them to make my final opinion on that.
+> >  =20
+>=20
+> I see your point =E2=80=94 the intent here is mainly to have the feature =
+flag
+> reflect hardware-level changes. In this series, for example, it
+> corresponds to the addition of the new PWR_CONTROL block.
 
-Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
-Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Yes, but those are not really optional features. Those are functional
+changes that are usually done on major version changes. But let's say
+it was something done on a minor version change, it's still something
+that I think would be better off abstracted using a vtable of some
+sort, and have this vtable forked everytime a version changes requires
+something new.
 
-Tested on:
+>=20
+> Another use case would be arch v11, where a new PRFCNT_FEATURES register
+> was introduced. In that case, we might want to adjust the
+> counters_per_block [1] value depending on that register=E2=80=99s value.
 
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c99be2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d75e2b3488f52930
-dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10fc7734580000
+Again, it looks like a property that can be determined at init time. For
+v10 it'd be hardcoded to X, and on v11+, you'd extract that from
+PERFCNT_FEATURES. I'm really not a huge fan of this feature flag
+pattern because it's very easy to forget to add/propagate one flag when
+adding support for new HW/flags. So I'd much rather rely on ">=3D X.Y"
+version checks in the init path, and for anything more involved or
+happening in some hot path, function based pointer specialization.
 
-Note: testing is done by a robot and is best-effort only.
+>=20
+> I would also expect this mechanism to remain useful for future hardware
+> revisions, as it provides a clean way to describe architectural
+> differences without scattering version-specific checks throughout the
+> code, while still being lighter-weight than function pointers.
+
+Well, that's questionable. What I usually see in practice is the
+following pattern spreading over the code base:
+
+	if (SUPPORTS(OBSCURE_FEATURE_NAME)) {
+		// do stuff that are not obviously related to the
+		// feature flag name
+	}
+
+whereas, if we're having a model where the specialization is done high
+enough, you'd just end up with functions calling more specialized
+helpers:
+
+void do_something_for_v12()
+{
+	hw_block_a_do_y()
+	hw_block_b_do_x()
+	...
+}
 
