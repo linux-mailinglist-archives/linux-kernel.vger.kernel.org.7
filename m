@@ -1,153 +1,93 @@
-Return-Path: <linux-kernel+bounces-868050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584D9C043B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2567C043C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F11B4350B76
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:18:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65B303B8617
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E5D26E6F7;
-	Fri, 24 Oct 2025 03:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3X8C14bl"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1F12494D8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CD226E6F2;
+	Fri, 24 Oct 2025 03:20:08 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E6735B130;
+	Fri, 24 Oct 2025 03:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761275885; cv=none; b=uFbTPOLEJnS4dwzt7vnIIT57GKH570q5XGdPI5fOYrHr1xzfyuifP7J11GoGGSsIOIutSeGQOGguEJ8HYZVF1cVU3YERh7NwYfmeUgJt/CXEm6nKGprmW4QOerA2H9vycPbS1Zpuz1tnWUeReZlH9XyPXcvQYIFACsq9vzkaGqs=
+	t=1761276008; cv=none; b=Vgjc8/7ZYSi7mp1qdOeabTj56gXaiiSg7/c3rYIW+SMFzOETj7zgSmPHX1sC6Ce47c2jMtpZrYf/VqCn0jduaUiS6nPiRWXUYu5c6bEajEMWdYomG7bH/K9Z0v5UIKk2/tdHf0i8wxagM1tqtTxL+tZ6MqfeE1maV6dS8z2k39Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761275885; c=relaxed/simple;
-	bh=Mm2VyaI4Igfss9i7TU8/z7aHTWUycbu8XrGKZEVvMDM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SqW1mb9LU4P7TMk/BVLSxIbNEQzDCEBhOfjynedLKTmKn6wGl1SGtGRbaMDDOgmIyYEDbHUu2gZxPQI2TwV9TpHyFHj8lHF/2bHYIaBSnMPHYu7I7weFVouvd0vy5zZuFvxtly4C/SRQSygj579nRblRc3JOl4Y+4CjhZD5KGEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3X8C14bl; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-26985173d8eso36198785ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761275883; x=1761880683; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=86TD3UzM8BdgXc7Yqd4HgeHYcCczwfuxg2J/6uVoESo=;
-        b=3X8C14blxZrrQslcVrMTQFDI4WRmtE1Lu1graPsoUsBZ1ghExnhKSRrvwqTlhyfJnp
-         H2TwGiQTruWEQIjJXhkoqQF0AvXmvgvd3rdnW/yYSFLBw6FSJ1tW1tuPtu7GUnNr+L90
-         V7y5/14PnkifDQslPICtXoKwRnS+zbPhfDvocXR8dJFcHCbXmyEHciWzF67jD9/7Bzya
-         9wvr9TODXQAkUtSM2IdP/NUoHFURgPRw+2tFuHCWKOZrtVtudswlQKRuGuSjXrcvveLM
-         W+CMqaCHXsb1ETMcIqsnxwrGz1Sah1do30s13cY1ho1VeYQfgnJt/SatNzl+DiKNladl
-         cO7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761275883; x=1761880683;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=86TD3UzM8BdgXc7Yqd4HgeHYcCczwfuxg2J/6uVoESo=;
-        b=ZJ867P0J69ZooAM/cvYh9Q8UvwqvEzvJl3mo2pCc7FACCXSCIyQgOFsX7Z3qNuCoH4
-         uyiJWr+diWdFTBQy5+9XdUE+PDBndrlywxSuhnTmF2l/QlkRVtt0gKRriZ3VgG3FMNpR
-         /9sc7/nCuTj1GJreTGScVZXXhjGRwqKEOETAUtq1Yju0fS1hWEETuvRe158Qr628hcdG
-         hg/FDwy4QJOQQYRmoDKC4K0wlcRssQB30eCPPdw0I1oLswJ+bpEqK4r0K+5y1fwwxYAW
-         IVq4a/ezk8VLIj272MArOrQSvdDd3CgJOX8GwPZJ7lgz1DS/xWdoMgivZqWS2SoZcaa3
-         MPEw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/+8z2FQUIR8i3ikdSnvGdtlwXQUsJPI0gW6yA+ZCkqH6VSsReFL2iyN+AqGQ1l1ihFGmXqrgriKiOmyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXRo229G+JoqOaEM25ah6UYT3qAinpqoJ+yYSFHDIegYt2+MQj
-	rwt1qe5R4/s93P8oI2gQmMoCS6K7qpSKv+QtSZCmef3N7lEIM4iGjVmY2fV9d2uGTICnTqB1gZO
-	7Cm68Yw==
-X-Google-Smtp-Source: AGHT+IGbDXf3zXQD4ouIpOm4qwyHLbnbWkwJ/gIVE7mT+Z9sFC3feertEA2eWKr2O8i5iT2f1gFWGeayNYw=
-X-Received: from pjbbk16.prod.google.com ([2002:a17:90b:810:b0:32d:a4d4:bb17])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3d0c:b0:267:af07:6526
- with SMTP id d9443c01a7336-290cb65c541mr349189525ad.55.1761275882800; Thu, 23
- Oct 2025 20:18:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 03:17:06 +0000
-In-Reply-To: <20251024013153.2811796-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1761276008; c=relaxed/simple;
+	bh=SPueU73YSGLkFIRRtlw1lCypIuUFZRrmVNQv9cnSPVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=NBuL3koapcxheyW+XTUTmlMhtxUhPsn9Fk0o+yzfDdNLLKrqIHFHiWiAHVIgFk32LXc+pDqXIopGkBfa+zF7oIufyaPqVRWz67ZzboEofJyu7AsqiJGhA5SNBXz1hhzY9O/VgsJUF0Jj/xJ76eoAl1Ir8xxeIXawLJFIHZPXj0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from hehuan1$eswincomputing.com ( [10.12.96.103] ) by
+ ajax-webmail-app2 (Coremail) ; Fri, 24 Oct 2025 11:19:52 +0800 (GMT+08:00)
+Date: Fri, 24 Oct 2025 11:19:52 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?5L2V5qyi?= <hehuan1@eswincomputing.com>
+To: "Adrian Hunter" <adrian.hunter@intel.com>
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	xuxiang@eswincomputing.com, luyulin@eswincomputing.com,
+	dongxuyang@eswincomputing.com, zhangsenchuan@eswincomputing.com,
+	weishangjuan@eswincomputing.com, lizhi2@eswincomputing.com,
+	caohang@eswincomputing.com,
+	=?UTF-8?B?5L2V5qyi?= <hehuan1@eswincomputing.com>
+Subject: Re: Re: [PATCH v5 2/2] mmc: sdhci-of-dwcmshc: Add support for Eswin
+ EIC7700
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <9b744e60-a0d7-48c7-b1fb-66df91b839e5@intel.com>
+References: <20251019115133.300-1-hehuan1@eswincomputing.com>
+ <20251019115316.337-1-hehuan1@eswincomputing.com>
+ <9b744e60-a0d7-48c7-b1fb-66df91b839e5@intel.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251024013153.2811796-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251024031801.35583-1-kuniyu@google.com>
-Subject: Re: [PATCH] net: rose: Prevent the use of freed digipeat
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: lizhi.xu@windriver.com
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jreuter@yaina.de, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com, kuniyu@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-ID: <4dddefe2.63d.19a143ad883.Coremail.hehuan1@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDHZpVY8PpoEgUvAQ--.28428W
+X-CM-SenderInfo: 5khk3tzqr6v25zlqu0xpsx3x1qjou0bp/1tbiAQEFCmj6WH4NSwAA
+	s9
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-From: Lizhi Xu <lizhi.xu@windriver.com>
-Date: Fri, 24 Oct 2025 09:31:53 +0800
-> There is no synchronization between the two timers, rose_t0timer_expiry
-> and rose_timer_expiry.
-> rose_timer_expiry() puts the neighbor when the rose state is ROSE_STATE_2.
-> However, rose_t0timer_expiry() does initiate a restart request on the
-> neighbor.
-> When rose_t0timer_expiry() accesses the released neighbor member digipeat,
-> a UAF is triggered.
-> 
-> To avoid this uaf, when rose_timer_expiry() puts the neighbor, the base
-> member digipeat is set to NULL.
-> 
-> syzbot reported a slab-use-after-free Read in ax25_find_cb.
-> BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17200
-> 
-> Call Trace:
->  ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
->  ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
->  rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
->  rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link.c:198
->  rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
-> 
-> Freed by task 17183:
->  kfree+0x2b8/0x6d0 mm/slub.c:6826
->  rose_neigh_put include/net/rose.h:165 [inline]
->  rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
->  call_timer_fn+0x19a/0x620 kernel/time/timer.c:1747
-> 
-> Fixes: dcb34659028f ("net: rose: split remove and free operations in rose_remove_neigh()")
-> Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  include/net/rose.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/net/rose.h b/include/net/rose.h
-> index 2b5491bbf39a..9b0dc81a9589 100644
-> --- a/include/net/rose.h
-> +++ b/include/net/rose.h
-> @@ -163,6 +163,7 @@ static inline void rose_neigh_put(struct rose_neigh *rose_neigh)
->  		if (rose_neigh->ax25)
->  			ax25_cb_put(rose_neigh->ax25);
->  		kfree(rose_neigh->digipeat);
-> +		rose_neigh->digipeat = NULL;
+SGkgQWRyaWFuLAoKVGhhbmsgeW91IHZlcnkgbXVjaCBmb3IgeW91ciBBY2tlZC1ieSBhbmQgdGhl
+IHJldmlldyEKCj4gT24gMTkvMTAvMjAyNSAxNDo1MywgaGVodWFuMUBlc3dpbmNvbXB1dGluZy5j
+b20gd3JvdGU6Cj4gPiBGcm9tOiBIdWFuIEhlIDxoZWh1YW4xQGVzd2luY29tcHV0aW5nLmNvbT4K
+PiA+IAo+ID4gQWRkIHN1cHBvcnQgZm9yIHRoZSBtbWMgY29udHJvbGxlciBpbiB0aGUgRXN3aW4g
+RUlDNzcwMCB3aXRoIHRoZSBuZXcKPiA+IGNvbXBhdGlibGUgImVzd2luLGVpYzc3MDAtZHdjbXNo
+YyIuIEltcGxlbWVudCBjdXN0b20gc2RoY2lfb3BzIGZvcgo+ID4gc2V0X2Nsb2NrLCByZXNldCwg
+c2V0X3Voc19zaWduYWxpbmcsIHBsYXRmb3JtX2V4ZWN1dGVfdHVuaW5nLgo+ID4gCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBIdWFuIEhlIDxoZWh1YW4xQGVzd2luY29tcHV0aW5nLmNvbT4KPiAKPiBOb3Rp
+bmcgdGhhdCB0aGUgZHQtYmluZGluZ3MgcGF0Y2ggc3RpbGwgc2VlbXMgdG8gaGF2ZSBpc3N1ZXMs
+Cj4gZm9yIHRoaXMgcGF0Y2gsIGFueXdheToKPiAKPiBBY2tlZC1ieTogQWRyaWFuIEh1bnRlciA8
+YWRyaWFuLmh1bnRlckBpbnRlbC5jb20+CgpJIHJlY2lldmVkIGFuIGR0X2JpbmRpbmdfY2hlY2sg
+ZXJyb3IgcmVwb3J0OgpodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMTc2MDk2MDExMzgwLjIy
+OTE3LjE5ODg2NzkzMjEwOTYwNzY1MjIucm9iaEBrZXJuZWwub3JnLwoKSXQgc2VlbXMgdGhlIGVy
+cm9yIGhhcyBub3RoaW5nIHRvIGRvIHdpdGggTU1DLCBidXQgaXMgcmVsYXRlZCB0byB0aGUKRXRo
+ZXJuZXQgYmluZGluZyAoZXN3aW4sZWljNzcwMC1ldGgueWFtbCksIHRoYXQgd2FzIHB1c2hlZCBi
+eSB1cyBhbmQKYXBwbGllZCByZWNlbnRseSwgbGluazoKaHR0cHM6Ly9naXQua2VybmVsLm9yZy9w
+dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvbmV0ZGV2L25ldC1uZXh0LmdpdC9jb21taXQvP2lkPTg4
+OGJkMGVjYTkzYwoKV2UncmUgZml4aW5nIHRoaXMgaXNzdWUgZm9yIHRoZSBFdGhlcm5ldC4gVGhl
+IEV0aGVybmV0IHBhdGNoIHdpdGgKdGhpcyBidWcgZml4IHdpbGwgYmUgc2VudCBvdXQgbGF0ZXIu
+CgpJIHdvdWxkIGJlIGdyYXRlZnVsIGZvciB5b3VyIHJlcGx5LgoKUmVnYXJkcywKSHVhbiBIZQo=
 
-How does this synchronise with the timer which is going to
-touch rose_neigh being freed below ?
-
-
->  		kfree(rose_neigh);
-
-Isn't the problem that we reach here without stopping all timers
-or that a timer does not hold refcnt ?
-
-
-Also, please post a patch in a separate thread so that patchwork
-will not be confused.
-
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#resending-after-review
-
----8<---
-The new version of patches should be posted as a separate
-thread, not as a reply to the previous posting.
----8<---
 
