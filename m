@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-868194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D451EC049F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8732EC049FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E64A0358D4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:08:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D3B834B12B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F1629CB4C;
-	Fri, 24 Oct 2025 07:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B651D798E;
+	Fri, 24 Oct 2025 07:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cIRh5nFO"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i9GfFIAu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bKKw5f2M"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EB01DB127
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB05729BDBC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289677; cv=none; b=IwqNPWOZ3qUvxo9I1pZHAs1PJgTcE31YXLbSmkCeRoquudK4952T03e+AHcioOnpZobC5Xic955TTL2YRlngtpsKZfVtI1XKIFS8BVJSSLYtiQWFo+N7Fber7Khz8YxU/t3aJL8yzH4s4oAq9iz88KperzfFHsWelgj0FWgeeeQ=
+	t=1761289699; cv=none; b=JZZiYERhDsp9bBSlqkNM5LK5K9rqmjAKMxa6k50c2CF3Ht9DJI6R3sUgo+u5XB8gPLfJ9eF9aTm43i4pZ/8EwdLqP8sFdxwfBaYnc9Ab9WS4oLqvAMnRmi8zscVJjuFdjc/gMm9NrX0+7CbBMgFRvawrqZwTIncfk6OSq3yLsZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289677; c=relaxed/simple;
-	bh=BNniUyI901wXBDIZRDj//iLWjluNXPc/huJRB/20Imc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PL2F0RSjM5YZ8pAozqd+hwgsgboV+3n7xN91Qk3ID7WMVVY4SbCRfkCb3bl42omdp0sL4fcB1bB7yar6G9Sy6EWyDDuNnzyRIuleaAc62g/PPlDaJiWZP5ochrQyV+ZzqelWFIyq7HGQ8iR23suHzlSeoImZbBH+nI5vJD77yiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cIRh5nFO; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d327af2b-8089-4d1b-8f7f-9f18c0d9faba@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761289671;
+	s=arc-20240116; t=1761289699; c=relaxed/simple;
+	bh=tSccEiZ5nbcLVRXslMFim6mY9G38GT+vZyoKau0M7sw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j6cX09VxRQvsB8vt/Jr5szi28en47LTaRbArA9zzuQYR4gzYZgQDoH5dyLVafxq8xNc8K7gB2C/zgr/v9t90vNOxzKhofCmVGwVxoL3JD9cQtutR61NHBNI7nzPLIRORAIA0rbOI1WUyzn/K+id2IIrBDU2kmqN7pyQhfLwLVp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i9GfFIAu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bKKw5f2M; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761289695;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJpu9jNeG/9AHqtuVmrf1mdpbO23IJsdx1yWPp+AZv8=;
-	b=cIRh5nFOYHb6pF8W1pDgnMpBx3yfZ+vT+k8OKL4renNzvsbG3YwZjaVL2tEjNRluaJMKZt
-	noGOXGtoSBhgmWSOrdo3DdHFZjsXW4A2dU1CwLkyZkVCCTn9c68E5sIzJoZS7HJD0eHa5W
-	pL693ktqobj4sgZBoAIMN7pEIyeAmsY=
-Date: Fri, 24 Oct 2025 15:06:56 +0800
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MBNjp43Jyd8UoA0/6AaO22zNRc1efCcF7IhiqPfmZQU=;
+	b=i9GfFIAudcqYb78QOGvWmGBj4M1giX+ySkag9ZIKb/k6UxafVP79lpKofjzp8mo3dhTr/3
+	hhRhT6k1LljXXlMFGKUY3/RrQmgbeSfEmrO5bhm/cC67A2d+MqyjuWY8rhEz1PNHH8B1dq
+	EtKBL0sSdv7egBHOaRJwLZZ57MnM3Y9SwNlI/0H9YUClWupasDE6J8HEnOQA9779V+0Cz5
+	CnVVoiCvfQCt5fLGAecVPUVuWDghhplWFvnqpeKOorbJhVoDcHim1f1Z38cAkRhOW3a6N7
+	cNdMIQg+t8XBYvq26LcDMcfP0VDnLQdAAWoUsuUYdakOIXNERQephNCjd0VssQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761289695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MBNjp43Jyd8UoA0/6AaO22zNRc1efCcF7IhiqPfmZQU=;
+	b=bKKw5f2MiTaPQMDFNXdNZv3o+cuPvgCLMN+S48XcA7/Msk3N1mTjjd80kZuALwlQyotzDk
+	qaYZJUveEq7vwnAw==
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Nam Cao <namcao@linutronix.de>
+Subject: [PATCH] smp: Suppress false DEBUG_PREEMPT warning in smp_call_on_cpu()
+Date: Fri, 24 Oct 2025 09:07:14 +0200
+Message-Id: <20251024070714.4047816-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] LoongArch: kexec: Initialize kexec_buf struct
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: kexec@lists.infradead.org, Breno Leitao <leitao@debian.org>,
- Youling Tang <tangyouling@kylinos.cn>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251024063653.35492-1-youling.tang@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <20251024063653.35492-1-youling.tang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
 
-cc to loongarch@lists.linux.dev and linux-kernel@vger.kernel.org
+While booting UP (uniprocessor) kernel with CONFIG_DEBUG_PREEMPT=3Dy, the
+following warning is observed:
 
+BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+caller is debug_smp_processor_id+0x1c/0x28
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.0-rc2-00012-g002733e9=
+53a7 #111 PREEMPT_RT
+Hardware name: MangoPi MQ Pro (DT)
+Call Trace:
+    dump_backtrace
+    show_stack
+    dump_stack_lvl
+    dump_stack
+    check_preemption_disabled.isra.0
+    debug_smp_processor_id
+    check_unaligned_access
+    smp_call_on_cpu
+    check_unaligned_access_all_cpus
+    do_one_initcall
+    kernel_init_freeable
+    kernel_init
+    ret_from_fork_kernel
+    ret_from_fork_kernel_asm
 
-On 10/24/25 14:36, Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
->
-> The kexec_buf structure was previously declared without initialization.
-> commit bf454ec31add ("kexec_file: allow to place kexec_buf randomly")
-> added a field that is always read but not consistently populated by all
-> architectures. This un-initialized field will contain garbage.
->
-> This is also triggering a UBSAN warning when the uninitialized data was
-> accessed:
->
->          ------------[ cut here ]------------
->          UBSAN: invalid-load in ./include/linux/kexec.h:210:10
->          load of value 252 is not a valid value for type '_Bool'
->
-> Zero-initializing kexec_buf at declaration ensures all fields are
-> cleanly set, preventing future instances of uninitialized memory being
-> used.
->
-> Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf randomly")
-> Link: https://lore.kernel.org/r/20250827-kbuf_all-v1-2-1df9882bb01a@debian.org
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> ---
->   arch/loongarch/kernel/kexec_efi.c          | 2 +-
->   arch/loongarch/kernel/kexec_elf.c          | 2 +-
->   arch/loongarch/kernel/machine_kexec_file.c | 2 +-
->   3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/loongarch/kernel/kexec_efi.c b/arch/loongarch/kernel/kexec_efi.c
-> index 45121b914f8f..5ee78ebb1546 100644
-> --- a/arch/loongarch/kernel/kexec_efi.c
-> +++ b/arch/loongarch/kernel/kexec_efi.c
-> @@ -42,7 +42,7 @@ static void *efi_kexec_load(struct kimage *image,
->   {
->   	int ret;
->   	unsigned long text_offset, kernel_segment_number;
-> -	struct kexec_buf kbuf;
-> +	struct kexec_buf kbuf = {};
->   	struct kexec_segment *kernel_segment;
->   	struct loongarch_image_header *h;
->   
-> diff --git a/arch/loongarch/kernel/kexec_elf.c b/arch/loongarch/kernel/kexec_elf.c
-> index 97b2f049801a..1b6b64744c7f 100644
-> --- a/arch/loongarch/kernel/kexec_elf.c
-> +++ b/arch/loongarch/kernel/kexec_elf.c
-> @@ -59,7 +59,7 @@ static void *elf_kexec_load(struct kimage *image,
->   	int ret;
->   	unsigned long text_offset, kernel_segment_number;
->   	struct elfhdr ehdr;
-> -	struct kexec_buf kbuf;
-> +	struct kexec_buf kbuf = {};
->   	struct kexec_elf_info elf_info;
->   	struct kexec_segment *kernel_segment;
->   
-> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
-> index dda236b51a88..fb57026f5f25 100644
-> --- a/arch/loongarch/kernel/machine_kexec_file.c
-> +++ b/arch/loongarch/kernel/machine_kexec_file.c
-> @@ -143,7 +143,7 @@ int load_other_segments(struct kimage *image,
->   	unsigned long initrd_load_addr = 0;
->   	unsigned long orig_segments = image->nr_segments;
->   	char *modified_cmdline = NULL;
-> -	struct kexec_buf kbuf;
-> +	struct kexec_buf kbuf = {};
->   
->   	kbuf.image = image;
->   	/* Don't allocate anything below the kernel */
+This is a false warning. The UP-variant of smp_call_on_cpu() simply calls
+the callback, and thus debug_smp_processor_id() thinks the context is
+unsafe for smp_processor_id(), which is obviously false because this is UP
+kernel.
+
+This appears after commit 06ddd17521bf ("sched/smp: Always define
+is_percpu_thread() and scheduler_ipi()"). Before this commit,
+is_percpu_thread() always returns true on UP kernel and thus
+debug_smp_processor_id() always sees a per-cpu thread and never warns. But
+now is_percpu_thread() returns false for this case.
+
+Suppress this warning with a migrate_disable()+migrate_enable() pair.
+
+Fixes: 06ddd17521bf ("sched/smp: Always define is_percpu_thread() and sched=
+uler_ipi()")
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+grep shows me that the followings also have the same false warning:
+
+    arch/arm64/kernel/watchdog_hld.c
+    drivers/hwmon/dell-smm-hwmon.c
+    drivers/platform/x86/dell/dcdbas.c
+    kernel/watchdog.c
+---
+ kernel/up.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/up.c b/kernel/up.c
+index df50828cc2f0..37c9f0d39b36 100644
+--- a/kernel/up.c
++++ b/kernel/up.c
+@@ -64,7 +64,14 @@ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *=
+), void *par, bool phys)
+=20
+ 	if (phys)
+ 		hypervisor_pin_vcpu(0);
++
++	/* suppress warnings from debug_smp_processor_id() */
++	migrate_disable();
++
+ 	ret =3D func(par);
++
++	migrate_enable();
++
+ 	if (phys)
+ 		hypervisor_pin_vcpu(-1);
+=20
+--=20
+2.39.5
+
 
