@@ -1,192 +1,155 @@
-Return-Path: <linux-kernel+bounces-868768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7178EC0612D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:45:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA1BC06180
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3653A2F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:41:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A911F357830
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B6330E0FD;
-	Fri, 24 Oct 2025 11:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A7ghF2Y2"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457BE2D7398;
+	Fri, 24 Oct 2025 11:50:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD3A275B18
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F412D0605
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761306046; cv=none; b=JcAfRBtr8PxTTRWCjaZ7QgiF0uexyeQAoQk/kkWaN0nbH7vqA1xE8tCJyWJyDi1OT9h4iv7AqBEj38rw9xmgB0N8LMXpeGnF7VjA086Kp2P/cF+7f00LPLE4q6gmK4iwFjFiebXUHzmZw6Ab+mxu7Y+Bk7Xdzf3oHdYBbyvCvMA=
+	t=1761306611; cv=none; b=o64HveSKfCaCsOhlKy1J1FhG4PIkNM0s+1ANo9REc9f4CDSxVJ1sDulsRsFD6uCs9+VFw6Dg+VSJabMMS3CxKyHAR1wi1HZ/2NbCTCicEdRlHx5QLWynB2n/Hgc4milI32EfX9NQoruAtCVkkNV8R9IwK34c/EtkT5Y2Xk6hbyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761306046; c=relaxed/simple;
-	bh=TBycVuEsoNnS8u/NOeJHPnKmqWfftrX+OE33WfKoKEE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=NgczqR+3NGUhVygCrW1ml9O7pbPK/lZ7sdSJUNDXCwUjpxqQOewRbNwEP2G5Km3/KPfRkIZPKfK3fz/BDeYWulw+95Kqwewgid+TNu0LCP9rhPFc+/DUh4D47jWeGAxdVynmLqLwp+Gs5iWTDq4zex9kqCJkciNUaI1ZWu7qAf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A7ghF2Y2; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251024114043epoutp03d58c5f094503fdab03c8bf28476d43a4~xaoOqGpho1876018760epoutp033
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:40:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251024114043epoutp03d58c5f094503fdab03c8bf28476d43a4~xaoOqGpho1876018760epoutp033
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761306043;
-	bh=jIcbVnj3waROYb5DR8qb9eF/AvAmo/ZNkBO/tKnnrh0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A7ghF2Y2lDZy+CEIXo5HiZZd0IzeJwD85Nx2wyEuh6O38C/ZT5SEyecO6s4uYJEFE
-	 swzQwDSMM/Fr4nHXItkFQb/Vv/3ci2xYfhd99n3VYIx17XwQLNwF7XAKoCeoJ/PqGH
-	 ZoyPqU8cV81vpRlpcDlhUGO/a7QlWoVKjpaQrVPI=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251024114042epcas5p229e91b907fedbafd8d86b757a29a6321~xaoOKzgdj0371803718epcas5p2H;
-	Fri, 24 Oct 2025 11:40:42 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ctLZ15319z6B9m4; Fri, 24 Oct
-	2025 11:40:41 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce~xaoMhI6Sw1719017190epcas5p3s;
-	Fri, 24 Oct 2025 11:40:40 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251024114030epsmtip1b81fba1ba23f43edafb902c806aa3a1a~xaoC5qBsj0323903239epsmtip1Q;
-	Fri, 24 Oct 2025 11:40:30 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
-	muhammed.ali@samsung.com, selvarasu.g@samsung.com, pritam.sutar@samsung.com
-Subject: [PATCH 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB nodes
-Date: Fri, 24 Oct 2025 17:18:45 +0530
-Message-Id: <20251024114845.2395166-4-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251024114845.2395166-1-pritam.sutar@samsung.com>
+	s=arc-20240116; t=1761306611; c=relaxed/simple;
+	bh=BzGWGbSx3ob/YoIpU5YipTn7h7I3mfIONsr2QxsFfEc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E1F3AaLTQ1cn4WdoOG8JSaAc/S/mZx8ZmiXH8mKsm90Kskk/UZZthSZaPWPFyMgBcT0KcXYRO7m40mQddhcFB1v29SrjcRme6yYePZbPwo8yjb7acm30RyEs8+tltOmFZ+bUlwk7nMN5eBfiiG11p4PKL1oPc5TFRqTk/st6R6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1vCGJ3-0002FG-Sl; Fri, 24 Oct 2025 13:50:05 +0200
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Subject: [PATCH v5 00/10] arm64: dts: socfpga: agilex5: enable network and
+ add new board
+Date: Fri, 24 Oct 2025 13:49:52 +0200
+Message-Id: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce
-References: <20251024114845.2395166-1-pritam.sutar@samsung.com>
-	<CGME20251024114040epcas5p3d8c093798a3fd6c9c3b0c89aa58be8ce@epcas5p3.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOBn+2gC/43Ny27DIBCF4VeJWJdqGMwlXfU9qi4wDA5SZSxwk
+ avI714SqcqiUdPlfxbfObNKJVFlL4czK9RSTXnuoZ4OzJ/cPBFPoTdDwEGABN40F8jXvCTPa/Z
+ xmRx3U/qgTfEjxCCDjUcLnnVhKRTTdtXf3nufUl1z+bqeNXFZ/+c2wYGPOGpjLJAGel1onj7Xk
+ ue0PQdiF7zhDRSo/gaxg1YPqDR5b0a8C8obiPAAlB1EZ32IRkYF7i44/IAKHoJDB2mMYIAQjIq
+ /wH3fvwGz4zOWvgEAAA==
+X-Change-ID: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: kernel@pengutronix.de, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
+ Teoh Ji Sheng <ji.sheng.teoh@intel.com>, 
+ Adrian Ng Ho Yin <adrian.ho.yin.ng@intel.com>, 
+ Austin Zhang <austin.zhang@intel.com>, 
+ "Tham, Mun Yew" <mun.yew.tham@intel.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.3
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Enable USB PHY and DWC3 USB controllers' nodes.
+Add an initial devicetree for a new board (Arrow AXE5-Eagle) and all
+needed patches to support the network on current mainline.
 
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Currently only QSPI and network are functional as all other hardware
+currently lacks mainline support.
+
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 ---
- .../boot/dts/exynos/exynosautov920-sadk.dts   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Changes in v5:
+- remove binding conversion
+- rebase to 6.18-rc1
+- add sofpga_agilex5.dtsi patches
+- add stmmac patches
+- add dwxgmac compatible to have usable network
+- Link to v4: https://lore.kernel.org/r/20250205-v6-12-topic-socfpga-agilex5-v4-0-ebf070e2075f@pengutronix.de
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-index f90f7704597c..5896dd69334a 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-@@ -160,15 +160,20 @@ &xtcxo {
- &usbdrd31_ssphy {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd31_hsphy {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd31_dwc3 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "super-speed-plus";
- 	usb-phy = <&usb_phy0>;
- };
-@@ -176,15 +181,20 @@ &usbdrd31_dwc3 {
- &usbdrd31 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_phy0 {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_dwc3_0 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "high-speed";
- 	usb-phy = <&usb_phy1>;
- };
-@@ -192,15 +202,20 @@ &usbdrd20_dwc3_0 {
- &usbdrd20_0 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_phy1 {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_dwc3_1 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "high-speed";
- 	usb-phy = <&usb_phy2>;
- };
-@@ -208,15 +223,20 @@ &usbdrd20_dwc3_1 {
- &usbdrd20_1 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_phy2 {
- 	dvdd-supply = <&dummy_regulator>;
- 	vdd18-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
- 
- &usbdrd20_dwc3_2 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	role-switch-default-mode = "peripheral";
- 	maximum-speed = "high-speed";
- 	usb-phy = <&usb_phy3>;
- };
-@@ -224,4 +244,5 @@ &usbdrd20_dwc3_2 {
- &usbdrd20_2 {
- 	vdd10-supply = <&dummy_regulator>;
- 	vdd33-supply = <&dummy_regulator>;
-+	status = "okay";
- };
+Changes in v4:
+- extract gmii-to-sgmii-converter binding to pcs subdir
+- fix dt_binding_check warnings
+- rebase to v6.13-rc1
+- Link to v3: https://lore.kernel.org/r/20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de
+
+Changes in v3:
+- add socfpga-stmmac-agilex5 compatible
+- convert socfpga-dwmac.txt -> yaml
+- add Acked-bys
+- rebase to v6.13-rc1
+- Link to v2: https://lore.kernel.org/r/20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de
+
+Changes in v2:
+- fix node names according to dtb_check
+- remove gpio 'status = disabled'
+- mdio0: remove setting of adi,[rt]x-internal-delay-ps. 2000 is the
+  default value
+- add Acked-by to dt-binding
+- Link to v1: https://lore.kernel.org/r/20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de
+
+---
+Adrian Ng Ho Yin (1):
+      arm64: dts: socfpga: agilex5: Add SMMU node
+
+Austin Zhang (1):
+      arm64: dts: socfpga: agilex5: smmu enablement
+
+Steffen Trumtrar (6):
+      net: stmmac: dwmac-socfpga: don't set has_gmac
+      dt-bindings: net: altr,socfpga-stmmac: add generic dwxgmac compatible
+      arm64: dts: socfpga: agilex5: add dwxgmac compatible
+      dt-bindings: net: altr,socfpga-stmmac: allow dma-coherent property
+      dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
+      arm64: dts: socfpga: agilex5: initial support for Arrow AXE5-Eagle
+
+Teoh Ji Sheng (1):
+      net: stmmac: Use interrupt mode INTM=1 for per channel irq
+
+Tham, Mun Yew (1):
+      arm64: dts: socfpga: agilex5: dma coherent enablement for XGMACs
+
+ .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
+ .../bindings/net/altr,socfpga-stmmac.yaml          |   4 +
+ arch/arm64/boot/dts/intel/Makefile                 |   1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     |  31 ++++-
+ .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |   1 -
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   3 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  10 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  20 +++
+ include/linux/stmmac.h                             |   2 +
+ 10 files changed, 214 insertions(+), 5 deletions(-)
+---
+base-commit: f67859cf0b6d21bf3641e7dec9e99edba91e0829
+change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
+
+Best regards,
 -- 
-2.34.1
+Steffen Trumtrar <s.trumtrar@pengutronix.de>
 
 
