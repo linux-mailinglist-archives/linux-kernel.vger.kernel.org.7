@@ -1,200 +1,126 @@
-Return-Path: <linux-kernel+bounces-869243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB998C07655
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:49:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E92C07661
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD5B1C40A42
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A581C42D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C444D3385B1;
-	Fri, 24 Oct 2025 16:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6043376B9;
+	Fri, 24 Oct 2025 16:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3kE1an0p"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E25NU4mv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v4Yr9Jgu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35DD27FD52
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A1D5C96;
+	Fri, 24 Oct 2025 16:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761324498; cv=none; b=bfh0LaAfamA5HU9eKJZak+Wc4m53wu+m5w01LlCtcCMOPvU/6gtzFH8ukG54caBXKlHKKClnbu4cy49EgGuYTgj0OI65+T7DSL2VWkLKpVYUVhokvgijPvJMlrhw9jQS6DSAJQ6XtlFGcJIl0Z40hV1XXo3bGHHsMQs+husQAug=
+	t=1761324635; cv=none; b=S8jRRZJNaTfKGephloK4yMi71YxBNALUOdbzq3r9yw7soB1vnryfgFuuXaFFs/dBIdR6/IGoGptPZsMWG6WVY+KRJA9leZGxr6UM6psjeXx3d+t9ac2HHLoKJTRBSxk/WCXxXhtimEESWVMurSz/GzCo7JXD16qOFX+4hJE/owA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761324498; c=relaxed/simple;
-	bh=f2a3PKTXtxiqGjxZTh9T4s+dCE9zdgxrYpNNXCt4lP4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PMY3WjLBZBrH86phrfdd7EfoVhFVVh8fTiE6+cY1JsruHF4t34ASvrO109bU/oBdTsVK7y21x4J6j7iYCkcEnjpLVNbRgyu65OV/Gfiv1fHRkaQ14K0UlrLAQ5MUNkby0CnYW90PWzwQWitl/sj8dgR9/nJ+B6uMhJlpwHqoaxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3kE1an0p; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b6ce25bea3eso1637973a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761324494; x=1761929294; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0ZqooCPaM4r88VkiqaSJuwNdNXDKXHQHEd4a0Vhrkk=;
-        b=3kE1an0pZPerDXVZT/Eryt9uJLK3d3syqHXqx2U9sE68vp+cA0k//igGNp03uLI6v0
-         bWU0BPVXcZnbk5Cp1wLp0ziT+rVR2R+VT3VF9WQSRVuPO1rEDSDxx10EIkOV2bBqF29i
-         vO9SoLzY3B9//15oc0CnGQia/eN+qYvIaGyyg0xJN5PC6Ro7mmgEFr7rdnazQFjyfylC
-         V8Z/K65gdxDsiJOn7zA2L/fiI7N9ow9FzNYJmItwiEzsnpk9PBme5+h18wyva85Il8xv
-         DXn4xNKhzPIeDLEm07oce/QTQ1rLUINZ6X0qMvPgfRna8f7azAG05IzBLssyFwAa6ZfA
-         udoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761324494; x=1761929294;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0ZqooCPaM4r88VkiqaSJuwNdNXDKXHQHEd4a0Vhrkk=;
-        b=kK/w7e25U90wKso3bE+A79Rvt+IcHei/kwrYzVIgzF/eIL0hoiHXB8AFbnuB+XauQ4
-         ZxcokiFxADd0bkF79gLE/EbMhvqtuzqeiweU6guHWsaiUP2OAtOe+MlRLaumCXGbj/vE
-         ck3mNS19ULdJKb4tWq6Rz62Dl/4WwP4xnFTHAmuRatvNJ4tu9xw9Rhn4DfR/5rzEV5KG
-         ktOMG29CXj5Ttc5T1Tf0KtTiJyWH0xDBcmx3qGQB5mtkRyjY18VFKOfKDEQkTy7B5bmr
-         4hZtDPEaC0qQ4JkBNZhOqJnBcIqNyKPPIeVTOfPaC0ONy0G67JTkXlqZfob3bqJmlJq6
-         qLKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNaiGAJCj/7OMftUaowVTfAZ5sRQWHhKTECsdfcptnsxLSS1+7aC9nMfx5z13fjt/LsovAV30JDFAG8iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLb5ofFPIu6kYgJ7L7Hj+C1zV2oQ0SHOR72PVB/MExWkNRr9hB
-	gWMX4F9TMT4tC/y3+sKAN7VFmCCUpq4jChARzf1b5pn+2AsubhDv+T2Z7wOwj9HgN17VycqQoZH
-	jLRzAUxyyhz8m/2BtDqHRDANulg==
-X-Google-Smtp-Source: AGHT+IEK36TdUsL0vlOCqmspe4caiObjbOIOsGdu4QEVuayy/5SWQrXbR3hmNgi0EJY8rePbH10nOdC3ZkaAHHoKBw==
-X-Received: from pjyj23.prod.google.com ([2002:a17:90a:e617:b0:339:ae3b:2bc7])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:9988:b0:334:b8bb:b11d with SMTP id adf61e73a8af0-33dead4c65cmr3868140637.31.1761324494100;
- Fri, 24 Oct 2025 09:48:14 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:48:12 -0700
-In-Reply-To: <727482ec42baa50cb1488ad89d02e732defda3db.1760731772.git.ackerleytng@google.com>
+	s=arc-20240116; t=1761324635; c=relaxed/simple;
+	bh=802Y4tmgxbBWx3dUu8zf4xr92S7/bulKZ8RxUVea3po=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=O5Fbgzvx+BZzDzfdunYa0HRpElhXr8rq/L26srB6r2vrQvMLpq85Ucj4pskaSgyA/v4yLYwkSTQPwQcQqhFjxMenS8w/DH/MT8mzaBsOV3Bq8voxgFuavPXvkOu56O13Z5BCWBvjUpedPmJWNzCUNULNvOcnfLdQ/AywIiYoxu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E25NU4mv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v4Yr9Jgu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 Oct 2025 16:50:30 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761324632;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=/srfrGB95F8KsTWpfmYi+eWdpXirMsAzyK/nFRRhmZc=;
+	b=E25NU4mvqavYGGIAu9UGt43rQMbOcQbBc92QA1VTe35zJ3iTDavQgm9ZICsTdBJNiSfyL7
+	7z2rgihuLbXlM3i1w3dIsWAmQcUQZCfVPQL/qQaW8T6D+JgWi154Zuce3WyVX45YqYGGsL
+	2zNg9caG5jQnUbYsy6b7eYO5ghJO8ezD8l9h3/RIaGgWoSGSkwZgiaVCAQl0YS9yTDj7N7
+	dJA+VngeTqwd8/CTST2PIKRrriCvp18QlSyxky+MoIDJ7caZGbGAQMPamjY8WcwVLOlAlk
+	Jr7fjvWg8KsHn69ikwx2vs5Rsol80k12w5MUXOXALkjWPL8kVbaZWIr4wjLDPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761324632;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=/srfrGB95F8KsTWpfmYi+eWdpXirMsAzyK/nFRRhmZc=;
+	b=v4Yr9JguQx8dSm4ZWwn0O33aKPQyVDzj0s9wJ565cxhpiJ9b0mUE/1kK/IBoVrhdYkXfLp
+	lYxOtMK06F215iAQ==
+From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/bugs: Remove dead code which might prevent from
+ building
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760731772.git.ackerleytng@google.com> <727482ec42baa50cb1488ad89d02e732defda3db.1760731772.git.ackerleytng@google.com>
-Message-ID: <diqzldl0dz5f.fsf@google.com>
-Subject: Re: [RFC PATCH v1 16/37] KVM: selftests: Add support for mmap() on
- guest_memfd in core library
-From: Ackerley Tng <ackerleytng@google.com>
-To: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Cc: akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
-	mail@maciej.szmigiero.name, maobibo@loongson.cn, 
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org, 
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, mingo@redhat.com, 
-	mlevitsk@redhat.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	peterx@redhat.com, pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, 
-	qperret@google.com, richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, 
-	rientjes@google.com, rostedt@goodmis.org, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shakeel.butt@linux.dev, shuah@kernel.org, 
-	steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, wyihan@google.com, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-ID: <176132463064.2601451.4359851782380550403.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ackerley Tng <ackerleytng@google.com> writes:
+The following commit has been merged into the x86/urgent branch of tip:
 
-> From: Sean Christopherson <seanjc@google.com>
->
-> Accept gmem_flags in vm_mem_add() to be able to create a guest_memfd within
-> vm_mem_add().
->
-> When vm_mem_add() is used to set up a guest_memfd for a memslot, set up the
-> provided (or created) gmem_fd as the fd for the user memory region. This
-> makes it available to be mmap()-ed from just like fds from other memory
-> sources. mmap() from guest_memfd using the provided gmem_flags and
-> gmem_offset.
->
-> Add a kvm_slot_to_fd() helper to provide convenient access to the file
-> descriptor of a memslot.
->
-> Update existing callers of vm_mem_add() to pass 0 for gmem_flags to
-> preserve existing behavior.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> [For guest_memfds, mmap() using gmem_offset instead of 0 all the time.]
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> ---
->  tools/testing/selftests/kvm/include/kvm_util.h |  7 ++++++-
->  tools/testing/selftests/kvm/lib/kvm_util.c     | 18 ++++++++++--------
->  .../kvm/x86/private_mem_conversions_test.c     |  2 +-
->  3 files changed, 17 insertions(+), 10 deletions(-)
->
-> 
-> [...snip...]
-> 
-> @@ -1050,13 +1049,16 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	}
->  
->  	region->fd = -1;
-> -	if (backing_src_is_shared(src_type))
-> +	if (flags & KVM_MEM_GUEST_MEMFD && gmem_flags & GUEST_MEMFD_FLAG_MMAP)
-> +		region->fd = kvm_dup(gmem_fd);
-> +	else if (backing_src_is_shared(src_type))
->  		region->fd = kvm_memfd_alloc(region->mmap_size,
->  					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
->  
+Commit-ID:     84dfce65a7ae7b11c7b13285a1b23e9a94ad37b7
+Gitweb:        https://git.kernel.org/tip/84dfce65a7ae7b11c7b13285a1b23e9a94a=
+d37b7
+Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate:    Fri, 24 Oct 2025 14:59:59 +02:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Fri, 24 Oct 2025 09:42:00 -07:00
 
-Doing this makes it hard to test the legacy dual-backing case.
+x86/bugs: Remove dead code which might prevent from building
 
-It actually broke x86/private_mem_conversions_test for the legacy
-dual-backing case because there's no way to mmap or provide a
-userspace_address from the memory provider that is not guest_memfd, as
-determined by src_type.
+Clang, in particular, is not happy about dead code:
 
-I didn't test the legacy dual-backing case before posting this RFC and
-probably should have.
+arch/x86/kernel/cpu/bugs.c:1830:20: error: unused function 'match_option' [-W=
+error,-Wunused-function]
+ 1830 | static inline bool match_option(const char *arg, int arglen, const ch=
+ar *opt)
+      |                    ^~~~~~~~~~~~
+1 error generated.
 
-> -	region->mmap_start = kvm_mmap(region->mmap_size, PROT_READ | PROT_WRITE,
-> -				      vm_mem_backing_src_alias(src_type)->flag,
-> -				      region->fd);
-> +	mmap_offset = flags & KVM_MEM_GUEST_MEMFD ? gmem_offset : 0;
-> +	region->mmap_start = __kvm_mmap(region->mmap_size, PROT_READ | PROT_WRITE,
-> +					vm_mem_backing_src_alias(src_type)->flag,
-> +					region->fd, mmap_offset);
->  
->  	TEST_ASSERT(!is_backing_src_hugetlb(src_type) ||
->  		    region->mmap_start == align_ptr_up(region->mmap_start, backing_src_pagesz),
-> @@ -1117,7 +1119,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
->  				 uint64_t gpa, uint32_t slot, uint64_t npages,
->  				 uint32_t flags)
->  {
-> -	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0);
-> +	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0, 0);
->  }
->  
->  /*
-> diff --git a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-> index 1969f4ab9b280..41f6b38f04071 100644
-> --- a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-> +++ b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-> @@ -399,7 +399,7 @@ static void test_mem_conversions(enum vm_mem_backing_src_type src_type, uint32_t
->  	for (i = 0; i < nr_memslots; i++)
->  		vm_mem_add(vm, src_type, BASE_DATA_GPA + slot_size * i,
->  			   BASE_DATA_SLOT + i, slot_size / vm->page_size,
-> -			   KVM_MEM_GUEST_MEMFD, memfd, slot_size * i);
-> +			   KVM_MEM_GUEST_MEMFD, memfd, slot_size * i, 0);
->  
->  	for (i = 0; i < nr_vcpus; i++) {
->  		uint64_t gpa =  BASE_DATA_GPA + i * per_cpu_size;
-> -- 
-> 2.51.0.858.gf9c4a03a3a-goog
+Remove a leftover from the previous cleanup.
+
+Fixes: 02ac6cc8c5a1 ("x86/bugs: Simplify SSB cmdline parsing")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://patch.msgid.link/20251024125959.1526277-1-andriy.shevchenko%40l=
+inux.intel.com
+---
+ arch/x86/kernel/cpu/bugs.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index e08de5b..d7fa03b 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1827,13 +1827,6 @@ void unpriv_ebpf_notify(int new_state)
+ }
+ #endif
+=20
+-static inline bool match_option(const char *arg, int arglen, const char *opt)
+-{
+-	int len =3D strlen(opt);
+-
+-	return len =3D=3D arglen && !strncmp(arg, opt, len);
+-}
+-
+ /* The kernel command line selection for spectre v2 */
+ enum spectre_v2_mitigation_cmd {
+ 	SPECTRE_V2_CMD_NONE,
 
