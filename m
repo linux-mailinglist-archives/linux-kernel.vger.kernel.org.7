@@ -1,145 +1,94 @@
-Return-Path: <linux-kernel+bounces-869223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1C1C0755F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:34:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA723C0756E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C181C40FD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 299CF402202
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C15E27E7F0;
-	Fri, 24 Oct 2025 16:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0D7280014;
+	Fri, 24 Oct 2025 16:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S+guq7qX"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tk3jzK/r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466FA267714
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1634426E6F7;
+	Fri, 24 Oct 2025 16:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761323623; cv=none; b=FFiuIrXqBnl67WasQlULkv2FB9MfJ3vM64Iy5Iju/OT/W+V0uRcpUDoVm1n0lJ5nAXDMxREeZdYwX3QNYyO3T50XSlCbd00Qy31UKvj2cv1FnNmIxgcebdBqtArij1BnRWx9i3xkQmxfz6T8TD1IkbK/PNSdH+Ip4tzwTUDUEpY=
+	t=1761323715; cv=none; b=in67XCKA5SITiZjLb9mtZAgYtq5zLCsIHuf2WapecWeDocaI4Yp9xzcouClL759ewBDwowRHK5LkRZhM4LrSzWVHkBE4cCWE8cAYczf76K/hgF863fMT/jHsioF74JVVyZ9U6VlQv3yaS2VQi+xy3IDLcJbaArt5QA5ka4OEBIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761323623; c=relaxed/simple;
-	bh=Z5gHvRc1WODjsQTzSZtHdDP0DGz77od9Vxxo/tfntr0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mp2lh7FTQvoILg6D7RDp85rsk2XwDMUzk4LlTcgl7M0NOnIQs6G75c1tZjnnVCgrTMqNn6aPUdSsdS26K3sbFG5tPlaPAZ43/p3pD/okz+WAfx0MI7CwHqWaJAUDOsx+ntWWiVKsTmR72BAldo4js36dRaYHEYEm9rm8I+2jRwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S+guq7qX; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b522037281bso1398372a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761323621; x=1761928421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XmFbq4MgFLvSavBU+dsE5BY6fpPsL4/gR9QPfUGTSHw=;
-        b=S+guq7qXK+4NrsVNV/bpyJ9RE8uOU1+4Xl8ecVZ4N1l/fGdcYuqBIsZtCvukd0sf2d
-         PIVIsBo58cHgL8/QfPHW2L9iu01UXiNp5JhleUsXiQ0z/HGveo2lfPckObD27r/LvqQh
-         PdnF6OrbwiaM4BfpK4dELTdp2eEpF7QRD0RDTN8nb+A+3RAHMyKtSN4gX6c8s4c9RVmq
-         t2oAMewsLDHpysnFczekizuwWsn6LEMIgI4+IsFzphgcOVDWjsBoS0f3zo5CHz9POjqP
-         xKcJWQiWeNaI2A6Lhzp+KH62uTERX01QcqFE9tdxRuV8s2UistWMLP6mEI+xNz24y8Tk
-         W6RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761323621; x=1761928421;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XmFbq4MgFLvSavBU+dsE5BY6fpPsL4/gR9QPfUGTSHw=;
-        b=Pwip5bH/SyychOVXjVW19ms2wQd6lSeAOuXK68ASiDVz7RZRI/EX8T/NVJ0g+iXYd+
-         MfZUbCLjS6+rJuraqW4Gff/IMcb4FHQkVFq/PMSapR8e/QYiqeTxgNzVTnQyXxQiqvFQ
-         tpID7kgCVc+DD45OVYpQBy2XwAOwuGRVENZ4FGFUitm4chCEMaD573Cs3+IJW9nwLChl
-         siA+sPsD/wpPRv5KlvSooIz7Te7DD3+CfdJkBt/OiejgWsnpFGgVW5JT/FIOfsaIv68Q
-         BmEZ3u9oFE6eAFmKSQk94ClRd+fN4hJ9HnRS6VN9hxCBDhc3CCaXMtY2ugTXsDYuLlwn
-         +Hig==
-X-Forwarded-Encrypted: i=1; AJvYcCXw1eTPAUvPCQkAcazKw2CjAxVimyk/FNn3asshvXT9cr6BbuxqThBNZ792/TlApRu6SenLLYGnjqOiRkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrCRJxPjexUZIBpmGgC7Cuxpt8rBSpi9B0d5wpVdKmobEYUSf0
-	JJIvtPUjwVrYtgeJ1qCusIGfM5d1zpg+XmGnjb5YclU4ZhQ6MyeG/6aRauDQJvlDLwjKrkXVJS8
-	fMeL1dw==
-X-Google-Smtp-Source: AGHT+IFeKRRbqSfdPI99mHeasG8LL+kiQGTQFDWiy/7cdPCFgXLMLE3NirNFzhTfpVhc/qoTuLXwCz2Ncvs=
-X-Received: from pjot2.prod.google.com ([2002:a17:90a:9502:b0:32f:3fab:c9e7])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:244b:b0:30f:7840:2c96
- with SMTP id adf61e73a8af0-334a8629ec6mr34771147637.47.1761323620638; Fri, 24
- Oct 2025 09:33:40 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:33:39 -0700
-In-Reply-To: <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com>
+	s=arc-20240116; t=1761323715; c=relaxed/simple;
+	bh=aVz2sHV0RYWauUYavo7tbuZPHzimp5YPbM6ovv3vsS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YSein1ZEahMDB611/9wKYSC9vqPv7Uao5YFvSVnljSApRAsmfqYEQWpTBt++S/APW2oBD5CqRrPKzJ4eZfJn5ttPGGJ8Z5H0FoL1rjYRU0ZzsbqWZX2oCXBpgP/ryRh/W0Ph426W9UnqEWUisEFWILJ5UnFmGQm6Ca2oUSUT3uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tk3jzK/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA74C4CEF7;
+	Fri, 24 Oct 2025 16:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761323712;
+	bh=aVz2sHV0RYWauUYavo7tbuZPHzimp5YPbM6ovv3vsS0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tk3jzK/reT0mj1nLyptzBR/ovYjq9D+xNZewAWkc/Pa2+BXQu19GXdPPeDxNjpQci
+	 8mSokpvaiGiWTtxf6Wgzhof6cJgGCks6UXtisptbv2uZfn+uNhmi9dj7dCLkRegmSv
+	 Zal3IAMUu0nvF0IFsWQI2iTKwG6rmr8jX0Y2HI4fxk+3oDvvbHJSpTHGt3J0MyskaD
+	 xXKTf4BboVDLKxjzjc96RxhfkpxVDIeEONL379AnVvVDzBIUkJrICwicpVEQqtHQca
+	 aANXAb66+hwuRwErro2ebH6M/vmj9TC2MxzBJTiMcazmdIwWyLUGQgSirb0r8Hf4so
+	 IAFlEW7HzgL+w==
+Date: Fri, 24 Oct 2025 13:35:02 -0300
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Jani Nikula
+ <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v2 00/10] Collect documentation-related tools under
+ /tools/docs
+Message-ID: <20251024133502.78a0c7de@sal.lan>
+In-Reply-To: <87tszoia51.fsf@trenco.lwn.net>
+References: <20251023161027.697135-1-corbet@lwn.net>
+	<20251024112428.44965f06@sal.lan>
+	<87tszoia51.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-14-seanjc@google.com>
- <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com>
-Message-ID: <aPuqYz3ly5a3__mf@google.com>
-Subject: Re: [PATCH v3 13/25] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
- into its sole caller
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 24, 2025, Binbin Wu wrote:
->=20
->=20
-> On 10/17/2025 8:32 AM, Sean Christopherson wrote:
-> > Fold tdx_mem_page_record_premap_cnt() into tdx_sept_set_private_spte() =
-as
-> > providing a one-off helper for effectively three lines of code is at be=
-st a
-> > wash, and splitting the code makes the comment for smp_rmb()  _extremel=
-y_
-> > confusing as the comment talks about reading kvm->arch.pre_fault_allowe=
-d
-> > before kvm_tdx->state, but the immediately visible code does the exact
-> > opposite.
-> >=20
-> > Opportunistically rewrite the comments to more explicitly explain who i=
-s
-> > checking what, as well as _why_ the ordering matters.
-> >=20
-> > No functional change intended.
-> >=20
-> > Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
->=20
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
->=20
-> One nit below.
->=20
-> [...]
-> > +	/*
-> > +	 * If the TD isn't finalized/runnable, then userspace is initializing
-> > +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the number of
-> > +	 * pages that need to be mapped and initialized via TDH.MEM.PAGE.ADD.
-> > +	 * KVM_TDX_FINALIZE_VM checks the counter to ensure all mapped pages
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0^
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 Nit: Is pre-mapped better?
+Em Fri, 24 Oct 2025 09:37:14 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Yeah, updated (and then it gets deleted a few commits later :-) ).
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > At the description you mentioned libs, but I'm not seeing anything
+> > at the above diffstat showing such renames.  
+> 
+> As I said... 
+> 
+> > The big elephant lurking in this small room is the home for Python modules;
+> > I left them under scripts/lib, but that is an even less appropriate place
+> > than it was before.  
+> 
+> Leaving them in place tends to leave the diffstat relatively devoid of
+> renames... :)
+> 
+> New version coming shortly.
+
+OK!
+
+Personally, I don't mind where they'll sit, but if you place them
+outside tools/docs/lib, the best would be to move what's there
+too.
+> 
+> Thanks,
+> 
+> jon
 
