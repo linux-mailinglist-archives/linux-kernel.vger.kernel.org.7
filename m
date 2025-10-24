@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-869150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCD7C071C1
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFB1C071BE
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E403F1C012BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:55:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D1ADD35B95B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C966432A3E5;
-	Fri, 24 Oct 2025 15:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909B3328F5;
+	Fri, 24 Oct 2025 15:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvAFvNfG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j+0yL9Vy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Aw/vJYnY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FB21A238F;
-	Fri, 24 Oct 2025 15:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C932E754;
+	Fri, 24 Oct 2025 15:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321296; cv=none; b=atjHttOZ+pOD5gOcK4Vp6su53F9FK2Uqkg7R9rXcUxSg2rZ79OxlObfoERwJmEBzmr+RBLxv6sNQhMLI1sEVkDuzSZj56AJqE6ERdxLSu/pWhZiIl/fvlpIFgRMhcxMv2x034LPKcPxs0egOagbZNdwo5Oa7PSu0nZiXnzV1rHE=
+	t=1761321317; cv=none; b=CxkYGhLifp16hpgvavqZi+0OApFqMygpRJP8EANrARSI+63ilvG8+hkQ+Em2vm2K5cDP3ykdhj6hQZ+ZqyZ7sen4pWtarLaKUUxQcbhNSaPL1aEigZ/dlT+y50G3ueZaZVR8mmxbceetwx83ZfgMn+sdCALHVKmoF6OtgBCYuWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321296; c=relaxed/simple;
-	bh=JqnMh+5p4gimxlPXBBgYVudpI66hb0Yj008dLNRPMuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aBKJOo8J9AH/FJYxolOuaO3MI+TZHiXpGlDl308JfphOByQVk9dA6FGMu0RW8YLgvzw/9PjNvH+BZuad7ulyXFM0e5LhfWWTeHWQTvZaydwc0bKIEaQNsrz+amQ02naZFx0ZAGqWKEod7HWNxKfc5f3+yWESW60TaVZQ3ECnEkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvAFvNfG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE852C4CEF1;
-	Fri, 24 Oct 2025 15:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761321295;
-	bh=JqnMh+5p4gimxlPXBBgYVudpI66hb0Yj008dLNRPMuI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IvAFvNfGiNpSsaNZYql90XJMUVb/2lkR2Pj6NQXPTtZ9xd7OTmQjSpxPZz3yfBAMM
-	 Np23ewISAbJg3Ibvn3rbe/XRXN9oRMgaH9HQvn/1rjTuKQvT+i28U2TxIvfHwHnnCb
-	 vjmf6rW08g9DBrcSznmqdO8F5b5iBcTMeZ8hkzQKSB9s/rXDUH92zxfZrtM+FEQTXa
-	 1shvHKJSUuViDur4SnjDoMWA57zXwHXniLH6yPtLWk/HYDP3EtenIWUlNlamtt3vgf
-	 m/cAFA535KyQ9YbsSMiTZ6bPL+wNBqGk0Za9MpfTYE5oxG+mmEzVlyy13qhajY9o28
-	 /0G7W3fN6Jr+A==
-Message-ID: <314fb56c-54b6-48e8-a5dd-a615712003f1@kernel.org>
-Date: Fri, 24 Oct 2025 10:54:53 -0500
+	s=arc-20240116; t=1761321317; c=relaxed/simple;
+	bh=uLkgxYLyMUzhQXeffmdYlniLYIB/KYmdOPjZoRoTHYo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V+bIjaZUkee7H5sdP1qp49Dwdw3vRf0YGS4Yoyw8KOjySe373rKOiGIZaAG6DxQ0cbvijNWva9f6kxjbdjiiS2ANvFleqB2JxY7Zcv1y6LEG3IMKdM7QrPlT3jF0igdl92JnBcOlEF6sdQiH45HPqPClHmfzgFvuekjygPo88q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j+0yL9Vy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Aw/vJYnY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761321313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WOe5phv4TtG2VbUNjJcJ2euqfGkUkvoO3y2L/DnVFD4=;
+	b=j+0yL9Vya5MvjeCiKkrp5aHA3FrPWG1ymrAS2OUElS9/ZPxiRKgv9nWBpRvoJk02/qriFz
+	JJBOZpVxyF0a3pO64whKW2H9a/wLfwoFu0g2qZMA6RNLvDPCmakGlbBwfR1IpVToMBVAMd
+	kPa34EsDIkZim5UGwLtCQZGqf/wGnDn0IX0DJHX46AbD1WmjrUy0U5O41F3AUCRnCgdaXq
+	ox3/MD0bzdpUQz9ge0XSjmkFOIIfLal3QteHV3Pj5qFNf1IomHD7dUGbzkwgD8Gkm192ud
+	OrIDwfQmwpMkcWbk7DeTW+rEvpmGmCz7Pg+F/Q8cfrHgQ4w8LEIkWZGN8WPOuw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761321313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WOe5phv4TtG2VbUNjJcJ2euqfGkUkvoO3y2L/DnVFD4=;
+	b=Aw/vJYnYahTo2hh0gMiFd9SCwQyMTaciHm/qxtq4yc+wjlxtj9ZsXPrM9pzho3xk8jiBUE
+	h16UxEPBK7T/u9Dg==
+To: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org, Sascha Bischoff <sascha.bischoff@arm.com>,
+ Scott Branden <sbranden@broadcom.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>, Frank Li
+ <Frank.Li@nxp.com>, Manivannan Sadhasivam <mani@kernel.org>, Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Marc Zyngier
+ <maz@kernel.org>
+Subject: Re: [PATCH v4 0/5] of/irq: Misc msi-parent handling fixes/clean-ups
+In-Reply-To: <CAL_JsqL5f4_qQ=YmQcYpaxsUx8vZDkuquK=G3YTw9qC1QibVrg@mail.gmail.com>
+References: <20251021124103.198419-1-lpieralisi@kernel.org>
+ <20251022140545.GB3390144-robh@kernel.org> <87v7k4ws58.ffs@tglx>
+ <CAL_JsqL5f4_qQ=YmQcYpaxsUx8vZDkuquK=G3YTw9qC1QibVrg@mail.gmail.com>
+Date: Fri, 24 Oct 2025 17:55:12 +0200
+Message-ID: <87sef8wazj.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] platform/x86/amd/pmc: Add spurious_8042 to Xbox
- Ally
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- Alex Deucher <alexander.deucher@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Perry Yuan <perry.yuan@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20251024152152.3981721-1-lkml@antheas.dev>
- <20251024152152.3981721-3-lkml@antheas.dev>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <20251024152152.3981721-3-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 24 2025 at 07:43, Rob Herring wrote:
+> On Fri, Oct 24, 2025 at 4:44=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>> On Wed, Oct 22 2025 at 09:05, Rob Herring wrote:
+>> > On Tue, Oct 21, 2025 at 02:40:58PM +0200, Lorenzo Pieralisi wrote:
+>> >> Lorenzo Pieralisi (5):
+>> >>   of/irq: Add msi-parent check to of_msi_xlate()
+>> >>   of/irq: Fix OF node refcount in of_msi_get_domain()
+>> >
+>> > I've applied these 2 for 6.18.
+>>
+>> The rest of this depends on those two.
+>>
+>> >>   of/irq: Export of_msi_xlate() for module usage
+>>
+>> Can you pick the three of/irq ones up and put them into a seperate
+>> branch based on rc1 so that I can pull that and apply the rest:
+>
+> Yes. This series is the only thing I have queued for 6.18 fixes so
+> far, so I'll add the 3rd patch and Cc you on my PR to Linus.
 
-
-On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
-> The Xbox Ally features a Van Gogh SoC that has spurious interrupts
-> during resume. We get the following logs:
-> 
-> atkbd_receive_byte: 20 callbacks suppressed
-> atkbd serio0: Spurious ACK on isa0060/serio0. Some program might be trying to access hardware directly.
-> 
-> So, add the spurious_8042 quirk for it. It does not have a keyboard, so
-> this does not result in any functional loss.
-> 
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>> ---
->   drivers/platform/x86/amd/pmc/pmc-quirks.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
-> index d63aaad7ef59..eb641ce0e982 100644
-> --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
-> +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
-> @@ -122,6 +122,14 @@ static const struct dmi_system_id fwbug_list[] = {
->   			DMI_MATCH(DMI_PRODUCT_NAME, "21A1"),
->   		}
->   	},
-> +	{
-> +		.ident = "ROG Xbox Ally RC73YA",
-> +		.driver_data = &quirk_spurious_8042,
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC."),
-> +			DMI_MATCH(DMI_BOARD_NAME, "RC73YA"),
-> +		}
-> +	},
->   	/* https://bugzilla.kernel.org/show_bug.cgi?id=218024 */
->   	{
->   		.ident = "V14 G4 AMN",
-
+Thanks!
 
