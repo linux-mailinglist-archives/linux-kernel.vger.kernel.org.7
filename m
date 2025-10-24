@@ -1,215 +1,228 @@
-Return-Path: <linux-kernel+bounces-869240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF0AC07625
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D13C07644
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F731B84676
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3711AA3DA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552BB337699;
-	Fri, 24 Oct 2025 16:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSwD/cs5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5B3337689;
+	Fri, 24 Oct 2025 16:47:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993B731D74E;
-	Fri, 24 Oct 2025 16:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3C7F9C1;
+	Fri, 24 Oct 2025 16:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761324370; cv=none; b=ufb4MVorgwNsM8kcP1rO+eWSN3y3uIzcyDHUFr7NLAOiTHYSawZdZnHAwAQ10s85/Th6V2PXcOzJnBwC5x671WFfdHw5t0QO4mAGGsIw1eIoGvnJ12i+AWYsNBg8Xy694T3x9KrfaoWnAXdwTOUOzfohNnGclZsZmX2haXWNvrk=
+	t=1761324441; cv=none; b=Zk0/mJ1B/CJLF5/JFptuoaa7KyLGBJJvJjI7wG+Z0DzIaUWHEQsl3Iu1XNM2hy04fSLytlJk/PS/hduyO5WL0QWC2uN4Bw4MpThPuMUHcIcyA/h1fON2obqE6iXX+rSSo0FuRPZSXIT4EdEIHVG6sGpp6TtoaaEsMJvNFZQI9PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761324370; c=relaxed/simple;
-	bh=oH2uo8kUvZvaWDuaKBK5Ia3tKQOcMF+N8RlJE5fLuNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1eWPxKyJB85BBoquRmzFxxb5grTu+V1EcwZnrAFZvTtZwKpvn+Os0rF00cLAR2szpmNhHBV5gBp66BvlixwqW3IHlMY//lUpd/VZnU759CLvkHktw6EkE1yipJoTP58RhV36IPRcRm6bSof9E9VnZl7zK4m3fXT5E4UTuXHl7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSwD/cs5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56CCC4CEF1;
-	Fri, 24 Oct 2025 16:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761324369;
-	bh=oH2uo8kUvZvaWDuaKBK5Ia3tKQOcMF+N8RlJE5fLuNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NSwD/cs5L6f5qlBmgfQodcXn4hEKJOQyLYx6LmkIVGt9zRcacVOreE4uvk+9JlYxy
-	 pI6L5HJGt8wvzSJsvZ+UvEXsT2TFskHEQdHqxw8N/C6uQc5AyusqbRW/xtFuyCMn1R
-	 Oj3GqElZImOxVsQIhDCVkwk6yHrcaae6BtwQXWVPR46rxaDM54P09G6/WNGEUSBB7Y
-	 skUG3IZ2D38fTg0Jh3ky+KQjIAx/p31peSkUJiuupbYsgq88vJxT2SDqMYr7Ig78xx
-	 02Hq7NA1FvUwDT1DXDVmyvxkbwBhuxhALAS0pFa9OAS3BSwB/bKtYGJSw1NTmJk2Jt
-	 H+lv1Je1X2+Fw==
-Date: Fri, 24 Oct 2025 17:46:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Longbin Li <looong.bin@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Yu Yuan <yu.yuan@sjtu.edu.cn>, Ze Huang <huangze@whut.edu.cn>,
-	devicetree@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: soc: sophgo: add TOP syscon for
- CV18XX/SG200X series SoC
-Message-ID: <20251024-hangout-designing-33e96c0d35fc@spud>
-References: <20251024030528.25511-1-looong.bin@gmail.com>
- <20251024030528.25511-2-looong.bin@gmail.com>
+	s=arc-20240116; t=1761324441; c=relaxed/simple;
+	bh=1DlT732Q4g9Q7JvygNsAztbcORNBus7wT5QEd/JJuNE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NTei48lag+SrIPiBxDGSsoJq8vZFmBj2CPJvvI+dxktb2qdLsR0UwZjxOPhY6wu6zphbdxNKjKQBz2yLc+KWSwmH5X1fbKVJ0aQfavAgW3aqOHbOnD5v4E7bqhqC01M9gfD/oXHD9YQ8JgE6MncmYVXnB1uD/eWEhJ/A/mJkhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctTHS0tZKz6M4Yg;
+	Sat, 25 Oct 2025 00:43:32 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6CC4F14010C;
+	Sat, 25 Oct 2025 00:47:15 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
+ 2025 17:47:14 +0100
+Date: Fri, 24 Oct 2025 17:47:12 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+	Gavin Shan <gshan@redhat.com>, Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH v3 08/29] arm_mpam: Add the class and component
+ structures for firmware described ris
+Message-ID: <20251024174712.000051b6@huawei.com>
+In-Reply-To: <20251017185645.26604-9-james.morse@arm.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+	<20251017185645.26604-9-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OpamxSOV8OwCADjJ"
-Content-Disposition: inline
-In-Reply-To: <20251024030528.25511-2-looong.bin@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
+n Fri, 17 Oct 2025 18:56:24 +0000
+James Morse <james.morse@arm.com> wrote:
 
---OpamxSOV8OwCADjJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> An MSC is a container of resources, each identified by their RIS index.
+> Some RIS are described by firmware to provide their position in the system.
+> Others are discovered when the driver probes the hardware.
+> 
+> To configure a resource it needs to be found by its class, e.g. 'L2'.
+> There are two kinds of grouping, a class is a set of components, which
+> are visible to user-space as there are likely to be multiple instances
+> of the L2 cache. (e.g. one per cluster or package)
+> 
+> Add support for creating and destroying structures to allow a hierarchy
+> of resources to be created.
+> 
+> CC: Ben Horgan <ben.horgan@arm.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+A few minor things inline.  Mostly code ordering related to make
+it easier to review!
 
-On Fri, Oct 24, 2025 at 11:05:14AM +0800, Longbin Li wrote:
-> The Sophgo CV1800/SG2000 SoC top misc system controller provides register
-
-Please remind me how it works, sg2000 is just a rebadge and really this
-just refers to one device?
-
-> access to configure related modules. It includes a usb2 phy and a dma
-> multiplexer.
->=20
-> Co-developed-by: Inochi Amaoto <inochiama@gmail.com>
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> Signed-off-by: Longbin Li <looong.bin@gmail.com>
 > ---
->  .../soc/sophgo/sophgo,cv1800b-top-syscon.yaml | 81 +++++++++++++++++++
->  1 file changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,c=
-v1800b-top-syscon.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-=
-top-syscon.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv180=
-0b-top-syscon.yaml
-> new file mode 100644
-> index 000000000000..d044ca661fa2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-top-sys=
-con.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/sophgo/sophgo,cv1800b-top-syscon.=
-yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo CV18XX/SG200X SoC top system controller
-> +
-> +maintainers:
-> +  - Inochi Amaoto <inochiama@outlook.com>
-> +
-> +description:
-> +  The Sophgo CV18XX/SG200X SoC top misc system controller provides
-> +  register access to configure related modules.
+>  drivers/resctrl/mpam_devices.c  | 390 +++++++++++++++++++++++++++++++-
+>  drivers/resctrl/mpam_internal.h |  93 ++++++++
+>  include/linux/arm_mpam.h        |   8 +-
+>  3 files changed, 483 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index d18eeec95f79..8685e50f08c6 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -30,7 +30,7 @@
+>  static DEFINE_MUTEX(mpam_list_lock);
+>  static LIST_HEAD(mpam_all_msc);
+>  
+> -static struct srcu_struct mpam_srcu;
+> +struct srcu_struct mpam_srcu;
 
-Here and in the title you have Xs, are those placeholder or is this
-going into cv180x.dtsi and going to be used on multiple devices?
+Meh. Others may be fussier about this but I'd rather you just
+added the extern when this was first introduced and didn't
+have this churn here.
+
+
+> +static void mpam_vmsc_destroy(struct mpam_vmsc *vmsc)
+> +{
+> +	struct mpam_component *comp = vmsc->comp;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_del_rcu(&vmsc->comp_list);
+> +	add_to_garbage(vmsc);
+> +
+> +	if (list_empty(&comp->vmsc))
+> +		mpam_comp_destroy(comp);
+> +}
+> +
+> +static void mpam_ris_destroy(struct mpam_msc_ris *ris)
+I'd rather see the create / destroy next to each other if possible.
+Makes it easier to check this unwinds the creat path.
+
+> +{
+> +	struct mpam_vmsc *vmsc = ris->vmsc;
+> +	struct mpam_msc *msc = vmsc->msc;
+> +	struct mpam_component *comp = vmsc->comp;
+> +	struct mpam_class *class = comp->class;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	/*
+> +	 * It is assumed affinities don't overlap. If they do the class becomes
+> +	 * unusable immediately.
+> +	 */
+> +	cpumask_andnot(&comp->affinity, &comp->affinity, &ris->affinity);
+> +	cpumask_andnot(&class->affinity, &class->affinity, &ris->affinity);
+> +	clear_bit(ris->ris_idx, &msc->ris_idxs);
+> +	list_del_rcu(&ris->vmsc_list);
+> +	list_del_rcu(&ris->msc_list);
+Can you reorder these so that they are reverse of what happens in create path?
+Makes not real difference other than slightly easier to check everything is done.
+Right now I'm failing to spot where this was added to ris->msc_list in the
+create path.
+
+
+> +	add_to_garbage(ris);
+> +
+> +	if (list_empty(&vmsc->ris))
+> +		mpam_vmsc_destroy(vmsc);
+> +}
+> +
 
 > +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: sophgo,cv1800b-top-syscon
-> +          - const: syscon
-> +          - const: simple-mfd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges: true
+> +/*
+> + * The cacheinfo structures are only populated when CPUs are online.
+> + * This helper walks the device tree to include offline CPUs too.
 
-Do you actually use ranges?
+Comment stale?  It does walk a tree of devices but I'm not sure that's
+what people will read device tree as meaning.
 
-> +patternProperties:
-> +  "dma-router@[0-9a-f]+$":
+> + */
+> +int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+> +				   cpumask_t *affinity)
+> +{
+> +	return acpi_pptt_get_cpumask_from_cache_id(cache_id, affinity);
+> +}
 
-Do these actually appear at variable addresses, or is it always 48 for
-the phy and 53 for the dma router?
-
-> +    $ref: /schemas/dma/sophgo,cv1800b-dmamux.yaml#
-> +    unevaluatedProperties: false
 > +
-> +  "phy@[0-9a-f]+$":
-> +    $ref: /schemas/phy/sophgo,cv1800b-usb2-phy.yaml#
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/sophgo,cv1800.h>
-> +
-> +    syscon@3000000 {
-> +      compatible =3D "sophgo,cv1800b-top-syscon", "syscon", "simple-mfd";
-> +      reg =3D <0x03000000 0x1000>;
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <1>;
-> +
-> +      usbphy: phy@48 {
+> +static int mpam_ris_create_locked(struct mpam_msc *msc, u8 ris_idx,
+> +				  enum mpam_class_types type, u8 class_id,
+> +				  int component_id)
+> +{
+...
 
-Drop the labels off of these two, since they're unused in the example.
-
-> +        compatible =3D "sophgo,cv1800b-usb2-phy";
-> +        reg =3D <0x48 0x4>;
-> +        #phy-cells =3D <0>;
-> +        clocks =3D <&clk CLK_USB_125M>,
-> +                 <&clk CLK_USB_33K>,
-> +                 <&clk CLK_USB_12M>;
-> +        clock-names =3D "app", "stb", "lpm";
-> +        resets =3D <&rst 58>;
-> +      };
+> +	ris = devm_kzalloc(&msc->pdev->dev, sizeof(*ris), GFP_KERNEL);
+> +	if (!ris)
+> +		return -ENOMEM;
+> +	init_garbage(&ris->garbage);
+> +	ris->garbage.pdev = pdev;
+I wonder if it's cleaner to just pass the pdev (sometimes null) in
+as a parameter to init_garbage()
 > +
-> +      dmamux: dma-router@154 {
-> +        compatible =3D "sophgo,cv1800b-dmamux";
-> +        reg =3D <0x154 0x8>, <0x298 0x4>;
-> +        #dma-cells =3D <2>;
-> +        dma-masters =3D <&dmac>;
-> +      };
-> +    };
+> +	class = mpam_class_find(class_id, type);
+> +	if (IS_ERR(class))
+> +		return PTR_ERR(class);
+
+
+
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index 6ac75f3613c3..1a5d96660382 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+
+> +/*
+> + * Structures protected by SRCU may not be freed for a surprising amount of
+> + * time (especially if perf is running). To ensure the MPAM error interrupt can
+> + * tear down all the structures, build a list of objects that can be gargbage
+
+Spell check.  garbage
+
+> + * collected once synchronize_srcu() has returned.
+> + * If pdev is non-NULL, use devm_kfree().
+> + */
+> +struct mpam_garbage {
+> +	/* member of mpam_garbage */
+> +	struct llist_node	llist;
 > +
-> +...
-> --
-> 2.51.0
+> +	void			*to_free;
+> +	struct platform_device	*pdev;
+> +};
 
---OpamxSOV8OwCADjJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPutSwAKCRB4tDGHoIJi
-0trzAP4nfQ6/Wxgh8wcGJdVXjTM5fYSSjyHVynWRqnuELKsrCQD+NmT3Mi9bgtxf
-nLsFD4E3jkFuEsA2OafNMSd9+ubbNw8=
-=pezZ
------END PGP SIGNATURE-----
-
---OpamxSOV8OwCADjJ--
 
