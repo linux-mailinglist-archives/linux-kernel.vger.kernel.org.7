@@ -1,310 +1,185 @@
-Return-Path: <linux-kernel+bounces-868737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD5FC05FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:36:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA53EC05F38
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 232CF582F49
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4FFE235BF12
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B82315767;
-	Fri, 24 Oct 2025 11:13:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77C423C50F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2286315D27;
+	Fri, 24 Oct 2025 11:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CDUp7TWv"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A34F315789
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304381; cv=none; b=pzHOs6n9gt6CchkzmoKmXPRX9YgHODYoD+Z1+qkWTrUQZL2txxkBbW24t1ed5Rm/eYRmhaktt9y8otpkxc0ELr+Wubz88GM0ONI8aoG6q2iezKGowHrZAP1nISDDoIwr5vj5iPJqjvramzwnrbcKyM8cAba5NGHCZ6+QFONt15o=
+	t=1761304424; cv=none; b=lSVJFPrUo3avyAjoRS8TXQYf8mNN3xcBEvcG1nbdXjhzqK/OV92Bm1JVel8QVEsIIFd/0XYDHY5cZfeDBmVwwQIL1wgcSbVpCslQAR3D26ZKkKGmv/4oHs97h8+md/YZB0GsPpBFl3hYbdqUWS9WS1bA22e8LuY7Q8HcRrxaXws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304381; c=relaxed/simple;
-	bh=GjvBpPsvP+rK04lkZ41DdAM4ugTMYrCKREoNNlI9Dto=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Esy8yUEZ8QqOkf0IeXmi3w7RaBhWnT6DhZknHHmFCv2j/mIbqBsNLH8Qtq9b6vJt9NGSMYEFkfnIUxd2B5/p4KVASUigTaQYhuPX9CTEcSScfJG0CNY3LFPEiOG2CKzDGNANo6wOaFJj4xNrDXg1B2jFSmAWtSxJfJBfgs7MMGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2200D175A;
-	Fri, 24 Oct 2025 04:12:50 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E45543F63F;
-	Fri, 24 Oct 2025 04:12:55 -0700 (PDT)
-Date: Fri, 24 Oct 2025 12:12:48 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>,
-	"Chen, Yu C" <yu.c.chen@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org
-Subject: [RFC] fs/resctrl: Generic schema description
-Message-ID: <aPtfMFfLV1l/RB0L@e133380.arm.com>
+	s=arc-20240116; t=1761304424; c=relaxed/simple;
+	bh=/Cs+7CZojpdYOYGDL2af4FDZmEZBa/hcfB21X1zR8RE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ob+NkUoP+5Ep/UwKuoKj7UWk5uDq4BVgMsSdVeoVwY+AbEJYJ0OHngiYtCIw5gSTq4o2pU/d0GhgwJNTwes1N1w9U2+Gwa4LU08cUk/QQaUVeZHMs02u2g+mESk7ac4OkJqbAV3kLrC0RPusKwBu3mvc4QC2hcOjBOhhWweZJrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CDUp7TWv; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-58d29830058so1996881e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:13:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761304420; x=1761909220; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iyyWCavapnD3yJLeJKy1rToQ+CHIPizLFi9XGHTmR1Q=;
+        b=CDUp7TWvdasXTJDmmUFpL0rTw4FkxayTlgjKLhPltkwFkVh/q9A5shFbe7UVvJaMnl
+         Xn5n5fWjhd9SwlvWrWhO1l8uUTnvgfQzK3kuaIKH5EWcFFx/NBOdzTigJGjEvVCsrH8b
+         nA7j2FM5w3CIFOseLxvEbWhQAzoWMBG1PTEfE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761304420; x=1761909220;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iyyWCavapnD3yJLeJKy1rToQ+CHIPizLFi9XGHTmR1Q=;
+        b=mpUxIvWdRlyH6s6w1UdgoLO7ys8YRSD7dTS+sW6OHdeqelBicrQfHHMN57X3rwCZLu
+         Z2924/NnGXZ0DYN8gudYOWWVJzmrsog+WZXl09HrQuJHs5HnUeHp7WoaVPZYkBIWb5T3
+         VdBhr40lBqsh6roQvCsParZUtDLDC0n7w84rUIqU6RKcnj6rdS+mm9NL8sjW5XH5auj1
+         D7Xz9MuzWaTMiFfL5fDy4rd5Ab7e3MaxD4OvM//rNVU0m1WanCWB4J+dOlauxNCXdHBa
+         lvyuxfNtRNGcZA2u+6eu3cWJ4hIGaE9LPBUiwMvE78Ludjf25JlLeyuL0GvAO1RLicXi
+         +uhA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+egNPoKH5eviBQHwAI6yBp3l9r76YTxFdKL9puFibBW/8QkFYhxWIm6y+fzEMgL39KlApMgi+FgfQwxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcuEhMzpskjMEJBX1CDwKCjuCjEU7q+8sTpqO4knFgObkht4cz
+	7/WEgeuGXdy2Y4WHonbKjyjtBQv316HDRW65mP1thVDa7R63cEggL1jheL8oUzz4qBixRszdVOv
+	nB/g=
+X-Gm-Gg: ASbGncuK/xRXhnfuuhrrz8t6yoKu9yeydFY40LKbFVAxOzz7JRTFtZaJvwwEbHJKWD5
+	a/P9a5+Wc7Tma1QndOaWocGwWANKXwYcWBSXbP+pmMb6bb0oD7s+yx3O9hGPha+CcIKw5gXn1eN
+	y2xso26xfJIODzVbGAC5xJv6hH2WjBgmTp0bEEDztG41dxnmEa8TUpxfocuNMklogFqHk5c3fC3
+	C3VCEXPcYOnzjgZv3Pdw8vPzUP0BJhoSS4YL/xr5K2RBIC2isXebTVqmwcaLLMMKFWMgbNk3KCP
+	y/xkWSBgMp9ZIgL6xjgDy1Sql9k+zMC/12VepXv+TxFDJ3zfV6eanB9Evnw3bwL0uLrHEJCJAo8
+	sw5DZIAijkU3qMvtpSP3QgS0+YrAGS/GoVXDdt8Yskle7iNEeHkPJALpB5JiGRS35i0ah3Yp+/6
+	tNM1zvqX1j2r4kYz4r4q3mLwtuU7y3OdctoV8GAw==
+X-Google-Smtp-Source: AGHT+IHJt+vaMoLu70YLJmOKS97ySBGkjbGIaAgMwVhJtVp7X5sZ86XcNi9rxszYUZbTLu25hqmQkA==
+X-Received: by 2002:a05:6512:3d0d:b0:57d:a4e9:5b00 with SMTP id 2adb3069b0e04-591d8552b69mr8813202e87.30.1761304420402;
+        Fri, 24 Oct 2025 04:13:40 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4cd12f4sm1567047e87.26.2025.10.24.04.13.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 04:13:39 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-58b025fce96so1684116e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:13:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXseikD1/MzNkyokzHPpxbKNoX4wApzwX2TaWAQFapdV75gidSwdP6L/3/Xzhv/w+vCjMLDEvPOL8lLI5Y=@vger.kernel.org
+X-Received: by 2002:a05:6512:1549:b0:591:ec77:2c9f with SMTP id
+ 2adb3069b0e04-591ec772e83mr3852138e87.36.1761304419304; Fri, 24 Oct 2025
+ 04:13:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-Hi all,
-
-Going forward, a single resctrl resource (such as memory bandwidth) is
-likely to require multiple schemata, either because we want to add new
-schemata that provide finer control, or because the hardware has
-multiple controls, covering different aspects of resource allocation.
-
-The fit between MPAM's memory bandwidth controls and the resctrl MB
-schema is already awkward, and later Intel RDT features such as Region
-Aware Memory Bandwidth Allocation are already pushing past what the MB
-schema can describe.  Both of these can involve multiple control
-values and finer resolution than the 100 steps offered by the current
-"MB" schema.
-
-The previous discussion went off in a few different directions [1], so
-I want to focus back onto defining an extended schema description that
-aims to cover the use cases that we know about or anticipate today, and
-allows for future extension as needed.
-
-(A separate discussion is needed on how new schemata interact with
-previously-defined schemata (such as the MB percentage schema). 
-suggest we pause that discussion for now, in the interests of getting
-the schema description nailed down.)
-
-
-Following on from the previous mail thread, I've tried to refine and
-flesh out the proposal for schema descriptions a bit, as follows.
-
-Proposal:
-
-  * Split resource names and schema names in resctrlfs.
-
-    Resources will be named for the unique, existing schema for each
-    resource.
-
-    The existing schema will keep its name (the same as the resource
-    name), and new schemata defined for a resource will include that
-    name as a prefix (at least, by default).
-
-    So, for example, we will have an MB resource with a schema called
-    MB (the schema that we have already).  But we may go on to define
-    additional schemata for the MB resource, with names such MB_MAX,
-    etc.
-
-  * Stop adding new schema description information in the top-level
-    info/<resource>/ directory in resctrlfs.
-
-    For backwards compatibilty, we can keep the existing property
-    files under the resource info directory to describe the previously
-    defined resource, but we seem to need something richer going
-    forward.
-
-  * Add a hierarchy to list all the schemata for each resource, along
-    with their properties.  So far, the proposal looks like this,
-    taking the MB resource as an example:
-
-	info/
-	 └─ MB/
-	     └─ resource_schemata/
-	         ├─ MB/
-	         ├─ MB_MIN/
-	         ├─ MB_MAX/
-	         ┆
-
-    Here, MB, MB_MIN and MB_MAX are all schemata for the "MB" resource.
-    In this proposal, what these just dummy schema names for
-    illustration purposes.  The important thing is that they all
-    control aspects of the "MB" resource, and that there can be more
-    than one of them.
-
-    It may be appropriate to have a nested hierarchy, where some
-    schemata are presented as children of other schemata if they
-    affect the same hardware controls.  For now, let's put this issue
-    on one side, and consider what properties should be advertsed for
-    each schema.
-
-  * Current properties that I think we might want are:
-
-	info/
-	 └─ SOME_RESOURCE/
-	     └─ resource_schemata/
-	         ├─ SOME_SCHEMA/
-	         ┆   ├─ type
-	             ├─ min
-	             ├─ max
-	             ├─ tolerance
-	             ├─ resolution
-	             ├─ scale
-	             └─ unit
-
-    (I've tweaked the properties a bit since previous postings.
-    "type" replaces "map"; "scale" is now the unit multiplier;
-    "resolution" is now a scaling divisor -- details below.)
-
-    I assume that we expose the properties in individual files, but we
-    could also combine them into a single description file per schema,
-    per resource or (possibly) a single global file.
-    (I don't have a strong view on the best option.)
-
-
-    Either way, the following set of properties may be a reasonable
-    place to start:
-
-
-    type: the schema type, followed by optional flag specifiers:
-
-      - "scalar": a single-valued numeric control
-
-        A mandatory flag indicates how the control value written to
-        the schemata file is converted to an amount of resource for
-        hardware regulation.
-
-	The flag "linear" indicates a linear mapping.
-
-	In this case, the amount of resource E that is actually
-	allocated is derived from the control value C written to the
-	schemata file as follows:
-
-    	E = C * scale * unit / resolution
-
-	Other flags values could be defined later, if we encounter
-	hardware with non-linear controls.
-
-      - "bitmap": a bitmap control
-
-        The optional flag "sparse" is present if the control accepts
-        sparse bitmaps.
-
-	In this case, E = bitmap_weight(C) * scale * unit / resolution.
-
-	As before, each bit controls access to a specific chunk of
-	resource in the hardware, such as a group of cache lines.  All
-	chunks are equally sized.
-
-	(Different CTRL_MON groups may still contend within the
-	allocation E, when they have bits in common between their
-	bitmaps.)
-
-    min:
-
-      - For a scalar schema, the minimum value that can be written to
-        the control when writing the schemata file.
-
-      - For a bitmap schema, a bitmap of the minimum weight that the
-        schema accepts: if an empty bitmap is accepted, this can be 0.
-        Otherwise, if bitmaps with a single bit set are acceptable,
-        this can just have the lowest-order bit set.
-
-	Most commonly, the value will probably be "1".
-
-	For bitmap schemata, we might report this in hex.  In the
-	interest of generic parsing, we could include a "0x" prefix if
-	so.
-
-    max:
-
-      - For a scalar schema, the maximum value that can be written to
-        the control when writing the schemata file.
-
-      - For a bitmap schema, the mask with all bits set.
-
-        Possibly reported in hex for bitmap schemata (as for "min").
-
-    tolerance:
-
-        (See below for discussion on this.)
-
-      - "0": the control is exact
-      
-      - "1": the effective control value is within ±1 of the control
-        value written to the schemata file.  (Similary, positive "n" ->
-        ±n.)
-
-        A negative value could be used to indicate that the tolerance
-        is unknown.  (Possibly we could also just omit the property,
-        though it seems better to warn userspace explicitly if we
-        don't know.)
-
-	Tests might make use of this parameter in order to determine
-	how picky to be about exact measurement results.
-
-    resolution:
-
-      - For a proportional scalar schema: the number of divisions that
-        the whole resource is divided into.  (See below for
-        "proportional scalar schema.)
-
-	Typically, this will be the same as the "max" value.
-
-      - For an absolute scalar schema: the divisor applied to the
-        control value.
-
-      - For a bitmap schema: the size of the bitmap in bits.
-
-    scale:
-
-      - For a scalar schema: the scale-up multiplier applied to
-        "unit".
-
-      - For a bitmap schema: probably "1".
-
-    unit:
-
-      - The base unit of the quantity measured by the control value.
-
-        The special unit "all" denotes a proportional schema.  In this
-        case, the resource is a finite, physical thing such as a cache
-        or maxed-out data throughput of a memory controller.  The
-        entire physical resource is available for allocation, and the
-        control value indicates what proportion of it is allocated.
-
-	Bitmap schemata will probably all be proportional and use the
-	unit "all".  (This applies to cache bitmaps, at least.)
-
-	Absolute schemata will require specification of the base unit
-	here, say, "MBps".  The "scale" parameter can be used to avoid
-	proliferation of unit strings:
-
-	For example, {scale=1000, unit="MBps"} would be equivalent to
-	{scale=1, unit="GBps"}.
-
-
-Note on the "tolerance" parameter:
-
-This is a new addition.  On the MPAM side, the hardware has a choice
-about how to interpret the control value in some edge-case situations.
-We may not reasonably be able to probe for this, so it may be useful
-to warn software that there is an uncertainty margin.
-
-We might also be able to use the "tolerance" parameter to accommodate
-the rounding behaviour of the existing "MB" schema (otherwise, we
-might want a special "type" for this schema, if it doesn't comply
-closely enough).
-
-
-If we want to deploy resctrl under virtualisation, resctrl on the host
-could dynamically affect the actual amount of resource that is
-available for allocation inside a VM.
-
-Whether or not we ever want to do that, it might be useful to have a
-way to warn software that the effective control values hitting the
-hardware may not be entirely predictable.
-
-Thoughts?
-
-Cheers
----Dave
-
-
-[1] Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be per-arch
-https://lore.kernel.org/lkml/aNFliMZTTUiXyZzd@e133380.arm.com/
+References: <20251024-fix-uvc-v3-0-b7f83c012ca7@realsenseai.com> <20251024-fix-uvc-v3-3-b7f83c012ca7@realsenseai.com>
+In-Reply-To: <20251024-fix-uvc-v3-3-b7f83c012ca7@realsenseai.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 24 Oct 2025 13:13:26 +0200
+X-Gmail-Original-Message-ID: <CANiDSCt30UjEEZd8-8Qsuqn_Ks2pOBE1awOwmZVsHPnPHVQ6FA@mail.gmail.com>
+X-Gm-Features: AS18NWB81SOOrW67C5lrHubwLteemy12mYDThqflKnvj3xYCkQLGwSJmGHydKqE
+Message-ID: <CANiDSCt30UjEEZd8-8Qsuqn_Ks2pOBE1awOwmZVsHPnPHVQ6FA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] media: uvc: Add D436 and D555 cameras metadata support
+To: yogev.modlin@realsenseai.com
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Yogev
+
+Thanks for the patch. Some minor nitpicks inlined.
+
+
+BTW, is there a way to programmatically detect if a device is
+RealSense with D4XX metadata?
+
+I am thinking that maybe all have a special entity id, or any other
+way besides vid/pid.
+
+I am asking you this, because if you could find a way to identify the
+camera you could implement something like uvc_meta_detect_msxu:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_metadata.c#n170
+Instead of creating quirks for every model.
+
+
+Regards!
+On Fri, 24 Oct 2025 at 07:50, Yogev Modlin via B4 Relay
+<devnull+yogev.modlin.realsenseai.com@kernel.org> wrote:
+>
+> From: Yogev Modlin <yogev.modlin@realsenseai.com>
+>
+> Add support for Intel RealSense D436 and D555 depth cameras metadata.
+> These cameras use the D4XX metadata format for transmitting depth and
+> sensor information.
+>
+> The D555 camera uses UVC protocol version 1.5, while the D436 uses
+> an undefined protocol version. Both cameras require the D4XX metadata
+> format flag to properly handle their metadata streams.
+
+We ask the lsusb -v output for every quirk we add. Could you provide that?
+
+Thanks!
+
+>
+> Signed-off-by: Yogev Modlin <yogev.modlin@realsenseai.com>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index dbdacc64ea6b..6f0053a78123 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -3223,6 +3223,24 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> +       /* Intel Realsense D555 Depth Camera */
+> +       { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+> +                               | USB_DEVICE_ID_MATCH_INT_INFO,
+> +         .idVendor             = 0x8086,
+> +         .idProduct            = 0x0b56,
+> +         .bInterfaceClass      = USB_CLASS_VIDEO,
+> +         .bInterfaceSubClass   = 1,
+> +         .bInterfaceProtocol   = UVC_PC_PROTOCOL_15,
+> +         .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> +       /* Intel Realsense D436 Camera */
+
+The list is sorted by vid:pid
+
+Please move the definition to the correct site.
+
+> +       { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+> +                               | USB_DEVICE_ID_MATCH_INT_INFO,
+> +         .idVendor             = 0x8086,
+> +         .idProduct            = 0x1156,
+> +         .bInterfaceClass      = USB_CLASS_VIDEO,
+> +         .bInterfaceSubClass   = 1,
+> +         .bInterfaceProtocol   = UVC_PC_PROTOCOL_UNDEFINED,
+> +         .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+>         /* Generic USB Video Class */
+>         { USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
+>         { USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
+>
+> --
+> 2.43.0
+>
+>
+>
+
+
+-- 
+Ricardo Ribalda
 
