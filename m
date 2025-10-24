@@ -1,211 +1,114 @@
-Return-Path: <linux-kernel+bounces-869494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E19C08010
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:13:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E469EC08022
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F813B1EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD503BD331
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA1E2E6CAA;
-	Fri, 24 Oct 2025 20:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C96B2E7186;
+	Fri, 24 Oct 2025 20:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TyZySqVp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ig/NWESD"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38612E62A1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DB22E6CA3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761336823; cv=none; b=c0Zc2XlcwJbZJGmYxqBF1cizS+RrPVf1yziCRvjQggPF0FZVldtUGu7naMvEea20TTdvyrkcVMPCB04By8JWfyKdPjJ5q9ZDYBtKCMbrprfDKOOMSkHLoprYEOMRhu1oGbJuucd1MmrVc4RCT8hGRwjGIsGsPB9B6siLpTEGdjY=
+	t=1761336860; cv=none; b=JVm4ekRLcRIz//jY9wtFVz6SWPEZpgqOMYAsZzwYpuC3U0zPOuQON0e46r4wp8anUUHWBxoys+UojC+P0eEDszj/CDj3BPUQrCSAUZso/8btTqjyNuLFVM1XJBcELTMP0gG5tAI2V1EygduZzd2JKQAluNxHZ7ObvOAi0LNqb5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761336823; c=relaxed/simple;
-	bh=j3v5TNMbUFZB30eKW14I321bGNuowEE00eakVRG41Gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p+gEa/kgmdKHowcWrLiYutt8LUm3g29cm4lRXy5hagP4+uWL7ChS87KEqjts9EFcB6pTobu4tHPIcBaqf7z/1+eQ6aGZrZuoa3G2ubvSOu/iNHVFkSa3Y/EuFh8EDZD/nmFNvxN5vjlCrPXPuV3luPyYCBGSYeIwIuv8xCceuUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TyZySqVp; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761336822; x=1792872822;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=j3v5TNMbUFZB30eKW14I321bGNuowEE00eakVRG41Gk=;
-  b=TyZySqVpYHun8+7bX5H2OjxJxUQVR957RQ8w+c6UMUdvcaI+vvTP+4Hu
-   9qiDToFMGI4Xh79MFKWxZcd+jgDBlTpTnVG7yrM2nlt9Po86C/rHZvMFD
-   TrlVFpt+v7hv+1YBWX3s7cK20xQKev5WkvVyz2lCzXbJ25vuAkcfcioEh
-   awNSP3M83NuTjWp++nba0Rp/2bopkUd7/gxTTpkrigD59odLv2/1wyXTl
-   i1JYJkTXQj7RyHBE69t90Uvj5GdGWgZRM2O4fiG82emJFL7Tvisx4zM8a
-   /gLMjBUX9ah/GxAu6s3bL+fDsxvVHDBFyZo78Bd/wiNUoOlGo47Jx9nS+
-   A==;
-X-CSE-ConnectionGUID: C6FsGE8KQf+h11YYDoON3Q==
-X-CSE-MsgGUID: utAEcUACQ/mi0NWJILOGoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74196966"
-X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
-   d="scan'208";a="74196966"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 13:13:41 -0700
-X-CSE-ConnectionGUID: P9cW1H75QuuPAB04qIwYaQ==
-X-CSE-MsgGUID: hrkB1Sj2RYGhD/jdDOzsHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
-   d="scan'208";a="188815297"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.44]) ([10.125.109.44])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 13:13:40 -0700
-Message-ID: <2e49e80f-fab0-4248-8dae-76543e3c6ae3@intel.com>
-Date: Fri, 24 Oct 2025 13:13:40 -0700
+	s=arc-20240116; t=1761336860; c=relaxed/simple;
+	bh=QRmmUPZjD0Nl/pzvJDzPxygHUoc//WlZnhbayyftwX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YQP3b3XZJ63EwQmAK8U1IKiJXwGJyaJk9Vsjil8a3l/RoNeVqeigqBRiFgCa8qsoUWOcp/arUkuIeTKyfLvXa2u2Zyspz7ieC23WpiMcwIGQ6OPpQ4854M3phrgYZCHOTOcA1YOuZSmmnnRGWC3X7F7eA+de9S2dLzrPa9Myqvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ig/NWESD; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-784a5f53e60so30394387b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761336858; x=1761941658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QRmmUPZjD0Nl/pzvJDzPxygHUoc//WlZnhbayyftwX4=;
+        b=Ig/NWESDE+V92QIAs8zCk53vnQj51oYAK+pzbV212WD2G+yUvvKjvhTy9IiZvbfWWz
+         47+14pJ65zdfrpG6ITUPgGZm3p7BsqVObqp8yKF3njxT8BlMatV4DGKQjGcuX7mvw5rw
+         wkaXanPokV8WnRclwP200/vH3zEIeUmEOAPRs2pCQJSxGPALGqX1thYEGX6k+Wwm84v/
+         NdQ370q4xL2lpiigeIrsFRbl2KvP8+CSXysI7CKHn5rv8nFVbHcT4dARO1NCK46uTteP
+         FeJHPD2l+Y1kZLbGLMfGkcEoD3oBN1hCQNrX49yfL3iFzKxQPFMahCYqg/o4/8JuFskT
+         ch0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761336858; x=1761941658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QRmmUPZjD0Nl/pzvJDzPxygHUoc//WlZnhbayyftwX4=;
+        b=ZFyzFFjR40TBWia/jtDiMrg07gSMRFoY8BQ39nAWgykLwcGQTjEB0StTb6LRMn/7dj
+         9aHo0M8M6SNUoYG0LCDdqLPxf2ZW9CEiXvWmMGjfWx5Jh6VHlfgltQKwvPz/psTf/8au
+         6IC9VLiHz7gNpQv1hofxWEYjd8cZY1L6GLZjzNHBNSuJKiSZb/b67453KM/8GiziTpgc
+         GFcAWlnuLOJP4R8UETKrwuBVi9S+YEX0VnAu+dJfFLE4fJ2On7BXqtA7ZTWR6Pq9buGp
+         yWoE0vFnSpGEM+ddX5z6Xhroq4vNA3w/NkLT0Et1swRpi6TkSdZ8KG8oI/2584X6uX+z
+         3uzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9xoS32fntLWqK+MjQX6ETOpD7tCvfSW7VndL8TcNbV73XYF69h6CHb7YbYq8l5Q+tZd4uGpM8nc92BdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFGbvP/0ikCS9MBvzLkvaSyllJUMtaRufFmy0IorszrTt8LZNc
+	8S0MwZYehKJCukGfAzD6M8nkCZlLG+0PapeZX0Hy1LzPyRHA2QK006L5GtbLFZ1qbf+c48lFJAF
+	BJB5GBQosQSJCNMXnHet+6peKit4I2+9TscQe7fvo
+X-Gm-Gg: ASbGncs6dZU/FvHAPGgdps1UG1jUv5qP2qz/BK+TFFJhv3vCrNOZ8cRMZKq5X8mho+q
+	07I4AxkpDiStsd79rvlsTVOalvVxzMrmfkq8vmy4Uyme7sUTj3fPh/Vpl69XKxQfR9N80shix6z
+	LICwbXExE6xrlQpHsnLqa3GZkiNNqo0eQcgH7FeZq5sIOHKxGq1YWaYJ4EZskJHI5hf/SKl8qwM
+	Adudog1eBXrAFi/ZLNHTQsHm/f4wwetpjhd98PoEeWhgKXJrFB0gsVNfMNCwg2z071wxOlfHv2G
+	nD7AcanvKR7mr7OjMpWLuzIiQReOsl4WMku5
+X-Google-Smtp-Source: AGHT+IHTpYbhZDmL6ruzEWH+gphI5m7Ialef1RNXjW82+6aaizHeKOCv9/XRyMcMq4hJKcNstGH8IXkZIyc1k4him6k=
+X-Received: by 2002:a05:690e:12ca:b0:63e:2f32:cccb with SMTP id
+ 956f58d0204a3-63e2f32cee7mr16781408d50.10.1761336857579; Fri, 24 Oct 2025
+ 13:14:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: dan.j.williams@intel.com, Chao Gao <chao.gao@intel.com>
-Cc: Vishal Annapurve <vannapurve@google.com>,
- "Reshetova, Elena" <elena.reshetova@intel.com>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Weiny, Ira" <ira.weiny@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
- "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>,
- "sagis@google.com" <sagis@google.com>,
- "paulmck@kernel.org" <paulmck@kernel.org>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com>
- <IA1PR11MB94955392108F5A662D469134E7E9A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH96B5K9Hk5h0FgxSUBa-pik=E=dLrO-4oxx76dxb9=7wQ@mail.gmail.com>
- <IA1PR11MB9495BB77A4FAFBD78600416AE7F6A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH-h_axusSLTWsEZ6QoxgmVs0nVknqNJx-iskpsg_qHKFg@mail.gmail.com>
- <aPiEakpcADuQHqQ3@intel.com>
- <CAGtprH8q5U6h3p5iDYtwRiyVG_xF8hDwq6G34hLt-jhe+MRNaA@mail.gmail.com>
- <CAGtprH9bLpQQ_2UOOShd15hPwMqwW+gwo1TzczLbwGdNkcJHhg@mail.gmail.com>
- <aad8ae43-a7bd-42b2-9452-2bdee82bf0d8@intel.com> <aPsuD2fbYwCccgNi@intel.com>
- <ca688bca-df3f-4d82-97e7-20fc26f7d69e@intel.com>
- <68fbd63450c7c_10e910021@dwillia2-mobl4.notmuch>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <68fbd63450c7c_10e910021@dwillia2-mobl4.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251022182301.1005777-1-joshwash@google.com> <20251022182301.1005777-3-joshwash@google.com>
+ <20251023171445.2d470bb3@kernel.org> <CAJcM6BFTb+ASBwO+5sMfLZyyO4+MhWKp3AweXMJrgis9P7ygag@mail.gmail.com>
+ <20251024131004.01e1bce7@kernel.org>
+In-Reply-To: <20251024131004.01e1bce7@kernel.org>
+From: Ankit Garg <nktgrg@google.com>
+Date: Fri, 24 Oct 2025 13:14:06 -0700
+X-Gm-Features: AWmQ_bm-8GreWoq_uf6j4SHvhOnHL6CyYtA5h03iWipus0wRS1EtWd4i-WIu02I
+Message-ID: <CAJcM6BFnN2HSYy=3+ocx+-M=tZroba6wCz9Pxgc8hyS0szdD2w@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/3] gve: Allow ethtool to configure rx_buf_len
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Joshua Washington <joshwash@google.com>, netdev@vger.kernel.org, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Jordan Rhee <jordanrhee@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Ziwei Xiao <ziweixiao@google.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/25 12:40, dan.j.williams@intel.com wrote:
-> Dave Hansen wrote:
->> On 10/24/25 00:43, Chao Gao wrote:
->> ...
->>> Beyond "the kvm_tdx object gets torn down during a build," I see two potential
->>> issues:
->>>
->>> 1. TD Build and TDX migration aren't purely kernel processes -- they span multiple
->>>    KVM ioctls. Holding a read-write lock throughout the entire process would
->>>    require exiting to userspace while the lock is held. I think this is
->>>    irregular, but I'm not sure if it's acceptable for read-write semaphores.
->>
->> Sure, I guess it's irregular. But look at it this way: let's say we
->> concocted some scheme to use a TD build refcount and a module update
->> flag, had them both wait_event_interruptible() on each other, and then
->> did wakeups. That would get the same semantics without an rwsem.
-> 
-> This sounds unworkable to me.
-> 
-> First, you cannot return to userspace while holding a lock. Lockdep will
-> rightfully scream:
-> 
->     "WARNING: lock held when returning to user space!"
+On Fri, Oct 24, 2025 at 1:10=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Fri, 24 Oct 2025 11:17:04 -0700 Ankit Garg wrote:
+> > > Please plumb extack thru to here. It's inside struct netdev_bpf
+> >
+> > Using extack just for this log will make it inconsistent with other
+> > logs in this method. Would it be okay if I send a fast follow patch to
+> > use exstack in this method and others?
+>
+> Could you make it part of this series, tho?
 
-Well, yup, it sure does look that way for normal lockdep-annotated lock
-types. It does seem like a sane rule to have for most things.
-
-But, just to be clear, this is a lockdep thing and a good, solid
-semantic to have. It's not a rule that no kernel locking structure can
-ever be held when returning to userspace.
-
-> The complexity of ensuring that a multi-stage ABI transaction completes
-> from the kernel side is painful. If that process dies in the middle of
-> its ABI sequence who cleans up these references?
-
-The 'struct kvm_tdx' has to get destroyed at some point. It also has a
-'kvm_tdx_state' field that could be tied very tightly to the build
-status. The reference gets cleaned up before the point when the
-kvm_tdx->state memory is freed.
-
-> The operational mechanism to make sure that one process flow does not
-> mess up another process flow is for those process to communicate with
-> *userspace* file locks, or for those process to check for failures after
-> the fact and retry. Unless you can make the build side an atomic ABI,
-> this is a documentation + userspace problem, not a kernel problem.
-
-Yeah, that's a totally valid take on it.
-
-My only worry is that the module update is going to be off in another
-world from the thing building TDs. We had a similar set of challenges
-around microcode updates, CPUSVN and SGX enclaves.
-
-The guy doing "echo 1 > /sys/.../whatever" wasn't coordinating with
-every entity on the system that might run an SGX enclave. It certainly
-didn't help that enclave creation is typically done by unprivileged
-users. Maybe the KVM/TDX world is a _bit_ more narrow and they will be
-talking to each other, or the /dev/kvm permissions will be a nice funnel
-to get them talking to each other.
-
-The SGX solution, btw, was to at least ensure forward progress (CPUSVN
-update) when the last enclave goes away. So new enclaves aren't
-*prevented* from starting but the window when the first one starts
-(enclave count going from 0->1) is leveraged to do the update.
+Absolutely. Will include in v2.
 
