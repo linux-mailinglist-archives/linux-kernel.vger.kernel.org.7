@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-868735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19154C05FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9740AC05FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6CF1C22EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC9D19A13BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB460314D08;
-	Fri, 24 Oct 2025 11:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EB9313E2E;
+	Fri, 24 Oct 2025 11:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nGpAI4lI"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="s6/2aArz"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4273126B2
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365BF31076A;
+	Fri, 24 Oct 2025 11:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304290; cv=none; b=CjlcStgHlE0sffNP/ndeJPTrbhsU5Mdb9uMSAxovcLhMfokRrj0pf8gHs6H9QbXGKshTsqYJhPpEy87Nv+GLdfE7CbSIZjAKBufmiFc8UAPXy2qQAVNCbGrZEEV5kBOyvCCsU667/0upb7j+1ABqMTUrcWNwX3lNKTAT85aeJzs=
+	t=1761303967; cv=none; b=CtXhQHEJZSQTtkDQ37hlrxOOdHZXokjQ7tIet0CPeQSevH45gLrsXlQCB4/jAPEjzAihvn4EuAA9E7QlBZslk0cEc6QfhVG61t/fxMgcHbh+gw7uJ/4UmYvvtAbGUACb0H0F4aJHAHzNFOXrdcmM5MD6ZHTmCYoVF6TBiZ4sg8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304290; c=relaxed/simple;
-	bh=rFPhCY/ukX6a4h68qvCO7frethsQHcRKNBZhFGoQHTY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=negyaHtCm4Dr97GZN9JPrzTik8MFqx4s3k0tlc7VWv1asfsyamRTyg9JcbGEvnQZalO7WNuFt5zYsulwZsoJM6W4iz0BY0FZ7QoIb19vyv9nGL9aNQfBR8fcAE/226YA7d1ma9yGvswpVJvlK0P/V3wCkdA9qyJirZH1BKsoDDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nGpAI4lI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O6eIZo016484;
-	Fri, 24 Oct 2025 11:06:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dWQe5S
-	gBSZKw/FVpvQxSwXcNW18bjrtIqGvxWNRuQpI=; b=nGpAI4lIpeztF9hVoP4sA4
-	VVaUlLI+i4UZaHDacCcRblz1dvgRmmI8v65DICuPHm0m4OdQ/JFoWtRCEAbp3Hvv
-	LFtHtZ27Q3Hy4w92Ppn/3+/obYh8Dk+C3WpSb3w32odFyqsTPdM1D4mlC2T0phYA
-	bvckMEL0MqmXhcQymNzC/0g3bNcrXHooLSkAjR7C8lkfrFyJdoXehEe9pWy18uRa
-	QFYwQIsPX2NKdhLVmVM3TI0njuNL4yzwjl1clzYDnawFSEvbh3ncRVBgzI89+1zg
-	8U/44AuPT82MvDBGWFcDBbXT5RCt15C/rAAocZgnb6lsgJrWeHO+65YGpESrVrpA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31sex5s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 11:06:09 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59O9Vn4v032166;
-	Fri, 24 Oct 2025 11:06:08 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vp7naped-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 11:06:08 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OB64Dd28180842
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 11:06:04 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3DB1620043;
-	Fri, 24 Oct 2025 11:06:04 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E90520040;
-	Fri, 24 Oct 2025 11:06:04 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 24 Oct 2025 11:06:04 +0000 (GMT)
-From: Gerd Bayer <gbayer@linux.ibm.com>
-Date: Fri, 24 Oct 2025 13:05:32 +0200
-Subject: [PATCH v3 2/2] nvme-pci: Add debug message on fail to read CSTS
+	s=arc-20240116; t=1761303967; c=relaxed/simple;
+	bh=lUtbpOm0HNwvHu4CwXbJ5Zxe40Lsed5WgdfeTdpcNoM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Lwqd0TalYM7EGCzHlsxGU/dXT2z8YuW7lAek1QO4SlW4Ks7Btdwrt4Ghmcr/JukD00eDvU4XQVZRzKjcBRhwoXQC480p5ByJ+ZIy058Tit4yuee9bJhpSGr3eBF27nVs8pmzQxUZZrhTwa7o/wrrYCVfeHBA0POvsEgv319YoXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=s6/2aArz; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ctKny0yWwz9tTX;
+	Fri, 24 Oct 2025 13:05:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761303958; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZtxpLaIOr4yTBDhQd/HrFTnKf9ZfodYckqNGD8tLD/Y=;
+	b=s6/2aArzcq5R0lYNtxdfUkEh7D9GN+NDcC42bF1OY9Rh8t+Ztz+X9YQMVy2ERsqtn/XB3B
+	YTkmmgy1UwAVrRPh/E/uIS5JaF8Mmr0BxttGZiKvRnlYi2zfYrK+8+EHj2zsJlHf7Qr5Pk
+	Rp0pTXYvwENvleDERrC4gF4VJHuYkkqEl5M75DYopZOE0M3G+CicjCp0WLyFog77FzNDAy
+	6T1R2HcFBjol93jtuXg4dejoJqh3qDHW1Lr4HjwBY5R64/U89q6FrFQalKMscvWaM3XhwK
+	T11ouw11q2nNiJoHZOwIywbfyFfkiYnY4I+nOs/tgcJ6e1HKsuIWRxVdFW0Zxw==
+Message-ID: <e189784c286a2d7f839e973eb88e287c9ea0774d.camel@mailbox.org>
+Subject: Re: [PATCH v2] ALSA: maestro3: using vmalloc_array() to handle the
+ code
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: tanze <tanze@kylinos.cn>, perex@perex.cz, phasta@kernel.org,
+ tiwai@suse.com
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Date: Fri, 24 Oct 2025 13:05:55 +0200
+In-Reply-To: <20251024105549.210654-1-tanze@kylinos.cn>
+References: <20251024105549.210654-1-tanze@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-nvme_probefail-v3-2-5386f905378b@linux.ibm.com>
-References: <20251024-nvme_probefail-v3-0-5386f905378b@linux.ibm.com>
-In-Reply-To: <20251024-nvme_probefail-v3-0-5386f905378b@linux.ibm.com>
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Wilfred Mallawa <wilfred.mallawa@wdc.com>,
-        John Garry <john.g.garry@oracle.com>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Gerd Bayer <gbayer@linux.ibm.com>
-X-Mailer: b4 0.14.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: O_OJ63j7a13bHnHitNQDMxdmib5S23j0
-X-Proofpoint-GUID: O_OJ63j7a13bHnHitNQDMxdmib5S23j0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX//mJ/yW1/5sE
- rqvR72fxLOnouaUpZ5k7kKTcgM8sPlcIFwYhx9t/d36YuuM0M+ZNTBLG6owTK1uYygWOagLVAp3
- dkCWCwgMqAjGaPH2QEsYU74OYu57pY2QNnybkZ4Hriwo2jdPSpKbnbH52VRZVlxwToE0Y3lnsAh
- 8JxIM348LVO7bhjrq8Xv0i+wCPCNbO2BLjphvikAUo1RfCX+ufpK1GLNv4Z6rP7N04bBxpMrU5l
- glYuTYJemxHVV3DQcYlNN/4YAgg5IzeNAzOHwJybbFgl2fiBAYtqFhz1MstkR5R1BiwCxZHqLGI
- JVZDo5f8QCOknTsHDeCaj3kIWQqevra898XEs6L84Z9VztAozsteirdqYo3EA+yaiGFoB1XLwqd
- Y4H8GE3AFfo4WaxgWeVX7ilNAx8KdA==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68fb5da1 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=JF9118EUAAAA:8 a=Ikd4Dj_1AAAA:8 a=VnNF1IyMAAAA:8 a=Gwek0BahB5A2Lshf9EwA:9
- a=QEXdDO2ut3YA:10 a=xVlTc564ipvMDusKsbsT:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+X-MBO-RS-ID: c9c6a7fe836045d3a96
+X-MBO-RS-META: 35ty37qrsetkaz6zy9m36b3hfj9jntuy
 
-Add a debug log spelling out that reading the CSTS register failed - to
-distinguish this from other reasons for ENODEV.
+On Fri, 2025-10-24 at 18:55 +0800, tanze wrote:
+> Change array_size() to vmalloc_array(), due to vmalloc_array()
+> being optimized better, using fewer instructions, and handles
+> overflow more concisely.
+>=20
+> Signed-off-by: tanze <tanze@kylinos.cn>
 
-Reviewed-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
----
- drivers/nvme/host/pci.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Philipp Stanner <phasta@kernel.org>
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 8c624960c9f67e0cc8409023de5e532d6ed9b3ac..15c12e6cba884a9bb5248f70d75490254014b9f9 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2906,6 +2906,7 @@ static int nvme_pci_enable(struct nvme_dev *dev)
- 	pci_set_master(pdev);
- 
- 	if (readl(dev->bar + NVME_REG_CSTS) == -1) {
-+		dev_dbg(dev->ctrl.device, "reading CSTS register failed\n");
- 		result = -ENODEV;
- 		goto disable;
- 	}
+> ---
+> Hi, Philipp Stanner,
+>=20
+> Thank you for your suggestions.
+> I have made revisions according to your requirements.
+>=20
+> Regarding the issue of my full name, thank you for your=20
+> attention to detail. Since I am in China, I use the name=20
+> "tanze" on many occasions, and the code I previously submitted=20
+> to the upstream community was also under this name.
+> ---
+> Changes in v2:
+> =C2=A0- Fix some issues in the commit message.
+>=20
+> v1:
+> =C2=A0- patch: https://lore.kernel.org/all/20251022092339.551438-1-tanze@=
+kylinos.cn/
+>=20
+> Best regards,
+> Ze Tan=20
 
--- 
-2.48.1
+Well, if your name is Ze Tan you could use that :)
+
+Don't get me wrong, it's not a huge issue; tanze just might raise an
+eyebrow here and there and have people wonder whether that's a
+pseudonym or nickname or sth.
+
+What's fine for Takashi is fine for me.
+
+Regards
+Philipp
+
+> ---
+> =C2=A0sound/pci/maestro3.c | 6 +++---
+> =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/sound/pci/maestro3.c b/sound/pci/maestro3.c
+> index bddf47a1f263..3353980d5cd8 100644
+> --- a/sound/pci/maestro3.c
+> +++ b/sound/pci/maestro3.c
+> @@ -2571,9 +2571,9 @@ snd_m3_create(struct snd_card *card, struct pci_dev=
+ *pci,
+> =C2=A0
+> =C2=A0	if (IS_ENABLED(CONFIG_PM_SLEEP)) {
+> =C2=A0		chip->suspend_mem =3D
+> -			vmalloc(array_size(sizeof(u16),
+> -					=C2=A0=C2=A0 REV_B_CODE_MEMORY_LENGTH +
+> -					=C2=A0=C2=A0 REV_B_DATA_MEMORY_LENGTH));
+> +			vmalloc_array(REV_B_CODE_MEMORY_LENGTH +
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 REV_B_DATA_MEMORY_LENGTH,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sizeof(u16));
+> =C2=A0		if (!chip->suspend_mem)
+> =C2=A0			dev_warn(card->dev, "can't allocate apm buffer\n");
+> =C2=A0	}
 
 
