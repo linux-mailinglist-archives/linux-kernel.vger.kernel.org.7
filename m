@@ -1,188 +1,106 @@
-Return-Path: <linux-kernel+bounces-869312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF5CC0798F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A464C0799B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2F4A4FBCF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAFF23ADDBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2532441A6;
-	Fri, 24 Oct 2025 17:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="ZKb2rdBf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5B8346798;
+	Fri, 24 Oct 2025 17:52:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4941F28314A;
-	Fri, 24 Oct 2025 17:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761328326; cv=pass; b=UU1CEjqDLfLyNBtvYvuuevzMzQPhGRxxhOr7KXl9z0D+ISY8ZV51ZwRhIuPWO6SfsK9ywxV7+3jEZb4BfzC1lPz6q6uugyGDhVmqKDfNOwkef4rUbaa+qUUQsmD0+o9Fmdx7/TNDYPbjD+7T615GOABpARGFH7u8IUwb6fBV6Ic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761328326; c=relaxed/simple;
-	bh=E4AmDFRM7F5PSBy6yLUtj3LAsj32f1PjzdGf0UHDo+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CX+iFOETp20R17cLJGQeWq6nKbMbeLv3lvnxZviJwiHpdY+osb39yv1MBrFEeCweufh8cC50aakad8tiY2CVdBYfpmL/7ig/kVuh8wvzF1nsd4AFcO4eQP3w3S2+E0eSl7uph/yXbX3/w1Gdz1IMszbfBXfgiu10NnfBCCmp66o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=ZKb2rdBf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761328287; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DiUyK8tdAupooswC4Sh2gsaGJwEarJ2aZRUjtIhDMxmxjnPCwSJRknW6FK7e104M3g/ENmJma3JrEma6BSWM8iTXHD3hRonO4QsrI45TwsKHlCiM2j5zsjTAMxTG2UycJQA8ITep5QRzANzyo1CGE3vSPesoum/GwvGkgdodCVw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761328287; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=sCRi+ao+Y0H2VTsuR8VLPC8s6tkLiQZtynG9CySW2MU=; 
-	b=RThPz6TkUJ2jhE7s8OufEirmiTtnvWIxDI0UBi+jed1zfOjgC7eRCNTISyyxzyX62b8PwegmUaIsDgWYJT725GLk4M5aLHylcuWtS7dXik1RTvVlYTWOBI6CqtxT3bz9VYRimiKSd2TbHgmqc4Q6v+RECoH2PcPIlsnlozP48qY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761328287;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=sCRi+ao+Y0H2VTsuR8VLPC8s6tkLiQZtynG9CySW2MU=;
-	b=ZKb2rdBffh4am/tRZLfrrSU3VWPizGpeEqiF3S7so4peQ3+FCRThFZJdvv8pSRFn
-	F0ikOoMjV24bWKPNFk4CoB5X+7yzxzwNZRWepd08Gj1lW5Su8OBONpJbXcc0s8JHWrY
-	yAaoi+kd4UPzNeYm8j+C5+cIzhfvtYqsBkAwnI2Y=
-Received: by mx.zohomail.com with SMTPS id 1761328284052701.9623815285279;
-	Fri, 24 Oct 2025 10:51:24 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, kernel@collabora.com,
- linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org
-Subject:
- Re: [PATCH v3 03/24] dt-bindings: ufs: mediatek,ufs: Add mt8196 variant
-Date: Fri, 24 Oct 2025 19:51:11 +0200
-Message-ID: <5617400.31r3eYUQgx@workhorse>
-In-Reply-To: <20251024-thrash-amid-d5af186c4319@spud>
-References:
- <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
- <20251023-mt8196-ufs-v3-3-0f04b4a795ff@collabora.com>
- <20251024-thrash-amid-d5af186c4319@spud>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5E633FE26;
+	Fri, 24 Oct 2025 17:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761328368; cv=none; b=cyoQQOlrzCOz8Rn6Iev/ms2fxtgz8tUf1JuCEFI8XnfWhyjA41plnGm2g2VKzMfQx32NebAXFjWCNUgSC6Cxs68J6dAPcdWc1FX5+Wkit1NIBeF4uBTxOOZFLDkGq2Oz6fEw2v2V9hIBPC+LuFr4N2zwpkmFNTLfOsWv5YdmMV8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761328368; c=relaxed/simple;
+	bh=CLuXSTG9NRI58+a1hWOBp0kNaI16bo/jqRz0pYjTLpY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FdEGrhUGKak4j0zBHao4tDPRwwHjf4tN73sLc5enHJyMsRte9LPjW2lPJLM0CR5zGZcShBijOkpGcZaDpsFq+cB3IjPPn38sJA729i7mSkYNPvBu8iVvUU+mcHqF5L1h0Q7YqczQ+xsGqtAn6rg5EU7kKE46ajNVjtcOzpiPxmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctVlT0TySz6GD8s;
+	Sat, 25 Oct 2025 01:49:25 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id E8D2F14027A;
+	Sat, 25 Oct 2025 01:52:43 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
+ 2025 18:52:42 +0100
+Date: Fri, 24 Oct 2025 18:52:41 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+	Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v3 15/29] arm_mpam: Reset MSC controls from cpuhp
+ callbacks
+Message-ID: <20251024185241.0000206e@huawei.com>
+In-Reply-To: <20251017185645.26604-16-james.morse@arm.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+	<20251017185645.26604-16-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Friday, 24 October 2025 19:13:36 Central European Summer Time Conor Dooley wrote:
-> On Thu, Oct 23, 2025 at 09:49:21PM +0200, Nicolas Frattaroli wrote:
+On Fri, 17 Oct 2025 18:56:31 +0000
+James Morse <james.morse@arm.com> wrote:
+
+> When a CPU comes online, it may bring a newly accessible MSC with
+> it. Only the default partid has its value reset by hardware, and
+> even then the MSC might not have been reset since its config was
+> previously dirtied. e.g. Kexec.
 > 
-> >      };
-> > +  - |
-> > +    #include <dt-bindings/reset/mediatek,mt8196-resets.h>
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    ufshci@16810000 {
-> > +        compatible = "mediatek,mt8196-ufshci";
-> > +        reg = <0x16810000 0x2a00>;
-> > +        interrupts = <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>;
-> > +
-> > +        clocks = <&ufs_ao_clk 6>,
-> > +                 <&ufs_ao_clk 7>,
-> > +                 <&clk26m>,
-> > +                 <&ufs_ao_clk 3>,
-> > +                 <&clk26m>,
-> > +                 <&ufs_ao_clk 4>,
-> > +                 <&ufs_ao_clk 0>,
-> > +                 <&topckgen 7>,
-> > +                 <&topckgen 41>,
-> > +                 <&topckgen 105>,
-> > +                 <&topckgen 83>,
-> > +                 <&ufs_ao_clk 1>,
-> > +                 <&ufs_ao_clk 2>,
-> > +                 <&topckgen 42>,
-> > +                 <&topckgen 84>,
-> > +                 <&topckgen 102>;
+> Any in-use partid must have its configuration restored, or reset.
+> In-use partids may be held in caches and evicted later.
 > 
-> This is absolutely a nitpick thing, but if you end up resubmitting, can
-> you pick a consistent format between the two examples your series adds
-> for the clocks/clock names?
-
-No problem, will do. IIRC I kept them as a list like this so I could
-easily reorder things, but now that I'm fairly sure this order is the
-correct one, it's probably best to make this more compact.
-
-Also sorry for the numbers as clock IDs, but MediaTek clock headers
-have conflicting symbols and the dt schema example extractor dumps
-all examples into one dts file. :(
-
-Since this has bugged me in the past, and many schemas may rely on
-the concat behaviour now: would a patch in the distant future that
-prefixes all MediaTek clock binding headers with the SoC name be
-acceptable if it keeps the old names intact as aliases to them with
-a #ifndef guard?
-
-I should also think about some way we can avoid similar bindings
-symbol naming mishaps in the future.
-
-Thank you for pointing me in the right direction with regards to
-the binding!
-
-Kind regards,
-Nicolas Frattaroli
-
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> pw-bot: not-applicable
+> MSC are also reset when CPUs are taken offline to cover cases where
+> firmware doesn't reset the MSC over reboot using UEFI, or kexec
+> where there is no firmware involvement.
 > 
-> > +        clock-names = "ufs",
-> > +                      "ufs_aes",
-> > +                      "ufs_tick",
-> > +                      "unipro_sysclk",
-> > +                      "unipro_tick",
-> > +                      "unipro_mp_bclk",
-> > +                      "ufs_tx_symbol",
-> > +                      "ufs_mem_sub",
-> > +                      "crypt_mux",
-> > +                      "crypt_lp",
-> > +                      "crypt_perf",
-> > +                      "ufs_rx_symbol0",
-> > +                      "ufs_rx_symbol1",
-> > +                      "ufs_sel",
-> > +                      "ufs_sel_min_src",
-> > +                      "ufs_sel_max_src";
-> > +
-> > +        operating-points-v2 = <&ufs_opp_table>;
-> > +
-> > +        phys = <&ufsphy>;
-> > +
-> > +        avdd09-supply = <&mt6363_vsram_modem>;
-> > +        vcc-supply = <&mt6363_vemc>;
-> > +        vcc-supply-1p8;
-> > +        vccq-supply = <&mt6363_va12_2>;
-> > +        vccq2-supply = <&mt6363_vufs12>;
-> > +
-> > +        resets = <&ufs_ao_clk MT8196_UFSAO_RST1_UFS_UNIPRO>,
-> > +                 <&ufs_ao_clk MT8196_UFSAO_RST1_UFS_CRYPTO>,
-> > +                 <&ufs_ao_clk MT8196_UFSAO_RST1_UFSHCI>;
-> > +        reset-names = "unipro", "crypto", "hci";
-> > +        mediatek,ufs-disable-mcq;
-> > +    };
-> > 
+> If the configuration for a RIS has not been touched since it was
+> brought online, it does not need resetting again.
 > 
-
-
+> To reset, write the maximum values for all discovered controls.
+> 
+> CC: Rohit Mathew <Rohit.Mathew@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
 
 
