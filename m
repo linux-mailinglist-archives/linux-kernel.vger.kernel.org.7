@@ -1,87 +1,131 @@
-Return-Path: <linux-kernel+bounces-868514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA81EC0561D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A748C05623
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 722F23B1AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:37:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49F13BC26E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3988F30B515;
-	Fri, 24 Oct 2025 09:37:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977930B514;
+	Fri, 24 Oct 2025 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="dWr3lOSs"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED072EB5AF
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191882FE04A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298627; cv=none; b=HTr9jMC/xL7coyqJYMAdzp5L4vjK5lPhuZfBpjxZyL0dHG6sioUOqKwTJXcEJ9iiHhQEy3j9AO12nL7s3va5fbyq43dD4Lmz8ewgAOoZIMyBk0WyvY+GVjpsQPRpzB9nOVLfejCki4sCVOn8nyux+UMgpxR2d0kOd+/LFqZOSK0=
+	t=1761298659; cv=none; b=haYt8qw4XiR3uOAqi3S/8cHSHbmvZv7I/d18W+R7kKlND32b5gZfripEoN88dzb84oUFYbycuM0p5VPNI8GNe3mNMA9vVeEavYt/6QcBc0g+JcSUQQ/T2ol/PJ2nJYIrA+pbF4Om1lH7r6qlHaKBKjpof1hO5DKt4fIAmhLcSek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298627; c=relaxed/simple;
-	bh=gUMkv3WQUcuabIn0FKGW14E4Ddh+xxYYgV25BA6CSHo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cYAzfQSLZWklPI8qyYhYqaE2/Xguh2Qz2ytyjus1sil6c8bu4fzXl+JoY/h7JOpalfWb7Thxnyea9pZY+3Lxojhcl/QlhV/BpvG3TvovLGIIqfaPLTmvOQ85OxVn0WG6i0C27g7yIUSZGI9sO4br7DLVrGJ+9srrJWcrTHtz8AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430b0adb3e2so23924215ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:37:06 -0700 (PDT)
+	s=arc-20240116; t=1761298659; c=relaxed/simple;
+	bh=/Cbl4n0yrdtsgnDtQir6yB7F4/rJakM2sUOcZ9UhiFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqYHQoieWyy9NRJQqTnG8D56Lh3hkWfh+nYFBiBDvg24jnLiTHj7h+RTArNWSfweDY5Iaei+eTjjhkQRrKXkhoeYVWFh8n+DLa8Ix38LLi8dSPudNC8NlhJjE0JEzqyuhpriZnopf1CGq5TWFLdMAOAtLUhnQjk/48mBNChA17k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=dWr3lOSs; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b6cf1a95273so1347450a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google; t=1761298656; x=1761903456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TluK3MF0nWIoJUSNiEPuReJVhgVvccO24FAbWBod7M8=;
+        b=dWr3lOSsaSdXQ/ArkM4UvzvcF3Og4kvW910aqfBu/ZcvAzIXDPSOaRUXJqchCtH9Uj
+         YHvEcwFkx8cAtoBMmTzklwVAKlU9RkGc/OqW0lmjXxyhEoZAeGNZ5P1XIS4YPPZBhk7q
+         8+do2MfqSfs+XQ9J/fc0IdBRWJL0omSngtfNw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761298625; x=1761903425;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JIoRaJs5Uc2PPX0h2m6BzXMg6q7dMXPOStsmDt2TF4E=;
-        b=bT+qlGr1DY12YuKeBzUH6tgrylGMdiVCBDhrgVp44jvny+mwVc5cELrLoe0WTO6blb
-         CJkbglMM4ES30Y8bu/jSLCHg1gvsxEuqrkJB7pILr9h3IgoFYCdf+1DcDlPaENST9eA3
-         h3OTZqvUYC30QBbQy5IdO+pRryhnuoTY0C6JPh1NGnqNT+ynNnlbAcDrkN1seN8avDb7
-         W7FCVereWvwQf0YQk8g/Med0KxILM6R4ElgKv5pzy+YUi7NL5V1OeRS2QBt68JRYW8nK
-         FaaZgedwKFshE1WJqfZaGdWyky75nVfMFFrBmS85VXOuopRtaqPgd/H8W+QMP3inm02o
-         6X1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWv3TQmhtsLHjNWFfByJKy7XxW5rN5L4Vg6gdMHzOv3ktdv8Zg2u1s7gIpYA2om+8bCR4RMzXjNL1EV5xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEZQ5o35xQoUK4D7cdaVDdgTdnNqwxJPH2QCK/vNn52lyJ3z2+
-	NLcJnyABdb9gIlYruAQZKU7zIol55vKcVDhsCfLUYFkFXa18miOW+Gg3j8PW+plBudSjtPWwN/J
-	0QgJrDRPVfAK9aGhgYMvKF05GSzqzXgiGLj26tBvYe2yFRQ8ZjaJdaj/Y/NY=
-X-Google-Smtp-Source: AGHT+IHS0I2o4KaM0+rN6T68/ROE5GAlWqPi9Tho6Qc+h38IHlinrtQLskQ6UOf25r8uYm6XJlMCUdFtwolxAlNlp8fN4xTTqUvq
+        d=1e100.net; s=20230601; t=1761298656; x=1761903456;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TluK3MF0nWIoJUSNiEPuReJVhgVvccO24FAbWBod7M8=;
+        b=V9BVoN7QJLkpdIzPHT92UbIBOLy9AEXoebwpiEAX4wOjWoHBDmSo6yuKytpzWQaTbo
+         pnqMJcCxokyFp1fMPX6XQH3UvlmN1ZDMWlJ67PoDZPMoI2DZYJV8RLD77tBkRnIQwqgb
+         dfrUTunsTFo3wRfu9YVAuG1Odn94OPNtR1GHlUGYfG3GDzkopxnpBEDenZTSmVHplLtU
+         8PIqeU0/dS7brb4c8ZdooUJN3RdFAFootnLPyoDk6+WcU8HrZVL9PwiOr/GZPisPeG/w
+         GYYcT9PL7mY4xv+p67dUeBxA5OusgwV5LjNrv3wzaxVJAAUGeh65MtvdKOZ8oyD9YEg1
+         BbYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWj98cMEB5srffnuhW0QgLCCzYYYA6ELFZNX6AOuRnfuAGVT3BaVjujlOOY24XVa8kx/0WXs2v4TnZSGKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu+VOCd6owD6X7QsGr76Aal+mVrj9OTq3is0WVHZNeLf0cpVSK
+	4T+xOinome4xjQTdczOrlzoPYhUBhjwA+tgJeR2pr646cteBXAYbIMTeD/X0niZyp8A=
+X-Gm-Gg: ASbGncta9Ai0x7z6FsxpSvhD4eFRVPp1T/IdVgz1yZ/DUNXWrqRgNfpFB+TClshK/Sb
+	+WiJYy8gkK5MFvB+CsOfL2LaBZ291K58CMcyXPfpSDt72xkqCOjTNsCGgi0zM3OjyIY6J6Ro3aa
+	uWeQVx1ajodPvJXPRVUjNM5rznK91pDqzLfzWdtWUcyFCQHFDi6/iZmwieu97rmsdvVqvOjmU2i
+	XePZ0O4uyfcDj5tkXZejwWj1wvmB5Y8LGXpy2g+FPeIvHtqjZultgx6kVPyQZUIEljQLC8mrx6W
+	p30KhhIITb8uXSLkttTysS/rqK7jmK9PR264N5UOa8nF+k1yHUveLvQcYMsUzMNmL8VTZAzlEnM
+	PgMkrad9RlACLBv72MN+1JBu3DzbqHMBLalfDV24mgEhh3kqcbd9OwsdWS/VV4SOt71QoqBFzIT
+	HQM/Gdu9p2OzzGexVdhxjvKq+GYS1uIvvnsjAWO1gDdRJYRtGYCUYY7pfpP7Mtiw==
+X-Google-Smtp-Source: AGHT+IEKtLA3XRvvshIlIg79q8hd8Y4gzZ4mZdxItUorXlFdB2qoWeLIZZW4BUstYBazD2NVXVoh/g==
+X-Received: by 2002:a17:903:1a4c:b0:267:a1f1:9b23 with SMTP id d9443c01a7336-290c9cbb12bmr378539265ad.18.1761298656100;
+        Fri, 24 Oct 2025 02:37:36 -0700 (PDT)
+Received: from shiro (p1391188-ipxg00a01sizuokaden.shizuoka.ocn.ne.jp. [153.222.3.188])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2946dda72d0sm49975485ad.16.2025.10.24.02.37.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 02:37:35 -0700 (PDT)
+From: Daniel Palmer <daniel@0x0f.com>
+To: deller@gmx.de,
+	linux-fbdev@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH] fbdev: atyfb: Check if pll_ops->init_pll failed
+Date: Fri, 24 Oct 2025 18:37:15 +0900
+Message-ID: <20251024093715.4012119-1-daniel@0x0f.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4801:b0:430:b4e1:bcb8 with SMTP id
- e9e14a558f8ab-431eb65dab1mr21791015ab.13.1761298625462; Fri, 24 Oct 2025
- 02:37:05 -0700 (PDT)
-Date: Fri, 24 Oct 2025 02:37:05 -0700
-In-Reply-To: <20251024071529.h1Iuk%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb48c1.a70a0220.3bf6c6.0182.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dx_dir_lookup_rec
-From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Actually check the return value from pll_ops->init_pll()
+as it can return an error.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+If the card's BIOS didn't run because it's not the primary VGA card
+the fact that the xclk source is unsupported is printed as shown
+below but the driver continues on regardless and on my machine causes
+a hard lock up.
 
-Reported-by: syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com
-Tested-by: syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com
+[   61.470088] atyfb 0000:03:05.0: enabling device (0080 -> 0083)
+[   61.476191] atyfb: using auxiliary register aperture
+[   61.481239] atyfb: 3D RAGE XL (Mach64 GR, PCI-33) [0x4752 rev 0x27]
+[   61.487569] atyfb: 512K SGRAM (1:1), 14.31818 MHz XTAL, 230 MHz PLL, 83 Mhz MCLK, 63 MHz XCLK
+[   61.496112] atyfb: Unsupported xclk source:  5.
 
-Tested on:
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+---
+ drivers/video/fbdev/aty/atyfb_base.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a19be2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae55ec3582be8d28
-dashboard link: https://syzkaller.appspot.com/bug?extid=30b53487d00b4f7f0922
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=117dc614580000
+diff --git a/drivers/video/fbdev/aty/atyfb_base.c b/drivers/video/fbdev/aty/atyfb_base.c
+index 210fd3ac18a4..56ef1d88e003 100644
+--- a/drivers/video/fbdev/aty/atyfb_base.c
++++ b/drivers/video/fbdev/aty/atyfb_base.c
+@@ -2614,8 +2614,12 @@ static int aty_init(struct fb_info *info)
+ 		pr_cont("\n");
+ 	}
+ #endif
+-	if (par->pll_ops->init_pll)
+-		par->pll_ops->init_pll(info, &par->pll);
++	if (par->pll_ops->init_pll) {
++		ret = par->pll_ops->init_pll(info, &par->pll);
++		if (ret)
++			return ret;
++	}
++
+ 	if (par->pll_ops->resume_pll)
+ 		par->pll_ops->resume_pll(info, &par->pll);
+ 
+-- 
+2.51.0
 
-Note: testing is done by a robot and is best-effort only.
 
