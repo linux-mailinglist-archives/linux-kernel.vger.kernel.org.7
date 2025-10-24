@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-868582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5867AC058CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:22:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5804DC058C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E373B4956
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:20:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B53C44E66EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A12730F925;
-	Fri, 24 Oct 2025 10:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+m0hwPs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2CF2F7AD3;
-	Fri, 24 Oct 2025 10:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ED430F92A;
+	Fri, 24 Oct 2025 10:20:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46B32F7AD3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301229; cv=none; b=RJp4PbPUem4Xg8boj68Kxf8qkp405iwjfyD+tu1FAADy3cvlhw9WErSH8oXWxWs8DhqyU7MlMmBZcWoe7kCdxRD5yi4Pk5W42vGFNuVp0GN+i2E0CYzuIjHuP1Sjxb9Z1GN2FtGm/qwIGeEKx+SNC/OgXMSXqDaVbWeAEJh+vRA=
+	t=1761301249; cv=none; b=VrPG1NnIXUeWqsM4osQpd6Axy1DEF68P49GfJpEbsriAHMjjajMZKPUJeWF2R8/66WC7kQRbL6I8a7k2yz38PUFO89UCEaIfi+ufb51UiQoZpKySHPsiAFkcjSdul9dtz8akKQ7LDAVn2XKKF5oohSvTRkIaN5NjmkeyPVEYmNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301229; c=relaxed/simple;
-	bh=FnW71TqPVzXRwI0dpG/xTBjzIyGRYlri2cV1BYifyeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6VIVsgRNEneo+Xps8ZKYKyKbBfEj75gPXhpuBFDAjyfmNrrcH6nR8xGYaosUw7ltxNsEl9BoDPAbvDLnmPwZpv1ixlOZeGIVuz/2TPNS4D9+8rL4RgwsqWUptcJaz6++t3D+1fnsBhCO0PLvgoRkEz0p3Q/BYwOlUSF3XQAFxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+m0hwPs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4A3C4CEF5;
-	Fri, 24 Oct 2025 10:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761301228;
-	bh=FnW71TqPVzXRwI0dpG/xTBjzIyGRYlri2cV1BYifyeg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P+m0hwPsa1c9TUACFZRnUOkfnRR//EoynKUc2HkHZer4k0ASAdUGyETGx+4DOd4/D
-	 T3BqTR1lnp9a2tyc+UYGQKADQtoqLD6TKmNynKgNei1ThL7+S7Qk+DaJLUdwveuo5b
-	 HtBPY6ZVlCVnkqYfuwh95NS8VnGSBjY2NgGwvXRiFc/WCjF454xtDd5274z7ReMfI8
-	 tcCSlkNAa1y5lEccmQSqjwiZl+s58PvTDSo0TQ0rqZPmOpqAFZds6QPnGoU6K7Lw2e
-	 Xpfa/CwIuZtVVUObftnAU0Rf0fmDrS/VxKJiCOehPFsRC4AKWT8n8Gpl4/wPjXPcMt
-	 SXf+1m6g715zw==
-Date: Fri, 24 Oct 2025 11:20:23 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Brian Masney <bmasney@redhat.com>
-Subject: Re: [PATCH v5 5/9] clk: microchip: mpfs: use regmap for clocks
-Message-ID: <20251024-dimness-everyday-1c074ce1f203@spud>
-References: <20251013-album-bovine-faf9f5ebc5d4@spud>
- <20251013-undercook-flatfoot-70dca974cd19@spud>
- <ab443375-524d-4e6c-a640-7e580c2d0c64@tuxon.dev>
+	s=arc-20240116; t=1761301249; c=relaxed/simple;
+	bh=j3FZcvyVc7uVHCdm8JHf7dDO483uOgihIOxjv4IX4No=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7FXHg2PDmEB0CJ103edP8UicEA1aXYetEuYhSC1lQhNijot94SckaBpS6fkbsPfBmky3MA4jb9PrIVlTdjEK8SCC+Xd71xK6J40LHoM7By5Bp22XE6dyIlOjpFcngn7+VJ6WDwrG5X9OHc204xmV+l89NT7GQEZvsFIOpIKgrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EF9C175A;
+	Fri, 24 Oct 2025 03:20:39 -0700 (PDT)
+Received: from [10.57.33.202] (unknown [10.57.33.202])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 158A83F66E;
+	Fri, 24 Oct 2025 03:20:45 -0700 (PDT)
+Message-ID: <8a75e90f-596e-407b-976f-e8a509c9065d@arm.com>
+Date: Fri, 24 Oct 2025 11:20:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CLHXK2iYVH1gz/Qf"
-Content-Disposition: inline
-In-Reply-To: <ab443375-524d-4e6c-a640-7e580c2d0c64@tuxon.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/arm-smmu-v3: fix probe device bug due to duplicated
+ stream IDS.
+To: Jason Gunthorpe <jgg@ziepe.ca>, Reaper Li <reaperlioc@glenfly.com>
+Cc: will@kernel.org, joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251011023003.159922-1-reaperlioc@glenfly.com>
+ <20251023181235.GH21554@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251023181235.GH21554@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025-10-23 7:12 pm, Jason Gunthorpe wrote:
+> On Sat, Oct 11, 2025 at 10:30:03AM +0800, Reaper Li wrote:
+>> From: Reaper <reaperlioc@glenfly.com>
+>>
+>> Commit 9246b487ab3c ("PCI: Add function 0 DMA alias quirk for Glenfly Arise
+>> chip ") add quirk to fix hda dma request issue, but IORT logic populaties
+>> two identical IDs into the fwspec->ids array via DMA aliasing in
+>> iort_pci_iommu_init() called by pci_for_each_dma_alias().
+> 
+> I'd rather we not have duplicate IDs in the same fwspec, can we avoid
+> that at the source?
 
---CLHXK2iYVH1gz/Qf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The original reason for not doing that is that there are multiple 
+sources - the drivers' own .of_xlate routines for DT, but the 
+IORT/VIOT/RIMT/whatever code for ACPI. Yes, iommu_fwspec_add_ids() is in 
+a common path there, but that's only responsible for appending an opaque 
+block of data to another opaque block of data - only the producer or 
+consumer of that data know how to interpret it (e.g. for SMMUv2, 
+[0x00000002, 0x00000003] may or may not be considered equivalent to 
+[0x00010002]).
 
-On Thu, Oct 23, 2025 at 07:06:01AM +0300, Claudiu Beznea wrote:
-> On 10/13/25 20:45, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> > +static int mpfs_cfg_clk_set_rate(struct clk_hw *hw, unsigned long rate=
-, unsigned long prate)
-> > +{
-> > +	struct mpfs_cfg_hw_clock *cfg_hw =3D to_mpfs_cfg_clk(hw);
-> > +	struct mpfs_cfg_clock *cfg =3D &cfg_hw->cfg;
-> > +	unsigned long flags;
-> > +	u32 val;
-> > +	int divider_setting;
->=20
-> This could be moved near flags to keep the reverse christmas tree order as
-> in the rest of this patch.
+Anyway, this patch is wrong regardless, and it is definitely not fixing 
+any bug. SMMUv3 has explicitly never supported StreamID aliasing between 
+*different* devices, because doing that correctly is a challenge. It 
+needs custom group assignment based on StreamID-to-group lookup (like 
+SMMUv2) - we can't just assume it's OK for PCI devices, since as soon as 
+we allow aliasing at all then we also allow it outside the PCI hierarchy 
+where pci_device_group() can't see it (like on the Arm Juno platform). 
+These days we do have arm_smmu_find_master() which makes *that* 
+feasible, but conversely means we now also have to be concerned with 
+disallowing ATS/PRI and working out what to do with anything else that 
+is subtly broken by no longer having the assumed 1:1 correspondence of 
+StreamID:device.
 
-The driver doesn't (intentionally) use reverse christmas tree. If it
-does, that's just a byproduct of putting bigger types before smaller
-ones.
-
-> > +	divider_setting =3D divider_get_val(rate, prate, cfg->table, cfg->wid=
-th, 0);
-> > +
-> > +	if (divider_setting < 0)
-> > +		return divider_setting;
-> > +
-> > +	spin_lock_irqsave(&mpfs_clk_lock, flags);
->=20
-> As spin locking is introduced in this file by this patch, you can go
-> directly w/ cleanup helpers for locking.
->=20
-> > +
-> > +	regmap_read(cfg->map, cfg->map_offset, &val);
-> > +	val &=3D ~(clk_div_mask(cfg->width) << cfg_hw->cfg.shift);
->=20
-> Why cfg_hw->cfg.shift here --------------------^ but cfg->shift on the ne=
-xt
-> line?
->=20
-> > +	val |=3D divider_setting << cfg->shift;
-> > +	regmap_write(cfg->map, cfg->map_offset, val);
->=20
-> Can't the regmap_read() + updated + regmap_write() be replaced by
-> regmap_update_bits() ?
-
-Yeah, I suppose it could. Ultimately what's here is a revert of with
-readl()/writel() replaced by regmap operations directly, so the answer
-to the above three items is that that's how they were done before the
-patch I am reverting. That's probably the answer to 90% of the things
-you've said here, this is how they were done prior to the commit I am
-reverting.
-
-
---CLHXK2iYVH1gz/Qf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPtS5wAKCRB4tDGHoIJi
-0sNMAQDlxAVOoPeGx0hK7BMub2zdWhzl5Z42VCSLO0sdhyD3IAEAiM0jeYZctPm/
-LnrQTlUDFXDzYmq5VgkJDAkrhjUULgk=
-=KbJi
------END PGP SIGNATURE-----
-
---CLHXK2iYVH1gz/Qf--
+Thanks,
+Robin.
 
