@@ -1,152 +1,139 @@
-Return-Path: <linux-kernel+bounces-869104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AFAC06F6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:28:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACF6C06F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC3E1889E7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:27:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C24156620D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A502DEA7B;
-	Fri, 24 Oct 2025 15:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94FB326D68;
+	Fri, 24 Oct 2025 15:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXlFFD0e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yCrc+9CP"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B28190477;
-	Fri, 24 Oct 2025 15:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C919921A447
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761319629; cv=none; b=CLtJjxp9xGPRc7ZtKcii606/d/hm9u/Damka2jM0u0OIB6FYntHZ/C2xPTja30TaZaVzvvTlD3QwOHJLl7wTUIYhRRAynuYYdWTGWCHQaDKJKJ0z6z/WAP2xNGyQG+2wmCtz6yKGm2t7upCU7afye9EDgHI0Om1jMScuOxBBioo=
+	t=1761319647; cv=none; b=qfVkpXCAoXROVNLwbdKUxmrSUk1HogBJ8yvy3fkUJ2tmazsvFdCUIGzIzHZjVnfOEDmRoGSMPiXYkhOPm8YJi9naDx8L8nIlOtEqpTOGYtbsPch+OAgoUt0YYLNvuyQL9z8WM7WfmaVNcQvoMPcsD0dhbPj2Vt82mAoR28lscps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761319629; c=relaxed/simple;
-	bh=K35xa85qxRDW/MqsnDVqFDx99T314O0XzeWHcoAYEJk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=twNjsXU5sDPPJzyhkwN9RmT5jxyCe5jpuHZ2bTzojh3j+5wmaOKC6NDS1fbj9Sxm9/Wcy+nu6/r2nITm2mOn7iZYT0diesFbKmYAOuBjDIlsQ1q8H1JHIuHQggcXnHa+sH7bwNFFCZb1csPfi6PfV9m/oLGESDIRUSpHwG6zBzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXlFFD0e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3851C4CEF1;
-	Fri, 24 Oct 2025 15:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761319625;
-	bh=K35xa85qxRDW/MqsnDVqFDx99T314O0XzeWHcoAYEJk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iXlFFD0esb38BGOypXdbuN+zB460cx6lQVQFOcp9+fqpdgc8/BzklLxqU0tUV1aqy
-	 xL0aS899x16VLYZJfBFr2VEl7oKFu03ulyUpav6KPwvjZpIpFY5QHFecc734nfoVIp
-	 +a3Bsr/6OFS340EhY15i9rgeogQdPodkMZtl0tezVqIibjM5wXKFIswHM7L+GxX2TS
-	 /YrHZLhO7wsFMWhFiALPyUvgGb6ZvIpMHjdYsOoO4LmOhYpOZERLrDFmm7wFw5CfBd
-	 66c/kloCqTYt33leVGEgrhBe0oAa0en0zTrue6n5wWhhUcUaXoQhYabx/5qG9pa2DE
-	 Cu8VJX1e0vQqg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Mike Rapoport <rppt@kernel.org>,  Pratyush Yadav <pratyush@kernel.org>,
-  akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  rdunlap@infradead.org,
-  tj@kernel.org
-Subject: Re: [PATCHv7 5/7] kho: don't unpreserve memory during abort
-In-Reply-To: <CA+CK2bAvKrfuOXTa-RWtcuSR8rkPMhurwCn41NcUm44_vT63rA@mail.gmail.com>
-	(Pasha Tatashin's message of "Fri, 24 Oct 2025 09:28:33 -0400")
-References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
-	<20251022005719.3670224-6-pasha.tatashin@soleen.com>
-	<mafs0a51jfar1.fsf@kernel.org> <aPnXVmD3cNmYNRF_@kernel.org>
-	<CA+CK2bAvKrfuOXTa-RWtcuSR8rkPMhurwCn41NcUm44_vT63rA@mail.gmail.com>
-Date: Fri, 24 Oct 2025 17:27:01 +0200
-Message-ID: <mafs0wm4ke2wq.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761319647; c=relaxed/simple;
+	bh=1XYvDvnbFF/TszPFi0vSCsxsrGAF0jNL5hclvwK3V4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NfnJ5tck9n3pZScsV0n2dkrVLLAcYBOGLeXSISbrPj8t7IA2EGwIgOq9tq/2KxL9RqfCemGSQafddwBX8xCSUFPHLGynFccSXqMQjnqJzAHTAJ8pN9WOjeWDw59pYsceyZkD60Hj0PIV8KeWxtYt9TubIIpAjJajEEsE3wbKAsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yCrc+9CP; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27ee41e074dso22218495ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761319645; x=1761924445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1XYvDvnbFF/TszPFi0vSCsxsrGAF0jNL5hclvwK3V4w=;
+        b=yCrc+9CPuRj3S0VDiKd0dyZY1VMg0zxkUWkqw1mCRDAqCJekFepfvc6pmg70rLZFPY
+         BrtVNavTpbrqza8uII7vb2FtTekv8ow24SiYIuMc4qN1Cb7rOwfnyvwsCOlWDsaONSOl
+         B00tnCJTA3p/1OXS4/m8KCQzQKlkoRHbyQkN67ik2rSLedSarnB4PHqbOgwcuVXcXZ3U
+         0hQLGZxLK7InjHaGAA3izbDwxgckmjVdJkP6Nj0pwbCeNXJjuyiX+XnyrWNLO58slFnn
+         aXpk4LKiQZzP7m0NlkEnL0uur2eXvxFPmX/5WdHZ3XNSHahJLBC6IkMnpSvYFIHHBtiK
+         yX1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761319645; x=1761924445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1XYvDvnbFF/TszPFi0vSCsxsrGAF0jNL5hclvwK3V4w=;
+        b=QREtoKefeB3L+0kMO/82jkOgcs1xiceAosjEt+k5m3uOboj0woZnC2ZvxEo/1KSAfo
+         kzbt9qRloU7mtf7cDfkgr4hxIF1wIq4auzzKl3E0K2C0JuxVi0OR0VFcoeNDwX4CDL66
+         LXWyRz7It7E4rQ+pBEO1ZKKlBytQ5j3JDO7LjQDQihuE5+iRf56SluaJCLel+EFeFmO9
+         qPjRu7H2V+tyOhew/1BWOzkzz4vsXj/L6g9AZTa6MlJB+3tyZ5vjxjupmj4FVzBvkzv1
+         +tmdpayTJFxITT2sx+OhLA02Fubfsc4h7g3NiE4PNVJcZUNm+c6fYKVhLmEP/moLKsWR
+         JwSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIbcm4VRbqSWAoSWCpeJ8Zoee/bgDcL/m/FRap3SmgQHiMnC03SBM+p5RpTsvPjndCtLZWoIwKYsHt0Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye8D9qryOuMYEHsJBEABurByMz4kNtAw9YjRYW4flQCcmYWRtX
+	iQVjplR2Uvvb8nT+5dGieaEg6z1ClguUb0E0O0FEjLGvcKGCsH/WUcctgbTThbUu2+vRLf61HYF
+	RO2yniGqv0p5enTNg+r4C8xRZHe9/QfpxoHIEC5p6jsrRT3fcVqqMBkapUA==
+X-Gm-Gg: ASbGncvRaBu1AObzf95fq+xte+fUzb1vFZGut5FRyuZPkQwTN8+M0VWh7vJQA+/wC6y
+	lfHQdRPTu/DAkdze7h+axM4qs3ehD3zJwAsW9Zb83Prf66bjDpL4jegh1kX18ZTxtA/c573h+l/
+	wIONHwTmOIIOzJHmsfrBx9f5jiQLk9OfNiVi4uqeBOzRHLemhLQV1n5ZxsfuUB6+3Knd6OYQLqF
+	+LZCuponJoNybgWwYk8izgviylrurbhYXLlAnTpWE680BGqrfKLsuH8kSsHtDOxMjBhMvdQizz8
+	ri+ZPYo4jC08CVg=
+X-Google-Smtp-Source: AGHT+IE3ievDsUOrEWWRlev3EL7B/5BDY1VDgl+stdkjFTeQQMz83r5xV0GQ4imramVbO2gEuzsY0GzOsNiz+9le5Qg=
+X-Received: by 2002:a17:903:3bc4:b0:290:b131:31dd with SMTP id
+ d9443c01a7336-290c99aa9a0mr353473585ad.0.1761319644954; Fri, 24 Oct 2025
+ 08:27:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org>
+ <20251022-reset-gpios-swnodes-v2-3-69088530291b@linaro.org> <aPuYg0ws8Q2sp7Wv@kekkonen.localdomain>
+In-Reply-To: <aPuYg0ws8Q2sp7Wv@kekkonen.localdomain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 24 Oct 2025 17:27:08 +0200
+X-Gm-Features: AS18NWD66neXy4pA0EykICaxP-IPYvUIs5btM5R7nrvoWotj1uaZi7dUGJ0akYg
+Message-ID: <CAMRc=MfgGSExksz6ZwGEhv3yiL+Kfg+YKX-p2Ox4m66nYor4hg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] software node: allow referencing firmware nodes
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24 2025, Pasha Tatashin wrote:
-
-> On Thu, Oct 23, 2025 at 3:21=E2=80=AFAM Mike Rapoport <rppt@kernel.org> w=
-rote:
->>
->> On Wed, Oct 22, 2025 at 01:15:30PM +0200, Pratyush Yadav wrote:
->> > On Tue, Oct 21 2025, Pasha Tatashin wrote:
->> >
->> > > KHO allows clients to preserve memory regions at any point before the
->> > > KHO state is finalized. The finalization process itself involves KHO
->> > > performing its own actions, such as serializing the overall
->> > > preserved memory map.
->> > >
->> > > If this finalization process is aborted, the current implementation
->> > > destroys KHO's internal memory tracking structures
->> > > (`kho_out.ser.track.orders`). This behavior effectively unpreserves
->> > > all memory from KHO's perspective, regardless of whether those
->> > > preservations were made by clients before the finalization attempt
->> > > or by KHO itself during finalization.
->> > >
->> > > This premature unpreservation is incorrect. An abort of the
->> > > finalization process should only undo actions taken by KHO as part of
->> > > that specific finalization attempt. Individual memory regions
->> > > preserved by clients prior to finalization should remain preserved,
->> > > as their lifecycle is managed by the clients themselves. These
->> > > clients might still need to call kho_unpreserve_folio() or
->> > > kho_unpreserve_phys() based on their own logic, even after a KHO
->> > > finalization attempt is aborted.
->> >
->> > I think you also need to update test_kho and reserve_mem to do this
->> > since right now they assume all memory gets unpreserved on failure.
->>
->> I agree.
+On Fri, Oct 24, 2025 at 5:17=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
-> Hm, this makes no sense to me. So, KHO tried to finalize (i.e.,
-> convert xarray to sparse bitmap) and failed (e.g. due to OOM) or
-> aborted, so we aborted the finalization. But the preserved memory
-> stays preserved, and if user/caller retries finalization and it
-> succeeds, the preserved memory will still be passed to the next
-> kernel. Why would reserve_mem and test_kho depend on whether KHO
-> finalization succeeded or was canceled? It is possible that user
-> cancel only to add something else to preservation.
+> Hi Bartosz,
+>
+> On Wed, Oct 22, 2025 at 03:41:02PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > At the moment software nodes can only reference other software nodes.
+> > This is a limitation for devices created, for instance, on the auxiliar=
+y
+> > bus with a dynamic software node attached which cannot reference device=
+s
+> > the firmware node of which is "real" (as an OF node or otherwise).
+>
+> That's not entirely true: you can add a software node as a secondary to a=
+n
+> existing OF or ACPI fwnode. This has not been used widely and it's not ve=
+ry
+> convenient to set up.
 
-On mainline, the reserve_mem kho_preserve_pages() calls come from the
-notifier chain. Any failure on the notifier chain causes an abort and
-thus automatically unpreserves all pages that were preserved.
+First: set_secondary_fwnode() API seems to require a struct device,
+what if we don't have one yet? Unless you're talking about a different
+interface.
 
-	static int reserve_mem_kho_finalize(struct kho_serialization *ser)
-	{
-		int err =3D 0, i;
-=09
-		for (i =3D 0; i < reserved_mem_count; i++) {
-                	[...]
-			err |=3D kho_preserve_pages(page, nr_pages);
-		}
-=09
-		err |=3D kho_preserve_folio(page_folio(kho_fdt));
-		err |=3D kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
-=09
-		return notifier_from_errno(err);
-	}
+Second: are we even allowed to modify an existing fwnode from a random
+place in the kernel? I mean: I'm module X and there's an fwnode Y, I
+don't know what it is. Can I just arbitrarily add a secondary node to
+it?
 
-If any of the kho_preserve_pages() fails, the notifier block will fail,
-cause an abort, and eventually all memory will be unpreserved.
+>
+> Additional properties in ACPI or OF nodes will still need the secondary
+> node, after these patches.
+>
 
-Now that there is no notifier, and thus no abort, the pages must be
-unpreserved explicitly before returning.
+That's not the goal of this series. Being able to create software
+nodes that reference real devices. In this particular case: a software
+node for the reset-gpio device that will allow it to resolve the
+reference to the physical GPIO provider.
 
-Similarly, for test_kho, kho_test_notifier() calls kho_preserve_folio()
-and expects the abort to clean things up.
-
-Side note: test_kho also preserves folios from kho_test_save_data() and
-doesn't clean them up on error, but that is a separate problem that this
-series doesn't have to solve.
-
-I think patch 3/7 is the one that actually causes this problem since it
-gets rid of the notifier. This is the wrong patch to complain about this
-but somehow I thought this is the one that triggers it.
-
---=20
-Regards,
-Pratyush Yadav
+Bart
 
