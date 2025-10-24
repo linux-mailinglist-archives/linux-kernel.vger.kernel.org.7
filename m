@@ -1,454 +1,416 @@
-Return-Path: <linux-kernel+bounces-869460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07FFC07F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:40:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C203C07F1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6851AA59E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:41:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EE274EDB77
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5263A2C027A;
-	Fri, 24 Oct 2025 19:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2850D2E424F;
+	Fri, 24 Oct 2025 19:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NyUaxQl/"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013038.outbound.protection.outlook.com [40.93.201.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRXTaFOD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2582C324E;
-	Fri, 24 Oct 2025 19:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761334852; cv=fail; b=DlA7vSKrvHM5x4q4NtKgRtGW0AI9mK6MCvUf9t0t/k1No73RFkKy8p214kqG0/o5N2IclkXJ/YMmFqVKQc6RV4V3khhtwtgQrwxy6qD8rhFeyNIhFoa/NsZyMCAjWOW0gUUM1TZtPZgXZL1LsIB3fhHp2Tzh2YdRk9ynM4xixeg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761334852; c=relaxed/simple;
-	bh=1SuxWyPBRqAgnNEu4bRZcQcJnB2rjmGiyaGr0V1URNU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kzKfQ44RvVnLpwlaMPhBP9QqwhaQcfJdioU6BKwVvK+bFqgxpxmHGlvZ0S8+0Wa614Hv7VF3Jn94C6rddfuooPeDYBe1vc25hr9RhME6zVbQ+N0JtmF9VUc6CtvWyq3u0m4yhGfGwwckSmJ7vc1NUVOjM//zmeIqNlNnd3rVzRQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NyUaxQl/; arc=fail smtp.client-ip=40.93.201.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nGZcUTL6b92OI8lEYQfOosJttlXs3+ZTH+phWoOmAaNU5KTjIRgKKyd72Ejkt8cpHAW+6LoqKboe2WYvAJuDzXmVvmZHnrnZ+mBLGFwqTihbevBcCzmDiFAn2yTEAaR9GWM765PVo2o1yJEu2JuJBCvfQUFm9tbg8i/WvpjspVGVjwpgdNu15jPDtC4K1PcS/ToQKyY1OGWymmQCoWyJThZTdw1Li+r8GCvofePSjkuq2dRZLAn9+5G89gU5AIGZJz2+mjrLPedJeLol9uVEm7WbqatoY3fYh6A11/LnEV+ePq7Mh1/CApJ7aTWNH9Dav7+Ceaj2nmls0rEai19emg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vidQscLnkJjfjdXQuJIi06A1LUsOxf+gDWWDGIYe3ps=;
- b=nkizCk9Mk9srcETVyyOU5Hewp0CTPbbzcJQcIb7ei5KFhZ7B3xvmB7EqikLahWwQvxOY05VnuKazNBl6x09Yxs3BHsnCyPGNuxVaN9Al6tdYAsCgpOl9qCV/MKQoVkGArBGLBL/WBC58UxrodRPOTxR8l7oAJ7uk6+rNecP3y0sjESemFEgbM4EzhzMVjK4vV25nS56ZItTitvgI3xVEJRn6cOr8t9a7BbOaAQEwgHLdEJgU2HiouYSQeXwRTqalwn7fyhlX30BTGUh9yMkdwXC9lB6XXDhSWb1ZJR9Htz/+F7WDup4dZOGyw3lyQD6LDoWdsoRsZiSQB4x/oZYQfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vidQscLnkJjfjdXQuJIi06A1LUsOxf+gDWWDGIYe3ps=;
- b=NyUaxQl/ZmJgp2LakQJ2PpdMABOo2EcJJ16LDsksg/PLi9xz1jLJEzLrhGfvnvfITodpDLfhoC4r6DcVgdVqy+UwFJqLgUmy1vlssX9PFCD/fqZZnSefV/CcSrCiyCOVI44vJtTHS8k8LV8Jg5BndYWzxu7t8R9ap6Gq9BTX5Ww=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH8PR12MB9766.namprd12.prod.outlook.com (2603:10b6:610:2b6::10)
- by CYYPR12MB8923.namprd12.prod.outlook.com (2603:10b6:930:bc::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 19:40:46 +0000
-Received: from CH8PR12MB9766.namprd12.prod.outlook.com
- ([fe80::499:541e:a7d8:8c14]) by CH8PR12MB9766.namprd12.prod.outlook.com
- ([fe80::499:541e:a7d8:8c14%5]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 19:40:46 +0000
-Message-ID: <c34dcf08-7a2c-4e78-b2b9-c9851cf6ab98@amd.com>
-Date: Fri, 24 Oct 2025 14:40:42 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 15/25] cxl/pci: Map CXL Endpoint Port and CXL Switch
- Port RAS registers
-To: Alejandro Lucero Palau <alucerop@amd.com>,
- Dave Jiang <dave.jiang@intel.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
- <20250925223440.3539069-16-terry.bowman@amd.com>
- <883ee74a-0f11-414e-be62-1d5bdbfb1edd@intel.com>
- <2f5d7017-d49c-4358-b12c-0cd00b229f2c@amd.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <2f5d7017-d49c-4358-b12c-0cd00b229f2c@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0043.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2d0::17) To CH8PR12MB9766.namprd12.prod.outlook.com
- (2603:10b6:610:2b6::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F0420CCCA
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761335014; cv=none; b=AOZcv3faNaNQKvn3BlBu6hXm4JfFVN2nsNG51FNdBLdKZ9x590xD5Di/hje2ehBsmLBsCpGDFBrtmu0rLOzqzgz8Lvmc5S6nj5rWqkN/eJhZswcu9VDF039RhRIVvrSoRy5iO3L6Ei+FqhWQGL64x3bU5Btr0/2Jz1Ue2IlOtC4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761335014; c=relaxed/simple;
+	bh=GhnYeUgW9HNrnbNuXebyBgs91nhB/UF1Y9z4XhqgECw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ia7jg1B189oIZ/+JOEza6haW9oKaa5gYhkH1EUAtPsQ6LcKAuH87Z8fVqqvYHM8xSHIDMKAjOIykWTS67wAZnjxZKWNK7H4atT32xyo32WideYXeA4ON2hTxB/vjTDisOPtEJejj9eSekp0SI5TeGGaka8kmZajhvrn4hTc7UMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRXTaFOD; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-471b80b994bso34176255e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761335010; x=1761939810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=90XaxFEyCpkV47QCzVcKxG5N1KKEds9BtveeKPxtNeE=;
+        b=QRXTaFODlGVVO20BunHLNVYW9aB63Ucl9U8p+2nnU68xlX90lpZUtsjxc+lXHmx0hc
+         EShBr4LRNZKTSsyKlhJ3BFSO7bJOq/4/VHbZltBLzwIAwH9O1/KW4gYsHC/kH302XhFR
+         2RVpyGFAqc6W3es49M94+KHF6ic/eE1X5789Q455ZAOHBMtBl9sis0MOP47QD0Bo9R9z
+         K8MdRo022dtfEg6fY/m3knGIpcV7Blr4eYita9UlJpWUItZMFZs1vJXHJrd1gKHlU3Lo
+         Len6KN1bri+7TOPV6MPNQH3aYOe1MTdQ3xqUSLjjkdpJewukDMYYhGS+ueg7IhxEATA1
+         Yz8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761335010; x=1761939810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=90XaxFEyCpkV47QCzVcKxG5N1KKEds9BtveeKPxtNeE=;
+        b=VIjBk0OIH9Q6bG2KGv8Kk22MsOSSKZREX2A1mRPYr1OnwSERgieIo8iSp8Ie9CRapw
+         HUJmEtu2AfVbOLTkUC9SNJPO4fyTyIZUoE+UQs0xM43ZNF83GaJ6sWQrLzlAuE3tYj/9
+         xXwcKx2EPHCJurVOqlWXhRLl0oqPfew4T9V00WHYYtE0O8ny69VD7NF3s4ix65/u6kQF
+         astRoAxji/sPn5bhbuDpW/OMLSe78uh2jaNRU7qg7rZaexiEZHiHvof4bEQu4/snax8A
+         7C1hyzf7zExb6rWkDKXFm14svvHiPah7jNn1vgTXHQzz5/hrTQEVS1Dskf/93EtFt6d2
+         D9qA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaiOlXTsUhi8uRkGc+9UW6TV0hu58hhVPAXEaHkxrRnabAJMT3zz8b8QGIqDke8OQesgliqYxjo6x98wE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLxPWoAlMvCr8tY2V3YND2HSkHDi8keaoQCjHcI4SR7J/SeIRP
+	jVkXA/uArM+V1ICjG7x/amfEzJKkNkM25afMF/iZ8T1zEOIwbwn+Pf2qIR17MrYUbbZFr82RxwZ
+	wgdQY6X1VSKXCtSLBhKapK6jcjyvziYOEj4b1
+X-Gm-Gg: ASbGncslkKG7f3ROEv6VZUI+JdvuCz+QAqCt3Vi7xP440e2mMLnzVyL85tPVtY6L7RJ
+	bxmqlUH9kDKIzu2gjH/VIO6Nz4/zy/k+vC+dD8H1K4s9Z0rKAUy/If5dQYxYrUh9Rjs5OT8StKf
+	t0N/J64YQA8736c62UZEnf37+O1ITWIS8vHuexH5RqIoEK1Z4Mz8wLIqB8hxD97+FTyz+pm69NX
+	HyD6RoJLZEsJTCWblKzscmqvlYr+zUWOM+QBL1bRB2wStZCCXog3fV4+r7wPeSm0ZAM3CqrlxWB
+	gTLlFq15BpHShFp0Ltk5u+xS1vRR
+X-Google-Smtp-Source: AGHT+IGlhgaHR7jFg9+tMxl+vQhbMYL40wY/+fohU6NDJjpXaCt4CPnZUsK/fNBWdwfFYQyXTJ3GI3NvxqyaKNwKNEI=
+X-Received: by 2002:a05:600c:3149:b0:46f:b43a:aef0 with SMTP id
+ 5b1f17b1804b1-47117925e63mr211257905e9.41.1761335010286; Fri, 24 Oct 2025
+ 12:43:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH8PR12MB9766:EE_|CYYPR12MB8923:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e4fdee3-4d93-4f0f-dc64-08de133539d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVkyalFKRWhFVkZ1QU9ISUhybGlYUXVxT2IrTk52WE5GWTlxSy92Q00zZWhv?=
- =?utf-8?B?SUV4eHF2eFdhSnQxRjJuUHZFNGRHRW96M2kzQTNRdVkxei8rNk9YQWVXVkNW?=
- =?utf-8?B?dENCMjZmSWMwQ0R3Zmk2RDZuNHJ5TXV5U1JHN1o5NTlyaGFsejdjOWVLL3Jy?=
- =?utf-8?B?ZHI1b1M0RjZURGxxUnpvUzBPMG0xUE5SdWhlVVUyNEwyeW1vVDVOYitMRkFr?=
- =?utf-8?B?a0NDVkE2UXYxQXVZeEdySjdkUmdteEpRUlRoK2poT2l6UnY1TGFPV3RleDM4?=
- =?utf-8?B?TlhRNlBBWUg4L0hFbmNTdUhwTEsvN1MxZDhEWlJMenIzN3dQZFJyaVZ6L1JH?=
- =?utf-8?B?SS91MnArYXlHbXhmMXZYU0VFc093ak13bzVFNEJKUWVFTTRPT2hlcXkyWHFB?=
- =?utf-8?B?Y082UFpJN0JGZUpSYWhkZXh4Y2lpeFcyR1RqeHFXKzhrbWQxWnRQdTU5TGFt?=
- =?utf-8?B?aGgzZkljREY0SVo0VHdWbG1zUWs5NkpiMjgrNmIvSDlOUlBRdWlOL3dWaysx?=
- =?utf-8?B?dVdLbC9MdTM5d1Y1T2pGRnd2bWlhRFJhMFBtNmk1emVJcnhMNVh1ZWljaEdC?=
- =?utf-8?B?d2dUMUxFamJ2cWFoUDJFaDVHbUJMVk5IeWtCSlg4VUVWT29MTjlYWnFVK0d5?=
- =?utf-8?B?V2FhMXFmcVoyVktrUU1vaHpjUHkybEpPeDNwREkrMlU5bEZIYkdKekVZYVpG?=
- =?utf-8?B?Q3FCdVNlWWhPWTlsNVBOVTNLd3ZxR2I1eTJuWFN0eFZQMGEvTzR1TTJhQVlm?=
- =?utf-8?B?TkNIc1RrZE1hanZNdisrRzFlb0pGTUtpOWIydHpBcGovcHQ4VDdOQlhDY01R?=
- =?utf-8?B?cGRpWHdCa2tWNnRBTWJmSmE1UkM1V1dOY1lGamwzV0JrcmJTdEgvRVRPUERR?=
- =?utf-8?B?VW12RVRYUjBKdUlwRk8yWGpaY1JUZnpENVFQaEhhM09jRGJqUHlFNStYWENy?=
- =?utf-8?B?eTZKSk5EZStPcHRTdkUyYTU4TDNXQktKb3FYRkdIeEc0V2U1VGNKYUZyZWJk?=
- =?utf-8?B?MDVnVFZwRmhWeWViZ1lZdkdnUGdsektydXM3TU1QSUxiQXhNeU12UXVZOWda?=
- =?utf-8?B?Wk9vMVhTTGIwQWUyTUwyNVRBNjh4TE5HblZUdHhSK2YrRFRyMS9oNXIxcDkv?=
- =?utf-8?B?RGY3UHlVbkRQYlp5Z0lkSVN4UTNFRDdrdzdueUc0TVIwTzRNU0lCaktqMjhC?=
- =?utf-8?B?NGljOGpXTTlyY3ptUmorWGd2ZFY2YlhiUFUyODFZMHhRU1dkckFXNjBKNjdP?=
- =?utf-8?B?VDJKRDZMcXkwVEppMjhGUkRaVXVnU1N6Zyt5YWlVVjBNU1VoL3VWd0VmczBr?=
- =?utf-8?B?dGh0R25idGJVTnB1R05oMmxuR2R6N1dzNXVyand1eDJmZ2ZOYmxadTl6RGRK?=
- =?utf-8?B?bmQ3SnJsZHNLaHNKK0dUYWVQeUcvVm4xUURscVBPalV0T0U4ZkZMeVNTMFBk?=
- =?utf-8?B?cDBlSnJsRlRiQ1FPV09LVDQ1bS9xVUxyUWduMnQ5WHpDblZ1NzNwVXFOTTYr?=
- =?utf-8?B?TGpSQ1dacytVQ2VERmI0ODJZRW84OUJiWU1adFM3My9semc3dU9iN1dvNmp0?=
- =?utf-8?B?dzhpYllLbTZCL0ZuaXpBM0NGV1RJTmxITEZSVS9LZ1hyUDBKYnZDSTAxd1Vq?=
- =?utf-8?B?aEhqVWhHNVdMOXdWT2lJdGhHaXArN0t2V2tVakxjZ2QxTTBZSWd1TjRobFlK?=
- =?utf-8?B?ZDB2L245MnlZeTYyRDJJTzJsK283bCtBWjE5VG05UkJ2MTlLb3RwOG9JSUU4?=
- =?utf-8?B?TmlDWmlGcUxwMGlZNlRaVXBpajhoN1A4M05XNHJ4VXcvaUg1N09uZ0N1YW9k?=
- =?utf-8?B?cmJyYlVLNVVtbDNxV3dtekhUbWtpckU1bjlQc2t0S1k1MVgvQU9VSHUzVUNO?=
- =?utf-8?B?QUxMcnJiOWJranlTeHNrd01VNEtjemQyRW9iK1lGYVRmQ1hLQmFxL0VsZ0RK?=
- =?utf-8?B?SkpEYkE3WGFiWWowbzdFK0Z0ejhKK3RrWVI3bkpBSi9rdjlYNzFjbklMMkha?=
- =?utf-8?Q?7TITayTNFPtpqvQZgiZkhxpx6SooXo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH8PR12MB9766.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cEFLbzBlMnNjMXMyaVpwVHRYZGd4QlpDb1dlSHF0aFE0Z3I4STY4TXdBditW?=
- =?utf-8?B?NXhzUGlyYTlkNHVrSmJEZTNzMEZiNTB2KzZnS3dpSjhIeEN4MkQyWW8yZW85?=
- =?utf-8?B?NFVpZ1g1eCs5NnVkWmNrUzBpYytZTVVMZHhOTVBtM0xZZXJ1ME5XUkpJQ1oz?=
- =?utf-8?B?ZHVTY3FoY1owRmN3WGUybWIwNEx3RnpDYk9ncnUyNlg4QUZGdHNRSEMxZ3Ax?=
- =?utf-8?B?Y2Zqc1Z0UlVLN3VUZElSbGYzTGtzcmpuVEozVENreW1yRDBPOGJjT3IySG0z?=
- =?utf-8?B?QzBYRFNhRGlualRYMk03UkxqV0gwcU1ncHVkRmViR0QwaGVlZWcvVFRvUTgy?=
- =?utf-8?B?NFR5WlNnTUxvbnl1K3VoVWIxQVRPMk5jeTViSzNwRlQ0WjJTUmduVkQxUDV2?=
- =?utf-8?B?NHdWeHg4TGduWmIrR2d0UzB1ODhhQTR0WXM2SGpVWXgyRlJBbDkxbk5SOTFv?=
- =?utf-8?B?RUxObzNUQ1EwRzJIY0tzendLNzlUTnh6dk5CQkM4ZE5XSTNiejkva1BvbWEw?=
- =?utf-8?B?YnB5M3hzQUNjWlhRcHlpcFZYWTNoRXVUWGowTjVoSVVkM2o1UWszQ0xWWksz?=
- =?utf-8?B?UlRSV2FrUzdOVGFHc05FY0RwQ3JCZU9pL0preDBwNzBseHo0aVp5OGdjcUZq?=
- =?utf-8?B?NGhLVXEvclNpeit3cWNWN1VyblBOYTU2U2ViekJhRUp3azhFM3hDRHU0a1VG?=
- =?utf-8?B?OXhyZDdSWHhoVDE3elgwNENLSlFoQU5Ca3prMENKcURmSCtOeTNzekFMc1o4?=
- =?utf-8?B?MTk3bVhKblFZR1VBenVIMzdDMGhQVk5XZEdkZlE5bHhOODlCUldhd3JQNlFD?=
- =?utf-8?B?a3hRREhvVFNObUo0ZkFETUVSWTFFRnJzWWZpK0ZzcGlpeUd3dnoyR0FETDYw?=
- =?utf-8?B?RG1tYmhNWVRrUGpKTTZpK0xWS002VmVhYUs5TnY1YXVGMk84OGVHNDJsZkZs?=
- =?utf-8?B?RzdFVWNRWXE3NUFJRVB2WU5GbDR5cXF0WnlzeUQ4VnhtY1lORXlaajJkTmhV?=
- =?utf-8?B?VWlTTy91RmpxTW9Xa0hPRC83d3FidkhFRHdubEVSL0JtcEprWVVZUng2cEc5?=
- =?utf-8?B?aERsRHppeEFkemtTbVZWNCtsMzhhajNaZ1dwOVNkbmVSdlNPbGEyT1V2Smpt?=
- =?utf-8?B?eVFweHBDaVZWQWt1MHRqVnFQTC9PWStRaWlJWVhIc29ibUp3bFJ3MmxzN0Zk?=
- =?utf-8?B?SThBZEdYdVliL0NXRkpQNDdlVTNPQTNBcjJsbWJIelQ1b1VjY2ovY25VY0l0?=
- =?utf-8?B?eGpYSG13MnE0WDc5UGZsQ1hHL1dCcDdQZUR3ZWJGejR3RDJFOHJkNlU1eGRB?=
- =?utf-8?B?OHpGeHpSOTJrMjBVT3ZaRkovZkZrbXk5Q0RTZld4QXlrbnRidWZPaHdoTzZJ?=
- =?utf-8?B?VDRxa00vS2NKbkFOUmVUNFA1QldHMzN4Z0xYMGRyczE2MzRTWU5taHlmZGQr?=
- =?utf-8?B?VkoyUFVmRnZtdXc4T0ViQVBhWlZtQXJlN1lYVk5venJtc3I2RmxYcTNhdjgr?=
- =?utf-8?B?dUM1QStYT2JvRk9LUyt5dzJ5T3U0TUFydWVCRWR5NXlaMlhMdDU3UlJzdTds?=
- =?utf-8?B?RWRkQmdsYjgvVW92elcya1RtejR2YmhJTFBlTmRLK2xSNjR2T3lpN0c2RWY2?=
- =?utf-8?B?Y1FpMVBjNSszUHo3TDlERTN4QlpaeEtGMnlwK0JwaVZHSG1kREZjTzhwWGJk?=
- =?utf-8?B?Wk5BR1Z0SUxLWFdycWlYS2czOXozd0wrc0lGV3pIcE1vdlkwMmhkRHNzS0Ex?=
- =?utf-8?B?QVpLcDVsMGYxQ0tyUjVtM3BLUFpFajNTbTZoV2ZKUWcyRElBbGdjZExNR3pP?=
- =?utf-8?B?eFRoODI2QnBaOUpRQU53M2lJYllDM1pRS0prNEUzZzh5aFpQY2NEcXRmajF2?=
- =?utf-8?B?Y2dKdVN2TytJbUtQbi9tZHNOTC9wQ284NTNvdGlmbi9nMHE0MHRYOTYvajF4?=
- =?utf-8?B?Q2djZ3Qxb3Y5RTB4TUxJVy81d25WRGpjUG5uTERPV0cyN2NFSndvdTYybDFP?=
- =?utf-8?B?N3FySyt4V0JWNW5xMEdjamNhQ1ZCaThxNDBtSkRwbkZkcFV3TnRPV2ZkcGpK?=
- =?utf-8?B?cEdJdEFCZG9hZjE4VFZkNktwREZaZnVCWEZBc2lsYlBSYnlVNW5sZnJIL0lT?=
- =?utf-8?Q?CqrBnAp7i+bNz+Vp0EzXARxwI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4fdee3-4d93-4f0f-dc64-08de133539d6
-X-MS-Exchange-CrossTenant-AuthSource: CH8PR12MB9766.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 19:40:45.9005
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +h7G81l1K3typ/9vSdF+FrtDQNbXA7woe9ArlMvZZXitiV1LmVrx+sJk4NCOj4kAjtseS8cl7Mxy6tPjmfQ+Xw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8923
+References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz> <20251023-sheaves-for-all-v1-7-6ffa2c9941c0@suse.cz>
+In-Reply-To: <20251023-sheaves-for-all-v1-7-6ffa2c9941c0@suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 24 Oct 2025 12:43:18 -0700
+X-Gm-Features: AWmQ_bk-kyewHYgpxUqtmCiyFoLA8j75cYs74Mz6Re-SJFA0srIhl0qtPOmknRs
+Message-ID: <CAADnVQLAFkYLLJbMjEyzEu=Q7aJSs19Ddb1qXqEWNnxm6=CDFg@mail.gmail.com>
+Subject: Re: [PATCH RFC 07/19] slab: make percpu sheaves compatible with kmalloc_nolock()/kfree_nolock()
+To: Vlastimil Babka <vbabka@suse.cz>, Chris Mason <clm@meta.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev, 
+	bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/24/2025 5:25 AM, Alejandro Lucero Palau wrote:
-> On 9/26/25 22:10, Dave Jiang wrote:
->> On 9/25/25 3:34 PM, Terry Bowman wrote:
->>> CXL Endpoint (EP) Ports may include Root Ports (RP) or Downstream Switch
->>> Ports (DSP). CXL RPs and DSPs contain RAS registers that require memory
->>> mapping to enable RAS logging. This initialization is currently missing and
->>> must be added for CXL RPs and DSPs.
->>>
->>> Update cxl_dport_init_ras_reporting() to support RP and DSP RAS mapping.
->>> Add alongside the existing Restricted CXL Host Downstream Port RAS mapping.
->>>
->>> Update cxl_endpoint_port_probe() to invoke cxl_dport_init_ras_reporting().
->>> This will initiate the RAS mapping for CXL RPs and DSPs when each CXL EP is
->>> created and added to the EP port.
->>>
->>> Make a call to cxl_port_setup_regs() in cxl_port_add(). This will probe the
->>> Upstream Port's CXL capabilities' physical location to be used in mapping
->>> the RAS registers.
->>>
->>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->>>
->>> ---
->>>
->>> Changes in v11->v12:
->>> - Add check for dport_parent->rch before calling cxl_dport_init_ras_reporting().
->>> RCH dports are initialized from cxl_dport_init_ras_reporting cxl_mem_probe().
->>>
->>> Changes in v10->v11:
->>> - Use local pointer for readability in cxl_switch_port_init_ras() (Jonathan Cameron)
->>> - Rename port to be ep in cxl_endpoint_port_init_ras() (Dave Jiang)
->>> - Rename dport to be parent_dport in cxl_endpoint_port_init_ras()
->>>    and cxl_switch_port_init_ras() (Dave Jiang)
->>> - Port helper changes were in cxl/port.c, now in core/ras.c (Dave
->>> Jiang)
->>> ---
->>>   drivers/cxl/core/core.h |  7 ++++++
->>>   drivers/cxl/core/port.c |  1 +
->>>   drivers/cxl/core/ras.c  | 48 +++++++++++++++++++++++++++++++++++++++++
->>>   drivers/cxl/cxl.h       |  2 ++
->>>   drivers/cxl/cxlpci.h    |  4 ----
->>>   drivers/cxl/mem.c       |  4 +++-
->>>   drivers/cxl/port.c      |  5 +++++
->>>   7 files changed, 66 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
->>> index 9f4eb7e2feba..8c51a2631716 100644
->>> --- a/drivers/cxl/core/core.h
->>> +++ b/drivers/cxl/core/core.h
->>> @@ -147,6 +147,9 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
->>>   #ifdef CONFIG_CXL_RAS
->>>   int cxl_ras_init(void);
->>>   void cxl_ras_exit(void);
->>> +void cxl_switch_port_init_ras(struct cxl_port *port);
->>> +void cxl_endpoint_port_init_ras(struct cxl_port *ep);
->>> +void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host);
->>>   #else
->>>   static inline int cxl_ras_init(void)
->>>   {
->>> @@ -156,6 +159,10 @@ static inline int cxl_ras_init(void)
->>>   static inline void cxl_ras_exit(void)
->>>   {
->>>   }
->>> +static inline void cxl_switch_port_init_ras(struct cxl_port *port) { }
->>> +static inline void cxl_endpoint_port_init_ras(struct cxl_port *ep) { }
->>> +static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
->>> +						struct device *host) { }
->>>   #endif // CONFIG_CXL_RAS
->>>   
->>>   int cxl_gpf_port_setup(struct cxl_dport *dport);
->>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
->>> index d5f71eb1ade8..bd4be046888a 100644
->>> --- a/drivers/cxl/core/port.c
->>> +++ b/drivers/cxl/core/port.c
->>> @@ -870,6 +870,7 @@ static int cxl_port_add(struct cxl_port *port,
->>>   			return rc;
->>>   
->>>   		port->component_reg_phys = component_reg_phys;
->>> +		cxl_port_setup_regs(port, port->component_reg_phys);
->> This was actually moved previously to delay the port register probe. It now happens when the first dport is discovered. See the end of __devm_cxl_add_dport().
+On Thu, Oct 23, 2025 at 6:53=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> FWIW (other people not going through my discovery path :-) ) Dave is 
-> pointing out to his patchset for delaying port probing and now applied 
-> to next.
+> Before we enable percpu sheaves for kmalloc caches, we need to make sure
+> kmalloc_nolock() and kfree_nolock() will continue working properly and
+> not spin when not allowed to.
 >
+> Percpu sheaves themselves use local_trylock() so they are already
+> compatible. We just need to be careful with the barn->lock spin_lock.
+> Pass a new allow_spin parameter where necessary to use
+> spin_trylock_irqsave().
 >
-> Terry, any estimation of when your next version will be sent to the 
-> list? My Type2 patchset is dependent on yours, so I'll be reviewing it 
-> as soon as you do it.
+> In kmalloc_nolock_noprof() we can now attempt alloc_from_pcs() safely,
+> for now it will always fail until we enable sheaves for kmalloc caches
+> next. Similarly in kfree_nolock() we can attempt free_to_pcs().
 >
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  mm/slub.c | 74 ++++++++++++++++++++++++++++++++++++++++++++-------------=
+------
+>  1 file changed, 52 insertions(+), 22 deletions(-)
 >
-> Thank you
+> diff --git a/mm/slub.c b/mm/slub.c
+> index ecb10ed5acfe..5d0b2cf66520 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2876,7 +2876,8 @@ static void pcs_destroy(struct kmem_cache *s)
+>         s->cpu_sheaves =3D NULL;
+>  }
 >
+> -static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
+> +static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn,
+> +                                              bool allow_spin)
+>  {
+>         struct slab_sheaf *empty =3D NULL;
+>         unsigned long flags;
+> @@ -2884,7 +2885,10 @@ static struct slab_sheaf *barn_get_empty_sheaf(str=
+uct node_barn *barn)
+>         if (!data_race(barn->nr_empty))
+>                 return NULL;
+>
+> -       spin_lock_irqsave(&barn->lock, flags);
+> +       if (likely(allow_spin))
+> +               spin_lock_irqsave(&barn->lock, flags);
+> +       else if (!spin_trylock_irqsave(&barn->lock, flags))
+> +               return NULL;
+>
+>         if (likely(barn->nr_empty)) {
+>                 empty =3D list_first_entry(&barn->sheaves_empty,
+> @@ -2961,7 +2965,8 @@ static struct slab_sheaf *barn_get_full_or_empty_sh=
+eaf(struct node_barn *barn)
+>   * change.
+>   */
+>  static struct slab_sheaf *
+> -barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empt=
+y)
+> +barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empt=
+y,
+> +                        bool allow_spin)
+>  {
+>         struct slab_sheaf *full =3D NULL;
+>         unsigned long flags;
+> @@ -2969,7 +2974,10 @@ barn_replace_empty_sheaf(struct node_barn *barn, s=
+truct slab_sheaf *empty)
+>         if (!data_race(barn->nr_full))
+>                 return NULL;
+>
+> -       spin_lock_irqsave(&barn->lock, flags);
+> +       if (likely(allow_spin))
+> +               spin_lock_irqsave(&barn->lock, flags);
+> +       else if (!spin_trylock_irqsave(&barn->lock, flags))
+> +               return NULL;
+>
+>         if (likely(barn->nr_full)) {
+>                 full =3D list_first_entry(&barn->sheaves_full, struct sla=
+b_sheaf,
+> @@ -2990,7 +2998,8 @@ barn_replace_empty_sheaf(struct node_barn *barn, st=
+ruct slab_sheaf *empty)
+>   * barn. But if there are too many full sheaves, reject this with -E2BIG=
+.
+>   */
+>  static struct slab_sheaf *
+> -barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
+> +barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full,
+> +                       bool allow_spin)
+>  {
+>         struct slab_sheaf *empty;
+>         unsigned long flags;
+> @@ -3001,7 +3010,10 @@ barn_replace_full_sheaf(struct node_barn *barn, st=
+ruct slab_sheaf *full)
+>         if (!data_race(barn->nr_empty))
+>                 return ERR_PTR(-ENOMEM);
+>
+> -       spin_lock_irqsave(&barn->lock, flags);
+> +       if (likely(allow_spin))
+> +               spin_lock_irqsave(&barn->lock, flags);
+> +       else if (!spin_trylock_irqsave(&barn->lock, flags))
+> +               return NULL;
 
-Hi Alejandro,
+AI did a good job here. I spent an hour staring at the patch
+for other reasons. Noticed this bug too and then went
+"ohh, wait, AI mentioned it already". Time to retire.
 
-It will be early next week.
+>         if (likely(barn->nr_empty)) {
+>                 empty =3D list_first_entry(&barn->sheaves_empty, struct s=
+lab_sheaf,
+> @@ -5000,7 +5012,8 @@ __pcs_replace_empty_main(struct kmem_cache *s, stru=
+ct slub_percpu_sheaves *pcs,
+>                 return NULL;
+>         }
+>
+> -       full =3D barn_replace_empty_sheaf(barn, pcs->main);
+> +       full =3D barn_replace_empty_sheaf(barn, pcs->main,
+> +                                       gfpflags_allow_spinning(gfp));
+>
+>         if (full) {
+>                 stat(s, BARN_GET);
+> @@ -5017,7 +5030,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, stru=
+ct slub_percpu_sheaves *pcs,
+>                         empty =3D pcs->spare;
+>                         pcs->spare =3D NULL;
+>                 } else {
+> -                       empty =3D barn_get_empty_sheaf(barn);
+> +                       empty =3D barn_get_empty_sheaf(barn, true);
+>                 }
+>         }
+>
+> @@ -5154,7 +5167,8 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gf=
+p, int node)
+>  }
+>
+>  static __fastpath_inline
+> -unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, size_t size, void=
+ **p)
+> +unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, gfp_t gfp, size_t=
+ size,
+> +                                void **p)
+>  {
+>         struct slub_percpu_sheaves *pcs;
+>         struct slab_sheaf *main;
+> @@ -5188,7 +5202,8 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache =
+*s, size_t size, void **p)
+>                         return allocated;
+>                 }
+>
+> -               full =3D barn_replace_empty_sheaf(barn, pcs->main);
+> +               full =3D barn_replace_empty_sheaf(barn, pcs->main,
+> +                                               gfpflags_allow_spinning(g=
+fp));
+>
+>                 if (full) {
+>                         stat(s, BARN_GET);
+> @@ -5693,7 +5708,7 @@ void *kmalloc_nolock_noprof(size_t size, gfp_t gfp_=
+flags, int node)
+>         gfp_t alloc_gfp =3D __GFP_NOWARN | __GFP_NOMEMALLOC | gfp_flags;
+>         struct kmem_cache *s;
+>         bool can_retry =3D true;
+> -       void *ret =3D ERR_PTR(-EBUSY);
+> +       void *ret;
+>
+>         VM_WARN_ON_ONCE(gfp_flags & ~(__GFP_ACCOUNT | __GFP_ZERO |
+>                                       __GFP_NO_OBJ_EXT));
+> @@ -5720,6 +5735,13 @@ void *kmalloc_nolock_noprof(size_t size, gfp_t gfp=
+_flags, int node)
+>                  */
+>                 return NULL;
+>
+> +       ret =3D alloc_from_pcs(s, alloc_gfp, node);
+> +
 
-Terry
+I would remove the empty line here.
 
->>>   	} else {
->>>   		rc = dev_set_name(dev, "root%d", port->id);
->>>   		if (rc)
->>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
->>> index 97a5a5c3910f..14a434bd68f0 100644
->>> --- a/drivers/cxl/core/ras.c
->>> +++ b/drivers/cxl/core/ras.c
->>> @@ -283,6 +283,54 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
->>>   }
->>>   EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
->>>   
->>> +static void cxl_uport_init_ras_reporting(struct cxl_port *port,
->>> +					 struct device *host)
->>> +{
->>> +	struct cxl_register_map *map = &port->reg_map;
->>> +
->>> +	map->host = host;
->>> +	if (cxl_map_component_regs(map, &port->uport_regs,
->>> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
->>> +		dev_dbg(&port->dev, "Failed to map RAS capability\n");
->>> +}
->>> +
->>> +void cxl_switch_port_init_ras(struct cxl_port *port)
->>> +{
->>> +	struct cxl_dport *parent_dport = port->parent_dport;
->>> +
->>> +	if (is_cxl_root(to_cxl_port(port->dev.parent)))
->>> +		return;
->>> +
->>> +	/* May have parent DSP or RP */
->>> +	if (parent_dport && dev_is_pci(parent_dport->dport_dev) &&
->>> +	    !parent_dport->rch) {
->>> +		struct pci_dev *pdev = to_pci_dev(parent_dport->dport_dev);
->>> +
->>> +		if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
->>> +		    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM))
->>> +			cxl_dport_init_ras_reporting(parent_dport, &port->dev);
->>> +	}
->>> +
->>> +	cxl_uport_init_ras_reporting(port, &port->dev);
->>> +}
->>> +EXPORT_SYMBOL_NS_GPL(cxl_switch_port_init_ras, "CXL");
->>> +
->>> +void cxl_endpoint_port_init_ras(struct cxl_port *ep)
->>> +{
->>> +	struct cxl_dport *parent_dport;
->>> +	struct cxl_memdev *cxlmd = to_cxl_memdev(ep->uport_dev);
->>> +	struct cxl_port *parent_port __free(put_cxl_port) =
->>> +		cxl_mem_find_port(cxlmd, &parent_dport);
->>> +
->>> +	if (!parent_dport || !dev_is_pci(parent_dport->dport_dev) || parent_dport->rch) {
->>> +		dev_err(&ep->dev, "CXL port topology not found\n");
->>> +		return;
->>> +	}
->>> +
->>> +	cxl_dport_init_ras_reporting(parent_dport, cxlmd->cxlds->dev);
->>> +}
->>> +EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
->>> +
->>>   static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->>>   {
->>>   	void __iomem *addr;
->>> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
->>> index 259ed4b676e1..b7654d40dc9e 100644
->>> --- a/drivers/cxl/cxl.h
->>> +++ b/drivers/cxl/cxl.h
->>> @@ -599,6 +599,7 @@ struct cxl_dax_region {
->>>    * @parent_dport: dport that points to this port in the parent
->>>    * @decoder_ida: allocator for decoder ids
->>>    * @reg_map: component and ras register mapping parameters
->>> + * @uport_regs: mapped component registers
->>>    * @nr_dports: number of entries in @dports
->>>    * @hdm_end: track last allocated HDM decoder instance for allocation ordering
->>>    * @commit_end: cursor to track highest committed decoder for commit ordering
->>> @@ -620,6 +621,7 @@ struct cxl_port {
->>>   	struct cxl_dport *parent_dport;
->>>   	struct ida decoder_ida;
->>>   	struct cxl_register_map reg_map;
->>> +	struct cxl_component_regs uport_regs;
->>>   	int nr_dports;
->>>   	int hdm_end;
->>>   	int commit_end;
->>> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
->>> index 0c8b6ee7b6de..3882a089ae77 100644
->>> --- a/drivers/cxl/cxlpci.h
->>> +++ b/drivers/cxl/cxlpci.h
->>> @@ -82,7 +82,6 @@ void read_cdat_data(struct cxl_port *port);
->>>   void cxl_cor_error_detected(struct pci_dev *pdev);
->>>   pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->>>   				    pci_channel_state_t state);
->>> -void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host);
->>>   #else
->>>   static inline void cxl_cor_error_detected(struct pci_dev *pdev) { }
->>>   
->>> @@ -91,9 +90,6 @@ static inline pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->>>   {
->>>   	return PCI_ERS_RESULT_NONE;
->>>   }
->>> -
->>> -static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
->>> -						struct device *host) { }
->>>   #endif
->>>   
->>>   #endif /* __CXL_PCI_H__ */
->> I think this change broke cxl_test:
->>
->>    CC [M]  test/mem.o
->> test/mock.c: In function ‘__wrap_cxl_dport_init_ras_reporting’:
->> test/mock.c:266:17: error: implicit declaration of function ‘cxl_dport_init_ras_reporting’ [-Wimplicit-function-declaration]
->>    266 |                 cxl_dport_init_ras_reporting(dport, host);
->>        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>
->>
->>> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
->>> index 6e6777b7bafb..f7dc0ba8905d 100644
->>> --- a/drivers/cxl/mem.c
->>> +++ b/drivers/cxl/mem.c
->>> @@ -7,6 +7,7 @@
->>>   
->>>   #include "cxlmem.h"
->>>   #include "cxlpci.h"
->>> +#include "core/core.h"
->>>   
->>>   /**
->>>    * DOC: cxl mem
->>> @@ -166,7 +167,8 @@ static int cxl_mem_probe(struct device *dev)
->>>   	else
->>>   		endpoint_parent = &parent_port->dev;
->>>   
->>> -	cxl_dport_init_ras_reporting(dport, dev);
->>> +	if (dport->rch)
->>> +		cxl_dport_init_ras_reporting(dport, dev);
->>>   
->>>   	scoped_guard(device, endpoint_parent) {
->>>   		if (!endpoint_parent->driver) {
->>> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
->>> index 51c8f2f84717..2d12890b66fe 100644
->>> --- a/drivers/cxl/port.c
->>> +++ b/drivers/cxl/port.c
->>> @@ -6,6 +6,7 @@
->>>   
->>>   #include "cxlmem.h"
->>>   #include "cxlpci.h"
->>> +#include "core/core.h"
->>>   
->>>   /**
->>>    * DOC: cxl port
->>> @@ -65,6 +66,8 @@ static int cxl_switch_port_probe(struct cxl_port *port)
->>>   	/* Cache the data early to ensure is_visible() works */
->>>   	read_cdat_data(port);
->>>   
->>> +	cxl_switch_port_init_ras(port);
->> This is probably not the right place to do it because you have no dports yet with the new delayed dport setup. I would init the uport when the register gets probed in __devm_cxl_add_dport(), and init the dport on per dport basis as they are discovered. So maybe in cxl_port_add_dport(). This is where the old dport stuff in the switch probe got moved to.
->>
->>> +
->>>   	return 0;
->>>   }
->>>   
->>> @@ -86,6 +89,8 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
->>>   	if (rc)
->>>   		return rc;
->>>   
->>> +	cxl_endpoint_port_init_ras(port);
->>> +
->>>   	/*
->>>   	 * Now that all endpoint decoders are successfully enumerated, try to
->>>   	 * assemble regions from committed decoders
+> +       if (ret)
+> +               goto success;
+> +
+> +       ret =3D ERR_PTR(-EBUSY);
+> +
+>         /*
+>          * Do not call slab_alloc_node(), since trylock mode isn't
+>          * compatible with slab_pre_alloc_hook/should_failslab and
+> @@ -5756,6 +5778,7 @@ void *kmalloc_nolock_noprof(size_t size, gfp_t gfp_=
+flags, int node)
+>                 ret =3D NULL;
+>         }
+>
+> +success:
+>         maybe_wipe_obj_freeptr(s, ret);
+>         slab_post_alloc_hook(s, NULL, alloc_gfp, 1, &ret,
+>                              slab_want_init_on_alloc(alloc_gfp, s), size)=
+;
+> @@ -6047,7 +6070,8 @@ static void __pcs_install_empty_sheaf(struct kmem_c=
+ache *s,
+>   * unlocked.
+>   */
+>  static struct slub_percpu_sheaves *
+> -__pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves=
+ *pcs)
+> +__pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves=
+ *pcs,
+> +                       bool allow_spin)
+>  {
+>         struct slab_sheaf *empty;
+>         struct node_barn *barn;
+> @@ -6071,7 +6095,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struc=
+t slub_percpu_sheaves *pcs)
+>         put_fail =3D false;
+>
+>         if (!pcs->spare) {
+> -               empty =3D barn_get_empty_sheaf(barn);
+> +               empty =3D barn_get_empty_sheaf(barn, allow_spin);
+>                 if (empty) {
+>                         pcs->spare =3D pcs->main;
+>                         pcs->main =3D empty;
+> @@ -6085,7 +6109,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struc=
+t slub_percpu_sheaves *pcs)
+>                 return pcs;
+>         }
+>
+> -       empty =3D barn_replace_full_sheaf(barn, pcs->main);
+> +       empty =3D barn_replace_full_sheaf(barn, pcs->main, allow_spin);
+>
+>         if (!IS_ERR(empty)) {
+>                 stat(s, BARN_PUT);
+> @@ -6093,6 +6117,11 @@ __pcs_replace_full_main(struct kmem_cache *s, stru=
+ct slub_percpu_sheaves *pcs)
+>                 return pcs;
+>         }
+>
+> +       if (!allow_spin) {
+> +               local_unlock(&s->cpu_sheaves->lock);
+> +               return NULL;
+> +       }
 
+and would add a comment here to elaborate that the next
+steps like sheaf_flush_unused() and alloc_empty_sheaf()
+cannot handle !allow_spin.
+
+
+> +
+>         if (PTR_ERR(empty) =3D=3D -E2BIG) {
+>                 /* Since we got here, spare exists and is full */
+>                 struct slab_sheaf *to_flush =3D pcs->spare;
+> @@ -6160,7 +6189,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struc=
+t slub_percpu_sheaves *pcs)
+>   * The object is expected to have passed slab_free_hook() already.
+>   */
+>  static __fastpath_inline
+> -bool free_to_pcs(struct kmem_cache *s, void *object)
+> +bool free_to_pcs(struct kmem_cache *s, void *object, bool allow_spin)
+>  {
+>         struct slub_percpu_sheaves *pcs;
+>
+> @@ -6171,7 +6200,7 @@ bool free_to_pcs(struct kmem_cache *s, void *object=
+)
+>
+>         if (unlikely(pcs->main->size =3D=3D s->sheaf_capacity)) {
+>
+> -               pcs =3D __pcs_replace_full_main(s, pcs);
+> +               pcs =3D __pcs_replace_full_main(s, pcs, allow_spin);
+>                 if (unlikely(!pcs))
+>                         return false;
+>         }
+> @@ -6278,7 +6307,7 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *=
+obj)
+>                         goto fail;
+>                 }
+>
+> -               empty =3D barn_get_empty_sheaf(barn);
+> +               empty =3D barn_get_empty_sheaf(barn, true);
+>
+>                 if (empty) {
+>                         pcs->rcu_free =3D empty;
+> @@ -6398,7 +6427,7 @@ static void free_to_pcs_bulk(struct kmem_cache *s, =
+size_t size, void **p)
+>                 goto no_empty;
+>
+>         if (!pcs->spare) {
+> -               empty =3D barn_get_empty_sheaf(barn);
+> +               empty =3D barn_get_empty_sheaf(barn, true);
+
+I'm allergic to booleans in arguments. They make callsites
+hard to read. Especially if there are multiple bools.
+We have horrendous lines in the verifier that we still need
+to clean up due to bools:
+check_load_mem(env, insn, true, false, false, "atomic_load");
+
+barn_get_empty_sheaf(barn, true); looks benign,
+but I would still use enum { DONT_SPIN, ALLOW_SPIN }
+and use that in all functions instead of 'bool allow_spin'.
+
+Aside from that I got worried that sheaves fast path
+may be not optimized well by the compiler:
+if (unlikely(pcs->main->size =3D=3D 0)) ...
+object =3D pcs->main->objects[pcs->main->size - 1];
+// object is accessed here
+pcs->main->size--;
+
+since object may alias into pcs->main and the compiler
+may be tempted to reload 'main'.
+Looks like it's fine, since object point is not actually read or written.
+gcc15 asm looks good:
+        movq    8(%rbx), %rdx   # _68->main, _69
+        movl    24(%rdx), %eax  # _69->size, _70
+# ../mm/slub.c:5129:    if (unlikely(pcs->main->size =3D=3D 0)) {
+        testl   %eax, %eax      # _70
+        je      .L2076  #,
+.L1953:
+# ../mm/slub.c:5135:    object =3D pcs->main->objects[pcs->main->size - 1];
+        leal    -1(%rax), %esi  #,
+# ../mm/slub.c:5135:    object =3D pcs->main->objects[pcs->main->size - 1];
+        movq    32(%rdx,%rsi,8), %rdi   # prephitmp_309->objects[_81], obje=
+ct
+# ../mm/slub.c:5135:    object =3D pcs->main->objects[pcs->main->size - 1];
+        movq    %rsi, %rax      #,
+# ../mm/slub.c:5137:    if (unlikely(node_requested)) {
+        testb   %r15b, %r15b    # node_requested
+        jne     .L2077  #,
+.L1954:
+# ../mm/slub.c:5149:    pcs->main->size--;
+        movl    %eax, 24(%rdx)  # _81, prephitmp_30->size
 
