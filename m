@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-868355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBB3C05071
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:23:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD94DC0507A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D133C4FC101
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:23:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E66454F2E3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616003043CD;
-	Fri, 24 Oct 2025 08:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BF63043DD;
+	Fri, 24 Oct 2025 08:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsYUin82"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Mq+VO9oq"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B0D2FC88C;
-	Fri, 24 Oct 2025 08:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55857302CC1;
+	Fri, 24 Oct 2025 08:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761294195; cv=none; b=Ymiy+XTIvyoDWjm77BNapwErzGX5kmMAYgzilyb+75E2htJI1OGedZHMaCF9r4xsU4qca5ISxeeQrycig+4ceIVx1QyVgbX8/0yREifspsXZdSb/3wpQWaR8mtrsf7LdhZED3CBbVrNIUy6PZ7Z+tMb7bNbc4OlQbMGSvTyeTOE=
+	t=1761294264; cv=none; b=N8pAxSbRT9iKH95FIR9J7P5nrtPw4SS2p0b8j9P69Eb5SREKZ2338YINxmb/7L1dFpVSRIy9D+Ytjzub6JSzXk/skohb+PQq3Ut7TvIhaKGYl+LkE+pprUxZySq/9yOZmiWUKSCYg8YOvcMP9Z8xAbCRqVBYIJ0bX/+ss+gLHkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761294195; c=relaxed/simple;
-	bh=f7IiCtdsMP9fzUEEFAOVEDHBt8eRbabg5W2VbyP0LKE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kSSxpLG1ggTU7hEB0pqzpfYgtq9fqj3Yib2oRlMct8Z6CZVd00M1NCFaei4sMRtBgPA9yE/7gQkt1Qmw0tJ93Y1akq7U747dEjRS3xUj+O7WcH6PuBttFWD5X0Vn20w+YQwuhHZSDaR5tNwihO3jhJNU5Nh3S9knTBxDafopEXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsYUin82; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9380C4CEF1;
-	Fri, 24 Oct 2025 08:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761294195;
-	bh=f7IiCtdsMP9fzUEEFAOVEDHBt8eRbabg5W2VbyP0LKE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TsYUin82qZvPIMvVAMj+2viHwFtr/OdOgFKW6F87cNwzjpQdTFVG9W0VrbVyo0/PW
-	 pKLTOLX6H7Z18a+zJSMb9/YEeHHmZn2fRae8oZ5ruAqgkp/S/3yvJfCoceCQCqRsp6
-	 wNihpd0vE4QqPT/nHH+WpQzThpPDjhVCENf0BizVmn1xg/C1yeNAfUTsudo5fcNsid
-	 mm9fBPdiodoGBu3f0+MBathiIKzVjt5gU3qWwN8/Ozk5DN8J7CxzxWoqVaj7geOX/7
-	 1N3yGR5WUmXgBu7Kv7gRbQCjTo1iOeD2AH7XPQARZUcFG+0iNS+ttcL517ilqbX3Le
-	 CdauNLQJExzjA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com,
- dakr@kernel.org, miguel.ojeda.sandonis@gmail.com
-Cc: fujita.tomonori@gmail.com, daniel.almeida@collabora.com,
- alex.gaynor@gmail.com, ojeda@kernel.org, anna-maria@linutronix.de,
- bjorn3_gh@protonmail.com, boqun.feng@gmail.com, frederic@kernel.org,
- gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org,
- lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org,
- sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
- gregkh@linuxfoundation.org
-Subject: Re: [PATCH v2 1/2] rust: add udelay() function
-In-Reply-To: <20251023.141909.400243634709519102.fujita.tomonori@gmail.com>
-References: <DDO3OMBHS8TB.2LDODR1AFRCU3@kernel.org>
- <20251022.193230.585171330619599845.fujita.tomonori@gmail.com>
- <aPjmKSrETqrchW_e@google.com>
- <v19-iFZczROFeW5CLs5unJeqiFWIX0oFV1ekc7pY-uzN8DDyoe_SVQqX6ARPdY3WbNjys5ffGs-8Cpisdk3h2g==@protonmail.internalid>
- <20251023.141909.400243634709519102.fujita.tomonori@gmail.com>
-Date: Fri, 24 Oct 2025 10:23:03 +0200
-Message-ID: <874irohfo8.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1761294264; c=relaxed/simple;
+	bh=VllH397HUZLGZlTEcc40pbNTwaXJJj+yH2kUesCtVeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BiJ1gMhKe2/e4R+X63dGZFfxQQIuvJMh7GMfDLw6+88OXzmSzSOgH0CwGuFZpzC9QdgYYGtZ3KEKGB0P3eZXNEWf+2qnFIHiDDs0JbMm7qMlSMfHxOwYQI+Pd7BV/kHiyR0mWShQHZ4PbRimFbH0k9bI75LQ/Pg6ZfVDoL2kVEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Mq+VO9oq; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=we
+	f/5RtKFc6j+gr1pDobNXpElTJ0PkzMN7RzTRqNfgQ=; b=Mq+VO9oqVeM67hba3i
+	Gygd3w4luWJW9eoBXUGl1oquGGop2gc/Aj8tm8uuqWayGZnilgijTklvwy83Ukmx
+	kwduAS5MJjLywcWJMsYZbnlDzjvzn+ESyUIcoZXugAJ6O+AJKJ4eKUtcF2IAVxVS
+	VKCdxHxy29SATSATN6uOBxUwk=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDX54uaN_to492MAA--.43853S2;
+	Fri, 24 Oct 2025 16:23:54 +0800 (CST)
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] regmap: irq: Correct documentation of wake_invert flag
+Date: Fri, 24 Oct 2025 16:23:44 +0800
+Message-ID: <20251024082344.2188895-1-shawnguo2@yeah.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:M88vCgDX54uaN_to492MAA--.43853S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrKr4fuw47tF4Utr4UCFWxWFg_yoW8JF1xpF
+	ZrCa1Fyr48Kry0vayDZ3Wj9FyUtwnrG3y3C3yDJr4jv3s0gry0qF4v9FyYqa4kJrWUCF4j
+	gwn7KrWj9a1UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jO_-9UUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNxoNcmj7N5ohyAAA3F
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+From: Shawn Guo <shawnguo@kernel.org>
 
-> On Wed, 22 Oct 2025 14:11:53 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
->> On Wed, Oct 22, 2025 at 07:32:30PM +0900, FUJITA Tomonori wrote:
->>> On Tue, 21 Oct 2025 17:20:41 +0200
->>> "Danilo Krummrich" <dakr@kernel.org> wrote:
->>>
->>> > On Tue Oct 21, 2025 at 5:13 PM CEST, Miguel Ojeda wrote:
->>> >> i.e. if they aren't sure what the value is, then I would prefer they
->>> >> clamp it explicitly on the callee side (or we provide an explicitly
->>> >> clamped version if it is a common case, but it seems to me runtime
->>> >> values are already the minority).
->>> >
->>> > Absolutely! Especially given the context udelay() is introduced
->>> > (read_poll_timeout_atomic()), the compile time checked version is wha=
-t we really
->>> > want.
->>> >
->>> > Maybe we should even defer a runtime checked / clamped version until =
-it is
->>> > actually needed.
->>>
->>> Then perhaps something like this?
->>>
->>> #[inline(always)]
->>> pub fn udelay(delta: Delta) {
->>>     build_assert!(
->>>         delta.as_nanos() >=3D 0 && delta.as_nanos() <=3D i64::from(bind=
-ings::MAX_UDELAY_MS) * 1_000_000
->>>     );
->>
->> This is a bad idea. Using build_assert! assert for range checks works
->> poorly, as we found for register index bounds checks.
->
-> Oh, I didn=E2=80=99t know about that. Do you have a pointer or some detai=
-ls I
-> could look at?
->
->
->> If you really want to check it at compile-time, you'll need a wrapper
->> type around Delta that can only be constructed with delays in the right
->> range.
->
-> You meant that introducing a new type like UdelayDelta, right?
->
-> read_poll_timeout() and read_poll_timeout_atomic() use different Delta
-> types... I'm not sure it's a good idea.
+Per commit 9442490a0286 ("regmap: irq: Support wake IRQ mask inversion")
+the wake_invert flag is to support enable register, so cleared bits are
+wake disabled.
 
-I would assume we keep this type private and only construct it in
-`udelay`. @Alice, could you give a pointer on this approach?
+Fixes: 68622bdfefb9 ("regmap: irq: document mask/wake_invert flags")
+Cc: stable@vger.kernel.org
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+---
+ include/linux/regmap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 4e1ac1fbcec4..55343795644b 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1643,7 +1643,7 @@ struct regmap_irq_chip_data;
+  * @status_invert: Inverted status register: cleared bits are active interrupts.
+  * @status_is_level: Status register is actuall signal level: Xor status
+  *		     register with previous value to get active interrupts.
+- * @wake_invert: Inverted wake register: cleared bits are wake enabled.
++ * @wake_invert: Inverted wake register: cleared bits are wake disabled.
+  * @type_in_mask: Use the mask registers for controlling irq type. Use this if
+  *		  the hardware provides separate bits for rising/falling edge
+  *		  or low/high level interrupts and they should be combined into
+-- 
+2.43.0
 
 
