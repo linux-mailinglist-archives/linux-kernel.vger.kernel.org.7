@@ -1,159 +1,152 @@
-Return-Path: <linux-kernel+bounces-869598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5615C08471
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:11:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344DDC08477
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CEC24ED7F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73D23A7093
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B104D30DD2F;
-	Fri, 24 Oct 2025 23:11:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74DE30DD13;
+	Fri, 24 Oct 2025 23:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMc8uwQa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2A12BE03E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DAE303A38;
+	Fri, 24 Oct 2025 23:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761347491; cv=none; b=olZ0OpNlom4nIig1LqWd1C8nz9WlwFs+/dYKEMdP3jysmS66pBNMbELvYaiWS5b2bXraScNQN5qcygFFWCSjTof8SEuTZWXez5NzYapnElrufqjX5eOQaK4VFTOY1jKmzXDb/kNHIwcijYapPqzV0kW0xfaoavwbZInJtCIzeQM=
+	t=1761347517; cv=none; b=iqaOrbgmgYGYQ8L0QpVzqv9WvkoEOIPTy/kvs3jOm5lL9aacq4cANUzBjESHTAuOn7HnkQSgEnqo9Cb85a2EHVofHbu2CA/5KA87jl1KJXPC5ksUIM2eZaEY09Xr96Ws7r3/sfYBHn/RqsNwwZTgPPNc6ayhqxeRuAYDDR3/bfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761347491; c=relaxed/simple;
-	bh=D0HhoPZUUI003Dr0/Z82VmkSMWyCgcVcSc/NG0S2ZRo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CIWECmqkjnZu4c3fb1qAZprcn9oOotzYkMDJZr3G28yek3CNk20XoAEwxaV8bEKu278ffi4PLkMNljAth3bjhlWAgcnGPtiGWMdE+VV01pjJuVh4N12D8cOAlFgY0LUJdTdNNdsH3ZW7bWV04sblVl1nc9x6fwiqp09/8oF6DMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-430da49fcbbso34924755ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:11:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761347489; x=1761952289;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YLmm+C3ZCh8Qp07LUG92nktccaTXL6AyWpT7k1Nn7as=;
-        b=TEK89HIHRuYncimk0drf8+FbKRKolGQbMq9CXFGJ54awcEXeURzNJKBRJmIfTx4dEc
-         736zadeiYdolMV2kYYIaGkxy+wnyLxC/a8GEqHx2D9mooBmonPebIcAo0IJMBm7Du+uO
-         ERw8pB24kwyAWm9tI50nc3OcuVo39Q4mu/L4iKwCDkPHh/QwFcOPPI+gJIqtGErbf8/H
-         EUxk1yJ3c3/N0Rq0vU74v1PB72lNV/VCDShjKUfwXFv0sGXraKgj3k3h3SLxykYvmEmV
-         xJDVRUt+z4/TuFkJZgtmR0bZpWOvDDzeWal98sEGp66cSpTudsyc/kO1rBFYv9jEMP5d
-         McIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaLXQXYMlbDLrhUCOJJVQjLOZhIJbyBiQ+WesDNdRLjQqNRiI+HB3Sa1qarX54yH8NWSL8+IdRUZ5H4YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZQ9ekxFjNlrW3s02o4wid2S7uUqKJmQIYIw9WUFmommPdePKf
-	/+4/uGV8Mq/1ddXa0IFmta1kyYDZcZ2oCvZVOZ1dFSzCkuoyZGs2IzkAmmqBD8I5ZIAgqUqwUsw
-	iN86dNjjt8vPf5KBlWtod9X66IY+txp2DyHfCfoUTYt8TlQ7LQDYtkFFd7tc=
-X-Google-Smtp-Source: AGHT+IGBSt7L9vcY/WLMU3vVT94oq8gMy2FOzTxRk6D8OcXsdeJI+zG817jRuUkMRphkH0xsDYJq2/MlLo8Wb4O54yFIpGU1eoZJ
+	s=arc-20240116; t=1761347517; c=relaxed/simple;
+	bh=F1LhiwGp0x3wM8SAKbj7UnEIjjud2a8/8+rDH/aYbsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tO2DdkVCUrQuIAyOv2Vu72XvKZyy0vuc9hqzEbxWiBBnZDukWHEoV9vQx4vsXRCUSuAACC+vgiU44LRnllXP3LpcT4J7X9zlBVp/PxaHu2VzEKpPYAGwDmq4ma82JSctdh4keFexsWYNkcfOwlBXRVFGBxNnYYMgElqOa8zHGXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMc8uwQa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E58C4CEF1;
+	Fri, 24 Oct 2025 23:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761347516;
+	bh=F1LhiwGp0x3wM8SAKbj7UnEIjjud2a8/8+rDH/aYbsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vMc8uwQa2ZrwjDbFF6Ktnl5l6b3YVFOifLfJacDlgvv45EyGN3Y6vPdMmdK2BrXsK
+	 TiBckurBINKotx8ovqoOOPI0fnqJVuVhO8YOdPW8TSaySjdDMzuWxcuc7wNk/kVPsA
+	 5N/yiuZvGf9TKL4dFHeNX0PtjsF+lZKSi+uU0JkK5LwpUGassFriVhIqO8Sp42MLdR
+	 X03nJP9dqgLarDzc4Mh3tXRP3Eb7pU2YqiYW+ig73LkP9XGIhABgXfL9+6rWojAguE
+	 OwAL6gnIeuecSfwRAT3vMeZjGTVJE5/x/RjVcBdJNTSV2vOjIDb8Xk7ILwlgo/qJdu
+	 mbg0SpRIpe76w==
+Date: Fri, 24 Oct 2025 18:11:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	"jk@codeconstruct.com.au" <jk@codeconstruct.com.au>,
+	Kevin Chen <kevin_chen@aspeedtech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: interrupt-controller:
+ aspeed,ast2700: Add support for INTC hierarchy
+Message-ID: <20251024231154.GA2962687-robh@kernel.org>
+References: <20251022065507.1152071-1-ryan_chen@aspeedtech.com>
+ <20251022065507.1152071-2-ryan_chen@aspeedtech.com>
+ <20251022135101.GA3349934-robh@kernel.org>
+ <TY2PPF5CB9A1BE674594566C13B8D8B2984F2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aaa:b0:42f:6790:476c with SMTP id
- e9e14a558f8ab-430c52d5323mr419014795ab.23.1761347488684; Fri, 24 Oct 2025
- 16:11:28 -0700 (PDT)
-Date: Fri, 24 Oct 2025 16:11:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fc07a0.a70a0220.3bf6c6.01ab.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in raw_ioctl
-From: syzbot <syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
-	david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com, 
-	rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY2PPF5CB9A1BE674594566C13B8D8B2984F2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
 
-Hello,
+On Thu, Oct 23, 2025 at 06:57:01AM +0000, Ryan Chen wrote:
+> Hello Rob.
+> 	Thank you for your detailed review and comments.
+> 
+> > Subject: Re: [PATCH v5 1/3] dt-bindings: interrupt-controller: aspeed,ast2700:
+> > Add support for INTC hierarchy
+> > 
+> > On Wed, Oct 22, 2025 at 02:55:05PM +0800, Ryan Chen wrote:
+> > > AST2700 contains two-level interrupt controllers (INTC0 and INTC1),
+> > > each with its own register space and handling different sets of
+> > > peripherals.
+> > 
+> > This is a mess!
+> > 
+> > How does this relate to the existing "aspeed,ast2700-intc-ic"? Its schema has a
+> > block diagram of connections which I can understand. This does not.
+> > 
+> > The use of child nodes here is questionable. A variable number of interrupt
+> > banks is not a reason to have child nodes. I'm only guessing that's what's
+> > happening here because you haven't explained it.
+> 
+> Let me clarify the hardware structure and the purpose of these bindings.
+> 
+> The AST2700 SoC includes two top-level interrupt controller modules,
+> INTC0 and INTC1. (aspeed,ast2700-intc0, aspeed,ast2700-intc1)
+> Each of them provides routing selection and register protection
+> features.
+> Within each INTCx block, there are multiple sub-blocks called
+> intc-ic, each handling multi-interrupt sources.
+> ("aspeed,ast2700-intc0-ic", "aspeed,ast2700-intc1-ic")
+> 
+> Cascading occurs between the child banks:
+> Level 1 : intc0-ic have multi-interrupts connect to GIC (root)
+> Level 2 : multi Intc1-ic# connect to intc0-ic
+> The parent intc0/1 nodes expose register regions for routing and
+> protection control, serving as containers for their intc-ic children.
 
-syzbot found the following issue on:
+Being a 2nd vs. 3rd level interrupt controller is not a reason for 
+different compatibles. The programming model is obviously the same for 
+both as you essentially have 0 driver changes. Having N banks of 32 
+interrupts vs. 1 bank of 32 interrupts is not a reason to have multiple 
+intcN-ic nodes. That is a very common difference between instances of 
+the same interrupt controller such as the GIC.
 
-HEAD commit:    72fb0170ef1f Add linux-next specific files for 20251024
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10fd0be2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e812d103f45aa955
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8fd35fa6177afa8c92b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119eae7c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140693e2580000
+What you need to do is simply extend your driver to support N banks of 
+32 interrupts. That's what almost every other irqchip driver with more 
+than 32 interrupts does. If you are lucky, then the offset to each 
+bank's registers is just hwirq/32 * <bank stride> and the number of 
+banks can be calculated from the length of 'reg'. If you are not 
+lucky, then you could put 1 'reg' entry for each bank.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be1fa3d1f761/disk-72fb0170.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/57302bf7af40/vmlinux-72fb0170.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/91c806bb2a2b/bzImage-72fb0170.xz
+AFAICT, the existing binding in aspeed,ast2700-intc.yaml should work for 
+you.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
+> 
+> The following simplified diagram shows the hierarchy:
+> 
+> 
+>                                  +----------+       +----------+
+>                                  |  intc0   |       |  intc1   |
+> - - - - - - - - - - - - - - - - -+---- -----+- -  - +------ - -+
+>   +-----------------------+      |          |       |          |
+>   | +-------+ +---------+ |      |          |       |          |
+>   | |       | |         | |      |          |       |          |
+>   | |  PSP  +-+ GIC     | |      |          |       |          |
+>   | |       | |         | |      |          |       |          |
+>   | +-------+ |         | |      |          |       |          |
+>   |           |         | |      +----------+       |          |
+>   |           | 192~201 <-|------+          <-------+ intc1-ic |
+>   |           +---------+ |      |          |       |          |
+>   +-----------------------+      | intc0-ic <-------+ intc1-ic |
+>                                  |          |       |          |
+>                                  | 			<-------+ intc1-ic |
+>                                  +----------+		  .....
 
-------------[ cut here ]------------
-WARNING: mm/page_alloc.c:5190 at __alloc_frozen_pages_noprof+0x2c8/0x370 mm/page_alloc.c:5190, CPU#1: syz.0.17/6001
-Modules linked in:
-CPU: 1 UID: 0 PID: 6001 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__alloc_frozen_pages_noprof+0x2c8/0x370 mm/page_alloc.c:5190
-Code: 74 10 4c 89 e7 89 54 24 0c e8 64 b9 0d 00 8b 54 24 0c 49 83 3c 24 00 0f 85 a5 fe ff ff e9 a6 fe ff ff c6 05 b1 7d 70 0d 01 90 <0f> 0b 90 e9 18 ff ff ff a9 00 00 08 00 48 8b 4c 24 10 4c 8d 44 24
-RSP: 0018:ffffc90003017920 EFLAGS: 00010246
-RAX: ffffc90003017900 RBX: 0000000000000013 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90003017988
-RBP: ffffc90003017a18 R08: ffffc90003017987 R09: 0000000000000000
-R10: ffffc90003017960 R11: fffff52000602f31 R12: 0000000000000000
-R13: 1ffff92000602f28 R14: 0000000000040cc0 R15: dffffc0000000000
-FS:  000055558dedb500(0000) GS:ffff888125ddc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffef4504a80 CR3: 0000000072ffa000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2418
- ___kmalloc_large_node+0x5f/0x1b0 mm/slub.c:5583
- __kmalloc_large_node_noprof+0x18/0x90 mm/slub.c:5614
- __do_kmalloc_node mm/slub.c:5630 [inline]
- __kmalloc_noprof+0x4c9/0x800 mm/slub.c:5654
- kmalloc_noprof include/linux/slab.h:961 [inline]
- raw_alloc_io_data drivers/usb/gadget/legacy/raw_gadget.c:673 [inline]
- raw_ioctl_ep_read drivers/usb/gadget/legacy/raw_gadget.c:1162 [inline]
- raw_ioctl+0x18fb/0x3be0 drivers/usb/gadget/legacy/raw_gadget.c:1325
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fccefd8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffef4505ad8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fcceffe5fa0 RCX: 00007fccefd8efc9
-RDX: 00002000000000c0 RSI: 00000000c0085508 RDI: 0000000000000004
-RBP: 00007fccefe11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fcceffe5fa0 R14: 00007fcceffe5fa0 R15: 0000000000000003
- </TASK>
+You already match on intc0 and handle 32 interrupts. Now you are adding 
+intc0-ic to match on and handling the same 32 interrupts?
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Rob
 
