@@ -1,369 +1,177 @@
-Return-Path: <linux-kernel+bounces-869128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E31FC070B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:44:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8D8C070C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184FF3B8188
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:44:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0590A4FD332
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA2732AAAC;
-	Fri, 24 Oct 2025 15:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0F132B9B2;
+	Fri, 24 Oct 2025 15:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/Au3lH2"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iF0tJPBo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098D5314D2D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1FC313552
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761320657; cv=none; b=rCE8fU1TC/LZE26lC6S0nKrp1wTGY6ydeRWTYdc1yLP2CvHTD43d7OV3CnJ1L2T8Sx+qsepLn96a6Nwxe8Qs9PJuQtCQsOt/cluUU4HlXgqjLBJfjKjCncn/SnnDtx9MERd2hy3SGUxi57cBf7Ce37IBoGEX5P7IV+KQzUAHH5k=
+	t=1761320687; cv=none; b=uo+m1+jPsz9aZKuEVgeHM+xah3ppzet/Yop41T8cpPLK5SJgtbRrlDk1ZHxGk8lEbzZg2zHFcO9BqANewKYFaXU15lq9q3zF3KmYZinmGD/TrBEt5q0T0psgH4RKEURxEpHrR4g0r8dEWaubDRB6SMb/OFFOZxE9w65QMKB8gWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761320657; c=relaxed/simple;
-	bh=OI5Mcwha4880QnYvaFHSmXPNmsViH6T7b40yOsLYZrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnM/8q8NS2t6MYQ8+XUbagAPEzyKtTUVu3jCbVp2Pcb4xA7PN5y/8lD8XEe7wUmUAhaX4LD7YnF0tLAw2DY9FEX2f6bi2KYsJsl53QSpzvhCDLRYRjt2vNDyzQzN3xqQKxdHkY/7X9ZtEaRieSavCV6kdRYdMl7mNRNVh9mxgyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/Au3lH2; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47117e75258so16620945e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761320653; x=1761925453; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HyFrzmD5VGIhCjgUJBbHgOpCz5hf6OpkpWtoCO82QTo=;
-        b=X/Au3lH2Phc7aYqhx7IhhWVjWy2swtpe0xzbNbMqgms5nLMDA5EFjrIOc/WmLUAnZr
-         ww/x6uyOzhRbPTCMViX59gjocUt0F8jvVIAJ5/cC+SDWkwfGujt54WjHT+Cs+wxRhBvM
-         x++smsdJpcCgpU32m3sdP4aLddJxLDazY6+1PXV9CXBfmxf/6tSNwnY98f1D2Hg8m02D
-         yjcTcS/bTcWydZNxZw0dFKIGJwSC4cufwIja0cIXVmO31k5Lzm7faI8rp0KiA+4fMCRC
-         hdmSHpYwiP33XFttPhVZdI1QWelXXNZCymTesDDG9KGevwk8hkP4rvdPOAb7WhPeu5T3
-         kymg==
+	s=arc-20240116; t=1761320687; c=relaxed/simple;
+	bh=BzlFR1sP1LDfQnnqVDneaWvFJahhmEcC/MtNUN+39ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CQcPhMk9xXOQTcP7UdibDZltOpXXGCDCINlzsjkOPSDDOcCNk82QeKHDY/bqWFz2IP9m6yqe+f3eAbdCry+zCGCCmYNTUJ6U59x+qV7q8UBsafQhZjG6GrFAnso88O2csVBUUbyPwLRpY77A0xrIRdz1e44NUFiz7PJUB3mg1DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iF0tJPBo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OBxT5o003638
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:44:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RsSIFOmPwOHfjKgaufxErN9BuxGH1hiiSVvvEFdeNg4=; b=iF0tJPBo7tivlT9j
+	X+fqeHS8Rs4DZQz14wcCn53jSzoIqO5bF0p9DEMxaija/ThZbcObPxbhJiE9peGQ
+	58Z0Z2A5ZBft8IjHJiVPghwENeecPSdzrGihxFsRUj0u350iuTUTannpLVuT1/HZ
+	toR0UUtX+aqfd/xj9YCSP4V0OyqJdzBIIwH5hWq0nSjsqwPuvjNDDILkXuUkR2WI
+	A1wipld5nQ7CQjd/htIEi86dMLveLc4/0YIBoAY23uVBKeahV2Iqub9NEPz7VnBn
+	KgX2JLIbKzgNj/9ssPQ3b+i+hy1j0JKO/cts0ln2iJ1JWEgmEW+D6GgRdB4X0QMz
+	KrawDw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v2gecfgs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:44:44 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33bdd0479a9so2441840a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:44:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761320653; x=1761925453;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HyFrzmD5VGIhCjgUJBbHgOpCz5hf6OpkpWtoCO82QTo=;
-        b=IbeheYT9tYlQUq/ookk5rss6irUb9YFjQfzWKDQU4RqArXqJ++6mGrpBuVG13bOMvv
-         Bp8X2e+ov4BCdabca+4MztH7VOqwVlP0GtstBgZiR5iy6MhKy3VVv/xs4/FLlku+9AFJ
-         OUAdCwPQWbHzYJa/0yYY4w9MUi7jAXHo/gkz4L9BzJjSoPhkhasKoNCZWPWQiwZpi0Ho
-         qZ2HplkUvVvNV3MgL9YxGpAy/ktMxYCBodTS8h1opMhzSH+y2/9yO64LsvaxNRtIxL/C
-         6juMsUnCpjSplhjAAysbe3NgjR8GKuP+4hXcaCuSC5rQy+SF2UM0jt+EqhasBeFqdgNF
-         E9fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG+9IEo0hIwkfrWRBUOINlaKH/J5RCjTXECSmcYh3KJhEdx8eKWW/bPsMGzqVuQ8j6WyETJaCGjaCDmUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr8slttzjc9sCIp8LCfJs9+tuWaaEXhZf4M8Q2iwLbuUjB15jH
-	hUnoIRnLjqITJ6T2m1LMeJ4FsWaS/1O+q8IYJYw4y3mWjyvoTEG35Ry/
-X-Gm-Gg: ASbGncv2ijICB0/HU9ibR62hT8FSZMld8cKHAOzUQJN1Aos2D0EdAgQOPqwnbalzXNe
-	bfcI/3hqH+SO/+ALwGVlWcrHkgR2TR4yZb+6w1luYgmdbM3It/1dITOHB3yInmzomfhL2VoYxLA
-	PHnCJX5/80vGd9VZKsppNTfX45PG/95Gzo/wBIO/nDTYdQHggHPU2j6RwWStpWLW0VUnIWmvVR3
-	sN/syWFt5vB4xT2llDGviv3mqc36BzKb+I++J+1UqKEw0dQw5tV5Q5+bhMQ09OQA0bEQpXuw76K
-	+YbwDqqlSDV/lPMMtGGQWXaNvGp8wtV/nxrWdg0Zf1N2htQl6yDsf5av1hXUu3iYY7wwyo/xmFf
-	yGvd8Gk3Dn9/mrhVdqYVdPJF9tShPlSHBiMjEBaOOwY0JDLe7D2TwHUetP+6N/LURsj532JGpX1
-	ijWwBNK3D25KVjYve415cp
-X-Google-Smtp-Source: AGHT+IEubgG8lezOHzEid79A6EvcYG46QmDmuwMeFGV3CQH5ZDkGrXl7VIXkJVqTpBwwQDK5w3yMwQ==
-X-Received: by 2002:a5d:64c4:0:b0:428:3cd7:a340 with SMTP id ffacd0b85a97d-4298a0a9602mr4884639f8f.35.1761320652968;
-        Fri, 24 Oct 2025 08:44:12 -0700 (PDT)
-Received: from fedora ([37.29.213.75])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ed13fsm9876155f8f.44.2025.10.24.08.44.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 08:44:12 -0700 (PDT)
-Date: Fri, 24 Oct 2025 17:44:09 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	victoria@system76.com, sebastian.wick@redhat.com,
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 09/22] drm/vkms: Introduce config for plane format
-Message-ID: <aPueydZ1bdmEQ8VE@fedora>
-References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
- <20251018-vkms-all-config-v1-9-a7760755d92d@bootlin.com>
+        d=1e100.net; s=20230601; t=1761320683; x=1761925483;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RsSIFOmPwOHfjKgaufxErN9BuxGH1hiiSVvvEFdeNg4=;
+        b=AAC36BgIIOOHPKbPkdyytEDVFQXhzbBD9tziknW2P20HdYJ2B6em0+tPPlszzlXTkc
+         P9+PmPDoUekDl7DD+NIpVK69qMqvwb/l/nXAZeN3xjmUYgP1kalVJLwfleNhUe93jMYY
+         XMnUTzs5ePBf1Ztb2v8Ni1Z1uQEV+ZWvW+feFTiB4kv8SPtqMkeUUezMhnTDYxatLS+l
+         coW2J4khc+jzLr5XOgUZs71ZiwihKNfTiLV6FUSNvGWrFwzVgSxikZ+UGxIAgv/tpFzk
+         YYb/bAiSIB2rHz1FQvAz+e/TpUk4Ho0pdcQZXKAz5bAPJcx55hKaEx/8i0NqbQsdATnd
+         yM2w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Jw7f37vO+1g38TBaLqwgy92g5K8Ey0iL+EXXnBiZXuNvBrTe9Yu1h9bE41sDDjYGTkFfrJim13jyTaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoAIkjjZAmTvIhE91mwb/VbfEg/NxFMei5qAyT/aHbABEypUjo
+	a2YVJF8BFGN0AoAtdslY+qzN7ZFAv8GR8KIuwg6txlGjvPO/9Q3Im/5Ybc3gIWRlyv1okXktj8z
+	fyUT5p/Qm9+1/x3dWDO/GVRuUaSpV3D3fsAY0aZlikWkXNv9EibyxHrZCUk6hZvvodV0=
+X-Gm-Gg: ASbGncv2gTllpaPcQ9zTt6wgqzv5FYMpShjIeA8/HKnH9156A3Fb/P4ijnUXS2qiKHE
+	Ms6y2hayElxHaIGShk5MnBag1tHbwqzFu1Ioyexs1wCXv/0BPf3xQhFQmojOP6JgbQr10vHFkYi
+	kZsisYdO0VhU0zLPaVnG5h47/hW1btkkx4yvBPqSU7TayoKx29ca8afx0Oc+QMeB/Ui6wYkjfrF
+	6/TzhuMTjwd/kqrKy80/obNUCeF9V4Jqt0UUGNf9z6owloJPJMWu2si+EME8+I1jEUdSd0BvEFt
+	it/mEkW7rEzy9vrXn58LcnHawDDdZCISRy0jSqNjWIoEk++czh49PTrjsoL1eiLBYXhcxiYLGlf
+	Ejy4a+WjOasWgZoj14apPJw==
+X-Received: by 2002:a17:90b:3a46:b0:33b:b0f7:fdc3 with SMTP id 98e67ed59e1d1-33fd65ca640mr3482669a91.8.1761320682856;
+        Fri, 24 Oct 2025 08:44:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHoydupJwYWbjfP4d6gKx6bLId6YhXa84WjCyAv6FuMrHrk33VGVoOGz0iiaQM3Gv/lfWoJJw==
+X-Received: by 2002:a17:90b:3a46:b0:33b:b0f7:fdc3 with SMTP id 98e67ed59e1d1-33fd65ca640mr3482638a91.8.1761320682339;
+        Fri, 24 Oct 2025 08:44:42 -0700 (PDT)
+Received: from [10.204.104.20] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33faff37c14sm6200687a91.2.2025.10.24.08.44.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 08:44:42 -0700 (PDT)
+Message-ID: <7cc6b184-e192-4d57-ba3a-82d4c7069fff@oss.qualcomm.com>
+Date: Fri, 24 Oct 2025 21:14:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018-vkms-all-config-v1-9-a7760755d92d@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Remove Jessica from drm-msm reviewers
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <rob.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>
+Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>
+References: <20251024-remove-jessica-v1-1-f1bb2dfc2e18@oss.qualcomm.com>
+ <fe898b57-2b96-4f8a-8f27-58dca1c11ffa@linaro.org>
+Content-Language: en-US
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+In-Reply-To: <fe898b57-2b96-4f8a-8f27-58dca1c11ffa@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMCBTYWx0ZWRfX+2QbWXI6wbma
+ k2d+TbyKWDwP7CLDfA7nP15RT2N6VZNKY8w5YiwPQ5E1r8U2AD9S7T1nFFDRmiIgMs2E0NzZ3w2
+ /M2yGThatA+7eKW9Y3PuRZAunG20mlFekqM7+GSXVXiKg51Jqxt5vrODHhvQ7YJzDEPWs91SjO7
+ dra9UbN3h3E2VqSxuFwXurQi9GclPZfBAdejxQbHiiqUJwPObLxtcY40FCs1R1ASFErew36zV6N
+ KEcCmC/hf2KzmNF6juvvqh966+dYCHl2dQHqNkWoPkIfoNAH9jFdcx0e0u07r28fLaoZ0lKp3km
+ DSSJXaz9dp9HtLVrcOIosWxATOWNDdba4A87cgrmmvnX1yOvenVf2SwKOnD6Ij/onkPNtcq+g13
+ qk52H4eqPFpxbd+z732I+RlrON2p3A==
+X-Authority-Analysis: v=2.4 cv=KqFAGGWN c=1 sm=1 tr=0 ts=68fb9eec cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=tVI0ZWmoAAAA:8 a=-IAwFrDFS_yr-AoREdYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+ a=-BPWgnxRz2uhmvdm1NTO:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-GUID: SJoS4Ce-XEjfU8bO_exGhy-wnWel0jYt
+X-Proofpoint-ORIG-GUID: SJoS4Ce-XEjfU8bO_exGhy-wnWel0jYt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180020
 
-On Sat, Oct 18, 2025 at 04:01:09AM +0200, Louis Chauvet wrote:
-> VKMS driver supports all the pixel formats for planes, but for testing it
-> can be useful to only advertise few of them. This new configuration
-> interface will allow configuring the pixel format per planes.
+On 10/24/2025 8:41 PM, Neil Armstrong wrote:
+> Hi,
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_config.c | 99 ++++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/vkms/vkms_config.h | 49 +++++++++++++++++++
->  drivers/gpu/drm/vkms/vkms_plane.c  | 39 +--------------
->  3 files changed, 150 insertions(+), 37 deletions(-)
+> On 10/24/25 16:56, Akhil P Oommen wrote:
+>> Jessica has left Qualcomm and her Qualcomm email address is bouncing.
+>> So remove Jessica from the reviewer list of drm-msm display driver for
+>> now.
+>>
+>> Cc: Rob Clark <robin.clark@oss.qualcomm.com>
+>> Cc: Dmitry Baryshkov <lumag@kernel.org>
+>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>> ---
+>>   MAINTAINERS | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 5889df9de210..064aecda38cf 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -7889,7 +7889,6 @@ DRM DRIVER for Qualcomm display hardware
+>>   M:    Rob Clark <robin.clark@oss.qualcomm.com>
+>>   M:    Dmitry Baryshkov <lumag@kernel.org>
+>>   R:    Abhinav Kumar <abhinav.kumar@linux.dev>
+>> -R:    Jessica Zhang <jessica.zhang@oss.qualcomm.com>
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-> index 8f00ca21ed6e..0b975a0d47aa 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.c
-> +++ b/drivers/gpu/drm/vkms/vkms_config.c
-> @@ -8,6 +8,42 @@
->  
->  #include "vkms_config.h"
->  
-> +static const u32 vkms_supported_plane_formats[] = {
-> +	DRM_FORMAT_ARGB8888,
-> +	DRM_FORMAT_ABGR8888,
-> +	DRM_FORMAT_BGRA8888,
-> +	DRM_FORMAT_RGBA8888,
-> +	DRM_FORMAT_XRGB8888,
-> +	DRM_FORMAT_XBGR8888,
-> +	DRM_FORMAT_RGB888,
-> +	DRM_FORMAT_BGR888,
-> +	DRM_FORMAT_XRGB16161616,
-> +	DRM_FORMAT_XBGR16161616,
-> +	DRM_FORMAT_ARGB16161616,
-> +	DRM_FORMAT_ABGR16161616,
-> +	DRM_FORMAT_RGB565,
-> +	DRM_FORMAT_BGR565,
-> +	DRM_FORMAT_NV12,
-> +	DRM_FORMAT_NV16,
-> +	DRM_FORMAT_NV24,
-> +	DRM_FORMAT_NV21,
-> +	DRM_FORMAT_NV61,
-> +	DRM_FORMAT_NV42,
-> +	DRM_FORMAT_YUV420,
-> +	DRM_FORMAT_YUV422,
-> +	DRM_FORMAT_YUV444,
-> +	DRM_FORMAT_YVU420,
-> +	DRM_FORMAT_YVU422,
-> +	DRM_FORMAT_YVU444,
-> +	DRM_FORMAT_P010,
-> +	DRM_FORMAT_P012,
-> +	DRM_FORMAT_P016,
-> +	DRM_FORMAT_R1,
-> +	DRM_FORMAT_R2,
-> +	DRM_FORMAT_R4,
-> +	DRM_FORMAT_R8,
-> +};
-> +
->  struct vkms_config *vkms_config_create(const char *dev_name)
->  {
->  	struct vkms_config *config;
-> @@ -435,6 +471,11 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
->  	if (!plane_cfg)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	if (vkms_config_plane_add_all_formats(plane_cfg)) {
-> +		kfree(plane_cfg);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
->  	plane_cfg->config = config;
->  	vkms_config_plane_set_type(plane_cfg, DRM_PLANE_TYPE_OVERLAY);
->  	vkms_config_plane_set_name(plane_cfg, NULL);
-> @@ -563,6 +604,64 @@ static struct vkms_config_plane *vkms_config_crtc_get_plane(const struct vkms_co
->  	return NULL;
->  }
->  
-> +int __must_check vkms_config_plane_add_all_formats(struct vkms_config_plane *plane_cfg)
-> +{
-> +	u32 *ret = krealloc_array(plane_cfg->supported_formats,
-> +				  ARRAY_SIZE(vkms_supported_plane_formats),
-> +				  sizeof(uint32_t), GFP_KERNEL);
-> +	if (!ret)
-> +		return -ENOMEM;
-> +	plane_cfg->supported_formats = ret;
-> +
-> +	memcpy(plane_cfg->supported_formats, vkms_supported_plane_formats,
-> +	       sizeof(vkms_supported_plane_formats));
-> +	plane_cfg->supported_formats_count = ARRAY_SIZE(vkms_supported_plane_formats);
-> +	return 0;
-> +}
-> +
-> +int __must_check vkms_config_plane_add_format(struct vkms_config_plane *plane_cfg, u32 drm_format)
-> +{
-> +	bool found = false;
-> +
-> +	for (int i = 0; i < ARRAY_SIZE(vkms_supported_plane_formats); i++) {
-> +		if (vkms_supported_plane_formats[i] == drm_format)
-> +			found = true;
+> The email has already been updated in drm-misc-next, but .mailmap change
+> is needed now:
+> https://lore.kernel.org/all/20251002-quit-qcom-
+> v1-1-0898a63ffddd@oss.qualcomm.com/
 
-Missing break?
+Thanks. I didn't notice that. We can drop this patch.
 
-> +	}
-> +
-> +	if (!found)
-> +		return -EINVAL;
-> +	for (unsigned int i = 0; i < plane_cfg->supported_formats_count; i++) {
-> +		if (plane_cfg->supported_formats[i] == drm_format)
-> +			return 0;
-> +	}
-> +	u32 *new_ptr = krealloc_array(plane_cfg->supported_formats,
-> +				      plane_cfg->supported_formats_count + 1,
-> +				      sizeof(*plane_cfg->supported_formats), GFP_KERNEL);
-> +	if (!new_ptr)
-> +		return -ENOMEM;
-> +
-> +	plane_cfg->supported_formats = new_ptr;
-> +	plane_cfg->supported_formats[plane_cfg->supported_formats_count] = drm_format;
-> +	plane_cfg->supported_formats_count++;
-> +
-> +	return 0;
-> +}
-> +
-> +void vkms_config_plane_remove_all_formats(struct vkms_config_plane *plane_cfg)
-> +{
-> +	plane_cfg->supported_formats_count = 0;
-> +}
-> +
-> +void vkms_config_plane_remove_format(struct vkms_config_plane *plane_cfg, u32 drm_format)
-> +{
-> +	for (unsigned int i = 0; i < plane_cfg->supported_formats_count; i++) {
-> +		if (plane_cfg->supported_formats[i] == drm_format) {
-> +			plane_cfg->supported_formats[i] = plane_cfg->supported_formats[plane_cfg->supported_formats_count - 1];
-> +			plane_cfg->supported_formats_count--;
-> +		}
-> +	}
-> +}
-> +
->  struct vkms_config_plane *vkms_config_crtc_primary_plane(const struct vkms_config *config,
->  							 struct vkms_config_crtc *crtc_cfg)
->  {
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-> index 8127e12f00dc..0b7067508e5f 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.h
-> +++ b/drivers/gpu/drm/vkms/vkms_config.h
-> @@ -62,6 +62,8 @@ struct vkms_config_plane {
->  	unsigned int supported_color_encoding;
->  	enum drm_color_range default_color_range;
->  	unsigned int supported_color_range;
-> +	u32 *supported_formats;
-> +	unsigned int supported_formats_count;
->  	struct xarray possible_crtcs;
->  
->  	/* Internal usage */
-> @@ -404,6 +406,53 @@ vkms_config_plane_set_supported_color_range(struct vkms_config_plane *plane_cfg,
->  	plane_cfg->supported_color_range = supported_color_range;
->  }
->  
-> +static inline u32 *
-> +vkms_config_plane_get_supported_formats(struct vkms_config_plane *plane_cfg)
-> +{
-> +	return plane_cfg->supported_formats;
-> +}
-> +
-> +static inline unsigned int
-> +vkms_config_plane_get_supported_formats_count(struct vkms_config_plane *plane_cfg)
-> +{
-> +	return plane_cfg->supported_formats_count;
-> +}
-> +
-> +/** vkms_config_plane_add_format - Add a format to the list of supported format of a plane
-> + *
-> + * The passed drm_format can already be present in the list. This may fail if the allocation of a
-> + * bigger array fails.
-> + *
-> + * @plane_cfg: Plane to add the format to
-> + * @drm_format: Format to add to this plane
-> + *
-> + * Returns: 0 on success, -ENOMEM if array allocation fails, -EINVAL if the format is not supported
-> + * by VKMS
-> + */
-> +int __must_check vkms_config_plane_add_format(struct vkms_config_plane *plane_cfg, u32 drm_format);
-> +
-> +/**
-> + * vkms_config_plane_add_all_formats - Helper to quickly add all the supported formats
-> + * @plane_cfg: Plane to add the formats to
-> + *
-> + * Returns: 0 on success, -ENOMEM if array allocation fails, -EINVAL if the format is not supported
-> + * by VKMS
-> + */
-> +int __must_check vkms_config_plane_add_all_formats(struct vkms_config_plane *plane_cfg);
-> +
-> +/**
-> + * vkms_config_plane_remove_format - Remove a specific format from a plane
-> + * @plane_cfg: Plane to remove the format to
-> + * @drm_format: Format to remove
-> + */
-> +void vkms_config_plane_remove_format(struct vkms_config_plane *plane_cfg, u32 drm_format);
-> +
-> +/**
-> + * vkms_config_plane_remove_all_formats - Remove all formast from a plane
-> + * @plane_cfg: Plane to remove the formats from
-> + */
-> +void vkms_config_plane_remove_all_formats(struct vkms_config_plane *plane_cfg);
-> +
->  /**
->   * vkms_config_plane_set_name() - Set the plane name
->   * @plane_cfg: Plane to set the name to
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index ab719da2ca0b..0414865915d8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -14,42 +14,6 @@
->  #include "vkms_formats.h"
->  #include "vkms_config.h"
->  
-> -static const u32 vkms_formats[] = {
-> -	DRM_FORMAT_ARGB8888,
-> -	DRM_FORMAT_ABGR8888,
-> -	DRM_FORMAT_BGRA8888,
-> -	DRM_FORMAT_RGBA8888,
-> -	DRM_FORMAT_XRGB8888,
-> -	DRM_FORMAT_XBGR8888,
-> -	DRM_FORMAT_RGB888,
-> -	DRM_FORMAT_BGR888,
-> -	DRM_FORMAT_XRGB16161616,
-> -	DRM_FORMAT_XBGR16161616,
-> -	DRM_FORMAT_ARGB16161616,
-> -	DRM_FORMAT_ABGR16161616,
-> -	DRM_FORMAT_RGB565,
-> -	DRM_FORMAT_BGR565,
-> -	DRM_FORMAT_NV12,
-> -	DRM_FORMAT_NV16,
-> -	DRM_FORMAT_NV24,
-> -	DRM_FORMAT_NV21,
-> -	DRM_FORMAT_NV61,
-> -	DRM_FORMAT_NV42,
-> -	DRM_FORMAT_YUV420,
-> -	DRM_FORMAT_YUV422,
-> -	DRM_FORMAT_YUV444,
-> -	DRM_FORMAT_YVU420,
-> -	DRM_FORMAT_YVU422,
-> -	DRM_FORMAT_YVU444,
-> -	DRM_FORMAT_P010,
-> -	DRM_FORMAT_P012,
-> -	DRM_FORMAT_P016,
-> -	DRM_FORMAT_R1,
-> -	DRM_FORMAT_R2,
-> -	DRM_FORMAT_R4,
-> -	DRM_FORMAT_R8,
-> -};
-> -
->  static struct drm_plane_state *
->  vkms_plane_duplicate_state(struct drm_plane *plane)
->  {
-> @@ -226,7 +190,8 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
->  
->  	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
->  					   &vkms_plane_funcs,
-> -					   vkms_formats, ARRAY_SIZE(vkms_formats),
-> +					   vkms_config_plane_get_supported_formats(config),
-> +					   vkms_config_plane_get_supported_formats_count(config),
->  					   NULL, vkms_config_plane_get_type(config),
->  					   vkms_config_plane_get_name(config));
->  	if (IS_ERR(plane))
+-Akhil
+
 > 
-> -- 
-> 2.51.0
+> Neil
 > 
+>>   R:    Sean Paul <sean@poorly.run>
+>>   R:    Marijn Suijten <marijn.suijten@somainline.org>
+>>   L:    linux-arm-msm@vger.kernel.org
+>>
+>> ---
+>> base-commit: 6fab32bb6508abbb8b7b1c5498e44f0c32320ed5
+>> change-id: 20251024-remove-jessica-1abd363a4647
+>>
+>> Best regards,
+> 
+
 
