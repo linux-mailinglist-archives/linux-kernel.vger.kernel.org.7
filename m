@@ -1,148 +1,94 @@
-Return-Path: <linux-kernel+bounces-868321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0604C04DF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:56:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C983AC04DFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A031881360
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:56:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B93B835A088
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E9F2F6194;
-	Fri, 24 Oct 2025 07:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49E42F8BF7;
+	Fri, 24 Oct 2025 07:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wi2oG8yn"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="eTgClpl/"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445002F0C7F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D2A2F3630;
+	Fri, 24 Oct 2025 07:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761292564; cv=none; b=TAMDo0Kty66nv0pFaztaucEcM+MZ08QfxPtxD3QHxueSEMqBa4q9ODZsLng/ulwozQmCDO9/HjMmck2euLBbYz6+3nVhx4egCYyEEBJD4kMRA9+QkBomWxquxHXLfoPSKScxpuLZNkk37ReaAKKqemnTHv1FlwcUZlHwdgUPZts=
+	t=1761292577; cv=none; b=FfnxwjyYvgF/L3nhgWPO39biYHyKvEzWAeVv8OIkU1HkcwHvN4QtwKNYYgxxZLntQRAhVM8AoIMSBWQiGl9xb/9y1iTCfLeeAdDVp0ht7TY5uS+iOk4dPoG4ErwRuMRufHuhTOXwknAPqassLcV+3h1hoS9ORwzyFXcc5f70Kbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761292564; c=relaxed/simple;
-	bh=ijNMXAGHEloq3MWzjWdu519b1yKZRu4keumrCc47LMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XuaLAbVFj4o5XSqsGcT8FBlwr2wKP6+Fs1CZK3yT2XqDtGwBFjwq/95vzFt7J0+bD9zW1qvbduCx6NXBejGR9oQKjh1Vktbu6b8xnZ1ggxjHgQpNvQfZV9qcnPm6iM++2dNDpQZSO1aoCEtJfnJGSXvzCUPYhlJn18IxMNK/rYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wi2oG8yn; arc=none smtp.client-ip=209.85.215.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b6cf30e5bbcso1211054a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:56:03 -0700 (PDT)
+	s=arc-20240116; t=1761292577; c=relaxed/simple;
+	bh=HvOaKA7yATNHviA11gu4zFrMYg2AOIM8mTYHs1HrhIQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nob/kcIsJNv4WEUJNW5JWdesImhY6wLk4XBdr639pxHEgGwWRA9+RLXobIlRX1qy+rcSMtwEa2ms7v6vQnxaD64wYQHOCoTBGKQahKzmPZdScnhZnU4VGrBk9g0TCTMzPMoJHQgFZAzqgg7K/rOSAUHAjD0+f7BoWI8TSNG2zko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=eTgClpl/; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761292562; x=1761897362; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2uRO27mPvjlq1Gmjws1js7XoJW9NFcThjF4sz95gEPw=;
-        b=Wi2oG8ynRH1k1lgIQ71f+1CprFEpH9ecIGdu3xd/Q81yEbkWTBH99pkyABzXrCsrij
-         LN5M4UZo1GWEFLDZSTtJPLfEVtpoONf2DvLUunyig7RC/G+YUk0Bgo02jtFoH2pCgGnj
-         5St9w2GjiDJ3ZHS+xkgKAqGjB7eA15it6W5/JoMVN1gTj1qSd62GS4lZOru1ApZ62Snj
-         rTiOSrLzIr+uxdqEzp4bNjgBw6joSlI/1YF+5BLFLKvV2oiPxKCHSjgObeZ05BamESLU
-         7Q0YOR4s2hwOJ/MKC87ImQgxRkUiyCQDpHIJkQWq/jjtSBPQ5dX/Gb0S+7QFx8Z+Jhbk
-         xeSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761292562; x=1761897362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2uRO27mPvjlq1Gmjws1js7XoJW9NFcThjF4sz95gEPw=;
-        b=R/kTtYjTw6yqdDUD2zXG32Q2n1C+d9vOTVs6ReUvrG/RFJU0s/oS10OYUsvlhnjLeA
-         2X5IwdfFYi7iy60SDLItvkxvz4MbtPwcSTPKCKE549fLQ8mIiWp3EmS6GiYwGwwcO/I4
-         MA2MiU2613K+RpftHpxMwYl063mUT2gAMwXKv0qCB7yqoVB8mWjQgx2PmtL6rG76KV5w
-         LamRjd4b8fXlwtvDum2hC0HY6600+cl41TXxndI33wPm7ytWakm91iDbGLfRmzhTFkxq
-         waMfjcL4z+9yJTiwVnwgJA1CkkZFrsob19dg0fY7XemIH/IIHvgfZ2PnaJ08VYQu7UIh
-         YlDQ==
-X-Gm-Message-State: AOJu0YwmQPv0uJByBPJYtgLWIaM3O6yqcAkoULqZZb/9lLGUGAY8RmtU
-	EgNePG5ib21c5LRmUkBqitrU+jYh38EhATtNj+vwNPBnTcO8bX35ZzRMBk7NwR/vothNLTQqPs3
-	GTNKfmpg+B0h3uLHVQxdtogURrnvv8lg=
-X-Gm-Gg: ASbGnct8T3cSZgbDazZFJWTscwbVX0GXCWQH5oEhgMJ5SjWZ9Srx3zsP/yfIA+nZEb1
-	Ke/R7qGxbez4nR+SjM1HKctcBOtaAadPM2qPNqpAezo/SxmAwuMmCjCoumYGHRJGePajokKIK3b
-	yfjSu7BTUD5WE3Wx7KzBl2j0q2tQYIJ21wPcpjlFEPpcYYxBVMZK5mrymMAholfK1irpo3aJ5t9
-	KzksixOH3uSKWVKEnAcUtLi9UivtwQu0bWrXRK3G3YyZD6ziLdjm58W1mtBf5lSNYhMve0=
-X-Google-Smtp-Source: AGHT+IHK8ra9yfzuc4UzCuPOPCF0a9fkZ6OHOYa7+1mzZSw8cgx/k2AvqlS08ZKXCgOl+bU90FQCGSikyL5fPfxHaF8=
-X-Received: by 2002:a17:902:c411:b0:249:71f5:4e5a with SMTP id
- d9443c01a7336-29489e619a7mr22649315ad.26.1761292562492; Fri, 24 Oct 2025
- 00:56:02 -0700 (PDT)
+	d=codeconstruct.com.au; s=2022a; t=1761292565;
+	bh=HvOaKA7yATNHviA11gu4zFrMYg2AOIM8mTYHs1HrhIQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=eTgClpl//Z89Gd3mJ26u/c4wtzTyfWBNQOqpjPZtVQzGYTvZMQdVv1/Wpm/Rr2afn
+	 ixqp5Glry95DeQ2s9NOePqNV048rEplCbVMt2Ul1jOE/rEOgl1Dg/zfWxmeQR5yNML
+	 XNCBrPiNacSqWAd+MngipGJyTrP5Osv2FMm4YfJEGOPidCmGebP0fiXHOS6ZipyiFq
+	 wbATJ/kvggqZTwHSbM7FPjb6+CADOaSZkY51KEnzJaLr4g3rrlSF/At0W9aPaOZU1M
+	 w+v6N7CGvrjRFtZxssmUwbCS8reLoFtOy35NSpeH8uE/Jgx9uk/TT+312sYqmAeAzL
+	 hAR2vW9ZYV+og==
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 1412F72F33;
+	Fri, 24 Oct 2025 15:56:04 +0800 (AWST)
+Message-ID: <bf3d6690b9124ecf74df6c0f9f1c0f72ae1db9f7.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v20 1/4] dt-bindings: i2c: Split AST2600 binding into a
+ new YAML
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Ryan Chen
+ <ryan_chen@aspeedtech.com>
+Cc: benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
+ andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
+ linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
+Date: Fri, 24 Oct 2025 15:56:03 +0800
+In-Reply-To: <2939cae6-2e8a-4528-8e27-8c932e2f82de@kernel.org>
+References: <20251021013548.2375190-1-ryan_chen@aspeedtech.com>
+	 <20251021013548.2375190-2-ryan_chen@aspeedtech.com>
+	 <20251024-dark-ringtail-of-defiance-1daabd@kuoka>
+	 <2939cae6-2e8a-4528-8e27-8c932e2f82de@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024060720.634826-1-jianyungao89@gmail.com> <aPsjSZtNxeQK239J@krava>
-In-Reply-To: <aPsjSZtNxeQK239J@krava>
-From: Jianyun Gao <jianyungao89@gmail.com>
-Date: Fri, 24 Oct 2025 15:55:51 +0800
-X-Gm-Features: AS18NWBZaG0Ysv0zopji-OZrXuo35dlHz4dN9X8MiEYrk2THM63xKhszYGw9le0
-Message-ID: <CAHP3+4Dg7aBqaVWs5vfydtWuSpuRS+p43XNJk9TwxAPrVm=7NQ@mail.gmail.com>
-Subject: Re: [PATCH] libbpf: optimize the redundant code in the
- bpf_object__init_user_btf_maps() function.
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	"open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri, thank you for your review. And I have realized my mistake in
-this patch. I will fix it in the next patch!
+Hi Krzysztof,
 
-On Fri, Oct 24, 2025 at 2:57=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Fri, Oct 24, 2025 at 02:07:20PM +0800, Jianyun Gao wrote:
-> > In the elf_sec_data() function, the input parameter 'scn' will be
-> > evaluated. If it is NULL, then it will directly return NULL. Therefore,
-> > the return value of the elf_sec_data() function already takes into
-> > account the case where the input parameter scn is NULL. Therefore,
-> > subsequently, the code only needs to check whether the return value of
-> > the elf_sec_data() function is NULL.
-> >
-> > Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
-> > ---
-> >  tools/lib/bpf/libbpf.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> > index b90574f39d1c..9e66104a61eb 100644
-> > --- a/tools/lib/bpf/libbpf.c
-> > +++ b/tools/lib/bpf/libbpf.c
-> > @@ -2988,15 +2988,15 @@ static int bpf_object__init_user_btf_maps(struc=
-t bpf_object *obj, bool strict,
-> >       int nr_types, i, vlen, err;
-> >       const struct btf_type *t;
-> >       const char *name;
-> > -     Elf_Data *data;
-> > +     Elf_Data *scn_data;
->
-> makes sense to me, but this rename breaks compilation later on
->
-> libbpf.c:3027:53: error: =E2=80=98data=E2=80=99 undeclared (first use in =
-this function)
->
-> jirka
->
-> >       Elf_Scn *scn;
-> >
-> >       if (obj->efile.btf_maps_shndx < 0)
-> >               return 0;
-> >
-> >       scn =3D elf_sec_by_idx(obj, obj->efile.btf_maps_shndx);
-> > -     data =3D elf_sec_data(obj, scn);
-> > -     if (!scn || !data) {
-> > +     scn_data =3D elf_sec_data(obj, scn);
-> > +     if (!scn_data) {
-> >               pr_warn("elf: failed to get %s map definitions for %s\n",
-> >                       MAPS_ELF_SEC, obj->path);
-> >               return -EINVAL;
-> > --
-> > 2.34.1
-> >
+> Although now I saw next patch, so clearly this commit is incomplete.
+
+The split that Ryan has done here - by shifting to an identical separate
+binding, then making the changes explicit - allows us to review the
+actual changes without losing them in the move. Sounds like a benefit to
+me?
+
+> You just need allOf:if:then: section to narrow the
+> constraints/presence of properties.
+
+That seems like a more complex approach. This is separate IP from the
+2500 controllers, wouldn't that warrant a new binding spec?
+
+Cheers,
+
+
+Jeremy
 
