@@ -1,190 +1,284 @@
-Return-Path: <linux-kernel+bounces-868198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E0DC04A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:10:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1ACC04A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F09B341E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E878A3BBEDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EDA2BE632;
-	Fri, 24 Oct 2025 07:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD022BD033;
+	Fri, 24 Oct 2025 07:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TgyihKLN"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HUpsfKRo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675E7245023
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1916F29BDB8;
+	Fri, 24 Oct 2025 07:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289722; cv=none; b=L2IJr4kL9oDGLGG5ApEZf/EM3KdGhKsauSVvuZSrqa4nPNOXPht0gsAcHXIBI9SobmLmKYHiWEOuht7vdxMKRyHmtFi5eeGhGphCYshalx0n86aYwLHYBVMDdKq0FC7Fh2F4635fP9zu+B9ZCI/fM5XOx7EWqVyy8rp80Di+ueE=
+	t=1761289790; cv=none; b=pU+EOfXyuI84YiPJkOV8qHZOVSPyO3dVi2w9gEVYC7/X7jYNgBB0R6XPVsLuwGANpd5sVzC7PH7jKbL7DsXGiEq3u714ucn1uUgnbbY9b+vh0F8AXG5uRLfdMOrVWzse1Xqou5XxNSKHTvoSJ0Uu+aLz0AQVNvaicSzaE9rg/Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289722; c=relaxed/simple;
-	bh=DMYZNMyiP51qhvR163WPghAWwrfu3AH48qP2CF7lSBU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nry1XEaTV6W9sFnJncuGlFATlIJcn+08NCTB+yBxOEJpUTvtBXnSc5jz/w6d19LYX4TcS9aVRbrNcL0hcraNI58V0ZBcxv2Dxl3Xfs4O2a8vdSAjj5xdgcl/ZzEdPXjwk13mNnhMXiJl6zvqS8M5YobiDO9efTstuQJ3PZIhd94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TgyihKLN; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63e11cfb4a9so2994845a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761289719; x=1761894519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S3j0863NMsH2TxDcTuhZnVL4n97Hbnm5ACId2JottOg=;
-        b=TgyihKLNBy1y2Vpec/dfONbA9mJKq6bScZJuOKnKyl4kizbp2qPWxBOheSHr1M/fhm
-         Lyjq46AHEcbh5xqbuPYXj258FLCZ1g3hU5xOUJhbYtV8JyGMntMEOQT4gIOhFbhL4Jzw
-         BbgTuI1n6cteh2ByrWMqbY5oqcnfshxtYX8oi2b5zjYeLokLlavalWji1iDx0wOYMKxZ
-         kTFUQ596WA8SLqb6r8iTcVA2MugXAn1SQpDCMv0/JPfN9aGG0aOB72gQSP/ivAHCj8Mv
-         +gfNNvj7TNRZ9szYX1m1a45c9Pg6PmK5lxmvO+WGhVk9+4Jv9y3iehzZogg40xHEV+oA
-         5YUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761289719; x=1761894519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S3j0863NMsH2TxDcTuhZnVL4n97Hbnm5ACId2JottOg=;
-        b=FNCHuDZZTiFaItDspbw4dLE6uEaU/5PSy80GPG94Y2rrbYJrlThFWOt8aUeRyvKGEe
-         yCwfSf3XZdh2BpG8Z2AAkevp7T/rHkqlwShL5uHjkxc5tAZBFEmd34tKbzrIGAeu60bN
-         YMIM6DwJbreq5eF3GSnMN9C4bnEtRfG8m5DLmCtahfFKEoHQL08Jv4pH/Quqrj/ZCTno
-         onr2Yh+lyv1nyAR1FfhiG/1u8gKNnpIVsGJ32Oe0/n/IgYVQ67NizfyESDQ5KTKboiKN
-         jd2LEztTpaBYWsDUUIteTkEk7NAlW0+OKJ1lL1RAAx65w9Apz7Ug+1vishLcT4WcrYU3
-         Zkxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoxWz8d7cVkHG96w2U4e63rO8cXONmyXI3xe3lB/RyDew5bl/4eDd7e6SgNEcpW4aLoV+SF/sKPRP8FvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR6fkfo6+yr73MNtlZAu4uhrKgs+6aNyr4TMKAa1Odja+WQe5v
-	4sDIL1FDP68vPaNM8VEx/+pfbu0WDNr6ciaBxNt4l6SyuXqtcf91PrLrUL5cJaJ7E23gVigZVmn
-	P40tM82/fZ2x13AMK3Send6/iblk+eKlhzbPfqMB6qg==
-X-Gm-Gg: ASbGncv1PyxJvAOIC9uO3R8MpLhjrvYCC2hTLEPqQgwCYQnUpw3L2L46iVIR3b2QJ0k
-	HwT4p36EFcT19Wbu2zSV35XYm93r9hiJ9jAJt6NT0joxuGJwL9M5CxNn59K+5qHTGwlRyakBtqa
-	7tS96JiKYjzAEUBSO35V10dT1zhHhBPyUQLN9U0hSi+QksTZOxDCtvopuEywmuWrECMYlIZB/bK
-	kVnh+ooi3G/e/JYuJ1dW7Vo134v6pAe+XVY0eQW/AfAcbFM4lw+AQ02GXRpwUTcPbuA/8YdpSfF
-	BYquOt9DCp7HcQ==
-X-Google-Smtp-Source: AGHT+IFLe3+jRoOLX67oMONNU8hUa4/ecYf2eWSv9JTCusb49DNV8U7PDzZtofnfsGkk5jm/DBvVd/x5ZvDf51+Y6dY=
-X-Received: by 2002:a05:6402:26cd:b0:63b:f1aa:11d1 with SMTP id
- 4fb4d7f45d1cf-63e60086099mr1273048a12.1.1761289718654; Fri, 24 Oct 2025
- 00:08:38 -0700 (PDT)
+	s=arc-20240116; t=1761289790; c=relaxed/simple;
+	bh=tjcvyfpnT2ROqnMDp39g2+93M2zfzww2SQf/zXN/Nc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1SdQ3Fg9IdYQ5NF8sm2ZgqRF3elk1HGlJ/sMyMGC4CujxqEkKgwsZSTWMIS1Op1wvvxg+sgreXo5iWX+wGepRH9j7PdjvAM/jRaMG49Nl8N0kSFGpyrMrnLeCR2juAgNLWCCI3VpobSb2wz2mUTuRPoBStyBUVQFdQ2Rrt494U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HUpsfKRo; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761289788; x=1792825788;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=tjcvyfpnT2ROqnMDp39g2+93M2zfzww2SQf/zXN/Nc4=;
+  b=HUpsfKRoGGDXomUFeT+3xyqF9M2JzqeWgBxdXxTzqh4b593uQx/03cOr
+   osmFoSwpxKehVZX0fRm/OjmQR2zssCfCu4k43xFRX4NCiqnAhlLJbjWh5
+   GghlSzTSUejLzSqV9gM7rpNO5Npow2pXgA85h2BbbHmWTCtk6Jcf3S0n8
+   +VwOXmq8dgYjllaRzq+5pbESLebpnDMfNhGIN/BmnBLc04V5bbjFUdgJZ
+   n1dv/wD2PY1N+E0nlohokNexBmfvIWV94TX9xydsem1PVIDovbnO3MzX4
+   +GAtGi++hCibo2oA07DPFfWQW1eNqNXiqZoLR2G4V8ePSLep8CZ/VeHRI
+   A==;
+X-CSE-ConnectionGUID: b5aUOSSeRLytKZ/AaDRU8Q==
+X-CSE-MsgGUID: /x0eqJBLQoq9srpswmsXOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62498715"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="62498715"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:09:47 -0700
+X-CSE-ConnectionGUID: sOxUcsTpTrCd9fBR4DsQ/g==
+X-CSE-MsgGUID: G1OmBVBdTf6OxtSNV8gUnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="184077348"
+Received: from opintica-mobl1 (HELO ashevche-desk.local) ([10.245.245.60])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:09:42 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vCBve-0000000257C-2kRs;
+	Fri, 24 Oct 2025 10:09:38 +0300
+Date: Fri, 24 Oct 2025 10:09:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 03/10] gpiolib: implement low-level, shared GPIO
+ support
+Message-ID: <aPsmMruDxOil_wYQ@smile.fi.intel.com>
+References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
+ <20251022-gpio-shared-v2-3-d34aa1fbdf06@linaro.org>
+ <aPkVjoWkP04Q-2xP@smile.fi.intel.com>
+ <CAMRc=Mc165HSLdug1F+t3qcOoE52mR1e_zEh=rSTUKN_-dB5NA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKfTPtDJW4yU2=_4stdS1bggHwAA8K2On_ruV63=_H9=YEgdkw@mail.gmail.com>
- <f3d77b74d72da0c627ff4b4fe9d430969da6b900.1761200831.git.peng_wang@linux.alibaba.com>
-In-Reply-To: <f3d77b74d72da0c627ff4b4fe9d430969da6b900.1761200831.git.peng_wang@linux.alibaba.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 24 Oct 2025 09:08:26 +0200
-X-Gm-Features: AWmQ_bnoLl6ZwZowLqq0oAjbairDlXIzhwAx0wIrKHjZTCUL6ePTWqrJ0tk9n6U
-Message-ID: <CAKfTPtC-L3R6iYA=boxQGKVafC_UhBihYq6n6qTJ6hk4Q76OZg@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: Clear ->h_load_next when unregistering cgroup
-To: Peng Wang <peng_wang@linux.alibaba.com>
-Cc: bsegall@google.com, dietmar.eggemann@arm.com, juri.lelli@redhat.com, 
-	linux-kernel@vger.kernel.org, mgorman@suse.de, mingo@redhat.com, 
-	peterz@infradead.org, rostedt@goodmis.org, vdavydov.dev@gmail.com, 
-	vschneid@redhat.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mc165HSLdug1F+t3qcOoE52mR1e_zEh=rSTUKN_-dB5NA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 23 Oct 2025 at 08:29, Peng Wang <peng_wang@linux.alibaba.com> wrote=
-:
->
-> An invalid pointer dereference bug was reported on arm64 cpu, and has
-> not yet been seen on x86. A partial oops looks like:
->
->  Call trace:
->   update_cfs_rq_h_load+0x80/0xb0
->   wake_affine+0x158/0x168
->   select_task_rq_fair+0x364/0x3a8
->   try_to_wake_up+0x154/0x648
->   wake_up_q+0x68/0xd0
->   futex_wake_op+0x280/0x4c8
->   do_futex+0x198/0x1c0
->   __arm64_sys_futex+0x11c/0x198
->
-> Link: https://lore.kernel.org/all/20251013071820.1531295-1-CruzZhao@linux=
-.alibaba.com/
->
-> We found that the task_group corresponding to the problematic se
-> is not in the parent task_group=E2=80=99s children list, indicating that
-> h_load_next points to an invalid address. Consider the following
-> cgroup and task hierarchy:
->
->          A
->         / \
->        /   \
->       B     E
->      / \    |
->     /   \   t2
->    C     D
->    |     |
->    t0    t1
->
-> Here follows a timing sequence that may be responsible for triggering
-> the problem:
->
-> CPU X                   CPU Y                   CPU Z
-> wakeup t0
-> set list A->B->C
-> traverse A->B->C
-> t0 exits
-> destroy C
->                         wakeup t2
->                         set list A->E           wakeup t1
->                                                 set list A->B->D
->                         traverse A->B->C
->                         panic
->
-> CPU Z sets ->h_load_next list to A->B->D, but due to arm64 weaker memory
-> ordering, Y may observe A->B before it sees B->D, then in this time windo=
-w,
-> it can traverse A->B->C and reach an invalid se.
->
-> We can avoid stale pointer accesses by clearing ->h_load_next when
-> unregistering cgroup.
->
-> Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Fixes: 685207963be9 ("sched: Move h_load calculation to task_h_load()")
-> Cc: <stable@vger.kernel.org>
-> Co-developed-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
-> Signed-off-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
-> Signed-off-by: Peng Wang <peng_wang@linux.alibaba.com>
-> ---
->  kernel/sched/fair.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index cee1793e8277..a5fce15093d3 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -13427,6 +13427,14 @@ void unregister_fair_sched_group(struct task_gro=
-up *tg)
->                                 list_del_leaf_cfs_rq(cfs_rq);
->                         }
->                         remove_entity_load_avg(se);
-> +                       /*
-> +                        * Clear parent's h_load_next if it points to the
-> +                        * sched_entity being freed to avoid stale pointe=
-r.
-> +                        */
-> +                       struct cfs_rq *parent_cfs_rq =3D cfs_rq_of(se);
+On Thu, Oct 23, 2025 at 08:55:27PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Oct 22, 2025 at 7:34 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Wed, Oct 22, 2025 at 03:10:42PM +0200, Bartosz Golaszewski wrote:
 
-Move the declaration at the beg of the if (se) {
+...
 
-> +
-> +                       if (READ_ONCE(parent_cfs_rq->h_load_next) =3D=3D =
-se)
-> +                               WRITE_ONCE(parent_cfs_rq->h_load_next, NU=
-LL);
->                 }
->
->                 /*
-> --
-> 2.27.0
->
+> > > +             if (!strends(prop->name, "-gpios") &&
+> > > +                 !strends(prop->name, "-gpio") &&
+> >
+> > > +                 strcmp(prop->name, "gpios") != 0 &&
+> > > +                 strcmp(prop->name, "gpio") != 0)
+> >
+> > We have gpio_suffixes for a reason (also refer to for_each_gpio_property_name()
+> > implementation, and yes I understand the difference, this is just a reference
+> > for an example of use of the existing list of suffixes).
+> 
+> And how would you use them here - when you also need the hyphen -
+> without multiple dynamic allocations instead of static strings?
+
+Something like
+
+	char suffix[6];
+	bool found = false;
+
+	for_each_gpio_property_name(suffix, "")
+		found = found || strends();
+	for_each_gpio_property_name(suffix, NULL)
+		found = found || (strcmp() == 0);
+	if (!found)
+		continue;
+
+Of course with more thinking this may be optimized to avoid snprintf()
+(probably with a new helper macro or so).
+
+But see my next reply, I found something more interesting.
+
+...
+
+> > > +     /* No need to dev->release() anything. */
+> >
+> > And is it okay?
+> >
+> > See drivers/base/core.c:2567
+> >
+> > WARN(1, KERN_ERR "Device '%s' does not have a release() function, it is broken and must be fixed. See Documentation/core-api/kobject.rst.\n",
+> 
+> Huh... you're not wrong but I haven't seen this warning. Do people
+> just use empty functions in this case?
+
+I dunno. Maybe something applies a default release in you case? Can you
+investigate that?
+
+...
+
+> > > +     pr_debug("Created an auxiliary GPIO proxy %s for GPIO device %s\n",
+> > > +              dev_name(&adev->dev), gpio_device_get_label(gdev));
+> >
+> > Are you expecting dev_name() to be NULL in some cases? Otherwise why is this
+> > not a dev_dbg() call?
+> 
+> It's the low-level code saying: "I created device X for Y", not "Hey,
+> here's X, I'm here for Y".
+
+OK.
+
+> > > +     return 0;
+> > > +}
+
+...
+
+> > > +static void gpio_shared_remove_adev(struct auxiliary_device *adev)
+> > > +{
+> > > +     lockdep_assert_held(&gpio_shared_lock);
+> > > +
+> > > +     auxiliary_device_uninit(adev);
+> > > +     auxiliary_device_delete(adev);
+> >
+> > _destroy() ? Esp. taking into account the (wrong?) ordering.
+> >
+> 
+> You're right about the order but if you _add() then you should
+> _delete(). You typically _destroy() if you earlier _create().
+
+Maybe, but as we noticed above my suggestion would make the code less error
+prone to begin with.
+
+> > > +}
+
+...
+
+> > > +     struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> > > +     struct gpio_shared_desc *shared_desc;
+> > > +     struct gpio_shared_entry *entry;
+> > > +     struct gpio_shared_ref *ref;
+> > > +     struct gpio_device *gdev;
+> > > +     int ret;
+> >
+> > > + +   scoped_guard(mutex, &gpio_shared_lock) {
+> >
+> > Much better to split the below to a helper and make it run under a
+> > scoped_guard() here or call a guard()() there.
+> 
+> I'm not following, please rephrase.
+
+	scoped_guard() {
+		call_my_new_helper_which_is_easier to read();
+	}
+
+	ret = devm_add_...
+
+OR
+
+call_my_new_helper_which_is_easier to read()
+{
+	guard()()
+
+	...
+}
+
+	call_my_new_helper_which_is_easier to read();
+
+	ret = devm_add_...
+
+
+> > > +             list_for_each_entry(entry, &gpio_shared_list, list) {
+> > > +                     list_for_each_entry(ref, &entry->refs, list) {
+> > > +                             if (adev != &ref->adev)
+> > > +                                     continue;
+> > > +
+> > > +                             if (entry->shared_desc) {
+> > > +                                     kref_get(&entry->ref);
+> > > +                                     shared_desc = entry->shared_desc;
+> > > +                                     break;
+> > > +                             }
+> > > +
+> > > +                             shared_desc = kzalloc(sizeof(*shared_desc), GFP_KERNEL);
+> > > +                             if (!shared_desc)
+> > > +                                     return ERR_PTR(-ENOMEM);
+> > > +
+> > > +                             gdev = gpio_device_find_by_fwnode(entry->fwnode);
+> > > +                             if (!gdev) {
+> > > +                                     kfree(shared_desc);
+> > > +                                     return ERR_PTR(-EPROBE_DEFER);
+> > > +                             }
+> > > +
+> > > +                             shared_desc->desc = &gdev->descs[entry->offset];
+> > > +                             shared_desc->can_sleep = gpiod_cansleep(shared_desc->desc);
+> > > +                             if (shared_desc->can_sleep)
+> > > +                                     mutex_init(&shared_desc->mutex);
+> > > +                             else
+> > > +                                     spin_lock_init(&shared_desc->spinlock);
+> > > +
+> > > +                             kref_init(&entry->ref);
+> > > +                             entry->shared_desc = shared_desc;
+> > > +
+> > > +                             pr_debug("Device %s acquired a reference to the shared GPIO %u owned by %s\n",
+> > > +                                      dev_name(dev), desc_to_gpio(shared_desc->desc),
+> > > +                                      gpio_device_get_label(gdev));
+> > > +                             break;
+> > > +                     }
+> > > +             }
+> > > +     }
+> > > +
+> > > +     ret = devm_add_action_or_reset(dev, gpiod_shared_put, entry);
+> > > +     if (ret)
+> > > +             return ERR_PTR(ret);
+> > > +
+> > > +     return shared_desc;
+> > > +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
