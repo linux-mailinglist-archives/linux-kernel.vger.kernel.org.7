@@ -1,117 +1,96 @@
-Return-Path: <linux-kernel+bounces-868053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3BCC043D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:23:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D7BC043E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF5918C6910
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:24:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F12F94E708B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E3A26F462;
-	Fri, 24 Oct 2025 03:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCA1271468;
+	Fri, 24 Oct 2025 03:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAZW1d9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e/26v4C+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3F2248F48;
-	Fri, 24 Oct 2025 03:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA87248F48
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761276213; cv=none; b=krRsHLvN0c1hWxmqcNCYdZUQAo2X9xA5c3B9IpV8Vx8nfXGUn1lYyZOe0WFVFDMLcch2GS1FTykTCv/MHoNyG4Re01YNZSN3mOmKR5g3+a69kZhgPXbbDfcaQ8m4H98aJ4cEpm2CnSSKUZw73WjWBe9rijOVS8b8Wup0ve+Okys=
+	t=1761276400; cv=none; b=AiMcJd5thxDbBQ1EZTtKC6LcQyGO1ElKBU//rCe0HOaqls3xH+hmHYJnUboU2Pl0Sxof/Nj2KuResEPudaGhww1o/fvn2LVRhPHi10rAu6OdAV5HfUV36yd2SWAJdPCb1e80CANQ6FZaBpfnFFLToSON248nW9SWH+pRu3EmAho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761276213; c=relaxed/simple;
-	bh=CNwnT8O4JG4Ottnhbl1cNUX0P6pAoK8TTMrHAWFkULg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=gDrTUt6jnCX7UkrRjSXj/0q7adxAyMHDwx4V9yWMawSe7Fi6YoZlS1gspEkxT9Pp9o6+sm8nLmTSrNRZQI4iA8APmZ+4hd5Pw3eSLYznLKEtkEGNFYy09+5T/s1xRq4UbD87FuuhGjaQGoayDPkOTVfc/j4J8c/ibUQqVHpC6mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAZW1d9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A10ABC4CEE7;
-	Fri, 24 Oct 2025 03:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761276212;
-	bh=CNwnT8O4JG4Ottnhbl1cNUX0P6pAoK8TTMrHAWFkULg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PAZW1d9nE4BKbSDO5YSLJIHFY7fvvq7/qb+KsjUsGRLmxi56jdxvmOARnYJv4d2ld
-	 Ic/xOGBjxwDNwmiwJ7cwI4V+apON+qMOt3p6cSvOAfiZ8jtjp0hXvhPBg0AM77I1zp
-	 g6i8gpSAFD7DosiR9Fi+RdTt41wplPyJOLqBMx3xzyWe4tOmA43TExpxPsd4IS8kb2
-	 ffQAI4FNvAT46dKsdBSkShyj3Tac9+wpugnoPlwOkCefGTwchZzYXux2HTezbtbDFb
-	 cD2F6SLTQmqfuVuj5vCgghi+8YZx5WXGvZntDmaWeqh9aFw3ZihEuSB6O7yksVD5ou
-	 igWnqilxSCITA==
-Date: Thu, 23 Oct 2025 22:23:30 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1761276400; c=relaxed/simple;
+	bh=wOVQLucTqTR+3WTAqlI3dBKz9v+oStyfQUJR6YOtBWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9UWtpqk9g7kON/xC3k/ot0Eq26UR/KxcYeg8Qud07VpwMISrg4rAhxdmCijyb3VOu6ZfbCSudLalGY/6MpbpY1xZvhc9KbJDLukVviMFlZscBU/J5EwHWRcWp0Z8lAAeDSRFoGdjm8yfGDSN7/Pb4I/AUaWdBKeT7tZ/6vQ1AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e/26v4C+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761276396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SBGpZ+b69w7Vm+EhedHcipsUWTvIk6iy1D0IPGn2dk8=;
+	b=e/26v4C+9bqPGqN5yv3iN2RMvSK+s8oamJegy5WrnKnfEv0Kdj04qPvja45n/iHwi0Z8hx
+	GstjK8PBx4XTR+7UlLklA6rDBHFWhvemlrKo4vNvh0KBfcOlL3mbYlXmOsS73g1lEe67Qh
+	ktJJPr2PIx0mDOnjaUyNbN1hDx/ul28=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-3XNFOwubM4iZvHWkmhe5wQ-1; Thu,
+ 23 Oct 2025 23:26:31 -0400
+X-MC-Unique: 3XNFOwubM4iZvHWkmhe5wQ-1
+X-Mimecast-MFC-AGG-ID: 3XNFOwubM4iZvHWkmhe5wQ_1761276388
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0420B1800378;
+	Fri, 24 Oct 2025 03:26:27 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.13])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5367F19540EB;
+	Fri, 24 Oct 2025 03:26:16 +0000 (UTC)
+Date: Fri, 24 Oct 2025 11:26:11 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] io_uring: expose io_should_terminate_tw()
+Message-ID: <aPrx05jWsnraLetW@fedora>
+References: <20251023201830.3109805-1-csander@purestorage.com>
+ <20251023201830.3109805-2-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org, 
- Jakub Kicinski <kuba@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
- Icenowy Zheng <uwu@icenowy.me>, Vivian Wang <wangruikang@iscas.ac.cn>, 
- Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Eric Dumazet <edumazet@google.com>, Chen Wang <unicorn_wang@outlook.com>, 
- Yao Zi <ziyao@disroot.org>, linux-stm32@st-md-mailman.stormreply.com, 
- Longbin Li <looong.bin@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- sophgo@lists.linux.dev, Han Gao <rabenda.cn@gmail.com>
-To: Inochi Amaoto <inochiama@gmail.com>
-In-Reply-To: <20251024015524.291013-2-inochiama@gmail.com>
-References: <20251024015524.291013-1-inochiama@gmail.com>
- <20251024015524.291013-2-inochiama@gmail.com>
-Message-Id: <176127621096.199631.1552825919177332173.robh@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: net: sophgo,sg2044-dwmac: add phy
- mode restriction
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023201830.3109805-2-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-
-On Fri, 24 Oct 2025 09:55:22 +0800, Inochi Amaoto wrote:
-> As the ethernet controller of SG2044 and SG2042 only supports
-> RGMII phy. Add phy-mode property to restrict the value.
+On Thu, Oct 23, 2025 at 02:18:28PM -0600, Caleb Sander Mateos wrote:
+> A subsequent commit will call io_should_terminate_tw() from an inline
+> function in include/linux/io_uring/cmd.h, so move it from an io_uring
+> internal header to include/linux/io_uring.h. Callers outside io_uring
+> should not call it directly.
 > 
-> Also, since SG2042 has internal rx delay in its mac, make
-> only "rgmii-txid" and "rgmii-id" valid for phy-mode.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  .../bindings/net/sophgo,sg2044-dwmac.yaml       | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml: allOf:1:then: 'anyOf' conditional failed, one must be fixed:
-	'phy-mode' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
-	'type' was expected
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251024015524.291013-2-inochiama@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Thanks,
+Ming
 
 
