@@ -1,190 +1,142 @@
-Return-Path: <linux-kernel+bounces-868554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85928C05755
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:58:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270ABC0575E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BCD5504164
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E191B84CEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFE530F80A;
-	Fri, 24 Oct 2025 09:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C006310655;
+	Fri, 24 Oct 2025 09:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L/8W35rc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hkvePpkV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC0830EF88;
-	Fri, 24 Oct 2025 09:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87323101B7
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299790; cv=none; b=UGyKW9KB6MeYzMboZsK6jkz8czFNMd4gIyLMW+gAT4NV4+CoLaFS1ZP2EgklPBWUO+WAVKp3w7RBM9zjROQ5OYNLTFfjVQpGr8W6AJFxPJE69paDk6c1H2VspnOYoyqC6tYbpjzVOnw+vFHKCTG+Y13HDTSwiYRLh6uF6DzJJaY=
+	t=1761299805; cv=none; b=TPiRHuDIIik++QTBLxp2hutU0R9Zgq9i2kHNJG640Mr0qmYUZ2t54UZoOIv5DHuvzNDp27Cvip1bJcAVJL4g5c23PF4onADQrWvK0b/jTanjiY0HHdfiAcQv5GMTtfDnalrMCT+qEBhmBWgzNTUR7+ttU9e6uCC3mIMGTOSoi/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299790; c=relaxed/simple;
-	bh=Xw+ZYhx58C+Zr3blCWW+XUEKOBaYkvpDWGAFa88CoqM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r+z1FUfXBhhBCwe1IPSe2zuvlKuZVrs4AsmB+x0NB8jKeSknPxDqUQ1/UHb8MlecIVLDRFjRr47RLsD71j9SPCAa1Esup1SRl3hCWMiPi42fkS8EOTvQBemYm3h3DJesXEOPQ1Gr07VUmnaLkWrUSftZ9rDLKxR0Xgg1PMNPOPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L/8W35rc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3FKOn014867;
-	Fri, 24 Oct 2025 09:56:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=61/F+V6evnM
-	02G8zMzpw+lw+6s8UIVCz6a9zUlWG9KA=; b=L/8W35rc1+O6iWJC4yqUscah4rX
-	sJFLumB7A/dCG79q4+/YsVQfDbzHZYfTgz76ms6//fHUx2kqp98ylfsAgkzmLUJL
-	wfCIJx4VqQ7qyVJPsS4gPaiRUBv5M87xucS2KLWxHQPfEa3w5jh2aFnlaHLqxEU3
-	w8lXsoUqvKCBSIo6/6qdqHwYcpxYEoqVS0T66LpnXTREcUYa9ou/7CgpaqKmBV0z
-	dik+WBAfYI6KbXS4G17Y4Jp9F7nTDz4dLUqStFeE4rHLjmpOZoOwrSZmeNo85rLq
-	LmPhnRpdXjsljV+myDM4GeECbqXXRu74hWxXpkY8ciZg22wpYz+a8IsHbvg==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08puupg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 09:56:17 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59O9uFlo026129;
-	Fri, 24 Oct 2025 09:56:15 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 49v3ymy0qp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 09:56:15 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59O9uEkF026120;
-	Fri, 24 Oct 2025 09:56:14 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 59O9uE6r026116
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 09:56:14 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id B1DCAB7F; Fri, 24 Oct 2025 17:56:10 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v14 5/5] arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-Date: Fri, 24 Oct 2025 17:56:09 +0800
-Message-Id: <20251024095609.48096-6-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251024095609.48096-1-ziyue.zhang@oss.qualcomm.com>
-References: <20251024095609.48096-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1761299805; c=relaxed/simple;
+	bh=lE+aqX3/HfP4eohECIS4sCy34gjsb0rrBjjsaCwcvWM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kFFL70IYoCP/3hS4Fu6sp1QvR/118EmbWGQBS7ogqxqzJcja5gYB6m1XOjU8izu0jl9+Y19ufDraoA6e+v20lB10Ms1c0h3mB22DlZOpC4/VgE6dLHi+Df9Gk1F5hK8BdqzpVFP7iYyI5wgNdCbHdjc7P+a8BQmxFl/Z+mPp5Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hkvePpkV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761299803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KFdXG8UsUCKKwuBuj5kudW0rIy6xekadEYj183tppO8=;
+	b=hkvePpkVEYDm2bP6pHm8cG7Z5Y+XW8EK8VUZMm5LVEtTIsWkDbAQaO0X6J/AJzUmki6Kok
+	u6gID2+cvM09E8yakBc696vaaZruWTOs49ucTeLGtLjL29t0NhTl2dQrfy+t0byJx+gPiH
+	nOgI/0yjveKbbhe0B9iDrTrkZo9JkaE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689--T-hYsJbMpiqEr81cSbXxA-1; Fri, 24 Oct 2025 05:56:41 -0400
+X-MC-Unique: -T-hYsJbMpiqEr81cSbXxA-1
+X-Mimecast-MFC-AGG-ID: -T-hYsJbMpiqEr81cSbXxA_1761299801
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47107fcb257so12482855e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:56:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761299800; x=1761904600;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KFdXG8UsUCKKwuBuj5kudW0rIy6xekadEYj183tppO8=;
+        b=wgKn1YFNf0f875+eDhyHrUxk7aCQWktW+mMtmFfq1JfzqvCCqFjqBMAIGlxZqXXY+q
+         hrnCSD/o0Ht5qt7ejgRl53OsGnpTHzq0FJ0MvwSClzjCKQd0nbTasCtOpFqqj2XI35fM
+         3e0JTY7bAXJke/phnQTrSvuMZXjgo4xGYiscKK49T9pFMQnEzSjGVcBoyuVxBmhXf4I9
+         Ww6AEa9y2180wJhIT+HJNliYBdR8mXUSGwQLHBpFlu7LojAVhx9WzP5wPb7yQuCW+3i9
+         ZcUF/Jt/gdCfikTjko4O32eCsHM5mP2cs17yVn/GYtDOSqk8KWVLH5xtjTpikVetQWVy
+         KnbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHwGU2zwIoaKQn7ruR6jep8kUZz9HXk6BU2QMmazXyY0htWsGuyOdmQuK5zSehdHxL1P8aQFLS6/OBbag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtevFG6zLmSmGpZ/Il1kWRzxiHrMWDrxj0h9FAVBupfaXTgP5I
+	5jYLfFA4jzFX/XQjBCgpT8zAl4laULT2HQu+h3HGh9njh1p2fAOC3MO80C7Lk/XnmNkzqFQHHCs
+	bVVnsjrA0JkI1YdQ2X9NehIzmoZvNF/GNfQWPMRl9tGduB+GYv1mTx+H6Hmbf+cSSASHb8DNzCQ
+	==
+X-Gm-Gg: ASbGnct7di6fqOh0bBCDtHoiBPPSWzOTA+WU9YxCU4aMGXssG/wA2eURjk0RDs8FOZ+
+	D9fWGTZqd8+j6BZD//WpqUXegg9WutW8TM+QuyCML2Ku5sEgiAf5wNL/EXUfcqg7utkdbMVHLBq
+	bOE4w43XvMJsgweFOWF3LBozXv709gR7G47tKomLekGIe1hPizCgenGIOX/mXE4Qa4hP6yhzs7a
+	6H8jNHk2K25MgwBZlNfT53rglsK2OGAAqRYxeaY9LtU83Z/Bqc3ESUdDkZsvvCXCjNmDNu3n/VG
+	nHVN/1FboJpVTTbEfvU/CQHBOZjUUzzcTx0HGqym09yB49MtkQhxTSWpI7uOFKJUc9fLf8FK0ny
+	y9HiSUvm8/nWjTA9q/2LB9Xdlhf2TkDaee4AQQQH1vZ5/HSwLo2oWgWB4ag==
+X-Received: by 2002:a05:600d:4382:b0:475:d891:ec8c with SMTP id 5b1f17b1804b1-475d891ed03mr3176255e9.3.1761299800030;
+        Fri, 24 Oct 2025 02:56:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYFxEJ+9vf53evEcAEZdGSa/MAWvLHBF+QBptEwj6rOjmFDqkrATeIFVyZrNhoUbZizrVxrQ==
+X-Received: by 2002:a05:600d:4382:b0:475:d891:ec8c with SMTP id 5b1f17b1804b1-475d891ed03mr3176075e9.3.1761299799657;
+        Fri, 24 Oct 2025 02:56:39 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cad4c81dsm83937215e9.0.2025.10.24.02.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 02:56:39 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, ardb@kernel.org, jonathan@marek.ca
+Cc: linux-efi@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH 4/5] efi/libstub: gop: Add support for reading EDID
+In-Reply-To: <20251015160816.525825-5-tzimmermann@suse.de>
+References: <20251015160816.525825-1-tzimmermann@suse.de>
+ <20251015160816.525825-5-tzimmermann@suse.de>
+Date: Fri, 24 Oct 2025 11:56:38 +0200
+Message-ID: <87qzus8vxl.fsf@ocarina.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX+oGDSW4qrQHk
- XbdxfpGE1TWD3YnRu98YyvlRNUbb8hJOMMiuPW1whCq1dVOdDlg0vhovMDi51KiNcxNFF9it1La
- mSZd0UKHhqPnPpKjJoVImzrVKpHqB4Ri+0Y44sTecNkTtH0E3DbAHJrq66OXgZrSgJitQ6zq7gJ
- lxTOzdIppHIu3zUXQlWtxhawuRmnlGIBIE9TFhgNMtcZaj2hDmb3iPhrDo8p/vi2d4Y7lmPr8qz
- H+afkfYI4rPh4Yi++PSajIuW1avSiHftxNxFzNwLzmTXL96yAJog7EJABpxCyNJFKhOAsvhSM3E
- b9wSKL8PPSP6MSzguvG05xTiZM//MqS7yks5bAXc5gxJy0OAArztDqNiGOW6hG7kQMrY7Dvoc9g
- uomUW0+A8ldM48YD/VBnutXl2TiB7Q==
-X-Proofpoint-GUID: X6-r6MFaeRO-hjmSHlKb176nMCyPEO0h
-X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68fb4d42 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=uO20Abh7jH90i48viEIA:9 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-ORIG-GUID: X6-r6MFaeRO-hjmSHlKb176nMCyPEO0h
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
+Content-Type: text/plain
 
-Add configurations in devicetree for PCIe1, board related gpios,
-PMIC regulators, etc for qcs8300-ride platform.
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 42 +++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+> Add support for EFI_EDID_DISCOVERED_PROTOCOL and EFI_EDID_ACTIVE_PROTOCOL
+> as defined in UEFI 2.8, sec 12.9. Define GUIDs and data structures in the
+> rsp header files.
+>
+> In the GOP setup function, read the EDID of the primary GOP device. First
+> try EFI_EDID_ACTIVE_PROTOCOL, which supports user-specified EDID data. Or
+> else try EFI_EDID_DISCOVERED_PROTOCOL, which returns the display device's
+> native EDID. If no EDID could be retrieved, clear the storage.
+>
+> Rename efi_setup_gop() to efi_setup_graphics() to reflect the changes
+> Let callers pass an optional instance of struct edid_data, if they are
+> interested.
+>
+> While screen_info and edid_info come from the same device handle, they
+> should be considered indendent data. The former refers to the graphics
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index cc06241bac6c..1215f21e67f1 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -336,6 +336,25 @@ &pcie0_phy {
- 	status = "okay";
- };
- 
-+&pcie1 {
-+	pinctrl-0 = <&pcie1_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcieport1 {
-+	reset-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l6a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -419,6 +438,29 @@ perst-pins {
- 			bias-pull-down;
- 		};
- 	};
-+
-+   pcie1_default_state: pcie1-default-state {
-+		wake-pins {
-+			pins = "gpio21";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio22";
-+			function = "pcie1_clkreq";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio23";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
- };
- 
- &uart7 {
+independent
+
+> mode, the latter refers to the display device. GOP devices might not
+> provide both.
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+
+[...]
+
+> +static void setup_edid_info(struct edid_info *edid, u32 gop_size_of_edid, u8 *gop_edid)
+> +{
+> +	if (!gop_edid || gop_size_of_edid < 128)
+
+Can you define a constant for 128 instead of having a magic number ?
+
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
 -- 
-2.34.1
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
