@@ -1,211 +1,167 @@
-Return-Path: <linux-kernel+bounces-868138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A749C0473A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:11:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B30C04752
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92ED04E244C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18F031AA26F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27442255F2C;
-	Fri, 24 Oct 2025 06:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F7D269B1C;
+	Fri, 24 Oct 2025 06:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Cl/DE0vm"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010020.outbound.protection.outlook.com [52.101.193.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TutqQKVW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82E1219A8A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761286286; cv=fail; b=rmgcSX5OdctZ7ePjoxTSGnbbLHiUzRdabZSzpAQk2yzh+FcEpMFjG3H9bRyBgyEcejTc9nbcvb2cvkq2v8RUuF4QFGhKsxwoNLXbWxwuGiyzuAXNAzLfqlb+8vTwHmqu+9Ayf91DhcWBpPCHhX6CRaKZoK90WGAEg6HZ4SFX7sA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761286286; c=relaxed/simple;
-	bh=ytpUdtV4vpK9hhp+O3Vv6xz4ohXkvYGlKVcDNSqoHIU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tTPuDEu1oVQcnpFdkAqC6t5vxNTI9gmqqszBX5nEmSDM1Uc2H3Asi0qt9Ss7wVTU6MO8AU8JPnAao3wDcW7Tzcb7wcojhLZ4jrGw7zPOaX0UAEKK0ZwBXQDp7VotzMdckgfNQ6ubkvtr4Mnt2Kwl7zLx05uFRRKVcRSZmFttYFk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Cl/DE0vm; arc=fail smtp.client-ip=52.101.193.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z1EsRLs37MF0ioQfbUXcw9RjoDt6gRolbz0lU5NI6HHIhwJ3yPq1m06kN3RE50x0k4yjLTudJrc6EhDWduoQMGiE3HwZhhLV/DSsC+WiO6JrIMgz2Wd5mZ+Qp3mC+U1KdEjiTS8brJ4e5vePTyDBFHXoRaIEkyk4hxZieySngo2KfzkwbGTO52Xwh62SeNxk6Yo+QS+NvS3TySWTuOUNnFoOt5ZiXTB0hlJHe3lpCJvtqdUkHzPYzdYWONnJqgvroLaL5UrpINk7/GOn3CF2+cADzNWLq/cXgdsK7euVcaijUw4zO8uH+1Q9EGV+re3iJ2jZGriH6ResAqXQp6+noA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vkGP5cr6dq54GVjVTgSLUm28RtPeQfLy0sS3t3Le2Jw=;
- b=Xvz/LWZND5yu06b0HH3krb0BLE3Ka8hTJA0++H6FFO66f50Kd7vw/lSY28y8mOuUqHDFWsyvlmCOS5UVLs8Q46j3JPEFK7HD4wKRYqPhupKCIsdGyl+qjvD5QQXTS5cIOo5rGOoI+Z6RRzRrU75aoLMssRO3FCQz+YNBuKdWCfeB4I7KUlaJ3HUOh6FCQMUTXHSpUO62Gs+nWkKX9TqoirAk6EVjp08fwr/7a53Lvg+LnLzQp/yUF+4Iia11jRgA6gYw9qdycbachXcmZ1RSJvUGLm+52v02PggN65bYKw1XX1T6kXoHTs0hG2rI9T7LzKm6oKwvOA+NhtZrDqqgeQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vkGP5cr6dq54GVjVTgSLUm28RtPeQfLy0sS3t3Le2Jw=;
- b=Cl/DE0vmTTOWhyV3JzeVP4+RLBoDvHu7nU8iqSIm/5nZ3opcIEF1g2k0NAtRi9AfZNCXloKyE+NTvSzvj6c/FxNPlFEt0J/rGStLx7sQBoz9iv5TBcZVWo5yQzyi4cjTcpMcGCvLtr39pz8bPCV2DeRifWL78tR0iXzdncyuFlM=
-Received: from CH0PR07CA0012.namprd07.prod.outlook.com (2603:10b6:610:32::17)
- by CH3PR12MB7547.namprd12.prod.outlook.com (2603:10b6:610:147::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 06:11:18 +0000
-Received: from DS3PEPF000099E0.namprd04.prod.outlook.com
- (2603:10b6:610:32:cafe::e3) by CH0PR07CA0012.outlook.office365.com
- (2603:10b6:610:32::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Fri,
- 24 Oct 2025 06:11:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS3PEPF000099E0.mail.protection.outlook.com (10.167.17.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Fri, 24 Oct 2025 06:11:17 +0000
-Received: from BLRDHSRIVAS.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 23 Oct
- 2025 23:11:14 -0700
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <suravee.suthikulpanit@amd.com>, <Vasant.Hegde@amd.com>,
-	<Santosh.Shukla@amd.com>, Dheeraj Kumar Srivastava
-	<dheerajkumar.srivastava@amd.com>
-Subject: [PATCH v2] iommu/amd: Enhance "Completion-wait Time-out" error message
-Date: Fri, 24 Oct 2025 11:40:41 +0530
-Message-ID: <20251024061041.707-1-dheerajkumar.srivastava@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0595B72631;
+	Fri, 24 Oct 2025 06:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761286417; cv=none; b=Pft5Wj0UYabPibG1DC33poudsskWIygwvBTbqbhWbDR+lcaeL9jEoWkg+8kiK0WA2Sow8YFpdWvO5uKBZdcoy5mjNvBnputyXqdQXbQ+LaPDlMOQjq6wchwRpTDNlj2VEVJUm7GQHsxnDd9us3fEXi4KMsSRIOWfh3uM5RSz168=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761286417; c=relaxed/simple;
+	bh=pPg4tGMDdSKgzOhv/19H1ClKHTpBCPpph/N7jY8PuY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNsFUrYE9H0+YqO7n5m4dCZJc334cSqyl4G8PzignbZPbovzFkJPGX9P/Td/TJtCAO1EIsuYaPViKRLxr/MWzPRIaBYoSvyaLQFxDpddy4nRYiphE1Ibef8qAQ8acsxW5WekqVahX7F/byATdC+l8jy3NhZJ7Kfv/R/HFkTaGQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TutqQKVW; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761286416; x=1792822416;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pPg4tGMDdSKgzOhv/19H1ClKHTpBCPpph/N7jY8PuY0=;
+  b=TutqQKVWPcmQDxCqpClK5Je+gO2goj86pU0iUIIfxk+xzLuVfyZqkxyg
+   ywtdgfG/spmc4UudxXWFPQGTZ91dgGpIR8nf+NIX5IH4uG5ExGAuR4j4K
+   IxSPQ8RPPdDlSG/bLNjEqSncn5xg4BVOdGVXrYrrDa5nj6F2Y53lOUgHO
+   v/jasdebyZCVofgLdCTuMVhjZse8VYIuDMTRxAIKpPX3BcnP0gxI+i5Pt
+   Xw0WquOZqMNq5UwLFEWLSb5HtB7y9CECfs94bQ3+Gp/u53Q/TQZJ44gYI
+   ax52c3az27sUN37GNnIhxEQJeV1mSsw+I+OCHAMsNmpPN2aKKaIev6MUa
+   w==;
+X-CSE-ConnectionGUID: 2lSKj0jaTcGLfDoBeealyQ==
+X-CSE-MsgGUID: IvKkTY/GR+yiVQUX7z32og==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74906837"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="74906837"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 23:13:35 -0700
+X-CSE-ConnectionGUID: EDZuUWOTS7iZKdMy7RFhHw==
+X-CSE-MsgGUID: zgPfV1+5TsCKMukpOqL70Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="188740617"
+Received: from opintica-mobl1 (HELO ashevche-desk.local) ([10.245.245.60])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 23:13:31 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vCB3H-000000024n3-3VVz;
+	Fri, 24 Oct 2025 09:13:27 +0300
+Date: Fri, 24 Oct 2025 09:13:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] i3c: Add HDR API support
+Message-ID: <aPsZB44qXR77jNHF@smile.fi.intel.com>
+References: <20251014-i3c_ddr-v6-0-3afe49773107@nxp.com>
+ <20251014-i3c_ddr-v6-1-3afe49773107@nxp.com>
+ <aPnmCwwZVZ5egqkP@smile.fi.intel.com>
+ <aPpHTej/vKfiN68k@lizhi-Precision-Tower-5810>
+ <aPpyf1xPmU_koEXH@smile.fi.intel.com>
+ <aPq/6/+63sHuq/qy@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099E0:EE_|CH3PR12MB7547:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1847124c-d16a-4ceb-705d-08de12c4251e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YHnk5zc1WHqEQwchyH0mAvfc+dA4+6MMdeph/G4y0UtHKYFdLdMqWVj0pfSV?=
- =?us-ascii?Q?NClRb4a/QRQo5xwBGhrFJVyYwa3jdeTJyQP7zHlzt3N0jDZ3bXN1D+qkYcp4?=
- =?us-ascii?Q?M8nyBtfDjgd6X135H1h5jBXuz0r0P9SbNQeiArC3t4oolw4VjdCjX5JQCd1X?=
- =?us-ascii?Q?4/Em9TcVUNxiNIvVeJg/RLNliIO3LFhlPeCHSGHetvV8xCJ3tU0lIb96tTxQ?=
- =?us-ascii?Q?y6OMFjPGF4vFUU5ystk79RJWrJdN/dK9zmhkY4E4hR7dtefPNEoHIP6/NpJR?=
- =?us-ascii?Q?iUvOqiGGgKuKXcf065GuW5SK80481+tO3bM1IK45Gccd1WD/JC3wpMTpzCDY?=
- =?us-ascii?Q?TiZkpM32i4MveqSU4Z0oNpvI7cuyM85pDBC2gczjWFPCKukCLvzM+66RsEo9?=
- =?us-ascii?Q?Ya6ZQS1qrrEbMi7s46VtUbSoBbaqTlDq0YrOoQEGoSqD2pCGi//tUv41lsT5?=
- =?us-ascii?Q?QDumiSX8dINQ+XAbHg2qj+5m6cZeEG68zi1XmmKfFT/KdnrtARWGGNMWb2MK?=
- =?us-ascii?Q?Cfho3TQ0QHcriXLYEZ8xij6699WozM7OqLng1VxQf5NP1Cu9sNtMMVFWKpTC?=
- =?us-ascii?Q?mjyBY6gNz7iDf7k7RFXsHHx3gP28Y3yyUIhUBBRX2V6QltLa9KkvKS0pJrtd?=
- =?us-ascii?Q?SXZex8Lyx2s09QMr0G+2ECKfoAcG1fAkTwjMh3SLGece9CEyEowZIWC6roOm?=
- =?us-ascii?Q?oz3j1/WNMvQwHqvjIRNPBh0pryznfW0aEVjVrinrDUgltjJ1BizDo7/4Td6F?=
- =?us-ascii?Q?VoXIOgwFAbJiyM0dJfK7vAvH8kYw/nHyf+vYEjmBZluogv955fLgJK+z+DUB?=
- =?us-ascii?Q?faQsX0QWOkSy/h3z940P3yxAF2A56cS8bB5AWt2P+oO4AOWInMSzzMRGXa52?=
- =?us-ascii?Q?SB/rr7FYL4q6yu2es8GJoyIFbLP2KkhQDhywDaiB8uKjJ1+tDYXNlNgLh7WC?=
- =?us-ascii?Q?F8acd292egRTihWIOKoHvWZsvnMBgWosbtCmsuRQtRytLa3OUiPLIIsvGhJ1?=
- =?us-ascii?Q?L5XIN95daUnyVxVG2gSLgqmBtzg4IHYSpRN4FbleByibcEK6gn01YKp3T34g?=
- =?us-ascii?Q?kHQg+n8uJDuQMQsMpKluAWrGk9GTUfOMuypUGcuAeQIl8qRF+qmAiEQa327b?=
- =?us-ascii?Q?uKkz8JhB2InI2csXGNjMcifuExWiyHPC/F6KBJZbqChUJng72Zvz4/31JPhf?=
- =?us-ascii?Q?31Xz+xSnB7Fnp3VUuUFfm8DCz9iiz7Qk8g5tz1/La6DmoVsuzOzPOjkRCAwO?=
- =?us-ascii?Q?QiTXN8ZtSWsbZJ7+GnLOW4/uilvmTrdPGzPo+lEMVLSUgtmcO+GBRoRHvPGo?=
- =?us-ascii?Q?IS0yjWQndL7tNSZWtN7vYXmrE/LqAkhf7zwHC9/CHLpnZliu3EvIKJbwQlAZ?=
- =?us-ascii?Q?NoPi8/PNIFPHRV8PQ2CM5hB2TgJ39ClhAQii8uHmN603XWqKvpZWCp6drok5?=
- =?us-ascii?Q?SdWn8ZPCUeaRPyriYTMn1TKZFKrvqo9FPK9eM2riMtJsgSzZWfYB58/lTQ3m?=
- =?us-ascii?Q?jcYU86s9isbV32pzGAdPjp7bJ6R4h4sT2crBbPT19He4G7oaDgRUpoYiApKu?=
- =?us-ascii?Q?E0Exor0pFEzFDPz3HSo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 06:11:17.8091
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1847124c-d16a-4ceb-705d-08de12c4251e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099E0.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7547
+In-Reply-To: <aPq/6/+63sHuq/qy@lizhi-Precision-Tower-5810>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Current IOMMU driver prints "Completion-wait Time-out" error message with
-insufficient information to further debug the issue.
+On Thu, Oct 23, 2025 at 07:53:15PM -0400, Frank Li wrote:
+> On Thu, Oct 23, 2025 at 09:22:55PM +0300, Andy Shevchenko wrote:
+> > On Thu, Oct 23, 2025 at 11:18:37AM -0400, Frank Li wrote:
+> > > On Thu, Oct 23, 2025 at 11:23:39AM +0300, Andy Shevchenko wrote:
+> > > > On Tue, Oct 14, 2025 at 12:40:00PM -0400, Frank Li wrote:
 
-Enhancing the error message as following:
-1. Log IOMMU PCI device ID in the error message.
-2. Also dump the command immediately preceding the COMPLETION_WAIT
-   command to identify what the IOMMU is waiting for.
+...
 
-Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
----
-Changes since v1:
--> Remove the code that dumps the entire command buffer on each
-   completion wait timeout when amd_iommu_dump=1. [Suravee and Vasant]
+> > > > > +/* keep back compatible */
+> > > > > +#define i3c_priv_xfer i3c_xfer
+> > > >
+> > > > How many of the current users do this? Can't we just rename treewide?
+> > >
+> > > git grep -r priv_xfer drivers/
+> >
+> > `git grep -lw ...` is a better approach :-)
+> >
+> > > drivers/base/regmap/regmap-i3c.c:       struct i3c_priv_xfer xfers[] = {
+> > > drivers/base/regmap/regmap-i3c.c:       return i3c_device_do_priv_xfers(i3c, xfers, 1);
+> > > drivers/base/regmap/regmap-i3c.c:       struct i3c_priv_xfer xfers[2];
+> > > drivers/base/regmap/regmap-i3c.c:       return i3c_device_do_priv_xfers(i3c, xfers, 2);
+> > > drivers/hwmon/lm75.c:   struct i3c_priv_xfer xfers[] = {
+> > > drivers/hwmon/lm75.c:   ret = i3c_device_do_priv_xfers(i3cdev, xfers, 2);
+> > > drivers/hwmon/lm75.c:   struct i3c_priv_xfer xfers[] = {
+> > > drivers/hwmon/lm75.c:   return i3c_device_do_priv_xfers(i3cdev, xfers, 1);
+> > > drivers/i3c/device.c:int i3c_device_do_xfers(struct i3c_device *dev, struct i3c_priv_xfer *xfers,
+> > > drivers/i3c/master.c:   if (!ops->priv_xfers && !ops->i3c_xfers)
+> > > drivers/i3c/master.c:   if (!master->ops->priv_xfers)
+> > > drivers/i3c/master.c:   return master->ops->priv_xfers(dev, xfers, nxfers);
+> > > drivers/i3c/master/dw-i3c-master.c:static int dw_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+> > > drivers/i3c/master/dw-i3c-master.c:                                 struct i3c_priv_xfer *i3c_xfers,
+> > > drivers/i3c/master/dw-i3c-master.c:     .priv_xfers = dw_i3c_master_priv_xfers,
+> > > drivers/i3c/master/i3c-master-cdns.c:static int cdns_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+> > > drivers/i3c/master/i3c-master-cdns.c:                                 struct i3c_priv_xfer *xfers,
+> > > drivers/i3c/master/i3c-master-cdns.c:   .priv_xfers = cdns_i3c_master_priv_xfers,
+> > > drivers/i3c/master/mipi-i3c-hci/core.c:static int i3c_hci_priv_xfers(struct i3c_dev_desc *dev,
+> > > drivers/i3c/master/mipi-i3c-hci/core.c:                       struct i3c_priv_xfer *i3c_xfers,
+> > > drivers/i3c/master/mipi-i3c-hci/core.c: .priv_xfers             = i3c_hci_priv_xfers,
+> > > drivers/i3c/master/renesas-i3c.c:static int renesas_i3c_priv_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *i3c_xfers,
+> > > drivers/i3c/master/renesas-i3c.c:       .priv_xfers = renesas_i3c_priv_xfers,
+> > > drivers/i3c/master/svc-i3c-master.c:    struct i3c_priv_xfer *xfer;
+> > > drivers/i3c/master/svc-i3c-master.c:     * at svc_i3c_master_priv_xfers().
+> > > drivers/i3c/master/svc-i3c-master.c:static int svc_i3c_master_i3c_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *xfers,
+> > > drivers/net/mctp/mctp-i3c.c:    struct i3c_priv_xfer xfer = { .rnw = 1, .len = mi->mrl };
+> > > drivers/net/mctp/mctp-i3c.c:    rc = i3c_device_do_priv_xfers(mi->i3c, &xfer, 1);
+> > > drivers/net/mctp/mctp-i3c.c:    struct i3c_priv_xfer xfer = { .rnw = false };
+> > > drivers/net/mctp/mctp-i3c.c:    rc = i3c_device_do_priv_xfers(mi->i3c, &xfer, 1);
+> > >
+> > > After this patch merged, I can clean up it at difference subsytem. After
+> > > all cleanup done, we can safely remove this define.
+> >
+> > I counted 9. I think it's not a big deal to convert all of them at once without
+> > leaving an intermediate state. But this is a call for the I³C subsystem maintaiiner.
+> 
+> There also are other cleanup works. The key point is that everyone agree my
+> HDR solution. Cleanup these is not big deal. I am not sure how to avoid
+> build broken at difference subsystem.
+> 
+> After this patch merge, cleanup will be easier and safer.
 
- drivers/iommu/amd/amd_iommu_types.h |  2 ++
- drivers/iommu/amd/iommu.c           | 18 +++++++++++++++++-
- 2 files changed, 19 insertions(+), 1 deletion(-)
+Then leave that renaming to the cleanup series. No need to use a define, just
+use the old function name.
 
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index 95f63c5f6159..d495e5e4a9a2 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -247,6 +247,8 @@
- #define CMD_BUFFER_ENTRIES 512
- #define MMIO_CMD_SIZE_SHIFT 56
- #define MMIO_CMD_SIZE_512 (0x9ULL << MMIO_CMD_SIZE_SHIFT)
-+#define MMIO_CMD_TAIL_MASK	GENMASK_ULL(18, 4)
-+#define MMIO_CMD_BUFFER_TAIL(x)	FIELD_GET(MMIO_CMD_TAIL_MASK, (x))
- 
- /* constants for event buffer handling */
- #define EVT_BUFFER_SIZE		8192 /* 512 entries */
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index eb348c63a8d0..89f7f6b01cad 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -1158,6 +1158,7 @@ irqreturn_t amd_iommu_int_handler(int irq, void *data)
- 
- static int wait_on_sem(struct amd_iommu *iommu, u64 data)
- {
-+	struct iommu_cmd *cmd;
- 	int i = 0;
- 
- 	while (*iommu->cmd_sem != data && i < LOOP_TIMEOUT) {
-@@ -1166,7 +1167,22 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
- 	}
- 
- 	if (i == LOOP_TIMEOUT) {
--		pr_alert("Completion-Wait loop timed out\n");
-+		int head, tail;
-+
-+		head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
-+		tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
-+
-+		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
-+			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
-+			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
-+		/*
-+		 * On command buffer completion timeout, step back by 2 commands
-+		 * to locate the actual command that is causing the issue.
-+		 */
-+		tail = (MMIO_CMD_BUFFER_TAIL(tail) - 2) & (CMD_BUFFER_ENTRIES - 1);
-+		cmd = (struct iommu_cmd *)(iommu->cmd_buf + tail * sizeof(*cmd));
-+		dump_command(iommu_virt_to_phys(cmd));
-+
- 		return -EIO;
- 	}
- 
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
