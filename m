@@ -1,319 +1,122 @@
-Return-Path: <linux-kernel+bounces-868837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFF8C06487
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AFDC0648D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0DBC1AA33C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C286F1AA40D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650DD31961D;
-	Fri, 24 Oct 2025 12:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB83B3176E3;
+	Fri, 24 Oct 2025 12:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oe2YO0L0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iX9Muh2+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5488A31960A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C95E3191A4;
+	Fri, 24 Oct 2025 12:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761309570; cv=none; b=gAQum0BlUqd/xXXdJimvdK/DBlm+4ZpeDLl6AHz3Kq2vD0FO19abdKFRpRrXmFdwXyhnpSe9MwpD4wId/AMzv2V4hxx2LuXPY5br5qeoeYfw3lfNAX0yholx0vtgIP9jjQG9Ackc5YTEtJfUUBujAFvgh5uW0U5aRczMchB7ASY=
+	t=1761309608; cv=none; b=asav7xedo+bQ+m3n9CHYr9SFr2ohMSzL3yKkWL2D7bgaVsoBMW9blQUAMJvpRro+W6m3b/pNW3876Fd/C8GGRGyBmaz0P/AI0DSUdsK8nhaJ788Oap0EkKlAMSIH/tIyM+poAqH/knzCQRNTiSLkLvgy++Jp+h6JTslgA/a/+cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761309570; c=relaxed/simple;
-	bh=aK66e1HazOzWMzd8lgqFFjotERBnHjJTC97qMkubdQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qOBOuhaGNY5itQtQPV9vwF9IC8bLEL8NMJD9XMgbtM+iZGi6pLHdyHR8nGnNEu+M0mqedKyGjGYHD/ZtBLgESROHifhJ2mP+v75hG3IkyPymd9udmrA5B5s5CH0/O3uW8rBoPGLP9P0z4Wi7oQx9jnbldwW3eMJ8rz+uX69eJcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oe2YO0L0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6118C16AAE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:39:29 +0000 (UTC)
+	s=arc-20240116; t=1761309608; c=relaxed/simple;
+	bh=ov/mJRpGjcnbWbNRcCb4IScCIGVbiV/goE+EpvdsJKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oz+rXBdU3LRMCSbgWi+Xzod6kV7IxrqOnZV32f6VM6TOriInMlw5T1KF0RQzgbN1BXvh6Fbkzl6LwuJfO/Vcuagiq+7z7CqevxNsnZZRKXp6/T6Lka/+LV8jy3rGqZKv3YyuBaVxNiXSmNuFOzFKoLj6mIdbel5oM8mfQT5VTQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iX9Muh2+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2953EC4CEF1;
+	Fri, 24 Oct 2025 12:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761309569;
-	bh=aK66e1HazOzWMzd8lgqFFjotERBnHjJTC97qMkubdQc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oe2YO0L0hFECA716hJuMAMCXTbtb9S3MNFEDGT//JvrOLGbJpaw4rvTaXTnRPJPNy
-	 rDW6mYIAa3zqmK+AY+ZkbRDWV3ACYh0evQbuyTHlEYh4B9gs5UsFVAurUfQX1rCSn5
-	 B57l9yoYhlJRW/fF4PzgfSyq9r4+YJhB9GdN1uV7agwLArxR3NqIP+LmIVe8ZcKVLf
-	 WtwrdOVnO/ctCGV1E5nXm7RekLqAi4IScWkUUWNHFuMleM4KBF9i9adIsxEilGFHMh
-	 hTd+Ich/6l6F9yvdSsvNuertCdYqavx2AKUabJUqyid+nQ8c+xA/h6rUQ7NR1vLWSJ
-	 yA67BI1w0TiwQ==
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26e68904f0eso21735515ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:39:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUen/97Wop72jFc0DpohB/mp0VWQQ18qlGij7CQaGdLf4JDbzDAVcnspnLWjIs4xrKXTkzc5iGpAkwc5+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6sdCs0TVSqP9yVJaALIZqCwFE03EL3y0rJj7+5y86VbNtuHba
-	A0h731kakxJhOt+SVfg7RNkIbt7LxMjYkwsKRPSZhUTFCLZrvPY7UKF6AIFKS1OLFVpfwqgwNxy
-	zha8vrvTIg8vgDuYft34y+6dGXfT+gQ==
-X-Google-Smtp-Source: AGHT+IEEZDTHYjPPrWU7mEBc+Dc3dKtlrXyd2PgGiTk+MM3/AaJL+7FaNl7MZbg+WzwPdyRBhQ49pl+COQN1GQ0+IoU=
-X-Received: by 2002:a17:903:b90:b0:276:d3e:6844 with SMTP id
- d9443c01a7336-290ca1218cbmr307603995ad.33.1761309569048; Fri, 24 Oct 2025
- 05:39:29 -0700 (PDT)
+	s=k20201202; t=1761309607;
+	bh=ov/mJRpGjcnbWbNRcCb4IScCIGVbiV/goE+EpvdsJKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iX9Muh2+BKGA1HorCeMzv1BnqR+HbQmsUvRC9S2NxvWCb4pcJKlIxwo+F1HDg3fsY
+	 qZQBXUMlcLNWQgsd7XJA3s8gVP6Q6oVVUs6UoqJWlsMVOROUCOFIUSlp/5VVJNfQWc
+	 fUbOeGEOP9Ymz4VP7BIFqd6vb5Y+DKnyqUweHCSAoB2BVIInpHLaw4t3anVHJ6y/Mv
+	 RUnKgCVPIsz6W11U1xAqr4lgVyVhnRcw0/yfRlHkcX7nCmZvHmvHI8kGDarKB6SRMt
+	 pngOSpn6nPql7jEmk4ZF/IQFdxbkeyKQnnN5tmnmDBaMmNctGwP9DQsJY1gf6QRNHD
+	 jjFbGwNjQM97g==
+Date: Fri, 24 Oct 2025 14:40:01 +0200
+From: Greg Kroah-Hartman <gregkh@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Steffen Jaeckel <sjaeckel@suse.de>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
+	anthony.l.nguyen@intel.com,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>,
+	dima.ruinskiy@intel.com, Mikael Wessel <post@mikaelkw.online>,
+	Mor Bar-Gabay <morx.bar.gabay@intel.com>, davem@davemloft.net,
+	kuba@kernel.org, pabeni@redhat.com, edumazet@google.com,
+	andrew+netdev@lunn.ch
+Subject: Re: CVE-2025-39898: e1000e: fix heap overflow in e1000_set_eeprom
+Message-ID: <2025102411-hamper-botany-b6d4@gregkh>
+References: <2025100116-CVE-2025-39898-d844@gregkh>
+ <db92fcc8-114d-4e85-9d15-7860545bc65e@suse.de>
+ <20251024132734.30522c31@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-mediatek-drm-hdmi-v2-v11-0-7873ec4a1edf@collabora.com>
-In-Reply-To: <20251023-mediatek-drm-hdmi-v2-v11-0-7873ec4a1edf@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Fri, 24 Oct 2025 12:39:16 +0000
-X-Gmail-Original-Message-ID: <CAAOTY_9f4bgy2z-PJL8kjKt5Es2NAsy8QvA36Rd6SC3x8W6b5g@mail.gmail.com>
-X-Gm-Features: AS18NWDks8wZh1-s9gE8rEBkHwxlTBkTzcn0tpVgOhEA_cFmNTtHC15b7iSv-yY
-Message-ID: <CAAOTY_9f4bgy2z-PJL8kjKt5Es2NAsy8QvA36Rd6SC3x8W6b5g@mail.gmail.com>
-Subject: Re: [PATCH v11 00/11] Add support for MT8195/88 HDMIv2 and DDCv2
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu <ck.hu@mediatek.com>, 
-	kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sjoerd Simons <sjoerd@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024132734.30522c31@pumpkin>
 
-Hi, Louis:
+On Fri, Oct 24, 2025 at 01:27:34PM +0100, David Laight wrote:
+> On Fri, 24 Oct 2025 12:53:44 +0200
+> Steffen Jaeckel <sjaeckel@suse.de> wrote:
+> 
+> > Hi Greg,
+> > 
+> > On 2025-10-01 09:43, Greg Kroah-Hartman wrote:
+> > > From: Greg Kroah-Hartman <gregkh@kernel.org>
+> > > 
+> > > Description
+> > > ===========
+> > > 
+> > > In the Linux kernel, the following vulnerability has been resolved:
+> > > 
+> > > e1000e: fix heap overflow in e1000_set_eeprom
+> > > 
+> > > Fix a possible heap overflow in e1000_set_eeprom function by adding
+> > > input validation for the requested length of the change in the EEPROM.
+> > > In addition, change the variable type from int to size_t for better
+> > > code practices and rearrange declarations to RCT.
+> > > 
+> > > The Linux kernel CVE team has assigned CVE-2025-39898 to this issue.
+> > > 
+> > > 
+> > > Affected and fixed versions
+> > > ===========================
+> > > 
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.4.299 with commit ea832ec0583e2398ea0c5ed8d902c923e16f53c4
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.10.243 with commit ce8829d3d44b8622741bccca9f4408bc3da30b2b
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.15.192 with commit 99a8772611e2d7ec318be7f0f072037914a1f509
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.1.151 with commit b48adcacc34fbbc49046a7ee8a97839bef369c85
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.6.105 with commit 50a84d5c814039ad2abe2748aec3e89324a548a7
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.12.46 with commit b370f7b1f470a8d5485cc1e40e8ff663bb55d712
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.16.6 with commit 0aec3211283482cfcdd606d1345e1f9acbcabd31
+> > > 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.17 with commit 90fb7db49c6dbac961c6b8ebfd741141ffbc8545
+> > > 
+> > > [...]  
+> > 
+> > we believe that this CVE is invalid since the sole caller is 
+> > `net/ethtool/ioctl.c:ethtool_set_eeprom()`, which already does all the 
+> > necessary checks before invoking a driver specific implementation.
+> 
+> Nothing stops an attacker-written program doing the ioctl.
 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> =E6=96=BC 2025=E5=B9=
-=B410=E6=9C=8823=E6=97=A5
-=E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8810:32=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> This is a respin of AngeloGioacchino Del Regno's patch series, that adds
-> the support of HDMIv2 and DDCv2 for MT8188 and MT8195 in mediatek-drm.
+How exactly would that happen given that this all goes through the
+ethtool "wrapper" for the ioctl function?
 
-Apply the whole series to mediatek-drm-next [1], thanks.
+And if that is true, then the other set eeprom callbacks also need to
+have this same "fix" for them, so it's either one or the other :)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
+thanks,
 
-Regards,
-Chun-Kuang.
-
->
-> Changes in v11:
->  - Rebased over next-20251023
->  - Resolved merge issues with next-20251023 for patch 4
->  - Added new "drm/mediatek: mtk_hdmi_common: Defer probe when ddc i2c bus
->    isn't available yet" to fix a probe issue when mtk_hdmi_v2 driver is
->    is enabled and built as module.
->  - Added new reviewed-by trailers
->  - Link to v10: https://lore.kernel.org/r/20250808-mediatek-drm-hdmi-v2-v=
-10-0-21ea82eec1f6@collabora.com
->
-> Changes in v10:
->  - Rebased over next-20250807
->  - Dropped patches from v9 that have been already merged in a previous
->    merge window (1 to 14)
->  - Resolved merge issues with next-20250807 for patches 3, 4 and 9
->  - Added new "drm/mediatek: mtk_hdmi: Drop redundant clock retrieval in
->    mtk_hdmi_get_cec_dev" patch to fix an issue introduced by a previously
->    merged patch from this series
->  - Deleted mtk_hdmi.c.orig file added by "drm/mediatek: mtk_hdmi: Split d=
-river
->    and add common probe function" patch
->  - Fixed in "drm/mediatek: Introduce HDMI/DDC v2 for MT8195/MT8188" patch
->    a bug about EDID reading not properly working in mtk_hdmi_ddc_v2 drive=
-r,
->    due to extra byte sent on i2c bus by mtk_ddc_wr_one function when the
->    payload length is equal to 0
->  - Fixed format issues detected by checkpatch in "drm/mediatek: Introduce
->    HDMI/DDC v2 for MT8195/MT8188" patch
->  - Tested on Mediatek Genio 350, 510 and 1200-EVK boards
->  - Link to v9: https://lore.kernel.org/dri-devel/20250415104321.51149-1-a=
-ngelogioacchino.delregno@collabora.com/
->
-> Changes in v9:
->  - Reordered patch from krzk as first as requested by CK
->
-> Changes in v8:
->  - Dropped DPI patches as those have been applied in the previous merge w=
-indow
->  - Changed description in mediatek,mt8195-hdmi.yaml as requested by CK
->  - Refactored function mtk_hdmi_v2_hw_gcp_avmute() to include contents
->    of, and delete, mtk_hdmi_v2_hw_reset_av_mute_regs() as requested by CK
->  - Expanded comment before enablement of HDCP reauthentication interrupt
->    to explain that the HW uses this internally as requested by CK
->  - Added comment in mtk_hdmi_v2_hpd_pord_status() explaining why there
->    are three states for cable detection as requested by CK
->  - Moved extra interrupts clearing from ISR to probe function and added
->    comments explaining the reason why those are being cleaned at probe
->    time, as requested by CK.
->  - Added support (and tested on MT8395/8195 and MT8390/8188) for output
->    in both YUV422 and YUV444 colorspaces other than RGB; please note that
->    RGB is still the default, and that the request for using any of the
->    YUV output formats depends on previous component(s) of the display
->    pipeline declaring support for those; should none of them declare any
->    support for YUV formats, only RGB will be available (no errors, the
->    additional ones will be simply ignored).
->
-> Changes in v7:
->  - Split more patches as requested by CK
->  - Changed the order of the interlaced variable addition as requested
->  - Cleanups in DDCv2 as requested by CK
->  - Removed comment from
->    drm/mediatek: mtk_hdmi: Move output init to mtk_hdmi_register_audio_dr=
-iver()
->    as that was forgotten from reintroduction of print in v5
->  - Some more small nitpicks as pointed out by CK here and there
->
-> Changes in v6:
->  - Split the TVD clock enable/disable calls in a different commit
->  - Changed `is_internal_hdmi` to two different variables, one for
->    DPI input clock from HDMI, and one for AFIFO 1T1P output and
->    conversion (mtk_dpi)
->    - Clarified why MT8195/88 HDMI-reserved DPI1 is different
->  - Moved `input_2p_en` bit to platform data to cleanup DPI vs DPINTF
->    - 1T2P enable bit is different between DPI and DPINTF, but usage
->      is actually the same
->  - Cleaned up headers inclusion in mtk_hdmi_v2.c, mtk_hdmi_ddc_v2.c
->    - Removed some unused headers, added missing bitfield.h header
->  - Split some prints cleanup commits as requested by CK
->  - Split the introduction of mtk_hdmi_conf as requested by CK
->  - Split commit to make CEC optional as requested by CK
->  - Reintroduced forgotten no_capture_mute in codec_pdata (mtk_hdmi_common=
-)
->  - Reintroduced error print for audio clocks enablement failure (mtk_hdmi=
-)
->  - Added cleanup syscon_regmap_lookup_by_phandle commit from Krzysztof K
->
-> Changes in v5:
->  - Rebased over next-20250113
->  - Resolved merge issues with next-20250113
->  - Added bitfield.h inclusion in mtk_dpi in commit [02/33] to resolve
->    build issue from 0day CI
->  - Removed .atomic_check callback from mtk_hdmi_v2 as it is now part
->    of drm_bridge_connector as pointed out by Dmitry B
->  - Removed call to pm_runtime_disable() as the driver uses devm
->  - Tested again :-)
->
-> Changes in v4:
->  - DDCv2 binding erroneously dropped in v3 is included again (oops!)
->  - Added reference to dai-common.yaml in HDMIv2 binding
->  - Dropped pinctrl entries from HDMIv2 binding
->  - Fixed required list in HDMIv2 binding and changed node name to
->    'hdmi' instead of 'hdmi-tx'
->  - Fixed issue in mtk_hdmi derived from wrong commit splitting action
->    from version 3
->  - Exported necessary symbols and added namespaces for those
->  - Fixed module build for both HDMIv1 and HDMIv2
->  - Other cleanups
->
-> Changes in v3:
->  - Added hpd_enable() and hpd_disable() callbacks as suggested by Dmitry =
-B
->  - Removed audio mute call in bridge_enable() as suggested by CK
->  - Reworked commonization commits for mtk_hdmi/mtk_hdmi_common and split
->    out debugfs/abist implementation as suggested by CK
->  - Removed .mode_valid() callback as it is now provided by the bridge
->    API in drm_bridge_connector_helper_funcs
->  - A bit of cleanups here and there
->  - Tested again on HW especially for new hpd_enable/disable callbacks.
->
-> Changes in v2:
->  - Merged series "Add support for MT8195/8188 and Pattern Generator"
->    and "drm/mediatek: Add support for HDMIv2 and DDCv2 IPs" in one
->    as they are directly related, as requested by CK Hu
->  - More commonization: moved some audio functions to mtk_hdmi_common
->  - Fixed a bug in DDCv2 driver to allow sending a message with len=3D1
->  - Renamed some functions in HDMIv2 to consistently use the prefix
->    mtk_hdmi_v2_ across the driver
->  - Added .mode_valid() callback to HDMIv2
->  - Added .atomic_check() callback to HDMIv2
->  - Reordered drm_bridge_funcs in HDMIv2 driver
->  - Rewritten .edid_read() callback in HDMIv2 to move checking audio
->    availability to bridge_pre_enable() stage, and to stop using the
->    drm_edid_read_ddc() in favor of drm_edid_read()
->  - Added support for API provided HDMI Helpers
->  - Added .tmds_char_rate_valid() callback to HDMIv2 for HDMI helpers
->  - Added .hdmi_{read,write}_infoframe() callback to HDMIv2 for helpers
->  - Added support for Vendor infoframes in HDMIv2
->  - Added missing audio-dai-cells to HDMIv2 binding to fix check error
->  - Added more information to the HDMIv2 binding for clocks and PHY
->  - Added some comments to the HDMIv2 code to clarify why the controller
->    is preconfigured in bridge_pre_enable() instead of bridge_enable()
->  - Added a mention of the differences in HPD between v1 and v2 to the
->    commit introducing the v2 driver (v2 is not using CEC for HPD)
->  - ...and tested again on HW! :-)
->
-> This series adds support for the HDMI-TX v2 Encoder and DDCv2, and for
-> the direct connection DPI as found in MT8195, MT8188 and their variants.
->
-> Tested on Genio 700 EVK:
->  - ABIST ON: ok, pattern generated internally from HDMI is shown on
->    HDMI screen at the correct resolution;
->  - ABIST OFF + DPI Pattern Generator ON: ok, pattern coming from DPI is
->    shown on HDMI screen at the correct resolution;
->  - Can negotiate up to 4k60
->
-> and on MT8395 Radxa NIO 12L:
->  - ABIST ON: ok, pattern generated internally from HDMI is shown on
->    HDMI screen at the correct resolution;
->  - ABIST OFF + DPI Pattern Generator ON: ok, pattern coming from DPI is
->    shown on HDMI screen at the correct resolution;
->  - Dual screen usecase validated (DSI + HDMI 3840x2160p 60Hz)
->  - Can negotiate up to 4k60
->
-> Please note that this submission does *not* include support for HDCP
-> nor for CECv2, as I want this to be upstream before implementing
-> additional features which are not strictly required for simple
-> HDMI output.
->
-> Bonus in this series is the addition of support for the Pattern Generator
-> found in the DPI HW: since I needed this for debugging during development=
-,
-> I had to code in the actual support bits and it looked like a waste of
-> time to just remove it.
-> I instead decided to clean it up and upstream it, as this will anyway com=
-e
-> handy for multiple things, of which the most important (imo) are:
->  - Adding support for new SoCs in the future will be less time consuming
->    as this driver already has the pattern generator in;
->  - CI Testing might be able to make use of this to validate that the
->    data that comes out is not garbled (so, to help testing display
->    support in an automated manner).
->
-> --
-> 2.49.0
->
-> ---
-> AngeloGioacchino Del Regno (9):
->       drm/mediatek: mtk_hdmi: Improve mtk_hdmi_get_all_clk() flexibility
->       drm/mediatek: mtk_hdmi: Add HDMI IP version configuration to pdata
->       drm/mediatek: mtk_hdmi: Split driver and add common probe function
->       drm/mediatek: mtk_hdmi_common: Make CEC support optional
->       drm/mediatek: mtk_hdmi_common: Assign DDC adapter pointer to bridge
->       drm/mediatek: mtk_hdmi_common: Add OP_HDMI if helper funcs assigned
->       drm/mediatek: mtk_hdmi_common: Add var to enable interlaced modes
->       drm/mediatek: Introduce HDMI/DDC v2 for MT8195/MT8188
->       drm/mediatek: mtk_hdmi_v2: Add debugfs ops and implement ABIST
->
-> Louis-Alexis Eyraud (1):
->       drm/mediatek: mtk_hdmi: Drop redundant clock retrieval in mtk_hdmi_=
-get_cec_dev
->
-> Sjoerd Simons (1):
->       drm/mediatek: mtk_hdmi_common: Defer probe when ddc i2c bus isn't a=
-vailable yet
->
->  drivers/gpu/drm/mediatek/Kconfig            |   18 +-
->  drivers/gpu/drm/mediatek/Makefile           |    3 +
->  drivers/gpu/drm/mediatek/mtk_hdmi.c         |  539 +---------
->  drivers/gpu/drm/mediatek/mtk_hdmi_common.c  |  440 ++++++++
->  drivers/gpu/drm/mediatek/mtk_hdmi_common.h  |  198 ++++
->  drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c  |  395 +++++++
->  drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h |  263 +++++
->  drivers/gpu/drm/mediatek/mtk_hdmi_v2.c      | 1521 +++++++++++++++++++++=
-++++++
->  8 files changed, 2858 insertions(+), 519 deletions(-)
-> ---
-> base-commit: a92c761bcac3d5042559107fa7679470727a4bcb
-> change-id: 20250806-mediatek-drm-hdmi-v2-cf88f51b8458
->
-> Best regards,
-> --
-> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->
+greg k-h
 
