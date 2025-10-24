@@ -1,253 +1,122 @@
-Return-Path: <linux-kernel+bounces-868923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C13C067ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFD0C06820
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121F01C0362C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1432B401A76
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FF131C584;
-	Fri, 24 Oct 2025 13:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D2F31D366;
+	Fri, 24 Oct 2025 13:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EQ9cqlHY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAqER0eQ"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE6B2F0689
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F8F2DE6FC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761312460; cv=none; b=qdxfXoeTOeDFzxliJHmtw2VFAC+leIP5ReE6ZYntZ24eq7MVvCqVjDv8M0u15xESKr+/JzrwizLj985KV+3V861/byh8eMxZpA0yelSU4tELNDlO2nXBv9jNvpI5qQ1JhzohOcyreD7EOpUpySB7bxzfuTF+W1in8/5DlvMJW+o=
+	t=1761312488; cv=none; b=F/TiPonNahmKQQvlG4byRVl1w7W/b2NXoaDvCWYg3MNz0l8IE/SV6sUSNg/02VpU9SfQ+BxJ/0nfHscve1Z83eIwD8G9pykVXicL2zE/14AlByncoSxUD5AC00QcS/D97R1spOAXiw5/qg0C7uZ34xP1CGLTYdXqn0m4ZtzCok0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761312460; c=relaxed/simple;
-	bh=2ZUHwXp2ysaRQs0zSD5QmaM8wmm4U6/OQbUL7/FYLSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g8eWqe/PUqOsIT0tiQ0VM8+WChvcaOufeu5YL7LjgVccygkKvyDdXTfIwILtRQHuCpalI5YSymPYPyPFHyJv7ykkLZdQMcVvqTElhFJ5nVdKl06UcS5fKRFOv/2RbzuHaNZn2b/z7QAn9gIK7va9y93P6Nr2O1PDA3Y4PC2mik4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EQ9cqlHY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761312458;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W95gCkBxowoa8sjYCMILYw6pqqluuwtxuEqICefNFQ8=;
-	b=EQ9cqlHYeA+Irl1jc/Y/4xpr8sngwljhpizjQoVhiCDNTXiGWBR82HclDrm/eRDudUjJAb
-	gZYQzvMaqbKKJf7PyubkSY//kEWLKKNnvErQzmDij9dZA54HZRmjZLa64DQHjp7pVxUcyd
-	4owDdD+OpfREioM3SYxjzw8mz+wJ7DM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-Wvm73QcCP92Yrx_adceFHg-1; Fri, 24 Oct 2025 09:27:36 -0400
-X-MC-Unique: Wvm73QcCP92Yrx_adceFHg-1
-X-Mimecast-MFC-AGG-ID: Wvm73QcCP92Yrx_adceFHg_1761312456
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-427a125c925so1302746f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:27:36 -0700 (PDT)
+	s=arc-20240116; t=1761312488; c=relaxed/simple;
+	bh=ceFA0S2W42fXX2lT+NelVq5KuhyNa5f8RI5F9G5tVFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nTzlugRwTWyHIibCG4GtUvn6IM2DRgRBMZS15sf2fyFo0l2zkf96cNOPH98F4nYKJfTx7wIsZjiMPBFAC9K3il82l04YXIdJgfrs/dFibcKecBeBtwjhd1u8nXN1VRDqWKxH3KSrGXCR7sLG+dUSf84mlIAIrZjdivAy83tLbIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAqER0eQ; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7833765433cso2673489b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761312487; x=1761917287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U6L1uxdzkk8srkrwCsNr6wv7lTER2UD4Th5fojH+wrQ=;
+        b=BAqER0eQQWFVaHOUZzsW8DDUuh9UqSwzUcuvtgH1peALRb65Pnjdg+HHJ3iIFsYjKf
+         mvNU8BCGI14IIzx3XYn9PUJGdDfn61V1agd/Y7fm1tCaoAP17vMco7HK0o+TiA0m9pyX
+         KzIDF+fXx/WBDNy2eOM50unEGWdup2jSurq3MVNhr1D2zTj74pxyAN3q4ptGUDRgipCV
+         bX0kR7LNq6UUEYOzGJQiT0CL9j4texAWdgXK/PZwsK6TzYcmrE83VZtqbQWxXvsGDIzs
+         5wNueDNTNIdv1FH6yAFvGpT+MVSvjwfhoFAsiQTZbOlBV18G1Lky68sXFNpVUhWsUlQ1
+         PsNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761312455; x=1761917255;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W95gCkBxowoa8sjYCMILYw6pqqluuwtxuEqICefNFQ8=;
-        b=LfInj7lC4K5RqRHZLBu+ahiHudNxWeE5dn5LWim64w/escadjUj5oIEg6EcExaLJXy
-         WRX5DMfSx1GS28UZ6T+dW3ipozckVXHSapjaxZqQkIRkmkBmWr1sUFMXY+cIlcDL0CBp
-         Oa2hoDF5mGNKQUoxlVU/D8pmUKHZPNNCmgPjSVM9fVRvazrDsOmbxCwWFroyFzyO1ZTr
-         57wXSqzaIienWfE2x2gjCp1eSFgc6nz1M4pibGkv8T5wdFUTeEiOc/YoZrfhEU9C/wvv
-         RPJ1HPsvk7jju4bu8KNWkK8rprxXDV1ogqlcc4SqmpdeHANz/B+E4RmoNQrrhVcnrNxT
-         AgVg==
-X-Gm-Message-State: AOJu0Yy0aolcGUZf0OfHMXM/lzQrubHZ/oHNb5QGgqeqXXvXagH3aG+A
-	SAVuUZO7ndhuwp61yi5h/V2q5olLGgB8CX2gUCMacSD1kzbWAV1XMR2aP5chudqtTEY8kscKs+L
-	NdEQGuEcX9vfNCFxb6aYR1kkGtfQl9tEh+ayejGeBc2N8V0bcaapBrfqyXmeSQPer4w==
-X-Gm-Gg: ASbGnctmxD8SjSVppLGE53Ry4lYMbzdo3HxpgsomgCUHGLVMcNRneQBfr7hVRviHhwC
-	ZcTZFSwXocX25TaBAKIzQdU1UdzHzWShJRlaM6jFXJLXTf8Nd48cVCa3zkOpz1QVpoNCg6kJQLJ
-	fVTk/aJuR22Y/cqmvHEvwQho5lM96dEgXJNJ+d80Pk9rJlv8MbOzksi3e4oEroaB9qzZwfSBngy
-	pEFUy6TbzyLiY0dkuNMwEdOSwACIDf8TdCKjRaXqfW32kIm9OxJ5vN4Eb9TQg/GHMqMgxvnnFEE
-	7gPVR3HqXpUMt2e4tsl8S9Rn+puAHgvWn+S1Cn0yzDenEJ4UCZ/ORNerTuGuvjUNF4W3zlT3uSY
-	QwlITcBYPvUDUvThiyg24cCzpWETkKcrq1fhcmmKmnCgjv4L24JQiydL9Qi+wQ/xjQDTKmSf0SV
-	861gccTWvg24Jk7FdZHsNNp6KAJYs=
-X-Received: by 2002:a5d:5f82:0:b0:3fa:5925:4b07 with SMTP id ffacd0b85a97d-42704d74f9fmr17804287f8f.18.1761312455511;
-        Fri, 24 Oct 2025 06:27:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6q4w15VA7XMPgV1osu1aNNaqJ9bER4GrjuNDgzSEl5cHuxzuUI4S5/OhMi/rPVse+Lx9Gyg==
-X-Received: by 2002:a5d:5f82:0:b0:3fa:5925:4b07 with SMTP id ffacd0b85a97d-42704d74f9fmr17804231f8f.18.1761312454926;
-        Fri, 24 Oct 2025 06:27:34 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ccc60sm9453555f8f.34.2025.10.24.06.27.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 06:27:34 -0700 (PDT)
-Message-ID: <f8d22ae0-4e36-4537-903f-28164c850fdb@redhat.com>
-Date: Fri, 24 Oct 2025 15:27:32 +0200
+        d=1e100.net; s=20230601; t=1761312487; x=1761917287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U6L1uxdzkk8srkrwCsNr6wv7lTER2UD4Th5fojH+wrQ=;
+        b=okoN9Gu/EaG/oLlZndVoDd1M3ICvK7Z0U2jsQ2dM+rCqfBxukDZEUkQT/AAHNLWTN3
+         mkXe+HzruIbxuujWeWhPJqefJxy8JTZU4TamVfqATwYO5Zlw+Pnueb0FHyXuKLlr5zSI
+         l+mGT/HmTGb5eJON2D/NVDjb3Sm5IoJXAXvjZ26cNtJ0O6300m5yvaXWOeaDtdbT8T7V
+         sH3EUPUAl6h6SvgkZdU0st7lhwHZEcSDL09Uo+/qSrwonqtU0fleRRvAjz5Mjj9YFpAd
+         T9vkia5YlqttgPHHn7pErWT+30TlFvkiuwfZoDrqgK48d0xSp8XmXq+QPy4y/uwZNBbw
+         r2Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXczypM8enKIUmXcyIVKAxjnkSK7haCt2kAHrvLZmFbeI/osKJmdvJLOlHBkWhemSfneZ0BCjOyfwjJnbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykBk/7CpPrY9i+SIIlJa+pS+co1iZFm+qZz/Rx2ZajIjmRKRIC
+	M8e0Pi21vmkTT71XKYmuVuOIOGFAsUpX86iHLDjcVWNz8sB1fvaJGylDDekQHvBhffbSsjTYllh
+	e7NoEkDkOo88fD5FQzfxeHXBpTcdgl+M=
+X-Gm-Gg: ASbGncse/LeqWBW/T5EuqYcQUYM58cWS6FXqYNEIDX4A3wFGm4aYfOwrr6XAG1pd9aA
+	yC97OKakQnhjdg3t6sQvr6zymNo6U7D3u55sTDyJTbE4mer1+BVJOTEHCVyGlrZexh4K/+So4T5
+	IMPoIFniDaAZtFqbupXmfI3tKody3pGeEHopNP3uvx5JUENvMSj1xrwJylboBF4xQA0TK36Jd06
+	J0bocfboOnhpNVu9HfHGepdacA4dMq1dPaemb2ZO67X0FWaHvNt5gDXLzXF9H7IK1PNmzULdg==
+X-Google-Smtp-Source: AGHT+IFfagfElQ7VdeIYoTX5r/N8GfzjgZaicvl/ggnv/QdNBInCxKV3LHrMSWqa99+jjqRtmBXA4QpAKlh7s02X1SA=
+X-Received: by 2002:a05:6a21:4d17:b0:334:a9f2:558c with SMTP id
+ adf61e73a8af0-334a9f255cemr34734939637.5.1761312486566; Fri, 24 Oct 2025
+ 06:28:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-7-kevin.brodsky@arm.com>
- <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
- <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251023191807.74006-2-stefan.wiehler@nokia.com>
+ <20251023235259.4179388-1-kuniyu@google.com> <CAAVpQUBxfpYHaSxS8o8SAecT27YtrNhcVY9O=rSYFr3GshF0_Q@mail.gmail.com>
+ <cf5df107-1056-48b1-aec5-f70043a9c31c@nokia.com>
+In-Reply-To: <cf5df107-1056-48b1-aec5-f70043a9c31c@nokia.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Fri, 24 Oct 2025 09:27:53 -0400
+X-Gm-Features: AWmQ_bmzAtPUqRUiN6VayanzPbUW_j_uagCykSjOy1z20QJwUstuknXDIPdDLR8
+Message-ID: <CADvbK_ddE0oUPXijkFJbWF6tFTq5TntpFMzDWH+uV_kc+KB7VA@mail.gmail.com>
+Subject: Re: [PATCH net] sctp: Hold RCU read lock while iterating over address list
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: Kuniyuki Iwashima <kuniyu@google.com>, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sctp@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24.10.25 14:13, Kevin Brodsky wrote:
-> On 23/10/2025 21:52, David Hildenbrand wrote:
->> On 15.10.25 10:27, Kevin Brodsky wrote:
->>> [...]
->>>
->>> * madvise_*_pte_range() call arch_leave() in multiple paths, some
->>>     followed by an immediate exit/rescheduling and some followed by a
->>>     conditional exit. These functions assume that they are called
->>>     with lazy MMU disabled and we cannot simply use pause()/resume()
->>>     to address that. This patch leaves the situation unchanged by
->>>     calling enable()/disable() in all cases.
->>
->> I'm confused, the function simply does
->>
->> (a) enables lazy mmu
->> (b) does something on the page table
->> (c) disables lazy mmu
->> (d) does something expensive (split folio -> take sleepable locks,
->>      flushes tlb)
->> (e) go to (a)
-> 
-> That step is conditional: we exit right away if pte_offset_map_lock()
-> fails. The fundamental issue is that pause() must always be matched with
-> resume(), but as those functions look today there is no situation where
-> a pause() would always be matched with a resume().
+On Fri, Oct 24, 2025 at 4:51=E2=80=AFAM Stefan Wiehler <stefan.wiehler@noki=
+a.com> wrote:
+>
+> > Or if lock_sock() is enough, we should use the plain
+> > list_for_each_entry(), or list_for_each_entry_rcu() with
+> > lockdep_sock_is_held() as the 4th arg.
+>
+> Right, I've already hinted in the commit comment that lock_sock() might b=
+e
+> enough, but I'm not sure about it...
+>
+> @Xin Long, as you're the author and have already acked, I suppose we actu=
+ally
+> need to hold the RCU read lock?
+Yes, there's a path not holding sock lock:
 
-We have matches enable/disable, so my question is rather "why" you are 
-even thinking about using pause/resume?
+  sctp_diag_dump() -> sctp_for_each_endpoint() -> sctp_ep_dump()
 
-What would be the benefit of that? If there is no benefit then just drop 
-this from the patch description as it's more confusing than just ... 
-doing what the existing code does :)
+Kuniyuki is right about the TOCTOU issue, we do need a check there:
 
->>
->> Why would we use enable/disable instead?
->>
->>>
->>> * x86/Xen is currently the only case where explicit handling is
->>>     required for lazy MMU when context-switching. This is purely an
->>>     implementation detail and using the generic lazy_mmu_mode_*
->>>     functions would cause trouble when nesting support is introduced,
->>>     because the generic functions must be called from the current task.
->>>     For that reason we still use arch_leave() and arch_enter() there.
->>
->> How does this interact with patch #11?
-> 
-> It is a requirement for patch 11, in fact. If we called disable() when
-> switching out a task, then lazy_mmu_state.enabled would (most likely) be
-> false when scheduling it again.
-> 
-> By calling the arch_* helpers when context-switching, we ensure
-> lazy_mmu_state remains unchanged. This is consistent with what happens
-> on all other architectures (which don't do anything about lazy_mmu when
-> context-switching). lazy_mmu_state is the lazy MMU status *when the task
-> is scheduled*, and should be preserved on a context-switch.
+                if (!--addrcnt)
+                        break;
 
-Okay, thanks for clarifying. That whole XEN stuff here is rather horrible.
+BTW, there is another addrcnt thing in inet_assoc_attr_size(), I think you
+can fix it in another patch, like moving nlmsg_new(inet_assoc_attr_size(ass=
+oc))
+under the lock_sock() in sctp_sock_dump_one() and delete _rcu?
 
-> 
->>
->>>
->>> Note: x86 calls arch_flush_lazy_mmu_mode() unconditionally in a few
->>> places, but only defines it if PARAVIRT_XXL is selected, and we are
->>> removing the fallback in <linux/pgtable.h>. Add a new fallback
->>> definition to <asm/pgtable.h> to keep things building.
->>
->> I can see a call in __kernel_map_pages() and
->> arch_kmap_local_post_map()/arch_kmap_local_post_unmap().
->>
->> I guess that is ... harmless/irrelevant in the context of this series?
-> 
-> It should be. arch_flush_lazy_mmu_mode() was only used by x86 before
-> this series; we're adding new calls to it from the generic layer, but
-> existing x86 calls shouldn't be affected.
-
-Okay, I'd like to understand the rules when arch_flush_lazy_mmu_mode() 
-would actually be required in such arch code, but that's outside of the 
-scope of your patch series.
-
-
--- 
-Cheers
-
-David / dhildenb
-
+Thanks.
 
