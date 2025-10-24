@@ -1,91 +1,134 @@
-Return-Path: <linux-kernel+bounces-868745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAD8C06028
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9F3C06058
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDEB1C272FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8FE188E93A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1473324B2F;
-	Fri, 24 Oct 2025 11:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F91C3161BD;
+	Fri, 24 Oct 2025 11:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SAEP9+na"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rrC+L+V3"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211683233ED
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA3A31281B
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304610; cv=none; b=CJJjeH+RikCFBGU/pkMUfssYdY6UrZYsEw42Gx50xctWqoFvXqSHdiELb1g8Zy1h65YuvhB69nAk2eUvtycR6Jr+GSqml4IXZvUa0tqTySuD1W0hcAA3sFQbsQm1SU/Wf5DTbddgBdC2no/bSsQP5iFRkgSXo3c1XFJO3lzadDs=
+	t=1761304752; cv=none; b=lfRbQd5vraEMMaZIG7fdCQYH71O5bNzbGtS2zLFHnAbNeceK3PddVQ73BsEUaQn1pRGQAhXQo5VIi5cIfGycXEem3E7xe20WkE62LikOZm99npgaIgKLwqy6S1AECq8p/bI8L1o6lJMF9ANMiPR7swHb7340OftsC3ZNbKxchG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304610; c=relaxed/simple;
-	bh=eacDw9L87bd/XGtW7FWfpnn3HxRi6ROpecDKJ/IHQ8A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HsujjqOx6Gc+OJ/tERLcbQaVRddyQewu9xA40N0bo+6LqbrDFBNRiHfXXxyrx6tEghVXGDchxxz3boTVhV+ppzOP+YIJfXJqz2Yudd8GIpmWLoUCwyOHsyFZY66eXn7BLquUnsNDsHZuasRr9BtU22mxQI9OtViu99jv7vTgX5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SAEP9+na; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 4A1494E412DA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:16:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 16D3760703;
-	Fri, 24 Oct 2025 11:16:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A3237102F248F;
-	Fri, 24 Oct 2025 13:16:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761304603; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=BaDn986q5yhbWKKWBePyq6Pb8smvvlHHR98lZRxcrVQ=;
-	b=SAEP9+nackPJTf3w5lUHPqIxzSpqBkOG/SPRu/QjSdJ+uod2yNSqgvSUrBhLo1AVsPZNam
-	lDNtnlTZ5MPC9WCZmRBd8iBaYEHPuc+aPxOY+7CG/WxrhCmyN0MVK+1b5471Z/9lytvn46
-	eYYUcNBH2h2SFd/RXvZqG7s2prh4bi+FNDrSIdeQj9O1MIXtaET5ulyB/bDUGF8c+v3I7z
-	e+gmElP3nLpUqU+P0QgsmEpcgMwx9nHCYLsT2RsnmaoHNZ60suFMIr/ysqNs84jHrmcgM+
-	KUSYjNJWv41bUnO6CwaEPDAPJdgnth4UTaJ6KLbzRuS4kl5YBgTliEPDVPU5Zg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: niravkumarlaxmidas.rabara@altera.com
-Cc: richard@nod.at,  vigneshr@ti.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: rawnand: cadence: Add support for NV-DDR
- interface mode
-In-Reply-To: <20251024102611.310568-1-niravkumarlaxmidas.rabara@altera.com>
-	(niravkumarlaxmidas rabara's message of "Fri, 24 Oct 2025 18:26:11
-	+0800")
-References: <20251024102611.310568-1-niravkumarlaxmidas.rabara@altera.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 24 Oct 2025 13:16:40 +0200
-Message-ID: <87zf9gpn1j.fsf@bootlin.com>
+	s=arc-20240116; t=1761304752; c=relaxed/simple;
+	bh=ZDcuj4nvsrlLmgmMXrgeXB6W4PToAWWP7D5MNCjklnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=MVbisN6NbajtbIvN9gy9Uvn39jRDab6FycB31xe59jRcI6xs8SaUEj6PITz8KtpfBUkvOSatqYJhsT8uaM7JRKFAvt2iZ5VfYGSpgTqAAD7l/bSnX6jO6rwOViD6tO8iVUY4WjG8Y5ARy2h0VXrXnr5fmNEDDpt5rr2PnB/lVOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rrC+L+V3; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251024111907euoutp028f2bb7844a77c0c6575fdf95a3836d67~xaVX8fysi1909719097euoutp02M
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:19:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251024111907euoutp028f2bb7844a77c0c6575fdf95a3836d67~xaVX8fysi1909719097euoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761304747;
+	bh=kYzbQaZe2By8egkc4y3i3SJq/zpodmWP3KwwN0dNah4=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=rrC+L+V3IoMA0ikgzSPgqXf00OP3ED2t8skXC4763eSm4erOWIVLZu42HIVJYN5Ba
+	 bNk23cHfFowFDn3HxfDigeK/ifWvD0zZsfdYwd1oTxe9UcQhDq8P6zaTtJ6AlaBmPC
+	 rTXla8dU5El0UPOtv3MxKTakKESkHobhfrNX9UMA=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251024111906eucas1p20bb3f61c830ac6e5f776a9f5a2dd6afd~xaVXe-8wp3220332203eucas1p2l;
+	Fri, 24 Oct 2025 11:19:06 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251024111904eusmtip131ad4a4bc1d1ab7f03a42110bd0da68d~xaVVgmqcF0896108961eusmtip1g;
+	Fri, 24 Oct 2025 11:19:04 +0000 (GMT)
+Message-ID: <c09387b9-3fcc-4d0e-8e29-21dee196014a@samsung.com>
+Date: Fri, 24 Oct 2025 13:19:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v5 4/7] clocksource/drivers/exynos_mct: Use percpu
+ interrupts only on ARM64
+To: Will McVicker <willmcvicker@google.com>, Russell King
+	<linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
+	Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
+	Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>, Ingo Molnar <mingo@kernel.org>, Peter
+	Griffin <peter.griffin@linaro.org>, Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, John Stultz <jstultz@google.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+	<andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251023205257.2029526-5-willmcvicker@google.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251024111906eucas1p20bb3f61c830ac6e5f776a9f5a2dd6afd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb
+X-EPHeader: CA
+X-CMS-RootMailID: 20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb
+References: <20251023205257.2029526-1-willmcvicker@google.com>
+	<CGME20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb@eucas1p2.samsung.com>
+	<20251023205257.2029526-5-willmcvicker@google.com>
 
-Hi,
+On 23.10.2025 22:52, Will McVicker wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> For some unknown reasons forcing percpu interrupts for local timers
+> breaks CPU hotplug for 'little' cores on legacy ARM 32bit Exynos based
+> machines (for example Exynos5422-based Odroid-XU3/XU4 boards). Use percpu
+> flag only when driver is compiled for newer ARM64 architecture.
+>
+> Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
 
-> +	if (nand_interface_is_sdr(conf)) {
-> +		const struct nand_sdr_timings *sdr =3D nand_get_sdr_timings(conf);
-> +
-> +		if (IS_ERR(sdr))
-> +			return PTR_ERR(sdr);
-> +
-> +		ret =3D cadence_nand_setup_sdr_interface(chip, sdr);
-> +	} else {
-> +		if (chipnr < 0)
-> +			return ret;
+This tag doesn't make sense in this patchset. Simply squash this change 
+with the previous one, adding the following tags:
 
-I still think this is incorrect. The chipnr value shall not be treated
-differently from the SDR path.
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Link: 
+https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/ 
 
-Thanks,
-Miqu=C3=A8l
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   drivers/clocksource/exynos_mct.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index a5ef7d64b1c2..1429b9d03a58 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -597,7 +597,8 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
+>   			if (request_irq(mct_irq,
+>   					exynos4_mct_tick_isr,
+>   					IRQF_TIMER | IRQF_NOBALANCING |
+> -					IRQF_PERCPU,
+> +					(IS_ENABLED(CONFIG_ARM64) ?
+> +					 IRQF_PERCPU : 0),
+>   					pcpu_mevt->name, pcpu_mevt)) {
+>   				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
+>   									cpu);
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
