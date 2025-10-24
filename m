@@ -1,136 +1,202 @@
-Return-Path: <linux-kernel+bounces-869009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863EEC06B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:31:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499FEC06B45
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00F01C04E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:31:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC6443417EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34E92343BE;
-	Fri, 24 Oct 2025 14:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2YE9Ct0"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C256A1D63EF
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F09C3074AE;
+	Fri, 24 Oct 2025 14:32:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC33269B1C;
+	Fri, 24 Oct 2025 14:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316275; cv=none; b=MbI1Qw6Gh+ymB2totUIaZGFmX+xKKPD8fY1uN0+SKJtVoJGbQOzuWnjeTaqi9m+yZHCisTHMAdqyGxgkahFFzrQT7yIHTW7dy44idA+n9/rjbIQIKKoKuocAVsfHE42ldgKNpRDqUCae7RcInztuHUoAleEyVSkyU/dFAWV9Mjs=
+	t=1761316372; cv=none; b=PX6WuWLfm/15zkEd7boSrvuqw67Qn87V+JtjYHwhI7zerVSZ36cOX6srcsoquoHj2AAHdMkmKh37ssvHmIQdXdeQ6VCjWdCxydMvBDYniVCvHPbQ48UxevVhELX4195gDlsan6E1PYmLzqLS7q0AJkVnRTPoG891E1mq4Rv2kWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316275; c=relaxed/simple;
-	bh=YwWaL7YELIgYKGB8/RNOfIPO+vpDTLb5fhNB+3MDkO0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=EndUviyDfCVwI/1uq8BiN6+Ukgru+BWILEoEAkqxbUMUuf8v1m8h45cL7VlMCWqdvMWPVqtP5FXNCRnweIJ1T5/qBn6M+oSFeP+u2/bVdMzce8RkUkSoO8LbL6AMhkEIzcxt8fVnJQ0SNX190eDXsnscm5s6D7blhZPSS6zoo30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2YE9Ct0; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-81efcad9c90so22976596d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761316272; x=1761921072; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0SfcH6cGIjO4GCF81rPy0gjRHBMgVWt4XFd5yPJO6t4=;
-        b=D2YE9Ct0sQbdyKm7QkYZJY5IURTf6OETJ4Ko3D3xNw1UPwQivNeK8HHqe7OhuiPSck
-         K9TDnAqv60UI8JluNeFiumJzR2er5gvoohBQ7CSl3Q3mD/sidcR9eQEPX8roCEYr7fEa
-         83l42Uz8GD0d3smGmEuaoZcj1PoJRCulIx7dPeWRMjS9ciEbf7gkJj7nMIAz5pXlH/Qq
-         sVJH8/T1+oA3cWh6pD71Gx6AeVihHlgpFtqphVcmt8xMqfLRYJNyuU7hxbqIk4MqUV8J
-         7MoN1eXlE5PgyHl7BBjAyIeVotcMdUnLuTja7WCuHiwueIBg+SqR1+Sl3XSm8Ztx7+7I
-         LbTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761316272; x=1761921072;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0SfcH6cGIjO4GCF81rPy0gjRHBMgVWt4XFd5yPJO6t4=;
-        b=LGSTNYhBw8xJFYugtZa3SZw4rr5kCT8CdouDy+1kHoLCDvssMP/jcEit0GzBnxvLu7
-         Vc1hpiVk0RKW/G33/H7f+eDS6YVJLr/215kAE66rPTM/HuhgnZ6oxbz3woD+PVd7Tfgy
-         cK1ZLBn+GO3sFvRu8D7XegnCSl4ACQKLJE+3H6PTRZrvkLYbTVNHEOEJ8J9wQYcP3VLm
-         SQlM/bUkfEJa5XBB8xZr49ZiL2U3erAFW4PcxmyCDRJo95YKYa67/60Sk1G6bQv/vrEY
-         ciUQGMmkvGymZ1Ri0VwVTagFz1gbXOi0DihtCvR61yngm5jw1ReDBLDnjY/RQnKHHGKv
-         aSVA==
-X-Gm-Message-State: AOJu0YwL8bAlBtsML+dAn5d77rIwEEyCpKsZmSJzyYf8eT4xYyBHkK7W
-	RmT//0o3dhFMuTG64yTBU/aI34IZKD02q+VYJQXr86fp0wxm208Q+Rx0tDhsUcv4qt6zmeZLgip
-	EAtbzR9wKjMhPgu0o6BmzoIbrzPAE9GgUi6Pw
-X-Gm-Gg: ASbGncs53Cb0QbFWRP8HLhY6mL6G18tyz0hp5zfO8jOjJMEOdJ+m+ytg6DCk8LLP55W
-	4RQZB9inQwkXMycamEDXxCeLyb5gFT9mdcvDzwnB/aq6jfmbhdDO/X9C8z3Nm7bNerXxht5xnTA
-	kwicdbATHarCsnFFPLqIw7Cps93h9UBEVr/EUsO+3FmHUykV6X3q3rl9OLbEnPlQH6AHEl32nDS
-	UFx6kUheh0nZygoAqQGLyh455smvRlp4SMEBUXtOB5lVu5jYyAars4xDfw3uD+VH4aASsA3waLF
-	Qtezewz86c9wjdPbJXZRR/i3EIFdEOiPFQqM6E2BR/irpX9hsNn90wfJq5iNV/JB0DWvAZUTnWL
-	lBbjSBQ5+MFCU5mb5rTO5eO5d+NnZmQKAt/xmVv63BVOaI1NKGP8oMZsICn00n0sb3YLsGG716N
-	0Nqx4NNsPRmLEp4VTHPsZt
-X-Google-Smtp-Source: AGHT+IH6Onrt1C57J648mHfgDzK7l5oADdvj83TGXRqZO0zc/iSil8hZgrdfB9t9cPOweL58IPlDUnQzrdV5d+yu3bQ=
-X-Received: by 2002:a05:6214:2a84:b0:87f:b2f2:c591 with SMTP id
- 6a1803df08f44-87fb2f2c6cdmr43135406d6.62.1761316272532; Fri, 24 Oct 2025
- 07:31:12 -0700 (PDT)
+	s=arc-20240116; t=1761316372; c=relaxed/simple;
+	bh=fj3ap4gb/dH/jt4Kw1Iocq3iQjPpRmaLvXvbN2t9MVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0hnsamzlbjF7d8Jof4qdXNrqqoSy2o6G2av175vLJQOxt1R8DxO3pPTEkExRWqhKwooBH0m9oI/hLIAOmos8zfHRnRmfqsjWjNbLWNAVw8KjtJ5iX/0qg7NL8GtXkMXDOX+umqv2+5KUElg7IF+A9ToL2xitmflrHftYql6jl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDD53175A;
+	Fri, 24 Oct 2025 07:32:41 -0700 (PDT)
+Received: from [10.44.160.74] (e126510-lin.lund.arm.com [10.44.160.74])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F9233F66E;
+	Fri, 24 Oct 2025 07:32:42 -0700 (PDT)
+Message-ID: <28bf77c0-3aa9-4c41-aa2b-368321355dbb@arm.com>
+Date: Fri, 24 Oct 2025 16:32:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 24 Oct 2025 09:31:01 -0500
-X-Gm-Features: AWmQ_bn5GytQ4_bDnpEs9WssDXChStMg2wmQo6fAZTzxfcRt45URfRBpCcQuu4s
-Message-ID: <CAH2r5mtRwOOJo1J_dR_2M4FwPcc1=LP1+NczMV8-PKJf+M=k-g@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-7-kevin.brodsky@arm.com>
+ <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
+ <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
+ <f8d22ae0-4e36-4537-903f-28164c850fdb@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <f8d22ae0-4e36-4537-903f-28164c850fdb@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-211ddde0823f1442e4ad052a2f30f050145ccada:
+On 24/10/2025 15:27, David Hildenbrand wrote:
+> On 24.10.25 14:13, Kevin Brodsky wrote:
+>> On 23/10/2025 21:52, David Hildenbrand wrote:
+>>> On 15.10.25 10:27, Kevin Brodsky wrote:
+>>>> [...]
+>>>>
+>>>> * madvise_*_pte_range() call arch_leave() in multiple paths, some
+>>>>     followed by an immediate exit/rescheduling and some followed by a
+>>>>     conditional exit. These functions assume that they are called
+>>>>     with lazy MMU disabled and we cannot simply use pause()/resume()
+>>>>     to address that. This patch leaves the situation unchanged by
+>>>>     calling enable()/disable() in all cases.
+>>>
+>>> I'm confused, the function simply does
+>>>
+>>> (a) enables lazy mmu
+>>> (b) does something on the page table
+>>> (c) disables lazy mmu
+>>> (d) does something expensive (split folio -> take sleepable locks,
+>>>      flushes tlb)
+>>> (e) go to (a)
+>>
+>> That step is conditional: we exit right away if pte_offset_map_lock()
+>> fails. The fundamental issue is that pause() must always be matched with
+>> resume(), but as those functions look today there is no situation where
+>> a pause() would always be matched with a resume().
+>
+> We have matches enable/disable, so my question is rather "why" you are
+> even thinking about using pause/resume?
+>
+> What would be the benefit of that? If there is no benefit then just
+> drop this from the patch description as it's more confusing than just
+> ... doing what the existing code does :)
 
-  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+Ah sorry I misunderstood, I guess you originally meant: why would we use
+pause()/resume()?
 
-are available in the Git repository at:
+The issue is the one I mentioned in the commit message: using
+enable()/disable(), we assume that the functions are called with lazy
+MMU mode is disabled. Consider:
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.18-rc2-smb-client-fixes
+  lazy_mmu_mode_enable()
+  madvise_cold_or_pageout_pte_range():
+    lazy_mmu_mode_enable()
+    ...
+    if (need_resched()) {
+      lazy_mmu_mode_disable()
+      cond_resched() // lazy MMU still enabled
+    }
 
-for you to fetch changes up to 64c9471aa9ded2440bf182b1c71d3f93f80b2f85:
+This will explode on architectures that do not allow sleeping while in
+lazy MMU mode. I'm not saying this is an actual problem - I don't see
+why those functions would be called with lazy MMU mode enabled. But it
+does go against the notion that nesting works everywhere.
 
-  cifs: #include cifsglob.h before trace.h to allow structs in
-tracepoints (2025-10-23 02:47:20 -0500)
+>
+>>>
+>>> Why would we use enable/disable instead?
+>>>
+>>>>
+>>>> * x86/Xen is currently the only case where explicit handling is
+>>>>     required for lazy MMU when context-switching. This is purely an
+>>>>     implementation detail and using the generic lazy_mmu_mode_*
+>>>>     functions would cause trouble when nesting support is introduced,
+>>>>     because the generic functions must be called from the current
+>>>> task.
+>>>>     For that reason we still use arch_leave() and arch_enter() there.
+>>>
+>>> How does this interact with patch #11?
+>>
+>> It is a requirement for patch 11, in fact. If we called disable() when
+>> switching out a task, then lazy_mmu_state.enabled would (most likely) be
+>> false when scheduling it again.
+>>
+>> By calling the arch_* helpers when context-switching, we ensure
+>> lazy_mmu_state remains unchanged. This is consistent with what happens
+>> on all other architectures (which don't do anything about lazy_mmu when
+>> context-switching). lazy_mmu_state is the lazy MMU status *when the task
+>> is scheduled*, and should be preserved on a context-switch.
+>
+> Okay, thanks for clarifying. That whole XEN stuff here is rather horrible.
 
-----------------------------------------------------------------
-Six smb client fixes
-- add missing tracepoints
-- smbdirect (RDMA) fix
-- fix potential issue with credits underflow
-- rename fix
-- improvement to calc_signature and additional cleanup patch
+Can't say I disagree... I tried to simplify it further, but the
+Xen-specific "LAZY_CPU" mode makes it just too difficult.
 
-----------------------------------------------------------------
-David Howells (4):
-      cifs: Add a couple of missing smb3_rw_credits tracepoints
-      cifs: Fix TCP_Server_Info::credits to be signed
-      cifs: Call the calc_signature functions directly
-      cifs: #include cifsglob.h before trace.h to allow structs in tracepoints
+>
+>>
+>>>
+>>>>
+>>>> Note: x86 calls arch_flush_lazy_mmu_mode() unconditionally in a few
+>>>> places, but only defines it if PARAVIRT_XXL is selected, and we are
+>>>> removing the fallback in <linux/pgtable.h>. Add a new fallback
+>>>> definition to <asm/pgtable.h> to keep things building.
+>>>
+>>> I can see a call in __kernel_map_pages() and
+>>> arch_kmap_local_post_map()/arch_kmap_local_post_unmap().
+>>>
+>>> I guess that is ... harmless/irrelevant in the context of this series?
+>>
+>> It should be. arch_flush_lazy_mmu_mode() was only used by x86 before
+>> this series; we're adding new calls to it from the generic layer, but
+>> existing x86 calls shouldn't be affected.
+>
+> Okay, I'd like to understand the rules when arch_flush_lazy_mmu_mode()
+> would actually be required in such arch code, but that's outside of
+> the scope of your patch series. 
 
-Paulo Alcantara (1):
-      smb: client: get rid of d_drop() in cifs_do_rename()
+Not too sure either. A little archaeology shows that the calls were
+added by [1][2]. Chances are [1] is no longer relevant since lazy_mmu
+isn't directly used in copy_page_range(). 
 
-Stefan Metzmacher (1):
-      smb: client: allocate enough space for MR WRs and ib_drain_qp()
+I think [2] is still required - __kernel_map_pages() can be called while
+lazy MMU is already enabled, and AIUI the mapping changes should take
+effect by the time __kernel_map_pages() returns. On arm64 we shouldn't
+have this problem by virtue of __kernel_map_pages() using lazy_mmu
+itself, meaning that the nested call to disable() will trigger a flush.
+(This case is in fact the original motivation for supporting nesting.)
 
- fs/smb/client/cifsglob.h      |  4 +---
- fs/smb/client/cifsproto.h     |  1 +
- fs/smb/client/cifssmb.c       |  8 ++++++++
- fs/smb/client/inode.c         |  5 +----
- fs/smb/client/smb2ops.c       |  4 ----
- fs/smb/client/smb2proto.h     |  6 ------
- fs/smb/client/smb2transport.c | 18 +++++++++---------
- fs/smb/client/smbdirect.c     | 36 +++++++++++++++++++++++-------------
- fs/smb/client/trace.c         |  1 +
- 9 files changed, 44 insertions(+), 39 deletions(-)
+- Kevin
 
+[1]
+https://lore.kernel.org/all/1319573279-13867-2-git-send-email-konrad.wilk@oracle.com/
+[2]
+https://lore.kernel.org/all/1365703192-2089-1-git-send-email-boris.ostrovsky@oracle.com/
 
---
-Thanks,
-
-Steve
 
