@@ -1,234 +1,152 @@
-Return-Path: <linux-kernel+bounces-869102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B99CC06F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:26:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AFAC06F6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02B624F4232
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC3E1889E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354D432548F;
-	Fri, 24 Oct 2025 15:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A502DEA7B;
+	Fri, 24 Oct 2025 15:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfHOF9EM"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXlFFD0e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848B4317710
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B28190477;
+	Fri, 24 Oct 2025 15:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761319550; cv=none; b=dF85w9biGzm6q+bster/r6CP79KIcNLnWz0cEQEzQFGUJBgCDLup46M+Pchf2Mm1Hbyk5/i3OgKYEpFbu+X+TffHgx7wdwt2Rei+FKD8S3m7y8mTNEwDXkwD6jazQ5ApHBQXsLYyYDYBnM2lDfIx6KjQCuFB0WYc5ax0ArUC4iU=
+	t=1761319629; cv=none; b=CLtJjxp9xGPRc7ZtKcii606/d/hm9u/Damka2jM0u0OIB6FYntHZ/C2xPTja30TaZaVzvvTlD3QwOHJLl7wTUIYhRRAynuYYdWTGWCHQaDKJKJ0z6z/WAP2xNGyQG+2wmCtz6yKGm2t7upCU7afye9EDgHI0Om1jMScuOxBBioo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761319550; c=relaxed/simple;
-	bh=+DwPFwhmkSUiZT3UZKwe/oRJM2RIonPEtdgijLe62ZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XU7pymcYpeG2XtUw00zkUg4WFgYDgpFcjRqyT6uQIkG2k/kxuK9R6D9Ct7zp10Mz69btX4Y/34H3OZfycKclgpK/9xrs/fDrDuiMHKO7wUu22gGBn+beSECy6yBzZnRZcTzLCjVExx6wYuqedhFWTnOei9E56NGIC0vK4k53OLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BfHOF9EM; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-475dae5d473so87065e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761319547; x=1761924347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypqIa5w6VQiQoM+Tw67e2xyPwM3Mkp0M4rGw2lAkqjc=;
-        b=BfHOF9EMKgW0O53R9chqL/tBdcyFSVlsbtXhjVAJV95wJ2LWzSdSx1HbQaa3559weV
-         YL7fDBnZ8SCLyA47ZYeCligFMYEOsPFqD0iCSBRNY9+lOTtdOhg5W7cdIahkgsg3yzGw
-         bfIJhZwCtQ9b93KX1vyEb4L1dzQHR7NjbokGFjNiIfZsP+XdRXwJG1O2GKEkKxs5hfmA
-         mlD7qJfk/olxg8bEGKeTPaEDMlZNoJlZ89Zc5fwRoBKbhpjLlGapCMmqwFdOiqW7vamN
-         QvjBhVSd71Cm71fippa8+R6rHuRogGs94UvdodctPCXSuMZMCQ/ED6rqOMSiTzuVPlws
-         4inA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761319547; x=1761924347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ypqIa5w6VQiQoM+Tw67e2xyPwM3Mkp0M4rGw2lAkqjc=;
-        b=PnmPWKH6qg+ORktLUzFENnoFiyGNYno4idHZbF8jEfrrfW4KTgnms5DQDAOeALNVeQ
-         Px31iu5bQRTiGSMcFj2UcYzRi3LRJ4t25U+/ff/HAezNrhsOglsPgkiIoNUHAokhek4/
-         pEhutiYJoAbrNn87suYdEx8sw2mMij07I+s2yOsdnDkyd6tNVTtBzhTFv6+NaGemXtby
-         y6ye4Gg06V2rcAlGoDobqPd2J4XoVuUXJJWW7e/MgVqjHv29gZVgl+SFZRjuODnLhnTm
-         GgxAjW18YWnoBP0xiuLgly/HeJU+dLiAR8NkfDIy3A2JMZwz0w1UndXTPKjQySiwY9M0
-         VQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKqXMMVc6SFquoK+vYAcFR72XSAKsVPyuQqfYKeNnPXDWGVtHuzY1oaRY1IATeCHNF3YQwcRAclh395vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKg3mX7S209DpO8iN0BMl+mRn1PDZa5thR0avHOL77ckl4hCtV
-	d1X3gfAl/x3gPOrsIHLKMXeYacLVmx9qn2COp82OOHoI1OiJjFsKN/v3
-X-Gm-Gg: ASbGnctIaTJrWuX6picY+ixktCvdk9lQ6ZxkbfM+imYr+Xkor/rRupGSgNMiu0vzaRn
-	0u7rba+t7YMEISxkoZMKUL+Mz8b7TvM45gXMxEaaqmB+DsRiTcIV3swEUOjUf5MbqrezsOashHE
-	JTF1BW5BCmvWVTs3pSZUFwDWZFWypAw/pA3QnOqcMaNgVP+bQLnQP/KT2fQ5god5SNKEMiNukoB
-	h1K/zghyT8/vuKjGKt6+knjGSAA0/a+wPYnpdK95/t2K6evurySiwWIVBC9u+DJFV1heEXLdsbD
-	g0sWlUNMWkqCjRNcJW/4a+1VshsTWHHyPWPMmL78bWHONNjseHLhGbcYQd3l4IjpL4ZUWz/sv09
-	nlKp7JPg1o/xfKebGZvjr2mHZkfqmPiHkwVMgKMfI6Ho/ySDyNNftG8pVnNwur0YSiC/CT41xFk
-	XsHNCeFXWPfjbaUJa14Cn2
-X-Google-Smtp-Source: AGHT+IH+9ceI5wAu8l/3wfsbGJD7MCuJ1USb4K1b4IDrZDz0mW503QMkS82KFPZH8fAPDDytSZwSNg==
-X-Received: by 2002:a05:600c:3b03:b0:468:86e0:de40 with SMTP id 5b1f17b1804b1-4711786c6b9mr223889745e9.4.1761319546714;
-        Fri, 24 Oct 2025 08:25:46 -0700 (PDT)
-Received: from fedora ([37.29.213.75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d4b923sm83941545e9.14.2025.10.24.08.25.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 08:25:46 -0700 (PDT)
-Date: Fri, 24 Oct 2025 17:25:43 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	victoria@system76.com, sebastian.wick@redhat.com,
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 07/22] drm/vkms: Introduce config for plane color range
-Message-ID: <aPuad03CDwb2PX5_@fedora>
-References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
- <20251018-vkms-all-config-v1-7-a7760755d92d@bootlin.com>
+	s=arc-20240116; t=1761319629; c=relaxed/simple;
+	bh=K35xa85qxRDW/MqsnDVqFDx99T314O0XzeWHcoAYEJk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=twNjsXU5sDPPJzyhkwN9RmT5jxyCe5jpuHZ2bTzojh3j+5wmaOKC6NDS1fbj9Sxm9/Wcy+nu6/r2nITm2mOn7iZYT0diesFbKmYAOuBjDIlsQ1q8H1JHIuHQggcXnHa+sH7bwNFFCZb1csPfi6PfV9m/oLGESDIRUSpHwG6zBzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXlFFD0e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3851C4CEF1;
+	Fri, 24 Oct 2025 15:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761319625;
+	bh=K35xa85qxRDW/MqsnDVqFDx99T314O0XzeWHcoAYEJk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=iXlFFD0esb38BGOypXdbuN+zB460cx6lQVQFOcp9+fqpdgc8/BzklLxqU0tUV1aqy
+	 xL0aS899x16VLYZJfBFr2VEl7oKFu03ulyUpav6KPwvjZpIpFY5QHFecc734nfoVIp
+	 +a3Bsr/6OFS340EhY15i9rgeogQdPodkMZtl0tezVqIibjM5wXKFIswHM7L+GxX2TS
+	 /YrHZLhO7wsFMWhFiALPyUvgGb6ZvIpMHjdYsOoO4LmOhYpOZERLrDFmm7wFw5CfBd
+	 66c/kloCqTYt33leVGEgrhBe0oAa0en0zTrue6n5wWhhUcUaXoQhYabx/5qG9pa2DE
+	 Cu8VJX1e0vQqg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Mike Rapoport <rppt@kernel.org>,  Pratyush Yadav <pratyush@kernel.org>,
+  akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
+  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  masahiroy@kernel.org,  ojeda@kernel.org,  rdunlap@infradead.org,
+  tj@kernel.org
+Subject: Re: [PATCHv7 5/7] kho: don't unpreserve memory during abort
+In-Reply-To: <CA+CK2bAvKrfuOXTa-RWtcuSR8rkPMhurwCn41NcUm44_vT63rA@mail.gmail.com>
+	(Pasha Tatashin's message of "Fri, 24 Oct 2025 09:28:33 -0400")
+References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
+	<20251022005719.3670224-6-pasha.tatashin@soleen.com>
+	<mafs0a51jfar1.fsf@kernel.org> <aPnXVmD3cNmYNRF_@kernel.org>
+	<CA+CK2bAvKrfuOXTa-RWtcuSR8rkPMhurwCn41NcUm44_vT63rA@mail.gmail.com>
+Date: Fri, 24 Oct 2025 17:27:01 +0200
+Message-ID: <mafs0wm4ke2wq.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018-vkms-all-config-v1-7-a7760755d92d@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 24 2025, Pasha Tatashin wrote:
 
-On Sat, Oct 18, 2025 at 04:01:07AM +0200, Louis Chauvet wrote:
-> VKMS driver supports all the color range on planes, but for testing it can
-> be useful to only advertise few of them. This new configuration interface
-> will allow configuring the color range per planes.
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_config.c | 14 ++++++++++++++
->  drivers/gpu/drm/vkms/vkms_config.h | 30 ++++++++++++++++++++++++++++++
->  drivers/gpu/drm/vkms/vkms_plane.c  |  5 ++---
->  3 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-> index 5353719a476d..8f00ca21ed6e 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.c
-> +++ b/drivers/gpu/drm/vkms/vkms_config.c
-> @@ -163,6 +163,13 @@ static bool valid_plane_properties(const struct vkms_config *config)
->  			drm_info(dev, "Configured default color encoding is not supported by the plane\n");
->  			return false;
->  		}
-> +
-> +		if ((BIT(vkms_config_plane_get_default_color_range(plane_cfg)) &
-> +		     vkms_config_plane_get_supported_color_range(plane_cfg)) !=
-> +		    BIT(vkms_config_plane_get_default_color_range(plane_cfg))) {
-> +			drm_info(dev, "Configured default color range is not supported by the plane\n");
-> +			return false;
-> +		}
->  	}
->  	return true;
->  }
-> @@ -386,6 +393,10 @@ static int vkms_config_show(struct seq_file *m, void *data)
->  			   vkms_config_plane_get_supported_color_encoding(plane_cfg));
->  		seq_printf(m, "\tdefault color encoding: %d\n",
->  			   vkms_config_plane_get_default_color_encoding(plane_cfg));
-> +		seq_printf(m, "\tsupported color range: 0x%x\n",
-> +			   vkms_config_plane_get_supported_color_range(plane_cfg));
-> +		seq_printf(m, "\tdefault color range: %d\n",
-> +			   vkms_config_plane_get_default_color_range(plane_cfg));
->  	}
->  
->  	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
-> @@ -433,6 +444,9 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
->  							BIT(DRM_COLOR_YCBCR_BT709) |
->  							BIT(DRM_COLOR_YCBCR_BT2020));
->  	vkms_config_plane_set_default_color_encoding(plane_cfg, DRM_COLOR_YCBCR_BT601);
-> +	vkms_config_plane_set_supported_color_range(plane_cfg, BIT(DRM_COLOR_YCBCR_LIMITED_RANGE) |
-> +							       BIT(DRM_COLOR_YCBCR_FULL_RANGE));
-> +	vkms_config_plane_set_default_color_range(plane_cfg, DRM_COLOR_YCBCR_FULL_RANGE);
->  
->  	xa_init_flags(&plane_cfg->possible_crtcs, XA_FLAGS_ALLOC);
->  
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-> index 11160c3c13bc..8127e12f00dc 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.h
-> +++ b/drivers/gpu/drm/vkms/vkms_config.h
-> @@ -47,6 +47,8 @@ struct vkms_config {
->   *         must be managed by other means.
->   * @default_color_encoding: Default color encoding that should be used by this plane
->   * @supported_color_encoding: Color encoding that this plane will support
-> + * @default_color_range: Default color range that should be used by this plane
-> + * @supported_color_range: Color range that this plane will support
+> On Thu, Oct 23, 2025 at 3:21=E2=80=AFAM Mike Rapoport <rppt@kernel.org> w=
+rote:
+>>
+>> On Wed, Oct 22, 2025 at 01:15:30PM +0200, Pratyush Yadav wrote:
+>> > On Tue, Oct 21 2025, Pasha Tatashin wrote:
+>> >
+>> > > KHO allows clients to preserve memory regions at any point before the
+>> > > KHO state is finalized. The finalization process itself involves KHO
+>> > > performing its own actions, such as serializing the overall
+>> > > preserved memory map.
+>> > >
+>> > > If this finalization process is aborted, the current implementation
+>> > > destroys KHO's internal memory tracking structures
+>> > > (`kho_out.ser.track.orders`). This behavior effectively unpreserves
+>> > > all memory from KHO's perspective, regardless of whether those
+>> > > preservations were made by clients before the finalization attempt
+>> > > or by KHO itself during finalization.
+>> > >
+>> > > This premature unpreservation is incorrect. An abort of the
+>> > > finalization process should only undo actions taken by KHO as part of
+>> > > that specific finalization attempt. Individual memory regions
+>> > > preserved by clients prior to finalization should remain preserved,
+>> > > as their lifecycle is managed by the clients themselves. These
+>> > > clients might still need to call kho_unpreserve_folio() or
+>> > > kho_unpreserve_phys() based on their own logic, even after a KHO
+>> > > finalization attempt is aborted.
+>> >
+>> > I think you also need to update test_kho and reserve_mem to do this
+>> > since right now they assume all memory gets unpreserved on failure.
+>>
+>> I agree.
+>
+> Hm, this makes no sense to me. So, KHO tried to finalize (i.e.,
+> convert xarray to sparse bitmap) and failed (e.g. due to OOM) or
+> aborted, so we aborted the finalization. But the preserved memory
+> stays preserved, and if user/caller retries finalization and it
+> succeeds, the preserved memory will still be passed to the next
+> kernel. Why would reserve_mem and test_kho depend on whether KHO
+> finalization succeeded or was canceled? It is possible that user
+> cancel only to add something else to preservation.
 
-Similar comment about using plural or singular in supported_*
-properties.
+On mainline, the reserve_mem kho_preserve_pages() calls come from the
+notifier chain. Any failure on the notifier chain causes an abort and
+thus automatically unpreserves all pages that were preserved.
 
->   */
->  struct vkms_config_plane {
->  	struct list_head link;
-> @@ -58,6 +60,8 @@ struct vkms_config_plane {
->  	unsigned int supported_rotations;
->  	enum drm_color_encoding default_color_encoding;
->  	unsigned int supported_color_encoding;
-> +	enum drm_color_range default_color_range;
-> +	unsigned int supported_color_range;
->  	struct xarray possible_crtcs;
->  
->  	/* Internal usage */
-> @@ -374,6 +378,32 @@ vkms_config_plane_set_supported_color_encoding(struct vkms_config_plane *plane_c
->  	plane_cfg->supported_color_encoding = supported_color_encoding;
->  }
->  
-> +static inline enum drm_color_range
-> +vkms_config_plane_get_default_color_range(struct vkms_config_plane *plane_cfg)
-> +{
-> +	return plane_cfg->default_color_range;
-> +}
-> +
-> +static inline void
-> +vkms_config_plane_set_default_color_range(struct vkms_config_plane *plane_cfg,
-> +					  enum drm_color_range default_color_range)
-> +{
-> +	plane_cfg->default_color_range = default_color_range;
-> +}
-> +
-> +static inline unsigned int
-> +vkms_config_plane_get_supported_color_range(struct vkms_config_plane *plane_cfg)
-> +{
-> +	return plane_cfg->supported_color_range;
-> +}
-> +
-> +static inline void
-> +vkms_config_plane_set_supported_color_range(struct vkms_config_plane *plane_cfg,
-> +					    unsigned int supported_color_range)
-> +{
-> +	plane_cfg->supported_color_range = supported_color_range;
-> +}
-> +
->  /**
->   * vkms_config_plane_set_name() - Set the plane name
->   * @plane_cfg: Plane to set the name to
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index 5869000415e4..ab719da2ca0b 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -240,10 +240,9 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
->  
->  	drm_plane_create_color_properties(&plane->base,
->  					  vkms_config_plane_get_supported_color_encoding(config),
-> -					  BIT(DRM_COLOR_YCBCR_LIMITED_RANGE) |
-> -					  BIT(DRM_COLOR_YCBCR_FULL_RANGE),
-> +					  vkms_config_plane_get_supported_color_range(config),
->  					  vkms_config_plane_get_default_color_encoding(config),
-> -					  DRM_COLOR_YCBCR_FULL_RANGE);
-> +					  vkms_config_plane_get_default_color_range(config));
->  
->  	return plane;
->  }
-> 
-> -- 
-> 2.51.0
-> 
+	static int reserve_mem_kho_finalize(struct kho_serialization *ser)
+	{
+		int err =3D 0, i;
+=09
+		for (i =3D 0; i < reserved_mem_count; i++) {
+                	[...]
+			err |=3D kho_preserve_pages(page, nr_pages);
+		}
+=09
+		err |=3D kho_preserve_folio(page_folio(kho_fdt));
+		err |=3D kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
+=09
+		return notifier_from_errno(err);
+	}
+
+If any of the kho_preserve_pages() fails, the notifier block will fail,
+cause an abort, and eventually all memory will be unpreserved.
+
+Now that there is no notifier, and thus no abort, the pages must be
+unpreserved explicitly before returning.
+
+Similarly, for test_kho, kho_test_notifier() calls kho_preserve_folio()
+and expects the abort to clean things up.
+
+Side note: test_kho also preserves folios from kho_test_save_data() and
+doesn't clean them up on error, but that is a separate problem that this
+series doesn't have to solve.
+
+I think patch 3/7 is the one that actually causes this problem since it
+gets rid of the notifier. This is the wrong patch to complain about this
+but somehow I thought this is the one that triggers it.
+
+--=20
+Regards,
+Pratyush Yadav
 
