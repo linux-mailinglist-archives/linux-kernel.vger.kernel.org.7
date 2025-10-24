@@ -1,201 +1,164 @@
-Return-Path: <linux-kernel+bounces-869544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7796C0820F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:51:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F97C0821E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64AF04F5AAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA81B3A1EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7752F5304;
-	Fri, 24 Oct 2025 20:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4922FABE3;
+	Fri, 24 Oct 2025 20:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="D3V9V6Mu"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gR8gz8Q0"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010007.outbound.protection.outlook.com [52.101.193.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AB026FA6E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761339087; cv=none; b=qNlzW/diq6pMn5QU6veuR5qSH81Yg+k1/aj0XPPLB9zIBSFZeCnbjXNTUfg94ct6NRkfS/0BEdaANG83f40PfdfaS+oaQFxV9dhNVO2ql+NM73/B1Ue0UmjDHR7Pu3crO/DXZR50Zy43trNv1NyRrTBcgg+x2JjgQ6uyapB7t5g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761339087; c=relaxed/simple;
-	bh=9fM9bt6nA/rtW9PgS3LtSyaJE4LpFg+UkmsIFTKRVf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IyWng5PnUXNdgq4tNn1x6Iy8rzkvz6q1FBmwkNzr03qmrssW9Hk0X/LcBDQN7CzYfEsu9+KWqOZHE9+NwL9fu71thnxjDddKH3DsltKc81wNDigE6vHA98pzri7dhDJFfZh7Zn0SAtbBhYVMC+BuQ/UIHa3ni4J6s36fnfSYy4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=D3V9V6Mu; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Uek8+Cf4Q/CngsJr56xLN10Qkqpp/D5bhYp2Lu51lME=; b=D3V9V6Muf8SR7Zy3
-	DQWRvU8/R2aKx+yt2DgR4S0lITpROSiud4bsN+1KjA/BWb4ZP7PBsfqmRBwa+ILT1P+ULMtdaclum
-	5LdMcvRtbsqFxyrQWPRI9jQseQS5SXL7bpJwxXT1sgPhINVZbrPtbYCuQcUWrNcVB1a5zt31u1oMy
-	jkxC9g02n6X8VzefZxmjLJ82ExP4vof/LOtL0lsCZnYnfh510TV/O8r+Ny4obGjJhz/bXN24TwDeJ
-	79e1FW1BXrQVnJQj4ZUC+AEwjTEtSKHlHoPBXQNjzvTAh3WPajDPCQ9Gc+s1C0+djgrcW8YzqvCZB
-	/CeHWX2h8EHBAtb8+g==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1vCOkr-0014Q3-0c;
-	Fri, 24 Oct 2025 20:51:21 +0000
-From: linux@treblig.org
-To: akpm@linux-foundation.org,
-	hch@lst.de
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH] lib/xxhash: remove more unused xxh functions
-Date: Fri, 24 Oct 2025 21:51:20 +0100
-Message-ID: <20251024205120.454508-1-linux@treblig.org>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF2C2C08DA
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761339143; cv=fail; b=W5vty8k7PIMrfZBgEV/Lg5Tn/3Rw7sBSqToftqU6wnS+euMqC+PWFGE4BjXiU8HZNMmlzmGd3SawA75/BOjjW+KHv7XKmHMQFQQC6lTl1Jg+mr3AMAD0e3+ysQBh61egTSbNx2GVZIFdtioMWvrUMmDQaYLGkSKbfOLW7Xjjmzw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761339143; c=relaxed/simple;
+	bh=Si8gOuNBnxqYP0pJOFaKia3xVE97OLIvSE7LSmDzSNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ObwFsjjG08uSk35vUUssRUy3k872+ZS5bhYvdJpiMqbjViT446d/XL8gqu2fiD5+hkyW96T6eDcnXm9DDfFeTo2TO9fhjpbvH5MZyM3iAsl+NiVbzhyisPj65jiy+I056rPqN6QNanflF8eXuJCCyTWH2obRF/ZElJt/QUx6Mus=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gR8gz8Q0; arc=fail smtp.client-ip=52.101.193.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jHWtAaiQgV1awx8gTZhhAZcCKAEvVWMLHkUCCREK5yGcX3HtllUPSQ6smTN7iW1dLI1/S7WwOl/yN44yEuBc/5Nsj/ib4R2vj8zRZXWbGZRhCzYmAwDEBOs+QNU56u1PhCTr1zab68ewxtVYuz9JAfTMl8RxGKsHXbaHYarSW5Y7v0XbIuvRwvBQtkADt5rPnpiSnf/Ckzoh0x+1T/N75cOFf6B+sLesX5egBB/ep7zuvm5K0tJ9SnXWQXRHXlQmtY9jO6yqk1AhiO6pjhjAEI+vtRe6UCTSx4y90iNHKUDr5J6XijLJE6t2TcoJkPyJjvKs9ssgX/1S5RX8Loaz4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SLUAowvK4OzKsAR4PaJV61wrPmQ1FXnvFjtbDbBn8JU=;
+ b=uV6VHcjx2jbjugF+AaDS8WTtTry/y1jrbzDW2JGHACDkdt5pfECWKJzCMu83HhcaX586TPoEjDGPccaRIqNht4WUf8WKgmSpqbQeIks9CPiqSwLQqlJVdkSalATKKllCxtkeIwhvBq4dX33Rz5I61BEAVnRQH7ZMcxJ/GrnXEIOVtTGHUiaAgWDj2OGn89J0EYLNz/GVnBK6Z1GVzcsJ+nkfOodB+i+llneq4mIB4jFGmORa7pIX2OEvtgAgvnPQ1Zuc3GTS9TERPrSs5FtMmjb8t4ZYBKV0YNL7fCjVP3nR+HxbYygYhwyEKjJ8Ri/752YejiLTTOG0fe+suVOKkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.dev smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SLUAowvK4OzKsAR4PaJV61wrPmQ1FXnvFjtbDbBn8JU=;
+ b=gR8gz8Q0D1aI7yNlkERa0YIcGwnws4aUdFXRjSXWlRRx23ymGi2YePhLJrl9e18/5hxK/UiuU0zlNTmcxyhoKyHlXPfy3ZSfKGWVAplSlKHVRL/uKQYfsyLy8Txdu5LaFacCaaZxY1DE34xb1FdClesgLG73kivSb00At4wrKOg=
+Received: from MN2PR03CA0013.namprd03.prod.outlook.com (2603:10b6:208:23a::18)
+ by PH7PR12MB6977.namprd12.prod.outlook.com (2603:10b6:510:1b7::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Fri, 24 Oct
+ 2025 20:52:18 +0000
+Received: from BL02EPF00021F69.namprd02.prod.outlook.com
+ (2603:10b6:208:23a:cafe::a6) by MN2PR03CA0013.outlook.office365.com
+ (2603:10b6:208:23a::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Fri,
+ 24 Oct 2025 20:52:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BL02EPF00021F69.mail.protection.outlook.com (10.167.249.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Fri, 24 Oct 2025 20:52:17 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 24 Oct
+ 2025 13:52:16 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 24 Oct
+ 2025 13:52:16 -0700
+Received: from [172.21.152.226] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 24 Oct 2025 13:52:15 -0700
+Message-ID: <fe02ec8c-a765-483d-8ad2-c3ee713001ef@amd.com>
+Date: Fri, 24 Oct 2025 16:52:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers/xen/xenbus: Simplify return statement in join()
+To: Thorsten Blum <thorsten.blum@linux.dev>, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>, "Dr. David Alan Gilbert" <linux@treblig.org>
+CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
+References: <20251021135002.1228-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20251021135002.1228-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F69:EE_|PH7PR12MB6977:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8dde6dbd-591e-4e20-b6a3-08de133f37d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MXYxVnNXVU5FRGJGV2dYTllmcnJPMFNGR2lJV3lXMU5Eejl1Um82SUkybG8x?=
+ =?utf-8?B?a25Gb1ZYTy9IVVVYRnVWQjNoYllqUVZrSS94WkhuNFVQMHd1Q1BqS0djOUZs?=
+ =?utf-8?B?Q1ROVnVadTFFNzVweWpOeU1sK1YzdUtqMVV6REFhOXhqdTFaMW1TOVVmdEhO?=
+ =?utf-8?B?Z0lEZkdWZnNYR3lTUk0vWmlPOUFYcFA4bjcyMUZtdHRIMmZJMjNkWHkvM0VU?=
+ =?utf-8?B?K3BVcDA0QzZQM3l4N3JsMDc3WDZHcE5qZGlTMUswMGh0eFM3bHFTWkIzcmVI?=
+ =?utf-8?B?MlV6TS9UME1XSjg0R0N1c2FNR214emNNazYyVFREdDJlMGdob3lsZlUzSDJ3?=
+ =?utf-8?B?ZDRUZzJsM1RlY2o2eUJxTDZhMzFXNmhEQ09ka2U1emNQOFRHWUlMZWZycHBE?=
+ =?utf-8?B?RWJ4cE14MkwrbXVUY2dKNzh1dnRydjg4UGlaMmJPRE1nTXNZNE03REFkN2lq?=
+ =?utf-8?B?L0hoTjIzNGlranFERFVid3hGZXk0TXFDS3c2ZG9NdTZkRnNnOXcyZmNNNHM5?=
+ =?utf-8?B?VmtUOXpXQlZVV21nOGh4SkV6VlJUUGVtUVA3ekZwMzlIMTdYcWxmUHVIalUx?=
+ =?utf-8?B?RzNoTXJkSGZ3em5tOU1OUytKNWMzWDVibE96ZG83TWNRS0RnVFBhRGRBOFJu?=
+ =?utf-8?B?V29YcEtWMkhiQncyUEttakxmWWh2MjVZMmVxcFVDM2NYS2xsR1FoblVjRE9H?=
+ =?utf-8?B?Qll6V3dxTVZRbDZwdWRFNzdsTUV1Qi9aek9GMGlNMEovQzMwVXV0R1ppT3Fq?=
+ =?utf-8?B?L0NibDU3QkN5KzdHNFd4TkRoalRlNmhEV3UwUHE1UlFBTlFVd05UYW9tU3Zi?=
+ =?utf-8?B?cWlxcmFuMkZCcmtQUkNXRkdGRWk5YStxc20rQ3lPbXVYNnQ0TTZyT01TNTF6?=
+ =?utf-8?B?SWxkOWZzaXREa01CSXVWVHh6N2lxd0l4c2ZCTmtlaVJCRUFFNVphMkxnY0V3?=
+ =?utf-8?B?STQ1bEx6UmRydVVIZmE5TlVhcXpQY3ZwWXR0aWtvdDN1ZlA1S1hiUFQyQ2Z3?=
+ =?utf-8?B?ZlpkN0tkdGtMRFA1RjBHNWJCdjFoN1MvWWU4dG1nZG8wM1ppOFFRRXhIeDE4?=
+ =?utf-8?B?VVBJZ3B5czR2YXJUaGNaMzFMYVZsSUw2L3Z5RzNHOUxqa1UrN3NaME5XT3Yw?=
+ =?utf-8?B?RFByOTE4QWZnLzJKTTBSN1hNWUE3SU10dlBsZXU2ODlNUXpJdERiem1HSDlv?=
+ =?utf-8?B?M3g4d3k1MXJZZDgvS2YyZlV5czl0dnF2N1JhS1k3cW1QbXNTNTRWY3U4OXoz?=
+ =?utf-8?B?TDZSSDQxVkJZd3pBNzl6cVBRWnRCeHRCMzNvRHN6Z2hKRkZJQUJzSmJhNVl3?=
+ =?utf-8?B?YlorY1YxZTBtRXMyaEdPMlUyam13ZlJVR1FubzFmUlhtcmdyV2RLb2J5eGZp?=
+ =?utf-8?B?MjZjcjJubmJ6bmpXMHRkejA0ZEJXbElHaXBWYlJGcUxXc2RlUkViTmlSREo3?=
+ =?utf-8?B?YkFJTmppNk5XaytNb3cvand3c2U0R3NaRFdwbXhJQlQwRDJUWjd2S05oN1lT?=
+ =?utf-8?B?dDZ5THljRVNOemJiRjNCNmNyUCtvdFRwVCtMQXNOb3dVbVQ3Mmh2VjQ5QnRt?=
+ =?utf-8?B?Y0dXK2tjRnptUWxkSzc0ekhWRXZvTDh1NkFVdWdTSUxGaWxZQUZlREp6bnNk?=
+ =?utf-8?B?eU9pZ2RmeW1GWm84S2o5RW5raUtSRnpzclUrWGxQME50NWZCTlFNOHVHQzNa?=
+ =?utf-8?B?TExEeW1vYXZUaFBwaHQwQ05mTUZrZ0orcmlVTWhYOUhGT2Y3cEJpZWRva2Rq?=
+ =?utf-8?B?NFE5cEJPZ2QvbXpqdXRKZzI0ZWNyeXpzTWhqSkhiVDgydkM1cUIrdG03ck9S?=
+ =?utf-8?B?TlNpZUdjQy9PdkkvZzF2bnM4bGNQNGk0aEkxbEhSYWNCTUJwMWNTVmVyeWhr?=
+ =?utf-8?B?bzVvZkRCRzBpU0JHOTRramg3SWFkaDdHSmJ3RFpNeVYrZGxsM0RVLzcwRm1O?=
+ =?utf-8?B?NStsQnoxUWo4MmU5ZS9LQmZqLzY3blNNQWYvRnByVEltUzNiQWZCSndLOVZp?=
+ =?utf-8?B?SHRIbmNXQ0RqM2p1MmxPVmpJVmpGVnFGMEJ5UysxOFBKM25YeTFjem1BV1RN?=
+ =?utf-8?B?YnhIWkJydklqcktaU0pnM0JKTWZhdHZuOHZVMzNPQjYxd1J0UGF3WFEyTTM4?=
+ =?utf-8?Q?/G28=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 20:52:17.3107
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dde6dbd-591e-4e20-b6a3-08de133f37d1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F69.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6977
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 2025-10-21 09:49, Thorsten Blum wrote:
+> Don't unnecessarily negate 'buffer' and simplify the return statement.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-xxh32_reset() and xxh32_copy_state() are unused, and with those gone,
-the xxh32_state struct is also unused.
-
-xxh64_copy_state() is also unused.
-
-Remove them all.
-
-(Also fixes a comment above the xxh64_state that referred to it as
-xxh32_state).
-
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/xxhash.h | 46 +-----------------------------------------
- lib/xxhash.c           | 29 --------------------------
- 2 files changed, 1 insertion(+), 74 deletions(-)
-
-diff --git a/include/linux/xxhash.h b/include/linux/xxhash.h
-index 27f57eca8cb1..587122e2c29c 100644
---- a/include/linux/xxhash.h
-+++ b/include/linux/xxhash.h
-@@ -141,21 +141,7 @@ static inline unsigned long xxhash(const void *input, size_t length,
-  */
- 
- /**
-- * struct xxh32_state - private xxh32 state, do not use members directly
-- */
--struct xxh32_state {
--	uint32_t total_len_32;
--	uint32_t large_len;
--	uint32_t v1;
--	uint32_t v2;
--	uint32_t v3;
--	uint32_t v4;
--	uint32_t mem32[4];
--	uint32_t memsize;
--};
--
--/**
-- * struct xxh32_state - private xxh64 state, do not use members directly
-+ * struct xxh64_state - private xxh64 state, do not use members directly
-  */
- struct xxh64_state {
- 	uint64_t total_len;
-@@ -167,16 +153,6 @@ struct xxh64_state {
- 	uint32_t memsize;
- };
- 
--/**
-- * xxh32_reset() - reset the xxh32 state to start a new hashing operation
-- *
-- * @state: The xxh32 state to reset.
-- * @seed:  Initialize the hash state with this seed.
-- *
-- * Call this function on any xxh32_state to prepare for a new hashing operation.
-- */
--void xxh32_reset(struct xxh32_state *state, uint32_t seed);
--
- /**
-  * xxh64_reset() - reset the xxh64 state to start a new hashing operation
-  *
-@@ -210,24 +186,4 @@ int xxh64_update(struct xxh64_state *state, const void *input, size_t length);
-  */
- uint64_t xxh64_digest(const struct xxh64_state *state);
- 
--/*-**************************
-- * Utils
-- ***************************/
--
--/**
-- * xxh32_copy_state() - copy the source state into the destination state
-- *
-- * @src: The source xxh32 state.
-- * @dst: The destination xxh32 state.
-- */
--void xxh32_copy_state(struct xxh32_state *dst, const struct xxh32_state *src);
--
--/**
-- * xxh64_copy_state() - copy the source state into the destination state
-- *
-- * @src: The source xxh64 state.
-- * @dst: The destination xxh64 state.
-- */
--void xxh64_copy_state(struct xxh64_state *dst, const struct xxh64_state *src);
--
- #endif /* XXHASH_H */
-diff --git a/lib/xxhash.c b/lib/xxhash.c
-index cf629766f376..4125b3e3cf7f 100644
---- a/lib/xxhash.c
-+++ b/lib/xxhash.c
-@@ -73,21 +73,6 @@ static const uint64_t PRIME64_3 =  1609587929392839161ULL;
- static const uint64_t PRIME64_4 =  9650029242287828579ULL;
- static const uint64_t PRIME64_5 =  2870177450012600261ULL;
- 
--/*-**************************
-- *  Utils
-- ***************************/
--void xxh32_copy_state(struct xxh32_state *dst, const struct xxh32_state *src)
--{
--	memcpy(dst, src, sizeof(*dst));
--}
--EXPORT_SYMBOL(xxh32_copy_state);
--
--void xxh64_copy_state(struct xxh64_state *dst, const struct xxh64_state *src)
--{
--	memcpy(dst, src, sizeof(*dst));
--}
--EXPORT_SYMBOL(xxh64_copy_state);
--
- /*-***************************
-  * Simple Hash Functions
-  ****************************/
-@@ -239,20 +224,6 @@ EXPORT_SYMBOL(xxh64);
- /*-**************************************************
-  * Advanced Hash Functions
-  ***************************************************/
--void xxh32_reset(struct xxh32_state *statePtr, const uint32_t seed)
--{
--	/* use a local state for memcpy() to avoid strict-aliasing warnings */
--	struct xxh32_state state;
--
--	memset(&state, 0, sizeof(state));
--	state.v1 = seed + PRIME32_1 + PRIME32_2;
--	state.v2 = seed + PRIME32_2;
--	state.v3 = seed + 0;
--	state.v4 = seed - PRIME32_1;
--	memcpy(statePtr, &state, sizeof(state));
--}
--EXPORT_SYMBOL(xxh32_reset);
--
- void xxh64_reset(struct xxh64_state *statePtr, const uint64_t seed)
- {
- 	/* use a local state for memcpy() to avoid strict-aliasing warnings */
--- 
-2.51.0
-
+Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
 
