@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-869173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA454C07375
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:12:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38683C0736F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1308B5813F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:10:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EE52581315
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EF9337B97;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC373376A0;
 	Fri, 24 Oct 2025 16:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="i8TI6USH"
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bCv0CBFE"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1E43376B9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D5F3375A3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322214; cv=none; b=Cf3Q6KOX8VgdtKAwnLO36RFad8HX8Z3q0BfgGBO0IISWkbXVfadpjGcPHvLRF+7h/5ZrkRnfz8VfEPPUxXpR2ZOv/Uvwa0pqqAn71jbOcc2srQa27GasTxdV5vsFwy+GwTnJBrr2t1Ys1oUYjQ063o+ifX5ZY9hJw1+UurNCSOM=
+	t=1761322213; cv=none; b=Z+p5Vg2KQCc6MGczX1YIIDS3YhNlEKK2PCB7A8+LzVmVq0o28xErfwty0U7l9M1WtdQcKzpy3Y8OK0QvYZ/Y9SVh4th7k6OsP75ynZMNrP8WPTxXzh+8pVy0mxgoBOiH8dUFIUDFAdmf0hYBic/Ka9ybJcg82ldj1w0QsC/ngtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322214; c=relaxed/simple;
-	bh=Qk9S6IHmnrfw6wGq0UeG8nzAs7ZVD29vG6VZbpdt4P4=;
+	s=arc-20240116; t=1761322213; c=relaxed/simple;
+	bh=q4+9pj1LZkPHVsjDnnJgCMXpKmubt7lvzC50ITZTU3k=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HoaDqiBEgcXMEdRtIX3SAxms7bNjR4pQmpbTFDb2uSQXxi/Lx9C+cSCXCpIc2q2MDdBK7xgn4dzl/Rj4BUa7Iwehq2aKbWcnc0b6+7t071oGovwyAaVPGm9t9j5RtcMKd9NekNL9z717q7NTr0UE77orO8eCaE1O/q1DWF46eRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=i8TI6USH; arc=none smtp.client-ip=74.125.224.47
+	 MIME-Version; b=JtrgyhZEvhU01CUTd/dfCd3rTcvaCEpmJJjRK0MbvOtYo1Rpn8F/xPglOXTHbGYoFJVEvYQzYE/bTaVTN4ZSjTyZ1N8G1RSLbwyfpr2CvGh6vNFK7LPynKAppNVYeHXxoEMGl+GS1NV3wU4ZI1BbM3LXvEgkGYuZMt1Jt5rH6uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=bCv0CBFE; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63e1e1bf882so2168840d50.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:10:12 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-785db6b7484so11314397b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google; t=1761322211; x=1761927011; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tqVXyF+IsYXkvSZaiTZ7JkU0PjsMFTNFd+jvNj7uHBc=;
-        b=i8TI6USH3ovpUOvOqT7ES6/CEvz+kW1mdR/tOkbCef1KYO1Ff6QgleqdhlUOEcCBD9
-         j0LL/Ir4RyOT81WiLI2jx5dXHieXzlYwfYYWiqbFKn+CcKPgAg1rJUKFkRpjsNksawQc
-         gBU54fw24tRt3r3/7IJ4MWPzBj3T0edqKPIszJfTt3Ok8Im3IhvW0TH9HtvIqF1AL4rb
-         0ChP1HWn6zETm5al/KiNgYE640m+17VmjkxYfv066qEJZree67E1oYk0Dxg77TAEJVlw
-         GQ1RMsiaKqzK+YyoMDPpC7JiirTvQ3+3cRFaYvAOUs1obbAJKitVlhfV6Am4x54Jt9HP
-         0mvg==
+        bh=sN3NXoZOBQaV0qk4GQkx+g1ZE3W0dyobKn95aWS8UQY=;
+        b=bCv0CBFEWxh4vaJQrFBxMZVOqjISjA5+mpNAMUt6rdVsY/VGRkwAUqUt222Y1bE/Fy
+         82ICQukormfU4kBQw7Yy/bmJjah+yJOQszVSDfFtsonbakcItmwXUs+ND+kAxNSiGZY6
+         P/8svyI+Quwn8JOFfK18PD9GiTz9jBlHcofDvSHEBke/LioOfQLBCjpbifd640Bejokx
+         MORLhRMZ7zc2TnO8RpgftWpcnABGKZvFejyZHfDWzfBi/jEtaFgQqRPEVuOVCzZ5ZdC3
+         wCyVkj1qEiBj9p7ZyafJwF6qrySUBE+AxM0SVmmD+ixl5E/xs1m8syWZsEaQIzbRISJc
+         eWZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761322211; x=1761927011;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tqVXyF+IsYXkvSZaiTZ7JkU0PjsMFTNFd+jvNj7uHBc=;
-        b=sqIiNbGUUxzM063pX5iDOJMa4lnyH5Ag8jHmZED82MlS/CyWA21xq92zvJYmuu5D7T
-         YxSGIvQ1uo5qOg9cqhxlf15TkID/q56ufjolIUxomq32CjwXUWiYwko5KhgOS5x9FGHH
-         ngIfRdB6bYQfOYBFhpHWzTbK7u3xGx2H/XQBP8rqZkGovc9KwyB8IQR2WAtcybOw9JUY
-         yNPwa0n00sbfbIrDIPJoEwq9Me3B1r+8Fl7b+LlcstbjglP/eNTizcuBouRax+dV++xW
-         TbBOmYmpH8lGB9qif9B40Sx4CIezRP8CSzSD3XeHS6uSUVAwkDFeHZEXHnO3nRp8m5Fl
-         W3Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Gym0pQCpyftacWaLCMkx2aaFK74RkYplTPiQRznvpDo+tkTpzG9vljZOwa//Dcxsl5GPL7deT2UCDl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygdips8fYQhBpTTZ9Zje9/mwgW1gJ7AYpNy0C7rOTOT+C/LPu0
-	1CYaRyv3Yw2aIX0/5uV6bFT1WyBRPbqfp1V0VW1cGCPIrjMsNUgfBMcBxhv2/3jcMpA=
-X-Gm-Gg: ASbGnctNoWX5NkigprG79LBvvKn85qXeVOi5gnYTCave2g48iiLYk2t9iLycbfANRmv
-	iZNz39bkAcWj9YkCcaqK6bjz2sgfXP2yX84GsRtZfxAejGCUTkX+FPa9/MKjMTwBqasDYHesm/q
-	Hg/R4a77wGf0cqqCMDkEE6X9tzDC8HK9o5FQpuc2NoDkvxhDcdfbFWMmM36GCMIK9/eNXfe5Lf2
-	h/FgD8wrTau+0y9zqf3mAclLg4bHggi8fXfzZJHaFHAaZMyLT7mXlefImM02N9DJWVgXCFanDCY
-	54UtOfyPBIgeI7AytJaTFo5ns0OPe4iLAGuGSs8G6HNod7+9Gfu+WyJDV4fnVLoZfJRwyUCEw7M
-	DWjHU/XCqN63kUyyj/04pat0GxxkzjYVrvustpoiA4QT2CQqY5DYmBlQt5eogEyOKwoGaMrUfwt
-	yu3kTD0V2x312IlK2xPgiwsF0M/PKE/UC6u69iC3G7kdPLBlvBGLmqbkiBi72TDecZoWYJIEPSY
-	vMMBwFIr7dC4Uu2CKXQZsLy45wvPckIRQ==
-X-Google-Smtp-Source: AGHT+IE1Y1ssC3vDPwXKD9Vohv1X1EAngxcUz/MZcTAaLZ2Xt65ito/oPm7FTBXTLQh5v9nY6sOF/g==
-X-Received: by 2002:a05:690c:4991:b0:784:8994:298c with SMTP id 00721157ae682-78489942dc2mr350965587b3.28.1761322209785;
-        Fri, 24 Oct 2025 09:10:09 -0700 (PDT)
+        bh=sN3NXoZOBQaV0qk4GQkx+g1ZE3W0dyobKn95aWS8UQY=;
+        b=ujCvyYiSyVoFY+KLj3qSddo0MeW+CZBAsiF/Wuk4EABsdbgpaM64hne+xN7T05gR1Q
+         d7F2IMJBDeyj3kbsmkSikzT1W3H4BZQ1qZd5JFEDhQkipxAgknDNpCAiD2GKpFi0fcUh
+         3NqkyjaY3MtrZhGEMMgM5ysoZp8zfhQBlvCJh6Mrxgc6EQLyzOvJbtvw5U87742bHpQn
+         Xzzs4rA7pcdARC9jV2Ru4Zv98OI8MtfOt1c9I9vmuyKVNZrWTw/McV9FwVadPnT4IDv6
+         LwJu0mNydVq+8zV2zmHls/lgBEWCZG8sC2JMSC/zMTILmjf4PqjOvBaGWXXoN23tHioh
+         X4yg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/dKsFNcycgxYMTtLY8hmorSTeFGOoiCQwyjR14xiWLedeK23cMFXOORKlxC8joStzAXWeARXyOw86KbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnF6Gv9N7r7lJtKI2sCyVJe5kXNwIEttsuu4xHKIGzTWHFw07O
+	greZEj90hrmFfkyivnv/UjKNDIm9feqM8BoWW2D3Z+RoZoqCgaHdZ8kZeei/LqkgMgk=
+X-Gm-Gg: ASbGncufBG9kDLZhy6CcpJoWe0kzbZt+4I9129sHz+8PC/X86+SLwsY7OUvuFt2xqX5
+	7YOkYEdnlvmoC2S+4glLrh+d4lTN1/gfxWN+P5etebIx+UgaLvEGHL1yyFf2l31n9bEnKhI/3R+
+	qTzErTR8XvAH2DN04KJsq0Lh8harm2157wgLDXuhyAVIsBno7nB4uBr/yPyZqucv2g/GsWdTTV4
+	kwbv/WKL314bbALkz8lOLWaoNJzwJxglxJtZ+64vbg++Dmuzil6fXxbVrQ86ifROl20CJ+5sGcV
+	jSW5P8ssfpaD+53aqbQJNWBArEp2u+sjVYakVjSks+KZNyK8/rV/a+rIF3awjEk4UOwQaCuJG/e
+	D6+emA/asmcFTihQW62J6BDcuMNF5aYuMsCx+39rSas2VBNTjFxpwms1LMDb+Mmy6fLoCl/WIT8
+	s0y1mQWIc0ogFKgkCdlYOPwNMTR2CaGWeDEW06rKEfiskK6o86wUXFjr5STBk0A2moOm8IlQFdu
+	JYw65PkBVG3HYEb5EIOSIumLRXCeRIVvQ==
+X-Google-Smtp-Source: AGHT+IE2zX+p6Y3PDMVI3Fio8m3zVktQ5V7vVyOcKDfiGfYYf436D7pO0NOBbSVmVxYTK4k34aoLiQ==
+X-Received: by 2002:a05:690c:4a06:b0:785:cf36:6b72 with SMTP id 00721157ae682-785cf366ba7mr65136627b3.50.1761322210780;
+        Fri, 24 Oct 2025 09:10:10 -0700 (PDT)
 Received: from soleen.us-east4-b.c.cloudtop-prod-us-east.internal (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-785cd6edd87sm14099197b3.51.2025.10.24.09.10.08
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785cd6edd87sm14099197b3.51.2025.10.24.09.10.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 09:10:09 -0700 (PDT)
+        Fri, 24 Oct 2025 09:10:10 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	brauner@kernel.org,
@@ -90,9 +90,9 @@ To: akpm@linux-foundation.org,
 	rdunlap@infradead.org,
 	rppt@kernel.org,
 	tj@kernel.org
-Subject: [PATCH v8 5/8] kho: don't unpreserve memory during abort
-Date: Fri, 24 Oct 2025 12:09:59 -0400
-Message-ID: <20251024161002.747372-6-pasha.tatashin@soleen.com>
+Subject: [PATCH v8 6/8] liveupdate: kho: move to kernel/liveupdate
+Date: Fri, 24 Oct 2025 12:10:00 -0400
+Message-ID: <20251024161002.747372-7-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
 In-Reply-To: <20251024161002.747372-1-pasha.tatashin@soleen.com>
 References: <20251024161002.747372-1-pasha.tatashin@soleen.com>
@@ -104,69 +104,222 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-KHO allows clients to preserve memory regions at any point before the
-KHO state is finalized. The finalization process itself involves KHO
-performing its own actions, such as serializing the overall
-preserved memory map.
-
-If this finalization process is aborted, the current implementation
-destroys KHO's internal memory tracking structures
-(`kho_out.ser.track.orders`). This behavior effectively unpreserves
-all memory from KHO's perspective, regardless of whether those
-preservations were made by clients before the finalization attempt
-or by KHO itself during finalization.
-
-This premature unpreservation is incorrect. An abort of the
-finalization process should only undo actions taken by KHO as part of
-that specific finalization attempt. Individual memory regions
-preserved by clients prior to finalization should remain preserved,
-as their lifecycle is managed by the clients themselves. These
-clients might still need to call kho_unpreserve_folio() or
-kho_unpreserve_phys() based on their own logic, even after a KHO
-finalization attempt is aborted.
+Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
+core kernel related files to the same place.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- kernel/kexec_handover.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+ Documentation/core-api/kho/concepts.rst       |  2 +-
+ MAINTAINERS                                   |  2 +-
+ init/Kconfig                                  |  2 +
+ kernel/Kconfig.kexec                          | 34 ----------------
+ kernel/Makefile                               |  4 +-
+ kernel/liveupdate/Kconfig                     | 39 +++++++++++++++++++
+ kernel/liveupdate/Makefile                    |  5 +++
+ kernel/{ => liveupdate}/kexec_handover.c      |  4 +-
+ .../{ => liveupdate}/kexec_handover_debug.c   |  0
+ .../{ => liveupdate}/kexec_handover_debugfs.c |  0
+ .../kexec_handover_internal.h                 |  0
+ 11 files changed, 51 insertions(+), 41 deletions(-)
+ create mode 100644 kernel/liveupdate/Kconfig
+ create mode 100644 kernel/liveupdate/Makefile
+ rename kernel/{ => liveupdate}/kexec_handover.c (99%)
+ rename kernel/{ => liveupdate}/kexec_handover_debug.c (100%)
+ rename kernel/{ => liveupdate}/kexec_handover_debugfs.c (100%)
+ rename kernel/{ => liveupdate}/kexec_handover_internal.h (100%)
 
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index 994ee0b70757..6aa25d304bad 100644
+diff --git a/Documentation/core-api/kho/concepts.rst b/Documentation/core-api/kho/concepts.rst
+index 36d5c05cfb30..d626d1dbd678 100644
+--- a/Documentation/core-api/kho/concepts.rst
++++ b/Documentation/core-api/kho/concepts.rst
+@@ -70,5 +70,5 @@ in the FDT. That state is called the KHO finalization phase.
+ 
+ Public API
+ ==========
+-.. kernel-doc:: kernel/kexec_handover.c
++.. kernel-doc:: kernel/liveupdate/kexec_handover.c
+    :export:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 35d7942b2082..400209b74d95 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13822,7 +13822,7 @@ S:	Maintained
+ F:	Documentation/admin-guide/mm/kho.rst
+ F:	Documentation/core-api/kho/*
+ F:	include/linux/kexec_handover.h
+-F:	kernel/kexec_handover*
++F:	kernel/liveupdate/kexec_handover*
+ F:	tools/testing/selftests/kho/
+ 
+ KEYS-ENCRYPTED
+diff --git a/init/Kconfig b/init/Kconfig
+index cab3ad28ca49..0605de5d96c0 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2138,6 +2138,8 @@ config TRACEPOINTS
+ 
+ source "kernel/Kconfig.kexec"
+ 
++source "kernel/liveupdate/Kconfig"
++
+ endmenu		# General setup
+ 
+ source "arch/Kconfig"
+diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+index 9308a0fb1419..15632358bcf7 100644
+--- a/kernel/Kconfig.kexec
++++ b/kernel/Kconfig.kexec
+@@ -94,40 +94,6 @@ config KEXEC_JUMP
+ 	  Jump between original kernel and kexeced kernel and invoke
+ 	  code in physical address mode via KEXEC
+ 
+-config KEXEC_HANDOVER
+-	bool "kexec handover"
+-	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
+-	depends on !DEFERRED_STRUCT_PAGE_INIT
+-	select MEMBLOCK_KHO_SCRATCH
+-	select KEXEC_FILE
+-	select DEBUG_FS
+-	select LIBFDT
+-	select CMA
+-	help
+-	  Allow kexec to hand over state across kernels by generating and
+-	  passing additional metadata to the target kernel. This is useful
+-	  to keep data or state alive across the kexec. For this to work,
+-	  both source and target kernels need to have this option enabled.
+-
+-config KEXEC_HANDOVER_DEBUG
+-	bool "Enable Kexec Handover debug checks"
+-	depends on KEXEC_HANDOVER_DEBUGFS
+-	help
+-	  This option enables extra sanity checks for the Kexec Handover
+-	  subsystem. Since, KHO performance is crucial in live update
+-	  scenarios and the extra code might be adding overhead it is
+-	  only optionally enabled.
+-
+-config KEXEC_HANDOVER_DEBUGFS
+-	bool "kexec handover debugfs interface"
+-	depends on KEXEC_HANDOVER
+-	depends on DEBUG_FS
+-	help
+-	  Allow to control kexec handover device tree via debugfs
+-	  interface, i.e. finalize the state or aborting the finalization.
+-	  Also, enables inspecting the KHO fdt trees with the debugfs binary
+-	  blobs.
+-
+ config CRASH_DUMP
+ 	bool "kernel crash dumps"
+ 	default ARCH_DEFAULT_CRASH_DUMP
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 2cf7909a74e5..e83669841b8c 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -52,6 +52,7 @@ obj-y += printk/
+ obj-y += irq/
+ obj-y += rcu/
+ obj-y += livepatch/
++obj-y += liveupdate/
+ obj-y += dma/
+ obj-y += entry/
+ obj-y += unwind/
+@@ -82,9 +83,6 @@ obj-$(CONFIG_CRASH_DUMP_KUNIT_TEST) += crash_core_test.o
+ obj-$(CONFIG_KEXEC) += kexec.o
+ obj-$(CONFIG_KEXEC_FILE) += kexec_file.o
+ obj-$(CONFIG_KEXEC_ELF) += kexec_elf.o
+-obj-$(CONFIG_KEXEC_HANDOVER) += kexec_handover.o
+-obj-$(CONFIG_KEXEC_HANDOVER_DEBUG) += kexec_handover_debug.o
+-obj-$(CONFIG_KEXEC_HANDOVER_DEBUGFS) += kexec_handover_debugfs.o
+ obj-$(CONFIG_BACKTRACE_SELF_TEST) += backtracetest.o
+ obj-$(CONFIG_COMPAT) += compat.o
+ obj-$(CONFIG_CGROUPS) += cgroup/
+diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
+new file mode 100644
+index 000000000000..ae8bdd87458a
+--- /dev/null
++++ b/kernel/liveupdate/Kconfig
+@@ -0,0 +1,39 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++menu "Live Update and Kexec HandOver"
++
++config KEXEC_HANDOVER
++	bool "kexec handover"
++	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
++	depends on !DEFERRED_STRUCT_PAGE_INIT
++	select MEMBLOCK_KHO_SCRATCH
++	select KEXEC_FILE
++	select DEBUG_FS
++	select LIBFDT
++	select CMA
++	help
++	  Allow kexec to hand over state across kernels by generating and
++	  passing additional metadata to the target kernel. This is useful
++	  to keep data or state alive across the kexec. For this to work,
++	  both source and target kernels need to have this option enabled.
++
++config KEXEC_HANDOVER_DEBUG
++	bool "Enable Kexec Handover debug checks"
++	depends on KEXEC_HANDOVER_DEBUGFS
++	help
++	  This option enables extra sanity checks for the Kexec Handover
++	  subsystem. Since, KHO performance is crucial in live update
++	  scenarios and the extra code might be adding overhead it is
++	  only optionally enabled.
++
++config KEXEC_HANDOVER_DEBUGFS
++	bool "kexec handover debugfs interface"
++	depends on KEXEC_HANDOVER
++	depends on DEBUG_FS
++	help
++	  Allow to control kexec handover device tree via debugfs
++	  interface, i.e. finalize the state or aborting the finalization.
++	  Also, enables inspecting the KHO fdt trees with the debugfs binary
++	  blobs.
++
++endmenu
+diff --git a/kernel/liveupdate/Makefile b/kernel/liveupdate/Makefile
+new file mode 100644
+index 000000000000..f52ce1ebcf86
+--- /dev/null
++++ b/kernel/liveupdate/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_KEXEC_HANDOVER)		+= kexec_handover.o
++obj-$(CONFIG_KEXEC_HANDOVER_DEBUG)	+= kexec_handover_debug.o
++obj-$(CONFIG_KEXEC_HANDOVER_DEBUGFS)	+= kexec_handover_debugfs.o
+diff --git a/kernel/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
+similarity index 99%
+rename from kernel/kexec_handover.c
+rename to kernel/liveupdate/kexec_handover.c
+index 6aa25d304bad..20c7a985828c 100644
 --- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -1098,31 +1098,12 @@ EXPORT_SYMBOL_GPL(kho_restore_vmalloc);
++++ b/kernel/liveupdate/kexec_handover.c
+@@ -26,8 +26,8 @@
+  * KHO is tightly coupled with mm init and needs access to some of mm
+  * internal APIs.
+  */
+-#include "../mm/internal.h"
+-#include "kexec_internal.h"
++#include "../../mm/internal.h"
++#include "../kexec_internal.h"
+ #include "kexec_handover_internal.h"
  
- static int __kho_abort(void)
- {
--	int err = 0;
--	unsigned long order;
--	struct kho_mem_phys *physxa;
--
--	xa_for_each(&kho_out.track.orders, order, physxa) {
--		struct kho_mem_phys_bits *bits;
--		unsigned long phys;
--
--		xa_for_each(&physxa->phys_bits, phys, bits)
--			kfree(bits);
--
--		xa_destroy(&physxa->phys_bits);
--		kfree(physxa);
--	}
--	xa_destroy(&kho_out.track.orders);
--
- 	if (kho_out.preserved_mem_map) {
- 		kho_mem_ser_free(kho_out.preserved_mem_map);
- 		kho_out.preserved_mem_map = NULL;
- 	}
- 
--	if (err)
--		pr_err("Failed to abort KHO finalization: %d\n", err);
--
--	return err;
-+	return 0;
- }
- 
- int kho_abort(void)
+ #define KHO_FDT_COMPATIBLE "kho-v1"
+diff --git a/kernel/kexec_handover_debug.c b/kernel/liveupdate/kexec_handover_debug.c
+similarity index 100%
+rename from kernel/kexec_handover_debug.c
+rename to kernel/liveupdate/kexec_handover_debug.c
+diff --git a/kernel/kexec_handover_debugfs.c b/kernel/liveupdate/kexec_handover_debugfs.c
+similarity index 100%
+rename from kernel/kexec_handover_debugfs.c
+rename to kernel/liveupdate/kexec_handover_debugfs.c
+diff --git a/kernel/kexec_handover_internal.h b/kernel/liveupdate/kexec_handover_internal.h
+similarity index 100%
+rename from kernel/kexec_handover_internal.h
+rename to kernel/liveupdate/kexec_handover_internal.h
 -- 
 2.51.1.821.gb6fe4d2222-goog
 
