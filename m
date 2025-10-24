@@ -1,113 +1,63 @@
-Return-Path: <linux-kernel+bounces-869136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09404C07125
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:49:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E49C07152
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6498D1C03C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:49:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D87D735C028
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789BC32C944;
-	Fri, 24 Oct 2025 15:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeyQ2w4G"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349FA330D43;
+	Fri, 24 Oct 2025 15:50:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64FA2DA765;
-	Fri, 24 Oct 2025 15:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E7132E695;
+	Fri, 24 Oct 2025 15:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761320933; cv=none; b=t5Ui0bzqy8Tvyo1RnBZhTzeyLH/RdTEAS//Qs8eBXpe7HKZpCZiNhcXo5rtRBmwAsALT+X1dLK69A+o5ZjQdDjzxJpu6Jw19xtPUEoiswLO7AMDvVChyBicXUF+2nyi09a2yAABlV2m56aZAmcCB2/0k4FnTH0njqGyljfP2E1Q=
+	t=1761321042; cv=none; b=kNwbyde9V+pFII1+7Y3Y59pb5EsWap4UYVdLUJP1k8AV4gQQZOgiSbAN+HSdyexL6+54pTvQMW0oLfEx0KU4jhnqXDSQlGKMjG/mDDnY5JE7ZSfblgq5rm2wBKIRw4DW6ikq26/Mlc4gMlFqO5b5mXDMC5CM3YBkDENTPuy1ark=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761320933; c=relaxed/simple;
-	bh=e4EnLs+KI0UqXaB1trgD5GCu2ZyhkG5qzX3ngK0Lo1U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=leRJ1FwgKNILnt8iTOP0wPYUkV+/8GPqar6n5hxfyARiLgNV/pe0sIVi1+b3l7igS4ypKf7xw3jIsBArIFbvSL+Y3/L7Ye2/cdhC0OiiQCi+b5Dd5RYhwZXuvzkWdOcp4GLKMEM7uYUXCag3BhzHUCsln+g5ObPsXBywt+2e078=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeyQ2w4G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA3EC4CEF1;
-	Fri, 24 Oct 2025 15:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761320933;
-	bh=e4EnLs+KI0UqXaB1trgD5GCu2ZyhkG5qzX3ngK0Lo1U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=eeyQ2w4G22fgbXxoT8z/fDtch/MDr4P8J+jS/S4kZVvSq07vPD2g07HC6/gwjt3b9
-	 eKRbhTkgvc1CjUwEpcktXpKF7pdlISGVeU0VwVQTYiLNsJkzrTQXQnMsNzE+pitPRb
-	 W9JWWIMd7VUHMM9klzJrBLZYo4w0udKVIjsw7lwdIdun+nLbG5p5vV9JRfGjNsUXgx
-	 Tmuxh6syssT//GBzbaLZISmKSVYXxDnyh6b9n+69CGoavIhi+EiQ+qoNcQu4OvN1UK
-	 a9HvHHoFkVgj8jLPcZcg3SeufvzmG1xld1zU8VpS2gJRQ8GRpAWrlt+J153+yf6Zqq
-	 xtg6jP2zs76lw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Mike Rapoport <rppt@kernel.org>,
-  akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  rdunlap@infradead.org,
-  tj@kernel.org
-Subject: Re: [PATCHv7 5/7] kho: don't unpreserve memory during abort
-In-Reply-To: <CA+CK2bARUpZaymPTusZWM-kzXcUp_d1UK9nUudu3tHitpeAH5Q@mail.gmail.com>
-	(Pasha Tatashin's message of "Fri, 24 Oct 2025 11:33:26 -0400")
-References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
-	<20251022005719.3670224-6-pasha.tatashin@soleen.com>
-	<mafs0a51jfar1.fsf@kernel.org> <aPnXVmD3cNmYNRF_@kernel.org>
-	<CA+CK2bAvKrfuOXTa-RWtcuSR8rkPMhurwCn41NcUm44_vT63rA@mail.gmail.com>
-	<mafs0wm4ke2wq.fsf@kernel.org>
-	<CA+CK2bARUpZaymPTusZWM-kzXcUp_d1UK9nUudu3tHitpeAH5Q@mail.gmail.com>
-Date: Fri, 24 Oct 2025 17:48:50 +0200
-Message-ID: <mafs0sef8e1wd.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761321042; c=relaxed/simple;
+	bh=jIQ3PmquF8IGksBf8g5ns6HEqLB7enlaDoX953Wv11U=;
+	h=From:Subject:Date:Message-ID:To; b=jIIriTy80m+Q8KdrOFyLqbJJWMDXjJMSEh15BGpV10I0kid20zeQ4Cft1SVlMvsbC5Bt+VCyEhpAnafhvnsMjALX4mRAurgbrKnuLfNnlDYwrfUarLRejHiUlcKBlnc44GkXreXnGMQEmBBB3Sr2OfpowHq/Szp0TPeE2Ka+Z74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD76C4CEFF;
+	Fri, 24 Oct 2025 15:50:42 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.1.157-rt57
+Date: Fri, 24 Oct 2025 15:49:54 -0000
+Message-ID: <176132099496.2233461.13982532598284511514@demetrius>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>,Stable RT List <stable-rt@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-On Fri, Oct 24 2025, Pasha Tatashin wrote:
+Hello RT-list!
 
->> If any of the kho_preserve_pages() fails, the notifier block will fail,
->> cause an abort, and eventually all memory will be unpreserved.
->
-> This is a wrong behavior. Why should the memory that I preserved be
-> unpreserved if there is finailziation failure or abort? reserve_mem
-> should still keep memory as preserved in case KHO later will be
-> finalized right? I have tested that this patch works with kho
-> self-test: preserve, finalize, abort, finalize again, and the pages
-> are properly preserved.
->
-> KHO Test and memblock do not need to ever unpreserve pages, as they
-> preserve them once during boot.
+I'm pleased to announce the 6.1.157-rt57 stable release.
 
-Agreed. The behaviour of reserve_mem and test_kho should be fixed, patch
-3 just exposes the problem.
+You can get this release via the git tree at:
 
-So, for this patch
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+  branch: v6.1-rt
+  Head SHA1: 0c44acb11352a8f409ba3aa8544f8bc6d0c5f9c2
 
->
->> Now that there is no notifier, and thus no abort, the pages must be
->> unpreserved explicitly before returning.
->>
->> Similarly, for test_kho, kho_test_notifier() calls kho_preserve_folio()
->> and expects the abort to clean things up.
->>
->> Side note: test_kho also preserves folios from kho_test_save_data() and
->> doesn't clean them up on error, but that is a separate problem that this
->> series doesn't have to solve.
->>
->> I think patch 3/7 is the one that actually causes this problem since it
->
-> I updated that patch with your suggested fix.
+Or to build 6.1.157-rt57 directly, the following patches should be applied:
 
-Thanks!
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.1.tar.xz
 
--- 
-Regards,
-Pratyush Yadav
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.1.157.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.1/patch-6.1.157-rt57.patch.xz
+
+
+Enjoy!
+Clark
 
