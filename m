@@ -1,111 +1,126 @@
-Return-Path: <linux-kernel+bounces-869493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D946C07FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D04CC08016
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B05BF354C13
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:11:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D713D353BAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D102E5D2A;
-	Fri, 24 Oct 2025 20:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECDE2E7BCA;
+	Fri, 24 Oct 2025 20:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LPevoN0D";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JiaOLXp8"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSBOA/k9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30F32E2F13
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5302E6CC4;
+	Fri, 24 Oct 2025 20:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761336687; cv=fail; b=DbwY0W+vEjyW9yFM1LfK1VzpqN9mHwtuJStjT0l8+ujILwANP7mKV5sgnmM6hACwFVKBM+syyL/I2rm+1fekp6JeRV21phXzE74AuNASKjPba11GA0gNLkr8gmIVCdUNVhlNZmyZpH0F6XYyMuNqLHFMWaCU8aifVPwvQSO9zbE=
+	t=1761336827; cv=fail; b=qo/MdiqYn0qa260qENE/N0wVCnj/m7XfKSEfJW//HRENlw+Q8wfonPO9p2oJrbiJ1w6bySoVb15k0LdxWv26/uKT4rhZ6KOmvYHxrUj9W2F2xvVw92Ez9+U12xQ+cvGrJs7TtIKMvJ5tzPUyX9hYbhEqlZJw+MNczMW3OQqapYg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761336687; c=relaxed/simple;
-	bh=ILptBfokfao0Tg5XegE0minI+WwZAqtNiBYfT4bX2RQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PnWdsxcvYkpFYC4QQfrHrrM0pqlmc9bEW/FoKCkdg3K8dVU7I9VYsb0JsHghVmJ5uqqNLFc2o3jAWko9bzBD6LhwOOSYeTBXE258gZ+2njAeVs0atRknsciwuTDs6ljuUKVUaePyH+sobapDTwDGKCj0cUN9eCPt/EO/fYHkk7c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LPevoN0D; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JiaOLXp8; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OINLt8012004;
-	Fri, 24 Oct 2025 20:10:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=zU+aS9XFKa58/SSu5M
-	0v719H4nTVDBTMvztoIYf7YUM=; b=LPevoN0DODiIdFJZxF9NJBux3LoQ8Gtk+8
-	caKcwtOMs4Je5PVKqx0uAvR+XQvKDdGz4fwc7phvyntvk8ZfWZGFh2CioyrkVNS5
-	b8K1emMsddcGJvF7s59OMcyNYl9D2XGhmCoOd/4lVixrwvHNcq3Zjlu5k3UotP+s
-	UjqPf/f1xHKPdAy2NVL43vksbp6Kd4O0797iygMeyQweDJUJc3nTOrt7jO9iu6oI
-	3Zq4bmGd0S5IzDhw5hsxcglRCCc1xzZMKNSdQZgMkeJFkisfKOLimMTxAEyHGs5C
-	2xWM5W9aLxYwiuUOP3enC0+FOpbi8ZAzNv9ZU4iVhYWqIlr9UL4w==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49xvd0whxa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 20:10:53 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59OJgLXf030478;
-	Fri, 24 Oct 2025 20:10:52 GMT
-Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010027.outbound.protection.outlook.com [52.101.201.27])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bhdteu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 20:10:52 +0000
+	s=arc-20240116; t=1761336827; c=relaxed/simple;
+	bh=lpidy9f/Xj23fTjAX3u0rI8Q4NvFKn81E/MA3w8DByI=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kq3u5d7Ttqod3AbHEtylYrnaSlQXUliUYXllEwpGU5K4tgosrK2PNPKWz9bM9LG5xqi1EYr8pWLdUB+RqQLd6zJd1+u7HuUdt6e+rkZcCA0J8tHvXpC6Ousq312DjJ3+jce0nYq0K2ElypDEzOsH2eCCQRdMOlIg8u+wfjLT6F0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSBOA/k9; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761336825; x=1792872825;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:mime-version;
+  bh=lpidy9f/Xj23fTjAX3u0rI8Q4NvFKn81E/MA3w8DByI=;
+  b=BSBOA/k9DP2DLPD3Q+N5eVLqLYAUfTygjMudg8hENcA5CU2U2zimjUG4
+   EVvbbxkSKZ7M1B/hKF3REfiwZn/4AmAi2KWw48HtH9fegBtx0HYMwuxgR
+   JfRRjUrLCrPaWAvtqZlw0zM91kuHIUbYcn48lTF65ge9WyVnT/E+68QZI
+   SyLl7moe7OUGkJ/NK4Rq2N/Ft7iWuM5KxsqPf8vhAmL4iE+OH1btiwlMP
+   +Xv40R0VBPUlxQWAhuMkVWl2xZaP88d1/R3zbcOlW/qMCQd4BsZaCOiGu
+   JWHRqXn44uF1rVKenX394KW1yH/JdmhpLTxYkK/YS1LZImh+x95PB0Xd4
+   g==;
+X-CSE-ConnectionGUID: Tfq0bkrcTaKC69UQzojEcw==
+X-CSE-MsgGUID: s2TXBzgwTt6btO/nQoS+8w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74868658"
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="asc'?scan'208";a="74868658"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 13:13:45 -0700
+X-CSE-ConnectionGUID: Zs4bOdUFT8mhPYcHJIjmgQ==
+X-CSE-MsgGUID: Unv3VW4aRGuTd++jp7+r8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="asc'?scan'208";a="184424268"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 13:13:45 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 24 Oct 2025 13:13:44 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 24 Oct 2025 13:13:44 -0700
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.28) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 24 Oct 2025 13:13:44 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NAYdcRDchLirrdmUsu48sAIB0UM7KKeyWq0SGoGDp1IU2ql+oVgVXEzvvA9FhMQStaEVPJrOLWae7tvHje3zxgp/gNriKSZENHeUkkU7BEZHyjV5M1ZUR4rpBfacjE9gyBBbjTFZ0fNw3US8tcFTOffGLwelGEChi9mNMA25zYk3/8qZqcUd+adl9FGqRh3tEGIJqr8xA1fE35elkBiPH6JU/wLWsR+8bzgPFDfojiHP69QkhHPZvUPvBcGpf1zvltZv93WwG15HQRkLGRwR4gfpcRtyIGcWVTadZGdiuzn+tbjBfq5a7V7gIA495rVtwMsc/D4k8oZXJJNzk3THCQ==
+ b=qUPpZ6yJvbaMDfrbd3thDFHsdM+dsCPGImV1YQOtuW1rD1oYag4LdRSWb5YdqRdk7MJuYQBss+0jJmLGSnhnVnizsv24zUsADczyMMkSqU3Y7fhf0UujH0eLOmxrXmAjY15mpeh8t3jDZSxgdisicGeXwB/LQmzurMWfXwLmyN2VvWxbDsN1N7Gh9o82mXMjoFYP/zZNxv0WcQpihNZRCnJCtbXCrmztD3Q1TQgk6lV5qkg3OX5R8JqUwJbMFe0M6M9GywGiEY1WXFaS0NKArJIiYsf6KdPQurYqepAzGOiOBdZ40K24aqfL+2yLpFUbchjE0+fostbss0D8B0pnHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zU+aS9XFKa58/SSu5M0v719H4nTVDBTMvztoIYf7YUM=;
- b=TDpxL8eOdUcpbN24M2iUN5U7JB2KfoEwJJS8ixFLzEroya4GUbLyewyDHlMZL8G848y5+/Y5YskEw66T/KUC5BBmsI//AgOS/8Nhc6/RHJd0pgrtuzN5xGTJ8Rnh33/86qwRbSLYDVoht2RqSr5z/U41vT9g4v4+umnWuirTPQgTeR3XJoqdjj+jn97hbu/4mCwwRABaHHb9LOE1NuTpRhiH357UVlgD6+Gwwxvvkm0ejEVxD5Pfjsq4MgA9/tYPwyNqrVqhdnh0E6DvzLV8WS8RTScgMinQUKnplV0QNH1KD1Onn7YGK/QjU2hxdnmeC5l2q3Cd4xpmdCKBY9ZDZA==
+ bh=3bNUn585zz4vTQVpAALwVhx3htf9/WSvj4QOBfpnijw=;
+ b=lZ8nz/IGxxMQU66QJEpzer7qBVquMfhgu47Ntm2yYlnZoC8zj1meBzVjxQxHvY+jBocMcaqHCzXyN1CPcqvITutgYtP6hG1Qg7rok7k3YugDZifBM0jo/BW8066vuQ1qD8y+Ibt/pf4NftZj15ixqX/FaSVyc0qg8tSdNU6OWMpb0+vGAfot7lXbEqooSF5n1/oXTy4ybRITkZqz16xWZrGRlzotYcCFxIvy5QbkM+p7UifzNDj04cyZC+ueirKfeGnUr966LxJRO7cwQZF7bksgjzIbI2ZQeCi6fhq5d10bDZeZk7vt2iYqLvxKDFCvDyPOmWhbtVk6enM8Sx9Rlw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zU+aS9XFKa58/SSu5M0v719H4nTVDBTMvztoIYf7YUM=;
- b=JiaOLXp8vfzUqG9ztGTHxe71rgkuuUGvnwJ9nqXDrHRnJg2sD+XuQT7wYR6sH7damA1YWb36vU/8/+mGrGv9Higk8MfTezRh7xrkxJ4oe9Y/S0k7uczGDvtYMNl/HlfFakHUrFt1LnFfq+ZdoRCS8pwGwjpKI4BMKvhTI+OAGQ0=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CYYPR10MB7570.namprd10.prod.outlook.com (2603:10b6:930:c0::5) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by CO1PR11MB5170.namprd11.prod.outlook.com (2603:10b6:303:91::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Fri, 24 Oct
- 2025 20:10:49 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 20:10:49 +0000
-Date: Fri, 24 Oct 2025 21:10:47 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Huang Ying <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Yang Shi <yang@os.amperecomputing.com>,
-        "Christoph Lameter (Ampere)" <cl@gentwo.org>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Yin Fengwei <fengwei_yin@linux.alibaba.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH -v3 1/2] mm: add spurious fault fixing support for huge
- pmd
-Message-ID: <588a98b6-b5ec-4b79-8791-ad01e57b9612@lucifer.local>
-References: <20251023013524.100517-1-ying.huang@linux.alibaba.com>
- <20251023013524.100517-2-ying.huang@linux.alibaba.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023013524.100517-2-ying.huang@linux.alibaba.com>
-X-ClientProxiedBy: LO3P123CA0029.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:388::19) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ 2025 20:13:42 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3%3]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 20:13:42 +0000
+Message-ID: <d8c8b315-6419-4178-8fc5-370d7b875c68@intel.com>
+Date: Fri, 24 Oct 2025 13:13:40 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net] sfc: fix potential memory leak in
+ efx_mae_process_mport()
+To: Edward Cree <ecree.xilinx@gmail.com>, Abdun Nihaal <nihaal@cse.iitm.ac.in>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <habetsm.xilinx@gmail.com>,
+	<alejandro.lucero-palau@amd.com>, <netdev@vger.kernel.org>,
+	<linux-net-drivers@amd.com>, <linux-kernel@vger.kernel.org>
+References: <20251023141844.25847-1-nihaal@cse.iitm.ac.in>
+ <a4ef697b-74f4-4a47-ac0b-30608b204a4c@intel.com>
+ <699aa920-ac7a-43ef-8ad5-5157d0018b54@gmail.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <699aa920-ac7a-43ef-8ad5-5157d0018b54@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------NiyYQrakHSnghdRep2H0UzWU"
+X-ClientProxiedBy: MW4PR03CA0048.namprd03.prod.outlook.com
+ (2603:10b6:303:8e::23) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,376 +128,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CYYPR10MB7570:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e97dd8d-e5db-4a22-934d-08de13396cf1
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|CO1PR11MB5170:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58e45f1d-3f7e-486d-10e9-08de1339d3e7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1RQx5aE884xKaMF12/EzPvSxlA6UCXRVgptROuElZc+vWSE7whojaYE+vhxL?=
- =?us-ascii?Q?PgPhnBM4B7V+dh4LCL4J2PdSsfV3IYJhDXywqIuc3BXyF5xg64QVxi+Mtcds?=
- =?us-ascii?Q?WkMkZLomEKkgrT9aHXdw2W+ZDGGlt9o3YPF3HDmQ8JXIipTLV+x2A5faLsPB?=
- =?us-ascii?Q?vHQH/yhPRbcrN9cta4NeQhCK5NzwHGpmQRhUJjPAolmKkiE3wCYCYp+xaD/V?=
- =?us-ascii?Q?KxZQSshuhdsV9N/AjkK2BwFY4f6ngVTEHrWFZfJDX9v2GLsXu5nXw+oAWC0b?=
- =?us-ascii?Q?6PEbCo0qCHHsahlG8Z1TE0m4qGg5gIvnixRdN7X2ZYGKmvE9TJffp8vAGgYz?=
- =?us-ascii?Q?krgH0X3nfLg8N0ApXOhVUQSGPNN4ct9UxiTaHsWc9f3QYeVgtxbtyO20rFyh?=
- =?us-ascii?Q?LmSiXx28iIXGhO0S2/hPzxcXFr2Xr9edUmdENKnGybk7nuXbZL0KIxBR+Rpw?=
- =?us-ascii?Q?XHlmJ5Sas4/gJs9Pfc9qAsekM7spyWVUadAdF0HiE0jx+xSOvhlZEe3tCV5H?=
- =?us-ascii?Q?WBARt6E/mZOIJdg6BJZGwscGNHU6gzVbJ1N9pjbmFWrYZcl/REnQjxyOSO1F?=
- =?us-ascii?Q?k9PzqHu1NyP7mkoisT7xdUf48jqHDjFXdOa09y5BSW9wIPPqKKDsiQYTuR9v?=
- =?us-ascii?Q?xxnRZRt3oXLFKlo/rI1qxCf/7P7GLo4qbVM/X0exu/IWW0QAcSjgaXUfRjhu?=
- =?us-ascii?Q?MqPBP5i+CmeU7/ULq0w91jWGz0PwiqRKsJEWtt/XUeIIgU7ffrRNdRZyh6lw?=
- =?us-ascii?Q?8585+1rYXuvkfHtpq2sA2j6dsY3ofwRE6kQoXVHCAIZrsvppJApCnSktXZjz?=
- =?us-ascii?Q?BwCKxDp0dOT4hUgVkMeLKhrsnyjBcqxYsA99JGUqlFZfouBmNkjUcpFtQcFb?=
- =?us-ascii?Q?IGpv9KpUzjg32ylj6fgiVQQBS0UXB2W1Uw0QJS/6lJFsR2SDkEEk6WdmoTVP?=
- =?us-ascii?Q?FY00oMDzufoOvdGXN5z+jpCh4PzngyqYfjo7jZoRtFaIJgBkrn29jNRonrFA?=
- =?us-ascii?Q?P4DrNOVG5tOxEWw8tUxxnPF5IBT2g8/0j2kVkO/mSnZdfB4aPTkVEQl3hHnS?=
- =?us-ascii?Q?ENttb8UeF5fnkNyv3GPuQ03pmM4d2msAdf4evsxutF0vRRP0leIMTAhYcVoe?=
- =?us-ascii?Q?uI//l/PNmSI4hycJ4OxgYi8mfcG7GEgJRVXIqdlrUAWdhoq7vLUecb90OQT/?=
- =?us-ascii?Q?3z8TyEXcqNsFyroAy3YrUUgRhzbKUL2jDNCH3BpUGH233CuZAMShtZ9x0jmT?=
- =?us-ascii?Q?qhyyR2l65t6r+E5Mou+n2VB6mhkEn8BH8neVTC/dlVjqhns1GbIdZsELACmF?=
- =?us-ascii?Q?R2mzSbTu0HaPFEaiKaM2advI3o41IaXIiyZm04bA9V5xNcPA5kqIT7DfUiEW?=
- =?us-ascii?Q?w2iRZs9HWB7/7Jgu9BZfxZW+l8OgGwpouCjylFAV1WsDOp1bwq8XkEIFyY5W?=
- =?us-ascii?Q?5hv3pUeADmIAlQ+PwlOxLRHKhzQqQe8R?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?d3NvVEFVZ2RTMlNTd2Q3c0w3UEplVi80TkxFMU5aTnFFZ0tkWEtXYTBSbUN0?=
+ =?utf-8?B?SXErSWV3YU9NcUFKRzdXV0IyUFdvTFl4enBJN3JiaUlZWHBzaXFkanJWNjht?=
+ =?utf-8?B?ODVFbEJGTUwweUNkZVVmNGlsQTRZSzB1K0grWkNWbjgzeHpVWXh3Mi90YXln?=
+ =?utf-8?B?L1NycnE3aDNaME52aHdpRWhFUmJNd2RKQXE0VXhucUhxMTNtd0t3c2kwcVNj?=
+ =?utf-8?B?SjNvNlpzclJnaTZtWEoxMlhDcENpMnMyUFRSSVZDM2E3dHBROFEza3ZaRW1S?=
+ =?utf-8?B?KzVQVXNzQjhRLzBkeldBV1lBaEU1dmNjdmU4YXRyUzBNZnhIS1pGNWlKWldL?=
+ =?utf-8?B?OWkvV0tWa3NUUzM3dmc1US9SMlpzcm9GTEFDc0NYOFphUVE1dndIT1BZb0lD?=
+ =?utf-8?B?ZmQ3Z2YwWXRsaWZsbXZ4TnhDcU8zWWthZ0J2MnVFT3NscUJjQUg3ckY1NHl0?=
+ =?utf-8?B?R0ZyYzNrWmpsSnNLdThkaHN5Rk93WUpha092a05kWHczYUZ5R3lKNDVucERZ?=
+ =?utf-8?B?b3pNdnZMU2xhamV6a0NXTVduaXZuSi9Bd3g0QUlVd1ZZZGQwVDFSRFZpVjFC?=
+ =?utf-8?B?ZzM3K0grdGpmUkNqejg3anpGekk5S1pzMXhDVW9vbm5NcnYra1lBZUw0enJt?=
+ =?utf-8?B?anZFVXI4QmQyV1ozRFQyOHdaRXMydUhhUUhRRzZtVTIveFBqaTZHbG52Y2hQ?=
+ =?utf-8?B?Y0UyL0x2cmVxaXc4SUgwSmFOODdyUHRIb0owZjc3aHh6SDcrVC9xazh6bkEw?=
+ =?utf-8?B?Wll5blcxMkY5TldrMHlJSzdyQ2FtUlFrbklmS2lmUDJKazNxVW8wZTMyRG8z?=
+ =?utf-8?B?ditUcVowTGVEbENHYVpxVGQ1L0ZuU0FUSzFjbXlsNzNNQnNJckJVL2VLQnZ3?=
+ =?utf-8?B?THNlQmVMNllkMHN1MTdPc2RPTFF5TElWSWwvN2xjb1ZNN0pKazJ3Zk5yeVFM?=
+ =?utf-8?B?WjQrMUJhbUxCYVVnWG5VdEpJK09iNVJkeGl4T0V6azI1WHZ1c2pFUzNQbmlw?=
+ =?utf-8?B?WnRncGg1Mk1uNVRyOXpwRVFNVy9VaXI2OGVML0FqQ091b2FyM3RGeXVDeXF3?=
+ =?utf-8?B?d0EzQ1RJOWJxQjd4dHhKZ3M1U0RHMHVlM1kvTVhpNU53QndxSVk4TlY1WjVa?=
+ =?utf-8?B?U0haelk4ajZUSFk2NldNUnVnTXlIVmtueFhUNGVzaHViakVITWRjYXNBMDJM?=
+ =?utf-8?B?Y0Nyc2xCMVl5NUNCQ0NycnFNOXBLMXVmOW5xVWc3WWVWaG4wNjl5QUVKRHV1?=
+ =?utf-8?B?MFNMbXEzRzZFQnN5amQ3RFhEcThXdFlyUWE3ajR0QUkzRS92ZlJpY0x2eHFt?=
+ =?utf-8?B?M0I5U1A1Qmp2ZEZ6VmVCRGo4SmtBSjBnQXZDdWF2YlpHeGRMNnFWL3FxTDNk?=
+ =?utf-8?B?U2tYZEpLMVlFR3l6ZHZWdnIxdDJKZlhnMG1FdnRBVHlQaGJkTHA4Vmd6aHpu?=
+ =?utf-8?B?d1BPNTM2aG4zWXlCK0NoWlo3RHVCYmozZkRDd0ZsT3BXUVFjL3RrcUdKVDhU?=
+ =?utf-8?B?STJxRUJPYkJXbWM2dVRXVWdQNG15dmV0OWV3WEdraFR4NGZFRDZJS3pqcEtD?=
+ =?utf-8?B?bytyMCtqVEh6dkpNS3BqTk1kY2kxTGE4MkwwNTFDYXNvd21NekhOcXhkS0th?=
+ =?utf-8?B?emY2T1dJQ2JidU9qN2RDOXVOT2h2aWVkT3FrSzhKODhiNDliQUY5S1RxSGJ2?=
+ =?utf-8?B?Wm1NMG5qOFZSeEduRHhKenduRWRrb0l6QWdOa3hMYjFsaUlvU0QreFNtc1NW?=
+ =?utf-8?B?K2RlNUJ6T1dkeldiSkIydHMwOWc2QWt0M0xUZ1VkYnRqbndZbUE2Q2pjQUFv?=
+ =?utf-8?B?R1ZxMGY2VndQSDkvY3M2K1pmUFg5K0M2dDUrZE1EMFovUjd3SFBCaTlGeFIy?=
+ =?utf-8?B?MzdQclRLNFhKNUVOaTk5aXBTVFZrSUNZeE1zWTErMUVvaFFUazhIOXZTdWxv?=
+ =?utf-8?Q?y21LYEQibmFm/jNDnnfF8ijgV991moLC?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9mMyZTbOXhW2sDs5J8SCNH6zigQuxg/0rVseSxciW+YY1zuB9I18voXp9zid?=
- =?us-ascii?Q?K2/E7B4tvES0cv20dJrEFu7zD8YGyFwTx+LR9u7/FhJjHjvGb5Zs8OpzHk2l?=
- =?us-ascii?Q?rxpJp5VGwylDz/n9BrE0GilKnRpPswHc1IOCW16h4UfHO80kJtP26JXDDE3I?=
- =?us-ascii?Q?kL5Q+Fxh2Cg6r90F5HJfcJ0S2Hy770ZxOJi3iM5gH8xBfDjyauKxaGisF8E4?=
- =?us-ascii?Q?S7pMTWavg0Azzsw7wOtWxAJA7rQmf0A4v9sw1G9hN1oHpRl0r34aZWsoY1mp?=
- =?us-ascii?Q?i5ForFLByM1effPCihAGRdWnGEG6gDfoRQZQbJ9MH5K3/65g5m3TgS5uloWK?=
- =?us-ascii?Q?sbVajUeT0fPhPlltr7MiSRNPiD3LJ9ld888v/mffh/vYnYhVa3aP97klAHsc?=
- =?us-ascii?Q?38urv3gogYsyF5badi6LM20gdlJMM3MKUgR0zFd1fCJy1XHh/GVoga/QDCUO?=
- =?us-ascii?Q?EzcI6M+ggG3kqBLp7BFcIafJX1FJ51vhVud6qckP1v0kmAGWzZkr05wgwRY6?=
- =?us-ascii?Q?dXVA8QtdfU0j+QoDaxIcSNqT+VnLblh5xOJ6jYrOqNZT0po9BU85RTXWYaKV?=
- =?us-ascii?Q?uUQ6w8cBG7avMtEWN4CqcFdSNHro/H7674UyUKTKYoOQli4SNFa14vSxF52d?=
- =?us-ascii?Q?QemJ81qCBIKIO4tDuxNmrrAsqymK543utK4VmoYG6HupPIRx6gXdibJabRzB?=
- =?us-ascii?Q?fuusfdVcnaU9FA5LUzt4N5bckZegq+VW143AAKrWq8G/I0krlLary/yiPu/9?=
- =?us-ascii?Q?2BIrdIm2WAfXx5KShJwP7r5oBFo/TzhHB9t/39qQ6q5HvJYwM9actSiv2SUe?=
- =?us-ascii?Q?wg3QcGReebkFztkJrM4SEzrjqKJBcixVDyd/j59bnx08xAVDjlouuG/eMkRc?=
- =?us-ascii?Q?hFSAocLysTjI703t+YHRi0Iy1Qb6d1q2FsxlvqpXH6LqN5M15BzURU+QwudE?=
- =?us-ascii?Q?/+Nj++Ph6OFQdHVdnW1thdUqqaUQsuuQzq2JvZoQThYC6pdxxQRNBFt9Adwz?=
- =?us-ascii?Q?xwm1DCUpApuzRMfqx6ZLAnxIYrVwgWikPjj8/1KGS6lQqcQ2Gx+qioTZBNCV?=
- =?us-ascii?Q?2RscNjuNGzxgOyEp7Gf6KwG8IsFz+n2wpdU0yE4LwtATNKxWvI6G3rXv1Haz?=
- =?us-ascii?Q?ln2/qF0Ruywrt9r72IPHJund89W6hMEDQawtkCgv+AyFWQ+MmWVqCrkTDS5D?=
- =?us-ascii?Q?X3Ot+T7GkmZMB+vpGviNUp5gCHNfxd/kzbijHQGyf5vOKxBhI1pFGAYqB9Sp?=
- =?us-ascii?Q?Uiy8UJmdLrn1I4n7AlwxtZWyQJWPmJhUYvYlV8WXwf8+22+A1IZ0X8Nq0veY?=
- =?us-ascii?Q?Yw2eAdj+By/B9gunK5emhPAxS6IVq4GScru4X6NSZ/p7M9s/NyJIIYaBD8oq?=
- =?us-ascii?Q?o/4ADYH8r5rU2UBvl60jsgzZqbzlrtef0r8F4Negu8bE19f7PbUBGbqrHD34?=
- =?us-ascii?Q?kmGL03QvShCAooBfEFQ6tJpBcbvHi9o4bhl04G2rhX2M/f+twCwNkyRTUxGu?=
- =?us-ascii?Q?Z0ChBQgGELhxFPmxQkrn4HVv2s8ZlkHcfFgG0Mf2gr3aypC4joAwM+W2O/oV?=
- =?us-ascii?Q?Mf3jAQPZm/ILDar9Z3Wjgtnzn/TK6rAE+tA4AO2K/64aQf9fztM66djqddJ0?=
- =?us-ascii?Q?Zw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	GxHJ2H9TIhOXoB/uFmD3UrE6Q53AhXA4IbdudctbCw5skOekjoF2wTvDV9/fVgSmCkQD1UuDxmLncuKIF+dn7R41ypPLKG/ZDsSWqIFq8qfeOTHM+Phhz8wx4wSOjRk59AMuVhOPCY5uNYOSPV8emi3ZDOOCcVA4ullwzDB6nM7JYNqUB/8XBlFPCObp+9eddErNqlcV99QHCMl4ZdR9QnuMIeQZAVZyifFPqNVnDber60ck+bNc71+xflr42B5tGwY/wkKQnNJ0GsO/NJ903J0C2KQITaVMM1QcImTbO+sawyzbXiL6Ur3WXnhz5qWRyD13ZPgyiZRZGhLymsAqZx1mX3/8e/F/VIHmP2xlZ26lWBtHTGRwj0eHM9AZPlGbtBvKSzLI1ByU9ZRr8hSGBAgOYBJbH/QkLxWJ5yxJyNnh+iTnA7Je1Lvc8JUa6G4BtGZcwUi/398hFMZsGUWqUNwRywKfFpbToJeJat80dyv8Q/jI3/Wqy+qclFLv2GyoNy7/KYYqDXrz771FgFvq/Rk5KcQ5ApP7wsrUvttnyMMFHlqcxT4Tyyu2j9YkBEj6XooWkBj9JrPHqGuto8o7hUBxt6efTLe0qQIrdPWmT4g=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e97dd8d-e5db-4a22-934d-08de13396cf1
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MXJaMHorbDNJb2FRbnlTdHBCam5INEU3N09VR1EwU3c3aVI2TnVQRjcweVl4?=
+ =?utf-8?B?bDczSEo3VmdpM0U4cU1hV0JOMU9xaHAwRVh4YWh6V3hMUEMyVHU3ZzJtaWh0?=
+ =?utf-8?B?RFVmSWlHT2lncHlmc1o5NS9XN2JPUi9wZTI3TnZvL1N4ZGNyRWpILzlhUVc4?=
+ =?utf-8?B?R1l4SmxvRjkvdisweXdJSWtpYlF1S2x0OVY5ZUVzVEFQOVJMRlZVOER5NEJK?=
+ =?utf-8?B?aFhnVEROcWFqMHdnZlE0RzliRzVHYjZmanhVUWJINDFaSFhhUmpFOVUzTmJL?=
+ =?utf-8?B?TmZlNUNndDAzSWVNRUdqYjhJb3FvRmczNVpHTjFVNDlHb1h6RHNWY0x0dXBY?=
+ =?utf-8?B?RkhnaGZJL3VNdUlNK3FabGVqZmhpSXFHSlg4UmpJQmp3ZmxsUlY0ZHlqS09P?=
+ =?utf-8?B?aWVzZEdnWjN5c2w1WnhDWmszSGFBWTdXN1lyTTk1bHNlUHZkVXZxZ1JEZ2pw?=
+ =?utf-8?B?YkJMYmZJR0ZsdFF4TmxZYlJUeFV0Z1ErV2xCdGN3U0tyOHlVWkVXeXFTWGww?=
+ =?utf-8?B?QmplVUhwQ2xOd0tQTGdwNXVERXNRd2pmY3RLOFVPM0dRQzVoMnB6R2laVDZt?=
+ =?utf-8?B?czlyQmRxSndJeTdGRUVMa1I5VGE5Z0d3NTJpZmY5SnExVHdqNlphaXdUM2hu?=
+ =?utf-8?B?cGZvT3RseE5HVDk4bmhuazRSN3dRT3Y0N2RXS1Q4cEY3elNSMTNRcWt3SXh4?=
+ =?utf-8?B?dHlLQ1F2OG1uNXN3ZDB0V0xGWU5NdStkWHg0eFUwZEM0Y25XL2orTUdqS0hx?=
+ =?utf-8?B?bTBQLzVyL3ZDbWJKN2NoRlIwM2dSYmJsSVhRK2thT21aQ3N2T3hXc21lMlJZ?=
+ =?utf-8?B?SWI4Y2o4djBtaDl6YndIRnNadTQ1ZU5FdjY2QzJ5NlByOHE4MjUwU01ZV2lp?=
+ =?utf-8?B?dE9rN09nZFpoQmlVSFBsRXp6VkUzdE9BT0p2UWhvai93dk5YTXVPaHdiV1VU?=
+ =?utf-8?B?M2VlWUhjS1pKM3pTYjNXNDRLUG5EMFJDa1Vhb2kzQ1pKM0JVR25YNnhESHdX?=
+ =?utf-8?B?VjFOUWYvalhwZ1UrWEg4TDFrSk8rZFRBempMVTlPQTM3WkF2ZWo0ODFGNStJ?=
+ =?utf-8?B?Y1JJdG9qaFpBYzRjKzZ2VkZRb2RET3ljWVBUbGtYM2tQd0UzK05KSHdHdTQv?=
+ =?utf-8?B?TU5yZkpEeHJOTWF3Q3N5dWlSZnZ1TzVHaWlJSDU4VktRSEU4bVJyZitMNEY4?=
+ =?utf-8?B?YklscVQwNzgxZUIyellkdDFMdHF0bG1sNmVHeW1YZWFFa2piT052Zko2ZWhq?=
+ =?utf-8?B?QVBMTTNOc0U2QWVjaE5uNzJTaEZQelJmZkhLbjdtcTQ5b2lEalMwMGFVTnR5?=
+ =?utf-8?B?eXBsUjJiejRTY3RsWnEyZjNYczlXRkdlY0dITzNwOFZqYTU3LytIWFRQdHdG?=
+ =?utf-8?B?L1lnZTUxUVFRc1E4ZHBUNEpHeUhsZWUxaVF0K21pVTF4aEx1TjV3c2ozMnpH?=
+ =?utf-8?B?TlJwcU5naXdwU3hyRzF5R0JRanFCdDhoVXZ6Y2doWlIvVWNLQWRwdVA1R09N?=
+ =?utf-8?B?M3VNS3B2aEZSUjhOd1dKTXVkUnhDdjU0Z0ptQzRmazZ5Sm0yWmdIQ0x5Z2FE?=
+ =?utf-8?B?RGRXTm9qZkUrQmtHY2hmeC8xYkpwNTBwZmZMSFAyS0lZVzdNVnRkc3gzR1Bk?=
+ =?utf-8?B?VTk4WDg4U043UUsyZnFlaUxqUUNFTGMvMTEyNis0MDFMdEZWNGpBaVhoY3Nt?=
+ =?utf-8?B?RXR2QWlMSDM2WEx1cnRveDdrVXNnZnRkaHBJWEJ4U0JneDN4SjJJTWlJVFgx?=
+ =?utf-8?B?ZHk3M2JaTC9IWkRrWG53MWxmT0JSclRYeTFueGpsZTBEcnFYeHcrVjNFdDh2?=
+ =?utf-8?B?QXRKMGZ5MlptS2lLNjlnbHhRNXA5MXM2eG5UQVdSdWlKbTFjVDFqOWF5WGxl?=
+ =?utf-8?B?VC9SbTY2ZCtER2tGSkxCRjJNYjNhb0M3cUFxbTkvRVhXVWplZ2pSTENYZnlN?=
+ =?utf-8?B?TFJmdWs4dVh0REs5SkRvKzZ1Wi9IZjlyN2FsVnE5NDZpUlJQZVNmMjNNR3Jv?=
+ =?utf-8?B?cUk1Zml3TnE5Vis2Qmx4K1pzN3Z2WHk4OG1abnNCYnNUMnlmS0FvWU9GS1l0?=
+ =?utf-8?B?SmFsbjlORmpOeEZPczRQaEM1ZjM0WEZhcGVSb2c1STJiQmYxTlc3dnJNMEYv?=
+ =?utf-8?B?Wk9mNEpvYWpYMERKbXY1eXlXOEVoRjFJSFFGdzZSM1VmcUdXYnJsWlB6dW80?=
+ =?utf-8?B?Znc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58e45f1d-3f7e-486d-10e9-08de1339d3e7
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 20:10:49.6600
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 20:13:42.3804
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nFR+zPBuD2mgg6nbEUzqSx6wR54rD1r1I2LceyAPlKniSFhndxMS325ySE3pqGD8pMNpBJqXt4LkDgLmQKTL/XFAtpbRd+NPKpPilLf13BQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR10MB7570
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510240182
-X-Proofpoint-ORIG-GUID: O_Brw2WoHVoglV_6gRBbIgyUauTcCNkf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDA3MyBTYWx0ZWRfX0NXg2/qcdiKu
- XhDZYN6cMaL9On6g81oBaXPAZRvOG9sRtwmcScl6oxxL8FCwz6D2q8v385MXVLsaoIDaoS9iNMP
- g4IIeBTBKQGI0NFhmpu59/2aY9+u8MSuI60d1ST08LcLQwRX+caGOnWbQ5gWcd7fwr8MdVHpbjS
- 4banrXWZ06ThmswybHnrTGP+54tMNogfpzO+cNz4cFbKNrNIwRRKIFAQBOmzXV3AhraLe2RypqJ
- FSLr1avpLQwtSvwi8yE+6PW7+UP88zHG34JmVsagZq1i6TLaUlOztSzTeF1cj2JGmRCS98vpdix
- uq1InLTd0eD/ihWrdawQpNtfet0u1w8CjQvIgqgrQuGdmqLZt4rDUWl0WLsZGp9yOP1kQxnyxzS
- m0DYGnHOiUEEV0C4d2xF5+N/3jgedpbuw3fUN1E/A9e72ZMuOpU=
-X-Proofpoint-GUID: O_Brw2WoHVoglV_6gRBbIgyUauTcCNkf
-X-Authority-Analysis: v=2.4 cv=D9RK6/Rj c=1 sm=1 tr=0 ts=68fbdd4d b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=SRrdq9N9AAAA:8 a=yPCof4ZbAAAA:8 a=7CQSdrXTAAAA:8 a=VwQbUJbxAAAA:8
- a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8 a=Ikd4Dj_1AAAA:8 a=vzhER2c_AAAA:8
- a=PuvxfXWCAAAA:8 a=i0EeH86SAAAA:8 a=JfrnYn6hAAAA:8 a=37rDS-QxAAAA:8
- a=UCaD48UJgALu0zcx_NEA:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
- a=HkZW87K1Qel5hWWM3VKY:22 a=0YTRHmU2iG2pZC6F1fw2:22 a=uAr15Ul7AJ1q7o2wzYQp:22
- a=1CNFftbPRP8L7MoqJWF3:22 a=k1Nq6YrhK2t884LQW06G:22 cc=ntf awl=host:13624
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q5yYvI6mPAqVbIT7yltw+OE/TT9i05N6GypknMTFGPjrHYARJJ/K4+iQtV/gIzGb4nVatQAu3o1bRdRxof+qej6wAnqiD0OWZrNYdrQbllQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5170
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 23, 2025 at 09:35:23AM +0800, Huang Ying wrote:
-> The page faults may be spurious because of the racy access to the page
-> table.  For example, a non-populated virtual page is accessed on 2
-> CPUs simultaneously, thus the page faults are triggered on both CPUs.
-> However, it's possible that one CPU (say CPU A) cannot find the reason
-> for the page fault if the other CPU (say CPU B) has changed the page
-> table before the PTE is checked on CPU A.  Most of the time, the
-> spurious page faults can be ignored safely.  However, if the page
-> fault is for the write access, it's possible that a stale read-only
-> TLB entry exists in the local CPU and needs to be flushed on some
-> architectures.  This is called the spurious page fault fixing.
->
-> In the current kernel, there is spurious fault fixing support for pte,
-> but not for huge pmd because no architectures need it. But in the
-> next patch in the series, we will change the write protection fault
-> handling logic on arm64, so that some stale huge pmd entries may
-> remain in the TLB. These entries need to be flushed via the huge pmd
-> spurious fault fixing mechanism.
+--------------NiyYQrakHSnghdRep2H0UzWU
+Content-Type: multipart/mixed; boundary="------------DD0sRRamtF4mUEiFHtz4mL1U";
+ protected-headers="v1"
+Message-ID: <d8c8b315-6419-4178-8fc5-370d7b875c68@intel.com>
+Date: Fri, 24 Oct 2025 13:13:40 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net] sfc: fix potential memory leak in
+ efx_mae_process_mport()
+To: Edward Cree <ecree.xilinx@gmail.com>, Abdun Nihaal <nihaal@cse.iitm.ac.in>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, habetsm.xilinx@gmail.com,
+ alejandro.lucero-palau@amd.com, netdev@vger.kernel.org,
+ linux-net-drivers@amd.com, linux-kernel@vger.kernel.org
+References: <20251023141844.25847-1-nihaal@cse.iitm.ac.in>
+ <a4ef697b-74f4-4a47-ac0b-30608b204a4c@intel.com>
+ <699aa920-ac7a-43ef-8ad5-5157d0018b54@gmail.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <699aa920-ac7a-43ef-8ad5-5157d0018b54@gmail.com>
 
-Thanks much better commit message! :)
+--------------DD0sRRamtF4mUEiFHtz4mL1U
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
->
-> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
 
-LGTM, so:
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On 10/24/2025 7:48 AM, Edward Cree wrote:
+> On 24/10/2025 01:48, Jacob Keller wrote:
+>> On 10/23/2025 7:18 AM, Abdun Nihaal wrote:
+>>> In efx_mae_enumerate_mports(), memory allocated for mae_mport_desc is=
 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-> Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> ---
->  include/linux/huge_mm.h |  2 +-
->  include/linux/pgtable.h |  4 +++
->  mm/huge_memory.c        | 33 ++++++++++++++--------
->  mm/internal.h           |  2 +-
->  mm/memory.c             | 62 ++++++++++++++++++++++++++++++-----------
->  5 files changed, 73 insertions(+), 30 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index f327d62fc985..887a632ce7a0 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -11,7 +11,7 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
->  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->  		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
->  		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
-> -void huge_pmd_set_accessed(struct vm_fault *vmf);
-> +bool huge_pmd_set_accessed(struct vm_fault *vmf);
->  int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->  		  pud_t *dst_pud, pud_t *src_pud, unsigned long addr,
->  		  struct vm_area_struct *vma);
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 32e8457ad535..ee3148ef87f6 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1232,6 +1232,10 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
->  #define flush_tlb_fix_spurious_fault(vma, address, ptep) flush_tlb_page(vma, address)
->  #endif
->
-> +#ifndef flush_tlb_fix_spurious_fault_pmd
-> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp) do { } while (0)
-> +#endif
-> +
->  /*
->   * When walking page tables, get the address of the next boundary,
->   * or the end address of the range if that comes earlier.  Although no
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 1b81680b4225..6a8679907eaa 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1641,17 +1641,30 @@ vm_fault_t vmf_insert_folio_pud(struct vm_fault *vmf, struct folio *folio,
->  EXPORT_SYMBOL_GPL(vmf_insert_folio_pud);
->  #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
->
-> -void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
-> +/**
-> + * touch_pmd - Mark page table pmd entry as accessed and dirty (for write)
-> + * @vma: The VMA covering @addr
-> + * @addr: The virtual address
-> + * @pmd: pmd pointer into the page table mapping @addr
-> + * @write: Whether it's a write access
-> + *
-> + * Return: whether the pmd entry is changed
-> + */
-> +bool touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->  	       pmd_t *pmd, bool write)
->  {
-> -	pmd_t _pmd;
-> +	pmd_t entry;
->
-> -	_pmd = pmd_mkyoung(*pmd);
-> +	entry = pmd_mkyoung(*pmd);
+>>> passed as a argument to efx_mae_process_mport(), but when the error p=
+ath
+>>> in efx_mae_process_mport() gets executed, the memory allocated for de=
+sc
+>>> gets leaked.
+>>>
+>>> Fix that by freeing the memory allocation before returning error.
+>>
+>> Why not make the caller responsible for freeing desc on failure?
+>=20
+> Since the callee takes ownership of desc on success (it stashes it in a=
 
-Thanks, I _hate_ this '_pmd' stuff :)
+>  table), arguably it's cleaner to have it do so in all cases; it's an
+>  aesthetic judgment call but I think I'd rather keep it this way and ju=
+st
+>  fix this one failure path than change all the existing failure paths a=
+nd
+>  the caller.
+> Alejandro (original author of this code) might have a different opinion=
 
->  	if (write)
-> -		_pmd = pmd_mkdirty(_pmd);
-> +		entry = pmd_mkdirty(entry);
->  	if (pmdp_set_access_flags(vma, addr & HPAGE_PMD_MASK,
-> -				  pmd, _pmd, write))
-> +				  pmd, entry, write)) {
->  		update_mmu_cache_pmd(vma, addr, pmd);
-> +		return true;
-> +	}
-> +
-> +	return false;
->  }
->
->  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-> @@ -1841,18 +1854,14 @@ void huge_pud_set_accessed(struct vm_fault *vmf, pud_t orig_pud)
->  }
->  #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
->
-> -void huge_pmd_set_accessed(struct vm_fault *vmf)
-> +bool huge_pmd_set_accessed(struct vm_fault *vmf)
->  {
->  	bool write = vmf->flags & FAULT_FLAG_WRITE;
->
-> -	vmf->ptl = pmd_lock(vmf->vma->vm_mm, vmf->pmd);
->  	if (unlikely(!pmd_same(*vmf->pmd, vmf->orig_pmd)))
-> -		goto unlock;
-> -
-> -	touch_pmd(vmf->vma, vmf->address, vmf->pmd, write);
-> +		return false;
->
-> -unlock:
-> -	spin_unlock(vmf->ptl);
-> +	return touch_pmd(vmf->vma, vmf->address, vmf->pmd, write);
->  }
->
->  static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf)
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 1561fc2ff5b8..27ad37a41868 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1402,7 +1402,7 @@ int __must_check try_grab_folio(struct folio *folio, int refs,
->   */
->  void touch_pud(struct vm_area_struct *vma, unsigned long addr,
->  	       pud_t *pud, bool write);
-> -void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
-> +bool touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->  	       pmd_t *pmd, bool write);
->
->  /*
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 74b45e258323..6e5a08c4fd2e 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -6115,6 +6115,45 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
->  	return VM_FAULT_FALLBACK;
->  }
->
-> +/*
-> + * The page faults may be spurious because of the racy access to the
-> + * page table.  For example, a non-populated virtual page is accessed
-> + * on 2 CPUs simultaneously, thus the page faults are triggered on
-> + * both CPUs.  However, it's possible that one CPU (say CPU A) cannot
-> + * find the reason for the page fault if the other CPU (say CPU B) has
-> + * changed the page table before the PTE is checked on CPU A.  Most of
-> + * the time, the spurious page faults can be ignored safely.  However,
-> + * if the page fault is for the write access, it's possible that a
-> + * stale read-only TLB entry exists in the local CPU and needs to be
-> + * flushed on some architectures.  This is called the spurious page
-> + * fault fixing.
-> + *
-> + * Note: flush_tlb_fix_spurious_fault() is defined as flush_tlb_page()
-> + * by default and used as such on most architectures, while
-> + * flush_tlb_fix_spurious_fault_pmd() is defined as NOP by default and
-> + * used as such on most architectures.
-> + */
+>  in which case I'll defer to him but otherwise I'd say v2 is fine to ap=
+ply
+>  as-is.
 
-This is great thanks!
+Fair enough.
 
-> +static void fix_spurious_fault(struct vm_fault *vmf,
-> +			       enum pgtable_level ptlevel)
-> +{
-> +	/* Skip spurious TLB flush for retried page fault */
-> +	if (vmf->flags & FAULT_FLAG_TRIED)
-> +		return;
-> +	/*
-> +	 * This is needed only for protection faults but the arch code
-> +	 * is not yet telling us if this is a protection fault or not.
-> +	 * This still avoids useless tlb flushes for .text page faults
-> +	 * with threads.
-> +	 */
-> +	if (vmf->flags & FAULT_FLAG_WRITE) {
-> +		if (ptlevel == PGTABLE_LEVEL_PTE)
-> +			flush_tlb_fix_spurious_fault(vmf->vma, vmf->address,
-> +						     vmf->pte);
-> +		else
-> +			flush_tlb_fix_spurious_fault_pmd(vmf->vma, vmf->address,
-> +							 vmf->pmd);
-> +	}
-> +}
+--------------DD0sRRamtF4mUEiFHtz4mL1U--
 
-This shared function is nice!
+--------------NiyYQrakHSnghdRep2H0UzWU
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
->  /*
->   * These routines also need to handle stuff like marking pages dirty
->   * and/or accessed for architectures that don't do it in hardware (most
-> @@ -6196,23 +6235,11 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
->  	}
->  	entry = pte_mkyoung(entry);
->  	if (ptep_set_access_flags(vmf->vma, vmf->address, vmf->pte, entry,
-> -				vmf->flags & FAULT_FLAG_WRITE)) {
-> +				vmf->flags & FAULT_FLAG_WRITE))
->  		update_mmu_cache_range(vmf, vmf->vma, vmf->address,
->  				vmf->pte, 1);
-> -	} else {
-> -		/* Skip spurious TLB flush for retried page fault */
-> -		if (vmf->flags & FAULT_FLAG_TRIED)
-> -			goto unlock;
-> -		/*
-> -		 * This is needed only for protection faults but the arch code
-> -		 * is not yet telling us if this is a protection fault or not.
-> -		 * This still avoids useless tlb flushes for .text page faults
-> -		 * with threads.
-> -		 */
-> -		if (vmf->flags & FAULT_FLAG_WRITE)
-> -			flush_tlb_fix_spurious_fault(vmf->vma, vmf->address,
-> -						     vmf->pte);
-> -	}
-> +	else
-> +		fix_spurious_fault(vmf, PGTABLE_LEVEL_PTE);
+-----BEGIN PGP SIGNATURE-----
 
-And we now have a nice cleanup here :)
+wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaPvd9AUDAAAAAAAKCRBqll0+bw8o6JnY
+AP9OPHGE5P+ZJ5/dUIDOGhxEYe7ykessqISZ1DxQS5Uc8QEA/PIOq6NbF4gsAlHelXPy5W/9Qj+Z
+JyGVNPpuGBKO6Qs=
+=zy4Q
+-----END PGP SIGNATURE-----
 
->  unlock:
->  	pte_unmap_unlock(vmf->pte, vmf->ptl);
->  	return 0;
-> @@ -6309,7 +6336,10 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
->  				if (!(ret & VM_FAULT_FALLBACK))
->  					return ret;
->  			} else {
-> -				huge_pmd_set_accessed(&vmf);
-> +				vmf.ptl = pmd_lock(mm, vmf.pmd);
-> +				if (!huge_pmd_set_accessed(&vmf))
-> +					fix_spurious_fault(&vmf, PGTABLE_LEVEL_PMD);
-> +				spin_unlock(vmf.ptl);
-
-Actually rather nice to move this locking logic up here too!
-
->  				return 0;
->  			}
->  		}
-> --
-> 2.39.5
->
+--------------NiyYQrakHSnghdRep2H0UzWU--
 
