@@ -1,54 +1,89 @@
-Return-Path: <linux-kernel+bounces-869929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7C4C0905A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:33:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49594C09063
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AD614EB4C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:32:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64FFE4E5511
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8042FB62C;
-	Sat, 25 Oct 2025 12:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B10F2FBE15;
+	Sat, 25 Oct 2025 12:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qTkN+v8v"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yj9VtxGr"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034A52F3C23
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4F51FBEAC
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761395550; cv=none; b=PoLuuwkBAR8vcTJxK8FFPfZvCC/+6QynVifXMoJ8VD685efi4+9u4yT7+B8dPuLWEerQjKTedimNg3CEfFbJ78My40R4qRqCGFx3Hg+P2xwXOT0i0zwEboOAawJIz2xMAszHiiD/5r4Pm6oWNn9OaEvpKIFJ5bAyK1NN4ZxQDpo=
+	t=1761396083; cv=none; b=Xu9iYFwjBytAOUv+kw/fmc3es08I+yQDwLztVvvVb8IZ6DThqdsSHPeN3vey4hSy3Ws+VIdJWXQQy0hF4mpWd2F40z2YaKbIgk5Y3JmvVktsin99bE8NprngBCeXOOLqScbicCSVG5yOiH9mRgcu5spmKfhhXfQF301lGazyzRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761395550; c=relaxed/simple;
-	bh=bKtCQZeY01x+B2cRHqvjTuXRaaYy/xhx3/4vV8NPOdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UguHmpbZThEvqZO9z0t7IzAPxXkGdjIgM/r3zZ+PZENEyTirouCD82VXXdJCynrK4PXr3+gP+ycO5lMksn7lyt/jozl0crCpTxbU908op91HXR7NDrk6o7gUGD19FKpmWQDvUrnptatus4FvUgsBX/qF/u24Iz/gHmzkkWSNc3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qTkN+v8v; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761395540; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=8qkCxbBowUMsv9z5ivWjwIJlzY14VXRnGA0epcgBQak=;
-	b=qTkN+v8vDFGgWbofYR+fpbbY1AazPGuYeYbVJckNFqCMMQHXHxz05pnxSzD90nMrjFVYsb/71HoOVJmbY3WOPbXv77BVKxzDmAudockSzkLFUOmhOl/COgNMIbfARWL6TXvMCG6fspFO6tgdLXw/EpBAMnRTyeCoE8G8uBON0WM=
-Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Wqwts6-_1761395539 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 25 Oct 2025 20:32:19 +0800
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Heming Zhao <heming.zhao@suse.com>
-Cc: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ocfs2: convert to host endian in ocfs2_validate_inode_block
-Date: Sat, 25 Oct 2025 20:32:18 +0800
-Message-Id: <20251025123218.3997866-2-joseph.qi@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20251025123218.3997866-1-joseph.qi@linux.alibaba.com>
-References: <20251025123218.3997866-1-joseph.qi@linux.alibaba.com>
+	s=arc-20240116; t=1761396083; c=relaxed/simple;
+	bh=DbhyxMxq4lUaU8IP69H+5X/6jxTC3W56/g+TqGuwKpA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cowmOS+uvwMRe3C7Bcy0votKI4XkWrb6DnceA7KwchLsgOQ25g8Tpgr98XOMFTfauzL7CAK8yWj0JECRMXMUE7CCurplvYz8RguI5o3fseowFBcgVC3Hou5IEabtrg9c9lTostk7meo5vyqPKPMcqQ6QiMNsdLvaL0k7r0x/6GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yj9VtxGr; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-794e300e20dso3680177b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761396081; x=1762000881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmZntVTHHXX7vvT4or3/vlXQkt3zScSQQ5D3QkdreyU=;
+        b=Yj9VtxGr6qS+aC8sOnV7DzsafLrQb0Mdd6O41N1Byx/wFjvHqyVSiKh9yMKfJhesog
+         HivT9S53UOw6WQNjv1gyXwVAfzHhn5fhXD8Cm+25y+frUoUPFOl4plJNrTvVnqrW5WjF
+         dNjLinUNuuPHE9TXW1q5Us6sh3GxyXZOHUVSxt0s2HPwpCt+5CbkVH6B7uEWNwaRBBnp
+         Ts93w9gPIN9dF31MwqAaykUD7g67CHJJmYVDpJhkOOtE4GYhDIrDQ6Z5iRMjAsiynq0z
+         tjxapjKdPSaevagsmn3GajANGwkzI1sUFnu4DBDXrGxhjmQxmq/Y1Ea02XGXyxO/GETE
+         GGaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761396081; x=1762000881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wmZntVTHHXX7vvT4or3/vlXQkt3zScSQQ5D3QkdreyU=;
+        b=mlj78lsozm9e8WQCqILcnapR9LxH/4+hRvQVWk1PyQ0U2AGftn3TkxnK3GWxe+ijO5
+         7CuwU4bwsqtyyi6Z3H7RSwNICBehHsFCqNYQiK1KkJzCLU99oSX6b8GMcWtSF1l0Ezkl
+         MQthfuvVVryRjVX5/A5pm1BKUlwtN/KP81bq6nt713PolZl4b17uuDeEmIKoyAr65N3b
+         vLftQSBMqptWHZ0ZGfrlaXzQ9I70ydLKmf0q+iXpBRPEKElRl4VLq1M18E1zJ4be1MXc
+         THXRbm9KWCOzJCWPJt1vA3xPsSairMJUdZLJDNwiOEnrtfKt30YXCpstFSNOyZbQ/35p
+         u7+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXdIyjQtQ3V15eiA/gxCwaC28hNd/HkQTiWhQ57z3V6SrMUwiqGmdiNZUhdG9CbZ56F/8xHYOBMtBwREUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzotzZNV8i9MY7HRvAtcvd2IWVsfsXvto4U2L4xVI+fflFHBJaY
+	RBLvh8sgcErgvxVNB3V62ZqqJNxS7qSBl+XQ+ByQoUUj3Vta3dHIEDyv
+X-Gm-Gg: ASbGncuBwLyq6UzvFfrlCJw/oCRkqxJ2Mb2yD7B5GlI8myYVKg9IbBD8074VA+Cz7Ou
+	V4btGliqcwG2clZYOI7WddwPoPiytO8gLNQ0AoX7QxK/K8IST6Y03U+Rla79FjNJNtGttKJWGtI
+	JEuPFRt3jInJMOJtt/wic5dLv4QFDCfpHIHIz3KFTGG/Fut4m0BNBig3hV6BojXfTu/kuxEKWdn
+	cU388emoi/SQhKrcJguR/EBGh5anE6AHtgbdcsYfPeDAYyOjKVsF1qg+ceKDzJNvh3gRfbk+Jjy
+	cbHC23or45qADsr3hn4keiAb3EvAcBFnGpppj63+oqBlcda+bbcn4nqFG0bkrijQ/v/RP9HOPZZ
+	HsKDcfC3ptxVkpHvfyQeffr6dVJRA+xgvVXmj3m57i+WeeLSuShc8MG+U0DddqUMQmk5B2aML6H
+	O0t3C5p0E=
+X-Google-Smtp-Source: AGHT+IHzNs/eLQNOngxeYDWlhwSANW/kUwt/EM86jh34NmnaHE0YhhBpGRAv70D0RhfuygrVqhJNRg==
+X-Received: by 2002:a17:902:d547:b0:273:ef4c:60f3 with SMTP id d9443c01a7336-29489d70d8bmr73531765ad.4.1761396081179;
+        Sat, 25 Oct 2025 05:41:21 -0700 (PDT)
+Received: from Ubuntu24.. ([157.32.121.71])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e42f5csm22263395ad.104.2025.10.25.05.41.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Oct 2025 05:41:20 -0700 (PDT)
+From: Shrikant Raskar <raskar.shree97@gmail.com>
+To: hverkuil@kernel.org,
+	mchehab@kernel.org
+Cc: skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Shrikant Raskar <raskar.shree97@gmail.com>
+Subject: [RFC PATCH v2] media: saa6588: Remove dprintk macro and use v4l2_info()
+Date: Sat, 25 Oct 2025 18:11:07 +0530
+Message-ID: <20251025124107.4921-1-raskar.shree97@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,28 +92,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert to host endian when checking OCFS2_VALID_FL to keep consistent
-with other checks.
+The existing 'dprintk' macro used an unwrapped 'if' statement which was
+flagged by checkpatch, but instead of wrapping it, the debug handling
+can be simplified.
 
-Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+This patch removes the 'dprintk' macro entirely and replaces all its
+usages with v4l2_info() helper. The unused 'PREFIX' macro is also
+removed.
+
+Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
 ---
- fs/ocfs2/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog:
+Changes since v2:
+- Removed dprintk macro
+- Replaced 'dprintk' with v4l2_info(). 
+- Removed PREFIX macro.
 
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 0a0a96054bfe..dc4044a565b5 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1481,7 +1481,7 @@ int ocfs2_validate_inode_block(struct super_block *sb,
- 		goto bail;
+Link to v1:
+https://lore.kernel.org/all/20250923175927.4380-1-raskar.shree97@gmail.com/
+---
+ drivers/media/i2c/saa6588.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/media/i2c/saa6588.c b/drivers/media/i2c/saa6588.c
+index fb09e4560d8a..d2cb85a2d226 100644
+--- a/drivers/media/i2c/saa6588.c
++++ b/drivers/media/i2c/saa6588.c
+@@ -49,8 +49,6 @@ MODULE_LICENSE("GPL");
+ /* ---------------------------------------------------------------------- */
+ 
+ #define UNSET       (-1U)
+-#define PREFIX      "saa6588: "
+-#define dprintk     if (debug) printk
+ 
+ struct saa6588 {
+ 	struct v4l2_subdev sd;
+@@ -144,14 +142,14 @@ static bool block_from_buf(struct saa6588 *s, unsigned char *buf)
+ 
+ 	if (s->rd_index == s->wr_index) {
+ 		if (debug > 2)
+-			dprintk(PREFIX "Read: buffer empty.\n");
++			v4l2_info(&s->sd, "Read: buffer empty.\n");
+ 		return false;
  	}
  
--	if (!(di->i_flags & cpu_to_le32(OCFS2_VALID_FL))) {
-+	if (!(le32_to_cpu(di->i_flags) & OCFS2_VALID_FL)) {
- 		rc = ocfs2_error(sb,
- 				 "Invalid dinode #%llu: OCFS2_VALID_FL not set\n",
- 				 (unsigned long long)bh->b_blocknr);
+ 	if (debug > 2) {
+-		dprintk(PREFIX "Read: ");
++		v4l2_info(&s->sd, "Read: ");
+ 		for (i = s->rd_index; i < s->rd_index + 3; i++)
+-			dprintk("0x%02x ", s->buffer[i]);
++			v4l2_info(&s->sd, "0x%02x ", s->buffer[i]);
+ 	}
+ 
+ 	memcpy(buf, &s->buffer[s->rd_index], 3);
+@@ -162,7 +160,7 @@ static bool block_from_buf(struct saa6588 *s, unsigned char *buf)
+ 	s->block_count--;
+ 
+ 	if (debug > 2)
+-		dprintk("%d blocks total.\n", s->block_count);
++		v4l2_info(&s->sd, "%d blocks total.\n", s->block_count);
+ 
+ 	return true;
+ }
+@@ -222,11 +220,11 @@ static void block_to_buf(struct saa6588 *s, unsigned char *blockbuf)
+ 	unsigned int i;
+ 
+ 	if (debug > 3)
+-		dprintk(PREFIX "New block: ");
++		v4l2_info(&s->sd, "New block: ");
+ 
+ 	for (i = 0; i < 3; ++i) {
+ 		if (debug > 3)
+-			dprintk("0x%02x ", blockbuf[i]);
++			v4l2_info(&s->sd, "0x%02x ", blockbuf[i]);
+ 		s->buffer[s->wr_index] = blockbuf[i];
+ 		s->wr_index++;
+ 	}
+@@ -242,7 +240,7 @@ static void block_to_buf(struct saa6588 *s, unsigned char *blockbuf)
+ 		s->block_count++;
+ 
+ 	if (debug > 3)
+-		dprintk("%d blocks total.\n", s->block_count);
++		v4l2_info(&s->sd, "%d blocks total.\n", s->block_count);
+ }
+ 
+ static void saa6588_i2c_poll(struct saa6588 *s)
+@@ -257,7 +255,7 @@ static void saa6588_i2c_poll(struct saa6588 *s)
+ 	   SAA6588 returns garbage otherwise. */
+ 	if (6 != i2c_master_recv(client, &tmpbuf[0], 6)) {
+ 		if (debug > 1)
+-			dprintk(PREFIX "read error!\n");
++			v4l2_info(&s->sd, "read error!\n");
+ 		return;
+ 	}
+ 
+@@ -267,7 +265,7 @@ static void saa6588_i2c_poll(struct saa6588 *s)
+ 	blocknum = tmpbuf[0] >> 5;
+ 	if (blocknum == s->last_blocknum) {
+ 		if (debug > 3)
+-			dprintk("Saw block %d again.\n", blocknum);
++			v4l2_info(&s->sd, "Saw block %d again.\n", blocknum);
+ 		return;
+ 	}
+ 
+@@ -370,12 +368,13 @@ static void saa6588_configure(struct saa6588 *s)
+ 		break;
+ 	}
+ 
+-	dprintk(PREFIX "writing: 0w=0x%02x 1w=0x%02x 2w=0x%02x\n",
+-		buf[0], buf[1], buf[2]);
++	if (debug)
++		v4l2_info(&s->sd, "writing: 0w=0x%02x 1w=0x%02x 2w=0x%02x\n",
++			buf[0], buf[1], buf[2]);
+ 
+ 	rc = i2c_master_send(client, buf, 3);
+ 	if (rc != 3)
+-		printk(PREFIX "i2c i/o error: rc == %d (should be 3)\n", rc);
++		v4l2_info(&s->sd, "i2c i/o error: rc == %d (should be 3)\n", rc);
+ }
+ 
+ /* ---------------------------------------------------------------------- */
+
+base-commit: 6fab32bb6508abbb8b7b1c5498e44f0c32320ed5
 -- 
-2.39.3
+2.43.0
 
 
