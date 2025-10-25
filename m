@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-870064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6321C09C4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:54:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F082EC09BA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9F5189585B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:50:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DBB734EB13
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB86D319852;
-	Sat, 25 Oct 2025 16:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2B631987B;
+	Sat, 25 Oct 2025 16:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ao47nZRp"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMoRVw/e"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635D231960D
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AE531961E
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410485; cv=none; b=qsZKds2LrUHaggz3gyJxnu7NiS3K5AcHfEaQerOMKJk+UJfTrnsurTgQf16GGbndQ2wSwNM0LlybIJcmAt7pazKKlUlB92CDsLU6ep8PokpwslaKOxpVQZaKec7cR9Ih6wkbVVXlddx0uB19HI+oFYViFtAShPO9+f2PG2IAgFs=
+	t=1761410486; cv=none; b=ZL2NsTFVTWnj/i7Ow43tL/AjD736YzCwMI0+trFoxhorkcPq2lfG+x52XnQcoaVnd3upVOA/UpM5zXBV/Ue1P0c7DKlQYhGmyENPWa9mtPGJP1oCF4MtuOt2OmSOyns2j4cxs8mI+IxEpK/+v/hPRvGALjiwdsElnNxiYsiPQZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410485; c=relaxed/simple;
-	bh=M6vYwiDXFrwliwHjWTkr6oRqx2KgbMTp+xr1SyvsQ5Y=;
+	s=arc-20240116; t=1761410486; c=relaxed/simple;
+	bh=7GwbfwFI4OnHwDpWdSIvynNWO47LZso8CXPD0pWl0FI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W8C3S+amxJBV1RYmSdFo1en9/Kvv9o2B5mZgoWInN6Nekxdvt4l4VhamggkQ3D1B9Sf9PE/r1EhOlz4hIlfgMO2l+gQnUoDDpAx+TqADWLFDCcU04nGDb+iP4USu201eQCyYfMajJSofkqIjeSlFRoopdSwr6bcTOBQxoIzhsRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ao47nZRp; arc=none smtp.client-ip=209.85.160.175
+	 MIME-Version; b=hIE04NXD5t2aKQ9bp8MG64vf/y2Iem5Am2tpWI4WRRPUcpnNNQV7mHR8lZjMSrxR/5y4pZBdC6GFevvKt8UAcJbZyt1LQmzI2C2haQISQ0rEoFQ62wbS5PdBHR6pnGgk+cEZpx3GmCW+peYSoIaMftdSAw9iNTObV4svP/wFuOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMoRVw/e; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4e8b90e9328so23782601cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:41:22 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4e88a1bbf5fso34505731cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410481; x=1762015281; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761410484; x=1762015284; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v+kdgwxqgLpSk+BXagyhyh0KizQR0PlmXlxRpNRvoio=;
-        b=ao47nZRpcW2eXLIVAQJTziNI7xHxLdffM/OF8QltmHhwe8KAkjLBY6zR5qLij43lv/
-         PKI+QP3pla1Yq7f8CZ7RVGuWQFLliJPYqkvV/b0Ib2jUBRyEiYzV6orh3eBuOBVfUKh/
-         jzh40TVdZZ8umoloAWbtHGzKxtZLufdEcrnrOB3bbo1NTyh0jzK7qc3vEwugiSsPYzSJ
-         PBtm8JmwKiPm1U8vlRxiaDpkN5Qu+qpBzKDZxdVw36Vbuq3Z+h08+4pf+iHrKQZK5+US
-         Ln9qgbZkBjMA5vb07ROKrDW2CltDrhf4TsvqsWoJBiY8dNT3d70duChqB0aiiRnBJ6Px
-         eT8Q==
+        bh=Cxuvcw+5BokTf5KtZwOgkWEs4upe9ufMvZQ/niv/DKU=;
+        b=nMoRVw/e47Ca2PFeJxQGcilQ0+7K/pEDLQw7tmgRePfrLJna7o3M4YgejGBdeZLUrE
+         S3dkSVkPnYssItysHDNziPNz5ani9VPDt5wnM0lFVl/EEWlfABAT6vg9vyLR14/bM+se
+         wYGzV9Z6exKNx9La/3E8WKdzQqG5wKpwkPooGNdiL5t6v2STACEUnGqZQvmdYtQ8Ld18
+         bI+uVQqfk3/vDnzetw35OgPfnGNCLkeWB0nQ8qa+Dztpb8zTK/sjoy2q+4+FwBihknoC
+         SKciyHsJUBU4KqBDmxil+LjI+CO6tw2Wxbp2EDtyRXelqLB4/wGWfss7AZm+H3opj8jo
+         +Iog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410481; x=1762015281;
+        d=1e100.net; s=20230601; t=1761410484; x=1762015284;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v+kdgwxqgLpSk+BXagyhyh0KizQR0PlmXlxRpNRvoio=;
-        b=L6rtwoSGGdFWx0XwhPR/M7QHN0Wk3Y/szJE6Q51hgv7zSK50h/T1gAGyRfz2FOLJgq
-         MlTzF6rL6epnCbamGvioYr6JFxyGP4YKUx0U9WdX/90dYSR4RmWEl83TUy6UjB6/Pf5K
-         J7klQ1mX5t5EH0mMj+WZoK6HE3520OKpou8xKmC1aDlY8mCzfhbNDhFPpXGD6/Qa68bR
-         +6YytKE5s6VulyqEgCPaW19wW2iNtnkTpFwOb53hlrF+H75tCx+EVqfvZUomhTJat8Jr
-         h/tviIC+wgd322pO2fDEGup4x+C1j1IjsH4V7Fs9SEpRAIIrsPAfV0okLLT5IFLg4kN4
-         WS+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW84liskmVNYDhifsTwnPzHv1qZnQik4e52809mgCic6+vv5AIpDeApYc2PDDEh5z6MzFaTybOlz9kScYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybEsmdH84pf9+poeY3eUv9ZlZWc5DzjXdC5s7k26qtOOT4Wm4i
-	NxA86iLpAh6nE+FbDbCU9WrSGdctwfZ5yBznajyswBOXP6uLMUlIGhW2
-X-Gm-Gg: ASbGncvrVxH8Z5QWxIRqwJ9+3RRYVV8zlfFPVfU5D43gpY2VswovQH0ZvUgeWEn2M8v
-	auXqS760yjLW4b88Ur78vbqgqiCUSDe+E6YVrJLNk+idNTV2CX8mPbfJ/hyTie9WPCO59f4IYi9
-	1Fog/SKWagxFcYxi5BdKdRl0/oWs6iUib+dy2YNmMq0ZzmXclwQghLT41tFhNRv4vx4OCw47Fwz
-	LuE+h38Ep+GcjsHuDXTV9OlcQuiw6P6TFbMyaTwMylCf4KLFgQjI1nMJM/6BpA73JBykHpGhp97
-	Tpp8KAUNqHu9rFIEjGKK803NJRG5JoJgjflrd9AlJatWgvdypsAMqdBp+3ZTuuR1rUlUdSzlTCI
-	ZpYAkefgY6ADjMfNHvRQF3yRxqhECxnHVUhtkidctDWU2x6vfl1M7TaeLOD3A4Zj9F1AXA120
-X-Google-Smtp-Source: AGHT+IEbSTHOPYn/ssbsalfndo2SE/aquOPMKCRUcU70dpCWt75EhJinxXayNqNWEpmv6XMRvXc8Dg==
-X-Received: by 2002:a05:622a:48f:b0:4e8:aad2:391c with SMTP id d75a77b69052e-4e8aad23e00mr349567941cf.1.1761410481317;
-        Sat, 25 Oct 2025 09:41:21 -0700 (PDT)
+        bh=Cxuvcw+5BokTf5KtZwOgkWEs4upe9ufMvZQ/niv/DKU=;
+        b=JiVdmhLLXX5fNRUHXbXVUzJa/EnhrLX4rSMyQpkRHo9ezhEbR9WdjILGmcC2ciR7DK
+         amMYMxlkpkI/E6mYwZLvV8dnPw90ghHnn56NYq2ZGn3o4eCSXbW6c+MBU16iXFUDwegy
+         6Ed6+5vwwEg3hgLRxwr75ZNv4V4pd3vQq0EHq2r4KTkXK5pkhS4Wf66LOwY364HyJYwq
+         PQTdFaZ76s+iJhNVIQ4SqULvvKOE1MeiCiiorfaeNHT+KelhSAvYxARRafmLn+z8giZ9
+         PdAtyWLeS3un58pvneh7J+kF8divQSzjrc5IRLGM3k+FN+wQ9zF4V+G+sGKEdserYhMO
+         TIFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFTA5ofnQoq9QnF4LqA1UlGwFvD6ZhrzAMoojGuMHkc2FVX/6SXCX5YfRXABpPkWsRR4631d+pEpPT0DE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx75l1CZRIWKB6nNUHa3a+r1xfgQvJoiIOneyaBiltX3JNAvWr
+	pJ2rvAiQEtRMlwj+1JaeOqO2IW5FYS8rz25gHhLSi1+FjDz1jEcoQL+C
+X-Gm-Gg: ASbGncuXA+b9bdS2Cte0FoDxsONi5zlDgw8ortEFJL2ge5fn1jI8CalOYbXKr33MIob
+	COzWQrYNrM6v6aArEupylxSy7zOOBRKDec6iTMfWkZINpR4etR2Jac10/Y8afMPBqltkezCKbin
+	eQ80RZjCcyaVECjnqh/iKo3bLmnfR7HTBIPmPSD8Knkj7A4/Y0ndgcN3+uQigdQddoFP2QPu2mW
+	ZCVCtQcqVuJSNYnrg/oqYb8U1EWCX7K6WVadLUs6RewdRuW8m1uBqcEEje1qFeUHQN1PYUOOYIx
+	lCWnBDb0rNKCLOtx+fxelDOxujC8/DMUYiXlgN7Y9F3txI0ybnAU/x5tKwzxKO7EF0k5qE2z1+N
+	oSU5kpwDxiWML2WA/KvwkBPkynzbIGqsz2lbWgTw/zKWWz5DbDukdsh9Iou0CfR4ypdwdDqQZWi
+	TPrC6oOO0=
+X-Google-Smtp-Source: AGHT+IH+bChMnhrke25hcunXp4ctYBzAwgqUPi/DPNGDmVtSwY5Yr5lQoJiKtZxVaRD5EDx9mjp5Qg==
+X-Received: by 2002:ac8:7dd2:0:b0:4e7:37fe:b619 with SMTP id d75a77b69052e-4e89d3a5549mr397523541cf.65.1761410484101;
+        Sat, 25 Oct 2025 09:41:24 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3858f1esm15257191cf.29.2025.10.25.09.41.19
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f24dd30c3sm174457985a.21.2025.10.25.09.41.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:41:20 -0700 (PDT)
+        Sat, 25 Oct 2025 09:41:22 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Gao Xiang <xiang@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Jinjiang Tu <tujinjiang@huawei.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Andrei Vagin <avagin@gmail.com>,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
+	Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 19/21] fs: don't use GENMASK()
-Date: Sat, 25 Oct 2025 12:40:18 -0400
-Message-ID: <20251025164023.308884-20-yury.norov@gmail.com>
+Subject: [PATCH 20/21] fortify-string: don't use GENMASK()
+Date: Sat, 25 Oct 2025 12:40:19 -0400
+Message-ID: <20251025164023.308884-21-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025164023.308884-1-yury.norov@gmail.com>
 References: <20251025164023.308884-1-yury.norov@gmail.com>
@@ -117,125 +96,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GENMASK(high, low) notation is confusing. FIRST/LAST_BITS() are
-more appropriate.
+GENMASK(high, low) notation is confusing. BITS(low, high) is more
+appropriate.
 
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- fs/erofs/internal.h      | 2 +-
- fs/f2fs/data.c           | 2 +-
- fs/f2fs/inode.c          | 2 +-
- fs/f2fs/segment.c        | 2 +-
- fs/f2fs/super.c          | 2 +-
- fs/proc/task_mmu.c       | 2 +-
- fs/resctrl/pseudo_lock.c | 2 +-
- include/linux/f2fs_fs.h  | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ include/linux/fortify-string.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index f7f622836198..6e0f03092c52 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -250,7 +250,7 @@ static inline u64 erofs_nid_to_ino64(struct erofs_sb_info *sbi, erofs_nid_t nid)
- 	 * Note: on-disk NIDs remain unchanged as they are primarily used for
- 	 * compatibility with non-LFS 32-bit applications.
- 	 */
--	return ((nid << 1) & GENMASK_ULL(63, 32)) | (nid & GENMASK(30, 0)) |
-+	return ((nid << 1) & LAST_BITS_ULL(32)) | (nid & FIRST_BITS(31)) |
- 		((nid >> EROFS_DIRENT_NID_METABOX_BIT) << 31);
- }
+diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+index b3b53f8c1b28..0c95cdcca736 100644
+--- a/include/linux/fortify-string.h
++++ b/include/linux/fortify-string.h
+@@ -11,9 +11,9 @@
+ #define __RENAME(x) __asm__(#x)
  
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 775aa4f63aa3..ef08464e003f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -416,7 +416,7 @@ int f2fs_target_device_index(struct f2fs_sb_info *sbi, block_t blkaddr)
+ #define FORTIFY_REASON_DIR(r)		FIELD_GET(BIT(0), r)
+-#define FORTIFY_REASON_FUNC(r)		FIELD_GET(GENMASK(7, 1), r)
++#define FORTIFY_REASON_FUNC(r)		FIELD_GET(BITS(1, 7), r)
+ #define FORTIFY_REASON(func, write)	(FIELD_PREP(BIT(0), write) | \
+-					 FIELD_PREP(GENMASK(7, 1), func))
++					 FIELD_PREP(BITS(1, 7), func))
  
- static blk_opf_t f2fs_io_flags(struct f2fs_io_info *fio)
- {
--	unsigned int temp_mask = GENMASK(NR_TEMP_TYPE - 1, 0);
-+	unsigned int temp_mask = FIRST_BITS(NR_TEMP_TYPE);
- 	unsigned int fua_flag, meta_flag, io_flag;
- 	blk_opf_t op_flags = 0;
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 8c4eafe9ffac..42a43f558136 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -524,7 +524,7 @@ static int do_read_inode(struct inode *inode)
- 			fi->i_compress_level = compress_flag >>
- 						COMPRESS_LEVEL_OFFSET;
- 			fi->i_compress_flag = compress_flag &
--					GENMASK(COMPRESS_LEVEL_OFFSET - 1, 0);
-+						FIRST_BITS(COMPRESS_LEVEL_OFFSET);
- 			fi->i_cluster_size = BIT(fi->i_log_cluster_size);
- 			set_inode_flag(inode, FI_COMPRESSED_FILE);
- 		}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b45eace879d7..64433d3b67d4 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -5425,7 +5425,7 @@ static int do_fix_curseg_write_pointer(struct f2fs_sb_info *sbi, int type)
- 		wp_block = zbd->start_blk + (zone.wp >> log_sectors_per_block);
- 		wp_segno = GET_SEGNO(sbi, wp_block);
- 		wp_blkoff = wp_block - START_BLOCK(sbi, wp_segno);
--		wp_sector_off = zone.wp & GENMASK(log_sectors_per_block - 1, 0);
-+		wp_sector_off = zone.wp & FIRST_BITS(log_sectors_per_block);
- 
- 		if (cs->segno == wp_segno && cs->next_blkoff == wp_blkoff &&
- 				wp_sector_off == 0)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index db7afb806411..96621fd45cdc 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4501,7 +4501,7 @@ static void save_stop_reason(struct f2fs_sb_info *sbi, unsigned char reason)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&sbi->error_lock, flags);
--	if (sbi->stop_reason[reason] < GENMASK(BITS_PER_BYTE - 1, 0))
-+	if (sbi->stop_reason[reason] < FIRST_BITS(BITS_PER_BYTE))
- 		sbi->stop_reason[reason]++;
- 	spin_unlock_irqrestore(&sbi->error_lock, flags);
- }
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index fc35a0543f01..71de487b244c 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1845,7 +1845,7 @@ struct pagemapread {
- 
- #define PM_ENTRY_BYTES		sizeof(pagemap_entry_t)
- #define PM_PFRAME_BITS		55
--#define PM_PFRAME_MASK		GENMASK_ULL(PM_PFRAME_BITS - 1, 0)
-+#define PM_PFRAME_MASK		FIRST_BITS_ULL(PM_PFRAME_BITS)
- #define PM_SOFT_DIRTY		BIT_ULL(55)
- #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
- #define PM_UFFD_WP		BIT_ULL(57)
-diff --git a/fs/resctrl/pseudo_lock.c b/fs/resctrl/pseudo_lock.c
-index 87bbc2605de1..45703bbd3bca 100644
---- a/fs/resctrl/pseudo_lock.c
-+++ b/fs/resctrl/pseudo_lock.c
-@@ -30,7 +30,7 @@
-  */
- static unsigned int pseudo_lock_major;
- 
--static unsigned long pseudo_lock_minor_avail = GENMASK(MINORBITS, 0);
-+static unsigned long pseudo_lock_minor_avail = FIRST_BITS(MINORBITS + 1);
- 
- static char *pseudo_lock_devnode(const struct device *dev, umode_t *mode)
- {
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 6afb4a13b81d..9996356b79e0 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -356,7 +356,7 @@ enum {
- 	OFFSET_BIT_SHIFT
- };
- 
--#define OFFSET_BIT_MASK		GENMASK(OFFSET_BIT_SHIFT - 1, 0)
-+#define OFFSET_BIT_MASK		FIRST_BITS(OFFSET_BIT_SHIFT)
- 
- struct f2fs_node {
- 	/* can be one of three types: inode, direct, and indirect types */
+ /* Overridden by KUnit tests. */
+ #ifndef fortify_panic
 -- 
 2.43.0
 
