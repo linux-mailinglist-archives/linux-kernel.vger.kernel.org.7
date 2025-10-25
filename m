@@ -1,188 +1,206 @@
-Return-Path: <linux-kernel+bounces-869638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0BCC0861C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE00C0862B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3D33ABFD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4930D40024B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C90D2AD3D;
-	Sat, 25 Oct 2025 00:12:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD02917DFE7;
+	Sat, 25 Oct 2025 00:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E4+9jUyy"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010069.outbound.protection.outlook.com [52.101.85.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478572F4A
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761351128; cv=none; b=aL+OaAhbLlG5rO5YZcqV1dnkHlrpGse9k9sFw0IuRJd2Jwcv9sZiXnMH0QCv4M0eZ6SB7sbk18VOKAesKmzuOBwqJCwxE8cCxQ1Rky0ljiG3CD2nP7r5n9Q5e1y/YsNPcUxN8AlBI+pyKE7qvC/BYuMyFMSN1urNat73Uz3kPeI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761351128; c=relaxed/simple;
-	bh=uXFxWnRStbW6yl1PETqMllx9eKBXQZv/kZfTucJJvpY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GlVc6KA6kShtR08eZ1Td249r1LHp+zvkiY/a2MZ2o4nDrsdbfqtTZA09jnwCzWbmlH2/kmAIjD33xtUe2I1RjJnu6bERxBNtfEpiHQkzRnmutK6bXleUIOkAsNJudsshDlp5zlABiYbMxT+BOf45tlixFXR9JTskC8JtRXPSnSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-927b19c5023so228241539f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:12:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761351125; x=1761955925;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWBsQER8bu6bk9UdC/DRTjOmlM7UxYSXQZ2YLCPQhb4=;
-        b=L4dLjOyE3tlj7VCgdYRqFH3tz/yl2FcK+ENfSz9exkZGsDiENubpYsHi++mGTnebE1
-         zsvLIit65NsIyiVImPSQsbAKcEDMYrpvqUZa7aZOcBmeDUQ1LgUJ8QsJLmGpki9B+wIm
-         e6jNdo23MeqmNC1pkUswMwuuTl5REsoCGY1BXnzFarHhUQWr33s09b9JXUV74XiqWe8K
-         WXD3ElnZDXC3C1qFHo33lmkV6kaasMAK7Uj9XF1yFch1laPKUxCq/PQjunvwBJYIpodr
-         1CkS4QalBc8HHF512xCHubSRam8uzH/wBAPskjVktq1zxdkuGClLJt2XOgYoWD2kafZU
-         sMaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSKccq6DEnxUPc4b+Nu0kwymog0RjJE6sEx5IE1EB81KWDR3QxVqIN89CN+aZY7Hd1Ass8/IKMBAO6gj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxub0MC4Pm48MuDW3S49dbxG2UONu7lZeTBA111NU9dzpHq4WaO
-	nQoAPvCT/dBCIZyvwj1VXp+rgYGjO6d4jq7INHt7LaIhprJ5l1fkpEho1Y8u7jLj60q5S90jMok
-	eeJ+R/oSi6X6XtcCDmvg0PtN5BJniO7U2zjutwlxseJ2LjFlgWAGCB2IYcuQ=
-X-Google-Smtp-Source: AGHT+IEaRGEYjyCywez+oTEPoGNfra5j5OFMxHan25VIdcW2g+ZSHsJ02KS2mjLE2ANO/pE3HH/OGceZZHMDhI/qRfPkqSCODqyx
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334BE78F36;
+	Sat, 25 Oct 2025 00:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761351311; cv=fail; b=QJS0Sc4wKW+DP1trB4C9AaSveQCeoe2U8kxA+K107Q/ZMx0f6j3wdVorfnkjhW4U3baBEfS7UkxwWlbiyEKtHK8n5V7c5CRTXLf2K9LdS/pkkzKU59SXOFNHZMhIRJZ5YhwEPe/VfFrmrRHRuOa8frpp3YB23F+47aSPAxUQDM4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761351311; c=relaxed/simple;
+	bh=g90egEwa1kiQNc2jRAJAf17f8nneoT4KXAykS1LQ1xI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=hjYlqSY+K482iV5Zcpjw01rJaq9Jj6zEH3vqLMTRAtYrXBpxU6B12qA5yx9bHv1uxDP74ZcyNOptiCcxhdJ0Zn6Z58RttJSA/LKp6wPy9SAW0svgjmZMISa6efL64DV/LbZaWMifYdQaco8UTXrOs6wbfzUV3xed7HlnR0Qt5+8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E4+9jUyy; arc=fail smtp.client-ip=52.101.85.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BKXFv5GQbS58i0ylqXUkZvwkj7B4oF1ZlA1ysrOC6z9HQa9vCnIv9YKg8jUH8IwyPcJnNjnpjIxbDFrY0PWehrF6fuUHe8hQfgGab1H4fe9tX9J1/fgBabcybzyltp27s7BhvFYwONikFt0Jc/lGW65J276b0Ng7DElzUV55dXz372mNsFblXEekSpQvdFJbaSmq5DeWpnIM0fLRBKz6elP06XD38mK3x9uoMq+p6OrUGrk/0sQCMN1ZWkFoHQ/1s0C89AoOCQrBwmeUnmIrHRodSostQ7jRU+TF661+zdoCh/lGze5Un9u1vZ1WZGPAmajd6W7XPidDM6c1qBuN+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XNvoqG93tSQJM/TSwiaQgf1hux4312sTSM9WonuqYBg=;
+ b=DCUuCAMHQnHU8UUsk9TzmebTSZRgm9L9p9AsTAkj+VEKceTUJqze5pM+BDudHrHkx6EqTsUupl/LWCfVjN9X8+qCi5+EB3D2ml4QERSFvXKNE0AAi5Y6QUcm0PX6ODEqXMP+am2nWvl71j2RNbzR2NxE81f4a3Fp3lf3J0NoEVn/Sf/9tO1ziv3R9BICm9fGSyruhYR5BhZwgsqoYSZcIeP6tZpEtZapTvRvUNiIhTH+KEagan1i56URRDB4htoCky+UGf8Y6ZLMDyiCQ1fqjsUWKr2qUWDJQXrzAtd80Cm5ahLtcHIiEQi42kiwyzcgF/2gVNjjgMbXNWfq+21kpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XNvoqG93tSQJM/TSwiaQgf1hux4312sTSM9WonuqYBg=;
+ b=E4+9jUyyXttFlVdpKNo5kXU4eUM/7Zvkv7frxoLlSF/K8pWAwKCVjAB5NaOd38vaJHV9xbgigvjyEwrHt+BXOMiCwUXNrGrPbfEBDPOqIIpUlGewCAmkC94xLW8eL6q0N/nJu4RsL06jVF0RGq8FHos+om/8hzpT17HOQCk9kRUuHh5eOSHGIPYkEDfaUJIrABA2RXqNptA1ihzQJSrlMrsvT5AluG8SV+YbiS7yFgaAGpyTjg8i+orG6rxEswXZDlb2LDaG87Snb0c6aYC4gVZ7JSarsyzyemQrP30oDCmo5IAwywhJJ3ZD1cVWT4CdIHvGMi0BiKpUMCQiy/iAHw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by CH3PR12MB9313.namprd12.prod.outlook.com (2603:10b6:610:1ca::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Sat, 25 Oct
+ 2025 00:15:02 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9253.011; Sat, 25 Oct 2025
+ 00:15:02 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Edwin Peer <epeer@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 0/2] gpu: nova: add boot42 support for next-gen GPUs
+Date: Fri, 24 Oct 2025 17:14:57 -0700
+Message-ID: <20251025001459.491983-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.51.1
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0193.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::18) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219d:b0:431:d093:758d with SMTP id
- e9e14a558f8ab-431ebed3700mr55271545ab.22.1761351125461; Fri, 24 Oct 2025
- 17:12:05 -0700 (PDT)
-Date: Fri, 24 Oct 2025 17:12:05 -0700
-In-Reply-To: <20251024234353.8746-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fc15d5.050a0220.346f24.01a4.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] KASAN: slab-use-after-free Write in kvm_gmem_release
-From: syzbot <syzbot+2479e53d0db9b32ae2aa@syzkaller.appspotmail.com>
-To: hdanton@sina.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	seanjc@google.com, syzkaller-bugs@googlegroups.com, tabba@google.com, 
-	xiaoyao.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CH3PR12MB9313:EE_
+X-MS-Office365-Filtering-Correlation-Id: eaafa1ed-9033-49a9-374a-08de135b8ab2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uWJ+fSDuCB7rMtBnCe+8zoX63+nc4rIgCEmVTyLPUu0sRa7hxDoe4RpkFZ6P?=
+ =?us-ascii?Q?DSEy5kfYtUnp9MbRqyc2SitZ7aVbP9zt8+u+osKrYy1ZzufDfNyK0plgs4rz?=
+ =?us-ascii?Q?jpoJXXx816P07vDKjumyFXVz+0cJHwEqnmWXDRmtrI+jNJA540fw2SgqSnQ5?=
+ =?us-ascii?Q?ZWUURlyiMkWoECnJVxdsLwdBedqHaaaJGoGPXRDc9/eqvFZQff+kk09KuPUg?=
+ =?us-ascii?Q?jylxPnTi0wfAy8rxKwM6RwJJToVnKa9fdVY0Yf+GtaRnB62sk5QIiTyCZLrR?=
+ =?us-ascii?Q?cm53d+XxrJT0DO5EzPmNqTNjlsvLvq/gidGq4fCl5WirdeOZsxcD2QsuptuP?=
+ =?us-ascii?Q?S8z+QxT9tYj0MgCGrqjfTZPIC0E9T0Cw50JBoaWzXCZxlOSrFR0vQsB8ZBSj?=
+ =?us-ascii?Q?jNKpg60mlDCx3tySNT/SxPd6nzFU8mbgNEPZeI9hWUDj+7zPsEgvjcNDSVuo?=
+ =?us-ascii?Q?BjOe5lCIAC4r2ix47Z6OW7Q5n16L+DdqajW3i/6JUHH9TLskj+KMg58rQzcU?=
+ =?us-ascii?Q?UkfQJkc8Oh8NCDDcZ4qj3Pg8vut1+DOKUIx0VtTDOu4GZcxbBYfVdPQLbEFw?=
+ =?us-ascii?Q?6oM5anerHI48UhO5ebJEd42YHTB5lgjhWm6Ni3YQ9Cexah8ost1TIE5U+1ik?=
+ =?us-ascii?Q?0dquJo1VVMH3aMBl5uZSVut9q9bMMu4KNUvXY5ziW5qhrIikX626wOa9ZsFH?=
+ =?us-ascii?Q?7fiVXyw8s8TpgVcM9ENLF3/thafLcUSTZg1ptt9RsseFBNAfpYNGtegp9jqI?=
+ =?us-ascii?Q?y8dIAfKCwbi79y8N3RbiQPe4CPGw7bmoYE8vEZpan2b6MQrT9wNheg6j61HS?=
+ =?us-ascii?Q?tiYdf+srpmVFhYciReju/AN1QJcKw/C9EjgQOr1R6XoUp+RnlibZBqY67JkA?=
+ =?us-ascii?Q?DSwXgoSlOZpj943ODggqOq7LjLxI6PFLxtBnH4rT0jbJvY/O2MFqpnKCLOvG?=
+ =?us-ascii?Q?32Z5Zj0tj1CpmlXPrmUvnWII+HZxzEE1gHf6KDOXuEb6k+Yisw3KCwhz2YQX?=
+ =?us-ascii?Q?hoeksE09GPJEgGwJvF+TR9CNy5VpHBAklSG6UuYK1YyLgn2vSDTUM4KQ0Mbj?=
+ =?us-ascii?Q?ejlE9+TG3UT+jGPnNfwT/ZOmDoeViWL6469MVLU3yphTzfULw2tQctu9/r2L?=
+ =?us-ascii?Q?+xSAwp9QH30jH6ypjCH26HSuLU02G4T9nTVg6u+LjXsZ5gONCFiIjRVstv/E?=
+ =?us-ascii?Q?rkVWrXox3r+LubPVzhVXvTadwO1x9XBpqG9hfzpTSeKd7DTbvkw3NKkF0mrw?=
+ =?us-ascii?Q?e2hzIIu+lIcYNnIbueZUwc/dELChFPajwc3vLafGAesY/zmrVVdIgNhmsgMS?=
+ =?us-ascii?Q?v0qhFqLoEulLVvU92R5q3Tr7cLslABRitO/bJj8lQJohZ90X/mfPWqzRVJIK?=
+ =?us-ascii?Q?s6rw/rZspJbY83rlyZCxftAltORv2dBWP1/QolqDi74oWrMa9BqbbDfdzcpM?=
+ =?us-ascii?Q?88SauyB5kI5ehvOZawZTfwZOnJyrVrp0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NpQTpaQVhOGm9QQS1N1Q1quqtg/LKqjQi5rAc9yd7T7bBG7ZXSyNdW/35hMC?=
+ =?us-ascii?Q?c8tpkBrNvmZMEbkyb9NE/dRgDI5YpFDa3lK/Reh+10/B4iLLOjFyTIWEfsLQ?=
+ =?us-ascii?Q?X7X3WuuG60JzYbvQL4gC6E5kbvsQk8wUxVuwK0EYwclyzTXSOp7BTfyBVOtX?=
+ =?us-ascii?Q?a4jZsI9jNa84yGJZhzgjCgIZEldaf/ZT9FnSPtZ8phF56Tjl82QgcpGhpulY?=
+ =?us-ascii?Q?cgxgpsOcUJEuQXsQ3V8iVtmX2puDEDcYAJI7Cd0Fe7RLLhRzLolWwdk9kkXH?=
+ =?us-ascii?Q?OJrZxRwq6heoP5BFyMJ5ZaaXMKD9xDEv0+SE9Z+MpI4lbUoyckqDSF+aF3ss?=
+ =?us-ascii?Q?Ca3LbVvUpHo0aJrahAc57O/OIRQBZANbJB5WXdoSpdwoX7Dq7Q/bssH0dAJO?=
+ =?us-ascii?Q?PYT7OumbwYR3l0RFcp41w/PNvcE/uqlfAXFR59SP9XcJQuvu0WiSjH2l1s+M?=
+ =?us-ascii?Q?USQQdXDH9qlENfr7zpITEWQMDUr5DeaFeKceDyt7XyxhEkebxSJllppjUpqD?=
+ =?us-ascii?Q?IVMtDo/6k8sEA/wNyMn3tnn2nZFT0ZVCzHiNO31GEWaUkmnAK1iHVEdrdvm+?=
+ =?us-ascii?Q?t/KvxyJ6k9qRJ9RnL+3PHMg86WN4v8zq3LDPZ76QORYN/3SRj3oWb26UB+0A?=
+ =?us-ascii?Q?9qmTzjQu+QTgZHY+or6LEzHIQHlGsJwOPW5MsF6dqb6poDb2zjT665OqxYUq?=
+ =?us-ascii?Q?L+WzObiLN+NZiHj0iLuah5tGHql+VNAVyMsYmzvIqABcrK7zvkCbKXVtMulV?=
+ =?us-ascii?Q?4D5m+XXON19c+b77+yd0z8dLlZNyadnYzBmz2uynI4OGfA8PqQJFFaN5YdXC?=
+ =?us-ascii?Q?rVabLZEUU95m3RLqWbJhb1WjxIT7ONTq6ybVXspXj5sUbQFdAvOCkVWaNJqr?=
+ =?us-ascii?Q?IVcGwyuxbj3X/Yc7k8JPDtFk5o1rdsq2yXKhqra7pXgOphGqyroWHLoRiDIb?=
+ =?us-ascii?Q?olmqbca0IYGWBR1C7G25l7Nqq2/PG0Gm7c5A/K1+NzWWCUGaitPcg4I3pZyl?=
+ =?us-ascii?Q?J4ztw4BA8maz5flTkej0rxLe4M6MXlD4SBAl0hzxzw+gkUvdjr9/ZSFJp12z?=
+ =?us-ascii?Q?Q4kocS/y29PGqzp3Hp+dZ1OC2U9RIogYYSALo0j9j+5D0PP2u//movTy4Nax?=
+ =?us-ascii?Q?sFpmA5KDofK7HSGItcqK/Tgo3HB/10pcJ0niH4jVM8zlj80feOSE/MBllC1J?=
+ =?us-ascii?Q?vwpIfHUiziwDmGhhpm3Y89vOra2WqSa6DFYOSrh7N8AwKpctquci++TLeihg?=
+ =?us-ascii?Q?1Ai5K2d9Vl1ZY+A/UP4Zi9uzHBVKTrsRHMkHRlgBjEzpsisjMCsKMbYCowr9?=
+ =?us-ascii?Q?MHjg01FDE4BkYmO2Bidm+/w/XUQu98uHVkD6VryxT/a579supfyLz9roXrLM?=
+ =?us-ascii?Q?sWYI+93jj8x9MmvrKoZpv55OHrOgtzitUNPXE9G02yCRIQJGUevIIJft6xmx?=
+ =?us-ascii?Q?3ldEPm4RYy7Vhr86RY6QEEkWi7cHeMXckuKG3g8k4zIHSilwJwAZifZv+N+c?=
+ =?us-ascii?Q?KK7U3NCQW8w7P9wiHY2TJUl8CsrohR7THwT03JaiTT/fkP+/gvZym2vAF6TE?=
+ =?us-ascii?Q?l2nUSd/+uscnh6ushKk2BPqOFWwRUrVW+/7L38T5?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eaafa1ed-9033-49a9-374a-08de135b8ab2
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2025 00:15:02.4406
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FMfGXurwY/wzv3EzcelDjOlVhDKV1G+u+MTo893R0B2UBfAsx1h63xHClRChL1dyFH9ujYBvgnURv8jOW+bNTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9313
 
-Hello,
+NVIDIA GPUs are moving away from using NV_PMC_BOOT_0 to contain
+architecture and revision details, and will instead use NV_PMC_BOOT_42
+in the future. NV_PMC_BOOT_0 will be zeroed out.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in get_data
+Change the selection logic in Nova so that it will claim Turing and
+later GPUs. This will work for the foreseeable future, without any
+further code changes here, because all NVIDIA GPUs are considered, from
+the oldest supported on Linux (NV04), through the future GPUs.
 
-------------[ cut here ]------------
-WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278, CPU#1: udevd/5199
-Modules linked in:
-CPU: 1 UID: 0 PID: 5199 Comm: udevd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278
-Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 57 cd 1e 00 90 <0f> 0b 90 eb 05 e8 4c cd 1e 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
-RSP: 0018:ffffc90000a08560 EFLAGS: 00010006
-RAX: ffffffff81a16c59 RBX: 00003fffffffffff RCX: ffff88807e471e40
-RDX: 0000000000010000 RSI: 00003fffffffffff RDI: 0000000000000000
-RBP: 0000000000000012 R08: 0000000000001005 R09: 0000002047c57766
-R10: 0000002047c57766 R11: 0000196a8200002e R12: 0000000000000012
-R13: 0000000000000000 R14: ffffc90000a086a8 R15: 1ffffffff1bcaa96
-FS:  00007fa682a1a880(0000) GS:ffff888126022000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30c63fff CR3: 000000007e4be000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- copy_data kernel/printk/printk_ringbuffer.c:1857 [inline]
- prb_read kernel/printk/printk_ringbuffer.c:1966 [inline]
- _prb_read_valid+0x672/0xa90 kernel/printk/printk_ringbuffer.c:2143
- prb_read_valid+0x3c/0x60 kernel/printk/printk_ringbuffer.c:2215
- printk_get_next_message+0x15c/0x7b0 kernel/printk/printk.c:2978
- console_emit_next_record kernel/printk/printk.c:3065 [inline]
- console_flush_one_record kernel/printk/printk.c:3197 [inline]
- console_flush_all+0x4cc/0xb10 kernel/printk/printk.c:3271
- __console_flush_and_unlock kernel/printk/printk.c:3301 [inline]
- console_unlock+0xbb/0x190 kernel/printk/printk.c:3341
- wake_up_klogd_work_func+0xa8/0x130 kernel/printk/printk.c:4550
- irq_work_single+0xe1/0x240 kernel/irq_work.c:221
- irq_work_run_list kernel/irq_work.c:252 [inline]
- irq_work_tick+0x2c2/0x360 kernel/irq_work.c:277
- update_process_times+0x264/0x2f0 kernel/time/timer.c:2476
- tick_sched_handle kernel/time/tick-sched.c:276 [inline]
- tick_nohz_handler+0x39a/0x520 kernel/time/tick-sched.c:297
- __run_hrtimer kernel/time/hrtimer.c:1777 [inline]
- __hrtimer_run_queues+0x4e0/0xc60 kernel/time/hrtimer.c:1841
- hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
- __sysvec_apic_timer_interrupt+0x10b/0x410 arch/x86/kernel/apic/apic.c:1058
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:__sanitizer_cov_trace_cmp4+0x4/0x90 kernel/kcov.c:288
-Code: 89 74 11 18 48 89 44 11 20 e9 48 ca 8b 09 cc 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa <48> 8b 04 24 65 48 8b 14 25 08 e0 6f 92 65 8b 0d a8 a4 af 10 81 e1
-RSP: 0018:ffffc900030e7d00 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: 0000000000000040 RCX: 0000000000000000
-RDX: ffff88807e471e40 RSI: 0000000000000040 RDI: 000000000000000c
-RBP: 000000000000000c R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff5200061cf90 R12: ffff88807ea4d320
-R13: dffffc0000000000 R14: ffff88807ea4d3c0 R15: 0000000000000000
- alloc_fd+0x2f3/0x6c0 fs/file.c:595
- do_sys_openat2+0xfc/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_openat fs/open.c:1468 [inline]
- __se_sys_openat fs/open.c:1463 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1463
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa6822a7407
-Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-RSP: 002b:00007fffd29370d0 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fa682a1a880 RCX: 00007fa6822a7407
-RDX: 0000000000080000 RSI: 00007fffd2937250 RDI: ffffffffffffff9c
-RBP: 0000000000000008 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00005600f32347f5
-R13: 00005600f32347f5 R14: 0000000000000001 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	89 74 11 18          	mov    %esi,0x18(%rcx,%rdx,1)
-   4:	48 89 44 11 20       	mov    %rax,0x20(%rcx,%rdx,1)
-   9:	e9 48 ca 8b 09       	jmp    0x98bca56
-   e:	cc                   	int3
-   f:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-  16:	90                   	nop
-  17:	90                   	nop
-  18:	90                   	nop
-  19:	90                   	nop
-  1a:	90                   	nop
-  1b:	90                   	nop
-  1c:	90                   	nop
-  1d:	90                   	nop
-  1e:	90                   	nop
-  1f:	90                   	nop
-  20:	90                   	nop
-  21:	90                   	nop
-  22:	90                   	nop
-  23:	90                   	nop
-  24:	90                   	nop
-  25:	90                   	nop
-  26:	f3 0f 1e fa          	endbr64
-* 2a:	48 8b 04 24          	mov    (%rsp),%rax <-- trapping instruction
-  2e:	65 48 8b 14 25 08 e0 	mov    %gs:0xffffffff926fe008,%rdx
-  35:	6f 92
-  37:	65 8b 0d a8 a4 af 10 	mov    %gs:0x10afa4a8(%rip),%ecx        # 0x10afa4e6
-  3e:	81                   	.byte 0x81
-  3f:	e1                   	.byte 0xe1
+Add some comment documentation to explain, chronologically, how boot0
+and boot42 change with the GPU eras, and how that affects the selection
+logic.
+
+Also, remove a couple of types: Spec and Revision. That deletes a net
+total of 33 lines of code and simplifies that area of code. It also
+simplifies the subsequent boot42 support diffs.
+
+This is based on today's drm-rust-next, which in turn is based on
+Linux 6.18-rc2.
+
+John Hubbard (2):
+  gpu: nova: remove Spec and Revision types
+  gpu: nova: add boot42 support for next-gen GPUs
+
+ drivers/gpu/nova-core/gpu.rs  | 120 ++++++++++++++++++++--------------
+ drivers/gpu/nova-core/regs.rs |  28 ++++++++
+ 2 files changed, 98 insertions(+), 50 deletions(-)
 
 
-Tested on:
-
-commit:         72fb0170 Add linux-next specific files for 20251024
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b2e3cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bcaf4aad77308158
-dashboard link: https://syzkaller.appspot.com/bug?extid=2479e53d0db9b32ae2aa
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d98be2580000
+base-commit: d3917368ebc5cd89d7d08eab4673e5c4c73ff42f
+-- 
+2.51.1
 
 
