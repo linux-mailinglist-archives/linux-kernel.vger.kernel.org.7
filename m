@@ -1,92 +1,90 @@
-Return-Path: <linux-kernel+bounces-870048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3164C09D43
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:05:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B00C09D1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C00F34F0C14
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3E458185D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0F53093BD;
-	Sat, 25 Oct 2025 16:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E5030BBAB;
+	Sat, 25 Oct 2025 16:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BsmtDUEl"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfH+o0wb"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE32308F1B
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D363093C1
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410437; cv=none; b=H4wCxxdwuelndVF7CJVQSu+gCbdof80OFXrgFseD7ZLBwiade3hJDKwWdOMKljJdOaxROoYm+NsHkw7hROTqVoeXOVxCQOeoq02I4Lsaeb/bt3Bmj7/tolgD7wsVrcMH6mU/u00B+TUICPgHyKbxyYwVdlaAQFJIwGXe/D0ceTw=
+	t=1761410441; cv=none; b=AIS2cj1+a+UiJ8/OXmCXrts6XJbdOMWxyGwkCJMY+orLpG2jDDRDUwd1s1gCUcLX9e/cjPTc2dFZdrwUo1dCSImOqZWOZ06MITZXVJy9NKPrHs2GaBnGv2Lb1COSAVUEiYEdHahPV+G53MVdmGEK/DLqF80q2lRFpNjHTmSBRTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410437; c=relaxed/simple;
-	bh=zAr2NN3Jns2OMOMJhebylpaZ7+Fr+NR7SMgQK33hi4Q=;
+	s=arc-20240116; t=1761410441; c=relaxed/simple;
+	bh=r1ZSvL7GYSBh/Cee0SXgYuJ/pWOJXGQu2D5xFAme0AE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LKTI1IGB/eqUJDnSyZPgoKHxDI6wDV0mdPtfLxlxO2ae3UOEwWayT2wmNuSe3YNW15e1pbNhvdCSYHQiDchV63YZLShKYa1oKvC8jn526mAe8oBeLfwQaJgvutOVQ4FF8sUfEHZVsYFMw/W9LHOQtiVDpCP8pZpbQ6LXxfWgkvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BsmtDUEl; arc=none smtp.client-ip=209.85.160.179
+	 MIME-Version; b=JE+pcFrVl9llE4dRZs2FFLOp2T24pQBlpXRPzWDPrP7EDA1pgLkh3iKkkXR+bgu4FxkGjGFM/whGpzr19t1+6jsOmCUSNfJ7wtx2f3HmjlrvzBLTy69ENt7FslJVux8YJ5rQ/XiaE5C5IDlAzyPVbd/93Rlfj8dsTRrORDGeha0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lfH+o0wb; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4e88a1bbf5fso34500631cf.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:40:35 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78ea15d3489so27625676d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410435; x=1762015235; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761410437; x=1762015237; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FdGq6o03y1IFQKw38Yd5zNXdE2p5YkP/ZYXUEcu9OkE=;
-        b=BsmtDUElEEHd7wsJHh8jVIKKqXTIIb0JCzAZ7T1NHZJtkr4OUMtnb2U7NW30yvJSP+
-         Okeg2HgeZc8I+qUbWfcOvzLUkWYDIHOb5oFSJzOhmgRTjATGWoq68gw2LJtTswHzkBPY
-         GlwlGcF2hQlfiUcSjS3pN6lnSbRHT6FtMnX+hDkA4B7h4YuJ4EaRWH+TsznlSyiDpIw6
-         9GHIbLgZB3oCA55AOsiU3RnCWfemfhxBy0Bxcd/WjagLptzDZjLhi7ppR3XRv9bN4m7V
-         HR199Zfw37czgFaP0nZMH+P6Bjp9Mxqe1yiAYTpF1z7mXJvlTLMbzw66QFfRhV6KqYeu
-         HvCA==
+        bh=mxeCOI9icR7/UFiwtRNvJHOt4NesbHGx93HWxIm5tv4=;
+        b=lfH+o0wbFcKnBcLqetfiVUhdNCb9XnBsKZwY96o9jLcYUsu493Ya44FsdUrZJ1e4+l
+         bxVxm7ju/wDa57wp8hlaUJwWjKKSqAGX0ku0X4bRBgvzPWQ1PEe7Q1PWXSNUFtMw5y90
+         ITtndAEnv7SKqIvSwpYPBK7WjDmq+9uWz9YaIfLPLmRr8VmG0pvRGJTBR4ZqX/Ey4gyJ
+         KSe2BZmWUqlJS6Fa8RfxdzWg2EbVs6ZvzaQZklU5eNdXSq4oXuW3Iw9imMJe8ydwgGqE
+         mmoDcAP/2gx2O7e3Tvyjfr+mAFwqCNCC79zE3tDMYt9piFsZLCeNUVAPEPcCbK9Ky1iQ
+         rzLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410435; x=1762015235;
+        d=1e100.net; s=20230601; t=1761410437; x=1762015237;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FdGq6o03y1IFQKw38Yd5zNXdE2p5YkP/ZYXUEcu9OkE=;
-        b=sgwBsbnh+VFULqzFwQVKk0GicoJVi7KLw+jrx3qmPEtop+ldt6IT67BHQ1VVYEanIx
-         bK33yH5qf6D0DEG1gdVCIanKjfWBEUzLYvJYBeLBM9MUlnYK8xccTrQbVJ//MsO4hm6A
-         a4O275Xf9SB5DSX/ov2RSmIPzCDNRl6Pz6vYj63hyMpHPPwGu7YxfH1KmLtaNeA0+sCy
-         QNjVWJxV1nzY35o2BmJirGWj93hZatzSU5/XZPepU38lEUXTdZlv1wlgwS8nQiIIDf/a
-         JiO5yxjk1Oh+8lqPo2xhasEFZXuEoUIeHanvn0CJ2TcS7qtUhaFIBkAzr9ih1sgV76Yn
-         FDSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWs9vTD67nql7wwRDYtOdYScRyPmmpN33yZx/lbK/e0swKIV9bDNKg7eHM+eL5HHe0eByROnHhs++6y1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi/n+Xjt8R8UMNi6zyrJlX7M0vfxNUH5cQ8AJsvOhX/hRaBQta
-	1N+W9h6Cj6S6zz6PBFTzd+qmAw50w+EnuX172bUjL6VTVubmdjEIjnnSEz66sg==
-X-Gm-Gg: ASbGnctEnGOgua276QmclVkQ0dfQbGh+Mp7meSNfL01b9/lNlhDG5cF0G+bFyQ5Djv0
-	ncTbhzxy7kQMvfM4JOu1BniPWkzhqAEb9k5wHKbonvoUFg+Z+Xw6KcepYn2IAIU5zIHBvHzgYIn
-	pQac1MIdjmZTikFQSE7gzRD41YDyPZlbkpQyaYq6p9Wy3jGq34vBdA7jrpjeCpq6oikqJjWcBaA
-	wq6/fVBrXvm4ODOa7nNrGDULGgW/irPf9fsdMUsVXe/uoCBAVy7aBUzbis7QeVcP5p9icUOYUpw
-	yLbhudcYjkxj4/bIyJA72fbXLzZNbCY++552u5tIq/gN60aHl2QqU/YeJwZb+hepyHp+joYt4Sf
-	qemBuFZUXboBTJA0ywpAce4RamDuYDSJ6UUw+NfCymWcF1+hGqzK4gVkxOIDXQii/QU4QCTtG6o
-	lM1ITxYxw=
-X-Google-Smtp-Source: AGHT+IHB7MFietozAVdiQPNgtEHZprXNbg0Ck/iHgJxOsJrH00g2y91+bZyBuwOOlRMQWPVBX5Z1jA==
-X-Received: by 2002:a05:622a:1a97:b0:4ec:a568:7b1c with SMTP id d75a77b69052e-4eca5688377mr14668911cf.21.1761410434693;
-        Sat, 25 Oct 2025 09:40:34 -0700 (PDT)
+        bh=mxeCOI9icR7/UFiwtRNvJHOt4NesbHGx93HWxIm5tv4=;
+        b=QibPr679R2oqAPCMxYXCCojRQAXu9IwH74/z8SubDA36jHFSXl5sCaMBctuFtvQskL
+         EWYK3MKcg88YGGJdDX54agScKALj4Tvx0TrukMvYEap+cB1I0eA9CXDkusOEFmtHAl67
+         XAcNquKEJcOwLkTMsQ/q0R+ggWC0PWf3ZWZJns8qY3nHA7ISeQphQCKj3E6kLNcQoXSy
+         P4BRNdfnP69rxz+32syQrqGt7iKFMoCOVLuVsn+3Yjd9YOgxElLwtm9rzXwfglAqiGNU
+         PE5lNHoYJB4K9CdK631SIIeDSocCm+JazVa5RXFmgz2lq3iOAsdkP5QfAIfWNXv17S6m
+         SIfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvOimAIzz2LT2Vn1azmV/G2aDHK6fo08SCQ5lH6ZnGqV8YUuih8Oiqb/X6kMPWHRPNXjOEHRvlXYENwow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJDSuikkadVzkEfYlql/pXe8nKT78I+NWR7p3hsWNzA0I3iNJt
+	MDGbYfzZTK7u4bd7cKyxXIWJwXDMm8CaLei0zODbBzuixRkUIJddh6Gw
+X-Gm-Gg: ASbGncujkOIuYJiYO08M9al5CgX/dj34VbZGaZNzcmQJJht+xowCFosWhWRP9YeVgxi
+	XRiAwnoyt6czd3rxBKbj0DHUXtHVwvxNoKASfHJQShgurLvz5azoO+1RYYMxkdhnmYk93+ucMl3
+	KtpLySpR1+2Dv65BMceMMLClNq94zAtrK6pqlc8eaZPhMS2WrtHSnqykTmVk1uHPSxAVlq8ICJz
+	vSKKVxaqv/JIJxxUGvz9eU5ye0vEEweUhkhyCSC8wDnBoHjd967B6ghe/m5i6x5fIFQ2eMegnMc
+	fa0Xz+OoOUr5fTNGBXNZ6WprDYwktiWUfbwveFHWGULNPj11qNkloAwl9gnxAZnrlSMWBZpgI9s
+	/C9md9aUFxgTCpzrH1Y7VdvVdomSAV1SnPcDUj2GOGzaVFRXiMxKSUjkEeF240/Jour1hAdUN
+X-Google-Smtp-Source: AGHT+IGA1DGszT7xZjIANsU8O6rvui0sqJn95mFqcuxChrfDbaomUSTYNAUrPgKr6w9KBJpYTpgUWA==
+X-Received: by 2002:a05:6214:808f:b0:87c:2275:4bf5 with SMTP id 6a1803df08f44-87c22754bfdmr400398756d6.28.1761410437167;
+        Sat, 25 Oct 2025 09:40:37 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3e193bdsm14687091cf.10.2025.10.25.09.40.32
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc4944a84sm16377846d6.36.2025.10.25.09.40.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:40:33 -0700 (PDT)
+        Sat, 25 Oct 2025 09:40:36 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 03/21] select: rename BITS() to FDS_BITS()
-Date: Sat, 25 Oct 2025 12:40:02 -0400
-Message-ID: <20251025164023.308884-4-yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 04/21] ALSA: rename BITS to R_BITS
+Date: Sat, 25 Oct 2025 12:40:03 -0400
+Message-ID: <20251025164023.308884-5-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025164023.308884-1-yury.norov@gmail.com>
 References: <20251025164023.308884-1-yury.norov@gmail.com>
@@ -102,40 +100,60 @@ In preparation for adding generic BITS() macro, rename the local one.
 
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- fs/select.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/core/oss/rate.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/select.c b/fs/select.c
-index 082cf60c7e23..ad5bfb4907ea 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -412,7 +412,7 @@ void zero_fd_set(unsigned long nr, unsigned long *fdset)
- #define FDS_OUT(fds, n)		(fds->out + n)
- #define FDS_EX(fds, n)		(fds->ex + n)
+diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
+index b56eeda5e30e..90a40221e4ce 100644
+--- a/sound/core/oss/rate.c
++++ b/sound/core/oss/rate.c
+@@ -25,8 +25,8 @@
+ #include "pcm_plugin.h"
  
--#define BITS(fds, n)	(*FDS_IN(fds, n)|*FDS_OUT(fds, n)|*FDS_EX(fds, n))
-+#define FDS_BITS(fds, n)	(*FDS_IN(fds, n)|*FDS_OUT(fds, n)|*FDS_EX(fds, n))
+ #define SHIFT	11
+-#define BITS	(1<<SHIFT)
+-#define R_MASK	(BITS-1)
++#define R_BITS	(1<<SHIFT)
++#define R_MASK	(R_BITS-1)
  
- static int max_select_fd(unsigned long n, fd_set_bits *fds)
- {
-@@ -428,7 +428,7 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
- 	open_fds = fdt->open_fds + n;
- 	max = 0;
- 	if (set) {
--		set &= BITS(fds, n);
-+		set &= FDS_BITS(fds, n);
- 		if (set) {
- 			if (!(set & ~*open_fds))
- 				goto get_max;
-@@ -438,7 +438,7 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
- 	while (n) {
- 		open_fds--;
- 		n--;
--		set = BITS(fds, n);
-+		set = FDS_BITS(fds, n);
- 		if (!set)
- 			continue;
- 		if (set & ~*open_fds)
+ /*
+  *  Basic rate conversion plugin
+@@ -104,7 +104,7 @@ static void resample_expand(struct snd_pcm_plugin *plugin,
+ 					src += src_step;
+ 				}
+ 			}
+-			val = S1 + ((S2 - S1) * (signed int)pos) / BITS;
++			val = S1 + ((S2 - S1) * (signed int)pos) / R_BITS;
+ 			if (val < -32768)
+ 				val = -32768;
+ 			else if (val > 32767)
+@@ -162,7 +162,7 @@ static void resample_shrink(struct snd_pcm_plugin *plugin,
+ 			}
+ 			if (pos & ~R_MASK) {
+ 				pos &= R_MASK;
+-				val = S1 + ((S2 - S1) * (signed int)pos) / BITS;
++				val = S1 + ((S2 - S1) * (signed int)pos) / R_BITS;
+ 				if (val < -32768)
+ 					val = -32768;
+ 				else if (val > 32767)
+@@ -191,7 +191,7 @@ static snd_pcm_sframes_t rate_src_frames(struct snd_pcm_plugin *plugin, snd_pcm_
+ 		return 0;
+ 	data = (struct rate_priv *)plugin->extra_data;
+ 	if (plugin->src_format.rate < plugin->dst_format.rate) {
+-		res = (((frames * data->pitch) + (BITS/2)) >> SHIFT);
++		res = (((frames * data->pitch) + (R_BITS/2)) >> SHIFT);
+ 	} else {
+ 		res = DIV_ROUND_CLOSEST(frames << SHIFT, data->pitch);
+ 	}
+@@ -226,7 +226,7 @@ static snd_pcm_sframes_t rate_dst_frames(struct snd_pcm_plugin *plugin, snd_pcm_
+ 	if (plugin->src_format.rate < plugin->dst_format.rate) {
+ 		res = DIV_ROUND_CLOSEST(frames << SHIFT, data->pitch);
+ 	} else {
+-		res = (((frames * data->pitch) + (BITS/2)) >> SHIFT);
++		res = (((frames * data->pitch) + (R_BITS/2)) >> SHIFT);
+ 	}
+ 	if (data->old_dst_frames > 0) {
+ 		snd_pcm_sframes_t frames1 = frames, res1 = data->old_src_frames;
 -- 
 2.43.0
 
