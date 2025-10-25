@@ -1,89 +1,182 @@
-Return-Path: <linux-kernel+bounces-869848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881C6C08DB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:59:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55796C08DB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 10:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B23C1AA7984
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:00:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF3E64E7D7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A1329B764;
-	Sat, 25 Oct 2025 07:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WNF2HGTB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B022F5B;
+	Sat, 25 Oct 2025 08:00:12 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1896EED8;
-	Sat, 25 Oct 2025 07:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB77299A8A
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761379181; cv=none; b=A31FUyk64o9BinhLgEShBH+5b/SYMenlH6qkryv+XM61GzsS2lm7QUenGtkDRqGPqsoJBV7bV5ppXKvMSAJeIwu71Vh+uhrrX+RreMN00kZU1Bh2D8iSzW+NypIQPDehuxw7zsjHAVyWlmKYTkJ9eJ9nijAURRznUO38Ib4IdxU=
+	t=1761379211; cv=none; b=TK+0x8ozJjNbtr4R+wJIUFazwdMQiMrRZCM5TJJizNRiQ61IqIvd9tVm3DJVPAJixWSYt1L7veENkQUVgaRziUvpmXPUc+db3QM0GFXHyqxM+4DP/g+FhUSdpjq1UqbmSflUefH3daF78P3OznNUzxACkA5fLUfZHVsXfqQG7T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761379181; c=relaxed/simple;
-	bh=AbtvcYaxz4DGYdcqeF+fpIf3vquaolxoesdtYVB67WY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1VgG75WbYaI4TDztCxHliK/s0HwuMTmr8NqNsElgYQKlsKdyF3ZE0k1rmYPuRaph5bZ6P4VybhQMaKhHgiFJvag5trW3RWSodNPXg58u89wg8b9H9+5Y8M+uN0OJwXJKm7WgoYHUblSPTE3ByEcmi9GOWKE9/5aVWzLLa12sZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WNF2HGTB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18104C4CEF5;
-	Sat, 25 Oct 2025 07:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761379180;
-	bh=AbtvcYaxz4DGYdcqeF+fpIf3vquaolxoesdtYVB67WY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WNF2HGTBRY57OZeaZo0ZHQI7VC5bOrXMhhjE6LphYY5PhAzxACMQ0vQaM5BeE0OU2
-	 NFM9GC6hLh3MEOUJeDUmhue0P6xuvu5KI1/7jLYekxcQi89kvTjL7PDyQvBL1dsqO9
-	 FaJY+03ISPyto1dzCtO4RNrWOtvqioOR0Jb82eDg=
-Date: Sat, 25 Oct 2025 09:59:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] usb: typec: ucsi: Add support for orientation
-Message-ID: <2025102508-deprive-appease-9682@gregkh>
-References: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
- <2025101530-skeleton-able-6523@gregkh>
- <vbbz2jfisxnjiblasbtay5mnaphsio5qnjrqbxjztykdvgvxfl@sdicu53m3pil>
+	s=arc-20240116; t=1761379211; c=relaxed/simple;
+	bh=1QkleFJf+6aQV/CqBfkr2ld0sn8Xc0AQxmwNYLrMBZQ=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=koGc2ITXB2OdeQ2DKmQtZrvW8GB348PXu3zDN9ePpSArzGN4auW5M/rYO7z02C1eAX67+fcwE/yNEKBklxhe1feUUXgoeEg51J3WhKGTFJubbQMLE2NFKdOG0oQ8WjTwoj7tYntisyxOezP8v/yiuw6ylx88akjo+IiPeI1RAw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ctsbt15rfzYQtwd
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:59:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 18A3B1A167C
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:00:05 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.159.234])
+	by APP2 (Coremail) with SMTP id Syh0CgBHnESDg_xomLEwBg--.51099S4;
+	Sat, 25 Oct 2025 16:00:04 +0800 (CST)
+From: Ye Bin <yebin@huaweicloud.com>
+To: jbaron@akamai.com,
+	jim.cromie@gmail.com,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	yebin@huaweicloud.com,
+	yebin10@huawei.com
+Subject: [PATCH] dynamic_debug: add support for print stack
+Date: Sat, 25 Oct 2025 16:00:03 +0800
+Message-Id: <20251025080003.312536-1-yebin@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vbbz2jfisxnjiblasbtay5mnaphsio5qnjrqbxjztykdvgvxfl@sdicu53m3pil>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBHnESDg_xomLEwBg--.51099S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw13Ww4kGrWrAFy7uFyDJrb_yoWrArWfp3
+	WkWFyYq3yrJFy8Gwn7XFs8KF13uFWIkF4xGFykur4rAFyDAasYqry0gF4aqFWrXwn2kayU
+	Xryqgay5Ar45CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
+	U==
+X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
-On Fri, Oct 24, 2025 at 11:19:46PM +0300, Abel Vesa wrote:
-> On 25-10-15 16:00:43, Greg Kroah-Hartman wrote:
-> > On Wed, Oct 15, 2025 at 04:50:36PM +0300, Abel Vesa wrote:
-> > > According to UCSI 2.0 specification, the orientation is
-> > > part of the connector status payload. So tie up the port
-> > > orientation.
-> > > 
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > ---
-> > >  drivers/usb/typec/ucsi/ucsi.c | 24 ++++++++++++++++++++++++
-> > >  drivers/usb/typec/ucsi/ucsi.h |  3 +++
-> > >  2 files changed, 27 insertions(+)
-> > 
-> > Why is this a "RFC"?  What is the request?
-> > 
-> 
-> My bad. Posted as an RFC since I wasn't sure if I tied the ucsi_orientation
-> correctly, meaning in all the right places.
+From: Ye Bin <yebin10@huawei.com>
 
-That's great, in the future try asking that question so we know what to
-look for :)
+In practical problem diagnosis, especially during the boot phase, it is
+often desirable to know the call sequence. However, currently, apart from
+adding print statements and recompiling the kernel, there seems to be no
+good alternative. If dynamic_debug supported printing the call stack, it
+would be very helpful for diagnosing issues.
+This patch add support '+d' for dump stack.
 
-> Let me know if you want me to respin this as a proper patch.
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ .../admin-guide/dynamic-debug-howto.rst         |  5 +++--
+ include/linux/dynamic_debug.h                   | 17 ++++++++++++++---
+ lib/dynamic_debug.c                             |  1 +
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-Please do, it's long gone from my queue.
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 7c036590cd07..095a63892257 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -223,12 +223,13 @@ The flags are::
+   f    Include the function name
+   s    Include the source file name
+   l    Include line number
++  d    Include call trace
+ 
+ For ``print_hex_dump_debug()`` and ``print_hex_dump_bytes()``, only
+ the ``p`` flag has meaning, other flags are ignored.
+ 
+-Note the regexp ``^[-+=][fslmpt_]+$`` matches a flags specification.
+-To clear all flags at once, use ``=_`` or ``-fslmpt``.
++Note the regexp ``^[-+=][fslmptd_]+$`` matches a flags specification.
++To clear all flags at once, use ``=_`` or ``-fslmptd``.
+ 
+ 
+ Debug messages during Boot Process
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index ff44ec346162..05743900a116 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -38,11 +38,12 @@ struct _ddebug {
+ #define _DPRINTK_FLAGS_INCL_LINENO	(1<<3)
+ #define _DPRINTK_FLAGS_INCL_TID		(1<<4)
+ #define _DPRINTK_FLAGS_INCL_SOURCENAME	(1<<5)
++#define _DPRINTK_FLAGS_INCL_STACK	(1<<6)
+ 
+ #define _DPRINTK_FLAGS_INCL_ANY		\
+ 	(_DPRINTK_FLAGS_INCL_MODNAME | _DPRINTK_FLAGS_INCL_FUNCNAME |\
+ 	 _DPRINTK_FLAGS_INCL_LINENO  | _DPRINTK_FLAGS_INCL_TID |\
+-	 _DPRINTK_FLAGS_INCL_SOURCENAME)
++	 _DPRINTK_FLAGS_INCL_SOURCENAME | _DPRINTK_FLAGS_INCL_STACK)
+ 
+ #if defined DEBUG
+ #define _DPRINTK_FLAGS_DEFAULT _DPRINTK_FLAGS_PRINT
+@@ -160,6 +161,12 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+ 			 const struct ib_device *ibdev,
+ 			 const char *fmt, ...);
+ 
++#define __dynamic_dump_stack(desc)				\
++{								\
++	if (desc.flags & _DPRINTK_FLAGS_INCL_STACK)		\
++		dump_stack();					\
++}
++
+ #define DEFINE_DYNAMIC_DEBUG_METADATA_CLS(name, cls, fmt)	\
+ 	static struct _ddebug  __aligned(8)			\
+ 	__section("__dyndbg") name = {				\
+@@ -220,8 +227,10 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+  */
+ #define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {	\
+ 	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);	\
+-	if (DYNAMIC_DEBUG_BRANCH(id))				\
++	if (DYNAMIC_DEBUG_BRANCH(id)) {				\
+ 		func(&id, ##__VA_ARGS__);			\
++		__dynamic_dump_stack(id);			\
++	}							\
+ } while (0)
+ #define __dynamic_func_call(id, fmt, func, ...)				\
+ 	__dynamic_func_call_cls(id, _DPRINTK_CLASS_DFLT, fmt,		\
+@@ -229,8 +238,10 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+ 
+ #define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) do {	\
+ 	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);		\
+-	if (DYNAMIC_DEBUG_BRANCH(id))					\
++	if (DYNAMIC_DEBUG_BRANCH(id)) {					\
+ 		func(__VA_ARGS__);					\
++		__dynamic_dump_stack(id);				\
++	}								\
+ } while (0)
+ #define __dynamic_func_call_no_desc(id, fmt, func, ...)			\
+ 	__dynamic_func_call_cls_no_desc(id, _DPRINTK_CLASS_DFLT,	\
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index 5a007952f7f2..7d7892e57a01 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -95,6 +95,7 @@ static const struct { unsigned flag:8; char opt_char; } opt_array[] = {
+ 	{ _DPRINTK_FLAGS_INCL_SOURCENAME, 's' },
+ 	{ _DPRINTK_FLAGS_INCL_LINENO, 'l' },
+ 	{ _DPRINTK_FLAGS_INCL_TID, 't' },
++	{ _DPRINTK_FLAGS_INCL_STACK, 'd' },
+ 	{ _DPRINTK_FLAGS_NONE, '_' },
+ };
+ 
+-- 
+2.34.1
 
-thanks,
-
-greg k-h
 
