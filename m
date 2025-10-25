@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-870022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB919C09BFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:52:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FC1C099A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3CDD4248E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:40:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E5AC534E692
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B3532548D;
-	Sat, 25 Oct 2025 16:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37637326D4C;
+	Sat, 25 Oct 2025 16:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGIt3x7h"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHMQtyGN"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E57324B2E
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E8324B2F
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409754; cv=none; b=RNtVpaviK7bbufF2nKaPg+WPP8v1fs7z7Elhqd6FrM8fL13cwtsVWTRmeIJ7/xPgs79BEwFXFBpstNpUEmi6be1C+w7VthMDsuX1hk1PxzMSILXDQ5iXaWibcnH2pCVc4ofCUdmeU19ydAQzGdjbhL5Ib5YlkrSOPfaVarm5FWk=
+	t=1761409756; cv=none; b=gNFEOjA/ZfDtgyDB3F2vSUetvy1FmPa+2lDdSLpXjCaEjyBtKhToX1Nbwyfh1vpq6FLZ55TfSL6Bl59uxiI/SPsMR+fYRgUohctzJHC42IoL4T50ThF6XM3CxULCUX33jgs9Su4RQlcqpAUvP9InQXch5aQ4bj2HUW/fKxtWCwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409754; c=relaxed/simple;
-	bh=r1ZSvL7GYSBh/Cee0SXgYuJ/pWOJXGQu2D5xFAme0AE=;
+	s=arc-20240116; t=1761409756; c=relaxed/simple;
+	bh=vSOmrnKl9j6cBNY7sSNJF+HbPImP5X3RfSSeVaTTTB8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OH8U4Ker5S0zx7Anh3a4Pfmv7VEcCkysu3D9+PmKqJ10HUelDMx5KaxqtL6+kim4cGq7JEE5hHHfODi0jd7hkrjtknJroWyM7BSJ7DzK+X0MmZW286qWjm9Jo1FPBwR0S952EHPm+qEo/NbefW5SA1ppjWfJ8/BtZ53IRhnUGiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGIt3x7h; arc=none smtp.client-ip=209.85.160.181
+	 MIME-Version; b=bOEC5V01tveW1RQ4ZKeqp1FbW+qJf7xRT8f/S5sM41SYVPeCt7GKvpVuEqGUCbFBKS7cA9bPETb3dK6q8IqiTdnjBTUnvIbB3Du03k3g/fPWPq8p6ApF0tu3moDX2uBMtRAPge/gpsGHAuAAChaLKwoaZjbfJIYiBhVplgMgzWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHMQtyGN; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e8850b09eeso31811741cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:29:12 -0700 (PDT)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8a114591f15so29345185a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:29:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761409751; x=1762014551; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761409753; x=1762014553; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mxeCOI9icR7/UFiwtRNvJHOt4NesbHGx93HWxIm5tv4=;
-        b=CGIt3x7hQWmYFABG6jUfTFmtphR0f6nf6bDA5fcyMyUX0XToDHYKQdphpuOhaMgZh9
-         62kNPNvK7LStwr9lmNBGJY1/+K3QtLYxaHyw6gPG7kUP8LOo2NQTu3Do9+mqlzMcztQ5
-         FpiHgsu2oErrMzvo6Kggd0XCPkx02VxKQjjz6b8y2aTEjwjNEOpPpr2aBdxkviQk5467
-         8LiPAezz8CxjQ3MKcFnVU4j28x8GvWbxLUJLUEROWpnJbzm0LKmg+QjzPlyQqdSP+1lS
-         VMQX9ZeH4+Yb3Plqwg5kZP6oYSGwxgBqPnDWxb+8hKccUo8me3L1Fc6wzE6gq3MCeEET
-         2oyA==
+        bh=sJO+MeQ4RtFqJ9ACNBMsRAE4YNMhC0BoZJ57Lb9WxOM=;
+        b=gHMQtyGNHqaGs40F7wIBmCDbZyWtl7y6iRZL7ITBgu3KXCEJBQNGHC5ktC0SaQp5eq
+         CYeNzHJF0EV48k/T80bpx2AeOCz3M8lbFSnplH3egU0vB5mcqwVhRtMRhqjOJu2xEAqO
+         ODNtUj0yXgcyAdcIn/t1FxQoiHUbe2YitCMWoysztIM19sIpQOQwhCrVawWVLlKj5prc
+         yub9NqMvB8vP7hjip1C4dXpf0naeeLKJNhgcHa9H96Rf2oZKB6MYMsCBBeHLA2GnAdtx
+         w9gzoSkIJebT3GXFuzh3eWrVZN90aT5ojrRUyGHU21iKFB8hfZ163o6GXvQ8tOEqw4+Z
+         5tKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761409751; x=1762014551;
+        d=1e100.net; s=20230601; t=1761409753; x=1762014553;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mxeCOI9icR7/UFiwtRNvJHOt4NesbHGx93HWxIm5tv4=;
-        b=GK44j0aj4/rC2ZU4jHbRgyT6YLguuLux+Xu1DIXT9hgdIBB+iQ6qYqwvNSlD8dLmzu
-         bMIjNuztWZWw33AmqMp9OMplSh+dQJHp/H7DenmoVqppziq8aKv/XqY1gXRUVYiFWSud
-         8NScZtdOshUtBWaUzR22z/Jp4aRkMmOdXavu+eFT9w3hwI7TsdA/UlTwZ+C+Nlh5D1I3
-         tUb9knU0C5qUaMYNmheEXsmEothdJVzJ3sBenudfJn744rnSz7fCfV8SuBmZyD5O4klj
-         +hj+rwlQFXOacMDszVqlStIKVm3FCwcC5n9vtg5GLObDrJdrL3jjInVoGLcd+l5r5uTG
-         WFQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ70WUBfBEmrfpodiw0G6CKWBWUgx5u7RY2m82iAwskITfIlyCwfJWbrV4tXqbUsxV5oqhoNxWf6FySnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsoRopA7ecTlZREMPW/qbyJzvcslWIbHzXxQ0k3eyfrmmnovjO
-	E4lg1OnPhNp0HyIieAvQAX/Kc6Co4HCIirnxnN4dkgn2Nb7dk25RypzV
-X-Gm-Gg: ASbGncu2FtCCco6ldejo+xx/BakjTQeoBX+J3KJrrR9OmldFLOA9tdN3AOQrkEPt8JZ
-	wB8Ue/MYOUaiXZ6u10PuFLkK/3HohC3bhMoIpNii4zvp74wWlImkjw6CPsJ/Kc1oMnZa68fKEHJ
-	vq0y9QuAvObyN5K+B2vNEJ4hlWbxpKmh6IhbDgesDLlqfNoxtsB3QLmIV296jmBVDBjDvJo44fR
-	mDin0FmTi75DGt45tpE2Bj0FfCoK6x4x8/83duJdpdHJ3cqsPzHL2SeL1kBGSmx0FbkW+CWqRIz
-	ZDFMKF0Q18JxCOVcK28xzjOZYemJyd8GhPl4QT8Dfjw+pjx01yjbqkoEAE/z+u2hQ5QNox4YCzx
-	Yx8p9t/Nk3ji4CPSam5BZbP7qm/zwvq67e0GSTQkzNiBrurFK+UvN2oT+zmWqMERWn1Y3dQEX
-X-Google-Smtp-Source: AGHT+IHE/cxtBB92jOlmZMcoUVK7+rMqdx2Thi4RMGOFfo0VELRSYvXVDUaBSTA5+Nf8oaPoFuNrpA==
-X-Received: by 2002:ac8:57c3:0:b0:4e8:a7d6:bc07 with SMTP id d75a77b69052e-4e8a7d6c0d8mr369172781cf.71.1761409751421;
-        Sat, 25 Oct 2025 09:29:11 -0700 (PDT)
+        bh=sJO+MeQ4RtFqJ9ACNBMsRAE4YNMhC0BoZJ57Lb9WxOM=;
+        b=iFtm3eBfFJTLW/GNjy0SvtUUtf1GsMrii0Y7aPiD0Ku/jiMP+U4/BRBYRswWZRskWk
+         v+qSNYnojdF40PeUFWuEtA7VamsMFvTxuC4yfW6M2pWRs/Voy8LEIH0ehc9uvWlzEA3R
+         UCaEIxX7ZzAkamA/pLqn/MbjDSPFYSvERCNIG48QjADW0bkSxkxFMJhlY9nQWs7Yz666
+         PGKVvMyD+o9/PBHgU0stYsb+27dkywNzUuM/4C937zjqfufeNtEG9hNZHI3magyqvmW1
+         L2gq8D83vT4pEr0HDkV49Qa/MuPaeUyCiAU3mh8N8OE1EscdXTFSFtHBphQsmQko8SzP
+         MQrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdLgR2mw5f1cQWKKtZhYwjBvyHaF5pqneOXyaJKxwrAT1xtEYMk4671jbsX0a2orEphFY4xcfqqzPY8XY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1vSri0ho9WkyhDyVChrKaWrKTeOTWPdbH4X4SiSy/FaNcT9kS
+	rymrYQrZGCYlrYi+dHVz5NGnX4yi09/8KxR9NyGssRP93w4ZYqNHirek
+X-Gm-Gg: ASbGncsz8s2jpXNnqzbOHGfEijkkDhQ+O3FZV0Llf23Ad5ZX28BW3CWi+B1Ql3RYEPM
+	/gO9ORi3NIT0F/cytV07jdUVQ2GFFTU1rW/Li1q7VtXgG4lPgfktOL6MGMvNrDoFAS7PsyxB1Ms
+	4+JP4r3t3CbjSJeZvX4dhANIsgo5tU5siNpdanJW5WCnTLGpDqhymUcXDPD5ban2wU4c/sbeUJ5
+	9FcvkClJAIchLoMVKA5fiSPs3+CilnAaK7u/W0ijdsV8zqaEm1q6F6kqkuL4H0sSG815xAYGunD
+	1Ler1zM0a4Fo9edDe2T80ofVKV7x2iQa26otIg23ROkcy4tvMFG5TfkDDmlmzxaktYPtv0XMftR
+	TPAgIgYkq549ezDP/TtQe/JS0ktAvs5ZSIlHijDmCUR63EtJUXCAT4/ir9CndWxA7ISSmQCOB
+X-Google-Smtp-Source: AGHT+IH6uNIrkZmsMoZ8MZ+ODlZIL9OIXHsVfJ9kwXcOeEFldBGDrvl1xoiZUliWzp4QZq0d8LiTBA==
+X-Received: by 2002:a05:620a:4627:b0:890:e60c:de2c with SMTP id af79cd13be357-89da018d159mr957294285a.14.1761409753403;
+        Sat, 25 Oct 2025 09:29:13 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba387fdb2sm14761791cf.37.2025.10.25.09.29.09
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f24cd592bsm173777985a.18.2025.10.25.09.29.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:29:10 -0700 (PDT)
+        Sat, 25 Oct 2025 09:29:12 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
 	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
-	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 04/21] ALSA: rename BITS to R_BITS
-Date: Sat, 25 Oct 2025 12:28:40 -0400
-Message-ID: <20251025162858.305236-5-yury.norov@gmail.com>
+Subject: [PATCH 05/21] zlib: rename BITS() to LOWBITS()
+Date: Sat, 25 Oct 2025 12:28:41 -0400
+Message-ID: <20251025162858.305236-6-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025162858.305236-1-yury.norov@gmail.com>
 References: <20251025162858.305236-1-yury.norov@gmail.com>
@@ -96,64 +93,200 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for adding generic BITS() macro, rename the local one.
+In preparation from adding generic BITS() macro, rename the local one.
 
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- sound/core/oss/rate.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ lib/zlib_inflate/inflate.c | 48 +++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
-index b56eeda5e30e..90a40221e4ce 100644
---- a/sound/core/oss/rate.c
-+++ b/sound/core/oss/rate.c
-@@ -25,8 +25,8 @@
- #include "pcm_plugin.h"
+diff --git a/lib/zlib_inflate/inflate.c b/lib/zlib_inflate/inflate.c
+index d1efad69f02b..3102137b51c2 100644
+--- a/lib/zlib_inflate/inflate.c
++++ b/lib/zlib_inflate/inflate.c
+@@ -229,7 +229,7 @@ static int zlib_inflateSyncPacket(z_streamp strm)
+     } while (0)
  
- #define SHIFT	11
--#define BITS	(1<<SHIFT)
--#define R_MASK	(BITS-1)
-+#define R_BITS	(1<<SHIFT)
-+#define R_MASK	(R_BITS-1)
+ /* Return the low n bits of the bit accumulator (n < 16) */
+-#define BITS(n) \
++#define LOWBITS(n) \
+     ((unsigned)hold & ((1U << (n)) - 1))
  
- /*
-  *  Basic rate conversion plugin
-@@ -104,7 +104,7 @@ static void resample_expand(struct snd_pcm_plugin *plugin,
- 					src += src_step;
- 				}
- 			}
--			val = S1 + ((S2 - S1) * (signed int)pos) / BITS;
-+			val = S1 + ((S2 - S1) * (signed int)pos) / R_BITS;
- 			if (val < -32768)
- 				val = -32768;
- 			else if (val > 32767)
-@@ -162,7 +162,7 @@ static void resample_shrink(struct snd_pcm_plugin *plugin,
- 			}
- 			if (pos & ~R_MASK) {
- 				pos &= R_MASK;
--				val = S1 + ((S2 - S1) * (signed int)pos) / BITS;
-+				val = S1 + ((S2 - S1) * (signed int)pos) / R_BITS;
- 				if (val < -32768)
- 					val = -32768;
- 				else if (val > 32767)
-@@ -191,7 +191,7 @@ static snd_pcm_sframes_t rate_src_frames(struct snd_pcm_plugin *plugin, snd_pcm_
- 		return 0;
- 	data = (struct rate_priv *)plugin->extra_data;
- 	if (plugin->src_format.rate < plugin->dst_format.rate) {
--		res = (((frames * data->pitch) + (BITS/2)) >> SHIFT);
-+		res = (((frames * data->pitch) + (R_BITS/2)) >> SHIFT);
- 	} else {
- 		res = DIV_ROUND_CLOSEST(frames << SHIFT, data->pitch);
- 	}
-@@ -226,7 +226,7 @@ static snd_pcm_sframes_t rate_dst_frames(struct snd_pcm_plugin *plugin, snd_pcm_
- 	if (plugin->src_format.rate < plugin->dst_format.rate) {
- 		res = DIV_ROUND_CLOSEST(frames << SHIFT, data->pitch);
- 	} else {
--		res = (((frames * data->pitch) + (BITS/2)) >> SHIFT);
-+		res = (((frames * data->pitch) + (R_BITS/2)) >> SHIFT);
- 	}
- 	if (data->old_dst_frames > 0) {
- 		snd_pcm_sframes_t frames1 = frames, res1 = data->old_src_frames;
+ /* Remove n bits from the bit accumulator */
+@@ -270,16 +270,16 @@ static int zlib_inflateSyncPacket(z_streamp strm)
+    is:
+ 
+         NEEDBITS(n);
+-        ... do something with BITS(n) ...
++        ... do something with LOWBITS(n) ...
+         DROPBITS(n);
+ 
+    where NEEDBITS(n) either returns from inflate() if there isn't enough
+-   input left to load n bits into the accumulator, or it continues.  BITS(n)
++   input left to load n bits into the accumulator, or it continues. LOWBITS(n)
+    gives the low n bits in the accumulator.  When done, DROPBITS(n) drops
+    the low n bits off the accumulator.  INITBITS() clears the accumulator
+    and sets the number of available bits to zero.  BYTEBITS() discards just
+    enough bits to put the accumulator on a byte boundary.  After BYTEBITS()
+-   and a NEEDBITS(8), then BITS(8) would return the next byte in the stream.
++   and a NEEDBITS(8), then LOWBITS(8) would return the next byte in the stream.
+ 
+    NEEDBITS(n) uses PULLBYTE() to get an available byte of input, or to return
+    if there is no input available.  The decoding of variable length codes uses
+@@ -295,7 +295,7 @@ static int zlib_inflateSyncPacket(z_streamp strm)
+     case STATEw:
+         while (want < need) {
+             NEEDBITS(n);
+-            keep[want++] = BITS(n);
++            keep[want++] = LOWBITS(n);
+             DROPBITS(n);
+         }
+         state = STATEx;
+@@ -369,18 +369,18 @@ int zlib_inflate(z_streamp strm, int flush)
+             }
+             NEEDBITS(16);
+             if (
+-                ((BITS(8) << 8) + (hold >> 8)) % 31) {
++                ((LOWBITS(8) << 8) + (hold >> 8)) % 31) {
+                 strm->msg = (char *)"incorrect header check";
+                 state->mode = BAD;
+                 break;
+             }
+-            if (BITS(4) != Z_DEFLATED) {
++            if (LOWBITS(4) != Z_DEFLATED) {
+                 strm->msg = (char *)"unknown compression method";
+                 state->mode = BAD;
+                 break;
+             }
+             DROPBITS(4);
+-            len = BITS(4) + 8;
++            len = LOWBITS(4) + 8;
+             if (len > state->wbits) {
+                 strm->msg = (char *)"invalid window size";
+                 state->mode = BAD;
+@@ -416,9 +416,9 @@ int zlib_inflate(z_streamp strm, int flush)
+                 break;
+             }
+             NEEDBITS(3);
+-            state->last = BITS(1);
++            state->last = LOWBITS(1);
+             DROPBITS(1);
+-            switch (BITS(2)) {
++            switch (LOWBITS(2)) {
+             case 0:                             /* stored block */
+                 state->mode = STORED;
+                 break;
+@@ -465,11 +465,11 @@ int zlib_inflate(z_streamp strm, int flush)
+             break;
+         case TABLE:
+             NEEDBITS(14);
+-            state->nlen = BITS(5) + 257;
++            state->nlen = LOWBITS(5) + 257;
+             DROPBITS(5);
+-            state->ndist = BITS(5) + 1;
++            state->ndist = LOWBITS(5) + 1;
+             DROPBITS(5);
+-            state->ncode = BITS(4) + 4;
++            state->ncode = LOWBITS(4) + 4;
+             DROPBITS(4);
+ #ifndef PKZIP_BUG_WORKAROUND
+             if (state->nlen > 286 || state->ndist > 30) {
+@@ -484,7 +484,7 @@ int zlib_inflate(z_streamp strm, int flush)
+         case LENLENS:
+             while (state->have < state->ncode) {
+                 NEEDBITS(3);
+-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
++                state->lens[order[state->have++]] = (unsigned short)LOWBITS(3);
+                 DROPBITS(3);
+             }
+             while (state->have < 19)
+@@ -505,7 +505,7 @@ int zlib_inflate(z_streamp strm, int flush)
+         case CODELENS:
+             while (state->have < state->nlen + state->ndist) {
+                 for (;;) {
+-                    this = state->lencode[BITS(state->lenbits)];
++                    this = state->lencode[LOWBITS(state->lenbits)];
+                     if ((unsigned)(this.bits) <= bits) break;
+                     PULLBYTE();
+                 }
+@@ -524,21 +524,21 @@ int zlib_inflate(z_streamp strm, int flush)
+                             break;
+                         }
+                         len = state->lens[state->have - 1];
+-                        copy = 3 + BITS(2);
++                        copy = 3 + LOWBITS(2);
+                         DROPBITS(2);
+                     }
+                     else if (this.val == 17) {
+                         NEEDBITS(this.bits + 3);
+                         DROPBITS(this.bits);
+                         len = 0;
+-                        copy = 3 + BITS(3);
++                        copy = 3 + LOWBITS(3);
+                         DROPBITS(3);
+                     }
+                     else {
+                         NEEDBITS(this.bits + 7);
+                         DROPBITS(this.bits);
+                         len = 0;
+-                        copy = 11 + BITS(7);
++                        copy = 11 + LOWBITS(7);
+                         DROPBITS(7);
+                     }
+                     if (state->have + copy > state->nlen + state->ndist) {
+@@ -584,7 +584,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 break;
+             }
+             for (;;) {
+-                this = state->lencode[BITS(state->lenbits)];
++                this = state->lencode[LOWBITS(state->lenbits)];
+                 if ((unsigned)(this.bits) <= bits) break;
+                 PULLBYTE();
+             }
+@@ -592,7 +592,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 last = this;
+                 for (;;) {
+                     this = state->lencode[last.val +
+-                            (BITS(last.bits + last.op) >> last.bits)];
++                            (LOWBITS(last.bits + last.op) >> last.bits)];
+                     if ((unsigned)(last.bits + this.bits) <= bits) break;
+                     PULLBYTE();
+                 }
+@@ -619,14 +619,14 @@ int zlib_inflate(z_streamp strm, int flush)
+         case LENEXT:
+             if (state->extra) {
+                 NEEDBITS(state->extra);
+-                state->length += BITS(state->extra);
++                state->length += LOWBITS(state->extra);
+                 DROPBITS(state->extra);
+             }
+             state->mode = DIST;
+ 	    fallthrough;
+         case DIST:
+             for (;;) {
+-                this = state->distcode[BITS(state->distbits)];
++                this = state->distcode[LOWBITS(state->distbits)];
+                 if ((unsigned)(this.bits) <= bits) break;
+                 PULLBYTE();
+             }
+@@ -634,7 +634,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 last = this;
+                 for (;;) {
+                     this = state->distcode[last.val +
+-                            (BITS(last.bits + last.op) >> last.bits)];
++                            (LOWBITS(last.bits + last.op) >> last.bits)];
+                     if ((unsigned)(last.bits + this.bits) <= bits) break;
+                     PULLBYTE();
+                 }
+@@ -653,7 +653,7 @@ int zlib_inflate(z_streamp strm, int flush)
+         case DISTEXT:
+             if (state->extra) {
+                 NEEDBITS(state->extra);
+-                state->offset += BITS(state->extra);
++                state->offset += LOWBITS(state->extra);
+                 DROPBITS(state->extra);
+             }
+ #ifdef INFLATE_STRICT
 -- 
 2.43.0
 
