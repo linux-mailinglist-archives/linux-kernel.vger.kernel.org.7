@@ -1,115 +1,149 @@
-Return-Path: <linux-kernel+bounces-870085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095B2C09E09
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:46:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0251C09E0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A370B407205
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:46:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37AFC4E1619
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86DC2E7F00;
-	Sat, 25 Oct 2025 17:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA74302774;
+	Sat, 25 Oct 2025 17:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfUKa476"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a1HUSyQO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4911A2C25;
-	Sat, 25 Oct 2025 17:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721CC289376
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761414394; cv=none; b=Z8pV2FjE+jgo5Hgo22SBy1w6NQdS1JHw0LGypLw3f/Aogw89cw1nBq1f56KMg7I6MONi90dpnXRmQKYVvcNkyp4GVWzZ8OvtQUfGMaqZV/30Sud6jy3RzKrgkNP5LWhhmPmzth/wIUUNEtja3oywWZZYMG+jPEozkFIqU/D9cu0=
+	t=1761414856; cv=none; b=EHqerpm1pd06iQ6fuga9pyhc84rqp5OXmFJod2YL7BWPrVO1SwKGAiIqNb5h4PoevSvGFr2MMOCyBYglofZxx33DJymHTzuG1BPV/xTm1YFOm2smzsjVYefWvUr9SQXssiXOK+95zz9iED1yR7Hb/F2hO4clu+2YG5ZE29JUHNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761414394; c=relaxed/simple;
-	bh=pMdDhf7+f8LQWh9TSxUM4Jk25+Fa7+4ZLnX2JnEUCtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hE1/K0ot9+USgin7rO2WvW1ydIhgvItN4pi9c3uDknjWiDePeUOJcccIU+m9VE0cZZuD7pEEPoX0QCAzN7B4KFpVBCAjVrbDACbSovpKhHtR52WFFfINyruP9EwY26tBgfQPxGwhUK0N0zPhIPoUjBkIRvB5CCHzsMOkfNsNLmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfUKa476; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0652EC4CEF5;
-	Sat, 25 Oct 2025 17:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761414393;
-	bh=pMdDhf7+f8LQWh9TSxUM4Jk25+Fa7+4ZLnX2JnEUCtc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YfUKa476Qh8cj1LE6SmnBD7TJO4qRgjsngRN+098oXTcsgXVFhHvjBL9SlRiGhP1w
-	 kckV1zn6pFo9p2QbyP4S+9w9KCJnqBfqgJKch6cqtITj3TG9IwgpytIrAqleiS/7iJ
-	 BptM0K5st8ZXh5yfWUIQHgYVDT97kEGuZZwmbeGDiV313MRJ9LvrUjunXsyOeqLo/U
-	 MHmqmf2ODLIyDEBtyE4jc38ShOE6XvGcwRATRXzKA3lj7rrHc7r10PMjTje1/e3KJg
-	 OxXkuX28iRAkt3pgTmntxrINFLFKg+Bvn/MLXQN89PJ2c1o06q5joOmzO/vjt3Dmnp
-	 k41iZT6d2H6Lw==
-Date: Sat, 25 Oct 2025 10:46:31 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zecheng Li <zecheng@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/9] perf annotate: Improve type comparison from
- different scopes
-Message-ID: <aP0M95FMF0fB48x9@google.com>
-References: <20251013181607.2745653-1-zecheng@google.com>
- <20251013181607.2745653-9-zecheng@google.com>
+	s=arc-20240116; t=1761414856; c=relaxed/simple;
+	bh=/dCnsJxwgqeFs7PKSg+Ud/3vJjVEQ1NvMAtuR/PgdkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rl9EE2FA1P2FQj+O+Ebz+XXCunT2RRk7LnfuoJrRwAhdL4fOyXNLlrSVdudTduIKf6y8dH9EyOt+w3VYKsDOYEWQKZMSOosShP0z3ckTTIPr6EEZPJVD4dQgLfMILcarvJVvsg2JoHWPDJhMq+EYeMQ5Whzdme7V1yWCghQPE08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a1HUSyQO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761414853;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/dCnsJxwgqeFs7PKSg+Ud/3vJjVEQ1NvMAtuR/PgdkQ=;
+	b=a1HUSyQO3OeEXPML4yQrxyZWqSEO1LoJqHzZ1SFDWzzW0DeJwHgzpqVEEc8ze1YvPMz5s2
+	9hby4VJeQbzTaaB3tCtDYTc/iECcyOEsZGeqLRV55O3onaskzEjy+U+RRDLOocWyDl8pgh
+	LIpxtI3B1SYL18yv6g+bInsR2xsj6BU=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-141-evHlA6LfO3aE_ct-b7r6Lg-1; Sat, 25 Oct 2025 13:54:11 -0400
+X-MC-Unique: evHlA6LfO3aE_ct-b7r6Lg-1
+X-Mimecast-MFC-AGG-ID: evHlA6LfO3aE_ct-b7r6Lg_1761414851
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-556a45a4519so6549584e0c.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:54:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761414851; x=1762019651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/dCnsJxwgqeFs7PKSg+Ud/3vJjVEQ1NvMAtuR/PgdkQ=;
+        b=FF17S5rOPHJQn5/HVUwiqHNOaNpVfQiKaquQ9LBN2SzV1PkrsRNRexfm+X/pB4XDyq
+         ibxG97Wbl8A1rOPw8HZ2uSdk5UCONaD9G8RVw9nxRtOzKcpEc60Fu1b55swf4qMH/2C5
+         aanJz96KKLpIBGfHSfQ5bQFlnUBDFVwmtYJshiqNXQ7x5TqkezA5U7qJgoGfiYNkf/Ec
+         QAWJuT/s1Byy4m+zuMVucko5cUbRDDMqMMuUuBZ/T/xJaXgzKExXAiXUpX0RJ0TOEOvg
+         4nwUnw2Gs/Z6epMpphkuEniw1HCHCL+4NXbZmgAkPntwz5ctZOt5uN9A8VbnhkLzC3TO
+         sRKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTtOoH5R0dkqKfsDEhCmpa2ohHJMEaTFCQE10nWBCfghNDpXyTgGSV/VZKx2hxV86oEMmCjN3nWfLS+gQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywck82Opy6dtdZMtnssE6T1NG03Dkgnttqo1uZiX98Q8xlDJoiB
+	qLa2zTDSUWMVmC8J0kdzIdfJJe8UadqwrIYi2iuI4CQnoO3lZtVtbLLRS8V62MbeYD9mqAKl+1v
+	VKW9vSv9ItKcxwYlrBVaZXCKn1Iu0Z/YrjVJoMIh8p2A74adgr0bkKb/n6eQFWx9wtHPx5hMvmK
+	h1nG9WOjQrugd0B/BgmSB8n20xfZsWFISOvp/51V9I
+X-Gm-Gg: ASbGncsydaNSckgggKMWDqHCIM6ZOJRRCzre1yLq1usAvreSL8JNN+f6p4WfrxZxIUt
+	VMaJYO/7RpoCTY6V7m6lBhcKU0YrvwUIRCMxVi60QPGRgCBENBxq5NP4mryuvIoBWfIA7FC65kZ
+	lqD85G81YbEiT8uUCUHQjNQzctAsrP8U0vFatkOtxWWq4VBb5YFPoYTwZXWqdw9HvV1cS2dd8=
+X-Received: by 2002:a05:6122:3707:b0:537:3e57:6bdc with SMTP id 71dfb90a1353d-557cf0ca71amr1998852e0c.12.1761414851364;
+        Sat, 25 Oct 2025 10:54:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgJOnM4bluQ6E9wHerRSTuFkaWRsBJjcnsXXzTai3J0SUYVYp4MA0v1jkm9r0t070IOxhPmLZo8Pqr0ynFtfU=
+X-Received: by 2002:a05:6122:3707:b0:537:3e57:6bdc with SMTP id
+ 71dfb90a1353d-557cf0ca71amr1998840e0c.12.1761414851050; Sat, 25 Oct 2025
+ 10:54:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251013181607.2745653-9-zecheng@google.com>
+References: <20251024084259.2359693-1-amarkuze@redhat.com> <20251024135301.0ed4b57d@gandalf.local.home>
+ <CAO8a2ShRVUAFOc7HECWbuR7aZV0Va3eZs=zxSsxtu0cMvJmb5g@mail.gmail.com> <20251025105944.1a04e518@batman.local.home>
+In-Reply-To: <20251025105944.1a04e518@batman.local.home>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Sat, 25 Oct 2025 20:54:00 +0300
+X-Gm-Features: AWmQ_bn2KbQ7u7-I7QWQqLSntYdpaNFjyE6UUX-03Ig8JKgRbXdxkCbCcGhJeXw
+Message-ID: <CAO8a2SgZ8gZ0VdtBAeW8wLMDxa+Eq42ppr-99tUpiu3Tpwqz5w@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] BLOG: per-task logging contexts with Ceph consumer
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, 
+	idryomov@gmail.com, mingo@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
+	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, rppt@kernel.org, 
+	peterz@infradead.org, surenb@google.com, vschneid@redhat.com, 
+	vincent.guittot@linaro.org, vbabka@suse.cz, xiubli@redhat.com, 
+	Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 06:16:05PM +0000, Zecheng Li wrote:
-> When comparing types from different scopes, first compare their type
-> offsets. A larger offset means the field belongs to an outer
-> (enclosing) struct. This helps resolve cases where a pointer is found
-> in an inner scope, but a struct containing that pointer exists in an
-> outer scope. Previously, is_better_type would prefer the pointer type,
-> but the struct type is actually more complete and should be chosen.
+Please correct me if I am wrong, I was not aware that ftrace is used
+by any kernel component as the default unstructured logger.
+This is the point of BLog, having a low impact unstructured logger,
+it's not always possible or easy to provide a debug kernel where
+ftarce is both enabled and used for dumping logs.
+Having an always-on binary logger facilitates better debuggability.
+When anything happens, a client with BLog has the option to send a
+large log file with their report.
+An additional benefit is that each logging buffer is attached to the
+associated tasks and the whole module has its own separate cyclical
+log buffer.
 
-Wouldn't the size check be sufficient?  I think we need to get read of
-the pointer preference.
+On Sat, Oct 25, 2025 at 5:59=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Sat, 25 Oct 2025 13:50:39 +0300
+> Alex Markuze <amarkuze@redhat.com> wrote:
+>
+> > First of all, Ftrace is for debugging and development; you won't see
+> > components or kernel modules run in production with ftrace enabled.
+> > The main motivation is to have verbose logging that is usable for
+> > production systems.
+>
+> That is totally untrue. Several production environments use ftrace. We
+> have it enabled and used in Chromebooks and in Android. Google servers
+> also have it enabled.
+>
+>
+> > The second improvement is that the logs have a struct task hook which
+> > facilitates better logging association between the kernel log and the
+> > user process.
+> > It's especially handy when debugging FS systems.
+>
+> So this is for use with debugging too?
+>
+> >
+> > Specifically we had several bugs reported from the field that we could
+> > not make progress on without additional logs.
+>
+> This still doesn't answer my question about not using ftrace. Heck,
+> when I worked for Red Hat, we used ftrace to debug production
+> environments. Did that change?
+>
+> -- Steve
+>
 
-> 
-> Prefer types from outer scopes when is_better_type cannot determine
-> a better type. This sometimes helps pick a more complete type.
-
-This code has a loop for the scopes so detecting larger struct would
-work well?
-
-Thanks,
-Namhyung
-
-> 
-> Signed-off-by: Zecheng Li <zecheng@google.com>
-> ---
->  tools/perf/util/annotate-data.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-> index 4b08331b9dd3..4b510eb29a5f 100644
-> --- a/tools/perf/util/annotate-data.c
-> +++ b/tools/perf/util/annotate-data.c
-> @@ -1629,7 +1629,9 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
->  				pr_debug_dtp("type_offset=%#x\n", type_offset);
->  			}
->  
-> -			if (!found || is_better_type(type_die, &mem_die)) {
-> +			if (!found || dloc->type_offset < type_offset ||
-> +				(dloc->type_offset == type_offset &&
-> +				 !is_better_type(&mem_die, type_die))) {
->  				*type_die = mem_die;
->  				dloc->type_offset = type_offset;
->  				found = true;
-> -- 
-> 2.51.0.788.g6d19910ace-goog
-> 
 
