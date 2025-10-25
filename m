@@ -1,88 +1,90 @@
-Return-Path: <linux-kernel+bounces-870029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D631C09CAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28A8C09BF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CD23B91A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E46542351F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A059B2FDC54;
-	Sat, 25 Oct 2025 16:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BB2307ACA;
+	Sat, 25 Oct 2025 16:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKFrXs1e"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNnPT9JD"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5756E303C96
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56D2305943
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409995; cv=none; b=GE0pSSGB7XNvo8RPFcqVtpjuAyUfbxCvIBXSXcZ7T9WkWoOOb1XHP9Mwj8SoRVbKTryRX4XwjHHgrpBrS186LMwWFgoxXkSd+YLowT73lxypDlvDhjy2yYu488gxdC4OeN/QF35CnFEBqDCzQuM5mQt0gajd1g25XzkZd9fgrv0=
+	t=1761409999; cv=none; b=T3/b0pZGWMzmUk7jtpTpmkpwpImB6+Dgjq4UZKX0dQW+zQcJ/ej1UnoD/zIYnwJU3WEuT2tpBckddgftlnjaZ4mGb7XfLKFoJPUGJ8dQEmTslHiTOQ/ux+RpDPQY/kgHn4DeoRhm0aaTuyYbTS9OdUzN7kGYzy/TQlPCT3VuX/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409995; c=relaxed/simple;
-	bh=TQ6xv3dIaxpajiHEhlYy8yfOY1BsNMosBwcumiYnhcI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FJQ3tpFcxYc4igDWIWlTiWiV/TJUUkY1FIAZeiIl9Z4zPH2ltC/egOcMKzYpaD3HwReUHJsiqQSwUnBezTocwvQ920xbrHN6X+hzun6SWTuzRsvkZ6VvB7jGVyEtR79ElV3uOJ9L7EJLJabBBRRE1qJKLTQ4plPBHcLdnOFGVt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKFrXs1e; arc=none smtp.client-ip=209.85.219.51
+	s=arc-20240116; t=1761409999; c=relaxed/simple;
+	bh=miSwCWAWlgSls2mz8C4vY/8512hTOCwNwE82bGQwr34=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ewyu/hn0DslIVasYstlBY+e3sSE6x7btxJGCJk3jj2lneYQzn5MdgQ8rs6va1XfIhY80IBoke7cBuAdsSJ4c4zgZGLhz5TRYO39FMz+TL1dx2aThRQOy8Ccznzy4AtFJrm3tzgGoI9LuY8dil0MBDJ1VJdXWkr3h1zXIc36qzdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNnPT9JD; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-87fc4d29301so14031946d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:33:12 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-89ec7919c71so136825685a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761409992; x=1762014792; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761409995; x=1762014795; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7/JFSnIjaD6DTDEOO1oZNxHniLLcLZti7jNstgpjRDc=;
-        b=lKFrXs1e6e6lPHpHa9z4ZxbRt7T8MGKjd1J2bi015MzRQRc6KUZTrcFReIhQ51DXfo
-         j89TGYltFajWRc24+geH9TyA6bNoFIb1ujVo9capuSlRu38d1GBkDEN14X0sTH5/qtKn
-         CQSvNCtszJU/SWXaUmAhK+AkmA9JF/ORG1atSqLipkDAuTJ8EzUG/QSJnCVGs96ou5A9
-         pQNzOZMiOaN7O4ejI9mTZlqkM2Ssv0UCCene1k8ST7QgOFFV+3mmL/51cFTl/RIvQfRt
-         Cr2rp4IQhD4JcaQyS4Vvt4x2aGc70GDuxibggMb5S5PE7AdzG3uAWMU6dG8/0lDmT43g
-         BFNg==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fhEz+tkYwuCSnU6LNYxfD5DkxTKdrSyEg2dThddkEgo=;
+        b=lNnPT9JDvNdft6l0Uo98joHCwEP2lpuHXb1pBz28Fx4uY1P85iYzNuVFAQdW1533U2
+         t303A0RPZ4Xa1Susp82zygD1snjYmhzHFDDI6dFMAWWIgE6Fr2sWlT3ACXH0NdCcsIn+
+         mHL0+hlilKvqRybrNPWETkmCclOlF8Bw8eWcYOrbPABIyltdAqNEp/gr/WMcoz2CRx17
+         GAqQWUkMCXOdIlQVFV1NPXrdO0rWApm/suR/6Q4hZfP8R0T7m3dp3kW3Gj2sMV5miKe7
+         CTUWckFq12qH47pT2pZdMHkd5y72TNErDhQHaJZrloCGPYbWQc9iK/x2MF7LEeuTc6cS
+         K+mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761409992; x=1762014792;
+        d=1e100.net; s=20230601; t=1761409995; x=1762014795;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7/JFSnIjaD6DTDEOO1oZNxHniLLcLZti7jNstgpjRDc=;
-        b=s+K3YBSUYRkRr+Nh3SedRPecZm+f3h88Sld0QoTHLtd4o8VBJLYaVgpMyCJTK6EEyF
-         vq0eVgga9yHZ9S32BAeaRh2YBr5p16v61yUjLMjPYg3kgQVSlEmEHdy1PDtuAt/vpfxy
-         X4dpyGgi6P3QRaGMMvCEyZUjZHizM3srUrEEcY/Gp7MFQKBb0fwB2nvpldyeyoJla7V+
-         laxfcY2WW+Mt2ja1sZ3dpp4427A59qyxm0UOCeQHtokvg4wkK2abxSZL/X0JEjIRtCAm
-         aNCKMLBICbtDgW+CjZCa9oJsMBoF2nhkY08BmcAGsj03J3cLKxYoShcmpGCsyERgvJk1
-         tBUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXx9uyjyOtFzirzVLDgVkQ9ZFbUFPx4Gk+wgvLhQo8+w7raDa8DqJKClTVR4qJJzzboyRS66uq6ABtWLkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwbiQdkQslVFLV7qx88ftolgR5kRA2VNjM/2Q8I4TrjKVrztRF
-	/7UGypA91tcHiOSLY2MHqRCWjuZk65zj8Rxn47hwlhq0Wj5gpkRvah0h
-X-Gm-Gg: ASbGnctEmmitRO8mWr9QfIqdnTG/tChwgp6/UnLksYQFNUqE8o/sIJnqCPWCOoy0fCp
-	pgnVY2IJGx8MAhaJmE2YJkzZuQO6orOKEG6qOA1np9tNWZWikTHXyrxioPgQ3jX9izHW331+TuL
-	NMqpF7ZX/fZii63vIDygSRTRio3sl6pdciab37hSe8R/rT++j3E+O4QxTmMuyk3GQtgRFt3ltQ7
-	sgPPTxmqrQdGr8e7CrSyel+9pr2wu9luIZKL2nbNJmc46yEvpwEy3l5k7RMJ2nnmEmrn1l9yFiT
-	YLkG9QHA/Dd9qEfyyJNPOHyOuwCIuQkASh36A2NyW+F1pBpWjgwpqPcN/2968hynKJm31c1sN18
-	bubnQv64dAgQz7/CLOgzsxSQGWNJ3ziu+iEJ9eQYW0b5CgCiX3yDrCqfWWm7bbdbLLQcIyZVEza
-	afEtzBjSM=
-X-Google-Smtp-Source: AGHT+IHVYDsqKWbYt2Nmb/p8bTfk7JqCLafoGcRUy2c7z6Z4BfX/omQyQkhSyRFtxDz8s1NdOAjCIw==
-X-Received: by 2002:a05:6214:248a:b0:7a3:b6ab:6f2 with SMTP id 6a1803df08f44-87c206612e2mr191871606d6.63.1761409991997;
-        Sat, 25 Oct 2025 09:33:11 -0700 (PDT)
+        bh=fhEz+tkYwuCSnU6LNYxfD5DkxTKdrSyEg2dThddkEgo=;
+        b=oMuiZRC5ujwf1TDUxRx1mEA3VZsfvSwZ2fabfS/u5p8sW2JLOE5ObPw/noR+600m+z
+         KnlOQWcxqwVn1SpyQIvCh4RxxEXoR7cWNyKIaWiHvcVkpTIsiPyYuaB4XwS1u42WbUN7
+         9QwDYROF5KiRy2aqsIkEfkl1aBSxXwiSRKz+7A7IGsi1LExJloX6TFny8/jvixojvjJW
+         QjvZUe9nWKkUHnnn1Tp8AVkSqVjet+aPLSXn+qytwvQgByqPR5lCeVgoYY7ctEhkkoFf
+         skCEBEdNTEUTaVW72S4mOIveu9nuvlb0eBeusg2cpyrEcyG1PSEjIktKVAYF1qd6n8fJ
+         Y8TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhmFDiPjhT3j6fTJx5Z/a46BSw08OM+ef85sFXE1mppJ/Az/eNAGc/mUaQqBmiztE7oUHT6FSBR0OHBms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0JBUQBQMmM2V146ucncQ2uVOJ2XM/8YdtqmvoHkjigIQquElS
+	yKu+XnFQo1SEMvrvaXQVbpgCEdcPPnuP4t3ouUQEh1g8NULvciu9USYG
+X-Gm-Gg: ASbGncsTeS/6OVujNEuRPmbjC0fCnroGu4ROALxvppOV5IYeWh+QD5P4fulNk64ie2s
+	GFka+Ke4Fkh8FXc8Bntxy91CyU8btMwdvwFFNAYdtI3GzWDs4G4nS9CZbtqqlQ4pbUac7Yncofs
+	8Tw/dcW4e8vVTMSYDUYa5X1bi17b5+GSpL6F5lH0lA2GCMwM08aBT/vkaZ2pVY/cZxoWs9zYOoo
+	M8vSXtYknnivxvHd+5k6WAV1Lp7K2TOWniDGxOmw8Op/Gf0qsoXvuUfdSZxToxlOwidHkKtREYR
+	OkanTjJRAjxZIRPjllV7zmSNT6ZCnXz9JixFlhMn3C3vkOK7rUw4tpn4PSutZUSMJjLfLSQShu5
+	kHUmPyGrxh8lAi5KNO9DD2ek1W8pcnFSJR3RJ3g0a/l/ARRJCZjsk5NlGcucIuX2YOMAWZNTSBn
+	ZFkKV8mXk=
+X-Google-Smtp-Source: AGHT+IFDvjrbgHR4c+YHa9gstK3rUAjMPa1JntDOFoEPIMpUO9JHPoIw8Cykn+I5mIOdA49QSX5xZw==
+X-Received: by 2002:a05:620a:aa01:b0:8a1:e059:cea0 with SMTP id af79cd13be357-8a1e059d294mr36247085a.84.1761409994607;
+        Sat, 25 Oct 2025 09:33:14 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc51e3809sm15261996d6.26.2025.10.25.09.33.09
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f254a297dsm174758885a.28.2025.10.25.09.33.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:33:10 -0700 (PDT)
+        Sat, 25 Oct 2025 09:33:13 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Lee Jones <lee@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 09/21] bits: generalize BITMAP_{FIRST,LAST}_WORD_MASK
-Date: Sat, 25 Oct 2025 12:32:51 -0400
-Message-ID: <20251025163305.306787-2-yury.norov@gmail.com>
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org
+Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 10/21] i2c: nomadik: don't use GENMASK()
+Date: Sat, 25 Oct 2025 12:32:52 -0400
+Message-ID: <20251025163305.306787-3-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025162858.305236-1-yury.norov@gmail.com>
 References: <20251025162858.305236-1-yury.norov@gmail.com>
@@ -94,52 +96,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The macros are helpful in many non-bitmap places too. Move them from
-bitmap.h to bits.h.
+GENMASK(high, low) notation is confusing. Switch to BITS() or FIRST_BITS()
+where appropriate.
 
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com/
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- include/linux/bitmap.h | 7 +++++--
- include/linux/bits.h   | 8 ++++++++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-nomadik.c | 44 ++++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 595217b7a6e7..fbe2d12bceab 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -223,8 +223,11 @@ void bitmap_onto(unsigned long *dst, const unsigned long *orig,
- void bitmap_fold(unsigned long *dst, const unsigned long *orig,
- 		unsigned int sz, unsigned int nbits);
+diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
+index 19b648fc094d..4c79ada5e1d4 100644
+--- a/drivers/i2c/busses/i2c-nomadik.c
++++ b/drivers/i2c/busses/i2c-nomadik.c
+@@ -53,9 +53,9 @@
  
--#define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
--#define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
-+#define BITMAP_FIRST_WORD_MASK(start) LAST_BITS(start)
-+#define BITMAP_LAST_WORD_MASK(nbits) FIRST_BITS(nbits)
-+
-+#define BITMAP_FIRST_WORD_MASK_ULL(start) LAST_BITS(start)
-+#define BITMAP_LAST_WORD_MASK_ULL(nbits) FIRST_BITS(nbits)
+ /* Control registers */
+ #define I2C_CR_PE		BIT(0)		/* Peripheral Enable */
+-#define I2C_CR_OM		GENMASK(2, 1)	/* Operating mode */
++#define I2C_CR_OM		BITS(1, 2)	/* Operating mode */
+ #define I2C_CR_SAM		BIT(3)		/* Slave addressing mode */
+-#define I2C_CR_SM		GENMASK(5, 4)	/* Speed mode */
++#define I2C_CR_SM		BITS(4, 5)	/* Speed mode */
+ #define I2C_CR_SGCM		BIT(6)		/* Slave general call mode */
+ #define I2C_CR_FTX		BIT(7)		/* Flush Transmit */
+ #define I2C_CR_FRX		BIT(8)		/* Flush Receive */
+@@ -63,31 +63,31 @@
+ #define I2C_CR_DMA_RX_EN	BIT(10)		/* DMA Rx Enable */
+ #define I2C_CR_DMA_SLE		BIT(11)		/* DMA sync. logic enable */
+ #define I2C_CR_LM		BIT(12)		/* Loopback mode */
+-#define I2C_CR_FON		GENMASK(14, 13)	/* Filtering on */
+-#define I2C_CR_FS		GENMASK(16, 15)	/* Force stop enable */
++#define I2C_CR_FON		BITS(13, 14)	/* Filtering on */
++#define I2C_CR_FS		BITS(15, 16)	/* Force stop enable */
  
- #define bitmap_size(nbits)	(ALIGN(nbits, BITS_PER_LONG) / BITS_PER_BYTE)
+ /* Slave control register (SCR) */
+-#define I2C_SCR_SLSU		GENMASK(31, 16)	/* Slave data setup time */
++#define I2C_SCR_SLSU		BITS(16, 31)	/* Slave data setup time */
  
-diff --git a/include/linux/bits.h b/include/linux/bits.h
-index c7c587e90e2d..0d2950b80a3b 100644
---- a/include/linux/bits.h
-+++ b/include/linux/bits.h
-@@ -5,6 +5,14 @@
- #include <vdso/bits.h>
- #include <uapi/linux/bits.h>
+ /* Master controller (MCR) register */
+ #define I2C_MCR_OP		BIT(0)		/* Operation */
+-#define I2C_MCR_A7		GENMASK(7, 1)	/* 7-bit address */
+-#define I2C_MCR_EA10		GENMASK(10, 8)	/* 10-bit Extended address */
++#define I2C_MCR_A7		BITS(1, 7)	/* 7-bit address */
++#define I2C_MCR_EA10		BITS(8, 10)	/* 10-bit Extended address */
+ #define I2C_MCR_SB		BIT(11)		/* Extended address */
+-#define I2C_MCR_AM		GENMASK(13, 12)	/* Address type */
++#define I2C_MCR_AM		BITS(12, 13)	/* Address type */
+ #define I2C_MCR_STOP		BIT(14)		/* Stop condition */
+-#define I2C_MCR_LENGTH		GENMASK(25, 15)	/* Transaction length */
++#define I2C_MCR_LENGTH		BITS(15, 25)	/* Transaction length */
  
-+/* Mask with first nbist set */
-+#define FIRST_BITS(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
-+#define FIRST_BITS_ULL(nbits) (~0ULL >> (-(nbits) & (BITS_PER_LONG_LONG - 1)))
-+
-+/* Mask with all bits before start unset */
-+#define LAST_BITS(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
-+#define LAST_BITS_ULL(start) (~0ULL << ((start) & (BITS_PER_LONG_LONG - 1)))
-+
- #define BIT_MASK(nr)		(UL(1) << ((nr) % BITS_PER_LONG))
- #define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
- #define BIT_ULL_MASK(nr)	(ULL(1) << ((nr) % BITS_PER_LONG_LONG))
+ /* Status register (SR) */
+-#define I2C_SR_OP		GENMASK(1, 0)	/* Operation */
+-#define I2C_SR_STATUS		GENMASK(3, 2)	/* controller status */
+-#define I2C_SR_CAUSE		GENMASK(6, 4)	/* Abort cause */
+-#define I2C_SR_TYPE		GENMASK(8, 7)	/* Receive type */
+-#define I2C_SR_LENGTH		GENMASK(19, 9)	/* Transfer length */
++#define I2C_SR_OP		BITS(0, 1)	/* Operation */
++#define I2C_SR_STATUS		BITS(2, 3)	/* controller status */
++#define I2C_SR_CAUSE		BITS(4, 6)	/* Abort cause */
++#define I2C_SR_TYPE		BITS(7, 8)	/* Receive type */
++#define I2C_SR_LENGTH		BITS(9, 19)	/* Transfer length */
+ 
+ /* Baud-rate counter register (BRCR) */
+-#define I2C_BRCR_BRCNT1		GENMASK(31, 16)	/* Baud-rate counter 1 */
+-#define I2C_BRCR_BRCNT2		GENMASK(15, 0)	/* Baud-rate counter 2 */
++#define I2C_BRCR_BRCNT2		FIRST_BITS(16)	/* Baud-rate counter 2 */
++#define I2C_BRCR_BRCNT1		BITS(16, 31)	/* Baud-rate counter 1 */
+ 
+ /* Interrupt mask set/clear (IMSCR) bits */
+ #define I2C_IT_TXFE		BIT(0)
+@@ -339,7 +339,7 @@ static int init_hw(struct nmk_i2c_dev *priv)
+ #define DEFAULT_I2C_REG_CR	(FIELD_PREP(I2C_CR_OM, I2C_OM_MASTER) | I2C_CR_PE)
+ 
+ /* grab top three bits from extended I2C addresses */
+-#define ADR_3MSB_BITS		GENMASK(9, 7)
++#define ADR_3MSB_BITS		BITS(7, 9)
+ 
+ /**
+  * load_i2c_mcr_reg() - load the MCR register
+@@ -1028,11 +1028,11 @@ static void nmk_i2c_of_probe(struct device_node *np,
+ }
+ 
+ static const unsigned int nmk_i2c_eyeq5_masks[] = {
+-	GENMASK(5, 4),
+-	GENMASK(7, 6),
+-	GENMASK(9, 8),
+-	GENMASK(11, 10),
+-	GENMASK(13, 12),
++	BITS(4, 5),
++	BITS(6, 7),
++	BITS(8, 9),
++	BITS(10, 11),
++	BITS(12, 13),
+ };
+ 
+ static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev *priv)
 -- 
 2.43.0
 
