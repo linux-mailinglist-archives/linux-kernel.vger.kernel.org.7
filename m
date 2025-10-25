@@ -1,164 +1,167 @@
-Return-Path: <linux-kernel+bounces-869786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5549C08BC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:12:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E037C08BD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45441B26BCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:12:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 90F0634F77B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6F62D46D1;
-	Sat, 25 Oct 2025 06:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B4A19E819;
+	Sat, 25 Oct 2025 06:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="et3GuBvK"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRqzPBq+"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD972D3EDD
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 06:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFEB1CAA7B
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 06:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761372716; cv=none; b=Y7ZPH5NrK7VP8d8sw1OzgSB0fHwdLK7D8p3NFNPVowmkIVLJL4laNHwbvbfM1VioGa2lalGU6ETixCx8Eu26nZb2Rv3r1zBpSkPazwB4QMhWuNHFJILSE2PZTird6MCssgDu/PDSb/DAf1tzurzT7lQTTqgyRNesd+GdGf5UO+c=
+	t=1761373039; cv=none; b=nJqDHVaSxNfnqcqDr+L/Dxx3khGLxxE61T2Btrn7zWmasNjEQjAOeUs90IWHhzCCFWoplNy5xXorDqYBPJYqPH7EqBKYLBEHnimFjmVzRRDDT19StBZov6HrGRw/SdnfDLqA/oAzkXsb418B/AayOGPiRVa/GoyajxJFKPhsxd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761372716; c=relaxed/simple;
-	bh=ht8mivIVcsrq/tkyABarOkXZzy8pnBOzGwAxzEl5OjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ifbY6jCCSyvTJox1VFdfBjbg44d29jCU7P8L4FYw9JbIljoheGL16re+KBfohbgZgMVZ2iorkVChH5BOuDwlVBoVm8TT30gufZJOm/2XTnRhX3v2sAVGYXUvdBi4jXXu8MnCim3E4Zyh49TIx4YssLWVY9t0+MYldi3MV85Fpes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=et3GuBvK; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 56931104C1FE
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:41:48 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 56931104C1FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1761372708; bh=ht8mivIVcsrq/tkyABarOkXZzy8pnBOzGwAxzEl5OjA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=et3GuBvKmfXQVN1T2QAZvZTfpAUPDtEy2a6Wj46Z+BTHUY7DLwTnya2FGMW9YbZm0
-	 JXAoMCVCRwIrW7J1UZsdSK2oFLhL3MadaG9KffDlTNOMshH2AsRjNUMYmTUZjcoq5B
-	 Ky0lYcGIbJBHGxoW56IL9ab3+h+4wT43JSlcfvYY=
-Received: (qmail 23471 invoked by uid 510); 25 Oct 2025 11:41:48 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.604223 secs; 25 Oct 2025 11:41:48 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 25 Oct 2025 11:41:43 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id E32553414E8;
-	Sat, 25 Oct 2025 11:41:42 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id A68641E8160F;
-	Sat, 25 Oct 2025 11:41:42 +0530 (IST)
-Date: Sat, 25 Oct 2025 11:41:37 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com
-Cc: skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	akhileshpatilvnit@gmail.com
-Subject: [PATCH v4 0/2] iio: pressure: add driver and bindings for adp810
-Message-ID: <cover.1761372227.git.akhilesh@ee.iitb.ac.in>
+	s=arc-20240116; t=1761373039; c=relaxed/simple;
+	bh=cn1oi11LG/pF61ql1VCKF0X0phsVnfYnbM22lp/uDU0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KEimtH1iXyWpnTqpR4cMUFcqOr9u1hl4jute2Zm+k+ieonV3C+q4GKtJCxH9bpVpsSXgKCgeRiPRTMKUrPJH3WFfmd8DAH3nhXJAc9YXzYw/lG9k8oxQnXIh6yGGVGk0zFmK8lj7/xxYZz8Mis1lbbdV3i+fmJZBwC783MaySfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRqzPBq+; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7a4176547bfso119618b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761373037; x=1761977837; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6p7GK3VvKhA8P74byFxrt2YZTTWqdb0ZlXuHY4d+0hM=;
+        b=JRqzPBq+QgOktLnq13zp5shoPGgLCx7woOK62GSPQpTXNtW58jLvS2lWsUc87Qn2wO
+         kd10em+94SBSSXxpLljambxISaKONWmIqvUlonovmcS95abp9AmY/YKl8v/0Ets0Xg3E
+         fGiJnvEVcRjCkCQETTL2/xHsQ2gKU+rfyOg7fCJF+3SikciGYsCp6N97rGRabtU8uH0H
+         0fouLrCQRQysWiD0/+6dIdMcZlpDYo2n8KPTL2ojwvqak4mvAhimOj52s07AJsYVDYjL
+         2VE9UzCEqmjmUxhyZ7wHwAFrZwxe2hVuMVh0vRh8agR7M/9EJD0qrN+m6o0rsuavuU/o
+         4LNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761373037; x=1761977837;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6p7GK3VvKhA8P74byFxrt2YZTTWqdb0ZlXuHY4d+0hM=;
+        b=e3fx6CWPpK6HSxmay2zUenXSgVUwR7GAGzof1tn1LkTe0voGpIdGuH93m9TBw87uQr
+         lkaIWzt7NSDgeEvANzGWFkdbRn2wOZEn2RxtayuG8H7FvkNvcI2oMcGIQpb2WQagZFgK
+         QStMqNbipa5hq/H5mJB5zipL/t8zuIhnlUsQ+CM32E7cDoXcmS72iuuCi39PZsBQSKu+
+         00I9ufOumOPW4xJ9JgobuIRjHMSX8UVXduicxKCR8aduamlc+28YVZWjwJ1LCuo94lGr
+         0aK23QFYqWegtvmdt6rlF002Ky3FpB/Pm65ZyTcai1jmtOntK/uF7V8lrKtnxAVOyu39
+         34gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwypyrhkKC+LkE9f6Dy09kMY6sg7Kepcl5GaldrIUtA2LRgOCl0jcex8A+RZ+WxFE+rSUBGz3T9ipSPZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8crkwboLEcrmrpo7d/qfpqjIZnIEmNE+RVLgBdYuegACUQ1Tq
+	dBfwfvRK5yhnKfiuLHlaMcDcJWBBhcDrd0QltOK3KS+GIDNy4TspYqCa
+X-Gm-Gg: ASbGncsCK4+NieW0FZ1NPNwfAdlJwaiDV3E7F2aHR+TOpPGDqgapo55VeeHSoSig+XU
+	GNwL+rK65WB9lnpVsDIiPlOI6IBabxoNuPLcW38UWzHdjURcDHE5ShnhSDOejGKYjnuVzMEKWGv
+	ZlWMTrWvXdLaTvnopqhk+iAF4OLqEdQZqFkGN9EpWRJDZnO2R8fSxwdXkVWarLu2I3mnjIMGb99
+	u6xE1JiUfU9SK8SvQKrCH8eakiHD8G2dCwL6spNSF/kxodXukUsOhpBc3Ja863FbDPrBlmbUPuO
+	eunw4jyo6Cris0Ywt82ZPVIgT3nlNdIt0ppblEhMpTTX//600gB7jWjBDXw8BU2UrnC0Dl8JID5
+	x+7btKeZVvoh/vpJPmYQKDKcZvivhGUQwtzpe/219c0UwtCKdUzAZ4A2OQMX5kCFEIrEohJJ2EW
+	TDsmfDVc9SzkxJilVY/jpVOAqg8pUac94LeaYKO+HUmvVytzoyFMrrht0o
+X-Google-Smtp-Source: AGHT+IEnx65olDd4wUsKq9Ohdp5aWegEgeLRj2EY+h3wY1HJDJOM27r0YRmfqUrDPBEW/wTGvWKOoQ==
+X-Received: by 2002:a05:6a00:2e26:b0:7a2:1b8a:ca22 with SMTP id d2e1a72fcca58-7a28685edf4mr5915593b3a.25.1761373036774;
+        Fri, 24 Oct 2025 23:17:16 -0700 (PDT)
+Received: from ?IPv6:2401:4900:88f6:d7b0:443:a828:b6ba:688d? ([2401:4900:88f6:d7b0:443:a828:b6ba:688d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414087587sm1158573b3a.58.2025.10.24.23.17.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 23:17:16 -0700 (PDT)
+Message-ID: <14a56a50d5d8803bc822ae99fbe527755323623b.camel@gmail.com>
+Subject: Re: [PATCH v2 2/2] add check for pointers with __free attribute
+ initialized to NULL
+From: ally heev <allyheev@gmail.com>
+To: Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andy Whitcroft <apw@canonical.com>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
+ David Hunter <david.hunter.linux@gmail.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, Viresh Kumar	 <vireshk@kernel.org>, Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,  linux-pm
+ <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
+Date: Sat, 25 Oct 2025 11:47:09 +0530
+In-Reply-To: <769268a5035b5a711a375591c25d48d077b46faa.camel@perches.com>
+References: 
+	<20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com>
+		 <20251024-aheev-checkpatch-uninitialized-free-v2-2-16c0900e8130@gmail.com>
+	 <769268a5035b5a711a375591c25d48d077b46faa.camel@perches.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-This patch series adds support for aosong adp810 differential pressure and
-temperature sensor driver in the IIO subsystem.
+On Fri, 2025-10-24 at 11:01 -0700, Joe Perches wrote:
+[..]
+> > @@ -7728,6 +7728,12 @@ sub process {
+> >  			ERROR("UNINITIALIZED_PTR_WITH_FREE",
+> >  			      "pointer '$1' with __free attribute should be initialized\n" =
+. $herecurr);
+> >  		}
+> > +
+> > +# check for pointers with __free attribute initialized to NULL
+> > +		while ($line =3D~ /\*\s*($Ident)\s+$FreeAttribute\s*=3D\s*NULL\b/g) =
+{
+> > +			WARN("NULL_INITIALIZED_PTR_WITH_FREE",
+> > +			      "pointer '$1' with __free attribute should be initialized to =
+a non-NULL address\n" . $herecurr);
+> > +		}
+> >  	}
+>=20
+> I think this a poor idea as almost all the instances where this
+> initialization is done are fine.
+>=20
+> And there are a lot of them.
+>=20
+> $ git grep -P '\b__free\b.*=3D\s*NULL\s*;' | wc -l
+> 490
 
-Patch 1: Adds bindings for this hardware.
-Patch 2: Adds driver code with device tree support.
+Sorry for not checking this earlier. I looked at quite a few of them
+none were real issues
 
-Overview of adp810:
-This is digital differential pressure and temperature sensor from aosong under
-the brand name of ASAIR. This sensor can measure pressure from -500 to +500Pa
-and temperature from -40 to +85 degree. It provides simple protocol to measure
-readings over I2C bus interface.
+>=20
+> And what about these uses that depend on struct path members
+> .mnt and .dentry being NULL.=20
+>=20
+> $ git grep -P '\b__free\b.*=3D\s*\{.*\}\s*;'
+> fs/configfs/symlink.c:  struct path path __free(path_put) =3D {};
+> fs/fhandle.c:   struct path path __free(path_put) =3D {};
+> fs/file_attr.c: struct path filepath __free(path_put) =3D {};
+> fs/file_attr.c: struct path filepath __free(path_put) =3D {};
+> fs/namei.c:     struct path parent_path __free(path_put) =3D {};
+> fs/namei.c:     struct path parent_path __free(path_put) =3D {};
+> fs/namespace.c: struct path old_path __free(path_put) =3D {};
+> fs/namespace.c: struct path path __free(path_put) =3D {};
+> fs/namespace.c: struct path old_path __free(path_put) =3D {};
+> fs/namespace.c: struct path path __free(path_put) =3D {};
+> fs/namespace.c: struct path to_path __free(path_put) =3D {};
+> fs/namespace.c: struct path from_path __free(path_put) =3D {};
+> fs/namespace.c: struct path new __free(path_put) =3D {};
+> fs/namespace.c: struct path old __free(path_put) =3D {};
+> fs/namespace.c: struct path root __free(path_put) =3D {};
+> fs/namespace.c: struct klistmount kls __free(klistmount_free) =3D {};
+> fs/namespace.c: struct path fs_root __free(path_put) =3D {};
+> fs/nsfs.c:      struct path path __free(path_put) =3D {};
+> fs/nsfs.c:              struct path path __free(path_put) =3D {};
+> fs/nsfs.c:      struct path path __free(path_put) =3D {};
+> fs/overlayfs/params.c:  struct path layer_path __free(path_put) =3D {};
+> fs/overlayfs/params.c:          struct path path __free(path_put) =3D {};
+> fs/pidfs.c:     struct path path __free(path_put) =3D {};
+> include/linux/path.h: * struct path path __free(path_put) =3D {};
+> kernel/acct.c:  struct path internal __free(path_put) =3D {};     // in t=
+hat order
+> kernel/trace/trace_uprobe.c:    struct path path __free(path_put) =3D {};
 
-How to read from sensor (Protocol)?
-To read from sensor, i2c master needs to send measure command 0x372d to
-start the data acquisition. Then host/master should wait for minimum 10ms for data
-to be ready before reading. Post this delay i2c master can read 9 bytes of
-measurement data which includes - pressure(u16): crc(u8): temperature(u16): crc(u8)
-scale factor (u16): crc(8).
-Host/master can optionally verify crc for data integrity. Read sequence can be
-terminated anytime by sending NAK.
-
-Datasheet: https://aosong.com/userfiles/files/media/Datasheet%20ADP810-Digital.pdf
-
-Testing:
-Driver is tested on Texas Instruments am62x sk board by connecting sensor at i2c-2.
-Data communication is validated with i2c bus at 100KHz and 400KHz using logic analyzer.
-Sensor values are read using iio subsystem's sysfs interface.
-
-Changes in v4:
-- Revert reordering of other entries in pressure/Makefile. Only add adp810.o at
-  alphabetically correct place. Makefile reordering will be separate patch.
-- Added additional include files types.h, array_size.h and error.h to follow IWYU.
-- Fixed trigger command sending logic in case of big endian systems by using u8 array
-  instead of u16 variable.
-- Removed ADP810_MEASURE_LATENCY_MS macro and used it directly in msleep() with 20ms
-  delay value. Improved comments for it.
-- Tab and spacing cleanup at .read_raw callback.
-- Added comments at adp810_read_buf struct declaration regarding usage of __packed.
-- Link to v3: https://lore.kernel.org/lkml/cover.1761022919.git.akhilesh@ee.iitb.ac.in/
-
-Changes in v3:
-- Followed Include What You Use (IWYU) by adding additional include files (mutex.h, dev_printk.h and few others)
-- Improved error handling of i2c_master_send() and i2c_master_recv() with additional transfer length checks.
-- Changed style of structure initialization from {0} to { } 
-- Rebased on top of v6.18-rc2
-- Link to v2: https://lore.kernel.org/lkml/cover.1760374257.git.akhilesh@ee.iitb.ac.in/ 
-
-Changes in v2:
-- Wrapped yaml binding description to 80 lines.
-- Dropped block scalar ' | ' from binding description.
-- Carry forward Reviewed-by tag from Krzysztof on device tree binding.
-- Grammar and spelling fixes at multiple places.
-- Ordered makefile alphabetically.
-- Ordered include files alphabetically and used IWYU principle
-- Explicitly mentioned unit of measure latency macro in MS (milliseconds)
-- Added inline comments for explaining CRC8 polynomial for CRC calculation 
-- Used scoped_guard() for mutex for safe and clean lock handling.
-- Used resource managed mutex_init() -> devm_mutex_init()
-- Removed dead code in _probe() function.
-- Used __be16 and related helpers to handle big endian data processing.
-- Apply reverse xmas tree guideline while declaring local variables if possible.
-- Used parent device pointer in dev_err() calls.
-- Hardcode device name string in _probe() function for simplicity.
-- Made default return value of _probe() function to 0.
-- Rebased and retested driver on top of 6.18-rc1
-- Link to v1: https://lore.kernel.org/lkml/cover.1760184859.git.akhilesh@ee.iitb.ac.in/
-
-Akhilesh Patil (2):
-  dt-bindings: iio: pressure: Add Aosong adp810
-  iio: pressure: adp810: Add driver for adp810 sensor
-
- .../bindings/iio/pressure/aosong,adp810.yaml  |  46 ++++
- MAINTAINERS                                   |   7 +
- drivers/iio/pressure/Kconfig                  |  12 +
- drivers/iio/pressure/Makefile                 |   1 +
- drivers/iio/pressure/adp810.c                 | 225 ++++++++++++++++++
- 5 files changed, 291 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
- create mode 100644 drivers/iio/pressure/adp810.c
-
--- 
-2.34.1
-
+These are not valid issues too
 
