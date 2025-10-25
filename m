@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-869859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368A2C08E0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 10:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6756C08E0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 10:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 168044E376A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2A918969C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2392BDC19;
-	Sat, 25 Oct 2025 08:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27942BE647;
+	Sat, 25 Oct 2025 08:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jd72T6NN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ha4zvYCC"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A9270552
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DD0296BD1
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761382015; cv=none; b=qKbnOKfroFphLyNKYt5hnCTBUEQYevo/48/lVs2evk0AsyCeSHVT8HvDWAQ42VUsKt9HA4Adm3hxvJ7851GAouBQXfwy9tVQyISDHWPr+BxQKrmqq6AilZ4MdZ67ruW33pGzZWRMRwj4wmg0gs8rV0pA0HL4/T3oLLVcbak9KAY=
+	t=1761382017; cv=none; b=A+3lOtr9oeLD/VImxHKODFLy9Kys1zVq0qZtTI6b755ibjMhwuNVzxo1NO2US1CpcTxUb/uh12gpgO8OBI+7xemLhIFxInqUUzqLm2jjlvoM2wF+ce3Rdu9WmKO6Fxdmr5bX0ER4uxYPFBfwu5b8C27z6DKsjFyUJKQYoK8PCCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761382015; c=relaxed/simple;
-	bh=PYegTm/QUptp0tyI0j2rvDg/HKGOCqQMU4T8XU6nWbA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=eR7Ds6iJkHUCw78h5UwYRflPjsJk1TEYMd5agLXQghpUgHBuGOh+X87UNBwHvrNAFRob3FYwpabhjyPc2jO88N7ifMYjf7HQJPHZoVXVLd/geGME83EsFX295P2f698RzQsXQZycqPzsTCUfVEiZ4XUTRGaE4fvbCNG5S657Jmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jd72T6NN; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1761382017; c=relaxed/simple;
+	bh=c+ZdQzYy3kbJqYtkQlyxVeFdNj4qOrt8Gpp0rbG3jb4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=dmV4ED+QONTSlQ7AKyDnwHgvvFtG7LvyPxXdvIcYRPzz3+5a7aQux95CsqI+kcPJCDNYnlXA4Lc8QLSkNe2mhq7m1ZGGdh2uzr+yqvUsUofV6MU8u/iFZcoGrLptoU5pGaCGSfq8GgKyJn8EIBNwsr/oPYApkYtraX7sQiEyzC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ha4zvYCC; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761382013; x=1792918013;
+  t=1761382015; x=1792918015;
   h=date:from:to:cc:subject:message-id;
-  bh=PYegTm/QUptp0tyI0j2rvDg/HKGOCqQMU4T8XU6nWbA=;
-  b=jd72T6NNjQH4PvSkz6hFwG3+XejoUdfNFpY+p3uWxf8yfoXlWvwBCzCA
-   W5mgFowqadWW88sTp0QA1ObZra3LRwLq9uafZ3m/8S+ZgZxPitAegZIjx
-   YEXbV9bSNHB+H8W/dA05M8kIyXiObnqlkvabtCCNWrKI5WyNJQruUfPqo
-   sC4t11DJmfSvTVfG0MnpDb9v2VR7nOgFbXRP4LR66sThtCFII2utO+3b6
-   z2fxw7V4xoEYpERdofOhhQopnEuw/VtUTlymqMjNwdkpERuE4DOPmytoC
-   YErJYgjU/3hkIaqd9RbxK1bUCyRed4SaxagFc7fWJTQkpxEZ6mciRvaK5
-   w==;
-X-CSE-ConnectionGUID: KRIwQ03mS8+rQ2IP2ITKTw==
-X-CSE-MsgGUID: j0Bh2UKMThmQNdkeWDE3bQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86177887"
+  bh=c+ZdQzYy3kbJqYtkQlyxVeFdNj4qOrt8Gpp0rbG3jb4=;
+  b=ha4zvYCCeJphow/PTSwR8rtB+LJkFATGd5Ig4rac6bFItFG8M2ha9CqF
+   YEq1Q5qOXQw5TkmrZ6GiWW+/9xYjaNESHzSPxSw2/izPgOGWQ+rCJk7Kz
+   z2/33H3FYKP9OdX5R8ay1g1tjwAxbCDkzeN3mw1hcWQJEftJ5pqrcSRtt
+   u8kIWpsKCViWEdNNzYI66VnxHIgh13DXRmY7NucqGCNnKZSp4U+Ooic9t
+   L/W130N6M4s/bpiTqHtdDm1e4RKD7dIzUwM2/IZrJVUsCxyQo19m2EtPs
+   daaOOAiw7vT4tqDKYfymzYpU4GDpHvoXCxCh0I8VG9Z5zXM5ymZqf3nRx
+   Q==;
+X-CSE-ConnectionGUID: ceQvbt2yS1axpTES9f7rqQ==
+X-CSE-MsgGUID: inEay4CCRPusvfP0qJoqsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86177888"
 X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="86177887"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
+   d="scan'208";a="86177888"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
   by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 01:46:53 -0700
-X-CSE-ConnectionGUID: WfFwrBE2SY+8UqHO3+H2Rg==
-X-CSE-MsgGUID: LHXwn6x6TISvIqz7URKDsQ==
+X-CSE-ConnectionGUID: pJzcHlj+S869XD+8QjwjiA==
+X-CSE-MsgGUID: 7p/RvwSOSi2I+N3jCWs3Hw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="183796104"
+   d="scan'208";a="184517020"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 25 Oct 2025 01:46:52 -0700
+  by orviesa007.jf.intel.com with ESMTP; 25 Oct 2025 01:46:52 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vCZvF-000FCk-1b;
+	id 1vCZvF-000FCi-1X;
 	Sat, 25 Oct 2025 08:46:49 +0000
-Date: Sat, 25 Oct 2025 16:46:11 +0800
+Date: Sat, 25 Oct 2025 16:46:40 +0800
 From: kernel test robot <lkp@intel.com>
 To: "x86-ml" <x86@kernel.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/drivers] BUILD REGRESSION
- b5fa8915a50a44c01727ab5b60193188c88e4881
-Message-ID: <202510251605.o0lHEoEw-lkp@intel.com>
+Subject: [tip:core/core] BUILD SUCCESS
+ 70e0a80a1f3580ccf5bc1f34dbb433c67d9d8d00
+Message-ID: <202510251634.qZpVBasZ-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,25 +73,16 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-branch HEAD: b5fa8915a50a44c01727ab5b60193188c88e4881  irqchip/sifive-plic: Add support for UltraRISC DP1000 PLIC
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/core
+branch HEAD: 70e0a80a1f3580ccf5bc1f34dbb433c67d9d8d00  treewide: Remove in_irq()
 
-Error/Warning (recently discovered and may have been fixed):
-
-    https://lore.kernel.org/oe-kbuild-all/202510250838.m2InkkSl-lkp@intel.com
-
-    drivers/irqchip/irq-sifive-plic.c:404:17: error: no member named 'enabled_save' in 'struct plic_handler'
-
-Error/Warning ids grouped by kconfigs:
-
-recent_errors
-`-- riscv-randconfig-002-20251025
-    `-- drivers-irqchip-irq-sifive-plic.c:error:no-member-named-enabled_save-in-struct-plic_handler
-
-elapsed time: 722m
+elapsed time: 723m
 
 configs tested: 221
 configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
 tested configs:
 alpha                             allnoconfig    clang-22
