@@ -1,164 +1,181 @@
-Return-Path: <linux-kernel+bounces-870042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DACC09B93
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:49:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39690C09D04
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E1B1AA5D7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:45:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47B31583A84
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7554D26E6F6;
-	Sat, 25 Oct 2025 16:35:25 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BCC2E9EAA;
+	Sat, 25 Oct 2025 16:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFMdd1HD"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E5F238142
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA1A2F5B
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410124; cv=none; b=qUomeQpY/iAHn2984/n5CmJwwu9S43AlKkvQwRzseFgvpDQo4c8Up4qJ9Mro1+4AzGPjFI9JMe/W5wYH49ceQXw+T3SgZi6ATnAPypUqHp2sgddksXQVT/GoiBG/veH21ILh+cR3AnQggZ5jcnBBsw/PxJj17qn6iMrDylcZRsc=
+	t=1761410227; cv=none; b=P0j6ZUbZpfLUTEsYURvN5QE7Z3CNKUQ7gJBZx8DImSu+KPMrQVAB9G9a8oz29huCHqO9IgnffCtvFOdWpr57cxqBDgb7gDMjJgTf5iNOSeep5aHdyhHUIgRGO8TMkqUBMvPqQcS8lySMLUFNrWhYi13/1NzjxVLeuNfUGR4d9rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410124; c=relaxed/simple;
-	bh=iyOBRl5QZhzw+5Ro5vJB2OJl2o9qrxD7/mSjzKjx6KI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LAPEFbdh7YnBiWTDr6udwWLE6hf846WnqpJf/F08iwsX/Phzn8dFSRvytYwO/hU5+/kaPav9HM3KoM+sThrBkAdQSAzSIBrOgoqoKYaLYRfAmbJ0MAStMMNH7lIAZVT61ybOgEgW2YnuElXsMxQx6SVF4lo+iQE1N8SpJfuYMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93e8092427aso325010039f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:35:23 -0700 (PDT)
+	s=arc-20240116; t=1761410227; c=relaxed/simple;
+	bh=Vq5UC3S+Qa9vDIbkzi9fCvhdC7hBqMC5Z9lmwN9lANw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfXr8D8lSWbmsCIcabYS70S66EpwXPp99Muqk3STshhYDs4DGJm0ZFVJ0oDb4zkyGdU0SOOJfg8HXmnbwloCyfBfyjV1rM26f0TzsJwpRjA78Eu0TRjKBdb16d6e1MZckOq6xzla085JnhGNAsrM3D8va4fX2ERtaSVr1XhLLW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFMdd1HD; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-89048f76ec2so357348885a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761410222; x=1762015022; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9N6S7T6py8PeRj/rOtZbhhJaooq6y8nSlIhgmi1OV0=;
+        b=MFMdd1HD6PPcXuTJo5WOJCrCpECwKbCP+y3c9kdotabEC+YQBAPh1jd8VetOS6qXHg
+         MRrv9FkpIVLz+No43CSp4iaWFCPYHwveOIAgoyMk+racBTehbMLjrFkVBhNiWJMUiK2i
+         3aHIabfydNNjZpLTVVw6uAnlSJPrFYaScEeGmpJcA8Tx/1y0xTpg37M9s600zjIX2bHr
+         bJp+AyoX6Fv3jcBGYLVgdAs0Kq4n0+yRwyniNV0lRXiQiLA0S6ncRBD1E6lUOe1sodNq
+         yfzjQkKhyaFScWjsI6d3Uqm+vgVioN3jbk2BfsBvMglZo/KOTcKJrk3dQRTYbmQPZcF3
+         2itQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410122; x=1762014922;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L/TBpiav1G79AIOTkdY4adnGJwgmMIA5+MCuyC38fbg=;
-        b=GUnSINhll+jVnXj55Uu1kzVBF90o/lrNJ0zTathE+Bp+FxgR9B7OTPQZsLXxN5n+bk
-         w1xlAc/nnW8iDuHjzkvpj/Ajjrq9bHUdR5DUkquIMJSKoBkFKxGvndq0Pjpbz86uVMqt
-         puktnsQXVQ26Rd8/jRV9U5Q8p+QNGyVZFkBAXgBSHUgSrmSMCK1IcOoQYpnmvq/lviVC
-         S/QOAw8GGYaqWv7TcUT0muN4nLikcKf96q/bXK0/ig5f4gB4GVcuCFq7UrZvbwDLLnhr
-         yti8SrZp/x7iogsZrT9+NR5IeeMnxahD+dgWPkx33VGAB8uIJeD1ZCZipHyiBwnZJPnl
-         Ac5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUe0Dlcbtl1G+2f+nP4RC6fc5AvTl6Zd3RbR5wx5U2VFrlQIuraR7WMjlvZywlFtjL6uSzC3tCXaCU4Jg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxwywi4FzD+Vp+q9PnFtwZi6roRk6UfALTx3ulmDZAXVOoCFo8
-	w8ZUT6JyPdClPmUEbvjDAdQOI0+tFE1RepvyBy3DMUs8E9ekUj27rVXwtRypjCvSb7XD3DrU7Gk
-	HQgLYv1PNo3GlqsCDlTue1q+YDfPi6bpDl2IljOhj6XF79ucPVodUMsdHWJg=
-X-Google-Smtp-Source: AGHT+IGeqEzwanU1biO5d+ivaOCUX5hEsxCyYT+xT+jf2Li+zt8m+I5UT6TpcYDR9S2JPh6BYwnuqkplXrB0G8rg6VjlCJJZR0ul
+        d=1e100.net; s=20230601; t=1761410222; x=1762015022;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l9N6S7T6py8PeRj/rOtZbhhJaooq6y8nSlIhgmi1OV0=;
+        b=bOhFKlshRxO9MpsgN7NONZxDsEXj0regLNCBjSBiSL8HLIvcS5xLyzcuvj05drojGa
+         0jExpaZxbkgi3BxEo+GP2jhj+Dc3z2CGiRFwCN6GOvZbL5Zip67MxtcKI0/fLU33DhtF
+         yvYNOKbo6rsn7aT/nOqmIfGixY+TN2coBBzOFZ6eUgmnkLPTIzgSKzKrUi2IGz2U/xjX
+         MsG3brhPq7OJzXotmkFELQdwjhvDc96ACfWZodJUK+d6erJ87LL3/T5eLl81xzcVhdG1
+         VxoKTNRNtL91IQV5x9eeUWUbcOsWTtCf1Rj+tP0L3Hgg8h0V3CarCjdHy7atydVTeUao
+         r9Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtIYlWLX2s1+Qs6fhpTUoHrkMjegfvHOBXIaX3SQyxPXB8E6KCMMoa/+ojsGFEmlqct6XYqhZSc8PTpQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSI01tRUUah7idQjw3/1/kL3qdn5ielflQDA5c7/xgrupmQNlg
+	zwNm887HyDNN4Tl8nCmrBF6Oy4RzedHJImK4JaNuS4I/o9VG2cVcd0D1
+X-Gm-Gg: ASbGncvjSKk/cavjNRePjKsNnQHorpca65Ln+GD1EZzn1dRwVz2BYiEiE8MFXaNBQ8p
+	/+WnlOxP/PJdp2AvjOZoLcoEtKMkhoMeyzXD55+Ym8EhUxTg1JJ76rHmGp4OKpS78SuWNlr3vSB
+	vp8bKyxTaSE4NXBZDdYP937BYwrc+lPcZUzHNKoCyVOq0/06Sun6Bne9iLAwhmm6mu+2491Wye+
+	JubBWTf93CrIDgLetTKRq3W7seR1dcbvg2ZIoqIwkpGqiI2T6U5FxuSdYr87W9gNmSbJY7SoqS3
+	+ITJ3dq90nqz90g8BQLXwDyu9wPz68002ZlfQujWN7DALFQ1LMLMz6jumSeu6H8BfW87E8NXV1o
+	iq7nsM7/iLX47LaIE4wp3u8J2Coo7LXLU7OqtClttYU2CTReWNCpyYddWA7N6A3EEz/r20/Y3
+X-Google-Smtp-Source: AGHT+IEtna3VdNFsNRGPPO1rRNNfH6lAa3G7+dTJJNdTKpS4A8PpY3/x/91ajSxp87X+6s24Ykc4yw==
+X-Received: by 2002:a05:620a:a09a:20b0:891:da6d:307c with SMTP id af79cd13be357-891da6d30c3mr3681242485a.27.1761410222169;
+        Sat, 25 Oct 2025 09:37:02 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f247fb582sm173627285a.12.2025.10.25.09.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Oct 2025 09:37:01 -0700 (PDT)
+Date: Sat, 25 Oct 2025 12:37:00 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/21] lib: add alternatives for GENMASK()
+Message-ID: <aPz8rC-F_xYrf03N@yury>
+References: <20251025162858.305236-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3f04:b0:430:c49d:750c with SMTP id
- e9e14a558f8ab-431ebed79admr77062145ab.27.1761410122404; Sat, 25 Oct 2025
- 09:35:22 -0700 (PDT)
-Date: Sat, 25 Oct 2025 09:35:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fcfc4a.050a0220.346f24.02fb.GAE@google.com>
-Subject: [syzbot] [mptcp?] WARNING in mptcp_pm_nl_del_addr_doit
-From: syzbot <syzbot+f56f7d56e2c6e11a01b6@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	martineau@kernel.org, matttbe@kernel.org, mptcp@lists.linux.dev, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025162858.305236-1-yury.norov@gmail.com>
 
-Hello,
+Please disregard it. The patches 8-21 have the TO list corrupted. I'll
+resend shortly.
 
-syzbot found the following issue on:
-
-HEAD commit:    6548d364a3e8 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11da4e7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f953a3e1b3e60637
-dashboard link: https://syzkaller.appspot.com/bug?extid=f56f7d56e2c6e11a01b6
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a6472a8e035a/disk-6548d364.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1547185ddf28/vmlinux-6548d364.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d4610741deb8/bzImage-6548d364.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f56f7d56e2c6e11a01b6@syzkaller.appspotmail.com
-
-netlink: 8 bytes leftover after parsing attributes in process `syz.7.6472'.
-netlink: 8 bytes leftover after parsing attributes in process `syz.7.6472'.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 27976 at net/mptcp/pm_kernel.c:1053 __mark_subflow_endp_available net/mptcp/pm_kernel.c:1053 [inline]
-WARNING: CPU: 0 PID: 27976 at net/mptcp/pm_kernel.c:1053 mptcp_nl_remove_subflow_and_signal_addr net/mptcp/pm_kernel.c:1088 [inline]
-WARNING: CPU: 0 PID: 27976 at net/mptcp/pm_kernel.c:1053 mptcp_pm_nl_del_addr_doit+0xe2c/0x11d0 net/mptcp/pm_kernel.c:1190
-Modules linked in:
-CPU: 0 UID: 0 PID: 27976 Comm: syz.7.6472 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__mark_subflow_endp_available net/mptcp/pm_kernel.c:1053 [inline]
-RIP: 0010:mptcp_nl_remove_subflow_and_signal_addr net/mptcp/pm_kernel.c:1088 [inline]
-RIP: 0010:mptcp_pm_nl_del_addr_doit+0xe2c/0x11d0 net/mptcp/pm_kernel.c:1190
-Code: 01 00 00 49 89 c6 e8 93 b2 82 f6 e9 ed fb ff ff e8 89 b2 82 f6 48 89 df be 03 00 00 00 e8 ac 8d 53 f9 eb 9c e8 75 b2 82 f6 90 <0f> 0b 90 e9 90 fe ff ff 89 d9 80 e1 07 38 c1 0f 8c d9 fb ff ff 48
-RSP: 0018:ffffc9000c3e71a0 EFLAGS: 00010283
-RAX: ffffffff8b3d917b RBX: 0000000000000000 RCX: 0000000000080000
-RDX: ffffc90019844000 RSI: 0000000000009d14 RDI: 0000000000009d15
-RBP: ffffc9000c3e73b0 R08: ffff88802f74eea7 R09: 1ffff11005ee9dd4
-R10: dffffc0000000000 R11: ffffed1005ee9dd5 R12: ffff888068e67080
-R13: ffff88802f74ee98 R14: ffff88802f74e400 R15: 1ffff11005ee9dd3
-FS:  00007f57ed7746c0(0000) GS:ffff888125d06000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000020000000c038 CR3: 000000004ebf8000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:742
- ____sys_sendmsg+0x505/0x830 net/socket.c:2630
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f57ec98efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f57ed774038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f57ecbe6090 RCX: 00007f57ec98efc9
-RDX: 000000002000c094 RSI: 0000200000000000 RDI: 0000000000000009
-RBP: 00007f57eca11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f57ecbe6128 R14: 00007f57ecbe6090 R15: 00007ffeff6c13c8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On Sat, Oct 25, 2025 at 12:28:36PM -0400, Yury Norov (NVIDIA) wrote:
+> GENMASK(high, low) notation reflects a common pattern to describe
+> hardware registers. However, out of drivers context it's confusing and
+> error-prone. 
+> 
+> This series introduces alternatives for GENMASK():
+> 
+>  - BITS(low, high);
+>  - FIRST_BITS(nbits);
+>  - LAST_BITS(start);
+> 
+> Patches 1-6 and 8 rename existing local BITS(). Patches 7 and 9 introduce
+> new generic macros. Patches 10-18 switch GENMASK() usage in core files to
+> better alternatives. Patch 19 adds Documentation section describing
+> preferred parameters ordering.
+> 
+> The series is inspired by:
+> 
+> https://lore.kernel.org/all/CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com/
+> 
+> Yury Norov (NVIDIA) (21):
+>   arc: disasm: rename BITS() for FIELD()
+>   iwlwifi: drop unused BITS()
+>   select: rename BITS() to FDS_BITS()
+>   ALSA: rename BITS to R_BITS
+>   zlib: BITS() to LOWBITS()
+>   mfd: prepare to generalize BITS() macro
+>   bits: Add BITS() macro
+>   mfd: drop local BITS() macro
+>   bits: generalize BITMAP_{FIRST,LAST}_WORD_MASK
+>   i2c: nomadik: don't use GENMASK()
+>   drivers: don't use GENMASK() in FIELD_PREP_WM16()
+>   bitmap: don't use GENMASK()
+>   trace: don't use GENMASK()
+>   lib: 842: don't use GENMASK_ULL()
+>   bpf: don't use GENMASK()
+>   kcsan: don't use GENMASK()
+>   mm: don't use GENMASK()
+>   fprobe: don't use GENMASK()
+>   fs: don't use GENMASK()
+>   fortify-string: don't use GENMASK()
+>   Docs: add Functions parameters order section
+> 
+>  Documentation/process/coding-style.rst        | 48 ++++++++++++++
+>  arch/arc/include/asm/disasm.h                 | 62 +++++++++----------
+>  arch/arc/kernel/disasm.c                      | 46 +++++++-------
+>  drivers/gpu/drm/rockchip/rockchip_lvds.h      |  2 +-
+>  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c  |  4 +-
+>  drivers/i2c/busses/i2c-nomadik.c              | 44 ++++++-------
+>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  4 +-
+>  drivers/mfd/db8500-prcmu-regs.h               |  2 -
+>  drivers/mmc/host/dw_mmc-rockchip.c            |  4 +-
+>  .../net/wireless/intel/iwlwifi/fw/api/coex.h  |  2 -
+>  drivers/soc/rockchip/grf.c                    |  4 +-
+>  fs/erofs/internal.h                           |  2 +-
+>  fs/f2fs/data.c                                |  2 +-
+>  fs/f2fs/inode.c                               |  2 +-
+>  fs/f2fs/segment.c                             |  2 +-
+>  fs/f2fs/super.c                               |  2 +-
+>  fs/proc/task_mmu.c                            |  2 +-
+>  fs/resctrl/pseudo_lock.c                      |  2 +-
+>  fs/select.c                                   |  6 +-
+>  include/asm-generic/fprobe.h                  |  7 +--
+>  include/linux/bitmap.h                        | 11 ++--
+>  include/linux/bits.h                          | 11 ++++
+>  include/linux/f2fs_fs.h                       |  2 +-
+>  include/linux/find.h                          | 34 +++++-----
+>  include/linux/fortify-string.h                |  4 +-
+>  kernel/bpf/verifier.c                         |  4 +-
+>  kernel/kcsan/encoding.h                       |  4 +-
+>  kernel/trace/fgraph.c                         | 10 +--
+>  kernel/trace/trace_probe.h                    |  2 +-
+>  lib/842/842_compress.c                        |  2 +-
+>  lib/842/842_decompress.c                      |  2 +-
+>  lib/bitmap.c                                  |  2 +-
+>  lib/test_bitmap.c                             | 14 ++---
+>  lib/zlib_inflate/inflate.c                    | 48 +++++++-------
+>  mm/debug_vm_pgtable.c                         |  2 +-
+>  sound/core/oss/rate.c                         | 12 ++--
+>  sound/soc/rockchip/rockchip_i2s_tdm.h         |  2 +-
+>  37 files changed, 235 insertions(+), 180 deletions(-)
+> 
+> -- 
+> 2.43.0
 
