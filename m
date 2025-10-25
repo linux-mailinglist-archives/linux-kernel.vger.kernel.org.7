@@ -1,157 +1,173 @@
-Return-Path: <linux-kernel+bounces-869917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126A2C08FFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:05:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B39FC09005
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442311B26BED
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:05:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776351883F66
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D40B28727E;
-	Sat, 25 Oct 2025 12:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488F12FB0A6;
+	Sat, 25 Oct 2025 12:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L98mhKpa"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0BMnNZp"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4734438B
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4531F5838
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761393911; cv=none; b=YhZx4WQa79RkETyqSxTotjxM7X0nelu5as3ygYmqXWN01X5dgJUIsoeIrf+u7JWSeDzCR/y8dnHLXQVrliegkm3F8knx+gBu0nQPBPPcu32xImvVDw7dteZ4Rhj/LP8WfpNbpJjvoq/5UTlhToLzTAGClydXDxNnFs7H+VBgSJo=
+	t=1761393933; cv=none; b=dKuTGTJVKXIm/3EFlda762C+bgYxA5R1moqhnooL1Hqes0P+xAaimnmJKZn4RccEaJOwwh+oawYEp2csLK3JZQGDL9p7phCgN26+4kphHP3b5yu4Swevz+bmZXDGKqXA72i8VdSYBFGgabYFOU3XsHiV+azX/ijjAwnfA30fsmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761393911; c=relaxed/simple;
-	bh=RqyLr/KFP6kVHxuT8uv8+KaJmrBYAr/DIIDr7cYq7eo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pqTeuvNwdzaEyW6WheD0YKphADr+nQl12kRWMKG2v6vk2YnamsQyUmsWC8P4JTmnDvN2n+S1iUEFBaZWq1jlEQ0aLvdPwi9zTgxbZg+rzGgL3gHliAUNyyXz8XcyoVhjBKaTFvXxhnk52KRbQN/zW+8LZsMyXRl3uHc9d8blhfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L98mhKpa; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1761393933; c=relaxed/simple;
+	bh=69y9OitDsvZG+ygITGh4xZyW20ZYYBCYMz7R434uZKM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F7Idz3IlkG8eyxgk36WVoSg3j/XEUPLvvJd9ajo944h9px+FlvG1HnbouOw2pVXe8OLdFwarfRmDEcPSFDqJoKmUP8gnTUX4ekO+T63/Zy5XDy4Ygw3gN8fdSUQoluMjiEYrQZEBdBWB4Y0HC7ABWZ3zaYgxt/EaT7IyoMYkgjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0BMnNZp; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29292eca5dbso40138705ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:05:09 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33d463e79ddso3718533a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761393908; x=1761998708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iPoytxf9KSpw9USlqlPwbyYT9B/FM2gOwtvnsmod8wc=;
-        b=L98mhKpaxkV56QwTM46XpSk7lQIJ/pBhQfQoJ5V1s6FhOdRITNR8mcbWamOV4BQbF0
-         SVn+NQhkrg/LdPTKmHeZ16L54g5x35qgPvRoTfHccJwzJx/v8kDRYp9hCTZzjNFsFkVq
-         nvuwiOEVu/uT9lsArBx+eI7iJpc7TsXVG10YpGxjAbIR3B2en4AAZp70nTTOLciaXqhS
-         ELPJgrDgkqgOb53XgQmrqv3APdSI0OGEebcfBqfAH+rpmGC1+P23eSqGn3d3Ih4DueS+
-         FWBUnEvB7JekvuMgb7FIP96Du8Nr7YBXAbo5gdmfqyIpjnArxaCo9gia0/iWDIqU9cSa
-         qNsA==
+        d=gmail.com; s=20230601; t=1761393928; x=1761998728; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qcJ3/FBKK2ajxzIkHMY6ixiVILAkehDzwnS491Vgj6k=;
+        b=Y0BMnNZpfTBwABFCVZIAHh3td9Z7lLwIgQyaUc3ZUkYsaroN3L24Juyzynbgp9anyB
+         7wTmZLv2XZB51rlipw8hM3Pg2k6DUYhktOy4qKX94lW5V4bJ4J2mnzQittGVcpo16omp
+         rlWvs3fkLMRnTcTY5aveZrD94JYaGrSSbXoezvjSp34Vd+awO8NYENgFaZVPla51vWgG
+         oUWgZJxBD2FQ/fUDT3ky1HWfgle15M8S8kpy7tehKII6MiDYsUE85tJlgIQEHCVUlhdj
+         M4S+R/BZESbFvNGrFufTVrRqmSea+DoL7cTn8tosugPYk1cmW800n0SkeYbAG27t6cg9
+         h7qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761393908; x=1761998708;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iPoytxf9KSpw9USlqlPwbyYT9B/FM2gOwtvnsmod8wc=;
-        b=N9v7Rugh3FnrSj9Qv9sZ6MhOD4j7fJq3uYCs1j1wQKkaHuV4+PNiVRahflEziiBsgB
-         igTjvLPlAiJ7eAspEIFyFj2jM1qJuSwQesMNMPA/WGjmXoCQZPKdnzmIv0kKr141Sw0k
-         u82fMwICGJD0Tc3W8ECIHYwc0943C/qDFxh/waswjGClZotq89CamHOmlqzrc9X6lKKs
-         9NBlsovMKqIJEGbvzlu+WFgcbtCbw6azW57Sf8+5PlWHZ+MReZQXd5La8O+Cp5yLD80u
-         hmoJemetp4ri6YR5JOViQhwfvqnLkwElSjNxgGjVS5kZ7CXxy2gH2E1oSgwZgVWwb46W
-         wUCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKNWcnag+z4DRMuFvwsDOVq+Ij69mDp2nmh7s1QugX7LinmVGipRE8kVxXw8omWajL4jThYbTo3NW9zew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu8WLy+VfEW4ZOXUslB9a/QrExmwgQNNh17IHw1dhIiSYieUf0
-	BjHoVlgyvJlNeOM/s1kUFqmcQbKqVerx240a5CE1603oJt3HQRV7PBD5
-X-Gm-Gg: ASbGnct1OifD/0JjKXf/VKdkOPxeTJQkjuZFa1GFirk6Sbl2v/aaRGvIfP3qM/WAqFi
-	bd7CIFc8IUYHdZ+MGlTvcwIyxuDAhwg+KrOGNuO9FaxB2PN3pY7WMTqj+aUwy/rcxVN1T8YZUiF
-	aVvwT+E5Zs9O9RhnrGwBCuP1EBz4YarGKl4wAGKYfVWI6+QM63rkSUBEAOCM2fogCOkkKyFkXCm
-	U0tADxChUEdEmCh4e8R7jldgR41CzRPfgDBpW1NZLNnUBb6BVdN24NC5qy4byryy8hO0I8gXPz9
-	sVP5pICpLAwRyBltPcu6psfWEmvkUelRm44/fn58yoEZBJU+I0ivnKuYWKuLdm9JSjXDrUo7s6K
-	uPbgTYHHXJ09u1SrFrFgvEnh83ndLASiUtLfskz7IRCD47eG4Znaj3v0cHud5JogI+n1SHrkUvD
-	Iio1rVqhr2DA==
-X-Google-Smtp-Source: AGHT+IENHghZmAfoOLVQx3IvoJEGkCtm9ehcXpV3CexqECxrjj1hj7ylp/61RR7XbH9zkL6BI8FUWg==
-X-Received: by 2002:a17:903:1746:b0:28e:7ea4:2023 with SMTP id d9443c01a7336-290cb07d430mr374033525ad.46.1761393908432;
-        Sat, 25 Oct 2025 05:05:08 -0700 (PDT)
-Received: from Shardul.. ([223.185.39.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d099b6sm21480655ad.33.2025.10.25.05.05.05
+        d=1e100.net; s=20230601; t=1761393928; x=1761998728;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qcJ3/FBKK2ajxzIkHMY6ixiVILAkehDzwnS491Vgj6k=;
+        b=FMvBRwRSQ6lxztxDStGYSuoNfuu/sf0uZLGsjNkeI694wexP12cjVNyNkR47xEVK6M
+         3nHHo5eF3Fw3PALAhcUW6FJU9EwZ8pZM+Thuol7eTsDfhtR24IgRQAN4z2fzklKQAKWh
+         eKIGlpzHvLbxWCWFIT6DubZnXJsqDZmUwQgLo4FrkZMNyAeY2lDEBXs1LQAAZc7uiG2J
+         gbbvukwr9NaPq8IyV4ZxRUmtTXmjd2udHuLXtEm+aEtDEcRU5yWq8ewF7p8xkz7ATQh5
+         B1NHJexahCDrK2ti2LHunyMx4MqxfY4/aa8p77ORlAvkUq+/ZBVI7SARstE7UtUVrWr4
+         Yc7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2wo38VUMq8RJPX4loTwuv8tamx+c/abRTZhdCWpf6Me0ZNDXZmopAx+Yp2CiVTXcIb4ZcRyJf7cMcGzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQDT20j372QJQPJn6dtzeFV7netewea0f+jNH9D/p3AEZd32vF
+	LJVYZgyhOi7wtHCpbG1KfR/PpucXFYduMftsdnCRbX3hLeC8oiLic2UW
+X-Gm-Gg: ASbGncuHr1A1cqIjj/EhCzuMjhTqfYZbkm5/M+H/tz1m+F1lQWt+tEAzEsLg1P0NqZ0
+	utZ8VGXmmhlEsY3NFcwxNj3tQfNSBrYdyX1NRvDrPdRoTFIeDe46l9Nn3o5lSX65r6QrtTjEMEi
+	+wZ84NQ08Lw2jy7dPAOqzGoSX/dOE08B47hUliLo1BQC9Bl/RHxaXMXGlDP0W+EnceV6cbDXFlN
+	Z24RyCgcwix/wm6lYVpvLB/ZfaE9h1OKX23GHDjIlwUJRORGLQxhdofLGiyYz6l8cnZ6QbyX5Es
+	BXRPJiYdV2HXJa9HmW4hwYT5tpwbJuHHHY91F0fimgE2ftzQIHG+48GJXV1XAG8KRnKwD6RSId8
+	8EYDHzLGnufw12/8Wo6n4Cs91waA00Qtq/MAevkh5tU8mwfwJ/uOMJOS7fhBq0Xt1xYBkhjt+8B
+	wFzGPsgj0r
+X-Google-Smtp-Source: AGHT+IEAK6eZag+MykEYgdavvPIK4g5Vlvg7NxyVKqzEv2FUkmjPRZH82E6BoaQ/fCmgKrW+V4J2Xg==
+X-Received: by 2002:a17:90b:2690:b0:32e:d16c:a8c6 with SMTP id 98e67ed59e1d1-33bcf87d120mr44521355a91.16.1761393927422;
+        Sat, 25 Oct 2025 05:05:27 -0700 (PDT)
+Received: from [10.248.7.103] ([2409:40f4:2141:a037:1f2b:7d61:3375:68bd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed81ca93sm2150038a91.19.2025.10.25.05.05.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 05:05:07 -0700 (PDT)
-From: Shardul Bankar <shardulsb08@gmail.com>
-To: linux-btrfs@vger.kernel.org
-Cc: clm@fb.com,
-	dsterba@suse.com,
-	linux-kernel@vger.kernel.org,
-	shardulsb08@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2 fs/btrfs v2] btrfs: fix memory leak of qgroup_list in btrfs_add_qgroup_relation
-Date: Sat, 25 Oct 2025 17:35:00 +0530
-Message-Id: <20251025120500.3092125-1-shardulsb08@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251025092951.2866847-1-shardulsb08@gmail.com>
-References: <20251025092951.2866847-1-shardulsb08@gmail.com>
+        Sat, 25 Oct 2025 05:05:27 -0700 (PDT)
+From: Rakuram Eswaran <rakuram.e96@gmail.com>
+Date: Sat, 25 Oct 2025 17:35:18 +0530
+Subject: [PATCH] net: tcp_lp: fix kernel-doc warnings and update outdated
+ reference links
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251025-net_ipv4_tcp_lp_c-v1-1-058cc221499e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAP28/GgC/x2MQQqAIBAAvxJ7TkhRir4SIaZrLYSJRgTi35MOc
+ 5jDTIGMiTDD3BVI+FCmKzThfQf2MGFHRq45iEEo3mABb03xkfq2UZ9RW8b9uEnj5GAnBa2LCT2
+ 9/3NZa/0A7hvaPWMAAAA=
+X-Change-ID: 20251025-net_ipv4_tcp_lp_c-1f7b4ad40c85
+To: Eric Dumazet <edumazet@google.com>, 
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, hswong3i@gmail.com, hlhung3i@gmail.com
+Cc: khalid@kernel.org, skhan@linuxfoundation.org, 
+ david.hunter.linux@gmail.com, 
+ linux-kernel-mentees@lists.linuxfoundation.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Rakuram Eswaran <rakuram.e96@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761393921; l=2374;
+ i=rakuram.e96@gmail.com; s=20251022; h=from:subject:message-id;
+ bh=69y9OitDsvZG+ygITGh4xZyW20ZYYBCYMz7R434uZKM=;
+ b=vWllaOOPUAH011DH/rlqhrvEcN8BOlGs5axrtJOP4Np2NxeVKvLN5ZCf0g8ypP6Mbq4t5lARr
+ 82IzpOkh3KjB8IKHqMHiKEAiY4dUTZicm9Bh/powGQO3u0qVtENBo7A
+X-Developer-Key: i=rakuram.e96@gmail.com; a=ed25519;
+ pk=swrXGNLB3jH+d6pqdVOCwq0slsYH5rn9IkMak1fIfgA=
 
-When btrfs_add_qgroup_relation() is called with invalid qgroup levels
-(src >= dst), the function returns -EINVAL directly without freeing the
-preallocated qgroup_list structure passed by the caller. This causes a
-memory leak because the caller unconditionally sets the pointer to NULL
-after the call, preventing any cleanup.
+Fix kernel-doc warnings in tcp_lp.c by adding missing parameter
+descriptions for tcp_lp_cong_avoid() and tcp_lp_pkts_acked() when
+building with W=1.
 
-The issue occurs because the level validation check happens before the
-mutex is acquired and before any error handling path that would free
-the prealloc pointer. On this early return, the cleanup code at the
-'out' label (which includes kfree(prealloc)) is never reached.
+Also replace invalid URLs in the file header comment with the currently
+valid links to the TCP-LP paper and implementation page.
 
-In btrfs_ioctl_qgroup_assign(), the code pattern is:
+No functional changes.
 
-    prealloc = kzalloc(sizeof(*prealloc), GFP_KERNEL);
-    ret = btrfs_add_qgroup_relation(trans, sa->src, sa->dst, prealloc);
-    prealloc = NULL;  // Always set to NULL regardless of return value
-    ...
-    kfree(prealloc);  // This becomes kfree(NULL), does nothing
-
-When the level check fails, 'prealloc' is never freed by either the
-callee or the caller, resulting in a 64-byte memory leak per failed
-operation. This can be triggered repeatedly by an unprivileged user
-with access to a writable btrfs mount, potentially exhausting kernel
-memory.
-
-Fix this by freeing prealloc before the early return, ensuring prealloc
-is always freed on all error paths.
-
-Fixes: 8465ecec9611 ("btrfs: Check qgroup level in kernel qgroup assign.")
-Cc: stable@vger.kernel.org # v4.0+
-Signed-off-by: Shardul Bankar <shardulsb08@gmail.com>
+Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
 ---
+Below W=1 build warnings:
+net/ipv4/tcp_lp.c:121 function parameter 'ack' not described in 'tcp_lp_cong_avoid'
+net/ipv4/tcp_lp.c:121 function parameter 'acked' not described in 'tcp_lp_cong_avoid'
+net/ipv4/tcp_lp.c:271 function parameter 'sample' not described in 'tcp_lp_pkts_acked'
 
-v2:
- - Free prealloc directly before returning -EINVAL (no mutex held),
-   per review from Qu Wenruo.
- - Drop goto-based cleanup.
+The new URLs were verified through archive.org to confirm they match
+the content of the original references.
+---
+ net/ipv4/tcp_lp.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
- fs/btrfs/qgroup.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+diff --git a/net/ipv4/tcp_lp.c b/net/ipv4/tcp_lp.c
+index 52fe17167460fc433ec84434795f7cbef8144767..976b56644a8a746946e5028dcb054e4c3e249680 100644
+--- a/net/ipv4/tcp_lp.c
++++ b/net/ipv4/tcp_lp.c
+@@ -23,9 +23,9 @@
+  * Original Author:
+  *   Aleksandar Kuzmanovic <akuzma@northwestern.edu>
+  * Available from:
+- *   http://www.ece.rice.edu/~akuzma/Doc/akuzma/TCP-LP.pdf
++ *   https://users.cs.northwestern.edu/~akuzma/doc/TCP-LP-ToN.pdf
+  * Original implementation for 2.4.19:
+- *   http://www-ece.rice.edu/networks/TCP-LP/
++ *   https://users.cs.northwestern.edu/~akuzma/rice/TCP-LP/linux/tcp-lp-linux.htm
+  *
+  * 2.6.x module Authors:
+  *   Wong Hoi Sing, Edison <hswong3i@gmail.com>
+@@ -113,6 +113,8 @@ static void tcp_lp_init(struct sock *sk)
+ /**
+  * tcp_lp_cong_avoid
+  * @sk: socket to avoid congesting
++ * @ack: current ack sequence number
++ * @acked: number of ACKed packets
+  *
+  * Implementation of cong_avoid.
+  * Will only call newReno CA when away from inference.
+@@ -261,6 +263,7 @@ static void tcp_lp_rtt_sample(struct sock *sk, u32 rtt)
+ /**
+  * tcp_lp_pkts_acked
+  * @sk: socket requiring congestion avoidance calculations
++ * @sample: ACK sample containing timing and rate information
+  *
+  * Implementation of pkts_acked.
+  * Deal with active drop under Early Congestion Indication.
 
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index 1175b8192cd7..31ad8580322a 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -1539,8 +1539,10 @@ int btrfs_add_qgroup_relation(struct btrfs_trans_handle *trans, u64 src, u64 dst
- 	ASSERT(prealloc);
- 
- 	/* Check the level of src and dst first */
--	if (btrfs_qgroup_level(src) >= btrfs_qgroup_level(dst))
-+	if (btrfs_qgroup_level(src) >= btrfs_qgroup_level(dst)) {
-+		kfree(prealloc);
- 		return -EINVAL;
-+	}
- 
- 	mutex_lock(&fs_info->qgroup_ioctl_lock);
- 	if (!fs_info->quota_root) {
+---
+base-commit: 566771afc7a81e343da9939f0bd848d3622e2501
+change-id: 20251025-net_ipv4_tcp_lp_c-1f7b4ad40c85
+
+Best regards,
 -- 
-2.34.1
+Rakuram Eswaran <rakuram.e96@gmail.com>
 
 
