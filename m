@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-869840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9DFC08D67
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E84BC08D75
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AB404E822F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3981C870DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8812E54D1;
-	Sat, 25 Oct 2025 07:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1CB2E62C8;
+	Sat, 25 Oct 2025 07:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aT10W6Oj"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s//E3hTF"
+Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BB12D9EFC;
-	Sat, 25 Oct 2025 07:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83557DDA9;
+	Sat, 25 Oct 2025 07:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761377895; cv=none; b=m/8YNjT2P3jNYfhPMazpqJ8Z+29IOhzrRRchEewxvGcTPAS+WuaQ7LxvtwpryGDZEYsJl4LHL6CilhNeq7lvM+4QyLOvZvLkHFVtvfRu4ttES9igU6KE4xGdvyzxLzgwoxvd8uWRpMr6VxS1nV5utw5nUMg0no1i7pfLAk+nfck=
+	t=1761378202; cv=none; b=KCFpF3Pl+hcXSfXnI5yJLjVtFT4kICSNRBWBI6G9L+TP2mCSjg/dMTi6v7iNVFlxqFMH4iu2SATmD7Orvocv3NzgV00k7RKFYmzaw+RIDOoG2tN9mtYlPFGceRs8IGy84URjotlwrUcWSGdc+o/+CZPutPhs9CM9BtFk0GSuwm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761377895; c=relaxed/simple;
-	bh=B77uCjWGnLkqZiz3JqNuCKakjxMi7nXAQARWSFzlKy0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pAUWKbmn2ruWQcYSfhzYmuUzfoFJ/COeX+3LL+Ye1yKRcWZsS6B/ReS6d2QsxAGbUUmt4PQhcJP0o7DJ4rc1Csbd3o/7TujSg+IWgsKyiv85JOTixoP1dJRGkdDBKHJI4xgG3h3yXjJ9pvoRh9KldRhoBa7XqAUvEmmj4aTtuIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aT10W6Oj; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59P7buxj2053674;
-	Sat, 25 Oct 2025 02:37:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761377876;
-	bh=qYKT716aMY+owi+NZNJDxv+VNu37GVYDK+vvVdVsVj8=;
-	h=From:To:CC:Subject:Date;
-	b=aT10W6Oj0whFanBwsorhuMXW8ARYB0QQC/l/H1BZk58B2mLeJyz7V0ACbbas+RQwV
-	 4KODTeKU/TZC1n0b4QAabd/SNH4AMx5fLUtrgpUApDQlOsAl7k2PU15bo0HEs2CSZn
-	 1C8KVXQLDGbBRSREhDqaBj527H+tKvHhgfton0qk=
-Received: from DLEE201.ent.ti.com (dlee201.ent.ti.com [157.170.170.76])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59P7buam3721762
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 25 Oct 2025 02:37:56 -0500
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE201.ent.ti.com
- (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 25 Oct
- 2025 02:37:56 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sat, 25 Oct 2025 02:37:56 -0500
-Received: from toolbox.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.73.74])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59P7bqnX1594606;
-	Sat, 25 Oct 2025 02:37:53 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-*: Replace rgmii-rxid with rgmii-id for CPSW ports
-Date: Sat, 25 Oct 2025 13:07:59 +0530
-Message-ID: <20251025073802.1790437-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1761378202; c=relaxed/simple;
+	bh=ZRMfpwIeiEBaIp3IOE1MWUX3+PUDqBU0KpRlnoaXh+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HlQgJqFo/FA4kM5cpZBkGcfPMKt7nYhyxLQwyMs64FIQRH8XHLIj/ESb4c5cTW4wXxC/d3euWhtNfeY5fcvou7eTZSR3OoeUsjEKUUaH8qnD6L6C0pNqNhdsEjQ2PJnQq653rlFnDOLxjPQKULD7/pCwbG0OAao+HOcSo91lSkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s//E3hTF; arc=none smtp.client-ip=80.12.242.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id CYvev1LQVZqBKCYvevAwog; Sat, 25 Oct 2025 09:43:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1761378192;
+	bh=v+RrkQ9YUdsboOCqsglN3Kfef+K4bp/CGqXgH+DRYlw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=s//E3hTFwLeP74Ah9/JHDaNzhvTaqsKyvUp05oW7HyCeyi849vJh7qNzpkClr862x
+	 DywX8nr/w1Vverky24pJl0bADjNpouD2ngIuQ/iWE/9i2JnWYSpdVQy/h7Wk306pJY
+	 zR5g4nFETG2xlWtVjkaElUukHIZL0inapNlNpgTkSGQDyXNvwYSU97wOAy+LYsxrUn
+	 6lHhmq/2cg3mcDcBg9Ico3ejrYorRb+CrcvKnIWtzPS37bSgAYs0+oDuBS4LJkm1a1
+	 wWboq/WuYHfp/vJDmSPCerzH+e1cC6LKzdEidMNxy2OdVlamt6Zk4FPo6jh6DzhFJu
+	 I7CTiRb0VBCDg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 25 Oct 2025 09:43:12 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-sctp@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] sctp: Constify struct sctp_sched_ops
+Date: Sat, 25 Oct 2025 09:40:59 +0200
+Message-ID: <dce03527eb7b7cc8a3c26d5cdac12bafe3350135.1761377890.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,555 +70,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The MAC Ports across all of the CPSW instances (CPSW2G, CPSW3G, CPSW5G and
-CPSW9G) present in various K3 SoCs only support the 'RGMII-ID' mode. This
-correction has been implemented/enforced by the updates to:
-a) Device-Tree binding for CPSW [0]
-b) Driver for CPSW [1]
-c) Driver for CPSW MAC Port's GMII [2]
+'struct sctp_sched_ops' is not modified in these drivers.
 
-To complete the transition from 'RGMII-RXID' to 'RGMII-ID', update the
-'phy-mode' property for all CPSW ports by replacing 'rgmii-rxid' with
-'rgmii-id'.
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-[0]: commit 9b357ea52523 ("dt-bindings: net: ti: k3-am654-cpsw-nuss: update phy-mode in example")
-[1]: commit ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
-[2]: commit a22d3b0d49d4 ("phy: ti: gmii-sel: Always write the RGMII ID setting")
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   8019	    568	      0	   8587	   218b	net/sctp/stream_sched_fc.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   8275	    312	      0	   8587	   218b	net/sctp/stream_sched_fc.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
+Compile tested only with:
+  make net/sctp/
+---
+ include/net/sctp/stream_sched.h |  4 ++--
+ include/net/sctp/structs.h      |  2 +-
+ net/sctp/stream.c               |  8 ++++----
+ net/sctp/stream_sched.c         | 16 ++++++++--------
+ net/sctp/stream_sched_fc.c      |  4 ++--
+ net/sctp/stream_sched_prio.c    |  2 +-
+ net/sctp/stream_sched_rr.c      |  2 +-
+ 7 files changed, 19 insertions(+), 19 deletions(-)
 
-Hello,
-
-This patch is based on linux-next tagged next-20251024.
-
-Regards,
-Siddharth.
-
- arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi          | 2 +-
- arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi           | 2 +-
- arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi           | 2 +-
- arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi               | 2 +-
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts           | 2 +-
- arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi           | 3 +--
- arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi         | 2 +-
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts                  | 2 +-
- arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi          | 2 +-
- arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi          | 2 +-
- arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi              | 2 +-
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                  | 4 ++--
- arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi       | 2 +-
- arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi           | 2 +-
- arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi          | 2 +-
- arch/arm64/boot/dts/ti/k3-am642-evm.dts                  | 4 ++--
- arch/arm64/boot/dts/ti/k3-am642-sk.dts                   | 4 ++--
- arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts   | 2 +-
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts           | 2 +-
- arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts           | 2 +-
- arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts         | 2 +-
- arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi          | 2 +-
- arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts         | 2 +-
- arch/arm64/boot/dts/ti/k3-am69-sk.dts                    | 2 +-
- arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts    | 2 +-
- arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts       | 2 +-
- arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts    | 2 +-
- arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso  | 8 ++++----
- arch/arm64/boot/dts/ti/k3-j721e-sk.dts                   | 2 +-
- arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts   | 2 +-
- arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso | 2 +-
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts                  | 2 +-
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi  | 4 ++--
- 33 files changed, 40 insertions(+), 41 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-index eeca643fedbe..985963774c00 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-@@ -214,7 +214,7 @@ &cpsw3g {
- };
+diff --git a/include/net/sctp/stream_sched.h b/include/net/sctp/stream_sched.h
+index 8034bf5febbe..77806ef1cb70 100644
+--- a/include/net/sctp/stream_sched.h
++++ b/include/net/sctp/stream_sched.h
+@@ -52,10 +52,10 @@ void sctp_sched_dequeue_done(struct sctp_outq *q, struct sctp_chunk *ch);
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy1>;
- 	bootph-all;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi
-index 5c1284b802ad..3d1406acf680 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi
-@@ -74,7 +74,7 @@ &cpsw_port1 {
- /* Verdin ETH_2_RGMII */
- &cpsw_port2 {
- 	phy-handle = <&cpsw3g_phy1>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- };
+ void sctp_sched_dequeue_common(struct sctp_outq *q, struct sctp_chunk *ch);
+ int sctp_sched_init_sid(struct sctp_stream *stream, __u16 sid, gfp_t gfp);
+-struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream);
++const struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream);
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
-index 71c29eab0eee..844f59f772e1 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
-@@ -268,7 +268,7 @@ &cpsw_port1 {
- /* Verdin ETH_2_RGMII */
- &cpsw_port2 {
- 	phy-handle = <&cpsw3g_phy1>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- };
+ void sctp_sched_ops_register(enum sctp_sched_type sched,
+-			     struct sctp_sched_ops *sched_ops);
++			     const struct sctp_sched_ops *sched_ops);
+ void sctp_sched_ops_prio_init(void);
+ void sctp_sched_ops_rr_init(void);
+ void sctp_sched_ops_fc_init(void);
+diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
+index 2ae390219efd..57cd5746bd0d 100644
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -1076,7 +1076,7 @@ struct sctp_outq {
+ 	struct list_head out_chunk_list;
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-index dc4b228a9fd7..2a7242a2fef8 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-@@ -845,7 +845,7 @@ &cpsw3g {
- /* Verdin ETH_1 (On-module PHY) */
- &cpsw_port1 {
- 	phy-handle = <&cpsw3g_phy0>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "disabled";
- };
+ 	/* Stream scheduler being used */
+-	struct sctp_sched_ops *sched;
++	const struct sctp_sched_ops *sched;
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-index 7028d9835c4a..7b9ae467e95a 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-@@ -593,7 +593,7 @@ &cpsw3g {
- };
+ 	unsigned int out_qlen;	/* Total length of queued data chunks. */
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- };
+diff --git a/net/sctp/stream.c b/net/sctp/stream.c
+index f205556c5b24..0615e4426341 100644
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -54,7 +54,7 @@ static void sctp_stream_shrink_out(struct sctp_stream *stream, __u16 outcnt)
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-index fe0b98e1d105..7eb9066bff82 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-@@ -215,8 +215,7 @@ &cpsw3g {
- };
+ static void sctp_stream_free_ext(struct sctp_stream *stream, __u16 sid)
+ {
+-	struct sctp_sched_ops *sched;
++	const struct sctp_sched_ops *sched;
  
- &cpsw_port2 {
--	/* PCB provides an internal delay of 2ns */
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy1>;
- };
+ 	if (!SCTP_SO(stream, sid)->ext)
+ 		return;
+@@ -130,7 +130,7 @@ static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
+ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
+ 		     gfp_t gfp)
+ {
+-	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
++	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
+ 	int i, ret = 0;
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-index b3d012a5a26a..b24a63feeab8 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-@@ -192,7 +192,7 @@ &cpsw3g {
- };
+ 	gfp |= __GFP_NOWARN;
+@@ -182,7 +182,7 @@ int sctp_stream_init_ext(struct sctp_stream *stream, __u16 sid)
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy1>;
- 	bootph-all;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index af591fe6ae4f..de850307912c 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -731,7 +731,7 @@ &phy_gmii_sel {
+ void sctp_stream_free(struct sctp_stream *stream)
+ {
+-	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
++	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
+ 	int i;
  
- &cpsw_port1 {
- 	status = "okay";
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	bootph-all;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi
-index 0679d76f31bd..a0d5b15fc147 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi
-@@ -78,7 +78,7 @@ &cpsw_port1 {
- /* Verdin ETH_2_RGMII */
- &cpsw_port2 {
- 	phy-handle = <&carrier_eth_phy>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- };
+ 	sched->unsched_all(stream);
+@@ -207,7 +207,7 @@ void sctp_stream_clear(struct sctp_stream *stream)
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi
-index 317c8818f9ee..04f13edcb166 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi
-@@ -275,7 +275,7 @@ &cpsw_port1 {
- /* Verdin ETH_2_RGMII */
- &cpsw_port2 {
- 	phy-handle = <&carrier_eth_phy>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- };
+ void sctp_stream_update(struct sctp_stream *stream, struct sctp_stream *new)
+ {
+-	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
++	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-index 99810047614e..5e050cbb9eaf 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-@@ -813,7 +813,7 @@ som_eth_phy: ethernet-phy@0 {
- /* Verdin ETH_1 (On-module PHY) */
- &cpsw_port1 {
- 	phy-handle = <&som_eth_phy>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "disabled";
- };
+ 	sched->unsched_all(stream);
+ 	sctp_stream_outq_migrate(stream, new, new->outcnt);
+diff --git a/net/sctp/stream_sched.c b/net/sctp/stream_sched.c
+index 54afbe4fb087..50f8b5240359 100644
+--- a/net/sctp/stream_sched.c
++++ b/net/sctp/stream_sched.c
+@@ -91,7 +91,7 @@ static void sctp_sched_fcfs_unsched_all(struct sctp_stream *stream)
+ {
+ }
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index a064a632680e..f04cf2d23d84 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -541,14 +541,14 @@ &cpsw3g {
- };
+-static struct sctp_sched_ops sctp_sched_fcfs = {
++static const struct sctp_sched_ops sctp_sched_fcfs = {
+ 	.set = sctp_sched_fcfs_set,
+ 	.get = sctp_sched_fcfs_get,
+ 	.init = sctp_sched_fcfs_init,
+@@ -111,10 +111,10 @@ static void sctp_sched_ops_fcfs_init(void)
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	status = "okay";
- 	bootph-all;
- };
+ /* API to other parts of the stack */
  
- &cpsw_port2 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy1>;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-index aab74d6019b0..d6e70ee15938 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-@@ -291,7 +291,7 @@ &cpsw3g {
- };
+-static struct sctp_sched_ops *sctp_sched_ops[SCTP_SS_MAX + 1];
++static const struct sctp_sched_ops *sctp_sched_ops[SCTP_SS_MAX + 1];
  
- &cpsw_port2 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy3>;
- };
+ void sctp_sched_ops_register(enum sctp_sched_type sched,
+-			     struct sctp_sched_ops *sched_ops)
++			     const struct sctp_sched_ops *sched_ops)
+ {
+ 	sctp_sched_ops[sched] = sched_ops;
+ }
+@@ -130,7 +130,7 @@ void sctp_sched_ops_init(void)
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-index 58f78c0de292..50ed859ae06c 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-@@ -438,7 +438,7 @@ &cpsw3g {
+ static void sctp_sched_free_sched(struct sctp_stream *stream)
+ {
+-	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
++	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
+ 	struct sctp_stream_out_ext *soute;
+ 	int i;
  
- &cpsw_port1 {
- 	bootph-all;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- };
+@@ -148,9 +148,9 @@ static void sctp_sched_free_sched(struct sctp_stream *stream)
+ int sctp_sched_set_sched(struct sctp_association *asoc,
+ 			 enum sctp_sched_type sched)
+ {
+-	struct sctp_sched_ops *old = asoc->outqueue.sched;
++	const struct sctp_sched_ops *old = asoc->outqueue.sched;
+ 	struct sctp_datamsg *msg = NULL;
+-	struct sctp_sched_ops *n;
++	const struct sctp_sched_ops *n;
+ 	struct sctp_chunk *ch;
+ 	int i, ret = 0;
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-index 02ef1dd92eaa..d64fb81b04e2 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-@@ -178,7 +178,7 @@ cpsw3g_phy1: ethernet-phy@1 {
- };
+@@ -263,14 +263,14 @@ void sctp_sched_dequeue_common(struct sctp_outq *q, struct sctp_chunk *ch)
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy1>;
- 	bootph-all;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-index 85dcff104936..80c52e06b4ce 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-@@ -579,13 +579,13 @@ &cpsw3g {
+ int sctp_sched_init_sid(struct sctp_stream *stream, __u16 sid, gfp_t gfp)
+ {
+-	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
++	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
+ 	struct sctp_stream_out_ext *ext = SCTP_SO(stream, sid)->ext;
  
- &cpsw_port1 {
- 	bootph-all;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	status = "okay";
- };
+ 	INIT_LIST_HEAD(&ext->outq);
+ 	return sched->init_sid(stream, sid, gfp);
+ }
  
- &cpsw_port2 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy3>;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-index 1fb1b91a1bad..34bfa99bd4b8 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-@@ -499,13 +499,13 @@ &cpsw3g {
- };
+-struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream)
++const struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream)
+ {
+ 	struct sctp_association *asoc;
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	status = "okay";
- };
+diff --git a/net/sctp/stream_sched_fc.c b/net/sctp/stream_sched_fc.c
+index 4bd18a497a6d..776c6de46c22 100644
+--- a/net/sctp/stream_sched_fc.c
++++ b/net/sctp/stream_sched_fc.c
+@@ -188,7 +188,7 @@ static void sctp_sched_fc_unsched_all(struct sctp_stream *stream)
+ 		list_del_init(&soute->fc_list);
+ }
  
- &cpsw_port2 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy1>;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-index 8f64d6272b1b..e5f2f20fdb11 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-@@ -185,7 +185,7 @@ &cpsw3g {
- };
+-static struct sctp_sched_ops sctp_sched_fc = {
++static const struct sctp_sched_ops sctp_sched_fc = {
+ 	.set = sctp_sched_fc_set,
+ 	.get = sctp_sched_fc_get,
+ 	.init = sctp_sched_fc_init,
+@@ -206,7 +206,7 @@ void sctp_sched_ops_fc_init(void)
+ 	sctp_sched_ops_register(SCTP_SS_FC, &sctp_sched_fc);
+ }
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index 0c42c486d83a..961287b6a3ed 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -586,7 +586,7 @@ phy0: ethernet-phy@0 {
- };
+-static struct sctp_sched_ops sctp_sched_wfq = {
++static const struct sctp_sched_ops sctp_sched_wfq = {
+ 	.set = sctp_sched_wfq_set,
+ 	.get = sctp_sched_wfq_get,
+ 	.init = sctp_sched_fc_init,
+diff --git a/net/sctp/stream_sched_prio.c b/net/sctp/stream_sched_prio.c
+index 4d4d9da331f4..fb6c55e5615d 100644
+--- a/net/sctp/stream_sched_prio.c
++++ b/net/sctp/stream_sched_prio.c
+@@ -300,7 +300,7 @@ static void sctp_sched_prio_unsched_all(struct sctp_stream *stream)
+ 			sctp_sched_prio_unsched(soute);
+ }
  
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
+-static struct sctp_sched_ops sctp_sched_prio = {
++static const struct sctp_sched_ops sctp_sched_prio = {
+ 	.set = sctp_sched_prio_set,
+ 	.get = sctp_sched_prio_get,
+ 	.init = sctp_sched_prio_init,
+diff --git a/net/sctp/stream_sched_rr.c b/net/sctp/stream_sched_rr.c
+index 1f235e7f643a..9157b653f196 100644
+--- a/net/sctp/stream_sched_rr.c
++++ b/net/sctp/stream_sched_rr.c
+@@ -171,7 +171,7 @@ static void sctp_sched_rr_unsched_all(struct sctp_stream *stream)
+ 		sctp_sched_rr_unsched(stream, soute);
+ }
  
-diff --git a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
-index b697035df04e..5255e04b9ac7 100644
---- a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
-@@ -249,7 +249,7 @@ cpsw3g_phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts b/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts
-index 41c8f8526e15..edc9f9b12f0e 100644
---- a/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts
-@@ -281,7 +281,7 @@ J721S2_WKUP_IOPAD(0x04c, PIN_OUTPUT, 0) /* (D27) WKUP_UART0_TXD */
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi
-index adef02bd8040..911007778bc6 100644
---- a/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi
-@@ -175,7 +175,7 @@ phy1: ethernet-phy@0 {
- 
- &main_cpsw_port1 {
- 	phy-handle = <&phy1>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-index 75a107456ce1..b8400cba832b 100644
---- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-@@ -705,7 +705,7 @@ phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- 	bootph-all;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-index 5896e57b5b9e..3a870b9b984d 100644
---- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-@@ -771,7 +771,7 @@ mcu_phy0: ethernet-phy@0 {
- 
- &mcu_cpsw_port1 {
- 	status = "okay";
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&mcu_phy0>;
- 	bootph-all;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-index f684ce6ad9ad..4608828512d1 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-@@ -334,7 +334,7 @@ phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-index 352fb60e6ce8..2e9455ab0bfa 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-@@ -677,7 +677,7 @@ phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-index 45311438315f..317cd0bfa406 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-@@ -780,7 +780,7 @@ phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso b/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso
-index f84aa9f94547..3bfe6036a8e6 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso
-@@ -37,7 +37,7 @@ &rgmii3_default_pins
- &cpsw0_port1 {
- 	status = "okay";
- 	phy-handle = <&cpsw9g_phy12>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	mac-address = [00 00 00 00 00 00];
- 	phys = <&cpsw0_phy_gmii_sel 1>;
- };
-@@ -45,7 +45,7 @@ &cpsw0_port1 {
- &cpsw0_port2 {
- 	status = "okay";
- 	phy-handle = <&cpsw9g_phy15>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	mac-address = [00 00 00 00 00 00];
- 	phys = <&cpsw0_phy_gmii_sel 2>;
- };
-@@ -53,7 +53,7 @@ &cpsw0_port2 {
- &cpsw0_port3 {
- 	status = "okay";
- 	phy-handle = <&cpsw9g_phy0>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	mac-address = [00 00 00 00 00 00];
- 	phys = <&cpsw0_phy_gmii_sel 3>;
- };
-@@ -61,7 +61,7 @@ &cpsw0_port3 {
- &cpsw0_port4 {
- 	status = "okay";
- 	phy-handle = <&cpsw9g_phy3>;
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	mac-address = [00 00 00 00 00 00];
- 	phys = <&cpsw0_phy_gmii_sel 4>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-index 5e5784ef6f85..febbac9262de 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-@@ -1045,7 +1045,7 @@ phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-index 9e43dcff8ef2..24f57f02588f 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-@@ -469,7 +469,7 @@ phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-index 8583178fa1f3..6869a95c6214 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-@@ -80,6 +80,6 @@ main_cpsw_phy0: ethernet-phy@0 {
- 
- &main_cpsw_port1 {
- 	status = "okay";
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&main_cpsw_phy0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index e0e303da7e15..5e7767e45130 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -388,7 +388,7 @@ cpsw3g_phy0: ethernet-phy@0 {
- };
- 
- &cpsw_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&cpsw3g_phy0>;
- 	status = "okay";
- 	bootph-all;
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index 419c1a70e028..4221f172779b 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -920,7 +920,7 @@ mcu_phy0: ethernet-phy@0 {
- 
- &mcu_cpsw_port1 {
- 	status = "okay";
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&mcu_phy0>;
- };
- 
-@@ -944,7 +944,7 @@ main_cpsw1_phy0: ethernet-phy@0 {
- };
- 
- &main_cpsw1_port1 {
--	phy-mode = "rgmii-rxid";
-+	phy-mode = "rgmii-id";
- 	phy-handle = <&main_cpsw1_phy0>;
- 	status = "okay";
- };
+-static struct sctp_sched_ops sctp_sched_rr = {
++static const struct sctp_sched_ops sctp_sched_rr = {
+ 	.set = sctp_sched_rr_set,
+ 	.get = sctp_sched_rr_get,
+ 	.init = sctp_sched_rr_init,
 -- 
 2.51.0
 
