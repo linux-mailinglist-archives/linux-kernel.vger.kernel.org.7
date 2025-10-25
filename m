@@ -1,149 +1,157 @@
-Return-Path: <linux-kernel+bounces-870086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0251C09E0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:54:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09249C09E12
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37AFC4E1619
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:54:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA7514E1CC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA74302774;
-	Sat, 25 Oct 2025 17:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136A2302774;
+	Sat, 25 Oct 2025 17:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a1HUSyQO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZA+PHghY"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721CC289376
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9218329CE1
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761414856; cv=none; b=EHqerpm1pd06iQ6fuga9pyhc84rqp5OXmFJod2YL7BWPrVO1SwKGAiIqNb5h4PoevSvGFr2MMOCyBYglofZxx33DJymHTzuG1BPV/xTm1YFOm2smzsjVYefWvUr9SQXssiXOK+95zz9iED1yR7Hb/F2hO4clu+2YG5ZE29JUHNY=
+	t=1761415007; cv=none; b=H1OWILz7SAONhI2iRPL5Ay30J2bazPA/QTxCWBEmbQuYEQMv09Zvf8OWc9by5pjg+GJz+yTL/aaMnh96uJGBEjY2b3OhV4JjriR4x7G3B/NdU4qYucf1iMAMdsiIEGsZ75Rek0gfrNM2gx4MdAl7k+XY2i7zbne3m1oXi7RSlY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761414856; c=relaxed/simple;
-	bh=/dCnsJxwgqeFs7PKSg+Ud/3vJjVEQ1NvMAtuR/PgdkQ=;
+	s=arc-20240116; t=1761415007; c=relaxed/simple;
+	bh=1s3zZbXoXuXbG73d1ctMzMs4o4nY/PD3TwXtQ7vgb6Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rl9EE2FA1P2FQj+O+Ebz+XXCunT2RRk7LnfuoJrRwAhdL4fOyXNLlrSVdudTduIKf6y8dH9EyOt+w3VYKsDOYEWQKZMSOosShP0z3ckTTIPr6EEZPJVD4dQgLfMILcarvJVvsg2JoHWPDJhMq+EYeMQ5Whzdme7V1yWCghQPE08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a1HUSyQO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761414853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/dCnsJxwgqeFs7PKSg+Ud/3vJjVEQ1NvMAtuR/PgdkQ=;
-	b=a1HUSyQO3OeEXPML4yQrxyZWqSEO1LoJqHzZ1SFDWzzW0DeJwHgzpqVEEc8ze1YvPMz5s2
-	9hby4VJeQbzTaaB3tCtDYTc/iECcyOEsZGeqLRV55O3onaskzEjy+U+RRDLOocWyDl8pgh
-	LIpxtI3B1SYL18yv6g+bInsR2xsj6BU=
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
- [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-141-evHlA6LfO3aE_ct-b7r6Lg-1; Sat, 25 Oct 2025 13:54:11 -0400
-X-MC-Unique: evHlA6LfO3aE_ct-b7r6Lg-1
-X-Mimecast-MFC-AGG-ID: evHlA6LfO3aE_ct-b7r6Lg_1761414851
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-556a45a4519so6549584e0c.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:54:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=eYe7Wm9uefMGgw9cE4bjveDOYaLZkCCrR35pWf8XgCaScruhgUMTWUUHYOMDVifGTmFthNaX4SHLb4hbbMG1ddrdaMPL1pKpg20ALettogO5dMSB8SDLiG3ia/aMfUEx1KRR+SexeTIwSROouWr9q/Vz6gzclANpysMd1MWh0Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZA+PHghY; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b4539dddd99so667335966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1761415002; x=1762019802; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uIHoHfWwul/SDuhHqNAPoAHHQqzZBlgkrRx5b1EY89A=;
+        b=ZA+PHghYTYHUd9Y/nrm/fT8DDBMlhjuKM8yavyHVYldvtQFwxcZ9oppSCqb0bt7jTK
+         +lfViElSh8gVsFYcPPOsXBr6WyquXePQC7BOf908SBPYosQP26Y+7bBp8uZw2qjBOZOW
+         Ru3HkV9IFq+8jQ5Fomc7igbSX4aGc/8LBTk3Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761414851; x=1762019651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/dCnsJxwgqeFs7PKSg+Ud/3vJjVEQ1NvMAtuR/PgdkQ=;
-        b=FF17S5rOPHJQn5/HVUwiqHNOaNpVfQiKaquQ9LBN2SzV1PkrsRNRexfm+X/pB4XDyq
-         ibxG97Wbl8A1rOPw8HZ2uSdk5UCONaD9G8RVw9nxRtOzKcpEc60Fu1b55swf4qMH/2C5
-         aanJz96KKLpIBGfHSfQ5bQFlnUBDFVwmtYJshiqNXQ7x5TqkezA5U7qJgoGfiYNkf/Ec
-         QAWJuT/s1Byy4m+zuMVucko5cUbRDDMqMMuUuBZ/T/xJaXgzKExXAiXUpX0RJ0TOEOvg
-         4nwUnw2Gs/Z6epMpphkuEniw1HCHCL+4NXbZmgAkPntwz5ctZOt5uN9A8VbnhkLzC3TO
-         sRKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTtOoH5R0dkqKfsDEhCmpa2ohHJMEaTFCQE10nWBCfghNDpXyTgGSV/VZKx2hxV86oEMmCjN3nWfLS+gQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywck82Opy6dtdZMtnssE6T1NG03Dkgnttqo1uZiX98Q8xlDJoiB
-	qLa2zTDSUWMVmC8J0kdzIdfJJe8UadqwrIYi2iuI4CQnoO3lZtVtbLLRS8V62MbeYD9mqAKl+1v
-	VKW9vSv9ItKcxwYlrBVaZXCKn1Iu0Z/YrjVJoMIh8p2A74adgr0bkKb/n6eQFWx9wtHPx5hMvmK
-	h1nG9WOjQrugd0B/BgmSB8n20xfZsWFISOvp/51V9I
-X-Gm-Gg: ASbGncsydaNSckgggKMWDqHCIM6ZOJRRCzre1yLq1usAvreSL8JNN+f6p4WfrxZxIUt
-	VMaJYO/7RpoCTY6V7m6lBhcKU0YrvwUIRCMxVi60QPGRgCBENBxq5NP4mryuvIoBWfIA7FC65kZ
-	lqD85G81YbEiT8uUCUHQjNQzctAsrP8U0vFatkOtxWWq4VBb5YFPoYTwZXWqdw9HvV1cS2dd8=
-X-Received: by 2002:a05:6122:3707:b0:537:3e57:6bdc with SMTP id 71dfb90a1353d-557cf0ca71amr1998852e0c.12.1761414851364;
-        Sat, 25 Oct 2025 10:54:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgJOnM4bluQ6E9wHerRSTuFkaWRsBJjcnsXXzTai3J0SUYVYp4MA0v1jkm9r0t070IOxhPmLZo8Pqr0ynFtfU=
-X-Received: by 2002:a05:6122:3707:b0:537:3e57:6bdc with SMTP id
- 71dfb90a1353d-557cf0ca71amr1998840e0c.12.1761414851050; Sat, 25 Oct 2025
- 10:54:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761415002; x=1762019802;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uIHoHfWwul/SDuhHqNAPoAHHQqzZBlgkrRx5b1EY89A=;
+        b=s+91/ZgRCdvFIYAlnYV36/Q+EZzqrq9ZEAoRhFckAjImSqYZEa3188LTcDYz7JXWHs
+         fpWV2Mhah6Q2W601yO4GtxTcdcvmrIh1F0ijANu+JyoWfWyepUgqn02qWamdmbW8Vnbj
+         tC7A7xBx1eT6UIDD3MNEX2LSXk/Wj9OtL4hh61FNxWFj9QuWckIJLf1SKlWzv5UNVpuD
+         CBjBXszb36fnxck8BVb0Rjlve+LupEofW3/XhFx3ojB2dxV1ZCKGhpLlAP4vt54fJOWT
+         1bvg/o+y5gnANSSxI6MupL7eEIhKbU0XWbGbI9zp9YRogtm8n1E99ERib1JU3CISdojg
+         GPBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0qKeOQVnbe0mh8kIXHrx1r1DP+uJ/Ja6t4pBtEDrhHlPiB4tn1PYGZnycUTEUOcerQRKkBCxBCKMxuz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9kMsMxsznK/eGqgpiC87O5k26sPAqYMu6oInIwtMY6HW/7tJH
+	17DrHIjmQo6MObhvoOrOjdfXgebZ0JWo4IQqSpqwuPh3CZKNrLtUfyxH0G6TMueeEc+/m+2JXNQ
+	cuFPkXu0=
+X-Gm-Gg: ASbGnctNt2S5r6vQO/Kz+k5re3ff1/BV2dnA94ne0vyO9bh98GT7lvP7dIBebCtv9D2
+	ZuirQ1dWMzvDkN9ppX6aCzz2U505VY6XQ7UKZE9E4UDEI8ypiooZVvmX804d8dymrWF3vHiazmx
+	Kz3s6g7UEIw1/V+hKYV4cCXnGHMxHqIWh+9CTKM1807ibiQlMlhyFh9udrrpj+molFhHmMf4+ji
+	j8LUPHv+MZUXcDa0Pc8TuBSvIFohEz/UPVzfEnoWBVDLAzKPhM5tvhFvkf34QE2MsFq3ntV+TpB
+	dySYnkwLpXOdugPUp7PWpUCyq/cLqakXxcLA9/+wrpk5cmzXQYBs1MXhco/f4WAQhyuUXhU9NCM
+	1kS2XIgHoRqalZieXTaezmlEeoLSI+a380/mzjSxyHD/rvY8mkyWlTzNfVxUXPKZeZ1SfBpaEaa
+	Oy5UncurvVnELoFHN6ueWQF1/M1wtcxe21IcrfXV86XVxE5CLHgYEewgU+yXNF
+X-Google-Smtp-Source: AGHT+IHcrc+yLJUOHS46PCk6jijsLCVtSLqJ0Qx3tLkumqKA6tM5U/1nEZosmcRGMfwfiKWzvR4GsQ==
+X-Received: by 2002:a17:906:c147:b0:b3d:8fe0:536d with SMTP id a640c23a62f3a-b6d51b0ac67mr1136428566b.15.1761415002552;
+        Sat, 25 Oct 2025 10:56:42 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8530905dsm259908366b.6.2025.10.25.10.56.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Oct 2025 10:56:41 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c4b41b38cso6940407a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:56:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLm5o/irMBFhAFUlfQuS9ywmHUb40vYUOicbpxycwSOt6b7nM17IDe2T3JKESCoIjHArBV9vV/l34SWqc=@vger.kernel.org
+X-Received: by 2002:a05:6402:1ecf:b0:639:7307:2403 with SMTP id
+ 4fb4d7f45d1cf-63e3e10b712mr8410407a12.11.1761415001123; Sat, 25 Oct 2025
+ 10:56:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024084259.2359693-1-amarkuze@redhat.com> <20251024135301.0ed4b57d@gandalf.local.home>
- <CAO8a2ShRVUAFOc7HECWbuR7aZV0Va3eZs=zxSsxtu0cMvJmb5g@mail.gmail.com> <20251025105944.1a04e518@batman.local.home>
-In-Reply-To: <20251025105944.1a04e518@batman.local.home>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Sat, 25 Oct 2025 20:54:00 +0300
-X-Gm-Features: AWmQ_bn2KbQ7u7-I7QWQqLSntYdpaNFjyE6UUX-03Ig8JKgRbXdxkCbCcGhJeXw
-Message-ID: <CAO8a2SgZ8gZ0VdtBAeW8wLMDxa+Eq42ppr-99tUpiu3Tpwqz5w@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] BLOG: per-task logging contexts with Ceph consumer
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, 
-	idryomov@gmail.com, mingo@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, rppt@kernel.org, 
-	peterz@infradead.org, surenb@google.com, vschneid@redhat.com, 
-	vincent.guittot@linaro.org, vbabka@suse.cz, xiubli@redhat.com, 
-	Slava.Dubeyko@ibm.com
+References: <20251025164023.308884-1-yury.norov@gmail.com>
+In-Reply-To: <20251025164023.308884-1-yury.norov@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 25 Oct 2025 10:56:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgVYPp1-06PVU8dZ1_BdXE8MYinviMSX9S+P75kWv3GoA@mail.gmail.com>
+X-Gm-Features: AWmQ_blFhDk_WzwRra_UuPnoPCy5QHVsb30SVzWg8zqGYyxOeYGeHyfmSM-cGFQ
+Message-ID: <CAHk-=wgVYPp1-06PVU8dZ1_BdXE8MYinviMSX9S+P75kWv3GoA@mail.gmail.com>
+Subject: Re: [PATCH 00/21] lib: add alternatives for GENMASK()
+To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Please correct me if I am wrong, I was not aware that ftrace is used
-by any kernel component as the default unstructured logger.
-This is the point of BLog, having a low impact unstructured logger,
-it's not always possible or easy to provide a debug kernel where
-ftarce is both enabled and used for dumping logs.
-Having an always-on binary logger facilitates better debuggability.
-When anything happens, a client with BLog has the option to send a
-large log file with their report.
-An additional benefit is that each logging buffer is attached to the
-associated tasks and the whole module has its own separate cyclical
-log buffer.
+On Sat, 25 Oct 2025 at 09:40, Yury Norov (NVIDIA) <yury.norov@gmail.com> wrote:
+>
+> GENMASK(high, low) notation reflects a common pattern to describe
+> hardware registers. However, out of drivers context it's confusing and
+> error-prone.
 
-On Sat, Oct 25, 2025 at 5:59=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Sat, 25 Oct 2025 13:50:39 +0300
-> Alex Markuze <amarkuze@redhat.com> wrote:
->
-> > First of all, Ftrace is for debugging and development; you won't see
-> > components or kernel modules run in production with ftrace enabled.
-> > The main motivation is to have verbose logging that is usable for
-> > production systems.
->
-> That is totally untrue. Several production environments use ftrace. We
-> have it enabled and used in Chromebooks and in Android. Google servers
-> also have it enabled.
->
->
-> > The second improvement is that the logs have a struct task hook which
-> > facilitates better logging association between the kernel log and the
-> > user process.
-> > It's especially handy when debugging FS systems.
->
-> So this is for use with debugging too?
->
-> >
-> > Specifically we had several bugs reported from the field that we could
-> > not make progress on without additional logs.
->
-> This still doesn't answer my question about not using ftrace. Heck,
-> when I worked for Red Hat, we used ftrace to debug production
-> environments. Did that change?
->
-> -- Steve
->
+So I obviously approve of the BITS() syntax, and am not a huge fan of
+the odd "GENMASK()" argument ordering.
 
+That said, I'm not convinced about adding the other helpers. I don't
+think "FIRST_BITS(8)" is any more readable than "BITS(0,7)", and I
+think there's a real danger to having lots of specialized macros that
+people then have to know what they mean.
+
+I have an absolutely *disgusting* trick to use the syntax
+
+    BITS(3 ... 25)
+
+to do this all, but it's so disgusting and limited that I don't think
+it's actually reasonable.
+
+In case somebody can come up with a cleaner model, here's the trick:
+
+   #define LOWRANGE_0 0,
+   #define LOWRANGE_1 1,
+   #define LOWRANGE_2 2,
+   #define LOWRANGE_3 3,
+   #define LOWRANGE_4 4,
+   #define LOWRANGE_5 5,
+   // ..and so on
+
+   #define _HIGH_VAL(x) (sizeof((char[]){[x]=1})-1)
+   #define __FIRST(x, ...) x
+   #define ___LOW_VAL(x) __FIRST(x)
+   #define __LOW_VAL(x) ___LOW_VAL(LOWRANGE_ ##x)
+   #define _LOW_VAL(x) __LOW_VAL(x)
+
+   #define BITS(x) GENMASK(_HIGH_VAL(x), _LOW_VAL(x))
+
+   #define TESTVAL 5
+   unsigned long val1 = BITS(3 ... 25);
+   unsigned long val2 = BITS(4);
+   unsigned long val3 = BITS(TESTVAL ... 31);
+
+and that syntax with either "3 ... 25" or just a plain "4" does
+actually work. But only with fairly simple numbers.
+
+It doesn't work with more complex expressions (due to the nasty
+preprocessor pasting hack), and I couldn't figure out a way to make it
+do so.
+
+I also suspect that we shouldn't do the core code conversions without
+having acks from maintainers. Some people may prefer the odd
+"high,low" ordering due to it matching some equally odd hardware
+documentation.
+
+               Linus
 
