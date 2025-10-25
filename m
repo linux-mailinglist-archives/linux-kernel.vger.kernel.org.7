@@ -1,380 +1,157 @@
-Return-Path: <linux-kernel+bounces-869713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B77EC088FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:41:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730FEC088FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023E93BA46B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:40:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2029B4E5356
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E594E24A04A;
-	Sat, 25 Oct 2025 02:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C032248F57;
+	Sat, 25 Oct 2025 02:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FyySNbGf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iJlbNIV2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A797214A79;
-	Sat, 25 Oct 2025 02:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C6610D;
+	Sat, 25 Oct 2025 02:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761360046; cv=none; b=acUB4Ki0VDw9+KW+OO9YgTzKT3b0fY6oNl9cuP06aC/9Z+rVTEWPvGQ3gMMVjnNLHGXbjp+X7PejTTZJI5NjI4nce7fl1qHBkC2JNqBw2bDZXToCbBs8x93Rb8ptxYuv2s2nZdHrSnwXS9Gk4sWBSDC7TdehPF1LWhI3s1+xWeQ=
+	t=1761360214; cv=none; b=d1oVM2b0m9Q+8TnHeq3fCHwvx25lZagki2SB6ilW6naDDUIAexcuxVoNR2qT3p0m6IrIvU9UimMAksEWMQ8+sR88kOJPCB4HIY4r1lkEf6CLMzULM3KYSemKmIrLUXOhOL04wENGXdSVyp+V5zjFpW0Pii5oAw3zJLLjQhhRvIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761360046; c=relaxed/simple;
-	bh=pkqZpQTw07IyRw14CjOHm2sj/zWG/xttdrIZjGNASak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZsAFir0lys7E/05S7SPjtF6McW5BLYM1HPtNvyqskaxysrYHa3+Z2TfJc1khSBoQ4J6FQ2g5Zh34FAfmHZ4mx5XUF01wHMXAath40ogN1Aq31WqKOFGdDDWTt7RDn9c1goZP1ziQZaWX06fFUd19VRNU2mQfgXjZMQWDCYRk4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FyySNbGf; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761360045; x=1792896045;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pkqZpQTw07IyRw14CjOHm2sj/zWG/xttdrIZjGNASak=;
-  b=FyySNbGffHQk/XH2u0B+XIi6isr87MOtB3Vjes4T3JOinTRyv2Sr4qC3
-   hXx0TyV1JQJvVtgYJM3uQIG+1Gqt4Y6vPwuB9VAlPWYuHwvIMVs6P/ccI
-   1/PekMi4YdsxP6KZKfD7njWraTb+qfoALk1+iAmT9Vx4e9IWwmofgX8lQ
-   ZLB/jlcaCfZtig4z0nNWJJ5xxqttVqo38S9BaL7KueSfbooobNmdgx3ht
-   FOO+KkeZDrY3BcBpPDqd4AwiyUrARo6Jz6XkOtpdzFVIiTz/TEwKdr4hz
-   H8izKb18jfakv7dNq0jb669pSmZOrVApHnlXzRMEGmvxU8m02uPdWje49
-   w==;
-X-CSE-ConnectionGUID: o56SyHA6SXqvnZUiGv1aug==
-X-CSE-MsgGUID: i2skOabyR0yDjgJKWIbV5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67183073"
-X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="67183073"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 19:40:44 -0700
-X-CSE-ConnectionGUID: nX56QVeHRGSF1M94CCwtOA==
-X-CSE-MsgGUID: 7KbtqPDQS6mKv7pUJRxwCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="183751346"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2025 19:40:41 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vCUCs-000F5N-1A;
-	Sat, 25 Oct 2025 02:40:38 +0000
-Date: Sat, 25 Oct 2025 10:39:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, David Yang <mmyangfl@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] net: dsa: yt921x: Add STP/MST support
-Message-ID: <202510251005.LlcQkR59-lkp@intel.com>
-References: <20251024033237.1336249-2-mmyangfl@gmail.com>
+	s=arc-20240116; t=1761360214; c=relaxed/simple;
+	bh=QdAPGK5hXpf0G5m6pcdF7m7LqY3YmGZb7eU89/9gqGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IqJSlm5zHvTcC03A7ZYO7WIzyzDWB2AQRDAxEJDp/rE0w9UOjh5IwzvbLaLaTAA1LlKrmw9ZLWAClRp2RpMNyb+WM0mYPuy4p/lpwHxM44ikLahhIaWT9uipSKBAJqLBB/wwnyO+R9trZ8GrQZxqzYHfaCRUYqKlq2Zrh/jiSLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iJlbNIV2; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=yN
+	l65k/kAeexTgDSNR6tWuwOKvH4IBPMLIdSVvUAofc=; b=iJlbNIV2UkMRMwbQlg
+	z7lgnIyGtxcw+j57t63C3i3RDDmCiXfIgH7SqqJcO14vJmk8/5aWKxoVIi9paE6P
+	pYMyTRJJzW4v3JOYootQlWvmSybvAehETtkg54axezXH+Hr5hFNGLZDjuvNaW1/A
+	aQ6yjXOkZJ8P0M36qVOqXihwk=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgBHn9cwOfxoc1hRBQ--.47S2;
+	Sat, 25 Oct 2025 10:42:57 +0800 (CST)
+From: albin_yang@163.com
+To: akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	wangzijie1@honor.com,
+	brauner@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: albinwyang@tencent.com
+Subject: [PATCH] fs/proc: fix uaf in proc_readdir_de()
+Date: Sat, 25 Oct 2025 10:42:33 +0800
+Message-ID: <20251025024233.158363-1-albin_yang@163.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024033237.1336249-2-mmyangfl@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgBHn9cwOfxoc1hRBQ--.47S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCF18XFWDtFy3KF4xKFyUWrg_yoW5AF45pF
+	W3WrW3Gr48WFn8Gr1Sqr1DCF48uF15Aa1akr4xua1IyrsFvryxJr4rtFy8try7AFWrGa4Y
+	qF4jg3srArykA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7txhUUUUU=
+X-CM-SenderInfo: pdoex0xb1d0wi6rwjhhfrp/1tbiShbxomj8NBwwJgABsk
 
-Hi David,
+From: Wei Yang <albinwyang@tencent.com>
 
-kernel test robot noticed the following build errors:
+Pde is erased from subdir rbtree through rb_erase(), but not set the node to EMPTY,
+which may result in uaf access. We should use RB_CLEAR_NODE() set the erased node
+to EMPTY, then pde_subdir_next() will return NULL to avoid uaf access.
 
-[auto build test ERROR on net-next/main]
+We found an uaf issue while using stree-ng testing, need to run testcase getdent and
+tun in the same time. The steps of the issue is as follows:
+1) use getdent to traverse dir /proc/pid/net/dev_snmp6/, and current pde is tun3;
+2) in the [time windows] unregister netdevice tun3 and tun2, and erase them from
+   rbtree. erase tun3 first, and then erase tun2. the pde(tun2) will be released
+   to slab;
+3) continue to getdent process, then pde_subdir_next() will return pde(tun2) which
+   is released, it will case uaf access.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Yang/net-dsa-yt921x-Add-STP-MST-support/20251024-113613
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20251024033237.1336249-2-mmyangfl%40gmail.com
-patch subject: [PATCH net-next 1/3] net: dsa: yt921x: Add STP/MST support
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20251025/202510251005.LlcQkR59-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510251005.LlcQkR59-lkp@intel.com/reproduce)
+CPU 0                                      |    CPU 1
+----------------------------------------------------------------------------------------------
+traverse dir /proc/pid/net/dev_snmp6/      |   unregister_netdevice(tun->dev)   //tun3 tun2
+sys_getdents64()                           |
+  iterate_dir()                            |
+    proc_readdir()                         |
+      proc_readdir_de()                    |     snmp6_unregister_dev()
+        pde_get(de);                       |       proc_remove()
+        read_unlock(&proc_subdir_lock);    |         remove_proc_subtree()
+                                           |           write_lock(&proc_subdir_lock);
+        [time window]                      |           rb_erase(&root->subdir_node, &parent->subdir);
+                                           |           write_unlock(&proc_subdir_lock);
+        read_lock(&proc_subdir_lock);      |
+        next = pde_subdir_next(de);        |
+        pde_put(de);                       |
+        de = next;    //UAF                |
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510251005.LlcQkR59-lkp@intel.com/
+rbtree of dev_snmp6
+                        |
+                    pde(tun3)
+                     /    \
+                  NULL  pde(tun2)
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Wei Yang <albinwyang@tencent.com>
+---
+ fs/proc/generic.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   drivers/net/dsa/yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   In file included from arch/arm/include/asm/ptrace.h:13,
-                    from arch/arm/include/asm/irqflags.h:7,
-                    from include/linux/irqflags.h:18,
-                    from arch/arm/include/asm/bitops.h:28,
-                    from include/linux/bitops.h:67:
-   include/linux/bits.h:48:27: warning: left shift count >= width of type [-Wshift-count-overflow]
-      48 |              (type_max(t) << (l) &                              \
-         |                           ^~
-   include/linux/bitfield.h:45:38: note: in definition of macro '__bf_shf'
-      45 | #define __bf_shf(x) (__builtin_ffsll(x) - 1)
-         |                                      ^
-   drivers/net/dsa/yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   drivers/net/dsa/yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
-      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-         |                           ^~
-   include/linux/bitfield.h:45:38: note: in definition of macro '__bf_shf'
-      45 | #define __bf_shf(x) (__builtin_ffsll(x) - 1)
-         |                                      ^
-   drivers/net/dsa/yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   drivers/net/dsa/yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bits.h:48:27: warning: left shift count >= width of type [-Wshift-count-overflow]
-      48 |              (type_max(t) << (l) &                              \
-         |                           ^~
-   include/linux/bitfield.h:116:63: note: in definition of macro 'FIELD_PREP'
-     116 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
-         |                                                               ^~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   drivers/net/dsa/yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
-      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-         |                           ^~
-   include/linux/bitfield.h:116:63: note: in definition of macro 'FIELD_PREP'
-     116 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
-         |                                                               ^~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   drivers/net/dsa/yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
->> include/linux/compiler_types.h:597:45: error: call to '__compiletime_assert_1178' declared with attribute error: FIELD_PREP: mask is not constant
-     597 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:578:25: note: in definition of macro '__compiletime_assert'
-     578 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:597:9: note: in expansion of macro '_compiletime_assert'
-     597 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:65:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      65 |                 BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
-         |                 ^~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:115:17: note: in expansion of macro '__BF_FIELD_CHECK'
-     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   drivers/net/dsa/yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   drivers/net/dsa/yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
---
-     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   In file included from arch/arm/include/asm/ptrace.h:13,
-                    from arch/arm/include/asm/irqflags.h:7,
-                    from include/linux/irqflags.h:18,
-                    from arch/arm/include/asm/bitops.h:28,
-                    from include/linux/bitops.h:67:
-   include/linux/bits.h:48:27: warning: left shift count >= width of type [-Wshift-count-overflow]
-      48 |              (type_max(t) << (l) &                              \
-         |                           ^~
-   include/linux/bitfield.h:45:38: note: in definition of macro '__bf_shf'
-      45 | #define __bf_shf(x) (__builtin_ffsll(x) - 1)
-         |                                      ^
-   yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
-      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-         |                           ^~
-   include/linux/bitfield.h:45:38: note: in definition of macro '__bf_shf'
-      45 | #define __bf_shf(x) (__builtin_ffsll(x) - 1)
-         |                                      ^
-   yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bits.h:48:27: warning: left shift count >= width of type [-Wshift-count-overflow]
-      48 |              (type_max(t) << (l) &                              \
-         |                           ^~
-   include/linux/bitfield.h:116:63: note: in definition of macro 'FIELD_PREP'
-     116 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
-         |                                                               ^~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
-      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-         |                           ^~
-   include/linux/bitfield.h:116:63: note: in definition of macro 'FIELD_PREP'
-     116 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
-         |                                                               ^~~~~
-   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^~~~~~~~~~~~
-   yt921x.h:341:49: note: in expansion of macro 'GENMASK'
-     341 | #define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
-         |                                                 ^~~~~~~
-   yt921x.h:342:68: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID_M'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
->> include/linux/compiler_types.h:597:45: error: call to '__compiletime_assert_1178' declared with attribute error: FIELD_PREP: mask is not constant
-     597 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:578:25: note: in definition of macro '__compiletime_assert'
-     578 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:597:9: note: in expansion of macro '_compiletime_assert'
-     597 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:65:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      65 |                 BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
-         |                 ^~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:115:17: note: in expansion of macro '__BF_FIELD_CHECK'
-     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   yt921x.h:342:57: note: in expansion of macro 'FIELD_PREP'
-     342 | #define   YT921X_VLAN_CTRL_STP_ID(x)                    FIELD_PREP(YT921X_VLAN_CTRL_STP_ID_M, (x))
-         |                                                         ^~~~~~~~~~
-   yt921x.c:2155:18: note: in expansion of macro 'YT921X_VLAN_CTRL_STP_ID'
-    2155 |         ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/__compiletime_assert_1178 +597 include/linux/compiler_types.h
-
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  583  
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  584  #define _compiletime_assert(condition, msg, prefix, suffix) \
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  585  	__compiletime_assert(condition, msg, prefix, suffix)
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  586  
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  587  /**
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  588   * compiletime_assert - break build and emit msg if condition is false
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  589   * @condition: a compile-time constant condition to check
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  590   * @msg:       a message to emit if condition is false
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  591   *
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  592   * In tradition of POSIX assert, this macro will break the build if the
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  593   * supplied condition is *false*, emitting the supplied error message if the
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  594   * compiler has support to do so.
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  595   */
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  596  #define compiletime_assert(condition, msg) \
-eb5c2d4b45e3d2 Will Deacon 2020-07-21 @597  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  598  
-
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 176281112273..501889856461 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -698,6 +698,12 @@ void pde_put(struct proc_dir_entry *pde)
+ 	}
+ }
+ 
++static void pde_erase(struct proc_dir_entry *pde, struct proc_dir_entry *parent)
++{
++	rb_erase(&pde->subdir_node, &parent->subdir);
++	RB_CLEAR_NODE(&pde->subdir_node);
++}
++
+ /*
+  * Remove a /proc entry and free it if it's not currently in use.
+  */
+@@ -720,7 +726,7 @@ void remove_proc_entry(const char *name, struct proc_dir_entry *parent)
+ 			WARN(1, "removing permanent /proc entry '%s'", de->name);
+ 			de = NULL;
+ 		} else {
+-			rb_erase(&de->subdir_node, &parent->subdir);
++			pde_erase(de, parent);
+ 			if (S_ISDIR(de->mode))
+ 				parent->nlink--;
+ 		}
+@@ -764,7 +770,7 @@ int remove_proc_subtree(const char *name, struct proc_dir_entry *parent)
+ 			root->parent->name, root->name);
+ 		return -EINVAL;
+ 	}
+-	rb_erase(&root->subdir_node, &parent->subdir);
++	pde_erase(root, parent);
+ 
+ 	de = root;
+ 	while (1) {
+@@ -776,7 +782,7 @@ int remove_proc_subtree(const char *name, struct proc_dir_entry *parent)
+ 					next->parent->name, next->name);
+ 				return -EINVAL;
+ 			}
+-			rb_erase(&next->subdir_node, &de->subdir);
++			pde_erase(next, de);
+ 			de = next;
+ 			continue;
+ 		}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.7
+
 
