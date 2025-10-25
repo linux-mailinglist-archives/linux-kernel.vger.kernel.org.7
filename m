@@ -1,173 +1,133 @@
-Return-Path: <linux-kernel+bounces-870148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C140BC0A07E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:54:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76034C0A083
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 00:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF4C94E4F39
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:54:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A5184E4B09
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEF7296BC8;
-	Sat, 25 Oct 2025 21:54:33 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65941BC58;
+	Sat, 25 Oct 2025 22:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="pxQMMed8"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480E1CDFD5
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F4814A8E
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 22:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761429273; cv=none; b=O4qKn/iwiJpFBS9ikJN/Yg4Z3wv8fggUPykyaXRk80CEWhCk7Pz3ZQtzWJALtqX94CquCc1eazgvKYSXnUQv2EY/w5GPdw0AFIGhQZmmCaekucf3KRBAXBQNd3STsvo9pinOVTHSCQajxNkGWI0EvbMrotlI6nvKGJoCPtOv4pY=
+	t=1761429668; cv=none; b=bSVJ28DTzCkJ0OrLSjh7mGRgq4x+4dIxWpWdy6xiIMWJMs9zopr9V7UA7flrxCADriThcsr0muu3ugzNglJxzdQCU97tGVWZQgbCndn85LQj8uEeez4oDOr0S7OHLKTWqH7ZBQe1nffxRyaZQpxlMFzVBUjva1Z79lv+2m08oXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761429273; c=relaxed/simple;
-	bh=JUFCk2b3q4NWznqEsdIiWE2fWpm6sZb1vcEUhwwy7Rs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WWx+kd5+2IuQ6R1dOzxxHDKm4naLKjo2vXCqSwd5cfbm9F5w0GOiU6BgIiGM2IoTtVBS2FfLE9uR7DG3azN25gE2gickAp376YZJkRe0NBarT1Dls6oPW1r/lFZFUeavnJw+w1gz1MqjrOcG0o2ylCW18nO+3ggEFv8iG6QBTVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-431db4650b7so46520665ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:54:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761429270; x=1762034070;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ClV3ZeL1Y+tIFEcvdME/1DYGFdqnexVcINdMwTUQ/4A=;
-        b=dNdw902JBzlC2DtkRD3bRUZCrHd8HBzUGGHpLEpM+eGNIhdCLHY/hCNvVxyTcTwuBX
-         EwFXWie2PrVio0Of/S5QW9Ya1onKdJ48bwUMptZibFWsNkR12yWuqjzTBr6EeJmJa157
-         znzsKxSJawIWHu8vxcK36Z3JRZ7AZnmnFlI+azjngQF6AevxWfX2UjAubRtzmhcLiuwA
-         wz6YFSQTMXd9tVHYVoeHEAe4K5ZJ5dHcQDnDGsdvegykyMyBvhK26lvNVzeVXCq+GkjK
-         WkJ5NXp3XS6w0NCX3Y7mK4jPGrE7Tw9uOmRjObhWlKIhzt8AfuOG0FS+PdMKUt4jNa/t
-         q6aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTtNkXNsK8BkTtARgZhI/TDZyN7itAfBO4Zgl7jVUiIN3MFl1aPLRqcBU4QqP/YcHFA7Om11UKYbhMlTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkD4wmLNfQdwcl/EYVe6zmvIO9cmN4gUsCRsfR+1AboeM1QnzS
-	+ZqENGt2PYyeqZujV4NTHQUI6XVT5hWrZzajEbJno8WMrCwcnWbem4HQIBcocHQI2cnA7yhb4VV
-	SQLobwhiBzpIBhN79OJT3BMehJNICwRp9iJsS9wobuxWKmxs/mOSGlCpRFKI=
-X-Google-Smtp-Source: AGHT+IGYASKP8hU31QI0trilywDw31OIxZOXXBUT5ZKD8CVkHRLF0C+8oJSCZ8wIM1De8sDbw67hl19Hri2UeJckvuAe6Kdc9wql
+	s=arc-20240116; t=1761429668; c=relaxed/simple;
+	bh=Zdhr3QH96vIa8XRkOagQaFJO6zFfwsrc394cVKNh4+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=l6MkracF4r4pFmo9JGzAA8Mfc9B+mTGIpn4cZ+06pdgzCI21NN97JaoxsHxGA4yKK2bYsrhDU+cuF7VNG2kCZJszy7LrN498Rmbn/8O4s5DPn/zLQ7SVqyx7ITJ3nKfCKbcaYcxGB7vIywBP0gQdv+TvqkDcAupfKNchrdth07M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=pxQMMed8; arc=none smtp.client-ip=212.77.101.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 39240 invoked from network); 26 Oct 2025 00:00:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1761429656; bh=eqCxPLGNk+p8qKPy3tzCrxq9AIQfMJbfl7ZnTBK0a5Q=;
+          h=Subject:To:From;
+          b=pxQMMed8x4AVKbBEnKdtT8wYSYfE4PNhM80Hnx9G/7c7doMtqKorFIbmOcM37/unk
+           hYyWwceDi4V7xFKygQTQxbfgy+NwET2DRZapiL+cs4+pGUbleLNjw5RlTvx5gm8A4q
+           vwCRZMiIl13vYPV4NAzUBTIRbsbO6LkBSjLu+PxQIfkYAnSJD6xGBeu4/5YF89zPss
+           69IeUPOGO/fq2Y7QByPtxZnRfg2XZnL3L2Cak7iLD/SkquywsaeqrnWwzDH5jDhulg
+           yh+K+uR5ukLIF1zZkrl83xZWUN4Kv3ylzo9389MvIPO5R8A5Yk/lMzfOlJZA8lnY79
+           OQEkdmdHcf7mQ==
+Received: from 83.24.132.245.ipv4.supernova.orange.pl (HELO [192.168.1.14]) (olek2@wp.pl@[83.24.132.245])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <greearb@candelatech.com>; 26 Oct 2025 00:00:56 +0200
+Message-ID: <626b4034-13f2-4b09-9f48-5bed9a6c82ca@wp.pl>
+Date: Sun, 26 Oct 2025 00:00:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0c:b0:430:c38f:fb82 with SMTP id
- e9e14a558f8ab-430c5223b84mr401619015ab.8.1761429270642; Sat, 25 Oct 2025
- 14:54:30 -0700 (PDT)
-Date: Sat, 25 Oct 2025 14:54:30 -0700
-In-Reply-To: <68f4abbe.050a0220.1186a4.052a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fd4716.050a0220.346f24.039a.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill (3)
-From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    566771afc7a8 Merge tag 'v6.18-rc2-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=112ec7e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25811b07889c90db
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141ca614580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156b4be2580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-566771af.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d8d15ef51fac/vmlinux-566771af.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7f77bbb0b916/bzImage-566771af.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/34711c27aae5/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1061bb04580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-
-         option from the mount to silence this warning.
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with writeback data mode.
-Oops: divide error: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5467 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
-RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
-Code: 34 1a 49 81 c6 50 01 00 00 45 0f b7 3f 49 83 c5 02 4c 89 e8 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 eb 03 00 00 44 89 f8 31 d2 <66> 41 f7 75 00 0f b7 d8 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0
-RSP: 0018:ffffc90002b2f080 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888000dba480
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002b2f188 R08: 00313050554f5247 R09: 00313050554f5247
-R10: dffffc0000000000 R11: ffffed1009f9b801 R12: dffffc0000000000
-R13: ffff88804fcc24c2 R14: ffff88804fcdc150 R15: 0000000000000000
-FS:  000055558f3fe500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2fd63fff CR3: 00000000431d7000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- ocfs2_block_group_alloc_discontig fs/ocfs2/suballoc.c:634 [inline]
- ocfs2_block_group_alloc fs/ocfs2/suballoc.c:703 [inline]
- ocfs2_reserve_suballoc_bits+0x20a6/0x4640 fs/ocfs2/suballoc.c:834
- ocfs2_reserve_new_inode+0x4f4/0xcc0 fs/ocfs2/suballoc.c:1074
- ocfs2_mknod+0x83c/0x2050 fs/ocfs2/namei.c:306
- ocfs2_mkdir+0x191/0x440 fs/ocfs2/namei.c:659
- vfs_mkdir+0x306/0x510 fs/namei.c:4453
- do_mkdirat+0x247/0x590 fs/namei.c:4486
- __do_sys_mkdirat fs/namei.c:4503 [inline]
- __se_sys_mkdirat fs/namei.c:4501 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4501
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3f05d8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdff269308 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00007f3f05fe5fa0 RCX: 00007f3f05d8efc9
-RDX: 0000000000000000 RSI: 00002000000000c0 RDI: ffffffffffffff9c
-RBP: 00007f3f05e11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f3f05fe5fa0 R14: 00007f3f05fe5fa0 R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
-RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
-Code: 34 1a 49 81 c6 50 01 00 00 45 0f b7 3f 49 83 c5 02 4c 89 e8 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 eb 03 00 00 44 89 f8 31 d2 <66> 41 f7 75 00 0f b7 d8 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0
-RSP: 0018:ffffc90002b2f080 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888000dba480
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002b2f188 R08: 00313050554f5247 R09: 00313050554f5247
-R10: dffffc0000000000 R11: ffffed1009f9b801 R12: dffffc0000000000
-R13: ffff88804fcc24c2 R14: ffff88804fcdc150 R15: 0000000000000000
-FS:  000055558f3fe500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2fd63fff CR3: 00000000431d7000 CR4: 0000000000352ef0
-----------------
-Code disassembly (best guess):
-   0:	34 1a                	xor    $0x1a,%al
-   2:	49 81 c6 50 01 00 00 	add    $0x150,%r14
-   9:	45 0f b7 3f          	movzwl (%r15),%r15d
-   d:	49 83 c5 02          	add    $0x2,%r13
-  11:	4c 89 e8             	mov    %r13,%rax
-  14:	48 c1 e8 03          	shr    $0x3,%rax
-  18:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
-  1d:	84 c0                	test   %al,%al
-  1f:	0f 85 eb 03 00 00    	jne    0x410
-  25:	44 89 f8             	mov    %r15d,%eax
-  28:	31 d2                	xor    %edx,%edx
-* 2a:	66 41 f7 75 00       	divw   0x0(%r13) <-- trapping instruction
-  2f:	0f b7 d8             	movzwl %ax,%ebx
-  32:	4c 89 f0             	mov    %r14,%rax
-  35:	48 c1 e8 03          	shr    $0x3,%rax
-  39:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
-  3e:	84 c0                	test   %al,%al
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921,
+ mt7981 and mt7986
+To: Ben Greear <greearb@candelatech.com>, nbd@nbd.name, lorenzo@kernel.org,
+ ryder.lee@mediatek.com, shayne.chen@mediatek.com, sean.wang@mediatek.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ howard-yh.hsu@mediatek.com, StanleyYP.Wang@mediatek.com, rosenp@gmail.com,
+ luoxueqin@kylinos.cn, chad@monroe.io, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20251019155316.3537185-1-olek2@wp.pl>
+ <fa7befd5-b2c7-4277-ad57-a1577216ba83@candelatech.com>
+ <5a529d81-fb4e-4e7a-a132-3b76d26c3696@wp.pl>
+ <4f75bb90-25ee-4312-b4b1-3faf0249b05a@candelatech.com>
+Content-Language: en-US
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+In-Reply-To: <4f75bb90-25ee-4312-b4b1-3faf0249b05a@candelatech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 7bd021ef727bbcc9a938de5417393e54
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000003 [UbDx]                               
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+On 10/19/25 20:18, Ben Greear wrote:
+> On 10/19/25 09:43, Aleksander Jan Bajkowski wrote:
+>> Hi Ben,
+>>
+>> On 10/19/25 18:26, Ben Greear wrote:
+>>> On 10/19/25 08:51, Aleksander Jan Bajkowski wrote:
+>>>> Supports IPv4 and IPv6 TCP + UDP
+>>>>
+>>>> In various tests between MT7986 and Intel BE200, I observed a 
+>>>> performance
+>>>> boost ranging from 2 to 12%, with an average of 5.5%.
+>>>>
+>>>> I did the tests on the MT7915, MT7981, MT7986, and MT7921 variants. 
+>>>> The
+>>>> MT7922, MT7925, and MT799x are untouched for now and still have
+>>>> checksumming disabled.
+>>>
+>>> At least with  7996, tcp csum only worked on the first few vdevs
+>>> created in our testing, so we had to add logic to disable that flag
+>>> on subsequent vdevs.
+>>>
+>>> Have you tried creating a bunch of station and/or vap vdevs to see if
+>>> all of them can still transmit TCP traffic?
+>>>
+>>>
+>> Thanks for the useful information. On all tested devices, I had a single
+>> AP configured per device. I will try to create several APs for each 
+>> device.
+>
+> We can try it out as well.
+
+
+I've tested multiple VAPs (15x AP + 1x station). It seems that everything
+works fine on MT7915, MT7981, and MT7986. By connecting to the first
+and last AP, tx checksum offload works correctly. MT7921 only supports
+a single VAP, so I skipped testing it.
+
+>
+>> I also have a router with MT7996. A quick test shows that checksum
+>> offload doesn't work on this router. MT7996 is visible in the system
+>> as a single DBDC device. I have 3 APs configured there. Each on a
+>> separate band (2.4/5/6 GHz).
+>>
+>> Best regards,
+>> Aleksander
+>
+> We have it working on 7996, but the patch is tangled in some other 
+> changes we made
+> with how wcid and such are allocated.  We are still cleaning and 
+> testing patches
+> on top of Felix's tree, should have something to post sometime soon.
+>
+
+Maybe only the MT7996 is affected?
 
