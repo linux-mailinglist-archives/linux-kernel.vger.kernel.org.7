@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-869762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6208C08AD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45871C08AEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561213AC220
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718343B2543
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1F525BEE5;
-	Sat, 25 Oct 2025 04:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A1E274646;
+	Sat, 25 Oct 2025 04:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3EnSCCW"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9Qcok5R"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3485A1494C2
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 04:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44F825BEE5
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 04:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761366719; cv=none; b=LnkloUqqsWvFddEvNqib7PcRPZ28f4KhlaiahNch3BDJGBOaAyLw3jFtIonvnmuLC1erlv2aYr6KrfPvR+ZyorDyw7zteNKYCHzWchhNJmoJPGSFlQB0z88x7fYpWbkXrornEM7agnc9qTk3VVQ3v5e61G/pDnbWvXVxhDJijlQ=
+	t=1761366736; cv=none; b=Jav2YzWG+jVvmRvDeig4qQqVwrmOVPURRCpbJyTREQK2M4VED75hrclEzTbNgPUrzONKra/KoqzEXGyI747svoIfvn8zELpt5fYzfRycj0UQjWIWUuQUvifotsTNp5CF+spNLw0HfVdHrTOk8BrtdalKsw4pshyn5R1+SYLjQlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761366719; c=relaxed/simple;
-	bh=TyC97LahORynCpDNYYasLXMe/KE5E24maIVQwa1LxhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BsRwJGevXr3aFdMbHEfWowahHFs7axthqCNzZJme6ONirc45qO6emKTwzW8lFKbJ7ir+7hOaSjphHVVGQwnZ2rOh0tEynR3+ox+iKSgLjmarjL01gq5VQgKa7TpzZTDVYbBntJ3HNARw3eNeJIwVhqTVeBPXsklI66/8HRrdUqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3EnSCCW; arc=none smtp.client-ip=209.85.208.173
+	s=arc-20240116; t=1761366736; c=relaxed/simple;
+	bh=LxsKOmVaDzOSy8bwwU0rWY43UlPO4MkzptnRxF9FP4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p+/o34MH3V3wlOjEtHfBOfPs/5nEN+BdpgyvrznXXADGjHAQv8giiWV3y1b6fbJuj+sEADWVnx3YxpzbBFswYdJQUH0KPaS5jhNzvMktQEb7CtcGwRDVBTmHJvYAR9wZ4B9hTVG5C6mjbKnwJmyJRkjhTypeeOrxdclU9BabYOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9Qcok5R; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-378d65d8184so37576321fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 21:31:56 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3737d0920e6so44916811fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 21:32:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761366715; x=1761971515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OEVFVM/l2psTi4+scJeyVhhgmazdGrNFi6gMHZXJLQg=;
-        b=d3EnSCCWd3gHiqluJx1/VKamPZRSQXHgglAIrf4U/gQcEJi1OZuz73eQ92o3Vhbmxy
-         bOcgr5ur8b+ze4S2AJOi2cwKDxunPzVMjvGmQyHohqwoBwqZV5sG+QXPQZ0eFu3d1O6s
-         RPNMks8FOuklQBTCnH5My3d3rHwfKWIByxV9qW75BHzS7XlurTzwrPTblC/PkKwyC6UU
-         zsmO7q4z/c3QUTgCe9EU2JJ3K/pbcEtSCYzH85aSessxOjyESD9+WIv+QJ2arfuKFcz/
-         kye0kepU+mnQoO52qrcdjycodcdD0JVaZL1VEuUTmOYPpEZRmlZU7bXmuLH+KDKhgUpB
-         /d8A==
+        d=gmail.com; s=20230601; t=1761366731; x=1761971531; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CuZHP6YFsCwwA4TkyjhYi+XmEZKmSYURob9jZc/v+s0=;
+        b=B9Qcok5RoenL6fqPlY6e10yRncd50H3kwiY26o1qE/pRn6c3Ux3k+uEO7MSFd7/CaA
+         NBcnmRvhUXZxjl5UbiEiKC18ag4KrYRvH4/A1HnNIkuufh2ElkBerbg7+A5tNjSHRklG
+         PDWjquaC9tXHMJmIGiZWIOIa9pgAz2ZfFXdi8wqCl+ymzUdzMtfiGOxGGWUE/ez21CNN
+         QOyIyFY13Kk/ehCS2DBw6txxg3R4VuC3RKf/RbpLigqk7mn76XVnLL+kK5ExLmc6ftMH
+         8aGzA3NqEUCAVaWaZnxWNRdaVi6kxo0wk2LMD1gMzc/CbQQAGBQweBzckNKNjJJ+q6ad
+         Vsew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761366715; x=1761971515;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OEVFVM/l2psTi4+scJeyVhhgmazdGrNFi6gMHZXJLQg=;
-        b=X/3Uyq+88hnqYV7nBDbR+E9mwRNJBAGOPXiAc94sOsDmU2o4oZ4+47BhVd++chXxqS
-         h++xKvioN/fTu48YmGACewy2voB8k/wrOq5Sx3a1NWCBqTtS+lidDJ7Se/7TDdZ8nzq5
-         3BsduIVAxFiCJiyjHlz0cVaFtJ9QIH4yBCxBhY7/AYO8uFOOJ35qLMjQJq9wsarffDy0
-         OT5vZ74rtZpk6QZmOmt0P1a33uzwLsV5TI8cliDntlrOS1D37jy5i3/Blhn2z/zFLQFD
-         5iRUdcZAIv+eqd2evHJWghxggwu35TzxvFWDkB85ONz/FzI2EatmwURt6zFCVRYBJj7v
-         A2PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHTOGxV9zVsJy6SVT3awlH5CWQBrjanGhJPLdkrSXhD3Y1HyBKh+VqEJ32JhDOdVrsPdYbmALE0H4UoZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+X1fYmJPk0ruCW9wxHl1o5V3ykLY4q4LB4PB2zExJ5M1id0ss
-	CTX4OztHP6TWDdFEPCmZw8XQMPr77zYa0nmXvxnDOflLo3D1mMNiCvtc
-X-Gm-Gg: ASbGncvfTV/QHN5z5mgnWgx2IDiYYg6tAJT4eoiILCmSL5w23gacf4prhWGt7QZ29bV
-	EyvrsuIhZXKDvhTobctYQoJv6Mf3MShkCKx/YvV6o2poOyJKvTUH/jy4poKgIKEXzyzfoRtAza3
-	uy7CoakmeNdsG2UsxkK5K/P0RXadKlYrBDQ4fm4y6/6GJPUGPfi/YxIcBqqT/A5I+AAi4KQNFRs
-	jHY5Wy0lK3hAo013ZML96twqsfbQ3BDficHNTMPUHqXfM0vea3StjJxjkwt0ZRYpa8MVFJWIOTb
-	5aM/Ay35iIdILuE7TEnS4GBSe9wiF3SHIzx85eCUl7EGv4YD5Y/RjhNA+pj6JP6kv4nUhJF0Wmr
-	XrH9Z6G6OUxCT9wOD09tDEZu3/ykE3DenpK3bOYDxFuImSRqrK5lj5l2FMN1caarz6zUxD0V6+8
-	Ge
-X-Google-Smtp-Source: AGHT+IFXzz4JrbCccLfkZ2ZXGDknqpjtngSJ7wok4+tdSDfFKxhBjVek1aHX+t+1GLDollUvLiPj9g==
-X-Received: by 2002:a2e:bc25:0:b0:378:dd60:38c9 with SMTP id 38308e7fff4ca-378dd60520emr22966101fa.38.1761366715050;
-        Fri, 24 Oct 2025 21:31:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761366731; x=1761971531;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CuZHP6YFsCwwA4TkyjhYi+XmEZKmSYURob9jZc/v+s0=;
+        b=YGMPpHKeVz+OlxqOK2NmszaNhXKsxIE/Vs0lJKPxxJY46Su/7YwOcn6TSDEnJY53MF
+         b/29JWIhUS31ThAkrgtp4WnSlBhC9xe12tj9VJhpBLgoJdpQAAsV43WgSkzJN/aG4gtx
+         DNGrZUA0L32J2DlPANnOalmpF5pUb0j3WC/AUaIF3mkcvlvb2mRZ3XrLlbnHTASX50XH
+         HjmArW44dFKiE0KMn7ndUjN7CjermRnR0FYt4g5MAgOW88r0fCO9BE6/xYy/kodDYAlp
+         p/TGozan88QGezH1bPrzjRV03FCa9C467O34fiDXXc8OZ/p39zTEmoOKH9b6yrFb9/ri
+         2QzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvQ4Jsgf//KKTsbD52S9z1SHzjF3yJFS/cao7hporT3H0aFDjDSY06ezVtnzPkABbwLQmD1Shv+v9PRvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/ZEgBIU0VcxkBmB6XVA4mylYDNAudXU6dxY9vFAJ3LlElfLM1
+	2oy1lDDrpnhFWD+SD+q10EH/qz1uQaXvSe9dKxsWsR+pifcFXy6cWtSc
+X-Gm-Gg: ASbGncspN0wte8SeZliVtT9x46d5ALbRyEQ7AkpgaiaIFLf8sUE3dsAPre6BR5CRZNe
+	x/4FwKouII558+3Jp8+T5zCZMcjnr2sK3/YUouc6eqty4LzofapNl6RiwcJsmUb6zPkdQQqip1l
+	7gqEYkLzTi9EEweY1vqHIl8wo+zOB3Pvc/ON83x4MaI4a7bvTsTvwZooSk+IbZ7ii+hbu7AqV0+
+	My8AHGSF7p/OwZXd4yVFU2ScR78OeWFzzVA4UAn9MOFn0t4vexLeDLDndavOFmiTEM33y5raxD/
+	oVLL+RNazRclcJCkzzpQCx5REH2UlZceeozlFONR1jGkuFBa9EC12kWdDen8CLuRoMh5GZopeRz
+	JChN4YpnXDZ8t8OpDruAR6amMsP43qYLP6u3LyawnDBoix2EnDc1BQghA3zakeW2H5u6uNqjO/E
+	gH
+X-Google-Smtp-Source: AGHT+IHidqK20asSnkSoaYA0Ua+IEXaUMgtNo1d+OXf+4JbTCbl0aR8F8Cd5djjk9glXI6+3c84fFA==
+X-Received: by 2002:a2e:a916:0:b0:376:4430:b545 with SMTP id 38308e7fff4ca-378e4648542mr13761041fa.49.1761366730866;
+        Fri, 24 Oct 2025 21:32:10 -0700 (PDT)
 Received: from junAIR ([176.106.241.81])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0ca7a0sm3409241fa.33.2025.10.24.21.31.40
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0ca7a0sm3409241fa.33.2025.10.24.21.31.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 21:31:54 -0700 (PDT)
+        Fri, 24 Oct 2025 21:32:10 -0700 (PDT)
 From: iuncuim <iuncuim@gmail.com>
 To: Vasily Khoruzhick <anarsoul@gmail.com>,
 	Yangtao Li <tiny.windzz@gmail.com>,
@@ -91,10 +93,12 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/6] Allwinner: A523: add support for A523 THS0/1 controllers
-Date: Sat, 25 Oct 2025 12:31:23 +0800
-Message-ID: <20251025043129.160454-1-iuncuim@gmail.com>
+Subject: [PATCH v3 1/6] dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
+Date: Sat, 25 Oct 2025 12:31:24 +0800
+Message-ID: <20251025043129.160454-2-iuncuim@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251025043129.160454-1-iuncuim@gmail.com>
+References: <20251025043129.160454-1-iuncuim@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,88 +109,129 @@ Content-Transfer-Encoding: 8bit
 
 From: Mikhail Kalashnikov <iuncuim@gmail.com>
 
-This patch series adds temperature sensor support for the Allwinner A523
-family of processors (same die with H728/A527/T527)
+Add a binding for D1/T113s thermal sensor controller. Add dt-bindings
+description of the thermal sensors in the A523 processor.
+The controllers require activation of the additional frequency of the
+associated gpadc controller, so a new clock property has been added.
 
-Based on 6.18-rc1.
+The calibration data is split into two cells that are in different areas
+of nvmem. Both controllers require access to both memory cell, so a new
+property nvmem-cells has been added. To maintain backward compatibility,
+the name of the old cell remains the same and the new nvmem-cell-names is
+called calibration-second-part
 
-Changes v3~v2:
-x) dt-bindings: nvmem: SID: Add binding for A523 SID controller
- - previously accepted, therefore removed from this version
+Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+---
+ .../thermal/allwinner,sun8i-a83t-ths.yaml     | 56 ++++++++++++++++++-
+ 1 file changed, 53 insertions(+), 3 deletions(-)
 
-1) dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
- - added changes as requested by Rob
-
-2) thermal/drivers/sun8i: add gpadc clock
- - removed undescribed changes spaces to tabs
-
-3) thermal/drivers/sun8i: replace devm_reset_control_get to
- - changed the commit description to the version suggested by wens
- - added reviewed-by tag
-
-4) thermal/drivers/sun8i: get calibration data from two nvmem cells
- - added spaces in the description block before "*"
-
-5) thermal/drivers/sun8i: Add support for A523 THS0/1 controllers
- - added alignment of functions in compliance with open parenthesis
-
-x) arm64: dts: allwinner: A523: Add SID controller node
- - previously accepted, therefore removed from this version
-
-6) arm64: dts: allwinner: A523: Add thermal sensors and zones
- - no functional changes
-
-Changes v2~v1:
-1) dt-bindings: nvmem: SID: Add binding for A523 SID controller
- - added new patch
-
-2) dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
- - changed clock order
- - added additional nvmem cell with calibration data
- - added requirements for new controllers
- - added description
-
-3) thermal/drivers/sun8i: add gpadc clock
- - removed unnecessary call to clk_prepare_enable() since
- devm_clk_get_enabled()includes this
-
-4) thermal/drivers/sun8i: replace devm_reset_control_get to
- - original function replaced with devm_reset_control_get_shared_deasserted()
- - removed some of the repetitive code executed by 
- devm_reset_control_get_shared_deasserted()
-
-5) thermal/drivers/sun8i: get calibration data from two nvmem cells
- - added possibility to get calibration data from two independent cells
-
-6) thermal/drivers/sun8i: Add support for A523 THS0/1 controllers
- - removed magic digits
- - changed description of calibration data procedure for A523
- - changed numbers of array elements with calibration data
-
-7) arm64: dts: allwinner: A523: Add SID controller node
- - fix typo (sun50i->sun55i)
-
-8) arm64: dts: allwinner: A523: Add thermal sensors and zones
- - cell with calibration data divided into two
- - added passive trips for gpu
- - added information that information obtained from BSP
-
-v1: https://lore.kernel.org/linux-sunxi/20250411003827.782544-1-iuncuim@gmail.com
-
-Mikhail Kalashnikov (6):
-  dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
-  thermal/drivers/sun8i: add gpadc clock
-  thermal/drivers/sun8i: replace devm_reset_control_get  to
-    devm_reset_control_get_shared_deasserted
-  thermal/drivers/sun8i: get calibration data from two nvmem cells
-  thermal/drivers/sun8i: Add support for A523 THS0/1 controllers
-  Allwinner: A523: add support for A523 THS0/1 controllers
-
- .../thermal/allwinner,sun8i-a83t-ths.yaml     |  56 ++++-
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 154 ++++++++++++
- drivers/thermal/sun8i_thermal.c               | 234 +++++++++++++++---
- 3 files changed, 401 insertions(+), 43 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+index 3e61689f6..b2f750ef2 100644
+--- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
++++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+@@ -24,18 +24,23 @@ properties:
+       - allwinner,sun50i-h5-ths
+       - allwinner,sun50i-h6-ths
+       - allwinner,sun50i-h616-ths
++      - allwinner,sun55i-a523-ths0
++      - allwinner,sun55i-a523-ths1
+ 
+   clocks:
+     minItems: 1
+     items:
+       - description: Bus Clock
+       - description: Module Clock
++      - description: GPADC Clock
+ 
+   clock-names:
+     minItems: 1
++    maxItems: 2
+     items:
+       - const: bus
+       - const: mod
++      - const: gpadc
+ 
+   reg:
+     maxItems: 1
+@@ -47,11 +52,16 @@ properties:
+     maxItems: 1
+ 
+   nvmem-cells:
+-    maxItems: 1
+-    description: Calibration data for thermal sensors
++    minItems: 1
++    items:
++      - description: Calibration data for thermal sensors
++      - description: Additional cell in case of separate calibration data
+ 
+   nvmem-cell-names:
+-    const: calibration
++    minItems: 1
++    items:
++      - const: calibration
++      - const: calibration-second-part
+ 
+   allwinner,sram:
+     maxItems: 1
+@@ -107,6 +117,7 @@ allOf:
+             enum:
+               - allwinner,sun8i-h3-ths
+               - allwinner,sun20i-d1-ths
++              - allwinner,sun55i-a523-ths0
+ 
+     then:
+       properties:
+@@ -132,6 +143,32 @@ allOf:
+         - clock-names
+         - resets
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - allwinner,sun55i-a523-ths0
++              - allwinner,sun55i-a523-ths1
++    then:
++      properties:
++        clocks:
++          minItems: 2
++        clock-names:
++          enum: [ bus, gpadc ]
++        nvmem-cells:
++          minItems: 2
++        nvmem-cell-names:
++          minItems: 2
++    else:
++      properties:
++        nvmem-cells:
++          maxItems: 1
++        nvmem-cell-names:
++          maxItems: 1
++          items:
++            - const: calibration
++
+ required:
+   - compatible
+   - reg
+@@ -176,4 +213,17 @@ examples:
+         #thermal-sensor-cells = <1>;
+     };
+ 
++  - |
++    thermal-sensor@2009400 {
++      compatible = "allwinner,sun55i-a523-ths1";
++      reg = <0x02009400 0x400>;
++      interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&ccu CLK_BUS_THS>, <&ccu CLK_GPADC1>;
++      clock-names = "bus", "gpadc";
++      resets = <&ccu RST_BUS_THS>;
++      nvmem-cells = <&ths_calibration0>, <&ths_calibration1>;
++      nvmem-cell-names = "calibration",
++             "calibration-second-part";
++      #thermal-sensor-cells = <1>;
++    };
+ ...
 -- 
 2.51.0
 
