@@ -1,76 +1,86 @@
-Return-Path: <linux-kernel+bounces-870096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B58C09E74
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:37:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 011BAC09E98
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6281B22752
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:38:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB1AA4E0F56
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7EB3016E1;
-	Sat, 25 Oct 2025 18:37:33 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD30301477;
+	Sat, 25 Oct 2025 18:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tutamail.com header.i=@tutamail.com header.b="qJRtWQFk"
+Received: from mail.w13.tutanota.de (mail.w13.tutanota.de [185.205.69.213])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744DC2FF167
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 18:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93239267B94
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 18:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761417452; cv=none; b=AUyeL5TkfZIBrNQpnqdElFbBLboBfxIoQR0dJurcDBAQTOdnaW571ztGdSbU/i5raloNCiP8yZotvF+Z9nhDXxbQDACSm72vnQ2qbCISdCNlRuLqEK3xTQGzrJ94datgECiezJ/IrA6AtpBnrXMfbv9rWUo4od529QVRjmoePtc=
+	t=1761418167; cv=none; b=K/ZnMOf8v+NTdjOaplpmd+8NJRCj/bxtdzpwqlNDFZ+gQWn2gQ0RqKKhbUMOtd5ZdlFeAi5EUiMObQB+Qmc5HMoPsOlz/n0+498FXIWTZxq1Lu3qrfv2gKxRhg++XLkvPnlgtbFwYUDN7/4H/EWa7FTLysL2hiMzB8RrTQ1eXMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761417452; c=relaxed/simple;
-	bh=Jzrlv5c+xfxqekayEMDIeeF/qVyIyYd5u5zrPTV2rZc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mkS7ZXwCd3G28RI4ecaRmIcJilkpYiJrsti0U1EX9apC4hdkhilaGptGW1cfVBF1N4TYocar4OdJwIVpM+jGf3UjHTjJFsyVTp1BzvWxQHov38fVcwd2hhRvoQx3lmJRl9W1oXFQguEtMHH0N768VdIKnZesjF3X6kfZmCSuRjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430e1a4a129so42395425ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:37:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761417450; x=1762022250;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jzrlv5c+xfxqekayEMDIeeF/qVyIyYd5u5zrPTV2rZc=;
-        b=YQ6Swyst4GQD19WwnFS2PjQMOlGKtCIgwYLWkKueERjQZeJmUvlA96rcSH2BnIEmC7
-         6JE7O7YLVzc35cghDCk4uASZzOOkC5GaPG3aYPifUZSjqP2K2oztuWw4Zh2baMQDQnyB
-         R+ZQSuLB3YKcWbsV0U3Pola9MnyreXfeIzRd81HfkxZTsX6D7gGjZlurU2WTfTctdlqp
-         0lMonQUqAQT/TEH74+b728qGuH8ReRSs/eKcyvZyO2OolZEGghk+//FKkIabx5+6yka4
-         D2GqVFsxTmXWTIslRtO5fLCRq5EjwZSa+ASwBIEfz+MwnM5/SQMrOgsIO2I5DYfKeSjw
-         vbfw==
-X-Gm-Message-State: AOJu0YzdelwZD7cuSxdgrkCs0TXTT+W6Uvkr28jPnlXtK4j24zkjk3gS
-	SQKh9+T4rDM+7xyOzmqB38fxQLOoDvyTFxS5hRFhQ0yK/ONNB8q2Sng9gddzavxITLSl4CV0kqB
-	lIULdzcvgB3X6eCfnYYDwO44Gc4oDpsVAAld8lGe6J5uHAVD/wyk7GrUhAPQ=
-X-Google-Smtp-Source: AGHT+IHBwT898SE9t0OkXURvfkB1hMorqxeecbdZkRQLGpsHq9Qmt3SW08l11k4LbEAViA7/AlGjmXTEun99F0HiJ0kCTZTmBpIZ
+	s=arc-20240116; t=1761418167; c=relaxed/simple;
+	bh=XQLq6SqPfOgW1k3I84AdyQa2oOQTXjEzBu/EanGLgns=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=YIm9K9uJlzZe+WO7uTTzblHicch98995RwgziwZVMLVv7M6HGgSiYCc8O1PkYUb5yBKGpuZV76jK2GnOPM/QjYpdPT+CqiEyDlpMMG+bt+/qn/7vivEn/2ay8z6QVsDl/P5j4gfePErxbFMRv0rO7p24s0rerd6EPJxZDUJKi3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tutamail.com; spf=pass smtp.mailfrom=tutamail.com; dkim=pass (2048-bit key) header.d=tutamail.com header.i=@tutamail.com header.b=qJRtWQFk; arc=none smtp.client-ip=185.205.69.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tutamail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tutamail.com
+Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
+	by mail.w13.tutanota.de (Postfix) with ESMTP id E30ECD546EFC
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 20:40:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761417645;
+	s=s1; d=tutamail.com;
+	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:Sender;
+	bh=XQLq6SqPfOgW1k3I84AdyQa2oOQTXjEzBu/EanGLgns=;
+	b=qJRtWQFkPgbgSHI4MwSPlPUwkistwx6ETXobuxOu9HVa43QAWHgB0vAnoLY/e+1x
+	9U9CI7rCbXYRowVFTdtt1W1HUz9D5PRUfOXD6gl9g+nAlsXWjXij3u9HfLgLo5Ql8Dx
+	BttrJMsBFCexjHw6mRyfqPUrsJSvdryLhOoXbspIfn46K/4kO8aF9xcXc7wCMH77iai
+	SnI4tXOrh77lKdRGSPLF5a2/52VbYAYk0lu8ygLgoaZfeRElBkJ+F7QxsEvM1mlgej7
+	CXDGsMxfGNRFFuhrUNmD7JT/NSmr+g8q0wEJmJsVoBp7RzlpRpjk8mw5iDiCwbQVM9g
+	ZDPqgZYktg==
+Date: Sat, 25 Oct 2025 20:40:45 +0200 (GMT+02:00)
+From: craftfever@tutamail.com
+To: Linkinjeon <linkinjeon@kernel.org>
+Cc: Linux Fsdevel <linux-fsdevel@vger.kernel.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Iamjoonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Cheol Lee <cheol.lee@lge.com>, Jay Sim <jay.sim@lge.com>,
+	Gunho Lee <gunho.lee@lge.com>
+Message-ID: <OcRf3_Q--F-9@tutamail.com>
+Subject: [FS-DEV][NTFSPLUS][BUGREPORT]NtfsPlus extend mft data allocation
+ error.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164c:b0:430:8bff:c5a2 with SMTP id
- e9e14a558f8ab-431ebef1db7mr76232635ab.30.1761417450570; Sat, 25 Oct 2025
- 11:37:30 -0700 (PDT)
-Date: Sat, 25 Oct 2025 11:37:30 -0700
-In-Reply-To: <68ec7960.a70a0220.b3ac9.0017.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fd18ea.050a0220.32483.0002.GAE@google.com>
-Subject: Forwarded: KASAN: slab-out-of-bounds Read in mcp2221_raw_event (2)
-From: syzbot <syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
 
-Subject: KASAN: slab-out-of-bounds Read in mcp2221_raw_event (2)
-Author: atharvd440@gmail.com
+Hi, I' decided to test your new driver, as I found ntfs3 driver buggy and c=
+ausing system crush under huge amount of files writing ti disk ("I'm report=
+ed this bug already on lore.kernel maillists). The thing is ntfsplus demons=
+trated buggy behavior in somewhat similar situation, but without system cru=
+shing or partition corruption. When I try, for example, download many small=
+ files through download manager, download can interrupt, and cosole version=
+ writes about memory allocation error. Similar error was in ntfs3 driver, b=
+ut in this case with ntfsplus there is no program/system crash, just soft-e=
+rroring and interrupting, but files cannot be wrote in this case. In dmesg =
+this errors follow up with this messages:
 
-#syz test
+[16952.870880] ntfsplus: (device sdc1): ntfs_mft_record_alloc(): Failed to =
+extend mft data allocation.
+[16954.299230] ntfsplus: (device sdc1): ntfs_mft_data_extend_allocation_nol=
+ock(): Not enough space in this mft record to accommodate extended mft data=
+ attribute extent.=C2=A0 Cannot handle this yet.
+
+I know. that driver in development now, so I'm reporting this bug in time w=
+hen development is still in process. Thank you
 
