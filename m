@@ -1,154 +1,95 @@
-Return-Path: <linux-kernel+bounces-870113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909EAC09F56
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:37:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37052C09F4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CD43A6B17
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37BB7188692C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAE52E2F08;
-	Sat, 25 Oct 2025 19:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDistKlk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C1B2E2679;
+	Sat, 25 Oct 2025 19:36:32 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574471F12F8
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 19:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1A2E172B;
+	Sat, 25 Oct 2025 19:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761421015; cv=none; b=cfCzsrd34YxWfEqbjwX2fzqXaF+Ib9WpYjOqVtzTSCPt+xMY07bdJ+7m80sO+l8nqGDN660kUL46w7+j71TlMVEtiNPEbEJVh7XkMpJkYoV03C46xFA7zNbvWB8T7DaGluNx0Rg9klNJJf1IUikj6OEAXnvbRUWqeXGKIGhmaE4=
+	t=1761420992; cv=none; b=fpjVxWWf9bglJpRsdyCriKEg+qWrj0/MOHehrSllDfu8c09bhLtozev4H+lbUP1Lr5l+OTVNr96TmdSxTnMgaBnPnA+LO6IYGnb0P+Vge3h/XNinPLFVo0g4ANlBgK+0nYEalEvLuwYp5+2Mg9qlybKjFKqrKNBAFfu2reLxe+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761421015; c=relaxed/simple;
-	bh=amKEW6z+TFPOb8CqNwSTob/MPQK7PC52RAS0d8iItIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QWBuzwGtqUDI2XsgWQ7OHZGWuqSS3/qQg1eFZlGYcdgYGQmMjaoyKdFhCy1QhH4SZyncV82k52euMLkmyQaYZZlupR4ugAuDqBhoc2HS76KxXdANdhdSQsKNRqyo+ADFwleuxETXJcGw+sGBphqZi2QGw+8dZdgTVvd7c5wqpZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDistKlk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812FBC113D0
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 19:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761421014;
-	bh=amKEW6z+TFPOb8CqNwSTob/MPQK7PC52RAS0d8iItIQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MDistKlk7F30Ri9bOiADE/6NRv/wd+5h34sA3x8wKxj6keTU5Vo8eseGe6xzMS1jJ
-	 EFggEfyzc6uZpOChiYzDZdFkORZ4tFml+kVJ8mH/KWhn9MaMa7ifnJsbBdbTOVVUBU
-	 NG1uaJVsrGs4FDYBMrgJP4DrubueOkPHvKzo9SCHxDeDoRHwBw5FAaVL4TRjQktjM9
-	 7yuyBYbNgus0qA6aIaDmnZSa0tJF6v7sShdM69xplULGMGEIG8e5P3Dk7jyKtnZuIZ
-	 8wlzRWCYFLBdky59W6DiNzR3vmbbIRF/jyWC8AATtTZyRiBY/tGE6Ue3OeVKNEzX5+
-	 tZjJa5/Yg5e4A==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b3c2db014easo712996266b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:36:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXMHa6VEC1YVf1A5LCX1zk8pdBOfFQ11HixsOyjCtpHnT4nGMAZ4u4W7iRyea3SRZ4np6thqj4rI78B9T4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Y6D1Vbue5YigpJa22o+3iiv5Dc5Aj5tq9tthIO/GvlaRFLM4
-	j2xwVfvrd9vykM/o7jZzALffngCpipJM/HAkbyN0bjaWL+tW1jwNqqLTHbwUawfI4LShgij5Gcc
-	tcByE54kaw7ObstYO9yLYNFsbpKIlXzw=
-X-Google-Smtp-Source: AGHT+IHWTSyJz3byfP3R4YMbneNxIM9fz7vywgncWrhDMKZ2IHwU3j/LSkDzcIc8r5ECb4MW76qhCzWe+7ZFf3z+wnQ=
-X-Received: by 2002:a17:907:94c6:b0:b6d:3de6:b729 with SMTP id
- a640c23a62f3a-b6d51c3102fmr1152468666b.51.1761421013029; Sat, 25 Oct 2025
- 12:36:53 -0700 (PDT)
+	s=arc-20240116; t=1761420992; c=relaxed/simple;
+	bh=g2fBBldohsG59SjNVOq5oDldiJbgwEcd3P1N3Bfvg60=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H+G8I/fICPo1zNmYROB+RW5pMJlabfbPhP4j6u8w5aUPh/0lwmDu6kx1t4AN7zo32NAOO6WkyFpDvAEocI4fTHBggy3amrZ0aLDS/eeIgmnT6kvWz95mbfCfiUq4sx7WrzkiugyslgEskgfijq29PGn5o5SllwndzXbLcev51Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id EDABD8466D;
+	Sat, 25 Oct 2025 19:36:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id A710B20030;
+	Sat, 25 Oct 2025 19:36:25 +0000 (UTC)
+Date: Sat, 25 Oct 2025 15:36:24 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/21] trace: don't use GENMASK()
+Message-ID: <20251025153624.4b049170@batman.local.home>
+In-Reply-To: <20251025152954.25807ec7@batman.local.home>
+References: <20251025162858.305236-1-yury.norov@gmail.com>
+	<20251025163305.306787-6-yury.norov@gmail.com>
+	<20251025152954.25807ec7@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251025092951.2866847-1-shardulsb08@gmail.com> <20251025120500.3092125-1-shardulsb08@gmail.com>
-In-Reply-To: <20251025120500.3092125-1-shardulsb08@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Sat, 25 Oct 2025 20:36:16 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7XbPrJUyXoiBfixY02Fp_PsL3AKVrLq=1FQpBtkCsFPg@mail.gmail.com>
-X-Gm-Features: AS18NWA-SZJiug2wP8qQT-86xpGUbQCKsq6pHLZcrt7H12XLQf4-E1H_shBhca8
-Message-ID: <CAL3q7H7XbPrJUyXoiBfixY02Fp_PsL3AKVrLq=1FQpBtkCsFPg@mail.gmail.com>
-Subject: Re: [PATCH v2 fs/btrfs v2] btrfs: fix memory leak of qgroup_list in btrfs_add_qgroup_relation
-To: Shardul Bankar <shardulsb08@gmail.com>
-Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: A710B20030
+X-Stat-Signature: sc4uzjb54t9mesd3dnyn9615188bnt6d
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+IMKydI74GI/yMv7u5bcYC1/vHU0zkFk0=
+X-HE-Tag: 1761420985-556311
+X-HE-Meta: U2FsdGVkX19Vq3BJKjcVgHUuXYHdvXZBoFQhRmvRHh5ZPxSNYTTvFoFxb4vgukWEwFCVY3//nmQkWclDwtAJG/WUqoG4JEPSliE5QMtS4lAjbTAkEMxOjFSgYib1+qy0Fg9jSbACapUwIh/7KuSuJFzKXK7jjcWS7mIV7myuU8in9LM1d9Wk8CilhmYubovjWbqnL8S7vZLicum2+l9yBYgBHQZA0wiBMnSZ3j0uS9TNYviB2ktp1lBms2l357htl6lOOQyqpMhcHULROAsUchtyQCacHso1zjT4b1z7t4P7zvsdfPFuL/gWhIrZ01lxAwkDLdRna01NSCXiKZ4gqPRQTyIHouS5vhvuE1qSArmvsR8ubvcpnDUehiKR24AFnMoFW1I3HxCJyTVxMx+WGQ==
 
-On Sat, Oct 25, 2025 at 1:05=E2=80=AFPM Shardul Bankar <shardulsb08@gmail.c=
-om> wrote:
->
-> When btrfs_add_qgroup_relation() is called with invalid qgroup levels
-> (src >=3D dst), the function returns -EINVAL directly without freeing the
-> preallocated qgroup_list structure passed by the caller. This causes a
-> memory leak because the caller unconditionally sets the pointer to NULL
-> after the call, preventing any cleanup.
->
-> The issue occurs because the level validation check happens before the
-> mutex is acquired and before any error handling path that would free
-> the prealloc pointer. On this early return, the cleanup code at the
-> 'out' label (which includes kfree(prealloc)) is never reached.
->
-> In btrfs_ioctl_qgroup_assign(), the code pattern is:
->
->     prealloc =3D kzalloc(sizeof(*prealloc), GFP_KERNEL);
->     ret =3D btrfs_add_qgroup_relation(trans, sa->src, sa->dst, prealloc);
->     prealloc =3D NULL;  // Always set to NULL regardless of return value
->     ...
->     kfree(prealloc);  // This becomes kfree(NULL), does nothing
->
-> When the level check fails, 'prealloc' is never freed by either the
-> callee or the caller, resulting in a 64-byte memory leak per failed
-> operation. This can be triggered repeatedly by an unprivileged user
-> with access to a writable btrfs mount, potentially exhausting kernel
-> memory.
->
-> Fix this by freeing prealloc before the early return, ensuring prealloc
-> is always freed on all error paths.
->
-> Fixes: 8465ecec9611 ("btrfs: Check qgroup level in kernel qgroup assign."=
-)
+On Sat, 25 Oct 2025 15:29:54 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-This is completely wrong...
-When that commit landed we didn't even have the 'prealloc'...
+> On Sat, 25 Oct 2025 12:32:55 -0400
+> "Yury Norov (NVIDIA)" <yury.norov@gmail.com> wrote:
+> 
+> > GENMASK(high, low) notation is confusing. FIRST_BITS() is more
+> > appropriate.
+> >   
+> 
+> I'm fine with this change as a clean up, but...
+> 
+> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> > ---
+> >  kernel/trace/fgraph.c      | 10 +++++-----
+> >  kernel/trace/trace_probe.h |  2 +-  
+> 
+> Make this two different patches. trace_probe and fgraph go through
+> different topic branches.
 
-The right commit is:
+OK, I see this is part of a patch series that adds FIRST_BITS().
 
-4addc1ffd67a ("btrfs: qgroup: preallocate memory before adding a relation")
+Please add that first, and the rest of the patches can go though their
+individual trees. Something like this change I would like to make sure
+doesn't accidentally cause a regression. That means it must go through
+my tests before it gets applied.
 
-> Cc: stable@vger.kernel.org # v4.0+
-
-And this becomes 6.11. But with a Fixes tag we pretty much don't need
-it, stable scripts will figure everything out.
-
-Thanks.
-
-
-> Signed-off-by: Shardul Bankar <shardulsb08@gmail.com>
-> ---
->
-> v2:
->  - Free prealloc directly before returning -EINVAL (no mutex held),
->    per review from Qu Wenruo.
->  - Drop goto-based cleanup.
->
->  fs/btrfs/qgroup.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-> index 1175b8192cd7..31ad8580322a 100644
-> --- a/fs/btrfs/qgroup.c
-> +++ b/fs/btrfs/qgroup.c
-> @@ -1539,8 +1539,10 @@ int btrfs_add_qgroup_relation(struct btrfs_trans_h=
-andle *trans, u64 src, u64 dst
->         ASSERT(prealloc);
->
->         /* Check the level of src and dst first */
-> -       if (btrfs_qgroup_level(src) >=3D btrfs_qgroup_level(dst))
-> +       if (btrfs_qgroup_level(src) >=3D btrfs_qgroup_level(dst)) {
-> +               kfree(prealloc);
->                 return -EINVAL;
-> +       }
->
->         mutex_lock(&fs_info->qgroup_ioctl_lock);
->         if (!fs_info->quota_root) {
-> --
-> 2.34.1
->
->
+-- Steve
 
