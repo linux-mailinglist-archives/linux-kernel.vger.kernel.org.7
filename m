@@ -1,95 +1,63 @@
-Return-Path: <linux-kernel+bounces-870112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37052C09F4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:36:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593B0C09F61
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37BB7188692C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189693A61ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C1B2E2679;
-	Sat, 25 Oct 2025 19:36:32 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F222FFF86;
+	Sat, 25 Oct 2025 19:41:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1A2E172B;
-	Sat, 25 Oct 2025 19:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34B82FE07E;
+	Sat, 25 Oct 2025 19:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761420992; cv=none; b=fpjVxWWf9bglJpRsdyCriKEg+qWrj0/MOHehrSllDfu8c09bhLtozev4H+lbUP1Lr5l+OTVNr96TmdSxTnMgaBnPnA+LO6IYGnb0P+Vge3h/XNinPLFVo0g4ANlBgK+0nYEalEvLuwYp5+2Mg9qlybKjFKqrKNBAFfu2reLxe+s=
+	t=1761421281; cv=none; b=Q+N6AQynF+K3axAWL2ZOnrob1/popZtc5goLMYM+1HD9jsxDXDLAdSHfzotsANbnK9hdpXQz9TeUJJt+iFkoIavG/XrdaKOOjdOs9JAYPeuRTFET2WDWsCPyZt4Vxx5UtEZ8b9omLnwuSWIFC/tl3IDfcB22OtqVMNQ2UWdJ2+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761420992; c=relaxed/simple;
-	bh=g2fBBldohsG59SjNVOq5oDldiJbgwEcd3P1N3Bfvg60=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H+G8I/fICPo1zNmYROB+RW5pMJlabfbPhP4j6u8w5aUPh/0lwmDu6kx1t4AN7zo32NAOO6WkyFpDvAEocI4fTHBggy3amrZ0aLDS/eeIgmnT6kvWz95mbfCfiUq4sx7WrzkiugyslgEskgfijq29PGn5o5SllwndzXbLcev51Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id EDABD8466D;
-	Sat, 25 Oct 2025 19:36:27 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id A710B20030;
-	Sat, 25 Oct 2025 19:36:25 +0000 (UTC)
-Date: Sat, 25 Oct 2025 15:36:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/21] trace: don't use GENMASK()
-Message-ID: <20251025153624.4b049170@batman.local.home>
-In-Reply-To: <20251025152954.25807ec7@batman.local.home>
-References: <20251025162858.305236-1-yury.norov@gmail.com>
-	<20251025163305.306787-6-yury.norov@gmail.com>
-	<20251025152954.25807ec7@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761421281; c=relaxed/simple;
+	bh=NzaZ3CiiIeAU1eb/XFt80wUeJdtaS7tpvIIGtpHvaSg=;
+	h=From:Subject:Date:Message-ID:To; b=Bjngtjkr1nrFRdqmbbRhlrxuImF2qCeXH2Kf7Vq15dcKbdWwwFbbQPeHyP8purXykJwp/wn1wfCgOvqpNqJ1Hr/p5NjKGfsGq0VcSW/02dtGFTWZI+DnW3AuaFM+JaLSR4FGwnx9+2l7gInR7G/1oxW/7Cxg/PYMyOyP/5fOaZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D953C4CEF5;
+	Sat, 25 Oct 2025 19:41:21 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.6.114-rt65
+Date: Sat, 25 Oct 2025 19:40:35 -0000
+Message-ID: <176142123504.2391680.9403530720672072172@demetrius>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>,Stable RT List <stable-rt@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A710B20030
-X-Stat-Signature: sc4uzjb54t9mesd3dnyn9615188bnt6d
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+IMKydI74GI/yMv7u5bcYC1/vHU0zkFk0=
-X-HE-Tag: 1761420985-556311
-X-HE-Meta: U2FsdGVkX19Vq3BJKjcVgHUuXYHdvXZBoFQhRmvRHh5ZPxSNYTTvFoFxb4vgukWEwFCVY3//nmQkWclDwtAJG/WUqoG4JEPSliE5QMtS4lAjbTAkEMxOjFSgYib1+qy0Fg9jSbACapUwIh/7KuSuJFzKXK7jjcWS7mIV7myuU8in9LM1d9Wk8CilhmYubovjWbqnL8S7vZLicum2+l9yBYgBHQZA0wiBMnSZ3j0uS9TNYviB2ktp1lBms2l357htl6lOOQyqpMhcHULROAsUchtyQCacHso1zjT4b1z7t4P7zvsdfPFuL/gWhIrZ01lxAwkDLdRna01NSCXiKZ4gqPRQTyIHouS5vhvuE1qSArmvsR8ubvcpnDUehiKR24AFnMoFW1I3HxCJyTVxMx+WGQ==
 
-On Sat, 25 Oct 2025 15:29:54 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello RT-list!
 
-> On Sat, 25 Oct 2025 12:32:55 -0400
-> "Yury Norov (NVIDIA)" <yury.norov@gmail.com> wrote:
-> 
-> > GENMASK(high, low) notation is confusing. FIRST_BITS() is more
-> > appropriate.
-> >   
-> 
-> I'm fine with this change as a clean up, but...
-> 
-> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> > ---
-> >  kernel/trace/fgraph.c      | 10 +++++-----
-> >  kernel/trace/trace_probe.h |  2 +-  
-> 
-> Make this two different patches. trace_probe and fgraph go through
-> different topic branches.
+I'm pleased to announce the 6.6.114-rt65 stable release.
 
-OK, I see this is part of a patch series that adds FIRST_BITS().
+You can get this release via the git tree at:
 
-Please add that first, and the rest of the patches can go though their
-individual trees. Something like this change I would like to make sure
-doesn't accidentally cause a regression. That means it must go through
-my tests before it gets applied.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
--- Steve
+  branch: v6.6-rt
+  Head SHA1: 8730bff5e3fb6244ff05722adeb890c928444cca
+
+Or to build 6.6.114-rt65 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.114.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.114-rt65.patch.xz
+
+
+Enjoy!
+Clark
 
