@@ -1,189 +1,216 @@
-Return-Path: <linux-kernel+bounces-869974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78ABC09283
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2ACC09296
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 033274E1167
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:14:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45B354E649A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2900A302172;
-	Sat, 25 Oct 2025 15:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8E5302176;
+	Sat, 25 Oct 2025 15:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnri/XJF"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RuNiqrYt"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012049.outbound.protection.outlook.com [52.101.43.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167702FFDCF
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761405266; cv=none; b=iLxxjLvMBNI59ltcQQgBa9MzV4tg2Rc6cgmFG3OPnafW2mHld7MZN+IbrZXMHkn6ySyEPhhy9Z97c+E9r0sXgAQRzEp3Jb97n0BXp+Pu0RSeE/wxLalBShfB3LgvwvAF8y/j3g9Bps9DRbTDHxT+mrgQUhXKrWSg4twNBYyVwuc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761405266; c=relaxed/simple;
-	bh=QAv9wnda7g3m75rjqRt1OT7ex6pWUA04I2r6oecL4yA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P4cyCmgl5EIAP3SYn6IFkatGI5EKwlpq1yOvFvDu0CK1zCmoPeklR/Qg36hRXeHPfZUb98FMvdr6jYBffe/jb4+cj1DA+8UULUi1mUb2RhjkcGEtZbhQCZJ6PDd9lzfg5Tq3p6ZnOXEA09Syo6FiZXe++m2JCHjmbVHCwJvAccQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnri/XJF; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso2543478a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:14:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761405264; x=1762010064; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V4QbhlCobjLz18WKX8IPz8TGhcE8DFK2aHPkOURXrxw=;
-        b=lnri/XJF8h/VA2LnnBT8eAlu4DCm85OUTHF1niCNz2SOEcFHQGI+Yca0CddP/vNhlS
-         W4opxC/C9IOIwCPUI1o43Llt26mzou8mJqBXE6XEg4ekMSh9j3SA8zG6LM8rd+SFGAu9
-         S2l6UKZYZQGOfMlFFTM0b79UAc20kj/Sd2sE0G9DV0iG0bYvwbzWPcqgxj/reJ98DeqY
-         3LyqQRvf6WD40n3rDThiT+Xbi7bY2w4NKWlIznAuXpithF0uXdTa4eV1Ia3d0/CCqu11
-         NzynTY5cs7gxEB9X0noPDhK7M3q6D2jbdzjrX0WZYT7wVZMQ2ocMYx+RJiEBsFl7sqYG
-         aahw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761405264; x=1762010064;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V4QbhlCobjLz18WKX8IPz8TGhcE8DFK2aHPkOURXrxw=;
-        b=mnpYiYv2IUstjO6i8pefcpgk0sAYeq8+YrLgvnd5TPOR1sf3E/H3tHMuOcYkK0AMU/
-         hhCWSDYzyQLC1wlYoQlAEMQlIaVK7FB8Z6mrKlPX4xJB9a2nAtoXv+C9Nk2Z532w95gE
-         s7gcGcJ4m1qlnGwkwsgCL9tgIb1pIMdjFXlyUE7anIDEiDzVwYrPtZzl+rsmvm3fYPvr
-         O7MlXJYv6sN1jlxOXkrcK3s2hGbSQw8555joix1cJ0h2JFRk3Er8LjQIuXTKMRG8Dfas
-         1MJuiwyPU9tzzK7I+CDEYuXytX9CtWCqca9wT1Zcbnnsj2GXH20zxnSYGdkMX1h1cDj/
-         B/Xw==
-X-Gm-Message-State: AOJu0YxigevVY1RNu/4gxBPdpay5vSXI49egvk+21wyRSO/avIlGI9iw
-	jT6kByMpKi0w7pqYI1pBRM7fO3j3xk9BKjYq6wTYluU3WaPQMjsQshIC
-X-Gm-Gg: ASbGncuXfhNAU9nGAqGdP8563meTENDKaHP0ybLVthPGnJgZVjmot/Z22uGwaICWmxy
-	Bu4v6+NOpINp9pPo8mgiOsx/egFr2tizbnIaa0QrcYbc6ACsFqcK3fH5Eckg2WXnJg8c21XR//0
-	cS52tcs28Qt+T8r72CPUqt0IQJ77ocPK1xwYFivaOM1bN3MMCKmJpSKKB5EHkYXjxeKPiyizhvb
-	AA8C8egpXZBTW6S7uU4RNhv7hExhtJPQIpqIzosplKnFIBQGlEsFicmxgO2d6YUEje0OjG6Z698
-	AThhSVX/+y1UDfRL+/a+X25mOvUKZtXUcn5HXsvRhTmoVG3ywLmye566uSduxRPWCWR9zpXtsCe
-	YcSR8kp1LKcsO2epEfJajjZE0LwzwQvUEs1MZaeg3HXg31N9PwTqk7KfKMeox1WuLbd0yR82aju
-	DXIwqPGsixrFE3hjbe9Vb2rSt8m7uqXfr+xwNKKETwNvxU7M3F2EXv5XAglSQTSdI7f5k=
-X-Google-Smtp-Source: AGHT+IHJPSP6jbM7wZQLFD7UH7DCxuWGCNk1Y6bwxxYjjMYdwYnT3N59e8lkDwguqze1YiD3++BZyw==
-X-Received: by 2002:a17:902:dac6:b0:290:b158:5db8 with SMTP id d9443c01a7336-290cb65b668mr449750345ad.44.1761405263942;
-        Sat, 25 Oct 2025 08:14:23 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d30030sm25882705ad.65.2025.10.25.08.14.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Oct 2025 08:14:23 -0700 (PDT)
-Message-ID: <d3f4c7ee-6351-4c6f-ae93-f423245c4c9e@gmail.com>
-Date: Sun, 26 Oct 2025 00:14:23 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36272153D3;
+	Sat, 25 Oct 2025 15:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761405721; cv=fail; b=IPPZjU9TVSWt/R2w/WvFZk4RnxdC7p3B/Nqr5n69ye36UYmsi2XyL5HYJLylcQ4YOGdR+6jS6OeApW462ozRV3fAbQLZaR++aO/VIZpIQ4qjGX9006Z5YmFxA1Bm3im9IFpsA0qeKPUiyl6JwS2zkyDbMCt4tDS/55gzt7OgStI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761405721; c=relaxed/simple;
+	bh=P+27ki1RZI7MPTpuVCbjuGJ01c5jNc0QW+zVKJs0vKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NzbgJXCMPS4VxEz7syUhJ6xAH3/vlJ7y3rJxmYSYxuAgjXLqMmWqTwz1x/xX9gb/TNpyiz5CT8+OSAbWBOBWmV+vhDfhVpboWWsakD+XLTzVfUL6VLcv5ZQDDkaP+nIluinOmttg7GKyk+yLhkQITFU1tvrgitaHna6AOECrHuc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RuNiqrYt; arc=fail smtp.client-ip=52.101.43.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iXX0ZHoMT1SbrHXJrtTHOt3AFgZjVC8LadSbJ9HgDelHOK2RtClueiwTlsD2o1GIBiy84iAeXeP60Hzx7ZBwkHJOrAaUPM5/xs2n+CIyxR5cuk3J/sZYXgta5WU9HQF9yNN6xIv7AHbYDmndXXnTwJZaoXyHOzJt6Gpm2rZUSD/htSWkqjRdBYKRRd//AJRzC6Lm1Fla6/ezW0b/vcNnK6/KNjXrHj4Ca7aOr7gWEjmDLsRAOd6/jvYCYLJ3z56v992QgAEO7ti1SCep1FlcHyGL32X8gPuQLV7YDL+qMcJOs+4WlqGbc+mZfm35flNMZ2LLoA3At5NF83t3+VqbbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P+27ki1RZI7MPTpuVCbjuGJ01c5jNc0QW+zVKJs0vKk=;
+ b=Dky3TZGeZxM6ohAujJZlkr6ekWvH82l2fNZAEw1fm75Mrc9zyPjMo/BJgou+sy2NGIwgPCLZnxYfJL3/irhz+uYdMcGqxH8RwxrtYw3kPOD+6I1KtaXJCi288oCsy6ZooN31xfw7Scfg79a3eUtwr//dMx8pHJW9YNK++cyOV2HJ1uxdMVEzmBbEM6UHM8xlVbAIVm5sAsBLeYJbMQbyOqeiXdTIfvwxYAvHnRdsU6uaDEvhGciKsxwewHcvP+fN7lD9KcaM/PuRaIdzxt7QB97DKu268FT9Gsxg7ak4dfkp4tV5rNvq22wvyLyqJahaPYkTdmp0d02Cq4FlLdaFLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P+27ki1RZI7MPTpuVCbjuGJ01c5jNc0QW+zVKJs0vKk=;
+ b=RuNiqrYtWh5HW2Z9IDZjjZqwzO81VizbkB6w9drUL16l5uATH0vmpaEbNIO2UIiv3ASzq5pVg1fw+1TI6TJ/DvnYDk964SNo5I1lDl2aWU/43qsOvT1ijR6bsezlv1yI1GRIr8RCFleTGx5C6lGSYgW8Lcg7TXKeSKz2oFKzV3uH+4STsLOHbZKntDSsGyvtmrZ3uy/119sjW/2dqh6bXRh17BITJ6II71FfVwsntYNBXyK7VRKEThMht+9JhJNFOsK2K5Vvagc/K9P1Xtxr+kAUXiimlmODYUQsKykd9fdKhWcVokrz8TFrH9fmWnWG76T6wpEVK9mnj2jdiUqmkw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ BL3PR12MB6476.namprd12.prod.outlook.com (2603:10b6:208:3bc::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.13; Sat, 25 Oct 2025 15:21:57 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9253.011; Sat, 25 Oct 2025
+ 15:21:57 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
+ kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
+ nao.horiguchi@gmail.com, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/4] mm/huge_memory: preserve PG_has_hwpoisoned if a
+ folio is split to >0 order
+Date: Sat, 25 Oct 2025 11:21:54 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <8BA9B714-9C9E-4F95-B832-3DA62D0C3FBD@nvidia.com>
+In-Reply-To: <c09e3282-46aa-4b53-aade-f63324b66d3f@lucifer.local>
+References: <20251022033531.389351-1-ziy@nvidia.com>
+ <20251022033531.389351-2-ziy@nvidia.com>
+ <c09e3282-46aa-4b53-aade-f63324b66d3f@lucifer.local>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN2PR03CA0006.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::11) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
- /tools/docs
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
- Jani Nikula <jani.nikula@linux.intel.com>, Akira Yokosawa <akiyks@gmail.com>
-References: <20251024200834.20644-1-corbet@lwn.net>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20251024200834.20644-1-corbet@lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BL3PR12MB6476:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c843fd8-9363-42e0-c457-08de13da3c52
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bZNJOajvAH7vRY6RCMDzFMGA/vQmobOn6WiqOePYDB7I6QOAy9bAbBjrXkTR?=
+ =?us-ascii?Q?CTpZ8Z6KyMzC4jmWMa83ba9ghyWm/2mkAju4exqOoEPR/fbRCwk/ZvdLEFkp?=
+ =?us-ascii?Q?4OHDvnEolIQFAzo3T9mrKFhqiyHKnQMvUGXlDs08hVNfPkM0MSXRYPMPiqOq?=
+ =?us-ascii?Q?UMzJoGrR6EzSMwOcZb2keNPa+EucamhtygZONgVQ4p8YWkgTkYqScX2NmD9s?=
+ =?us-ascii?Q?QlLGJnCvjwP/A+Cbu8llpabq71JSO2x0eKirdsbt4944rI2xa+1agkOk9VIs?=
+ =?us-ascii?Q?A4D3JewRu/nSsH9z0wvBR/NkCUrWLxxFrstLh55u8XeDvr1THc2c7PFY1mXp?=
+ =?us-ascii?Q?CaE92etxLiaBGURTrGGPAW3Em88haIcDpvb6vmj+eH4hI9HsF9mBHIkuxGms?=
+ =?us-ascii?Q?mWSrUs222usR65/jcXvuq7fJXUJjupNMrQPckwATUlMt6oyeivsyMKu1IbsT?=
+ =?us-ascii?Q?MDPmJe+uvdaDKxIS+s9knQghoXWRQ0vT0tJ1N9+N4dK+gClhkKI7Rui0oDhR?=
+ =?us-ascii?Q?B+mKPN8x6n/BfrcgJETwJTmoJEEFsLmrnLvLuRslV/gPI9VW28CpwBryeNvT?=
+ =?us-ascii?Q?X2WR5XHZRksub72ErZHQEZneZpngGBWeqLVBpBOwD3q0ZGiEsqUs/4Zu7egx?=
+ =?us-ascii?Q?lPxTN2omCU/30wZYMNfpllp9nhLbBB9J7BhGAE0v7eGIt/Rmt5ZTJCFq7L+A?=
+ =?us-ascii?Q?Ggoiy2SdiFzyU/PAO7alHh9QIe6Z+sBillt61R/gZvl8jDX0UtW+dfXYh0Jg?=
+ =?us-ascii?Q?M0wAwf1IprysUmue9qsL+8RYYVNoR7Itl0oi0bDSigwxAa4G6psMdxYk2iCr?=
+ =?us-ascii?Q?IeMz0sv+LadTPCFAhvSIrWEQdNAG1Riiswm8OsiXoK1sAxQJWkaM7qGkpkf3?=
+ =?us-ascii?Q?pFVWJNIDwQseMGQ1wzqxQLZ6HbK6QHjc48j/i7aTD8Udfq55TZLUP8DsgFvr?=
+ =?us-ascii?Q?qOkC3ZGCkuFrjHE5daLEAP2UTVymW2gLdM3m2Zhv38LSgA/EUe57J+5xphzY?=
+ =?us-ascii?Q?81TTjaICqU5F8JHAEJwxHce3rfcGS9JlucbkL39qIewKc2e6zj9sYxX7uVEO?=
+ =?us-ascii?Q?RZcz5vj0/nM0PEVjKjMWGNDagnLgOv7rton8y2+5iSC7/gUwnybvo1d8Q/Y/?=
+ =?us-ascii?Q?FYVX+CN8xBLoCY3u+vB2FWEkVEI54RG3qZxXZcagxNM69tbokg7Vubpb73A/?=
+ =?us-ascii?Q?vtIRPNJsWjtCXgO/mC+vPExG745Rr5Yly8g3rkTmdw8MFawQIuREbhXc1QKQ?=
+ =?us-ascii?Q?Ty7LoKK9qhcLR3SJDMQ5l9MK0TRFM7YMpSjBNNYVme+CfSsNPxVGzqCWPB9x?=
+ =?us-ascii?Q?emMvvsAE4qIKjXVKZR/vAWjjzlOXBM4lUD/vAAnN534LPy3tPDVUH0NuJJMA?=
+ =?us-ascii?Q?Qn6Yu63rkMq4lYxHGyZwzhvwdoLWHLRflKZWO+m4/yADBgUqWtxFQNj688S0?=
+ =?us-ascii?Q?vV4rNxpVzE8V1HXshcK8RmrVV50ywVtoL7GWSznoFVO2v+EctGofQQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UyxRvfXxOIjJqpagCbeDJlfQyRIOhZUP6BMJF6uSEZZ5RlTlLHHRu7/0eO/p?=
+ =?us-ascii?Q?ypa0rIMipo9m0zIu42lGqc5n6mQeTiFf0h7Sd2SKoPh3yXxjBYwZSgpG6ePm?=
+ =?us-ascii?Q?Qp2JdCGKPJl8kUHTuCFH6ZVjblS26nyuiD+L2Bba1v9Tq8NjbYemN/5QsaHT?=
+ =?us-ascii?Q?dOFxyta+WPlOAC8iYoAqI1r/T6uM16NBAppk6dIZCtwy1uFSQmFJ5dgtSjCC?=
+ =?us-ascii?Q?97KlSI8iO8pHhKx62ATsHSW4tOAPxGx7Frp9f+1iY2xDCKWv/PNIdDrjWh06?=
+ =?us-ascii?Q?L8a8LT7BGZ98XYFfjp8d0COwrER/tsnJ6cXMskP/88bwZvzH1pNeZUY0qf6J?=
+ =?us-ascii?Q?dleid3jueC98gnwL1KwEuG/3GeNnDbXAhmuvLIkyKflHQAwLiYqk+Ksb4H0P?=
+ =?us-ascii?Q?PSZRnDpDtSBvpS2LIshbA+uzojX3C7J3Si2fxOSKJTexefo2C8Fr/Sh7+0YZ?=
+ =?us-ascii?Q?kbwlo+QSmx3KLnmTblWfZZL9ZYJt1tCPUaLZ16GxcfUQlLdpL1OEpiCRky/0?=
+ =?us-ascii?Q?yl6alk72qW6CsJq2NC+ta3aJ/1/FaUPIj+kuRnB+DRG7vprUS4PXap9lhRKA?=
+ =?us-ascii?Q?giPZW47IjIYRFAT8oNkoxV4P/IvUrwD88cSgLZ9RKT4c8YnA2CVAQ4Fp8RA5?=
+ =?us-ascii?Q?wQp4pwn15KI75BcueBkkf5wdXr1w0mBHpTzscjxmFGjuxtcN46IIVAIB9wGV?=
+ =?us-ascii?Q?UCGNWbM6rlagEqWtJ67lDCXI7HwtZfCwF1mUhBRdl3Y/poXm33wXnVZt/7E+?=
+ =?us-ascii?Q?zWOAO1JDwPInLxEKb6rJdKg9Keqk3GgqmqjdZPiRY1IXzs0B6LVQ4o1dM+mU?=
+ =?us-ascii?Q?MS9CoQrdwGKHP0s4EaQpf07tiRK5JxVavBeBtsjairJojVviWS2+Ihi54PX9?=
+ =?us-ascii?Q?sSL49a1lHXkSWxW8vyhwF4ns5ik+pitY1rGBRHuUM/BVgcYzOg2fgSNnOGg/?=
+ =?us-ascii?Q?Re/Ij0b7i4hur1h/0tGu9pwPGcLSynQffPEAGzILNpXI8aXMlWuUpWQgNsp/?=
+ =?us-ascii?Q?g3u9G6ZAAlhc1QZDbyvRQGqPW6kU3kjB9m8Smdn+F/ubKlLI/Yuz7AJZhprU?=
+ =?us-ascii?Q?nMQhf4UEw77rftExzOho/TeMH2B2bndalHrHlH0o2L8g2M28kCAcrP0Zh0lr?=
+ =?us-ascii?Q?zo4ek60/7/87FVHPPVW8Ak9EUNfRHa5I36DuUboh9r0ZvZFmGzWvtfT5CkTe?=
+ =?us-ascii?Q?gy8USiurNxE1w0J2DXaEPbxx93IXKNhCMd4Jr2ybQ9bS0517Bz1stI3JOCMf?=
+ =?us-ascii?Q?6QE62gsjRyoZgJktVPt5Gq6CD64P+1HMlx84ClbWQA6IvsM+Fy2W9Vfd05go?=
+ =?us-ascii?Q?wkUbQMNuDK/g8amZDtBcyTVXdKj7krI5U6Ju6lFc9g6l5o1CxTGg9od+qAU4?=
+ =?us-ascii?Q?t1vc/Pf5BbFlq/kmbpTIF9DrgSNP8GAcC6zWdzTy/ikcwDxtQkgqO8J8GUI1?=
+ =?us-ascii?Q?RiUIQuVMyQAppvKDJAm+ZlbK8hS1PFm5in4jMLBjnUg9t+u5dnB6VXBdn3g6?=
+ =?us-ascii?Q?JDIwTU10tQI1uSPinfFxjsLQ3vVeQlPmiixnslwd40AEroYJRf4QX62fLn96?=
+ =?us-ascii?Q?/OZ0N0REAgAsVAYstF8N0dHx0GQjvS8xCBNUNd8f?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c843fd8-9363-42e0-c457-08de13da3c52
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2025 15:21:57.0073
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J7v0EzCxlKEgfEDcR6vago/72UKYBjRVZ+O34/szHhWyHK43wh+ooPeq90Ibflsd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6476
 
-On Fri, 24 Oct 2025 14:08:21 -0600, Jonathan Corbet wrote:
-> Our documentation-related tools are spread out over various directories;
-> several are buried in the scripts/ dumping ground.  That makes them harder
-> to discover and harder to maintain.
-> 
-> Recent work has started accumulating our documentation-related tools in
-> /tools/docs.  This series completes that task, moving the rest of our
-> various utilities there, hopefully fixing up all of the relevant references
-> in the process.
-> 
-> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
-> 
-> The big elephant lurking in this small room is the home for Python modules;
-> I left them under scripts/lib, but that is an even less appropriate place
-> than it was before.  I would propose either tools/python or lib/python;
-> thoughts on that matter welcome.
-> 
-> Changes in v3:
->   - Now with more caffeine! Properly based on docs-next.
+On 24 Oct 2025, at 11:58, Lorenzo Stoakes wrote:
 
-:-) :-)
+> On Tue, Oct 21, 2025 at 11:35:27PM -0400, Zi Yan wrote:
+>> folio split clears PG_has_hwpoisoned, but the flag should be preserved=
+ in
+>> after-split folios containing pages with PG_hwpoisoned flag if the fol=
+io is
+>> split to >0 order folios. Scan all pages in a to-be-split folio to
+>> determine which after-split folios need the flag.
+>>
+>> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned =
+to
+>> avoid the scan and set it on all after-split folios, but resulting fal=
+se
+>> positive has undesirable negative impact. To remove false positive, ca=
+ller
+>> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() nee=
+ds to
+>> do the scan. That might be causing a hassle for current and future cal=
+lers
+>> and more costly than doing the scan in the split code. More details ar=
+e
+>> discussed in [1].
+>>
+>> It is OK that current implementation does not do this, because memory
+>> failure code always tries to split to order-0 folios and if a folio ca=
+nnot
+>> be split to order-0, memory failure code either gives warnings or the =
+split
+>> is not performed.
+>>
+>> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=3DcpRXrSrJ=
+9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>
+> I guess this was split out to [0]? :)
+>
+> [0]: https://lore.kernel.org/linux-mm/44310717-347c-4ede-ad31-c6d375a44=
+9b9@linux.dev/
 
-WRT the build error from test robot, it looks to me like we need these
-final touches:
+Yes. The decision is based on the discussion with David[1] and announced =
+at[2].
 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 8e3df5db858e..fbd8e3ae23ea 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -582,7 +582,7 @@ pdf_documents = [
- # kernel-doc extension configuration for running Sphinx directly (e.g. by Read
- # the Docs). In a normal build, these are supplied from the Makefile via command
- # line arguments.
--kerneldoc_bin = "../tools/docs/kernel-doc.py"
-+kerneldoc_bin = "../tools/docs/kernel-doc"
- kerneldoc_srctree = ".."
- 
- def setup(app):
-diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-index 2586b4d4e494..3c815b40026b 100644
---- a/Documentation/sphinx/kerneldoc.py
-+++ b/Documentation/sphinx/kerneldoc.py
-@@ -289,13 +289,8 @@ def setup_kfiles(app):
- 
-     kerneldoc_bin = app.env.config.kerneldoc_bin
- 
--    if kerneldoc_bin and kerneldoc_bin.endswith("kernel-doc.py"):
--        print("Using Python kernel-doc")
--        out_style = RestFormat()
--        kfiles = KernelFiles(out_style=out_style, logger=logger)
--    else:
--        print(f"Using {kerneldoc_bin}")
--
-+    out_style = RestFormat()
-+    kfiles = KernelFiles(out_style=out_style, logger=logger)
- 
- def setup(app):
-     app.add_config_value('kerneldoc_bin', None, 'env')
-diff --git a/Makefile b/Makefile
-index d6ff0af5cca6..33b1db1cc0cf 100644
---- a/Makefile
-+++ b/Makefile
-@@ -460,7 +460,7 @@ HOSTPKG_CONFIG	= pkg-config
- 
- # the KERNELDOC macro needs to be exported, as scripts/Makefile.build
- # has a logic to call it
--KERNELDOC       = $(srctree)/tools/docs/kernel-doc.py
-+KERNELDOC       = $(srctree)/tools/docs/kernel-doc
- export KERNELDOC
- 
- KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \
+[1] https://lore.kernel.org/all/d3d05898-5530-4990-9d61-8268bd483765@redh=
+at.com/
+[2] https://lore.kernel.org/all/1AE28DE5-1E0A-432B-B21B-61E0E3F54909@nvid=
+ia.com/
 
------------------------------------------------------------------
-
-The change in Documentation/sphinx/kerneldoc.py is needed because
-
-    kerneldoc_bin == ".../kernel-doc.py"
-
-indicated loading it as python lib into the extension, while
-
-    kerneldoc_bin == ".../kernel-doc"
-
-indicated invoking it as a script.
-
-Now that we don't have kernel-doc.py, loading python lib looks to me
-as a natural choice.
-
-Mauro, what do you think?
-
-Hope this helps,
-Akira
-
+--
+Best Regards,
+Yan, Zi
 
