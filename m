@@ -1,161 +1,158 @@
-Return-Path: <linux-kernel+bounces-870116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3ABC09F74
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:00:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E866C09F86
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 729B24E20EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:00:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FAA74E23A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FBC27E054;
-	Sat, 25 Oct 2025 20:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EDC2FFDD7;
+	Sat, 25 Oct 2025 20:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kArtkmSe"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OCgixwa2"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC3020A5EB
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 20:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3F027E054;
+	Sat, 25 Oct 2025 20:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761422430; cv=none; b=fIxmc80AVZ2wca77zFrAT0NH1Ebyy4cLXpv+w2P61zgMEV2cUnTAvB1Y+dgbbyCr1QW2LP7Qd7IVm+KEjpDKLg539EoCSHvBdp89GoPUGEux8Iqx4tzbIgQKCfFdZhIs64TIH90pUD1s7Cq00MCrEmwR3CXjGpozgh1ZzifHzxU=
+	t=1761423246; cv=none; b=tY593vlbM3BlmKPG8EufblgM6oU4Kxpv4GpStvh8ENxw008zqO5TwAx1+27t/yDtAlYgbcJIQ7OltJ7Fo4mgZY14Q1LLxRVO66ONReXtvA2Qlp6QVgwvt7JCf57frrC+2pRO+y/iFzYMXswaTTcdPaxGmlWxpWRZd4CWOtRkEeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761422430; c=relaxed/simple;
-	bh=gTK2JfluqP2TVQ+J2BjTjg97nxpnL8hWo8TWogHz7iM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OjmZ5uzEVkwE0Cs5JlhfkXYf+PJKDIusSbUQtl5TnpNIfcEFCXDYz64gT+0gvfqKCRiPgLim3Bj6UnqwA/esxK31ld3wowbsxX+bEucOC2BwdZIvM1DeE4S1yoYA7J6nqTDya6vGJTyiVePPxTYhQpIGNHPihUgitZNzyq2Ybsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kArtkmSe; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b6cf3174ca4so2206280a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 13:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761422428; x=1762027228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QaYeMKwI1BF49vrEVOohJsMVytqLhSnbaX71rZear/E=;
-        b=kArtkmSeAH8nFkbRaxl1aJ8fFoybLL3W26wGQKwSPzXHJhHxofOszcuyEfTnUvsUIO
-         of/W33ngea63PmPoNtSjqS5CoqLCorhmlRI+G8ahALjVC1+ha7Muhu1/utZ2He4o/cuE
-         akXuXJ0AY8r/V/qvYoU2MwqsSWPaPLTB/p9sUB5AzGJDckvukxzsKswqz8ZwwSVKSpQB
-         RaLN+gtPTIJdbB1KyAlQ29+q7OfQHu0tbDu/afquzH4gOFNnXEE1/8TZRpVyk3YISdMU
-         BiN0O5NsERM9LR1/LZ0dArAt/BU9i/F3lKYQjhIGPiKDb1jAeSrPdmzOTcLJ/RhVRwfw
-         plJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761422428; x=1762027228;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QaYeMKwI1BF49vrEVOohJsMVytqLhSnbaX71rZear/E=;
-        b=AvYkJ9NMFQSa2ichlt5u7u717W6AeLvdbj2RPUcfHw9pYPqCMYOzsFO3vjXgbhbQno
-         NUgP+uCmh0lZFM8JW6IU/Pri3cs+eYlgDIUDZOK8ljSc3tXhU1pt9YAXpK5yXZN5eLbu
-         2KJ6o8LFEdyr1+zuln5qsXEhUF2rj7NFd9uXmeDUvCvK2+R1svD4qHnqaqpGLL2GApDJ
-         +tfn3cl1eIzRW4DXYejJvJUG1lRcs+17RnrSSEHg/m6F3Yjlf1kpCs18AEsjcyP8omgK
-         A1nT0tj3tW2/9OPmIArbPojzXDvXUtRoTdJ1Izr5kfsH0EdF0F+69DQHKelmT9N3kUKi
-         diHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/SICMokpOmw5Bd1kA6PTuZ/Oy9fZfOID4LixtBvODD/kbA147ZK9ZOxuGBmAL08C3atrFzr/xqwneo5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygOiwoweSHTURI1F+K7iecsmOXFlk4eWX3He8pdCQdAFMh7y3G
-	Cdg2hNvwVwhEWm1jj3dzWArFgdcHfjDUkFRMpGW6qCA6YG4RyUMGHKox
-X-Gm-Gg: ASbGncsOFgzUVfKzLqiXxriEn2U9dvKwSijNZFSWo/0/mrWLBzrQk9CwH0L6WSvIVuH
-	LQxAC8XZGsBvTNsvfzc8eDlXVoIQXmRoh9jt/+6H+9HvEh7Uf468FuQuPUpeB2GmExpzKlHo1X1
-	FVvK4ulUMbXZfSvTok2dM2zG4DFTWZY/UTC8cjph2e5xbq0G2b4/9syCd1QAA5gXHd8VxCuBcNt
-	jhP/fKHpFzIaXzveQ5g3QsZpQ/TgYuOGPPLPABjyqekybtBJrVB3gAw0XCKGmD9pDDO5cZAjHY5
-	lqtdE1egq/PEpsR8P1YrxSl+mlbzZ0yIb9NPhvRaA45MvDjoOUg52S5TMAqDA0FqVOu53ATiG2+
-	WzbPB42KvadipPqPSYDNQEBxSdDYG+yVTStksplrb49G5RvaMrRvniu+UEDV3cetKD1cP6qZk52
-	v0EeZzcdxm6A==
-X-Google-Smtp-Source: AGHT+IEvmm33i5yQ74Ry6lP4P6rB7QNWNDpbtf1i0gbKVWkTsxAaii5ceRUOfu1A2ad8axHlPDDddQ==
-X-Received: by 2002:a17:902:da88:b0:24c:9a51:9a33 with SMTP id d9443c01a7336-290c9cbc119mr409541635ad.22.1761422428005;
-        Sat, 25 Oct 2025 13:00:28 -0700 (PDT)
-Received: from Shardul.. ([223.185.39.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d273cdsm30677905ad.55.2025.10.25.13.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 13:00:27 -0700 (PDT)
-From: Shardul Bankar <shardulsb08@gmail.com>
-To: linux-btrfs@vger.kernel.org
-Cc: clm@fb.com,
-	dsterba@suse.com,
-	linux-kernel@vger.kernel.org,
-	shardulsb08@gmail.com,
-	wqu@suse.com,
-	fdmanana@kernel.org
-Subject: [PATCH v3 fs/btrfs v3] btrfs: fix memory leak of qgroup_list in btrfs_add_qgroup_relation
-Date: Sun, 26 Oct 2025 01:30:21 +0530
-Message-Id: <20251025200021.375700-1-shardulsb08@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251025092951.2866847-1-shardulsb08@gmail.com>
-References: <20251025092951.2866847-1-shardulsb08@gmail.com>
+	s=arc-20240116; t=1761423246; c=relaxed/simple;
+	bh=2FJPHdl8ZPG3ubQOejLn1V/yQqaRIwskjlSJiIOjXHo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Vo+ftC/NeHNlF+BXcXTkvjbMyn4mS2csuWgi50egF0ASXreZKx09oaniVCnPKdLJlIInR0+h6xyZKO3807qd2Lp4KzyZYlJmo5OZY4GHhU7ZHfLy2gQqV0EHdQEiCQ6OXK4iI5VP0n+m5N78GNX2p0Lr3jtejr44w40AGkF3TbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OCgixwa2; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761423235; x=1762028035; i=markus.elfring@web.de;
+	bh=2FJPHdl8ZPG3ubQOejLn1V/yQqaRIwskjlSJiIOjXHo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OCgixwa2kOz7YkmVc8LwYq1Ff7zhyhnHXLeQY8Ja99buaXjKVkukQ6f2xbxPprYj
+	 iVxTosi3DcUc9R3xrEnkhkwHKBreefq8z9GMglUMCsbnFXQWb41WgFv9/a91Bsbmk
+	 hHT/lERnmuApRWM8PVIc6MfNIB+zemjx+QMZDsmBeTiag+Jng6hAXZ4i3/W5inBrF
+	 vK/HAvXOe0zQQxtkD3BYP8RvAXnFShdndqi2TRe5zHgrMXTxCgh83xal8lexWzM6Y
+	 uGH1uG/yIeaRCtJTZB2VSxdCDaFAh6KWqkqaN3zOVnobqR+Q7CdZMobaWgoEj2JJl
+	 UIvOuG8LoMWjJVmV+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M6YJ1-1v5ste2Vi5-00DVo3; Sat, 25
+ Oct 2025 22:13:55 +0200
+Message-ID: <62ab3119-94d8-4d74-abb3-e141c4b85934@web.de>
+Date: Sat, 25 Oct 2025 22:13:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, mdf@kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Johan Hovold <johan@kernel.org>,
+ Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Suzuki Poulouse <suzuki.poulose@arm.com>, Wolfram Sang <wsa@kernel.org>
+References: <20251025142352.25475-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] drivers: Fix reference leak in
+ altr_sysmgr_regmap_lookup_by_phandle()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251025142352.25475-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6vB/unV3bYx4o/NP4s5A0s3/SxFzZVvHhfWTcBcrWdWSMoyIPkZ
+ Ro1egaa5kWsxufY4CWy9bKJID4Wjr7Y7BTJW93okQiEPgDPx/V5PvGTwSDrbLCUC9cr1Bsz
+ TMb4R7VwLaJ6fsj0ZDFtMAuHqaajRDrShPn/VQ4dcHO3dIcS+vmn11mEju5OeImrp6o46dy
+ LgSnJx0CGQUIsuQxhhmow==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:49IG8/0Eiqs=;ow8/2e+55qWscRi9rybllTddn/P
+ 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
 
-When btrfs_add_qgroup_relation() is called with invalid qgroup levels
-(src >= dst), the function returns -EINVAL directly without freeing the
-preallocated qgroup_list structure passed by the caller. This causes a
-memory leak because the caller unconditionally sets the pointer to NULL
-after the call, preventing any cleanup.
+=E2=80=A6
+> Found by code review.
 
-The issue occurs because the level validation check happens before the
-mutex is acquired and before any error handling path that would free
-the prealloc pointer. On this early return, the cleanup code at the
-'out' label (which includes kfree(prealloc)) is never reached.
+See also the commit facd37d3882baad4a38afdd5f33908f6fc145d13
+("mfd: altera-sysmgr: Fix device leak on sysmgr regmap lookup") from 2025-=
+10-21.
 
-In btrfs_ioctl_qgroup_assign(), the code pattern is:
-
-    prealloc = kzalloc(sizeof(*prealloc), GFP_KERNEL);
-    ret = btrfs_add_qgroup_relation(trans, sa->src, sa->dst, prealloc);
-    prealloc = NULL;  // Always set to NULL regardless of return value
-    ...
-    kfree(prealloc);  // This becomes kfree(NULL), does nothing
-
-When the level check fails, 'prealloc' is never freed by either the
-callee or the caller, resulting in a 64-byte memory leak per failed
-operation. This can be triggered repeatedly by an unprivileged user
-with access to a writable btrfs mount, potentially exhausting kernel
-memory.
-
-Fix this by freeing prealloc before the early return, ensuring prealloc
-is always freed on all error paths.
-
-Fixes: 4addc1ffd67a ("btrfs: qgroup: preallocate memory before adding a relation")
-Signed-off-by: Shardul Bankar <shardulsb08@gmail.com>
----
-
-v3:
- - Update Fixes: tag to correct commit SHA as suggested by Filipe Manana.
- - No code changes.
-
-v2:
- - Free prealloc directly before returning -EINVAL (no mutex held),
-   per review from Qu Wenruo.
- - Drop goto-based cleanup.
-
- fs/btrfs/qgroup.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index 1175b8192cd7..31ad8580322a 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -1539,8 +1539,10 @@ int btrfs_add_qgroup_relation(struct btrfs_trans_handle *trans, u64 src, u64 dst
- 	ASSERT(prealloc);
- 
- 	/* Check the level of src and dst first */
--	if (btrfs_qgroup_level(src) >= btrfs_qgroup_level(dst))
-+	if (btrfs_qgroup_level(src) >= btrfs_qgroup_level(dst)) {
-+		kfree(prealloc);
- 		return -EINVAL;
-+	}
- 
- 	mutex_lock(&fs_info->qgroup_ioctl_lock);
- 	if (!fs_info->quota_root) {
--- 
-2.34.1
-
+Regards,
+Markus
 
