@@ -1,139 +1,203 @@
-Return-Path: <linux-kernel+bounces-870159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4731C0A11A
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 01:41:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F4EC0A129
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 01:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2663B9E30
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:41:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03C3B4E2DBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6232E54D1;
-	Sat, 25 Oct 2025 23:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5342E6135;
+	Sat, 25 Oct 2025 23:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b="hsB0eYeS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vUBFx400"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZ8F/zae"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07C02773EC;
-	Sat, 25 Oct 2025 23:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF672F5B;
+	Sat, 25 Oct 2025 23:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761435678; cv=none; b=r+97edIg7wxhWAclwMDjKWElllp+VQV/HlOBldswBXdplf5k2LbVVnYtJMdX1uLamuBFwnjErclAN+5c/zPf2FOoMLOrjDgruNY5FJd/Sjw8HrXacu7MnXigJmh2dLml/+bn9ioU1tnlDGFyKBQB7PznRQNPQtjKmfI6LdHQewA=
+	t=1761436750; cv=none; b=onZTFoclGAVKEj8DWTqdcg+hEOQeA/3s3yrR0IKmdp03hT4PRg/nE2KzR3k5FCB0fPNYoGFoLoUAVp9ZLzzKO+xTzINLZ68JwEEOymCqu/XMSaQ+7xy7q/dlLswn7uJvMZeqXR75MXESDViZY4mUUtW0WPrV7+qnhWNqyXWQOxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761435678; c=relaxed/simple;
-	bh=+0yQ3PZ/Y6GvAIwGi6qJ8MBf11coH/dJxfHmD9XPI3E=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=tk4UMNdVJHq5agtTM1fM1KEXaxSrRSv2wwdAMS7Cnr0mdXK8Zmbcre9A0cLr0VkuQrshCLgyC9ythp35CoeKG4plzrIuPKeUKXULGB967zIwyyAYl6I6I6pe4okDSmhZ7gFqDhCHIovqHJbmI9LEA/3FdmMF8bF7GhnkWK6yDV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=colorremedies.com; spf=pass smtp.mailfrom=colorremedies.com; dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b=hsB0eYeS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vUBFx400; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=colorremedies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorremedies.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 000FC1400157;
-	Sat, 25 Oct 2025 19:41:14 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-04.internal (MEProxy); Sat, 25 Oct 2025 19:41:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	colorremedies.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1761435674; x=1761522074; bh=EpSnKmqai+
-	3jFmppMoZumhVdGX9BUprbSJKZUnw1mcU=; b=hsB0eYeSnDyEFHPt5E+O3i+/1q
-	neithNRIJ82/BbhOXs/YaUTWsJBXRRL8Kt1ozJ8oevYz9ejLzEzklwxvbEYTGb+P
-	Wrut7B77MB28v0YjZ/DM02Enx5SpkYz/RwiPUzvd0LLxXqqWWzk8OtFhzHIy5y9Z
-	hcBygvThSzmXr5cJ33aBG8iZ29eJ6LaD1/ICxG19d0TsIzIjkuyOwz1HWZNMOYl0
-	jMAwV5VPcrRKPg1CQs6VC8mbcxdMD6S6az0welHu2HiY3cxun9Dy0+4lkK2bpKUi
-	gLwiAiJtmvSsB/YmvYQVvQWefkHS+N03pcF6I1muqDKYk/rGxA432ZZPp0oA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761435674; x=
-	1761522074; bh=EpSnKmqai+3jFmppMoZumhVdGX9BUprbSJKZUnw1mcU=; b=v
-	UBFx400jg9hw/tRsFdyTtlEURJyFMU7u44GGZVEWBJH1FwKrKGDH+fJxkTPV1taG
-	x4EU0o5IHYvLYEB1l7gzg0wm2hh72BcB1wdQQodwrkert3NvblPhjAQ+eQ5l9xO5
-	JLeSBTnqg5vJFKD+2m0OJjdKnAtwh/TlwOU/ckaOBAN5L+fmFkPbtCsIrn1WsyhA
-	bfOMHHyK7hiFqBhGNTbbokcQeAjTktEjHApLHpcMf4UHeKhH/dWHvaI1uOLUW82p
-	kaG1WgAQYf+WhLD8NQc3pgnTuFBvSW7UJVtWUgb8AIGz0iLIAcpLReKtbxCiVdWe
-	RtVrmm/EaphiX6nnMHQdQ==
-X-ME-Sender: <xms:GmD9aDIVW9XXuZzKrBWy653PjXYxLXqAFzSF34OaQd37kzcq7M1yEw>
-    <xme:GmD9aB_GeW63CsGhOxKDWRdLGFoq4_XYSzWcnf4T9G19BlEWOBrMCBPaDoyReVazt
-    n2NBWFS5zaHsVA6kbjqTCTgwP1IhD2IO3iGrWyRbi_eTWsjGqW3eR0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheefheeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfvehhrhhi
-    shcuofhurhhphhihfdcuoehlihhsthhssegtohhlohhrrhgvmhgvughivghsrdgtohhmqe
-    enucggtffrrghtthgvrhhnpeekhedtieejleeuleetvefgvefgtedvhfegtdejieffhffg
-    tdeutdeljeevgfdvueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehlihhsthhssegtohhlohhrrhgvmhgvughivghsrdgtohhmpdhnsggprhgt
-    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtlhhmsehfsgdrtg
-    homhdprhgtphhtthhopehslhgrvhgrrdhkohhvrghlvghvshhkihihrddvtddugeesghhm
-    rghilhdrtghomhdprhgtphhtthhopehfughmrghnrghnrgeskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepughsthgvrhgsrgesshhushgvrdgtohhmpdhrtghpthhtoheplhhinhhu
-    gidqsghtrhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:GmD9aCIsvY98HazfWjqCNgAJ-W3EOG4LkUKGNWt3Od8XV5TtQE53EA>
-    <xmx:GmD9aFF1uuPkw-MVHnURhsmIsxl2J6X3V516TPIlmCxC5hgBWDrZ6A>
-    <xmx:GmD9aBswf-5DbM2vpJFG9sEINcf0kvpdqfoO0C1fWjJAtVjzBZ_2Mw>
-    <xmx:GmD9aMvBEZNn8E7Su-qaVcrH39OiRggffZl75wq839UULtLjkOkmtg>
-    <xmx:GmD9aGcTp_ujcLCK4D8g34eQBBEG-_hFYbXYelVdWk_ZXa54g6ojv34z>
-Feedback-ID: i06494636:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 7721118C004E; Sat, 25 Oct 2025 19:41:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761436750; c=relaxed/simple;
+	bh=06zKdO6I7W5EZ/u4lGAMePBVjzLmVb5JfE/SpsSIUz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EeTlelaN/zCIVt/OoL0SZS0vmwosAzMTe5N7YFq0WLsj4GJt6UolHLbKbgFMTaQLpdFSvoK64+FMqPmiP44GONC1WZr4bPjJlcbu/Sesu8HC1GlOSmz7/nFOe+M00YCqmu1t7iKg2ZWpDSf0mNKos36qcdG+73At4V+NPyvYfPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZ8F/zae; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF94C4CEF5;
+	Sat, 25 Oct 2025 23:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761436748;
+	bh=06zKdO6I7W5EZ/u4lGAMePBVjzLmVb5JfE/SpsSIUz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JZ8F/zaezdd8RK5F1IbDyfZVKVQ3LoqH5cEbdMROi36mprGMqmhdoK6CJNhfFecfP
+	 3jFu0Cp+6J/RDUaThrRvFZYciv3QHR7N4vAL/wGCkqUHC80UypDYeNMYtbs69rPR1S
+	 w0FRBtxWIEZyLIgTlRcUvu7Z3+sCAoRXPvsSKPBeeNKn4129BAALx6uj/Np6bJ26yO
+	 NK0DE/FlpBbWBqsCAWrgZUAPtXzmQd25C/nLQmaucZB83vBPQIKHwTZtzF1wfkvKFp
+	 tLJENk/s76/66PkFZXTAOZ+JfiVU/6eX43h5hnPyX6zF+FTarcpaKcIFwnC0WYqz4Z
+	 WKrjUHNM50uzg==
+Date: Sat, 25 Oct 2025 16:59:05 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf dsos: Don't block when reading build IDs
+Message-ID: <aP1kSdZJKYIpnRia@google.com>
+References: <20251022-james-perf-fix-dso-block-v1-1-c4faab150546@linaro.org>
+ <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AJNHBnwyGDYw
-Date: Sat, 25 Oct 2025 19:40:54 -0400
-From: "Chris Murphy" <lists@colorremedies.com>
-To: "Vyacheslav Kovalevsky" <slava.kovalevskiy.2014@gmail.com>,
- "Filipe Manana" <fdmanana@kernel.org>
-Cc: "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
- "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-Message-Id: <601d70f3-ab6d-4f15-88eb-169fede1a685@app.fastmail.com>
-In-Reply-To: <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
-References: <03c5d7ec-5b3d-49d1-95bc-8970a7f82d87@gmail.com>
- <CAL3q7H5ggWXdptoGH9Bmk-hc2CMBLz-YmC1A8U-hx9q=ZZ0BHw@mail.gmail.com>
- <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
-Subject: Re: Directory is not persisted after writing to the file within directory if
- system crashes
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com>
 
+Hello,
 
+On Fri, Oct 24, 2025 at 11:26:18AM -0700, Ian Rogers wrote:
+> On Wed, Oct 22, 2025 at 8:46 AM James Clark <james.clark@linaro.org> wrote:
+> >
+> > The following command will hang consistently when the GPU is being used
+> > due to non regular files (e.g. /dev/dri/renderD129, /dev/dri/card2)
+> > being opened to read build IDs:
+> >
+> >  $ perf record -asdg -e cpu-clock -- true
+> >
+> > Change to non blocking reads to avoid the hang here:
+> >
+> >   #0  __libc_pread64 (offset=<optimised out>, count=0, buf=0x7fffffffa4a0, fd=237) at ../sysdeps/unix/sysv/linux/pread64.c:25
+> >   #1  __libc_pread64 (fd=237, buf=0x7fffffffa4a0, count=0, offset=0) at ../sysdeps/unix/sysv/linux/pread64.c:23
+> >   #2  ?? () from /lib/x86_64-linux-gnu/libelf.so.1
+> >   #3  read_build_id (filename=0x5555562df333 "/dev/dri/card2", bid=0x7fffffffb680, block=true) at util/symbol-elf.c:880
+> >   #4  filename__read_build_id (filename=0x5555562df333 "/dev/dri/card2", bid=0x7fffffffb680, block=true) at util/symbol-elf.c:924
+> >   #5  dsos__read_build_ids_cb (dso=0x5555562df1d0, data=0x7fffffffb750) at util/dsos.c:84
+> >   #6  __dsos__for_each_dso (dsos=0x55555623de68, cb=0x5555557e7030 <dsos__read_build_ids_cb>, data=0x7fffffffb750) at util/dsos.c:59
+> >   #7  dsos__for_each_dso (dsos=0x55555623de68, cb=0x5555557e7030 <dsos__read_build_ids_cb>, data=0x7fffffffb750) at util/dsos.c:503
+> >   #8  dsos__read_build_ids (dsos=0x55555623de68, with_hits=true) at util/dsos.c:107
+> >   #9  machine__read_build_ids (machine=0x55555623da58, with_hits=true) at util/build-id.c:950
+> >   #10 perf_session__read_build_ids (session=0x55555623d840, with_hits=true) at util/build-id.c:956
+> >   #11 write_build_id (ff=0x7fffffffb958, evlist=0x5555562323d0) at util/header.c:327
+> >   #12 do_write_feat (ff=0x7fffffffb958, type=2, p=0x7fffffffb950, evlist=0x5555562323d0, fc=0x0) at util/header.c:3588
+> >   #13 perf_header__adds_write (header=0x55555623d840, evlist=0x5555562323d0, fd=3, fc=0x0) at util/header.c:3632
+> >   #14 perf_session__do_write_header (session=0x55555623d840, evlist=0x5555562323d0, fd=3, at_exit=true, fc=0x0, write_attrs_after_data=false) at util/header.c:3756
+> >   #15 perf_session__write_header (session=0x55555623d840, evlist=0x5555562323d0, fd=3, at_exit=true) at util/header.c:3796
+> >   #16 record__finish_output (rec=0x5555561838d8 <record>) at builtin-record.c:1899
+> >   #17 __cmd_record (rec=0x5555561838d8 <record>, argc=2, argv=0x7fffffffe320) at builtin-record.c:2967
+> >   #18 cmd_record (argc=2, argv=0x7fffffffe320) at builtin-record.c:4453
+> >   #19 run_builtin (p=0x55555618cbb0 <commands+288>, argc=9, argv=0x7fffffffe320) at perf.c:349
+> >   #20 handle_internal_command (argc=9, argv=0x7fffffffe320) at perf.c:401
+> >   #21 run_argv (argcp=0x7fffffffe16c, argv=0x7fffffffe160) at perf.c:445
+> >   #22 main (argc=9, argv=0x7fffffffe320) at perf.c:553
+> >
+> > Fixes: 53b00ff358dc ("perf record: Make --buildid-mmap the default")
+> > Signed-off-by: James Clark <james.clark@linaro.org>
+> > ---
+> > I'm not actually sure if this is the right fix for this. Commit
+> > 2c369d91d093 ("perf symbol: Add blocking argument to
+> > filename__read_build_id") which added the blocking argument says that it
+> > should be non-blocking reads for event synthesis, but the callstack here
+> > is when writing the header out.
+> >
+> > There was also an is_regular_file() check added in commit c21986d33d6b
+> > ("perf unwind-libdw: skip non-regular files"), which presumably falls
+> > afoul of the "which unfortunately fails for symlinks" part of the other
+> > linked commit message?
+> >
+> > So I can't tell if we should add the is_regular_file() check here too,
+> > or just set it to non-blocking, or it needs some extra state to be
+> > passed all the way down to dsos__read_build_ids_cb() to do different
+> > things.
+> 
+> The fix lgtm but I worry about making all the build ID reading
+> non-blocking meaning build IDs getting lost. 
 
-On Sat, Oct 25, 2025, at 5:49 AM, Vyacheslav Kovalevsky wrote:
-> I think the line with `echo` may not be the correct translation:
->  > echo -n "hello world" > $SCRATCH_MNT/file1
->
-> In the original test, the file was opened with `O_SYNC` flag, if you=20
-> remove it, the directory will be there when the system crashes.=C2=A0I=
- also=20
-> forgot to close the file after the `creat` call in the original test,=20
-> may be important as well.
->
-> The test itself is quite weird (why would `dir` be gone after seemingl=
-y=20
-> unrelated operation?), any detail can matter.
->
-> Please run the original test with a real system crash.=20
+I'm not sure what non-blocking means for regular file system operations
+on a block device.  But it may have some impact on regular files on a
+network filesystem.
 
-This would produce hardware specific results rather than determining whe=
-ther the file system is behaving correctly. It's possible the hardware i=
-s acknowledging the metadata, flush, super, flush, but then it's still n=
-ot really persisting on disk
+> It seems that generating
+> the build ID feature table is unnecessary if we have build ID mmap
+> events, including synthesized ones that will have read the build IDs.
+> I wonder if a better "fix" is:
+> ```
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index cb52aea9607d..15f75c70eb76 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1842,7 +1842,7 @@ static void record__init_features(struct record *rec)
+>        for (feat = HEADER_FIRST_FEATURE; feat < HEADER_LAST_FEATURE; feat++)
+>                perf_header__set_feat(&session->header, feat);
+> 
+> -       if (rec->no_buildid)
+> +       if (rec->no_buildid || rec->buildid_mmap)
+>                perf_header__clear_feat(&session->header, HEADER_BUILD_ID);
+> 
+>        if (!have_tracepoints(&rec->evlist->core.entries))
+> ```
+> that should disable the build ID feature table generation when build
+> ID mmaps are in use (the default). Having the build IDs twice in the
+> data file feels redundant. Or we could do your fix or both, wdyt?
 
+I'm ok to remove the header feature but I think it should update
+build-ID cache even with this change.
 
---=20
-Chris Murphy
+I'm also curious if the device has samples actually.  It should be
+checked by dso->hit.
+
+Thanks,
+Namhyung
+
+> 
+> Thanks,
+> Ian
+> 
+> > ---
+> >  tools/perf/util/dsos.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
+> > index 64c1d65b0149..5e1c815d7cb0 100644
+> > --- a/tools/perf/util/dsos.c
+> > +++ b/tools/perf/util/dsos.c
+> > @@ -81,13 +81,14 @@ static int dsos__read_build_ids_cb(struct dso *dso, void *data)
+> >                 return 0;
+> >         }
+> >         nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+> > -       if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/true) > 0) {
+> > +       /* Don't block in case path isn't for a regular file. */
+> > +       if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/false) > 0) {
+> >                 dso__set_build_id(dso, &bid);
+> >                 args->have_build_id = true;
+> >         } else if (errno == ENOENT && dso__nsinfo(dso)) {
+> >                 char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
+> >
+> > -               if (new_name && filename__read_build_id(new_name, &bid, /*block=*/true) > 0) {
+> > +               if (new_name && filename__read_build_id(new_name, &bid, /*block=*/false) > 0) {
+> >                         dso__set_build_id(dso, &bid);
+> >                         args->have_build_id = true;
+> >                 }
+> >
+> > ---
+> > base-commit: a1d8548c23076c66d96647f5f6f25aa43567f247
+> > change-id: 20251022-james-perf-fix-dso-block-ca1d8437bbc0
+> >
+> > Best regards,
+> > --
+> > James Clark <james.clark@linaro.org>
+> >
 
