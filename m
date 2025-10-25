@@ -1,281 +1,520 @@
-Return-Path: <linux-kernel+bounces-869835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09B2C08D41
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:16:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA6FC08D48
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53DB2351113
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2E33BB62C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E34F2C17A8;
-	Sat, 25 Oct 2025 07:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5DF2D592D;
+	Sat, 25 Oct 2025 07:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nsxhePH/"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="KaKR063j"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4C0224FA
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 07:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089AC3BB4A;
+	Sat, 25 Oct 2025 07:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761376565; cv=none; b=cAGlUk0z8CHcQ6kS3yTC+lDxyDRGAibPplhgpNimLJpdXkc+W4KZfD5zIDoC8EQ7gLAwmBxzyhiiUSa9aWqacp+RPYahkJHxrJmcVMGHyYyRT2aFRdPQVLTKqeqpn7C4GM7o8K3QBsUUXyco6147jmf+DaN+TRKCZ+HuCSY9x6s=
+	t=1761376747; cv=none; b=JJR+OAxBoJESjyH2PbwXWnpXabke4RKCn4m6db/aRPsC7Jeuclf+X1sjG3M3JTEYhHVHruRj1EJjkXprYnU1hJKgdqg2xdF1kfqGbEzKCbEjgQXijN+Tfko2Ln8lcsrj1NslrhO7jTUptGxg/TwYv7fE6OoQA4O+H+1u10An3jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761376565; c=relaxed/simple;
-	bh=biEA5MpSib2IYJUahdExDpnVZxpN4RYOjrYtsmVXVdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uLiA5yzJ9iPsXcjBwfIgnjfRQ02Yr01khbe6LZvlHdGgpkLd75QguHerZRNbyfWuEtcZ7HwkTgLvsMT1r1T6LVpC/5kKaJBM99LZ2oZw+3He8vLUZ+sq0woa0GndD5sgWVlk50o9fVGM46B+cOoYE4BU7Gq0mxC/pqWGbbrdOQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nsxhePH/; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so42067465ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761376563; x=1761981363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=svbY4zNoxF4qCqZuyqm3Pf2YrS++BcI9qAc5aeejeds=;
-        b=nsxhePH/FatANoHhNcLwFtxlVJAiB8hMF6tHvD6CjmizjnHz3iMdKrnq4F28qELeis
-         Xp6ElIAYyL4DmkS5TBypMa2Uh+QORfFpCx1evfPH4vYfibFaeaeTT7kbX54Jdwa6b9o3
-         eGhHNUhCjqvyXmBj9FtkZThz8Q31ZuGtOv1mBBMjyYwxYC5CwWHVIyxfPAory52fAMJ/
-         WJVw/XdUHpuqK6IsPdZh1dpkbcnfBUtPKwFEYEcMSCe6FgDsm9yyi3hjgA6I9er+QViu
-         v5k3WfiY5WV9xdNfJI7S+GPXkjTRhuZQ3UryV6XTZZFvpveGDDFUVCodgPoJSw3It9iY
-         wnMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761376563; x=1761981363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=svbY4zNoxF4qCqZuyqm3Pf2YrS++BcI9qAc5aeejeds=;
-        b=A1b06aexI9ZN13aRMAf16+iRbewgSXxrKkU/p6+KlId1DHuE2zbkJAESMMr7ennB4s
-         qYmU3fnd1mIEcaTIryUIb/uDtLIr9DzmbXp/oTI55+jy8kkRzQkzetmShvC+gSeQdgiS
-         q22Byi4md4v+B4nOzU0RdR1w0NKH96H6x8PSPCA1p6nms0wgxNDEFOew9F6M17mXCazh
-         GvFPLQmTarFiSnjGFv9JtMANZJ5L+juWGRqSZ15i9RnGNHcf5gvQLjUor/SLs2KHs5uS
-         U6hrJUin3D7sprVH2mZfXW7yFE5mgVGJCmaGT5M1fkbCKfXCNxc4uutJg78ZYOFK7msq
-         kJgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWitkDCrsM00y6eIblasld+S0Wx1ZZGd/4lNWfII9djNUE0TqbPgrXhSmmrCzjSqAXR+gHXMkAfCEAtdE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGpM2WicMzT0YQ6X8aCpK8GXxo+joNXjsEP+UCQ6wLRPrQaC5m
-	OaDjkf3SmCBNy+erWiYfh9FmHJSZxayuj5GAMY7hiVRaD0NxKjClPc+0PhMWXARo1j0nnIz+3OP
-	crI0a8erPO6GOQHrhexZNFH76nkVAy3AH/aaE2i+U
-X-Gm-Gg: ASbGncszPt1RdW49WnRPbObzvJ+rnyJ+NA//KoFZNFLiZFy0OBJhRrEjes5mDVYGc+L
-	ldkvHPYru+fSxY5XQDEdC+7c5IStjtobF7jb/ePcj7MPqslcah93lk3Fe9M/Lf+xssp8XSeded0
-	T96u6JrQJ4hovYBz5a686MSlUyys3FeEhDMHvHO0f2EONUAk+M8oijISNPC2N9StCQ9jiatSDeB
-	g07wzUE4EbZJfOcLZV9Gqfpn8XC9N0g50K+kzlgqT7clJGJgxtmLe4Zty2gH8xYlB5WUrfqcvKE
-	wtOeeejcJGyBy9XwjObKAB/xEw==
-X-Google-Smtp-Source: AGHT+IFrWwE9daGcrnOfrKeIJ9mdYxb9a2TtdwZpEtwG5NORQI/kMcHd2F/VG7L16reRUqtaYYJKSGRr0DNq7pJl2L8=
-X-Received: by 2002:a17:902:e80c:b0:290:2735:7285 with SMTP id
- d9443c01a7336-290cb278acamr426432255ad.47.1761376563027; Sat, 25 Oct 2025
- 00:16:03 -0700 (PDT)
+	s=arc-20240116; t=1761376747; c=relaxed/simple;
+	bh=Fj6df5XxMk5WoEXy1kyB2bsby4rQd0pD0LDLRt4nIw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aogv6Sw2ScNIM9pfauivqpsRL8vASpiSsyGSItC5Q/Re1wXuVlnBfTRLHHWhtdcE1HxDHmNxwFjwoUuh8+OzFcXgMgo7YOMAtcTaJK7/i+LpzwqDnzC35VcNq9QznkjG9racNP6VarhYKtwRDLZfj3m3vbzQ9s/coYQSQ3oN/cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=KaKR063j; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=MwX/s5SYASd0iKGYB0XTDuYgCV0T6REyfugcDNoJpbI=;
+	b=KaKR063j3AwQa7jCa9q37XeA7OL63ew6l7t+cOFjS/WOFhuLOIxqZAS330KkUu
+	1yR7rAZ1g+1kz4pqma48zs6maL39Yydt2b4aPzlIthM03mb7VqfLIIy9CcVBeuGB
+	8Dn0exz3iX88KX6YMABw84bCwLafcY2+ALWBQvBsqO/VU=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3BzBHefxoBGWeAA--.50533S3;
+	Sat, 25 Oct 2025 15:16:25 +0800 (CST)
+Date: Sat, 25 Oct 2025 15:16:22 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Rogerio Pimentel <rpimentel.silva@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, xiaofeng.wei@nxp.com,
+	kernel@pengutronix.de, festevam@gmail.com,
+	alexander.stein@ew.tq-group.com,
+	dario.binacchi@amarulasolutions.com, marex@denx.de,
+	Markus.Niebel@tq-group.com, y.moog@phytec.de,
+	joao.goncalves@toradex.com, frieder.schrempf@kontron.de,
+	josua@solid-run.com, francesco.dolcini@toradex.com,
+	primoz.fiser@norik.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
+Message-ID: <aPx5RpFeqWmmhQs5@dragon>
+References: <20250922232523.844633-1-rpimentel.silva@gmail.com>
+ <20250922232523.844633-2-rpimentel.silva@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAVpQUA_CqqUfoJb=NaQ7YnBUbW0UWQS4W++TXwRFekenkDM8Q@mail.gmail.com>
- <20251025064624.2972311-1-lizhi.xu@windriver.com>
-In-Reply-To: <20251025064624.2972311-1-lizhi.xu@windriver.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Sat, 25 Oct 2025 00:15:51 -0700
-X-Gm-Features: AS18NWD0aLvE28ntXYp7r9GroSd8L7O3b06gP8_GGwZZ_4MXTHaYRgFqmkW-eeM
-Message-ID: <CAAVpQUAEBgTZF5GMvRgZybC0pHUuaN-4JBaff79L6AABNKSNWw@mail.gmail.com>
-Subject: Re: [PATCH V3] net: rose: Prevent the use of freed digipeat
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jreuter@yaina.de, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922232523.844633-2-rpimentel.silva@gmail.com>
+X-CM-TRANSID:Ms8vCgD3BzBHefxoBGWeAA--.50533S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW3try8XF4fZw43ZF1fCF13twb_yoWkCF4Upr
+	9xJrsrCw4vkr1Syas3J3W7Krn8Xa95G3Wq9w1DuFy8AF9rAasIqrn0krn8GrsrJrs8Z3y8
+	uFWjvryI9FnIgw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbVysUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIAnJL2j8eUkYHwAA3s
 
-On Fri, Oct 24, 2025 at 11:46=E2=80=AFPM Lizhi Xu <lizhi.xu@windriver.com> =
-wrote:
->
-> On Fri, 24 Oct 2025 21:25:20 -0700, Kuniyuki Iwashima <kuniyu@google.com>=
- wrote:
-> > On Fri, Oct 24, 2025 at 8:51 PM Lizhi Xu <lizhi.xu@windriver.com> wrote=
-:
-> > >
-> > > On Fri, 24 Oct 2025 19:18:46 -0700, Kuniyuki Iwashima <kuniyu@google.=
-com> wrote:
-> > > > On Fri, Oct 24, 2025 at 2:39 AM Lizhi Xu <lizhi.xu@windriver.com> w=
-rote:
-> > > > >
-> > > > > There is no synchronization between the two timers, rose_t0timer_=
-expiry
-> > > > > and rose_timer_expiry.
-> > > > > rose_timer_expiry() puts the neighbor when the rose state is ROSE=
-_STATE_2.
-> > > > > However, rose_t0timer_expiry() does initiate a restart request on=
- the
-> > > > > neighbor.
-> > > > > When rose_t0timer_expiry() accesses the released neighbor member =
-digipeat,
-> > > > > a UAF is triggered.
-> > > > >
-> > > > > To avoid this UAF, defer the put operation to rose_t0timer_expiry=
-() and
-> > > > > stop restarting t0timer after putting the neighbor.
-> > > > >
-> > > > > When putting the neighbor, set the neighbor to NULL. Setting neig=
-hbor to
-> > > > > NULL prevents rose_t0timer_expiry() from restarting t0timer.
-> > > > >
-> > > > > syzbot reported a slab-use-after-free Read in ax25_find_cb.
-> > > > > BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 net/a=
-x25/af_ax25.c:237
-> > > > > Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17200
-> > > > > Call Trace:
-> > > > >  ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> > > > >  ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
-> > > > >  rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
-> > > > >  rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link.c:1=
-98
-> > > > >  rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
-> > > > >
-> > > > > Freed by task 17183:
-> > > > >  kfree+0x2b8/0x6d0 mm/slub.c:6826
-> > > > >  rose_neigh_put include/net/rose.h:165 [inline]
-> > > > >  rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
-> > > > >
-> > > > > Fixes: d860d1faa6b2 ("net: rose: convert 'use' field to refcount_=
-t")
-> > > > > Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmail.co=
-m
-> > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > > > ---
-> > > > > V1 -> V2: Putting the neighbor stops t0timer from automatically s=
-tarting
-> > > > > V2 -> V3: add rose_neigh_putex for set rose neigh to NULL
-> > > > >
-> > > > >  include/net/rose.h   | 12 ++++++++++++
-> > > > >  net/rose/rose_link.c |  5 +++++
-> > > > >  2 files changed, 17 insertions(+)
-> > > > >
-> > > > > diff --git a/include/net/rose.h b/include/net/rose.h
-> > > > > index 2b5491bbf39a..33de310ba778 100644
-> > > > > --- a/include/net/rose.h
-> > > > > +++ b/include/net/rose.h
-> > > > > @@ -167,6 +167,18 @@ static inline void rose_neigh_put(struct ros=
-e_neigh *rose_neigh)
-> > > > >         }
-> > > > >  }
-> > > > >
-> > > > > +static inline void rose_neigh_putex(struct rose_neigh **roseneig=
-h)
-> > > > > +{
-> > > > > +       struct rose_neigh *rose_neigh =3D *roseneigh;
-> > > > > +       if (refcount_dec_and_test(&rose_neigh->use)) {
-> > > > > +               if (rose_neigh->ax25)
-> > > > > +                       ax25_cb_put(rose_neigh->ax25);
-> > > > > +               kfree(rose_neigh->digipeat);
-> > > > > +               kfree(rose_neigh);
-> > > > > +               *roseneigh =3D NULL;
-> > > > > +       }
-> > > > > +}
-> > > > > +
-> > > > >  /* af_rose.c */
-> > > > >  extern ax25_address rose_callsign;
-> > > > >  extern int  sysctl_rose_restart_request_timeout;
-> > > > > diff --git a/net/rose/rose_link.c b/net/rose/rose_link.c
-> > > > > index 7746229fdc8c..334c8cc0876d 100644
-> > > > > --- a/net/rose/rose_link.c
-> > > > > +++ b/net/rose/rose_link.c
-> > > > > @@ -43,6 +43,9 @@ void rose_start_ftimer(struct rose_neigh *neigh=
-)
-> > > > >
-> > > > >  static void rose_start_t0timer(struct rose_neigh *neigh)
-> > > > >  {
-> > > > > +       if (!neigh)
-> > > > > +               return;
-> > > > > +
-> > > > >         timer_delete(&neigh->t0timer);
-> > > > >
-> > > > >         neigh->t0timer.function =3D rose_t0timer_expiry;
-> > > > > @@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_=
-list *t)
-> > > > >  {
-> > > > >         struct rose_neigh *neigh =3D timer_container_of(neigh, t,=
- t0timer);
-> > > > >
-> > > >
-> > > > What prevents rose_timer_expiry() from releasing the
-> > > > last refcnt here ?
-> > > The issue reported by syzbot is that rose_t0timer_expiry() is trigger=
-ed
-> > > first, followed by rose_timer_expiry().
-> >
-> > I don't see how you read that ordering from the report.
-> > https://syzkaller.appspot.com/bug?extid=3Dcaa052a0958a9146870d
-> Here's my understanding: See the two calltraces below.
+On Mon, Sep 22, 2025 at 07:25:23PM -0400, Rogerio Pimentel wrote:
+> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
+> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
+> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
+> display interfaces, camera connectors, and standard expansion headers.
+> 
+> Based on the device tree found in the NXP repository at github
+> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
+> board kernel mainline device tree.
+> 
+> This is a basic device tree supporting:
+> 
+>  - Quad Cortex-A53
+>  - 4GB LPDDR4 DRAM
+>  - PCA9450C PMIC with regulators
+>  - Two NXP PCAL6416 GPIO expanders
+>  - RGB LEDs via GPIO expander
+>  - I2C1, I2C2, I2C3 controllers
+>  - UART2 (console) and UART3 (with RTS/CTS)
+>  - USDHC3 (8-bit eMMC)
+>  - SNVS power key (onboard power button)
+> 
+> Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
+> Signed-off-by: Rogerio Pimentel <rpimentel.silva@gmail.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> 
+> ---
+> 
+> Changes in v3:
+> 
+>  - Removing the following tags and names added
+>  on v2 by mistake: 
+>  Reviewed-by: Daniel Baluta <daniel.baluta@gmail.com>
+>  Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>  Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+> 
+> Changes in v2:
+> 
+>  - Fixed dt-binding schema warnings
+>  - Renamed nodes 'red, green and blue' to
+>    'led-0, led-1 and led-2'
+>  - Renamed led labels 'led-0, led-1 and led-2'
+>    to 'red, green and blue'
+>  - Added Reviewed-by and Signed-off-by tags
+>  
+>  
+>  arch/arm64/boot/dts/freescale/Makefile        |   1 +
+>  arch/arm64/boot/dts/freescale/imx8mp-frdm.dts | 355 ++++++++++++++++++
+>  2 files changed, 356 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 525ef180481d..d861e576779a 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -206,6 +206,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-picoitx.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-edm-g-wb.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-frdm.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-mate.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pro.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pulse.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts b/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
+> new file mode 100644
+> index 000000000000..9138c65739aa
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
+> @@ -0,0 +1,355 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2019 NXP
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "imx8mp.dtsi"
+> +
+> +/ {
+> +	model = "NXP i.MX8MPlus FRDM board";
+> +	compatible = "fsl,imx8mp-frdm", "fsl,imx8mp";
+> +
+> +	chosen {
+> +		stdout-path = &uart2;
+> +	};
+> +
+> +	gpio-leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led-0 {
+> +			label = "red";
+> +			gpios = <&pcal6416 13 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +		};
+> +
+> +		led-1 {
+> +			label = "green";
+> +			gpios = <&pcal6416 14 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +		};
+> +
+> +		led-2 {
+> +			label = "blue";
+> +			gpios = <&pcal6416 15 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +		};
+> +	};
+> +
+> +	memory@40000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x40000000 0 0xc0000000>,
+> +		      <0x1 0x00000000 0 0x40000000>;
+> +	};
+> +};
+> +
+> +&A53_0 {
+> +	cpu-supply = <&reg_arm>;
+> +};
+> +
+> +&A53_1 {
+> +	cpu-supply = <&reg_arm>;
+> +};
+> +
+> +&A53_2 {
+> +	cpu-supply = <&reg_arm>;
+> +};
+> +
+> +&A53_3 {
+> +	cpu-supply = <&reg_arm>;
+> +};
+> +
+> +&i2c1 {
+> +	clock-frequency = <400000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c1>;
+> +	status = "okay";
+> +
+> +	pmic@25 {
 
-The same question still applies.
+Please sort I2C devices in order of slave address?
 
-What prevents rose_timer_expiry() from releasing the last
-refcnt before [1] ?
+> +		compatible = "nxp,pca9450c";
+> +		reg = <0x25>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pmic>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +		regulators {
+> +			BUCK1 {
+> +				regulator-name = "BUCK1";
+> +				regulator-min-microvolt = <720000>;
+> +				regulator-max-microvolt = <1000000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +				regulator-ramp-delay = <3125>;
+> +			};
+> +
+> +			reg_arm: BUCK2 {
+> +				regulator-name = "BUCK2";
+> +				regulator-min-microvolt = <720000>;
+> +				regulator-max-microvolt = <1025000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +				regulator-ramp-delay = <3125>;
+> +				nxp,dvs-run-voltage = <950000>;
+> +				nxp,dvs-standby-voltage = <850000>;
+> +			};
+> +
+> +			BUCK4 {
+> +				regulator-name = "BUCK4";
+> +				regulator-min-microvolt = <3000000>;
+> +				regulator-max-microvolt = <3600000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			reg_buck5: BUCK5 {
+> +				regulator-name = "BUCK5";
+> +				regulator-min-microvolt = <1650000>;
+> +				regulator-max-microvolt = <1950000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			BUCK6 {
+> +				regulator-name = "BUCK6";
+> +				regulator-min-microvolt = <1045000>;
+> +				regulator-max-microvolt = <1155000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			LDO1 {
+> +				regulator-name = "LDO1";
+> +				regulator-min-microvolt = <1650000>;
+> +				regulator-max-microvolt = <1950000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			LDO3 {
+> +				regulator-name = "LDO3";
+> +				regulator-min-microvolt = <1710000>;
+> +				regulator-max-microvolt = <1890000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			LDO5 {
+> +				regulator-name = "LDO5";
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +		};
+> +	};
+> +
+> +	pcal6416: gpio@20 {
+> +		compatible = "nxp,pcal6416";
+> +		reg = <0x20>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pcal6416_int>;
+> +		interrupt-parent = <&gpio3>;
+> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+> +		gpio-line-names = "CSI1_nRST",
+> +			"CSI2_nRST",
+> +			"DSI_CTP_RST",
+> +			"EXT_PWREN1",
+> +			"CAN_STBY",
+> +			"EXP_P0_5",
+> +			"EXP_P0_6",
+> +			"P0_7",
+> +			"LVDS0_BLT_EN",
+> +			"LVDS1_BLT_EN",
+> +			"LVDS0_CTP_RST",
+> +			"LVDS1_CTP_RST",
+> +			"SPK_PWREN",
+> +			"RLED_GPIO",
+> +			"GLED_GPIO",
+> +			"BLED_GPIO";
+> +	};
+> +
+> +	pcal6416_1: gpio@21 {
 
-For example, why is accessing neigh->dev in rose_send_frame()
-safe then ?
+Would it be better to label these two pcal6416 devices as
 
-The commit message mentions that two timers are not
-synchronised, but the diff adds no such synchronisation.
+	pcal6416_1
+	pcal6416_2
 
+or
+	pcal6416_0
+	pcal6416_1
+?
 
-> [1] Line 111 occurs after rose_neigh_put(). Otherwise, accessing
-> neigh->digipeat would result in a UAF. Therefore, rose_t0timer_expiry()
-> must be triggered before rose_timer_expiry().
->
-> [2] syzbot reports that line 237 generates a UAF when accessing digi->ndi=
-gi.
->
-> UAF Task1:
-> rose_t0timer_expiry()->
->   rose_transmit_restart_request()->
->     rose_send_frame(.., neigh->digipeat, ..)-> // [1] line 111
->       ax25_find_cb()->
->         if (digi !=3D NULL && digi->ndigi !=3D 0)  // [2] line 237
->
-> Freed neigh Task2:
->  rose_timer_expiry()->
->    rose_neigh_put(neigh)->
->      kfree(neigh)
-> >
-> > The only ordering I can find is that kfree() in rose_timer_expiry()
-> > happened before ax25_find_cb () in rose_t0timer_expiry().
-> >
-> > > Therefore, in rose_t0timer_expiry(), the reference count of neigh is
-> > > increased before entering rose_transmit_restart_request() to prevent
-> > > neigh from being put in rose_timer_expiry(). Then, in rose_t0timer_ex=
-piry(),
-> > > neigh is put before executing rose_start_t0timer() and the neigh valu=
-e is
-> > > set to NULL to prevent t0timer restarts.
-> > >
-> > > The case where rose_timer_expiry() is triggered before rose_t0timer_e=
-xpiry()
-> > > is not considered at this time.
-> >
-> > So this change just papers over the root cause.
-> >
-> >
-> > > >
-> > > > The t0timer could be triggered even after that happens.
-> > > >
-> > > >
-> > > > > +       rose_neigh_hold(neigh);
-> > > > >         rose_transmit_restart_request(neigh);
-> > > > >
-> > > > >         neigh->dce_mode =3D 0;
-> > > > >
-> > > > > +       rose_neigh_putex(&neigh);
-> > > > >         rose_start_t0timer(neigh);
-> > > > >  }
-> > > > >
-> > > > > --
-> > > > > 2.43.0
-> > > > >
+Shawn
+
+> +		compatible = "nxp,pcal6416";
+> +		reg = <0x21>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pcal6416_1_int>;
+> +		interrupt-parent = <&gpio2>;
+> +		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +		gpio-line-names = "P0_0",
+> +			"P0_1",
+> +			"AUD_nINT",
+> +			"RTC_nINTA",
+> +			"USB1_SS_SEL",
+> +			"USB2_PWR_EN",
+> +			"SPI_EXP_SEL",
+> +			"P0_7",
+> +			"W2_HOST_WAKE_SD_3V3",
+> +			"W2_HOST_WAKE_BT_3V3",
+> +			"EXP_WIFI_BT_PDN_3V3",
+> +			"EXP_BT_RST_3V3",
+> +			"W2_RST_IND_3V3",
+> +			"SPI_nINT_3V3",
+> +			"KEYM_PCIE_nWAKE",
+> +			"P1_7";
+> +	};
+> +};
+> +
+> +&i2c2 {
+> +	clock-frequency = <400000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c2>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c3 {
+> +	clock-frequency = <400000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c3>;
+> +	status = "okay";
+> +};
+> +
+> +&snvs_pwrkey {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2>;
+> +	status = "okay";
+> +};
+> +
+> +&uart3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart3>;
+> +	assigned-clocks = <&clk IMX8MP_CLK_UART3>;
+> +	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
+> +	uart-has-rtscts;
+> +	status = "okay";
+> +};
+> +
+> +&usdhc3 {
+> +	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
+> +	assigned-clock-rates = <400000000>;
+> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+> +	pinctrl-0 = <&pinctrl_usdhc3>;
+> +	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
+> +	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
+> +	bus-width = <8>;
+> +	non-removable;
+> +	status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_i2c1: i2c1grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL	0x400001c2
+> +			MX8MP_IOMUXC_I2C1_SDA__I2C1_SDA	0x400001c2
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c2: i2c2grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL	0x400001c2
+> +			MX8MP_IOMUXC_I2C2_SDA__I2C2_SDA	0x400001c2
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c3: i2c3grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_I2C3_SCL__I2C3_SCL	0x400001c2
+> +			MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA	0x400001c2
+> +		>;
+> +	};
+> +
+> +	pinctrl_pmic: pmicgrp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03	0x000001c0
+> +		>;
+> +	};
+> +
+> +	pinctrl_pcal6416_int: pcal6416_int_grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_NAND_READY_B__GPIO3_IO16	0x146
+> +		>;
+> +	};
+> +
+> +	pinctrl_pcal6416_1_int: pcal6416_1_int_grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_SD1_STROBE__GPIO2_IO11	0x146
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2: uart2grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x140
+> +			MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX	0x140
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart3: uart3grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_ECSPI1_SCLK__UART3_DCE_RX	0x140
+> +			MX8MP_IOMUXC_ECSPI1_MOSI__UART3_DCE_TX	0x140
+> +			MX8MP_IOMUXC_ECSPI1_SS0__UART3_DCE_RTS	0x140
+> +			MX8MP_IOMUXC_ECSPI1_MISO__UART3_DCE_CTS	0x140
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc3: usdhc3grp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x190
+> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d0
+> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d0
+> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d0
+> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d0
+> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d0
+> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d0
+> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d0
+> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d0
+> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d0
+> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x190
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x194
+> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d4
+> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d4
+> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d4
+> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d4
+> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d4
+> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d4
+> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d4
+> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d4
+> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d4
+> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x194
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x196
+> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d6
+> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d6
+> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d6
+> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d6
+> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d6
+> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d6
+> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d6
+> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d6
+> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d6
+> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x196
+> +		>;
+> +	};
+> +};
+> -- 
+> 2.25.1
+> 
+
 
