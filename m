@@ -1,289 +1,235 @@
-Return-Path: <linux-kernel+bounces-870026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4067C099E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:41:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71103C093E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3FD6934E96A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:41:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17F644EFA3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FB132A3D8;
-	Sat, 25 Oct 2025 16:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAotVmFV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B05303A19;
+	Sat, 25 Oct 2025 16:11:26 +0000 (UTC)
+Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020101.outbound.protection.outlook.com [52.101.195.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7526309EE8;
-	Sat, 25 Oct 2025 16:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409770; cv=none; b=rroGItP4Rc6ioAJAefO7/mGH56jZe0HgS9pnLfguddoZ8pJTrYJrWMUR62x5pUGxDofxGcjzc5SG3QaJPLaw/ZRzF9a26dIRBNa5Ic183Jzt25STtcQ+kP7ubmVH+45gzprXmX3dToETsxHpp1bIt7/ygLAG2QIvpWdhRGJqgAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409770; c=relaxed/simple;
-	bh=vokghphZFN7cPlJYGHUkiv2cttRvCZNnrb6NHwYUJ1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bkqg32M7PuEVIi2PdV0OYgX7Dzz0HrELUkN/w8fwV42zCdgw4xBrgMxWf+SriXbT0Bknt5hH3rqXI0Gvy8SLuTflwPFdDhR46WbwWp72a8Ibco/F+TNJ5U9D7dS8xnZfwvwWicNruwQCTPMyDIhEV60Gw6edMIK3lLAh3FUgzTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAotVmFV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EEB8C4CEFB;
-	Sat, 25 Oct 2025 16:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761409770;
-	bh=vokghphZFN7cPlJYGHUkiv2cttRvCZNnrb6NHwYUJ1I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eAotVmFVX3zIEdvLhVQcYGs4HTZaSQD/73eLPX5z3+wnypPAZu/Y5u2RNkYAKyP3N
-	 mEoZMk5U04Re2ezGSm6b5ljxhrLtP/3RhUFhnqkj+ptiaOGIiBFK+tBe0Kb3F7i+rs
-	 cfCovJBZjwwEa5pkZDr3k09sCdxFYsAfdImxoTj1g/9VaX8fLEC/1w5HZnNDtL84Xl
-	 rE36pm1aaNJrULBo/ZBYTHgvgm+ATfuDfpugM9pIvf60TA4l5mXfxTGJapjiN8e0w6
-	 OLuaAWhaU//XCEcC3q1uAlqPgOVcU0qk0KaVZHkl4UGIIocMoIaz52oaLVO8b/Tsw/
-	 g8jCkiqmEvqPg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Sasha Levin <sashal@kernel.org>,
-	hawk@kernel.org,
-	ilias.apalodimas@linaro.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.17-5.15] page_pool: always add GFP_NOWARN for ATOMIC allocations
-Date: Sat, 25 Oct 2025 12:01:29 -0400
-Message-ID: <20251025160905.3857885-458-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3075827280E
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.101
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761408686; cv=fail; b=UkI9imBOX4E/NXTzxN+Kiv0xURb5BHTJtW5uSS4Bx86RNF4aMv10UoWnsAC77hFrIECvxPA3kVJBcK0HzKWmYXNSvOzjnxR9XDcanwBMk9X2IJFCsTvDqMt9GdL1Or7UCVKvTmXR+7XpnW2Dw0OhotlM2FDSqHTFcjwCvFG+wjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761408686; c=relaxed/simple;
+	bh=sb898pj1GCFdDZg+i8Nt4SxwEJSNPpG0P6y/mw9LlP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Mqpk8emky/6tAhWx9szPfH9r1pqRy0tzMmbtbzoSMg3WXRbHVNAzfGWO2AvrwCcwHXjd2VCLIvipj0aV2DWX8GcqO8alGPDsCbHbDQ4ultj4R7+Hqz6wiQsnXnaHjXkBE8u4pIQEqgcFOlkAw7Ade6FrP6mDvHhCS+oxxzMO2pE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.195.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cHHDMXf0ZiW+kYg40gZu23sxtlvA7odqO1538ocKLmENpH47WEfR/X6MQYazLRcflwnOm0aeaTtcVmgZ7tltgatGvhiPqeJzbKI+3SDm//mALEUWnFPktOV774qbubikX4/vkTCJAV5y3dPRp5GAQ2mk5Th0i/8c1eklg/X8hAWMAjLGMLwUBXPUUmLukZGJhUQWzo4F26uuubZrOPDCEOLfy2mwzu9UKWH9WZnsvVkXapw+1Bz5UEZKzL6Grc3ng+kzUm7OUdP4Rugojq9xnVnO0g9eTOD/4mgThdJ8sU/MyO+yhwboudH82xQmkdbChaz6wWPAzTBu8YOoSCYf6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v/+qkCxC04kL82SAVOYuHeZfJ6wcFwaG788QGxfzAOU=;
+ b=cJLTrl7yZLwal23CxiIZLhEkalUJVg5mcnZRz97l8kfmHRkbf0s2xb/SqL0RyqtXoCU5gdPoSwk4COFKu6owQOGad8RFVFoBSvu/7Ktq1cI9qcSD80cyX0Clm3jBNrA8b+TJiWmgbWRixWq1T1wHxTCDS1MUQ2tQE1UAGn9vVx5iTnSRYQi6PfJDV8lG2nnVDYzuyBvdxFU14mtxI1CnJK1R0IF07qRIigRVYQU6PSlY4KFdH9OikWe96KM7ngj6L05/8Bsg86DSd7S+PxAGxtUDUvzUGcZ0AsoODkeEsgGEgvHrsQsfu4QNAs3fabnwgc5AjZ1AaMXRDbsRm0g2NA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
+ dkim=pass header.d=atomlin.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=atomlin.com;
+Received: from LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:be::10)
+ by CWXP123MB4293.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:db::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.16; Sat, 25 Oct
+ 2025 16:11:18 +0000
+Received: from LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::8242:da40:efa0:8375]) by LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::8242:da40:efa0:8375%4]) with mapi id 15.20.9253.013; Sat, 25 Oct 2025
+ 16:11:17 +0000
+From: Aaron Tomlin <atomlin@atomlin.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: atomlin@atomlin.com,
+	pauld@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/isolation: Enforce at least one housekeeping CPU per node unless maxcpus limits
+Date: Sat, 25 Oct 2025 12:11:13 -0400
+Message-ID: <20251025161113.14313-1-atomlin@atomlin.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251025160905.3857885-1-sashal@kernel.org>
-References: <20251025160905.3857885-1-sashal@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN1PR12CA0023.namprd12.prod.outlook.com
+ (2603:10b6:408:e1::28) To LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:be::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.17.5
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO3P123MB3531:EE_|CWXP123MB4293:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8e28e34-695b-48e0-1cd4-08de13e120b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZEPueq05xhKITwWhiBBYI1efQCT00RxN1mCD/wy9YnooyB0uFgFdtjYA4onm?=
+ =?us-ascii?Q?b1UfQ30cvei2c4fr1avMnczXxMT23wu7M5Odb8PqQyb8R9kNz6JNDiD5Ogve?=
+ =?us-ascii?Q?QSP9Z8kjKM1X07FVIZxMwA/clq82l5OB20sFPaga01gtj5GtEXNxd7mjpGoJ?=
+ =?us-ascii?Q?m5CqD3YeElyyVTZJe52CGvz0AYrmgTiWTbhZlx0zo/6lVoxn4Aov7fH2UFhP?=
+ =?us-ascii?Q?dv3WjarrV6qCEfGAVQo20VftUNxNQ05jD/YhZXMrPMgrUOGXnPegr9wohF9f?=
+ =?us-ascii?Q?l7QROl46UKSpcEkA2AjN607BQs2ZGJYwYhaDP7HLIm44BCWEXOzUqeKa+p2Y?=
+ =?us-ascii?Q?VGxRrqXjoRjKsNyeTdnB/Bk0Bg5XrZYqCYBKfoZ89Ch/EysWgTAEjeMLH8N/?=
+ =?us-ascii?Q?MEDhoYKjO9LagHn8/1Cz7IPnf+zI/4EloNLtSVHP/AqMBytvsNjUSF/6dWp5?=
+ =?us-ascii?Q?tSmQLkDNzIIa3J/XB6VWuI8XNo9XmR9UcDy7MAeTSQNPAKCQofG7IarDwKkM?=
+ =?us-ascii?Q?z8f+JIHWP9K9ds6o/BGLI3Yjmh9lGbOfgwLeKp+AB+uUlq5vyElL61Hvt8qX?=
+ =?us-ascii?Q?xkKIHoMPBtQDSJMMsUIfNfB4ZgR+xzhUExZbobxBczG3iL31F8woGkmOCH5u?=
+ =?us-ascii?Q?Q5yWnLqvBoByGEhrp9EOytI3joB1Rg58y3j1Or93vgpi0gFad5bNDHil07Mb?=
+ =?us-ascii?Q?1zxN92WbysM3/rcQQvdHDxABYZsVkbvlIMzckq8kI751t6oGm3r9f6dTmTn9?=
+ =?us-ascii?Q?jbwSMB9qHvFLO+pMXswfhpiRGQSiKK9/smUhqI82amaviE3RBa0Bmry0IgW9?=
+ =?us-ascii?Q?OObCw2Ve3eWtrBEGnYT2sUz0Maf63JI2uSIhYH8B7jhcog2N7wQr0SvezKIk?=
+ =?us-ascii?Q?3tpnBrmF8G7Kt+TwJlZ9jJgVUvl2wWsdqAzVhPozOka9K3HYTZymIk6d5Yfn?=
+ =?us-ascii?Q?3HteMOxhzHWtV+W6zBVJVb1eRh2vseQEzzJaEIRiESXkWsCfBMAnxAxD0EoU?=
+ =?us-ascii?Q?vVWxRpoJz8LJZ/wkeEjfaX2eD0u34aHGbcimoeI3ZNEJe0tdrphdfQ/2KRwf?=
+ =?us-ascii?Q?uTnAlSMTdPVepZhbJCt5GVBAJLP0V6Xc1ornZ+MN5KNZNxNVjR8fHH6R29Ok?=
+ =?us-ascii?Q?DeCSLNlZMcK73FidsUqH2VTS1Gvxe3fOx1G0u4gfENmduM2lIHU9rhQYgZmc?=
+ =?us-ascii?Q?vmw1BOg2b9sDMOuOe+TrUgaIOWlgUTaMUUdg2RCS5k0+G8qhm62yjFvjmR4H?=
+ =?us-ascii?Q?QGDf/b1Rhlc8/t6byY8UuNxmzep3rxN/nnQvbeNVWjAdGk3FYrdASC2hKIpR?=
+ =?us-ascii?Q?XpTp8yKQzu+pbIMNnm1s5rIHvWjowH8IZbr4fd4h6sklvwtqeiVTz4UuJSzq?=
+ =?us-ascii?Q?JkRxVW9CIDwp9zUZ5MHLm5yV3TBUAv9Xy1SN1ZHzhbEAn7w1coOHPPw36dhc?=
+ =?us-ascii?Q?IO1Rl9v6oTlUYN/DnRP8IIKWdmjoYeVu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3Q4wkkiLGPaqldbN22dSjfm0L5n7JveBUhL8uEYr2KW7wh+j4Min8eGtM5Bm?=
+ =?us-ascii?Q?QOReRGt7LQWdces8s6AdUyhjG8CdLHUgQSQs3h/lo/iN/5NnYLWzWf5UveXK?=
+ =?us-ascii?Q?NxToB4m+4b35hHdO6EM2P8JXMnBs25cIb7C+hrBm2AjRJCJt7JyostrejxXw?=
+ =?us-ascii?Q?Djo9VDt28dbR98kcjK3X13QtCATlD9yYYAu/JDnSBweUhncXOVLFRmw6xsXG?=
+ =?us-ascii?Q?cKR6RBYqZPqcFeF/Rba/ThyOyDf5GCsnWCfoKuGzaKuZP0e7DJvvFPUdm/AF?=
+ =?us-ascii?Q?OM/Gn566LPJVKXA+7HmMC9vODMwFFPB3WOFvv8MCt7oI12D63MF8miUa5mKz?=
+ =?us-ascii?Q?T0nKP5xSuG3JSKU208fuqyc/5TVsCJCLzcm8KmXNEUiWsETJkWcJR3+3X1o7?=
+ =?us-ascii?Q?7PgQJOJqCXnaU1IPNuWPum4BQ57F6UhowGPcuK1u0GcbpHfSQL0a25sJrlvr?=
+ =?us-ascii?Q?UKjSs/pcR9zLzwoiAKGA/lk0c3S/CwufPX+pbAuJzOmQ1toMSDOhaKjQ+hwi?=
+ =?us-ascii?Q?mDIDHk+QByY2y1LG8Qhy+AcmzCELGnKwAd6x4pyDHEF+01FoCaIlckKCFQSQ?=
+ =?us-ascii?Q?/woqo5i8eJl3BnfPWtsjyXAYojR5FkAPQ/HHkDF4ecI+3VvGdNjjmp1YmKUB?=
+ =?us-ascii?Q?WIk52zcZMhNR3s8xwEOdyvvuiWr9wEaBdscl4pFTq+wJeCiBzK4Uy3QuuCbJ?=
+ =?us-ascii?Q?4LQ9nSGubZOZomFQI+2vwTSgpS4VW3dFTzXjVoTs9hRNh5xzHRiNNI/+klv2?=
+ =?us-ascii?Q?UP2guKJaf3/78a4PmBkDrgFN1H0fHiXL69FsknWoRFvSDJFUc8vVGMh4FpkR?=
+ =?us-ascii?Q?E1lSiZWpZ1kPZFO54JWDgCdLnmvJ7tzbhMXZBCUxORBb+e4/p6VEGcFNT1fR?=
+ =?us-ascii?Q?iLZSDHDd8HtkZPYjRLpnKaNtuf1HIrrUJNVE6zACTuU33HSRZI07zDgRQh6H?=
+ =?us-ascii?Q?A6pkgWZAOcvgG0kpbpRmJ4G3YUId6KT5aZVKaBvQ5XQ3A+ZGXhKOiw10BTHa?=
+ =?us-ascii?Q?wxLboQZPdvSPUUS06T19bRuuAFim07BiaqDR3Mq8zdAoMMgVV2mqa1IAWhT4?=
+ =?us-ascii?Q?TGlbTeQfX01UrYhkaHiYKt0B2X37TepU64JhG1dAstXgE6i3g9ZC3JLpfHKN?=
+ =?us-ascii?Q?sNCWeI5Rvw6smmL9WDPUO5ZvYplKyFo6Xic0OrpNjNjBw86Dg0ihY0xs/e2B?=
+ =?us-ascii?Q?vFLwW1Y8DTDOfRwv6jsl5EblbDClYCFRbPuNaxQhCJ3GQ2E3zf9cmS+8X8Jt?=
+ =?us-ascii?Q?JD4LKnbjPl/NFSv+LxniuE+7TTsUc+h3uLu8zo2OoPOk7WgdqtjQ3+jCAyJC?=
+ =?us-ascii?Q?rXyOlcv5wLPPxqPte3wapIyWxFRHVx2eeBuhfus7xzrjPxfJ50Lv2tAx8xZU?=
+ =?us-ascii?Q?u8DQX+gHuaIED9kzsQM9oOpQnvJR75yXusVeo6TSv3w6RJeZLf1yb8l3C+5D?=
+ =?us-ascii?Q?V+VnIo5k96efEoxULM2wCjQ86kzcknJ/tKQifOiIL/tGjosCAtA79X/1xCZw?=
+ =?us-ascii?Q?LAUZC2HEqK3vU6rKwGqzNUREYES2nWXnLoOHm7mN61MlucV59AhgTGMGAw+v?=
+ =?us-ascii?Q?sOSdUzcqcFw5ETU3VDvm4is4gXFb9NtfUIWZRfVz?=
+X-OriginatorOrg: atomlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8e28e34-695b-48e0-1cd4-08de13e120b6
+X-MS-Exchange-CrossTenant-AuthSource: LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2025 16:11:17.3256
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OGR2Z2yN+YKleJKyVAFNkqTZDWuHuHNaZptU+tzAPtWuDSbWrdT8IJrQi4wAzSHr+Ik3KYy/nFg1dgbNfcrRrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP123MB4293
 
-From: Jakub Kicinski <kuba@kernel.org>
+This patch improves housekeeping CPU selection logic by enforcing that
+each online NUMA node has at least one dedicated housekeeping CPU,
+ensuring better NUMA locality for kernel threads and timed work.
 
-[ Upstream commit f3b52167a0cb23b27414452fbc1278da2ee884fc ]
+Before assigning additional housekeeping CPUs, the patch checks if any
+online NUMA node contains CPUs with logical IDs greater than or equal to
+max_cpus=. If so, per-node NUMA enforcement is skipped and a
+warning is issued, since some nodes would be unserviceable given the CPU
+limit.
 
-Driver authors often forget to add GFP_NOWARN for page allocation
-from the datapath. This is annoying to users as OOMs are a fact
-of life, and we pretty much expect network Rx to hit page allocation
-failures during OOM. Make page pool add GFP_NOWARN for ATOMIC allocations
-by default.
+If NUMA enforcement is possible, each online node lacking a housekeeping
+CPU will have one present CPU (the lowest logical ID) assigned and
+included in the housekeeping staging mask, with a warning logged for
+visibility. The final guarantee that at least one present housekeeping
+CPU is assigned across the system remains intact.
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-Link: https://patch.msgid.link/20250912161703.361272-1-kuba@kernel.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
 ---
+ kernel/sched/isolation.c | 40 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 38 insertions(+), 2 deletions(-)
 
-LLM Generated explanations, may be completely bogus:
-
-Based on my extensive research and analysis of this commit, here is my
-determination:
-
-## **BACKPORT RECOMMENDATION: YES**
-
-## Detailed Analysis
-
-### What This Commit Does
-
-This commit adds the `__GFP_NOWARN` flag to GFP_ATOMIC allocations in
-the page_pool subsystem by modifying the
-`__page_pool_alloc_netmems_slow()` function in `net/core/page_pool.c`.
-The change is minimal (6 lines) and specifically targets atomic
-allocations that occur during network packet reception in NAPI context.
-
-**Code change at net/core/page_pool.c:554-558:**
-```c
-+   /* Unconditionally set NOWARN if allocating from NAPI.
-+    * Drivers forget to set it, and OOM reports on packet Rx are
-useless.
-+    */
-+   if ((gfp & GFP_ATOMIC) == GFP_ATOMIC)
-+       gfp |= __GFP_NOWARN;
-```
-
-This modification affects both bulk page allocations (via
-`alloc_pages_bulk_node`) and high-order page allocations (via
-`__page_pool_alloc_page_order`).
-
-### Historical Context and Broader Pattern
-
-Through extensive git history analysis, I discovered this is part of a
-**systematic effort by Jakub Kicinski** to address OOM warnings in the
-network stack:
-
-1. **March 2024** (commit 6e9b01909a811): Modified `napi_alloc_skb()` to
-   hardcode `GFP_ATOMIC | __GFP_NOWARN`
-   - Commit message stated: *"the resulting OOM warning is the top
-     networking warning in our fleet"* (Meta's production environment)
-   - Rationale: *"allocation failures in atomic context will happen, and
-     printing warnings in logs, effectively for a packet drop, is both
-     too much and very likely non-actionable"*
-
-2. **August 2024** (commit c89cca307b209): Added `__GFP_NOWARN` to
-   skbuff ingress allocations
-   - Similar rationale: *"build_skb() and frag allocations done with
-     GFP_ATOMIC will fail in real life, when system is under memory
-     pressure, and there's nothing we can do about that. So no point
-     printing warnings."*
-
-3. **September 2025** (this commit): Extends the same principle to
-   page_pool allocations
-
-### Existing Precedent Validates This Approach
-
-My code research revealed:
-
-**Helper function already uses this pattern**
-(include/net/page_pool/helpers.h:92-96):
-```c
-static inline struct page *page_pool_dev_alloc_pages(struct page_pool
-*pool)
-{
-    gfp_t gfp = (GFP_ATOMIC | __GFP_NOWARN);
-    return page_pool_alloc_pages(pool, gfp);
-}
-```
-
-**Drivers manually adding NOWARN since 2022**:
-- `drivers/net/ethernet/mediatek/mtk_eth_soc.c:1916` - Added in July
-  2022 (commit 23233e577ef973)
-- `drivers/net/vmxnet3/vmxnet3_drv.c:1425` - Also includes manual NOWARN
-
-This demonstrates driver authors were already aware of the need for
-`__GFP_NOWARN` with page_pool allocations, validating the approach.
-
-### Why This Should Be Backported
-
-**1. Fixes Real User-Visible Issue**
-- OOM warnings during network Rx are non-actionable and create log spam
-- Confirmed as "top networking warning" at large-scale deployments
-  (Meta)
-- OOM during memory pressure is expected behavior, not an error
-  condition
-- Warnings provide no value but clutter logs and may trigger false
-  alarms
-
-**2. Minimal Risk**
-- Only 6 lines of code added to a single function
-- Only suppresses warning messages, doesn't change allocation behavior
-- Allocation failures are still detected and properly handled by drivers
-- Network stack provides proper statistics via qstats (rx-alloc-fail
-  counter)
-- No change to actual page allocation logic or error handling paths
-
-**3. No Regressions Found**
-- No subsequent commits fixing or reverting this change
-- No Fixes: tags referencing this commit
-- Commit has been in mainline since September 2025 with no reported
-  issues
-- Subsequent commit (a1b501a8c6a87) is unrelated (pool size clamping)
-
-**4. Makes Behavior Consistent**
-- Aligns with existing helper function behavior
-- Removes burden from driver authors who often forget this flag
-- Prevents inconsistency where some drivers add NOWARN and others don't
-- Follows established pattern from napi_alloc_skb() and skbuff
-  allocations
-
-**5. Meets Stable Kernel Criteria**
-- ✅ Fixes a real bug that bothers people (log spam annoys users and
-  operators)
-- ✅ Obviously correct (trivial change, well-understood semantics)
-- ✅ Small and self-contained (6 lines, single file)
-- ✅ No regression risk (only suppresses warnings)
-- ✅ No API changes (internal implementation detail)
-
-### Technical Correctness
-
-**GFP_ATOMIC context** (from include/linux/gfp_types.h:316-318):
-> "GFP_ATOMIC users can not sleep and need the allocation to succeed. A
-lower watermark is applied to allow access to 'atomic reserves'."
-
-**__GFP_NOWARN semantics** (from include/linux/gfp_types.h:274):
-> "__GFP_NOWARN suppresses allocation failure reports."
-
-The change is semantically correct: When page_pool allocates pages in
-atomic context (NAPI), allocation failures are expected during OOM and
-warnings serve no purpose. The allocation failure is still detected and
-handled - only the noisy warning is suppressed.
-
-### Why Not Explicitly Tagged for Stable
-
-While the commit lacks a `Cc: stable` tag, this doesn't necessarily mean
-it shouldn't be backported. Examining similar commits:
-- Neither the napi_alloc_skb nor skbuff NOWARN commits had explicit
-  stable tags
-- Quality-of-life improvements often aren't tagged by authors but are
-  valuable for stable trees
-- Stable backport decisions should be based on technical merit and user
-  benefit
-
-### Potential Concerns Addressed
-
-**"Does this hide real bugs?"**
-No - drivers still detect and handle allocation failures. The difference
-is only in logging.
-
-**"Could this affect debugging?"**
-Minimal impact - allocation failures are tracked via qstats. OOM
-warnings during memory pressure are expected, not diagnostic.
-
-**"Is this actually a bug fix?"**
-Yes - it fixes the "bug" of annoying, non-actionable log spam that
-affects production deployments at scale.
-
-### Conclusion
-
-This commit should be backported because it:
-1. Solves a real, annoying user-visible problem (confirmed at production
-   scale)
-2. Has essentially zero risk (only suppresses warnings)
-3. Is part of a well-vetted, systematic improvement
-4. Makes the page_pool behavior consistent with established patterns
-5. Reduces operational burden and log noise
-
-While this is more of a quality-of-life improvement than a critical
-functional fix, the combination of high user benefit, zero risk, and
-strong technical justification makes it a good candidate for stable
-backporting.
-
-**Final Answer: YES** - This commit should be backported to stable
-kernel trees.
-
- net/core/page_pool.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 19c92aa04e549..e224d2145eed9 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -596,6 +596,12 @@ static noinline netmem_ref __page_pool_alloc_netmems_slow(struct page_pool *pool
- 	netmem_ref netmem;
- 	int i, nr_pages;
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index a4cf17b1fab0..87b7f20d76b1 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -114,8 +114,10 @@ static void __init housekeeping_setup_type(enum hk_type type,
+ static int __init housekeeping_setup(char *str, unsigned long flags)
+ {
+ 	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
+-	unsigned int first_cpu;
+-	int err = 0;
++	const struct cpumask *node_cpus;
++	unsigned int first_cpu, last_cpu;
++	int node, node_cpu, err = 0;
++	bool skip_numa_enforcement = false;
  
-+	/* Unconditionally set NOWARN if allocating from NAPI.
-+	 * Drivers forget to set it, and OOM reports on packet Rx are useless.
-+	 */
-+	if ((gfp & GFP_ATOMIC) == GFP_ATOMIC)
-+		gfp |= __GFP_NOWARN;
+ 	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
+ 		if (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
+@@ -135,6 +137,40 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
+ 	cpumask_andnot(housekeeping_staging,
+ 		       cpu_possible_mask, non_housekeeping_mask);
+ 
++	for_each_online_node(node) {
++		node_cpus = cpumask_of_node(node);
 +
- 	/* Don't support bulk alloc for high-order pages */
- 	if (unlikely(pp_order))
- 		return page_to_netmem(__page_pool_alloc_page_order(pool, gfp));
++		if (cpumask_empty(node_cpus))
++			continue;
++
++		last_cpu = cpumask_last(node_cpus);
++		if (last_cpu >= setup_max_cpus) {
++			skip_numa_enforcement = true;
++			pr_warn("Housekeeping: NUMA node %d has CPU %d >= "
++				"max_cpus=%d. Skipping NUMA enforcement\n",
++				node, last_cpu, setup_max_cpus);
++			break;
++		}
++	}
++
++	if (!skip_numa_enforcement) {
++		for_each_online_node(node) {
++			node_cpus = cpumask_of_node(node);
++
++			if (cpumask_intersects(node_cpus, housekeeping_staging))
++				continue;
++
++			for_each_cpu_and(node_cpu, node_cpus, cpu_present_mask) {
++				pr_warn("Housekeeping: Adding CPU %d "
++					"from node %d to ensure NUMA "
++					"coverage\n", node_cpu, node);
++				__cpumask_set_cpu(node_cpu, housekeeping_staging);
++				__cpumask_clear_cpu(node_cpu, non_housekeeping_mask);
++				break;
++			}
++		}
++	}
++
+ 	first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging);
+ 	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
+ 		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
 -- 
 2.51.0
 
