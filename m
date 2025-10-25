@@ -1,139 +1,168 @@
-Return-Path: <linux-kernel+bounces-869674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8222C087BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A530C087D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F8034E13C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604573BC12B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05DB1F37D3;
-	Sat, 25 Oct 2025 00:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6494212542;
+	Sat, 25 Oct 2025 01:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="30SDF+ls"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DOsOKCk+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918CE1A9FB4
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5337195FE8;
+	Sat, 25 Oct 2025 01:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761353696; cv=none; b=Gat3hF0uSPFSGcF5bbj4L8urw5PWHCoRKnzIGRXb2UcAlJDLb+2GkI89lpJqOosO57pQJSWkBTb2FkXi7OA/JLBut/P05pJklm0EwwYtbo34FItX6gMSrM0SOIxqB/6JRVNKVVe+XZStCi2WFvIrN0S42aY+hF8LVCGHyWw/eAs=
+	t=1761354221; cv=none; b=anZXpIteCTF1ClNpfE2vpgSH/gIMePkoMsuTmMo1UVjlYEnNool+xWMT4XVI46W7QySP4jnk/XdXdrePQHB0ryPSHZHjnR+w+wvBGfuxZMz/1WMlEPmcmHSGd6HxeUcXSnNXuiPrzLokE+jx3PNEZ1NLEafFUjl2ZTrfnDJb/kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761353696; c=relaxed/simple;
-	bh=FAa8qh/yrZ/DivWv0HekP569K1EcOK1GynHOSo9ol4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qhd8PUz2Hojw4DKCJDhAF1VbkIP9z4UwnW1na3L7opp618j4pJczqhcnfpDYMbtHjnh38KOrSt/IP5o9oPRD+ZigCPK7+0OM+T7cZZh0BzUeytYWRbHkp1HDyJnaHPfoIVXv4KaeX1IRdVkAFPD+akn0sSsLJ2pHc6hhistWRUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=30SDF+ls; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27eeafd4882so85965ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761353694; x=1761958494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FAa8qh/yrZ/DivWv0HekP569K1EcOK1GynHOSo9ol4g=;
-        b=30SDF+lswvHj5UJ2oyrKDQLoVhuH2LJwDdeLuuxcl2Rx76jPp+Kw4xvey13ctlrxv8
-         iKPhNJlncqXEI/oHWNLyK7GHm48OwfqWqBv8qorpVIu8sDWwDIHdv3AURbBfmwGFqvHG
-         yeu1aPR+mOAjRxCwyDbGi4JR0djFJIskihE6Yk2yJb0i5I7w2+twx0cKiXSwfiEsyOsC
-         qZnFK7I3d0AvmFCzIMluDlurw3/vFvGkNDlYgNY0aJHn9MN5v8upG2pJDvHLScMthrAW
-         wqxZS1Ef4Z9bVN1sItOTlmyL47oJMvWpHHIvrZLzYQaVk6J5THwm44+qrTQnqE3U1xO4
-         W8UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761353694; x=1761958494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FAa8qh/yrZ/DivWv0HekP569K1EcOK1GynHOSo9ol4g=;
-        b=Gw3kZ1ZNtMPzG6ci8XllAkt91+q9pLWr5Q4ZKgrso+dt4Whx47K4phlVHQhXCDVg+c
-         UQUgDLnvhfVT3ofaVsUAEfvaZ6WtCRdyyXGlyH8AlDouT9fl7NEBOp1Q+HZclYmeLiYK
-         5Rb314jv4CHsXM48wS2murMt24q4a2Rd3mG/hw2t0WDRMSi7Mxc7wrRy+IILeb3joOm7
-         NFkiQxDiDwA2OdmFs65GVaD1GoZC3CoSOEGQqcgmAy8FK5DudBwILGr3fMolKDy8K3Om
-         Lf/Nth2d6D7fJ6whs4WqlkdaryNwURdBomT66WaA7fhYQvxbwuKHnz9+kQCeA8560RIG
-         lBWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfzNbGunR+yaAw7kIqEEghp1Lsdc2/9CwvQOIRb5lWuFBWSy4Wj2l30JzdvUxz7egZ/CGDnU5UeM3MlsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzolQpJV4kYA/76eHydJ/zi1SKOo1WPekV5Mx7/RXO/ja+FtncZ
-	5/XZ81WMUBAZ1Je5s3gpxXCl7oxNGc7bqrfTTh9/YLDn5P//QPzrLva3teLR+DU66zHkXu8D4OA
-	uKnrwChWOXhtHFXZZ9xU+wHQRgvkDRHN8/PbBgAcJ
-X-Gm-Gg: ASbGncshyKBRcEihYccTI3f3pmtFDDIWxke9SJPOKBXfNrYB/u4zt858IYhZioAwUvv
-	Cz72LOmW5KTNeexlEiiOLctZn7dAWa+2pKDjY552AilaRS8Avc1Sz7kmC8wFUB8fgfRbR4r6ufn
-	htd/IjhCaCkoNP5WkHsWiSkmnZIaRxO1Kyt+pcw5XbUm8V6WuOLdael9+Pd3LgXkgVRm+FJwRSm
-	MAVieIvJ6MomvDl+kU9alf5S1/xaNmWvtJr1HnIzdAVrsABx6oAGU8Dcz3CoZlUuxfDY/Aq+KPV
-	dEWOy1LOARQx03LO
-X-Google-Smtp-Source: AGHT+IHAZ97kNRS6LIm17OkKE+WVWsFtHlMK6rPjrAsP/+pfRZatmLGaC4FeacAc9nw5mRAZKQnmr9bJJldNrkXuH1Y=
-X-Received: by 2002:a17:902:ce84:b0:274:1a09:9553 with SMTP id
- d9443c01a7336-29497bb4f1amr2404035ad.6.1761353693538; Fri, 24 Oct 2025
- 17:54:53 -0700 (PDT)
+	s=arc-20240116; t=1761354221; c=relaxed/simple;
+	bh=OyigZUEGYtST+wfiMwu6/ZIq8s4IjOCdsiksqsdakCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYxrFTpnO5CGliVKJUpf1GYh6TZdAU88HiCPrJxQ++APBzBBfG/LOYmAwBS0c+x+5Pepu39As44V3Nfxn1Qm3eRxOjKL2nj6DGrQHEN/fXJfIt1OJbKNWBXVPjGsAmHMUYVCTBULKIM56PAxpQWvF8L2Z8ZJB97WbkoDNC3qQk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DOsOKCk+; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761354219; x=1792890219;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OyigZUEGYtST+wfiMwu6/ZIq8s4IjOCdsiksqsdakCI=;
+  b=DOsOKCk+9S3MpwVgTQ/evtWKrjikPHm+7DWilkOSGku9zeKMQ3Z+6WwS
+   ziQRa/3nHPNJlF6Uoyf1Xxf2mb6V/PKPnxL79+awC3ft1+44/9lBjir99
+   /cekeL8G1nokuZKp5dsraoRUFYrIUPVnnscSTROf0JtxB/h96HixaSYFd
+   ODHsTDAlLyXJ1vqmTYtmHH6uDmaotsNyFs8hbdaCOh0dppAMdZQLrL9oo
+   0dhg5KSCTYONWjVf2bnzP1gqbtZsC1DrFC9dRCPq1fb+6LISXd7EsJijD
+   rkvPpx2siGgkWkTNCaFhKV1iZOEpF0s4witHpG0XVuZheACTPmu9SSsd6
+   A==;
+X-CSE-ConnectionGUID: EpHRcW1uTUapnYpYgbu6pQ==
+X-CSE-MsgGUID: RmjIr4YPRtOdWjO3C+DT5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63574336"
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="63574336"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 18:03:38 -0700
+X-CSE-ConnectionGUID: 8586qdYRR0u90w7qFvQSVQ==
+X-CSE-MsgGUID: yVooTElqRda1rFVyo5pTHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="221762274"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 24 Oct 2025 18:03:35 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCSgv-000F1Z-0U;
+	Sat, 25 Oct 2025 01:03:33 +0000
+Date: Sat, 25 Oct 2025 09:02:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for
+ DSI and LCDC modules
+Message-ID: <202510250820.8SwrAUFt-lkp@intel.com>
+References: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com> <IA1PR11MB94955392108F5A662D469134E7E9A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH96B5K9Hk5h0FgxSUBa-pik=E=dLrO-4oxx76dxb9=7wQ@mail.gmail.com>
- <IA1PR11MB9495BB77A4FAFBD78600416AE7F6A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH-h_axusSLTWsEZ6QoxgmVs0nVknqNJx-iskpsg_qHKFg@mail.gmail.com>
- <aPiEakpcADuQHqQ3@intel.com> <CAGtprH8q5U6h3p5iDYtwRiyVG_xF8hDwq6G34hLt-jhe+MRNaA@mail.gmail.com>
- <CAGtprH9bLpQQ_2UOOShd15hPwMqwW+gwo1TzczLbwGdNkcJHhg@mail.gmail.com>
- <aad8ae43-a7bd-42b2-9452-2bdee82bf0d8@intel.com> <aPsuD2fbYwCccgNi@intel.com>
- <ca688bca-df3f-4d82-97e7-20fc26f7d69e@intel.com> <68fbd63450c7c_10e910021@dwillia2-mobl4.notmuch>
- <2e49e80f-fab0-4248-8dae-76543e3c6ae3@intel.com> <68fbebc54e776_10e9100fd@dwillia2-mobl4.notmuch>
- <10786082-94e0-454e-a581-7778b3a22e26@intel.com>
-In-Reply-To: <10786082-94e0-454e-a581-7778b3a22e26@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Fri, 24 Oct 2025 17:54:40 -0700
-X-Gm-Features: AS18NWD48cIVeisP_Vz7McnMgruGX1KZ_wuEbrM37xSeUhKYSGdaLBQqN8lJETQ
-Message-ID: <CAGtprH8AbW4P2t-wHVcTdfLwf3SJK5mxP1CbsMHTgMYEpLiWjQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: dan.j.williams@intel.com, Chao Gao <chao.gao@intel.com>, 
-	"Reshetova, Elena" <elena.reshetova@intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"Chatre, Reinette" <reinette.chatre@intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Huang, Kai" <kai.huang@intel.com>, "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>, 
-	"sagis@google.com" <sagis@google.com>, "paulmck@kernel.org" <paulmck@kernel.org>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Oct 24, 2025 at 2:19=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 10/24/25 14:12, dan.j.williams@intel.com wrote:
-> >> The SGX solution, btw, was to at least ensure forward progress (CPUSVN
-> >> update) when the last enclave goes away. So new enclaves aren't
-> >> *prevented* from starting but the window when the first one starts
-> >> (enclave count going from 0->1) is leveraged to do the update.
-> > The status quo does ensure forward progress. The TD does get built and
-> > the update does complete, just the small matter of TD attestation
-> > failures, right?
+Hi Prabhakar,
 
-I would think that it's not a "small" problem if confidential
-workloads on the hosts are not able to pass attestation.
+kernel test robot noticed the following build warnings:
 
->
-> Oh, yeah, for sure.
->
-> If we do _nothing_ in the kernel (no build vs. module update
-> synchronization), then the downside is being exposed to attestation
-> failures if userspace either also does nothing or has bugs.
->
-> That's actually, by far, my preferred solution to this whole mess:
-> Userspace plays stupid games, userspace wins stupid prizes.
->
+[auto build test WARNING on geert-renesas-drivers/renesas-clk]
+[also build test WARNING on clk/clk-next linus/master v6.18-rc2 next-20251024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-IIUC, enforcing "Avoid updates during update sensitive times" is not
-that complex and will ensure to avoid any issues with user space
-logic.
+url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/clk-renesas-r9a09g056-Add-clocks-and-resets-for-DSI-and-LCDC-modules/20251024-050927
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20251023210724.666476-2-prabhakar.mahadev-lad.rj%40bp.renesas.com
+patch subject: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC modules
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251025/202510250820.8SwrAUFt-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510250820.8SwrAUFt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510250820.8SwrAUFt-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/renesas/r9a09g056-cpg.c:130:1: warning: data definition has no type or storage class
+     130 | RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+         | ^~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:130:1: error: type defaults to 'int' in declaration of 'RZV2H_CPG_PLL_DSI_LIMITS' [-Wimplicit-int]
+   drivers/clk/renesas/r9a09g056-cpg.c:130:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/clk/renesas/r9a09g056-cpg.c:153:9: error: implicit declaration of function 'DEF_PLLDSI'; did you mean 'DEF_PLL'? [-Wimplicit-function-declaration]
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |         ^~~~~~~~~~
+         |         DEF_PLL
+   drivers/clk/renesas/r9a09g056-cpg.c:131:25: error: implicit declaration of function 'PLL_PACK_LIMITS' [-Wimplicit-function-declaration]
+     131 | #define PLLDSI          PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+         |                         ^~~~~~~~~~~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:153:55: note: in expansion of macro 'PLLDSI'
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |                                                       ^~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:131:54: error: 'rzv2n_cpg_pll_dsi_limits' undeclared here (not in a function)
+     131 | #define PLLDSI          PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+         |                                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:153:55: note: in expansion of macro 'PLLDSI'
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |                                                       ^~~~~~
+   In file included from drivers/clk/renesas/r9a09g056-cpg.c:16:
+   drivers/clk/renesas/r9a09g056-cpg.c:189:19: error: 'CSDIV0_DIVCTL2' undeclared here (not in a function); did you mean 'CSDIV0_DIVCTL1'?
+     189 |                   CSDIV0_DIVCTL2, dtable_16_128),
+         |                   ^~~~~~~~~~~~~~
+   drivers/clk/renesas/rzv2h-cpg.h:196:45: note: in definition of macro 'DEF_TYPE'
+     196 |         { .name = _name, .id = _id, .type = _type }
+         |                                             ^~~~~
+   drivers/clk/renesas/rzv2h-cpg.h:215:9: note: in expansion of macro 'DEF_DDIV'
+     215 |         DEF_DDIV(_name, _id, _parent, _ddiv_packed, _dtable)
+         |         ^~~~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:188:9: note: in expansion of macro 'DEF_CSDIV'
+     188 |         DEF_CSDIV(".plleth_lpclk_gear", CLK_PLLETH_LPCLK_GEAR, CLK_CDIV4_PLLETH_LPCLK,
+         |         ^~~~~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:191:9: error: implicit declaration of function 'DEF_PLLDSI_DIV' [-Wimplicit-function-declaration]
+     191 |         DEF_PLLDSI_DIV(".plldsi_gear", CLK_PLLDSI_GEAR, CLK_PLLDSI,
+         |         ^~~~~~~~~~~~~~
+   drivers/clk/renesas/r9a09g056-cpg.c:192:24: error: 'CSDIV1_DIVCTL2' undeclared here (not in a function); did you mean 'CDDIV1_DIVCTL2'?
+     192 |                        CSDIV1_DIVCTL2, dtable_2_32),
+         |                        ^~~~~~~~~~~~~~
+         |                        CDDIV1_DIVCTL2
+
+
+vim +130 drivers/clk/renesas/r9a09g056-cpg.c
+
+   129	
+ > 130	RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+   131	#define PLLDSI		PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+   132	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
