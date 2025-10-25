@@ -1,108 +1,180 @@
-Return-Path: <linux-kernel+bounces-869747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855D0C08A5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:41:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F6AC08A6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5A03B28FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06C7189DEE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AC0273D6D;
-	Sat, 25 Oct 2025 03:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7084025291B;
+	Sat, 25 Oct 2025 03:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Fub/+nVe"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iys64O/F"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1AB215F6B;
-	Sat, 25 Oct 2025 03:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A372580E1
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 03:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761363370; cv=none; b=JICCbzV0tNo1WD7WebZ1osNVU/uDHRBZ/WuldBnYfb6ZfEg67VKmqPf9fk3muV2GHCjOj0dv6dldEgaydvB9T3gEFMaSM97c9PcXW3xUpdmNs6SD8Y+mKVJSHKGWBDrKVoNuOnw4mNINS6EfrPRUsIG5vw/hlvMuTSitFPvvQx8=
+	t=1761363487; cv=none; b=HiDQyMPHkRVDRBQLCDTn2/LrzOk7DcyvlP/vlP0AvMQLEF+3ZU3oxCCHjyBv2J4tSaRvNBW05IUysYxfPagDSE1asdT6ChF/D3a5AirU8JKFvKGXOx1LlUrvofX85y9tjiDFPyFa5A+UBvBc+0QifyEIv5fWqkQEdWnKjaLY8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761363370; c=relaxed/simple;
-	bh=KiON0OU+Y/RR/jXzP9+/gwwp+JIlFiRQgsnXLMPprwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBxDA0DXt3MafxH+7qMYiDrmjCG1RZgi3yEltEscVqk8zBOEIT4QkO8URkTuFYSFtnddikjnK8rv3E1U0aSiC8L9HPrIpULF/00AQN4GoGHwNEpf7wi1s8ilkFB9kUcfRU80t0QqjwxaOYQFEy3/IsUcKKthiWuKTLC47S5/SJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Fub/+nVe; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cbugbZ+qcT/wMKq21rqYgDFNKpMW8Ujxzcq00HGBWCs=; b=Fub/+nVe73IoydgDcQfwiwEOT+
-	yVfeo1JMxWigGVonx9kafO5yX5RhmBeZzQ2np82JYDmOzBFCwd11Z9DHEDdM4nyw3awdDVX7yXv1/
-	T47wKmTOCQcN2NC1LhUTjIK8+HDdt5AiMZn4aYJq5O+MbYW/O4EC8MYoN8RIMnIUBiO9lApBMzDiN
-	3+An56UwxbaRLd4wYMRgPfwpWVJvNgvyg59j60IZjbNzHdEk4ZNbokaWPvEju35D+rL0V2UrN5rBH
-	4x8SAlJaF4iIUpxeRvyYZxxmF7Qlk2J6FdPfd6PNzJHMAer9wkKK9xWYxk+5LVurXBLx2gVyWbNIa
-	bK/cEZTw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCV4U-00000009yw1-08Ph;
-	Sat, 25 Oct 2025 03:36:02 +0000
-Date: Sat, 25 Oct 2025 04:36:01 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: GuangFei Luo <luogf2025@163.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mount: fix duplicate mounts using the new mount API
-Message-ID: <20251025033601.GJ2441659@ZenIV>
-References: <20251025024934.1350492-1-luogf2025@163.com>
+	s=arc-20240116; t=1761363487; c=relaxed/simple;
+	bh=MSm2STsu1OScM8I8RvJHx9e3rLug4XaaM/vb3Ol9s60=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LQupshzLUlFHLuyDfnkKfR6fzy9Qy9fDImpTobw3t0shEOXD9MqB6gWUO6dAImu993lgpr9srJ4B8uGitB62sh/Zanstb/DoFdoYD1Z4/+HZYhbrt9HYDLhVz1ebHH4wLbx/n/8LG7y41y02wQbmHtgbS/7P7fEQsCYi8GmQejw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iys64O/F; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7811a02316bso2039279b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:38:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761363485; x=1761968285; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S1Rr+XG8pIEaWKzksED6IwpW+zljJmMqZaZf6Zprc+w=;
+        b=iys64O/F4mQuebS3Oi+x7l6v3cFgWqKxXzAF4F5SALobiA3irVDorlkFair0ve58g9
+         2DHdlNZljD9+jQn6FSMlrZdDyFKPc3idPeUNf57zhbeLqvu4oSWmTd58SBE+rV6iQU56
+         rz+ilOdO40NyZrqVgztIYm0iipmVJJp0uMepfhyK8lL93RMlkuKzmS0sK0E2XldOhdhz
+         19SyHSPp6VBhr0/GS97ORiY361318ZlM64FkhvDJ9ppevNprm7lSvA7X8owTWltPKU/n
+         DnRNGJzltCetad07+t9Qb8SfvspKHZfEAR/WrG2+jOiHFVyBpJCgmbdOWp1Q0ewQTfUg
+         9KQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761363485; x=1761968285;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S1Rr+XG8pIEaWKzksED6IwpW+zljJmMqZaZf6Zprc+w=;
+        b=hCCIFeghW8pPZxVtMyQHGX7BfZffWi/VIyOPiQqNlYl50FLnAUzLGay9gSDgLtMTAy
+         ynB8h+BwfKlikvZRVc92KWCGSNeoXLLnTR8P9iMUtZtUfo8vB2Joz+LTVyXGltiDfEMP
+         BHvDlDj0/DOiiiNDLm1C5A1EfYoTLCL8719fnKsYOVjEThEN+wV5rTYrWnedZkRe+SUT
+         k3n2Vubd2y0kXVphkxsnYtTEORwelnX3OrwPeITxYNAuD0HjiP2w7o4FfrWXKudeZVzM
+         CnUrtyKXe5Bs5VOTVhHmkD4m6TIgp6UDSDhAfbksbRY2NW1Daz84U8D3lS4bq9+5NxUX
+         nVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKf7fMxdOhk8fgeILV/artqLiBE5NrJGyP7Jry5Y/lw3Hbkn8PmYv2EtOO37xYmjm/9aV0tAwR0pY7Lj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ofu6Z3r/xhL1G7OkxAyWiCjxMZjTLR3rcJtO89qzGLVMXeIp
+	Gpd4glpGWdiebktjae0fR1n0HB90SbKf07M0v5lehXiIkWcSDTbz4WUN
+X-Gm-Gg: ASbGncv5dvc1I0ZexgJOIlIv7vrUcDObb4JlN7SQfpBUOt7VbkkQrxwdnQdntlB4jkL
+	wI9QklL7wYD5yMwn2Nah4kNGaNHO8G0Pd7FDSXFk28geTept3AzzIZOhJfGcADvIexfPmtRMSyw
+	QBMizf+k6LgsQi49KvDp2f9qG4SYRugzds1ohKp/W3wc7XZdCI8UKwE8LL1sLGqURZxrIzN10Tk
+	6C/TJ0BM7svfgAWeXsi1EG3MPcwScg4twHGa+Oc5sOrOt6MfknbeNZUUeBC/G1KmGi+26hjvSQA
+	TV7mJUkfpsq1pxuWlVNG9345rOXYCn9Ote0y1gtGs8z4b2tCQOPofE1kX7O0vAdBQTxah336amT
+	uBHlGSy5M6m072m/qooOjrrglJ7XmiXMp8h3Pmn3JBEDJEFlvhmox45vaHW9jICBel0UYdOd30c
+	vI6x4o1XLWLWgOT3kdQ1FVF2azsPvvEyA/+jEDotx4V/5sYqsiwMOCI2fN5mY=
+X-Google-Smtp-Source: AGHT+IGlVmEr+KV8oVMLrPtqVKsS5HLztOHi6CRyrI4of7GV5Hke4rtw1iz5DMcdL32dqz1/HUS2Pw==
+X-Received: by 2002:a05:6a21:6daa:b0:33e:6885:2bbd with SMTP id adf61e73a8af0-33e68852da4mr4208699637.40.1761363485250;
+        Fri, 24 Oct 2025 20:38:05 -0700 (PDT)
+Received: from ?IPv6:2401:4900:88f6:d7b0:fede:e287:a1d3:d967? ([2401:4900:88f6:d7b0:fede:e287:a1d3:d967])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm745571a12.5.2025.10.24.20.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 20:38:04 -0700 (PDT)
+Message-ID: <66575ceb29493f3b9c5b8bb94f4f66bf21d53211.camel@gmail.com>
+Subject: Re: [PATCH v2 1/2] checkpatch: add uninitialized pointer with
+ __free attribute check
+From: ally heev <allyheev@gmail.com>
+To: Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andy Whitcroft <apw@canonical.com>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
+ David Hunter <david.hunter.linux@gmail.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, Viresh Kumar	 <vireshk@kernel.org>, Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,  linux-pm
+ <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
+Date: Sat, 25 Oct 2025 09:07:56 +0530
+In-Reply-To: <026a32413b0c9e4edb5d3ab411d18134078430d8.camel@perches.com>
+References: 
+	<20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com>
+		 <20251024-aheev-checkpatch-uninitialized-free-v2-1-16c0900e8130@gmail.com>
+	 <026a32413b0c9e4edb5d3ab411d18134078430d8.camel@perches.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025024934.1350492-1-luogf2025@163.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Oct 25, 2025 at 10:49:34AM +0800, GuangFei Luo wrote:
+On Fri, 2025-10-24 at 11:14 -0700, Joe Perches wrote:
+> On Fri, 2025-10-24 at 22:59 +0530, Ally Heev wrote:
+> > uninitialized pointers with __free attribute can cause undefined
+> > behaviour as the memory allocated to the pointer is freed
+> > automatically when the pointer goes out of scope.
+> > add check in checkpatch to detect such issues
+> >=20
+> > Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Link: https://lore.kernel.org/all/8a4c0b43-cf63-400d-b33d-d9c447b7e0b9@=
+suswa.mountain/
+> > Acked-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Ally Heev <allyheev@gmail.com>
+> > ---
+> >  Documentation/dev-tools/checkpatch.rst | 5 +++++
+> >  scripts/checkpatch.pl                  | 7 +++++++
+> >  2 files changed, 12 insertions(+)
+> >=20
+> > diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev=
+-tools/checkpatch.rst
+> > index d5c47e560324fb2399a5b1bc99c891ed1de10535..1a304bf38bcd27e50bbb7cd=
+4383b07ac54d20b0a 100644
+> > --- a/Documentation/dev-tools/checkpatch.rst
+> > +++ b/Documentation/dev-tools/checkpatch.rst
+> > @@ -1009,6 +1009,11 @@ Functions and Variables
+> > =20
+> >        return bar;
+> > =20
+> > +  **UNINITIALIZED_PTR_WITH_FREE**
+> > +    Pointers with __free attribute should be initialized. Not doing so
+> > +    may lead to undefined behavior as the memory allocated (garbage,
+> > +    in case not initialized) to the pointer is freed automatically
+> > +    when the pointer goes out of scope.
+> > =20
+> >  Permissions
+> >  -----------
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > index 92669904eecc7a8d2afd3f2625528e02b6d17cd6..1009a4a065e910143dabeee=
+6640b3b3a4bd3fe06 100755
+> > --- a/scripts/checkpatch.pl
+> > +++ b/scripts/checkpatch.pl
+> > @@ -509,6 +509,7 @@ our $InitAttributeData =3D qr{$InitAttributePrefix(=
+?:initdata\b)};
+> >  our $InitAttributeConst =3D qr{$InitAttributePrefix(?:initconst\b)};
+> >  our $InitAttributeInit =3D qr{$InitAttributePrefix(?:init\b)};
+> >  our $InitAttribute =3D qr{$InitAttributeData|$InitAttributeConst|$Init=
+AttributeInit};
+> > +our $FreeAttribute =3D qr{__free\s*\(\s*$Ident\s*\)};
+>=20
+> If you are really suggesting using this, and I don't think it's
+> particularly useful, please use
+>=20
+> out $InitAttributeFree =3D qr{$InitAttributePrefix(?:free\s*\(\s*$Ident\s=
+*\)};
 
-> @@ -4427,6 +4427,7 @@ SYSCALL_DEFINE5(move_mount,
->  {
->  	struct path to_path __free(path_put) = {};
->  	struct path from_path __free(path_put) = {};
-> +	struct path path __free(path_put) = {};
->  	struct filename *to_name __free(putname) = NULL;
->  	struct filename *from_name __free(putname) = NULL;
->  	unsigned int lflags, uflags;
-> @@ -4472,6 +4473,14 @@ SYSCALL_DEFINE5(move_mount,
->  			return ret;
->  	}
->  
-> +	ret = user_path_at(AT_FDCWD, to_pathname, LOOKUP_FOLLOW, &path);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Refuse the same filesystem on the same mount point */
-> +	if (path.mnt->mnt_sb == to_path.mnt->mnt_sb && path_mounted(&path))
-> +		return -EBUSY;
+Thanks, I'll check it out
 
-Races galore:
-	* who said that string pointed to by to_pathname will remain
-the same bothe for user_path_at() and getname_maybe_null()?
-	* assuming it is not changed, who said that it will resolve
-to the same location the second time around?
-	* not a race but... the fact that to_dfd does not affect anything
-in that check looks odd, doesn't it?  And if you try to pass it instead
-of AT_FDCWD... who said that descriptor will correspond to the same
-opened file for both?
-
-Besides... assuming that nothing's changing under you, your test is basically
-"we are not moving anything on top of existing mountpoint" - both path and
-to_path come from resolving to_pathname, after all.  It doesn't depend upon
-the thing you are asked to move over there - the check is done before you
-even look at from_pathname.
-
-What's more, you are breaking the case of mount --move, which had never had
-that constraint of plain mount.  Same for mount --bind, for that matter.
-
-I agree that it's a regression in mount(8) conversion to new API, but this
-is not a fix.
+> > =20
+> >  # Notes to $Attribute:
+> >  # We need \b after 'init' otherwise 'initconst' will cause a false pos=
+itive in a check
+> > @@ -7721,6 +7722,12 @@ sub process {
+> >  				ERROR("MISSING_SENTINEL", "missing sentinel in ID array\n" . "$her=
+e\n$stat\n");
+> >  			}
+> >  		}
+> > +
+> > +# check for uninitialized pointers with __free attribute
+> > +		while ($line =3D~ /\*\s*($Ident)\s+$FreeAttribute\s*[,;]/g) {
+> > +			ERROR("UNINITIALIZED_PTR_WITH_FREE",
+> > +			      "pointer '$1' with __free attribute should be initialized\n" =
+. $herecurr);
+> > +		}
+> >  	}
+> > =20
+> >  	# If we have no input at all, then there is nothing to report on
 
