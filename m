@@ -1,135 +1,99 @@
-Return-Path: <linux-kernel+bounces-870146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0126C0A069
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:29:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C9CC0A078
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74BBB3AA8F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:29:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0A684E4894
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F4C288514;
-	Sat, 25 Oct 2025 21:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB15628B3E7;
+	Sat, 25 Oct 2025 21:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4NujWDt"
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="M7IyTQoS"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D540724E4BD
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CD42AD2F;
+	Sat, 25 Oct 2025 21:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761427758; cv=none; b=qOb2hIZtA5swKlWg+oRLUVKIJYqTB326TbtgZ5qTEJmrQ3SZirjn4uHchHIy9C4AOejdltp/DVjzea64Y5S6BlqkKxp4f7NkmLWjSXH6lkHQt7r+R1exHaVTcH85moT9DinIeAX5NEd/RK8EsLD7VU1bv1YadF1HiM/cikXJEYU=
+	t=1761429057; cv=none; b=lbAH3EbDfOQJJ8ZrGUotgvUAmRBN/azD+/GeYWSk1q7Y99i13zcwvlGdL65Tz77gsQLuTfC1tyWSFCJWSMIEIROy6JQjj3EKsRMC5XNHSPDim5WXoasMr+fu4cfspHrIPJuzPAj4Jw4Q/e5VaCLu6ztMBedEm3hxVc8R/OeOynM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761427758; c=relaxed/simple;
-	bh=MmMICD0aG5zYZqdyrqj3OoNO5kVn/Kex+T/2Hpjw7YY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fcg6Z5zCDrN6UhQxXRuYZSoQN89Id1oEv7l/Jyk/PLYH8bPrUsLL3lAkFCR+GUm9CoTXwxOZMfSzaFtNv93UKY8aqOky5Ye0oOzs06O6PjjRpIkt4twN/3q0A8TV2QOaHwbl5EXydBwczGD9INrP5wPwP2hO0OHnkxVz2dCZEtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4NujWDt; arc=none smtp.client-ip=209.85.221.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-42557c5cedcso2263771f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:29:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761427755; x=1762032555; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Tiad/+1cEvbbx15ctckUrIUdNeCP0XY3zN8XtK7zXJ4=;
-        b=P4NujWDtttW+YbfhbKYygjWazHF+f8LSGKE6jI69DUfWCg2aq4/FcED+qlrn5F3CIx
-         79XUwJNrwuj4EiNgn1b1GFLcLzLaLIbLIY7MVKrAFDd78nxy46I99BsWnezB8GHXyPw+
-         wOIMaZriBNWfyKo9zpkztPgNXHhcQB0LQ+lFJXZUXmHjfc9IugqGHqg/x2msh0YU+Cop
-         alt+KQyNXrCmQBqjviMdnrlwgwiE3HbCqwHI0ZfnFlqujezNhjsV5xWZ5UUoM63DiLa4
-         Ed8i21XHEA1+iLww9n9Lc52kZN9Xu44WE0cah0UGkAiLCeWVOE97a03Oi266rUzvu683
-         cP3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761427755; x=1762032555;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tiad/+1cEvbbx15ctckUrIUdNeCP0XY3zN8XtK7zXJ4=;
-        b=hjzd2G4I4EOn0cu47I2UGinXuD5FUGYYRUYARc+PoQLsEiWNLcb3Sigse0jNRsjIxq
-         dex4rNQAly7mb/8ePbenAW5P8IBOqbP/UGa5mFfvHCrWeBehjW2GCJPHFj7zGHDceya7
-         UsoulcO1Xd/yQp7h9fD6dYlQVKfo42Yk/lM7WlK81eQeNnyjs76OrrdKTldvWw/X2o55
-         UZeNyDZUK9j0DsD4hpynV2O2JbJrfjtegN8ggMBH5ckEhT+QXBVCN6CdV7KAf9NFl3f8
-         3EsPxBbl7xrfEISYTcmdD0LM+CjEN5WISNb62AyPucrXew900oI+SnKP/7vTf8tI2viu
-         C0MA==
-X-Forwarded-Encrypted: i=1; AJvYcCXH/jfan8TnhAm/fFmzxAAp1ZbiQJH69Yrb20hquiuYAjNXtdA1TF9e+ALX7mRPMYHXPTnurNXl8NAJc4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8Kmu9dLuhIK7u0DoOP4xrf5pNFQRW8pEM0dirno454eviw/Z5
-	XCi3d9I7IwtF/5iQL4oQ+pXuufHdPJv9o8X/jQIZ9J99mif8LkJzSAH5
-X-Gm-Gg: ASbGncv2hUjhq7Zoe7xKMZcHxaZlydVuQm+JhQpq/QBHeSUfTcXrHNt9nlrVi2p3sbg
-	+ywojYL6jW2kqf7ZCmp912PsXlMkdnkQ2gveX4I7isXRIw47PHVlRkL8cE7kkF8Mm6GbUyvxpto
-	hRApLqu5WLNRtSktx6JHNUiO+DrTQepsumfQPZ37gOCA3WVK0XiE18dD9tUr2e5guSBPIwxEZYP
-	CcRUEt9BN3BhMZGB9oprNS7zjXvZE7PLF/L00jM9pluhsg3jW502vVh3x3+3tZLqGz51t/DptIa
-	HIs1rnu5CuLrbTj+U6pgxmaKPeJOGxXBDsTt60DZJPp0uVe7XMzET58491sVwRWqKRykXTyhzoL
-	l4VEZ4YLa+JyV0rbMqccFxBZLHMeNXExDuozvULaLlt1/ZAbb5Ca7Vz6ZN6CxaZnjFCIvwmvAxO
-	rLy9E+qhQ=
-X-Google-Smtp-Source: AGHT+IFR9xPlXCmUBASW/ik5a6VeudIrPkWWyQ4aeDva1FfLdoVVStcvOXzPLBYNJFCvHVp+roFOgQ==
-X-Received: by 2002:a05:6000:1a8c:b0:428:55c3:ced6 with SMTP id ffacd0b85a97d-42855c3d3f3mr10555869f8f.18.1761427754791;
-        Sat, 25 Oct 2025 14:29:14 -0700 (PDT)
-Received: from [192.168.10.22] ([39.46.217.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952e3201sm5395009f8f.47.2025.10.25.14.29.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Oct 2025 14:29:14 -0700 (PDT)
-Message-ID: <0881d989-c1f7-484f-a5e6-aee47ee5c5d6@gmail.com>
-Date: Sun, 26 Oct 2025 02:29:11 +0500
+	s=arc-20240116; t=1761429057; c=relaxed/simple;
+	bh=WV6sOsK95CL79pnSDWklrqcJbBh9kw7B+++33ob0zhE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=VSI+ZqC95H+P+br+Nl9lg36rFKjAAJyfyyhtGB4C3fJox0bLmZNm6S1ujpOQ0kIs2zqqU/q36Y09SYR7WC8pvArQGHaqGB6uD+VZpuKHNJPBucIT0xSnMakFKOzKrW1D0IH69wrLqbRKFgxAp7spNJcf3nakFgF2YcAnjsxAY5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=M7IyTQoS; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net ([172.59.163.204])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59PLoG1S4179485
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 25 Oct 2025 14:50:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59PLoG1S4179485
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1761429018;
+	bh=eXQiaXQMBEkffKXwky4JNR+uRHh73bSTtxccDACEux4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=M7IyTQoSCYKp2vhd4FVMOvpoxDSprmjVQjBDad8TG0neqPd1dJLogdJmlkfwB0/zM
+	 7ZdSbTD+ffmRhEB7hQk3DhSLOub/eX6QVXu9SbHz66XeQycmWFnyk8dLduDzmUYNdF
+	 zA/OemUVELrulEMU1bz5Gq05QNoabeBE/CAKLReVVEV5Cya7JbXrH5LjCtvExcbePe
+	 k+zqo09jA+W5Qubulr64zdW+GvUmwRt6g5LV7fq9vJDCl/tnArZKQgh20joJYfMIJW
+	 B8W+clI9xeGbcPyn/JiKbJUzbczRW8Xs15EzsN7EMo3xcLuSxpnHbKLCOjpbO2JcJe
+	 7DcBsl0zTsqQw==
+Date: Sat, 25 Oct 2025 14:50:08 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Dave Hansen <dave.hansen@intel.com>, Usama Arif <usamaarif642@gmail.com>,
+        dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, ardb@kernel.org
+CC: x86@kernel.org, apopple@nvidia.com, thuth@redhat.com, nik.borisov@suse.com,
+        kas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, kernel-team@meta.com,
+        Michael van der Westhuizen <rmikey@meta.com>,
+        Tobias Fleig <tfleig@meta.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_1/3=5D_x86/boot=3A_Fix_page_table_ac?=
+ =?US-ASCII?Q?cess_in_5-level_to_4-level_paging_transition?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8283c1b6-1487-49e2-b220-7dbd043a2913@intel.com>
+References: <20251022220755.1026144-1-usamaarif642@gmail.com> <20251022220755.1026144-2-usamaarif642@gmail.com> <8283c1b6-1487-49e2-b220-7dbd043a2913@intel.com>
+Message-ID: <7BB09BB9-7034-413B-9FA8-D3FC3EB352D7@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pinctrl: starfive: use dynamic GPIO base allocation
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: hal.feng@starfivetech.com, linus.walleij@linaro.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <brgl@bgdev.pl>
-References: <CANBLGcygpsp=R5gM7NeuVO-JG1yfQJ_0dhnFfL1ud=291cJZAQ@mail.gmail.com>
- <20251024143353.71753-1-alitariq45892@gmail.com>
- <CAJM55Z-SrU1Mk4xUZTgey-zArYAvtpftTwGBb_VEb0zL3L1EPw@mail.gmail.com>
-Content-Language: en-US
-From: Ali Tariq <alitariq45892@gmail.com>
-In-Reply-To: <CAJM55Z-SrU1Mk4xUZTgey-zArYAvtpftTwGBb_VEb0zL3L1EPw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Emil,
+On October 22, 2025 4:16:34 PM PDT, Dave Hansen <dave=2Ehansen@intel=2Ecom>=
+ wrote:
+>On 10/22/25 15:06, Usama Arif wrote:
+>> +		pgdp =3D (pgd_t *)read_cr3_pa();
+>> +		new_cr3 =3D (u64 *)(pgd_val(pgdp[0]) & PTE_PFN_MASK);
+>> +		memcpy(trampoline_32bit, new_cr3, PAGE_SIZE);
+>
+>Heh, somebody like casting, I see!
+>
+>But seriously, read_cr3_pa() should be returning a physical address=2E No=
+?
+>Today it does:
+>
+>static inline unsigned long read_cr3_pa(void)
+>{
+>        return __read_cr3() & CR3_ADDR_MASK;
+>}
+>
+>So shouldn't CR3_ADDR_MASK be masking out any naughty non-address bits?
+>Shouldn't we fix read_cr3_pa() and not do this in its caller?
 
-Thanks for the review and feedback.
+Ah, the times when one can wish for C++=2E
 
-Quoting Emil Renner Berthing:
- > 1) The justification for why this is no longer needed should be in 
-the commit
- > message, and not just in a random thread that will soon be forgotten.
-
-My apologies for the confusion. I did add the removal of unused 
-variables as a bullet point in the v2 changelog (which is in the email 
-body), but I failed to include the necessary justification for this 
-removal in the main commit message itself.
-
-You are correct, the justification for removing `gc_base` and associated 
-macros (because we now use `sfp->gc.base = -1` for dynamic allocation) 
-belongs in the permanent commit message.
-
-I will update the v2 commit message to clearly state the removal of 
-macros and unused definitions (before "Signed-off-by") in the v3 submission.
-
-Quoting Emil Renner Berthing:
- > 2) Please don't send new revisions as replies. Start a new mail thread.
-
-Understood. I will send the next revision as a new thread.
-
-Quoting Emil Renner Berthing:
- > The code changes look good though, so once that is fixed you can add
- >
- > Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-
-Understood. I will include your Reviewed-by tag in the v3 patch.
-
-Thanks again for the review!
-
--Ali
+Too bad they still haven't figured out tagged initializers=2E
 
