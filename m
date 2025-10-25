@@ -1,171 +1,177 @@
-Return-Path: <linux-kernel+bounces-869711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1080DC088E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EDDC088F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A02F352D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4BD3A6EC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCF923ABA0;
-	Sat, 25 Oct 2025 02:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D37224469E;
+	Sat, 25 Oct 2025 02:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmWGZOmf"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqzuyYsI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E08D531
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 02:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65948204583;
+	Sat, 25 Oct 2025 02:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761359238; cv=none; b=eoOjAJHswannVzvr6AthvEC+6fG5I4I6E0K8mefiL67i96Qq546O9VTRn0fmhtf480rCRGK6DPN6PuT9BYPsBtVYaOOKLmrhw4/pFoPoO0AyAOwfNovRXv6BQwhURNt1xL+sFK+SiCRgbW04k63/9DdiNvzlCDTXkHdPtZsQrRU=
+	t=1761359611; cv=none; b=eqMvog+9bDCGaLy0Vy2BT25hXQIdT5b7tFq6oKnC+Q2xLwD+97pgHOwqn/nkc76Q+Tf/D1WmAtFt+YayUIrUBPpvm/FiietvJKAVuwuygmfPkRPYzqnLsR11rHCWm9D0bXlp6AxFG10dwZrAVT+4FHClM4AObufLB7pVjsilGjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761359238; c=relaxed/simple;
-	bh=x8OlYWFi6qnMbSDUo1cgT5csPWwOhJOPBrlPWQui8DE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1Swn31c92AWvCbPHf3UdDkh5piJtEEizoA4eNIUXcLY4skwA1n1Q9eS3X05DG53vuEcwpxqXFoYASQWaAVNIIFuWSRgqhuSDPUmh1K8FCWJ2bAH2xD4IA1SHatankfUHj67l4Nr+GiSmDoDgzGhnZMuvg9QnjBM0DMzfBl0pLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmWGZOmf; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-290dc63fabbso26492585ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761359236; x=1761964036; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5g8OWVuVjsbahwY/Qa7JcyvpPlQfkEr7235nxaCt5s=;
-        b=RmWGZOmfLv8u5Gqw3g1uk3Lc5GM3DU4/2G7+PpFOIHKSc04DsCrPZmIVlgwaJ7bzAX
-         RhvBSa2+o/BmiA6jiuidar9JEy6oide/uFd+qmP7GUiNXrB0YUgUliPPHKFoWHPPCCgD
-         HXlCNU3AzOju2jVgDPTEbjZm1fEZIPPJK8FqFa9O0w3ymL5/f+ChvvktjxZdmjoGv2EG
-         4cwwhonY1SKQGBCO9vZs57tU6tiV5L9ONC3032y7CnUCaTexSXWemlIVC+QI6LAVVje/
-         RcGTeqnJ5Zzuix2lDfUDMvHzbfNS6ioWQdLfsAH1ozjxizPXpCLaxhlmuNLNJnbU8B5j
-         t9Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761359236; x=1761964036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m5g8OWVuVjsbahwY/Qa7JcyvpPlQfkEr7235nxaCt5s=;
-        b=vMvxJbG3eGzNUXYjQP84Buxuo7jWhKMXnSVpJml8ElH22mcWUFhFdfu5hnLeo+rXWq
-         gid/hfXTzLAbij+/Wf7K7lfckWrjmrESp0wt/s88bwX7lElhzHJFYlHx/aZoTfsrofF7
-         ZMf3UuvZL4CARDvVTcnoqGBmb+vys1NIx7ur5/cVh2cIjd38YtZN7rs9g5wHWpB0mjzg
-         c407EHWl0CcMi71owEcRzae6Z5mcsopFlyaUT5qy9QgxE6lSQZk4uDiHeLz056ZCwweS
-         ta+4c1RhJA8kXlxGvijBZxmaAlC3R2wmzfyTOPAsjratxFR/eHaMXzBm1p2UY2lqLYhI
-         bdZA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2zDJxDepm5boqMp0HabVQgAn79AiLuKoNVRX95GWx1djndqyfPWkan8lX+LAEnuQK7wRTtTxrxpZem5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Wf4K+5H5UgbPunYtMi8iWPF/SNpDKlwah/ZN8j4pk6orePkF
-	TpePSN8odNEcfSoyWRgRm4ewQ/IUVKs2Q4KFN9SGdtQBw4UpBQhxjEPS
-X-Gm-Gg: ASbGncuGVgv2LjxMtyi8Shp3EEGP0mAa3yD+nqwc5z2MGdLBv8lAyrJ/9OHmMWqVZgu
-	+hBJ6U07SzDR/cszPA5lH3lw5KlBg1Bm/uoE2neZXAfeVICTkz0zZuyiGiY2k4G2s47jy08DDC4
-	h+ewFVzp28l+HY3joS6Js+jWfT6uAQPpC6Y8QCV/JcoyFUEk2JzHCHygtIVJsoDFHnKl8Cxi7JC
-	zNp2R3Ioo+ARk5RC1Kkl0n4otDFBspUWV7FeOpdG1XnxMbBxm8SILO+Zao8pe8RXIqNtmSHJIll
-	sAdsfvrRNNfDi57/TE7o4Rj6v1OUYXitvpjrq901ln4FPapQkRG7P5h9aXcYESUeJlvvECoL5HS
-	dATpfJA/pEPKkSU1K+k1SmLvRUKs+Uo7TWczhVP2Y54QGuVUGdGyGcWwWQl58hu1enckGL4YuTM
-	g9aimON98ru1fs8P23xDE2Fw==
-X-Google-Smtp-Source: AGHT+IFfj8dcaPyoJUnBwrQrbEjc0tKnxl0fbsVgVFk4QvGgEAOydtQrbEdriDic6wnAsYVeECy3eg==
-X-Received: by 2002:a17:903:1c2:b0:270:ced4:911a with SMTP id d9443c01a7336-2946de4071amr99308125ad.9.1761359236031;
-        Fri, 24 Oct 2025 19:27:16 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d23334sm6685145ad.52.2025.10.24.19.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 19:27:15 -0700 (PDT)
-Date: Sat, 25 Oct 2025 10:27:13 +0800
-From: Longbin Li <looong.bin@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	Yu Yuan <yu.yuan@sjtu.edu.cn>, Ze Huang <huangze@whut.edu.cn>, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: soc: sophgo: add TOP syscon for
- CV18XX/SG200X series SoC
-Message-ID: <oymxspgopaqja63nipufgzn6kpobkdopemfaw3azhom3ikvk5f@e7cg4lq64j2o>
-References: <20251024030528.25511-1-looong.bin@gmail.com>
- <20251024030528.25511-2-looong.bin@gmail.com>
- <20251024-hangout-designing-33e96c0d35fc@spud>
+	s=arc-20240116; t=1761359611; c=relaxed/simple;
+	bh=H6vwnKYEndeJUPyf4ITO8rD38NBCnhRGZasNa0uPvaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PDGp+ewV+M5VvJsv0RIuguYylh6zMpZsoBwkiO39y8SvJayW4kztVTixCuRQGX2ZvfaYNJXEUAGkGooQzFEWw6SqJSRxZFwsIJDlS2EgE8tKlwtJiKBGUXD4/bUjfZhyNTYO4v5/gj0JjcIB7ktwnF4eQCi0U4bKhz2HCUhiGTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqzuyYsI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74962C4CEF1;
+	Sat, 25 Oct 2025 02:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761359610;
+	bh=H6vwnKYEndeJUPyf4ITO8rD38NBCnhRGZasNa0uPvaU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BqzuyYsIDriEw9/k42HAXlc1D/U6kSDHo7Hvv80bzCIo66X8odW9gRsuSieSBL+kw
+	 CeodC1sll/em8ozs5ergMyip7u2bS2rIyJcoG6G+4aIQvYanGHdkZoQpl9w0ENEr91
+	 UF0yiZb1fqcNYRDik7STc8BuTqoRVRFVhIjzE0gKPp11PrDHAeE0GcebDngoPicoAI
+	 OQpmDdEQMeaf/57xmqW8K/hmfumRBWH24YN67n4LFyHveM0L0a2UHhlfmPUvuRHxYA
+	 aE4zV1oHjelSOD3Vef/B3hlW0D6gGOHLJ7M6MffaxnpVUDQGLlDKWiTwFI96UNDxJm
+	 qYO2mXD4UXUyA==
+Date: Fri, 24 Oct 2025 23:33:20 -0300
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Jani Nikula
+ <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
+ /tools/docs
+Message-ID: <20251024233320.3346a24d@sal.lan>
+In-Reply-To: <20251024200834.20644-1-corbet@lwn.net>
+References: <20251024200834.20644-1-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024-hangout-designing-33e96c0d35fc@spud>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 24, 2025 at 05:46:03PM +0100, Conor Dooley wrote:
+Em Fri, 24 Oct 2025 14:08:21 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> > ...
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - const: sophgo,cv1800b-top-syscon
-> > +          - const: syscon
-> > +          - const: simple-mfd
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 1
-> > +
-> > +  ranges: true
+> Our documentation-related tools are spread out over various directories;
+> several are buried in the scripts/ dumping ground.  That makes them harder
+> to discover and harder to maintain.
 > 
-> Do you actually use ranges?
+> Recent work has started accumulating our documentation-related tools in
+> /tools/docs.  This series completes that task, moving the rest of our
+> various utilities there, hopefully fixing up all of the relevant references
+> in the process.
 > 
-> > +patternProperties:
-> > +  "dma-router@[0-9a-f]+$":
-> 
-> Do these actually appear at variable addresses, or is it always 48 for
-> the phy and 53 for the dma router?
-> 
-> > +    $ref: /schemas/dma/sophgo,cv1800b-dmamux.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> > +  "phy@[0-9a-f]+$":
-> > +    $ref: /schemas/phy/sophgo,cv1800b-usb2-phy.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#address-cells"
-> > +  - "#size-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/sophgo,cv1800.h>
-> > +
-> > +    syscon@3000000 {
-> > +      compatible = "sophgo,cv1800b-top-syscon", "syscon", "simple-mfd";
-> > +      reg = <0x03000000 0x1000>;
-> > +      #address-cells = <1>;
-> > +      #size-cells = <1>;
-> > +
-> > +      usbphy: phy@48 {
-> 
-> Drop the labels off of these two, since they're unused in the example.
-> 
+> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
 
-Hi,
+LGTM.
 
-Thanks for the review.
+For the entire series:
 
-There are a couple of different opinions here.
-Could you please help confirm which approach is preferred here?
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-This is Rob's reply:
-https://lore.kernel.org/all/20251015134144.GA3265377-robh@kernel.org/
+> 
+> The big elephant lurking in this small room is the home for Python modules;
+> I left them under scripts/lib, but that is an even less appropriate place
+> than it was before.  I would propose either tools/python or lib/python;
+> thoughts on that matter welcome.
+
+Agreed that it should be moved out of scripts/lib. Besides that,
+I don't care much about its location. My personal preference would
+be (with no particular order):
+
+	- tools/python_lib
+	- tools/lib_python
+	- tools/lib_py
+	- tools/lib
+
+(lib/python works for me as well)
+
+Or, if we don't aim to share code with docs and non-docs python
+code, we can use:
+
+	- tools/docs/lib
+
+> 
+> Changes in v3:
+>   - Now with more caffeine! Properly based on docs-next.
+> 
+> Changes in v2:
+>   - Rebase on top of all of Mauro's changes (the most painful rebase I've
+>     ever done, I think).
+>   - Land everything in /tools/docs/ rather than /tools/doc/
+> 
+> v2: https://lore.kernel.org/lkml/20251023161027.697135-1-corbet@lwn.net/
+> v1: https://lore.kernel.org/lkml/20250813213218.198582-1-corbet@lwn.net/
+> 
+> 
+> Jonathan Corbet (8):
+>   docs: Move the "features" tools to tools/docs
+>   docs: move checktransupdate.py to tools/docs
+>   docs: move scripts/documentation-file-ref-check to tools/docs
+>   docs: move get_abi.py to tools/docs
+>   docs: move test_doc_build.py to tools/docs
+>   docs: move kernel-doc to tools/docs
+>   docs: move find-unused-docs.sh to tools/docs
+>   docs: remove kernel-doc.pl
+> 
+>  Documentation/Kconfig                         |    2 +-
+>  Documentation/Makefile                        |    6 +-
+>  Documentation/conf.py                         |    2 +-
+>  Documentation/doc-guide/checktransupdate.rst  |    6 +-
+>  Documentation/doc-guide/contributing.rst      |    2 +-
+>  Documentation/doc-guide/kernel-doc.rst        |    6 +-
+>  Documentation/doc-guide/sphinx.rst            |    2 +-
+>  Documentation/kbuild/kbuild.rst               |    2 +-
+>  Documentation/process/coding-style.rst        |    2 +-
+>  Documentation/sphinx/kernel_abi.py            |    2 +-
+>  Documentation/sphinx/kernel_feat.py           |    4 +-
+>  .../it_IT/doc-guide/kernel-doc.rst            |    8 +-
+>  .../sp_SP/process/coding-style.rst            |    2 +-
+>  .../zh_CN/doc-guide/checktransupdate.rst      |    6 +-
+>  .../zh_CN/doc-guide/contributing.rst          |    2 +-
+>  .../zh_CN/doc-guide/kernel-doc.rst            |   10 +-
+>  Documentation/translations/zh_CN/how-to.rst   |    2 +-
+>  .../translations/zh_CN/kbuild/kbuild.rst      |    2 +-
+>  .../zh_CN/process/coding-style.rst            |    2 +-
+>  .../zh_TW/process/coding-style.rst            |    2 +-
+>  MAINTAINERS                                   |    5 -
+>  Makefile                                      |    2 +-
+>  drivers/gpu/drm/i915/Makefile                 |    2 +-
+>  scripts/kernel-doc                            |    1 -
+>  scripts/kernel-doc.pl                         | 2439 -----------------
+>  {scripts => tools/docs}/checktransupdate.py   |    8 +-
+>  .../docs}/documentation-file-ref-check        |    2 +-
+>  .../docs}/features-refresh.sh                 |    0
+>  {scripts => tools/docs}/find-unused-docs.sh   |    8 +-
+>  {scripts => tools/docs}/get_abi.py            |    0
+>  {scripts => tools/docs}/get_feat.pl           |    2 +-
+>  .../kernel-doc.py => tools/docs/kernel-doc    |    0
+>  .../features => tools/docs}/list-arch.sh      |    2 +-
+>  tools/docs/sphinx-pre-install                 |    2 +-
+>  {scripts => tools/docs}/test_doc_build.py     |    0
+>  35 files changed, 50 insertions(+), 2495 deletions(-)
+>  delete mode 120000 scripts/kernel-doc
+>  delete mode 100755 scripts/kernel-doc.pl
+>  rename {scripts => tools/docs}/checktransupdate.py (97%)
+>  rename {scripts => tools/docs}/documentation-file-ref-check (99%)
+>  rename {Documentation/features/scripts => tools/docs}/features-refresh.sh (100%)
+>  rename {scripts => tools/docs}/find-unused-docs.sh (79%)
+>  rename {scripts => tools/docs}/get_abi.py (100%)
+>  rename {scripts => tools/docs}/get_feat.pl (99%)
+>  rename scripts/kernel-doc.py => tools/docs/kernel-doc (100%)
+>  rename {Documentation/features => tools/docs}/list-arch.sh (83%)
+>  rename {scripts => tools/docs}/test_doc_build.py (100%)
+> 
 
