@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-870035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452BFC09D97
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:10:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C7DC09C02
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7F50582751
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E481A3B0A47
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D2A30EF77;
-	Sat, 25 Oct 2025 16:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66AD30F541;
+	Sat, 25 Oct 2025 16:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgGPhXIg"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkSaTt1O"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2189B30E0F9
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B954730EF84
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410009; cv=none; b=WGS7y71j2r4RAn/CG4oUmgR3wyDkRrD6grGP9x3og+/g3KdRYZVtEK88mWzJngEYUF930Zs0Z3hsICI4VzMBmGZyNPGh8lngqi+4dAU3DPFWDq6EdjrLfi69XzrGHazewj5MaKSQ/7GvbJirkqs1OahfHydxfXZRjqttmedkYn8=
+	t=1761410012; cv=none; b=QqnTh98w0DD5IPWplLR3aWXgxPXTjkAZaPAITqcmhfdUqzY4HNro/KJOxvG9SBJEDtiKVfwE/ivv/MPE5pa63lxyhnVLdTYis81kpBmjG97cbdvTvuKtjLPafDgcCLZdJCEQl4uzNjEoYv4mxs212wvJgQg8tfyulr6UxPBUTPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410009; c=relaxed/simple;
-	bh=BQ3V3TJBGcgRl9M8TTeR9VPGV9MIeZxMNrPM3NKIWvY=;
+	s=arc-20240116; t=1761410012; c=relaxed/simple;
+	bh=+b2D4vP+c+kh3wd/DS3NcNXJ9L+1kZpJcsBrgvelyh0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=siyvk4zqE/rTd7DTbzpf0Ok/td85HxrjfnvhNAjy/NxGfmA4/0ztm0pdteruFn8KnWOrS1lPsV3zf+e8vxsu/GGRwU3SfaNiw5Ofzm5GwUkG4sNOIHqr5qa0/0Qfs/0/zqaVtPAbhGyLf+B/7w0REdFMOy/oy2wbnY3rMTUf9G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgGPhXIg; arc=none smtp.client-ip=209.85.160.179
+	 MIME-Version; b=I757kh3oLKI8bo4bZJUaldPWQa3SWeWj22kU3+bwkWwCBAyMSiJL99NQHgTLknysOjf/kyJqgTU2FhyaXpNRcui0gOxPoDCcF7RcrPUuuKF68QyV3jybS4grcXgrcJrd0MjSnkoCXY2i1rodypL/fuL7JnsrF9vKwSZVOjK4+jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bkSaTt1O; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4e8b6144288so26294461cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:33:27 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-89ead335934so136257085a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410007; x=1762014807; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761410010; x=1762014810; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fsJVQgpn61zq+Ge6F8BtEeBoOu3oJNRDvnauUG9sJYA=;
-        b=MgGPhXIg0rTs9nmYtvb/bgsKyqiLVN7NdRQ4G2mUrJJ24tquypioARmvbsG+6FkCBB
-         szepg08P5WF4NdGZqI0Xo7O8CDdNIiHW0NIeL37ESqFd7lRzgRTmFLOWrq11fPdVjDtl
-         K7J0NuKz2cxxrT07ZUXP3dIQAOWjQ8FtWkS2DLI0YqbFSP5QAYiwuPndTkvuwkz+sRTD
-         0KRkl62eFG8JDwll390+qZ3Aq1c4aUpQ15vVVOL5GCsMn2xAK8lN+x2f5eJDprckfdOM
-         +ol53XJfFVdmcHYbhxZ0ZRWz1nysaDRKGRXj1MDAkbIA9VSsDeADodehyZQYIjpVLeYr
-         N1fA==
+        bh=QSGBaOZhD7YMIGtASkoY94KR31YSs6yG4R1SCYeYD08=;
+        b=bkSaTt1O/+sEEm8n2rHDZlpIfOLlmrQHzBf67p259dd56VJunDvQhn4WlX/J1aIkF4
+         b6gLzl8vPHpFV5WhijlPePIxcEPJ8H2/b0ijo4LsJMOupOdmGnUgYtqr9QUPlUwBC8vo
+         VNpmazjXF+g9cD9MSFzXIMQcj0lhpCTUMOP73et5Qrqib3a5pLXb4nRxsWHAOYOJ2xC3
+         uwusAUbz4jVGYeRLyq+LUHL1N3qFDEjuM9pgn7XtCL2X1OhEPij/9jmDnGCIUvcdBeJT
+         fsTloWNt/6Fq5GnJ1DZAbcUe7Pt11m8Py8HIDFVpaH3YNUPns0pDJwLQ6U71DkNl6asM
+         V61A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410007; x=1762014807;
+        d=1e100.net; s=20230601; t=1761410010; x=1762014810;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fsJVQgpn61zq+Ge6F8BtEeBoOu3oJNRDvnauUG9sJYA=;
-        b=OuV8kNB/wlm2aElU+3x117eJUh3RGsFr/hmbvrWORa0eucRt2hTZAp6oRcMBvinqgf
-         y76YHA7VPpjqVPzNwlfyn65W6Efc4yq/qHBLodepTssgQ8S+YjyhGgwGYe5C2erp+pWg
-         quCx+/KT2FaD03q8Fauy8svOLC9hTayH7ulsKuYqEYplqPuD3/xvTDMumdegMVN1S28m
-         YsCsCqHEOoJz0Ob3eLetI3EhwPYwfTjhhS28l+UawXmlu1di12DKwRzRDcAjawIjWYQA
-         ZkLiunpwni6yEhQe87MMV+EqeU4kMMpYEOmHQxd7YrmdT+1NTxxr1Qf4oDlsnFc8TICx
-         7otg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHGfJGp0ejMFw+zYCF4uiCVM6f+sNjlGEuBjA05Q+3F2kzjTNNUlyyMyOYZ+peVpXP0DNT83rm8FPm95I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Ab/77B40xcU2HYu/AchFIH+OOPBOU+V2bizmluDH29cWSyxF
-	m2rnAszdg+gMKiJmDNzA/QvHIQ7+ovNQgfSbTZX46Gy3q+Z8vZy3y3bY
-X-Gm-Gg: ASbGncuX4O3VbhGMeFpFxac6zxKgqf9Bae9XUqLkMgPT5fdOhWb0u2XwY9cHaQwmRk1
-	tPymd4z8x/YAGrk9MvNQTUk9UhIJ0NQSPvn/9tlOqujVMRdQDOVcaITaI8QwQakXVmXklQtheIt
-	qlt7fotg+qodFIib8OxwyOS11G7NkgIgR9VwkIHacOOsPtimjMDQtaUqpU+HfVuV/7N2EBSeQ97
-	urNVYhdTC9h3bN8Nf5uV7ZmRquYzocIlxptY4eADKdlnjDGZoUTSynbD7/8DIi6kBPntd+4aSSo
-	4uNtuMTTrnqoL9idvWSXp7LoWRe27lA9jBMIATJKfJTk6MsIpzOloy/Nlze0f46sLVeg4WodFWb
-	rNGmcEC1juW46BALX7VeqRJwc2TOJpCSITrPFLrPyRqXJSrQg5ahhqeN4XEUkK9HCbxvda7z1VU
-	2QzoqMscE=
-X-Google-Smtp-Source: AGHT+IEi0gU3nsclmOfIhkatsK1ylhMxi3V/RcKHP2qNLsK4jpBPuV25o1zZOF+JE24zBQDJY9wwQA==
-X-Received: by 2002:ac8:5d13:0:b0:4e8:a2dd:34a8 with SMTP id d75a77b69052e-4eb94912a08mr76566831cf.64.1761410007043;
-        Sat, 25 Oct 2025 09:33:27 -0700 (PDT)
+        bh=QSGBaOZhD7YMIGtASkoY94KR31YSs6yG4R1SCYeYD08=;
+        b=T4KgJ7nTv6Qf8JkkF/DAj/mkIqTJb4FO7lqUavSPVcX/oCMElZLb8KEuZaVHq83toV
+         YCdXSPEpm4k2HInPALs5j/sWkpMqXOvHSd1Cc57AeZdYyt/+iKtDRSTXEm25+8dPuyUW
+         m83Qc9kbTCW04/hsrQA9ptjJTs5rZi5jxmIrvH12N86Enk2Tka7r+P5rSC752sRUBNiP
+         QodbOL6NR+Y23hWhD8rcDdYaCNAX06C1gJBjHVPBqv11Y256CrIys0KV6b7HONOjPwm+
+         M0UHhryfddiflPGwT1eyXYdy1q2h2KZkjEalwU2/NrxSdI5vYwRkfg4FGfpHxNUsILAB
+         N5DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZhtOIn3RQu0uc15vw+1RKcRY5VEiCyGJliPDmYmlP004WSRTXXyxGxgDJbTMkft5X6lD3dcDSGav0APc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYEoLqYEx7vQ+xxI72PdhRehvs21q0XjbAJ9VVErgH4PrZJxaQ
+	PQ0wyqlFfbeaGNEysdAubn5vDCFgLDW8Ttf+DnD8WqrN9y/fHQAQuNiM
+X-Gm-Gg: ASbGnctS07ar5tKe8vT+0zyaL4RyFwo3KxUZxd50xIUBRjRHhD5fc1DhYReKcf7PEkS
+	dnGEJta4f5dKQRN3gxioePqCwbUs1aIUYwLIRK5f42RnqJtKbd6bYHSWT8a2DZJqXw96BbKKipw
+	bPOSNWYnERsNi/UsPWl0+t/067dPpupXVAzFHUwETT1Qh/Zj7AAUQ6u3NNW8SgK54NiBDxzASUH
+	v0bq8L+Mkf9jiEAZ82RVA6lr5gPW9o1TKOOcWRkF/PSQr41VhekjD9J98SRRWH6Og58xVLLRkJU
+	6kctdqRBwXfohcoI1fjCzNqPuG5ahK2D9KqP1B9fc8C+xiJ/kcvRRju/NuT1kGd3npybNAkxeeB
+	P5wtbmLFIm3ui1KxH7hUFx6fK1rViXW6KHTv4d/fio00EKNGslqhRYO8t/xFOZO+pUplkU7FN4n
+	hucJSAWCY=
+X-Google-Smtp-Source: AGHT+IEwse5jmtf5o3/IBBOm0kKgX0Hal7s087GbKSjPCM9MuS1VqssBnXXTT034Qa8iz97Crbuo3g==
+X-Received: by 2002:a05:6214:e4c:b0:87d:fef8:6155 with SMTP id 6a1803df08f44-87f9eeac1bfmr115745596d6.52.1761410009628;
+        Sat, 25 Oct 2025 09:33:29 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25896d52sm172754385a.38.2025.10.25.09.33.25
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48f64aasm16321246d6.27.2025.10.25.09.33.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:33:25 -0700 (PDT)
+        Sat, 25 Oct 2025 09:33:28 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Lee Jones <lee@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org
+	Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com
 Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Subject: [PATCH 15/21] bpf: don't use GENMASK()
-Date: Sat, 25 Oct 2025 12:32:57 -0400
-Message-ID: <20251025163305.306787-8-yury.norov@gmail.com>
+Subject: [PATCH 16/21] kcsan: don't use GENMASK()
+Date: Sat, 25 Oct 2025 12:32:58 -0400
+Message-ID: <20251025163305.306787-9-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025162858.305236-1-yury.norov@gmail.com>
 References: <20251025162858.305236-1-yury.norov@gmail.com>
@@ -106,36 +96,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GENMASK(high, low) notation is confusing. BITS(low, high) is more
-appropriate.
+GENMASK(high, low) notation is confusing. Use BITS(low, high) and
+FIRST_BITS() where appropriate.
 
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- kernel/bpf/verifier.c | 4 ++--
+ kernel/kcsan/encoding.h | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index ff40e5e65c43..a9d690d3a507 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -17676,7 +17676,7 @@ static void mark_fastcall_pattern_for_call(struct bpf_verifier_env *env,
- 	 * - includes R1-R5 if corresponding parameter has is described
- 	 *   in the function prototype.
- 	 */
--	clobbered_regs_mask = GENMASK(cs.num_params, cs.is_void ? 1 : 0);
-+	clobbered_regs_mask = BITS(cs.is_void ? 1 : 0, cs.num_params);
- 	/* e.g. if helper call clobbers r{0,1}, expect r{2,3,4,5} in the pattern */
- 	expected_regs_mask = ~clobbered_regs_mask & ALL_CALLER_SAVED_REGS;
+diff --git a/kernel/kcsan/encoding.h b/kernel/kcsan/encoding.h
+index 170a2bb22f53..3a4cb7b354e3 100644
+--- a/kernel/kcsan/encoding.h
++++ b/kernel/kcsan/encoding.h
+@@ -44,8 +44,8 @@
  
-@@ -24210,7 +24210,7 @@ static void compute_insn_live_regs(struct bpf_verifier_env *env,
- 			def = ALL_CALLER_SAVED_REGS;
- 			use = def & ~BIT(BPF_REG_0);
- 			if (get_call_summary(env, insn, &cs))
--				use = GENMASK(cs.num_params, 1);
-+				use = BITS(1, cs.num_params);
- 			break;
- 		default:
- 			def = 0;
+ /* Bitmasks for the encoded watchpoint access information. */
+ #define WATCHPOINT_WRITE_MASK	BIT(BITS_PER_LONG-1)
+-#define WATCHPOINT_SIZE_MASK	GENMASK(BITS_PER_LONG-2, WATCHPOINT_ADDR_BITS)
+-#define WATCHPOINT_ADDR_MASK	GENMASK(WATCHPOINT_ADDR_BITS-1, 0)
++#define WATCHPOINT_ADDR_MASK	FIRST_BITS(WATCHPOINT_ADDR_BITS)
++#define WATCHPOINT_SIZE_MASK	BITS(WATCHPOINT_ADDR_BITS, BITS_PER_LONG-2)
+ static_assert(WATCHPOINT_ADDR_MASK == (1UL << WATCHPOINT_ADDR_BITS) - 1);
+ static_assert((WATCHPOINT_WRITE_MASK ^ WATCHPOINT_SIZE_MASK ^ WATCHPOINT_ADDR_MASK) == ~0UL);
+ 
 -- 
 2.43.0
 
