@@ -1,334 +1,90 @@
-Return-Path: <linux-kernel+bounces-869948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C564C09104
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:53:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77E7C09179
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28C5D4E5692
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 13:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44901AA7BDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 13:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DC62FD1D4;
-	Sat, 25 Oct 2025 13:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="PPdnJEeG"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64492FB0B7;
+	Sat, 25 Oct 2025 13:58:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97CA1DF759;
-	Sat, 25 Oct 2025 13:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342722AD3D
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 13:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761400367; cv=none; b=GJjVgF6feHtfdIRF97nzwawd39LE1RdhxH7KFMK6kqCzI6+Z86y0C76OZTjMnFItWUoqRVhKsAMzxbBToOnOWfXijpjVPlHkZWYmaxK+mf0od1+mPW0ahIwttw6TVmVWY7k3KRbDi7Kbkw1jvQKWYJEkrrwToZBQuwDXTEe2AjI=
+	t=1761400686; cv=none; b=uFh1ymvEBVvicwQmFE9HcVGiWLlLNr83sPx7WIb+UJy29UVLDUfeIPwxQPl6tNYptzs+tZNd+z+h9/LfpthinQHWVBwlmdPGOhlOTFEoh9aBrnBCBiP6KIcrpW4z4O4AXpmwU6+AF6BWmkbxVlYp7eFo/chO2fGjajFyz4sEWLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761400367; c=relaxed/simple;
-	bh=cdlggE3gA8UgDf6zq0+hoDc+RHvLQ5HO5w/KeLx4Pg4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PkaxffcBEZAocAX3Zo4oqRTV7GV2r0WSB/id1ysHztuWfn6KloNeb8Fw3/XzEG5tm5jxllGQWujC4iVPXLS0KHxriIq8PL85XpAVzb1xcLzmSXrJk6Pl2sIiaanUrqL26CcId3t/ma+zYY0LD6tEsAQ8yPmKDZJ4KGamggXeRQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=PPdnJEeG; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=GqViMKNYTnBICF5zAoXxYxhvbGMTu6XooJZOKmuUlFE=;
-	b=PPdnJEeGOCSYxQ0eerh4IFIgdGtVhbipqdVZU0Rd9CSAGuXXMLIZVLgAhC4FI/Glxt8+eDmpB
-	OhY1QtyPoB00CLsh3vXi49NUpEkuphhCyYTQLMKfr+OqqpIRFovla63ri8wQx1K1Md1/993KwF2
-	oVk/DuYUqJMpjlFmlsTsAi4=
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cv1RJ6qbLzLlVc;
-	Sat, 25 Oct 2025 21:52:12 +0800 (CST)
-Received: from kwepemr200004.china.huawei.com (unknown [7.202.195.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 772A9140276;
-	Sat, 25 Oct 2025 21:52:39 +0800 (CST)
-Received: from huawei.com (10.50.163.32) by kwepemr200004.china.huawei.com
- (7.202.195.241) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 25 Oct
- 2025 21:52:38 +0800
-From: Pengjie Zhang <zhangpengjie2@huawei.com>
-To: <myungjoo.ham@samsung.com>, <kyungmin.park@samsung.com>,
-	<cw00.choi@samsung.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <lihuisong@huawei.com>,
-	<yubowen8@huawei.com>, <linhongye@h-partners.com>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <zhangpengjie2@huawei.com>
-Subject: [PATCH] PM / devfreq: use _visible attribute to replace create/remove_sysfs_files()
-Date: Sat, 25 Oct 2025 21:52:38 +0800
-Message-ID: <20251025135238.3576861-1-zhangpengjie2@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1761400686; c=relaxed/simple;
+	bh=nv1LmrIhYPZPpwRpv0ke9kCHlLBAMLKb8eL1U81ihcw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Jt7uYUVhvQhChU+KZh7WdRx301lQSEhq6qvCmkjO0vn8ElVuw6CRNZ9XjThyNWbAfdUYXQea//wE+pxXZpMMH051Et54afuSQWF3oV+IUfcWTJ4o1wySZaSWdbyKGq0OXZ2Y2TE/j8+s26bbHLs0vfexqGgc7X0ncKjICTe05CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-940dc0d7a38so464003839f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 06:58:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761400683; x=1762005483;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0hX7Xmy0Kxtzd20tdCrVN3WPsq+s3O89wFoVx+waOf4=;
+        b=gbvLv+nqvE3bRdpwLuQBdDDexBpUnjvKfIcTBOUBKjniELiEH4VqUckJ1bs9FMoadc
+         wRdt4j9TiUpsjt0dHboKLLah3HQDa9mqaOOBPabl7ZKLappbgtzlMh88FRiMviRcARaX
+         qC0GCHbNF0TEHYtyR1iW/eo8uA1cs7bEZ1QE7L3YkOJkEaZk6gXJAfZ4ZkaDJwGkLc5E
+         D20bGSZp17AbD7yl0SUQN97BFZF2D2/LDC9PVDs146hnlvXKa+C5MDgwij3Yq1xsBWa0
+         N7qNb9okZkvD73I7SDujjOVEZssRVVCFVb0FUzmT2E8RChnTVPZ2Zw+y/T8/XduckTOB
+         +gxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHohg3fPjPCHe+bFAhvo8HsG7GTzwZkFJ4WR2HJaAvZB6zFcbQsX0iPq1HSwJsZspFOiH1yI7xBVqNpdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN/Jkl/5bro/+rS/SYJoPRpDs42DaOgpx8X4gFtWMpUTklI0Fk
+	Td3CwttHUQiz1/LfOln+nDmw/hDhRSXuSKrVSGUTXmNSei5QUIdf07pyFdpGV331OTSfS8YgIgV
+	4SY1v2pFVg7sE1/anzKqR5aCcMst8phz20E92WJo+L4iTYXjXtF48UwPjVWc=
+X-Google-Smtp-Source: AGHT+IHLuGup7FvrtWEhAdxQW6pc+HkJp5VkQy3kaEW+3FCzq6/u86oSYHu5ceNO3JAKYd3Jh6ecMUpxSMld3GyW6SPg7BvYdW9I
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemr200004.china.huawei.com (7.202.195.241)
+X-Received: by 2002:a05:6e02:3c85:b0:424:805a:be98 with SMTP id
+ e9e14a558f8ab-431eb63e7bbmr73145145ab.9.1761400683341; Sat, 25 Oct 2025
+ 06:58:03 -0700 (PDT)
+Date: Sat, 25 Oct 2025 06:58:03 -0700
+In-Reply-To: <kwl4tk52z4cl5d5wahcmfh6skff5mypsa2jylyd6ag5nhrad3j@yawn25geajlz>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fcd76b.a00a0220.9662e.001a.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in raw_ioctl
+From: syzbot <syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
+	david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com, 
+	krishnagopi487@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	matthew.brost@intel.com, rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, 
+	ying.huang@linux.alibaba.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-Previously, non-generic attributes (polling_interval, timer) used separate
-create/delete logic, leading to race conditions during concurrent access in
-creation/deletion. Multi-threaded operations also caused inconsistencies
-between governor capabilities and attribute states.
+Hello,
 
-1.Use is_visible + sysfs_update_group() to unify management of these
-attributes, eliminating creation/deletion races.
-2.Add locks and validation to these attributes, ensuring consistency
-between current governor capabilities and attribute operations in
-multi-threaded environments.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
----
- drivers/devfreq/devfreq.c | 132 +++++++++++++++++++++++++-------------
- 1 file changed, 89 insertions(+), 43 deletions(-)
+Reported-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
+Tested-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 2e8d01d47f69..f67efd37f611 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -38,6 +38,7 @@
- 
- static struct class *devfreq_class;
- static struct dentry *devfreq_debugfs;
-+static const struct attribute_group gov_attr_group;
- 
- /*
-  * devfreq core provides delayed work based load monitoring helper
-@@ -785,11 +786,6 @@ static void devfreq_dev_release(struct device *dev)
- 	kfree(devfreq);
- }
- 
--static void create_sysfs_files(struct devfreq *devfreq,
--				const struct devfreq_governor *gov);
--static void remove_sysfs_files(struct devfreq *devfreq,
--				const struct devfreq_governor *gov);
--
- /**
-  * devfreq_add_device() - Add devfreq feature to the device
-  * @dev:	the device to add devfreq feature.
-@@ -956,7 +952,10 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 			 __func__);
- 		goto err_init;
- 	}
--	create_sysfs_files(devfreq, devfreq->governor);
-+
-+	err = sysfs_update_group(&devfreq->dev.kobj, &gov_attr_group);
-+	if (err)
-+		goto err_init;
- 
- 	list_add(&devfreq->node, &devfreq_list);
- 
-@@ -998,9 +997,7 @@ int devfreq_remove_device(struct devfreq *devfreq)
- 	if (devfreq->governor) {
- 		devfreq->governor->event_handler(devfreq,
- 						 DEVFREQ_GOV_STOP, NULL);
--		remove_sysfs_files(devfreq, devfreq->governor);
- 	}
--
- 	device_unregister(&devfreq->dev);
- 
- 	return 0;
-@@ -1460,7 +1457,6 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 			 __func__, df->governor->name, ret);
- 		goto out;
- 	}
--	remove_sysfs_files(df, df->governor);
- 
- 	/*
- 	 * Start the new governor and create the specific sysfs files
-@@ -1489,7 +1485,7 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 	 * Create the sysfs files for the new governor. But if failed to start
- 	 * the new governor, restore the sysfs files of previous governor.
- 	 */
--	create_sysfs_files(df, df->governor);
-+	ret = sysfs_update_group(&df->dev.kobj, &gov_attr_group);
- 
- out:
- 	mutex_unlock(&devfreq_list_lock);
-@@ -1805,19 +1801,26 @@ static struct attribute *devfreq_attrs[] = {
- 	&dev_attr_min_freq.attr,
- 	&dev_attr_max_freq.attr,
- 	&dev_attr_trans_stat.attr,
--	NULL,
-+	NULL
- };
--ATTRIBUTE_GROUPS(devfreq);
- 
- static ssize_t polling_interval_show(struct device *dev,
- 				     struct device_attribute *attr, char *buf)
- {
- 	struct devfreq *df = to_devfreq(dev);
-+	int ret;
- 
--	if (!df->profile)
-+	mutex_lock(&devfreq_list_lock);
-+	if (!df->profile || !df->governor ||
-+	    !IS_SUPPORTED_ATTR(df->governor->attrs, POLLING_INTERVAL)) {
-+		mutex_unlock(&devfreq_list_lock);
- 		return -EINVAL;
-+	}
- 
--	return sprintf(buf, "%d\n", df->profile->polling_ms);
-+	ret = sprintf(buf, "%d\n", df->profile->polling_ms);
-+	mutex_unlock(&devfreq_list_lock);
-+
-+	return ret;
- }
- 
- static ssize_t polling_interval_store(struct device *dev,
-@@ -1828,15 +1831,22 @@ static ssize_t polling_interval_store(struct device *dev,
- 	unsigned int value;
- 	int ret;
- 
--	if (!df->governor)
-+	mutex_lock(&devfreq_list_lock);
-+	if (!df->governor ||
-+	    !IS_SUPPORTED_ATTR(df->governor->attrs, POLLING_INTERVAL)) {
-+		mutex_unlock(&devfreq_list_lock);
- 		return -EINVAL;
-+	}
- 
- 	ret = sscanf(buf, "%u", &value);
--	if (ret != 1)
-+	if (ret != 1) {
-+		mutex_unlock(&devfreq_list_lock);
- 		return -EINVAL;
-+	}
- 
- 	df->governor->event_handler(df, DEVFREQ_GOV_UPDATE_INTERVAL, &value);
- 	ret = count;
-+	mutex_unlock(&devfreq_list_lock);
- 
- 	return ret;
- }
-@@ -1846,11 +1856,19 @@ static ssize_t timer_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
- {
- 	struct devfreq *df = to_devfreq(dev);
-+	int ret;
- 
--	if (!df->profile)
-+	mutex_lock(&devfreq_list_lock);
-+	if (!df->profile || !df->governor ||
-+	    !IS_SUPPORTED_ATTR(df->governor->attrs, TIMER)) {
-+		mutex_unlock(&devfreq_list_lock);
- 		return -EINVAL;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", timer_name[df->profile->timer]);
-+	mutex_unlock(&devfreq_list_lock);
- 
--	return sprintf(buf, "%s\n", timer_name[df->profile->timer]);
-+	return ret;
- }
- 
- static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
-@@ -1861,8 +1879,12 @@ static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
- 	int timer = -1;
- 	int ret = 0, i;
- 
--	if (!df->governor || !df->profile)
-+	mutex_lock(&devfreq_list_lock);
-+	if (!df->governor || !df->profile ||
-+	    !IS_SUPPORTED_ATTR(df->governor->attrs, TIMER)) {
-+		mutex_unlock(&devfreq_list_lock);
- 		return -EINVAL;
-+	}
- 
- 	ret = sscanf(buf, "%16s", str_timer);
- 	if (ret != 1)
-@@ -1901,40 +1923,64 @@ static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
- 		dev_warn(dev, "%s: Governor %s not started(%d)\n",
- 			 __func__, df->governor->name, ret);
- out:
-+	mutex_unlock(&devfreq_list_lock);
- 	return ret ? ret : count;
- }
- static DEVICE_ATTR_RW(timer);
- 
--#define CREATE_SYSFS_FILE(df, name)					\
--{									\
--	int ret;							\
--	ret = sysfs_create_file(&df->dev.kobj, &dev_attr_##name.attr);	\
--	if (ret < 0) {							\
--		dev_warn(&df->dev,					\
--			"Unable to create attr(%s)\n", "##name");	\
--	}								\
--}									\
-+static struct attribute *governor_attrs[] = {
-+	&dev_attr_polling_interval.attr,
-+	&dev_attr_timer.attr,
-+	NULL
-+};
- 
--/* Create the specific sysfs files which depend on each governor. */
--static void create_sysfs_files(struct devfreq *devfreq,
--				const struct devfreq_governor *gov)
-+static umode_t gov_attr_visible(struct kobject *kobj,
-+				struct attribute *attr, int n)
- {
--	if (IS_SUPPORTED_ATTR(gov->attrs, POLLING_INTERVAL))
--		CREATE_SYSFS_FILE(devfreq, polling_interval);
--	if (IS_SUPPORTED_ATTR(gov->attrs, TIMER))
--		CREATE_SYSFS_FILE(devfreq, timer);
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct devfreq *df = to_devfreq(dev);
-+
-+	if (!df->governor || !df->governor->attrs)
-+		return 0;
-+
-+	if (IS_SUPPORTED_ATTR(df->governor->attrs, POLLING_INTERVAL))
-+		return attr->mode;
-+	if (IS_SUPPORTED_ATTR(df->governor->attrs, TIMER))
-+		return attr->mode;
-+
-+	return 0;
- }
- 
--/* Remove the specific sysfs files which depend on each governor. */
--static void remove_sysfs_files(struct devfreq *devfreq,
--				const struct devfreq_governor *gov)
-+static bool gov_group_visible(struct kobject *kobj)
- {
--	if (IS_SUPPORTED_ATTR(gov->attrs, POLLING_INTERVAL))
--		sysfs_remove_file(&devfreq->dev.kobj,
--				&dev_attr_polling_interval.attr);
--	if (IS_SUPPORTED_ATTR(gov->attrs, TIMER))
--		sysfs_remove_file(&devfreq->dev.kobj, &dev_attr_timer.attr);
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct devfreq *df;
-+
-+	if (!dev)
-+		return false;
-+
-+	df = to_devfreq(dev);
-+	if (!df)
-+		return false;
-+
-+	return true;
- }
-+DEFINE_SYSFS_GROUP_VISIBLE(gov);
-+
-+static const struct attribute_group devfreq_group = {
-+	.attrs = devfreq_attrs,
-+};
-+
-+static const struct attribute_group gov_attr_group = {
-+	.attrs = governor_attrs,
-+	.is_visible = SYSFS_GROUP_VISIBLE(gov),
-+};
-+
-+static const struct attribute_group *devfreq_groups[] = {
-+	&devfreq_group,
-+	&gov_attr_group,
-+	NULL
-+};
- 
- /**
-  * devfreq_summary_show() - Show the summary of the devfreq devices
--- 
-2.33.0
+Tested on:
 
+commit:         72fb0170 Add linux-next specific files for 20251024
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=133e1d42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e812d103f45aa955
+dashboard link: https://syzkaller.appspot.com/bug?extid=d8fd35fa6177afa8c92b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c72614580000
+
+Note: testing is done by a robot and is best-effort only.
 
