@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-870090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2EBC09E25
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED135C09E2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27B7F4E4FF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7113A47AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6011D514B;
-	Sat, 25 Oct 2025 18:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055362D0C94;
+	Sat, 25 Oct 2025 18:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgBIUpJ6"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="l85FGJiq"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1933C35B131
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 18:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E466E26E6F7
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 18:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761415251; cv=none; b=U2PdjsaCXGYd0UUqzhx7eGHuJ83EqnsxbA+MAceCQQ4NoPed9fMpCYCH0Jh+M2RDmeFfkzBTSiQd3qXaR3zE/2dcg3Yc2nUf5aclqbeLKoYG/yverQSmp4O0sCHXdi4p1Y+bxmlPBnsqsfjmfxnYzzzAYmppJHJ9PRA4KS+k/fQ=
+	t=1761415924; cv=none; b=kAHGrosDJ3aSjQsBdnKGAA64NOfWrjQme+qCYs21scSqAylui88FyE583h45X4O7Op2dC9bVXrZQ0s4FogdnTFrZR588LgpOYniodu92qpG0dsOmx/2khKCpRtKi+jlCjkaFKFrspKt3dfzSDcVdtu/Oi0m6Zt2EjjuUPjTmvoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761415251; c=relaxed/simple;
-	bh=4reZdqBKXLAfCl+fqMwNhRzSDJaXcnJ62jSG8fzMP38=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S4Z4fHr+G4s92PTCu5ZIQGLIY0SyO+Yu5+Ho9sTfAicga6Nvfbkm4Oo89aLWHFDXIevxsUjl2azcur44vnt3PQK1P4+LrIw4ACVFzlqKDbxGXFyjQtuc5+32vqYzifWNZxn7YvV19ZogluM3qqgGLqt4pNsAcIbrGTFcXQ4OANg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgBIUpJ6; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-592fdbeb7b2so2364861e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761415248; x=1762020048; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FczjnEOoMGjlPYp5JwUCRjBRTRga8fK3XnuMzP3GAn8=;
-        b=KgBIUpJ6A/h5y4mm2wuKvhNuEXslRGNL65KI8fLs0Pz9lkv9eaq8CSBfSVOzbfXYqc
-         beepSpLNrufhqWGYLbYUDKnPMuQKPmum86/PuIAeYx6VW9zSAmp27GM5AiPOGI0p1V69
-         zH9CDlwAA0+FBrdA+fB8nAv4z5nh+9NXdlKBR/tZDOslI4k7CnjKs+ph+fr0V1K2ZgzM
-         SL41oirx294tpHvq0LtetgYK2K6obp8RY9fBFHEcmgDNXj9miNehmLgslo7PVvSj2LSQ
-         kPoXvf1pq/ou6zeAVQvTlUu+8T6fC8txlZ2mhJWmmdResJxumYgtpjOcGF1MwG+LKPwy
-         oQWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761415248; x=1762020048;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FczjnEOoMGjlPYp5JwUCRjBRTRga8fK3XnuMzP3GAn8=;
-        b=RnDp4vU7/kAxkS/6UusEeIR9fy6KOjAeIJr7eZWur6eYfCoXOsmlqI6jfC485bfm28
-         utFi08THrAMALkECdH6rmH4pJCZntqu1HerODLkotkdN7Jrz2mjQ0b+SE+XVLJc3a+UI
-         KNtbdGh450c/y6APDqORV3PI4JEHLtgIcIC8gcDCYa5gH1FmtEygKxstd1FPwuRPdzH3
-         k1bWTpWZ+FLnCY9HNXdfkR8ikOO/vJ83zRUi3EVJPHabnqDetA17Z0wSF6CfPsDWF58M
-         jRWQGQeOTa0KyhVaF0ArBv/gdcivitwcwBiE7bYWhMBAITBSU3c3PolOXkCPOXzUxxxn
-         i3Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxgvJeQ/jwFJjixI0Dt9em/t5XK/Rznh0C4KOWyVbnTAEXJjOs5I8Nl4viO1IeIF9q5UWmhkf6MZomleY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK2qvY9HfNONoYa1swYsMME78BqK8j7OvTBDAaHT7gIUO7lmFj
-	hrdoPh9WBiQLh8p8ASmUeiHY/DiXYyxemB3bVmywaFei9IKkE/ZR0w8=
-X-Gm-Gg: ASbGncs9kGbe0RmfiKrPbotkbAqam4+No2ypYYReHNAOt4BedoEdTdVRSLlkX56ONzl
-	X90P9mBvkpu3GbmgxXxRJXx7EFz5y1PRFNJEzemp+079UNSws1K+6nb9hjbferKTd9lv7ceiQ7U
-	t8KC/cQv5sdBXWUI/BRvg20uarWCDf9CWalitsoPcONP3kYiJAUbBYIjoDXXXyqpaMq6RH4mqqW
-	Pa9Ulp4ZUxHh7VgMPqn5T5EssISmhHBLrvTsABra8NmG/YZKCluexBkQ3wF0dctN0k4TKNE/mQ1
-	EJpcxlh4vHW7ogCXtqEcxG/wmu61FhDbPdXu77sdz3z9KDgaeQyvGO4WAkQNAZFriljhoOqzm8l
-	Hf9GzXRGhAj8BiBhZKegQo3winRFZrjxNIuh9D5rDEVCc9d9LlaJeIjX0GnFlLiZSQHjdUgp4
-X-Google-Smtp-Source: AGHT+IFtKsbQInhjSF6RbUCEhp+bwcigU1IJ0F+1jsgZ/xmHmrs/T3EcjmrQD4kq/UcsVd3ctZGuCg==
-X-Received: by 2002:ac2:4f03:0:b0:57f:42c8:409 with SMTP id 2adb3069b0e04-592fca66deamr2236499e87.39.1761415247996;
-        Sat, 25 Oct 2025 11:00:47 -0700 (PDT)
-Received: from p183 ([46.53.249.58])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f68e9fsm853360e87.71.2025.10.25.11.00.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 11:00:47 -0700 (PDT)
-Date: Sat, 25 Oct 2025 21:01:37 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/21] lib: add alternatives for GENMASK()
-Message-ID: <3fbe9674-bc06-430d-8702-74d9dd9c3cb0@p183>
+	s=arc-20240116; t=1761415924; c=relaxed/simple;
+	bh=/IKhcuNSgMpOamjayHWURydjiZtD6SnaLDkZZFe/CQc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJl2zWxlhT89J+AmcUS1GzCI07v+EGmrZcbY5LVQgxd13MSiLfoQIt62PwCE8TAtR+/xf+hu99/9IGnrzskw1M/mR7WOn5zs5zBLZT/lYfixcT3ePXzxZ4a/DDmvyRGVOrnz946uNgU1uU1s96q52S2efU/+3QW3tdcquELpLfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=l85FGJiq; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59PBcnxR3544507
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:12:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=/IKhcuNSgMpOamjayHWU
+	RydjiZtD6SnaLDkZZFe/CQc=; b=l85FGJiqEcritGHcf9G+yxkzcFt4CeUBBQ67
+	s99qh3h81IVudvTTM2oeiI2ymRAt0ye1gk56yX1iHO0KtwdM1FLjxSjRwgc/m34o
+	38t26I4CMiXbvuyzDnjytG5bQnxubaiV5pAbJ6hQntctt6SWqdZhQogrp0iTwiE9
+	XqpBTrZad0fxhCKLqcMggO8qj/8h8vIZxLyN7JwWtJlvrVAwUf7JCrX7Aa5A57f7
+	1u0jEwcsqlh5XC5vB5cfyXRdUfTatUlADmv0eHE+tTgzJzlddSrWqJrV7tUMtEgR
+	EW2ViE+NA3mBHhcydsLq2LRqL+idxRX9Jht3nxP5260wsuSpaw==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a0wuhh46f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:12:00 -0700 (PDT)
+Received: from twshared10560.01.ash9.facebook.com (2620:10d:c0a8:1b::8e35) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Sat, 25 Oct 2025 18:11:59 +0000
+Received: by devgpu012.nha5.facebook.com (Postfix, from userid 28580)
+	id 399052AE426; Sat, 25 Oct 2025 11:11:49 -0700 (PDT)
+Date: Sat, 25 Oct 2025 11:11:49 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>,
+        David Matlack <dmatlack@google.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Message-ID: <aP0S5ZF9l3sWkJ1G@devgpu012.nha5.facebook.com>
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
+X-FB-Internal: Safe
+X-Proofpoint-ORIG-GUID: 2iYcX9wB9NSgraP-88sy0rEAECIGXRG8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDE2NiBTYWx0ZWRfX6qZy2/SrDCyT
+ hrVZ3tvdsmBEeb/vi+ajm5e+uxqS2PhjV8JPBTel3By8UL7ALXvg/lmywmc9ZWBD8jz+VRqIeWL
+ ckGqCVC7pNzOKvDI5yoe8e6aFTv2bkhov8c+f9HAhlQRDBN6RO28CXnNtgg2l1d0Hj7CA1tMc9K
+ RUmA5S0eoNOAIdgRVcYTA+EIdw4/H1CPWpXt3vf1WuHt6Q9Tgw39FUpbIaL98SqVBvlKZ0NhiE3
+ Iig7+D61BBLsWLrxIiLiL5ikU6IxR2HLK3BGGhhohw1v45Bh55lWk5ZXKPUz7a3kWKLIJeC64jb
+ bvLwf+s8oCMd3E06TZCjQ78JwHYSWEyPYyiap0gcEKwaH+fzV+/MH6k1FJ79qeaAfNiAf/DAjI4
+ ZQK1d+Ebo3yTMCIWyi3sh+5oT/DM3A==
+X-Authority-Analysis: v=2.4 cv=dMqrWeZb c=1 sm=1 tr=0 ts=68fd12f1 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=dzLN2TX3shYeVDC5Iz4A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: 2iYcX9wB9NSgraP-88sy0rEAECIGXRG8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-25_06,2025-10-22_01,2025-03-28_01
 
-> GENMASK(high, low) notation reflects a common pattern to describe
-> hardware registers. However, out of drivers context it's confusing and
-> error-prone. 
-> 
-> This series introduces alternatives for GENMASK():
-> 
->  - BITS(low, high);
+Alex and Jason, during my testing, I found that the behavior of range-based
+(!VFIO_DMA_UNMAP_FLAG_ALL) VFIO_IOMMU_UNMAP_DMA differs slightly when using
+/dev/iommu as the container.
 
-This is less bad (low bit then high), but in a perfect world high bit
-should have been exclusive.
+iommufd treats range-based unmap where there are no hits in the range as an
+error, and the ioctl fails with ENOENT.
 
->  - FIRST_BITS(nbits);
->  - LAST_BITS(start);
+vfio_iommu_type1.c treats this as a success and reports zero bytes unmapped in
+vfio_iommu_type1_dma_unmap.size.
 
-Now it is 200% more confusing.
+It implies to me that we may need some more shimming in
+drivers/iommu/iommufd/vfio_compat.c to iron out observable differences in UAPI
+usage.
+
+Addressing it would be outside the scope of this patch series, so this mail is
+just to make note of my findings.
 
