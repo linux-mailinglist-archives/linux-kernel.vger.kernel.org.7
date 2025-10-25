@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-870078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7572C09DD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:17:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A0FC09DD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3EC354F1FC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:14:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7AF74E73B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F2F3043A2;
-	Sat, 25 Oct 2025 17:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB238286891;
+	Sat, 25 Oct 2025 17:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bs88pHsP"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIn9t9GL"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D20303A3C
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CF427F00A
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761412412; cv=none; b=kXvEmt/xH0W6lrJtPiXvoDFxalN5DztKXaQ5v0Vbs2IPm599QgPrvlVYxz+Kfwzxe8z8iLxL2uxuWzXwo8kABCC1p/SIMroAH1Xi05ZUvb4We6ODhFuIabf9Lono4jGWeVX7/J1IBZnDuM1dRP5DlFyhBLjgZMxiQorW25bui8s=
+	t=1761412605; cv=none; b=H+bjXkWaIh9c9sHWNO7TMPXcof/VwGXkusVxCfkquONuST+uumPHixWK7fubBlNgGhLbyHdCBCa4L+gp2Zxj21RaheBRFg6eONAzBgBpyh399nujBmj6Mbv0RZOZ6mqCRZvOcJwvjpHCDMD/IA8tHbmPltEDjV4j83lcSfLiWzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761412412; c=relaxed/simple;
-	bh=uOFfSvYybj5U/YMLdHhj4kE0AVO6RfvG+9hqVvgsk+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YwxeP5m+iEfDk6Z15N1uUyYNBKSdxw0/XdzZQnc4x8mDIyHyQUiu8fCOxCgl2Bg4DkwUHHwilZyqmbdSjL1NvugxI/R/kscojqzjQ2HdoZmMmhceolatUcUOEns/vXhGhiMRcwN0sM9JaUf8Bl72HH7HzTsl4A3+15GNb32Za3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bs88pHsP; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1761412605; c=relaxed/simple;
+	bh=r2Om375Gpz/OuMljTFd7kK48QcMYVt8EzT4iLKOqUk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=liXBlFgmsqUavsNjH8vW6KBqVjoVU4bV+U5WJUKaXRvgNx4tV9JDoWcxfMVT1k1gDcB/cp7NMGNVBNnSpjKLxO5pgPLohs9TfHG9+X7W/KDFffshMDC5oqC7AOFvUJUtIpgADwJSiCMSx0e92FOJce652Fa3UCNCENIXdH0tsEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIn9t9GL; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7833765433cso4115342b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:13:30 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so16994825e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:16:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761412410; x=1762017210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=skkIsPjZzdIgiE62Lq5VQ7m30JaRsLRctIZwjBpQojY=;
-        b=Bs88pHsPdWJ6e67+xU6Ifv4t/Mrl5R0GW/zuT6h09P/FS5nuWLrJmpaKZy2nq6vzKb
-         NjEPGNG60xiq9KDxaKq7DnYZ+FLnqlNNsFocKw+U2956/TLeS3lwzs6nU9qGvd5zZnP4
-         hw3IhNXo5i+Y+wN+Q0kktfSOzDgYy09ZOUzCflYrOiGQ9weWLMUzWm1hpUctl5NhC6kb
-         mk+FVZdqKmoNNCObPeux7ZI1UplaVawCRbHOWlJ2rdd3FOuvVY7/QlVbS3sEEAygbCyp
-         eSGwonu/zdRsHUKvxq3UFV8SwWTsZ5q2klSif4VCX8Iw+7UKomQfQyXBE0MgXe6XFRWv
-         Mlmw==
+        d=gmail.com; s=20230601; t=1761412602; x=1762017402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEm6jQjbUP/ZLb0mwjDF1ek1ZnHXSkpVbfXo/n55Y+U=;
+        b=FIn9t9GLSwbWRAgo3G6aW7dwAGUIxar+bq+bKEWx9HgCZLw5/gcbJQI0YNhRrOB83V
+         FU9gTOuopp3b9y/HMrxacMEGc/+SKszw+D6Nz67haFCUrBNqhMXCeO9ZjitQnky8+fJ9
+         lp0ND74MHC1u5VGimGRzjpt84uwaE+IFN9466Wh4ph9u5rkGz4nnZYlVHrWu5AJtutNh
+         yxt+GZntWGsJ4PWLPfyGJ6CXXq1tsRgP3Cz7YyOaZtkd0TtAhaY70TSO9xtDVZ2c4AY8
+         h5Jz6B6b6oRHp3E/VbC8k3dDCafvIk0kpdAWObjpP9vccPcbASFGSbG0J2FIUv4vWgg1
+         Qlnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761412410; x=1762017210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=skkIsPjZzdIgiE62Lq5VQ7m30JaRsLRctIZwjBpQojY=;
-        b=e73zYkWRE5iDJ+U19FTAO0cRxhMlemh9SXty2zIm0IoPv8MiSonZfwJ9vPat3hkyx/
-         ZbZABIoqxIVnWg6bj20Qy73/7B8407WSLENARRoEx6L5feTtvRP2c/rAztWwDVR9FdPm
-         DvY2McHZY36pQqxlqD0yTeGnCtdp24wT7+BGlZlkJu22o6qFLYSQJLk9nMHzJt6PKyeY
-         3gb58QWgu42L30WrcYzhtMCc8akTTA0Xg30bTaJZT1kLf5k0WsOcCgOQS8HHVAQHlFNA
-         ws7Q8cA2C34BJBD8kHv3ch333z2qp25s1TfQYvJpSXGAGtpVA9XsuQ830eOgjgIydH8G
-         WIFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjbsdT1u0cINkPMPePwASVXCAtawj7OTQ69gFTF7YE+csuI3HFbTMKM5ZT3f91WivFOa2w82GFygZR+5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYMms6ARe79si544v4kc9kdcj9EPKnzx2Df6YruewFOaMgcMrt
-	s45Kqnlo2ZbSLRVbAAFpv+XCWFZ2TnrFDPVJTxt0qDVbZ8/i6QvJq/60
-X-Gm-Gg: ASbGncsEYQrIcmX/2DxEzMOZOikhqgGCzsVR/OdaYJUMXat+0PwBDRdfEwTa9QktmFH
-	wsCGO0NwfyD+mGNIjkUYxkn0D+32W5cECvF8XjSiU5f9LqUwz61ybYt5paocBaAk6gPhh47FSid
-	AgG+KnRQscPn1OFlnHvPOUTPoreX8TRefsciMsLAVwdwdKxuEy2LrW7fMzA9RFOGYEcMuQnbNhu
-	um6ZPIvZUTeY066xhJl3Sg7KhdMeM+FVSb8ozfcsX91OgBIComreD11D6k1DbY5ZXvr5Ch86mHC
-	t/TrOpRCsIcJA/91tuah98Jx3H77U+4Ks1A+akf61yGZdQU3X7XCrdtPKR80NRFrzc5dZdNSq82
-	/z21fhLpPNW/eaZHyFNeWVAVDWwjltgQU1OyfyIFLgXh9jAAYWoz1IwrFbmk74wCgxJDjcRNq7U
-	LI9SygdR5zdslcbi+KGQ==
-X-Google-Smtp-Source: AGHT+IFrE/I5QcKhRbXEdfK7JwyY2O+27cboGMuNOwu2tayp52hBp3cLe68UEO4DrutT6WE5Naid3g==
-X-Received: by 2002:a05:6a00:94d5:b0:780:7eaa:938 with SMTP id d2e1a72fcca58-7a220a7f285mr41815292b3a.12.1761412409917;
-        Sat, 25 Oct 2025 10:13:29 -0700 (PDT)
-Received: from d.home.yangfl.dn42 ([45.32.227.231])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012bcesm2850481b3a.8.2025.10.25.10.13.26
+        d=1e100.net; s=20230601; t=1761412602; x=1762017402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EEm6jQjbUP/ZLb0mwjDF1ek1ZnHXSkpVbfXo/n55Y+U=;
+        b=DJhcw2ChpnCXde/NxJ1M20UeYyQrjoE83MTb6Zs9iJ6CJNerd2FcA6ywOQhCovquIE
+         5rYD2iLojFKWSmyqCD6YvTvzvHvYzQrXyFXxByX1Z3u8A4zV8PLZpMvrHULAXXBSOcv5
+         P7o8L0sQagwlfqbYEcOhYFbmq4A0kWdW5xqp/9E6FL7JMvnedh1l1v1ci54piSnyBI2X
+         Yw7lTY/jaKQ3niznFZnImLgctDX0psb2xLdfmbxWem2h8AdkFyBrsjDuhjmlfPPnIMA+
+         ymahVjQW0tKjhZU8PmRSra0xElHhvUaaBqjc7Wl96BuZ4dD4NugjQp7wapPWQJildnhM
+         oOdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvqX8CMwrBDa7d5konXI3HwDL4Jz6hWGvsnvPWviZNXFUUhwEdIsKxNOGVSRF23MIIlCZyb/lsRot+9qY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzoo2c7iJkkC+4SmYiaApeJvCyxOaIvt2GEmoCakGlqb1K2BN7
+	lGgs6nmKJeAgr80p+cEYXPsVHu1T5k26QxQFMPBgg1ClDR1Te2iz19UU
+X-Gm-Gg: ASbGncuepY/P+6DjmA1QMLTvzoumE+qMJMomW0a6hrwRepMQ8DO+XOmYN2tf8aj5T7S
+	nZmGOA4BIhwhhNczmQ66p/TB6Iw+rmgZ4HtSB8P/JDHOeGexwA9JIuL8n2Sq/wIjjkW5Xxs/Zs9
+	ZrbfAtamDssrAYr+JpdWIEwKU4dTMY11Jge0daCWLxfThclZny1zlGUnJHs/TR5PV/woUQLz3KV
+	Jq+iOfla5gtOi7XDLAcOdf9xa1HzzhjqHIgVKJhmkvDgnU0dA05TMNy+nPqA9N8tFVOLZk4HQgP
+	jwYBOVdCdC9Rzr9mgc6kFZlK/TkZl2E/IYneBm2igxT/9TYSqhFn59VJaClTdxnxn9tiHjzQzF8
+	Vps06xr+waTLdiKRqjBXohTkC0Yq3V5IOH9MeonpdNVJyP0obCYfENyIIKceuW5xGNWclT03pe+
+	8amc/awOanRx+iLg4W2f4XOIWwJsx7BHEFE/AM4n1/Ou87liDqChYRQ8qWgO3peagmoJdFzgGiz
+	7NKxA==
+X-Google-Smtp-Source: AGHT+IETiH6reF9yPWlfM21dO17Uv5A8dtC1Are9hXbWiATaPdqLT8Ej4bIbVxMZ/9xCDbB1zZYEcQ==
+X-Received: by 2002:a05:600c:3e16:b0:45b:9afe:ad48 with SMTP id 5b1f17b1804b1-475d2e8c68fmr45738125e9.16.1761412601518;
+        Sat, 25 Oct 2025 10:16:41 -0700 (PDT)
+Received: from nadav-lenovo.tail4fd44.ts.net (85.64.200.239.dynamic.barak-online.net. [85.64.200.239])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd477c92sm42510045e9.2.2025.10.25.10.16.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 10:13:29 -0700 (PDT)
-From: David Yang <mmyangfl@gmail.com>
-To: netdev@vger.kernel.org
-Cc: David Yang <mmyangfl@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
+        Sat, 25 Oct 2025 10:16:41 -0700 (PDT)
+From: Nadav Tasher <tashernadav@gmail.com>
+To: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 2/2] net: dsa: yt921x: Protect MIB stats with a lock
-Date: Sun, 26 Oct 2025 01:13:11 +0800
-Message-ID: <20251025171314.1939608-3-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251025171314.1939608-1-mmyangfl@gmail.com>
-References: <20251025171314.1939608-1-mmyangfl@gmail.com>
+Cc: corbet@lwn.net,
+	Nadav Tasher <tashernadav@gmail.com>
+Subject: [PATCH] docs: replace broken links in ramfs-rootfs-initramfs docs
+Date: Sat, 25 Oct 2025 20:16:25 +0300
+Message-ID: <20251025171625.33197-1-tashernadav@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,209 +89,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-64bit variables might not be atomic on 32bit architectures, thus cannot
-be made lock-free. Protect them with a spin lock since get_stats64()
-cannot sleep.
+http://www.uwsg.iu.edu/ doesn't seem to exist anymore.
+I managed to find backups on archive.org, which helped me find
+the right links on https://lore.kernel.org/.
 
-Signed-off-by: David Yang <mmyangfl@gmail.com>
+http://freecode.com/projects/afio was also down, so I figured
+it could be replaced with https://linux.die.net/man/1/afio.
+
+Replace broken links to mailing list and aifo tool.
+
+Signed-off-by: Nadav Tasher <tashernadav@gmail.com>
 ---
- drivers/net/dsa/yt921x.c | 63 ++++++++++++++++++++++++++--------------
- drivers/net/dsa/yt921x.h |  4 +++
- 2 files changed, 45 insertions(+), 22 deletions(-)
+ Documentation/filesystems/ramfs-rootfs-initramfs.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/dsa/yt921x.c b/drivers/net/dsa/yt921x.c
-index 97a7eeb4ea15..e5d7c6820089 100644
---- a/drivers/net/dsa/yt921x.c
-+++ b/drivers/net/dsa/yt921x.c
-@@ -671,22 +671,16 @@ yt921x_mbus_ext_init(struct yt921x_priv *priv, struct device_node *mnp)
- static int yt921x_read_mib(struct yt921x_priv *priv, int port)
- {
- 	struct yt921x_port *pp = &priv->ports[port];
-+	struct yt921x_mib *mib_new = &pp->mib_new;
- 	struct device *dev = to_device(priv);
- 	struct yt921x_mib *mib = &pp->mib;
-+	u64 rx_frames;
-+	u64 tx_frames;
- 	int res = 0;
+diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.rst b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+index fa4f81099cb4..a9d271e171c3 100644
+--- a/Documentation/filesystems/ramfs-rootfs-initramfs.rst
++++ b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+@@ -290,11 +290,11 @@ Why cpio rather than tar?
  
--	/* Reading of yt921x_port::mib is not protected by a lock and it's vain
--	 * to keep its consistency, since we have to read registers one by one
--	 * and there is no way to make a snapshot of MIB stats.
--	 *
--	 * Writing (by this function only) is and should be protected by
--	 * reg_lock.
--	 */
--
- 	for (size_t i = 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
- 		const struct yt921x_mib_desc *desc = &yt921x_mib_descs[i];
- 		u32 reg = YT921X_MIBn_DATA0(port) + desc->offset;
--		u64 *valp = &((u64 *)mib)[i];
- 		u64 val;
- 		u32 val0;
+ This decision was made back in December, 2001.  The discussion started here:
  
-@@ -695,7 +689,7 @@ static int yt921x_read_mib(struct yt921x_priv *priv, int port)
- 			break;
+-  http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1538.html
++- https://lore.kernel.org/lkml/a03cke$640$1@cesium.transmeta.com/
  
- 		if (desc->size <= 1) {
--			u64 old_val = *valp;
-+			u64 old_val = ((u64 *)mib)[i];
+ And spawned a second thread (specifically on tar vs cpio), starting here:
  
- 			val = (old_val & ~(u64)U32_MAX) | val0;
- 			if (val < old_val)
-@@ -709,22 +703,31 @@ static int yt921x_read_mib(struct yt921x_priv *priv, int port)
- 			val = ((u64)val0 << 32) | val1;
- 		}
+-  http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1587.html
++- https://lore.kernel.org/lkml/3C25A06D.7030408@zytor.com/
  
--		WRITE_ONCE(*valp, val);
-+		((u64 *)mib_new)[i] = val;
- 	}
+ The quick and dirty summary version (which is no substitute for reading
+ the above threads) is:
+@@ -310,7 +310,7 @@ the above threads) is:
+    either way about the archive format, and there are alternative tools,
+    such as:
  
--	pp->rx_frames = mib->rx_64byte + mib->rx_65_127byte +
--			mib->rx_128_255byte + mib->rx_256_511byte +
--			mib->rx_512_1023byte + mib->rx_1024_1518byte +
--			mib->rx_jumbo;
--	pp->tx_frames = mib->tx_64byte + mib->tx_65_127byte +
--			mib->tx_128_255byte + mib->tx_256_511byte +
--			mib->tx_512_1023byte + mib->tx_1024_1518byte +
--			mib->tx_jumbo;
--
--	if (res)
-+	if (res) {
- 		dev_err(dev, "Failed to %s port %d: %i\n", "read stats for",
- 			port, res);
--	return res;
-+		return res;
-+	}
-+
-+	rx_frames = mib->rx_64byte + mib->rx_65_127byte +
-+		    mib->rx_128_255byte + mib->rx_256_511byte +
-+		    mib->rx_512_1023byte + mib->rx_1024_1518byte +
-+		    mib->rx_jumbo;
-+	tx_frames = mib->tx_64byte + mib->tx_65_127byte +
-+		    mib->tx_128_255byte + mib->tx_256_511byte +
-+		    mib->tx_512_1023byte + mib->tx_1024_1518byte +
-+		    mib->tx_jumbo;
-+
-+	spin_lock(&pp->stats_lock);
-+	*mib = *mib_new;
-+	pp->rx_frames = rx_frames;
-+	pp->tx_frames = tx_frames;
-+	spin_unlock(&pp->stats_lock);
-+
-+	return 0;
- }
+-     http://freecode.com/projects/afio
++      https://linux.die.net/man/1/afio
  
- static void yt921x_poll_mib(struct work_struct *work)
-@@ -773,6 +776,7 @@ yt921x_dsa_get_ethtool_stats(struct dsa_switch *ds, int port, uint64_t *data)
- 	yt921x_read_mib(priv, port);
- 	mutex_unlock(&priv->reg_lock);
+ 2) The cpio archive format chosen by the kernel is simpler and cleaner (and
+    thus easier to create and parse) than any of the (literally dozens of)
+@@ -331,12 +331,12 @@ the above threads) is:
+ 5) Al Viro made the decision (quote: "tar is ugly as hell and not going to be
+    supported on the kernel side"):
  
-+	spin_lock(&pp->stats_lock);
- 	j = 0;
- 	for (size_t i = 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
- 		const struct yt921x_mib_desc *desc = &yt921x_mib_descs[i];
-@@ -783,6 +787,7 @@ yt921x_dsa_get_ethtool_stats(struct dsa_switch *ds, int port, uint64_t *data)
- 		data[j] = ((u64 *)mib)[i];
- 		j++;
- 	}
-+	spin_unlock(&pp->stats_lock);
- }
+-      http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1540.html
++    - https://lore.kernel.org/lkml/Pine.GSO.4.21.0112222109050.21702-100000@weyl.math.psu.edu/
  
- static int yt921x_dsa_get_sset_count(struct dsa_switch *ds, int port, int sset)
-@@ -814,6 +819,7 @@ yt921x_dsa_get_eth_mac_stats(struct dsa_switch *ds, int port,
- 	yt921x_read_mib(priv, port);
- 	mutex_unlock(&priv->reg_lock);
+    explained his reasoning:
  
-+	spin_lock(&pp->stats_lock);
- 	mac_stats->FramesTransmittedOK = pp->tx_frames;
- 	mac_stats->SingleCollisionFrames = mib->tx_single_collisions;
- 	mac_stats->MultipleCollisionFrames = mib->tx_multiple_collisions;
-@@ -836,6 +842,7 @@ yt921x_dsa_get_eth_mac_stats(struct dsa_switch *ds, int port,
- 	/* mac_stats->InRangeLengthErrors */
- 	/* mac_stats->OutOfRangeLengthField */
- 	mac_stats->FrameTooLongErrors = mib->rx_oversize_errors;
-+	spin_unlock(&pp->stats_lock);
- }
+-     - http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1550.html
+-     - http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1638.html
++    - https://lore.kernel.org/lkml/Pine.GSO.4.21.0112222240530.21702-100000@weyl.math.psu.edu/
++    - https://lore.kernel.org/lkml/Pine.GSO.4.21.0112230849550.23300-100000@weyl.math.psu.edu/
  
- static void
-@@ -850,9 +857,11 @@ yt921x_dsa_get_eth_ctrl_stats(struct dsa_switch *ds, int port,
- 	yt921x_read_mib(priv, port);
- 	mutex_unlock(&priv->reg_lock);
+    and, most importantly, designed and implemented the initramfs code.
  
-+	spin_lock(&pp->stats_lock);
- 	ctrl_stats->MACControlFramesTransmitted = mib->tx_pause;
- 	ctrl_stats->MACControlFramesReceived = mib->rx_pause;
- 	/* ctrl_stats->UnsupportedOpcodesReceived */
-+	spin_unlock(&pp->stats_lock);
- }
- 
- static const struct ethtool_rmon_hist_range yt921x_rmon_ranges[] = {
-@@ -881,6 +890,8 @@ yt921x_dsa_get_rmon_stats(struct dsa_switch *ds, int port,
- 
- 	*ranges = yt921x_rmon_ranges;
- 
-+	spin_lock(&pp->stats_lock);
-+
- 	rmon_stats->undersize_pkts = mib->rx_undersize_errors;
- 	rmon_stats->oversize_pkts = mib->rx_oversize_errors;
- 	rmon_stats->fragments = mib->rx_alignment_errors;
-@@ -901,6 +912,8 @@ yt921x_dsa_get_rmon_stats(struct dsa_switch *ds, int port,
- 	rmon_stats->hist_tx[4] = mib->tx_512_1023byte;
- 	rmon_stats->hist_tx[5] = mib->tx_1024_1518byte;
- 	rmon_stats->hist_tx[6] = mib->tx_jumbo;
-+
-+	spin_unlock(&pp->stats_lock);
- }
- 
- static void
-@@ -911,6 +924,8 @@ yt921x_dsa_get_stats64(struct dsa_switch *ds, int port,
- 	struct yt921x_port *pp = &priv->ports[port];
- 	struct yt921x_mib *mib = &pp->mib;
- 
-+	spin_lock(&pp->stats_lock);
-+
- 	stats->rx_length_errors = mib->rx_undersize_errors +
- 				  mib->rx_fragment_errors;
- 	stats->rx_over_errors = mib->rx_oversize_errors;
-@@ -937,6 +952,8 @@ yt921x_dsa_get_stats64(struct dsa_switch *ds, int port,
- 	/* stats->tx_dropped */
- 	stats->multicast = mib->rx_multicast;
- 	stats->collisions = mib->tx_collisions;
-+
-+	spin_unlock(&pp->stats_lock);
- }
- 
- static void
-@@ -951,8 +968,10 @@ yt921x_dsa_get_pause_stats(struct dsa_switch *ds, int port,
- 	yt921x_read_mib(priv, port);
- 	mutex_unlock(&priv->reg_lock);
- 
-+	spin_lock(&pp->stats_lock);
- 	pause_stats->tx_pause_frames = mib->tx_pause;
- 	pause_stats->rx_pause_frames = mib->rx_pause;
-+	spin_unlock(&pp->stats_lock);
- }
- 
- static int
-diff --git a/drivers/net/dsa/yt921x.h b/drivers/net/dsa/yt921x.h
-index 3e85d90826fb..be69c3508da8 100644
---- a/drivers/net/dsa/yt921x.h
-+++ b/drivers/net/dsa/yt921x.h
-@@ -470,9 +470,13 @@ struct yt921x_port {
- 	bool isolated;
- 
- 	struct delayed_work mib_read;
-+	spinlock_t stats_lock;
- 	struct yt921x_mib mib;
- 	u64 rx_frames;
- 	u64 tx_frames;
-+
-+	/* only used by read routine to avoid huge allocations on the stack */
-+	struct yt921x_mib mib_new;
- };
- 
- struct yt921x_reg_ops {
 -- 
-2.51.0
+2.43.0
 
 
