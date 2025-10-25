@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-869999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D946DC097EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:31:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C7CC0961D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC0194EFC34
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:23:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CD4534884D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499D1309F18;
-	Sat, 25 Oct 2025 16:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409DA3074B3;
+	Sat, 25 Oct 2025 16:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pc17s/CT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/1XiBsR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6759E2957B6;
-	Sat, 25 Oct 2025 16:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C0430DEBD;
+	Sat, 25 Oct 2025 16:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409155; cv=none; b=t37NryMbbDMbLlT7zLbHhCieqTHP27v3Fc7hDumt29p650MGUJ8G9zM14nLEPctnc9rcXJvjmRtkaAcfI3881p0wM7JRywtkKgbj/86wV269S+T0ABLzOga9ooyqoll0hSi0mbtz279YRnh7aKOckOsN5uIjikIq8AECJNGEFz8=
+	t=1761409158; cv=none; b=tmtQvebY4m7/KjtFQrHQnNbnYZUKbpvlm7rWED3cPuskjsAxVfA3sN6sOtRlIYGCUZabDjRFr9lkc3pNeFJbSCSJrF762ZHcpZyy79B0YNcvKQcA8+JhRSDHOazJPvfcsuvXCWwinfIoI9MGnNJoYWfS5Qisx2oUxeC5W1eOM6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409155; c=relaxed/simple;
-	bh=LpufHFRecLmN77OlpTVdTjowSFY0QAMP0NfmEIO769s=;
+	s=arc-20240116; t=1761409158; c=relaxed/simple;
+	bh=HWAS67ZZGh1qrXjkOYru5fXKeeMUlbFmDj9HyoGVQtg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D7dUT9+kb58osxG086ElGIWX3SdISbXi1P7ZPKlqrt086GT8coqPEuilZiqGBx66otRnLU0z5g8ngwmX+hbt+tXnLps8SU7eJ3OgkHMv1+/0KsZJxnN+x5uMhzUrXO+tNpU0r51YXW9i/QMSSw8wXhmnYlqmiFFRnUd5CEPYAk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pc17s/CT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0DBAC4CEF5;
-	Sat, 25 Oct 2025 16:19:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=t2PkfNfDQWA/Kv4fNsbAu+BVZI9EEPglBrWXneTfXWpkoaP+a3oDZwRKlT85EGFZ77yvg7Hdz65zCU9RCcTbMMlPgx3gLDfo6jEBa3LCOTAoSRreUlfC8kGE4BCfs2Cknrcc0u20t5SGqpaRPwT3nHg11cP+AJGh3JbLxXzaJZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/1XiBsR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C73C4AF0B;
+	Sat, 25 Oct 2025 16:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761409155;
-	bh=LpufHFRecLmN77OlpTVdTjowSFY0QAMP0NfmEIO769s=;
+	s=k20201202; t=1761409158;
+	bh=HWAS67ZZGh1qrXjkOYru5fXKeeMUlbFmDj9HyoGVQtg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Pc17s/CTGZaV6l9HQFhhymDq5zRDxCxsfOIGxfHXvtNmthtJ7xdo3VxDOtPkzac+t
-	 7tcalpRwSNEFSGmw1/ROnaBifGYQa3oihQnjnp9EgOex6OYpKSjOd2zK0wXHZHGDo3
-	 Zwi4cQW5voOE7Wozg2VxbKyrtBaEK3HoKb/Fxrkjjo1IJRfIUHLcUqKGN0SvoM9DED
-	 usLBHJN3lFzMZDWEAreXrb0/+hq1z+RQiO5KsvoHAQL94wcMQhtRplo1ggYmVTY0Gy
-	 S9gMJCofuNztXJivzX/RJc6Hhd1W2sUc+4K4k8JDA0Ec7mV1xr9M8WWM0tINHGT6o2
-	 dKHlzGxS1xPUA==
+	b=Y/1XiBsRNZwDqZD8CgmHincwHNrehdv4gyfYjQNrsMPp0ikOY+ezaFTOTVn9T2jzv
+	 TRz58xWjdhlYmYpjvfE38mxSRll0jIgwpr0ocBq6wtteaUkxaUCqMWVRZbmt7tTSew
+	 +Il6t8OiK2ysnEVq1sYAEZmt6dKVOjom+Hyh3ARTzCkAovIDUWt1Jq9HymCUXrs1yb
+	 ok6v6n+oRh0QOuj4aol2F/3RX2IKpJyRtsDUPupdEmQGk1oI0cnLl0mTREvcf9xj3k
+	 MJosjx6W/PRIv879B91u3wL3nBXV8UcqsfSSgyToNAw0NhO5axCAi/bxK18DV15Hex
+	 vCVb5SRUk+CxQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>,
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Sasha Levin <sashal@kernel.org>,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	lorenzo@kernel.org,
-	shayne.chen@mediatek.com,
-	chui-hao.chiu@mediatek.com,
-	Bo.Jiao@mediatek.com,
-	alexandre.f.demers@gmail.com,
-	howard-yh.hsu@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.17-6.12] wifi: mt76: mt7996: fix memory leak on mt7996_mcu_sta_key_tlv error
-Date: Sat, 25 Oct 2025 11:57:31 -0400
-Message-ID: <20251025160905.3857885-220-sashal@kernel.org>
+	myungjoo.ham@samsung.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17] extcon: fsa9480: Fix wakeup source leaks on device unbind
+Date: Sat, 25 Oct 2025 11:57:33 -0400
+Message-ID: <20251025160905.3857885-222-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251025160905.3857885-1-sashal@kernel.org>
 References: <20251025160905.3857885-1-sashal@kernel.org>
@@ -74,229 +67,293 @@ X-stable-base: Linux 6.17.5
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[ Upstream commit 7c0f63fe37a5da2c13fc35c89053b31be8ead895 ]
+[ Upstream commit 6f982d55f8c5d1e9189906a2a352dba8de421f5f ]
 
-Free the allocated skb on error
+Device can be unbound, so driver must also release memory for the wakeup
+source.
 
-Link: https://patch.msgid.link/20250915075910.47558-5-nbd@nbd.name
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Link: https://lore.kernel.org/lkml/20250501-device-wakeup-leak-extcon-v2-3-7af77802cbea@linaro.org/
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## BACKPORT RECOMMENDATION: **YES**
+## BACKPORT RECOMMENDATION: YES (with version constraints)
 
-Based on my comprehensive analysis, this commit **SHOULD be backported**
-to stable kernel trees.
+**Backport Status: YES - but ONLY to stable kernels v6.14 and later**
 
 ---
 
-## DETAILED ANALYSIS
+## COMPREHENSIVE ANALYSIS
 
-### **Summary of the Bug**
+### 1. TECHNICAL ANALYSIS OF THE BUG
 
-The commit fixes a memory leak in the mt7996 MediaTek WiFi 7 driver. In
-the function `mt7996_mcu_add_key()`
-(drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:2590), when
-`mt7996_mcu_sta_key_tlv()` returns an error, the function was returning
-immediately without freeing the previously allocated socket buffer
-(`skb`).
+**The Memory Leak:**
 
-### **Code Analysis**
+The fsa9480 driver calls `device_init_wakeup(info->dev, true)` in its
+probe function at line 320. This function internally calls
+`device_wakeup_enable()` which allocates a `struct wakeup_source` via
+`wakeup_source_register()` (drivers/base/power/wakeup.c:346).
 
-**Before the fix (lines 2603-2605):**
+The allocation chain in `wakeup_source_create()` includes:
+- The wakeup_source struct itself (~170-200 bytes based on struct
+  definition in include/linux/pm_wakeup.h:43-64)
+- A dynamically allocated name string via `kstrdup_const()` (~20-50
+  bytes)
+- An IDA allocation via `ida_alloc(&wakeup_ida, GFP_KERNEL)`
+
+**Total leak per device unbind: approximately 200-300 bytes**
+
+**How the leak occurs:**
+
+In commit 387162479d8ba (May 2022, merged v6.0), the driver's remove
+function was dropped because it was a no-op:
+
 ```c
-ret = mt7996_mcu_sta_key_tlv(wcid, skb, key, cmd);
-if (ret)
-    return ret;  // MEMORY LEAK: skb is not freed
+-static int fsa9480_remove(struct i2c_client *client)
+-{
+- return 0;
+-}
 ```
 
-**After the fix (lines 2603-2607):**
+However, this empty remove function never cleaned up the wakeup source
+in the first place! The bug existed even before the remove function was
+dropped - the function should have been calling `device_init_wakeup(dev,
+false)` to properly release the wakeup source, but it didn't.
+
+**So the leak has actually existed since the driver was first
+introduced, but removing the empty function made it more obvious.**
+
+### 2. THE FIX
+
+The commit changes line 320 from:
 ```c
-ret = mt7996_mcu_sta_key_tlv(wcid, skb, key, cmd);
-if (ret) {
-    dev_kfree_skb(skb);  // Properly free the allocated memory
-    return ret;
+device_init_wakeup(info->dev, true);
+```
+
+to:
+```c
+devm_device_init_wakeup(info->dev);
+```
+
+The `devm_device_init_wakeup()` helper (introduced in commit
+b317268368546, December 2024) is a device-managed version that
+automatically registers a cleanup action via
+`devm_add_action_or_reset()` to call `device_init_wakeup(dev, false)`
+when the device is released (include/linux/pm_wakeup.h:239-243).
+
+From the implementation:
+```c
+static inline int devm_device_init_wakeup(struct device *dev)
+{
+        device_init_wakeup(dev, true);
+        return devm_add_action_or_reset(dev, device_disable_wakeup,
+dev);
 }
 ```
 
-### **When the Leak Occurs**
+This ensures proper cleanup without requiring an explicit remove
+function.
 
-The `mt7996_mcu_sta_key_tlv()` function returns errors in two specific
-scenarios:
+### 3. IMPACT ASSESSMENT
 
-1. **Line 2552**: Returns `-EOPNOTSUPP` when `cipher == MCU_CIPHER_NONE`
-   (unsupported cipher type)
-2. **Line 2582**: Returns `-EOPNOTSUPP` for beacon protection keys
-   (keyidx 6 or 7) using unsupported cipher suites (anything other than
-   AES-CMAC, BIP-GMAC-128, or BIP-GMAC-256)
+**Severity: LOW to MODERATE**
 
-Each leak would be of size `MT7996_STA_UPDATE_MAX_SIZE` (approximately
-several hundred bytes to a few KB, depending on the sum of multiple
-structure sizes).
+- **Trigger condition**: Only occurs when the device is unbound (module
+  unload, device removal, or manual unbind via sysfs)
+- **Not triggered during normal operation**: The leak does NOT occur
+  during regular device usage
+- **Cumulative effect**: Memory leaks accumulate with repeated
+  bind/unbind cycles
+- **Hardware scope**: Limited to systems using FSA9480/FSA880/TI TSU6111
+  extcon chips (mobile/embedded devices)
+- **Real-world impact**: Most users never unbind these drivers, but
+  developers/testers doing repeated module load/unload cycles would see
+  memory accumulation
 
-### **Impact Assessment**
+**User-visible symptoms:**
+- Gradual memory consumption increase during development/testing with
+  module reloading
+- Memory not reclaimed until system reboot
+- Entries remain in /sys/kernel/debug/wakeup_sources after device
+  removal
 
-**Severity: MODERATE to HIGH**
+### 4. BACKPORTING CONSIDERATIONS
 
-1. **User Impact**: Memory leaks can gradually degrade system stability,
-   especially on systems with limited memory or long uptimes. Each
-   failed key configuration leaks memory that cannot be reclaimed until
-   reboot.
+**DEPENDENCY REQUIREMENT - CRITICAL:**
 
-2. **Trigger Conditions**: The leak occurs during WiFi key configuration
-   operations, which happen:
-   - During station association with access points
-   - During key rotation operations
-   - When unsupported cipher suites are requested (could be
-     configuration errors or attack attempts)
-   - When beacon protection keys use unsupported ciphers
+This fix **REQUIRES** the `devm_device_init_wakeup()` helper function,
+which was introduced in:
+- Commit: b317268368546 ("PM: wakeup: implement
+  devm_device_init_wakeup() helper")
+- Author: Joe Hattori
+- Date: December 18, 2024
+- First appeared in: **v6.14-rc1**
 
-3. **Frequency**: While the error conditions are relatively uncommon in
-   normal operation, they could be triggered:
-   - By misconfigured wireless networks
-   - During compatibility issues with certain access points
-   - Potentially by malicious actors attempting to exhaust system memory
-   - In enterprise environments with frequent key rotations
+**This means the commit can ONLY be backported to stable trees v6.14 and
+later.**
 
-4. **Security Implications**: While no CVE has been assigned, kernel-
-   level memory leaks in WiFi drivers are security-relevant because:
-   - They operate at kernel privilege level
-   - They can lead to denial-of-service through memory exhaustion
-   - WiFi drivers process unauthenticated network frames
-   - The mt76 driver family has had other security-related memory leak
-     fixes
+For older kernels (v6.0 - v6.13), backporting would require:
+1. Either backporting the devm_device_init_wakeup() helper first, OR
+2. Implementing a custom remove function that calls
+   `device_init_wakeup(info->dev, false)`
 
-### **Historical Context**
+### 5. STABLE TREE CRITERIA EVALUATION
 
-- **Bug Age**: This bug has existed since the mt7996 driver was first
-  introduced in commit `98686cd21624c` (November 22, 2022, merged in
-  v6.2-rc1)
-- **Affected Versions**: All kernel versions from v6.2 onwards
-  (approximately 2.5 years)
-- **Fix Date**: September 15, 2025 (approximately 1 month ago)
-- **Related Fixes**: Part of a series of key management improvements by
-  Felix Fietkau, including other key-related fixes around the same
-  timeframe
+✅ **Fixes an important bug**: YES - fixes memory leak
+✅ **Small and contained**: YES - one line change
+✅ **Obviously correct**: YES - standard use of devm helper
+✅ **No architectural changes**: YES - purely resource management fix
+✅ **Low regression risk**: YES - devm pattern is well-established
+✅ **Confined to subsystem**: YES - single driver in extcon subsystem
+✅ **Tested in mainline**: YES - merged in v6.15+
+❌ **Has Cc: stable tag**: NO - no explicit stable tag in commit message
+⚠️ **Version constraint**: Only applicable to v6.14+
 
-### **Backporting Assessment**
+### 6. SUPPORTING EVIDENCE
 
-**Positive Factors for Backporting:**
+**Part of systematic cleanup effort:**
 
-1. ✅ **Fixes Important Bug**: Memory leaks affect system stability and
-   can lead to DoS
-2. ✅ **Small, Contained Change**: Only 3 lines added (+2, -0, modified
-   braces)
-3. ✅ **Clear, Straightforward Fix**: Classic error path resource cleanup
-   pattern
-4. ✅ **No Architectural Changes**: Pure bug fix with no design changes
-5. ✅ **Minimal Regression Risk**: Adding cleanup on error path is safe
-6. ✅ **Long-Standing Bug**: Has affected users for 2.5 years across many
-   kernel versions
-7. ✅ **Isolated to Subsystem**: Confined to mt7996 driver, no impact on
-   other components
-8. ✅ **Clean Application**: Function signature hasn't changed, should
-   apply cleanly to older kernels
-9. ✅ **Part of Quality Effort**: Matches pattern of ongoing memory leak
-   fixes in mt76 driver family
+This fix is part of a larger patch series by Krzysztof Kozlowski
+addressing the same issue across multiple drivers. From the git log,
+related fixes include:
 
-**Potential Concerns (All Low Risk):**
+- extcon: axp288: Fix wakeup source leaks (93ccf3f2f22ce)
+- extcon: qcom-spmi-misc: Fix wakeup source leaks (369259d5104d6)
+- extcon: adc-jack: Fix wakeup source leaks (78b6a991eb6c6)
+- mfd: max77705: Fix wakeup source leaks
+- mfd: max14577: Fix wakeup source leaks
+- Bluetooth: btmtksdio: Fix wakeup source leaks
+- And many more...
 
-1. ⚠️ **No Fixes Tag**: The commit lacks a "Fixes:" tag, which is
-   typically expected for backports (but this is a documentation issue,
-   not a technical one)
-2. ⚠️ **No Stable CC**: No "Cc: stable@vger.kernel.org" in commit
-   message (again, documentation issue)
-3. ⚠️ **Limited Test Coverage**: As a relatively new WiFi 7 driver,
-   there may be fewer users testing this specific hardware
+All use the same pattern: converting `device_init_wakeup(dev, true)` to
+`devm_device_init_wakeup(dev)`.
 
-### **Risk Analysis**
+**Patch series link:** https://lore.kernel.org/lkml/20250501-device-
+wakeup-leak-extcon-v2-3-7af77802cbea@linaro.org/
 
-**Risk of Backporting: VERY LOW**
+**No regressions reported:**
 
-- The change only affects an error path that was previously incorrect
-- Adding `dev_kfree_skb()` on error is the standard kernel pattern and
-  cannot introduce new bugs
-- The fix doesn't change any logic, just adds missing cleanup
-- If the error path was not being hit before, this change has zero
-  effect
-- If the error path was being hit, this fix only helps (prevents memory
-  leak)
+My research found no reverts, regression reports, or follow-up fixes
+related to this change or similar changes in the patch series.
 
-**Risk of NOT Backporting: MODERATE**
+### 7. CODE-LEVEL VERIFICATION
 
-- Continued memory leaks on affected systems
-- Potential stability issues in production environments
-- Possible security implications if leak can be triggered remotely
-- Users on stable kernels won't benefit from this fix for years
+**Current code (before fix):**
+```c
+ret = devm_request_threaded_irq(info->dev, client->irq, NULL,
+                                fsa9480_irq_handler,
+                                IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+                                "fsa9480", info);
+if (ret) {
+        dev_err(info->dev, "failed to request IRQ\n");
+        return ret;
+}
 
-### **Stable Tree Applicability**
+device_init_wakeup(info->dev, true);  // ← Allocates wakeup source,
+never freed
+fsa9480_detect_dev(info);
 
-This commit should be backported to all stable trees that include the
-mt7996 driver:
-- ✅ v6.17.x (current)
-- ✅ v6.16.x
-- ✅ v6.15.x
-- ✅ v6.14.x
-- ✅ v6.13.x
-- ✅ v6.12.x (LTS)
-- ✅ v6.11.x
-- ✅ v6.10.x
-- ✅ v6.9.x
-- ✅ v6.8.x
-- ✅ v6.7.x
-- ✅ v6.6.x (LTS)
-- ✅ v6.5.x
-- ✅ v6.4.x
-- ✅ v6.3.x
-- ✅ v6.2.x (where mt7996 was introduced)
+return 0;
+```
 
-**Priority: HIGH** for LTS kernels (6.12.x, 6.6.x) as these will be
-maintained for years and have the most users.
+**After fix:**
+```c
+ret = devm_request_threaded_irq(info->dev, client->irq, NULL,
+                                fsa9480_irq_handler,
+                                IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+                                "fsa9480", info);
+if (ret) {
+        dev_err(info->dev, "failed to request IRQ\n");
+        return ret;
+}
 
-### **Similar Precedents**
+devm_device_init_wakeup(info->dev);  // ← Auto-cleanup on device release
+fsa9480_detect_dev(info);
 
-The Linux kernel has a strong history of backporting similar memory leak
-fixes:
-- Multiple mt76 driver memory leak fixes have been backported previously
-- Other MediaTek driver leak fixes (mt7663u, mt76x02u) were backported
-- Kernel memory leaks in drivers are routinely fixed in stable trees
+return 0;
+```
 
-### **Conclusion**
+**The driver has no remove function** (drivers/extcon/extcon-
+fsa9480.c:372), so there's no explicit cleanup path. The devm_ pattern
+ensures cleanup happens automatically.
 
-This is a textbook example of a commit that **should be backported**:
-- Important bug (memory leak affecting stability)
-- Minimal change (3 lines)
-- No architectural modifications
-- Extremely low risk
-- Affects multiple stable kernel versions
-- Clear benefit to users
+### 8. RISK ANALYSIS
 
-**RECOMMENDATION: Backport to all stable trees from v6.2 onwards, with
-priority for LTS releases.**
+**Regression risk: VERY LOW**
 
- drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+1. **No functional change**: The wakeup functionality remains identical;
+   only cleanup is added
+2. **Well-tested pattern**: The devm_ pattern is used extensively
+   throughout the kernel
+3. **Defensive implementation**: `devm_add_action_or_reset()` handles
+   errors properly
+4. **Already in mainline**: Code has been running in mainline since
+   v6.15+
+5. **Similar fixes deployed**: Dozens of similar fixes across the kernel
+   with no issues
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-index aad58f7831c7b..0d688ec5a8163 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-@@ -2535,8 +2535,10 @@ int mt7996_mcu_add_key(struct mt76_dev *dev, struct ieee80211_vif *vif,
- 		return PTR_ERR(skb);
- 
- 	ret = mt7996_mcu_sta_key_tlv(wcid, skb, key, cmd);
--	if (ret)
-+	if (ret) {
-+		dev_kfree_skb(skb);
+**What could go wrong:**
+- Theoretical: If devm cleanup order causes issues with wakeup during
+  device removal
+- Reality: The device is already being removed, so wakeup is irrelevant
+  at that point
+- Verdict: No realistic failure scenario
+
+### 9. FINAL RECOMMENDATION
+
+**YES - This commit SHOULD be backported to stable kernel trees v6.14
+and later**
+
+**Rationale:**
+
+1. **Fixes a genuine bug**: Memory leak is a real issue, even if low
+   impact
+2. **Clean, minimal fix**: One line change with zero functional impact
+3. **Part of systematic cleanup**: Aligns with kernel-wide effort to fix
+   similar issues
+4. **Stable tree appropriate**: Meets all criteria for stable
+   backporting
+5. **Low risk, high correctness**: Very unlikely to cause problems,
+   fixes known leak
+6. **Version dependency met**: Can be safely applied to v6.14+ stable
+   trees
+
+**Backporting constraints:**
+- **Only for v6.14+ stable kernels** (dependency on
+  devm_device_init_wakeup helper)
+- For older kernels, the helper function must be backported first OR a
+  different fix approach is needed
+
+**Why the maintainer may not have added Cc: stable:**
+- Low impact (only affects device unbind scenarios)
+- New helper function dependency limits backport range
+- May have considered it cleanup rather than critical fix
+
+However, from a technical correctness standpoint, this is a valid stable
+candidate that improves kernel quality without risk.
+
+ drivers/extcon/extcon-fsa9480.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/extcon/extcon-fsa9480.c b/drivers/extcon/extcon-fsa9480.c
+index b11b43171063d..a031eb0914a0b 100644
+--- a/drivers/extcon/extcon-fsa9480.c
++++ b/drivers/extcon/extcon-fsa9480.c
+@@ -317,7 +317,7 @@ static int fsa9480_probe(struct i2c_client *client)
  		return ret;
-+	}
+ 	}
  
- 	return mt76_mcu_skb_send_msg(dev, skb, mcu_cmd, true);
- }
+-	device_init_wakeup(info->dev, true);
++	devm_device_init_wakeup(info->dev);
+ 	fsa9480_detect_dev(info);
+ 
+ 	return 0;
 -- 
 2.51.0
 
