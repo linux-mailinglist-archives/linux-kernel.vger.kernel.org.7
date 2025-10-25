@@ -1,128 +1,150 @@
-Return-Path: <linux-kernel+bounces-869782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3DFC08BA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:45:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78024C08BA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E43104E5B3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:45:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FF744E12B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EBD2C2349;
-	Sat, 25 Oct 2025 05:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1064D2BE7CC;
+	Sat, 25 Oct 2025 05:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g9XQ36Hf"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="xEnD/0mm"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5921821D3CC
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5EB29E101
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761371102; cv=none; b=K0VIcbH3iFoiGTNqG33/rksUGnHgMWaGx3LDG1TIuAyu9n1pTzrhKRMMMQ7+Te6mH+dGpYzcDSUJ8f3eXskNflR23AUX1e9SjF3IbLzgFz2WX0LkRFPJlP04eCVqc8l+qquoetilErPd2pFMuQ1UBbdXP5ntirxPfKNPGKm421w=
+	t=1761371320; cv=none; b=Z07R+OgaXtRP3veuJdZJOo+f/ZDTEf3oiiyyoP5lltM61IgF6Iaz5jGeRnd7ENWwor392ThTPUgdjFM+wU2jDIfmaWPf7v3F9x4aYjmdPj2FMvR0iZhb40nqnAWNBQIgv6NXi0ZKP2+n2t5na3+a9L/ojIg2H9wroNHY9dbIrfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761371102; c=relaxed/simple;
-	bh=z+60HUCThz8rs62/eMtfSJpsS6s+6ahM5AbCboWurh4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=swpz0IuP90fVUvCQTK7MAeuId/0PI8sYWEQQI+2YItL22p1GtgRL5t6jz5rbvU8C9mHpTR8YbLVJHuSx1GkMA/MKkrtPXyHkApCbLD6F9652q7SmZtSLhxwpDUpveaqRxfsNtFBMumQSUwPb9PzxwLzwgvxeML6v2dhFwX7lipI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jinliangw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g9XQ36Hf; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jinliangw.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33be4db19cfso5059007a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 22:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761371101; x=1761975901; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y2ylm5lDxZdWcq2dZySkzTXA46K65qL8WrTs8EJDdbA=;
-        b=g9XQ36HfjACmo1lx8DVmkIHs+uI7A3nRAXCNWW0737va28g3buMJ3WwTEBuC1Ib9aB
-         dk9xbYMCZH2GEtjtvowKAt37FdLq+rqrdV2c6D0DGGFAGbpH8lY3a0F0lBwhiPvCkXmH
-         3Dv4acl+TfN1dKzecK7xCp8fGfvL6kwDNBPx++Mix2aiIoA6lJfHze2BxS9hdo+aPtLg
-         pyozNGjGu/0YVq192f4XRv0je8wIjoQ/O+dB4surt/Jhtg1Vv7V8DpWvvr795j9a0wLh
-         /uU7O/1K0DkBThSOE1c47VzcQGioE5SlfirKjyjuuB0RdgQZ2Qx8T9adVF9LifIl5V1v
-         xH+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761371101; x=1761975901;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y2ylm5lDxZdWcq2dZySkzTXA46K65qL8WrTs8EJDdbA=;
-        b=KmqZTOIgdR8FY1Y1cMdcgjlsOHCPYR/iutIBfx5YpT9wynAKDcirMU7a7kIj7nAV3U
-         16g8cFxPWtob1y+Q5IeEV5EsoidAuWe/TuKgxuEBpZS+FyCtQy16Gt+FDff8+vkEQs0c
-         9Y/WeHdWVhsH9PtxHX/fU1WPEUmW8gMu2rwblW7+X/KCLB0figBGNulUdW2cgrN0YeXc
-         nHwNioOHCXHGN/EP8tGKN+z/jDNDc4FFW/XWJXYgbI0U9MWCmeGM50v8L0d9caWK8mG8
-         XBbJCFGsbZBIrDH03bE+DBPdXsiex/SdwknFk2xKQAv50mVvaN49t3ccy+UQJGwMKlH5
-         4EvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMbrL9mYOzFgS7O+RdAtYs4iwRo6MaFPvEe8WSJLTmJtEZv7CSvsANLPr0RRaQ9N6/UdSWIBEndv37Uts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyESGHYz9jAH0kVIyTkISHc8k2eVqMrz2lEMxLsm5lm9YTJPvWp
-	IrE+V+7evb0bo9eqK4d4wgHazIokdoJPWtZIRSa/6MzOAI//pkjQQHyGgWJHAuejZ9bpOMbhHiJ
-	pSfhEOy///NHgwZf5Sg==
-X-Google-Smtp-Source: AGHT+IEQSsP/qsCbYJ7wLWUWJdrRrb8F1nw3wCRb93kC7DoAkPCiEMvUYxt5cwnvpuoBZl9bDE2h4ZLZw3Y2HQ4=
-X-Received: from pjvj4.prod.google.com ([2002:a17:90a:dc84:b0:32e:aa46:d9ab])
- (user=jinliangw job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3d87:b0:33b:b020:595e with SMTP id 98e67ed59e1d1-33bcf8f78cfmr37172395a91.25.1761371100710;
- Fri, 24 Oct 2025 22:45:00 -0700 (PDT)
-Date: Fri, 24 Oct 2025 22:44:52 -0700
-In-Reply-To: <20251025053048.1215109-1-jinliangw@google.com>
+	s=arc-20240116; t=1761371320; c=relaxed/simple;
+	bh=dMB2rkFWBqWPo+96AANSVyqIxVGRsYvhy7i2cjH8OtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDMebi8/duL5czbJoAKpgEv4zF67H1d4ra4PEJB+9xzdJwY1JDUWOsB+z2IROhkefcCAxTWwgNs2xCUMDz6jEQkcdMhrZg9DrG4GDa2gx3n+KAsdRMI52qM8hha61JanhUtqZpI+A+kL6SuIpn+ss6sJfOBo2tBM7n+6fiFFkSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=xEnD/0mm; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 708C2104C1FF
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:18:33 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 708C2104C1FF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1761371313; bh=dMB2rkFWBqWPo+96AANSVyqIxVGRsYvhy7i2cjH8OtY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xEnD/0mmohH4j7aa9RaMXLd9zss8M/6wGODA5xmkfxnex7WoPYYEvFwXYiQ4b+nHb
+	 hBRTZo7ZQZkTsO1XL3/INlhESi+7QxWsZd6EwJYqnFpjcZ8jQlr0Rc5/GAAtsFi2Yk
+	 X/LEkDgDgpnK4OvKOmzlFxK+hfbWvOSfFnvv4fg4=
+Received: (qmail 7458 invoked by uid 510); 25 Oct 2025 11:18:33 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 1.177972 secs; 25 Oct 2025 11:18:33 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 25 Oct 2025 11:18:32 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 5AD2F36003B;
+	Sat, 25 Oct 2025 11:18:31 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 1FCB01E8160C;
+	Sat, 25 Oct 2025 11:18:31 +0530 (IST)
+Date: Sat, 25 Oct 2025 11:18:25 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
+	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
+	salah.triki@gmail.com, skhan@linuxfoundation.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH v3 2/2] iio: pressure: adp810: Add driver for adp810
+ sensor
+Message-ID: <20251025-54825-942964@bhairav-test.ee.iitb.ac.in>
+References: <cover.1761022919.git.akhilesh@ee.iitb.ac.in>
+ <5cf1419bff57b906faeb942c5d782d7fe70ad41d.1761022919.git.akhilesh@ee.iitb.ac.in>
+ <20251023183417.00007d22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251025053048.1215109-1-jinliangw@google.com>
-X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
-Message-ID: <20251025054452.1220262-1-jinliangw@google.com>
-Subject: [PATCH v2] net: mctp: Fix tx queue stall
-From: Jinliang Wang <jinliangw@google.com>
-To: Jeremy Kerr <jk@codeconstruct.com.au>, Matt Johnston <matt@codeconstruct.com.au>, 
-	netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	linux-kernel@vger.kernel.org, Jinliang Wang <jinliangw@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023183417.00007d22@huawei.com>
 
-The tx queue can become permanently stuck in a stopped state due to a
-race condition between the URB submission path and its completion
-callback.
+On Thu, Oct 23, 2025 at 06:34:17PM +0100, Jonathan Cameron wrote:
+> On Tue, 21 Oct 2025 11:20:30 +0530
+> Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+> 
+> > Add driver for Aosong adp810 differential pressure and temperature sensor.
+> > This sensor provides an I2C interface for reading data.
+> > Calculate CRC of the data received using standard crc8 library to verify
+> > data integrity.
+> > 
+> > Tested on TI am62x sk board with sensor connected at i2c-2.
+> > 
+> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> 
+> A couple of trivial bits of follow up from me given you are going to be
+> doing a v4 for the stuff Andy picked up on.  Otherwise I'd just have
+> tweaked it whilst applying for these two.
 
-The URB completion callback can run immediately after usb_submit_urb()
-returns, before the submitting function calls netif_stop_queue(). If
-this occurs, the queue state management becomes desynchronized, leading
-to a stall where the queue is never woken.
+Sure.
 
-Fix this by moving the netif_stop_queue() call to before submitting the
-URB. This closes the race window by ensuring the network stack is aware
-the queue is stopped before the URB completion can possibly run.
+> 
+> > diff --git a/drivers/iio/pressure/adp810.c b/drivers/iio/pressure/adp810.c
+> > new file mode 100644
+> > index 000000000000..5fcb0447c628
+> > --- /dev/null
+> > +++ b/drivers/iio/pressure/adp810.c
+> 
+> > +/*
+> > + * Time taken in ms by sensor to do measurements after triggering.
+> > + * As per datasheet 10ms is sufficient but we define 30ms for better margin.
+> > + */
+> > +#define ADP810_MEASURE_LATENCY_MS	30
+> I'd just put this value in the one place that it is used and combine the two
+> comments on why it has this particular value.
 
-Signed-off-by: Jinliang Wang <jinliangw@google.com>
----
- drivers/net/mctp/mctp-usb.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Okay. Removed this macro and used value directly along with
+improved comment.
 
-diff --git a/drivers/net/mctp/mctp-usb.c b/drivers/net/mctp/mctp-usb.c
-index 36ccc53b1797..ef860cfc629f 100644
---- a/drivers/net/mctp/mctp-usb.c
-+++ b/drivers/net/mctp/mctp-usb.c
-@@ -96,11 +96,13 @@ static netdev_tx_t mctp_usb_start_xmit(struct sk_buff *skb,
- 			  skb->data, skb->len,
- 			  mctp_usb_out_complete, skb);
- 
-+	/* Stops TX queue first to prevent race condition with URB complete */
-+	netif_stop_queue(dev);
- 	rc = usb_submit_urb(urb, GFP_ATOMIC);
--	if (rc)
-+	if (rc) {
-+		netif_wake_queue(dev);
- 		goto err_drop;
--	else
--		netif_stop_queue(dev);
-+	}
- 
- 	return NETDEV_TX_OK;
- 
--- 
-2.51.1.821.gb6fe4d2222-goog
+> 
+> 30ms seems like a bit over the top for handling silicon variation etc.
+> Any background for the large margin?  If you've seen this as necessary
+> in practice then just state that - it's useful info to have available
+> to a future reader of the driver.
+
+Datasheet recommends value greater than 10ms.
+30ms is what I started with for initial testing.
+I have checked it working for even 10ms, 20ms etc.
+Let me use 20ms here with margin over 10 and mention it
+in the comment in code.
+
+> 
+> 
+> > +static const struct iio_info adp810_info = {
+> > +	.read_raw	= adp810_read_raw,
+> Trivial but there is no benefit in using a tab before the =
+> 
+> In general aligning this stuff isn't a good plan. It causes
+> a mass of churn in the long run as some of the callbacks have longer
+> names and suddenly whole thing needs reindenting.
+
+okay, got it. Fixed. 
+
+Regards,
+Akhilesh
 
 
