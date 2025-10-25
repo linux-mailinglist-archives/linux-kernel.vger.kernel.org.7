@@ -1,167 +1,145 @@
-Return-Path: <linux-kernel+bounces-869787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E037C08BD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:17:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C930C08BEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 90F0634F77B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:17:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED4C234F9EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B4A19E819;
-	Sat, 25 Oct 2025 06:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0BD2D978A;
+	Sat, 25 Oct 2025 06:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRqzPBq+"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Ol04oaNa"
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFEB1CAA7B
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 06:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B1A2D77E2;
+	Sat, 25 Oct 2025 06:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761373039; cv=none; b=nJqDHVaSxNfnqcqDr+L/Dxx3khGLxxE61T2Btrn7zWmasNjEQjAOeUs90IWHhzCCFWoplNy5xXorDqYBPJYqPH7EqBKYLBEHnimFjmVzRRDDT19StBZov6HrGRw/SdnfDLqA/oAzkXsb418B/AayOGPiRVa/GoyajxJFKPhsxd8=
+	t=1761373139; cv=none; b=nCDdExQ8mC5HxzQTsLGxHjMPWVDAMJpZAqXKY75x/KwtT6wVCJxKWA/3sMTki7o7Y+YsIc10bZQWPgQ29eaxxH61eoTj0Y0S7wg1earuhDnh0Ohhwa3xhAF5H2OUCuJT52sQrSdG5wc6GG/Z7ZTc4gyiKx+7VvWzgMwdi0QxUVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761373039; c=relaxed/simple;
-	bh=cn1oi11LG/pF61ql1VCKF0X0phsVnfYnbM22lp/uDU0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KEimtH1iXyWpnTqpR4cMUFcqOr9u1hl4jute2Zm+k+ieonV3C+q4GKtJCxH9bpVpsSXgKCgeRiPRTMKUrPJH3WFfmd8DAH3nhXJAc9YXzYw/lG9k8oxQnXIh6yGGVGk0zFmK8lj7/xxYZz8Mis1lbbdV3i+fmJZBwC783MaySfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRqzPBq+; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7a4176547bfso119618b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761373037; x=1761977837; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6p7GK3VvKhA8P74byFxrt2YZTTWqdb0ZlXuHY4d+0hM=;
-        b=JRqzPBq+QgOktLnq13zp5shoPGgLCx7woOK62GSPQpTXNtW58jLvS2lWsUc87Qn2wO
-         kd10em+94SBSSXxpLljambxISaKONWmIqvUlonovmcS95abp9AmY/YKl8v/0Ets0Xg3E
-         fGiJnvEVcRjCkCQETTL2/xHsQ2gKU+rfyOg7fCJF+3SikciGYsCp6N97rGRabtU8uH0H
-         0fouLrCQRQysWiD0/+6dIdMcZlpDYo2n8KPTL2ojwvqak4mvAhimOj52s07AJsYVDYjL
-         2VE9UzCEqmjmUxhyZ7wHwAFrZwxe2hVuMVh0vRh8agR7M/9EJD0qrN+m6o0rsuavuU/o
-         4LNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761373037; x=1761977837;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6p7GK3VvKhA8P74byFxrt2YZTTWqdb0ZlXuHY4d+0hM=;
-        b=e3fx6CWPpK6HSxmay2zUenXSgVUwR7GAGzof1tn1LkTe0voGpIdGuH93m9TBw87uQr
-         lkaIWzt7NSDgeEvANzGWFkdbRn2wOZEn2RxtayuG8H7FvkNvcI2oMcGIQpb2WQagZFgK
-         QStMqNbipa5hq/H5mJB5zipL/t8zuIhnlUsQ+CM32E7cDoXcmS72iuuCi39PZsBQSKu+
-         00I9ufOumOPW4xJ9JgobuIRjHMSX8UVXduicxKCR8aduamlc+28YVZWjwJ1LCuo94lGr
-         0aK23QFYqWegtvmdt6rlF002Ky3FpB/Pm65ZyTcai1jmtOntK/uF7V8lrKtnxAVOyu39
-         34gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwypyrhkKC+LkE9f6Dy09kMY6sg7Kepcl5GaldrIUtA2LRgOCl0jcex8A+RZ+WxFE+rSUBGz3T9ipSPZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8crkwboLEcrmrpo7d/qfpqjIZnIEmNE+RVLgBdYuegACUQ1Tq
-	dBfwfvRK5yhnKfiuLHlaMcDcJWBBhcDrd0QltOK3KS+GIDNy4TspYqCa
-X-Gm-Gg: ASbGncsCK4+NieW0FZ1NPNwfAdlJwaiDV3E7F2aHR+TOpPGDqgapo55VeeHSoSig+XU
-	GNwL+rK65WB9lnpVsDIiPlOI6IBabxoNuPLcW38UWzHdjURcDHE5ShnhSDOejGKYjnuVzMEKWGv
-	ZlWMTrWvXdLaTvnopqhk+iAF4OLqEdQZqFkGN9EpWRJDZnO2R8fSxwdXkVWarLu2I3mnjIMGb99
-	u6xE1JiUfU9SK8SvQKrCH8eakiHD8G2dCwL6spNSF/kxodXukUsOhpBc3Ja863FbDPrBlmbUPuO
-	eunw4jyo6Cris0Ywt82ZPVIgT3nlNdIt0ppblEhMpTTX//600gB7jWjBDXw8BU2UrnC0Dl8JID5
-	x+7btKeZVvoh/vpJPmYQKDKcZvivhGUQwtzpe/219c0UwtCKdUzAZ4A2OQMX5kCFEIrEohJJ2EW
-	TDsmfDVc9SzkxJilVY/jpVOAqg8pUac94LeaYKO+HUmvVytzoyFMrrht0o
-X-Google-Smtp-Source: AGHT+IEnx65olDd4wUsKq9Ohdp5aWegEgeLRj2EY+h3wY1HJDJOM27r0YRmfqUrDPBEW/wTGvWKOoQ==
-X-Received: by 2002:a05:6a00:2e26:b0:7a2:1b8a:ca22 with SMTP id d2e1a72fcca58-7a28685edf4mr5915593b3a.25.1761373036774;
-        Fri, 24 Oct 2025 23:17:16 -0700 (PDT)
-Received: from ?IPv6:2401:4900:88f6:d7b0:443:a828:b6ba:688d? ([2401:4900:88f6:d7b0:443:a828:b6ba:688d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414087587sm1158573b3a.58.2025.10.24.23.17.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 23:17:16 -0700 (PDT)
-Message-ID: <14a56a50d5d8803bc822ae99fbe527755323623b.camel@gmail.com>
-Subject: Re: [PATCH v2 2/2] add check for pointers with __free attribute
- initialized to NULL
-From: ally heev <allyheev@gmail.com>
-To: Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Andy Whitcroft <apw@canonical.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
- David Hunter <david.hunter.linux@gmail.com>, Shuah Khan
- <skhan@linuxfoundation.org>, Viresh Kumar	 <vireshk@kernel.org>, Nishanth
- Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,  linux-pm
- <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
-Date: Sat, 25 Oct 2025 11:47:09 +0530
-In-Reply-To: <769268a5035b5a711a375591c25d48d077b46faa.camel@perches.com>
-References: 
-	<20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com>
-		 <20251024-aheev-checkpatch-uninitialized-free-v2-2-16c0900e8130@gmail.com>
-	 <769268a5035b5a711a375591c25d48d077b46faa.camel@perches.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761373139; c=relaxed/simple;
+	bh=0TsJFfcvFlFXuxBIyNm7rgseOY6FSG+SodZ1xqOiyus=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J9H37vphQ+b8bC0fVhLU7D+eX1r5ddEWaOdcjpbyh4R2nINMftSvMYctxxK7tAqqitUxkvxZm63j/ao6LNZ/eU5dtGYzqQtQRup9doVYIzfbpU8hQRCb838XB45ZYMB/1taEkaNZanEUhLCkSUJsI4ZOscLsvmCCuuMZVuVdyMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Ol04oaNa; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=d3eVBxR4BUb7+w5NFdwHFuhF0UPg0SYD5nLLfDs7Ltw=;
+	b=Ol04oaNaG0ZjSHVo0mz7jmPads301eM1yhGSiLW31WU6c3OdBMzZXeoAuKdOwJeTGRholthRH
+	89D9n0a3vq+IQLgHbHo67MK43Wdh/RaClpNX2tx5Jy+ryfnDAfCwuWY/Jv4oPrvjU9aNjEgA4E8
+	W0yaDVke2P2MCoudZMJfGZQ=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4ctqLh05yrzcb1C;
+	Sat, 25 Oct 2025 14:17:32 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 559A4180B73;
+	Sat, 25 Oct 2025 14:18:48 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 25 Oct 2025 14:18:47 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
+	<netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, <Markus.Elfring@web.de>, <pavan.chebbi@broadcom.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, luosifu
+	<luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
+	<shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
+	<wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Luo Yang
+	<luoyang82@h-partners.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
+	<gur.stavi@huawei.com>
+Subject: [PATCH net-next v03 0/5] net: hinic3: PF initialization
+Date: Sat, 25 Oct 2025 14:18:31 +0800
+Message-ID: <cover.1761362580.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-On Fri, 2025-10-24 at 11:01 -0700, Joe Perches wrote:
-[..]
-> > @@ -7728,6 +7728,12 @@ sub process {
-> >  			ERROR("UNINITIALIZED_PTR_WITH_FREE",
-> >  			      "pointer '$1' with __free attribute should be initialized\n" =
-. $herecurr);
-> >  		}
-> > +
-> > +# check for pointers with __free attribute initialized to NULL
-> > +		while ($line =3D~ /\*\s*($Ident)\s+$FreeAttribute\s*=3D\s*NULL\b/g) =
-{
-> > +			WARN("NULL_INITIALIZED_PTR_WITH_FREE",
-> > +			      "pointer '$1' with __free attribute should be initialized to =
-a non-NULL address\n" . $herecurr);
-> > +		}
-> >  	}
->=20
-> I think this a poor idea as almost all the instances where this
-> initialization is done are fine.
->=20
-> And there are a lot of them.
->=20
-> $ git grep -P '\b__free\b.*=3D\s*NULL\s*;' | wc -l
-> 490
+This is [1/3] part of hinic3 Ethernet driver second submission.
+With this patch hinic3 becomes a complete Ethernet driver with
+pf and vf.
 
-Sorry for not checking this earlier. I looked at quite a few of them
-none were real issues
+The driver parts contained in this patch:
+Add support for PF framework based on the VF code.
+Add PF management interfaces to communicate with HW.
+Add ops to configure NIC features.
+Support mac filter to unicast and multicast.
+Add netdev notifier.
 
->=20
-> And what about these uses that depend on struct path members
-> .mnt and .dentry being NULL.=20
->=20
-> $ git grep -P '\b__free\b.*=3D\s*\{.*\}\s*;'
-> fs/configfs/symlink.c:  struct path path __free(path_put) =3D {};
-> fs/fhandle.c:   struct path path __free(path_put) =3D {};
-> fs/file_attr.c: struct path filepath __free(path_put) =3D {};
-> fs/file_attr.c: struct path filepath __free(path_put) =3D {};
-> fs/namei.c:     struct path parent_path __free(path_put) =3D {};
-> fs/namei.c:     struct path parent_path __free(path_put) =3D {};
-> fs/namespace.c: struct path old_path __free(path_put) =3D {};
-> fs/namespace.c: struct path path __free(path_put) =3D {};
-> fs/namespace.c: struct path old_path __free(path_put) =3D {};
-> fs/namespace.c: struct path path __free(path_put) =3D {};
-> fs/namespace.c: struct path to_path __free(path_put) =3D {};
-> fs/namespace.c: struct path from_path __free(path_put) =3D {};
-> fs/namespace.c: struct path new __free(path_put) =3D {};
-> fs/namespace.c: struct path old __free(path_put) =3D {};
-> fs/namespace.c: struct path root __free(path_put) =3D {};
-> fs/namespace.c: struct klistmount kls __free(klistmount_free) =3D {};
-> fs/namespace.c: struct path fs_root __free(path_put) =3D {};
-> fs/nsfs.c:      struct path path __free(path_put) =3D {};
-> fs/nsfs.c:              struct path path __free(path_put) =3D {};
-> fs/nsfs.c:      struct path path __free(path_put) =3D {};
-> fs/overlayfs/params.c:  struct path layer_path __free(path_put) =3D {};
-> fs/overlayfs/params.c:          struct path path __free(path_put) =3D {};
-> fs/pidfs.c:     struct path path __free(path_put) =3D {};
-> include/linux/path.h: * struct path path __free(path_put) =3D {};
-> kernel/acct.c:  struct path internal __free(path_put) =3D {};     // in t=
-hat order
-> kernel/trace/trace_uprobe.c:    struct path path __free(path_put) =3D {};
+Changes:
 
-These are not valid issues too
+PATCH 01 V01: https://lore.kernel.org/netdev/cover.1760502478.git.zhuyikai1@h-partners.com/
+
+PATCH 01 V02: https://lore.kernel.org/netdev/cover.1760685059.git.zhuyikai1@h-partners.com/
+* Change the order of hinic3_netdev_event (Jakub Kicinski)
+* Use netdev_hold/put instead of dev_hold/put (Jakub Kicinski)
+* Remove the semicolon at the end of switch case (Jakub Kicinski)
+* Remove redundant PF judgement in hinic3_rx_tx_flush (Paven Chebbi)
+* change hinic3_send_mbox_to_mgmt errcode to EFAULT (Paven Chebbi)
+* Optimize hinic3_set_bdf_ctxt parameters (Paven Chebbi)
+* Modify main and CC recipients (Markus Elfring)
+
+PATCH 01 V03:
+* Use disable_delayed_work_sync instead of cancel_delayed_work_sync (Paolo Abeni)
+* Fill in the missing hinic3_sync_time & hinic3_free_ppf_work (Paolo Abeni)
+* Refactor hinic3_mac_filter_sync to implement linux coding style(err label)
+  and improve readability (Paolo Abeni & Markus Elfring)
+
+Fan Gong (5):
+  hinic3: Add PF framework
+  hinic3: Add PF management interfaces
+  hinic3: Add NIC configuration ops
+  hinic3: Add mac filter ops
+  hinic3: Add netdev register interfaces
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   1 +
+ .../net/ethernet/huawei/hinic3/hinic3_csr.h   |   6 +
+ .../ethernet/huawei/hinic3/hinic3_filter.c    | 412 ++++++++++++++++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   | 115 +++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |   6 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   |  24 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  97 ++++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.h |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  |  89 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  23 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 138 +++++-
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   |  52 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  | 261 ++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  |  55 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  |   2 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.c  | 309 ++++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |  53 +++
+ .../huawei/hinic3/hinic3_mgmt_interface.h     |  69 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         | 380 ++++++++++++++++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 280 +++++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  47 ++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  84 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  20 +
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  18 +
+ 24 files changed, 2531 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_filter.c
+
+
+base-commit: 16a2206354d169bfd13552ad577e07ce66e439ab
+-- 
+2.43.0
+
 
