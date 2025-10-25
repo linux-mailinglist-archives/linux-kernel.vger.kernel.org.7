@@ -1,57 +1,97 @@
-Return-Path: <linux-kernel+bounces-869825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E223C08D02
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4B2C08C5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A21B4F2142
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:06:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07C5F4E3054
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5E52F7AD6;
-	Sat, 25 Oct 2025 07:04:04 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC0B2D97BF;
+	Sat, 25 Oct 2025 06:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQxycQ4c"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74042E54A3;
-	Sat, 25 Oct 2025 07:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A42A2D3A75
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 06:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761375843; cv=none; b=pn2OzuVOlv5fT1KLl52uGfDLRlxv34bB/IVcMNVGFMskyAGJQZ5vs3w3Q0FPE+FdrqCukluVoYwzflHZI4g65FYqlPmHnGrpZroW/7F5L3MdfAvSqn05yHCoife4PDF2OwecGI/+rx1bzHPEQthXCVcJ9WRIBBmAGmFMtYkk4AY=
+	t=1761374946; cv=none; b=hXOQnDcnZomNaSzIGBN64EsSE38p+rgbpzS/lmoCke/3ahUwd6kTr0cDSsHy+OJ2/uapIjVt1iOuIwYPy7aZiLDnjL/FJjqnsZflgDCqCDsJ5GXqszn/+U/FRGYcixKFwGc8+1nElgdXygYbizQ0uFD9cwXOFZo1EP9l1QfZsUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761375843; c=relaxed/simple;
-	bh=mertrTET6ihelAiD2eZ0NiAJIkboFiGiiLWEfAmqtSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j+2GhTYWEsJD1x1Lhfg1QiNm5xaVLfFUTpVdJwet59cj7wOMEG34wjz72tQtB9k9RCWdr50QGoP9eGiBjMuZvtnekAO6XUJrBgQzBL0TGjwHGwVcErYeQFtoufjNd8Z/eOWD8zdYVw7Eh9q4CYsE363Gixq/Vzdf1MJnEvP7lnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ctrM01fr9zYQtwn;
-	Sat, 25 Oct 2025 15:02:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 202241A0E8C;
-	Sat, 25 Oct 2025 15:03:51 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgCHKUJGdvxovSssBg--.49460S24;
-	Sat, 25 Oct 2025 15:03:51 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
+	s=arc-20240116; t=1761374946; c=relaxed/simple;
+	bh=pVTlcY1X+kIhO3r0God2rsT/x3/ox7cpLS4Nu9m5TXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mPS3kGrT9IokFIPc8bk0s1+9kwLxcNtvjcdC8wIYtMqbNr1nIs1OmsJgVW1cHec/c8w7YHiod1+DOOwLGT3uqYAkL1mb8vUWPOamkWELurYQPHdaU0Ak5j7yENyXFgKpuo6NpupKZ3YerXl8RMy6He1EdaEbmkAt8MSquswILQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQxycQ4c; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7833765433cso3682816b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:49:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761374944; x=1761979744; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QgMCq/BY+uw753rejJGDNmeTuTUhlxJMjMZ33QupS54=;
+        b=iQxycQ4cNnpDD5x2RfsUUo7OVXQ2JpqvFL4CYGAGN2hDr/NHqfsmDJ63CXPQNFTfjL
+         ZiRbRvx3mUoaPkdHNvalsJzWtUhh309hU5C+53NfnvsvlzjD8CZEZNxOPCjL2h0KZjnm
+         Cen9qOEKSYEAewzXFHOOIBI1oSyZ1DK3J3W3xICfRkivY8LPKzemOfe6rqdSMjYiWwri
+         Ha7Ajpnf6VybSDrCeMZzrs97ZC0SF0jofpFACViEQbUQEtBPMvZ4Rt7zorXj0ZGaiDmT
+         VqjtgQJIjZKF/hLfvxToYJwi7j5q5gjPL4U3J+Q9aZMe2+ReVWK+pAH/mCKz2zubYE0M
+         4IAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761374944; x=1761979744;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QgMCq/BY+uw753rejJGDNmeTuTUhlxJMjMZ33QupS54=;
+        b=ZaAsQRz6KwzKVGvfBdYxWFyrymZ22RS65VHpK7VoZTb04Z1KFwUOvdUOGgyy+BNHkp
+         xMqTThpRN8VtT/sriQK3Jq71Kj/jcsXe7K/CwrU8INm8EIIhlNiOYXI1XkjK/BbFPKQx
+         9OGaJK168E28IIha0h4ZvZsuTXfdl0LEQXHPyxKQibRusmtmiusPXGE3SYbxxkvpZr3Y
+         N66rqsHyFVe8VgwI6Dow9rzPzVr7vOH+lESiYC/G/Do20+AzGKuLS1BwwcCSblTdPlMH
+         TC76OibmAmERQwdzidHYXfwCOMLlO4Uba6NSwtPzbrilkcq4ICm5DzcAfpPuR8Rk0Bud
+         fR8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWlyicLnV+F6y1f6Ur1pSCAAfgw7qKHFHGCDbyPL3mXnr5BxdwZc6HfLJIPNS6BHcGEFzZmSDYhjKf/VXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx948B9fMQUqL5H9VR9FeMFBoEnrj8gb/M/8ILNCHdtRScxZGDA
+	R2NwZjLIIUEv1ikQ9z6WlYkF4SibXJv8jnMU2mAWhGgDXf4jsWLppxdS
+X-Gm-Gg: ASbGncvTpTDeEjMbmmaNf1zCirIi3mny2uVkgeHFI5uO7uhp2AzC5C4LEXQzID3srau
+	JMmAlwRYIaEW+Db0yJjZZVokJxz144eSmRuO5egc05/IraxZs1LPqU7mrdO6B7uOj1bEdEei9L7
+	5H1sTkvkLg9MHA2qdh42Q8hdcO1EJhHZ4xKedFbSWbf0Ez1+CRw4SnWKT57m6pX75RJRROiGJRr
+	rEQT2czHNCTuVDq3B0Lnf26AqWGNafyxgDcGoK9THNL1df0WjuRi8sUJhNJm/wtwi71mTwwmXQw
+	9YdPk+xt6vgi8BQ5GbVrSa68KoSri04cyMbdTpby2GlFL9igABPPSSQOt7Gw0adBx7vswvu29fe
+	LoPjLw+GhFqr5iAEPFKltI0ZmQkXrEy2qUISMI7p70Er/n8x8G6eZFyOw33eYLcxbVy2xjc0dcq
+	sa9a6xDbiwTgU4Jq86hE28bQZ7cqBUQvk=
+X-Google-Smtp-Source: AGHT+IHwaj0UZRsnj8dcvgC/D/fSCnQYIZ0bRmj1nAwG07azhqtDDwbJkmRQ+8lLnIHl9U3aFl4gJQ==
+X-Received: by 2002:a05:6a00:3d13:b0:7a2:7bdd:cbf4 with SMTP id d2e1a72fcca58-7a27bddcd09mr9126120b3a.27.1761374944226;
+        Fri, 24 Oct 2025 23:49:04 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c06:77f0:564:1203:6acd:bae8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414034661sm1281886b3a.26.2025.10.24.23.48.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 23:49:03 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH RFC v2 22/22] cpuset: remove prs_err clear when notify_partition_change
-Date: Sat, 25 Oct 2025 06:48:44 +0000
-Message-Id: <20251025064844.495525-23-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251025064844.495525-1-chenridong@huaweicloud.com>
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v2] dt-bindings: net: phy: vsc8531: Convert to DT schema
+Date: Sat, 25 Oct 2025 07:48:50 +0100
+Message-ID: <20251025064850.393797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,51 +99,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCHKUJGdvxovSssBg--.49460S24
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFyfCw48uryktw4fWry3Jwb_yoW3uFc_Z3
-	4vgF1vqryrXFyIg3WYka1SqrWvya1UZr1vyas0q3y5AF129wn3WwnFqFZ8Jrn8Za1xXrnx
-	Aas3GFnI9FnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UM6wAUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Chen Ridong <chenridong@huawei.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The prs_err should be properly set when partition state is set, it
-does't have to reset in the notify_partition_change, just remove it.
+Convert VSC8531 Gigabit ethernet phy binding to DT schema format. While
+at it add compatible string for VSC8541 PHY which is very much similar
+to the VSC8531 PHY and is already supported in the kernel. VSC8541 PHY
+is present on the Renesas RZ/T2H EVK.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- kernel/cgroup/cpuset.c | 4 ----
- 1 file changed, 4 deletions(-)
+Inspired from the DT warnings seen while running dtbs check [0],
+took an opportunity to convert this binding to DT schema format.
+As there was no entry in the maintainers file Ive added myself
+as the maintainer for this binding.
+[0] https://lore.kernel.org/all/176073765433.419659.2490051913988670515.robh@kernel.org/
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 42c7ee77d01b..ced87929b96b 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -178,10 +178,6 @@ static inline void notify_partition_change(struct cpuset *cs, int old_prs)
- 	if (old_prs == cs->partition_root_state)
- 		return;
- 	cgroup_file_notify(&cs->partition_file);
+Note,
+1] As there is no entry in maintainers file for this binding, Ive added myself
+as the maintainer for this binding.
+
+v1->v2:
+- Updated dependencies format as per review comments.
+- Updated vsc8531,edge-slowdown description to use formatting.
+---
+ .../bindings/net/mscc-phy-vsc8531.txt         |  73 ----------
+ .../bindings/net/mscc-phy-vsc8531.yaml        | 131 ++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +-
+ 3 files changed, 132 insertions(+), 74 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+ create mode 100644 Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml
+
+diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+deleted file mode 100644
+index 0a3647fe331b..000000000000
+--- a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
++++ /dev/null
+@@ -1,73 +0,0 @@
+-* Microsemi - vsc8531 Giga bit ethernet phy
 -
--	/* Reset prs_err if not invalid */
--	if (is_partition_valid(cs))
--		WRITE_ONCE(cs->prs_err, PERR_NONE);
- }
+-Optional properties:
+-- vsc8531,vddmac	: The vddmac in mV. Allowed values is listed
+-			  in the first row of Table 1 (below).
+-			  This property is only used in combination
+-			  with the 'edge-slowdown' property.
+-			  Default value is 3300.
+-- vsc8531,edge-slowdown	: % the edge should be slowed down relative to
+-			  the fastest possible edge time.
+-			  Edge rate sets the drive strength of the MAC
+-			  interface output signals.  Changing the
+-			  drive strength will affect the edge rate of
+-			  the output signal.  The goal of this setting
+-			  is to help reduce electrical emission (EMI)
+-			  by being able to reprogram drive strength
+-			  and in effect slow down the edge rate if
+-			  desired.
+-			  To adjust the edge-slowdown, the 'vddmac'
+-			  must be specified. Table 1 lists the
+-			  supported edge-slowdown values for a given
+-			  'vddmac'.
+-			  Default value is 0%.
+-			  Ref: Table:1 - Edge rate change (below).
+-- vsc8531,led-[N]-mode	: LED mode. Specify how the LED[N] should behave.
+-			  N depends on the number of LEDs supported by a
+-			  PHY.
+-			  Allowed values are defined in
+-			  "include/dt-bindings/net/mscc-phy-vsc8531.h".
+-			  Default values are VSC8531_LINK_1000_ACTIVITY (1),
+-			  VSC8531_LINK_100_ACTIVITY (2),
+-			  VSC8531_LINK_ACTIVITY (0) and
+-			  VSC8531_DUPLEX_COLLISION (8).
+-- load-save-gpios	: GPIO used for the load/save operation of the PTP
+-			  hardware clock (PHC).
+-
+-
+-Table: 1 - Edge rate change
+-----------------------------------------------------------------|
+-| 		Edge Rate Change (VDDMAC)			|
+-|								|
+-| 3300 mV	2500 mV		1800 mV		1500 mV		|
+-|---------------------------------------------------------------|
+-| 0%		0%		0%		0%		|
+-| (Fastest)			(recommended)	(recommended)	|
+-|---------------------------------------------------------------|
+-| 2%		3%		5%		6%		|
+-|---------------------------------------------------------------|
+-| 4%		6%		9%		14%		|
+-|---------------------------------------------------------------|
+-| 7%		10%		16%		21%		|
+-|(recommended)	(recommended)					|
+-|---------------------------------------------------------------|
+-| 10%		14%		23%		29%		|
+-|---------------------------------------------------------------|
+-| 17%		23%		35%		42%		|
+-|---------------------------------------------------------------|
+-| 29%		37%		52%		58%		|
+-|---------------------------------------------------------------|
+-| 53%		63%		76%		77%		|
+-| (slowest)							|
+-|---------------------------------------------------------------|
+-
+-Example:
+-
+-        vsc8531_0: ethernet-phy@0 {
+-                compatible = "ethernet-phy-id0007.0570";
+-                vsc8531,vddmac		= <3300>;
+-                vsc8531,edge-slowdown	= <7>;
+-                vsc8531,led-0-mode	= <VSC8531_LINK_1000_ACTIVITY>;
+-                vsc8531,led-1-mode	= <VSC8531_LINK_100_ACTIVITY>;
+-		load-save-gpios		= <&gpio 10 GPIO_ACTIVE_HIGH>;
+-        };
+diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml
+new file mode 100644
+index 000000000000..0afbd0ff126f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml
+@@ -0,0 +1,131 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/mscc-phy-vsc8531.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microsemi VSC8531 Gigabit Ethernet PHY
++
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++
++description:
++  The VSC8531 is a Gigabit Ethernet PHY with configurable MAC interface
++  drive strength and LED modes.
++
++allOf:
++  - $ref: ethernet-phy.yaml#
++
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - ethernet-phy-id0007.0570 # VSC8531
++          - ethernet-phy-id0007.0772 # VSC8541
++  required:
++    - compatible
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - ethernet-phy-id0007.0570 # VSC8531
++          - ethernet-phy-id0007.0772 # VSC8541
++      - const: ethernet-phy-ieee802.3-c22
++
++  vsc8531,vddmac:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      The VDDMAC voltage in millivolts. This property is used in combination
++      with the edge-slowdown property to control the drive strength of the
++      MAC interface output signals.
++    enum: [3300, 2500, 1800, 1500]
++    default: 3300
++
++  vsc8531,edge-slowdown:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: >
++      Percentage by which the edge rate should be slowed down relative to
++      the fastest possible edge time. This setting helps reduce electromagnetic
++      interference (EMI) by adjusting the drive strength of the MAC interface
++      output signals. Valid values depend on the vddmac voltage setting
++      according to the edge rate change table in the datasheet.
++
++      - When vsc8531,vddmac = 3300 mV: allowed values are 0, 2, 4, 7, 10, 17, 29, and 53.
++        (Recommended: 7)
++      - When vsc8531,vddmac = 2500 mV: allowed values are 0, 3, 6, 10, 14, 23, 37, and 63.
++        (Recommended: 10)
++      - When vsc8531,vddmac = 1800 mV: allowed values are 0, 5, 9, 16, 23, 35, 52, and 76.
++        (Recommended: 0)
++      - When vsc8531,vddmac = 1500 mV: allowed values are 0, 6, 14, 21, 29, 42, 58, and 77.
++        (Recommended: 0)
++    enum: [0, 2, 3, 4, 5, 6, 7, 9, 10, 14, 16, 17, 21, 23, 29, 35, 37, 42, 52, 53, 58, 63, 76, 77]
++    default: 0
++
++  vsc8531,led-0-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: LED[0] behavior mode. See include/dt-bindings/net/mscc-phy-vsc8531.h
++      for available modes.
++    minimum: 0
++    maximum: 15
++    default: 1
++
++  vsc8531,led-1-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: LED[1] behavior mode. See include/dt-bindings/net/mscc-phy-vsc8531.h
++      for available modes.
++    minimum: 0
++    maximum: 15
++    default: 2
++
++  vsc8531,led-2-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: LED[2] behavior mode. See include/dt-bindings/net/mscc-phy-vsc8531.h
++      for available modes.
++    minimum: 0
++    maximum: 15
++    default: 0
++
++  vsc8531,led-3-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: LED[3] behavior mode. See include/dt-bindings/net/mscc-phy-vsc8531.h
++      for available modes.
++    minimum: 0
++    maximum: 15
++    default: 8
++
++  load-save-gpios:
++    description: GPIO phandle used for the load/save operation of the PTP hardware
++      clock (PHC).
++    maxItems: 1
++
++dependencies:
++  vsc8531,edge-slowdown:
++    - vsc8531,vddmac
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/net/mscc-phy-vsc8531.h>
++
++    mdio {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet-phy@0 {
++            compatible = "ethernet-phy-id0007.0772", "ethernet-phy-ieee802.3-c22";
++            reg = <0>;
++            vsc8531,vddmac = <3300>;
++            vsc8531,edge-slowdown = <7>;
++            vsc8531,led-0-mode = <VSC8531_LINK_1000_ACTIVITY>;
++            vsc8531,led-1-mode = <VSC8531_LINK_100_ACTIVITY>;
++            load-save-gpios = <&gpio 10 GPIO_ACTIVE_HIGH>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 54ba517d7e79..1af57177a747 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -20,7 +20,7 @@ patternProperties:
+   "^(keypad|m25p|max8952|max8997|max8998|mpmc),.*": true
+   "^(pciclass|pinctrl-single|#pinctrl-single|PowerPC),.*": true
+   "^(pl022|pxa-mmc|rcar_sound|rotary-encoder|s5m8767|sdhci),.*": true
+-  "^(simple-audio-card|st-plgpio|st-spics|ts),.*": true
++  "^(simple-audio-card|st-plgpio|st-spics|ts|vsc8531),.*": true
+   "^pool[0-3],.*": true
  
- /*
+   # Keep list in alphabetical order.
 -- 
-2.34.1
+2.43.0
 
 
