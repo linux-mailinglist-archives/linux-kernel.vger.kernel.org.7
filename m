@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-869832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557CDC08D2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:14:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB26BC08D32
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C681D1C658A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:13:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C55F4E703D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1392DA767;
-	Sat, 25 Oct 2025 07:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1A22DC337;
+	Sat, 25 Oct 2025 07:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4xTrnbd8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVjKHH28"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06D2222A1;
-	Sat, 25 Oct 2025 07:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA48257846;
+	Sat, 25 Oct 2025 07:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761376367; cv=none; b=sapUUBH+d/uOtqqtdWXpZ8IYExjdXz7riS7Rp1LqSFNGrXQxvP+SYIqh9m13xmzZUFA9QYr6C5tT1tzz7XIeCnD3+r/Fadpisj4V1Lu1/l8FZWJvy503a1E23z+wUl4LuzULLZ8ueypjND0nUgT88Gh4UZWblLBPVwKRbWfwgCo=
+	t=1761376471; cv=none; b=kyKj9VDtaIKEl/8XqVqbWTCMbW3OvGNXa98sz3YhdeADmIWJYqimm1se03aeXqpIMOzWbEorU+VMPgncWEJsvPVH1bpMeObenUyZV+VKL5++sKk9x+DoRMAGrSLGJvm4TW+mleVdP8jmr49q1ZNKpvpFHx99cJqzfAKQt6pHnwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761376367; c=relaxed/simple;
-	bh=h5myBk7Y9jzgCKKdqfGa3lbhEpXoJK0bpOFNhQDtySs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ad/K5j4nhZeilCDEockOfg1mXi5sZQeq6UtQkhXVPoyvsSqzEIx/yXeolAmrXpFkHh0TSk6+ogYIrVwZtwYzOHPDUEdSm/doYjgcQZZvo4LA+QuaItQteaT9HdmW0cTatrbviv828+HZoDMAWA+x5uhXnhgysv3SHzgrbZ43t0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4xTrnbd8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=64wHHTG8QB3jz1ZnHmV8lL6weqDR4OInJsXbNS1AKF4=; b=4xTrnbd8e1fM5OHPxRo96+1jry
-	suNQLeoFRXKFgtMp4q/cHDEjpIzSxmjzUGJhKMsRP8HHVVVnMAmOUcN35Dxfvk6p4ZBLfiaTCHwvt
-	PVvwRtKrwZ7MPDmoJHgS9Xs4XQ5MdrzTYDFZsRlZVjU1XwVXldMwWIP471lNmOte5Kt9u159okWqb
-	kb3/Cf3KFpdrnhOkD9ouxrmBeft1oK70NFhZzj3o4Bbf2NvXB6WFf0mprFSWcuX5FMKNJFG956PNl
-	toca+ldl93MKP1lsUGK0eOkJHF7rICTnfaNtsSSEtknt7k1bc31NS6isNWc8eBYJ+OZ2Z3VdnE6fn
-	iZPXI8Iw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCYSA-0000000B40o-3wgN;
-	Sat, 25 Oct 2025 07:12:42 +0000
-Message-ID: <9433805e-c610-4249-a45d-e6e94c0f5522@infradead.org>
-Date: Sat, 25 Oct 2025 00:12:42 -0700
+	s=arc-20240116; t=1761376471; c=relaxed/simple;
+	bh=X6YoMpQgSgZAZKvggDwcha+QMleffEi+3c3WT17AgYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EumFGZCXDSyNDBE01O59DTj/qCoiZV1BlNmkuxUb1X8trzUcXd/VlHI2hoixrw8hfHk6muw+44mypiGMwv+536B6LZU9aH5HDP9ADYtusX41IY5Yy+lx5LMvDWWG5zpdZU+6dexpMSRq8EFI2NneiLRDf/PR9gX+3abgpsJektY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVjKHH28; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761376470; x=1792912470;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X6YoMpQgSgZAZKvggDwcha+QMleffEi+3c3WT17AgYg=;
+  b=ZVjKHH28nry60Ly3SEP/MY/pmfsOWNov4i11UlD4wMhD0Su2D4jz+CUE
+   Lq0/c1tGUHVxpcWNTpBGshWUzLsYu2w3lbdVgNyhhqiEgI9zz6tJTIobj
+   aur7Ak8WliHj7nuagSInHj6Cf7MGWhlbWXlPmuRFvuioHBiLnhhNzfEac
+   yj84Y1dAZA2n0M1qcApadMuuyZPW/d5BAfwXmN8LcSPKCpwkqi/VDoTXY
+   wFHL4UBkr3aM7Tav2ZrBbXEhi+o6xZhPyvCor4rFMDpzPTvhkUZH/8jjG
+   U3DExfByWPRMsQFMmcNIvIDWlgAKd7Pt8Y4PWRkgZaSOEXi+E6b2+mGFy
+   Q==;
+X-CSE-ConnectionGUID: aVJGek2IQsCjmfFvTRtapg==
+X-CSE-MsgGUID: q7MMfyqdRICdq6WaidH72Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63451252"
+X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
+   d="scan'208";a="63451252"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 00:14:29 -0700
+X-CSE-ConnectionGUID: Au+FxXoGS0mCzXf++6NWnA==
+X-CSE-MsgGUID: lXvVQI1AQvmV+X31d+pIWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
+   d="scan'208";a="184968492"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 25 Oct 2025 00:14:27 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCYTp-000FAV-09;
+	Sat, 25 Oct 2025 07:14:25 +0000
+Date: Sat, 25 Oct 2025 15:14:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v3 6/8] docs: move kernel-doc to tools/docs
+Message-ID: <202510251428.mk24iI0r-lkp@intel.com>
+References: <20251024200834.20644-7-corbet@lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] hid-alps docs heading cleanup
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Input Devices <linux-input@vger.kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Masaki Ota <masaki.ota@jp.alps.com>,
- George Anthony Vernon <contact@gvernon.com>
-References: <20251024103934.20019-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251024103934.20019-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024200834.20644-7-corbet@lwn.net>
 
+Hi Jonathan,
 
+kernel test robot noticed the following build errors:
 
-On 10/24/25 3:39 AM, Bagas Sanjaya wrote:
-> Hi,
-> 
-> Here are two section headings cleanup patches for Alps HID documentation.
-> Enjoy!
-> 
-> Bagas Sanjaya (2):
->   Documentation: hid-alps: Fix packet format section headings
->   Documentation: hid-alps: Format DataByte* subsection headings
-> 
->  Documentation/hid/hid-alps.rst | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+[auto build test ERROR on lwn/docs-next]
+[also build test ERROR on next-20251024]
+[cannot apply to drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master v6.18-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Much nicer. Thanks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Corbet/docs-Move-the-features-tools-to-tools-docs/20251025-041303
+base:   git://git.lwn.net/linux.git docs-next
+patch link:    https://lore.kernel.org/r/20251024200834.20644-7-corbet%40lwn.net
+patch subject: [PATCH v3 6/8] docs: move kernel-doc to tools/docs
+config: parisc-randconfig-r071-20251025 (https://download.01.org/0day-ci/archive/20251025/202510251428.mk24iI0r-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510251428.mk24iI0r-lkp@intel.com/reproduce)
 
-for both patches:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510251428.mk24iI0r-lkp@intel.com/
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+All errors (new ones prefixed by >>):
+
+>> /bin/sh: 1: tools/docs/kernel-doc.py: not found
+   make[3]: *** [scripts/Makefile.build:287: scripts/mod/empty.o] Error 127
+   make[3]: *** Deleting file 'scripts/mod/empty.o'
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1279: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
 -- 
-~Randy
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
