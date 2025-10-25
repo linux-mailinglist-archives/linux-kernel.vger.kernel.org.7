@@ -1,520 +1,382 @@
-Return-Path: <linux-kernel+bounces-869836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA6FC08D48
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 567B9C08D57
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2E33BB62C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:19:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A906406FF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5DF2D592D;
-	Sat, 25 Oct 2025 07:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67CB2D6E64;
+	Sat, 25 Oct 2025 07:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="KaKR063j"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="BEe77O78"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089AC3BB4A;
-	Sat, 25 Oct 2025 07:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6705A23F422
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 07:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761376747; cv=none; b=JJR+OAxBoJESjyH2PbwXWnpXabke4RKCn4m6db/aRPsC7Jeuclf+X1sjG3M3JTEYhHVHruRj1EJjkXprYnU1hJKgdqg2xdF1kfqGbEzKCbEjgQXijN+Tfko2Ln8lcsrj1NslrhO7jTUptGxg/TwYv7fE6OoQA4O+H+1u10An3jk=
+	t=1761376871; cv=none; b=UHWHi+UBRrRCG0eRIGWK2Puri3mpze0qAFgb0TVzqJ6hPAATB0kBiw7sRbTyctzVeEB2qV7K2uX2t4jsSEkHWF9RSAC0288HHEkzsGtKLKysZDwxZWl/9gd0266x8INCyNVRX/KEZzJeYXjzjQVBlS785j7xnNacZKK4inmTRho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761376747; c=relaxed/simple;
-	bh=Fj6df5XxMk5WoEXy1kyB2bsby4rQd0pD0LDLRt4nIw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aogv6Sw2ScNIM9pfauivqpsRL8vASpiSsyGSItC5Q/Re1wXuVlnBfTRLHHWhtdcE1HxDHmNxwFjwoUuh8+OzFcXgMgo7YOMAtcTaJK7/i+LpzwqDnzC35VcNq9QznkjG9racNP6VarhYKtwRDLZfj3m3vbzQ9s/coYQSQ3oN/cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=KaKR063j; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=MwX/s5SYASd0iKGYB0XTDuYgCV0T6REyfugcDNoJpbI=;
-	b=KaKR063j3AwQa7jCa9q37XeA7OL63ew6l7t+cOFjS/WOFhuLOIxqZAS330KkUu
-	1yR7rAZ1g+1kz4pqma48zs6maL39Yydt2b4aPzlIthM03mb7VqfLIIy9CcVBeuGB
-	8Dn0exz3iX88KX6YMABw84bCwLafcY2+ALWBQvBsqO/VU=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3BzBHefxoBGWeAA--.50533S3;
-	Sat, 25 Oct 2025 15:16:25 +0800 (CST)
-Date: Sat, 25 Oct 2025 15:16:22 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Rogerio Pimentel <rpimentel.silva@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, xiaofeng.wei@nxp.com,
-	kernel@pengutronix.de, festevam@gmail.com,
-	alexander.stein@ew.tq-group.com,
-	dario.binacchi@amarulasolutions.com, marex@denx.de,
-	Markus.Niebel@tq-group.com, y.moog@phytec.de,
-	joao.goncalves@toradex.com, frieder.schrempf@kontron.de,
-	josua@solid-run.com, francesco.dolcini@toradex.com,
-	primoz.fiser@norik.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-Message-ID: <aPx5RpFeqWmmhQs5@dragon>
-References: <20250922232523.844633-1-rpimentel.silva@gmail.com>
- <20250922232523.844633-2-rpimentel.silva@gmail.com>
+	s=arc-20240116; t=1761376871; c=relaxed/simple;
+	bh=pwdhPPhvKbz0V738IUqB7hjR3lvtvn4qqpzuR8UYO/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=beXn9e1NEZfnY4yE6UC4JmGNkG37nLJ5hO+2+ovQukCQRdYwjiPx/91TlkPJBvG14DjYv6tmROAV48t5yzytFXPQm974ORsjjHG1YnXzPStTedoxGCMKNnXv5QnGcHqXRYAmgVHNGnj66+V8cfhbWZIH5l/rFRYFTNCxQa8oqcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=BEe77O78; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id 31D5B40719
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:21:05 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id A320340686
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:21:03 +0300 (EEST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id D1803200BFB
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:21:02 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761376863;
+	bh=9MUl27cO2Ei8YeDg730+/6CR+6BK14eULrrNspxGizU=;
+	h=Received:From:Subject:To;
+	b=BEe77O788CsWR43iMaO0l53ta1XRWC4pBYXqZWfkdWUDHoUwvJs1a3TbwIFpRSnbN
+	 RReldmzrQJdeGKAeeRm8670KE/5TSi0x5bR925d2H4EYy8pkWUvJUyP9Y11RkJr5EX
+	 p2cLC8gADTGdOTgyrwY5f7LxvIap7nl1DNNWKg5SJcizOzzkTHtkcpAR0ubVXgVo5N
+	 xG1G6epq+z6xYgcwL8SKN78dsVZNg6P0URzzX0qtpKnjsxhmGTGCqv+EF8yufGto3P
+	 nt1bXv1rr/caD5Bn/iZNiMbTLI0FPz29evwckpWR8KapxSkzolf6y1uvCcd4OeriFh
+	 gtyZIWI+u/Q4g==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.178) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f178.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f178.google.com with SMTP id
+ 38308e7fff4ca-378d50e1cccso31529681fa.0
+        for <linux-kernel@vger.kernel.org>;
+ Sat, 25 Oct 2025 00:21:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUTA5v/IRjU1sk2R3juXWO0GRhB8grwSmA71R0pYFBubNr4O8zVAxa1Og5tbFkwoEzOUHQSAw7y1WYAruI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmZyAktZbppL8HVgud7s+IAy34458aNQEYen29nQcfzjyIBiU8
+	vIy9NyAq5W+mJcyz4y8O9+V/QoPLdfoVxj+KRo28VVAssjnq7jbRIrY6KnItZxZtp9SEHF8WtMH
+	FEw+I8wqc1aK7++jKIDvM2WkE8ZUKzlo=
+X-Google-Smtp-Source: 
+ AGHT+IEW4LlQ1v+uLQvZDipQIO4SZSe1WPbzjQCR+anQew6Mq+O7WD/iW877zNG6d2qsrO0cs2jlCGCfEMZzJdTfycI=
+X-Received: by 2002:a05:651c:1595:b0:375:f6b9:c962 with SMTP id
+ 38308e7fff4ca-377978263edmr92266791fa.3.1761376861512; Sat, 25 Oct 2025
+ 00:21:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922232523.844633-2-rpimentel.silva@gmail.com>
-X-CM-TRANSID:Ms8vCgD3BzBHefxoBGWeAA--.50533S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW3try8XF4fZw43ZF1fCF13twb_yoWkCF4Upr
-	9xJrsrCw4vkr1Syas3J3W7Krn8Xa95G3Wq9w1DuFy8AF9rAasIqrn0krn8GrsrJrs8Z3y8
-	uFWjvryI9FnIgw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbVysUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIAnJL2j8eUkYHwAA3s
+References: <20251018101759.4089-1-lkml@antheas.dev>
+ <20251018101759.4089-2-lkml@antheas.dev>
+ <e6328da3-8099-4540-9cb0-4fc28b359ee7@gmail.com>
+ <CAGwozwG+gf09PQf9o9YkKFYVgVn-1w5CDVrpOe4uFavVYCNijQ@mail.gmail.com>
+ <3947f772-691b-46a2-af68-15825e7f4939@gmail.com>
+ <CAGwozwFbQWyuQB6EwLMLon5muff2WudR+oVL62DqP_MXGW+p-Q@mail.gmail.com>
+ <b91de7c7-74b8-4cf5-82a4-f3d4eaf418d4@gmail.com>
+ <CAGwozwGj-yXHXBan38_NV7G5T66bnjm7om2bz_Bha35AHhtCJQ@mail.gmail.com>
+ <CAGwozwEh32XMcGJPKMRBWd63ybYOxW1Wx4QjU-QErjQgLHwX2g@mail.gmail.com>
+ <0d18666a-78e1-4e69-8fd2-f15052db0cee@gmail.com>
+ <CAGwozwHyC8P4KzZFY7t=WF3ANiJ4q6HgbiAMUNAGHE899Jd6rQ@mail.gmail.com>
+ <ee179dc9-e7ac-4b64-a58c-93da5f7f4057@gmail.com>
+In-Reply-To: <ee179dc9-e7ac-4b64-a58c-93da5f7f4057@gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sat, 25 Oct 2025 09:20:50 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwG3kk3z+7Ev4p21VsB8jChRPqSZmu5Cxu1RhRRtr3bnuA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnGzzPP3dpoJD1W6gEj3wJbCOfiLBKj6MGe1qbs4_FJhYJgc8Yk6mMDi3k
+Message-ID: 
+ <CAGwozwG3kk3z+7Ev4p21VsB8jChRPqSZmu5Cxu1RhRRtr3bnuA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/9] HID: asus: simplify RGB init sequence
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <176137686315.1918022.11118505183343782752@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On Mon, Sep 22, 2025 at 07:25:23PM -0400, Rogerio Pimentel wrote:
-> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
-> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
-> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
-> display interfaces, camera connectors, and standard expansion headers.
-> 
-> Based on the device tree found in the NXP repository at github
-> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
-> board kernel mainline device tree.
-> 
-> This is a basic device tree supporting:
-> 
->  - Quad Cortex-A53
->  - 4GB LPDDR4 DRAM
->  - PCA9450C PMIC with regulators
->  - Two NXP PCAL6416 GPIO expanders
->  - RGB LEDs via GPIO expander
->  - I2C1, I2C2, I2C3 controllers
->  - UART2 (console) and UART3 (with RTS/CTS)
->  - USDHC3 (8-bit eMMC)
->  - SNVS power key (onboard power button)
-> 
-> Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
-> Signed-off-by: Rogerio Pimentel <rpimentel.silva@gmail.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> 
-> ---
-> 
-> Changes in v3:
-> 
->  - Removing the following tags and names added
->  on v2 by mistake: 
->  Reviewed-by: Daniel Baluta <daniel.baluta@gmail.com>
->  Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->  Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-> 
-> Changes in v2:
-> 
->  - Fixed dt-binding schema warnings
->  - Renamed nodes 'red, green and blue' to
->    'led-0, led-1 and led-2'
->  - Renamed led labels 'led-0, led-1 and led-2'
->    to 'red, green and blue'
->  - Added Reviewed-by and Signed-off-by tags
->  
->  
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  arch/arm64/boot/dts/freescale/imx8mp-frdm.dts | 355 ++++++++++++++++++
->  2 files changed, 356 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 525ef180481d..d861e576779a 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -206,6 +206,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-picoitx.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-edm-g-wb.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-frdm.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-mate.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pro.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pulse.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts b/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
-> new file mode 100644
-> index 000000000000..9138c65739aa
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
-> @@ -0,0 +1,355 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2019 NXP
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx8mp.dtsi"
-> +
-> +/ {
-> +	model = "NXP i.MX8MPlus FRDM board";
-> +	compatible = "fsl,imx8mp-frdm", "fsl,imx8mp";
-> +
-> +	chosen {
-> +		stdout-path = &uart2;
-> +	};
-> +
-> +	gpio-leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led-0 {
-> +			label = "red";
-> +			gpios = <&pcal6416 13 GPIO_ACTIVE_HIGH>;
-> +			default-state = "off";
-> +		};
-> +
-> +		led-1 {
-> +			label = "green";
-> +			gpios = <&pcal6416 14 GPIO_ACTIVE_HIGH>;
-> +			default-state = "on";
-> +		};
-> +
-> +		led-2 {
-> +			label = "blue";
-> +			gpios = <&pcal6416 15 GPIO_ACTIVE_HIGH>;
-> +			default-state = "off";
-> +		};
-> +	};
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x40000000 0 0xc0000000>,
-> +		      <0x1 0x00000000 0 0x40000000>;
-> +	};
-> +};
-> +
-> +&A53_0 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&A53_1 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&A53_2 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&A53_3 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c1>;
-> +	status = "okay";
-> +
-> +	pmic@25 {
+On Sat, 25 Oct 2025 at 03:25, Denis Benato <benato.denis96@gmail.com> wrote:
+>
+>
+> On 10/24/25 23:20, Antheas Kapenekakis wrote:
+> > On Fri, 24 Oct 2025 at 20:53, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>
+> >> On 10/24/25 18:20, Antheas Kapenekakis wrote:
+> >>> On Fri, 24 Oct 2025 at 01:25, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+> >>>> On Fri, 24 Oct 2025 at 00:53, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>>> On 10/23/25 23:30, Antheas Kapenekakis wrote:
+> >>>>>> On Thu, 23 Oct 2025 at 22:05, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>>>>> On 10/23/25 20:06, Antheas Kapenekakis wrote:
+> >>>>>>>> On Thu, 23 Oct 2025 at 19:38, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>>>>>>> On 10/18/25 12:17, Antheas Kapenekakis wrote:
+> >>>>>>>>>> Currently, RGB initialization forks depending on whether a device is
+> >>>>>>>>>> NKEY. Then, NKEY devices are initialized using 0x5a, 0x5d, 0x5e
+> >>>>>>>>>> endpoints, and non-NKEY devices with 0x5a and then a
+> >>>>>>>>>> backlight check, which is omitted for NKEY devices.
+> >>>>>>>>>>
+> >>>>>>>>>> Remove the fork, using a common initialization sequence for both,
+> >>>>>>>>>> where they are both only initialized with 0x5a, then checked for
+> >>>>>>>>>> backlight support. This patch should not affect existing functionality.
+> >>>>>>>>>>
+> >>>>>>>>>> 0x5d and 0x5e endpoint initializations are performed by Windows
+> >>>>>>>>>> userspace programs associated with different usages that reside under
+> >>>>>>>>>> the vendor HID. Specifically, 0x5d is used by Armoury Crate, which
+> >>>>>>>>>> controls RGB and 0x5e by an animation program for certain Asus laptops.
+> >>>>>>>>>> Neither is used currently in the driver.
+> >>>>>>>>> What benefits do we get from removing the unused initialization?
+> >>>>>>>>>
+> >>>>>>>>> If this has never caused any troubles I don't see the reason for removing
+> >>>>>>>>> them. Moreover the lighting protocol is known and I might as well add
+> >>>>>>>>> support for it in the near future,
+> >>>>>>>> I already have a patch that adds RGB and delay inits that endpoint. It
+> >>>>>>>> got removed to make this easier to merge. See [1].
+> >>>>>>>>
+> >>>>>>>> [1] https://lore.kernel.org/lkml/20250324210151.6042-10-lkml@antheas.dev/
+> >>>>>>> I have to main concerns about this:
+> >>>>>>>
+> >>>>>>> 1. taking away initialization commands in one patchset to make it
+> >>>>>>> easier to merge another unrelated patch doesn't seem the right thing
+> >>>>>>> to do if the other patch it's not in the same series.
+> >>>>>>>
+> >>>>>>> I can see [1] has been removed from the set for a later moment in time,
+> >>>>>>> it's fine if it needs more work, just send something that function in the
+> >>>>>>> same way and do not remove initialization commands when unnecessary,
+> >>>>>>> especially since there will be for sure future development.
+> >>>>>> The initialization was removed as part of general cleanup. Not to make
+> >>>>>> it easier to merge the RGB patch. In addition, the RGB patch only runs
+> >>>>>> the init in a lazy fashion, so if nobody uses the RGB sysfs the init
+> >>>>>> does not run and the behavior is the same.
+> >>>>> There are a few problems here:
+> >>>>> 1. sope creep: either do a cleanup or solve bugs. The fact that your flow z13
+> >>>>> doesn't load hid-asus correctly has nothing to do with the initialization of anime.
+> >>>>> The fact that hid-asus is driving leds instead of asus-wmi has nothing to do with
+> >>>>> anime matrix initialization either.
+> >>>>> 2. not sending the initialization can get hardware misbehave because it
+> >>>>> is left in an uninitialized state.
+> >>>>> 3. there are absolutely zero reasons to do that. There are even less reasons
+> >>>>> as to do it as part of this patchset.
+> >>>>>
+> >>>>>>> 2. Your patchset resolves around keyboard backlight control and how
+> >>>>>>> the keyboard device is exposed to userspace: it's fine but I do not see
+> >>>>>>> the point in removing initialization commands that has nothing to do
+> >>>>>>> with the issue we are trying to solve here.
+> >>>>>>>
+> >>>>>>> Please leave 0x5E and 0x5D initialization commands where they are now.
+> >>>>>> I mean the second part of the patchset does that. The first part is a
+> >>>>>> cleanup. What would be the reason for keeping 0x5E and 0x5D? They are
+> >>>>>> only used when initializing those endpoints to write further commands
+> >>>>>> to them and for identification. The current driver does not write
+> >>>>>> commands to those endpoints and identifies itself over 0x5A.
+> >>>>> There are no bugs opened that ties initialization of devices to bugs.
+> >>>>> Quite the opposite: I can guarantee you that removing part of the
+> >>>>> init will introduce regressions.
+> >>>>>
+> >>>>> The onus is on you to provide strong evidence that the removal is
+> >>>>> a necessary act.
+> >>>>>
+> >>>>> Regardless it is not in the scope of this patchset: remove it.
+> >>>>>> I do get that it is a bit risky as some laptops might be hardcoded to
+> >>>>>> wait for 0x5D to turn on RGB. Which is why we had the last patch until
+> >>>>>> V4. But we have yet to find a laptop that has this problem, so I find
+> >>>>>> it difficult to justify keeping the init.
+> >>>>> Yes it's risky to remove initialization sequences for a device that is
+> >>>>> in every modern ASUS laptop and is tied to the EC.
+> >>>>>> Do note that you might need to add the 0x5D init to your userspace
+> >>>>>> program for certain laptops if you haven't already. But that is ok,
+> >>>>>> since in doing so you are also validating you are speaking to an Asus
+> >>>>>> device, which is important.
+> >>>>> This doesn't make much sense: why would anyone remove
+> >>>>> a command from the kernel, that can be very well essential to some models
+> >>>>> (sleep can break, for example) just to add it back in a userspace program?
+> >>>>>
+> >>>>> What does it mean I have to validate I am speaking to an asus device?
+> >>>>> Software selects devices by known attribute, one of them is the vid:pid....
+> >>>>> Beside what does this have to do with the removal of initialization commands
+> >>>>> from the kernel?
+> >>>>>
+> >>>>> Even late initializing devices can lead to problems. Windows doesn't do that:
+> >>>>> as soon as asus drivers are loaded all relevant initialization sequences are
+> >>>>> sent; Windows is the only officially supported OS: do not introduce commands
+> >>>>> flow divergence without strong reasons backing it up.
+> >>>> If you think keeping 0x5D init is that important, I can spin patch [1]
+> >>>> into this series. But then this quirk will stay in the kernel forever.
+> >>>> I can even add 0x5E since that does not affect newer devices, which I
+> >>>> care for simplifying the sequence.
+> >> Fully initializing the device tied to the EC in the same windows does
+> >> is not a "quirk". Please stop calling it that.
+> >>
+> >> It will stay on the kernel until we have strong evidence that it is causing
+> >> problems, at that point we simply avoid doing it for problematic laptops.
+> >>
+> >> If adding other commands doesn't introduce regressions or are otherwise
+> >> easy to bisect and makes more hardware working please do.
+> > It is not an init sequence. It is a handshake with the userspace
+> > program that proves to the program it is talking with a genuine asus
+> > device and to the device with the correct program. For all devices
+> > that I have tested it seems to NOOP.
+> The MCU doesn't distinguish between userspace or kernel space:
+> "it is a handshake" => yeah handshakes are part of initialization procedures.
+> "with the userspace program [...]" => MCU does not care where data is coming from.
+>
+> Anyway further discussion is useless. We understood you are against
+> keeping commands that that you believe  are useless, but sometimes
+> software is like life: you have to accept compromises.
+> > 0x5a is the only one used for a driver and it does brightness control.
+> > 0x5d/0x5e are used with userspace Windows programs. 0x5d does RGB.
+> > Moreover, the application 0xff310076 only has a single report ID under
+> > it, 0x5a. 0x5d and 0x5e belong to different hid applications that are
+> > not currently checked by the driver (but when they exist they reside
+> > under the same hid endpoint, with a multi-application collection that
+> > bifurcates in Windows to multiple hid devices).
+> The MCU works as a state machine where the status is updated
+> on sleep, power on and power off: not sending initialization commands
+> will confuse (some) hardware. If not now in a few years when some user will
+> migrate away from whatever debian 12 they are running.
+>
+> Those commands are not simple commands to "just init the device" as you
+> are depicting here. Stop doing that.
+> > So it makes sense to remove the redundant handshakes. If some laptops
+> > require 0x5d to enable shortcuts as Luke said, I have a patch that
+> > does that and is straightforward to do. But since the shortcut
+> > response comes from the 0x5a endpoint, I find it unlikely for it to
+> > require a handshake over a different endpoint to init.
+> So you want to remove some code, that has caused no troubles, on
+> the assumption that such removal won't have any visible consequence,
+> but you have a patch ready to restore the previous behavior in case
+> something goes wrong? It doesn't matter if you find it unlikely or not:
+> either there is a strong reason to remove it or there is not: you finding
+> such removal "unlikely" to break anything down the line is not a strong
+> reason to remove it. The fact that you don't like some code is not a strong
+> reason to remove it either.
+>
+> Antheas... your flow z13 isn't loading correctly. Focus on the issue
+> at hands. Please.
+>
 
-Please sort I2C devices in order of slave address?
+If that initialization means that much to you I will re-add the patch
+that runs it on old laptops. No need to crash out
 
-> +		compatible = "nxp,pca9450c";
-> +		reg = <0x25>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_pmic>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +		regulators {
-> +			BUCK1 {
-> +				regulator-name = "BUCK1";
-> +				regulator-min-microvolt = <720000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +				regulator-ramp-delay = <3125>;
-> +			};
-> +
-> +			reg_arm: BUCK2 {
-> +				regulator-name = "BUCK2";
-> +				regulator-min-microvolt = <720000>;
-> +				regulator-max-microvolt = <1025000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +				regulator-ramp-delay = <3125>;
-> +				nxp,dvs-run-voltage = <950000>;
-> +				nxp,dvs-standby-voltage = <850000>;
-> +			};
-> +
-> +			BUCK4 {
-> +				regulator-name = "BUCK4";
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3600000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			reg_buck5: BUCK5 {
-> +				regulator-name = "BUCK5";
-> +				regulator-min-microvolt = <1650000>;
-> +				regulator-max-microvolt = <1950000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			BUCK6 {
-> +				regulator-name = "BUCK6";
-> +				regulator-min-microvolt = <1045000>;
-> +				regulator-max-microvolt = <1155000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			LDO1 {
-> +				regulator-name = "LDO1";
-> +				regulator-min-microvolt = <1650000>;
-> +				regulator-max-microvolt = <1950000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			LDO3 {
-> +				regulator-name = "LDO3";
-> +				regulator-min-microvolt = <1710000>;
-> +				regulator-max-microvolt = <1890000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			LDO5 {
-> +				regulator-name = "LDO5";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +		};
-> +	};
-> +
-> +	pcal6416: gpio@20 {
-> +		compatible = "nxp,pcal6416";
-> +		reg = <0x20>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_pcal6416_int>;
-> +		interrupt-parent = <&gpio3>;
-> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-> +		gpio-line-names = "CSI1_nRST",
-> +			"CSI2_nRST",
-> +			"DSI_CTP_RST",
-> +			"EXT_PWREN1",
-> +			"CAN_STBY",
-> +			"EXP_P0_5",
-> +			"EXP_P0_6",
-> +			"P0_7",
-> +			"LVDS0_BLT_EN",
-> +			"LVDS1_BLT_EN",
-> +			"LVDS0_CTP_RST",
-> +			"LVDS1_CTP_RST",
-> +			"SPK_PWREN",
-> +			"RLED_GPIO",
-> +			"GLED_GPIO",
-> +			"BLED_GPIO";
-> +	};
-> +
-> +	pcal6416_1: gpio@21 {
-
-Would it be better to label these two pcal6416 devices as
-
-	pcal6416_1
-	pcal6416_2
-
-or
-	pcal6416_0
-	pcal6416_1
-?
-
-Shawn
-
-> +		compatible = "nxp,pcal6416";
-> +		reg = <0x21>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_pcal6416_1_int>;
-> +		interrupt-parent = <&gpio2>;
-> +		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-> +		gpio-line-names = "P0_0",
-> +			"P0_1",
-> +			"AUD_nINT",
-> +			"RTC_nINTA",
-> +			"USB1_SS_SEL",
-> +			"USB2_PWR_EN",
-> +			"SPI_EXP_SEL",
-> +			"P0_7",
-> +			"W2_HOST_WAKE_SD_3V3",
-> +			"W2_HOST_WAKE_BT_3V3",
-> +			"EXP_WIFI_BT_PDN_3V3",
-> +			"EXP_BT_RST_3V3",
-> +			"W2_RST_IND_3V3",
-> +			"SPI_nINT_3V3",
-> +			"KEYM_PCIE_nWAKE",
-> +			"P1_7";
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c2>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c3 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c3>;
-> +	status = "okay";
-> +};
-> +
-> +&snvs_pwrkey {
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart2>;
-> +	status = "okay";
-> +};
-> +
-> +&uart3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart3>;
-> +	assigned-clocks = <&clk IMX8MP_CLK_UART3>;
-> +	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
-> +	uart-has-rtscts;
-> +	status = "okay";
-> +};
-> +
-> +&usdhc3 {
-> +	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
-> +	assigned-clock-rates = <400000000>;
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	pinctrl-0 = <&pinctrl_usdhc3>;
-> +	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-> +	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-> +	bus-width = <8>;
-> +	non-removable;
-> +	status = "okay";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl_i2c1: i2c1grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL	0x400001c2
-> +			MX8MP_IOMUXC_I2C1_SDA__I2C1_SDA	0x400001c2
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c2: i2c2grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL	0x400001c2
-> +			MX8MP_IOMUXC_I2C2_SDA__I2C2_SDA	0x400001c2
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c3: i2c3grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C3_SCL__I2C3_SCL	0x400001c2
-> +			MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA	0x400001c2
-> +		>;
-> +	};
-> +
-> +	pinctrl_pmic: pmicgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03	0x000001c0
-> +		>;
-> +	};
-> +
-> +	pinctrl_pcal6416_int: pcal6416_int_grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_READY_B__GPIO3_IO16	0x146
-> +		>;
-> +	};
-> +
-> +	pinctrl_pcal6416_1_int: pcal6416_1_int_grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SD1_STROBE__GPIO2_IO11	0x146
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart2: uart2grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x140
-> +			MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX	0x140
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart3: uart3grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ECSPI1_SCLK__UART3_DCE_RX	0x140
-> +			MX8MP_IOMUXC_ECSPI1_MOSI__UART3_DCE_TX	0x140
-> +			MX8MP_IOMUXC_ECSPI1_SS0__UART3_DCE_RTS	0x140
-> +			MX8MP_IOMUXC_ECSPI1_MISO__UART3_DCE_CTS	0x140
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3: usdhc3grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x190
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d0
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d0
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d0
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d0
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d0
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x190
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x194
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d4
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d4
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d4
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d4
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d4
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x194
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x196
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d6
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d6
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d6
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d6
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d6
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x196
-> +		>;
-> +	};
-> +};
-> -- 
-> 2.25.1
-> 
+> >>>> Luke said these two pairs are the important ones to keep.
+> >>>>
+> >>>> I'm not sure what to do.
+> >>> I was asked by a 2025 Asus Zenbook Duo user to add his IDs in [1]. In
+> >>> doing so, I updated the rgb and legacy init patches for the new series
+> >>> and added a quirk for early init of the duo keyboards.
+> >> I will take a look when I can, but if you haven't removed anything
+> >> that shouldn't pose any risk. None that I can think of at the moment anyway.
+> >>> The series is 14 patches long, I don't think my email can take it :(
+> >> linux.dev accounts for maintainers are provided free of charge
+> >> and I had to ask for an account too. I suggest you do the same.
+> >>> Should we merge the first part of this series with the legacy init,
+> >>> then do the backlight refactor, and finally the new Duo stuff + rgb?
+> >> I think so. My only doubt is about the per_app quirk. Other than
+> >> that looks good and solves one problem while also better representing
+> >> the hardware, so I can't think of any blockers.
+> >>> Antheas
+> >>>
+> >> Thanks,
+> >> Denis
+> >>>> Antheas
+> >>>>
+> >>>> [1] https://lore.kernel.org/all/20250325184601.10990-12-lkml@antheas.dev/
+> >>>>
+> >>>>>> Antheas
+> >>>>>>
+> >>>>> Denis
+> >>>>>>>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >>>>>>>>>> ---
+> >>>>>>>>>>  drivers/hid/hid-asus.c | 56 ++++++++++++++----------------------------
+> >>>>>>>>>>  1 file changed, 19 insertions(+), 37 deletions(-)
+> >>>>>>>>>>
+> >>>>>>>>>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> >>>>>>>>>> index a444d41e53b6..7ea1037c3979 100644
+> >>>>>>>>>> --- a/drivers/hid/hid-asus.c
+> >>>>>>>>>> +++ b/drivers/hid/hid-asus.c
+> >>>>>>>>>> @@ -638,50 +638,32 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+> >>>>>>>>>>       unsigned char kbd_func;
+> >>>>>>>>>>       int ret;
+> >>>>>>>>>>
+> >>>>>>>>>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> >>>>>>>>>> -             /* Initialize keyboard */
+> >>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>>>>>>>>> -             if (ret < 0)
+> >>>>>>>>>> -                     return ret;
+> >>>>>>>>>> -
+> >>>>>>>>>> -             /* The LED endpoint is initialised in two HID */
+> >>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+> >>>>>>>>>> -             if (ret < 0)
+> >>>>>>>>>> -                     return ret;
+> >>>>>>>>>> -
+> >>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+> >>>>>>>>>> -             if (ret < 0)
+> >>>>>>>>>> -                     return ret;
+> >>>>>>>>>> -
+> >>>>>>>>>> -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> >>>>>>>>>> -                     ret = asus_kbd_disable_oobe(hdev);
+> >>>>>>>>>> -                     if (ret < 0)
+> >>>>>>>>>> -                             return ret;
+> >>>>>>>>>> -             }
+> >>>>>>>>>> -
+> >>>>>>>>>> -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> >>>>>>>>>> -                     intf = to_usb_interface(hdev->dev.parent);
+> >>>>>>>>>> -                     udev = interface_to_usbdev(intf);
+> >>>>>>>>>> -                     validate_mcu_fw_version(hdev,
+> >>>>>>>>>> -                             le16_to_cpu(udev->descriptor.idProduct));
+> >>>>>>>>>> -             }
+> >>>>>>>>>> +     ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>>>>>>>>> +     if (ret < 0)
+> >>>>>>>>>> +             return ret;
+> >>>>>>>>>>
+> >>>>>>>>>> -     } else {
+> >>>>>>>>>> -             /* Initialize keyboard */
+> >>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>>>>>>>>> -             if (ret < 0)
+> >>>>>>>>>> -                     return ret;
+> >>>>>>>>>> +     /* Get keyboard functions */
+> >>>>>>>>>> +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> >>>>>>>>>> +     if (ret < 0)
+> >>>>>>>>>> +             return ret;
+> >>>>>>>>>>
+> >>>>>>>>>> -             /* Get keyboard functions */
+> >>>>>>>>>> -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> >>>>>>>>>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> >>>>>>>>>> +             ret = asus_kbd_disable_oobe(hdev);
+> >>>>>>>>>>               if (ret < 0)
+> >>>>>>>>>>                       return ret;
+> >>>>>>>>>> +     }
+> >>>>>>>>>>
+> >>>>>>>>>> -             /* Check for backlight support */
+> >>>>>>>>>> -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> >>>>>>>>>> -                     return -ENODEV;
+> >>>>>>>>>> +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> >>>>>>>>>> +             intf = to_usb_interface(hdev->dev.parent);
+> >>>>>>>>>> +             udev = interface_to_usbdev(intf);
+> >>>>>>>>>> +             validate_mcu_fw_version(
+> >>>>>>>>>> +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
+> >>>>>>>>>>       }
+> >>>>>>>>>>
+> >>>>>>>>>> +     /* Check for backlight support */
+> >>>>>>>>>> +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> >>>>>>>>>> +             return -ENODEV;
+> >>>>>>>>>> +
+> >>>>>>>>>>       drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+> >>>>>>>>>>                                             sizeof(struct asus_kbd_leds),
+> >>>>>>>>>>                                             GFP_KERNEL);
+>
 
 
