@@ -1,169 +1,164 @@
-Return-Path: <linux-kernel+bounces-870041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373C6C09B8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DACC09B93
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC79A1AA20DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E1B1AA5D7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F6F314A6B;
-	Sat, 25 Oct 2025 16:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3GxsZcQ"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7554D26E6F6;
+	Sat, 25 Oct 2025 16:35:25 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0313148AC
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E5F238142
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410025; cv=none; b=VJfrBjI7dw1PxyxOGAxNYkTgQkmYHZi6NMVJml7y08zK/e/bB4nPXLBmG1+byUmqqycGI3YpvPUUoF/I/wDukHhjUTFX+Wp800AKjYdqDcEGvjkaU8BJQg39g14NNlavkHDjM2HDAJDkZd/H4O7y4Bh+rI/i+gT2sqY/NnDtVsQ=
+	t=1761410124; cv=none; b=qUomeQpY/iAHn2984/n5CmJwwu9S43AlKkvQwRzseFgvpDQo4c8Up4qJ9Mro1+4AzGPjFI9JMe/W5wYH49ceQXw+T3SgZi6ATnAPypUqHp2sgddksXQVT/GoiBG/veH21ILh+cR3AnQggZ5jcnBBsw/PxJj17qn6iMrDylcZRsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410025; c=relaxed/simple;
-	bh=W0pTJAcfrpLd3MSeWjU9C4zToTzxqvWOKJPAJegCRgo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dzr4XyN14qmNPuadTwb5p0D6mfNJhcdzAS+FNqS18ENBo+AU+igNXV0YZtXk3iV91uXSX9trKT+QUmYRnpoRgoZAgVTk+xA75yUdMZ14LQqMY7pdfbwRoNW2dmIIngHH38QZ6isnyGfmouQKd7oFnGhatKNCSA1W/LoolZGdVWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3GxsZcQ; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-89f4779fe03so75235085a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410021; x=1762014821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lCukDE2Wz/llmJRA1Dhhk+dKRYCeKOkr6t5vR7uoeBo=;
-        b=W3GxsZcQ0AjbfViWXfh+9q20Q/hqRqnWMrVwf3Lu3jxrZlLYZzR8fqV64fofyiCOsc
-         AQycqC1WssYOjDuAsqnRJoC21rHmhmQI0ZmOVelCYow4SxouzLe2dGOcW2rGPuX0ytRy
-         mP0nhuwEiE6cQuHjJrkETrZf3zbhEjyq+Ed3jQapIMRSiNNrHhXXzvgYmE/cs5qtEkcZ
-         fafAAxxSj7k25jMJvEzRtknXyICbUpOo2GZphZh5Pw3/1bb9lfiJI/eW6y6RcHwgHiyP
-         O7/JvbzuIlG4lvE168bPoIxVmpT8Cp441DPOVQmHnfT0bqaaWiYcPVebjmY/mzSojYlD
-         YCsw==
+	s=arc-20240116; t=1761410124; c=relaxed/simple;
+	bh=iyOBRl5QZhzw+5Ro5vJB2OJl2o9qrxD7/mSjzKjx6KI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LAPEFbdh7YnBiWTDr6udwWLE6hf846WnqpJf/F08iwsX/Phzn8dFSRvytYwO/hU5+/kaPav9HM3KoM+sThrBkAdQSAzSIBrOgoqoKYaLYRfAmbJ0MAStMMNH7lIAZVT61ybOgEgW2YnuElXsMxQx6SVF4lo+iQE1N8SpJfuYMIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93e8092427aso325010039f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:35:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410021; x=1762014821;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lCukDE2Wz/llmJRA1Dhhk+dKRYCeKOkr6t5vR7uoeBo=;
-        b=pxUASSoJvxm8UICvz6Ony15ItthSs+ieVb0EsHCoakfI21kexco7GPVGM9bQLDhqux
-         mgqIbJu2TD+3NgCCSoOasp5Fq0UA1/bqBWciZcJnB4WwWXquMKXrGuOPE+8M0tsK3Paz
-         auq2ICQqw1aVfJPkWLzt0Hmh+uvUKOt06vJratb80lWMgfOTxxhRIBCoXAy2Hp0f4+wm
-         5z0oSq2aelwAkES+mVk4pKE4cMqigDZUdc6vXsjGQYZLMU5hSudDcMi/lcdT2hDS53NX
-         oi3MId/UEy72QxylGJa1l9WSpMiode9uMJtwicFYfv09/RxExYtNdeP4HCePWmqS3PZ1
-         xPJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyL7vlU4Zu/n0+0uUI6WcyiHmI3OyZPXb9RIXhZpxruT8hN58Eso58rBqk3E1FvAITY0s0BQSY++9a7yU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGCE4VFyWHRuZyk2LosO3hNItQ5TaGVi4I35Eiv0SqKsoPmKFM
-	igvUDuS/x8bKMNFDHeYi2/LXhpHRFRmZwDboDorfWr8oPGGu2nwpLXRH
-X-Gm-Gg: ASbGncu8Oo6J6K7QId3bG1oNcsLmf+9Ye9LsXEYxLrJr/PSIMrLJdNYnF7w/MOknEGo
-	3b45MOFDoqgARLifCtkraP3FLYHd7DSPUnIEWBRAuitiF+GylNU32NKtaROJjYpRfxC5b3X5Rm7
-	2wgCjXg95YGxpUdkKMgFrHRnj1Zz7uLXtJ5yBwkXg15lAPpYcj5038lU2lSYvdiYuFsN6/s1q51
-	yj2YTMqXr1ajvHmtnaq1TNW8pI8CIKgLPR0TC9a1LZS8aL5T0SfIyjBXZaSRh1P3r8I8Nz1E72n
-	gP0yNpaCCPUAGmDn6+solH8tZl3wQ8fKIEilrsxIxGU9ZWZ2lWdRSpK7MIqXRVFtD34RyeAtHH0
-	H0LPnOLWnVxdjPWU8C1SKBCrm/IaylH6kIy2owEHButVh1/25xVl6OgFQ65epQARnRXg+jO4bHL
-	NDrE0cCEE=
-X-Google-Smtp-Source: AGHT+IFZUXzUCKjX2GS7KVjFpxXVayhaSU18PSnROxCbmg4ehcl8/3L/N8ey4/nagW/qyG5Qi/ofXg==
-X-Received: by 2002:a05:620a:2990:b0:829:b669:c791 with SMTP id af79cd13be357-890712b8ca4mr3694996585a.78.1761410021395;
-        Sat, 25 Oct 2025 09:33:41 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f254a41cdsm172336185a.29.2025.10.25.09.33.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:33:40 -0700 (PDT)
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Subject: [PATCH 21/21] Docs: add Functions parameters order section
-Date: Sat, 25 Oct 2025 12:33:03 -0400
-Message-ID: <20251025163305.306787-14-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251025162858.305236-1-yury.norov@gmail.com>
-References: <20251025162858.305236-1-yury.norov@gmail.com>
+        d=1e100.net; s=20230601; t=1761410122; x=1762014922;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L/TBpiav1G79AIOTkdY4adnGJwgmMIA5+MCuyC38fbg=;
+        b=GUnSINhll+jVnXj55Uu1kzVBF90o/lrNJ0zTathE+Bp+FxgR9B7OTPQZsLXxN5n+bk
+         w1xlAc/nnW8iDuHjzkvpj/Ajjrq9bHUdR5DUkquIMJSKoBkFKxGvndq0Pjpbz86uVMqt
+         puktnsQXVQ26Rd8/jRV9U5Q8p+QNGyVZFkBAXgBSHUgSrmSMCK1IcOoQYpnmvq/lviVC
+         S/QOAw8GGYaqWv7TcUT0muN4nLikcKf96q/bXK0/ig5f4gB4GVcuCFq7UrZvbwDLLnhr
+         yti8SrZp/x7iogsZrT9+NR5IeeMnxahD+dgWPkx33VGAB8uIJeD1ZCZipHyiBwnZJPnl
+         Ac5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUe0Dlcbtl1G+2f+nP4RC6fc5AvTl6Zd3RbR5wx5U2VFrlQIuraR7WMjlvZywlFtjL6uSzC3tCXaCU4Jg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxwywi4FzD+Vp+q9PnFtwZi6roRk6UfALTx3ulmDZAXVOoCFo8
+	w8ZUT6JyPdClPmUEbvjDAdQOI0+tFE1RepvyBy3DMUs8E9ekUj27rVXwtRypjCvSb7XD3DrU7Gk
+	HQgLYv1PNo3GlqsCDlTue1q+YDfPi6bpDl2IljOhj6XF79ucPVodUMsdHWJg=
+X-Google-Smtp-Source: AGHT+IGeqEzwanU1biO5d+ivaOCUX5hEsxCyYT+xT+jf2Li+zt8m+I5UT6TpcYDR9S2JPh6BYwnuqkplXrB0G8rg6VjlCJJZR0ul
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3f04:b0:430:c49d:750c with SMTP id
+ e9e14a558f8ab-431ebed79admr77062145ab.27.1761410122404; Sat, 25 Oct 2025
+ 09:35:22 -0700 (PDT)
+Date: Sat, 25 Oct 2025 09:35:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fcfc4a.050a0220.346f24.02fb.GAE@google.com>
+Subject: [syzbot] [mptcp?] WARNING in mptcp_pm_nl_del_addr_doit
+From: syzbot <syzbot+f56f7d56e2c6e11a01b6@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	martineau@kernel.org, matttbe@kernel.org, mptcp@lists.linux.dev, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Standardize parameters ordering in some typical cases to minimize
-confusion.
+Hello,
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    6548d364a3e8 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11da4e7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f953a3e1b3e60637
+dashboard link: https://syzkaller.appspot.com/bug?extid=f56f7d56e2c6e11a01b6
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a6472a8e035a/disk-6548d364.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1547185ddf28/vmlinux-6548d364.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d4610741deb8/bzImage-6548d364.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f56f7d56e2c6e11a01b6@syzkaller.appspotmail.com
+
+netlink: 8 bytes leftover after parsing attributes in process `syz.7.6472'.
+netlink: 8 bytes leftover after parsing attributes in process `syz.7.6472'.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 27976 at net/mptcp/pm_kernel.c:1053 __mark_subflow_endp_available net/mptcp/pm_kernel.c:1053 [inline]
+WARNING: CPU: 0 PID: 27976 at net/mptcp/pm_kernel.c:1053 mptcp_nl_remove_subflow_and_signal_addr net/mptcp/pm_kernel.c:1088 [inline]
+WARNING: CPU: 0 PID: 27976 at net/mptcp/pm_kernel.c:1053 mptcp_pm_nl_del_addr_doit+0xe2c/0x11d0 net/mptcp/pm_kernel.c:1190
+Modules linked in:
+CPU: 0 UID: 0 PID: 27976 Comm: syz.7.6472 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:__mark_subflow_endp_available net/mptcp/pm_kernel.c:1053 [inline]
+RIP: 0010:mptcp_nl_remove_subflow_and_signal_addr net/mptcp/pm_kernel.c:1088 [inline]
+RIP: 0010:mptcp_pm_nl_del_addr_doit+0xe2c/0x11d0 net/mptcp/pm_kernel.c:1190
+Code: 01 00 00 49 89 c6 e8 93 b2 82 f6 e9 ed fb ff ff e8 89 b2 82 f6 48 89 df be 03 00 00 00 e8 ac 8d 53 f9 eb 9c e8 75 b2 82 f6 90 <0f> 0b 90 e9 90 fe ff ff 89 d9 80 e1 07 38 c1 0f 8c d9 fb ff ff 48
+RSP: 0018:ffffc9000c3e71a0 EFLAGS: 00010283
+RAX: ffffffff8b3d917b RBX: 0000000000000000 RCX: 0000000000080000
+RDX: ffffc90019844000 RSI: 0000000000009d14 RDI: 0000000000009d15
+RBP: ffffc9000c3e73b0 R08: ffff88802f74eea7 R09: 1ffff11005ee9dd4
+R10: dffffc0000000000 R11: ffffed1005ee9dd5 R12: ffff888068e67080
+R13: ffff88802f74ee98 R14: ffff88802f74e400 R15: 1ffff11005ee9dd3
+FS:  00007f57ed7746c0(0000) GS:ffff888125d06000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000020000000c038 CR3: 000000004ebf8000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:742
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2630
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
+ __sys_sendmsg net/socket.c:2716 [inline]
+ __do_sys_sendmsg net/socket.c:2721 [inline]
+ __se_sys_sendmsg net/socket.c:2719 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f57ec98efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f57ed774038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f57ecbe6090 RCX: 00007f57ec98efc9
+RDX: 000000002000c094 RSI: 0000200000000000 RDI: 0000000000000009
+RBP: 00007f57eca11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f57ecbe6128 R14: 00007f57ecbe6090 R15: 00007ffeff6c13c8
+ </TASK>
+
+
 ---
- Documentation/process/coding-style.rst | 48 ++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
-index d1a8e5465ed9..dde24148305c 100644
---- a/Documentation/process/coding-style.rst
-+++ b/Documentation/process/coding-style.rst
-@@ -523,6 +523,54 @@ below, compared to the **declaration** example above)::
- 	...
-  }
- 
-+6.2) Function parameters order
-+------------------------------
-+
-+The order of parameters is important both for code generation and readability.
-+Passing parameters in an unusual order is a common source of bugs. Listing
-+them in standard widely adopted order helps to avoid confusion.
-+
-+Many ABIs put first function parameter and return value in R0. If your
-+function returns one of its parameters, passing it at the very beginning
-+would lead to a better code generation. For example::
-+
-+        void *memset64(uint64_t *s, uint64_t v, size_t count);
-+        void *memcpy(void *dest, const void *src, size_t count);
-+
-+If your function doesn't propagate a parameter, but has a meaning of copying
-+and/or processing data, the best practice is following the traditional order:
-+destination, source, options, flags.
-+
-+for_each()-like iterators should take an enumerator the first. For example::
-+
-+        for_each_set_bit(bit, mask, nbits);
-+                do_something(bit);
-+
-+        list_for_each_entry(pos, head, member);
-+                do_something(pos);
-+
-+If function operates on a range or ranges of data, corresponding parameters
-+may be described as ``start - end`` or ``start - size`` pairs. In both cases,
-+the parameters should follow each other. For example::
-+
-+        int
-+        check_range(unsigned long vstart, unsigned long vend,
-+                    unsigned long kstart, unsigned long kend);
-+
-+        static inline void flush_icache_range(unsigned long start, unsigned long end);
-+
-+        static inline void flush_icache_user_page(struct vm_area_struct *vma,
-+                                            struct page *page,
-+                                            unsigned long addr, int len);
-+
-+Both ``start`` and ``end`` of the interval are inclusive.
-+
-+Describing intervals in order ``end - start`` is unfavorable. One notable
-+example is the ``GENMASK(high, low)`` macro. While such a notation is popular
-+in hardware context, particularly to describe registers structure, in context
-+of software development it looks counter intuitive and confusing. Please switch
-+to an equivalent ``BITS(low, high)`` version.
-+
- 7) Centralized exiting of functions
- -----------------------------------
- 
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
