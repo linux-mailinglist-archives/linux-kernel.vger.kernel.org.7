@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-870124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5612C09FCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:46:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309E1C09FEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3394B4E39C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:46:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 48D5E34C3D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E8826E165;
-	Sat, 25 Oct 2025 20:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FB43081AC;
+	Sat, 25 Oct 2025 20:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bjg6aMuT"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dO/6fv8U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B79280033;
-	Sat, 25 Oct 2025 20:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826A11367;
+	Sat, 25 Oct 2025 20:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761425181; cv=none; b=Q4qZtKO6SfQv4MLaQ8CyK/1wM4N5Y7DzZF53OUQlhDJSgUCt9QfDTRon6MtikL4RvKfAdaxktpAFQquoMhYV7pm16SxSA9FR5xlgXTf7NGY4E3ALA6z3wkCFSqt5ZXdKJLWwFfEEJzHSLVBYkRT5cwWBSDqyPiZp1IoypQ3QY7E=
+	t=1761425617; cv=none; b=XSZmT1XhkEGpAZseMV7zkYbrzUZM60P16+5Lu24qGxMeKfg416ozRTRNl3+pzHljyXlY+0eTIii1Zvw6zxqUFyVWm0KNboV2ZYLsD/PxEAlav0HnIYWGx9yfBUheHsL4lFl6VlvEjfCrwNmnj3rGOqKSpKUo1Z4ma0TKb9GRt3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761425181; c=relaxed/simple;
-	bh=b5MeFWazwr56LQLRwY3moBEi821dzMS3YUDc0jgPLkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFSKQlK713yb8ECmfuDGjK8k8CrmsT8D09CW4Fk5/RfDVpQS/Q5TkIeqr7kPJI/r8ZVCduxjwdUccWl4DL579snjaZix8DBrmOXL6TwSPryUKF3ivfCOL/Ks+aNZ+brCPuT+SMt874BEOCdhetCCDo1T+FF771M1eE3tuT9kucI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bjg6aMuT; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WJV8yCBpczm8KIDTOsvfMxoNj/9nD30O6hwUymk/qO0=; b=bjg6aMuTvmwxlWyrdPML/qAeGw
-	dDzzD5bjnPn2Lbo3fD7YfqscLtqAIJpy6tfD/0TjfwWfugJ7Lop70enTP+lIIWHVzw+GgmlcNHtBb
-	Bdrkg7aXs/Q2bxy5zP8wZ0bkPkqO5wD8GlUZVTKbPvzVlJbfke/bx8To+qFO/IyjySxbVepFWwPxn
-	1zCv6rgZT5YugM4iktbfuVI1mBLDSXSgyFDK1kWBe8dSH7DtMh7OgePawMCRkQVHYdTdwRTaVqIyu
-	yCIh3tuGe8R4dFb9ONUL5cWlbckvDJA/kA9mZDb3nr0dGmnKOdP5ymYwH/XFY2GJ3aj0S9ny26c4b
-	Z92vdDDQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38512)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vCl9K-000000000Ok-3bSV;
-	Sat, 25 Oct 2025 21:46:06 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vCl9J-0000000040n-06JH;
-	Sat, 25 Oct 2025 21:46:05 +0100
-Date: Sat, 25 Oct 2025 21:46:04 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next 13/13] net: dsa: add driver for MaxLinear GSW1xx
- switch family
-Message-ID: <aP03DEZMHOv0NQoj@shell.armlinux.org.uk>
-References: <cover.1761324950.git.daniel@makrotopia.org>
- <4216aee3e5cbb20b31fe22c711efc38ea73df880.1761324950.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1761425617; c=relaxed/simple;
+	bh=rFP6/tMgv7qEPLocj8aUGISHZ+Qd8YkLgA3SOHA7IFg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rzqgXjZdY+k5KajFF5NrroJzgTy78X3IHiY8z+bc2ca3kl3hOBfFPHmOIrOzs+6JcL6ObmwCakFqyHyl1YXwXBf6cmA4H5z0nXKp+xnrJXOcNCwayXD886RiXiE6HBhFwxixLvC/ZPSAx2GKzgblIkFOaPWmoQ1uZxIczCAiS7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dO/6fv8U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19D9C4CEF5;
+	Sat, 25 Oct 2025 20:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761425616;
+	bh=rFP6/tMgv7qEPLocj8aUGISHZ+Qd8YkLgA3SOHA7IFg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=dO/6fv8UzBrVLHCd0fc5uz0cG4KMB4yZCCKfEv9PNfJyt84N4HvvFkr9SLnMqoDFq
+	 MC6eeGlHxKjdFusduqS7whF3+LI8uKHHteq3L9cWbYdyemGHfH0ZSATjn/+MON4nS+
+	 SGGq1Cu+x5RfhbSJy4JDd4k8QNud+Gl3MRmzbK3Ov/jHNuzYhE+y1BYrF3vbNNsq+Z
+	 VmnU+g43DmrJD1Yeb54OmFGrJsvhVL+6rzRnlCyQruroujbYpynmGyUkhljT/ulpWi
+	 Xeeaa19Wt57Ra1CCiMogevG+w3M2zt0PY0oPJYav6FKkRGvOhDbcTjcx4VqYVYJpKr
+	 0oc7OvhL9PEMA==
+From: Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH 0/3] Resolve ARM kCFI build failure in idpf xsk.c
+Date: Sat, 25 Oct 2025 21:53:17 +0100
+Message-Id: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4216aee3e5cbb20b31fe22c711efc38ea73df880.1761324950.git.daniel@makrotopia.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL04/WgC/x3MQQoCMQyF4auUrA3YajvoVcRFp001jM6UFEUov
+ fsEF2/xwePv0EiYGlxNB6EvN95WhT0YSM+4Pgg5q8Ednbc6ZS1Y+IdR3rikwjh/+JWRRDbB4CP
+ 5S7DhNJ1BG1VIv//+7T7GDuPH3rVvAAAA
+X-Change-ID: 20251025-idpf-fix-arm-kcfi-build-error-65ae59616374
+To: Kees Cook <kees@kernel.org>, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Michal Kubiak <michal.kubiak@intel.com>, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=939; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=rFP6/tMgv7qEPLocj8aUGISHZ+Qd8YkLgA3SOHA7IFg=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBl/Lc6kLCj/wcq3yeGsWg7TjF1BU1OvzJSQmSEluq/5j
+ HWb2Dr/jlIWBjEuBlkxRZbqx6rHDQ3nnGW8cWoSzBxWJpAhDFycAjARxxhGhpMGy3/Le1eG6FrY
+ x++odOT0dJn48p5ImrV8U3D8r61Bbgx/+Lv3M71ZtCXF/VdhpWPpuyP58q4bnoSFhR9hYrlkFtP
+ KCgA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Fri, Oct 24, 2025 at 06:05:00PM +0100, Daniel Golle wrote:
-> Add driver for the MaxLinear GSW1xx family of Ethernet switch ICs which
-> are based on the same IP as the Lantiq/Intel GSWIP found in the Lantiq VR9
-> and Intel GRX MIPS router SoCs. The main difference is that instead of
-> using memory-mapped I/O to communicate with the host CPU these ICs are
-> connected via MDIO (or SPI, which isn't supported by this driver).
-> Implement the regmap API to access the switch registers over MDIO to allow
-> reusing lantiq_gswip_common for all core functionality.
-> 
-> The GSW1xx also comes with a SerDes port capable of 1000Base-X, SGMII and
-> 2500Base-X, which can either be used to connect an external PHY or SFP
-> cage, or as the CPU port. Support for the SerDes interface is implemented
-> in this driver using the phylink_pcs interface.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Hi all,
 
-Not sure what version I reviewed, but please see that other version for
-my review comments on this patch.
+This series resolves a build failure that is seen in
+drivers/net/ethernet/intel/idpf/xsk.c after commit 9705d6552f58 ("idpf:
+implement Rx path for AF_XDP") in 6.18-rc1 with ARCH=arm and
+CONFIG_CFI=y. See patch 3 for a simplified reproducer on top of
+defconfig.
 
-Thanks.
+I think this could go via hardening or net.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+---
+Nathan Chancellor (3):
+      compiler_types: Introduce __nocfi_generic
+      ARM: Select ARCH_USES_CFI_GENERIC_LLVM_PASS
+      libeth: xdp: Disable generic kCFI pass for libeth_xdp_tx_xmit_bulk()
+
+ arch/Kconfig                   | 7 +++++++
+ arch/arm/Kconfig               | 2 ++
+ include/linux/compiler_types.h | 6 ++++++
+ include/net/libeth/xdp.h       | 2 +-
+ 4 files changed, 16 insertions(+), 1 deletion(-)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251025-idpf-fix-arm-kcfi-build-error-65ae59616374
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
+
 
