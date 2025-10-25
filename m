@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-870051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858CEC09CDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:00:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59826C09D4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F5214F0D88
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:47:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 901CA584A76
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AA530C60F;
-	Sat, 25 Oct 2025 16:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9462C30FC0A;
+	Sat, 25 Oct 2025 16:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVN14onw"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvDZsl/F"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6ED30BF6A
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6393430BF66
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410446; cv=none; b=ibR0fIUPSUq/joXoSMkJ9mG1xvM4OWsRfil0qV/R2BI6luK479/NfhFszH/WKRhlNgi1TM7eWhstjJMEzjBeXubtzuz6MWr7vo3ciDNhpWTroI3ttkUwF9lid5aq+pR9BML2tKbxcoTc3Y2Q60nIuPPQoy40W2pUZCi5L8qNJ7k=
+	t=1761410447; cv=none; b=V6oUAADWxrCjjp3y83dlWp9jyHGNHWGl0ANLOiRwx5Fau9u2CUspzwLf8XvSdelQA1cPQSlcr5ZQ0qyn2PGdICbejYJlgfeFIByO6Lmw5fgmBDko2b0m/7jVfg3932qODHdyDOVlcGrJsmzeLsQR5dFmb+U/HRGPMukaGJGGupU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410446; c=relaxed/simple;
-	bh=HkqvAUV2gBzhJnul/mGo7LdzjzJg+2pG+539ApHOXFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TL6rI5BMUNHyYyS1RzMoAYSc/w+LSS5zqVV1U16fvCnvYXCTuP5gnrfU2GfBUaQWwrpVQyRs8G/+elb7QScyE0nKdcEg96IxNrhthPflMxaykESTsvzMteH1OIgInjzgkEFKhFNx0hGdvVL5SNDf7yYwWKe6HyLh+TCy29vmy7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVN14onw; arc=none smtp.client-ip=209.85.219.41
+	s=arc-20240116; t=1761410447; c=relaxed/simple;
+	bh=6VtH0YRJIJT6wM7OnyxPz0sTaONVtRxS45ztLq91gUI=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CsbuGxuFBywyGyBhYE/IExeAntheqpsV/A+kUL8oJYFdfSoHs6w/uWACMzkTPxFTi7B5grcXELFw6IIAEP/KykJRZ+axPXOmTK32W5KVrDVl6/Qm1H6HZ+ATmkM1el7fV+NfaJ+d//vi05MPGRKSGrGLN6zwdkf7f8JasGlS5+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvDZsl/F; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-795be3a3644so17802966d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:40:43 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7f7835f4478so22924946d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410442; x=1762015242; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761410444; x=1762015244; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZXemVp+XP5C7K8PhG6mE03zKRPQX07LLYcr9/0qBaeY=;
-        b=YVN14onwG2Ww1dUHuVA8kXevdVznYfaJfJPACF32GtrqG4BQ40tDrTfXnDzCmbSTG1
-         oPf++8Win6glHMH6XlcUqJkXFW94QcsEhu0dqExF9w/R1Gs9EnFsQCJdaNyp/XC6/JiK
-         wZYtPge/GIkO4RtdFV7w4wA8yVr1FLy0BtMhPugI+he4S0dC+LxRXU8u/ZnqopQ/gf9+
-         6gUCycJyDpxqzLpR7rQbrbzJf6wpHZ3qW8q3s1L/P9XgfGoTE4jpJOSg9juuyjlH3aFJ
-         h2ommn6oVF8oQAp9rJkdqjTLN+fc44+fAbwabz2Z/TUEOIYvRn29+/7y5chUX17qn5/Z
-         x+dw==
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rg54zbsiDVSwYkKftv5+NDhQ1U50ovc7eDauHPziXJ4=;
+        b=kvDZsl/Fl7oBZpOxXZCdNS92r8JKczW4/ODkzUDS3nBDpG+CQ8lubiDUy9kVXoqamH
+         Mz+19/1Z4MkcQyw1syWRCc2cu+PnfT43EcWNNkXz0sS8VPcaDs/05Hg2Dwz0uHgpHBUu
+         maDY5AYRAMRc7YyaQ/ojX2DpqfsEDMWQ+M1gZ3RLuvXHnQ++x5UTZwyUtuhVy8+ZACVN
+         psj73tc8voCa1z2c3Wfdlznu6Nia5NyKODMF0YwWbrRY9MYniWNh9o3MznzePB9jbKk8
+         phk05XLO8WGPfLpPYro4OGMAHvsbQnenJGhSrrafvT4076+aNxuFdhr0/Lv4q8zJ3fZm
+         /Dew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410442; x=1762015242;
+        d=1e100.net; s=20230601; t=1761410444; x=1762015244;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZXemVp+XP5C7K8PhG6mE03zKRPQX07LLYcr9/0qBaeY=;
-        b=oDHcdXyICpR0hu4jFMP3/5GJJmeusDJ+r/bVd1eCz7Pw8f83mnWLrJ6pghYhCdVpam
-         LSfYDTHdunsFFdlN6qY4D4cT3+r9yGU8Re3o+HfH85JkwhJYUy8JP2iBbCeWgs5vG8Vq
-         7Qz53W/sPMOl7QPTZW4lTC7vAnZBeo04i1urteEsm94jQo/5PJ4iZY48NBIt2so4Qh7n
-         esTkJPM9fE68UmA1tV4AQSQInjNEaiulzWgFSX1lkGnc2SL+7G38TtMirHNZbdqniBrM
-         e4ReG48ix/MjrL9QT09KiM+eQlupMgPxf5329LIMpt8X60G1yKxECl95uVU0TprEGGgU
-         SaCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIy5vq3WU1fiTjK1HwB38Nn1eTlLcbZADOS0TQb4avHbx3MLwrMwTO/jEwF1qNGD4b3foWYa6PhpDJpZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDiL0TAakop9boRK3yemDi9NHuHsGd5cm5WGlP5PjrWkVinOTG
-	GMApgBInXPB27lVwfDegkRH/oITWJyTBVUmJa+qC0nsv9UOZCRq4fQCU
-X-Gm-Gg: ASbGncsaMCOlotithfw4tVKtKu50nAj22aH37xTieiafl55TbBBpKiSULRJKsqkEFKO
-	xp9e4+piQdaHWSBWKDZ8sT9Bmo+pjbwa/FaYAD3IBVAzYCu6aHeFkPvVlhxBTi8xQmoOUmvDIjV
-	BxucrnXjrNdtH7APvx4PZJrHKY2Yup/fsB6oxG2DpYgeOpgylnxViZa8k1TQ0Xs6KS7t5HJhucb
-	Jn5kf2JHfchBMOk+AHexkRZXt/g5sJybA5Hc8Pk5Fn/DCw625QV6OfFt+tOEqp9JKvV6grpsMaV
-	JM7mhdIIAAoVy/so7+Ex3336QJDAwis4PJ74z1hKOpFqb4RmJ/gRHMb5mC62ppGUpB9nnTf8YIP
-	gTlITlVoB2eHl04HgKEFnIlOJF5Ssi/aGNy0D+axw7QD5NNPLGsrQsYilGpOZHwm6dG/Z5PYgnO
-	jMSe6IzuQ=
-X-Google-Smtp-Source: AGHT+IFkeV9A6Ptus3JmqPV8qa6Aad4UN1X85QS76U9hx0IlT5Ln2gOuZnWRlM9bH9mA3BFWyYon/A==
-X-Received: by 2002:ac8:7e84:0:b0:4e8:b793:1c3b with SMTP id d75a77b69052e-4e8b79325e2mr295994671cf.61.1761410442323;
-        Sat, 25 Oct 2025 09:40:42 -0700 (PDT)
+        bh=rg54zbsiDVSwYkKftv5+NDhQ1U50ovc7eDauHPziXJ4=;
+        b=PMmj9mfjESi4q1NtM9y1EoCSOMmosw5H8t7NSfIqolGYyiw/MbCkltdQ1u4yWypD3V
+         UDeKwDhQsrQBRxlSq75rzlmOxA0fb6DpRK8F3PKoyg7MLKJXol4kkcxkNZIzQHnyi3Lt
+         UUg0vYT9sSY4oEi4TWag+b/q8k7ipIzkUHnv/PYuC+5TkM+COGGUUXYHXCseRKRJy5sR
+         7/SpKBdkoFW77wDxvlzR1uGypdq2s6pEDXlsfugdQdzgrtw10tYh0/DeC9KCUYRTJaVS
+         RTCySi9oQnh+qIDWKtHu9V6+qCyvfy2h02yilG+aLyfBfwSXoIAieMY0LbwrhVsma3BO
+         Cs5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWo2SnfMz48nGsdtcrbsjrzRb0wdCDAOJgHtymdFjOPVQ9EjZ8pZJIE1iTtTFNefqX1RdbhEyURDG1Rz2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbtsDpIB4RzBCpZ8HKxBKOCaXupMsWKY30mLlTXVurVoA07zdo
+	Plwt4JH7yZ8WH5nTv7XSC8V81xRtn9t+10YELxbj8QoJPjSmzj+S4fmF
+X-Gm-Gg: ASbGncujhqL7E7tt/RheVzYBJG24IJfkb+r2G0eqbYORZowAPjTmrdt1kVmzLC2jScN
+	jz5gcMw78JCsMvc2vNzWdzoF7vZgtUNa1PCGp9jDrm69ZRPEMrh6YKa/3+DVX0qKrcTlQZTTofm
+	atN655/NhHlGLpJ9hCpcpNDKfFD/OPK8lo2+9sBn0L8Cwthke25qthrT4yFx9wDmdEvvmedJvOj
+	s9ZqFg2xUy8CEGsTtExdqC+FexaGTFd+Mzbjnp2kXbKn+1SRGuT+n7VVw0UHMfaJBzE2qgDleu7
+	JHPkO14INzaWlvpp270pRQEw9/OVT6JC3PhNgh7Je5ENEOGNvDDaktslMhM2h1nHXVcV8vNsWsJ
+	OkKZwI9RdDfz7Ui2TKmcAjHOGvmhVP3klI1FhjWN83xUh1BsoVxUucqSpRqRFCcENGAEn51FT3f
+	U17PZ8Cg0=
+X-Google-Smtp-Source: AGHT+IGKsc2keEHm/1YFQYrnIMTwMslANRJ4raDN9IkDXbXLCbSXAIKbrJmhJuMSjVOFvhRcYi6AIw==
+X-Received: by 2002:a05:6214:43c4:b0:87c:20f5:84e2 with SMTP id 6a1803df08f44-87c20f5873cmr525350756d6.25.1761410444250;
+        Sat, 25 Oct 2025 09:40:44 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba37db728sm15162421cf.12.2025.10.25.09.40.40
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc51e3809sm15359146d6.26.2025.10.25.09.40.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:40:41 -0700 (PDT)
+        Sat, 25 Oct 2025 09:40:43 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	linux-kernel@vger.kernel.org
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 06/21] mfd: prepare to generalize BITS() macro
-Date: Sat, 25 Oct 2025 12:40:05 -0400
-Message-ID: <20251025164023.308884-7-yury.norov@gmail.com>
+Subject: [PATCH 07/21] bits: Add BITS() macro
+Date: Sat, 25 Oct 2025 12:40:06 -0400
+Message-ID: <20251025164023.308884-8-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025164023.308884-1-yury.norov@gmail.com>
 References: <20251025164023.308884-1-yury.norov@gmail.com>
@@ -96,26 +94,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for adding generic BITS() macro, add an #undef directive
-for the existing BITS(). The following patches will drop it entirely.
+The BITS(low, high) macro is preferable over a similar GENMASK(high, low)
+because (low, high) parameters order is more natural. The (high, low)
+order is confusing and has a record of misuse.
 
+To enforce unintuitive parameters order, GENMASK() is enforced with
+compile time checks. In addition, fixed-width versions of GENMASK() had
+been developed. They make sense in describing hardware registers.
+
+In generic code, using standard ordering (low to high) is more preferable,
+and fixed-width features are not that useful.
+
+In non-driver code, BITS() must be taken over GENMASK(). In drivers code,
+BITS() is preferable over GENMASK().
+
+The following pattern of using GENMASK() is highly unfavorable:
+
+  /* Status register (SR) */
+  #define I2C_SR_OP               GENMASK(1, 0)   /* Operation */
+  #define I2C_SR_STATUS           GENMASK(3, 2)   /* controller status */
+  #define I2C_SR_CAUSE            GENMASK(6, 4)   /* Abort cause */
+  #define I2C_SR_TYPE             GENMASK(8, 7)   /* Receive type */
+  #define I2C_SR_LENGTH           GENMASK(19, 9)  /* Transfer length */
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com/
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- drivers/mfd/db8500-prcmu-regs.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/bits.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mfd/db8500-prcmu-regs.h b/drivers/mfd/db8500-prcmu-regs.h
-index 75fd1069372c..25d2d5966211 100644
---- a/drivers/mfd/db8500-prcmu-regs.h
-+++ b/drivers/mfd/db8500-prcmu-regs.h
-@@ -12,6 +12,7 @@
- #ifndef __DB8500_PRCMU_REGS_H
- #define __DB8500_PRCMU_REGS_H
+diff --git a/include/linux/bits.h b/include/linux/bits.h
+index a40cc861b3a7..c7c587e90e2d 100644
+--- a/include/linux/bits.h
++++ b/include/linux/bits.h
+@@ -57,6 +57,9 @@
+ #define GENMASK_U64(h, l)	GENMASK_TYPE(u64, h, l)
+ #define GENMASK_U128(h, l)	GENMASK_TYPE(u128, h, l)
  
-+#undef BITS
- #define BITS(_start, _end) ((BIT(_end) - BIT(_start)) + BIT(_end))
- 
- #define PRCM_ACLK_MGT		(0x004)
++#define BITS(l, h)		GENMASK(h, l)
++#define BITS_ULL(l, h)		GENMASK_ULL(h, l)
++
+ /*
+  * Fixed-type variants of BIT(), with additional checks like GENMASK_TYPE(). The
+  * following examples generate compiler warnings due to -Wshift-count-overflow:
 -- 
 2.43.0
 
