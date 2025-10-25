@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-870010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A407C09B45
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:47:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4D8C09CDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71350427F16
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:33:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A661B562629
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9953164D6;
-	Sat, 25 Oct 2025 16:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85213195F6;
+	Sat, 25 Oct 2025 16:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLGd3odE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPNXYUS4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A333164C7;
-	Sat, 25 Oct 2025 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57B264F81;
+	Sat, 25 Oct 2025 16:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409567; cv=none; b=Bx8cxYXu9q3NzUHQ5NpAcv6xKgSCswFpcb7QwwX+I5L2+m/DT2WJLckfxgeAWkx8zwKQUyckO4GvGOr5FoCV3cvDHW+s5pbe3H9BeKOl6x/QesDjJxHwyato8/68tRRFg0ieP7CloPgMj9SooxBXLA+g9P5zASycCeJNjrq/PrU=
+	t=1761409600; cv=none; b=mQjc+YD1z6ETS1BVXRe2JeOjp/4jKNRouugvTjptJ9MMBwb5ipbIMMSVAd3xIGL0NobzYUiaWFfkl9flblOvjUaHApFt/YTAL2Q0FojhsC/qguYd5jXvWHxy0+hc9RphPGo2MBaYGtPcpD50H6V+5AAvy1qT5sqKktgdnTrutN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409567; c=relaxed/simple;
-	bh=fg9xU9MkRdWjXARbYA25O47bgzYDbgXcg3MEtfG4mJI=;
+	s=arc-20240116; t=1761409600; c=relaxed/simple;
+	bh=kfDcDMw7eTIsx4lkXWJSt5Nhdmtf4AE030oWpxBM3nM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sx/5ZnU6ZKoE1IOkRFUBFMM6ka9lXi9PpKX6YwFOgg2kcrMd0lWn+qHKA0K/GzCc4BtnC/TvUdxKvYRtVjoTJ6uIIFgqpfw7WVusMaQ7VUtLeF8HbEkf7d3AUyR6dIb6fF1UkPBaU0VdL6BRnYNRob8v2p2sMuJ2mIsscLvuGIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLGd3odE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E64C4CEFB;
-	Sat, 25 Oct 2025 16:26:04 +0000 (UTC)
+	 MIME-Version; b=GWn2L4T8rEBn2y6R1giGGrdnuIycfqlgA5jh5zmha7to3iGAB0QyuXTV9b1RG2c5vLA65ECICsSKPxxqqwaS9awJ57jEYnp8a+BIqXtjzHq21GfQEuU+qfQg160N1QZysdyorbC1yW8e13jP5379peJ2WG09SeB/XiUqEHUSd5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPNXYUS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFDDC4CEFF;
+	Sat, 25 Oct 2025 16:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761409565;
-	bh=fg9xU9MkRdWjXARbYA25O47bgzYDbgXcg3MEtfG4mJI=;
+	s=k20201202; t=1761409600;
+	bh=kfDcDMw7eTIsx4lkXWJSt5Nhdmtf4AE030oWpxBM3nM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mLGd3odEYpopEfv3acWnb7MEoVi7DuWXU41pJbH0oZSuLyR4vYhQUAoyjsHDwZkNh
-	 rxutlpYPVdG2H0ObZv28CKl4VVBn/79DBQ4PhGSAqaDDWqVfc7UUCn4+dRBThOG7kJ
-	 SU2O8Q8ij3SgG/hcgMa4e5ySiSfAnS2T4cm4EaHro/gfScnCqg8l/JlaVyMC7iZFeI
-	 vv7+8vhrdk986JWPhBO8mRcCRjJySjgKpV83XXkopFjteYeNKoiBa6OApmCV2GZwQh
-	 qAycSuWiVqlMrf50qqxLKtBFdCTpAxlhg2I8sLloxsVKFbqlzrQbB1oQ6PV5O9rc/0
-	 sg0m7kUnayMGg==
+	b=OPNXYUS4lZGgj9WFgGJDsouli5QzwxrpUBXJcoD/nuP5Yd/3fkt4a87pgFzfzKFLZ
+	 dzYfDHGEV+MsDl75Tv8YylGbJB6I2RZPJDAIphM+Fz2AbCG5DB0/m5tmM0HoGYiSMI
+	 ChWlWNQzl/r6hGoxzu0MnmKjjiRyKbuUxY0KPc/wg8D/Hjsk7bHaO2jun5qnpuBMbD
+	 1MA5VHnUcTgiNrXLoO26TRiNuAJZ1bE5/DNztYFFoeDyWy7thH3wt2eO4+An74YTQH
+	 OCD3Lglg/WVy5hVoNYQG1NKd3Eboq4oxHYgeSczJvgZuDJE/wfJMq/KVQTrRqbS3Z4
+	 TZAPZPzL1b4GQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Vladimir Riabchun <ferr.lambarginio@gmail.com>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17] mei: make a local copy of client uuid in connect
-Date: Sat, 25 Oct 2025 12:00:00 -0400
-Message-ID: <20251025160905.3857885-369-sashal@kernel.org>
+	mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-6.1] ftrace: Fix softlockup in ftrace_module_enable
+Date: Sat, 25 Oct 2025 12:00:16 -0400
+Message-ID: <20251025160905.3857885-385-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251025160905.3857885-1-sashal@kernel.org>
 References: <20251025160905.3857885-1-sashal@kernel.org>
@@ -64,112 +66,70 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.17.5
 Content-Transfer-Encoding: 8bit
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
 
-[ Upstream commit bb29fc32ae56393269d8fe775159fd59e45682d1 ]
+[ Upstream commit 4099b98203d6b33d990586542fa5beee408032a3 ]
 
-Connect ioctl has the same memory for in and out parameters.
-Copy in parameter (client uuid) to the local stack to avoid it be
-overwritten by out parameters fill.
+A soft lockup was observed when loading amdgpu module.
+If a module has a lot of tracable functions, multiple calls
+to kallsyms_lookup can spend too much time in RCU critical
+section and with disabled preemption, causing kernel panic.
+This is the same issue that was fixed in
+commit d0b24b4e91fc ("ftrace: Prevent RCU stall on PREEMPT_VOLUNTARY
+kernels") and commit 42ea22e754ba ("ftrace: Add cond_resched() to
+ftrace_graph_set_hash()").
 
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Link: https://lore.kernel.org/r/20250918130435.3327400-3-alexander.usyskin@intel.com
+Fix it the same way by adding cond_resched() in ftrace_module_enable.
+
+Link: https://lore.kernel.org/aMQD9_lxYmphT-up@vova-pc
+Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
 YES
-- `struct mei_connect_client_data` and `_vtag` overlay input and output
-  fields in a union (`include/uapi/linux/mei.h:44`,
-  `include/uapi/linux/mei.h:90`), so once the driver fills
-  `out_client_properties` the original UUID bytes are lost.
-- `mei_ioctl_connect_client()` reuses the saved UUID pointer in its
-  retry loop at `drivers/misc/mei/main.c:426` while the same call path
-  overwrites the union with output data at
-  `drivers/misc/mei/main.c:452`, so during the second iteration
-  `mei_me_cl_by_uuid()` sees garbage and the ioctl fails with `-ENOTTY`.
-- The patch copies the UUID into a stack variable
-  (`drivers/misc/mei/main.c:672`, `drivers/misc/mei/main.c:700`) and
-  passes a pointer to that stable copy (`drivers/misc/mei/main.c:708`,
-  `drivers/misc/mei/main.c:750`), ensuring the retry logic added for
-  D3cold link-reset recovery actually succeeds.
-- Without this fix, user space cannot reconnect to the firmware client
-  after a link reset triggered by powering a discrete card back up, so
-  the bug is user-visible and regresses the very scenario the previous
-  retry change was meant to solve.
-- Risk is minimal: it is a self-contained stack copy with no API
-  changes. When backporting, pair it with the `mei: retry connect if
-  interrupted by link reset` commit so the recovery flow on stable
-  kernels works end-to-end.
+- The change inserts `cond_resched()` inside the inner iteration over
+  every ftrace record (`kernel/trace/ftrace.c:7538`). That loop holds
+  the ftrace mutex and, for each record, invokes heavy helpers like
+  `test_for_valid_rec()` which in turn calls `kallsyms_lookup()`
+  (`kernel/trace/ftrace.c:4289`). On huge modules (e.g. amdgpu) this can
+  run for tens of milliseconds with preemption disabled, triggering the
+  documented soft lockup/panic during module load.
+- `ftrace_module_enable()` runs only in process context via
+  `prepare_coming_module()` (`kernel/module/main.c:3279`), so adding a
+  voluntary reschedule point is safe; the same pattern already exists in
+  other long-running ftrace loops (see commits d0b24b4e91fc and
+  42ea22e754ba), so this brings consistency without changing control
+  flow or semantics.
+- No data structures or interfaces change, and the code still executes
+  under the same locking (`ftrace_lock`, `text_mutex` when the arch
+  overrides `ftrace_arch_code_modify_prepare()`), so the risk of
+  regression is minimal: the new call simply yields CPU if needed while
+  keeping the locks held, preventing watchdog-induced crashes but
+  otherwise behaving identically.
 
- drivers/misc/mei/main.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Given it fixes a real, user-visible soft lockup with a contained and
+well-understood tweak, this is an excellent candidate for stable
+backporting.
 
-diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index 8a149a15b8610..77e7b641b8e97 100644
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -641,7 +641,7 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 	struct mei_cl *cl = file->private_data;
- 	struct mei_connect_client_data conn;
- 	struct mei_connect_client_data_vtag conn_vtag;
--	const uuid_le *cl_uuid;
-+	uuid_le cl_uuid;
- 	struct mei_client *props;
- 	u8 vtag;
- 	u32 notify_get, notify_req;
-@@ -669,18 +669,18 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 			rets = -EFAULT;
- 			goto out;
- 		}
--		cl_uuid = &conn.in_client_uuid;
-+		cl_uuid = conn.in_client_uuid;
- 		props = &conn.out_client_properties;
- 		vtag = 0;
+ kernel/trace/ftrace.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index a69067367c296..42bd2ba68a821 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7535,6 +7535,8 @@ void ftrace_module_enable(struct module *mod)
+ 		if (!within_module(rec->ip, mod))
+ 			break;
  
--		rets = mei_vt_support_check(dev, cl_uuid);
-+		rets = mei_vt_support_check(dev, &cl_uuid);
- 		if (rets == -ENOTTY)
- 			goto out;
- 		if (!rets)
--			rets = mei_ioctl_connect_vtag(file, cl_uuid, props,
-+			rets = mei_ioctl_connect_vtag(file, &cl_uuid, props,
- 						      vtag);
- 		else
--			rets = mei_ioctl_connect_client(file, cl_uuid, props);
-+			rets = mei_ioctl_connect_client(file, &cl_uuid, props);
- 		if (rets)
- 			goto out;
- 
-@@ -702,14 +702,14 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 			goto out;
- 		}
- 
--		cl_uuid = &conn_vtag.connect.in_client_uuid;
-+		cl_uuid = conn_vtag.connect.in_client_uuid;
- 		props = &conn_vtag.out_client_properties;
- 		vtag = conn_vtag.connect.vtag;
- 
--		rets = mei_vt_support_check(dev, cl_uuid);
-+		rets = mei_vt_support_check(dev, &cl_uuid);
- 		if (rets == -EOPNOTSUPP)
- 			cl_dbg(dev, cl, "FW Client %pUl does not support vtags\n",
--				cl_uuid);
-+				&cl_uuid);
- 		if (rets)
- 			goto out;
- 
-@@ -719,7 +719,7 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 			goto out;
- 		}
- 
--		rets = mei_ioctl_connect_vtag(file, cl_uuid, props, vtag);
-+		rets = mei_ioctl_connect_vtag(file, &cl_uuid, props, vtag);
- 		if (rets)
- 			goto out;
- 
++		cond_resched();
++
+ 		/* Weak functions should still be ignored */
+ 		if (!test_for_valid_rec(rec)) {
+ 			/* Clear all other flags. Should not be enabled anyway */
 -- 
 2.51.0
 
