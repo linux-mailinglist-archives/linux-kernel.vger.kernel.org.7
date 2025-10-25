@@ -1,253 +1,204 @@
-Return-Path: <linux-kernel+bounces-869903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23B3C08F77
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 13:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 645ECC08F80
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 13:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DACC4E4490
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:33:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2F484E71E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3FF2F7471;
-	Sat, 25 Oct 2025 11:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AA32F7AB1;
+	Sat, 25 Oct 2025 11:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrWPmUgv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmRdkG2I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FF917C21E;
-	Sat, 25 Oct 2025 11:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F342F069E;
+	Sat, 25 Oct 2025 11:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761391990; cv=none; b=jL/CrhFd3jOI0TeCvRrtcRBWjOtk1X1Qwsgq9sVtYwry8mSnFWcpta5QEZrnpBbcRrhkS3FLjpNpOLVvTtSg+/ziDwyihZQfYGuo/zzN/+IoBza8cUBb5Mp63z3PEZ/8CnGV3KV/wAhUExCXpP/Cp4DvoW3aDcNvzHMiB6ux8Oc=
+	t=1761392288; cv=none; b=b5QqRkqa9VcpF30wbxaPNHbc7PBhE0pce6lO3NoS0bXCD1Z3uDroj2MvTNiGLeZ3DYTJwGxbJQ02FEOfYBj4KLTtxEyqyvUI6CA+ospeZxriPgDApyZOcdm/hUcQ54LDlVVNbT6+hSvohR1a8Sm9X+OVR/0PlyM6EQkDA/l0rlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761391990; c=relaxed/simple;
-	bh=ezU1DRuGnsw3vL5rtzM9FxW6SZkGjKTA78pL3akBlcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PkH9NeB3tjXau2BaUUE1G29F0LDVh/G2ALbQvL4N1PsfGTNKqXecoXLNmFCwgb42fc46+9ufnTxWuPsOvmPrIKhoeQNA/rUXzh/FTMV0H+4E2IGEgJ2+aXM9JzyCorDaY3jzaD9IAMc+9ZOaZqfWdpL4giv/hMQxtbNnKg4A7j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrWPmUgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8A8C4CEF5;
-	Sat, 25 Oct 2025 11:33:04 +0000 (UTC)
+	s=arc-20240116; t=1761392288; c=relaxed/simple;
+	bh=F8IahjDZGjj5AZc+2Q2JyqxSl+DYX48BIZmYr2S7bRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XibBATc1fYPJnAIK6hvDMcUC5F8mrkxH57RaqUPSre8xzpZKe1KYm9tLnxpFFnL2R2WrorHYccU6TMF+DqT/zdmbKzKkhxbRLe1nRo+ZQUk73FLD4n5rvhKsCxjBFL86dYLx0ZUA5UuhmEglJlefuEZGBVLqHGi7PiTrT5mJ2Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmRdkG2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879ACC4CEF5;
+	Sat, 25 Oct 2025 11:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761391987;
-	bh=ezU1DRuGnsw3vL5rtzM9FxW6SZkGjKTA78pL3akBlcc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XrWPmUgv9wm7Xf+5SoC4m4HgmwHOgp+cOLmMOL/7gJZTq/cTMIVWhGrE+wUgjK6QR
-	 svfNZxO3UKMHSD9ahwZiJRKu8tgQkdFirbzfB3cd37HDG1UTh+HsHpmJPwrwnTX8gC
-	 s0jUW5IN3YboJB+GJcZXPMqGX3Qwqk5TMyibS2CVpj9NvMAu2m87i2fm0Zjh11kMpC
-	 +p2tnpMRDiDJVB7tQJPrw5E8m2bJu1dbR1uX+ZQmhtCwAqKh2QqGEakZHPv18+1z5y
-	 AGl/uZfLEDSJf3lr+UAOzS3c6/Fkrdvj7RdFlg2V44gGiMtZRl4DTXDdAusZ1kaQuL
-	 VSM6s+ervkFoQ==
-Message-ID: <a2fc02e2-d75a-43ed-8057-9b3860873ebb@kernel.org>
-Date: Sat, 25 Oct 2025 13:33:03 +0200
+	s=k20201202; t=1761392287;
+	bh=F8IahjDZGjj5AZc+2Q2JyqxSl+DYX48BIZmYr2S7bRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MmRdkG2I7D00nJ1TBpsXWkgMXskP5mljErDLxGc29wnnyzfe8B1RtVWwV6fBp1roL
+	 PURB2rIqI4sjakcYeyjpqoeNpaGqqDo+Bwgt4SUzgaH15T8A2Js2cxOQORB8/x0DR2
+	 EbgkOyhCwFjJpsY0fiF0ZddzWGsUdw6Bx1CL2S5I+zUm1VWd5CoLMWdjYvxAcKO2OD
+	 kOT93BPQZyxwuZtbuZu1LEsoU97DkoxJHFNyGI3KO/4GXfBQXcaew6/Y8ark0VnzPq
+	 Qw4h1C8YLimfzluRSUdYtPIHZV9HxksW47go5Bk6eIiKPqXqaSk3InaWj5oCSBGdOr
+	 Yajz0py4lS78g==
+Date: Sat, 25 Oct 2025 12:37:58 +0100
+From: Lee Jones <lee@kernel.org>
+To: Christian Hitz <christian@klarinett.li>
+Cc: Pavel Machek <pavel@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Dan Murphy <dmurphy@ti.com>, Christian Hitz <christian.hitz@bbv.ch>,
+	stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: leds-lp50xx: enable chip before any communication
+Message-ID: <20251025113758.GA29337@google.com>
+References: <20251016145623.2863553-1-christian@klarinett.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] misc: rp1: Fix a reference leak
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251016145623.2863553-1-christian@klarinett.li>
 
-On 24/10/2025 21:36, Christophe JAILLET wrote:
-> The reference taken by of_find_node_by_name() in the probe is not released
-> in the remove function.
+On Thu, 16 Oct 2025, Christian Hitz wrote:
+
+> From: Christian Hitz <christian.hitz@bbv.ch>
 > 
-> In order to avoid a reference leak, use cleanup.h to automatically
-> release the reference at the end of the probe when it is not needed
-> anymore.
+> If a GPIO is used to control the chip's enable pin, it needs to be pulled
+> high before any SPI communication is attempted.
+> Split lp50xx_enable_disable() into two distinct functions to enforce
+> correct ordering.
+> Observe correct timing after manipulating the enable GPIO and SPI
+> communication.
+
+Is this currently broken?  How did it test okay before?
+
+You need to explain more about why you are changing the semantics.
+
+See below.
+
+> Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
 > 
-> In order to do so, a reference also needs to be taken when DT is not used.
-> 
-> This simplifies the error handling path and makes direct returns possible
-> in several places.
-> 
-> While at it, also add a missing \n at the end of an error message.
-> 
-> Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
+> Cc: stable@vger.kernel.org
 > ---
-> This patch is compile tested only.
+>  drivers/leds/leds-lp50xx.c | 51 +++++++++++++++++++++++++++-----------
+>  1 file changed, 36 insertions(+), 15 deletions(-)
 > 
-> This change is speculative. Review with care.
-> 
-> Changes in v2:
->   - implement Dan's suggestions
-> 
-> v1: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/misc/rp1/rp1_pci.c | 42 ++++++++++++++++----------------------
->  1 file changed, 18 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-> index 803832006ec8..0abfeb4a28e3 100644
-> --- a/drivers/misc/rp1/rp1_pci.c
-> +++ b/drivers/misc/rp1/rp1_pci.c
-> @@ -5,6 +5,7 @@
->   * All rights reserved.
->   */
+> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+> index d19b6a459151..f23e9ae434e4 100644
+> --- a/drivers/leds/leds-lp50xx.c
+> +++ b/drivers/leds/leds-lp50xx.c
+> @@ -52,6 +52,8 @@
 >  
-> +#include <linux/cleanup.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> @@ -185,9 +186,9 @@ static void rp1_unregister_interrupts(struct pci_dev *pdev)
->  static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  #define LP50XX_SW_RESET		0xff
+>  #define LP50XX_CHIP_EN		BIT(6)
+> +#define LP50XX_START_TIME_US	500
+> +#define LP50XX_RESET_TIME_US	3
+>  
+>  /* There are 3 LED outputs per bank */
+>  #define LP50XX_LEDS_PER_MODULE	3
+> @@ -374,19 +376,42 @@ static int lp50xx_reset(struct lp50xx *priv)
+>  	return regmap_write(priv->regmap, priv->chip_info->reset_reg, LP50XX_SW_RESET);
+>  }
+>  
+> -static int lp50xx_enable_disable(struct lp50xx *priv, int enable_disable)
+> +static int lp50xx_enable(struct lp50xx *priv)
 >  {
->  	u32 dtbo_size = __dtbo_rp1_pci_end - __dtbo_rp1_pci_begin;
-> +	struct device_node *rp1_node __free(device_node) = NULL;
+>  	int ret;
+>  
+> -	ret = gpiod_direction_output(priv->enable_gpio, enable_disable);
+> +	if (priv->enable_gpio) {
 
-This is not recommended way of using cleanup. You should declare it with
-constructor.... if you cannot that's strong indication you are not
-suppose to use cleanup.
+Why have you added this check back in?
 
->  	void *dtbo_start = __dtbo_rp1_pci_begin;
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *rp1_node;
->  	bool skip_ovl = true;
->  	struct rp1_dev *rp1;
->  	int err = 0;
-> @@ -200,42 +201,40 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	rp1_node = of_find_node_by_name(NULL, "rp1_nexus");
->  	if (!rp1_node) {
->  		rp1_node = dev_of_node(dev);
-> +		/*
-> +		 * Take a reference to match of_find_node_by_name()
-> +		 * behavior. This makes cleanup.h usable in both cases.
-> +		 */
-> +		of_node_get(rp1_node);
->  		skip_ovl = false;
+See: 5d2bfb3fb95b ("leds: lp50xx: Get rid of redundant check in lp50xx_enable_disable()")
+
+> +		ret = gpiod_direction_output(priv->enable_gpio, 1);
+
+Take the opportunity to define the magic numbers '0' and '1'.
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		udelay(LP50XX_START_TIME_US);
+> +	} else {
+
+In this old code we did both.  Why are we now choosing?
+
+> +		ret = lp50xx_reset(priv);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
+> +}
+> +
+> +static int lp50xx_disable(struct lp50xx *priv)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (enable_disable)
+> -		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
+> -	else
+> -		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
+> +	if (priv->enable_gpio) {
+> +		ret = gpiod_direction_output(priv->enable_gpio, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		udelay(LP50XX_RESET_TIME_US);
+> +	}
+>  
+> +	return 0;
+>  }
+>  
+>  static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
+> @@ -453,6 +478,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+>  		return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
+>  				     "Failed to get enable GPIO\n");
+>  
+> +	ret = lp50xx_enable(priv);
+> +	if (ret)
+> +		return ret;
+> +
+>  	priv->regulator = devm_regulator_get(priv->dev, "vled");
+>  	if (IS_ERR(priv->regulator))
+>  		priv->regulator = NULL;
+> @@ -550,14 +579,6 @@ static int lp50xx_probe(struct i2c_client *client)
+>  		return ret;
 >  	}
 >  
->  	if (!rp1_node) {
->  		dev_err(dev, "Missing of_node for device\n");
-> -		err = -EINVAL;
-> -		goto err_put_node;
-> +		return -EINVAL;
->  	}
+> -	ret = lp50xx_reset(led);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = lp50xx_enable_disable(led, 1);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return lp50xx_probe_dt(led);
+>  }
 >  
->  	rp1 = devm_kzalloc(&pdev->dev, sizeof(*rp1), GFP_KERNEL);
-> -	if (!rp1) {
-> -		err = -ENOMEM;
-> -		goto err_put_node;
-> -	}
-> +	if (!rp1)
-> +		return -ENOMEM;
+> @@ -566,7 +587,7 @@ static void lp50xx_remove(struct i2c_client *client)
+>  	struct lp50xx *led = i2c_get_clientdata(client);
+>  	int ret;
 >  
->  	rp1->pdev = pdev;
+> -	ret = lp50xx_enable_disable(led, 0);
+> +	ret = lp50xx_disable(led);
+>  	if (ret)
+>  		dev_err(led->dev, "Failed to disable chip\n");
 >  
->  	if (pci_resource_len(pdev, 1) <= 0x10000) {
->  		dev_err(&pdev->dev,
->  			"Not initialized - is the firmware running?\n");
-> -		err = -EINVAL;
-> -		goto err_put_node;
-> +		return -EINVAL;
->  	}
->  
->  	err = pcim_enable_device(pdev);
-> -	if (err < 0) {
-> -		err = dev_err_probe(&pdev->dev, err,
-> -				    "Enabling PCI device has failed");
-> -		goto err_put_node;
-> -	}
-> +	if (err < 0)
-> +		return dev_err_probe(&pdev->dev, err,
-> +				     "Enabling PCI device has failed\n");
->  
->  	rp1->bar1 = pcim_iomap(pdev, 1, 0);
->  	if (!rp1->bar1) {
->  		dev_err(&pdev->dev, "Cannot map PCI BAR\n");
-> -		err = -EIO;
-> -		goto err_put_node;
-> +		return -EIO;
->  	}
->  
->  	pci_set_master(pdev);
-> @@ -243,13 +242,11 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
->  				    PCI_IRQ_MSIX);
->  	if (err < 0) {
-> -		err = dev_err_probe(&pdev->dev, err,
-> -				    "Failed to allocate MSI-X vectors\n");
-> -		goto err_put_node;
-> +		return dev_err_probe(&pdev->dev, err,
-> +				     "Failed to allocate MSI-X vectors\n");
->  	} else if (err != RP1_INT_END) {
->  		dev_err(&pdev->dev, "Cannot allocate enough interrupts\n");
-> -		err = -EINVAL;
-> -		goto err_put_node;
-> +		return -EINVAL;
->  	}
->  
->  	pci_set_drvdata(pdev, rp1);
-> @@ -295,9 +292,6 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	of_overlay_remove(&rp1->ovcs_id);
->  err_unregister_interrupts:
+> -- 
+> 2.51.0
+> 
 
-And gotos is another strong indication that you should not use
-cleanup.h. See cleanup.h for further explanations.
-
-
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
 
