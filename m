@@ -1,294 +1,156 @@
-Return-Path: <linux-kernel+bounces-869645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E4CC0863E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:19:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E94C08641
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98273401AB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:19:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E97D44EF840
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DBE1547EE;
-	Sat, 25 Oct 2025 00:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575AA78F36;
+	Sat, 25 Oct 2025 00:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mw5xESBI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PB7iI4Nj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D9C129A78;
-	Sat, 25 Oct 2025 00:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26393249E5
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761351533; cv=none; b=J8/qF/FwX3wwv2m4gSmAAM5QxDyLImjsLEF83DX7y/ln8qNd8vcwkVthi4++dFSD/shCvyWrHWWL6jhEkVFWMpSq+ggRpv24woW0BVHdVNQkQwzS2L8LYO5aqbkPYh3d3qZLxo86PIIskOR62qJlIiyUo9vTbnlgE2ZEo52UxDo=
+	t=1761351688; cv=none; b=jQJz+cs+yp2FjmMvFHHKOT4eoFpLxVsGN5lQWnOi2vHnggfKr1ohBD90jfMIn9TmCn8K/RRhZvELeLyZzUZbOqqNyaopOwhdsPr8IZu7LxtdaCm9Yc1gAD5BTvM1UTJVxaE4oq3+pgOogrAJ2FqOpZGvrGI4YMV+zGXdz0yxaeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761351533; c=relaxed/simple;
-	bh=yzYZJ8Gpfkz5lZtvU1CD+ANL9ZIWUpRTt7FIq2EBDWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m4EJjAqV/oo40Fja2yf12WNOioqVNOyFlyI+7lyGTiBqmUuF8vAIK3NrQV30f8Z80+RAln+0nf68OZ9vZx0PRD4AkKW3EDO8xMQKmuG0M9yS9TCCFAdSmsZcznymDaEFxzqFYYMIfe4blmi3MsWwDPnk9GNysVV0u7+NRYdO1O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mw5xESBI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5513BC4CEF1;
-	Sat, 25 Oct 2025 00:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761351533;
-	bh=yzYZJ8Gpfkz5lZtvU1CD+ANL9ZIWUpRTt7FIq2EBDWc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mw5xESBInofyGyWtGrUMk3sd7QofjXSGvOSHHFWSgtyESsx+J5w6X0yBm+YeKocnX
-	 +MYw3bEpS2n2gQaU8bcXAPwamJFKf4ROmKk9pVXa3/C81o3fJVyFkuz5wyfcEPw6Pz
-	 0WWDXlYeU+radCR5Ocl/MszpliNg915pQ1VB3W49ANE1mgDl7vc9YxevmAHbSrfX31
-	 KQQaR2WyLOQK+l0OOWF+ZJ5gIKA7IBk8YMMSkhBNxa1qM5/L4ZO0xt9x8RwqOed2do
-	 xAcdmPECDTFnoKqwm0i/dKOl3sNRZv7hRLXPsju+8sZ6zRlcws4GJIlno/80jM1b35
-	 j9/FTHqgl/dPQ==
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	Peter Zijlstra <peterz@infradead.org>,
-	Wen-Fang Liu <liuwenfang@honor.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be called from anywhere
-Date: Fri, 24 Oct 2025 14:18:49 -1000
-Message-ID: <20251025001849.1915635-4-tj@kernel.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251025001849.1915635-1-tj@kernel.org>
-References: <20251025001849.1915635-1-tj@kernel.org>
+	s=arc-20240116; t=1761351688; c=relaxed/simple;
+	bh=It2In47AKGq20T9gVbO2USTvSDh2utL9rO9AZbv13Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YIgd10DtCb1UGJ41/a5RSElbLV48qR7rK5UGr+SEk0rmGQerjo6bCAAy7MLHZuUQB2YI4H+ARBOMVVDpKjVOiCnXG5SEo8KzfDg2wZTmHIiRYHa0yPJnwBFLp/q5ReX7srLR/pIu8Vt1AMqPWDM6lvwIhzxx4tgNePH8RVNHcBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PB7iI4Nj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761351687; x=1792887687;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=It2In47AKGq20T9gVbO2USTvSDh2utL9rO9AZbv13Qs=;
+  b=PB7iI4Nj9U2Uzez9PSqvlCUxDfQYC6DBFsNGIIILGBva1ouB4sgvh3Fz
+   6Uq+jvC2r8MfMAERLS36TCSBaIFjndWlUD3wDg9sGjDofkVWgs2YC03tj
+   X+AHr/YfgBnRgJe2B9KzqtjtOKqujukP23zNPBrO7Xx6ICVlKXFQsSvRR
+   uHnLecblLMV3d2jR1mYT9eFKxWgLNw6XkCTyvVdE2oleH/8w3Eh+0LriU
+   zWodJsuARPbGwfuJLakQNeW9lCsc6AqcNp+7bMZ14D0B+ez5Ogz5TsXaC
+   w8lwdgCeDammFTklLE3zVvrWCadwW6R8jrWypcYAlgeehqL0C3pg8qQl8
+   g==;
+X-CSE-ConnectionGUID: ji+YfodBTdeMisxRaAG84Q==
+X-CSE-MsgGUID: zFtfWh9eSnGxsSBGjxQBpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80966140"
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="80966140"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 17:21:27 -0700
+X-CSE-ConnectionGUID: Xocof/kbQXik/Cob2CJbbg==
+X-CSE-MsgGUID: hy3v8xBtSv2BtZdRRBzJCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="189681826"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 24 Oct 2025 17:21:23 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCS24-000Ezp-1M;
+	Sat, 25 Oct 2025 00:21:21 +0000
+Date: Sat, 25 Oct 2025 08:21:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Zhang Xincheng <zhangxincheng@ultrarisc.com>,
+	Lucas Zampieri <lzampier@redhat.com>
+Subject: [tip:irq/drivers 23/23] drivers/irqchip/irq-sifive-plic.c:404:17:
+ error: no member named 'enabled_save' in 'struct plic_handler'
+Message-ID: <202510250838.m2InkkSl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The ops.cpu_acquire/release() callbacks are broken - they miss events under
-multiple conditions and can't be fixed without adding global sched core hooks
-that sched maintainers don't want. They also aren't necessary as BPF schedulers
-can use generic BPF mechanisms like tracepoints to achieve the same goals.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
+head:   b5fa8915a50a44c01727ab5b60193188c88e4881
+commit: b5fa8915a50a44c01727ab5b60193188c88e4881 [23/23] irqchip/sifive-plic: Add support for UltraRISC DP1000 PLIC
+config: riscv-randconfig-002-20251025 (https://download.01.org/0day-ci/archive/20251025/202510250838.m2InkkSl-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project e1ae12640102fd2b05bc567243580f90acb1135f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510250838.m2InkkSl-lkp@intel.com/reproduce)
 
-The main use case for cpu_release() was calling scx_bpf_reenqueue_local() when
-a CPU gets preempted by a higher priority scheduling class. However, the old
-scx_bpf_reenqueue_local() could only be called from cpu_release() context.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510250838.m2InkkSl-lkp@intel.com/
 
-Add a new version of scx_bpf_reenqueue_local() that can be called from any
-context by deferring the actual re-enqueue operation. This eliminates the need
-for cpu_acquire/release() ops entirely. Schedulers can now use standard BPF
-mechanisms like the sched_switch tracepoint to detect and handle CPU preemption.
+All errors (new ones prefixed by >>):
 
-Update scx_qmap to demonstrate the new approach using sched_switch instead of
-cpu_release, with compat support for older kernels. Mark cpu_acquire/release()
-as deprecated. The old scx_bpf_reenqueue_local() variant will be removed in
-v6.23.
+>> drivers/irqchip/irq-sifive-plic.c:404:17: error: no member named 'enabled_save' in 'struct plic_handler'
+     404 |                 if (!handler->enabled_save[i])
+         |                      ~~~~~~~  ^
+   drivers/irqchip/irq-sifive-plic.c:407:27: error: no member named 'enabled_save' in 'struct plic_handler'
+     407 |                 pending_irqs = handler->enabled_save(i] & readl_relaxed(pending + i);
+         |                                ~~~~~~~  ^
+   drivers/irqchip/irq-sifive-plic.c:422:28: error: no member named 'enabled_save' in 'struct plic_handler'
+     422 |                 if (new_mask != handler->enabled_save[j])
+         |                                 ~~~~~~~  ^
+   3 errors generated.
 
-Reported-by: Wen-Fang Liu <liuwenfang@honor.com>
-Link: https://lore.kernel.org/all/8d64c74118c6440f81bcf5a4ac6b9f00@honor.com/
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c                       | 31 ++++++++++++++++++++
- kernel/sched/sched.h                     |  1 +
- tools/sched_ext/include/scx/common.bpf.h |  1 -
- tools/sched_ext/include/scx/compat.bpf.h | 23 +++++++++++++++
- tools/sched_ext/scx_qmap.bpf.c           | 38 +++++++++++++++++-------
- 5 files changed, 83 insertions(+), 11 deletions(-)
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
+   Depends on [n]: BINFMT_ELF [=y] && ELF_CORE [=n]
+   Selected by [y]:
+   - RISCV [=y]
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 222222222222..333333333333 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -147,6 +147,7 @@ static struct kset *scx_kset;
- #include <trace/events/sched_ext.h>
 
- static void process_ddsp_deferred_locals(struct rq *rq);
-+static u32 reenq_local(struct rq *rq);
- static void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags);
- static void scx_vexit(struct scx_sched *sch, enum scx_exit_kind kind,
- 		      s64 exit_code, const char *fmt, va_list args);
-@@ -755,6 +756,11 @@ static int ops_sanitize_err(struct scx_sched *sch, s32 ret, s32 ops_err)
- static void run_deferred(struct rq *rq)
- {
- 	process_ddsp_deferred_locals(rq);
-+
-+	if (local_read(&rq->scx.reenq_local_deferred)) {
-+		local_set(&rq->scx.reenq_local_deferred, 0);
-+		reenq_local(rq);
-+	}
- }
+vim +404 drivers/irqchip/irq-sifive-plic.c
 
- static void deferred_bal_cb_workfn(struct rq *rq)
-@@ -4569,6 +4575,9 @@ static int validate_ops(struct scx_sched *sch)
- 	if (ops->flags & SCX_OPS_HAS_CGROUP_WEIGHT)
- 		pr_warn("SCX_OPS_HAS_CGROUP_WEIGHT is deprecated and a noop\n");
+   393	
+   394	static u32 cp100_isolate_pending_irq(int nr_irq_groups, struct plic_handler *handler)
+   395	{
+   396		u32 __iomem *pending = handler->priv->regs + PENDING_BASE;
+   397		u32 __iomem *enable = handler->enable_base;
+   398		u32 pending_irqs = 0;
+   399		int i, j;
+   400	
+   401		/* Look for first pending interrupt */
+   402		for (i = 0; i < nr_irq_groups; i++) {
+   403			/* Any pending interrupts would be annihilated, so skip checking them */
+ > 404			if (!handler->enabled_save[i])
+   405				continue;
+   406	
+   407			pending_irqs = handler->enabled_save(i] & readl_relaxed(pending + i);
+   408			if (pending_irqs)
+   409				break;
+   410		}
+   411	
+   412		if (!pending_irqs)
+   413			return 0;
+   414	
+   415		/* Isolate lowest set bit*/
+   416		pending_irqs &= -pending_irqs;
+   417	
+   418		/* Disable all interrupts but the first pending one */
+   419		for (j = 0; j < nr_irq_groups; j++) {
+   420			u32 new_mask = j == i ? pending_irqs : 0;
+   421	
+   422			if (new_mask != handler->enabled_save[j])
+   423				writel_relaxed(new_mask, enable + j);
+   424		}
+   425		return pending_irqs;
+   426	}
+   427	
 
-+	if (ops->cpu_acquire || ops->cpu_release)
-+		pr_warn("ops->cpu_acquire/release() are deprecated, use sched_switch TP instead\n");
-+
- 	return 0;
- }
-
-@@ -5931,6 +5940,9 @@ __bpf_kfunc_start_defs();
-  * Iterate over all of the tasks currently enqueued on the local DSQ of the
-  * caller's CPU, and re-enqueue them in the BPF scheduler. Returns the number of
-  * processed tasks. Can only be called from ops.cpu_release().
-+ *
-+ * COMPAT: Will be removed in v6.23 along with the ___v2 suffix on the void
-+ * returning variant that can be called from anywhere.
-  */
- __bpf_kfunc u32 scx_bpf_reenqueue_local(void)
- {
-@@ -6490,6 +6502,24 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *data__str, u32 data__sz)
- }
-
- /**
-+ * scx_bpf_reenqueue_local - Re-enqueue tasks on a local DSQ
-+ *
-+ * Iterate over all of the tasks currently enqueued on the local DSQ of the
-+ * caller's CPU, and re-enqueue them in the BPF scheduler. Can be called from
-+ * anywhere.
-+ */
-+__bpf_kfunc void scx_bpf_reenqueue_local___v2(void)
-+{
-+	struct rq *rq;
-+
-+	guard(preempt)();
-+
-+	rq = this_rq();
-+	local_set(&rq->scx.reenq_local_deferred, 1);
-+	schedule_deferred(rq);
-+}
-+
-+/**
-  * scx_bpf_cpuperf_cap - Query the maximum relative capacity of a CPU
-  * @cpu: CPU of interest
-  *
-@@ -6902,6 +6932,7 @@ BTF_ID_FLAGS(func, bpf_iter_scx_dsq_destroy, KF_ITER_DESTRUCTOR)
- BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, scx_bpf_reenqueue_local___v2)
- BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap)
- BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur)
- BTF_ID_FLAGS(func, scx_bpf_cpuperf_set)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 444444444444..555555555555 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -804,6 +804,7 @@ struct scx_rq {
- 	cpumask_var_t		cpus_to_preempt;
- 	cpumask_var_t		cpus_to_wait;
- 	unsigned long		kick_sync;
-+	local_t			reenq_local_deferred;
- 	struct balance_callback	deferred_bal_cb;
- 	struct irq_work		deferred_irq_work;
- 	struct irq_work		kick_cpus_irq_work;
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index 666666666666..777777777777 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -70,7 +70,6 @@ void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 slice) _
- void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
- bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
- bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
--u32 scx_bpf_reenqueue_local(void) __ksym;
- void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
- s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
- void scx_bpf_destroy_dsq(u64 dsq_id) __ksym;
-diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-index 888888888888..999999999999 100644
---- a/tools/sched_ext/include/scx/compat.bpf.h
-+++ b/tools/sched_ext/include/scx/compat.bpf.h
-@@ -279,6 +279,29 @@ static inline void scx_bpf_task_set_dsq_weight(struct task_struct *p, u32 weigh
- }
-
- /*
-+ * v6.19: The new void variant can be called from anywhere while the older v1
-+ * variant can only be called from ops.cpu_release(). The double ___ prefixes on
-+ * the v2 variant need to be removed once libbpf is updated to ignore ___ prefix
-+ * on kernel side. Drop the wrapper and move the decl to common.bpf.h after
-+ * v6.22.
-+ */
-+u32 scx_bpf_reenqueue_local___v1(void) __ksym __weak;
-+void scx_bpf_reenqueue_local___v2___compat(void) __ksym __weak;
-+
-+static inline bool __COMPAT_scx_bpf_reenqueue_local_from_anywhere(void)
-+{
-+	return bpf_ksym_exists(scx_bpf_reenqueue_local___v2___compat);
-+}
-+
-+static inline void scx_bpf_reenqueue_local(void)
-+{
-+	if (__COMPAT_scx_bpf_reenqueue_local_from_anywhere())
-+		scx_bpf_reenqueue_local___v2___compat();
-+	else
-+		scx_bpf_reenqueue_local___v1();
-+}
-+
-+/*
-  * Define sched_ext_ops. This may be expanded to define multiple variants for
-  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
-  */
-diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-index aaaaaaaaaaaa..bbbbbbbbbbbb 100644
---- a/tools/sched_ext/scx_qmap.bpf.c
-+++ b/tools/sched_ext/scx_qmap.bpf.c
-@@ -202,6 +202,9 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct *p, u64 enq_flags)
- 	void *ring;
- 	s32 cpu;
-
-+	if (enq_flags & SCX_ENQ_REENQ)
-+		__sync_fetch_and_add(&nr_reenqueued, 1);
-+
- 	if (p->flags & PF_KTHREAD) {
- 		if (stall_kernel_nth && !(++kernel_cnt % stall_kernel_nth))
- 			return;
-@@ -529,20 +532,35 @@ bool BPF_STRUCT_OPS(qmap_core_sched_before, struct task_struct *a,
- 	return task_qdist(a) > task_qdist(b);
- }
-
--void BPF_STRUCT_OPS(qmap_cpu_release, s32 cpu, struct scx_cpu_release_args *args)
-+SEC("tp_btf/sched_switch")
-+int BPF_PROG(qmap_sched_switch, bool preempt, struct task_struct *prev,
-+	     struct task_struct *next, unsigned long prev_state)
- {
--	u32 cnt;
-+	if (!__COMPAT_scx_bpf_reenqueue_local_from_anywhere())
-+		return 0;
-
- 	/*
--	 * Called when @cpu is taken by a higher priority scheduling class. This
--	 * makes @cpu no longer available for executing sched_ext tasks. As we
--	 * don't want the tasks in @cpu's local dsq to sit there until @cpu
--	 * becomes available again, re-enqueue them into the global dsq. See
--	 * %SCX_ENQ_REENQ handling in qmap_enqueue().
-+	 * If @cpu is taken by a higher priority scheduling class, it is no
-+	 * longer available for executing sched_ext tasks. As we don't want the
-+	 * tasks in @cpu's local dsq to sit there until @cpu becomes available
-+	 * again, re-enqueue them into the global dsq. See %SCX_ENQ_REENQ
-+	 * handling in qmap_enqueue().
- 	 */
--	cnt = scx_bpf_reenqueue_local();
--	if (cnt)
--		__sync_fetch_and_add(&nr_reenqueued, cnt);
-+	switch (next->policy) {
-+	case 1: /* SCHED_FIFO */
-+	case 2: /* SCHED_RR */
-+	case 6: /* SCHED_DEADLINE */
-+		scx_bpf_reenqueue_local();
-+	}
-+
-+	return 0;
-+}
-+
-+void BPF_STRUCT_OPS(qmap_cpu_release, s32 cpu, struct scx_cpu_release_args *args)
-+{
-+	/* see qmap_sched_switch() to learn how to do this on newer kernels */
-+	if (!__COMPAT_scx_bpf_reenqueue_local_from_anywhere())
-+		scx_bpf_reenqueue_local();
- }
-
- s32 BPF_STRUCT_OPS(qmap_init_task, struct task_struct *p,
---
-2.47.1
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
