@@ -1,229 +1,230 @@
-Return-Path: <linux-kernel+bounces-869953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B143BC0919C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:23:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268D3C09189
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2692034C7D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A8A1B2460D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E6E2DC332;
-	Sat, 25 Oct 2025 14:23:19 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846CF2FDC44;
+	Sat, 25 Oct 2025 14:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BkHLfcxk"
+Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CA7235358;
-	Sat, 25 Oct 2025 14:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0926290;
+	Sat, 25 Oct 2025 14:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761402198; cv=none; b=MXfQGL6+qeHrmNVCBmCkJ/BphlhsjOr5o9LPp4Aho5UtLpdieMnZTz951b/Ywg0TIZI4q2h6y2bv3A8y+l4GvmE8OyerOMBNwWLukxqn7pT/R2nA3qVxt+8KtB1O6A0DK29Ok1HwoyBgtZ9sYNz9rgTWMcsFxCELmIeEbDplMkQ=
+	t=1761401687; cv=none; b=CsPTLY8l7UigfZOqn/yeY4g6goYz9IYb3jvA8mrpr6qZJkywGylmJ/hvBdlxjk++cTITBZH2zIYYnOPPsE0w1LTfKlPZpYj6ZLgUuQnwAr5kzsErx5sGw7YMhb1SRAx7yyq74Ne7W+CK2+xRz8eZcQmWg3ucMAwBGH79vKte7a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761402198; c=relaxed/simple;
-	bh=EOPknwi5gK/nxqmOD0314jLXu/hia7CRMHro0+jMtwk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bzZcGhtsM3v1em6IXcE/fJ3paIX8lss34bICJ7wPvFz6sYMYbhylV+KSWJTgSU+vCQmkqi/aOcZwgZNWwFs3C7/FNxlr6eNQw1mBFtn8tIrEKVUMBQdU2IpN7mGBjxByHWAlucSWMOLbfQmlAYrF6+1ZCjlzLv6F0qqG9ccC+Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from dev-dsk-arnaudlc-1a-b66eeb5f.eu-west-1.amazon.com (54-240-197-230.amazon.com [54.240.197.230])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id DD2ED4081A;
-	Sat, 25 Oct 2025 14:14:11 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 54.240.197.230) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=dev-dsk-arnaudlc-1a-b66eeb5f.eu-west-1.amazon.com
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: contact@arnaud-lcm.com,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	andrii@kernel.org
-Cc: ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	song@kernel.org,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev
-Subject: [PATCH bpf-next 1/2] bpf: refactor stack map trace depth calculation
- into helper function
-Date: Sat, 25 Oct 2025 14:14:03 +0000
-Message-ID: <20251025141403.14188-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <1169f4ac-c28a-442f-bcbc-2cf8e2beb3f5@arnaud-lcm.com>
-References: <1169f4ac-c28a-442f-bcbc-2cf8e2beb3f5@arnaud-lcm.com>
+	s=arc-20240116; t=1761401687; c=relaxed/simple;
+	bh=ggXg7tpSRfPSWwgDDEc0Mi4dgvu2t7qPfbblFCUWpjc=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=Atd79vJo0BYfQWjOV0vrGtKQHYd6X6aZhp+lO0A8bML7qIyGSYGzw+BHfmUPTcaOc/9HbjIxvO7NdfOxdv3bFICMho0pyiQvUSDNi5TnYlgKLwvKcCPWpdjNM3NFmMoiqHIv3oWChDzrdUrlOwJZTwqbPHonr0WLVQBznGWvskg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BkHLfcxk; arc=none smtp.client-ip=80.12.242.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id Cf2UvEzW5B8skCf2VvuYL3; Sat, 25 Oct 2025 16:14:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1761401681;
+	bh=hNXgE5EPV7K9LPWtHEU6p5h+Ujg/qjo4e+CAbzOghM8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=BkHLfcxkxkyKAyDzQCjwZ6q+4U0UK/ufwXpHiUGFp5q7j8xhnzrw+N2pGpHHUKopE
+	 NGoGbRHxxuUbi9bqYILTWgEuq0H0dnNED16eFhJl1l7icPHWT+4OBrbykN8RwiOFTm
+	 6NZQYdGSocDTWHBiW/38B1yAOX2suAiwXeR1xWM5kD1Yh5/PB23KwHGdjm9dMBYm4d
+	 P0ig2i6ZnUAACVWt8Guxym4AesqejMLM9OI3Md8ZBdKqvNipF0hrP8KehgmnlGjJ1V
+	 puIL6Nijnbi3coM2eDAQBqJhhCydlD2htJ1ZwaPn2NwJAlaXrN88G7cCVD77gnYWtb
+	 SAF/DOPDjPjWA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 25 Oct 2025 16:14:41 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <9b059848-1512-457c-8437-8172e3726992@wanadoo.fr>
+Date: Sat, 25 Oct 2025 16:14:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID pin
+ state
+References: <20251025122854.1163275-1-krishna.kurapati@oss.qualcomm.com>
+ <20251025122854.1163275-3-krishna.kurapati@oss.qualcomm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+To: krishna.kurapati@oss.qualcomm.com
+Cc: biju.das.jz@bp.renesas.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+ gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com,
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ robh@kernel.org
+In-Reply-To: <20251025122854.1163275-3-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <176140165271.22769.15097439622517102128@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
 
-Extract the duplicated maximum allowed depth computation for stack
-traces stored in BPF stacks from bpf_get_stackid() and __bpf_get_stack()
-into a dedicated stack_map_calculate_max_depth() helper function.
+Le 25/10/2025 à 14:28, Krishna Kurapati a écrit :
+> There is a ID pin present on HD3SS3220 controller that can be routed
+> to SoC. As per the datasheet:
+> 
+> "Upon detecting a UFP device, HD3SS3220 will keep ID pin high if VBUS is
+> not at VSafe0V. Once VBUS is at VSafe0V, the HD3SS3220 will assert ID pin
+> low. This is done to enforce Type-C requirement that VBUS must be at
+> VSafe0V before re-enabling VBUS"
+> 
+> Add support to read the ID pin state and enable VBUS accordingly.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati-5oFBVzJwu8Ry9aJCnZT0Uw@public.gmane.org>
+> ---
+>   drivers/usb/typec/hd3ss3220.c | 79 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 79 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index 3ecc688dda82..970c0ca8f8d4 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -15,6 +15,9 @@
+>   #include <linux/usb/typec.h>
+>   #include <linux/delay.h>
+>   #include <linux/workqueue.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/of_graph.h>
+>   
+>   #define HD3SS3220_REG_CN_STAT		0x08
+>   #define HD3SS3220_REG_CN_STAT_CTRL	0x09
+> @@ -54,6 +57,11 @@ struct hd3ss3220 {
+>   	struct delayed_work output_poll_work;
+>   	enum usb_role role_state;
+>   	bool poll;
+> +
+> +	struct gpio_desc *id_gpiod;
+> +	int id_irq;
+> +
+> +	struct regulator *vbus;
+>   };
+>   
+>   static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
+> @@ -319,6 +327,49 @@ static const struct regmap_config config = {
+>   	.max_register = 0x0A,
+>   };
+>   
+> +static irqreturn_t hd3ss3220_id_isr(int irq, void *dev_id)
+> +{
+> +	struct hd3ss3220 *hd3ss3220 = dev_id;
+> +	int ret;
+> +	int id;
+> +
+> +	if (IS_ERR_OR_NULL(hd3ss3220->vbus))
 
-This unifies the logic for:
-- The max depth computation
-- Enforcing the sysctl_perf_event_max_stack limit
+I don't think it can be ERR. hd3ss3220_get_vbus_supply() forces it to 
+NULL in such a case.
 
-No functional changes for existing code paths.
+> +		return IRQ_HANDLED;
+> +
+> +	id = hd3ss3220->id_gpiod ? gpiod_get_value_cansleep(hd3ss3220->id_gpiod) : 1;
+> +
+> +	if (!id) {
+> +		ret = regulator_enable(hd3ss3220->vbus);
+> +		if (ret)
+> +			dev_err(hd3ss3220->dev, "enable vbus regulator failed\n");
+> +	} else {
+> +		regulator_disable(hd3ss3220->vbus);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int hd3ss3220_get_vbus_supply(struct hd3ss3220 *hd3ss3220)
+> +{
+> +	struct device_node *hd3ss3220_node = hd3ss3220->dev->of_node;
+> +	struct device_node *np;
+> +	int ret = 0;
+> +
+> +	np = of_graph_get_remote_node(hd3ss3220_node, 0, 0);
+> +	if (!np) {
+> +		dev_err(hd3ss3220->dev, "failed to get device node");
+> +		return -ENODEV;
+> +	}
+> +
+> +	hd3ss3220->vbus = of_regulator_get_optional(hd3ss3220->dev, np, "vbus");
+> +	if (IS_ERR(hd3ss3220->vbus))
+> +		hd3ss3220->vbus = NULL;
+> +
+> +	of_node_put(np);
+> +
+> +	return ret;
 
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-Acked-by: Song Liu <song@kernel.org>
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
----
-Changes in v2:
- - Removed the checking 'map_size % map_elem_size' from
-   stack_map_calculate_max_depth
- - Changed stack_map_calculate_max_depth params name to be more generic
+return 0 and avoid 'ret'?
 
-Changes in v3:
- - Changed map size param to size in max depth helper
+> +}
+> +
+>   static int hd3ss3220_probe(struct i2c_client *client)
+>   {
+>   	struct typec_capability typec_cap = { };
+> @@ -354,6 +405,34 @@ static int hd3ss3220_probe(struct i2c_client *client)
+>   		hd3ss3220->role_sw = usb_role_switch_get(hd3ss3220->dev);
+>   	}
+>   
+> +	hd3ss3220->id_gpiod = devm_gpiod_get_optional(hd3ss3220->dev, "id", GPIOD_IN);
+> +	if (IS_ERR(hd3ss3220->id_gpiod))
+> +		return PTR_ERR(hd3ss3220->id_gpiod);
+> +
+> +	if (hd3ss3220->id_gpiod) {
+> +		hd3ss3220->id_irq = gpiod_to_irq(hd3ss3220->id_gpiod);
+> +		if (hd3ss3220->id_irq < 0) {
+> +			dev_err(hd3ss3220->dev, "failed to get ID IRQ\n");
 
-Changes in v4:
- - Fixed indentation in max depth helper for args
+Maybe return dev_err_probe() to log the error and simplify code?
 
-Changes in v5:
- - Bound back trace_nr to num_elem in __bpf_get_stack
- - Make a copy of sysctl_perf_event_max_stack
-   in stack_map_calculate_max_depth
+> +			return hd3ss3220->id_irq;
+> +		}
+> +
+> +		ret = devm_request_threaded_irq(hd3ss3220->dev,
+> +						hd3ss3220->id_irq, NULL,
+> +						hd3ss3220_id_isr,
+> +						IRQF_TRIGGER_RISING |
+> +						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> +						dev_name(hd3ss3220->dev), hd3ss3220);
+> +		if (ret < 0) {
+> +			dev_err(hd3ss3220->dev, "failed to get id irq\n");
 
-Changes in v6:
- - Restrained max_depth computation only when required
- - Additional cleanup from Song in __bpf_get_stack
+Maybe return dev_err_probe() to log the error and simplify code?
 
-Changes in v7:
- - Removed additional cleanup from v6
+Above, you use "ID IRQ" and here "id irq". Maybe keep the case case? Or 
+change the 2nd message that looks a copy'n'paste error to me.
 
-Changes in v9:
- - Fixed incorrect removal of num_elem in get stack
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = hd3ss3220_get_vbus_supply(hd3ss3220);
+> +	if (ret)
+> +		return dev_err_probe(hd3ss3220->dev,
+> +				     PTR_ERR(hd3ss3220->vbus), "failed to get vbus\n");
 
-Changes in v10:
- - Squashed 2 previous patch 1 and 2
+Why PTR_ERR(hd3ss3220->vbus)? Should this be 'ret'?
 
-Link to v9:
-https://lore.kernel.org/all/20250912233409.74900-1-contact@arnaud-lcm.com/
----
----
- kernel/bpf/stackmap.c | 47 +++++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 15 deletions(-)
+If hd3ss3220_get_vbus_supply() fails, vbus will be NULL in all cases.
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 3615c06b7dfa..9a86b5acac10 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -42,6 +42,28 @@ static inline int stack_map_data_size(struct bpf_map *map)
- 		sizeof(struct bpf_stack_build_id) : sizeof(u64);
- }
- 
-+/**
-+ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
-+ * @size:  Size of the buffer/map value in bytes
-+ * @elem_size:  Size of each stack trace element
-+ * @flags:  BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
-+ *
-+ * Return: Maximum number of stack trace entries that can be safely stored
-+ */
-+static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
-+{
-+	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+	u32 max_depth;
-+	u32 curr_sysctl_max_stack = READ_ONCE(sysctl_perf_event_max_stack);
-+
-+	max_depth = size / elem_size;
-+	max_depth += skip;
-+	if (max_depth > curr_sysctl_max_stack)
-+		return curr_sysctl_max_stack;
-+
-+	return max_depth;
-+}
-+
- static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
- {
- 	u64 elem_size = sizeof(struct stack_map_bucket) +
-@@ -300,20 +322,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
--	u32 max_depth = map->value_size / stack_map_data_size(map);
--	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+	u32 elem_size = stack_map_data_size(map);
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	u32 max_depth;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
- 		return -EINVAL;
- 
--	max_depth += skip;
--	if (max_depth > sysctl_perf_event_max_stack)
--		max_depth = sysctl_perf_event_max_stack;
--
-+	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
- 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
- 				   false, false);
- 
-@@ -406,7 +425,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 			    struct perf_callchain_entry *trace_in,
- 			    void *buf, u32 size, u64 flags, bool may_fault)
- {
--	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
-+	u32 trace_nr, copy_len, elem_size, max_depth;
- 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
- 	bool crosstask = task && task != current;
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-@@ -438,21 +457,20 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 		goto clear;
- 	}
- 
--	num_elem = size / elem_size;
--	max_depth = num_elem + skip;
--	if (sysctl_perf_event_max_stack < max_depth)
--		max_depth = sysctl_perf_event_max_stack;
-+	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
- 
- 	if (may_fault)
- 		rcu_read_lock(); /* need RCU for perf's callchain below */
- 
--	if (trace_in)
-+	if (trace_in) {
- 		trace = trace_in;
--	else if (kernel && task)
-+		trace->nr = min_t(u32, trace->nr, max_depth);
-+	} else if (kernel && task) {
- 		trace = get_callchain_entry_for_task(task, max_depth);
--	else
-+	} else {
- 		trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
- 					   crosstask, false);
-+	}
- 
- 	if (unlikely(!trace) || trace->nr < skip) {
- 		if (may_fault)
-@@ -461,7 +479,6 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	}
- 
- 	trace_nr = trace->nr - skip;
--	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
- 	copy_len = trace_nr * elem_size;
- 
- 	ips = trace->ip + skip;
--- 
-2.47.3
+In hd3ss3220_get_vbus_supply(), if -ENODEV is returned, it is not 
+initialized yet, and if of_regulator_get_optional() fails, it is set to 
+NULL.
 
+> +
+>   	if (IS_ERR(hd3ss3220->role_sw)) {
+>   		ret = PTR_ERR(hd3ss3220->role_sw);
+>   		goto err_put_fwnode;
+
+CJ
 
