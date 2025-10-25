@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-869753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C0FC08A99
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBE7C08A81
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42D414E873F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D432403B36
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1993725BEE7;
-	Sat, 25 Oct 2025 03:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901AE259C92;
+	Sat, 25 Oct 2025 03:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bnLa/qej"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="T8pDU1Fw"
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF87257843
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 03:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319582147F9;
+	Sat, 25 Oct 2025 03:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761364670; cv=none; b=V4dWPvyGvig4ajPR5IZ/qcU9k/OK4e4mt955BvOGBTnkGD9a607uAkfPVusexrUvFzafnCXUT50Do39Oeonz14KZ8mOepsJ4eBpJ2/c0WBUa+aEY1ABOCuDJhPk9T+u/UBzs9cHpeQhQESRIlpkrjmFYYp4WIoMY17Cb2yNyLDg=
+	t=1761363897; cv=none; b=W8aJfseyg7zox3gfCPa7ZM8X6Nz4AreKXzJzKMGkGt+sqaqpcWXgzr9OT6bRH+37Nm/ytE2jbMweEtWApTdk43oI6QFSgG3ulRTBPC9yH9nkSRBbKXb1H+XJIKqr6wYCpTDPzjD3fSWyBoVRGCNew/j30RcY3H0oyMtHzpD6Els=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761364670; c=relaxed/simple;
-	bh=zdY7TECA95G1snEXpjR0jev+kdjPGHGKfzCPjDCGUTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3H8g46rWVjU07xfbO5739EJZqSC+Oozz9LVLT9kvVnUJhSPLKtmbISwNGRtgdFuLZMNS52Z1xUiNhoJaRWtLVBfnhN0uVIEpbzE8xDxFhtXt2BHfqoNd5WmI9UiwuNlJdUOy4Fdl+y2s3zxxbdWaBFTfpA0bh+mOdsRgC2qhes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bnLa/qej; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761364669; x=1792900669;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zdY7TECA95G1snEXpjR0jev+kdjPGHGKfzCPjDCGUTM=;
-  b=bnLa/qejK4c00iGfZjGLQ4PzKOr234bhbe79wQvBIwj5ylszzonJVDPW
-   Gj0UZHphwnGLIT3N3hXPmpxl8NGoji1r0yIXGJPuzFEp5u85MBtAsDDqf
-   mcuNFEg4vQomR2aMdktyMQfaNgl/ByGsPZY+qnTbA88HMwWfqPNpk2pYN
-   ej8nG+MmywI+CQpYy4UlfWIzxZeJysVym55B/yrDq64ymnsjNj4CaZNz/
-   gaE0pFywN4BdVyKFGEyn0IiPcU04iq7NmalpBZXnTnhZ13TpWfM1JLCFn
-   koIq1GQF9UqJsbfMes+C3hf8j+e+CGezjDLd9p3YdZfQ2BcO1s7vCf39Q
-   w==;
-X-CSE-ConnectionGUID: 8WIGmdA6Tmi8hDbAoKzS6Q==
-X-CSE-MsgGUID: 09hg6eIZTM2keTg6Bas+2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="89011568"
-X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="89011568"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 20:57:48 -0700
-X-CSE-ConnectionGUID: zeiL05zFRYOibm3bN9b6TA==
-X-CSE-MsgGUID: GJg2D4PwS8W3UGjX1XeAag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="184489554"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 24 Oct 2025 20:57:45 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vCVPT-000F6f-2R;
-	Sat, 25 Oct 2025 03:57:43 +0000
-Date: Sat, 25 Oct 2025 11:56:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: Re: [PATCH 5/6] drm/sitronix/st7571: split up the driver into a
- common and an i2c part
-Message-ID: <202510251116.5wpReHRY-lkp@intel.com>
-References: <20251024-st7571-split-v1-5-d3092b98130f@gmail.com>
+	s=arc-20240116; t=1761363897; c=relaxed/simple;
+	bh=2bouS7hna0gClWKGkPD0t7YRPlEeO+s2XXR4RVd0lJU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hk+TvrWqxh7AmlY6eQ6jEEoHe2fRCFVbm3+qsicGaIrBTIDo8cAt93b3UAcFE9i3sRvaTbEe6qL4H7k0uHkhz7AsC3YoOgn6oeHYzbEM1D/DdLRR58xksvdNQUW5CT4n2Zy72rGk5/BBnc6iFZUEorQ+tYF1jjBBHQOy/hoej8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=T8pDU1Fw; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=Y7Rj9E2CdLAIkXLhpNINjdklw1IJhaMfMqQhc80+fB4=;
+	b=T8pDU1FwYdR5RRmiX67izPdS9NVMhoZJZ6aWK1LfM5MzIj8S5CuiPMBmc2i9ZR/DOMT3Nbxhk
+	5YJgBhgh9yAjjW2M5AopCT3bmqTSEMwnfr+9yydDdmRjjBbFR2d+m7djIcC/oqkV9dmjAkCaUu6
+	d+HD5qU+HLdSL9J2eL7KHPM=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ctlxk6vMWznTVF;
+	Sat, 25 Oct 2025 11:44:10 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8DF1C140278;
+	Sat, 25 Oct 2025 11:44:50 +0800 (CST)
+Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 25 Oct
+ 2025 11:44:49 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
+	<zhangchangzhong@huawei.com>, <wangliang74@huawei.com>
+Subject: [PATCH -next] i40e: Replace sscanf() with kstrtoint() in i40e_dbg_netdev_ops_write()
+Date: Sat, 25 Oct 2025 12:07:35 +0800
+Message-ID: <20251025040735.558953-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024-st7571-split-v1-5-d3092b98130f@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-Hi Marcus,
+Commit 9fcdb1c3c4ba ("i40e: remove read access to debugfs files")
+introduced some checkpatch warnings like this:
 
-kernel test robot noticed the following build warnings:
+  WARNING: Prefer kstrto<type> to single variable sscanf
+  #240: FILE: drivers/net/ethernet/intel/i40e/i40e_debugfs.c:1655:
+  +               cnt = sscanf(&cmd_buf[11], "%i", &vsi_seid);
 
-[auto build test WARNING on 7e73cefd2bede5408d1aeb6145261b62d85d23be]
+  WARNING: Prefer kstrto<type> to single variable sscanf
+  #251: FILE: drivers/net/ethernet/intel/i40e/i40e_debugfs.c:1676:
+  +               cnt = sscanf(&cmd_buf[4], "%i", &vsi_seid);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marcus-Folkesson/drm-sitronix-st7571-i2c-rename-struct-drm_device-in-st7571_device/20251024-192347
-base:   7e73cefd2bede5408d1aeb6145261b62d85d23be
-patch link:    https://lore.kernel.org/r/20251024-st7571-split-v1-5-d3092b98130f%40gmail.com
-patch subject: [PATCH 5/6] drm/sitronix/st7571: split up the driver into a common and an i2c part
-config: x86_64-randconfig-005-20251025 (https://download.01.org/0day-ci/archive/20251025/202510251116.5wpReHRY-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510251116.5wpReHRY-lkp@intel.com/reproduce)
+  total: 0 errors, 2 warnings, 0 checks, 194 lines checked
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510251116.5wpReHRY-lkp@intel.com/
+Function kstrtoint() provides better error detection, overflow protection,
+and consistent error handling than sscanf(). Replace sscanf() with
+kstrtoint() in i40e_dbg_netdev_ops_write() to silence the checkpatch
+warnings.
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_debugfs.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
->> WARNING: modpost: module st7571-i2c uses symbol st7567_config from namespace DRM_ST7571, but does not import it.
->> WARNING: modpost: module st7571-i2c uses symbol st7571_config from namespace DRM_ST7571, but does not import it.
-
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
+index c17b5d290f0a..2abd12b62509 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
+@@ -1604,7 +1604,7 @@ static ssize_t i40e_dbg_netdev_ops_write(struct file *filp,
+ 	int bytes_not_copied;
+ 	struct i40e_vsi *vsi;
+ 	int vsi_seid;
+-	int i, cnt;
++	int i, ret;
+ 
+ 	/* don't allow partial writes */
+ 	if (*ppos != 0)
+@@ -1629,9 +1629,9 @@ static ssize_t i40e_dbg_netdev_ops_write(struct file *filp,
+ 	if (strncmp(cmd_buf, "change_mtu", 10) == 0) {
+ 		int mtu;
+ 
+-		cnt = sscanf(&cmd_buf[11], "%i %i",
++		ret = sscanf(&cmd_buf[11], "%i %i",
+ 			     &vsi_seid, &mtu);
+-		if (cnt != 2) {
++		if (ret != 2) {
+ 			dev_info(&pf->pdev->dev, "change_mtu <vsi_seid> <mtu>\n");
+ 			goto netdev_ops_write_done;
+ 		}
+@@ -1652,8 +1652,8 @@ static ssize_t i40e_dbg_netdev_ops_write(struct file *filp,
+ 		}
+ 
+ 	} else if (strncmp(cmd_buf, "set_rx_mode", 11) == 0) {
+-		cnt = sscanf(&cmd_buf[11], "%i", &vsi_seid);
+-		if (cnt != 1) {
++		ret = kstrtoint(&cmd_buf[11], 0, &vsi_seid);
++		if (ret) {
+ 			dev_info(&pf->pdev->dev, "set_rx_mode <vsi_seid>\n");
+ 			goto netdev_ops_write_done;
+ 		}
+@@ -1673,8 +1673,8 @@ static ssize_t i40e_dbg_netdev_ops_write(struct file *filp,
+ 		}
+ 
+ 	} else if (strncmp(cmd_buf, "napi", 4) == 0) {
+-		cnt = sscanf(&cmd_buf[4], "%i", &vsi_seid);
+-		if (cnt != 1) {
++		ret = kstrtoint(&cmd_buf[4], 0, &vsi_seid);
++		if (ret) {
+ 			dev_info(&pf->pdev->dev, "napi <vsi_seid>\n");
+ 			goto netdev_ops_write_done;
+ 		}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
