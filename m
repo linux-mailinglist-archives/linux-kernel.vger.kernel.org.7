@@ -1,89 +1,93 @@
-Return-Path: <linux-kernel+bounces-870057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81954C09CCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:58:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F69C09C98
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AA804F088A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693643B955A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B13314D3B;
-	Sat, 25 Oct 2025 16:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20A7315786;
+	Sat, 25 Oct 2025 16:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2WTiFvK"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aidmQ6Id"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E1C31194C
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53172314D2D
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410467; cv=none; b=meSEBN+FJWUIdDMDQ0gPbZ2RZHdszE1uV8keC+Bt6gQ5Hx72G4mgKbd33zTtJPDzhztJe3B8gLkp5Ga3CcNexILd7kHJrwEfXh2okVpijT0PcoViFF6zMjUs37DCIqroj3Ux1w4H9o2VZHvEsuhTrf7h14vxRYzQ60nMQOs32SI=
+	t=1761410469; cv=none; b=JIcnHjqs0yyKHWcSzChPKIbdXO4vtNDcllMV3Zmpo14UyCiLz+TyEdGy+HOzw0Frh1JcucEjtZwVFTPYzLd5WEkTq3MeV4J7anMIns96yBOGmQ2kdZ3HYMitFxuyZ3SRoxIgAYsw6hCbuU01cuzQOeu5wE4JXgMt7LlXjN68qd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410467; c=relaxed/simple;
-	bh=/FqtaDoZDiEkgJ775gUA1lnv4tNmr3AkN5xeLieFs6M=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fBTPZv01zUDkBa7OYja85OYrx7TWrmaReoplX2rlFLeTMGDcf8WKNvq7zDTzI3dJGcwA62fVjq8z1+atgSR1jJmVugi4riAjudGC+iwPW5Sci/CnhKjmUnXnpNT6Mecebw8WhED3L7ZASHuknViAhI5KHYrG7i3it8cdNG3EERQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2WTiFvK; arc=none smtp.client-ip=209.85.222.179
+	s=arc-20240116; t=1761410469; c=relaxed/simple;
+	bh=XhV4d6vVAyK94tJmHv/pzX7uso4PaLhZOAOHlwMKMkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TULMSAl2H/lmEHZTexyhsyxxhm0laoNuHKBYOYC4fbKNJe/mQjXzpidk2exbdVnwwHhe7Tu8e8efwh5unubfXENuYhXxXhF72HGYmwI0CI71ErcjZwHsYQsg54dtHhUebhIHBzG18BUTlEKdtA+mVS/kvWiFbPDmpsnxFakI86Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aidmQ6Id; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-89f4779fe03so75715085a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:41:05 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-78e4056623fso32594506d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410464; x=1762015264; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761410466; x=1762015266; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fSxoEFGAAolVhXFywte18CkthEXwJuFOJ2hIbnLSDSg=;
-        b=A2WTiFvKW012MPlO3NSsz7bZsmDUpB6Nz/56w4BEHypZbx7SQKn92AO9AOB9Qx6+Fk
-         reoZ7FRasRvyNHfZHlWOXe5VkqN8xrMqno0Hh/JJwIjGnYwxtRUGGp4ho2/URhj6C28R
-         hdthsQBgyYZiVoy+PRQ6rVDKV8yA4wYKMDeRHySs4pK/mzMDEtkHXn+5IYng3YgH1m32
-         Xk6pWoWqgc/ztYxOooIotks+csnOxuPAcvd5YTebUIACaqQ/FJLwe2P6muPFYgWKOjB9
-         cDXeAumq10/VBsAqbWvzIh/ix2HXQXs2oMlddvbzs6ust0By7NviIvIG85oDMKwlzqKh
-         zd+Q==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ehiUcUt6iLCen11Ncs28J2yHpJNhGkVkWPyWS3jNXxY=;
+        b=aidmQ6Id21oJUCYTKFpnRu/3uu5cLBBKQfFHDg6UqHM+oQ3eIbMTasl4LFPnWNWWtb
+         TIaRe7dD6hA5zNu1nztSmKMu/rU3YMMGJgv8b5YD98SHeTOelHmCuQKj7A1M8R5kyYiE
+         yQXF2slqIhWD44xiLUEv/rQ023S1+ggrFQ54zucCz4vkMkqAl28fRLxX5urqY8m4ZRbw
+         6+qMPY1XoSUrKpBx6Cg7GuEdLBYV6/VsSvynH8BJwRWsI0QMeTzsyy0vCBWLNU3Qz2VT
+         lleVdUZyqpmqYsxhidB56+k6+/0FiKvBxcTpwzVqgV5pciVQhF2YmSs8MeW/Lrp5Yler
+         FwSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410464; x=1762015264;
+        d=1e100.net; s=20230601; t=1761410466; x=1762015266;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fSxoEFGAAolVhXFywte18CkthEXwJuFOJ2hIbnLSDSg=;
-        b=urSzhBTUbAoHZcfreQKJvDlfMDcEoWu45DzerBKPnocPRU5TogDlGNhSyi/p3GSnN9
-         OmNCW+yxAGhkxBFX6+jRwF8BM6srF4v0Wj8N2GCwzFSlfSgmKKx3nrputLqvqoKuSzZA
-         0BMmKFJUo5nXyhhqT0kYghZJgyO9TfqYdo4Vx02MKkUr1urkoMh5DCKsllS9buylAv0q
-         x1jowoFZY7x4VB+0Rbu2uQMiwAWgAB36wMXYohpI8c7Lzw4ifSehi/MgOMBrFNEQcf2Z
-         MPwA3cAmu13nW7WoEN7JGo0DeJRF4Pn7GKBVPeQ3yrlF3bQKHcthBMGphV8V2UWkcQOq
-         9SVw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+ibSAtjC4xcla2q5hcZrMZ+yJvI2Q7RX6KmR4sAGo1Nm/05Rl2oR3tPct6A5RGoMyfzt3ARjVcZ6/ZUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYCpVNWc3XM7gNKGGQXfjQdTncYpIodLc0EiBg+QrU5n8pIun2
-	0h9OkJjKRsgljKcUGFPykuLY1EUhU0hsXK8+8MiZhW3pu7/LTxSx6fQN
-X-Gm-Gg: ASbGncvSIbytmuN/bT7dgXE5lG5wio2OquGXBL2vJ6wwnG5psLbfekOipvBe9XqSotk
-	Wt0m5fQyNtDUIcCQ2IW6msFXPq37A5Ok1E09OAUjYpzcTs/Ukoh5IgZn1buVnFrz2Iot/A3hXCD
-	NzBRnPmDBYt/MCmxlHR+mhaxXl5bcCZCGsjGf0nOBcTXOe/HIQUsP/5QrY0iwm6avF+4FIGQOsi
-	jbya1yyu00yimA6rWsncCK0q+AS1/Gx6tlYHBm87fn+WOMpNK+5CJglOBiTqROQh0qeA/pTeANP
-	nqAuD3gN4H7w83cra4SBU0k7w/GyTcUcYZVxR1ShUfmTGiYZyx7qPfp2+qcqiDVK3jmh7GtCHDY
-	n0UyRq2rYcyHZFBJoEeMiDspc8gq0eB7c+4ixQJKJrPxiM/tKyYIjcRP+3Mesv+aH4rHA9AkWg5
-	RcqKdzNUk=
-X-Google-Smtp-Source: AGHT+IEJ+VGIE9njWqp738nyLBuC4v8CoidtGMfLmNNjfj41Zy6EVk/dYE8QJdM3J56MYC03DWdagw==
-X-Received: by 2002:a05:620a:2990:b0:829:b669:c791 with SMTP id af79cd13be357-890712b8ca4mr3696698185a.78.1761410464404;
-        Sat, 25 Oct 2025 09:41:04 -0700 (PDT)
+        bh=ehiUcUt6iLCen11Ncs28J2yHpJNhGkVkWPyWS3jNXxY=;
+        b=DfYaIHvgytsKxZiofzA3NfFw0rdGoQqyYpVyeF+GF0QFvWxe+xJqBcM4B5IIGZmjKv
+         IEcOSvIa+cH/qGx2tUYSUYg7a37SKGPrgFBSw7UmKoWOq6xBYl9DzDErc/G0enbDd62e
+         afZqrhstkJwoIPmUH5mKKE7iGCJJ1bQo3EI+xEEvBQyqqNCj9EMpiKvoYEBhCe8g/LVs
+         /HvJOMGYt9S28Zxp43jXmNtEMDNwIwCvyeAhuBajVgozE1EGgKRNzAI61IMlofpzR/bi
+         kDj1ml+3jGR08psBcliK4uYph9Lpj21qJSj61ZXKRydjAuqIswYHAc3LjFRWbV1TCUln
+         IN8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgG2wmwV/9CEPQ+SD7D7TSstUD/lYShVkFeqBX+jJdJ2nxdzWsGoEz2J3qn2wswkPJ0CxTBp8zZuin0MM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6a1hS05ky1IZv7p6Et1nu63SVBdtlFKv0t0tnHx/dFQmhSjG9
+	6pgM8Z7jY496oF3f7OwZm5oN0hAtPuXZKoxro8dF0JGvUzbp2Z+HT8HY
+X-Gm-Gg: ASbGnctEVwp3CDoneh6lyTLNiKp+rAWrefEHQznDaITca1Gd/NZwvvrZcRBfxdB6KjV
+	vOtKyMXrmbLFQzyq0DpghbuUV4mFpbALXgT8CJcsmN/T3dicGk3l+bVtnHd4+crdrDdajsBbmhJ
+	nzNO/eUCwwwi1K6F13PTkFhkCpFjZp/s2BktGGdJxwAd9iHKgErtbrIer/qVr5fxYsnYgSIh20t
+	5BUQWJ/aDhRR3xVacrRgAGDZDqeKlK7Cv/PrFIJb9dmJ/p8IvZruRw3GXX6hQGFcVg/jLPzR1Vc
+	1xMf4z/DY8ABLBnpTzywQhVUZKct8NwG5lK1rEiXTA4CWmTiV5R8CsOxk36pUWot6MxvLIiXs/L
+	x81UxHxdURJD7knFGzcqge+P+GzOY3+p5Ftrc9S+0meFuFpbxQJFAoZTN/lQ644Nh9MAbut2K98
+	grNkAo2rU=
+X-Google-Smtp-Source: AGHT+IHdUbKQhz7684jsgoRDJdwRjaQ2Xzm+lx6YWL84J4FmuB+pEZxn/rvpLnFKlTlrkm8ZxkpTCg==
+X-Received: by 2002:ad4:5ca9:0:b0:87c:11cb:6d0c with SMTP id 6a1803df08f44-87c20573120mr383057026d6.17.1761410466214;
+        Sat, 25 Oct 2025 09:41:06 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f262716efsm172607385a.59.2025.10.25.09.41.02
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc49a9d92sm16338826d6.51.2025.10.25.09.41.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:41:03 -0700 (PDT)
+        Sat, 25 Oct 2025 09:41:05 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 12/21] bitmap: don't use GENMASK()
-Date: Sat, 25 Oct 2025 12:40:11 -0400
-Message-ID: <20251025164023.308884-13-yury.norov@gmail.com>
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 13/21] trace: don't use GENMASK()
+Date: Sat, 25 Oct 2025 12:40:12 -0400
+Message-ID: <20251025164023.308884-14-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025164023.308884-1-yury.norov@gmail.com>
 References: <20251025164023.308884-1-yury.norov@gmail.com>
@@ -95,258 +99,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GENMASK(high, low) notation is confusing. Switch to a more natural
-BITS(low, high) mask generator, or FIRST/LAST_BITS() as appropriate.
+GENMASK(high, low) notation is confusing. FIRST_BITS() is more
+appropriate.
 
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- include/linux/bitmap.h |  4 ++--
- include/linux/find.h   | 34 +++++++++++++++++-----------------
- lib/bitmap.c           |  2 +-
- lib/test_bitmap.c      | 14 +++++++-------
- 4 files changed, 27 insertions(+), 27 deletions(-)
+ kernel/trace/fgraph.c      | 10 +++++-----
+ kernel/trace/trace_probe.h |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index fbe2d12bceab..3bed29f1780b 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -473,7 +473,7 @@ void bitmap_set(unsigned long *map, unsigned int start, unsigned int nbits)
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__set_bit(start, map);
- 	else if (small_const_nbits(start + nbits))
--		*map |= GENMASK(start + nbits - 1, start);
-+		*map |= BITS(start, start + nbits - 1);
- 	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
- 		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
- 		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-@@ -489,7 +489,7 @@ void bitmap_clear(unsigned long *map, unsigned int start, unsigned int nbits)
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__clear_bit(start, map);
- 	else if (small_const_nbits(start + nbits))
--		*map &= ~GENMASK(start + nbits - 1, start);
-+		*map &= ~BITS(start, start + nbits - 1);
- 	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
- 		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
- 		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-diff --git a/include/linux/find.h b/include/linux/find.h
-index 9d720ad92bc1..24d7266fd02b 100644
---- a/include/linux/find.h
-+++ b/include/linux/find.h
-@@ -66,7 +66,7 @@ unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
- 		if (unlikely(offset >= size))
- 			return size;
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 484ad7a18463..4f21bd837055 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -106,10 +106,10 @@
+  *     (RESERVED or BITMAP)
+  */
+ #define FGRAPH_FRAME_OFFSET_BITS	10
+-#define FGRAPH_FRAME_OFFSET_MASK	GENMASK(FGRAPH_FRAME_OFFSET_BITS - 1, 0)
++#define FGRAPH_FRAME_OFFSET_MASK	FIRST_BITS(FGRAPH_FRAME_OFFSET_BITS)
  
--		val = *addr & GENMASK(size - 1, offset);
-+		val = *addr & BITS(offset, size - 1);
- 		return val ? __ffs(val) : size;
- 	}
+ #define FGRAPH_TYPE_BITS	2
+-#define FGRAPH_TYPE_MASK	GENMASK(FGRAPH_TYPE_BITS - 1, 0)
++#define FGRAPH_TYPE_MASK	FIRST_BITS(FGRAPH_TYPE_BITS)
+ #define FGRAPH_TYPE_SHIFT	FGRAPH_FRAME_OFFSET_BITS
  
-@@ -96,7 +96,7 @@ unsigned long find_next_and_bit(const unsigned long *addr1,
- 		if (unlikely(offset >= size))
- 			return size;
+ enum {
+@@ -123,7 +123,7 @@ enum {
+  *   FGRAPH_INDEX (12-27) bits holding the gops index wanting return callback called
+  */
+ #define FGRAPH_INDEX_BITS	16
+-#define FGRAPH_INDEX_MASK	GENMASK(FGRAPH_INDEX_BITS - 1, 0)
++#define FGRAPH_INDEX_MASK	FIRST_BITS(FGRAPH_INDEX_BITS)
+ #define FGRAPH_INDEX_SHIFT	(FGRAPH_TYPE_SHIFT + FGRAPH_TYPE_BITS)
  
--		val = *addr1 & *addr2 & GENMASK(size - 1, offset);
-+		val = *addr1 & *addr2 & BITS(offset, size - 1);
- 		return val ? __ffs(val) : size;
- 	}
+ /*
+@@ -135,12 +135,12 @@ enum {
+  *  data_size == 0 means 1 word, and 31 (=2^5 - 1) means 32 words.
+  */
+ #define FGRAPH_DATA_BITS	5
+-#define FGRAPH_DATA_MASK	GENMASK(FGRAPH_DATA_BITS - 1, 0)
++#define FGRAPH_DATA_MASK	FIRST_BITS(FGRAPH_DATA_BITS)
+ #define FGRAPH_DATA_SHIFT	(FGRAPH_TYPE_SHIFT + FGRAPH_TYPE_BITS)
+ #define FGRAPH_MAX_DATA_SIZE (sizeof(long) * (1 << FGRAPH_DATA_BITS))
  
-@@ -127,7 +127,7 @@ unsigned long find_next_andnot_bit(const unsigned long *addr1,
- 		if (unlikely(offset >= size))
- 			return size;
+ #define FGRAPH_DATA_INDEX_BITS	4
+-#define FGRAPH_DATA_INDEX_MASK	GENMASK(FGRAPH_DATA_INDEX_BITS - 1, 0)
++#define FGRAPH_DATA_INDEX_MASK	FIRST_BITS(FGRAPH_DATA_INDEX_BITS)
+ #define FGRAPH_DATA_INDEX_SHIFT	(FGRAPH_DATA_SHIFT + FGRAPH_DATA_BITS)
  
--		val = *addr1 & ~*addr2 & GENMASK(size - 1, offset);
-+		val = *addr1 & ~*addr2 & BITS(offset, size - 1);
- 		return val ? __ffs(val) : size;
- 	}
+ #define FGRAPH_MAX_INDEX	\
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 08b5bda24da2..88de129dcde0 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -401,7 +401,7 @@ static inline int traceprobe_get_entry_data_size(struct trace_probe *tp)
+ #define TPARG_FL_USER   BIT(4)
+ #define TPARG_FL_FPROBE BIT(5)
+ #define TPARG_FL_TPOINT BIT(6)
+-#define TPARG_FL_LOC_MASK	GENMASK(4, 0)
++#define TPARG_FL_LOC_MASK	FIRST_BITS(5)
  
-@@ -157,7 +157,7 @@ unsigned long find_next_or_bit(const unsigned long *addr1,
- 		if (unlikely(offset >= size))
- 			return size;
- 
--		val = (*addr1 | *addr2) & GENMASK(size - 1, offset);
-+		val = (*addr1 | *addr2) & BITS(offset, size - 1);
- 		return val ? __ffs(val) : size;
- 	}
- 
-@@ -185,7 +185,7 @@ unsigned long find_next_zero_bit(const unsigned long *addr, unsigned long size,
- 		if (unlikely(offset >= size))
- 			return size;
- 
--		val = *addr | ~GENMASK(size - 1, offset);
-+		val = *addr | ~BITS(offset, size - 1);
- 		return val == ~0UL ? size : ffz(val);
- 	}
- 
-@@ -206,7 +206,7 @@ static __always_inline
- unsigned long find_first_bit(const unsigned long *addr, unsigned long size)
+ static inline bool tparg_is_function_entry(unsigned int flags)
  {
- 	if (small_const_nbits(size)) {
--		unsigned long val = *addr & GENMASK(size - 1, 0);
-+		unsigned long val = *addr & FIRST_BITS(size);
- 
- 		return val ? __ffs(val) : size;
- 	}
-@@ -235,7 +235,7 @@ unsigned long find_nth_bit(const unsigned long *addr, unsigned long size, unsign
- 		return size;
- 
- 	if (small_const_nbits(size)) {
--		unsigned long val =  *addr & GENMASK(size - 1, 0);
-+		unsigned long val =  *addr & FIRST_BITS(size);
- 
- 		return val ? fns(val, n) : size;
- 	}
-@@ -261,7 +261,7 @@ unsigned long find_nth_and_bit(const unsigned long *addr1, const unsigned long *
- 		return size;
- 
- 	if (small_const_nbits(size)) {
--		unsigned long val =  *addr1 & *addr2 & GENMASK(size - 1, 0);
-+		unsigned long val =  *addr1 & *addr2 & FIRST_BITS(size);
- 
- 		return val ? fns(val, n) : size;
- 	}
-@@ -291,7 +291,7 @@ unsigned long find_nth_and_andnot_bit(const unsigned long *addr1,
- 		return size;
- 
- 	if (small_const_nbits(size)) {
--		unsigned long val =  *addr1 & *addr2 & (~*addr3) & GENMASK(size - 1, 0);
-+		unsigned long val =  *addr1 & *addr2 & (~*addr3) & FIRST_BITS(size);
- 
- 		return val ? fns(val, n) : size;
- 	}
-@@ -315,7 +315,7 @@ unsigned long find_first_and_bit(const unsigned long *addr1,
- 				 unsigned long size)
- {
- 	if (small_const_nbits(size)) {
--		unsigned long val = *addr1 & *addr2 & GENMASK(size - 1, 0);
-+		unsigned long val = *addr1 & *addr2 & FIRST_BITS(size);
- 
- 		return val ? __ffs(val) : size;
- 	}
-@@ -339,7 +339,7 @@ unsigned long find_first_andnot_bit(const unsigned long *addr1,
- 				 unsigned long size)
- {
- 	if (small_const_nbits(size)) {
--		unsigned long val = *addr1 & (~*addr2) & GENMASK(size - 1, 0);
-+		unsigned long val = *addr1 & (~*addr2) & FIRST_BITS(size);
- 
- 		return val ? __ffs(val) : size;
- 	}
-@@ -364,7 +364,7 @@ unsigned long find_first_and_and_bit(const unsigned long *addr1,
- 				     unsigned long size)
- {
- 	if (small_const_nbits(size)) {
--		unsigned long val = *addr1 & *addr2 & *addr3 & GENMASK(size - 1, 0);
-+		unsigned long val = *addr1 & *addr2 & *addr3 & FIRST_BITS(size);
- 
- 		return val ? __ffs(val) : size;
- 	}
-@@ -385,7 +385,7 @@ static __always_inline
- unsigned long find_first_zero_bit(const unsigned long *addr, unsigned long size)
- {
- 	if (small_const_nbits(size)) {
--		unsigned long val = *addr | ~GENMASK(size - 1, 0);
-+		unsigned long val = *addr | ~FIRST_BITS(size);
- 
- 		return val == ~0UL ? size : ffz(val);
- 	}
-@@ -406,7 +406,7 @@ static __always_inline
- unsigned long find_last_bit(const unsigned long *addr, unsigned long size)
- {
- 	if (small_const_nbits(size)) {
--		unsigned long val = *addr & GENMASK(size - 1, 0);
-+		unsigned long val = *addr & FIRST_BITS(size);
- 
- 		return val ? __fls(val) : size;
- 	}
-@@ -537,7 +537,7 @@ unsigned long find_next_zero_bit_le(const void *addr, unsigned
- 		if (unlikely(offset >= size))
- 			return size;
- 
--		val = swab(val) | ~GENMASK(size - 1, offset);
-+		val = swab(val) | ~BITS(offset, size - 1);
- 		return val == ~0UL ? size : ffz(val);
- 	}
- 
-@@ -550,7 +550,7 @@ static __always_inline
- unsigned long find_first_zero_bit_le(const void *addr, unsigned long size)
- {
- 	if (small_const_nbits(size)) {
--		unsigned long val = swab(*(const unsigned long *)addr) | ~GENMASK(size - 1, 0);
-+		unsigned long val = swab(*(const unsigned long *)addr) | ~FIRST_BITS(size);
- 
- 		return val == ~0UL ? size : ffz(val);
- 	}
-@@ -570,7 +570,7 @@ unsigned long find_next_bit_le(const void *addr, unsigned
- 		if (unlikely(offset >= size))
- 			return size;
- 
--		val = swab(val) & GENMASK(size - 1, offset);
-+		val = swab(val) & BITS(offset, size - 1);
- 		return val ? __ffs(val) : size;
- 	}
- 
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index b97692854966..ec11cc36624e 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -876,7 +876,7 @@ void bitmap_to_arr64(u64 *buf, const unsigned long *bitmap, unsigned int nbits)
- 
- 	/* Clear tail bits in the last element of array beyond nbits. */
- 	if (nbits % 64)
--		buf[-1] &= GENMASK_ULL((nbits - 1) % 64, 0);
-+		buf[-1] &= FIRST_BITS_ULL(nbits);
- }
- EXPORT_SYMBOL(bitmap_to_arr64);
- #endif
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index c83829ef557f..c198fc7a66d2 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -692,10 +692,10 @@ static void __init test_bitmap_arr64(void)
- 		}
- 
- 		if ((nbits % 64) &&
--		    (arr[(nbits - 1) / 64] & ~GENMASK_ULL((nbits - 1) % 64, 0))) {
-+		    (arr[(nbits - 1) / 64] & ~FIRST_BITS_ULL(nbits))) {
- 			pr_err("bitmap_to_arr64(nbits == %d): tail is not safely cleared: 0x%016llx (must be 0x%016llx)\n",
- 			       nbits, arr[(nbits - 1) / 64],
--			       GENMASK_ULL((nbits - 1) % 64, 0));
-+			       FIRST_BITS_ULL(nbits));
- 			failed_tests++;
- 		}
- 
-@@ -1217,7 +1217,7 @@ static void __init test_bitmap_const_eval(void)
- 	 * in runtime.
- 	 */
- 
--	/* Equals to `unsigned long bitmap[1] = { GENMASK(6, 5), }` */
-+	/* Equals to `unsigned long bitmap[1] = { BITS(5, 6), }` */
- 	bitmap_clear(bitmap, 0, BITS_PER_LONG);
- 	if (!test_bit(7, bitmap))
- 		bitmap_set(bitmap, 5, 2);
-@@ -1229,9 +1229,9 @@ static void __init test_bitmap_const_eval(void)
- 	/* Equals to `unsigned long var = BIT(25)` */
- 	var |= BIT(25);
- 	if (var & BIT(0))
--		var ^= GENMASK(9, 6);
-+		var ^= BITS(6, 9);
- 
--	/* __const_hweight<32|64>(GENMASK(6, 5)) == 2 */
-+	/* __const_hweight<32|64>(BITS(5, 6)) == 2 */
- 	res = bitmap_weight(bitmap, 20);
- 	BUILD_BUG_ON(!__builtin_constant_p(res));
- 	BUILD_BUG_ON(res != 2);
-@@ -1241,8 +1241,8 @@ static void __init test_bitmap_const_eval(void)
- 	BUILD_BUG_ON(!__builtin_constant_p(res));
- 	BUILD_BUG_ON(!res);
- 
--	/* BIT(2) & GENMASK(14, 8) == 0 */
--	res = initvar & GENMASK(14, 8);
-+	/* BIT(2) & BITS(8, 14) == 0 */
-+	res = initvar & BITS(8, 14);
- 	BUILD_BUG_ON(!__builtin_constant_p(res));
- 	BUILD_BUG_ON(res);
- 
 -- 
 2.43.0
 
