@@ -1,369 +1,78 @@
-Return-Path: <linux-kernel+bounces-870074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57D9C09D7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:08:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED562C09DBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52E903AA05B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:07:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C61064F80B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1C8305051;
-	Sat, 25 Oct 2025 17:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7502FFDDA;
+	Sat, 25 Oct 2025 17:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ob5jkLdK"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIeL6JtK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA60304980
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB6D1C1F02
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 17:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761411992; cv=none; b=XMwnB1WrAelA0T2mqxIXLc18+sKT0DmwOh7fRxd6NWOCXOmZrWdMsTsfOBhj43dN6+/TkA+jSdAakXYUoj5b5bqPGdC1Aoyaw0s08Ukthg1pqLwD47S2lFfMQg/C0KOUfdI5KkGpaRq0MJnPdt/woTMRZKjm7hMtvrie7m351PA=
+	t=1761412035; cv=none; b=OAkbX2gypHqtsYKL350tAxzcdJW4421r1Mh9tC4+wCPoJOjh3HTfR1e5TegBssT4shmauhteQUNK8POTUlBBE5H3Mimxbm2C0yqpNQ+W1SIliyUum7TXninbOrryUG7HwJ0HteLslC+aenHoxpoaz2I/RT0D73jKX/VcwuYcvkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761411992; c=relaxed/simple;
-	bh=2dxQC3wyZueaMEnOwoWXRHlFpSs6OgygyE9+UYsElzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XZ6726qXYC2uqKgsB3aSN/hGiqagWKxnSaEGGXmdDgxs6BtiKTzh/A0Eew88VKOgMDLs2yDRPbTIvvnQobp9mQzOxNbrYD3ClV+RUy7iVg18LyqiSI8OQqoVM0E0n7sYNhliR8iEzhaVclkn99KpNPnukHNSAo/8102VNPYq7zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ob5jkLdK; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so2134581a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 10:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761411990; x=1762016790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eM3FTCWkFUdaa4aFlf56htgtPRFQ9+Op0+Uy5qhWdhc=;
-        b=Ob5jkLdKx6Id5iq06NN21xEoAghR9UfQzAfPQczQhW7oR4RgAr3MBi4/Y/Pgtp7cVl
-         n6UgWWgitiSK7AZ73Qo6t8LrsM++vVTkZ7OlP4m0I+RTSISxuy4zQ9NpxfQNRqbVNn/E
-         nUTPMis1U8gQ7Ff1sDkTRNTAOeeJoTu+DKfmYpcJoJYvrbhcvGRdm6CCRJyTMFyN4EsH
-         8vgIOF+sZZdIht/ycYbE0Kpe6YQJN71DnApvwCByKAh2maABPm7yRq2bm+0sZMcxAuq1
-         UY0a94NLbwPa87rq0bYBRh+tJdsJPOp2ZtkemTcB1ulUP9vNMW+CVh9AAydwpclIybWq
-         2F0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761411990; x=1762016790;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eM3FTCWkFUdaa4aFlf56htgtPRFQ9+Op0+Uy5qhWdhc=;
-        b=t2ZlKYwHG4LZKqhzoNP08MzpoiHYRp03HQ54YWuI04hZBcLckAlUkvQSfhxRVXw0N+
-         qLW8nh2en/VP+3CI6NY5wOX+nIGQ/Yr4DhDOxJ2qBvkVJhTUDMtz80FWCY6qY9f6GCJD
-         SQcE8Kw4Wb6gDmpmYasrqPwkm6Jd6owTcrYMunR38fvw0rH892lPgG626K+u5M3xzdK6
-         gaJ+DUE4TKxQdUYNfRwdRBjPlI8RmYukkc58jjxl5CYg0TJPJj5IFJLiKqTCR+G9g6xi
-         65gDa4ucVddIlfy2Z/6cQyDaO9Oh/Wqf4jBz6MjusHSr5OmlzZkMIhKmThagsH4uHcqA
-         zoTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9HQehJchUAQTDm9ScJSWF9i+luV8LBfpFmCXaqZzGpeGYzIQEFE1eu6WIPG8bZs5e8YOXJ585aXxmV9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJebc3DdhJnL/RDUl4IYx24EvGYw/4y3kwWEOe5Z6hw6LCng4Q
-	f+NikBHcDsYi5WryVtT8MTFsWyP8Aa3Sa/p+NVgs3Dec6q2nJzg68mOF
-X-Gm-Gg: ASbGncuRSPBvwA5ix+TUW9nRHp0GwXjfibqwccQjlXk7fm8E3dcwDDCNE0uhbXUbINF
-	6Kg7GuRGgEt5e+AZSkh1kdWebtVvRwoWj1Od4tfsi8nrr0Yvg2ECG/0c+jusdEQoc48JXsvIlJl
-	sHEikVN6iE6EelP3u6nGqE4JuovamJVcAlB+yEgMvC/ZaJdIBcCdpk7Ac+pGfyYnY7kaodtwW+Q
-	LwaR2QVePdM6H9V/vrbpulkMNIgyd+BnoV5yOSrWmsHDUhwwaVh2tiEmMLcYEzIOpWJKutCKKyf
-	fFEfqgonXHjNtiNB8LPOO0Gs5bBf4WUd1HJw8s/4pMGMIEv7Uc2yR9zxmCK6bk7EC6N76O62xHg
-	MYGfhTzzzVatQGCfIYwDEifWL56ay5GtzR+L3su39mYlq/QIzkLza7DlwoIHzMsygDndi2urNSW
-	rHfJMUMn42zJw6kf2DbA==
-X-Google-Smtp-Source: AGHT+IENyejyeawlBEItrvmhxyRV78AAC7HJ7ORCzzVMdYH71cv2wGWnnAwQWzE0xmst5RUKdrjEvQ==
-X-Received: by 2002:a17:903:38c8:b0:276:76e1:2e87 with SMTP id d9443c01a7336-2946e22bbcfmr114585715ad.44.1761411990123;
-        Sat, 25 Oct 2025 10:06:30 -0700 (PDT)
-Received: from d.home.yangfl.dn42 ([45.32.227.231])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e70d1sm2857842a91.11.2025.10.25.10.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 10:06:29 -0700 (PDT)
-From: David Yang <mmyangfl@gmail.com>
-To: netdev@vger.kernel.org
-Cc: David Yang <mmyangfl@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 4/4] net: dsa: yt921x: Add LAG offloading support
-Date: Sun, 26 Oct 2025 01:05:27 +0800
-Message-ID: <20251025170606.1937327-5-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251025170606.1937327-1-mmyangfl@gmail.com>
-References: <20251025170606.1937327-1-mmyangfl@gmail.com>
+	s=arc-20240116; t=1761412035; c=relaxed/simple;
+	bh=oFDEjQWmXI3lwyCZ0vmIrO8U6dOX+eps2W2pa+wnXZM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CyxJs4dHXedM4KOsejbN2TQOCWanz3GqRgUh0vEvDn8BMX6OEvXO0dzHxmgjZ/PdniioTMK6ICk1J5mB+ezjNBsl7cXzcQCH9p6EhVfiDLaf1FLotNrP7V+rv2WDVPNjlBArui86htnlB1wdXCBa2QVp3302Rf7t5ZNmy92Cvp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIeL6JtK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39206C4CEF5;
+	Sat, 25 Oct 2025 17:07:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761412035;
+	bh=oFDEjQWmXI3lwyCZ0vmIrO8U6dOX+eps2W2pa+wnXZM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZIeL6JtKu5z7Yd3dxtHdcnXtO4+nQez97rdt/fs9bG/9ild/9ynTeq95S5jC3jL9G
+	 wD0wMeF6UqsOWjiF4TdKwsM6IfJTgn7l70hbIUwIHSLuBSLL2OPnZthn6vUoSSQp2A
+	 wAWiu3d5UuPTp1BTViQNJvBOowxw5E13BEIpbjfJzJ9z0tM/qdMx/a/Wfxm0r6votY
+	 FZhEQPKcqTv7WBFL5zKLjPoML+xxRS53u5hCiT9RqLAQuhGeoIs8zp0MfhH3FcrVrS
+	 2DCzbZyB2vpyLQyv1DAYZVV5OUITVtKJD+oHnhJ+uK5lZAHDWvX8JrNXuvwQOocObj
+	 TJYc3BAapSdWA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDB0380AA63;
+	Sat, 25 Oct 2025 17:06:55 +0000 (UTC)
+Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <27fed8ce-11d7-cd8c-b0e2-b89b11fa3c5a@kernel.org>
+References: <27fed8ce-11d7-cd8c-b0e2-b89b11fa3c5a@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <27fed8ce-11d7-cd8c-b0e2-b89b11fa3c5a@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-6.18-rc3
+X-PR-Tracked-Commit-Id: b7776a802f2f80139f96530a489dd00fd7089eda
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9bb956508c9d94935bedba4f13901fb2b7468e91
+Message-Id: <176141201418.82217.572878325720123603.pr-tracker-bot@kernel.org>
+Date: Sat, 25 Oct 2025 17:06:54 +0000
+To: Paul Walmsley <pjw@kernel.org>
+Cc: torvalds@linux-foundation.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add offloading for a link aggregation group supported by the YT921x
-switches.
+The pull request you sent on Sat, 25 Oct 2025 01:04:21 -0600 (MDT):
 
-Signed-off-by: David Yang <mmyangfl@gmail.com>
----
- drivers/net/dsa/yt921x.c | 185 +++++++++++++++++++++++++++++++++++++++
- drivers/net/dsa/yt921x.h |  20 +++++
- 2 files changed, 205 insertions(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-6.18-rc3
 
-diff --git a/drivers/net/dsa/yt921x.c b/drivers/net/dsa/yt921x.c
-index 885a63f2b978..1d18d1e89cb8 100644
---- a/drivers/net/dsa/yt921x.c
-+++ b/drivers/net/dsa/yt921x.c
-@@ -1143,6 +1143,187 @@ yt921x_dsa_port_mirror_add(struct dsa_switch *ds, int port,
- 	return res;
- }
- 
-+static int
-+yt921x_dsa_port_lag_check(struct dsa_switch *ds, struct dsa_lag lag,
-+			  struct netdev_lag_upper_info *info,
-+			  struct netlink_ext_ack *extack)
-+{
-+	struct dsa_port *dp;
-+	unsigned int members;
-+
-+	if (lag.id <= 0)
-+		return -EINVAL;
-+
-+	members = 0;
-+	dsa_lag_foreach_port(dp, ds->dst, &lag)
-+		/* Includes the port joining the LAG */
-+		members++;
-+
-+	if (members > YT921X_LAG_PORT_NUM) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Cannot offload more than 4 LAG ports");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (info->tx_type != NETDEV_LAG_TX_TYPE_HASH) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Can only offload LAG using hash TX type");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (info->hash_type != NETDEV_LAG_HASH_L2 &&
-+	    info->hash_type != NETDEV_LAG_HASH_L23 &&
-+	    info->hash_type != NETDEV_LAG_HASH_L34) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Can only offload L2 or L2+L3 or L3+L4 TX hash");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int yt921x_lag_hash(struct yt921x_priv *priv, u32 ctrl, bool unique_lag)
-+{
-+	struct device *dev = to_device(priv);
-+	u32 val;
-+	int res;
-+
-+	/* Hash Mode is global. Make sure the same Hash Mode is set to all the
-+	 * 2 possible lags.
-+	 * If we are the unique LAG we can set whatever hash mode we want.
-+	 * To change hash mode it's needed to remove all LAG and change the mode
-+	 * with the latest.
-+	 */
-+	if (unique_lag) {
-+		res = yt921x_reg_write(priv, YT921X_LAG_HASH, ctrl);
-+		if (res)
-+			return res;
-+	} else {
-+		res = yt921x_reg_read(priv, YT921X_LAG_HASH, &val);
-+		if (res)
-+			return res;
-+
-+		if (val != ctrl) {
-+			dev_err(dev,
-+				"Mismatched Hash Mode across different lag is not supported\n");
-+			return -EOPNOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int yt921x_lag_leave(struct yt921x_priv *priv, u8 index)
-+{
-+	return yt921x_reg_write(priv, YT921X_LAG_GROUPn(index), 0);
-+}
-+
-+static int yt921x_lag_join(struct yt921x_priv *priv, u8 index, u16 ports_mask)
-+{
-+	unsigned long targets_mask = ports_mask;
-+	unsigned int cnt;
-+	u32 ctrl;
-+	int port;
-+	int res;
-+
-+	cnt = 0;
-+	for_each_set_bit(port, &targets_mask, YT921X_PORT_NUM) {
-+		ctrl = YT921X_LAG_MEMBER_PORT(port);
-+		res = yt921x_reg_write(priv, YT921X_LAG_MEMBERnm(index, cnt),
-+				       ctrl);
-+		if (res)
-+			return res;
-+
-+		cnt++;
-+	}
-+
-+	ctrl = YT921X_LAG_GROUP_PORTS(ports_mask) |
-+	       YT921X_LAG_GROUP_MEMBER_NUM(cnt);
-+	return yt921x_reg_write(priv, YT921X_LAG_GROUPn(index), ctrl);
-+}
-+
-+static int
-+yt921x_dsa_port_lag_leave(struct dsa_switch *ds, int port, struct dsa_lag lag)
-+{
-+	struct yt921x_priv *priv = to_yt921x_priv(ds);
-+	int res;
-+
-+	if (lag.id <= 0)
-+		return -EINVAL;
-+
-+	mutex_lock(&priv->reg_lock);
-+	res = yt921x_lag_leave(priv, lag.id - 1);
-+	mutex_unlock(&priv->reg_lock);
-+
-+	return res;
-+}
-+
-+static int
-+yt921x_dsa_port_lag_join(struct dsa_switch *ds, int port, struct dsa_lag lag,
-+			 struct netdev_lag_upper_info *info,
-+			 struct netlink_ext_ack *extack)
-+{
-+	struct yt921x_priv *priv = to_yt921x_priv(ds);
-+	struct dsa_port *dp;
-+	bool unique_lag;
-+	unsigned int i;
-+	u32 ctrl;
-+	int res;
-+
-+	res = yt921x_dsa_port_lag_check(ds, lag, info, extack);
-+	if (res)
-+		return res;
-+
-+	ctrl = 0;
-+	switch (info->hash_type) {
-+	case NETDEV_LAG_HASH_L34:
-+		ctrl |= YT921X_LAG_HASH_IP_DST;
-+		ctrl |= YT921X_LAG_HASH_IP_SRC;
-+		ctrl |= YT921X_LAG_HASH_IP_PROTO;
-+
-+		ctrl |= YT921X_LAG_HASH_L4_DPORT;
-+		ctrl |= YT921X_LAG_HASH_L4_SPORT;
-+		break;
-+	case NETDEV_LAG_HASH_L23:
-+		ctrl |= YT921X_LAG_HASH_MAC_DA;
-+		ctrl |= YT921X_LAG_HASH_MAC_SA;
-+
-+		ctrl |= YT921X_LAG_HASH_IP_DST;
-+		ctrl |= YT921X_LAG_HASH_IP_SRC;
-+		ctrl |= YT921X_LAG_HASH_IP_PROTO;
-+		break;
-+	case NETDEV_LAG_HASH_L2:
-+		ctrl |= YT921X_LAG_HASH_MAC_DA;
-+		ctrl |= YT921X_LAG_HASH_MAC_SA;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	/* Check if we are the unique configured LAG */
-+	unique_lag = true;
-+	dsa_lags_foreach_id(i, ds->dst)
-+		if (i != lag.id && dsa_lag_by_id(ds->dst, i)) {
-+			unique_lag = false;
-+			break;
-+		}
-+
-+	mutex_lock(&priv->reg_lock);
-+	do {
-+		res = yt921x_lag_hash(priv, ctrl, unique_lag);
-+		if (res)
-+			break;
-+
-+		ctrl = 0;
-+		dsa_lag_foreach_port(dp, ds->dst, &lag)
-+			ctrl |= BIT(dp->index);
-+		res = yt921x_lag_join(priv, lag.id - 1, ctrl);
-+	} while (0);
-+	mutex_unlock(&priv->reg_lock);
-+
-+	return res;
-+}
-+
- static int yt921x_fdb_wait(struct yt921x_priv *priv, u32 *valp)
- {
- 	struct device *dev = to_device(priv);
-@@ -2906,6 +3087,9 @@ static const struct dsa_switch_ops yt921x_dsa_switch_ops = {
- 	/* mirror */
- 	.port_mirror_del	= yt921x_dsa_port_mirror_del,
- 	.port_mirror_add	= yt921x_dsa_port_mirror_add,
-+	/* lag */
-+	.port_lag_leave		= yt921x_dsa_port_lag_leave,
-+	.port_lag_join		= yt921x_dsa_port_lag_join,
- 	/* fdb */
- 	.port_fdb_dump		= yt921x_dsa_port_fdb_dump,
- 	.port_fast_age		= yt921x_dsa_port_fast_age,
-@@ -3000,6 +3184,7 @@ static int yt921x_mdio_probe(struct mdio_device *mdiodev)
- 	ds->priv = priv;
- 	ds->ops = &yt921x_dsa_switch_ops;
- 	ds->phylink_mac_ops = &yt921x_phylink_mac_ops;
-+	ds->num_lag_ids = YT921X_LAG_NUM;
- 	ds->num_ports = YT921X_PORT_NUM;
- 
- 	mdiodev_set_drvdata(mdiodev, priv);
-diff --git a/drivers/net/dsa/yt921x.h b/drivers/net/dsa/yt921x.h
-index 2a986b219080..0afd90461108 100644
---- a/drivers/net/dsa/yt921x.h
-+++ b/drivers/net/dsa/yt921x.h
-@@ -316,6 +316,14 @@
- #define  YT921X_FILTER_PORTn(port)		BIT(port)
- #define YT921X_VLAN_EGR_FILTER		0x180598
- #define  YT921X_VLAN_EGR_FILTER_PORTn(port)	BIT(port)
-+#define YT921X_LAG_GROUPn(n)		(0x1805a8 + 4 * (n))
-+#define  YT921X_LAG_GROUP_PORTS_M		GENMASK(13, 3)
-+#define   YT921X_LAG_GROUP_PORTS(x)			FIELD_PREP(YT921X_LAG_GROUP_PORTS_M, (x))
-+#define  YT921X_LAG_GROUP_MEMBER_NUM_M		GENMASK(2, 0)
-+#define   YT921X_LAG_GROUP_MEMBER_NUM(x)		FIELD_PREP(YT921X_LAG_GROUP_MEMBER_NUM_M, (x))
-+#define YT921X_LAG_MEMBERnm(n, m)	(0x1805b0 + 4 * (4 * (n) + (m)))
-+#define  YT921X_LAG_MEMBER_PORT_M		GENMASK(3, 0)
-+#define   YT921X_LAG_MEMBER_PORT(x)			FIELD_PREP(YT921X_LAG_MEMBER_PORT_M, (x))
- #define YT921X_CPU_COPY			0x180690
- #define  YT921X_CPU_COPY_FORCE_INT_PORT		BIT(2)
- #define  YT921X_CPU_COPY_TO_INT_CPU		BIT(1)
-@@ -360,6 +368,15 @@
- #define  YT921X_PORT_IGR_TPIDn_STAG(x)		BIT((x) + 4)
- #define  YT921X_PORT_IGR_TPIDn_CTAG_M		GENMASK(3, 0)
- #define  YT921X_PORT_IGR_TPIDn_CTAG(x)		BIT(x)
-+#define YT921X_LAG_HASH			0x210090
-+#define  YT921X_LAG_HASH_L4_SPORT		BIT(7)
-+#define  YT921X_LAG_HASH_L4_DPORT		BIT(6)
-+#define  YT921X_LAG_HASH_IP_PROTO		BIT(5)
-+#define  YT921X_LAG_HASH_IP_SRC			BIT(4)
-+#define  YT921X_LAG_HASH_IP_DST			BIT(3)
-+#define  YT921X_LAG_HASH_MAC_SA			BIT(2)
-+#define  YT921X_LAG_HASH_MAC_DA			BIT(1)
-+#define  YT921X_LAG_HASH_SRC_PORT		BIT(0)
- 
- #define YT921X_PORTn_VLAN_CTRL(port)	(0x230010 + 4 * (port))
- #define  YT921X_PORT_VLAN_CTRL_SVLAN_PRI_EN	BIT(31)
-@@ -404,6 +421,9 @@ enum yt921x_fdb_entry_status {
- 
- #define YT921X_MSTI_NUM		16
- 
-+#define YT921X_LAG_NUM		2
-+#define YT921X_LAG_PORT_NUM	4
-+
- #define YT9215_MAJOR	0x9002
- #define YT9218_MAJOR	0x9001
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9bb956508c9d94935bedba4f13901fb2b7468e91
+
+Thank you!
+
 -- 
-2.51.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
