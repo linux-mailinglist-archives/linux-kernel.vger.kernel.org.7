@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-869799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384EBC08C43
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:35:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B1CC08C4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C9764ED327
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C89E400D68
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9DE2D9EC9;
-	Sat, 25 Oct 2025 06:34:11 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933002DA776;
+	Sat, 25 Oct 2025 06:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="joUPdBdm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EC82D592C;
-	Sat, 25 Oct 2025 06:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648152D97A8
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 06:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761374051; cv=none; b=enLCgQymgG731yNMiBA2VqyA6cnaxYSCWcYZ6nvCyV1cXrt/XBIW5ltp/Q+hzstXI9ZAwQt/NtkZbmGKFUAtIfKKk9hnxoa+F8gnpmOytKQ15m01F3OHF68VoLnnL/PXPXh2bJzGdchuFxxXtDY/ijot15x9En3BsJ3p/ZOj+94=
+	t=1761374638; cv=none; b=bY8DmhTOi+4kEq1CbDd99y4OGgnLxtiz6V5pbtnX+i/doFAwvBcOfL5WBf+sT9GvwAh6HmBWYtXBNaifbIRun0OtxFZRUFedqzgi6/wVFNdjzAPDdWb/QvWuovMM6I5T81QblknttY3fsNFoppRzjpDyGE46u1R12hDh5+QRaI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761374051; c=relaxed/simple;
-	bh=ctSRq6I+opkla8CezO86rPe++ILpgc2HAX6UyIl5NQI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LJNCXh4qrzyJAwCu04xooWj83392cdMF61mxXoawENhbXqGZBM+AWHcqQ1CCy1WK3IheFlvoT+6lmjLPIEP+yiaYrge9CV07GDy3wb3yEdU8NGL3QC3najJ4xc3KfjOKLdXwwdxE1qpQbFQf1Q22WD+9A/1Xl20jexr9Sxlz8Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ctqhg4lk9zYQtmK;
-	Sat, 25 Oct 2025 14:33:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 800D61A0902;
-	Sat, 25 Oct 2025 14:34:06 +0800 (CST)
-Received: from [10.174.178.254] (unknown [10.174.178.254])
-	by APP2 (Coremail) with SMTP id Syh0CgBXrUVdb_xoutIpBg--.48673S3;
-	Sat, 25 Oct 2025 14:34:06 +0800 (CST)
-Message-ID: <26839410-f131-4a7b-857e-c0c159981a83@huaweicloud.com>
-Date: Sat, 25 Oct 2025 14:34:05 +0800
+	s=arc-20240116; t=1761374638; c=relaxed/simple;
+	bh=5Xd2T2aNTl8c9Ga1fQDjXYNrqheu8xPazvqz7CR1xeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckfyJJOtk8BowizVcPH/JvusieNR7vJzSuPxePA5vUqitfJnHv2XIbQ0l7wci2OhLOxR79PoaV1cQ2LIUm2M02/+KxXQVphq+pPEdpGTCvOMOeHcBgDTQ7Fjja1xB6O4WWNFbDmmeZ0Y6oZkYmANfSDOAjCSevzQujMmX03/CMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=joUPdBdm; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761374637; x=1792910637;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5Xd2T2aNTl8c9Ga1fQDjXYNrqheu8xPazvqz7CR1xeE=;
+  b=joUPdBdmQ09BcKjp57waKNFsyBPA+/tIfF2ce1U41SUPYYDEsYIVMaYn
+   2abb6BM083f7xYBXOS3KeFhXztpPe8hx94edtXV2MQwmcHIsw8Uow6f5k
+   HsMDY78YG0Z9T9UY6Ow6KrH4HTUgcMzmNTxwXYXX/cN9xjumeEFfJXTih
+   +BYrYddxA53GCJFjBcKO2TzsIcrkHNb/AYByxHBdXIO7VFTTVyKg6NldA
+   Y5Qp1DtMKigZbDVn2ZC3ZTheVKsLGUxAVBRcByuelbtV/xfdlQ+ZmjXzI
+   /aQHevonsuZdWvZcyJ3k8CROz+J5hu/CH0yYmQIlyxbetb8DqD43QJgbo
+   A==;
+X-CSE-ConnectionGUID: f0yNwP45RYer5HAbOBwZxg==
+X-CSE-MsgGUID: aDY2sKi3R7KfEKT6cT/WrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67189552"
+X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
+   d="scan'208";a="67189552"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 23:43:56 -0700
+X-CSE-ConnectionGUID: GPcfqCRKSqWteCHwySs0PA==
+X-CSE-MsgGUID: y5IAKaXKSUOW6cbBl86z4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
+   d="scan'208";a="184671266"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 24 Oct 2025 23:43:53 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCY0F-000F9d-1c;
+	Sat, 25 Oct 2025 06:43:51 +0000
+Date: Sat, 25 Oct 2025 14:42:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: Re: [PATCH 6/6] drm/sitronix/st7571-spi: add support for SPI
+ interface
+Message-ID: <202510251430.rl42LCVH-lkp@intel.com>
+References: <20251024-st7571-split-v1-6-d3092b98130f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Baokun Li <libaokun@huaweicloud.com>
-Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
- __alloc_pages_slowpath() when BS > PS
-To: Matthew Wilcox <willy@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
- mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
- libaokun1@huawei.com
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-23-libaokun@huaweicloud.com>
- <aPxV6QnXu-OufSDH@casper.infradead.org>
-Content-Language: en-GB
-In-Reply-To: <aPxV6QnXu-OufSDH@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBXrUVdb_xoutIpBg--.48673S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4ktw47Kw13CF47Zr43Wrg_yoW8Jw4xpF
-	WvkF1IqFykJr1kZF1kZw13JFyak3y8JF4UCay7t3sxuFn8Ja4agrsFk3WFkFySkryUAw10
-	qFWxtrZ7u3ZxA37anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	j4eHgUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAMBWj7Ua9PfQABsV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-st7571-split-v1-6-d3092b98130f@gmail.com>
 
-On 2025-10-25 12:45, Matthew Wilcox wrote:
-> On Sat, Oct 25, 2025 at 11:22:18AM +0800, libaokun@huaweicloud.com wrote:
->> +	while (1) {
->> +		folio = __filemap_get_folio(mapping, index, fgp_flags,
->> +					    gfp & ~__GFP_NOFAIL);
->> +		if (!IS_ERR(folio) || !(gfp & __GFP_NOFAIL))
->> +			return folio;
->> +
->> +		if (PTR_ERR(folio) != -ENOMEM && PTR_ERR(folio) != -EAGAIN)
->> +			return folio;
->> +
->> +		memalloc_retry_wait(gfp);
->> +	}
-> No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
-> The right way forward is for ext4 to use iomap, not for buffer heads
-> to support large block sizes.
+Hi Marcus,
 
-ext4 only calls getblk_unmovable or __getblk when reading critical
-metadata. Both of these functions set __GFP_NOFAIL to ensure that
-metadata reads do not fail due to memory pressure.
+kernel test robot noticed the following build warnings:
 
-Both functions eventually call grow_dev_folio(), which is why we
-handle the __GFP_NOFAIL logic there. xfs_buf_alloc_backing_mem()
-has similar logic, but XFS manages its own metadata, allowing it
-to use vmalloc for memory allocation.
+[auto build test WARNING on 7e73cefd2bede5408d1aeb6145261b62d85d23be]
 
-ext4 Direct I/O has already switched to iomap, and patches to
-support iomap for Buffered I/O are currently under iteration.
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcus-Folkesson/drm-sitronix-st7571-i2c-rename-struct-drm_device-in-st7571_device/20251024-192347
+base:   7e73cefd2bede5408d1aeb6145261b62d85d23be
+patch link:    https://lore.kernel.org/r/20251024-st7571-split-v1-6-d3092b98130f%40gmail.com
+patch subject: [PATCH 6/6] drm/sitronix/st7571-spi: add support for SPI interface
+config: x86_64-randconfig-005-20251025 (https://download.01.org/0day-ci/archive/20251025/202510251430.rl42LCVH-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510251430.rl42LCVH-lkp@intel.com/reproduce)
 
-But as far as I know, iomap does not support metadata, and XFS does not
-use iomap to read metadata either.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510251430.rl42LCVH-lkp@intel.com/
 
-Am I missing something here?
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
+WARNING: modpost: module st7571-i2c uses symbol st7567_config from namespace DRM_ST7571, but does not import it.
+WARNING: modpost: module st7571-i2c uses symbol st7571_config from namespace DRM_ST7571, but does not import it.
+>> WARNING: modpost: module st7571-spi uses symbol st7567_config from namespace DRM_ST7571, but does not import it.
+>> WARNING: modpost: module st7571-spi uses symbol st7571_config from namespace DRM_ST7571, but does not import it.
 
 -- 
-With Best Regards,
-Baokun Li
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
