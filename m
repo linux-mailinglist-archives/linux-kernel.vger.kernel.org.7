@@ -1,89 +1,110 @@
-Return-Path: <linux-kernel+bounces-869930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49594C09063
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB89C09075
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64FFE4E5511
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:41:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 460774E39BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B10F2FBE15;
-	Sat, 25 Oct 2025 12:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C758A2FBE19;
+	Sat, 25 Oct 2025 12:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yj9VtxGr"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="mnSgGn3A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Aivx50Lu"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4F51FBEAC
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CAF2E8894;
+	Sat, 25 Oct 2025 12:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761396083; cv=none; b=Xu9iYFwjBytAOUv+kw/fmc3es08I+yQDwLztVvvVb8IZ6DThqdsSHPeN3vey4hSy3Ws+VIdJWXQQy0hF4mpWd2F40z2YaKbIgk5Y3JmvVktsin99bE8NprngBCeXOOLqScbicCSVG5yOiH9mRgcu5spmKfhhXfQF301lGazyzRM=
+	t=1761396197; cv=none; b=RNB/cYFI0AD+sgx32pFx2q6ATJ6RbGLvYjNa1Y973rHKfaq1X80e4uh1T7YO8ndZWOR7lsfc9rpgzPbVmagA+jTxf4vcF2mtzX6hLZZSEcQcZsKpb3hw2Ewz4vYf5k1aM8KWmdhiHH+8Jq+cQco0rIXujeIhKDyyk25Msd5Br0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761396083; c=relaxed/simple;
-	bh=DbhyxMxq4lUaU8IP69H+5X/6jxTC3W56/g+TqGuwKpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cowmOS+uvwMRe3C7Bcy0votKI4XkWrb6DnceA7KwchLsgOQ25g8Tpgr98XOMFTfauzL7CAK8yWj0JECRMXMUE7CCurplvYz8RguI5o3fseowFBcgVC3Hou5IEabtrg9c9lTostk7meo5vyqPKPMcqQ6QiMNsdLvaL0k7r0x/6GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yj9VtxGr; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-794e300e20dso3680177b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761396081; x=1762000881; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wmZntVTHHXX7vvT4or3/vlXQkt3zScSQQ5D3QkdreyU=;
-        b=Yj9VtxGr6qS+aC8sOnV7DzsafLrQb0Mdd6O41N1Byx/wFjvHqyVSiKh9yMKfJhesog
-         HivT9S53UOw6WQNjv1gyXwVAfzHhn5fhXD8Cm+25y+frUoUPFOl4plJNrTvVnqrW5WjF
-         dNjLinUNuuPHE9TXW1q5Us6sh3GxyXZOHUVSxt0s2HPwpCt+5CbkVH6B7uEWNwaRBBnp
-         Ts93w9gPIN9dF31MwqAaykUD7g67CHJJmYVDpJhkOOtE4GYhDIrDQ6Z5iRMjAsiynq0z
-         tjxapjKdPSaevagsmn3GajANGwkzI1sUFnu4DBDXrGxhjmQxmq/Y1Ea02XGXyxO/GETE
-         GGaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761396081; x=1762000881;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wmZntVTHHXX7vvT4or3/vlXQkt3zScSQQ5D3QkdreyU=;
-        b=mlj78lsozm9e8WQCqILcnapR9LxH/4+hRvQVWk1PyQ0U2AGftn3TkxnK3GWxe+ijO5
-         7CuwU4bwsqtyyi6Z3H7RSwNICBehHsFCqNYQiK1KkJzCLU99oSX6b8GMcWtSF1l0Ezkl
-         MQthfuvVVryRjVX5/A5pm1BKUlwtN/KP81bq6nt713PolZl4b17uuDeEmIKoyAr65N3b
-         vLftQSBMqptWHZ0ZGfrlaXzQ9I70ydLKmf0q+iXpBRPEKElRl4VLq1M18E1zJ4be1MXc
-         THXRbm9KWCOzJCWPJt1vA3xPsSairMJUdZLJDNwiOEnrtfKt30YXCpstFSNOyZbQ/35p
-         u7+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdIyjQtQ3V15eiA/gxCwaC28hNd/HkQTiWhQ57z3V6SrMUwiqGmdiNZUhdG9CbZ56F/8xHYOBMtBwREUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzotzZNV8i9MY7HRvAtcvd2IWVsfsXvto4U2L4xVI+fflFHBJaY
-	RBLvh8sgcErgvxVNB3V62ZqqJNxS7qSBl+XQ+ByQoUUj3Vta3dHIEDyv
-X-Gm-Gg: ASbGncuBwLyq6UzvFfrlCJw/oCRkqxJ2Mb2yD7B5GlI8myYVKg9IbBD8074VA+Cz7Ou
-	V4btGliqcwG2clZYOI7WddwPoPiytO8gLNQ0AoX7QxK/K8IST6Y03U+Rla79FjNJNtGttKJWGtI
-	JEuPFRt3jInJMOJtt/wic5dLv4QFDCfpHIHIz3KFTGG/Fut4m0BNBig3hV6BojXfTu/kuxEKWdn
-	cU388emoi/SQhKrcJguR/EBGh5anE6AHtgbdcsYfPeDAYyOjKVsF1qg+ceKDzJNvh3gRfbk+Jjy
-	cbHC23or45qADsr3hn4keiAb3EvAcBFnGpppj63+oqBlcda+bbcn4nqFG0bkrijQ/v/RP9HOPZZ
-	HsKDcfC3ptxVkpHvfyQeffr6dVJRA+xgvVXmj3m57i+WeeLSuShc8MG+U0DddqUMQmk5B2aML6H
-	O0t3C5p0E=
-X-Google-Smtp-Source: AGHT+IHzNs/eLQNOngxeYDWlhwSANW/kUwt/EM86jh34NmnaHE0YhhBpGRAv70D0RhfuygrVqhJNRg==
-X-Received: by 2002:a17:902:d547:b0:273:ef4c:60f3 with SMTP id d9443c01a7336-29489d70d8bmr73531765ad.4.1761396081179;
-        Sat, 25 Oct 2025 05:41:21 -0700 (PDT)
-Received: from Ubuntu24.. ([157.32.121.71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e42f5csm22263395ad.104.2025.10.25.05.41.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 05:41:20 -0700 (PDT)
-From: Shrikant Raskar <raskar.shree97@gmail.com>
-To: hverkuil@kernel.org,
-	mchehab@kernel.org
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-media@vger.kernel.org,
+	s=arc-20240116; t=1761396197; c=relaxed/simple;
+	bh=3TvDjbq4mKxAYjolp70z7LwGV2DiC4QHoYxb659SfR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a2N9ZD6c74v7nedX3oPDwiyYDm0IiSWGBaN5hrEKkC7Uz54OtgMoFMMU4FRGxziSnCZtxJQHIbwuYEoY7kd1jJBbv8PWXlEe3vh0w9S7JTRrbF48no2JweynfxBa1S5Nh22ajVtSCDTEl4LYMQ4SHdppMTWtTckhIbvALExa6wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=mnSgGn3A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Aivx50Lu; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailflow.stl.internal (Postfix) with ESMTP id 28A3B13000F7;
+	Sat, 25 Oct 2025 08:43:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Sat, 25 Oct 2025 08:43:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1761396194; x=1761399794; bh=zAFQucylvBENicdiTBkdA
+	9Z5rlZ3eaoQYdr+2ewyF+8=; b=mnSgGn3ASF+MeFqjqtTJoYkF0yx3fvXo520AS
+	4fpf/8fONPrgqtf8m4zgzagFnJYlwH95gD5BV8dNTA8e5U/3gVEVF+EimZ5puX7i
+	8+yw4mad/yuMsBTOVqwu0+ymcOedfh6p9NbjkHrPveRY/oUftLLAZPe3Sv5BisDJ
+	geghPZh8aBtPJtFcBNTOgQMMUwVu5dXkuZ2vOzD5HT89++PZOMHx4NDq/ibwqUuR
+	Iyor8jMSwjlcdGdtfhJ55tklqHjGfJsuNGB9ymaab7iSl+bEK5CDa/tssHG9g4Yf
+	k0F19QPMJdFx663vn92aOkQDkbmImbSzHfGHlN0N3jsmA9ezA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761396194; x=1761399794; bh=zAFQucylvBENicdiTBkdA9Z5rlZ3eaoQYdr
+	+2ewyF+8=; b=Aivx50LuPTohrcelggQRiRRrh+5TFhURGovTc/M4yGQszi7MMtw
+	5JENZkCD3i1mty7JElPAe2fNgn3H1non6AstqgDupiCyTP7WrXeCrBBCIHY26qQM
+	v2d4WL+yoFp/hylZA875nagiScONnaDOGFupGhmNGCUekFlixDJSHJsgQk3ansbB
+	0G0oqAEZFdFRpkVLUbbWZuodhiQo6yAYhYGjCxOZQuSXsIhfQcE/EaDwU9IDASf+
+	9C/19Cf9mye1mJgK8E9GW7jrpFue6NX2PlM0WPzkbqjEU8BkDIZ2U0xNTSCRuC4S
+	a0QgdQ/pb3CjRk21WDND590VRfu5k7y1cMw==
+X-ME-Sender: <xms:4cX8aHNHjr2Z-NZ_E8vbQL4Oo44V66HMQwHeVzfFChZTAIfvfuN6Pw>
+    <xme:4cX8aBbiMD2eHqfTBkTEfqDMMhrh6aTC6DVG4BRuEiDtZJLiLjFATpR1kqxZlcKMT
+    7d_tqGlszvjSu-N9zrLIrgoEdCOhpQbmyPexLDahEXRJmErDvoTs8w>
+X-ME-Received: <xmr:4cX8aHUMYw22Rbv83heAH7nn8vr3e6BbpWa1ZnHqZUCUxvxYIq5MXxAAgp7AlFMxfBzmtyMElBM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduhedvvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpegjihiihhgvucfuuhhnuceoshhunhihihiihhgvsehfrghsthhmrghi
+    lhdrtghomheqnecuggftrfgrthhtvghrnhepjefhffdvfeeigfegueejuedujeduueeugf
+    egveekuddufeetuedtfeffgfdvfedunecuffhomhgrihhnpehgihhthhhusgdrtghomhen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsuhhnhi
+    hiiihhvgesfhgrshhtmhgrihhlrdgtohhmpdhnsggprhgtphhtthhopeduhedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhnohhrihesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmgh
+    hrohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegs
+    jhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehlohhssh
+    hinheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:4cX8aADf49XoIH9Ttb1IAe-SpzNbxBY460hFqHJpejWNE1BkdFJ1mQ>
+    <xmx:4cX8aDJjQ8GICWH1jpQ8KRST2DkorhPOJns2apwbatvuvSpiie9Vow>
+    <xmx:4cX8aOv3efnRBo-FcK9xxgfTEngMhmAuyWNDAPcsd0rJNqrEhPpkRA>
+    <xmx:4cX8aLW7-j7QkvOADOEy07-Gj5lf9K0F3KlBOQd27Rjfi8b4RgZpPQ>
+    <xmx:4cX8aHwyWRxciF3klThowkMB6cK9lpPBgJuecCwTcBqevhnt-D4Yx4YK>
+Feedback-ID: i1736481b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 25 Oct 2025 08:43:08 -0400 (EDT)
+From: Yizhe Sun <sunyizhe@fastmail.com>
+To: fujita.tomonori@gmail.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com
+Cc: tmgross@umich.edu,
+	netdev@vger.kernel.org,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	dakr@kernel.org,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Shrikant Raskar <raskar.shree97@gmail.com>
-Subject: [RFC PATCH v2] media: saa6588: Remove dprintk macro and use v4l2_info()
-Date: Sat, 25 Oct 2025 18:11:07 +0530
-Message-ID: <20251025124107.4921-1-raskar.shree97@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Yizhe Sun <sunyizhe@fastmail.com>
+Subject: [PATCH] rust: phy: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
+Date: Sat, 25 Oct 2025 20:42:18 +0800
+Message-ID: <20251025124218.33951-1-sunyizhe@fastmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,129 +113,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The existing 'dprintk' macro used an unwrapped 'if' statement which was
-flagged by checkpatch, but instead of wrapping it, the debug handling
-can be simplified.
+From: Benno Lossin <lossin@kernel.org>
 
-This patch removes the 'dprintk' macro entirely and replaces all its
-usages with v4l2_info() helper. The unused 'PREFIX' macro is also
-removed.
+All types in `bindings` implement `Zeroable` if they can, so use
+`pin_init::zeroed` instead of relying on `unsafe` code.
 
-Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+If this ends up not compiling in the future, something in bindgen or on
+the C side changed and is most likely incorrect.
+
+Link: https://github.com/Rust-for-Linux/linux/issues/1189
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Signed-off-by: Yizhe Sun <sunyizhe@fastmail.com>
 ---
-Changelog:
-Changes since v2:
-- Removed dprintk macro
-- Replaced 'dprintk' with v4l2_info(). 
-- Removed PREFIX macro.
+ rust/kernel/net/phy.rs | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Link to v1:
-https://lore.kernel.org/all/20250923175927.4380-1-raskar.shree97@gmail.com/
----
- drivers/media/i2c/saa6588.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/media/i2c/saa6588.c b/drivers/media/i2c/saa6588.c
-index fb09e4560d8a..d2cb85a2d226 100644
---- a/drivers/media/i2c/saa6588.c
-+++ b/drivers/media/i2c/saa6588.c
-@@ -49,8 +49,6 @@ MODULE_LICENSE("GPL");
- /* ---------------------------------------------------------------------- */
- 
- #define UNSET       (-1U)
--#define PREFIX      "saa6588: "
--#define dprintk     if (debug) printk
- 
- struct saa6588 {
- 	struct v4l2_subdev sd;
-@@ -144,14 +142,14 @@ static bool block_from_buf(struct saa6588 *s, unsigned char *buf)
- 
- 	if (s->rd_index == s->wr_index) {
- 		if (debug > 2)
--			dprintk(PREFIX "Read: buffer empty.\n");
-+			v4l2_info(&s->sd, "Read: buffer empty.\n");
- 		return false;
- 	}
- 
- 	if (debug > 2) {
--		dprintk(PREFIX "Read: ");
-+		v4l2_info(&s->sd, "Read: ");
- 		for (i = s->rd_index; i < s->rd_index + 3; i++)
--			dprintk("0x%02x ", s->buffer[i]);
-+			v4l2_info(&s->sd, "0x%02x ", s->buffer[i]);
- 	}
- 
- 	memcpy(buf, &s->buffer[s->rd_index], 3);
-@@ -162,7 +160,7 @@ static bool block_from_buf(struct saa6588 *s, unsigned char *buf)
- 	s->block_count--;
- 
- 	if (debug > 2)
--		dprintk("%d blocks total.\n", s->block_count);
-+		v4l2_info(&s->sd, "%d blocks total.\n", s->block_count);
- 
- 	return true;
- }
-@@ -222,11 +220,11 @@ static void block_to_buf(struct saa6588 *s, unsigned char *blockbuf)
- 	unsigned int i;
- 
- 	if (debug > 3)
--		dprintk(PREFIX "New block: ");
-+		v4l2_info(&s->sd, "New block: ");
- 
- 	for (i = 0; i < 3; ++i) {
- 		if (debug > 3)
--			dprintk("0x%02x ", blockbuf[i]);
-+			v4l2_info(&s->sd, "0x%02x ", blockbuf[i]);
- 		s->buffer[s->wr_index] = blockbuf[i];
- 		s->wr_index++;
- 	}
-@@ -242,7 +240,7 @@ static void block_to_buf(struct saa6588 *s, unsigned char *blockbuf)
- 		s->block_count++;
- 
- 	if (debug > 3)
--		dprintk("%d blocks total.\n", s->block_count);
-+		v4l2_info(&s->sd, "%d blocks total.\n", s->block_count);
+diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
+index bf6272d87a7b..46c693c5768a 100644
+--- a/rust/kernel/net/phy.rs
++++ b/rust/kernel/net/phy.rs
+@@ -553,9 +553,7 @@ pub const fn create_phy_driver<T: Driver>() -> DriverVTable {
+         } else {
+             None
+         },
+-        // SAFETY: The rest is zeroed out to initialize `struct phy_driver`,
+-        // sets `Option<&F>` to be `None`.
+-        ..unsafe { core::mem::MaybeUninit::<bindings::phy_driver>::zeroed().assume_init() }
++        ..pin_init::zeroed()
+     }))
  }
  
- static void saa6588_i2c_poll(struct saa6588 *s)
-@@ -257,7 +255,7 @@ static void saa6588_i2c_poll(struct saa6588 *s)
- 	   SAA6588 returns garbage otherwise. */
- 	if (6 != i2c_master_recv(client, &tmpbuf[0], 6)) {
- 		if (debug > 1)
--			dprintk(PREFIX "read error!\n");
-+			v4l2_info(&s->sd, "read error!\n");
- 		return;
- 	}
- 
-@@ -267,7 +265,7 @@ static void saa6588_i2c_poll(struct saa6588 *s)
- 	blocknum = tmpbuf[0] >> 5;
- 	if (blocknum == s->last_blocknum) {
- 		if (debug > 3)
--			dprintk("Saw block %d again.\n", blocknum);
-+			v4l2_info(&s->sd, "Saw block %d again.\n", blocknum);
- 		return;
- 	}
- 
-@@ -370,12 +368,13 @@ static void saa6588_configure(struct saa6588 *s)
- 		break;
- 	}
- 
--	dprintk(PREFIX "writing: 0w=0x%02x 1w=0x%02x 2w=0x%02x\n",
--		buf[0], buf[1], buf[2]);
-+	if (debug)
-+		v4l2_info(&s->sd, "writing: 0w=0x%02x 1w=0x%02x 2w=0x%02x\n",
-+			buf[0], buf[1], buf[2]);
- 
- 	rc = i2c_master_send(client, buf, 3);
- 	if (rc != 3)
--		printk(PREFIX "i2c i/o error: rc == %d (should be 3)\n", rc);
-+		v4l2_info(&s->sd, "i2c i/o error: rc == %d (should be 3)\n", rc);
- }
- 
- /* ---------------------------------------------------------------------- */
-
-base-commit: 6fab32bb6508abbb8b7b1c5498e44f0c32320ed5
 -- 
-2.43.0
+2.51.1
 
 
