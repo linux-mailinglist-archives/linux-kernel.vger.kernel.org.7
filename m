@@ -1,171 +1,319 @@
-Return-Path: <linux-kernel+bounces-869977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E013C092B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:31:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C62EC092BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98C9420698
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FC21B27E1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEC2303A14;
-	Sat, 25 Oct 2025 15:30:36 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F129C30277D;
+	Sat, 25 Oct 2025 15:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KRm4cCB0"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276C01917CD
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E192E8DF3
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761406235; cv=none; b=Z1X+Rz4rGVRjWsJ42RCckDVUTvgCyjqVVs/qRsLwMAuldL5hfjQrGughui/gDAaN4Fji4YpiKHE5dA7V7gdjhzsx1XJeaNL5wUdW2UjlWXT/xLWR3NqQz0k2ZsNGB82GwPfUAfbuUxlv7uXqviF4jLqdwH9IFzoYoFVoUKO/1n8=
+	t=1761406364; cv=none; b=c9d6rv8YQeQ7p+Qdan00bahTZHKakJwKbFYZiBCwNa2oaA8oXJGqzCEFtTpP0K1HVRZOhMUGZ/vlCntw9I/4wZys35OELTeQXhx5KKdPTIC1+ro4UEeUkJrrYe/hAOLf9B+FGY/WjSFIiXOD0SAzsQEojAiMejsRc+e8oJqhuzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761406235; c=relaxed/simple;
-	bh=tuqhXV1Da6wCZ0InK2dIqD7W5pd/2Xgd2oEnAJ9E7QA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DfIE6VAH2xZmdwzNbPd9zJqMqZDc/k8H3hcsLa63sPoopjzt7ZJFFN2nkRwH9T7KzBBwmPqUXawhh9tI5AJsjSYL8Bb1YWBKN+L585RD26ekjtnWEgLp5pwlu/mll2ZmTxE9GwMCVV1ZnjSP0cHlIyAWe7a15CUNpSZSjMVCfoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430db5635d6so39059585ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:30:32 -0700 (PDT)
+	s=arc-20240116; t=1761406364; c=relaxed/simple;
+	bh=hWDeiL3W9fWYqMezt71RAU3HPaOUiLMJ4gsoEP1hTnU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=I6ZV9fr3W39wO1P1tAIZxMxo/jFe6Bl0vHty+KwJ9Wvy63jSVt5sdkXqzADnvMDQUDeh08bi1Ri8fhToqzWq4O3/f6x5BV5nlDTvHheCFIU4LuNMSamzUxB2/fKM4mfTbt0IuOuPDWVAYMcKRkNd8gp4n7XgOTqusPTI7SzmLws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KRm4cCB0; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5edecdf94eso5675360a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761406362; x=1762011162; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yO2mWFSLhq6NqYN6b4GFq0YvrG3c9t/f/H9KA1+pHEU=;
+        b=KRm4cCB0wtstsueCzRDz4TR0/HNalMz4vSiTf36zyk6EEm3/EyBwOcs52l7U4LTVgE
+         QOZ9mZZqEtf1oFCUB5+wvfHTgXUB13ks1eG/a4tue6qzF6TK29DlGwr7za74Qj/nsXHn
+         k4GvgMKlApdw+blhElfex4NNwMPhEn7FA0rXv4YAAiKWLe3McTf8WQqW1fP2dp8JVnHk
+         fjtcsY5DEVIQBlSEO8Jhn3vhFNll+4lGrMLpya4jxnmOSHA8Wr9Et1L4qPIzVeEa3Ceq
+         gAfEdJ+m+HZauZqmBz8TrESlCL3YlynweMgg3sIn/3imatJ5tIaJKQmP9fUshIYEjmMc
+         v3Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761406232; x=1762011032;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4PtvkKZFEBjpaVtmYMgaiUP0rE5WRgcuVuHYkk41Is=;
-        b=dEUmiR1jJnb73Qq+ONNmmPpkmkWFdRcY2dvWY/u3d7QzUpe5OsqaW9vV+BoXPRkqgj
-         6RJgt9y0ALCgImUscwEsMS4rHf+uuuMwAMaEzrwMofp5g85rgsQvf0S6X1osHBXsYdfq
-         CIp4xBLo8QB8khh85LxT5ZSuANqGa6M7Cdjtc+olL8JVCB64xA8KqfUwl2PTVUzZ+3B6
-         asAbMOyTohV+A5ljbGmC2RLjCT9kVB8V9+6cNj44Z/NdcpVAFpkpMkBsdPNo+373Ny66
-         dBnQh3AKNgWnF8JI/b49D4M+Q10tsDII8NGEqKxpsRtWNxMoziFMHbyLGtWIPi8y9mCQ
-         4uog==
-X-Forwarded-Encrypted: i=1; AJvYcCVK9qSN6LO3iGKNeON/brbNR90dATKv2wdujpJEVc/PTtix6fzDv3Dw1cgjjejDSdW3fTpAcoSYAIsZuNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsE9jLf1xo+KnH+N6s6qu+3kqrp8mXTRX7AkoDrrcshJnxQYQR
-	JGS/zoSb9qxXv4eNhzCRYCbHMm0w1azUnVXIc9UJ84Zwj+NYXEO/JmE+5rfCTu2HQyt86MLtZVf
-	2aFvXBj4qjnvbkIt0RVmsiZeTSaA/iJ+k6719YZiGATnhL9vOzYRBFmghkTs=
-X-Google-Smtp-Source: AGHT+IE/mS5AInx/Fn2GfpldYfqwHT1aTDzL70mL7vQ4auUZniXaqCBaITtE4KGxBTh882iPv4MheVT5dy2uy9HDIpuf7K+7ITIw
+        d=1e100.net; s=20230601; t=1761406362; x=1762011162;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yO2mWFSLhq6NqYN6b4GFq0YvrG3c9t/f/H9KA1+pHEU=;
+        b=lalJzPJ4tuMpTJNFltFYlnUPCkUidLpt5lypvTM3Z+pg7h31WI3FCTlL0UWUZYaei+
+         rA1FVVNQlLd4+rYLm48BpssiOM3GS3LI6soS+qVSBOrw5bZhZ/H9cDYb+BdTPvrzIyBh
+         y2/vKlyd1IzvEj+lSYV1Gm1brM6VcdCU4B1iRsIHCDldUH1Onee6VQA9bZiMvfJtBC3E
+         caKK/KuGIhNp5a5+rw6aoY+uHNBdPQKmd/cDiwqj/RIaEHPvhyMJso3zTtg/diIxQ1+/
+         PCgk5GgtpsRDVYUGpVTIKGWx4pNNbQXtRFUWN/l0JrUIn9I3cTX1sMHi0paUfb050rnt
+         OUyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEeUtKKiK1yhMBdbBF/c+J+dalgJsqeHnFRB1LzNB04P2TSPORYm9aFjtRrEtgyvkNmCHfaSA+A4x48kM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVKEX/MBdUmonInf7FejdXlKBrRb10xJpv6EfeFyyXFiox7XkX
+	rM8S0bRIt0TDy2w9Zzah65W6LuaII5F2eEPUhEmfekmCB+b4bw0Pz70wxak2YsO3tL31if8CeJu
+	T3UdWUdczNw==
+X-Google-Smtp-Source: AGHT+IEMHNT2jZoKx91/ee2Eojn/oUOJwBe81BYnxPFDlFIqEupCxCnYx80mYOFWVk+J/Gqt7zCmjVDg5w32
+X-Received: from pjzm22.prod.google.com ([2002:a17:90b:696:b0:339:ee20:f620])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:99a1:b0:334:a915:f403
+ with SMTP id adf61e73a8af0-33dea08a733mr7071510637.2.1761406361815; Sat, 25
+ Oct 2025 08:32:41 -0700 (PDT)
+Date: Sat, 25 Oct 2025 08:32:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:ca4d:0:b0:430:b05a:ecc3 with SMTP id
- e9e14a558f8ab-430c525f52amr239057035ab.9.1761406232302; Sat, 25 Oct 2025
- 08:30:32 -0700 (PDT)
-Date: Sat, 25 Oct 2025 08:30:32 -0700
-In-Reply-To: <68087f2f.050a0220.dd94f.0177.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fced18.050a0220.1e563d.00cd.GAE@google.com>
-Subject: Re: [syzbot] [mm?] BUG: soft lockup in sys_bpf
-From: syzbot <syzbot+9431dc0c0741cff46a99@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
-	da.gomez@samsung.com, david@redhat.com, gourry@gourry.net, 
-	joshua.hahnjy@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, matthew.brost@intel.com, mcgrof@kernel.org, 
-	netdev@vger.kernel.org, petr.pavlu@suse.com, rakie.kim@sk.com, 
-	samitolvanen@google.com, syzkaller-bugs@googlegroups.com, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
+Message-ID: <20251025153231.1090855-1-irogers@google.com>
+Subject: [PATCH v1] perf stat: Add/fix bperf cgroup max events workarounds
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+Commit b8308511f6e0 bumped the max events to 1024 but this results in
+BPF verifier issues if the number of command line events is too
+large. Workaround this by:
 
-HEAD commit:    566771afc7a8 Merge tag 'v6.18-rc2-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15c8ee7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8345ce4ce316ca28
-dashboard link: https://syzkaller.appspot.com/bug?extid=9431dc0c0741cff46a99
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157013cd980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130cc7e2580000
+1) moving the constants to a header file to share between BPF and perf
+   C code,
+2) testing that the maximum number of events doesn't cause BPF
+   verifier issues in debug builds,
+3) lower the max events from 1024 to 128,
+4) in perf stat, if there are more events than the BPF counters can
+   support then disable BPF counter usage.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/52417ef1f782/disk-566771af.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/66730a263bf1/vmlinux-566771af.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1fe0762efb1f/bzImage-566771af.xz
+The rodata setup is factored into its own function to avoid
+duplicating it in the testing code.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9431dc0c0741cff46a99@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5823
-rcu: 	(detected by 1, t=10502 jiffies, g=8989, q=37467 ncpus=2)
-task:syz-executor333 state:R  running task     stack:24744 pid:5823  tgid:5823  ppid:5816   task_flags:0x400140 flags:0x00080001
-Call Trace:
- <IRQ>
- sched_show_task+0x49d/0x630 kernel/sched/core.c:7901
- rcu_print_detail_task_stall_rnp kernel/rcu/tree_stall.h:292 [inline]
- print_other_cpu_stall+0xf78/0x1340 kernel/rcu/tree_stall.h:681
- check_cpu_stall kernel/rcu/tree_stall.h:857 [inline]
- rcu_pending kernel/rcu/tree.c:3671 [inline]
- rcu_sched_clock_irq+0xa47/0x11b0 kernel/rcu/tree.c:2706
- update_process_times+0x235/0x2d0 kernel/time/timer.c:2473
- tick_sched_handle kernel/time/tick-sched.c:276 [inline]
- tick_nohz_handler+0x39a/0x520 kernel/time/tick-sched.c:297
- __run_hrtimer kernel/time/hrtimer.c:1777 [inline]
- __hrtimer_run_queues+0x506/0xd40 kernel/time/hrtimer.c:1841
- hrtimer_interrupt+0x45d/0xa90 kernel/time/hrtimer.c:1903
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
- __sysvec_apic_timer_interrupt+0x10b/0x410 arch/x86/kernel/apic/apic.c:1058
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:instrument_atomic_read include/linux/instrumented.h:68 [inline]
-RIP: 0010:_test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-RIP: 0010:get_page_from_freelist+0x459/0x2960 mm/page_alloc.c:3824
-Code: 8c 0d 00 48 8b 74 24 18 49 b8 00 00 00 00 00 fc ff df 48 8b 03 48 39 d8 0f 84 7e 07 00 00 48 8b 44 24 08 4c 8d a0 38 06 00 00 <4c> 89 e7 be 08 00 00 00 e8 ba 8e 0d 00 48 b9 00 00 00 00 00 fc ff
-RSP: 0018:ffffc90004c97158 EFLAGS: 00000206
-RAX: ffff88823fff8740 RBX: ffff88823fffc888 RCX: dffffc0000000000
-RDX: 0000000000000001 RSI: ffff88813fffdf70 RDI: ffff88813fffdf70
-RBP: 0000000000000000 R08: dffffc0000000000 R09: 1ffff11027fff7da
-R10: dffffc0000000000 R11: ffffed1027fff7db R12: ffff88823fff8d78
-R13: 0000000000000830 R14: ffffc90004c97448 R15: ffffc90004c9745c
- __alloc_pages_slowpath+0x33b/0xe50 mm/page_alloc.c:4714
- __alloc_frozen_pages_noprof+0x319/0x370 mm/page_alloc.c:5196
- alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:3055 [inline]
- allocate_slab+0x96/0x350 mm/slub.c:3228
- new_slab mm/slub.c:3282 [inline]
- ___slab_alloc+0xb12/0x13f0 mm/slub.c:4651
- __slab_alloc+0xc6/0x1f0 mm/slub.c:4770
- __slab_alloc_node mm/slub.c:4846 [inline]
- slab_alloc_node mm/slub.c:5268 [inline]
- kmem_cache_alloc_noprof+0xec/0x6b0 mm/slub.c:5287
- skb_clone+0x212/0x3a0 net/core/skbuff.c:2050
- ____bpf_clone_redirect net/core/filter.c:2465 [inline]
- bpf_clone_redirect+0xad/0x3d0 net/core/filter.c:2450
- bpf_prog_3e1cbbed0c4acd81+0x5f/0x68
- bpf_dispatcher_nop_func include/linux/bpf.h:1350 [inline]
- __bpf_prog_run include/linux/filter.h:721 [inline]
- bpf_prog_run include/linux/filter.h:728 [inline]
- bpf_test_run+0x313/0x7a0 net/bpf/test_run.c:423
- bpf_prog_test_run_skb+0xb4e/0x1550 net/bpf/test_run.c:1091
- bpf_prog_test_run+0x2cd/0x340 kernel/bpf/syscall.c:4688
- __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6167
- __do_sys_bpf kernel/bpf/syscall.c:6259 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6257 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6257
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0d40505cb9
-Code: Unable to access opcode bytes at 0x7f0d40505c8f.
-RSP: 002b:00007fff9d9b3ed8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0d40505cb9
-RDX: 0000000000000050 RSI: 00002000000000c0 RDI: 000000000000000a
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
+Signed-off-by: Ian Rogers <irogers@google.com>
+Fixes: b8308511f6e0 ("perf stat bperf cgroup: Increase MAX_EVENTS from 32 to 1024")
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ tools/perf/builtin-stat.c                   | 13 +++-
+ tools/perf/util/bpf_counter_cgroup.c        | 79 +++++++++++++++------
+ tools/perf/util/bpf_skel/bperf_cgroup.bpf.c | 18 +++--
+ 3 files changed, 76 insertions(+), 34 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 3c3188a57016..130515f87ee0 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -96,6 +96,10 @@
+ #include <perf/evlist.h>
+ #include <internal/threadmap.h>
+ 
++#ifdef HAVE_BPF_SKEL
++#include "util/bpf_skel/bperf_cgroup.h"
++#endif
++
+ #define DEFAULT_SEPARATOR	" "
+ #define FREEZE_ON_SMI_PATH	"bus/event_source/devices/cpu/freeze_on_smi"
+ 
+@@ -2852,7 +2856,14 @@ int cmd_stat(int argc, const char **argv)
+ 			goto out;
+ 		}
+ 	}
+-
++#ifdef HAVE_BPF_SKEL
++	if (target.use_bpf &&
++	    (evsel_list->core.nr_entries / nr_cgroups) > BPERF_CGROUP__MAX_EVENTS) {
++		pr_warning("Disabling BPF counters due to more events (%d) than the max (%d)\n",
++			   evsel_list->core.nr_entries / nr_cgroups, BPERF_CGROUP__MAX_EVENTS);
++		target.use_bpf = false;
++	}
++#endif // HAVE_BPF_SKEL
+ 	evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
+ 
+ 	evlist__for_each_entry(evsel_list, counter) {
+diff --git a/tools/perf/util/bpf_counter_cgroup.c b/tools/perf/util/bpf_counter_cgroup.c
+index 690be3ce3e11..68bd994c8880 100644
+--- a/tools/perf/util/bpf_counter_cgroup.c
++++ b/tools/perf/util/bpf_counter_cgroup.c
+@@ -27,6 +27,7 @@
+ #include "cpumap.h"
+ #include "thread_map.h"
+ 
++#include "bpf_skel/bperf_cgroup.h"
+ #include "bpf_skel/bperf_cgroup.skel.h"
+ 
+ static struct perf_event_attr cgrp_switch_attr = {
+@@ -42,6 +43,55 @@ static struct bperf_cgroup_bpf *skel;
+ 
+ #define FD(evt, cpu) (*(int *)xyarray__entry(evt->core.fd, cpu, 0))
+ 
++static void setup_rodata(struct bperf_cgroup_bpf *sk, int evlist_size)
++{
++	int map_size, total_cpus = cpu__max_cpu().cpu;
++
++	sk->rodata->num_cpus = total_cpus;
++	sk->rodata->num_events = evlist_size / nr_cgroups;
++
++	if (cgroup_is_v2("perf_event") > 0)
++		sk->rodata->use_cgroup_v2 = 1;
++
++	BUG_ON(evlist_size % nr_cgroups != 0);
++
++	/* we need one copy of events per cpu for reading */
++	map_size = total_cpus * evlist_size / nr_cgroups;
++	bpf_map__set_max_entries(sk->maps.events, map_size);
++	bpf_map__set_max_entries(sk->maps.cgrp_idx, nr_cgroups);
++	/* previous result is saved in a per-cpu array */
++	map_size = evlist_size / nr_cgroups;
++	bpf_map__set_max_entries(sk->maps.prev_readings, map_size);
++	/* cgroup result needs all events (per-cpu) */
++	map_size = evlist_size;
++	bpf_map__set_max_entries(sk->maps.cgrp_readings, map_size);
++}
++
++static void test_max_events_program_load(void)
++{
++#ifndef NDEBUG
++	/*
++	 * Test that the program verifies with the maximum number of events. If
++	 * this test fails unfortunately perf needs recompiling with a lower
++	 * BPERF_CGROUP__MAX_EVENTS to avoid BPF verifier issues.
++	 */
++	int err, max_events = BPERF_CGROUP__MAX_EVENTS * nr_cgroups;
++	struct bperf_cgroup_bpf *test_skel = bperf_cgroup_bpf__open();
++
++	if (!test_skel) {
++		pr_err("Failed to open cgroup skeleton\n");
++		return;
++	}
++	setup_rodata(test_skel, max_events);
++	err = bperf_cgroup_bpf__load(test_skel);
++	if (err) {
++		pr_err("Failed to load cgroup skeleton with max events %d.\n",
++			BPERF_CGROUP__MAX_EVENTS);
++	}
++	bperf_cgroup_bpf__destroy(test_skel);
++#endif
++}
++
+ static int bperf_load_program(struct evlist *evlist)
+ {
+ 	struct bpf_link *link;
+@@ -50,35 +100,18 @@ static int bperf_load_program(struct evlist *evlist)
+ 	int i, j;
+ 	struct perf_cpu cpu;
+ 	int total_cpus = cpu__max_cpu().cpu;
+-	int map_size, map_fd;
+-	int prog_fd, err;
++	int map_fd, prog_fd, err;
++
++	set_max_rlimit();
++
++	test_max_events_program_load();
+ 
+ 	skel = bperf_cgroup_bpf__open();
+ 	if (!skel) {
+ 		pr_err("Failed to open cgroup skeleton\n");
+ 		return -1;
+ 	}
+-
+-	skel->rodata->num_cpus = total_cpus;
+-	skel->rodata->num_events = evlist->core.nr_entries / nr_cgroups;
+-
+-	if (cgroup_is_v2("perf_event") > 0)
+-		skel->rodata->use_cgroup_v2 = 1;
+-
+-	BUG_ON(evlist->core.nr_entries % nr_cgroups != 0);
+-
+-	/* we need one copy of events per cpu for reading */
+-	map_size = total_cpus * evlist->core.nr_entries / nr_cgroups;
+-	bpf_map__set_max_entries(skel->maps.events, map_size);
+-	bpf_map__set_max_entries(skel->maps.cgrp_idx, nr_cgroups);
+-	/* previous result is saved in a per-cpu array */
+-	map_size = evlist->core.nr_entries / nr_cgroups;
+-	bpf_map__set_max_entries(skel->maps.prev_readings, map_size);
+-	/* cgroup result needs all events (per-cpu) */
+-	map_size = evlist->core.nr_entries;
+-	bpf_map__set_max_entries(skel->maps.cgrp_readings, map_size);
+-
+-	set_max_rlimit();
++	setup_rodata(skel, evlist->core.nr_entries);
+ 
+ 	err = bperf_cgroup_bpf__load(skel);
+ 	if (err) {
+diff --git a/tools/perf/util/bpf_skel/bperf_cgroup.bpf.c b/tools/perf/util/bpf_skel/bperf_cgroup.bpf.c
+index 18ab4d9b49ff..c2298a2decc9 100644
+--- a/tools/perf/util/bpf_skel/bperf_cgroup.bpf.c
++++ b/tools/perf/util/bpf_skel/bperf_cgroup.bpf.c
+@@ -1,14 +1,12 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ // Copyright (c) 2021 Facebook
+ // Copyright (c) 2021 Google
++#include "bperf_cgroup.h"
+ #include "vmlinux.h"
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
+ #include <bpf/bpf_core_read.h>
+ 
+-#define MAX_LEVELS  10  // max cgroup hierarchy level: arbitrary
+-#define MAX_EVENTS  1024  // max events per cgroup: arbitrary
+-
+ // NOTE: many of map and global data will be modified before loading
+ //       from the userspace (perf tool) using the skeleton helpers.
+ 
+@@ -97,7 +95,7 @@ static inline int get_cgroup_v1_idx(__u32 *cgrps, int size)
+ 	cgrp = BPF_CORE_READ(p, cgroups, subsys[perf_subsys_id], cgroup);
+ 	level = BPF_CORE_READ(cgrp, level);
+ 
+-	for (cnt = 0; i < MAX_LEVELS; i++) {
++	for (cnt = 0; i < BPERF_CGROUP__MAX_LEVELS; i++) {
+ 		__u64 cgrp_id;
+ 
+ 		if (i > level)
+@@ -123,7 +121,7 @@ static inline int get_cgroup_v2_idx(__u32 *cgrps, int size)
+ 	__u32 *elem;
+ 	int cnt;
+ 
+-	for (cnt = 0; i < MAX_LEVELS; i++) {
++	for (cnt = 0; i < BPERF_CGROUP__MAX_LEVELS; i++) {
+ 		__u64 cgrp_id = bpf_get_current_ancestor_cgroup_id(i);
+ 
+ 		if (cgrp_id == 0)
+@@ -148,17 +146,17 @@ static int bperf_cgroup_count(void)
+ 	register int c = 0;
+ 	struct bpf_perf_event_value val, delta, *prev_val, *cgrp_val;
+ 	__u32 cpu = bpf_get_smp_processor_id();
+-	__u32 cgrp_idx[MAX_LEVELS];
++	__u32 cgrp_idx[BPERF_CGROUP__MAX_LEVELS];
+ 	int cgrp_cnt;
+ 	__u32 key, cgrp;
+ 	long err;
+ 
+ 	if (use_cgroup_v2)
+-		cgrp_cnt = get_cgroup_v2_idx(cgrp_idx, MAX_LEVELS);
++		cgrp_cnt = get_cgroup_v2_idx(cgrp_idx, BPERF_CGROUP__MAX_LEVELS);
+ 	else
+-		cgrp_cnt = get_cgroup_v1_idx(cgrp_idx, MAX_LEVELS);
++		cgrp_cnt = get_cgroup_v1_idx(cgrp_idx, BPERF_CGROUP__MAX_LEVELS);
+ 
+-	for ( ; idx < MAX_EVENTS; idx++) {
++	for ( ; idx < BPERF_CGROUP__MAX_EVENTS; idx++) {
+ 		if (idx == num_events)
+ 			break;
+ 
+@@ -186,7 +184,7 @@ static int bperf_cgroup_count(void)
+ 			delta.enabled = val.enabled - prev_val->enabled;
+ 			delta.running = val.running - prev_val->running;
+ 
+-			for (c = 0; c < MAX_LEVELS; c++) {
++			for (c = 0; c < BPERF_CGROUP__MAX_LEVELS; c++) {
+ 				if (c == cgrp_cnt)
+ 					break;
+ 
+-- 
+2.51.1.821.gb6fe4d2222-goog
+
 
