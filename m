@@ -1,99 +1,173 @@
-Return-Path: <linux-kernel+bounces-870147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C9CC0A078
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:51:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C140BC0A07E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0A684E4894
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:51:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF4C94E4F39
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB15628B3E7;
-	Sat, 25 Oct 2025 21:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="M7IyTQoS"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEF7296BC8;
+	Sat, 25 Oct 2025 21:54:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CD42AD2F;
-	Sat, 25 Oct 2025 21:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480E1CDFD5
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761429057; cv=none; b=lbAH3EbDfOQJJ8ZrGUotgvUAmRBN/azD+/GeYWSk1q7Y99i13zcwvlGdL65Tz77gsQLuTfC1tyWSFCJWSMIEIROy6JQjj3EKsRMC5XNHSPDim5WXoasMr+fu4cfspHrIPJuzPAj4Jw4Q/e5VaCLu6ztMBedEm3hxVc8R/OeOynM=
+	t=1761429273; cv=none; b=O4qKn/iwiJpFBS9ikJN/Yg4Z3wv8fggUPykyaXRk80CEWhCk7Pz3ZQtzWJALtqX94CquCc1eazgvKYSXnUQv2EY/w5GPdw0AFIGhQZmmCaekucf3KRBAXBQNd3STsvo9pinOVTHSCQajxNkGWI0EvbMrotlI6nvKGJoCPtOv4pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761429057; c=relaxed/simple;
-	bh=WV6sOsK95CL79pnSDWklrqcJbBh9kw7B+++33ob0zhE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=VSI+ZqC95H+P+br+Nl9lg36rFKjAAJyfyyhtGB4C3fJox0bLmZNm6S1ujpOQ0kIs2zqqU/q36Y09SYR7WC8pvArQGHaqGB6uD+VZpuKHNJPBucIT0xSnMakFKOzKrW1D0IH69wrLqbRKFgxAp7spNJcf3nakFgF2YcAnjsxAY5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=M7IyTQoS; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net ([172.59.163.204])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59PLoG1S4179485
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 25 Oct 2025 14:50:16 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59PLoG1S4179485
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1761429018;
-	bh=eXQiaXQMBEkffKXwky4JNR+uRHh73bSTtxccDACEux4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=M7IyTQoSCYKp2vhd4FVMOvpoxDSprmjVQjBDad8TG0neqPd1dJLogdJmlkfwB0/zM
-	 7ZdSbTD+ffmRhEB7hQk3DhSLOub/eX6QVXu9SbHz66XeQycmWFnyk8dLduDzmUYNdF
-	 zA/OemUVELrulEMU1bz5Gq05QNoabeBE/CAKLReVVEV5Cya7JbXrH5LjCtvExcbePe
-	 k+zqo09jA+W5Qubulr64zdW+GvUmwRt6g5LV7fq9vJDCl/tnArZKQgh20joJYfMIJW
-	 B8W+clI9xeGbcPyn/JiKbJUzbczRW8Xs15EzsN7EMo3xcLuSxpnHbKLCOjpbO2JcJe
-	 7DcBsl0zTsqQw==
-Date: Sat, 25 Oct 2025 14:50:08 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Dave Hansen <dave.hansen@intel.com>, Usama Arif <usamaarif642@gmail.com>,
-        dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, ardb@kernel.org
-CC: x86@kernel.org, apopple@nvidia.com, thuth@redhat.com, nik.borisov@suse.com,
-        kas@kernel.org, linux-kernel@vger.kernel.org,
-        linux-efi@vger.kernel.org, kernel-team@meta.com,
-        Michael van der Westhuizen <rmikey@meta.com>,
-        Tobias Fleig <tfleig@meta.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_1/3=5D_x86/boot=3A_Fix_page_table_ac?=
- =?US-ASCII?Q?cess_in_5-level_to_4-level_paging_transition?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <8283c1b6-1487-49e2-b220-7dbd043a2913@intel.com>
-References: <20251022220755.1026144-1-usamaarif642@gmail.com> <20251022220755.1026144-2-usamaarif642@gmail.com> <8283c1b6-1487-49e2-b220-7dbd043a2913@intel.com>
-Message-ID: <7BB09BB9-7034-413B-9FA8-D3FC3EB352D7@zytor.com>
+	s=arc-20240116; t=1761429273; c=relaxed/simple;
+	bh=JUFCk2b3q4NWznqEsdIiWE2fWpm6sZb1vcEUhwwy7Rs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WWx+kd5+2IuQ6R1dOzxxHDKm4naLKjo2vXCqSwd5cfbm9F5w0GOiU6BgIiGM2IoTtVBS2FfLE9uR7DG3azN25gE2gickAp376YZJkRe0NBarT1Dls6oPW1r/lFZFUeavnJw+w1gz1MqjrOcG0o2ylCW18nO+3ggEFv8iG6QBTVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-431db4650b7so46520665ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:54:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761429270; x=1762034070;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ClV3ZeL1Y+tIFEcvdME/1DYGFdqnexVcINdMwTUQ/4A=;
+        b=dNdw902JBzlC2DtkRD3bRUZCrHd8HBzUGGHpLEpM+eGNIhdCLHY/hCNvVxyTcTwuBX
+         EwFXWie2PrVio0Of/S5QW9Ya1onKdJ48bwUMptZibFWsNkR12yWuqjzTBr6EeJmJa157
+         znzsKxSJawIWHu8vxcK36Z3JRZ7AZnmnFlI+azjngQF6AevxWfX2UjAubRtzmhcLiuwA
+         wz6YFSQTMXd9tVHYVoeHEAe4K5ZJ5dHcQDnDGsdvegykyMyBvhK26lvNVzeVXCq+GkjK
+         WkJ5NXp3XS6w0NCX3Y7mK4jPGrE7Tw9uOmRjObhWlKIhzt8AfuOG0FS+PdMKUt4jNa/t
+         q6aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTtNkXNsK8BkTtARgZhI/TDZyN7itAfBO4Zgl7jVUiIN3MFl1aPLRqcBU4QqP/YcHFA7Om11UKYbhMlTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkD4wmLNfQdwcl/EYVe6zmvIO9cmN4gUsCRsfR+1AboeM1QnzS
+	+ZqENGt2PYyeqZujV4NTHQUI6XVT5hWrZzajEbJno8WMrCwcnWbem4HQIBcocHQI2cnA7yhb4VV
+	SQLobwhiBzpIBhN79OJT3BMehJNICwRp9iJsS9wobuxWKmxs/mOSGlCpRFKI=
+X-Google-Smtp-Source: AGHT+IGYASKP8hU31QI0trilywDw31OIxZOXXBUT5ZKD8CVkHRLF0C+8oJSCZ8wIM1De8sDbw67hl19Hri2UeJckvuAe6Kdc9wql
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1c0c:b0:430:c38f:fb82 with SMTP id
+ e9e14a558f8ab-430c5223b84mr401619015ab.8.1761429270642; Sat, 25 Oct 2025
+ 14:54:30 -0700 (PDT)
+Date: Sat, 25 Oct 2025 14:54:30 -0700
+In-Reply-To: <68f4abbe.050a0220.1186a4.052a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fd4716.050a0220.346f24.039a.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill (3)
+From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On October 22, 2025 4:16:34 PM PDT, Dave Hansen <dave=2Ehansen@intel=2Ecom>=
- wrote:
->On 10/22/25 15:06, Usama Arif wrote:
->> +		pgdp =3D (pgd_t *)read_cr3_pa();
->> +		new_cr3 =3D (u64 *)(pgd_val(pgdp[0]) & PTE_PFN_MASK);
->> +		memcpy(trampoline_32bit, new_cr3, PAGE_SIZE);
->
->Heh, somebody like casting, I see!
->
->But seriously, read_cr3_pa() should be returning a physical address=2E No=
-?
->Today it does:
->
->static inline unsigned long read_cr3_pa(void)
->{
->        return __read_cr3() & CR3_ADDR_MASK;
->}
->
->So shouldn't CR3_ADDR_MASK be masking out any naughty non-address bits?
->Shouldn't we fix read_cr3_pa() and not do this in its caller?
+syzbot has found a reproducer for the following issue on:
 
-Ah, the times when one can wish for C++=2E
+HEAD commit:    566771afc7a8 Merge tag 'v6.18-rc2-smb-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=112ec7e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25811b07889c90db
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141ca614580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156b4be2580000
 
-Too bad they still haven't figured out tagged initializers=2E
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-566771af.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d8d15ef51fac/vmlinux-566771af.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7f77bbb0b916/bzImage-566771af.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/34711c27aae5/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1061bb04580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
+
+         option from the mount to silence this warning.
+=======================================================
+ocfs2: Mounting device (7,0) on (node local, slot 0) with writeback data mode.
+Oops: divide error: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5467 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
+Code: 34 1a 49 81 c6 50 01 00 00 45 0f b7 3f 49 83 c5 02 4c 89 e8 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 eb 03 00 00 44 89 f8 31 d2 <66> 41 f7 75 00 0f b7 d8 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0
+RSP: 0018:ffffc90002b2f080 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888000dba480
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002b2f188 R08: 00313050554f5247 R09: 00313050554f5247
+R10: dffffc0000000000 R11: ffffed1009f9b801 R12: dffffc0000000000
+R13: ffff88804fcc24c2 R14: ffff88804fcdc150 R15: 0000000000000000
+FS:  000055558f3fe500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2fd63fff CR3: 00000000431d7000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ ocfs2_block_group_alloc_discontig fs/ocfs2/suballoc.c:634 [inline]
+ ocfs2_block_group_alloc fs/ocfs2/suballoc.c:703 [inline]
+ ocfs2_reserve_suballoc_bits+0x20a6/0x4640 fs/ocfs2/suballoc.c:834
+ ocfs2_reserve_new_inode+0x4f4/0xcc0 fs/ocfs2/suballoc.c:1074
+ ocfs2_mknod+0x83c/0x2050 fs/ocfs2/namei.c:306
+ ocfs2_mkdir+0x191/0x440 fs/ocfs2/namei.c:659
+ vfs_mkdir+0x306/0x510 fs/namei.c:4453
+ do_mkdirat+0x247/0x590 fs/namei.c:4486
+ __do_sys_mkdirat fs/namei.c:4503 [inline]
+ __se_sys_mkdirat fs/namei.c:4501 [inline]
+ __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4501
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3f05d8efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdff269308 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00007f3f05fe5fa0 RCX: 00007f3f05d8efc9
+RDX: 0000000000000000 RSI: 00002000000000c0 RDI: ffffffffffffff9c
+RBP: 00007f3f05e11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3f05fe5fa0 R14: 00007f3f05fe5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
+Code: 34 1a 49 81 c6 50 01 00 00 45 0f b7 3f 49 83 c5 02 4c 89 e8 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 eb 03 00 00 44 89 f8 31 d2 <66> 41 f7 75 00 0f b7 d8 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0
+RSP: 0018:ffffc90002b2f080 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888000dba480
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002b2f188 R08: 00313050554f5247 R09: 00313050554f5247
+R10: dffffc0000000000 R11: ffffed1009f9b801 R12: dffffc0000000000
+R13: ffff88804fcc24c2 R14: ffff88804fcdc150 R15: 0000000000000000
+FS:  000055558f3fe500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2fd63fff CR3: 00000000431d7000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	34 1a                	xor    $0x1a,%al
+   2:	49 81 c6 50 01 00 00 	add    $0x150,%r14
+   9:	45 0f b7 3f          	movzwl (%r15),%r15d
+   d:	49 83 c5 02          	add    $0x2,%r13
+  11:	4c 89 e8             	mov    %r13,%rax
+  14:	48 c1 e8 03          	shr    $0x3,%rax
+  18:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
+  1d:	84 c0                	test   %al,%al
+  1f:	0f 85 eb 03 00 00    	jne    0x410
+  25:	44 89 f8             	mov    %r15d,%eax
+  28:	31 d2                	xor    %edx,%edx
+* 2a:	66 41 f7 75 00       	divw   0x0(%r13) <-- trapping instruction
+  2f:	0f b7 d8             	movzwl %ax,%ebx
+  32:	4c 89 f0             	mov    %r14,%rax
+  35:	48 c1 e8 03          	shr    $0x3,%rax
+  39:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
+  3e:	84 c0                	test   %al,%al
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
