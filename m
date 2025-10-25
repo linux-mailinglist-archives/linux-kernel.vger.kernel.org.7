@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-869873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80A7C08E83
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:34:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A674AC08E8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D20940454F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:34:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 602E54E90EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3280D2E62C4;
-	Sat, 25 Oct 2025 09:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AFD288522;
+	Sat, 25 Oct 2025 09:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="pI2Ce4vy"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nRFp7MWJ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5657635898;
-	Sat, 25 Oct 2025 09:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0851F1932;
+	Sat, 25 Oct 2025 09:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761384887; cv=none; b=PGGLFvC3BmgfzBt0yUz6CZh5YgckH3K9B5MMViH67DdKzDgNIDn1J+lKt+kiVBLSKEFsnCdXCs3KcjcsvcwitdFuoy0o8VgQor2XI9W+vXdo2c+AIFJYzMT+nyYngUheKgouFuMU8kHTrDs0MusEKeuUIa4zWFOSqTV3jom26Jo=
+	t=1761385092; cv=none; b=Qudh7sP5bkaXb75HZpDpeB+KAzrrapdvaAXz0aWrR1kuJPy9sciA8gRmq0B7J7cWIfMfcOKCnnmuZD2Ehvl1cj1+i78Y5HGgpyUapVsHUZpMQc6XC0XkcekFiwSX/hVIbcjVYG0qMLFPuWP1uKICkZ6NPjh95IL2rG6dckGfZDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761384887; c=relaxed/simple;
-	bh=LV8sGQ71xsL085epJdSMDWxSQ/YnHemUNu6BoJUcrfU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aOmF2v5hU/c9aBU2oCAcBtSr8wUrvPgkp2Rmz9fzieOG73NACqyD8vVk8XHRXrcRdQyEZ4Ow3F8idzLok/kd8ldof0pi8rb6unBMhhPlAN1K74a0VC8OWFkSODV1W/CjCUy7OMmAAWgkhXcQWNts2ZnB5dMrF6wbchb/fRqNR/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=pI2Ce4vy; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=lKlFKPFWui0rBF7JkALPT4rV4/6BtprmXI6qCc+ucnA=;
-	b=pI2Ce4vySPQvfHaznAABDEnVBnVP5iKVw+xG5yvYh+bN0vv24/CP7qMoFWYrpqHsj4RYoRu3X
-	z+fZXrVao8Lu/FXvBQzyK53O5TTEzH7KrybEvJkIUlmqabHGNXmO4OIA1AuIUmiQNXe9URANqOy
-	cc8GcvVx4i33G4OQvyLozkU=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4ctvjW3FDSz1prLt;
-	Sat, 25 Oct 2025 17:34:07 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3FCA6180087;
-	Sat, 25 Oct 2025 17:34:34 +0800 (CST)
-Received: from huawei.com (10.50.87.109) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 25 Oct
- 2025 17:34:32 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <ben.horgan@arm.com>, <james.morse@arm.com>
-CC: <zengheng4@huawei.com>, <amitsinght@marvell.com>,
-	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
-	<carl@os.amperecomputing.com>, <catalin.marinas@arm.com>, <dakr@kernel.org>,
-	<dave.martin@arm.com>, <david@redhat.com>, <dfustini@baylibre.com>,
-	<fenghuay@nvidia.com>, <gregkh@linuxfoundation.org>, <gshan@redhat.com>,
-	<guohanjun@huawei.com>, <jeremy.linton@arm.com>,
-	<jonathan.cameron@huawei.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <sunnanyong@huawei.com>, <tan.shaopeng@fujitsu.com>,
-	<wangkefeng.wang@huawei.com>, <will@kernel.org>, <xhao@linux.alibaba.com>
-Subject: [PATCH] arm64/mpam: Clean MBWU monitor overflow bit
-Date: Sat, 25 Oct 2025 17:34:28 +0800
-Message-ID: <20251025093428.1379218-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <a3e95937-b0c7-020e-d52d-7189d2540f8f@huawei.com>
-References: <a3e95937-b0c7-020e-d52d-7189d2540f8f@huawei.com>
+	s=arc-20240116; t=1761385092; c=relaxed/simple;
+	bh=qKeh5cxyw+7Gml1biLwuWJ/nM8sHMmP0hyx9XSDwCDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCmknSx8MA29IQdXuicxWg32UBFzGWZq5kaTUYXuIaybH636sOhATN5axjpyGkTTcg5MffovTfe9OwIren3hiG1AZmvRGypvBNacfIKTCBo19RvtjViV0gxMg8Nhup73MuclnwAbEUBZjxIimKtiNLiKwUipy/Z2xeE+EptUVhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nRFp7MWJ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=m71c3FooNtQtr8y26hSGiucyyGJcYCSbaK6kuqcT358=; b=nRFp7MWJHcj0hBpft31gI2THeL
+	8ka0Zyuf5+40gCgGx0g4m4X07Mu43tVcHyY3Kxf3P9sLuFrsuhKcJEnnLCq8vu/9q1fSwRu12lE6W
+	owBAOq9DSBqKUixI0RrCiZJgl/H844rsqdHRdvJR27iq8I2v1xg6jr08b3gWzsEv/OI2s9yfA3q/r
+	wT98DDQKs8J5bKU74+s0wA5hJ2z0iHq3kXQOowrdiiglhx5W67RN3oYfgfVmbD3UO4U3W+jcoRL1W
+	LO1DkC2tQejGALxFelRQ+LEtRW7coFWYZKPJKWkMYBnNNJWxZ3qAap904IZj7TrGydoo2gQTImvAs
+	jc/EjOOw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56308)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vCain-000000008SL-45Ut;
+	Sat, 25 Oct 2025 10:38:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vCail-000000003Z0-15vv;
+	Sat, 25 Oct 2025 10:37:59 +0100
+Date: Sat, 25 Oct 2025 10:37:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] net: phy: dp83867: Disable EEE support as not
+ implemented
+Message-ID: <aPyad0PUR9lY70rk@shell.armlinux.org.uk>
+References: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
+ <aPyN7z8Vk4EiS20b@shell.armlinux.org.uk>
+ <aPyWHRphEYOdk2MG@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPyWHRphEYOdk2MG@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The MSMON_MBWU register accumulates counts monotonically forward and
-would not automatically cleared to zero on overflow. The overflow portion
-is exactly what mpam_msmon_overflow_val() computes, there is no need to
-additionally subtract mbwu_state->prev_val.
+On Sat, Oct 25, 2025 at 11:19:25AM +0200, Oleksij Rempel wrote:
+> On Sat, Oct 25, 2025 at 09:44:31AM +0100, Russell King (Oracle) wrote:
+> > On Thu, Oct 23, 2025 at 04:48:53PM +0200, Emanuele Ghidoli wrote:
+> > > While the DP83867 PHYs report EEE capability through their feature
+> > > registers, the actual hardware does not support EEE (see Links).
+> > > When the connected MAC enables EEE, it causes link instability and
+> > > communication failures.
+> > > 
+> > > The issue is reproducible with a iMX8MP and relevant stmmac ethernet port.
+> > > Since the introduction of phylink-managed EEE support in the stmmac driver,
+> > > EEE is now enabled by default, leading to issues on systems using the
+> > > DP83867 PHY.
+> > 
+> > Wasn't it enabled before? See commit 4218647d4556 ("net: stmmac:
+> > convert to phylink managed EEE support").
+> > 
+> > stmmac's mac_link_up() was:
+> > 
+> > -       if (phy && priv->dma_cap.eee) {
+> > -               phy_eee_rx_clock_stop(phy, !(priv->plat->flags &
+> > -                                            STMMAC_FLAG_RX_CLK_RUNS_IN_LPI));
+> > -               priv->tx_lpi_timer = phy->eee_cfg.tx_lpi_timer;
+> > -               stmmac_eee_init(priv, phy->enable_tx_lpi);
+> >                 stmmac_set_eee_pls(priv, priv->hw, true);
+> > -       }
+> > 
+> > So, if EEE is enabled in the core synthesis, then EEE will be
+> > configured depending on what phylib says.
+> > 
+> > In stmmac_init_phy(), there was this:
+> > 
+> > -               if (priv->dma_cap.eee)
+> > -                       phy_support_eee(phydev);
+> > -
+> >                 ret = phylink_connect_phy(priv->phylink, phydev);
+> > 
+> > So phylib was told to enable EEE support on the PHY if the dwmac
+> > core supports EEE.
+> > 
+> > So, from what I can see, converting to phylink managed EEE didn't
+> > change this. So what really did change?
+> 
+> I suspect it is a change in board designs. iMX8MP EVB variants are using
+> Realtek PHYs with the SmartEEE variant. Therefore, the MAC is not able
+> to control LPI behavior. Designs based on the EVB design (with the
+> Realtek PHY) are not affected. I mean, any bug on the MAC or software
+> side will stay invisible.
+> 
+> Some new designs with special requirements for TSN, for example
+> low-latency TI PHYs, are a different story. They promise "Extra low
+> latency TX < 90ns, RX < 290ns" and also announce EEE support. These two
+> promises are not compatible with each other anyway, and at the same
+> time, even if LPI does work, it will most probably fail with the FEC
+> driver. I do not know about STMMAC.
 
-Before invoking write_msmon_ctl_flt_vals(), the overflow bit of the
-MSMON_MBWU register must first be read to prevent it from being
-inadvertently cleared by the write operation. Then, before updating the
-monitor configuration, the overflow bit should be cleared to zero.
+What's annoying me is this "we spotted a change in the driver, we're
+going to blame that for our problems" attitude that there seems to be
+towards phylink.
 
-Finally, use the overflow bit instead of relying on counter wrap-around
-to determine whether an overflow has occurred, that avoids the case where
-a wrap-around (now > prev_val) is overlooked.
+When I make changes such as when porting a driver to a new facility,
+I try to do it with _no_ behavioural change. Yet, people still blame
+phylink for their problems. In 99% of cases, it turns out to be
+incorrect blame.
 
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/resctrl/mpam_devices.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+This commit description is stating that the conversion of stmmac to
+phylink-managed EEE changed the behaviour to default to enabling EEE.
+I claim that the driver _already_ defaulted to enabling EEE. So
+the commit description is nonsense, and just pulling at straws to
+justify the probem.
 
-diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-index 0dd048279e02..575980e3a366 100644
---- a/drivers/resctrl/mpam_devices.c
-+++ b/drivers/resctrl/mpam_devices.c
-@@ -1062,6 +1062,21 @@ static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
- 	}
- }
- 
-+static bool read_msmon_mbwu_is_overflow(struct mpam_msc *msc)
-+{
-+	u32 ctl;
-+	bool overflow;
-+
-+	ctl = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
-+	overflow = ctl & MSMON_CFG_x_CTL_OFLOW_STATUS ? true : false;
-+
-+	if (overflow)
-+		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl &
-+				     ~MSMON_CFG_x_CTL_OFLOW_STATUS);
-+
-+	return overflow;
-+}
-+
- /* Call with MSC lock held */
- static void __ris_msmon_read(void *arg)
- {
-@@ -1069,6 +1084,7 @@ static void __ris_msmon_read(void *arg)
- 	bool config_mismatch;
- 	struct mon_read *m = arg;
- 	u64 now, overflow_val = 0;
-+	bool mbwu_overflow = false;
- 	struct mon_cfg *ctx = m->ctx;
- 	bool reset_on_next_read = false;
- 	struct mpam_msc_ris *ris = m->ris;
-@@ -1091,6 +1107,7 @@ static void __ris_msmon_read(void *arg)
- 			reset_on_next_read = mbwu_state->reset_on_next_read;
- 			mbwu_state->reset_on_next_read = false;
- 		}
-+		mbwu_overflow = read_msmon_mbwu_is_overflow(msc);
- 	}
- 
- 	/*
-@@ -1138,8 +1155,8 @@ static void __ris_msmon_read(void *arg)
- 		mbwu_state = &ris->mbwu_state[ctx->mon];
- 
- 		/* Add any pre-overflow value to the mbwu_state->val */
--		if (mbwu_state->prev_val > now)
--			overflow_val = mpam_msmon_overflow_val(m->type) - mbwu_state->prev_val;
-+		if (mbwu_overflow)
-+			overflow_val = mpam_msmon_overflow_val(m->type);
- 
- 		mbwu_state->prev_val = now;
- 		mbwu_state->correction += overflow_val;
+What I'm asking for is people to _properly_ investigate their problems
+rather than just looking at the commit history, and pulling out some
+random commit to blame, which invariably seems to be phylink related.
+
+Having one's hard efforts constantly slated in this way is unhelpful.
+
 -- 
-2.25.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
