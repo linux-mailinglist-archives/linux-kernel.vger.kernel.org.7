@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-869870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CD7C08E5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:19:52 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC1EC08E37
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686D83ADBED
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:19:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C5E634F18B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F652DAFCC;
-	Sat, 25 Oct 2025 09:19:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91242D5C95;
+	Sat, 25 Oct 2025 09:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="msKRhHp7"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE4F26FA56
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33F918EB0;
+	Sat, 25 Oct 2025 09:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761383980; cv=none; b=EK/YdLplwE0F2GvFaF8opsHy0Xvbro2QY6K3Cxjs7/op4HePx/ZC1YcZvCsgrpIwy/ohQMWGPChsGHWrrLPGB3pVbUJw36C8XAKUb081T8DvaNoEj/bZnCTTZYA2hdYF65c9/Nu2nJGbEUAjzroi40lKDWWMbbKHMrOISfjCUXs=
+	t=1761383045; cv=none; b=AV/cV4Y0kTGWqflpVt63IjHk9n9B7TiKeIYSsnmRMcbAR6rR0rpN5X8RQk6mxluJPl5JCkopTyV31ho/fMU12orktIfyFKD0muEwWGwoDnA0aLC8bTsi7IrQz86uZ9TjuswPQK+a3fHcyOikSyZE5feBuKKwl6mvIhWySIxYkpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761383980; c=relaxed/simple;
-	bh=HONwtuD6EIQPd3bdIrsre/LYS82ez4l+wh32OW9JNik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POcKi9FV8Z7ECWCdrIswyehcKw+yAnJbeFoKDQJUE1Pl+nLWFRqvZTrWtSTURgBM2se9LahLZHqlNmq6S+chBNB3qaidpHSfBBDNDBQLZVjPf89qT1H6upifqARVmd4tGGwE3KVtUuCZuzcYnJUEdd3ek7bxxF1B/Ntu/d1nIEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vCaQp-0001p1-ES; Sat, 25 Oct 2025 11:19:27 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vCaQn-005Mjq-2Z;
-	Sat, 25 Oct 2025 11:19:25 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vCaQn-00H0pU-27;
-	Sat, 25 Oct 2025 11:19:25 +0200
-Date: Sat, 25 Oct 2025 11:19:25 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1] net: phy: dp83867: Disable EEE support as not
- implemented
-Message-ID: <aPyWHRphEYOdk2MG@pengutronix.de>
-References: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
- <aPyN7z8Vk4EiS20b@shell.armlinux.org.uk>
+	s=arc-20240116; t=1761383045; c=relaxed/simple;
+	bh=JX54dqkVcettB79jeo61PXjr1tMDPM5+8OlJj2sQzYw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ssay4wz0k0KQ33U2Puao/GzlNAwb9jY+Vb+mPc4Vj2fW+px7TILxf/oOZWxnLE4G2kTuohO+d4RezWvOo27gwhXvg7FLBtVgwANYjQXbrLJ/rOMwquHsdo723lWfvjAv7L93Yqzhj6UwbI/XzdEFHTM97J9bYYiyotVORQ1oHmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=msKRhHp7; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=1Vku7UM5vEHO2L1MY81GnHcBlnb5iKV3pBcw9CkFwpA=;
+	b=msKRhHp7q8CZ2UjkJ1TKFbxNbX1W8SEWwxXQ0EMvwrUSI554r9jVSej0rGOqKHrBECihdK/HZ
+	dZdI9bP3W3ADSkY1L9QJGo0CCA4Q3RR7oGLUz5Jhic3YB6BWi2E9RcaWBsJkYlp8ub/Y7T8ncyU
+	hfe14Mkwqg+0632HPSVVr7Q=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ctv272ZF3zKm4k;
+	Sat, 25 Oct 2025 17:03:27 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id A74AE1A016C;
+	Sat, 25 Oct 2025 17:03:53 +0800 (CST)
+Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 25 Oct
+ 2025 17:03:52 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>
+Subject: [PATCH net-next] net: ipv4: Remove extern udp_v4_early_demux()/tcp_v4_early_demux() in .c files
+Date: Sat, 25 Oct 2025 17:26:37 +0800
+Message-ID: <20251025092637.1020960-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aPyN7z8Vk4EiS20b@shell.armlinux.org.uk>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Sat, Oct 25, 2025 at 09:44:31AM +0100, Russell King (Oracle) wrote:
-> On Thu, Oct 23, 2025 at 04:48:53PM +0200, Emanuele Ghidoli wrote:
-> > While the DP83867 PHYs report EEE capability through their feature
-> > registers, the actual hardware does not support EEE (see Links).
-> > When the connected MAC enables EEE, it causes link instability and
-> > communication failures.
-> > 
-> > The issue is reproducible with a iMX8MP and relevant stmmac ethernet port.
-> > Since the introduction of phylink-managed EEE support in the stmmac driver,
-> > EEE is now enabled by default, leading to issues on systems using the
-> > DP83867 PHY.
-> 
-> Wasn't it enabled before? See commit 4218647d4556 ("net: stmmac:
-> convert to phylink managed EEE support").
-> 
-> stmmac's mac_link_up() was:
-> 
-> -       if (phy && priv->dma_cap.eee) {
-> -               phy_eee_rx_clock_stop(phy, !(priv->plat->flags &
-> -                                            STMMAC_FLAG_RX_CLK_RUNS_IN_LPI));
-> -               priv->tx_lpi_timer = phy->eee_cfg.tx_lpi_timer;
-> -               stmmac_eee_init(priv, phy->enable_tx_lpi);
->                 stmmac_set_eee_pls(priv, priv->hw, true);
-> -       }
-> 
-> So, if EEE is enabled in the core synthesis, then EEE will be
-> configured depending on what phylib says.
-> 
-> In stmmac_init_phy(), there was this:
-> 
-> -               if (priv->dma_cap.eee)
-> -                       phy_support_eee(phydev);
-> -
->                 ret = phylink_connect_phy(priv->phylink, phydev);
-> 
-> So phylib was told to enable EEE support on the PHY if the dwmac
-> core supports EEE.
-> 
-> So, from what I can see, converting to phylink managed EEE didn't
-> change this. So what really did change?
+Function udp_v4_early_demux() was already declared in 'include/net/udp.h',
+no need to keep the extern in 'ip_input.c', which may produce the
+following checkpatch warning:
 
-I suspect it is a change in board designs. iMX8MP EVB variants are using
-Realtek PHYs with the SmartEEE variant. Therefore, the MAC is not able
-to control LPI behavior. Designs based on the EVB design (with the
-Realtek PHY) are not affected. I mean, any bug on the MAC or software
-side will stay invisible.
+  WARNING: externs should be avoided in .c files
+  #45: FILE: net/ipv4/ip_input.c:322:
+  +enum skb_drop_reason udp_v4_early_demux(struct sk_buff *skb);
 
-Some new designs with special requirements for TSN, for example
-low-latency TI PHYs, are a different story. They promise "Extra low
-latency TX < 90ns, RX < 290ns" and also announce EEE support. These two
-promises are not compatible with each other anyway, and at the same
-time, even if LPI does work, it will most probably fail with the FEC
-driver. I do not know about STMMAC.
+Replace it by including 'net/udp.h'. Do the same for tcp_v4_early_demux().
 
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ net/ipv4/ip_input.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
+index 273578579a6b..19d3141dad1f 100644
+--- a/net/ipv4/ip_input.c
++++ b/net/ipv4/ip_input.c
+@@ -141,6 +141,8 @@
+ #include <linux/mroute.h>
+ #include <linux/netlink.h>
+ #include <net/dst_metadata.h>
++#include <net/udp.h>
++#include <net/tcp.h>
+ 
+ /*
+  *	Process Router Attention IP option (RFC 2113)
+@@ -317,8 +319,6 @@ static bool ip_can_use_hint(const struct sk_buff *skb, const struct iphdr *iph,
+ 	       ip_hdr(hint)->tos == iph->tos;
+ }
+ 
+-int tcp_v4_early_demux(struct sk_buff *skb);
+-enum skb_drop_reason udp_v4_early_demux(struct sk_buff *skb);
+ static int ip_rcv_finish_core(struct net *net,
+ 			      struct sk_buff *skb, struct net_device *dev,
+ 			      const struct sk_buff *hint)
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.34.1
+
 
