@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-869770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D01C08B23
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:55:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B29DC08B29
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2910A3BCF7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 04:55:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA6FB350044
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC852BE622;
-	Sat, 25 Oct 2025 04:55:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040FF26E701;
+	Sat, 25 Oct 2025 05:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIVsuAuX"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2998E13B7A3
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 04:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD29C72612
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761368104; cv=none; b=EKDyBmw6DdLkP+rgEBodZOhAQxkJJVLPs7d2Zm4crh95zSs/FIAavKwd9uP3Bx75et1FZTwMOusmjepL3LMHkiCDkBHOrLn/tQkaqdqNA06bW9qxrjtLUYF9621MWsZUfbc02EkE9HsCNiHe4uwkUzZxJm9iwrR4iVWbYfpO44I=
+	t=1761368907; cv=none; b=nIcmCoKDdw/bUFzUeGBHFxMcDAsld4DXiJQ5qOxb/wxpb45UzM3mOveTbbTHfxT3OrEu9V6dpbtVvaBw67/tL0DheyWUQOyQaskyQRYCjHc9MAU0bWjq2cz9MHTWLJN9dKD5uduzEwdnnxpQiVb3htMG8LdDttDC04OYYyZ1t0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761368104; c=relaxed/simple;
-	bh=iktKT3WSsX5Eh5WpbJhRG4yNuP8WNCWNH5X4PESRAnc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aaWMUG9t4K8buSkA5xzZS/59g5Rw4uEP2oCbM/OYhtUhJhYqffKam/OMAgisfqd8zKnCrlyoD2eBEBaK7ZUKB/cKeoHlonFVAu6+wu83OF5UXHrlwnNyqwk2CiqkQDhRYyuJswe6jNy6uq2IFhLhZIQIs5FzTY4FP7CTb/Rf1DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-94389ae547cso14268139f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 21:55:02 -0700 (PDT)
+	s=arc-20240116; t=1761368907; c=relaxed/simple;
+	bh=9sj97WqdM5/emB5ZezWNh1O1KphVBD/fj3cCp/SxgbQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SItKnhCGwWwhF2xhDBOoPUBh8d9m5PLrwM5/lCLeR8dlj08v0r7sM8y4TgvagIuUtXY0+euEUgvL6VG+BrzyXLoufwiiLvkSpMPVFvZPPL2qkLJTkaaHW4c6s9udW4s61G0t4RM68Cd06xifcNCVDa2GA3jQhX3iqsk/JLJ5+sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIVsuAuX; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b6d78062424so326129366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 22:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761368904; x=1761973704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/wyvOizFeamc5J5XjDLMeHypdnVLhvC3mQKcXmMz7GA=;
+        b=BIVsuAuXHP/62HK33Z2I3MG7kIcUmr2V+K2OsBUChOl5LizA5zkWZzud2TDCCuODFS
+         Zt6e7NHH898J78AJPxsvV18Uaz426hgkG0EtVn/d8MJYTNdX5n5NKEnb+J5OzuRCkBcI
+         zriJkJTXnGD97x3KtvDIEcu/RYsnxBk4etbfCgAKajUEcb+raXdt9HdHynggM7qH1AGI
+         h3Nlo1qvm81QUJsqKYFdC2U3U2kE12KyYKsQCCA7RMFc4wg/64uiA5h8NhX7O9goZgzs
+         J8bpDylP1tXW8lXAkmikBwhcZ73vzmXDpB8xpokW0hYyuR02CHtiuLOB8vg7Rp5ikdOt
+         +50g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761368102; x=1761972902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sfohFdAczWF1WzY/GrEVTuUSveF/6y4Geu8fq13XWG0=;
-        b=gxh6fRy5MfADbLL7+o/lkdsP7qQ5Tn1amaHiMEv1znMe5298+OaMOXdmb7iHvBIDFB
-         fVHRMgoTsO44MnTqYMtzA/PQjPIfPbLSde/TtN5P1rsZTaxaE5aXfxUjnDUdYbj4WZNY
-         jBaeJta6J3nqtdmSnTwLxdXHGd3b5MPP63ZxLhN11hKsX8veO1ao2n3lzx2Dj8AmNT2+
-         sdhyC0VzIz7PMr6g0O8mfCXCS3ItO7AJ4y3bwCdoVQT4lkYAzHS3QEoQVyYOIapWfrTG
-         dYZ5ocFAI73iQs5KUP74BCaWFJrWpGrF/uwvmc5qfID4nDi18Pk/7Gb2x/SKNZz5gWNu
-         mWvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6HqBP5uV9j4AMKPS8VfxLy6S131ZO/idkGLNzmeDrjnWDt8qLDOpt1ja/vOqRRYHkmQK68It/kAoEzcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF/aqMh/2Q0MoDJO+bk7KDnwPjelFgEG6nhP1EBXPwKr9UiFbs
-	q/hNKw9hQ1hdkkyLxWEQlJqbyiaO2t3KpKscXcY9Aoo2qRhEbHsWNWv9uriv9MsMrYAwjYwhyba
-	DU+mx1j5m0Ml15Ks51KPsNw4aNiXnK5NCzxtKLwOglySULF0oD2FVxzibbKQ=
-X-Google-Smtp-Source: AGHT+IGmzN3hj7nTSLkXk9l23ogDW9Jk3lYuOUnF/SmoXNtxlLUT1tNfps/Ib9eNuMT9GWLVCiL6ZSXIMp0XiubP6Fz4W3ASkXvN
+        d=1e100.net; s=20230601; t=1761368904; x=1761973704;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/wyvOizFeamc5J5XjDLMeHypdnVLhvC3mQKcXmMz7GA=;
+        b=cQP06q8CJDj7rZM/mrSSi8GaAfkSmWEIHw2XGWsMWsGdkbsTRZsbvcWRh+rtKm+R+N
+         Act1o5HFc9VuVO/YYJtx7WUBC8akL8GyJ7fVjtYMUX8VjIuPswXhIDSg/2MaUOrcepI+
+         UTu44nqiCx5UxCNJ6+0C67/80TyYpOvSTMUuKcsy5qdvgBjEqnXVKIZNudHk8qDKCLjh
+         StgC9qnxG7HEcYBSWlDUYbyb0mV0W+e81qaPUbyYS/d3bEm/ocqf1RxPCzrQCtC51Kn/
+         lt4WBBNiVj+mEW8ngggvPRtG1ewlp/hn8QTQ1IqH/OfHjdXBGvCU5NRZ8SdnXHyILLmV
+         7CMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdB6LlKs8qNStDO/t3uZYCpeqYNxAVNacYB5D21SBVEyyBDw5X5HMTPj3avENnazpdFY2fkfdOcqRXt0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynPDlGl8wyCDm0Rdr+gYl5LeEiBlSf1FMQF9Nwpx0pFfco4nTz
+	SgUR1AohP3hHsE8nPOkS+YRMQqpwIsDdjyz5B434xhT/SAr83EidsLmv
+X-Gm-Gg: ASbGncvo2O97hcF8DbreF944ygt9dQk9JyNhShft7/MDMklcdJLtR1WHqfcbvztnCak
+	kh0vSfwh6mUTnYX5M4yWh4zcB6lEfhvu3TkReZ1MYrH59jFslqZlXwmd9y/3OqJhPCdLbenO5wL
+	iIVKOUZqbTS91+EmlwVg/mqAd96QkP5YTPFYCE0OOrsj9Hyln4TreKAM74kojEzrAYxGJnC2WAF
+	qT36iBgQn5Dy/VevPwkeOH2o8LxYpLPg0t9kOOkk2ICkISiVy+LM+VDG1yJVlY5aXqBqlwyXtDZ
+	uTr9RrdHFR5LAsTWg26O/dQd9eqK2sxbWF7sLR7rIe6M4Tro3Sgh/XJMM45mptZI4RqjMYyK3tI
+	q2yLV8QjTpmYeu04pXCy06v9BiKoAX7bOw6Ny/2zN+HTekFvw3bmaaybEsg3ucC4qJARIa1Ds8z
+	SC
+X-Google-Smtp-Source: AGHT+IGED30i/rKdoHj02khe2qIDFQObvhJ3a36vUQHMrmoCrPRoG3pb3BVWX1cfcmX/8CsErsWK4g==
+X-Received: by 2002:a17:907:9615:b0:b6d:7859:61eb with SMTP id a640c23a62f3a-b6d7859620fmr371817166b.29.1761368903851;
+        Fri, 24 Oct 2025 22:08:23 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6d853077e8sm102873866b.14.2025.10.24.22.08.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 22:08:23 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: rafael@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	guoqing.zhang@amd.com,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	mario.limonciello@amd.com,
+	todd.e.brandt@linux.intel.com,
+	torvalds@linuxfoundation.org,
+	"regressions" <regressions@lists.linux.dev>
+Subject: [REGRESSION][BISECTED] Hibernation: WARNING at kernel/power/main.c:48 pm_restrict_gfp_mask (was: "[PATCH v1] PM: hibernate: Restrict GFP mask in hibernation_snapshot()")
+Date: Sat, 25 Oct 2025 08:08:12 +0300
+Message-ID: <20251025050812.421905-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <5924662.DvuYhMxLoT@rafael.j.wysocki>
+References: <5924662.DvuYhMxLoT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1414:b0:940:d395:fb53 with SMTP id
- ca18e2360f4ac-940d395fcbemr3180777839f.12.1761368102301; Fri, 24 Oct 2025
- 21:55:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 21:55:02 -0700
-In-Reply-To: <68ec1f21.050a0220.ac43.0010.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fc5826.050a0220.346f24.01f5.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm6_tunnel_net_exit (4)
-From: syzbot <syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	herbert@gondor.apana.org.au, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sd@queasysnail.net, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com, wangliang74@huawei.com, 
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+"Rafael J. Wysocki" <rafael@kernel.org>:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Commit 12ffc3b1513e ("PM: Restrict swap use to later in the suspend
+> sequence") incorrectly removed a pm_restrict_gfp_mask() call from
+> hibernation_snapshot(), so memory allocations involving swap are not
+> prevented from being carried out in this code path any more which may
+> lead to serious breakage.
 
-commit b441cf3f8c4b8576639d20c8eb4aa32917602ecd
-Author: Sabrina Dubroca <sd@queasysnail.net>
-Date:   Fri Jul 4 14:54:33 2025 +0000
+#regzbot introduced: 449c9c02537a146ac97ef962327a221e21c9cab3
 
-    xfrm: delete x->tunnel as we delete x
+This commit introduced regression: now I see WARNING every time when
+I hibernate. The bug reproduces both on real hardware and in Qemu.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d2f980000
-start commit:   cf1ea8854e4f Merge tag 'mmc-v6.18-rc1' of git://git.kernel..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d2f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d2f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
-dashboard link: https://syzkaller.appspot.com/bug?extid=3df59a64502c71cab3d5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162c3de2580000
+Here is script I used to reproduce this bug in Qemu:
+https://zerobin.net/?aadae7117a208c0a#Xh8aI5+u3pyk+vKwET7j+yXolLeoSLe/AedcvnNeCLs=
 
-Reported-by: syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com
-Fixes: b441cf3f8c4b ("xfrm: delete x->tunnel as we delete x")
+Here is resulting log (dmesg) on current master (43e9ad0c55a3):
+https://zerobin.net/?471d17d0632e7f85#uYne0yUu+rP4KnDbOFFqtCrcDIi6UpQz2uIQw85lcdQ=
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Here is the most interesting part:
+
+[    1.735001] PM: Image saving progress:  90%
+[    1.746611] PM: Image saving progress: 100%
+[    1.747208] PM: Image saving done
+[    1.747403] PM: hibernation: Wrote 30164 kbytes in 0.13 seconds (232.03 MB/s)
+[    1.747837] PM: Image size after compression: 8908 kbytes
+[    1.748190] PM: S|
+[    1.750351] ------------[ cut here ]------------
+[    1.750627] WARNING: CPU: 0 PID: 1 at kernel/power/main.c:48 pm_restrict_gfp_mask+0x3b/0x40
+
+On real hardware exactly same thing happens (i. e. WARNING at kernel/power/main.c:48 pm_restrict_gfp_mask).
+
+-- 
+Askar Safin
 
