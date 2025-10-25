@@ -1,184 +1,247 @@
-Return-Path: <linux-kernel+bounces-869653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892F0C086DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54609C08737
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 02:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D908500D23
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:26:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5097C4F36E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5DC15746F;
-	Sat, 25 Oct 2025 00:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E101C32FF;
+	Sat, 25 Oct 2025 00:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bsg3BHhN"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VnBK9R5h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75821A9FB4
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C60156F45;
+	Sat, 25 Oct 2025 00:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761351944; cv=none; b=Q8JKypJzJpfebr6Tqvc1AZlSwVaait4RbZnVzZbIajaeYWxQrWL2B0Fbr633r1vBBgTxYspuRoshDqwI57X/6lsaOZDg1x8+2MvSUzYE4s0nvPUSsXS20a6M9qL/i5FO0lytuudTBr7rIJ/xkZVekhTtQHomKuaXyF9E9x1LtBM=
+	t=1761352361; cv=none; b=aOZwPbLcdXF/b6flOjf+KoVv4YG6OPSzXNttbMxjd8wMAOSL5r4WKlJ/vuxKhweUx4VM1fjJDp/6fDe8cvQzPNP2segl6FaXlBglGNwamWgB6I4nWuKrr/+a/Jrd6XdDjFbncLJPcek89l03Ojh2p2TbO4qsX+O1OOPRCA8ifTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761351944; c=relaxed/simple;
-	bh=ccDSWsDcv1VgO5FQCNboytqw8BM+lSa4xnjDL6DygK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VAQgaz1MZ+wtZ/3+W7PnjiIn4JtPweJZweZC+BYulkO1XTVfmB/gkQyzlTdp2xS4AJaM7XsXxSEJMT6MH5cn6Ch6WbJz1GpNz+vmSB7+LsIk6gU5LTTn7fWs05SBCgVLbKWXqksT76vCBYtX0Tito5+b1DX6YF3l3+PWX/083Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bsg3BHhN; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7835321bc98so2123040b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:25:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761351941; x=1761956741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j9yYHTI4h25yt43JbI8zzKxRC8DtBUXLI6AUZFTgumw=;
-        b=bsg3BHhNfDpQpmzv341EFW64bYEiEeiobWE1zm/f9dPo6rw3FhM/RdcXQQF5JrQV4f
-         GRn/KO6DNTEJlRY9RFIzoYJZHu3Oo1f53emj/zyKAOAuvKVlyoAy3JR2Gu7SFBgz3DVE
-         OkfUupxGP+E1EBAOnGUVH/E3vWv/Ln9vQ3AL+T5Dw+TuyMGcrfveTcNFI+UpjGt1JqIe
-         QKEtRF8X3fHSJtlVpdB3ptvBEvyV6QeI0CefPeXWNF1nmdGl4xVqM5x0i+E7vZnouMuo
-         7M9Nb/l0MdxJplTLHZyOeloCVbT8RoXUOg8AP6XZlCzJn0xB54rsMk2kPgbwe2MfOByo
-         XB8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761351941; x=1761956741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j9yYHTI4h25yt43JbI8zzKxRC8DtBUXLI6AUZFTgumw=;
-        b=GqWhevFvlRkq+xUCLx0uBys1foNgyoETwAy5d4HPo+fLRrxiLj9clDtBPnf8SeOVzr
-         t87RiBE3HhoFxyKKWMZZou7X9bVhNCXKidnlvnyumBqpoaYotwbd+u+/MsK4WpiimemV
-         y+8bcly7tqqXqpliQ965vm7fKI2Q2eReWGn8ZWt65n75wB6Z/N0E3ERSoOIE9bplg3st
-         fdvNDd/Tjo3i3fqFjSLq5gbHavJ5YmqCmmmjSb+72V2HOfkDGGJCj6h2ELFceqJXveZj
-         Er3cj3fejUavaMne2JsFNKrMVTE76a7txxTMGvVS+UWkbI8jGqcSnjQLZnqVIpWpxfDW
-         42sg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5f8O/WnQGm0XDK80EAvDY2+MO8TcfLt+xB7KmxBj/ZSp2SBcv8OmJ8THmio86iOIXZTQ2jj71tTCJVIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzs650yLToNNmXiNggXtN7/8v/EXorkvC9SkaMiKOiIpcDGHNI
-	kkySd/3XnjYa2x0RGOO2MOav+Athg+8s8hOw98MQ6XPkP5XaLRVp6ZEVgzwu5UbGaR90Rb5EMFT
-	awmElrXYcX60SO0ogZfPcBvMFyHaSMdDGH3/hmh8h
-X-Gm-Gg: ASbGnctL2h4CAGGn0eVKsMZG4HBDXQdM+g1Gn+Na4NR0XwcP+TpOd0aesiDEGBro//a
-	ARAKWqk0Pne7c+cDaAT2LsfPrfNgTK9M3IHh7exXiUzsonbmfUQriBHVGsw0Nvmcno9GnnZY+qs
-	fcweB14K3rHaMqrZABgKWLr1w6gST1edKgxEKlUzjvNPQVGUoIlnNKxfgC7dID/OQNXq9ydGvIz
-	pgWTi6SKOS5pGkudBr/74OPurjf2PRZs2MrLHhA6Wk9p8Ao6AuXy/6z9I0Axch6ur0TW6lyJn4M
-	8kKWkbv45C8EJEedhn6y2TgSeQP1BD9S0wQ3Thg=
-X-Google-Smtp-Source: AGHT+IEAtGIYzz5GuE7d802lxFu8k5RTtfyNbMXTlexm9n6vhrEfMKv+0UkqmDG6uDjac/PGpPAozKneZs4s+CDi2dw=
-X-Received: by 2002:a17:902:f78b:b0:290:ab61:6a5e with SMTP id
- d9443c01a7336-290c9ce0ad2mr375635765ad.27.1761351940750; Fri, 24 Oct 2025
- 17:25:40 -0700 (PDT)
+	s=arc-20240116; t=1761352361; c=relaxed/simple;
+	bh=ykn0rynaYicv/KHr2XtoEm7SZC+on0uB1brVoPFjQcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFb3Nl1ivnGHfBD3CLWGyXAYmRmXGP17j+vn+8vigpBGaENNgcxrQiWzf+qbVqtTaHAzDPhO/RPLIr8a4DqqZ8nzE6+HHA4Eiu5Ly7R1XLYSJK7V9rfhXvtY3wV7wVQ9Zfrn3HwQZXIMOthdQtc7NLCqGYKaFJbYgugIehzWrVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VnBK9R5h; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761352360; x=1792888360;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ykn0rynaYicv/KHr2XtoEm7SZC+on0uB1brVoPFjQcA=;
+  b=VnBK9R5htk5IjNNyctz3Zy5I7UfVShFVrNHs7H0icQJgXL/+jnRDQahq
+   tgH/+g3XcqnpZ6dS8CsqIrZV5MJIc6Z6/9r1TzZdYm1Rs+OrfXiqP6N01
+   ijCixFVAcxKiR9J80BUwfmBu2h5cfz2AWqkrFt5apq0cfWqeGbLbo8G8L
+   dXVqWkDsyxnW6wFSnWzzSoTP2gCkOcY9FT8pNOj0DxVPvPo4PVhgYmN9k
+   fSCD02Yi3UK8FEHbZCEaPasqL7asD0wj9wyZpnGPKaOVznB34LbKsFtsS
+   7h5/KbX3b5mF41iZjswkGdbmdd4ZVT69Mygc8Wgf9QzfJR+GQSAKA6uBQ
+   A==;
+X-CSE-ConnectionGUID: D5sLyMPfTw+dVZqweEbZEA==
+X-CSE-MsgGUID: XqDXYfOnRdS+Zo71rD/rMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86165138"
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="86165138"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 17:32:39 -0700
+X-CSE-ConnectionGUID: xd+zz43FQhKMWA9xqz1Y1Q==
+X-CSE-MsgGUID: UvuvYmzAStKAuLWehOL2AA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="185316801"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 24 Oct 2025 17:32:35 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCSCv-000F05-0H;
+	Sat, 25 Oct 2025 00:32:33 +0000
+Date: Sat, 25 Oct 2025 08:31:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for
+ DSI and LCDC modules
+Message-ID: <202510250804.WuSolOK0-lkp@intel.com>
+References: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017233459.2409975-1-royluo@google.com> <20251017233459.2409975-3-royluo@google.com>
- <20251023224302.vdiryshblnkbtsfd@synopsys.com>
-In-Reply-To: <20251023224302.vdiryshblnkbtsfd@synopsys.com>
-From: Roy Luo <royluo@google.com>
-Date: Fri, 24 Oct 2025 17:25:03 -0700
-X-Gm-Features: AS18NWBOci17zFtbnd0-kPsMTuRFIm7KB3V_utgPg4fIqx_Bi1ldRxcvUNvrXRY
-Message-ID: <CA+zupgx9QjT2faWeGtAy_oZffYfEXupPG-GDU9aLisrMGNohdA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Oct 23, 2025 at 3:43=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys=
-.com> wrote:
->
-> On Fri, Oct 17, 2025, Roy Luo wrote:
-> > Add support for the DWC3 USB controller found on Google Tensor G5.
-> > The controller features dual-role functionality and hibernation.
-> >
-> > The primary focus is implementing hibernation support in host mode,
-> > enabling the controller to enter a low-power state (D3). This is
-> > particularly relevant during system power state transition and
-> > runtime power management for power efficiency.
-> > Highlights:
-> > - Align suspend callback with dwc3_suspend_common() for deciding
-> >   between a full teardown and hibernation in host mode.
-> > - Integration with `psw` (power switchable) and `top` power domains,
-> >   managing their states and device links to support hibernation.
-> > - A notifier callback dwc3_google_usb_psw_pd_notifier() for
-> >   `psw` power domain events to manage controller state
-> >   transitions to/from D3.
-> > - Coordination of the `non_sticky` reset during power state
-> >   transitions, asserting it on D3 entry and deasserting on D0 entry
-> >   in hibernation scenario.
-> > - Handling of high-speed and super-speed PME interrupts
-> >   that are generated by remote wakeup during hibernation.
-> >
-> > Co-developed-by: Joy Chakraborty <joychakr@google.com>
-> > Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> > Co-developed-by: Naveen Kumar <mnkumar@google.com>
-> > Signed-off-by: Naveen Kumar <mnkumar@google.com>
-> > Signed-off-by: Roy Luo <royluo@google.com>
-> > ---
-> >  drivers/usb/dwc3/Kconfig       |  10 +
-> >  drivers/usb/dwc3/Makefile      |   1 +
-> >  drivers/usb/dwc3/dwc3-google.c | 608 +++++++++++++++++++++++++++++++++
-> >  3 files changed, 619 insertions(+)
-> >  create mode 100644 drivers/usb/dwc3/dwc3-google.c
-> >
->
-> Sorry, I've been tied up with some internal projects and haven't
-> reviewed this in detail yet. I think this change deserve more time and
-> attention, and thus the delay.
->
+Hi Prabhakar,
 
-No worry, thanks for paying attention to this patch!
+kernel test robot noticed the following build errors:
 
-> One of the things that stood out is that you're assuming the host
-> suspend is always hibernation. While it's true that xhci suspend would
-> go through the xhci hibernation flow, however, that needs to communicate
-> to the glue driver here. For example, if the xhci driver is not bound,
-> and the device goes into suspend, we may go through this hibernation
-> flow when we should not. But maybe that's already handle? I need to
-> check.
+[auto build test ERROR on geert-renesas-drivers/renesas-clk]
+[also build test ERROR on clk/clk-next linus/master v6.18-rc2 next-20251024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Actually the host suspend doesn't always go into hibernation.
-In dwc3_google_suspend(), this driver follows the logic in
-dwc3_suspend_common() in determining whether to do a full tear
-down or enter hibernation.
+url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/clk-renesas-r9a09g056-Add-clocks-and-resets-for-DSI-and-LCDC-modules/20251024-050927
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20251023210724.666476-2-prabhakar.mahadev-lad.rj%40bp.renesas.com
+patch subject: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC modules
+config: x86_64-buildonly-randconfig-004-20251025 (https://download.01.org/0day-ci/archive/20251025/202510250804.WuSolOK0-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510250804.WuSolOK0-lkp@intel.com/reproduce)
 
-| static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
-| ...
-| case DWC3_GCTL_PRTCAP_HOST:
-|   if (!PMSG_IS_AUTO(msg) && !device_may_wakeup(dwc->dev)) {
-|     dwc3_core_exit(dwc);
-|     break;
-|   }
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510250804.WuSolOK0-lkp@intel.com/
 
-The glue and the dwc3 core have to be aligned here as there's no
-way to enter hibernation if the core has been completely torn down.
-As for xhci, I don't see any logic that's conditional on hibernation
-so I didn't pay much attention to it, please correct me if I'm wrong.
+All errors (new ones prefixed by >>):
 
->
-> In any case, there are multiple players (xhci, xhci-plat, dwc3, glue)
-> here, and I need more time to review. Appologies if this will take
-> longer than usual.
->
-> Thanks,
-> Thinh
+>> drivers/clk/renesas/r9a09g056-cpg.c:130:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     130 | RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+         | ^
+         | int
+>> drivers/clk/renesas/r9a09g056-cpg.c:130:26: error: a parameter list without types is only allowed in a function definition
+     130 | RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+         |                          ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:153:2: error: call to undeclared function 'DEF_PLLDSI'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |         ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:153:48: error: call to undeclared function 'PLL_PACK_LIMITS'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |                                                       ^
+   drivers/clk/renesas/r9a09g056-cpg.c:131:17: note: expanded from macro 'PLLDSI'
+     131 | #define PLLDSI          PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+         |                         ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:153:48: error: use of undeclared identifier 'rzv2n_cpg_pll_dsi_limits'
+   drivers/clk/renesas/r9a09g056-cpg.c:131:46: note: expanded from macro 'PLLDSI'
+     131 | #define PLLDSI          PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+         |                                                      ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:189:5: error: use of undeclared identifier 'CSDIV0_DIVCTL2'
+     189 |                   CSDIV0_DIVCTL2, dtable_16_128),
+         |                   ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:191:2: error: call to undeclared function 'DEF_PLLDSI_DIV'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     191 |         DEF_PLLDSI_DIV(".plldsi_gear", CLK_PLLDSI_GEAR, CLK_PLLDSI,
+         |         ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:192:10: error: use of undeclared identifier 'CSDIV1_DIVCTL2'
+     192 |                        CSDIV1_DIVCTL2, dtable_2_32),
+         |                        ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:410:19: error: invalid application of 'sizeof' to an incomplete type 'const struct cpg_core_clk[]'
+     410 |         .num_core_clks = ARRAY_SIZE(r9a09g056_core_clks),
+         |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:32: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                ^~~~~
+   9 errors generated.
 
-Looking forward to working with you to land this patch.
 
-Thanks,
-Roy Luo
+vim +/int +130 drivers/clk/renesas/r9a09g056-cpg.c
+
+   129	
+ > 130	RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+   131	#define PLLDSI		PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+   132	
+   133	/* Mux clock tables */
+   134	static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxclk" };
+   135	static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txclk" };
+   136	static const char * const smux2_gbe1_rxclk[] = { ".plleth_gbe1", "et1_rxclk" };
+   137	static const char * const smux2_gbe1_txclk[] = { ".plleth_gbe1", "et1_txclk" };
+   138	static const char * const smux2_xspi_clk0[] = { ".pllcm33_div3", ".pllcm33_div4" };
+   139	static const char * const smux2_xspi_clk1[] = { ".smux2_xspi_clk0", ".pllcm33_div5" };
+   140	
+   141	static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+   142		/* External Clock Inputs */
+   143		DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+   144		DEF_INPUT("rtxin", CLK_RTXIN),
+   145		DEF_INPUT("qextal", CLK_QEXTAL),
+   146	
+   147		/* PLL Clocks */
+   148		DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
+   149		DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
+   150		DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+   151		DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
+   152		DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
+ > 153		DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+   154		DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
+   155	
+   156		/* Internal Core Clocks */
+   157		DEF_FIXED(".pllcm33_div3", CLK_PLLCM33_DIV3, CLK_PLLCM33, 1, 3),
+   158		DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
+   159		DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
+   160		DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
+   161		DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
+   162		DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
+   163		DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
+   164		DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
+   165			  dtable_2_16),
+   166	
+   167		DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
+   168		DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
+   169		DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
+   170	
+   171		DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+   172		DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+   173		DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
+   174		DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
+   175		DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+   176	
+   177		DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
+   178		DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
+   179		DEF_CSDIV(".plleth_gbe0", CLK_CSDIV_PLLETH_GBE0,
+   180			  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL0, dtable_2_100),
+   181		DEF_CSDIV(".plleth_gbe1", CLK_CSDIV_PLLETH_GBE1,
+   182			  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL1, dtable_2_100),
+   183		DEF_SMUX(".smux2_gbe0_txclk", CLK_SMUX2_GBE0_TXCLK, SSEL0_SELCTL2, smux2_gbe0_txclk),
+   184		DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
+   185		DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
+   186		DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+   187		DEF_FIXED(".cdiv4_plleth_lpclk", CLK_CDIV4_PLLETH_LPCLK, CLK_PLLETH, 1, 4),
+   188		DEF_CSDIV(".plleth_lpclk_gear", CLK_PLLETH_LPCLK_GEAR, CLK_CDIV4_PLLETH_LPCLK,
+ > 189			  CSDIV0_DIVCTL2, dtable_16_128),
+   190	
+ > 191		DEF_PLLDSI_DIV(".plldsi_gear", CLK_PLLDSI_GEAR, CLK_PLLDSI,
+ > 192			       CSDIV1_DIVCTL2, dtable_2_32),
+   193	
+   194		DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
+   195	
+   196		/* Core Clocks */
+   197		DEF_FIXED("sys_0_pclk", R9A09G056_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
+   198		DEF_DDIV("ca55_0_coreclk0", R9A09G056_CA55_0_CORE_CLK0, CLK_PLLCA55,
+   199			 CDDIV1_DIVCTL0, dtable_1_8),
+   200		DEF_DDIV("ca55_0_coreclk1", R9A09G056_CA55_0_CORE_CLK1, CLK_PLLCA55,
+   201			 CDDIV1_DIVCTL1, dtable_1_8),
+   202		DEF_DDIV("ca55_0_coreclk2", R9A09G056_CA55_0_CORE_CLK2, CLK_PLLCA55,
+   203			 CDDIV1_DIVCTL2, dtable_1_8),
+   204		DEF_DDIV("ca55_0_coreclk3", R9A09G056_CA55_0_CORE_CLK3, CLK_PLLCA55,
+   205			 CDDIV1_DIVCTL3, dtable_1_8),
+   206		DEF_FIXED("iotop_0_shclk", R9A09G056_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
+   207		DEF_FIXED("usb2_0_clk_core0", R9A09G056_USB2_0_CLK_CORE0, CLK_QEXTAL, 1, 1),
+   208		DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G056_GBETH_0_CLK_PTP_REF_I,
+   209			  CLK_PLLETH_DIV_125_FIX, 1, 1),
+   210		DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G056_GBETH_1_CLK_PTP_REF_I,
+   211			  CLK_PLLETH_DIV_125_FIX, 1, 1),
+   212		DEF_FIXED_MOD_STATUS("spi_clk_spi", R9A09G056_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2,
+   213				     FIXED_MOD_CONF_XSPI),
+   214	};
+   215	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
