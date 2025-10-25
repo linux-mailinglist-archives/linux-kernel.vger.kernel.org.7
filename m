@@ -1,138 +1,171 @@
-Return-Path: <linux-kernel+bounces-870128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29613C09FFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7569C0A002
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 135093B4461
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1603B50F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BFF30B511;
-	Sat, 25 Oct 2025 20:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E0C35B124;
+	Sat, 25 Oct 2025 21:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzboqHNR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BHm9pFBT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD62308F0B;
-	Sat, 25 Oct 2025 20:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2072EED8
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761425630; cv=none; b=D6735FsGhNf2UnA7+W//lgGipOg7oHOuJtJpgQtHND9mkw3lxhrRoqdJuCZOlfLj6MBxc7sxlft3ADymocuvc9J0mNjzrh/RNxKy9nzGPBl84PCkLk5vnXnjRET3dWFOsisyUlrCI32/DXilFAN9l1Q4ByLnQRcsO8yGKZurBkg=
+	t=1761426040; cv=none; b=ga3AOYgwVujZuR0ngKZs4iYRC/uXK8YeMT9xSNge9ZEsfM+cGff64aZYQXyN2YHtZq57KOJ/ErGIoltRBIFK79rl15C/8xnx21zskRF/GrMdhCRYhiir7rm9+EodovKI65I2u0X2ytBT2l4wTUBEeUXJTL4wew+CIH0ts3aoI/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761425630; c=relaxed/simple;
-	bh=Mat9VxZHBL0yR1NJE0Sr7s9tFOz/Ujx/ASRcrsLo2u4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PaM64nNbRn5otR007WDVcG4bmKbr1jIjU4Mp6XzXXKzzvI4iz7K3IQ0fnUe7VYQ5TMdRnBmEMbbjU21j3rrYlOBPDhPffRJQI7mETgexp3wgccPiq6evHhgG6WPdRMMnZ6ALSI/G8VAedGmGkfZ9w/AepCy+COSA+FW0pu8T/wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzboqHNR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6576AC4CEFB;
-	Sat, 25 Oct 2025 20:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761425630;
-	bh=Mat9VxZHBL0yR1NJE0Sr7s9tFOz/Ujx/ASRcrsLo2u4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DzboqHNR6b7YAK/AUFIyjPlywlnGFoSVpIJamZ9O5dnKDJg8Imsrvq7i7iInHUJlC
-	 YuokKw1U2HEcROCUm2Jk/L4o65LXzgoFCXxpetdbAWeICJ01FujcA0wr6ZVJTMbHG3
-	 Muu2VovKrAV6hjuQSCLmfzU9tXwfuiG0nZsaBm0kdz300LONEUlvacAnqSMCgi0Q+s
-	 M/ChilFU/ewTw529F/2z8UEEldjxkze9lzkGOII6ExkIqFYE+tGmBjgRwEla+nkwXB
-	 XQWP3pThD1esuOMry27jV9gPBoSU0cAM1pq85WyXg++E3Ymk3ndg1smOSnUHRydYt/
-	 7yO6yHGiMtUMQ==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Sat, 25 Oct 2025 21:53:20 +0100
-Subject: [PATCH 3/3] libeth: xdp: Disable generic kCFI pass for
- libeth_xdp_tx_xmit_bulk()
+	s=arc-20240116; t=1761426040; c=relaxed/simple;
+	bh=/7uw6/+uVAyvakbvVGn43byDqcefCUuZ/GdPEYMjtts=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WUuOWnxXmGR3dsGqs+cTvDD48kvkp4d0HOo4+FiEjYkXaSlPIXHlyXk5QP4uIv9qou6YoNodM5pdGtqImyKuhqFADb5Mnh6Ca53X59ia9CJlzJFmOmIMBs698RcMyv2piA6RNdIZdylJe/Opr6rundz/RXO8oSesWs6LQsBOCU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BHm9pFBT; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761426039; x=1792962039;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/7uw6/+uVAyvakbvVGn43byDqcefCUuZ/GdPEYMjtts=;
+  b=BHm9pFBTD3qRAa8P2ZCY2zVTNgPYFSSNjcOGo+MQXWtA9TDlkzRZkOBm
+   raUDGUmWPRSLvNaBDHmRLlwqiD9A8gh5zubiu6N3E66u/aebPM7eDeQqt
+   8Zq9dSb2eqVS/WkoAjdTrJ4z7HhsVHOZmGcw3lzLEXzTnF6wCYpWGr9WT
+   Tt3vyusxp1QvBZ2GN88GZb5yq8lUygv2wjeMlkqyOPwFxFvSRtx54LlpP
+   cCWcrJv/UFpVKniYgiKIXqAXYtk+xnnTHaJwTxKPQXx8wkFK7mlw6ZVLQ
+   LU16H2AfHhe2Hl027280YdenmUzHduk754zKNyzjjIjN5gESLyACL3qN2
+   Q==;
+X-CSE-ConnectionGUID: pWSgsS2uQUWW0EsMpIVZgA==
+X-CSE-MsgGUID: QL/2aWfuRTewKsjquTN/LA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74682714"
+X-IronPort-AV: E=Sophos;i="6.19,255,1754982000"; 
+   d="scan'208";a="74682714"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 14:00:38 -0700
+X-CSE-ConnectionGUID: tdu7SxhoTWi+wvZ8cjEHkw==
+X-CSE-MsgGUID: ++bFjUueTvmdHwKv9D/GJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,255,1754982000"; 
+   d="scan'208";a="185463770"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Oct 2025 14:00:37 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vClNH-000Fav-2z;
+	Sat, 25 Oct 2025 21:00:32 +0000
+Date: Sun, 26 Oct 2025 04:59:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4e3:
+ cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+Message-ID: <202510260435.79ThTwFt-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251025-idpf-fix-arm-kcfi-build-error-v1-3-ec57221153ae@kernel.org>
-References: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
-In-Reply-To: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
-To: Kees Cook <kees@kernel.org>, 
- Alexander Lobakin <aleksander.lobakin@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Michal Kubiak <michal.kubiak@intel.com>, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2425; i=nathan@kernel.org;
- h=from:subject:message-id; bh=Mat9VxZHBL0yR1NJE0Sr7s9tFOz/Ujx/ASRcrsLo2u4=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBl/Lc4s8byy2+zW+2tnI17aCb7y78nm1vC4yCC7xrr22
- K2NnbP9O0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEVt9h+B/6c9+7XWH/52jz
- y2bfy3zF/i3juG9i2YSqQJGdfM58/uyMDMt92Iu7Ah++Mld6tpGp2/hLEPse18vWllvakzwfrHT
- U4AUA
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When building drivers/net/ethernet/intel/idpf/xsk.c for ARCH=arm with
-CONFIG_CFI=y using a version of LLVM prior to 22.0.0, there is a
-BUILD_BUG_ON failure:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   72761a7e31225971d0b29d9195e0ffa986b77867
+commit: 29c578c848402a34e8c8e115bf66cb6008b77062 objtool, regulator: rk808: Remove potential undefined behavior in rk806_set_mode_dcdc()
+date:   7 months ago
+config: x86_64-randconfig-004-20251026 (https://download.01.org/0day-ci/archive/20251026/202510260435.79ThTwFt-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251026/202510260435.79ThTwFt-lkp@intel.com/reproduce)
 
-  $ cat arch/arm/configs/repro.config
-  CONFIG_BPF_SYSCALL=y
-  CONFIG_CFI=y
-  CONFIG_IDPF=y
-  CONFIG_XDP_SOCKETS=y
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510260435.79ThTwFt-lkp@intel.com/
 
-  $ make -skj"$(nproc)" ARCH=arm LLVM=1 clean defconfig repro.config drivers/net/ethernet/intel/idpf/xsk.o
-  In file included from drivers/net/ethernet/intel/idpf/xsk.c:4:
-  include/net/libeth/xsk.h:205:2: error: call to '__compiletime_assert_728' declared with 'error' attribute: BUILD_BUG_ON failed: !__builtin_constant_p(tmo == libeth_xsktmo)
-    205 |         BUILD_BUG_ON(!__builtin_constant_p(tmo == libeth_xsktmo));
-        |         ^
-  ...
+All warnings (new ones prefixed by >>):
 
-libeth_xdp_tx_xmit_bulk() indirectly calls libeth_xsk_xmit_fill_buf()
-but these functions are marked as __always_inline so that the compiler
-can turn these indirect calls into direct ones and see that the tmo
-parameter to __libeth_xsk_xmit_fill_buf_md() is ultimately libeth_xsktmo
-from idpf_xsk_xmit().
-
-Unfortunately, the generic kCFI pass in LLVM expands the kCFI bundles
-from the indirect calls in libeth_xdp_tx_xmit_bulk() in such a way that
-later optimizations cannot turn these calls into direct ones, making the
-BUILD_BUG_ON fail because it cannot be proved at compile time that tmo
-is libeth_xsktmo.
-
-Disable the generic kCFI pass for libeth_xdp_tx_xmit_bulk() to ensure
-these indirect calls can always be turned into direct calls to avoid
-this error.
-
-Closes: https://github.com/ClangBuiltLinux/linux/issues/2124
-Fixes: 9705d6552f58 ("idpf: implement Rx path for AF_XDP")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- include/net/libeth/xdp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/net/libeth/xdp.h b/include/net/libeth/xdp.h
-index bc3507edd589..898723ab62e8 100644
---- a/include/net/libeth/xdp.h
-+++ b/include/net/libeth/xdp.h
-@@ -513,7 +513,7 @@ struct libeth_xdp_tx_desc {
-  * can't fail, but can send less frames if there's no enough free descriptors
-  * available. The actual free space is returned by @prep from the driver.
-  */
--static __always_inline u32
-+static __always_inline __nocfi_generic u32
- libeth_xdp_tx_xmit_bulk(const struct libeth_xdp_tx_frame *bulk, void *xdpsq,
- 			u32 n, bool unroll, u64 priv,
- 			u32 (*prep)(void *xdpsq, struct libeth_xdpsq *sq),
+   vmlinux.o: warning: objtool: cfi_probe_chip+0x7d: cfi_qry_mode_on() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_probe_chip+0x7f: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_probe_chip+0x81: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4e3: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4eb: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4f5: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_staa_read+0x305: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_staa_read+0x30d: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_staa_read+0x312: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_staa_write_buffers+0x3b7: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_staa_write_buffers+0x3bf: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_staa_write_buffers+0x3c4: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_staa_lock+0x2b2: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_staa_lock+0x2b7: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_staa_lock+0x2bb: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_staa_unlock+0x1a4: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_staa_unlock+0x1a9: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_staa_unlock+0x1ae: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_staa_resume+0x12d: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_staa_resume+0x130: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_staa_resume+0x133: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: cfi_intelext_read+0x35e: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_read+0x361: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_read+0x364: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_intelext_write_words+0x296: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_write_words+0x299: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_write_words+0x29e: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: cfi_intelext_suspend+0x480: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_suspend+0x483: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_suspend+0x48d: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: cfi_intelext_resume+0x173: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_resume+0x176: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_resume+0x180: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: fixup_LH28F640BF+0x110: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: fixup_LH28F640BF+0x113: unreachable instruction
+   vmlinux.o: warning: objtool: fixup_LH28F640BF+0x116: skipping duplicate warning(s)
+>> vmlinux.o: warning: objtool: cfi_intelext_writev+0x4aa: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_writev+0x4ad: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_writev+0x4b2: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: inval_cache_and_wait_for_operation+0x6a: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: inval_cache_and_wait_for_operation+0x6f: unreachable instruction
+   vmlinux.o: warning: objtool: inval_cache_and_wait_for_operation+0x73: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: put_chip+0x1d5: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: put_chip+0x1d8: unreachable instruction
+   vmlinux.o: warning: objtool: put_chip+0x1dc: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: chip_ready+0x8d: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: chip_ready+0x92: unreachable instruction
+   vmlinux.o: warning: objtool: chip_ready+0x97: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: fwh_xxlock_oneblock+0x168: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: fwh_xxlock_oneblock+0x16b: unreachable instruction
+   vmlinux.o: warning: objtool: fwh_xxlock_oneblock+0x16e: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: cfi_intelext_point+0x538: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_point+0x53b: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_point+0x53e: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: cfi_intelext_reset+0x141: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: cfi_intelext_reset+0x144: unreachable instruction
+   vmlinux.o: warning: objtool: cfi_intelext_reset+0x14e: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: do_erase_oneblock+0x1cd: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: do_erase_oneblock+0x1d0: unreachable instruction
+   vmlinux.o: warning: objtool: do_erase_oneblock+0x1d3: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: do_xxlock_oneblock+0x13d: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: do_xxlock_oneblock+0x140: unreachable instruction
+   vmlinux.o: warning: objtool: do_xxlock_oneblock+0x143: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: do_getlockstatus_oneblock+0xd8: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: do_getlockstatus_oneblock+0xdd: unreachable instruction
+   vmlinux.o: warning: objtool: do_getlockstatus_oneblock+0xdf: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: jedec_probe_chip+0x304: cfi_send_gen_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: jedec_probe_chip+0x308: unreachable instruction
+   vmlinux.o: warning: objtool: jedec_probe_chip+0x310: skipping duplicate warning(s)
+   vmlinux.o: warning: objtool: jedec_reset+0x88: cfi_send_gen_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
+   vmlinux.o: warning: objtool: jedec_reset+0x8c: unreachable instruction
+   vmlinux.o: warning: objtool: jedec_reset+0x90: skipping duplicate warning(s)
 
 -- 
-2.51.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
