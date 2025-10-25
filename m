@@ -1,127 +1,233 @@
-Return-Path: <linux-kernel+bounces-869919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948F7C0900B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B410DC0900F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6770B34DEF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9AD3B0213
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38EA2C11E8;
-	Sat, 25 Oct 2025 12:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFDC2E7F1D;
+	Sat, 25 Oct 2025 12:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pgieb3JZ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ixIMXYwH"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51F61F5838
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862451F5838;
+	Sat, 25 Oct 2025 12:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761394051; cv=none; b=SuVLMNIulcz70hyUjetNFxFG9d1d//oWlyNAt/441YkD5OrprjxG1pFn3J+CsII1WyZPCDqyJBc8Il+fOUBtSFsGUGKSjaKWm/Tq56sDAUHJBE+Jchzkfrzz/Blf8bszYlLWTvu8j1GoPbVhYx/tyrIOdiLIJYuhnHwiLIsr9uc=
+	t=1761394267; cv=none; b=I90GJ0U+t2a3ZlN0BZNeEwJDgWEl40MlOE2V39wBSka3kvkz1mnIjH2het9AgHBHpNCRapg1+/zQRkOfysYB6aXZlMlGezJede3gNAVvfS+otbA5n0mQiVawRgfDtNLlx8ZHeAj0du4OKcCgvJXI/wuOdykNdIw6nB847xXJooE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761394051; c=relaxed/simple;
-	bh=wZJADg3XnZ6RwpXOOcROiNVqbWnU5p1aLlzgqnZjIX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JjLm8qTIkPWq44+GtBF2/2EGl9hofF3Wme5tv04OMVOFcXQBvOqoURcNeiARtYe4I1dMrE/yniIX8oT/CqFkYhmjBIDPWwVp7jEgKpNCY/jYADFg7PjVlQ4ikL60wJGu+qe+L8oT3Ax5t0zU+p2AD4yaZgMfFgZYLQUwdXbRvbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pgieb3JZ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33226dc4fc9so2926032a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:07:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761394049; x=1761998849; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvErBYG+vAV0vX5EwaTO9Q2laL6zacG+FzbGHb5fv/4=;
-        b=Pgieb3JZPxoUx175vGf+R47vp01daXZgOR9vtGZBwjzxwPlDVMQE4kc3TLCsQM7Clt
-         +PLd+PoD7+F/PjVEwPi/AvFAkr2aXLDX0fGAp0JxlU/HCVDkWihMpM3ImwFlMMJCOy1f
-         1yXpLO+XEvn2U+M6/FZnnMdKC/uGwZ8AUWUI5RxtPb5kHRb7iuypVNzxYXO9ewvIwtMJ
-         gOz/FBdZLjMq/YBnZv6ObiuibUn2PN2iB0LpmSIbeijbNj0lynePu9XXWWHvfYhetTDc
-         5eWNqGuluBv5xsYbgcV1FXHS0eBXBc0rFO8QShn2nxyIxkQ881+n31vX52WvuUjbZStk
-         j5IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761394049; x=1761998849;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GvErBYG+vAV0vX5EwaTO9Q2laL6zacG+FzbGHb5fv/4=;
-        b=d+IxOJ7egK2qLL9x/Us6Dn0SDNP9s0egXbAC8mqpLkBsBUlpNOCOY7fafMRrW82vn+
-         LNU5Uuehgcg2I9AI/YG8J8uP4j2ZDYOZKi5op/+2yWIOEIxoJYtRaf1RRPFdw8EWXWo6
-         vWxArODGMbUzwdPlRKIFojmbzgeuAvRmnbgkZDBAK20ChZCujxiq9DMPcwWbpLkj7ItQ
-         mam2C3sxCYEqn/xK5FqvYhVJbeXI/34s+CHXxcYQZQEjZA3lM4yQqdv2YScG2ya8o7lG
-         vOgc9eOMq7V5dl1EYZIp/6nmrH6gP6EE8Iie6xC+H3Hz1NqqoRo02b5iQOiUkDwS0HhD
-         1pkg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2d2fUr80MGS87CXdkumczSlh9f6UOjz+4qvRdYWt5CblGZzv+ZOPv/6r0fs5a/ypkYR84AF4SLhHd8BM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG1ISkXbPes+HHTGXi/Qc9gTVPoxTtxayrI9z6qjez18UQmz2I
-	K1rtFgDDCU7NaecvxM3AlousLuHCzdH0jvvSQctN62Oz6hRMsupNKSW4
-X-Gm-Gg: ASbGncsS1qRQ7YY4dVx4hlZsL/gYIy6wUST8ZKntwt+uoovUJ4NZm1qzS5tFLqpmozA
-	NOU5O4lPbZlATMwSYRrGpK0GEZsOOb9ET2W9IFQeNR3HYEqUWC90kK8N4RlEJDvK61J7qJS9KhR
-	DX+DsL0mkQDeGkfafK0d3KNVFT486WnOaJiLNBJG58lXaFdnBNy6MlULUN9upEoK+32bk0mLv0R
-	nbH6l8Emho8/mNuNPvbL8MBTuvkuba7BOkyXG1kiKUlcNpa+cC+yLldUfZwcGFZptCYw3t+Y8oX
-	VgFSNVj/6F3kbF4anFWe5NipoHS60ySapRDAADewiRR3KiqQygfL6tUn1CvdsgtxuYan4+5/P1G
-	XjwAuctgcukrDSXf1eY3pQkW4F0OLTIdydcxZ9+QcFp55VRLu/rWLlAuhhemOOFmdkzblMcF0E4
-	jVpQJG6nN86QRJYFxt
-X-Google-Smtp-Source: AGHT+IHAYxum3m94nffwJVgTx2pWh1WNJorhHj73gH4JXy6dRTn2aqTnLu+PFuJH09vGy3wCXje9sQ==
-X-Received: by 2002:a17:90b:28c4:b0:327:c0c6:8829 with SMTP id 98e67ed59e1d1-33bcf8e4f50mr39883472a91.24.1761394048970;
-        Sat, 25 Oct 2025 05:07:28 -0700 (PDT)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fee405b6asm945846a91.3.2025.10.25.05.07.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 05:07:28 -0700 (PDT)
-From: kriish.sharma2006@gmail.com
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	longli@microsoft.com
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] hv: fix missing kernel-doc description for 'size' in request_arr_init()
-Date: Sat, 25 Oct 2025 12:07:07 +0000
-Message-Id: <20251025120707.686825-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761394267; c=relaxed/simple;
+	bh=0hw+HnkWtOszaFvfv8pWJiog78lB/IISzNNMZ1Epvfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=up3wB3nUiabdZ6eQUjmVucBMZG3H2ZvJoAQYKoqgFufrakkjD4EzNKJg+bXYLt6nSPWKz6o+X920pK1azYI8N2xth6RzdkjXy2lYxUJjF1mQ3NOUGTNyEhW1tn4bNSOGk6gjsmg8mJWPhb4sKBpju+XCNMBmCF/aBOr1Gq979H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ixIMXYwH; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id EF749407674D;
+	Sat, 25 Oct 2025 12:10:59 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru EF749407674D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1761394260;
+	bh=9TA1nTcqS1c7E3pMQCWPyHKJBcSBxYYPbUmS6qAxGlU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ixIMXYwHFukHpm3FyRfl6mmE88ZTKXIMKC70KTTTiCgniLmFs/pxbclr8A0sWdciy
+	 aP5finHnisGDu3uDd85FQPLAz+eWjWX9QUld5l62d0h581MjrNCHzs5HylobMrcYnq
+	 suZieEVvrc2KHfSC2FqLGDdlQcioeZGqVfbXWrSc=
+Date: Sat, 25 Oct 2025 15:10:59 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>, 
+	Zong-Zhe Yang <kevin_yang@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH rtw-next v3 7/9] wifi: rtw89: handle
+ IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
+Message-ID: <20251025131637-d3a03888f5c753e6b213e204-pchelkin@ispras>
+References: <20251017100658.66581-1-pchelkin@ispras.ru>
+ <20251017100658.66581-8-pchelkin@ispras.ru>
+ <f013f65b97a447e2b744a4f3d6aff269@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f013f65b97a447e2b744a4f3d6aff269@realtek.com>
 
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
+On Wed, 22. Oct 07:16, Ping-Ke Shih wrote:
+> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> > @@ -5849,6 +5852,7 @@ int rtw89_core_init(struct rtw89_dev *rtwdev)
+> >         wiphy_work_init(&rtwdev->cancel_6ghz_probe_work, rtw89_cancel_6ghz_probe_work);
+> >         INIT_WORK(&rtwdev->load_firmware_work, rtw89_load_firmware_work);
+> > 
+> > +       skb_queue_head_init(&rtwdev->tx_rpt.queue);
+> 
+> not sure if it's worth to initialize tx_rpt.sn to zero?
 
-Add missing kernel-doc entry for the @size parameter in
-request_arr_init(), fixing the following documentation warning
-reported by the kernel test robot and detected via kernel-doc:
+That shouldn't be needed because rtwdev is zero initialized in
+rtw89_alloc_ieee80211_hw().  ieee80211_alloc_hw() fills the private
+driver part with zeroes.
 
-Warning: drivers/hv/channel.c:595 function parameter 'size' not described in 'request_arr_init'
+> > @@ -5484,6 +5488,26 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
+> >         rtw89_debug(rtwdev, RTW89_DBG_TXRX,
+> >                     "C2H TX RPT: sn %d, tx_status %d, data_txcnt %d\n",
+> >                     sw_define, tx_status, data_txcnt);
+> > +
+> > +       spin_lock_irqsave(&tx_rpt->queue.lock, flags);
+> > +       skb_queue_walk_safe(&tx_rpt->queue, skb, tmp) {
+> > +               skb_data = RTW89_TX_SKB_CB(skb);
+> > +
+> > +               /* skip if sequence number doesn't match */
+> > +               if (sw_define != skb_data->tx_rpt_sn)
+> > +                       continue;
+> > +               /* skip if TX attempt has failed and retry limit has not been
+> > +                * reached yet
+> > +                */
+> > +               if (tx_status != RTW89_TX_DONE &&
+> > +                   data_txcnt != skb_data->tx_pkt_cnt_lmt)
+> > +                       continue;
+> > +
+> > +               __skb_unlink(skb, &tx_rpt->queue);
+> > +               rtw89_tx_rpt_tx_status(rtwdev, skb, tx_status);
+> 
+> Would it be better to run rtw89_tx_rpt_tx_status() after this loop outside
+> spin_lock()?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503021934.wH1BERla-lkp@intel.com
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
- drivers/hv/channel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't have a strong opinion here: PCIe side implements the release
+like
 
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index 88485d255a42..6821f225248b 100644
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -590,7 +590,7 @@ EXPORT_SYMBOL_GPL(vmbus_establish_gpadl);
-  * keeps track of the next available slot in the array. Initially, each
-  * slot points to the next one (as in a Linked List). The last slot
-  * does not point to anything, so its value is U64_MAX by default.
-- * @size The size of the array
-+ * @size: The size of the array
-  */
- static u64 *request_arr_init(u32 size)
- {
--- 
-2.34.1
+rtw89_pci_poll_rpq_dma()
+ spin_lock_bh(&rtwpci->trx_lock)
+ rtw89_pci_release_tx()
+ ...
+   rtw89_pci_release_txwd_skb()
+	skb_queue_walk_safe(&txwd->queue, skb, tmp) {
+		skb_unlink(skb, &txwd->queue);
 
+		tx_data = RTW89_PCI_TX_SKB_CB(skb);
+		dma_unmap_single(&rtwpci->pdev->dev, tx_data->dma, skb->len,
+				 DMA_TO_DEVICE);
+
+		rtw89_pci_tx_status(rtwdev, tx_ring, skb, tx_status);
+	}
+ ...
+ spin_unlock_bh(&rtwpci->trx_lock)
+
+
+Apart from bh/irqsave part the iteration over skbs looks visually similar
+at the moment.
+
+> > --- a/drivers/net/wireless/realtek/rtw89/usb.c
+> > +++ b/drivers/net/wireless/realtek/rtw89/usb.c
+> > @@ -216,6 +216,14 @@ static void rtw89_usb_write_port_complete(struct urb *urb)
+> >                 skb_pull(skb, txdesc_size);
+> > 
+> >                 info = IEEE80211_SKB_CB(skb);
+> > +               if (rtw89_is_tx_rpt_skb(skb)) {
+> > +                       /* sequence number is passed to rtw89_mac_c2h_tx_rpt() via
+> 
+> nit: The 'via' is over 80 characters a little bit. Move to next line.
+> 
+> > +                        * driver data
+> > +                        */
+> > +                       skb_queue_tail(&rtwdev->tx_rpt.queue, skb);
+> > +                       continue;
+> > +               }
+> > +
+> >                 ieee80211_tx_info_clear_status(info);
+> > 
+> >                 if (urb->status == 0) {
+> 
+> Should we move this checking upward? Enqueue skb into tx_rpt_skb only if
+> urb->status == 0?
+
+Yep, I agree we can do it.  Just need to report it immediately with
+RTW89_TX_MACID_DROP status.
+
+As it currently stands, we should not receive notification from the
+firmware for such skb so it would remain inside tx_rpt.queue until HCI
+reset occurs.
+
+However, I've not considered the case when the queue is full and we start
+queueing skbs with duplicate sequence numbers - the overall range we have
+is just 0xF, theoretically the situation is possible if the firmware
+fatally crashes and doesn't provide notifications in time.  IMHO the TX
+status will be the last thing we're going to be interested in when this
+happens.  In the end, HCI reset during SER activity will purge the queue.
+
+But the possibility of having skbs with duplicate seq numbers is not good.
+Though I'm not sure if we can ever hit such a situation... Generally it
+indicates that the firmware doesn't respond or performs very badly, and
+we'd better reset it or something.  What do you think on this?
+
+> 
+> > @@ -372,6 +380,7 @@ static int rtw89_usb_ops_tx_write(struct rtw89_dev *rtwdev,
+> >  {
+> >         struct rtw89_tx_desc_info *desc_info = &tx_req->desc_info;
+> >         struct rtw89_usb *rtwusb = rtw89_usb_priv(rtwdev);
+> > +       struct rtw89_tx_skb_data *skb_data;
+> >         struct sk_buff *skb = tx_req->skb;
+> >         struct rtw89_txwd_body *txdesc;
+> >         u32 txdesc_size;
+> > @@ -398,6 +407,9 @@ static int rtw89_usb_ops_tx_write(struct rtw89_dev *rtwdev,
+> > 
+> >         le32p_replace_bits(&txdesc->dword0, 1, RTW89_TXWD_BODY0_STF_MODE);
+> > 
+> > +       skb_data = RTW89_TX_SKB_CB(skb);
+> > +       skb_data->tx_rpt_sn = tx_req->desc_info.sn;
+> 
+> Shouldn't set skb_data->tx_pkt_cnt_lmt? 
+> 
+> skb_data->tx_pkt_cnt_lmt = tx_req->desc_info.tx_cnt_lmt;
+> 
+> Also, should we check desc_info.{report, tx_cnt_lmt_en} individually before 
+> setting?
+
+Right, this all makes sense.  Will fix it, thanks!
+
+> 
+> 
+> > +
+> >         skb_queue_tail(&rtwusb->tx_queue[desc_info->ch_dma], skb);
+> > 
+> >         return 0;
+> > @@ -678,7 +690,7 @@ static void rtw89_usb_deinit_tx(struct rtw89_dev *rtwdev)
+> > 
+> >  static void rtw89_usb_ops_reset(struct rtw89_dev *rtwdev)
+> >  {
+> > -       /* TODO: anything to do here? */
+> > +       rtw89_tx_rpt_queue_purge(rtwdev);
+> 
+> Have you consider the SKB that has been rtw89_usb_write_port() but
+> has not yet rtw89_usb_write_port_complete()?
+> 
+> Since we call rtw89_mac_pwr_off() before rtw89_hci_reset() in 
+> rtw89_core_stop(), it should be not more C2H at rtw89_hci_reset().
+> It seems to be safe, right?
+
+Well, rtw89_usb_write_port_complete() is asynchronous URB callback managed
+by USB subsystem and it's mainly independent of rtw89.  We're guaranteed
+all pending URB completions will complete when the device is being
+disconnected and rtw89_usb_disconnect() method is called.  That's all, I
+think.
+
+In other call sites like SER we risk URB completion be called after
+purging the queue, the only consequence will be the obsolete skb still
+added to the queue.
+
+We can implement an anchor for TX URBs and explicitly wait with
+usb_kill_anchored_urbs() in ->reset() until all pending URB completions
+are done, and then purge the queue.
+
+If nothing else, I'll add it in the next respin of the series.
 
