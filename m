@@ -1,210 +1,372 @@
-Return-Path: <linux-kernel+bounces-869680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F84FC087F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DA2C0880E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 03:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89F21C28062
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29BD3BDAA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E1921D3CC;
-	Sat, 25 Oct 2025 01:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C547221D3CC;
+	Sat, 25 Oct 2025 01:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qlFtWOTV"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013033.outbound.protection.outlook.com [40.107.201.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBFXUcK4"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C4EBA3D;
-	Sat, 25 Oct 2025 01:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761355456; cv=fail; b=HZtordSWq4HFxG61o3SgbLhsR/t+Nn7HmncuJRSP5BX9dPzY4yippJIwb+oqv2Ji2KZMvtSZju9/GKQSBugUmXO3YHrEZHtCzlA3epv0WYG904ZL3J30cjUJ5G5+lsQqh0JxVF02Dpj/8k5kl9ce9Sgl/p+cxA8cDHCwwJUK9cU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761355456; c=relaxed/simple;
-	bh=MNV8hyyrWI9AicHiG1tt22jaIuvdn8Zv3c5J186sWfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=R3MJJcYKDskQrBnMveDtAOQlWQhNHzX5UeOBpPnPHdDBlux/wy/UMrh6I9VKnLwR5NeZRWIViegLfSj/nVJotq6OQRIRl3eavd7Ehw+Zq31kV9MPg3NIcaXe/drY/fcn5EcAkLaGEcI30gzVgooqKxgnD+vCs2Q8StbUvSENzng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qlFtWOTV; arc=fail smtp.client-ip=40.107.201.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KtOZiT+PBhhM5SVwTW4MKQ1aZMKUGesmrUZWwgte0wkMqi7pq2toOtT5VVIKP6Y1x3mR0zZqCsi19PuQ/n0huCK4thln81SObIWE96Sid1d/iy+WTlKPMo8Zo0YAn5uN1r07cg7T4VUFpcXnAoRjwoKmd/fQnXEhw/nWBIZP1CrnDo42hVVlbPquHr8W7uGyvw5lcN/qPO7E0aZmRFATR/eI0n99hIHHiO3ghZo6aWY87EHYDKcQN9L/lGvmA4g8Ov0Ipsl+zTyLqJU2zT6HeQbdnUMrd/YkULxcB4jqP2KxCsNn2BtRT3AvlHK6Gsn88ECWLAcSXAriHl3crGlM3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s2qGHY8H0MFA6UnSOb6nEpS3idAeHhtyhrBJv8/dS7U=;
- b=O4uRLRas6cfM86dZa3p7a+fX59BEJNhlMg4HCimAQV1+Yx4+/BsNy0NncdSJ50Nr5wUgmdBDUmJpdFuahj3yAtL7/aLIVQYPKYaUYPMapMYK3uvlOqSKKi+wQY4jp6mePIm8LJtPRe6+/e4Ut4PffLBEHRzVw/d6XDsOfmtjwFW+IDhwUS/rjNNWOqyAuwH87mbA0TpDv+g4KNNIru36fFHyibbxV2NhvAlfUiiA9svtOtLThTfSxxHKHK2n3YmMcNala1HUcj8c0RCBB18KxDS0Z4+H/zcNdzBO3Iz3D06OFEE8U2L3r8UFrXnmhDDK1lvEqzZIRplhfc4na1jpFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s2qGHY8H0MFA6UnSOb6nEpS3idAeHhtyhrBJv8/dS7U=;
- b=qlFtWOTVK9U8MZk/Wnzgez4u1XQBn4COx0HuKw80ASQFEQE80SmllZ1I0AtDOBoeE9dcY6kI1EEvwT3Q0k5e/DTzWziCeICkDLh4nKOv2jgihpyYIu+U5tVGadMHOCClLWwHLE1kt8xCf9Zf7IuAevEg8Ff56wuiWtieQPIoM5dRESPC6tsYoiGLiaExVm5A3oPWY+cEywec3lh5uvywW5AgImY51UxlrIeq+mFHD584pfk/vbkkipbhgjXu8dzDRaRFKpIXehZwsIuHA7WRFU/+S89QSEJwjGBf94tU7NEwXfjHOgV8yUchw1Eq1ULFITZRcOQJbiZPw4jHn6Ij+w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by BN7PPF08EEA05B5.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6c5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Sat, 25 Oct
- 2025 01:24:11 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9253.011; Sat, 25 Oct 2025
- 01:24:11 +0000
-From: John Hubbard <jhubbard@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Edwin Peer <epeer@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH] nova-core: remove an unnecessary register read: HWCFG1
-Date: Fri, 24 Oct 2025 18:24:08 -0700
-Message-ID: <20251025012409.577596-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.51.1
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR11CA0054.namprd11.prod.outlook.com
- (2603:10b6:a03:80::31) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B121CA02
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 01:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761355555; cv=none; b=P2vP+DjBUpOIdPr4cg29/5O+Uy0VWf/gvP1S6G5rNqa0E1RGJst7KbHyr8VvaP8OVJbgLcfFUqUuFs7ofYFSpz2L13Y+NxTGMD94X3X7rxFXsXlUYZK3u14ZD3WEWMZAhyFUOF4VH00zrJqkK1WhJzcHEqk04Eg7GYs8Q+46wQw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761355555; c=relaxed/simple;
+	bh=7yzFKDqdyVSYxjiMpdHMhjgPX3Yh8sLzmTUPlzd27b8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rAajpxdvvAzuSrI2yPazjjh4XyUwIPGGCPuFvQ0j3FcgagBPoDzUDMrSDB1sbjM21fMEBTPoj1o3J5IonNqsU7Oph/azwLI18AX4Eg6nCL8bWIAAm1Fi8AP83fAoESV0ASB6xnMSm2rYrhRfoNmbyelCBu4nXjc0k/HQn+KoaOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBFXUcK4; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-475dd54d7cdso374445e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761355551; x=1761960351; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I4ZDs3Ak41rLq2qMyCq9YixpOI99V+Jr3pKEsYI3VkM=;
+        b=cBFXUcK4kk6vEwmqqGFgt2U8sbYDyXSkZsEBU607C+FVO8zdaIFo+OitBa92pp1zi9
+         qotjx/xgiT3Gugh+z83jT26x0kQOpUW+6eRWzf+OdoOgr1STWOiH6sR+o/8REjgQ1uFE
+         0SfxadmaaDoTj13Dj/kyA6EWuGLGK5b3W+C6+/x9lBkYnIndi+1rtHReCMNyw9HJ4N/q
+         3f9Z+Gw+fd0bTjtKaTDejs8ROEokxZyKNmf2ozcdUcHYWOTyl2EDfq3ICVDsE0WsRdQo
+         zR4lKnayGC82O7kI5cjwGbNF0TpMSnF8PEWkk93PoKm3KVy1mz/41ZDzmbb6aRMEDW+z
+         ABFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761355551; x=1761960351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4ZDs3Ak41rLq2qMyCq9YixpOI99V+Jr3pKEsYI3VkM=;
+        b=mxWRlSiyE/VygZbklLSx6cmjtNxVclB1eNkhcDReImdz8Mf6/RzgPM4inlE/PpRn3V
+         Z+1tozv3UBu1RQZmng0fz+5NyDcCXuw3m87XL0hAdoSKhJhwF59LuFdltqIS2uo6hi/D
+         YmLeds4S8xEl5uRbbq+zdRZVji7Zip6n3Kfj4bIYL4sD2ngqyFUQ+1WMnL+Tz5BUtzNF
+         D5eoIq8ESl5eB+gsTbStHDWmdoAopr13wSyL/NQpnVld8dBS8p8JYgNqJVl4qwBzAjqQ
+         27hQI+xw5Kj7aGDJPwPpDZzrcRe8A0hOp5g15NalF5Bh49xGtWV8pLzxgrVVvWJTkvUe
+         raWg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4l9NHsiws1qbbQ8da+hFtcZbtufNjrncK5ezSPZfr4tcEYLc68IItluAWS3LAL5zASXETu88HLAxrEIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlE6rPQh6qytCq7QTOiPWlV4PMaeHSc+vt9tsUnxS+oP5gL+0P
+	VNsv6437sWBjXdUSSisb3ii54wpj/8M8j5CeETo5jl0o8IupdafqI6cP
+X-Gm-Gg: ASbGncut6cDeDp8/vHX4KYv5qbnUMYzsD9ilyIo3yGTLDB+9Vd7J66jioTVkrD+/Pla
+	QajapurfT/CB4Vh0VArJsilkhSiC8ZOqJrVdXn/VXpBu3QW3iOIqHmHAX0JnAsge0Mxj4WBPG0J
+	7PakElRkFcBtJirn9R1hMe8plIkudyNnHyY/bw9ZSJrtRkAL3xdE2mVda1vYGA1v625afWHbUv0
+	XtPOfpD4sgayaC9jnXr3CGZtCCkyX1xFG7yvcpRwT7XaUTSUXILXRlDIN0GorHNSs8geipPA4/u
+	WFLxjZ6A+LhE6B1yGvndvx6I3T9Cg4VBQqt1OE2Sqde+5/LxI6ja4PpzxBeOU0xf+B+Wq/0zxXq
+	gNXJaLYGiGsPQt72gDnxPOn6Hi7XNLKcKLcs+hBoU2bd/aBqtism5QC5YXFkdNLcYooTM/MZQ/u
+	nMvKwrNn1iRRGAresSfRQBzw==
+X-Google-Smtp-Source: AGHT+IGHdwTHv2GMpyPV3QhnOQtco0wDeS8+CcxzYd04JpZRu0ULX38B0onSMa9y+7d1nZ/j/sSwRA==
+X-Received: by 2002:a05:600c:3509:b0:475:dd8d:2f52 with SMTP id 5b1f17b1804b1-475dd8d30d2mr2921345e9.32.1761355551297;
+        Fri, 24 Oct 2025 18:25:51 -0700 (PDT)
+Received: from [192.168.1.121] ([151.61.20.236])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4cc596sm8724075e9.15.2025.10.24.18.25.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 18:25:50 -0700 (PDT)
+Message-ID: <ee179dc9-e7ac-4b64-a58c-93da5f7f4057@gmail.com>
+Date: Sat, 25 Oct 2025 03:25:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|BN7PPF08EEA05B5:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f0df75a-d369-47ba-78a4-08de1365336c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d81X8+RoX5Uhc8TcjWCi5m1STdp2/vqnnddnZ45qvoG+cJa+1ivTamikIP8C?=
- =?us-ascii?Q?hl8Ks4OdWopofJFfokOix3gctLA3xQW0tB4zoPkATbg/N/0OsByLQnxCti2R?=
- =?us-ascii?Q?LWHYjFBpQFpSd0a7Zqfg2im/fpGTM6iOVpiy5JvEAMBiRyNH5G/EKEe6OIqE?=
- =?us-ascii?Q?NFSWR9L4ZQum8t2anICzU3jS8hMbSqnRK5+jz0LcjDImFJdlM2H0zO/nsmMN?=
- =?us-ascii?Q?eSWaZLrQI2FZkJ6Bj50GX+qo7zKLsGXphSg2d9mKMAPhNbKPIWopExJ69tZ/?=
- =?us-ascii?Q?9s4MUgisgIaT//PIOVEb0ZXjGmMG7IVdDQe9IE9L5LCZRVRtBgWAxou42+29?=
- =?us-ascii?Q?xDSGxBJ64hSo8t6SRq/AIAKvtkP+NMLHLsFhp0e0ZtCMii5ttxAtF0kHnf3e?=
- =?us-ascii?Q?bMQP/0bWrGpF8Xg0/MF8XP3qrxRdw1NgQsrBY5G2i5BcIEo6G+/lqJLTCzYf?=
- =?us-ascii?Q?lVCl7etYzIG4XoZWZx1JV3Umwpq1cOxb4lJEj+qOtvgHk3OCEHLIVYq32mPs?=
- =?us-ascii?Q?B9PK/02d0PvaU2sazzJjkHtsvt/77U9K7saQI3mrMZiV3WVxu+fuS/hxeiS8?=
- =?us-ascii?Q?pO7YHpxKvi/QbUoriKzSb/ErsD7ug7tm+Cq+LQPluiJ4J/lRGtEhuFKmGY2S?=
- =?us-ascii?Q?kMIv88a3DfB+/xuYNt4BHZC2cDBtng4Q1BDOuqMi9/Ge7C8QhamSVCvG4v9Q?=
- =?us-ascii?Q?yaF3nyw2T9d7Mms7K7DgzvbqqaDy1zUWzULDXiR6aYFjgIKOT2rk/0KZmAuz?=
- =?us-ascii?Q?c7WpRY67cFBwx9x9vIDDkN1QLrOq+/QMF5ROc7vqFHz9oqfyP6KunSiDoLc7?=
- =?us-ascii?Q?QcdvWTp2fZ6nVjsJxkc9LY9KuEOZsD4XW/XnzfUbweB9CaxrLizpqhcKmeUO?=
- =?us-ascii?Q?cPT5biUKCrA8Fv0Y4dlfMKKnLtpHycBqgIaPDfvd+wb95FV6TQc6qDnQTJtp?=
- =?us-ascii?Q?+7AtJAyAfUXdD/MxtCxlLvV8rl7sMbbs63HOPoFQzw9bcpIL7TWGQ4LskX8u?=
- =?us-ascii?Q?+uJkzLS0tekJb6ob3UrMZR9iVRdNxWCacszfigje3Cnru6gBpbAIQ37pD040?=
- =?us-ascii?Q?1IbyoCVCwK3ZKPfQNK8SZJBhiGmpFvdYv9we51AJt3EfEPX17ITOLXJnWiG+?=
- =?us-ascii?Q?lC4UchuDa/+LepX2PdkIdQUtkY6zDMG2RoSplHzd2vsbJ1GEOEHD5UPbtql1?=
- =?us-ascii?Q?U7aeskthelZJ8cH01GO3G9RZp72iSOmLWOe8BSRv35mUTrVY3BDVHzsxSv3A?=
- =?us-ascii?Q?2VF/OvYFxOXienDDfCSLTCZTVKXwt9aJ5+1RGYn/VQP1haEwi1shNRkBhLpC?=
- =?us-ascii?Q?j+A0lh+qwOajberTx98Ej3dC9bOdV8hwvgcTmRFd01ELrV9WuEwXcuGOhB9d?=
- =?us-ascii?Q?/W6g54eKIAGR6Xvp3z9iikXPTxENABjPrrM93pZfBJ3Rw8GrbYBhn2z6aAro?=
- =?us-ascii?Q?ua1OKF6R16poY/S4E0tHuoXV2EOqeA9o?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qMoCYAkcrY7HFnygNWfNZZEne/i2RIg5jG9+JCL2kw2WS/qsF1o2h61JNLF6?=
- =?us-ascii?Q?OFFYDKJeBqlC+ZHK6mPIAiIh1VG2qxRVWeOgjyGe95hRNjj1isRFSQxcJ4rZ?=
- =?us-ascii?Q?BbEYwX3Pls9U20WGKUU4VUT6PhWoGjAyS9TdTEUPWxQAnUZy/8//jZVJDjXO?=
- =?us-ascii?Q?0oTKB+cxLqNNZfBNvVAByqtEU//YvQBu0Few2+2toSA6svS8TyxrZn7Ypc/U?=
- =?us-ascii?Q?wrLOcOAkbKO7hs57Qs2loRo/cmapnevYR+NQuh29J7FIImr3WbKSBjtErc8s?=
- =?us-ascii?Q?aLaqwyhGuKijAPFO+svrLz5v0KQP69vkQ1gMEcT9NeRBb6JWC0sCLLIywJrK?=
- =?us-ascii?Q?yCJQ3gtB82XNR9HI2gRXQdHCBE1fefPouIlX3+IKl/LtEpUgtZSuIduZYsN2?=
- =?us-ascii?Q?JlbStvpEoxksH/BcT+OVU2r/OblxqgU7nwu/ELRYrfonCInKLViE9wp5dkZe?=
- =?us-ascii?Q?wn+a+BIqM9188Lx7Wqsa0RPrUoGW4f0rJ8mku6u4mJ7swfagjvriAR0DKNBA?=
- =?us-ascii?Q?CzwtDiGs3JKIygOOCFK/WYHf1n+QQyjikFgQjpZr1vMDE4FgO2tCCWXzsEwU?=
- =?us-ascii?Q?B3hkpwifuxsMJ1edn8ItqKDsc+p1TZwbiIxBG+SXUPbdXqrLisghZ73zvJZP?=
- =?us-ascii?Q?BSaUj0TzpKwC7HcqbNekpsKGOFzJH6Sy7t1e8u46J4BlhFXk9ngjqunjpPCg?=
- =?us-ascii?Q?bBbYggGbIGz2HX1kaIX3ZFdk9UghnCFFNcbA4YhjmIO9TRl6ljwnOe3DY8ik?=
- =?us-ascii?Q?XgE+Z8LJocHqPKRyp9bFni4MNkdrdUyqXlzHRrf35C1KB7l6UguvyQIghlqR?=
- =?us-ascii?Q?x81ho3aY+qZkjkxStkBYcv+M1NX5JriBCjt9WX15mbpVQDnJCNufZJBb1hEK?=
- =?us-ascii?Q?i/In5MJfFz+NjSAJk8JblQONSVTjBIL9jhyiV/N/UW9QKX99r6lZ0fvQK2Cb?=
- =?us-ascii?Q?ZKNkD/xjsvTk0ksd2qtS0TWxy49q2ZdTvTvrLVZB+pM/qAPOmDsENEl+Kvmu?=
- =?us-ascii?Q?jY33Ujk0cQXRVPFZMMLK0cjgN8KXTUYoZf0oAYI4cbSVrb9P08OihxANKKl2?=
- =?us-ascii?Q?48Q+2hHQ353IgAZA33Tdzv7AKg/dQNyarDtZMcMees4xMj6atwU/WuFJfRZM?=
- =?us-ascii?Q?Vzw9/yfUKet44b4HM450SsnFZVUcDMXXxSBsvJYEwfQgVSrAlr+c/tzX7u5T?=
- =?us-ascii?Q?2DYISlVaNFvPLfbnkQnjk/RYkEHNlaFUKLdcN8c0UzhEMtvPS2dXU6FJkOBz?=
- =?us-ascii?Q?6JKDNFa3KAh3Jlb+KY9fOt7T+D5sp8rxbKpjUbcI02ebscbXyoswRrRCMVhg?=
- =?us-ascii?Q?L5xAkqLtgi10yDeNuPJoA/wbtKQXKHLzMWDMVYNAbBNpYU0n8mBzswzy7/9j?=
- =?us-ascii?Q?TXSlfi/imIqwWM+QfkI90kNud93+TI0WEvKSN9dvzQUob5Y7SeXR2QPmWOdA?=
- =?us-ascii?Q?noXlIEcij2ZXjMRS74lww0ow3dHeKZglIrGV9Wy7g6zeQdO1Ps+e6+mGl0/e?=
- =?us-ascii?Q?cOfS3TVu2peby0HuUZtGDidDsYsIPegyhTsHO8ppyfOhwwRD+aqHI5U0ERaE?=
- =?us-ascii?Q?iCwCRolfiOA28DN77rcwfZZ/rEUtiZQLaYHIvq5W?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f0df75a-d369-47ba-78a4-08de1365336c
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2025 01:24:11.0201
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0N1cb9LkdUgPpMMj56gPz+/+HaDtC+sF6EUoCJ2h+cSbppDdKu9lc6UKYdo8z+7E9m5YTL/LphpJa1KaCVaWYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF08EEA05B5
-
-This register read is not required in order to bring up any of the GPUs,
-and it is read too early on Hopper/Blackwell+ GPUs anyway. So just stop
-doing this.
-
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
-
-This applies cleanly to today's drm-rust-next.
-
-thanks,
-John Hubbard
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/9] HID: asus: simplify RGB init sequence
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20251018101759.4089-1-lkml@antheas.dev>
+ <20251018101759.4089-2-lkml@antheas.dev>
+ <e6328da3-8099-4540-9cb0-4fc28b359ee7@gmail.com>
+ <CAGwozwG+gf09PQf9o9YkKFYVgVn-1w5CDVrpOe4uFavVYCNijQ@mail.gmail.com>
+ <3947f772-691b-46a2-af68-15825e7f4939@gmail.com>
+ <CAGwozwFbQWyuQB6EwLMLon5muff2WudR+oVL62DqP_MXGW+p-Q@mail.gmail.com>
+ <b91de7c7-74b8-4cf5-82a4-f3d4eaf418d4@gmail.com>
+ <CAGwozwGj-yXHXBan38_NV7G5T66bnjm7om2bz_Bha35AHhtCJQ@mail.gmail.com>
+ <CAGwozwEh32XMcGJPKMRBWd63ybYOxW1Wx4QjU-QErjQgLHwX2g@mail.gmail.com>
+ <0d18666a-78e1-4e69-8fd2-f15052db0cee@gmail.com>
+ <CAGwozwHyC8P4KzZFY7t=WF3ANiJ4q6HgbiAMUNAGHE899Jd6rQ@mail.gmail.com>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <CAGwozwHyC8P4KzZFY7t=WF3ANiJ4q6HgbiAMUNAGHE899Jd6rQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
- drivers/gpu/nova-core/falcon.rs | 5 -----
- 1 file changed, 5 deletions(-)
+On 10/24/25 23:20, Antheas Kapenekakis wrote:
+> On Fri, 24 Oct 2025 at 20:53, Denis Benato <benato.denis96@gmail.com> wrote:
+>>
+>> On 10/24/25 18:20, Antheas Kapenekakis wrote:
+>>> On Fri, 24 Oct 2025 at 01:25, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>>>> On Fri, 24 Oct 2025 at 00:53, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>>> On 10/23/25 23:30, Antheas Kapenekakis wrote:
+>>>>>> On Thu, 23 Oct 2025 at 22:05, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>>>>> On 10/23/25 20:06, Antheas Kapenekakis wrote:
+>>>>>>>> On Thu, 23 Oct 2025 at 19:38, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>>>>>>> On 10/18/25 12:17, Antheas Kapenekakis wrote:
+>>>>>>>>>> Currently, RGB initialization forks depending on whether a device is
+>>>>>>>>>> NKEY. Then, NKEY devices are initialized using 0x5a, 0x5d, 0x5e
+>>>>>>>>>> endpoints, and non-NKEY devices with 0x5a and then a
+>>>>>>>>>> backlight check, which is omitted for NKEY devices.
+>>>>>>>>>>
+>>>>>>>>>> Remove the fork, using a common initialization sequence for both,
+>>>>>>>>>> where they are both only initialized with 0x5a, then checked for
+>>>>>>>>>> backlight support. This patch should not affect existing functionality.
+>>>>>>>>>>
+>>>>>>>>>> 0x5d and 0x5e endpoint initializations are performed by Windows
+>>>>>>>>>> userspace programs associated with different usages that reside under
+>>>>>>>>>> the vendor HID. Specifically, 0x5d is used by Armoury Crate, which
+>>>>>>>>>> controls RGB and 0x5e by an animation program for certain Asus laptops.
+>>>>>>>>>> Neither is used currently in the driver.
+>>>>>>>>> What benefits do we get from removing the unused initialization?
+>>>>>>>>>
+>>>>>>>>> If this has never caused any troubles I don't see the reason for removing
+>>>>>>>>> them. Moreover the lighting protocol is known and I might as well add
+>>>>>>>>> support for it in the near future,
+>>>>>>>> I already have a patch that adds RGB and delay inits that endpoint. It
+>>>>>>>> got removed to make this easier to merge. See [1].
+>>>>>>>>
+>>>>>>>> [1] https://lore.kernel.org/lkml/20250324210151.6042-10-lkml@antheas.dev/
+>>>>>>> I have to main concerns about this:
+>>>>>>>
+>>>>>>> 1. taking away initialization commands in one patchset to make it
+>>>>>>> easier to merge another unrelated patch doesn't seem the right thing
+>>>>>>> to do if the other patch it's not in the same series.
+>>>>>>>
+>>>>>>> I can see [1] has been removed from the set for a later moment in time,
+>>>>>>> it's fine if it needs more work, just send something that function in the
+>>>>>>> same way and do not remove initialization commands when unnecessary,
+>>>>>>> especially since there will be for sure future development.
+>>>>>> The initialization was removed as part of general cleanup. Not to make
+>>>>>> it easier to merge the RGB patch. In addition, the RGB patch only runs
+>>>>>> the init in a lazy fashion, so if nobody uses the RGB sysfs the init
+>>>>>> does not run and the behavior is the same.
+>>>>> There are a few problems here:
+>>>>> 1. sope creep: either do a cleanup or solve bugs. The fact that your flow z13
+>>>>> doesn't load hid-asus correctly has nothing to do with the initialization of anime.
+>>>>> The fact that hid-asus is driving leds instead of asus-wmi has nothing to do with
+>>>>> anime matrix initialization either.
+>>>>> 2. not sending the initialization can get hardware misbehave because it
+>>>>> is left in an uninitialized state.
+>>>>> 3. there are absolutely zero reasons to do that. There are even less reasons
+>>>>> as to do it as part of this patchset.
+>>>>>
+>>>>>>> 2. Your patchset resolves around keyboard backlight control and how
+>>>>>>> the keyboard device is exposed to userspace: it's fine but I do not see
+>>>>>>> the point in removing initialization commands that has nothing to do
+>>>>>>> with the issue we are trying to solve here.
+>>>>>>>
+>>>>>>> Please leave 0x5E and 0x5D initialization commands where they are now.
+>>>>>> I mean the second part of the patchset does that. The first part is a
+>>>>>> cleanup. What would be the reason for keeping 0x5E and 0x5D? They are
+>>>>>> only used when initializing those endpoints to write further commands
+>>>>>> to them and for identification. The current driver does not write
+>>>>>> commands to those endpoints and identifies itself over 0x5A.
+>>>>> There are no bugs opened that ties initialization of devices to bugs.
+>>>>> Quite the opposite: I can guarantee you that removing part of the
+>>>>> init will introduce regressions.
+>>>>>
+>>>>> The onus is on you to provide strong evidence that the removal is
+>>>>> a necessary act.
+>>>>>
+>>>>> Regardless it is not in the scope of this patchset: remove it.
+>>>>>> I do get that it is a bit risky as some laptops might be hardcoded to
+>>>>>> wait for 0x5D to turn on RGB. Which is why we had the last patch until
+>>>>>> V4. But we have yet to find a laptop that has this problem, so I find
+>>>>>> it difficult to justify keeping the init.
+>>>>> Yes it's risky to remove initialization sequences for a device that is
+>>>>> in every modern ASUS laptop and is tied to the EC.
+>>>>>> Do note that you might need to add the 0x5D init to your userspace
+>>>>>> program for certain laptops if you haven't already. But that is ok,
+>>>>>> since in doing so you are also validating you are speaking to an Asus
+>>>>>> device, which is important.
+>>>>> This doesn't make much sense: why would anyone remove
+>>>>> a command from the kernel, that can be very well essential to some models
+>>>>> (sleep can break, for example) just to add it back in a userspace program?
+>>>>>
+>>>>> What does it mean I have to validate I am speaking to an asus device?
+>>>>> Software selects devices by known attribute, one of them is the vid:pid....
+>>>>> Beside what does this have to do with the removal of initialization commands
+>>>>> from the kernel?
+>>>>>
+>>>>> Even late initializing devices can lead to problems. Windows doesn't do that:
+>>>>> as soon as asus drivers are loaded all relevant initialization sequences are
+>>>>> sent; Windows is the only officially supported OS: do not introduce commands
+>>>>> flow divergence without strong reasons backing it up.
+>>>> If you think keeping 0x5D init is that important, I can spin patch [1]
+>>>> into this series. But then this quirk will stay in the kernel forever.
+>>>> I can even add 0x5E since that does not affect newer devices, which I
+>>>> care for simplifying the sequence.
+>> Fully initializing the device tied to the EC in the same windows does
+>> is not a "quirk". Please stop calling it that.
+>>
+>> It will stay on the kernel until we have strong evidence that it is causing
+>> problems, at that point we simply avoid doing it for problematic laptops.
+>>
+>> If adding other commands doesn't introduce regressions or are otherwise
+>> easy to bisect and makes more hardware working please do.
+> It is not an init sequence. It is a handshake with the userspace
+> program that proves to the program it is talking with a genuine asus
+> device and to the device with the correct program. For all devices
+> that I have tested it seems to NOOP.
+The MCU doesn't distinguish between userspace or kernel space:
+"it is a handshake" => yeah handshakes are part of initialization procedures.
+"with the userspace program [...]" => MCU does not care where data is coming from.
 
-diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-index 3f505b870601..ac55cbc5ac1e 100644
---- a/drivers/gpu/nova-core/falcon.rs
-+++ b/drivers/gpu/nova-core/falcon.rs
-@@ -371,11 +371,6 @@ pub(crate) fn new(
-         bar: &Bar0,
-         need_riscv: bool,
-     ) -> Result<Self> {
--        let hwcfg1 = regs::NV_PFALCON_FALCON_HWCFG1::read(bar, &E::ID);
--        // Check that the revision and security model contain valid values.
--        let _ = hwcfg1.core_rev()?;
--        let _ = hwcfg1.security_model()?;
--
-         if need_riscv {
-             let hwcfg2 = regs::NV_PFALCON_FALCON_HWCFG2::read(bar, &E::ID);
-             if !hwcfg2.riscv() {
+Anyway further discussion is useless. We understood you are against
+keeping commands that that you believe  are useless, but sometimes
+software is like life: you have to accept compromises.
+> 0x5a is the only one used for a driver and it does brightness control.
+> 0x5d/0x5e are used with userspace Windows programs. 0x5d does RGB.
+> Moreover, the application 0xff310076 only has a single report ID under
+> it, 0x5a. 0x5d and 0x5e belong to different hid applications that are
+> not currently checked by the driver (but when they exist they reside
+> under the same hid endpoint, with a multi-application collection that
+> bifurcates in Windows to multiple hid devices).
+The MCU works as a state machine where the status is updated
+on sleep, power on and power off: not sending initialization commands
+will confuse (some) hardware. If not now in a few years when some user will
+migrate away from whatever debian 12 they are running.
 
-base-commit: d3917368ebc5cd89d7d08eab4673e5c4c73ff42f
--- 
-2.51.1
+Those commands are not simple commands to "just init the device" as you
+are depicting here. Stop doing that.
+> So it makes sense to remove the redundant handshakes. If some laptops
+> require 0x5d to enable shortcuts as Luke said, I have a patch that
+> does that and is straightforward to do. But since the shortcut
+> response comes from the 0x5a endpoint, I find it unlikely for it to
+> require a handshake over a different endpoint to init.
+So you want to remove some code, that has caused no troubles, on
+the assumption that such removal won't have any visible consequence,
+but you have a patch ready to restore the previous behavior in case
+something goes wrong? It doesn't matter if you find it unlikely or not:
+either there is a strong reason to remove it or there is not: you finding
+such removal "unlikely" to break anything down the line is not a strong
+reason to remove it. The fact that you don't like some code is not a strong
+reason to remove it either.
 
+Antheas... your flow z13 isn't loading correctly. Focus on the issue
+at hands. Please.
+
+
+>>>> Luke said these two pairs are the important ones to keep.
+>>>>
+>>>> I'm not sure what to do.
+>>> I was asked by a 2025 Asus Zenbook Duo user to add his IDs in [1]. In
+>>> doing so, I updated the rgb and legacy init patches for the new series
+>>> and added a quirk for early init of the duo keyboards.
+>> I will take a look when I can, but if you haven't removed anything
+>> that shouldn't pose any risk. None that I can think of at the moment anyway.
+>>> The series is 14 patches long, I don't think my email can take it :(
+>> linux.dev accounts for maintainers are provided free of charge
+>> and I had to ask for an account too. I suggest you do the same.
+>>> Should we merge the first part of this series with the legacy init,
+>>> then do the backlight refactor, and finally the new Duo stuff + rgb?
+>> I think so. My only doubt is about the per_app quirk. Other than
+>> that looks good and solves one problem while also better representing
+>> the hardware, so I can't think of any blockers.
+>>> Antheas
+>>>
+>> Thanks,
+>> Denis
+>>>> Antheas
+>>>>
+>>>> [1] https://lore.kernel.org/all/20250325184601.10990-12-lkml@antheas.dev/
+>>>>
+>>>>>> Antheas
+>>>>>>
+>>>>> Denis
+>>>>>>>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>>>>>>>>>> ---
+>>>>>>>>>>  drivers/hid/hid-asus.c | 56 ++++++++++++++----------------------------
+>>>>>>>>>>  1 file changed, 19 insertions(+), 37 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+>>>>>>>>>> index a444d41e53b6..7ea1037c3979 100644
+>>>>>>>>>> --- a/drivers/hid/hid-asus.c
+>>>>>>>>>> +++ b/drivers/hid/hid-asus.c
+>>>>>>>>>> @@ -638,50 +638,32 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>>>>>>>>>>       unsigned char kbd_func;
+>>>>>>>>>>       int ret;
+>>>>>>>>>>
+>>>>>>>>>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+>>>>>>>>>> -             /* Initialize keyboard */
+>>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+>>>>>>>>>> -             if (ret < 0)
+>>>>>>>>>> -                     return ret;
+>>>>>>>>>> -
+>>>>>>>>>> -             /* The LED endpoint is initialised in two HID */
+>>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+>>>>>>>>>> -             if (ret < 0)
+>>>>>>>>>> -                     return ret;
+>>>>>>>>>> -
+>>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+>>>>>>>>>> -             if (ret < 0)
+>>>>>>>>>> -                     return ret;
+>>>>>>>>>> -
+>>>>>>>>>> -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+>>>>>>>>>> -                     ret = asus_kbd_disable_oobe(hdev);
+>>>>>>>>>> -                     if (ret < 0)
+>>>>>>>>>> -                             return ret;
+>>>>>>>>>> -             }
+>>>>>>>>>> -
+>>>>>>>>>> -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+>>>>>>>>>> -                     intf = to_usb_interface(hdev->dev.parent);
+>>>>>>>>>> -                     udev = interface_to_usbdev(intf);
+>>>>>>>>>> -                     validate_mcu_fw_version(hdev,
+>>>>>>>>>> -                             le16_to_cpu(udev->descriptor.idProduct));
+>>>>>>>>>> -             }
+>>>>>>>>>> +     ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+>>>>>>>>>> +     if (ret < 0)
+>>>>>>>>>> +             return ret;
+>>>>>>>>>>
+>>>>>>>>>> -     } else {
+>>>>>>>>>> -             /* Initialize keyboard */
+>>>>>>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+>>>>>>>>>> -             if (ret < 0)
+>>>>>>>>>> -                     return ret;
+>>>>>>>>>> +     /* Get keyboard functions */
+>>>>>>>>>> +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+>>>>>>>>>> +     if (ret < 0)
+>>>>>>>>>> +             return ret;
+>>>>>>>>>>
+>>>>>>>>>> -             /* Get keyboard functions */
+>>>>>>>>>> -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+>>>>>>>>>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+>>>>>>>>>> +             ret = asus_kbd_disable_oobe(hdev);
+>>>>>>>>>>               if (ret < 0)
+>>>>>>>>>>                       return ret;
+>>>>>>>>>> +     }
+>>>>>>>>>>
+>>>>>>>>>> -             /* Check for backlight support */
+>>>>>>>>>> -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+>>>>>>>>>> -                     return -ENODEV;
+>>>>>>>>>> +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+>>>>>>>>>> +             intf = to_usb_interface(hdev->dev.parent);
+>>>>>>>>>> +             udev = interface_to_usbdev(intf);
+>>>>>>>>>> +             validate_mcu_fw_version(
+>>>>>>>>>> +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
+>>>>>>>>>>       }
+>>>>>>>>>>
+>>>>>>>>>> +     /* Check for backlight support */
+>>>>>>>>>> +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+>>>>>>>>>> +             return -ENODEV;
+>>>>>>>>>> +
+>>>>>>>>>>       drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+>>>>>>>>>>                                             sizeof(struct asus_kbd_leds),
+>>>>>>>>>>                                             GFP_KERNEL);
 
