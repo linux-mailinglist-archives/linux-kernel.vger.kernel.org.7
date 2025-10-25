@@ -1,164 +1,116 @@
-Return-Path: <linux-kernel+bounces-869784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2108C08BB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A43C08BBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 08:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32DDB4E3F02
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 05:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A941B25C07
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 06:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F3B2D2497;
-	Sat, 25 Oct 2025 05:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7D42D3739;
+	Sat, 25 Oct 2025 06:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="gua/ijhQ"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RICL+Pd+"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373FD227B83
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3DF1F4C92;
+	Sat, 25 Oct 2025 06:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761371722; cv=none; b=tX13geZ4PVKoAZgcFHY9lnYx5BCC0SUC1LHZ8XcjVkmr38fzXvJX9N3ly0EMGq7ggotLTEAvumNNnSzBgJt/J9dnMOTX7XjwyIo2oyx7y6jL7jjLF+myKkY3LTthcykvtEsluVsCK6LCme5SZM9kEZb9vYg3iLy3bp95YGKPMIg=
+	t=1761372192; cv=none; b=X61jRvYGR+cuU4Y1s1WFfc3hCQfxGgD9WPF7Sfa5fNe55FXxQWqdtnOr8AgpT6B4oQUPOhUYJEhb8178lgz6kU+DFYGNa0Cscjdqk/XonhmaqAxAqmnSkdVexuSKlMa3KDs63yTClhI5oaV7oYwyi9rEWHYKgZHgNYdJ5BgS+xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761371722; c=relaxed/simple;
-	bh=wstOIFFDyXnvi2d4rVVhQL2Pc9EfHyUwIfCTnxK+RNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huDWUDJtZizrt8iMft9Kz2DV/9ojtVdBhx9zSjl1AMil4fN2gPNdYT73JfyTd6FZQr5iaO0Peqhp08NMrkEeqz4AQlH3FqedV0miu8NaaljZMQ7OydpaNW7ATWieJ//6XICbzZysQgMW5QSA/0jhR46hVuuBgZaSweS7+iGZM5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=gua/ijhQ; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 9BE49104CBAC
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 11:25:17 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 9BE49104CBAC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1761371717; bh=wstOIFFDyXnvi2d4rVVhQL2Pc9EfHyUwIfCTnxK+RNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gua/ijhQuNYdFNDPD8+HMJLp+gXmu8Jckj6dpvnmttQJ1PG6h6m1qABEaA2r5GPGc
-	 v/GRFxtPLE0T4D1Bg31shLR5ts91mFejH/sAzaPcJLH6P0j7cnFnyVCv697xxg7HO5
-	 lZE+/F7WKqf3Yjk5tEh9bjJ3mOWq0+nBLFt1CqQU=
-Received: (qmail 20775 invoked by uid 510); 25 Oct 2025 11:25:17 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.445197 secs; 25 Oct 2025 11:25:17 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 25 Oct 2025 11:25:14 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id 3D9453414DF;
-	Sat, 25 Oct 2025 11:25:13 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id EDBC41E8160F;
-	Sat, 25 Oct 2025 11:25:12 +0530 (IST)
-Date: Sat, 25 Oct 2025 11:25:06 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org,
-	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
-Message-ID: <20251025-5556-944955@bhairav-test.ee.iitb.ac.in>
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
- <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
- <20251013-144614-1551316@bhairav-test.ee.iitb.ac.in>
- <aPp65bmTGk1qfPSE@smile.fi.intel.com>
+	s=arc-20240116; t=1761372192; c=relaxed/simple;
+	bh=joX0o5Lrl2JShvoKBqYfj933xypiwMqz1lDALZeTrzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qN8cBe6tTR4cIH4IJtQ/AfgtowhN7I1SqR/uM06+7XgKn2GptkGFnVaDbpmbI9T3PoRForQsAenK6dKsks5jtwGbngkiJrFYIkrfrptZ/kb5kUSOXIDVfJa+3XLXXPWS2SdEtQzVDkkwjiL4qOpq8Ilqh5uW5l4SHZ196yyMvCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RICL+Pd+; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=fekQSLGB0ovepYdE7QuWcHq2DxkkaAo5JrQRK380pb0=;
+	b=RICL+Pd+rFCdO6Xzthl6j3sTcyl4hhQ5xP6OHzyg2XumJXV0riBtcvMF3bsIAU
+	LLJW4cBd2mwL+3AwcaDwgahUg5JvMMI6vzpJRYGDMvJUmIX/TQH+gH/kGhvy17jB
+	XX044oRqHmB0hytlaUdNmylkEfYHeWZ+cL/6WT4+zSHUg=
+Received: from [192.168.3.55] (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgCXAt4MaPxoKdVhBQ--.2431S2;
+	Sat, 25 Oct 2025 14:02:52 +0800 (CST)
+Message-ID: <788d8763-0c2c-458a-9b0b-a5634e50c029@163.com>
+Date: Sat, 25 Oct 2025 14:02:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mount: fix duplicate mounts using the new mount API
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251025024934.1350492-1-luogf2025@163.com>
+ <20251025033601.GJ2441659@ZenIV>
+From: GuangFei Luo <luogf2025@163.com>
+In-Reply-To: <20251025033601.GJ2441659@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPp65bmTGk1qfPSE@smile.fi.intel.com>
+X-CM-TRANSID:PCgvCgCXAt4MaPxoKdVhBQ--.2431S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar1fGrW5ZrykAF1fXFyftFb_yoW8ZryDpF
+	Wrtw4DCrs7JwsxKry8Zr18u3yFyan5A3W5AFyYqr90y3ZIvFyIqF1IvFWUZas8Gw4Fgr9F
+	vF4rGryDua4YgFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uca9-UUUUU=
+X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbizQTxmWj8V0TUEAAAsi
 
-On Thu, Oct 23, 2025 at 09:58:45PM +0300, Andy Shevchenko wrote:
-> On Mon, Oct 13, 2025 at 08:16:14PM +0530, Akhilesh Patil wrote:
-> > On Sat, Oct 11, 2025 at 05:10:58PM +0300, Andy Shevchenko wrote:
-> > > On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
-> 
-> ...
-> 
-> > > > +struct adp810_read_buf {
-> > > > +       u8 dp_msb;
-> > > > +       u8 dp_lsb;
-> > > > +       u8 dp_crc;
-> > > > +       u8 tmp_msb;
-> > > > +       u8 tmp_lsb;
-> > > > +       u8 tmp_crc;
-> > > > +       u8 sf_msb;
-> > > > +       u8 sf_lsb;
-> > > > +       u8 sf_crc;
-> > > > +} __packed;
-> > > 
-> > > Why __packed?
-> > 
-> > Yes. This is the structure used as a buffer to store sensor values read.
-> > Each entry in this structure should be contiguous in the memory because
-> > reference of this structure will be passed to i2c_master_recv() to
-> > receive and fill the data.
-> > __packed will avoid any compiler generated paddings in the structure to
-> > force alignments on certain architectures. We do not want these paddings
-> > and want our struct members to be sequentially ordered as shown, with
-> > no padding and size of the struct should also be 9 bytes as only 9 bytes of
-> > data should be read from the sensor as per the specification.
-> > 
-> > I could have used array here. But I preferred strcture for better
-> > readability of the code as one can easily see what values are expected
-> > from sensor while reading and in which order.
-> 
-> Right, but in this form packed only affects the last member size (due to
-> alignment), in any case since it's HW mandated requirement, perhaps add a
-> comment. (Since we also going to use __be16 types, the __packed is required
-> for that to be properly placed in the memory.)
 
-Sure. Added comment explaning this in v4.
 
-Regards,
-Akhilesh
+On 10/25/2025 11:36 AM, Al Viro wrote:
+> On Sat, Oct 25, 2025 at 10:49:34AM +0800, GuangFei Luo wrote:
+>
+>> @@ -4427,6 +4427,7 @@ SYSCALL_DEFINE5(move_mount,
+>>   {
+>>   	struct path to_path __free(path_put) = {};
+>>   	struct path from_path __free(path_put) = {};
+>> +	struct path path __free(path_put) = {};
+>>   	struct filename *to_name __free(putname) = NULL;
+>>   	struct filename *from_name __free(putname) = NULL;
+>>   	unsigned int lflags, uflags;
+>> @@ -4472,6 +4473,14 @@ SYSCALL_DEFINE5(move_mount,
+>>   			return ret;
+>>   	}
+>>   
+>> +	ret = user_path_at(AT_FDCWD, to_pathname, LOOKUP_FOLLOW, &path);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Refuse the same filesystem on the same mount point */
+>> +	if (path.mnt->mnt_sb == to_path.mnt->mnt_sb && path_mounted(&path))
+>> +		return -EBUSY;
+> Races galore:
+> 	* who said that string pointed to by to_pathname will remain
+> the same bothe for user_path_at() and getname_maybe_null()?
+> 	* assuming it is not changed, who said that it will resolve
+> to the same location the second time around?
+> 	* not a race but... the fact that to_dfd does not affect anything
+> in that check looks odd, doesn't it?  And if you try to pass it instead
+> of AT_FDCWD... who said that descriptor will correspond to the same
+> opened file for both?
+>
+> Besides... assuming that nothing's changing under you, your test is basically
+> "we are not moving anything on top of existing mountpoint" - both path and
+> to_path come from resolving to_pathname, after all.  It doesn't depend upon
+> the thing you are asked to move over there - the check is done before you
+> even look at from_pathname.
+>
+> What's more, you are breaking the case of mount --move, which had never had
+> that constraint of plain mount.  Same for mount --bind, for that matter.
+>
+> I agree that it's a regression in mount(8) conversion to new API, but this
+> is not a fix.
+Thanks for the review. Perhaps fixing this in |move_mount| isn't the 
+best approach, and I don’t have a good solution yet.
 
-> 
-> 
-> ...
-> 
-> > > > +struct adp810_data {
-> > > > +       struct i2c_client *client;
-> > > > +       /* Use lock to synchronize access to device during read sequence */
-> > > > +       struct mutex lock;
-> > > > +};
-> > > 
-> > > Is there a deliberate choice to not use regmap I²C APIs?
-> > 
-> > Yes. I explored that possibility. However this sensor follows simple I2C
-> > client protocol. It does not expose the concept of I2C registers. It
-> > does not follow smbus. Specifically, while reading the measurement from
-> > the sensor, we need to only send the device address with read bit on the bus,
-> > and start reading 9 bytes following that. That is, no register address
-> > should be sent. I am not sure if regmap API has some hack to achive
-> > similar because these APIs expect register addresses to read/write which
-> > this sensor does not follow. Hence using raw i2c functions. I also
-> > thought regmap abstraction is not needed here as this sensor has very
-> > limited commands to send and not many command/configurations.
-> 
-> Ah, makes sense.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
 
