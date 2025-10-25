@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-869973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3BAC09277
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:07:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78ABC09283
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 17:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554F5189A391
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:07:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 033274E1167
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 15:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673ED302155;
-	Sat, 25 Oct 2025 15:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2900A302172;
+	Sat, 25 Oct 2025 15:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cll+X/5F"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnri/XJF"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1461D5154
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167702FFDCF
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761404835; cv=none; b=SG6WLi3cbl+2iwK4+N0v4d5eqCMnuLAf5iMOkXFSe0OWbMj7t9XAugHYYkopWI5H7IHOf4a75b7ave4A7kMmo8zhjITEQQqBtVNqoPRiyIyKEdkDeNshU3UA6s9/vRaVY5gv+4cyl9MtmicvsLX0+L4BgN8M5sRq2dMW+9yGfBU=
+	t=1761405266; cv=none; b=iLxxjLvMBNI59ltcQQgBa9MzV4tg2Rc6cgmFG3OPnafW2mHld7MZN+IbrZXMHkn6ySyEPhhy9Z97c+E9r0sXgAQRzEp3Jb97n0BXp+Pu0RSeE/wxLalBShfB3LgvwvAF8y/j3g9Bps9DRbTDHxT+mrgQUhXKrWSg4twNBYyVwuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761404835; c=relaxed/simple;
-	bh=pdElZZTBRl/ohTApnI+0p2VE9kXSMqg2mVsZtsGTtng=;
+	s=arc-20240116; t=1761405266; c=relaxed/simple;
+	bh=QAv9wnda7g3m75rjqRt1OT7ex6pWUA04I2r6oecL4yA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G2lfw+EJ0hCaxYtEzMgVArP+4XDOPveNMhkiFQLUsfmPtJGklWNGK/O910KyGIzDKmeK8uH/8RIsWY7YLMx7WvMAlBrBjzk2bGPN/+2WZy/fzZhd+I4RS/+cf/ZSs6X15cs350vlxdbOHfQmu+izMi+ARmSlEnnT3fUUZrPsKA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cll+X/5F; arc=none smtp.client-ip=209.85.216.50
+	 In-Reply-To:Content-Type; b=P4cyCmgl5EIAP3SYn6IFkatGI5EKwlpq1yOvFvDu0CK1zCmoPeklR/Qg36hRXeHPfZUb98FMvdr6jYBffe/jb4+cj1DA+8UULUi1mUb2RhjkcGEtZbhQCZJ6PDd9lzfg5Tq3p6ZnOXEA09Syo6FiZXe++m2JCHjmbVHCwJvAccQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnri/XJF; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33c4252c3c5so3001414a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:07:14 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso2543478a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 08:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761404833; x=1762009633; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761405264; x=1762010064; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ehGvucYryd5ksZM+NP6h3eQPQh9+jzxwKY2MY5g6NkY=;
-        b=cll+X/5FdLqe3WCwunOhkW9FjmBZMoomMaql1u/VZzP3P1bjPZ4Z6d7zCOA0djomFJ
-         MhemLQEGyo3l2VWTYwsDXJApVLu7VU1Jt2jfXNJWNU+jaTufDgY+Pw9K4YKSWJrr63OI
-         gLyZwMkMeEPSYGHp4ETaBQ16Vsx8kwRM6HaKc/Gx6JuwSlUCuF4tAehRRSwtJ/mxLb+m
-         vhcXw8FEmZ7IQvwnEziBmkFnBRZ8xcf+59f0XNEX916/qFsIy9q8lh5b7l/o1kKSzsy9
-         X396vy8+oHNQnwURDP3by6WWnJ7DQVw6Qys/UtsHTpnsK4oMlJxoyBiUT2lCpJ1afl1V
-         EUmQ==
+        bh=V4QbhlCobjLz18WKX8IPz8TGhcE8DFK2aHPkOURXrxw=;
+        b=lnri/XJF8h/VA2LnnBT8eAlu4DCm85OUTHF1niCNz2SOEcFHQGI+Yca0CddP/vNhlS
+         W4opxC/C9IOIwCPUI1o43Llt26mzou8mJqBXE6XEg4ekMSh9j3SA8zG6LM8rd+SFGAu9
+         S2l6UKZYZQGOfMlFFTM0b79UAc20kj/Sd2sE0G9DV0iG0bYvwbzWPcqgxj/reJ98DeqY
+         3LyqQRvf6WD40n3rDThiT+Xbi7bY2w4NKWlIznAuXpithF0uXdTa4eV1Ia3d0/CCqu11
+         NzynTY5cs7gxEB9X0noPDhK7M3q6D2jbdzjrX0WZYT7wVZMQ2ocMYx+RJiEBsFl7sqYG
+         aahw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761404833; x=1762009633;
+        d=1e100.net; s=20230601; t=1761405264; x=1762010064;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ehGvucYryd5ksZM+NP6h3eQPQh9+jzxwKY2MY5g6NkY=;
-        b=WNJ/cbHbNsqYmBVs5uGybXr9wpOMzbOPTAGu4oUfwfF7rOmaBGmsu8CGju/nj4XbPN
-         qXy7IJvHTqHRit/U0nMY65QsrNyoLG8oLcaHnHK6GEOgUSQIc+dJ2ZxIR5rx7NbFQcUl
-         xEAmEKR0wamURjYg9WttPv2CRTxSxHIZfP/mf/2/wzdcjEU3JMc8IGFnDSnF8/QrwKts
-         UWd2yVdkTHfTaulrANdFrXxX7PoLkZUn0SWf6Uaik0NlY5acFC1w7mzbHHaznhqKcFUh
-         42vNUhuwAlIMvxvGJqDRUEZ0MXP77xZlMyRDfKfVKaUl4fO5ugeaxmUFA85PGPwLKwCh
-         ydqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAWegQB+3En6Gu5QdZtndoga5r+/IgjDc+CWu8X8QP3cMWyxj7ffKXyQwNHKhnVjRCj4PTqQ6VF3WKJ0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylL2POrFazalccOCW+qRT6BZ/p0NwLK3WYb12bJFvxT3ojKeOc
-	B39hFUVUuhBWbvHROP+IBCVCKl7djO4KYF8SRgzh2LY4Pd7EkrjdDkkQ
-X-Gm-Gg: ASbGncvq6//z8RAB6ADf1iF1HmUoW/PIc9ahFg+8wIe8NV/o0QT1yqM/Gtcy4VmgfMr
-	eJ05DxjWkpVf3lehWwRGBVRZKMVneBmmmUiEp3AKCndxz4Af6HZ5IsAF1E2QSA16Cmp3B/hWvln
-	E1duoUhmoLYnKyOi8ElxNI33jbYeT4CWnpPim6ztzsBC9sNYSPxHwPKFIFpv3M+KfJBKCEngpE/
-	vJu+9wKwIzhU6RAABCBfVIH1zFhOKoavwWNHzW51jv0ZclZQ0P17JZemsakdVjvUUXcA5R2rEQO
-	KSF2WQZS05c/A3tAvXKc0DJR0oMXJeSmxNjbl6rUXsiF/slStSMJ6LDlF2QSztCBL5DwJZbkj+d
-	n19EeBXfcVqQGhCGl65jYoQ146cfwpK2N/a/6uyvy7Q309Z+v7hw7/qJQOtI6tso2PUaTYWGZng
-	5TXpPNzH6k+f10z53dzNtl2lMCF+BsNfiMZ8+Co881lPYNUKxtZ7/EQrdRKudPAlWiiUknfW+lK
-	gVDHBtk1KJSzvBG9In1j80=
-X-Google-Smtp-Source: AGHT+IHc2D1me194quCxZvcS0NmqKlfdcG9goQhTzdjCPdL4h6Tfx4LteJBnMLzm8AlcYT1LIELvtw==
-X-Received: by 2002:a17:90b:1b4a:b0:32b:6151:d1b with SMTP id 98e67ed59e1d1-33fafb98ac1mr12129890a91.8.1761404833441;
-        Sat, 25 Oct 2025 08:07:13 -0700 (PDT)
-Received: from ?IPV6:2606:4700:110:896a:5f1b:2412:be21:3a45? ([2a09:bac5:3c3b:a82::10c:59])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed73a7b7sm2605532a91.5.2025.10.25.08.07.09
+        bh=V4QbhlCobjLz18WKX8IPz8TGhcE8DFK2aHPkOURXrxw=;
+        b=mnpYiYv2IUstjO6i8pefcpgk0sAYeq8+YrLgvnd5TPOR1sf3E/H3tHMuOcYkK0AMU/
+         hhCWSDYzyQLC1wlYoQlAEMQlIaVK7FB8Z6mrKlPX4xJB9a2nAtoXv+C9Nk2Z532w95gE
+         s7gcGcJ4m1qlnGwkwsgCL9tgIb1pIMdjFXlyUE7anIDEiDzVwYrPtZzl+rsmvm3fYPvr
+         O7MlXJYv6sN1jlxOXkrcK3s2hGbSQw8555joix1cJ0h2JFRk3Er8LjQIuXTKMRG8Dfas
+         1MJuiwyPU9tzzK7I+CDEYuXytX9CtWCqca9wT1Zcbnnsj2GXH20zxnSYGdkMX1h1cDj/
+         B/Xw==
+X-Gm-Message-State: AOJu0YxigevVY1RNu/4gxBPdpay5vSXI49egvk+21wyRSO/avIlGI9iw
+	jT6kByMpKi0w7pqYI1pBRM7fO3j3xk9BKjYq6wTYluU3WaPQMjsQshIC
+X-Gm-Gg: ASbGncuXfhNAU9nGAqGdP8563meTENDKaHP0ybLVthPGnJgZVjmot/Z22uGwaICWmxy
+	Bu4v6+NOpINp9pPo8mgiOsx/egFr2tizbnIaa0QrcYbc6ACsFqcK3fH5Eckg2WXnJg8c21XR//0
+	cS52tcs28Qt+T8r72CPUqt0IQJ77ocPK1xwYFivaOM1bN3MMCKmJpSKKB5EHkYXjxeKPiyizhvb
+	AA8C8egpXZBTW6S7uU4RNhv7hExhtJPQIpqIzosplKnFIBQGlEsFicmxgO2d6YUEje0OjG6Z698
+	AThhSVX/+y1UDfRL+/a+X25mOvUKZtXUcn5HXsvRhTmoVG3ywLmye566uSduxRPWCWR9zpXtsCe
+	YcSR8kp1LKcsO2epEfJajjZE0LwzwQvUEs1MZaeg3HXg31N9PwTqk7KfKMeox1WuLbd0yR82aju
+	DXIwqPGsixrFE3hjbe9Vb2rSt8m7uqXfr+xwNKKETwNvxU7M3F2EXv5XAglSQTSdI7f5k=
+X-Google-Smtp-Source: AGHT+IHJPSP6jbM7wZQLFD7UH7DCxuWGCNk1Y6bwxxYjjMYdwYnT3N59e8lkDwguqze1YiD3++BZyw==
+X-Received: by 2002:a17:902:dac6:b0:290:b158:5db8 with SMTP id d9443c01a7336-290cb65b668mr449750345ad.44.1761405263942;
+        Sat, 25 Oct 2025 08:14:23 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d30030sm25882705ad.65.2025.10.25.08.14.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Oct 2025 08:07:13 -0700 (PDT)
-Message-ID: <4aeceb66-ceea-4171-8806-95bd11a928b3@gmail.com>
-Date: Sat, 25 Oct 2025 20:37:07 +0530
+        Sat, 25 Oct 2025 08:14:23 -0700 (PDT)
+Message-ID: <d3f4c7ee-6351-4c6f-ae93-f423245c4c9e@gmail.com>
+Date: Sun, 26 Oct 2025 00:14:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,77 +81,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/ntfs3: fix KMSAN uninit-value in ni_create_attr_list
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org,
- syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com,
- ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251006223805.139206-1-nirbhay.lkd@gmail.com>
+Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
+ /tools/docs
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+ Jani Nikula <jani.nikula@linux.intel.com>, Akira Yokosawa <akiyks@gmail.com>
+References: <20251024200834.20644-1-corbet@lwn.net>
 Content-Language: en-US
-From: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-In-Reply-To: <20251006223805.139206-1-nirbhay.lkd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20251024200834.20644-1-corbet@lwn.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On Fri, 24 Oct 2025 14:08:21 -0600, Jonathan Corbet wrote:
+> Our documentation-related tools are spread out over various directories;
+> several are buried in the scripts/ dumping ground.  That makes them harder
+> to discover and harder to maintain.
+> 
+> Recent work has started accumulating our documentation-related tools in
+> /tools/docs.  This series completes that task, moving the rest of our
+> various utilities there, hopefully fixing up all of the relevant references
+> in the process.
+> 
+> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
+> 
+> The big elephant lurking in this small room is the home for Python modules;
+> I left them under scripts/lib, but that is an even less appropriate place
+> than it was before.  I would propose either tools/python or lib/python;
+> thoughts on that matter welcome.
+> 
+> Changes in v3:
+>   - Now with more caffeine! Properly based on docs-next.
 
+:-) :-)
 
-On 10/7/25 4:08 AM, Nirbhay Sharma wrote:
-> The call to kmalloc() to allocate the attribute list buffer is given a
-> size of al_aligned(rs). This size can be larger than the data
-> subsequently copied into the buffer, leaving trailing bytes uninitialized.
-> 
-> This can trigger a KMSAN "uninit-value" warning if that memory is
-> later accessed.
-> 
-> Fix this by using kzalloc() instead, which ensures the entire
-> allocated buffer is zero-initialized, preventing the warning.
-> 
-> Reported-by: syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=83c9dd5c0dcf6184fdbf
-> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-> ---
-> The following syzbot test commands were used to verify the fix against
-> both linux-next and a specific mainline commit. Both kernels were
-> configured with CONFIG_KMSAN=y, and no KMSAN warnings were observed
-> with the patch applied.
-> 
-> An attempt to test against the latest mainline tip failed due to an
-> unrelated boot failure in the SCSI subsystem (KMSAN: use-after-free in
-> scsi_get_vpd_buf). Therefore, testing was done on the last known-good
-> mainline commit below.
-> 
-> For mainline commit 9b0d551bcc05 ("Merge tag 'pull-misc' of..."):
-> #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 9b0d551bcc05
-> 
-> For the linux-next branch:
-> #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> 
->   fs/ntfs3/frecord.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-> index 8f9fe1d7a690..4fe8da7fc034 100644
-> --- a/fs/ntfs3/frecord.c
-> +++ b/fs/ntfs3/frecord.c
-> @@ -767,7 +767,7 @@ int ni_create_attr_list(struct ntfs_inode *ni)
->   	 * Skip estimating exact memory requirement.
->   	 * Looks like one record_size is always enough.
->   	 */
-> -	le = kmalloc(al_aligned(rs), GFP_NOFS);
-> +	le = kzalloc(al_aligned(rs), GFP_NOFS);
->   	if (!le)
->   		return -ENOMEM;
->   
-Hi Konstantin,
+WRT the build error from test robot, it looks to me like we need these
+final touches:
 
-I sent this patch about 3 weeks ago and haven't heard back yet. I wanted
-to check if there are any concerns with the patch or if any changes are
-needed. The fix addresses a KMSAN uninit-value bug and has been tested
-successfully on both linux-next and the commit from the syzbot report.
+diff --git a/Documentation/conf.py b/Documentation/conf.py
+index 8e3df5db858e..fbd8e3ae23ea 100644
+--- a/Documentation/conf.py
++++ b/Documentation/conf.py
+@@ -582,7 +582,7 @@ pdf_documents = [
+ # kernel-doc extension configuration for running Sphinx directly (e.g. by Read
+ # the Docs). In a normal build, these are supplied from the Makefile via command
+ # line arguments.
+-kerneldoc_bin = "../tools/docs/kernel-doc.py"
++kerneldoc_bin = "../tools/docs/kernel-doc"
+ kerneldoc_srctree = ".."
+ 
+ def setup(app):
+diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+index 2586b4d4e494..3c815b40026b 100644
+--- a/Documentation/sphinx/kerneldoc.py
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -289,13 +289,8 @@ def setup_kfiles(app):
+ 
+     kerneldoc_bin = app.env.config.kerneldoc_bin
+ 
+-    if kerneldoc_bin and kerneldoc_bin.endswith("kernel-doc.py"):
+-        print("Using Python kernel-doc")
+-        out_style = RestFormat()
+-        kfiles = KernelFiles(out_style=out_style, logger=logger)
+-    else:
+-        print(f"Using {kerneldoc_bin}")
+-
++    out_style = RestFormat()
++    kfiles = KernelFiles(out_style=out_style, logger=logger)
+ 
+ def setup(app):
+     app.add_config_value('kerneldoc_bin', None, 'env')
+diff --git a/Makefile b/Makefile
+index d6ff0af5cca6..33b1db1cc0cf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -460,7 +460,7 @@ HOSTPKG_CONFIG	= pkg-config
+ 
+ # the KERNELDOC macro needs to be exported, as scripts/Makefile.build
+ # has a logic to call it
+-KERNELDOC       = $(srctree)/tools/docs/kernel-doc.py
++KERNELDOC       = $(srctree)/tools/docs/kernel-doc
+ export KERNELDOC
+ 
+ KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \
 
-Please let me know if you need any additional information or testing.
+-----------------------------------------------------------------
 
-Thanks,
-Nirbhay
+The change in Documentation/sphinx/kerneldoc.py is needed because
+
+    kerneldoc_bin == ".../kernel-doc.py"
+
+indicated loading it as python lib into the extension, while
+
+    kerneldoc_bin == ".../kernel-doc"
+
+indicated invoking it as a script.
+
+Now that we don't have kernel-doc.py, loading python lib looks to me
+as a natural choice.
+
+Mauro, what do you think?
+
+Hope this helps,
+Akira
+
 
