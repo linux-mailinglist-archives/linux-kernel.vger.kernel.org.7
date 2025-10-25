@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-869833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB26BC08D32
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:14:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12BAC08D38
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C55F4E703D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4FC1C627BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1A22DC337;
-	Sat, 25 Oct 2025 07:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A571C22CBD7;
+	Sat, 25 Oct 2025 07:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVjKHH28"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dtqs4k+Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA48257846;
-	Sat, 25 Oct 2025 07:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE8A2629C
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 07:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761376471; cv=none; b=kyKj9VDtaIKEl/8XqVqbWTCMbW3OvGNXa98sz3YhdeADmIWJYqimm1se03aeXqpIMOzWbEorU+VMPgncWEJsvPVH1bpMeObenUyZV+VKL5++sKk9x+DoRMAGrSLGJvm4TW+mleVdP8jmr49q1ZNKpvpFHx99cJqzfAKQt6pHnwQ=
+	t=1761376517; cv=none; b=Z8Iscv2jS3pxg4/43WyE51I4ehG/ZAHhn9eG3nC65bflVjy76XUCx8P6PKaamHDhKCZxzRaojBuDHYgSAHbLIcEaX9iFDEPWM25yMJDpijBUKhUgXqQ0NspzpRg8DDQNONcrocLo8M8OmXpi7QzLAFigbVtVlxSeY1oqh6sEGF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761376471; c=relaxed/simple;
-	bh=X6YoMpQgSgZAZKvggDwcha+QMleffEi+3c3WT17AgYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EumFGZCXDSyNDBE01O59DTj/qCoiZV1BlNmkuxUb1X8trzUcXd/VlHI2hoixrw8hfHk6muw+44mypiGMwv+536B6LZU9aH5HDP9ADYtusX41IY5Yy+lx5LMvDWWG5zpdZU+6dexpMSRq8EFI2NneiLRDf/PR9gX+3abgpsJektY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVjKHH28; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761376470; x=1792912470;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X6YoMpQgSgZAZKvggDwcha+QMleffEi+3c3WT17AgYg=;
-  b=ZVjKHH28nry60Ly3SEP/MY/pmfsOWNov4i11UlD4wMhD0Su2D4jz+CUE
-   Lq0/c1tGUHVxpcWNTpBGshWUzLsYu2w3lbdVgNyhhqiEgI9zz6tJTIobj
-   aur7Ak8WliHj7nuagSInHj6Cf7MGWhlbWXlPmuRFvuioHBiLnhhNzfEac
-   yj84Y1dAZA2n0M1qcApadMuuyZPW/d5BAfwXmN8LcSPKCpwkqi/VDoTXY
-   wFHL4UBkr3aM7Tav2ZrBbXEhi+o6xZhPyvCor4rFMDpzPTvhkUZH/8jjG
-   U3DExfByWPRMsQFMmcNIvIDWlgAKd7Pt8Y4PWRkgZaSOEXi+E6b2+mGFy
-   Q==;
-X-CSE-ConnectionGUID: aVJGek2IQsCjmfFvTRtapg==
-X-CSE-MsgGUID: q7MMfyqdRICdq6WaidH72Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63451252"
-X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="63451252"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 00:14:29 -0700
-X-CSE-ConnectionGUID: Au+FxXoGS0mCzXf++6NWnA==
-X-CSE-MsgGUID: lXvVQI1AQvmV+X31d+pIWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,254,1754982000"; 
-   d="scan'208";a="184968492"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 25 Oct 2025 00:14:27 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vCYTp-000FAV-09;
-	Sat, 25 Oct 2025 07:14:25 +0000
-Date: Sat, 25 Oct 2025 15:14:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v3 6/8] docs: move kernel-doc to tools/docs
-Message-ID: <202510251428.mk24iI0r-lkp@intel.com>
-References: <20251024200834.20644-7-corbet@lwn.net>
+	s=arc-20240116; t=1761376517; c=relaxed/simple;
+	bh=xk5wGA7YzQyhSJOIloUEEN8B+/4+jX+OfkebTt5KUMc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OpoYuMxN5bhn6KwUVbI4EF+EDRzzOhkJSPgziaBbzoTHV16F74uOHZp2pKIMz8QUUfm+uuyuNlCHyV0Voa3ndM33tpxW1EUQAYW8fFiiqhOI10XaOGjI1Zn3hY1TWH9tHRRUFBnfwysUo6hUS75j8AIXMfZBuXZbfD+aMmf56fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dtqs4k+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1AD2C4CEF5;
+	Sat, 25 Oct 2025 07:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761376516;
+	bh=xk5wGA7YzQyhSJOIloUEEN8B+/4+jX+OfkebTt5KUMc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=Dtqs4k+YJTg9+aS8n9Jcy4T8TIFIOS/BNLwX7RDyLLVGGN3o2Fwr2wC8fFu06Tqdv
+	 0UDFWO+wkzdNoWt4yTE1fecwekaZCO8cauqXIvH3AtKtprRqOA50XSeO0vwVHNyWHi
+	 2bU8ra7Za+A7xDuWNgIsPgGish/PiydgCr4Muqy5hO0sMlV7gA0iyWq80AiLB60PND
+	 wkNmWqjiTBnCsj/U0O22jiXIMpDpN047NAxdigGmt+mY4A91/4gqnsVvCX32s9+wgk
+	 UHtPf60PecjW6KemZqOT+0fiw3Mb+hRO4dQs+tHEjAiaUDPrXTDif6dGb89NHOTSkZ
+	 H1hqh1/yoLguA==
+Date: Sat, 25 Oct 2025 01:15:12 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Josephine Pfeiffer <hi@josie.lol>
+cc: pjw@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+    aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] riscv: ptdump: use seq_puts() in pt_dump_seq_puts()
+ macro
+In-Reply-To: <20251019140711.63664-1-hi@josie.lol>
+Message-ID: <ab17be2e-202e-e34e-21f8-c865aff4024f@kernel.org>
+References: <2eaeaa69-b2cf-3a3a-0239-2aefcaa836aa@kernel.org> <20251019140711.63664-1-hi@josie.lol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024200834.20644-7-corbet@lwn.net>
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Jonathan,
+On Sun, 19 Oct 2025, Josephine Pfeiffer wrote:
 
-kernel test robot noticed the following build errors:
+> On Sat, 18 Oct 2025, Paul Walmsley wrote:
+> 
+> > Hard to accept that it's a performance issue.  But I think you're right
+> > that generating a newline should be done with seq_puts().
+> 
+> Fair point. I'll drop that from the commit message.
+> 
+> > A better fix would seem to be to just get rid of pt_dump_seq_puts().  It's
+> > only used once in arch/riscv.
+> >
+> > Taking a broader view, both pt_dump_seq_puts() and pt_dump_seq_printf()
+> > look completely pointless.  Is there any argument for keeping them?
+> 
+> Good question. I investigated the git history and current usage:
+> 
+> The macros were introduced in commit ae5d1cf358a5 ("arm64: dump: Make the
+> page table dumping seq_file optional") to support passing NULL for the
+> seq_file parameter. This is used by ptdump_check_wx() for CONFIG_DEBUG_WX,
+> where the kernel walks page tables to check for writable+executable pages
+> without outputting anything to userspace.
+> 
+> All four architectures use this pattern in ptdump_check_wx():
+> 
+>   arch/arm64/mm/ptdump.c:341:         .seq = NULL,
+>   arch/arm/mm/dump.c:456:             .seq = NULL,
+>   arch/riscv/mm/ptdump.c:378:         .seq = NULL,
+>   arch/s390/mm/dump_pagetables.c:197: .seq = NULL,
+> 
+> However, you're right that the utility of these macros varies:
+> 
+> Usage of pt_dump_seq_puts():
+> - arm64: 1 use
+> - ARM: 0 uses
+> - riscv: 1 use
+> - s390: 3 uses
+> 
+> Note: ARM defines pt_dump_seq_puts() but never uses it - that macro
+> could be removed entirely.
+> 
+> Usage of pt_dump_seq_printf():
+> - arm64: 6 uses
+> - ARM: 7 uses
+> - riscv: 6 uses
+> - s390: 5 uses
+> 
+> For RISC-V specifically, I agree the single use of pt_dump_seq_puts()
+> could be replaced with an inline conditional. For pt_dump_seq_printf(),
+> the macro does save some repetition (6 uses vs 1 macro definition).
+> 
+> pt_dump_seq_printf() could also be questioned - removing it means 20+
+> inline conditionals across all architectures. I focused on the minimal
+> fix, but happy to tackle the larger refactor if preferred.
+> 
+> Would you prefer:
+> 
+> Option A) Remove pt_dump_seq_puts() entirely from riscv and replace the
+> single use with:
+>   if (st->seq)
+>     seq_puts(st->seq, "\n");
+> 
+> Option B) Keep the macro for consistency with other architectures, but
+> fix the bug
+> 
+> I'm happy to send a v2 with either approach. If Option A, I could also
+> propose similar cleanups for arm64 (1 use) as a follow-up.
 
-[auto build test ERROR on lwn/docs-next]
-[also build test ERROR on next-20251024]
-[cannot apply to drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master v6.18-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for investigating further.  I just queued your original patch; I 
+think that's the simplest way forward.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Corbet/docs-Move-the-features-tools-to-tools-docs/20251025-041303
-base:   git://git.lwn.net/linux.git docs-next
-patch link:    https://lore.kernel.org/r/20251024200834.20644-7-corbet%40lwn.net
-patch subject: [PATCH v3 6/8] docs: move kernel-doc to tools/docs
-config: parisc-randconfig-r071-20251025 (https://download.01.org/0day-ci/archive/20251025/202510251428.mk24iI0r-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510251428.mk24iI0r-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510251428.mk24iI0r-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> /bin/sh: 1: tools/docs/kernel-doc.py: not found
-   make[3]: *** [scripts/Makefile.build:287: scripts/mod/empty.o] Error 127
-   make[3]: *** Deleting file 'scripts/mod/empty.o'
-   make[3]: Target 'scripts/mod/' not remade because of errors.
-   make[2]: *** [Makefile:1279: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Paul
 
