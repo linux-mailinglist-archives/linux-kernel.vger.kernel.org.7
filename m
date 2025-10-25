@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-870133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BC2C0A02C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:08:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AEDC0A01A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45833AE847
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:07:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D68624E67FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F63299ABF;
-	Sat, 25 Oct 2025 21:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096CA30505E;
+	Sat, 25 Oct 2025 21:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvdy4u8K"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhAxPh9C"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3142D8DB9
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941593009F0
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761426434; cv=none; b=u6S6F7g80MhlJy8tcrUoktPguCHkvkUZUtZqm9fy+Rphz7oDsaQla/Rlhnm0TYMlRd64klFJ+HssfeyAcv2e5xyEmrY2bBqtc1wDtSclqeRiKUe31nIpcoQ6aRg50CQ6x5+c5AwEqQpCu7oBxMXpWbRUakHj2rsBwmeVcFg9O3Q=
+	t=1761426437; cv=none; b=aU+udvG1P1zi9jcblLaYqBYoDa3oNO7g6hDwo8AZK6ZVai8YiRjeopjMWEx0wWvyjm1J4fIiQhMUFxYkL2uMsHuRd4g1znWx6QlCgXVcIkRENpUrLJzINabn08wCcxameBHx3AD30zG8MXxCjGz7CZtmSwwslzbApd4uUO+2EGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761426434; c=relaxed/simple;
-	bh=vKbmQPnxwBg289DjWSmS0b59pBATdSkR5Ho4WAMAT9U=;
+	s=arc-20240116; t=1761426437; c=relaxed/simple;
+	bh=I+Jx6xBgH2zAab9TpH14gkeCgnP49zZ44qWiAaJu1NQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y29wDTpW+wvzYnaZleJCGBgPm+DaXZlXj5j0cAxeLASrruCx4Cocdc2wdeQplV04JzfXhlm15VmZ+23KjTNwDGAXnpP8M6gzCR3aiDcRTFc8X/Z2j2gceC91NCPw8Ro8BKjz/vHu7O+qRxji6kY8AshI0u6ZuG20uW9MX6ZgTYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvdy4u8K; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=PwT3VdxQ35I35x/MsdhCTtoO6wBvDzmyS+Un9bUsVNCRNVIEFElnZM7Hz9JBlAceCzTxtUG6SOPuRAGtKxBAQbFvNNRKxUSOJTT4AiVQDRzWbEyJn9obKm3ealIvVxcxgdbwEXAAsmOgUAO+t/VIVUyocAulBQqiutiAOwZD1FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhAxPh9C; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so3635733e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:07:12 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-591c9934e0cso4823767e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:07:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761426431; x=1762031231; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761426434; x=1762031234; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KOKLEyEqhroRvoLq2wOrgCP0+QeKumxXjJG7yF7kNYg=;
-        b=jvdy4u8KNy0jWtN6XzskatheWMC1wnAf11lb0V4AjfZAfGD5jNHjl+3RYDapacVt8l
-         qV3r5ENo5abtfyHaov/2tyz95MJIbthX1a7rNT41GkuYoXMcZrhAOamSRyuXkVTUvEc/
-         0K41iBv6b9Conc4UBlDdLfs/i2hqf37MPMK+kvu4eP0y1ahxrqKqJs+4vnpokmOALGJ1
-         L4C2s1QmkAoNWndF8WawP1oYNeiygoPUSAoHagg0yDQMuds6M1wcgtu3hXBd2PWSmtmJ
-         WqGSeItSy8WBJpbgBQn5E9TRigbby94wagDHCB6Q/WmnRlOcDwW2hFmkuDICMwGu4Og2
-         wUFg==
+        bh=1z9oJMGhMkRuSJL42xb+stRjYj/XQC2rSAWX+erznoA=;
+        b=OhAxPh9CeQiheGaYloZ6IRUb+catFwutGsmHdNHmoTgvVvS5AtYq8oPBuy5nctpWGD
+         92BmI84RAXZT9wEdDUR+iQZfD2RWS8bwxW+x4sDN4bWgKjy6DCW1UJm3luGo+2pGWbft
+         7alW7MqeOMrv7OVEOqM8gbHL0WMshkqlsGenvb/ouf9Mn1ya75zL7DlZJpLTAXiyjqOu
+         Cxqe6AxmINwXTucB6+dVhMtNjnciD72+zOmrr+u78K4wjiFPEWrMXf/urQlhI4VI959a
+         ATksxX4u4NnTKdI+S4aIxzkaUyTMZyDbOKroKZ+T7S53Z4woYlXIbkT9naKZyeVb40ww
+         vUsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761426431; x=1762031231;
+        d=1e100.net; s=20230601; t=1761426434; x=1762031234;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KOKLEyEqhroRvoLq2wOrgCP0+QeKumxXjJG7yF7kNYg=;
-        b=D+fpL9QVexvUYpTvK06TDsF/0ceGoCTA/vy7uXZnFgz0n9PJYV0qfd2Tx9/HFTgnkr
-         hhdjH7oR945VgFEZXis3JjQYQvSd+rVvqFFWwxEeVB7AdCgJ3GYavrNldE8YMKwfgTrq
-         sfcUFGyEs6aDBw2dNJKFUjogsxMTgE5Cltjtz4kFq+g0RtJls4lR/dT1zbh//63Pf0Ak
-         OJIjlaHjDHbQQGxdS+qa6beVW40Se7o4M7/XYr+sEGSudkFTwH+mfMqtv+l5JOGM2keR
-         XeFRRTJVNtLWtM/4s/4uN0WCvloXcEcOKlyXmd65e900YIllcTLXivoIOkm5SSTLVSrj
-         TSfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+59FtFp5gA11d/0RMGdPMPUsXv8KCpdpN+TqVetDzixShbt9rWwab7aAfX4xcdAXRbrNaDMjUBvDxrsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIC6o0qvmDbj+NPhVp4qDWgDdKxFk1t8JU3Y8gllQZTgjDEjRa
-	25kzbPZaf8j4sPXoUCNxwae01ccCGUIRjlJXf3NkL1KYZVSuKCwMsWGU
-X-Gm-Gg: ASbGncsX5cQ5NlMGFnAqPwHg6JrW7bpm0lvpNSCc9zn2HuP7zR1sfYfqv+rAQj5wJqH
-	ZU2VuIphPWn8Vjhdp7PjzB3bmwTj04bpHHGZ3qHvw187vJkndbF1ai/I5nccXn9Eu7LFRug1lHV
-	0klsXDaBGqGQb623SDKM340bhOQ1eKORUWlh2fd+JfTIZqR9EgjiPcMdJBHDN5k41ci89Wv/Vnq
-	vSW+nAVwLSk4ONtYyhu1AemS/6RELAt7Im2cwfGB9fEEnuTIy9EXwU84T/5ygpIu7X+bdaTyJmM
-	uVKpZHmOAAzpnmWtepwoZ3OJj8uOwg+HFRB29f359wnXCc0hDFMBPRktvczxL97bzkSC0w2lm7K
-	IX/5vWV67iEtE9gQZNtpxdoClQ7Ka052zWNk66rFMl+A+f2TchAXQAsQacHSKPE6AXbQ=
-X-Google-Smtp-Source: AGHT+IF1PY8CjKZBltkRiaMjAPbsy0y2I5sExlfobv+KioSsAE6i9yPd2n/v6imAUn4q9skXUbuNAQ==
-X-Received: by 2002:a05:6512:1581:b0:591:c93c:cf6a with SMTP id 2adb3069b0e04-591d84cf7a9mr11591651e87.4.1761426430511;
-        Sat, 25 Oct 2025 14:07:10 -0700 (PDT)
+        bh=1z9oJMGhMkRuSJL42xb+stRjYj/XQC2rSAWX+erznoA=;
+        b=jQ5g2kTFUV9O+BEEgoUqPXUHlvgSNpr1xLDZHky8DRjsp92nRGu9qf45Cpz2a7nke1
+         ioF4V+GV+WLve7oy4J8BtN/R6LqMzTqEFANnKUuwJ1YrcjjtezojhWPKraSOdY1GeW/O
+         B3IehqZoo3K5bTHUPCVXW7MD37WB7SzBt65ZqbdQ1ne6K7rvy2sQ8GtqZMMNb6clxP3h
+         XrMZmXkuN2NQfkVOQLTEM3io2VVjEq3SNdomMK6SjoLgYi9y/146Gzd3CAKtt+Icn+Jm
+         CDLlTaHhSq9DTXvWbSS4H9XZZFx+kMBQRkoESgIjCuUbyhNBbQAaSPTMw+M/oOT1G3eG
+         algA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpgU/dJ7eJb3ldMemPBrgN4UL5E4CaQEqzBrFFf9onTz0gLI5Soygf/HR5UWaH/5ZxrUC4BAWe63xk7wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWJlO6X1Df/ns/auEzCPr4dkv1MtXgye8T4qTzee2OyVOqFSP0
+	wm0ZEeZW6Zc9a/w3+SQ7rufZPx7tyTUSsOPzhLCM6Ceed7CpneCDTXOQ
+X-Gm-Gg: ASbGncsIusrrCqqjciGrUNEmlGaaYdTJetqK3KFfphNU9yN5hk476YPxK5ts6GF8wLS
+	NHCDsu+zcaUitBwjkImU4wMJ7lDIDisxNI1743IZAzVacDXMKsHoB0E3REI8fQMLgwzzldyXGqV
+	8EL1PZ25cftKEgGeWdJVV7AYTa11HFP1SoWkkm8M29+bgsM0YQbCC3V/pDlfcOOx54e8u6YOVUY
+	IDOqhsN/OVNaTGyNUj4uVs5WBe92lQ9eV3bzck1g24YY7fCyQFdMBPOCt58Ng8mlmfRaledv9kp
+	fCd+cgZ2u5TC0LKT0AAsL8LhnqP/bU/fPGg79bZMm/jcv1tzy09QlxzsbI7G/RoWmE0DOViKX8A
+	tgOJaT6HGu/r9Z4Zdn1ACHzyzSyTJgvD6pDsgeuMGuj0O99yA+AfGWnHTWu4JKgKKHgQ=
+X-Google-Smtp-Source: AGHT+IFUdDmSd26EpJsO+EiP5G0k+Ebq3VVdqt8KbLEbTXtWf6GeHir1tww1xGP4PmC4wQzC5b6wjw==
+X-Received: by 2002:a05:6512:32c5:b0:57e:ad46:b0a0 with SMTP id 2adb3069b0e04-591d84cf5ecmr11675494e87.6.1761426433528;
+        Sat, 25 Oct 2025 14:07:13 -0700 (PDT)
 Received: from curiosity ([5.188.167.4])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-59301f840dfsm953644e87.104.2025.10.25.14.07.08
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-59301f840dfsm953644e87.104.2025.10.25.14.07.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 14:07:08 -0700 (PDT)
+        Sat, 25 Oct 2025 14:07:12 -0700 (PDT)
 From: Sergey Matyukevich <geomatsi@gmail.com>
 To: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
@@ -90,11 +90,10 @@ Cc: Paul Walmsley <pjw@kernel.org>,
 	Conor Dooley <conor.dooley@microchip.com>,
 	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
 	Heiko Stuebner <heiko@sntech.de>,
-	Sergey Matyukevich <geomatsi@gmail.com>,
-	Ilya Mamay <mmamayka01@gmail.com>
-Subject: [PATCH v3 2/9] riscv: ptrace: return ENODATA for inactive vector extension
-Date: Sun, 26 Oct 2025 00:06:35 +0300
-Message-ID: <20251025210655.43099-3-geomatsi@gmail.com>
+	Sergey Matyukevich <geomatsi@gmail.com>
+Subject: [PATCH v3 3/9] selftests: riscv: verify initial vector state with ptrace
+Date: Sun, 26 Oct 2025 00:06:36 +0300
+Message-ID: <20251025210655.43099-4-geomatsi@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251025210655.43099-1-geomatsi@gmail.com>
 References: <20251025210655.43099-1-geomatsi@gmail.com>
@@ -106,57 +105,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ilya Mamay <mmamayka01@gmail.com>
+Add a test case that attaches to a traced process immediately after its
+first executed vector instructions to verify the initial vector context.
 
-Currently, ptrace returns EINVAL when the vector extension is supported
-but not yet activated for the traced process. This error code is not
-always appropriate since the ptrace arguments may be valid.
-
-Debug tools like gdbserver expect ENODATA when the requested register
-set is not active, e.g. see [1]. This expectation seems to be more
-appropriate, so modify the vector ptrace implementation to return:
-- EINVAL when V extension is not supported
-- ENODATA when V extension is supported but not active
-
-[1] https://github.com/bminor/binutils-gdb/blob/637f25e88675fa47e47f9cc5e2cf37384836b8a2/gdbserver/linux-low.cc#L5020
-
-Signed-off-by: Ilya Mamay <mmamayka01@gmail.com>
+Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
 ---
- arch/riscv/kernel/ptrace.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../testing/selftests/riscv/vector/v_ptrace.c | 101 ++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-index 8e86305831ea..906cf1197edc 100644
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -95,9 +95,12 @@ static int riscv_vr_get(struct task_struct *target,
- 	struct __riscv_v_ext_state *vstate = &target->thread.vstate;
- 	struct __riscv_v_regset_state ptrace_vstate;
+diff --git a/tools/testing/selftests/riscv/vector/v_ptrace.c b/tools/testing/selftests/riscv/vector/v_ptrace.c
+index 6a4b5a2ab4a2..9fea29f7b686 100644
+--- a/tools/testing/selftests/riscv/vector/v_ptrace.c
++++ b/tools/testing/selftests/riscv/vector/v_ptrace.c
+@@ -82,4 +82,105 @@ TEST(ptrace_v_not_enabled)
+ 	}
+ }
  
--	if (!riscv_v_vstate_query(task_pt_regs(target)))
-+	if (!has_vector())
- 		return -EINVAL;
- 
-+	if (!riscv_v_vstate_query(task_pt_regs(target)))
-+		return -ENODATA;
++TEST(ptrace_v_early_debug)
++{
++	static volatile unsigned long vstart;
++	static volatile unsigned long vtype;
++	static volatile unsigned long vlenb;
++	static volatile unsigned long vcsr;
++	static volatile unsigned long vl;
++	pid_t pid;
 +
- 	/*
- 	 * Ensure the vector registers have been saved to the memory before
- 	 * copying them to membuf.
-@@ -130,9 +133,12 @@ static int riscv_vr_set(struct task_struct *target,
- 	struct __riscv_v_ext_state *vstate = &target->thread.vstate;
- 	struct __riscv_v_regset_state ptrace_vstate;
- 
--	if (!riscv_v_vstate_query(task_pt_regs(target)))
-+	if (!has_vector())
- 		return -EINVAL;
- 
-+	if (!riscv_v_vstate_query(task_pt_regs(target)))
-+		return -ENODATA;
++	if (!is_vector_supported())
++		SKIP(return, "Vector not supported");
 +
- 	/* Copy rest of the vstate except datap */
- 	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &ptrace_vstate, 0,
- 				 sizeof(struct __riscv_v_regset_state));
++	chld_lock = 1;
++	pid = fork();
++	ASSERT_LE(0, pid)
++		TH_LOG("fork: %m");
++
++	if (pid == 0) {
++		while (chld_lock == 1)
++			asm volatile("" : : "g"(chld_lock) : "memory");
++
++		asm volatile("csrr %[vstart], vstart" : [vstart] "=r"(vstart));
++		asm volatile("csrr %[vl], vl" : [vl] "=r"(vl));
++		asm volatile("csrr %[vtype], vtype" : [vtype] "=r"(vtype));
++		asm volatile("csrr %[vcsr], vcsr" : [vcsr] "=r"(vcsr));
++		asm volatile("csrr %[vlenb], vlenb" : [vlenb] "=r"(vlenb));
++
++		asm volatile ("ebreak" : : : );
++	} else {
++		struct __riscv_v_regset_state *regset_data;
++		unsigned long vstart_csr;
++		unsigned long vlenb_csr;
++		unsigned long vtype_csr;
++		unsigned long vcsr_csr;
++		unsigned long vl_csr;
++		size_t regset_size;
++		struct iovec iov;
++		int status;
++
++		/* attach */
++
++		ASSERT_EQ(0, ptrace(PTRACE_ATTACH, pid, NULL, NULL));
++		ASSERT_EQ(pid, waitpid(pid, &status, 0));
++		ASSERT_TRUE(WIFSTOPPED(status));
++
++		/* unlock */
++
++		ASSERT_EQ(0, ptrace(PTRACE_POKEDATA, pid, &chld_lock, 0));
++
++		/* resume and wait for ebreak */
++
++		ASSERT_EQ(0, ptrace(PTRACE_CONT, pid, NULL, NULL));
++		ASSERT_EQ(pid, waitpid(pid, &status, 0));
++		ASSERT_TRUE(WIFSTOPPED(status));
++
++		/* read tracee vector csr regs using ptrace PEEKDATA */
++
++		errno = 0;
++		vstart_csr = ptrace(PTRACE_PEEKDATA, pid, &vstart, NULL);
++		ASSERT_FALSE((errno != 0) && (vstart_csr == -1));
++
++		errno = 0;
++		vl_csr = ptrace(PTRACE_PEEKDATA, pid, &vl, NULL);
++		ASSERT_FALSE((errno != 0) && (vl_csr == -1));
++
++		errno = 0;
++		vtype_csr = ptrace(PTRACE_PEEKDATA, pid, &vtype, NULL);
++		ASSERT_FALSE((errno != 0) && (vtype_csr == -1));
++
++		errno = 0;
++		vcsr_csr = ptrace(PTRACE_PEEKDATA, pid, &vcsr, NULL);
++		ASSERT_FALSE((errno != 0) && (vcsr_csr == -1));
++
++		errno = 0;
++		vlenb_csr = ptrace(PTRACE_PEEKDATA, pid, &vlenb, NULL);
++		ASSERT_FALSE((errno != 0) && (vlenb_csr == -1));
++
++		/* read tracee csr regs using ptrace GETREGSET */
++
++		regset_size = sizeof(*regset_data) + vlenb_csr * 32;
++		regset_data = calloc(1, regset_size);
++
++		iov.iov_base = regset_data;
++		iov.iov_len = regset_size;
++
++		ASSERT_EQ(0, ptrace(PTRACE_GETREGSET, pid, NT_RISCV_VECTOR, &iov));
++
++		/* compare */
++
++		EXPECT_EQ(vstart_csr, regset_data->vstart);
++		EXPECT_EQ(vtype_csr, regset_data->vtype);
++		EXPECT_EQ(vlenb_csr, regset_data->vlenb);
++		EXPECT_EQ(vcsr_csr, regset_data->vcsr);
++		EXPECT_EQ(vl_csr, regset_data->vl);
++
++		/* cleanup */
++
++		ASSERT_EQ(0, kill(pid, SIGKILL));
++	}
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.51.0
 
