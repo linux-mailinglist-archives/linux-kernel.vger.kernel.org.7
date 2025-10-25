@@ -1,68 +1,95 @@
-Return-Path: <linux-kernel+bounces-869841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E84BC08D75
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:43:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0DDC08D7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3981C870DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBAEA1C87525
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1CB2E62C8;
-	Sat, 25 Oct 2025 07:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07F62D592C;
+	Sat, 25 Oct 2025 07:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s//E3hTF"
-Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAxk4c3I"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83557DDA9;
-	Sat, 25 Oct 2025 07:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC51C2E54A8
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 07:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761378202; cv=none; b=KCFpF3Pl+hcXSfXnI5yJLjVtFT4kICSNRBWBI6G9L+TP2mCSjg/dMTi6v7iNVFlxqFMH4iu2SATmD7Orvocv3NzgV00k7RKFYmzaw+RIDOoG2tN9mtYlPFGceRs8IGy84URjotlwrUcWSGdc+o/+CZPutPhs9CM9BtFk0GSuwm8=
+	t=1761378226; cv=none; b=r2dwwGQhAjLKrZ24fv9uuoK3hfMjdj57rCl5+F+ecokOt6037LuNCSZsj2AyxzWVr+cD3kV11vhKf/NFCw8OuzEltlRzq55JmBH/lfhCD7HHNXub7Y6oSKvnQnaj37WQ3XSVh+A7cc+rPqjDvhiQjgxlWE6EAwUZMZFs6kyxM+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761378202; c=relaxed/simple;
-	bh=ZRMfpwIeiEBaIp3IOE1MWUX3+PUDqBU0KpRlnoaXh+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HlQgJqFo/FA4kM5cpZBkGcfPMKt7nYhyxLQwyMs64FIQRH8XHLIj/ESb4c5cTW4wXxC/d3euWhtNfeY5fcvou7eTZSR3OoeUsjEKUUaH8qnD6L6C0pNqNhdsEjQ2PJnQq653rlFnDOLxjPQKULD7/pCwbG0OAao+HOcSo91lSkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s//E3hTF; arc=none smtp.client-ip=80.12.242.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id CYvev1LQVZqBKCYvevAwog; Sat, 25 Oct 2025 09:43:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1761378192;
-	bh=v+RrkQ9YUdsboOCqsglN3Kfef+K4bp/CGqXgH+DRYlw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=s//E3hTFwLeP74Ah9/JHDaNzhvTaqsKyvUp05oW7HyCeyi849vJh7qNzpkClr862x
-	 DywX8nr/w1Vverky24pJl0bADjNpouD2ngIuQ/iWE/9i2JnWYSpdVQy/h7Wk306pJY
-	 zR5g4nFETG2xlWtVjkaElUukHIZL0inapNlNpgTkSGQDyXNvwYSU97wOAy+LYsxrUn
-	 6lHhmq/2cg3mcDcBg9Ico3ejrYorRb+CrcvKnIWtzPS37bSgAYs0+oDuBS4LJkm1a1
-	 wWboq/WuYHfp/vJDmSPCerzH+e1cC6LKzdEidMNxy2OdVlamt6Zk4FPo6jh6DzhFJu
-	 I7CTiRb0VBCDg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 25 Oct 2025 09:43:12 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] sctp: Constify struct sctp_sched_ops
-Date: Sat, 25 Oct 2025 09:40:59 +0200
-Message-ID: <dce03527eb7b7cc8a3c26d5cdac12bafe3350135.1761377890.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761378226; c=relaxed/simple;
+	bh=xGV1glgkny9Ydr3KIsuzkIRCaEadYHkVr8U90FGPB0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EsNOdEzx02uUaHIRx9PMHdNS1x+HpKaFM/k5hCBLblFoB78zS8MXWnFN2ebnWqdwm2w8RuaySd2OO8ocDNwHVflK2+wcFk0N6UKHIl4ViEao/FINOcOFAF28yzOjPi8IQW5hEorrZuRiF+VNLYxsR/t3rrPcEjPt6Q8f0jpCUl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAxk4c3I; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so2864561b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761378224; x=1761983024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UoVebdxoYndvuY8RSJNbECBWK/xtYB+Fdm+CYMdRAlY=;
+        b=kAxk4c3IJ5pt4rvCb68PUT6PF5AkwMLrNi5deE8ouUWucNgRZ9kIe6Q5D8vwpbs7x8
+         9F493BqWqoBRACt7s0WDoML8L47FNOE3Pr84I4hx0c7bXJTihMOSIgW08Yt+HsxFGiyU
+         oxL5hy72fYpqmAQdw64U1Sg1cm66jz9lvwP7dgetnHnytdrXIgEZ8DlFlXQmyCZOWmp7
+         ddhRoQAhTJOwFDvFt1rQtAAalKWGuxG2sc3Qbz4hkPf2IjeRptXdqCQTse6lTMzGzLqf
+         pG8BKjaYoR8y03hwo8IwY9eb2ygAHN0I30HYvav4IKimNnxE2fbGkMCYTjIKJONU7aUZ
+         tbvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761378224; x=1761983024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UoVebdxoYndvuY8RSJNbECBWK/xtYB+Fdm+CYMdRAlY=;
+        b=ts/aJRvbxmSVt1Iz0WjNvXHPUj8MizG9Sq9M6Zl0f/DCZWhWks3EL+kndgjm/iGpn0
+         8NtM47oKUim4JVHZdTtU6QzvVthmXOdr+TA5E1tdKWRSmW/tX09ay1bbm1jzOXdhd6MC
+         x3s6CPT914Ze2ii+qWyM9Y2OkV7NXpJa2zoAekfEijFkc24sGrnaOdiMcegQVkwR1TDA
+         /UKtJJvXI2/he1ITvZB0VPPW2A4m/bN77o0PzjJlnHVUFY8/cVmbfs7aka6tq10Ns5ZM
+         kAJ5BqrfTWgD9Uri+uQ/Dx9zq1DcauTD0d0qV1fOZao+BErQ8aZM6rOnuXZf6w056Zql
+         2rzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLYOSXW28O8pfDcqIZ/c5TIuz/C4BC2bQIGtHjV95diuEo+CvgmHXtI3KhlOXj1VpSyCLxBaCxjKO32cM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIPOX19CFTSNfgfmDK7NTKAZQsZ8qQkITZGaV47a4QCy8RtRB8
+	qPHwBEbfgwcFqNqiYA1yrqa4dPdnSxU5y16fsWYz9BcmBDcgnicx3TGG
+X-Gm-Gg: ASbGncvsTGVppN9X6zIq/BTnRyxpdnyaHd7V5U9pm1XW5S9rZwOf4jB7hGG2HXvSttP
+	SmnuVMP4S88ZG1hPNrYT4csGHXAiDui5c4SgaQRucJK+fMK6BX1AStSCX/8ALs1Vd79JWVfBAzG
+	rBberCcCq3Md9qMcbHOnTXu8ofS8q04xQc3fnhnRLYJNxvH0MAzfQGXLq+TuaFV52m1iKhzQxRx
+	SaaGnkPaYaI+Lv/gSH3Jv2wco+tXmeTnHhsnZv5q/jfEapBJbAeBaatktk4OGAl9aGgQuZWuIm3
+	QtDhcVxmF9my7oKag3Pkcn4/sTKf1VPDoDqEJkc7kmr8xV1JB/iCh6gdFsR4uOEcg225Tuq7hDP
+	DZGudTYuXfMADFa/jLSF8tDSTMK0T9JLy6UIw/izSoz3MPBA3A3TBwtynfIduWWQWctnPHFszLA
+	==
+X-Google-Smtp-Source: AGHT+IHbg6uahjG69hu0gzcYoFdfbPQ0bsi43jxp57hXpiuURUZytGc4IEe9Wj+GeDsVaOYDgbBBYw==
+X-Received: by 2002:a05:6a00:2b94:b0:746:195b:bf1c with SMTP id d2e1a72fcca58-7a284dcfee5mr5115661b3a.10.1761378224061;
+        Sat, 25 Oct 2025 00:43:44 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.108])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a41404d760sm1395083b3a.39.2025.10.25.00.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Oct 2025 00:43:43 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-omap@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-arm-kernel@lists.infradead.org (moderated list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v2 0/2] PCI: j721e: A couple of cleanups
+Date: Sat, 25 Oct 2025 13:13:30 +0530
+Message-ID: <20251025074336.26743-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,220 +98,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct sctp_sched_ops' is not modified in these drivers.
+Refactor the J721e probe function to use devres helpers for resource
+management. This replaces manual clock handling with
+devm_clk_get_optional_enabled() and assigns the reset GPIO directly
+to the struct members, eliminating unnecessary local variables.
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+These patches have been compile-tested only, as I do not have access
+to the hardware for runtime verification.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   8019	    568	      0	   8587	   218b	net/sctp/stream_sched_fc.o
+v1  : https://lore.kernel.org/all/20251014113234.44418-1-linux.amoon@gmail.com/
+RFC : https://lore.kernel.org/all/20251013101727.129260-1-linux.amoon@gmail.com/
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   8275	    312	      0	   8587	   218b	net/sctp/stream_sched_fc.o
+Changes
+v2  Drop the dev_err_probe return patch.
+    Fix small issue address issue by Dan and Markus.
+v1:
+   Add new patch for dev_err_probe return.
+   dropped unsesary clk_disable_unprepare as its handle by
+   devm_clk_get_optional_enabled.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only with:
-  make net/sctp/
----
- include/net/sctp/stream_sched.h |  4 ++--
- include/net/sctp/structs.h      |  2 +-
- net/sctp/stream.c               |  8 ++++----
- net/sctp/stream_sched.c         | 16 ++++++++--------
- net/sctp/stream_sched_fc.c      |  4 ++--
- net/sctp/stream_sched_prio.c    |  2 +-
- net/sctp/stream_sched_rr.c      |  2 +-
- 7 files changed, 19 insertions(+), 19 deletions(-)
+Thanks
+-Anand
 
-diff --git a/include/net/sctp/stream_sched.h b/include/net/sctp/stream_sched.h
-index 8034bf5febbe..77806ef1cb70 100644
---- a/include/net/sctp/stream_sched.h
-+++ b/include/net/sctp/stream_sched.h
-@@ -52,10 +52,10 @@ void sctp_sched_dequeue_done(struct sctp_outq *q, struct sctp_chunk *ch);
- 
- void sctp_sched_dequeue_common(struct sctp_outq *q, struct sctp_chunk *ch);
- int sctp_sched_init_sid(struct sctp_stream *stream, __u16 sid, gfp_t gfp);
--struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream);
-+const struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream);
- 
- void sctp_sched_ops_register(enum sctp_sched_type sched,
--			     struct sctp_sched_ops *sched_ops);
-+			     const struct sctp_sched_ops *sched_ops);
- void sctp_sched_ops_prio_init(void);
- void sctp_sched_ops_rr_init(void);
- void sctp_sched_ops_fc_init(void);
-diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
-index 2ae390219efd..57cd5746bd0d 100644
---- a/include/net/sctp/structs.h
-+++ b/include/net/sctp/structs.h
-@@ -1076,7 +1076,7 @@ struct sctp_outq {
- 	struct list_head out_chunk_list;
- 
- 	/* Stream scheduler being used */
--	struct sctp_sched_ops *sched;
-+	const struct sctp_sched_ops *sched;
- 
- 	unsigned int out_qlen;	/* Total length of queued data chunks. */
- 
-diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-index f205556c5b24..0615e4426341 100644
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -54,7 +54,7 @@ static void sctp_stream_shrink_out(struct sctp_stream *stream, __u16 outcnt)
- 
- static void sctp_stream_free_ext(struct sctp_stream *stream, __u16 sid)
- {
--	struct sctp_sched_ops *sched;
-+	const struct sctp_sched_ops *sched;
- 
- 	if (!SCTP_SO(stream, sid)->ext)
- 		return;
-@@ -130,7 +130,7 @@ static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
- int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
- 		     gfp_t gfp)
- {
--	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
-+	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
- 	int i, ret = 0;
- 
- 	gfp |= __GFP_NOWARN;
-@@ -182,7 +182,7 @@ int sctp_stream_init_ext(struct sctp_stream *stream, __u16 sid)
- 
- void sctp_stream_free(struct sctp_stream *stream)
- {
--	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
-+	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
- 	int i;
- 
- 	sched->unsched_all(stream);
-@@ -207,7 +207,7 @@ void sctp_stream_clear(struct sctp_stream *stream)
- 
- void sctp_stream_update(struct sctp_stream *stream, struct sctp_stream *new)
- {
--	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
-+	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
- 
- 	sched->unsched_all(stream);
- 	sctp_stream_outq_migrate(stream, new, new->outcnt);
-diff --git a/net/sctp/stream_sched.c b/net/sctp/stream_sched.c
-index 54afbe4fb087..50f8b5240359 100644
---- a/net/sctp/stream_sched.c
-+++ b/net/sctp/stream_sched.c
-@@ -91,7 +91,7 @@ static void sctp_sched_fcfs_unsched_all(struct sctp_stream *stream)
- {
- }
- 
--static struct sctp_sched_ops sctp_sched_fcfs = {
-+static const struct sctp_sched_ops sctp_sched_fcfs = {
- 	.set = sctp_sched_fcfs_set,
- 	.get = sctp_sched_fcfs_get,
- 	.init = sctp_sched_fcfs_init,
-@@ -111,10 +111,10 @@ static void sctp_sched_ops_fcfs_init(void)
- 
- /* API to other parts of the stack */
- 
--static struct sctp_sched_ops *sctp_sched_ops[SCTP_SS_MAX + 1];
-+static const struct sctp_sched_ops *sctp_sched_ops[SCTP_SS_MAX + 1];
- 
- void sctp_sched_ops_register(enum sctp_sched_type sched,
--			     struct sctp_sched_ops *sched_ops)
-+			     const struct sctp_sched_ops *sched_ops)
- {
- 	sctp_sched_ops[sched] = sched_ops;
- }
-@@ -130,7 +130,7 @@ void sctp_sched_ops_init(void)
- 
- static void sctp_sched_free_sched(struct sctp_stream *stream)
- {
--	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
-+	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
- 	struct sctp_stream_out_ext *soute;
- 	int i;
- 
-@@ -148,9 +148,9 @@ static void sctp_sched_free_sched(struct sctp_stream *stream)
- int sctp_sched_set_sched(struct sctp_association *asoc,
- 			 enum sctp_sched_type sched)
- {
--	struct sctp_sched_ops *old = asoc->outqueue.sched;
-+	const struct sctp_sched_ops *old = asoc->outqueue.sched;
- 	struct sctp_datamsg *msg = NULL;
--	struct sctp_sched_ops *n;
-+	const struct sctp_sched_ops *n;
- 	struct sctp_chunk *ch;
- 	int i, ret = 0;
- 
-@@ -263,14 +263,14 @@ void sctp_sched_dequeue_common(struct sctp_outq *q, struct sctp_chunk *ch)
- 
- int sctp_sched_init_sid(struct sctp_stream *stream, __u16 sid, gfp_t gfp)
- {
--	struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
-+	const struct sctp_sched_ops *sched = sctp_sched_ops_from_stream(stream);
- 	struct sctp_stream_out_ext *ext = SCTP_SO(stream, sid)->ext;
- 
- 	INIT_LIST_HEAD(&ext->outq);
- 	return sched->init_sid(stream, sid, gfp);
- }
- 
--struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream)
-+const struct sctp_sched_ops *sctp_sched_ops_from_stream(struct sctp_stream *stream)
- {
- 	struct sctp_association *asoc;
- 
-diff --git a/net/sctp/stream_sched_fc.c b/net/sctp/stream_sched_fc.c
-index 4bd18a497a6d..776c6de46c22 100644
---- a/net/sctp/stream_sched_fc.c
-+++ b/net/sctp/stream_sched_fc.c
-@@ -188,7 +188,7 @@ static void sctp_sched_fc_unsched_all(struct sctp_stream *stream)
- 		list_del_init(&soute->fc_list);
- }
- 
--static struct sctp_sched_ops sctp_sched_fc = {
-+static const struct sctp_sched_ops sctp_sched_fc = {
- 	.set = sctp_sched_fc_set,
- 	.get = sctp_sched_fc_get,
- 	.init = sctp_sched_fc_init,
-@@ -206,7 +206,7 @@ void sctp_sched_ops_fc_init(void)
- 	sctp_sched_ops_register(SCTP_SS_FC, &sctp_sched_fc);
- }
- 
--static struct sctp_sched_ops sctp_sched_wfq = {
-+static const struct sctp_sched_ops sctp_sched_wfq = {
- 	.set = sctp_sched_wfq_set,
- 	.get = sctp_sched_wfq_get,
- 	.init = sctp_sched_fc_init,
-diff --git a/net/sctp/stream_sched_prio.c b/net/sctp/stream_sched_prio.c
-index 4d4d9da331f4..fb6c55e5615d 100644
---- a/net/sctp/stream_sched_prio.c
-+++ b/net/sctp/stream_sched_prio.c
-@@ -300,7 +300,7 @@ static void sctp_sched_prio_unsched_all(struct sctp_stream *stream)
- 			sctp_sched_prio_unsched(soute);
- }
- 
--static struct sctp_sched_ops sctp_sched_prio = {
-+static const struct sctp_sched_ops sctp_sched_prio = {
- 	.set = sctp_sched_prio_set,
- 	.get = sctp_sched_prio_get,
- 	.init = sctp_sched_prio_init,
-diff --git a/net/sctp/stream_sched_rr.c b/net/sctp/stream_sched_rr.c
-index 1f235e7f643a..9157b653f196 100644
---- a/net/sctp/stream_sched_rr.c
-+++ b/net/sctp/stream_sched_rr.c
-@@ -171,7 +171,7 @@ static void sctp_sched_rr_unsched_all(struct sctp_stream *stream)
- 		sctp_sched_rr_unsched(stream, soute);
- }
- 
--static struct sctp_sched_ops sctp_sched_rr = {
-+static const struct sctp_sched_ops sctp_sched_rr = {
- 	.set = sctp_sched_rr_set,
- 	.get = sctp_sched_rr_get,
- 	.init = sctp_sched_rr_init,
+Anand Moon (2):
+  PCI: j721e: Use devm_clk_get_optional_enabled() to get the clock
+  PCI: j721e: Use inline reset GPIO assignment and drop local variable
+
+ drivers/pci/controller/cadence/pci-j721e.c | 34 +++++++---------------
+ 1 file changed, 11 insertions(+), 23 deletions(-)
+
+
+base-commit: 566771afc7a81e343da9939f0bd848d3622e2501
 -- 
-2.51.0
+2.50.1
 
 
