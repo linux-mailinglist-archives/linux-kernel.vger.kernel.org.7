@@ -1,169 +1,117 @@
-Return-Path: <linux-kernel+bounces-869952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB9EC0918F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:15:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC4CC091A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57A3A1B247DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:15:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF95734C94A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6817F2222AC;
-	Sat, 25 Oct 2025 14:15:24 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BA62FB989;
+	Sat, 25 Oct 2025 14:24:20 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845584A1E;
-	Sat, 25 Oct 2025 14:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772C02E7BB5;
+	Sat, 25 Oct 2025 14:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761401724; cv=none; b=YrbKzsxN+z//3qeNVp9MKiWLQsV7kZgWL5duIj9NIRaZRZA+c2I4ESnJOHJORXhpYaPAsmS039zW1tldrXjNfd0nQ+7whMn5oz2NhkgpP/NjRUDcEPJEND9Au616czVwhQMBel/5DG0Eg00yfhVJ9tYr4+B4B9aqQw5XCyCgpZE=
+	t=1761402259; cv=none; b=qGfOfaXAo0pSF2iNa+jFzqoSKxPv0yHy52Dik+Tzqfq6zHz4zGZrDAPgEAcGfW7V0ATLPY3gFbsNgx5YyBZskiU2DMtZXRXqfxC+2+/KTtUBhTy6jOYT6UxkVfMV1luHwrCNmrz/12ee96z2FkBuyAj1RlTb4xNQI6bw2Y2zQUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761401724; c=relaxed/simple;
-	bh=g+nS8UFm68WP0j4E2Vncre+h4U5ts4FJmVq56OPtd+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=es6t6b2S/l1bkzd5aMLl/ujeBzSbF33EMSKN0dtV6xig45mIo+j5YGbkndJ6B5/t08k24qaFkbPgukDuomLLiZ7d7gXrQsSTJeYj0L9n8uGfole2pQ4FN62ZK5LaA2n5JjqEupPClGVVgdrL061I1OJqOROeyAXegtCumPtET+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from dev-dsk-arnaudlc-1a-b66eeb5f.eu-west-1.amazon.com (54-240-197-230.amazon.com [54.240.197.230])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 077A341C67;
-	Sat, 25 Oct 2025 14:15:19 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 54.240.197.230) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=dev-dsk-arnaudlc-1a-b66eeb5f.eu-west-1.amazon.com
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: contact@arnaud-lcm.com,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	andrii@kernel.org
-Cc: ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	song@kernel.org,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev
-Subject: [PATCH bpf-next 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Date: Sat, 25 Oct 2025 14:15:12 +0000
-Message-ID: <20251025141512.18911-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251025141403.14188-1-contact@arnaud-lcm.com>
-References: <20251025141403.14188-1-contact@arnaud-lcm.com>
+	s=arc-20240116; t=1761402259; c=relaxed/simple;
+	bh=+bv92ATdBBjbTgiNEpB2pAzl8R6jUHhFTnx/H0dV3d8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Vnqn31J2LgvZ/2lc+LYYn9Xbnz1od1BrkknN27cZtbNYX3VZ1CtIkjdbuueiL3BJk+38Co62Gcz2QJIe0GkjIsy6ls9HMsOEdv+vQAKGnKedoOOuIxVYK6QRoKebXbrAN2Ajx4+i9fpzQunth628qa1bvxjsyiienaS8uNtAlkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowAA3vWF53fxoIJeYAA--.6133S2;
+	Sat, 25 Oct 2025 22:24:01 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: lee@kernel.org,
+	suzuki.poulose@arm.com,
+	broonie@kernel.org,
+	mdf@kernel.org,
+	wsa@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] drivers: Fix reference leak in altr_sysmgr_regmap_lookup_by_phandle()
+Date: Sat, 25 Oct 2025 22:23:52 +0800
+Message-Id: <20251025142352.25475-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowAA3vWF53fxoIJeYAA--.6133S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw4DXF48KrWUZFyrAr43Wrg_yoW8WF4rpr
+	WUGa4Ykr9rG3W8Ww409w1UAFWakr48C3yS93yjk3sY93Zaq34fJFyjgayjv3s0yFyUGF4U
+	tFsFy348AF4UGw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6ry5MxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUYXdjDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <176140171981.23921.16996471263390109903@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
 
-Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-when copying stack trace data. The issue occurs when the perf trace
- contains more stack entries than the stack map bucket can hold,
- leading to an out-of-bounds write in the bucket's data array.
+altr_sysmgr_regmap_lookup_by_phandle() utilizes
+driver_find_device_by_of_node() which internally calls
+driver_find_device() to locate the matching device.
+driver_find_device() increments the ref count of the found device by
+calling get_device(), but altr_sysmgr_regmap_lookup_by_phandle() fails
+to call put_device() to decrement the reference count before
+returning. This results in a reference count leak of the device, which
+may prevent the device from being properly released and cause a memory
+leak.
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-Fixes: ee2a098851bf ("bpf: Adjust BPF stack helper functions to accommodate skip > 0")
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-Acked-by: Song Liu <song@kernel.org>
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: cfba5de9b99f ("drivers: Introduce device lookup variants by of_node")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
-Changes in v2:
- - Fixed max_depth names across get stack id
+ drivers/mfd/altera-sysmgr.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Changes in v4:
- - Removed unnecessary empty line in __bpf_get_stackid
-
-Changes in v6:
- - Added back trace_len computation in __bpf_get_stackid
-
-Changes in v7:
- - Removed usefull trace->nr assignation in bpf_get_stackid_pe
- - Added restoration of trace->nr for both kernel and user traces
-   in bpf_get_stackid_pe
-
-Changes in v9:
- - Fixed variable declarations in bpf_get_stackid_pe
- - Added the missing truncate of trace_nr in __bpf_getstackid
-
-Changes in v10:
- - Remove not required trace->nr = nr_kernel; in bpf_get_stackid_pe
-
-Link to v9:
-https://lore.kernel.org/all/20250912233558.75076-1-contact@arnaud-lcm.com/
----
----
- kernel/bpf/stackmap.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 9a86b5acac10..c0ee51db8eed 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -251,8 +251,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
- {
- 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
- 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-+	u32 hash, id, trace_nr, trace_len, i, max_depth;
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
--	u32 hash, id, trace_nr, trace_len, i;
- 	bool user = flags & BPF_F_USER_STACK;
- 	u64 *ips;
- 	bool hash_matches;
-@@ -261,7 +261,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 		/* skipping more than usable stack trace */
- 		return -EFAULT;
+diff --git a/drivers/mfd/altera-sysmgr.c b/drivers/mfd/altera-sysmgr.c
+index fb5f988e61f3..c6c763fb7bbe 100644
+--- a/drivers/mfd/altera-sysmgr.c
++++ b/drivers/mfd/altera-sysmgr.c
+@@ -98,6 +98,7 @@ struct regmap *altr_sysmgr_regmap_lookup_by_phandle(struct device_node *np,
+ 	struct device *dev;
+ 	struct altr_sysmgr *sysmgr;
+ 	struct device_node *sysmgr_np;
++	struct regmap *regmap;
  
--	trace_nr = trace->nr - skip;
-+	max_depth = stack_map_calculate_max_depth(map->value_size, stack_map_data_size(map), flags);
-+	trace_nr = min_t(u32, trace->nr - skip, max_depth - skip);
- 	trace_len = trace_nr * sizeof(u64);
- 	ips = trace->ip + skip;
- 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
-@@ -390,15 +391,11 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 		return -EFAULT;
+ 	if (property)
+ 		sysmgr_np = of_parse_phandle(np, property, 0);
+@@ -116,8 +117,10 @@ struct regmap *altr_sysmgr_regmap_lookup_by_phandle(struct device_node *np,
+ 		return ERR_PTR(-EPROBE_DEFER);
  
- 	nr_kernel = count_kernel_ip(trace);
-+	__u64 nr = trace->nr; /* save original */
+ 	sysmgr = dev_get_drvdata(dev);
++	regmap = sysmgr->regmap;
++	put_device(dev);
  
- 	if (kernel) {
--		__u64 nr = trace->nr;
--
- 		trace->nr = nr_kernel;
- 		ret = __bpf_get_stackid(map, trace, flags);
--
--		/* restore nr */
--		trace->nr = nr;
- 	} else { /* user */
- 		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 
-@@ -409,6 +406,10 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
- 		ret = __bpf_get_stackid(map, trace, flags);
- 	}
-+
-+	/* restore nr */
-+	trace->nr = nr;
-+
- 	return ret;
+-	return sysmgr->regmap;
++	return regmap;
  }
+ EXPORT_SYMBOL_GPL(altr_sysmgr_regmap_lookup_by_phandle);
  
 -- 
-2.47.3
+2.17.1
 
 
