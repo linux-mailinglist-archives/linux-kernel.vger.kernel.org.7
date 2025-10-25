@@ -1,204 +1,140 @@
-Return-Path: <linux-kernel+bounces-869904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645ECC08F80
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 13:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F8CC08F89
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 13:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2F484E71E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:38:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 356BB4E060F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 11:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AA32F7AB1;
-	Sat, 25 Oct 2025 11:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E477A2F83BC;
+	Sat, 25 Oct 2025 11:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmRdkG2I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wTxY2ccG"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F342F069E;
-	Sat, 25 Oct 2025 11:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0E1125A9;
+	Sat, 25 Oct 2025 11:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761392288; cv=none; b=b5QqRkqa9VcpF30wbxaPNHbc7PBhE0pce6lO3NoS0bXCD1Z3uDroj2MvTNiGLeZ3DYTJwGxbJQ02FEOfYBj4KLTtxEyqyvUI6CA+ospeZxriPgDApyZOcdm/hUcQ54LDlVVNbT6+hSvohR1a8Sm9X+OVR/0PlyM6EQkDA/l0rlY=
+	t=1761392537; cv=none; b=YvBlXj3defNVn4mxadl/wxFJoDQ9Bp1E/PXiYez9jioJX1QaVxttZ9Bxjmy2rDHt/bawfgPUMXKurGa/FfuI2pjIIL5zWBcPX+gt1nH1I+rfe9I6raIGkuySECvnIZFVgRVtaTI8edHyvujl4TETZVX1ofTt+3+demlDuJxz2FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761392288; c=relaxed/simple;
-	bh=F8IahjDZGjj5AZc+2Q2JyqxSl+DYX48BIZmYr2S7bRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XibBATc1fYPJnAIK6hvDMcUC5F8mrkxH57RaqUPSre8xzpZKe1KYm9tLnxpFFnL2R2WrorHYccU6TMF+DqT/zdmbKzKkhxbRLe1nRo+ZQUk73FLD4n5rvhKsCxjBFL86dYLx0ZUA5UuhmEglJlefuEZGBVLqHGi7PiTrT5mJ2Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmRdkG2I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879ACC4CEF5;
-	Sat, 25 Oct 2025 11:38:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761392287;
-	bh=F8IahjDZGjj5AZc+2Q2JyqxSl+DYX48BIZmYr2S7bRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MmRdkG2I7D00nJ1TBpsXWkgMXskP5mljErDLxGc29wnnyzfe8B1RtVWwV6fBp1roL
-	 PURB2rIqI4sjakcYeyjpqoeNpaGqqDo+Bwgt4SUzgaH15T8A2Js2cxOQORB8/x0DR2
-	 EbgkOyhCwFjJpsY0fiF0ZddzWGsUdw6Bx1CL2S5I+zUm1VWd5CoLMWdjYvxAcKO2OD
-	 kOT93BPQZyxwuZtbuZu1LEsoU97DkoxJHFNyGI3KO/4GXfBQXcaew6/Y8ark0VnzPq
-	 Qw4h1C8YLimfzluRSUdYtPIHZV9HxksW47go5Bk6eIiKPqXqaSk3InaWj5oCSBGdOr
-	 Yajz0py4lS78g==
-Date: Sat, 25 Oct 2025 12:37:58 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christian Hitz <christian@klarinett.li>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Dan Murphy <dmurphy@ti.com>, Christian Hitz <christian.hitz@bbv.ch>,
-	stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: leds-lp50xx: enable chip before any communication
-Message-ID: <20251025113758.GA29337@google.com>
-References: <20251016145623.2863553-1-christian@klarinett.li>
+	s=arc-20240116; t=1761392537; c=relaxed/simple;
+	bh=H3mlJ0jLzxUq3liDuRwZIkiiKefMUKLhNzLfln0Gb/k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nUESeWLnvoeEJcb/MT8akSgtczB6XphHCllEPaa2fD1lBUolgls6mu3565ytFgWQZoiiWnwAuKzaUXH9Z53AbyFt/3dH1U+iLLAZNZcWY7Yrc3KT/rNGXDnwfC8xLTS5KSStQXaYnNp1OMQKAo2ZjjqO0YJDXIX4K8pPAR+O4R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wTxY2ccG; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761392526; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=GhFrCpZd8LutM5rPkha9lgb3n3CgPlLWOr9ztbGOOE0=;
+	b=wTxY2ccGHTgzCjVgc+VvS4RSgNYOq30/u1RomlgSFcb3KlbugLQ8PiK6LQmVqIB77XyX/TMPEQmiDkZcOdhwGs+8oQXur10xBredWdJSHPl1Ae4abRDHQjqdtN+65Og3zj2BWcF22sJCRDBRV9zxvn4/pAzz+VL8acaSt+00i/c=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqwoUfp_1761392522 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 25 Oct 2025 19:42:04 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: rostedt@goodmis.org,
+	lukas@wunner.de,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	helgaas@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	mattc@purestorage.com,
+	Jonathan.Cameron@huawei.com
+Cc: bhelgaas@google.com,
+	tony.luck@intel.com,
+	bp@alien8.de,
+	xueshuai@linux.alibaba.com,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	oleg@redhat.com,
+	naveen@kernel.org,
+	davem@davemloft.net,
+	anil.s.keshavamurthy@intel.com,
+	mark.rutland@arm.com,
+	peterz@infradead.org,
+	tianruidong@linux.alibaba.com
+Subject: [PATCH v13 0/3] PCI: trace: Add a RAS tracepoint to monitor link speed changes
+Date: Sat, 25 Oct 2025 19:41:55 +0800
+Message-Id: <20251025114158.71714-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251016145623.2863553-1-christian@klarinett.li>
 
-On Thu, 16 Oct 2025, Christian Hitz wrote:
+changes since v12:
+- add Reviewed-by tag for PATCH 1 from Steve
+- add Reviewed-by tag for PATCH 1-3 from Ilpo
+- add comments for why use string to define tracepoint per Steve
+- minor doc improvements from Ilpo
+- remove use pci_speed_string to fix PCI dependends which cause build error on sparc64
 
-> From: Christian Hitz <christian.hitz@bbv.ch>
-> 
-> If a GPIO is used to control the chip's enable pin, it needs to be pulled
-> high before any SPI communication is attempted.
-> Split lp50xx_enable_disable() into two distinct functions to enforce
-> correct ordering.
-> Observe correct timing after manipulating the enable GPIO and SPI
-> communication.
+changes since v11:
+- rebase to Linux 6.18-rc1 (no functional changes)
 
-Is this currently broken?  How did it test okay before?
+changes since v10:
+- explicitly include header file per Ilpo
+- add comma on any non-terminator entry  per Ilpo
+- compile trace.o under CONFIG_TRACING per Ilpo
 
-You need to explain more about why you are changing the semantics.
+changes since v9:
+- add a documentation about PCI tracepoints per Bjorn
+- create a dedicated drivers/pci/trace.c that always defines the PCI tracepoints per Steve
+- move tracepoint callite into __pcie_update_link_speed() per Lukas and Bjorn
 
-See below.
+changes since v8:
+- rewrite commit log from Bjorn
+- move pci_hp_event to a common place (include/trace/events/pci.h) per Ilpo
+- rename hotplug event strings per Bjorn and Lukas
+- add PCIe link tracepoint per Bjorn, Lukas, and Ilpo
 
-> Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
-> 
-> Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/leds/leds-lp50xx.c | 51 +++++++++++++++++++++++++++-----------
->  1 file changed, 36 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-> index d19b6a459151..f23e9ae434e4 100644
-> --- a/drivers/leds/leds-lp50xx.c
-> +++ b/drivers/leds/leds-lp50xx.c
-> @@ -52,6 +52,8 @@
->  
->  #define LP50XX_SW_RESET		0xff
->  #define LP50XX_CHIP_EN		BIT(6)
-> +#define LP50XX_START_TIME_US	500
-> +#define LP50XX_RESET_TIME_US	3
->  
->  /* There are 3 LED outputs per bank */
->  #define LP50XX_LEDS_PER_MODULE	3
-> @@ -374,19 +376,42 @@ static int lp50xx_reset(struct lp50xx *priv)
->  	return regmap_write(priv->regmap, priv->chip_info->reset_reg, LP50XX_SW_RESET);
->  }
->  
-> -static int lp50xx_enable_disable(struct lp50xx *priv, int enable_disable)
-> +static int lp50xx_enable(struct lp50xx *priv)
->  {
->  	int ret;
->  
-> -	ret = gpiod_direction_output(priv->enable_gpio, enable_disable);
-> +	if (priv->enable_gpio) {
+changes since v7:
+- replace the TRACE_INCLUDE_PATH to avoid macro conflict per Steven
+- pick up Reviewed-by from Lukas Wunner
 
-Why have you added this check back in?
+Hotplug events are critical indicators for analyzing hardware health, and
+surprise link downs can significantly impact system performance and reliability.
+In addition, PCIe link speed degradation directly impacts system performance and
+often indicates hardware issues such as faulty devices, physical layer problems,
+or configuration errors.
 
-See: 5d2bfb3fb95b ("leds: lp50xx: Get rid of redundant check in lp50xx_enable_disable()")
+This patch set add PCI hotplug and PCIe link tracepoint to help analyze PCI
+hotplug events and PCIe link speed degradation.
 
-> +		ret = gpiod_direction_output(priv->enable_gpio, 1);
+Shuai Xue (3):
+  PCI: trace: Add a generic RAS tracepoint for hotplug event
+  PCI: trace: Add a RAS tracepoint to monitor link speed changes
+  Documentation: tracing: Add documentation about PCI tracepoints
 
-Take the opportunity to define the magic numbers '0' and '1'.
-
-> +		if (ret)
-> +			return ret;
-> +
-> +		udelay(LP50XX_START_TIME_US);
-> +	} else {
-
-In this old code we did both.  Why are we now choosing?
-
-> +		ret = lp50xx_reset(priv);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
-> +}
-> +
-> +static int lp50xx_disable(struct lp50xx *priv)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
->  	if (ret)
->  		return ret;
->  
-> -	if (enable_disable)
-> -		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
-> -	else
-> -		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
-> +	if (priv->enable_gpio) {
-> +		ret = gpiod_direction_output(priv->enable_gpio, 0);
-> +		if (ret)
-> +			return ret;
-> +
-> +		udelay(LP50XX_RESET_TIME_US);
-> +	}
->  
-> +	return 0;
->  }
->  
->  static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
-> @@ -453,6 +478,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
->  		return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
->  				     "Failed to get enable GPIO\n");
->  
-> +	ret = lp50xx_enable(priv);
-> +	if (ret)
-> +		return ret;
-> +
->  	priv->regulator = devm_regulator_get(priv->dev, "vled");
->  	if (IS_ERR(priv->regulator))
->  		priv->regulator = NULL;
-> @@ -550,14 +579,6 @@ static int lp50xx_probe(struct i2c_client *client)
->  		return ret;
->  	}
->  
-> -	ret = lp50xx_reset(led);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = lp50xx_enable_disable(led, 1);
-> -	if (ret)
-> -		return ret;
-> -
->  	return lp50xx_probe_dt(led);
->  }
->  
-> @@ -566,7 +587,7 @@ static void lp50xx_remove(struct i2c_client *client)
->  	struct lp50xx *led = i2c_get_clientdata(client);
->  	int ret;
->  
-> -	ret = lp50xx_enable_disable(led, 0);
-> +	ret = lp50xx_disable(led);
->  	if (ret)
->  		dev_err(led->dev, "Failed to disable chip\n");
->  
-> -- 
-> 2.51.0
-> 
+ Documentation/trace/events-pci.rst |  74 +++++++++++++++++
+ drivers/pci/Makefile               |   3 +
+ drivers/pci/hotplug/pciehp_ctrl.c  |  31 +++++--
+ drivers/pci/hotplug/pciehp_hpc.c   |   3 +-
+ drivers/pci/pci.c                  |   2 +-
+ drivers/pci/pci.h                  |  21 ++++-
+ drivers/pci/pcie/bwctrl.c          |   4 +-
+ drivers/pci/probe.c                |   9 +-
+ drivers/pci/trace.c                |  11 +++
+ include/trace/events/pci.h         | 129 +++++++++++++++++++++++++++++
+ include/uapi/linux/pci.h           |   7 ++
+ 11 files changed, 279 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/trace/events-pci.rst
+ create mode 100644 drivers/pci/trace.c
+ create mode 100644 include/trace/events/pci.h
 
 -- 
-Lee Jones [李琼斯]
+2.39.3
+
 
