@@ -1,94 +1,147 @@
-Return-Path: <linux-kernel+bounces-869921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DE1C09015
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:19:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1F3C09024
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CF094E6E9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E091C20797
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F752F6587;
-	Sat, 25 Oct 2025 12:19:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AFD2F83AC;
+	Sat, 25 Oct 2025 12:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gQuJROW8"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEDC2D6612
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62C81DE2A7
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761394745; cv=none; b=h2uBU2medf4E3nvdDJGp2Gsw/3WYUVRv+oTXJP6z//aBatp1pGpCK80P4/TlzXAa4mDWoRydIsm2pBaVuL/egcYruoqWHndKLHl1pGIRlsprcWblnVTnOrfhhVsNd+kbu+OewcCfME4c3chz4547k8jb8uAUxc0JxlNdV00HsJ8=
+	t=1761395081; cv=none; b=lUa0yCYt2m/tzv0XTAeLaiSG3eBLBhnNNwEiE6ya7T6JMwTQO1eqY4gKwhocxcDvW2GprSGocGqmBA80SmorXoh2QjPYQCv0P/DVJpFhMjQlltluPI9zDbJfqWlcAakpvsXvFy/ETcA7W1UmWDs27IsJq0tCN+rTrZGmXRR9Xc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761394745; c=relaxed/simple;
-	bh=EVlFebBa6swtthoo3XMik13PZNNqhlB1y4EKOTdvLE8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dqjc9XAoEZQiC+j41xpdJPKLVvsf/QvY8R6v9xvSzzPdeuAiIuwLqPL14fs4xlse5pmSIU6ydYE1Z3PtdZIeAwltwVLz1IAyBiH76OJ31AUT97VxJsMLxkErk51u5TlVK1Io0joOSjtkZwxaVyrmVp0QZr1p4nG0gcXzlikfCsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430e1a4a129so39484755ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 05:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761394743; x=1761999543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=detJ0ZqNeJlrOsDrnLZMjTVhzUl3dolYqWJSe5Y+Nq0=;
-        b=CpLEApSHSem25Z5G+xWXjbapSxdV/DgywIUNd4t6a8ylxogGVYMLk9cBWYwM6b2Ia4
-         46Q+PQa1Ceuv8BP+jDoeLM5xRYQyD1Pbpemy0A0QZp/P8cI37zrIOin5kv2EKKJPaKb1
-         zwYPs/juk7u+RJM4pQAibf6LKTUzmGBLGtXuoGUipARbdfSgsYTeRMXqf25sHRusjvvK
-         Phd31k9V0BmVIHp2rrGLAlZ9g+gKmaLqGvM6HOCJcPMvIreDDuVGCR5TTkjwGluksyiG
-         9G0BWSkAc/8m9o3ntKNPCQcf1yoisjdod0xaemuwKMfeUrsTrduYW5NNKUdu55jHm5AG
-         9y8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSVEcbwBPT6z2lqZ5UZI0C8mBjrcCC6D0S+o7ZiDFiihiBnxqWqIWcPADCc1h+YYbcuGaIXkF8Uvnk7To=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAFjezOCzdgZ75OvqY0hvnO77KpdViFtOqdNASXeF/SZ1S4YM8
-	5Gjgpbwy7U8+uTg7RwCG95KwFoJxxHSPKGy86DMgB/LF6DFG+pSgYvGaR/Z3A0De7RHIThGrcQQ
-	rR3R6mp3JISXsb7JzRnriWwaz7Z6hXary0Ss6EH8+8EJWRpB+2qlxxDKKLu0=
-X-Google-Smtp-Source: AGHT+IG0oFMhPB3qHtmC1dmKqk1sRLQIj1ue+TTfk/yvBRc/nkTT76FySFISbYfurl785uiqw6lIns7SAqbjDTDaXjD7xmlkbQv5
+	s=arc-20240116; t=1761395081; c=relaxed/simple;
+	bh=2583AJYDJNkBUrFMwfw3UO/9QBRLf7JT7gJQRZKA7lM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yx5VPInIZo/6CJ3hOLS7x9LwhMA+0aUEztCNHq7K0NakzWPh3LXxuBmHp2WitSQAUwaS2FGxttIG0/j+3blNMQYZkg0EhqjI9u8/G+uNYU5U9rwzLrGJ2HGnlumzTL/3aKfNYDkNQj0wlft8u89bnvO1vlNiwmrRWZzBxRhJkmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gQuJROW8; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761395070; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=QBkOSh4GSFWfzEtwF628TabusJ5AWIKyvv1Mv/HXDb4=;
+	b=gQuJROW8UCjql5Iaejtx75jDRtG0a0HCaX3+13GuIfGkM8ZEiPhMqpdf7VNIakbe7FYAVF27PEvO+avaSbCGxcLtqqDME/O3K8IZ8GYtwo0S8bFOkY12B2JuK+Y9D9ubcNZFiVAlpFjnYRG76fv6VgiEPfwl9RzHigtCaWbu9c0=
+Received: from 30.41.143.132(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Wqwtpv1_1761395069 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 25 Oct 2025 20:24:30 +0800
+Message-ID: <192fd326-2963-4839-8a4b-79abfc4ad3bd@linux.alibaba.com>
+Date: Sat, 25 Oct 2025 20:24:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3f04:b0:430:c49d:750c with SMTP id
- e9e14a558f8ab-431ebed79admr68309205ab.27.1761394742947; Sat, 25 Oct 2025
- 05:19:02 -0700 (PDT)
-Date: Sat, 25 Oct 2025 05:19:02 -0700
-In-Reply-To: <68fc07a0.a70a0220.3bf6c6.01aa.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fcc036.a00a0220.9662e.0017.GAE@google.com>
-Subject: Re: [syzbot] [block?] [trace?] WARNING in __blk_add_trace
-From: syzbot <syzbot+153e64c0aa875d7e4c37@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, dlemoal@kernel.org, johannes.thumshirn@wdc.com, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, martin.petersen@oracle.com, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ocfs2: Invalidate inode if i_mode is zero after block
+ read
+To: Ahmet Eray Karadag <eraykrdg1@gmail.com>, mark@fasheh.com,
+ jlbec@evilplan.org
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
+ syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com,
+ Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+References: <20251022222752.46758-2-eraykrdg1@gmail.com>
+ <20251025111355.32045-2-eraykrdg1@gmail.com>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20251025111355.32045-2-eraykrdg1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
 
-commit f9ee38bbf70fb20584625849a253c8652176fa66
-Author: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Date:   Wed Oct 22 11:41:12 2025 +0000
 
-    blktrace: add block trace commands for zone operations
+On 2025/10/25 19:13, Ahmet Eray Karadag wrote:
+> A panic occurs in ocfs2_unlink due to WARN_ON(inode->i_nlink == 0) when
+> handling a corrupted inode with i_mode=0 and i_nlink=0 in memory.
+> 
+> This "zombie" inode is created because ocfs2_read_locked_inode proceeds
+> even after ocfs2_validate_inode_block successfully validates a block
+> that structurally looks okay (passes checksum, signature etc.) but
+> contains semantically invalid data (specifically i_mode=0). The current
+> validation function doesn't check for i_mode being zero.
+> 
+> This results in an in-memory inode with i_mode=0 being added to the VFS
+> cache, which later triggers the panic during unlink.
+> 
+> Prevent this by adding an explicit check for i_mode == 0 within
+> ocfs2_validate_inode_block. If i_mode is zero, return -EFSCORRUPTED to signal
+> corruption. This causes the caller (ocfs2_read_locked_inode) to invoke
+> make_bad_inode(), correctly preventing the zombie inode from entering
+> the cache.
+> 
+> ---
+> [RFC]:
+> The current fix handles i_mode=0 corruption detected during inode read
+> by returning -EFSCORRUPTED from ocfs2_validate_inode_block, which leads to
+> make_bad_inode() being called, preventing the corrupted inode from
+> entering the cache. This approach avoids immediately forcing the entire
+> filesystem read-only, assuming the corruption might be localized to
+> this inode.
+> 
+> Is this less aggressive error handling strategy appropriate for i_mode=0
+> corruption? Or is this condition considered severe enough that we *should*
+> explicitly call ocfs2_error() within the validation function to guarantee
+> the filesystem is marked read-only immediately upon detection?
+> Feedback and testing on the correct severity assessment and error
+> handling for this type of corruption would be appreciated.
+> 
+> Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
+> Fixes: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
+> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+> ---
+> v2:
+>  - Reviewed how ext4 handling same situation and we come up with this
+>    solution
+> ---
+> v3:
+>  - Implement combined check for nlink=0, mode=0 and non-orphan
+>    as requested.
+> ---
+>  fs/ocfs2/inode.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> index 14bf440ea4df..3feeaa475b62 100644
+> --- a/fs/ocfs2/inode.c
+> +++ b/fs/ocfs2/inode.c
+> @@ -1455,7 +1455,14 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+>  		     (unsigned long long)bh->b_blocknr);
+>  		goto bail;
+>  	}
+> -
+> +	if (!le16_to_cpu(di->i_links_count) && !le16_to_cpu(di->i_mode) &&
+> +		!(le32_to_cpu(di->i_flags) & OCFS2_ORPHANED_FL)) {
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1750c7e2580000
-start commit:   72fb0170ef1f Add linux-next specific files for 20251024
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14d0c7e2580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d0c7e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f02d98016cc9c137
-dashboard link: https://syzkaller.appspot.com/bug?extid=153e64c0aa875d7e4c37
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145ae3cd980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f58be2580000
+	    ^Better to align here.
 
-Reported-by: syzbot+153e64c0aa875d7e4c37@syzkaller.appspotmail.com
-Fixes: f9ee38bbf70f ("blktrace: add block trace commands for zone operations")
+> +			mlog(ML_ERROR, "Invalid dinode #%llu: "
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+One tab is engough.
+
+Joseph
+> +				"Corrupt state (nlink=0, mode=0, !orphan) detected!\n",
+> +			        (unsigned long long)bh->b_blocknr);
+> +			rc = -EFSCORRUPTED;
+> +			goto bail;
+> +	}
+>  	/*
+>  	 * Errors after here are fatal.
+>  	 */
+
 
