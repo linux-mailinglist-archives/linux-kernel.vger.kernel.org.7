@@ -1,86 +1,537 @@
-Return-Path: <linux-kernel+bounces-870098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011BAC09E98
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F1AC09E89
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 20:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB1AA4E0F56
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8BB83BDEE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD30301477;
-	Sat, 25 Oct 2025 18:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9D6303A33;
+	Sat, 25 Oct 2025 18:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tutamail.com header.i=@tutamail.com header.b="qJRtWQFk"
-Received: from mail.w13.tutanota.de (mail.w13.tutanota.de [185.205.69.213])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gaVbIZmg"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93239267B94
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 18:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04A02E764A;
+	Sat, 25 Oct 2025 18:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761418167; cv=none; b=K/ZnMOf8v+NTdjOaplpmd+8NJRCj/bxtdzpwqlNDFZ+gQWn2gQ0RqKKhbUMOtd5ZdlFeAi5EUiMObQB+Qmc5HMoPsOlz/n0+498FXIWTZxq1Lu3qrfv2gKxRhg++XLkvPnlgtbFwYUDN7/4H/EWa7FTLysL2hiMzB8RrTQ1eXMs=
+	t=1761417880; cv=none; b=hN/gH8zqTmvCpKOIlhR7VjPnrZkhmvywfGoeCq756jxqaQBdkieYc698UfgZ+AnQCCH9pVtO/Mi6x2jbFyCuNL2L1dZgBVLKiEZZuW61oSqu/2KawgnoHkRRtzR/O6OY3psvYUhYkbxML+f5NccMOXtokJK2orU+P5ndM6oZ4Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761418167; c=relaxed/simple;
-	bh=XQLq6SqPfOgW1k3I84AdyQa2oOQTXjEzBu/EanGLgns=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=YIm9K9uJlzZe+WO7uTTzblHicch98995RwgziwZVMLVv7M6HGgSiYCc8O1PkYUb5yBKGpuZV76jK2GnOPM/QjYpdPT+CqiEyDlpMMG+bt+/qn/7vivEn/2ay8z6QVsDl/P5j4gfePErxbFMRv0rO7p24s0rerd6EPJxZDUJKi3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tutamail.com; spf=pass smtp.mailfrom=tutamail.com; dkim=pass (2048-bit key) header.d=tutamail.com header.i=@tutamail.com header.b=qJRtWQFk; arc=none smtp.client-ip=185.205.69.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tutamail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tutamail.com
-Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
-	by mail.w13.tutanota.de (Postfix) with ESMTP id E30ECD546EFC
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 20:40:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761417645;
-	s=s1; d=tutamail.com;
-	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:Sender;
-	bh=XQLq6SqPfOgW1k3I84AdyQa2oOQTXjEzBu/EanGLgns=;
-	b=qJRtWQFkPgbgSHI4MwSPlPUwkistwx6ETXobuxOu9HVa43QAWHgB0vAnoLY/e+1x
-	9U9CI7rCbXYRowVFTdtt1W1HUz9D5PRUfOXD6gl9g+nAlsXWjXij3u9HfLgLo5Ql8Dx
-	BttrJMsBFCexjHw6mRyfqPUrsJSvdryLhOoXbspIfn46K/4kO8aF9xcXc7wCMH77iai
-	SnI4tXOrh77lKdRGSPLF5a2/52VbYAYk0lu8ygLgoaZfeRElBkJ+F7QxsEvM1mlgej7
-	CXDGsMxfGNRFFuhrUNmD7JT/NSmr+g8q0wEJmJsVoBp7RzlpRpjk8mw5iDiCwbQVM9g
-	ZDPqgZYktg==
-Date: Sat, 25 Oct 2025 20:40:45 +0200 (GMT+02:00)
-From: craftfever@tutamail.com
-To: Linkinjeon <linkinjeon@kernel.org>
-Cc: Linux Fsdevel <linux-fsdevel@vger.kernel.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>,
-	Iamjoonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Cheol Lee <cheol.lee@lge.com>, Jay Sim <jay.sim@lge.com>,
-	Gunho Lee <gunho.lee@lge.com>
-Message-ID: <OcRf3_Q--F-9@tutamail.com>
-Subject: [FS-DEV][NTFSPLUS][BUGREPORT]NtfsPlus extend mft data allocation
- error.
+	s=arc-20240116; t=1761417880; c=relaxed/simple;
+	bh=NhyFd3x0IcU36FVuiepdWTEQQ9K0ZZsa5YqEuNGaKE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnGF/ERgBuACb4xvWUER1uR+DE6j1aoYlDbvitWKfa6QPvi//cgspJ8x2S+EHco/YG7ZBEUiBpLEd2LMfaPf5zaRN2hNgf+92Xz84x03cCNREh2NdiLzD7iH2nEHwf96ByUkxLHqsHAA7qP42ZNf7Gvi5XnuwFoM8In6rLcedgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=gaVbIZmg; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PRsPHEz/DrVccg8l2DF/sDU8Gr7i5rfnTkQZ55zTx8E=; b=gaVbIZmgKEOK/wzt5X/J3Q7Tj9
+	PgT5SAo7NpImvMEF18QVk4/DMapCq/+hdTnmFd/jRAEzRNyoYMNNtgMHO4Z2frkx2aPrlVmAr4h0Q
+	HSrsVYs1HhU3eBpGX7CB4HHcmTWZuLGUqoDSNLH0t1BJeGo6X5uiSiBigZGueGT292QCUu2GtAGZQ
+	I5FxS1VUqnA+plfpHGbkBCkqNKeYFmehwThavgFaiKcg7LgZJ3Xwwi/AcK5U1JUuYdopn8WmA0uj5
+	uzD5dfwNNB9pR0ttH49cRBFvpQqC74TWfiqrV3tUFrCkU9uCmkBIu/zvo8rw0ybLtFNDPWJwuPRbm
+	9z7TLAZA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56004)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vCjFR-000000000Ha-2LEv;
+	Sat, 25 Oct 2025 19:44:17 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vCjFM-000000003tk-00ZH;
+	Sat, 25 Oct 2025 19:44:12 +0100
+Date: Sat, 25 Oct 2025 19:44:11 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v2 13/13] net: dsa: add driver for MaxLinear
+ GSW1xx switch family
+Message-ID: <aP0ae1rxKnaJUO-_@shell.armlinux.org.uk>
+References: <cover.1761402873.git.daniel@makrotopia.org>
+ <5a586b0441a18a1e0eca9ebe77668d6ebde79d1c.1761402873.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a586b0441a18a1e0eca9ebe77668d6ebde79d1c.1761402873.git.daniel@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+
+On Sat, Oct 25, 2025 at 03:51:23PM +0100, Daniel Golle wrote:
+> +static int gsw1xx_sgmii_pcs_config(struct phylink_pcs *pcs,
+> +				   unsigned int neg_mode,
+> +				   phy_interface_t interface,
+> +				   const unsigned long *advertising,
+> +				   bool permit_pause_to_mac)
+> +{
+> +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
+> +	bool sgmii_mac_mode = dsa_is_user_port(priv->gswip.ds, GSW1XX_SGMII_PORT);
+> +	u16 txaneg, anegctl, val, nco_ctrl;
+> +	int ret;
+> +
+> +	/* Assert and deassert SGMII shell reset */
+> +	ret = regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
+> +			      GSW1XX_RST_REQ_SGMII_SHELL);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = regmap_clear_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
+> +				GSW1XX_RST_REQ_SGMII_SHELL);
+> +	if (ret < 0)
+> +		return ret;
+
+So this is disruptive. Overall, at this point, having added every other
+comment below, this code has me wondering whether you are aware of the
+documentation I have written in phylink.h for pcs_config(). This code
+goes against this paragraph in that documentation:
+
+"
+ * pcs_config() will be called when configuration of the PCS is required
+ * or when the advertisement is possibly updated. It must not unnecessarily
+ * disrupt an established link.
+"
+
+Low quality implementations lead to poor user experiences.
+
+> +
+> +	/* Hardware Bringup FSM Enable  */
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_HWBU_CTRL,
+> +			   GSW1XX_SGMII_PHY_HWBU_CTRL_EN_HWBU_FSM |
+> +			   GSW1XX_SGMII_PHY_HWBU_CTRL_HW_FSM_EN);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Configure SGMII PHY Receiver */
+> +	val = FIELD_PREP(GSW1XX_SGMII_PHY_RX0_CFG2_EQ,
+> +			 GSW1XX_SGMII_PHY_RX0_CFG2_EQ_DEF) |
+> +	      GSW1XX_SGMII_PHY_RX0_CFG2_LOS_EN |
+> +	      GSW1XX_SGMII_PHY_RX0_CFG2_TERM_EN |
+> +	      FIELD_PREP(GSW1XX_SGMII_PHY_RX0_CFG2_FILT_CNT,
+> +			 GSW1XX_SGMII_PHY_RX0_CFG2_FILT_CNT_DEF);
+> +
+> +	// if (!priv->dts.sgmii_rx_invert)
+> +		val |= GSW1XX_SGMII_PHY_RX0_CFG2_INVERT;
+> +
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_RX0_CFG2, val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Reset and Release TBI */
+> +	val = GSW1XX_SGMII_TBI_TBICTL_INITTBI | GSW1XX_SGMII_TBI_TBICTL_ENTBI |
+> +	      GSW1XX_SGMII_TBI_TBICTL_CRSTRR | GSW1XX_SGMII_TBI_TBICTL_CRSOFF;
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TBICTL, val);
+> +	if (ret < 0)
+> +		return ret;
+> +	val &= ~GSW1XX_SGMII_TBI_TBICTL_INITTBI;
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TBICTL, val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Release Tx Data Buffers */
+> +	ret = regmap_set_bits(priv->sgmii, GSW1XX_SGMII_PCS_TXB_CTL,
+> +			      GSW1XX_SGMII_PCS_TXB_CTL_INIT_TX_TXB);
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = regmap_clear_bits(priv->sgmii, GSW1XX_SGMII_PCS_TXB_CTL,
+> +				GSW1XX_SGMII_PCS_TXB_CTL_INIT_TX_TXB);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Release Rx Data Buffers */
+> +	ret = regmap_set_bits(priv->sgmii, GSW1XX_SGMII_PCS_RXB_CTL,
+> +			      GSW1XX_SGMII_PCS_RXB_CTL_INIT_RX_RXB);
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = regmap_clear_bits(priv->sgmii, GSW1XX_SGMII_PCS_RXB_CTL,
+> +				GSW1XX_SGMII_PCS_RXB_CTL_INIT_RX_RXB);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	anegctl = GSW1XX_SGMII_TBI_ANEGCTL_OVRANEG;
+> +	if (neg_mode != PHYLINK_PCS_NEG_INBAND_ENABLED)
+> +		anegctl |= GSW1XX_SGMII_TBI_ANEGCTL_OVRABL;
+
+override aneg and override able? What's this doing?
+
+> +
+> +	switch (phylink_get_link_timer_ns(interface)) {
+> +	case 10000:
+> +		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
+> +				      GSW1XX_SGMII_TBI_ANEGCTL_LT_10US);
+> +		break;
+> +	case 1600000:
+> +		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
+> +				      GSW1XX_SGMII_TBI_ANEGCTL_LT_1_6MS);
+> +		break;
+> +	case 5000000:
+> +		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
+> +				      GSW1XX_SGMII_TBI_ANEGCTL_LT_5MS);
+> +		break;
+> +	case 10000000:
+> +		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
+> +				      GSW1XX_SGMII_TBI_ANEGCTL_LT_10MS);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (interface == PHY_INTERFACE_MODE_SGMII) {
+> +		txaneg = ADVERTISE_SGMII;
+> +		if (sgmii_mac_mode) {
+> +			txaneg |= BIT(14); /* MAC should always send BIT 14 */
+
+Bit 14 is ADVERTISE_LPACK.
+
+I think I'd prefer:
+
+			txaneg = ADVERTISE_SGMII | ADVERTISE_LPACK;
+
+and...
+
+> +			anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
+> +					      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_SGMII_MAC);
+> +		} else {
+> +			txaneg |= LPA_SGMII_1000FULL;
+
+			txaneg = LPA_SGMII | LPA_SGMII_1000FULL;
+
+here.
+
+> +			anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
+> +					      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_SGMII_PHY);
+
+So this seems to be yet another case of reverse SGMII. Andrew, please
+can we get to a conclusion on PHY_INTERFACE_MODE_REVSGMII before we
+end up with a crapshow of drivers doing their own stuff *exactly*
+like we see here?
+
+> +		if (neg_mode & PHYLINK_PCS_NEG_INBAND)
+> +			anegctl |= GSW1XX_SGMII_TBI_ANEGCTL_ANEGEN;
+
+Please add a comment describing what is going on here. What does this
+register bit do...
+
+> +	} else if (interface == PHY_INTERFACE_MODE_1000BASEX ||
+> +		   interface == PHY_INTERFACE_MODE_2500BASEX) {
+> +		txaneg = BIT(5) | BIT(7);
+
+ADVERTISE_1000XFULL | ADVERTISE_1000XPAUSE ?
+
+> +		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
+> +				      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_1000BASEX);
+> +	} else {
+> +		dev_err(priv->gswip.dev, "%s: SGMII wrong interface mode %s\n",
+> +			__func__, phy_modes(interface));
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TXANEGH,
+> +			   FIELD_GET(GENMASK(15, 8), txaneg));
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TXANEGL,
+> +			   FIELD_GET(GENMASK(7, 0), txaneg));
+> +	if (ret < 0)
+> +		return ret;
+> +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_ANEGCTL, anegctl);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* setup SerDes clock speed */
+> +	if (interface == PHY_INTERFACE_MODE_2500BASEX)
+> +		nco_ctrl = GSW1XX_SGMII_2G5 | GSW1XX_SGMII_2G5_NCO2;
+> +	else
+> +		nco_ctrl = GSW1XX_SGMII_1G | GSW1XX_SGMII_1G_NCO1;
+> +
+> +	ret = regmap_update_bits(priv->clk, GSW1XX_CLK_NCO_CTRL,
+> +				 GSW1XX_SGMII_HSP_MASK | GSW1XX_SGMII_SEL,
+> +				 nco_ctrl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = gsw1xx_sgmii_phy_xaui_write(priv, 0x30, 0x80);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static void gsw1xx_sgmii_pcs_link_up(struct phylink_pcs *pcs,
+> +				     unsigned int neg_mode,
+> +				     phy_interface_t interface, int speed,
+> +				     int duplex)
+> +{
+> +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
+> +	u16 lpstat;
+> +
+> +	/* When in-band AN is enabled hardware will set lpstat */
+> +	if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED)
+> +		return;
+> +
+> +	/* Force speed and duplex settings */
+> +	if (interface == PHY_INTERFACE_MODE_SGMII) {
+> +		if (speed == SPEED_10)
+> +			lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
+> +					    GSW1XX_SGMII_TBI_LPSTAT_SPEED_10);
+> +		else if (speed == SPEED_100)
+> +			lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
+> +					    GSW1XX_SGMII_TBI_LPSTAT_SPEED_100);
+> +		else
+> +			lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
+> +					    GSW1XX_SGMII_TBI_LPSTAT_SPEED_1000);
+> +	} else {
+> +		lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
+> +				    GSW1XX_SGMII_TBI_LPSTAT_SPEED_NOSGMII);
+> +	}
+> +
+> +	if (duplex == DUPLEX_FULL)
+> +		lpstat |= GSW1XX_SGMII_TBI_LPSTAT_DUPLEX;
+> +
+> +	regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_LPSTAT, lpstat);
+> +}
+> +
+> +static void gsw1xx_sgmii_pcs_get_state(struct phylink_pcs *pcs,
+> +				       unsigned int neg_mode,
+> +				       struct phylink_link_state *state)
+> +{
+> +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
+> +	int ret;
+> +	u32 val;
+> +
+> +	ret = regmap_read(priv->sgmii, GSW1XX_SGMII_TBI_TBISTAT, &val);
+> +	if (ret < 0)
+> +		return;
+> +
+> +	state->link = !!(val & GSW1XX_SGMII_TBI_TBISTAT_LINK);
+> +	state->an_complete = !!(val & GSW1XX_SGMII_TBI_TBISTAT_AN_COMPLETE);
+> +
+> +	ret = regmap_read(priv->sgmii, GSW1XX_SGMII_TBI_LPSTAT, &val);
+> +	if (ret < 0)
+> +		return;
+> +
+> +	state->duplex = (val & GSW1XX_SGMII_TBI_LPSTAT_DUPLEX) ?
+> +			 DUPLEX_FULL : DUPLEX_HALF;
+> +	if (val & GSW1XX_SGMII_TBI_LPSTAT_PAUSE_RX)
+> +		state->pause |= MLO_PAUSE_RX;
+> +
+> +	if (val & GSW1XX_SGMII_TBI_LPSTAT_PAUSE_TX)
+> +		state->pause |= MLO_PAUSE_TX;
+> +
+> +	switch (FIELD_GET(GSW1XX_SGMII_TBI_LPSTAT_SPEED, val)) {
+> +	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_10:
+> +		state->speed = SPEED_10;
+> +		break;
+> +	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_100:
+> +		state->speed = SPEED_100;
+> +		break;
+> +	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_1000:
+> +		state->speed = SPEED_1000;
+> +		break;
+> +	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_NOSGMII:
+> +		if (state->interface == PHY_INTERFACE_MODE_1000BASEX)
+> +			state->speed = SPEED_1000;
+> +		else if (state->interface == PHY_INTERFACE_MODE_2500BASEX)
+> +			state->speed = SPEED_2500;
+> +		else
+> +			state->speed = SPEED_UNKNOWN;
+> +		break;
+> +	}
+> +}
+> +
+> +static void gsw1xx_sgmii_pcs_an_restart(struct phylink_pcs *pcs)
+> +{
+> +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
+> +
+> +	regmap_set_bits(priv->sgmii, GSW1XX_SGMII_TBI_ANEGCTL,
+> +			GSW1XX_SGMII_TBI_ANEGCTL_RANEG);
+> +}
+> +
+> +static int gsw1xx_sgmii_pcs_enable(struct phylink_pcs *pcs)
+> +{
+> +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
+> +
+> +	/* Deassert SGMII shell reset */
+> +	return regmap_clear_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
+> +				 GSW1XX_RST_REQ_SGMII_SHELL);
+> +}
+> +
+> +static void gsw1xx_sgmii_pcs_disable(struct phylink_pcs *pcs)
+> +{
+> +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
+> +
+> +	/* Assert SGMII shell reset */
+> +	regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
+> +			GSW1XX_RST_REQ_SGMII_SHELL);
+> +}
+> +
+> +static const struct phylink_pcs_ops gsw1xx_sgmii_pcs_ops = {
+> +	.pcs_an_restart = gsw1xx_sgmii_pcs_an_restart,
+> +	.pcs_config = gsw1xx_sgmii_pcs_config,
+> +	.pcs_disable = gsw1xx_sgmii_pcs_disable,
+> +	.pcs_enable = gsw1xx_sgmii_pcs_enable,
+> +	.pcs_get_state = gsw1xx_sgmii_pcs_get_state,
+> +	.pcs_link_up = gsw1xx_sgmii_pcs_link_up,
+
+Please order these in the same order as they appear in the struct, and
+please order your functions above in the same order. This makes it
+easier in future if new methods need to be added.
+
+Also, please add the .pcs_inband_caps method to describe the
+capabilities of the PCS.
+
+It seems to me that this is not just a Cisco SGMII PCS, but also
+supports IEEE 802.3 1000BASE-X. "SGMII" is an ambiguous term. Please
+avoid propagating this ambigutiy to the kernel. I think in this case
+merely "gsw1xx_pcs_xyz" will do.
+
+> +};
+> +
+> +static void gsw1xx_phylink_get_caps(struct dsa_switch *ds, int port,
+> +				    struct phylink_config *config)
+> +{
+> +	struct gswip_priv *priv = ds->priv;
+> +
+> +	config->mac_capabilities = MAC_ASYM_PAUSE | MAC_SYM_PAUSE |
+> +				   MAC_10 | MAC_100 | MAC_1000;
+> +
+> +	switch (port) {
+> +	case 0:
+> +	case 1:
+> +	case 2:
+> +	case 3:
+> +		__set_bit(PHY_INTERFACE_MODE_INTERNAL,
+> +			  config->supported_interfaces);
+> +		break;
+> +	case 4: /* port 4: SGMII */
+> +		__set_bit(PHY_INTERFACE_MODE_SGMII,
+> +			  config->supported_interfaces);
+> +		__set_bit(PHY_INTERFACE_MODE_1000BASEX,
+> +			  config->supported_interfaces);
+> +		if (priv->hw_info->supports_2500m) {
+> +			__set_bit(PHY_INTERFACE_MODE_2500BASEX,
+> +				  config->supported_interfaces);
+> +			config->mac_capabilities |= MAC_2500FD;
+> +		}
+> +		return; /* no support for EEE on SGMII port */
+> +	case 5: /* port 5: RGMII or RMII */
+> +		__set_bit(PHY_INTERFACE_MODE_RMII,
+> +			  config->supported_interfaces);
+> +		phy_interface_set_rgmii(config->supported_interfaces);
+> +		break;
+> +	}
+> +
+> +	config->lpi_capabilities = MAC_100FD | MAC_1000FD;
+> +	config->lpi_timer_default = 20;
+> +	memcpy(config->lpi_interfaces, config->supported_interfaces,
+> +	       sizeof(config->lpi_interfaces));
+> +}
+> +
+> +static struct phylink_pcs *gsw1xx_phylink_mac_select_pcs(struct phylink_config *config,
+> +							 phy_interface_t interface)
+> +{
+> +	struct dsa_port *dp = dsa_phylink_to_port(config);
+> +	struct gswip_priv *gswip_priv = dp->ds->priv;
+> +	struct gsw1xx_priv *gsw1xx_priv = container_of(gswip_priv,
+> +						       struct gsw1xx_priv,
+> +						       gswip);
+
+Reverse christmas tree?
+
+> +static int gsw1xx_probe(struct mdio_device *mdiodev)
+> +{
+> +	struct device *dev = &mdiodev->dev;
+> +	struct gsw1xx_priv *priv;
+> +	u32 version;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->mdio_dev = mdiodev;
+> +	priv->smdio_badr = GSW1XX_SMDIO_BADR_UNKNOWN;
+> +
+> +	priv->gswip.dev = dev;
+> +	priv->gswip.hw_info = of_device_get_match_data(dev);
+> +	if (!priv->gswip.hw_info)
+> +		return -EINVAL;
+> +
+> +	priv->gswip.gswip = gsw1xx_regmap_init(priv, "switch",
+> +					       GSW1XX_SWITCH_BASE, 0xfff);
+> +	if (IS_ERR(priv->gswip.gswip))
+> +		return PTR_ERR(priv->gswip.gswip);
+> +
+> +	priv->gswip.mdio = gsw1xx_regmap_init(priv, "mdio", GSW1XX_MMDIO_BASE,
+> +					      0xff);
+> +	if (IS_ERR(priv->gswip.mdio))
+> +		return PTR_ERR(priv->gswip.mdio);
+> +
+> +	priv->gswip.mii = gsw1xx_regmap_init(priv, "mii", GSW1XX_RGMII_BASE,
+> +					     0xff);
+> +	if (IS_ERR(priv->gswip.mii))
+> +		return PTR_ERR(priv->gswip.mii);
+> +
+> +	priv->sgmii = gsw1xx_regmap_init(priv, "sgmii", GSW1XX_SGMII_BASE,
+> +					 0xfff);
+> +	if (IS_ERR(priv->sgmii))
+> +		return PTR_ERR(priv->sgmii);
+> +
+> +	priv->gpio = gsw1xx_regmap_init(priv, "gpio", GSW1XX_GPIO_BASE, 0xff);
+> +	if (IS_ERR(priv->gpio))
+> +		return PTR_ERR(priv->gpio);
+> +
+> +	priv->clk = gsw1xx_regmap_init(priv, "clk", GSW1XX_CLK_BASE, 0xff);
+> +	if (IS_ERR(priv->clk))
+> +		return PTR_ERR(priv->clk);
+> +
+> +	priv->shell = gsw1xx_regmap_init(priv, "shell", GSW1XX_SHELL_BASE,
+> +					 0xff);
+> +	if (IS_ERR(priv->shell))
+> +		return PTR_ERR(priv->shell);
+> +
+> +	priv->sgmii_pcs.ops = &gsw1xx_sgmii_pcs_ops;
+> +	priv->sgmii_pcs.poll = 1;
+
+This is declared as a C99 'bool'. It takes true/false values in
+preference to 0/1.
 
 
-
-Hi, I' decided to test your new driver, as I found ntfs3 driver buggy and c=
-ausing system crush under huge amount of files writing ti disk ("I'm report=
-ed this bug already on lore.kernel maillists). The thing is ntfsplus demons=
-trated buggy behavior in somewhat similar situation, but without system cru=
-shing or partition corruption. When I try, for example, download many small=
- files through download manager, download can interrupt, and cosole version=
- writes about memory allocation error. Similar error was in ntfs3 driver, b=
-ut in this case with ntfsplus there is no program/system crash, just soft-e=
-rroring and interrupting, but files cannot be wrote in this case. In dmesg =
-this errors follow up with this messages:
-
-[16952.870880] ntfsplus: (device sdc1): ntfs_mft_record_alloc(): Failed to =
-extend mft data allocation.
-[16954.299230] ntfsplus: (device sdc1): ntfs_mft_data_extend_allocation_nol=
-ock(): Not enough space in this mft record to accommodate extended mft data=
- attribute extent.=C2=A0 Cannot handle this yet.
-
-I know. that driver in development now, so I'm reporting this bug in time w=
-hen development is still in process. Thank you
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
