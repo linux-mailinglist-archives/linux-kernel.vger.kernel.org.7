@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-870151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C326C0A0C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 00:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E694C0A0E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 00:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88D234E3211
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30BF188D81E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 22:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4512C3749;
-	Sat, 25 Oct 2025 22:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CBF2D5927;
+	Sat, 25 Oct 2025 22:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UMu5+Pe+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtGPljA5"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073D35D8F0;
-	Sat, 25 Oct 2025 22:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866B82D4B5E
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 22:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761430847; cv=none; b=RcwY2/Dbi4oBpLAus9ZOU+I46WujI93QF8T02hKINwM0kiML2kEDXovoBIYLlWDhDHNRVndyDEXl85rzpeJoDq8xbHQw1MmEahoP8m73PPdcH8fFJGWELozkhMZSBBE/hZ8VXDCfUU7m1od2pT/MBwT6UKeKntBDKe8qYcVMDs4=
+	t=1761432137; cv=none; b=G4bKvRdR5Z3rwD00e1HFzkbm0r5tDSpjQWBz4nEECXFqYAaOBMzc1Twipf4GBxw9Ysnd5n0AbKpD0FQz/skB3hWxi3bEZNIpf9ak43WYv8Zytbqy0cxcCtfLATkh5vqi8JX2VUEm9FJ2ZkWbuAZ4ZZ9qYSCJ1zI1S6TsFLh+p28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761430847; c=relaxed/simple;
-	bh=l/b+Yx7vbASjmTNiGPaVJJU4k9e1IDZy00yud1KlT28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ufa7/IqIJGjkb5sujx/aI31nK0EH1DUIXBk2go5iUeX+bdAhnEO2UyWTbe31hX1ZOKTg5XQxxfOPuwEHaP11r/lW3WeJm/Me7KKJduT2/Q8O0AgMQ9K00RJ6TysJl05FvJtQ+WjeXHKWUk1zuPsSykwNCFA0WmLpVljQom54634=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UMu5+Pe+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=0TVPUd4oM+c9CYCjanSYEZ+zsEi27Rc05MbASsefem8=; b=UMu5+Pe+CPrrRXuDCuLPnJgn7l
-	/srtOglIHsNhSrEFjkvTm77aPg+41WeFPMofdY9PANcgXOwE7Tyvd/pUvZu7h/wDoWILLDAOdEpiw
-	BLuwBqk1Z0XVnCuIIw4JfuoV1sLkATKYdycvauJNmjHW0KrbNYkzROez7ldybtnjBGthnJBIfwwqY
-	eOsZ+yTcDUMesnrFf1rSCZFbk4kcF9L+lynvf9//WT/IU8/7EiM31xu3xSKAFCqusgND6kzhKlSZ0
-	iBUz9zaNeNu8F00P+XWhEqus92USl6KhzjCQkaNosn9qmR476mzM2AKqhhAWOE85dVQHZihCqKJwP
-	rgGJnzig==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCmcs-0000000Booi-0qqT;
-	Sat, 25 Oct 2025 22:20:42 +0000
-Message-ID: <f72d1739-8c3d-4bc8-a26d-8f03b3aecf15@infradead.org>
-Date: Sat, 25 Oct 2025 15:20:41 -0700
+	s=arc-20240116; t=1761432137; c=relaxed/simple;
+	bh=4TeSUUQyzmjI+AmEM5j9GI7xFhPjauS254ia4GjX/nc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PBRfO3pkynqzXspBEFrQH/V+bdMWuP0d+ncwBraI/2CNtJrpHxGK1nqJrUf6S+PJLN736+NiRmlpB0RijyIuWJU+9PSYWD4OvcvlR7UQ+BX4ioRw4rPs/OjEizdZoLpXdKGfDqGxHNGC3bqUsS9akDnp8FJfpGtDJoEvocvgLxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtGPljA5; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-427007b1fe5so2782679f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 15:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761432134; x=1762036934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXq2mQ4sAJmwho7etnf6FLZOIO7gybFmwHnhQ+k6dI8=;
+        b=YtGPljA532L3+1QTNRK8ucyMfbMjuy1X4EvYe7fZ9cn/Sf/vdvXVFXJ3eVPRmRCf79
+         wsD++hhvwDxz8P0UrlzVVZs+0eJSfSZAFPd7uskAKPrZZBlIPrfM63qU12Rc/lbgHQYz
+         ccj4DqwGnTj7lMuUbUoe1lfRT+jYLyvl2NdBABK5h14/NEklRqPk2p8NYEbdvuseB6rd
+         /4SCEemylkOzoyMOO+pQNcaxRrxq3DoZB1XSSpI+zn0XQGkPl9VSegx76bUCtwyrU1Yw
+         Mo9xL+BNqgDkq3lIGGQrVw8b0yUOoxqo4MNFHnH1SQsaGuUaa/jWeTkpY+ivKSyp34jW
+         hiXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761432134; x=1762036934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZXq2mQ4sAJmwho7etnf6FLZOIO7gybFmwHnhQ+k6dI8=;
+        b=isUyezvwkEkN4gcdPCtqjSA2E22hqMdXkUw/pFdrRN1dEwfK6Gt65kJEwTgzO4Tfj0
+         Cnn5ZwC+amFpDUgPgYMRlyw8u5fobIpH5ke/NKopluzoYKlc3DldYF2MtwPr44tyXfsY
+         ao+42K4GnAJLkLpsXce55k9HTJNL5yFqoOZau9Sg0twGol9WiylZIyIjxFryedVHggAv
+         sdLXmrlyUQAJz1Dd8rYsjlWE47eUxrwbntXDmKmb6iItHVpOaHJTpYpkJgphQ6urC8ti
+         k4AuKV5/EOObQUsb+Le0xj/BlgdIqN8qKTqazIqhIM2BTjoOTrbRpb9+xHrG0nkM0buc
+         RvdQ==
+X-Gm-Message-State: AOJu0Yw310LEaV/6g+y6eAv5wBrKjyyOv7AwQjFAjRHsFM4BZWWk/tsh
+	EfR/wwNWSVjamzaxKmb+VmLEGX2MvOsLEnf0IFMXPAXgTyTzSFkKSqg=
+X-Gm-Gg: ASbGncuqIUdaqfiVbbM+bIPyKEWjaHrjvXH8Y/9Y7O+RutrJt9DbijdO6PNhwmvS50d
+	23ip88RMFhtj6g/IAuAU+JctowwNgk5t0z59lz0uvuYNUgyspvNCx1tf1s+BFfKp6JwPRwAHxy5
+	Zcz11IK//9BKzgq1wWBWbpmQJARZftXBx4Kvp+0OjgM5PJzIW08s1jlv79HFbzDkR5cAIJ0t24u
+	/eDleXM6JwuOqbQLVbO8Hqo9H6IauLkmZSINRyY2jGwrBVp06i90wS7JWxkxaBKDy/HsDUJIVes
+	OJNn6jOjWLdqpKYlfFCmH15kOC97QdTWaJ8DEewFIZuIFaLtT9Wc7oL5omPJQqxnru46KKD7a+v
+	oYmrwIMq9OTU9ooDyBKM7GpDAo8qB6Ai4bazXwRgvQo76EdDKjwOi79Vtt0rrwEGRT+xtqC1T2f
+	/oB7Bar/So1e5YnM3EehmR9ACCkbarRm2EgHHWRZ76B2N6tuuzpPM6Jcrlg1w42aVesYQqfxy7L
+	/uorxI=
+X-Google-Smtp-Source: AGHT+IH5qEmI200tfknZM3nb5ovcfV9MSsErH9Gyktcj7nN/CQ7b7jCUO5zA24B4gpxH66kEW1MyEA==
+X-Received: by 2002:a05:6000:41d5:b0:427:666:f9d6 with SMTP id ffacd0b85a97d-4270666fa57mr22253037f8f.39.1761432133628;
+        Sat, 25 Oct 2025 15:42:13 -0700 (PDT)
+Received: from localhost ([2a02:810d:4a94:b300:bad8:a439:d5f7:21de])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952cb55asm5742091f8f.17.2025.10.25.15.42.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Oct 2025 15:42:13 -0700 (PDT)
+From: Florian Fuchs <fuchsfl@gmail.com>
+To: Helge Deller <deller@gmx.de>,
+	linux-fbdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	fuchsfl@gmail.com
+Subject: [PATCH] fbdev/pvr2fb: Fix leftover reference to ONCHIP_NR_DMA_CHANNELS
+Date: Sun, 26 Oct 2025 00:38:50 +0200
+Message-ID: <20251025223850.1056175-1-fuchsfl@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: replace broken links in ramfs-rootfs-initramfs docs
-To: Nadav Tasher <tashernadav@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: corbet@lwn.net
-References: <20251025171625.33197-1-tashernadav@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251025171625.33197-1-tashernadav@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Commit e24cca19babe ("sh: Kill off MAX_DMA_ADDRESS leftovers.") removed
+the define ONCHIP_NR_DMA_CHANNELS. So that the leftover reference needs
+to be replaced by CONFIG_NR_ONCHIP_DMA_CHANNELS to compile successfully
+with CONFIG_PVR2_DMA enabled.
 
+Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
+---
+Note: The fix has been compiled, and tested on real Dreamcast hardware,
+with CONFIG_PVR2_DMA=y.
 
-On 10/25/25 10:16 AM, Nadav Tasher wrote:
-> http://www.uwsg.iu.edu/ doesn't seem to exist anymore.
-> I managed to find backups on archive.org, which helped me find
-> the right links on https://lore.kernel.org/.
-> 
-> http://freecode.com/projects/afio was also down, so I figured
-> it could be replaced with https://linux.die.net/man/1/afio.
-> 
-> Replace broken links to mailing list and aifo tool.
+ drivers/video/fbdev/pvr2fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                                           afio
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index cbdb1caf61bd..0b8d23c12b77 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -192,7 +192,7 @@ static unsigned long pvr2fb_map;
+ 
+ #ifdef CONFIG_PVR2_DMA
+ static unsigned int shdma = PVR2_CASCADE_CHAN;
+-static unsigned int pvr2dma = ONCHIP_NR_DMA_CHANNELS;
++static unsigned int pvr2dma = CONFIG_NR_ONCHIP_DMA_CHANNELS;
+ #endif
+ 
+ static struct fb_videomode pvr2_modedb[] = {
 
-> Signed-off-by: Nadav Tasher <tashernadav@gmail.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-> ---
->  Documentation/filesystems/ramfs-rootfs-initramfs.rst | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.rst b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-> index fa4f81099cb4..a9d271e171c3 100644
-> --- a/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-> +++ b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-> @@ -290,11 +290,11 @@ Why cpio rather than tar?
->  
->  This decision was made back in December, 2001.  The discussion started here:
->  
-> -  http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1538.html
-> +- https://lore.kernel.org/lkml/a03cke$640$1@cesium.transmeta.com/
->  
->  And spawned a second thread (specifically on tar vs cpio), starting here:
->  
-> -  http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1587.html
-> +- https://lore.kernel.org/lkml/3C25A06D.7030408@zytor.com/
->  
->  The quick and dirty summary version (which is no substitute for reading
->  the above threads) is:
-> @@ -310,7 +310,7 @@ the above threads) is:
->     either way about the archive format, and there are alternative tools,
->     such as:
->  
-> -     http://freecode.com/projects/afio
-> +      https://linux.die.net/man/1/afio
->  
->  2) The cpio archive format chosen by the kernel is simpler and cleaner (and
->     thus easier to create and parse) than any of the (literally dozens of)
-> @@ -331,12 +331,12 @@ the above threads) is:
->  5) Al Viro made the decision (quote: "tar is ugly as hell and not going to be
->     supported on the kernel side"):
->  
-> -      http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1540.html
-> +    - https://lore.kernel.org/lkml/Pine.GSO.4.21.0112222109050.21702-100000@weyl.math.psu.edu/
->  
->     explained his reasoning:
->  
-> -     - http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1550.html
-> -     - http://www.uwsg.iu.edu/hypermail/linux/kernel/0112.2/1638.html
-> +    - https://lore.kernel.org/lkml/Pine.GSO.4.21.0112222240530.21702-100000@weyl.math.psu.edu/
-> +    - https://lore.kernel.org/lkml/Pine.GSO.4.21.0112230849550.23300-100000@weyl.math.psu.edu/
->  
->     and, most importantly, designed and implemented the initramfs code.
->  
-
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-~Randy
+2.43.0
+
 
