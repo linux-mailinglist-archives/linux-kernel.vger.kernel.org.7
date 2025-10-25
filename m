@@ -1,171 +1,170 @@
-Return-Path: <linux-kernel+bounces-870129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7569C0A002
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:00:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84466C0A00E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1603B50F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC793B20F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E0C35B124;
-	Sat, 25 Oct 2025 21:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8518B28B7DA;
+	Sat, 25 Oct 2025 21:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BHm9pFBT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="YEASFOKR"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2072EED8
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEE41917CD;
+	Sat, 25 Oct 2025 21:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761426040; cv=none; b=ga3AOYgwVujZuR0ngKZs4iYRC/uXK8YeMT9xSNge9ZEsfM+cGff64aZYQXyN2YHtZq57KOJ/ErGIoltRBIFK79rl15C/8xnx21zskRF/GrMdhCRYhiir7rm9+EodovKI65I2u0X2ytBT2l4wTUBEeUXJTL4wew+CIH0ts3aoI/Y=
+	t=1761426213; cv=none; b=fqW5vQ17tu3p0suUAdtv+N43iJ/JNrQOReIgIC71W6ot/nWbgk4ezBwZrHbEM9Xv0QWSdCBLuRE8pdEpuVQOvkw451buWJSBIJkEwIHMzZNcYROcggTtOCfrvmrOgWZhVl66ywtcO2LD5W3OHQriGA2IYKuYOB3ZOLO6ZO0UfnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761426040; c=relaxed/simple;
-	bh=/7uw6/+uVAyvakbvVGn43byDqcefCUuZ/GdPEYMjtts=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WUuOWnxXmGR3dsGqs+cTvDD48kvkp4d0HOo4+FiEjYkXaSlPIXHlyXk5QP4uIv9qou6YoNodM5pdGtqImyKuhqFADb5Mnh6Ca53X59ia9CJlzJFmOmIMBs698RcMyv2piA6RNdIZdylJe/Opr6rundz/RXO8oSesWs6LQsBOCU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BHm9pFBT; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761426039; x=1792962039;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/7uw6/+uVAyvakbvVGn43byDqcefCUuZ/GdPEYMjtts=;
-  b=BHm9pFBTD3qRAa8P2ZCY2zVTNgPYFSSNjcOGo+MQXWtA9TDlkzRZkOBm
-   raUDGUmWPRSLvNaBDHmRLlwqiD9A8gh5zubiu6N3E66u/aebPM7eDeQqt
-   8Zq9dSb2eqVS/WkoAjdTrJ4z7HhsVHOZmGcw3lzLEXzTnF6wCYpWGr9WT
-   Tt3vyusxp1QvBZ2GN88GZb5yq8lUygv2wjeMlkqyOPwFxFvSRtx54LlpP
-   cCWcrJv/UFpVKniYgiKIXqAXYtk+xnnTHaJwTxKPQXx8wkFK7mlw6ZVLQ
-   LU16H2AfHhe2Hl027280YdenmUzHduk754zKNyzjjIjN5gESLyACL3qN2
-   Q==;
-X-CSE-ConnectionGUID: pWSgsS2uQUWW0EsMpIVZgA==
-X-CSE-MsgGUID: QL/2aWfuRTewKsjquTN/LA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74682714"
-X-IronPort-AV: E=Sophos;i="6.19,255,1754982000"; 
-   d="scan'208";a="74682714"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 14:00:38 -0700
-X-CSE-ConnectionGUID: tdu7SxhoTWi+wvZ8cjEHkw==
-X-CSE-MsgGUID: ++bFjUueTvmdHwKv9D/GJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,255,1754982000"; 
-   d="scan'208";a="185463770"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 25 Oct 2025 14:00:37 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vClNH-000Fav-2z;
-	Sat, 25 Oct 2025 21:00:32 +0000
-Date: Sun, 26 Oct 2025 04:59:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4e3:
- cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-Message-ID: <202510260435.79ThTwFt-lkp@intel.com>
+	s=arc-20240116; t=1761426213; c=relaxed/simple;
+	bh=cURQFyyz2SwSVaPXae8hjd6zYbI/epcdwKmNP0WhfjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BNeLcyzmUMr2HVo6m4Qm7oPwlNk2OALLD/ezMhLDe0/0XGUwbAEFKYfQB7iKHBVL4/LHakydlMW3xGXXlMd8/mtk1aZ1aJ0OP6lQiQZak7G4qhll8S/aA0d62iJLqW+E7x2/q4BvwAO1JKxrrIRyRH453gJWmdlL3gppuPJj7tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=YEASFOKR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=UPmSx/rC/bLVWOw7yLLlRYHnQQ8/QE5D94ipJ1ensxQ=; b=YEASFOKREVuSgjHgpy0Y2dRBS3
+	s82bVK4joK0JDK3UxqW/p4Y+wOnrE1Z/gZ1xovq/jEE/iWp2erD6477NYCnkHkJhntAkS7Xt/sWMk
+	eqxQiHLMv5qgMYH3W+UKGZo9GMivQN0gpIxjon1UaOBTeHvm0QeoPdAbfILHltsECucUdEzwREHmg
+	j8wL8BOvlHlTE8ksd5mOq1Wej4mYpIPWPCaeVhwgjWdwSx2nGgrJKXr82Txtqu955ouA+BaqOcdcf
+	ZsCwQgQqzoBHmD2rGpH8r/7GmVwM6Q+SssAZ6LxkeYciepqmsKAMgMjs0a0EiDppethbe3IHQ/XSC
+	MKArByuA==;
+Received: from i53875aba.versanet.de ([83.135.90.186] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vClPs-0005MZ-EF; Sat, 25 Oct 2025 23:03:12 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Coia Prant <coiaprant@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Coia Prant <coiaprant@gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the X3568 v4
+Date: Sat, 25 Oct 2025 23:03:11 +0200
+Message-ID: <2940731.88bMQJbFj6@phil>
+In-Reply-To: <20251025203711.3859240-1-coiaprant@gmail.com>
+References: <20251025203711.3859240-1-coiaprant@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   72761a7e31225971d0b29d9195e0ffa986b77867
-commit: 29c578c848402a34e8c8e115bf66cb6008b77062 objtool, regulator: rk808: Remove potential undefined behavior in rk806_set_mode_dcdc()
-date:   7 months ago
-config: x86_64-randconfig-004-20251026 (https://download.01.org/0day-ci/archive/20251026/202510260435.79ThTwFt-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251026/202510260435.79ThTwFt-lkp@intel.com/reproduce)
+Hi,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510260435.79ThTwFt-lkp@intel.com/
+general comments, I haven't disected the devicetrees yet.
 
-All warnings (new ones prefixed by >>):
 
-   vmlinux.o: warning: objtool: cfi_probe_chip+0x7d: cfi_qry_mode_on() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_probe_chip+0x7f: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_probe_chip+0x81: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4e3: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4eb: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_staa_erase_varsize+0x4f5: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_staa_read+0x305: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_staa_read+0x30d: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_staa_read+0x312: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_staa_write_buffers+0x3b7: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_staa_write_buffers+0x3bf: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_staa_write_buffers+0x3c4: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_staa_lock+0x2b2: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_staa_lock+0x2b7: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_staa_lock+0x2bb: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_staa_unlock+0x1a4: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_staa_unlock+0x1a9: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_staa_unlock+0x1ae: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_staa_resume+0x12d: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_staa_resume+0x130: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_staa_resume+0x133: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: cfi_intelext_read+0x35e: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_read+0x361: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_read+0x364: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_intelext_write_words+0x296: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_write_words+0x299: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_write_words+0x29e: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: cfi_intelext_suspend+0x480: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_suspend+0x483: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_suspend+0x48d: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: cfi_intelext_resume+0x173: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_resume+0x176: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_resume+0x180: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: fixup_LH28F640BF+0x110: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: fixup_LH28F640BF+0x113: unreachable instruction
-   vmlinux.o: warning: objtool: fixup_LH28F640BF+0x116: skipping duplicate warning(s)
->> vmlinux.o: warning: objtool: cfi_intelext_writev+0x4aa: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_writev+0x4ad: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_writev+0x4b2: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: inval_cache_and_wait_for_operation+0x6a: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: inval_cache_and_wait_for_operation+0x6f: unreachable instruction
-   vmlinux.o: warning: objtool: inval_cache_and_wait_for_operation+0x73: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: put_chip+0x1d5: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: put_chip+0x1d8: unreachable instruction
-   vmlinux.o: warning: objtool: put_chip+0x1dc: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: chip_ready+0x8d: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: chip_ready+0x92: unreachable instruction
-   vmlinux.o: warning: objtool: chip_ready+0x97: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: fwh_xxlock_oneblock+0x168: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: fwh_xxlock_oneblock+0x16b: unreachable instruction
-   vmlinux.o: warning: objtool: fwh_xxlock_oneblock+0x16e: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: cfi_intelext_point+0x538: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_point+0x53b: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_point+0x53e: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: cfi_intelext_reset+0x141: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: cfi_intelext_reset+0x144: unreachable instruction
-   vmlinux.o: warning: objtool: cfi_intelext_reset+0x14e: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: do_erase_oneblock+0x1cd: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: do_erase_oneblock+0x1d0: unreachable instruction
-   vmlinux.o: warning: objtool: do_erase_oneblock+0x1d3: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: do_xxlock_oneblock+0x13d: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: do_xxlock_oneblock+0x140: unreachable instruction
-   vmlinux.o: warning: objtool: do_xxlock_oneblock+0x143: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: do_getlockstatus_oneblock+0xd8: cfi_build_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: do_getlockstatus_oneblock+0xdd: unreachable instruction
-   vmlinux.o: warning: objtool: do_getlockstatus_oneblock+0xdf: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: jedec_probe_chip+0x304: cfi_send_gen_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: jedec_probe_chip+0x308: unreachable instruction
-   vmlinux.o: warning: objtool: jedec_probe_chip+0x310: skipping duplicate warning(s)
-   vmlinux.o: warning: objtool: jedec_reset+0x88: cfi_send_gen_cmd() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-   vmlinux.o: warning: objtool: jedec_reset+0x8c: unreachable instruction
-   vmlinux.o: warning: objtool: jedec_reset+0x90: skipping duplicate warning(s)
+Am Samstag, 25. Oktober 2025, 22:37:11 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Coia Prant:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please also provide some description what type of board this is,
+not just a list of specs
+
+> Specification:
+> - SoC: RockChip RK3568 ARM64 (4 cores)
+> - eMMC: 16-128 GB
+> - RAM: 2-8 GB
+> - Power: DC 12V 2A
+> - Ethernet: 2x YT8521SC RGMII (10/100/1000 Mbps)
+> - Wireless radio: 802.11b/g/n/ac/ax dual-band
+> - LED:
+>   Power: AlwaysOn
+>   User: GPIO
+> - Button:
+>   VOL+: SARADC/0 <35k =C2=B5V>
+>   VOL-: SARADC/0 <450k =C2=B5V>
+>   Power/Reset: PMIC RK809
+> - CAN
+>   CAN/1: 4-pin (PH 2.0)
+> - PWM
+>   PWM/4: Backlight DSI/0 DSI/1
+>   PWM/7: IR Receiver [may not install]
+> - UART:
+>   UART/2: Debug TTL - 1500000 8N1 (1.25mm)
+>   UART/3: TTL (PH 2.0)
+>   UART/4: TTL (PH 2.0)
+>   UART/8: AP6275S Bluetooth
+>   UART/9: TTL (PH 2.0)
+> - I2C:
+>   I2C/0: PMIC RK809
+>   I2C/1: Touchscreen DSI/0 DSI/1
+>   I2C/4: Camera
+>   I2C/5: RTC@51 PCF8563
+> - I2S:
+>   I2S/0: miniHDMI Sound
+>   I2S/1: RK809 Audio Codec
+>   I2S/3: AP6275S Bluetooth Sound
+> - SDMMC:
+>   SDMMC/0: microSD (TF) slot
+>   SDMMC/2: AP6275S SDIO WiFi card
+> - Camera: 1x CSI
+> - Video: miniHDMI / DSI0 (MIPI/LVDS) / DSI1 (MIPI/EDP)
+> - Audio: miniHDMI / MIC on-board / Speaker / SPDIF / 3.5mm Headphones / A=
+P6275S Bluetooth
+> - USB:
+>   USB 2.0 HOST x2
+>   USB 2.0 HOST x3 (4-pin)
+>   USB 2.0 OTG x1 (shared with USB 3.0 OTG/HOST) [slot may not install]
+>   USB 3.0 HOST x1
+>   USB 3.0 OTG/HOST x1
+> - SATA: 1x SATA 3.0 with Power/4-pin [slot may not install]
+> - PCIe: 1x PCIe 3.0 x2 (x4 connecter) [clock/slot may not install]
+>=20
+> Link:
+> - https://appletsapi.52solution.com/media/X3568V4%E5%BC%80%E5%8F%91%E6%9D=
+%BF%E7%A1%AC%E4%BB%B6%E6%89%8B%E5%86%8C.pdf
+> - https://blog.gov.cooking/archives/research-ninetripod-x3568-v4-and-flas=
+h.html
+
+2nd link ends in a 404 error, page not found
+
+
+> Signed-off-by: Coia Prant <coiaprant@gmail.com>
+> Tested-by: Coia Prant <coiaprant@gmail.com>
+
+
+When you submit a patch, we expect you to have tested it, so tere
+is no need to have a separate tested-by line :-) .
+
+
+> ---
+>  arch/arm64/boot/dts/rockchip/Makefile         |  11 +
+>  .../rockchip/rk3568-x3568-camera-demo.dtso    |  82 ++
+>  .../boot/dts/rockchip/rk3568-x3568-v4.dts     | 884 ++++++++++++++++++
+>  .../dts/rockchip/rk3568-x3568-video-demo.dtso | 141 +++
+
+please name your boards including the ninetree name, because x3568 is way
+too generic, so
+rk3568-ninetree-x3568 .....
+
+Additionally, from that PDF above, it seems this is a system-on-module?
+X3568CV2 + baseboard? If so, please split this into a dtsi + dts.
+See all the other system-on-modules for reference.
+
+Additionally, you'll need to have a 2nd patch to add the board to
+Documentation/devicetree/bindings/arm/rockchip.yaml
+
+And also possily a 3rd patch to add ninetree to
+Documentation/devicetree/bindings/vendor-prefixes.yaml
+
+
+Heiko
+
+
 
