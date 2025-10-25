@@ -1,103 +1,83 @@
-Return-Path: <linux-kernel+bounces-870140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E658C0A032
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:09:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99F1C0A04D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68E9B4E8505
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78EA3B8725
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E37930BB94;
-	Sat, 25 Oct 2025 21:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8061A9FAC;
+	Sat, 25 Oct 2025 21:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Do8VN5io"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6Fkef1E"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0910D30B511
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F432AC17
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761426453; cv=none; b=Mokka5Y91jjF0yN0uF/BOrVMlbu0sCeNCb01mV6CeIQvfX4bZIsjvKCews7nnC/6NnM+HZ3dcJITCn6p9HP4lAsRnxaniopHrIL6BogiUoZ2O2pHH0hCluO28EPMiH26046P+ZtfSOpelQgiMRmCyPboAxoMU3YhpW+pqUoLOM0=
+	t=1761426929; cv=none; b=vE/Q/Pam0C1xi2E8tjNOZPcuJhIy4iWTUsuUqP5DFOqIWZTOVCDDsYccJacvN1pWT9Zpwz3J6xiiY8P5Y+aXmQa9pVyZCUy+J8HyPJGVEfO5hQo6P6fH0gmAoW/yl990WZFJKZy8gTo21p1jTVeS0cbCggWvw0L2UfGevGBPV5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761426453; c=relaxed/simple;
-	bh=2E3Fo1znPlzaabZKXzSWEg4Z8coek9HOIOj+q4wvYWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pOJ5PsvPZj6UqJpuoBXk0h2yFVPB/rZL/avbnhmJNs6u9uBerf2+WmgEMRKrjlC4kGSfyKRKG1vY4HGSmwClcdpywIOBFe1qTtlHk9zvTuDXQAYs7NWAkVAFqAUiOmUHCi+4d16MkbOGg+WoyddKWyHYAz09Xnee2nPX4lganAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Do8VN5io; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1761426929; c=relaxed/simple;
+	bh=WyWUawK+/N7dsJRPDKxuShqOiXTcdy6QCMPboNalpLM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MNDebCFA7ydLsMxhRNcSaVDE3dJ6RexUN/yNv78ajYSrKvtYLjWCbyT3t/GQSWL/2J3ayG5+MzEu3v/WzR1C51mgV9FyesKxv4BDpWqyVtTNvAyBeI7Bce0tq2sU1tVE0tVGaEgKk7BS5PUAn9GNMwGv+vrC4aH1OP9Zj41pr/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6Fkef1E; arc=none smtp.client-ip=209.85.166.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so3949333e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:07:31 -0700 (PDT)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-430b6a0eaeaso30451175ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 14:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761426450; x=1762031250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFxB+FMNooBfOd2zLjcq46e2Dj/CD31Cyo7lUKy84vI=;
-        b=Do8VN5ioaNOWS4a0lJKbTZXM4HBIM57HRFoUvovOoH/Kr9MdFeHLwjpzy1jnHzeq4m
-         CyuRXe0oBJeitLMSSnUpu+SrhdYy85Qw0ld1gId3Qkd98xEd6GdiQ9Qy+xMZmaFIlyx2
-         Zer8QLG+lIhqX9wl+5YxnZcreHzTY8Qc1PaFUbdpk8cUpTEQphKEexumrfh8+ytujYnd
-         rgFlIa+L9MxHzE7rQjp9w2aJV5u24DX+l8FIN+JlPhmCh9LiSTfj+oC5fARBCwDRUS7R
-         9XJrfTPVWKc/VzoB1tKn0HyfNcxy7iQNpoYA5/4wWn8/bp6HTd+6zaypV64ykXl01Zgw
-         DWsA==
+        d=gmail.com; s=20230601; t=1761426926; x=1762031726; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hGg7RgLm7u7Aps0+61d/iPTOlPXVnICEyxv1QEpHm98=;
+        b=l6Fkef1EbgQ4hzeJ5GEsB+yrhAL2nhhknjaujuipONCTAO0BIsoj91X6ONOShfSvwz
+         xRyN1OEcVl02FvQXULELaLEOlC0DWWnk0zBQRxs0ToxJB4gC4cc0aZVdUCdmcz6cxNiC
+         iEhznzdUZg952oomc7z1E3g/O6f1QLUItVSJTIgPGH4Tf+XbI4L343f29T18Di+WDBhI
+         K1pWsre0iam/2wzmqm8AIgnF/PQ5K3HsM2nB2GQwisZHVsEICxsTgqbma3OtmJb2UOFS
+         3pWoWjc0WCoHshSiIOEG9dJgHVy4QyVoiPSUyKxJv5+NwFcgFBQ6MZaEDRsLghoN8D4l
+         EFig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761426450; x=1762031250;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JFxB+FMNooBfOd2zLjcq46e2Dj/CD31Cyo7lUKy84vI=;
-        b=StqX0uEd+bfI1qrWHpdVq2NPvsjFWDU8v2yDraxRvXsVGKW7sNGKd07OcXnIlMTw9C
-         JfX+RVlP8XIQ6Z+aUdpjfNL2iVz5MIunA5m4NIcs2vLOHNr6WH6Skzmo+t9BN2OwOxWL
-         uXZ4I/NAcULYNnyJ4QyujeeALyHwD1cEqjxVzKb8xbwIDMh3QcTp3Z9mdy5so74/9G+O
-         8j1QWk9WghEwcNGE9RJcAhduJ6tD1icsgEDsnHbMWjcVH81S0BpVGLObMJ5k27YpL3Mz
-         BDE2bTKdgoqREd9Zt14Baa45h6YH2mFgeWb7As79DdR5v29aXZUeEGujlYiRrludCx09
-         6IIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjv2QvaFEV4psqUtoqZFQvdbamBXrdTVtaIux3RDmb3JJn3+aS06OwBF0+JtY32Ha53eX60UAR2LiEg44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHnHgtTcjpMnBcNfLewgitkFW/0pKZgYDZ5co4nQd22KWBNiJP
-	WQOy/5E0lTaJg/9N4ro5GeK7x2b670wopW9q1PBvOI7Ct3aTdIFYieZv
-X-Gm-Gg: ASbGncsWfZOYT6h2vRPNytxkDgX/GUmfmbzYZ7MFjcWBJQnWv6VkAo9VpnFQYBV4Mol
-	FAVf0L+BTmDqQLp8f0QwduA+q/etyTLEZ77LZeSr1n+mNLWpqggyZA1l9UudiHJS8HG8T7kvdEy
-	WBahDlSa9uyrl4womDDBM4MnvvYAThi6Z0p5z/nawhFZE+RzkPYHn9WsLKTCPQeqgyko6YMpYwV
-	iqqDCuBsF1fWW9sXiGzZZjgXm/KmzVo3cMQcg2UEIas8xgJ8pJPZIX9niQ1qQ72mkmvwePoS62K
-	QJEPrgdPyG0aeNWO6IDgFuv9nxBwo7Va0fxVDLi4oP64TmosYBhMVakkczJT+elMM6flYuuEg33
-	sFiQX5BIWy7R2g8QPJhdoX/KFgpTcIrOiFMLEDqC8HPdffdmAezoN9ihr5d5rVTmeza/FNonsxh
-	1S8A==
-X-Google-Smtp-Source: AGHT+IGWWrc4WdF7FX7lRQrDMuhwqAOXh5C+jquwBNySEwQCE3G1DQMT0DRSQnyd9anBGi35RkN5AQ==
-X-Received: by 2002:a05:6512:308d:b0:571:8fad:ecee with SMTP id 2adb3069b0e04-591d850c0efmr10901687e87.21.1761426449935;
-        Sat, 25 Oct 2025 14:07:29 -0700 (PDT)
-Received: from curiosity ([5.188.167.4])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-59301f840dfsm953644e87.104.2025.10.25.14.07.27
+        d=1e100.net; s=20230601; t=1761426926; x=1762031726;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hGg7RgLm7u7Aps0+61d/iPTOlPXVnICEyxv1QEpHm98=;
+        b=hBeHjmUrK3r0IrMFiAiYrqmnsK/ZsDJfZ4eYiLdWmbRYhtU0WghWagttlwY/MvCoJg
+         toHvdRGcd7HcOftg93UIjb7cp0EkRWju7s+yDjBP3TLFgXfLWAdgaD58Esjlul2w7mJV
+         51av296/RLA2s7OBM/XRvrN6V6nMQ0B8GZofBljzGo5ggUvdZ/tMB3vGJ88vV2MPDTCr
+         nNhSPB7Npoi5xKOsdQP1WGQk2x/S7Crd3Y/OPL2pfMANaiUUDvpo6nfVnXMRbZ6A8R6e
+         vcH27GIUGGWz95jsLkL7Y1QN8XRR8yVdjQtZqZqqGc9N5emEDe/eF0J9/ytv8rU7Vgd6
+         uacA==
+X-Gm-Message-State: AOJu0Yz7s/R4fD870oq1WPKvSPjMZKh8IGPTImCIQJGVjPwE+pq76MBE
+	nME0nQ0CK4JvPXogbZE3FhArhZCTjRB2EJ3Rl/rioPOcQMGCXc8eSTCxLG9Zjg==
+X-Gm-Gg: ASbGncvnfmquZAcGmNNTdKA4rvx4S6IwFjNUDRvVDNlshLep8pMCMDG8ln4J7icdbA/
+	RbZpua9jFYrEuUvxPAxRoq0bR2Fjk35qPduBh70gJLwTqDFeb+JusMp3uIYpN5LkDal1KNJBcJF
+	HgvNVuU1kvu/DceXkyuTrnHn0ghgOt0JUjiCEm4/8eMZFeR53Fu63aUjKMFXk9WN4vqJ2yjoHuF
+	5vflNzaxaVbvuqvFISpGTmHNelXrFTsq22Qj1iArS0J1n8vH40kak+q328dZvehUs6LIQDhYBQU
+	vpFGP/MKsBe0g0z5JWUGUqfvRBQ6AUJaU/C/SLjlV+68ELAhLoyVlWNRHry5FVOB/v1AQMcm7tc
+	9jKzLUaNHDe2UWBhcuXVAT1MbuohW5T/DUzNKtckLPRhID8+SwNTr7IVrm2Uqv3fmoNeJRp7/LJ
+	UWWYXuKELkX0rPfMQMZayUHmTpxQnZFJrGqqyu86sk0calXIrTYLwsU+DwTpiV46IBJ1M=
+X-Google-Smtp-Source: AGHT+IGKJCONmRK/nZ8xhEqRC7k3CPdqJWFaSxz7MOARGNF3lZ2qUjFhhoVz04rGNDvI02sft76pYw==
+X-Received: by 2002:a05:6e02:1947:b0:430:9f96:23bb with SMTP id e9e14a558f8ab-430c522319amr407365685ab.8.1761426926413;
+        Sat, 25 Oct 2025 14:15:26 -0700 (PDT)
+Received: from godzilla.raven-morpho.ts.net (c-98-38-17-99.hsd1.co.comcast.net. [98.38.17.99])
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-5aea7ce584bsm1212138173.27.2025.10.25.14.15.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 14:07:29 -0700 (PDT)
-From: Sergey Matyukevich <geomatsi@gmail.com>
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Thomas Huth <thuth@redhat.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sergey Matyukevich <geomatsi@gmail.com>
-Subject: [PATCH v3 9/9] selftests: riscv: verify syscalls discard vector context
-Date: Sun, 26 Oct 2025 00:06:42 +0300
-Message-ID: <20251025210655.43099-10-geomatsi@gmail.com>
+        Sat, 25 Oct 2025 14:15:25 -0700 (PDT)
+From: Jim Cromie <jim.cromie@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linuxfoundation.org,
+	Jim Cromie <jim.cromie@gmail.com>
+Subject: [PATCH 0/3] checkpatch --strict | ci-pipeline improvements
+Date: Sat, 25 Oct 2025 15:15:15 -0600
+Message-ID: <20251025211519.1616439-1-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251025210655.43099-1-geomatsi@gmail.com>
-References: <20251025210655.43099-1-geomatsi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,127 +86,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a test to v_ptrace test suite to verify that vector csr registers
-are clobbered on syscalls.
+Several CI-pipelines call to checkpatch.pl --strict, so CHECK reports
+there can disrupt pipeline flow.  This patchset addresses one such check.
 
-Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
----
- .../testing/selftests/riscv/vector/v_ptrace.c | 102 ++++++++++++++++++
- 1 file changed, 102 insertions(+)
+  CHECK: Macro argument reuse '_var' - possible side-effects?
 
-diff --git a/tools/testing/selftests/riscv/vector/v_ptrace.c b/tools/testing/selftests/riscv/vector/v_ptrace.c
-index 7e8fdebded07..51a7cc71b2be 100644
---- a/tools/testing/selftests/riscv/vector/v_ptrace.c
-+++ b/tools/testing/selftests/riscv/vector/v_ptrace.c
-@@ -183,6 +183,108 @@ TEST(ptrace_v_early_debug)
- 	}
- }
- 
-+TEST(ptrace_v_syscall_clobbering)
-+{
-+	unsigned long vlenb;
-+	pid_t pid;
-+
-+	if (!is_vector_supported())
-+		SKIP(return, "Vector not supported");
-+
-+	asm volatile("csrr %[vlenb], vlenb" : [vlenb] "=r"(vlenb));
-+
-+	chld_lock = 1;
-+	pid = fork();
-+	ASSERT_LE(0, pid)
-+		TH_LOG("fork: %m");
-+
-+	if (pid == 0) {
-+		while (chld_lock == 1)
-+			asm volatile("" : : "g"(chld_lock) : "memory");
-+
-+		asm(".option arch, +zve32x\n");
-+		asm(".option arch, +c\n");
-+		asm volatile("vsetvli x0, x0, e8, m8, tu, mu\n");
-+
-+		while (1) {
-+			asm volatile ("c.ebreak");
-+			sleep(0);
-+		}
-+	} else {
-+		struct __riscv_v_regset_state *regset_data;
-+		struct user_regs_struct regs;
-+		size_t regset_size;
-+		struct iovec iov;
-+		int status;
-+
-+		/* attach */
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_ATTACH, pid, NULL, NULL));
-+		ASSERT_EQ(pid, waitpid(pid, &status, 0));
-+		ASSERT_TRUE(WIFSTOPPED(status));
-+
-+		/* unlock */
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_POKEDATA, pid, &chld_lock, 0));
-+
-+		/* resume and wait for the 1st c.ebreak */
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_CONT, pid, NULL, NULL));
-+		ASSERT_EQ(pid, waitpid(pid, &status, 0));
-+		ASSERT_TRUE(WIFSTOPPED(status));
-+
-+		/* read tracee vector csr regs using ptrace GETREGSET */
-+
-+		regset_size = sizeof(*regset_data) + vlenb * 32;
-+		regset_data = calloc(1, regset_size);
-+
-+		iov.iov_base = regset_data;
-+		iov.iov_len = regset_size;
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_GETREGSET, pid, NT_RISCV_VECTOR, &iov));
-+
-+		/* verify initial vsetvli x0, x0, e8, m8, tu, mu settings */
-+
-+		EXPECT_EQ(3UL, regset_data->vtype);
-+		EXPECT_EQ(0UL, regset_data->vstart);
-+		EXPECT_EQ(16UL, regset_data->vlenb);
-+		EXPECT_EQ(0UL, regset_data->vcsr);
-+		EXPECT_EQ(0UL, regset_data->vl);
-+
-+		/* skip 1st c.ebreak, then resume and wait for the 2nd c.ebreak */
-+
-+		iov.iov_base = &regs;
-+		iov.iov_len = sizeof(regs);
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov));
-+		regs.pc += 2;
-+		ASSERT_EQ(0, ptrace(PTRACE_SETREGSET, pid, NT_PRSTATUS, &iov));
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_CONT, pid, NULL, NULL));
-+		ASSERT_EQ(pid, waitpid(pid, &status, 0));
-+		ASSERT_TRUE(WIFSTOPPED(status));
-+
-+		/* read tracee vtype using ptrace GETREGSET */
-+
-+		iov.iov_base = regset_data;
-+		iov.iov_len = regset_size;
-+
-+		ASSERT_EQ(0, ptrace(PTRACE_GETREGSET, pid, NT_RISCV_VECTOR, &iov));
-+
-+		/* verify that V state is illegal after syscall */
-+
-+		EXPECT_EQ((1UL << (__riscv_xlen - 1)), regset_data->vtype);
-+		EXPECT_EQ(vlenb, regset_data->vlenb);
-+		EXPECT_EQ(0UL, regset_data->vstart);
-+		EXPECT_EQ(0UL, regset_data->vcsr);
-+		EXPECT_EQ(0UL, regset_data->vl);
-+
-+		/* cleanup */
-+
-+		ASSERT_EQ(0, kill(pid, SIGKILL));
-+	}
-+}
-+
- FIXTURE(v_csr_invalid)
- {
- };
+Multi-statement declarative macros (both top-of-scope and file-scope),
+commonly fall victim to this warning, checkpatch even has a list of
+named exceptions to silence some of the checks.
+
+This patchset provides a more focussed approach:
+
+1 #define __chkp_no_side_effects(...)   /* nothing */
+  so no functional change due to its use.
+
+2 teach checkpatch how to silence THAT WARNING on that _var
+  find the macro call in macro-body, extract no-side-effect-vars
+  process the macro body as usual, count arg expansions
+  before issuing CHECK, check the no-side-effect-vars
+
+3 authors add the assertion to their noisy macros
+  active assertion of safety, per variable, not full pardon by name
+  indicates they tested against --strict
+
+Jim Cromie (3):
+  checkpatch: add --drx option and drx_print() helper
+  checkpatch: recognize __chkp_no_side_effects(_var) hint macro
+  compiler.h: add __chkp_no_side_effects() empty hint/assertion macro
+
+ include/linux/compiler.h | 12 ++++++++++
+ scripts/checkpatch.pl    | 47 ++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 55 insertions(+), 4 deletions(-)
+
 -- 
 2.51.0
 
