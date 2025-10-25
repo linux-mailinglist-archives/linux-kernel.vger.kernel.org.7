@@ -1,203 +1,146 @@
-Return-Path: <linux-kernel+bounces-870160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F4EC0A129
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 01:59:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F23C0A133
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 02:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03C3B4E2DBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 23:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EFC3AA081
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 00:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5342E6135;
-	Sat, 25 Oct 2025 23:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9272D287259;
+	Sun, 26 Oct 2025 00:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZ8F/zae"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rF/eTQIS"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF672F5B;
-	Sat, 25 Oct 2025 23:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1AE17C21E;
+	Sun, 26 Oct 2025 00:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761436750; cv=none; b=onZTFoclGAVKEj8DWTqdcg+hEOQeA/3s3yrR0IKmdp03hT4PRg/nE2KzR3k5FCB0fPNYoGFoLoUAVp9ZLzzKO+xTzINLZ68JwEEOymCqu/XMSaQ+7xy7q/dlLswn7uJvMZeqXR75MXESDViZY4mUUtW0WPrV7+qnhWNqyXWQOxc=
+	t=1761436827; cv=none; b=TmoCD9nBU6YOu1FPnESVxuxAJbboF7g7yh5fYQ5usIUqsc+0CJMlcepA9MG3cEUnS09thwxXXh8SlDXxa6I06pK4XW2a20njACTg5RjkVpT4nmunB6q6Mr6346X+vIVDwPLbPQSeHKSLsInF8vptskR1aRZy7TE96k4yJXF+drs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761436750; c=relaxed/simple;
-	bh=06zKdO6I7W5EZ/u4lGAMePBVjzLmVb5JfE/SpsSIUz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EeTlelaN/zCIVt/OoL0SZS0vmwosAzMTe5N7YFq0WLsj4GJt6UolHLbKbgFMTaQLpdFSvoK64+FMqPmiP44GONC1WZr4bPjJlcbu/Sesu8HC1GlOSmz7/nFOe+M00YCqmu1t7iKg2ZWpDSf0mNKos36qcdG+73At4V+NPyvYfPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZ8F/zae; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF94C4CEF5;
-	Sat, 25 Oct 2025 23:59:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761436748;
-	bh=06zKdO6I7W5EZ/u4lGAMePBVjzLmVb5JfE/SpsSIUz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZ8F/zaezdd8RK5F1IbDyfZVKVQ3LoqH5cEbdMROi36mprGMqmhdoK6CJNhfFecfP
-	 3jFu0Cp+6J/RDUaThrRvFZYciv3QHR7N4vAL/wGCkqUHC80UypDYeNMYtbs69rPR1S
-	 w0FRBtxWIEZyLIgTlRcUvu7Z3+sCAoRXPvsSKPBeeNKn4129BAALx6uj/Np6bJ26yO
-	 NK0DE/FlpBbWBqsCAWrgZUAPtXzmQd25C/nLQmaucZB83vBPQIKHwTZtzF1wfkvKFp
-	 tLJENk/s76/66PkFZXTAOZ+JfiVU/6eX43h5hnPyX6zF+FTarcpaKcIFwnC0WYqz4Z
-	 WKrjUHNM50uzg==
-Date: Sat, 25 Oct 2025 16:59:05 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf dsos: Don't block when reading build IDs
-Message-ID: <aP1kSdZJKYIpnRia@google.com>
-References: <20251022-james-perf-fix-dso-block-v1-1-c4faab150546@linaro.org>
- <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com>
+	s=arc-20240116; t=1761436827; c=relaxed/simple;
+	bh=BL9iIxGzcOrrn5GUC/h6Vz6nDiCCgt8tKcGksVUNAcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mlrB8zNtxUAcLf9O+IFws7GqoZlCFjXukAwqktYRZAywb7Ur6hh5tAyswPhBjI9QhJ1r+AEFNWYMlxsS9QWVDAsrjQ0sKXguL2NQYZUE2D3Y8IE1gqWah0xo4rlLTTnfJqIko/snTuJsDNGR2xLtM20SkAXi688EuO1WUW/TWFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rF/eTQIS; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <328ebb4f-b1ce-4645-9cea-5fe81d3483e0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761436811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bE6U4DIZJuvGeeM9mWvYcD6GNpIIZgiIJKMCn5NvN5s=;
+	b=rF/eTQISKdPGI3C7IDMbDet/37bE+bETIsWqYLnW9PK3MsBXqEnHv+W9CArj9rdIYFARY/
+	xCWk7Qo6XM6YOWr27u9Wb/0AmiDv56MGhS/dkROsBj0a0r33dgASUNSnvd86J66nMcIPSM
+	F30SLujwwBOepns6sDPiUDjnX0UIzZg=
+Date: Sat, 25 Oct 2025 16:59:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH net-next 0/5] net/mlx5: Add balance ID support for LAG
+ multiplane groups
+To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gal Pressman <gal@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
+ Shay Drori <shayd@nvidia.com>
+References: <1761211020-925651-1-git-send-email-tariqt@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <1761211020-925651-1-git-send-email-tariqt@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
-
-On Fri, Oct 24, 2025 at 11:26:18AM -0700, Ian Rogers wrote:
-> On Wed, Oct 22, 2025 at 8:46 AM James Clark <james.clark@linaro.org> wrote:
-> >
-> > The following command will hang consistently when the GPU is being used
-> > due to non regular files (e.g. /dev/dri/renderD129, /dev/dri/card2)
-> > being opened to read build IDs:
-> >
-> >  $ perf record -asdg -e cpu-clock -- true
-> >
-> > Change to non blocking reads to avoid the hang here:
-> >
-> >   #0  __libc_pread64 (offset=<optimised out>, count=0, buf=0x7fffffffa4a0, fd=237) at ../sysdeps/unix/sysv/linux/pread64.c:25
-> >   #1  __libc_pread64 (fd=237, buf=0x7fffffffa4a0, count=0, offset=0) at ../sysdeps/unix/sysv/linux/pread64.c:23
-> >   #2  ?? () from /lib/x86_64-linux-gnu/libelf.so.1
-> >   #3  read_build_id (filename=0x5555562df333 "/dev/dri/card2", bid=0x7fffffffb680, block=true) at util/symbol-elf.c:880
-> >   #4  filename__read_build_id (filename=0x5555562df333 "/dev/dri/card2", bid=0x7fffffffb680, block=true) at util/symbol-elf.c:924
-> >   #5  dsos__read_build_ids_cb (dso=0x5555562df1d0, data=0x7fffffffb750) at util/dsos.c:84
-> >   #6  __dsos__for_each_dso (dsos=0x55555623de68, cb=0x5555557e7030 <dsos__read_build_ids_cb>, data=0x7fffffffb750) at util/dsos.c:59
-> >   #7  dsos__for_each_dso (dsos=0x55555623de68, cb=0x5555557e7030 <dsos__read_build_ids_cb>, data=0x7fffffffb750) at util/dsos.c:503
-> >   #8  dsos__read_build_ids (dsos=0x55555623de68, with_hits=true) at util/dsos.c:107
-> >   #9  machine__read_build_ids (machine=0x55555623da58, with_hits=true) at util/build-id.c:950
-> >   #10 perf_session__read_build_ids (session=0x55555623d840, with_hits=true) at util/build-id.c:956
-> >   #11 write_build_id (ff=0x7fffffffb958, evlist=0x5555562323d0) at util/header.c:327
-> >   #12 do_write_feat (ff=0x7fffffffb958, type=2, p=0x7fffffffb950, evlist=0x5555562323d0, fc=0x0) at util/header.c:3588
-> >   #13 perf_header__adds_write (header=0x55555623d840, evlist=0x5555562323d0, fd=3, fc=0x0) at util/header.c:3632
-> >   #14 perf_session__do_write_header (session=0x55555623d840, evlist=0x5555562323d0, fd=3, at_exit=true, fc=0x0, write_attrs_after_data=false) at util/header.c:3756
-> >   #15 perf_session__write_header (session=0x55555623d840, evlist=0x5555562323d0, fd=3, at_exit=true) at util/header.c:3796
-> >   #16 record__finish_output (rec=0x5555561838d8 <record>) at builtin-record.c:1899
-> >   #17 __cmd_record (rec=0x5555561838d8 <record>, argc=2, argv=0x7fffffffe320) at builtin-record.c:2967
-> >   #18 cmd_record (argc=2, argv=0x7fffffffe320) at builtin-record.c:4453
-> >   #19 run_builtin (p=0x55555618cbb0 <commands+288>, argc=9, argv=0x7fffffffe320) at perf.c:349
-> >   #20 handle_internal_command (argc=9, argv=0x7fffffffe320) at perf.c:401
-> >   #21 run_argv (argcp=0x7fffffffe16c, argv=0x7fffffffe160) at perf.c:445
-> >   #22 main (argc=9, argv=0x7fffffffe320) at perf.c:553
-> >
-> > Fixes: 53b00ff358dc ("perf record: Make --buildid-mmap the default")
-> > Signed-off-by: James Clark <james.clark@linaro.org>
-> > ---
-> > I'm not actually sure if this is the right fix for this. Commit
-> > 2c369d91d093 ("perf symbol: Add blocking argument to
-> > filename__read_build_id") which added the blocking argument says that it
-> > should be non-blocking reads for event synthesis, but the callstack here
-> > is when writing the header out.
-> >
-> > There was also an is_regular_file() check added in commit c21986d33d6b
-> > ("perf unwind-libdw: skip non-regular files"), which presumably falls
-> > afoul of the "which unfortunately fails for symlinks" part of the other
-> > linked commit message?
-> >
-> > So I can't tell if we should add the is_regular_file() check here too,
-> > or just set it to non-blocking, or it needs some extra state to be
-> > passed all the way down to dsos__read_build_ids_cb() to do different
-> > things.
+在 2025/10/23 2:16, Tariq Toukan 写道:
+> Hi,
 > 
-> The fix lgtm but I worry about making all the build ID reading
-> non-blocking meaning build IDs getting lost. 
-
-I'm not sure what non-blocking means for regular file system operations
-on a block device.  But it may have some impact on regular files on a
-network filesystem.
-
-> It seems that generating
-> the build ID feature table is unnecessary if we have build ID mmap
-> events, including synthesized ones that will have read the build IDs.
-> I wonder if a better "fix" is:
-> ```
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index cb52aea9607d..15f75c70eb76 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -1842,7 +1842,7 @@ static void record__init_features(struct record *rec)
->        for (feat = HEADER_FIRST_FEATURE; feat < HEADER_LAST_FEATURE; feat++)
->                perf_header__set_feat(&session->header, feat);
+> This series adds balance ID support for MLX5 LAG in multiplane
+> configurations.
 > 
-> -       if (rec->no_buildid)
-> +       if (rec->no_buildid || rec->buildid_mmap)
->                perf_header__clear_feat(&session->header, HEADER_BUILD_ID);
+> See detailed description by Mark below [1].
 > 
->        if (!have_tracepoints(&rec->evlist->core.entries))
-> ```
-> that should disable the build ID feature table generation when build
-> ID mmaps are in use (the default). Having the build IDs twice in the
-> data file feels redundant. Or we could do your fix or both, wdyt?
-
-I'm ok to remove the header feature but I think it should update
-build-ID cache even with this change.
-
-I'm also curious if the device has samples actually.  It should be
-checked by dso->hit.
-
-Thanks,
-Namhyung
-
+> Regards,
+> Tariq
 > 
-> Thanks,
-> Ian
 > 
-> > ---
-> >  tools/perf/util/dsos.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
-> > index 64c1d65b0149..5e1c815d7cb0 100644
-> > --- a/tools/perf/util/dsos.c
-> > +++ b/tools/perf/util/dsos.c
-> > @@ -81,13 +81,14 @@ static int dsos__read_build_ids_cb(struct dso *dso, void *data)
-> >                 return 0;
-> >         }
-> >         nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
-> > -       if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/true) > 0) {
-> > +       /* Don't block in case path isn't for a regular file. */
-> > +       if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/false) > 0) {
-> >                 dso__set_build_id(dso, &bid);
-> >                 args->have_build_id = true;
-> >         } else if (errno == ENOENT && dso__nsinfo(dso)) {
-> >                 char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
-> >
-> > -               if (new_name && filename__read_build_id(new_name, &bid, /*block=*/true) > 0) {
-> > +               if (new_name && filename__read_build_id(new_name, &bid, /*block=*/false) > 0) {
-> >                         dso__set_build_id(dso, &bid);
-> >                         args->have_build_id = true;
-> >                 }
-> >
-> > ---
-> > base-commit: a1d8548c23076c66d96647f5f6f25aa43567f247
-> > change-id: 20251022-james-perf-fix-dso-block-ca1d8437bbc0
-> >
-> > Best regards,
-> > --
-> > James Clark <james.clark@linaro.org>
-> >
+> [1]
+> The problem: In complex multiplane LAG setups, we need finer control over LAG
+> groups. Currently, devices with the same system image GUID are treated
+> identically, but hardware now supports per-multiplane-group balance IDs that
+> let us differentiate between them. On such systems image system guid
+> isn't enough to decide which devices should be part of which LAG.
+> 
+> The solution: Extend the system image GUID with a balance ID byte when the
+> hardware supports it. This gives us the granularity we need without breaking
+> existing deployments.
+> 
+> What this series does:
+> 
+> 1. Add the hardware interface bits (load_balance_id and lag_per_mp_group)
+> 2. Clean up some duplicate code while we're here
+> 3. Rework the system image GUID infrastructure to handle variable lengths
+> 4. Update PTP clock pairing to use the new approach
+> 5. Restructure capability setting to make room for the new feature
+> 6. Actually implement the balance ID support
+> 
+> The key insight is in patch 6: we only append the balance ID when both
+
+In the above, patch 6 is the following patch? It should be patch 5?
+
+[PATCH net-next 5/5] net/mlx5: Add balance ID support for LAG multiplane 
+groups
+
+Yanjun.Zhu
+
+> capabilities are present, so older hardware and software continue to work
+> exactly as before. For newer setups, you get the extra byte that enables
+> per-multiplane-group load balancing.
+> 
+> This has been tested with both old and new hardware configurations.
+> 
+> 
+> Mark Bloch (5):
+>    net/mlx5: Use common mlx5_same_hw_devs function
+>    net/mlx5: Add software system image GUID infrastructure
+>    net/mlx5: Refactor PTP clock devcom pairing
+>    net/mlx5: Refactor HCA cap 2 setting
+>    net/mlx5: Add balance ID support for LAG multiplane groups
+> 
+>   drivers/net/ethernet/mellanox/mlx5/core/dev.c | 12 ++++---
+>   .../ethernet/mellanox/mlx5/core/en/devlink.c  |  7 ++--
+>   .../ethernet/mellanox/mlx5/core/en/mapping.c  | 13 +++++---
+>   .../ethernet/mellanox/mlx5/core/en/mapping.h  |  3 +-
+>   .../mellanox/mlx5/core/en/rep/bridge.c        |  6 +---
+>   .../mellanox/mlx5/core/en/tc/int_port.c       |  8 +++--
+>   .../ethernet/mellanox/mlx5/core/en/tc_ct.c    | 11 ++++---
+>   .../net/ethernet/mellanox/mlx5/core/en_tc.c   | 32 ++++++++++---------
+>   .../mellanox/mlx5/core/esw/devlink_port.c     |  6 +---
+>   .../mellanox/mlx5/core/eswitch_offloads.c     |  8 +++--
+>   .../net/ethernet/mellanox/mlx5/core/lag/lag.c |  4 ++-
+>   .../ethernet/mellanox/mlx5/core/lib/clock.c   | 19 ++++++-----
+>   .../ethernet/mellanox/mlx5/core/lib/devcom.h  |  2 ++
+>   .../net/ethernet/mellanox/mlx5/core/main.c    | 23 +++++++++----
+>   .../ethernet/mellanox/mlx5/core/mlx5_core.h   |  2 ++
+>   .../net/ethernet/mellanox/mlx5/core/vport.c   | 19 +++++++++++
+>   include/linux/mlx5/driver.h                   |  3 ++
+>   17 files changed, 112 insertions(+), 66 deletions(-)
+> 
+> 
+> base-commit: d550d63d0082268a31e93a10c64cbc2476b98b24
+
 
