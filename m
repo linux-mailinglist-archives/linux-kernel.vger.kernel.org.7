@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-870107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614FCC09F37
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:26:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF44C09F3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 21:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327A61A6838E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:26:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E91E4E5D5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4932305E02;
-	Sat, 25 Oct 2025 19:25:58 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2B0306D37;
+	Sat, 25 Oct 2025 19:28:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0EB2F7AB0;
-	Sat, 25 Oct 2025 19:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABCD2C234E
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 19:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761420358; cv=none; b=lYjTVX29Yt91PUvApWGgrAbdC745TloXGCx3XyJYUjPJ/aCzNDA3XT8w+j0MrsfCWCyBz+a9LM6zkkDKEIO6776pf1+WN/4tnXi8SmfjFPMqbzxStUiVku5SNg3FaWniOfkTqUKApfSDd6F+3S1x5ae6x4Hfmqa3spo505VYZeQ=
+	t=1761420484; cv=none; b=UA1CCz4o7sKfwFd02L+DGzO8zMFjTNeIyouqF4eGA3QGFJbt3NeskI1TXu2bx7ndZhzszz+DKfReQf3vqlatF0XsrVzCN7HIk8VkX019sOF03mNTYLYvgl5rkpPupswmTtQYFyCkVLOylcX11JFinCohmRO9dlIw2OZGDXw8hF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761420358; c=relaxed/simple;
-	bh=XMqi7Bh1BNLZKfN+KZrTPFp8zjrMA4E+wj7kNBhSdh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C0qiTV40rHTQl7u4sSxzx9s0OMzQbO8MwQi2f85irQP+1XdYYMM3hsvJtVsTt5WPQe1aEZEqTVW8ledrVtOg/rkEZJRUoXf/aS29P8+LfofWxVi6yuZmcDEFKk0NhAQsGw3OOLmCAS7asSqn2hgbsnk4/9CO+bRgtwWEYSMmhhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id ACD0B129347;
-	Sat, 25 Oct 2025 19:25:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 7F4FC2000D;
-	Sat, 25 Oct 2025 19:25:46 +0000 (UTC)
-Date: Sat, 25 Oct 2025 15:25:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: patches@lists.linux.dev, stable@vger.kernel.org, Vladimir Riabchun
- <ferr.lambarginio@gmail.com>, mhiramat@kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.17-6.1] ftrace: Fix softlockup in
- ftrace_module_enable
-Message-ID: <20251025152545.534cb450@batman.local.home>
-In-Reply-To: <20251025160905.3857885-385-sashal@kernel.org>
-References: <20251025160905.3857885-1-sashal@kernel.org>
-	<20251025160905.3857885-385-sashal@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761420484; c=relaxed/simple;
+	bh=fjM9+Nv8IBMSvAyQjqIj+zdSn5WYymU5s3GOC4GJQiA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Bd+W3QSqPt8NrtRiYVqR0VuyF7xQoRn3kjk2Nq141w1S/Ei7TRdB35lAoFr/HCyxvSHPaW/Io2OZ18ftrdTMfkb6VcNyw7vNqUhPYypB61GRa8rXCuJ4NgMrHxf+PChkkhowK8Dv9R3QjGDrwaMqht5FdDGeuIPX73hHzlujHeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430e67e2427so45080735ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 12:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761420482; x=1762025282;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=enkP0q3fu608KdPyNUFP0pGjeIAxuOCFFRrpwx/W+Cs=;
+        b=tfuwDX8Nho5BvOK3W4pR08axvonda50z9ShRAppYbW9y2Z7SDjSjfgro6Axc1KLViS
+         RHlwPVucFToiQFCygRe9/neGOtB2phdH0N4lce2ftqWcMnU1ooFi91ptdiSBSy7QudJQ
+         ybwFQjkSv7etICoVPVPETFydLW3vAwvxkDrez9xbK864Xz77xMDWnpdl8wns+fXKO8+3
+         G3HVHb6Pkce55+IHuueQvcEy1bwoSgPOovrZ/EIC0grnl6oKe7d5F/IF6+g98vhQtu+N
+         XRNC/rxuPDpyNxJ4NYsRlBYpqgakALvkr3VGsdpzymDHphjhO8XNCDV8zrhPsn70S3ef
+         a1Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCW3u0r+fzCn0DcZC6GzEPw27uOHstT+QBJkQYC/GhsB2/FFYdXOHUBjgBU7U2oPXJ/uQg38GRdSaWBAsBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdo5VTKMHMpgFnISKaR+b7n9JHcm3zVJ3xgMaTyDGsT9aJbWhu
+	gTPqOFTVr2vaLHEPUjNEIRmGRXbDUKLQjymYDS/asqpALDWC+iKvCIbwNogDJs1P+Fx9jclZ/vi
+	p5eNoKpMy0ByXVF0O82w47HDquNs/Qih5rcvQty98AvPzJaaRtqy6SPZY/8A=
+X-Google-Smtp-Source: AGHT+IHuaYoxiX9OUUySpqLQbHVQ+UVgzIs8Km7n3hgq+3cygOhPn6olAhAHZI5aKW2R2AmRCUO8K+9L82cYMsA8GWrU4jxjDaIT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 7F4FC2000D
-X-Stat-Signature: 6yzqks5de9frsbsiwds9bwsbas7hfgd9
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19Xb9xl1QfjMzJ0FPDKue1X1sp4w9TAnjA=
-X-HE-Tag: 1761420346-248664
-X-HE-Meta: U2FsdGVkX18ELnPSb5L3NDlysnvw/R0s3/WOQlBy9kZTIosIrZ+9IV6rFjTPeDLJMTGvk5Y5PtiMLyuk1RFcckxgwX9jPYHWZ2Ybi13GKOwUpkQRYGORVb/WWVh4W0I7veCeBx188jIZqTU8qmUhWKRk0qPWi/TcHx6YtRfIcyOmMcYAAx5ELsUjxdM/QOnet7d+jdDa6Mh7+Fe09PXtSU4+yUa+peHpMQ8mlY0heTarLu4bX5IA71KcRe6z9yCRpEC4v8WYX4/rJJ0+w0/Kr5qTC8BFK4hpAoctCKWVtg4nwVRJ8eXWoocFK+elYX1wdpzFg0jWhQDwIbaPPLa+BLDsGdZHWFW8
+X-Received: by 2002:a05:6e02:1a2b:b0:430:a66b:4ec1 with SMTP id
+ e9e14a558f8ab-430c527ea55mr457691095ab.23.1761420482358; Sat, 25 Oct 2025
+ 12:28:02 -0700 (PDT)
+Date: Sat, 25 Oct 2025 12:28:02 -0700
+In-Reply-To: <CAKTQj-61-rCP0AoqpUgaX66NmiTKKJK8CoYxZ76qbN+bv+dWSA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fd24c2.a70a0220.12011.0003.GAE@google.com>
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-out-of-bounds Read in
+ mcp2221_raw_event (2)
+From: syzbot <syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com>
+To: atharvd440@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 25 Oct 2025 12:00:16 -0400
-Sasha Levin <sashal@kernel.org> wrote:
+Hello,
 
-> - The change inserts `cond_resched()` inside the inner iteration over
->   every ftrace record (`kernel/trace/ftrace.c:7538`). That loop holds
->   the ftrace mutex and, for each record, invokes heavy helpers like
->   `test_for_valid_rec()` which in turn calls `kallsyms_lookup()`
->   (`kernel/trace/ftrace.c:4289`). On huge modules (e.g. amdgpu) this can
->   run for tens of milliseconds with preemption disabled, triggering the
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It got the "preemption disabled" wrong. Well maybe when running
-PREEMPT_NONE it is, but the description doesn't imply that.
+Reported-by: syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com
+Tested-by: syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com
 
--- Steve
+Tested on:
 
+commit:         72761a7e Merge tag 'driver-core-6.18-rc3' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f2ee7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8785cbeec147850
+dashboard link: https://syzkaller.appspot.com/bug?extid=1018672fe70298606e5f
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1275c258580000
 
->   documented soft lockup/panic during module load.
-> - `ftrace_module_enable()` runs only in process context via
->   `prepare_coming_module()` (`kernel/module/main.c:3279`), so adding a
->   voluntary reschedule point is safe; the same pattern already exists in
->   other long-running ftrace loops (see commits d0b24b4e91fc and
->   42ea22e754ba), so this brings consistency without changing control
->   flow or semantics.
-> - No data structures or interfaces change, and the code still executes
->   under the same locking (`ftrace_lock`, `text_mutex` when the arch
->   overrides `ftrace_arch_code_modify_prepare()`), so the risk of
->   regression is minimal: the new call simply yields CPU if needed while
->   keeping the locks held, preventing watchdog-induced crashes but
->   otherwise behaving identically.
-
+Note: testing is done by a robot and is best-effort only.
 
