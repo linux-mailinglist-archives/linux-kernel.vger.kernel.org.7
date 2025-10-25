@@ -1,139 +1,105 @@
-Return-Path: <linux-kernel+bounces-869883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA749C08EE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:14:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566E5C08ECF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FE7189A39D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 10:13:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C7B4C34EA64
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 10:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78B32EA735;
-	Sat, 25 Oct 2025 10:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B6F2EB5DE;
+	Sat, 25 Oct 2025 10:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="A8FMeEFg"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="cMEAVVAf"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5A827E7F0;
-	Sat, 25 Oct 2025 10:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B831C2EA46F;
+	Sat, 25 Oct 2025 10:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761387164; cv=none; b=ItqtiAk/4GdqBbUJNaovvc2Xbq4pkmgAYdLdvq0vDlSfhHfnInQlTpenv8Irp3j4q7908LAYzvKel7rkelrYg0bcdwM43MdbDm34t1O/qqpFJcf5KCHu5f385DjDXIJTVR0wSDIO6jgpsbJfm7qK4epXr11VoHqDhVweTV76X9g=
+	t=1761387185; cv=none; b=bySY/pSNpCpRFh5gT8c3nv06dLrOCbWs6wiVseowmHn2oxtokNQoa0nfeDYNylKXHb2zNcOndRpie5AAgfpNRu/bCCLaX2voD330VMIyU1W1B0RMThP6A2HaH84yZoE48Zc3xdfhmxwKgwR7Z9Px22qEGy2lojNb1nOuWGsR5dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761387164; c=relaxed/simple;
-	bh=xYAgceLspemRBMQ+mkC0zd2Skjqs0JX7be4SWBc08mQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxZHTQUYV5gtNChOs+/TowJY8bjlSh4EQzIu4gyiURsxw17HKm+TW5f4qKq0w7nYukAT+JiIVZ4Y5sPNAgkgGxvS0iwHs0Iqu5kVxXJa4CAfuKD1uAZ4knPuYLnLLkiWYr0567AZDktZ8g4CxZ4+dCPLR5nVmMm98sTCd0/c1Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=A8FMeEFg; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 86E8B407674D;
-	Sat, 25 Oct 2025 10:12:31 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 86E8B407674D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1761387151;
-	bh=k+qxlMOpsdoySMMJQyou7/5VUprV+TN2uaIvjNBJC+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A8FMeEFg13jLtvFiL4eXye2eSbdwsbkTQb9Gk4wQykr/cc98JmH6zHwNYfihRRjYK
-	 pCW0tJLZrVNNij3/EfDICQ3YeHN2wSGT5FlNF3HOQED67KJ+orKuXKgFgjkA0nbbnK
-	 /slwHH8a3ZJAHFuKyWDk1idByKuzbVz04uc6GtgE=
-Date: Sat, 25 Oct 2025 13:12:31 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>, 
-	Zong-Zhe Yang <kevin_yang@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH rtw-next v3 5/9] wifi: rtw89: implement C2H TX report
- handler
-Message-ID: <20251025125848-1a66489b56a61c3e63193431-pchelkin@ispras>
-References: <20251017100658.66581-1-pchelkin@ispras.ru>
- <20251017100658.66581-6-pchelkin@ispras.ru>
- <6dc0740a095f4a38ae2427169b1d100c@realtek.com>
+	s=arc-20240116; t=1761387185; c=relaxed/simple;
+	bh=LiRJO0uqrTqoomhsftTGBDGSwayh7lHgVXGED2QgW/o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EtyPnQdmFPD/0jJhBHwXz00uUuBiS6wdPkEkM7tM4oGndkQCU6Sln81YAxRK9inAa68zEalaFQX8d41XaGYVzP7jqsndDF1f/u5ZAWQmP+md8jX937SJRZmQDyiXs7rQZux0eMg0DIUtQ2JmqfRKIVL4bAwnL9K6wgdGxOfEEPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=cMEAVVAf; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=ICUYgriAX66Ic6nFV4wDFOSrOFuC1F2rghUO8grP7d0=;
+	b=cMEAVVAfShUlEhAxrzruzN6ToUQAFQVcmd08dnyQIA3X8e3DphMITQiRp3JXazC4BQVIXJSAK
+	gBLyLe9KYVjQAzy17+62yWalwrZj9ltwtF5teHNyopmDmec3+0MrQZHfDfqb7Tm5pPRPipvK1xf
+	E2zQ1vkdHJ54+HAkGw6hciI=
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4ctwYs1jzgz1prLt;
+	Sat, 25 Oct 2025 18:12:33 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 17C9C180488;
+	Sat, 25 Oct 2025 18:13:00 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 25 Oct 2025 18:12:59 +0800
+Received: from localhost.huawei.com (10.90.31.46) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 25 Oct 2025 18:12:59 +0800
+From: Chenghai Huang <huangchenghai2@huawei.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <liulongfang@huawei.com>, <qianweili@huawei.com>,
+	<wangzhou1@hisilicon.com>, <fanghao11@huawei.com>, <nieweiqiang@huawei.com>
+Subject: [PATCH 0/4] crypto: hisilicon - various cleanup for QM and SGL
+Date: Sat, 25 Oct 2025 18:12:54 +0800
+Message-ID: <20251025101258.2793179-1-huangchenghai2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6dc0740a095f4a38ae2427169b1d100c@realtek.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-On Wed, 22. Oct 06:21, Ping-Ke Shih wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > @@ -5457,6 +5457,35 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32
-> >         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
-> >  }
-> > 
-> > +static void
-> > +rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
-> > +{
-> > +       u8 sw_define, tx_status, data_txcnt;
-> > +
-> > +       if (rtwdev->chip->chip_id == RTL8922A) {
-> 
-> Add a chip_ops c2h_tx_rpt? Then, no need chip_id checking, and reduce line
-> length (normally we prefer shorter than 80 or 90 characters; over 100 characters
-> isn't a good idea).
-> 
-> Maybe this is because you want to store the status into local variables.
-> With a chip_ops, you should define another struct to store them.
-> 
-> Or, you just keep it as was, but wrap lines to be shorter, and give shorter
-> naming. For example,
->   - rpt_v2 -> v2
-> 
->   - data_txcnt -> txcnt
-> 
-> 		if (rtwdev->chip->chip_id == RTL8852C)
-> 			txcnt = le32_get_bits(rpt->w5,
-> 					              RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1);
-> 		else
-> 			txcnt = le32_get_bits(rpt->w5,
-> 					              RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT);
-> 
+This patch series addresses several issues in the hisilicon crypto
+driver:
+Patch 1: ensures proper synchronization when reading eqe/aeqe
+values by saving the complete 4-byte values atomically. This
+guarantees the valid bit and queue number are read as a consistent
+pair that was written by the device.
+Patch 2: adds concurrency protection for the err_threshold variable
+to prevent race conditions between sysfs operations and hardware
+error handling functions.
+Patch 3: removes redundant error checks for curr_hw_sgl since
+acc_get_sgl() cannot fail after mem_block creation, simplifying the
+code.
+Patch 4: adds a default case to a switch statement in
+qm_vft_data_cfg to comply with coding style and prevent compiler
+warnings.
 
-The chip_ops variant is more abstract (and good in such a way) but I don't
-think it's worth mangling with modifying struct chip_ops of each chip and
-adding new structs as we probably won't need to scale or expand
-rtw89_mac_c2h_tx_rpt() further unless some another V3 format is supported.
-Also other mac C2H functions tend to check chip_id in place if they need.
+nieweiqiang (4):
+  crypto: hisilicon/qm - add concurrency protection for variable
+    err_threshold
+  crypto: hisilicon/qm - add missing default in switch in
+    qm_vft_data_cfg
+  crypto: hisilicon/qm - add the save operation of eqe and aeqe
+  crypto: hisilicon/sgl - remove unnecessary checks for curr_hw_sgl
+    error
 
-I'll try to make the lines shorter - the longest one will be 86 symbols.
+ drivers/crypto/hisilicon/qm.c  | 41 ++++++++++++++++++++++------------
+ drivers/crypto/hisilicon/sgl.c |  5 -----
+ 2 files changed, 27 insertions(+), 19 deletions(-)
 
-> 
-> > +               const struct rtw89_c2h_mac_tx_rpt_v2 *rpt_v2;
-> > +
-> > +               rpt_v2 = (const struct rtw89_c2h_mac_tx_rpt_v2 *)c2h->data;
-> > +               sw_define = le32_get_bits(rpt_v2->w12, RTW89_C2H_MAC_TX_RPT_W12_SW_DEFINE_V2);
-> > +               tx_status = le32_get_bits(rpt_v2->w12, RTW89_C2H_MAC_TX_RPT_W12_TX_STATE_V2);
-> > +               data_txcnt = le32_get_bits(rpt_v2->w14, RTW89_C2H_MAC_TX_RPT_W14_DATA_TX_CNT_V2);
-> > +       } else {
-> > +               const struct rtw89_c2h_mac_tx_rpt *rpt;
-> > +
-> > +               rpt = (const struct rtw89_c2h_mac_tx_rpt *)c2h->data;
-> > +               sw_define = le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_SW_DEFINE);
-> > +               tx_status = le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_TX_STATE);
-> > +               if (rtwdev->chip->chip_id == RTL8852C)
-> > +                       data_txcnt = le32_get_bits(rpt->w5, RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1);
-> > +               else
-> > +                       data_txcnt = le32_get_bits(rpt->w5, RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT);
-> > +       }
-> > +
-> > +       rtw89_debug(rtwdev, RTW89_DBG_TXRX,
-> > +                   "C2H TX RPT: sn %d, tx_status %d, data_txcnt %d\n",
-> > +                   sw_define, tx_status, data_txcnt);
-> > +}
-> > +
-> >  static void
-> >  rtw89_mac_c2h_mrc_tsf_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
-> >  {
-> 
-> [...]
-> 
+-- 
+2.33.0
+
 
