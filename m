@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-870055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1014EC09D9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 19:10:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1912C09C0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 18:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5760E4F4B33
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7C11C27865
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 16:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1653126A3;
-	Sat, 25 Oct 2025 16:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CB0314B80;
+	Sat, 25 Oct 2025 16:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epYhg3gv"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CH5Pt97D"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1259E3101D3
-	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E8B31194C
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 16:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761410452; cv=none; b=eDJMMbceZPBwd2g+BE99Z4RMJOWLN5dVTKJhJQrIlpsklM/DCHCvwpWzdEn/HKzb9BIvUwLyhg/iPr5Oo02xP3z6F6znId4tJm5sIQ9ef8vEt+I7l0Gm4L1FxOLEbfdzRLQkBhGVrOAfBcCOkxTx9WmnaEBHA+czkpdrMVnUdzE=
+	t=1761410454; cv=none; b=V/M1+CXudZ4/ZUk8ESLEm/m+1/Etgbm6HQdmygWwsEmniNQuLbPCSdVZqmt1L4pigx5OxFbWTZUNmIdgMAL2F1wfQtY4e3AOCo01idxK2+M9KgXSB1ZxI1TrrYjqyTqxkcVH9UmEHPomVu+XHl7O6403FgGzzfWogs3t8V1Mz48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761410452; c=relaxed/simple;
-	bh=miSwCWAWlgSls2mz8C4vY/8512hTOCwNwE82bGQwr34=;
+	s=arc-20240116; t=1761410454; c=relaxed/simple;
+	bh=iv3iCCSDVeRbyipC1ke5q3yTI1qFQp4/PoyLN2PjHKI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H1HIZOpoF+WywrK3W4J52cb5cfs/kNeal42x6JgcgvxfbksCIynM/aHBeEYwfqJDzwTUhb2mKHQwnrg5cPc0WzSMKm8JJGHw9tKQe7Y3YJ3VdwkLs7hMHjIOf/Kljbneb3lmSKX/wczQCiSoPaWhWTezb3Auws/iJirxVn9/siI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epYhg3gv; arc=none smtp.client-ip=209.85.160.169
+	 MIME-Version; b=oEW/fA+VrXeJ9cxMSAzOMcjvvBD1Hyd2++/XOL11OpNevkzt1WlovSvrcUpRynDJ7yEuTzfVkiX67p7KLWojobwg/vyDAziR0Bsd771d9/j1Fhn2aecgMgR+I+EysJHOaCbSLJHLZPUNtFVjWER4MM6phq604zhGcHIOB0BR45Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CH5Pt97D; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4e4d9fc4316so34504051cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:40:50 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-87c11268b97so33359806d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 09:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761410450; x=1762015250; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761410452; x=1762015252; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fhEz+tkYwuCSnU6LNYxfD5DkxTKdrSyEg2dThddkEgo=;
-        b=epYhg3gvZzKHKHOJgQngb8ty+no/S030Bw2bPZcIikPfhcCFkDCvAEuCOudSywR4ZX
-         LjXgG+dhg/7YWCFHvpLjnhqrY2+Zk171kJNnvw6sw7pzI0nqHWuNGWLScLi7m7uBR/Mw
-         lpbzm2P+3j6qMP2vJa+rOOasmnZVYrmEO2VbYfXj6oicn/DHc5HrGMNfcPQsiEgHeIJE
-         zkJhdRoWyhpYj4lSLJibNnztw2+eB9qpSinEqISekDz8gF9rvUSCMnqNLt871pPnTlq6
-         RAnZoTlEmPNEitmJU3AtHUNxD1R90exH3Dytfh2gxad5drz0bSRaFv2U6fjk/xqASl3K
-         OYOw==
+        bh=pQlnwek1lWpij8LeOBWh+sxDT7KmBEOhz8ZE1R1F1kI=;
+        b=CH5Pt97DrMy2adK69ctT5bhrxVunqRAx0H+/jUSxxs0fBx9mXoxCN+96EnjVPD78Dj
+         JX/gpwFnMB7lEXqbIDA9nBFJ4gKX810Oo0mpidTm+41TLfVhK/Ll+X2r9G5t6mDNjpNK
+         SJWbZy+7wPvojWR9OGaCq3Hkw5avHHe0s7ig8hhBWR3ykmS+kWFktI+Sboa2cc1aim3O
+         NATH6Canhs0gTSJLSwAUZU/orkyOVDGhCHrukY4UmxtqkxcxlN1QBbDbmO54GJvJdYvn
+         tdy2Lk9A8BEW/y7tEaLkHKogkn0+c78bvtgMJmThPgkRKOvw8d2AEy+IZl2gMxnBTrWU
+         fbLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761410450; x=1762015250;
+        d=1e100.net; s=20230601; t=1761410452; x=1762015252;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fhEz+tkYwuCSnU6LNYxfD5DkxTKdrSyEg2dThddkEgo=;
-        b=agXwau00fdeU/imEfDSjN/iEr2G2J08loq0QPsdhjoTEiq31dAwFrag9mtGqaKhRVc
-         oIb/gtAq3icKmTBO9UBC0LSkmSpRds1NIYQ6xO71ixJmc73Gd8BkOZpoIsbiYvYYS93h
-         tPin24nm4FV+yo/pP4j8HUndcQbKanuVUFCBRKZp8AqE87H0iC+fy0qkWF5csfLnO8+M
-         7LT69MXlEAqz7em6R7kfNmJhvXo0m+q/4ws9ylBKp+FmbdaQ3eFNC0ZTRLT1BVoYWkG/
-         0Yna4UN+zySf/pTevFWnDSKOBPpxzVeCQqSyjzKPaky1OwS2CAIyfPy41pbyKDHaU+P8
-         5MGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9CUa0kw29/e0Z/dPvknrU/T7NvaLtfaFVfHM4gq8Ip4J13YIdaWM/DD/7Xll3+jKy1H2ELLj4FL/dC6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoF3UrZapjVsw1fzu/NlZploc9YtZ26SG43pnBcl+LhNM2Nu1U
-	1jF4PV3A+yH4iPVaNgaIJk5oDRizQLvrlp0xrZyOykzbwBr4cbCxOEYY
-X-Gm-Gg: ASbGnct2r3HfeKs1fYsXo4i5IPdNS5iFBWNq4W1miUAN9Z7QAWZliFCm5x8b+PYuJxr
-	CeqsoCaeFJz+rfeParOkP2ti8zy0DQUB5IFT99469FG3wP14m9Ox3XyPutYsKHpIXWFLM3CKAZu
-	amUJ0mCzBuDsxYaCZvPmWRoUM3XPH3PBUmu2IvL9ATM6wnwI6nXLXNDnbOccjSBZS7hdBwWeDp1
-	sZeHNgpUhDI4iSR9WNJI5NYRgVy1uR/Ipl4TKThwdqNXv/UMdHrezDzwLgKgRLy/XCfXtjRXajg
-	ak86dGf7x4ZEoNAP65hPTUX8cOv6TWcRK8a0rBUtjikIi8jZJJxTU7fvgu4tHDV8b2C1lCc2ZCW
-	lL2WT+/odQkfF58HYp4YCzgcdVDgEg3Q57OfJa2eDuwQGWKKGikrV23o3kFa/DqU2p1L57wOC
-X-Google-Smtp-Source: AGHT+IFg107k/tCYFMcohq67EzH90IUaPmb/gULgz0xOuwcBmv/ppnfnMODk2cLJXAhzPksQP0R0Mw==
-X-Received: by 2002:a05:622a:153:b0:4e8:bae7:4d0a with SMTP id d75a77b69052e-4e8bae74e00mr318957881cf.51.1761410449893;
-        Sat, 25 Oct 2025 09:40:49 -0700 (PDT)
+        bh=pQlnwek1lWpij8LeOBWh+sxDT7KmBEOhz8ZE1R1F1kI=;
+        b=v9DRaKThSamDu2LmiPmvYFXN3Z2sm2L7byhPVj+IbZuiPo8ZsSlXZq99Pod/PAEqej
+         LoKYucWpsLFYIJ8zMqcBWjSQzFwHQ9ILdhNmEBhfbSGRRy15vAl2HYYsNsbMfZUXTc3c
+         Hi5sIR7DmXlpHtM1n20vi1s20GSaL69SCq3tj4ezDlju9ZdLS/oOpJgn/eapsxnRmHDp
+         iajSQRHhQEWYV9yGrV4s43qUI7eSH0GAct20cKz1mar5VH4TeYUPfREVrGRwA7ED7zkE
+         yWgEkP/X7vvrofQDR7sUIscuieBWamj7la6e/GGvuweMQS5dHZ11q07CMBACXN4MoAIw
+         g65A==
+X-Forwarded-Encrypted: i=1; AJvYcCXculmcZmSIaKdUTI/sU5J1fEAxahuKRaNiqU5Ax+WCvNBmNk5VKtSluC/tDocheLs/qnfIqNIk39pD1KQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx//uiX6GWsQ1PacuoQNEN1cSCLsZsEpjObGxKs3MrEfD9TsUmM
+	sJgb/aB6txESjZ4Np9deOly28Sn6B14qwnEcoqNTIY/mOMVYdxGw8oYz
+X-Gm-Gg: ASbGnct3J8dXIPbqK0ggCi11X6qyvUYve5jtaDHsNuzZOPyjNk9ziw7KO18BRuI0lZU
+	iIDM3vxYcn5Q1P80AQGpKTXQG2mE/eHyhSyR0+sRdUkfeuM8/JXG02DTQGsFxpV0uKbWIeeisbd
+	7y1ENhLdVfH/2fWPB+bZGT7v2D4rzdKAh3BpEBdjKmRwx6JwEujVDMoV+/BxEw8Xk8HbYKzRnt6
+	gNtz4Dzq84YJr5Dd1dlGCLKsV2T0hfnCldoct2Qyfcp5l02Thafe5inltigfmLmk4QInCEbH0t4
+	GPbfOVtOddD+KZkkCQ0GQvcvLmGho0+xkrslfxkGr6T1LMQ+p1wm+X9SLmivICqiWX5sNnY/qB4
+	uBoQyiS6mtfHjW8ELyU59PAPFHyltqc9Nps9b6cIWT8IoLxO8uc/d0cIDwEfeGaipLnGRRO5vtC
+	lMBLzP4BU=
+X-Google-Smtp-Source: AGHT+IHlyjol8Bie8F99hAjP80rz8ZMg2F2ufGY62yGvqxUFdDm1aK3+hSTgiT9hRW2DHU1QiGn1gA==
+X-Received: by 2002:ad4:5aae:0:b0:787:8e43:5761 with SMTP id 6a1803df08f44-87fb6473b5fmr66116636d6.56.1761410451896;
+        Sat, 25 Oct 2025 09:40:51 -0700 (PDT)
 Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3860692sm15069131cf.30.2025.10.25.09.40.49
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc49b98b0sm16464616d6.54.2025.10.25.09.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Oct 2025 09:40:49 -0700 (PDT)
+        Sat, 25 Oct 2025 09:40:51 -0700 (PDT)
 From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Shreeya Patel <shreeya.patel@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 10/21] i2c: nomadik: don't use GENMASK()
-Date: Sat, 25 Oct 2025 12:40:09 -0400
-Message-ID: <20251025164023.308884-11-yury.norov@gmail.com>
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	kernel@collabora.com,
+	linux-mmc@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 11/21] drivers: don't use GENMASK() in FIELD_PREP_WM16()
+Date: Sat, 25 Oct 2025 12:40:10 -0400
+Message-ID: <20251025164023.308884-12-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251025164023.308884-1-yury.norov@gmail.com>
 References: <20251025164023.308884-1-yury.norov@gmail.com>
@@ -96,104 +118,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GENMASK(high, low) notation is confusing. Switch to BITS() or FIRST_BITS()
-where appropriate.
+Recently added FIELD_PREP_WM16() in a few places uses GENMASK. It's
+confusing and may mislead readers. Switch to BITS() or FIRST_BITS()
+as appropriate.
 
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Link: https://lore.kernel.org/all/CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com/
 Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- drivers/i2c/busses/i2c-nomadik.c | 44 ++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_lvds.h             | 2 +-
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c         | 4 ++--
+ drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h | 4 ++--
+ drivers/mmc/host/dw_mmc-rockchip.c                   | 4 ++--
+ drivers/soc/rockchip/grf.c                           | 4 ++--
+ sound/soc/rockchip/rockchip_i2s_tdm.h                | 2 +-
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
-index 19b648fc094d..4c79ada5e1d4 100644
---- a/drivers/i2c/busses/i2c-nomadik.c
-+++ b/drivers/i2c/busses/i2c-nomadik.c
-@@ -53,9 +53,9 @@
+diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.h b/drivers/gpu/drm/rockchip/rockchip_lvds.h
+index 2d92447d819b..e79e6031be59 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_lvds.h
++++ b/drivers/gpu/drm/rockchip/rockchip_lvds.h
+@@ -115,7 +115,7 @@
+ #define   PX30_LVDS_INVERT_DCLK(val)		FIELD_PREP_WM16(BIT(5), (val))
  
- /* Control registers */
- #define I2C_CR_PE		BIT(0)		/* Peripheral Enable */
--#define I2C_CR_OM		GENMASK(2, 1)	/* Operating mode */
-+#define I2C_CR_OM		BITS(1, 2)	/* Operating mode */
- #define I2C_CR_SAM		BIT(3)		/* Slave addressing mode */
--#define I2C_CR_SM		GENMASK(5, 4)	/* Speed mode */
-+#define I2C_CR_SM		BITS(4, 5)	/* Speed mode */
- #define I2C_CR_SGCM		BIT(6)		/* Slave general call mode */
- #define I2C_CR_FTX		BIT(7)		/* Flush Transmit */
- #define I2C_CR_FRX		BIT(8)		/* Flush Receive */
-@@ -63,31 +63,31 @@
- #define I2C_CR_DMA_RX_EN	BIT(10)		/* DMA Rx Enable */
- #define I2C_CR_DMA_SLE		BIT(11)		/* DMA sync. logic enable */
- #define I2C_CR_LM		BIT(12)		/* Loopback mode */
--#define I2C_CR_FON		GENMASK(14, 13)	/* Filtering on */
--#define I2C_CR_FS		GENMASK(16, 15)	/* Force stop enable */
-+#define I2C_CR_FON		BITS(13, 14)	/* Filtering on */
-+#define I2C_CR_FS		BITS(15, 16)	/* Force stop enable */
+ #define PX30_LVDS_GRF_PD_VO_CON1		0x438
+-#define   PX30_LVDS_FORMAT(val)			FIELD_PREP_WM16(GENMASK(14, 13), (val))
++#define   PX30_LVDS_FORMAT(val)			FIELD_PREP_WM16(BITS(13, 14), (val))
+ #define   PX30_LVDS_MODE_EN(val)		FIELD_PREP_WM16(BIT(12), (val))
+ #define   PX30_LVDS_MSBSEL(val)			FIELD_PREP_WM16(BIT(11), (val))
+ #define   PX30_LVDS_P2S_EN(val)			FIELD_PREP_WM16(BIT(6), (val))
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+index 38c49030c7ab..438fea5f6f6d 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+@@ -1698,7 +1698,7 @@ static unsigned long rk3588_set_intf_mux(struct vop2_video_port *vp, int id, u32
+ 		val = rk3588_get_hdmi_pol(polflags);
+ 		regmap_write(vop2->vop_grf, RK3588_GRF_VOP_CON2, FIELD_PREP_WM16(BIT(1), 1));
+ 		regmap_write(vop2->vo1_grf, RK3588_GRF_VO1_CON0,
+-			     FIELD_PREP_WM16(GENMASK(6, 5), val));
++			     FIELD_PREP_WM16(BITS(5, 6), val));
+ 		break;
+ 	case ROCKCHIP_VOP2_EP_HDMI1:
+ 		div &= ~RK3588_DSP_IF_EDP_HDMI1_DCLK_DIV;
+@@ -1711,7 +1711,7 @@ static unsigned long rk3588_set_intf_mux(struct vop2_video_port *vp, int id, u32
+ 		val = rk3588_get_hdmi_pol(polflags);
+ 		regmap_write(vop2->vop_grf, RK3588_GRF_VOP_CON2, FIELD_PREP_WM16(BIT(4), 1));
+ 		regmap_write(vop2->vo1_grf, RK3588_GRF_VO1_CON0,
+-			     FIELD_PREP_WM16(GENMASK(8, 7), val));
++			     FIELD_PREP_WM16(BITS(7, 8), val));
+ 		break;
+ 	case ROCKCHIP_VOP2_EP_EDP0:
+ 		div &= ~RK3588_DSP_IF_EDP_HDMI0_DCLK_DIV;
+diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+index b13f58e31944..14df3f53ff8f 100644
+--- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
++++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+@@ -12,8 +12,8 @@
+ #include <linux/bitops.h>
+ #include <linux/hw_bitfield.h>
  
- /* Slave control register (SCR) */
--#define I2C_SCR_SLSU		GENMASK(31, 16)	/* Slave data setup time */
-+#define I2C_SCR_SLSU		BITS(16, 31)	/* Slave data setup time */
+-#define UPDATE(x, h, l)		FIELD_PREP(GENMASK((h), (l)), (x))
+-#define HIWORD_UPDATE(v, h, l)	FIELD_PREP_WM16(GENMASK((h), (l)), (v))
++#define UPDATE(x, h, l)		FIELD_PREP(BITS((l), (h)), (x))
++#define HIWORD_UPDATE(v, h, l)	FIELD_PREP_WM16(BITS((l), (h)), (v))
  
- /* Master controller (MCR) register */
- #define I2C_MCR_OP		BIT(0)		/* Operation */
--#define I2C_MCR_A7		GENMASK(7, 1)	/* 7-bit address */
--#define I2C_MCR_EA10		GENMASK(10, 8)	/* 10-bit Extended address */
-+#define I2C_MCR_A7		BITS(1, 7)	/* 7-bit address */
-+#define I2C_MCR_EA10		BITS(8, 10)	/* 10-bit Extended address */
- #define I2C_MCR_SB		BIT(11)		/* Extended address */
--#define I2C_MCR_AM		GENMASK(13, 12)	/* Address type */
-+#define I2C_MCR_AM		BITS(12, 13)	/* Address type */
- #define I2C_MCR_STOP		BIT(14)		/* Stop condition */
--#define I2C_MCR_LENGTH		GENMASK(25, 15)	/* Transaction length */
-+#define I2C_MCR_LENGTH		BITS(15, 25)	/* Transaction length */
+ /* SYS_GRF */
+ #define SYS_GRF_SOC_CON1			0x0304
+diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+index 82dd906bb002..7fac1a7281bf 100644
+--- a/drivers/mmc/host/dw_mmc-rockchip.c
++++ b/drivers/mmc/host/dw_mmc-rockchip.c
+@@ -148,10 +148,10 @@ static int rockchip_mmc_set_internal_phase(struct dw_mci *host, bool sample, int
  
- /* Status register (SR) */
--#define I2C_SR_OP		GENMASK(1, 0)	/* Operation */
--#define I2C_SR_STATUS		GENMASK(3, 2)	/* controller status */
--#define I2C_SR_CAUSE		GENMASK(6, 4)	/* Abort cause */
--#define I2C_SR_TYPE		GENMASK(8, 7)	/* Receive type */
--#define I2C_SR_LENGTH		GENMASK(19, 9)	/* Transfer length */
-+#define I2C_SR_OP		BITS(0, 1)	/* Operation */
-+#define I2C_SR_STATUS		BITS(2, 3)	/* controller status */
-+#define I2C_SR_CAUSE		BITS(4, 6)	/* Abort cause */
-+#define I2C_SR_TYPE		BITS(7, 8)	/* Receive type */
-+#define I2C_SR_LENGTH		BITS(9, 19)	/* Transfer length */
+ 	if (sample)
+ 		mci_writel(host, TIMING_CON1,
+-			   FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
++			   FIELD_PREP_WM16(BITS(1, 11), raw_value));
+ 	else
+ 		mci_writel(host, TIMING_CON0,
+-			   FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
++			   FIELD_PREP_WM16(BITS(1, 11), raw_value));
  
- /* Baud-rate counter register (BRCR) */
--#define I2C_BRCR_BRCNT1		GENMASK(31, 16)	/* Baud-rate counter 1 */
--#define I2C_BRCR_BRCNT2		GENMASK(15, 0)	/* Baud-rate counter 2 */
-+#define I2C_BRCR_BRCNT2		FIRST_BITS(16)	/* Baud-rate counter 2 */
-+#define I2C_BRCR_BRCNT1		BITS(16, 31)	/* Baud-rate counter 1 */
+ 	dev_dbg(host->dev, "set %s_phase(%d) delay_nums=%u actual_degrees=%d\n",
+ 		sample ? "sample" : "drv", degrees, delay_num,
+diff --git a/drivers/soc/rockchip/grf.c b/drivers/soc/rockchip/grf.c
+index 344870da7675..89fd4a4c69eb 100644
+--- a/drivers/soc/rockchip/grf.c
++++ b/drivers/soc/rockchip/grf.c
+@@ -125,8 +125,8 @@ static const struct rockchip_grf_info rk3566_pipegrf __initconst = {
+ #define RK3576_SYSGRF_SOC_CON1		0x0004
  
- /* Interrupt mask set/clear (IMSCR) bits */
- #define I2C_IT_TXFE		BIT(0)
-@@ -339,7 +339,7 @@ static int init_hw(struct nmk_i2c_dev *priv)
- #define DEFAULT_I2C_REG_CR	(FIELD_PREP(I2C_CR_OM, I2C_OM_MASTER) | I2C_CR_PE)
- 
- /* grab top three bits from extended I2C addresses */
--#define ADR_3MSB_BITS		GENMASK(9, 7)
-+#define ADR_3MSB_BITS		BITS(7, 9)
- 
- /**
-  * load_i2c_mcr_reg() - load the MCR register
-@@ -1028,11 +1028,11 @@ static void nmk_i2c_of_probe(struct device_node *np,
- }
- 
- static const unsigned int nmk_i2c_eyeq5_masks[] = {
--	GENMASK(5, 4),
--	GENMASK(7, 6),
--	GENMASK(9, 8),
--	GENMASK(11, 10),
--	GENMASK(13, 12),
-+	BITS(4, 5),
-+	BITS(6, 7),
-+	BITS(8, 9),
-+	BITS(10, 11),
-+	BITS(12, 13),
+ static const struct rockchip_grf_value rk3576_defaults_sys_grf[] __initconst = {
+-	{ "i3c0 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(GENMASK(7, 6), 3) },
+-	{ "i3c1 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(GENMASK(9, 8), 3) },
++	{ "i3c0 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(BITS(6, 7), 3) },
++	{ "i3c1 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(BITS(8, 9), 3) },
  };
  
- static int nmk_i2c_eyeq5_probe(struct nmk_i2c_dev *priv)
+ static const struct rockchip_grf_info rk3576_sysgrf __initconst = {
+diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.h b/sound/soc/rockchip/rockchip_i2s_tdm.h
+index 0171e05ee886..eee6db372ee7 100644
+--- a/sound/soc/rockchip/rockchip_i2s_tdm.h
++++ b/sound/soc/rockchip/rockchip_i2s_tdm.h
+@@ -287,7 +287,7 @@ enum {
+ #define I2S_TDM_RXCR	(0x0034)
+ #define I2S_CLKDIV	(0x0038)
+ 
+-#define HIWORD_UPDATE(v, h, l)	(FIELD_PREP_WM16_CONST(GENMASK((h), (l)), (v)))
++#define HIWORD_UPDATE(v, h, l)	(FIELD_PREP_WM16_CONST(BITS((l), (h)), (v)))
+ 
+ /* PX30 GRF CONFIGS */
+ #define PX30_I2S0_CLK_IN_SRC_FROM_TX		HIWORD_UPDATE(1, 13, 12)
 -- 
 2.43.0
 
