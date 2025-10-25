@@ -1,149 +1,278 @@
-Return-Path: <linux-kernel+bounces-869932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB89C09075
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:43:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDF5C0906F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 14:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 460774E39BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CAF3B69AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 12:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C758A2FBE19;
-	Sat, 25 Oct 2025 12:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EF12FBE0E;
+	Sat, 25 Oct 2025 12:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="mnSgGn3A";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Aivx50Lu"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b="zpnV/IOQ"
+Received: from mail.hostpark.net (mail.hostpark.net [212.243.197.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CAF2E8894;
-	Sat, 25 Oct 2025 12:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2DA250C06;
+	Sat, 25 Oct 2025 12:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.243.197.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761396197; cv=none; b=RNB/cYFI0AD+sgx32pFx2q6ATJ6RbGLvYjNa1Y973rHKfaq1X80e4uh1T7YO8ndZWOR7lsfc9rpgzPbVmagA+jTxf4vcF2mtzX6hLZZSEcQcZsKpb3hw2Ewz4vYf5k1aM8KWmdhiHH+8Jq+cQco0rIXujeIhKDyyk25Msd5Br0g=
+	t=1761396168; cv=none; b=FAdHVnF7oy/5nrub0y1vtvhmtl/yuteFjOQi3EkveoS8w7i7v/UJifj1cYce9Suju6ILVX3t+Wf/+aLVNdWp01+cJbkPEYd/BrXs9J4MUdvqsKjADv3t+X/x4DEGiRiMuhKlEb+GMlrIl8p05RcvoieRnBrUSy77s6gjMcGEId0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761396197; c=relaxed/simple;
-	bh=3TvDjbq4mKxAYjolp70z7LwGV2DiC4QHoYxb659SfR4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a2N9ZD6c74v7nedX3oPDwiyYDm0IiSWGBaN5hrEKkC7Uz54OtgMoFMMU4FRGxziSnCZtxJQHIbwuYEoY7kd1jJBbv8PWXlEe3vh0w9S7JTRrbF48no2JweynfxBa1S5Nh22ajVtSCDTEl4LYMQ4SHdppMTWtTckhIbvALExa6wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=mnSgGn3A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Aivx50Lu; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.stl.internal (Postfix) with ESMTP id 28A3B13000F7;
-	Sat, 25 Oct 2025 08:43:14 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Sat, 25 Oct 2025 08:43:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1761396194; x=1761399794; bh=zAFQucylvBENicdiTBkdA
-	9Z5rlZ3eaoQYdr+2ewyF+8=; b=mnSgGn3ASF+MeFqjqtTJoYkF0yx3fvXo520AS
-	4fpf/8fONPrgqtf8m4zgzagFnJYlwH95gD5BV8dNTA8e5U/3gVEVF+EimZ5puX7i
-	8+yw4mad/yuMsBTOVqwu0+ymcOedfh6p9NbjkHrPveRY/oUftLLAZPe3Sv5BisDJ
-	geghPZh8aBtPJtFcBNTOgQMMUwVu5dXkuZ2vOzD5HT89++PZOMHx4NDq/ibwqUuR
-	Iyor8jMSwjlcdGdtfhJ55tklqHjGfJsuNGB9ymaab7iSl+bEK5CDa/tssHG9g4Yf
-	k0F19QPMJdFx663vn92aOkQDkbmImbSzHfGHlN0N3jsmA9ezA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761396194; x=1761399794; bh=zAFQucylvBENicdiTBkdA9Z5rlZ3eaoQYdr
-	+2ewyF+8=; b=Aivx50LuPTohrcelggQRiRRrh+5TFhURGovTc/M4yGQszi7MMtw
-	5JENZkCD3i1mty7JElPAe2fNgn3H1non6AstqgDupiCyTP7WrXeCrBBCIHY26qQM
-	v2d4WL+yoFp/hylZA875nagiScONnaDOGFupGhmNGCUekFlixDJSHJsgQk3ansbB
-	0G0oqAEZFdFRpkVLUbbWZuodhiQo6yAYhYGjCxOZQuSXsIhfQcE/EaDwU9IDASf+
-	9C/19Cf9mye1mJgK8E9GW7jrpFue6NX2PlM0WPzkbqjEU8BkDIZ2U0xNTSCRuC4S
-	a0QgdQ/pb3CjRk21WDND590VRfu5k7y1cMw==
-X-ME-Sender: <xms:4cX8aHNHjr2Z-NZ_E8vbQL4Oo44V66HMQwHeVzfFChZTAIfvfuN6Pw>
-    <xme:4cX8aBbiMD2eHqfTBkTEfqDMMhrh6aTC6DVG4BRuEiDtZJLiLjFATpR1kqxZlcKMT
-    7d_tqGlszvjSu-N9zrLIrgoEdCOhpQbmyPexLDahEXRJmErDvoTs8w>
-X-ME-Received: <xmr:4cX8aHUMYw22Rbv83heAH7nn8vr3e6BbpWa1ZnHqZUCUxvxYIq5MXxAAgp7AlFMxfBzmtyMElBM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduhedvvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpegjihiihhgvucfuuhhnuceoshhunhihihiihhgvsehfrghsthhmrghi
-    lhdrtghomheqnecuggftrfgrthhtvghrnhepjefhffdvfeeigfegueejuedujeduueeugf
-    egveekuddufeetuedtfeffgfdvfedunecuffhomhgrihhnpehgihhthhhusgdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsuhhnhi
-    hiiihhvgesfhgrshhtmhgrihhlrdgtohhmpdhnsggprhgtphhtthhopeduhedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhnohhrihesghhmrg
-    hilhdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmgh
-    hrohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
-    homhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegs
-    jhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehlohhssh
-    hinheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:4cX8aADf49XoIH9Ttb1IAe-SpzNbxBY460hFqHJpejWNE1BkdFJ1mQ>
-    <xmx:4cX8aDJjQ8GICWH1jpQ8KRST2DkorhPOJns2apwbatvuvSpiie9Vow>
-    <xmx:4cX8aOv3efnRBo-FcK9xxgfTEngMhmAuyWNDAPcsd0rJNqrEhPpkRA>
-    <xmx:4cX8aLW7-j7QkvOADOEy07-Gj5lf9K0F3KlBOQd27Rjfi8b4RgZpPQ>
-    <xmx:4cX8aHwyWRxciF3klThowkMB6cK9lpPBgJuecCwTcBqevhnt-D4Yx4YK>
-Feedback-ID: i1736481b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 25 Oct 2025 08:43:08 -0400 (EDT)
-From: Yizhe Sun <sunyizhe@fastmail.com>
-To: fujita.tomonori@gmail.com,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com
-Cc: tmgross@umich.edu,
-	netdev@vger.kernel.org,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	dakr@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yizhe Sun <sunyizhe@fastmail.com>
-Subject: [PATCH] rust: phy: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
-Date: Sat, 25 Oct 2025 20:42:18 +0800
-Message-ID: <20251025124218.33951-1-sunyizhe@fastmail.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1761396168; c=relaxed/simple;
+	bh=zjsOv7gJgjzpeM6gwPXZvXT1zgKeR0+kDKb77Gc7lwM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qea75t+r2Rb8r7uebDYifRUrTsuLDpDa4BHRBfaUj29/QiCsM2HX6TFGH/SvsMt40WFUWW8twW4cYHLmsTTiNyjZsBDnPSklcjO3eVWhZcXHg2x50WX447kCuTNwJnqzu5EddLVf9uDmyk6dqpDYBk+jsIJTflSaivvbn1Airls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li; spf=pass smtp.mailfrom=klarinett.li; dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b=zpnV/IOQ; arc=none smtp.client-ip=212.243.197.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=klarinett.li
+Received: from localhost (localhost [127.0.0.1])
+	by mail.hostpark.net (Postfix) with ESMTP id B015D162CA;
+	Sat, 25 Oct 2025 14:42:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=klarinett.li; h=
+	x-mailer:references:message-id:content-transfer-encoding:date
+	:date:in-reply-to:from:from:subject:subject:mime-version
+	:content-type:content-type; s=sel2011a; t=1761396156; bh=zjsOv7g
+	JgjzpeM6gwPXZvXT1zgKeR0+kDKb77Gc7lwM=; b=zpnV/IOQ8aFYB+rBHNBYLDF
+	X0mYieaeDwQDucfJYgEzL5oEsai1XybD/T/q/6pvtplAYhYmea2iRAqdLeSUVL+z
+	ctvuWTQ9OkycPsYriubSXqHwUvIE1WtrKYfKjx6kfjQeO9WkBS7QP5wa56hiorSM
+	4PWJsrgrfoKx/ZoCR/CY=
+X-Virus-Scanned: by Hostpark/NetZone Mailprotection at hostpark.net
+Received: from mail.hostpark.net ([127.0.0.1])
+ by localhost (mail0.hostpark.net [127.0.0.1]) (amavis, port 10224) with ESMTP
+ id Vrj6O67yuTfg; Sat, 25 Oct 2025 14:42:36 +0200 (CEST)
+Received: from customer (localhost [127.0.0.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.hostpark.net (Postfix) with ESMTPSA id A3F2A162C2;
+	Sat, 25 Oct 2025 14:42:34 +0200 (CEST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH] leds: leds-lp50xx: enable chip before any communication
+From: Christian Hitz <christian@klarinett.li>
+In-Reply-To: <20251025113758.GA29337@google.com>
+Date: Sat, 25 Oct 2025 14:42:24 +0200
+Cc: Pavel Machek <pavel@kernel.org>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Dan Murphy <dmurphy@ti.com>,
+ Christian Hitz <christian.hitz@bbv.ch>,
+ stable@vger.kernel.org,
+ Pavel Machek <pavel@ucw.cz>,
+ linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D09EA9A0-6EC5-45D5-B75C-FF79C8A201E0@klarinett.li>
+References: <20251016145623.2863553-1-christian@klarinett.li>
+ <20251025113758.GA29337@google.com>
+To: Lee Jones <lee@kernel.org>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
 
-From: Benno Lossin <lossin@kernel.org>
+Hi Lee
 
-All types in `bindings` implement `Zeroable` if they can, so use
-`pin_init::zeroed` instead of relying on `unsafe` code.
+> Am 25.10.2025 um 13:37 schrieb Lee Jones <lee@kernel.org>:
+>=20
+> On Thu, 16 Oct 2025, Christian Hitz wrote:
+>=20
+>> From: Christian Hitz <christian.hitz@bbv.ch>
+>>=20
+>> If a GPIO is used to control the chip's enable pin, it needs to be =
+pulled
+>> high before any SPI communication is attempted.
+>> Split lp50xx_enable_disable() into two distinct functions to enforce
+>> correct ordering.
+>> Observe correct timing after manipulating the enable GPIO and SPI
+>> communication.
+>=20
+> Is this currently broken?  How did it test okay before?
 
-If this ends up not compiling in the future, something in bindgen or on
-the C side changed and is most likely incorrect.
+Yes, the driver ist currently broken when used with an enable GPIO.
 
-Link: https://github.com/Rust-for-Linux/linux/issues/1189
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Signed-off-by: Yizhe Sun <sunyizhe@fastmail.com>
----
- rust/kernel/net/phy.rs | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Assume the used enable GPIO is low when the probe function is entered. =
+In this case
+the device is in SHUTDOWN mode and does not react to i2c commands.
 
-diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-index bf6272d87a7b..46c693c5768a 100644
---- a/rust/kernel/net/phy.rs
-+++ b/rust/kernel/net/phy.rs
-@@ -553,9 +553,7 @@ pub const fn create_phy_driver<T: Driver>() -> DriverVTable {
-         } else {
-             None
-         },
--        // SAFETY: The rest is zeroed out to initialize `struct phy_driver`,
--        // sets `Option<&F>` to be `None`.
--        ..unsafe { core::mem::MaybeUninit::<bindings::phy_driver>::zeroed().assume_init() }
-+        ..pin_init::zeroed()
-     }))
- }
- 
--- 
-2.51.1
+- The call to lp50xx_reset() on line 548 has therefore no effect as i2c =
+is not possible yet.
+- Then - on line 552 - lp50xx_enable_disable() is called. As =
+"priv->enable_gpio=E2=80=9C has not
+yet been initialized, setting the GPIO has no effect. Also the i2c =
+enable command is not
+executed as the device is still in SHUTDOWN.
+- On line 556 lp50xx_probe_dt() finally the rest of the DT is parsed and =
+the configured=20
+priv->enable_gpio is set up.
+
+As a result the device is still in SHUTDOWN mode and not ready for =
+operation.
+
+>=20
+> You need to explain more about why you are changing the semantics.
+>=20
+> See below.
+>=20
+>> Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB =
+LED driver")
+>>=20
+>> Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
+>> Cc: stable@vger.kernel.org
+>> ---
+>> drivers/leds/leds-lp50xx.c | 51 =
++++++++++++++++++++++++++++-----------
+>> 1 file changed, 36 insertions(+), 15 deletions(-)
+>>=20
+>> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+>> index d19b6a459151..f23e9ae434e4 100644
+>> --- a/drivers/leds/leds-lp50xx.c
+>> +++ b/drivers/leds/leds-lp50xx.c
+>> @@ -52,6 +52,8 @@
+>>=20
+>> #define LP50XX_SW_RESET 0xff
+>> #define LP50XX_CHIP_EN BIT(6)
+>> +#define LP50XX_START_TIME_US 500
+>> +#define LP50XX_RESET_TIME_US 3
+>>=20
+>> /* There are 3 LED outputs per bank */
+>> #define LP50XX_LEDS_PER_MODULE 3
+>> @@ -374,19 +376,42 @@ static int lp50xx_reset(struct lp50xx *priv)
+>> return regmap_write(priv->regmap, priv->chip_info->reset_reg, =
+LP50XX_SW_RESET);
+>> }
+>>=20
+>> -static int lp50xx_enable_disable(struct lp50xx *priv, int =
+enable_disable)
+>> +static int lp50xx_enable(struct lp50xx *priv)
+>> {
+>> int ret;
+>>=20
+>> - ret =3D gpiod_direction_output(priv->enable_gpio, enable_disable);
+>> + if (priv->enable_gpio) {
+>=20
+> Why have you added this check back in?
+>=20
+> See: 5d2bfb3fb95b ("leds: lp50xx: Get rid of redundant check in =
+lp50xx_enable_disable()")
+
+I have re-added the check because of the =E2=80=9Eudelay()=E2=80=9C call =
+below. This delay is not necessary=20
+when there is no enable_gpio. I assumed that it is better to do a double =
+check here than to wait
+500us in cases where no enable_gpio is used.
+
+>=20
+>> + ret =3D gpiod_direction_output(priv->enable_gpio, 1);
+>=20
+> Take the opportunity to define the magic numbers '0' and '1'.
+
+Will do.
+
+>=20
+>> + if (ret)
+>> + return ret;
+>> +
+>> + udelay(LP50XX_START_TIME_US);
+>> + } else {
+>=20
+> In this old code we did both.  Why are we now choosing?
+
+Coming out of SHUTDOWN state the device is already reset and =
+lp50xx_reset() is a no-op.
+To ensure a clean reset in all cases (also when enable GPIO was already =
+high before) I will
+make the reset unconditional again.
+
+Thanks for the review and comments. I will prepare a v2 to include the =
+comments and expand
+the commit message.
+
+Regards
+Christian=20
+
+>=20
+>> + ret =3D lp50xx_reset(priv);
+>> + if (ret)
+>> + return ret;
+>> + }
+>> +
+>> + return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
+>> +}
+>> +
+>> +static int lp50xx_disable(struct lp50xx *priv)
+>> +{
+>> + int ret;
+>> +
+>> + ret =3D regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
+>> if (ret)
+>> return ret;
+>>=20
+>> - if (enable_disable)
+>> - return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
+>> - else
+>> - return regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
+>> + if (priv->enable_gpio) {
+>> + ret =3D gpiod_direction_output(priv->enable_gpio, 0);
+>> + if (ret)
+>> + return ret;
+>> +
+>> + udelay(LP50XX_RESET_TIME_US);
+>> + }
+>>=20
+>> + return 0;
+>> }
+>>=20
+>> static int lp50xx_probe_leds(struct fwnode_handle *child, struct =
+lp50xx *priv,
+>> @@ -453,6 +478,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+>> return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
+>>     "Failed to get enable GPIO\n");
+>>=20
+>> + ret =3D lp50xx_enable(priv);
+>> + if (ret)
+>> + return ret;
+>> +
+>> priv->regulator =3D devm_regulator_get(priv->dev, "vled");
+>> if (IS_ERR(priv->regulator))
+>> priv->regulator =3D NULL;
+>> @@ -550,14 +579,6 @@ static int lp50xx_probe(struct i2c_client =
+*client)
+>> return ret;
+>> }
+>>=20
+>> - ret =3D lp50xx_reset(led);
+>> - if (ret)
+>> - return ret;
+>> -
+>> - ret =3D lp50xx_enable_disable(led, 1);
+>> - if (ret)
+>> - return ret;
+>> -
+>> return lp50xx_probe_dt(led);
+>> }
+>>=20
+>> @@ -566,7 +587,7 @@ static void lp50xx_remove(struct i2c_client =
+*client)
+>> struct lp50xx *led =3D i2c_get_clientdata(client);
+>> int ret;
+>>=20
+>> - ret =3D lp50xx_enable_disable(led, 0);
+>> + ret =3D lp50xx_disable(led);
+>> if (ret)
+>> dev_err(led->dev, "Failed to disable chip\n");
+>>=20
+>> --=20
+>> 2.51.0
+>>=20
+>=20
+> --=20
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
 
 
