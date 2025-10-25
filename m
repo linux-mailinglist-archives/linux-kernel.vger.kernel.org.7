@@ -1,277 +1,187 @@
-Return-Path: <linux-kernel+bounces-869846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CB3C08DA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:54:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64396C08DA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 09:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31D204E317A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:54:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200203B9C1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 07:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D80E28A3EF;
-	Sat, 25 Oct 2025 07:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05D7291C07;
+	Sat, 25 Oct 2025 07:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="mVOEc9it"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJRNee8n"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB74277C98;
-	Sat, 25 Oct 2025 07:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680DA287257
+	for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 07:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761378831; cv=none; b=TdoZldjezhnlR+UjB9SraOuWhTSSxCsO3ycgPMa3xjCd3HdTvVq5DoJrxPQUlgspeXoZxWom00m/FGBgF4GDf1/UwQO5F7sTg0Y1jWPtL+VG98hcLGv5kD4+pDFnT49EX3Zx67q241/GXc0MwOgq7oTVfrji+YQg4SXlP1aqbPg=
+	t=1761378987; cv=none; b=IMPfD7K5/5WH5ourHUXovfdHgzmSVMB2k313bc7xrU4LvzJeZMweoRXXkxd7hIpmLuTfWvVf7HnZ7ETCVuoqlsZ3Rl46Gv1W1sg3c8Mkt2By2my3noc8I92brgm9wsXmEZaj7Q3MONH1+scRJ3z32NpRq9ncU6AIxUL+s5Ku7w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761378831; c=relaxed/simple;
-	bh=jg1+qkdhSwKS5qrLon3684aZfiA4cs2YyAL6IeIhTyA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AXtrdXitCZgQzwZMSnFXLRNTVCsvjNgxGyW9sHKU4LmO9nDMBJM5wyVYbdRTpK0hii58zrM8T5C9+C1vYKMSJYcEolnPgOBGdw6m6/6KN8HNbWszIhZzIw/JZW6DmUF4TT1ApcZnMGQDl9CjjjPlgP9W3rSESDycs2X/PhymA24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=mVOEc9it; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59P7iXid1218455;
-	Sat, 25 Oct 2025 07:53:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=ICtETx2Z8AVHEoPymap7RM0JQ8qMYAURXImZ9HBoS3U=; b=
-	mVOEc9itJE/sUITOccH5W6QbMwfI9Mir+JBnAbmrG/CqyNly9d2mMMaom+fL7oe3
-	l/ZlntugsQujGUFgXQJJE0axHbN2fu2g4YPNvpGFhchJBnJFTtzowpSD0PbnmAmF
-	Bd0VmzADMjXi8MK9DSORSjua4EFf3RWNJTxtXBTQE3B2Nb9EidonMb2JZdgsgKYr
-	JO9TURlF08xhzuE8JoUyY2hBvBOwb4YPf1nyFHl4xCrODfZmzpJGQHNBMUz8G0xR
-	ZwCvh+c8DFOawl/HQsxiNJkj798vU36fXGkB4OoTxmGFfGC2lWA95t0cV/OI+nI3
-	yifA++VBPrQPDUomsxz30g==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a0nh5r59m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 25 Oct 2025 07:53:20 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Sat, 25 Oct 2025 00:53:17 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Sat, 25 Oct 2025 00:53:14 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <kuniyu@google.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-        <jreuter@yaina.de>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-        <syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH V3] net: rose: Prevent the use of freed digipeat
-Date: Sat, 25 Oct 2025 15:53:14 +0800
-Message-ID: <20251025075314.3275350-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAAVpQUAEBgTZF5GMvRgZybC0pHUuaN-4JBaff79L6AABNKSNWw@mail.gmail.com>
-References: <CAAVpQUAEBgTZF5GMvRgZybC0pHUuaN-4JBaff79L6AABNKSNWw@mail.gmail.com>
+	s=arc-20240116; t=1761378987; c=relaxed/simple;
+	bh=8gVKaVr7mQmOCkjXIqbeVzWh9yXzYrSkI1/lFkAQbAQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WZKhCIBd3PUz+5K4EsG3Jh6WstTEPaHlNoi2p5muVjErgoR/TO9AC13I7XX0OsnC23vHZ7dnJcvhODGGpQvakkQh/7UTGd9JgoSNRDyg2XsuKkyTAms5eIcIKuDUiBhJi72esAHvrxKmETCA67kDL+biaWBMIbJxTJdzN/SqkD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJRNee8n; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-27c369f898fso45742915ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 00:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761378984; x=1761983784; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hVHEeVvTfnJjIr7f3Y35GS9oBs/K0+nn/6SC3ws73x4=;
+        b=YJRNee8n9DdtETcheWWK9DAAMmmpVXlSKbKke9bNZZ8RBXadnfNIzrNkJLjN8m5Su0
+         M67cLAndjhFvsHhevq2kCF9aC/+IqxsBHjPZINIcS++u5SVRMgihEP3ftVOwP5zmbSPS
+         e0rAU9hRV6q0TxK7U7LAkljCrK5OtalWSSnu5N/NmL0tkWd4Id988balyoatENTdSQZt
+         umNw5Xf1jFEkrsYgQN4uTdXQqcsMEMKoAVirCPYJ7Kdu2N2SKJoPvCxoPf3Wdj58Qd83
+         jP2YP9WULeVc5X6H5TMFtMyCDKVmezHf4uXX+YS+kpNHsrQ/YBRVSaBmtAOVnk8JNHrW
+         mT1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761378984; x=1761983784;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hVHEeVvTfnJjIr7f3Y35GS9oBs/K0+nn/6SC3ws73x4=;
+        b=pCl6zjfO6jlxeiNXRV+DlqTp62vBKa5YCUc0ah/FaMPeBUMUGG5IoX21hhey2/xGQf
+         7wSZbEJ0SFcw4Fo1OCZO4jDDr5PZDhkc48WQblP3fE/gaiX9NGOg74WqJzYZG6EGrIZ0
+         nv02sfrnL5ol0cT0zWk+6vaGnFs8Pl9OjM8icOl0Wm1w5qgSZZJAPzEvySEPdQEXxd8L
+         /64Usz6b1gFGCKiBGSc/WWeS5Xx9shCvhD7/4OfDCANUotRd+abb1BFddtWWqO9mVNmp
+         Wtj/m6QFoUaQxWEeB1+zyyeVSaryrmxGGmBWNF3Aw4rS0hp+VE62ltQfIEy0ZA1qwa7b
+         /d9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWOOziWnf2lbTFoPmXDqr8LHzuR9tLjlObj+6Yj/kIWYj4fE1vjOYRRtIM/Wjjedrd5KwiQ2CBAAnyXt3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5aY/AtLBaV2Pii6wKVUXgb3a/FA8R6q3OhrwIAdg0HEcO2d4Y
+	jRBDA0Z4CfvkUdRbMkycjpcVjU52JKc5Uoa2S2KDHo2BzNXhvPWolHaA
+X-Gm-Gg: ASbGncu4Rvw143JqtD8G4yyvkotX9MpGQuPeuR4briKxclNCvuZDcBHqBFgStnztNuT
+	1ELJnOoOt092wZVm9cTZ9H1oXcyMHBmZhXwiOFHIzoiCgfZpV+TaWqZCHlXIY+AsCrh52GJIDaN
+	R85FlN7dCtpYuB0rf+DgjpnnNlft+lF/jwQt/RzYGAdIsYcy1fFREFRKzYkSgVC86Yo3xNJpqyW
+	L0sFe34GigK/j/DX3rWUvqjVXrYaDhAOh2FG+JMnxP9LFce1XVvJfmXhaBDpOJZlqPzpXMD//ta
+	B5rjwlez1zx1EQN8ArT0HTaVkv0I58vBwLlJsgPdlvxgG400NGybAjLB7yaN97AAsvYHObZGMNx
+	mhlj4z6WPulUkJc3mKaJXtk9VB9uIXjoZvb+hDAky0fhYjvike/7b0YywNLNFXS7o+1PmTAcW8C
+	U=
+X-Google-Smtp-Source: AGHT+IGwvkVJVftLc7N152A3XNiMYQcFGtvvfqDROQl6klMasXSEkx7383k2P/ZS1iFavUlMTbLlyA==
+X-Received: by 2002:a17:902:c943:b0:26d:d860:3dae with SMTP id d9443c01a7336-290c9c93ac6mr393490305ad.3.1761378984475;
+        Sat, 25 Oct 2025 00:56:24 -0700 (PDT)
+Received: from aheev.home ([2401:4900:88f6:d7b0:443:a828:b6ba:688d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d2333fsm14806285ad.50.2025.10.25.00.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Oct 2025 00:56:23 -0700 (PDT)
+From: Ally Heev <allyheev@gmail.com>
+Date: Sat, 25 Oct 2025 13:26:16 +0530
+Subject: [PATCH v3] checkpatch: add uninitialized pointer with __free
+ attribute check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: nWfN72PwxcKdipTathcNAHXEIqLhYbwE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDA3MCBTYWx0ZWRfX8lalfdMngfpE
- QtTVn0jn8ZFB58jd9IFx8zniL5t9luJNszsVSyjqbuGmJfhf+2LQg97i0gRGsp1Z6xXMP0cPq6T
- yHqUkzWTKnu0Untcql+SyQDy1u1U2wA0Vkh0QeocQKT6zRhlk0xg8uNm7SuHSUb9jlcLxt/JZuK
- 0mWKlm3gjFK0LGcp9UM488z5guIXZJ/e1q8ZmIDruNVaJOVxcNZw4F/ET0etMdejnfyAv1b3OfY
- EBYrw0T2PMFJeCWLBUztB96vCZs0s25RsOhbl7+PNaozXufnXi6ZmDTi1DOWXwtzna4HkHUSyne
- QDWtkg6yTw9Azl1yaV7757nhohQyLdLjK/zn5PD2LbNrXQg2rmrGZRUrvfQDU1ZMbHVAF6SEnpu
- ZhK4b3A7TtMf6r6KcOIQ1Vk99aq+eQ==
-X-Authority-Analysis: v=2.4 cv=FOoWBuos c=1 sm=1 tr=0 ts=68fc81f0 cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=1XWaLZrsAAAA:8
- a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=F4dupCkMKLVTJLQvDq8A:9
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cQPPKAXgyycSBL8etih5:22
- a=cPQSjfK2_nFv0Q5t_7PE:22 a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
- a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-ORIG-GUID: nWfN72PwxcKdipTathcNAHXEIqLhYbwE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-25_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510250070
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251025-aheev-checkpatch-uninitialized-free-v3-1-a67f72b1c2bd@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJ+C/GgC/5XNPQ7CMAyG4augzBjZKeVv4h6IIQ0OsShplZYIq
+ Hp30k6MIE+vh+cbVMdRuFOHxaAiJ+mkCTmK5UJZb8KVQS65lUZdEmoC45kTWM/21preengECdK
+ LqeXNF3CRGUpb7N22ZEJDKkttZCfPeeV0zu2l65v4mkcTTd///ESQb+cqpMpuzNYcr3cj9co2d
+ zX5SX+b699MDQi0sbhH5B0V+G2O4/gBfu11rSoBAAA=
+X-Change-ID: 20251021-aheev-checkpatch-uninitialized-free-5c39f75e10a1
+To: Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Andy Whitcroft <apw@canonical.com>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
+ David Hunter <david.hunter.linux@gmail.com>, 
+ Shuah Khan <skhan@linuxfoundation.org>, Viresh Kumar <vireshk@kernel.org>, 
+ Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-pm <linux-pm@vger.kernel.org>, dan.j.williams@intel.com, 
+ Ally Heev <allyheev@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3095; i=allyheev@gmail.com;
+ h=from:subject:message-id; bh=8gVKaVr7mQmOCkjXIqbeVzWh9yXzYrSkI1/lFkAQbAQ=;
+ b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDL+NC26H2nLc7Uj8V6vE+M+NhPOxze5JdqevlmxofwPT
+ 5PvHr/FHaUsDGJcDLJiiiyMolJ+epukJsQdTvoGM4eVCWQIAxenAEwkYSYjw5q9EzSu7MjpOla/
+ ck3tB+cC/3M/vSJ6bZLKq1Kcb6wPiGVkaNr5ZdWWds/3zE+dY3+2Sk+80qK7IPban6u7znnW+f+
+ 8xwAA
+X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
+ fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
 
-On Sat, 25 Oct 2025 00:15:51 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> On Fri, Oct 24, 2025 at 11:46 PM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> >
-> > On Fri, 24 Oct 2025 21:25:20 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> > > On Fri, Oct 24, 2025 at 8:51 PM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> > > >
-> > > > On Fri, 24 Oct 2025 19:18:46 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> > > > > On Fri, Oct 24, 2025 at 2:39 AM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> > > > > >
-> > > > > > There is no synchronization between the two timers, rose_t0timer_expiry
-> > > > > > and rose_timer_expiry.
-> > > > > > rose_timer_expiry() puts the neighbor when the rose state is ROSE_STATE_2.
-> > > > > > However, rose_t0timer_expiry() does initiate a restart request on the
-> > > > > > neighbor.
-> > > > > > When rose_t0timer_expiry() accesses the released neighbor member digipeat,
-> > > > > > a UAF is triggered.
-> > > > > >
-> > > > > > To avoid this UAF, defer the put operation to rose_t0timer_expiry() and
-> > > > > > stop restarting t0timer after putting the neighbor.
-> > > > > >
-> > > > > > When putting the neighbor, set the neighbor to NULL. Setting neighbor to
-> > > > > > NULL prevents rose_t0timer_expiry() from restarting t0timer.
-> > > > > >
-> > > > > > syzbot reported a slab-use-after-free Read in ax25_find_cb.
-> > > > > > BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> > > > > > Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17200
-> > > > > > Call Trace:
-> > > > > >  ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> > > > > >  ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
-> > > > > >  rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
-> > > > > >  rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link.c:198
-> > > > > >  rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
-> > > > > >
-> > > > > > Freed by task 17183:
-> > > > > >  kfree+0x2b8/0x6d0 mm/slub.c:6826
-> > > > > >  rose_neigh_put include/net/rose.h:165 [inline]
-> > > > > >  rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
-> > > > > >
-> > > > > > Fixes: d860d1faa6b2 ("net: rose: convert 'use' field to refcount_t")
-> > > > > > Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com
-> > > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > > > > ---
-> > > > > > V1 -> V2: Putting the neighbor stops t0timer from automatically starting
-> > > > > > V2 -> V3: add rose_neigh_putex for set rose neigh to NULL
-> > > > > >
-> > > > > >  include/net/rose.h   | 12 ++++++++++++
-> > > > > >  net/rose/rose_link.c |  5 +++++
-> > > > > >  2 files changed, 17 insertions(+)
-> > > > > >
-> > > > > > diff --git a/include/net/rose.h b/include/net/rose.h
-> > > > > > index 2b5491bbf39a..33de310ba778 100644
-> > > > > > --- a/include/net/rose.h
-> > > > > > +++ b/include/net/rose.h
-> > > > > > @@ -167,6 +167,18 @@ static inline void rose_neigh_put(struct rose_neigh *rose_neigh)
-> > > > > >         }
-> > > > > >  }
-> > > > > >
-> > > > > > +static inline void rose_neigh_putex(struct rose_neigh **roseneigh)
-> > > > > > +{
-> > > > > > +       struct rose_neigh *rose_neigh = *roseneigh;
-> > > > > > +       if (refcount_dec_and_test(&rose_neigh->use)) {
-> > > > > > +               if (rose_neigh->ax25)
-> > > > > > +                       ax25_cb_put(rose_neigh->ax25);
-> > > > > > +               kfree(rose_neigh->digipeat);
-> > > > > > +               kfree(rose_neigh);
-> > > > > > +               *roseneigh = NULL;
-> > > > > > +       }
-> > > > > > +}
-> > > > > > +
-> > > > > >  /* af_rose.c */
-> > > > > >  extern ax25_address rose_callsign;
-> > > > > >  extern int  sysctl_rose_restart_request_timeout;
-> > > > > > diff --git a/net/rose/rose_link.c b/net/rose/rose_link.c
-> > > > > > index 7746229fdc8c..334c8cc0876d 100644
-> > > > > > --- a/net/rose/rose_link.c
-> > > > > > +++ b/net/rose/rose_link.c
-> > > > > > @@ -43,6 +43,9 @@ void rose_start_ftimer(struct rose_neigh *neigh)
-> > > > > >
-> > > > > >  static void rose_start_t0timer(struct rose_neigh *neigh)
-> > > > > >  {
-> > > > > > +       if (!neigh)
-> > > > > > +               return;
-> > > > > > +
-> > > > > >         timer_delete(&neigh->t0timer);
-> > > > > >
-> > > > > >         neigh->t0timer.function = rose_t0timer_expiry;
-> > > > > > @@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_list *t)
-> > > > > >  {
-> > > > > >         struct rose_neigh *neigh = timer_container_of(neigh, t, t0timer);
-> > > > > >
-> > > > >
-> > > > > What prevents rose_timer_expiry() from releasing the
-> > > > > last refcnt here ?
-> > > > The issue reported by syzbot is that rose_t0timer_expiry() is triggered
-> > > > first, followed by rose_timer_expiry().
-> > >
-> > > I don't see how you read that ordering from the report.
-> > > https://syzkaller.appspot.com/bug?extid=caa052a0958a9146870d
-> > Here's my understanding: See the two calltraces below.
-> 
-> The same question still applies.
-> 
-> What prevents rose_timer_expiry() from releasing the last
-> refcnt before [1] ?
-@@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_list *t)
- {
- 	struct rose_neigh *neigh = timer_container_of(neigh, t, t0timer);
+uninitialized pointers with __free attribute can cause undefined
+behaviour as the memory allocated to the pointer is freed
+automatically when the pointer goes out of scope.
+add check in checkpatch to detect such issues
 
-+	rose_neigh_hold(neigh); // [3] This prevents rose_timer_expiry() from putting neigh.
- 	rose_transmit_restart_request(neigh);
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Link: https://lore.kernel.org/all/8a4c0b43-cf63-400d-b33d-d9c447b7e0b9@suswa.mountain/
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Ally Heev <allyheev@gmail.com>
+---
+Testing:
+ran checkpatch.pl before and after the change on 
+crypto/asymmetric_keys/x509_public_key.c, which has
+both initialized with NULL and uninitialized pointers
+---
+Changes in v3:
+- remove $FreeAttribute
+- Link to v2: https://lore.kernel.org/r/20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com
 
- 	neigh->dce_mode = 0;
+Changes in v2:
+- change cover letter and title to reflect new changes
+- fix regex to handle multiple declarations in a single line case
+- convert WARN to ERROR for uninitialized pointers
+- add a new WARN for pointers initialized with NULL 
+- NOTE: tried handling multiple declarations on a single line by splitting
+        them and matching the parts with regex, but, it turned out to be 
+	complex and overkill. Moreover, multi-line declarations pose a threat
+- Link to v1: https://lore.kernel.org/r/20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com
+---
+ Documentation/dev-tools/checkpatch.rst | 5 +++++
+ scripts/checkpatch.pl                  | 6 ++++++
+ 2 files changed, 11 insertions(+)
 
-+	rose_neigh_putex(&neigh); // [4] This prevents t0timer from restarting by setting neigh to NULL.
- 	rose_start_t0timer(neigh);
- }
-> 
-> For example, why is accessing neigh->dev in rose_send_frame()
-> safe then ?
-> 
-> The commit message mentions that two timers are not
-> synchronised, but the diff adds no such synchronisation.
-> 
-> 
-> > [1] Line 111 occurs after rose_neigh_put(). Otherwise, accessing
-> > neigh->digipeat would result in a UAF. Therefore, rose_t0timer_expiry()
-> > must be triggered before rose_timer_expiry().
-> >
-> > [2] syzbot reports that line 237 generates a UAF when accessing digi->ndigi.
-> >
-> > UAF Task1:
-> > rose_t0timer_expiry()->
-> >   rose_transmit_restart_request()->
-> >     rose_send_frame(.., neigh->digipeat, ..)-> // [1] line 111
-> >       ax25_find_cb()->
-> >         if (digi != NULL && digi->ndigi != 0)  // [2] line 237
-> >
-> > Freed neigh Task2:
-> >  rose_timer_expiry()->
-> >    rose_neigh_put(neigh)->
-> >      kfree(neigh)
-> > >
-> > > The only ordering I can find is that kfree() in rose_timer_expiry()
-> > > happened before ax25_find_cb () in rose_t0timer_expiry().
-> > >
-> > > > Therefore, in rose_t0timer_expiry(), the reference count of neigh is
-> > > > increased before entering rose_transmit_restart_request() to prevent
-> > > > neigh from being put in rose_timer_expiry(). Then, in rose_t0timer_expiry(),
-> > > > neigh is put before executing rose_start_t0timer() and the neigh value is
-> > > > set to NULL to prevent t0timer restarts.
-> > > >
-> > > > The case where rose_timer_expiry() is triggered before rose_t0timer_expiry()
-> > > > is not considered at this time.
-> > >
-> > > So this change just papers over the root cause.
-> > >
-> > >
-> > > > >
-> > > > > The t0timer could be triggered even after that happens.
-> > > > >
-> > > > >
-> > > > > > +       rose_neigh_hold(neigh);
-> > > > > >         rose_transmit_restart_request(neigh);
-> > > > > >
-> > > > > >         neigh->dce_mode = 0;
-> > > > > >
-> > > > > > +       rose_neigh_putex(&neigh);
-> > > > > >         rose_start_t0timer(neigh);
-> > > > > >  }
-> > > > > >
-> > > > > > --
-> > > > > > 2.43.0
-> > > > > >
+diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
+index d5c47e560324fb2399a5b1bc99c891ed1de10535..1a304bf38bcd27e50bbb7cd4383b07ac54d20b0a 100644
+--- a/Documentation/dev-tools/checkpatch.rst
++++ b/Documentation/dev-tools/checkpatch.rst
+@@ -1009,6 +1009,11 @@ Functions and Variables
+ 
+       return bar;
+ 
++  **UNINITIALIZED_PTR_WITH_FREE**
++    Pointers with __free attribute should be initialized. Not doing so
++    may lead to undefined behavior as the memory allocated (garbage,
++    in case not initialized) to the pointer is freed automatically
++    when the pointer goes out of scope.
+ 
+ Permissions
+ -----------
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 92669904eecc7a8d2afd3f2625528e02b6d17cd6..e697d81d71c0b3628f7b59807e8bc40d582621bb 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -7721,6 +7721,12 @@ sub process {
+ 				ERROR("MISSING_SENTINEL", "missing sentinel in ID array\n" . "$here\n$stat\n");
+ 			}
+ 		}
++
++# check for uninitialized pointers with __free attribute
++		while ($line =~ /\*\s*($Ident)\s+__free\s*\(\s*$Ident\s*\)\s*[,;]/g) {
++			ERROR("UNINITIALIZED_PTR_WITH_FREE",
++			      "pointer '$1' with __free attribute should be initialized\n" . $herecurr);
++		}
+ 	}
+ 
+ 	# If we have no input at all, then there is nothing to report on
+
+---
+base-commit: 6548d364a3e850326831799d7e3ea2d7bb97ba08
+change-id: 20251021-aheev-checkpatch-uninitialized-free-5c39f75e10a1
+
+Best regards,
+-- 
+Ally Heev <allyheev@gmail.com>
+
 
