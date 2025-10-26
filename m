@@ -1,214 +1,86 @@
-Return-Path: <linux-kernel+bounces-870641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE2EC0B560
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52791C0B569
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7443B87EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9E13B8AA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07832836A6;
-	Sun, 26 Oct 2025 22:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910E3283159;
+	Sun, 26 Oct 2025 22:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ENJ4Qj8l"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0N9a6Ws"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7016972633;
-	Sun, 26 Oct 2025 22:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1E572633;
+	Sun, 26 Oct 2025 22:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761516925; cv=none; b=AJn/GRxfT/dzuSAbnRK24Wo7Mc4gAc5z2vOWRH3KUoclY0ZsVfOnmFnIFRuTe5nK5mjjah+YSsYbntxjS0P8Ir+bvyJN0A5fbxNoG/w+4BPTfwC5VLJeo+C8ZvCGIapHQrfM0pBrDQprw/sLpxFjr/uJqA5ok+dbROVlCX/uVSE=
+	t=1761516938; cv=none; b=OAraA/uL3YRZ2JKhM9itTDKO5ywQwlLUK2GF2dELzd7FDmFVqEIL83kglzceJ7kG/tEuMGtGK7EJcuWrNLTg1voa42sSDAJ5CUdG23Eu5AA4F+kyeyddr2xJjTa7ENQGP0zxi8GGdVEtI/syG1fw2/Us8lEg5vy4YymY0gGKtx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761516925; c=relaxed/simple;
-	bh=GRJJh+euJBb7Q3UYKG8XfvgSRz/qMSbefV+j3k8HTpM=;
+	s=arc-20240116; t=1761516938; c=relaxed/simple;
+	bh=HsVvS+d7okCtQ5mjLmoJqtA3NyYSkQ5luidBs4em8yQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwOeVvigTuXtOKGSdlGT6aTiYPOkiBtgUximb/RwMKQZWqPs7UpWxOcbBrIti4pjYkW8N09lmagMqkoAVNHthkcJ+14WhN31OX+WxQDxfCgDVRyFEEhn2gAFPUdHdy7cymqAYPScmY8KsVo501Y/1Yz71IJHM+61qewIjX5w/dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ENJ4Qj8l; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4CCCE1F0E;
-	Sun, 26 Oct 2025 23:13:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761516814;
-	bh=GRJJh+euJBb7Q3UYKG8XfvgSRz/qMSbefV+j3k8HTpM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbFGLg9vZoF28Cq/4CMD6EiSJuLlRQRciOjkLkdaU8a5IRLtEABu/dLzPgpguSkvBHacI2x+M9jf5aVUSwqjU4eXg+TMiKGH9/RghTHjuZzdvYwwHBWHBJeHXNHnEyx5kkPsa6XVWL45ve/S/9Sb6MYpwR8Olp4TFpnY1NHulFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0N9a6Ws; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CF45C4CEE7;
+	Sun, 26 Oct 2025 22:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761516937;
+	bh=HsVvS+d7okCtQ5mjLmoJqtA3NyYSkQ5luidBs4em8yQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ENJ4Qj8loGEmGVnpDuHIsZojbsdBJSMiN1hgdJoY4UptY5CwOttTMYVPGoCQGu8Ca
-	 Vyih4w1LvF4Avh2CE6CUv7D5/sZEMSlAo6l+o6W3SC4Hjlmwro1LyUJqqhv/SFoO7+
-	 pL3GDphfqMiL5DiVuPmLqi20em3nleOaS+sKBU8c=
-Date: Mon, 27 Oct 2025 00:15:07 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Guoniu Zhou <guoniu.zhou@oss.nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Guoniu Zhou <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH 3/3] media: nxp: imx8-isi: Add ISI support for i.MX95
-Message-ID: <20251026221507.GI13023@pendragon.ideasonboard.com>
-References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
- <20251024-isi_imx95-v1-3-3ad1af7c3d61@nxp.com>
- <aPuEEDzY3FoeM9tQ@lizhi-Precision-Tower-5810>
+	b=s0N9a6WsHjGsv5XplbKVtoiAEYPurNptJGQtBFK7fPgAExpq1opS9XiebLN0VH7YM
+	 /ftZfqaXNtLmOrrE4WqXbLTwLd5fT4IPD150VC2eyJGh9Oe7UnY4NqgsOmWvqyS6iM
+	 r1DcwDg+jiWz2cPnOatidf3eZrl2sewgIouVNkWXoU/HOxtGou2rGb3axQPDYy5eNv
+	 fVzqqBVAu0HhbaxYHOMDk08N1UJq/jYOzafrtoaCI1JM3c5sAeWj8iTToT5GtGKqmO
+	 org1HoBd6D8Srg7coe9y3wB8KkPxU2pkADN7XDdAiIPy8BYLd8O3ErtOL4xSUlBoQd
+	 rzdpf990YdAyg==
+Date: Sun, 26 Oct 2025 17:15:35 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: aiqun.yu@oss.qualcomm.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+	trilok.soni@oss.qualcomm.com,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org,
+	Das Srinagesh <quic_gurus@quicinc.com>, yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH v2 2/4] dt-bindings: soc: qcom,aoss-qmp: Document the
+ Kaanapali AOSS channel
+Message-ID: <176151693344.3032100.16182164232751767007.robh@kernel.org>
+References: <20251022-knp-soc-binding-v2-0-3cd3f390f3e2@oss.qualcomm.com>
+ <20251022-knp-soc-binding-v2-2-3cd3f390f3e2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPuEEDzY3FoeM9tQ@lizhi-Precision-Tower-5810>
+In-Reply-To: <20251022-knp-soc-binding-v2-2-3cd3f390f3e2@oss.qualcomm.com>
 
-On Fri, Oct 24, 2025 at 09:50:08AM -0400, Frank Li wrote:
-> On Fri, Oct 24, 2025 at 05:46:54PM +0800, Guoniu Zhou wrote:
-> > From: Guoniu Zhou <guoniu.zhou@nxp.com>
-> >
-> > The ISI module on i.MX95 supports up to eight channels and four link
-> > sources to obtain the image data for processing in its pipelines. It
-> > can process up to eight image sources at the same time.
-> >
-> > In i.MX95, the gasket callbacks set ISI QoS which decide the priority
-> > to access system memory when there are multiple masters access memory
-> > simultaneously in camera domain.
-> >
-> > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > ---
-> >  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 13 +++++++
-> >  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  2 +
-> >  .../media/platform/nxp/imx8-isi/imx8-isi-gasket.c  | 44 ++++++++++++++++++++++
-> >  3 files changed, 59 insertions(+)
-> >
-> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> > index adc8d9960bf0df87d4e475661a3439beaf5ce9f6..ea9cc6d72bd4605000c6cbac2fa8cb9806e3cd3b 100644
-> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> > @@ -337,6 +337,18 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
-> >  	.has_36bit_dma		= false,
-> >  };
-> >
-> > +static const struct mxc_isi_plat_data mxc_imx95_data = {
-> > +	.model			= MXC_ISI_IMX95,
-> > +	.num_ports		= 4,
-> > +	.num_channels		= 8,
-> > +	.reg_offset		= 0x10000,
-> > +	.ier_reg		= &mxc_imx8_isi_ier_v2,
-> > +	.set_thd		= &mxc_imx8_isi_thd_v1,
-> > +	.buf_active_reverse	= true,
-> > +	.gasket_ops		= &mxc_imx95_gasket_ops,
-> > +	.has_36bit_dma		= true,
-> > +};
-> > +
-> >  static const struct mxc_isi_plat_data mxc_imx8qm_data = {
-> >  	.model			= MXC_ISI_IMX8QM,
-> >  	.num_ports		= 5,
-> > @@ -548,6 +560,7 @@ static const struct of_device_id mxc_isi_of_match[] = {
-> >  	{ .compatible = "fsl,imx8qxp-isi", .data = &mxc_imx8qxp_data },
-> >  	{ .compatible = "fsl,imx8ulp-isi", .data = &mxc_imx8ulp_data },
-> >  	{ .compatible = "fsl,imx93-isi", .data = &mxc_imx93_data },
-> > +	{ .compatible = "fsl,imx95-isi", .data = &mxc_imx95_data },
-> >  	{ /* sentinel */ },
-> >  };
-> >  MODULE_DEVICE_TABLE(of, mxc_isi_of_match);
-> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> > index e84af5127e4e7938e55e31b7063bee5e2cd4cb11..d1297ac26c56bdd97e4dd325b2a7394430a7adb9 100644
-> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> > @@ -161,6 +161,7 @@ enum model {
-> >  	MXC_ISI_IMX8QXP,
-> >  	MXC_ISI_IMX8ULP,
-> >  	MXC_ISI_IMX93,
-> > +	MXC_ISI_IMX95,
-> >  };
-> >
-> >  struct mxc_isi_plat_data {
-> > @@ -297,6 +298,7 @@ struct mxc_isi_dev {
-> >
-> >  extern const struct mxc_gasket_ops mxc_imx8_gasket_ops;
-> >  extern const struct mxc_gasket_ops mxc_imx93_gasket_ops;
-> > +extern const struct mxc_gasket_ops mxc_imx95_gasket_ops;
-> >
-> >  int mxc_isi_crossbar_init(struct mxc_isi_dev *isi);
-> >  void mxc_isi_crossbar_cleanup(struct mxc_isi_crossbar *xbar);
-> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > index f69c3b5d478209c083738477edf380e3f280c471..6418ee1aabdad3cb92e84f2ef6406c5503987401 100644
-> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > @@ -3,6 +3,7 @@
-> >   * Copyright 2019-2023 NXP
-> >   */
-> >
-> > +#include <linux/bits.h>
-> >  #include <linux/regmap.h>
-> >
-> >  #include <media/mipi-csi2.h>
-> > @@ -83,3 +84,46 @@ const struct mxc_gasket_ops mxc_imx93_gasket_ops = {
-> >  	.enable = mxc_imx93_gasket_enable,
-> >  	.disable = mxc_imx93_gasket_disable,
-> >  };
-> > +
-> > +/* -----------------------------------------------------------------------------
-> > + * i.MX95 gasket
-> > + */
-> > +#define ISI_QOS						0x10
-> > +#define ISI_QOS_AWQOS(x)				FIELD_PREP(GENMASK(2, 0), (x))
-> > +
-> > +#define ISI_PANIC_QOS					0x14
-> > +#define ISI_PANIC_QOS_HURRY_AWQOS(x)			FIELD_PREP(GENMASK(2, 0), (x))
-> > +
-> > +static void mxc_imx95_set_qos(struct mxc_isi_dev *isi, unsigned int val)
-> > +{
-> > +	/* Config QoS */
-> > +	regmap_write(isi->gasket, ISI_QOS, ISI_QOS_AWQOS(val));
-> > +
-> > +	/* Config Panic QoS */
-> > +	regmap_write(isi->gasket, ISI_PANIC_QOS, ISI_PANIC_QOS_HURRY_AWQOS(val));
-> > +}
-> > +
-> > +static void mxc_imx95_clear_qos(struct mxc_isi_dev *isi)
-> > +{
-> > +	regmap_write(isi->gasket, ISI_QOS, 0x0);
-> > +	regmap_write(isi->gasket, ISI_PANIC_QOS, 0x0);
-> > +}
-> > +
-> > +static void mxc_imx95_gasket_enable(struct mxc_isi_dev *isi,
-> > +				    const struct v4l2_mbus_frame_desc *fd,
-> > +				    const struct v4l2_mbus_framefmt *fmt,
-> > +				    const unsigned int port)
-> > +{
-> > +	mxc_imx95_set_qos(isi, 0x3);
-> > +}
+
+On Wed, 22 Oct 2025 00:28:42 -0700, Jingyi Wang wrote:
+> Document the Always-On Subsystem side channel on the Qualcomm Kaanapali
+> platform for communication with client found on the SoC such as
+> remoteprocs.
 > 
-> can we use standard interconnects standard interface to config Qos stuff.
-> https://elixir.bootlin.com/linux/v6.17.4/source/include/linux/interconnect.h
+> Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Good suggestion, that would be my preference too. Otherwise we'll end up
-hardcoding parameters here, which doesn't feel right. I assume the
-values above would need to be tweaked based on use cases.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> > +
-> > +static void mxc_imx95_gasket_disable(struct mxc_isi_dev *isi,
-> > +				     unsigned int port)
-> > +{
-> > +	mxc_imx95_clear_qos(isi);
-> > +}
-> > +
-> > +const struct mxc_gasket_ops mxc_imx95_gasket_ops = {
-> > +	.enable = mxc_imx95_gasket_enable,
-> > +	.disable = mxc_imx95_gasket_disable,
-> > +};
-
--- 
-Regards,
-
-Laurent Pinchart
 
