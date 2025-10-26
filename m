@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-870520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42885C0B07E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:45:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6022AC0B08D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2BC18349060
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C065618977F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822742EF66A;
-	Sun, 26 Oct 2025 18:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C829C20C001;
+	Sun, 26 Oct 2025 18:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="Xu7AezbX"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b="nfuU5nc0"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8A5253950
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 18:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED261DB127
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 18:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761504295; cv=none; b=mUUdzv4rOZX4NkPrT8orJC2zwa1zHvAQYKmuAnpy2+DBSS/0MIz9rENzE7n4845QEOPVtr5GMPj+jYjrdBQOfsxAm3Y5UOp4+j7JZBD/EqjPDIkSoJwzOx1vX0J1FpHhQaqNmT42J4jV3bQlnWiSMUm3AJjGkQlfZi49vWFfQSY=
+	t=1761504407; cv=none; b=Hdm4pBXhf6g5Ob7sO22t09q64azJlEiMUQsln96euBGDS//G6sAarltTFWaeBfOjUItikbS64SvD5oiYJtNWAORcH6RD9RtXXRMDAYsFLNfNlR6CxpVpnyZA23FPLbpnsa/of+xe2+bN22ShWwW6gXIElCe1vd0ZBeBEBLqOCeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761504295; c=relaxed/simple;
-	bh=+y8KHncls3OAOqDaFkj5gilK4idEaoPHp5VamyBZOns=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=gvUKTFdJio0HXTz2GZK95yY3RDC5DBPSc/minWkUSQIOLKSt4LwUtLgY+8MTKPsQ8btTrmQvl+zUMSNG6OkVWvpr+Ig9bpNCOpgXLMI327kSX69iDv39LWw0WTB9XuhS9+K7fTmU5iy/8MT/95Y2iSrsnIyLJX9mHsMIMjPBotg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=Xu7AezbX; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1761504407; c=relaxed/simple;
+	bh=9JElRUYcelJHNX0v60zr/J8lWtgoWXeCAYKccVAcB3o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t/s154ArfsP/7P1YOZ8JD/4CdYeTsNAj4gBEQoJ7cPS8yqgiZeJsji8o46IMTPwvYUOnyivMbV4NNenChz4sZohP5rVmKSVqdEdORquLt1Hk62QEgPSbjnzIXPRuuC8QGHun51PWpo9DMnlhOkRuoJ+ql2DRvOcuM5cvVBXZtJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net; spf=none smtp.mailfrom=dpplabs.com; dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b=nfuU5nc0; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dpplabs.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-290a3a4c7ecso43061755ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:46:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=reznichenko.net; s=google; t=1761504405; x=1762109205; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kr+uTiTscqC5xNsxJVLhouOq96vCtcj/UADaRDhqzhs=;
+        b=nfuU5nc0POpV4P3j/DGLhWJQXNqr0k1HE9XSR9yoHSEwcBdUbWJrDZYIJNC/Zigl6F
+         vHDtRKR7oa6eXm8LNFt350e4RLDLiyPUquzPNz6Aw1x35N6To1Q8ve58ATIPNEeiBo11
+         ur7nEaXMjxSGzSoYn4diJtavEwxzJPcZVVmszzlpx690+BugfkfxFVkZgxNNGpnNZlZP
+         Mm5mcMN+BY8C0xEeM+VI47tSDq5MCuJIZWbXA01kn/aNtazHm6o4pnG9RfYsx/ARUmMh
+         ysw1c0ZBFcNMlGfNTBSpKL19nfZYqEPPjLcU+HpQ0hrU3LPAQzmZmrFNLRF1ld4A2q4w
+         VUaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761504405; x=1762109205;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kr+uTiTscqC5xNsxJVLhouOq96vCtcj/UADaRDhqzhs=;
+        b=bNaO9kI4jn18UdDVAEPsGa0zhEfovKWyk46uFlTzmcYoWzCFH6DAB2Uo7f6shbJTAm
+         9FcrFDvagCyCYn2uqE0bMfYHWt0dZii074keXmw2Q9yH2gPq8VXzGoE3Vujkk48yk/eF
+         m4VrSacaSF75PtbH/TgMd1GguDVZdD2GH6Ytva9MqhHsRBJXC0WxFtAqGjx5R7CiTCkx
+         NSPZoFF6SuU334sqsK6U01T2z13TDqxLTEILYPBliqrJjxN7A1lmOudVUUKv4QV4Ir0F
+         tT5vxj6LUcFV2wFugPizHMfJsMjyWJ0ee3987iwYQC5asrCWoSHqUfMct0EGC4tKnGKa
+         eE6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcv7bT7eFvA6rSZ8fR+qPm0dTJDAaXbLgZnYiY0GLpca36bErUTASozLBsvQdiB/cjpbPfNrk5U3N560g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGaM5q386Rte2kHropfyDKPcP53CjzBzE89sytO1PenvTgVuOV
+	z8YCRAePzjdcs2QLhRTe5gA3yPHnyBPVqkQ0MWKw9kWXnuc/mqp74LlnzUZxI61lrYo=
+X-Gm-Gg: ASbGncuxGkbsc8QlRlGYONWyN9YReHLNyjq219KCKwGHvqRjMp6hXEM7n3m+URl55fI
+	xU2YgEg2PZV7l/mbAMCMyd9ZltaNvUKliOoktAd72H7TSCw34QJ6kLswUKJr1vfwo8UbEZYA1HJ
+	uD9k1uK70vv+Vhj3UekGHuFqevo0ZwL6iaEn+WZ9Np8GLt55sFskK0SOW93C/bZRyj4J9yc6YH8
+	zxTLpTmLhCCYpQd0GAzGOVflzVUu2EM4Va8291MkfY548dA4CBIJTpEhfubcIatjCBi03ADjLs7
+	yqrX4SzL20EiyRlWxXAz+SJJH0OSsHwbymZiO+nCzDHnaq9RLUf4Q0fOBDzUpEORkrF8GYe7p/P
+	06P45GY0zORFGYNtNcueo1piPWiY3g3jyVmUG5SA/Gq5cEbP9YfDIG1jX3i/KhBblPcBiT7IRgn
+	mqHBG/zFESsnJWs5Fa
+X-Google-Smtp-Source: AGHT+IHyb18kbZzmWwrapG89GEeH9zIO5kUERUgBm/20I/UDyDk2AQLJZ+iiUs1VcHb79+gHNkmW7A==
+X-Received: by 2002:a17:902:db05:b0:24e:3cf2:2450 with SMTP id d9443c01a7336-290c9c8a5e6mr441023785ad.2.1761504404962;
+        Sun, 26 Oct 2025 11:46:44 -0700 (PDT)
+Received: from z440.. ([2601:1c0:4502:2d00:a43b:396a:591:2ee9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e2851sm2432460a91.6.2025.10.26.11.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 11:46:44 -0700 (PDT)
+From: Igor Reznichenko <igor@reznichenko.net>
+To: krzk@kernel.org
+Cc: conor+dt@kernel.org,
+	corbet@lwn.net,
+	david.hunter.linux@gmail.com,
+	devicetree@vger.kernel.org,
+	igor@reznichenko.net,
+	krzk+dt@kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641 power monitor
+Date: Sun, 26 Oct 2025 11:46:41 -0700
+Message-ID: <20251026184641.631641-1-igor@reznichenko.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
+References: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1761504290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XoP33HamohJnYpgEMOOVXkOdMXK2Wj7iOxwWmiRyjA=;
-	b=Xu7AezbXj9uqu7+8ZLk5xs1budthm6Tf5t9XogPUBoroeIZZR1h/G+9rdfNJ8Xig4w28K7
-	gPD0TnSaKwr90otHjpM6vEpYkhJy1vI8qx6gkVfrEgpiJc4LItyLMgZkP2tcRHROsqLx8u
-	LY95EHxK2aJnHc7Fqr36DzEspOnO3QV+cY0tVkC+DWK/NNXHUSpfAVm5cemsgu1JGp67Zb
-	dgfEN2OBKCNW6Afk3pK0kcTOiI5KOtrjS7waaQnZWHYHQrdVZchK2EA5Q8I4ZlzUR4yPG1
-	ltUHntWkA8gv38x4oGWo5AwdxHnBCt4CR4iVOeIhpsnyvHjUhcz5vkz08vJRbQ==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 26 Oct 2025 19:44:34 +0100
-Message-Id: <DDSH5G4FVB5F.BK0F7WNGG6S@cknow-tech.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Dragan Simic" <dsimic@manjaro.org>, "Diederik de Haas"
- <diederik@cknow-tech.com>
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko
- Stuebner" <heiko@sntech.de>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Johan Jonker" <jbx6244@gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix vccio4-supply on
- rk3566-pinetab2
-References: <20251026172608.108956-1-diederik@cknow-tech.com>
- <e2caefd1-9668-0404-598f-98b26375525c@manjaro.org>
-In-Reply-To: <e2caefd1-9668-0404-598f-98b26375525c@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi,
+> Subject: I asked to drop "binding" and not add "support for". "Support
+> for" makes little sense in terms of binding. How binding can support
+> anything? This is the "ST TSC1641 power monitor" not support.
 
-On Sun Oct 26, 2025 at 6:36 PM CET, Dragan Simic wrote:
-> On Sunday, October 26, 2025 18:25 CET, Diederik de Haas <diederik@cknow-t=
-ech.com> wrote:
->> Page 13 of the PineTab2 v2 schematic dd 20230417 shows VCCIO4's power
->> source is VCCIO_WL. Page 19 shows that VCCIO_WL is connected to
->> VCCA1V8_PMU, so fix the PineTab2 dtsi to reflect that.
->>=20
->> Signed-off-by: Diederik de Haas <diederik@cknow-tech.com>
+Krzysztof,
+
+Thanks for feedback, will fix this and will create following patch versions
+in new threads.
+
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  shunt-resistor-micro-ohms:
+>> +    description: Shunt resistor value in micro-ohms. Since device has internal
+>> +      16-bit RSHUNT register with 10 uOhm LSB, the maximum value is capped at
+>> +      655.35 mOhm.
+>> +    minimum: 100
+>> +    default: 1000
+>> +    maximum: 655350
+>> +
+>> +  st,alert-polarity-active-high:
 >
-> Thanks for this patch.  As already discussed in private, this is
-> correct and safe to do, because both supplies are designated as
-> always-on, so please feel free to include:
->
-> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+>Isn't this just interrupt? You need proper interrupts property and then
+>its flag define the type of interrupt.
 
-Thanks :-)
+This controls a bit written into device register.
+I omitted interrupt property after looking at existing power monitor bindings,
+especially hwmon/ti,ina2xx.yaml. INA226 has very similar bit controlling alert 
+pin polarity and binding doesn't define alert pin as interrupt. Overall, I didn't
+find many power monitor bindings defining alert pins as interrupts.
 
-> Though, I think this cleanup should also be propagated into the
-> stable kernels.  Right now this patch doesn't actually introduce
-> any functional changes, but maybe in the future there will be
-> some related driver or DT changes or improvements that may end up
-> relying on DT correction such as this one.
-
-Fair point. Dunno if b4 picks this up automatically ...
-
-Fixes: 1b7e19448f8f ("arm64: dts: rockchip: Add devicetree for Pine64 PineT=
-ab2")
-
-Cheers,
-  Diederik
-
->> ---
->>  arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi b/arch/ar=
-m64/boot/dts/rockchip/rk3566-pinetab2.dtsi
->> index d0e38412d56a..08bf40de17ea 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
->> @@ -789,7 +789,7 @@ &pmu_io_domains {
->>  	vccio1-supply =3D <&vccio_acodec>;
->>  	vccio2-supply =3D <&vcc_1v8>;
->>  	vccio3-supply =3D <&vccio_sd>;
->> -	vccio4-supply =3D <&vcc_1v8>;
->> +	vccio4-supply =3D <&vcca1v8_pmu>;
->>  	vccio5-supply =3D <&vcc_1v8>;
->>  	vccio6-supply =3D <&vcc1v8_dvp>;
->>  	vccio7-supply =3D <&vcc_3v3>;
-
+Thanks, Igor
 
