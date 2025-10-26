@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-870302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FE6C0A6BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:36:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E71AC0A6C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCDC3AEB02
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:36:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983CA3ADDB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E841B21BF;
-	Sun, 26 Oct 2025 11:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309FF1B21BF;
+	Sun, 26 Oct 2025 11:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DlMjKYU7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b="E8AIVkep"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C272313FEE
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170551E633C
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761478559; cv=none; b=lfPKh+zz/Zg3ctfmVqZK+L+hCW+H2S8AcyB+twcFj8Xd/jAeNVXlRY+gvYFvibPRkkuXEZj2HL71apdDCTuzvSBecJfad4NdjsAoXTArF2xr2L/kCUBv8/LCaaQgI9FOp1/f2GGal4M9ZNuvAh6sBxhnleZ2NhyXJIjMDRMiiy4=
+	t=1761478753; cv=none; b=pjCjROF9JzEbZN2ByeYtvGqiNrYX1Rzg1eZes5OsCfUHHxCrj4bYa7GpyevuDZgQFgnY3f0ieojkJlEC3C8t6FKkt1c8CLYsnsZNI7c41wksLP06/0gmneiLwFTNLTTAfm5D66Rke+i/eL9a4QvK4zR75x/b3JlTLsTSni5K7sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761478559; c=relaxed/simple;
-	bh=UxhS6urnvIXKP6Cxjo/I/5ot9bfrkwFb+4Hll2ex5PU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BPk/FRxp1oi9Zd6jBp8BmeXTPyoGBuam4gfOgyxXXo64Di7g9E0h+dRVN88tmW+Cnico1Sx98JqFvRSqhjYdpjdqeN5rJ4sd855u3luatLx07cAnSs/g25mnYbWvs1/NH4d2V5ntM8o04suZ6RthunSJ3gjZMLL1wHZfwTMY2sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DlMjKYU7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 48E8440E01AB;
-	Sun, 26 Oct 2025 11:35:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lDOJRbbvRBtl; Sun, 26 Oct 2025 11:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761478543; bh=3bG8529YX6WpUImO6K3iKgS/DeaL5dfIG41cPwxMepk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DlMjKYU7c+EQYckDPRQV1TpAC6qTVxqF5ih8d9XybRWdR0hE1Q2azANZ4OjmrzM6V
-	 uQ+2Ic1P4mtRle8YPeQlWrn0DCvm/l6ppb770wV2e/52Wj+QgyhOeHybwm+0rwfr99
-	 ajDX6liyDfNcbepIdd7xXyCnZgIwcGs9Z/PxPNwp7tv7WQtboR1LbDn6e0p6A1rcap
-	 5GVIGS7S2w0vXZ+zjFJ8MAUxhCYcVIJcCA9PHsJZmlF+VJ3UeFMWvEBP9qjkYewI5T
-	 7hf1ryEzVyKu0l9u0GmFQKEzKJmbbQbIdtFkfI5KRvtvDm5nax2qoOF7schXuab+X1
-	 YnZaNGr9lJd+Nx96ekgkLiqJwBDCqIAWtz8D/RzUk6T14nLu/C6EUII1NbYu7XgR+e
-	 9nP84MWwnBLrreR8lanLD9rrO29IrRotR2rCXeCHJdCOfqGH+CSPBVCqPMATlxemyp
-	 R+X6GqwwquRu+vYEaJqF1RtzxzfI7MnYSsoEkrefp3cErqZ/uzUh4h8D2GLv4kYRx0
-	 b9QaZVEOWIe5kqwWofryn46mKSLrNS0TKfCDY+TAqHQNJwU5NhwBM8Wv+LHqyixxhZ
-	 g4qSjzuPAMHpUfB+KaBzYDSKjGdJKFDeVvDRhRKmFd3W1VyBSqwdk40Tx8bKnbrOhZ
-	 Q3oTioDvs2g0dQuV5axBOjdc=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C049140E019F;
-	Sun, 26 Oct 2025 11:35:40 +0000 (UTC)
-Date: Sun, 26 Oct 2025 12:35:32 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] timers/urgent for v6.18-rc3
-Message-ID: <20251026113532.GAaP4HhADWuKp1XI16@fat_crate.local>
+	s=arc-20240116; t=1761478753; c=relaxed/simple;
+	bh=j0DSqnJo3+ZWQare0kWlrCZ5/Tm1ZDbwWXOuuuFqhMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l7yB33XmwWlGleRfJoTt2CwD7vG8oR0OZ6riUUw27AEQ04qyO+cNITdmARqFfmdX9nzxUMhpN7d/QFHQhChrXLKWebIrEB8yBjClHhE9ChdF89tEswLpSZ74eiaXhMweyv1HfgiAjdLtZv3t5ABebDA6IHiA+XJP2dUejQJq7Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com; spf=pass smtp.mailfrom=vayavyalabs.com; dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b=E8AIVkep; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vayavyalabs.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7847ee5f59dso50840837b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 04:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vayavyalabs.com; s=google; t=1761478751; x=1762083551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RkEJC8HtsrIv4zgbYuistKh7eAOhGGJ2bEOCqXpaWog=;
+        b=E8AIVkepdTKDKBvR/u/Kcau33805U9xRvCzsPNMBzICakqOdX2kC+hwQTleNl6ShvM
+         pYrQ4yv7VftTtjJmcER3VQRr1cgbPbCfyOzrafg9I+yYlzH9w3VKhRV+QANZ82/CMBZU
+         c+ySz0kNgvfyoQgt6IOTRE6sLl92yiJagIesQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761478751; x=1762083551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RkEJC8HtsrIv4zgbYuistKh7eAOhGGJ2bEOCqXpaWog=;
+        b=hGnVMkBuKeGA0Zy8XzuUMQ1omaJW5zseOMpzJKSW04urcPplM6r2wlvyUtMHmpTHxF
+         tVbeBhOWjZFIFLqfHyh/Eg0AOoYUtsGBMuEONVjlOoG/jB1Iw07rpwmKcmS7LiYfGmBS
+         qE5O0/+P7EssxPUHrj6hCkUexsp29iVT6zGfNrUp8AOUvAdvjsNpOE316t5E+7YoZSJh
+         DDkAy8pELlaB+ATy7bbWEL173zRQEGOuOekFxinDlBBK5Vi4SfI5WSkuwCmkZUpt9Pta
+         AyYsBEYY4ECFFxukjRkulfJMWNKL2edNih7g5mBhQdB2Ba89UBjx+WBMkgYotgdQVYm9
+         oUkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0iDPu5mHV9F6Zgp+eaLQtmwId3u4vKdqCNBfzQHY4HuCI/DL6FcJ64Yl7Db9Av5EFUM2eF8fbucmSUtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg7OtQJkEmTnrYR08fC0bSxB7vJGqXlY3nvKbwsTqK+9hLaqI/
+	iBk8y3brL9lI4caHH90nyDYn3X8faGeAccskMSFz98f+cAqvUcEDd/gWSEYYPeG5jdXztQ45iwj
+	SUhUuCFZL3mMZuqAgfC6eX6n5CaOgNIu27kdSi4tWgQ==
+X-Gm-Gg: ASbGncuEVb7ovhi+9i6L0tpmh5sjni1Re/ry/HIvJ5Mt/dQBKdoUhmawF//bv5ovTkq
+	2+Dsh1blCrLKY6WNdsROD+CuCy8uGgQrDhc9dtJOCXY4pjg+ckWFUPNe4l6KBztwfkjxWmw0TND
+	nqSDB45QAGRilAudEVfKHmFB3z5CaIihW+awYg7jXn2gWRiUwxpX+271oBL1fl2xBcXCop5gWnL
+	TqFhVMp0/Ljlsu+D7BnfCXyGR0tgwa9yVeFzfMktoDXQQfXEMYZk/msucvkvr4xUd8+G1A=
+X-Google-Smtp-Source: AGHT+IE5wi1pOk5gMg7t44CcjUcuDJu5krHIn2apqIczzrvUxBYy/Gnl8HzIxmhmuF6Z+BqZbysVKsYMZFeUOs31qhk=
+X-Received: by 2002:a05:690e:1598:20b0:636:1a27:6aba with SMTP id
+ 956f58d0204a3-63e1617624bmr24007856d50.12.1761478751060; Sun, 26 Oct 2025
+ 04:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251007065020.495008-3-pavitrakumarm@vayavyalabs.com>
+ <fe4d7cd9-0566-4d1b-97c0-91cc1f952077@web.de> <CALxtO0m1R0kf5Am+oEPAgqommQph9zs6+xfTM0GzGHV+YEXT3Q@mail.gmail.com>
+ <51baad8c-6997-4e3b-81df-6d0380fc48d0@web.de>
+In-Reply-To: <51baad8c-6997-4e3b-81df-6d0380fc48d0@web.de>
+From: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Date: Sun, 26 Oct 2025 17:09:00 +0530
+X-Gm-Features: AWmQ_bloZmHf3HWYJNFPPTUzK-vc0K2C3sQhcOg1pi8KCo8VnNlMuW1t0ziEdx4
+Message-ID: <CALxtO0=4iJho3fqVuQbV+CQyhYqc4zbmNNGeSy03go-iy758aw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] Add SPAcc ahash support
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+	Bhoomika Kadabi <bhoomikak@vayavyalabs.com>, 
+	Manjunath Hadli <manjunath.hadli@vayavyalabs.com>, Ruud Derwig <Ruud.Derwig@synopsys.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Aditya Kulkarni <adityak@vayavyalabs.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, T Pratham <t-pratham@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Markus,
+  My comments below
 
-please pull a timers/urgent fix for v6.18-rc3.
+Warm regards,
+PK
 
-Thx.
+On Fri, Oct 17, 2025 at 4:36=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> >> =E2=80=A6
+> >>> +do_shash_err:
+> >>> +     crypto_free_shash(hash);
+> >>> +     kfree(sdesc);
+> >>> +
+> >>> +     return rc;
+> >>> +}
+> >> =E2=80=A6
+> >>
+> >> * You may use an additional label for better exception handling.
+> > PK: Ack, I will go with an additional label.
+>
+> Can scope-based resource management become applicable for more use cases?
+PK: Yes, wherever applicable we will make the changes. I do see a few
+use cases in the SPAcc driver code.
 
----
-
-The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
-
-  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/timers_urgent_for_v6.18_rc3
-
-for you to fetch changes up to 39a9ed0fb6dac58547afdf9b6cb032d326a3698f:
-
-  timekeeping: Fix aux clocks sysfs initialization loop bound (2025-10-20 19:56:12 +0200)
-
-----------------------------------------------------------------
-- Do not create more than eight (max supported) AUX clocks sysfs hierarchies
-
-----------------------------------------------------------------
-Haofeng Li (1):
-      timekeeping: Fix aux clocks sysfs initialization loop bound
-
- kernel/time/timekeeping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+> Regards,
+> Markus
 
