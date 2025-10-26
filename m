@@ -1,192 +1,138 @@
-Return-Path: <linux-kernel+bounces-870278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7082C0A5A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:47:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D15DC0A5B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37373AD14C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FAF43A7463
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8578A23EA95;
-	Sun, 26 Oct 2025 09:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08925C809;
+	Sun, 26 Oct 2025 10:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fv0m7Rsz"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkQKIbN0"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BD01DD525
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F6D20C029
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 10:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761472059; cv=none; b=W9tHgMW1erAMOlp4kzoSEeQ+t4vUX1sTxDTRzFC6Yk+RTEm5Rj8pZKuf99gdTCXHxhlNHYoLCfAQpL0KMAR7EsVYyieJP3lt4mfKbtLXRA+2xhrHHCFRi0u0PdCtnVOf4z1rDTQ6GavPv3n6qKOsuDjhh0XBqZDyQoKfl0BXnUw=
+	t=1761472877; cv=none; b=hOIvr/cmvaR56TMGnwMHSK7A4KwJEcUI28MwHFWbqDPMUrThxMIXFMnZMISdNW2HSmxLvDdryTXcENWZkV4JESKtXTdGNBYl22O6NolZFBA41osctgsnuUjK7AoISc7yIqeH8xoazj1A7W8eRIwQfDGvmR6ya0qL1C1lWBkV2+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761472059; c=relaxed/simple;
-	bh=qcYvH9Ptny0DNh/rzoeTiiivcuo/PRAup2s+HOtuycw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piaxSCoGrqKHn+70s91eVGtrqVyJoPQt/gILEBrQrJ7MvxEhP4Yvud7BDPa0Zqch1inZkh4A7ikBMv6h+8gTkzsi/a3fUNCQT3XuLkLcmzlwoR5RwFZDFEbPYdx8ELb2lbewvxAZfxXObdFmobd0CI1pekFeQEkxVRMe8QlXvDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fv0m7Rsz; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1761472877; c=relaxed/simple;
+	bh=7KD5dGgax9bTmRFpWBp6doF76wbbIxJPMbGDcdBfxus=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bI9FiF7Q2GLBfc/ozqZfaVFwVBjow0zr9WAm7HAI0fNagRLMipXXW4slCUTti5HYhls/f9sUdSH8CoKj/a6959izTGKshEy0m2yCqkWVQz2sZw3w5SlqHjVtk3x/3t4HiMaQIkk1P1KjeJs+4Xtxo6/2Kw3n/C8yd+qycqEsjh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkQKIbN0; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339e71ccf48so4686659a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 02:47:37 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-26d0fbe238bso25812585ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 03:01:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761472057; x=1762076857; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C91HvAQxwR7B1bhgRZq1EXx7cSrqAYa22OF4JmCWXOg=;
-        b=fv0m7RszL/M3uZbs9WgrQon1osn5ugYXFRSH2vxuHsxl5jAxrL/DsmNByNrcjG1tj5
-         PytDdt0gtaLAIz5+Frr8qOqvkykMAVSinaSr3UUrvco8u/jZvfRu1MyWaJrMBBQ+xTV9
-         FQ/9o6kgiwVWzDXVpu/mO/OmmKRSSBxIc5M2MZmU7DmwSxnRawtYWKYg5negmF8LrF6S
-         Y60wRWRx98zLE1tn6HFjbYNjJmBFK+mmYqu70nK3CjyzlNGRbxZOYFqWEJ6AJ80ZICHq
-         EVx8WDAK2tR4f6UpMJ5HxTsl11XrvcJGyjr6dkEmwHiCp7BAwXoF66wn2WfW1yPVL81w
-         Kigw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761472057; x=1762076857;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761472875; x=1762077675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C91HvAQxwR7B1bhgRZq1EXx7cSrqAYa22OF4JmCWXOg=;
-        b=XehcyoA1sHXgM6ErxboROK6MHnTtXaxhjlqWZs2Q5elAVH4j43EmOzelXYJhit96hv
-         zpRlHaoNa+hm6EtYNQtz0Xx9Yc6zTs23E5B7x3TiJtG8oE1voKiJNdFRzpTk6r4u7U+X
-         qdDwM61kB8jpfeP8C4Vmvpsh5c4+x+V2ltkgok4SXM7w9iFiUNisbQ32eBxsUlLJyqob
-         f4W+a7HacAA9WHO1t6uMP7oRka5AEf3fwV1im/mFxqCGjF+u+/CKLhinMD1GXXlBCrdP
-         9LSy7iAZ3+rmOFYw+1pVKq2m1Z2hRrXEXzeXXhx/Zsd0g7ORImLd7p+ZKtvpDeV9YE1l
-         X8Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJH5IXn+2JCA4/lewcAZjk6HtP1nai5g9iAU1fDhHI1RRREci4AhoE+X4ak2ghy4vy2nXPfapa3Z8DxZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpLTxnSSMsva3vXSZrLkTEFCPpdEUIjkthtF/fvzLDOg6VSfvi
-	A4emIo/kVNbLLstY+JnyfhPxcH0Tpex8fsmxhe/ARZcEMDU774AeUjVQ
-X-Gm-Gg: ASbGncuwumMg273e9X9KGyxMWNtS1tGwRnA8maHqhKTsUNB2KlVEi0jmJ9yDizjZ/TM
-	J7d/YpYyDRkonc+vLq7mr9gx5ZQiK5vlAvyT1A2COuApekudscrlMefDkckTVHitL4C6+CPWWZU
-	Mf5fwEqtSImWUfd+OXEhYWaoMMIinzPWcs9fMALmWCD+HjkZVNVAtKf+gY53d2oqF0XryfdUu+e
-	ulO8H4aFB8B2vRxvClqMnq6ro90XyW5iLPfJJVqxS1jMjdvnzooI/IXSbIlBpukiU6nHmf2HInz
-	39FeTqTpbsWy//OsblnljcObMWHypGhJBX7ZWNHUnq+alVxyp/+Wo0OkWB5MUMIfj3an4zriD13
-	VFKtCvKlQ8pmKc5VqZ8lYnCBtoSEGlJm5rCH3nbs+QpIbR25WCbtYQ9OvtDc0JQ6y1mjFq3+jK1
-	YO
-X-Google-Smtp-Source: AGHT+IGBtA0xQBuD4uogDvjIhQK7Qhr4z8CGsMy+ULWwP1OFvRuXkY87KrHlWUr9Efn6GjJx6fmMdw==
-X-Received: by 2002:a17:90b:3e43:b0:32e:7270:9499 with SMTP id 98e67ed59e1d1-33bcec297c9mr40598008a91.0.1761472056734;
-        Sun, 26 Oct 2025 02:47:36 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed807dbasm4802556a91.12.2025.10.26.02.47.35
+        bh=2RfGStvJcl4TjNSGKHIZE9j5tm2qV6cEHrkxmBAThP0=;
+        b=QkQKIbN0k/9rTMbSZPy21PHzbhewJKcThqGeNCas8ByZ8//PVoid9TkVxc0Wvlb35O
+         0W9ZxXl2JrUF5Z1ueincG0OqbgM+8X+IyGeDGgePlj2cgEs/SdCAxK3+crUC9FoZbJzK
+         byhmKxb7bfuLxVCt4EBC31QAEDRO4W88AsxUDftEH7mGfKLkSIEd8nDIfKDgiB8bjea1
+         FHqASKbSjI6aQ9aIgENVURW+b5CuogJTF9fCA6JzWWdIOssF6whmzGLYkhS6Qy0F9Nxs
+         FchEZ0Kvo8NRAMnhN14jZMIgQokQ03PfnptANDDLVuanQfEwY7W9W/4uosaQ/bCpL2Z9
+         mJHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761472875; x=1762077675;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2RfGStvJcl4TjNSGKHIZE9j5tm2qV6cEHrkxmBAThP0=;
+        b=JYs21wvRn3JsJghCzzI7dUo3S96nGhIwAa5KdXFXp48qou8dd8sfP8RO0KBw6UC4Bj
+         jc8g4KPS9HyeuN2L/PLqMCh3FVchtIPSdMzrbsbO/UlfUHiVuhSVtqqckHNGsojiPsKd
+         5EVVLER5qACLiQFSj3BUIfepkw2KEPYjGM3l82GY2EnNBaYxAVpIwPP941r55nZv6oc2
+         /OWqMUYt7Wzdr0jScj5eJo0+Q92ezMn4PeqYddgCsHk6x4oWa416CCLsNTsiKZceBLO9
+         WsWnWAGe5ILbdlKhUPLRvCLsl+25AKzDXd7OTokB+/M4aNvYbt/NCZvYqfDrefnA9f2L
+         BWvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLdsTwKSI4E1QV3UAW0ZfvQJWhSw9rK0EjUqMdU7rHxyhfhOb2NwP+vqNCoED4tEhM5rKCw6pW2iMzdP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHq//fh0ovHOrinR22N7z6MOTfiDHphqYS3Ch0+z3W77n5tv7I
+	qx5ATCtqcmlw3ccyBRRPfU1tEX5hESmYQOoz4ipedJRC3d6+tHRkN4WT
+X-Gm-Gg: ASbGncvFPKBTUrXcYigG998c8MGhtQHFJ68cZsDd01SnZTiw7oyvVZ0/OwdpIz31/nO
+	BaaQMmbZRVaV+zCvaxkY8v19Gn2OAXssbFThqWqSFfnCXCspxaLCehRFLnltVV3wDK729xXofKG
+	ueYv6wfcsQ/t9O/UEZSVV4zCg5ZeppVzUkRpQy+M6dHrfGQyZZVhq+WAdZwZOqDwa4fre0FPTGj
+	ByWYoIo9nh0tye4SKHz+lLc2Q79CafQXDFCbuxevJ1enT6nyE7+u8zZ1RuFgveDCTHZmuhtWzyU
+	WEGP//h6F88esWVVqrOmja04jkBeo0Iq5wqvikRWbc0qYPzEvO25Y4uT+yVaZGjWskD2gOqTVFI
+	GLGbDyB4ckXJqWM0/kyGjCmhj7r5qG5otIwycZFgkZ+q5zA4TWu9+tXqqtnGkq4slH+oiUty7R1
+	jcyu8JrffspLX83QTwtF4=
+X-Google-Smtp-Source: AGHT+IFKNOKTau/QQRGqY0zzzctIn/ja6Be2Y4OB0k/nayMvBEyR1iUbx77eiYu6XXPZj9O6THlOLQ==
+X-Received: by 2002:a17:903:2f05:b0:275:f156:965c with SMTP id d9443c01a7336-2948ba5ae75mr89132875ad.52.1761472874942;
+        Sun, 26 Oct 2025 03:01:14 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d099b6sm45719905ad.33.2025.10.26.03.01.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 02:47:36 -0700 (PDT)
-Date: Sun, 26 Oct 2025 17:47:32 +0800
-From: Longbin Li <looong.bin@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Yu Yuan <yu.yuan@sjtu.edu.cn>, Ze Huang <huangze@whut.edu.cn>, 
-	devicetree@vger.kernel.org, sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: soc: sophgo: add TOP syscon for
- CV18XX/SG200X series SoC
-Message-ID: <ugmphokne6ssc7ou7apvbldxg7xxk24wp5jrzdasjiplnu6gfy@ebbuxnjqlsw4>
-References: <20251024030528.25511-1-looong.bin@gmail.com>
- <20251024030528.25511-2-looong.bin@gmail.com>
- <20251024-hangout-designing-33e96c0d35fc@spud>
- <oymxspgopaqja63nipufgzn6kpobkdopemfaw3azhom3ikvk5f@e7cg4lq64j2o>
- <20251025-shakable-jujitsu-3a5e9c8895a5@spud>
+        Sun, 26 Oct 2025 03:01:14 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	xandfury@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	khalid@kernel.org
+Subject: [PATCH v3] selftests: tty: add tty_tiocsti_test to .gitignore
+Date: Sun, 26 Oct 2025 15:30:25 +0530
+Message-ID: <20251026100104.3354-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2025102634-relive-glutinous-df0c@gregkh>
+References: <2025102634-relive-glutinous-df0c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025-shakable-jujitsu-3a5e9c8895a5@spud>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 25, 2025 at 01:44:00PM +0100, Conor Dooley wrote:
-> On Sat, Oct 25, 2025 at 10:27:13AM +0800, Longbin Li wrote:
-> > On Fri, Oct 24, 2025 at 05:46:03PM +0100, Conor Dooley wrote:
-> > 
-> > > > ...
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    oneOf:
-> > > > +      - items:
-> > > > +          - const: sophgo,cv1800b-top-syscon
-> > > > +          - const: syscon
-> > > > +          - const: simple-mfd
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  "#address-cells":
-> > > > +    const: 1
-> > > > +
-> > > > +  "#size-cells":
-> > > > +    const: 1
-> > > > +
-> > > > +  ranges: true
-> > > 
-> > > Do you actually use ranges?
-> > > 
+Building the tty selftests generates the tty_tiocsti_test binary, which
+appears as untracked file in git. As mentioned in the kselftest
+documentation, all the generated objects must be placed inside
+.gitignore. This prevents the generated objects from accidentally
+getting staged and keeps the working tree clean.
 
-Actually, I do not use it.
-I added it following Rob's suggestion in
-https://lore.kernel.org/all/20251015134144.GA3265377-robh@kernel.org/.
-Should I drop it or not?
+Add the tty_tiocsti_test binary to .gitignore to avoid accidentally
+staging the build artifact and maintain a clean working tree.
 
-> > > > +patternProperties:
-> > > > +  "dma-router@[0-9a-f]+$":
-> > > 
-> > > Do these actually appear at variable addresses, or is it always 48 for
-> > > the phy and 53 for the dma router?
-> > > 
-> > > > +    $ref: /schemas/dma/sophgo,cv1800b-dmamux.yaml#
-> > > > +    unevaluatedProperties: false
-> > > > +
-> > > > +  "phy@[0-9a-f]+$":
-> > > > +    $ref: /schemas/phy/sophgo,cv1800b-usb2-phy.yaml#
-> > > > +    unevaluatedProperties: false
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - "#address-cells"
-> > > > +  - "#size-cells"
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    #include <dt-bindings/clock/sophgo,cv1800.h>
-> > > > +
-> > > > +    syscon@3000000 {
-> > > > +      compatible = "sophgo,cv1800b-top-syscon", "syscon", "simple-mfd";
-> > > > +      reg = <0x03000000 0x1000>;
-> > > > +      #address-cells = <1>;
-> > > > +      #size-cells = <1>;
-> > > > +
-> > > > +      usbphy: phy@48 {
-> > > 
-> > > Drop the labels off of these two, since they're unused in the example.
-> > > 
-> > 
-> > Hi,
-> > 
-> > Thanks for the review.
-> > 
-> > There are a couple of different opinions here.
-> > Could you please help confirm which approach is preferred here?
-> > 
-> > This is Rob's reply:
-> > https://lore.kernel.org/all/20251015134144.GA3265377-robh@kernel.org/
-> 
-> I don't think that Rob and I disgree about the example, having child
-> nodes is good, having the label on them is what I don't want.
-> 
-> Re: the child node patterns, I was not looking for a return to what Rob
-> didn't like, but rather a move to just making them normal properties
-> rather than a pattern, if there's only one possible address.
+Link: https://docs.kernel.org/dev-tools/kselftest.html#contributing-new-tests-details
 
-Thanks!
-I will drop the lable and move the child nodes to normal properties.
+Fixes: 7553f5173ec3 ("selftests/tty: add TIOCSTI test suite")
+Suggested-by: Greg KH <gregkh@linuxfoundation.org>
+Suggested-by: David Hunter <david.hunter.linux@gmail.com>
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+Changelog:
+v3:
+- Add fixes tag as suggested by Greg KH.
+v2:
+- Improve the commit wording and explain clearly why this change is needed.
+
+ tools/testing/selftests/tty/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/tty/.gitignore b/tools/testing/selftests/tty/.gitignore
+index fe70462a4aad..2453685d2493 100644
+--- a/tools/testing/selftests/tty/.gitignore
++++ b/tools/testing/selftests/tty/.gitignore
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++tty_tiocsti_test
+ tty_tstamp_update
+-- 
+2.43.0
+
 
