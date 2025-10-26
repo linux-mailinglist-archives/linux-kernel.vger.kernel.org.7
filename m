@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-870351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ADDC0A826
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:48:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A852C0A820
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E08D94EBAD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:47:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36C9B4EB7A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99282E8E16;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5EF2E8DF6;
 	Sun, 26 Oct 2025 12:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="APpdyciq"
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="FQZ4C1j4"
 Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B1E2DD5EF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EBD2DE6E3;
 	Sun, 26 Oct 2025 12:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761482558; cv=none; b=EAbKX6oHs+lb6pqFRSg7ucWB9rvM60JRUrABpwvJw4qi5msYe+g/ussI94uHs8MbBOyJ+mElFNCNh7lC2e0dITsiUBwQtzebUfN+XzcOJVm71YiS6J8zUKnVdmO1cWSscqu5Uef5qKA9huZVp3UAHoaZzm6Ey1sifG8oYToR69M=
+	t=1761482558; cv=none; b=ZdQC2O4MK/2VCxFbP36L2IqLZ11DNnAftxlJ9fum7kWgPXI2GqdoVh0DJKvVCMm42l2TZIFhctC44ZLHt/kyNi1gFqL9uihJ8t2LSv3KrLCDWR9vDJOHeAO97BUBrofexCG2XMBrpCUkWjwRM8qEDDltas2sHiyRRHrH/7eJjfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761482558; c=relaxed/simple;
-	bh=IqDhGtp4nyvxdpoe48xN9U6qWwQ3W54JbdWSQG/FjaQ=;
+	bh=rNZIoC6pDpscutI+1aAPe3z6yjg/MlPZ7XDTm/LQhsM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iKiRP2ExloaR4ZSxq1tHyVUMmovgkbyTWT4QQbVxgiaG0+5b6VGREm1X7YnZbHMV2V2CiWbGqt0lplkpQJhf9Qr2biUN7aNj1CacmQ3Bmm9Y05NFy4LQ/fITm8JAzdyxDnoJ17cq5ZqKIQF0TckDYUuKMbmz0XEta/kuQT81Wds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=APpdyciq; arc=none smtp.client-ip=80.237.130.52
+	 MIME-Version:Content-Type; b=rsnDrwzXqnnLz8R1iYdLfbMWe4CiAtOuQQmaC/J4cg3MHxdVsZ8Tmc0o7NYWLNihOX+SHO+OfsW6qZSV6hjkvjH7cEGO3fqD1YlcxkihhLHTXiDIi+i2iWx59ck1zzsO9P3+efKASBCXYVQoynUv/NLjQnohzhcdFnbuOjPyQhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=FQZ4C1j4; arc=none smtp.client-ip=80.237.130.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Sender:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
 	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=z/mmDtnORp4tMTfolU1iwiCKThwrxaag3p5onqizLFY=; t=1761482554;
-	x=1761914554; b=APpdyciqkedRsoanh/bqcCZ5Bg+QLvH6SboUCHDROA6uxyBvzFNKhZvoqiFHY
-	z12vwkjWA8dRs61qnqRdZgdiA/2sUf3nw6x4auCnv9SPnMNTpIO5Pyvp1QKaVJgjaz6coATSDX1Z3
-	8iFfIOhKiaSxaM7xB8gzFEr0gJJHg0DhQl3zGepezHMb0rmjUrhNq4plr51OoU9wAGdc5Zm55ZJx7
-	hlb0o6PYP/7z5nB6e3rAUn6uVitlD4mlnnEyYV/ybq3IDFkTT8T4vMyAMYfB/jebUVv4cEsaIVTRU
-	GqNUocYCLpgABZ2/sqgZDvUlwvF7TiewvktA0wd2v9v8AsXIIg==;
+	References; bh=K7qoI4NF+hR2zU8RlYf5/2Ju3tpWLz9BGYsIERml1u8=; t=1761482555;
+	x=1761914555; b=FQZ4C1j4YrS/vJORr4XB06Pv7fNh3TBAwbekJSPHgile9OG1S7ouVVuA/ySX1
+	bAt2Cyfb828/2ZEwqrJen82hr39B1D5qXoVoY6dQIgYCYPwmr1ew+8mazds/aTTsgEs05bowL2XRC
+	wkg3FRthOUTvBwUovabvxw5eNIrSuM0/H35wZV8/L8gIPUYpashzSNVMhddWswwjsixUOXac4FVbs
+	BvpqwzGb0DkM4BIKWCTzbCk23FLFtBI4vfmiSxupATHS+6g5FHjEOOpHEqm2hWjOarCnf2Lq49bEu
+	O81ikzqxJ0bVVa0tD7h4YzAPRXyeDVfymhBTl/JxYrSDqhvPDw==;
 Received: from [2a02:8108:8984:1d00:a8ad:ebd4:6fc6:160] (helo=luggage.fritz.box); authenticated
 	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1vD04u-001mZC-3A;
+	id 1vD04v-001mZC-16;
 	Sun, 26 Oct 2025 13:42:33 +0100
 From: Thorsten Leemhuis <linux@leemhuis.info>
 To: Jonathan Corbet <corbet@lwn.net>
@@ -51,9 +51,9 @@ Cc: workflows@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	regressions@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 28/30] docs: reporting-issues: separate steps for optimizing and submitting reports
-Date: Sun, 26 Oct 2025 13:42:19 +0100
-Message-ID: <13f6dd4470f388220cc559d88afc490aa1c8cd12.1761481839.git.linux@leemhuis.info>
+Subject: [PATCH v1 29/30] docs: reporting-issues: separate steps for follow-up tasks
+Date: Sun, 26 Oct 2025 13:42:20 +0100
+Message-ID: <e3430ec1b5513a3fed6c3152202d86343e292a61.1761481839.git.linux@leemhuis.info>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1761481839.git.linux@leemhuis.info>
 References: <cover.1761481839.git.linux@leemhuis.info>
@@ -63,411 +63,405 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1761482555;32bd3f7a;
-X-HE-SMSGID: 1vD04u-001mZC-3A
+X-HE-SMSGID: 1vD04v-001mZC-16
 
-Make optimizing and submitting reports separate steps. The latter now
-needs to cover regressions as well, which earlier was handled by a
-separate section.
+Create three separate steps that cover things that are important for bug
+reporters to keep an eye on after submitting the report.
 
 Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
 ---
- .../admin-guide/reporting-issues.rst          | 341 ++++++++++--------
- 1 file changed, 199 insertions(+), 142 deletions(-)
+ .../admin-guide/reporting-issues.rst          | 347 +++++++++---------
+ 1 file changed, 175 insertions(+), 172 deletions(-)
 
 diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 5c991163039f82..c147191a7d0987 100644
+index c147191a7d0987..d81d558c245953 100644
 --- a/Documentation/admin-guide/reporting-issues.rst
 +++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -298,21 +298,79 @@ following the others is usually in your own interest.
+@@ -372,12 +372,41 @@ following the others is usually in your own interest.
  
-  [:ref:`details <attachments_repiref>`]
+  [:ref:`details <submit_repiref>`]
  
-- * Start to compile the report by writing a detailed description about the
--   issue. Always mention a few things: the latest kernel version you installed
--   for reproducing, the Linux Distribution used, and your notes on how to
--   reproduce the issue. Ideally, make the kernel's build configuration
--   (.config) and the output from ``dmesg`` available somewhere on the net and
--   link to it. Include or upload all other information that might be relevant,
--   like the output/screenshot of an Oops or the output from ``lspci``. Once
--   you wrote this main part, insert a normal length paragraph on top of it
--   outlining the issue and the impact quickly. On top of this add one sentence
--   that briefly describes the problem and gets people to read on. Now give the
--   thing a descriptive title or subject that yet again is shorter. Then you're
--   ready to send or file the report like the MAINTAINERS file told you, unless
--   you are dealing with one of those 'issues of high priority': they need
--   special care which is explained in 'Special handling for high priority
--   issues' below.
-+.. _compile_repisbs:
+- * Wait for reactions and keep the thing rolling until you can accept the
+-   outcome in one way or the other. Thus react publicly and in a timely manner
+-   to any inquiries. Test proposed fixes. Do proactive testing: retest with at
+-   least every first release candidate (RC) of a new mainline version and
+-   report your results. Send friendly reminders if things stall. And try to
+-   help yourself, if you don't get any help or if it's unsatisfying.
++.. _keeprolling_repisbs:
 +
-+* Prepare and optimize the report.
++* Wait for reactions and keep the ball rolling until you can accept the outcome
++  in one way or the other. Hence react publicly and in a timely manner to any
++  inquiries and requests for testing patches.
 +
-+  Start by writing a text describing the problem. Ensure it contains all the
-+  important bits directly so that readers do not have to open attachments or
-+  follow links to understand roughly what the report is about -- you thus might
-+  want to copy error messages and similarly important parts from supplied files
-+  into the text.
++ [:ref:`details <keeprolling_repiref>`]
 +
-+  Early on in the text, mention the distribution and kernel version used for the
-+  bug verification.
++.. _retest_repisbs:
 +
-+  In case of a regression, start the subject with '[REGRESSION]'. Furthermore,
-+  specify early in the text the latest working versions and all known to be
-+  broken; if you performed a bisection, mention the culprit's commit-id, title,
-+  and authors instead.
++* Retest at least every first release candidate (e.g., -rc1) of a new mainline
++  version released and report your findings in a reply to your report.
 +
-+  Mention the Linux distribution used and other aspects of your environment
-+  that might be relevant, like the machine's model name, the hardware
-+  components involved, or the version of related userspace drivers.
++ [:ref:`details <retest_repiref>`]
 +
-+  Make sure to not overload the report with a long problem description, too
-+  many details, or many attachments: Developers will ask for additional
-+  information when needed.
++.. _reminder_repisbs:
 +
-+  Now write a subject, which is the only thing most people will read -- hence
-+  try hard to make it as descriptive as possible without making it overly long,
-+  as that is your best chance to grab people's attention. Your second best
-+  chance is the first paragraph. If your problem description is longer than two
-+  or three paragraphs, you thus want to create a small intro paragraph
-+  describing the gist of the problem; if it is shorter, optimize the early
-+  sentences.
++* If things stall for more than three weeks, evaluate why. It can happen due to
++  good or bad reasons -- like an inadequate report or because you
++  missed a request for further details or testing. If it is unlikely to be
++  something like that, send a friendly inquiry as a reply-to-self, as it might
++  be a mundane reason like an over-eager spam filter or a developer being on
++  vacation.
 +
-+  At the end, review and optimize the report once more to make it as
-+  straightforward as possible while ensuring the problem is easy to grasp for
-+  people new to it.
++ [:ref:`details <reminder_repiref>`]
 +
-+ [:ref:`details <compile_repiref>`]
++.. _yourself_repisbs:
 +
-+.. _submit_repisbs:
++* Be aware that nobody is obliged to help you, unless it is a recent regression,
++  a security issue, or an extremely severe problem. Hence, try to help yourself
++  if you don't receive any or only unsatisfying help.
 +
-+* Submit your report in the appropriate way, which depends on the outcome of
-+  the verification and the MAINTAINERS entry.
++ [:ref:`details <yourself_repiref>`]
 +
-+  * Are you facing a regression within a stable or longterm kernel series you
-+    were unable to reproduce with a fresh mainline kernel? Then report it by
-+    email to the stable team while CCing the regressions list (To: Greg
-+    Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>;
-+    CC: stable@vger.kernel.org, regressions@lists.linux.dev); if you performed a
-+    bisection, CC everyone in the culprit's 'Signed-off-by' chain, too.
-+
-+  * In all other cases, submit the report as specified in MAINTAINERS while
-+    keeping Documentation/process/security-bugs.rst in mind in case you deal
-+    with a security issue:
-+
-+    * If that means reporting by email, CC linux-kernel@vger.kernel.org. In case
-+      of a regression, CC regressions@lists.linux.dev, too -- and when the
-+      culprit is known, also everyone in its 'Signed-off-by' chain, while
-+      addressing the email to the culprit's author.
-+
-+    * If that means submitting a regression to a bug tracker, perform
-+      one more thing afterwards: Write a short heads-up email with a link to the
-+      report to regressions@lists.linux.dev -- and if the culprit is known, CC
-+      everyone that signed it off, while addressing the email to the culprit's
-+      author.
-+
-+  Whichever way it is, in case you sent the brief inquiry mentioned initially
-+  to the regressions list, try to keep that discussion involved: Either send
-+  your report as a reply to the earlier inquiry while adding relevant parties
-+  or send a quick reply-to-self with a link to the proper report.
-+
-+ [:ref:`details <submit_repiref>`]
- 
-  * Wait for reactions and keep the thing rolling until you can accept the
-    outcome in one way or the other. Thus react publicly and in a timely manner
-@@ -1108,166 +1166,165 @@ the code section the kernel was executing at that time.
- [:ref:`back to step-by-step guide <attachments_repisbs>`]
++.. _readysolved_repisubs:
  
  
--Write and send the report
---------------------------
+ Handling non-regressions only occurring in stable or longterm kernels
+@@ -1327,193 +1356,167 @@ The step-by-step guide covers all the important details already.
+ [:ref:`back to step-by-step guide <submit_repisbs>`]
+ 
+ 
+-Duties after the report went out
+---------------------------------
++.. _keeprolling_repiref:
++
++Things to do after the report went out
++--------------------------------------
+ 
+-    *Wait for reactions and keep the thing rolling until you can accept the
+-    outcome in one way or the other. Thus react publicly and in a timely manner
+-    to any inquiries. Test proposed fixes. Do proactive testing: retest with at
+-    least every first release candidate (RC) of a new mainline version and
+-    report your results. Send friendly reminders if things stall. And try to
+-    help yourself, if you don't get any help or if it's unsatisfying.*
++  *Wait for reactions and keep the ball rolling until you can accept the outcome* [:ref:`... <keeprolling_repisbs>`]
+ 
+-If your report was good and you are really lucky then one of the developers
+-might immediately spot what's causing the issue; they then might write a patch
+-to fix it, test it, and send it straight for integration in mainline while
+-tagging it for later backport to stable and longterm kernels that need it. Then
+-all you need to do is reply with a 'Thank you very much' and switch to a version
+-with the fix once it gets released.
++If your report was good and you are lucky, some developers might immediately
++spot what is causing the issue. They then might provide a fix for you to test,
++which you should do in a timely manner; afterwards they then send it out for
++integration into the mainline kernel while tagging it for backporting to
++affected stable and longterm kernels if appropriate.
+ 
+-But this ideal scenario rarely happens. That's why the job is only starting
+-once you got the report out. What you'll have to do depends on the situations,
+-but often it will be the things listed below. But before digging into the
+-details, here are a few important things you need to keep in mind for this part
+-of the process.
++But frequently it is a little less straightforward. That is why the job often
++is only starting once you send a report. What you'll have to do depends on the
++situation. Here are a few tips:
+ 
++**Check who you deal with**: Most of the time a
++developer for the particular area of code will respond. But as
++issues are usually reported in public, it could be anyone --
++including people that want to help but in the end send you off
++track. That is why it might be wise to run a quick search on `lore <https://lore.kernel.org/all/>`_
++to see who you are interacting with.
+ 
+-General advice for further interactions
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++**Inquiries for data**: Often you will be asked to test something or provide
++additional details. Try to supply the requested information soon, as you have
++the attention of someone willing to help and risk losing it the longer you
++wait; that outcome is even likely if you do not provide the information within
++a few business days.
+ 
+-**Always reply in public**: When you filed the issue in a bug tracker, always
+-reply there and do not contact any of the developers privately about it. For
+-mailed reports always use the 'Reply-all' function when replying to any mails
+-you receive. That includes mails with any additional data you might want to add
+-to your report: go to your mail applications 'Sent' folder and use 'reply-all'
+-on your mail with the report. This approach will make sure the public mailing
+-list(s) and everyone else that gets involved over time stays in the loop; it
+-also keeps the mail thread intact, which among others is really important for
+-mailing lists to group all related mails together.
++**Always reply in public!** When you submitted the issue in a bug tracker,
++always reply there and do not contact any of the developers privately; for
++mailed reports, always use the 'Reply-all' function when replying to any emails
++you receive. That includes emails with any additional data you might want to add
++to your report: Go to your email application's 'Sent' folder and use 'reply-all'
++on your email with the report. This approach will make sure the public mailing
++lists and everyone else who becomes involved later can access everything; it
++also keeps the email thread intact, which, among others, is really important for
++others that later run into the same problem and check the thread for a solution.
+ 
+ There are just two situations where a comment in a bug tracker or a 'Reply-all'
+ is unsuitable:
+ 
+- * Someone tells you to send something privately.
++* Someone tells you to send something privately.
++
++* You were told to supply something containing
++  information that should not be exposed to the public. In that case, it is okay
++  to send it in private to the person who asked for it. But note in the ticket
++  or an email that you did so to keep the public record straight.
+ 
+- * You were told to send something, but noticed it contains sensitive
+-   information that needs to be kept private. In that case it's okay to send it
+-   in private to the developer that asked for it. But note in the ticket or a
+-   mail that you did that, so everyone else knows you honored the request.
++**Requests for testing**: When you are asked to test a diagnostic patch or a
++possible fix, try to test it in a timely manner, too. But do it thoroughly and
++do not rush it: Mixing things up can happen easily and leads to a lot of
++confusion. A common mistake, for example, is thinking a proposed fix was applied
++when building a test kernel, when in fact it was not.
+ 
+-**Do research before asking for clarifications or help**: In this part of the
++**Try to help yourself** before asking for help: During this part of the
+ process someone might tell you to do something that requires a skill you might
+ not have mastered yet. For example, you might be asked to use some test tools
+-you never have heard of yet; or you might be asked to apply a patch to the
+-Linux kernel sources to test if it helps. In some cases it will be fine sending
+-a reply asking for instructions how to do that. But before going that route try
+-to find the answer own your own by searching the internet; alternatively
+-consider asking in other places for advice. For example ask a friend or post
+-about it to a chatroom or forum you normally hang out.
 -
--    *Start to compile the report by writing a detailed description about the
--    issue. Always mention a few things: the latest kernel version you installed
--    for reproducing, the Linux Distribution used, and your notes on how to
--    reproduce the issue. Ideally, make the kernel's build configuration
--    (.config) and the output from ``dmesg`` available somewhere on the net and
--    link to it. Include or upload all other information that might be relevant,
--    like the output/screenshot of an Oops or the output from ``lspci``. Once
--    you wrote this main part, insert a normal length paragraph on top of it
--    outlining the issue and the impact quickly. On top of this add one sentence
--    that briefly describes the problem and gets people to read on. Now give the
--    thing a descriptive title or subject that yet again is shorter. Then you're
--    ready to send or file the report like the MAINTAINERS file told you, unless
--    you are dealing with one of those 'issues of high priority': they need
--    special care which is explained in 'Special handling for high priority
--    issues' below.*
+-**Be patient**: If you are really lucky you might get a reply to your report
+-within a few hours. But most of the time it will take longer, as maintainers
+-are scattered around the globe and thus might be in a different time zone – one
+-where they already enjoy their night away from keyboard.
 -
--Now that you have prepared everything it's time to write your report. How to do
--that is partly explained by the three documents linked to in the preface above.
--That's why this text will only mention a few of the essentials as well as
--things specific to the Linux kernel.
+-In general, kernel developers will take one to five business days to respond to
+-reports. Sometimes it will take longer, as they might be busy with the merge
+-windows, other work, visiting developer conferences, or simply enjoying a long
+-summer holiday.
 -
--There is one thing that fits both categories: the most crucial parts of your
--report are the title/subject, the first sentence, and the first paragraph.
--Developers often get quite a lot of mail. They thus often just take a few
--seconds to skim a mail before deciding to move on or look closer. Thus: the
--better the top section of your report, the higher are the chances that someone
--will look into it and help you. And that is why you should ignore them for now
--and write the detailed report first. ;-)
-+.. _compile_repiref:
-+
-+Prepare and optimize the report
-+-------------------------------
-+
-+  *Prepare and optimize the report.* [:ref:`... <compile_repisbs>`]
-+
-+Most developers just take a few seconds to skim a report before deciding
-+between taking a closer look or moving on, as they receive a ton of messages.
-+That is why the title/subject, the first sentence, and the three or four
-+following it are crucial.
-+
-+People will also stop reading if the report's text is long or hard to follow;
-+the same is true if crucial information is not at hand. So be sure to describe
-+things as short, straightforward, and simple as possible while providing
-+everything important.
-+
-+How to do that is partly explained by the three documents linked to in the
-+reference section's intro. The next few subsections thus will only mention a
-+few essentials as well as things specific to the Linux kernel.
-+
- 
- Things each report should mention
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--Describe in detail how your issue happens with the fresh vanilla kernel you
--installed. Try to include the step-by-step instructions you wrote and optimized
--earlier that outline how you and ideally others can reproduce the issue; in
--those rare cases where that's impossible try to describe what you did to
--trigger it.
-+Describe the problem while mentioning all the important details about the
-+environment others might need to fully understand the issue.:
-+
-+* The output from ``uname -r`` from the Linux kernel used for the verification.
- 
--Also include all the relevant information others might need to understand the
--issue and its environment. What's actually needed depends a lot on the issue,
--but there are some things you should include always:
-+* The Linux distribution used (``hostnamectl | grep 'Operating System'``)
- 
-- * the output from ``cat /proc/version``, which contains the Linux kernel
--   version number and the compiler it was built with.
-+* The nature of the issue and when it occurs.
- 
-- * the Linux distribution the machine is running (``hostnamectl | grep
--   "Operating System"``)
-+* If you are dealing with a regression and performed a bisection, mention
-+  The author, subject, and commit-id of the culprit change.
- 
-- * the architecture of the CPU and the operating system (``uname -mi``)
-+* If you are dealing with a 'warning', an 'OOPS' or a 'panic' from the kernel,
-+  include it. If you can't copy and paste it, take a picture of the screen.
- 
-- * if you are dealing with a regression and performed a bisection, mention the
--   subject and the commit-id of the change that is causing it.
- 
--Things that might be wise to provide
-+Things that might be good to provide
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--Depending on the issue you might need to add more background data. Here are a
--few suggestions what often is good to provide:
+-The 'issues of high priority' (see above for an explanation) are an exception
+-here: maintainers should address them as soon as possible; that's why you
+-should wait a week at maximum (or just two days if it's something urgent)
+-before sending a friendly reminder.
 -
-- * If the issue might be related to your computer hardware, mention what kind
--   of system you use. If you for example have problems with your graphics card,
--   mention its manufacturer, the card's model, and what chip is uses. If it's a
--   laptop mention its name, but try to make sure it's meaningful. 'Dell XPS 13'
--   for example is not, because it might be the one from 2012; that one looks
--   not that different from the one sold today, but apart from that the two have
--   nothing in common. Hence, in such cases add the exact model number, which
--   for example are '9380' or '7390' for XPS 13 models introduced during 2019.
--   Names like 'Lenovo Thinkpad T590' are also somewhat ambiguous: there are
--   variants of this laptop with and without a dedicated graphics chip, so try
--   to find the exact model name or specify the main components.
+-Sometimes the maintainer might not be responding in a timely manner; other
+-times there might be disagreements, for example if an issue qualifies as
+-regression or not. In such cases raise your concerns on the mailing list and
+-ask others for public or private replies how to move on. If that fails, it
+-might be appropriate to get a higher authority involved. In case of a WiFi
+-driver that would be the wireless maintainers; if there are no higher level
+-maintainers or all else fails, it might be one of those rare situations where
+-it's okay to get Linus Torvalds involved.
 -
-- * Mention the relevant software in use. If you have problems with loading
--   modules, you want to mention the versions of kmod, systemd, and udev in use.
--   If one of the DRM drivers misbehaves, you want to state the versions of
--   libdrm and Mesa; also specify your Wayland compositor or the X-Server and
--   its driver. If you have a filesystem issue, mention the version of
--   corresponding filesystem utilities (e2fsprogs, btrfs-progs, xfsprogs, ...).
+-**Proactive testing**: Every time the first pre-release (the 'rc1') of a new
+-mainline kernel version gets released, go and check if the issue is fixed there
+-or if anything of importance changed. Mention the outcome in the ticket or in a
+-mail you sent as reply to your report (make sure it has all those in the CC
+-that up to that point participated in the discussion). This will show your
+-commitment and that you are willing to help. It also tells developers if the
+-issue persists and makes sure they do not forget about it. A few other
+-occasional retests (for example with rc3, rc5 and the final) are also a good
+-idea, but only report your results if something relevant changed or if you are
+-writing something anyway.
 -
--Those examples should give your some ideas of what data might be wise to
--attach, but you have to think yourself what will be helpful for others to know.
-+In some cases it is wise to provide additional details:
-+
-+* The processor architecture used (``uname -mi``).
-+
-+* The relevant software in use. If you have problems with loading
-+  modules, you want to mention the versions of kmod, systemd, and udev in use.
-+  If one of the DRM drivers misbehaves, you want to state the versions of
-+  libdrm and Mesa; also specify your Wayland compositor or the X-Server and
-+  its driver.
-+
-+* If the issue might be related to your hardware, mention what kind
-+  of system you use. If you, for example, have problems with your graphics card,
-+  mention its manufacturer, the card's model, and what chip it uses. If it is a
-+  laptop, specify its name, but try to make sure it is meaningful. 'Dell XPS
-+  13', for example, is not, because that might be the one from 2012 or 2020;
-+  the latter might not look that different, but apart from that it shares
-+  nothing with the former. In such cases add the exact model number, like '9380'
-+  or '7390' for XPS 13 models introduced during 2019. Names like 'Lenovo
-+  Thinkpad T590' are also somewhat ambiguous: There are variants of this laptop
-+  with and without a dedicated graphics chip, so try to find the exact model
-+  name or specify the main components.
-+
-+Those examples should give you some ideas of what data might be wise to
-+specify, but you have to think through yourself what will be helpful for others
-+to know.
-+
- Don't worry too much about forgetting something, as developers will ask for
- additional details they need. But making everything important available from
- the start increases the chance someone will take a closer look.
+-With all these general things off the table let's get into the details of how
+-to help to get issues resolved once they were reported.
+-
+-Inquires and testing request
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-Here are your duties in case you got replies to your report:
+-
+-**Check who you deal with**: Most of the time it will be the maintainer or a
+-developer of the particular code area that will respond to your report. But as
+-issues are normally reported in public it could be anyone that's replying —
+-including people that want to help, but in the end might guide you totally off
+-track with their questions or requests. That rarely happens, but it's one of
+-many reasons why it's wise to quickly run an internet search to see who you're
+-interacting with. By doing this you also get aware if your report was heard by
+-the right people, as a reminder to the maintainer (see below) might be in order
+-later if discussion fades out without leading to a satisfying solution for the
+-issue.
++you have never heard of yet; or you are asked to apply a patch to the
++Linux kernel sources to test. It usually will be fine replying asking for
++instructions on how to do that. But before going that route, try to find the
++answer on your own by searching the internet; alternatively,
++consider asking elsewhere for advice. For example, ask a friend or post
++your question to a chat room or forum you normally hang out in.
  
-+Special handling for high-priority issues
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-**Inquiries for data**: Often you will be asked to test something or provide
+-additional details. Try to provide the requested information soon, as you have
+-the attention of someone that might help and risk losing it the longer you
+-wait; that outcome is even likely if you do not provide the information within
+-a few business days.
++**Be patient**: If you are really lucky, you might receive a reply to your
++report within a few hours. But most of the time it will take longer, as
++maintainers might be in a different time zone -- one where people currently
++take a few days off or already enjoy their night away from the keyboard. They
++might also simply be busy with other work, on a trip to a conference, or simply
++enjoying a long holiday.
  
--The important part: the head of your report
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Reports for high-priority issues need special handling:
- 
--Now that you have the detailed part of the report prepared let's get to the
--most important section: the first few sentences. Thus go to the top, add
--something like 'The detailed description:' before the part you just wrote and
--insert two newlines at the top. Now write one normal length paragraph that
--describes the issue roughly. Leave out all boring details and focus on the
--crucial parts readers need to know to understand what this is all about; if you
--think this bug affects a lot of users, mention this to get people interested.
-+* Regressions: Make the report's subject start with '[REGRESSION]'.
- 
--Once you did that insert two more lines at the top and write a one sentence
--summary that explains quickly what the report is about. After that you have to
--get even more abstract and write an even shorter subject/title for the report.
-+  In case you performed a successful bisection, use the title of the change that
-+  introduced the regression as the second part of your subject. Make the report
-+  also mention the commit-id of the culprit. In case of an unsuccessful
-+  bisection, make your report mention the latest tested version that is working
-+  fine (say 5.7) and the oldest where the issue occurs (say 5.8-rc1).
- 
--Now that you have written this part take some time to optimize it, as it is the
--most important parts of your report: a lot of people will only read this before
--they decide if reading the rest is time well spent.
-+  When sending the report by email, CC the Linux regressions mailing list
-+  (regressions@lists.linux.dev). In case the report needs to be filed to some
-+  web tracker, proceed to do so. Once filed, forward the report by email to the
-+  regressions list; CC the maintainer and the mailing list for the subsystem in
-+  question. Make sure to inline the forwarded report and do not attach it.
-+  Also add a short note at the top where you mention the URL to the ticket.
- 
--Now send or file the report like the :ref:`MAINTAINERS <maintainers>` file told
--you, unless it's one of those 'issues of high priority' outlined earlier: in
--that case please read the next subsection first before sending the report on
--its way.
-+  When mailing or forwarding the report, in case of a successful bisection, add
-+  the author of the culprit to the recipients; also CC everyone in the
-+  signed-off-by   chain, which you find at the end of its commit message.
- 
--Special handling for high priority issues
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+* Security issues: For these issues you will have to evaluate if a
-+  short-term risk to other users would arise if details were publicly disclosed.
-+  If that is not the case, simply proceed with reporting the issue as described.
-+  For issues that bear such a risk, you will need to adjust the reporting
-+  process slightly:
- 
--Reports for high priority issues need special handling.
-+  * If the MAINTAINERS file instructed you to report the issue by email, do not
-+    CC any public mailing lists.
- 
--**Severe issues**: make sure the subject or ticket title as well as the first
--paragraph makes the severeness obvious.
-+  * If you were supposed to file the issue in a bug tracker, make sure to mark
-+    the ticket as 'private' or 'security issue'. If the bug tracker does not
-+    offer a way to keep reports private, forget about it and send your report as
-+    a private email to the maintainers instead.
- 
--**Regressions**: make the report's subject start with '[REGRESSION]'.
-+ In both cases, make sure to also email your report to the addresses the
-+ MAINTAINERS file lists in the section 'security contact'. Ideally, directly CC
-+ them when sending the report by email. If you filed it in a bug tracker, forward
-+ the report's text to these addresses; but on top of it, put a small note where
-+ you mention that you filed it with a link to the ticket.
- 
--In case you performed a successful bisection, use the title of the change that
--introduced the regression as the second part of your subject. Make the report
--also mention the commit id of the culprit. In case of an unsuccessful bisection,
--make your report mention the latest tested version that's working fine (say 5.7)
--and the oldest where the issue occurs (say 5.8-rc1).
-+ See Documentation/process/security-bugs.rst for more information.
- 
--When sending the report by mail, CC the Linux regressions mailing list
--(regressions@lists.linux.dev). In case the report needs to be filed to some web
--tracker, proceed to do so. Once filed, forward the report by mail to the
--regressions list; CC the maintainer and the mailing list for the subsystem in
--question. Make sure to inline the forwarded report, hence do not attach it.
--Also add a short note at the top where you mention the URL to the ticket.
-+Optimize the report and especially its head section
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--When mailing or forwarding the report, in case of a successful bisection add the
--author of the culprit to the recipients; also CC everyone in the signed-off-by
--chain, which you find at the end of its commit message.
-+Once you have everything covered in your report, it is wise to optimize the
-+most important section: The first few sentences.
- 
--**Security issues**: for these issues your will have to evaluate if a
--short-term risk to other users would arise if details were publicly disclosed.
--If that's not the case simply proceed with reporting the issue as described.
--For issues that bear such a risk you will need to adjust the reporting process
--slightly:
-+If the report is long, it is usually a good idea to go to the top, add
-+something like 'The detailed description:' before the part you just wrote, and
-+insert two newlines at the top. Now write one normal length paragraph that
-+describes the issue roughly. Leave out all boring details and focus on the
-+crucial parts readers need to know to understand what this is all about.
-+
-+Whenever you have or do not have such a paragraph with a gist, ideally start the
-+report with one sentence that explains quickly what the report is about.
-+
-+Now try to write an even shorter subject/title for the report.
- 
-- * If the MAINTAINERS file instructed you to report the issue by mail, do not
--   CC any public mailing lists.
-+Spending time on these things is time well spent, as a lot of people will only
-+read the subject and maybe the first sentence or two before they decide if
-+reading the rest is worth it for them.
-+
-+Now send or file the report like the :ref:`MAINTAINERS <maintainers>` file told
-+you, unless it is one of those 'issues of high-priority' outlined earlier: In
-+that case, please read the next subsection first before sending the report on
-+its way.
-+
-+[:ref:`back to step-by-step guide <compile_repisbs>`]
+-**Requests for testing**: When you are asked to test a diagnostic patch or a
+-possible fix, try to test it in timely manner, too. But do it properly and make
+-sure to not rush it: mixing things up can happen easily and can lead to a lot
+-of confusion for everyone involved. A common mistake for example is thinking a
+-proposed patch with a fix was applied, but in fact wasn't. Things like that
+-happen even to experienced testers occasionally, but they most of the time will
+-notice when the kernel with the fix behaves just as one without it.
++[:ref:`back to step-by-step guide <keeprolling_repisbs>`]
 +
 +
-+.. _submit_repiref:
++.. _retest_repiref:
 +
-+Submit the report
-+-----------------
++Regularly check if the bug is still present
++-------------------------------------------
++
++  *Retest at least every first release candidate (e.g., -rc1) of a new mainline
++  version released and* [:ref:`... <retest_repisbs>`]
++
++Every time the first pre-release of a new mainline kernel version is released
++(the 'rc1'), go and check if the issue is fixed there or if anything of
++importance has changed. Mention the outcome in the ticket or in a mailed reply
++to your report (make sure to CCs everyone that up to that point participated in
++the discussion). This will show your commitment. It also tells developers the
++issue persists and acts as an implicit reminder.
++
++An occasional retest at another time (for example, with -rc4 or -rc7) is also
++wise, but only report your results if something relevant changed or if you are
++writing anyway.
++
++[:ref:`back to step-by-step guide <retest_repisbs>`]
++
++
++.. _reminder_repiref:
  
-- * If you were supposed to file the issue in a bug tracker make sure to mark
--   the ticket as 'private' or 'security issue'. If the bug tracker does not
--   offer a way to keep reports private, forget about it and send your report as
--   a private mail to the maintainers instead.
-+  *Submit your report in the appropriate way, which depends on the outcome* [:ref:`... <submit_repisbs>`]
+ What to do when nothing of substance happens
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-Some reports will not get any reaction from the responsible Linux kernel
+-developers; or a discussion around the issue evolved, but faded out with
+-nothing of substance coming out of it.
+-
+-In these cases wait two (better: three) weeks before sending a friendly
+-reminder: maybe the maintainer was just away from keyboard for a while when
+-your report arrived or had something more important to take care of. When
+-writing the reminder, kindly ask if anything else from your side is needed to
+-get the ball running somehow. If the report got out by mail, do that in the
+-first lines of a mail that is a reply to your initial mail (see above) which
+-includes a full quote of the original report below: that's on of those few
+-situations where such a 'TOFU' (Text Over, Fullquote Under) is the right
+-approach, as then all the recipients will have the details at hand immediately
+-in the proper order.
+-
+-After the reminder wait three more weeks for replies. If you still don't get a
+-proper reaction, you first should reconsider your approach. Did you maybe try
+-to reach out to the wrong people? Was the report maybe offensive or so
+-confusing that people decided to completely stay away from it? The best way to
+-rule out such factors: show the report to one or two people familiar with FLOSS
+-issue reporting and ask for their opinion. Also ask them for their advice how
+-to move forward. That might mean: prepare a better report and make those people
+-review it before you send it out. Such an approach is totally fine; just
++--------------------------------------------
++
++  *If things stall for more than two to three weeks, evaluate why. It can
++  happen due to good or bad reasons, like* [:ref:`... <reminder_repisbs>`]
++
++Sometimes you will not receive any reaction from the responsible
++developers; or a discussion around the issue evolves but ends fruitlessly.
++
++In these cases, wait two to three weeks before sending a friendly
++reminder: Maybe the right developers were just away from their keyboards when
++you sent your report or had something more important to take care of.
++
++When writing the reminder, kindly ask if there was anything wrong with the
++report or if anything from your side is needed to get the ball rolling. If the
++report was submitted by email, send a reply inserting your query after quoting
++the intro while including a full quote of the original report below: Then all
++the recipients will have both the gist of the problem and the details at hand
++immediately in convenient order.
++
++After sending a reminder, wait three more weeks for replies. If you still don't
++receive a proper reaction, reconsider your approach. Did you maybe try
++to reach out to the wrong people? Was the report possibly offensive or so
++confusing that people decided to stay away from it?
++
++The best way to
++rule out such factors: Show the report to one or two people familiar with FLOSS
++issue reporting and ask for their opinion. Also ask them for their advice on how
++to move forward. That might mean preparing a better report and making those
++people review it before sending it out. Such an approach is totally fine; just
+ mention that this is the second and improved report on the issue and include a
+ link to the first report.
  
--In both cases make sure to also mail your report to the addresses the
--MAINTAINERS file lists in the section 'security contact'. Ideally directly CC
--them when sending the report by mail. If you filed it in a bug tracker, forward
--the report's text to these addresses; but on top of it put a small note where
--you mention that you filed it with a link to the ticket.
-+The step-by-step guide covers all the important details already.
+-If the report was proper you can send a second reminder; in it ask for advice
+-why the report did not get any replies. A good moment for this second reminder
+-mail is shortly after the first pre-release (the 'rc1') of a new Linux kernel
+-version got published, as you should retest and provide a status update at that
+-point anyway (see above).
+-
+-If the second reminder again results in no reaction within a week, try to
+-contact a higher-level maintainer asking for advice: even busy maintainers by
+-then should at least have sent some kind of acknowledgment.
+-
+-Remember to prepare yourself for a disappointment: maintainers ideally should
+-react somehow to every issue report, but they are only obliged to fix those
+-'issues of high priority' outlined earlier. So don't be too devastating if you
+-get a reply along the lines of 'thanks for the report, I have more important
+-issues to deal with currently and won't have time to look into this for the
+-foreseeable future'.
+-
+-It's also possible that after some discussion in the bug tracker or on a list
+-nothing happens anymore and reminders don't help to motivate anyone to work out
+-a fix. Such situations can be devastating, but is within the cards when it
+-comes to Linux kernel development. This and several other reasons for not
+-getting help are explained in 'Why some issues won't get any reaction or remain
+-unfixed after being reported' near the end of this document.
+-
+-Don't get devastated if you don't find any help or if the issue in the end does
+-not get solved: the Linux kernel is FLOSS and thus you can still help yourself.
+-You for example could try to find others that are affected and team up with
+-them to get the issue resolved. Such a team could prepare a fresh report
+-together that mentions how many you are and why this is something that in your
+-option should get fixed. Maybe together you can also narrow down the root cause
+-or the change that introduced a regression, which often makes developing a fix
+-easier. And with a bit of luck there might be someone in the team that knows a
+-bit about programming and might be able to write a fix.
++If the report was proper, you can send a second reminder; in it, ask for advice
++on why the report did not receive any replies. An ideal moment for this is
++shortly after retesting with the first pre-release of a new mainline release
++(the 'rc1'), as you should retest and provide a status update at that point
++anyway (see above).
++
++[:ref:`back to step-by-step guide <reminder_repisbs>`]
++
++
++.. _yourself_repiref:
++
++In most cases nobody is obliged to help
++---------------------------------------
++
++*Be aware that nobody is obliged to help you, unless it is* [:ref:`... <yourself_repisbs>`]
++
++Developers ideally should react somehow to every issue report, but sometimes do
++not reply or, in the end, do not address problems. This is due to reasons
++[:ref:`Why some bugs remain unfixed and some reports are ignored <unfixedbugs_repiapdx>`]
++explains in more detail, which also explains why some code does not even have
++maintainers.
++
++Try to help yourself in that case.
++You, for example, could team up with others affected to then create a better
++report or narrow down the root cause of a problem. With a bit of luck, someone
++on the team might even know a bit about programming and provide a fix.
++
++[:ref:`back to step-by-step guide <yourself_repisbs>`]
  
--See Documentation/process/security-bugs.rst for more information.
-+[:ref:`back to step-by-step guide <submit_repisbs>`]
  
- 
- Duties after the report went out
+ Appendix: additional background information
 -- 
 2.51.0
 
