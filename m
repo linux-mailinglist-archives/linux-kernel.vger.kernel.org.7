@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-870251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4214C0A497
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:27:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A09C0A4A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78F414E3C99
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:27:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759323AD9DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1944822CBD7;
-	Sun, 26 Oct 2025 08:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EA9271456;
+	Sun, 26 Oct 2025 08:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Rb2GrXi6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jv7IApOp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7641C17A2E8
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416E81A9FB8;
+	Sun, 26 Oct 2025 08:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761467247; cv=none; b=FBymTu0AfFk5e4ugr03HQis1KMTMT3FX5ABklwQdhgfEr7BpAnmafcJtZNYPmHxQVlRx7ZaSC22gsgtSYFnynSol5jX7WPw88CBiQBlCS80JzacbHYCqqEIf0h4fqbJYkOgOlz3J4R9gyY4fDhK9kgrGleotAIk/vluklnV44VM=
+	t=1761467718; cv=none; b=hv1Vft7XdOI2KQeVi6vRFN+/ecNc1U/sVWCqWCYxHp+pp3DJzpkDAPz3l+cHj+XuRUkAih9ht7MYH8wTmq9ln8RSIxexIG7H6fR/VGWllYHzB/InIlIAEd5eRXo3XNqtfDGZPV4sM0C5shWsOXwcRXXLIaFtwwbT7R+Vj8+/5P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761467247; c=relaxed/simple;
-	bh=elSX9IbqQvW2SuUAYMHA/NTFtVw/y09OwjHI4aK+9Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tZ6W8hm7rkuDg29fJahL3O1Bn0nqutQ2/+7qBlvssAetcag1aJQAL2ADWZilhx5bthP/wjzmLg7Bm1ZEVful/3SzcKWXYOrow4w41q3sxhe2Zw+PjKoIftR0V8upqS5D+exQNElYZT9M5QVE8eb4+rj8BceAHAaC2rsisIM3o3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Rb2GrXi6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761467243;
-	bh=elSX9IbqQvW2SuUAYMHA/NTFtVw/y09OwjHI4aK+9Go=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rb2GrXi6HpsLYx8ZrvSbgyAJlo2w3O/tfX6q40tcLizhEoYlqGL4gUKiWVT0OP/Sd
-	 jaY4yTzWqaYwic2VHaW3S7XiTowwI8AERodX7pCPTjcdH/4SFJUpBP5CnsWwqOff0y
-	 zpj7vW8bZtG3Ode8mE/TFZuWXqCH0fN8mz++01sqTHpD0sY5qdWiq5dcXr4/mq24J3
-	 QpGTT4hOMsMFfXmXHKr+WwsL6DhqZs9QudT3FrrwDr1eHWTkYaoiQR7vnE/51RX1o9
-	 M9r183MCBA+jScztgDTuRvUSPLDtEcc8YO2SVKBLTbtEWg4R02vCrVEWaeDWLkbTcw
-	 lUo8o3w2V5eyw==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 02AA117E139C;
-	Sun, 26 Oct 2025 09:27:22 +0100 (CET)
-Date: Sun, 26 Oct 2025 09:27:17 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/8] drm/panthor: Support GLB_REQ.STATE field for
- Mali-G1 GPUs
-Message-ID: <20251026092717.3aae3679@fedora>
-In-Reply-To: <20251024202117.3241292-7-karunika.choo@arm.com>
-References: <20251024202117.3241292-1-karunika.choo@arm.com>
-	<20251024202117.3241292-7-karunika.choo@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761467718; c=relaxed/simple;
+	bh=ALtIZhfG/TUBhbt9FciM12RZJpgwup6sZ6kHoMFr7UQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SuFmVK4EQfFZIH3QsyLJBCqq0VNedCZ574KizG3PTD05T5YE8iMTFjfipwk5p6Neb8K9hPOwWbofxmJHntwZrjWj/6LD+arPL2+IceZFPUjB87uo21ZkCusA+os7TDZ6g7fFXxdAjpUKr6VkL/mQQJL/0bhqADvxb4v2P9JZUn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jv7IApOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF292C4CEE7;
+	Sun, 26 Oct 2025 08:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761467717;
+	bh=ALtIZhfG/TUBhbt9FciM12RZJpgwup6sZ6kHoMFr7UQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jv7IApOpwm/13mj9fpL9ERbppMr2xOCFgJxjXtorSCT+pIJ4uew3KJ83HYQbMuiSk
+	 cfmQKm5Gk0aLQazddXkiDDw595VwcFRiNKqJD6yGevrFxQm1mmGHg9oRphfWlicMXA
+	 DmiKkQdoGqaACmrVu1lsG5mul45SNtkz8lVSMYk/vVjx6jUeDymIVOHIb2nHW8qMG0
+	 zo3omCWSmbPKUNzY4Xmp0ROXpynyqy4JUpt3+Qb5DBnW9uDe1gefSRslSejouxem3O
+	 t2bI5xqUZ5YbWWy3Lx4N9UoZwOxc+68wEWAilhhBN0JVdTGJIgenTPtXdTKOMmw96i
+	 o1YaLSEoun5UA==
+Message-ID: <42161519-e8b3-4fc4-be67-0d9c50426eda@kernel.org>
+Date: Sun, 26 Oct 2025 09:35:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: vendor-prefixes: Add NineTripod
+To: Coia Prant <coiaprant@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20251026062831.4045083-3-coiaprant@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251026062831.4045083-3-coiaprant@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 24 Oct 2025 21:21:15 +0100
-Karunika Choo <karunika.choo@arm.com> wrote:
-
-> +static bool panthor_fw_has_glb_state(struct panthor_device *ptdev)
-> +{
-> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-> +
-> +	return glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0);
-> +}
-
-It's okay for now, but if we start having more of these, we probably
-want to automate the generation of those has_<featurex>() helpers with
-something like:
-
-#define FW_FEATURE(feat_name, major, minor)						\
-static bool panthor_fw_has_ ## feat_name(struct panthor_device *ptdev) 			\
-{											\
-	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev); 	\
-											\
-	return glb_iface->control->version >= CSF_IFACE_VERSION(major, minor, 0);	\
-}
-
-Same goes for the HW features BTW.
-
-> +
->  /**
->   * panthor_fw_conv_timeout() - Convert a timeout into a cycle-count
->   * @ptdev: Device.
-> @@ -995,6 +1003,9 @@ static void panthor_fw_init_global_iface(struct panthor_device *ptdev)
->  					 GLB_IDLE_EN |
->  					 GLB_IDLE;
+On 26/10/2025 07:28, Coia Prant wrote:
+> Add NineTripod to the vendor prefixes.
 > 
-> +	if (glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0))
+> Signed-off-by: Coia Prant <coiaprant@gmail.com>
+> Cc: stable@vger.kernel.org
 
-	if (panthor_fw_has_glb_state(ptdev))
+Please drop, this is not a bugfix for anything.
 
-> +		glb_iface->input->ack_irq_mask |= GLB_STATE_MASK;
-> +
->  	panthor_fw_update_reqs(glb_iface, req, GLB_IDLE_EN, GLB_IDLE_EN);
->  	panthor_fw_toggle_reqs(glb_iface, req, ack,
->  			       GLB_CFG_ALLOC_EN |
-> @@ -1068,6 +1079,54 @@ static void panthor_fw_stop(struct panthor_device *ptdev)
->  		drm_err(&ptdev->base, "Failed to stop MCU");
->  }
-
+Best regards,
+Krzysztof
 
