@@ -1,185 +1,180 @@
-Return-Path: <linux-kernel+bounces-870626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A972C0B4F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:02:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ECB9C0B509
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A17189DF4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7014E189ED2E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857021DE4EF;
-	Sun, 26 Oct 2025 22:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15712226CF6;
+	Sun, 26 Oct 2025 22:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JH+vdXCs"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sN7N3bqe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3E933F9
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ACD224FA;
+	Sun, 26 Oct 2025 22:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761516128; cv=none; b=OUnQV5prQnltbowi2gbSPwf8coaWnxkbvoowCKNfUXL9kEQodCwhAepnJyb6GurmnEwBUzN1n89ACulLlZwt0LPHd/bC34/atcMfqe/HpK0axQNIfTu4x0QP8MPaCRsLJsjVyhdGfgTN/iUDLT+Y0+6WXXH4VOQBLM4WohV/jA8=
+	t=1761516262; cv=none; b=UAMxx5W6mrohtF4zwx6Okl4n+si2FBkUMKpmLykSPR7nhB4GJg1G1lx8RAch5296cMfMUxvb6uIRJNYLfR3GnXKQoWv3JtL3Vb114vkvCVLJaDSGQzdu9nLPchsf/32phSl1BAXqRKWXFacxdsiKYFCIHzeqzdd9egngP7pbtKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761516128; c=relaxed/simple;
-	bh=3+fgENP1ZH4cyV41Y+zrMzSCQC/sRXBIU0RStkeCUOw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KcdE+AY5JCbX8KOOTImrdS3PBKWkbdvYiAFkvcQq9EsvsYXk1luzqjEzREYlxLd1CRuMusxAiTDtL3gnsUfVlyHhUmHlNWE/OFQcYO9CBAL8leO5a0lZ6J5Iqgg19PlXZMc2Xzh08UtVlq3urOlaR/8dTw9KybWju85aazx1TLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JH+vdXCs; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-290da96b37fso219525ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 15:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761516127; x=1762120927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3+fgENP1ZH4cyV41Y+zrMzSCQC/sRXBIU0RStkeCUOw=;
-        b=JH+vdXCsfoeExO3NbEWmBiEeehzMT+b2ifVsyAFz1ZbjTgdNjAcvbveKuzK2f6VS0N
-         Vi77IoN8osCqfME3gsJR4Y0qOGtbAvX2IgbEXnvIVScLhmiYZQcLeWPF/zv6RfYjXs6m
-         gILJm06l9RKI/Pk1xYIwYfJzsaGPCq5gTpyUfbzOv/tBk8k+EJpjUTiAkQxlo9WdXe85
-         gXuc7B6zavRQbWI+t/Jwr/J9O62pzr7DzdXa51MSf58beSBm9BfvliumPEfYOcVDPfBI
-         cNovxNeoyy3tBROz0qTWh/VGCFQNfffQ5Lc1rY7PUFjL6KzAMbQwAXV9trvYGiuUjVnx
-         rzbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761516127; x=1762120927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3+fgENP1ZH4cyV41Y+zrMzSCQC/sRXBIU0RStkeCUOw=;
-        b=CoymdeJkwUgA7l3QuYP5MvOCxLkQBXFW7j2dpbEUtqoDCdPe+Eocnrb/zuoU8WuOSJ
-         OAQ3WnA/dtVA90T6gvtzI1ot5pFn37L3oL+kTtSdiSOY0wY6JCSKDNuLDBA7vikZ45s7
-         njDMvTFUDHkd1I/YY1FMMc3XLEhyyPCTZKzNC9wMPiLNmKTRGFm0JaaWu6jRT5oZrI6W
-         FLS/sTPPjlO3H8s9b/MLx46xMUhdZftq4ZBZGcLpXrT8QgQL4EpdNmsANCMO+Jj0wGJ4
-         P4h2J6J9Uw+RGXx3BYbknVbjfWk5fWosjVaymgJ/wyOzJsoMGrA/ReKDzKqKRwlnTSZ2
-         OtGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfIOv8x5qyBwlWKjj/ltbrZYAts2ljZzl8neyHUnzq4X2TdwlTfvL84imegMGoAtqJmRtHihn+8uIK1Wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpq8foHcsR1KhtJDdYyiRoqI7C7lQcLzTffJLwbFRgqO+ar0Ym
-	783AvKrj/S+3WI5Rm2kwbf2U01NtuehzYd4yl/6tgxpRaVBjbhRAlkbRXm6JcadtWhncKoYxFHk
-	UWQYLDMIISn4+1/ofj/zvy+jxxzwnXnMxDPBkEMZf
-X-Gm-Gg: ASbGncv17YahPM5oZEYlIVS1x2ZY9KK2KN8JxVPbIUjnWTYuXpE8Re5nluNKmgQ4AmM
-	89izGrLCr44Rm3Bt6BfoMV8Ivqi0h55pjIJKMu++hnyDBMZnXrdCn8ElVRGxWDOToDASWz2zfHg
-	v4b484KQiScEFN0d9djWR83yODpPj0HfPQQHGvbn37hyaAXEeclofR3wCzrXBK73g+l0meBEfCk
-	9d1CIvBRiUo8B22CEDYcK+5h8jnh0J1h8dQ9z4MVGcF9NGKn9EQhbiA3gme0ZipE/2sUjuOHOhL
-	MFPHgb7KxPl6itE+tiI9zmykcQ==
-X-Google-Smtp-Source: AGHT+IHx53+OT/iU5ncrV7eLgcmP7WB6YYEN+QheTqXjctli+ZTT136PerVE69TnyO4Xpuz74P93dggE62/a9ay0GUE=
-X-Received: by 2002:a17:902:d2cb:b0:292:64ec:e0f with SMTP id
- d9443c01a7336-29497c21fb6mr5956275ad.6.1761516126042; Sun, 26 Oct 2025
- 15:02:06 -0700 (PDT)
+	s=arc-20240116; t=1761516262; c=relaxed/simple;
+	bh=PdErI+I/U0Fxg8DPcXpq+cld1psA4QSdRuJETGHdBeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abAxDNa6jMNO/zRo6Zo8CP9CW59F7Tkdwm+G0kKbSFGbVNOfkbrc/CCSTHCXoi+UyVyS97h+4y9Y8lonP6FUMoonzSBAulHScarcobqPZXCuGpTbpXICFP8L7Sue2/EYLDtdSCHUhRVTWLp7CSKP2d9aP8T+/5rncCz+lOpKFdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sN7N3bqe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E087AC4CEE7;
+	Sun, 26 Oct 2025 22:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761516262;
+	bh=PdErI+I/U0Fxg8DPcXpq+cld1psA4QSdRuJETGHdBeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sN7N3bqe8s4o0FnO+R360fkOQWJgC/k8RAkUcJcC+attu+8qX4PzkT3gnGcIiPg2l
+	 2hi6hYN3PkHrGyIG5XVvF4zpQqcpL1TRPT4bGh3iR2pfiEVkyUYYrLJeaGaz5bNVlL
+	 T3Txp9muq5lnODRoto/+hA/v50P+INRHOOAc1tqBpX9icRZa0dzhmTKYba45UwrV6Z
+	 B8j4Sc2OemWylnWCerF8jZ7D5fbY4tcwNNANAEohMWgU21pOLLOKSxuFAd59xlvyI9
+	 RH/BKzMq9/XW+/K9agOxO6sPO71v2ToMAWst2a19QKaO+BL5DGonxE1X4iQQMxHFx7
+	 6GqcK804SR13w==
+Date: Sun, 26 Oct 2025 17:04:20 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sander Vanheule <sander@svanheule.net>
+Cc: Michael Walle <mwalle@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 4/8] dt-bindings: mfd: Binding for RTL8231
+Message-ID: <20251026220420.GA3008050-robh@kernel.org>
+References: <20251021142407.307753-1-sander@svanheule.net>
+ <20251021142407.307753-5-sander@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com> <IA1PR11MB94955392108F5A662D469134E7E9A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH96B5K9Hk5h0FgxSUBa-pik=E=dLrO-4oxx76dxb9=7wQ@mail.gmail.com>
- <IA1PR11MB9495BB77A4FAFBD78600416AE7F6A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH-h_axusSLTWsEZ6QoxgmVs0nVknqNJx-iskpsg_qHKFg@mail.gmail.com>
- <aPiEakpcADuQHqQ3@intel.com> <CAGtprH8q5U6h3p5iDYtwRiyVG_xF8hDwq6G34hLt-jhe+MRNaA@mail.gmail.com>
- <CAGtprH9bLpQQ_2UOOShd15hPwMqwW+gwo1TzczLbwGdNkcJHhg@mail.gmail.com>
- <aad8ae43-a7bd-42b2-9452-2bdee82bf0d8@intel.com> <aPsuD2fbYwCccgNi@intel.com>
- <ca688bca-df3f-4d82-97e7-20fc26f7d69e@intel.com> <68fbd63450c7c_10e910021@dwillia2-mobl4.notmuch>
- <2e49e80f-fab0-4248-8dae-76543e3c6ae3@intel.com> <68fbebc54e776_10e9100fd@dwillia2-mobl4.notmuch>
- <10786082-94e0-454e-a581-7778b3a22e26@intel.com> <CAGtprH8AbW4P2t-wHVcTdfLwf3SJK5mxP1CbsMHTgMYEpLiWjQ@mail.gmail.com>
- <68fc2af6305be_10e210029@dwillia2-mobl4.notmuch> <CAGtprH8-UGFkh4NmuY1ETPYmg7Uk+bm24Er2PPxf8tUOSR_byQ@mail.gmail.com>
- <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch>
-In-Reply-To: <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Sun, 26 Oct 2025 15:01:52 -0700
-X-Gm-Features: AWmQ_blT1zj6KKe0CRTsU1n5euwANUl1olNBkqvjxuYAuzV9TOvr6vNZnzbUBTw
-Message-ID: <CAGtprH8g5212M26HPneyaHPq8VKS=x4TU4Q4vbDZqt_gYLO=TA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: dan.j.williams@intel.com
-Cc: Dave Hansen <dave.hansen@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	"Reshetova, Elena" <elena.reshetova@intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"Chatre, Reinette" <reinette.chatre@intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Huang, Kai" <kai.huang@intel.com>, "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>, 
-	"sagis@google.com" <sagis@google.com>, "paulmck@kernel.org" <paulmck@kernel.org>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021142407.307753-5-sander@svanheule.net>
 
-On Sun, Oct 26, 2025 at 2:30=E2=80=AFPM <dan.j.williams@intel.com> wrote:
->
-> Vishal Annapurve wrote:
-> > On Fri, Oct 24, 2025 at 6:42=E2=80=AFPM <dan.j.williams@intel.com> wrot=
-e:
-> > >
-> > > Vishal Annapurve wrote:
-> > > > On Fri, Oct 24, 2025 at 2:19=E2=80=AFPM Dave Hansen <dave.hansen@in=
-tel.com> wrote:
-> > > > >
-> > > > > On 10/24/25 14:12, dan.j.williams@intel.com wrote:
-> > > > > >> The SGX solution, btw, was to at least ensure forward progress=
- (CPUSVN
-> > > > > >> update) when the last enclave goes away. So new enclaves aren'=
-t
-> > > > > >> *prevented* from starting but the window when the first one st=
-arts
-> > > > > >> (enclave count going from 0->1) is leveraged to do the update.
-> > > > > > The status quo does ensure forward progress. The TD does get bu=
-ilt and
-> > > > > > the update does complete, just the small matter of TD attestati=
-on
-> > > > > > failures, right?
-> > > >
-> > > > I would think that it's not a "small" problem if confidential
-> > > > workloads on the hosts are not able to pass attestation.
-> > >
-> > > "Small" as in "not the kernel's problem". Userspace asked for the
-> > > update, update is documented to clobber build sometimes, userspace ra=
-n
-> > > an update anyway. Userspace asked for the clobber.
-> > >
-> > > It would be lovely if this clobbering does not happen at all and the
-> > > update mechanism did not come with this misfeature. Otherwise, the ke=
-rnel
-> > > has no interface to solve that problem. The best it can do is documen=
-t
-> > > that this new update facility has this side effect.
-> >
-> > In this case, host kernel has a way to ensure that userspace can't
-> > trigger such clobbering at all.
->
-> Unless the clobber condition can be made atomic with respect to update
-> so that both succeed, the kernel needs to punt the syncrhonization
-> problem to userspace.
->
-> A theoretical TDX Module change could ensure that atomicity.
+On Tue, Oct 21, 2025 at 04:23:59PM +0200, Sander Vanheule wrote:
+> Add a binding description for the Realtek RTL8231, a GPIO and LED
+> expander chip commonly used in ethernet switches based on a Realtek
+> switch SoC. These chips can be addressed via an MDIO or SMI bus, or used
+> as a plain 36-bit shift register.
+> 
+> This binding only describes the feature set provided by the MDIO/SMI
+> configuration, and covers the GPIO, PWM, and pin control properties. The
+> LED properties are defined in a separate binding.
+> 
+> Signed-off-by: Sander Vanheule <sander@svanheule.net>
+> ---
+>  .../bindings/mfd/realtek,rtl8231.yaml         | 189 ++++++++++++++++++
+>  1 file changed, 189 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+> new file mode 100644
+> index 000000000000..25135917d3f2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+> @@ -0,0 +1,189 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/realtek,rtl8231.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Realtek RTL8231 GPIO and LED expander.
+> +
+> +maintainers:
+> +  - Sander Vanheule <sander@svanheule.net>
+> +
+> +description: |
+> +  The RTL8231 is a GPIO and LED expander chip, providing up to 37 GPIOs, up to
+> +  88 LEDs, and up to one PWM output. This device is frequently used alongside
+> +  Realtek switch SoCs, to provide additional I/O capabilities.
+> +
+> +  To manage the RTL8231's features, its strapping pins can be used to configure
+> +  it in one of three modes: shift register, MDIO device, or SMI device. The
+> +  shift register mode does not need special support. In MDIO or SMI mode, most
+> +  pins can be configured as a GPIO output or LED matrix scan line/column. One
+> +  pin can be used as PWM output.
+> +
+> +  The GPIO, PWM, and pin control are part of the main node. LED support is
+> +  configured as a sub-node.
+> +
+> +properties:
+> +  compatible:
+> +    const: realtek,rtl8231
+> +
+> +  reg:
+> +    description: MDIO or SMI device address.
+> +    maxItems: 1
+> +
+> +  # GPIO support
+> +  gpio-controller: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +    description: |
 
-IIUC TDX module already supports avoiding this clobber based on the
-TDH.SYS.SHUTDOWN documentation from section 5.4.73 of TDX ABI Spec
-[1].
+Drop '|' here and elsewhere with no formatting.
 
-Host kernel needs to set bit 16 of rcx when invoking TDH.SYS.SHUTDOWN
-is available.
+> +      The first cell is the pin number and the second cell is used to specify
+> +      the GPIO active state.
+> +
+> +  gpio-ranges:
+> +    description: |
+> +      Must reference itself, and provide a zero-based mapping for 37 pins.
+> +    maxItems: 1
+> +
+> +  # Pin muxing and configuration
+> +  drive-strength:
+> +    description: |
+> +      Common drive strength used for all GPIO output pins, must be 4mA or 8mA.
+> +      On reset, this value will default to 8mA.
+> +    enum: [4, 8]
+> +
+> +  # LED scanning matrix
+> +  led-controller:
+> +    $ref: ../leds/realtek,rtl8231-leds.yaml#
+> +
+> +  # PWM output
+> +  "#pwm-cells":
+> +    description: |
+> +      Twos cells with PWM index (must be 0) and PWM frequency in Hz. To use
+> +      the PWM output, gpio35 must be muxed to its 'pwm' function. Valid
+> +      frequency values for consumers are 1200, 1600, 2000, 2400, 2800, 3200,
+> +      4000, and 4800.
+> +    const: 2
+> +
+> +patternProperties:
+> +  "-pins$":
+> +    type: object
+> +    $ref: ../pinctrl/pinmux-node.yaml#
+> +
+> +    properties:
+> +      pins:
+> +        items:
+> +          enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7,
+> +                 gpio8, gpio9, gpio10, gpio11, gpio12, gpio13, gpio14, gpio15,
+> +                 gpio16, gpio17, gpio18, gpio19, gpio20, gpio21, gpio22, gpio23,
+> +                 gpio24, gpio25, gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
+> +                 gpio32, gpio33, gpio34, gpio35, gpio36]
+> +        minItems: 1
+> +        maxItems: 37
 
-"If supported by the TDX Module, the host VMM can set the
-AVOID_COMPAT_SENSITIVE flag to request the TDX Module to fail
-TDH.SYS.UPDATE if any of the TDs are currently in a state that is
-impacted by the update-sensitive cases."
+blank line
 
-I think the above documentation should replace TDH.SYS.UPDATE with
-TDH.SYS.SHUTDOWN IIUC.
+Other than those nits, looks good.
 
-[1] https://cdrdv2.intel.com/v1/dl/getContent/733579
-
-> A
-> theoretical change to the kernel's build ABI could effect that as well,
-> or notify the collision. I.e. a flag at the finalization stage that an
-> update happened during the build sequence needs a restart. This is the
-> role of "generation" in the tsm_report ABI. As far as I understand
-> userspace just skips that ABI and arranges for userspace synchronized
-> access to tsm_report.
->
+Rob
 
