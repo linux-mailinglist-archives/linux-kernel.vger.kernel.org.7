@@ -1,134 +1,148 @@
-Return-Path: <linux-kernel+bounces-870536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5FFC0B14B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:38:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54FCC0B157
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 592D94E70ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35AC3B4F59
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2CB2FE07B;
-	Sun, 26 Oct 2025 19:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BDB2FE56D;
+	Sun, 26 Oct 2025 19:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KncyBaB7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBKvkDzN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B676026;
-	Sun, 26 Oct 2025 19:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFDE76026;
+	Sun, 26 Oct 2025 19:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761507477; cv=none; b=uPNuxZCS90sD7awaSW+VfujEpM0bRJ3/Vl05RUO+StQgOwBhO9ufHrp85txlbMQGanr0ESL5dqwmqRK82AccREEBmwbzKHZABXqgPnBxaJA8oZmu3CwSMFJH+kcZNO3ld1RQGYni1SxnME7Wch4pZuendaQXPYQ3KaVm9MSeH5s=
+	t=1761507666; cv=none; b=RH7zXwIjtTi+DkKgmQk5UWCoKAUb6rmGo4iHUsAENMDDxAiQ5DM3XXHyGULXHLIG1sAke0pCgxr+t7VbEhu0G7hwNbBc7/hzudzUT8bUkdPEGH4p/CfLJ8AIJTQ/Jtu2e5F0W1XN4egT+r9fvr9d/ItGl5W7T43Q0ujmVTFvOu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761507477; c=relaxed/simple;
-	bh=+ciTEVmI0wG+8ArlT4ieOrUCVVyPlrehDfttcyUWrag=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=F1NpUKAjr1WjlATv9J9BKmpux2T/9cLAqzfSLaJ2c7N953sQZnL/vBq5YvBMe/xRlVNPk15nXorhMoEoNQ3i0HNXVuOrZFDfNYfBUpN16nZlHbMtCVGcnU0lveY0OIQ8IO656Fwi+Zq+7G1wbry5D6/dzcOeB1hYmV/pdXqcMZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KncyBaB7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4407DC4CEE7;
-	Sun, 26 Oct 2025 19:37:56 +0000 (UTC)
+	s=arc-20240116; t=1761507666; c=relaxed/simple;
+	bh=lTf4joyzeGXF9zVtIHE2AgWtcJt0N6N9jhyW3FA9Hz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZEcN9gKY1dM3a665XhuHADQZb/uJYWfebhNY1itHgXZMOV0GoXI3XiJnEH1G1/DNog6QNDmHuairH/HAWcYf5wuWvBdvBPdPtBA1oqPG0qxMAco6uQ3qyoxwm1x5qEafaM3eeQ1k+1ofDPpwKvJ4Vr+1o4NTTeNDTf6mKKFJGiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBKvkDzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5D3C4CEE7;
+	Sun, 26 Oct 2025 19:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761507476;
-	bh=+ciTEVmI0wG+8ArlT4ieOrUCVVyPlrehDfttcyUWrag=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KncyBaB7f5JeHlN3t4HKyPKcq7dAVdNXsA5J4x7l75KKnNht9QnxvjED0cU10jLzo
-	 sA3WdH1o7ptStyKpjRX0yaN8yW4zeKVVqB9kV2foOHixvyyiWkRRDp1vrz498ylUXx
-	 VCJEcVLb8M77qgvmIandj8Qt7GjvYNgLqMNfQsiSvXR09qx2PcaA3vKWmszEiDBsE2
-	 hQiFjhjJ3aqcOofRVmA5Ll61v5CUl++iYWAvSgzH4yTU8xmBpESYYESfe5i+snzIyP
-	 CMti162/9y2fRXUx40P2fEKSK7AkXwv+zGHf7M4lx+gAhrZt5T49XcENB5EVPVXnPY
-	 pv4qM3SgrquZQ==
-Date: Sun, 26 Oct 2025 14:37:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-pci@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Johan Hovold <johan@kernel.org>, Frank Li <Frank.li@nxp.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	"David E . Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-	Han Jingoo <jingoohan1@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
-Message-ID: <20251026193754.GA1432729@bhelgaas>
+	s=k20201202; t=1761507665;
+	bh=lTf4joyzeGXF9zVtIHE2AgWtcJt0N6N9jhyW3FA9Hz4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uBKvkDzNuvY1TXO688T7xl66SarjxU3ScQDXy+53XHL1EGzz+NwqKKx/SVtrr7xcq
+	 0aby4mw4MVfsJaWKuWLh6KfixdMr+Y2IRY5jjR3dYyKbzKn4c3KX3qYflx0WnO6xUh
+	 B5K3meeMwpZC1emfEDEJaD4MJcNaRhksUx79793mF7ANoohDZduJVFRACurxZHB0X3
+	 +Te84WLNLCVc+oBKTLalsZfMAijuC2hV9HatsCic5eJqtUtC9jxpnuSZ/dzoy/jwta
+	 YZfukw/vgs5oLGYAGpJpuFsvd8mnePMShFbJJ2sKSggQXH/APov1NyUjxHSfSuSCEU
+	 NHcEx5S4oPnWg==
+Message-ID: <a45ad6b8-b4d5-4e0c-8f1a-3641dddb240d@kernel.org>
+Date: Sun, 26 Oct 2025 20:41:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rc4ydm2c3c4gqipaorr2ndrlwufay3ocfc2rq7llskkg7npe6x@53eztxy5v3gt>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641
+ power monitor
+To: Igor Reznichenko <igor@reznichenko.net>
+Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@roeck-us.net, robh@kernel.org, skhan@linuxfoundation.org
+References: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
+ <20251026184641.631641-1-igor@reznichenko.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251026184641.631641-1-igor@reznichenko.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 26, 2025 at 08:58:29PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Oct 24, 2025 at 04:04:57PM -0500, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > This reverts commit a729c16646198872e345bf6c48dbe540ad8a9753.
-> > 
-> > Prior to a729c1664619 ("PCI: qcom: Remove custom ASPM enablement code"),
-> > the qcom controller driver enabled ASPM, including L0s, L1, and L1 PM
-> > Substates, for all devices powered on at the time the controller driver
-> > enumerates them.
-> > 
-> > ASPM was *not* enabled for devices powered on later by pwrctrl (unless the
-> > kernel was built with PCIEASPM_POWERSAVE or PCIEASPM_POWER_SUPERSAVE, or
-> > the user enabled ASPM via module parameter or sysfs).
-> > 
-> > After f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for
-> > devicetree platforms"), the PCI core enabled all ASPM states for all
-> > devices whether powered on initially or by pwrctrl, so a729c1664619 was
-> > unnecessary and reverted.
-> > 
-> > But f3ac2ff14834 was too aggressive and broke platforms that didn't support
-> > CLKREQ# or required device-specific configuration for L1 Substates, so
-> > df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
-> > enabled only L0s and L1.
-> > 
-> > On Qualcomm platforms, this left L1 Substates disabled, which was a
-> > regression.  Revert a729c1664619 so L1 Substates will be enabled on devices
-> > that are initially powered on.  Devices powered on by pwrctrl will be
-> > addressed later.
+On 26/10/2025 19:46, Igor Reznichenko wrote:
+>> Subject: I asked to drop "binding" and not add "support for". "Support
+>> for" makes little sense in terms of binding. How binding can support
+>> anything? This is the "ST TSC1641 power monitor" not support.
 > 
-> Can we rather have platform specific APIs [1] to enable ASPM states
-> instead of just re-introducing this half-baked solution? (yes, I
-> introduced it, but it is still imperfect).
+> Krzysztof,
+> 
+> Thanks for feedback, will fix this and will create following patch versions
+> in new threads.
+> 
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  shunt-resistor-micro-ohms:
+>>> +    description: Shunt resistor value in micro-ohms. Since device has internal
+>>> +      16-bit RSHUNT register with 10 uOhm LSB, the maximum value is capped at
+>>> +      655.35 mOhm.
+>>> +    minimum: 100
+>>> +    default: 1000
+>>> +    maximum: 655350
+>>> +
+>>> +  st,alert-polarity-active-high:
+>>
+>> Isn't this just interrupt? You need proper interrupts property and then
+>> its flag define the type of interrupt.
+> 
+> This controls a bit written into device register.
+> I omitted interrupt property after looking at existing power monitor bindings,
+> especially hwmon/ti,ina2xx.yaml. INA226 has very similar bit controlling alert 
+> pin polarity and binding doesn't define alert pin as interrupt. Overall, I didn't
+> find many power monitor bindings defining alert pins as interrupts.
 
-I intend this (reverting "PCI: qcom: Remove custom ASPM enablement
-code") for v6.18 to avoid regressing Qualcomm: v6.17 enabled L1 PM
-Substates, and v6.18-rc3 does not.
 
-Adding pci_host_set_default_pcie_link_state() with [1] (along with a
-follow-up qcom patch using it) is another possible way to enable L1 PM
-Substates, but I think the revert is the safest post-merge window
-regression fix.
+On INA2xx that's SMBUS Alert. Is this the case here as well?
 
-I have some heartburn about both the revert and the
-pci_host_set_default_pcie_link_state() approach because they apply to
-the entire hierarchy under a qcom or VMD root port, potentially
-including add-in cards with switches.  CLKREQ# (and possibly more) is
-required to enable L1SS, and I don't know if we can assume it's
-supported on add-in links.
-
-> I think we have learned by hard way that enabling ASPM by default
-> can have catastrophic effects for reasons we do not certainly know.
-> So how about having this platform specific API that enables
-> individual platforms to enable the ASPM states?
-
-As far as I know, it's L1SS that has catastrophic effects.  I haven't
-seen anything for L0s or L1.
-
-> [1]
-> https://lore.kernel.org/linux-pci/20250825203542.3502368-1-david.e.box@linux.intel.com/
+Best regards,
+Krzysztof
 
