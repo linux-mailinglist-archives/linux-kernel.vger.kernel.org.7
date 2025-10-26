@@ -1,254 +1,454 @@
-Return-Path: <linux-kernel+bounces-870664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E99DC0B660
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:50:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EF3C0B66C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A3F04E701C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7A43AE5E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87F32FF654;
-	Sun, 26 Oct 2025 22:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACB52FF661;
+	Sun, 26 Oct 2025 22:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ZDHVJXcb"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWh0tMov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944401BC5C;
-	Sun, 26 Oct 2025 22:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3512FF643;
+	Sun, 26 Oct 2025 22:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761518999; cv=none; b=hCCcjG70EvML7ei52FOMQKVsoWHjO/U/0ZxSqY/qCMPyKasYHd5Gsn7DcisA+FTPadywdxjB+/2fxqZy8oebCF2SiGdb22lZz+i8q7rCR7TXlEDINULG+yJrd2XhXb8io3w0REDrUS4bxXrL2i77I+LjtVHNcEHCgIfLk/v9AHc=
+	t=1761519144; cv=none; b=g6yTBhREd+GSTTv1ufU7UZZ6LRrlgMK3g20AT5WNCWfLTMTlwhXFbyzBnEUr+qa/0HKhaBJ3iLKcLz5+bba6wDoJQNBfrWbGudngbsvLhZbDzmLBzuafSJIwQV1HSfBSQzJO0Gr2K8GTEOr8B8YvGgHLzZHj83iCTF5INWlr48s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761518999; c=relaxed/simple;
-	bh=Cc4df0JjIO6+tnwwuyIYnFiRL2z4izoA0MZNKQ8hkOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CasBYZWUx+WJ018mgs6YB7nqb7L3JV1ptNQQK/LN7/onxs0/AxpqWK3byoZCV3lxSOxTAH9lYqvZYcKUEK4GN9nEjw45wFIPusVwkyh9Coy3asQ9/3/k6W4snrTfEcQqPRMed3hiqJdUx6SpgbQHCAOHF2LngGis++6Hxoj1F3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ZDHVJXcb; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761518987; x=1762123787; i=w_armin@gmx.de;
-	bh=GDn9s7baFendtkmgnn14F/wdoN29Rbr+Rfjd5IqSGU8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZDHVJXcbBsuSGSbJ5GV6Jruzf8UCcJGj+ORfPSxU6Je77xvY5GYtw4bXd4narUvC
-	 LhoazZ28RIwbSpyycVY/Ge9749TTVZiSMp823VB/blU9+cZDxTbghyBrgs7k8Dhe8
-	 +ytRBL3CPuoJ9C8+yfOwiiQkEQ6AtR2sXevlSCkBOujfq8XIpelR0vYzv20Q5RH12
-	 1pRwrx2oVLPEYQsyLxjwh2LipKyL8KLAigQI/MbgrI3W7Ry+V2FRB67KdSGVRzQzS
-	 elsns3E4tOiyj23eIiGQotMrlaP8y8ilT0uM/csIU0maBxQwieu2eDYAB64CxMxhS
-	 yK2iRbDjDco2kjFAzw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M7sHy-1v8DsX0B3i-006Oi8; Sun, 26
- Oct 2025 23:49:47 +0100
-Message-ID: <63f0221d-4436-4d1e-a933-8b12f392cac6@gmx.de>
-Date: Sun, 26 Oct 2025 23:49:44 +0100
+	s=arc-20240116; t=1761519144; c=relaxed/simple;
+	bh=V2lXryGzJmCvDusRUu4ypLdAz1INZcRx6XO4O1wJMWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JPA2icMhgzdygdVSXaD0KClVUHtExnGgwXHlynJCbk002DpBStkDvlhE6vOn+YpEpjuJIFItgDilsHlCe4s2s4UmMHpdtn4NaNUyc9VEplAgYfB+ErG5RP+zoVV/Zgk1RzNnKo19F4YmiwadfOL+9k7wAHfGLK+HSckQ9mZOmTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWh0tMov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4385AC4CEE7;
+	Sun, 26 Oct 2025 22:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761519142;
+	bh=V2lXryGzJmCvDusRUu4ypLdAz1INZcRx6XO4O1wJMWA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MWh0tMovvdB95mmOBOU3x2Vym1UIbgtyLu8vUv9vMa/Qcu4/xwsg+0EIJH2ceWk7c
+	 Hv48HRWV7eCIaxAdit0eYu9JD7bP8GztKu27e0EmHfT73XFUlkg4RsyxRF42sntlb7
+	 xzwhZ2zIlISTnIT//JRttCVUOdxCueo1CuF+hLZG9bF5alaAHFkXR2SB9fiqhbxOL3
+	 cEAxr8XAK40bJGRcDnVcCSlXS9wTbn/5GfRwvjHyYN5i2YNrh+fNH5W5wyFPDotHFy
+	 cNpa/i0kEsmTv6tzpXxs4yn37tEDOWGgKVDN7thWaRHW3rb7gTQHokXGFwlY7gjz37
+	 BTrClubtsUkcA==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Maarten Lankhorst <dev@lankhorst.se>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.12.y] devcoredump: Fix circular locking dependency with devcd->mutex.
+Date: Sun, 26 Oct 2025 18:52:19 -0400
+Message-ID: <20251026225219.273317-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <2025102621-setup-uniformly-7ae5@gregkh>
+References: <2025102621-setup-uniformly-7ae5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-References: <20251015084414.1391595-1-lkml@antheas.dev>
- <20251015084414.1391595-7-lkml@antheas.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20251015084414.1391595-7-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gcKzcIEb+PthSasSIUnOzPTXRG2+7MY0m8fG3V4qukWQZuV/oFJ
- 5u5nQ2PDM3jkn52mQybM9gWbURyvRSoqPOiUWj3H+v+UV6b998fplCwIQna/YmfH/eFC7KS
- Bj4OgrMt2ltYV+g1pMU3boR9FUww5E+dSQYzs/1W1Rr4IxVnmCNUK2dWqA7ef4Ffhu86iHR
- a+G5P9gktTCRqHcf1/G2w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wp7F/RXudSo=;fyE6CdDXYW4hDYRgL8djVhouj3P
- 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
- UoMQt0Yze2K09Tr7HuShE6AS3OxI5g2wT0U=
+Content-Transfer-Encoding: 8bit
 
-Am 15.10.25 um 10:44 schrieb Antheas Kapenekakis:
+From: Maarten Lankhorst <dev@lankhorst.se>
 
-> The Ayaneo EC resets after hibernation, losing the charge control state.
-> Add a small PM hook to restore this state on hibernation resume.
->
-> The fan speed is also lost during hibernation, but since hibernation
-> failures are common with this class of devices, setting a low fan speed
-> when the userspace program controlling the fan will potentially not
-> take over could cause the device to overheat, so it is not restored.
+[ Upstream commit a91c8096590bd7801a26454789f2992094fe36da ]
 
-I am still not happy with potentially breaking fancontrol on this device.
-Most users expect fancontrol to continue working after hibernation, so not
-restoring the fan speed configuration seems risky to me. Would it be enoug=
-h
-to warn users about his inside the documentation?
+The original code causes a circular locking dependency found by lockdep.
 
->
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/platform/x86/ayaneo-ec.c | 42 ++++++++++++++++++++++++++++++++
->   1 file changed, 42 insertions(+)
->
-> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/aya=
-neo-ec.c
-> index 73e9dd39c703..8529f6f8dc69 100644
-> --- a/drivers/platform/x86/ayaneo-ec.c
-> +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -37,6 +37,8 @@
->   #define AYANEO_MODULE_LEFT	BIT(0)
->   #define AYANEO_MODULE_RIGHT	BIT(1)
->  =20
-> +#define AYANEO_CACHE_LEN	1
-> +
->   struct ayaneo_ec_quirk {
->   	bool has_fan_control;
->   	bool has_charge_control;
-> @@ -47,6 +49,8 @@ struct ayaneo_ec_platform_data {
->   	struct platform_device *pdev;
->   	struct ayaneo_ec_quirk *quirks;
->   	struct acpi_battery_hook battery_hook;
-> +
-> +	u8 cache[AYANEO_CACHE_LEN];
->   };
->  =20
->   static const struct ayaneo_ec_quirk quirk_fan =3D {
-> @@ -464,10 +468,48 @@ static int ayaneo_ec_probe(struct platform_device =
-*pdev)
->   	return 0;
->   }
->  =20
-> +static int ayaneo_freeze(struct device *dev)
-> +{
-> +	struct platform_device *pdev =3D to_platform_device(dev);
-> +	struct ayaneo_ec_platform_data *data =3D platform_get_drvdata(pdev);
-> +	int ret, i =3D 0;
-> +
-> +	if (data->quirks->has_charge_control) {
-> +		ret =3D ec_read(AYANEO_CHARGE_REG, &data->cache[i]);
-> +		if (ret)
-> +			return ret;
-> +		i++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ayaneo_thaw(struct device *dev)
-> +{
-> +	struct platform_device *pdev =3D to_platform_device(dev);
-> +	struct ayaneo_ec_platform_data *data =3D platform_get_drvdata(pdev);
-> +	int ret, i =3D 0;
-> +
-> +	if (data->quirks->has_charge_control) {
-> +		ret =3D ec_write(AYANEO_CHARGE_REG, data->cache[i]);
-> +		if (ret)
-> +			return ret;
-> +		i++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops ayaneo_pm_ops =3D {
-> +	.freeze =3D ayaneo_freeze,
-> +	.thaw =3D ayaneo_thaw,
-> +};
-> +
->   static struct platform_driver ayaneo_platform_driver =3D {
->   	.driver =3D {
->   		.name =3D "ayaneo-ec",
->   		.dev_groups =3D ayaneo_ec_groups,
-> +		.pm =3D &ayaneo_pm_ops,
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 Tainted: G S   U
+------------------------------------------------------
+xe_fault_inject/5091 is trying to acquire lock:
+ffff888156815688 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}, at: __flush_work+0x25d/0x660
 
-Please use pm_sleep_ptr() here.
+but task is already holding lock:
 
-Thanks,
-Armin Wolf
+ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
+which lock already depends on the new lock.
+the existing dependency chain (in reverse order) is:
+-> #2 (&devcd->mutex){+.+.}-{3:3}:
+       mutex_lock_nested+0x4e/0xc0
+       devcd_data_write+0x27/0x90
+       sysfs_kf_bin_write+0x80/0xf0
+       kernfs_fop_write_iter+0x169/0x220
+       vfs_write+0x293/0x560
+       ksys_write+0x72/0xf0
+       __x64_sys_write+0x19/0x30
+       x64_sys_call+0x2bf/0x2660
+       do_syscall_64+0x93/0xb60
+       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+-> #1 (kn->active#236){++++}-{0:0}:
+       kernfs_drain+0x1e2/0x200
+       __kernfs_remove+0xae/0x400
+       kernfs_remove_by_name_ns+0x5d/0xc0
+       remove_files+0x54/0x70
+       sysfs_remove_group+0x3d/0xa0
+       sysfs_remove_groups+0x2e/0x60
+       device_remove_attrs+0xc7/0x100
+       device_del+0x15d/0x3b0
+       devcd_del+0x19/0x30
+       process_one_work+0x22b/0x6f0
+       worker_thread+0x1e8/0x3d0
+       kthread+0x11c/0x250
+       ret_from_fork+0x26c/0x2e0
+       ret_from_fork_asm+0x1a/0x30
+-> #0 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}:
+       __lock_acquire+0x1661/0x2860
+       lock_acquire+0xc4/0x2f0
+       __flush_work+0x27a/0x660
+       flush_delayed_work+0x5d/0xa0
+       dev_coredump_put+0x63/0xa0
+       xe_driver_devcoredump_fini+0x12/0x20 [xe]
+       devm_action_release+0x12/0x30
+       release_nodes+0x3a/0x120
+       devres_release_all+0x8a/0xd0
+       device_unbind_cleanup+0x12/0x80
+       device_release_driver_internal+0x23a/0x280
+       device_driver_detach+0x14/0x20
+       unbind_store+0xaf/0xc0
+       drv_attr_store+0x21/0x50
+       sysfs_kf_write+0x4a/0x80
+       kernfs_fop_write_iter+0x169/0x220
+       vfs_write+0x293/0x560
+       ksys_write+0x72/0xf0
+       __x64_sys_write+0x19/0x30
+       x64_sys_call+0x2bf/0x2660
+       do_syscall_64+0x93/0xb60
+       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+other info that might help us debug this:
+Chain exists of: (work_completion)(&(&devcd->del_wk)->work) --> kn->active#236 --> &devcd->mutex
+ Possible unsafe locking scenario:
+       CPU0                    CPU1
+       ----                    ----
+  lock(&devcd->mutex);
+                               lock(kn->active#236);
+                               lock(&devcd->mutex);
+  lock((work_completion)(&(&devcd->del_wk)->work));
+ *** DEADLOCK ***
+5 locks held by xe_fault_inject/5091:
+ #0: ffff8881129f9488 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x72/0xf0
+ #1: ffff88810c755078 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x123/0x220
+ #2: ffff8881054811a0 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x55/0x280
+ #3: ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
+ #4: ffffffff8359e020 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x72/0x660
+stack backtrace:
+CPU: 14 UID: 0 PID: 5091 Comm: xe_fault_inject Tainted: G S   U              6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 PREEMPT_{RT,(lazy)}
+Tainted: [S]=CPU_OUT_OF_SPEC, [U]=USER
+Hardware name: Micro-Star International Co., Ltd. MS-7D25/PRO Z690-A DDR4(MS-7D25), BIOS 1.10 12/13/2021
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ dump_stack+0x10/0x20
+ print_circular_bug+0x285/0x360
+ check_noncircular+0x135/0x150
+ ? register_lock_class+0x48/0x4a0
+ __lock_acquire+0x1661/0x2860
+ lock_acquire+0xc4/0x2f0
+ ? __flush_work+0x25d/0x660
+ ? mark_held_locks+0x46/0x90
+ ? __flush_work+0x25d/0x660
+ __flush_work+0x27a/0x660
+ ? __flush_work+0x25d/0x660
+ ? trace_hardirqs_on+0x1e/0xd0
+ ? __pfx_wq_barrier_func+0x10/0x10
+ flush_delayed_work+0x5d/0xa0
+ dev_coredump_put+0x63/0xa0
+ xe_driver_devcoredump_fini+0x12/0x20 [xe]
+ devm_action_release+0x12/0x30
+ release_nodes+0x3a/0x120
+ devres_release_all+0x8a/0xd0
+ device_unbind_cleanup+0x12/0x80
+ device_release_driver_internal+0x23a/0x280
+ ? bus_find_device+0xa8/0xe0
+ device_driver_detach+0x14/0x20
+ unbind_store+0xaf/0xc0
+ drv_attr_store+0x21/0x50
+ sysfs_kf_write+0x4a/0x80
+ kernfs_fop_write_iter+0x169/0x220
+ vfs_write+0x293/0x560
+ ksys_write+0x72/0xf0
+ __x64_sys_write+0x19/0x30
+ x64_sys_call+0x2bf/0x2660
+ do_syscall_64+0x93/0xb60
+ ? __f_unlock_pos+0x15/0x20
+ ? __x64_sys_getdents64+0x9b/0x130
+ ? __pfx_filldir64+0x10/0x10
+ ? do_syscall_64+0x1a2/0xb60
+ ? clear_bhb_loop+0x30/0x80
+ ? clear_bhb_loop+0x30/0x80
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x76e292edd574
+Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+RSP: 002b:00007fffe247a828 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000076e292edd574
+RDX: 000000000000000c RSI: 00006267f6306063 RDI: 000000000000000b
+RBP: 000000000000000c R08: 000076e292fc4b20 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00006267f6306063
+R13: 000000000000000b R14: 00006267e6859c00 R15: 000076e29322a000
+ </TASK>
+xe 0000:03:00.0: [drm] Xe device coredump has been deleted.
 
->   	},
->   	.probe =3D ayaneo_ec_probe,
->   };
+Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # v6.1+
+Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20250723142416.1020423-1-dev@lankhorst.se
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ removed const qualifier from bin_attribute callback parameters ]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/base/devcoredump.c | 138 ++++++++++++++++++++++---------------
+ 1 file changed, 84 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
+index c795edad1b969..e9a8bd9b20ea0 100644
+--- a/drivers/base/devcoredump.c
++++ b/drivers/base/devcoredump.c
+@@ -23,50 +23,46 @@ struct devcd_entry {
+ 	void *data;
+ 	size_t datalen;
+ 	/*
+-	 * Here, mutex is required to serialize the calls to del_wk work between
+-	 * user/kernel space which happens when devcd is added with device_add()
+-	 * and that sends uevent to user space. User space reads the uevents,
+-	 * and calls to devcd_data_write() which try to modify the work which is
+-	 * not even initialized/queued from devcoredump.
++	 * There are 2 races for which mutex is required.
+ 	 *
++	 * The first race is between device creation and userspace writing to
++	 * schedule immediately destruction.
+ 	 *
++	 * This race is handled by arming the timer before device creation, but
++	 * when device creation fails the timer still exists.
+ 	 *
+-	 *        cpu0(X)                                 cpu1(Y)
++	 * To solve this, hold the mutex during device_add(), and set
++	 * init_completed on success before releasing the mutex.
+ 	 *
+-	 *        dev_coredump() uevent sent to user space
+-	 *        device_add()  ======================> user space process Y reads the
+-	 *                                              uevents writes to devcd fd
+-	 *                                              which results into writes to
++	 * That way the timer will never fire until device_add() is called,
++	 * it will do nothing if init_completed is not set. The timer is also
++	 * cancelled in that case.
+ 	 *
+-	 *                                             devcd_data_write()
+-	 *                                               mod_delayed_work()
+-	 *                                                 try_to_grab_pending()
+-	 *                                                   del_timer()
+-	 *                                                     debug_assert_init()
+-	 *       INIT_DELAYED_WORK()
+-	 *       schedule_delayed_work()
+-	 *
+-	 *
+-	 * Also, mutex alone would not be enough to avoid scheduling of
+-	 * del_wk work after it get flush from a call to devcd_free()
+-	 * mentioned as below.
+-	 *
+-	 *	disabled_store()
+-	 *        devcd_free()
+-	 *          mutex_lock()             devcd_data_write()
+-	 *          flush_delayed_work()
+-	 *          mutex_unlock()
+-	 *                                   mutex_lock()
+-	 *                                   mod_delayed_work()
+-	 *                                   mutex_unlock()
+-	 * So, delete_work flag is required.
++	 * The second race involves multiple parallel invocations of devcd_free(),
++	 * add a deleted flag so only 1 can call the destructor.
+ 	 */
+ 	struct mutex mutex;
+-	bool delete_work;
++	bool init_completed, deleted;
+ 	struct module *owner;
+ 	ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+ 			void *data, size_t datalen);
+ 	void (*free)(void *data);
++	/*
++	 * If nothing interferes and device_add() was returns success,
++	 * del_wk will destroy the device after the timer fires.
++	 *
++	 * Multiple userspace processes can interfere in the working of the timer:
++	 * - Writing to the coredump will reschedule the timer to run immediately,
++	 *   if still armed.
++	 *
++	 *   This is handled by using "if (cancel_delayed_work()) {
++	 *   schedule_delayed_work() }", to prevent re-arming after having
++	 *   been previously fired.
++	 * - Writing to /sys/class/devcoredump/disabled will destroy the
++	 *   coredump synchronously.
++	 *   This is handled by using disable_delayed_work_sync(), and then
++	 *   checking if deleted flag is set with &devcd->mutex held.
++	 */
+ 	struct delayed_work del_wk;
+ 	struct device *failing_dev;
+ };
+@@ -95,14 +91,27 @@ static void devcd_dev_release(struct device *dev)
+ 	kfree(devcd);
+ }
+ 
++static void __devcd_del(struct devcd_entry *devcd)
++{
++	devcd->deleted = true;
++	device_del(&devcd->devcd_dev);
++	put_device(&devcd->devcd_dev);
++}
++
+ static void devcd_del(struct work_struct *wk)
+ {
+ 	struct devcd_entry *devcd;
++	bool init_completed;
+ 
+ 	devcd = container_of(wk, struct devcd_entry, del_wk.work);
+ 
+-	device_del(&devcd->devcd_dev);
+-	put_device(&devcd->devcd_dev);
++	/* devcd->mutex serializes against dev_coredumpm_timeout */
++	mutex_lock(&devcd->mutex);
++	init_completed = devcd->init_completed;
++	mutex_unlock(&devcd->mutex);
++
++	if (init_completed)
++		__devcd_del(devcd);
+ }
+ 
+ static ssize_t devcd_data_read(struct file *filp, struct kobject *kobj,
+@@ -122,12 +131,12 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
+ 	struct device *dev = kobj_to_dev(kobj);
+ 	struct devcd_entry *devcd = dev_to_devcd(dev);
+ 
+-	mutex_lock(&devcd->mutex);
+-	if (!devcd->delete_work) {
+-		devcd->delete_work = true;
+-		mod_delayed_work(system_wq, &devcd->del_wk, 0);
+-	}
+-	mutex_unlock(&devcd->mutex);
++	/*
++	 * Although it's tempting to use mod_delayed work here,
++	 * that will cause a reschedule if the timer already fired.
++	 */
++	if (cancel_delayed_work(&devcd->del_wk))
++		schedule_delayed_work(&devcd->del_wk, 0);
+ 
+ 	return count;
+ }
+@@ -155,11 +164,21 @@ static int devcd_free(struct device *dev, void *data)
+ {
+ 	struct devcd_entry *devcd = dev_to_devcd(dev);
+ 
++	/*
++	 * To prevent a race with devcd_data_write(), disable work and
++	 * complete manually instead.
++	 *
++	 * We cannot rely on the return value of
++	 * disable_delayed_work_sync() here, because it might be in the
++	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
++	 *
++	 * devcd->mutex here guards against multiple parallel invocations
++	 * of devcd_free().
++	 */
++	disable_delayed_work_sync(&devcd->del_wk);
+ 	mutex_lock(&devcd->mutex);
+-	if (!devcd->delete_work)
+-		devcd->delete_work = true;
+-
+-	flush_delayed_work(&devcd->del_wk);
++	if (!devcd->deleted)
++		__devcd_del(devcd);
+ 	mutex_unlock(&devcd->mutex);
+ 	return 0;
+ }
+@@ -183,12 +202,10 @@ static ssize_t disabled_show(const struct class *class, const struct class_attri
+  *                                                                 put_device() <- last reference
+  *             error = fn(dev, data)                           devcd_dev_release()
+  *             devcd_free(dev, data)                           kfree(devcd)
+- *             mutex_lock(&devcd->mutex);
+  *
+  *
+- * In the above diagram, It looks like disabled_store() would be racing with parallely
+- * running devcd_del() and result in memory abort while acquiring devcd->mutex which
+- * is called after kfree of devcd memory  after dropping its last reference with
++ * In the above diagram, it looks like disabled_store() would be racing with parallelly
++ * running devcd_del() and result in memory abort after dropping its last reference with
+  * put_device(). However, this will not happens as fn(dev, data) runs
+  * with its own reference to device via klist_node so it is not its last reference.
+  * so, above situation would not occur.
+@@ -376,7 +393,7 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+ 	devcd->read = read;
+ 	devcd->free = free;
+ 	devcd->failing_dev = get_device(dev);
+-	devcd->delete_work = false;
++	devcd->deleted = false;
+ 
+ 	mutex_init(&devcd->mutex);
+ 	device_initialize(&devcd->devcd_dev);
+@@ -385,8 +402,14 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+ 		     atomic_inc_return(&devcd_count));
+ 	devcd->devcd_dev.class = &devcd_class;
+ 
+-	mutex_lock(&devcd->mutex);
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, true);
++
++	/* devcd->mutex prevents devcd_del() completing until init finishes */
++	mutex_lock(&devcd->mutex);
++	devcd->init_completed = false;
++	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
++	schedule_delayed_work(&devcd->del_wk, timeout);
++
+ 	if (device_add(&devcd->devcd_dev))
+ 		goto put_device;
+ 
+@@ -403,13 +426,20 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+ 
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, false);
+ 	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
+-	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
+-	schedule_delayed_work(&devcd->del_wk, timeout);
++
++	/*
++	 * Safe to run devcd_del() now that we are done with devcd_dev.
++	 * Alternatively we could have taken a ref on devcd_dev before
++	 * dropping the lock.
++	 */
++	devcd->init_completed = true;
+ 	mutex_unlock(&devcd->mutex);
+ 	return;
+  put_device:
+-	put_device(&devcd->devcd_dev);
+ 	mutex_unlock(&devcd->mutex);
++	cancel_delayed_work_sync(&devcd->del_wk);
++	put_device(&devcd->devcd_dev);
++
+  put_module:
+ 	module_put(owner);
+  free:
+-- 
+2.51.0
+
 
