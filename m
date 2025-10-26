@@ -1,217 +1,114 @@
-Return-Path: <linux-kernel+bounces-870461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4524AC0ADF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:40:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D8EC0ADFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C883B41A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A023B0666
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2477B2BF013;
-	Sun, 26 Oct 2025 16:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D472C0275;
+	Sun, 26 Oct 2025 16:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMMIMMKf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhrcF4Vv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5A5242D97;
-	Sun, 26 Oct 2025 16:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D4819D065;
+	Sun, 26 Oct 2025 16:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761496755; cv=none; b=RKF+8eFjyc1rAz9FifKfpFM2t/gQ+Cv2MCAPZ1aWbAI0s10ETpgeMSp8z+mFX+d1xcHdS+8j9YI6fbMDAI5/Gtp7EZrxvIHg75bod0hZNicMZ36MsdgREBk2YLxylapbvhTLk1W5wvGHOl7pEq8Og9vfvstJFc39MPpXGhzFbSc=
+	t=1761496988; cv=none; b=WCQ2q24ClZyAs0S1lFVHV/L+3WsAwyEx/Maxl6unkuyvvMV+QvZe6oJFTnQlfAQk6kVGpSc8dQ4W2LSS5r+myeeMUqHi2kkx+gqmKK/tG89ROvtyUFmGbm7vnQIh8inW52gIKu1to1phaCuIbPrNR4nWmJ7uDYJFdzQgMAOnAr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761496755; c=relaxed/simple;
-	bh=7EkrJZ5Bwy4dRCDr6B0M5T4s+Zh0OW4bkTvukrJGLIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVqomgdhWrHWT6wA0vR3Hi4z0gC+3i8JixyNVnGSq87KE9/KhIO8f85CdS7RstSj7rSbyw2R0sMoBXj+8wFsxJl/5Q25feJbbWjlGEfRzdYwUkvPJeFzcOXDEQIgrvCD7O/KeJL/gmJMhOvxp/ai1UGsCnEa7ucwsCTXXGbDUw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMMIMMKf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D179C4CEE7;
-	Sun, 26 Oct 2025 16:39:04 +0000 (UTC)
+	s=arc-20240116; t=1761496988; c=relaxed/simple;
+	bh=k/7TZI9MaeLcnsEULYSl0PNNFCT1m0p+1qssnCP/zuI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M4ma7gbaXzsV9em1UIchDTHmeDxgf07Murgkp/cFnZk5mQOOwCG5JkhZ6zH8oszCjafyUImL3k497rKutjAXCcO6RedLb4uHA92Ix7mE0q9fP0p/bLjLCEIJB/genfeUX7zs5aT8y2/5yZHc3vwFWkIUewiSFLilrFe8y6xSgEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhrcF4Vv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 90DF3C4CEE7;
+	Sun, 26 Oct 2025 16:43:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761496754;
-	bh=7EkrJZ5Bwy4dRCDr6B0M5T4s+Zh0OW4bkTvukrJGLIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cMMIMMKfUPNsyKBvzFh0/HGa59WeCmAJvwJXnIrXlgfC/IIfyLFWSdz29j3Y2wzGz
-	 9uEmWMdO8WV+g8nkqWUF0hgpDMNJj1Pa2c9CB2mOjleG/OTGpd/deI635Yk73PHvEj
-	 vIgVaLQOPonYlwWmwI//qPAI5+onuBWl6EkifuwqsL+B74TCCJtZ5GouB2IuFOYVeg
-	 wRxlbZK1YOLs3tsWikEI6/q3mpI2w0zWbtZOd5TM29rRS2Oar1bbbDC8X6XTuHiwNF
-	 YvjpD/ftBanV3r7s+TFQD+ltchQOJVWdK9y5tQ76tb7tfDi3sYPoyu7gvSrlOaFvl9
-	 YjnxLPMZ9ZvxA==
-Date: Sun, 26 Oct 2025 22:08:57 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, vkoul@kernel.org, 
-	kishon@kernel.org, dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, 
-	christian.bruel@foss.st.com, shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com, 
-	qiang.yu@oss.qualcomm.com, namcao@linutronix.de, thippeswamy.havalige@amd.com, 
-	inochiama@gmail.com, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: pci: spacemit: introduce PCIe host
- controller
-Message-ID: <u53qfrubgrcamiz35ox6lcdpp5bbzfwcsic466z5r6yyx6xz3n@c64nw2pegtfe>
-References: <20251013153526.2276556-1-elder@riscstar.com>
- <20251013153526.2276556-4-elder@riscstar.com>
+	s=k20201202; t=1761496987;
+	bh=k/7TZI9MaeLcnsEULYSl0PNNFCT1m0p+1qssnCP/zuI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZhrcF4VvEFiJLzdSwPtl+DuoWUXYr6QyVrcUWqj/fPVwBCHB5OPiJI6HeFgEHhssZ
+	 NLj5WiEq97F46i6gdkg243gXn0mV8bV4F5oENecakE9MbIlpxkhiknkabTOyluGpAP
+	 xNBAqp5Ibi3hdtqU/xzTz1JuWpYARP06kRsPRUWivMzAHe/fF40vWof1GBCeldGdrJ
+	 RSHYQBLEy8wnvPmlQ6RbV3fvgzJ07NE01HNXMBpjHRBZssCTubAQ5tZhru73hdLdgW
+	 khoF9gzCZf0QNXcJXGUBqDh8PA9l7G5OUp1h4OEpka8q2ybJctKEb/Nouu+KnCtu1a
+	 +drLLegm24FLQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866FFCCF9E9;
+	Sun, 26 Oct 2025 16:43:07 +0000 (UTC)
+From: ymodlin via B4 Relay <devnull+yogev.modlin.realsenseai.com@kernel.org>
+Subject: [PATCH v4 0/2] Since Realsense has been spin-off Intel, the
+ comment should be change.
+Date: Sun, 26 Oct 2025 18:43:01 +0200
+Message-Id: <20251026-fix-uvc-v4-0-610eb1329600@realsenseai.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251013153526.2276556-4-elder@riscstar.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJVP/mgC/23MQQ7CIBCF4asY1o6BmVasK+9hXNBhVBJtDSjRN
+ L272E1NdPlgvn9QSWKQpLaLQUXJIYW+K6NaLhSfXXcSCL5shRproxHhGJ7wyAzYkPUtGXYNqXJ
+ 9i1K+ptL+UPY5pHsfX1M4m8/rbyMbMCAVe01rvbZU76K4S5IuiQsr7q/qU8r4rWnWCBoMN7SpC
+ Wvr+b+mb13Nmopu7XFDrA2ys796HMc3WDsT/iABAAA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ymodlin <yogev.modlin@realsenseai.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761496986; l=1203;
+ i=yogev.modlin@realsenseai.com; s=20251022; h=from:subject:message-id;
+ bh=k/7TZI9MaeLcnsEULYSl0PNNFCT1m0p+1qssnCP/zuI=;
+ b=I1lFqcUO+oQPu1Wcr4buBhXP1zaLw6fPjt4XLadAL5ILz9hl7m59LqaTOnZAoVdZnD0Bkdfms
+ IIYgow0/bvADLJER3Kn3lLPhX7iqk8HUN54h92zhVPBz3INN02bjVnx
+X-Developer-Key: i=yogev.modlin@realsenseai.com; a=ed25519;
+ pk=V3EENbzJJO6YkqjrHtGmN67ulKS2b5TU7Ze0hVi1G1o=
+X-Endpoint-Received: by B4 Relay for yogev.modlin@realsenseai.com/20251022
+ with auth_id=549
+X-Original-From: ymodlin <yogev.modlin@realsenseai.com>
+Reply-To: yogev.modlin@realsenseai.com
 
-On Mon, Oct 13, 2025 at 10:35:20AM -0500, Alex Elder wrote:
-> Add the Device Tree binding for the PCIe root complex found on the
-> SpacemiT K1 SoC.  This device is derived from the Synopsys Designware
-> PCIe IP.  It supports up to three PCIe ports operating at PCIe gen 2
-> link speeds (5 GT/sec).  One of the ports uses a combo PHY, which is
-> typically used to support a USB 3 port.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
-> v2: - Renamed the binding, using "host controller"
->     - Added '>' to the description, and reworded it a bit
->     - Added reference to /schemas/pci/snps,dw-pcie.yaml
->     - Fixed and renamed the compatible string
->     - Renamed the PMU property, and fixed its description
->     - Consistently omit the period at the end of descriptions
->     - Renamed the "global" clock to be "phy"
->     - Use interrupts rather than interrupts-extended, and name the
->       one interrupt "msi" to make clear its purpose
->     - Added a vpcie3v3-supply property
->     - Dropped the max-link-speed property
->     - Changed additionalProperties to unevaluatedProperties
->     - Dropped the label and status property from the example
-> 
->  .../bindings/pci/spacemit,k1-pcie-host.yaml   | 156 ++++++++++++++++++
->  1 file changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
-> new file mode 100644
-> index 0000000000000..87745d49c53a1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
-> @@ -0,0 +1,156 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/spacemit,k1-pcie-host.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SpacemiT K1 PCI Express Host Controller
-> +
-> +maintainers:
-> +  - Alex Elder <elder@riscstar.com>
-> +
-> +description: >
-> +  The SpacemiT K1 SoC PCIe host controller is based on the Synopsys
-> +  DesignWare PCIe IP.  The controller uses the DesignWare built-in
-> +  MSI interrupt controller, and supports 256 MSIs.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-pcie
-> +
-> +  reg:
-> +    items:
-> +      - description: DesignWare PCIe registers
-> +      - description: ATU address space
-> +      - description: PCIe configuration space
-> +      - description: Link control registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: atu
-> +      - const: config
-> +      - const: link
-> +
-> +  spacemit,apmu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      A phandle that refers to the APMU system controller, whose
-> +      regmap is used in managing resets and link state, along with
-> +      and offset of its reset control register.
-> +    items:
-> +      - items:
-> +          - description: phandle to APMU system controller
-> +          - description: register offset
-> +
-> +  clocks:
-> +    items:
-> +      - description: DWC PCIe Data Bus Interface (DBI) clock
-> +      - description: DWC PCIe application AXI-bus master interface clock
-> +      - description: DWC PCIe application AXI-bus slave interface clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: dbi
-> +      - const: mstr
-> +      - const: slv
-> +
-> +  resets:
-> +    items:
-> +      - description: DWC PCIe Data Bus Interface (DBI) reset
-> +      - description: DWC PCIe application AXI-bus master interface reset
-> +      - description: DWC PCIe application AXI-bus slave interface reset
-> +      - description: Global reset; must be deasserted for PHY to function
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dbi
-> +      - const: mstr
-> +      - const: slv
-> +      - const: phy
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Interrupt used for MSIs
-> +
-> +  interrupt-names:
-> +    const: msi
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  vpcie3v3-supply:
-> +    description:
-> +      A phandle for 3.3v regulator to use for PCIe
+Signed-off-by: ymodlin <yogev.modlin@realsenseai.com>
+---
+Changes in v4:
+- reorder Intel RealSense camera according to vid/pid.
+- Link to v3: https://lore.kernel.org/r/20251024-fix-uvc-v3-0-b7f83c012ca7@realsenseai.com
 
-Could you please move these Root Port specific properties (phy, vpcie3v3-supply)
-to the Root Port node?
+Changes in v3:
+- Add metadata support for D436 and D555 cameras.
+- Realsense D555 has been released to the market earlier this year.
+- Realsense D436 will soon be official it's currenly being supplied to
+  beta users.
+- Link to v2: https://lore.kernel.org/r/20251023-fix-uvc-v2-0-1c93853257dc@realsenseai.com
 
-Reference: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+Changes in v2:
+- Fixed commit message formatting
+- Write 'Intel RealSense' for D400 family of depth camera comments
+- Link to v1: https://lore.kernel.org/r/20251022-fix-uvc-v1-1-e4cd03606735@realsenseai.com
 
-For handling the 'vpcie3v3-supply', you can rely on PCI_PWRCTRL_SLOT driver.
+---
+ymodlin (2):
+      media: uvcvideo: change comment to 'Intel RealSense'
+      media: uvcvideo: Add D436 and D555 cameras metadata support
 
-> +
-> +  device_type:
-> +    const: pci
-> +
+ drivers/media/usb/uvc/uvc_driver.c | 36 +++++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
+---
+base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
+change-id: 20251022-fix-uvc-2937db31ca93
 
-This is part of the PCI bus schema itself.
-
-> +  num-viewport:
-> +    const: 8
-> +
-
-This property has been deprecated in favor of driver auto-detecting the iATU
-regions.
-
-- Mani
-
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Yogev Modlin <yogev.modlin@realsenseai.com>
+
+
 
