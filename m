@@ -1,91 +1,175 @@
-Return-Path: <linux-kernel+bounces-870441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0311C0AD0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:57:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2466DC0AD1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BA994E449A
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AE4118A1619
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CB6233134;
-	Sun, 26 Oct 2025 15:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F49120B81B;
+	Sun, 26 Oct 2025 16:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUPb8KxQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVtW0NKe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BB71F4169;
-	Sun, 26 Oct 2025 15:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAD845C0B;
+	Sun, 26 Oct 2025 16:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761494240; cv=none; b=PHCvMbn+dUmC4+THW7Rqgbm+Cyi8NI6JN/+uT5ZmXKhOPuyWqFg9KAY5PuYFVN3JRLCQEH1i8Uf85OkokIG3LvcrZgsL/jI1YtuXm2AsCMryQ/DHFsm954979iJ6VefKJASeACPP078Esyfq9gVTmMZirpLoCG5E5DpzqfGAxZA=
+	t=1761494701; cv=none; b=CSr62wCUTNzU7FYBZXTDeANpTmpY1xH5PERbSFVWgeTgqLTIVNEJzYS9m8VKdPC7lCMc455x7xDpFWwVVGOw85kd2AW083gsIHQmrb4K+BU3sbx2Xir3Fi6PjMRKDUEN0jnI5YYUdbHnx+SI5rg42+JNnXDRIfBbb1axXnla1Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761494240; c=relaxed/simple;
-	bh=7Ou0fEZ/jwKerVmUa4t96b/hLUjjbHEGSc/S4mOnZyk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=h8TBxAyhxNtZxEGB2/IyO31dXMoSM1viz7vjsWeZtZgDfFTvbsQtCf4g8cbP2b0PJwRHWFMPh+g7zC4nSJahFuPnpCnfYDJewEEsPdxj2PB9Ybr4HSjNAwonOPHa8WTLbdyKWwi7WFKU5YfMYXJsB30bZNgD3EVbV6Da2JC0xwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUPb8KxQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F6FC4CEE7;
-	Sun, 26 Oct 2025 15:57:15 +0000 (UTC)
+	s=arc-20240116; t=1761494701; c=relaxed/simple;
+	bh=l7JPkliu+UAJY5jgLqKO+0m/pMNLoNR87mNscuCPqhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZVwcl7R94FKOADTOEJA3xYIi0iTV1FVp53wNOj+nR8gi6xZosseAearHn922EbTmWdWiuEzLGH+3W07aNhFdpZOO8TzTYJ92RlPVeprzIfnA4yuhYl7I99lUj8JB9+0FC67ZUfLhiBM9cilI4f6P74edLoysu1CiUAVVoO3jy0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVtW0NKe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D019DC4CEE7;
+	Sun, 26 Oct 2025 16:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761494240;
-	bh=7Ou0fEZ/jwKerVmUa4t96b/hLUjjbHEGSc/S4mOnZyk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jUPb8KxQm2jI/qhICb70KWnhukiMfL3HCZ9JVXUq/H2f6i1aWGv3awPaDfmZ0/FLZ
-	 e8R1wXwYd+i8bvq+JA1X0GIUaaCtwsghv9qElkORQrhy0dZ4ijVWDSzIxTPRcMYs8m
-	 2qyOIYpQ4/ypz0KNAb+NFFAl+h3O2ZSqw/77QFN0ZDJIcGcpPfX0X0x26W5xwjkb3W
-	 ++MxEwLww8sV0ZS+hxamrRYJS1u5aF5j23yR/N7WO7KChbCRwgcPcuUQCDuDFmW1Z3
-	 5f49Qecq5v6fxefs0FGmKHus61hCAj2usE6bUSId1GNGc2uFBegfEIEOtYJCQofCH2
-	 8wKtbXRMecWvw==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
-References: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH 0/3] PCI: qcom: Binding fix
-Message-Id: <176149423539.9818.11398999036385649843.b4-ty@kernel.org>
-Date: Sun, 26 Oct 2025 21:27:15 +0530
+	s=k20201202; t=1761494700;
+	bh=l7JPkliu+UAJY5jgLqKO+0m/pMNLoNR87mNscuCPqhU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cVtW0NKeE9+CKIn2dxUtvyxQTcVBo2OzidnfN8htCwbPWpSB1XMuemJIcPEWAZM3b
+	 bRe0TG/rWB1cLfzjIjYD7wZyRZgR9Fj1c1uNFQWRKnPag6j7Qwwf82h7YJAdDWJ6Ab
+	 yxGHmGJ/pgobJEX/BFUsh2wqo8YGQp9I1nmjS6uNsNwj2U6RrUcwrnOgONCRvKIi2P
+	 Usva7N/bsQXopbVKo5FzJ1xPU5ROegU21mq6V4hmzKXq3VLFFYJMlSnQ8aIDZN43HX
+	 q9IlwrPhYYIw8UXDnyYDB/kXwzR87H2UCv5D2+wro75USR+JwwtiKs1JGhIuxfJnu1
+	 EovmCwQVFBcBA==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Jakub Acs <acsjakub@amazon.de>,
+	Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-unionfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6.y] fs/notify: call exportfs_encode_fid with s_umount
+Date: Sun, 26 Oct 2025 12:04:56 -0400
+Message-ID: <20251026160456.99836-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <2025102612-kissing-atrocious-4949@gregkh>
+References: <2025102612-kissing-atrocious-4949@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+From: Jakub Acs <acsjakub@amazon.de>
 
-On Fri, 10 Oct 2025 11:25:46 -0700, Manivannan Sadhasivam wrote:
-> This series fixes the binding issue around the PERST# and PHY properties.
-> The binding issue was reported in [1], while discussing a DTS fix [2].
-> 
-> The binding fix provided in this series is not sufficient enough to spot all the
-> shenanigans, especially keeping one property in Controller node and another in
-> Root Port node. But this series does catch the DTS issue fixed by [2]:
-> 
-> [...]
+[ Upstream commit a7c4bb43bfdc2b9f06ee9d036028ed13a83df42a ]
 
-Applied, thanks!
+Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
+the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
 
-[1/3] dt-bindings: PCI: Update the email address for Manivannan Sadhasivam
-      commit: e3d7fda088c3c75d210b849c3823008f32cd00ce
+This issue was found by syzkaller.
 
-Best regards,
+Race Condition Diagram:
+
+Thread 1                           Thread 2
+--------                           --------
+
+generic_shutdown_super()
+ shrink_dcache_for_umount
+  sb->s_root = NULL
+
+                    |
+                    |             vfs_read()
+                    |              inotify_fdinfo()
+                    |               * inode get from mark *
+                    |               show_mark_fhandle(m, inode)
+                    |                exportfs_encode_fid(inode, ..)
+                    |                 ovl_encode_fh(inode, ..)
+                    |                  ovl_check_encode_origin(inode)
+                    |                   * deref i_sb->s_root *
+                    |
+                    |
+                    v
+ fsnotify_sb_delete(sb)
+
+Which then leads to:
+
+[   32.133461] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+[   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+[   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted 6.17.0-rc6 #22 PREEMPT(none)
+
+<snip registers, unreliable trace>
+
+[   32.143353] Call Trace:
+[   32.143732]  ovl_encode_fh+0xd5/0x170
+[   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
+[   32.144425]  show_mark_fhandle+0xbe/0x1f0
+[   32.145805]  inotify_fdinfo+0x226/0x2d0
+[   32.146442]  inotify_show_fdinfo+0x1c5/0x350
+[   32.147168]  seq_show+0x530/0x6f0
+[   32.147449]  seq_read_iter+0x503/0x12a0
+[   32.148419]  seq_read+0x31f/0x410
+[   32.150714]  vfs_read+0x1f0/0x9e0
+[   32.152297]  ksys_read+0x125/0x240
+
+IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
+to NULL in the unmount path.
+
+Fix it by protecting calling exportfs_encode_fid() from
+show_mark_fhandle() with s_umount lock.
+
+This form of fix was suggested by Amir in [1].
+
+[1]: https://lore.kernel.org/all/CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com/
+
+Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias")
+Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+[ Adjust context ]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/notify/fdinfo.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 26655572975d3..1aa7de55094cd 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -17,6 +17,7 @@
+ #include "fanotify/fanotify.h"
+ #include "fdinfo.h"
+ #include "fsnotify.h"
++#include "../internal.h"
+ 
+ #if defined(CONFIG_PROC_FS)
+ 
+@@ -50,7 +51,12 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+ 	f.handle.handle_bytes = sizeof(f.pad);
+ 	size = f.handle.handle_bytes >> 2;
+ 
++	if (!super_trylock_shared(inode->i_sb))
++		return;
++
+ 	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
++	up_read(&inode->i_sb->s_umount);
++
+ 	if ((ret == FILEID_INVALID) || (ret < 0))
+ 		return;
+ 
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
+2.51.0
 
 
