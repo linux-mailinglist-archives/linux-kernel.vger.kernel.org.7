@@ -1,454 +1,245 @@
-Return-Path: <linux-kernel+bounces-870665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65EF3C0B66C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:52:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44812C0B68A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7A43AE5E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:52:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 182664EB798
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACB52FF661;
-	Sun, 26 Oct 2025 22:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBECF2FFF88;
+	Sun, 26 Oct 2025 23:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWh0tMov"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="Td8P9PMH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="oJsmgykt"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3512FF643;
-	Sun, 26 Oct 2025 22:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761519144; cv=none; b=g6yTBhREd+GSTTv1ufU7UZZ6LRrlgMK3g20AT5WNCWfLTMTlwhXFbyzBnEUr+qa/0HKhaBJ3iLKcLz5+bba6wDoJQNBfrWbGudngbsvLhZbDzmLBzuafSJIwQV1HSfBSQzJO0Gr2K8GTEOr8B8YvGgHLzZHj83iCTF5INWlr48s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761519144; c=relaxed/simple;
-	bh=V2lXryGzJmCvDusRUu4ypLdAz1INZcRx6XO4O1wJMWA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JPA2icMhgzdygdVSXaD0KClVUHtExnGgwXHlynJCbk002DpBStkDvlhE6vOn+YpEpjuJIFItgDilsHlCe4s2s4UmMHpdtn4NaNUyc9VEplAgYfB+ErG5RP+zoVV/Zgk1RzNnKo19F4YmiwadfOL+9k7wAHfGLK+HSckQ9mZOmTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWh0tMov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4385AC4CEE7;
-	Sun, 26 Oct 2025 22:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761519142;
-	bh=V2lXryGzJmCvDusRUu4ypLdAz1INZcRx6XO4O1wJMWA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MWh0tMovvdB95mmOBOU3x2Vym1UIbgtyLu8vUv9vMa/Qcu4/xwsg+0EIJH2ceWk7c
-	 Hv48HRWV7eCIaxAdit0eYu9JD7bP8GztKu27e0EmHfT73XFUlkg4RsyxRF42sntlb7
-	 xzwhZ2zIlISTnIT//JRttCVUOdxCueo1CuF+hLZG9bF5alaAHFkXR2SB9fiqhbxOL3
-	 cEAxr8XAK40bJGRcDnVcCSlXS9wTbn/5GfRwvjHyYN5i2YNrh+fNH5W5wyFPDotHFy
-	 cNpa/i0kEsmTv6tzpXxs4yn37tEDOWGgKVDN7thWaRHW3rb7gTQHokXGFwlY7gjz37
-	 BTrClubtsUkcA==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org
-Cc: Maarten Lankhorst <dev@lankhorst.se>,
-	Mukesh Ojha <quic_mojha@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Matthew Brost <matthew.brost@intel.com>,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12.y] devcoredump: Fix circular locking dependency with devcd->mutex.
-Date: Sun, 26 Oct 2025 18:52:19 -0400
-Message-ID: <20251026225219.273317-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <2025102621-setup-uniformly-7ae5@gregkh>
-References: <2025102621-setup-uniformly-7ae5@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406C81990A7;
+	Sun, 26 Oct 2025 23:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761519829; cv=pass; b=GvPWNf7Vi4maiFc1IIlLixZZVh3J8pbQFn9yvLIHdXEipQw3j09g/uWV1J1N/NaTZwGX3m3m85qc/qxc5sXHT8wx0FRZWlI0MPlgzYo2WWiCxP01RAIvqEPHPxUpn40NHS92PYDoGWc/utW0uJdwZXg6U5ioRfdTEsniQukBT7Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761519829; c=relaxed/simple;
+	bh=+ifDqTasTBOiJ3jA1D6liL2PSivxMkHApr4Dpp+jaK8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q3oNE8nIHuvXLoAZGdY2nelja/lCBuEbpjme42JvIHNC2DnaAmKFM0x5uhmXkIRr1VUmiw2O1D+qYenAJEMwnU6J2X4AnVgplyWoCl+dFQi02Wplt+sPeeXGEdeBIRMLmEPFpxsgC+aqSkKds+Kor4d88F8VQUjfxwH6vOnRqco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=Td8P9PMH; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=oJsmgykt; arc=pass smtp.client-ip=185.56.87.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-4x87.prod.antispam.mailspamprotection.com; s=arckey; t=1761519827;
+	 b=kYH5c7hCUpkCufM9V49I8B9SOmH/vcXsZh48LLFeMPD6nYkYctg6s2n85jlvlwrZ32V+esvB+Z
+	  cC1uYliWBM5blMcxNc5qSdBP5zypk1y2tyRfZmN5thVjpznThRKqhxqare4VZQcyilwCRiRJtX
+	  4vjjnJ8DO7lBVAYsxNomRmsh7JhuKPMiqn+kZ5Z/ZFWSzz19XhXCyMleoOLHJV6+H8puezeyZ+
+	  ekTMLF46lysxpHo/6mLtBKamj65axQbeY0qfMnDNBW7CxcNoE5dh4SaBz75STMJjxOB5kd3m+h
+	  3fXDX0p0TqH7ZtZw1xoMejWSL5sQdZqDTHqNtw4pP+nFUg==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-4x87.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-4x87.prod.antispam.mailspamprotection.com; s=arckey; t=1761519827;
+	bh=+ifDqTasTBOiJ3jA1D6liL2PSivxMkHApr4Dpp+jaK8=;
+	h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
+	  Subject:From:DKIM-Signature:DKIM-Signature;
+	b=31GINQpXeMO5IoAXw7UqAE1EVTh0zvIifVQ3liMBt033uDyt0v8T50x+2dbPYn9CMHvek1bIkN
+	  IaJTaJnvwYKbid7T6Jlrqv1hjZ2EYtI/chXTfbi39obm+D3VBVoNz7T9m18h08eOMxGqrWjJ/o
+	  tKzS201b1gA3lEQ6ixTUTU18/KleEe154opY8JVINX3NnGUcYJp/21c2pj6NGTgIem4toXrBTo
+	  vhhehofSLej5iIFLFwPrK8qWuOP2JXc9SussNo5+zDaEFFQiF60E4N+EQleJg/vQNHZ0/J97jG
+	  wcXDkC3MyZ7LdmZ7JW7lmN5HAtKYySNtyPovB/3ytLh2WQ==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date:
+	Subject:From:Reply-To:List-Unsubscribe;
+	bh=/esxIZLC2v0hWhtNa8E6uqHduQe1rcLZyFz3W/CggDI=; b=Td8P9PMHdQrHiZSkispMZYb2kq
+	lAWhF8I0xCFOKMC21ZsSISnBmrMqtb+TYZ8jsfFWztgyApVKDxZ3DOG4OplBeIWaRv9Cf5sAJem3q
+	r2XLzSub1LHl7bSFAZasIEhrj1oQsk0VakoEa4zT7dK4h4pXhTu3HP8y5f3Y8FpHliOE=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-4x87.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vD9lw-00000002w75-3XG0;
+	Sun, 26 Oct 2025 23:03:38 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Cc:To:Date:Subject:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=/esxIZLC2v0hWhtNa8E6uqHduQe1rcLZyFz3W/CggDI=; b=oJsmgyktsnxT0LuJkjKfBc6mkC
+	Ia7FzRMvopHpApfgCqw5F+wed/RyBmT/1WB2Vfmu6YNRAvC4cNDdWFc+93N9ay8H6gQOvJEZK/49/
+	uPYs5/A90NnwUEmTraG88dQrXyDYYJYdfTiK99oMJ6pgCyuna2C1gd+/11t1WHuMvT4I=;
+Received: from [87.17.42.198] (port=63736 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vD9lp-00000000KNm-3zNW;
+	Sun, 26 Oct 2025 23:03:30 +0000
+From: Francesco Valla <francesco@valla.it>
+Subject: [PATCH RFC 0/3] Add splash DRM client
+Date: Mon, 27 Oct 2025 00:03:00 +0100
+Message-Id: <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKSo/mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyMz3ZSi3PjknMzUvJL44oKcxOIM3VRDgxTzFDMz41TzNCWgvoKi1LT
+ MCrCZ0UpBbs5KsbW1ALwPpH5oAAAA
+X-Change-ID: 20251026-drm_client_splash-e10d7d663e7f
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jonathan Corbet <corbet@lwn.net>, Jocelyn Falempe <jfalempe@redhat.com>, 
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+ linux-embedded@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4592; i=francesco@valla.it;
+ h=from:subject:message-id; bh=+ifDqTasTBOiJ3jA1D6liL2PSivxMkHApr4Dpp+jaK8=;
+ b=owGbwMvMwCX2aH1OUIzHTgbG02pJDBn/Vmx//lFsUfpG631xeVf+9ajvKStYpZbcOJsp6k70D
+ BOWYpVZHaUsDGJcDLJiiiwh627c2zPX/FvaBsZHMHNYmUCGMHBxCsBEokUZGaatnPdjfprcnu+T
+ J8y6NOn7bnunq08ZZLjNrQV9s39Ib9vHyLBftpKRIfZT0H4zw2ebNVqrK/gSS6Zt8dz/OT1i8+J
+ IDw4A
+X-Developer-Key: i=francesco@valla.it; a=openpgp;
+ fpr=CC70CBC9AA13257C6CCED8669601767CA07CA0EA
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 2bb777e146862eddcffe1886d2eba538
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vD9lw-00000002w75-3XG0-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-4x87.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-From: Maarten Lankhorst <dev@lankhorst.se>
+Hello,
 
-[ Upstream commit a91c8096590bd7801a26454789f2992094fe36da ]
+this patchset adds a new DRM client offering splash functionalities,
+able to draw to screen:
 
-The original code causes a circular locking dependency found by lockdep.
+  - a colored background;
+  - a single-line text message, which can be set through sysfs or
+    directly from the kernel command line;
+  - a very simple progress bar, which can be driven through sysfs;
+  - a static image (optional).
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 Tainted: G S   U
-------------------------------------------------------
-xe_fault_inject/5091 is trying to acquire lock:
-ffff888156815688 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}, at: __flush_work+0x25d/0x660
+Once compiled inside the kernel, the client can be enabled through the
+command line specifying the drm_client_lib.active=splash parameter.
 
-but task is already holding lock:
+== Motivation ==
 
-ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
-which lock already depends on the new lock.
-the existing dependency chain (in reverse order) is:
--> #2 (&devcd->mutex){+.+.}-{3:3}:
-       mutex_lock_nested+0x4e/0xc0
-       devcd_data_write+0x27/0x90
-       sysfs_kf_bin_write+0x80/0xf0
-       kernfs_fop_write_iter+0x169/0x220
-       vfs_write+0x293/0x560
-       ksys_write+0x72/0xf0
-       __x64_sys_write+0x19/0x30
-       x64_sys_call+0x2bf/0x2660
-       do_syscall_64+0x93/0xb60
-       entry_SYSCALL_64_after_hwframe+0x76/0x7e
--> #1 (kn->active#236){++++}-{0:0}:
-       kernfs_drain+0x1e2/0x200
-       __kernfs_remove+0xae/0x400
-       kernfs_remove_by_name_ns+0x5d/0xc0
-       remove_files+0x54/0x70
-       sysfs_remove_group+0x3d/0xa0
-       sysfs_remove_groups+0x2e/0x60
-       device_remove_attrs+0xc7/0x100
-       device_del+0x15d/0x3b0
-       devcd_del+0x19/0x30
-       process_one_work+0x22b/0x6f0
-       worker_thread+0x1e8/0x3d0
-       kthread+0x11c/0x250
-       ret_from_fork+0x26c/0x2e0
-       ret_from_fork_asm+0x1a/0x30
--> #0 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}:
-       __lock_acquire+0x1661/0x2860
-       lock_acquire+0xc4/0x2f0
-       __flush_work+0x27a/0x660
-       flush_delayed_work+0x5d/0xa0
-       dev_coredump_put+0x63/0xa0
-       xe_driver_devcoredump_fini+0x12/0x20 [xe]
-       devm_action_release+0x12/0x30
-       release_nodes+0x3a/0x120
-       devres_release_all+0x8a/0xd0
-       device_unbind_cleanup+0x12/0x80
-       device_release_driver_internal+0x23a/0x280
-       device_driver_detach+0x14/0x20
-       unbind_store+0xaf/0xc0
-       drv_attr_store+0x21/0x50
-       sysfs_kf_write+0x4a/0x80
-       kernfs_fop_write_iter+0x169/0x220
-       vfs_write+0x293/0x560
-       ksys_write+0x72/0xf0
-       __x64_sys_write+0x19/0x30
-       x64_sys_call+0x2bf/0x2660
-       do_syscall_64+0x93/0xb60
-       entry_SYSCALL_64_after_hwframe+0x76/0x7e
-other info that might help us debug this:
-Chain exists of: (work_completion)(&(&devcd->del_wk)->work) --> kn->active#236 --> &devcd->mutex
- Possible unsafe locking scenario:
-       CPU0                    CPU1
-       ----                    ----
-  lock(&devcd->mutex);
-                               lock(kn->active#236);
-                               lock(&devcd->mutex);
-  lock((work_completion)(&(&devcd->del_wk)->work));
- *** DEADLOCK ***
-5 locks held by xe_fault_inject/5091:
- #0: ffff8881129f9488 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x72/0xf0
- #1: ffff88810c755078 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x123/0x220
- #2: ffff8881054811a0 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x55/0x280
- #3: ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
- #4: ffffffff8359e020 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x72/0x660
-stack backtrace:
-CPU: 14 UID: 0 PID: 5091 Comm: xe_fault_inject Tainted: G S   U              6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 PREEMPT_{RT,(lazy)}
-Tainted: [S]=CPU_OUT_OF_SPEC, [U]=USER
-Hardware name: Micro-Star International Co., Ltd. MS-7D25/PRO Z690-A DDR4(MS-7D25), BIOS 1.10 12/13/2021
-Call Trace:
- <TASK>
- dump_stack_lvl+0x91/0xf0
- dump_stack+0x10/0x20
- print_circular_bug+0x285/0x360
- check_noncircular+0x135/0x150
- ? register_lock_class+0x48/0x4a0
- __lock_acquire+0x1661/0x2860
- lock_acquire+0xc4/0x2f0
- ? __flush_work+0x25d/0x660
- ? mark_held_locks+0x46/0x90
- ? __flush_work+0x25d/0x660
- __flush_work+0x27a/0x660
- ? __flush_work+0x25d/0x660
- ? trace_hardirqs_on+0x1e/0xd0
- ? __pfx_wq_barrier_func+0x10/0x10
- flush_delayed_work+0x5d/0xa0
- dev_coredump_put+0x63/0xa0
- xe_driver_devcoredump_fini+0x12/0x20 [xe]
- devm_action_release+0x12/0x30
- release_nodes+0x3a/0x120
- devres_release_all+0x8a/0xd0
- device_unbind_cleanup+0x12/0x80
- device_release_driver_internal+0x23a/0x280
- ? bus_find_device+0xa8/0xe0
- device_driver_detach+0x14/0x20
- unbind_store+0xaf/0xc0
- drv_attr_store+0x21/0x50
- sysfs_kf_write+0x4a/0x80
- kernfs_fop_write_iter+0x169/0x220
- vfs_write+0x293/0x560
- ksys_write+0x72/0xf0
- __x64_sys_write+0x19/0x30
- x64_sys_call+0x2bf/0x2660
- do_syscall_64+0x93/0xb60
- ? __f_unlock_pos+0x15/0x20
- ? __x64_sys_getdents64+0x9b/0x130
- ? __pfx_filldir64+0x10/0x10
- ? do_syscall_64+0x1a2/0xb60
- ? clear_bhb_loop+0x30/0x80
- ? clear_bhb_loop+0x30/0x80
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x76e292edd574
-Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-RSP: 002b:00007fffe247a828 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000076e292edd574
-RDX: 000000000000000c RSI: 00006267f6306063 RDI: 000000000000000b
-RBP: 000000000000000c R08: 000076e292fc4b20 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00006267f6306063
-R13: 000000000000000b R14: 00006267e6859c00 R15: 000076e29322a000
- </TASK>
-xe 0000:03:00.0: [drm] Xe device coredump has been deleted.
+The motivation behind this work is to offer to embedded system
+developers a new path for a simple activation of the display(s)
+connected to their system, with the following usecases:
 
-Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
-Cc: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # v6.1+
-Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
-Cc: Matthew Brost <matthew.brost@intel.com>
-Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Link: https://lore.kernel.org/r/20250723142416.1020423-1-dev@lankhorst.se
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[ removed const qualifier from bin_attribute callback parameters ]
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  - bootsplash - possibly displaying even before init;
+  - early activation of the display pipeline, in particular whenever one
+    component of the pipeline (e.g.: a panel) takes a non-negligible
+    time to initialize;
+  - recovery systems, where the splash client can offer a simple feedback
+    for unattended recovery tasks;
+  - update systems, where the splash client can offer a simple feedback
+    for unattended update tasks.
+
+While the first seems the most obvious one, it was the second that acted
+as the driver, as in the past I had to implement a ugly workaround using
+a systemd generator to kickstart the initialization of a display and
+shave ~400ms of boot time.
+
+The last 2 usecase, instead, are the reason I dropped the "boot" part
+from bootsplash.
+
+== Implementation details ==
+
+The design is quite simple, with a kernel thread doing the heavylifting
+for the rendering part and some locking to protect interactions with it.
+
+The splash image is loaded using the firmware framework, with the client
+expecting to find a binary dump having the right dimensions (width and
+height) and FOURCC format for each modeset. Given a 1920x1080 RGB888
+modeset, the client will for example search for a firmware named:
+
+   drm_splash_1920x1080_RG24.raw
+
+If the firmware cannot be loaded directly, the NOUEVENT sysfs fallback
+mechanism is used to let userspace load the appropriate image.
+
+== Testing ==
+
+Testing was done on qemu (both with vkms and bochs drivers), on a HDMI
+display connected to a Beagleplay and on a ILI9341 SPI display connected
+to a i.MX93 FRDM board. All these platforms revealed different
+weaknesses that were hopefully removed.
+
+== Open points / issues ==
+
+The reason for this being an RFC is that there are several open points:
+
+  - Support for tiled connectors should be there, but has not been
+    tested. Any idea on how to test it?
+  - I'm not entirely convinced that using the firmware framework to load
+    the images is the right path. The idea behind it was to re-use the
+    compressed firmware support, but then I discovered it is not there
+    for built-in firmware.
+  - Again on the firmware loading: CONFIG_LOADPIN would interfere with
+    sysfs loading.
+  - And again: FW_ACTION_NOUEVENT only has one user inside the kernel,
+    leading me to think it is de-facto deprecated. And still, uevents
+    for firmware loading seem frowned upon these days... 
+  - Generating binary dumps for... basically any format is not so
+    straightforward. I crafted a Python tool with AI help which seems
+    to work quite well, but I honestly did not yet understood which is
+    the policy for AI-generated code inside the kernel, so it is not
+    included in this patch set. All client code is genuine, though.
+
+== Additional notes ==
+
+A bootsplash client was one of the TODOs for the DRM subsystem, so patch
+3 removes the relative section from the list.
+
+Curious to hear your thoughts. Thank you in advance!
+
+Best regards,
+Francesco
+
+Signed-off-by: Francesco Valla <francesco@valla.it>
 ---
- drivers/base/devcoredump.c | 138 ++++++++++++++++++++++---------------
- 1 file changed, 84 insertions(+), 54 deletions(-)
+Francesco Valla (3):
+      drm: client: add splash client
+      MAINTAINERS: add entry for DRM splash client
+      drm: docs: remove bootsplash from TODO
 
-diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
-index c795edad1b969..e9a8bd9b20ea0 100644
---- a/drivers/base/devcoredump.c
-+++ b/drivers/base/devcoredump.c
-@@ -23,50 +23,46 @@ struct devcd_entry {
- 	void *data;
- 	size_t datalen;
- 	/*
--	 * Here, mutex is required to serialize the calls to del_wk work between
--	 * user/kernel space which happens when devcd is added with device_add()
--	 * and that sends uevent to user space. User space reads the uevents,
--	 * and calls to devcd_data_write() which try to modify the work which is
--	 * not even initialized/queued from devcoredump.
-+	 * There are 2 races for which mutex is required.
- 	 *
-+	 * The first race is between device creation and userspace writing to
-+	 * schedule immediately destruction.
- 	 *
-+	 * This race is handled by arming the timer before device creation, but
-+	 * when device creation fails the timer still exists.
- 	 *
--	 *        cpu0(X)                                 cpu1(Y)
-+	 * To solve this, hold the mutex during device_add(), and set
-+	 * init_completed on success before releasing the mutex.
- 	 *
--	 *        dev_coredump() uevent sent to user space
--	 *        device_add()  ======================> user space process Y reads the
--	 *                                              uevents writes to devcd fd
--	 *                                              which results into writes to
-+	 * That way the timer will never fire until device_add() is called,
-+	 * it will do nothing if init_completed is not set. The timer is also
-+	 * cancelled in that case.
- 	 *
--	 *                                             devcd_data_write()
--	 *                                               mod_delayed_work()
--	 *                                                 try_to_grab_pending()
--	 *                                                   del_timer()
--	 *                                                     debug_assert_init()
--	 *       INIT_DELAYED_WORK()
--	 *       schedule_delayed_work()
--	 *
--	 *
--	 * Also, mutex alone would not be enough to avoid scheduling of
--	 * del_wk work after it get flush from a call to devcd_free()
--	 * mentioned as below.
--	 *
--	 *	disabled_store()
--	 *        devcd_free()
--	 *          mutex_lock()             devcd_data_write()
--	 *          flush_delayed_work()
--	 *          mutex_unlock()
--	 *                                   mutex_lock()
--	 *                                   mod_delayed_work()
--	 *                                   mutex_unlock()
--	 * So, delete_work flag is required.
-+	 * The second race involves multiple parallel invocations of devcd_free(),
-+	 * add a deleted flag so only 1 can call the destructor.
- 	 */
- 	struct mutex mutex;
--	bool delete_work;
-+	bool init_completed, deleted;
- 	struct module *owner;
- 	ssize_t (*read)(char *buffer, loff_t offset, size_t count,
- 			void *data, size_t datalen);
- 	void (*free)(void *data);
-+	/*
-+	 * If nothing interferes and device_add() was returns success,
-+	 * del_wk will destroy the device after the timer fires.
-+	 *
-+	 * Multiple userspace processes can interfere in the working of the timer:
-+	 * - Writing to the coredump will reschedule the timer to run immediately,
-+	 *   if still armed.
-+	 *
-+	 *   This is handled by using "if (cancel_delayed_work()) {
-+	 *   schedule_delayed_work() }", to prevent re-arming after having
-+	 *   been previously fired.
-+	 * - Writing to /sys/class/devcoredump/disabled will destroy the
-+	 *   coredump synchronously.
-+	 *   This is handled by using disable_delayed_work_sync(), and then
-+	 *   checking if deleted flag is set with &devcd->mutex held.
-+	 */
- 	struct delayed_work del_wk;
- 	struct device *failing_dev;
- };
-@@ -95,14 +91,27 @@ static void devcd_dev_release(struct device *dev)
- 	kfree(devcd);
- }
- 
-+static void __devcd_del(struct devcd_entry *devcd)
-+{
-+	devcd->deleted = true;
-+	device_del(&devcd->devcd_dev);
-+	put_device(&devcd->devcd_dev);
-+}
-+
- static void devcd_del(struct work_struct *wk)
- {
- 	struct devcd_entry *devcd;
-+	bool init_completed;
- 
- 	devcd = container_of(wk, struct devcd_entry, del_wk.work);
- 
--	device_del(&devcd->devcd_dev);
--	put_device(&devcd->devcd_dev);
-+	/* devcd->mutex serializes against dev_coredumpm_timeout */
-+	mutex_lock(&devcd->mutex);
-+	init_completed = devcd->init_completed;
-+	mutex_unlock(&devcd->mutex);
-+
-+	if (init_completed)
-+		__devcd_del(devcd);
- }
- 
- static ssize_t devcd_data_read(struct file *filp, struct kobject *kobj,
-@@ -122,12 +131,12 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
- 	struct device *dev = kobj_to_dev(kobj);
- 	struct devcd_entry *devcd = dev_to_devcd(dev);
- 
--	mutex_lock(&devcd->mutex);
--	if (!devcd->delete_work) {
--		devcd->delete_work = true;
--		mod_delayed_work(system_wq, &devcd->del_wk, 0);
--	}
--	mutex_unlock(&devcd->mutex);
-+	/*
-+	 * Although it's tempting to use mod_delayed work here,
-+	 * that will cause a reschedule if the timer already fired.
-+	 */
-+	if (cancel_delayed_work(&devcd->del_wk))
-+		schedule_delayed_work(&devcd->del_wk, 0);
- 
- 	return count;
- }
-@@ -155,11 +164,21 @@ static int devcd_free(struct device *dev, void *data)
- {
- 	struct devcd_entry *devcd = dev_to_devcd(dev);
- 
-+	/*
-+	 * To prevent a race with devcd_data_write(), disable work and
-+	 * complete manually instead.
-+	 *
-+	 * We cannot rely on the return value of
-+	 * disable_delayed_work_sync() here, because it might be in the
-+	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
-+	 *
-+	 * devcd->mutex here guards against multiple parallel invocations
-+	 * of devcd_free().
-+	 */
-+	disable_delayed_work_sync(&devcd->del_wk);
- 	mutex_lock(&devcd->mutex);
--	if (!devcd->delete_work)
--		devcd->delete_work = true;
--
--	flush_delayed_work(&devcd->del_wk);
-+	if (!devcd->deleted)
-+		__devcd_del(devcd);
- 	mutex_unlock(&devcd->mutex);
- 	return 0;
- }
-@@ -183,12 +202,10 @@ static ssize_t disabled_show(const struct class *class, const struct class_attri
-  *                                                                 put_device() <- last reference
-  *             error = fn(dev, data)                           devcd_dev_release()
-  *             devcd_free(dev, data)                           kfree(devcd)
-- *             mutex_lock(&devcd->mutex);
-  *
-  *
-- * In the above diagram, It looks like disabled_store() would be racing with parallely
-- * running devcd_del() and result in memory abort while acquiring devcd->mutex which
-- * is called after kfree of devcd memory  after dropping its last reference with
-+ * In the above diagram, it looks like disabled_store() would be racing with parallelly
-+ * running devcd_del() and result in memory abort after dropping its last reference with
-  * put_device(). However, this will not happens as fn(dev, data) runs
-  * with its own reference to device via klist_node so it is not its last reference.
-  * so, above situation would not occur.
-@@ -376,7 +393,7 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
- 	devcd->read = read;
- 	devcd->free = free;
- 	devcd->failing_dev = get_device(dev);
--	devcd->delete_work = false;
-+	devcd->deleted = false;
- 
- 	mutex_init(&devcd->mutex);
- 	device_initialize(&devcd->devcd_dev);
-@@ -385,8 +402,14 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
- 		     atomic_inc_return(&devcd_count));
- 	devcd->devcd_dev.class = &devcd_class;
- 
--	mutex_lock(&devcd->mutex);
- 	dev_set_uevent_suppress(&devcd->devcd_dev, true);
-+
-+	/* devcd->mutex prevents devcd_del() completing until init finishes */
-+	mutex_lock(&devcd->mutex);
-+	devcd->init_completed = false;
-+	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
-+	schedule_delayed_work(&devcd->del_wk, timeout);
-+
- 	if (device_add(&devcd->devcd_dev))
- 		goto put_device;
- 
-@@ -403,13 +426,20 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
- 
- 	dev_set_uevent_suppress(&devcd->devcd_dev, false);
- 	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
--	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
--	schedule_delayed_work(&devcd->del_wk, timeout);
-+
-+	/*
-+	 * Safe to run devcd_del() now that we are done with devcd_dev.
-+	 * Alternatively we could have taken a ref on devcd_dev before
-+	 * dropping the lock.
-+	 */
-+	devcd->init_completed = true;
- 	mutex_unlock(&devcd->mutex);
- 	return;
-  put_device:
--	put_device(&devcd->devcd_dev);
- 	mutex_unlock(&devcd->mutex);
-+	cancel_delayed_work_sync(&devcd->del_wk);
-+	put_device(&devcd->devcd_dev);
-+
-  put_module:
- 	module_put(owner);
-  free:
+ Documentation/gpu/todo.rst                    |  17 -
+ MAINTAINERS                                   |   7 +
+ drivers/gpu/drm/clients/Kconfig               |  46 +-
+ drivers/gpu/drm/clients/Makefile              |   1 +
+ drivers/gpu/drm/clients/drm_client_internal.h |   9 +
+ drivers/gpu/drm/clients/drm_client_setup.c    |   8 +
+ drivers/gpu/drm/clients/drm_splash.c          | 761 ++++++++++++++++++++++++++
+ 7 files changed, 831 insertions(+), 18 deletions(-)
+---
+base-commit: 4bb1f7e19c4a1d6eeb52b80acff5ac63edd1b91d
+change-id: 20251026-drm_client_splash-e10d7d663e7f
+
+Best regards,
 -- 
-2.51.0
+Francesco Valla <francesco@valla.it>
 
 
