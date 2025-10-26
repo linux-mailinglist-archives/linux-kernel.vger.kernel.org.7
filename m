@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-870440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545B6C0AD03
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:56:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0311C0AD0F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138EB3B2385
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:56:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BA994E449A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404F32264CF;
-	Sun, 26 Oct 2025 15:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CB6233134;
+	Sun, 26 Oct 2025 15:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUDkIQ9f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUPb8KxQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FC71C862D;
-	Sun, 26 Oct 2025 15:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BB71F4169;
+	Sun, 26 Oct 2025 15:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761494157; cv=none; b=dEvBp/T9u2ePshmhmgiUaknaLnAu6TFBn3iUBQHJ3SjoXO81Um3iewazX+XVswH0GnVI7MwrhE/GcJhSrzHngXVKuiw5htqgrFeALcAZa+pxbky4m63sfxPKzPC6N/3S187LmvLidJ4zfc+7zLSyN5PXfSkt0x+uPaUeWKqokl0=
+	t=1761494240; cv=none; b=PHCvMbn+dUmC4+THW7Rqgbm+Cyi8NI6JN/+uT5ZmXKhOPuyWqFg9KAY5PuYFVN3JRLCQEH1i8Uf85OkokIG3LvcrZgsL/jI1YtuXm2AsCMryQ/DHFsm954979iJ6VefKJASeACPP078Esyfq9gVTmMZirpLoCG5E5DpzqfGAxZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761494157; c=relaxed/simple;
-	bh=+KJV3T7U4q4scaSgOMGLj6Dcmej5i/SZt/F+HnIo4wo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBtklL1xfT/YlrxNDViSn76G22CgX1hgVj+6kgnP/hnSfwSQMB+IYbT9arxDlAlmZMPi39TxhTKbph2YsVWOWaBrmwvH1pIb3fTm7mjjOLgOdCXJlEYUtCtwGidI7ST8M5YkPDytjvzgnaLH3oqsLRcyNyc1O8yDeCZiQiDj9tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUDkIQ9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3389FC4CEE7;
-	Sun, 26 Oct 2025 15:55:53 +0000 (UTC)
+	s=arc-20240116; t=1761494240; c=relaxed/simple;
+	bh=7Ou0fEZ/jwKerVmUa4t96b/hLUjjbHEGSc/S4mOnZyk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=h8TBxAyhxNtZxEGB2/IyO31dXMoSM1viz7vjsWeZtZgDfFTvbsQtCf4g8cbP2b0PJwRHWFMPh+g7zC4nSJahFuPnpCnfYDJewEEsPdxj2PB9Ybr4HSjNAwonOPHa8WTLbdyKWwi7WFKU5YfMYXJsB30bZNgD3EVbV6Da2JC0xwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUPb8KxQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F6FC4CEE7;
+	Sun, 26 Oct 2025 15:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761494157;
-	bh=+KJV3T7U4q4scaSgOMGLj6Dcmej5i/SZt/F+HnIo4wo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UUDkIQ9fUx7yB6THfSU6sNRJMSh4ROWirMd8RANSG93xtaCepJfORfnQwDNnIN681
-	 /qqrppOdCFghA+x5EeWeW9WPA9hPjwNIhacgK7TRcX9tUkJdOEFEEhNoFb1sL8pMc9
-	 ogvdhk200hII1wT6P8olR7vACnE714sDJrD02s36sscb3T2U+DwAdZ89W6kyg4BzSS
-	 v4DofCunyI7fKblAIPwv1fom1ZMLSiJKJLf71Kk4ZVKfi7bdDJWDEeS1x7pLSnzn+p
-	 0NsY1ry3LK6TaYBQA2Q1HIpA71KgB+oCPBRVFToDdgd2tWPrHu7v1mgxrm45IvMr2d
-	 RMhB/We42N0hg==
-Message-ID: <104b4f2f-56c7-4e92-8b22-1987673ba262@kernel.org>
-Date: Sun, 26 Oct 2025 16:55:51 +0100
+	s=k20201202; t=1761494240;
+	bh=7Ou0fEZ/jwKerVmUa4t96b/hLUjjbHEGSc/S4mOnZyk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jUPb8KxQm2jI/qhICb70KWnhukiMfL3HCZ9JVXUq/H2f6i1aWGv3awPaDfmZ0/FLZ
+	 e8R1wXwYd+i8bvq+JA1X0GIUaaCtwsghv9qElkORQrhy0dZ4ijVWDSzIxTPRcMYs8m
+	 2qyOIYpQ4/ypz0KNAb+NFFAl+h3O2ZSqw/77QFN0ZDJIcGcpPfX0X0x26W5xwjkb3W
+	 ++MxEwLww8sV0ZS+hxamrRYJS1u5aF5j23yR/N7WO7KChbCRwgcPcuUQCDuDFmW1Z3
+	 5f49Qecq5v6fxefs0FGmKHus61hCAj2usE6bUSId1GNGc2uFBegfEIEOtYJCQofCH2
+	 8wKtbXRMecWvw==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
+References: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 0/3] PCI: qcom: Binding fix
+Message-Id: <176149423539.9818.11398999036385649843.b4-ty@kernel.org>
+Date: Sun, 26 Oct 2025 21:27:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] samples: rust: add Rust I2C sample driver
-To: Igor Korotin <igor.korotin.linux@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20251005102226.41876-1-igor.korotin.linux@gmail.com>
- <20251005102348.41935-1-igor.korotin.linux@gmail.com>
- <b09c7c91-b801-40df-8cd8-731837ba2553@kernel.org>
- <72e286cb-7517-494d-a8ed-769b5fb8baee@gmail.com>
- <2d9a8196-8d66-4238-a807-b1ff9fd84519@kernel.org>
- <0d8cd0ef-01bd-4996-a146-404a677ad935@gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <0d8cd0ef-01bd-4996-a146-404a677ad935@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 10/26/25 4:50 PM, Igor Korotin wrote:
-> Just for the clarification: by "the change for the other patch" you mean rebase
-> and update this patch series based on [1], right?
 
-Yes, plus the i2c:Registration change.
-> [1] https://lore.kernel.org/all/20251016125544.15559-1-dakr@kernel.org/
+On Fri, 10 Oct 2025 11:25:46 -0700, Manivannan Sadhasivam wrote:
+> This series fixes the binding issue around the PERST# and PHY properties.
+> The binding issue was reported in [1], while discussing a DTS fix [2].
+> 
+> The binding fix provided in this series is not sufficient enough to spot all the
+> shenanigans, especially keeping one property in Controller node and another in
+> Root Port node. But this series does catch the DTS issue fixed by [2]:
+> 
+> [...]
 
+Applied, thanks!
+
+[1/3] dt-bindings: PCI: Update the email address for Manivannan Sadhasivam
+      commit: e3d7fda088c3c75d210b849c3823008f32cd00ce
+
+Best regards,
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
 
 
