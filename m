@@ -1,78 +1,126 @@
-Return-Path: <linux-kernel+bounces-870476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15187C0AE59
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:01:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33969C0AE5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2D7F349B6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E793B3C20
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4801B2F0C49;
-	Sun, 26 Oct 2025 17:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED94253956;
+	Sun, 26 Oct 2025 17:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCbfuzIz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y1DaXUfS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CA7248886
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 17:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EED8F7D
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 17:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761498053; cv=none; b=bM8h6B8q0z72K55vZlzvjtFPgoiQLQ/XKNU1KyqQ0O6ronMdNB5x8iQRcahsTUQd8a6NsM6eojBuAI7axyXR7sy6YvLm9eYSpsvkmZYXs2IHgpgx2VgI5bXEYPDRU5RsuSFK2yH2La+lIusTTx+2bhDFukBo8bOUoZhH+BNeJ+8=
+	t=1761498355; cv=none; b=PU4wI0I2GDedZLorl8yUff6B2bYS15Ekz5bnkD5SWbnIY+aB9ghLZm4l6X3z50/dx6K6jXbLz2QtP7eyQok7dmND6NIt8izcUF3t6FgIorTyxJtHaU629bOCEZ0VSCRQBomsWSq2bsSvGRRLBcS/8UUNDajilT5KzeHhAvRfG1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761498053; c=relaxed/simple;
-	bh=4XCBpPL3oGTRmtI8t5+2yJFiAewi3gyDTKtkn5tnjsw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=d1ruMv1VOMX+IlSQb+u2G5Qt4oxbJOjiqHVsvxWoTaXlLuFlKqj5FxNhS5LGhaZwZilu7DINLG0o1EF2xVl/docBZHbAURoXVWVI2f3f2M7lvL/jc4igyccT9Z34EsNpC5HKlARs5BU46WkQVjTfIxSI60V1kDjJWV231b8I5W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCbfuzIz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA87C4CEE7;
-	Sun, 26 Oct 2025 17:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761498053;
-	bh=4XCBpPL3oGTRmtI8t5+2yJFiAewi3gyDTKtkn5tnjsw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=RCbfuzIzHCHcxC9mNIS9R9OZPWKxcjD2+2cKOflfhKG/05I3OHn4INWCHdsRERxEZ
-	 N/iMPAeMUS8ITPbo47M2UW6bPnulCB2QMXOTFW0S0iHZgNKujgDnPFIvIiF1FpvgQ7
-	 TuF47tfP1BZ+3cagtNMw5vSuS71mGmSKO7Ma2uLB+YhxEqnWjhrRogDBv6hTasjO7i
-	 29IbqUFXd0hHrOcEf0vyCDOOqnPuVcoNVoY1Ryyy47Wf+LekMNRpIRXNm4EC4D8lcQ
-	 F7ZY1Dr4q1xZuR6lVT/BtXnS9mrkilc4faw03OhK8RAvySrpsth0k9yCKIl12ylLUm
-	 fKyNnCX/Uxp8A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B30380AA7E;
-	Sun, 26 Oct 2025 17:00:33 +0000 (UTC)
-Subject: Re: [GIT PULL] x86/urgent for v6.18-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251026123417.GAaP4VSVbDKBgjZ9GJ@fat_crate.local>
-References: <20251026123417.GAaP4VSVbDKBgjZ9GJ@fat_crate.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251026123417.GAaP4VSVbDKBgjZ9GJ@fat_crate.local>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.18_rc3
-X-PR-Tracked-Commit-Id: 84dfce65a7ae7b11c7b13285a1b23e9a94ad37b7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dbfc6422a34d6cb28e5c0432af309b24f66ef27e
-Message-Id: <176149803176.292745.7955545903038266725.pr-tracker-bot@kernel.org>
-Date: Sun, 26 Oct 2025 17:00:31 +0000
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1761498355; c=relaxed/simple;
+	bh=pOr9H7d14Gtw12sWQjbcQjTI11u4cMnBCOwDA49Z1+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U1U7b98YkzGNkSwFwu4m4m+OKV7gtyYCfKXikozlIG/Uv7PEW6nepSB5PWLcnWbpMEtV8ZV3FaWUn0VSNIlkP+MP0n38p6Fr6oPHJyrVAcy2EimnNL/LkFXAKR3JHAhDeWzcczEkuI6PCfKZkI6PBL6ZB93bsWVilmLcFxLUCNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y1DaXUfS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761498352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bA1cIwXomvcX1UTVpRY8z5I/n8g7kRe8UX4mFoCfBqc=;
+	b=Y1DaXUfS5lQyB50xzoi/aYl9RnQMKq4Fn61QfaFpyV/wstDCPkK/Gnq70NiTSrA2k6Ux0E
+	g53E5n+cA5gSYZH6GXMlvqdGGID83a7aKn5npN4HcIpIrWiscG06GfD1YYIhO19u4Wooh8
+	eMwbUyNPjcdf8dxevmA8QQJsXst96xA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-384-4iHEveDYOTSX9FuP-bBgGg-1; Sun,
+ 26 Oct 2025 13:05:47 -0400
+X-MC-Unique: 4iHEveDYOTSX9FuP-bBgGg-1
+X-Mimecast-MFC-AGG-ID: 4iHEveDYOTSX9FuP-bBgGg_1761498346
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 93F0F196F75E;
+	Sun, 26 Oct 2025 17:05:45 +0000 (UTC)
+Received: from mrout-thinkpadp16vgen1.punetw6.csb (unknown [10.74.80.24])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0A34C1955F1B;
+	Sun, 26 Oct 2025 17:05:36 +0000 (UTC)
+From: Malaya Kumar Rout <mrout@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: mrout@redhat.com,
+	lyude@redhat.com,
+	malayarout91@gmail.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] PM: runtime: fix typos in runtime.c comments
+Date: Sun, 26 Oct 2025 22:35:27 +0530
+Message-ID: <20251026170527.262003-1-mrout@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The pull request you sent on Sun, 26 Oct 2025 13:34:17 +0100:
+Fix several typos in comments:
+- "timesptamp" -> "timestamp"
+- "involed" -> "involved"
+- "nonero" -> "nonzero"
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.18_rc3
+Fix typos in comments to improve code documentation clarity.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dbfc6422a34d6cb28e5c0432af309b24f66ef27e
+Signed-off-by: Malaya Kumar Rout <mrout@redhat.com>
+---
+ drivers/base/power/runtime.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thank you!
-
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 1b11a3cd4acc..7fe63cab2708 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -90,7 +90,7 @@ static void update_pm_runtime_accounting(struct device *dev)
+ 	/*
+ 	 * Because ktime_get_mono_fast_ns() is not monotonic during
+ 	 * timekeeping updates, ensure that 'now' is after the last saved
+-	 * timesptamp.
++	 * timestamp.
+ 	 */
+ 	if (now < last)
+ 		return;
+@@ -217,7 +217,7 @@ static int dev_memalloc_noio(struct device *dev, void *data)
+  *     resume/suspend callback of any one of its ancestors(or the
+  *     block device itself), the deadlock may be triggered inside the
+  *     memory allocation since it might not complete until the block
+- *     device becomes active and the involed page I/O finishes. The
++ *     device becomes active and the involved page I/O finishes. The
+  *     situation is pointed out first by Alan Stern. Network device
+  *     are involved in iSCSI kind of situation.
+  *
+@@ -1210,7 +1210,7 @@ EXPORT_SYMBOL_GPL(__pm_runtime_resume);
+  *
+  * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_usage_count
+  * is set, or (2) @dev is not ignoring children and its active child count is
+- * nonero, or (3) the runtime PM usage counter of @dev is not zero, increment
++ * nonzero, or (3) the runtime PM usage counter of @dev is not zero, increment
+  * the usage counter of @dev and return 1.
+  *
+  * Otherwise, return 0 without changing the usage counter.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.51.0
+
 
