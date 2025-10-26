@@ -1,89 +1,257 @@
-Return-Path: <linux-kernel+bounces-870322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFAAC0A74E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:38:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2636EC0A75A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:39:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6503F3AF0DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:38:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B61318A0AEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FDD2DA757;
-	Sun, 26 Oct 2025 12:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281B02DA746;
+	Sun, 26 Oct 2025 12:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQkNk0St"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjVnWuQJ"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237BA2D9EF8;
-	Sun, 26 Oct 2025 12:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5492223DF9
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761482290; cv=none; b=YpvpgqejPZjOP32p/jk2U3NlA0zjrcbwyX6rlee6RhAKTVs3iaVVqgZhmChO00wMEX/lpI3go1ywpnhv0tMn5dSyWXKPyyF+yTieDDO+UQyP4TgyA8qImwOnCYm63VfM4XL78pQSVcUtQSAQjmIvC7OPra6xvJkGcOuSoBauJw0=
+	t=1761482378; cv=none; b=eoR6gEK01IHTw7GlqdBR5LLQ2bZ/mz9O1KGoZS0YIKzmEZDnNjcWan/UyNjqyLpTTOHor2w+f+7TgYJ8df7rma41sthzu02jo0cGuhT6sjmt8zvssctpzvS5Kk4CEjdbLj+ocAbyQ1NYFNIp3EFDuUAy9oOlgDrxfLaK98Rc7wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761482290; c=relaxed/simple;
-	bh=qw8/PAvD2816zMcT/W8BWmFh+apV2YWDBWzHohHc9Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESHBfPZF5eXeV97IRXS1qy6v9TMPFiZSWj7g51DLIyIuFmvhBuOIgtAP7w6F5joDdtmRCCDAOlrAyUP8w8WDrOZSIRE2gJJqPkI0xQ1yNFXrvN81TDPrbXOuaUCX3t+kTnjviJ59eiUXiZOXjFsmi1GxkqpswuxiUxRDHXzzmHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQkNk0St; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6923C4CEE7;
-	Sun, 26 Oct 2025 12:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761482289;
-	bh=qw8/PAvD2816zMcT/W8BWmFh+apV2YWDBWzHohHc9Ds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UQkNk0Sta/L0r0qWJfiwMmnRcxJLqPTWe/65cQ3Pfpc0tJUxZYvyNDt5rE8LNhrwH
-	 ggkYucPLXnNtjYQjAlu8w6qWbMQl7YVrXhkxMuFysWP3k3fxIhhYQZmDRktF2ySR9a
-	 kc7oNCgEHxB/0wOT1YfEsl+0oH2Pl5pleG/MPqcicK2J94n794MkgfH8zsmvTvzVgM
-	 c0ufi4zVyPp/rVKwUwJMljkndLo/iwp3RR3LY4yWDAVU3X151+3YKUTHwJ9YN8H4bN
-	 tSbWQ6s5DqB0b0mgg0++GGAVkizOJJL6b+MXVvbr/Gb9OGqPe1cr4pXQIbDoy8ayvy
-	 X9sOiqXbIGEdg==
-Date: Sun, 26 Oct 2025 14:38:04 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] nvme-pci: migrate to dma_map_phys instead of
- map_page
-Message-ID: <20251026123804.GD12554@unreal>
-References: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com>
- <20251020-block-with-mmio-v2-1-147e9f93d8d4@nvidia.com>
- <20251022061418.GC4317@lst.de>
+	s=arc-20240116; t=1761482378; c=relaxed/simple;
+	bh=FwahnmFI+RANUbP/ccocpD49/vz2nmfLhC6tjHp5sWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=idI3LrrvAunEUzclhFuUJo7Z7qlZ0I0LSZ50B74K0L6Ric6YteHJh89vgV96JVrb+J1I0ZwqR/GpiRb6jwLHIC2PsonY8gmLxR2ddoAZvlxhh6JWg7ZuEVyKw/2mD3rrZUi4JkNsh9JyHD31bRho64GlmAvN4H2/6c/rGHjpR98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjVnWuQJ; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-2698d47e776so29678445ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761482376; x=1762087176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ieZihMLOOLBctZi12lxn8LR/iyKa5pG/boJ+0OiRR90=;
+        b=NjVnWuQJkHnC0qeAII8x/wOD8/oIn4gEQOhkkLDRqz1f6wIIN5HtU+eGYrHUIXVCGN
+         hgfyeFpJCAzoKDguTh8apmZ/RptddfLj6uKo2h0UPGLOa9NBh0gSCSzDEyiEHygflyeS
+         FPb1tZq8QQKzCoNDVCnZgFnx9p3avbtRwtRe0wmHozy4rdh6vtD58/nWWZeuYwGdL7uG
+         MjpESRxUdg3RPQOOktbgKXwsLQ/iR2kUR4yU64keyB6ZnU+gJwEbriLO6Jaoj2Fdrhsy
+         h6aT/aRpkZ2eai+1eXQPK2A7CeuB/vhVWUXCHBLAY4vo74dkrJIZw5Jljr1/ZbeeDpGJ
+         7DOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761482376; x=1762087176;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ieZihMLOOLBctZi12lxn8LR/iyKa5pG/boJ+0OiRR90=;
+        b=he9lbeK5y6X7GVPZT+FHD29XclJEOMX+i6b/Il6SFOL1o8HdeNxw9oYjfccWnjNm2K
+         jc6EC0jw157pC3ufwo+wi1xej/botd9/LA7Wg9FRjAV1+KzdrVUkGMQyTdNTw+XdGPUf
+         bTVsbEFDMcoREZWX+S0Ql9mFfj6UZG1pNbmwDl+53/4iJQdoKxupO4aFdfKt8sqJs2n4
+         gNzTH6B/tHgCrpqCYGao6cc2ramFZhhKo+GBKuiFYOkkcdkFg1jpBPHyMo+sRJUtbqLt
+         sABOdrUqkBOWxMZh8gWnfMBeltKZGfFZ8ixxIaOdsfGWLRGcd7Jr9LUjdGVmQ6De9anm
+         kMqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPclNdeT235AjB2KJ4+RTYbInfGB3GkImEF0qcrgMN5fLYtQmOclm5TuRF+RaCvG5wu48O4JTLqUwjRCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy/NLHqMp0PZyOqQHopwEZJQX8PRI5KXyGdKASOiP4sKjq8Qa+
+	1EWNSP3v1k8aq1CiCXy6Ko80bagmoQS3ijpFqwy7iSC9QJVTErdq5R3d
+X-Gm-Gg: ASbGncuK1zTCXL+plrnbUvhsML6/COea5Z/jDah6XSTlBOjNSsPSIbv9cjZmxuvLyAi
+	eR0o9rcuKbMurzhuoe6ro95RYIFUQvZ6QUenqFIhrAuJsvHY9dgnrP9r8cOq83a8ndhOzUcNDxK
+	9pZPwP1R37GYlTDuS7kDPd6dUt6Q9RGAfFWyJw8jCDDcLuRpZW7MNrVVcamWi+da8DGwUHDt4Gb
+	wNRGvcmUKGnB0yDSV69AC9jB8KRI4CITfnfNyvu8lFW9NhPoG+KsvpvDP9TAc0mgicPnr/U2VTb
+	JZ3YcQ1IiDHIj3WPltV5XiEEo+0ym9+x3Bjip15sUiqsR7xmprUgpX/xO3NcXTV81iQLDEzW/Gj
+	EFc280MLKR6mdkYH6vlhh1s1m2vF2aSxH2zwKw38AtUNX12l7KDVQ5FJN6BNqxNjehxcGS92uMp
+	3yA27z/RzdDAFjx/8MQA==
+X-Google-Smtp-Source: AGHT+IHGs4DwXfP6nWqnbQ+7R8SWiz+qxqpgqaWLkFf+omIN7sI48ep3gWUkRscpSyoQrMau23dXqg==
+X-Received: by 2002:a17:903:19cb:b0:24c:7b94:2f87 with SMTP id d9443c01a7336-290c9ca6707mr410391015ad.14.1761482376103;
+        Sun, 26 Oct 2025 05:39:36 -0700 (PDT)
+Received: from VM-0-14-ubuntu.. ([43.134.26.72])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7d2869sm5119634a91.7.2025.10.26.05.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 05:39:35 -0700 (PDT)
+From: Junjie Cao <caojunjie650@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Helge Deller <deller@gmx.de>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	Junjie Cao <caojunjie650@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: leds: backlight: Add Awinic AW99706 backlight
+Date: Sun, 26 Oct 2025 20:39:22 +0800
+Message-ID: <20251026123923.1531727-2-caojunjie650@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251026123923.1531727-1-caojunjie650@gmail.com>
+References: <20251026123923.1531727-1-caojunjie650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022061418.GC4317@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 08:14:18AM +0200, Christoph Hellwig wrote:
-> This actually has block and nvme bits, so the subject line should
-> say that.
-> 
-> > +	unsigned int attrs = 0;
-> 
-> attrs is always zero here, no need to start passing it for the
-> map_phys conversion alone.
-> 
-> > +	unsigned int attrs = 0;
-> 
-> Same here.
+Add Awinic AW99706 backlight binding documentation.
 
-It gave me more clean second patch where I only added new attribute, but
-if it doesn't look right to you, let's change.
+Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
+---
+ .../leds/backlight/awinic,aw99706.yaml        | 135 ++++++++++++++++++
+ 1 file changed, 135 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
 
-> 
-> > +	unsigned int			attrs;
-> 
-> And this is also entirely unused as far as I can tell.
+diff --git a/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
+new file mode 100644
+index 000000000..640af3891
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
+@@ -0,0 +1,135 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/backlight/awinic,aw99706.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Awinic AW99706 6-channel WLED Backlight Driver
++
++maintainers:
++  - Junjie Cao <caojunjie650@gmail.com>
++
++allOf:
++  - $ref: common.yaml#
++
++properties:
++  compatible:
++    const: awinic,aw99706
++
++  reg:
++    maxItems: 1
++
++  enable-gpios:
++    description: GPIO to use to enable/disable the backlight (HWEN pin).
++    maxItems: 1
++
++  awinic,dim-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: >
++      Select dimming mode of the device.
++        0 = Bypass mode.
++        1 = DC mode.
++        2 = MIX mode.
++        3 = MIX-26k.
++    enum: [0, 1, 2, 3]
++    default: 1
++
++  awinic,sw-freq:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Boost switching frequency in kHz.
++    enum: [300, 400, 500, 600, 660, 750, 850, 1000, 1200, 1330, 1500, 1700]
++    default: 750
++
++  awinic,sw-ilmt:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Switching current limitation in mA.
++    enum: [1500, 2000, 2500, 3000]
++    default: 3000
++
++  awinic,iled-max:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Maximum LED current setting in uA.
++    minimum: 5000
++    maximum: 50000
++    multipleOf: 500
++    default: 20000
++
++  awinic,uvlo-thres:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: UVLO(Under Voltage Lock Out) in mV.
++    enum: [2200, 5000]
++    default: 2200
++
++  awinic,fade-time:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Fade In/Out Time(per step) in us.
++    enum: [8, 16, 32, 64, 128, 256, 512, 1024]
++    default: 16
++
++  awinic,slope-time:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Slope time in ms.
++    enum: [8, 24, 48, 96, 200, 300, 400, 500]
++    default: 300
++
++  awinic,ramp-ctl:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: >
++      Select ramp control and filter of the device.
++        0 = Fade in/fade out.
++        1 = Light filter.
++        2 = Medium filter.
++        3 = Heavy filter.
++    enum: [0, 1, 2, 3]
++    default: 2
++
++  awinic,brt-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: >
++      Select brightness control of the device.
++        0 = PWM.
++        1 = IIC.
++        2 = IIC x PWM.
++        3 = IIC x PWM(P-ramp).
++    enum: [0, 1, 2, 3]
++    default: 1
++
++  awinic,onoff-time:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Turn on/off time(per step) in ns.
++    enum: [250, 500, 1000, 2000, 4000, 8000, 16000]
++    default: 2000
++
++required:
++  - compatible
++  - reg
++  - enable-gpios
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        aw99706@76 {
++            compatible = "awinic,aw99706";
++            reg = <0x76>;
++            enable-gpios = <&tlmm 88 GPIO_ACTIVE_HIGH>;
++            awinic,dim-mode = <1>;
++            awinic,sw-ilmt = <3000>;
++            awinic,sw-freq = <750>;
++            awinic,uvlo-thres = <2200>;
++            awinic,iled-max = <23500>;
++            awinic,ramp-ctl = <2>;
++            awinic,slope-time = <96>;
++            awinic,fade-time = <16>;
++            awinic,brt-mode = <1>;
++            awinic,onoff-time = <2000>;
++        };
++    };
++
++...
+-- 
+2.51.1.dirty
 
-Right, it is used in second patch, will fix.
-
-Thanks
 
