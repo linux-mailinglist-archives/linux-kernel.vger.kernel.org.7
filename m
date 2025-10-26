@@ -1,173 +1,133 @@
-Return-Path: <linux-kernel+bounces-870272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77697C0A567
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:21:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8066C0A56D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368C93AE370
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:21:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FC814E6163
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FCF21FF3E;
-	Sun, 26 Oct 2025 09:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AE22D7A1;
+	Sun, 26 Oct 2025 09:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l3gsmR9x"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1COdxsR"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCE629CE1
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4478820B7E1
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761470476; cv=none; b=meRkkHgd6vn78f6RmOzDogUIkyqF4A1T03/pZSjw17hgP3ed0p7oOp0BGElA5lftj/JRncoGqYkqvvdIyF8rrMvk9//jporeeQjDA+7BZkKnfKOYIE1rfNm30QViXB4BbgPi0bv6iFQ1ZfzIPJp+waakxMHaQ4yX84zfXKv8fN8=
+	t=1761470665; cv=none; b=D9I3k3JKQsfc6O8cGu69S77AkLhZSIMSbTtMMgx8KTPtfgRDTwNkfY0kPzGrPWMDxM5+/2P8ecl3SdS/l6rTkaYNrIhUt0woWdyQoqENY6292cr6H4YrhSDVsu20IhcigeP/wBzv1BzJe7pQ3czqoHQokEtFlryjI179KHsO5Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761470476; c=relaxed/simple;
-	bh=dHEHOymarxJ/E4vwUwZ7VqcbQbmE3K9lR7MOM/cFS6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRG1JMYNusDOO5dlajAEVb/RMvX0XnZnLj2HY0CMYs9PuHKCA/dcWY887MldKQCJfXe05qwGCIsy4kRA55PqJLo9/wteCMUpWroSadM/8M4CB6wz1owPX1vGRECQGEmZiIYm2JFQqxSODuEAhJlNrQpgXI+cC6nNw338ugAQ6EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l3gsmR9x; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e2757988-63af-4ace-aed7-f8708f52fe93@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761470461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BZ1mNPfVmr+XRghn4SL9a6fm6IEVj1GhI2L8kZHAyYQ=;
-	b=l3gsmR9xIiAg847MttOGph3kwu5xKTlyUwYQaaiW5A18UoTmeovapDmkJZ6pOMImA36WRi
-	yg8brkK7qDmY1o7mwW1a57Uti7OTSVbWU0Kp4Db3CiV3dp2X+As6Blaj0oT0cSHPEOHLg8
-	BGoHDNctZFtUtCbn8/FHPC23jUqdChw=
-Date: Sun, 26 Oct 2025 17:20:38 +0800
+	s=arc-20240116; t=1761470665; c=relaxed/simple;
+	bh=Wsp8cxVy22klAhiDGv9P8tZ3IPZ7LUZzLpg3S21IfDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UZnLjrPW+rP5+WN7ZOvFG7nJ2cyTBeUpB8Uw/2MC4/zI+rkcDmn1NR2VBIMNfVIvarq51D7cRY0IkJ+4szbGiteRc9tZImHxv07Ev6DiFjDrADXzC8xhX4iYy37EyQT1vm3jDSzxJqK/aF3PXpEDfeYqILp8yv3aAKnxbfFDYWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1COdxsR; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781997d195aso2551100b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 02:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761470664; x=1762075464; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BdMa6HWGVI8flyxHcsiTS5cMCkPtytHGgTVFhKdr0DY=;
+        b=f1COdxsR66WLD3OuqEA0Rq55Q7m+WcTFWN3K+XEtNYrDT6OAAOlsD/RryqO55LiNrl
+         h9P00xlnr0e6ApQsFX3yaF3HsJhF5bQ2oUPa+aBI9Th+4aEUVvaM952ibhXm4BXcUVzk
+         U/IBNL+sWV5aWsObI6N/v+T9LMQyMpC6nZ3hCpJM0pPwBHFsVVR4f8+d31buzQ5R3U85
+         URHYHd7tZTqdSeGex1E4Ivc012NwgEV7kcSFXr/R4yk/kICCWRgqAAz+dsig46dFRvc/
+         kuzS/BkiVeFd6dhUmt920KNpQnJ2cupgas2ECn/k11rYoOK7F7rDyxBG4x/7GOin6u4z
+         19BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761470664; x=1762075464;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BdMa6HWGVI8flyxHcsiTS5cMCkPtytHGgTVFhKdr0DY=;
+        b=YMaw3m8qgk9dxj8WaTUEuQfP0D3U4UI1dXKZs3iKU/0AxkmqCdl90rkYvOV/mbumQr
+         EbBVLpEuWAzltAwh+Y6YHjUQhR9O1+c6LUfZrOVutjHtcResjugoQzfAbryQ8RrV2ZdZ
+         Ij3jhZyUCTTJreRN+3zRBBy/3AbyvADJeIQWvJ7yDv8/2W6E9HV2H7G+7kxjRLJMg6C5
+         SHApmZDAg2qBmA80d6t6oDhnVo3fh7WcMPHaTX5Pt+tgg/5xKlBlYEJcrxdRP9xRub4g
+         vJOx8M+qqijVzIwcBqy5J0HUB6Go0IX8XdK7oFAmp2G4kS61jxkbj2zmn8+2970OEFbR
+         scbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdlJClSpTx5fFdrDbmQBpIBIod7aelq7os5Q8Oh9R6lz2R32zoPXTCqOAS/0/ANvjpQflZ7HhsfLtMxOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHNpUCmT2AyiETEu/wr1L9VDyR6cWTxtTqSWg6835Hajw99r0H
+	OY3PiAxA4ZxgvdSf8z7r1v4UznjZVa0xKYGECLNmV3jUjmvhvKxZCEHh
+X-Gm-Gg: ASbGnct9RBdV7k/9AODkvGev1VMlMaFm0taLQhPvtO+XW89l3QdvAOmFxb86jYM+eeQ
+	5UWWJoNYcG7s8U5bx9mqoa9zUD1OxRck1Kgox7Pbh2PbUM4trFMgXiAE0xDTZYB9Qf6w4rgkwqK
+	MKXLDmXaOBZRpf6dTtGsrr0JErZn5/srEoPn7HmB+6++GOTjrsGFQ+QVPo29eApGupZQoPEzyPM
+	LqNZp0fHbiNtdElpR3O7ZBlnR3BpyMurA5P4bImmjhUEeGIgg4mMPE73Ti+EGHLyreEJs5tz0D2
+	yKH1QVShjp/jOMmpqmf8go8RTQ973UuENCACqKEUOtRtlILnmajtZejV+PDwfG01iht9mWPaDBI
+	IavJo0qr0TVkPH8OGtl5ngaNfCCzUUUeWcUOs+XY/EZ6mN0J054xCM3LOZjEDZya4aXBcM2DA7l
+	uDpmGRd3fW946jHpTtFVc=
+X-Google-Smtp-Source: AGHT+IGvbZctqDawrbvVj/YWwiaibKLUONAPApFbeuXnBVOb80OZCjV/x8ZAeq0wItW2If52JQqywA==
+X-Received: by 2002:a05:6a20:12cf:b0:334:a681:389c with SMTP id adf61e73a8af0-33de967f61dmr10026226637.15.1761470663538;
+        Sun, 26 Oct 2025 02:24:23 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bfaa1sm4063316a12.7.2025.10.26.02.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 02:24:23 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	xandfury@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	khalid@kernel.org
+Subject: [PATCH v2] selftests: tty: add tty_tiocsti_test to .gitignore
+Date: Sun, 26 Oct 2025 14:52:32 +0530
+Message-ID: <20251026092341.2896-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2025102633-dandruff-clang-e91d@gregkh>
+References: <2025102633-dandruff-clang-e91d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 07/22] smb: move some duplicate definitions to
- common/smb2pdu.h
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org,
- smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org,
- tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com,
- sprasad@microsoft.com, bharathsm@microsoft.com,
- christophe.jaillet@wanadoo.fr, zhangguodong@kylinos.cn,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi Namjae,
+Building the tty selftests generates the tty_tiocsti_test binary, which
+appears as untracked file in git. As mentioned in the kselftest
+documentation, all the generated objects must be placed inside
+.gitignore. This prevents the generated objects from accidentally
+getting staged and keeps the working tree clean.
 
-I'm confused by what this sentence means: "I prefer moving it when the 
-durable handle structures are moved to /common later.".
+Add the tty_tiocsti_test binary to .gitignore to avoid accidentally
+staging the build artifact and maintain a clean working tree.
 
-What does "it" refer to? Does "it" refer to the whole patch, or only to 
-"SMB2_DHANDLE_FLAG_PERSISTENT"?
+Link: https://docs.kernel.org/dev-tools/kselftest.html#contributing-new-tests-details
 
-On 10/20/25 12:52 PM, Namjae Jeon wrote:
-> On Tue, Oct 14, 2025 at 4:21 PM <chenxiaosong.chenxiaosong@linux.dev> wrote:
->>
->> From: ZhangGuoDong <zhangguodong@kylinos.cn>
->>
->> In order to maintain the code more easily, move duplicate definitions to
->> new common header file.
->>
->> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
->> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
->> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
->> ---
->>   fs/smb/client/smb2pdu.h | 24 +++---------------------
->>   fs/smb/common/smb2pdu.h | 24 ++++++++++++++++++++++++
->>   fs/smb/server/smb2pdu.c |  8 ++++----
->>   fs/smb/server/smb2pdu.h | 17 -----------------
->>   4 files changed, 31 insertions(+), 42 deletions(-)
->>
->> diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
->> index 101024f8f725..c013560bcfa1 100644
->> --- a/fs/smb/client/smb2pdu.h
->> +++ b/fs/smb/client/smb2pdu.h
->> @@ -135,11 +135,9 @@ struct share_redirect_error_context_rsp {
->>
->>
->>   /* See MS-SMB2 2.2.13.2.11 */
->> -/* Flags */
->> -#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
->>   struct durable_context_v2 {
->>          __le32 Timeout;
->> -       __le32 Flags;
->> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
->>          __u64 Reserved;
->>          __u8 CreateGuid[16];
->>   } __packed;
->> @@ -157,13 +155,13 @@ struct durable_reconnect_context_v2 {
->>                  __u64 VolatileFileId;
->>          } Fid;
->>          __u8 CreateGuid[16];
->> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
->> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
->>   } __packed;
->>
->>   /* See MS-SMB2 2.2.14.2.12 */
->>   struct durable_reconnect_context_v2_rsp {
->>          __le32 Timeout;
->> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
->> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
->>   } __packed;
->>
->>   struct create_durable_handle_reconnect_v2 {
->> @@ -263,22 +261,6 @@ struct network_resiliency_req {
->>   } __packed;
->>   /* There is no buffer for the response ie no struct network_resiliency_rsp */
->>
->> -#define RSS_CAPABLE    cpu_to_le32(0x00000001)
->> -#define RDMA_CAPABLE   cpu_to_le32(0x00000002)
->> -
->> -#define INTERNETWORK   cpu_to_le16(0x0002)
->> -#define INTERNETWORKV6 cpu_to_le16(0x0017)
->> -
->> -struct network_interface_info_ioctl_rsp {
->> -       __le32 Next; /* next interface. zero if this is last one */
->> -       __le32 IfIndex;
->> -       __le32 Capability; /* RSS or RDMA Capable */
->> -       __le32 Reserved;
->> -       __le64 LinkSpeed;
->> -       __le16 Family;
->> -       __u8 Buffer[126];
->> -} __packed;
->> -
->>   struct iface_info_ipv4 {
->>          __be16 Port;
->>          __be32 IPv4Address;
->> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
->> index f79a5165a7cc..25e8ece283c4 100644
->> --- a/fs/smb/common/smb2pdu.h
->> +++ b/fs/smb/common/smb2pdu.h
->> @@ -1290,6 +1290,10 @@ struct create_mxac_req {
->>          __le64 Timestamp;
->>   } __packed;
->>
->> +/* See MS-SMB2 2.2.13.2.11 and MS-SMB2 2.2.13.2.12 and MS-SMB2 2.2.14.2.12 */
->> +/* Flags */
->> +#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
-> I prefer moving it when the durable handle structures are moved to
-> /common later.
-> Thanks.
+Suggested-by: David Hunter <david.hunter.linux@gmail.com>
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+Changelog:
+- Improve the commit wording and explain clearly why this change is needed.
 
+ tools/testing/selftests/tty/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/tty/.gitignore b/tools/testing/selftests/tty/.gitignore
+index fe70462a4aad..2453685d2493 100644
+--- a/tools/testing/selftests/tty/.gitignore
++++ b/tools/testing/selftests/tty/.gitignore
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++tty_tiocsti_test
+ tty_tstamp_update
 -- 
-Thanks,
-ChenXiaoSong.
+2.43.0
 
 
