@@ -1,68 +1,92 @@
-Return-Path: <linux-kernel+bounces-870417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93789C0ABC4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:04:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D554C0ABCA
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E9BA4E9B02
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:04:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15CAC4EAB8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4CB2222AC;
-	Sun, 26 Oct 2025 15:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E3B2066F7;
+	Sun, 26 Oct 2025 15:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=smail.nju.edu.cn header.i=@smail.nju.edu.cn header.b="qmYZCnpt"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGFfNx+t"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990C14A00;
-	Sun, 26 Oct 2025 15:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405544A00
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 15:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761491056; cv=none; b=B+FOr01hTzFhFnGsUBCRHtZlcXcE5zJD5/6x7oSAwLp24MKgsovExjR/m2Y8M0NbntaL4umcO6bJH/LGYucvv1RQNRMHJHrOv680YaKk/u1etE+wdf307xApKxYosgUozh8+F2gkty96513/PSkl3vWLscLsATVG+KJlbvUL09E=
+	t=1761491066; cv=none; b=DEna90woX44PdeZ50oOVcJODf431gshHodJTYFPGHR4jQVP5elA7CEUa9tSoGVRNGLdw1vb2OohOBLfswn8PGYjRg+oImCL27C6/ErO4N7dGzsbPSW3urjfEnlKva2+QdVax/qiADQ+2TDcovaN/YexEVRQWHI9U9q0Zs1SO1N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761491056; c=relaxed/simple;
-	bh=PUY8ufN7vstGylzvnbltRDJNllT5tt1XhKbAwVE5Z54=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DeeeDaW7GpWNa6Ivvqe6+PSNIK/664Ub86fMltB/Lde/xjRpqKRL+tkrMZZ6wl+a51adq1Xpp0jiGm2+PmdNfdZcRWCWLOndFtJ7vdMmyg/F4JECxALjIFWmij7tSJUm2/3XQa+xVgVc7VLneL951O6VEsMambMXd19BY1l52SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smail.nju.edu.cn; spf=pass smtp.mailfrom=smail.nju.edu.cn; dkim=pass (1024-bit key) header.d=smail.nju.edu.cn header.i=@smail.nju.edu.cn header.b=qmYZCnpt; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smail.nju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smail.nju.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smail.nju.edu.cn;
-	s=iohv2404; t=1761490986;
-	bh=+Z+j6fQorgO5+luTFqPZGzIYaMBkEtHiXYbxa9t/aKU=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=qmYZCnptUP+6DU5xy/xiqp16b9ymOd5+W8thqCSSPb+hcYObYLJ68DlS8Wmckjeue
-	 T45V97Nw2YVrCvVQd6L5X0vGVdwBIdD15N2gDEFHWFeCU4F6xa7w4NmIVhzXa9x4z2
-	 lTegKfBqv2w2CrpCRb5dVDsukbI/6mZ4Az0LO/dQ=
-X-QQ-mid: zesmtpsz8t1761490977t568d50cd
-X-QQ-Originating-IP: NrAxf5G8PfEeh737gDU+xRgygti1s0gwHe4kjF8ywb0=
-Received: from localhost.localdomain ( [1.27.207.188])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 26 Oct 2025 23:02:35 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14413365355414812529
-EX-QQ-RecipientCnt: 13
-From: Kexin Sun <kexinsun@smail.nju.edu.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
+	s=arc-20240116; t=1761491066; c=relaxed/simple;
+	bh=A3bSV3u8AarAyp31lzoLWMXHtLeH04d3zGSkueTEkDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=reecgP1E+hY7MolpTifPWE7KHD9o9WTLf4iW7F1LgCp1RJv3UI0kG00vxb8MCnIdmsxGFqDZaIlfAAN7AnM/V0nUhW3PRDTDLobfIn8XGyufnz19whyz+CRBAplhcxvZsinC5x53E2ZXKIGdzAmsuxLeqnLfP3oOMnvhzxPQgeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGFfNx+t; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2698384978dso24120845ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761491064; x=1762095864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Px4DGTedr0t+HqBVc78Zx84UzxWlcHUehvdoHcOj/G4=;
+        b=KGFfNx+t9dnPaKmJ+V8GqTuokIguft2n5kbPp6Yg3HnOrPfWxLcuuxuQNwuihlHnyE
+         sOgNpBLRKZ2UnETM3LLBcJs75LRoiR3S9lvDG43wHVn9MLizyZZ7syEq7jBz/y97eWrS
+         E/TsHG13ZU8TpoUerT36DWrWWjGdNJoSxtEulI938OjDftkN+mlOa4AHCxpDdjuUGvRJ
+         X/7Uw/lonjCniNItC+rzVg+dwbK2vkm/1s2cfiGm28aEantVJKyABdI25x5J7/0XTcy4
+         LTWIr1AeSP2mts1KSETsirbWAB0kLOSG1ddJ9O5Vpz1VqijP1VQ6xhNYh/c8qWx0vEcx
+         XksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761491064; x=1762095864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Px4DGTedr0t+HqBVc78Zx84UzxWlcHUehvdoHcOj/G4=;
+        b=uDk4a/JKhNC1q6O14R29QTMLwGONirKyFw58bMPSfWDJ1dXHcrdR5JJHvXIY53VE3R
+         J2ADJF+PZO+HooExuZZDQdhpStmSdmGGaRvpUYHYvsaZ79RhldtTjQh2PVBOa5p0gVD7
+         t8cVl25NzeJjAzhw0uNoZMLoCOiZoxF7GjqzoZfvMXdEczrsgl12FNE9trr1N0U0YSMt
+         cnugGq66GwxMg9JU0RurY4YDsJmbZxl+2OWQpSDhFbBF2vX3s0fecITARKRzdswqhGSJ
+         AuL7Bp9r9sUWixxQfu24Di7VWCN3VZv647VSBF7OejF2Mb+XTh6A5//mmXMNPav+9qjJ
+         rf+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX3LXrALlhsTQ+3ECyLryoPi4vdnD8KDwLFocpvkcOsEjmV8EUFGaKKlR2XKPajIw8H//4v+us/Mfe3jz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7n1yUJHDnHbTp+m9Ylk1OUGNmNpRMy57OsmSfeKEvR/57ZmWy
+	ibJhiASq9g89Q2Ij+wtiHydY2Nn+3LjWAoBzVMdEAD+xf9kXlrHltpu7
+X-Gm-Gg: ASbGncs5NhOjxtR90ReNY8Za6/3LCYv+NOPJvAY/NW1/SCD0ZkLjzcFUTfTPgI3+ECt
+	PUYMJFBT1CPYpSPJv1J8EfL9VhuXyROJumGQU3GsAxOEehTnMxGchwPIi1OcjFLZsTOMTqL7s/D
+	Zw13Qq5wO1NRY1Zt55KvOtO9SioUYvz7sjJwfDmrkSblocxOIk/AeNCabo3BAEBP1lJDmhxoonC
+	h6ErTOv1rfJEz7W2ItxClL64UJvFoR+XG74q91byr9+AnKZn1VMPIuj2fzjkL7hJ7MQq6pb2TK4
+	bEV0lCx8xooa8hSdWiffJTgTyoSvWeFSf0/syxYtrwTL/dm6qt1XIICu3bS97YExtHNjQvUfeYC
+	sL5YnD8ozFBUFA1mv8ArPGxnRfHXQGwlaGK1+dV9DNoU4xHbovWcf/tO+L/ymT2shbY+PLObDi3
+	oxEXT1LZgX9g==
+X-Google-Smtp-Source: AGHT+IGL4spg1O0mDgF7D8EgJ3Ni4wTgAIJZGQLvD5iwsaPiYkWPvkdowdH8iIGlLOxo0R0ZBTdCOQ==
+X-Received: by 2002:a17:902:ce0e:b0:264:befb:829c with SMTP id d9443c01a7336-290c9c8a738mr391932175ad.9.1761491064394;
+        Sun, 26 Oct 2025 08:04:24 -0700 (PDT)
+Received: from server.lan ([150.230.217.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d09958sm52320375ad.24.2025.10.26.08.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 08:04:23 -0700 (PDT)
+From: Coia Prant <coiaprant@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	WANG Xuerui <kernel@xen0n.name>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Yunbo Lyu <yunbolyu@smu.edu.sg>,
-	ratnadiraw <ratnadiraw@smu.edu.sg>,
-	Kexin Sun <kexinsun@smail.nju.edu.cn>
-Subject: [PATCH] KVM: MIPS/LoongArch: Fix typo in pfn_to_pfn_prot comments
-Date: Sun, 26 Oct 2025 23:02:19 +0800
-Message-Id: <20251026150219.2711-1-kexinsun@smail.nju.edu.cn>
-X-Mailer: git-send-email 2.25.1
+	Coia Prant <coiaprant@gmail.com>
+Subject: [PATCH v4 1/3] dt-bindings: vendor-prefixes: Add NineTripod
+Date: Sun, 26 Oct 2025 23:03:56 +0800
+Message-ID: <20251026150358.1078453-1-coiaprant@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,85 +94,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:smail.nju.edu.cn:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NlrfLQhmr2s5c53fY0QiQxylX6NgeuqXb8Q6KRvQiWN52YrS8uLceJYs
-	rrcBSGCpLyZGeRHrHRl1/gd5tbaPIjiHPNjfxN4pdMLu9SM2XEOcis/QzXhWS8wG1xZMrpr
-	g/tupIJTKeDcl2fi8Zj3t8LtUo8CibKU+boBJExVAsXSImLuGJ0ZssIYkBSefHjkqTnMsvJ
-	rXhVyICCImEJt8X1w+/pBd5JSrxR+LsQEDuOMY9N9PMC80v2lUlHBNoKlYKXTFFgZaYRzaB
-	UfstE33LR0A1xVgUhVtyB6M381VHS35UsUl8w1di9Y10UPVudMjmtDV8e4JLbbU5eOI4G0H
-	eM4jd4FcN5wCQ2kDBPvLGe578QqpPu18QwALHAdu015FjyBTWyxlcn/Hri7OL4M4dScoXOd
-	RPsoWnEfJkiQGzcZ+NvIAsQwQqAdHMCqVG7klaCieuxaPsAZ44subTNz3fGWQv3y0DcWKtF
-	0z6EA+YSefhYRNWSeuFOd0z4c9FiWQHLMebzI7A5IKBLpVZKpZbUo23iMfboG1BgdGo8CB9
-	w8I3vs2FuB9JQsQnc5+KPfLpDISbjixNa9dmWnpUAJKOWrb/Bs3YqhB+AYxFentb299QQcd
-	Q4X6UqaQ3IKGZN1DYYp5snflNmqOgLLQIFHk5bNtwxMkCtFhHKPuUk1vJMf68of/9dFwSSH
-	vKTFji0gTuMiBmR1acLs2PqFNcKZzzxmA1c69Q0dwvTiVlUE7W+DbHD/EXk+aCDRFuVgEJs
-	M5n0x3p4K5iYKOpQI2VLhtbhBQyixBZFfFF/RjkNDmIdxXHykv80qrJ2i3QOnBucuJmGXPk
-	4pYaTGCPtMhMzFqemPVbvJgK10IyotZfATqmKoX4w0mePRWJk6+ujLzQZwrwqU+sEcA9StN
-	7PLGvihrDHTRc5Fj/CPobFpJrTHYAQo2XJ9iEBosG3cogGVU81l7OyODXhgw2tFgTRwgwT9
-	Duqq3dw8SiH3utXeoIR4WaOi+PzwkW8PL+EXRqaMy33ofPfEL6NJI9Z9T9XPyq7nNr5t5yh
-	oY02cYmzkKWK++We0qpTDFCZxSYJyyuXmUJnhYj6w4kR/3mocczCLikEnOEXU2etZe2+V/X
-	Zaxktp8U+Q8Na6jD+3P4b4=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
 
-The comments in arch/{mips,loongarch}/kvm/mmu.c refer to a non-existent
-function "pfn_to_pfn_prot". This is a historical typo.
+Add NineTripod to the vendor prefixes.
 
-In MIPS, it was introduced in commit 411740f5422a ("KVM: MIPS/MMU:
-Implement KVM_CAP_SYNC_MMU") where the actual function being called was
-`gfn_to_pfn_prot`.
-(see `pfn = gfn_to_pfn_prot(kvm, gfn, write, &writeable);`).
-This was later replaced by `kvm_faultin_pfn()` in commit 7e8f1aa59d0b
-("KVM: MIPS: Use kvm_faultin_pfn() to map pfns into the guest").
-
-The LoongArch code, likely copied from MIPS, inherited this typo upon
-its introduction in commit 752e2cd7b4fb ("LoongArch: KVM: Implement
-kvm mmu operations"). The actual function call was likewise updated to
-`kvm_faultin_pfn()` in commit 14d02b7ff912 ("KVM: LoongArch: Use
-kvm_faultin_pfn() to map pfns into the guest").
-
-Update the comments in both files to correctly reference the current
-function, `kvm_faultin_pfn`.
-
-No functional change; comments only.
-
-Fixes: 411740f5422a ("KVM: MIPS/MMU: Implement KVM_CAP_SYNC_MMU")
-Fixes: 752e2cd7b4fb ("LoongArch: KVM: Implement kvm mmu operations").
-
-Signed-off-by: Kexin Sun <kexinsun@smail.nju.edu.cn>
+Signed-off-by: Coia Prant <coiaprant@gmail.com>
 ---
- arch/loongarch/kvm/mmu.c | 2 +-
- arch/mips/kvm/mmu.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-index 7c8143e79c12..1a9ed6f56a1b 100644
---- a/arch/loongarch/kvm/mmu.c
-+++ b/arch/loongarch/kvm/mmu.c
-@@ -803,7 +803,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
- retry:
- 	/*
- 	 * Used to check for invalidations in progress, of the pfn that is
--	 * returned by pfn_to_pfn_prot below.
-+	 * returned by kvm_faultin_pfn() below.
- 	 */
- 	mmu_seq = kvm->mmu_invalidate_seq;
- 	/*
-diff --git a/arch/mips/kvm/mmu.c b/arch/mips/kvm/mmu.c
-index d2c3b6b41f18..da51707a2366 100644
---- a/arch/mips/kvm/mmu.c
-+++ b/arch/mips/kvm/mmu.c
-@@ -574,7 +574,7 @@ static int kvm_mips_map_page(struct kvm_vcpu *vcpu, unsigned long gpa,
- retry:
- 	/*
- 	 * Used to check for invalidations in progress, of the pfn that is
--	 * returned by pfn_to_pfn_prot below.
-+	 * returned by kvm_faultin_pfn() below.
- 	 */
- 	mmu_seq = kvm->mmu_invalidate_seq;
- 	/*
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index f1d188200..37687737e 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1124,6 +1124,8 @@ patternProperties:
+     description: National Instruments
+   "^nicera,.*":
+     description: Nippon Ceramic Co., Ltd.
++  "^ninetripod,.*":
++    description: Shenzhen 9Tripod Innovation and Development CO., LTD.
+   "^nintendo,.*":
+     description: Nintendo
+   "^nlt,.*":
 -- 
-2.25.1
+2.47.3
 
 
