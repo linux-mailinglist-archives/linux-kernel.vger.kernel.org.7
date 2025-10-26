@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-870705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE48EC0B7E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:50:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AE2C0B807
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4D574EC802
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:50:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78A5E4EB1B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7058530217E;
-	Sun, 26 Oct 2025 23:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7B4302779;
+	Sun, 26 Oct 2025 23:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qPigjbWl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1PkiU1/Q"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331B735965;
-	Sun, 26 Oct 2025 23:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8332F656B;
+	Sun, 26 Oct 2025 23:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761522624; cv=none; b=bWNgQ72OrjxfIoyjl2FLONKv6TZGfZm2nD1s8Aol+6X9MP7TMLse23k1icNIsHhXFTmP8XS5mGBcP6GVVJ5RRjfP8/tutQA/dJDk2yCqCrW8GeMYNjb7awcCOhZULYUz8CQhwOZkkJpSwIeo4gmCuLOeg42IWhuXyIjczOpjQnY=
+	t=1761522891; cv=none; b=QUPXKOGvnS7151ObuBX+kHYRIHXrv0i24FjEMGhHsRnqSM8Ln8Vkq8m/EK7QKx+UIA76gsS/imYVyUB3B43P16BGlvqo9+jGtcdj6rxrATJNGsKEton1rHb5dRkNVs9MjzdgBsB/Xjh+ccC25AcWhrBJfsFKX6rPLv9xGsoLnPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761522624; c=relaxed/simple;
-	bh=8Ka4KDuKSKR42vpWKdt7GFbxhPMHhPwGK1RFzHHs4nk=;
+	s=arc-20240116; t=1761522891; c=relaxed/simple;
+	bh=vwZTxe+ObXBjMgYQ0gvodtEMXgf1fA/8IMgB3QhUv9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmwCRkjdoFp33VJNF/SCJzqOMmkHyIw4sLUHoXAB5LrjqSyHZKZy9lDEyOCK/n4xEep8Cpv5YlX5ujMcYsWK+pWwu7XUzSPbdAwiJdmpb4pKAViOlho12XljrRGUngwidH16hwyqjum/7rs0n7YMECLxZ48Va3ioGTJMY9c+rHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qPigjbWl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 46579E77;
-	Mon, 27 Oct 2025 00:48:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761522513;
-	bh=8Ka4KDuKSKR42vpWKdt7GFbxhPMHhPwGK1RFzHHs4nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qPigjbWltVZE8/Mr7XP81ImDEVEkv8Z+Pgr0VaS2RBysqHPXxaPl/ZpRVMKHbajTv
-	 CkHbISjneiKi9JInf+q9Vd8m70MJDYog2uvC1AfNO9QciMrPppNz6STNKoWUkTxy3M
-	 B5irh0C5gKbUrWHWgKHJvdynxS6sJVahxgFUVEB4=
-Date: Mon, 27 Oct 2025 01:50:06 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guoniu Zhou <guoniu.zhou@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] media: imx8mq-mipi-csi2: Add RGB format support
-Message-ID: <20251026235006.GK13023@pendragon.ideasonboard.com>
-References: <20250820-csi2_imx8mq-v5-0-e04a6fc593bd@nxp.com>
- <20250820-csi2_imx8mq-v5-3-e04a6fc593bd@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUECmX7Z41VkhkvW/I/UUPRTL+KikxETf05uw7v75k8Iiqe17HOsMROCtD2QBlPSF+wyaNp61et9kM7qqv9nOVZOLTfLA9J6aFDe/UuAybLKhUKHlVwPEtZT5yN3ZmuhM6r2OPsP7AGu4hGOnQ/DHCRRRZ9VT+VdhBvX9HZC80E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1PkiU1/Q; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vof5s1/Zw1TeJHjv7+1s4o0cLwd9aghRs+o0h+wWhTI=; b=1PkiU1/QZqsPOzHFz8Vfh/fZBQ
+	jCH1GNmPIO3tczm6DM1WN7JBk1ECstBeD2x7+UOLTcOqCxA2oqV/AA4TfPJCQLX5aXp5KwlAvnonX
+	EU6GVihy+UUvLeNYvKD+hwzx5TL+7Yaq7phWNaVkN6U4QsinKb4jHf/R8WEXPB1lw+vQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vDAZN-00C8ob-LY; Mon, 27 Oct 2025 00:54:41 +0100
+Date: Mon, 27 Oct 2025 00:54:41 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: dsa: yt921x: Add STP/MST support
+Message-ID: <35d469ba-6ff5-42da-b4b2-cec11c50857d@lunn.ch>
+References: <20251024033237.1336249-1-mmyangfl@gmail.com>
+ <20251024033237.1336249-2-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820-csi2_imx8mq-v5-3-e04a6fc593bd@nxp.com>
+In-Reply-To: <20251024033237.1336249-2-mmyangfl@gmail.com>
 
-On Wed, Aug 20, 2025 at 07:04:58PM +0800, Guoniu Zhou wrote:
-> Add format RGB565 and RGB24 support.
-> 
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> ---
->  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> index ad7adc677e389e0f35b0cf63195279e197907f8c..529928b94a193e02177f8773a0e68375b59b0a08 100644
-> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> @@ -306,6 +306,13 @@ static const struct csi2_pix_format imx8mq_mipi_csi_formats[] = {
->  	}, {
->  		.code = MEDIA_BUS_FMT_UYVY8_1X16,
->  	},
-> +	/* RGB formats */
-> +	{
-> +		.code = MEDIA_BUS_FMT_RGB565_1X16,
+> +static int
+> +yt921x_dsa_vlan_msti_set(struct dsa_switch *ds, struct dsa_bridge bridge,
+> +			 const struct switchdev_vlan_msti *msti)
+> +{
+> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
+> +	u64 mask64;
+> +	u64 ctrl64;
+> +	int res;
+> +
+> +	if (!msti->vid)
+> +		return -EINVAL;
+> +	if (msti->msti <= 0 || msti->msti >= YT921X_MSTI_NUM)
+> +		return -EINVAL;
 
-There's ongoing discussions regarding what format is appropriate for
-CSI-2 RGB565, see
-https://lore.kernel.org/all/20251013-csi-bgr-rgb-v4-0-55eab2caa69f@kernel.org/.
-Let's see what the outcome will be.
+I see there are a bunch of build bot warning emails, so this might be
+covered already?
 
-> +	}, {
-> +		.code = MEDIA_BUS_FMT_BGR888_1X24,
-> +		.output = MEDIA_BUS_FMT_RGB888_1X24,
+msti->msti is a u16. It cannot by < 0, so <= should be =.
 
-This looks right.
-
-> +	},
->  };
->  
->  static const struct csi2_pix_format *find_csi2_format(u32 code)
-
--- 
-Regards,
-
-Laurent Pinchart
+	Andrew
 
