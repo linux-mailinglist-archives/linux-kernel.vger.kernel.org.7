@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-870504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5EAC0AFDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:10:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC88C0B050
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FCE63B4C6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:10:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D26E54EC492
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509B527B34D;
-	Sun, 26 Oct 2025 18:10:14 +0000 (UTC)
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCFB2F1FDA;
+	Sun, 26 Oct 2025 18:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="m1Ow9j43"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A178262A6;
-	Sun, 26 Oct 2025 18:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3492ECD1B;
+	Sun, 26 Oct 2025 18:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761502213; cv=none; b=emRIoBN+XGHfZ/BUKL/sj+ih4913jwUnIw8ROMfN+T67ljBCnhP+Y8jugrZ611feAVNHexg7FyIzBG0Qn/MUU4qjmIdUhkGHLdsbdLV4mYL6kUksBrdKcyGKQ5HKRLDuOvUn9iWTaKTwfaYkYklf7iJuGPpfUfGWnFeEpGYGrqs=
+	t=1761503282; cv=none; b=eM1EFFJpIKGFS/FCw+7z/YiUWxRhSr1FQLSU2ueAL5b9KJwMet/RUieVHSF8FLfz7Tx2Gnx/r+cys8RLgPwM41GMxH5P3nY9xUKoD1FMm1HLm5ZAGiMPOjmoj/KsqL80QkL63M5CzYXnZq9ROJ7Gbaux32oEHwHZb2P2Jha+UgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761502213; c=relaxed/simple;
-	bh=2ztvjpybYtP58LTxtTl9y4dSNNgOzBQTm2S20A0kB/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rwQG3hxNnFATWvkqThlxo6sq0P7Vm2+pJOZYqtTdAfIDzMAQGlTO5w2SFXBb4fVdTqiLulanvi4lgHoQF0i6gusqbB5njrNA7nxZDG4P3Gh07sf+CpW8mOT+kuS7yBwx9ODIYoY+ljHPtLQzZ9zLC+MmU6HZwGgEzAsceT/floU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from [192.168.100.50] (unknown [144.48.130.189])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7792117E00AC;
-	Sun, 26 Oct 2025 19:10:05 +0100 (CET)
-Message-ID: <f7e2974c-5513-4a05-b136-9902ffc31dbc@gmail.com>
-Date: Sun, 26 Oct 2025 23:09:38 +0500
+	s=arc-20240116; t=1761503282; c=relaxed/simple;
+	bh=dxiZgUshidiunzeesXzbevM5oc8Zm0k3O9Y4h0w5UVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tqSxAUHhssPDqyt+XsGzwalxzzDizPQE53osPsX6ubPrZfywJl9YB/6oa6M7h46W7SlV50W+Yz6iDXMkBZ1GbCN1/8Zj89dbsQPULrIwAkg3usWigag2AK0sjzBImmkJmvh/UPrugfiO3xaDZv7hBQG7WkqUZfMS6X2JyGT4MxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=m1Ow9j43; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1761503215; x=1762803215;
+	bh=pZPnNNIfItaWXhurcxi0vMwTs0Lsqn4l/evDT63v+Tw=; h=From;
+	b=m1Ow9j43CkZe4whqZREYpOs3d9RDjJCdpxl5z9mrSQVff0Do01TZnF+fqBHpDCJws
+	 qH2MTfrk1F5yiBJdABNlryHZYp6GQoLOVvoMdMAjP72/l7JmugIdhtpiTI6mL45whm
+	 Kk2rSBeN45f1OLms7vpUmHrgHjAI7KO4DI+YnalGOuc/2xgIsknY7mfM/zgtx3dDD5
+	 td+gKlUG5VB2nagLl08ctJF7CnKQ1f/QUuhZEDV4TA59pFNDK6l/fu8J2etHq3BL6q
+	 DKljwsIApQCGRztx1napPsTduJ9GaGMi/ovsRxfnKAh27mve3QIMPNj2LZ/xM4WtS5
+	 mRskW/PdYhnCg==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 59QIQqnR043047
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Sun, 26 Oct 2025 19:26:53 +0100 (CET)
+	(envelope-from balejk@matfyz.cz)
+From: Karel Balej <balejk@matfyz.cz>
+To: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Francesco Dolcini <francesco@dolcini.it>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mmc@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Karel Balej <balejk@matfyz.cz>, Jeff Chen <jeff.chen_1@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [DONOTAPPLY RFC PATCH v2 0/4] WiFi support for samsung,coreprimevelte
+Date: Sun, 26 Oct 2025 19:20:37 +0100
+Message-ID: <20251026182602.26464-1-balejk@matfyz.cz>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: net: fix socklen_t type mismatch in
- sctp_collision test
-To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>,
- Phil Sutter <phil@nwl.cc>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251026174649.276515-1-ankitkhushwaha.linux@gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <MUsamaAnjum@gmail.com>
-In-Reply-To: <20251026174649.276515-1-ankitkhushwaha.linux@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/26/25 10:46 PM, Ankit Khushwaha wrote:
-> Socket APIs like recvfrom(), accept(), and getsockname() expect socklen_t*
-> arg, but tests were using int variables. This causes -Wpointer-sign 
-> warnings on platforms where socklen_t is unsigned.
-> 
-> Change the variable type from int to socklen_t to resolve the warning and
-> ensure type safety across platforms.
-Yes, socklen_t must have 32 bits which would be possible by using unsigned
-int or better socklen_t type.
+Hello,
 
-> 
-> warning fixed:
-> 
-> sctp_collision.c:62:70: warning: passing 'int *' to parameter of 
-> type 'socklen_t *' (aka 'unsigned int *') converts between pointers to 
-> integer types with different sign [-Wpointer-sign]
->    62 |                 ret = recvfrom(sd, buf, sizeof(buf), 
-> 									0, (struct sockaddr *)&daddr, &len);
->       |                                                           ^~~~
-> /usr/include/sys/socket.h:165:27: note: passing argument to 
-> parameter '__addr_len' here
->   165 |                          socklen_t *__restrict __addr_len);
->       |                                                ^
-> 
-> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+this series adds support for WiFi to the samsung,coreprimevelte
+smartphone (and can be straightforwardly reused for the other known
+Marvell PXA1908-based smartphones).
 
-> ---
->  tools/testing/selftests/net/netfilter/sctp_collision.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/net/netfilter/sctp_collision.c b/tools/testing/selftests/net/netfilter/sctp_collision.c
-> index 21bb1cfd8a85..91df996367e9 100644
-> --- a/tools/testing/selftests/net/netfilter/sctp_collision.c
-> +++ b/tools/testing/selftests/net/netfilter/sctp_collision.c
-> @@ -9,7 +9,8 @@
->  int main(int argc, char *argv[])
->  {
->  	struct sockaddr_in saddr = {}, daddr = {};
-> -	int sd, ret, len = sizeof(daddr);
-> +	int sd, ret;
-> +	socklen_t len = sizeof(daddr);
->  	struct timeval tv = {25, 0};
->  	char buf[] = "hello";
->  
+The series is currently not intended for application as indicated in the
+subject prefix as the firmware necessary for the operation of the chip is not
+available in linux-firmware.
+
+Instead, my intentions are to publish the recent developments regarding
+the chip support (see the third patch of the series) and offer them for
+others to use and if possible get some feedback on them and also
+hopefully to spark some conversation with NXP regarding getting the FW
+into linux-firmware which would allow this series to be mainlined.
+
+Regarding the firmware I have been in contact with Jeff Chen of NXP some
+time ago who promised to ask about it internally – I am thus now gently
+reminding Jeff of the matter. I will also appreciate input from anyone
+else who may help with upstreaming whichever version of the firmware.
+
+The trouble of upstreaming the FW is mostly a legal one (although an up
+to date version of it would also be very welcome) as it is available as
+part of the stock Android of the devices with this chip and can thus be
+used on individual basis, it cannot however be submitted to
+linux-firmware by myself for instance as the license is not known
+(although probably is the same as for the other blobs in the mrvl
+directory) and as the submission would require a sign-off from someone
+involved with NXP.
+
+The third patch in this series fixes a serious issue with the WiFi
+observed on the phone (see the relevant commit message). The form is
+however not directly usptreamable and it is not clear to me how to best
+make it be since it involves changing a data type which probably cannot
+be easily be special-cased for the new chip and would likely break the
+other chips the mwifiex driver supports if applied as is. I will thus
+welcome suggestions on this, although I'm also hopeful that a possible
+reasonably up to date FW would not require this workaround at all.
+
+The series is based on the pxa1908-dt-for-6.19 tag of Duje's tree [1] as
+it contains the necessary SDIO description in the phone's device tree.
+
+I have not applied the trailers sent in response to v1 as it has been
+some time and as this is not expected to be applied anyway.
+
+[1] https://gitlab.com/pxa1908-mainline/linux/-/commits/pxa1908-dt-for-6.19
+
+Cc: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+
+v2:
+- Rebase to Duje's tag.
+- Add a new patch fixing observed firmware crashes.
+- Link to v1: https://lore.kernel.org/r/20231029111807.19261-1-balejk@matfyz.cz/
+
+Karel Balej (4):
+  dt-bindings: mwifiex: document use with the SD8777 chipset
+  net: mwifiex: add support for the SD8777 chipset
+  DONOTMERGE: net: mwifiex: fix timeouts with the SD8777 chip
+  arm64: dts: samsung,coreprimevelte: add wifi node
+
+ .../bindings/net/wireless/marvell,sd8787.yaml |  1 +
+ .../mmp/pxa1908-samsung-coreprimevelte.dts    | 15 +++++++++++++
+ drivers/net/wireless/marvell/mwifiex/fw.h     |  4 +---
+ drivers/net/wireless/marvell/mwifiex/sdio.c   | 21 +++++++++++++++++++
+ drivers/net/wireless/marvell/mwifiex/sdio.h   |  1 +
+ drivers/net/wireless/marvell/mwifiex/sta_tx.c | 10 ++-------
+ include/linux/mmc/sdio_ids.h                  |  1 +
+ 7 files changed, 42 insertions(+), 11 deletions(-)
+
+-- 
+2.51.1
 
 
