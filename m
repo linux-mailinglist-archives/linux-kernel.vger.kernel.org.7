@@ -1,158 +1,107 @@
-Return-Path: <linux-kernel+bounces-870527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B930C0B0CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:11:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B4FC0B0D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86D33B5B12
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:11:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 115E234A1B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C29C2FDC4C;
-	Sun, 26 Oct 2025 19:11:33 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09C32FC881;
+	Sun, 26 Oct 2025 19:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TsV2NkG2"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535B2252292
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189F724C06A
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761505893; cv=none; b=UAcfGft53sJU8pVK+9bBFYqOGnPsTuFzFMQz6k8SqY2yaQ6Hi1LisCyKM0DIyuZlfwQtTZFKArVjFA2L2MrmUV4ftB9O7cE/64lpKW7eo2gJqhSZQqf5HSpMRckGIeKp7vAtMcR4nAnYmkC8ZO/67ucpSEuAHzqSXg+GdaK+k3Q=
+	t=1761505911; cv=none; b=kLD+tlprUwGHtuZ4AmR5cxa+G/fgNlUNuqptTisS78B+/Hpzqs0+tjSpWqReRY625IKkp2V1AJyN76466XXf9QEpETj6UCohpalIo361iW63bmsyhQXzii3qy54yOlWFo0cmESkfMKnKndJPIfIdKgF8/wrjYs0GmQ3xgfts/Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761505893; c=relaxed/simple;
-	bh=gB+/H1jHc3kXm0oQn9JJNSxv/rmr/mkFCubhGERWOe0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l8GwW8TGGNB47yagEjBJf45iXBbAwvDweP/ZKLuO6GIS0LgzOc1m7x0bjecV9qq17mIKlIeSvjivzUppRvkXDHTjCjbzDgvxsm+KQaxkRMKumHZGbx6VrRn7GPYMXF35rugMaQmakkpWzAy97nbstniMfFz7tdkQsuyQMMMQCv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so44539265ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:11:31 -0700 (PDT)
+	s=arc-20240116; t=1761505911; c=relaxed/simple;
+	bh=+AUJLFop/NP1PqN2N9QlTcoa51Nm9Pq8GtfyWKv+TXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLlLho4kgd3sH+SAdDo7zPPXJLqZ5v5pL5jZV20d1/1r0461Ejc0bqH0uYd1dYGLD8vx48h2G+HwLeQ5Aah2BeZNKM+7VgHIvnem3q49SYvgbJKwj3XDq4O7mwmLUktNluxEJpgHkBKK4JuN1IHr5JdBRjPAXVaLLVzQ8EQupbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TsV2NkG2; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42421b1514fso2644804f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:11:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761505907; x=1762110707; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kxkTyzPeNmi6+toC10bTmxd1f4OEXI+mwvGXkJgCrDw=;
+        b=TsV2NkG2JgebcKkWKLiKv8x2sIDNLjeEH7lumT9TjYJ/M8RARTIqMtXjEM4YLaw2rE
+         89c6zzWOMCi4AMiNVQRNSuDCPXE22V9yuyXohtAq52jadFxS4Y0NleA/NCfrbLHe7eeX
+         7w587XZGVC2HaCPkzgn7KC9gfoQajPnx2A4olJ3VHzqTbHRKo9L550TRULkemDNhVhJr
+         yPwEOcIn3MMBeBKTFzN4Ck5dzd/aSVqhHQ9HDNpfPjIWcT5XvQrH4a5XrVOqPopqUINi
+         mhemGe6rXdqNEuldbmogKrdv3+yi56aGPCg9jCu2iaLHL1HfZ+wTqXqo1UdVI8H++VWi
+         CXfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761505890; x=1762110690;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/+kphTYoer9Bj1J3zBI4eWzahyJezzwpuW4Mnn7Kco4=;
-        b=NX5DDJsIcxlkk4mkcF/GFpYYyucfdut0nrUUlMujYKETB/jlJLJVqH3noenCxOVmx+
-         VKW+JStlxopINqFxewmKqkC33hma6Y7Ab2dK6kkNSv1bemnuEab+jxfJ5sVk91jv4xEb
-         IzLI5vnON4idBbJKi4k7BD1JomkI1ijltdZludbQsiC2pv1GAHi4046gXwTe2ABiDqXq
-         DFid3CG4hRLnXAo/ZsI9BhydGOqoyil0GwyJjBbU2VlQODIGA8gHqjluRDXcqGbHkKdx
-         MZoeE0MYpF0JMU7vAt/fiSTggXFX7Cggi7DV5SFeahlkr9tjWCXfhjwhe6A8BMo5AZpa
-         lRFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXc3lidCi30uOQBmibqyiXfRnu2LOY1zWyAFreY154NTPGUZHjb9rfOzCgn8ele7ELKz2jHL+AolcOanBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzanWnZLFIfyPn26dTzb64BwX+PowMh9URRxCr0SaI9GQWNN/jN
-	O8Icz6/dfY9jfub4KdmLnFjaxJT6GMjBQlNtoX038Rnl+ngr4Ci7NcTfentFNWO62jYf3wOhWS4
-	azxSJSlzoIB9MLrwBtONiDOxmuFB7DW0VSt5d3hZ61GuNvdcHbohIaPg5h7w=
-X-Google-Smtp-Source: AGHT+IGDEU9U4Z+L7cBPuqTs8NtO6WkLHGO9pQDYO8IFWzvKfxSzGkoEojTSu0k4eG+tyOrG2QyvQ+VUXo5k2uMTK2MFqTWC3kRn
+        d=1e100.net; s=20230601; t=1761505907; x=1762110707;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kxkTyzPeNmi6+toC10bTmxd1f4OEXI+mwvGXkJgCrDw=;
+        b=c7m/FcmWaGL8U2d+vzBpJ5AWmL6nOT3TAIb7jFblWrvGxyndBnD0zugDb7Qa+/7FuM
+         ampdda5ABAfxDUlvvEgoTOSTtUIve9nVbAcc47+PuGAT1/jlUTP4vpPwcireYs96hOiS
+         NTOuEtDaFZxWgKOihdPAes/wi3pfKoyFzcq5j+ehoo0ZSJL27ntorpu9KpQW7kLgzplI
+         Nv+sTHjawmxRtwIY9nQucM2nkVbipHdSMw/AbQWi8uJkMkCgY/qJFSfea2v+J/WnfuNi
+         yf5MrLovFStJ8ygNWuFuOhLjoUfCW3m/HmHiKP4mmVQfI3u3wZTAcFEcAtRcO2Yj0NYD
+         gyqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYN7ZSCG+jfDYQZZYBt24DsvoKjsMUrnV5X+LtULNh/fTYRKm2fD8Efzo488Tg0AbRQXwmW9xShaFjAFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Qo1QJu7csEOAGxwTbh1Kl5FMIvb5IBN5y9qN7d2WTQilktH+
+	Ekhf1AVkgSRAuZyVKXK463Jq6cCg0NaNGKCOeSMUYEh3zaa+MF/GToWmrCiXEWNdwBnAATCNwbu
+	3o2L/
+X-Gm-Gg: ASbGncvqax6ocKfZ0f4MClNK1zmzxq2krYfHIZ2/UNIZ0trWVGdH9/w0gir981AYX5n
+	p+EK1G46ashsui5Z4CAzb9zyNBfkNKmX0T8RdBFMn4ofpWq3s2Pk4cbfEWGUbrjPqe9FmMDjOm6
+	ltc2aFFCQXJ/kWk7VP7diRQbOk+omcID94wdvkjp6Ubj4jTrT9pHUaFZTlJDPO2TmjGeH6Bp+P4
+	XBPYFH9yw8tqPomkfCAjoSgo8DPQpX9g2D0kmXArRWk7k2DnOSofFmBLOMdp5R936Al3MgzRiW4
+	mzG50MDHJ97lDmzGTiUAtceDXOLjrSXe63nDrbc13HFN+RaS8fSwzI5PDJ3ZMYyYECjJBYOL/6a
+	3SBQNsdXa+5nB9p39re9sD7y7PkXcpT8GL8ZLkf0zxeOE/o6CmVmEin/QMEiCmXQG6aH62GB5kk
+	KkPXfePzc=
+X-Google-Smtp-Source: AGHT+IHzexoxvDrDvl24BhwQnRe4QdBdByW9rd0vZNY8yvB8WV7YYfd9RJbflJWTepT5nb//VF+/0Q==
+X-Received: by 2002:a5d:5f82:0:b0:3ea:6680:8fb5 with SMTP id ffacd0b85a97d-42990701979mr5977601f8f.2.1761505907325;
+        Sun, 26 Oct 2025 12:11:47 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475ddd41a5esm44681245e9.5.2025.10.26.12.11.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 12:11:45 -0700 (PDT)
+Date: Sun, 26 Oct 2025 21:11:43 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: qce: Provide dev_err_probe() status on DMA
+ failure
+Message-ID: <qolhxtuathf4go2wyiheptmd2u4nsg7gvlpj3jlzprkybv2hds@wp2clrvcurjo>
+References: <20251024-qce-dma-err-probe-v1-1-03de2477bb5c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e04:b0:42d:878b:6e40 with SMTP id
- e9e14a558f8ab-430c5263fcbmr520530915ab.13.1761505890465; Sun, 26 Oct 2025
- 12:11:30 -0700 (PDT)
-Date: Sun, 26 Oct 2025 12:11:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fe7262.050a0220.3344a1.0145.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_destroy_inode (3)
-From: syzbot <syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-qce-dma-err-probe-v1-1-03de2477bb5c@oss.qualcomm.com>
 
-Hello,
+On 25-10-24 14:35:07, Bjorn Andersson wrote:
+> On multiple occasions the qce device have shown up in devices_deferred,
+> without the explanation that this came from the failure to acquire the
+> DMA channels from the associated BAM.
+> 
+> Use dev_err_probe() to associate this context with the failure to faster
+> pinpoint the culprit when this happens in the future.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-syzbot found the following issue on:
-
-HEAD commit:    43e9ad0c55a3 Merge tag 'scsi-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=127ea3cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df98b4d1d5944c56
-dashboard link: https://syzkaller.appspot.com/bug?extid=25df068cd8509f8c0fe1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-43e9ad0c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58bbcd26d07f/vmlinux-43e9ad0c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f7223e24dee9/bzImage-43e9ad0c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com
-
-BTRFS info (device loop0): balance: start -d -m
-BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
-BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
-BTRFS error (device loop0): bdev /dev/loop0 errs: wr 3, rd 1, flush 0, corrupt 0, gen 0
-BTRFS error (device loop0 state EA): nocow_one_range failed, root=-9 inode=258 start=53248 len=12288: -5
-BTRFS error (device loop0 state EA): run_delalloc_nocow failed, root=18446744073709551607 inode=258 start=53248 len=12288 cur_offset=53248 oe_cleanup=53248 oe_cleanup_len=0 untouched_start=65536 untouched_len=0: -5
-BTRFS error (device loop0 state EA): failed to run delalloc range, root=-9 ino=258 folio=53248 submit_bitmap=0 start=53248 len=12288: -5
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5324 at fs/btrfs/inode.c:7942 btrfs_destroy_inode+0x7c9/0x910 fs/btrfs/inode.c:7942
-Modules linked in:
-CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_destroy_inode+0x7c9/0x910 fs/btrfs/inode.c:7942
-Code: 4a fd ff e9 03 ff ff ff e8 d4 6a ef fd 90 0f 0b 90 e9 c4 f8 ff ff e8 c6 6a ef fd 90 0f 0b 90 e9 ee f8 ff ff e8 b8 6a ef fd 90 <0f> 0b 90 e9 1f f9 ff ff e8 aa 6a ef fd 90 0f 0b 90 e9 47 f9 ff ff
-RSP: 0018:ffffc9000d497860 EFLAGS: 00010287
-RAX: ffffffff83d0a8d8 RBX: 0000000000028000 RCX: 0000000000100000
-RDX: ffffc9000ea83000 RSI: 0000000000062177 RDI: 0000000000062178
-RBP: ffff8880427a2280 R08: ffff888041940777 R09: 1ffff110083280ee
-R10: dffffc0000000000 R11: ffffffff83d0a110 R12: ffff8880427a24f0
-R13: dffffc0000000000 R14: ffff8880427a2628 R15: ffff888035518000
-FS:  00007fece6bca6c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc0fc53000 CR3: 00000000435f3000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- destroy_inode fs/inode.c:396 [inline]
- evict+0x7c2/0x9c0 fs/inode.c:834
- btrfs_relocate_block_group+0xb4a/0xc60 fs/btrfs/relocation.c:4026
- btrfs_relocate_chunk+0x12f/0x5c0 fs/btrfs/volumes.c:3451
- __btrfs_balance+0x1860/0x23f0 fs/btrfs/volumes.c:4227
- btrfs_balance+0xac2/0x11b0 fs/btrfs/volumes.c:4604
- btrfs_ioctl_balance+0x3d3/0x610 fs/btrfs/ioctl.c:3577
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fece5d8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fece6bca038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fece5fe6090 RCX: 00007fece5d8efc9
-RDX: 0000200000000180 RSI: 00000000c4009420 RDI: 0000000000000005
-RBP: 00007fece5e11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fece5fe6128 R14: 00007fece5fe6090 R15: 00007ffc0fc52ca8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
