@@ -1,189 +1,158 @@
-Return-Path: <linux-kernel+bounces-870543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D2DC0B17F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:58:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68016C0B184
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65E61897350
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C707189876F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AAD2FD687;
-	Sun, 26 Oct 2025 19:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0010725A2DD;
+	Sun, 26 Oct 2025 19:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SB1s9PDB"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZvNlD0Y"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6082609D4
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9AF2417C6
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761508693; cv=none; b=U4wHG9Aaog7vSJVojjwn7QAU29vHQH18EtAnV7M+WZoDYdlhtFrLiF28bN1wCikKcSU57oVH1vyGNIFW04rA7FzeQpDfDrYXaMRezvXOn6lvTC7QwaFzWKr2UMSRm4LXm9OornILCMa/Bo/BNM4GoaGVSuUl3VYv9s+xbhJd8n8=
+	t=1761508739; cv=none; b=ACYT9PLCUVCZMaRcr/dZVeLPqcKZykoaPwPeMkT8fX6rF9ce9pMm/GObMEkBOpTOiGAid/b9akdK13KKZJJEdU3cdly3mxb3sSL9p2kDc8WrqUw5rJnUj6lChPdPR4CqyxBfn6fIh8Zj4CErztmGCAmfplDyKXePsM6NgelOX7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761508693; c=relaxed/simple;
-	bh=yOE0P7FWFoGaMhy1Bhi1naXUs1jG5gQoZnDqGoQWcSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QAvoKOt6iYs608teV87ENN+XHraADrNxii5dg3sIKmSnSyu6NEtU2X8CsmY2zXxnleQn2gpHEhYHgGhHpmqKmQwuumg40HpZskmGBzlSOR/eG2QwT9v8JzUTz/PmwEs7fxtEYZ0o7VVsdFlui5TsPhRusJp3TTfG7zHlD3omHPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SB1s9PDB; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1761508739; c=relaxed/simple;
+	bh=QBZOFso+rikTeqOfG5xslpmr/o1dWQgIjC9jRe5aqxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ml6cPK2gKLwQxXn4dd+l9Q71lMhLmFTn8J8jtsZwwsR0WKJBDNpsN2tPXlX+ag8fCHl4Z8zHFxgDfAkbzkWud/Xg/8K42r3ac1MTXkV7InEa0A3Uk8OyM06poSNghDtOPLQbDFf5pDL2y1ZjMQQ4jziLVrIu6lM/cGmLN4iViVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZvNlD0Y; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so2852245b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:58:11 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-592ee9a16adso6722990e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:58:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761508691; x=1762113491; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=rz+iPjrso650B0W3/FsE0e28IvCi/qUg0X/JHlyUrwk=;
-        b=SB1s9PDBgJsQNM0MCxExgvljtAOM4F5hVfe7POB/MscBlVJDV2an679nt0/Mcn4yTx
-         VEX0LLdOPzyNyj3lBCANxOHywE+Xw+1rcxSc90gzXE6mo2Cdx39BjAv+UEQwKwcz78z6
-         Ag6XSeY0wIytk0JaN08QdLQbrCHZDajAWTtnAZIE3AF+H2IQlffoLftR6AqkNbO9mJ4W
-         rT3UDWO9C2Wsf8ASmfxuoaxRikcGitB8ATsKSzytLJbm7XmkUpziSpFW9DlBeN+AUQsZ
-         jqOvCvCDJtBmPW4c7O/VUS7bJjlkBZowEGX0KZgIZI39KtL4oyuTGD2dajLo79XE5JkI
-         9UJA==
+        d=gmail.com; s=20230601; t=1761508736; x=1762113536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9BW4FFJcxwWu2CsyinUCr/KixoJIv7Wl/ptnFvZ10Zo=;
+        b=kZvNlD0YmOCJnNIR5I6b6ooc6sYJ/PnrnO8BLcdvQgfr2iSNjHHkdh2SEAcRhJ1Z4q
+         I8pBJ1w8gkgInQ7bEKC5wu/oNWBR42TiPEKRSwcvmjbLMLE4DO5APp87IhLnN86i+WEE
+         ACtFl8DY+19IR9gQJg3jf7uDKif8hfuV6ss6R8pzL2bUzgzZS1qBkUNgFvhopCLkOwb6
+         uhgzeFzMlWDGuZniwvVsdW/izabTfY2V6wK6z2c0NkW9Bqbt1kucubQcMgH71GlCSVJ9
+         U4e6c6qVpeuqkxw2+kkvb1L1qMfe82czxUuU4fs5RI6ehV+A3WdgRpDJCGioSVke8z0A
+         YHvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761508691; x=1762113491;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rz+iPjrso650B0W3/FsE0e28IvCi/qUg0X/JHlyUrwk=;
-        b=vkOm9t39cU1+zmR27B3lzYFsSSgnqE2OMtRNOMSnW5HKWJi0OgH51ySosSwaPsCA/k
-         BnZARIb0H1VJcsesCEhHhx7SSxcfoNdFPtkM083cDjt8ZfPj2zgKVr256tPOXBfxAE0N
-         Evbll1r5Q5sqEeArFJDcOu1K9ClUu/j+C0hr8VDt9M2nyvK3mH+bLSBG8U8/MQGnC6l6
-         TicMoPdxmLNBJyvAsKUC6bH7u4nCIMFKYoZUvdDncUDki0E1PfoMi6SvERImIjwKDwJJ
-         jjRIDntVlw6QinGxxHXt/iDDMCV9hSzfgcoHf1yDDxi8Xiy+beA3HLpZ7CFmxZ5+zTIy
-         vHHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVewyDr4l8R4PBHBZTWP6RxtQjuKtl20odhjgYD4vzF+PoxcZYkuS1TyEvBcd0liZQgpCMz9/74HRhd5gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytJJ40qZeIK6shc6QCgTe91ADqvjLmq2ZuDMsto2r8JENx5niN
-	eGlvAHF3GuW1WNm13bUZumnY4CNSY9tp9SV4ujn1OFt8oO+s7RN4bVNi
-X-Gm-Gg: ASbGncs8TFib6JadqIdOUyv9ju9/aRLxFRpEtGrfQY5SDrvOZuxgPs22J2bYe8csqo5
-	59NSCIpokN5ji4WeFGy8ZYkHkyHILZAu3kMfmvywiewbSHmxgVUeYSfTwuZBL5PpxZm7QVQHsuK
-	X5YF1J14Jy5UasPcNdrhADEnETEiO/5SgB+V3tDurno0mOwH7Abm+b9WMFnRWXdBHRwT5cFo3wA
-	oguR1X+ONgJVZKMb1LAsHV/RpvtxZqhOjNeot1dD4IglsR0fl34GGIvSMo+N1Dly1dSb5qvtPF2
-	O8q0GF4+cFXf2bLgdLiKdJ1qTB1LQtsfhy3l33+PFKNM8Z3OS45l24BWzhmxr0TgoTj5/zdBzOq
-	5UDYpd9dNuEdGbdUaER6zsaN9ePrO+7OI0J1/ZWIFGgKS7tkQSebG0J4+0NWiBW28KqKbsX/zOi
-	G3ssLIjNXgLOvPaLcRQRdWopqTvsL+uEp6O+jdm3iGgps3yZP+
-X-Google-Smtp-Source: AGHT+IFoB+ruOh+nGUiptuYoaCYIh4e90e4xNspCvcjO4DwFEFbyG34XpfKFjr+dDPN56lOiGboX8w==
-X-Received: by 2002:a05:6a00:813:b0:7a4:2294:92ff with SMTP id d2e1a72fcca58-7a4229495a8mr3384862b3a.27.1761508691177;
-        Sun, 26 Oct 2025 12:58:11 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414082e10sm5525818b3a.55.2025.10.26.12.58.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 12:58:10 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e51c3dfa-406b-4dfa-bbb5-c31d1a2e0007@roeck-us.net>
-Date: Sun, 26 Oct 2025 12:58:08 -0700
+        d=1e100.net; s=20230601; t=1761508736; x=1762113536;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9BW4FFJcxwWu2CsyinUCr/KixoJIv7Wl/ptnFvZ10Zo=;
+        b=sKdpq+Y1jS/oo78DfGuG9PzvbWzqFKkIbpsFX7Mq/2pCiL0crkTy1IRGS5+TGk0RiZ
+         xk5CB7EbsRRYwTnaHXX3hUppyGXxF7k+8X2C4WX6IAz2cs9PKOgeQlxtvPTSrclV+bCV
+         Z5vjmSzez9gUXJ4OoBebBh2CyX0UeFRgTEKe5ml9WY71q4XLoEqhnW/C4zWyMULGmQqQ
+         ijtWKd0GecnAo2LaW/49H73wrqM4fBSWoxhK9QLt3Rmqmj9sKfz8CI59sagMA3mXRVmL
+         prvJ82r0AHv/7FF/1mefyyOlCZD86q4p2rfftUHgKPEWQVeDlvmNK9GFQXYDXlRN0qUm
+         N95g==
+X-Forwarded-Encrypted: i=1; AJvYcCU36xKVtmx8O7WfO+4vZuXDKSy0tw9hUoayY9k4WwXCUZURKeG3WaK6ihXm6Mwl64ON2VGsz5qaBSuNuh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKCYpjJVjySDf7zdA8jnsgWeuMQA4mNBjdGQvkeWbKvDidN0cD
+	Z8VI4a0Qf/mD8Np7r6F8rOxgoeFqnX3ec1iM4Q9TJyVVC3dl8QioFXMc
+X-Gm-Gg: ASbGncsClIquRKc7EzJt+W6BX70uq3vWjXTg9g7ReNn9OUeBvsn0AMRWC9LYqsFN+3c
+	7faWZjnhpT4O7cjPTRdf59MM4WfyQiLUF0nSwibxbGyhX0d+ihXF0uk/nxrhdbwJp0Ialdc0t2d
+	tGJsyX7X0QIzJ0WG54sSNsu+WcSbJzTrU7sg78sr1o9vMViZe+3K7wo76MYCmTLOKhRQY0f3tTq
+	M+NJcV5ka3Y4QxsFbW4cxdGqSX9MLLYuQmKeASQEQkXs+vGx1uHDsHVH4mIstO+GVP09gbUW/tt
+	LmrBUKymAjy2BU6sSemIClGiVV/FnO5oC7AevGepZqqeBUyXsZAtLDJJgzJSBS2KHq3uk0ye4DC
+	HN7U6x312k1d4ukm6sNQ/kCYKBp6Z4wstlnR6xMSYqcD+9fmPhPfHfOwcn6NQxN0pcJW3VnAbJ3
+	4wMnbfdz9tghiCaYNknfVBOiddV1zL0Wb9XizReNkl+GHM6vx+yqi8iXbAoMoh2AZTK5e5ZWOph
+	nzkE1YZG651NZDuDuNIcWA=
+X-Google-Smtp-Source: AGHT+IE9Z30YetmF5ZoMGNO3uDtCKPnBzSiGPDkXuike/MPa9JFCNcZ7+akwrlNqk9Sg7uQ2GYVu/w==
+X-Received: by 2002:a05:6512:1106:b0:58b:114:b7e2 with SMTP id 2adb3069b0e04-591d8546250mr12024526e87.32.1761508735657;
+        Sun, 26 Oct 2025 12:58:55 -0700 (PDT)
+Received: from uuba.fritz.box (2001-14ba-6e-3100-e3bd-e249-333e-6a5a.rev.dnainternet.fi. [2001:14ba:6e:3100:e3bd:e249:333e:6a5a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f83c96sm1773523e87.101.2025.10.26.12.58.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 12:58:54 -0700 (PDT)
+From: =?UTF-8?q?Hanne-Lotta=20M=C3=A4enp=C3=A4=C3=A4?= <hannelotta@gmail.com>
+To: akpm@linux-foundation.org
+Cc: kees@kernel.org,
+	gustavoars@kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	=?UTF-8?q?Hanne-Lotta=20M=C3=A4enp=C3=A4=C3=A4?= <hannelotta@gmail.com>
+Subject: [PATCH] headers: Add check for C standard version
+Date: Sun, 26 Oct 2025 21:58:46 +0200
+Message-ID: <20251026195846.69740-1-hannelotta@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641
- power monitor
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Igor Reznichenko <igor@reznichenko.net>
-Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
- devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- skhan@linuxfoundation.org
-References: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
- <20251026184641.631641-1-igor@reznichenko.net>
- <a45ad6b8-b4d5-4e0c-8f1a-3641dddb240d@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <a45ad6b8-b4d5-4e0c-8f1a-3641dddb240d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/26/25 12:41, Krzysztof Kozlowski wrote:
-> On 26/10/2025 19:46, Igor Reznichenko wrote:
->>> Subject: I asked to drop "binding" and not add "support for". "Support
->>> for" makes little sense in terms of binding. How binding can support
->>> anything? This is the "ST TSC1641 power monitor" not support.
->>
->> Krzysztof,
->>
->> Thanks for feedback, will fix this and will create following patch versions
->> in new threads.
->>
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  shunt-resistor-micro-ohms:
->>>> +    description: Shunt resistor value in micro-ohms. Since device has internal
->>>> +      16-bit RSHUNT register with 10 uOhm LSB, the maximum value is capped at
->>>> +      655.35 mOhm.
->>>> +    minimum: 100
->>>> +    default: 1000
->>>> +    maximum: 655350
->>>> +
->>>> +  st,alert-polarity-active-high:
->>>
->>> Isn't this just interrupt? You need proper interrupts property and then
->>> its flag define the type of interrupt.
->>
->> This controls a bit written into device register.
->> I omitted interrupt property after looking at existing power monitor bindings,
->> especially hwmon/ti,ina2xx.yaml. INA226 has very similar bit controlling alert
->> pin polarity and binding doesn't define alert pin as interrupt. Overall, I didn't
->> find many power monitor bindings defining alert pins as interrupts.
-> 
-> 
-> On INA2xx that's SMBUS Alert. Is this the case here as well?
-> 
+Compiling the kernel with GCC 15 results in errors, as with GCC 15
+the default language version for C compilation has been changed from
+-std=gnu17 to -std=gnu23 - unless the language version has been
+changed using
 
-It could be wired to SMBus alert, or it could be wired to a CPU interrupt pin.
+    KBUILD_CFLAGS += -std=gnu17
 
-Guenter
+or earlier.
+
+C23 includes new keywords 'bool', 'true' and 'false', which cause
+compilation errors in Linux headers:
+
+    ./include/linux/types.h:30:33: error: ‘bool’ cannot be defined
+        via ‘typedef’
+
+    ./include/linux/stddef.h:11:9: error: cannot use keyword ‘false’
+        as enumeration constant
+
+Add check for C Standard's version in the header files to be able
+to compile the kernel with C23.
+
+Signed-off-by: Hanne-Lotta Mäenpää <hannelotta@gmail.com>
+---
+ include/linux/stddef.h | 2 ++
+ include/linux/types.h  | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+index 80b6bfb944f0..aa2cb3db3c06 100644
+--- a/include/linux/stddef.h
++++ b/include/linux/stddef.h
+@@ -7,10 +7,12 @@
+ #undef NULL
+ #define NULL ((void *)0)
+ 
++#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
+ enum {
+ 	false	= 0,
+ 	true	= 1
+ };
++#endif
+ 
+ #undef offsetof
+ #define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
+diff --git a/include/linux/types.h b/include/linux/types.h
+index 6dfdb8e8e4c3..931db48a7a09 100644
+--- a/include/linux/types.h
++++ b/include/linux/types.h
+@@ -32,7 +32,9 @@ typedef __kernel_timer_t	timer_t;
+ typedef __kernel_clockid_t	clockid_t;
+ typedef __kernel_mqd_t		mqd_t;
+ 
++#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
+ typedef _Bool			bool;
++#endif
+ 
+ typedef __kernel_uid32_t	uid_t;
+ typedef __kernel_gid32_t	gid_t;
+-- 
+2.51.0
 
 
