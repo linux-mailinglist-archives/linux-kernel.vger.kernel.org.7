@@ -1,115 +1,236 @@
-Return-Path: <linux-kernel+bounces-870443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6DEC0AD24
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7941FC0AD34
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A057188BC7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F7B188F01E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF6622423A;
-	Sun, 26 Oct 2025 16:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39133218EB1;
+	Sun, 26 Oct 2025 16:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0o1OXDJ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ED82mNNR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235DC20371E
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 16:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3361A3164;
+	Sun, 26 Oct 2025 16:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761495077; cv=none; b=aHe0cFUADkHQUIR22k0ektpocNjhWRuPs7KAldTGZ6g5/0eo/JfQKpQ0QLgDXC4GX+9bNy3CAGCO//Lh1+KTnBxiKfisNzt39e/mTw6A82pLMxbf5U5zcsBjGg0XzNsQHzQ1hRU8OgxCkXBEwQ98l8cEHPR33ZQUPNiXXkoSYJQ=
+	t=1761495824; cv=none; b=RCQc6o3SeqRA9A+lZYDWZWadOyZTWdwY64/SWoXO51Rxrq0wMtbzDLqHaDiWDkXncS2jPzjYyImQ01eOH/AXlCHQ6aC1h+20AObuiESmxkJSfMShCh6WlrFhWCRukgd7Piw1IFTbfTMiPH4gb5sBzEmn+WHlijI3dtU4hAR52vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761495077; c=relaxed/simple;
-	bh=b/cnNI5DLYSQ1LNmhLxai52Jbx0+rBEUqUBkQ49bPvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WBoEUQG3wlq2HlHsNPfnv3Wp0LjvhC0+JVIkaiSnBtaMK38PH74AP6UqxD9eqi1iA++h/pS5+MNVRZNtuhhj5oVW+y25AsXpdPfGjbnIF0QO/Bq6tD54AZEUx1EfdA4fBmOtC2w0o1CbHBTMJISmda0jafDaz7jjKGvMGKyQ36o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G0o1OXDJ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-26987b80720so6768995ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761495075; x=1762099875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AQau2nuAPBGeqn7nXR606yrFTjooTnZ5gmJ89ZW511o=;
-        b=G0o1OXDJR4Ov9pbnT2bujSglqNdu5axd2DEowrwhS11c5CT2QbPH350ozcsznhu04m
-         Myu5+hMer9YNLsGvLtBQsv9jVlCeFmk2xU7Z1hiV7Es8SlxRQ3N3wSh/S637xXuxr09/
-         C9bF1mFkWuWpfnksn1nZ5azTDWZzvViPl+6b/py9Z93tWOD6NqMZlZnShMcHZt4tRqui
-         MfC9pJfnGFpC2ri06gggGe28yGOXGhkTQXCvAu9GveMjx5EQW0oUA0A2tn7AZTVBxhVz
-         PszKd8Z2qdb9sE6wVXuBBf/PR2DxYacQLxv21qGASzErsvJPHHpPLU6Joc2CY6YTYIYB
-         J2eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761495075; x=1762099875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AQau2nuAPBGeqn7nXR606yrFTjooTnZ5gmJ89ZW511o=;
-        b=TaCDYfG4L8/bv5CtBqlpog6FPsLJd1IBsbiVZOIBws+s4E3pU4e9hIhuN6S/yGRBGS
-         xOMplfdjYqjOEs6FzTLQvA9xFsU/o1MiwIrcQ8+mZf+odQMdOJQXrMiULwxpXaR57lfV
-         6UMRJB1w+XmWdWGp+oTIkXSB9bk7nqRG1781Z0+EVcw8ghfJL9h8AHTOaNv+e0Xa6Aic
-         jXBnobpGGypagX4ZcQuFNap3yMDNDr5b/YMYluRUxYqooBzUcyXBN8AKCxF5TMZhqy49
-         CKaJsi3fWLy2ODAJGHa+pgXpoj9NabnEVhhiWALEMQR95Jkisaa1B+ElLT6ftq+wd6gT
-         kCcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8rP2bvhy2EFPlqOqWJ2HTMDzGhS20RPLwwAv9u+8MK/JKYhP48SnC04k9ZhFwXoAYDZFa1Rpf6kZpJDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwG8KbqXC87DV67p/axSTU4/GqzHOygBdHGhlB+FgCIQfqDQmf
-	kuiNxehfC49Fzc9wE5+B00GDzyu4rCEUku8d8d3MybR56C5jE7F0LXB6EnTgwRxfJT6XNMWXlxi
-	dn1lD5ONzPswVKf8oVhsOTNxWPIqa6cU=
-X-Gm-Gg: ASbGncunauSAwQbWmsz/UMfa4Q/KwJzZy44Nfwvo2/dHXAupcp57twfDGD1/06JfxCE
-	wEUhzuvTWHN2juxqGMNHXPMWdfI61xt550QeGmslhbeXk5/ithp8Tstx3bpDP0e5IZUNv4DSeAz
-	vnI8yKNpYrS/37ZV5veJ1J1/4g23ap9we3r8bOWDASqJUR4bq8XM5LUmDQWcsADjkA1o7ZEXg3F
-	bOEelCnTaeXw22GDeTwSssF+lEt4VT6ejINKyltrRGxpHNFpGi5lBHUH7qiZsfPSoQgUa8luf8M
-	VYfT8Vr+wRlLU9EfFVwuXgh8I8kC1L0p+NU/B0bTnP56ncJL/6YduFDKnl6z5KC9CXLXrvTceDu
-	u5L8=
-X-Google-Smtp-Source: AGHT+IFI6sg3xeU/Y+7ewS/quTbjQS82OqC83SGue3QsM3IMT+1H7kuNPGEtqVWO3pz2NXoXOmWS4q2L435vkLC65I8=
-X-Received: by 2002:a17:903:1a0b:b0:27e:eb9b:b80f with SMTP id
- d9443c01a7336-292d3e50f14mr137740975ad.2.1761495075335; Sun, 26 Oct 2025
- 09:11:15 -0700 (PDT)
+	s=arc-20240116; t=1761495824; c=relaxed/simple;
+	bh=IzIryL5ZzSIK5IAADXW8ppRRMG5QdtE1U1LqyYCn2mI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GANhOGJt9griFVbffuNzR5DdBE8vTso0Y/XdIklkqQO9syr5/mEjdZ50VYxy7fOKvnnL9rPh60Or5KpzwDeqCLAPwNsUKtS7UEKkBu2GxY5ZAqQG2zIVoTlsQCRx23yEQzv+Qu4NPUZlnLMyliZhxKCU7i9U06JH95QppsySZXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ED82mNNR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC36C4CEE7;
+	Sun, 26 Oct 2025 16:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761495824;
+	bh=IzIryL5ZzSIK5IAADXW8ppRRMG5QdtE1U1LqyYCn2mI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ED82mNNRqJ3jL9ehZj1qNyPphPq68PfaTZpFEelfjITAU4qGtuUKf/8h/2qFQbOTb
+	 z1KR9ENADYHkDYhyQE6kcTPvpTGMdCXLpadop2cSDHl4+GXDg4PBoicMiNEMm93lql
+	 VoiWY85vHidBbxkYTZ70BhkP/e8UPe+czQAAmn+DX+aBVknZC79AHLEzoG9ha0j+am
+	 SCP54gQMgxT+XKxQYhkvv9+OywRKrIOC1wzvIFNuysd/RhrPoFyZJm2dOHpUU+R+w8
+	 WeoTskL6dViCKt7nP6rDJodk39ucVwwiAZWczO/dN0uXB6SZ4GcR2uXwwiAVO5IZ5L
+	 DXoHwdlQ8sxxg==
+Date: Sun, 26 Oct 2025 18:23:35 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
+	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
+	rdunlap@infradead.org, tj@kernel.org
+Subject: Re: [PATCH v8 3/8] kho: drop notifiers
+Message-ID: <aP5LB5NQ4lhhAA6Y@kernel.org>
+References: <20251024161002.747372-1-pasha.tatashin@soleen.com>
+ <20251024161002.747372-4-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026-nova-as-v1-0-60c78726462d@nvidia.com> <20251026-nova-as-v1-7-60c78726462d@nvidia.com>
-In-Reply-To: <20251026-nova-as-v1-7-60c78726462d@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 26 Oct 2025 17:11:03 +0100
-X-Gm-Features: AWmQ_blYJsh-bUnlNpdDu-je1LAAZ23ehLx8sNiiMWM4JI3qmhDsJ4Jmtvqb2i4
-Message-ID: <CANiq72m9ms-OznWQ5+4_JvAs4yruwgBRcm1u0gCAnasqO8uJOA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] gpu: nova-core: justify remaining uses of `as`
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, John Hubbard <jhubbard@nvidia.com>, 
-	Alistair Popple <apopple@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Timur Tabi <ttabi@nvidia.com>, Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024161002.747372-4-pasha.tatashin@soleen.com>
 
-On Sun, Oct 26, 2025 at 3:40=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> +            // `as u32` is used on purpose since we do want to strip the=
- upper bits, which will be
-> +            // written to `NV_PFALCON_FALCON_DMATRFBASE1`.
->              .set_base((dma_start >> 8) as u32)
->              .write(bar, &E::ID);
+On Fri, Oct 24, 2025 at 12:09:57PM -0400, Pasha Tatashin wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> The KHO framework uses a notifier chain as the mechanism for clients to
+> participate in the finalization process. While this works for a single,
+> central state machine, it is too restrictive for kernel-internal
+> components like pstore/reserve_mem or IMA. These components need a
+> simpler, direct way to register their state for preservation (e.g.,
+> during their initcall) without being part of a complex,
+> shutdown-time notifier sequence. The notifier model forces all
+> participants into a single finalization flow and makes direct
+> preservation from an arbitrary context difficult.
+> This patch refactors the client participation model by removing the
+> notifier chain and introducing a direct API for managing FDT subtrees.
+> 
+> The core kho_finalize() and kho_abort() state machine remains, but
+> clients now register their data with KHO beforehand.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  include/linux/kexec_handover.h   |  28 +-----
+>  kernel/kexec_handover.c          | 166 +++++++++++++++++--------------
+>  kernel/kexec_handover_debugfs.c  |  17 ++--
+>  kernel/kexec_handover_internal.h |   5 +-
+>  lib/test_kho.c                   |  33 +-----
+>  mm/memblock.c                    |  62 +++---------
+>  6 files changed, 126 insertions(+), 185 deletions(-)
 
-We are not very consistent on this yet, but I would suggest using `//
-CAST:`. We are working on getting `// PANIC:` in Clippy, and we could
-get others like this one eventually.
+> diff --git a/lib/test_kho.c b/lib/test_kho.c
+> index 60cd899ea745..1c6c4ce83666 100644
+> --- a/lib/test_kho.c
+> +++ b/lib/test_kho.c
+> @@ -120,6 +93,7 @@ static int kho_test_prepare_fdt(struct kho_test_state *state)
+>  
+>  	fdt = folio_address(state->fdt);
+>  
+> +	err |= kho_preserve_folio(state->fdt);
 
-Cheers,
-Miguel
+We should bail out here, no point creating an fdt if it won't be preserved.
+
+>  	err |= fdt_create(fdt, fdt_size);
+>  	err |= fdt_finish_reservemap(fdt);
+>  
+> @@ -131,6 +105,7 @@ static int kho_test_prepare_fdt(struct kho_test_state *state)
+>  
+>  	err |= fdt_finish(fdt);
+>  
+> +	err = kho_add_subtree(KHO_TEST_FDT, folio_address(state->fdt));
+>  	if (err)
+>  		folio_put(state->fdt);
+>  
+> @@ -203,7 +178,7 @@ static int kho_test_save(void)
+>  	if (err)
+>  		goto err_free_folios;
+>  
+> -	err = register_kho_notifier(&kho_test_nb);
+> +	err = kho_add_subtree(KHO_TEST_FDT, folio_address(state->fdt));
+
+This is the second time we add the same subtree, isn't it?
+
+>  	if (err)
+>  		goto err_free_fdt;
+>  
+> @@ -326,7 +301,7 @@ static void kho_test_cleanup(void)
+>  
+>  static void __exit kho_test_exit(void)
+>  {
+> -	unregister_kho_notifier(&kho_test_nb);
+> +	kho_remove_subtree(folio_address(kho_test_state.fdt));
+>  	kho_test_cleanup();
+>  }
+>  module_exit(kho_test_exit);
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index e23e16618e9b..e3bef9b35d63 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+>  static int __init prepare_kho_fdt(void)
+>  {
+>  	int err = 0, i;
+> +	struct page *fdt_page;
+>  	void *fdt;
+>  
+> -	kho_fdt = alloc_page(GFP_KERNEL);
+> -	if (!kho_fdt)
+> +	fdt_page = alloc_page(GFP_KERNEL);
+> +	if (!fdt_page)
+>  		return -ENOMEM;
+>  
+> -	fdt = page_to_virt(kho_fdt);
+> +	fdt = page_to_virt(fdt_page);
+>  
+>  	err |= fdt_create(fdt, PAGE_SIZE);
+>  	err |= fdt_finish_reservemap(fdt);
+> @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
+>  	err |= fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NODE_COMPATIBLE);
+>  	for (i = 0; i < reserved_mem_count; i++) {
+>  		struct reserve_mem_table *map = &reserved_mem_table[i];
+> +		struct page *page = phys_to_page(map->start);
+> +		unsigned int nr_pages = map->size >> PAGE_SHIFT;
+>  
+> +		err |= kho_preserve_pages(page, nr_pages);
+>  		err |= fdt_begin_node(fdt, map->name);
+>  		err |= fdt_property_string(fdt, "compatible", RESERVE_MEM_KHO_NODE_COMPATIBLE);
+>  		err |= fdt_property(fdt, "start", &map->start, sizeof(map->start));
+> @@ -2507,13 +2475,16 @@ static int __init prepare_kho_fdt(void)
+>  		err |= fdt_end_node(fdt);
+>  	}
+>  	err |= fdt_end_node(fdt);
+> -
+>  	err |= fdt_finish(fdt);
+>  
+> +	err |= kho_preserve_folio(page_folio(fdt_page));
+
+When looking at the end result after patch 8 it becomes a total mess.
+Let's move this right after the allocation and make it
+
+	err = kho_preserve_folio(page_folio(fdt_page);
+	if (err)
+		goto err_free_fdt;
+
+> +
+> +	if (!err)
+> +		err = kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
+
+and replace this pattern with usual kernel
+
+	if (err)
+		goto err_free_fdt;
+
+	err = kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
+	if (err)
+		goto err_free_fdt;
+
+so that only fdt operations will be a part of 
+
+	err |= fdt_<function> 
+
+sequence.
+
+>  	if (err) {
+>  		pr_err("failed to prepare memblock FDT for KHO: %d\n", err);
+> -		put_page(kho_fdt);
+> -		kho_fdt = NULL;
+> +		put_page(fdt_page);
+>  	}
+>  
+>  	return err;
+> @@ -2529,13 +2500,6 @@ static int __init reserve_mem_init(void)
+>  	err = prepare_kho_fdt();
+>  	if (err)
+>  		return err;
+> -
+> -	err = register_kho_notifier(&reserve_mem_kho_nb);
+> -	if (err) {
+> -		put_page(kho_fdt);
+> -		kho_fdt = NULL;
+> -	}
+> -
+>  	return err;
+>  }
+>  late_initcall(reserve_mem_init);
+> -- 
+> 2.51.1.821.gb6fe4d2222-goog
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
