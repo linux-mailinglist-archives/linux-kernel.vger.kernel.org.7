@@ -1,315 +1,286 @@
-Return-Path: <linux-kernel+bounces-870192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D234C0A245
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 04:57:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30407C0A25E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87FD18A2395
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 03:57:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1C218A4B4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 04:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F98922D781;
-	Sun, 26 Oct 2025 03:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49602252912;
+	Sun, 26 Oct 2025 04:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="h0rpnEWS"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022111.outbound.protection.outlook.com [52.101.126.111])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="o/nkpgSw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FA1182D2;
-	Sun, 26 Oct 2025 03:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.111
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761451034; cv=fail; b=Fofp5gj8t8ie3TUeqbDhz0gL5VpVAJc1oAI7+vUtAtpXUzZl2PfdzUXbJOYDARE8oSDG+iQDVaF944vNnXkSFtJYz0QbM/Lji2IQSB2LTXVx0yEBgNshFtq7GdIYExfmhckmJDFRtrZ4U+SrSNnaFISApNTTZ3N91uQ3er8xfeM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761451034; c=relaxed/simple;
-	bh=guHkhx70vtTdylPEh5tIXjSx6IHtvjnZHpjpWhodd/Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Bv+cQzEJkhHTt74t6lJ4NruuU8FgNt4NUyh0hQVim7RwFcBi54PILmkKjN1kNHvnGyno35WpsP6ggFIir97hAPMhFjXTHDHuBH6kfC3ER4SyeXEyq0flprERv1eRaScwbN/55i2azpOrk1U9s3RZhkFU9FhpN58Y3yPI0junkpQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=h0rpnEWS; arc=fail smtp.client-ip=52.101.126.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C5PUhQC+J1YtSUJFee07BULo0tVx3Psc2DfqcRTtaA3pCnx4JqixHSy980G4Tu+vT41eZ8SP425sO27hExn0RXseBfdfTGJidLTJnIB1/4No8+9cqQdu6tUUtv7mOYB/qNBn7ZyksQn18XkwAORzomgXuB3sCfEriJgP94/D/I/71aXDf6oHBm5bfq3zVWZG76AXOFys+b01AMSN5y8hhBxcTWIpYbDyWm5hUj3f9vsQmuBiqPK1b1InYHzxhmqKhELOI+ozxdnnU/fv4GXjLk0tTz214ytlHRANwvsPyLezbtLfxeELfM3J4rLNC5BydT+ea0Pw7Om4vMoCs5UUdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PVlUsR6MkagZQZAcoxrsw831QkGncuv7sR4E7vpVVW0=;
- b=VG9dDGx055aQOCmR4Yjw6cKSrly4piViG5lIEtdqpSFoXESacji/ZU8rsI1wOYdheyg2mFcCjmr4txTI54YQ5owDZOZDG1q0EujIS5a9TT/BINAdyCQ4GNQE6ioy2m/0e7d0EvFkWDJrSV65mfJbgYkMFETzGDt2EsQqBudcTwxHhOGKFt7rw9lSqSYEG9LR3nDOA6hze5WSO+pDUam2OBqgzgOHBfBhFLUbUfnXkG78vWNzsBGjG3PNsjbdeLhTqp3Y0BBxGjeKLN6GAnCCgIRUdpnZ0vhkw7YhVl/W7bfrvZA/j0+wEF75Og6FZLveuAAmUPBaNQBOD3OscPD4WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PVlUsR6MkagZQZAcoxrsw831QkGncuv7sR4E7vpVVW0=;
- b=h0rpnEWSXD+6gWdWx69vzVv/kj4PrqtClcY3TuzXM1/qorZlzBEcHS41Xjj8qiUOeg2JqGN7DPDWJg+9riKkuE1X4NesmrjgVT8pVqpkLEi1+rfqoWDPTVPp1KysTCbkV7q0KkNHf++/VKwhdpQ1WQ/Apwr6M9seClu/Kk2YCZa4FE5sN7bHOi6b+jdMs+wn3he3Il/GJkgWlOLy76TYGBcKnBY4yheJF/kikXvHBosoTVJUc3GEgGLhWPeNdiR2UxdjFGjeHPsyEdqnzVF1vvHcNZlVrzqRb0Zq8M/eLeGeO2emQ6E1cA5f54zAJuJIpmU7IP/ZirQuNuKCNXYAcg==
-Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
- by TYPPR06MB8104.apcprd06.prod.outlook.com (2603:1096:405:313::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Sun, 26 Oct
- 2025 03:57:07 +0000
-Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
- ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
- ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9253.011; Sun, 26 Oct 2025
- 03:57:06 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Rob Herring <robh@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"jk@codeconstruct.com.au" <jk@codeconstruct.com.au>, Kevin Chen
-	<kevin_chen@aspeedtech.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>
-Subject: RE: [PATCH v5 1/3] dt-bindings: interrupt-controller: aspeed,ast2700:
- Add support for INTC hierarchy
-Thread-Topic: [PATCH v5 1/3] dt-bindings: interrupt-controller:
- aspeed,ast2700: Add support for INTC hierarchy
-Thread-Index: AQHcQyDQYO/3l6vgwk2QRDf7VCK0I7TOL4uAgAEN90CAArNoAIAB3pOg
-Date: Sun, 26 Oct 2025 03:57:06 +0000
-Message-ID:
- <TY2PPF5CB9A1BE6CDE8AF88A638BEC06B41F2FFA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-References: <20251022065507.1152071-1-ryan_chen@aspeedtech.com>
- <20251022065507.1152071-2-ryan_chen@aspeedtech.com>
- <20251022135101.GA3349934-robh@kernel.org>
- <TY2PPF5CB9A1BE674594566C13B8D8B2984F2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
- <20251024231154.GA2962687-robh@kernel.org>
-In-Reply-To: <20251024231154.GA2962687-robh@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|TYPPR06MB8104:EE_
-x-ms-office365-filtering-correlation-id: b160912d-66b3-415f-4aaf-08de1443baee
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?/AGcO45365STq4XMbmugr6druN4IPpwgW64nRshfW0gAmKYcyGrVcF88O0o/?=
- =?us-ascii?Q?oXX2nx8rAAl9fpRwA3EU67R1iB+o4hcgymHtLvCMlP7/8GCl1FjyTf025UPv?=
- =?us-ascii?Q?NKKUX74esE6ZMARyUP7/CCv1eoCzE1xO0VVUXCWn5eLhgYeOvEzher8iE9U4?=
- =?us-ascii?Q?9WcQyqan4cKyBbxI3TIE1UtS/gjhlhMA89jFz++o+qtJp/XZVmJn5qt+s8Ce?=
- =?us-ascii?Q?IJ9L8W4ABEzYhhLU427udzmL5hZEBO/tYLgnhLRezQOPQCTTyNy4q2bYYQ5l?=
- =?us-ascii?Q?Cs73+8/zs0cuZlfKyvACjZsaO81ekr+X51bkx/7LgJusaL3fby6IW4QCZKgk?=
- =?us-ascii?Q?rhJKyQxkQt15hgcfVacsv8+msbZMXnhmTSnbyla33hTzgrJY4NZ07IDwDFLt?=
- =?us-ascii?Q?6ojnRlb1+Rro1xZUZDuiHO8UjCJzfz6TUWSHS3yePEV3nbPUkycrobmvuPxk?=
- =?us-ascii?Q?IljQyCGwK+lqcRLY7q/0HemLtvuWyXDqMK325bUXgofIdfOAZbsfFufaGXSD?=
- =?us-ascii?Q?yjr3Uxcufd2JpsSkwP13i0loc7jY2fQN3C4HaxPGnSPDeP6CAHSHhbxZaE5X?=
- =?us-ascii?Q?4El60R/cMaozVmblfe1Y/wLSoFQyeICWenGFUwGW2AiJSN+AaNhrt4Ogi9rb?=
- =?us-ascii?Q?hpa9Plp0hV4ZJ+MiaYuL4uQtRHofXcrWmMbTdOOUx9OTV3lbd98DG+0srQWr?=
- =?us-ascii?Q?Dtow9GcQ/+sbyDGUDWFO/8+WmFguqieEI/W5tJtVmSOZeMeHltT9/YTFkuCa?=
- =?us-ascii?Q?tLZwGr077D8LIP1LtmE/S2S0+3AjRtrR/aSX+VWhXr6g3K/9n2H7fuC4PRvJ?=
- =?us-ascii?Q?JkrJqaxDzZ9Ibkxc19blSaxgR7dYxHTkuJGnSPsQjePm9yIWe+u0CHHfEryx?=
- =?us-ascii?Q?91ecF9T2ZyyVSDFquNykE8wIsIEmSlTORY/dhjnjg0Z/b3zRiH1EWcvRRydE?=
- =?us-ascii?Q?WG8NLeOZ0qHe0JCCN8a1zgRxjcElJJNxqxB0dlwKDb1u1azWs1xR9iYc24np?=
- =?us-ascii?Q?5vSAGBqo+VlJgGETbH7BJcYhWqmXGpIK5op7D6Qjj/bWpnWlqoTRTovuf7v3?=
- =?us-ascii?Q?wI/5hc0wdcbIPaHF5a3bPwXW/WYWk+6tK9QI0XHAWgSI+MOcvGi/uy/SOTMi?=
- =?us-ascii?Q?pjDRNBHs7kz7mKkZCz/CDmCqk1YzIUS5nu4RS+WJI0SwpIWCTE/ywJ6ppi6l?=
- =?us-ascii?Q?GsW6diPy763xPzQvmptM5uxbGTzADj6xwKrO4gPFlC5lYGylMOKf7Mld+jEZ?=
- =?us-ascii?Q?QRv5n1ecWzVpOwpgQmHLWf0HIVz2zAtJ8znX1gOPEwaUgCIDLWxxIS1YPIju?=
- =?us-ascii?Q?vguWF98x1IG9tJ3YTpnbG1fIHFQdqAEu9dRQ02ryOtVEGQsZdgVmpfs19zZ0?=
- =?us-ascii?Q?zKOQowVXy+1S+BnLP8wWfcgSo0UtzHtFLnwaKFngnCQMyqex/V7saiSiu06b?=
- =?us-ascii?Q?FCXl9JdpTA19V3jRxP6FTwF0lnolE0dlFcMypNwMrFxmcL+1BQJuS230KAbs?=
- =?us-ascii?Q?nq4QOwk4GlmOKihfjXSYHS7ahcZdtKXqZ04k?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?vhIIE4pWlY2+p94Ah8DUNF73ab7yqWUbqo6W5CqukCs0chERz5/pdoCSXWGp?=
- =?us-ascii?Q?XDxqfzskDARuqzo91ZCxWKOyND+AOZhTWp7IrCyMRT/c2ODnpEy0MLjAcHYK?=
- =?us-ascii?Q?o1JU/n4XZLRn3VbGx3A3x0sYl3Ltoy3KE5nn2bUHzcLe4HeLj+wt5h19Ofwu?=
- =?us-ascii?Q?BhkIOqMj4fMA3IQhkbwyMtO/1OIAFf14NOmwJkRSNfLAYEayReDwS70gbj/G?=
- =?us-ascii?Q?/rDZa5XdMiU5PQs65fvs8Hf7coJVnlYDsL+EVZIFF+EKis8wiv2P97/HmtgP?=
- =?us-ascii?Q?y/ANiVlMkrHGsM/IN656CjdllzeJdVpG5sGC6XpynL2vTvR5b/muEvnfnduf?=
- =?us-ascii?Q?h9Kf8/ltIMflbcF5QgSP7KPM2il0iIvEbkw1bVnV+e4sv2fCyMvQEvPRgECc?=
- =?us-ascii?Q?H4LsbgymtykleJZIVjkcRqUr/uqR+70N0ctXw9L80/tm4RZB3SsTyBI0AxbN?=
- =?us-ascii?Q?HK0QmDlL7rLCKOtse1SUdfkN/8c0WTkp2tvqFXRbm7GTu0gdXahi8KPDbfnx?=
- =?us-ascii?Q?UYBzREwuqzs+n0Ywm/h4l2sx1hPA0SBK4L/CTa50QX4smDc6aRj6QwAhqACk?=
- =?us-ascii?Q?2iEZ+QIWIuwAnFM4fl71gpkkgUigxJHLjiGkw4LWa83FuvZnengDfNox1Szt?=
- =?us-ascii?Q?lxHliJASnxzd/tzR34QD4okUDGiuKDqL1f4UPfMl/28yHFr5Ghak3XCFHNmB?=
- =?us-ascii?Q?+WApGCoMNW7IKXPD2jK1E8z8YLjxAy5uend5S1DgWalSTd5DvTgpesB/Ty6i?=
- =?us-ascii?Q?vXZWFo9QpyWNJkDQFS3SCHcFJPf1UK57zh/l5zg8zQaHUCVhkjuMwocw5VUc?=
- =?us-ascii?Q?yD6Y8bwU/4UTa3YVVvByUy6XfCbqgUCHTkeSS/RbKvAZ5bmSClWdALtu3yJk?=
- =?us-ascii?Q?H6sTA1dCbPR/ds7OBaEI8JHolXFghUqRE2ATQ+JIc1aMirPJINjfLCuhYteq?=
- =?us-ascii?Q?Z/0DLj/hnU7d6lv/UbWyXEDaEXVa1A3kwLFx60mRdDaJib84Wio3RBT7RPLP?=
- =?us-ascii?Q?RAcZeKIAKYe/T0AOuZ3u9kYOPJ0IvHgCGG0QeD+1IXTRl4gyIMqCAi1nc08Q?=
- =?us-ascii?Q?1RyfRrLIB9/f1aGTaRg28UeoAHUl3wI179yJ/KYtRNSmUQCWk32E5qP9dePR?=
- =?us-ascii?Q?uahzVov+PBXmLH6BezDv4VIWX56O93SOM+yTNFM0ybBnqxokJVnrNhPFeFC5?=
- =?us-ascii?Q?66JYVIsZKMScKrkl/sC3n1NOWopN5oqwMK7s1M0tJQzwQfN6ca79C6CU5wmn?=
- =?us-ascii?Q?b7Nntu9JH7QnjACDySFoo0W+at7dCFZxofUYcOZc0UtKSqSKQE1qUnqLH18b?=
- =?us-ascii?Q?yl8PlcqlQFQatnLEiQQ88Brt/7urtjecWhr7zeYl6bc7zgfyNqCHRjNOLe3m?=
- =?us-ascii?Q?wcZAlkrLz2Wnq4SYoUcH5LkqdbEECshI2Ozgi0uNXs5RMHPIxealSl5wNNVP?=
- =?us-ascii?Q?Sf5KWcwLIjWqAqKneodH1LLzpunVFPthzGn3e8hCOwqhrAxawVfFo2EEFk+E?=
- =?us-ascii?Q?he0nURGwEWukYKRVAtm3RRQqSQQOhT8F46YrA3qSkJAwgTW22p8gf46tHMMm?=
- =?us-ascii?Q?Mnu1ZraDS5a19IDMtLTJgeyYHumd3jywKg9uA2eZ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7903B212542
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 04:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761452949; cv=none; b=UgbPJnx723HMddEfZ2iWt0dkdsVrg2r03/T76Y60F99sKQLApumPDzN8Xb2KMj/vGv0UBvruT5mMj2IoM8yS1NrC1sEzGeO7l373jOunRkrLWCJNpLNvEK1pSfBspJaR+UZEjZUa6jTCuLCNiiJn1hbikU8yVSFF4PGiy30yhmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761452949; c=relaxed/simple;
+	bh=AWB5I8OpZEfko7+3OmwoDfmZtix5Y5s/jpuoZF/Zvuo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qNqf46qPoTT9PwvcX3FpNK3pVSgU9/4E4SbQQFxOdRakPknGPcRdVX+j3wffYWOo/x32+8n3HbEvEd0W9kJo+9okLmoJ1UrA+DcSjQPy9wIMzVmaU28jvjoBh0vvYZT1gvDdPBv57NEOvoRLYQkB/IojAOyapUbJWRh5ZJM46FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=o/nkpgSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7356C4CEE7;
+	Sun, 26 Oct 2025 04:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761452949;
+	bh=AWB5I8OpZEfko7+3OmwoDfmZtix5Y5s/jpuoZF/Zvuo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o/nkpgSwNZ9KH1RPAuqPgYtuL6RqncBCG4hlR/jpl2kCoaC13qE2OhX9I9EPc1Rta
+	 m7Bn2jvzhpvDJuHoATQux2hbXlwSMlUCNL8sHdGLnjPTrLA+tJxSH/jDo4Brh2ydDl
+	 5HTPtXil1pq3aNvU9dKG3nAVg1reA6+2Q+aQH8p0=
+Date: Sat, 25 Oct 2025 21:29:08 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Dmitry Ilvokhin <d@ilvokhin.com>, David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Hugh Dickins
+ <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Kiryl
+ Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
+Message-Id: <20251025212908.8f85fad99c4b78e528a7e324@linux-foundation.org>
+In-Reply-To: <aPtpt4hYMuJnwnOO@tiehlicka>
+References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
+	<aPstDXRerYqi1O2X@tiehlicka>
+	<aPtg1vUnpkaK1Ce5@shell.ilvokhin.com>
+	<aPtpt4hYMuJnwnOO@tiehlicka>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b160912d-66b3-415f-4aaf-08de1443baee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2025 03:57:06.4613
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dNhFfXBxnynLFE2GGZ8mzUSUvNp7IhuT8Gbxl45wm55bxheDmQPmZO6TqLaecNT3UZ8e4E+SCgDrvCHbXRrXyeEx4QaGSKiNXN7z5GD71V8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYPPR06MB8104
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Subject: Re: [PATCH v5 1/3] dt-bindings: interrupt-controller: aspeed,ast=
-2700:
-> Add support for INTC hierarchy
->=20
-> On Thu, Oct 23, 2025 at 06:57:01AM +0000, Ryan Chen wrote:
-> > Hello Rob.
-> > 	Thank you for your detailed review and comments.
-> >
-> > > Subject: Re: [PATCH v5 1/3] dt-bindings: interrupt-controller:
-> aspeed,ast2700:
-> > > Add support for INTC hierarchy
-> > >
-> > > On Wed, Oct 22, 2025 at 02:55:05PM +0800, Ryan Chen wrote:
-> > > > AST2700 contains two-level interrupt controllers (INTC0 and
-> > > > INTC1), each with its own register space and handling different
-> > > > sets of peripherals.
-> > >
-> > > This is a mess!
-> > >
-> > > How does this relate to the existing "aspeed,ast2700-intc-ic"? Its
-> > > schema has a block diagram of connections which I can understand. Thi=
-s
-> does not.
-> > >
-> > > The use of child nodes here is questionable. A variable number of
-> > > interrupt banks is not a reason to have child nodes. I'm only
-> > > guessing that's what's happening here because you haven't explained i=
-t.
-> >
-> > Let me clarify the hardware structure and the purpose of these bindings=
-.
-> >
-> > The AST2700 SoC includes two top-level interrupt controller modules,
-> > INTC0 and INTC1. (aspeed,ast2700-intc0, aspeed,ast2700-intc1) Each of
-> > them provides routing selection and register protection features.
-> > Within each INTCx block, there are multiple sub-blocks called intc-ic,
-> > each handling multi-interrupt sources.
-> > ("aspeed,ast2700-intc0-ic", "aspeed,ast2700-intc1-ic")
-> >
-> > Cascading occurs between the child banks:
-> > Level 1 : intc0-ic have multi-interrupts connect to GIC (root) Level 2
-> > : multi Intc1-ic# connect to intc0-ic The parent intc0/1 nodes expose
-> > register regions for routing and protection control, serving as
-> > containers for their intc-ic children.
->=20
-> Being a 2nd vs. 3rd level interrupt controller is not a reason for differ=
-ent
-> compatibles. The programming model is obviously the same for both as you
-> essentially have 0 driver changes. Having N banks of 32 interrupts vs. 1 =
-bank of
-> 32 interrupts is not a reason to have multiple intcN-ic nodes. That is a =
-very
-> common difference between instances of the same interrupt controller such=
- as
-> the GIC.
->=20
-> What you need to do is simply extend your driver to support N banks of
-> 32 interrupts. That's what almost every other irqchip driver with more th=
-an 32
-> interrupts does. If you are lucky, then the offset to each bank's registe=
-rs is just
-> hwirq/32 * <bank stride> and the number of banks can be calculated from t=
-he
-> length of 'reg'. If you are not lucky, then you could put 1 'reg' entry f=
-or each
-> bank.
->=20
-> AFAICT, the existing binding in aspeed,ast2700-intc.yaml should work for =
-you.
->=20
-> >
-> > The following simplified diagram shows the hierarchy:
-> >
-> >
-> >                                  +----------+       +----------+
-> >                                  |  intc0   |       |  intc1   |
-> > - - - - - - - - - - - - - - - - -+---- -----+- -  - +------ - -+
-> >   +-----------------------+      |          |       |          |
-> >   | +-------+ +---------+ |      |          |       |          |
-> >   | |       | |         | |      |          |       |          |
-> >   | |  PSP  +-+ GIC     | |      |          |       |          |
-> >   | |       | |         | |      |          |       |          |
-> >   | +-------+ |         | |      |          |       |          |
-> >   |           |         | |      +----------+       |          |
-> >   |           | 192~201 <-|------+          <-------+ intc1-ic |
-> >   |           +---------+ |      |          |       |          |
-> >   +-----------------------+      | intc0-ic <-------+ intc1-ic |
-> >                                  |          |       |
-> |
-> >                                  | 			<-------+ intc1-ic |
-> >                                  +----------+		  .....
->=20
-> You already match on intc0 and handle 32 interrupts. Now you are adding
-> intc0-ic to match on and handling the same 32 interrupts?
+On Fri, 24 Oct 2025 13:57:43 +0200 Michal Hocko <mhocko@suse.com> wrote:
 
-Thank your guidance, understood your point. the currently is met requiremen=
-t.
-For currently aspeed,ast2700-intc.yaml I still need update following.
-#1. Interrupts:
-	- maxItems: 6
-    + minItems: 1
-    + maxItems: 10
+> > In short, primary benefit is mostly operational: it provides a way to
+> > codify preferred policy in the kernel configuration, which is versioned,
+> > reviewed, and tested as part of the kernel build process, rather than
+> > depending on potentially variable boot parameters.
+> 
+> Please expand the changelog with this explanation. Thanks!
 
-The 1 level request multi-interrupt to root GIC, the max is 10.
-2nd level only request 1 to level 1 intc-ic.=20
-in level 1: will be need 10, 2nd level only need 1.
-=09
-Level1 :=20
-        intc0_11: interrupt-controller@12101b00 {
-            compatible =3D "aspeed,ast2700-intc-ic";
-            reg =3D <0x0 0x12101b00 0x0 0x10>;
-            #interrupt-cells =3D <1>;
-            interrupt-controller;
-            interrupts =3D <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-                    <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
-        };
+I pasted it as below.
 
-Level 2:
-     intc1_0: interrupt-controller@14c18100 {
-            compatible =3D "aspeed,ast2700-intc-ic";
-            reg =3D <0x0 0x14c18100 0x0 0x10>;
-            #interrupt-cells =3D <1>;
-            interrupt-controller;
-            interrupts-extended =3D <&intc0_11 0>;
-        };
+> > I hope possible operational benefits outweigh downsides from increasing
+> > the config space. Please, let me know if this argument sounds
+> > reasonable to you, I'll rephrase commit message for v2 to include this
+> > reasoning.
+> 
+> Yes, this is exactly what I was looking for. Thank you.
 
-#2. '#interrupt-cells':
-    -const: 2=20
-    +const: 1
-Due to the driver irq-aspeed-intc.c not support any trigger type.=20
+Yep, super helpful.
 
 
->=20
-> Rob
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+Subject: mm: shmem/tmpfs hugepage defaults config choice
+Date: Thu, 23 Oct 2025 18:12:02 +0000
+
+Allow to override defaults for shmem and tmpfs at config time.  This is
+consistent with how transparent hugepages can be configured.
+
+Same results can be achieved with the existing
+'transparent_hugepage_shmem' and 'transparent_hugepage_tmpfs' settings in
+the kernel command line, but it is more convenient to define basic
+settings at config time instead of changing kernel command line later.
+
+Defaults for shmem and tmpfs were not changed.  They are remained the same
+as before: 'never' for both cases.  Options 'deny' and 'force' are omitted
+intentionally since these are special values and supposed to be used for
+emergencies or testing and are not expected to be permanent ones.
+
+Primary motivation for adding config option is to enable policy
+enforcement at build time.  In large-scale production environments
+(Meta's for example), the kernel configuration is often maintained
+centrally close to the kernel code itself and owned by the kernel
+engineers, while boot parameters are managed independently (e.g.  by
+provisioning systems).  In such setups, the kernel build defines the
+supported and expected behavior in a single place, but there is no
+reliable or uniform control over the kernel command line options.
+
+A build-time default allows kernel integrators to enforce a predictable
+hugepage policy for shmem/tmpfs on a base layer, ensuring reproducible
+behavior and avoiding configuration drift caused by possible boot-time
+differences.
+
+In short, primary benefit is mostly operational: it provides a way to
+codify preferred policy in the kernel configuration, which is
+versioned, reviewed, and tested as part of the kernel build process,
+rather than depending on potentially variable boot parameters.
+
+Link: https://lkml.kernel.org/r/aPpv8sAa2sYgNu3L@shell.ilvokhin.com
+Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Liam Howlett <liam.howlett@oracle.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/Kconfig |   91 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/shmem.c |   33 +++++++++++++++++-
+ 2 files changed, 122 insertions(+), 2 deletions(-)
+
+--- a/mm/Kconfig~mm-shmem-tmpfs-hugepage-defaults-config-choice
++++ a/mm/Kconfig
+@@ -853,6 +853,97 @@ choice
+ 	  enabled at runtime via sysfs.
+ endchoice
+ 
++choice
++	prompt "Shmem hugepage allocation defaults"
++	depends on TRANSPARENT_HUGEPAGE
++	default TRANSPARENT_HUGEPAGE_SHMEM_HUGE_NEVER
++	help
++	  Selects the hugepage allocation policy defaults for
++	  the internal shmem mount.
++
++	  The selection made here can be overridden by using the kernel
++	  command line 'transparent_hugepage_shmem=' option.
++
++	config TRANSPARENT_HUGEPAGE_SHMEM_HUGE_NEVER
++		bool "never"
++	help
++	  Disable hugepage allocation for shmem mount by default. It can
++	  still be enabled with the kernel command line
++	  'transparent_hugepage_shmem=' option or at runtime via sysfs
++	  knob. Note that madvise(MADV_COLLAPSE) can still cause
++	  transparent huge pages to be obtained even if this mode is
++	  specified.
++
++	config TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ALWAYS
++		bool "always"
++	help
++	  Always attempt to allocate hugepage for shmem mount, can
++	  increase the memory footprint of applications without a
++	  guaranteed benefit but it will work automatically for all
++	  applications.
++
++	config TRANSPARENT_HUGEPAGE_SHMEM_HUGE_WITHIN_SIZE
++		bool "within_size"
++	help
++	  Enable hugepage allocation for shmem mount if the allocation
++	  will be fully within the i_size. This configuration also takes
++	  into account any madvise(MADV_HUGEPAGE) hints that may be
++	  provided by the applications.
++
++	config TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ADVISE
++		bool "advise"
++	help
++	  Enable hugepage allocation for the shmem mount exclusively when
++	  applications supply the madvise(MADV_HUGEPAGE) hint.
++	  This ensures that hugepages are used only in response to explicit
++	  requests from applications.
++endchoice
++
++choice
++	prompt "Tmpfs hugepage allocation defaults"
++	depends on TRANSPARENT_HUGEPAGE
++	default TRANSPARENT_HUGEPAGE_TMPFS_HUGE_NEVER
++	help
++	  Selects the hugepage allocation policy defaults for
++	  the tmpfs mount.
++
++	  The selection made here can be overridden by using the kernel
++	  command line 'transparent_hugepage_tmpfs=' option.
++
++	config TRANSPARENT_HUGEPAGE_TMPFS_HUGE_NEVER
++		bool "never"
++	help
++	  Disable hugepage allocation for tmpfs mount by default. It can
++	  still be enabled with the kernel command line
++	  'transparent_hugepage_tmpfs=' option. Note that
++	  madvise(MADV_COLLAPSE) can still cause transparent huge pages
++	  to be obtained even if this mode is specified.
++
++	config TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ALWAYS
++		bool "always"
++	help
++	  Always attempt to allocate hugepage for tmpfs mount, can
++	  increase the memory footprint of applications without a
++	  guaranteed benefit but it will work automatically for all
++	  applications.
++
++	config TRANSPARENT_HUGEPAGE_TMPFS_HUGE_WITHIN_SIZE
++		bool "within_size"
++	help
++	  Enable hugepage allocation for tmpfs mount if the allocation
++	  will be fully within the i_size. This configuration also takes
++	  into account any madvise(MADV_HUGEPAGE) hints that may be
++	  provided by the applications.
++
++	config TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ADVISE
++		bool "advise"
++	help
++	  Enable hugepage allocation for the tmpfs mount exclusively when
++	  applications supply the madvise(MADV_HUGEPAGE) hint.
++	  This ensures that hugepages are used only in response to explicit
++	  requests from applications.
++endchoice
++
+ config THP_SWAP
+ 	def_bool y
+ 	depends on TRANSPARENT_HUGEPAGE && ARCH_WANTS_THP_SWAP && SWAP && 64BIT
+--- a/mm/shmem.c~mm-shmem-tmpfs-hugepage-defaults-config-choice
++++ a/mm/shmem.c
+@@ -570,8 +570,37 @@ static int shmem_confirm_swap(struct add
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ /* ifdef here to avoid bloating shmem.o when not necessary */
+ 
+-static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
+-static int tmpfs_huge __read_mostly = SHMEM_HUGE_NEVER;
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_NEVER)
++#define SHMEM_HUGE_DEFAULT SHMEM_HUGE_NEVER
++#elif defined(CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ALWAYS)
++#define SHMEM_HUGE_DEFAULT SHMEM_HUGE_ALWAYS
++#elif defined(CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_WITHIN_SIZE)
++#define SHMEM_HUGE_DEFAULT SHMEM_HUGE_WITHIN_SIZE
++#elif defined(CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ADVISE)
++#define SHMEM_HUGE_DEFAULT SHMEM_HUGE_ADVISE
++#else
++#define SHMEM_HUGE_DEFAULT SHMEM_HUGE_NEVER
++#endif
++
++static int shmem_huge __read_mostly = SHMEM_HUGE_DEFAULT;
++
++#undef SHMEM_HUGE_DEFAULT
++
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_NEVER)
++#define TMPFS_HUGE_DEFAULT SHMEM_HUGE_NEVER
++#elif defined(CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ALWAYS)
++#define TMPFS_HUGE_DEFAULT SHMEM_HUGE_ALWAYS
++#elif defined(CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_WITHIN_SIZE)
++#define TMPFS_HUGE_DEFAULT SHMEM_HUGE_WITHIN_SIZE
++#elif defined(CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ADVISE)
++#define TMPFS_HUGE_DEFAULT SHMEM_HUGE_ADVISE
++#else
++#define TMPFS_HUGE_DEFAULT SHMEM_HUGE_NEVER
++#endif
++
++static int tmpfs_huge __read_mostly = TMPFS_HUGE_DEFAULT;
++
++#undef TMPFS_HUGE_DEFAULT
+ 
+ static unsigned int shmem_get_orders_within_size(struct inode *inode,
+ 		unsigned long within_size_orders, pgoff_t index,
+_
+
 
