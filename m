@@ -1,163 +1,276 @@
-Return-Path: <linux-kernel+bounces-870454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD33C0AD9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:33:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5388FC0ADA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9AA84EA1CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:33:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91D7189C7A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AF3233D9C;
-	Sun, 26 Oct 2025 16:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E318E2522BA;
+	Sun, 26 Oct 2025 16:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7wGD6kr"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDlLHUmG"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF246233D85
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 16:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350ED199E94
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 16:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761496405; cv=none; b=UYjgiBIT5ZmsvtPoBRvID7mZApOUyLpmnRg2SxGnq/W1LADYIMEiTRZMqE00p4DnkWiG1JXIDKeCBmSXTTIcFyUt63p223ojR7dxPSqzDlYNRT+08tNZug8rDEdKnFVo/p6CEG1swyxRT8tJLDDqXjcOR0gLbQRMRrxmsEPqcyI=
+	t=1761496522; cv=none; b=nCR2gkV3y7xOpgb0FrqCUJWIcs6+2VEjWPd2d65PE+ePQ4Vka+LNf5bnkfBomOhL4oq4bQpdA1WMgcTE6CmVdtJ1Wk5Q3EOAl0GI7KUQVCArbp/oVj3wXp2wFeBCQ1QlEnJv1OPaoypp1xzU8WFBhMBfatUQ7o/iOMKS9yVk42E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761496405; c=relaxed/simple;
-	bh=dkfgSRg3n/ubnVVhdVKVipSAGyUHeSxeTZAvC8QYEGI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Jm9GjwxkvLze//h5yfNdzK6dL9FROFUQprIZ65vT5z3jcnMul0QIhWg7IQOwO2cRdVlHTIiuIcchVi1s8ll1WzVyFLJBSIEOcJgKlNQh7FkoYc+LDI8ORy8ZbLxp8+UuPE5kvjgtQrNeyVSZ6tODlVBHArFBUl2VgCIUpg97Q74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7wGD6kr; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1761496522; c=relaxed/simple;
+	bh=yt7o8v/fe1j3j05XnolAR9NoT6jX+EKYzwXle+WCACM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxygOhK+erKRmvuGWwlDU+SVY2y36md3T0aoinWTdmoEop/PtUz15ME9d5MNDjcZ4ZeKUD3sBOImRKnrtsvgcEUu6Wkg8HqP95PDwKI+Ffj/gltJYPETM0VYqNiYWFZAbOISy0vO1SJa1xfAxAlW+3IVs7ULJEfYLDpk/D621Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDlLHUmG; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33bdd2b3b77so817241a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:33:23 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4711f3c386eso28280475e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761496403; x=1762101203; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7sbMEHOWO5Ae/gMtvFENkyfzcNJXX7WO2rOgBfdcmdE=;
-        b=D7wGD6kr5KaXWkuZ1RT7Yb+wB9X17LgfcJy/ebeZVv1InmTLBgRbvPtP7fIv6w9bS4
-         rulFeG3MhawTMlx75E6Z7TgtQRZ8KnDyd9yr9/sk07WGkZwOVe4iXlly3OS2W8/StTUe
-         d7NjHX3Hsjx+PO1Y10TQ992gqU6mQSiGaVRj+4RCxU1jd8kVlVHfJ9ri827MFp2lcDXR
-         /74URtbdqrRNAyBSbhCOiqOyvipc2XPvEH137PH/1fKJAl9+yLMwpemXgDC9hVTKBwmi
-         XQnBg84PnQGwQWQBHC57q6kCQFZ1nSQvNYb7Q3JIvAQ9zfsL5tMyOQUDI+9eek3CWD25
-         MMxw==
+        d=gmail.com; s=20230601; t=1761496518; x=1762101318; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6WGifvjdmNS6BAEGIP9IVWYOc5+AwrG3zJ9VQpVMyno=;
+        b=lDlLHUmGIy8q97s0fezXKIQs8tH8MdqaKzPiBFBOCKn1A6yGhHPATyHd8pPfyJyqIm
+         bEaKAiQfF1u4ydC9OvdQYmKxsTdMqQ80VYWbzlrnu1ZBOvnq6MsuapLEJA7Pjad9u7Zx
+         Un7Z/Cb3qGEzyUUiOAQYmOogXLVn5yRDiTgTUUuoZJJZerdQk1/z7/m6pWMJLWUwgVX+
+         lorEp9FfUzJrR0UfImA73QyLF056MYACCVYkHjTKfJSj9STdezqsbZtN5fPCDhN/BGXP
+         6P4s5V3nBWiPqcYeFvmmqtr0ck2FOAptbZU/Y1ZbKhQfVrrdnw1jQZaEZq/1HFghamds
+         hxEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761496403; x=1762101203;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7sbMEHOWO5Ae/gMtvFENkyfzcNJXX7WO2rOgBfdcmdE=;
-        b=j9bueu3+riWggMay+zjOoCZF3UHZfFGZ05tTfHQ66Wy5aEyRBFELr9VFf19gK8gREK
-         HaeAmQQITuNTseK3rcjv3DAj37uJYfEo//lAW84E1pmEqUCBp1Pu1TRmfRI5p14S0alx
-         3DPKnHgh5862WSWIl+3l+4FZ3Nkz8p3XwQzesl/16bTvk1fdCjZZdcvjsPUAr2EIXUSF
-         cNMwfGYc5Ktcfg0S9fWQoxq7oUSxttNx4nHMw1xR+sAr8Y7vpZ5qZrviP2Dspq/dM1zh
-         S9IqFIT+uDzoDGs2Zt7hpaJJjxKjvi4eDBut5ZezsirznZgkoXU8X3zakq0uJGwrAPK2
-         q76w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFRxZjCLYsPKyPEyT0yBlZz9NGcnvpToVykXo7csIQQv0h7lx6TWP45y/I5to2UqjW2kDxVcBuT/6s07w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ6+YMRq/Zl7uMFbeh0CjeN07fq2nLNMILsSt610mR6R1jauQF
-	SsFX3n107SwJCsqEclppW4umjoGOoHAv6n+gXENnAeZ/CiHxMvrByXuw
-X-Gm-Gg: ASbGnctvRn8AvlDCh2NEMo5w6RxyRsymrLl5yxmwNbcGEWOpcnPlGc11iXW4uIi3mNM
-	tlC8iSfGgkHrjNpHWMaIVgjM+c0K9FECy2OXz9wbCsV788vDKl02PlnEM7pJRMugsLLwv1u3gge
-	mrnek/XeSzBawtgGSjutZvp41A0i5J5U1IuOE1N/4Rtb/LBoaCiV5wV2A1G/6OHgkFLvGxW1qJn
-	3TDcEDgbTJnwk43caT8rQV7eE2J6GxtnxxEkmDO44SNx0u1eT3lwl4PsXKmBC5DGRVN8QpRBspy
-	gxEvb9Zaj0hTzF++xab+NpL/3V/HMRraPN91/1Rec/0i425b0cpFiRolbAbQRAfOcvFzmK7QVmX
-	UHK0dfhGFq1l/9Whv1zS7udHAAvxdeEfUKZVpZbEzEV+JALsm9wjBQFCpRg7jCcP/bkyDDgFCLB
-	6J3CUkxuaKRUmne2INUTPpMtjbLNRs0vv/KPgIvNOSm5kQXfK1MNGS
-X-Google-Smtp-Source: AGHT+IHcEjmlNyC3BUiCH/cJeBxJokcXHzVfjj+6EljnXykqRRfg4XwTOuv1Q9en28L2oqmxU7E7rg==
-X-Received: by 2002:a17:902:d589:b0:290:7634:6d7e with SMTP id d9443c01a7336-292d40198f8mr135057545ad.11.1761496402921;
-        Sun, 26 Oct 2025 09:33:22 -0700 (PDT)
-Received: from [127.0.1.1] ([2406:7400:10c:a59a:a7b7:a351:9b3b:d26d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bde68sm4837369a12.1.2025.10.26.09.33.19
+        d=1e100.net; s=20230601; t=1761496518; x=1762101318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6WGifvjdmNS6BAEGIP9IVWYOc5+AwrG3zJ9VQpVMyno=;
+        b=VU936WfSAM9OGPeTaKu2/V4SkANkY29prNnW1FKjExCmfq/sMuPg6HwDI+O2GkycQu
+         crDBeF/pFbFYRFL3dr4L8VS+DCqz0XvsJAirst6hJS8uAC4Ufg22jMCtSJqXvutmorfK
+         Zn3otQ4A5UiaSoiEBihORC00DDyDg9oJjx1tAXBH3kpxTtmsP9N5erO44hhOLPeZPlUp
+         fGnh22l/V4WUEuvI0V00IKPmi7fyywjLKvzdUU4McRz6f10k4tqhnMPhmjsLvtSEcfcT
+         HzkBXTyQafTZJaQZFdEjRo3FbyR4Rg8OtpcALS6affAL8rac1SdFafqdxZhVANroixNc
+         y9RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGOAjOWGVbLgVpGBj4zeeHjLtSc2EZeheF+uEUrrBMeXmfhiGj+1DeKYaKY6ARfmXhLpv2NfoNPNsYcyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8oEEWln3PSXe9M4O3sE6H/juiq/muEZu8ndrNIrVNit3Y/Rvx
+	Q7NVjLfATJdjZzOB10VZO9fZ6GEuOVmRVoD4kuMy4HQv7zc4Fxx6OoLH
+X-Gm-Gg: ASbGncsO3jLYQvYhaO3Q0Mrx+EyR/oP7Uir65jfBEsAjCLlTP+sSYyO++eCdVnOvW/7
+	goxdBEmAXb8lqbCqY2KdxCM3lVYCgFzuICbYbmy8//nnFB/E1hCo0il9c1qg5HWGaLTK7FP2Y64
+	y6HQ4H/Q19OBuvb8dIAUwSmeIA1sq/hvLSDhVcXmN9twEl4g0JmAEyrqytu1n1l+oXeJqKXgUA5
+	x3nCoyN5UkpYfNV6+AkxC86QWLVqoh/KkiJl6i/9461i9vKDLnnETZkNeMrHBBmV368khqLpyNz
+	0zFRc+GIzz08VNAz7d0TH/n6H0NZTRPfMfAzZX+OSf7+B3dZeM93p/kpdSr40eznlwRCMoxGZVk
+	tCQpgTiX7yn89OMoso4IlqzxYZ2bZmP7Nh5m931EOFVjlZRuX6FyutLO3LIG4osblGNPbntxshP
+	8gbueRfA==
+X-Google-Smtp-Source: AGHT+IFWThCoxvJcBgUUBwLjwSDOlnnjJ96A1ZyZiJrxwSGOXtXBwlKYTWbldGijLHbHluRqRdy+6g==
+X-Received: by 2002:a05:600d:438b:b0:475:dbb5:23a2 with SMTP id 5b1f17b1804b1-475dbb5250amr21853355e9.16.1761496518265;
+        Sun, 26 Oct 2025 09:35:18 -0700 (PDT)
+Received: from home0.fritz.box ([2001:a61:123e:4501:d88:2861:1686:c41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dcbb4001sm45138865e9.0.2025.10.26.09.35.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 09:33:22 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-Date: Sun, 26 Oct 2025 22:03:12 +0530
-Subject: [PATCH v3] net: sctp: fix KMSAN uninit-value in sctp_inq_pop
+        Sun, 26 Oct 2025 09:35:17 -0700 (PDT)
+Date: Sun, 26 Oct 2025 17:35:15 +0100
+From: Jorge Marques <gastmaier@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jorge Marques <jorge.marques@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: iio: adc: Add adi,ad4062
+Message-ID: <lyu4x54r7dmtj4hcggsgzupcz6vzmflubm5bq2zafxgnyhjako@a74xbq3d6tyd>
+References: <20251013-staging-ad4062-v1-0-0f8ce7fef50c@analog.com>
+ <20251013-staging-ad4062-v1-1-0f8ce7fef50c@analog.com>
+ <20251013-step-quaintly-c58d8a1a460b@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251026-kmsan_fix-v3-1-2634a409fa5f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAEdN/mgC/22Myw6CMBQFf4XctTV9iG1Z+R/GGPoAbrRgWtNoC
- P9uYcXC5ZycmRmSj+gTNNUM0WdMOI0FxKECO7Rj7wm6wsAprxnlgjxCasd7hx8ilau5NFqfqYH
- yf0Vf5q11vRUeML2n+N3Sma3rv0pmhBFHlWXKGaWkvPShxefRTgHWSuZ787Q3+WpaoYXtjKaS7
- c1lWX7X3VYF3AAAAA==
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, 
- Xin Long <lucien.xin@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
- syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com, 
- Ranganath V N <vnranganath.20@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761496398; l=1958;
- i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
- bh=dkfgSRg3n/ubnVVhdVKVipSAGyUHeSxeTZAvC8QYEGI=;
- b=cXfC2grfwFoLTzuKTmqRsq4RmFBhH81YwCEK+w6/9OREBTgr7kj10VBf6eGGDduYtb9w//Hn/
- uGQe23ZPQprDUJ2/t63/UnLKYIyUrrrQIs7T0xElPUnR1QpQ8ABqBaS
-X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
- pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-step-quaintly-c58d8a1a460b@spud>
 
-Fix an issue detected by syzbot:
+On Mon, Oct 13, 2025 at 08:50:31PM +0100, Conor Dooley wrote:
+> On Mon, Oct 13, 2025 at 09:27:59AM +0200, Jorge Marques wrote:
+> > Add dt-bindings for AD4062 family, devices AD4060/AD4062, low-power with
+> > monitor capabilities SAR ADCs. Each variant of the family differs in
+> > granuality. The device contains two outputs (gp0, gp1). The outputs can
+> > be configured for range of options, such as threshold and data ready.
+> > The device uses a 2-wire I3C interface.
+> > 
+> > Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+> > ---
+> >  .../devicetree/bindings/iio/adc/adi,ad4062.yaml    | 83 ++++++++++++++++++++++
+> >  MAINTAINERS                                        |  6 ++
+> >  2 files changed, 89 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..dcf86088fc4f32de7ad681561a09bad2755af04c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
+> > @@ -0,0 +1,83 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +# Copyright 2024 Analog Devices Inc.
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/adc/adi,ad4062.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices AD4062 ADC family device driver
+> > +
+> > +maintainers:
+> > +  - Jorge Marques <jorge.marques@analog.com>
+> > +
+> > +description: |
+> > +  Analog Devices AD4062 Single Channel Precision SAR ADC family
+> > +
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad4060.pdf
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad4062.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,ad4060
+> > +      - adi,ad4062
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: gp0
+> > +        description: Signal coming from the GP0 pin.
+> > +      - const: gp1
+> > +        description: Signal coming from the GP1 pin.
+Hi Conor,
+> 
+> Please move the descriptions to the interrupts property, by creating an
+> items list there. I think more information should probably be provided
+> about them, than just "signal coming from", perhaps referencing the
+> ability for what the signal actually represents being controllable at
+> runtime.
 
-KMSAN reported an uninitialized-value access in sctp_inq_pop
-BUG: KMSAN: uninit-value in sctp_inq_pop
+I will add a short description of all mode that can be configured to
+during runtime. Since both can be configured to any mode except gp0 as
+dev_rdy, I will add an description to Interrupts, and then for each
+item, just say that for gp0 cannot be dev_rdy, aka:
 
-The issue is actually caused by skb trimming via sk_filter() in sctp_rcv().
-In the reproducer, skb->len becomes 1 after sk_filter(), which bypassed the
-original check:
+  interrupts:
+    description:
+      The interrupt pins are digital outputs that can be configured at runtime
+      as multiple interrupt signals. Each can be configured as GP_INTR, RDY,
+      DEV_EN, logic low, logic high and DEV_RDY (GP1 only). RDY is the
+      active-low data ready signal, indicates when new ADC data are ready to
+      read. DEV_EN synchronizes the enable and power-down states of signal
+      chain devices with the ADC sampling instant. DEV_RDY is an active-high
+      signal that indicates when the device is ready to accept serial interface
+      communications. In GP_INTR mode, the interrupt outputs one of the
+      threshold detection interrupt signals (MIN_INTR, MAX_INTR or either).
+    minItems: 1
+    items:
+      - description:
+          gp0, interrupt line for GP0 pin, cannot be configured as DEV_RDY.
+      - description:
+          gp1, interrupt line for GP1 pin, can be configured to any setting.
 
-        if (skb->len < sizeof(struct sctphdr) + sizeof(struct sctp_chunkhdr) +
-                       skb_transport_offset(skb))
-To handle this safely, a new check should be performed after sk_filter().
+  interrupt-names:
+    items:
+      - const: gp0
+      - const: gp1
 
-Reported-by: syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com
-Tested-by: syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d101e12bccd4095460e7
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Suggested-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
-KMSAN reported an uninitialized-value access in sctp_inq_pop
----
-Changes in v3:
-- fixes the patch format like fixes and closes tags.
-- Link to v2: https://lore.kernel.org/r/20251024-kmsan_fix-v2-1-dc393cfb9071@gmail.com
+> 
+> > +
+> > +  vdd-supply:
+> > +    description: Analog power supply.
+> > +
+> > +  vio-supply:
+> > +    description: Digital interface logic power supply.
+> > +
+> > +  ref-supply:
+> > +    description: |
+> > +      Reference voltage to set the ADC full-scale range. If not present,
+> > +      vdd-supply is used as the reference voltage.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - vdd-supply
+> > +  - vio-supply
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/i3c/i3c.yaml#
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    i3c {
+> > +        #address-cells = <3>;
+> > +        #size-cells = <0>;
+> > +
+> > +        ad4062: adc@0,2ee007c0000 {
+> 
+> Remove the ad4062 label here, since there are no users.
 
-Changes in v2:
-- changes in commit message as per the code changes.
-- fixed as per the suggestion.
-- Link to v1: https://lore.kernel.org/r/20251023-kmsan_fix-v1-1-d08c18db8877@gmail.com
----
- net/sctp/input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ack.
 
-diff --git a/net/sctp/input.c b/net/sctp/input.c
-index 7e99894778d4..e119e460ccde 100644
---- a/net/sctp/input.c
-+++ b/net/sctp/input.c
-@@ -190,7 +190,7 @@ int sctp_rcv(struct sk_buff *skb)
- 		goto discard_release;
- 	nf_reset_ct(skb);
- 
--	if (sk_filter(sk, skb))
-+	if (sk_filter(sk, skb) || skb->len < sizeof(struct sctp_chunkhdr))
- 		goto discard_release;
- 
- 	/* Create an SCTP packet structure. */
-
----
-base-commit: 43e9ad0c55a369ecc84a4788d06a8a6bfa634f1c
-change-id: 20251023-kmsan_fix-78d527b9960b
-
+> 
+> Cheers,
+> Conor.
+> 
+> pw-bot: changes-requested
+> 
 Best regards,
--- 
-Ranganath V N <vnranganath.20@gmail.com>
+Jorge
+> > +            reg = <0x0 0x2ee 0x7c0000>;
+> > +            vdd-supply = <&vdd>;
+> > +            vio-supply = <&vio>;
+> > +            ref-supply = <&ref>;
+> > +
+> > +            gp1-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+> > +            gp0-gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+> > +            interrupt-parent = <&gpio>;
+> > +            interrupts = <0 0 IRQ_TYPE_EDGE_RISING>,
+> > +                         <0 1 IRQ_TYPE_EDGE_FALLING>;
+> > +            interrupt-names = "gp0", "gp1";
+> > +        };
+> > +    };
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index f090c2f6e63a0d255a025885cc4573f5802ef159..afbfaeba5387b9fbfa9bf1443a059c47dd596d45 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1400,6 +1400,12 @@ F:	Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+> >  F:	Documentation/iio/ad4030.rst
+> >  F:	drivers/iio/adc/ad4030.c
+> >  
+> > +ANALOG DEVICES INC AD4062 DRIVER
+> > +M:	Jorge Marques <jorge.marques@analog.com>
+> > +S:	Supported
+> > +W:	https://ez.analog.com/linux-software-drivers
+> > +F:	Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
+> > +
+> >  ANALOG DEVICES INC AD4080 DRIVER
+> >  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+> >  L:	linux-iio@vger.kernel.org
+> > 
+> > -- 
+> > 2.49.0
+> > 
+
 
 
