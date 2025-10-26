@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-870380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BD7C0A8DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:59:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF9CC0A8E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80C9D18A037F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA17F3AFA59
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA30220F37;
-	Sun, 26 Oct 2025 13:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5763B18EB0;
+	Sun, 26 Oct 2025 13:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eKk8WPi1"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dmqDnQwL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE429408;
-	Sun, 26 Oct 2025 13:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8DD1E1C22;
+	Sun, 26 Oct 2025 13:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761487166; cv=none; b=nJdv81hneybOw33UOpA4r0NrLc3xDfNzRLEzHkmgU/PT0awcDHvtYac+j5dzIQZeSFA1UHZPo1Rc+0NpYPqMvvaS8sLyqkBD67kRNkCeuennc09u3FUviP6wWApUtC4/6BKzAV/MbdIAFE2geDdGYpbd0EKuIEJ1FAObV5x0+mo=
+	t=1761487182; cv=none; b=duPB5X07VbQAEe/jRwujwhDuIIGRs7UrX224t/OXjJUBZmqKa0eyOX9Vskp0UdbgqkEe5r8rd82oUj4MA6SQROuva1ZhBXLginfLeZY6k4sOjdzeho1D2WFTdKhsiYIZWy4B+dSwaK8AhRsfbXkDHk2hryB2DkN7uFBXd75M0uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761487166; c=relaxed/simple;
-	bh=Wmo/Tp+nodkOP3qLtdxCP/AyRTQN1yeys19spP2bHXw=;
+	s=arc-20240116; t=1761487182; c=relaxed/simple;
+	bh=z9ENmQBPXDOYZ9BsEZqtw/UhsDZN8tdZ+6KB5WgXGGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=q5kDwXC5CxG0RW5EWHxPbReMVYuA5AUqLlSB/PAnqu2J3Zqhr66UvWtkQlENEwDJktR6NEl2oNywZhgR/KsQjUka9rcSHEi83O3xrh/IiWCELqMi9kOkW0paOBdoREMNZ4SPidt8TsYlPKG283qyQ8o/lzP/q1rPeiBPEZl1p0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eKk8WPi1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8DDC4CEE7;
-	Sun, 26 Oct 2025 13:59:25 +0000 (UTC)
+	 Content-Disposition; b=YuUVW9EcNZ2nXZ1Pt81FJJ/Ja1luS/gwUWFQUHH+AJX11s9Nzd6v6NsA21wzOwU1KsD0oWLigVDJVwNq3/lg6PGyyl8oY4h7TINBFCsmQjOwESLXjwIejCPFGryUBSEKPhFNrVlGxmhj5r1PjyKZtOcosPolrjpZFdVY5h5Zw44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dmqDnQwL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E64B8C4CEE7;
+	Sun, 26 Oct 2025 13:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761487166;
-	bh=Wmo/Tp+nodkOP3qLtdxCP/AyRTQN1yeys19spP2bHXw=;
+	s=korg; t=1761487182;
+	bh=z9ENmQBPXDOYZ9BsEZqtw/UhsDZN8tdZ+6KB5WgXGGk=;
 	h=Date:From:To:Cc:Subject:From;
-	b=eKk8WPi19WQ34cfAXrA7jBNGMGmj+OX586me0H7Sy3Qmv6/+65rsiovni9mfqBEvd
-	 e/HcgCGHfTyGxopwGDZVCcvCj0Xq6unXHNBv0OPKQ3LHyGECwYq0vfzdZaEOfXGfJM
-	 UoKO/HC6onVpysYfWb81pf+gfbps5rv80uHPZqAY=
-Date: Sun, 26 Oct 2025 14:59:23 +0100
+	b=dmqDnQwL7xDoug18z/PdGh8ZXghzZrf4ngH7vYm0eAF7KlncZPULdyIe2NYU5kKgX
+	 YWh+wLXfjV863OtLhWXnizrLYKZh2hn9G6iPapNNxZrMqFKO3lzNj67ZOIFLvQr3YC
+	 RsmVgefJuih0Rv9ijtoR5InOyuRbVG1wI+VJxl4I=
+Date: Sun, 26 Oct 2025 14:59:39 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 6.18-rc3
-Message-ID: <aP4pO8V4UAE3XEiY@kroah.com>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY / Serial driver fixes for 6.18-rc3
+Message-ID: <aP4pS45wz11Lcggf@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,99 +54,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.18-rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.18-rc3
 
-for you to fetch changes up to a1b866f2018748282fa026eb4c92d032dfda11a9:
+for you to fetch changes up to d518314a1fa4e980a227d1b2bda1badf433cb932:
 
-  Merge tag 'usb-serial-6.18-rc3' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus (2025-10-24 13:52:58 +0200)
+  serial: 8250_mtk: Enable baud clock and manage in runtime PM (2025-10-22 12:13:54 +0200)
 
 ----------------------------------------------------------------
-USB driver fixes for 6.18-rc3
+tty/serial driver bugfixes for 6.18-rc3
 
-Here are some small USB driver fixes and new device ids for 6.18-rc3.
+Here are some small tty and serial driver fixes for reported issues.
 Included in here are:
-  - new option serial driver device ids added
-  - dt bindings fixes for numerous platforms
-  - xhci bugfixes for many reported regressions
-  - usbio dependency bugfix
-  - dwc3 driver fix
-  - raw-gadget bugfix
+  - sh-sci serial driver fixes
+  - 8250_dw and _mtk driver fixes
+  - sc16is7xx driver bugfix
+  - new 8250_exar device ids added
 
-All of these have been in linux-next this week with no reported issues.
+All of these have been in linux-next this past week with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Andrey Konovalov (1):
-      usb: raw-gadget: do not limit transfer length
+Artem Shimko (1):
+      serial: 8250_dw: handle reset control deassert error
 
-Christophe JAILLET (1):
-      usb: dwc3: Don't call clk_bulk_disable_unprepare() twice
+Cosmin Tanislav (1):
+      tty: serial: sh-sci: fix RSCI FIFO overrun handling
 
-Greg Kroah-Hartman (1):
-      Merge tag 'usb-serial-6.18-rc3' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
+Daniel Golle (1):
+      serial: 8250_mtk: Enable baud clock and manage in runtime PM
 
-Krishna Kurapati (1):
-      dt-bindings: usb: qcom,snps-dwc3: Fix bindings for X1E80100
+Florian Eckert (1):
+      serial: 8250_exar: add support for Advantech 2 port card with Device ID 0x0018
 
-LI Qingwu (1):
-      USB: serial: option: add Telit FN920C04 ECM compositions
+Geert Uytterhoeven (1):
+      dt-bindings: serial: sh-sci: Fix r8a78000 interrupts
 
-Mathias Nyman (2):
-      xhci: dbc: fix bogus 1024 byte prefix if ttyDBC read races with stall event
-      xhci: dbc: enable back DbC in resume if it was enabled before suspend
+Hugo Villeneuve (1):
+      serial: sc16is7xx: remove useless enable of enhanced features
 
-Michael Grzeschik (1):
-      tcpm: switch check for role_sw device with fw_node
-
-Michal Pecio (1):
-      usb: xhci-pci: Fix USB2-only root hub registration
-
-Neil Armstrong (1):
-      dt-bindings: usb: switch: split out ports definition
-
-Peter Robinson (1):
-      usb: misc: Add x86 dependency for Intel USBIO driver
-
-Reinhard Speyerer (1):
-      USB: serial: option: add Quectel RG255C
-
-Renjun Wang (1):
-      USB: serial: option: add UNISOC UIS7720
-
-Tim Guttzeit (1):
-      usb/core/quirks: Add Huawei ME906S to wakeup quirk
-
-Xu Yang (1):
-      dt-bindings: usb: dwc3-imx8mp: dma-range is required only for imx8mp
-
- .../bindings/phy/fsl,imx8mq-usb-phy.yaml           |  4 +-
- .../bindings/phy/samsung,usb3-drd-phy.yaml         |  4 +-
- .../devicetree/bindings/usb/fcs,fsa4480.yaml       |  1 +
- .../devicetree/bindings/usb/fsl,imx8mp-dwc3.yaml   | 10 +++-
- .../devicetree/bindings/usb/gpio-sbu-mux.yaml      |  1 +
- .../devicetree/bindings/usb/nxp,ptn36502.yaml      |  1 +
- .../devicetree/bindings/usb/onnn,nb7vpq904m.yaml   |  1 +
- .../devicetree/bindings/usb/parade,ps8830.yaml     |  1 +
- .../devicetree/bindings/usb/qcom,snps-dwc3.yaml    |  3 +
- .../bindings/usb/qcom,wcd939x-usbss.yaml           |  1 +
- .../devicetree/bindings/usb/ti,tusb1046.yaml       |  1 +
- .../devicetree/bindings/usb/usb-switch-ports.yaml  | 68 ++++++++++++++++++++++
- .../devicetree/bindings/usb/usb-switch.yaml        | 52 -----------------
- drivers/usb/core/quirks.c                          |  2 +
- drivers/usb/dwc3/dwc3-generic-plat.c               |  3 -
- drivers/usb/gadget/legacy/raw_gadget.c             |  2 -
- drivers/usb/host/xhci-dbgcap.c                     | 15 ++++-
- drivers/usb/host/xhci-pci.c                        |  3 +-
- drivers/usb/misc/Kconfig                           |  1 +
- drivers/usb/serial/option.c                        | 10 ++++
- drivers/usb/typec/tcpm/tcpm.c                      |  4 +-
- 21 files changed, 122 insertions(+), 66 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/usb-switch-ports.yaml
+ Documentation/devicetree/bindings/serial/renesas,scif.yaml |  1 +
+ drivers/tty/serial/8250/8250_dw.c                          |  4 +++-
+ drivers/tty/serial/8250/8250_exar.c                        | 11 +++++++++++
+ drivers/tty/serial/8250/8250_mtk.c                         |  6 ++++--
+ drivers/tty/serial/sc16is7xx.c                             |  7 -------
+ drivers/tty/serial/sh-sci.c                                | 14 ++++++++------
+ 6 files changed, 27 insertions(+), 16 deletions(-)
 
