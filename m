@@ -1,236 +1,429 @@
-Return-Path: <linux-kernel+bounces-870412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DABC0AAD5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:43:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DF8C0AAF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C11EA4EC9B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:41:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944F53B25BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700842652AF;
-	Sun, 26 Oct 2025 14:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E12E8E11;
+	Sun, 26 Oct 2025 14:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FbjKJCy1"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013060.outbound.protection.outlook.com [40.93.201.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJy7xLpu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E6E27AC21;
-	Sun, 26 Oct 2025 14:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761489659; cv=fail; b=pOiFhMYzQJEc5IgbHHfGPctVXmmYGI4W0LKNsUlhTulSL4AF4rJHIoOUhtQwmCLeR2R19LqhBmn4s8yXQK40/tAgoEgJRt4YS7BcEqjwkVburOAIEnk2U8AWjqoI0o3nmTDw0uHR2MYa/tm4IGx719dK8oidYyb+AC6+peNWELM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761489659; c=relaxed/simple;
-	bh=EjkL0BKwtQAj6KT2/OyVH+qUCSaSUPL5nMmfPJLG8sQ=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=ZIQXpYHVse4FK38ri6XN4cMrYjNJjdOR5WCb4fcq+gl685XiyTc7O+yieml2vnL6F9uq/6T3r8rZMdGKr1rNJggH8UWDs3wn/9JhlcpX2EHwlx+yUMgAjEjWCbaWtv3lG8lkhOZwjWIQhhbtPnViHI59EhkH8gCtjbHa32aZ1IQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FbjKJCy1; arc=fail smtp.client-ip=40.93.201.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rXHcb1HMdSaZ6AcHhe3ZLBij7Nh5GmRlPDdNMG0Wbp87tLxRH8g50nXnQA247x1qPwMGGvZ9HnbYqoetXd348ctvwXtAUO95p8cPw3jYB3RsDChw3q3wfMDYe6mTMRs86HzdTQnW+ilIcNfbs0uhk7JF5hci1vqlKUewwfsXthR0b22vyDboAeawfbI+Nb4dsXx2hOk+uzZ5uPQ6NlbognLDeJwzhCukUf/pxzXDOBRnjnN0cvktgu410nBUtLEszclK1Wndo8Vhg1uKx7xM8bPleBOvGypcwjypR/Z5CLlsDvJCdCInz27LIisX5LYR8mgdZu2G56A1Hg7Dalj+sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QnIaJsEPGTUTuXBSmWKDJHljGUENt+Nkuvu853RU/Pc=;
- b=gxbaLjDlEOuAIwkJL5siWDXYPQVFlqLXNINB9KnCBp4TWmo1yLpXu0ddmzb89cnPvYa1eR58fXAgAfTAogeC2VpOQXi4lw7+g2y5FVtGQd+O3EwgtiCkj8FBMVS7P48x4WpRIRMsrj4h9DSvoNW652sTd2tq6eDBbrENCl3JU+Xk71psm6zXcUe4iIM8BFo9G9JqWJJwCZW23EyMa4fthvuNhaeVlzoTQPQnyN7pANW+Gp/s0AUWjL6RTnr2wf6iMPxiWA6qbHklF03XG/UUDSBjB2VL2m3VwDcDmB1uVTHrNuRwDteZON832xdZbHAYwr9yjEgODru548dYMaHUVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QnIaJsEPGTUTuXBSmWKDJHljGUENt+Nkuvu853RU/Pc=;
- b=FbjKJCy1hxhHrH+hmeaBLELKStNvmMJSj5S54JCWaO6Di+ic2peMImQb8DaAj+L1X+fq3K8Y5j5hdGXnpEjt5n9je7D7X1nk67wCFia+8DFYJv3PQFWZAbzz+IrGv2WHjdSt7pXNu+FRCaEyXRIFNfFOV/vWoFPKQMC/c27CqxYdS5oQrF/5IAwZ82VNGWrKWKN6tg7qEr0tzyeemiW0CimzGl5Ab0TZ3LwXm7owsYn8zY26uAdTrmDyr3fntJcyx6opGMy5qSXTr2YNvvEjV047WGAbA1tUEQn91MhggN/sivPYtYUKjROjKx5Zl3+1acI7mO/Qds8Pn7Y+HUEksQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
- by SN7PR12MB7833.namprd12.prod.outlook.com (2603:10b6:806:344::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Sun, 26 Oct
- 2025 14:40:55 +0000
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316%4]) with mapi id 15.20.9253.017; Sun, 26 Oct 2025
- 14:40:55 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Sun, 26 Oct 2025 23:39:12 +0900
-Subject: [PATCH 7/7] gpu: nova-core: justify remaining uses of `as`
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251026-nova-as-v1-7-60c78726462d@nvidia.com>
-References: <20251026-nova-as-v1-0-60c78726462d@nvidia.com>
-In-Reply-To: <20251026-nova-as-v1-0-60c78726462d@nvidia.com>
-To: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: John Hubbard <jhubbard@nvidia.com>, 
- Alistair Popple <apopple@nvidia.com>, 
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
- Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.3
-X-ClientProxiedBy: TYCP286CA0357.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::15) To MN2PR12MB3997.namprd12.prod.outlook.com
- (2603:10b6:208:161::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B47A23EA89;
+	Sun, 26 Oct 2025 14:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761490207; cv=none; b=Tjrkl+NSJt6JO8IcIg8nqSSfubXNY6MyYIyDBDTLBpC/pJyNXX3stJpRMdVyJ0GyJz/kGOb4WLw9rXlHYwsS5S5imdUc9jAcKrHZ4+bfZJEFSWx6naBi8GfIUEGYeOKCiLFfzkplJ10NaOQ1tAEAwH1XWBTVKFCycuROhePBXSM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761490207; c=relaxed/simple;
+	bh=8cx012AHIyAVT81End9yKPY7nr1ogoBemutO1syf4RE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FmicpTj8kwM3DRsh9cAGqlbNH8clDL2yeP/rY/Kf+NEpA4mMKbLtXWgylk+VP7hwsE5BxXU5J/NmBVzeeT9XHqw5ccracwbrYm3Efmit7KE5k3RbK9+elw9KBXW9DJrxgXOTa+/cTOyNv8Hg+WdCBKqp9fJW67bor8iVHdOs1CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJy7xLpu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2703C116B1;
+	Sun, 26 Oct 2025 14:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761490207;
+	bh=8cx012AHIyAVT81End9yKPY7nr1ogoBemutO1syf4RE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qJy7xLpubR4b7Vqt55wzHVVDjZa3qy3B3jW3frp8cVH339QiJPRQrf1X0JhMfytq5
+	 MrPoqSEOAtCoC1QSgqRV7goA6JFuwPteYB7X2PoBZBF9LxK9wMBoCpWudq+5wzGGD+
+	 MM3opFxrq+Kj+L3iPyv2tiy/VzWcvDHHqO7y6yWh3C+44DdfSWdbSk45SvSxONEN3Z
+	 0ZDKHCQy145YxEUNjGqSQSYKD4OvIeuRnNFs7Gkiyrppb3dstnUv7pLGfoBpzow6I+
+	 83icfGhz5uYV93S89kajcbag6iSRLi79ALc6GL+X7BzlmTxkXkwj7IzdlRdQxTjMSj
+	 auhVbZU5urQdg==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Icenowy Zheng <uwu@icenowy.me>,
+	Drew Fustini <fustini@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	guoren@kernel.org,
+	wefu@redhat.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.17] clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
+Date: Sun, 26 Oct 2025 10:48:43 -0400
+Message-ID: <20251026144958.26750-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251026144958.26750-1-sashal@kernel.org>
+References: <20251026144958.26750-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|SN7PR12MB7833:EE_
-X-MS-Office365-Filtering-Correlation-Id: 508e69ac-841e-4ae0-d010-08de149dab72
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|10070799003|1800799024|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NGhPWkJjQzVobmtva2NTdUw2bHZESUJXaS83SkkxQVFDMmx4ejdyOGR0eFVv?=
- =?utf-8?B?aEx6ckV2MGNQS2VHaGhsM3JJTzZMUy9KbzVlM2pYdEpPaHJwRzhCNW5KTXlL?=
- =?utf-8?B?WHFmMXJaazZhcEg2L3VDU1NuMm5VY1g0and5SUYrUDdqOFpMbXBrVTZWMW9r?=
- =?utf-8?B?UGhnTkNUWjBCdmdaR1NKUG5ZenNqQ3FDb3FKWnBucXFxMUFlT1RrM3crRnZi?=
- =?utf-8?B?ZDNIS1duSmw2Vk1NQWthNVVYOGMzQ250UENHNlhmTCttZnc0V0U4VGx4eUtJ?=
- =?utf-8?B?cHFmNDY1aUN4SUpTSFRLaGFDS1RUbTVpQjJzV0plakRpbXNGVG1CNTllaTZs?=
- =?utf-8?B?dVlpOWdlNFkxL2FwTi8xZUxxcTBPeTQxeEdJRGtvYWg1OURCRE9VeUY4RlQr?=
- =?utf-8?B?amIxb2Vxb0NjcWltNjZOSm12aTFzSnZDamY3TlE3N1N6L3lUbStyYVNxN2hP?=
- =?utf-8?B?cXFMbWIwM3lUZjcvMWhOc1h0VmRvWmowWFBIM2srMzdoODAzVjdCa0Y0ajBu?=
- =?utf-8?B?UVNSb09mKzQ1SzZaT3VHVGJtU29vZFNuRURMS1BLdVAzK04wRXFGbzBWdnl5?=
- =?utf-8?B?ZzhKbG16U0RaODZDZE91cE5nM0NLVWoxQnVnVE5YOGJOdXFRYjRpU0NGaW1D?=
- =?utf-8?B?MVZ6YklleitSb2F4cXJiczI3TEpMWEJpMTVhNldodW81S21NQ1VEWVBRV1JJ?=
- =?utf-8?B?d1lFNG04VTJwakhnaGhuZEZycEdMd29vVkFhZC9rdzgyVi90K1UyVDc1RHFr?=
- =?utf-8?B?dzV3ekE2aDZXVDlIbE9RcVVobFlKU28rVWljd0xXTkxKUkk2TFdrMGVlUUtY?=
- =?utf-8?B?aHZjLyt6eU1ReUV4ODhkTWNsNWp4Z2piRERzMDU0bGVMREh3VTlJU3ZSeGEv?=
- =?utf-8?B?VTBDcmxVZXN2aUx5NitsckJRTURyelF2cFNmM3dWbWFLOU1pTStjWEJXYy9M?=
- =?utf-8?B?YmZDT1FRZ3I3bUZ2SDh3amhWL1NTUnRFdmRtUVB2Z0owdUtWRHlNdXlYcFJa?=
- =?utf-8?B?RkZCTXNRQnM4a1gzeWdvS2Zib05valNhV2RpT2FGdksyNWh1NnI4am1YNVhS?=
- =?utf-8?B?YVFhSzlpTzRkUXdnRS9zWU8wZUFOMVY2dzB6ZE1CNFdWeHM2dm1PMGMwSFY0?=
- =?utf-8?B?dGpRclh0YUFtemMyTUt2SUF1dzc0QUJ0aEJCQTdLcVd0bGFhYnJRbGFlZmkr?=
- =?utf-8?B?NGN0cGlUekhLN3dGWlJzRzBSc0wwekt1T0RCTUF3QnFrNTB4a2V6N2hpdmVO?=
- =?utf-8?B?WWx4ZTdkRGR4NEJyejhYb3VWZTZVaUxtV3dkM1o1dWxmWXkzb2gvaFkvWlFN?=
- =?utf-8?B?cFI5U2EvbU0xZmZIZ3JmT2lndWIvSXlUTTVqVUNBVFJ0LytjamM3Sm8wUjcv?=
- =?utf-8?B?UVl5ZWZTRXM2NHBabEN6NCs3VXFjN3Q1cG55TlAwUjJkSGZ4K2xYQUo4dFV0?=
- =?utf-8?B?NHFlanVPNmJwekNXb0VnZnFHNHBYcXROdE9TdzRKYzd2VHZ0V2JjQWoxc2xW?=
- =?utf-8?B?Sm1LZ2tFdDE3eVZxZTZ2SW9rVzNHOUVwbVpjb0U4VytRR0lZVDErS1ZNR0t4?=
- =?utf-8?B?ZnYzM1RRY0ZzNlpIRnduNGtLd1g4S3JzT2F2cFNqclYvanJIdGVWbWx3bmxO?=
- =?utf-8?B?ZTdzREwyUkN5Qjd0VWxzVFQwek5NRzhMRDI3Z3BFV2xRdzF2YmEvVk9qL1pE?=
- =?utf-8?B?TWhsYTlLanYySTdra3JQSVUwWGNPQjRuUnFJNkpvR2djOEo0YUtDNFhIWVIz?=
- =?utf-8?B?WUtSR0JPRHRjS05YQWxFdThLZmFtazJxRTJYbUZQZktNODlUK3Y1Ums1T1RS?=
- =?utf-8?B?RUZEWVNhdCtJSFJmM1dnV0xWTFZVVSs3WGxJOTRRUUFab3YzSGZwaHBZRHF5?=
- =?utf-8?B?UjNLczJsbWdnSklSU1JWNWp1bzJoaTRSb2oxWHZGYmtsUlA4NFRPQUQ3WGZz?=
- =?utf-8?B?d0Jvditna3dFRzBNUExUK0xPakI2SEVldDNnRU9nSUh6SDB5Z1lCanh0R084?=
- =?utf-8?Q?Q2yCoQh8uig6ItCYqHzA6kLBgooSeY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cld4YytOUldhUzlwWHdmWGNlT2U2a2pKaFdmSlZzcWFjUFBzTTkyR0NoQWRy?=
- =?utf-8?B?TTlCN25adTgxZWdvY2wvR21sRVVVUnV4bFZkZDhNazZ2dDRXUnowS25sVk9H?=
- =?utf-8?B?YWg4RW9haHB4OENpak02aEEvUDNXVkhSRTBIVVRwaFQ3SVlNTTdLYW9Wa2Qx?=
- =?utf-8?B?SzRzd1cxYW9iSTNKUktTRGNYZVdDUkhQMHZNeVVCWUNGR1g0ZVUzU0xXTG44?=
- =?utf-8?B?dHB6NFhyOWRFVy8wN2QrY1RpTldudkpVRkRjZDkyeHNVTWNKc0pnSktqQ25u?=
- =?utf-8?B?YnQ4QUV1OHNsZU5yWFJ2YTlrUHk3dVU0enJkVTBUaGlZL3FXbElHdVlRZ2dH?=
- =?utf-8?B?bDRpanlMcDJZaC93anFYRTFiY2xiaXFxNVdnczRvaVJVOWU3NUpaMmNvNjVv?=
- =?utf-8?B?ZFBpVnBablhzZ3owL1hZdlA3YzdxUGNXN0lOZVpjeHRIV1JSNnU3MkpQRVF1?=
- =?utf-8?B?RWh6NW1aN1p0ZGt6R0t0WkRjMllXOVBDSER0V0hOYUlnWnZBU3Y0cnZaWDBE?=
- =?utf-8?B?YXVVZ0VRY0NSLzNlUkFLTEJSak10TDBMRzBkRGpvMEtBVkViK29mZlIvRGh6?=
- =?utf-8?B?S3RjT0NHMXdydkE4M2JWZzFoN2NXUjhYc0VySCtUblkzMTNkYXlOK3BJRUU3?=
- =?utf-8?B?SnRnZnN3TjJIWFhjU2YzNnE3OElCRUtJSUl3bzhSQ2IzMjZuc1FTZ0JDUmw4?=
- =?utf-8?B?ZnRScjZIUE80M0ZUa0JocHVncVliVmlRQ0FYWVJQd3NZY3Z3SnNxOU95WDh3?=
- =?utf-8?B?dlRDWGUxSHNYaW5VNW1tTDdZYUYwQ3I3Sm8rVFQ2SE8rdndDYWYzVkpyL0pn?=
- =?utf-8?B?ZEhMS3pCRDhJWHpOMkNRcTdNOXdta3c0MlVrcktCSGVvYmhCV2gwelVmcmd4?=
- =?utf-8?B?Q2JLMTJrRFVWRFExK0xCcm9VTUw5c29nSlR3TnNlZ2dTQUM2WC9KM2pUbHdY?=
- =?utf-8?B?eE5yZXpVMEFMSVdvWGF2czVOc3NVUWJvRGROdVozWElCMkQzWGpRcE92QzY0?=
- =?utf-8?B?THNRblZ6QVBBMUxlZU8rOFRpZEtvdFkxOURKdTExYWRBZ3M0SHZrNEZQWW55?=
- =?utf-8?B?dWxZTzVMUHBGZzhLbGxnSGNrejZaSXVKdTZKa3RkazZjc3diL0JPT3hmSlF0?=
- =?utf-8?B?aDVUNlMvTjFiQVB1YVkvMXgyS3hRQVBERGcxTFJSbHNhMWYzOWU4emNsS3ow?=
- =?utf-8?B?aVFVV0pEODcvR2kreklDcy83b3lVNVhqYkEydTcwL1pvREhvb3lZS3R2bjdV?=
- =?utf-8?B?TG5zQnVEU1dLU3NGZFNMblR0ZnYvaHBHdFlHclhZMUhNNmhZWmN3dG1JdlNh?=
- =?utf-8?B?LzhJOUpWeTViZmEwR1lCTUttZDRXNjl5eFJYYktKMW1WRHdlYmJjYlljRXdT?=
- =?utf-8?B?QTdieWt2a21HVDdWSG9OaEtsdUdVaTVVYWJjcDhmV3VEeXVlZ1g2cXpUaFNm?=
- =?utf-8?B?cy9aTmJkekoxbFJ2T0JEZ1Z0SEtDU1RXYTFaV1FKUjJXb2FEV0V0Sk5yUmlW?=
- =?utf-8?B?WGZsaG1QVFNqOHpuV2dtcDNja211S0o1bTR1NVJGZkdJVStCWk9iY3B3dm1R?=
- =?utf-8?B?Y2NiZkNHUWY3dEkwWTFPNXZCR013aGh0aHVlR2p0N0RQSklaT0pCOFdOblJE?=
- =?utf-8?B?VHN6NkxEVGhnSjVOa1lBOUg5T2N4eTIzMWxqQS9jNjIrZzJRU0VHWGZ5Yisr?=
- =?utf-8?B?Yy9XbThEWnZBWHFKM2pkNzh6OG1wdWFPTklrSmh3UTcraElHQXY1NEdrWnRM?=
- =?utf-8?B?ZFl4M0Y2UmZCT0JwY2Q3Rkh6TklNQ3NzMkdqUXRPVkJQYVZDc1JYM3BYck9D?=
- =?utf-8?B?NTA3WmhHTEtLWUdqOW9STWNWOXkzalh5dVNseHpSVWFaL2s0WjZuaC85TEpQ?=
- =?utf-8?B?VHhwRzRqSzFUNkkrY3VXNkFVczRnbUsvSFJpZzlzbGRpblIxNVBGZW50bXJw?=
- =?utf-8?B?dFVOZWNBME9YYkRWTVc3d1BVWkJEeDBxSHVsaCtWUUhVeGJlZnJvV0ZSVWIv?=
- =?utf-8?B?VHRQOWVTOGxYSW9xYVVBZm9aTW93VGhUWElVR2wwU3h1Q0FsdHlCZ0ZRN0JX?=
- =?utf-8?B?QVVPNzhwOGRiMEhsYXRjNjlXdjYwL2hiam9ocmVlVGE2bVo2QzJadXlHcXBS?=
- =?utf-8?B?RlkzUmg1aWw3ckI0eVhXN0V1aFRyVTQ2R0hRV0pCTDBieDNjVFhLaWpNWjhm?=
- =?utf-8?Q?x5EEsgGG7bSYRx+IBA4OSlMsxG0Eih2SP+VvtD7jV7ab?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 508e69ac-841e-4ae0-d010-08de149dab72
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2025 14:40:55.3021
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZhpTe9D7bjeTAd1/Xl4A3EhR8igJnGiZAB1hkrYX7J9lr3fKhaKoGCFc+XnrWo4nsJi2DOgr8tZHS1UJfLiYUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7833
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-There are a few remaining cases where we *do* want to use `as`,
-because we specifically want to strip the data that does not fit into
-the destination type. Comment these uses to clear confusion about the
-intent.
+From: Icenowy Zheng <uwu@icenowy.me>
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+[ Upstream commit c567bc5fc68c4388c00e11fc65fd14fe86b52070 ]
+
+The AXI crossbar of TH1520 has no proper timeout handling, which means
+gating AXI clocks can easily lead to bus timeout and thus system hang.
+
+Set all AXI clock gates to CLK_IS_CRITICAL. All these clock gates are
+ungated by default on system reset.
+
+In addition, convert all current CLK_IGNORE_UNUSED usage to
+CLK_IS_CRITICAL to prevent unwanted clock gating.
+
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+Reviewed-by: Drew Fustini <fustini@kernel.org>
+Signed-off-by: Drew Fustini <fustini@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/nova-core/falcon.rs       | 4 ++++
- drivers/gpu/nova-core/fb/hal/ga100.rs | 4 ++++
- 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-index a44df1ac8873..701c08d0cb2a 100644
---- a/drivers/gpu/nova-core/falcon.rs
-+++ b/drivers/gpu/nova-core/falcon.rs
-@@ -479,9 +479,13 @@ fn dma_wr<F: FalconFirmware<Target = E>>(
-         // Set up the base source DMA address.
- 
-         regs::NV_PFALCON_FALCON_DMATRFBASE::default()
-+            // `as u32` is used on purpose since we do want to strip the upper bits, which will be
-+            // written to `NV_PFALCON_FALCON_DMATRFBASE1`.
-             .set_base((dma_start >> 8) as u32)
-             .write(bar, &E::ID);
-         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
-+            // `as u16` is used on purpose since the remaining bits are guaranteed to fit within a
-+            // `u16`.
-             .set_base((dma_start >> 40) as u16)
-             .write(bar, &E::ID);
- 
-diff --git a/drivers/gpu/nova-core/fb/hal/ga100.rs b/drivers/gpu/nova-core/fb/hal/ga100.rs
-index 871c42bf033a..6a59c96febc1 100644
---- a/drivers/gpu/nova-core/fb/hal/ga100.rs
-+++ b/drivers/gpu/nova-core/fb/hal/ga100.rs
-@@ -18,9 +18,13 @@ pub(super) fn read_sysmem_flush_page_ga100(bar: &Bar0) -> u64 {
- 
- pub(super) fn write_sysmem_flush_page_ga100(bar: &Bar0, addr: u64) {
-     regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI::default()
-+        // `as u32` is used on purpose since the remaining bits are guaranteed to fit within a
-+        // `u32`.
-         .set_adr_63_40((addr >> FLUSH_SYSMEM_ADDR_SHIFT_HI) as u32)
-         .write(bar);
-     regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR::default()
-+        // `as u32` is used on purpose since we want to strip the upper bits that have been written
-+        // to `NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI`.
-         .set_adr_39_08((addr >> FLUSH_SYSMEM_ADDR_SHIFT) as u32)
-         .write(bar);
- }
+LLM Generated explanations, may be completely bogus:
 
+## Backport Recommendation
+
+**YES** - This commit should be backported to stable kernel trees.
+
+---
+
+## Executive Summary
+
+This commit fixes a critical system stability issue on TH1520 SoC-based
+systems (LicheePi 4A, BeagleV Ahead boards) by preventing AXI clock
+gating, which causes bus timeouts and system hangs due to a hardware
+limitation. The fix is small, localized, low-risk, and follows
+established kernel patterns.
+
+---
+
+## Detailed Analysis
+
+### 1. Problem Description
+
+**Hardware Limitation**: The TH1520 SoC's AXI crossbar lacks proper
+timeout handling. When AXI clocks are gated, bus transactions can
+timeout indefinitely, causing complete system hangs.
+
+**User Impact**: Without this fix, users experience:
+- System hangs during boot (especially after "clk: Disabling unused
+  clocks")
+- Unresponsive devices when accessing peripherals
+- Random freezes when the kernel's power-saving mechanisms gate AXI bus
+  clocks
+
+### 2. Code Changes Analysis
+
+The commit makes **44 lines of mechanical flag changes** in
+`drivers/clk/thead/clk-th1520-ap.c`:
+
+**Two types of changes:**
+
+1. **Converting `0` → `CLK_IS_CRITICAL`** (15 clocks):
+   - `axi4_cpusys2_aclk` (drivers/clk/thead/clk-th1520-ap.c:483)
+   - `axi_aclk` (drivers/clk/thead/clk-th1520-ap.c:505)
+   - `vi_clk` (drivers/clk/thead/clk-th1520-ap.c:685)
+   - `vo_axi_clk` (drivers/clk/thead/clk-th1520-ap.c:710)
+   - `aon2cpu_a2x_clk` (drivers/clk/thead/clk-th1520-ap.c:794)
+   - `x2x_cpusys_clk` (drivers/clk/thead/clk-th1520-ap.c:796)
+   - `npu_axi_clk` (drivers/clk/thead/clk-th1520-ap.c:813)
+   - `cpu2vp_clk` (drivers/clk/thead/clk-th1520-ap.c:814)
+   - `axi4_vo_aclk` (drivers/clk/thead/clk-th1520-ap.c:858)
+   - `gpu_cfg_aclk` (drivers/clk/thead/clk-th1520-ap.c:862)
+   - `x2h_dpu1_aclk` (drivers/clk/thead/clk-th1520-ap.c:894)
+   - `x2h_dpu_aclk` (drivers/clk/thead/clk-th1520-ap.c:896)
+   - `iopmp_dpu1_aclk` (drivers/clk/thead/clk-th1520-ap.c:906)
+   - `iopmp_dpu_aclk` (drivers/clk/thead/clk-th1520-ap.c:908)
+   - `iopmp_gpu_aclk` (drivers/clk/thead/clk-th1520-ap.c:910)
+
+2. **Converting `CLK_IGNORE_UNUSED` → `CLK_IS_CRITICAL`** (7 clocks):
+   - `apb_pclk` (drivers/clk/thead/clk-th1520-ap.c:654)
+   - `vp_axi_clk` (drivers/clk/thead/clk-th1520-ap.c:735)
+   - `cpu2aon_x2h_clk` (drivers/clk/thead/clk-th1520-ap.c:798)
+   - `cpu2peri_x2h_clk` (drivers/clk/thead/clk-th1520-ap.c:800)
+   - `perisys_apb1_hclk` (drivers/clk/thead/clk-th1520-ap.c:802)
+   - `perisys_apb2_hclk` (drivers/clk/thead/clk-th1520-ap.c:804)
+   - `perisys_apb3_hclk` (drivers/clk/thead/clk-th1520-ap.c:806)
+
+**Technical Significance**:
+- `CLK_IGNORE_UNUSED` (BIT(3)): Only prevents gating during initial
+  cleanup
+- `CLK_IS_CRITICAL` (BIT(11)): Prevents gating at ALL times - enforced
+  with WARN messages in clk core
+
+### 3. Historical Context
+
+The TH1520 clock driver has a history of clock gating issues:
+
+**Timeline:**
+- **v6.11** (July 2024): Driver introduced (ae81b69fd2b1e)
+- **January 2025**: First fix added `CLK_IGNORE_UNUSED` to prevent boot
+  hangs (037705e94bf6e)
+  - Commit message: "Without this flag, the boot hangs after 'clk:
+    Disabling unused clocks'"
+- **June 2025**: More bus clocks marked `CLK_IGNORE_UNUSED`
+  (0370395d45ca6)
+  - Fixed boot hangs with PVT thermal sensor and PWM controller
+  - Documented that alternative solutions (simple-pm-bus) were not
+    viable
+- **August 2025**: Current commit upgrades to `CLK_IS_CRITICAL`
+  (c567bc5fc68c4)
+  - Addresses root cause: AXI crossbar hardware limitation
+
+**Pattern**: Progressive escalation shows that `CLK_IGNORE_UNUSED` was
+insufficient, and the proper fix requires `CLK_IS_CRITICAL` to prevent
+ANY clock gating, not just initial cleanup.
+
+### 4. Validation Against Kernel Patterns
+
+**Industry Standard Practice**: Using `CLK_IS_CRITICAL` for critical bus
+clocks is well-established:
+
+```bash
+# Similar patterns found in:
+- drivers/clk/imx/clk-imx6q.c: mmdc_ch0_axi (CLK_IS_CRITICAL)
+- drivers/clk/imx/clk-imx6ul.c: axi (CLK_IS_CRITICAL)
+- drivers/clk/imx/clk-imx7d.c: main_axi_root_clk (CLK_IS_CRITICAL)
+- drivers/clk/imx/clk-imx93.c: wakeup_axi_root, nic_axi_root
+  (CLK_IS_CRITICAL)
+- drivers/clk/npcm/clk-npcm7xx.c: axi (CLK_IS_CRITICAL)
+- drivers/clk/mediatek/: Multiple AXI/bus clocks (CLK_IS_CRITICAL)
+```
+
+This confirms the approach is not unusual and follows established best
+practices.
+
+### 5. Risk Assessment
+
+**Risk of Backporting: VERY LOW**
+
+**Positive factors:**
+- ✅ Changes are purely flag modifications, no logic changes
+- ✅ Only affects TH1520 SoC (narrow hardware scope)
+- ✅ Change is conservative (prevents gating vs enabling new features)
+- ✅ Hardware defaults already have these clocks ungated
+- ✅ No dependencies on other commits
+- ✅ No follow-up fixes or reverts found
+- ✅ Follows kernel best practices
+- ✅ Small, contained change (44 lines, single file)
+
+**Potential side effects:**
+- ⚠️ Slightly higher power consumption (clocks stay enabled)
+  - **Mitigated**: Hardware already leaves these ungated by default
+  - **Acceptable**: Stability > minor power savings for critical
+    infrastructure
+
+**Risk of NOT Backporting: HIGH**
+
+Users on stable kernels (v6.11+) will experience:
+- System hangs and freezes
+- Boot failures
+- Unresponsive peripherals
+- Unreliable systems
+
+### 6. Backport Criteria Compliance
+
+| Criterion | Status | Details |
+|-----------|--------|---------|
+| **Fixes important bug** | ✅ YES | Fixes critical system hangs |
+| **Affects users** | ✅ YES | All TH1520 hardware users affected |
+| **Small and contained** | ✅ YES | 44 lines, single file, mechanical
+changes |
+| **No new features** | ✅ YES | Only prevents clock gating |
+| **No architectural changes** | ✅ YES | Simple flag changes |
+| **Minimal regression risk** | ✅ YES | Conservative change, hardware
+limitation |
+| **Confined to subsystem** | ✅ YES | Only affects TH1520 clock driver |
+| **Clear side effects** | ✅ YES | Slightly higher power (acceptable
+tradeoff) |
+
+### 7. Target Stable Kernels
+
+**Recommended backport targets:**
+- v6.11+ stable trees (where TH1520 driver was introduced)
+- Current LTS kernels that include TH1520 support
+
+**Dependencies:** None - this is a standalone fix
+
+### 8. Supporting Evidence
+
+**Real Hardware Impact**: This affects actual production hardware:
+- LicheePi 4A (RISC-V development board)
+- BeagleV Ahead (RISC-V development board)
+- Other TH1520-based systems
+
+**Documentation**: Commit message clearly explains the rationale and
+hardware limitation.
+
+**Community Review**:
+- Reviewed-by: Drew Fustini (TH1520 maintainer)
+- Signed-off-by: Drew Fustini (subsystem maintainer)
+
+---
+
+## Conclusion
+
+This commit is an **excellent candidate for backporting** to stable
+kernel trees. It fixes a critical reliability issue (system hangs)
+caused by a documented hardware limitation, uses a conservative and
+well-established approach, has minimal regression risk, and is essential
+for users of TH1520-based hardware. The change follows stable kernel
+rules precisely: important bugfix, small and contained, no architectural
+changes, minimal risk.
+
+**Recommendation: BACKPORT to v6.11+ stable kernels**
+
+ drivers/clk/thead/clk-th1520-ap.c | 44 +++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+index ec52726fbea95..6c1976aa1ae62 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -480,7 +480,7 @@ static struct ccu_div axi4_cpusys2_aclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("axi4-cpusys2-aclk",
+ 					      gmac_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -502,7 +502,7 @@ static struct ccu_div axi_aclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("axi-aclk",
+ 						      axi_parents,
+ 						      &ccu_div_ops,
+-						      0),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -651,7 +651,7 @@ static struct ccu_div apb_pclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
+ 						      apb_parents,
+ 						      &ccu_div_ops,
+-						      CLK_IGNORE_UNUSED),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -682,7 +682,7 @@ static struct ccu_div vi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -707,7 +707,7 @@ static struct ccu_div vo_axi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vo-axi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -732,7 +732,7 @@ static struct ccu_div vp_axi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      CLK_IGNORE_UNUSED),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -791,27 +791,27 @@ static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
+ static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, 4, 0);
+ static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, 5, 0);
+ static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
+-		0x134, 8, 0);
++		0x134, 8, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_pd,
+-		0x134, 7, 0);
++		0x134, 7, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd,
+-		0x138, 8, CLK_IGNORE_UNUSED);
++		0x138, 8, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
+-		0x140, 9, CLK_IGNORE_UNUSED);
++		0x140, 9, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
+-		0x150, 9, CLK_IGNORE_UNUSED);
++		0x150, 9, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
+-		0x150, 10, CLK_IGNORE_UNUSED);
++		0x150, 10, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
+-		0x150, 11, CLK_IGNORE_UNUSED);
++		0x150, 11, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+ 		0x150, 12, 0);
+ static const struct clk_parent_data perisys_apb4_hclk_pd[] = {
+ 	{ .hw = &perisys_apb4_hclk.gate.hw },
+ };
+ 
+-static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, 0);
+-static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, 0);
++static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, CLK_IS_CRITICAL);
++static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, 30, 0);
+ static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, 26, 0);
+ static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, 24, 0);
+@@ -855,11 +855,11 @@ static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, 2, 0);
+ static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, 1, 0);
+ 
+ static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
+-		video_pll_clk_pd, 0x0, 0, 0);
++		video_pll_clk_pd, 0x0, 0, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
+ 		0x0, 3, 0);
+ static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
+-		video_pll_clk_pd, 0x0, 4, 0);
++		video_pll_clk_pd, 0x0, 4, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
+ 		dpu0_clk_pd, 0x0, 5, 0);
+ static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
+@@ -891,9 +891,9 @@ static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
+ static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
+ 		0x0, 19, 0);
+ static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
+-		video_pll_clk_pd, 0x0, 20, 0);
++		video_pll_clk_pd, 0x0, 20, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
+-		video_pll_clk_pd, 0x0, 21, 0);
++		video_pll_clk_pd, 0x0, 21, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
+ 		video_pll_clk_pd, 0x0, 22, 0);
+ static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
+@@ -903,11 +903,11 @@ static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
+ static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
+ 		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, 25, 0);
+ static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
+-		video_pll_clk_pd, 0x0, 27, 0);
++		video_pll_clk_pd, 0x0, 27, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
+-		video_pll_clk_pd, 0x0, 28, 0);
++		video_pll_clk_pd, 0x0, 28, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
+-		video_pll_clk_pd, 0x0, 29, 0);
++		video_pll_clk_pd, 0x0, 29, CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
+ 		video_pll_clk_pd, 0x0, 30, 0);
+ static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
 -- 
 2.51.0
 
