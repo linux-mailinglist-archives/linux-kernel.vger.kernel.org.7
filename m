@@ -1,245 +1,192 @@
-Return-Path: <linux-kernel+bounces-870678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC565C0B6F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:17:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAFDC0B702
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 625534E8904
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A4F189F95A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C7D3009F5;
-	Sun, 26 Oct 2025 23:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463C23009F4;
+	Sun, 26 Oct 2025 23:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="UmdTyKVl"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PB2vfHYQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E182417C2
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921D73002B3
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761520658; cv=none; b=Y/OqmvomVz3UAHpHeMwRQHYNTJ7coagKY1AzQadg89dygn7Hz5Bmx2CiXEtAsvELY5GdzY/g0X8GZq5V8FMMkf3lmRvjQTURRQumrrblolYWsi0vUlaR2NI29g7H7PIz7cuzJr1XTkMwnifQyvchfRZxUlkveHXiAqHfVTuOh/0=
+	t=1761520667; cv=none; b=T8qw3J3hX/9KKjbDqetxySdNBYFWJzme1R3s1PMxLVmMHvta5gsKfL2NMkBGWQ1m1+0cD0CqWsrSxTpT0cOlGC65NaDPkzpPoNWNlOzSY3SBe/JJG2CxRDzB0k1c2kyIgCRU2s2U8a7GA7h6ILp5HVgxHM09P0ZYW63oIN8/g3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761520658; c=relaxed/simple;
-	bh=0Eblrr0rQZHjmoM8FhZsrjb4gQPrP3t6Hlax/MDvvM8=;
+	s=arc-20240116; t=1761520667; c=relaxed/simple;
+	bh=Sxn1qFboHLBHmz3scQl5x/MknSvqUBzC0WU+bHRwKBw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZhDdfBsL81KaOvA2Kq6dql87zgPEJ4TN1mZvoUCSN0A8RBfbTrFO1uu0CeGWgZtcaYXQ4ZXanIURfs8MJsYaWImCaRSDx0QbdmSB74kqDbQ+McSfHfiozPWK2TX+11XDRCk8OcyssXV5PdQsvYddrqRcyljq5YFkU/06kOjfp5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=UmdTyKVl; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id 88742C06B1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:17:31 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id D7166C06B7
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:17:30 +0200 (EET)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 18F2D20197F
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:17:30 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761520650;
-	bh=NLLhv4W6vg+uqkKQKr1d0rnjNBVPg3Q90Yj6Z1QOohs=;
-	h=Received:From:Subject:To;
-	b=UmdTyKVllKS1wmVtPwbQsTMe1KZjegxocLCAw4QtQTICQb7l8mvCCyaPtcmdCeGYM
-	 VYyGN7y1LDsBPs014MI7pxJYB70hsOMh4WQpjQBleDCAvbXnNnp2ZigAGYfFplqeQL
-	 rFH3YH9Z4/4BmU7VM6Qb2nCyj3VNdLC9dj3NyiAlRpaIfgYUmggkBK3sAv2rkzTQfo
-	 Zi9eC8EW/IQ2JYnS9/BxtwrQ+eNOaCRUbIyIMQc/khHs4L7RYkTu+irr5d8UuPs8E3
-	 YE/TaELhuN5ZQUHWpRCMxSGHhpMVnXWCjSS2U/rVrp6VixIIg0ZIya/+R2LyWSpyw7
-	 X+2HAITIEtNxA==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-378ccb8f84aso42761731fa.3
-        for <linux-kernel@vger.kernel.org>;
- Sun, 26 Oct 2025 16:17:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCXw24r4q5ML3mEVhm3242LoR7a9j/dMMZo/l1Lj92WGEbLwFFMPnrk1gejHK/kPxo6XxTHgANGAgqXUrik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV1uKw9tBIZnu6IMfu8s2zGCegp40hVTjbhH1vjNx2Dw5EEtMg
-	e1UEFbgUfsNTuhX2eKCY6glZZ6UGjJhKtNaapIBZBJlNZMwi/nKuyyt+I83fAJot9Sza/odT2xU
-	LysH5jNvfxcqQA+dZsN1zId6aEgQ+hKM=
-X-Google-Smtp-Source: 
- AGHT+IF+hOy1JUlRDSLwAnFSRjjFUusa/46QRrgNSniA7IHw4k4MPNiKsp/8aOC45osMCehRlShRPvXlBfB66NWzQYw=
-X-Received: by 2002:a05:651c:438d:20b0:378:d69f:af51 with SMTP id
- 38308e7fff4ca-378d69fb29fmr30006271fa.23.1761520649446; Sun, 26 Oct 2025
- 16:17:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=kzHsToi8pwEpRzlJEYunpNW33DTYewhU0WJLb1V+tv8uxTeCTsJ5Q8w7CCNHjmbd34lrW8IKUIMBXMNjOnAHRdyZQVISmdRYZTe+m5yC95yCzxDO1nsW8SSIIYoxPEuKdO2c6BH8wU3F2H9KEDtxhEFgU8rShrYcAl4zrclsjek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PB2vfHYQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2499BC19425
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:17:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761520667;
+	bh=Sxn1qFboHLBHmz3scQl5x/MknSvqUBzC0WU+bHRwKBw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PB2vfHYQQ4lPgfwvvaASjw1Nv4DWoKZo8m9FKsNnH9vHvHjCRJbojs5LEHCSSKuYY
+	 u7nivXjzV25EhJT7+lo2NY3/cxjjsoIj2lbgrj6qkqrU68AopNEfKOuVTm+l4B8Xob
+	 muBa6zl6VHUIiZxyEazF8nMrq3XR+XmNpBdp5DLp0I2pTcEADWdSoJM5iM05qRlsYe
+	 fKhsH9bMxPPv+/l/exfh4MvxMFsuNW51BWGf+pu6Z5N/8xOemJ8lQLHgawMA+GXqib
+	 24Pda9OMJOiADZff/s/1H84QKCJWrTu/eNgdiDFGzHreAMLoWMQtZAZTOKKmm/3rj3
+	 TM6IIBWCYYqxQ==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63c4b5a1b70so7637994a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 16:17:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/5HVdihfyMEASzUy+QlZb2e+i6L498+QEsG52jAKIqRVk94k8HjBmxKPyj+Mq8Pl5X889TcF/W/H8wM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcQ68/cLqSngOYBbdsV+iRkZvzGfKwTRmXE7CmwFU/Lvnmpxvc
+	jCW6QiBGdTA2eUhPm4LT620OT0IbEkwsmNrpjRGzMS3FfLeY3xRn+6lMM5MPKU1M9j30ZQaOZoT
+	2DsO4MPvjEeKsEjp319+flBTsbyfbPdA=
+X-Google-Smtp-Source: AGHT+IHPeTtq5sY0zSRj4xzG9FTc1LgV1Sh+fv9mm7ksb1Ngm9o67tVpEeeEvXIAUOh6I0kgYNEo/9S0jp89gDsI/qc=
+X-Received: by 2002:a05:6402:2113:b0:637:ee5f:d89e with SMTP id
+ 4fb4d7f45d1cf-63c1f6b4c29mr33882365a12.20.1761520665599; Sun, 26 Oct 2025
+ 16:17:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015084414.1391595-1-lkml@antheas.dev>
- <20251015084414.1391595-7-lkml@antheas.dev>
- <63f0221d-4436-4d1e-a933-8b12f392cac6@gmx.de>
-In-Reply-To: <63f0221d-4436-4d1e-a933-8b12f392cac6@gmx.de>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 27 Oct 2025 00:17:18 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwHsFEU1nZNe-7HEv86Oi8VTX=qHO-Tz76uRJVeFTUDv5g@mail.gmail.com>
-X-Gm-Features: AWmQ_bkT1BFV1BoAROk7zo1d9f-a5mQkYakihyu3LLTsXKjAjtlTIYIhG0371kA
-Message-ID: 
- <CAGwozwHsFEU1nZNe-7HEv86Oi8VTX=qHO-Tz76uRJVeFTUDv5g@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
+ <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com> <e2757988-63af-4ace-aed7-f8708f52fe93@linux.dev>
+In-Reply-To: <e2757988-63af-4ace-aed7-f8708f52fe93@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 27 Oct 2025 08:17:33 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-ZuVzN9zFLtdmm7Kzh_wYUV_vAj4G=-evw80rLmBrrdQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnk1otU24Jjp9_bBp7PYBfUXhIordxU-QA7NcUtWLaVpKu341C-ujpzuc8
+Message-ID: <CAKYAXd-ZuVzN9zFLtdmm7Kzh_wYUV_vAj4G=-evw80rLmBrrdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 07/22] smb: move some duplicate definitions to common/smb2pdu.h
+To: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
+	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
+	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
+	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176152065033.2014730.14216895431647280340@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 26 Oct 2025 at 23:50, Armin Wolf <W_Armin@gmx.de> wrote:
+On Sun, Oct 26, 2025 at 6:21=E2=80=AFPM ChenXiaoSong
+<chenxiaosong.chenxiaosong@linux.dev> wrote:
 >
-> Am 15.10.25 um 10:44 schrieb Antheas Kapenekakis:
+> Hi Namjae,
+Hi Chen,
 >
-> > The Ayaneo EC resets after hibernation, losing the charge control state.
-> > Add a small PM hook to restore this state on hibernation resume.
-> >
-> > The fan speed is also lost during hibernation, but since hibernation
-> > failures are common with this class of devices, setting a low fan speed
-> > when the userspace program controlling the fan will potentially not
-> > take over could cause the device to overheat, so it is not restored.
+> I'm confused by what this sentence means: "I prefer moving it when the
+> durable handle structures are moved to /common later.".
 >
-> I am still not happy with potentially breaking fancontrol on this device.
-> Most users expect fancontrol to continue working after hibernation, so not
-> restoring the fan speed configuration seems risky to me. Would it be enough
-> to warn users about his inside the documentation?
+> What does "it" refer to? Does "it" refer to the whole patch, or only to
+> "SMB2_DHANDLE_FLAG_PERSISTENT"?
+Only SMB2_DHANDLE_FLAG_PERSISTENT.
 
-This device features two modes of operation: a factory fan curve
-managed by the EC and a fixed speed set via override of the EC.
-
-The factory curve is tuned by the manufacturer to result in safe
-operation in all conditions by monitoring the CPU temperature and is
-not adjustable.
-
-The fixed speed, on its own when set manually, is not use-able,
-because this device has a fluctuating temperature based on workload.
-So to meet the varying conditions, its speed would either have to be
-set too high, leading to excess noise, or too low, potentially
-overheating. Therefore, users of this interface control it via a
-userspace program, e.g., hhd, coolercontrol, which allows creating a
-custom fan curve based on measurements of temperature sensors.
-
-When entering hibernation, the userspace program that controls the fan
-speed is frozen, so the fan remains at its previous speed regardless
-of temperature readings and there are no safety checks.
-
-When resuming from hibernation, the EC takes over and monitors the
-temperature, so it is safe until the userspace program is thawed. If
-we introduce a resume hook, we take over from the EC before the
-program is ready, introducing a gap where the device can potentially
-overheat. If anything, the freeze hook should remove the fan speed
-override instead, because suspend-then-hibernate is more of a
-liability for overheating if hibernation hangs.
-
-Other devices feature adjustable EC fan curves (e.g., Lenovo, Asus,
-AYN, MSI). Since the EC monitors the temperature there, it is fine to
-restore the fan curve. Speaking of, I am having quite a few issues
-with MSI Claws, so that series is a bit on the back burner, so I plan
-to push these series first.
-
-I will try to tend to this series in the next days. I wanted to push
-the Asus stuff first though.
-
-
-Antheas
-
-> >
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >   drivers/platform/x86/ayaneo-ec.c | 42 ++++++++++++++++++++++++++++++++
-> >   1 file changed, 42 insertions(+)
-> >
-> > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-> > index 73e9dd39c703..8529f6f8dc69 100644
-> > --- a/drivers/platform/x86/ayaneo-ec.c
-> > +++ b/drivers/platform/x86/ayaneo-ec.c
-> > @@ -37,6 +37,8 @@
-> >   #define AYANEO_MODULE_LEFT  BIT(0)
-> >   #define AYANEO_MODULE_RIGHT BIT(1)
-> >
-> > +#define AYANEO_CACHE_LEN     1
-> > +
-> >   struct ayaneo_ec_quirk {
-> >       bool has_fan_control;
-> >       bool has_charge_control;
-> > @@ -47,6 +49,8 @@ struct ayaneo_ec_platform_data {
-> >       struct platform_device *pdev;
-> >       struct ayaneo_ec_quirk *quirks;
-> >       struct acpi_battery_hook battery_hook;
-> > +
-> > +     u8 cache[AYANEO_CACHE_LEN];
-> >   };
-> >
-> >   static const struct ayaneo_ec_quirk quirk_fan = {
-> > @@ -464,10 +468,48 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
-> >       return 0;
-> >   }
-> >
-> > +static int ayaneo_freeze(struct device *dev)
-> > +{
-> > +     struct platform_device *pdev = to_platform_device(dev);
-> > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> > +     int ret, i = 0;
-> > +
-> > +     if (data->quirks->has_charge_control) {
-> > +             ret = ec_read(AYANEO_CHARGE_REG, &data->cache[i]);
-> > +             if (ret)
-> > +                     return ret;
-> > +             i++;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int ayaneo_thaw(struct device *dev)
-> > +{
-> > +     struct platform_device *pdev = to_platform_device(dev);
-> > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> > +     int ret, i = 0;
-> > +
-> > +     if (data->quirks->has_charge_control) {
-> > +             ret = ec_write(AYANEO_CHARGE_REG, data->cache[i]);
-> > +             if (ret)
-> > +                     return ret;
-> > +             i++;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct dev_pm_ops ayaneo_pm_ops = {
-> > +     .freeze = ayaneo_freeze,
-> > +     .thaw = ayaneo_thaw,
-> > +};
-> > +
-> >   static struct platform_driver ayaneo_platform_driver = {
-> >       .driver = {
-> >               .name = "ayaneo-ec",
-> >               .dev_groups = ayaneo_ec_groups,
-> > +             .pm = &ayaneo_pm_ops,
+Thanks!
 >
-> Please use pm_sleep_ptr() here.
+> On 10/20/25 12:52 PM, Namjae Jeon wrote:
+> > On Tue, Oct 14, 2025 at 4:21=E2=80=AFPM <chenxiaosong.chenxiaosong@linu=
+x.dev> wrote:
+> >>
+> >> From: ZhangGuoDong <zhangguodong@kylinos.cn>
+> >>
+> >> In order to maintain the code more easily, move duplicate definitions =
+to
+> >> new common header file.
+> >>
+> >> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> >> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> >> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+> >> ---
+> >>   fs/smb/client/smb2pdu.h | 24 +++---------------------
+> >>   fs/smb/common/smb2pdu.h | 24 ++++++++++++++++++++++++
+> >>   fs/smb/server/smb2pdu.c |  8 ++++----
+> >>   fs/smb/server/smb2pdu.h | 17 -----------------
+> >>   4 files changed, 31 insertions(+), 42 deletions(-)
+> >>
+> >> diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+> >> index 101024f8f725..c013560bcfa1 100644
+> >> --- a/fs/smb/client/smb2pdu.h
+> >> +++ b/fs/smb/client/smb2pdu.h
+> >> @@ -135,11 +135,9 @@ struct share_redirect_error_context_rsp {
+> >>
+> >>
+> >>   /* See MS-SMB2 2.2.13.2.11 */
+> >> -/* Flags */
+> >> -#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
+> >>   struct durable_context_v2 {
+> >>          __le32 Timeout;
+> >> -       __le32 Flags;
+> >> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+> >>          __u64 Reserved;
+> >>          __u8 CreateGuid[16];
+> >>   } __packed;
+> >> @@ -157,13 +155,13 @@ struct durable_reconnect_context_v2 {
+> >>                  __u64 VolatileFileId;
+> >>          } Fid;
+> >>          __u8 CreateGuid[16];
+> >> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
+> >> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+> >>   } __packed;
+> >>
+> >>   /* See MS-SMB2 2.2.14.2.12 */
+> >>   struct durable_reconnect_context_v2_rsp {
+> >>          __le32 Timeout;
+> >> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
+> >> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+> >>   } __packed;
+> >>
+> >>   struct create_durable_handle_reconnect_v2 {
+> >> @@ -263,22 +261,6 @@ struct network_resiliency_req {
+> >>   } __packed;
+> >>   /* There is no buffer for the response ie no struct network_resilien=
+cy_rsp */
+> >>
+> >> -#define RSS_CAPABLE    cpu_to_le32(0x00000001)
+> >> -#define RDMA_CAPABLE   cpu_to_le32(0x00000002)
+> >> -
+> >> -#define INTERNETWORK   cpu_to_le16(0x0002)
+> >> -#define INTERNETWORKV6 cpu_to_le16(0x0017)
+> >> -
+> >> -struct network_interface_info_ioctl_rsp {
+> >> -       __le32 Next; /* next interface. zero if this is last one */
+> >> -       __le32 IfIndex;
+> >> -       __le32 Capability; /* RSS or RDMA Capable */
+> >> -       __le32 Reserved;
+> >> -       __le64 LinkSpeed;
+> >> -       __le16 Family;
+> >> -       __u8 Buffer[126];
+> >> -} __packed;
+> >> -
+> >>   struct iface_info_ipv4 {
+> >>          __be16 Port;
+> >>          __be32 IPv4Address;
+> >> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+> >> index f79a5165a7cc..25e8ece283c4 100644
+> >> --- a/fs/smb/common/smb2pdu.h
+> >> +++ b/fs/smb/common/smb2pdu.h
+> >> @@ -1290,6 +1290,10 @@ struct create_mxac_req {
+> >>          __le64 Timestamp;
+> >>   } __packed;
+> >>
+> >> +/* See MS-SMB2 2.2.13.2.11 and MS-SMB2 2.2.13.2.12 and MS-SMB2 2.2.14=
+.2.12 */
+> >> +/* Flags */
+> >> +#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
+> > I prefer moving it when the durable handle structures are moved to
+> > /common later.
+> > Thanks.
 >
+> --
 > Thanks,
-> Armin Wolf
+> ChenXiaoSong.
 >
-> >       },
-> >       .probe = ayaneo_ec_probe,
-> >   };
 >
-
 
