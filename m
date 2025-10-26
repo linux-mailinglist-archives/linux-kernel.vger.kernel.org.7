@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-870398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0968FC0AA2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:30:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDC3C0AA3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59C704E9861
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4DD3ABF30
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D21125332E;
-	Sun, 26 Oct 2025 14:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175031FF1C7;
+	Sun, 26 Oct 2025 14:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ge46rBGU"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SOujKYKO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452A024A074
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 14:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38FB125A0
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 14:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761489007; cv=none; b=dQnMWfWGsGhLJWIpnSdJffi3J3SbviLQUAe5fqbGhNMg+VvEq+bYp+glv7eYu4DpGGESiOYeHFHVMzJXhIhn7waHopAMahYKZVveUplBAjTnQG1tccZ6crBzUbAmyg6PhrIg9I4HJgw0qldsmid6foDOPfzVS17W/LakiJUI3Kw=
+	t=1761489190; cv=none; b=W/c/lxwzyivNzhaET/osdTGkMxb233SHYkDmvb3CHGhqVGe/Hmg26qXm/yNlzEcZriLIz+Z53qalxp+xcwouYZcBRhbLJEmkSnORXl9GWxMEJ/YREz3qwZdR/UyrmlL84dMe76GJl34vysavpbteX19nhTYJN4uzPv1rfRvyMvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761489007; c=relaxed/simple;
-	bh=ZMBASMVtnBa1PP4cxjX6NifaX9MKgfOlfcgiWr85ZqA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ljnw73yPqolaYQm5/bqLOWWuzvyL8j0SOXGIvmMDe2rvTmXYz5zEiPOUpOXSaKveNbe97OjPhRDcN1pdWWPJRBlRMPK0HGL5yAqroytL29aA4ZISTm9p90iuoT7kiipts8QvEp3GFgumuV8xH9QpSbJyX1srj73ctnWVULvES5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ge46rBGU; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-784826b75a4so42729817b3.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 07:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761489004; x=1762093804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZMBASMVtnBa1PP4cxjX6NifaX9MKgfOlfcgiWr85ZqA=;
-        b=Ge46rBGU368OWN2kmYi0CdXtoGzJ62U+I38pRGjNODlU66NQK780PkZ4gwdeA/twBX
-         Dspqzb0NCQQDPTrdvz5ww5LtswnNVgYUQYZi+jSKZZ11oeds3bxFhI5MjITiAeF+IAGl
-         eo38n0V8fwfG4XbrKq7fav+y64FBNtSPFZIvb1VuVqtsj981yPHeJuwokHWAfaYLweJB
-         yeA8aD/qLL9oQDgPr9wtef8KQIf0y8b/huqQiBe40KUMs/sz7W0wWNv+Q4NV79TwfXq2
-         AjaqwyRBxgDXiOzEqvWP7Xac8EF/jbMzsOH31x8cCZQ2iMcPUjE5heMMUBcSYKEy7axV
-         1jjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761489004; x=1762093804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZMBASMVtnBa1PP4cxjX6NifaX9MKgfOlfcgiWr85ZqA=;
-        b=sss3n1Bv8cNpX8JV8WadpiXeUQ3WbBRJgAPEtfsveHM1Xmi+8pqTP9y5vntqjHy6ux
-         2v3R+MZhoAUhmk9AIdJ5wejXydXmoOj2F4ky4eb+ckB3pWWUekrqy2vHCOiS7vfdMxBr
-         k0AvGHd3+T+YJoLUXApm7MGtouYWbzZhWbLv4fA4uefrHeC1Z1oLZk98PnTNG2zvQ0uH
-         7EydMpHPpdo3yRYf6F3cuYUJgQpFc4nJfixp8YljaN4ZX5tTZWHq8WS4k7HMvhY/b4r/
-         aMqKwtCseHv+7dGaXienFwF/hmXhVY8k3fzPTSONlZH3mvmeVfUY2SrrgVkaU4dWPMfn
-         I+uw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9kzd05kOkzGvTHbuhF0JIWRcglIL49mKuh6VzLtUebvxeHuG1fUwOu0JnM/8Q6QCEh6acVjEW1QG9us4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl8z0qw1FTY1y9ZvmkIdQnnKcZqwyH5fnQ+9IDL+nzM/VTH9uj
-	aQ59hXRDpZqKyckTQfalt6ahaxF0cYZHAaryKe6H+r5UaYezPR2tX0M4myTjm1TRIlHK6gI9qzh
-	Re6OG/IZ/6bAN0c5nn++vNXrjeXeIvzc=
-X-Gm-Gg: ASbGncv2rJ+k5OLlgRrnlSflId6bMOuOACeYHCZ2vBDy3coajgXLa3VD7BQKEEAjU+H
-	VQPRcNA54ehSlGbAaDLDjhk+/2y0yre2jGP5wdSg8oYHGV/Cvs8qi61ehAKTKO580BMCAhzcVQd
-	4Ab2ZJNlxMzrgQSWjNWf+IzQKu62dtp04W+GhknlVKIyZAxEzbU1hcB/fuMYCsS34WfHOupiag/
-	FnsXxDOG+/MT/4v60isGOK6nXh49CZ9ipQ/4cx2jEphKGCljIoo6mUNBH+UgEfqneg2UXMmIrEl
-	NT3Uk97rrY5mHs+gRaStKpps/LjQx6LX89g=
-X-Google-Smtp-Source: AGHT+IFplHhxxhepVtWBvu6tNgqK95auQg5sHnU1QHolP/4r4XhVH2q9CWaTT0gnl3dFh8Qxvm/3lmn9BOtV9jwBKEk=
-X-Received: by 2002:a05:690e:4287:10b0:636:1bb3:2d2d with SMTP id
- 956f58d0204a3-63e16115b38mr22224007d50.22.1761489004073; Sun, 26 Oct 2025
- 07:30:04 -0700 (PDT)
+	s=arc-20240116; t=1761489190; c=relaxed/simple;
+	bh=kyPszRFTtVkijKqZ+MBtEbNQpDio20V+TtpbIVtBxbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ngDdjxXh0QqH/WDkti6m5FTickL0/V6n0O3r/ndhuwVkIW5uMBbkIIup6Mkq/gEl1xjeicDtXtGnjowznU0GPyCpfbRdeX/vBO5nKCdUmtrtMpgJdS/ZkOQjr2cMfrPoPNOiLEHWF4kSoXaZLiYauf1/YbaSsB6rQsNh6pf3kLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SOujKYKO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761489187;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=aiQn/c7MdROHcxE7i1h+oHIwSHYLRD/1dsdhp01RzO4=;
+	b=SOujKYKObBCPl1PejoSGiJvq2cAEFRDrNpR7B/qeQhq46NarMtsqZTpnmTMP722XQmN7pA
+	aaJW7D9lZptSzvNpIMnR4XjooYh0s7ZrHvWIP1QrV3hY6/ljQyvEvIpq5Ue73CXQ/B2+qX
+	bw5tn1Y79ByTxGg4mF48zyInJ2gE1lw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-297-w6GqwkfENrKyeBHsCZ9bVw-1; Sun,
+ 26 Oct 2025 10:33:03 -0400
+X-MC-Unique: w6GqwkfENrKyeBHsCZ9bVw-1
+X-Mimecast-MFC-AGG-ID: w6GqwkfENrKyeBHsCZ9bVw_1761489182
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BB35180A23D;
+	Sun, 26 Oct 2025 14:33:02 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C0293180057D;
+	Sun, 26 Oct 2025 14:32:59 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 26 Oct 2025 15:31:44 +0100 (CET)
+Date: Sun, 26 Oct 2025 15:31:40 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Alexey Gladkov <legion@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Howells <dhowells@redhat.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] release_task: kill unnecessary rcu_read_lock() around
+ dec_rlimit_ucounts()
+Message-ID: <20251026143140.GA22463@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Alex Gaynor <alex.gaynor@gmail.com>
-Date: Sun, 26 Oct 2025 10:29:52 -0400
-X-Gm-Features: AWmQ_blrLx6Rk-HNpIneEOmsfH242FhjzwfZJDKkuP91hm5_-oofSVpP1XgVjFE
-Message-ID: <CAFRnB2U1uvg1vyZe1kDi7L3P4kTFowfOo6Hfo9WJED4qve4ZZw@mail.gmail.com>
-Subject: [PATCH] MAINTAINERS: Remove Alex Gaynor as Rust maintainer
-To: rust-for-linux <rust-for-linux@vger.kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-I've long since stopped having the time to contribute code or reviews, this
-acknowledges that.
+rcu_read_lock() was added to shut RCU-lockdep up when this code used
+__task_cred()->rcu_dereference(), but after the commit 21d1c5e386bc
+("Reimplement RLIMIT_NPROC on top of ucounts") it is no longer needed:
+task_ucounts()->task_cred_xxx() takes rcu_read_lock() itself.
 
-Geoffrey Thomas and I created the "linux-kernel-module-rust" project at PyC=
-on
-in 2018, as an experiment to see if we could make it possible to write kern=
-el
-modules in Rust. The Rust for Linux effort has far exceeded anything we cou=
-ld
-have expected at the time.
+NOTE: task_ucounts() returns the pointer to another rcu-protected data,
+struct ucounts. So it should either be used when task->real_cred and thus
+task->real_cred->ucounts is stable (release_task, copy_process, copy_creds),
+or it should be called under rcu_read_lock(). In both cases it is pointless
+to take rcu_read_lock() to read the cred->ucounts pointer.
 
-I want to thank all the Rust for Linux contributors, past and present, who =
-have
-helped make this a reality -- and in particularly Miguel, who really
-transformed this project from an interesting demo to something that could
-really land in mainline.
-
-Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/exit.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3da2c26a796b..355fee6a382b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22498,7 +22498,6 @@ F: tools/verification/
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 9f74e8f1c431..f041f0c05ebb 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -251,10 +251,8 @@ void release_task(struct task_struct *p)
+ 	memset(&post, 0, sizeof(post));
+ 
+ 	/* don't need to get the RCU readlock here - the process is dead and
+-	 * can't be modifying its own credentials. But shut RCU-lockdep up */
+-	rcu_read_lock();
++	 * can't be modifying its own credentials. */
+ 	dec_rlimit_ucounts(task_ucounts(p), UCOUNT_RLIMIT_NPROC, 1);
+-	rcu_read_unlock();
+ 
+ 	pidfs_exit(p);
+ 	cgroup_release(p);
+-- 
+2.25.1.362.g51ebf55
 
- RUST
- M: Miguel Ojeda <ojeda@kernel.org>
--M: Alex Gaynor <alex.gaynor@gmail.com>
- R: Boqun Feng <boqun.feng@gmail.com>
- R: Gary Guo <gary@garyguo.net>
- R: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
---=20
-2.34.1
+
 
