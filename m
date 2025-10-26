@@ -1,189 +1,117 @@
-Return-Path: <linux-kernel+bounces-870309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1923C0A6E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:22:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F1DC0A6F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B2C3AAF4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A47189F5E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774DD23EA95;
-	Sun, 26 Oct 2025 12:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62472367AC;
+	Sun, 26 Oct 2025 12:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k111yPkR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="E01zmAtP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B64187346;
-	Sun, 26 Oct 2025 12:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238437483
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761481324; cv=none; b=Mqvexy8BOhcoGAHh8MOrfe8ktigEbwdjcQ9axNTl8g5Y7i4dbfKgIMnWwAbaSmtfKqwdIGHJV1in2+FtgZazAch3DZcdBLZcUiBDQchrE5KEtPPm/l/L0JweJRI0SBq4agVi6KJMv8fI4nq++zdBUs3JLFWhBbbI1UTdFMriO5U=
+	t=1761481552; cv=none; b=DguZq0n0U2MqZppl+2MPFTEBLkM8A9GPyPzsBbPztoikWZ8w3Thhqz0HO2N+EZaDzlcaVen2jzTAmUCiyaU9j6BPVPY5wYVm7sfoG76ixBr5uDQK8ItAUPv9ahs5unAovGEMRYf9ZttPGxpU5fJNXYrCLySmAYX5El8QITckuD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761481324; c=relaxed/simple;
-	bh=GXuFAtgP+oHMIwv1faVRiehyLAz3rr8xYHnrw+m3qak=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kAxb+szLyFgtl5uCnnWhBzYWSPuY8Pms72FpNhkyANoz/Dv7jbpA9LWBOU6gWoDTso9JA8+/tB2OfOyFKsKkzkbHvmbBw4lQtSgUWWO4N5iNNKenejx1Fd808N56n/EHqWVTErjjitV2GSozT7skyrz3XwLKvhweCtQOaUZ5spg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k111yPkR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 17B8EC4CEE7;
-	Sun, 26 Oct 2025 12:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761481324;
-	bh=GXuFAtgP+oHMIwv1faVRiehyLAz3rr8xYHnrw+m3qak=;
-	h=From:Date:Subject:To:Cc:From;
-	b=k111yPkR1SAqFi0Qba1jO49IqFj+0ci+6K7rGAXWe2l3L63nptArnw0a7XPQChgHR
-	 L1k9/OBZgmJbPGHphEAWKjiriogr1wqe9tnBb2oT64hx671BPFyeHmXygcFKGDbRSj
-	 BAqI3kmZDK1L4cxknhg41JIRYWlwSGLmN2D5AdNgEoxiLjmTc6UN7rkn+FpN7HmRH3
-	 YjpUUnWkWEkIDL96CdtejGKVdzEKU2yQv7FTdwzxdYth5i2NyYmwNq9o6/nhWSR+2i
-	 hNNc8rKcaochTKbh11fhFEE2gxhguvKvr4vjPw/8FTyrebj1djI0+/Llmeq2G30CPj
-	 qcyoXv7EX1EVg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F25CCD1A5;
-	Sun, 26 Oct 2025 12:22:03 +0000 (UTC)
-From: Sven Peter <sven@kernel.org>
-Date: Sun, 26 Oct 2025 12:21:36 +0000
-Subject: [PATCH usb-next] usb: dwc3: apple: Only support a single reset
- controller
+	s=arc-20240116; t=1761481552; c=relaxed/simple;
+	bh=VFeqIpKSyjOWkBCHr0jwXRbJnajBe9+TNrO4WxGNAKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=j2Kf0/rfv9FsCXyc5RV8kOHoMTF0yHYVZG+zKW9WIKvs8dL88qCeF530ClGsBbYrAFIVYFJ8edy6a9APSlg8ZwG0GkRJoGCiUruWDXMJXBbrva6bX2GfsmbNBOueFQlr8/RK76CJcChDNP1vELN8wf5iw3nbfPhJXDYteA5cUYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=E01zmAtP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 09C4B40E00DA;
+	Sun, 26 Oct 2025 12:25:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1xk_GPDU2798; Sun, 26 Oct 2025 12:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761481544; bh=pxEyRL82UuFXgTwyNGZHWQdvXQyTuRhS+Sr74VixTM0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=E01zmAtP82mjlhaaAIoEmfHwQaaHZ4s6+JzvpzGEUVWGXyUrp5oP4IIV/VVX1zf0Y
+	 DmGShm9u+EWYhrlqgBPFZB3D0o3wGrQ9A72QeJtj2gInkAGh1hOVbTLMQUdte8LMID
+	 EnzwVyXZTk9ec/I7br417882He1OQ9k2wjgBj3hrCMX/i5WsCGk5bPTLc1Oacps1jo
+	 L+qOiAAs9fQLl4gbMvmc4z8qcgZ4vLRGVVuAeuwPYx2Kvl9YQteHAlG715gvouMomj
+	 iru8JhzZRxXgoRih8hM/gGmqnjLLp455dEEkojnKkO2E25ie/uS5zqkp7501FQRfhT
+	 lbWZdYET1/F3njhk/ixNXm2F5GPpoH11SFAPwF7qgNY56Ci3BCKwHvG7Ho1oAzVkpB
+	 MHpKP1+qV3/SJWEMGAakLwVf7X6BtohgbEn0v944SBJX/X70Xgjaj74+Agy07zklY7
+	 N0oH8sjNWlHGvaeZ9s9ZiMOKpPq/ntMGiwxyrM3yKQBDsS3QEmsIxZk3aCNI3NyJrb
+	 lo6fAYX7HHbFQ+X2QrzTQ0IC1/TbwmFR90Ey8Yd9ws2dr0MbQ6+g6oh6XSt+Au85hc
+	 rcO5WWqzO+80Z37HhfptpjoOfA/qPSCXP2jFJJrbr1SQ0ajljE8YS37QJGF//2o0oN
+	 PYMB0V1LrBOPBKghsWaX7lsU=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2B12440E019D;
+	Sun, 26 Oct 2025 12:25:41 +0000 (UTC)
+Date: Sun, 26 Oct 2025 13:25:35 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] irq/urgent for v6.18-rc3
+Message-ID: <20251026122535.GAaP4TP1aPktqUyeu4@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251026-b4-dwc3-apple-reset-array-fix-v1-1-ccdbacd63f78@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAE8S/mgC/x3MwQrCMAyA4VcZORtY6xzoq4iHtIkakFqSTSdj7
- 77i8fsP/woupuJw6VYw+ajruzSEQwf5SeUhqNwMsY+n0MeIaUD+5iNSrS9BE5cJyYx+eNcFaQy
- Z4zkxhxHao5q0/P9fYfaERZYJbtu2A+uoLQR5AAAA
-X-Change-ID: 20251022-b4-dwc3-apple-reset-array-fix-a61cd29bdd16
-To: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sven Peter <sven@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4079; i=sven@kernel.org;
- h=from:subject:message-id;
- bh=GXuFAtgP+oHMIwv1faVRiehyLAz3rr8xYHnrw+m3qak=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ8Y/oczj+5zfLeI4+Srj5LntiU/C5kyIN8tijz08dwpPo
- /fJPW97OkpZGMQ4GGTFFFm277c3ffLwjeDSTZfew8xhZQIZwsDFKQATeb+V4Q9X33uZNcet++6y
- fNy4Xd/3zs3K5ODcbb3i8/jVGU68DOBmZHi73a7h0vMvfZyFhxc+/ZWo/6i06uZ3VQ/XnakbNkl
- cusEBAA==
-X-Developer-Key: i=sven@kernel.org; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
- auth_id=407
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-As pointed out by Philipp, Apple's dwc3 controller only uses a single
-reset line and there's thus no need to use reset controller array
-functions. The only functional change here is replacing
-devm_reset_control_array_get_exclusive with
-devm_reset_control_get_exclusive. The rest are only cosmetic changes
-to replace "resets" with "reset".
+Hi Linus,
 
-Reported-by: Philipp Zabel <p.zabel@pengutronix.de>
-Closes: https://lore.kernel.org/asahi/47112ace39ea096242e68659d67a401e931abf3a.camel@pengutronix.de/
-Fixes: 0ec946d32ef7 ("usb: dwc3: Add Apple Silicon DWC3 glue layer driver")
-Signed-off-by: Sven Peter <sven@kernel.org>
----
-I was planning to submit a v3 with this fixed but didn't find the time
-before v2 was picked up.
----
- drivers/usb/dwc3/dwc3-apple.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+please pull the irq/urgent lineup for v6.18-rc3.
 
-diff --git a/drivers/usb/dwc3/dwc3-apple.c b/drivers/usb/dwc3/dwc3-apple.c
-index 6e41bd0e34f461b0c3db9b8a646116458ff816b6..cc47cad232e397ac4498b09165dfdb5bd215ded7 100644
---- a/drivers/usb/dwc3/dwc3-apple.c
-+++ b/drivers/usb/dwc3/dwc3-apple.c
-@@ -81,7 +81,7 @@ enum dwc3_apple_state {
-  * @dev: Pointer to the device structure
-  * @mmio_resource: Resource to be passed to dwc3_core_probe
-  * @apple_regs: Apple-specific DWC3 registers
-- * @resets: Reset control
-+ * @reset: Reset control
-  * @role_sw: USB role switch
-  * @lock: Mutex for synchronizing access
-  * @state: Current state of the controller, see documentation for the enum for details
-@@ -93,7 +93,7 @@ struct dwc3_apple {
- 	struct resource *mmio_resource;
- 	void __iomem *apple_regs;
- 
--	struct reset_control *resets;
-+	struct reset_control *reset;
- 	struct usb_role_switch *role_sw;
- 
- 	struct mutex lock;
-@@ -237,9 +237,9 @@ static int dwc3_apple_init(struct dwc3_apple *appledwc, enum dwc3_apple_state st
- 
- 	lockdep_assert_held(&appledwc->lock);
- 
--	ret = reset_control_deassert(appledwc->resets);
-+	ret = reset_control_deassert(appledwc->reset);
- 	if (ret) {
--		dev_err(appledwc->dev, "Failed to deassert resets, err=%d\n", ret);
-+		dev_err(appledwc->dev, "Failed to deassert reset, err=%d\n", ret);
- 		return ret;
- 	}
- 
-@@ -288,9 +288,9 @@ static int dwc3_apple_init(struct dwc3_apple *appledwc, enum dwc3_apple_state st
- core_exit:
- 	dwc3_core_exit(&appledwc->dwc);
- reset_assert:
--	ret_reset = reset_control_assert(appledwc->resets);
-+	ret_reset = reset_control_assert(appledwc->reset);
- 	if (ret_reset)
--		dev_warn(appledwc->dev, "Failed to assert resets, err=%d\n", ret_reset);
-+		dev_warn(appledwc->dev, "Failed to assert reset, err=%d\n", ret_reset);
- 
- 	return ret;
- }
-@@ -323,9 +323,9 @@ static int dwc3_apple_exit(struct dwc3_apple *appledwc)
- 	dwc3_core_exit(&appledwc->dwc);
- 	appledwc->state = DWC3_APPLE_NO_CABLE;
- 
--	ret = reset_control_assert(appledwc->resets);
-+	ret = reset_control_assert(appledwc->reset);
- 	if (ret) {
--		dev_err(appledwc->dev, "Failed to assert resets, err=%d\n", ret);
-+		dev_err(appledwc->dev, "Failed to assert reset, err=%d\n", ret);
- 		return ret;
- 	}
- 
-@@ -411,14 +411,14 @@ static int dwc3_apple_probe(struct platform_device *pdev)
- 	appledwc->dev = &pdev->dev;
- 	mutex_init(&appledwc->lock);
- 
--	appledwc->resets = devm_reset_control_array_get_exclusive(dev);
--	if (IS_ERR(appledwc->resets))
--		return dev_err_probe(&pdev->dev, PTR_ERR(appledwc->resets),
--				     "Failed to get resets\n");
-+	appledwc->reset = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(appledwc->reset))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(appledwc->reset),
-+				     "Failed to get reset control\n");
- 
--	ret = reset_control_assert(appledwc->resets);
-+	ret = reset_control_assert(appledwc->reset);
- 	if (ret) {
--		dev_err(&pdev->dev, "Failed to assert resets, err=%d\n", ret);
-+		dev_err(&pdev->dev, "Failed to assert reset, err=%d\n", ret);
- 		return ret;
- 	}
- 
+Thx.
 
 ---
-base-commit: be83d83664e9f6fa035e96fb9187f9e7898659e4
-change-id: 20251022-b4-dwc3-apple-reset-array-fix-a61cd29bdd16
 
-Best regards,
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
+
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.18_rc3
+
+for you to fetch changes up to ef3330b99c01bda53f2a189b58bed8f6b7397f28:
+
+  genirq/manage: Add buslock back in to enable_irq() (2025-10-24 11:38:39 +0200)
+
+----------------------------------------------------------------
+- Restore the original buslock locking in a couple of places in the irq core
+  subsystem after a rework
+
+----------------------------------------------------------------
+Charles Keepax (3):
+      genirq/chip: Add buslock back in to irq_set_handler()
+      genirq/manage: Add buslock back in to __disable_irq_nosync()
+      genirq/manage: Add buslock back in to enable_irq()
+
+ kernel/irq/chip.c   | 2 +-
+ kernel/irq/manage.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+
 -- 
-Sven Peter <sven@kernel.org>
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
