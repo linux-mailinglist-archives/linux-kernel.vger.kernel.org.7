@@ -1,90 +1,123 @@
-Return-Path: <linux-kernel+bounces-870425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1012BC0ACB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBACC0ACAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CFD3AD5E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45CC189FB1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647C6262FF6;
-	Sun, 26 Oct 2025 15:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E14273809;
+	Sun, 26 Oct 2025 15:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4HzZeJP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqrTKfWR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F8E22172C;
-	Sun, 26 Oct 2025 15:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F7625487C;
+	Sun, 26 Oct 2025 15:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761493051; cv=none; b=g54azzDcMsvah+Mb3xbmA4BF8vBTK47asoHCya1aUi9p+xyUAzTubVk5Z8O1/s+58UZe5S6D0jE8oxDzoS9tEYEh7mecKLCKHWX1JYAaNbOARs7YwivZetLWelEmNKMKhFKnIa6aVwH8Lo87MVHdzbX67obpQOu1s+/JMP6wJB8=
+	t=1761493128; cv=none; b=nFCCPu4MqbSohbSJPo221UksTfYrvkZYFPbF2JAdQQedF6oSSa4NiA2z86us19DHdgGdUh4LSaXlNfVQQssEHzXt0OecFym7w8/AZA4x23LZsSYuVtF1UaKm3wWz+yZ5yUtDGfLHhYsNUFfwf/0UopV79+mD8sECm5Cqn+4qhFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761493051; c=relaxed/simple;
-	bh=FAVjGfD5iURxjFRW5lrdmhLUB13r0BoxN6mWb3t0/xk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=D0prWLSbqHDEYjGgfQWZh8LUkFIxbNYDuCqCbPAu9s0Wbr9vsbhQREp1Zy+UQGIf9NiQQv32v7uYw+HZxbgg9Hua5FR/62BQBIT7foz+ojMa/FYSwmZyKr9CxXpctZP5E15Rey41Ao8HlKFEku3zu/HtoohFNW1kMkuEEKD8B2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4HzZeJP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3263C4CEE7;
-	Sun, 26 Oct 2025 15:37:27 +0000 (UTC)
+	s=arc-20240116; t=1761493128; c=relaxed/simple;
+	bh=6kgpDc8RniC71k0JLxpDkWv63PHKz+Ojr87Zsi5Zusg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mtpk+LDsCnXXMufhPZVyLxNG8WhnhytHdnX3gm8zrjHmJc+8ewh5MzE9sShDO2+W3G1mgIX8JXdUwC9HfsCUjfBiw3heIvXE0R5Yfl45PG8HK+4HXL9cHAHNC/GXCPIHmV5mtxA0i/036D8mXSR9ANaGROzHlXL/sX2+ijm1S1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqrTKfWR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9A7C4CEE7;
+	Sun, 26 Oct 2025 15:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761493051;
-	bh=FAVjGfD5iURxjFRW5lrdmhLUB13r0BoxN6mWb3t0/xk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=J4HzZeJPQpyjpjHs5BetJodW89YXoquuALgjCtc5jWbwY1BoToyqS9kRSZZFO2FpR
-	 jq6wO0xkP0ZqwOPdElKLkQ99oOiAbdM7XiH733TejtoyNDThkRXd1ARvBNM+ntGY8k
-	 KVjDIENQehaaKuUCAlJ8oeaOv9zUqjqbRoqNUq5HxfQ2yoQd//QcLVjdoP19olUbfI
-	 RAfUS6svpTuRvyThLcB6+ise03q/qUNUfQVCL53gBaK3HBP/oySZdzqAx9L/1eKkuJ
-	 ppy2FBR3b5TiSVwgFOMFpgiOav5KI3PXcUiSviPPcPPeOixRY+ZkhnKX9QFnPKtIZq
-	 21k931UdAZUkA==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Gustavo Pimentel <gustavo.pimentel@synopsys.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251024011122.26001-1-robh@kernel.org>
-References: <20251024011122.26001-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: PCI: amlogic,axg-pcie: Fix select schema
-Message-Id: <176149304726.5459.7196722337090746268.b4-ty@kernel.org>
-Date: Sun, 26 Oct 2025 21:07:27 +0530
+	s=k20201202; t=1761493128;
+	bh=6kgpDc8RniC71k0JLxpDkWv63PHKz+Ojr87Zsi5Zusg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FqrTKfWRjjVzJ6b8aBCiImqovP1o4gIpOnabjLpkx17sjEODvSr1/uOZAssscL0Ci
+	 Jt/1XUni5Q+bcD8+8xNvRqT3C7p506tgkUjHu4cQtokkj3XlQWsIJmexThfWpyzg17
+	 5/t/FgxEBAyVPw4IK/dvG8Ia3uFlKUMOtC7qzk1wFq9LaP53le4PwK14BOYlJg65Sf
+	 oi1aecZX7jaUCF/27msHQ7gjWn01SqvxENDHEqevS0ZQggJW7g0bQXKVeZja/RoYtU
+	 CaRne/oKKz8vgvhE8Cz6r7w7Fsb70Vyt+aO86CRMgNqqYMZwTEhxrZ8/s9LkCPjwNB
+	 FCC59NMGxE+KA==
+From: Mike Rapoport <rppt@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>
+Cc: jane.chu@oracle.com,
+	=?UTF-8?q?Micha=C5=82=20C=C5=82api=C5=84ski?= <mclapinski@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: [PATCH v3 0/1] nvdimm: allow exposing RAM as libnvdimm DIMMs
+Date: Sun, 26 Oct 2025 17:38:40 +0200
+Message-ID: <20251026153841.752061-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+
+Hi,
+
+It's not uncommon that libnvdimm/dax/ndctl are used with normal volatile
+memory for a whole bunch of $reasons.
+
+Probably the most common usecase is to back VMs memory with fsdax/devdax,
+but there are others as well when there's a requirement to manage memory
+separately from the kernel.
+
+The existing mechanisms to expose normal ram as "persistent", such as
+memmap=x!y on x86 or dummy pmem-region device tree nodes on DT systems lack
+flexibility to dynamically partition a single region without rebooting the
+system and sometimes even updating the system firmware. Also, to create
+several DAX devices with different properties it's necessary to repeat
+the memmap= command line option or add several pmem-region nodes to the
+DT.
+
+I propose a new ramdax driver that will create a DIMM device on
+E820_TYPE_PRAM/pmem-region and that will allow partitioning that device
+dynamically. The label area is kept in the end of that region and managed
+by the driver.
+
+v3 changes:
+* Update Kconfig dependencies and help text
+* Add manual check for of_match_node()
+* Adjust white space for function parameters to match other nvdimm drivers
+* Add Reviewed-by, thanks Dan!
+
+v2: https://lore.kernel.org/all/20251015080020.3018581-1-rppt@kernel.org
+* Change the way driver is bound to a device, following Dan's
+  suggestion. Instead of forcing mutual exclusion of ramdax and
+  nr_e820/of-pmem at build time, rely on 'driver_override' attribute to
+  allow binding ramdax driver to e820_pmem/pmem-region devices.
+* Fix build warning reported by kbuild
+
+v1: https://lore.kernel.org/all/20250826080430.1952982-1-rppt@kernel.org
+* fix offset calculations in ramdax_{get,set}_config_data
+* use a magic constant instead of a random number as nd_set->cookie*
+
+RFC: https://lore.kernel.org/all/20250612083153.48624-1-rppt@kernel.org
+
+Mike Rapoport (Microsoft) (1):
+  nvdimm: allow exposing RAM carveouts as NVDIMM DIMM devices
+
+ drivers/nvdimm/Kconfig  |  19 +++
+ drivers/nvdimm/Makefile |   1 +
+ drivers/nvdimm/ramdax.c | 282 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 302 insertions(+)
+ create mode 100644 drivers/nvdimm/ramdax.c
 
 
-On Thu, 23 Oct 2025 20:11:21 -0500, Rob Herring (Arm) wrote:
-> The amlogic,axg-pcie binding was never enabled as the 'select' schema
-> expects a single compatible value, but the binding has a fallback
-> compatible. Fix the 'select' by adding a 'contains'. With this, several
-> errors in the clock and reset properties are exposed. Some of the names
-> aren't defined in the common DWC schema and the order of clocks entries
-> doesn't match .dts files.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] dt-bindings: PCI: amlogic,axg-pcie: Fix select schema
-      commit: 7411850df8e460d5e8319f3c020d03a88fa2dbc7
-
-Best regards,
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
+2.50.1
 
 
