@@ -1,87 +1,170 @@
-Return-Path: <linux-kernel+bounces-870367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1001C0A872
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CEEC0A887
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D4E3A6F67
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:13:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00743ACDBE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09C6226D1D;
-	Sun, 26 Oct 2025 13:13:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F8521C19E;
+	Sun, 26 Oct 2025 13:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOtHy9aC"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A3A1FC3
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFEE749C
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761484384; cv=none; b=e1SIxupB7uuv+YC3dvQwf4BMU6/YO07ggYkihAxgqkjiTJfYfiPVk86naAh+XBmNPZVDYAIFBn3UpsU0X7riCKLiKYYM0k8njRBGA3s38zef0h8lBSYR+SrvFBN+YIXM6JBLToZz7ijsZ+BVMchIxxqFv/P8FdHC4cc75/82S7Y=
+	t=1761485195; cv=none; b=bEF1nJonibTrJoL+SfxM4UZsPNcWK+leCZM9hUxqWU4IiDip2oUZEBmCH4VEG+cZZfAElnMbAK1o/xX40u2ikPy/FG3XC78fgp8fMGuNkIgBQotxG4xodsctkYHYY+NVq5QmrUS/0ACm3W6RTCRZZW9qakxgj4Ik3KeRGVdEwh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761484384; c=relaxed/simple;
-	bh=0PiqYaF7SNVM+qtSxPltaQqfEjZdxUtAiaOPvzwem9E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=T0nzPOL/P1+rPq5emikR+9QJY7iegOwzECjQKcyjyg8cBKpuygwX4pwN+7h6oJ4mglIahP2S2qPrsni/FADW06gKxPeTDlCj9bPK1sTam0xlaQ4fQL7SaItxrlkK1rCpf24dAyWMDaczBrpIYrDKv0WauhBux+4SDNxWdl19gOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-94389ae547cso102977639f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 06:13:02 -0700 (PDT)
+	s=arc-20240116; t=1761485195; c=relaxed/simple;
+	bh=JhBg/DEYtFnFZiVEkgExHhvzklfayDTyXLhykAU3v5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sBfMFocUy+VDu6WmcxINYamYj6nJ4OHMJ1srdvl4DfG5baS1an6NxyfAuSuYI1JlYf/bijjou8xrx0l3VrCb2TNPpRjKZa1qgrP/iNcOTzfP6ZUAySe1yflytf2/zWPzuJ1aj1ft3t3qr1zZ8b1wH84CbPhixZ4ZixbwT/axY0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOtHy9aC; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33d896debe5so4254027a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 06:26:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761485193; x=1762089993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvVdsjYVtY6FXc76drGJeGdtb/RwYklmlZOHVZSsLtA=;
+        b=cOtHy9aCqQQ1tnOhNEFss9B3XW1Ph7IQi7wsGK1950IUnfNqSTnC5c/72KHcRO7GCj
+         fnqcFfc78UDzRMO/FGSyA+GPIr4mWeVVXKiZb3V4BuKMpTsev3V8bULm72EMb/6/rS+H
+         ikqB/A5TT0jpnz0Kf6OPpF90Db3nGAx/+1bmnHNrJqZbnUXAn3iqVWxFIM4D3oi88kGW
+         oHvzZBJSB84/ehPXipotqVRxkSnMSp+TjVEjJIMCHEl0L2VSpQbV4mBy7JkBgEL+HbyI
+         Yt5k/u7CvxWORygM8YYxLbBzJHFFRjibpxZM4OOYFzSW0o69s0gL4+fRVBZcDWSem1NC
+         ZlRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761484382; x=1762089182;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zXREvUJxd4Ck4+LNIQhFBKrJT8jvN/aT5g/VIZdfXQ4=;
-        b=R46LPcNGmVxIh/afL4PhWdhpiFXJUe4hE8dWk0HN8Ng6y4H4iROq04+9xsLWc6qhcD
-         vMIg8qUBGu9RPuX5CfOIcKrRwIKCKvXVPaBXAiqIc8h1ywkktsHKXpT6LcYJqBYs3x2I
-         Pv7vfr0u3Vbn+YyTvSzAp95TDeTmfua0tojw8bAP/QcZpeyky9hkWSRGQ+/ONmIITOG/
-         m1ZNffxHiISfwVv7grupcCYu2qM78T4e4UFEwKa6Qrb8/Uk+j8nC7quQS0pM++zOUq/L
-         OL46AlXROxLNL1a57SZOZT5jIDFjwLtCBaQ22ceUerE4w5NYGouFDGroKxh6ukFFRMPK
-         1eGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOGJm+TMeWjYSHpGJvsxdSttYmPDSxTX8RBRh8epkdYlzKMxN/ximWGfxxYlRgmZ2DuMFpH2/lW0d7fLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW7XKSyzlqgK0ScgpMkYtaCmN62L/+wPvoufF+b9ckzvACfSRn
-	cJ0pStFBw9+UQR1p+Apvy1oy8CwxWcVaTJMJHMaMLzPmYuOB2zsQfTYEWX7cUXnGJxFw5cUP3K9
-	ZiycudyD2Zj+UY1EjTj8Sknmfse+HS4ed7RcfH5gQ3yOReviHR7KntNGfS+E=
-X-Google-Smtp-Source: AGHT+IFzTunlj+VF+YzVGGj8/jRIfqa89jSrftb97YshXyyQG1y9FTq0lPBt4TE5h3dBEMahKpVV03pF5IFgXdpHCO9eAJ2Oi4Hy
+        d=1e100.net; s=20230601; t=1761485193; x=1762089993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IvVdsjYVtY6FXc76drGJeGdtb/RwYklmlZOHVZSsLtA=;
+        b=xQvqvBZiorh5Vrx4xqDZiG0NVPNeV+Wf1PNyQDFCyt2jlWpinM5stNDb3h8y0ZbBdX
+         zZeoyKjGhDSncx5wf7IETTvQk6QjB0G+TgK1GCfR1u37bApGV5iSvEYEKhhxjY2U3Cpg
+         Fd8IGo7K/0tyDzr7Jl+hfPfd7yAA78BIVK/WZN0/bT5Hl7lB5VDpkLeiaCnPdhz/7Rhz
+         4bFPCo3RnJYxF7TiwIcS6ugPCyZqmeUHgLPeBsXN9Wbce3IRlXu8rv8vqx+b1pdp13WP
+         sz8cWpCPI8DJRl99chLoaZ0LxRdqiwygemrhbp17ChDfqYlCS9qOYPsXo1dePTPXS6Tb
+         aj+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVl2Zf5SuFx1GhBdXPP8ZIuUB2/xSY53c95Dxg5KoViNcoR8ph0j01QGWjaY6VtvVnPHXLAc5uidd7U/9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdBTCPE533uQSItFpZVzj0a9WI3EnfW2NirYorisHrVemLxDHU
+	PZfRYZK5RWYLcazoLTOzpNCaIeHzbFZSqm/9kwfiYqCupYE3Wy8vlok4
+X-Gm-Gg: ASbGnctgVtTGec6RTlzpHOpGHk6jcOMmNK2z25lrJjU1THciU2fKMApA30qn6Sk1ly9
+	iQcAsWX4JqWcYtOCdXojFO9iPx9YWmoD96tpSADrIRxwxfDsLA6c4p2963SbdukEXrtGWc2z3WV
+	cPyFSjbEXaKCxZyMJJUSs84mLm2olz4Jsx2ZSQGKE6tB5Yy+JVR7Jc8KkZ//SzVTupPtZfmBGI4
+	zyc3HuMnk1kr/f93FbV8D05rHrw+66MbZhwB/BCDSi2fXtJCsm2B9DtDTPKc7hOqQrv8YAzdpU8
+	88FAbPGq1LUq4LiMPwgJn6oqwRDfrUjB6F5pzNGZvKG2ltE7zqLTl3hUtyvQBiBdk8TI2UFtNrD
+	kWMCPM+zk/8nZB0fe1Vq662zj/fIgCSWVhjTmp3/ZsfqrRz7KKyJzWhALEFEd1rJqfQRs6xzI1Y
+	llSJi3SAqqoTSJwy2LELl1V2S/jWtaqgfhb8c=
+X-Google-Smtp-Source: AGHT+IEfSgoONaltrGxb9fBnmRXofDodRrDKu8WknVv+/bnHYU+2XnDqJZWq1FrL2wLBBvbJsoIF9A==
+X-Received: by 2002:a17:90b:17c3:b0:33b:ae39:c297 with SMTP id 98e67ed59e1d1-33fd6502cb7mr10730797a91.16.1761485193038;
+        Sun, 26 Oct 2025 06:26:33 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:18af:8c3a:faa4:5c0a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414069164sm5060678b3a.45.2025.10.26.06.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 06:26:32 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
+Subject: [PATCH] ocfs2: validate cl_bpc in ocfs2_block_group_alloc to prevent divide-by-zero
+Date: Sun, 26 Oct 2025 18:56:25 +0530
+Message-ID: <20251026132625.12348-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156c:b0:430:b994:3bd1 with SMTP id
- e9e14a558f8ab-430c52460ecmr496906635ab.1.1761484382189; Sun, 26 Oct 2025
- 06:13:02 -0700 (PDT)
-Date: Sun, 26 Oct 2025 06:13:02 -0700
-In-Reply-To: <20251026125108.11538-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fe1e5e.050a0220.32483.000c.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill (3)
-From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The chain allocator field cl_bpc (blocks per cluster) is read from disk
+and used in division operations without validation. A corrupted filesystem
+image with cl_bpc=0 causes a divide-by-zero crash in the kernel:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+  divide error: 0000 [#1] PREEMPT SMP KASAN
+  RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+  RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
+  Call Trace:
+   ocfs2_block_group_alloc+0x7e9/0x1330 fs/ocfs2/suballoc.c:703
+   ocfs2_reserve_suballoc_bits+0x20a6/0x4640 fs/ocfs2/suballoc.c:834
+   ocfs2_reserve_new_inode+0x4f4/0xcc0 fs/ocfs2/suballoc.c:1074
+   ocfs2_mknod+0x83c/0x2050 fs/ocfs2/namei.c:306
+
+This patch adds validation in ocfs2_block_group_alloc() to ensure cl_bpc
+matches the expected value calculated from the superblock's cluster size
+and block size. This validation follows the same pattern used elsewhere
+in OCFS2 to verify on-disk structures against known-good values derived
+from the superblock parameters.
+
+The check is performed early in the allocation path, before any resources
+are allocated or transactions started, ensuring clean error propagation.
+If validation fails, the filesystem is marked read-only and the operation
+returns -EUCLEAN (Structure needs cleaning), prompting the administrator
+to run fsck.ocfs2.
+
+The validation catches both:
+- Zero values that cause divide-by-zero crashes
+- Non-zero but incorrect values indicating filesystem corruption or
+  mismatched filesystem geometry
+
+With this fix, mounting a corrupted filesystem produces:
+  OCFS2: ERROR (device loop0): ocfs2_block_group_alloc: Chain allocator
+         74 has corrupted cl_bpc: ondisk=0 expected=16
+  OCFS2: File system is now read-only.
+
+Instead of a kernel crash.
 
 Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
 Tested-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
+Tested-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ocfs2/suballoc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Tested on:
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index 6ac4dcd54588..9f3db59890c3 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -667,10 +667,22 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+ 	u16 alloc_rec;
+ 	struct buffer_head *bg_bh = NULL;
+ 	struct ocfs2_group_desc *bg;
++	u16 cl_bpc, expected_bpc;
+ 
+ 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
+ 
+ 	cl = &fe->id2.i_chain;
++	cl_bpc = le16_to_cpu(cl->cl_bpc);
++	expected_bpc = 1 << (osb->s_clustersize_bits - alloc_inode->i_sb->s_blocksize_bits);
++	if (cl_bpc != expected_bpc) {
++		ocfs2_error(alloc_inode->i_sb,
++			"Chain allocator %llu has corrupted cl_bpc: ondisk=%u expected=%u\n",
++			(unsigned long long)le64_to_cpu(fe->i_blkno),
++			cl_bpc, expected_bpc);
++		status = -EUCLEAN;
++		goto bail;
++	}
++
+ 	status = ocfs2_reserve_clusters_with_limit(osb,
+ 						   le16_to_cpu(cl->cl_cpg),
+ 						   max_block, flags, &ac);
+-- 
+2.43.0
 
-commit:         72761a7e Merge tag 'driver-core-6.18-rc3' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fa5614580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25811b07889c90db
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17d82c92580000
-
-Note: testing is done by a robot and is best-effort only.
 
