@@ -1,138 +1,146 @@
-Return-Path: <linux-kernel+bounces-870279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D15DC0A5B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D41C2C0A5E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FAF43A7463
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272C53AD682
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08925C809;
-	Sun, 26 Oct 2025 10:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60A02877EA;
+	Sun, 26 Oct 2025 10:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkQKIbN0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwRFXDZX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F6D20C029
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 10:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D0611E;
+	Sun, 26 Oct 2025 10:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761472877; cv=none; b=hOIvr/cmvaR56TMGnwMHSK7A4KwJEcUI28MwHFWbqDPMUrThxMIXFMnZMISdNW2HSmxLvDdryTXcENWZkV4JESKtXTdGNBYl22O6NolZFBA41osctgsnuUjK7AoISc7yIqeH8xoazj1A7W8eRIwQfDGvmR6ya0qL1C1lWBkV2+I=
+	t=1761473415; cv=none; b=kjXiNeQVsVMqAU2AtOp0yyyBTIAXmYQxvfnS8A9xXK+UsIz903KRXpF0U/QjQ5m/mSGoe0ByiL14oi75PYax6UnXtTUKzXC6McCC8HT1hxivO52IeEUDojI1qVRISS0sMjdHkXvRVxoDSmnykUisKU3cC5wUcboxal1d9ygiP9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761472877; c=relaxed/simple;
-	bh=7KD5dGgax9bTmRFpWBp6doF76wbbIxJPMbGDcdBfxus=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bI9FiF7Q2GLBfc/ozqZfaVFwVBjow0zr9WAm7HAI0fNagRLMipXXW4slCUTti5HYhls/f9sUdSH8CoKj/a6959izTGKshEy0m2yCqkWVQz2sZw3w5SlqHjVtk3x/3t4HiMaQIkk1P1KjeJs+4Xtxo6/2Kw3n/C8yd+qycqEsjh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkQKIbN0; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-26d0fbe238bso25812585ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 03:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761472875; x=1762077675; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2RfGStvJcl4TjNSGKHIZE9j5tm2qV6cEHrkxmBAThP0=;
-        b=QkQKIbN0k/9rTMbSZPy21PHzbhewJKcThqGeNCas8ByZ8//PVoid9TkVxc0Wvlb35O
-         0W9ZxXl2JrUF5Z1ueincG0OqbgM+8X+IyGeDGgePlj2cgEs/SdCAxK3+crUC9FoZbJzK
-         byhmKxb7bfuLxVCt4EBC31QAEDRO4W88AsxUDftEH7mGfKLkSIEd8nDIfKDgiB8bjea1
-         FHqASKbSjI6aQ9aIgENVURW+b5CuogJTF9fCA6JzWWdIOssF6whmzGLYkhS6Qy0F9Nxs
-         FchEZ0Kvo8NRAMnhN14jZMIgQokQ03PfnptANDDLVuanQfEwY7W9W/4uosaQ/bCpL2Z9
-         mJHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761472875; x=1762077675;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2RfGStvJcl4TjNSGKHIZE9j5tm2qV6cEHrkxmBAThP0=;
-        b=JYs21wvRn3JsJghCzzI7dUo3S96nGhIwAa5KdXFXp48qou8dd8sfP8RO0KBw6UC4Bj
-         jc8g4KPS9HyeuN2L/PLqMCh3FVchtIPSdMzrbsbO/UlfUHiVuhSVtqqckHNGsojiPsKd
-         5EVVLER5qACLiQFSj3BUIfepkw2KEPYjGM3l82GY2EnNBaYxAVpIwPP941r55nZv6oc2
-         /OWqMUYt7Wzdr0jScj5eJo0+Q92ezMn4PeqYddgCsHk6x4oWa416CCLsNTsiKZceBLO9
-         WsWnWAGe5ILbdlKhUPLRvCLsl+25AKzDXd7OTokB+/M4aNvYbt/NCZvYqfDrefnA9f2L
-         BWvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLdsTwKSI4E1QV3UAW0ZfvQJWhSw9rK0EjUqMdU7rHxyhfhOb2NwP+vqNCoED4tEhM5rKCw6pW2iMzdP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHq//fh0ovHOrinR22N7z6MOTfiDHphqYS3Ch0+z3W77n5tv7I
-	qx5ATCtqcmlw3ccyBRRPfU1tEX5hESmYQOoz4ipedJRC3d6+tHRkN4WT
-X-Gm-Gg: ASbGncvFPKBTUrXcYigG998c8MGhtQHFJ68cZsDd01SnZTiw7oyvVZ0/OwdpIz31/nO
-	BaaQMmbZRVaV+zCvaxkY8v19Gn2OAXssbFThqWqSFfnCXCspxaLCehRFLnltVV3wDK729xXofKG
-	ueYv6wfcsQ/t9O/UEZSVV4zCg5ZeppVzUkRpQy+M6dHrfGQyZZVhq+WAdZwZOqDwa4fre0FPTGj
-	ByWYoIo9nh0tye4SKHz+lLc2Q79CafQXDFCbuxevJ1enT6nyE7+u8zZ1RuFgveDCTHZmuhtWzyU
-	WEGP//h6F88esWVVqrOmja04jkBeo0Iq5wqvikRWbc0qYPzEvO25Y4uT+yVaZGjWskD2gOqTVFI
-	GLGbDyB4ckXJqWM0/kyGjCmhj7r5qG5otIwycZFgkZ+q5zA4TWu9+tXqqtnGkq4slH+oiUty7R1
-	jcyu8JrffspLX83QTwtF4=
-X-Google-Smtp-Source: AGHT+IFKNOKTau/QQRGqY0zzzctIn/ja6Be2Y4OB0k/nayMvBEyR1iUbx77eiYu6XXPZj9O6THlOLQ==
-X-Received: by 2002:a17:903:2f05:b0:275:f156:965c with SMTP id d9443c01a7336-2948ba5ae75mr89132875ad.52.1761472874942;
-        Sun, 26 Oct 2025 03:01:14 -0700 (PDT)
-Received: from kforge.gk.pfsense.com ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d099b6sm45719905ad.33.2025.10.26.03.01.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 03:01:14 -0700 (PDT)
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	xandfury@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	khalid@kernel.org
-Subject: [PATCH v3] selftests: tty: add tty_tiocsti_test to .gitignore
-Date: Sun, 26 Oct 2025 15:30:25 +0530
-Message-ID: <20251026100104.3354-1-krishnagopi487@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025102634-relive-glutinous-df0c@gregkh>
-References: <2025102634-relive-glutinous-df0c@gregkh>
+	s=arc-20240116; t=1761473415; c=relaxed/simple;
+	bh=kuV0S2OwQx4nY+AZKrytOk4IPz21g7ujteih8OCY1a0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4O4OKnW49wt3CRApAwM/8UyYqAvlSFII1XbawZ0/iE3u0Hc5o70PJ2pcv8PYd3j7uMwYZniZQtKuDs4f8xaqYZWXmDkM4YcA/uGEc+tIdH8oVc0Z/TeyrT6wqyta+2j8apLemqqDb971LC0r0IWZThDU02AT38mYXMJGI+zWBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwRFXDZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DD7C4CEE7;
+	Sun, 26 Oct 2025 10:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761473413;
+	bh=kuV0S2OwQx4nY+AZKrytOk4IPz21g7ujteih8OCY1a0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VwRFXDZXi0VULAHvDqeil2sOEdobsJqL/vMpPrxw+1SWljsdTuc03G80fG66YVonu
+	 TW2/k86hQZIOi4w0u9bd/owYlE9vF2X7H4Vu9oB/pelGU+eN7WMjrHzboTM624VAdJ
+	 Pag72oBtjHksM92AHd/+gpVDiAhJkVfUu4KlQ5cwmok00Vcr/ZSpfNq+i3qJ9tSvsr
+	 kRBJA+8wisuli6zFwRDmtJqd6iWlhja79cyI06uC/mlS1Wkgpq1c6p4OqWv9wIe0TK
+	 0wG3AxYToJrJM0/c15ZVGgqCGvc35F1JsTCsjLdnuxC5xFIRvohtugAJ4v7o2lC+lt
+	 brGD90VB0rZ0A==
+Message-ID: <f3bd99c8-eb70-40d3-9b43-fba56546f591@kernel.org>
+Date: Sun, 26 Oct 2025 11:10:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
+To: Robert Marko <robert.marko@sartura.hr>, srini@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ horatiu.vultur@microchip.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, daniel.machon@microchip.com
+Cc: luka.perkov@sartura.hr
+References: <20251024192532.637563-1-robert.marko@sartura.hr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251024192532.637563-1-robert.marko@sartura.hr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Building the tty selftests generates the tty_tiocsti_test binary, which
-appears as untracked file in git. As mentioned in the kselftest
-documentation, all the generated objects must be placed inside
-.gitignore. This prevents the generated objects from accidentally
-getting staged and keeps the working tree clean.
+On 24/10/2025 21:24, Robert Marko wrote:
+> LAN969x series also has the same HW block, its just 16KB instead of 8KB
+> like on LAN966x series.
+> 
+> So, document compatibles for the LAN969x series.
+> 
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> ---
+>  .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml  | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+> index f97c6beb4766..f8c68cf22c1c 100644
+> --- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+> +++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+> @@ -23,8 +23,15 @@ properties:
+>        - items:
+>            - const: microchip,lan9668-otpc
+>            - const: microchip,lan9662-otpc
+> +          - const: microchip,lan9691-otpc
+> +          - const: microchip,lan9692-otpc
+> +          - const: microchip,lan9693-otpc
+> +          - const: microchip,lan9694-otpc
+> +          - const: microchip,lan9696-otpc
+> +          - const: microchip,lan9698-otpc
 
-Add the tty_tiocsti_test binary to .gitignore to avoid accidentally
-staging the build artifact and maintain a clean working tree.
+Why are you changing lan9668? Nothing on this is explained in commit
+msg. Also, list of more than 3 items is not really useful.
 
-Link: https://docs.kernel.org/dev-tools/kselftest.html#contributing-new-tests-details
+>        - enum:
+>            - microchip,lan9662-otpc
+> +          - microchip,lan9691-otpc
 
-Fixes: 7553f5173ec3 ("selftests/tty: add TIOCSTI test suite")
-Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-Suggested-by: David Hunter <david.hunter.linux@gmail.com>
-Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
----
-Changelog:
-v3:
-- Add fixes tag as suggested by Greg KH.
-v2:
-- Improve the commit wording and explain clearly why this change is needed.
+Why is it listed twice? First you say lan9662 is compatible with
+lan9691, now you say it is not.
 
- tools/testing/selftests/tty/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/tty/.gitignore b/tools/testing/selftests/tty/.gitignore
-index fe70462a4aad..2453685d2493 100644
---- a/tools/testing/selftests/tty/.gitignore
-+++ b/tools/testing/selftests/tty/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+tty_tiocsti_test
- tty_tstamp_update
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
