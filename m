@@ -1,297 +1,107 @@
-Return-Path: <linux-kernel+bounces-870203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C45C0A2AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:52:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233ACC0A2B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CEC884E33FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 04:52:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE91D3B30F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 04:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E704257842;
-	Sun, 26 Oct 2025 04:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44866257842;
+	Sun, 26 Oct 2025 04:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jWFfD9U/"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZSa90mR0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E734B17BA6
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 04:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB6AB661;
+	Sun, 26 Oct 2025 04:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761454335; cv=none; b=jG/ycxV2bSe9+kLYauX8YR7/iCW/Bj41t62ohlx8ndAlI4JI4yrvNzw/bFwGtx1qecdA/3ouPmweyh3Ku4yzQ1tccFXrk/qOkz2fH7RBLmNWCW1QNP5Loc7expe5dEb/YQAot4z4WXGrMH3V9vDr7Fc9tesibkFA8BjWN49y528=
+	t=1761454458; cv=none; b=oLekRZugRoBvnXuP18bvdZTmNeu3Y/lsf32rrTwYNnoXTZoo+PuJL55iexHq+Db/tTgS0Zej3eHeZgTUr6K/Yq+yTqcD1mCK1xlATouNnBtlo+fV3VHTBgIwT7QLOCwHzDIH4RV8loIDORzi0ws2Obx+MZyIJtyyNF56TyS2goE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761454335; c=relaxed/simple;
-	bh=4Dc4N3qbwwcxA9ZMSvZPe7OTp9wp9wL3+2BXKP94uic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iFP04fU2oqNE9AVKBHcr4XtgL2QcfK+2AJeZtotqBrnBj/tIA9MSk+pA2Maz5Imd2fYc+fuZOjuGMnTb9XcFOznQxY/YahCAbAKQDGdzp76fkpBB6Uq4jTw1f5EuR5JcnN9L9jjud4/Bz3u5oE6loLb/UcRwJcpBhInVnKudUbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jWFfD9U/; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-290d48e9f1fso142135ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:52:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761454333; x=1762059133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2P6mxq6VtzZxcoez1LoW+qD/3rCdmW7jgaATYRcM+ME=;
-        b=jWFfD9U/UvcJzF4JkNY3u6vHuHgE5Agz/VHpB5mBcJsNUkJ0CnFM2SvZ3Q9JrIC2Hd
-         jnA+TceXcDdGedYaaftpSIGhkyaVXf6gSroUaFLWw3zCgt0u9i8wI2DIHHycLO+WXQ8O
-         3MAWp1EIAXdPyIcDMUJxajjB+7ZDiZpOFWnHobR2cRX1Vmd7DGkhvrK9l0aeRIyPg8Iw
-         UTNHnwi9EhTZn2UUlDvNuZkFTEV+f6NryCrnOIvMxE62c5KtHmXtkzF02UWvTAMgfQrJ
-         A50ezmDDxPf4KPP2ryc+C2Xar+AxiFHratyNQYGvCr8OUEqtju9GUzhF0kCPyc9CTHGe
-         ikrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761454333; x=1762059133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2P6mxq6VtzZxcoez1LoW+qD/3rCdmW7jgaATYRcM+ME=;
-        b=saftPszXVdn5YgS/UwgDnIfXVzDHph7qxgcFWqfKSpzid0+nchPVuOmKUS21ss5KoA
-         b7DYrS4Ad7U0OYtz2A9Ay2BUZ5upvfvXc3ryLNn9cRHr7HeWzA6ugkygm0Q+EzvF/tyX
-         ORSK4YrczAIcwWoK3u0+jl5w3OeeAP9sCHP0uaSeXQd7V5DIsNZYNq7tQh34Cw3Iidlg
-         HZUdfepNVKgYQt1FEYGbSRPf+T5Vi3ss7xvbWxiJIRgBxpNtEdYuTUXhOwU8j7XH/w9v
-         XD9IFmsXaoAJQ7AMt0ZLhxegMccD6SiI3XEiWXi5Y3k5D9xF9ARRwPQeUzUQpDnzKbT6
-         tFvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWt/CabVH2T7kFU9nFiH/LLNhDfKb7jEkrtTZCHfLxgwXjiaB8Lo08J6s31JQpx+GkBKIvaKw1zWbYUdDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc/y1Pdz7WQUUYZCgdpsEWDp6ONTgf9td5qdf72m/wZfiS2N7f
-	LHUWxnBpXEgclEf2clKnM24F1EvpuVTzX538Ye2apQddPKioWfPFBgeNY+nx3X6tSnqPfEOn0tI
-	+ydVvSCzbrui1Am/ILDEUEMfYFYOs/eatWaxYMthr
-X-Gm-Gg: ASbGncszScdBfSwg0o1kg6lkbfjykreptF/um8TbkbcJzro0dub48sejTTjvvqtFFUI
-	hiPZXN1qoiN+byYEeumKcwl40sRdgtpRTCTh0zAnuoK9lqlbfRtrN44JkcHiQa9s3MnQFcqOCl2
-	FnBrFHGCSPJkweue+Fyo10CpCev/5eNs3PivcdTdCoWdDbH+/H9rzbilL+MdZ9OfdYlgUMNOaWs
-	x/Fz0GT0i7ucoBnQzQ4o8zuwrDkK8NekYvA98JlGmPpDNxhp2j2sb4O9c5g
-X-Google-Smtp-Source: AGHT+IHMVzaofhA3wIWgJzuesVEgvKeAV/oywnPC1Wtd2m/CFKkObi3QC/tc5kGCRAJqfBC3EoGMG53nIMZgRHAgQ+U=
-X-Received: by 2002:a17:902:e749:b0:290:dd42:eb5f with SMTP id
- d9443c01a7336-29497bce346mr4445765ad.12.1761454332725; Sat, 25 Oct 2025
- 21:52:12 -0700 (PDT)
+	s=arc-20240116; t=1761454458; c=relaxed/simple;
+	bh=ucWJuWDs7R36b9/cO5QkJztWCLe4j4T2lRr4BgXYjkw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nTbmov8YH6MgwpXCpdfh/Q3hYghm5XKbUTqhbAjf8gy3xOMl3ctH7JOuo9hVslsj91j/9BHgAs13clX+TmVEJW4Nv+ZUmzTIXNNVw4FqYdOE/qdXw3qmr1JS+yARBUnCNGJiILf6U/H0UzKGNyaoHJIaOknTpFw1YQ7H5h6sOMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZSa90mR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A70C4CEE7;
+	Sun, 26 Oct 2025 04:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761454458;
+	bh=ucWJuWDs7R36b9/cO5QkJztWCLe4j4T2lRr4BgXYjkw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZSa90mR0ncqVcsn+MWBFbF6cTiS2j8rPQM93oADJ4MLoxpTvK0abfvEwrQdH4NyJY
+	 ZguZeHhHFg8HHhNpkr6fzPHh9FpaXSo2HREt9XkTep4zWROZeEfRc+H7PibHtUB9Bp
+	 QJnC0l/W4BkCdCKVO5dV4weZI0VCrwChmVfmIWGo=
+Date: Sat, 25 Oct 2025 21:54:16 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
+ <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+Message-Id: <20251025215416.dbe01a36382fdd1a6d6a8e5b@linux-foundation.org>
+In-Reply-To: <xhpgje5pb5sxi5frjvje73v7oatablynl7ksyjnbrglwh5qx7h@fforsl3cwbl6>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+	<20251023093251.54146-2-kirill@shutemov.name>
+	<20251023134929.b72ab75a8c132a17ae68a582@linux-foundation.org>
+	<3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
+	<20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
+	<xhpgje5pb5sxi5frjvje73v7oatablynl7ksyjnbrglwh5qx7h@fforsl3cwbl6>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251022-james-perf-fix-dso-block-v1-1-c4faab150546@linaro.org>
- <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com> <aP1kSdZJKYIpnRia@google.com>
-In-Reply-To: <aP1kSdZJKYIpnRia@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 25 Oct 2025 21:52:01 -0700
-X-Gm-Features: AWmQ_blBTg1noq0xZtV_gKrDwKOg3MyceopTwyck3emeMmrFAVlTFDdLFl7juGY
-Message-ID: <CAP-5=fUiO1uypnsw=G-FFj0xE=uCowG5FetaC9JGygOxybuGGA@mail.gmail.com>
-Subject: Re: [PATCH] perf dsos: Don't block when reading build IDs
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 25, 2025 at 4:59=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hello,
->
-> On Fri, Oct 24, 2025 at 11:26:18AM -0700, Ian Rogers wrote:
-> > On Wed, Oct 22, 2025 at 8:46=E2=80=AFAM James Clark <james.clark@linaro=
-.org> wrote:
-> > >
-> > > The following command will hang consistently when the GPU is being us=
-ed
-> > > due to non regular files (e.g. /dev/dri/renderD129, /dev/dri/card2)
-> > > being opened to read build IDs:
-> > >
-> > >  $ perf record -asdg -e cpu-clock -- true
-> > >
-> > > Change to non blocking reads to avoid the hang here:
-> > >
-> > >   #0  __libc_pread64 (offset=3D<optimised out>, count=3D0, buf=3D0x7f=
-ffffffa4a0, fd=3D237) at ../sysdeps/unix/sysv/linux/pread64.c:25
-> > >   #1  __libc_pread64 (fd=3D237, buf=3D0x7fffffffa4a0, count=3D0, offs=
-et=3D0) at ../sysdeps/unix/sysv/linux/pread64.c:23
-> > >   #2  ?? () from /lib/x86_64-linux-gnu/libelf.so.1
-> > >   #3  read_build_id (filename=3D0x5555562df333 "/dev/dri/card2", bid=
-=3D0x7fffffffb680, block=3Dtrue) at util/symbol-elf.c:880
-> > >   #4  filename__read_build_id (filename=3D0x5555562df333 "/dev/dri/ca=
-rd2", bid=3D0x7fffffffb680, block=3Dtrue) at util/symbol-elf.c:924
-> > >   #5  dsos__read_build_ids_cb (dso=3D0x5555562df1d0, data=3D0x7ffffff=
-fb750) at util/dsos.c:84
-> > >   #6  __dsos__for_each_dso (dsos=3D0x55555623de68, cb=3D0x5555557e703=
-0 <dsos__read_build_ids_cb>, data=3D0x7fffffffb750) at util/dsos.c:59
-> > >   #7  dsos__for_each_dso (dsos=3D0x55555623de68, cb=3D0x5555557e7030 =
-<dsos__read_build_ids_cb>, data=3D0x7fffffffb750) at util/dsos.c:503
-> > >   #8  dsos__read_build_ids (dsos=3D0x55555623de68, with_hits=3Dtrue) =
-at util/dsos.c:107
-> > >   #9  machine__read_build_ids (machine=3D0x55555623da58, with_hits=3D=
-true) at util/build-id.c:950
-> > >   #10 perf_session__read_build_ids (session=3D0x55555623d840, with_hi=
-ts=3Dtrue) at util/build-id.c:956
-> > >   #11 write_build_id (ff=3D0x7fffffffb958, evlist=3D0x5555562323d0) a=
-t util/header.c:327
-> > >   #12 do_write_feat (ff=3D0x7fffffffb958, type=3D2, p=3D0x7fffffffb95=
-0, evlist=3D0x5555562323d0, fc=3D0x0) at util/header.c:3588
-> > >   #13 perf_header__adds_write (header=3D0x55555623d840, evlist=3D0x55=
-55562323d0, fd=3D3, fc=3D0x0) at util/header.c:3632
-> > >   #14 perf_session__do_write_header (session=3D0x55555623d840, evlist=
-=3D0x5555562323d0, fd=3D3, at_exit=3Dtrue, fc=3D0x0, write_attrs_after_data=
-=3Dfalse) at util/header.c:3756
-> > >   #15 perf_session__write_header (session=3D0x55555623d840, evlist=3D=
-0x5555562323d0, fd=3D3, at_exit=3Dtrue) at util/header.c:3796
-> > >   #16 record__finish_output (rec=3D0x5555561838d8 <record>) at builti=
-n-record.c:1899
-> > >   #17 __cmd_record (rec=3D0x5555561838d8 <record>, argc=3D2, argv=3D0=
-x7fffffffe320) at builtin-record.c:2967
-> > >   #18 cmd_record (argc=3D2, argv=3D0x7fffffffe320) at builtin-record.=
-c:4453
-> > >   #19 run_builtin (p=3D0x55555618cbb0 <commands+288>, argc=3D9, argv=
-=3D0x7fffffffe320) at perf.c:349
-> > >   #20 handle_internal_command (argc=3D9, argv=3D0x7fffffffe320) at pe=
-rf.c:401
-> > >   #21 run_argv (argcp=3D0x7fffffffe16c, argv=3D0x7fffffffe160) at per=
-f.c:445
-> > >   #22 main (argc=3D9, argv=3D0x7fffffffe320) at perf.c:553
-> > >
-> > > Fixes: 53b00ff358dc ("perf record: Make --buildid-mmap the default")
-> > > Signed-off-by: James Clark <james.clark@linaro.org>
-> > > ---
-> > > I'm not actually sure if this is the right fix for this. Commit
-> > > 2c369d91d093 ("perf symbol: Add blocking argument to
-> > > filename__read_build_id") which added the blocking argument says that=
- it
-> > > should be non-blocking reads for event synthesis, but the callstack h=
-ere
-> > > is when writing the header out.
-> > >
-> > > There was also an is_regular_file() check added in commit c21986d33d6=
-b
-> > > ("perf unwind-libdw: skip non-regular files"), which presumably falls
-> > > afoul of the "which unfortunately fails for symlinks" part of the oth=
-er
-> > > linked commit message?
-> > >
-> > > So I can't tell if we should add the is_regular_file() check here too=
-,
-> > > or just set it to non-blocking, or it needs some extra state to be
-> > > passed all the way down to dsos__read_build_ids_cb() to do different
-> > > things.
-> >
-> > The fix lgtm but I worry about making all the build ID reading
-> > non-blocking meaning build IDs getting lost.
->
-> I'm not sure what non-blocking means for regular file system operations
-> on a block device.  But it may have some impact on regular files on a
-> network filesystem.
+On Fri, 24 Oct 2025 10:26:05 +0100 Kiryl Shutsemau <kirill@shutemov.name> wrote:
 
-Agreed. Prior to using blocking we tried to imply from the file type
-from stat, but that skipped things like symlinks :-/
+> > Because the Sep 28 2025 Fixes: totally fooled me and because this
+> > doesn't apply to 6.17, let alone to 6.ancient.
+> > 
+> > > It sure is a fix for that. We can indicate to which stable 
+> > > versions we want to have ti backported.
+> > > 
+> > > And yes, it might be all stable kernels.
+> > 
+> > No probs, thanks for clarifying.  I'll restore the
+> > 
+> > 	Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> > 	Cc; <stable@vger.kernel.org>
+> > 
+> > and shall let others sort out the backporting issues.
+> 
+> One possible way to relax backporting requirements is only to backport
+> to kernels where we can have writable file mapping to filesystem with a
+> backing storage (non-shmem).
+> 
+> Maybe
+> 
+> Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
 
-> > It seems that generating
-> > the build ID feature table is unnecessary if we have build ID mmap
-> > events, including synthesized ones that will have read the build IDs.
-> > I wonder if a better "fix" is:
-> > ```
-> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > index cb52aea9607d..15f75c70eb76 100644
-> > --- a/tools/perf/builtin-record.c
-> > +++ b/tools/perf/builtin-record.c
-> > @@ -1842,7 +1842,7 @@ static void record__init_features(struct record *=
-rec)
-> >        for (feat =3D HEADER_FIRST_FEATURE; feat < HEADER_LAST_FEATURE; =
-feat++)
-> >                perf_header__set_feat(&session->header, feat);
-> >
-> > -       if (rec->no_buildid)
-> > +       if (rec->no_buildid || rec->buildid_mmap)
-> >                perf_header__clear_feat(&session->header, HEADER_BUILD_I=
-D);
-> >
-> >        if (!have_tracepoints(&rec->evlist->core.entries))
-> > ```
-> > that should disable the build ID feature table generation when build
-> > ID mmaps are in use (the default). Having the build IDs twice in the
-> > data file feels redundant. Or we could do your fix or both, wdyt?
->
-> I'm ok to remove the header feature but I think it should update
-> build-ID cache even with this change.
+OK, thanks, I changed it to
 
-Yeah, dropping the feature writing also impacts updating the build ID
-cache because:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/header.c?h=3Dperf-tools-next#n338
-It is kind of strange that writing a header feature does this. What if
-I want to write a header with build IDs but not update the cache? It'd
-make more sense, I think, for perf_session__cache_build_ids to be
-called explicitly. There is also the global no_buildid_cache
-controlling behavior:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/build-id.c?h=3Dperf-tools-next#n43
-But that's kind of a hack as we may have >1 session such as with TPEBS.
-
-> I'm also curious if the device has samples actually.  It should be
-> checked by dso->hit.
-
-In this case the header writing is happening after the samples have
-been processed, but it looks like marking of samples doesn't consider
-data addresses:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/build-id.c?h=3Dperf-tools-next#n55
-just sample->ip and the callchain. If the marking was updated for data
-pages then just writing build IDs for marked dsos would make sense.
-There could be callers not marking dsos so they'd need altering, or
-two versions of the code.
-
-Thanks,
-Ian
-
-> Thanks,
-> Namhyung
->
-> >
-> > Thanks,
-> > Ian
-> >
-> > > ---
-> > >  tools/perf/util/dsos.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
-> > > index 64c1d65b0149..5e1c815d7cb0 100644
-> > > --- a/tools/perf/util/dsos.c
-> > > +++ b/tools/perf/util/dsos.c
-> > > @@ -81,13 +81,14 @@ static int dsos__read_build_ids_cb(struct dso *ds=
-o, void *data)
-> > >                 return 0;
-> > >         }
-> > >         nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
-> > > -       if (filename__read_build_id(dso__long_name(dso), &bid, /*bloc=
-k=3D*/true) > 0) {
-> > > +       /* Don't block in case path isn't for a regular file. */
-> > > +       if (filename__read_build_id(dso__long_name(dso), &bid, /*bloc=
-k=3D*/false) > 0) {
-> > >                 dso__set_build_id(dso, &bid);
-> > >                 args->have_build_id =3D true;
-> > >         } else if (errno =3D=3D ENOENT && dso__nsinfo(dso)) {
-> > >                 char *new_name =3D dso__filename_with_chroot(dso, dso=
-__long_name(dso));
-> > >
-> > > -               if (new_name && filename__read_build_id(new_name, &bi=
-d, /*block=3D*/true) > 0) {
-> > > +               if (new_name && filename__read_build_id(new_name, &bi=
-d, /*block=3D*/false) > 0) {
-> > >                         dso__set_build_id(dso, &bid);
-> > >                         args->have_build_id =3D true;
-> > >                 }
-> > >
-> > > ---
-> > > base-commit: a1d8548c23076c66d96647f5f6f25aa43567f247
-> > > change-id: 20251022-james-perf-fix-dso-block-ca1d8437bbc0
-> > >
-> > > Best regards,
-> > > --
-> > > James Clark <james.clark@linaro.org>
-> > >
+Link: https://lkml.kernel.org/r/20251023093251.54146-2-kirill@shutemov.name
+Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
+Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+...
+Cc: <stable@vger.kernel.org>
 
