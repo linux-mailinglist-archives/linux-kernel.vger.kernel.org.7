@@ -1,87 +1,142 @@
-Return-Path: <linux-kernel+bounces-870706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AE2C0B807
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:54:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7411DC0B82A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78A5E4EB1B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:54:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3414E1893
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7B4302779;
-	Sun, 26 Oct 2025 23:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B066303C8A;
+	Mon, 27 Oct 2025 00:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1PkiU1/Q"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gLxxpakx"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8332F656B;
-	Sun, 26 Oct 2025 23:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048C303A33;
+	Mon, 27 Oct 2025 00:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761522891; cv=none; b=QUPXKOGvnS7151ObuBX+kHYRIHXrv0i24FjEMGhHsRnqSM8Ln8Vkq8m/EK7QKx+UIA76gsS/imYVyUB3B43P16BGlvqo9+jGtcdj6rxrATJNGsKEton1rHb5dRkNVs9MjzdgBsB/Xjh+ccC25AcWhrBJfsFKX6rPLv9xGsoLnPo=
+	t=1761523210; cv=none; b=NSvmfqlU2DdaCbIRu2QsHB+PmrLu9D/XAhQwCfTDxf873VG8xpFq8bhr3POVsgZpAYwVnw3M1Tjrgtt4gtyAsGT9OTZ83v+bLTm7yIHa2xNhX9DyLKVCKHzpCBm/Y6rGmgqLxX5eh7f0XYCs5kXqHdPh4TV6DXmVTPauM5rSlFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761522891; c=relaxed/simple;
-	bh=vwZTxe+ObXBjMgYQ0gvodtEMXgf1fA/8IMgB3QhUv9k=;
+	s=arc-20240116; t=1761523210; c=relaxed/simple;
+	bh=2LEzP3txFu5ErcmDdC5BABECgcH7F5vf2cMFAPsu270=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUECmX7Z41VkhkvW/I/UUPRTL+KikxETf05uw7v75k8Iiqe17HOsMROCtD2QBlPSF+wyaNp61et9kM7qqv9nOVZOLTfLA9J6aFDe/UuAybLKhUKHlVwPEtZT5yN3ZmuhM6r2OPsP7AGu4hGOnQ/DHCRRRZ9VT+VdhBvX9HZC80E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1PkiU1/Q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=vof5s1/Zw1TeJHjv7+1s4o0cLwd9aghRs+o0h+wWhTI=; b=1PkiU1/QZqsPOzHFz8Vfh/fZBQ
-	jCH1GNmPIO3tczm6DM1WN7JBk1ECstBeD2x7+UOLTcOqCxA2oqV/AA4TfPJCQLX5aXp5KwlAvnonX
-	EU6GVihy+UUvLeNYvKD+hwzx5TL+7Yaq7phWNaVkN6U4QsinKb4jHf/R8WEXPB1lw+vQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDAZN-00C8ob-LY; Mon, 27 Oct 2025 00:54:41 +0100
-Date: Mon, 27 Oct 2025 00:54:41 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] net: dsa: yt921x: Add STP/MST support
-Message-ID: <35d469ba-6ff5-42da-b4b2-cec11c50857d@lunn.ch>
-References: <20251024033237.1336249-1-mmyangfl@gmail.com>
- <20251024033237.1336249-2-mmyangfl@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCgwhHH8jSP1QzE8VJdGAWBLx9jQntsw2fZxBZlERY840BgPyyh8H2bTNCyOvT4N8pigI2o2UaFwN4Ujnhiy+6HzjmNp0l6My/d+PdHjZwsEG8brAc4pFa91YfxTrbchlznUpytNi6Oj0Q3TVOAwukAKUmd+VCnHMiCv4Jc4CiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gLxxpakx; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4411CE9B;
+	Mon, 27 Oct 2025 00:58:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761523098;
+	bh=2LEzP3txFu5ErcmDdC5BABECgcH7F5vf2cMFAPsu270=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gLxxpakxqUgpog66O8G7I2uQM4WUbF4UeXljNud5eTWUlQ6iKLdaBfmzHzaKUwiVl
+	 H4P8o1LyEeFyV7zungjl6PzoY5UWYmO5oFgR2RQ2RK2K//LcBk7qyiBTKtjKbFKlcw
+	 WkMGRjfcHurfqs+cBb8VXdXbF0raanqgkLPbSgSs=
+Date: Mon, 27 Oct 2025 01:59:51 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guoniu Zhou <guoniu.zhou@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] media: imx8mq-mipi-csi2: Implement
+ .get_frame_desc subdev callback
+Message-ID: <20251026235951.GL13023@pendragon.ideasonboard.com>
+References: <20250820-csi2_imx8mq-v5-0-e04a6fc593bd@nxp.com>
+ <20250820-csi2_imx8mq-v5-4-e04a6fc593bd@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251024033237.1336249-2-mmyangfl@gmail.com>
+In-Reply-To: <20250820-csi2_imx8mq-v5-4-e04a6fc593bd@nxp.com>
 
-> +static int
-> +yt921x_dsa_vlan_msti_set(struct dsa_switch *ds, struct dsa_bridge bridge,
-> +			 const struct switchdev_vlan_msti *msti)
+Hi Guoniu,
+
+Thank you for the patch.
+
+On Wed, Aug 20, 2025 at 07:04:59PM +0800, Guoniu Zhou wrote:
+> Implement .get_frame_desc subdev callback since downstream subdev
+> need to get frame description.
+> 
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 32 +++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> index 529928b94a193e02177f8773a0e68375b59b0a08..a28ccdeef8521c0e00d13b1860eadef5f2118651 100644
+> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> @@ -648,6 +648,37 @@ static int imx8mq_mipi_csi_set_fmt(struct v4l2_subdev *sd,
+>  	return 0;
+>  }
+>  
+> +static int imx8mq_mipi_csi_get_frame_desc(struct v4l2_subdev *sd,
+> +					  unsigned int pad,
+> +					  struct v4l2_mbus_frame_desc *fd)
 > +{
-> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
-> +	u64 mask64;
-> +	u64 ctrl64;
-> +	int res;
+> +	struct v4l2_mbus_frame_desc_entry *entry = &fd->entry[0];
+> +	const struct csi2_pix_format *csi2_fmt;
+> +	const struct v4l2_mbus_framefmt *fmt;
+> +	struct v4l2_subdev_state *state;
 > +
-> +	if (!msti->vid)
+> +	if (pad != MIPI_CSI2_PAD_SOURCE)
 > +		return -EINVAL;
-> +	if (msti->msti <= 0 || msti->msti >= YT921X_MSTI_NUM)
-> +		return -EINVAL;
+> +
+> +	state = v4l2_subdev_lock_and_get_active_state(sd);
+> +	fmt = v4l2_subdev_state_get_format(state, MIPI_CSI2_PAD_SOURCE);
+> +	csi2_fmt = find_csi2_format(fmt->code);
+> +	v4l2_subdev_unlock_state(state);
+> +
+> +	if (!csi2_fmt)
+> +		return -EPIPE;
+> +
+> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+> +	fd->num_entries = 1;
+> +
+> +	entry->flags = 0;
+> +	entry->pixelcode = csi2_fmt->code;
+> +	entry->bus.csi2.vc = 0;
+> +	entry->bus.csi2.dt = media_bus_fmt_to_csi2_dt(csi2_fmt->code);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct v4l2_subdev_video_ops imx8mq_mipi_csi_video_ops = {
+>  	.s_stream	= imx8mq_mipi_csi_s_stream,
+>  };
+> @@ -656,6 +687,7 @@ static const struct v4l2_subdev_pad_ops imx8mq_mipi_csi_pad_ops = {
+>  	.enum_mbus_code		= imx8mq_mipi_csi_enum_mbus_code,
+>  	.get_fmt		= v4l2_subdev_get_fmt,
+>  	.set_fmt		= imx8mq_mipi_csi_set_fmt,
+> +	.get_frame_desc		= imx8mq_mipi_csi_get_frame_desc,
+>  };
+>  
+>  static const struct v4l2_subdev_ops imx8mq_mipi_csi_subdev_ops = {
 
-I see there are a bunch of build bot warning emails, so this might be
-covered already?
+-- 
+Regards,
 
-msti->msti is a u16. It cannot by < 0, so <= should be =.
-
-	Andrew
+Laurent Pinchart
 
