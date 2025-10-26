@@ -1,146 +1,159 @@
-Return-Path: <linux-kernel+bounces-870166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B73C0A15B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 02:58:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF0CC0A168
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 02:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF8C18C1967
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 00:59:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2BC134B74C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 01:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04C5243964;
-	Sun, 26 Oct 2025 00:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BCA2264B0;
+	Sun, 26 Oct 2025 01:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FoNjnXqW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWe5OMOe"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13842611E;
-	Sun, 26 Oct 2025 00:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131E02772D
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 01:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761440310; cv=none; b=C26lv5XE1RZGKniiCM9nM43udTsE76aWcxIaCpyPVp2UR9WYvLXk1dTGg2CQOm26mUn13hZvB2GK52HrPv1G2ri2MY1+nFehX+jcKQNo9SFy8zcdkAoBstFk+fhp5YO7QzZr/NnEZDI8Asc+cBsfQoCL4AhvD6x50leknAxANJc=
+	t=1761440724; cv=none; b=nPDO3dpopKUBgptMNJQhcFWmG89V3/q4aHvjh9z/dVTx87fk9weG4SZuVODTsko3cu1WGe5s+IIKi5iiXmTiSuecRYQvvQfO3f5QdkZn/36fskDDU0IIXQmXeVbM676iD3M9vaal05X3oARTwKdeTYYjA1NXjK9jxwcPUHJhNlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761440310; c=relaxed/simple;
-	bh=iKNU21p4UOkhzbsU6WfHyfoc71anHD5MgXpTQaxqSvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oXTnnb2QI9pa3z1jG93NdhoulLZbisMosVLxGz/JWT3x5AAdQjLP8xq3iFtxuvZsaatATLsexjniSeJUXi5vM45C5FLb053ic5e5l7fN7q9Ga6mwemf3X8TzEUTUxLiA8xjIU17LcBRWP1dywcsaF9yy5JiY9bwrbed4U+SKl+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FoNjnXqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD662C4CEF5;
-	Sun, 26 Oct 2025 00:58:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761440309;
-	bh=iKNU21p4UOkhzbsU6WfHyfoc71anHD5MgXpTQaxqSvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FoNjnXqWgDaGFKoPeRTziiKkQt9O08mjcK0iBsx5lSgtOulcik5n7VwHBaJzQ7kgH
-	 vRVIf3Ra1QInObf7/23u+ZmsA8/i89WTiRP/RP6bXQCm8cWsNBRKBiaSYfpysCkNTs
-	 k9FQnt/VsXhYiC2ZcQ8FcjJho9MmGHNIw/9L0TNEBzXwi1fCcpxnDKMxLO7Rf8ctMa
-	 q05cbwUGJtzrUMgpUrttdCV/dQ9ui8w4CJlyKphRVYiEtHsrHKhA6oXuubosBUyO5w
-	 1eCrnuXePrr1gRIrhbT+7wmdW5hkj6Df3m/1Qz6c76t37Wvklo6zJUI2Sqsp+QlngB
-	 WuT5wELuJFj0A==
-Date: Sat, 25 Oct 2025 17:58:27 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <aP1yM53r1GLS-767@google.com>
-References: <20251007214008.080852573@kernel.org>
- <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
- <20251023124057.2a6e793a@gandalf.local.home>
- <20251024082656.GS4067720@noisy.programming.kicks-ass.net>
- <20251024125841.GK4068168@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761440724; c=relaxed/simple;
+	bh=KLqV75PcvEyUm05RQodatiEG/ugFMUNCSjZ4Fbo2bkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eGW1N2Za1Wq108oEOdGmejfbb8pcH0J7lrtIzUkG0+9r5Zh37WsympXSdS38YRAc4h9LRe9iXy6Ex/rR1KWr+ryVYQLe5V3x+yLZ3XooC4iQ3aZcpRsJaZ+0iqhwgcyeqvw1t0hiBJVMn2EkMSqR2CfVm6beBSREYmeEEOII+gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWe5OMOe; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-79ef9d1805fso3728835b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 18:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761440722; x=1762045522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yS34+uhylNdFYNWrvgsPGh1bBy7nTRn8Y42YGAOkzr0=;
+        b=MWe5OMOe824Tdw6FcQvWhgeBq0xyEAepk3Q4yOtpcfeHIoNGUzCF1uEh0/FD2ZPudz
+         u6luLV2YhOzvd7Sks8zL2aHXJLykn8klOFH5TnXf724gSlLB+QGkJyyTHGLNRpTyBGCX
+         L0Qscld6K5t3wYu22El5xRsirPCb0fTf6myS8yr4uqJIyefWFddKxeI2D6BjKamAC0t5
+         bOe2yyUqRlX80THK0F6r7+TzO2k/PoKx9rHMkJ7WKPM9oBTVPBb4sgL/Vk3zsE2gdeb5
+         CnWqvXnpDN9nWif+3aiBSUy3sZsQBLclDn9w9z+Eweq6mVo3D3iVkUA/++dcreZKwJVV
+         VT9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761440722; x=1762045522;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yS34+uhylNdFYNWrvgsPGh1bBy7nTRn8Y42YGAOkzr0=;
+        b=lgc9LeUGTer1G0ueUj93GhMFMQXYewXidaDcp9djlon+HZnnxkwzz5TigOX3CWratV
+         /I24So0hLW/SO5Nyn8yns0Z5gFmusKjagNcGRFqR1gDRl3NghTf6O5XoTRfdAp1aNtWB
+         9JWZzmHZ0jLln4T2tGGN152Yeq2SbFI5JJFQ3VHDfs6zzNKl2pMhqp3JFStob/gT2Hgj
+         O7I/2re+pBX2CG22JLXTbr0GcIbbXHH+B2SjdjS5FUJm9fOQ6ke+11MSQc5REwFYTB9X
+         nq5oecpyDy5TO/b+bpvQ5XUzxfghdx6dJZoRpNkmgmQjH9D9HTn0UhoS4YvA7jlEfS/H
+         /MOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKPllquCet5FUH3QHZ0hrcBe4S9BWAST/XLE9P63fqLZQzk3C/9kl6+9MIN9miBJpm6ffJWFT9cgfd2iI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi1kIHmcs2wapNTbwZTW4Lyn+3F0P87LiBUDrtBrn1e63POOEn
+	RUGG1KVpBYclJQLy4mZ+cXHZMmhIRZboJrrreHim5/7A1cowH9aRmRDn
+X-Gm-Gg: ASbGncvjh2jgD1Q41X0z64J2a/2NepKIz7tQIzCASyIXrrDuhWdoO2lNANJsLwsZlpg
+	avVpLSzk59KSkVOG7dKjE7vyL/mYc+jmfgcknKZNS8sq16xm/yJXllIIA4qPtLE8YSp5nFad9Um
+	oWcubUb9i+uCGL9E4l6xQNLj5tcF+2UmxUN6G/GM+C9eOwbD7/CjIUe/fVdNtm7jsBePq0Kh1g9
+	nsWvy40k3w2kI3Vlm1EEKTSraH/xUSXQnoMPsFsLVhKQdiIY0D3GJwh/g0fqf1dvcaFN9T0G3qm
+	vuHNonh6Q6DqJrNnORGn/cb4NIlZ3OdbqS5Tk3K8EySotc3MOedvhgivtkUMhTO7U8iqTdM+aWH
+	IyVAEbuP7JwmJeGv2TtnU+SMrvQL9cv2MyVso4tz98wf0TNd44vGkGvld01kwJ88xieosY2ccEz
+	pLxAFeBMIjd6Rvyw==
+X-Google-Smtp-Source: AGHT+IGqJ3fK980blF3S2OhDDl1kPCFC3PDx3uiV6lRR9MlLGgQ+c3xMg89feF4XpI76Z2y7cP/wYQ==
+X-Received: by 2002:a05:6a00:23c2:b0:780:f758:4133 with SMTP id d2e1a72fcca58-7a274ba91d9mr12147230b3a.10.1761440722260;
+        Sat, 25 Oct 2025 18:05:22 -0700 (PDT)
+Received: from daniel.. ([221.218.137.209])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a41404987esm3371597b3a.36.2025.10.25.18.05.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Oct 2025 18:05:21 -0700 (PDT)
+From: jinji zhong <jinji.z.zhong@gmail.com>
+To: minchan@kernel.org,
+	senozhatsky@chromium.org,
+	philipp.reisner@linbit.com,
+	lars.ellenberg@linbit.com,
+	christoph.boehmwalder@linbit.com,
+	corbet@lwn.net,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	axboe@kernel.dk,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	akpm@linux-foundation.org,
+	terrelln@fb.com,
+	dsterba@suse.com
+Cc: muchun.song@linux.dev,
+	linux-kernel@vger.kernel.org,
+	drbd-dev@lists.linbit.com,
+	linux-doc@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-mm@kvack.org,
+	zhongjinji@honor.com,
+	liulu.liu@honor.com,
+	feng.han@honor.com,
+	jinji zhong <jinji.z.zhong@gmail.com>
+Subject: [RFC PATCH 0/3] Introduce per-cgroup compression priority
+Date: Sun, 26 Oct 2025 01:05:07 +0000
+Message-ID: <cover.1761439133.git.jinji.z.zhong@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251024125841.GK4068168@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-Hi Peter,
+Hello everyone,
 
-On Fri, Oct 24, 2025 at 02:58:41PM +0200, Peter Zijlstra wrote:
-> 
-> Arnaldo, Namhyung,
-> 
-> On Fri, Oct 24, 2025 at 10:26:56AM +0200, Peter Zijlstra wrote:
-> 
-> > > So "perf_iterate_sb()" was the key point I was missing. I'm guessing it's
-> > > basically a demultiplexer that distributes events to all the requestors?
-> > 
-> > A superset. Basically every event in the relevant context that 'wants'
-> > it.
-> > 
-> > It is what we use for all traditional side-band events (hence the _sb
-> > naming) like mmap, task creation/exit, etc.
-> > 
-> > I was under the impression the perf tool would create one software dummy
-> > event to listen specifically for these events per buffer, but alas, when
-> > I looked at the tool this does not appear to be the case.
-> > 
-> > As a result it is possible to receive these events multiple times. And
-> > since that is a problem that needs to be solved anyway, I didn't think
-> > it 'relevant' in this case.
-> 
-> When I use:
-> 
->   perf record -ag -e cycles -e instructions
-> 
-> I get:
-> 
-> # event : name = cycles, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0 (PERF_COUNT_HW_CPU_CYCLES), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|CPU|PERIOD|IDENTIFIER, read_format = ID|LOST, disabled = 1, freq = 1, sample_id_all = 1, defer_callchain = 1
-> # event : name = instructions, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0x1 (PERF_COUNT_HW_INSTRUCTIONS), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|CPU|PERIOD|IDENTIFIER, read_format = ID|LOST, disabled = 1, freq = 1, sample_id_all = 1, defer_callchain = 1
-> # event : name = dummy:u, , id = { }, type = 1 (PERF_TYPE_SOFTWARE), size = 136, config = 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq } = 1, sample_type = IP|TID|TIME|CPU|IDENTIFIER, read_format = ID|LOST, exclude_kernel = 1, exclude_hv = 1, mmap = 1, comm = 1, task = 1, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1, build_id = 1, defer_output = 1
-> 
-> And we have this dummy event I spoke of above; and it has defer_output
-> set, none of the others do. This is what I expected.
-> 
-> *However*, when I use:
-> 
->   perf record -g -e cycles -e instruction
-> 
-> I get:
-> 
-> # event : name = cycles, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0 (PERF_COUNT_HW_CPU_CYCLES), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|ID|PERIOD, read_format = ID|LOST, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, sample_id_all = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1, build_id = 1, defer_callchain = 1, defer_output = 1
-> # event : name = instructions, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0x1 (PERF_COUNT_HW_INSTRUCTIONS), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|ID|PERIOD, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, sample_id_all = 1, defer_callchain = 1
-> 
-> Which doesn't have a dummy event. Notably the first real event has
-> defer_output set (and all the other sideband stuff like mmap, comm,
-> etc.).
-> 
-> Is there a reason the !cpu mode doesn't have the dummy event? Anyway, it
-> should all work, just unexpected inconsistency that confused me. 
+On Android, different applications have varying tolerance for
+decompression latency. Applications with higher tolerance for
+decompression latency are better suited for algorithms like ZSTD,
+which provides high compression ratio but slower decompression
+speed. Conversely, applications with lower tolerance for
+decompression latency can use algorithms like LZ4 or LZO that
+offer faster decompression but lower compression ratios. For example,
+lightweight applications (with few anonymous pages) or applications
+without foreground UI typically have higher tolerance for decompression
+latency.
 
-Right, I don't remember why.  I think there's no reason doing it for
-system wide mode only.
+Similarly, in memory allocation slow paths or under high CPU
+pressure, using algorithms with faster compression speeds might
+be more appropriate.
 
-Adrian, do you have any idea?  I have a vague memory that you worked on
-this in the past.
+This patch introduces a per-cgroup compression priority mechanism,
+where different compression priorities map to different algorithms.
+This allows administrators to select appropriate compression
+algorithms on a per-cgroup basis.
 
-Thanks,
-Namhyung
+Currently, this patch is experimental and we would greatly
+appreciate community feedback. I'm uncertain whether obtaining
+compression priority via get_cgroup_comp_priority in zram is the
+best approach. While this implementation is convenient, it seems
+somewhat unusual. Perhaps the next step should be to pass
+compression priority through page->private.
+
+jinji zhong (3):
+  mm/memcontrol: Introduce per-cgroup compression priority
+  zram: Zram supports per-cgroup compression priority
+  Doc: Update documentation for per-cgroup compression priority
+
+ Documentation/admin-guide/blockdev/zram.rst | 18 +++--
+ Documentation/admin-guide/cgroup-v2.rst     |  7 ++
+ drivers/block/zram/zram_drv.c               | 74 ++++++++++++++++++---
+ drivers/block/zram/zram_drv.h               |  2 +
+ include/linux/memcontrol.h                  | 19 ++++++
+ mm/memcontrol.c                             | 31 +++++++++
+ 6 files changed, 139 insertions(+), 12 deletions(-)
+
+-- 
+2.48.1
 
 
