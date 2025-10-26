@@ -1,116 +1,257 @@
-Return-Path: <linux-kernel+bounces-870179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805E6C0A1CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 02:57:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D00C0A1E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 03:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF3A3B5649
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 01:57:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9AAEB34ABA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 02:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5785213E9F;
-	Sun, 26 Oct 2025 01:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C158A248F69;
+	Sun, 26 Oct 2025 02:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kG4OjdpU"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dC4KVKMT"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84C020408A
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 01:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0622B20DD48;
+	Sun, 26 Oct 2025 02:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761443866; cv=none; b=psmHUAjl4DuBeJIH43G19cT2/l+ppOcJsOkeqkBVwOEwa/onBI1sqFEZ4fG25BQBs8oJPhsqrXdhAVA+ipUkysRvH1KGa/xBrcC9Z3w8/INPuZM0ZGyiDT3oHectg3sRB32+OCosUWq0A5JeuT3HQF8UzuMRUPCC4fG4jeaCsyE=
+	t=1761446886; cv=none; b=ilvy56Ag/tgMGWK/BVqgqMbldnSAO9QmatfvbkJDu61ygHIawSbTamtLlYA6fanHOODnYWbNqPoSBUmFiCR/LcNCRFlH2/314CbEXABjdEFBsOteTf/1DM/xvMMDRkQlArvVM+kYasPCE0OLqyHWBfHGdMxGFbBEWRuhnZg6YHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761443866; c=relaxed/simple;
-	bh=oPikvwt45BVYvYTWxBgaE9XM1ulsKhp78n5H8z0kqm8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=enu3Eomv7j7zXCLZZc1P5fNyIoD/JnQUGCgW5Sdr7qYywgpqHtWgE3y2JsHfeUv2v9pxOSoN/Pl2lARUgFTTDCuDBKI/gAMyrUqUzYbXhfjggNCV2Q9ie1r4w2EGS8b2FLgOiwTwVUpNzgILbqEqt/P0PKj6uzBog+npga+y7wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kG4OjdpU; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761443861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NNgxyD0sVa6QuTrTPdQX4llkf4PVAjU/F33ptCCYNVk=;
-	b=kG4OjdpU0+3I1DUsjRelaOu4+EkP8cPzC//YKkR9DZ2xL1QhSQLZymHhhacB7XaH8WWA/Q
-	s1w7Jd6ad7jzZ8TQtHKaRCmKwl14M8WFzwuJFu8oH/MhAWgeLyzWtYxXqjMWhpSydOPEpY
-	IiqZunVO0cpvDPfo+YgnBwmdbev//qw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jack Xu <jack.xu@intel.com>,
-	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
-	Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	qat-linux@intel.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] crypto: qat - use simple_strtoull to improve qat_uclo_parse_num
-Date: Sun, 26 Oct 2025 02:57:07 +0100
-Message-ID: <20251026015710.1368-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761446886; c=relaxed/simple;
+	bh=BdC6IVQByFlAwpunF3sHO1HRVXcj0fCi+U3mhEdS+kQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RAPSPqDZIOPOJ0gjIX+Mbp+7OkbbRLUmBjDwgOTSARx5cexwFKCHXGsQRBY+ItIlZJhbdw1t95l5g30xG6QCLctr1c3++3kVsN4GZ7wmYM2/xTdeOJ4L+ELsxD8a9W9Su6gpGeuhA734sc5smDNcQXxM+Zg132Xeq9cF/QCfRsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dC4KVKMT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=e/FjdbomwXXA5DVpijLHktilymfOdPctOT0G+OIHjkI=; b=dC4KVKMT3pzfc9sdJSZydWmZHW
+	6AsgRpT514DwQqIW98PXk9CEwC13r4EJcnEsTfcKiTWI0dJSa4LGbtjIW8GQO8ILCi5bqOEorK3x4
+	X/M+P6JAndDIFGa2DbAnOUsDTFQxAWqR5yolSQ6bH4YY/JRYFV2nGFQQfCBcdDE8Dur0kQtSNOY0+
+	hPrpPLXlDwLnDb1v5CE90hkeJu/dtSTWg4hA+16kwKs7ygO1rhCssvy8QgEtERBKmgcHfjFH74CgO
+	xJHvb0MvmLUW6mcPpRJbwcjDo/LpWZ1swToXSmwa9B4euxHXucw/uSdLKpfVzj+ndRNnDHIcjadWi
+	P9PKiwRA==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCqnY-0000000Bx2G-2UvL;
+	Sun, 26 Oct 2025 02:48:00 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-iio@vger.kernel.org
+Subject: [PATCH] iio: imu: adis: fix all kernel-doc warnings in header file
+Date: Sat, 25 Oct 2025 19:47:59 -0700
+Message-ID: <20251026024759.433956-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Replace the manual string copying and parsing logic with a call to
-simple_strtoull() to simplify and improve qat_uclo_parse_num().
+Correct and add to adis.h to resolve all kernel-doc warnings:
 
-Ensure that the parsed number does not exceed UINT_MAX, and add an
-approximate upper-bound check (no more than 19 digits) to guard against
-overflow.
+- add a missing struct member description
+- change one non-kernel-doc comment to use /* instead of /**
+- correct function parameter @value to @val (7 locations)
+- add function return value comments (13 locations)
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Warning: include/linux/iio/imu/adis.h:97 struct member 'has_fifo'
+ not described in 'adis_data'
+Warning: include/linux/iio/imu/adis.h:139 Incorrect use of kernel-doc
+ format: * The state_lock is meant to be used during operations that
+ require
+Warning: include/linux/iio/imu/adis.h:158 struct member '"__adis_"'
+ not described in 'adis'
+Warning: include/linux/iio/imu/adis.h:264 function parameter 'val'
+ not described in 'adis_write_reg'
+Warning: include/linux/iio/imu/adis.h:371 No description found for
+ return value of 'adis_update_bits_base'
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
-Changes in v2:
-- Use simple_strtoull(), return -EINVAL, and guard against overflow as
-  suggested by Andy
-- Link to v1: https://lore.kernel.org/lkml/20251022123622.349544-1-thorsten.blum@linux.dev/
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>
+Cc: Nuno Sá <nuno.sa@analog.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org
 ---
- drivers/crypto/intel/qat/qat_common/qat_uclo.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ include/linux/iio/imu/adis.h |   45 ++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/intel/qat/qat_common/qat_uclo.c b/drivers/crypto/intel/qat/qat_common/qat_uclo.c
-index 18c3e4416dc5..06d49cb781ae 100644
---- a/drivers/crypto/intel/qat/qat_common/qat_uclo.c
-+++ b/drivers/crypto/intel/qat/qat_common/qat_uclo.c
-@@ -200,20 +200,12 @@ qat_uclo_cleanup_batch_init_list(struct icp_qat_fw_loader_handle *handle,
- 
- static int qat_uclo_parse_num(char *str, unsigned int *num)
+--- linux-next-20251024.orig/include/linux/iio/imu/adis.h
++++ linux-next-20251024/include/linux/iio/imu/adis.h
+@@ -57,6 +57,7 @@ struct adis_timeout {
+  * @enable_irq: Hook for ADIS devices that have a special IRQ enable/disable
+  * @unmasked_drdy: True for devices that cannot mask/unmask the data ready pin
+  * @has_paging: True if ADIS device has paged registers
++ * @has_fifo: True if ADIS device has a hardware FIFO
+  * @burst_reg_cmd:	Register command that triggers burst
+  * @burst_len:		Burst size in the SPI RX buffer. If @burst_max_len is defined,
+  *			this should be the minimum size supported by the device.
+@@ -136,7 +137,7 @@ struct adis {
+ 	const struct adis_data	*data;
+ 	unsigned int		burst_extra_len;
+ 	const struct adis_ops	*ops;
+-	/**
++	/*
+ 	 * The state_lock is meant to be used during operations that require
+ 	 * a sequence of SPI R/W in order to protect the SPI transfer
+ 	 * information (fields 'xfer', 'msg' & 'current_page') between
+@@ -166,7 +167,7 @@ int __adis_reset(struct adis *adis);
+  * adis_reset() - Reset the device
+  * @adis: The adis device
+  *
+- * Returns 0 on success, a negative error code otherwise
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_reset(struct adis *adis)
  {
--	char buf[16] = {0};
--	unsigned long ae = 0;
--	int i;
--
--	strscpy(buf, str, sizeof(buf));
--	for (i = 0; i < 16; i++) {
--		if (!isdigit(buf[i])) {
--			buf[i] = '\0';
--			break;
--		}
--	}
--	if ((kstrtoul(buf, 10, &ae)))
--		return -EFAULT;
-+	unsigned long long ae;
-+	char *end;
- 
-+	ae = simple_strtoull(str, &end, 10);
-+	if (ae > UINT_MAX || str == end || (end - str) > 19)
-+		return -EINVAL;
- 	*num = (unsigned int)ae;
- 	return 0;
- }
--- 
-2.51.0
-
+@@ -183,7 +184,9 @@ int __adis_read_reg(struct adis *adis, u
+  * __adis_write_reg_8() - Write single byte to a register (unlocked)
+  * @adis: The adis device
+  * @reg: The address of the register to be written
+- * @value: The value to write
++ * @val: The value to write
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int __adis_write_reg_8(struct adis *adis, unsigned int reg,
+ 				     u8 val)
+@@ -195,7 +198,9 @@ static inline int __adis_write_reg_8(str
+  * __adis_write_reg_16() - Write 2 bytes to a pair of registers (unlocked)
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+- * @value: Value to be written
++ * @val: Value to be written
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int __adis_write_reg_16(struct adis *adis, unsigned int reg,
+ 				      u16 val)
+@@ -207,7 +212,9 @@ static inline int __adis_write_reg_16(st
+  * __adis_write_reg_32() - write 4 bytes to four registers (unlocked)
+  * @adis: The adis device
+  * @reg: The address of the lower of the four register
+- * @value: Value to be written
++ * @val: Value to be written
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int __adis_write_reg_32(struct adis *adis, unsigned int reg,
+ 				      u32 val)
+@@ -220,6 +227,8 @@ static inline int __adis_write_reg_32(st
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+  * @val: The value read back from the device
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int __adis_read_reg_16(struct adis *adis, unsigned int reg,
+ 				     u16 *val)
+@@ -239,6 +248,8 @@ static inline int __adis_read_reg_16(str
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+  * @val: The value read back from the device
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int __adis_read_reg_32(struct adis *adis, unsigned int reg,
+ 				     u32 *val)
+@@ -257,8 +268,10 @@ static inline int __adis_read_reg_32(str
+  * adis_write_reg() - write N bytes to register
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+- * @value: The value to write to device (up to 4 bytes)
++ * @val: The value to write to device (up to 4 bytes)
+  * @size: The size of the @value (in bytes)
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_write_reg(struct adis *adis, unsigned int reg,
+ 				 unsigned int val, unsigned int size)
+@@ -273,6 +286,8 @@ static inline int adis_write_reg(struct
+  * @reg: The address of the lower of the two registers
+  * @val: The value read back from the device
+  * @size: The size of the @val buffer
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static int adis_read_reg(struct adis *adis, unsigned int reg,
+ 			 unsigned int *val, unsigned int size)
+@@ -285,7 +300,9 @@ static int adis_read_reg(struct adis *ad
+  * adis_write_reg_8() - Write single byte to a register
+  * @adis: The adis device
+  * @reg: The address of the register to be written
+- * @value: The value to write
++ * @val: The value to write
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_write_reg_8(struct adis *adis, unsigned int reg,
+ 				   u8 val)
+@@ -297,7 +314,9 @@ static inline int adis_write_reg_8(struc
+  * adis_write_reg_16() - Write 2 bytes to a pair of registers
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+- * @value: Value to be written
++ * @val: Value to be written
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_write_reg_16(struct adis *adis, unsigned int reg,
+ 				    u16 val)
+@@ -309,7 +328,9 @@ static inline int adis_write_reg_16(stru
+  * adis_write_reg_32() - write 4 bytes to four registers
+  * @adis: The adis device
+  * @reg: The address of the lower of the four register
+- * @value: Value to be written
++ * @val: Value to be written
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_write_reg_32(struct adis *adis, unsigned int reg,
+ 				    u32 val)
+@@ -322,6 +343,8 @@ static inline int adis_write_reg_32(stru
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+  * @val: The value read back from the device
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_read_reg_16(struct adis *adis, unsigned int reg,
+ 				   u16 *val)
+@@ -341,6 +364,8 @@ static inline int adis_read_reg_16(struc
+  * @adis: The adis device
+  * @reg: The address of the lower of the two registers
+  * @val: The value read back from the device
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_read_reg_32(struct adis *adis, unsigned int reg,
+ 				   u32 *val)
+@@ -366,6 +391,8 @@ int __adis_update_bits_base(struct adis
+  * @size: Size of the register to update
+  *
+  * Updates the desired bits of @reg in accordance with @mask and @val.
++ *
++ * Returns: %0 on success, a negative error code otherwise
+  */
+ static inline int adis_update_bits_base(struct adis *adis, unsigned int reg,
+ 					const u32 mask, const u32 val, u8 size)
 
