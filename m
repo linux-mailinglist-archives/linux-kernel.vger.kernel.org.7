@@ -1,103 +1,97 @@
-Return-Path: <linux-kernel+bounces-870500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E02C0AFA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:56:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E97FC0AFB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9747C3499EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:55:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C7A03349E91
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AD62EDD5F;
-	Sun, 26 Oct 2025 17:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F3526CE3A;
+	Sun, 26 Oct 2025 18:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXR3HNT3"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpgkXalN"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671A226E16E
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 17:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898F7129A78
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 18:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761501321; cv=none; b=b0z6Oh9yBBr1qo+HXtWA7EXFglaUn2Nl6tPCRRfW02FXoaFLvsYJ9BaBt9s9RlT0qQTWHbPVskPo1PgRQXZJrsbZbLkw5yFUJnLCzAaTe9ApILgt9/iDSmTpE6SQrzxy8Ov5PnMvt3dFUqM7ZC0fQPBoOiWfxSpc6EcSYP85Jis=
+	t=1761501635; cv=none; b=oBkYJe0ck2r/MuI0SWcWaFA/3Xf2utHdcD1q/dpwQWWXJ4ix6xRrVRvMQSFbh/on5nCH1HuPbg0O49fkshG3p3VfgYmWmfUA1qqBVhsVoF/KdvuBfLRBO9JOEt481H5fl7fVB9v4pkt6AAmJ2R81XyddWO5YFvEKyKL/thYZOhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761501321; c=relaxed/simple;
-	bh=TYqSgjtJTLH69TjVY4P5M4kBe3nBDzdkUzWmul55T9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uRhIG6FFFMUU7/b2rm5DJL6x3sZ55zB3S86nT7jdpiJwx0jWM4tNipNDwBcyV7SO5JaZDfsihjzUTgBJuwj/oSuDAuzN2PUxspAY/AtW8Nm1MYA2nJWSKK1LcK85+tIeyFozAMBl8YPYS+OUAVEJdgYXMVHvzHMLirjUWPKwR0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXR3HNT3; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1761501635; c=relaxed/simple;
+	bh=bsUdyZxowJWtgAkdDM6NuUseZpm4ADIH7h8y/G9Cook=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KNmYtaB6xlhwvYgIO+G2XhT8Yv00zaxTQ6o0jReDmCnn1QVYXCYPyrmHNb4YBSanF8K+g4mZi/Zz+YVDI7stiUfuvrfIoc7r4fIYwANBwZ7aUWQhvB2/GtCE5eSjeKfxxT5w78Vv7Xd4hkMbj0ntqkvLHy/0uTQCRTpf7gSDJBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NpgkXalN; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-27c369f898fso63119645ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 10:55:20 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7835321bc98so3016369b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:00:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761501319; x=1762106119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BU/OVZkhFNUOoFCHhkl2TNsQ4jyGlF9k1fRMPXpk2ak=;
-        b=WXR3HNT31NwM5NodAbb8boYXbDCLNZQxsOCUc4n40UBDHRxJHzLVQMoVHd8T5w8j7G
-         UB1fCnqgM+tjfFsTttWHmXm7YVT6MzLP314kJjnjRrPVvcFwhCWSbsBiBUqkHfE93Atq
-         VSH3w1DiHRyt3EZzB82MX6P4IKgC/aD8HNB2Xbv9j0GDWvC8cQ5qmqqkvADJuRaVCa9u
-         1fOJKmx/41leZcrEkkFOruF89YL1amfyrcKX2ZaWY5sCkFR4fJVZ4JH578cjIw0sH7Df
-         caXxnvNw/p2oU2U9LO/1W3FKOkGFgfZNRl/z/xxje7Sjc6GJt15zIfHGxCVWqba/hMtf
-         P8+Q==
+        d=gmail.com; s=20230601; t=1761501633; x=1762106433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DHaV3TmVxnoAqXhejDq47KmdfYQgyKejybkw2Me1N8k=;
+        b=NpgkXalN53zfOx+82hdqq4mmlp//Iv6h4JAR8h1ZIM/tCt9p/liItaXki+4QQobo8c
+         WmNSdBiWKl31KOXZFAJ3HoPcHkqyrXKi6aNn2HHs358D3ULZ+6BibVbUTzgE3CNgyL55
+         ieWLl3LUx+WptnS5oOooDUoN0TlXFQt6C0RuOrIWH15pTktjh+/6HNSF3uhmGiGjBYhj
+         lp33KOWi0z797HS34O6WHnANnjb9iuWp0iMfMLaLBHYOT1a+ewJ3eV0tVhL/TUu1HWi9
+         bwQiz5mGuvMq4sb36JCIfC/uj9y5Ct8xn6eL/O7aYQJBINvgr+a4fANpmHZDNIIwqW10
+         QYig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761501319; x=1762106119;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BU/OVZkhFNUOoFCHhkl2TNsQ4jyGlF9k1fRMPXpk2ak=;
-        b=o1PjR13HcN73gX3u4YHOjsu6UYWtz4L8djuo5btyD6kVvythChcYNNrGXhj4srW1Qr
-         saK5f+I0eG3B7nY+pFzHsQeSB2iQ6Le57C6mEstDbKkaPUCyaI9D1FIFyDwPUCJPebky
-         5KUGfasVUr30UmUKEvHTTYTL30cwJxzPqi4wi+AlT/6Ha2IbTxZHT7eTSt7zAiPYscxx
-         +It4xbT/9zhy9cc0beHc7pdRkxd1HP6ELYcLRMJYrqpw55HxuUzwZpaHf67Kia+RdNk8
-         Zux+vx0FWyHS1UvshaTXXBnjv9bpESNu5qaUsDH9tmLmPtXQxmqr84n+YV9adg1pFDC5
-         q0Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAKaINYAGbJglCnSbbpH2WpKCTIyFaBI/cOFJgLevbAKtsjXiI41w4TsyF5fzvcSqAcN0JGoDCYpTFasI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxueYOc1M8s9ZZZnMz0UDac+B8mJSuV1gW2tdVZ21AvU3Q/uZ/J
-	4CsIGtTzEyqvAhu2hVOTVVMgrYXk/+DJzd0sT6Z1CL5VCqcbdnjRiYFk
-X-Gm-Gg: ASbGnctlpPqA2t6fZQiVX5sp0LXGZ3xLB47/zK+lHhfQ9pbDTKQ3VvftlOpadTA0jN4
-	clnMKzIMC2r5TVrIPM2BzAMf9Hoe5JN/jcnwCZHTA9ejD95SZZnK89rqeIDHHEIJlvGcphGM3Pj
-	NBzfl+dJStcKKjlfs4vIxNopl1P+KmmUBoBkgZLGg/y/ZIHCTI7WsIJOvm/I47xmeFnQynUMiJ0
-	ZI3vClbrqyOVTvirgN7iF9QTLLJoEeT7cpE6aXYDI0/z3zqH5Ri6ZXsmBAL9LOLIiQI2EGeYHbX
-	ofPczyyrA6xidkOGgLwxmqK2lI885r3j4QMUg6hQ0AXet75QAWiUfdWXdCze80F/y22WB/qrr6O
-	RnvUXb0efeJnCOGoevb1NL7M0J5x2BDYv9695N2ifz5f1MpcVDp0R4Iyjw4hbDeWkrZapolBm5N
-	FkyhpYdpepDNiCYZBVGyK2NFKtYVqdxBcnw50QJ7J1wK0vn3R1nswqZsGR7KukW0jc00Kjccr+2
-	sStbQ==
-X-Google-Smtp-Source: AGHT+IHtoxrSHSNCI+CS585O+ZJjSo87+gdMzyAlT3jsfOF+kLbMUFYgGNOn1A7r8TyRNijf4nEX9g==
-X-Received: by 2002:a17:902:cece:b0:292:fc65:3579 with SMTP id d9443c01a7336-292fc65380cmr248557725ad.17.1761501319468;
-        Sun, 26 Oct 2025 10:55:19 -0700 (PDT)
-Received: from debian.domain.name ([223.181.110.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e4349fsm54813845ad.107.2025.10.26.10.55.12
+        d=1e100.net; s=20230601; t=1761501633; x=1762106433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DHaV3TmVxnoAqXhejDq47KmdfYQgyKejybkw2Me1N8k=;
+        b=FNYcaHUqhXKoUV2Th43EScacVUpdohHs87ybHSyt93DprIARXI3KWma9OXDFLOBADh
+         K39Js9BRRspPKj0yunfySHuv9nXZB295LJIerM/Y5NNcbmpT/OGuiDR2Zwh3gDE/LEr5
+         sPePt6E4pMafskT5h/jqypvt/Vx0za3nHe8ycHyuRwzUM1QMgBRyLk1lqGwZoiSYzET5
+         7taMQmgvraF0AVp0N3ZWo9zvSEIoo4Y3BWlhi2Ktb/FfS3iUmBuPqWarJYubkzSVKESv
+         LDspqNyovZ1F/hDieJrjXkLdRhW+OwA4BanpWwntWlUiNIB1yCucWecWNw8dNUSda0DH
+         zfkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVe4PvU5mLCfvIHcOjW7QjNrIBskP7qxnsuTVKWvNQdDUoAf3dFjV6GFO9bbXdPLVAJDktPo/cjmn0EMq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNt0BFqgTIklV1cIm6czjibEWfX69E4S39jGe2z0B04QQLcFox
+	OtCZsrvsJD4JZxNNrHVfiTMv84mD/YHupY/LEMDvBQdU10M8xoN90faM
+X-Gm-Gg: ASbGncuFz2T+NCi1Ab6ytdhZigHUX0HBnZav8M4x0ChIGUs5owM2Qa33Q+O0kHUbvH3
+	yhgDaVQbWa0RjTb57vSihEaLg5hTD5olzTjilL27+NNSBLwc56DeaclVM1My3cG3zxp3tfcg/v8
+	7MVUXk1mXxqalxyRbdAfWCf7pKIVLeTK4sHYZ/CRVmIeCJKchWJbdHsU/Nwl9DvRcQV0Y530bTH
+	MoAUdVOQTNKL6zfH7uAJxnNsWV6+GzSNcrDmCYQTuAwHzY4HTZqNt9RNg9vI2T4UCnSrt0qu80o
+	HbSMNXTPlrOzg5lgtN9mJzEmeFZZdZbdSyBN/ykifELUAiLihhW/UpLSwljN2JngtJ8uOuc7rZg
+	WRoRe/UGsedjTRygaKOV7k/20epqqYnJ8nNLBjUGxYWqmbwV/QMk3MyIaw2ehd9RssfVJaVHaAt
+	M=
+X-Google-Smtp-Source: AGHT+IH1oNgGKZQ4Y9fVMbqnKjHXUHudd4pszZxhju2pFdhdSu7ADJsfQhD+q8EMHFRpUHk0PC1/dg==
+X-Received: by 2002:a05:6a20:914a:b0:33f:df99:11f2 with SMTP id adf61e73a8af0-33fdf991412mr9718307637.14.1761501632586;
+        Sun, 26 Oct 2025 11:00:32 -0700 (PDT)
+Received: from snowman ([2401:4900:615d:9a11:7123:5dd6:caaa:5450])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7bd08asm5713439a91.3.2025.10.26.11.00.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 10:55:18 -0700 (PDT)
-From: I Viswanath <viswanathiyyappan@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	sdf@fomichev.me,
-	kuniyu@google.com,
-	ahmed.zaki@intel.com,
-	aleksander.lobakin@intel.com,
-	jacob.e.keller@intel.com
-Cc: netdev@vger.kernel.org,
+        Sun, 26 Oct 2025 11:00:32 -0700 (PDT)
+From: Khushal Chitturi <kc9282016@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	I Viswanath <viswanathiyyappan@gmail.com>
-Subject: [RFC PATCH net-next v2 2/2] net: ethernet: Implement ndo_write_rx_config callback for the 8139cp driver
-Date: Sun, 26 Oct 2025 23:24:45 +0530
-Message-ID: <20251026175445.1519537-3-viswanathiyyappan@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251026175445.1519537-1-viswanathiyyappan@gmail.com>
-References: <20251026175445.1519537-1-viswanathiyyappan@gmail.com>
+	Khushal Chitturi <kc9282016@gmail.com>,
+	Khushal Chitturi <kc928206@gmail.com>
+Subject: [PATCH] xdrgen: handle _XdrString in union encoder/decoder
+Date: Sun, 26 Oct 2025 23:30:16 +0530
+Message-ID: <20251026180018.9248-1-kc9282016@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,188 +100,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement ndo_write_rx_config for the 8139cp driver
+Running xdrgen on xdrgen/tests/test.x fails when
+generating encoder or decoder functions for union members
+of type _XdrString. It was because _XdrString
+does not have a spec attribute like _XdrBasic,
+leading to AttributeError.
 
-Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
+This patch updates emit_union_case_spec_definition
+and emit_union_case_spec_decoder/encoder
+to handle _XdrString by assigning
+type_name = "char *" and  avoiding referencing to spec.
+
+Testing: Fixed xdrgen tool was ran on originally failing
+test file (tools/net/sunrpc/xdrgen/tests/test.x) and now completes without AttributeError.
+Modified xdrgen tool was also run against nfs4_1.x (Documentation/sunrpc/xdr/nfs4_1.x).
+The output header file matches with nfs4_1.h (include/linux/sunrpc/xdrgen/nfs4_1.h).
+This validates the patch for all XDR input files currently within the kernel.
+
+Signed-off-by: Khushal Chitturi <kc928206@gmail.com>
 ---
- drivers/net/ethernet/realtek/8139cp.c | 78 ++++++++++++++++-----------
- 1 file changed, 46 insertions(+), 32 deletions(-)
+ tools/net/sunrpc/xdrgen/generators/union.py   | 35 ++++++++++++++-----
+ .../templates/C/union/encoder/string.j2       |  6 ++++
+ 2 files changed, 32 insertions(+), 9 deletions(-)
+ create mode 100644 tools/net/sunrpc/xdrgen/templates/C/union/encoder/string.j2
 
-diff --git a/drivers/net/ethernet/realtek/8139cp.c b/drivers/net/ethernet/realtek/8139cp.c
-index 5652da8a178c..3480079361f3 100644
---- a/drivers/net/ethernet/realtek/8139cp.c
-+++ b/drivers/net/ethernet/realtek/8139cp.c
-@@ -319,6 +319,11 @@ struct cp_extra_stats {
- 	unsigned long		rx_frags;
- };
+diff --git a/tools/net/sunrpc/xdrgen/generators/union.py b/tools/net/sunrpc/xdrgen/generators/union.py
+index 2cca00e279cd..3118dfdddcc4 100644
+--- a/tools/net/sunrpc/xdrgen/generators/union.py
++++ b/tools/net/sunrpc/xdrgen/generators/union.py
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ #!/usr/bin/env python3
+ # ex: set filetype=python:
  
-+struct cp_rx_config {
-+	int rx_mode;
-+	u32 mc_filter[2];	/* Multicast hash filter */
-+};
+@@ -8,7 +9,7 @@ from jinja2 import Environment
+ from generators import SourceGenerator
+ from generators import create_jinja2_environment, get_jinja2_template
+ 
+-from xdr_ast import _XdrBasic, _XdrUnion, _XdrVoid, get_header_name
++from xdr_ast import _XdrBasic, _XdrUnion, _XdrVoid, _XdrString, get_header_name
+ from xdr_ast import _XdrDeclaration, _XdrCaseSpec, public_apis, big_endian
+ 
+ 
+@@ -40,13 +41,20 @@ def emit_union_case_spec_definition(
+     """Emit a definition for an XDR union's case arm"""
+     if isinstance(node.arm, _XdrVoid):
+         return
+-    assert isinstance(node.arm, _XdrBasic)
++    if isinstance(node.arm, _XdrString):
++        type_name = "char *"
++        classifier = ""
++    else:
++        type_name = node.arm.spec.type_name
++        classifier = node.arm.spec.c_classifier
 +
- struct cp_private {
- 	void			__iomem *regs;
- 	struct net_device	*dev;
-@@ -328,7 +333,7 @@ struct cp_private {
- 	struct napi_struct	napi;
++    assert isinstance(node.arm, (_XdrBasic, _XdrString))
+     template = get_jinja2_template(environment, "definition", "case_spec")
+     print(
+         template.render(
+             name=node.arm.name,
+-            type=node.arm.spec.type_name,
+-            classifier=node.arm.spec.c_classifier,
++            type=type_name,
++            classifier=classifier,
+         )
+     )
  
- 	struct pci_dev		*pdev;
--	u32			rx_config;
-+	struct cp_rx_config	*rx_config;
- 	u16			cpcmd;
+@@ -84,6 +92,12 @@ def emit_union_case_spec_decoder(
  
- 	struct cp_extra_stats	cp_stats;
-@@ -372,7 +377,6 @@ struct cp_private {
- 	} while (0)
+     if isinstance(node.arm, _XdrVoid):
+         return
++    if isinstance(node.arm, _XdrString):
++        type_name = "char *"
++        classifier = ""
++    else:
++        type_name = node.arm.spec.type_name
++        classifier = node.arm.spec.c_classifier
  
+     if big_endian_discriminant:
+         template = get_jinja2_template(environment, "decoder", "case_spec_be")
+@@ -92,13 +106,13 @@ def emit_union_case_spec_decoder(
+     for case in node.values:
+         print(template.render(case=case))
  
--static void __cp_set_rx_mode (struct net_device *dev);
- static void cp_tx (struct cp_private *cp);
- static void cp_clean_rings (struct cp_private *cp);
- #ifdef CONFIG_NET_POLL_CONTROLLER
-@@ -882,55 +886,53 @@ static netdev_tx_t cp_start_xmit (struct sk_buff *skb,
- 	goto out_unlock;
- }
+-    assert isinstance(node.arm, _XdrBasic)
++    assert isinstance(node.arm, (_XdrBasic, _XdrString))
+     template = get_jinja2_template(environment, "decoder", node.arm.template)
+     print(
+         template.render(
+             name=node.arm.name,
+-            type=node.arm.spec.type_name,
+-            classifier=node.arm.spec.c_classifier,
++            type=type_name,
++            classifier=classifier,
+         )
+     )
  
-+static void cp_write_rx_config(struct net_device *dev)
-+{
-+	struct cp_private *cp = netdev_priv(dev);
-+	struct cp_rx_config snapshot;
-+
-+	read_snapshot((&snapshot), struct cp_private);
-+
-+	/* We can safely update without stopping the chip. */
-+	cpw32_f(RxConfig, snapshot.rx_mode);
-+
-+	cpw32_f(MAR0 + 0, snapshot.mc_filter[0]);
-+	cpw32_f(MAR0 + 4, snapshot.mc_filter[1]);
-+}Firstly, think whether you have a bug fix or new "next-like" content.
-Then once decided, assuming that you use git, use the prefix flag, i.e.
-+
- /* Set or clear the multicast filter for this adaptor.
-    This routine is not state sensitive and need not be SMP locked. */
+@@ -169,7 +183,10 @@ def emit_union_case_spec_encoder(
  
--static void __cp_set_rx_mode (struct net_device *dev)
-+static void cp_set_rx_mode (struct net_device *dev)
- {
--	struct cp_private *cp = netdev_priv(dev);
--	u32 mc_filter[2];	/* Multicast hash filter */
--	int rx_mode;
-+	struct cp_rx_config new_config;
- 
- 	/* Note: do not reorder, GCC is clever about common statements. */
- 	if (dev->flags & IFF_PROMISC) {
- 		/* Unconditionally log net taps. */
--		rx_mode =
-+		new_config.rx_mode =
- 		    AcceptBroadcast | AcceptMulticast | AcceptMyPhys |
- 		    AcceptAllPhys;
--		mc_filter[1] = mc_filter[0] = 0xffffffff;
-+		new_config.mc_filter[1] = new_config.mc_filter[0] = 0xffffffff;
- 	} else if ((netdev_mc_count(dev) > multicast_filter_limit) ||
- 		   (dev->flags & IFF_ALLMULTI)) {
- 		/* Too many to filter perfectly -- accept all multicasts. */
--		rx_mode = AcceptBroadcast | AcceptMulticast | AcceptMyPhys;
--		mc_filter[1] = mc_filter[0] = 0xffffffff;
-+		new_config.rx_mode = AcceptBroadcast | AcceptMulticast | AcceptMyPhys;
-+		new_config.mc_filter[1] = new_config.mc_filter[0] = 0xffffffff;
- 	} else {
- 		struct netdev_hw_addr *ha;
--		rx_mode = AcceptBroadcast | AcceptMyPhys;
--		mc_filter[1] = mc_filter[0] = 0;
-+		new_config.rx_mode = AcceptBroadcast | AcceptMyPhys;
-+		new_config.mc_filter[1] = new_config.mc_filter[0] = 0;
- 		netdev_for_each_mc_addr(ha, dev) {
- 			int bit_nr = ether_crc(ETH_ALEN, ha->addr) >> 26;
- 
--			mc_filter[bit_nr >> 5] |= 1 << (bit_nr & 31);
--			rx_mode |= AcceptMulticast;
-+			new_config.mc_filter[bit_nr >> 5] |= 1 << (bit_nr & 31);
-+			new_config.rx_mode |= AcceptMulticast;
- 		}
- 	}
- 
--	/* We can safely update without stopping the chip. */
--	cp->rx_config = cp_rx_config | rx_mode;
--	cpw32_f(RxConfig, cp->rx_config);
+     if isinstance(node.arm, _XdrVoid):
+         return
 -
--	cpw32_f (MAR0 + 0, mc_filter[0]);
--	cpw32_f (MAR0 + 4, mc_filter[1]);
--}
--
--static void cp_set_rx_mode (struct net_device *dev)
--{
--	unsigned long flags;
--	struct cp_private *cp = netdev_priv(dev);
--
--	spin_lock_irqsave (&cp->lock, flags);
--	__cp_set_rx_mode(dev);
--	spin_unlock_irqrestore (&cp->lock, flags);
-+	new_config.rx_mode = cp_rx_config | new_config.rx_mode;
-+	update_snapshot(&new_config, struct cp_private);
- }
++    if isinstance(node.arm, _XdrString):
++        type_name = "char *"
++    else:
++        type_name = node.arm.spec.type_name
+     if big_endian_discriminant:
+         template = get_jinja2_template(environment, "encoder", "case_spec_be")
+     else:
+@@ -181,7 +198,7 @@ def emit_union_case_spec_encoder(
+     print(
+         template.render(
+             name=node.arm.name,
+-            type=node.arm.spec.type_name,
++            type=type_name,
+         )
+     )
  
- static void __cp_get_stats(struct cp_private *cp)
-@@ -1040,7 +1042,7 @@ static void cp_init_hw (struct cp_private *cp)
- 	cp_start_hw(cp);
- 	cpw8(TxThresh, 0x06); /* XXX convert magic num to a constant */
- 
--	__cp_set_rx_mode(dev);
-+	set_and_schedule_rx_config(dev, true);
- 	cpw32_f (TxConfig, IFG | (TX_DMA_BURST << TxDMAShift));
- 
- 	cpw8(Config1, cpr8(Config1) | DriverLoaded | PMEnable);
-@@ -1188,6 +1190,12 @@ static int cp_open (struct net_device *dev)
- 	if (rc)
- 		return rc;
- 
-+	cp->rx_config = kmalloc(sizeof(*cp->rx_config), GFP_KERNEL);
-+	if (!cp->rx_config) {
-+		rc = -ENOMEM;
-+		goto err_out_rx_config;
-+	}
-+
- 	napi_enable(&cp->napi);
- 
- 	cp_init_hw(cp);
-@@ -1207,6 +1215,9 @@ static int cp_open (struct net_device *dev)
- err_out_hw:
- 	napi_disable(&cp->napi);
- 	cp_stop_hw(cp);
-+	kfree(cp->rx_config);
-+
-+err_out_rx_config:
- 	cp_free_rings(cp);
- 	return rc;
- }
-@@ -1227,6 +1238,8 @@ static int cp_close (struct net_device *dev)
- 
- 	cp_stop_hw(cp);
- 
-+	kfree(cp->rx_config);
-+
- 	spin_unlock_irqrestore(&cp->lock, flags);
- 
- 	free_irq(cp->pdev->irq, dev);
-@@ -1262,7 +1275,7 @@ static void cp_tx_timeout(struct net_device *dev, unsigned int txqueue)
- 	cp_clean_rings(cp);
- 	cp_init_rings(cp);
- 	cp_start_hw(cp);
--	__cp_set_rx_mode(dev);
-+	set_and_schedule_rx_config(dev, false);
- 	cpw16_f(IntrMask, cp_norx_intr_mask);
- 
- 	netif_wake_queue(dev);
-@@ -1870,6 +1883,7 @@ static const struct net_device_ops cp_netdev_ops = {
- 	.ndo_validate_addr	= eth_validate_addr,
- 	.ndo_set_mac_address 	= cp_set_mac_address,
- 	.ndo_set_rx_mode	= cp_set_rx_mode,
-+	.ndo_write_rx_config    = cp_write_rx_config,
- 	.ndo_get_stats		= cp_get_stats,
- 	.ndo_eth_ioctl		= cp_ioctl,
- 	.ndo_start_xmit		= cp_start_xmit,
+diff --git a/tools/net/sunrpc/xdrgen/templates/C/union/encoder/string.j2 b/tools/net/sunrpc/xdrgen/templates/C/union/encoder/string.j2
+new file mode 100644
+index 000000000000..2f035a64f1f4
+--- /dev/null
++++ b/tools/net/sunrpc/xdrgen/templates/C/union/encoder/string.j2
+@@ -0,0 +1,6 @@
++{# SPDX-License-Identifier: GPL-2.0 #}
++{% if annotate %}
++		/* member {{ name }} (variable-length string) */
++{% endif %}
++		if (!xdrgen_encode_string(xdr, ptr->u.{{ name }}, {{ maxsize }}))
++			return false;
 -- 
-2.47.3
+2.51.1
 
 
