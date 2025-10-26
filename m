@@ -1,53 +1,95 @@
-Return-Path: <linux-kernel+bounces-870551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED03C0B1C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:16:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04666C0B1D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D20189C0D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C823A3E2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7781A9FBC;
-	Sun, 26 Oct 2025 20:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1996C263F38;
+	Sun, 26 Oct 2025 20:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="MGIBTogX"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WBSxHODl"
+Received: from mail-yx1-f98.google.com (mail-yx1-f98.google.com [74.125.224.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7D11DF252;
-	Sun, 26 Oct 2025 20:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9091AAE28
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761509775; cv=none; b=hYwURrIj2/rvHwywXUiC470PzwHH+OGqKcZMmLDegHjwJNnztlb2KbujC8h5p1ofwQeV8le/FOf6Q9B28NmMAJ+7hhYeK76w0GFwUmHJCjFFwSWsY2EcSR4Dx2S7uw05SyQ2N2lEzdl5B2iLZxhpBdiYBiYGDURNhcD0GK9kFUc=
+	t=1761509808; cv=none; b=YlXWIcHM2+msubTDApF9QKgD53nGhA2inw+odiNOX7nb6HjErzMdvxhSmeKrBSj3HDEBVihDKwsr4MId53tRGIi5T+QCDh0UzUIxuQxUSiC83rZCgA7mF/vOtsPDyneqKQ6PSOKRQBxs/OkcAQ4mmUjH3ZpmML0nsNHne04M5+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761509775; c=relaxed/simple;
-	bh=AvS+C9V1jDixAnFnsGU1vyxB6uHJMX9a3e8wGV187Fg=;
+	s=arc-20240116; t=1761509808; c=relaxed/simple;
+	bh=D1w93OIYrBq11QB4TX80HocFtZ6iK3JjI3GpcGSyjww=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CHwulgrOcFHQ7VMZPImiSWrKazJ20SP1WGEa3mC9TJtD3s6SVYw/M6oZobY2IWSGqDMUVs5NpXGFLP7y91xSTS7R/QCJl6Di8wu5j6dq+CmwvjFBhHmlbuW0t2rJZDr5uS27yLoVh5CGunB2UKsG1hLpwilJOHnm8Ky2dAj+eBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=MGIBTogX; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.240] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 57F4053404AA;
-	Sun, 26 Oct 2025 21:16:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1761509762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AvS+C9V1jDixAnFnsGU1vyxB6uHJMX9a3e8wGV187Fg=;
-	b=MGIBTogXeuA83cnMxRuk3Nkf+qWmU5w+UzXxjid9JWV+vBlYeFpOsED6Ix/5AW5pNCuD4O
-	5UvcOYSHwvwAb6gCl+gmRziC8+hxAwvtx8Hub9jfwwz7MhQE4UBIin/qoL16s10RTIzvU0
-	RVSsALUdtj16tAdaU3U9YyOvSePoOSg=
-Message-ID: <97222454-7f9b-4959-85ff-293c34a3a980@ixit.cz>
-Date: Sun, 26 Oct 2025 21:16:01 +0100
+	 In-Reply-To:Content-Type; b=uzhUoL9vznIO8PT498q0BSotImKW5zMHN+ynIZzS2w6bH57zA863GNNxh3yUn1VsJUlrh5oB1GU5OSpGfOYyzhng5SeNzUKtLud4J7/aNzMEprEbw4SyXTl7bOJ2doqyN3cGGoWGLXfsF+XtBW8QQOUg9L921KXxkLqWujwqe7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WBSxHODl; arc=none smtp.client-ip=74.125.224.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yx1-f98.google.com with SMTP id 956f58d0204a3-63bbf5f77daso4341943d50.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:16:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761509805; x=1762114605;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aX98xM5uLTwNgSn/07WIOBdC4l1s/Q8i8XO2+Sj+EJg=;
+        b=MuwpiLCl/5tuoFvHUPhma5gpD1Y/hDh9LsQz/EtBAPZ8lgKXwjXoNRhw4JXYcDCYTs
+         H/v7SxIHIuesx3+odq+skmLSN9omAHnoDa7J/x/BR4jqn7Pn1AYdqPh1bWGM4v1absJf
+         TJxXbYyVGDv1mtHzl7dfbUaFxooadj6dz4Hye42IflTyhfq6VHhec2xjo9pQK06R8e3e
+         SeYGBLlP+CaaYJYH0XmOhbFCKBwMOOkHcZil0mAsfIzflSjeWAgRwHIg3lH11Rfe4VeQ
+         moUpiBbKDQ7w0ZVKTmum4yE34KjY7YeQMyPyYk9TiUeLv1RjSVm7nil5zNePa6uhN61L
+         1uFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqARCBWcAY/83ppioq0OhO/CpwTEjo1TUztV2zv4fCMvGgloyLZ3tXdsSXaHMI94EYylEBM4EsWY6hreY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfFsmtWI8VSrqNcNjWg9mRHOnNPkobhxyVSwyF32Uj/iAnHwk4
+	vsjW+85YVAfyhP0O1OY+A7CVdjDLP1c0/EgH0RfxNpmdwqfOo64WLasEjSYQLIiCMBOjCqpGP3m
+	Ty+4Z4GN9hCbm7W3ukjMgTeskLTYUZSsth36QrtKzmLBd5kojMbbUoZJbhuD5YRNxGAN9O2IKPg
+	uz4EqIAOP4mPMnX4gCeuz44sQhSe9Kpztg1GcdM6cxCRLMjSGki+nQpQBbIDSqBo+cct/UDgUp3
+	BVynHdwbWOkF3jsPBwnVdJV
+X-Gm-Gg: ASbGncs56YK4R2zWATNoed7fNq7msZWq9R8+1WGKyX0zqcn+utHogZFafR7aCxp0WSx
+	GUZENzSrw2ZPB72wfrAc1bnob5x3bsay8+aq1lgpVnU+AvVI685hCJsu3cq34GL4AbRygWzyYid
+	QQ9yaWcuZ5QU3QU1+MhmFeITQgoJdxh20rePStCOl/MQQzkKRhGzLSS+H8qb9G2NDgL0u/84byJ
+	zF4T8GuyIqAkWT2DlkgQO7LwJx2bMI3hY/DRbDcqVKvL0GszhLWqUmmkmaitQCH0hW9XULoqbiN
+	xQp0WwyuKeWlrfGuMWiuRahtvhPjok8lzuiPc4U0+k8jwCM5tI3Q1M/7GCHzaajQSfmeqi09fvm
+	IzIZ0DTNsNk4hHBQ8W4J6BOwLXSSyOlmOpgeydxZ38/c1sicXl4Hbm67uiyzHnjq4SUrP2a1xw1
+	xhXvpW66M8gF0OSVTbvltgoHGaX7ix466j/46knnhTdA==
+X-Google-Smtp-Source: AGHT+IE8XxihwK7iN4lNWc840y7V/h2RWXD24eJlnpp6Gewad7yHvM4rAGsMHSxZkF48+unrDx4DWYVcibSX
+X-Received: by 2002:a05:690e:144e:b0:63e:1d91:f54d with SMTP id 956f58d0204a3-63e1d91f657mr23053776d50.35.1761509804785;
+        Sun, 26 Oct 2025 13:16:44 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-122.dlp.protect.broadcom.com. [144.49.247.122])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-785ed17a5e8sm3886907b3.11.2025.10.26.13.16.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Oct 2025 13:16:44 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77f610f7325so2889580b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1761509803; x=1762114603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aX98xM5uLTwNgSn/07WIOBdC4l1s/Q8i8XO2+Sj+EJg=;
+        b=WBSxHODldrxDYV3jKxrAzjOirm5651f+sane+bPQkD1QKjl3mQlMTAcamgYShE/RmV
+         UeHoDHNxkf+gg824Vhj0d1zlhvrmP6RXdcch7i5DQ4PJHvj7/MNJqbu5RnhDfqNSJY5h
+         lKtDdWsTYS4Wyw+HXXdombUDKi9bI3kyNDiks=
+X-Forwarded-Encrypted: i=1; AJvYcCVuq1z4YQ/5/bG12THVw7OMKdmuxvw7q4FOcIVwws1/XNbgG09BvwlAZSsTZKVEtHiD7GyL7GeQShgpX9c=@vger.kernel.org
+X-Received: by 2002:a05:6a00:1916:b0:77f:2f7c:b709 with SMTP id d2e1a72fcca58-7a220a083f7mr40308903b3a.5.1761509803531;
+        Sun, 26 Oct 2025 13:16:43 -0700 (PDT)
+X-Received: by 2002:a05:6a00:1916:b0:77f:2f7c:b709 with SMTP id d2e1a72fcca58-7a220a083f7mr40308882b3a.5.1761509803117;
+        Sun, 26 Oct 2025 13:16:43 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414032c71sm5754054b3a.25.2025.10.26.13.16.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Oct 2025 13:16:41 -0700 (PDT)
+Message-ID: <20ca3d0e-a935-4296-8678-5903310b3712@broadcom.com>
+Date: Sun, 26 Oct 2025 13:16:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,73 +97,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: qce: Provide dev_err_probe() status on DMA
- failure
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251024-qce-dma-err-probe-v1-1-03de2477bb5c@oss.qualcomm.com>
+Subject: Re: [PATCH 1/4] pmdomain: bcm: bcm2835-power: Prepare to support
+ BCM2712
+To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Lee Jones <lee@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Willow Cunningham <willow.e.cunningham@gmail.com>,
+ Stefan Wahren <wahrenst@gmx.net>, Saenz Julienne <nsaenz@kernel.org>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20250917063233.1270-1-svarbanov@suse.de>
+ <20250917063233.1270-2-svarbanov@suse.de>
 Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20251024-qce-dma-err-probe-v1-1-03de2477bb5c@oss.qualcomm.com>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250917063233.1270-2-svarbanov@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 24/10/2025 23:35, Bjorn Andersson wrote:
- > On multiple occasions the qce device have shown up in devices_deferred,
- > without the explanation that this came from the failure to acquire the
- > DMA channels from the associated BAM.
- >
- > Use dev_err_probe() to associate this context with the failure to faster
- > pinpoint the culprit when this happens in the future.
- >
- > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-Reviewed-by: David Heidelberg <david@ixit.cz>
+
+On 9/16/2025 11:32 PM, Stanimir Varbanov wrote:
+> BCM2712 has a PM block but lacks asb and rpivid_asb register
+> spaces. To avoid unwanted results add a check for asb existence
+> during probe and also add a new register offset for bcm2712 to
+> control grafx_v3d power domain. The decision to use the new
+> register is implicit - if asb register base is null then the
+> driver is probed for bcm2712 (the other supported SoCs have
+> asb register space).
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
