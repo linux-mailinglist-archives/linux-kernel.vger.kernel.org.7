@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-870645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F356C0B58C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:22:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0727DC0B59E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2857C1896622
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D74A1898405
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C78F283FE5;
-	Sun, 26 Oct 2025 22:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ADB2F12C0;
+	Sun, 26 Oct 2025 22:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2zin1Z7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVU2GwNf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06C7247287;
-	Sun, 26 Oct 2025 22:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A6D48CFC;
+	Sun, 26 Oct 2025 22:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761517319; cv=none; b=lLvshaLzfU0NfcSH7/8L3zc+uu53aZWUO6QdeWXTgtDENaHHjdeErwrNapcWL9sjl6o85tPIVIu6mBGrJb/aohOz0BLbRAWh7oX2kYmKrons3pHKP7rL4/N5H0JTpZVTIxIQllalAGRCJ0wEEFHpzKFcclpCbYxuK5vhd6leJsw=
+	t=1761517459; cv=none; b=KI8+aw5gU9LLxeSfrpHnUtwCD2wthHdJczB+3cuXYowru3npdAip7noo4BAz87SvROwYn0nrkt0RwwF54HyNNyrRmH26+8b+9qkrrjQVxr4C22jOvdMIhAYSbd+FtjrKpsGVO2HRAnpLD61beOBIrNz/H0RNxeyCVMj5g/HgoIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761517319; c=relaxed/simple;
-	bh=shvt/H62MSL/X9zYi3wGfN1JdJm+2GxmIeTsccBYlo0=;
+	s=arc-20240116; t=1761517459; c=relaxed/simple;
+	bh=wqfmqPUYrqaRfBk+poDFpcrAq8e0x45EHLFsjGjVWiU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWdPlSzdm8JKJVyiRqSbQbu3RCek+DcENb7tETRSVokTONAFxlqPvZuyP9LezhhAohX5vmpTm0ddbFOnoF1D0pbaYx/Gw7jzh5TItdOms9p3sisw0TwWtcv+63V7qwPHVcpjyDWhbMFwjUWFkpRjtB0+pzl7Y05Vzg4CVIT1w38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2zin1Z7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE71BC4CEE7;
-	Sun, 26 Oct 2025 22:21:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHr1zruGlW8aUEbqO1NeRDgDRA5FbOC02bolRypxUTNLW4+IPjmYOpbaqxUX3wQgt7TpFJl6subQm5w5dY6217g1QIku3Ljq4AT/8o95Dn43WoA7rp8hbAK4hdG1UAfqpVOgzAnCtT6jks/pY2bvTZpcIPl+CzKwvo6dUFtAGQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVU2GwNf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B8EC4CEE7;
+	Sun, 26 Oct 2025 22:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761517319;
-	bh=shvt/H62MSL/X9zYi3wGfN1JdJm+2GxmIeTsccBYlo0=;
+	s=k20201202; t=1761517458;
+	bh=wqfmqPUYrqaRfBk+poDFpcrAq8e0x45EHLFsjGjVWiU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2zin1Z72la3TT+4nnVV6RnFFNATQhk8uw/M8t+PYAw7o+NSpYyuCpvRuMSRaWKXI
-	 XYXbsqFUchbqhrAysO8wKh421BTh1cg4zH1cfn6rSf40wnT6bxwkD9IrC9vyAqnnbM
-	 LfXHbx54mgn2dTt3DvKyqTFbpJfOe88eAw9ZSGg3tNkLNMlf7OqJALbtqWA3ZkdBpY
-	 ORnbXGTC6W46Vwz6Smk4y3je5R3NAyzggsPT88+H4rGKxdvQLu0CxGRwN7VBzKiuZa
-	 jiD03wbYxbRyRU4M3Wu8lE34yHP4FLGYU8lRy8QuJb0FA7YyQ7n4R73N+52+sew5UC
-	 Oz549dNSfmSWg==
-Date: Sun, 26 Oct 2025 22:21:54 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
-	lgirdwood@gmail.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v10 1/9] dt-bindings: regulator: Document MediaTek MT6316
- PMIC Regulators
-Message-ID: <20251026-despise-treadmill-12636f1a476f@spud>
-References: <20251024083221.25758-1-angelogioacchino.delregno@collabora.com>
- <20251024083221.25758-2-angelogioacchino.delregno@collabora.com>
- <20251024-think-handwoven-504634ca620d@spud>
- <aPvETBr5aebElQUS@finisterre.sirena.org.uk>
+	b=NVU2GwNfwtpx6wq6fJoFqVxektGKFDqprTLRqK+JcoZhnNmRQOwGSocBBNOPG3vTT
+	 81Z3JqDVJdPT4zAxd4RYatkBjpj1wpCqiQL1Rn96e/JWPTDs4o87LztNG8XNWi9jnP
+	 fRmenZlr9UI4z20bq4qbXEJpgQyySlAoEOrIR96Tl4c8Dqro03eHVatK771aa42f25
+	 klcYgzV/pv/C/DB7flPJM/stVHiCeNWugqRjMESyhlzRlJpgnx+2/0FfT1Yo6u0F6X
+	 KVCRG1mGSsasXw8BNa6IRATUkusP7e9W3RB+5jgszjawGRCtUxSRNf+4imwJR/X30o
+	 5hKdFern7DJxA==
+Date: Sun, 26 Oct 2025 17:24:16 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
+	linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	linux-media@vger.kernel.org, David Airlie <airlied@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH v5 21/23] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+Message-ID: <176151745413.3041982.13183037303437786159.robh@kernel.org>
+References: <20251022144930.73272-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Dhk4ruQsXIYcg54z"
-Content-Disposition: inline
-In-Reply-To: <aPvETBr5aebElQUS@finisterre.sirena.org.uk>
-
-
---Dhk4ruQsXIYcg54z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251022144930.73272-1-clamor95@gmail.com>
 
-On Fri, Oct 24, 2025 at 07:24:12PM +0100, Mark Brown wrote:
-> On Fri, Oct 24, 2025 at 05:29:31PM +0100, Conor Dooley wrote:
-> > On Fri, Oct 24, 2025 at 10:32:13AM +0200, AngeloGioacchino Del Regno wr=
-ote:
->=20
-> > > +      regulator-allowed-modes:
-> > > +        description: |
-> > > +          Allowed Buck regulator operating modes allowed. Valid valu=
-es below.
->=20
-> > > +        minItems: 1
-> > > +        maxItems: 3
-> > > +        items:
-> > > +          enum: [ 0, 1, 2 ]
->=20
-> > This property has no default, and the property is not required. Is one
-> > of these modes the default, or is there another mode beyond what's here
-> > that is used if the property is absent? Or are all modes allowed with no
-> > property?
->=20
-> The general approach the regulator API takes with everything is that if
-> there is no explict configuration then it will simply not touch the
-> hardware.  If nothing is configured then the hardware will be left in
-> whatever state we found it in which could be anything as far as we know,
-> it might vary depending on what was running before and what it was doing.
 
-Okay, thanks for explaining Mark.
+On Wed, 22 Oct 2025 17:49:28 +0300, Svyatoslav Ryhel wrote:
+> Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> 
+> The #nvidia,mipi-calibrate-cells is not an introduction of property, such
+> property already exists in nvidia,tegra114-mipi.yaml and is used in
+> multiple device trees. In case of Tegra30 and Tegra20 CSI block combines
+> mipi calibration function and CSI function, in Tegra114+ mipi calibration
+> got a dedicated hardware block which is already supported. This property
+> here is used to align with mipi-calibration logic used by Tegra114+.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 ++++++++++++++++++
+>  1 file changed, 138 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> 
 
---Dhk4ruQsXIYcg54z
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaP6fAgAKCRB4tDGHoIJi
-0n9OAQCobSKgp224TCJ/mWYTt04fs5bxUTVnFJHz1LwZzQH0swEA+rPzYffubTv6
-nxvq1BN/kkR//ktv2ykl6VnXkm0CJQ8=
-=2u0+
------END PGP SIGNATURE-----
-
---Dhk4ruQsXIYcg54z--
 
