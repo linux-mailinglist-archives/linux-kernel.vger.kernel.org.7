@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-870579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7F9C0B2B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:26:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6607BC0B2DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2DE18A2BAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6F03BDCB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F872EBDF4;
-	Sun, 26 Oct 2025 20:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA592FFDD3;
+	Sun, 26 Oct 2025 20:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=surgut.co.uk header.i=@surgut.co.uk header.b="bOW5E/Ds"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LorHSvIc"
+Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com [209.85.219.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D69D2FDC3F
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD242FFDCB
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761510066; cv=none; b=EagI548QsomtCRV0Er0utTclg6vBBi4xO9t6ZEDg0dABfMNMsnDXz0gQPdtxSO8fa2xpoketZOh6LmjJ+hDlO1pfRUWd1Azsi2BLE49d9ByhbsdahitB3914o9Qj2b4LIgm4iKbc5dyxuy1qrnMNlGGQsGf6S32bexSCNDL2lUw=
+	t=1761510110; cv=none; b=E0jj6KNdFgurBCj+Vt1CI96f2ExwvxH0Iij9nw+nJdbWJrtDqysgWIF/z0njnH3Q4LCRmwYpL6zgDAKAoC7hJ6ZZ1OsPZhb6ANLKLkjfko4s09frB4eWA/seTME8029JXPwSQhkWWRqNw2lQ8XknfpbWzVLFXOKUJhLWLn2FnEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761510066; c=relaxed/simple;
-	bh=6cmkGw7ridHGA5Ra0Gam2hWHwDUIPtc7nwY9+savRes=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QVQ0oLdzzZKE+OCbwDUblBvatLjd899wNdJFZRWXybu1cLaTSDdUj7SvwkJDcqGjw05IoisWmDwFTl71/PT+JwU0Apcy2LO9XCsvxEcbhcw6VnVCeYDsMBj1KW6Kb8+hxu43LCiKhFZ7+/512qNCAhckVjX0FzXwrii5vBASvAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surgut.co.uk; spf=pass smtp.mailfrom=surgut.co.uk; dkim=pass (1024-bit key) header.d=surgut.co.uk header.i=@surgut.co.uk header.b=bOW5E/Ds; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surgut.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surgut.co.uk
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47118259fd8so27819565e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=surgut.co.uk; s=google; t=1761510062; x=1762114862; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hc8hIMVlXblSUQKCczS0qplI2IZPcuMR2yk3IdKjDio=;
-        b=bOW5E/Dsq5ajNQvpPTOuJBQQloZ8fFeBiyHmd+G+JEJXqSV8Km5Rbacw8AhA9h/uKH
-         2YmvpI8uIUvZ++TQsHiOf5dY5CugEEHiRS3cSsBgjje0PcylXVV9FAH6xWsLYqUUDJHq
-         BZ02yESLchOi7BAsegWQ9DsS3lnrZwjeOaou0=
+	s=arc-20240116; t=1761510110; c=relaxed/simple;
+	bh=4tSahBmQN6jMzP2JQ5nDoVOyrZcYN3xAPDSgMy6+xo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hbOdpQCRpgOUHTKRKYjjRCGn545JMSfV9qUDphUvfZH20iXrEN3KDqf8G9bUPFx9X6LMxAFmBckrTTFjWn2IiTPBkwGnZiKHcRtytViqrMaFdTzC23QJ7GQsDMzJtqCe8YfoQCmFMZthZGxDWEFM/i33Eau8qd+RY+uW+ThsUCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LorHSvIc; arc=none smtp.client-ip=209.85.219.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f100.google.com with SMTP id 6a1803df08f44-87dfd3cfafbso40187556d6.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:21:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761510062; x=1762114862;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hc8hIMVlXblSUQKCczS0qplI2IZPcuMR2yk3IdKjDio=;
-        b=wlnglsO9iqwsH6PgLREdcg4KtAmYY8Hl2VbGTsUh2GI1OcIG2KekRCDsGVjmRct/3g
-         4boiQIyh+FF2Dql/h9f4PYCkJA3r7x69BKC4k7Zm7aXl8mFIqH3dDVHXrwqV5CG9aeVw
-         TMXT6LkRWpCbnaZH2B6KfFqgj/8kpRssgvATF9MY/ubynny1JALLn6VyrkDWKygl7vYV
-         E/ULxz7BOV7s0qT/iBl9aKjweMth6gmgrmYWfmyyQCfh68uZJkiJytRGCOat0lkshUQG
-         eiKzx/Lq5/2zv/FmytbKJru8It9fwkg6DPxK8b1puv2NNcCbry9Ujefjbw6pLXloQbxt
-         8Jeg==
-X-Gm-Message-State: AOJu0YxfcoP+JlMh251cYSsuYph41jAfJ0at7dSbe3t8/JHz3gvkerj/
-	iKeBmM5ebQywQhb3glIAZrX1b10EbfaVpbg2vDzF0kw7Qv/qkHtVSi2Nje9yIgH4ZaWAvgmzER7
-	2iS0u2Ns=
-X-Gm-Gg: ASbGncukSr0cvQqNGUWP5u3AXh1hWtxsntR9LTtbDRGYELayEfef+mSlKUoDWYCjlqt
-	53tJ5kJgkhaQfOSGw6XF4oQ3OhvkbQy2F/j7mT++xOxnqlg2EZaWsQOonB7yM6GR2KK1n0FXCUs
-	DvkQ0YTc7UcYevr6gPp59ayUzIgmAjv967YSZbQc0MTUpRPQGVkyjDtb5tCPfSqQCu44sefw0t1
-	Cb8jo9TX1uEqPHbHyz5Ii/bl2E/BFWygv2oaHD8AuPStuvcM88odRCbztsO3tCIsrz801Shh37x
-	pqUA6wYnGL7Xe1jEbCMxgOgllb0DhGbn542xvKJtpF8MKyGuqGf+jKo/b+OMBJ7xVrN4sqv37Pp
-	Tb33FAU5yN0BroouVq4QqqEIhdr80c5B4Yyq05DlAso4bfyNPO+RwyBDMYmZuvWqV1OpoyM/6bU
-	bIuAuYejBGIF7jOg==
-X-Google-Smtp-Source: AGHT+IG8s5HQE3d4ses2cZsHHAgP37V3gTadPVocMJn0oepp1TxOzMppA7/tFk8b1MYo9yP7ey0bWQ==
-X-Received: by 2002:a05:600c:3513:b0:471:1415:b545 with SMTP id 5b1f17b1804b1-4711786d625mr282847025e9.7.1761510061672;
-        Sun, 26 Oct 2025 13:21:01 -0700 (PDT)
-Received: from chainguard ([2a01:4b00:b911:bf00:459d:eae2:cf7e:1a5f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd035e05sm97042815e9.7.2025.10.26.13.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 13:21:01 -0700 (PDT)
-From: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>
-To: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: masahiroy@kernel.org,
-	arnd@arndb.de
-Subject: [PATCH] kbuild: align modinfo section for Secureboot Authenticode EDK2 compat
-Date: Sun, 26 Oct 2025 20:21:00 +0000
-Message-ID: <20251026202100.679989-1-dimitri.ledkov@surgut.co.uk>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1761510106; x=1762114906;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVS6LiUU36AQl8NmfGBhHoZlr4o5V+sFm0sfdWcZXDg=;
+        b=UR+Dn83f+FKJWAf6MqqHqfBQeN0JcgU5tAUVd4HJHm+pQBfFUSnf8cD2wMNto+Ik7m
+         gUJuUGmyhiKomjFiKLTTYG1stwk0QwsKbwah7r2nftdX1BGuTSkkGYcNVDYg5CKvKy1I
+         po4/Cyl761hX6xLvBr3MZhJjbTm/iaZnpYAOrANmvF6iCsFqvRomGJpHQRzJfYg7oUeE
+         JOCSF8kqvTq6vQcqJhvjVrVhuP4BNra2mnpzonxJbvhjV8E8nQ5PTUmQWYXh899CjakC
+         uQnqCgMk6XKunOFFJQbqcvet1tXXjR/eqd+9yieFYHR6ca2iZBOR9sT9yB+aCYi9UhRe
+         DAFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ZqiZYFrpEsAmtzpm616AvMn57ywg/U/QmSCd/69wi0mVC3IWLJj6AQ+ZSFgBwGpqxOB/wdmalfqIJ/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFS+ZWRPyPasCwjg1tNVc066HNzDr2KDihnWtnq7pAS6ahTe0Y
+	inxGg2tegScw626Mf5ZdMiS/++1y8m/xGGJPMiTjhuex0VCLRHyoRXnsWPsBq7xhAMouIIXJMjm
+	BxZelQzNSzLiOgbJXyej3my2LsgBpCOrgrv97O9kkj/J3ub8/1M/4flCXj5TRNa+gMUvmrJP6+9
+	H620J/pjxYqyomwJe+LC4wY19DNSJRTi5QWVwoGDB+Mwxw7aVkq38/ElrHOk1tdAJ1qlpAowP6R
+	aaEeERIu0VtQ0H0oSpzfE0l
+X-Gm-Gg: ASbGnct21Qk8QvwAyZijZr8rLNbYtfOajZjupygUJK8j1qLNUIUzShE4//wzT+NKq9L
+	SUFg47r2CAj08cX5GDZCudt6yYIDYv1lpJTArc9Uii0X29upQCsWLDpQU4Q0bX9PmclCbhslcH/
+	FyBJgxeBsxISOQB2qr5usQTAhU2bFAYH+XxZK/U71C+WQKvrUO79PjbYZE/lANAz0BLFfK2QdS8
+	61D8KTH+J9WAeoD0wX/nx9gbuGE9IMe4wsLU5ykGOOvYPtXSRBLDNzkQhjFGfD7mSPjhET1cF1z
+	fe7VQgw4V/VKFV7H3qDYv2FOPi5XJpI6e/qFNn1U0FzYrg24RIU1TIbY29DcJscWfdk9Y/eopn4
+	QjPkjZjGrEwO53DsMMv1+Qg7mUWgRWvHFyWWmFcA/N9SJ2mHKwHj6rWgL/E0pQH86i/wMoTQflX
+	mJjdRtRjZXFn0uSjKpoRQga0Q61GbgVsn2L4AAe6U=
+X-Google-Smtp-Source: AGHT+IElqFRz8QtSuUf7cbDQVJ2uVT0NcoIMoOGeSjUIlO7En0gyEghCoOz791scOcCy9tjJqekZ6unKtPNV
+X-Received: by 2002:a05:6214:8017:b0:87f:c46f:8c95 with SMTP id 6a1803df08f44-87fc46f9017mr64074406d6.37.1761510106444;
+        Sun, 26 Oct 2025 13:21:46 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-87fc49c2772sm5683896d6.32.2025.10.26.13.21.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Oct 2025 13:21:46 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7a27ade1e73so2507267b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1761510104; x=1762114904; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVS6LiUU36AQl8NmfGBhHoZlr4o5V+sFm0sfdWcZXDg=;
+        b=LorHSvIcioOq2Jr4Qudbto7UAIxpJQNsCO4fC7nPgIkZ5H79ludiB8lnuvuKfAaz9f
+         /V565ASwK24BB4ATbK9JHJYy7I1wZ/Iqkv99lSCS+O2JqcUICJPAMzLQeKDwqpjdOXiA
+         AVeXAX0MoLfrpKOX/y2NPI4LdLhLo6Z6iyArU=
+X-Forwarded-Encrypted: i=1; AJvYcCU5sGY/oCBZXbB5s/k7xa0Us/GomDebWhSn1PsQ6INeGz8+xTNyaTCWWJ9RLLQgOFc0VjDezNLpDtXjdRw=@vger.kernel.org
+X-Received: by 2002:a05:6a20:734e:b0:341:2fea:6b5 with SMTP id adf61e73a8af0-3412fea07ffmr6653458637.20.1761510104275;
+        Sun, 26 Oct 2025 13:21:44 -0700 (PDT)
+X-Received: by 2002:a05:6a20:734e:b0:341:2fea:6b5 with SMTP id adf61e73a8af0-3412fea07ffmr6653436637.20.1761510103855;
+        Sun, 26 Oct 2025 13:21:43 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414049290sm5593723b3a.34.2025.10.26.13.21.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Oct 2025 13:21:42 -0700 (PDT)
+Message-ID: <88c3c5a1-1b51-4b08-8b01-803659e9b1a0@broadcom.com>
+Date: Sun, 26 Oct 2025 13:21:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: broadcom: bcm2712: Add watchdog DT node
+To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Lee Jones <lee@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Willow Cunningham <willow.e.cunningham@gmail.com>,
+ Stefan Wahren <wahrenst@gmx.net>, Saenz Julienne <nsaenz@kernel.org>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20250917063233.1270-1-svarbanov@suse.de>
+ <20250917063233.1270-5-svarbanov@suse.de>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250917063233.1270-5-svarbanov@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Previously linker scripts would always generate vmlinuz that has sections
-aligned. And thus padded (correct Authenticode calculation) and unpadded
-calculation would be same. As in https://github.com/rhboot/pesign userspace
-tool would produce the same authenticode digest for both of the following
-commands:
 
-    pesign --padding --hash --in ./arch/x86_64/boot/bzImage
-    pesign --nopadding --hash --in ./arch/x86_64/boot/bzImage
 
-The commit 3e86e4d74c04 ("kbuild: keep .modinfo section in
-vmlinux.unstripped") added .modinfo section of variable length. Depending
-on kernel configuration it may or may not be aligned.
+On 9/16/2025 11:32 PM, Stanimir Varbanov wrote:
+> Add watchdog device-tree node for bcm2712 SoC.
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+>   arch/arm64/boot/dts/broadcom/bcm2712.dtsi | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> index 0a9212d3106f..3094a8e69f35 100644
+> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> @@ -243,6 +243,15 @@ uart10: serial@7d001000 {
+>   			status = "disabled";
+>   		};
+>   
+> +		pm: watchdog@7d200000 {
+> +			compatible = "brcm,bcm2712-pm", "brcm,bcm2835-pm-wdt";
+> +			reg = <0x7d200000 0x308>;
 
-All userspace signing tooling correctly pads such section to calculation
-spec compliant authenticode digest.
-
-However, if bzImage is not further processed and is attempted to be loaded
-directly by EDK2 firmware, it calculates unpadded Authenticode digest and
-fails to correct accept/reject such kernel builds even when propoer
-Authenticode values are enrolled in db/dbx. One can say EDK2 requires
-aligned/padded kernels in Secureboot.
-
-Thus add ALIGN(8) to the .modinfo section, to esure kernels irrespective of
-modinfo contents can be loaded by all existing EDK2 firmware builds.
-
-Fixes: 3e86e4d74c04 ("kbuild: keep .modinfo section in vmlinux.unstripped")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>
----
- include/asm-generic/vmlinux.lds.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 8a9a2e732a65b..e04d56a5332e6 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -832,7 +832,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 
- /* Required sections not related to debugging. */
- #define ELF_DETAILS							\
--		.modinfo : { *(.modinfo) }				\
-+		.modinfo : { *(.modinfo) . = ALIGN(8); }		\
- 		.comment 0 : { *(.comment) }				\
- 		.symtab 0 : { *(.symtab) }				\
- 		.strtab 0 : { *(.strtab) }				\
+The register actually spans up to offset 0x600, so the register size 
+would be 0x604 here.
 -- 
-2.51.0
+Florian
 
 
