@@ -1,87 +1,125 @@
-Return-Path: <linux-kernel+bounces-870371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFA8C0A896
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:31:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9276AC0A89C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480973AE2CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:31:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA3DB4E15A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BB9242D62;
-	Sun, 26 Oct 2025 13:31:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0226E2DF15E;
+	Sun, 26 Oct 2025 13:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/Dt2xVU"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C88719DF8D
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3F12309B9
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761485468; cv=none; b=HFwwYawuJs/+FMDxJkP1YqPAtXcwPgZm1uO/NLLZwsfa1KrhKV49XCSYVVxuuTf6syoy3t6j5VDrHF7FWxZp61g90DC37qVOhfUQjPBFuYA+8mOzfbHAwdi8LVNluCdvJ5Q65Gfk3aYZdExcQuP2fkGcBT9cqh+TC2DcSoqe80g=
+	t=1761485822; cv=none; b=h50S9YFHBbuHm4jBys9s78Iwmrmfk7l/yt60lnEEi4fcX3U6tG7ZgCLWIC8Rke2eZO9oHbJ6lt/yMR5g0RNC7wQN2fpQe4vHTxSxTezemDYZMy+YqALVZzOHK+83coByEAVZ1n+93RiBOayDjjYjJFbtqs1YHoQ8J9uuBCGSdTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761485468; c=relaxed/simple;
-	bh=bDf110AlXtv+VnvFhl4VKWo32kn+Ar4IxaVUYUQf3oI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QJ9HaZ7VvS6ObpBJ/OHYtbJy4q2tBgs2KmeFkjtTutMyvUs9Xt6darkIrvc4/we5J8ppvjitKXKOTv7hC6FA+jQX+DGU38IfSZzSle/aiSDj8XCF06ErdWjIHR4KFb+1+X+oOgiJGAUk/Gkomfh03YPbYHrifusVFBOaeCKrQ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430e1a4a129so47907635ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 06:31:06 -0700 (PDT)
+	s=arc-20240116; t=1761485822; c=relaxed/simple;
+	bh=k5Xu+Fx91w23i61CCMFAZ+u9aD54Fy0PXtQ0IULwHnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bWzOltCK79aJT3r2x3+4pHrH2B7sNHS+uzax2DrXZ8DDdLnVIcmoNxjY3Wol/82et78Rri16mKxBygzdS2oUr/jvxRoGQW1Tzu6lr0Cz3Ohr4s5TFk7saxn+wHJ7a8dn/c69Q3kVLPgcj6eqKunpzUbw/0+2QX6YO6uBZpB5y/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/Dt2xVU; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-78118e163e5so4116994b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 06:37:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761485820; x=1762090620; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4q95rxfDB89T9aMYjvX0MgcFXoo23MwOCFX912uJuHk=;
+        b=H/Dt2xVU5OfwZp2w/lnX2gbk3TifH2ZztgQ8MM1dDWacRxlUnlRukja9hT1j6h6OZG
+         TjRBPLfn+aWHfyl0XUIjh/ktTS/vw8W6WA3lqdAN78nmlAuTm6Tlbii1ApYfLVGmGX2U
+         uCMm1cIfcPKr0vZ8fBJmAmqtTdN4DL7s+uL0S2Afz4u6Mz8WzCAeC+7mnVe5uiflpEQi
+         taM+UKdhZTtsHdAxUAF9d8+pGi5hnyHXjrsPge99FLIVBLRHaH8L+mEnMM2SQzJNf/Hb
+         VJk/EIAufmH7u499L2HJ97dZG0skX4rD3vQh2SgUxPBKZGGZTLYCNqSSUKK3Hmy7KCtO
+         4bvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761485466; x=1762090266;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4ALCs6kaWDA5nJlzDG7U3TtxLYTKIHQn7g5VmhKLv8=;
-        b=pQwPonPnUfsx3l5wS8txadSmh/zzp8AJDinyPeg/ksTcK/DK3z+ge/vb9oWPENz+nF
-         BdoDllnCvSgQ5B8nLydHpBfafI1VhBHl+GJJ+ZdzteQ4UNoeL1R7Vrkst9w9eDJ6AFbU
-         mpvRSZ3xId4+DONpZ+PGpvQYbJftzctApyD5WWVF/3shpCwvcxmnCKFnY1mroL9yaohb
-         C5GbmqbovJrx6m1mcAWAyfkROtbBAOs0IL3LDF9fr68TJyIVhYCRbi3dzyhY8Iuo2Yef
-         NGrrd2rua03wz3F6go6ph9p5vQwko1I2MXFBG9YHvuPEDC/ZcpUUTAtpTzXf+A9K7THd
-         tjBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTtan4G+CUSnj0sorv1qV4zq+ChI2JMaoXmbSM6AZqvTPknc3zb7zUHBCDMCrCAmLY3zJJL9bFmhRuhpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyBDWxDr4Xn1c9Eym+p3dKVbs1od73sRq19YwYubMMyyQVI9Ev
-	zZ0kYLaYqAmukkpAbo8MSIMoNsgx8ax3+fvCAxPm8dSAZBq/fcwVsbAS59WKWpApxqTsj53prp0
-	Msa2TiU3y4ZfnIADrhMST1S2rNdRbhIH+k7MoaGUyWzeIf9Dl1ALSCZkKxxw=
-X-Google-Smtp-Source: AGHT+IGPbeJTCC97WbxNt2jkBxxCwuw1/mXjaALFktblj4ldAOvv+jJSI8qQU+emb/k/daEbHJ7BZ/3W2mKq286l0DYz2B38HijV
+        d=1e100.net; s=20230601; t=1761485820; x=1762090620;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4q95rxfDB89T9aMYjvX0MgcFXoo23MwOCFX912uJuHk=;
+        b=UyLPstU1r5AO/WWi7IQWwaX21J4n4Kb/yEnJzZq9/x3KwqhDkk1yF4hvU0LTLGiCmC
+         4N8Ay/oMroNo1HsSCXNPkSmaVuLkaBzxvltQblUNMtXbhqTzWhkkwBcBfJzreV6ibGmE
+         gOrwMluyCYD9a/jbnFQ8MOouYB+9hSaRfzPRk7Yij4agNUgxllmLiY86VDfhxkAcJmvU
+         G6E5c9B7YqrAjAw2o3rFlzJsnWV/dGwKxzJV38OjL8NghRxDi+T697a2zlbAMHqDaWkS
+         mANwuGEWmClCVvAvikfCPlVQ70KKxYenMh9P1bokSbn5SfkEZv7vA38gUQn6EB1DdNdo
+         rDcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUu8NCHjGg/83V1LZwJgZeHfXKv0XzTvzWN24DMb4t+WJsOmQJ7cHvpupLgQNh4BH6JusjL1R1Gvucngg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0yUroiPrkI/D+lUqmalhoktZKiObzfZPhyeGZgyE9NYuMBp68
+	iXyC/3/Znt95c5LZfFkoqMDdjYFc63wKv8vS3rBs4b+roAfz/LcfmSZb
+X-Gm-Gg: ASbGncuNU7RnT5kGU3j77Z3plmwTjd5InDMsAoFdEHtrSbf/S9qxh8hBBy2Yj7gQAhD
+	eiM80oBmpMlUN5EGREVonJZpteQ2ORu5f9UNXL0F89hziYKO3IZMUerCmSgFzbTP7McJSNdy14X
+	R5l04YGW6dqQbF7NHvicJaWTfWYWVUHZepFBY2yoU5aIAzMof7kuBrwF99v8gqgGPTmB3LCtAsn
+	JNXTr6UPhTljTzwIeb5hRQMVEvoGxAtipLqWSzu6qcfj14NXDZNPJeu2/hnUMnABgqZX8dCEzi0
+	DiHLYJvhTzzpXi7wtR0cmM97cvaP9BW8tUw1nMYhE4KHaC9/HE5BJTZDksNzRizn4xVgPkj0iuI
+	X1sLWmxxr6Xb05JNU6rlevL+W1z2Rm6tpDyFPbzhgnzLD8ofteNc2lqPQ6GJcBKo=
+X-Google-Smtp-Source: AGHT+IGI9yVmqkshJAUp2sgizg1Z5RFAEA9X7PnH7GLFoLbo49UGAbjKO28ty0jrOiiJOueYMsoPvw==
+X-Received: by 2002:a17:902:dacd:b0:265:f460:ab26 with SMTP id d9443c01a7336-29489d70d80mr106863085ad.3.1761485819705;
+        Sun, 26 Oct 2025 06:36:59 -0700 (PDT)
+Received: from CNSZTL-DEB.lan ([2401:b60:5:2::a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40a7esm51605775ad.70.2025.10.26.06.36.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 06:36:59 -0700 (PDT)
+From: Tianling Shen <cnsztl@gmail.com>
+To: Frank Sae <Frank.Sae@motor-comm.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Tianling Shen <cnsztl@gmail.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: phy: motorcomm: Add support for PHY LEDs on YT8531
+Date: Sun, 26 Oct 2025 21:36:52 +0800
+Message-ID: <20251026133652.1288732-1-cnsztl@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164c:b0:430:8bff:c5a2 with SMTP id
- e9e14a558f8ab-431ebef1db7mr97211755ab.30.1761485465810; Sun, 26 Oct 2025
- 06:31:05 -0700 (PDT)
-Date: Sun, 26 Oct 2025 06:31:05 -0700
-In-Reply-To: <CAPqLRf1xv2B+qfrR3Qq5L-AhD7Gn9tZ98M=LBo-B+DbOkn05uw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fe2299.050a0220.3344a1.00a0.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in bcmp (3)
-From: syzbot <syzbot+0399100e525dd9696764@syzkaller.appspotmail.com>
-To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The LED registers on YT8531 are exactly same as YT8521, so simply
+reuse yt8521_led_hw_* functions.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Tested on OrangePi R1 Plus LTS and Zero3.
 
-Reported-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
-Tested-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+---
+ drivers/net/phy/motorcomm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Tested on:
+diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+index a3593e663059..89b5b19a9bd2 100644
+--- a/drivers/net/phy/motorcomm.c
++++ b/drivers/net/phy/motorcomm.c
+@@ -3048,6 +3048,9 @@ static struct phy_driver motorcomm_phy_drvs[] = {
+ 		.get_wol	= ytphy_get_wol,
+ 		.set_wol	= yt8531_set_wol,
+ 		.link_change_notify = yt8531_link_change_notify,
++		.led_hw_is_supported = yt8521_led_hw_is_supported,
++		.led_hw_control_set = yt8521_led_hw_control_set,
++		.led_hw_control_get = yt8521_led_hw_control_get,
+ 	},
+ 	{
+ 		PHY_ID_MATCH_EXACT(PHY_ID_YT8531S),
+-- 
+2.51.1
 
-commit:         72761a7e Merge tag 'driver-core-6.18-rc3' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=111a7b04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0d3e651b4bf498
-dashboard link: https://syzkaller.appspot.com/bug?extid=0399100e525dd9696764
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=145827e2580000
-
-Note: testing is done by a robot and is best-effort only.
 
