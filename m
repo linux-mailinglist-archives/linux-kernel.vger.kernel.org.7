@@ -1,77 +1,63 @@
-Return-Path: <linux-kernel+bounces-870514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68D9C0B039
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:28:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07072C0AFF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:22:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1CDAD4E97D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:28:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 538924E6775
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 18:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8942F0690;
-	Sun, 26 Oct 2025 18:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D9E2E9EB2;
+	Sun, 26 Oct 2025 18:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="Alvj1afz"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6JS8Tx9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4B22E92DA;
-	Sun, 26 Oct 2025 18:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A60129E6E;
+	Sun, 26 Oct 2025 18:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761503281; cv=none; b=pNFQT3B/K74CWib0yd3xwiC1osBrfYR3J4HSvWPLe+ls7JizXpGLm+jI3PZvY2yLwptzqZ3RwoppzRCYmdIjefpO0DAxnWTp3RflaYLVqbmZxJ32QCsFEtxYkasPtG2pvl82d4Zmh4nf/+UqGCtlT1JOs8j5MLWSQngU75CiT7g=
+	t=1761502944; cv=none; b=MqW6ak5bA9Ga16kwtEvw0kewGg0A/sCU3/t8aKNR5kEjvnGar6udgCdX5rsYjQVpH1eiYo/IZQvAHx/0TD/piDh772EpmGaFZ/33LeZjvewC3pTYIeTeVkZ0Kw+D3E4/wrxCqMPJbyoDWnpKMrjT6FsKQ8joU92HLasn/lVvLr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761503281; c=relaxed/simple;
-	bh=0HhYOYWxfjpg+9Kq7lCk7i1xML9Xo3LVDTHR8xeZOSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H4FLMvrXMNcEQi9+nuTQRMbouIzMwu4YZJOed5edh/TwQblvxbGUL1qiIR/2s4S8ZNwDLjqayYkKc5fEoS9jjY3KY87njE3o2MXh5wPqAQWS1qd/L8/zqAtYTO1E7cQkc8GXezKNNOzghYE67hsyJWjIH8iRX/q3xx375MXwILg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=Alvj1afz; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1761503228; x=1762803228;
-	bh=thIl0eoythKb01PWr+ANwhU9Ff6R4yl+rTHFbaUTblI=; h=From;
-	b=Alvj1afza8dYCwi0s/dGQRKNnatbHJflZbyYAYLJg0iaHsYdPTg3Ak3CnTSa4Mj0T
-	 H7D49mQ8BjVd6krsOK2qcgoUc+ziHnYRt+izW8yW5fOTXibom0SCSpm5T8R+lez2wG
-	 IH+5VJA0oCzOJikDRjHyosg72fInAPlXBsxFcGOlsemuBl4w+5/qAhGjowantpx9Nt
-	 4bbE3S4MQwnMaQBd1z/FRxlpSFbfr+lyJyfPOiogPMx5p/QPF4w4FsIpWTMybkc9+1
-	 mgO4TnvKR32d8Bbl9mpwf9iyFCHyr9+hCHs9VY70agWF1DWPTFUBAutZ6YDA5NVFF5
-	 Y4GCS7skZiphQ==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 59QIR6Wb043073
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Sun, 26 Oct 2025 19:27:08 +0100 (CET)
-	(envelope-from balejk@matfyz.cz)
-From: Karel Balej <balejk@matfyz.cz>
-To: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Francesco Dolcini <francesco@dolcini.it>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Karel Balej <balejk@matfyz.cz>, Jeff Chen <jeff.chen_1@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [DONOTAPPLY RFC PATCH v2 4/4] arm64: dts: samsung,coreprimevelte: add wifi node
-Date: Sun, 26 Oct 2025 19:20:41 +0100
-Message-ID: <20251026182602.26464-5-balejk@matfyz.cz>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251026182602.26464-1-balejk@matfyz.cz>
-References: <20251026182602.26464-1-balejk@matfyz.cz>
+	s=arc-20240116; t=1761502944; c=relaxed/simple;
+	bh=GiKZojVeog5YOllrsDes1GwbWKFkabuDbGBFBP0siC0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AmBYs2DKj6SiOM/Lcm9ITAfmFJZyNOKIPCA2vNOy3EDyauGdZP9eIcth0ypfuPwBdyl5W7S/gvDPfJ5lLoXTju5O0Jvv7ofhR+EmBThLELozbWUK8/bfsDz7OEbJduvxokQuNGJIVM0whFOFAsLqPom+Wp+Nh3O0+ffE47EWejI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6JS8Tx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3600C4CEE7;
+	Sun, 26 Oct 2025 18:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761502943;
+	bh=GiKZojVeog5YOllrsDes1GwbWKFkabuDbGBFBP0siC0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l6JS8Tx9QJHnZ/QS+03PmXD+ZLF0mnbSH9X7NFXeo+oY9KW77lstrx8MfPsbmFkfi
+	 izQVOMQn/kc9Irh8pG0rCN237YpZHkobm5WXB8DEMkYXZ3oQFihP6tLF5fYMjEZ75j
+	 AQ7qfckSBBVjTWpsz0PLmthmt4pPhHGb9vhdazIN+lZJMX8SjoqgcMLDlXynSrzreD
+	 /puxr1dv+DraGT738SAjH5KNDJ4cdt4ZVplqPX/onibP7TgGRvO+aaJLZjZwL9y0v6
+	 6TdnGn1AnA898sj4g4MVSPCcQzdP+WcD0kvyE11USzfSfZBVhpxGQDJfNKOjcS6EWp
+	 LPrzxg0FoWYig==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	damon@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/8] mm/damon: misc documentation fixups
+Date: Sun, 26 Oct 2025 11:22:05 -0700
+Message-ID: <20251026182216.118200-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,50 +66,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a node for the phone's WiFi serviced by the Marvell SD8777 chip a
-communication with which happens over the SDIO. Also enable a regulator
-without which it is not possible to connect to networks although they
-are discovered properly.
+As the subject says.
 
-Signed-off-by: Karel Balej <balejk@matfyz.cz>
----
- .../mmp/pxa1908-samsung-coreprimevelte.dts        | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+First three patches fix up issues in the documents, including wrong
+explanation of a behavior, wrong link, and a contextual typo.  Following
+five patches update documents for not yet documented features and
+behaviors.
 
-diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-index b2ce5edd9c6a..36d6ae4e902e 100644
---- a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-+++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-@@ -475,6 +475,14 @@ ldo14: ldo14 {
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <3300000>;
- 			};
-+
-+			/*
-+			 * Needs to be enabled in order for the WiFi to be able
-+			 * to connect to networks.
-+			 */
-+			ldo15 {
-+				regulator-always-on;
-+			};
- 		};
- 	};
- };
-@@ -523,6 +531,13 @@ &sdh1 {
- 	pinctrl-1 = <&sdh1_fast_pins_0 &sdh1_fast_pins_1 &sdh1_pins_2>;
- 	bus-width = <4>;
- 	non-removable;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	wifi@1 {
-+		compatible = "marvell,sd8777";
-+		reg = <1>;
-+	};
- };
- 
- &pwm3 {
+SeongJae Park (8):
+  mm/damon/core: fix wrong comment of damon_call() return timing
+  Docs/mm/damon/design: fix wrong link to intervals goal section
+  Docs/admin-guide/mm/damon/stat: fix a typo: s/sampling events/sampling
+    interval/
+  Docs/admin-guide/mm/damon/usage: document empty target regions commit
+    behavior
+  Docs/admin-guide/mm/damon/reclaim: document addr_unit parameter
+  Docs/admin-guide/mm/damon/lru_sort: document addr_unit parameter
+  Docs/admin-guide/mm/damon/stat: document aggr_interval_us parameter
+  Docs/admin-guide/mm/damon/stat: document negative idle time
+
+ .../admin-guide/mm/damon/lru_sort.rst         | 22 ++++++++++++
+ .../admin-guide/mm/damon/reclaim.rst          | 22 ++++++++++++
+ Documentation/admin-guide/mm/damon/stat.rst   | 35 ++++++++++++++-----
+ Documentation/admin-guide/mm/damon/usage.rst  |  8 ++++-
+ Documentation/mm/damon/design.rst             |  4 +--
+ mm/damon/core.c                               |  2 +-
+ 6 files changed, 80 insertions(+), 13 deletions(-)
+
+
+base-commit: 1148e04980a5471922064ff4b19cd154643da743
 -- 
-2.51.1
-
+2.47.3
 
