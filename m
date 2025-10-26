@@ -1,143 +1,104 @@
-Return-Path: <linux-kernel+bounces-870596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F72EC0B3D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:07:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D95C0B3E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:08:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF923AF676
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:07:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 543A34E5903
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2812A283121;
-	Sun, 26 Oct 2025 21:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AE7280331;
+	Sun, 26 Oct 2025 21:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OcSMQaL2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gCSFO0eb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9971D514B;
-	Sun, 26 Oct 2025 21:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF8472633;
+	Sun, 26 Oct 2025 21:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761512864; cv=none; b=qsdszR94CgyWuexc/HSlbLotI5f0vTXgU926evMZeFa3CVuWzZ5YKkPR22jtPbJ0JT2CLY/9Xm6sFx6f1GDgWRyVvq2s7rcFzb1KEQtjcQnSY304mfq3R99fcSrDry9Xy1u+zftgnEo0ephyGV7mlWsVhYxLXjpCuSWfvQI++sg=
+	t=1761512929; cv=none; b=UtPLIFClALUSQOBQnD6sN0buBr79iubmh1TtpCqZRtx0py3rOrzB2p0bQJRQ3lCj4/DxRrwEbLgFJwyNvgEnJi5jd/iC+Kq+HGBYm9zrJXMK5hkIkog2tyMKbYojd/ymaThaCIegCvfGEi0WCgG++4O6mqEYMrr2EAf9FIhRXb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761512864; c=relaxed/simple;
-	bh=FX3PJZ4Zx7AunoIvtIIT5LbQdAgzbExv6kJ6VBmjW8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkTlI6/GbAC9RoXSft/ySS50a+y6Rkv9xv21H9VNgIXst8PFWqKinF9S2CTzsds2W94/x7JM7816ZD6HPw+jYHCmx/BZQWnxe49zR6cj6yPgEEwybkxbBEfCexZuNARL66hoH5seex5Mkiam7DenvTDO9LjSvwrjJqkAwq4PMqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OcSMQaL2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 96811129;
-	Sun, 26 Oct 2025 22:05:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761512751;
-	bh=FX3PJZ4Zx7AunoIvtIIT5LbQdAgzbExv6kJ6VBmjW8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OcSMQaL2aTruoSuT8i+ItTMMlx5+YuMA01qolWkx56SEliWHlNkl2R0pUC2imvG7m
-	 HF5VieJN/VQqu0Jv9+qJcgVdeK07SgxVcaRYUG2k7qlpzucdyV8Dzy5s8rvO1mWFuy
-	 8trOxSaexrIuaxpwQ+bwHlUD61vKOimvBvz6F2x8=
-Date: Sun, 26 Oct 2025 23:07:24 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: mchehab@kernel.org, rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, sakari.ailus@linux.intel.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Frank.Li@nxp.com
-Subject: Re: [PATCH v5 3/4] media: imx-mipi-csis: Add num_data_lanes to
- mipi_csis_device
-Message-ID: <20251026210724.GE1025@pendragon.ideasonboard.com>
-References: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
- <20251022102228.275627-4-isaac.scott@ideasonboard.com>
+	s=arc-20240116; t=1761512929; c=relaxed/simple;
+	bh=wtmaUcmUQO2/j1dA5UlzGbNz1/zPq+JvqBmW1XNu4hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nUrGoIwCVbVkT/mcDngjkNn0O/DHfR9R3c3Y1nZSgwfc+Uglqtm5xF0erq/AL6bR842XYOGnj+nnF2FdM98rGL9YqlYgHdJkJjkeHVK382YYCM7JedFgAHmSJveIApJYpQGMweIZWLns7AixF4UgCkYa0Q8quFrC8H2xmVZL2F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gCSFO0eb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761512916;
+	bh=KNGlZDI97pDFpHcN6XMMluyye9W7EKnY2DtK4oajiHE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gCSFO0ebq2Fviw+0lRsWmsXzviw/58EoRoC5cFFESZCQilTQ9ls3KGdfxH45BUhBr
+	 zvcEciyytMp71Rnx5RFh/0BIsefhTc3jZdQ8eFw3WeWmYG/rumwMc/+BaKXDScei8T
+	 GxlwQ75DIKWI40ao6IMVLMxdMbiK9kh4uXB4oyirxQxo7tCZypCRrPi9FLwHpn+Tes
+	 rrfcGb3rc7cy4xKh2S8R9KmA4lJI564cLIAdyBC8oF+Gwu+Vtydjzwj2O2cNYaMMAO
+	 JMuGv97jfoPQMAJV4gIynaG6sh6HJmxcOSIgtHe0a5mwtRnjPGtGx1d0/hC1cmtrO/
+	 Zy4hof8/rIqTg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cvq4N1Nh0z4wCV;
+	Mon, 27 Oct 2025 08:08:36 +1100 (AEDT)
+Date: Mon, 27 Oct 2025 08:08:35 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the mfd-fixes tree
+Message-ID: <20251027080835.04e0a4c2@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251022102228.275627-4-isaac.scott@ideasonboard.com>
+Content-Type: multipart/signed; boundary="Sig_/OiQeCwxxs9cyHX.b1aGV1x9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Isaac,
+--Sig_/OiQeCwxxs9cyHX.b1aGV1x9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the patch.
+Hi all,
 
-On Wed, Oct 22, 2025 at 11:22:27AM +0100, Isaac Scott wrote:
-> Add the num_data_lanes field to the mipi_csis_device struct, and set it
-> equal to csis->bus.num_data_lanes. This is in preparation to support
-> cases when the data lanes actively used differs from the maximum
-> supported data lanes.
-> 
-> No functional changes intended by this commit.
-> 
-> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+  91a3e1f5453a ("mfd: ls2kbmc: Check for devm_mfd_add_devices() failure")
+  fdff3cadeea9 ("mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()")
 
-> ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index 7c2a679dca2e..838a1ad123b5 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -351,6 +351,8 @@ struct mipi_csis_device {
->  	u32 hs_settle;
->  	u32 clk_settle;
->  
-> +	unsigned int num_data_lanes;
-> +
->  	spinlock_t slock;	/* Protect events */
->  	struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
->  	struct dentry *debugfs_root;
-> @@ -573,7 +575,7 @@ static void mipi_csis_system_enable(struct mipi_csis_device *csis, int on)
->  	val = mipi_csis_read(csis, MIPI_CSIS_DPHY_CMN_CTRL);
->  	val &= ~MIPI_CSIS_DPHY_CMN_CTRL_ENABLE;
->  	if (on) {
-> -		mask = (1 << (csis->bus.num_data_lanes + 1)) - 1;
-> +		mask = (1 << (csis->num_data_lanes + 1)) - 1;
->  		val |= (mask & MIPI_CSIS_DPHY_CMN_CTRL_ENABLE);
->  	}
->  	mipi_csis_write(csis, MIPI_CSIS_DPHY_CMN_CTRL, val);
-> @@ -623,7 +625,7 @@ static int mipi_csis_calculate_params(struct mipi_csis_device *csis,
->  
->  	/* Calculate the line rate from the pixel rate. */
->  	link_freq = v4l2_get_link_freq(csis->source.pad, csis_fmt->width,
-> -				       csis->bus.num_data_lanes * 2);
-> +				       csis->num_data_lanes * 2);
->  	if (link_freq < 0) {
->  		dev_err(csis->dev, "Unable to obtain link frequency: %d\n",
->  			(int)link_freq);
-> @@ -668,7 +670,7 @@ static void mipi_csis_set_params(struct mipi_csis_device *csis,
->  				 const struct v4l2_mbus_framefmt *format,
->  				 const struct csis_pix_format *csis_fmt)
->  {
-> -	int lanes = csis->bus.num_data_lanes;
-> +	int lanes = csis->num_data_lanes;
->  	u32 val;
->  
->  	val = mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
-> @@ -1366,8 +1368,9 @@ static int mipi_csis_async_register(struct mipi_csis_device *csis)
->  	}
->  
->  	csis->bus = vep.bus.mipi_csi2;
-> +	csis->num_data_lanes = csis->bus.num_data_lanes;
->  
-> -	dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
-> +	dev_dbg(csis->dev, "max data lanes: %d\n", csis->bus.num_data_lanes);
->  	dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
->  
->  	asd = v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
+These are commits
 
--- 
-Regards,
+  4af66c2bcab0 ("mfd: ls2kbmc: check for devm_mfd_add_devices() failure")
+  0892507f4a0b ("mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()")
 
-Laurent Pinchart
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OiQeCwxxs9cyHX.b1aGV1x9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj+jdMACgkQAVBC80lX
+0GwspAgAnVOdEQYjIuoFHKwnfEQthnwIeLBhSGg7byoTvzilQr96WKiiDmY8OIXT
+tHVDMvg2qKVLdgaPt8K05Yugs7NX7w3WOOB1rlbsNI1u6iLUvgn+U0GnauxXS0UY
+4Br8Fr9Vo0lh2ks4gYpv3cOD6DeAsNwrl0ibiRfvxBbDfi7ws+8ZNA1oj2EQRgwl
+QX/Rq+DElcwtoB01TqlDymxdTRVcwml/CEohuzDujhi3lrdr2c1SkJ0nxvT+Sa2q
+YAM5rXDVnzBKXXsxY6Sw3/9B51u9MlLsRPZ/MccMcQJb+qClX//WevbGzXxebx6s
+w6msYSa86s3PSU43nUKePT1JEoMSGQ==
+=pS8G
+-----END PGP SIGNATURE-----
+
+--Sig_/OiQeCwxxs9cyHX.b1aGV1x9--
 
