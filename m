@@ -1,90 +1,66 @@
-Return-Path: <linux-kernel+bounces-870540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34467C0B16F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:49:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFACC0B172
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061B3189D5D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293C81895DAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4172741DA;
-	Sun, 26 Oct 2025 19:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768F12F693B;
+	Sun, 26 Oct 2025 19:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sf5CXgJA"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="nlPpoCfm"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF111E1E00
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BF4749C
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761508147; cv=none; b=mjjjqDAR8i1zGtIF2gsSB+uAtvn1XCDddqfB3SAa06V0kiV3ktI869QA5Wpg0nKZVbs3u5Zd36kH/rR0u6n6qKtK+3HEB4pGqxU/CbU7YmTNp8mEvG3id2qC31FbKyGsB/nbTyyTfJ2Y9yFIm0XilbIJU/nDJGxHpz6onvG8WOA=
+	t=1761508559; cv=none; b=j8utnaOPK+e2f+KYINBoHJhhNikoKBH1/lKKuAd9hW7uFhwdD+BxKX4pXC6HlbYO4F1+4jsLjTkSOq4WUyGz3VvXBFBtlpftzJzAMFrjsV3DlipWa8UvDygiduAsSyCysMwYIVYLm1MgGDMEOYfxPnyjAQIO9dddL59Xm+351hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761508147; c=relaxed/simple;
-	bh=yEDM5djfStEQKMjG1jKwNq677sq7Oympi+OJl1BgcBw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LOg9c/c8Hlm5EaBBrBBjLYOyXXqAOeducyLVGD37HOQUcowrEIy7OwE37veEV6294V0vOEoqdpEFcm2SBFt0VEhqlal8YMlB9z6szxqy2sNKjrdoHbRcNZCDqQJQkfm8yAoJv8THMLE56oL2wOpjX8xcLlGJRSwQTQxsgFjmax8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sf5CXgJA; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-475de184058so4167075e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761508144; x=1762112944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dGAlA6xEEpg5Sg3NpocSMWJ7GFQOTpi3dlaTTRDDDLM=;
-        b=Sf5CXgJAJVBgfbmWIB/1/N4dB37FvGhGcfSF5L1dBSKgdNzKGEsoIMMnPWKv+NPGmW
-         CfcwXKZATG1bC3lelxCnACSWyV7k071fCGhQ57YbwP8caDtvVRlqswKO3OjqkNRathag
-         nDo3hVy0SFnWwuFirpuirnsmu5KL9XW8fhx1QtVhtoAI1GOge4ytm1vHWwVO1vuGu8AL
-         rgzhuZO+EwB4j42ZdRt+/brYhq4+d2IOskfYeUY4B+TPMDN0OE8sm0wiwBr18ExXCpgT
-         uem1kr7o/Br1J/G3hjkdr5WdNQSvcyzqujh8j6LAIXIhwDgdwpvG2YOFTaCR4wzul9e0
-         blfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761508144; x=1762112944;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dGAlA6xEEpg5Sg3NpocSMWJ7GFQOTpi3dlaTTRDDDLM=;
-        b=UAfWe/rUeLy6wZFVGqGGos8VzUoPyr6W7DP+EOerEyNwHOQSnMB+IfTs3dA/lail7Y
-         GEmF684Fd6hZ6gmHc65+zU/CRyE/N78M1CfgPZQ6Zz+gfCW50r+LDJfu55kojocTbfWk
-         eLIqAAxcZvOSBYk/9WUGfjLve20+yKm3gaZV41zqzwROtna8Lbp7imS+MvsOvU8W77N+
-         rPCK1v7Sj1pT9YgHmv1KBKZUF+rHMx8ONlUs6XFPVRcrPbW4rTDK8ZFRq89Lt4V7u8CE
-         lzF6BVxjdoTiY33olz+aUknKMRebHsgE9c16ymoIgfI3Di17qNH9/QV6FeH4BgdJ9xNK
-         bMPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuEtkrXQLZkZuMxKLBCCsDEnIqH4BAwXJPYqgQw6fHY/b8Cvup8ICj3I2lUxrldur4+6m8xHfXZN+CiCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyitjxzGqfVW3r/iweOWfi3Bfq3gsYB09xZuerHEHephgyoRWU0
-	TV6hWOHr1obDNQeSOsQFas65yJTeeCXQkrYymVliIwnXtvuvYWZtiUmz
-X-Gm-Gg: ASbGncvcB8vdxbDhtw3Pbyu+JOn7mYLkC6AOIaKV0+6Cg5izy7n6o8dqL0bARGz+vic
-	yuj4Pb10MWFbbXYt4JfnP1yGWyAJRKL4vGOhUif5BTrB/mxMsR77ffg/DhFEtrDkJhOMuiG1ETH
-	TVkxXuVua3QCogThdI0sIRkAsTgKg3WjVVyDz7SQjX+K8LLPnPv1MZvACaOQF7J+AU2sQN7SSxf
-	7INIuBMMsk7SLfplwq4lamh66VYpDwzP27ipLxftGPhizEzX5U0Dq/q24GNiM0Z+lEokn96pQXb
-	HgWuXm3ysl13hyTUvH9wri7zAw+E7CABCyYC5aOWjt/dO5fc7NH54eRl7p+2hOT1T4UmgXuYYy+
-	xSIdWG/2qCUJ0408Pa4tjcFjQtDeqbZ/4YHkpeIKbSED46Vv/7G9Np1pHjAR+3/CgKZtY4cazxj
-	p40W3K8ZdlPMY7nA==
-X-Google-Smtp-Source: AGHT+IHxjRQnRW5DZRFV2Qwhcw+akufX9vynEkSIauiFSd7fK9owVylMsihE4r48/PVg7PHb0yVz6Q==
-X-Received: by 2002:a05:600c:468d:b0:471:95a:60b1 with SMTP id 5b1f17b1804b1-475d2ed6e11mr100007385e9.32.1761508143555;
-        Sun, 26 Oct 2025 12:49:03 -0700 (PDT)
-Received: from orange.info ([2a02:8010:6606:0:8fa:2ba2:6886:7fe4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd05098dsm45244265e9.5.2025.10.26.12.49.02
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 26 Oct 2025 12:49:02 -0700 (PDT)
-From: Hugh Cole-Baker <sigmaris@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Hugh Cole-Baker <sigmaris@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1761508559; c=relaxed/simple;
+	bh=VWlnT0XnAKDifRF6Men5IauzNKyMY9+iRc9PVlnps00=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IBXkE3ljtCfXm6qceSEvv/cx2MLa7qqQKleoJJk6z+3O+q/p+WcL0HGfJF1+tDQ/en9HP6IkoJgVvjNAoyF9PB+08Xw3gNJrLqX7Rg8ITRVe+s+bcSMqKbl0I89qVKIVImPEmxNtD2HNMdw5/Y7OY5W1vcSJnwS8A0pRXKRxvw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=nlPpoCfm; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cvnSN1gcYz9t0t;
+	Sun, 26 Oct 2025 20:55:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
+	t=1761508548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sF5qFNtldL4hxU1Eob88O4wvYXONE5jYGbUo2vOTtAA=;
+	b=nlPpoCfmolNoB1lnQvMklf3nrPPOoUciUxYN+IF7KuprwYR+pUdvUyml2xcznQ6jB7/xcX
+	2SuyGV1L7zT+thsQDYGvTb0Ydkn5r3BWeECEaMPnWiPFf3SNVzZwm4f3jNqoTO4B72W+JR
+	M1f6mz8HQGEd7HMvnD6jEV77wLUAtTq/I7OS/h18K8SFfwfP3LW5gSYz3ZU9+JRkOOgTh6
+	IOuJ+2URPSQvJDd9Uhmszk66roHPf38F3RFtJBlMCU4b46X70V7mFo5PJXHcHq0vkirwWW
+	pIGR3dZfR3tG6O6lLrcTgGhxfPpiCzakivXQgCbHyhRV9l6OZje3XOqEHQB6tg==
+From: Kael D'Alcamo <dev@kael-k.io>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: pwm-fan overlay for NanoPC-T6
-Date: Sun, 26 Oct 2025 19:48:40 +0000
-Message-ID: <20251026194858.92461-1-sigmaris@gmail.com>
-X-Mailer: git-send-email 2.50.1
+Subject: [PATCH v2 0/1] x86/mtrr: Fix kernel-doc warnings in amd.c and centaur.c
+Date: Sun, 26 Oct 2025 20:54:41 +0100
+Message-ID: <20251026195511.79300-1-dev@kael-k.io>
+In-Reply-To: <20251021103739.GBaPdic1JTakX2bA9i@fat_crate.local>
+References: <20251021103739.GBaPdic1JTakX2bA9i@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,134 +69,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-FriendlyELEC offers an optional heatsink and fan addon for the NanoPC-T6
-and T6 LTS. Add an overlay which can be applied if the fan is fitted and
-configures the fan as an active cooling device for the SoC package.
+Hi Boris,
 
-Signed-off-by: Hugh Cole-Baker <sigmaris@gmail.com>
----
-FriendlyELEC heatsink with fan addon:
-https://www.friendlyelec.com/index.php?route=product/product&product_id=305
-Vendor DT with trip points and PWM duty cycle values:
-https://github.com/friendlyarm/kernel-rockchip/blob/4944602540b62f5aad139fe602a76cf7c3176128/arch/arm64/boot/dts/rockchip/rk3588-nanopi6-rev01.dts#L75-L90
+Thank you for your feedback
 
- arch/arm64/boot/dts/rockchip/Makefile         |  9 +++
- .../dts/rockchip/rk3588-nanopc-t6-fan.dtso    | 78 +++++++++++++++++++
- 2 files changed, 87 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6-fan.dtso
+>> Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
+>> ---
+>>  arch/x86/kernel/cpu/mtrr/centaur.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/arch/x86/kernel/cpu/mtrr/centaur.c b/arch/x86/kernel/cpu/mtrr/centaur.c
+>> index 6f6c3ae92943..f4c72402c284 100644
+>> --- a/arch/x86/kernel/cpu/mtrr/centaur.c
+>> +++ b/arch/x86/kernel/cpu/mtrr/centaur.c
+>> @@ -20,6 +20,7 @@ static u8 centaur_mcr_type;	/* 0 for winchip, 1 for winchip2 */
+>>   *
+>>   * @base: The starting (base) address of the region.
+>>   * @size: The size (in bytes) of the region.
+>> + * @replace_reg: mtrr index to be replaced; set to invalid value if none.
+>
+>I'm afraid I can't follow here what invalid value you mean...
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 4cd8ef607f55c..7a67b68a6bb03 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -178,6 +178,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-jaguar-ethernet-switch.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-jaguar-pre-ict-tester.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-mnt-reform2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-nanopc-t6.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-nanopc-t6-fan.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-nanopc-t6-lts.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-ok3588-c.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-orangepi-5-max.dtb
-@@ -271,6 +272,14 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-jaguar-pre-ict-tester.dtb
- rk3588-jaguar-pre-ict-tester-dtbs := rk3588-jaguar.dtb \
- 	rk3588-jaguar-pre-ict-tester.dtbo
- 
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-nanopc-t6-with-fan.dtb
-+rk3588-nanopc-t6-with-fan-dtbs := rk3588-nanopc-t6.dtb \
-+	rk3588-nanopc-t6-fan.dtbo
-+
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-nanopc-t6-lts-with-fan.dtb
-+rk3588-nanopc-t6-lts-with-fan-dtbs := rk3588-nanopc-t6-lts.dtb \
-+	rk3588-nanopc-t6-fan.dtbo
-+
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtb
- rk3588-rock-5b-pcie-ep-dtbs := rk3588-rock-5b.dtb \
- 	rk3588-rock-5b-pcie-ep.dtbo
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6-fan.dtso b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6-fan.dtso
-new file mode 100644
-index 0000000000000..08c4782fb4148
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6-fan.dtso
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/thermal/thermal.h>
-+
-+&{/} {
-+	fan: pwm-fan {
-+		compatible = "pwm-fan";
-+		cooling-levels = <0 35 64 100 150 255>;
-+		fan-supply = <&vcc5v0_sys>;
-+		pwms = <&pwm1 0 50000 0>;
-+		#cooling-cells = <2>;
-+	};
-+};
-+
-+&package_thermal {
-+	polling-delay = <1000>;
-+
-+	trips {
-+		package_fan0: package-fan0 {
-+			temperature = <50000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan1: package-fan1 {
-+			temperature = <55000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan2: package-fan2 {
-+			temperature = <60000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan3: package-fan3 {
-+			temperature = <65000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan4: package-fan4 {
-+			temperature = <70000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map0 {
-+			trip = <&package_fan0>;
-+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-+		};
-+
-+		map1 {
-+			trip = <&package_fan1>;
-+			cooling-device = <&fan 2 3>;
-+		};
-+
-+		map2 {
-+			trip = <&package_fan2>;
-+			cooling-device = <&fan 3 4>;
-+		};
-+
-+		map3 {
-+			trip = <&package_fan3>;
-+			cooling-device = <&fan 4 5>;
-+		};
-+
-+		map4 {
-+			trip = <&package_fan4>;
-+			cooling-device = <&fan 5 THERMAL_NO_LIMIT>;
-+		};
-+	};
-+};
+In order to solve the warning issue while keeping the documentation
+homogeneus, I used the same description from the get_free_region in
+generic.c.
+I believe that the original doc author referred to the fact that you can either
+choose to reuse a specific MTRR (by passing its index in replace_reg) 
+or ask the function to find a free one
+by passing an "invalid value" (for instance -1).
+
+Changelog v1 -> v2:
+* merge changes into a single patch
+* add commit message
+
+Have a nice day,
+Kael.
+
+Kael D'Alcamo (1):
+  x86/mtrr: Fix kernel-doc warnings in amd.c and centaur.c
+
+ arch/x86/kernel/cpu/mtrr/amd.c     | 8 ++++----
+ arch/x86/kernel/cpu/mtrr/centaur.c | 1 +
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
 -- 
-2.50.1 (Apple Git-155)
+2.51.1
 
 
