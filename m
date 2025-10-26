@@ -1,196 +1,142 @@
-Return-Path: <linux-kernel+bounces-870361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508AAC0A84D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:54:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C3EC0A853
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AFE84E94F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACEA3B0490
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54112DF14A;
-	Sun, 26 Oct 2025 12:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F65D2DF12E;
+	Sun, 26 Oct 2025 12:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7vztKOR"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbsTvMzn"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7398C21FF48
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7021D1F418F
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761483238; cv=none; b=szi3pjTafBDmmrRttV9Vj0xyyo8vw+LWhqDPxLEofmYWfRMkG7DcxDuTOrjDaw8QNx0xs+azqFGc/L7n8wFLoYjHgBkYfJlGhWcFZgre8QC6zs5MewWcdrTkdzwfge1/ZbQcYgoFKgBvX/vIY5wxtGUsWryaGmteNWXSOdab7Ns=
+	t=1761483327; cv=none; b=uh/vnQ8x55DNa6sTQPmgzbJJ+EJMsL0ErBYA1BeDIm001dlLkQKTs9pw5s1oa+dKxt3NFatTnuOGWwYeS3dZY34f/0acEVpdIty8Py1druEMCpeg0rUfaSDx2v22gvuSLAHOlaU03AJ1DBX72GdXZxG+ErVChn8LeYG2Gt8Nk2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761483238; c=relaxed/simple;
-	bh=CyL6U2fX8FZXu00nUcb3mHVole2/hj1X1E6kj7nMlt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TMp/t2Mo1NOhScgOe1tbvtDYqSuCXy8WELaa5L8Poa10FZm8gy52zjoW9HUkB9Tz7onnG16i1+uNxotFYxy6uoKjZlevtAbt221cDKWhanZO6dxngwgxq+TfdVCx1LnqqAKpIbIVqI2DA1KDXJ0rHCoqhm6QzuKTr6cnoyYBMeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C7vztKOR; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1761483327; c=relaxed/simple;
+	bh=7hYaukdo0Jdq8vOEcDX/02TcRRrIfzHxZFzM5wkRCO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QBU31Ks/n6XQxqTewPg1iLpQ2IOrg48XsHys5wyPMfuWQZffW6n8cAhXM3krHdexKwXMf4Y75K7HRmJYrV4cp3dqMQOmkq74IumMU4L42/X8tEIBegy2Rr6bPhRsJcT4upF/cEdIDMkD0/jU2eEjTR8EuczBJ6SYobGbbMP28Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GbsTvMzn; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4711b95226dso43795665e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:53:56 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33bcf228ee4so3152754a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761483235; x=1762088035; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i26CRJcrGe4BdHM3xxFhCLRVQ9kLMqkWcqoTK+HJaKU=;
-        b=C7vztKORaQfMOw3YlBAyiSUSui+Is6YuWLwmV7o3aZD5ez71EqJADvXa3VkU+M7IoC
-         PyeUQSnaWqt5V0F7JUhs4bNYgKh6nmmXgRUqrpHyE/s0AFW8eOMNwyMIMPm6sxeNWrLl
-         kQwZ7wb+tVTrkiY+0O21GgiMgGmSOzTV0rJ4btR/ni5oqk98MxN/Z2PVqjfsdYt0QnQ2
-         p6WHfA8OFp8ueWdvycKvxrxRxnQS+MpbuR6Z1Fj4zEjiJfLnREpKLPICzKmj3wcM4/SN
-         1aWq+vyM/lK48/uIFVSjDnDxNC8oobSAsN196vekgWP1FmZAzlMw+POumGL0ALyAtvbA
-         tZmA==
+        d=gmail.com; s=20230601; t=1761483326; x=1762088126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aH6tCO/cQOJwkdwpg0bYZ2HnPHzmOgjXWnEfvG+kC8Y=;
+        b=GbsTvMznh2fS6wyXiKJUWKzg5YBvJriNpH1u3x5fKFrl+ZOY0ASMA2qkvHXNwQo9fZ
+         7/HfxSy8wOgl9SH1yW9kx+yfj8IVcv047LVVwZI+6RzJUoOUfOkgUjUgz6JGz5heMT2t
+         ycDf9R3vtcLg9smp+tZatDnZH6fwULm2f+6cu48Thf5MwjzRr/pioOeI71J8DApByfpX
+         BRmxWFg0kSYENKdDPjkXgkSPmo7xWur7QX+rNy3U4SewjI4amup+wy0T8k5T3YsPMgX2
+         +L6ox1eRVFSLrJEMc75JQclORWH1LjDluvlpyFibVraaTM/4zJwXr/UCETH+PJcI0G1X
+         WZ8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761483235; x=1762088035;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i26CRJcrGe4BdHM3xxFhCLRVQ9kLMqkWcqoTK+HJaKU=;
-        b=D4d459iQt+S/bybgpowEvkgVuVB7mhRBkM9RqFkRjBSLtLH7y9O/rJOqgYrtgloUg/
-         ExX+9dQgYIdF8T+/joG6Ml7WUZeWUCIOTioFHAgbaMmoysZAxrMnJ3qRek5CNRmbs2H/
-         we2GBRjCFGM6QUGJP+Rm5gNDbyYsMMXQjW7Bnn6YHAuTfeayYn3zEGA0WgpA/AToEHOk
-         tXrg9e8EDNAxG4OklsRWwweyBR8ePmohBLOaInZlIQabCXX3dLgZzx8goPBQ0yVjqnbP
-         JSr2jImtW4lhAjxevmWl+Bb60YzzREjBqjLug+4hLRHQLjJOnfmI/8+k0WpZydjBFIIo
-         n28w==
-X-Forwarded-Encrypted: i=1; AJvYcCWsEcihpD1kCwRvVTug/HtSBOIbzaGZWL79qzdWiWac99Y+rUBhCxCC/cwfCR9GqBK5LxjFIyfwCqGGs/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD0TmlKClsZ4KRg9q1W1Yml8qP2p+dbT9o5qL3lx2TEnIndRXc
-	zbsORnXEIiBRMsfIeLdLiueOdznAqLyIxPiR5ydSx0XX/Q1k70pz96Ly
-X-Gm-Gg: ASbGncvUTPnoDdJqzwp0z2JqlQdNvDrRgXOf9DQCBQpYdwecdR/l6PeAi2JyUIspfWC
-	VRcPf6Oc+QQS7jfjV+Q1E+aU6p/CMRn2qkhPWHPJH8QRzLSauDR+9se2v9xKGBG37leeYWRkfcx
-	0cX4aes21DB60R4V4a7m583kJ0zws118RasTeI7fGK4QFi/pbfW75veth+AjaIIBA5fladGF7tN
-	OZ11J2k/qsqw5Pzz21hs3aCfpZIgtgaS5vEs59JV9ko+4s3F98mhVFKnTNLX1pQoRUVSnSZ+R2V
-	3yy0cv4Lg7Bknsb96VvVI8IPxOY0xWRuaHbyIStkjL+FZbfeB4FA08LBzH8MqDts/O8iwqTIotT
-	A54Ujp9HfUfkUnZnx2x4+DzUSI/PQPV6O9CrrDBTZuAX8iMgjZgQf0EdYu3s+Im2U4GwG6qDteK
-	3AmlfM1FG2JR/LBOZgdm8xatw=
-X-Google-Smtp-Source: AGHT+IFJUSS1Q8cwzkZUDDbdeQa6stYxe8rs4Tv4IO8zl8FPI2XfyzYE3FyOP61Il7yGxBXwHY0cSQ==
-X-Received: by 2002:a05:600c:3f08:b0:470:ffd1:782d with SMTP id 5b1f17b1804b1-47117876a19mr281885455e9.6.1761483234846;
-        Sun, 26 Oct 2025 05:53:54 -0700 (PDT)
-Received: from [10.221.206.54] ([165.85.126.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cbc16sm8399094f8f.15.2025.10.26.05.53.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 05:53:53 -0700 (PDT)
-Message-ID: <2f84a4ee-8e45-460a-8e62-3f9a48da892a@gmail.com>
-Date: Sun, 26 Oct 2025 14:53:51 +0200
+        d=1e100.net; s=20230601; t=1761483326; x=1762088126;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aH6tCO/cQOJwkdwpg0bYZ2HnPHzmOgjXWnEfvG+kC8Y=;
+        b=vAKTU3H4M1bsopPvw6TdReAupYlRbuvQKeum/lU/xd3Q7CtBq9QP3oZk+HFyq+t9Je
+         6t8qLxIizJ+/kfPnm2Uq/YuIZ4wOhsoLx+FGIZ2lzJYfIkrGl3DM0WHrFM9xIsBTIXKj
+         Xmm9xRc5xeWtn2q7ElWgAJHf8Aln1Szh2cyvG9BbKF5yVg0jWVdRbZtXRNpSuJTReelU
+         5ktE0miJgrxw4qe4pTeRrU5YLZpwk1uttpMSG6Ei+QoASeQmQWzI7aQvG/zvu0NKYr/B
+         fF/CRiVu1PUckM5sK78JvpdlMxXR32VtISbG80CJnGiqaeeHoe6rynvaRjUxIcGU/Ccm
+         iWsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrQ8ixrH2FwDrKUCIJU2UUksrLZtYNw5XjBuhK+qQOUWwylPkQnmucv5g5KK0tAmPYwemB3F7KD3/hn8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7KnwYBg82kMt24lL6Peq/qdhQfDrdZPJNWfgqwirEp+mXh6Al
+	Tk2zCStGDpfrpM50ZFmfp6dQr07bWS7Cd1Ji+/fmqrz69r/p4kOjWXfc
+X-Gm-Gg: ASbGncvNOlDvBR4E8G18CfugCcYpf+HlncZypX4+wK+yUv7EV1tNZQ9VMJRJKO7q2Rb
+	InYQt3GipbUmHqNBmZcs+b130a8/jUvmupKk0LyxTvXgb79I1rmMfvDPrA6laz+9raj81rwO0LE
+	MEUuCM+bD8rCkrD1HwEE+5WazEW0NErqed4MRNoOHksiwBpeDFBIx4EDddeI38o84fpj0E4ClO9
+	qZWy5emjZpP5LyjC+PuHCG20/XkBbYJ+KBejHRXZUOrU1L/03d+AhsdXvTrBZu0I2+ikPckQ69q
+	g3oRtD0U5Wm9P222H3XDWl9CNKy1d3bQ1XPbu4fD5nU7tx+sXNhO1S4cFCFNRrcGbWke1n/sZBb
+	OwAdj5ApwRRiWijma103DEZwRgsufhU57lMC5cuI50zFO4/XKR92wW9u6TTyLuawz+yyRWnVcqJ
+	f3egojIjnP/rqaeG/tyLSdanQ0nR5b8PZxjckIv/9hJY+3dUsm40xpnRN/3VIY5q3w28n6Kg==
+X-Google-Smtp-Source: AGHT+IFrOdWWMYR3d25fK5nwTlcliYXymU0pj/pOVfjUBs702aTNlLeGllm9A3rfl/Z7gtdm4PmRNw==
+X-Received: by 2002:a17:90b:1dc4:b0:33b:ade7:51d3 with SMTP id 98e67ed59e1d1-33bcf8f78c4mr45902883a91.20.1761483325564;
+        Sun, 26 Oct 2025 05:55:25 -0700 (PDT)
+Received: from bee.. (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm4641759a12.5.2025.10.26.05.55.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 05:55:25 -0700 (PDT)
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+To: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	dakr@kernel.org,
+	daniel.almeida@collabora.com,
+	ojeda@kernel.org
+Cc: anna-maria@linutronix.de,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	frederic@kernel.org,
+	gary@garyguo.net,
+	jstultz@google.com,
+	linux-kernel@vger.kernel.org,
+	lossin@kernel.org,
+	lyude@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	sboyd@kernel.org,
+	tglx@linutronix.de,
+	tmgross@umich.edu
+Subject: [PATCH v3 0/2] Add read_poll_timeout_atomic support
+Date: Sun, 26 Oct 2025 21:54:56 +0900
+Message-ID: <20251026125458.2772103-1-fujita.tomonori@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/5] net/mlx5: Add balance ID support for LAG
- multiplane groups
-To: Zhu Yanjun <yanjun.zhu@linux.dev>, Tariq Toukan <tariqt@nvidia.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
- Shay Drori <shayd@nvidia.com>
-References: <1761211020-925651-1-git-send-email-tariqt@nvidia.com>
- <328ebb4f-b1ce-4645-9cea-5fe81d3483e0@linux.dev>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <328ebb4f-b1ce-4645-9cea-5fe81d3483e0@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Add read_poll_timeout_atomic function which polls periodically until a
+condition is met, an error occurs, or the attempt limit is reached.
+
+This helper is used to wait for a condition in atomic context,
+mirroring the C's read_poll_timeout_atomic().
+
+In atomic context, the timekeeping infrastructure is unavailable, so
+reliable time-based timeouts cannot be implemented. So instead, the
+helper accepts a maximum number of attempts and busy-waits (udelay +
+cpu_relax) between tries.
 
 
-On 26/10/2025 1:59, Zhu Yanjun wrote:
-> 在 2025/10/23 2:16, Tariq Toukan 写道:
->> Hi,
->>
->> This series adds balance ID support for MLX5 LAG in multiplane
->> configurations.
->>
->> See detailed description by Mark below [1].
->>
->> Regards,
->> Tariq
->>
->>
->> [1]
->> The problem: In complex multiplane LAG setups, we need finer control 
->> over LAG
->> groups. Currently, devices with the same system image GUID are treated
->> identically, but hardware now supports per-multiplane-group balance 
->> IDs that
->> let us differentiate between them. On such systems image system guid
->> isn't enough to decide which devices should be part of which LAG.
->>
->> The solution: Extend the system image GUID with a balance ID byte when 
->> the
->> hardware supports it. This gives us the granularity we need without 
->> breaking
->> existing deployments.
->>
->> What this series does:
->>
->> 1. Add the hardware interface bits (load_balance_id and lag_per_mp_group)
->> 2. Clean up some duplicate code while we're here
->> 3. Rework the system image GUID infrastructure to handle variable lengths
->> 4. Update PTP clock pairing to use the new approach
->> 5. Restructure capability setting to make room for the new feature
->> 6. Actually implement the balance ID support
->>
->> The key insight is in patch 6: we only append the balance ID when both
-> 
-> In the above, patch 6 is the following patch? It should be patch 5?
-> 
-> [PATCH net-next 5/5] net/mlx5: Add balance ID support for LAG multiplane 
-> groups
-> 
-> Yanjun.Zhu
-> 
+v2: https://lore.kernel.org/lkml/20251021071146.2357069-1-fujita.tomonori@gmail.com/
+- revert the function name
+- simplify the example code
+- add debug_assert to check the range for udelay
+v1: https://lore.kernel.org/lkml/20250821035710.3692455-1-fujita.tomonori@gmail.com/
+- use the attempt limit instead of timeout
+- rename the function to read_poll_count_atomic
+- add the comment about C's udelay behavior.
 
-Right.
 
-Indices shifted because we sent the preparation IFC patch a priori:
-137d1a635513 net/mlx5: IFC add balance ID and LAG per MP group bits
+FUJITA Tomonori (2):
+  rust: add udelay() function
+  rust: Add read_poll_timeout_atomic function
 
->> capabilities are present, so older hardware and software continue to work
->> exactly as before. For newer setups, you get the extra byte that enables
->> per-multiplane-group load balancing.
->>
->> This has been tested with both old and new hardware configurations.
->>
->>
->> Mark Bloch (5):
->>    net/mlx5: Use common mlx5_same_hw_devs function
->>    net/mlx5: Add software system image GUID infrastructure
->>    net/mlx5: Refactor PTP clock devcom pairing
->>    net/mlx5: Refactor HCA cap 2 setting
->>    net/mlx5: Add balance ID support for LAG multiplane groups
->>
->>   drivers/net/ethernet/mellanox/mlx5/core/dev.c | 12 ++++---
->>   .../ethernet/mellanox/mlx5/core/en/devlink.c  |  7 ++--
->>   .../ethernet/mellanox/mlx5/core/en/mapping.c  | 13 +++++---
->>   .../ethernet/mellanox/mlx5/core/en/mapping.h  |  3 +-
->>   .../mellanox/mlx5/core/en/rep/bridge.c        |  6 +---
->>   .../mellanox/mlx5/core/en/tc/int_port.c       |  8 +++--
->>   .../ethernet/mellanox/mlx5/core/en/tc_ct.c    | 11 ++++---
->>   .../net/ethernet/mellanox/mlx5/core/en_tc.c   | 32 ++++++++++---------
->>   .../mellanox/mlx5/core/esw/devlink_port.c     |  6 +---
->>   .../mellanox/mlx5/core/eswitch_offloads.c     |  8 +++--
->>   .../net/ethernet/mellanox/mlx5/core/lag/lag.c |  4 ++-
->>   .../ethernet/mellanox/mlx5/core/lib/clock.c   | 19 ++++++-----
->>   .../ethernet/mellanox/mlx5/core/lib/devcom.h  |  2 ++
->>   .../net/ethernet/mellanox/mlx5/core/main.c    | 23 +++++++++----
->>   .../ethernet/mellanox/mlx5/core/mlx5_core.h   |  2 ++
->>   .../net/ethernet/mellanox/mlx5/core/vport.c   | 19 +++++++++++
->>   include/linux/mlx5/driver.h                   |  3 ++
->>   17 files changed, 112 insertions(+), 66 deletions(-)
->>
->>
->> base-commit: d550d63d0082268a31e93a10c64cbc2476b98b24
-> 
-> 
+ rust/helpers/time.c       |  5 +++
+ rust/kernel/io/poll.rs    | 72 ++++++++++++++++++++++++++++++++++++++-
+ rust/kernel/time/delay.rs | 39 +++++++++++++++++++++
+ 3 files changed, 115 insertions(+), 1 deletion(-)
+
+
+base-commit: 26c1a20bf7ce76e9afe4030f25bec20e3c63dcf8
+-- 
+2.43.0
 
 
