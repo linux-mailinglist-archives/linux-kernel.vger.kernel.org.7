@@ -1,186 +1,220 @@
-Return-Path: <linux-kernel+bounces-870585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F65C0B2E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 678F1C0B302
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:36:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143163BF0E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEE03B6105
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034543002CE;
-	Sun, 26 Oct 2025 20:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF68B2E06ED;
+	Sun, 26 Oct 2025 20:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="X6QiNGDV"
-Received: from mail-yx1-f98.google.com (mail-yx1-f98.google.com [74.125.224.98])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nnPUUDOP"
+Received: from mail-yx1-f73.google.com (mail-yx1-f73.google.com [74.125.224.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7CF2E0406
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D7323875D
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761510189; cv=none; b=gbmJYlKgBMRVs0NPa3sjYSGvbtNTFmElsj3/4go8Scbdtp7gK1lsCxBg6413LzDuGi4kmq7YaS/YkIOeVuSQ7jBReVSgr3HuO6nInv0J5k4k5mATzmSpX915UTYJsvi7BHWKB7os5LBbhhqWCJQ4twVzHNWXLkd3mF1bWsXz0/8=
+	t=1761510979; cv=none; b=dWIO8HUjrqxu+muZ4/5KH1+WsnS3fRvLvt8tEbs5JiDqFCoCILaSCeRrxzOJS0SHXOWvCVLaxQiIHbP+Ke/q3Z/bI2S8XMpVi3iw+h7/NpaQPFO0ycUiItdpFDVYIcbXbvO24FczAz2M9lapg0QVlpCtdLrCx4XwPfA9SRu0Mx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761510189; c=relaxed/simple;
-	bh=rRQ1+ntCz6compsldbj49MSoD9DCOxn7CudapH/7LFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YZOpnGdbEo0efP7hvxkCOFrQYulIK9bphJOAmziskmRZycKzZKMost8VwDa6CGsJMIhPJxBqSYxPD+thlPtiXDrwrEsyVSXl3AsPUQirkHspspoWT4LbcAkvwlSayvVz5/2+k/w8EmqxNaPy1mWEcIdNC+W0zz7ipceUQohKb10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=X6QiNGDV; arc=none smtp.client-ip=74.125.224.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yx1-f98.google.com with SMTP id 956f58d0204a3-63e3568f90dso4059232d50.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:23:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761510187; x=1762114987;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8tv4EJsASL1wPUSDcCCUa8FCSZ/HO6INTApnbMDnxMQ=;
-        b=jHxkn8GPINgk2/Z+bQPNI3+RcnQ6dqn/bM6x+Jb48e0FPvLza+5zZnkXWWSD7GbkVJ
-         trD4nPlaTAEY1qKwiiM9f+NAoblAVQwmeov7fjAn+dAqFygkUDrpMEHzP3XOyCvqZOda
-         kUQlOdM4FAQOx+pTseapY1Y5AQCIzOr7MiCdqNcn6Txb9EwukvnOV3ynMQeqRVqPepZ/
-         0QdlEDkJDuEmm4ywnldVIJ+aDWdB1oCgk87WpgdwGBub6PC74ErLmSuOeqzlEthUTqcW
-         xK9d857iXlTXBiGxTQASA6U2LE/vuo9fMCIIaMAdG81Sh2omdzVeDB7lpyWlYo7q6gQM
-         EJUA==
-X-Gm-Message-State: AOJu0YwZnrSRqJZjc+bP7IRJbkZTZo6tyMDO8XlDCqla18JOvo3s/ydp
-	HhE1zNj1RW43l8XDr9luOXAaQPtZK+PV1ctBIFMoTgOIF35hZl45qs2inP1tpL4gRHnbSoZPIwV
-	FnD5VTTMsz+Ss770eCronZH9j+z4miCInGOAxf2MjpKsU2Fbt4VEF8b83ET/GOZbeQHScX5nWiQ
-	LDp12p8Lf4a072V8iQ3xpXrst92ijoI1lv6cWP3tl6ALw/AFEbaO7jHyHkLkR5+OuyW5WM7Huj6
-	LAq1/uCOHtGounKaxteIFD9
-X-Gm-Gg: ASbGnctj2Y5ji7xdgc5b928qYDqlWisondqQJTMpJZQ9yqStHfMjW5J4Dtk+gkqJySM
-	9RUDUxdMR9LVREzSYes+Hb3B1QUXSiovMeW6yCjEk5YBK8e0/1dVUAt3uAmNg0uIJbX8dGKYLmZ
-	8xErb1HEqBFBt1RYC5R9BTcu1lziLZRXeIKQIx9Gz++lp+jNrB5q9QCkCL/m+J6FzDo1szmI9kT
-	oG9jKhodXWet1VGJIy9MapMqzrS9CWUZYNmBQyAk8tNiOBOs7iGKqZH2A6c/3SACNQMvobqC91G
-	2IS9NIYDoOjA2nAA0FrTIv4FYBwgtbkvIOtpjfpgaukU6GnbQJGgyL4zxUI/13We9rcAs+rJ8hn
-	tier5QeRjA43OBfFrsSfZvHlqFmZbCIeirVyyLUG1tWLgeZBFyFbOgh9JuQTw1ZoxxeISbM9CmA
-	MZH5GdyKnVrQ27F2XtecKNxi+D9vitcwsqHimPGfw=
-X-Google-Smtp-Source: AGHT+IFdgWdlsjCk6zjYNLx9BnFTaVjzASemGIRqSLNieSneg468G1s6B6QrW1ShrPZvzq+Gj3+waGN0Xh/0
-X-Received: by 2002:a05:690e:4242:b0:63e:1ee2:eb0a with SMTP id 956f58d0204a3-63f377f6d94mr9575345d50.26.1761510186653;
-        Sun, 26 Oct 2025 13:23:06 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-785ed1977c2sm3819017b3.14.2025.10.26.13.23.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Oct 2025 13:23:06 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eaa47c7c8so3011912a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:23:06 -0700 (PDT)
+	s=arc-20240116; t=1761510979; c=relaxed/simple;
+	bh=EtPHM/rxvf1s6wpudENnj+c1ViV9senew6m5yYbiKog=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Vv/EPZtCjzS9iNujPHJltMLK4AIQyngh4Y3PMpnwHc5vUg0qTL+s6IIRhNXaTup9bNcRnWta/8Xlfj/spp5pRZUSpyZf05lCqE3/N8D5bBn70ZKDi+4aPw2/1CUx+3p6ZKesIQmqjHtX8tq1e9PNqv2vnYqmec1u3BD9AMJtHDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nnPUUDOP; arc=none smtp.client-ip=74.125.224.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yx1-f73.google.com with SMTP id 956f58d0204a3-63e33859d16so4619820d50.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761510185; x=1762114985; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tv4EJsASL1wPUSDcCCUa8FCSZ/HO6INTApnbMDnxMQ=;
-        b=X6QiNGDVTXSUOgSPUyhv3vUrZ1N7+XRgy8mZ3cWxsnEL2M2STJXaZEBaJ70ktOnElw
-         R5XQdzBuUndDXz186WtRBWykVcLiCP2qpjQGGct2ou0OcDiE3c6bBbOiHOlJZhM7hMDO
-         5/Ec20eLbSpG3JBlUWEnFxxqJvswdE0uUppa8=
-X-Received: by 2002:a17:90b:38c6:b0:33b:c853:2d95 with SMTP id 98e67ed59e1d1-33fafc8a042mr16326558a91.33.1761510185408;
-        Sun, 26 Oct 2025 13:23:05 -0700 (PDT)
-X-Received: by 2002:a17:90b:38c6:b0:33b:c853:2d95 with SMTP id 98e67ed59e1d1-33fafc8a042mr16326533a91.33.1761510185004;
-        Sun, 26 Oct 2025 13:23:05 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f6040sm5951572a91.16.2025.10.26.13.22.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 13:23:03 -0700 (PDT)
-Message-ID: <c379087c-1702-44b7-a890-beb5b77d794b@broadcom.com>
-Date: Sun, 26 Oct 2025 13:22:57 -0700
+        d=google.com; s=20230601; t=1761510976; x=1762115776; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oIYNgmwaiZev52ielsOny0g8kp/qW6C19JMGXvUOw8g=;
+        b=nnPUUDOP4vNpiN1JkUwR2VQk5zKdhdf6YMDBHoaqPiKQbK7V78fPyfor29DYhtdN1N
+         rnGgSXXLyrG4LgPUV09tkDDyAZ5VHm8p0h8d6+YYegZMKZWcaMEt17AO2MkJSiEGju0X
+         v0tsRA3l3YDp0Ug/Y0jDFW0Nj7/otmw0Q1/4ugJVReLbW2XMT8n30IEajT2mlc+7RNA9
+         DxkVjsVGpalDNfgZPF0f1AhtuHDDbQ1/kF9rO9jxo/FjiL1zQeo7ySGeYXLOmVVofIhF
+         NM3k7tXzPWeKCsCvueA1wNx7vrAgVD7AUjNQecdUHlZIG2Na/UGb/1loPWMG+3n1yAwt
+         sUzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761510976; x=1762115776;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oIYNgmwaiZev52ielsOny0g8kp/qW6C19JMGXvUOw8g=;
+        b=iVsGAO7O5EOFsS1lsz+R51nK+ITR28aJ5ew3P4c+yhQ9xHututepexIiTMjM1EZjl9
+         Woz2CihTG3oZGIc4/oCvNht7A6H/TUSYkGxMj7wnDRcKTbfsr09Grl1GzBlzhWyUiySI
+         H3vDIVLTE9tCJNQ51diGTf12gl4uMn4DDtlyN45MMcOAJqLPgLZbjixZ0lbmJaOU07GI
+         3q+a1KCUEk5yjHSmWrsk1XdmCtndHKmMgD94h566pYHAZP09Q7CPAgNJ2FzsoSH4816v
+         auLJ5Y7ESdahBJHWM80MLHo49pjO/8WhD8K9kZhmTdtY8rPEYICJ5JwbrEuLTMcOZJIp
+         qjaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsOfu/irvuBN9hXbm9a9xoQvSvxSK9QoEtxB8nMDvfhDSw5ldGM2PGqKZZJ27X7cQMUPCRwb1YPWmIm50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKZ2HZJZ+NAfP+xXtnOQcJrp6Er6dliD0094h9V88/ApGpJRpk
+	OmJE4uQ00S06r+v2kevoPZ/CS7Zp8SRtAeDvmQ+Pi65G+HOFjw+wlLQVcrr1vznsQAY/AfE5ht/
+	68sLy3A==
+X-Google-Smtp-Source: AGHT+IEQ9Pwyyd7kjVHYsKEBM6jXV+KGbNmmj3ZfQc3rnB2XqZ4bQZDKRwRIjK4vvzIoUgZwP2mnd9XDO/0=
+X-Received: from yxdd3.prod.google.com ([2002:a05:690e:2443:b0:63f:2d9a:656b])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:9a07:b0:784:8620:1c49
+ with SMTP id 00721157ae682-78486201eacmr444866607b3.30.1761510975632; Sun, 26
+ Oct 2025 13:36:15 -0700 (PDT)
+Date: Sun, 26 Oct 2025 13:36:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add watchdog support for bcm2712
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Lee Jones <lee@kernel.org>,
- Willow Cunningham <willow.e.cunningham@gmail.com>,
- Stefan Wahren <wahrenst@gmx.net>, Saenz Julienne <nsaenz@kernel.org>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
- <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-References: <20250917063233.1270-1-svarbanov@suse.de>
- <CAPDyKFpus05RAkYAoG7zjyvgAJiuXwRt3=z-JB5Kb7mo0AK4vw@mail.gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <CAPDyKFpus05RAkYAoG7zjyvgAJiuXwRt3=z-JB5Kb7mo0AK4vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
+Message-ID: <20251026203611.1608903-1-surenb@google.com>
+Subject: [PATCH v2 0/8] Guaranteed CMA
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, alexandru.elisei@arm.com, peterx@redhat.com, sj@kernel.org, 
+	rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, jack@suse.cz, 
+	willy@infradead.org, m.szyprowski@samsung.com, robin.murphy@arm.com, 
+	hannes@cmpxchg.org, zhengqi.arch@bytedance.com, shakeel.butt@linux.dev, 
+	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com, 
+	minchan@kernel.org, surenb@google.com, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+
+Guaranteed CMA (GCMA) is designed to improve utilization of reserved
+memory carveouts without compromising their advantages of:
+1. Guaranteed success of allocation (as long as total allocation size is
+below the size of the reservation.
+2. Low allocation latency.
+The idea is that carved out memory when not used for its primary purpose
+can be donated and used as an extension of the pagecache and any donated
+folio can be taken back at any moment with minimal latency and guaranteed
+success.
+
+To achieve this, GCMA needs to use memory that is not addressable by the
+kernel (can't be pinned) and that contains content that can be discarded.
+To provide such memory we reintroduce cleancache idea [1] with two major
+changes. New implementation:
+1. Avoids intrusive hooks into filesystem code, limiting them to two hooks
+for filesystem mount/unmount events and a hook for bdev invalidation.
+2. Manages inode to folio association and handles pools of donated folios
+inside cleancache itself, freeing backends of this burden.
+
+Cleancache provides a simple interface to its backends which lets them
+donate folios to cleancache, take a folio back for own use and return the
+folio back to cleancache when not needed.
+
+With cleancache in place, GCMA becomes a thin layer linking CMA allocator
+to cleancache, which allows existing CMA API to be used for continuous
+memory allocations with additional guarantees listed above.
+The limitation of GCMA is that its donated memory can be used only to
+extend file-backed pagecache. Note that both CMA and GCMA can be used
+at the same time.
+
+Accounting for folios allocated from GCMA is implemented the same way as
+for CMA. The reasoning is that both CMA and GCMA use reserved memory for
+contiguous allocations with the only difference in how that memory gets
+donated while not in use. CMA donates its memory to the system for movable
+allocations with expectation that it will be returned when it is needed.
+GCMA donatest its memory to cleancache with the same expectation. Once CMA
+or GCMA use that memory for contiguous allocation, the difference between
+them disappears, therefore accounting at that point should not differ.
+
+The patchset borrows some ideas and code from previous implementations of
+the cleancache and GCMA [2] as well as Android's reference patchset [3]
+implemented by Minchan Kim and used by many Android vendors.
+
+[1] https://elixir.bootlin.com/linux/v5.16.20/source/Documentation/vm/cleancache.rst
+[2] https://lore.kernel.org/lkml/1424721263-25314-1-git-send-email-sj38.park@gmail.com/
+[3] https://android-review.googlesource.com/q/topic:%22gcma_6.12%22
+
+Patchset is based on mm-new.
+
+Changes since v1 [1]:
+- Removed extra address_space parameter in cleancache hooks,
+per Matthew Wilcox
+- Updated comments to replace page with folio, per Matthew Wilcox
+- Removed unnecessary new abbreviations from Kconfig, changelog and
+documentation, per Matthew Wilcox
+- Removed unnecessary comment about lock protecting xarray,
+per Matthew Wilcox
+- Replaced IDR with xarray for storage, per Matthew Wilcox
+- Added unions in the folio for aliased fields, per Matthew Wilcox
+- Removed an unused variable in the test, per kernel test robot
+- Linked the cleancache document in mm/index.rst, per SeongJae Park
+- Split cleancache sysfs documenation into cleancache_sysfs.rst and
+linked it in Documentation/admin-guide/mm/index.rst, per SeongJae Park
+- Cleaned up free_folio_range() code, per SeongJae Park
+- Reworked gcma_free_range() to handle failures and properly rollback
+refcount changes, per SeongJae Park
+- Removed references to transcendent memory, per SeongJae Park
+- Other minor documentation fixups, per SeongJae Park
+- Added Minchan Kim as cleancache maintainer
+- Minor code and documentation cleanups
+
+Minchan Kim (1):
+  mm: introduce GCMA
+
+Suren Baghdasaryan (7):
+  mm: implement cleancache
+  mm/cleancache: add cleancache LRU for folio aging
+  mm/cleancache: readahead support
+  mm/cleancache: add sysfs interface
+  mm/tests: add cleancache kunit test
+  add cleancache documentation
+  mm: integrate GCMA with CMA using dt-bindings
+
+ .../admin-guide/mm/cleancache_sysfs.rst       |   51 +
+ Documentation/admin-guide/mm/index.rst        |    1 +
+ Documentation/mm/cleancache.rst               |   68 +
+ Documentation/mm/index.rst                    |    1 +
+ MAINTAINERS                                   |   15 +
+ block/bdev.c                                  |    6 +
+ fs/super.c                                    |    3 +
+ include/linux/cleancache.h                    |   77 ++
+ include/linux/cma.h                           |   11 +-
+ include/linux/fs.h                            |    6 +
+ include/linux/gcma.h                          |   36 +
+ include/linux/mm_types.h                      |   12 +-
+ include/linux/pagemap.h                       |    1 +
+ kernel/dma/contiguous.c                       |   11 +-
+ mm/Kconfig                                    |   39 +
+ mm/Kconfig.debug                              |   13 +
+ mm/Makefile                                   |    4 +
+ mm/cleancache.c                               | 1127 +++++++++++++++++
+ mm/cleancache_sysfs.c                         |  209 +++
+ mm/cleancache_sysfs.h                         |   58 +
+ mm/cma.c                                      |   37 +-
+ mm/cma.h                                      |    1 +
+ mm/cma_sysfs.c                                |   10 +
+ mm/filemap.c                                  |   26 +
+ mm/gcma.c                                     |  244 ++++
+ mm/readahead.c                                |   54 +
+ mm/tests/Makefile                             |    6 +
+ mm/tests/cleancache_kunit.c                   |  420 ++++++
+ mm/truncate.c                                 |    4 +
+ mm/vmscan.c                                   |    1 +
+ 30 files changed, 2537 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/admin-guide/mm/cleancache_sysfs.rst
+ create mode 100644 Documentation/mm/cleancache.rst
+ create mode 100644 include/linux/cleancache.h
+ create mode 100644 include/linux/gcma.h
+ create mode 100644 mm/cleancache.c
+ create mode 100644 mm/cleancache_sysfs.c
+ create mode 100644 mm/cleancache_sysfs.h
+ create mode 100644 mm/gcma.c
+ create mode 100644 mm/tests/Makefile
+ create mode 100644 mm/tests/cleancache_kunit.c
 
 
-
-On 10/13/2025 4:08 AM, Ulf Hansson wrote:
-> On Wed, 17 Sept 2025 at 08:33, Stanimir Varbanov <svarbanov@suse.de> wrote:
->>
->> Hello,
->>
->> The following patch-set aims to:
->>
->>   * allow probe of bcm2835-wdt watchdog driver for bcm2712.
->>   * prepare bcm2835-power driver for enabling of v3d for bcm2712.
->>
->>   - patch 1/4 is preparing bcm2835-power driver to be able to
->> control GRAFX_V3D pm-domain. This is a prerequisite for the follow-up
->> patch-set which will add a v3d DT node for bcm2712 (RPi5).
->>
->>   - patches 2/4 and 3/4 are adding bcm2712-pm compatible in MFD driver
->> and update the dt-bindings accordingly.
->>
->>   - patch 4/4 is adding a watchdog DT node for bcm2712.
->>
->> Comments are welcome!
-> 
-> This looks good to me!
-
-How do you want to proceed with merging those patches? I would assume 
-you would take patches 1-3 and I would take patch 4.
-
-Thanks!
+base-commit: 752c460b5865d87117095c915addcce7a68296f2
 -- 
-Florian
+2.51.1.851.g4ebd6896fd-goog
 
 
