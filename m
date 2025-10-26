@@ -1,70 +1,179 @@
-Return-Path: <linux-kernel+bounces-870265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD2BC0A524
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:03:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BAFC0A527
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:05:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801243ADE72
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:03:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC5A1349E2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FD0288C25;
-	Sun, 26 Oct 2025 09:03:06 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DB02877E7;
+	Sun, 26 Oct 2025 09:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jx08Zy+s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E198A611E;
-	Sun, 26 Oct 2025 09:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B27C220F38
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761469385; cv=none; b=iCgQ25FXWgL3gS5GiMSvgderSBtDsl9jO7xh6MAg9Qo1XIhsak6tTsXA+6WsXVy0H0ULyghToars9VeXoc+hU1qrcPfv8TvftHVuvmJu8VYmkKgANXTqToycF/w7hkrRK5iz4jVZieOjFDUz0mfyH2orFP/0o77u03cMARwOIWk=
+	t=1761469494; cv=none; b=OCOQDAP/hN9jtvCX02OYfYYgP1H7+UePhQbjhzncfxsNmpVh1RlfR5l3n6Lhv0ROHU7gZgib6NUH+zIkLDRIrHidreoHfMclXTzog7Ndd8nXgvH0ByWfI/mN3NGpZAHQvT9wCGz5aizDUe7Xl5nU+goWS1SmyJzexM+HVQf6+T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761469385; c=relaxed/simple;
-	bh=mE+oC5AupLSk0QKiZ3gvwBoqI56AdzoHcuair5Y5DpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=anSUkh6Ut86rjwkEj3L1bc7DcQUwUbDdIB3m8hJz/a1TwJ/89BawG85mBPJNrtqZnu1gj8nydYL8cVFfL/I8WBNG1HUokkeXSauMe5XFvivoZNC1zOoB3c1woxLlVpOxRloYobz20TsXTQNDnTjp9EEx8J0Qi7b1TyiXJ9ZR6gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 64E222C000AC;
-	Sun, 26 Oct 2025 10:02:53 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 3E3964A12; Sun, 26 Oct 2025 10:02:53 +0100 (CET)
-Date: Sun, 26 Oct 2025 10:02:53 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] keys: Annotate struct asymmetric_key_id with __counted_by
-Message-ID: <aP3jvbe3gfDucycd@wunner.de>
-References: <20251023174810.75805-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761469494; c=relaxed/simple;
+	bh=QkIpeed90JvRYD+LlXhb38rcDeUYh6JyO/y80SENDbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciWobg6/l91//IssHXVougj+zpFPA2bEVDR3+DgYQFRByhnOiFP5vFdjtCvRIibjLgViOB8+4pZ2JAc+nBmaxi8EwyFT7oNJBMhjtMbJpRhHzIof3Mfc8lTBGFehqce6xPc1zATGU74sUqNApPx+xoT4T0Q1VppjE/VET9sBG0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jx08Zy+s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3C3C113D0
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761469493;
+	bh=QkIpeed90JvRYD+LlXhb38rcDeUYh6JyO/y80SENDbw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jx08Zy+srhwWrsVRy4kMP3wZwFApw4x9qH6OcYGssUych/go1Bc4KDj7saFLjPcS0
+	 PhFZQuKZ45hzITx9sWjcQO4+8+z5HgiP0lTv3QKZLbeFfSlkugJZedyDibPC2el8wi
+	 KAi2WLv3bVHrDjYKoqJzJBKH0Y+lazdKnxHIthQ5YUbbeFUAxvcm07m0YR64e5/k4v
+	 EoHxW5XpO3hY7B9sCzGX75oDpSYcAiw1yzTSbDrF8pR1QLY9steamhNvrh/BrvHxCt
+	 jHsKxPPp2ZyuGczSWlpKj+JSOHB91QxHciJXz7bqUfz2GdzmMf8eFUkacnout71XQs
+	 vAPqIyImU/3gg==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d855ca585so263908866b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 02:04:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNlrRe9iMmV6pHvi10FXEltYjZahQlBGIJlhVCC3ZN9jWziKEOP6kcLE7z0BOFx+eyTMuurXbsUKZLfPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFvBM30TBpEgMKjbJZSjl/NGTndhxZrdyy4r/RfT/Z1NNX23Yz
+	8MUnTloHIg4vqxfE9sdNC1cZZZwxUkCBIj9sptKpy0/Gj26Rx0aqzuGjHGKaZdgY7ofzJ3qproX
+	y/clIz4LjH5CyRtBPCsdgAerkydmiTOQ=
+X-Google-Smtp-Source: AGHT+IGyEHSDzuVGDFODZvjJvjOd8qAfNqDU3rNiaxcu5N0duCid5VIUNaadnBu/k4DYtY8GVk8WHPe1hHl7tVTMbTY=
+X-Received: by 2002:a17:907:728d:b0:b49:b3ca:52b4 with SMTP id
+ a640c23a62f3a-b6471f3bdfemr4160600466b.23.1761469492223; Sun, 26 Oct 2025
+ 02:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023174810.75805-2-thorsten.blum@linux.dev>
+References: <03c5d7ec-5b3d-49d1-95bc-8970a7f82d87@gmail.com>
+ <CAL3q7H5ggWXdptoGH9Bmk-hc2CMBLz-YmC1A8U-hx9q=ZZ0BHw@mail.gmail.com> <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
+In-Reply-To: <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Sun, 26 Oct 2025 09:04:13 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H5ewZROWz0384L_pLvqWrjNK8mX=-kQb26ZDmpAbBUQ4A@mail.gmail.com>
+X-Gm-Features: AWmQ_bk0FrP1t6tmpr-sfxZeFRrPyaKvBAwfIsWmpf3rbbKI-FzXZTkveawBXw0
+Message-ID: <CAL3q7H5ewZROWz0384L_pLvqWrjNK8mX=-kQb26ZDmpAbBUQ4A@mail.gmail.com>
+Subject: Re: Directory is not persisted after writing to the file within
+ directory if system crashes
+To: Vyacheslav Kovalevsky <slava.kovalevskiy.2014@gmail.com>
+Cc: clm@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 07:48:11PM +0200, Thorsten Blum wrote:
-> Add the __counted_by() compiler attribute to the flexible array member
-> 'data' to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Sat, Oct 25, 2025 at 10:49=E2=80=AFAM Vyacheslav Kovalevsky
+<slava.kovalevskiy.2014@gmail.com> wrote:
+>
+> On 24/10/2025 19:17, Filipe Manana wrote:
+> > I converted that to a test case for fstests and couldn't reproduce,
+> > "dir", "file1" and "dir/file2" exist after the power failure.
+> >
+> > The conversion for fstests:
+> >
+> > #! /bin/bash
+> > # SPDX-License-Identifier: GPL-2.0
+> > # Copyright (c) 2025 SUSE S.A.  All Rights Reserved.
+> > #
+> > # FS QA Test 780
+> > #
+> > # what am I here for?
+> > #
+> > . ./common/preamble
+> > _begin_fstest auto quick log
+> >
+> > _cleanup()
+> > {
+> > _cleanup_flakey
+> > cd /
+> > rm -r -f $tmp.*
+> > }
+> >
+> > . ./common/filter
+> > . ./common/dmflakey
+> >
+> > _require_scratch
+> > _require_dm_target flakey
+> >
+> > rm -f $seqres.full
+> > On 24/10/2025 19:17, Filipe Manana wrote:
+> > _scratch_mkfs >>$seqres.full 2>&1 || _fail "mkfs failed"
+> > _require_metadata_journaling $SCRATCH_DEV
+> > _init_flakey
+> > _mount_flakey
+> >
+> > touch $SCRATCH_MNT/file1
+> >
+> > _scratch_sync
+> >
+> > mkdir $SCRATCH_MNT/dir
+> > echo -n "hello world" > $SCRATCH_MNT/file1
+> > ln $SCRATCH_MNT/file1 $SCRATCH_MNT/dir/file2
+> >
+> > $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/
+> >
+> > # Simulate a power failure and then mount again the filesystem to repla=
+y the
+> > # journal/log.
+> > _flakey_drop_and_remount
+> >
+> > ls -R $SCRATCH_MNT/ | _filter_scratch
+> >
+> > _unmount_flakey
+> >
+> > # success, all done
+> > _exit 0
+>
+> I think the line with `echo` may not be the correct translation:
+>  > echo -n "hello world" > $SCRATCH_MNT/file1
 
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+An echo is just a write...
+
+>
+> In the original test, the file was opened with `O_SYNC` flag, if you
+> remove it, the directory will be there when the system crashes. I also
+> forgot to close the file after the `creat` call in the original test,
+> may be important as well.
+
+An O_SYNC, which is what I missed before, is essentially just an
+implicit fsync after every write on a file.
+Adding an fsync after the echo:
+
+$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/file1
+
+Triggers the problem of "dir" not being persisted.
+
+>
+> The test itself is quite weird (why would `dir` be gone after seemingly
+> unrelated operation?), any detail can matter.
+
+"dir" should be persisted as well as "dir/file2", according to the
+SOMC (Strictly Ordered Metadata Consistency) that Dave Chinner
+discussed many times in the past in fstests and btrfs mailing lists.
+
+You should also reach the xfs mailing list and mention that
+"dir/file2" is not persisted.
+
+>
+> Please run the original test with a real system crash. I will also
+> double check everything on my side.
+
+I've said before in another thread: we don't need to trigger qemu
+crashes in order to test fsync.
+Just use the dm flakey target with fstests - no need to do reboots,
+much more practical and way less time consuming.
+In 12 years of fixing fsync stuff on btrfs, I haven't yet seen any
+case where dm flakey didn't do the job of reproducing issues.
+
+>
 
