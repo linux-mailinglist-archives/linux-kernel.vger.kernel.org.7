@@ -1,100 +1,121 @@
-Return-Path: <linux-kernel+bounces-870250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028FBC0A491
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:26:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4214C0A497
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8869F3AD99D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:26:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78F414E3C99
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746FB273809;
-	Sun, 26 Oct 2025 08:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1944822CBD7;
+	Sun, 26 Oct 2025 08:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fM9JNjjn"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Rb2GrXi6"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7174B23D7D2
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7641C17A2E8
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761467158; cv=none; b=b1RffcBiMMwYBq3isEVmJbYEsKvvuNSfXwc9Cqx8oDExOXMXkQuIkGugokGLRb2PCuTCTLSL2m+V6ZUeZlshDF4r4HNo+/50v2KhwPm0IE7GwvrN6TXr13DWZ5qm8ajAHAXJitq2Q6gdZsqmBg/2fj5h+tP5GIEF6WXhJzLxVYY=
+	t=1761467247; cv=none; b=FBymTu0AfFk5e4ugr03HQis1KMTMT3FX5ABklwQdhgfEr7BpAnmafcJtZNYPmHxQVlRx7ZaSC22gsgtSYFnynSol5jX7WPw88CBiQBlCS80JzacbHYCqqEIf0h4fqbJYkOgOlz3J4R9gyY4fDhK9kgrGleotAIk/vluklnV44VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761467158; c=relaxed/simple;
-	bh=WCD8R9xQBmmQFqaX0VCtflgMfkv8o2xCOmmKnuUd9A0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Strbaj5Xuz6lU02HHkyz0HPuG/ARshQ+X24iUhaOoj5z9bJNqJ1ADbXOCRymAYBd5f7GkYvQfOnn06MHAfIhpAejzMJHMz71dRqew1Mi/ORGB4b8Y3ZD5EYpKE0HBzEIXsE4d3sSnqswcgVL4+T+IemFhIl11SkvakeEZKSxx2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fM9JNjjn; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-430da72d67bso23083005ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 01:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761467156; x=1762071956; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WCD8R9xQBmmQFqaX0VCtflgMfkv8o2xCOmmKnuUd9A0=;
-        b=fM9JNjjnFm04p48qC7fkDr2CxQaouwjDn3F6CFSNAl6dJOgzmEx8puptMj3Sa4jhEs
-         8gJeFeRvUvJDVUVfE1rsMLz6Vgohj60mAo8ZjI+wGM1BWGFSmZlmAlujx5Y8SWMwmyeH
-         I6+vvXP/ashnlC57oDbF3MaUDNf4toDDvbsBOS7+hfXhbKff+ImTLgwkg7Vfz0i/PYZZ
-         Tbpj1hggA8UnhNonF9MC50CZVvJ0iBZOdQVIXY/VRjiJmmoQb0D6F/oKQ3osn6FXrQei
-         Kg7c7JP7T6fRdbbR1HR/0pKmAW+s9kYh1WgGF9nnq6umKuEyZfmZNzEuuNkiGQ5f8D67
-         bjbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761467156; x=1762071956;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WCD8R9xQBmmQFqaX0VCtflgMfkv8o2xCOmmKnuUd9A0=;
-        b=QOENfr/XEX+tJWoOfXxCJAc4sQ3rPx/ngm2UJG6u0rwfp9Mz5+S0lUf3+yVY7MDnCX
-         Zr5Np+yfJH/8z6Uo24C18MkWgjYTk2J5YxS0wvSjcsz5XF3hkc4xkrGiIVWwl+52+Ras
-         czhIvG6u070oxQ8hoJC4+djNgIWlb7OAOHv5rHkPR1tJRusuKc/nn8ciMKZcqnuQWCYo
-         nSZ36SXkh+JNxk0n7EO03TxM1RLDnMC8W/xX0r+OGCm0CUTPQv5BELPQ45C+ceS0XMZR
-         jDF5hbdqQQACgX4cXxljaDrFZcJPv13677qkUJnKz7z7p7X/1/521BvCBpIJp+y3C6Gv
-         diNA==
-X-Gm-Message-State: AOJu0Yw5u/Y7B+axwOPvYWvM8KK0y8lHXOXF+Vh9TVAu3n/78VEE1ZI3
-	zB7CuTvqXhMuXDCvdJC+vH9e8QvWpHkZgSpykEOyTuy0rvQzjOsYeHnnhAy17+TFDKSIFjzKu9G
-	C9sIpEfUxpvLe8gHLKgA2djTFXYHghLBUi0yg
-X-Gm-Gg: ASbGnctdQxJSlCkXMgSesa8wf4UanZxDeM/pbwci5rnkOfbmVKX2+n8bIg5AASYb+S1
-	ZwXMjS9/qTdZ6QYtw06pdJISULSJJtO8PR5eX8M+U/8vJcx9NZqsdRDZDDiDYGPgmQ6/v9lJ5fN
-	xEgjlm/i7TmUJVbOKYcRMpDVn0j/AXyrsFv013dOMK5ipW0AiscDgrfBgsftHjuqlwjX9zoFw+C
-	km3/cPhhlGR8Q7GNboWF4o5lMv1Zmf//8XUsw6ksQQr4T2gNw1ivY1TH7WRduVz/vj89qmRzg96
-	JJBs5HbEChDVwFtm7PgMbh5aDbIZ
-X-Google-Smtp-Source: AGHT+IFsxJE9amyHCf47qG1yTdtWJeGh48qrWBV0CWmqRw7VI5lCUwkL37wBnWACb9bAClDxSvGC11GyYkPWVAOMlAA=
-X-Received: by 2002:a05:6e02:1786:b0:430:bf84:e94c with SMTP id
- e9e14a558f8ab-431eb67c444mr85241195ab.13.1761467156231; Sun, 26 Oct 2025
- 01:25:56 -0700 (PDT)
+	s=arc-20240116; t=1761467247; c=relaxed/simple;
+	bh=elSX9IbqQvW2SuUAYMHA/NTFtVw/y09OwjHI4aK+9Go=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tZ6W8hm7rkuDg29fJahL3O1Bn0nqutQ2/+7qBlvssAetcag1aJQAL2ADWZilhx5bthP/wjzmLg7Bm1ZEVful/3SzcKWXYOrow4w41q3sxhe2Zw+PjKoIftR0V8upqS5D+exQNElYZT9M5QVE8eb4+rj8BceAHAaC2rsisIM3o3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Rb2GrXi6; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761467243;
+	bh=elSX9IbqQvW2SuUAYMHA/NTFtVw/y09OwjHI4aK+9Go=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Rb2GrXi6HpsLYx8ZrvSbgyAJlo2w3O/tfX6q40tcLizhEoYlqGL4gUKiWVT0OP/Sd
+	 jaY4yTzWqaYwic2VHaW3S7XiTowwI8AERodX7pCPTjcdH/4SFJUpBP5CnsWwqOff0y
+	 zpj7vW8bZtG3Ode8mE/TFZuWXqCH0fN8mz++01sqTHpD0sY5qdWiq5dcXr4/mq24J3
+	 QpGTT4hOMsMFfXmXHKr+WwsL6DhqZs9QudT3FrrwDr1eHWTkYaoiQR7vnE/51RX1o9
+	 M9r183MCBA+jScztgDTuRvUSPLDtEcc8YO2SVKBLTbtEWg4R02vCrVEWaeDWLkbTcw
+	 lUo8o3w2V5eyw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 02AA117E139C;
+	Sun, 26 Oct 2025 09:27:22 +0100 (CET)
+Date: Sun, 26 Oct 2025 09:27:17 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] drm/panthor: Support GLB_REQ.STATE field for
+ Mali-G1 GPUs
+Message-ID: <20251026092717.3aae3679@fedora>
+In-Reply-To: <20251024202117.3241292-7-karunika.choo@arm.com>
+References: <20251024202117.3241292-1-karunika.choo@arm.com>
+	<20251024202117.3241292-7-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-Date: Sun, 26 Oct 2025 09:25:45 +0100
-X-Gm-Features: AWmQ_bkq5DB2z8qpYMPuUopBz_fbj3vbmdg5r6ZMqJt_cZMGQiOfWcDXBtGETT0
-Message-ID: <CAB95QARfqSUNJCCgyPcTPu0-hk10e-sOVVMrnpKd6OdV_PHrGA@mail.gmail.com>
-Subject: Can't boot kernel 6.17.4+ via rEFInd
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi All,
+On Fri, 24 Oct 2025 21:21:15 +0100
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-I've got a problem booting the stable kernel 6.17.4 and 6.17.5 after
-updating from 6.17.3 via make oldconfig. Out of my 4 amd64 machines
-running Gentoo, two are unable to boot with rEFInd showing "Error: Not
-Found while loading <kernel file name>." Bisecting kernel sources
-points to commit 5b5cdb1fe434e8adc97d5037e6d05dd386c4c4c6.
+> +static bool panthor_fw_has_glb_state(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> +
+> +	return glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0);
+> +}
 
-All four machines use very similar toolchains: GCC 15.2.0 and
-15.2.1_p20251018, binutils 2.45.
+It's okay for now, but if we start having more of these, we probably
+want to automate the generation of those has_<featurex>() helpers with
+something like:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=220700 has kernel config attached.
+#define FW_FEATURE(feat_name, major, minor)						\
+static bool panthor_fw_has_ ## feat_name(struct panthor_device *ptdev) 			\
+{											\
+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev); 	\
+											\
+	return glb_iface->control->version >= CSF_IFACE_VERSION(major, minor, 0);	\
+}
 
-Would appreciate any hints or suggestions.
+Same goes for the HW features BTW.
 
-Best regards,
-Eugene
+> +
+>  /**
+>   * panthor_fw_conv_timeout() - Convert a timeout into a cycle-count
+>   * @ptdev: Device.
+> @@ -995,6 +1003,9 @@ static void panthor_fw_init_global_iface(struct panthor_device *ptdev)
+>  					 GLB_IDLE_EN |
+>  					 GLB_IDLE;
+> 
+> +	if (glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0))
+
+	if (panthor_fw_has_glb_state(ptdev))
+
+> +		glb_iface->input->ack_irq_mask |= GLB_STATE_MASK;
+> +
+>  	panthor_fw_update_reqs(glb_iface, req, GLB_IDLE_EN, GLB_IDLE_EN);
+>  	panthor_fw_toggle_reqs(glb_iface, req, ack,
+>  			       GLB_CFG_ALLOC_EN |
+> @@ -1068,6 +1079,54 @@ static void panthor_fw_stop(struct panthor_device *ptdev)
+>  		drm_err(&ptdev->base, "Failed to stop MCU");
+>  }
+
 
