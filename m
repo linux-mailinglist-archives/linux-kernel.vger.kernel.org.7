@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-870260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DFFC0A4F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:57:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8256C0A4FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FC3B4E25D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C6F3ADCF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0397B28727D;
-	Sun, 26 Oct 2025 08:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62532877D9;
+	Sun, 26 Oct 2025 08:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b="DpY6M76Z"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MddvoryI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB5723D7E4
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D00A23D7E4;
+	Sun, 26 Oct 2025 08:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761469050; cv=none; b=aSi2tcGqtipxaFlWbb2DyluYpQau+Bi75KK6eyN7Yjr5nFcavU5OiRK8yogYh9hW/OthZfKzYwOxXuj3tTWBkYUJOvROHzftND8RY/h9Y10MTfbSdjzy8BXFQMeJP2Yt0/N3ViZmuQjfu19C1tM099ZK5jmf5maaKOsZGYoHUs4=
+	t=1761469081; cv=none; b=KEjiklG11UOGnR1EhRS+73+JSSLycAnMdgIjcT/cXvs6IEoOKSGjBvA2hV+XOlaZL03BC/pj9APh6bgDEud9VcV1ht/O6gb/+7Z01VPT6/WlTCCmYhn5mRBPrXiqFXhq4oqG+o6G+prpLi5yWdieJoOFQqkJ4cwlWHHYXoGGg3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761469050; c=relaxed/simple;
-	bh=s4z+lnbfoCtbH+DLmKc1rIBSkfVRo3EsKwc/ip1eTNc=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=OkCAYaJSjqDjwhL8qGfPJgWRz7TiXdiM/AviuyLpiRh9N2/p4RcTWUyRoiy16AFmeRfmFmZGt8emv0vSQA1OVWcltOJJC4yZ22xoEGkqyPgpRkRH1zdC6esLGxw2mt04T8PsdlHHacl/7da22EWedD55MrpEjB1rw3wZzfGB7AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu; spf=pass smtp.mailfrom=bit-tao.eu; dkim=pass (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b=DpY6M76Z; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-tao.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-tao.eu;
-	s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
-	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Dqc/gqoXWFuGLOiNGXFq9T5Id9LHBYqsSRf+E9VB94Q=; b=DpY6M76ZCt2YCRw+3nRJm4IvPf
-	jKiAinZfdavNjgK6tQJrq9178n5A5gjYhty01FegHM6GavNBWxAVObPhD+6HxHAwFk7g3+CFGwV1D
-	R9J873mCd7AfutcZhHmup5XREP50jEg1KzehmFkESRIC+uUvljAbXKMTPHIvPquS0rhugrJgU9qGl
-	s5V0vThIvjr/r5NWh7h0LohLW3R7GlQ0f1vr/WW3BTYdCQv6HuJhRtbKeNIVEpQDXnPSEqX2lzSug
-	42MHEuMiaXFiuqdBRb/MFUHap7qLfxq8CM6UY3S1ghd1+yRlscU2OynL0I7H615zQcwXqdHM0X11q
-	103JqWoQ==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1vCwYz-0016nE-5I
-	for linux-kernel@vger.kernel.org;
-	Sun, 26 Oct 2025 09:57:21 +0100
-Message-ID: <719906ac-199e-46ac-a5d2-06700d43570b@bit-tao.eu>
-Date: Sun, 26 Oct 2025 09:57:21 +0100
+	s=arc-20240116; t=1761469081; c=relaxed/simple;
+	bh=3iawiwdyl6YkqwgoT3jaWO1ZcL+rxdAJv50E5bPZZps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JOx17gM+dV5r6mx9axJwiKPlD+IQt1sUxuPvvWLwfnhWtC8scJ4ZR2Oq6Qnl3zXRmp13N6jvguHgq/JTCnA8rLHm292kR3vCvvyCRILV6ZkyHagf0F8g73UshGZcf3raYVcM90vnEajDWaRWUdovLyba6CIWGFP7CCDiHt4sPzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MddvoryI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F47C4CEE7;
+	Sun, 26 Oct 2025 08:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761469080;
+	bh=3iawiwdyl6YkqwgoT3jaWO1ZcL+rxdAJv50E5bPZZps=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MddvoryIKXSC+00ow4/Mj5ZMva5KkF5PPTRsIODKM1+8ev+HGWdBm+lYq0QxPDOWZ
+	 a2/rXK3Z0PFLJtPhQ2KrTssD+sCMGtwmeR7x0qhfEv1lo55R2STCx8u2rNPYSt6pVx
+	 iVPJ/aMH0YoeZKXlnjCg7u438TCis9cOavXLgh9ddUNYmyGB5Gq5bzC9HOcJMbztxd
+	 2XCm/4PQyA/M8OTYgHGHxJkATGo8564oyrr/ZVYf8vkTFE3Qbo6uay7d12x/ImcpA/
+	 cRhZ9VDe7rzTBSFAsbUVIw0r2cTclxXpXar1x801xNaDMChj0S5t03a75O/kRA8AsV
+	 l7t6n/UTzRR9g==
+Message-ID: <68033c02-7860-420d-9fa7-29b844631bce@kernel.org>
+Date: Sun, 26 Oct 2025 09:57:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,45 +49,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-tao.eu>
-Subject: Questioning Linus, Monolithic Kernel, Agreeing on Kind Communication
- Guidelines etc?
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v6 1/8] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
+ Add Glymur compatible
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251024-glymur_usb-v6-0-471fa39ff857@oss.qualcomm.com>
+ <20251024-glymur_usb-v6-1-471fa39ff857@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251024-glymur_usb-v6-1-471fa39ff857@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-As I said in previous mail, the LDA/STA joystick language is not for me.
+On 25/10/2025 02:47, Wesley Cheng wrote:
+> Define a Glymur compatible string for the QMP PHY combo driver, along with
 
-"Monolithic" kernel, aka one man controlling it that is widely critiqued 
-is not something that I agree with either. (So many years for realtime 
-patches, then breakpoints outside sched/internals for that, 10ms filter 
-in sched.c Rust & Germ symbols etc!)
+Bindings are for hardware, not driver.
 
-One needs Kind Communication Guidelines, from GNU. GNU actually seems to 
-be the Bit concept I am about, worded as a variant of "GOD".
+> resource requirements.  Add a different identifier for the primary QMP PHY
 
-It would even be better to drop the concept GOD entirely and rather do a 
-sane alternative, doing actually someething about this. Linus really is 
-L, of aLLA. You can actually try this, and it would be the L segment of 
-The Coran only. Which again could be the part about an operating system.
+What is an "identifier"?
 
-L X actually really being Bitstreams System, a result of my work with 
-popularizing the computer Bit, so we can use the native term.
+> instance as it does not require a clkref entry.
 
-The whole philosohpy (optimally translated) is on my page. Bit Tao a 
-macro for all.
+I do not see how this is related or relevant. You add some identifier
+because clkref is not needed? And if clkref was needed you would not add
+that identifier?
 
-https://bit-tao.eu/
-
-LIGHT!
-
-
-
-
-
-
-
-
-
-
+Best regards,
+Krzysztof
 
