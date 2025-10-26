@@ -1,225 +1,193 @@
-Return-Path: <linux-kernel+bounces-870684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE99C0B729
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AC7C0B732
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 524A64ECED2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:20:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 898DF4E7855
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D873C3009EA;
-	Sun, 26 Oct 2025 23:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AB63002AA;
+	Sun, 26 Oct 2025 23:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cZfKK+td"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PjFvBqdM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450AC2FFF85
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A68313B797;
+	Sun, 26 Oct 2025 23:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761520828; cv=none; b=b68QlshGkUaJzPjWKImgnP8HnHX3BA4QI0ri6Tk+ycO91VAh9gCh55qzNqo1l22hqig3VUhbCv8lzpIXumUR8VswleXzerDj0R9SA1UQSw7C9Nw+22TPQJanWtDhlMjKfwQyoIZ/Q923VkyQNz4NRbcVFOrkRViWeS1Q6f4KX/o=
+	t=1761521606; cv=none; b=bZ1h7Pj5B3uUBzwPwlOCVlilJGvx8DMwar0qoKFgTNG8xohpM8StHyvWK8EhXdGtLoJIQKo9x04/9/Xjb0zYlXIUdm0L9G2kfZWQ31MPMNepNk0USJJ+tI7w0RFyFW4LkakwSd6NC3ZBD8FtT0oP6J75+KK5OYb2J0Vzy14qp14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761520828; c=relaxed/simple;
-	bh=ICcmP7uY+Udb/EwnpBmNQvmhpJXCReQnHkSzOELZZX4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=BDPtz55SuXWDC5Jokonn6pFrG0zS1D6dDMhlX4QJFZv1M7C/GeAcCy88drgucs+xma0XaN7eC4Uq72BEIPCY46RLpzv4lF0z3ERBkB2KMGRaNu/aLI6/80LCotdjA8UViPM01urj03m9VGWmqI5mAUT6rw08utz2wYM0GPMDC14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cZfKK+td; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761520827; x=1793056827;
-  h=date:from:to:cc:subject:message-id;
-  bh=ICcmP7uY+Udb/EwnpBmNQvmhpJXCReQnHkSzOELZZX4=;
-  b=cZfKK+tdJUutd+lf6QQI3YpqAtVCl3sX46WfcLXFFEbxv7xe1/hZG8aO
-   tDbWUIOWZON6AmEvMrdE3yoWTY0anIB34tg37jcejXd5mTUU/E8TtAOqD
-   ScXPiqkhw2OSEwSgTTitUn+5Nv2lYJgTEIksUnabStV2s7M1/cIlLQyhv
-   cdkkIUrIPtC69N4UmLllmpEgG9EfiEWNYaq+CZo+u+SF6PL/HDEh6fJrE
-   UjmzkV+8+A2nhqdHzakjdXntyHwS2EtKY6GjN2nB8fr9+Pk94tI+TDqNx
-   iiwbhNBn96iKW/3On/1CmnhilZsUHFTTL567+g3aQOlzrg/KMdlY0eNUK
-   Q==;
-X-CSE-ConnectionGUID: 2jLmvt5tRaywKZ+gZ7Zxcg==
-X-CSE-MsgGUID: ZWlVwEPKQZuI1hz/w+oCvQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63502800"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63502800"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2025 16:20:26 -0700
-X-CSE-ConnectionGUID: hqr1vS39SI24S4dYRBGjrQ==
-X-CSE-MsgGUID: uARQQPR5QiKob0KMtabyhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,257,1754982000"; 
-   d="scan'208";a="184118258"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 26 Oct 2025 16:20:23 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDA1t-000GNp-0B;
-	Sun, 26 Oct 2025 23:20:12 +0000
-Date: Mon, 27 Oct 2025 07:19:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 8d309ae354d6b5537f6c716ca5c411ece5bd78c0
-Message-ID: <202510270728.XqEYQQkR-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1761521606; c=relaxed/simple;
+	bh=L2bX3MV0Mp/1a01GxZohAKcqcukwW2zO9smFB0R0wdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COwvk0ZggbfdulW39sXhNqtYVRAMqjAr2zWggcN7XgFdaD+atBAfnzzrkbqmvk1Q2aBnFH5P8PrXoU9zWtwam2CotpLmH2w1NcgwDVLcNdF7LSrdr2/QofkDyxNUMIdCxmvRtj4t3yM6lKCQm9WfF5ctBld53MPweJ/51gjrg3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PjFvBqdM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 7EDC7AB4;
+	Mon, 27 Oct 2025 00:31:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761521495;
+	bh=L2bX3MV0Mp/1a01GxZohAKcqcukwW2zO9smFB0R0wdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PjFvBqdM28TDl4S7oi1dBKPbWgJv3hPQLTG5bpLU4KGUEXdtqeBRERTxXHUIjcuw2
+	 tb8hv21HL08w0+KPxwvTfk0GfWMnCZwGWD0jvRpsgRw440y7S0EXaUyyi+TyE9fZ2q
+	 QNWYyg5sOEhkJM8den2uty+XyzO4EXi4JdRGAknQ=
+Date: Mon, 27 Oct 2025 01:33:08 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mats Randgaard <matrandg@cisco.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v4 2/4] media: uapi: Introduce MEDIA_BUS_FMT_BGR565_1X16
+Message-ID: <20251026233308.GC9719@pendragon.ideasonboard.com>
+References: <20251013-csi-bgr-rgb-v4-0-55eab2caa69f@kernel.org>
+ <20251013-csi-bgr-rgb-v4-2-55eab2caa69f@kernel.org>
+ <20251026231553.GB9719@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251026231553.GB9719@pendragon.ideasonboard.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 8d309ae354d6b5537f6c716ca5c411ece5bd78c0  Merge branch into tip/master: 'x86/sgx'
+On Mon, Oct 27, 2025 at 01:15:54AM +0200, Laurent Pinchart wrote:
+> On Mon, Oct 13, 2025 at 01:01:34PM +0200, Maxime Ripard wrote:
+> > MIPI-CSI2 sends its RGB format on the wire with the blue component
+> > first, then green, then red. MIPI calls that format "RGB", but by v4l2
+> > conventions it would be BGR.
+> > 
+> > MIPI-CSI2 supports three RGB variants: 444, 555, 565, 666 and 888.
+> > 
+> > We already have BGR666 and BGR888 media bus formats, we don't have any
+> > CSI transceivers using the 444 and 555 variants, but some transceivers
+> > use the CSI RGB565 format, while using the RGB565 media bus code.
+> > 
+> > That's a mistake, but since we don't have a BGR565 media bus code we
+> > need to introduce one before fixing it.
+> > 
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+> >  .../userspace-api/media/v4l/subdev-formats.rst     | 37 ++++++++++++++++++++++
+> >  include/uapi/linux/media-bus-format.h              |  3 +-
+> >  2 files changed, 39 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/userspace-api/media/v4l/subdev-formats.rst b/Documentation/userspace-api/media/v4l/subdev-formats.rst
+> > index 8e92f784abd8123f9ea950f954a60af56ee76dbe..def0d24ef6cdb1a2ec9395af1468f56adf31a8de 100644
+> > --- a/Documentation/userspace-api/media/v4l/subdev-formats.rst
+> > +++ b/Documentation/userspace-api/media/v4l/subdev-formats.rst
+> > @@ -625,10 +625,47 @@ The following tables list existing packed RGB formats.
+> >        - b\ :sub:`4`
+> >        - b\ :sub:`3`
+> >        - b\ :sub:`2`
+> >        - b\ :sub:`1`
+> >        - b\ :sub:`0`
+> > +    * .. _MEDIA-BUS-FMT-BGR565-1X16:
+> > +
+> > +      - MEDIA_BUS_FMT_BGR565_1X16
+> > +      - 0x1028
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      -
+> > +      - b\ :sub:`4`
+> > +      - b\ :sub:`3`
+> > +      - b\ :sub:`2`
+> > +      - b\ :sub:`1`
+> > +      - b\ :sub:`0`
+> > +      - g\ :sub:`5`
+> > +      - g\ :sub:`4`
+> > +      - g\ :sub:`3`
+> > +      - g\ :sub:`2`
+> > +      - g\ :sub:`1`
+> > +      - g\ :sub:`0`
+> > +      - r\ :sub:`4`
+> > +      - r\ :sub:`3`
+> > +      - r\ :sub:`2`
+> > +      - r\ :sub:`1`
+> > +      - r\ :sub:`0`
+> 
+> We're definitely in convention territory, because this is not how 16-bit
+> RGB data is transmitted over CSI-2. CSI-2 transmits blue first, but
+> starts with bit 0, not bit 4.
+> 
+> Have you explored the alternative of picking the parallel bus code that
+> matches the serial order when transmitted with the least significant bit
+> first ? That would be MEDIA_BUS_FMT_RGB565_1X16 here, and
+> MEDIA_BUS_FMT_RGB888_1X24 for 24-bit RGB.
 
-elapsed time: 959m
+To be clear, media bus codes are a matter of conventions. Some
+conventions would be easier to explain that others, and can also be more
+consistent with pixel format namings, but at the end of the day they're
+all conventions. While saying "pick the media bus code that transmits a
+pixel in one clock sample, with the bit order matching LSB-first
+transmission" could be the simplest to document, there will be a
+mismatch in component orders between the media bus code and the pixel
+format in some cases. There may also be more drivers implementing other
+conventions, making the transition more difficult.
 
-configs tested: 133
-configs skipped: 5
+I'll be very busy the upcoming week and will likely not be able to
+participate in this discussion in the near future.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> >      * .. _MEDIA-BUS-FMT-BGR565-2X8-BE:
+> >  
+> >        - MEDIA_BUS_FMT_BGR565_2X8_BE
+> >        - 0x1005
+> >        -
+> > diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
+> > index ff62056feed5b6588bfcfdff178f5b68eecd3a26..a73d91876d31844bf8c2da91ddea541181840bd2 100644
+> > --- a/include/uapi/linux/media-bus-format.h
+> > +++ b/include/uapi/linux/media-bus-format.h
+> > @@ -32,17 +32,18 @@
+> >   * new pixel codes.
+> >   */
+> >  
+> >  #define MEDIA_BUS_FMT_FIXED			0x0001
+> >  
+> > -/* RGB - next is	0x1028 */
+> > +/* RGB - next is	0x1029 */
+> >  #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
+> >  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
+> >  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
+> >  #define MEDIA_BUS_FMT_RGB555_2X8_PADHI_BE	0x1003
+> >  #define MEDIA_BUS_FMT_RGB555_2X8_PADHI_LE	0x1004
+> >  #define MEDIA_BUS_FMT_RGB565_1X16		0x1017
+> > +#define MEDIA_BUS_FMT_BGR565_1X16		0x1028
+> >  #define MEDIA_BUS_FMT_BGR565_2X8_BE		0x1005
+> >  #define MEDIA_BUS_FMT_BGR565_2X8_LE		0x1006
+> >  #define MEDIA_BUS_FMT_RGB565_2X8_BE		0x1007
+> >  #define MEDIA_BUS_FMT_RGB565_2X8_LE		0x1008
+> >  #define MEDIA_BUS_FMT_RGB666_1X18		0x1009
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20251026    gcc-13.4.0
-arc                   randconfig-002-20251026    gcc-9.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                                 defconfig    clang-22
-arm                         orion5x_defconfig    clang-22
-arm                   randconfig-001-20251026    clang-22
-arm                   randconfig-002-20251026    clang-20
-arm                   randconfig-003-20251026    clang-17
-arm                   randconfig-004-20251026    clang-20
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20251026    gcc-15.1.0
-arm64                 randconfig-002-20251026    clang-22
-arm64                 randconfig-003-20251026    gcc-8.5.0
-arm64                 randconfig-004-20251026    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20251026    gcc-15.1.0
-csky                  randconfig-002-20251026    gcc-9.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20251026    clang-18
-hexagon               randconfig-002-20251026    clang-22
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386                             allyesconfig    gcc-14
-i386        buildonly-randconfig-001-20251026    gcc-14
-i386        buildonly-randconfig-002-20251026    clang-20
-i386        buildonly-randconfig-003-20251026    gcc-14
-i386        buildonly-randconfig-004-20251026    clang-20
-i386        buildonly-randconfig-005-20251026    clang-20
-i386        buildonly-randconfig-006-20251026    gcc-14
-i386                                defconfig    clang-20
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251026    clang-22
-loongarch             randconfig-002-20251026    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                         bigsur_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251026    gcc-8.5.0
-nios2                 randconfig-002-20251026    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251026    gcc-12.5.0
-parisc                randconfig-002-20251026    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                     mpc83xx_defconfig    clang-22
-powerpc               randconfig-001-20251026    gcc-13.4.0
-powerpc               randconfig-002-20251026    gcc-8.5.0
-powerpc               randconfig-003-20251026    gcc-10.5.0
-powerpc64             randconfig-001-20251026    gcc-10.5.0
-powerpc64             randconfig-002-20251026    gcc-12.5.0
-powerpc64             randconfig-003-20251026    clang-22
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251027    gcc-13.4.0
-riscv                 randconfig-002-20251027    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251027    clang-22
-s390                  randconfig-002-20251027    gcc-8.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                        edosk7760_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251027    gcc-12.5.0
-sh                    randconfig-002-20251027    gcc-15.1.0
-sh                           se7343_defconfig    gcc-15.1.0
-sh                           se7780_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251027    gcc-12.5.0
-sparc                 randconfig-002-20251027    gcc-8.5.0
-sparc                       sparc64_defconfig    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251027    gcc-14.3.0
-sparc64               randconfig-002-20251027    gcc-15.1.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251027    clang-22
-um                    randconfig-002-20251027    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251026    clang-20
-x86_64      buildonly-randconfig-002-20251026    gcc-12
-x86_64      buildonly-randconfig-003-20251026    gcc-14
-x86_64      buildonly-randconfig-004-20251026    gcc-14
-x86_64      buildonly-randconfig-005-20251026    clang-20
-x86_64      buildonly-randconfig-006-20251026    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251027    gcc-12.5.0
-xtensa                randconfig-002-20251027    gcc-10.5.0
+-- 
+Regards,
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Laurent Pinchart
 
