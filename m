@@ -1,105 +1,173 @@
-Return-Path: <linux-kernel+bounces-870271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4C3C0A561
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:20:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77697C0A567
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6EC33AE41F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368C93AE370
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B9B246BA4;
-	Sun, 26 Oct 2025 09:20:29 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FCF21FF3E;
+	Sun, 26 Oct 2025 09:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l3gsmR9x"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC7E29CE1;
-	Sun, 26 Oct 2025 09:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCE629CE1
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761470428; cv=none; b=sVpCoS+Y7sF6ji27N7RGu2vKfazd2tovYcMY66hb6ZXpt36Lq9XPo6whfyi9IVF+DBxHDWLc3WEAFdrSkBKWL3sYAzQs+/zhomPAnAi/BCO8r4IK6h8KLmiVad/rhO4Irf1V5AnSt2UFgehnsgkzqRBWUWg/NF7woHMqPSt4NPg=
+	t=1761470476; cv=none; b=meRkkHgd6vn78f6RmOzDogUIkyqF4A1T03/pZSjw17hgP3ed0p7oOp0BGElA5lftj/JRncoGqYkqvvdIyF8rrMvk9//jporeeQjDA+7BZkKnfKOYIE1rfNm30QViXB4BbgPi0bv6iFQ1ZfzIPJp+waakxMHaQ4yX84zfXKv8fN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761470428; c=relaxed/simple;
-	bh=pm+w35RRQqugC7LYqKdn/s8gmhqaCcoLYgXqWUd7GS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSfNirCzBjmtEBPEuxWVpOSWXzVT1rvSMyZYraECymylju/EFpaFBRjVAHXNITUpqq9XSxiYTc+w/BhJgtVnq1OKa4HosELf5QLgQktUUD7UBiMdlk3GQEMOka2Z+znAgthaHeN0DuTXkfX2CXugsjLKFpu4igtdpuLk5qo/w6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id C66592C06404;
-	Sun, 26 Oct 2025 10:20:17 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id B15714A12; Sun, 26 Oct 2025 10:20:17 +0100 (CET)
-Date: Sun, 26 Oct 2025 10:20:17 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] keys: Remove unnecessary local variable from
- ca_keys_setup
-Message-ID: <aP3n0Rn0UMW3_rj9@wunner.de>
-References: <20251023143231.2086-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761470476; c=relaxed/simple;
+	bh=dHEHOymarxJ/E4vwUwZ7VqcbQbmE3K9lR7MOM/cFS6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tRG1JMYNusDOO5dlajAEVb/RMvX0XnZnLj2HY0CMYs9PuHKCA/dcWY887MldKQCJfXe05qwGCIsy4kRA55PqJLo9/wteCMUpWroSadM/8M4CB6wz1owPX1vGRECQGEmZiIYm2JFQqxSODuEAhJlNrQpgXI+cC6nNw338ugAQ6EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l3gsmR9x; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e2757988-63af-4ace-aed7-f8708f52fe93@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761470461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BZ1mNPfVmr+XRghn4SL9a6fm6IEVj1GhI2L8kZHAyYQ=;
+	b=l3gsmR9xIiAg847MttOGph3kwu5xKTlyUwYQaaiW5A18UoTmeovapDmkJZ6pOMImA36WRi
+	yg8brkK7qDmY1o7mwW1a57Uti7OTSVbWU0Kp4Db3CiV3dp2X+As6Blaj0oT0cSHPEOHLg8
+	BGoHDNctZFtUtCbn8/FHPC23jUqdChw=
+Date: Sun, 26 Oct 2025 17:20:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023143231.2086-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH v3 07/22] smb: move some duplicate definitions to
+ common/smb2pdu.h
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org,
+ smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org,
+ tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com,
+ sprasad@microsoft.com, bharathsm@microsoft.com,
+ christophe.jaillet@wanadoo.fr, zhangguodong@kylinos.cn,
+ linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ChenXiaoSong <chenxiaosong@kylinos.cn>
+References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
+ <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 23, 2025 at 04:32:31PM +0200, Thorsten Blum wrote:
-> The variable 'ret', whose name implies a return variable, is only used
-> to temporarily store the result of __asymmetric_key_hex_to_key_id().
-> Use the result directly and remove the local variable.
-[...]
-> +++ b/crypto/asymmetric_keys/restrict.c
-> @@ -29,15 +29,13 @@ static int __init ca_keys_setup(char *str)
->  	if (strncmp(str, "id:", 3) == 0) {
->  		struct asymmetric_key_id *p = &cakey.id;
->  		size_t hexlen = (strlen(str) - 3) / 2;
-> -		int ret;
->  
->  		if (hexlen == 0 || hexlen > sizeof(cakey.data)) {
->  			pr_err("Missing or invalid ca_keys id\n");
->  			return 1;
->  		}
->  
-> -		ret = __asymmetric_key_hex_to_key_id(str + 3, p, hexlen);
-> -		if (ret < 0)
-> +		if (__asymmetric_key_hex_to_key_id(str + 3, p, hexlen) < 0)
->  			pr_err("Unparsable ca_keys id hex string\n");
->  		else
->  			ca_keyid = p;	/* owner key 'id:xxxxxx' */
+Hi Namjae,
 
-Quite honestly I don't think this change constitutes a worthwhile
-improvement.
+I'm confused by what this sentence means: "I prefer moving it when the 
+durable handle structures are moved to /common later.".
 
-Those "if (ret)" checks are everywhere in the kernel, it's a pattern
-that developers have grown accustomed to and immediately understand
-when reading the code.  If it takes an extra variable declaration,
-so be it.
+What does "it" refer to? Does "it" refer to the whole patch, or only to 
+"SMB2_DHANDLE_FLAG_PERSISTENT"?
 
-For people (like me) who frequently have to dig in the git history
-with recursive "git blame", changes like this one make life harder
-because it introduces an extra step when trying to understand from
-which commit a particular line of code originated.
+On 10/20/25 12:52 PM, Namjae Jeon wrote:
+> On Tue, Oct 14, 2025 at 4:21 PM <chenxiaosong.chenxiaosong@linux.dev> wrote:
+>>
+>> From: ZhangGuoDong <zhangguodong@kylinos.cn>
+>>
+>> In order to maintain the code more easily, move duplicate definitions to
+>> new common header file.
+>>
+>> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+>> ---
+>>   fs/smb/client/smb2pdu.h | 24 +++---------------------
+>>   fs/smb/common/smb2pdu.h | 24 ++++++++++++++++++++++++
+>>   fs/smb/server/smb2pdu.c |  8 ++++----
+>>   fs/smb/server/smb2pdu.h | 17 -----------------
+>>   4 files changed, 31 insertions(+), 42 deletions(-)
+>>
+>> diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+>> index 101024f8f725..c013560bcfa1 100644
+>> --- a/fs/smb/client/smb2pdu.h
+>> +++ b/fs/smb/client/smb2pdu.h
+>> @@ -135,11 +135,9 @@ struct share_redirect_error_context_rsp {
+>>
+>>
+>>   /* See MS-SMB2 2.2.13.2.11 */
+>> -/* Flags */
+>> -#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
+>>   struct durable_context_v2 {
+>>          __le32 Timeout;
+>> -       __le32 Flags;
+>> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+>>          __u64 Reserved;
+>>          __u8 CreateGuid[16];
+>>   } __packed;
+>> @@ -157,13 +155,13 @@ struct durable_reconnect_context_v2 {
+>>                  __u64 VolatileFileId;
+>>          } Fid;
+>>          __u8 CreateGuid[16];
+>> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
+>> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+>>   } __packed;
+>>
+>>   /* See MS-SMB2 2.2.14.2.12 */
+>>   struct durable_reconnect_context_v2_rsp {
+>>          __le32 Timeout;
+>> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
+>> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+>>   } __packed;
+>>
+>>   struct create_durable_handle_reconnect_v2 {
+>> @@ -263,22 +261,6 @@ struct network_resiliency_req {
+>>   } __packed;
+>>   /* There is no buffer for the response ie no struct network_resiliency_rsp */
+>>
+>> -#define RSS_CAPABLE    cpu_to_le32(0x00000001)
+>> -#define RDMA_CAPABLE   cpu_to_le32(0x00000002)
+>> -
+>> -#define INTERNETWORK   cpu_to_le16(0x0002)
+>> -#define INTERNETWORKV6 cpu_to_le16(0x0017)
+>> -
+>> -struct network_interface_info_ioctl_rsp {
+>> -       __le32 Next; /* next interface. zero if this is last one */
+>> -       __le32 IfIndex;
+>> -       __le32 Capability; /* RSS or RDMA Capable */
+>> -       __le32 Reserved;
+>> -       __le64 LinkSpeed;
+>> -       __le16 Family;
+>> -       __u8 Buffer[126];
+>> -} __packed;
+>> -
+>>   struct iface_info_ipv4 {
+>>          __be16 Port;
+>>          __be32 IPv4Address;
+>> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+>> index f79a5165a7cc..25e8ece283c4 100644
+>> --- a/fs/smb/common/smb2pdu.h
+>> +++ b/fs/smb/common/smb2pdu.h
+>> @@ -1290,6 +1290,10 @@ struct create_mxac_req {
+>>          __le64 Timestamp;
+>>   } __packed;
+>>
+>> +/* See MS-SMB2 2.2.13.2.11 and MS-SMB2 2.2.13.2.12 and MS-SMB2 2.2.14.2.12 */
+>> +/* Flags */
+>> +#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
+> I prefer moving it when the durable handle structures are moved to
+> /common later.
+> Thanks.
 
-And so changes like this one which are merely motivated by personal
-stylistic preferences become a net negative.
-
+-- 
 Thanks,
+ChenXiaoSong.
 
-Lukas
 
