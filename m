@@ -1,299 +1,242 @@
-Return-Path: <linux-kernel+bounces-870206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BC4C0A2BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:55:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E45BC0A2BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B90334AD11
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 04:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9422189BA24
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 04:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E64F17BA6;
-	Sun, 26 Oct 2025 04:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C852594B7;
+	Sun, 26 Oct 2025 04:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7PMOEXR"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Hn6ZiP3M"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011067.outbound.protection.outlook.com [52.101.62.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACC6258ECE
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 04:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761454551; cv=none; b=J7aVeNUAvdToFJ/piU1tE/LqjHfK35E6WtWac3XJ+chOXzPJZsm911lU3pz4G+EhjBVD+l8zUkOjvo+WqzpdrzNG9h2sgdi27GChOI5W7+CBc5RVbJc5NzFJWDI9aMrNfwlPQ4FH65kXrtXBlwxdQWeZvTRUpgtW2kMcFi0MJsU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761454551; c=relaxed/simple;
-	bh=ABYH4V+pRu87+wKNK9R9g/m9KLGynD3ygc6mDpRpy/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GIn9/dZMgqM3QeW7qejNOeQyuASv596D6aNFMWTpx5MTKn6U4oICNtJsXaSz2ogJKwJWovVhSXim/EjbR9lWRcH3YHgZndxmPG9vJZWI6+O5pXbp3yPNc28MSabDDCBgxsbbUq6bpWYZUeNo4wCT4aBRQerTLAVH7JTuJLryyNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I7PMOEXR; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-78ea15d3489so31000466d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Oct 2025 21:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761454548; x=1762059348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HgU2jlNzIRT+Gs0Wufj5JnrZE9nnyyOZY0imGkHnrgI=;
-        b=I7PMOEXRaeP6gwDE3yExswKiBYqmtr3vYNH1B7svQDs4RdoCfmpVuYJ/jVS72kGAlX
-         MbDmff6CjZ9MIvCvxwycD55wUIJtzLQsY4GJznZ8qVgMNoDM0wAW0dBgIYppR4m7PW3r
-         Nu7BfRhmY1vt+m+2go5gKv5EQL/FKEo/W4A5edHC9YEpvmm97eY/D1846vIrbk/QP3vI
-         W9p5Yze/8t7U+X7vJDN+vw2xgnotcM719G01iZYEkE0H6/6ajAx1rVpOlJeQUJLtdEDS
-         RHLk6O7NK20PK2YWzTTdu0FhQhqFZPS75H4W8g+pvZgZ3yBvsAj6crzU1LN3HyCWvshL
-         yW6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761454548; x=1762059348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HgU2jlNzIRT+Gs0Wufj5JnrZE9nnyyOZY0imGkHnrgI=;
-        b=XRw2yiNnF6NgvQnzdrZe0bQ7wRq/h/pLM+V00IpIoQvc+1m06jtli/9RWHuzO//TLS
-         6rCT+WXLxSLUkWwNct0+jQCc+dELWE02v/0xy+CA0xoAnzljP42qY3UQaad6RX//sv9p
-         PMhOAldSkJM74kxqXm2lf7XpTyedVXL9IrGXM+iBOguJpAUczXujx1/os8RMUClQ28h0
-         oW16ZTezcZZ0Ne9bUt2/GOuaR/9qbDEcLrCMBVfMY89s0O1QIJi7ftKNcMjq6wb0JIgV
-         RUYwueKOTCIj5cV5aYqkw8UrxpU64QhX4/MAW+4jc5FaHs7Qp3eVbai8jdhK/GYgvXGs
-         RJPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvoINJr0UO9IeAGcExP3M0pgkQzMpyZJNcH07I+DOfMWhTHIZTTC+JdJJe6bXzSk6UBUwmOfMfQ95WHOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUGZN/fbUsbVaEsuebtMpD0Hl3QaJzmV8Ls5+jTNDh437rM3xu
-	t09v9gqRq97rzyBP1sFZ+IRiyeFz6lpecPHGqQtKVQ3Z9mMnFylbWZlfu1ymp7j+Hgvd2iE2Lj3
-	JdNIZJVh66CxdjPkxXDq0EJIPaits5VI=
-X-Gm-Gg: ASbGncvND7L3TWolbSjC+LeSVepxgbYYHWxPtaUfZEtieeVmCX5jTReinoJ/+FowFKH
-	6AWP8sw8zFJrH8oQi6oiBYXineE8oGNtz/WhoQOGWU9marmFn+VjlZupd4RHTcowLm7ZwhQ68QZ
-	2yZdPVA4azWKpDNiQdVup0cBFRZDqm91mzlRlUy5jctaHwgPJVFIYEFpBciX+0rkyi6APQae8Pb
-	FB9maNFLInH72XaWTIyc6BPFschB7Zpz2DXk8cIjE5DfKi3gmeSwUsnVfEzrrl2ibX+sfcP
-X-Google-Smtp-Source: AGHT+IGNdbbIW5Y4wifswNmspmg9VMlv68g0YdMBe6cDt/hhtuqAEJjANxFJ8pxMPtLK9p5JasumB40TZptvnTTCFjs=
-X-Received: by 2002:a05:6214:262d:b0:87d:cb8d:2a8a with SMTP id
- 6a1803df08f44-87dcb8d3223mr338355326d6.21.1761454547636; Sat, 25 Oct 2025
- 21:55:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6005217BA6;
+	Sun, 26 Oct 2025 04:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761454543; cv=fail; b=h9Llj7S9A5lEjlkllhEo8jL7/Wv78WVM4ctBksXkLQYPO/weSge8KmH/kgNq4zW+TFiiBQ4K6WePPyTAM/64fV4M9/HuQQBprPeEMFjs+ILhbTZg1Teo7ClSrtm4TB0QilNVgOD4SfZxf0lLJIMZAmmbvzLkG5HPQMX+QyXBfNI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761454543; c=relaxed/simple;
+	bh=UZSV2fmNegJTEjlaSB/zYpW/Lgib3JTvo3II0tIQQSI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=a1KV4fgkrO6JM5cERAFPk0t5lDfxusyHh/aeqBK45S5J2Ov7kaoYMFHI9AWAz0NaJDLGB5Be08BtpbtKSN/kn4BGl6dd/XXkyH5FFTMP5qzglQUOAQIp90K09s+J87mBa8dvqaizH3wM3E2SBxmmGKaWUELk+G0iuQMvxbvDNE4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Hn6ZiP3M; arc=fail smtp.client-ip=52.101.62.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vkGpTFKqJAorrOe+P3+5pLtAlrKCAlcn9ILwdLQU/s8vl9uKqnTDXHm85d0G0Z3NFWE+O3XGlz/l79mhJKqSZDfIVs0fy1jWAOHO2l6S9GYsHDthA5OC5sHJGjAY6nY5IPgJgS/r2uk7sm3gR4a2dxt/vT16ozTXpUYlVJFpFQjeVMxNdZIzPWPOvK9BRgY/7bTgFOFTS8t7XNj01BvnW446Fwf7Go4iJTptMWzd2GHr5Xx7V9VZHVbFSNDO1KKhJZZ5fDgZxBPkzW0LDaR9K17mUgU7cpyZavMx24+wy57Y3zoFAxR8mZVXLaYqHu65pgcegPOfYlwtWhBnfbee2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UZSV2fmNegJTEjlaSB/zYpW/Lgib3JTvo3II0tIQQSI=;
+ b=tV9DdSCx17bOAoX9pWGNCetN0aA0AdgU5jQUCvOqZjxT25IUk81mQlKqxDDaFNkkm1G7CcY04I/XmeuQC+V+V7ET3WH2hfCaYuB4LruQp7mmeMaUi7h6/OZtJecMdaqIwC3ziMez1eGdkunNcdtgq0RMSslFmW+T/onGRcWeQODFG3HE1HXhQXY8PFc7OQnWQqJAasPbhl2pIyPWy50ee36XT1jDssAVC317rr+Yi6Qy3aSXeb1nvh7R4GL9BTV2YbKZp/OE8BNm1ugnGUMd4TZuNPYsNmOgeMFbzzkH5/kRdufcPQ++ZncFVW/+HYeUtJd7/fZ/p2O5U5+GMe8z6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UZSV2fmNegJTEjlaSB/zYpW/Lgib3JTvo3II0tIQQSI=;
+ b=Hn6ZiP3MUh+6fFAglSjFqWMkRPStVHZR1XLM7AIF45CH3HhudWjRUXE+PQHuXDMdR7QV8bZsFggkE+z+tKeFUgpDhUtb4DTRkeVCklkR7xS3Qp2kEzyaZhA/he1jLpHGhRPUN5BO8cOUhqpW/o2/7u5XrGHwCb5UcTB43Y0Ru+9TX0MonQE75T29QebjfZCe/KxQKYE5zry5XuYIW3u87LQDasz+UKwLF3C/76CyU2SDKgBVQ47G6cVNH7XdRrbfxE8zc/X2X/O7CXz0hL9WHYv+z128UQuJ+yZOnDqUbdQ+3F53kBqyLpspA5FzgjbvsTeCxEAPWfhw8YMUYGLCdA==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by DS0PR12MB7654.namprd12.prod.outlook.com (2603:10b6:8:11d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.16; Sun, 26 Oct
+ 2025 04:55:38 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9253.013; Sun, 26 Oct 2025
+ 04:55:38 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+CC: syzbot <syzbot+153e64c0aa875d7e4c37@syzkaller.appspotmail.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>, "rostedt@goodmis.org"
+	<rostedt@goodmis.org>, "syzkaller-bugs@googlegroups.com"
+	<syzkaller-bugs@googlegroups.com>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [syzbot] [block?] [trace?] WARNING in __blk_add_trace
+Thread-Topic: [syzbot] [block?] [trace?] WARNING in __blk_add_trace
+Thread-Index: AQHcRTuRuF4tdLmizk2cNOZ+I1QUsrTS3e4AgAEBJIA=
+Date: Sun, 26 Oct 2025 04:55:38 +0000
+Message-ID: <cc31bf15-5c9e-43b5-9615-2475aebd1d53@nvidia.com>
+References: <68fc07a0.a70a0220.3bf6c6.01aa.GAE@google.com>
+ <c4ea8d7c-e449-47d6-b4a1-54fdbe86ba01@kernel.dk>
+In-Reply-To: <c4ea8d7c-e449-47d6-b4a1-54fdbe86ba01@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|DS0PR12MB7654:EE_
+x-ms-office365-filtering-correlation-id: 2849e581-a39e-4c9e-a27b-08de144be820
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?aTJxdWN0QVFJSVBxQTFuTVZENHZ5WmljZ2VMais5NDZwdU9PWHAra1g0MnNN?=
+ =?utf-8?B?Ry9Ib3ZqQW01NHZzN0xQVnBZN0RGVUJCYlMzT0d6SU5OVG5FQ1BUazhieXU4?=
+ =?utf-8?B?amovWVQvcCt3S0VXeHdTSTdzWllXam9ROStrSHYvT3lDeWhvNFJaUkdHL00x?=
+ =?utf-8?B?WTJIZFArNE9sUGJ0UzBObkRCcHFxamVJTHJYaHZHdjhWQWRWMWdHU2xDMjQx?=
+ =?utf-8?B?M2s0d3RQVWxrcmVNS2lqR1BWM3hMTzFKQUMxYVc2V3NDd1VtTjl4bStMUmk3?=
+ =?utf-8?B?SnU4Ymtybm9mOTd6czU0Q2YrWi9Nb3RxcFNLZEhJZmJEbHhhK2xIdTNua2c3?=
+ =?utf-8?B?Sloyb2hxRG0vTG9GcnRUR2ROcGkySGViaFpiVTN4ZWhDR1pyNklybHpOa0Uw?=
+ =?utf-8?B?NTY4eXhoUDBtb3BPTmwxbk1BaTlkU3MxdGtZQmpkelJFNGlPVXNJbk82UU9V?=
+ =?utf-8?B?K2F1ZkdjZ25FMXhqT1dDSUVZd1EyT2NBaVN0elZRbkZ1TXBpL201bjQ4Q1Nh?=
+ =?utf-8?B?ay9uQkI4Z2wySHZRelhoU2RrbkVqQ1BpRWs2MmFEaWUyVFNKaEtxTGdVVGZk?=
+ =?utf-8?B?cG5UWm5nTjllVzN2dnFKMDhIb3o2YWQ3N1IrcGpOKzEvWXJiQjg4T0N4VnBx?=
+ =?utf-8?B?TUc5R1lpTnF1aldyRXJoNk4yK25Dc3JYNTlld3h4UjhsUzI1NFhQdkZMR0d2?=
+ =?utf-8?B?d2E0ZzZtRDY2NVE0U1VuSkUzZ0R5YUtKb3FZZWVUMThuNGpqV3FNbUxBeFor?=
+ =?utf-8?B?Nkx1ODhadWdGaVJuQVhOckhRVVVlenRzdGRNVEorMm9XS3hSMmRxS2JUTnNm?=
+ =?utf-8?B?YXJ3aUdvVDVmd25RQ0QrekJpWEI4RW1aRDJVaE5PQlVySWxwUC9renk1NWww?=
+ =?utf-8?B?ZmNLRDJ3QzRicVFZUDRKSlZLdEhON0VWL1A1elRTb2c3SEdOR2x5RGxyUmJP?=
+ =?utf-8?B?em5ZVlZCb3d0N1YyYnVkZnhON3dNVzkwTHNjcDYzOGJSdGQ0V2owT0NiVFFo?=
+ =?utf-8?B?UTVsL3B4c0FaTDA2VFl4K0hUK1JZbXJqYjg4SzBWbFMyUWhRWDNOYkRsa3M1?=
+ =?utf-8?B?RWUza1FNZVhuaVl0anFRb0sxU2o5emYxNGFObThlQ3NlclJhTjdmTFJFMXRI?=
+ =?utf-8?B?TmFtVzZ1eSs0QWVCSWkweTlHRVl5cmxQOThjakJnUE1EUDFCQXpFR25jaHBX?=
+ =?utf-8?B?aFRWMmtLeXlxRXVmV1FOSDNSOVluYW0rT0J1cTBtNTkzNXgwakRTN2RrK0Fm?=
+ =?utf-8?B?STdtRjM0U1ozRHZaQTBIRGRnUGN1K2doSmdOZ2RqZHlKYXd2cE9rME83bksv?=
+ =?utf-8?B?ZmxlU2JKUUNBZG5xRVJoeWQ0TWNFVVlQS0R0SmJNUGNWdVNNbGd1bDJsRU8x?=
+ =?utf-8?B?WnZxRmZlZStXN1h1Nk94KzE1RzdnN2g4VmtBSFp4ZjQxNnBrN05VQklsK0Ey?=
+ =?utf-8?B?aXVjS2RNNUVBZDRycElZQThjTmNyZW43UmJEY1U4MEduWFk3RUpGWnJjVDEv?=
+ =?utf-8?B?eHpWQW44OHhDQnVMWWpZYlN1TFhXOGNJL211OGZnLzJTdHM2NktlMmROWGFK?=
+ =?utf-8?B?SUtvNW9OVmVDUm1nSXZ2UHVqa1FNNk9PSEs5azcwSFBYZTNXeFNXdzhUZ1pC?=
+ =?utf-8?B?d0JyZHZoNEh6MDhrck9KcFBwSURRQytkb1BIN25VVXFmSUQ2bnI3QjVvVFhY?=
+ =?utf-8?B?ME1zMmMrejZITi83WEVLSnM2d3lUZnYxVWlOa3dZT1RQLzd1ei9pcjNtbDNa?=
+ =?utf-8?B?UkpJb3dzVTR2d3RmMnhKQllsYnhYM2hiT1ZoMi9ReHBZbGo4WElNRzNHL0xh?=
+ =?utf-8?B?N3h2Tmh6Ym1UWnlHellkZnBiZ3pKRjlsRTgrbUxMeEdGR3VKYUNsWnJ3emE3?=
+ =?utf-8?B?eStDYXVORWRSSEZsK2hyRGoxOUxqc3lZRFU5ck5vZDhqNHBia0ZZZFMvaU93?=
+ =?utf-8?B?SnJGekpUckorVFpDWlZsRElMUGQvN2JSWFBJRkg0My9LRHpxd1NUY2ZvRlow?=
+ =?utf-8?B?UUFTTW0zU1ViQXN6ZnFYdytMbUVUQXJuZkxjL0tZWVRSWEpiTjVrUGR4dWF2?=
+ =?utf-8?Q?adPYZ4?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Q0JXQTVYb1pZaW8vck56VWZyUkhXQ0hjZWI2eldNbGV1MUo0REowK0dOYUg4?=
+ =?utf-8?B?MWZCMXIwV3l3WXYzbzI2VHJWNzJsZ21XT3dOR3lZL1BUeTBjdmlhQUVyK1lY?=
+ =?utf-8?B?a1lYcDUvdERqOExUYTdibWN0TUJnaWFRSVNJeHpPUjY4OEp3N1FqaFhwVFI5?=
+ =?utf-8?B?VlpZdEZPL2F0KzJqL2JtVEUvYWJBL1VWV0Z3NkwvcUM1WTh0eTE0WWJxaDZD?=
+ =?utf-8?B?d2h1UGsyQVUxd3pUSnMySG02emRjYzJoWWJnc2FsL0RTUUZzdGtCVjBHc2Jl?=
+ =?utf-8?B?dzV1SU1zTEx5ODgrenpYOUF5TEhkVi9VSUo4YUV6MTlteHZmWFJFalFMczEz?=
+ =?utf-8?B?WFZ6OFNFWXJpbUN1a2NhR3kwRzdIK3FndUw0WXNpM3Q5OFc4bU1nTUpaM0FM?=
+ =?utf-8?B?ckhNZE4reFlrMzRwWHVvd3ZId214MFNzd20rNjlIRWhLTzhGbjgrZ3gwRlI3?=
+ =?utf-8?B?M09MRitYY2FvTlkvbUJBd2xrdG02Uk5pNzRxeTRDSUMwaUhsVVhhU1haZnpX?=
+ =?utf-8?B?ZVhkb1RRZ3JaUTlDTjFDR2tqK1h0dGhTSzkwVXVFRHVqL0djeUd4Z002NURv?=
+ =?utf-8?B?a0NNbUlLU2NsSTBvdERGL2tVQTZNN3BKY1lDMU5qdENBL2FNakVpTk83aXVs?=
+ =?utf-8?B?U3FydzFXTGxEMEhMMUdCT25samh0ZHdQeDQvb28rU2ptbVY1V2ZQWDdpSkpt?=
+ =?utf-8?B?cTFuRmtYM3NXbVo0c0FWVTMvamdoclNPY1dBc3BwNWRDMjczODM2ZlEwUXZo?=
+ =?utf-8?B?Vk5acHJ1dVlrQ29HMTFFazVpSHhLNjJSK05RZ1B0NEFScm5ETitSZ3I0MTVk?=
+ =?utf-8?B?VWgwUmhobmp6VFBSeXpvYWIzcGtNekVHYWw4cWJ6UzgvdytkN1BYak4rRC9E?=
+ =?utf-8?B?VlFmMVkzU0d6d2FFd0hXMC93ZU41ZUxXTFlLOG9MS0lOUmQxQ2pmOTgyejJK?=
+ =?utf-8?B?TmdJbHpobXprRGFkT2JTcG0rbmd0YkgwdkJUVlNqR3BLNVB4b25jdVpLUFkr?=
+ =?utf-8?B?NTlpWGRoWk41ejN6SUZRTWFISEJJajduV3NjTGVEMHd6bVNTc0hvbzNaRGV6?=
+ =?utf-8?B?YU82NWcvMTdrelZYbVVlQUZTMFlWdXFUK1VvbmVhRWI2MTBKamNkY0Y0WEU0?=
+ =?utf-8?B?WEMyT2w2N3ZvTjVjOXZtM0lYYmlOd1ZxZmJ6TTZNVmtXZ3U1OFAxSytLQzNk?=
+ =?utf-8?B?a3ROT0dmZk1zT0pKdkd3Ym01UkN4VWFRWlF6SmRVdnljTUZIczYzSVZ2WTEv?=
+ =?utf-8?B?TlNTTkczV1JZNURNaEsxbjNyOUhtbmJCWFhzMS9SNXV5ZXk1NW04bFMvVS80?=
+ =?utf-8?B?R0JTL2N1NzIrdDhhQ0lWdkMwL1F3Vzd2aHVIOVppcEJDV1hOZnZzNHdMUEtw?=
+ =?utf-8?B?Z29ZeFU4Y3p3L3lCTGFsRVV4ZEpkcDRucWFDMks2NnpFRTE0K3JiWFVhTzBM?=
+ =?utf-8?B?VGJqWGk1ZEQ2MWFaRXl0QW9BcTArRlNGVTg0VnVvaHJzTzhPbkVjT1pDSzBx?=
+ =?utf-8?B?S1FjN28wMjZFS0prNWpFT09lTWNLTVUvd2lrVXR3Z2JnOSsyc2xDTTNxaTM1?=
+ =?utf-8?B?MUdBVjBtVUNtaGVDYW1NL1lrTGhoSThhMGxsZlNuRkZ1OVJhdER3TFhlR1h0?=
+ =?utf-8?B?a0VmcXFqYldSZFd1c3FOZVJrRlhaeHZweHdyd0szTC8yMUtYUjVyQXRMTmFr?=
+ =?utf-8?B?TGp1NG5LaG5DbW1OUjV3MkVtSktRbkdKTERjaEtPSzRGZVRqS2Jhd2N6bkZx?=
+ =?utf-8?B?SDNIQk53R2orYjhYNm5HZmlwVGJrODR1NDRBWnlrekxJaWhxV2NaNmYyY1d2?=
+ =?utf-8?B?R2NkQ205ZlZjWExTZEJwNk9oVlI3cmp2SllLdGJraXJ5RStQL0RnL1cxaktk?=
+ =?utf-8?B?YktHekpWZzBMMURJR2ZnWG5sSHhCdEx6QlVKTTc5SUlwejlwQkFBeGlSekYv?=
+ =?utf-8?B?UGJuc2huM2lIbENhOE1Ucms2ZlU3OUMxcTBNRWlOZ0NvUFpWZCtJTjJWZ3Jt?=
+ =?utf-8?B?TWlzZWpNRWNjcHNicGVjd2wyVElveFpkclBTSUszb1VDOWhNMllIWk1yM1dU?=
+ =?utf-8?B?QXd0bTlJR2pwMVpZTGVBbUs3WVN5TWNKVkZTTUw1U24zVDlnZExKMkN2TTBo?=
+ =?utf-8?B?QldRajJ0aDdML2U3dkhLeUNRWXdmY3Jzc3FMSDNDZXhiWHNONlk3c2xIeUlJ?=
+ =?utf-8?Q?rPCHktbakqHhYwkRtswJUyf2yNKf6fhbKUrMJoCNYQ6Z?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A8D39B2713E9E64E89E9B893044706F2@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251019210450.88830-1-i@rong.moe> <20251019210450.88830-4-i@rong.moe>
-In-Reply-To: <20251019210450.88830-4-i@rong.moe>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Sat, 25 Oct 2025 21:55:36 -0700
-X-Gm-Features: AWmQ_blorlCWqUh9Ix9FfXfBqLoJMJJkhFqXYbIp_x2-MJkysBYS4xkunmDWwhE
-Message-ID: <CAFqHKT=bMLHvkcohaSNSUqxSkeFg_7aZxMVpBSbWqtsOeuT7rg@mail.gmail.com>
-Subject: Re: [PATCH 3/6] platform/x86: lenovo-wmi-capdata: Add support for
- Capability Data 00
-To: Rong Zhang <i@rong.moe>
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>, Armin Wolf <W_Armin@gmx.de>, 
-	Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Guenter Roeck <linux@roeck-us.net>, platform-driver-x86@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2849e581-a39e-4c9e-a27b-08de144be820
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2025 04:55:38.2700
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: X9ZztqD79CWThd5QtBIjbcrW0b3gqSq25LKZ7RO1EOl+70xgOnop6o/5dqXxkHPWltaE6s8IEqhghlsOkaI0UA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7654
 
-On Sun, Oct 19, 2025 at 2:05=E2=80=AFPM Rong Zhang <i@rong.moe> wrote:
->
-> Add support for LENOVO_CAPABILITY_DATA_00 WMI data block that comes on
-> "Other Mode" enabled hardware. Provides an interface for querying if a
-> given attribute is supported by the hardware, as well as its default
-> value.
->
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> ---
->  .../wmi/devices/lenovo-wmi-other.rst          |  8 +++++++
->  drivers/platform/x86/lenovo/wmi-capdata.c     | 23 ++++++++++++++++++-
->  drivers/platform/x86/lenovo/wmi-capdata.h     |  8 +++++++
->  3 files changed, 38 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/wmi/devices/lenovo-wmi-other.rst b/Documentati=
-on/wmi/devices/lenovo-wmi-other.rst
-> index d7928b8dfb4b5..adbd7943c6756 100644
-> --- a/Documentation/wmi/devices/lenovo-wmi-other.rst
-> +++ b/Documentation/wmi/devices/lenovo-wmi-other.rst
-> @@ -31,6 +31,14 @@ under the following path:
->
->    /sys/class/firmware-attributes/lenovo-wmi-other/attributes/<attribute>=
-/
->
-> +LENOVO_CAPABILITY_DATA_00
-> +-------------------------
-> +
-> +WMI GUID ``362A3AFE-3D96-4665-8530-96DAD5BB300E``
-> +
-> +The LENOVO-CAPABILITD_DATA_00 interface provides information on whether =
-the
-> +device supports querying or setting fan speed.
-> +
-
-There is a lot more data provided by this interface that hasn't been
-implemented yet. To avoid having to touch this too often I'd prefer if
-it were formatted similarly to the 01 interface where the opening
-paragraph is generic for the interface and the specific features that
-have been implemented in the driver are listed below that. From
-documentation, the 00 interface seems to deal with enabling or
-disabling  various hardware features that don't rely on the gamezone
-thermal mode. I'd also be okay with specifying in the change that 01
-features do rely on the gamezone thermal mode.
-
->  LENOVO_CAPABILITY_DATA_01
->  -------------------------
->
-> diff --git a/drivers/platform/x86/lenovo/wmi-capdata.c b/drivers/platform=
-/x86/lenovo/wmi-capdata.c
-> index 14175fe19247e..6927de409b09d 100644
-> --- a/drivers/platform/x86/lenovo/wmi-capdata.c
-> +++ b/drivers/platform/x86/lenovo/wmi-capdata.c
-> @@ -5,6 +5,9 @@
->   * Lenovo Capability Data provides information on tunable attributes use=
-d by
->   * the "Other Mode" WMI interface.
->   *
-> + * Capability Data 00 includes if the attribute is supported by the hard=
-ware,
-> + * and the default_value. All attributes are independent of thermal mode=
-s.
-> + *
->   * Capability Data 01 includes if the attribute is supported by the hard=
-ware,
->   * and the default_value, max_value, min_value, and step increment. Each
->   * attribute has multiple pages, one for each of the thermal modes manag=
-ed by
-> @@ -14,7 +17,7 @@
->   *   - Initial implementation (formerly named lenovo-wmi-capdata01)
->   *
->   * Copyright (C) 2025 Rong Zhang <i@rong.moe>
-> - *   - Unified implementation
-> + *   - Unified implementation for Capability Data 00 and 01
->   */
-
-This might be a bit verbose considering the changes are all part of
-the same series.
-
-Thanks,
-Derek
->
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> @@ -36,12 +39,14 @@
->
->  #include "wmi-capdata.h"
->
-> +#define LENOVO_CAPABILITY_DATA_00_GUID "362A3AFE-3D96-4665-8530-96DAD5BB=
-300E"
->  #define LENOVO_CAPABILITY_DATA_01_GUID "7A8F5407-CB67-4D6E-B547-39B3BE01=
-8154"
->
->  #define ACPI_AC_CLASS "ac_adapter"
->  #define ACPI_AC_NOTIFY_STATUS 0x80
->
->  enum lwmi_cd_type {
-> +       LENOVO_CAPABILITY_DATA_00,
->         LENOVO_CAPABILITY_DATA_01,
->  };
->
-> @@ -57,6 +62,7 @@ static const struct lwmi_cd_info {
->         const char *name;
->         enum lwmi_cd_type type;
->  } lwmi_cd_table[] =3D {
-> +       LWMI_CD_TABLE_ITEM(LENOVO_CAPABILITY_DATA_00),
->         LWMI_CD_TABLE_ITEM(LENOVO_CAPABILITY_DATA_01),
->  };
->
-> @@ -72,6 +78,7 @@ struct cd_list {
->         u8 count;
->
->         union {
-> +               DECLARE_FLEX_ARRAY(struct capdata00, cd00);
->                 DECLARE_FLEX_ARRAY(struct capdata01, cd01);
->         };
->  };
-> @@ -95,6 +102,9 @@ static int lwmi_cd_component_bind(struct device *cd_de=
-v,
->         struct lwmi_cd_binder *binder =3D data;
->
->         switch (priv->list->type) {
-> +       case LENOVO_CAPABILITY_DATA_00:
-> +               binder->cd00_list =3D priv->list;
-> +               break;
->         case LENOVO_CAPABILITY_DATA_01:
->                 binder->cd01_list =3D priv->list;
->                 break;
-> @@ -136,6 +146,9 @@ static const struct component_ops lwmi_cd_component_o=
-ps =3D {
->                 return -EINVAL;                                          =
-                       \
->         }
->
-> +DEF_LWMI_CDXX_GET_DATA(cd00, LENOVO_CAPABILITY_DATA_00, struct capdata00=
-);
-> +EXPORT_SYMBOL_NS_GPL(lwmi_cd00_get_data, "LENOVO_WMI_CD");
-> +
->  DEF_LWMI_CDXX_GET_DATA(cd01, LENOVO_CAPABILITY_DATA_01, struct capdata01=
-);
->  EXPORT_SYMBOL_NS_GPL(lwmi_cd01_get_data, "LENOVO_WMI_CD");
->
-> @@ -154,6 +167,10 @@ static int lwmi_cd_cache(struct lwmi_cd_priv *priv)
->         void *p;
->
->         switch (priv->list->type) {
-> +       case LENOVO_CAPABILITY_DATA_00:
-> +               p =3D &priv->list->cd00[0];
-> +               size =3D sizeof(priv->list->cd00[0]);
-> +               break;
->         case LENOVO_CAPABILITY_DATA_01:
->                 p =3D &priv->list->cd01[0];
->                 size =3D sizeof(priv->list->cd01[0]);
-> @@ -199,6 +216,9 @@ static int lwmi_cd_alloc(struct lwmi_cd_priv *priv, e=
-num lwmi_cd_type type)
->         count =3D wmidev_instance_count(priv->wdev);
->
->         switch (type) {
-> +       case LENOVO_CAPABILITY_DATA_00:
-> +               list_size =3D struct_size(list, cd00, count);
-> +               break;
->         case LENOVO_CAPABILITY_DATA_01:
->                 list_size =3D struct_size(list, cd01, count);
->                 break;
-> @@ -346,6 +366,7 @@ static void lwmi_cd_remove(struct wmi_device *wdev)
->         .context =3D &lwmi_cd_table[_type]
->
->  static const struct wmi_device_id lwmi_cd_id_table[] =3D {
-> +       { LWMI_CD_WDEV_ID(LENOVO_CAPABILITY_DATA_00) },
->         { LWMI_CD_WDEV_ID(LENOVO_CAPABILITY_DATA_01) },
->         {}
->  };
-> diff --git a/drivers/platform/x86/lenovo/wmi-capdata.h b/drivers/platform=
-/x86/lenovo/wmi-capdata.h
-> index 1e5fce7836cbf..a6f0cb006e745 100644
-> --- a/drivers/platform/x86/lenovo/wmi-capdata.h
-> +++ b/drivers/platform/x86/lenovo/wmi-capdata.h
-> @@ -11,6 +11,12 @@ struct component_match;
->  struct device;
->  struct cd_list;
->
-> +struct capdata00 {
-> +       u32 id;
-> +       u32 supported;
-> +       u32 default_value;
-> +};
-> +
->  struct capdata01 {
->         u32 id;
->         u32 supported;
-> @@ -21,9 +27,11 @@ struct capdata01 {
->  };
->
->  struct lwmi_cd_binder {
-> +       struct cd_list *cd00_list;
->         struct cd_list *cd01_list;
->  };
->
-> +int lwmi_cd00_get_data(struct cd_list *list, u32 attribute_id, struct ca=
-pdata00 *output);
->  int lwmi_cd01_get_data(struct cd_list *list, u32 attribute_id, struct ca=
-pdata01 *output);
->  void lwmi_cd_match_add_all(struct device *master, struct component_match=
- **matchptr);
->
-> --
-> 2.51.0
->
+T24gMTAvMjUvMjUgMDY6MzUsIEplbnMgQXhib2Ugd3JvdGU6DQo+PiAtLS0tLS0tLS0tLS1bIGN1
+dCBoZXJlIF0tLS0tLS0tLS0tLS0NCj4+IFdBUk5JTkc6IGtlcm5lbC90cmFjZS9ibGt0cmFjZS5j
+OjM2OCBhdCBfX2Jsa19hZGRfdHJhY2UrMHg3OWMvMHg4ZDAga2VybmVsL3RyYWNlL2Jsa3RyYWNl
+LmM6MzY3LCBDUFUjMDogamJkMi9zZGExLTgvNTE2Mw0KPj4gTW9kdWxlcyBsaW5rZWQgaW46DQo+
+PiBDUFU6IDAgVUlEOiAwIFBJRDogNTE2MyBDb21tOiBqYmQyL3NkYTEtOCBOb3QgdGFpbnRlZCBz
+eXprYWxsZXIgIzAgUFJFRU1QVChmdWxsKQ0KPj4gSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2ds
+ZSBDb21wdXRlIEVuZ2luZS9Hb29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgR29vZ2xlIDEwLzAy
+LzIwMjUNCj4+IFJJUDogMDAxMDpfX2Jsa19hZGRfdHJhY2UrMHg3OWMvMHg4ZDAga2VybmVsL3Ry
+YWNlL2Jsa3RyYWNlLmM6MzY3DQo+PiBDb2RlOiBmZiA0ZCA4NSBlNCA3NSA0ZiBlOCA4MyAwZSBm
+OCBmZiBlOSBmYiBmZCBmZiBmZiBlOCA3OSAwZSBmOCBmZiBlOSBlYyBmZCBmZiBmZiBlOCA2ZiAw
+ZSBmOCBmZiBlOSBkOCBmZCBmZiBmZiBlOCA2NSAwZSBmOCBmZiA5MCA8MGY+IDBiIDkwIGU5IGNh
+IGZkIGZmIGZmIGU4IDU3IDBlIGY4IGZmIDQ4IDhiIDdjIDI0IDMwIGU4IGNkIDUxIDAwDQo+PiBS
+U1A6IDAwMTg6ZmZmZmM5MDAwZTU0ZjQ2MCBFRkxBR1M6IDAwMDEwMjkzDQo+PiBSQVg6IGZmZmZm
+ZmZmODFjODFiNGIgUkJYOiAwMDAwMDAwMDAwMDAwMDAxIFJDWDogZmZmZjg4ODAzNDFhYmM4MA0K
+Pj4gUkRYOiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogMDAwMDAwMDA5MDFlMDAwZiBSREk6IDAwMDAw
+MDAwODAwMGZmZmYNCj4+IFJCUDogZmZmZmM5MDAwZTU0ZjU3OCBSMDg6IGZmZmY4ODgwMzQxYWJj
+ODAgUjA5OiAwMDAwMDAwMDAwMDAwMDA5DQo+PiBSMTA6IDAwMDAwMDAwMDAwMDAwMTEgUjExOiAw
+MDAwMDAwMDAwMDAwMDAwIFIxMjogMDAwMDAwMDA4MDAwZmZmZg0KPj4gUjEzOiBmZmZmODg4MDc1
+Yzg2MDgwIFIxNDogMDAwMDAwMDA5MDFlMDAwZiBSMTU6IDAwMDAwMDAwMDAwMDAwMDENCj4+IEZT
+OiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKUdTOmZmZmY4ODgxMjVmMjIwMDAoMDAwMCkga25sR1M6
+MDAwMDAwMDAwMDAwMDAwMA0KPj4gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAw
+MDAwMDA4MDA1MDAzMw0KPj4gQ1IyOiAwMDAwNTU1NTc3NjI5ODA4IENSMzogMDAwMDAwMDAwZGQz
+ODAwMCBDUjQ6IDAwMDAwMDAwMDAzNTI2ZjANCj4+IENhbGwgVHJhY2U6DQo+PiAgIDxUQVNLPg0K
+Pj4gICBibGtfYWRkX3RyYWNlX2Jpb19yZW1hcCsweDRiOC8weDU2MCBrZXJuZWwvdHJhY2UvYmxr
+dHJhY2UuYzoxMjAwDQo+PiAgIF9fZG9fdHJhY2VfYmxvY2tfYmlvX3JlbWFwIGluY2x1ZGUvdHJh
+Y2UvZXZlbnRzL2Jsb2NrLmg6NTI2IFtpbmxpbmVdDQo+PiAgIHRyYWNlX2Jsb2NrX2Jpb19yZW1h
+cCBpbmNsdWRlL3RyYWNlL2V2ZW50cy9ibG9jay5oOjUyNiBbaW5saW5lXQ0KPj4gICBibGtfcGFy
+dGl0aW9uX3JlbWFwIGJsb2NrL2Jsay1jb3JlLmM6NTg1IFtpbmxpbmVdDQo+PiAgIHN1Ym1pdF9i
+aW9fbm9hY2N0KzB4MTg3Yi8weDFiODAgYmxvY2svYmxrLWNvcmUuYzo4MDQNCj4+ICAgam91cm5h
+bF9zdWJtaXRfY29tbWl0X3JlY29yZCsweDY2NS8weDhiMCBmcy9qYmQyL2NvbW1pdC5jOjE1Ng0K
+Pj4gICBqYmQyX2pvdXJuYWxfY29tbWl0X3RyYW5zYWN0aW9uKzB4MzQ1NS8weDVhMDAgZnMvamJk
+Mi9jb21taXQuYzo4NzUNCj4+ICAga2pvdXJuYWxkMisweDNjZi8weDc1MCBmcy9qYmQyL2pvdXJu
+YWwuYzoyMDENCj4+ICAga3RocmVhZCsweDcxMS8weDhhMCBrZXJuZWwva3RocmVhZC5jOjQ2Mw0K
+Pj4gICByZXRfZnJvbV9mb3JrKzB4NGJjLzB4ODcwIGFyY2gveDg2L2tlcm5lbC9wcm9jZXNzLmM6
+MTU4DQo+PiAgIHJldF9mcm9tX2ZvcmtfYXNtKzB4MWEvMHgzMCBhcmNoL3g4Ni9lbnRyeS9lbnRy
+eV82NC5TOjI0NQ0KPj4gICA8L1RBU0s+DQo+IEFkZGluZyBKb2hhbm5lcy4NCg0KVGhpcyBzZWVt
+cyB0byBtYWtlIFdBUk5fT05fT05DRSgpIGdvIGF3YXkgaWYgeW91IGZpbmQgdGhpcyBmaXggdXNl
+ZnVsDQpJJ2xsIHNlbmQgYSBwcm9wZXIgcGF0Y2ggOi0NCg0KZGlmZiAtLWdpdCBhL2tlcm5lbC90
+cmFjZS9ibGt0cmFjZS5jIGIva2VybmVsL3RyYWNlL2Jsa3RyYWNlLmMNCmluZGV4IDZhZDM4MDdh
+NWI3My4uYjQ2NjJjNTYzNmE2IDEwMDY0NA0KLS0tIGEva2VybmVsL3RyYWNlL2Jsa3RyYWNlLmMN
+CisrKyBiL2tlcm5lbC90cmFjZS9ibGt0cmFjZS5jDQpAQCAtMzY1LDcgKzM2NSw3IEBAIHN0YXRp
+YyB2b2lkIF9fYmxrX2FkZF90cmFjZShzdHJ1Y3QgYmxrX3RyYWNlICpidCwgDQpzZWN0b3JfdCBz
+ZWN0b3IsIGludCBieXRlcywNCiDCoCDCoCDCoCDCoCB9DQoNCiDCoCDCoCDCoCDCoCBpZiAoV0FS
+Tl9PTl9PTkNFKGJ0LT52ZXJzaW9uID09IDEgJiYNCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCAod2hhdCA+PiBCTEtfVENfU0hJRlQpID4gQkxLX1RDX0VORF9WMSkpDQorwqAgwqAgwqAg
+wqAgwqAgwqAod2hhdCA+PiBCTEtfVENfU0hJRlQpICYgfigodTY0KUJMS19UQ19FTkRfVjEgKiAy
+IC0gMSkpKQ0KIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldHVybjsNCg0KIMKgIMKgIMKgIMKg
+IGlmIChjZ2lkKQ0KDQphbHNvIHdvdWxkIHlvdSBwcmVmZXIgdGhpcyB0byBiZSByYXRlbGltaXRl
+ZCBwcmludCBvciBrZWVwIHdhcm5fb25fb25jZSgpDQphbmQgYWRkIGRlYnVnIHByaW50ID8NCg0K
+d2hlbiBJIHNlbnQgeW91IHRoZSBjb2RlIGZvciBibGt0cmFjZV9leHQgdGhhdCBjb3ZlciBsZXR0
+ZXIgaGFzIHNvbWUgdGVzdHMsDQpub3QgZGVtYW5kaW5nIGFueXRoaW5nIGhlcmUgYnV0IGl0J2Qg
+bmljZSB0byBoYXZlIHRob3NlIGluIHRoZSBibGt0ZXN0cw0KZXNwZWNpYWxseSBmb3IgdGhlIFJF
+UV9PUF9aT05FWFhYLCBzbyB3ZSBhbGwgY2FuIHJ1biByZWd1bGFybHkuDQoNCkVsc2UgSSdsbCBh
+ZGQgdGhpcyB0byBteSBUT0RPIGZvciBibGt0ZXN0cyBhbG9uZyB3aXRoIDE1IHRlc3RjYXNlcyBz
+aXR0aW5nDQppbiBteSBwcml2YXRlIHRyZWUgdG8gZ28gdXBzdHJlYW0uDQoNCi1jaw0KDQoNCg==
 
