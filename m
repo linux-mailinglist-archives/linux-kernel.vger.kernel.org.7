@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-870657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39A7C0B61F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:43:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3432DC0B639
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 699E43B6F65
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FB7189DC3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994182FDC2C;
-	Sun, 26 Oct 2025 22:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321B2171C9;
+	Sun, 26 Oct 2025 22:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Juq6mEy8"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="FoIGKjdi"
 Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C83925A2A5;
-	Sun, 26 Oct 2025 22:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CDD2FF14A;
+	Sun, 26 Oct 2025 22:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761518571; cv=none; b=fdqJlxuuTxb2Y1m3Zhqj5nmzD8N8yzsQ+d3ImvyN+iAqjkOdklqoj6yrcaHZXXsc0YU02s1ljezVPClf3DCXVxTm1kQY4WrOrGMoDdcRfDgD7GtbJd0BL0YTpsR5ht6zkpe6NRG2jOgRxwt2mBRApjdSZ9l5Iaq+L2BefXKO7ns=
+	t=1761518711; cv=none; b=qljeg/HMpgPgNinfIiIKOdFM15bK/ciN1v40pH5AYbzplmwUC1xKorLmi60hWwEb7WAw2uHmLBLKPe9Qr5J6VLnwnuHNCJ8+422aEbLnU2g9kY86on1jz1s6OhcwgOCwuJRFxylLfB1Ep4n6R5Iqk+VwtYjIWtA4uQW4mJzOZps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761518571; c=relaxed/simple;
-	bh=9xoWttMVKgpnLUA0bd2JXuz5vCp2CTj+gTZMueKtR4A=;
+	s=arc-20240116; t=1761518711; c=relaxed/simple;
+	bh=zaxV4JRRz/qn3O+6LLn9hdqTNFkO3h5a3GYhFgF1feU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaP3SonL+OVePOoV2SS0K/2ZXM332aQR8WgjVKYZlgcmQG6z1Nyo8kt1O9YEUIDsw2jrug88oOFNAVxP/1hbaKwaLgMXaiPjzxQ+EmZLJmKwd7tmg7KQ5GeRR6cMC4GfuwuI3LZeIZ/N97xQnyp2udOyEEESZWBTrQFW3hKh2MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Juq6mEy8; arc=none smtp.client-ip=212.227.17.22
+	 In-Reply-To:Content-Type; b=XgmwDFl4POSmUIzc4vDW2TwlXvyXbuXf1aqF6ixT2G512TBYPA5cMuXbcd1Bk0Oi9VI82ji6DSf8lSqUmJiVJHv5Oj+puuZKw/ntTrrPvRGsNHWophBjA+r9KuIF1mYOsgVOdDcFaaofkJ1kUB0LJsa9d99VSv8QvpuakKAifXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=FoIGKjdi; arc=none smtp.client-ip=212.227.17.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761518562; x=1762123362; i=w_armin@gmx.de;
-	bh=ZEGcaqMfAieJP+lje25MsHsNKxy0JOMF+9Wd2/vHnfE=;
+	s=s31663417; t=1761518705; x=1762123505; i=w_armin@gmx.de;
+	bh=zkcgsk6sxZUElntgbbuwqEbnGX1osSWN9RIU1b4ZSaQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=Juq6mEy8lzGwUKHq9U+ljWiE6/Q0RgX/BeLnessJ02tThrTVojjOBH2fWbYWqFPV
-	 1XZ7rAZgYuXsDW8yv+y6DGXXq1CjlvSalKriPbAZlGb3H1aSaxXKXkiAZ6C8hh77t
-	 m7aBK1Yaa541bS6HkfDX8mrlLGAZOYgxB9h+KHEoI5BP3hq84Ma7S8uB+28o0owO7
-	 HuWRSDoi1jO0nl3jbyzpUQ2NF1+7w7dZElgfuZ+LRS4qZM2/5fv7UkeGu58KnF0UV
-	 i04YLV15eNH/53H2lBb10K6CJEgiN+6Y8SeTy7QE4WeB1NL6ligyJmiEFdRSlLY2H
-	 zSx4g+dLPrXExTSSNw==
+	b=FoIGKjdiGig2BcSh5PiWARw8hzGXZy3NY3uRKcpb8ekzh7soaiZLq+9KKOi3r5CX
+	 YeercGIC/voK/a8HG0sggrI1WpkQcyUZujWsOTSHfTVHYvGQTpoeLB3WgQ8hvj3ja
+	 2FXt3LPlkVARORKI/2PRVuQtebInPWoKW79ia7HJsZmkFPQ8mMAKFyHph9QOZPQCI
+	 SZfN/HIC/vTdXLL/RauCJysIAAwK3WFdSiQtvSNBWq8b2f/TfjnN7KkTuC3gZgVuu
+	 teWzBsr39PiGwnQR8fgW5zdl19+p9lhacB9FYWOevov7RE2zo7ZXX4usmQOhK1k/S
+	 TrPOuS/jKye2mcwumQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M1Hdq-1vAPMG1Gv4-004Di0; Sun, 26
- Oct 2025 23:42:42 +0100
-Message-ID: <7b1fa12c-dc4e-41f2-9807-a4e772c3888e@gmx.de>
-Date: Sun, 26 Oct 2025 23:42:39 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MrhUK-1uPUqT1fTI-00mv2h; Sun, 26
+ Oct 2025 23:45:05 +0100
+Message-ID: <1fb87443-f1fa-45d1-ae87-3ec2be6ce3ce@gmx.de>
+Date: Sun, 26 Oct 2025 23:45:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,8 +57,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] platform/x86: ayaneo-ec: Add controller power and
- modules attributes
+Subject: Re: [PATCH v2 5/6] platform/x86: ayaneo-ec: Move Ayaneo devices from
+ oxpec to ayaneo-ec
 To: Antheas Kapenekakis <lkml@antheas.dev>,
  platform-driver-x86@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
@@ -68,314 +68,392 @@ Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
  =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
  Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
 References: <20251015084414.1391595-1-lkml@antheas.dev>
- <20251015084414.1391595-5-lkml@antheas.dev>
+ <20251015084414.1391595-6-lkml@antheas.dev>
 Content-Language: en-US
 From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20251015084414.1391595-5-lkml@antheas.dev>
+In-Reply-To: <20251015084414.1391595-6-lkml@antheas.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mniyyOQgIoLSUQHeFrxbjC0wq1Ckym0K6c3KK6Gea7YttuMfZi+
- nYdApIzNoGIuRJ5TfFaNYkUuZkOiEYNgWvKTAsvQwBqc8+OIbnMrH9siZXDop7on6j6Auch
- 2yGLt4nhWZzXZk8cqTLHfzZeKMSZXsrkEUee9syjFzOiEk5+OpHA0/8D4OR+rJ+XjN7TGoa
- Rl5RHx/GFXVx6TWFvkvYg==
+X-Provags-ID: V03:K1:BVcnPDZ6SGGdj+lZ4d38ZSA+P16MxEp5X16FffDoX7pzgy1i+lz
+ juWvMTuwsDe6Bn536VEI2P2UP896KuW6TePMCNHfHWtz3qe9y7ytLc/LjceZEyrfMuMXpxo
+ +w82ay0UK98G/ovPIftATBJmAagPIN37QQw0RIK2SjZVTdwjmKsOd3nSMiHYVPYyFL0VUtl
+ kzFJyKs6Qrlmc34wvm1Bg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Xd0gF706Ohg=;YqRQWZn8beGH0ML+o2k4ZWtfjkK
- gHd9OrFLg/lM8soVEj4bCk66/PXNhMY73Lj0mcvY+0I0UZJ2yX5siVivRkVlA8URjUKXAi0Ff
- 7jmhxoCuUin4bKa7fCOEXaunx8Rit6zGJ8hFyXcF+ffAkxhGBPQr73GoD+EKLMZ8zYmtRmAab
- 2Na1YcqcpM34p6sCygjfbCL6KuJLeSb5+OCuyI1+4+UBhsw01d2LKtu533rYt/8WT4DSUAEzb
- dN9FfgcVjgs62FZwpiKvnog8EGiIjLRinw+MIZv82xt3AtIPeiMWVvLkBoWEU9vFky+NQ1fxa
- UsZBG3CtYdQo9BNkkqHNjGs1DweRP7hu6nvWKiPMUbTlWSFxfFT8KHivTWkiKPAn3hNKxpPCU
- Y7u8jZpgqpNA2SQIkM1oKjUq90fUpbdD9d7W8JoiMG9dBLW0rBVNJgR9s9vJ0T4z9cW6Jhrna
- HelA2u+W2IYgB2O4mIY/IL6c43/vEuMXJKM0t3rZop7zvapOsfEi4T55Lo9OQNVAp8esK4+kJ
- 3cyUIWGQssnRHU/MGpzq63SzaEYJNsqTi9Uddf/qXeYWF7Cmpgu81bzkuutjZz2L79fJDTdRp
- M3NIuGl/z64ouhjYpAPEUqrl/ma5Sm8bz470ddvlSe61h208oFzdAqoNJfs2AtAzPz3wv3jVp
- tqE3xx7TCUF2Q5DCSm3gx0BrO2kykAwmDfy4NtxlAK1nB9M/VyoGzr6TwdXiFnhINqWS/9q8O
- VHqPUJUx9XCxAFadkNYe7pA7uDEeOcKciZlcwCFbPGfiaRY8/Aj/aHhyP4LcC/hnnVWEAp+lK
- bTUujHxla8K+ggcDODKJZvPxdhM1ujse9zBuuWCFAOq90wpyc68hZXZjvv8Yo2DNLFUw/ZRd4
- tFzmGGMVSDCnDymc4MNl5zNejNhdvPUXBiYL2F//O9Ki1zXeXyV022ubcaysJPjmuyOZK2xi6
- v6megF+tIV/8leOxs6OXKSLKOI6yAA4HEw04EQ2PPEEdL/lcyL21aAQVri+fdcq0Rjb5/X1NS
- YLBaRsYCLEEDrUgeoa4ZorQ+4FOEqpi1oOLF7y6U4Wj0IK0vBnL+GJFjnBL7EQ7Kdu5f1k/Jn
- 51ddksn2Ie6ioi72w7BdJhCpFNfssuQInJubTXIg2HElYt5AjrkpO5oAmW03QJCbHJzdM3dMS
- AjMU8Q6dM+Ktf0j+x4Bbaz5DwN9+GpPNwgB94RPp6fgNyupugOjYht8RyB4OgdETqe94RlIiL
- otGsxOC7u7djZ2JgdVmBirFjjnHCSrjvjAIPJHnuj9GTBO9w6m5FFDQhNxC5IIr1C8x3hVC9S
- ZsDUSDDBGmp/Sxh1oIeNg5XZJPYwT+a3moy2Jy2hEqq5Ip6oH5SQ6x0y9JDCO+kUoFn9Ni07T
- nUeuK2mWhSqkt/1Da1LSXBf+DV990f3oxQbzlNs/f7LLbGfTxTLYzYWj5OSX+/rl3+KCtXzJo
- AYBMWWV9AddTjdJpYTCfwPbGYAacNwudgqeNksahpYvdfcxlDPsfv0VLKuB39xQPBu+CkulMJ
- drKlT7motskL0e/skcqD4FVGgSSUrXfE0HmwkkjeWvSr/ar31dVw5fE7cbkMeN4WMAH62IETd
- E41wKD5jz8HqDoln9LJqCmgp++ZGGi+VmZ2Hbyn78ubwLr+HFhWqzbUUZcufGQIlIQqhHNLKf
- AakaWwwR00qcXObnEzYNWMAq5pke9uxTM8FZxq6RmekL3U/0P5PkEhJ3JSm3w7plH+6ShANQH
- Gr4TPnKMv3fyq4o0TasuFdPhPasyH9ufdtjYmDHgmn7GlvEnbloCJaa3V4oUMh0aUtZTMKHaB
- YHZNM3PvX+oiZ9t0gpIHM9SfiuWdvhfeAnnzRctUJ5Yr13yiHpVWO4pq26XPZ3zKt5uld3W2m
- FlDBlD8IW1vpfVuk2QbMmzoIcj+sJFd7S6pYw/Ir7vUmwn/HYV/dhUFGK1ijpNzvWYQFYczSf
- FaOonCcYh3rWyiJA9NM85fp0376dZM2n22kozK5bbe3U06O2uqTvCEErf9clQSbqA5JYf88t/
- s4WqWyM51IrQIn+FSVjxBgdDfOHFN75vdBJg1oN/sDr7qLQT+3hVZvZnTjYtd1IU01BTPCNhx
- KRwff26o1SB4Mk4u0FFiM7LYM30+xkutW4QE8I5y8or8B9CV3ngWrF6GoyJb/A6r4n1rpPb08
- GE4K1nEbjyAKCc0I1x8g0VKjAw/8VdbsOXWukBEkQr95/8G5JG4J6O5ouUFPujfr60+L64KFP
- RRdgMvw8DIjD65eiqdfqrPNqaf1nYp8M7l7Cx01mPJAh6ynLutAH+IqRyyjmgsAdSBCpOrwol
- L7h90mHyPfJ4uGFmzM3TWg/imJRZUTVw/jCK/of5s6ER+ZHHfp7u3KQkz596iHNCDN1KPC1f9
- pduxhJTrdIgZf0ccHJzzUSZ6YrvNC0tQ0PMOdV505/JveZVOJ+SEt5RbsJZxlWF8JAnnTkcyJ
- gSiUmkfMh1huLCREYGSpipmR+VNJ4gc2sUWIYfPnl/w3f6L4fKzjqs00ej8ABe3iD83KIkcAr
- eP6zCkkKXWuK+Ww14eeHaXNoKPDvRn+hTWHVEOp4IZxEqVV9pXNMVeSNMBal9Wec+dvi1Em0c
- TlPbb93ajtPp9OVV+C4Nsmvj1+3Me+wZzaG5v/gJGlZMWvkI2eFWKOxxlHCHVbsHwbKO86pN5
- uT86drHUnSPE0NamMYROYHUiUAvcrdo+NOFMv/Vow6UEdPEP2VEL8jLfMje3u1LTbGTDT12r2
- XAIbS+0dfjdEwsprupdlbj+bZXIAPknYMsM/fcHvT+4CYE+W5lxBCRajrA+yxB8IzFxbzbHDP
- fKoXIJgTEIdwCbyh8qRPCYBhFtx49M55aLoOq9/Rxlt4ym/iSshpare9GW7kMzUZzGifzCVrz
- h42bnRvR8hsnUCljA6MileEGCnUXiGbqcRUkAcdJZRp26FokJ4q/skbkSsAF6DBSyf4BC0iwU
- ahfPVW1rzlFnWQAnTMOJlZYJ2OcCKdWoZyD+yD3E5oUvrct60ZNJLfnxFA7SeqALPTpoVud1m
- /cETVBH2uIhRAt/qSCcwXEWRbqihPtsj3jttb6Qdtc9/dpdSJIvPwaFx9uoEe17SS45Jg6h+j
- vFUAVgv/WSDdDOHdQi45mnyyy6RSWAdbFdBsrOuKxXT8NYd0Xnit5/jZuzVpc8p5cZTiw80jW
- 0vmnbnmU5lnq7HbmtolPt01/ED8VFA8Ccsw6x2BRToeyShffCJs1XKQ10V9KpT/eeSyOA4uLM
- Aj0k/pN3Cvyz3Th/nOEnxuA8FGAnCDPJLckl6wkqhYoNoGDxOUuFOIZMSZcLGVBAxvcgrJ7mQ
- 3kc5B2tG5EbyQhCq3JfxiGBTjymAaeyYmEhDMdGejjU9v7U4OXu4TmqykgHC+TK2a3itPwAKC
- IXPdJfJnohvQZRlyz7xgkYXQb4FhKBoSsINc3b8BxpHR4AK/DuaVvw5OI6ReOVghBJU/Hlxfg
- xfsPFjypZDZL0UPY4+pcLlyW0KlP+FQ5UW3zGXsr6MdfKwsrx8Qd0BZPPNaAQsCopsGKlYeJW
- 0LK+Husu1kAXPcJ3jWGrUPPnkAFr/WWOnWmQ5otEzwTV27gdnTngbw9Ed4R7wt6sKJ5Cewpkf
- GopLiT+akss/76unvveIr0cj6cxf/FY1ISbrPuTUd/NyxZH+Mq3GhNUb5BpoIaOuQlyKp3HQD
- 2W2s4d8K28l7qvb8PUgsPmQk4y0QLUYcE7cJzsTsJkBile2Opth5jmkFdxyOqVFqcK2BffqTK
- 0e84NQvd2ISwU8jpwQZZ3RzQmiqUI3RDpF49FN1AccyzW8S7vytSXhxdJSgNERZc8G0JOoA1l
- gvlF2EXExcqqDOmVk/dnCno3IQiWU+4/aVSQxxrl3NaLch5SyOVfeUNpXiBXc5vEmWwFOwjhw
- RsTVscrzd43C4/HoVoQxJToam6owjN2n+qLSimiF9eJAfXKGt29VTJKO2rRm0/PLBhiy/3KoD
- jmMNx1bS0CGU4T01zlC9s7Z5WYrhAmCo6SxE8X/PhxguzUsyLcZ5ZWCMCdPiIgbIf5XEsv1o+
- W7g0UzQfXXSylJbHqs6zpuDDj6SSTTC525kCtv17C+LanNExcMnQOKpa67Dry6+X/hBp5VE+9
- Cyq5BZf27oLYiUbghYrnrpzQxJ3kP0Xc0NaCfmgtBeuyo1XWNP2Ao1i+cW6RGwZ4mna9Ne52G
- L3p5yIrysWWU/qwd7fcerUwpt+YrUDwyUlPH29bupxPaYtgR77+wKAMi+70OwKiVSCCt55YF9
- S7ZWY/vu5ZaMl7fAp0aY5nP7hx7c5vpoLeZL3dtJpCbPUzJAbPdFCITTvdeBtaQjYVxD6bTYy
- vbu1/Y+4gf2tUMWXmAuJQ0FOkM2/OFgejo5F6thIas7k60DUKhT3XRjF9RxHhYU5+tMzbFG2M
- +2iIXEL5cA+zLL2l0PKqbyMbNCnPV3B073Srknm+EiLu4Jl2LVIQV0p1QtNqTp2JnujL+gMv5
- 9Kh+vKjcxzrhPQLtePcQH1/8/cMrAKct0uTcLPCg83N58F9275lK6HX5PzASgk8oC8yGckslT
- SrxiBdXx+BJN3ISUErivgjuUYT3FRzrJNHdJoMIfQVCTM1oJVxe++ZectbYJgT9ajxC0jXPz2
- qVzzUNGWDf8Vimh/sfK3lsbKkwWIg6XIGMxi2fNTtuxFBOCOKF/I7ZtW/ARFDhYfHSpb0JHAQ
- 60ETrnXy5JWKqQB3viX+IzYph+crUF9y2qvRm7eQs0p8EgJdOINm2P38nZrxTI5g7F7aGeghm
- OEeoTalqkOhQk9Ust340JloqyUscA5JF+caLMOyH+lGwjEua415nif1sPKtj+4GL0qrHOqIrg
- iPGM3QovX9xEzhDgWm3d7mFGIoA4IJx/D64KyJRu2BqdmzgC9DMBN0wK0liedpM9flrAp5cGM
- F2q+/2p5UTO1845sWLP/+tlUkBZFd0QghmCBFU0bkOaRaAafLPigwhelJMBxEkEKLb6WUg9tw
- F0gskHCdJojKk0q3fHN4aqy51jJ5xZfFsby7L1HuckwHZm2lP/CHW6DGHjyFt4WlisUJ6bTbU
- i3Bmfg9pDFrEf3nyCs4fv2ejKJBNjY/l4ZtQBdg9IZImGaupx15hF755QhJ20vNTbOq2g==
+UI-OutboundReport: notjunk:1;M01:P0:9XRIPaopFbI=;qNdRa9lsC8fFIuMpiuqqgbOoaEJ
+ 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
 
 Am 15.10.25 um 10:44 schrieb Antheas Kapenekakis:
 
-> The Ayaneo 3 features hot-swappable controller modules. The ejection
-> and management is done through HID. However, after ejecting the modules,
-> the controller needs to be power cycled via the EC to re-initialize.
+> Currently, the oxpec driver contains Ayaneo devices. Move them to the
+> new ayaneo-ec driver, which is dedicated to them.
 >
-> For this, the EC provides a variable that holds whether the left or
-> right modules are connected, and a power control register to turn
-> the controller on or off. After ejecting the modules, the controller
-> should be turned off. Then, after both modules are reinserted,
-> the controller may be powered on again to re-initialize.
+> As this driver supports charge inhibition for Ayaneo, add support for it
+> for the AIR, AIR 1S, AB05-Medoncino, AIR Pro, and Kun, referenced from
+> the out-of-tree ayaneo-platform driver.
 >
-> This patch introduces two new sysfs attributes:
->   - `controller_modules`: a read-only attribute that indicates whether
->     the left and right modules are connected (none, left, right, both).
->   - `controller_power`: a read-write attribute that allows the user
->     to turn the controller on or off (with '1'/'0').
->
-> Therefore, after ejection is complete, userspace can power off the
-> controller, then wait until both modules have been reinserted
-> (`controller_modules` will return 'both') to turn on the controller.
->
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   .../ABI/testing/sysfs-platform-ayaneo         |  19 ++++
->   MAINTAINERS                                   |   1 +
->   drivers/platform/x86/ayaneo-ec.c              | 100 ++++++++++++++++++
->   3 files changed, 120 insertions(+)
->   create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo
->
-> diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo b/Documenta=
-tion/ABI/testing/sysfs-platform-ayaneo
-> new file mode 100644
-> index 000000000000..1fa32ba60fd0
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-platform-ayaneo
-
-Better use Documentation/ABI/testing/sysfs-platform-ayaneo-ec.
-
-> @@ -0,0 +1,19 @@
-> +What:		/sys/devices/platform/<platform>/controller_power
-
-Better use /sys/devices/platform/ayaneo-ec/controller_power.
-
-> +Date:		Oct 2025
-> +KernelVersion:	6.9
-
-Kernel version is outdated.
-
-> +Contact:	"Antheas Kapenekakis" <lkml@antheas.dev>
-> +Description:
-> +		Current controller power state. Allows turning on and off
-> +		the controller power (e.g. for power savings). Write 1 to
-> +		turn on, 0 to turn off. File is readable and writable.
-> +
-> +What:		/sys/devices/platform/<platform>/controller_modules
-
-See above.
-
-> +Date:		Oct 2025
-> +KernelVersion:	6.9
-
-See above.
-
-With this being fixed:
+> In addition, update the readmes of oxpec to reflect this change.
 
 Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-> +Contact:	"Antheas Kapenekakis"  <lkml@antheas.dev>
-> +Description:
-> +		Shows which controller modules are currently connected to
-> +		the device. Possible values are "left", "right" and "both".
-> +		File is read-only. The Windows software for this device
-> +		will only set controller power to 1 if both module sides
-> +		are connected (i.e. this file returns "both").
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8c4d0c26ca77..3dfa004555dd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4191,6 +4191,7 @@ AYANEO PLATFORM EC DRIVER
->   M:	Antheas Kapenekakis <lkml@antheas.dev>
->   L:	platform-driver-x86@vger.kernel.org
->   S:	Maintained
-> +F:	Documentation/ABI/testing/sysfs-platform-ayaneo
->   F:	drivers/platform/x86/ayaneo-ec.c
+>
+> Link: https://github.com/ShadowBlip/ayaneo-platform
+> Tested-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/platform/x86/Kconfig     |   4 +-
+>   drivers/platform/x86/ayaneo-ec.c |  65 +++++++++++++++++
+>   drivers/platform/x86/oxpec.c     | 115 +------------------------------
+>   3 files changed, 67 insertions(+), 117 deletions(-)
+>
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index f5b2edc6bc67..4d4be1634152 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1043,9 +1043,7 @@ config OXP_EC
+>   	help
+>   		Enables support for the platform EC of OneXPlayer and AOKZOE
+>   		handheld devices. This includes fan speed, fan controls, and
+> -		disabling the default TDP behavior of the device. Due to legacy
+> -		reasons, this driver also provides hwmon functionality to Ayaneo
+> -		devices and the OrangePi Neo.
+> +		disabling the default TDP behavior of the device.
 >  =20
->   AZ6007 DVB DRIVER
+>   source "drivers/platform/x86/tuxedo/Kconfig"
+>  =20
 > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/aya=
 neo-ec.c
-> index 23c283f5eb61..363b61fc6e12 100644
+> index 363b61fc6e12..73e9dd39c703 100644
 > --- a/drivers/platform/x86/ayaneo-ec.c
 > +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -30,9 +30,17 @@
->   #define AYANEO_CHARGE_VAL_AUTO		0xaa
->   #define AYANEO_CHARGE_VAL_INHIBIT	0x55
->  =20
-> +#define AYANEO_POWER_REG	0x2d
-> +#define AYANEO_POWER_OFF	0xfe
-> +#define AYANEO_POWER_ON		0xff
-> +#define AYANEO_MODULE_REG	0x2f
-> +#define AYANEO_MODULE_LEFT	BIT(0)
-> +#define AYANEO_MODULE_RIGHT	BIT(1)
-> +
->   struct ayaneo_ec_quirk {
->   	bool has_fan_control;
->   	bool has_charge_control;
-> +	bool has_magic_modules;
+> @@ -49,6 +49,15 @@ struct ayaneo_ec_platform_data {
+>   	struct acpi_battery_hook battery_hook;
 >   };
 >  =20
->   struct ayaneo_ec_platform_data {
-> @@ -44,6 +52,7 @@ struct ayaneo_ec_platform_data {
+> +static const struct ayaneo_ec_quirk quirk_fan =3D {
+> +	.has_fan_control =3D true,
+> +};
+> +
+> +static const struct ayaneo_ec_quirk quirk_charge_limit =3D {
+> +	.has_fan_control =3D true,
+> +	.has_charge_control =3D true,
+> +};
+> +
 >   static const struct ayaneo_ec_quirk ayaneo3 =3D {
 >   	.has_fan_control =3D true,
 >   	.has_charge_control =3D true,
-> +	.has_magic_modules =3D true,
+> @@ -56,6 +65,62 @@ static const struct ayaneo_ec_quirk ayaneo3 =3D {
 >   };
 >  =20
 >   static const struct dmi_system_id dmi_table[] =3D {
-> @@ -262,6 +271,96 @@ static int ayaneo_remove_battery(struct power_suppl=
-y *battery,
->   	return 0;
->   }
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_fan,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_fan,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_fan,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_charge_limit,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_charge_limit,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AB05-Mendocino"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_charge_limit,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR Pro"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_charge_limit,
+> +	},
+> +	{
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
+> +		},
+> +		.driver_data =3D (void *)&quirk_charge_limit,
+> +	},
+>   	{
+>   		.matches =3D {
+>   			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+> index 54377b282ff8..144a454103b9 100644
+> --- a/drivers/platform/x86/oxpec.c
+> +++ b/drivers/platform/x86/oxpec.c
+> @@ -1,8 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0+
+>   /*
+> - * Platform driver for OneXPlayer and AOKZOE devices. For the time bein=
+g,
+> - * it also exposes fan controls for AYANEO, and OrangePi Handhelds via
+> - * hwmon sysfs.
+> + * Platform driver for OneXPlayer and AOKZOE devices.
+>    *
+>    * Fan control is provided via pwm interface in the range [0-255].
+>    * Old AMD boards use [0-100] as range in the EC, the written value is
+> @@ -43,14 +41,6 @@ static bool unlock_global_acpi_lock(void)
 >  =20
-> +static ssize_t controller_power_store(struct device *dev,
-> +			    struct device_attribute *attr, const char *buf,
-> +			    size_t count)
-> +{
-> +	bool value;
-> +	int ret;
-> +
-> +	ret =3D kstrtobool(buf, &value);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYANEO_PO=
-WER_OFF);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t controller_power_show(struct device *dev,
-> +			   struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	u8 val;
-> +
-> +	ret =3D ec_read(AYANEO_POWER_REG, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "%d\n", val =3D=3D AYANEO_POWER_ON);
-> +}
-> +
-> +static DEVICE_ATTR_RW(controller_power);
-> +
-> +static ssize_t controller_modules_show(struct device *dev,
-> +				       struct device_attribute *attr, char *buf)
-> +{
-> +	bool left, right;
-> +	char *out;
-> +	int ret;
-> +	u8 val;
-> +
-> +	ret =3D ec_read(AYANEO_MODULE_REG, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	left =3D !(val & AYANEO_MODULE_LEFT);
-> +	right =3D !(val & AYANEO_MODULE_RIGHT);
-> +
-> +	if (left && right)
-> +		out =3D "both";
-> +	else if (left)
-> +		out =3D "left";
-> +	else if (right)
-> +		out =3D "right";
-> +	else
-> +		out =3D "none";
-> +
-> +	return sysfs_emit(buf, "%s\n", out);
-> +}
-> +
-> +static DEVICE_ATTR_RO(controller_modules);
-> +
-> +static struct attribute *aya_mm_attrs[] =3D {
-> +	&dev_attr_controller_power.attr,
-> +	&dev_attr_controller_modules.attr,
-> +	NULL
-> +};
-> +
-> +static umode_t aya_mm_is_visible(struct kobject *kobj,
-> +				 struct attribute *attr, int n)
-> +{
-> +	struct device *dev =3D kobj_to_dev(kobj);
-> +	struct platform_device *pdev =3D to_platform_device(dev);
-> +	struct ayaneo_ec_platform_data *data =3D platform_get_drvdata(pdev);
-> +
-> +	if (data->quirks->has_magic_modules)
-> +		return attr->mode;
-> +	return 0;
-> +}
-> +
-> +static const struct attribute_group aya_mm_attribute_group =3D {
-> +	.is_visible =3D aya_mm_is_visible,
-> +	.attrs =3D aya_mm_attrs,
-> +};
-> +
-> +static const struct attribute_group *ayaneo_ec_groups[] =3D {
-> +	&aya_mm_attribute_group,
-> +	NULL
-> +};
-> +
->   static int ayaneo_ec_probe(struct platform_device *pdev)
->   {
->   	const struct dmi_system_id *dmi_entry;
-> @@ -303,6 +402,7 @@ static int ayaneo_ec_probe(struct platform_device *p=
-dev)
->   static struct platform_driver ayaneo_platform_driver =3D {
->   	.driver =3D {
->   		.name =3D "ayaneo-ec",
-> +		.dev_groups =3D ayaneo_ec_groups,
+>   enum oxp_board {
+>   	aok_zoe_a1 =3D 1,
+> -	aya_neo_2,
+> -	aya_neo_air,
+> -	aya_neo_air_1s,
+> -	aya_neo_air_plus_mendo,
+> -	aya_neo_air_pro,
+> -	aya_neo_flip,
+> -	aya_neo_geek,
+> -	aya_neo_kun,
+>   	orange_pi_neo,
+>   	oxp_2,
+>   	oxp_fly,
+> @@ -131,62 +121,6 @@ static const struct dmi_system_id dmi_table[] =3D {
+>   		},
+>   		.driver_data =3D (void *)oxp_fly,
 >   	},
->   	.probe =3D ayaneo_ec_probe,
->   };
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_2,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_air,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_air_1s,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AB05-Mendocino"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_air_plus_mendo,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR Pro"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_air_pro,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_flip,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_geek,
+> -	},
+> -	{
+> -		.matches =3D {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
+> -		},
+> -		.driver_data =3D (void *)aya_neo_kun,
+> -	},
+>   	{
+>   		.matches =3D {
+>   			DMI_MATCH(DMI_BOARD_VENDOR, "OrangePi"),
+> @@ -672,13 +606,6 @@ static int oxp_pwm_enable(void)
+>   	case orange_pi_neo:
+>   		return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MODE_MANUAL);
+>   	case aok_zoe_a1:
+> -	case aya_neo_2:
+> -	case aya_neo_air:
+> -	case aya_neo_air_plus_mendo:
+> -	case aya_neo_air_pro:
+> -	case aya_neo_flip:
+> -	case aya_neo_geek:
+> -	case aya_neo_kun:
+>   	case oxp_2:
+>   	case oxp_fly:
+>   	case oxp_mini_amd:
+> @@ -699,14 +626,6 @@ static int oxp_pwm_disable(void)
+>   	case orange_pi_neo:
+>   		return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MODE_AUTO);
+>   	case aok_zoe_a1:
+> -	case aya_neo_2:
+> -	case aya_neo_air:
+> -	case aya_neo_air_1s:
+> -	case aya_neo_air_plus_mendo:
+> -	case aya_neo_air_pro:
+> -	case aya_neo_flip:
+> -	case aya_neo_geek:
+> -	case aya_neo_kun:
+>   	case oxp_2:
+>   	case oxp_fly:
+>   	case oxp_mini_amd:
+> @@ -727,14 +646,6 @@ static int oxp_pwm_read(long *val)
+>   	case orange_pi_neo:
+>   		return read_from_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, 1, val);
+>   	case aok_zoe_a1:
+> -	case aya_neo_2:
+> -	case aya_neo_air:
+> -	case aya_neo_air_1s:
+> -	case aya_neo_air_plus_mendo:
+> -	case aya_neo_air_pro:
+> -	case aya_neo_flip:
+> -	case aya_neo_geek:
+> -	case aya_neo_kun:
+>   	case oxp_2:
+>   	case oxp_fly:
+>   	case oxp_mini_amd:
+> @@ -774,14 +685,6 @@ static int oxp_pwm_fan_speed(long *val)
+>   	case oxp_g1_i:
+>   		return read_from_ec(OXP_2_SENSOR_FAN_REG, 2, val);
+>   	case aok_zoe_a1:
+> -	case aya_neo_2:
+> -	case aya_neo_air:
+> -	case aya_neo_air_1s:
+> -	case aya_neo_air_plus_mendo:
+> -	case aya_neo_air_pro:
+> -	case aya_neo_flip:
+> -	case aya_neo_geek:
+> -	case aya_neo_kun:
+>   	case oxp_fly:
+>   	case oxp_mini_amd:
+>   	case oxp_mini_amd_a07:
+> @@ -810,14 +713,6 @@ static int oxp_pwm_input_write(long val)
+>   		/* scale to range [0-184] */
+>   		val =3D (val * 184) / 255;
+>   		return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> -	case aya_neo_2:
+> -	case aya_neo_air:
+> -	case aya_neo_air_1s:
+> -	case aya_neo_air_plus_mendo:
+> -	case aya_neo_air_pro:
+> -	case aya_neo_flip:
+> -	case aya_neo_geek:
+> -	case aya_neo_kun:
+>   	case oxp_mini_amd:
+>   	case oxp_mini_amd_a07:
+>   		/* scale to range [0-100] */
+> @@ -854,14 +749,6 @@ static int oxp_pwm_input_read(long *val)
+>   		/* scale from range [0-184] */
+>   		*val =3D (*val * 255) / 184;
+>   		break;
+> -	case aya_neo_2:
+> -	case aya_neo_air:
+> -	case aya_neo_air_1s:
+> -	case aya_neo_air_plus_mendo:
+> -	case aya_neo_air_pro:
+> -	case aya_neo_flip:
+> -	case aya_neo_geek:
+> -	case aya_neo_kun:
+>   	case oxp_mini_amd:
+>   	case oxp_mini_amd_a07:
+>   		ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
 
