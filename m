@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-870301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD03C0A6B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:20:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FE6C0A6BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E93BA349DD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCDC3AEB02
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267CE23EA95;
-	Sun, 26 Oct 2025 11:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E841B21BF;
+	Sun, 26 Oct 2025 11:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZO0l5rCu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DlMjKYU7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE1921B9C1
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C272313FEE
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761477614; cv=none; b=I7EbcTzo/T0ZaCEyRSYbtNpEicbGr85bB4mqUGUAWKyeE55PgBDmf2UvxEp9E/eMTNzMrEIg4ROdqzHrYRka/GnACSVYluv/3hbX8yphXoYVTdpw2X7QqduEfWELOknEQFcp1AWbMfuVsMMB4ypL1fUO33SAPgbXQoryMNHN6GE=
+	t=1761478559; cv=none; b=lfPKh+zz/Zg3ctfmVqZK+L+hCW+H2S8AcyB+twcFj8Xd/jAeNVXlRY+gvYFvibPRkkuXEZj2HL71apdDCTuzvSBecJfad4NdjsAoXTArF2xr2L/kCUBv8/LCaaQgI9FOp1/f2GGal4M9ZNuvAh6sBxhnleZ2NhyXJIjMDRMiiy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761477614; c=relaxed/simple;
-	bh=WXhSsOHYlSratjyBUfDoyHGZ/FPtXvc0lOg0vqlrD54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hyzBYHbqzgotf3+i4bxxwoHrQmqmNgLe7xRV6sdL382XKo0l477MBT5ls4bt+KZ7fy+67Va8os2U9xajELcLWFRHpbIeR2X8WrO8nCXByh05vQFGQQLupamjuKQYeE76Z5JQ9LE6r8rCafEQpSccjzUR+DqbjX3JRajxSFvHhco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZO0l5rCu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D1C6C116D0
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 11:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761477614;
-	bh=WXhSsOHYlSratjyBUfDoyHGZ/FPtXvc0lOg0vqlrD54=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZO0l5rCuPbIC/tMs2ZuC773iICJte/FhCsKJGvRLh/ebR5CG5S+VTY5XG4cXYGP6M
-	 Z/s0dV9b87BHLomxqE3D5UB8YqEJDQMLXCjNhmL9oHg2FyALdelP52uznyqeTRAPMp
-	 oBp5OEhpNRTOVFxf+2szgNMIw5nni1QkLzPtSsAco9J85vpSxJJ18yQu3skkx9ZV48
-	 TeqeJWzUOU+ddhJvY63n21A1GJ/mL1Kp2KEUzUAQcILa1EYMOUZ9Xd4Ih7IKIH87W4
-	 1ZcaMZsEhxOSBXmCN8UXXzR3oP/5iDBxJi5ii6DwIowMZaDj+Q9cssR22TrvUoAcqe
-	 0vAyEzYFx5uSA==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63e0abe71a1so7361215a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 04:20:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXfZCWzqGQ4X2zwkK/wN67T0mljc4WpjN1MQUoitKr5Fg61+FCR4SiyJ7MUVRBSROjFIGTtwl524V7T9GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7g2OQV+fWQ+isqwJBWNCGceAnPZnboOlCTO1+4gcq49Vkc5sd
-	0KTHfyioLQq861/Dmq7BGlo4UyV09Qz27rpcbsqxq6R8D/nXDWi6FSElCwYDEPC0BWtyRFtEIe1
-	erdl+9Kjlldo7vK0ogjZKO1DRHJlbA4k=
-X-Google-Smtp-Source: AGHT+IHSStRGe85V7TfWyZyzfF6Ya5hjYUTpONErQ3HLd1kUDYooXBrzJ4vLF95pyPPlWOudi0MNIFeRATeAXFEtvLQ=
-X-Received: by 2002:a05:6402:2554:b0:63e:2d46:cc5d with SMTP id
- 4fb4d7f45d1cf-63e3dff1673mr10711788a12.7.1761477612710; Sun, 26 Oct 2025
- 04:20:12 -0700 (PDT)
+	s=arc-20240116; t=1761478559; c=relaxed/simple;
+	bh=UxhS6urnvIXKP6Cxjo/I/5ot9bfrkwFb+4Hll2ex5PU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BPk/FRxp1oi9Zd6jBp8BmeXTPyoGBuam4gfOgyxXXo64Di7g9E0h+dRVN88tmW+Cnico1Sx98JqFvRSqhjYdpjdqeN5rJ4sd855u3luatLx07cAnSs/g25mnYbWvs1/NH4d2V5ntM8o04suZ6RthunSJ3gjZMLL1wHZfwTMY2sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DlMjKYU7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 48E8440E01AB;
+	Sun, 26 Oct 2025 11:35:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lDOJRbbvRBtl; Sun, 26 Oct 2025 11:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761478543; bh=3bG8529YX6WpUImO6K3iKgS/DeaL5dfIG41cPwxMepk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DlMjKYU7c+EQYckDPRQV1TpAC6qTVxqF5ih8d9XybRWdR0hE1Q2azANZ4OjmrzM6V
+	 uQ+2Ic1P4mtRle8YPeQlWrn0DCvm/l6ppb770wV2e/52Wj+QgyhOeHybwm+0rwfr99
+	 ajDX6liyDfNcbepIdd7xXyCnZgIwcGs9Z/PxPNwp7tv7WQtboR1LbDn6e0p6A1rcap
+	 5GVIGS7S2w0vXZ+zjFJ8MAUxhCYcVIJcCA9PHsJZmlF+VJ3UeFMWvEBP9qjkYewI5T
+	 7hf1ryEzVyKu0l9u0GmFQKEzKJmbbQbIdtFkfI5KRvtvDm5nax2qoOF7schXuab+X1
+	 YnZaNGr9lJd+Nx96ekgkLiqJwBDCqIAWtz8D/RzUk6T14nLu/C6EUII1NbYu7XgR+e
+	 9nP84MWwnBLrreR8lanLD9rrO29IrRotR2rCXeCHJdCOfqGH+CSPBVCqPMATlxemyp
+	 R+X6GqwwquRu+vYEaJqF1RtzxzfI7MnYSsoEkrefp3cErqZ/uzUh4h8D2GLv4kYRx0
+	 b9QaZVEOWIe5kqwWofryn46mKSLrNS0TKfCDY+TAqHQNJwU5NhwBM8Wv+LHqyixxhZ
+	 g4qSjzuPAMHpUfB+KaBzYDSKjGdJKFDeVvDRhRKmFd3W1VyBSqwdk40Tx8bKnbrOhZ
+	 Q3oTioDvs2g0dQuV5axBOjdc=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C049140E019F;
+	Sun, 26 Oct 2025 11:35:40 +0000 (UTC)
+Date: Sun, 26 Oct 2025 12:35:32 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] timers/urgent for v6.18-rc3
+Message-ID: <20251026113532.GAaP4HhADWuKp1XI16@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
- <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
- <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
- <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
- <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
- <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com>
- <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
- <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
- <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
- <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
- <jxfb5a2c2qber623l2gwewirwod54bbgfnvt7t7f3jah2ea33g@2uyhy3auzmpx>
- <d9f3352a-1c1f-464a-a8fd-741cd96b5f8e@loongson.cn> <CAAhV-H6m5vszCyiF3qi94cpHBPVuqM2xH93D=gfsQqOSYvC-sA@mail.gmail.com>
- <33612d85-e70b-26da-8460-ea6b9064ce08@loongson.cn> <CAAhV-H5ZSTFDxvm-W1CrgEoQ5d_jw5yVsfetQ_J_qL5pqLtzgg@mail.gmail.com>
- <CAMj1kXGk0udgM67wrWqahqK8H0uE8emQj51SmJey+7fE-FTjdA@mail.gmail.com>
-In-Reply-To: <CAMj1kXGk0udgM67wrWqahqK8H0uE8emQj51SmJey+7fE-FTjdA@mail.gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 26 Oct 2025 19:20:04 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4c=vdNWO0v_mYL2xZ9FYjDyRDvt6f_kV4d8Bh=CRJniQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bnx7p3KGFn8w4CVpWUGoGvdUyYRdpas7DP247MZLQ7EzDz5RnfRwoldkjM
-Message-ID: <CAAhV-H4c=vdNWO0v_mYL2xZ9FYjDyRDvt6f_kV4d8Bh=CRJniQ@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Thu, Oct 23, 2025 at 4:07=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> On Thu, 23 Oct 2025 at 10:01, Huacai Chen <chenhuacai@kernel.org> wrote:
-> >
-> > On Thu, Oct 23, 2025 at 2:55=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongso=
-n.cn> wrote:
-> > >
-> > > Hi Josh and Ard,
-> > >
-> > > On 2025/10/20 =E4=B8=8B=E5=8D=882:55, Huacai Chen wrote:
-> > > > On Mon, Oct 20, 2025 at 9:24=E2=80=AFAM Tiezhu Yang <yangtiezhu@loo=
-ngson.cn> wrote:
-> > > >>
-> > > >> Hi Josh, Ard and Huacai,
-> > > >>
-> > > >> On 2025/10/18 =E4=B8=8A=E5=8D=881:05, Josh Poimboeuf wrote:
-> > > >>
-> > > >> ...
-> > > >>
-> > > >>> But IIUC, the libstub code runs *very* early, and wouldn't show u=
-p in a
-> > > >>> stack trace anyway, because there are no traces of it on the stac=
-k once
-> > > >>> it branches to head.S code (which doesn't save the link register)=
-.
-> > > >>
-> > > >> Thanks for your discussions.
-> > > >>
-> > > >> Are you OK with this current patch?
-> > > > For me the current patch is just OK.
-> > >
-> > > We have discussed this a few times but there is almost no consensus
-> > > of what should happen next and nothing changes.
-> > >
-> > > Could you please give me a clear reply? Then I can make progress for
-> > > the following series:
-> > >
-> > > https://lore.kernel.org/loongarch/20250917112716.24415-1-yangtiezhu@l=
-oongson.cn/
-> > For me, this patch is OK, ignore __efistub_ prefix in objtool is also
-> > OK [1]. But I cannot accept the way that modifying the efistub part
-> > only for LoongArch.
-> >
-> > Clear enough?
-> >
->
-> LoongArch is the only architecture which has the problem, so I don't
-> see a reason to modify other architectures.
-From your reply I think the efistub code is completely right, but
-objtool cannot handle the "noreturn" function pointer. And this patch
-is a workaround rather than a proper fix (so you don't want to touch
-other architectures), right?
+Hi Linus,
+
+please pull a timers/urgent fix for v6.18-rc3.
+
+Thx.
+
+---
+
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
+
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/timers_urgent_for_v6.18_rc3
+
+for you to fetch changes up to 39a9ed0fb6dac58547afdf9b6cb032d326a3698f:
+
+  timekeeping: Fix aux clocks sysfs initialization loop bound (2025-10-20 19:56:12 +0200)
+
+----------------------------------------------------------------
+- Do not create more than eight (max supported) AUX clocks sysfs hierarchies
+
+----------------------------------------------------------------
+Haofeng Li (1):
+      timekeeping: Fix aux clocks sysfs initialization loop bound
+
+ kernel/time/timekeeping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 
-Huacai
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
