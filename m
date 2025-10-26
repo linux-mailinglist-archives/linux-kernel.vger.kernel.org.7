@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-870335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05693C0A7CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:44:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414F0C0A7CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7A3E934919D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:44:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDA104E8410
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82892E092D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC7D2E06EF;
 	Sun, 26 Oct 2025 12:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="dxWmeTjd"
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="DcEcOzku"
 Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756022C11EC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7567E2C17A8;
 	Sun, 26 Oct 2025 12:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761482553; cv=none; b=hF+cg/MqzpSc29RrumNLRHLTzTjyCSyGVxOmsH9hutv81DAOn5F+NHk8Fa+3EwhmPLgp9pDbF2eoiEsXgC56IdOZ+YP3keh5N9ZfqZYuM2GmSxz/OeCcJ6kwg0wqLQQAUv483OKrCJO3E0j5A7ZGWCkOnxBbq1p2YgDyYOa+u8k=
+	t=1761482553; cv=none; b=SWmHU1VIH5WwvuamHQoBMJgQIh7HfBYm0uCryepGQz2O7EHqp0ONGTyEvXsnjqVefffGnyXQjt/j8smmLr10NsZVWdZDnKUZCnSzAKz1jB7jBkJhsnu0JlfnKxGTzGoWEC5gV6HjA4JJF4logHPxSlTAm/JuMkXsj2W1e6ga/vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761482553; c=relaxed/simple;
-	bh=j11Gc/5QYiUy6F+P2RyEr/2EB+XN5KyxRXrWVYzN3t0=;
+	bh=vghudGEOY3L1ytcEYABOWe472CPzB9vVvZz/X1Px26A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C18BgROYjQGpprHsUzv3Gpf+hTPK/jLeVnfHlYYt1I5iAG2OSjvGAvwvLyWr2HSjZbMwCGZ52XAgLRqUWvpwxP04Tls4g1XI+vjfHd6olGSm52LIdUL6SYfu03WyUU9HffNzSuOIhoHKzMoz350MfYi+OGebTm9cJw4H00XRWE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=dxWmeTjd; arc=none smtp.client-ip=80.237.130.52
+	 MIME-Version; b=AkNH1QkYFM0MLLUKpzPVcZA5VJs21Tne2faliEtjfIy0A1zEt8GtHhhIKv1PhENRIUMg9BbZogaojv57B9t8IeBwUBVeraCTQscQGoeeoMO1r/sPI90vlFWjHPIReSTXZGqJuvQr8so7hIYKEMYdQ4nm22NabdhcP37r2DBc/SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=DcEcOzku; arc=none smtp.client-ip=80.237.130.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Sender:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
 	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=+oSFmLCLJ2XeD/SLV19HCOuUmPh+XxTv83L0oJR/kUU=; t=1761482551;
-	x=1761914551; b=dxWmeTjda+jjl2pCaR3qB/GCv4fs1xC0xbQUtz4y06QXBX89+QRzZwm7GZ0PS
-	2KPt7XO6Ajap2JU3csRU2vBJ97LHxmkWdDVCIkGzIiHhgK2T9Cl5ujFp8gw2iLuDAAlO1pXQBI0KS
-	qI7NpBm1JQ3qLc0w3RXCBhZVwi9YGPXjagCSjCAp4xCUs0Vev+1EJ7qYt4zh7cipJuNEt0d8uXFvK
-	vaeYmPkVVlaoZlUu0oSav752YlgB9gYugtRaPowyjiDaXAVpGzkCnTZ0FnrWZFsxoXGEXdLQIWsh3
-	oxN3i0O3w/3sqNGghprEqHf6rSJ25Ndn8Y/oCA2C3I04rTH3Nw==;
+	References; bh=A9M9qnXAKMMmJCdLmCAyHsjy98RtFl6ZF9DFi+xuUB8=; t=1761482551;
+	x=1761914551; b=DcEcOzkuAxLLQ9iCDWvClnYTOvNO++ZqYAJygDLgZPxd5NdejNLZQbhQzRDd7
+	p0ucvKsmxYeLuZdM+yuIMoQtBP6uitMi7TwyOUWmrxf/UsSVTzoCNcW2KYu9dS7mnomM1uO7N3v/m
+	yaUUBtsd2046oKrWA1Ir+rRJGNrK6YrUViKu1xk9eYuIUMWiWnQfU8i5Ik4lR3aN2YUxxWHzjvbuE
+	AaaqDWuB5970iXOJfMcPMxp0jo5ulBzI8yHH0wPcwcpBSKGFXbOvDqdT40UJt4JgqQ5rzdBhCUxjS
+	KABWrOwpze7pg1O3rJXmfd+/CmVgBM0f9XtOfzh52hQv2XB1CQ==;
 Received: from [2a02:8108:8984:1d00:a8ad:ebd4:6fc6:160] (helo=luggage.fritz.box); authenticated
 	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1vD04l-001mX6-2O;
-	Sun, 26 Oct 2025 13:42:23 +0100
+	id 1vD04m-001mXP-12;
+	Sun, 26 Oct 2025 13:42:24 +0100
 From: Thorsten Leemhuis <linux@leemhuis.info>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: workflows@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	regressions@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 04/30] docs: reporting-issues: add proper appendix
-Date: Sun, 26 Oct 2025 13:41:55 +0100
-Message-ID: <c3d92d4e74557bfff3627d8ceb6a9911612af52a.1761481839.git.linux@leemhuis.info>
+Subject: [PATCH v1 05/30] docs: reporting-issues: outline why reporting is complicated
+Date: Sun, 26 Oct 2025 13:41:56 +0100
+Message-ID: <a6704ef5b3a8dcbaf645ddb5407e8f13553502b0.1761481839.git.linux@leemhuis.info>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1761481839.git.linux@leemhuis.info>
 References: <cover.1761481839.git.linux@leemhuis.info>
@@ -63,138 +63,96 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1761482551;009d26c6;
-X-HE-SMSGID: 1vD04l-001mX6-2O
+X-HE-SMSGID: 1vD04m-001mXP-12
 
-Turn the "Why some bugs remain unfixed and some report are ignored"
-section into a proper appendix while improving it slightly.
+Replace the closing words with a section that describes why reporting
+Linux kernel bugs is more complicated than in other FLOSS projects.
 
 Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
 ---
- .../admin-guide/reporting-issues.rst          | 102 +++++++++---------
- 1 file changed, 54 insertions(+), 48 deletions(-)
+ .../admin-guide/reporting-issues.rst          | 67 ++++++++++++++++---
+ 1 file changed, 59 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 9676ba85e1b73c..745e698cb6be8b 100644
+index 745e698cb6be8b..2629fde3aa4b8f 100644
 --- a/Documentation/admin-guide/reporting-issues.rst
 +++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -1693,60 +1693,66 @@ for the subsystem where the issue seems to have its roots; CC the mailing list
- for the subsystem as well as the stable mailing list (stable@vger.kernel.org).
- 
- 
--Why some issues won't get any reaction or remain unfixed after being reported
--=============================================================================
-+Appendix: additional background information
-+===========================================
- 
--When reporting a problem to the Linux developers, be aware only 'issues of high
--priority' (regressions, security issues, severe problems) are definitely going
--to get resolved. The maintainers or if all else fails Linus Torvalds himself
--will make sure of that. They and the other kernel developers will fix a lot of
--other issues as well. But be aware that sometimes they can't or won't help; and
--sometimes there isn't even anyone to send a report to.
-+.. _unfixedbugs_repiapdx:
- 
--This is best explained with kernel developers that contribute to the Linux
--kernel in their spare time. Quite a few of the drivers in the kernel were
--written by such programmers, often because they simply wanted to make their
--hardware usable on their favorite operating system.
-+Why some bugs remain unfixed and some report are ignored
-+--------------------------------------------------------
-+
-+When reporting a problem to the Linux developers, be aware that they are only
-+obliged to fix regressions, security issues, and severe problems. Developers,
-+maintainers, or, if all else fails, Linus Torvalds himself will make sure of
-+that. They will fix a lot of other issues as well, but sometimes they can't or
-+won't help -- and sometimes there isn't even anyone to send a report to.
-+
-+This situation is best explained using kernel developers that contribute to the
-+Linux kernel in their spare time. Quite a few of the drivers in the kernel were
-+written by such programmers; often they simply wanted to make the
-+hardware they owned usable on their favorite operating system.
- 
- These programmers most of the time will happily fix problems other people
--report. But nobody can force them to do, as they are contributing voluntarily.
--
--Then there are situations where such developers really want to fix an issue,
--but can't: sometimes they lack hardware programming documentation to do so.
--This often happens when the publicly available docs are superficial or the
--driver was written with the help of reverse engineering.
--
--Sooner or later spare time developers will also stop caring for the driver.
--Maybe their test hardware broke, got replaced by something more fancy, or is so
--old that it's something you don't find much outside of computer museums
--anymore. Sometimes developer stops caring for their code and Linux at all, as
--something different in their life became way more important. In some cases
--nobody is willing to take over the job as maintainer – and nobody can be forced
--to, as contributing to the Linux kernel is done on a voluntary basis. Abandoned
--drivers nevertheless remain in the kernel: they are still useful for people and
--removing would be a regression.
-+report. But nobody can force them to do so, as they are contributing
-+voluntarily.
-+
-+There are also situations where such developers would like to fix issues,
-+but can't: They might lack programming documentation to do so or hardware to
-+test. The former can happen when the publicly available docs are superficial or
-+when a driver was written with the help of reverse engineering.
-+
-+Sooner or later, spare-time developers usually stop caring for the driver.
-+Maybe their test hardware broke, was replaced by something more fancy, or
-+became so old that it is something you don't find much outside of computer
-+museums anymore. Other times developers also stop caring when
-+something different in life becomes more important to them. Then sometimes
-+nobody is willing to take over the job as maintainer -- and nobody else can be
-+forced to, as contributing is voluntary. The code nevertheless often stays
-+around, as it is useful for people; removing it would also cause a regression,
-+which is not allowed in Linux.
- 
- The situation is not that different with developers that are paid for their
--work on the Linux kernel. Those contribute most changes these days. But their
--employers sooner or later also stop caring for their code or make its
--programmer focus on other things. Hardware vendors for example earn their money
--mainly by selling new hardware; quite a few of them hence are not investing
--much time and energy in maintaining a Linux kernel driver for something they
--stopped selling years ago. Enterprise Linux distributors often care for a
--longer time period, but in new versions often leave support for old and rare
--hardware aside to limit the scope. Often spare time contributors take over once
--a company orphans some code, but as mentioned above: sooner or later they will
--leave the code behind, too.
--
--Priorities are another reason why some issues are not fixed, as maintainers
--quite often are forced to set those, as time to work on Linux is limited.
--That's true for spare time or the time employers grant their developers to
--spend on maintenance work on the upstream kernel. Sometimes maintainers also
--get overwhelmed with reports, even if a driver is working nearly perfectly. To
--not get completely stuck, the programmer thus might have no other choice than
--to prioritize issue reports and reject some of them.
--
--But don't worry too much about all of this, a lot of drivers have active
-+work on the upstream Linux kernel. Those contribute the most changes these days.
-+But their employers set the priorities. And those sooner or later stop caring
-+for some code or make their
-+employees focus on other things. Hardware vendors, for example, earn their money
-+mainly by selling new hardware -- they thus often are not much interested in
-+investing much time and energy in maintaining a Linux kernel driver for a chip
-+they stopped selling years ago. Enterprise Linux distributors often care for a
-+longer time period, but in new versions might set support for old and rare
-+hardware aside to limit the scope, too. Often spare-time contributors take over
-+once employed developers orphan some code, but as mentioned earlier: Sooner or
-+later they will usually leave the code behind, too.
-+
-+Priorities are another reason why some issues are not fixed, as developers
-+quite often are forced to set those: The spare-time of volunteers or the time
-+employers allot for upstream Linux kernel work is often limited. Sometimes
-+developers are also flooded with good and bad reports, even if a driver is
-+working well. To
-+not get completely stuck, the programmers might have no other choice than
-+to prioritize bug reports and ignore some.
-+
-+But do not worry too much about all of this, a lot of drivers have active
+@@ -1756,14 +1756,65 @@ But do not worry too much about all of this, a lot of drivers have active
  maintainers who are quite interested in fixing as many issues as possible.
  
  
+-Closing words
+-=============
+-
+-Compared with other Free/Libre & Open Source Software it's hard to report
+-issues to the Linux kernel developers: the length and complexity of this
+-document and the implications between the lines illustrate that. But that's how
+-it is for now. The main author of this text hopes documenting the state of the
+-art will lay some groundwork to improve the situation over time.
++Why reporting Linux kernel bugs is somewhat complicated
++-------------------------------------------------------
++
++The Linux kernel's development model differs from typical Open Source projects
++in a few important aspects. Four of those complicate bug reporting:
++
++1. Developers are free to solely focus on the latest mainline codebase.
++
++2. The 'stable team' maintains the stable and longterm kernel series, but is not
++   allowed to fix many bugs just there if they happen in mainline, too.
++
++3. There is no central bug tracker.
++
++4. Most kernels used in Linux distributions are totally unsuitable for reporting
++   bugs upstream.
++
++Due to the first aspect, some of the developers ignore or react coldly to
++reports about bugs in, say, Linux 6.1 when 6.2-rc1 is already out.
++
++The combination of the first and the second aspect is why some of the
++developers are unwilling to look into reports with stable or longterm kernels:
++the problem might never have happened in the code they work on, for example
++because the stable team did something wrong between 6.1.1 and 6.1.2.
++
++The stable team due to those two aspects is often in a similar but opposite
++situation when it comes to bugs reported using a kernel like 6.1.2: If that
++issue already happened in 6.1 and still happens in the latest mainline kernel,
++then it must be fixed there first. That is among the reasons why reporters in
++the end always have to check if mainline is affected, as the stable team often
++is the wrong point of contact, unless it is a series specific regression.
++
++There are various reasons why no central bug tracker exists. They, among others,
++were not a thing yet when Linux started, which is why reporting my email was
++the norm initially -- and still is, as quite a few developers prefer to handle
++all aspects of kernel development via email. Some, on the other hand, saw
++benefits in trackers and set up bugzilla.kernel.org, which due to the
++aforementioned aspect never became mandatory and has some problematic aspects;
++this is why it frequently does not even forward newly filed reports to the
++appropriate developers. Yet other developers prefer the comfort of Git forges
++for development and issue tracking; but subsystems use various forges, so those
++trackers are spread over the web.
++
++The fourth aspect is explained in the second point of the reference section
++already: Old codebases, modified sources, and add-ons lead to bugs that were
++fixed a long time ago already or never happened upstream in the first place.
++These are problems for many other software packaged by Linux distributions as
++well. But there it is usually a smaller problem, as the modifications and
++extensions distributors apply to the kernel are often much bigger and more
++dangerous; the kernel also changes way more quickly, is a lot more
++complex, and naturally more fragile. Due to these aspects, many developers
++expect reports to be based on fresh and vanilla kernels. Furthermore, most of
++them receive way more bug reports than they are able to handle, which is
++why they prioritize the ones that look more promising.
++
++Reporting a bug due to these and other unmentioned aspects is harder than in
++other Free/Libre & Open Source Software projects -- the complexity of this
++document proves that. But that is the state of affairs for now. The primary
++author of this text hopes documenting it will lay some groundwork to improve
++the situation over time.
+ 
+ 
+ ..
 -- 
 2.51.0
 
