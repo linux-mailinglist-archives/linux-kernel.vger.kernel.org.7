@@ -1,83 +1,92 @@
-Return-Path: <linux-kernel+bounces-870621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E10CC0B4C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:44:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F472C0B4D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91853B822C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B1B18A1349
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB592F83BC;
-	Sun, 26 Oct 2025 21:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A6B2FD1A3;
+	Sun, 26 Oct 2025 21:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jd2Vc9iC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+SY37Nd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12E2DA760;
-	Sun, 26 Oct 2025 21:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25911D7E31;
+	Sun, 26 Oct 2025 21:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761515076; cv=none; b=VFSHOgG+pBwn3Tm/H88vFHL8hf3RQNqVdDNfbo4Y8+L0kq3GKDZc0BhPelc5Y9rjrhOwuV8G8fkaMUQMLSNz4hdiJL1aGLefZ6uETahMNVIkLeRdel9Mo/z0tlSn40mv2k9Bc4x3/ToIySYRb8XBAHDT3T9DYcDcxJEATXCkhKU=
+	t=1761515121; cv=none; b=WKX1JiOI0TkOZaYfa+o6UEmgnDNf5SVUZXJ5vrAyrNHd+GiV1zoFKBK747cDnGgHqM2p1iOr56jDuvdbp2/xZxmposfOTVYp/VipHfAVnJpo7Iyf56V+JR0u03KSshHbUqsD8DX6k4awpQ4S18bGt2TIKPDsJiY7HGkWJnsjTck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761515076; c=relaxed/simple;
-	bh=vXbSbnOjYRZqzne9Rsm7iv5shX4kPK2FDFgOzWLRR9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=omXS8AH/jS5voWCVxpKYjFJ5iqAivEpaePCRoyR7+kOxG1eDGCpA2wBv23VossUX2jO0RqJkhn/y6j7xuTd5FgLJMzohCNp3AX52UFO8ZAqnzh+tVJGSydcmpkwkFnrDYjrpwURyPjAmp21aNqt5ipMCx/mTjgRDtGqpUBRHrSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jd2Vc9iC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=AisfXWItUiP+YCt6QRi/uofiXwhLt5T+U2Q8Ip1ol8Q=; b=jd2Vc9iCUYPARRnVvYGMuyJHUG
-	Rm98d1vW1kME7anCxQ1VGQlyMLsfMicrlFq17Ts+UOBH2tlBeSiJGIZiN5LFBjoWfsiuuYTHJzJCs
-	b4ImDKBPCJ33TO02d1b4yQo6f9AggzKiKcRoUNmSbCjq7jjLfx4ZDNiNB6vWw1wSwSoPgREHuQkWD
-	YwgY55q91aFrpsaGaxeHqc4GKoVHpJOEl1soKjMD7ibL4qa8RIsT+936ekjxLaPCTRQbFw6ln3EMF
-	3Jw+HYTCh0AjXjbgq44hOKdD4kopIpAEGdIGBjmGWu5cydr0iRFtSiox5ZvfU5Dd021mcyvmtHmD+
-	mRjjL1yQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vD8XR-0000000CmMx-0zxN;
-	Sun, 26 Oct 2025 21:44:33 +0000
-Message-ID: <bfb5a59b-40de-4d24-b49d-4683b40e5395@infradead.org>
-Date: Sun, 26 Oct 2025 14:44:32 -0700
+	s=arc-20240116; t=1761515121; c=relaxed/simple;
+	bh=2oCXk8yWmT0Rh4DSL89Lqqbb+y930NQMDgM+wHt8Qt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=to3Nlux13hL1NEvNZMbBrCbFO3Z+w53jtItB1QOQqCLGP1bunOoGacRC+BB6+Pcr5qf2EL8M/q8IgQQsQkjBljVp0wQu428Q1VgiD6pgecp/YBp7XXGOXUnQGBIvt+2p31nFl3TGH+35053z9efroTingiNS4sDAa03wDmIY7FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+SY37Nd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E73C4CEE7;
+	Sun, 26 Oct 2025 21:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761515121;
+	bh=2oCXk8yWmT0Rh4DSL89Lqqbb+y930NQMDgM+wHt8Qt8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A+SY37NdmY8yTOMg3t4DSAkQIi+CpDzeYrHeqdy3xgeMwmbFeyUiuSOFv3g86huVn
+	 1TA4nX/YEE2mxAY9PclfciiHdRhVZavCqP16DAplI0CVJsQK4Var5GayqVJgaUN6W9
+	 lKhCxOnQsUNFNX4jShVt1yHaQTIYFlcX/Iyn9+2dciWCMx/oh+fro3SytPwPScesnn
+	 q1dYbSsZtmukHxchoPjapKoJ7EQiPUAhKlQ6T5Sw2wq0RwCwGaKXs/DJfnf2C5eS+O
+	 HZBuIwU5+1FGydsT9eRWB2ki9PKs4d0JxQ8jvKRI51Nen1JnQ7pxbvmZU2UK4uXUfk
+	 lcTSHBnvWrAgg==
+Date: Sun, 26 Oct 2025 16:45:19 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, freedreno@lists.freedesktop.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: display/msm: Reference DAI schema for
+ DAI properties
+Message-ID: <176151511679.2990875.10147448365246102323.robh@kernel.org>
+References: <20251021111050.28554-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
- /tools/docs
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Akira Yokosawa <akiyks@gmail.com>, Jani Nikula <jani.nikula@linux.intel.com>
-References: <20251024200834.20644-1-corbet@lwn.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251024200834.20644-1-corbet@lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021111050.28554-3-krzysztof.kozlowski@linaro.org>
 
 
+On Tue, 21 Oct 2025 13:10:51 +0200, Krzysztof Kozlowski wrote:
+> DisplayPort nodes are DAIs (Digital Audio Interfaces): they have already
+> 'sound-dai-cells'.  Reference the common DAI schema to bring common
+> properties for them, which allows also customizing DAI name prefix.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/display/msm/dp-controller.yaml         | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-On 10/24/25 1:08 PM, Jonathan Corbet wrote:
-> The big elephant lurking in this small room is the home for Python modules;
-> I left them under scripts/lib, but that is an even less appropriate place
-> than it was before.  I would propose either tools/python or lib/python;
-> thoughts on that matter welcome.
-
-I agree with Jani-- not lib/.
-if that helps.
-
--- 
-~Randy
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
