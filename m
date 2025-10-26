@@ -1,214 +1,133 @@
-Return-Path: <linux-kernel+bounces-870364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA79C0A859
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:56:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EBFC0A868
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAA584ED1E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C473A6A96
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F161D2E8B91;
-	Sun, 26 Oct 2025 12:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B0E2DECDE;
+	Sun, 26 Oct 2025 12:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnpQIUnB"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mi1KbTTq"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C342DF149
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9DA243946
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761483336; cv=none; b=b5rkZwm9ZnBeuJ0zCnJMLyOvs5jbNPCmNxg+kPjmX2hsUxLZ0zzhLuL3JJGbl8xCEa+0CaN/ll3w9yOM/ZX50naKFCD/RvGzK+AO3Xbq+Hwm17I8F5HvIx6IqgpWIDQXJr8jbBJVMClcoBiM2P3BADBWaYEgDnQxsjVQeztICT4=
+	t=1761483448; cv=none; b=IyPzZHbrTHnLUSUxY2shO6JGKrJUUkf1kge3NVtj0LB7+OTa1HIjp4MlZl5mC7b15iNCXalH1G16ZpjF8FDpOIVfxmnQCpVfyIKPNbCbTo2FI9czb5CxbU9q+qPgIuTj6DUOetAIqPdr8maf1l32T3riYn9VLLzZ9qLCNJtdwZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761483336; c=relaxed/simple;
-	bh=ga/2Ql3JpoWfmrFHfn50pQoQySYcTifPzY8FBOMDrWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YyvGe35tbrW/pHIuIRAb9s+qF/n+o9rwcNtKzefpiUlEUTOjVbU7HHDOD8X6fPnOskbbfax+ViPJT4TJ7EcitUgbS47my9KHe3Uv2C3q+LT2bcX6F9Fc3cOym/+P3rwhocPGe/dfxUGR5bVIYKrU5C/QljZ3cdjUVhSl+61CBdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnpQIUnB; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1761483448; c=relaxed/simple;
+	bh=rCGw4ZbsZQCpqBLJPg/c9+/fXOA/cXyXFOwoHEEcBhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6ai0lAvWdgVP6tRoTbJftzaaLaf125Cbl3C992eOhFdcucYJZB2uKMWIAzemq924J+kBbH3ycaBWvvxxec72MkYuDWMUzzbp6wUBZOS3zM/5Dfc7hNcLYc+6lNWh7Pbx49OejrAGkGTOcd8qGTY1ZuqQKcla/S+gtZaIXxLwPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mi1KbTTq; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so4422414a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:55:34 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3b27b50090so656040366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:57:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761483334; x=1762088134; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1CAzZXd4A3lF4KIIahj6WEixTTC+T0E5VAC/UV75Tc8=;
-        b=fnpQIUnBCpFjd2zqIvrtqTrB1OkiyRzsAjMhd7HwNhrXBJ1qjstAqCumalTsXE4l0L
-         atydmeuTQEJx27Uduf6GUcNjYrlamS6S9eVkNmiUTbjnn+MpIiiYV2pQShsBoqLOZSQZ
-         1IyNYjhnqMv4nuFxDBWRtrMN34o5APdkClvzm42hYlYRT4gge2fGOlNKPzFfac/uN0Th
-         SrbqHADzNfwG83tyHWBclKvnoJZ2ivkZBNAT6VhBN2YdN6eozg/zaEIU3jkLbJOFF52G
-         AJ9jQFadKDR1uB8iR4R6slyXV3+L1SwAgjQbWCDkOu4e0K5/6p6ElLLRUyqCjYmpSW3q
-         0gqg==
+        d=gmail.com; s=20230601; t=1761483445; x=1762088245; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ETXrEZX5fQ8Oi3Y5mw2OqmhS1VtxyB2GFpSLLiFAkrE=;
+        b=Mi1KbTTqziQFPAvBKPvSJMexoWUA3AYoYm2lymk5rhdVysogyp/NVZsGt+I3tYluho
+         xC6NZzKRpdYi14wvMh5zPKaRKve6kRBeQMUJTmAyzHwhBbDchw1dw7uv38gPEFP8kMlP
+         t+Ga+0v99K4Po/WlAP2fSEhk2F2UjzHQBEDp+3exA1qdeE6tPOo/RjwRoKKk76DpT5pz
+         0NgKHDru0M1OXS5Uc+XXzjxyYbIt0lGNh6K4nG70XcZD87BUX2EA60H9LYonHWwTYAE1
+         lgzx7mZyPFzo1MFxpPmrMiK1ui3plDQptMIAUZIfGBMgelN2iC+njNopN7HXKXupaES+
+         nJhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761483334; x=1762088134;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761483445; x=1762088245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1CAzZXd4A3lF4KIIahj6WEixTTC+T0E5VAC/UV75Tc8=;
-        b=g3AH9SFHYgYrtnvq78ZCv2YjpdV7MNOsogZW+yFUesBtr9OlucvE/Yo+3sfGxREMhO
-         ZEJQvSicEJerjYUePybwBttxUyd9LZ531nYVkTfALgohD6SMQdxeeLevpjOnxP3YkNXd
-         vgqU2JzIy+LHOIF0xEIED6J+iZHTDYCLQ7QK9bhxsvxQSz6+U10YQxoI46tNFZjOFX96
-         QLgoK6BAA3PfXmLY8nn3kHUzyBr5NZbvSt1uKIyCRvbnW34zsL02wWacuEqLMVepWh8h
-         taGf1w62nATOR9QRHDQriPBQgsQBYMgsFpkU3P3c2oxNQn2/07xOqGIiiCq82aLwBUBk
-         E8Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVK1OEcVprXIwU6fjCkmwXZTtCe6LxUje4OWdLGD+yQrCrf6KeWrjWvR2k4yE2UagYBr4xC96DHvRiL6ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlspIkLWQO3BCUJ62mGQzU2o1BDcnSWo9AzMHQgs05j1hJNZcR
-	1+hrwmNRJvvod81Wol5vjtA6T/EhacZsF4T1ac1JzCmHz7+OunsZnNuU
-X-Gm-Gg: ASbGncs5ZvpRe7oQn1HoJW+3sGwjBXc2q7AB1lHMr2Fycy7hjDOTAD9Tkub7680Kd4v
-	C7Xg7UCpMKx/gEY5VwGQaR9k0Vlo6yH2smTvAE733zGJFU65uC/V2uBFndX6CIvYl8oayGgaJ98
-	LCY/Szmaj3n36HJBu+wCsx/rD6a0IQWtDxG9ITs+f4DgwSosvp5hD3UU+wVTie5BmT/Yqs3HEpj
-	VasrTAXg6HUoBVJO7HFmp69spLfDTfwi+m/1LuqTqK3CkzcUZRaQPm/5sjrS+uibpj94/meXRRS
-	31uqQUhXp56KMkbCRVUuQLkOXS6QpFCFfEUuozhuD/17OlTwTQwTYBG+PPapeY5zrsOWDB25wBt
-	K/QuDOV/9haExbXcEQjUZijr24dUV+UK/3CY3atYwytrCjybX4TfrMOhufN+sAh96BwMs9BY7Ee
-	tpFNub6+SUZfzdLqrR+IL5FRY9/XfJzbhjpP5ekQ9Rb0sZCpbF
-X-Google-Smtp-Source: AGHT+IHZWhs/E+CtlUuWIrH5OJyrAhAoGqPWvwTTsxXtMWGAgRDVXQfA8CrHQP0ju6+3vvvAqTyMlA==
-X-Received: by 2002:a17:90b:5105:b0:32e:e3af:45f6 with SMTP id 98e67ed59e1d1-33bcf87b6a4mr43304692a91.10.1761483334095;
-        Sun, 26 Oct 2025 05:55:34 -0700 (PDT)
-Received: from bee.. (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm4641759a12.5.2025.10.26.05.55.30
+        bh=ETXrEZX5fQ8Oi3Y5mw2OqmhS1VtxyB2GFpSLLiFAkrE=;
+        b=S/xLdHlIriU4l4BmU6QHIk5nWf3OSQu3wXFQHFbahaFfI2K7K0UV20+HxamK1S67dC
+         mNWIKrBxb/5bPrzndq3/RqxHIlL3bpCkAqabLc2jxxb5dTshgSfgFURamVv67ArzcFrx
+         8YDirjxOUpukLBQOLWX/ELuil1Qx0eH6JS8z9qOKziYhcR9blp0jkhyDcJmf1UWOXlLG
+         IaY8qwMvCu6J3PwzmDSkgjp+fCAEmfewL8HcJ3hS9iG6UmY4BJm4qnv5ahyPPKfKkwLZ
+         GdxMLyupNGLRnCp4s+TMS2DhBF83vZjj3EyKBQtU0zP1uHh6nu8bxFTCHBs7Cp7le5iL
+         KfgA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1q1mkHbzkhoUc4FLfHYjmLLhSC4pHdpwR5KB7dzdb9efsyTIKwNSB25GH87D8IscEQXx0Y4qdtypwyxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5bOMhA1F9yL1R4cC+pxqldbgKBZcK224Z+ey2PuGbR3892BNQ
+	MO9xo4R6mCzDGk1mPHuvCclyjOw2tUGp/8m6gqfXLbtlkSA0Ot08+pz3
+X-Gm-Gg: ASbGncuMcKpFlS1xtqakIAE0hHRVL8aw/KPxC+KQSFQcRfm21ya1r+JegCLuJcbZMpB
+	eaRh3APnQU2g6zrJb7qivtRR1hRuzXZNT8DQFQXkVSdse4jF5LyRMdJKLVIuMKr5dEPxeXJyiGV
+	j12tOeFQ5SljnXBDlTIzlx/xhFxVwPTukOcnnIhY7atACmV9oX9L4QRUW+SwmRIKjDskULgISlS
+	ZUDRA2RxdUzXN3OFJDfHgJ6VGgG79oqXtr4tbyXdkk3pkUdQxjy7hd32XJWCnBcoRBGqWb19Wo1
+	lvNh1Tl/xjZEIN/8SZJQjOVCkoTDoo0UiEvC66yt3wCvgEfJq5049K5ciYT6vEY9kogncJHbAhg
+	doGfOa6CQq8iOj9ZCDhPiiiWlCfRa8HuGRh1MUCdBqVk4VxlK+9/u5o1XNv9Y18hbBiS0HN/kR7
+	Ag37qkcmcxHR3pJeDxSFa4LQ/uZMlAR5ARTXPUCKKKBXbv
+X-Google-Smtp-Source: AGHT+IGVz/VPRAxaoxwbFjYCLhD1ar+3bJt34o/sZ1Velhqhsmkm8EcDtkmYcSESmb5WVANXKCHAUQ==
+X-Received: by 2002:a17:907:3d87:b0:b3f:b7ca:26c5 with SMTP id a640c23a62f3a-b647570a3d9mr3880397366b.59.1761483444461;
+        Sun, 26 Oct 2025 05:57:24 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8541fb2esm453815766b.59.2025.10.26.05.57.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 05:55:33 -0700 (PDT)
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-To: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	dakr@kernel.org,
-	daniel.almeida@collabora.com,
-	ojeda@kernel.org
-Cc: anna-maria@linutronix.de,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	frederic@kernel.org,
-	gary@garyguo.net,
-	jstultz@google.com,
-	linux-kernel@vger.kernel.org,
-	lossin@kernel.org,
-	lyude@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	sboyd@kernel.org,
-	tglx@linutronix.de,
-	tmgross@umich.edu
-Subject: [PATCH v3 2/2] rust: Add read_poll_timeout_atomic function
-Date: Sun, 26 Oct 2025 21:54:58 +0900
-Message-ID: <20251026125458.2772103-3-fujita.tomonori@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251026125458.2772103-1-fujita.tomonori@gmail.com>
-References: <20251026125458.2772103-1-fujita.tomonori@gmail.com>
+        Sun, 26 Oct 2025 05:57:22 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 51C38BE2EE7; Sun, 26 Oct 2025 13:56:58 +0100 (CET)
+Date: Sun, 26 Oct 2025 13:56:58 +0100
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Andreas Radke <andreas.radke@mailbox.org>
+Cc: stable <stable@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>, Zhixu Liu <zhixu.liu@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Please backport commit 00d95fcc4dee ("docs: kdoc: handle the
+ obsolescensce of docutils.ErrorString()") to v6.17.y
+Message-ID: <aP4amn4YQDnzBBCU@eldamar.lan>
+References: <aPUCTJx5uepKVuM9@eldamar.lan>
+ <DDS2XJZB0ECJ.N4LNABSIJHAJ@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDS2XJZB0ECJ.N4LNABSIJHAJ@mailbox.org>
 
-Add read_poll_timeout_atomic function which polls periodically until a
-condition is met, an error occurs, or the attempt limit is reached.
+Hi,
 
-The C's read_poll_timeout_atomic() is used for the similar purpose.
-In atomic context the timekeeping infrastructure is unavailable, so
-reliable time-based timeouts cannot be implemented. So instead, the
-helper accepts a maximum number of attempts and busy-waits (udelay +
-cpu_relax) between tries.
+On Sun, Oct 26, 2025 at 08:36:00AM +0100, Andreas Radke wrote:
+> For kernel 6.12 there's just one more place required to add the fix:
+> 
+> --- a/Documentation/sphinx/kernel_abi.py        2025-10-23 16:20:48.000000000 +0200
+> +++ b/Documentation/sphinx/kernel_abi.py.new    2025-10-26 08:08:33.168985951 +0100
+> @@ -42,9 +42,11 @@
+>  from docutils import nodes, statemachine
+>  from docutils.statemachine import ViewList
+>  from docutils.parsers.rst import directives, Directive
+> -from docutils.utils.error_reporting import ErrorString
+>  from sphinx.util.docutils import switch_source_input
+> 
+> +def ErrorString(exc):  # Shamelessly stolen from docutils
+> +    return f'{exc.__class__.__name}: {exc}'
+> +
+>  __version__  = '1.0'
+> 
+>  def setup(app):
 
-Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
----
- rust/kernel/io/poll.rs | 72 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 1 deletion(-)
+Yes this is why I asked Jonathan, how to handle backports to older
+series, if it is wanted to pick specifically as well faccc0ec64e1
+("docs: sphinx/kernel_abi: adjust coding style") or a partial backport
+of it, or do a 6.12.y backport of 00d95fcc4dee with additional
+changes (like you pointed out).
 
-diff --git a/rust/kernel/io/poll.rs b/rust/kernel/io/poll.rs
-index 613eb25047ef..65c8ec3fb683 100644
---- a/rust/kernel/io/poll.rs
-+++ b/rust/kernel/io/poll.rs
-@@ -8,7 +8,10 @@
-     error::{code::*, Result},
-     processor::cpu_relax,
-     task::might_sleep,
--    time::{delay::fsleep, Delta, Instant, Monotonic},
-+    time::{
-+        delay::{fsleep, udelay},
-+        Delta, Instant, Monotonic,
-+    },
- };
- 
- /// Polls periodically until a condition is met, an error occurs,
-@@ -102,3 +105,70 @@ pub fn read_poll_timeout<Op, Cond, T>(
-         cpu_relax();
-     }
- }
-+
-+/// Polls periodically until a condition is met, an error occurs,
-+/// or the attempt limit is reached.
-+///
-+/// The function repeatedly executes the given operation `op` closure and
-+/// checks its result using the condition closure `cond`.
-+///
-+/// If `cond` returns `true`, the function returns successfully with the result of `op`.
-+/// Otherwise, it performs a busy wait for a duration specified by `delay_delta`
-+/// before executing `op` again.
-+///
-+/// This process continues until either `op` returns an error, `cond`
-+/// returns `true`, or the attempt limit specified by `retry` is reached.
-+///
-+/// # Errors
-+///
-+/// If `op` returns an error, then that error is returned directly.
-+///
-+/// If the attempt limit specified by `retry` is reached, then
-+/// `Err(ETIMEDOUT)` is returned.
-+///
-+/// # Examples
-+///
-+/// ```no_run
-+/// use kernel::io::{poll::read_poll_timeout_atomic, Io};
-+/// use kernel::time::Delta;
-+///
-+/// const HW_READY: u16 = 0x01;
-+///
-+/// fn wait_for_hardware<const SIZE: usize>(io: &Io<SIZE>) -> Result {
-+///     read_poll_timeout_atomic(
-+///         // The `op` closure reads the value of a specific status register.
-+///         || io.try_read16(0x1000),
-+///         // The `cond` closure takes a reference to the value returned by `op`
-+///         // and checks whether the hardware is ready.
-+///         |val: &u16| *val == HW_READY,
-+///         Delta::from_micros(50),
-+///         1000,
-+///     )?;
-+///     Ok(())
-+/// }
-+/// ```
-+pub fn read_poll_timeout_atomic<Op, Cond, T>(
-+    mut op: Op,
-+    mut cond: Cond,
-+    delay_delta: Delta,
-+    retry: usize,
-+) -> Result<T>
-+where
-+    Op: FnMut() -> Result<T>,
-+    Cond: FnMut(&T) -> bool,
-+{
-+    for _ in 0..retry {
-+        let val = op()?;
-+        if cond(&val) {
-+            return Ok(val);
-+        }
-+
-+        if !delay_delta.is_zero() {
-+            udelay(delay_delta);
-+        }
-+
-+        cpu_relax();
-+    }
-+
-+    Err(ETIMEDOUT)
-+}
--- 
-2.43.0
+I'm just not sure what is preferred here. 
 
+Regards,
+Salvatore
 
