@@ -1,224 +1,158 @@
-Return-Path: <linux-kernel+bounces-870526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EA3C0B0CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:10:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B930C0B0CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 20:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A68189C92B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86D33B5B12
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 19:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941D52FDC4C;
-	Sun, 26 Oct 2025 19:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULU3LZ5Q"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C29C2FDC4C;
+	Sun, 26 Oct 2025 19:11:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548BE2D0626
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535B2252292
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761505807; cv=none; b=eDCIfc66ffWAXwvqUzafPcXTgNPaILdUOMNedQNuMdAVKhbnHXon3jnnKAb3veTdkgzN7mUOTKx2twGknVhRM6h+8axIvtbi6t15Lvczr4rT0a3F8P1Efzjcttzlc1cN0hhOOOneHIbNyiG3AwiBdmrpyHyYfBp30NjyGYplFE0=
+	t=1761505893; cv=none; b=UAcfGft53sJU8pVK+9bBFYqOGnPsTuFzFMQz6k8SqY2yaQ6Hi1LisCyKM0DIyuZlfwQtTZFKArVjFA2L2MrmUV4ftB9O7cE/64lpKW7eo2gJqhSZQqf5HSpMRckGIeKp7vAtMcR4nAnYmkC8ZO/67ucpSEuAHzqSXg+GdaK+k3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761505807; c=relaxed/simple;
-	bh=0lq7zVwPZaQ1Z0QmxvXwvIFsXJKsKrMtftkVUtORhEE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=L3+L5GkfQxMl1coqbF7RBmh3yBcqohFrHj3EecP3Xzj87/o92JEJoBdArrdZlM3IzyLaRSQvojL60nzCe2tsCwJWT7b6eUvrl5YeXa8+mwVELcsLfSZEfbWklT9tz96rgeoi4/PqIjQPIRbV2KbnMixOInNFbr506KJ66AEGnfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULU3LZ5Q; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33bda2306c5so3507342a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761505805; x=1762110605; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fnFYZ9YUqokdNrVhAzveB7Lx/h8vJ0ZLZBrXLG7FIwU=;
-        b=ULU3LZ5QDucJoRHtdN4r5T2qvlQG/ptN219iohNQDg9o3S+ZEmuCqEOwU7absOBLYh
-         q3IE8Zle/mINy94lD2fCyJvHl7Sqa8q7k9mxFQibFX6Bqv751DVk2lczqAZ7N0qhF8Xw
-         K5q22x+K/FLPFD/5oQFHNVYgI264hMqb5BVxncTbrJXjvLJPt7Q98gPnc4GVxuabEFsl
-         g2xjlYH+tSEC4Pc2toEXQRfwZ9cDe+iKVQLzrqtJX7XJGaJ78JHinAZhz09O/Q5VPI7v
-         5FLXRauY85GvtYjwGijcr8p8G/cTQEGs0mg/qmvFbbn6WE01SDCuF0NeFKrJTS3NlmBR
-         vpTQ==
+	s=arc-20240116; t=1761505893; c=relaxed/simple;
+	bh=gB+/H1jHc3kXm0oQn9JJNSxv/rmr/mkFCubhGERWOe0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l8GwW8TGGNB47yagEjBJf45iXBbAwvDweP/ZKLuO6GIS0LgzOc1m7x0bjecV9qq17mIKlIeSvjivzUppRvkXDHTjCjbzDgvxsm+KQaxkRMKumHZGbx6VrRn7GPYMXF35rugMaQmakkpWzAy97nbstniMfFz7tdkQsuyQMMMQCv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so44539265ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:11:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761505805; x=1762110605;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1761505890; x=1762110690;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fnFYZ9YUqokdNrVhAzveB7Lx/h8vJ0ZLZBrXLG7FIwU=;
-        b=QxcJN8Vn30bL4tJmpnr+hrOg5H53g1oEL3/fFX1GC7rgTcTbpxtnchPvhMAxozR7aa
-         O2Tvc0GqUXEwqilNmX11aSa5cvduAXdw/UJhGOzpriDWLhIrH2K7dHWzNXosy9eEwhdG
-         40c4pPfbYG7Gy89TOJDOyjW0LDokPGCulNjOGW+OJKl49+e9Gf6VA53GRetd/HRWjo1K
-         wd0F2TfTB3UDf3di/E16zSDmZ2BCPXw6YHhcppVMMous+MsbDw8LtVBEoUDg1KCzapEr
-         I9xJJUwNo6Hg2lGjPQQtrMd2b8XLmbTvtJs6pllZbW1kjT9JI3rqeRQ6aWS3gysuOjYY
-         aCtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfYaW+8lhV/mEYAP2/bqoyn2Zha3H4/kur8GptmTheoQ4MJ/V5Z8IzW/po2ekj4jy06UW/ngyBp4mo6Co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCd4B1h/6OSYWlE1e17DefdSTR/KH18jk0797hE5HywU2oddFi
-	NXsZ9aQOhr4iaY661eW8EBL8p2Lc1SrrkkSeZD28OQT8n17VXItUfdMp
-X-Gm-Gg: ASbGncvL9UB0ecDqd3idQUVDQaioBUc99FCpBhCh9Pr+wcoTHb+qVJdbRwwYV07UoOF
-	pmtBh8vGxyk+JJD5YfhKXTWIUmVYz1dVkeeqR3JfX1RkADazcySCjBTUR43tiR3QD0hp+NSmtVb
-	kbQNTngM6RitncMT3FIVg8wzW2SqFmtd/gdvdIPftkUh23HVKsv6VAclHPNxbeGrm4OVV6zrl+E
-	6hSADULStrL9h41aW4SRIhNMLpWysIDnl00owUzMnFkOjvLE5+kPrpCeSGHRA19+08ULmxgWbiq
-	f9QJ8s9VPczkWwyKu6uUu4GX+DV8PaDFMu5XE2f/lIxFBQ9NZLnkvBgKa0PaGqDOJXZ3F1Sp+Oc
-	e9uC7NZPubKuMO58QcozILow9HqzEZScKl83b+fjT1OBG5AwsEQ8YQ5S+hXqPBhayKivuSTQMm9
-	NWQaE4ikiGOeUvyYLtT7l+nXnTYPXIfXdQDu61xdoBJJpC0ecK2pQHuifHMRpREjpEJCqARJGFp
-	xwJf17DMO74gxjj1RAu
-X-Google-Smtp-Source: AGHT+IHIMcsGGm24Rt7x4qUBaUlLuW2TkTj9Vx3KclPFhSEmsfRY9ycNQeSpu5npNrhMtA0Tz3+PdA==
-X-Received: by 2002:a17:90a:ec8b:b0:32e:d011:ea0f with SMTP id 98e67ed59e1d1-33bcf8f7280mr40460828a91.25.1761505805426;
-        Sun, 26 Oct 2025 12:10:05 -0700 (PDT)
-Received: from ehlo.thunderbird.net (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f3aeesm5818053a91.14.2025.10.26.12.10.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 12:10:05 -0700 (PDT)
-Date: Sun, 26 Oct 2025 12:10:03 -0700
-From: "Derek J. Clark" <derekjohn.clark@gmail.com>
-To: Mario Limonciello <superm1@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- =?ISO-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Armin Wolf <W_Armin@gmx.de>, Len Brown <lenb@kernel.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-CC: Zhixin Zhang <zhangzx36@lenovo.com>, Mia Shao <shaohz1@lenovo.com>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
- Kurt Borja <kuurtb@gmail.com>, platform-driver-x86@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/3=5D_platform/x86=3A_lenovo-wmi-ga?=
- =?US-ASCII?Q?mezone_Use_Extreme_vice_balanced-performance?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <e8789ef0-1700-4f1b-95fe-95dfdbc1e785@kernel.org>
-References: <20251026081240.997038-1-derekjohn.clark@gmail.com> <20251026081240.997038-3-derekjohn.clark@gmail.com> <e8789ef0-1700-4f1b-95fe-95dfdbc1e785@kernel.org>
-Message-ID: <C92AC0B4-8458-4D2B-AE5D-9D452294EDFE@gmail.com>
+        bh=/+kphTYoer9Bj1J3zBI4eWzahyJezzwpuW4Mnn7Kco4=;
+        b=NX5DDJsIcxlkk4mkcF/GFpYYyucfdut0nrUUlMujYKETB/jlJLJVqH3noenCxOVmx+
+         VKW+JStlxopINqFxewmKqkC33hma6Y7Ab2dK6kkNSv1bemnuEab+jxfJ5sVk91jv4xEb
+         IzLI5vnON4idBbJKi4k7BD1JomkI1ijltdZludbQsiC2pv1GAHi4046gXwTe2ABiDqXq
+         DFid3CG4hRLnXAo/ZsI9BhydGOqoyil0GwyJjBbU2VlQODIGA8gHqjluRDXcqGbHkKdx
+         MZoeE0MYpF0JMU7vAt/fiSTggXFX7Cggi7DV5SFeahlkr9tjWCXfhjwhe6A8BMo5AZpa
+         lRFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXc3lidCi30uOQBmibqyiXfRnu2LOY1zWyAFreY154NTPGUZHjb9rfOzCgn8ele7ELKz2jHL+AolcOanBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzanWnZLFIfyPn26dTzb64BwX+PowMh9URRxCr0SaI9GQWNN/jN
+	O8Icz6/dfY9jfub4KdmLnFjaxJT6GMjBQlNtoX038Rnl+ngr4Ci7NcTfentFNWO62jYf3wOhWS4
+	azxSJSlzoIB9MLrwBtONiDOxmuFB7DW0VSt5d3hZ61GuNvdcHbohIaPg5h7w=
+X-Google-Smtp-Source: AGHT+IGDEU9U4Z+L7cBPuqTs8NtO6WkLHGO9pQDYO8IFWzvKfxSzGkoEojTSu0k4eG+tyOrG2QyvQ+VUXo5k2uMTK2MFqTWC3kRn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:3e04:b0:42d:878b:6e40 with SMTP id
+ e9e14a558f8ab-430c5263fcbmr520530915ab.13.1761505890465; Sun, 26 Oct 2025
+ 12:11:30 -0700 (PDT)
+Date: Sun, 26 Oct 2025 12:11:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fe7262.050a0220.3344a1.0145.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_destroy_inode (3)
+From: syzbot <syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On October 26, 2025 10:52:29 AM PDT, Mario Limonciello <superm1@kernel=2Eor=
-g> wrote:
->Is 'vice' the right word for the subject?
->
-Used as in rather than or as an alternative to, it has more brevity=2E
+Hello,
 
->On 10/26/25 3:12 AM, Derek J=2E Clark wrote:
->> When upstreaming the gamezone WMI drivers the "extreme" mode was matche=
-d
->> to performance and performance was matched to balanced-performance, but
->> only when extreme mode was fully enabled=2E Otherwise performance was
->> matched to performance=2E This has led to quite a bit of confusion with
->> users not understanding why the LED color indicating the platform
->> profile doesn't match their expectations=2E To solve this, replace the
->> confusing convention with the new "extreme" profile=2E
->
->Are the colors common to all devices?  Maybe it would be worth adding to =
-the documentation the expected colors for each mode=2E
->
-I think so, based on every case I've run into=2E I'll need to expound a li=
-ttle and reword more in this section but that should be doable=2E
+syzbot found the following issue on:
 
-Thanks,
-Derek
+HEAD commit:    43e9ad0c55a3 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=127ea3cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df98b4d1d5944c56
+dashboard link: https://syzkaller.appspot.com/bug?extid=25df068cd8509f8c0fe1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
->>=20
->> Signed-off-by: Derek J=2E Clark <derekjohn=2Eclark@gmail=2Ecom>
->> ---
->>   =2E=2E=2E/wmi/devices/lenovo-wmi-gamezone=2Erst        | 10 +++------=
--
->>   drivers/platform/x86/lenovo/wmi-gamezone=2Ec     | 18 +++++----------=
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-43e9ad0c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58bbcd26d07f/vmlinux-43e9ad0c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f7223e24dee9/bzImage-43e9ad0c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com
+
+BTRFS info (device loop0): balance: start -d -m
+BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
+BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
+BTRFS error (device loop0): bdev /dev/loop0 errs: wr 3, rd 1, flush 0, corrupt 0, gen 0
+BTRFS error (device loop0 state EA): nocow_one_range failed, root=-9 inode=258 start=53248 len=12288: -5
+BTRFS error (device loop0 state EA): run_delalloc_nocow failed, root=18446744073709551607 inode=258 start=53248 len=12288 cur_offset=53248 oe_cleanup=53248 oe_cleanup_len=0 untouched_start=65536 untouched_len=0: -5
+BTRFS error (device loop0 state EA): failed to run delalloc range, root=-9 ino=258 folio=53248 submit_bitmap=0 start=53248 len=12288: -5
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5324 at fs/btrfs/inode.c:7942 btrfs_destroy_inode+0x7c9/0x910 fs/btrfs/inode.c:7942
+Modules linked in:
+CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_destroy_inode+0x7c9/0x910 fs/btrfs/inode.c:7942
+Code: 4a fd ff e9 03 ff ff ff e8 d4 6a ef fd 90 0f 0b 90 e9 c4 f8 ff ff e8 c6 6a ef fd 90 0f 0b 90 e9 ee f8 ff ff e8 b8 6a ef fd 90 <0f> 0b 90 e9 1f f9 ff ff e8 aa 6a ef fd 90 0f 0b 90 e9 47 f9 ff ff
+RSP: 0018:ffffc9000d497860 EFLAGS: 00010287
+RAX: ffffffff83d0a8d8 RBX: 0000000000028000 RCX: 0000000000100000
+RDX: ffffc9000ea83000 RSI: 0000000000062177 RDI: 0000000000062178
+RBP: ffff8880427a2280 R08: ffff888041940777 R09: 1ffff110083280ee
+R10: dffffc0000000000 R11: ffffffff83d0a110 R12: ffff8880427a24f0
+R13: dffffc0000000000 R14: ffff8880427a2628 R15: ffff888035518000
+FS:  00007fece6bca6c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc0fc53000 CR3: 00000000435f3000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ destroy_inode fs/inode.c:396 [inline]
+ evict+0x7c2/0x9c0 fs/inode.c:834
+ btrfs_relocate_block_group+0xb4a/0xc60 fs/btrfs/relocation.c:4026
+ btrfs_relocate_chunk+0x12f/0x5c0 fs/btrfs/volumes.c:3451
+ __btrfs_balance+0x1860/0x23f0 fs/btrfs/volumes.c:4227
+ btrfs_balance+0xac2/0x11b0 fs/btrfs/volumes.c:4604
+ btrfs_ioctl_balance+0x3d3/0x610 fs/btrfs/ioctl.c:3577
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fece5d8efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fece6bca038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fece5fe6090 RCX: 00007fece5d8efc9
+RDX: 0000200000000180 RSI: 00000000c4009420 RDI: 0000000000000005
+RBP: 00007fece5e11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fece5fe6128 R14: 00007fece5fe6090 R15: 00007ffc0fc52ca8
+ </TASK>
+
+
 ---
->>   2 files changed, 8 insertions(+), 20 deletions(-)
->>=20
->> diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone=2Erst b/Docu=
-mentation/wmi/devices/lenovo-wmi-gamezone=2Erst
->> index 997263e51a7d=2E=2E6c908f44a08e 100644
->> --- a/Documentation/wmi/devices/lenovo-wmi-gamezone=2Erst
->> +++ b/Documentation/wmi/devices/lenovo-wmi-gamezone=2Erst
->> @@ -24,18 +24,14 @@ current platform profile when it changes=2E
->>   The following platform profiles are supported:
->>    - low-power
->>    - balanced
->> - - balanced-performance
->>    - performance
->> + - extreme
->>    - custom
->>   -Balanced-Performance
->> +Extreme
->>   ~~~~~~~~~~~~~~~~~~~~
->>   Some newer Lenovo "Gaming Series" laptops have an "Extreme Mode" prof=
-ile
->> -enabled in their BIOS=2E For these devices, the performance platform p=
-rofile
->> -corresponds to the BIOS Extreme Mode, while the balanced-performance
->> -platform profile corresponds to the BIOS Performance mode=2E For legac=
-y
->> -devices, the performance platform profile will correspond with the BIO=
-S
->> -Performance mode=2E
->> +enabled in their BIOS=2E
->>     For some newer devices the "Extreme Mode" profile is incomplete in =
-the BIOS
->>   and setting it will cause undefined behavior=2E A BIOS bug quirk tabl=
-e is
->> diff --git a/drivers/platform/x86/lenovo/wmi-gamezone=2Ec b/drivers/pla=
-tform/x86/lenovo/wmi-gamezone=2Ec
->> index 0eb7fe8222f4=2E=2Efaabbd4657bd 100644
->> --- a/drivers/platform/x86/lenovo/wmi-gamezone=2Ec
->> +++ b/drivers/platform/x86/lenovo/wmi-gamezone=2Ec
->> @@ -171,14 +171,10 @@ static int lwmi_gz_profile_get(struct device *dev=
-,
->>   		*profile =3D PLATFORM_PROFILE_BALANCED;
->>   		break;
->>   	case LWMI_GZ_THERMAL_MODE_PERFORMANCE:
->> -		if (priv->extreme_supported) {
->> -			*profile =3D PLATFORM_PROFILE_BALANCED_PERFORMANCE;
->> -			break;
->> -		}
->>   		*profile =3D PLATFORM_PROFILE_PERFORMANCE;
->>   		break;
->>   	case LWMI_GZ_THERMAL_MODE_EXTREME:
->> -		*profile =3D PLATFORM_PROFILE_PERFORMANCE;
->> +		*profile =3D PLATFORM_PROFILE_EXTREME;
->>   		break;
->>   	case LWMI_GZ_THERMAL_MODE_CUSTOM:
->>   		*profile =3D PLATFORM_PROFILE_CUSTOM;
->> @@ -218,16 +214,12 @@ static int lwmi_gz_profile_set(struct device *dev=
-,
->>   	case PLATFORM_PROFILE_BALANCED:
->>   		mode =3D LWMI_GZ_THERMAL_MODE_BALANCED;
->>   		break;
->> -	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
->> -		mode =3D LWMI_GZ_THERMAL_MODE_PERFORMANCE;
->> -		break;
->>   	case PLATFORM_PROFILE_PERFORMANCE:
->> -		if (priv->extreme_supported) {
->> -			mode =3D LWMI_GZ_THERMAL_MODE_EXTREME;
->> -			break;
->> -		}
->>   		mode =3D LWMI_GZ_THERMAL_MODE_PERFORMANCE;
->>   		break;
->> +	case PLATFORM_PROFILE_EXTREME:
->> +		mode =3D LWMI_GZ_THERMAL_MODE_EXTREME;
->> +		break;
->>   	case PLATFORM_PROFILE_CUSTOM:
->>   		mode =3D LWMI_GZ_THERMAL_MODE_CUSTOM;
->>   		break;
->> @@ -338,7 +330,7 @@ static int lwmi_gz_platform_profile_probe(void *drv=
-data, unsigned long *choices)
->>     	priv->extreme_supported =3D lwmi_gz_extreme_supported(profile_supp=
-ort_ver);
->>   	if (priv->extreme_supported)
->> -		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, choices);
->> +		set_bit(PLATFORM_PROFILE_EXTREME, choices);
->>     	return 0;
->>   }
->
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
