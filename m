@@ -1,143 +1,96 @@
-Return-Path: <linux-kernel+bounces-870437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98795C0ACF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:50:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65FDC0ACFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BBF91897D1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:50:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05FF94E1394
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4087C2264CF;
-	Sun, 26 Oct 2025 15:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E373222172C;
+	Sun, 26 Oct 2025 15:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbhP5d2d"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3QR99tz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04DA1F4169
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 15:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B61C862D;
+	Sun, 26 Oct 2025 15:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761493807; cv=none; b=owLDKhLAPPwn9F2u9uqYLyQx9X2yeWXwT4YIqmDeWNXPqPLurr+naHv5a4BY0WuoNWjNuVZNN0pn39On1r9osoOUR8TaATblLT0mm7v3cpNJGHKk7rZ7havRzipAti34hwvMVShskWVhdvnMdXSmMl0l/ZG4OoAEjha2lVBtNfM=
+	t=1761494040; cv=none; b=t9JPLwUyeUaCqOtpc1aTw8zvBUwihettrucYOw/SLvD0TWWrV/5u1jQi8iG7QbJDmJMXL6EjCn6+2GfVcwZ2SSQ8qGFqcuMwlhEs5NGj11mtQjffNmLLthqrSfOcoJDnwIb9Gz6Oh7H3Dt03QiH6zDKpsX4hdpWjthl1F/Hw7tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761493807; c=relaxed/simple;
-	bh=BxE4AMPL/vcJ70cwNaercB49PFvdWpZrZz54n4I+Tss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DZ2ZfPOu9eOCrjeJSK09s6L2CTnYIaKbc8k+7BbXsrHWopV6Sxx5NFVBxX6mO5Vyo/Y9RPPrdfHpDRebHS+52vLcKjtmm9+K78v4HqGZAisuJ2HroZAJ+CNaxTlNw/Li41C4tgvqudJR/EzorBJYejGtcmxxU2jWejq6rZQ+REo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbhP5d2d; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47106fc51faso48491245e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761493804; x=1762098604; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AwoH7I232gTPCmP7qEpxtY2g6Hfq6kq4uW779mwS/Vc=;
-        b=WbhP5d2duYs8xkDO7p8JdxampWS/y2CiGTizWyXKgdMfPqLCpnvV+VAsqSVeGVtH0g
-         I3BTSqmbj9OonrEdMZhfVw5PGlQj5MnmAKq3tr1jE8aAjP1NOkUx67f5uXWlN/cuxVGa
-         q3NmxRlFFW7woW6V86EkXkKC2dIK4LrxVADwtn6lzxIP+42J+TC8MDcFJ59ERCqMWHZ2
-         AAu1Xu0VU2NaHsq0hoR6Juc/cfw8EYjxPvcIJYDuxdVHKr1uXH1jX9Gi1p7PaY88V/l9
-         Bx6A+NDJ0sFMO2aoloiN8NGY2P+MEMIvh77xiebDeRXFWmfo3LrPj4Ccrg+TbWzUc4ck
-         44iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761493804; x=1762098604;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AwoH7I232gTPCmP7qEpxtY2g6Hfq6kq4uW779mwS/Vc=;
-        b=r2ZZqTjGoFfJuBbBZ6XVqr4sLSWsPnbCkGcXZKZh/rBigI4AykVGFBI7ylUxUFfbu+
-         /Cu2UEIYM2Z/m2OvqqXSxAP1bJcD3blo0sj+ugP80vZyZ7WaKIACImp3PKaekHx/g/Xl
-         dHSMFnshAkM4pksPDw9Qfjb/HTXJxRGGsv5L2bfjD61nbVs5+B3VGA+V1fNUU2Q/bYWS
-         HXxeuU8beHxIFD3mRiC5f0TGuGbkaKD234PelkwcyUO4gLtzmB/O6obzG0DFeYHqyYnN
-         /DtGiwggXEfkGd1zE8midynAYvYVh/vsG2gKsPBH69Z+Zy9lLc8WVjdBHyYJrmKtP1MJ
-         cVtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTuR+31h31JqaJbf5UBHZJOZTMsVHnjgFLwSEhteja85Ci1lGtJLL/sy9Wiz/RC062OQlkB1trzPTrwgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC6VVgTsMS9Ii4LSY2zioCb5eB9SLBzzgpQheE6Z2c2xFmCH/3
-	HohNpLZoYoUf6hBKF13R7edqTVK68CljJ2ZlTNK39kWTr7DX37o53dqq
-X-Gm-Gg: ASbGnctXy6XRfJsl49S7zAQJOdAF01uHSOSdICNFoLm0IQWQzeAPBgwJ6ybHLvvZEwf
-	y0Eflp1sAp1BlUWTs++62rlrGvzVj0kxeQ2f52w5AXspe4h5H/fVjwSq/+CQzZwLaipKwocCTNJ
-	CHR/lkPWckL4LUKkZsSpn0WA6X5EULhpvtZ9AYWDry0Ij5F0kHyLWKU8Q4+Lfc0wtEroMrvGoCS
-	DSXCHL+he74pjteyw5N+oF3/UszcuEWYvvV8c1QsW70I3De3FeuxcA8TBP0tR8L79/DSu/wU7xT
-	BNuJeZ1ZUWf8YYqKb0kcHNl9ePxVF5uytLBNUoE/eMYXh8WxY9nnAOupkb/D7GYqR0ADRFmmT2A
-	LbfjBVr98rXv8C8kVF9T4cx8z+ASgRI4uXBdv5Cm5QuBTpr6AtrQr8bmemWKUNFnP5AVLDWlWVb
-	pYj4HBXcClp1Lm8QVjKO7gP5+l+uMZbX38NqN+x5ToKTkFLSutY6trfRWvX+7Ung==
-X-Google-Smtp-Source: AGHT+IHkA2M3SX4HhxxTJ6SEKSHdbNns6ue18wHnx7W7S0nv87PUUK8aoI/2+ta3S9khmo30OxGG8Q==
-X-Received: by 2002:a05:600c:3e07:b0:46e:4783:1a7a with SMTP id 5b1f17b1804b1-471178705bbmr270697435e9.3.1761493804087;
-        Sun, 26 Oct 2025 08:50:04 -0700 (PDT)
-Received: from ?IPV6:2a02:c7c:8b21:7400:c9e:bafa:eeb1:89f7? ([2a02:c7c:8b21:7400:c9e:bafa:eeb1:89f7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475de57b156sm77916985e9.13.2025.10.26.08.50.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 08:50:03 -0700 (PDT)
-Message-ID: <0d8cd0ef-01bd-4996-a146-404a677ad935@gmail.com>
-Date: Sun, 26 Oct 2025 15:50:00 +0000
+	s=arc-20240116; t=1761494040; c=relaxed/simple;
+	bh=yuj6B/4jdw5JEcTrXhjojLU0Yio81Or2fV2JsultxwA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=J1LmSSoo9NtfB4d736d9DWR5qEDYJWECKMqH6pR3nIAw2FPQ4G2lrTLcr9EcaarbaxT3+NtkV5W7/VNlWznjUiFDiq1CSykeCI2e6xzbwVs7uvG1RI7AzBA5Sn6iZ8FsDCYKNBocCq/WsW1AUFk2f+Cwbe187KPhcEalowkCXJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3QR99tz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B038EC4CEE7;
+	Sun, 26 Oct 2025 15:53:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761494039;
+	bh=yuj6B/4jdw5JEcTrXhjojLU0Yio81Or2fV2JsultxwA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=h3QR99tzfIu+K7ksVCwtEPWxwQ9sECLZsLctJSK9pvZ0dfZ0Le1G6+7Y1BhN2jW8Q
+	 62tBIMX3gVFIdxnH8YSbdrwYVfqOg+MowM2OvHIsjPByKIVRWXFKF9JKWW1F9heQpk
+	 qp0ZI4q7oPp9UhM4RvxeIGbgC+lNn6iQIa8Jlp5UfeADK6SSz5GOJJv1hEjofBriZU
+	 UN7OYmhdjrQZcQyHufPPRAbgdcCLcs28WujPXet7IijwO6fTcpNzZedW3lSYs6LZ18
+	 Bq9eemWv0Bm/7NiUo/QQrUPMoJuuGWtofXbOV48Jn2UPK1JrCfLdI1oqE94I0Y4ri4
+	 GEdYmegIzdpLg==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <cassel@kernel.org>, 
+ Frank Li <Frank.Li@nxp.com>, Damien Le Moal <dlemoal@kernel.org>, 
+ Mohamed Khalfella <khalfella@gmail.com>, 
+ Christian Bruel <christian.bruel@foss.st.com>, 
+ Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org, 
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+In-Reply-To: <20251014024109.42287-1-bhanuseshukumar@gmail.com>
+References: <20251014024109.42287-1-bhanuseshukumar@gmail.com>
+Subject: Re: [PATCH v3] PCI: endpoint: pci-epf-test: Fix sleeping function
+ being called from atomic context
+Message-Id: <176149403315.9388.15839787422598934486.b4-ty@kernel.org>
+Date: Sun, 26 Oct 2025 21:23:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] samples: rust: add Rust I2C sample driver
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20251005102226.41876-1-igor.korotin.linux@gmail.com>
- <20251005102348.41935-1-igor.korotin.linux@gmail.com>
- <b09c7c91-b801-40df-8cd8-731837ba2553@kernel.org>
- <72e286cb-7517-494d-a8ed-769b5fb8baee@gmail.com>
- <2d9a8196-8d66-4238-a807-b1ff9fd84519@kernel.org>
-Content-Language: en-US
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-In-Reply-To: <2d9a8196-8d66-4238-a807-b1ff9fd84519@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 10/26/2025 3:43 PM, Danilo Krummrich wrote:
-> On 10/26/25 3:06 PM, Igor Korotin wrote:
->> Hello Danilo
->>
->> On 10/26/2025 10:48 AM, Danilo Krummrich wrote:
->>> On 10/5/25 12:23 PM, Igor Korotin wrote:
->>>> +impl Drop for SampleDriver {
->>>> +    fn drop(&mut self) {
->>>> +        dev_info!(self.idev.as_ref(), "Remove Rust I2C driver sample.\n");
->>>> +    }
->>>> +}
->>>
->>> NIT: Please use the i2c::Driver::unbind() callback instead.
->>
->> Thanks for the feedback.
->> I’ll move this into the i2c::Driver::unbind() callback.
->>
->> Should I send v7?
+
+On Tue, 14 Oct 2025 08:11:09 +0530, Bhanu Seshu Kumar Valluri wrote:
+> When Root Complex (RC) triggers a Doorbell MSI interrupt to Endpoint (EP)
+> it triggers a warning in the EP. pci_endpoint kselftest target is
+> compiled and used to run the Doorbell test in RC.
 > 
-> For such a minor thing I can usually do it when applying the patch, but given
-> that for the other patch the change is a bit more significant, I'd say please
-> send a v7.
+> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:271
+> Call trace:
+>  __might_resched+0x130/0x158
+>  __might_sleep+0x70/0x88
+>  mutex_lock+0x2c/0x80
+>  pci_epc_get_msi+0x78/0xd8
+>  pci_epf_test_raise_irq.isra.0+0x74/0x138
+>  pci_epf_test_doorbell_handler+0x34/0x50
+> 
+> [...]
 
-Just for the clarification: by "the change for the other patch" you mean 
-rebase and update this patch series based on [1], right?
+Applied, thanks!
 
-Thanks
-Igor
+[1/1] PCI: endpoint: pci-epf-test: Fix sleeping function being called from atomic context
+      commit: 25423cda145f9ed6ee4a72d9f2603ac2a4685e74
 
-[1] https://lore.kernel.org/all/20251016125544.15559-1-dakr@kernel.org/
-
+Best regards,
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
 
 
