@@ -1,714 +1,218 @@
-Return-Path: <linux-kernel+bounces-870230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BF9C0A3B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 06:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8CAC0A326
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 06:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50A518A4806
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:56:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09B318A2649
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 05:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADC02C08AB;
-	Sun, 26 Oct 2025 05:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E611E5724;
+	Sun, 26 Oct 2025 05:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNUDlFIP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lHjs5Pzx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C4629E0ED;
-	Sun, 26 Oct 2025 05:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761457991; cv=none; b=LjCrPg9qK0Q+DTaBQdEMVGVOqIrdz29H5OMq8pTOB3jr0Edqksw++aRkd/zG2BG3hD4g6XMPsPRYDc2l7g6jqY2wGB8nyIwUdm/T/cXyq0iXfkpg/uDm8+9GCLJwFMgfZIvTLdQiv9UYkmQ3zRcqmmBJGf8PPduOVHCIaY0eiRI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761457991; c=relaxed/simple;
-	bh=FxkTtqmvapgMOXF2seH3qE7iMfwcM5QZ6SqZ2cx83o8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e74to5sztchHtYQliKEQMrl4KDi70QIP/0bDFn9QIDqEun4+SNXOdYNvMhgdTHhnxMyr4vQ/9QO9wDIVZVhetY5Ezkm1GpJNLcOUjr/yAex0qGMJYJpOUovDTxz5AHrFCEskc8N2SWElQVCy9kZDkpjm3YlZXe221uxTPg+AGmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNUDlFIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5D7C116C6;
-	Sun, 26 Oct 2025 05:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761457990;
-	bh=FxkTtqmvapgMOXF2seH3qE7iMfwcM5QZ6SqZ2cx83o8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tNUDlFIPgnqc0EXEqpGqAa6pDym0eG8iIlNmAQcVq8kAN61eKZbgxL3QMv+pKpKOb
-	 LPAzqHg2C9BXJ/GtXU6zUaTJkuo1l6p/pvUvot0KrYPB7/hAclSxhQrphjIotiSnN0
-	 wtA7c2FIsig0ezUo3zECgZHGurQn/WhCqgzCR6/YSrimP5WMV1D6iGoAuM470mUSgH
-	 CvFtqMoyB4mmceTewc5Q0DzK5gX94lQFg8gfBtYOJ5I4v7FIOfgV51jlhI8OZC1Wuw
-	 sE0Gt29NwPTpWc0ZYsqcAmGhbPLnRf7Yx2J5EYK8J3e2Lmrnp61vMEBN2A9Rqi6CWU
-	 9Y58m3Tc8JQMw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/15] crypto: s390/sha3 - Remove superseded SHA-3 code
-Date: Sat, 25 Oct 2025 22:50:32 -0700
-Message-ID: <20251026055032.1413733-16-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <20251026055032.1413733-1-ebiggers@kernel.org>
-References: <20251026055032.1413733-1-ebiggers@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28B3288D6
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761457846; cv=fail; b=DwX/lnzC+3QPNAqV+xzHwshmelZ7jAnN6KrR0RVGeklA4S1/1VZ+CMQJ7zdgNwh50DpN6zvxoGkW4mPIacrFPJ8KC+Y/ZhCamoKXcUDfmFEHwp+UuJLjgKp5wlxE/MHFwQrc9ynVEEFH++qw5cdmMRKRga20RKId1lbG/YECZyc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761457846; c=relaxed/simple;
+	bh=v7l18ovgwBjK1ey4fbloQY8Acnnb4l0uzJgrmbOUxms=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=aun4Ejas4zkE6PAwBDt7bZbUq2KF/5fSRa9TA5QdZvJcfLfSno399FrEi1gBBApMMDnEFcoy3GTFfzYhS0/JiOmhHgoH+YHCEXRrv4XN+VKQQ0/SWT9pfTMsvAOkXt0swwjSMN12MT2ld4TVP5LT9p2WcVHJdDPxdvoqTPdjvYM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lHjs5Pzx; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761457845; x=1792993845;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=v7l18ovgwBjK1ey4fbloQY8Acnnb4l0uzJgrmbOUxms=;
+  b=lHjs5PzxYDY661hYI5bvPxNl9O2GU6CGESsUIJQa4uOpvB3CRSOeabUN
+   aDcDCab/KK+9B8IHWpzCmvmF//7PPP8boAuwHn3Z0oax16Eb9QaXdVANg
+   rZNCwCgnqXm99lrk8LdRk++sIZBY8dg+townp1nF0l1HOTdoM9hN0WWLH
+   k7vtH5FCupZzxXSeUrZ6a+ipjeQyVT585pg011iSX2b+AKfMtdof/plMV
+   koGQbaDro2tHb3qsIiwlBFllVX9jKVjCx9p3ECiwRcbpGmh0x6+PR+lop
+   F01h5X933hQAr//ySfs3qI/yTf6+fZ4CmZ3l0fxUxKGLuXisSavXr/OJz
+   g==;
+X-CSE-ConnectionGUID: dRuBJ4KqR8CO36bGmAmYiA==
+X-CSE-MsgGUID: /kdeLYZFQvOOnWF7onjY1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74176631"
+X-IronPort-AV: E=Sophos;i="6.19,256,1754982000"; 
+   d="scan'208";a="74176631"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 22:50:44 -0700
+X-CSE-ConnectionGUID: lNXYGGlfQh6KSpZL+3UPVA==
+X-CSE-MsgGUID: gkjnF4TpSIWhnC7aV6TesQ==
+X-ExtLoop1: 1
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2025 22:50:44 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sat, 25 Oct 2025 22:50:44 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Sat, 25 Oct 2025 22:50:44 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.46) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sat, 25 Oct 2025 22:50:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Cp46gSn0omusHmN8aM7qhFqqhCgB8fXZZEr09RPMwBShCH9NI03vqyvemfrI9pL2EcS8G4qTSeDCUv8CkRdU0yEY40YRoJeW7kFbJqBrHU0z/Xn/cBGxg93muHaNgXzDRt8G0T8PS9UuKUJNZA4JcKwB4mZ1Y50uULC5GzUQzyiu60UjiqlZ+s9M0FfG/C+NczXP0d0S5oovipz3fjoUiGJiXKnLbqbCmnqfKoAPzAjMPv/WAf3cerPYteN159PEFWjRc/BvRV7uqikw5pHSreR1UaEECMByoQzNqDiMEUVxBj6ZWfk0tfM0328HBmkC0shocHW2MhNdZyXvzGClhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T9aUXET+NJo8AMHW4IBI30nHg7APjh1NoY9sOnSJxk4=;
+ b=BUOoyY4rRegQtcxLynB0TtzEdaDnkJxwNs3hapBymaAdLqy3dmLiNy0FG0Dp6DNjSR6A42I56mMm3Br2AkLUZAmkUn7KaRF/7gzVLG6m0/PyqBWIXPsRYvJZnv5dvzGkZ0UkT3wbRqKL2Rk0jKe4KMtdMls3e3cDriH+zWOJqRNOdQTpVuFAO6+dRq+jMbqZZqpdxBuMwBOcqMtJELQYHyuyrCqsou6SmESQAB2mHJYIBzrqLTI15syecvlhzDNEwsXEKKgUh4gojWKYCQ3I1CeZrnexYjzZ/3h2FSoYyaRpmDZtBO5so3Sv25/+mXeEAcOuY9+6koMeEDhljldqkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BY5PR11MB4165.namprd11.prod.outlook.com (2603:10b6:a03:18c::26)
+ by DS7PR11MB5991.namprd11.prod.outlook.com (2603:10b6:8:72::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.16; Sun, 26 Oct
+ 2025 05:50:42 +0000
+Received: from BY5PR11MB4165.namprd11.prod.outlook.com
+ ([fe80::d9f7:7a66:b261:8891]) by BY5PR11MB4165.namprd11.prod.outlook.com
+ ([fe80::d9f7:7a66:b261:8891%7]) with mapi id 15.20.9253.011; Sun, 26 Oct 2025
+ 05:50:42 +0000
+Date: Sun, 26 Oct 2025 13:50:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Palmer
+ Dabbelt" <palmer@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>
+Subject: pointer_masking.c:216:25: warning: format string is not a string
+ literal (potentially insecure)
+Message-ID: <aP22qrhDBtMs4iIn@rli9-mobl>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR04CA0171.apcprd04.prod.outlook.com (2603:1096:4::33)
+ To BY5PR11MB4165.namprd11.prod.outlook.com (2603:10b6:a03:18c::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR11MB4165:EE_|DS7PR11MB5991:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15271ada-e57f-424c-d1db-08de14539935
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VKLLgoUQS9S6WChgEsu3qP7ddYs8Nl7EM8kVuCDOepdNDeoZFcQjOrEP6mFU?=
+ =?us-ascii?Q?YUoxyBAJxC8MotVNb67kpXROSG6uP1BghK3cp4Tm1dSLSGrzCCtgGrTUvp/5?=
+ =?us-ascii?Q?De5ga4DFDHsbKS/euxK9A3jq5nQe9TTaRRwIj4ynKZPcaK/s/Brj726tsQ6L?=
+ =?us-ascii?Q?qstFiJLTzyx8fGmDIbEyXodKjyK/vCNfNQWBipD77MEg3yaPlDyd8HrSKYPn?=
+ =?us-ascii?Q?xWqM8CIyBXSHVI/D9UP0pYmBsqNLxBvV0h01NAbj6fo7Vg7d4/xtlqHl6C+a?=
+ =?us-ascii?Q?D7Uxwr1Jr0HYHX6rIwdCWWKGWrbMvGvcFlWn29U2yiDum7Jq0KFCduKyFGTd?=
+ =?us-ascii?Q?TN4yQG19axT5Ah0X0TESWKwKzMcmH6QU+1BXgLqmyiGAd0AHl3jLP+u4J/4D?=
+ =?us-ascii?Q?LiTXb40zEfXgbKsYDduGxgaFOg4PUTwRwBum5EE3dg/BA4nC1VlCNdzVQRKm?=
+ =?us-ascii?Q?rdylm4v4WJxU+NrwL6b8flr6ZCyxgaEcIQSU4gd7HF822tXKfvpSulNobY7W?=
+ =?us-ascii?Q?Tk96+Pl64+YFC+/6AIbnJD6cWS1H+Ed7vNxGkBzAhdMbMxyQYQos4Jkl5EoU?=
+ =?us-ascii?Q?gL1Z9pmxe45yb+Fl/fvhDygqG7c/kVR5GXz45zlnpaozzpW8vd46euIrh5kj?=
+ =?us-ascii?Q?+8snGyNmJBt1CaHiVEpNva8EBNC39A75/Hpz1tFv/R4VKrI5sp3YSrOCiPtV?=
+ =?us-ascii?Q?+dj8gDU39ekURnvRirhu4bLUb3bEWROq8voL9eyTYD/T3ija2+rQKMhA2fCB?=
+ =?us-ascii?Q?x5yqudYlXqNGpszb4msM9KixIgfaaeSiQSO93RzSQRp7GoZLQoZQRgIuBdQX?=
+ =?us-ascii?Q?zhYlUd4mKD7zr6AzUlM9+fl+bEIMFqmUO8avEgOB/yLcF/t2dgRCTMxyjYBe?=
+ =?us-ascii?Q?SoMviWGASaP4XfmgWpoXIGT038zT/ar+ZqzTXs97THxUPo/O+g5iz0sqZKHG?=
+ =?us-ascii?Q?gZaXiDYmhLS+bmN+C1RC1/Xpgz9YPB/lryB5Oogr0RPH96FF23mXiwIgtZef?=
+ =?us-ascii?Q?gLTbWM2rkOZW/vqt+jOMnuRmvICxH4FHk9wTojmKxXkGGBSzefhmH8KfnfMV?=
+ =?us-ascii?Q?cfaRolCXDnNNz2oqudiIIHa4IKcvo0DUoM1jA8AFG+s/EnpmrvdaWL/k9tur?=
+ =?us-ascii?Q?z/1lRM6kKQe8DfeEsbcHvvrQMFs34WYo3wTxmI9d0c/a4jAZihgH0d90/Jem?=
+ =?us-ascii?Q?UYuiK1Xx1EkoSu/TJYI6RCJ4wqT5wfnADiP7GsWhnrvxXQoWBTA7IO+wCR71?=
+ =?us-ascii?Q?3jdDIiqUtgk5KisMo+O9ILjY1kmRDpT3KCIcBagrWd/Lidmp/ecXljUZLTvG?=
+ =?us-ascii?Q?sTMrHun4yTcYok+1ZxXLyYoMWIWtz2gS7cBYUzPlzEv71N06sX+Ll3N+VU6e?=
+ =?us-ascii?Q?gz2mR5r/Y503szC8YNG5M2q20Mn7THjIlA+gqJ+2Qyn9lDIgFFG1TCp15cST?=
+ =?us-ascii?Q?sG7vRBKqchtqOnevc+4BPuRGVwwDSkXW7fK2F+l8GaoRne/n4TQUvQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4165.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NdBNyac9jrcqNG33xburnu12r1D+xBp0Dy/zJ1v6VlWw8+QRi+UbAok/L8Xh?=
+ =?us-ascii?Q?TpLacW84IlHxnP/fG7M8lBveG7MML3fN7kBQ1U9nYEWgKITQSLUf+MttgkPW?=
+ =?us-ascii?Q?u8giGVij37kdaP/K22u47WuPRLGkxzUChAnjR4evPrHbQcthgtlwrSP/FOgB?=
+ =?us-ascii?Q?73bWrGo1C9buT1ChCyZkb5vK1neKp+Ngg9V1IEV6AKJXiDtst1AncDW6MJJ+?=
+ =?us-ascii?Q?QBOk/El8MS+ATKC2jWYTKYoXQpOIe8AQR3tfpPhh5OBpx84nQjUOvDnXL05J?=
+ =?us-ascii?Q?OMG8SyaDv/XCqEwYDpSoT69opQV2VNOIT/Celx4HGC0YXeOjdaylSo5qCMDW?=
+ =?us-ascii?Q?LrgeChOab6NHp8SVtzwVGs63zF8FDzhHBuCwb1gn++IM5ZG3mj1Eo+nAv4vg?=
+ =?us-ascii?Q?DoJVzF0eSac0q1wmnSUm0sYr3yX1zVtOiw3p+3kAFOo/vS+UqL973jSSos4W?=
+ =?us-ascii?Q?+84IHZoPFmFQGvtV6UJdIuyCq6/zi5HzwDQsp83BLBO+zFuAtE6+NZYyGc3G?=
+ =?us-ascii?Q?TKskz8VatZ52flLOvJMIV6nIJh3gGJOdtd6iKnRNqS54/AtRnTt6yDaev5n0?=
+ =?us-ascii?Q?fjMQ8io0aLCFzjHQvdju78Kar+Y2zgzle5IcodBEN3fHMIOKdwbGm1w7Gh34?=
+ =?us-ascii?Q?rnroK0Bgjh/bKsbiC/R8PbUF9XunJSXMgEvnt6BG8N4tzVByK+VKfkd+mjS8?=
+ =?us-ascii?Q?8K6X5lP3b/7gU9AmPE6qsuLXh76did9ZNdux191hzJNMLcZKTt8op15j0lGy?=
+ =?us-ascii?Q?nqTC4Q7w66i6MDmuHLVI2ir7C/xFK/jX1ObkKTu3WOouXc6IVe7g+1dj2bih?=
+ =?us-ascii?Q?RU4Ml9Pv3iuaI7327cXFvNuqpITLsD2NJ418Zfe3X4Lcl011ItIo4jhU2DDu?=
+ =?us-ascii?Q?Bk+uuUu0Dzz6kx9ROZ5JlUqZ3M0kGwCMU7Cc7K/uSFXufVpjp40il3AtUhWn?=
+ =?us-ascii?Q?f4DMgUMgZkdUJctNXTCWTZfSzGIHFUs33Q7/EwciCEZE8F7vi608lIzypxvH?=
+ =?us-ascii?Q?w0U1Sh9SBcqJRfLwoTQ6EkFBLRR3+lYVxRORZZ5ZiI+Kv5O32/Baz1f6OFZx?=
+ =?us-ascii?Q?04PD/qoB+D9asbWJ0ePRnYFkkN3743iPG8kyMmn7tDDe3bWiAv3dSTlaBxqF?=
+ =?us-ascii?Q?TohMHTy0IUJVKCEtuvlCiYBeGftgducKUrpAizc0JSnDSOlNEh77DVS34MLA?=
+ =?us-ascii?Q?5ndAQxJf/VmZNmo4gn8dsjYnLop3lTwCLACQoJlKvCX19y3bUJMn31aGyXZ9?=
+ =?us-ascii?Q?Sa71D2xaZXHXtYiT7ercSmtNIvvpoj6Ze1cn/p5a6g8Fr5k35tF94EOj2tHq?=
+ =?us-ascii?Q?0EWHSYRVwS29Fp2JF7uPoCb5julWeq2+ReTHhkzsiyaSg3opdjuPwZcsQP1P?=
+ =?us-ascii?Q?tuBBzCRg/jdTQ6qu1wTDIoMxirlvU4KZzSx+uagXIfzmefjpGCRt8zSYxWoR?=
+ =?us-ascii?Q?7tmwn2k+dehYHsKIwS01oIan+ZfnByBwWGETtIKutJRMXj5lBy/h9NuYFnWM?=
+ =?us-ascii?Q?9fy+AaFUz/tQ1AC+SYepa5BSBsy3mTmXr0Lx9OcpytaFp96uG2ERSsdm43pG?=
+ =?us-ascii?Q?7D0LOn3P1TMZytxvc0JiXMnuRz98XF3TwPH/nc2j?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15271ada-e57f-424c-d1db-08de14539935
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR11MB4165.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2025 05:50:42.0907
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RSGHXaoaoLQv6OUHZZym7m3u52rvZOotKKIv1KFzvixdT3oZiQHEaT7dTQEPxxz8x0W/H0S4qcw4Jy4Rzhhq7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB5991
+X-OriginatorOrg: intel.com
 
-The SHA-3 library now utilizes the same s390 SHA-3 acceleration
-capabilities as the arch/s390/crypto/ SHA-3 crypto_shash algorithms.
-Moreover, crypto/sha3.c now uses the SHA-3 library.  The result is that
-all SHA-3 APIs are now s390-accelerated without any need for the old
-SHA-3 code in arch/s390/crypto/.  Remove this superseded code.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9bb956508c9d94935bedba4f13901fb2b7468e91
+commit: 498d5b14db8c9118be139f668720c67bea2dc344 riscv: selftests: Fix warnings pointer masking test
+date:   10 months ago
+:::::: branch date: 3 hours ago
+:::::: commit date: 10 months ago
+config: riscv-allnoconfig-bpf (https://download.01.org/0day-ci/archive/20251026/202510260342.qQLArXOY-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251026/202510260342.qQLArXOY-lkp@intel.com/reproduce)
 
-Also update the s390 defconfig and debug_defconfig files to enable
-CONFIG_CRYPTO_SHA3 instead of CONFIG_CRYPTO_SHA3_256_S390 and
-CONFIG_CRYPTO_SHA3_512_S390.  This makes it so that the s390-optimized
-SHA-3 continues to be built when either of these defconfigs is used.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/r/202510260342.qQLArXOY-lkp@intel.com/
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- arch/s390/configs/debug_defconfig |   3 +-
- arch/s390/configs/defconfig       |   3 +-
- arch/s390/crypto/Kconfig          |  20 ----
- arch/s390/crypto/Makefile         |   2 -
- arch/s390/crypto/sha.h            |  51 ----------
- arch/s390/crypto/sha3_256_s390.c  | 157 ------------------------------
- arch/s390/crypto/sha3_512_s390.c  | 157 ------------------------------
- arch/s390/crypto/sha_common.c     | 117 ----------------------
- 8 files changed, 2 insertions(+), 508 deletions(-)
- delete mode 100644 arch/s390/crypto/sha.h
- delete mode 100644 arch/s390/crypto/sha3_256_s390.c
- delete mode 100644 arch/s390/crypto/sha3_512_s390.c
- delete mode 100644 arch/s390/crypto/sha_common.c
+All warnings (new ones prefixed by >>):
 
-diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
-index b31c1df902577..5fdfebcfd50f2 100644
---- a/arch/s390/configs/debug_defconfig
-+++ b/arch/s390/configs/debug_defconfig
-@@ -790,10 +790,11 @@ CONFIG_CRYPTO_GCM=y
- CONFIG_CRYPTO_SEQIV=y
- CONFIG_CRYPTO_MD4=m
- CONFIG_CRYPTO_MD5=y
- CONFIG_CRYPTO_MICHAEL_MIC=m
- CONFIG_CRYPTO_RMD160=m
-+CONFIG_CRYPTO_SHA3=m
- CONFIG_CRYPTO_SM3_GENERIC=m
- CONFIG_CRYPTO_WP512=m
- CONFIG_CRYPTO_XCBC=m
- CONFIG_CRYPTO_CRC32=m
- CONFIG_CRYPTO_842=m
-@@ -803,12 +804,10 @@ CONFIG_CRYPTO_ZSTD=m
- CONFIG_CRYPTO_ANSI_CPRNG=m
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
--CONFIG_CRYPTO_SHA3_256_S390=m
--CONFIG_CRYPTO_SHA3_512_S390=m
- CONFIG_CRYPTO_GHASH_S390=m
- CONFIG_CRYPTO_AES_S390=m
- CONFIG_CRYPTO_DES_S390=m
- CONFIG_CRYPTO_HMAC_S390=m
- CONFIG_ZCRYPT=m
-diff --git a/arch/s390/configs/defconfig b/arch/s390/configs/defconfig
-index 161dad7ef211a..7bac3f53a95b0 100644
---- a/arch/s390/configs/defconfig
-+++ b/arch/s390/configs/defconfig
-@@ -774,10 +774,11 @@ CONFIG_CRYPTO_GCM=y
- CONFIG_CRYPTO_SEQIV=y
- CONFIG_CRYPTO_MD4=m
- CONFIG_CRYPTO_MD5=y
- CONFIG_CRYPTO_MICHAEL_MIC=m
- CONFIG_CRYPTO_RMD160=m
-+CONFIG_CRYPTO_SHA3=m
- CONFIG_CRYPTO_SM3_GENERIC=m
- CONFIG_CRYPTO_WP512=m
- CONFIG_CRYPTO_XCBC=m
- CONFIG_CRYPTO_CRC32=m
- CONFIG_CRYPTO_842=m
-@@ -788,12 +789,10 @@ CONFIG_CRYPTO_ANSI_CPRNG=m
- CONFIG_CRYPTO_JITTERENTROPY_OSR=1
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
--CONFIG_CRYPTO_SHA3_256_S390=m
--CONFIG_CRYPTO_SHA3_512_S390=m
- CONFIG_CRYPTO_GHASH_S390=m
- CONFIG_CRYPTO_AES_S390=m
- CONFIG_CRYPTO_DES_S390=m
- CONFIG_CRYPTO_HMAC_S390=m
- CONFIG_ZCRYPT=m
-diff --git a/arch/s390/crypto/Kconfig b/arch/s390/crypto/Kconfig
-index 03f73fbd38b62..f838ca055f6d7 100644
---- a/arch/s390/crypto/Kconfig
-+++ b/arch/s390/crypto/Kconfig
-@@ -1,29 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- menu "Accelerated Cryptographic Algorithms for CPU (s390)"
- 
--config CRYPTO_SHA3_256_S390
--	tristate "Hash functions: SHA3-224 and SHA3-256"
--	select CRYPTO_HASH
--	help
--	  SHA3-224 and SHA3-256 secure hash algorithms (FIPS 202)
--
--	  Architecture: s390
--
--	  It is available as of z14.
--
--config CRYPTO_SHA3_512_S390
--	tristate "Hash functions: SHA3-384 and SHA3-512"
--	select CRYPTO_HASH
--	help
--	  SHA3-384 and SHA3-512 secure hash algorithms (FIPS 202)
--
--	  Architecture: s390
--
--	  It is available as of z14.
--
- config CRYPTO_GHASH_S390
- 	tristate "Hash functions: GHASH"
- 	select CRYPTO_HASH
- 	help
- 	  GCM GHASH hash function (NIST SP800-38D)
-diff --git a/arch/s390/crypto/Makefile b/arch/s390/crypto/Makefile
-index 998f4b656b18e..387a229e10381 100644
---- a/arch/s390/crypto/Makefile
-+++ b/arch/s390/crypto/Makefile
-@@ -1,12 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
- #
- # Cryptographic API
- #
- 
--obj-$(CONFIG_CRYPTO_SHA3_256_S390) += sha3_256_s390.o sha_common.o
--obj-$(CONFIG_CRYPTO_SHA3_512_S390) += sha3_512_s390.o sha_common.o
- obj-$(CONFIG_CRYPTO_DES_S390) += des_s390.o
- obj-$(CONFIG_CRYPTO_AES_S390) += aes_s390.o
- obj-$(CONFIG_CRYPTO_PAES_S390) += paes_s390.o
- obj-$(CONFIG_S390_PRNG) += prng.o
- obj-$(CONFIG_CRYPTO_GHASH_S390) += ghash_s390.o
-diff --git a/arch/s390/crypto/sha.h b/arch/s390/crypto/sha.h
-deleted file mode 100644
-index b9cd9572dd35c..0000000000000
---- a/arch/s390/crypto/sha.h
-+++ /dev/null
-@@ -1,51 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0+ */
--/*
-- * Cryptographic API.
-- *
-- * s390 generic implementation of the SHA Secure Hash Algorithms.
-- *
-- * Copyright IBM Corp. 2007
-- * Author(s): Jan Glauber (jang@de.ibm.com)
-- */
--#ifndef _CRYPTO_ARCH_S390_SHA_H
--#define _CRYPTO_ARCH_S390_SHA_H
--
--#include <crypto/hash.h>
--#include <crypto/sha2.h>
--#include <crypto/sha3.h>
--#include <linux/build_bug.h>
--#include <linux/types.h>
--
--/* must be big enough for the largest SHA variant */
--#define CPACF_MAX_PARMBLOCK_SIZE	SHA3_STATE_SIZE
--#define SHA_MAX_BLOCK_SIZE		SHA3_224_BLOCK_SIZE
--
--struct s390_sha_ctx {
--	u64 count;		/* message length in bytes */
--	union {
--		u32 state[CPACF_MAX_PARMBLOCK_SIZE / sizeof(u32)];
--		struct {
--			u64 state[SHA512_DIGEST_SIZE / sizeof(u64)];
--			u64 count_hi;
--		} sha512;
--		struct {
--			__le64 state[SHA3_STATE_SIZE / sizeof(u64)];
--		} sha3;
--	};
--	int func;		/* KIMD function to use */
--	bool first_message_part;
--};
--
--struct shash_desc;
--
--int s390_sha_update_blocks(struct shash_desc *desc, const u8 *data,
--			   unsigned int len);
--int s390_sha_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
--		   u8 *out);
--
--static inline void __check_s390_sha_ctx_size(void)
--{
--	BUILD_BUG_ON(S390_SHA_CTX_SIZE != sizeof(struct s390_sha_ctx));
--}
--
--#endif
-diff --git a/arch/s390/crypto/sha3_256_s390.c b/arch/s390/crypto/sha3_256_s390.c
-deleted file mode 100644
-index 7415d56649a52..0000000000000
---- a/arch/s390/crypto/sha3_256_s390.c
-+++ /dev/null
-@@ -1,157 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0+
--/*
-- * Cryptographic API.
-- *
-- * s390 implementation of the SHA256 and SHA224 Secure Hash Algorithm.
-- *
-- * s390 Version:
-- *   Copyright IBM Corp. 2019
-- *   Author(s): Joerg Schmidbauer (jschmidb@de.ibm.com)
-- */
--#include <asm/cpacf.h>
--#include <crypto/internal/hash.h>
--#include <crypto/sha3.h>
--#include <linux/cpufeature.h>
--#include <linux/errno.h>
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/string.h>
--
--#include "sha.h"
--
--static int s390_sha3_256_init(struct shash_desc *desc)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--
--	sctx->first_message_part = test_facility(86);
--	if (!sctx->first_message_part)
--		memset(sctx->state, 0, sizeof(sctx->state));
--	sctx->count = 0;
--	sctx->func = CPACF_KIMD_SHA3_256;
--
--	return 0;
--}
--
--static int sha3_256_export(struct shash_desc *desc, void *out)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--	union {
--		u8 *u8;
--		u64 *u64;
--	} p = { .u8 = out };
--	int i;
--
--	if (sctx->first_message_part) {
--		memset(out, 0, SHA3_STATE_SIZE);
--		return 0;
--	}
--	for (i = 0; i < SHA3_STATE_SIZE / 8; i++)
--		put_unaligned(le64_to_cpu(sctx->sha3.state[i]), p.u64++);
--	return 0;
--}
--
--static int sha3_256_import(struct shash_desc *desc, const void *in)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--	union {
--		const u8 *u8;
--		const u64 *u64;
--	} p = { .u8 = in };
--	int i;
--
--	for (i = 0; i < SHA3_STATE_SIZE / 8; i++)
--		sctx->sha3.state[i] = cpu_to_le64(get_unaligned(p.u64++));
--	sctx->count = 0;
--	sctx->first_message_part = 0;
--	sctx->func = CPACF_KIMD_SHA3_256;
--
--	return 0;
--}
--
--static int sha3_224_import(struct shash_desc *desc, const void *in)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--
--	sha3_256_import(desc, in);
--	sctx->func = CPACF_KIMD_SHA3_224;
--	return 0;
--}
--
--static struct shash_alg sha3_256_alg = {
--	.digestsize	=	SHA3_256_DIGEST_SIZE,	   /* = 32 */
--	.init		=	s390_sha3_256_init,
--	.update		=	s390_sha_update_blocks,
--	.finup		=	s390_sha_finup,
--	.export		=	sha3_256_export,
--	.import		=	sha3_256_import,
--	.descsize	=	S390_SHA_CTX_SIZE,
--	.statesize	=	SHA3_STATE_SIZE,
--	.base		=	{
--		.cra_name	 =	"sha3-256",
--		.cra_driver_name =	"sha3-256-s390",
--		.cra_priority	 =	300,
--		.cra_flags	 =	CRYPTO_AHASH_ALG_BLOCK_ONLY,
--		.cra_blocksize	 =	SHA3_256_BLOCK_SIZE,
--		.cra_module	 =	THIS_MODULE,
--	}
--};
--
--static int s390_sha3_224_init(struct shash_desc *desc)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--
--	s390_sha3_256_init(desc);
--	sctx->func = CPACF_KIMD_SHA3_224;
--	return 0;
--}
--
--static struct shash_alg sha3_224_alg = {
--	.digestsize	=	SHA3_224_DIGEST_SIZE,
--	.init		=	s390_sha3_224_init,
--	.update		=	s390_sha_update_blocks,
--	.finup		=	s390_sha_finup,
--	.export		=	sha3_256_export, /* same as for 256 */
--	.import		=	sha3_224_import, /* function code different! */
--	.descsize	=	S390_SHA_CTX_SIZE,
--	.statesize	=	SHA3_STATE_SIZE,
--	.base		=	{
--		.cra_name	 =	"sha3-224",
--		.cra_driver_name =	"sha3-224-s390",
--		.cra_priority	 =	300,
--		.cra_flags	 =	CRYPTO_AHASH_ALG_BLOCK_ONLY,
--		.cra_blocksize	 =	SHA3_224_BLOCK_SIZE,
--		.cra_module	 =	THIS_MODULE,
--	}
--};
--
--static int __init sha3_256_s390_init(void)
--{
--	int ret;
--
--	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA3_256))
--		return -ENODEV;
--
--	ret = crypto_register_shash(&sha3_256_alg);
--	if (ret < 0)
--		goto out;
--
--	ret = crypto_register_shash(&sha3_224_alg);
--	if (ret < 0)
--		crypto_unregister_shash(&sha3_256_alg);
--out:
--	return ret;
--}
--
--static void __exit sha3_256_s390_fini(void)
--{
--	crypto_unregister_shash(&sha3_224_alg);
--	crypto_unregister_shash(&sha3_256_alg);
--}
--
--module_cpu_feature_match(S390_CPU_FEATURE_MSA, sha3_256_s390_init);
--module_exit(sha3_256_s390_fini);
--
--MODULE_ALIAS_CRYPTO("sha3-256");
--MODULE_ALIAS_CRYPTO("sha3-224");
--MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("SHA3-256 and SHA3-224 Secure Hash Algorithm");
-diff --git a/arch/s390/crypto/sha3_512_s390.c b/arch/s390/crypto/sha3_512_s390.c
-deleted file mode 100644
-index ff6ee55844005..0000000000000
---- a/arch/s390/crypto/sha3_512_s390.c
-+++ /dev/null
-@@ -1,157 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0+
--/*
-- * Cryptographic API.
-- *
-- * s390 implementation of the SHA512 and SHA384 Secure Hash Algorithm.
-- *
-- * Copyright IBM Corp. 2019
-- * Author(s): Joerg Schmidbauer (jschmidb@de.ibm.com)
-- */
--#include <asm/cpacf.h>
--#include <crypto/internal/hash.h>
--#include <crypto/sha3.h>
--#include <linux/cpufeature.h>
--#include <linux/errno.h>
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/string.h>
--
--#include "sha.h"
--
--static int s390_sha3_512_init(struct shash_desc *desc)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--
--	sctx->first_message_part = test_facility(86);
--	if (!sctx->first_message_part)
--		memset(sctx->state, 0, sizeof(sctx->state));
--	sctx->count = 0;
--	sctx->func = CPACF_KIMD_SHA3_512;
--
--	return 0;
--}
--
--static int sha3_512_export(struct shash_desc *desc, void *out)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--	union {
--		u8 *u8;
--		u64 *u64;
--	} p = { .u8 = out };
--	int i;
--
--	if (sctx->first_message_part) {
--		memset(out, 0, SHA3_STATE_SIZE);
--		return 0;
--	}
--	for (i = 0; i < SHA3_STATE_SIZE / 8; i++)
--		put_unaligned(le64_to_cpu(sctx->sha3.state[i]), p.u64++);
--	return 0;
--}
--
--static int sha3_512_import(struct shash_desc *desc, const void *in)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--	union {
--		const u8 *u8;
--		const u64 *u64;
--	} p = { .u8 = in };
--	int i;
--
--	for (i = 0; i < SHA3_STATE_SIZE / 8; i++)
--		sctx->sha3.state[i] = cpu_to_le64(get_unaligned(p.u64++));
--	sctx->count = 0;
--	sctx->first_message_part = 0;
--	sctx->func = CPACF_KIMD_SHA3_512;
--
--	return 0;
--}
--
--static int sha3_384_import(struct shash_desc *desc, const void *in)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--
--	sha3_512_import(desc, in);
--	sctx->func = CPACF_KIMD_SHA3_384;
--	return 0;
--}
--
--static struct shash_alg sha3_512_alg = {
--	.digestsize	=	SHA3_512_DIGEST_SIZE,
--	.init		=	s390_sha3_512_init,
--	.update		=	s390_sha_update_blocks,
--	.finup		=	s390_sha_finup,
--	.export		=	sha3_512_export,
--	.import		=	sha3_512_import,
--	.descsize	=	S390_SHA_CTX_SIZE,
--	.statesize	=	SHA3_STATE_SIZE,
--	.base		=	{
--		.cra_name	 =	"sha3-512",
--		.cra_driver_name =	"sha3-512-s390",
--		.cra_priority	 =	300,
--		.cra_flags	 =	CRYPTO_AHASH_ALG_BLOCK_ONLY,
--		.cra_blocksize	 =	SHA3_512_BLOCK_SIZE,
--		.cra_module	 =	THIS_MODULE,
--	}
--};
--
--MODULE_ALIAS_CRYPTO("sha3-512");
--
--static int s390_sha3_384_init(struct shash_desc *desc)
--{
--	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
--
--	s390_sha3_512_init(desc);
--	sctx->func = CPACF_KIMD_SHA3_384;
--	return 0;
--}
--
--static struct shash_alg sha3_384_alg = {
--	.digestsize	=	SHA3_384_DIGEST_SIZE,
--	.init		=	s390_sha3_384_init,
--	.update		=	s390_sha_update_blocks,
--	.finup		=	s390_sha_finup,
--	.export		=	sha3_512_export, /* same as for 512 */
--	.import		=	sha3_384_import, /* function code different! */
--	.descsize	=	S390_SHA_CTX_SIZE,
--	.statesize	=	SHA3_STATE_SIZE,
--	.base		=	{
--		.cra_name	 =	"sha3-384",
--		.cra_driver_name =	"sha3-384-s390",
--		.cra_priority	 =	300,
--		.cra_flags	 =	CRYPTO_AHASH_ALG_BLOCK_ONLY,
--		.cra_blocksize	 =	SHA3_384_BLOCK_SIZE,
--		.cra_ctxsize	 =	sizeof(struct s390_sha_ctx),
--		.cra_module	 =	THIS_MODULE,
--	}
--};
--
--MODULE_ALIAS_CRYPTO("sha3-384");
--
--static int __init init(void)
--{
--	int ret;
--
--	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA3_512))
--		return -ENODEV;
--	ret = crypto_register_shash(&sha3_512_alg);
--	if (ret < 0)
--		goto out;
--	ret = crypto_register_shash(&sha3_384_alg);
--	if (ret < 0)
--		crypto_unregister_shash(&sha3_512_alg);
--out:
--	return ret;
--}
--
--static void __exit fini(void)
--{
--	crypto_unregister_shash(&sha3_512_alg);
--	crypto_unregister_shash(&sha3_384_alg);
--}
--
--module_cpu_feature_match(S390_CPU_FEATURE_MSA, init);
--module_exit(fini);
--
--MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("SHA3-512 and SHA3-384 Secure Hash Algorithm");
-diff --git a/arch/s390/crypto/sha_common.c b/arch/s390/crypto/sha_common.c
-deleted file mode 100644
-index d6f8396187946..0000000000000
---- a/arch/s390/crypto/sha_common.c
-+++ /dev/null
-@@ -1,117 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0+
--/*
-- * Cryptographic API.
-- *
-- * s390 generic implementation of the SHA Secure Hash Algorithms.
-- *
-- * Copyright IBM Corp. 2007
-- * Author(s): Jan Glauber (jang@de.ibm.com)
-- */
--
--#include <crypto/internal/hash.h>
--#include <linux/export.h>
--#include <linux/module.h>
--#include <asm/cpacf.h>
--#include "sha.h"
--
--int s390_sha_update_blocks(struct shash_desc *desc, const u8 *data,
--			   unsigned int len)
--{
--	unsigned int bsize = crypto_shash_blocksize(desc->tfm);
--	struct s390_sha_ctx *ctx = shash_desc_ctx(desc);
--	unsigned int n;
--	int fc;
--
--	fc = ctx->func;
--	if (ctx->first_message_part)
--		fc |= CPACF_KIMD_NIP;
--
--	/* process as many blocks as possible */
--	n = (len / bsize) * bsize;
--	ctx->count += n;
--	switch (ctx->func) {
--	case CPACF_KLMD_SHA_512:
--	case CPACF_KLMD_SHA3_384:
--		if (ctx->count < n)
--			ctx->sha512.count_hi++;
--		break;
--	}
--	cpacf_kimd(fc, ctx->state, data, n);
--	ctx->first_message_part = 0;
--	return len - n;
--}
--EXPORT_SYMBOL_GPL(s390_sha_update_blocks);
--
--static int s390_crypto_shash_parmsize(int func)
--{
--	switch (func) {
--	case CPACF_KLMD_SHA_1:
--		return 20;
--	case CPACF_KLMD_SHA_256:
--		return 32;
--	case CPACF_KLMD_SHA_512:
--		return 64;
--	case CPACF_KLMD_SHA3_224:
--	case CPACF_KLMD_SHA3_256:
--	case CPACF_KLMD_SHA3_384:
--	case CPACF_KLMD_SHA3_512:
--		return 200;
--	default:
--		return -EINVAL;
--	}
--}
--
--int s390_sha_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
--		   u8 *out)
--{
--	struct s390_sha_ctx *ctx = shash_desc_ctx(desc);
--	int mbl_offset, fc;
--	u64 bits;
--
--	ctx->count += len;
--
--	bits = ctx->count * 8;
--	mbl_offset = s390_crypto_shash_parmsize(ctx->func);
--	if (mbl_offset < 0)
--		return -EINVAL;
--
--	mbl_offset = mbl_offset / sizeof(u32);
--
--	/* set total msg bit length (mbl) in CPACF parmblock */
--	switch (ctx->func) {
--	case CPACF_KLMD_SHA_512:
--		/* The SHA512 parmblock has a 128-bit mbl field. */
--		if (ctx->count < len)
--			ctx->sha512.count_hi++;
--		ctx->sha512.count_hi <<= 3;
--		ctx->sha512.count_hi |= ctx->count >> 61;
--		mbl_offset += sizeof(u64) / sizeof(u32);
--		fallthrough;
--	case CPACF_KLMD_SHA_1:
--	case CPACF_KLMD_SHA_256:
--		memcpy(ctx->state + mbl_offset, &bits, sizeof(bits));
--		break;
--	case CPACF_KLMD_SHA3_224:
--	case CPACF_KLMD_SHA3_256:
--	case CPACF_KLMD_SHA3_384:
--	case CPACF_KLMD_SHA3_512:
--		break;
--	default:
--		return -EINVAL;
--	}
--
--	fc = ctx->func;
--	fc |= test_facility(86) ? CPACF_KLMD_DUFOP : 0;
--	if (ctx->first_message_part)
--		fc |= CPACF_KLMD_NIP;
--	cpacf_klmd(fc, ctx->state, src, len);
--
--	/* copy digest to out */
--	memcpy(out, ctx->state, crypto_shash_digestsize(desc->tfm));
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(s390_sha_finup);
--
--MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("s390 SHA cipher common functions");
+>> pointer_masking.c:216:25: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+     216 |                 ksft_test_result_fail(err_pwrite_msg);
+         |                                       ^~~~~~~~~~~~~~
+   pointer_masking.c:216:25: note: treat the string as an argument to avoid this
+     216 |                 ksft_test_result_fail(err_pwrite_msg);
+         |                                       ^
+         |                                       "%s", 
+   pointer_masking.c:223:25: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+     223 |                 ksft_test_result_fail(err_pwrite_msg);
+         |                                       ^~~~~~~~~~~~~~
+   pointer_masking.c:223:25: note: treat the string as an argument to avoid this
+     223 |                 ksft_test_result_fail(err_pwrite_msg);
+         |                                       ^
+         |                                       "%s", 
+   2 warnings generated.
+
 -- 
-2.51.1.dirty
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
