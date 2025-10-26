@@ -1,89 +1,128 @@
-Return-Path: <linux-kernel+bounces-870293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1504DC0A649
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:53:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854B6C0A66E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 438EE34A1F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D47A18A0315
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25457246BD8;
-	Sun, 26 Oct 2025 10:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70B92367A2;
+	Sun, 26 Oct 2025 11:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fES4rZGG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V73ECIo6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710725D8F0;
-	Sun, 26 Oct 2025 10:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2A935B15F;
+	Sun, 26 Oct 2025 11:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761475968; cv=none; b=YlIVnT8VjIDBJ6lwVGeB070Ge2w/lp4Wg2sFyi2lu6bRfeVnOPfMjyEhDyt89U+ez8wbOspN6nvCrpJeJmnlmlVTFmLBo80t4Kd1p0xTlTkntFsoH0LlwjxDjEwb3keQoHzdRLiPo5bQZmadqLSHNn71sKcMoLvcUHnjPrGu18Y=
+	t=1761477329; cv=none; b=lmddgVrvhsVGrTODM6TYTsiBFaRORxRIql59/8ClPsj2jI+PlWTyB6uFFboAOfUu10oKPgU7gO4xICZEG0ETXGYKsXDA+0X3+Rrv5Kcp6gqHDoF1HBPswa+9nRvv5mSWLZs+jBR9rJNg9IjFIyiZmXAk2odQI2elRxUI3Xa4uzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761475968; c=relaxed/simple;
-	bh=Myx3IGCamphYPWXcEBfxQfsVLyhzoLgCt8NgFsAp96U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXwxX1GXvic6tJLpq+t5nT2z06MpeUUgt1EDPw79tU/NnKLFNYDPOI1wJNG2Il3wv1flrPQfqwu5zapzev0EKwlb7XaTtUvOqw7LRXb+kuSJC5ePxBzS1z/IoOWT1zWcf8s+UVyJ6lIm3iXfSMwYoq48TL8TCH2HMaIh50NcY/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fES4rZGG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D63C4CEE7;
-	Sun, 26 Oct 2025 10:52:42 +0000 (UTC)
+	s=arc-20240116; t=1761477329; c=relaxed/simple;
+	bh=HTruYLUWVQCfi6SQXupL+CrOSj/QbB/ZlLpAIxMdvc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9j9jsjJPdl54+jrvKTH0bGY2tDuyLK47QEweI/dwlhcivXj7cj1CfE+ZPGSMmts42pWyUP743U7vJAKI50jIjxOCgmfQMCXRgendRoq5cD4C9vI1dBHAx6knfuWBSwH/jkmcd+7eJgOhy6G8A0lkfvM2CkNrORg02u8JlDev1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V73ECIo6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85FEC4CEE7;
+	Sun, 26 Oct 2025 11:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761475966;
-	bh=Myx3IGCamphYPWXcEBfxQfsVLyhzoLgCt8NgFsAp96U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fES4rZGG+FZOBRajJprd7YK5Bm+wBfJYcMP54xp2Lq5aTnSSFbLWo03wwKEovL2Op
-	 e32KQuERPDNob0CWQSwEGKg6VYvBFCRdi5FoG3w5ZYiu+Sk/wOVe8Xv5+PAYyRgsQ8
-	 4aWzVyuB464ZtaMt7Re8Wpl8Anas3hgbq6ZhQaAFFWI3Ige/Sc89XVxUn2qLWVhV7x
-	 bQs/qJktF4RHwQepQ1k9WgreP0xPwG9ajvpZ2zgM2Ryvc12T07Ks2LW7yX6UmtCEK2
-	 0IMSBOG48ztR4uqAi461cHgYJFI3uuhQ4GZ/c+lPQRF5nrkeHR9FL49VRmL7XxVLBN
-	 BMwH3M4dwa8eA==
-Message-ID: <8b0718a3-bf3f-4037-be2e-540ba1879405@kernel.org>
-Date: Sun, 26 Oct 2025 11:52:41 +0100
+	s=k20201202; t=1761477328;
+	bh=HTruYLUWVQCfi6SQXupL+CrOSj/QbB/ZlLpAIxMdvc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V73ECIo6/qSjkcuLQGkEL6W2kesEMvM5bq9FRp1XGZVv8NiaM51qu6ldc7Qa7vdvc
+	 QJVQt9rj0VGjJ3Gy3dSKM/SEQYNY2ZVaFbdLfK5gSkqtH/e31tfIa2Rts5siCzxzY2
+	 ++KB+9gshe03RFO46IUNzIOpfNKG0z9tBnh15KrhE15ArshgIv8VfX2wL6hfdn1agY
+	 kmtYZdQIUfFd0OlrGuGHovyiPNsn4FBP+UVcqgaB78lsKFzT5RHt7KeltqIFW5L/w5
+	 d4NJwYQAuy/80sybUdG1hW3Tkm1eeo6/OMK4nyehaVTtqfQnPdokN35ICwjgd2KVLs
+	 Dwqb+gBXVPLBA==
+Date: Sun, 26 Oct 2025 04:14:50 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v16 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+Message-ID: <aP4CqqOL7xEyFZ0w@gen8>
+References: <CGME20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e@eucas1p1.samsung.com>
+ <20251016-rust-next-pwm-working-fan-for-sending-v16-0-a5df2405d2bd@samsung.com>
+ <47ut33rck4xoh3d7d6t3d7twqag3u7eusbruc2i2veqf2umpga@ipamilvshysw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] rust: i2c: Add basic I2C driver abstractions
-To: Igor Korotin <igor.korotin.linux@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20251005102226.41876-1-igor.korotin.linux@gmail.com>
- <4d6d737e-6e9d-4d33-8402-940947170872@gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <4d6d737e-6e9d-4d33-8402-940947170872@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Hu0VeUTprsM8C7Nl"
+Content-Disposition: inline
+In-Reply-To: <47ut33rck4xoh3d7d6t3d7twqag3u7eusbruc2i2veqf2umpga@ipamilvshysw>
 
-On 10/26/25 10:38 AM, Igor Korotin wrote:
-> Just checking if there’s any feedback or if it’s still pending review.
-> Thanks!
 
-One note, if taken through the I2C tree, this patch series will have a conflict
-with [1] from the driver-core tree.
+--Hu0VeUTprsM8C7Nl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Igor, Wolfram: If you rather want to avoid the conflict, I can also take this
-initial series through the driver-core tree.
+On Sat, Oct 25, 2025 at 02:26:31PM +0200, Uwe Kleine-K=F6nig wrote:
+> Hello,
+>=20
+> On Thu, Oct 16, 2025 at 03:38:00PM +0200, Michal Wilczynski wrote:
+> > Michal Wilczynski (7):
+> >       pwm: Export `pwmchip_release` for external use
+> >       rust: pwm: Add Kconfig and basic data structures
+> >       rust: pwm: Add complete abstraction layer
+> >       pwm: Add Rust driver for T-HEAD TH1520 SoC
+> >       dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM controller
+> >       riscv: dts: thead: Add PWM controller node
+> >       riscv: dts: thead: Add PWM fan and thermal control
+>=20
+> I applied patches #1-#5 to
+>=20
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/f=
+or-next
+>=20
+> . If I should take the riscv dts changes, too, please tell me.
+
+I can take them through my thead-dt-for-next branch.
 
 Thanks,
-Danilo
+Drew
 
-[1] https://lore.kernel.org/all/20251016125544.15559-1-dakr@kernel.org/
+--Hu0VeUTprsM8C7Nl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSy8G7QpEpV9aCf6Lbb7CzD2SixDAUCaP4CpAAKCRDb7CzD2Six
+DFmwAP0XV04YlT43vkUJmO2Q22KkuSgNzqJMOqSjgRNYzlZG8AEA3UwESVtDL40X
+5JE1LibqO78mAkoeDlA3Gy1lXXPr8AE=
+=4yF3
+-----END PGP SIGNATURE-----
+
+--Hu0VeUTprsM8C7Nl--
 
