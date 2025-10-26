@@ -1,112 +1,89 @@
-Return-Path: <linux-kernel+bounces-870321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C491C0A748
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:36:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABFAAC0A74E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A97218A0335
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6503F3AF0DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE93F2D9EDF;
-	Sun, 26 Oct 2025 12:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FDD2DA757;
+	Sun, 26 Oct 2025 12:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9a3wtPg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQkNk0St"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37357223DF9
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237BA2D9EF8;
+	Sun, 26 Oct 2025 12:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761482164; cv=none; b=WZloQlg7trxjiICb8tYzsbKKx6Ze7Gb9gqdnuUVJWBAN2XeUUaIKRkgHIaTrKaNIhG0P3dy+lJ3GGwu/oMvxmEq3e/px2WYMSxaW6RlYJ6VRsBbSuAdh0IuSnRrXGdg/54qeguzC2baERrxn9d+2w8nIApoNWbV+iPEoJ2+Xk6c=
+	t=1761482290; cv=none; b=YpvpgqejPZjOP32p/jk2U3NlA0zjrcbwyX6rlee6RhAKTVs3iaVVqgZhmChO00wMEX/lpI3go1ywpnhv0tMn5dSyWXKPyyF+yTieDDO+UQyP4TgyA8qImwOnCYm63VfM4XL78pQSVcUtQSAQjmIvC7OPra6xvJkGcOuSoBauJw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761482164; c=relaxed/simple;
-	bh=nNyhb3twy27BmGNthU5zy6KxlGrVekyWkJIA+zPIdVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L7wKPVsoCK5yOtWIkUC67Sb4otN5p06NSFVFlSMZvg98ux4c0rmWd2NTbUdsyC7nH01tIvgvlEJSArCo9EeRmeM1ozKUQL9zuV0UXo0sN518R1gPC6eiJrGNPvgn1kP376XxqI/jY+lLY2WZMgGyXVTnilH3dVLgUYbP2UhkEfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9a3wtPg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2EE0C4CEFB
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:36:03 +0000 (UTC)
+	s=arc-20240116; t=1761482290; c=relaxed/simple;
+	bh=qw8/PAvD2816zMcT/W8BWmFh+apV2YWDBWzHohHc9Ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESHBfPZF5eXeV97IRXS1qy6v9TMPFiZSWj7g51DLIyIuFmvhBuOIgtAP7w6F5joDdtmRCCDAOlrAyUP8w8WDrOZSIRE2gJJqPkI0xQ1yNFXrvN81TDPrbXOuaUCX3t+kTnjviJ59eiUXiZOXjFsmi1GxkqpswuxiUxRDHXzzmHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQkNk0St; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6923C4CEE7;
+	Sun, 26 Oct 2025 12:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761482163;
-	bh=nNyhb3twy27BmGNthU5zy6KxlGrVekyWkJIA+zPIdVc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=W9a3wtPgksrMCJiew0IRIHonN9dKDhc1dtECCdAJC1MD9NuAc3tIVUfDf54QZ/TZX
-	 FKx+TRUpuIaBq8t2r6XWbQJQGSy9JrDe+10ecMpGi4tRpDmQHnyiSIPXa3qTn6Npxk
-	 83kWQHNqxortJbW+aBfBdb9dxbt260y2S1g2TSw+JjHsSxLz6EuiNm/OdlcnDpsWsM
-	 AJeuP03MVmgR+5jbDI+Q6BKVVYJvFCzwniGBzDytNUMLA/WWJ3FfqRRLnqZsD8j8U2
-	 ZovcLpOS7G8lYoKadB0mpX99nKIYRf9zRLgAw2mmuY8sI3IZ62aZ6WAMOGpxF2UfGb
-	 Emh1BkXQdWJRg==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-44dabf29d02so574716b6e.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:36:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXfWMhK7qebm08GH9m8kKm+oI5SirOWrRnCEsdPg17wIHKEs+H3keiKrI9ICYCi50pE0fdwzL9D5VtZemA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh2yEebgbu1Tr3LfunnwQrC+FG9+cf5JoG7ItA08ln1vJ+cEum
-	O8IuF1c0cypf+MCGBLqM6bDSbP3t8KfL4fuWGnAT4ouEAdEmj1SmMk4w01nLUZR/BcoKJBD+cle
-	4ppMH9DvBBk+aS00nvv8i4T2YliUs8Xk=
-X-Google-Smtp-Source: AGHT+IGEYt7bmKDoEOnvnRFPgQ2ytPnAMlF0hK2Ah5RJ5EHcqtF0vC11phTUzK2NVa0DswTiL8lRVmmd2uBP8yDwHRs=
-X-Received: by 2002:a05:6808:250b:b0:441:8f74:e95 with SMTP id
- 5614622812f47-443a31757c6mr14561414b6e.63.1761482163037; Sun, 26 Oct 2025
- 05:36:03 -0700 (PDT)
+	s=k20201202; t=1761482289;
+	bh=qw8/PAvD2816zMcT/W8BWmFh+apV2YWDBWzHohHc9Ds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UQkNk0Sta/L0r0qWJfiwMmnRcxJLqPTWe/65cQ3Pfpc0tJUxZYvyNDt5rE8LNhrwH
+	 ggkYucPLXnNtjYQjAlu8w6qWbMQl7YVrXhkxMuFysWP3k3fxIhhYQZmDRktF2ySR9a
+	 kc7oNCgEHxB/0wOT1YfEsl+0oH2Pl5pleG/MPqcicK2J94n794MkgfH8zsmvTvzVgM
+	 c0ufi4zVyPp/rVKwUwJMljkndLo/iwp3RR3LY4yWDAVU3X151+3YKUTHwJ9YN8H4bN
+	 tSbWQ6s5DqB0b0mgg0++GGAVkizOJJL6b+MXVvbr/Gb9OGqPe1cr4pXQIbDoy8ayvy
+	 X9sOiqXbIGEdg==
+Date: Sun, 26 Oct 2025 14:38:04 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] nvme-pci: migrate to dma_map_phys instead of
+ map_page
+Message-ID: <20251026123804.GD12554@unreal>
+References: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com>
+ <20251020-block-with-mmio-v2-1-147e9f93d8d4@nvidia.com>
+ <20251022061418.GC4317@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929093754.3998136-1-lihuisong@huawei.com>
- <20250929093754.3998136-3-lihuisong@huawei.com> <CAJZ5v0ikPpwKA4WLvwon3p+e8+53fOQuudOioOr-KD-Ee-E0dA@mail.gmail.com>
- <8c0057a7-24a2-493a-8054-904a89ca9f6d@huawei.com> <CAJZ5v0jg5RGi-+i3LtwK6U8m+_C5Rs4OuRTBLTGi6g0aRq3LBQ@mail.gmail.com>
- <a577bfd3-a4b8-4d06-b95b-a78b2916b8a4@huawei.com>
-In-Reply-To: <a577bfd3-a4b8-4d06-b95b-a78b2916b8a4@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 26 Oct 2025 13:35:46 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jyOM-DMAGi5MxdDxjZsgFWeSL_dqiZx3imAPShMyeoNQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bl-ihU7D-Ks66qjjUi0zDtQsAsDtpAkVIY9dYWOo1ajrcDaXqyB0IvR2T4
-Message-ID: <CAJZ5v0jyOM-DMAGi5MxdDxjZsgFWeSL_dqiZx3imAPShMyeoNQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/9] ACPI: processor: idle: Return failure if entry
- method is not buffer or integer type
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022061418.GC4317@lst.de>
 
-On Fri, Oct 24, 2025 at 11:25=E2=80=AFAM lihuisong (C) <lihuisong@huawei.co=
-m> wrote:
->
->
-> =E5=9C=A8 2025/10/23 18:07, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Thu, Oct 23, 2025 at 11:25=E2=80=AFAM lihuisong (C) <lihuisong@huawe=
-i.com> wrote:
-> >>
-> >> =E5=9C=A8 2025/10/22 3:34, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> >>> On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei=
-.com> wrote:
-> >>>> According to ACPI spec, entry method in LPI sub-package must be buff=
-er
-> >>>> or integer. However, acpi_processor_evaluate_lpi() regeards it as su=
-ccess
-> >>>> and treat it as an effective LPI state.
-> >>> Is that the case?  AFAICS, it just gets to the next state in this cas=
-e
-> >>> and what's wrong with that?
-> >> The flatten_lpi_states() would consider the state with illegal entry
-> >> method sub-package as a valid one
-> >> if the flag of this state is enabled(ACPI_LPI_STATE_FLAGS_ENABLED is s=
-et).
-> >> And then cpuidle governor would use it because the caller of
-> >> acpi_processor_ffh_lpi_probe() also don't see the return value.
-> > So the problem appears to be that lpi_state increments in every step
-> > of the loop, but it should only increment if the given state is valid.
-> Yes,
-> So set the flag of the state with illegal entry method sub-package to
-> zero so that this invalid LPI state will be skiped in
-> flatten_lpi_states(), ok?
+On Wed, Oct 22, 2025 at 08:14:18AM +0200, Christoph Hellwig wrote:
+> This actually has block and nvme bits, so the subject line should
+> say that.
+> 
+> > +	unsigned int attrs = 0;
+> 
+> attrs is always zero here, no need to start passing it for the
+> map_phys conversion alone.
+> 
+> > +	unsigned int attrs = 0;
+> 
+> Same here.
 
-Sounds reasonable.
+It gave me more clean second patch where I only added new attribute, but
+if it doesn't look right to you, let's change.
+
+> 
+> > +	unsigned int			attrs;
+> 
+> And this is also entirely unused as far as I can tell.
+
+Right, it is used in second patch, will fix.
+
+Thanks
 
