@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-870673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A89C0B6D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:10:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8398C0B6CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9263B7D86
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:10:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15B8D4EB7E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DF12FFFA1;
-	Sun, 26 Oct 2025 23:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B7D2FFF9C;
+	Sun, 26 Oct 2025 23:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="A1azr4O1"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="QZpxA7Y2"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B602F7AA0;
-	Sun, 26 Oct 2025 23:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C9226F28B;
+	Sun, 26 Oct 2025 23:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761520233; cv=none; b=JZsVg2AEY6CrtyD41EicjVc3eCRjQHBzx+RrX2vXtD7Swh5QnTRDYppKBEDVvE6MUyX+AgXzr5S/5ruxg5ceONpHoEBWKbcQQM25fYPSbtnCSFEPTHXPazgfht7PlJaP2DlgKOXw8Bni5mJ1wAjm9D06gwOeRilNNt523BqZ4NU=
+	t=1761520126; cv=none; b=OkrOGrTOTXUhqWjut7jUttGwX0PA+8kgOEF/U0Eo0Kj2kvztVzpJ0R1/by4Gy+pcFdnzFtU0ZrFAj0U9BmdqwYq1eLgNMWsHyEzc0hFCZqwmZvEpnYnuS4dr1/zfO9jWeJl4JMYU5hAdUzOWE7I78Kir2bst5bValWZNqHVaQ3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761520233; c=relaxed/simple;
-	bh=dfVR9ycCRUOjfF49zgYS2XJH9XNp+wt9GOVMSGtWyjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fDFBPAAXnVK9PKKO2Uq2f2IqWhYLE4hwYUmKeq4yToSwjyEOsl1IKtQGoY1CxgAvTG311IKg8mWUMwTIC9HrrqeM8EFQpQZynC2KyP74iNDDhQYFGWEysH5vHzVBK9+RyXUEPdrExY7xP4TTo5DCt8sLa/bbOdzac0kylgfivGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=A1azr4O1; arc=none smtp.client-ip=212.227.17.20
+	s=arc-20240116; t=1761520126; c=relaxed/simple;
+	bh=f/C4u5UA9qRZFwCUgLqt/0+lD/cFHCgOd+DAuAIX04k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hskyPPCwv7e4oSU6v9tMoeRgOot6GFpOin8UpmJb7vDxiMsB54kB/pYBrSfOXthDSDzrtvw84htdFcJZtqFN/kr75F+ELs8/3M1rZimS+7S+AnDxMkcYOADon0y/RvwJShQZ8eg7TtyDMW37NpG33smzBikcvnukehzY8UdgH28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=QZpxA7Y2; arc=none smtp.client-ip=212.227.17.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761519582; x=1762124382; i=w_armin@gmx.de;
-	bh=So6fnkiTCqFYKSE4jxw7wiQy+SqtklIy20RzDBGvsUo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=A1azr4O1WEl4FPQrOc4CdtTGZ+Gc29OZyXtIg6ZILP5hAoAhJ1ObMGhkcLosNntG
-	 7NRK7RLWWoJBTAeD9HgmYgBdtvPsN2DUACPpAP8U2Xbon5l5/lPyQE/8GL1j62DZU
-	 XWIyv3b8frv7XTWYw2ndcgmhROBvAg0QExts4ybaCCuxpwA7Dcu0obJ8UmrpO7d6A
-	 PGsFHnfZ+9ukLsiNjKCs5q/KehvLu312aBHb8ni8ZghWXi+of7kPh2H3rO3Wn6JtT
-	 zJTw0W6eoiQpviPsXXkKqwlmw95YikZjBNzmXR8im3ktMMTU1FJWbVSzB5lGQHK+Y
-	 ChLFMwO7viWMA0L44w==
+	s=s31663417; t=1761520107; x=1762124907; i=w_armin@gmx.de;
+	bh=VCA9uixoFwXY0NAqm4O6suWp7gf1AFZmvAK6AmLL1dM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QZpxA7Y26Cuj5wVkKI5NgtYVeCP8/dYC37NF8iZSQRDIRbXy8elwdYr1jK28FG0i
+	 Vt87FCNcIeNuRzSKm3x+8zBQLp5NN0ZrFnTbIIYK9xP0jahh84pMHl12vxs3axEYf
+	 4l20YjzMwTHrPuJtxl4qBqvaEGl1v5BOyz9YGT2cGAgReaLIqa4arHs//QEVimQhU
+	 kDrFCYg8AUmn9aj6d+Ar3xx72CIrAGng/UwbOo/wJVLHMOhPNfKrlkAX/QgfFs9PN
+	 HSJuH4FfQCqI8WTMlmm4VGIWm3/0jsEgyWsCE409++Giy1keNhcn/AlAS1RG9T/k8
+	 3ezNiEqzt+OdTtloZA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ml6qC-1uRgsk0dXI-00kjpO; Sun, 26
- Oct 2025 23:59:42 +0100
-Message-ID: <f1787927-b655-4321-b9d9-bc12353c72db@gmx.de>
-Date: Sun, 26 Oct 2025 23:59:38 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mi2Jt-1uZiIc1xmD-00euXe; Mon, 27
+ Oct 2025 00:08:27 +0100
+Message-ID: <7e078590-28b2-4dc5-bccb-5593f2ce494d@gmx.de>
+Date: Mon, 27 Oct 2025 00:08:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,265 +56,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] platform/x86: lenovo-wmi-{capdata,other}: Add HWMON
- for fan speed
-To: Rong Zhang <i@rong.moe>, Derek John Clark <derekjohn.clark@gmail.com>
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>, Hans de Goede
- <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20251019210450.88830-1-i@rong.moe>
- <CAFqHKTkBbtSHfu1bXn8tyjvPSmCOMoWdLyNMv=DRQke679SEPA@mail.gmail.com>
- <1cebf2340386adf52bde31b05238199a201e9882.camel@rong.moe>
-Content-Language: en-US
+Subject: Re: [PATCH v5 0/2] Add support for Uniwill laptop features
 From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <1cebf2340386adf52bde31b05238199a201e9882.camel@rong.moe>
+To: ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, chumuzero@gmail.com,
+ corbet@lwn.net, cs@tuxedo.de, wse@tuxedocomputers.com,
+ ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
+ pobrn@protonmail.com, nathan@kernel.org
+References: <20251005192049.18515-1-W_Armin@gmx.de>
+Content-Language: en-US
+In-Reply-To: <20251005192049.18515-1-W_Armin@gmx.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8Av9L4VnIkRElyfP/UdttrGzOTsaHbtU3vJQboc8+/yF6oH3gHh
- wi78H4aZmlT/XBrIsPamyHiuw0D3aT2xdQtr68EIBbhs0VrBywoU3LUV+HamJ4nbpdomRYs
- ggb99tm7TFo869BkeGXLqowXsBMJsskEGRWbBjFXFnInZU7wLVSowztv0+wlZ+OQsTLFNDK
- LcZLPe460cunzkAvbjyoQ==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:fDOdZeMhNC3EGjjwQxKhTXUJ3f4sowX8jtaMLK61uSKkYiDnnS9
+ aSlv4DPV+fmLpn6aFQx1aFVO8dN/FA9zXPaeOXxyeJOPgPIL66hm45DPX5PUz8cLb4v2UQS
+ WrVV1cQN/tHYNOGDhlauin30sHSx++gPQfSLcI+3U/y2SooiNxnLIVUOYoata753MIrk776
+ 5R2CzXR7HcT37fOjCx5Xg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OOJ7oVKQkiQ=;0pdaj6dnfwiYFOiVZaTh15pWbPj
- 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
+UI-OutboundReport: notjunk:1;M01:P0:Is9khLGRt58=;ktr7H4KwVugS+sIGRqyUAjYHh0G
+ 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
+ 9Ht+eNFpMwt5ZsWsXWbOzJGqVh9fulnj9Is=
 
-Am 26.10.25 um 18:11 schrieb Rong Zhang:
+Am 05.10.25 um 21:20 schrieb Armin Wolf:
 
-> Hi Derek,
+> This patch series adds support for the various features found on
+> laptops manufactured by Uniwill. Those features are:
 >
-> On Sat, 2025-10-25 at 21:39 -0700, Derek John Clark wrote:
->> On Sun, Oct 19, 2025 at 2:05=E2=80=AFPM Rong Zhang <i@rong.moe> wrote:
->>> Lenovo WMI Other Mode interface also supports querying or setting fan
->>> speed RPM. This capability is decribed by LENOVO_CAPABILITY_DATA_00.
->>> Besides, LENOVO_FAN_TEST_DATA provides reference data for self-test of
->>> cooling fans, including minimum and maximum fan speed RPM.
->>>
->>> This patchset turns lenovo-wmi-capdata01 into a unified driver (now
->>> named lenovo-wmi-capdata) for LENOVO_CAPABILITY_DATA_{00,01} and
->>> LENOVO_FAN_TEST_DATA; then adds HWMON support for lenovo-wmi-other:
->>>
->>>   - fanX_enable: enable/disable the fan (tunable)
->>>   - fanX_input: current RPM
->>>   - fanX_max: maximum RPM
->>>   - fanX_min: minimum RPM
->>>   - fanX_target: target RPM (tunable)
->>>
->>> This implementation doesn't require all capability data to be availabl=
-e,
->>> and is capable to expose interfaces accordingly:
->>>
->>>   - Having LENOVO_CAPABILITY_DATA_00: exposes fanX_{enable,input,targe=
-t}
->>>   - Having LENOVO_CAPABILITY_DATA_01: exposes firmware_attributes
->>>   - Having LENOVO_FAN_TEST_DATA: exposes fanX_{max,min}
->>>
->>> Rong Zhang (6):
->>>    platform/x86: Rename lenovo-wmi-capdata01 to lenovo-wmi-capdata
->>>    platform/x86: lenovo-wmi-{capdata,other}: Support multiple Capabili=
-ty
->>>      Data
->>>    platform/x86: lenovo-wmi-capdata: Add support for Capability Data 0=
-0
->>>    platform/x86: lenovo-wmi-other: Add HWMON for fan speed RPM
->>>    platform/x86: lenovo-wmi-capdata: Add support for Fan Test Data
->>>    platform/x86: lenovo-wmi-other: Report min/max RPM and hide dummy f=
-ans
->>>
->>>   .../wmi/devices/lenovo-wmi-other.rst          |  32 +
->>>   drivers/platform/x86/lenovo/Kconfig           |   5 +-
->>>   drivers/platform/x86/lenovo/Makefile          |   2 +-
->>>   drivers/platform/x86/lenovo/wmi-capdata.c     | 545 ++++++++++++++++=
-++
->>>   drivers/platform/x86/lenovo/wmi-capdata.h     |  46 ++
->>>   drivers/platform/x86/lenovo/wmi-capdata01.c   | 302 ----------
->>>   drivers/platform/x86/lenovo/wmi-capdata01.h   |  25 -
->>>   drivers/platform/x86/lenovo/wmi-other.c       | 422 +++++++++++++-
->>>   8 files changed, 1028 insertions(+), 351 deletions(-)
->>>   create mode 100644 drivers/platform/x86/lenovo/wmi-capdata.c
->>>   create mode 100644 drivers/platform/x86/lenovo/wmi-capdata.h
->>>   delete mode 100644 drivers/platform/x86/lenovo/wmi-capdata01.c
->>>   delete mode 100644 drivers/platform/x86/lenovo/wmi-capdata01.h
->>>
->>>
->>> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
->>> --
->>> 2.51.0
->>>
->> The series' intention looks good overall. The composable methods for
->> additional capdata interfaces is a welcome change. I have a few
->> comments I'll add for a couple of the patches. My apologies for the
->> slow review timeline, I've been on travel and wanted to test the
->> changes before submitting a review.
-> Thanks for you review and testing! Hope you have/had a nice trip ;)
+>   - battery charge limiting
+>   - RGB lightbar control
+>   - hwmon support
+>   - improved hotkey support
+>   - keyboard-related settings
 >
->> For testing I'm using my Legion Go 2. It apparently doesn't have the
->> FAN_TEST_DATA GUID, and the hwmon interface errors on all inputs
->> despite being visible. I know for the Legion Go series they use a fan
->> table with 10 auto_set points in the Other Method interface tied to
->> the platform profile, but the documentation I have says the methods
->> you're adding here should be available on all models, so that is a bit
->> strange.
-> Yeah, that sounds weird.
+> This patch series is based on the following out-of-tree drivers:
 >
-> As for the fan table on your device, did you mean
-> LENOVO_FAN_TABLE_DATA/LENOVO_FAN_METHOD? My device doesn't use a fan
-> table, the corresponding ACPI methods are dummy (see below).
+>   - https://github.com/pobrn/qc71_laptop
+>   - https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
 >
-> My device is ThinkBook 14 G7+ ASP (forgot to mention when submitting,
-> sorry). I don't have any documentation and I finished the patchset
-> according to the MOF as well as the decompiled ASL code of its ACPI
-> tables. The information from the documentation (including those in your
-> following replies) is very useful, thanks for that!
+> Additionally the OEM software of the Intel Nuc x15 was
+> reverse-engineered to have a better understanding about the underlying
+> hardware interface.
 >
-> As it's branded as ThinkBook, most GAMEZONE/WMI_OTHER interfaces on my
-> device may differ from Legion devices. To summerize:
+> The first patch introduces the uniwill-laptop driver that consists of
+> two parts: a WMI part responsible for receiving platform events and
+> a ACPI part that does the majority of the work by talking to the
+> underlying embedded controller using the INOU0000 ACPI device.
+> The whole driver uses a DMI whitelist for identifying supported
+> notebook models as both the ACPI device ID and the WMI device GUID
+> are shared with a wide range of notebook models that might use a
+> different embedded controller register layout.
 >
-> - LENOVO_GAMEZONE_DATA: dummy ACPI method.
-> - LENOVO_GAMEZONE_CPU_OC_DATA: presents in MOF; missing ACPI method.
-> - LENOVO_GAMEZONE_GPU_OC_DATA: dummy ACPI method.
-> - LENOVO_CAPABILITY_DATA_00: works fine.
-> - LENOVO_CAPABILITY_DATA_01: dummy ACPI method, data still presents
->    (\_SB.GZFD.CD01).
-> - LENOVO_FAN_TEST_DATA: works fine.
-> - LENOVO_FAN_TABLE_DATA: dummy ACPI method.
-> - LENOVO_FAN_METHOD: dummy ACPI method.
-> - LENOVO_OTHER_METHOD:
->    * Despite missing LENOVO_CAPABILITY_DATA_01, SPPT/SPL/FPPT can still
->      be get/set. There is also CHTC (FEATURE_ID=3D4, get/set) which I am
->      not sure what it means.
->    * FAN1/2: get method reads data from the EC; set method for FAN1
->      updates the EC, for FAN2 is dummy (no-op, returns 0).
+> The second patch additionally adds some documentation for configuring
+> and using said driver.
 >
->> dmesg output:
->> [    3.995549] lenovo_wmi_cd 362A3AFE-3D96-4665-8530-96DAD5BB300E-13:
->> registered LENOVO_CAPABILITY_DATA_00 with 33 items
->> [    4.000266] lenovo_wmi_cd 7A8F5407-CB67-4D6E-B547-39B3BE018154-9:
->> registered LENOVO_CAPABILITY_DATA_01 with 80 items
->> [    4.005603] lenovo_wmi_other
->> DC2A8805-3A8C-41BA-A6F7-092E0089CD3B-3: bound
->> 362A3AFE-3D96-4665-8530-96DAD5BB300E-13 (ops lwmi_cd_component_ops
->> [lenovo_wmi_capdata])
->> [    4.005611] lenovo_wmi_other
->> DC2A8805-3A8C-41BA-A6F7-092E0089CD3B-3: bound
->> 7A8F5407-CB67-4D6E-B547-39B3BE018154-9 (ops lwmi_cd_component_ops
->> [lenovo_wmi_capdata])
->> [    4.005614] lenovo_wmi_other
->> DC2A8805-3A8C-41BA-A6F7-092E0089CD3B-3: fan capdata unavailable
->>
->> Testing results:
->> (deck@lego2 hwmon5)$ ls
->> device  fan1_enable  fan1_input  fan1_target  name  power  subsystem  u=
-event
->> (deck@lego2 hwmon5)$ cat fan1_enable
->> cat: fan1_enable: No data available
->> (1)(deck@lego2 hwmon5)$ echo 1 | sudo tee fan1_enable
->> [sudo] password for deck:
->> 1
->> tee: fan1_enable: Input/output error
->> (1)(deck@lego2 hwmon5)$ echo 0 | sudo tee fan1_enable
->> 0
->> tee: fan1_enable: Input/output error
->> (1)(deck@lego2 hwmon5)$ echo 3000 | sudo tee fan1_target
->> 3000
->> tee: fan1_target: Input/output error
-> -EIO was returned when the set method didn't return 1 (as long as
-> lwmi_dev_evaluate_int() didn't return this due to ACPI_FAILURE).
-> Despite the return value, did the fan speed change after writing?
-> Otherwise the method might be dummy and LENOVO_CAPABILITY_DATA_00
-> simply returned mistaken data :(
+> Special thanks go to:
 >
->> (1)(deck@lego2 hwmon5)$ cat fan1_input
->> cat: fan1_input: No such device or address
-> -ENXIO was returned by lwmi_dev_evaluate_int() as the return value was
-> not an integer. It's really weird. Could you check the type of the
-> return value? Some clues may also lie in the ASL code of the ACPI
-> method.
+>   - github user cyear for bring up this topic on the lm-sensors issue
+>     tracker and being the tester for various prototype versions
+>   - github user dumingqiao for testing the battery, lightbar and
+>     keyboard-related features
+>   - Tuxedo computers for giving advice on how to design the userspace
+>     interface
+>
+> NOTE: During testing it turned out that the touchpad_toggle sysfs
+> attribute does not work. The reason for this is unknown, as the driver
+> emulates the behaviour of the OEM application just fine. I suspect
+> that this feature only controls some obscure key combination we dont
+> know about, so i decided to send out this series regardless.
 
-The Windows WMI-ACPI driver converts all ACPI objects into a common buffer
-format, so returning a buffer with four bytes will look like an integer
-for WMI consumers under Windows.
-
-I already have patches for that, but for now i suggest that you handle
-this inside lwmi_dev_evaluate_int() yourself.
+Any updates on this?
 
 Thanks,
 Armin Wolf
 
->> Thanks,
->> Derek
-> Thanks,
-> Rong
+>
+> Changes since v4:
+> - add Tested-by tag
+> - fix usage of guard() inside switch statement
+>
+> Changes since v3:
+> - Add support for UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED event
+> - rename sysfs files to prepare for future changes
+> - use kstrtobool() for handling sysfs input
+> - add proper led locking
+>
+> Changed since v2:
+> - Use the INOU0000 ACPI device for talking to the EC as it is much
+>    faster than the WMI interface used before. Additionally the OEM
+>    application also uses this ACPI inteface through a special driver.
+> - Merge the uniwill-wmi driver into the uniwill-laptop driver as
+>    the WMI driver should only load when matching the DMI whitelist.
+> - Various small fixes
+>
+> Changes since v1:
+> - spelling fixes
+> - add missing error handling when reading PWM duty cycle
+> - fix error when setting the super key lock sysfs attribute
+>
+> Changes since the RFC series:
+> - spelling fixes
+> - mention the INOU0000 ACPI device inside thew documentation
+> - use MILLIDEGREE_PER_DEGREE instead of 1000
+> - use power_supply_get_property_direct() to prevent deadlock
+> - add support for KEY_KBDILLUMDOWN and KEY_KBDILLUMUP
+>
+> Armin Wolf (2):
+>    platform/x86: Add Uniwill laptop driver
+>    Documentation: laptops: Add documentation for uniwill laptops
+>
+>   .../ABI/testing/sysfs-driver-uniwill-laptop   |   53 +
+>   Documentation/admin-guide/laptops/index.rst   |    1 +
+>   .../admin-guide/laptops/uniwill-laptop.rst    |   60 +
+>   Documentation/wmi/devices/uniwill-laptop.rst  |  198 +++
+>   MAINTAINERS                                   |   11 +
+>   drivers/platform/x86/Kconfig                  |    2 +
+>   drivers/platform/x86/Makefile                 |    3 +
+>   drivers/platform/x86/uniwill/Kconfig          |   38 +
+>   drivers/platform/x86/uniwill/Makefile         |    8 +
+>   drivers/platform/x86/uniwill/uniwill-acpi.c   | 1549 +++++++++++++++++
+>   drivers/platform/x86/uniwill/uniwill-wmi.c    |   92 +
+>   drivers/platform/x86/uniwill/uniwill-wmi.h    |  127 ++
+>   12 files changed, 2142 insertions(+)
+>   create mode 100644 Documentation/ABI/testing/sysfs-driver-uniwill-laptop
+>   create mode 100644 Documentation/admin-guide/laptops/uniwill-laptop.rst
+>   create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
+>   create mode 100644 drivers/platform/x86/uniwill/Kconfig
+>   create mode 100644 drivers/platform/x86/uniwill/Makefile
+>   create mode 100644 drivers/platform/x86/uniwill/uniwill-acpi.c
+>   create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
+>   create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
 >
 
