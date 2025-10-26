@@ -1,125 +1,87 @@
-Return-Path: <linux-kernel+bounces-870370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83950C0A893
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:30:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFA8C0A896
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:31:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6423ADA8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480973AE2CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654892DFA2A;
-	Sun, 26 Oct 2025 13:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccYD/F0F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BB9242D62;
+	Sun, 26 Oct 2025 13:31:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99888212572;
-	Sun, 26 Oct 2025 13:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C88719DF8D
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 13:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761485409; cv=none; b=Xv3Sn8GgcshhOTlWE8cF83aIwSu7mVYSHVRUlc+IHOJDYxdm0Pe8/9Vpo3QIy4TIVEmuwdlODwQdzGmwXq++VdOFMU/so1L+V9yfM+Pw/EaojabpzBFR5dDH6sLMy7IPgHhMbsSzFkjMH4EI8ImYq3Jvk7sh7DNnyPeMUzfdHwM=
+	t=1761485468; cv=none; b=HFwwYawuJs/+FMDxJkP1YqPAtXcwPgZm1uO/NLLZwsfa1KrhKV49XCSYVVxuuTf6syoy3t6j5VDrHF7FWxZp61g90DC37qVOhfUQjPBFuYA+8mOzfbHAwdi8LVNluCdvJ5Q65Gfk3aYZdExcQuP2fkGcBT9cqh+TC2DcSoqe80g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761485409; c=relaxed/simple;
-	bh=40O4AkKAojsrOlSedZ12tmVu2dY2adh7yZ0M+ABkhxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7Phfx7k5pPw9QAuYLhx3rONS96iCzVbaF2Ke51thtnLPeMBSyxyiyfQB63V8a0F3G6M/f81UhSimtByEKwf60aPvPI1Z+5wBSdSKi6ObLtxL0UNYSVfg+YdbiJmHrjkaALdb3jdghLsvSU08mWcFvLhnqOS4E0BvMzoqQDBp2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccYD/F0F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E816C4CEE7;
-	Sun, 26 Oct 2025 13:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761485409;
-	bh=40O4AkKAojsrOlSedZ12tmVu2dY2adh7yZ0M+ABkhxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ccYD/F0FX/MYdI3AQbnRUPySQl7LYSTqJKO/BtNbNNxvRdcgqI7T9sc/oM06tpBgZ
-	 uyEQBHDuDlee2IdDuyDQ5bU0imuIDLO+R4IOIS6VrwjPhxpFjDD/RMmlxtMxirB0ud
-	 z1KCFNyMSD905kmUzg+iMfQRwcTN3yGsyfoDTnSIkmEVA/JLDWzOhbrLBGCgfHJrdw
-	 sixIYjk81+pcJNXN1OX+h44WAuVZMzkgtZyGcpI2DoChLysHunbYrbtUaY8JA56s7H
-	 GNvmrxpiIsLkDCeNgp7JI102c3uQQ1D09+CaytccWLlzAfetxh/h07TmuGXzIDRqcn
-	 QVpd4DG9VUnIQ==
-Date: Sun, 26 Oct 2025 15:30:04 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] block-dma: properly take MMIO path
-Message-ID: <20251026133004.GE12554@unreal>
-References: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com>
- <20251020-block-with-mmio-v2-2-147e9f93d8d4@nvidia.com>
- <20251022062135.GD4317@lst.de>
+	s=arc-20240116; t=1761485468; c=relaxed/simple;
+	bh=bDf110AlXtv+VnvFhl4VKWo32kn+Ar4IxaVUYUQf3oI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QJ9HaZ7VvS6ObpBJ/OHYtbJy4q2tBgs2KmeFkjtTutMyvUs9Xt6darkIrvc4/we5J8ppvjitKXKOTv7hC6FA+jQX+DGU38IfSZzSle/aiSDj8XCF06ErdWjIHR4KFb+1+X+oOgiJGAUk/Gkomfh03YPbYHrifusVFBOaeCKrQ+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430e1a4a129so47907635ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 06:31:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761485466; x=1762090266;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B4ALCs6kaWDA5nJlzDG7U3TtxLYTKIHQn7g5VmhKLv8=;
+        b=pQwPonPnUfsx3l5wS8txadSmh/zzp8AJDinyPeg/ksTcK/DK3z+ge/vb9oWPENz+nF
+         BdoDllnCvSgQ5B8nLydHpBfafI1VhBHl+GJJ+ZdzteQ4UNoeL1R7Vrkst9w9eDJ6AFbU
+         mpvRSZ3xId4+DONpZ+PGpvQYbJftzctApyD5WWVF/3shpCwvcxmnCKFnY1mroL9yaohb
+         C5GbmqbovJrx6m1mcAWAyfkROtbBAOs0IL3LDF9fr68TJyIVhYCRbi3dzyhY8Iuo2Yef
+         NGrrd2rua03wz3F6go6ph9p5vQwko1I2MXFBG9YHvuPEDC/ZcpUUTAtpTzXf+A9K7THd
+         tjBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTtan4G+CUSnj0sorv1qV4zq+ChI2JMaoXmbSM6AZqvTPknc3zb7zUHBCDMCrCAmLY3zJJL9bFmhRuhpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyBDWxDr4Xn1c9Eym+p3dKVbs1od73sRq19YwYubMMyyQVI9Ev
+	zZ0kYLaYqAmukkpAbo8MSIMoNsgx8ax3+fvCAxPm8dSAZBq/fcwVsbAS59WKWpApxqTsj53prp0
+	Msa2TiU3y4ZfnIADrhMST1S2rNdRbhIH+k7MoaGUyWzeIf9Dl1ALSCZkKxxw=
+X-Google-Smtp-Source: AGHT+IGPbeJTCC97WbxNt2jkBxxCwuw1/mXjaALFktblj4ldAOvv+jJSI8qQU+emb/k/daEbHJ7BZ/3W2mKq286l0DYz2B38HijV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022062135.GD4317@lst.de>
+X-Received: by 2002:a05:6e02:164c:b0:430:8bff:c5a2 with SMTP id
+ e9e14a558f8ab-431ebef1db7mr97211755ab.30.1761485465810; Sun, 26 Oct 2025
+ 06:31:05 -0700 (PDT)
+Date: Sun, 26 Oct 2025 06:31:05 -0700
+In-Reply-To: <CAPqLRf1xv2B+qfrR3Qq5L-AhD7Gn9tZ98M=LBo-B+DbOkn05uw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fe2299.050a0220.3344a1.00a0.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in bcmp (3)
+From: syzbot <syzbot+0399100e525dd9696764@syzkaller.appspotmail.com>
+To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025 at 08:21:35AM +0200, Christoph Hellwig wrote:
-> On Mon, Oct 20, 2025 at 08:00:21PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > In commit eadaa8b255f3 ("dma-mapping: introduce new DMA attribute to
-> > indicate MMIO memory"), DMA_ATTR_MMIO attribute was added to describe
-> > MMIO addresses, which require to avoid any memory cache flushing, as
-> > an outcome of the discussion pointed in Link tag below.
-> > 
-> > In case of PCI_P2PDMA_MAP_THRU_HOST_BRIDGE transfer, blk-mq-dm logic
-> > treated this as regular page and relied on "struct page" DMA flow.
-> > That flow performs CPU cache flushing, which shouldn't be done here,
-> > and doesn't set IOMMU_MMIO flag in DMA-IOMMU case.
-> > 
-> > Link: https://lore.kernel.org/all/f912c446-1ae9-4390-9c11-00dce7bf0fd3@arm.com/
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  block/blk-mq-dma.c            |  6 ++++--
-> >  drivers/nvme/host/pci.c       | 23 +++++++++++++++++++++--
-> >  include/linux/blk-integrity.h |  7 ++++---
-> >  include/linux/blk-mq-dma.h    | 11 +++++++----
-> >  4 files changed, 36 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/block/blk-mq-dma.c b/block/blk-mq-dma.c
-> > index 4ba7b0323da4..3ede8022b41c 100644
-> > --- a/block/blk-mq-dma.c
-> > +++ b/block/blk-mq-dma.c
-> > @@ -94,7 +94,7 @@ static bool blk_dma_map_direct(struct request *req, struct device *dma_dev,
-> >  		struct blk_dma_iter *iter, struct phys_vec *vec)
-> >  {
-> >  	iter->addr = dma_map_phys(dma_dev, vec->paddr, vec->len,
-> > -			rq_dma_dir(req), 0);
-> > +			rq_dma_dir(req), iter->attrs);
-> >  	if (dma_mapping_error(dma_dev, iter->addr)) {
-> >  		iter->status = BLK_STS_RESOURCE;
-> >  		return false;
-> > @@ -116,7 +116,7 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
-> >  
-> >  	do {
-> >  		error = dma_iova_link(dma_dev, state, vec->paddr, mapped,
-> > -				vec->len, dir, 0);
-> > +				vec->len, dir, iter->attrs);
-> >  		if (error)
-> >  			break;
-> >  		mapped += vec->len;
-> > @@ -184,6 +184,8 @@ static bool blk_dma_map_iter_start(struct request *req, struct device *dma_dev,
-> >  		 * P2P transfers through the host bridge are treated the
-> >  		 * same as non-P2P transfers below and during unmap.
-> >  		 */
-> > +		iter->attrs |= DMA_ATTR_MMIO;
-> 
-> DMA_ATTR_MMIO is the only flags in iter->attrs, and I can't see any other
-> DMA mapping flag that would fit here.  So I'd rather store the
-> enum pci_p2pdma_map_type here, which also removes the need for REQ_P2PDMA 
-> and BIP_P2P_DMA when propagating that to nvme.
+Hello,
 
-It is already stored in iter->p2pdma.map, will reuse it.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks
+Reported-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+Tested-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
 
-> 
+Tested on:
+
+commit:         72761a7e Merge tag 'driver-core-6.18-rc3' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=111a7b04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0d3e651b4bf498
+dashboard link: https://syzkaller.appspot.com/bug?extid=0399100e525dd9696764
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=145827e2580000
+
+Note: testing is done by a robot and is best-effort only.
 
