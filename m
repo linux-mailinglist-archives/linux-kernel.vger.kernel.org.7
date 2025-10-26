@@ -1,172 +1,189 @@
-Return-Path: <linux-kernel+bounces-870310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43ACAC0A6F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:22:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1923C0A6E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607F0189F806
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B2C3AAF4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7F525524C;
-	Sun, 26 Oct 2025 12:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774DD23EA95;
+	Sun, 26 Oct 2025 12:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="S9ZPujlB"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k111yPkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749BA18EB0;
-	Sun, 26 Oct 2025 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B64187346;
+	Sun, 26 Oct 2025 12:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761481336; cv=none; b=HJEAgrQSplmQLy/2wxploOdpCKPdIZc2Mf51QELd1xT+9Ft5QBDyg1W78exHBZjIJqtwSmqSkx20gHhZPJLy17isAbklnvC57M3xdnYVIHOsD4QXULhZ8tdRM3UimvjLMp0JR76mj7jOdmOJsW5vC+AjMCd+eaAfHNY4B+bKdrE=
+	t=1761481324; cv=none; b=Mqvexy8BOhcoGAHh8MOrfe8ktigEbwdjcQ9axNTl8g5Y7i4dbfKgIMnWwAbaSmtfKqwdIGHJV1in2+FtgZazAch3DZcdBLZcUiBDQchrE5KEtPPm/l/L0JweJRI0SBq4agVi6KJMv8fI4nq++zdBUs3JLFWhBbbI1UTdFMriO5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761481336; c=relaxed/simple;
-	bh=QPZqpmMM53oDlw5RkClpzSB/9haDur+byq04ET34B+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C9GfjVdaaqJ3o+0qSUwo6zEaSXa6g1/+sxX9BGUIe3ZKzxKTvdZwdyAh9kvmNRrtngMqPVVpTlUlwbd5z7AYhB96xv4HZhur2h9t0jZMkju23hXjsdzO5ruYelE2r25peVRxdlPF77il8lbmIgUj0rukR0UJFyPGWfflytTqh6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=S9ZPujlB; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout2.routing.net (Postfix) with ESMTP id EB48A5FF3F;
-	Sun, 26 Oct 2025 12:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1761481326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0dY9esegxlxvfveosoEyFChzlWucqwdO0YH5Tj3yiok=;
-	b=S9ZPujlBTnCdbMJvrxVvkukT6o+Scd2mNqnGuwjJLvLfi9wnHM9rp6GrqgsyjCpPJh45Nc
-	p+OPvrCITAZjf0eqLrD2wAfH2ivXL0E/gBXRRJN1W1lLQ+/csTp3TsaSg9DHF67cLTQCSq
-	fjNADBDeAX6F7RcwObO6DONXNNKTmWU=
-Received: from frank-u24.. (fttx-pool-217.61.154.70.bambit.de [217.61.154.70])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id AFA1A1226BC;
-	Sun, 26 Oct 2025 12:22:05 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
-	Mason Chang <mason-cw.chang@mediatek.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Balsam CHIHI <bchihi@baylibre.com>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v1 5/5] thermal/drivers/mediatek/lvts_thermal: Add mt7987 support
-Date: Sun, 26 Oct 2025 13:21:34 +0100
-Message-ID: <20251026122143.71100-6-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251026122143.71100-1-linux@fw-web.de>
-References: <20251026122143.71100-1-linux@fw-web.de>
+	s=arc-20240116; t=1761481324; c=relaxed/simple;
+	bh=GXuFAtgP+oHMIwv1faVRiehyLAz3rr8xYHnrw+m3qak=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kAxb+szLyFgtl5uCnnWhBzYWSPuY8Pms72FpNhkyANoz/Dv7jbpA9LWBOU6gWoDTso9JA8+/tB2OfOyFKsKkzkbHvmbBw4lQtSgUWWO4N5iNNKenejx1Fd808N56n/EHqWVTErjjitV2GSozT7skyrz3XwLKvhweCtQOaUZ5spg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k111yPkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 17B8EC4CEE7;
+	Sun, 26 Oct 2025 12:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761481324;
+	bh=GXuFAtgP+oHMIwv1faVRiehyLAz3rr8xYHnrw+m3qak=;
+	h=From:Date:Subject:To:Cc:From;
+	b=k111yPkR1SAqFi0Qba1jO49IqFj+0ci+6K7rGAXWe2l3L63nptArnw0a7XPQChgHR
+	 L1k9/OBZgmJbPGHphEAWKjiriogr1wqe9tnBb2oT64hx671BPFyeHmXygcFKGDbRSj
+	 BAqI3kmZDK1L4cxknhg41JIRYWlwSGLmN2D5AdNgEoxiLjmTc6UN7rkn+FpN7HmRH3
+	 YjpUUnWkWEkIDL96CdtejGKVdzEKU2yQv7FTdwzxdYth5i2NyYmwNq9o6/nhWSR+2i
+	 hNNc8rKcaochTKbh11fhFEE2gxhguvKvr4vjPw/8FTyrebj1djI0+/Llmeq2G30CPj
+	 qcyoXv7EX1EVg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F25CCD1A5;
+	Sun, 26 Oct 2025 12:22:03 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Date: Sun, 26 Oct 2025 12:21:36 +0000
+Subject: [PATCH usb-next] usb: dwc3: apple: Only support a single reset
+ controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251026-b4-dwc3-apple-reset-array-fix-v1-1-ccdbacd63f78@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAE8S/mgC/x3MwQrCMAyA4VcZORtY6xzoq4iHtIkakFqSTSdj7
+ 77i8fsP/woupuJw6VYw+ajruzSEQwf5SeUhqNwMsY+n0MeIaUD+5iNSrS9BE5cJyYx+eNcFaQy
+ Z4zkxhxHao5q0/P9fYfaERZYJbtu2A+uoLQR5AAAA
+X-Change-ID: 20251022-b4-dwc3-apple-reset-array-fix-a61cd29bdd16
+To: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sven Peter <sven@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4079; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=GXuFAtgP+oHMIwv1faVRiehyLAz3rr8xYHnrw+m3qak=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ8Y/oczj+5zfLeI4+Srj5LntiU/C5kyIN8tijz08dwpPo
+ /fJPW97OkpZGMQ4GGTFFFm277c3ffLwjeDSTZfew8xhZQIZwsDFKQATeb+V4Q9X33uZNcet++6y
+ fNy4Xd/3zs3K5ODcbb3i8/jVGU68DOBmZHi73a7h0vMvfZyFhxc+/ZWo/6i06uZ3VQ/XnakbNkl
+ cusEBAA==
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
 
-From: Frank Wunderlich <frank-w@public-files.de>
+As pointed out by Philipp, Apple's dwc3 controller only uses a single
+reset line and there's thus no need to use reset controller array
+functions. The only functional change here is replacing
+devm_reset_control_array_get_exclusive with
+devm_reset_control_get_exclusive. The rest are only cosmetic changes
+to replace "resets" with "reset".
 
-Add support for MT7987.
-
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Reported-by: Philipp Zabel <p.zabel@pengutronix.de>
+Closes: https://lore.kernel.org/asahi/47112ace39ea096242e68659d67a401e931abf3a.camel@pengutronix.de/
+Fixes: 0ec946d32ef7 ("usb: dwc3: Add Apple Silicon DWC3 glue layer driver")
+Signed-off-by: Sven Peter <sven@kernel.org>
 ---
- drivers/thermal/mediatek/lvts_thermal.c | 38 +++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+I was planning to submit a v3 with this fixed but didn't find the time
+before v2 was picked up.
+---
+ drivers/usb/dwc3/dwc3-apple.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 544941e8219a..1d800bdf4a24 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -87,6 +87,8 @@
- #define LVTS_COEFF_B_MT8195			250460
- #define LVTS_COEFF_A_MT7988			-204650
- #define LVTS_COEFF_B_MT7988			204650
-+#define LVTS_COEFF_A_MT7987			-204650
-+#define LVTS_COEFF_B_MT7987			204650
+diff --git a/drivers/usb/dwc3/dwc3-apple.c b/drivers/usb/dwc3/dwc3-apple.c
+index 6e41bd0e34f461b0c3db9b8a646116458ff816b6..cc47cad232e397ac4498b09165dfdb5bd215ded7 100644
+--- a/drivers/usb/dwc3/dwc3-apple.c
++++ b/drivers/usb/dwc3/dwc3-apple.c
+@@ -81,7 +81,7 @@ enum dwc3_apple_state {
+  * @dev: Pointer to the device structure
+  * @mmio_resource: Resource to be passed to dwc3_core_probe
+  * @apple_regs: Apple-specific DWC3 registers
+- * @resets: Reset control
++ * @reset: Reset control
+  * @role_sw: USB role switch
+  * @lock: Mutex for synchronizing access
+  * @state: Current state of the controller, see documentation for the enum for details
+@@ -93,7 +93,7 @@ struct dwc3_apple {
+ 	struct resource *mmio_resource;
+ 	void __iomem *apple_regs;
  
- #define LVTS_MSR_IMMEDIATE_MODE		0
- #define LVTS_MSR_FILTERED_MODE		1
-@@ -1400,6 +1402,20 @@ static void lvts_remove(struct platform_device *pdev)
- 		lvts_ctrl_set_enable(&lvts_td->lvts_ctrl[i], false);
- }
+-	struct reset_control *resets;
++	struct reset_control *reset;
+ 	struct usb_role_switch *role_sw;
  
-+static const struct lvts_ctrl_data mt7987_lvts_ap_data_ctrl[] = {
-+	{
-+		.lvts_sensor = {
-+			{ .dt_id = MT7987_CPU,
-+			  .cal_offsets = { 0x04, 0x05, 0x06 } },
-+			{ .dt_id = MT7987_ETH2P5G,
-+			  .cal_offsets = { 0x08, 0x09, 0x0a } },
-+		},
-+		VALID_SENSOR_MAP(1, 1, 0, 0),
-+		.offset = 0x0,
-+		.mode = LVTS_MSR_FILTERED_MODE,
-+	},
-+};
-+
- static const struct lvts_ctrl_data mt7988_lvts_ap_data_ctrl[] = {
- 	{
- 		.lvts_sensor = {
-@@ -1482,6 +1498,12 @@ static const u32 default_init_cmds[] = {
- 	0xC10300FC, 0xC103009D, 0xC10300F1, 0xC10300E1
- };
+ 	struct mutex lock;
+@@ -237,9 +237,9 @@ static int dwc3_apple_init(struct dwc3_apple *appledwc, enum dwc3_apple_state st
  
-+static const u32 mt7987_init_cmds[] = {
-+	0xC1030300, 0xC1030420, 0xC1030500, 0xC10307A6, 0xC10308C7,
-+	0xC103098D, 0xC1030C7C, 0xC1030AA8, 0xC10308CE, 0xC10308C7,
-+	0xC1030B04, 0xC1030E01, 0xC10306B8
-+};
-+
- static const u32 mt7988_init_cmds[] = {
- 	0xC1030300, 0xC1030420, 0xC1030500, 0xC10307A6, 0xC1030CFC,
- 	0xC1030A8C, 0xC103098D, 0xC10308F1, 0xC1030B04, 0xC1030E01,
-@@ -1780,6 +1802,21 @@ static const struct lvts_ctrl_data mt8195_lvts_ap_data_ctrl[] = {
+ 	lockdep_assert_held(&appledwc->lock);
+ 
+-	ret = reset_control_deassert(appledwc->resets);
++	ret = reset_control_deassert(appledwc->reset);
+ 	if (ret) {
+-		dev_err(appledwc->dev, "Failed to deassert resets, err=%d\n", ret);
++		dev_err(appledwc->dev, "Failed to deassert reset, err=%d\n", ret);
+ 		return ret;
  	}
- };
  
-+static const struct lvts_data mt7987_lvts_ap_data = {
-+	.lvts_ctrl	= mt7987_lvts_ap_data_ctrl,
-+	.num_lvts_ctrl	= ARRAY_SIZE(mt7987_lvts_ap_data_ctrl),
-+	.conn_cmd	= mt7988_conn_cmds,
-+	.init_cmd	= mt7987_init_cmds,
-+	.num_conn_cmd	= ARRAY_SIZE(mt7988_conn_cmds),
-+	.num_init_cmd	= ARRAY_SIZE(mt7987_init_cmds),
-+	.temp_factor	= LVTS_COEFF_A_MT7987,
-+	.temp_offset	= LVTS_COEFF_B_MT7987,
-+	.golden_temp	= 60,
-+	.gt_calib_bit_offset = 32,
-+	.def_calibration = 19380,
-+	.irq_enable	= false,
-+};
-+
- static const struct lvts_data mt7988_lvts_ap_data = {
- 	.lvts_ctrl	= mt7988_lvts_ap_data_ctrl,
- 	.conn_cmd	= mt7988_conn_cmds,
-@@ -1899,6 +1936,7 @@ static const struct lvts_data mt8195_lvts_ap_data = {
- };
+@@ -288,9 +288,9 @@ static int dwc3_apple_init(struct dwc3_apple *appledwc, enum dwc3_apple_state st
+ core_exit:
+ 	dwc3_core_exit(&appledwc->dwc);
+ reset_assert:
+-	ret_reset = reset_control_assert(appledwc->resets);
++	ret_reset = reset_control_assert(appledwc->reset);
+ 	if (ret_reset)
+-		dev_warn(appledwc->dev, "Failed to assert resets, err=%d\n", ret_reset);
++		dev_warn(appledwc->dev, "Failed to assert reset, err=%d\n", ret_reset);
  
- static const struct of_device_id lvts_of_match[] = {
-+	{ .compatible = "mediatek,mt7987-lvts-ap", .data = &mt7987_lvts_ap_data },
- 	{ .compatible = "mediatek,mt7988-lvts-ap", .data = &mt7988_lvts_ap_data },
- 	{ .compatible = "mediatek,mt8186-lvts", .data = &mt8186_lvts_data },
- 	{ .compatible = "mediatek,mt8188-lvts-mcu", .data = &mt8188_lvts_mcu_data },
+ 	return ret;
+ }
+@@ -323,9 +323,9 @@ static int dwc3_apple_exit(struct dwc3_apple *appledwc)
+ 	dwc3_core_exit(&appledwc->dwc);
+ 	appledwc->state = DWC3_APPLE_NO_CABLE;
+ 
+-	ret = reset_control_assert(appledwc->resets);
++	ret = reset_control_assert(appledwc->reset);
+ 	if (ret) {
+-		dev_err(appledwc->dev, "Failed to assert resets, err=%d\n", ret);
++		dev_err(appledwc->dev, "Failed to assert reset, err=%d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -411,14 +411,14 @@ static int dwc3_apple_probe(struct platform_device *pdev)
+ 	appledwc->dev = &pdev->dev;
+ 	mutex_init(&appledwc->lock);
+ 
+-	appledwc->resets = devm_reset_control_array_get_exclusive(dev);
+-	if (IS_ERR(appledwc->resets))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(appledwc->resets),
+-				     "Failed to get resets\n");
++	appledwc->reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(appledwc->reset))
++		return dev_err_probe(&pdev->dev, PTR_ERR(appledwc->reset),
++				     "Failed to get reset control\n");
+ 
+-	ret = reset_control_assert(appledwc->resets);
++	ret = reset_control_assert(appledwc->reset);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to assert resets, err=%d\n", ret);
++		dev_err(&pdev->dev, "Failed to assert reset, err=%d\n", ret);
+ 		return ret;
+ 	}
+ 
+
+---
+base-commit: be83d83664e9f6fa035e96fb9187f9e7898659e4
+change-id: 20251022-b4-dwc3-apple-reset-array-fix-a61cd29bdd16
+
+Best regards,
 -- 
-2.43.0
+Sven Peter <sven@kernel.org>
+
 
 
