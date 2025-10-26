@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-870447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412E8C0AD61
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:26:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC6C0AD52
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:26:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 040F54E7261
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:26:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7E618962CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61EB23EABE;
-	Sun, 26 Oct 2025 16:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkbdT0AL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0015D218EB1;
+	Sun, 26 Oct 2025 16:26:09 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FEE224240;
-	Sun, 26 Oct 2025 16:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D74C1A3164
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 16:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761495983; cv=none; b=tLuMyL1Kut+XrvcwpBJ2TVkKmZCanPxoHGwTdc/OKRTr0o8pA93L5MwsRSN2MzYSy9k0cZH9tvHTssyLMy2GQEruohv7Z1NdHBMJzy+lV6I/OAj8DlBlTNGWdZn44sKwRrtSCUBOC0DpSlIv2PmqQNRjBftSojJxgfmDOWs3qS4=
+	t=1761495969; cv=none; b=DpOJZPg3359ojXaeZeHv/sYJ879kPzKfmUALrHmyoQAAh6g0bAgWUtiqEblsWzuwuENkps+QDB8U0HKHK4QNn6mHYbVdAL/jie8Jlqs/UZ6FAJrh7fLmgPY14c9rCj1ftzOsU0SGRiGv5oHxnGCgZ0z5I1YNHgQtqaMclgZ4YaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761495983; c=relaxed/simple;
-	bh=KY2OlOpYRw2Sxa9zjg+L8vnU+0Um3jouZEZbFuk7wus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pwz50HRSHnkhJy0EJXkuQg4Pg1SF4UHyaSQUNTq5j0KUKKpNDF+qOelQU8sGOqb634BO9MBA6+uYDIELq/EjnbgihwCkXIHmFF1USepBgjC3wJvisvg1GdV/x2i+7j+RA0tfCRwzAX98hCx7nZWcLlt5h3uSLn2S7MNg9W7WBpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkbdT0AL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F2D6C4CEE7;
-	Sun, 26 Oct 2025 16:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761495982;
-	bh=KY2OlOpYRw2Sxa9zjg+L8vnU+0Um3jouZEZbFuk7wus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PkbdT0ALg+u+/cJwU+z8SzZzQWi8hgMfKjlvNLrnFVGdg1JouJpIxjr9uJyvTriBK
-	 4gLhSreEXdT3XWXgConrc6tVPBBsK+O0NVlz+wpvSkjjqx/1+vzaUTriLGvAgyP+Zg
-	 V0qSYNRMRr2VUUa4HvlqtPa5gy9xsizvYWlVbURZhnj8D/GQNtTAqmV7LN1gV6PAh3
-	 8XTIyANBLitw2qs4BYRXyq2KTCA/TxMFSy+nnMO88RRIj9qtuqFTlsrn8S1xI+cUAL
-	 RVssleKPQVHIuvzGumZIuy4wUYsbg8bbcFhX6koUXedTmaNKP4edud3cs2N9IR8WMr
-	 ihk3VjnA7HqUg==
-Date: Sun, 26 Oct 2025 21:56:02 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] PCI: qcom: Use frequency and level based OPP
- lookup
-Message-ID: <ufy5q3vx3zh26rjdv6mb36mvlpk2tmxuvluo7s5bykyl3elgh5@cqmjsgnwar6a>
-References: <20251013-opp_pcie-v5-0-eb64db2b4bd3@oss.qualcomm.com>
- <20251013-opp_pcie-v5-5-eb64db2b4bd3@oss.qualcomm.com>
- <f0f1219b-672e-4793-8501-ea31e7cc9575@oss.qualcomm.com>
+	s=arc-20240116; t=1761495969; c=relaxed/simple;
+	bh=L2OQ9nFN/WtDFuWejs5yV+5/Igcos50FlX0Aqd/rkSI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fOEmtpmxyzURUKBPt4Qkh9FluXIjsmcjJ3GpWeReaE/gAVImuCy1VCXAacwRDOzOoXOFOv68vhTJehelIiwrcO9tHp2Q9Gilu/YEOEx59RCRTDdpeSUJ3ESLo8vGvDYFGz/W8uTEajejtTYLZY1R8YslzAxS+an9pZ3H8gdHGv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430afaea1beso49338965ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:26:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761495965; x=1762100765;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pCJN6/lgLt/AfwJKPwFs5gCvPc90cICUUWyW6Li3B6Y=;
+        b=Q0nZidtkGmTvGg0rDvN9tT99KIEGbzjNgrscdYugbQofNDPobhYYN/WkMOWP3fx72x
+         5Xzm3y0Gu8cQbP7sSJcCtxwHd+yOSJu7raRv0ErEdBWjz5W4TCt6kcZwzD6I3wc/WCRo
+         8XebyfVT0zFNq1qAWUkpoyTkoal1OAEnj/T3kM8cloTh1C6Tk07i12GTJdveOKZ3GqAG
+         9GyWTLjDQs6MKnZwkXKPV9uo/zDpm4LR53d5mnhHmtVuQa5PJm6p2MQ6Af8bYLrzUCSL
+         PPa5EG6OYt+Lkhnsey5GZGEWrzCLb6ClvjGJ449gEdYPH6m1U+exJA0MpfjIWs+Yi2sM
+         4lSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1cy6YzcTo1mWrn3/5Fcsd/fZAWAj88W8/uWJcxM9qL1ZJvupLgIHhcQyRLtFdcdtpH8lKl3Fgnbr/mTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0QaIaT9k+oueZLKGqo2E+T04Zb8j7KJz2uqM7XP7zV1ZMywu4
+	DbjA2uByW2H6dbAeBLpQHJtJQT6/nqaClY/92w4fL5GwQ90pk61dFfo6/5zgcqpw2qkuB4quUKI
+	3Cd0lRKuw1Phm8a2QNTARfRFY5+m5tpkv7C6cPNZfmT/CY1KjniucXDQdwc0=
+X-Google-Smtp-Source: AGHT+IH52psLEnDOZJSiEcCStoHiiJLLXvL2QIYffQxCD2Yjkp6ahcD2w+bzkWQts8kgQjeoH3A469n6jWlGRIMvzzTZdGoR3U4u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f0f1219b-672e-4793-8501-ea31e7cc9575@oss.qualcomm.com>
+X-Received: by 2002:a92:cd82:0:b0:426:39a:90f1 with SMTP id
+ e9e14a558f8ab-430c527dc54mr487007405ab.18.1761495965106; Sun, 26 Oct 2025
+ 09:26:05 -0700 (PDT)
+Date: Sun, 26 Oct 2025 09:26:05 -0700
+In-Reply-To: <CAPqLRf3LgEErOjV3V2A6XsaBL=fvhGPFooXWSv4Vt2Q6juWGXQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fe4b9d.050a0220.32483.000d.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_hdr (3)
+From: syzbot <syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com>
+To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025 at 06:37:41PM +0200, Konrad Dybcio wrote:
-> On 10/13/25 12:53 PM, Krishna Chaitanya Chundru wrote:
-> > PCIe link configurations such as 8GT/s x2 and 16GT/s x1 may operate at
-> > the same frequency but differ in other characteristics like RPMh votes.
-> > The existing OPP selection based solely on frequency cannot distinguish
-> > between such cases.
-> > 
-> > In such cases, frequency alone is insufficient to identify the correct OPP.
-> > Use the newly introduced dev_pm_opp_find_key_exact() API to match both
-> > frequency and level when selecting an OPP, here level indicates PCIe
-> > data rate.
-> > 
-> > To support older device tree's where opp-level is not defined, check if
-> > opp-level is present or not using dev_pm_opp_find_level_exact(). if
-> > not present fallback to frequency only match.
-> > 
-> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 17 +++++++++++++++--
-> >  1 file changed, 15 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 805edbbfe7eba496bc99ca82051dee43d240f359..03b3a1d3a40359a0c70704873b72539ffa43e722 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -1565,6 +1565,7 @@ static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
-> >  {
-> >  	u32 offset, status, width, speed;
-> >  	struct dw_pcie *pci = pcie->pci;
-> > +	struct dev_pm_opp_key key;
-> 
-> You need to zero-initialize this, or it'll explode the second
-> struct dev_pm_opp_key {} grows
-> 
+Hello,
 
-I've fixed it up while applying, thanks!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-- Mani
+Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
+Tested-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
 
--- 
-மணிவண்ணன் சதாசிவம்
+Tested on:
+
+commit:         72761a7e Merge tag 'driver-core-6.18-rc3' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=122a1e7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8e9002258a92a7b
+dashboard link: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13ba93cd980000
+
+Note: testing is done by a robot and is best-effort only.
 
