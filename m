@@ -1,126 +1,100 @@
-Return-Path: <linux-kernel+bounces-870253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8FBC0A4AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D64D0C0A4AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBAB73ADA52
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915CF3ADA53
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47842279346;
-	Sun, 26 Oct 2025 08:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4C1278165;
+	Sun, 26 Oct 2025 08:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeZN8h/W"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WFW3R7M1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988EE1A9FB8;
-	Sun, 26 Oct 2025 08:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DE221254B;
+	Sun, 26 Oct 2025 08:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761467739; cv=none; b=fwFRClBMDs4iU/S1K312l80b3JU6zk6bzIaqodwsg77cVkzwD+qtia0SAx+2PJI/D/7zsa6Fimk3TN6w5R9sqQWVSMu9S8pu6Bo6rOpA6ksppPeyqUrMoCW4w8/5b7Vp/moaggFabqv6t5P8YkT5VldSme5x4hrHV+j1F0j46K8=
+	t=1761467761; cv=none; b=L+1iBwC6XNvZMcmsy8igVA/yrnX8C4HgJ3gJKdVxAyQJelNvLGwP8mXEmyfxTcmO4tEl4If+NeaMjfRSdZNYp50NtrgkPcS4EY2QvfbY0W84KxkHlQZItNFePmnnDPmIyxqWEhnI0oOHsNTRGxI8RO6/DT1ESKOkTNtfhYy+O5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761467739; c=relaxed/simple;
-	bh=rzxJTNoSOeK7VNGYumqIb4DOxnBQhT9we9NoIaaK07o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UChCAj/H4sj6o83iKluUi1YBuNx8kc7hU0WhpN52crosIdPLQnMSVJkQT0XeXxVBtI7NxJkeelkyjV03ZB1+3BYakA6g5T8A8+ga+Eee+2Mn7Abz8pF+IoieWvkYQbVyOspPYu4fAaxDSmFr1JJmPQO8houC8da8DQUJkvDNOew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeZN8h/W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54824C4CEE7;
-	Sun, 26 Oct 2025 08:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761467739;
-	bh=rzxJTNoSOeK7VNGYumqIb4DOxnBQhT9we9NoIaaK07o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BeZN8h/WuGf9UdFvLhwi25+qrZW9fazEHdDdD8MZsFo/Rj2iLsTv+mLReMs/RGbHH
-	 Gdocozotplr+wWvgUEucfti9d9T9Y5hF9PTnDKKMohctpC+VTeKsTtfKBB2zBS2aFX
-	 83xV58yUHs51uQ3/kvB4bl2r6Q5fjbVy8C7reiV5FVHENfTMrPqy5NMlB1mNKmUiDI
-	 XR516/n8izQJUkeYaYezKnbMcwM7lE+qlTip1qqNY1bIaLC8FXmzYGuMrJ1vJsIDNH
-	 TtG/3CCi0dISme7goXKS4Kq+2JVP8fXfV1wiMPfk5ZEeKMbtTaobci081rt9s6nidl
-	 6mRajpX24eLKg==
-Message-ID: <84082a2a-c5ef-499a-8374-58f9a063f862@kernel.org>
-Date: Sun, 26 Oct 2025 09:35:34 +0100
+	s=arc-20240116; t=1761467761; c=relaxed/simple;
+	bh=ERCgAQxpXEfEwS2OB4jbX7cHDxV1u4EV4btd63GElsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6U3u6bvkfbtvOvAevz17/JtiOhCv3E6DQnYOEG6MpZtRyijZ+D9rUMqgrIejgkqhh1Jz2GF86LU1XNobfhMOb1fj6EWsl6a5tHOh0EP8K4wyo11SgxSZkFo4xp4gg4ZWvlO42ZTdx30nBapMs9+O8TbactVFhpHE/QZ3kuMP6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WFW3R7M1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADD6C4CEE7;
+	Sun, 26 Oct 2025 08:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761467760;
+	bh=ERCgAQxpXEfEwS2OB4jbX7cHDxV1u4EV4btd63GElsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WFW3R7M1xZ4UPh84WP/AESwDFe20vMM+AS8rMhnS4x+R0B6topzCkS3JHnrgB/E+C
+	 to+bveUKeaY+Kza/MyHTfgM0KWHbZlwDs+PaIP4axeL2nAqLS6PG1Cecq5e/JIytF8
+	 QN9k0WAPJBg/9AGf4BKb+1ox3bLyjZ8cpJ9I6wRE=
+Date: Sun, 26 Oct 2025 09:35:51 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Gopi Krishna Menon <krishnagopi487@gmail.com>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+	khalid@kernel.org
+Subject: Re: [PATCH v2] selftests: tty: add tty_tiocsti_test to .gitignore
+Message-ID: <2025102633-dandruff-clang-e91d@gregkh>
+References: <d1a483dd-5405-4e8b-8a38-816d49fffbc3@gmail.com>
+ <20251026072554.48786-1-krishnagopi487@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: arm: rockchip: Add NineTripod X3568
- series
-To: Coia Prant <coiaprant@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251026062831.4045083-3-coiaprant@gmail.com>
- <20251026062831.4045083-5-coiaprant@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251026062831.4045083-5-coiaprant@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026072554.48786-1-krishnagopi487@gmail.com>
 
-On 26/10/2025 07:28, Coia Prant wrote:
-> This documents NineTripod X3568 v4 which is a SBC based on RK3568 SoC.
+On Sun, Oct 26, 2025 at 12:55:46PM +0530, Gopi Krishna Menon wrote:
+> Building the tty selftests generates the tty_tiocsti_test binary, which
+> appears as untracked file in git. As mentioned in the kselftest
+> documentation, all the generated objects must be placed inside
+> .gitignore. This prevents the generated objects from accidentally
+> getting staged and keeps the working tree clean.
 > 
-> Link: http://www.9tripod.com/showpro.php?id=117
-> Link: https://appletsapi.52solution.com/media/X3568V4%E5%BC%80%E5%8F%91%E6%9D%BF%E7%A1%AC%E4%BB%B6%E6%89%8B%E5%86%8C.pdf
+> Add the tty_tiocsti_test binary to .gitignore to avoid accidentally
+> staging the build artifact and maintain a clean working tree.
 > 
-> Signed-off-by: Coia Prant <coiaprant@gmail.com>
-> Cc: stable@vger.kernel.org
+> Link: https://docs.kernel.org/dev-tools/kselftest.html#contributing-new-tests-details
+> 
+> Suggested-by: David Hunter <david.hunter.linux@gmail.com>
+> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+> ---
+> Changelog:
+> - Improve the commit wording and explain clearly why this change is needed.
+> 
+>  tools/testing/selftests/tty/.gitignore | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/tty/.gitignore b/tools/testing/selftests/tty/.gitignore
+> index fe70462a4aad..2453685d2493 100644
+> --- a/tools/testing/selftests/tty/.gitignore
+> +++ b/tools/testing/selftests/tty/.gitignore
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> +tty_tiocsti_test
+>  tty_tstamp_update
+> -- 
+> 2.43.0
+> 
+> 
 
+Shouldn't this go through the tty tree that added this test?
 
-No, not a stable commit.
+thanks,
 
-Best regards,
-Krzysztof
+greg k-h
 
