@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-870362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C3EC0A853
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:55:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E78C0A856
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACEA3B0490
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:55:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A345B189FDDB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F65D2DF12E;
-	Sun, 26 Oct 2025 12:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA90E2DA74D;
+	Sun, 26 Oct 2025 12:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbsTvMzn"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJkZvO94"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7021D1F418F
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14502E040A
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 12:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761483327; cv=none; b=uh/vnQ8x55DNa6sTQPmgzbJJ+EJMsL0ErBYA1BeDIm001dlLkQKTs9pw5s1oa+dKxt3NFatTnuOGWwYeS3dZY34f/0acEVpdIty8Py1druEMCpeg0rUfaSDx2v22gvuSLAHOlaU03AJ1DBX72GdXZxG+ErVChn8LeYG2Gt8Nk2g=
+	t=1761483332; cv=none; b=LUECSI0ZWlPxKMP7QAiv/NzyFcNUjHFwbnNpqhuXlgDxkXXyzPe7A+oWcvFxzKMoprDDW041CB4AW6GyooauuWNQUYRAc/ONUdEv+BZ+IWc6d2mFXRSgKQAb0dRh0N5gz0YdrH9+oO7VV4eDe9Nv8pFcaZZjoZc5tKZPHLzrCsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761483327; c=relaxed/simple;
-	bh=7hYaukdo0Jdq8vOEcDX/02TcRRrIfzHxZFzM5wkRCO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QBU31Ks/n6XQxqTewPg1iLpQ2IOrg48XsHys5wyPMfuWQZffW6n8cAhXM3krHdexKwXMf4Y75K7HRmJYrV4cp3dqMQOmkq74IumMU4L42/X8tEIBegy2Rr6bPhRsJcT4upF/cEdIDMkD0/jU2eEjTR8EuczBJ6SYobGbbMP28Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GbsTvMzn; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1761483332; c=relaxed/simple;
+	bh=BQH7hgD7+xt4W7z/S368Lm76rShNO58wKexO34QQko8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gB1qj+YNNc8nnLWg4zmLY0NL4E48TR2MThGtaDiwFATdJgPFnsLRN26bt6Hlwyt0M+QHlMhXUgh2pYSyrMTnVpIf1ZdcGVJ/81shUhbFNC1PqtaFRbxjvDTqlTqTT72Rhcfb5fgJovNI/hMy19zq8XbWbCawF8cWEYTS+SJLhrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJkZvO94; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33bcf228ee4so3152754a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:55:26 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-290cd62acc3so43606415ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 05:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761483326; x=1762088126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aH6tCO/cQOJwkdwpg0bYZ2HnPHzmOgjXWnEfvG+kC8Y=;
-        b=GbsTvMznh2fS6wyXiKJUWKzg5YBvJriNpH1u3x5fKFrl+ZOY0ASMA2qkvHXNwQo9fZ
-         7/HfxSy8wOgl9SH1yW9kx+yfj8IVcv047LVVwZI+6RzJUoOUfOkgUjUgz6JGz5heMT2t
-         ycDf9R3vtcLg9smp+tZatDnZH6fwULm2f+6cu48Thf5MwjzRr/pioOeI71J8DApByfpX
-         BRmxWFg0kSYENKdDPjkXgkSPmo7xWur7QX+rNy3U4SewjI4amup+wy0T8k5T3YsPMgX2
-         +L6ox1eRVFSLrJEMc75JQclORWH1LjDluvlpyFibVraaTM/4zJwXr/UCETH+PJcI0G1X
-         WZ8A==
+        d=gmail.com; s=20230601; t=1761483330; x=1762088130; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mpL5GRYYewBmCb3HYHj7NyzEFHr83PdgBMD+j8Wif4Y=;
+        b=AJkZvO9483JwtKIc9EPOy0w5aYFQiuH3yJ2EqdHKKpXaTikU4mJ1S8ZX9Jm6t55WYa
+         iPvCixebq8mm+LX5BURYFz6vbhnmhI0kHKZef8fkEPeQ5cFYLxxNrpo+8iB90QTNv8d+
+         6HduCaucLIlnsxeT59Vk0YhktEDL4K7WLbz06GMhu1O60d+dz2bSltHflb5RNbQomjAT
+         8nh/TqXCeHtxYpaF20OkC2VOe3u5xf3xjiZrMkXYtmDvlr5L1MGdgjAQmPwHC+cJ3G//
+         zt5hvRpjA+FbaRbkcBSza99FvIYhutYQ/QNuSmvXlW1cLaGzT0QFhqM8KPIZOS3/8eYZ
+         Dm3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761483326; x=1762088126;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aH6tCO/cQOJwkdwpg0bYZ2HnPHzmOgjXWnEfvG+kC8Y=;
-        b=vAKTU3H4M1bsopPvw6TdReAupYlRbuvQKeum/lU/xd3Q7CtBq9QP3oZk+HFyq+t9Je
-         6t8qLxIizJ+/kfPnm2Uq/YuIZ4wOhsoLx+FGIZ2lzJYfIkrGl3DM0WHrFM9xIsBTIXKj
-         Xmm9xRc5xeWtn2q7ElWgAJHf8Aln1Szh2cyvG9BbKF5yVg0jWVdRbZtXRNpSuJTReelU
-         5ktE0miJgrxw4qe4pTeRrU5YLZpwk1uttpMSG6Ei+QoASeQmQWzI7aQvG/zvu0NKYr/B
-         fF/CRiVu1PUckM5sK78JvpdlMxXR32VtISbG80CJnGiqaeeHoe6rynvaRjUxIcGU/Ccm
-         iWsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrQ8ixrH2FwDrKUCIJU2UUksrLZtYNw5XjBuhK+qQOUWwylPkQnmucv5g5KK0tAmPYwemB3F7KD3/hn8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7KnwYBg82kMt24lL6Peq/qdhQfDrdZPJNWfgqwirEp+mXh6Al
-	Tk2zCStGDpfrpM50ZFmfp6dQr07bWS7Cd1Ji+/fmqrz69r/p4kOjWXfc
-X-Gm-Gg: ASbGncvNOlDvBR4E8G18CfugCcYpf+HlncZypX4+wK+yUv7EV1tNZQ9VMJRJKO7q2Rb
-	InYQt3GipbUmHqNBmZcs+b130a8/jUvmupKk0LyxTvXgb79I1rmMfvDPrA6laz+9raj81rwO0LE
-	MEUuCM+bD8rCkrD1HwEE+5WazEW0NErqed4MRNoOHksiwBpeDFBIx4EDddeI38o84fpj0E4ClO9
-	qZWy5emjZpP5LyjC+PuHCG20/XkBbYJ+KBejHRXZUOrU1L/03d+AhsdXvTrBZu0I2+ikPckQ69q
-	g3oRtD0U5Wm9P222H3XDWl9CNKy1d3bQ1XPbu4fD5nU7tx+sXNhO1S4cFCFNRrcGbWke1n/sZBb
-	OwAdj5ApwRRiWijma103DEZwRgsufhU57lMC5cuI50zFO4/XKR92wW9u6TTyLuawz+yyRWnVcqJ
-	f3egojIjnP/rqaeG/tyLSdanQ0nR5b8PZxjckIv/9hJY+3dUsm40xpnRN/3VIY5q3w28n6Kg==
-X-Google-Smtp-Source: AGHT+IFrOdWWMYR3d25fK5nwTlcliYXymU0pj/pOVfjUBs702aTNlLeGllm9A3rfl/Z7gtdm4PmRNw==
-X-Received: by 2002:a17:90b:1dc4:b0:33b:ade7:51d3 with SMTP id 98e67ed59e1d1-33bcf8f78c4mr45902883a91.20.1761483325564;
-        Sun, 26 Oct 2025 05:55:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761483330; x=1762088130;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mpL5GRYYewBmCb3HYHj7NyzEFHr83PdgBMD+j8Wif4Y=;
+        b=h5ZpLuw4QUQL9lNIvcBR88dnau0oW8Y0tshmZQr2zmIgU8i0QlN/Fjz5s9q/1XtFzs
+         hZVRxvNhZFUC6GpfWsYQF+GciNoGt35gs2rnACBs/FFQAq0KK6iVnLzGu+Kl4A3CPM7s
+         Pxm7yxWqtiLPSYYMWyq0kYw8tRUEKmZql+PynZrYnYoSWqDyhynty3/wSqXkDFWUoBHh
+         zLgVXqCX9otHYmD77OPDgc4s27GZgpKgTurHmwyT3d17H+YSHDWX4I9Zr02WsJy81gaR
+         bgb4O1y4gxVKc/lvFQ7DM3ksZ7CaAVvTOKn6QplLo6KbgIk+PJXTyTBwSy4hrpmdl0pW
+         DFFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBpaFpZ7FXfAZtGj4QzyIkaHvXLA9CScm2cGoILUsFMWe3ixuiyqGqAwZk8+NUW4dg4k9kBn207YVbClA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfi3SWwUHLgEAXyeRwv6DFyh2Bwz16OsW4pTXRLJTPjRXYb6BF
+	KjnTCjQpVpXXZI8mYS8+42gDGLbCWRJ9k/F5ileWxm6WU02e46q0AxhC
+X-Gm-Gg: ASbGncv2J+/mykOsRuvtthssebiLC1b8FzQbCKaVOfXnVwa7ZkP+s6n3gaz45lWyTbw
+	9wpvQxSKCKaMpr8k5S4zNxsI1SPXGMg3kVf2ExMPNeaiaeYl6eiyZOyuCOJLsgwRUXnmHZxkw3K
+	0bmau2RhIsaLIfP9QhH5KCKsPVFvk4EMlppoi+ENpNhvSp4dsFB6izNTD6ZTQpy8af027VYCiwi
+	px24tueykwX3ah7E3AuHeKzoO1vfZXW/+mf8HLuwkREE+gUkbWsirlQSc7mLPpoKoR3EdWjJtbP
+	MPRTS6PwCYo7as5c7udQqdJGFLlnxMBYYAThx/aMsSvqMcBfqfXjuSOWapmMVWs24PYCvB4DhMT
+	0TbAwFm7PNgmLMhoClno06RppJDUsneMTB7ltH5tE9BHcyUMBO7wL9pmtvVW9F+/mH7kpupeYqR
+	DZL3O6FEej6G05yCsITAx9O8PVG2vRm+IRl3XcU3iV0cTl/uZI
+X-Google-Smtp-Source: AGHT+IGbWGIIOzAhr1d2Z5UjYERrsJ5I4YvcxAZSP1AAcn2uDneNWiOnjZDQ7TMXZAuZy/JTyzooJw==
+X-Received: by 2002:a17:902:dac3:b0:277:3488:787e with SMTP id d9443c01a7336-2948b95c1f5mr102003455ad.12.1761483329901;
+        Sun, 26 Oct 2025 05:55:29 -0700 (PDT)
 Received: from bee.. (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm4641759a12.5.2025.10.26.05.55.21
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm4641759a12.5.2025.10.26.05.55.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 05:55:25 -0700 (PDT)
+        Sun, 26 Oct 2025 05:55:29 -0700 (PDT)
 From: FUJITA Tomonori <fujita.tomonori@gmail.com>
 To: a.hindborg@kernel.org,
 	alex.gaynor@gmail.com,
@@ -91,10 +93,12 @@ Cc: anna-maria@linutronix.de,
 	sboyd@kernel.org,
 	tglx@linutronix.de,
 	tmgross@umich.edu
-Subject: [PATCH v3 0/2] Add read_poll_timeout_atomic support
-Date: Sun, 26 Oct 2025 21:54:56 +0900
-Message-ID: <20251026125458.2772103-1-fujita.tomonori@gmail.com>
+Subject: [PATCH v3 1/2] rust: add udelay() function
+Date: Sun, 26 Oct 2025 21:54:57 +0900
+Message-ID: <20251026125458.2772103-2-fujita.tomonori@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251026125458.2772103-1-fujita.tomonori@gmail.com>
+References: <20251026125458.2772103-1-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,39 +107,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add read_poll_timeout_atomic function which polls periodically until a
-condition is met, an error occurs, or the attempt limit is reached.
+Add udelay() function, inserts a delay based on microseconds with busy
+waiting, in preparation for supporting read_poll_timeout_atomic().
 
-This helper is used to wait for a condition in atomic context,
-mirroring the C's read_poll_timeout_atomic().
+Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+---
+ rust/helpers/time.c       |  5 +++++
+ rust/kernel/time/delay.rs | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-In atomic context, the timekeeping infrastructure is unavailable, so
-reliable time-based timeouts cannot be implemented. So instead, the
-helper accepts a maximum number of attempts and busy-waits (udelay +
-cpu_relax) between tries.
-
-
-v2: https://lore.kernel.org/lkml/20251021071146.2357069-1-fujita.tomonori@gmail.com/
-- revert the function name
-- simplify the example code
-- add debug_assert to check the range for udelay
-v1: https://lore.kernel.org/lkml/20250821035710.3692455-1-fujita.tomonori@gmail.com/
-- use the attempt limit instead of timeout
-- rename the function to read_poll_count_atomic
-- add the comment about C's udelay behavior.
-
-
-FUJITA Tomonori (2):
-  rust: add udelay() function
-  rust: Add read_poll_timeout_atomic function
-
- rust/helpers/time.c       |  5 +++
- rust/kernel/io/poll.rs    | 72 ++++++++++++++++++++++++++++++++++++++-
- rust/kernel/time/delay.rs | 39 +++++++++++++++++++++
- 3 files changed, 115 insertions(+), 1 deletion(-)
-
-
-base-commit: 26c1a20bf7ce76e9afe4030f25bec20e3c63dcf8
+diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+index a318e9fa4408..67a36ccc3ec4 100644
+--- a/rust/helpers/time.c
++++ b/rust/helpers/time.c
+@@ -33,3 +33,8 @@ s64 rust_helper_ktime_to_ms(const ktime_t kt)
+ {
+ 	return ktime_to_ms(kt);
+ }
++
++void rust_helper_udelay(unsigned long usec)
++{
++	udelay(usec);
++}
+diff --git a/rust/kernel/time/delay.rs b/rust/kernel/time/delay.rs
+index eb8838da62bc..0739b75fb9c3 100644
+--- a/rust/kernel/time/delay.rs
++++ b/rust/kernel/time/delay.rs
+@@ -47,3 +47,42 @@ pub fn fsleep(delta: Delta) {
+         bindings::fsleep(delta.as_micros_ceil() as c_ulong)
+     }
+ }
++
++/// Inserts a delay based on microseconds with busy waiting.
++///
++/// Equivalent to the C side [`udelay()`], which delays in microseconds.
++///
++/// `delta` must be within `[0, `MAX_UDELAY_MS`]` in milliseconds;
++/// otherwise, it is erroneous behavior. That is, it is considered a bug to
++/// call this function with an out-of-range value, in which case the function
++/// will insert a delay for at least the maximum value in the range and
++/// may warn in the future.
++///
++/// The behavior above differs from the C side [`udelay()`] for which out-of-range
++/// values could lead to an overflow and unexpected behavior.
++///
++/// [`udelay()`]: https://docs.kernel.org/timers/delay_sleep_functions.html#c.udelay
++pub fn udelay(delta: Delta) {
++    const MAX_UDELAY_DELTA: Delta = Delta::from_millis(bindings::MAX_UDELAY_MS as i64);
++
++    debug_assert!(delta.as_nanos() >= 0);
++    debug_assert!(delta <= MAX_UDELAY_DELTA);
++
++    let delta = if (Delta::ZERO..=MAX_UDELAY_DELTA).contains(&delta) {
++        delta
++    } else {
++        MAX_UDELAY_DELTA
++    };
++
++    // SAFETY: It is always safe to call `udelay()` with any duration.
++    // Note that the kernel is compiled with `-fno-strict-overflow`
++    // so any out-of-range value could lead to unexpected behavior
++    // but won't lead to undefined behavior.
++    unsafe {
++        // Convert the duration to microseconds and round up to preserve
++        // the guarantee; `udelay()` inserts a delay for at least
++        // the provided duration, but that it may delay for longer
++        // under some circumstances.
++        bindings::udelay(delta.as_micros_ceil() as c_ulong)
++    }
++}
 -- 
 2.43.0
 
