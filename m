@@ -1,130 +1,179 @@
-Return-Path: <linux-kernel+bounces-870239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE9BC0A40F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 025CBC0A415
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FE63AFB99
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 07:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9199D3AF451
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 07:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02728271456;
-	Sun, 26 Oct 2025 07:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595C027815D;
+	Sun, 26 Oct 2025 07:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N09uaRca"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTV7F87f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6FD2580E1
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 07:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7031E1D514B;
+	Sun, 26 Oct 2025 07:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761463576; cv=none; b=sozcIDk9W3uBwy0+O5R8QDb7+yT3lK4QAVPa/OA37NIeWXQw/JFTnPOIZnkEcqqRoNDRL3qaT2hChxijFRThdkgfspiOhOrEDRp8szMc5TOoM39FPZw/UweBzvhjXptWTgOmuyH3Q1Gpj4mty5PDX33ATsWX7h2OqkiHr4Axl0M=
+	t=1761463804; cv=none; b=lLPDClSeAgCh7whSrT/mccePa9neBFoDBjzy7mEbeBUDqHh3EKTM90Q5S82xBWalP1PSjHoZQk2JOS8Kg/ZNepjvldlCr2rmloZHNN4e7n/yi1SB62IDGYLbRiB46RhYOgRFrvA/202F55AWelIm9m4LDXwxeZvrtBC71cpXMpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761463576; c=relaxed/simple;
-	bh=Wsp8cxVy22klAhiDGv9P8tZ3IPZ7LUZzLpg3S21IfDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oKl5MpmNoJH+XGx+Am5TUyRsL0Law4vs8T7L/L1qnICpCa2yJ/MuyHxLWAZyC3b3Cd48NwtwObJ/nuaPU9gcxdszDDbJTj7D9xcT42PNykJ9CLip1DLe3t2Xexzv0zDGI4rRWYoJlIrz33FZJsTTIT7457X+96x6Vl+QegjFhgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N09uaRca; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b6ceba7c97eso3339025a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 00:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761463571; x=1762068371; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BdMa6HWGVI8flyxHcsiTS5cMCkPtytHGgTVFhKdr0DY=;
-        b=N09uaRcauINW+Qrk0LiGLJ1eBJ/aA8Zbltog3vai8RA5VpFjQv4QT+5skFfGNBNk4e
-         1UoW4uzC21LoYB30lznALNevGBgD+X4npyUyXysENnfGi9sks7VWOHQ+n3uogHR8kDkm
-         YgGnWTRlWSn9jBULLV2Zk/P7bE77WsdnNqV/NIkmcxAc6OomkjItaDJ1VcJAJViQwLLM
-         YqDnkXIHGTN7hUYGv6iSyX/K7/ELUdu1e3+vhR+HZBTVyaD1TAZVLBP9hubZnGP2PyqJ
-         mi2HcL/CAszieu39xTUUP683OjgXcNbyv2zZIs8trVbKdT4DSECbBVg5g4jdfIlOi6i6
-         MfQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761463571; x=1762068371;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BdMa6HWGVI8flyxHcsiTS5cMCkPtytHGgTVFhKdr0DY=;
-        b=arVuJSMFZ6NPEK/YFNW8eiL+aDT9mcxQCGq1eL1yvpYLOe22MQ9r4XSXCXkKlkK91N
-         VHeIA7SQEdc+/5ERYCnfJE7BvZfbHcu0vt62AgssbSme7ArnKuXaatmjCQoK52+V0EcD
-         i8/+XkqkwMwBfIWUOIniOY/UyqXZIURV22i+6uJQvyOCVPGYypCol1eNt0ll2PO7Tjek
-         5A0SB8bVNzRA6/OKogne2Xql32TCSrnXkZy/6UBZj8SGoK5mbl4c8Z91YVL4e/VWkHCj
-         NXKiGwlpfRLtXzKdCewivUCVRPrRWPxAPapb4LB0wDlqu5bBHtrE31LDxiNPLvGwJeoE
-         /OoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzHuyK6oQ6pgUTqf6kyp/qUvPNz+pff0czgMgrftypuawuMM2/p4inLYH2WIEu/4wzZy3vuurV4+OnmMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ZLsPyNq60IRolUOVviizpKE4vmvoFqkuILUtxghws5FgJWxX
-	gyyYlpyAGcjKyrDVsRQk/ZQy1rVSz7e4tCltmPGKCB/gpAsSpc5Ym15Xym9f99Wn
-X-Gm-Gg: ASbGncvB3GUrpwhjxuP7Afv97spXPUrgsTfXDTliOBcoE1eL+bipfAfrz2hR6v5YB+v
-	J95j4NeQX371A4su/SpllTkU7VBP04k1XAcb/VSWECN+8atQMrqL3wGcZ18GWZookzfd7UCSRnx
-	RS0rnhpAnKxEvWu8Hz0XS5GkajeZMtzzooSAltgt1CqqRbtubiIaln9tu+kvi/3wdSYbtAt6EJ4
-	8wJYCNtF6BeDZ3YuwClg631667LQzorDEVk6qrQn3+zyWCzLndF6W0eoHLn7YJtJFzj6x3u0JWc
-	4uYoXnvyGuiQZbPJB0cEQDKk0EnK6nwIVnzQpS2mO2Gulj5Mwb8MkJaLhBAPeqxiDucgwR2k70N
-	EiqVRSxvb9LshYo6BlFlK+RSGkdKBMq47qkKbleNFBXKzGbNCr+VxWkIozWvsNRffwgD8FWm6T8
-	1eGXeWW4eexzURfq+ITxmsyBgKGc/Z6RdKFmoB/xqK
-X-Google-Smtp-Source: AGHT+IE5U6eGzQVnJuOp2Y8MluTWBLNlPfwZGE50frkHscCUegOKsjhIR8XeTV7M1ymJACtKk/unFg==
-X-Received: by 2002:a17:903:2441:b0:271:479d:3de3 with SMTP id d9443c01a7336-290c9c93d94mr423076345ad.12.1761463571105;
-        Sun, 26 Oct 2025 00:26:11 -0700 (PDT)
-Received: from kforge.gk.pfsense.com ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d2903csm42817175ad.63.2025.10.26.00.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 00:26:10 -0700 (PDT)
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: shuah@kernel.org
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	khalid@kernel.org
-Subject: [PATCH v2] selftests: tty: add tty_tiocsti_test to .gitignore
-Date: Sun, 26 Oct 2025 12:55:46 +0530
-Message-ID: <20251026072554.48786-1-krishnagopi487@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <d1a483dd-5405-4e8b-8a38-816d49fffbc3@gmail.com>
-References: <d1a483dd-5405-4e8b-8a38-816d49fffbc3@gmail.com>
+	s=arc-20240116; t=1761463804; c=relaxed/simple;
+	bh=htiWAq6iMZXxfabupy1JM4kiUVfrOnJOCEMU/JiJmzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXbH4IRDzkidZdEiKQd0amVXuJxlUUXmw0ez6YxHR7DuBuGifm7/gDVYXl9lfFpihTApKAiM+E770H5V6U3XSe+Hy8O/PY106QLpYwBypWwnObI7t0CX1vXDa2jVF+T1s1qMsoJKexAYdf+Qtmrnkz4HG/WhluoKtiF47qm1n1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTV7F87f; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761463803; x=1792999803;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=htiWAq6iMZXxfabupy1JM4kiUVfrOnJOCEMU/JiJmzQ=;
+  b=KTV7F87fO2rpZ1J76GKuDG8eTnj5ySeFDrS3DBFvKA9bM/VTwN6+tmW4
+   pHVmzhA9LUBAu61dojWbef7cknEcL/JDg4cP5tdqNtc62Vhcai96G1FQg
+   WQXRGBaLADPpYT1C1M+pnwmg/W3Q29kp2wYzMB1fEuDdJhhQnk5fUAtJs
+   RNjBKXvMNka/Bcl2RiNQBegUMY08wqlr4GkbyVqfuNoNz8QKnSfIFJ7gT
+   65tGl7Z0hnpwp3O6HZKJHtTez08IKyR+e+wGvb+XT5aO1xw3kR4Pr6dFn
+   ARiNkLTx6TkgZOpwku3SmhJ5wqyqhKPYi9ZDj5Sc5Vw0ntDoExtrPWR46
+   w==;
+X-CSE-ConnectionGUID: GqaU80cKQV6vJU6g7l/nwg==
+X-CSE-MsgGUID: joiY2BoqRQq6noyNRyTLgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81005631"
+X-IronPort-AV: E=Sophos;i="6.19,256,1754982000"; 
+   d="scan'208";a="81005631"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2025 00:30:02 -0700
+X-CSE-ConnectionGUID: IOhbygVPQmG+sECxKbCJdQ==
+X-CSE-MsgGUID: FpsA08v6Q5KZpnC9I5OBIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,256,1754982000"; 
+   d="scan'208";a="189155119"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Oct 2025 00:29:57 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCvCN-000FxV-0H;
+	Sun, 26 Oct 2025 07:29:55 +0000
+Date: Sun, 26 Oct 2025 15:29:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	sboyd@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mturquette@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, laura.nao@collabora.com,
+	nfraprado@collabora.com, wenst@chromium.org,
+	y.oudjana@protonmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v1 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC
+ Clock Controller
+Message-ID: <202510261450.oYPrwZwR-lkp@intel.com>
+References: <20251024083301.25845-8-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024083301.25845-8-angelogioacchino.delregno@collabora.com>
 
-Building the tty selftests generates the tty_tiocsti_test binary, which
-appears as untracked file in git. As mentioned in the kselftest
-documentation, all the generated objects must be placed inside
-.gitignore. This prevents the generated objects from accidentally
-getting staged and keeps the working tree clean.
+Hi AngeloGioacchino,
 
-Add the tty_tiocsti_test binary to .gitignore to avoid accidentally
-staging the build artifact and maintain a clean working tree.
+kernel test robot noticed the following build errors:
 
-Link: https://docs.kernel.org/dev-tools/kselftest.html#contributing-new-tests-details
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v6.18-rc2 next-20251024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Suggested-by: David Hunter <david.hunter.linux@gmail.com>
-Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
----
-Changelog:
-- Improve the commit wording and explain clearly why this change is needed.
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/clk-mediatek-Split-out-registration-from-mtk_clk_register_gates/20251024-164213
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20251024083301.25845-8-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v1 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC Clock Controller
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20251026/202510261450.oYPrwZwR-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251026/202510261450.oYPrwZwR-lkp@intel.com/reproduce)
 
- tools/testing/selftests/tty/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510261450.oYPrwZwR-lkp@intel.com/
 
-diff --git a/tools/testing/selftests/tty/.gitignore b/tools/testing/selftests/tty/.gitignore
-index fe70462a4aad..2453685d2493 100644
---- a/tools/testing/selftests/tty/.gitignore
-+++ b/tools/testing/selftests/tty/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+tty_tiocsti_test
- tty_tstamp_update
+All errors (new ones prefixed by >>):
+
+   drivers/clk/mediatek/clk-mtk-spmi.c: In function 'mtk_spmi_clk_simple_probe':
+>> drivers/clk/mediatek/clk-mtk-spmi.c:48:20: error: implicit declaration of function 'devm_spmi_subdevice_alloc_and_add' [-Wimplicit-function-declaration]
+      48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/mediatek/clk-mtk-spmi.c:48:18: error: assignment to 'struct spmi_subdevice *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+      48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+         |                  ^
+   In file included from drivers/clk/mediatek/clk-mtk-spmi.c:16:
+>> drivers/clk/mediatek/clk-mtk-spmi.c:52:53: error: invalid use of undefined type 'struct spmi_subdevice'
+      52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
+         |                                                     ^~
+   include/linux/regmap.h:775:20: note: in definition of macro '__regmap_lockdep_wrapper'
+     775 |                 fn(__VA_ARGS__, &_key,                                  \
+         |                    ^~~~~~~~~~~
+   drivers/clk/mediatek/clk-mtk-spmi.c:52:18: note: in expansion of macro 'devm_regmap_init_spmi_ext'
+      52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/devm_spmi_subdevice_alloc_and_add +48 drivers/clk/mediatek/clk-mtk-spmi.c
+
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  21  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  22  int mtk_spmi_clk_simple_probe(struct platform_device *pdev)
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  23  {
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  24  	struct regmap_config mtk_spmi_clk_regmap_config = {
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  25  		.reg_bits = 16,
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  26  		.val_bits = 8,
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  27  		.fast_io = true
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  28  	};
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  29  	struct device_node *node = pdev->dev.of_node;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  30  	const struct mtk_spmi_clk_desc *mscd;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  31  	struct spmi_subdevice *sub_sdev;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  32  	struct spmi_device *sparent;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  33  	struct regmap *regmap;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  34  	int ret;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  35  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  36  	ret = of_property_read_u32(node, "reg", &mtk_spmi_clk_regmap_config.reg_base);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  37  	if (ret)
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  38  		return ret;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  39  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  40  	/* If the max_register was not declared the pdata is not valid */
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  41  	mscd = device_get_match_data(&pdev->dev);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  42  	if (mscd->max_register == 0)
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  43  		return -EINVAL;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  44  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  45  	mtk_spmi_clk_regmap_config.max_register = mscd->max_register;
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  46  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  47  	sparent = to_spmi_device(pdev->dev.parent);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24 @48  	sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  49  	if (IS_ERR(sub_sdev))
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  50  		return PTR_ERR(sub_sdev);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  51  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24 @52  	regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  53  	if (IS_ERR(regmap))
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  54  		return PTR_ERR(regmap);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  55  
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  56  	return mtk_clk_simple_probe_internal(pdev, node, mscd->desc, regmap);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  57  }
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  58  EXPORT_SYMBOL_GPL(mtk_spmi_clk_simple_probe);
+0986bdc04bd40e AngeloGioacchino Del Regno 2025-10-24  59  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
