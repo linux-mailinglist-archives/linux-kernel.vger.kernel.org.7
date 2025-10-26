@@ -1,121 +1,124 @@
-Return-Path: <linux-kernel+bounces-870448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E52C0AD67
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:27:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F20C0AD6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45282188D935
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C48A3A64AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC509146593;
-	Sun, 26 Oct 2025 16:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8832A23F439;
+	Sun, 26 Oct 2025 16:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owbCws9B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFBb/FfJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6EF21257E;
-	Sun, 26 Oct 2025 16:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AC3366;
+	Sun, 26 Oct 2025 16:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761496026; cv=none; b=oVtFKSOUClu+HfPxQD+uDf5uGPzQYDGaZQ7bQrLihq23k4Rmbmnx0SY2BreZ2JStZNX5b066VTYIy3ax9ZES7STJH3LXuVbkkSdcb6ydh2Z7PEx7Lpxv1kIqGaxaimwCsH7DH5IX9vrLvSUwnqlS6mD6gwMHTy1SUrQmJVrgWBI=
+	t=1761496079; cv=none; b=C2GxMmtTJiPUD4xLD2nR+jpB+6ok+w2Xiocqh8ye5+17NM4as2ltn02qiXqBewwgcIFa1xS/pSocI9f/Ty1deb8UUaHKStdkNCudIQLDYCLROeumeEM4tomafQq/ehFaCjDthCtYfoYNqmLjuoI+PpOp2YK9f4T5Z9BYg3O8kXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761496026; c=relaxed/simple;
-	bh=TdXB0ISYKRIWJDthOnWDF2K3IYL33xlQ6qaCJWuJLtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTZZ1+R9RqQR8n9Iz6bcEaL4kL3qG9LCHQwnqKgoVUhagAyhuu6O5iQQ3d+UEORSq+SszGr3UUQj8Q7DecenNmGF+ms05pTTPbWd1hP/L98KM8KBrbllEK5xJDcW+23CPynl51QhT1ZXZWXgtn9LywwwvA3ksRgV05DtQTu+XZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owbCws9B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC028C4CEE7;
-	Sun, 26 Oct 2025 16:27:02 +0000 (UTC)
+	s=arc-20240116; t=1761496079; c=relaxed/simple;
+	bh=8Rp4F3QbRPmzOvkK6zscPZ5G5tDnDNPqCHYmVjxd+L8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VonqeeM0bqQfrCwx+59AB82GWq+gXbNPjzwn/hZ5pFSkZOnBtj5szR8oVJ4WzxkGDfym7JfspkleXG1dJpLkGNNCpF0glqnhIfS72ki+++TbcFjL7Nw6GvxhZ9D6Wi5jbA3RH28gXW0HOAsZvwmV0bReXs4RcHIIBjeRevQmQqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFBb/FfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B1FC4CEE7;
+	Sun, 26 Oct 2025 16:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761496025;
-	bh=TdXB0ISYKRIWJDthOnWDF2K3IYL33xlQ6qaCJWuJLtg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=owbCws9Bly4XdsayCFHdJJ3LbvAip0EhZCwRgFaL+Q7NnD/OHG7BgveJm5OAafii0
-	 y2ROBq2KYqF7+gYWdtSDLV2uqyE8fNkva8+HQAnQXlGJpK4T7ktSGWTTUFZJBx/f1R
-	 +De9Ly1Lg/j8okaQLElC9inVclaqV8y5lTn2+6jeinIxRxW3hyJp1PdTsrbn7846XF
-	 wwXTikCd46jSGbyVudxF79PQKmljZ+SfT/ncWLWjjdOuSWyjaWGFaNjdINHblNnwmM
-	 /ewQc6duT1RpFFUx8HEZFs1y4CfTRoGUNBAE7Y+Inpnhp/XLNi6yFPohRHMS0GemQY
-	 ZC4DVxeyXhFUw==
-Message-ID: <f6535596-fdc5-4076-a925-26cecf25eacb@kernel.org>
-Date: Sun, 26 Oct 2025 17:27:00 +0100
+	s=k20201202; t=1761496079;
+	bh=8Rp4F3QbRPmzOvkK6zscPZ5G5tDnDNPqCHYmVjxd+L8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QFBb/FfJ/slUWPYzJSDhwJfRoYgjbHs5LLb5NkmYapXVzBq6kR1erjVLhBhcJYePC
+	 FCnpFOrIz1m/7S/YF/r2zt9Lw351ELrmgyTPxMXEfQqUDnxyccL1R+MK/Qu9gBbPWq
+	 mQ1zFxTr27+IwO4g8GrdUVcArnI52FapPkZa86ApWpIQKhzlf5RbHGTwghjGcGX0Qj
+	 MvmjhDiQl6qtQTB/835dmcWzk3avIG/hkwtg0Nk380Q67YW4vFbiUeKKdO8vL3eG5P
+	 oOD0nfzXFt9qOQlyABZ493Rvm3ltP7fpQMgoV7wXCWNJ1P6bNI9VkcRfITj7iIs0rS
+	 dBlpp3bkTjnFQ==
+Date: Sun, 26 Oct 2025 21:57:48 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 0/5] OPP: Add support to find OPP for a set of keys
+Message-ID: <eedvr7oojrp74opshopbjehiuqixa6q3a5tuxni6gni6bacexk@ktrsutu32tqs>
+References: <20251013-opp_pcie-v5-0-eb64db2b4bd3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: vendor-prefixes: Add NineTripod
-To: Coia Prant <coiaprant@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251026150358.1078453-1-coiaprant@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251026150358.1078453-1-coiaprant@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251013-opp_pcie-v5-0-eb64db2b4bd3@oss.qualcomm.com>
 
-On 26/10/2025 16:03, Coia Prant wrote:
-> Add NineTripod to the vendor prefixes.
+On Mon, Oct 13, 2025 at 04:23:27PM +0530, Krishna Chaitanya Chundru wrote:
+> The existing OPP table in the device tree for PCIe is shared across
+> different link configurations such as data rates 8GT/s x2 and 16GT/s x1.
+> These configurations often operate at the same frequency, allowing them
+> to reuse the same OPP entries. However, 8GT/s and 16 GT/s may have
+> different characteristics beyond frequency—such as RPMh votes in QCOM
+> case, which cannot be represented accurately when sharing a single OPP.
 > 
-> Signed-off-by: Coia Prant <coiaprant@gmail.com>
+> In such cases, frequency alone is not sufficient to uniquely identify
+> an OPP. To support these scenarios, introduce a new API
+> dev_pm_opp_find_key_exact() that allows OPP lookup for set of keys like
+> frequency, level & bandwidth.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+> Changes in v5:
+> - Add support for legacy devicetree's (Neil).
+> - Update commit text and comments to use data rates instead of GEN (Mani).
+> - Link to v4: https://lore.kernel.org/r/20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com
+> 
+> Changes in v4:
+> - Included dtsi changes for all platforms.
+> - Made the changes as requested by Viresh like adding comments, some
+>   coding styles etc.
+> - Link to v3: https://lore.kernel.org/r/20250819-opp_pcie-v3-0-f8bd7e05ce41@oss.qualcomm.com
+> 
+> Changes in v3:
+> - Always check for frequency match unless user doesn't pass it (Viresh).
+> - Make dev_pm_opp_key public and let user pass the key (Viresh).
+> - Include bandwidth as part of dev_pm_opp_key (Viresh).
+> - Link to v2: https://lore.kernel.org/r/20250818-opp_pcie-v2-0-071524d98967@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Use opp-level to indentify data rate and use both frequency and level
+>   to identify the OPP. (Viresh)
+> - Link to v1: https://lore.kernel.org/r/20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com
+> 
+> ---
+> Krishna Chaitanya Chundru (5):
+>       arm64: dts: qcom: sm8450: Add opp-level to indicate PCIe data rates
+>       arm64: dts: qcom: sm8550: Add opp-level to indicate PCIe data rates
+>       arm64: dts: qcom: sm8650: Add opp-level to indicate PCIe data rates
+>       arm64: dts: qcom: x1e80100: Add opp-level to indicate PCIe data rates
+>       PCI: qcom: Use frequency and level based OPP lookup
+> 
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi   | 55 +++++++++++++------
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi   | 79 +++++++++++++++++++--------
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi   | 79 +++++++++++++++++++--------
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 98 +++++++++++++++++++++++++++-------
 
+Acked-by: Manivannan Sadhasivam <mani@kernel.org>
 
-Please slow down sending the same. One patchset per 24h.
+- Mani
 
-None of these have changelog, so I do not get why you send v4 now.
-
-Best regards,
-Krzysztof
+-- 
+மணிவண்ணன் சதாசிவம்
 
