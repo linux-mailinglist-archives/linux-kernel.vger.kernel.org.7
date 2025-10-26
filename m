@@ -1,179 +1,138 @@
-Return-Path: <linux-kernel+bounces-870266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BAFC0A527
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:05:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC13BC0A534
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC5A1349E2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:05:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 782F54E286C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DB02877E7;
-	Sun, 26 Oct 2025 09:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CB028851F;
+	Sun, 26 Oct 2025 09:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jx08Zy+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNoXStkk"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B27C220F38
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E625B24C06A
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761469494; cv=none; b=OCOQDAP/hN9jtvCX02OYfYYgP1H7+UePhQbjhzncfxsNmpVh1RlfR5l3n6Lhv0ROHU7gZgib6NUH+zIkLDRIrHidreoHfMclXTzog7Ndd8nXgvH0ByWfI/mN3NGpZAHQvT9wCGz5aizDUe7Xl5nU+goWS1SmyJzexM+HVQf6+T8=
+	t=1761469757; cv=none; b=OuGe0yANnNGalSb5GB42Tics5PgK9WhM+sX4kZdCSzhjbQqgCvAmjr7yUYd+8gKNpRfdObrpl/fcgAGM8JOuh7NQY1YYqHge4lQjCHBOR9FA1kUVQGKxc8n0o1w/RI9taZkLoG6IQVe1HUoKCFCLLquSwzl2dbKfustKkzijB5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761469494; c=relaxed/simple;
-	bh=QkIpeed90JvRYD+LlXhb38rcDeUYh6JyO/y80SENDbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ciWobg6/l91//IssHXVougj+zpFPA2bEVDR3+DgYQFRByhnOiFP5vFdjtCvRIibjLgViOB8+4pZ2JAc+nBmaxi8EwyFT7oNJBMhjtMbJpRhHzIof3Mfc8lTBGFehqce6xPc1zATGU74sUqNApPx+xoT4T0Q1VppjE/VET9sBG0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jx08Zy+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3C3C113D0
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761469493;
-	bh=QkIpeed90JvRYD+LlXhb38rcDeUYh6JyO/y80SENDbw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jx08Zy+srhwWrsVRy4kMP3wZwFApw4x9qH6OcYGssUych/go1Bc4KDj7saFLjPcS0
-	 PhFZQuKZ45hzITx9sWjcQO4+8+z5HgiP0lTv3QKZLbeFfSlkugJZedyDibPC2el8wi
-	 KAi2WLv3bVHrDjYKoqJzJBKH0Y+lazdKnxHIthQ5YUbbeFUAxvcm07m0YR64e5/k4v
-	 EoHxW5XpO3hY7B9sCzGX75oDpSYcAiw1yzTSbDrF8pR1QLY9steamhNvrh/BrvHxCt
-	 jHsKxPPp2ZyuGczSWlpKj+JSOHB91QxHciJXz7bqUfz2GdzmMf8eFUkacnout71XQs
-	 vAPqIyImU/3gg==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d855ca585so263908866b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 02:04:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWNlrRe9iMmV6pHvi10FXEltYjZahQlBGIJlhVCC3ZN9jWziKEOP6kcLE7z0BOFx+eyTMuurXbsUKZLfPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFvBM30TBpEgMKjbJZSjl/NGTndhxZrdyy4r/RfT/Z1NNX23Yz
-	8MUnTloHIg4vqxfE9sdNC1cZZZwxUkCBIj9sptKpy0/Gj26Rx0aqzuGjHGKaZdgY7ofzJ3qproX
-	y/clIz4LjH5CyRtBPCsdgAerkydmiTOQ=
-X-Google-Smtp-Source: AGHT+IGyEHSDzuVGDFODZvjJvjOd8qAfNqDU3rNiaxcu5N0duCid5VIUNaadnBu/k4DYtY8GVk8WHPe1hHl7tVTMbTY=
-X-Received: by 2002:a17:907:728d:b0:b49:b3ca:52b4 with SMTP id
- a640c23a62f3a-b6471f3bdfemr4160600466b.23.1761469492223; Sun, 26 Oct 2025
- 02:04:52 -0700 (PDT)
+	s=arc-20240116; t=1761469757; c=relaxed/simple;
+	bh=rhvUQQ1aDLIgY9l5Xbthj+I3M2mzo0BNAfDOxjdvxS4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=owr3ZZWeqTTTCvh0dzVBSyNAC6hRnU0uE2Ti2jHe5c7JtoY2aWRJ8pBvlLO4KJnRwyMpQMEuv8KLDPaI7FVEIUbrnth/lIMIfiS8lcDnSZ5gsVyZE03ILnujE23RwBORkVL6C8JTEXCGJKFETO4iCW3YEhFzc9vTc4QTfnef+2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNoXStkk; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b553412a19bso2284913a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 02:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761469755; x=1762074555; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XDgBxVdEbTdr5iOqBlPvDWxYT4j0U5j6kRWBLPDFwas=;
+        b=QNoXStkkgsY4pho1HMXuuLiPrtSIgXcbhdyz+4isjbnNhpi5t9B5RgxKgvbfRYNeVM
+         LDsLBzSblXbY/Dsu5nC+ZMubDVj0T7Qb+lGWBDYQ5PI85GTkmMUbDxriWiXzNhXNqgRh
+         A5uBA6fRENpD1Mg1zVGCnXnC2lJJzNvFVxFhv7d7TdY5O9pTWhLM94XH0UvmNXSgYk9E
+         OYIDgstyJAQTy+ydE+0X5mqTyPad65KYyWdS37oZ6AVLlACSGfXfbjc0qa7a2SB0b4DH
+         OFeAz5pCLGs5Yhf72nv/y3A3qFXbEYzCEJiVi0XaBGXnEWIUHPrHburyyAmstanfLOt+
+         Ircw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761469755; x=1762074555;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XDgBxVdEbTdr5iOqBlPvDWxYT4j0U5j6kRWBLPDFwas=;
+        b=RRdBijAmFNdEt6PyBR9nLGyQ4KZIqM11ivZAZdBrO+8Rrptq84bPf7Qpc4JU80rY4k
+         E8fQlJ1uLcT7iiKbxdiMlkHrYVkjznt6X8yhGQULDpY0c07LUu9TDdDpgyBvBUCDZzFR
+         yOYkW3WBAHSDB0UGbl+bj04Hf5reJX8u6NUqWv7K5xU2sPlFGC4/U/5pZYTbCBuIoAK+
+         toVv78HJ6ol5HWwzwZIARFmx0GEwEM7Udm0kSpEromZeVwOIy6oI5AiCaPtCTxHBZaka
+         vRpDuUUXjqzEpmV9Kz60pYI58uyVswq2Y6k6Ul/RZirX7K2h87iNf0lFGOgvDnfjUWNq
+         yYRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXD+SxKqasbF+CCFkehimCF1LfkVmcLiib1X7XQy5tArJyCkHv+znHVOgbDAWSl3JMIOpR137+5PyX71vA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKbVKVQUdpL1C5P5HZEnNEpvAN8GBk8VTQuAmWf88AELh64dJx
+	ohP10yJK3GnyY+qhpJDpUe3riEsdH9wbpL1OrOMP1gC0u3bsHMggYCVk
+X-Gm-Gg: ASbGnctMd3ct9YJKiN8hyjvenMOLNb4H16IF7p8FtYYqO1IbWIuOpTwkKyuvgCbGeu2
+	u/tGmp06BADLOUvrAsMqx8RvSCAjJISZp6i9lLCBdWV5jw73puf6gMnZ5Z9+AsEgiYNwOwpGV8q
+	psFxom3mVzlucjXdcJLknGImpRfgFEqA+RU4WZvtqq4OHuYlDMBNIYWoTcTnwWLP9qZ/N7FsHZ5
+	zMYNoFRdGj6h8lxbbn4rw0TNfYDM4c/Wje3hFfsVk7ho9as6vgXqvF+RVNuN/0WEqjw3fir5PGv
+	1icyAE4+Vo209Xvi6+JKUgx0ZeG0SahrypkMzizHaSofDbSq7xaTPGL8cMluAHt5AO64c5HtOLc
+	vHmyhbhFwkT+Mj3y+HMw9JkQLHM3LpuVsviMHOsq6ef4FAimJjFozKhXLzfOdR8vJB2nzIn+0SJ
+	pSe1IrVy9TgitUOtfB0S5Cew==
+X-Google-Smtp-Source: AGHT+IHoQyB3vduskRb0VU1yRtEZxt+TCgaYNmvXlhRvC3wwf/9MqRK9WnjLi1uyYkvh8yX+068xAw==
+X-Received: by 2002:a17:902:d512:b0:290:9ebf:211b with SMTP id d9443c01a7336-2948ba3d94emr87342155ad.40.1761469755256;
+        Sun, 26 Oct 2025 02:09:15 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498d230basm45238555ad.46.2025.10.26.02.09.12
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 26 Oct 2025 02:09:14 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: cdns3: Fix double resource release in cdns3_pci_probe
+Date: Sun, 26 Oct 2025 17:08:59 +0800
+Message-Id: <20251026090859.33107-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <03c5d7ec-5b3d-49d1-95bc-8970a7f82d87@gmail.com>
- <CAL3q7H5ggWXdptoGH9Bmk-hc2CMBLz-YmC1A8U-hx9q=ZZ0BHw@mail.gmail.com> <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
-In-Reply-To: <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Sun, 26 Oct 2025 09:04:13 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H5ewZROWz0384L_pLvqWrjNK8mX=-kQb26ZDmpAbBUQ4A@mail.gmail.com>
-X-Gm-Features: AWmQ_bk0FrP1t6tmpr-sfxZeFRrPyaKvBAwfIsWmpf3rbbKI-FzXZTkveawBXw0
-Message-ID: <CAL3q7H5ewZROWz0384L_pLvqWrjNK8mX=-kQb26ZDmpAbBUQ4A@mail.gmail.com>
-Subject: Re: Directory is not persisted after writing to the file within
- directory if system crashes
-To: Vyacheslav Kovalevsky <slava.kovalevskiy.2014@gmail.com>
-Cc: clm@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 25, 2025 at 10:49=E2=80=AFAM Vyacheslav Kovalevsky
-<slava.kovalevskiy.2014@gmail.com> wrote:
->
-> On 24/10/2025 19:17, Filipe Manana wrote:
-> > I converted that to a test case for fstests and couldn't reproduce,
-> > "dir", "file1" and "dir/file2" exist after the power failure.
-> >
-> > The conversion for fstests:
-> >
-> > #! /bin/bash
-> > # SPDX-License-Identifier: GPL-2.0
-> > # Copyright (c) 2025 SUSE S.A.  All Rights Reserved.
-> > #
-> > # FS QA Test 780
-> > #
-> > # what am I here for?
-> > #
-> > . ./common/preamble
-> > _begin_fstest auto quick log
-> >
-> > _cleanup()
-> > {
-> > _cleanup_flakey
-> > cd /
-> > rm -r -f $tmp.*
-> > }
-> >
-> > . ./common/filter
-> > . ./common/dmflakey
-> >
-> > _require_scratch
-> > _require_dm_target flakey
-> >
-> > rm -f $seqres.full
-> > On 24/10/2025 19:17, Filipe Manana wrote:
-> > _scratch_mkfs >>$seqres.full 2>&1 || _fail "mkfs failed"
-> > _require_metadata_journaling $SCRATCH_DEV
-> > _init_flakey
-> > _mount_flakey
-> >
-> > touch $SCRATCH_MNT/file1
-> >
-> > _scratch_sync
-> >
-> > mkdir $SCRATCH_MNT/dir
-> > echo -n "hello world" > $SCRATCH_MNT/file1
-> > ln $SCRATCH_MNT/file1 $SCRATCH_MNT/dir/file2
-> >
-> > $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/
-> >
-> > # Simulate a power failure and then mount again the filesystem to repla=
-y the
-> > # journal/log.
-> > _flakey_drop_and_remount
-> >
-> > ls -R $SCRATCH_MNT/ | _filter_scratch
-> >
-> > _unmount_flakey
-> >
-> > # success, all done
-> > _exit 0
->
-> I think the line with `echo` may not be the correct translation:
->  > echo -n "hello world" > $SCRATCH_MNT/file1
+The driver uses pcim_enable_device() to enable the PCI device,
+the device will be automatically disabled on driver detach through
+the managed device framework. The manual pci_disable_device() calls
+in the error paths are therefore redundant and should be removed.
 
-An echo is just a write...
+Found via static anlaysis and this is similar to commit 99ca0b57e49f
+("thermal: intel: int340x: processor: Fix warning during module unload").
 
->
-> In the original test, the file was opened with `O_SYNC` flag, if you
-> remove it, the directory will be there when the system crashes. I also
-> forgot to close the file after the `creat` call in the original test,
-> may be important as well.
+Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/usb/cdns3/cdns3-pci-wrap.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-An O_SYNC, which is what I missed before, is essentially just an
-implicit fsync after every write on a file.
-Adding an fsync after the echo:
+diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
+index 3b3b3dc75f35..57f57c24c663 100644
+--- a/drivers/usb/cdns3/cdns3-pci-wrap.c
++++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
+@@ -98,10 +98,8 @@ static int cdns3_pci_probe(struct pci_dev *pdev,
+ 		wrap = pci_get_drvdata(func);
+ 	} else {
+ 		wrap = kzalloc(sizeof(*wrap), GFP_KERNEL);
+-		if (!wrap) {
+-			pci_disable_device(pdev);
++		if (!wrap)
+ 			return -ENOMEM;
+-		}
+ 	}
+ 
+ 	res = wrap->dev_res;
+@@ -160,7 +158,6 @@ static int cdns3_pci_probe(struct pci_dev *pdev,
+ 		/* register platform device */
+ 		wrap->plat_dev = platform_device_register_full(&plat_info);
+ 		if (IS_ERR(wrap->plat_dev)) {
+-			pci_disable_device(pdev);
+ 			err = PTR_ERR(wrap->plat_dev);
+ 			kfree(wrap);
+ 			return err;
+-- 
+2.39.5 (Apple Git-154)
 
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/file1
-
-Triggers the problem of "dir" not being persisted.
-
->
-> The test itself is quite weird (why would `dir` be gone after seemingly
-> unrelated operation?), any detail can matter.
-
-"dir" should be persisted as well as "dir/file2", according to the
-SOMC (Strictly Ordered Metadata Consistency) that Dave Chinner
-discussed many times in the past in fstests and btrfs mailing lists.
-
-You should also reach the xfs mailing list and mention that
-"dir/file2" is not persisted.
-
->
-> Please run the original test with a real system crash. I will also
-> double check everything on my side.
-
-I've said before in another thread: we don't need to trigger qemu
-crashes in order to test fsync.
-Just use the dm flakey target with fstests - no need to do reboots,
-much more practical and way less time consuming.
-In 12 years of fixing fsync stuff on btrfs, I haven't yet seen any
-case where dm flakey didn't do the job of reproducing issues.
-
->
 
