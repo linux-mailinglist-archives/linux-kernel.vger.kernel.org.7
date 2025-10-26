@@ -1,180 +1,175 @@
-Return-Path: <linux-kernel+bounces-870627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECB9C0B509
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:04:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16602C0B512
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7014E189ED2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:04:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CE66349C38
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15712226CF6;
-	Sun, 26 Oct 2025 22:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECCF264602;
+	Sun, 26 Oct 2025 22:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sN7N3bqe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="a8Qszwq0"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ACD224FA;
-	Sun, 26 Oct 2025 22:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625541A9F85;
+	Sun, 26 Oct 2025 22:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761516262; cv=none; b=UAMxx5W6mrohtF4zwx6Okl4n+si2FBkUMKpmLykSPR7nhB4GJg1G1lx8RAch5296cMfMUxvb6uIRJNYLfR3GnXKQoWv3JtL3Vb114vkvCVLJaDSGQzdu9nLPchsf/32phSl1BAXqRKWXFacxdsiKYFCIHzeqzdd9egngP7pbtKg=
+	t=1761516297; cv=none; b=SAOVkpLzQqPKv4+k2TEuswtbW1URvYOI8cDtO0YaBLOX65QEt+xCq7XaHGyG8/vRcV21ZtV0G2haRvGyvMa+xi33akA7FOXNaJBuA6JVJz94pWxUjGSElLqgamSg+WGtk4xcgNRUqMaMyMlBXWYKC6qH4UF6DQnV1BmBlvMyG/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761516262; c=relaxed/simple;
-	bh=PdErI+I/U0Fxg8DPcXpq+cld1psA4QSdRuJETGHdBeE=;
+	s=arc-20240116; t=1761516297; c=relaxed/simple;
+	bh=QXwwajsozN6n52An7A1QJ6FAATGmuWpgmNPS6tMrYos=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abAxDNa6jMNO/zRo6Zo8CP9CW59F7Tkdwm+G0kKbSFGbVNOfkbrc/CCSTHCXoi+UyVyS97h+4y9Y8lonP6FUMoonzSBAulHScarcobqPZXCuGpTbpXICFP8L7Sue2/EYLDtdSCHUhRVTWLp7CSKP2d9aP8T+/5rncCz+lOpKFdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sN7N3bqe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E087AC4CEE7;
-	Sun, 26 Oct 2025 22:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761516262;
-	bh=PdErI+I/U0Fxg8DPcXpq+cld1psA4QSdRuJETGHdBeE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pF5am7AIJ/NNOSuUurrrkVPVz6+ToOWoX3+U36qQL0yyMdqEuxnS/YF5aBqyCqQYPnI+YJIgSkKv8OifNbdDq0J4eyHpFYVU6ynjwQsW/Tc8PJcLgSjWnu1xIrWxOYyZm8Ko2C4MTU2VQGP/qbIcIyf5Zumi3mLshCKTOrnGx5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=a8Qszwq0; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 16FBA1F0E;
+	Sun, 26 Oct 2025 23:03:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761516185;
+	bh=QXwwajsozN6n52An7A1QJ6FAATGmuWpgmNPS6tMrYos=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sN7N3bqe8s4o0FnO+R360fkOQWJgC/k8RAkUcJcC+attu+8qX4PzkT3gnGcIiPg2l
-	 2hi6hYN3PkHrGyIG5XVvF4zpQqcpL1TRPT4bGh3iR2pfiEVkyUYYrLJeaGaz5bNVlL
-	 T3Txp9muq5lnODRoto/+hA/v50P+INRHOOAc1tqBpX9icRZa0dzhmTKYba45UwrV6Z
-	 B8j4Sc2OemWylnWCerF8jZ7D5fbY4tcwNNANAEohMWgU21pOLLOKSxuFAd59xlvyI9
-	 RH/BKzMq9/XW+/K9agOxO6sPO71v2ToMAWst2a19QKaO+BL5DGonxE1X4iQQMxHFx7
-	 6GqcK804SR13w==
-Date: Sun, 26 Oct 2025 17:04:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sander Vanheule <sander@svanheule.net>
-Cc: Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	b=a8Qszwq0/C+49obn6G7bQx8qm/+xz2LGOKY9U/QnB1L6FDKfytKEXDR0wZ5c+qhEv
+	 bATLGKhxcL1J2VWMrE0BL8CMEVOtJyg3+yDEQVDxhTGj5/FyAuxWgE+97i1Q+NqsD/
+	 UC7aqdd2YoMRsNlevHl5e+otCs5ovLhCfNZpoycw=
+Date: Mon, 27 Oct 2025 00:04:38 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Guoniu Zhou <guoniu.zhou@oss.nxp.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/8] dt-bindings: mfd: Binding for RTL8231
-Message-ID: <20251026220420.GA3008050-robh@kernel.org>
-References: <20251021142407.307753-1-sander@svanheule.net>
- <20251021142407.307753-5-sander@svanheule.net>
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH 1/3] media: dt-bindings: nxp,imx8-isi: Add i.MX95 ISI
+ compatible string
+Message-ID: <20251026220438.GG13023@pendragon.ideasonboard.com>
+References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
+ <20251024-isi_imx95-v1-1-3ad1af7c3d61@nxp.com>
+ <aPuAVqVUHjrPCbIH@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251021142407.307753-5-sander@svanheule.net>
+In-Reply-To: <aPuAVqVUHjrPCbIH@lizhi-Precision-Tower-5810>
 
-On Tue, Oct 21, 2025 at 04:23:59PM +0200, Sander Vanheule wrote:
-> Add a binding description for the Realtek RTL8231, a GPIO and LED
-> expander chip commonly used in ethernet switches based on a Realtek
-> switch SoC. These chips can be addressed via an MDIO or SMI bus, or used
-> as a plain 36-bit shift register.
+On Fri, Oct 24, 2025 at 09:34:14AM -0400, Frank Li wrote:
+> On Fri, Oct 24, 2025 at 05:46:52PM +0800, Guoniu Zhou wrote:
+> > From: Guoniu Zhou <guoniu.zhou@nxp.com>
+> >
+> > The ISI module on i.MX95 supports up to eight channels and four link
+> > sources to obtain the image data for processing in its pipelines. It
+> > can process up to eight image sources at the same time.
+> >
+> > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> > ---
+> >  .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 26 +++++++++++++++++++++-
+> >  1 file changed, 25 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> > index f43b91984f0152fbbcf80db3b3bbad7e8ad6c11e..eaab98ecf343a2cd3620f7469c016c3955d37406 100644
+> > --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> > +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> > @@ -23,6 +23,7 @@ properties:
+> >        - fsl,imx8mp-isi
+> >        - fsl,imx8ulp-isi
+> >        - fsl,imx93-isi
+> > +      - fsl,imx95-isi
+> >
+> >    reg:
+> >      maxItems: 1
+> > @@ -49,7 +50,7 @@ properties:
+> >    interrupts:
+> >      description: Processing pipeline interrupts, one per pipeline
+> >      minItems: 1
+> > -    maxItems: 2
+> > +    maxItems: 8
+> >
+> >    power-domains:
+> >      maxItems: 1
+> > @@ -109,6 +110,29 @@ allOf:
+> >              - port@0
+> >              - port@1
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: fsl,imx95-isi
+> > +    then:
+> > +      properties:
+> > +        interrupts:
+> > +          maxItems: 8
 > 
-> This binding only describes the feature set provided by the MDIO/SMI
-> configuration, and covers the GPIO, PWM, and pin control properties. The
-> LED properties are defined in a separate binding.
+> should minItems: 8 because you already limit maxItems at top;
+
+As far as I understand, when no "items" are specified, minItems defaults
+to 1, and maxItems defaults to minItems (if specified) or 0 (if minItems
+is not specified). This is implemented in dtschema/lib.py of
+https://github.com/devicetree-org/dt-schema.git.
+
+Then, in dtschema/fixups.py, if only one of minItems or maxItems is
+specified, the other one is set to the same value. I believe relying on
+this is frowned upon by the DT maintainers.
+
+We could specify minItems only here, as the top-level constraint will
+ensure we don't go over 8. That's not very future-proof though, so I
+think specifying both minItems and maxItems would be best. Confirmation
+from a DT maintainer would be appreciated.
+
+The fsl,imx8mp-isi block above should then be fixed. It currently only
+has maxItems set, minItems should be set to 2 as well.
+
+> > +        ports:
+> > +          properties:
+> > +            port@0:
+> > +              description: Pixel Link Slave 0
+> > +            port@1:
+> > +              description: Pixel Link Slave 1
+> > +            port@2:
+> > +              description: MIPI CSI-2 RX 0
+> > +            port@3:
+> > +              description: MIPI CSI-2 RX 1
+> > +          required:
+> > +            - port@2
+> > +            - port@3
+> > +
 > 
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
-> ---
->  .../bindings/mfd/realtek,rtl8231.yaml         | 189 ++++++++++++++++++
->  1 file changed, 189 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+>      else
+>        properties:
+>          interrupts:
+>            maxItem: 2
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
-> new file mode 100644
-> index 000000000000..25135917d3f2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
-> @@ -0,0 +1,189 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/realtek,rtl8231.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Realtek RTL8231 GPIO and LED expander.
-> +
-> +maintainers:
-> +  - Sander Vanheule <sander@svanheule.net>
-> +
-> +description: |
-> +  The RTL8231 is a GPIO and LED expander chip, providing up to 37 GPIOs, up to
-> +  88 LEDs, and up to one PWM output. This device is frequently used alongside
-> +  Realtek switch SoCs, to provide additional I/O capabilities.
-> +
-> +  To manage the RTL8231's features, its strapping pins can be used to configure
-> +  it in one of three modes: shift register, MDIO device, or SMI device. The
-> +  shift register mode does not need special support. In MDIO or SMI mode, most
-> +  pins can be configured as a GPIO output or LED matrix scan line/column. One
-> +  pin can be used as PWM output.
-> +
-> +  The GPIO, PWM, and pin control are part of the main node. LED support is
-> +  configured as a sub-node.
-> +
-> +properties:
-> +  compatible:
-> +    const: realtek,rtl8231
-> +
-> +  reg:
-> +    description: MDIO or SMI device address.
-> +    maxItems: 1
-> +
-> +  # GPIO support
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +    description: |
+> to keep the same restriction for existed compatible string.
 
-Drop '|' here and elsewhere with no formatting.
+We already specify the number of interrupts in two separate conditional
+blocks above, with any else statement (for all but fsl,imx8mp-isi first,
+and then for fsl,imx8mp-isi). Both specify maxItems, so I think we're
+fine.
 
-> +      The first cell is the pin number and the second cell is used to specify
-> +      the GPIO active state.
-> +
-> +  gpio-ranges:
-> +    description: |
-> +      Must reference itself, and provide a zero-based mapping for 37 pins.
-> +    maxItems: 1
-> +
-> +  # Pin muxing and configuration
-> +  drive-strength:
-> +    description: |
-> +      Common drive strength used for all GPIO output pins, must be 4mA or 8mA.
-> +      On reset, this value will default to 8mA.
-> +    enum: [4, 8]
-> +
-> +  # LED scanning matrix
-> +  led-controller:
-> +    $ref: ../leds/realtek,rtl8231-leds.yaml#
-> +
-> +  # PWM output
-> +  "#pwm-cells":
-> +    description: |
-> +      Twos cells with PWM index (must be 0) and PWM frequency in Hz. To use
-> +      the PWM output, gpio35 must be muxed to its 'pwm' function. Valid
-> +      frequency values for consumers are 1200, 1600, 2000, 2400, 2800, 3200,
-> +      4000, and 4800.
-> +    const: 2
-> +
-> +patternProperties:
-> +  "-pins$":
-> +    type: object
-> +    $ref: ../pinctrl/pinmux-node.yaml#
-> +
-> +    properties:
-> +      pins:
-> +        items:
-> +          enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7,
-> +                 gpio8, gpio9, gpio10, gpio11, gpio12, gpio13, gpio14, gpio15,
-> +                 gpio16, gpio17, gpio18, gpio19, gpio20, gpio21, gpio22, gpio23,
-> +                 gpio24, gpio25, gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
-> +                 gpio32, gpio33, gpio34, gpio35, gpio36]
-> +        minItems: 1
-> +        maxItems: 37
+> >  additionalProperties: false
+> >
+> >  examples:
 
-blank line
+-- 
+Regards,
 
-Other than those nits, looks good.
-
-Rob
+Laurent Pinchart
 
