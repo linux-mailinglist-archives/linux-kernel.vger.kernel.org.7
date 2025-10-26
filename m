@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-870262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D19C0A506
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E354C0A511
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0242B3ADB7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AC413ADE15
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 08:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58F62877E7;
-	Sun, 26 Oct 2025 08:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1C328751F;
+	Sun, 26 Oct 2025 08:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMon76BZ"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGD6COkc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013E32874F0
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 08:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88F023D7E4;
+	Sun, 26 Oct 2025 08:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761469134; cv=none; b=WPSNxhmGjgfynEfiOamLppi2NFgz7D+fWtFaJTV4JDEgpSq0u2mcJFx8LbdiKfXYpr8MwKbxgk7k7VPQftEXV1GKKIJzzbnvKLW/jBLBzokRQ3Mbxj3ApVZnjFH+GENRcQY7sF2NB5lYH5MhkWCN1aifsKe4j5Lcau06q6X8sso=
+	t=1761469152; cv=none; b=MOvwCvBQrm/eq9UBJA45qWVMY7pgPj48CJcF3WdV1wgGDRenYZEze3+zFx6AXTaapfV76YlVJK+vAd8er27WbCaC3arYi/kXfvLfJIY82HWkdSNcxVRdAEIV9Ppolj2z8/no4rr0uZAuSnlj421NEd7FLcjmiPjSoyyNWIE80BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761469134; c=relaxed/simple;
-	bh=5K4B7s96EMwwaDVEBzoytBv7iE1q9RzEsf4agH12XZM=;
+	s=arc-20240116; t=1761469152; c=relaxed/simple;
+	bh=+NLdj7+MCeZ+zV2z6gQfnlmhyU7KIWfk6aOvvgBgryg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DJJJADYjCYhh8yE/inm4egSO+Dt7uDGLu2t9AIbH2RMCAuPEJCIAfMC1VeJmcvIvNdoTJ5hNxEnghOvBTNsa9YHFlVpF5JQcm+YLefXVlucgEGe7RtOkC0Ib6HVjH+oIMemD5GHcspmv1PIu8AQV7lgprmWKBgX/L8VIqNlBpdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMon76BZ; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b6ce806af3eso3259568a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 01:58:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761469132; x=1762073932; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5K4B7s96EMwwaDVEBzoytBv7iE1q9RzEsf4agH12XZM=;
-        b=KMon76BZA7iezln/XZHUxCJhQZRX9NLslCTWfW4lw5hmD2wCcGtMu4pKPaJ3VsdD9M
-         7uhj9fYLjxEBKBiZNR+C0qvElKvses1AxCRZv8V4LpiK5vB08UyCWdW8Oxmh1m1ybR9J
-         P4YbBSK5ZSr5ncBRV9s7d4eKpTIfWE4k4aLg6b8jphC+6CzzEXXM/lSjT5KN4j7ZGCma
-         NvUp/jOhal7A3Of8+GF3/TAdI0o7Z199/l9hqgBQLODggg164fypvwuZlBEZGYP6P5Py
-         qfb5tfmvzCWLni/vQ0rKyWlrQJIVtNJkXpJx2tYZrUyu0VZbtigNn/cEbgnAnZ9PM+/1
-         GOCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761469132; x=1762073932;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5K4B7s96EMwwaDVEBzoytBv7iE1q9RzEsf4agH12XZM=;
-        b=Tx0GUPx1m54Wm3hW7SoTea43O/em2jKKfP2JSr8hb28KVs1hpYOW9CDAkzjfWZb3ws
-         VTBrF/cqy5P/dIU/e68RBmTh0zA3lM1AKgHqonN1XfOsLRCnl8lViYebWIYWs9Ja3fre
-         Sf9VU/N37knPgiv2j4vaiPEhidXp4YJ+0SU+N+N7bkDPDMWGMdrOBP82WOQYGUT6ltlR
-         eJrPoCTq8IVhXgHJ59bY9Obdc0+hFTjdSQ2kn7fTpwXcrhJ5oLxT5sxyn5fSclyTsvcB
-         Bih0VF9t7nAMAFDIQBxMy5yhNFEldMOhU/rIHpxjZFWktuJeWud/5W30zH7n4ekMz1cy
-         +kEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDu3saMeAL6Gn+dJeYQtIQvsLHrGlQXDUQS8uY7VYhUgTWDKr3/dGKuZRTQ01m3dPFvGlFT4wcXiV/TYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwprJSiMF1B4pWDeIE9TquKGZntV9QI9MZ44auhoWuXOQUejaf9
-	ZaM8DH5hLM9R1pz369Ywl9oMIeRY9j9UIhNHNuC9nbhe+IE70pIDUeiW
-X-Gm-Gg: ASbGnctJXe4dPksiuCO8sDYwThbS4StiKvB/rMl8MEzhRenxtaKSruqb+uELugJJD7P
-	EQeoQStUxDlxjflOXS9wypctNrpuGMonHyciHaZrZwGBAYNoNAAPX54Ph93gh0EjwHcKbuJKMbk
-	3t21UyuIEVoVsjzKVxfN+isS/+POvfNsf3bpf6wlQH5u1OmOHK+7b0q42dtTAZaUWQLzML5Jknr
-	9XmNwrgtWzMzIOQHKf73itsM9ubXUDtp7jZ9UVa3HPx5APzk8Ke/r/zWcgrX5DvQAWZ9cR8qYb0
-	3d3AB88/uwHD9I1H49hQo5Y/Ax+1wGi6iRrm2H+jbk1g54fWlFoMkQFH7ySwlKOBzQzcmIVvUdC
-	8B0oXsrIuf2rHF9PYTP8P827f5sXbyBJmzfM+UqmqaY4P0pfYtdLTjXKHcdTabFdrmRd6ODkIv1
-	St6PcDjUUK1mjdoceEiJvlbplqURhyND42zqCyD2QEQZcglKk4UT7DNg4iSpeFk21oNL8/EP25A
-	n0AbigonfT/8/5qyjNIyPenicCQpdTE+Q==
-X-Google-Smtp-Source: AGHT+IHbY4zR+pxQ2HAXsXrhA3W5dSP1Wj+vZRqqpwWFOwc/lu9gHcqd7/GoXq4UV6YsapVAtB9Wiw==
-X-Received: by 2002:a17:902:f690:b0:290:ac36:2ed6 with SMTP id d9443c01a7336-2948b97fd44mr101660985ad.14.1761469132156;
-        Sun, 26 Oct 2025 01:58:52 -0700 (PDT)
-Received: from ?IPV6:2606:4700:110:896a:5f1b:2412:be21:3a45? ([2a09:bac1:36e0:1c0::10c:2f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed70a83csm4611330a91.4.2025.10.26.01.58.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 01:58:51 -0700 (PDT)
-Message-ID: <da05d1d1-c241-49af-bed8-7db5e9968396@gmail.com>
-Date: Sun, 26 Oct 2025 14:28:46 +0530
+	 In-Reply-To:Content-Type; b=sEqNs93p9+q32kJMoNPMq2dd1pl2Z2lfFrL2tjMhxgghpdBJezJhuO5TB2OVvtAazGjB8GnKEkaYmYxVIiBLnH5kaIEj+IKRe+3DrPrREoDcQGpy/RnPfYO2WhEUzil281NMhe4ip9EHxU6nW+Rb0hWmRZswQ9BFzWdA8Z1AZ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGD6COkc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA371C4CEE7;
+	Sun, 26 Oct 2025 08:59:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761469152;
+	bh=+NLdj7+MCeZ+zV2z6gQfnlmhyU7KIWfk6aOvvgBgryg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QGD6COkcQUdDFnh2CVeKMXOOhu3oMfg1JZ/6Hno5SxL9LMnR62RqGPk4czwTZOUAR
+	 pKyJLjDxdpMSaI4O6Y5M6HaWjQx7vSTV7g8VTlR29U3Vu/twGq7Wu060usH/+uUqHo
+	 aripfue1T4XQ2GwHl+JgBhWQUsM35Pvm9kdauWrYf29ZIcNi0M/Bw7LxM1Ks3nW1NR
+	 M5HDIZmOsTdDmQIUYW2pdvU8vkBM0psDhrlYC6ymt1rv1bTMqZS9PZgVKne6GImTwo
+	 0jsdqW/BH8+gICJ3+yFUPj0L33ABE/JxLObD5XVkxjkKF9TMDVnAOhOsShJ+WYDEXX
+	 3mPRUfzleny9Q==
+Message-ID: <c0a58766-ed04-4fbf-a821-5b912233b26b@kernel.org>
+Date: Sun, 26 Oct 2025 09:59:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,48 +49,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/seccomp: fix pointer type mismatch in UPROBE
- test
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, khalid@kernel.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251025184903.154755-2-nirbhay.lkd@gmail.com>
- <aP0-k3vlEEWNUtF8@krava>
+Subject: Re: [PATCH v6 2/8] dt-bindings: phy: qcom,qmp-usb: Add Glymur USB UNI
+ PHY compatible
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251024-glymur_usb-v6-0-471fa39ff857@oss.qualcomm.com>
+ <20251024-glymur_usb-v6-2-471fa39ff857@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-In-Reply-To: <aP0-k3vlEEWNUtF8@krava>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251024-glymur_usb-v6-2-471fa39ff857@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 25/10/2025 02:47, Wesley Cheng wrote:
+>  
+>    vdda-pll-supply: true
+>  
+> +  refgen-supply: true
+> +
+>    "#clock-cells":
+>      const: 0
+>  
+> @@ -114,6 +117,7 @@ allOf:
+>          compatible:
+>            contains:
+>              enum:
+> +              - qcom,glymur-qmp-usb3-uni-phy
+>                - qcom,qcs8300-qmp-usb3-uni-phy
+>                - qcom,qdu1000-qmp-usb3-uni-phy
+>                - qcom,sa8775p-qmp-usb3-uni-phy
+> @@ -126,6 +130,7 @@ allOf:
+>      then:
+>        properties:
+>          clocks:
+> +          minItems: 4
 
+Why? Does not look related to this patch.
 
-Hi Jiri,
+>            maxItems: 4
 
-Thank you for the review and for catching that inaccuracy!
-
-On 10/26/25 2:48 AM, Jiri Olsa wrote:
-> just probed_uprobe right?
-
-Yes, you're absolutely correct. Only probed_uprobe has the
-__attribute__((nocf_check)) attribute. I apologize for the confusion
-in my original commit message. I'll fix this in v2.
-
-> curious what compiler do you see that with?
-
-I am seeing this error with Clang 19.1.2 on Fedora, which enables
--fcf-protection=full by default. As Sam confirmed, the error occurs
-specifically when CFI protection is enabled via -fcf-protection. GCC
-without this flag treats it as a warning or ignores the nocf_check
-attribute entirely.
-
-I'll send v2 with the corrected commit message.
-
-Thanks again for the review!
-
+>          clock-names:
 Best regards,
-Nirbhay
-
+Krzysztof
 
