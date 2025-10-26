@@ -1,164 +1,90 @@
-Return-Path: <linux-kernel+bounces-870652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DA0C0B5E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:29:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91541C0B5EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A2D3B74FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:29:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 509364EC233
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103342F12C0;
-	Sun, 26 Oct 2025 22:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEE52FE586;
+	Sun, 26 Oct 2025 22:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YvIzxQ/6"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoLWbW05"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68CA48CFC
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA2425A2A5;
+	Sun, 26 Oct 2025 22:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761517767; cv=none; b=Tt1KHqtdZKh0AguvBOKPo7zbVHUOLNKaBnbOJ2L1m5tlGvrp3vb3KUmKNXGaqOpxKP3EZeh0kyVhHcHEXLeseIVB7x2u3bIjzbSWlVHyld/mEOp4SW11i811stVrcmQUYKIeIcFVAp7G8oxg4+WbgNedsizet/0H4N+rdsmW/eQ=
+	t=1761517806; cv=none; b=KDM2efJcLB2Rv7OwDev1JM1Yslqg4WJ40Ki/XWI+ZXKQ0C1IwZGczpC2VM88NzEMGTEu/zDovzOPQ2WsMSRwKe5uovV/AsMb40ofzCz9mxlV8h++s7+178OaaR89wcdTqjnmoDemIu7fgkGdNwbZ53GsVHzJw7rD+8RlcYRQI48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761517767; c=relaxed/simple;
-	bh=Y0P2AWqPYjaMFSx/E/QMTTsAvv5s6apFpZPwSBNhObU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=f+kkdSi6tU52mCE0SBfF95boem2kv88c6jTqvf4Tb4ySiI5aGL8+xt49kuILCzeBX9xkTHr35o16P8izo4LaI/us784xDUueGzp5k9zYq1sh/j31dU9RKSD74i5sip7Vj2ubW6+OzxTmVL89Xn+HRPsI07/JODAl1LpjN/HfHyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YvIzxQ/6; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-63c4999fa3dso277441a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 15:29:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761517764; x=1762122564; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=66iqL1wQDJrMjUMimUYRUQT7RhtIF8bdulrGmkclbmU=;
-        b=YvIzxQ/6U5c5SMq6JGippU091DZSzSWjnadHhpacIJ7VqbHw9AN0LAR0IvwlvM9tMr
-         oXmXMkgMwJ1EOWA9ONJePTVOKyRKrnr+af09vZ5KUVNiAQwGJQj3NgYMcT1LuX5jhrzU
-         497ZWhHo/1Hj27TeZPxisYH20CYUUTaXgcbxjzKatNFCAlJXXx+k6yV2mhGwF33awFY6
-         7eoJo5g3adCaxCopj/0cHbzY+mU2nWN8FnO4Bieel5mV+ihBkNs0uuKRMlih+rap3RMb
-         Kk25as94xVBi8AWrQA2viOJbHwo1xtoqWXOQj9W5ttDpaPHypJqlG49kXQNu7kuph2cJ
-         1xOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761517764; x=1762122564;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=66iqL1wQDJrMjUMimUYRUQT7RhtIF8bdulrGmkclbmU=;
-        b=LPZX+9fD/yB4BKqid/E6HeYeynX2tbBAJyDTcSjzV5w2MoTrBSbjAwJiZxEN2tJyh3
-         lD5LuUpQX26ITzsbYUd75qd/YbPYMIxB8ZKGD1dd2yECWDu8b24i3y/0UEYMC6tJnQrY
-         Rb7RZgbCeMNO5W8+W7KtWYvij2jWoj1k5VdzN1VYdpTGCAoPm5qKVh0EmX94//qo7QKu
-         jMg+7caQIbOrrvC1n76PlC5RuqyoJnME3t7n98lRGO6Jw3xwczF0E2WZtEqB+SUvXPpX
-         BVGxfsMXkXFu7gUWoBSrDxS18g0h/gOkN44hBYDOM2xDqvbEzg5le9s+D5VoR1pM3nv5
-         ppwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLmkAgTu4RTFaJxA3HRld8WtlhcptAG3ZEyXXSBqfejxC/86CERvBNaPjrMjd+SpZwflbfKHvJrrLa41Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl24s8isLw1cT9Z9fAlmIJc5TS52F3GJzJ3KG5hapb99Zh9Y4o
-	a5i2T/O+18iZnYhSBc9CeuqF8Y0vVC65DEtnKS8VaJR8GCHKS35zOazK4iObIrlLatl5u1MbOcG
-	bldd71ofuDoBYuQ==
-X-Google-Smtp-Source: AGHT+IEFiLJX44hMWNXHZC3Aih1gij7lk8DQBXxxJ2bwgJL5TDkN/S5/hEJ472CJdxkQKTEOJdcGAy+su2hzzQ==
-X-Received: from edf6.prod.google.com ([2002:a05:6402:21c6:b0:639:c8c6:de62])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:26d1:b0:63e:14c2:2818 with SMTP id 4fb4d7f45d1cf-63e14c22f06mr15645925a12.17.1761517763982;
- Sun, 26 Oct 2025 15:29:23 -0700 (PDT)
-Date: Sun, 26 Oct 2025 22:29:23 +0000
-In-Reply-To: <20251025114801.GWaPy48dhlZ_EVoqKi@fat_crate.local>
+	s=arc-20240116; t=1761517806; c=relaxed/simple;
+	bh=eUaUCjQL2k6wS3OJDAZjVm1LxinVF4MQDIbMPIkZImo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=anxAG8jKrJSu9OuIBYClrQsP8E2dVngtbMIgL7aklgQmbtagZTW2EyFui1/tRGjCqdwre4AanF9AiMa4odwqp/gNZIZ6z1d5MOihDiSyUH6yJKZg79hTiBgR3RunhNXeVQ3ThU/syaInlxL9/+ZYh1ticZ+KaMleI/00yntAp9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoLWbW05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA4CC4CEE7;
+	Sun, 26 Oct 2025 22:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761517803;
+	bh=eUaUCjQL2k6wS3OJDAZjVm1LxinVF4MQDIbMPIkZImo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BoLWbW05zU4pIUwztfJ+tTgW645Adsd1hDY2/nXoeTqEix25ASz63Imd3WS5Lnymn
+	 EzNwnXxnQk9S2vPGYfw80AewxsdqJl1O4nPpdH84AqH5WoJt3LCUGP5eDRysUyBhfk
+	 MD18a53LC0LIlCiXfQhvYjgfywOdUCFsjAWfvv6m1hM3nTMxY3kVb1HVBwFM6DL2vH
+	 q/wELZgw152e1ywIGcL8YEC7YkDhD4Xmr7B0KKERJWYEtTMJmGEXNyf9ZSmtzxLNKx
+	 JKGrYXQg+kE75mSSACHPkw1ockaAWz30fws7JkLAri775EBhrc/xaPlnYPSYKfMKFt
+	 vYUp0sM3IWcgQ==
+Date: Sun, 26 Oct 2025 17:30:00 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jascha Sundaresan <flizarthanon@gmail.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2] nvmem: layouts: u-boot-env: add optional "env-size"
+ property
+Message-ID: <176151779689.3048651.370574318472729306.robh@kernel.org>
+References: <20251022230740.200742-1-flizarthanon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
- <20250924-b4-asi-page-alloc-v1-3-2d861768041f@google.com> <20251025114801.GWaPy48dhlZ_EVoqKi@fat_crate.local>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDSLXKU87HTE.G0XUZ5BG5M8K@google.com>
-Subject: Re: [PATCH 03/21] x86/mm: factor out phys_pgd_init()
-From: Brendan Jackman <jackmanb@google.com>
-To: Borislav Petkov <bp@alien8.de>, Brendan Jackman <jackmanb@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, <peterz@infradead.org>, 
-	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>, 
-	<akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
-	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
-	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
-	<vbabka@suse.cz>, <x86@kernel.org>, <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022230740.200742-1-flizarthanon@gmail.com>
 
-On Sat Oct 25, 2025 at 11:48 AM UTC, Borislav Petkov wrote:
-> On Wed, Sep 24, 2025 at 02:59:38PM +0000, Brendan Jackman wrote:
->> +static unsigned long __meminit
->> +__kernel_physical_mapping_init(unsigned long paddr_start,
->> +			       unsigned long paddr_end,
->> +			       unsigned long page_size_mask,
->> +			       pgprot_t prot, bool init)
->> +{
->> +	bool pgd_changed;
->
-> I have to say, that pgd_changed is yuck but I don't have a better idea and
-> this has happened a long time ago anyway.
->
-> How about you have the caller pass in false:
->
-> 	bool pgd_changed = false;
->
-> and then callee sets it to true when it does so?
 
-Sure.
+On Thu, 23 Oct 2025 03:07:41 +0400, Jascha Sundaresan wrote:
+> Some devices reserve a larger NVMEM region for the U-Boot environment
+> than the actual environment data length used by U-Boot itself. The CRC32
+> in the U-Boot header is calculated over the smaller data length, causing
+> CRC validation to fail when Linux reads the full partition.
+> 
+> Allow an optional device tree property "env-size" to specify the
+> environment data size to use for CRC computation.
+> 
+> v2: add missing $ref line to DT binding
+> 
+> Signed-off-by: Jascha Sundaresan <flizarthanon@gmail.com>
+> ---
+> Changes in v2:
+>  - Added missing "$ref" line to schema for env-size
+>  - Confirmed dt_binding_check passes
+> 
+>  .../devicetree/bindings/nvmem/layouts/u-boot,env.yaml      | 7 +++++++
+>  drivers/nvmem/layouts/u-boot-env.c                         | 4 +++-
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
 
-Per Dave's feedback I am still slightly hopeful I can find a way to
-come in and refactor this code so that it's gets cleaner for you guys
-and then ASI becomes a natural addition. So far I don't come up with
-anything in init_64.c but I'm still planning to stare at set_memory.c a
-while longer and see if anything comes to mind. So maybe we'll be able
-to reduce the yuck factor a bit.
-
->> +	unsigned long paddr_last;
->
-> The tip-tree preferred ordering of variable declarations at the
-> beginning of a function is reverse fir tree order::
->
-> 	struct long_struct_name *descriptive_name;
-> 	unsigned long foo, bar;
-> 	unsigned int tmp;
-> 	int ret;
->
-> The above is faster to parse than the reverse ordering::
->
-> 	int ret;
-> 	unsigned int tmp;
-> 	unsigned long foo, bar;
-> 	struct long_struct_name *descriptive_name;
->
-> And even more so than random ordering::
->
-> 	unsigned long foo, bar;
-> 	int ret;
-> 	struct long_struct_name *descriptive_name;
-> 	unsigned int tmp;
-
-Ack
-
->> +
->> +	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
->> +				   prot, init, &pgd_changed);
->> +	if (pgd_changed)
->> +		sync_global_pgds((unsigned long)__va(paddr_start),
->> +				 (unsigned long)__va(paddr_end) - 1);
->> +
->> +	return paddr_last;
->> +}
->>  
->>  /*
->>   * Create page table mapping for the physical memory for specific physical
->> 
->> -- 
->> 2.50.1
->> 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
