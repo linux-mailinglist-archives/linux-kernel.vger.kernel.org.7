@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-870629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7203C0B51E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:06:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C77CC0B527
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3BB64E6C7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:06:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC9F7348D7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B271A264602;
-	Sun, 26 Oct 2025 22:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F32A277009;
+	Sun, 26 Oct 2025 22:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZH9WAhW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtXQqWaY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1098F1D514B;
-	Sun, 26 Oct 2025 22:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52F71D90DF;
+	Sun, 26 Oct 2025 22:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761516403; cv=none; b=QtmjSy9BbY0GvBEIXMaO9tSshMPtu1QJY6D7ajLpOBBCNxzGIyAQAwFfSjE4kMoOa2fJPoSPmrS1W3P2HY9lvcjq1Ean7dpogJwGPRAh7PuuQ5hq0jB7yDpzhSyzh24ct2CL+db9cunjvITnY3ljw890RthjGQivDgQxPWjeTKY=
+	t=1761516532; cv=none; b=iKkM60ZI01UKRqvWNI+lIi/qUHyPj/oCiwvp1Zvu4w8MBG4UfqjcXqwPsdsPLefZinW/hNqelW2094cG7mLNFdlNY8DvMF4l2WRFQ14rR4oriG32aCca9Zt9PKkvfnjzljQlrYZtPAImEf537o8PLJJOC0kwnpbqNTtUY2Hyx08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761516403; c=relaxed/simple;
-	bh=UqMmr/F/eCo9KBoDrSzO7OMu8cCTn9ncdfinzNm7c5M=;
+	s=arc-20240116; t=1761516532; c=relaxed/simple;
+	bh=fn4oj68D497iz81cigKaDwQEThcbsKJegLo2/Pz6azg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxEzCAnSbJMuY2gg4goWbi3NN3jtrLkoJZcnEMqpmqQukfyXHyqjDmogHFqHXbD3adXMr4FtWA0m8YCA3rNvsgZ9U/PosGDeeqDtPW9O3SJIzsKPYIL+XSkD82LeAobtQqMur2tM6eNmL8jGapQzOZUETH55ilB7nzdFFHqjMdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZH9WAhW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667F3C4CEE7;
-	Sun, 26 Oct 2025 22:06:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1smQIX0UQ3wSdi41M/MyDXcxk69NrBaXLvloVmxJTFOtXskT0FhCpMjA+7eoUmGzOe3uerkc0qt4ydGvqSSBb/mq2prbhTO4Zxt20R/E9xuoWArcBFxOUuPM+xrNawc8IDiQNm4kizdPXp1JFH0gownFXDpF0metxvWzBI6hG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtXQqWaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BDD9C4CEF7;
+	Sun, 26 Oct 2025 22:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761516402;
-	bh=UqMmr/F/eCo9KBoDrSzO7OMu8cCTn9ncdfinzNm7c5M=;
+	s=k20201202; t=1761516530;
+	bh=fn4oj68D497iz81cigKaDwQEThcbsKJegLo2/Pz6azg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kZH9WAhWXibLk49Ydl1GuQb+LDY4rXOxwLM2bN7HSOTidKpKRKUdDoNB+dEum5BTI
-	 fFMlEX5Jh2aCqOIV55zEnir05/jAeHYD9LyUVBR8QPMtRbjdxaOO9jztDSgTLzpu9i
-	 JGZ31Q56BwzwDJTTEWQhIxhwtTfPwm1j8wZ3s6K7E7noDIz+u/oLEcIsfQQbv8ZRUz
-	 4cIUsGbQvi2p0kQbLG2SSBTOiI71FbNakeiKa5DcNduDSiqPBTeIFB0L/GlqCUjDlx
-	 /57liXr4ONkel66a1fzPKHhsrSaXmR89wh9bIA9FldE1y3ZOtCiRAJE7HQHojp23Ci
-	 zDLvgHwm5tGwg==
-Date: Sun, 26 Oct 2025 17:06:40 -0500
+	b=YtXQqWaYL0d4rIc8JITJBw4GN2e4v9XyjsAlD7tkMLLyjp5ORu7ohZMBdHyZSzjXK
+	 WewjgtLwA6pzh9FDgWME4tcJ+bt94o4Ydm15D2hxP6942KFhFAEbHizyzTmcqNszj7
+	 pj0xbqLpiF0t4UWR4VJ7JHkGMtI8m4BSKrpvUt4WWBZHHjxUzstdR75IygAf0CIzpr
+	 Qwjpm3yPi6SEUlrjFAI2SgSZma8z50NCQlOwfQ8hS7Fehgll32qKtIp1jOShRW5jkx
+	 s3bW/PTZnRN+wBIVojxoZuZw3uIMyyB5yIhWK0Zl8i6iGZHl4toF8khYkiLTTK3V4W
+	 2cFBYHz9yrRpg==
+Date: Sun, 26 Oct 2025 17:08:48 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: gregkh@linuxfoundation.org, christophe.jaillet@wanadoo.fr,
-	linux-doc@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
-	rdunlap@infradead.org, pavel@kernel.org, devicetree@vger.kernel.org,
-	corbet@lwn.net, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lee@kernel.org
-Subject: Re: [PATCH v17 1/3] dt-bindings: leds: add TI/National Semiconductor
- LP5812 LED Driver
-Message-ID: <176151639828.3021418.5454356445251493268.robh@kernel.org>
-References: <20251021155927.140929-1-trannamatk@gmail.com>
- <20251021155927.140929-2-trannamatk@gmail.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+	Srinivas Kandagatla <srini@kernel.org>
+Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: qcom,sm8250: add QRB2210
+ soundcard
+Message-ID: <176151652614.3024086.8105515420763759094.robh@kernel.org>
+References: <20251022-qrb2210-qcm2290-sndcard-v2-0-32e9e269a825@linaro.org>
+ <20251022-qrb2210-qcm2290-sndcard-v2-1-32e9e269a825@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021155927.140929-2-trannamatk@gmail.com>
+In-Reply-To: <20251022-qrb2210-qcm2290-sndcard-v2-1-32e9e269a825@linaro.org>
 
 
-On Tue, 21 Oct 2025 22:59:25 +0700, Nam Tran wrote:
-> The LP5812 is a 4x3 RGB LED driver with an autonomous animation
-> engine and time-cross-multiplexing (TCM) support for up to 12 LEDs
-> or 4 RGB LEDs. It supports both analog (256 levels) and PWM (8-bit)
-> dimming, including exponential PWM for smooth brightness control.
+On Wed, 22 Oct 2025 04:58:49 +0100, Alexey Klimov wrote:
+> Add soundcard compatible for QRB2210 (QCM2290) SoCs, where the older
+> non-audioreach audio architecture is implemented.
 > 
-> Signed-off-by: Nam Tran <trannamatk@gmail.com>
+> Cc: Srinivas Kandagatla <srini@kernel.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
->  .../devicetree/bindings/leds/ti,lp5812.yaml   | 246 ++++++++++++++++++
->  MAINTAINERS                                   |   6 +
->  2 files changed, 252 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+>  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
