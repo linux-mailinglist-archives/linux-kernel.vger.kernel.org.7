@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-870416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1EEC0AB3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCFCC0AADC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 15:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55ABF18A1B09
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06B5189E9C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 14:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5335D2E92CF;
-	Sun, 26 Oct 2025 14:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCF52DF15E;
+	Sun, 26 Oct 2025 14:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCqrYxQx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQK1HyZB"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD841527B4;
-	Sun, 26 Oct 2025 14:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4F8187332
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 14:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761490254; cv=none; b=frktvhB4pS4eqrajmU1EdBDWRWHTpDPgXe+wUy6ePikrFSM5fMiMuimlnjOz8yOTftGfoCVnlc1K7r7svRSm4Kaa0ZkGecpt+2J2m/i8d5uf+NGX1HGyocb7QscKsJUiQIlj7BDEpj5F7UZCVqyL+u8HJUCkNgrX1BryP2hDEKE=
+	t=1761490171; cv=none; b=rpYd0ZCHTP19Rh4zeJvOk44vKV5KZ+0I4HZ8f8uBNFyOf12JK+pqnDLTpHP7CHJB/ZBwk2ECObkdXmQ58pTeqUj8JKpDnLoEMZArM+78DU3FFX9//FmnYWgwGagsC7UCNZhDwvPS4LAX4CM3DyT4bqwdVyVbenVmqXZJx/bYWyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761490254; c=relaxed/simple;
-	bh=tZ1b/j/xd1u/qe2VCxt/mPYUg7poWAV2HiZHY/okZbA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s5f9EYof9X7PZ04p6dTfZL1oVr/LubQT0G16x9lQkusYtMxG3shcpbnLadrJpVmlVYt+OvsZB7fpP0ILLTWmBOrVBO9c9jxYe7RjqcosGVm0/1SkrNAQQyLE6xKQrEvKto5TLztIcLYdlFd142IXMSBVIRXPF5BH1k0RCxm7qyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCqrYxQx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2482EC4CEE7;
-	Sun, 26 Oct 2025 14:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761490254;
-	bh=tZ1b/j/xd1u/qe2VCxt/mPYUg7poWAV2HiZHY/okZbA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LCqrYxQxmUvs67PQ1gnztDLpP6E7DtwEX/RUh+inS+saHLxYfIlXmlIz4FyeMLbsG
-	 7GDW0oxxljkLSzxM/fXJjnKD7RUhVk+HvVrI8Ljk528OMnjCpbQFa6w6T8GC4nW3Fx
-	 5EI6FSoPIr/BOls5HnRVI3owOGdmOSMCFFtX8sSMLdDYTg7e+eYiGQ2mk8q9Z7KUF5
-	 ygXnIRymU3ZIcKRg9FVILQe/kRcPYzhSCB215bQ9pZ2CvGBhRsW0y8FhF6V2wM8FA7
-	 5mIysJlWkpZym+sVxzKlPWqPpwvmYuDbY6LxD5n3iAKZQJwd2zzFzWPykeY98rGBfz
-	 vGkTSE2aSSjwg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Wei Liu <wei.liu@kernel.org>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	decui@microsoft.com,
-	daniel.lezcano@linaro.org,
-	tglx@linutronix.de,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17] clocksource: hyper-v: Skip unnecessary checks for the root partition
-Date: Sun, 26 Oct 2025 10:49:03 -0400
-Message-ID: <20251026144958.26750-25-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251026144958.26750-1-sashal@kernel.org>
-References: <20251026144958.26750-1-sashal@kernel.org>
+	s=arc-20240116; t=1761490171; c=relaxed/simple;
+	bh=acZ4e+1KY6LceXz3Koq9xdo6+VSQuOj1Oijaluceq6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M0QD3nfjiXF4rRWb39lL6rkiKRlFQibZ4noXnzHACic15hNtI9dyOmJ9PdWWq0FE8D1MHqyUo1zj4KrCYwjht4nIfBJ1krBhzFK85CCHRMHyToYdIs9rYZWh1NiJgBdTd3pHjGroM+ea5SXApAs+Hjszi/vCk/HxHweKRH5d0cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQK1HyZB; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-26987b80720so6589975ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 07:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761490169; x=1762094969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lb6ES41tqXu+5foRoOY9F6w8rssbd1JAOpMDC5HrpGE=;
+        b=RQK1HyZBMKWXja4erMaepxLlwIggQ1qE2zekGkybl/ApYejLYfC+yOFfiSS7LeobMj
+         7Xazwy20lIfV1CDZez+wH64HaeOhRT1vlupGADVHzZNLAPk22aegvVDXJJVN1VFrALB0
+         Bq7ZIlh3FcZE9jmt5Qz9NilV640S5FF9dXfY2EvnkhgwlMZIfTXw/wF4Nm+r1fjY6gTe
+         jWkOIDmh7Hf34IQPnqerLdwkF/cpIsLqWFR5fDSPShpoqAthG7Gl8YUOpw2ICMaXEkZ+
+         ursGZVOewBHqBWkP+KbDBieJ45yGHc2GMLUrhqxSIL4wI4tNK4kZu9dg8Ixs2ThNZF+a
+         +g1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761490169; x=1762094969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lb6ES41tqXu+5foRoOY9F6w8rssbd1JAOpMDC5HrpGE=;
+        b=WdlKu3iW1soEub+wzCVuzzGXliP8STbT6A9vZJRCuKU/AJysVOwWRUrfTCNxMLPLOB
+         /fcDsEa67A2xKntGXGAb/iKA01K45/9YNdKXf4b8tt2u+fvq2aNUtcVAU+0sEtAhk5lH
+         b6mSVuBMm+gLJQpFU4+Cj50N0boa24tl2XjvGBQEWqmvYmouef2FdiwowQ+UCBPOW5Ur
+         9b/wi6bmyKvGfUTv4qBU9gph9HQcBHZTca3tzGMYW+ig2kmOOHhhMnUYLtrPhvhtC6Ak
+         CX1KRopBXf09RiwJl0ixe9a4N7v70Jq8CLT0+JuTeGw9j4ZKIA62BFwU65Z9LOkUAzu1
+         TAMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZmrZMnZsyZ4ltWicQ69S5RA2sWvNZ24qthZbK2jbsvYFyPJf52e3UpdrxowjXowHOC5rxFnyukmvJ0VU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybOEaIgbyhVnP/FvWBt4Kaj64t7Tnfb7jyYCZE+7tCGwbZo/f6
+	VMzsAz9+jBNmHRSm1XBX5JC0k0OfiRtdJ6rwoRkwzxRl7YWVhqbX6jheX92+tRm3QsfIAH0ndhS
+	IHK2LraLDkzOQaL3kgzEmJbOwxywVI2A=
+X-Gm-Gg: ASbGncvZnkpTuX3RITN+yR/qvL2UVyNEYx+L512saK+KNc245ZytYLf6aeFjdzJ+Sv3
+	9Mp8vayhzuVrNAbVGaVseuw1fzBc+ubnT/d9IDQvocVE5JSwDk/b08kjH1qj1NAOsWos3PwdVkU
+	CQcnNH95QY5ClxeQB/ruBh5yIHxfZoWwe7shKBCZp4RHwAUAIA1sZPhC6bHU5W3kAFSud9bHmyD
+	gZ+CUpCsHNDVb9yKxLouztEzkV21ItAeiNxwSx2IF8DAJd6S1smdjd3Lc8/ue9JYrgrA+kEuSsM
+	31f2OOU8PtJK/mxyZ16ylkTztbYxShKZD31tMyGl6sSva4xvWXDT0V7mzGK4yKs5oPmlY1dydPP
+	4Oo7/DZPWm+sJ3g==
+X-Google-Smtp-Source: AGHT+IEbq1idU6mFUHaEkLHxYClYVOJgW4+NCUJadAvg7TkFzSAWnge1vJm7GcM3ks9O9zyxp995r9uERHVQy8bNrcs=
+X-Received: by 2002:a17:903:120b:b0:28e:aacb:e6f7 with SMTP id
+ d9443c01a7336-292d3e61e60mr119561235ad.3.1761490168926; Sun, 26 Oct 2025
+ 07:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.17.5
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <877bwkhfrr.fsf@t14s.mail-host-address-is-not-set>
+ <aPtGgNajcXKWpji0@google.com> <CANiq72=wkL_tfmStR1HYOBsyV5_o41YXTtUsCM5t+i80+urxxw@mail.gmail.com>
+ <20251026.221126.278291666422815679.fujita.tomonori@gmail.com>
+In-Reply-To: <20251026.221126.278291666422815679.fujita.tomonori@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 26 Oct 2025 15:49:16 +0100
+X-Gm-Features: AWmQ_bk1MM-IWjmjcUhQCFzYQ8EoO_-8B_XmoPKX-aSUCiL4ZygZDVzwkcDRXBs
+Message-ID: <CANiq72nVz64-8W4rYK=oyexMugW9YD7+eMGhcbf9W61kW7Y5tQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: add udelay() function
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: aliceryhl@google.com, a.hindborg@kernel.org, dakr@kernel.org, 
+	daniel.almeida@collabora.com, alex.gaynor@gmail.com, ojeda@kernel.org, 
+	anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu, gregkh@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Wei Liu <wei.liu@kernel.org>
+On Sun, Oct 26, 2025 at 2:11=E2=80=AFPM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> I've sent v3 with debug_assert! added.
+>
+> Is anyone currently working on pr_*_once? If I remember correctly,
+> there were a few proposals in the past, but they didn=E2=80=99t reach a
+> conclusion on how to implement it and never got merged.
 
-[ Upstream commit 47691ced158ab3a7ce2189b857b19c0c99a9aa80 ]
+Thanks Tomo -- I think the latest was:
 
-The HV_ACCESS_TSC_INVARIANT bit is always zero when Linux runs as the
-root partition. The root partition will see directly what the hardware
-provides.
+    https://lore.kernel.org/rust-for-linux/20241126-pr_once_macros-v4-0-410=
+b8ca9643e@tuta.io/
 
-The old logic in ms_hyperv_init_platform caused the native TSC clock
-source to be incorrectly marked as unstable on x86. Fix it.
-
-Skip the unnecessary checks in code for the root partition. Add one
-extra comment in code to clarify the behavior.
-
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Signed-off-by: Wei Liu <wei.liu@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-YES – this fix prevents Linux Hyper-V root partitions from unnecessarily
-downgrading their primary time source.
-
-- `mark_tsc_unstable()` is now gated by `!hv_root_partition()`
-  (`arch/x86/kernel/cpu/mshyperv.c:655`), so the native TSC is no longer
-  flagged as unreliable when the kernel is the Hyper-V root partition.
-  Without this, hosts always fell back to the slower Hyper-V reference
-  clock, hurting timekeeping and scheduler precision.
-- The Hyper-V clocksource ratings are lowered for either
-  `HV_ACCESS_TSC_INVARIANT` guests or root partitions
-  (`drivers/clocksource/hyperv_timer.c:566-569`). That ensures the
-  hardware TSC regains priority on hosts, matching what the platform
-  actually guarantees.
-- All new behaviour is tightly scoped to the root-partition path; guests
-  still see the old logic, so regression risk for common deployments is
-  negligible.
-- The change aligns the code with the documented hardware behaviour
-  (root partitions always see hardware invariant TSC) without
-  introducing new features, making it an appropriate stable fix. (On
-  older trees that still expose `hv_root_partition` as a global, this
-  needs the usual trivial adaptation.)
-
- arch/x86/kernel/cpu/mshyperv.c     | 11 ++++++++++-
- drivers/clocksource/hyperv_timer.c | 10 +++++++++-
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index c78f860419d69..25773af116bc4 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -565,6 +565,11 @@ static void __init ms_hyperv_init_platform(void)
- 	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
- #endif
- #endif
-+	/*
-+	 * HV_ACCESS_TSC_INVARIANT is always zero for the root partition. Root
-+	 * partition doesn't need to write to synthetic MSR to enable invariant
-+	 * TSC feature. It sees what the hardware provides.
-+	 */
- 	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
- 		/*
- 		 * Writing to synthetic MSR 0x40000118 updates/changes the
-@@ -636,8 +641,12 @@ static void __init ms_hyperv_init_platform(void)
- 	 * TSC should be marked as unstable only after Hyper-V
- 	 * clocksource has been initialized. This ensures that the
- 	 * stability of the sched_clock is not altered.
-+	 *
-+	 * HV_ACCESS_TSC_INVARIANT is always zero for the root partition. No
-+	 * need to check for it.
- 	 */
--	if (!(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
-+	if (!hv_root_partition() &&
-+	    !(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
- 		mark_tsc_unstable("running on Hyper-V");
- 
- 	hardlockup_detector_disable();
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index 2edc13ca184e0..10356d4ec55c3 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -549,14 +549,22 @@ static void __init hv_init_tsc_clocksource(void)
- 	union hv_reference_tsc_msr tsc_msr;
- 
- 	/*
-+	 * When running as a guest partition:
-+	 *
- 	 * If Hyper-V offers TSC_INVARIANT, then the virtualized TSC correctly
- 	 * handles frequency and offset changes due to live migration,
- 	 * pause/resume, and other VM management operations.  So lower the
- 	 * Hyper-V Reference TSC rating, causing the generic TSC to be used.
- 	 * TSC_INVARIANT is not offered on ARM64, so the Hyper-V Reference
- 	 * TSC will be preferred over the virtualized ARM64 arch counter.
-+	 *
-+	 * When running as the root partition:
-+	 *
-+	 * There is no HV_ACCESS_TSC_INVARIANT feature. Always lower the rating
-+	 * of the Hyper-V Reference TSC.
- 	 */
--	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
-+	if ((ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) ||
-+	    hv_root_partition()) {
- 		hyperv_cs_tsc.rating = 250;
- 		hyperv_cs_msr.rating = 245;
- 	}
--- 
-2.51.0
-
+Cheers,
+Miguel
 
