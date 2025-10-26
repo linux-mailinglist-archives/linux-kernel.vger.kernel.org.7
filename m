@@ -1,87 +1,121 @@
-Return-Path: <linux-kernel+bounces-870446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC6C0AD52
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:26:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E52C0AD67
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 17:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7E618962CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45282188D935
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 16:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0015D218EB1;
-	Sun, 26 Oct 2025 16:26:09 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC509146593;
+	Sun, 26 Oct 2025 16:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owbCws9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D74C1A3164
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 16:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6EF21257E;
+	Sun, 26 Oct 2025 16:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761495969; cv=none; b=DpOJZPg3359ojXaeZeHv/sYJ879kPzKfmUALrHmyoQAAh6g0bAgWUtiqEblsWzuwuENkps+QDB8U0HKHK4QNn6mHYbVdAL/jie8Jlqs/UZ6FAJrh7fLmgPY14c9rCj1ftzOsU0SGRiGv5oHxnGCgZ0z5I1YNHgQtqaMclgZ4YaA=
+	t=1761496026; cv=none; b=oVtFKSOUClu+HfPxQD+uDf5uGPzQYDGaZQ7bQrLihq23k4Rmbmnx0SY2BreZ2JStZNX5b066VTYIy3ax9ZES7STJH3LXuVbkkSdcb6ydh2Z7PEx7Lpxv1kIqGaxaimwCsH7DH5IX9vrLvSUwnqlS6mD6gwMHTy1SUrQmJVrgWBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761495969; c=relaxed/simple;
-	bh=L2OQ9nFN/WtDFuWejs5yV+5/Igcos50FlX0Aqd/rkSI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fOEmtpmxyzURUKBPt4Qkh9FluXIjsmcjJ3GpWeReaE/gAVImuCy1VCXAacwRDOzOoXOFOv68vhTJehelIiwrcO9tHp2Q9Gilu/YEOEx59RCRTDdpeSUJ3ESLo8vGvDYFGz/W8uTEajejtTYLZY1R8YslzAxS+an9pZ3H8gdHGv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430afaea1beso49338965ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:26:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761495965; x=1762100765;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pCJN6/lgLt/AfwJKPwFs5gCvPc90cICUUWyW6Li3B6Y=;
-        b=Q0nZidtkGmTvGg0rDvN9tT99KIEGbzjNgrscdYugbQofNDPobhYYN/WkMOWP3fx72x
-         5Xzm3y0Gu8cQbP7sSJcCtxwHd+yOSJu7raRv0ErEdBWjz5W4TCt6kcZwzD6I3wc/WCRo
-         8XebyfVT0zFNq1qAWUkpoyTkoal1OAEnj/T3kM8cloTh1C6Tk07i12GTJdveOKZ3GqAG
-         9GyWTLjDQs6MKnZwkXKPV9uo/zDpm4LR53d5mnhHmtVuQa5PJm6p2MQ6Af8bYLrzUCSL
-         PPa5EG6OYt+Lkhnsey5GZGEWrzCLb6ClvjGJ449gEdYPH6m1U+exJA0MpfjIWs+Yi2sM
-         4lSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1cy6YzcTo1mWrn3/5Fcsd/fZAWAj88W8/uWJcxM9qL1ZJvupLgIHhcQyRLtFdcdtpH8lKl3Fgnbr/mTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0QaIaT9k+oueZLKGqo2E+T04Zb8j7KJz2uqM7XP7zV1ZMywu4
-	DbjA2uByW2H6dbAeBLpQHJtJQT6/nqaClY/92w4fL5GwQ90pk61dFfo6/5zgcqpw2qkuB4quUKI
-	3Cd0lRKuw1Phm8a2QNTARfRFY5+m5tpkv7C6cPNZfmT/CY1KjniucXDQdwc0=
-X-Google-Smtp-Source: AGHT+IH52psLEnDOZJSiEcCStoHiiJLLXvL2QIYffQxCD2Yjkp6ahcD2w+bzkWQts8kgQjeoH3A469n6jWlGRIMvzzTZdGoR3U4u
+	s=arc-20240116; t=1761496026; c=relaxed/simple;
+	bh=TdXB0ISYKRIWJDthOnWDF2K3IYL33xlQ6qaCJWuJLtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sTZZ1+R9RqQR8n9Iz6bcEaL4kL3qG9LCHQwnqKgoVUhagAyhuu6O5iQQ3d+UEORSq+SszGr3UUQj8Q7DecenNmGF+ms05pTTPbWd1hP/L98KM8KBrbllEK5xJDcW+23CPynl51QhT1ZXZWXgtn9LywwwvA3ksRgV05DtQTu+XZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owbCws9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC028C4CEE7;
+	Sun, 26 Oct 2025 16:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761496025;
+	bh=TdXB0ISYKRIWJDthOnWDF2K3IYL33xlQ6qaCJWuJLtg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=owbCws9Bly4XdsayCFHdJJ3LbvAip0EhZCwRgFaL+Q7NnD/OHG7BgveJm5OAafii0
+	 y2ROBq2KYqF7+gYWdtSDLV2uqyE8fNkva8+HQAnQXlGJpK4T7ktSGWTTUFZJBx/f1R
+	 +De9Ly1Lg/j8okaQLElC9inVclaqV8y5lTn2+6jeinIxRxW3hyJp1PdTsrbn7846XF
+	 wwXTikCd46jSGbyVudxF79PQKmljZ+SfT/ncWLWjjdOuSWyjaWGFaNjdINHblNnwmM
+	 /ewQc6duT1RpFFUx8HEZFs1y4CfTRoGUNBAE7Y+Inpnhp/XLNi6yFPohRHMS0GemQY
+	 ZC4DVxeyXhFUw==
+Message-ID: <f6535596-fdc5-4076-a925-26cecf25eacb@kernel.org>
+Date: Sun, 26 Oct 2025 17:27:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd82:0:b0:426:39a:90f1 with SMTP id
- e9e14a558f8ab-430c527dc54mr487007405ab.18.1761495965106; Sun, 26 Oct 2025
- 09:26:05 -0700 (PDT)
-Date: Sun, 26 Oct 2025 09:26:05 -0700
-In-Reply-To: <CAPqLRf3LgEErOjV3V2A6XsaBL=fvhGPFooXWSv4Vt2Q6juWGXQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fe4b9d.050a0220.32483.000d.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_hdr (3)
-From: syzbot <syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com>
-To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: vendor-prefixes: Add NineTripod
+To: Coia Prant <coiaprant@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251026150358.1078453-1-coiaprant@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251026150358.1078453-1-coiaprant@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 26/10/2025 16:03, Coia Prant wrote:
+> Add NineTripod to the vendor prefixes.
+> 
+> Signed-off-by: Coia Prant <coiaprant@gmail.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
-Tested-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
+Please slow down sending the same. One patchset per 24h.
 
-Tested on:
+None of these have changelog, so I do not get why you send v4 now.
 
-commit:         72761a7e Merge tag 'driver-core-6.18-rc3' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=122a1e7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8e9002258a92a7b
-dashboard link: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13ba93cd980000
-
-Note: testing is done by a robot and is best-effort only.
+Best regards,
+Krzysztof
 
