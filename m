@@ -1,279 +1,254 @@
-Return-Path: <linux-kernel+bounces-870663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC37AC0B654
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:49:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E99DC0B660
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 558404EDB66
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:46:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A3F04E701C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3957C2FF65C;
-	Sun, 26 Oct 2025 22:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87F32FF654;
+	Sun, 26 Oct 2025 22:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KwNiD+IG"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ZDHVJXcb"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CB14386D;
-	Sun, 26 Oct 2025 22:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944401BC5C;
+	Sun, 26 Oct 2025 22:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761518766; cv=none; b=AKTJSJABhDDIsdHaa8t1GYJulbXu9v+trB+0TppuwU9WuHHx36p16IB24BF2LcssujH50cdGgGQC7Ik8SQTUgh4jQ3q6D2lxwKxY8JPeJ+G+g/7hd+fpymWDGsaImwu3AQRfjPXYZbQ0pvkih/T/qA5uCGQYeZJYvjM35kkSZ+U=
+	t=1761518999; cv=none; b=hCCcjG70EvML7ei52FOMQKVsoWHjO/U/0ZxSqY/qCMPyKasYHd5Gsn7DcisA+FTPadywdxjB+/2fxqZy8oebCF2SiGdb22lZz+i8q7rCR7TXlEDINULG+yJrd2XhXb8io3w0REDrUS4bxXrL2i77I+LjtVHNcEHCgIfLk/v9AHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761518766; c=relaxed/simple;
-	bh=le2xvwUqcISaoyhG2EPX1Cz0XWb2oeqygji2ZzpAk7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XcuL0KxYs+hU2c6oSpH31osi3aDvVU6f/U8foM9nZVOrWttDpVjqTWfDr+35UTgK/mJvjIEfeSznFLucS06MG+x6x3bsYctazR81EeAtge1yJQfkGOLYPH/wT8aDqmipwMlSBbHMX9IhVz69J7YiCbCCvki6tIAr8HLMuZ++AHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KwNiD+IG; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=rCRAutHedepxoaqlhY+trKzO9H8TOhlVc7iMT1F8fAg=; b=KwNiD+IGxwgKKhX16mI1eZHUh2
-	+qV/XAxGesDYhgRsnt2HcXLX4Su+mon9piSbab4X7mMb9nECfPXumu5ZOAHQFlHVi55d5Ac6IUFSD
-	sYAbqwrsG5pTZTKhnd2gaOVAg6/ZAs2S604YYHDR0VhCbEjfH07FmJQrfLecv3kH4FIMsJU5oDIQP
-	9Ul51L64PufdveiYueEyDiv3sJviQlwR0jnfsC7StNNMDeEMF38Ga1/tzxu5498agx2qmSpPwCM2v
-	9pzyXA7lDZ5IxK/phN0fKvxmw4gzrOzf3KvdSp32mqcTtmnXD96KkaqhGyytw/sbR8AvWudQGm6Nn
-	LB29r/gg==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vD9Uu-0000000CpNa-25U1;
-	Sun, 26 Oct 2025 22:46:00 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-usb@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 2/2] usb: mtu3: fix invalid kernel-doc in mtu3.h
-Date: Sun, 26 Oct 2025 15:45:58 -0700
-Message-ID: <20251026224558.826143-2-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251026224558.826143-1-rdunlap@infradead.org>
-References: <20251026224558.826143-1-rdunlap@infradead.org>
+	s=arc-20240116; t=1761518999; c=relaxed/simple;
+	bh=Cc4df0JjIO6+tnwwuyIYnFiRL2z4izoA0MZNKQ8hkOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CasBYZWUx+WJ018mgs6YB7nqb7L3JV1ptNQQK/LN7/onxs0/AxpqWK3byoZCV3lxSOxTAH9lYqvZYcKUEK4GN9nEjw45wFIPusVwkyh9Coy3asQ9/3/k6W4snrTfEcQqPRMed3hiqJdUx6SpgbQHCAOHF2LngGis++6Hxoj1F3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ZDHVJXcb; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1761518987; x=1762123787; i=w_armin@gmx.de;
+	bh=GDn9s7baFendtkmgnn14F/wdoN29Rbr+Rfjd5IqSGU8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZDHVJXcbBsuSGSbJ5GV6Jruzf8UCcJGj+ORfPSxU6Je77xvY5GYtw4bXd4narUvC
+	 LhoazZ28RIwbSpyycVY/Ge9749TTVZiSMp823VB/blU9+cZDxTbghyBrgs7k8Dhe8
+	 +ytRBL3CPuoJ9C8+yfOwiiQkEQ6AtR2sXevlSCkBOujfq8XIpelR0vYzv20Q5RH12
+	 1pRwrx2oVLPEYQsyLxjwh2LipKyL8KLAigQI/MbgrI3W7Ry+V2FRB67KdSGVRzQzS
+	 elsns3E4tOiyj23eIiGQotMrlaP8y8ilT0uM/csIU0maBxQwieu2eDYAB64CxMxhS
+	 yK2iRbDjDco2kjFAzw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M7sHy-1v8DsX0B3i-006Oi8; Sun, 26
+ Oct 2025 23:49:47 +0100
+Message-ID: <63f0221d-4436-4d1e-a933-8b12f392cac6@gmx.de>
+Date: Sun, 26 Oct 2025 23:49:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Derek John Clark <derekjohn.clark@gmail.com>,
+ =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+References: <20251015084414.1391595-1-lkml@antheas.dev>
+ <20251015084414.1391595-7-lkml@antheas.dev>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20251015084414.1391595-7-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gcKzcIEb+PthSasSIUnOzPTXRG2+7MY0m8fG3V4qukWQZuV/oFJ
+ 5u5nQ2PDM3jkn52mQybM9gWbURyvRSoqPOiUWj3H+v+UV6b998fplCwIQna/YmfH/eFC7KS
+ Bj4OgrMt2ltYV+g1pMU3boR9FUww5E+dSQYzs/1W1Rr4IxVnmCNUK2dWqA7ef4Ffhu86iHR
+ a+G5P9gktTCRqHcf1/G2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wp7F/RXudSo=;fyE6CdDXYW4hDYRgL8djVhouj3P
+ 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
+ UoMQt0Yze2K09Tr7HuShE6AS3OxI5g2wT0U=
 
-Fix unconventional kernel-doc lines to avoid warnings.
-Summary of changes:
+Am 15.10.25 um 10:44 schrieb Antheas Kapenekakis:
 
-- change non-kernel-doc comments from "/**" to "/*"
-- add "enum <enum-name> - short description" for undescribed enums
-- use leading '@' for describing enum members and struct members
-- add "struct <struct-name> - short description" for undescribed structs
+> The Ayaneo EC resets after hibernation, losing the charge control state.
+> Add a small PM hook to restore this state on hibernation resume.
+>
+> The fan speed is also lost during hibernation, but since hibernation
+> failures are common with this class of devices, setting a low fan speed
+> when the userspace program controlling the fan will potentially not
+> take over could cause the device to overheat, so it is not restored.
 
+I am still not happy with potentially breaking fancontrol on this device.
+Most users expect fancontrol to continue working after hibernation, so not
+restoring the fan speed configuration seems risky to me. Would it be enoug=
+h
+to warn users about his inside the documentation?
 
-Repair and remove invalid or unconventional lines in mtu3.h:
+>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/platform/x86/ayaneo-ec.c | 42 ++++++++++++++++++++++++++++++++
+>   1 file changed, 42 insertions(+)
+>
+> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/aya=
+neo-ec.c
+> index 73e9dd39c703..8529f6f8dc69 100644
+> --- a/drivers/platform/x86/ayaneo-ec.c
+> +++ b/drivers/platform/x86/ayaneo-ec.c
+> @@ -37,6 +37,8 @@
+>   #define AYANEO_MODULE_LEFT	BIT(0)
+>   #define AYANEO_MODULE_RIGHT	BIT(1)
+>  =20
+> +#define AYANEO_CACHE_LEN	1
+> +
+>   struct ayaneo_ec_quirk {
+>   	bool has_fan_control;
+>   	bool has_charge_control;
+> @@ -47,6 +49,8 @@ struct ayaneo_ec_platform_data {
+>   	struct platform_device *pdev;
+>   	struct ayaneo_ec_quirk *quirks;
+>   	struct acpi_battery_hook battery_hook;
+> +
+> +	u8 cache[AYANEO_CACHE_LEN];
+>   };
+>  =20
+>   static const struct ayaneo_ec_quirk quirk_fan =3D {
+> @@ -464,10 +468,48 @@ static int ayaneo_ec_probe(struct platform_device =
+*pdev)
+>   	return 0;
+>   }
+>  =20
+> +static int ayaneo_freeze(struct device *dev)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	struct ayaneo_ec_platform_data *data =3D platform_get_drvdata(pdev);
+> +	int ret, i =3D 0;
+> +
+> +	if (data->quirks->has_charge_control) {
+> +		ret =3D ec_read(AYANEO_CHARGE_REG, &data->cache[i]);
+> +		if (ret)
+> +			return ret;
+> +		i++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ayaneo_thaw(struct device *dev)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	struct ayaneo_ec_platform_data *data =3D platform_get_drvdata(pdev);
+> +	int ret, i =3D 0;
+> +
+> +	if (data->quirks->has_charge_control) {
+> +		ret =3D ec_write(AYANEO_CHARGE_REG, data->cache[i]);
+> +		if (ret)
+> +			return ret;
+> +		i++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops ayaneo_pm_ops =3D {
+> +	.freeze =3D ayaneo_freeze,
+> +	.thaw =3D ayaneo_thaw,
+> +};
+> +
+>   static struct platform_driver ayaneo_platform_driver =3D {
+>   	.driver =3D {
+>   		.name =3D "ayaneo-ec",
+>   		.dev_groups =3D ayaneo_ec_groups,
+> +		.pm =3D &ayaneo_pm_ops,
 
-(This list is a combination of warnings from the old kernel-doc.pl and
-the new kernel-doc.py scripts. This combo provides better coverage
-of all problems.)
+Please use pm_sleep_ptr() here.
 
-mtu3.h:69: warning: This comment starts with '/**', but isn't a
- kernel-doc comment.
- * IP TRUNK version
-mtu3.h:69: warning: missing initial short description on line:
- * IP TRUNK version
-mtu3.h:78: warning: This comment starts with '/**', but isn't a
- kernel-doc comment.
- * Normally the device works on HS or SS, to simplify fifo management,
-mtu3.h:78: warning: missing initial short description on line:
- * Normally the device works on HS or SS, to simplify fifo management,
-mtu3.h:89: warning: This comment starts with '/**', but isn't
- a kernel-doc comment.
- * Maximum size of ep0 response buffer for ch9 requests,
-mtu3.h:89: warning: missing initial short description on line:
- * Maximum size of ep0 response buffer for ch9 requests,
-mtu3.h:106: warning: Cannot understand  * @MU3D_EP0_STATE_SETUP: waits for
- SETUP or received a SETUP
- on line 106 - I thought it was a doc line
-mtu3.h:130: warning: cannot understand function prototype:
- 'enum mtu3_dr_force_mode'
-mtu3.h:137: warning: Cannot understand  * @base: the base address of fifo
- on line 137 - I thought it was a doc line
-mtu3.h:148: warning: missing initial short description on line:
- * General Purpose Descriptor (GPD):
-mtu3.h:174: warning: cannot understand function prototype:
- 'struct qmu_gpd'
-mtu3.h:189: warning: cannot understand function prototype:
- 'struct mtu3_gpd_ring'
-mtu3.h:198: warning: Cannot understand * @vbus: vbus 5V used by host mode
- on line 198 - I thought it was a doc line
-mtu3.h:225: warning: Cannot understand  * @mac_base: register base address
- of device MAC, exclude xHCI's
- on line 225 - I thought it was a doc line
-mtu3.h:275: warning: cannot understand function prototype: 'struct mtu3_ep'
+Thanks,
+Armin Wolf
 
-Warning: drivers/usb/mtu3/mtu3.h:135 Enum value 'MTU3_DR_FORCE_NONE'
- not described in enum 'mtu3_dr_force_mode'
-Warning: drivers/usb/mtu3/mtu3.h:135 Enum value 'MTU3_DR_FORCE_HOST'
- not described in enum 'mtu3_dr_force_mode'
-Warning: drivers/usb/mtu3/mtu3.h:135 Enum value 'MTU3_DR_FORCE_DEVICE'
- not described in enum 'mtu3_dr_force_mode'
-Warning: drivers/usb/mtu3/mtu3.h:270 Cannot find identifier on line:
- * @fifo_size: it is (@slot + 1) * @fifo_seg_size
-Warning: drivers/usb/mtu3/mtu3.h:271 Cannot find identifier on line:
- * @fifo_seg_size: it is roundup_pow_of_two(@maxp)
-Warning: drivers/usb/mtu3/mtu3.h:272 Cannot find identifier on line:
- */
-Warning: drivers/usb/mtu3/mtu3.h:273 Cannot find identifier on line:
-struct mtu3_ep {
-Warning: drivers/usb/mtu3/mtu3.h:274 Cannot find identifier on line:
-        struct usb_ep ep;
-Warning: drivers/usb/mtu3/mtu3.h:275 Cannot find identifier on line:
-        char name[12];
-Warning: drivers/usb/mtu3/mtu3.h:276 missing initial short description
- on line:
-        struct mtu3 *mtu;
-
-
-This removes all of the invalid/unconventional kernel-doc attempts but
-still leaves quite a few struct members in structs ssusb_mtk, mtu3_ep,
-and mtu3 without kernel-doc descriptions.
-
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
----
- drivers/usb/mtu3/mtu3.h |   32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
-
---- linux-next.orig/drivers/usb/mtu3/mtu3.h
-+++ linux-next/drivers/usb/mtu3/mtu3.h
-@@ -65,7 +65,7 @@ struct mtu3_request;
- #define MTU3_U3_IP_SLOT_DEFAULT 2
- #define MTU3_U2_IP_SLOT_DEFAULT 1
- 
--/**
-+/*
-  * IP TRUNK version
-  * from 0x1003 version, USB3 Gen2 is supported, two changes affect driver:
-  * 1. MAXPKT and MULTI bits layout of TXCSR1 and RXCSR1 are adjusted,
-@@ -74,7 +74,7 @@ struct mtu3_request;
-  */
- #define MTU3_TRUNK_VERS_1003	0x1003
- 
--/**
-+/*
-  * Normally the device works on HS or SS, to simplify fifo management,
-  * divide fifo into some 512B parts, use bitmap to manage it; And
-  * 128 bits size of bitmap is large enough, that means it can manage
-@@ -85,7 +85,7 @@ struct mtu3_request;
- #define MTU3_FIFO_BIT_SIZE		128
- #define MTU3_U2_IP_EP0_FIFO_SIZE	64
- 
--/**
-+/*
-  * Maximum size of ep0 response buffer for ch9 requests,
-  * the SET_SEL request uses 6 so far, and GET_STATUS is 2
-  */
-@@ -103,6 +103,7 @@ enum mtu3_speed {
- };
- 
- /**
-+ * enum mtu3_g_ep0_state - endpoint 0 states
-  * @MU3D_EP0_STATE_SETUP: waits for SETUP or received a SETUP
-  *		without data stage.
-  * @MU3D_EP0_STATE_TX: IN data stage
-@@ -121,11 +122,12 @@ enum mtu3_g_ep0_state {
- };
- 
- /**
-- * MTU3_DR_FORCE_NONE: automatically switch host and peripheral mode
-+ * enum mtu3_dr_force_mode - indicates host/OTG operating mode
-+ * @MTU3_DR_FORCE_NONE: automatically switch host and peripheral mode
-  *		by IDPIN signal.
-- * MTU3_DR_FORCE_HOST: force to enter host mode and override OTG
-+ * @MTU3_DR_FORCE_HOST: force to enter host mode and override OTG
-  *		IDPIN signal.
-- * MTU3_DR_FORCE_DEVICE: force to enter peripheral mode.
-+ * @MTU3_DR_FORCE_DEVICE: force to enter peripheral mode.
-  */
- enum mtu3_dr_force_mode {
- 	MTU3_DR_FORCE_NONE = 0,
-@@ -134,6 +136,7 @@ enum mtu3_dr_force_mode {
- };
- 
- /**
-+ * struct mtu3_fifo_info - HW FIFO description and management data
-  * @base: the base address of fifo
-  * @limit: the bitmap size in bits
-  * @bitmap: fifo bitmap in unit of @MTU3_EP_FIFO_UNIT
-@@ -145,7 +148,7 @@ struct mtu3_fifo_info {
- };
- 
- /**
-- * General Purpose Descriptor (GPD):
-+ * struct qmu_gpd - General Purpose Descriptor (GPD):
-  *	The format of TX GPD is a little different from RX one.
-  *	And the size of GPD is 16 bytes.
-  *
-@@ -179,11 +182,13 @@ struct qmu_gpd {
- } __packed;
- 
- /**
--* dma: physical base address of GPD segment
--* start: virtual base address of GPD segment
--* end: the last GPD element
--* enqueue: the first empty GPD to use
--* dequeue: the first completed GPD serviced by ISR
-+* struct mtu3_gpd_ring - GPD ring descriptor
-+* @dma: physical base address of GPD segment
-+* @start: virtual base address of GPD segment
-+* @end: the last GPD element
-+* @enqueue: the first empty GPD to use
-+* @dequeue: the first completed GPD serviced by ISR
-+*
- * NOTE: the size of GPD ring should be >= 2
- */
- struct mtu3_gpd_ring {
-@@ -195,6 +200,7 @@ struct mtu3_gpd_ring {
- };
- 
- /**
-+* struct otg_switch_mtk - OTG/dual-role switch management
- * @vbus: vbus 5V used by host mode
- * @edev: external connector used to detect vbus and iddig changes
- * @id_nb : notifier for iddig(idpin) detection
-@@ -222,6 +228,7 @@ struct otg_switch_mtk {
- };
- 
- /**
-+ * struct ssusb_mtk - SuperSpeed USB descriptor (MTK)
-  * @mac_base: register base address of device MAC, exclude xHCI's
-  * @ippc_base: register base address of IP Power and Clock interface (IPPC)
-  * @vusb33: usb3.3V shared by device/host IP
-@@ -268,6 +275,7 @@ struct ssusb_mtk {
- };
- 
- /**
-+ * struct mtu3_ep - common mtu3 endpoint description
-  * @fifo_size: it is (@slot + 1) * @fifo_seg_size
-  * @fifo_seg_size: it is roundup_pow_of_two(@maxp)
-  */
+>   	},
+>   	.probe =3D ayaneo_ec_probe,
+>   };
 
