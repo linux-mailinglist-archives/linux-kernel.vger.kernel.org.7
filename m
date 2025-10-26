@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-870633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E504DC0B545
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2854C0B55A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CD81890093
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704BA189FE87
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A25E283159;
-	Sun, 26 Oct 2025 22:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53C72FFDFE;
+	Sun, 26 Oct 2025 22:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N3fUNtwK"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YwrHTdFG"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0851E1D90DF;
-	Sun, 26 Oct 2025 22:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE2C2FFDDB;
+	Sun, 26 Oct 2025 22:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761516729; cv=none; b=BkUcL7GnFeavVvk1PlUrycagE/8QzXcV+/qZpIIY/NnOeD0DUmtXF/A5mzPXMg+wd8iH8EGRaF3S9sV5+CQ9xqcjZV+vRASQdbrXB16HN9XqkOAQcr2kAlCpowRllexREHDR3Bxp/VvXJkeuHXa3GZN4ekqRFHgpEg+fmxfuRJw=
+	t=1761516792; cv=none; b=rDIg7emuv1ganSr5N0k2A5nBM7YaMZScF/gyLwZ5s2f80iH5e7cSj6tKg6+YxNOuLZh5G2Uu1aJS8jQDBuPymjohtWGesz9rpoh44EHH3fhYluno2zEntwWurek68a7ygIwf0EJPSRdMJuhK1oVp19F+BEjJj77aKTS+fovRUPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761516729; c=relaxed/simple;
-	bh=2FItP0Jr2f51sPq6GWmj36Vulpiy8YWMunvCKYHvpME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuW9d/Hqt9LLo4NC0LrjcXZpFwHnC9TN893nN7KVp6OM+HhOS0k8WSHq4FJ+g47wvKhHA8+gCL2Gu6AE+BLsFrt/02GopgbZU87mFnpKicNYDONSCqW3UaTfZE2vIxRTNqFeTwP6Oj1swCFKsBE8K3lWtqf58QFY5g9mLw7N3oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N3fUNtwK; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id DD2EA1F0E;
-	Sun, 26 Oct 2025 23:10:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761516618;
-	bh=2FItP0Jr2f51sPq6GWmj36Vulpiy8YWMunvCKYHvpME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N3fUNtwKJBmAVHGQzv0Xh1/8neLjL3T4tJVOxQHLUNcOEiS5jmGXuIdzTm4lq8aTV
-	 mL5SyqSe9TKkk67L5lzXHsmls9HbvezFzy7lF1VhlzJBrRso+NDiXmXSzYmsBSN1Rr
-	 08yIf6p1xYtyQ/nwbMmAz1lhZwQuMXaMAa2abYmE=
-Date: Mon, 27 Oct 2025 00:11:49 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Guoniu Zhou <guoniu.zhou@oss.nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Guoniu Zhou <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH 2/3] media: nxp: imx8-isi: Keep the default value for
- BLANK_PXL field
-Message-ID: <20251026221149.GH13023@pendragon.ideasonboard.com>
-References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
- <20251024-isi_imx95-v1-2-3ad1af7c3d61@nxp.com>
- <aPuCHltyz9Ed7wcF@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1761516792; c=relaxed/simple;
+	bh=+3MHllPtkDlO+i7Q0aTwO0Ol0PB1Jxkj/Fyjjy8PSZo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=mYgu9GRC8JmE1L08b5bK0shLt+6zBd3Qj3tZ9VgFahLgbdwpoaRwXqbiZVuMO33lbivBUIc7nfbR2YXLjvAkLC/8VK/GCY4Rnb1kP5r2z4GcXLKZaANQuhqONuMV/Mcz9ttRyHSCr8uxuCTF5rCRNRYnknUDBL71JAKyD07g4I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YwrHTdFG; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:8257:f1ab:878e:498b])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59QMCFpK548264
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Sun, 26 Oct 2025 15:12:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59QMCFpK548264
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1761516739;
+	bh=hARM3PE/fySirCrpK2SHSPeP8s1QBdwnxki1irso0xA=;
+	h=From:To:Subject:Date:From;
+	b=YwrHTdFGutRUx90/3B5amccAgoA86Ywn5oKY2a1/73I9q4dCtNWFpC///grkBBBxf
+	 fgsWQgWkkv2/Q3gDhTPmHrU2jzuQx8pq6uKG9SFrRzNfT1FsHEgyxW85HPHYWdfIET
+	 C9VaH9oK1F21V3W0/hUugRafKf9tjZA6lfEdCXEnLMYSJwNnVFU+FSWuAyCW05WESS
+	 Noicu5hfJsZ2/Ykff7opO6FrSS+zEXQcwBAAR7ep4LzvOmkiHd9TRtv7nrICWwA+NH
+	 TH7PqxsZqtWWfBktxeNH7IAqn3p7mDcr8sm7OEQNZWlj0Ur/+Opwdu6u8iXyMK7v8l
+	 Ag/gWl1LqsFCw==
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
+        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
+        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sgx@vger.kernel.org, x86@kernel.org
+Subject: [PATCH 0/6] x86/entry/vdso: cleanups for vdso build and 32-bit vdso
+Date: Sun, 26 Oct 2025 15:12:00 -0700
+Message-ID: <20251026221208.1938173-1-hpa@zytor.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aPuCHltyz9Ed7wcF@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 09:41:50AM -0400, Frank Li wrote:
-> On Fri, Oct 24, 2025 at 05:46:53PM +0800, Guoniu Zhou wrote:
-> > From: Guoniu Zhou <guoniu.zhou@nxp.com>
-> >
-> > The field provides the value of the blank pixel to be inserted in the
-> 
-> The field BLANK_PXL provides
-> 
-> > image in case an overflow error occurs in the output buffers of the
-> > channel. Its default value is 0xff, so no need to set again.
-> >
-> > Besides, the field only exist in i.MX8QM/XP ISI version. Other versions
-> > like mscale series, remove the field since it won't send data to AXI bus
+From: "H. Peter Anvin" (Intel) <hpa@zytor.com>
 
-What's the mscale series ? Is that i.MX 8M ?
+This patchset cleans up the vdso build by building the 32- and 64-bit
+vdsos in separate directories, moving the vdso2c tool to
+arch/x86/tools, and by merging common code and especially Makefile
+rules between the 32- and 64-bit vdsos to the greatest extent
+possible.
 
-> > when overflow error occurs and set the field as reserved. i.MX9 series
-> 
-> mark BLANK_PXL as reserved. i.MX9 series use it for other purposes.
-> 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> 
-> > use the field as other purposes.
-> >
-> > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+Be more strict about sanitizing and standardizing the vdso build options.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+If the vdso is build with CET endbr support, add an endbr32
+instruction to system_call.S.
 
-> > ---
-> >  drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c
-> > index 9225a7ac1c3ee7e42e64983982eb4b6c27e356fe..0187d4ab97e8e28fca9013f6864a094e08f2c570 100644
-> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c
-> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c
-> > @@ -309,8 +309,8 @@ static void mxc_isi_channel_set_control(struct mxc_isi_pipe *pipe,
-> >
-> >  	val = mxc_isi_read(pipe, CHNL_CTRL);
-> >  	val &= ~(CHNL_CTRL_CHNL_BYPASS | CHNL_CTRL_CHAIN_BUF_MASK |
-> > -		 CHNL_CTRL_BLANK_PXL_MASK | CHNL_CTRL_SRC_TYPE_MASK |
-> > -		 CHNL_CTRL_MIPI_VC_ID_MASK | CHNL_CTRL_SRC_INPUT_MASK);
-> > +		 CHNL_CTRL_SRC_TYPE_MASK | CHNL_CTRL_MIPI_VC_ID_MASK |
-> > +		 CHNL_CTRL_SRC_INPUT_MASK);
-> >
-> >  	/*
-> >  	 * If no scaling or color space conversion is needed, bypass the
-> > @@ -323,8 +323,6 @@ static void mxc_isi_channel_set_control(struct mxc_isi_pipe *pipe,
-> >  	if (pipe->chained)
-> >  		val |= CHNL_CTRL_CHAIN_BUF(CHNL_CTRL_CHAIN_BUF_2_CHAIN);
-> >
-> > -	val |= CHNL_CTRL_BLANK_PXL(0xff);
-> > -
-> >  	/* Input source (including VC configuration for CSI-2) */
-> >  	if (input == MXC_ISI_INPUT_MEM) {
-> >  		/*
+	x86/entry/vdso: rename vdso_image_* to vdso*_image
+	x86/entry/vdso: refactor the vdso build
+	x86/entry/vdso32: remove int80_landing_pad
+	x86/entry/vdso32: remove SYSCALL_ENTER_KERNEL macro in sigreturn.S
+	x86/entry/vdso32: remove open-coded DWARF in sigreturn.S
+	x86/entry/vdso32: add endbr32 to system_call.S
 
--- 
-Regards,
+Overall, the patchset removes 90 lines of code. Although it touches a
+lot of files, the vast majority is just code movement and/or
+deduplication.
 
-Laurent Pinchart
+	-hpa
+
+---
+ arch/x86/Makefile                                  |   2 +-
+ arch/x86/entry/syscall_32.c                        |   2 +-
+ arch/x86/entry/vdso/.gitignore                     |  11 +-
+ arch/x86/entry/vdso/Makefile                       | 162 +--------------------
+ arch/x86/entry/vdso/common/Makefile.include        |  83 +++++++++++
+ arch/x86/entry/vdso/{vdso-note.S => common/note.S} |   5 +-
+ arch/x86/entry/vdso/{ => common}/vclock_gettime.c  |   0
+ arch/x86/entry/vdso/{ => common}/vdso-layout.lds.S |   0
+ arch/x86/entry/vdso/{ => common}/vgetcpu.c         |   0
+ arch/x86/entry/vdso/vdso32/Makefile                |  24 +++
+ arch/x86/entry/vdso/vdso32/note.S                  |  19 +--
+ arch/x86/entry/vdso/vdso32/sigreturn.S             | 152 +++++--------------
+ arch/x86/entry/vdso/vdso32/system_call.S           |  10 +-
+ arch/x86/entry/vdso/vdso32/vclock_gettime.c        |   5 +-
+ arch/x86/entry/vdso/vdso32/vdso32.lds.S            |   2 +-
+ arch/x86/entry/vdso/vdso32/vgetcpu.c               |   4 +-
+ arch/x86/entry/vdso/vdso64/Makefile                |  45 ++++++
+ arch/x86/entry/vdso/vdso64/note.S                  |   1 +
+ arch/x86/entry/vdso/vdso64/vclock_gettime.c        |   1 +
+ .../entry/vdso/{vdso.lds.S => vdso64/vdso64.lds.S} |   2 +-
+ arch/x86/entry/vdso/{ => vdso64}/vdsox32.lds.S     |   2 +-
+ arch/x86/entry/vdso/vdso64/vgetcpu.c               |   1 +
+ .../entry/vdso/{ => vdso64}/vgetrandom-chacha.S    |   0
+ arch/x86/entry/vdso/{ => vdso64}/vgetrandom.c      |   2 +-
+ arch/x86/entry/vdso/{ => vdso64}/vsgx.S            |   0
+ arch/x86/entry/vdso/vma.c                          |  24 ++-
+ arch/x86/include/asm/dwarf2.h                      |   1 +
+ arch/x86/include/asm/elf.h                         |   2 +-
+ arch/x86/include/asm/vdso.h                        |   6 +-
+ arch/x86/kernel/asm-offsets.c                      |   6 +
+ arch/x86/kernel/process_64.c                       |   6 +-
+ arch/x86/kernel/signal_32.c                        |   4 +-
+ arch/x86/tools/Makefile                            |  15 +-
+ arch/x86/{entry/vdso => tools}/vdso2c.c            |   1 -
+ arch/x86/{entry/vdso => tools}/vdso2c.h            |   0
+ 35 files changed, 255 insertions(+), 345 deletions(-)
 
