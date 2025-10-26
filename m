@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-870276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818F1C0A591
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:38:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BFAC0A595
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB3604E3BF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E4F18A006A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 09:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB45288C0A;
-	Sun, 26 Oct 2025 09:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37A828A1E6;
+	Sun, 26 Oct 2025 09:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cj/eAAOF"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ovp5fpfj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4D717A303
-	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 09:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE0E17BA6;
+	Sun, 26 Oct 2025 09:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761471519; cv=none; b=CXL/rBeYrlGN/wK5zj1eYgJkDk0RXoG90oh7nT10OEnXv6XPWuLf+9g1eCzIO2n8wTlOCeOxsLZxq3bOtHl83uDkT2ScYk8w6bm1yuVvefkzIjQhXvYssf+3QavY6jexzSvBHtKb4c/pge7IU91kKtwgA9tOaDA5/hGoSWqsRv4=
+	t=1761471847; cv=none; b=d1FO2hNYHTu0wV89Fsn6THtb1UnsMMFuGTT8vHBEXG9jZZE/VkBc4AEUtIzu9tzYnolzqOafVesfYXuiClsYpo70pLWQtkaI7mp1XeiyQQ7AuadFHVyWgD6BRmovwY9lDz+078+SZgoFWssXPdzLUviZHB0VczA+bl2JhNZaSX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761471519; c=relaxed/simple;
-	bh=BlGELhvKOBCcUK01cT+hHszOs7SJMhq+zuaurlP3kzw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jBfiLLDTXHSTPgn3qVT0Ps5V92XYLIWokWkJ9kuNSYZCRqWL6/+HiH4WtTGKolILuJQ/ACO1vFm4+z3TJxQrGwwiTKp4QYO2D2bR2wOCZ14rA+eNr/74Dq0pma3gQH+nEQ+uq9RaBHzSxTPFopFtS8p5CidSfPWPvIcD0dPQooE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cj/eAAOF; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so3296749f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 02:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761471516; x=1762076316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BlGELhvKOBCcUK01cT+hHszOs7SJMhq+zuaurlP3kzw=;
-        b=cj/eAAOFm8UR+TjUspS0+9/+KI6GIZFDVK4Ls6unokE/vw9yZ+Ph94oKB+CC8Z3VEq
-         Ctagx/7QCj9IAdc9Rz74pYeIUXNkSLKBiNA1HXUZIQmSmkVgpYhNqY0r0SocHYJPFh0F
-         4foA9fP9ewmuc+4nSWY3EzDW0LuHSwyvrODj9zY7p152h6q8hP3ZCRbTYUHe4GK5VvfW
-         goMHnztEdDJRPS+51nxe12jicRVKobl7i7qiLCetvaS3qjOj4BQFJfxQfle5LAxQMrOj
-         lPlsIAtvv0MBF7V4AInkalLvKqQAMMOuaOvfKKTW0WFySEhVQhn1E40xIL0Q/sRbFCHA
-         TMeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761471516; x=1762076316;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BlGELhvKOBCcUK01cT+hHszOs7SJMhq+zuaurlP3kzw=;
-        b=WqYfG20pxVGGaQZKmMGJr12WO59uKe+Y6WgDa1USLx9F9CeFsCUD51b6ppzraGnT1G
-         u6R+FR+xkN8ODrYmDEW3jf58LQwTNsDQUgGL19rPB9HMyaOBPa3wxLlkWhOsh+7Hj7R4
-         YM88Om+qcR3EZ1p8OYuW/BXZlImg7PLXJaiwA7mkLCaSgtHY1JkxevHjdH0G7bPSW1wB
-         bQkOnVqnB/eOTsvSTl2J/9pUpWrxsXZEQUu0UlDGta1avF2MxIqFMbf+pt4lPPPpi/i3
-         ++zsVKlLnuw5GYydHSoUpYn9S352XXYSv0BYnoYh4bJAVBa8sV/kPw/UZ6LWW/4/B/rL
-         fP9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWcxnGk7ff0M3FgTLkmN+D1aRMnX4x+B+BJYy5Ro3f4qmpRASRhXREzcy56vcvxIOWz+R3geRtB5MqV5k0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl/WxVbpgtFzuv2ahCaZO8oUxmanM6C6hqu9EB5spSCt+NyJTo
-	towP80k5PnLJMivIEUxSoEggucw9EWloszOYetpMgr7EbbA547Z5JNUT
-X-Gm-Gg: ASbGnctg25V4gDPBjDGdrhIXwAtrexagslBlCSg3ax5bud8e0TYLnJmJVGOi4K6Eywn
-	DN0srN+vv0ZmFYKidF2XhjHS3NtcJyWCSV3ZNywhGhq97GxgNFSluY0Uyx5Cw6ziN5sB0R50i3q
-	tv8MwobSHj5SVNJ/0KIdBc1hOfgKcRFfeJuGuHtEU63HamXkfAjS/2J5AdwqkE/Zs97nGe4KPgP
-	XbA0I3fN48kg+922GDHQ3CMy/tbE/k2h5wNqkkJ5dC/0bN3CbW0OYuKKTBF6goH/hZkF8+m9uId
-	BAw8LaVJY2dA0Ok98iLD0NnJfp02T2UQABeNq8es17nahFrkiWpjslI4FK/fA0FX/6Uq/VLHNC2
-	/3catWH8sD6T+Jmn53sVjO6v28TaAfQle7mAL4vDAogTTaTnaci7dHoNMP9UZ5QCtrunOGxujH4
-	9FyNmrwwwJuV6UQ90z6FAKdeykEYzGIcliJiOdATVxHEc4E8UNqHoi5QsB/wzeQbOBpxuvYPBm
-X-Google-Smtp-Source: AGHT+IEjnKK7Q47TzLdAeD/BIWXcqdHCINnF1PkJmHJElS4u7hTRXmg/V24ilZ9lRzYDGAOsD4o0tw==
-X-Received: by 2002:a05:6000:41d5:b0:427:666:f9d6 with SMTP id ffacd0b85a97d-4270666fa57mr22885765f8f.39.1761471515642;
-        Sun, 26 Oct 2025 02:38:35 -0700 (PDT)
-Received: from ?IPV6:2a02:c7c:8b21:7400:c9e:bafa:eeb1:89f7? ([2a02:c7c:8b21:7400:c9e:bafa:eeb1:89f7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd374e21sm73364465e9.9.2025.10.26.02.38.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 02:38:35 -0700 (PDT)
-Message-ID: <4d6d737e-6e9d-4d33-8402-940947170872@gmail.com>
-Date: Sun, 26 Oct 2025 09:38:33 +0000
+	s=arc-20240116; t=1761471847; c=relaxed/simple;
+	bh=MyRDkkeM1WniRrNwIECJAWX6rR/HsGtbFOS5K7hsaLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyUTwQgb9ZM7c5nXnk8B8epmnlGi54Sum6Q6thMSduA7TqhC7UzmPVkcLzVyuMn7vN0iw2r5yJHYVmwVgm0EMEfWnmqWuFUOaT5Pfiyi4nQcibL/b4Kg6ccJErE2tehm60zBb9mevI7jHxZwQWzPg4PUX1yaAlY6kuGeQdXuLdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ovp5fpfj; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761471846; x=1793007846;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MyRDkkeM1WniRrNwIECJAWX6rR/HsGtbFOS5K7hsaLo=;
+  b=Ovp5fpfjKoj+Go/AhTv9LrRreDjFLLLAKWKxcFGrEonSqX4Y82zz4+Ol
+   syh1m0Wkzmi14i5+R6twZ8uIpUZI5Dm63aM2f8lMJHgfCNEu+wuELgXZL
+   y+4dVWyS/nvVK6V2LR08M6S6gke/3pdBWaN5ndvS4pEfoUFKmisQww65q
+   XBpgAKybvLDu3zyBvkx3ZEvtJACf8feb6f8HP2LO3WHSZNwl7koDTakFs
+   W8Us4FnV6mMOSFijmoki6UOmdArevFpeGa25S7GhbZ4I1+wh99LslNbA0
+   HyFq717/VzwnQiJBNhqn0BwYXp4+PFam8v9lzlqNPLPDfVIx0/Z/xpXzr
+   Q==;
+X-CSE-ConnectionGUID: rU81IqelQ6OQupZgFBx7uA==
+X-CSE-MsgGUID: xt7tB2iTQn2Ftk3k8LX/ZA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63730916"
+X-IronPort-AV: E=Sophos;i="6.19,256,1754982000"; 
+   d="scan'208";a="63730916"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2025 02:43:52 -0700
+X-CSE-ConnectionGUID: RJXJrLBXRruANBTCQE/mPQ==
+X-CSE-MsgGUID: sgB1CLxGQzyoEeuxq8N8/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,256,1754982000"; 
+   d="scan'208";a="184877434"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 26 Oct 2025 02:43:46 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCxHr-000G1x-2v;
+	Sun, 26 Oct 2025 09:43:43 +0000
+Date: Sun, 26 Oct 2025 17:43:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Coia Prant <coiaprant@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Coia Prant <coiaprant@gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the X3568 v4
+Message-ID: <202510261750.glZ5VRca-lkp@intel.com>
+References: <20251025203711.3859240-1-coiaprant@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] rust: i2c: Add basic I2C driver abstractions
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20251005102226.41876-1-igor.korotin.linux@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20251005102226.41876-1-igor.korotin.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025203711.3859240-1-coiaprant@gmail.com>
 
-Hi all,
+Hi Coia,
 
-Gentle ping on this series:
-[PATCH v6 0/3] rust: i2c: Add basic I2C driver abstractions (2025-10-05)
+kernel test robot noticed the following build errors:
 
-Just checking if there’s any feedback or if it’s still pending review.
-Thanks!
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on krzk-dt/for-next linus/master v6.18-rc2]
+[cannot apply to rockchip/for-next next-20251024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Coia-Prant/arm64-dts-rockchip-Add-devicetree-for-the-X3568-v4/20251026-043855
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251025203711.3859240-1-coiaprant%40gmail.com
+patch subject: [PATCH] arm64: dts: rockchip: Add devicetree for the X3568 v4
+config: arm64-randconfig-002-20251026 (https://download.01.org/0day-ci/archive/20251026/202510261750.glZ5VRca-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project e1ae12640102fd2b05bc567243580f90acb1135f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251026/202510261750.glZ5VRca-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510261750.glZ5VRca-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> Error: missing overlay file(s)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
