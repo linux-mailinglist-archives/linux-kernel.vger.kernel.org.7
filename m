@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-870598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B31BC0B3E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:09:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53ACC0B3F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A6A74E47C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29F718903E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69B284663;
-	Sun, 26 Oct 2025 21:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5F72836A6;
+	Sun, 26 Oct 2025 21:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUR1M4l/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lVMYW7vs"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEC972633;
-	Sun, 26 Oct 2025 21:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133BB72633;
+	Sun, 26 Oct 2025 21:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761512947; cv=none; b=m5rYzDYAkIP/0VpoRwDVJde95OaAmNV3kyQeCO1UgB9HhB+FmSFoYZ/K6StsMj9ZJ6pYfCSZL4POA+nP1zPNisqxyOhoHy640rt0yP2jQDYYC5uzUAuKK9BBXxtpgiOroe6D+4aFUUcyB768EMLqU1u8YNQzCOKR7IqE5Wdt/Og=
+	t=1761513089; cv=none; b=ZbzuLD4sQ+UGvWNcS+/KjVTR6ps+TKzgI6O3+oh8oo8OpvC50byku/D+8ITSF/hEoGraQpodJRQxUvG3tvIdOQ7yJuFWZXGpqwhBUoQ2mVJORuBY7zs4YLK8WhbKcCufl72SQMAUtf14tOt9zrOOmZtO6Cphi8f89LFJxzIWp3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761512947; c=relaxed/simple;
-	bh=PgGZkxx9eVXClCW73EbY+KTGYweRYJk4TsXoUCP0ekU=;
+	s=arc-20240116; t=1761513089; c=relaxed/simple;
+	bh=ObOOH9WDscvwAqkjW2Oryk+fDasfzz/CdPqG1NC+8vo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8bH4Ahtv/DplOi7oWo/kFnHRmFjGTAqidTbsIQ9ikV++cM0jC0i20tqLrAxi17a/hl9voxG6C7ts+9CQfsMUPUG+B9ifUNwZ3Ci1QAPkss1OKAjUNI5aJ13G/md+VECHuaPQ7/uPXb5p/KGY9aDVfFFtnDFmIJcJcWfumyqgAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUR1M4l/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0288BC4CEE7;
-	Sun, 26 Oct 2025 21:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761512947;
-	bh=PgGZkxx9eVXClCW73EbY+KTGYweRYJk4TsXoUCP0ekU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sr49LjboAkKZfo0hvg5BrwZtiqJ1qNd155eUiSdqBO8J+bESMvyYMq0U+BRbRCn5yCkWXtR1sZn/8eHs7twmWsv9ZSTpdLEgDQ+S6D7dWlYhBUm/PAglgu07qLPck93EFcy3/M1cilUJtWycaSlRX+mp3LXWE0V/gOsWkZ/WHEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lVMYW7vs; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CAC8F21B1;
+	Sun, 26 Oct 2025 22:09:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761512975;
+	bh=ObOOH9WDscvwAqkjW2Oryk+fDasfzz/CdPqG1NC+8vo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lUR1M4l/hP8HpiVUCzrPwKHQLA71phjUp7BimzWp+4GClN0UQGwSfzsd8fVfX8wRV
-	 0KoytM0amuJJnfRidVHRhWF4gVgqbUjaYBkx0UgwbwhUxE7brFWpTs3cfPKaXZM/I8
-	 n6dJKg1SqGyGQ0zzhY5F6uCksj42hmsX7iazM8feVgjyg6S9EWHkRQHbXDLxKUzJbJ
-	 c3RU3rCDY8rckM0EqsfDfWfpuz1NJQluvNWhvQ0sPexN6jKfSq5Uibhp/z7R5ims10
-	 /y4N93U9eb/LS2ZoU9sCmehKWKB0ja+59U53OG8NS5eVEGuiB3tGhyqAPKBeWVZ09p
-	 VJDTdJX0SgnXw==
-Date: Sun, 26 Oct 2025 16:09:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: iuncuim <iuncuim@gmail.com>
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>,
-	Yangtao Li <tiny.windzz@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: thermal: sun8i: Add A523 THS0/1
- controllers
-Message-ID: <20251026210905.GA2941518-robh@kernel.org>
-References: <20251025043129.160454-1-iuncuim@gmail.com>
- <20251025043129.160454-2-iuncuim@gmail.com>
+	b=lVMYW7vswqx2wA3X+nZlRRw/8m2pGFWq22EnlY7+9HV9FFhGjUxF8DtUc70y1Djyn
+	 xE5Y1qiRWUglDb4wfE4pVM5+P5cgPqrA4Gh4LlOOLEJFdbOXQAJfkM9iRENIUQ8/yu
+	 zPBeAvHwSrBBFc+FAF9WCJKSyf5OyDPrFwJ/W32I=
+Date: Sun, 26 Oct 2025 23:11:07 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>, mchehab@kernel.org,
+	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Frank.Li@nxp.com
+Subject: Re: [PATCH v5 4/4] media: imx-mipi-csis: Support active data lanes
+ differing from maximum
+Message-ID: <20251026211107.GF1025@pendragon.ideasonboard.com>
+References: <20251022102228.275627-1-isaac.scott@ideasonboard.com>
+ <20251022102228.275627-5-isaac.scott@ideasonboard.com>
+ <aPi8RXHVBMB7vHQ2@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251025043129.160454-2-iuncuim@gmail.com>
+In-Reply-To: <aPi8RXHVBMB7vHQ2@kekkonen.localdomain>
 
-On Sat, Oct 25, 2025 at 12:31:24PM +0800, iuncuim wrote:
-> From: Mikhail Kalashnikov <iuncuim@gmail.com>
+On Wed, Oct 22, 2025 at 02:13:09PM +0300, Sakari Ailus wrote:
+> On Wed, Oct 22, 2025 at 11:22:28AM +0100, Isaac Scott wrote:
+> > Call on v4l2_get_active_data_lanes() to check if the driver reports that
+> > the number of lanes actively used by the MIPI CSI transmitter differs to
+> > the maximum defined in device tree.
+> > 
+> > If the number of active data lanes reported by the driver is invalid, or
+> > the operation is not supported, fall back to the number of allowed data
+> > lanes.
+> > 
+> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/nxp/imx-mipi-csis.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > index 838a1ad123b5..637ef6e614fa 100644
+> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > @@ -1034,6 +1034,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> >  	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+> >  	csis_fmt = find_csis_format(format->code);
+> >  
+> > +	ret = v4l2_get_active_data_lanes(csis->source.pad,
+> > +					 csis->bus.num_data_lanes);
+> > +	csis->num_data_lanes = ret < 0 ? csis->bus.num_data_lanes : ret;
 > 
-> Add a binding for D1/T113s thermal sensor controller. Add dt-bindings
-> description of the thermal sensors in the A523 processor.
-> The controllers require activation of the additional frequency of the
-> associated gpadc controller, so a new clock property has been added.
+> I guess this works but should we return an error here instead?
 > 
-> The calibration data is split into two cells that are in different areas
-> of nvmem. Both controllers require access to both memory cell, so a new
-> property nvmem-cells has been added. To maintain backward compatibility,
-> the name of the old cell remains the same and the new nvmem-cell-names is
-> called calibration-second-part
-> 
-> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
-> ---
->  .../thermal/allwinner,sun8i-a83t-ths.yaml     | 56 ++++++++++++++++++-
->  1 file changed, 53 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
-> index 3e61689f6..b2f750ef2 100644
-> --- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
-> @@ -24,18 +24,23 @@ properties:
->        - allwinner,sun50i-h5-ths
->        - allwinner,sun50i-h6-ths
->        - allwinner,sun50i-h616-ths
-> +      - allwinner,sun55i-a523-ths0
-> +      - allwinner,sun55i-a523-ths1
->  
->    clocks:
->      minItems: 1
->      items:
->        - description: Bus Clock
->        - description: Module Clock
-> +      - description: GPADC Clock
->  
->    clock-names:
->      minItems: 1
-> +    maxItems: 2
+> Alternatively, the function could always return some number of lanes as
+> well (with a printed warning on error). I think I'd do the former though.
 
-How can the max be both 2 and...
+Agreed, I would return an error.
 
->      items:
->        - const: bus
->        - const: mod
-> +      - const: gpadc
+> > +
+> >  	ret = mipi_csis_calculate_params(csis, csis_fmt);
+> >  	if (ret < 0)
+> >  		goto err_unlock;
 
-...3 entries?
+-- 
+Regards,
+
+Laurent Pinchart
 
