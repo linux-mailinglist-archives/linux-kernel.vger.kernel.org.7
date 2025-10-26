@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-870280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41C2C0A5E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 720B3C0A5EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 11:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272C53AD682
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9673AD625
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 10:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60A02877EA;
-	Sun, 26 Oct 2025 10:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C6728B7DA;
+	Sun, 26 Oct 2025 10:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwRFXDZX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvKhGaHQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D0611E;
-	Sun, 26 Oct 2025 10:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046B1611E;
+	Sun, 26 Oct 2025 10:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761473415; cv=none; b=kjXiNeQVsVMqAU2AtOp0yyyBTIAXmYQxvfnS8A9xXK+UsIz903KRXpF0U/QjQ5m/mSGoe0ByiL14oi75PYax6UnXtTUKzXC6McCC8HT1hxivO52IeEUDojI1qVRISS0sMjdHkXvRVxoDSmnykUisKU3cC5wUcboxal1d9ygiP9I=
+	t=1761473490; cv=none; b=aV3tSeU0lnwS9PHynFudwoDxY4tvZrXpy28E1feTkldfIGeEb4Ara47YR25LMvX73auV20r/0dIjfyB0qlp+HHUF/FmwhcVl1thMbhqewv6OyihyhorUhebv50caPNlUExrFSroRh8/gKFZCzLE5CtZby346ByW0bs+9xaY5FQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761473415; c=relaxed/simple;
-	bh=kuV0S2OwQx4nY+AZKrytOk4IPz21g7ujteih8OCY1a0=;
+	s=arc-20240116; t=1761473490; c=relaxed/simple;
+	bh=avxVR6ZL7chTsl3uYXIKBmlQoKmCc1jNW07r6vW96Rg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z4O4OKnW49wt3CRApAwM/8UyYqAvlSFII1XbawZ0/iE3u0Hc5o70PJ2pcv8PYd3j7uMwYZniZQtKuDs4f8xaqYZWXmDkM4YcA/uGEc+tIdH8oVc0Z/TeyrT6wqyta+2j8apLemqqDb971LC0r0IWZThDU02AT38mYXMJGI+zWBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwRFXDZX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DD7C4CEE7;
-	Sun, 26 Oct 2025 10:10:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=M96kj4qrEzRECfODaktK1rRWQR+defPYQkf4PkeVsYZ1rp5LJNjU0Ldmfn0KRoKF4/mLNcbKJJEkY5fpAJi+AIrd8Mh6g0t/l3IDi1e5ycf8WiW5/avSvhwDGjcUvNe39pxhS6vY22LrLq6KzqfzRtDWPDQxSdZ777+ON44lOGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvKhGaHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9662FC4CEE7;
+	Sun, 26 Oct 2025 10:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761473413;
-	bh=kuV0S2OwQx4nY+AZKrytOk4IPz21g7ujteih8OCY1a0=;
+	s=k20201202; t=1761473489;
+	bh=avxVR6ZL7chTsl3uYXIKBmlQoKmCc1jNW07r6vW96Rg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VwRFXDZXi0VULAHvDqeil2sOEdobsJqL/vMpPrxw+1SWljsdTuc03G80fG66YVonu
-	 TW2/k86hQZIOi4w0u9bd/owYlE9vF2X7H4Vu9oB/pelGU+eN7WMjrHzboTM624VAdJ
-	 Pag72oBtjHksM92AHd/+gpVDiAhJkVfUu4KlQ5cwmok00Vcr/ZSpfNq+i3qJ9tSvsr
-	 kRBJA+8wisuli6zFwRDmtJqd6iWlhja79cyI06uC/mlS1Wkgpq1c6p4OqWv9wIe0TK
-	 0wG3AxYToJrJM0/c15ZVGgqCGvc35F1JsTCsjLdnuxC5xFIRvohtugAJ4v7o2lC+lt
-	 brGD90VB0rZ0A==
-Message-ID: <f3bd99c8-eb70-40d3-9b43-fba56546f591@kernel.org>
-Date: Sun, 26 Oct 2025 11:10:09 +0100
+	b=IvKhGaHQjAsYLz98IXWzL3uoXrqaa39WMcxbir9FT0jR6z58/wNfvUOJfRZA/iCCV
+	 HzR/I3zK2LJ97DOqWGkoQgjRYA7evyCqDgFZwHHu2jP2SdubBgvTmh9qNn0pkXsQLs
+	 oREy4oFZU/W+PHfsNqzVn0S6GxmYDOXmOCbNKsXmK5U0PwOdQex4cNkEOQgIXLv/ph
+	 7LYCEIA8kSi8pq/hul73tabeV9A77Pp4ZzPfjWeHkKoA439kUfFbl9SjLEXs+F7Hw6
+	 CmaVNaes0hD9UNbaYpoP4IcsZivSzI6VcgWiTizKc8AGL1E5vpKOax14DTNcI1BPkQ
+	 jzHmunnw6A9lg==
+Message-ID: <f94c2766-6c68-468c-83c7-4f4c8000f026@kernel.org>
+Date: Sun, 26 Oct 2025 11:11:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
-To: Robert Marko <robert.marko@sartura.hr>, srini@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- horatiu.vultur@microchip.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, daniel.machon@microchip.com
-Cc: luka.perkov@sartura.hr
-References: <20251024192532.637563-1-robert.marko@sartura.hr>
+Subject: Re: [PATCH net] dt-bindings: net: sparx5: correct LAN969x register
+ space windows
+To: Robert Marko <robert.marko@sartura.hr>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, Steen.Hegelund@microchip.com,
+ daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+ lars.povlsen@microchip.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: luka.perkov@sartura.hr, benjamin.ryzman@canonical.com
+References: <20250925132109.583984-1-robert.marko@sartura.hr>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,45 +105,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251024192532.637563-1-robert.marko@sartura.hr>
+In-Reply-To: <20250925132109.583984-1-robert.marko@sartura.hr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/10/2025 21:24, Robert Marko wrote:
-> LAN969x series also has the same HW block, its just 16KB instead of 8KB
-> like on LAN966x series.
+On 25/09/2025 15:19, Robert Marko wrote:
+> LAN969x needs only 2 register space windows as GCB is already covered by
+> the "devices" register space window, so expect only 2 "reg" and "reg-names"
+> properties.
 > 
-> So, document compatibles for the LAN969x series.
-> 
+> Fixes: 41c6439fdc2b ("dt-bindings: net: add compatible strings for lan969x targets")
 > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 > ---
->  .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml  | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  .../bindings/net/microchip,sparx5-switch.yaml | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-> index f97c6beb4766..f8c68cf22c1c 100644
-> --- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-> +++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-> @@ -23,8 +23,15 @@ properties:
->        - items:
->            - const: microchip,lan9668-otpc
->            - const: microchip,lan9662-otpc
-> +          - const: microchip,lan9691-otpc
-> +          - const: microchip,lan9692-otpc
-> +          - const: microchip,lan9693-otpc
-> +          - const: microchip,lan9694-otpc
-> +          - const: microchip,lan9696-otpc
-> +          - const: microchip,lan9698-otpc
+> diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
+> index 082982c59a55..5caa3779660d 100644
+> --- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
+> +++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
+> @@ -55,12 +55,14 @@ properties:
+>            - const: microchip,lan9691-switch
+>  
+>    reg:
+> +    minItems: 2
+>      items:
+>        - description: cpu target
+>        - description: devices target
+>        - description: general control block target
+>  
+>    reg-names:
+> +    minItems: 2
+>      items:
+>        - const: cpu
+>        - const: devices
+> @@ -168,6 +170,26 @@ required:
+>    - interrupt-names
+>    - ethernet-ports
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,lan9691-switch
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
 
-Why are you changing lan9668? Nothing on this is explained in commit
-msg. Also, list of more than 3 items is not really useful.
-
->        - enum:
->            - microchip,lan9662-otpc
-> +          - microchip,lan9691-otpc
-
-Why is it listed twice? First you say lan9662 is compatible with
-lan9691, now you say it is not.
+This is wrong. You wanted maxItems.
 
 Best regards,
 Krzysztof
