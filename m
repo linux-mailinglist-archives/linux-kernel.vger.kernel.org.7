@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-870333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414F0C0A7CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:44:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48FBC0A7FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 13:45:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDA104E8410
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6D218A0F3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 12:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC7D2E06EF;
-	Sun, 26 Oct 2025 12:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5352E3703;
+	Sun, 26 Oct 2025 12:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="DcEcOzku"
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vashsqxB"
 Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7567E2C17A8;
-	Sun, 26 Oct 2025 12:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E60D2DA776;
+	Sun, 26 Oct 2025 12:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761482553; cv=none; b=SWmHU1VIH5WwvuamHQoBMJgQIh7HfBYm0uCryepGQz2O7EHqp0ONGTyEvXsnjqVefffGnyXQjt/j8smmLr10NsZVWdZDnKUZCnSzAKz1jB7jBkJhsnu0JlfnKxGTzGoWEC5gV6HjA4JJF4logHPxSlTAm/JuMkXsj2W1e6ga/vc=
+	t=1761482555; cv=none; b=bOiPB3X0yArEXxQfKcqo0gys3ePqiOhDv3yTUf/kXpNsCRVRKbSFNrwAPBLd6k++oWtFKMUAgoyUqj7ueratvlNm8Ft6cb/+1alNPzaENw4xRsa4VoI+5Xd9CEnIRg02kptDsLoIA11+zT5R4IK8k3kxtQLEpbxj0f+lhysl9eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761482553; c=relaxed/simple;
-	bh=vghudGEOY3L1ytcEYABOWe472CPzB9vVvZz/X1Px26A=;
+	s=arc-20240116; t=1761482555; c=relaxed/simple;
+	bh=Jzpn3cEHJuR4e/7Diq2X/A/kIMNuV6RmqTVz+GOnCgQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AkNH1QkYFM0MLLUKpzPVcZA5VJs21Tne2faliEtjfIy0A1zEt8GtHhhIKv1PhENRIUMg9BbZogaojv57B9t8IeBwUBVeraCTQscQGoeeoMO1r/sPI90vlFWjHPIReSTXZGqJuvQr8so7hIYKEMYdQ4nm22NabdhcP37r2DBc/SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=DcEcOzku; arc=none smtp.client-ip=80.237.130.52
+	 MIME-Version; b=pVi5mpLFqHdniYDMTJJxqTrBVKwjfacO1zwI5h+Oj2qm3l4Q3toYyEKnq7BbfxjplZJ7eilreL4BURKFZwp/AZpzDQ5YEVVqH8TNV9B1XX8KiC0w+PTpwZ/M1VZuc/z09kprvl6VbtuGT0h7luPB+GMIC8bl+iULFzy4uRztsvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vashsqxB; arc=none smtp.client-ip=80.237.130.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -35,15 +35,15 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Sender:
 	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
 	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=A9M9qnXAKMMmJCdLmCAyHsjy98RtFl6ZF9DFi+xuUB8=; t=1761482551;
-	x=1761914551; b=DcEcOzkuAxLLQ9iCDWvClnYTOvNO++ZqYAJygDLgZPxd5NdejNLZQbhQzRDd7
-	p0ucvKsmxYeLuZdM+yuIMoQtBP6uitMi7TwyOUWmrxf/UsSVTzoCNcW2KYu9dS7mnomM1uO7N3v/m
-	yaUUBtsd2046oKrWA1Ir+rRJGNrK6YrUViKu1xk9eYuIUMWiWnQfU8i5Ik4lR3aN2YUxxWHzjvbuE
-	AaaqDWuB5970iXOJfMcPMxp0jo5ulBzI8yHH0wPcwcpBSKGFXbOvDqdT40UJt4JgqQ5rzdBhCUxjS
-	KABWrOwpze7pg1O3rJXmfd+/CmVgBM0f9XtOfzh52hQv2XB1CQ==;
+	References; bh=MCwTNgmIFvfobjvhJBYW7voWM3a+ip/YtfYapTlN3Nk=; t=1761482552;
+	x=1761914552; b=vashsqxBZFUm+HfTEbYOYjsDfL5o7wXov+/rwaX7X0JmOY9+/9nuK0OLVoPPV
+	SSZt/4fz7wdwwFQXeKwppx+er6M8HTXrcsx0yUORhZtoruKc+zpjsMOpDHyKPK7fNtwRJ7PrGFUYK
+	/TF3e+02Ms2d2agTpAg2aHgtcjnV6U1sbAPTA5UVZUSd9YmAwa3dpZMzPn9HP0bnJJlX0VULSyJW/
+	XB9RlRnp6BHI0cgj+ii4AXlacDFBKk8AEFXv3HLaPLGwB9deaFn10XuQeZtJwTTguPeGsbd9cpZ2U
+	E+iO9FqEtI723Frq5I0m3VHPXpoWEqp/h4pzdodB86WBraAQGg==;
 Received: from [2a02:8108:8984:1d00:a8ad:ebd4:6fc6:160] (helo=luggage.fritz.box); authenticated
 	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1vD04m-001mXP-12;
+	id 1vD04m-001mXP-22;
 	Sun, 26 Oct 2025 13:42:24 +0100
 From: Thorsten Leemhuis <linux@leemhuis.info>
 To: Jonathan Corbet <corbet@lwn.net>
@@ -51,9 +51,9 @@ Cc: workflows@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	regressions@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 05/30] docs: reporting-issues: outline why reporting is complicated
-Date: Sun, 26 Oct 2025 13:41:56 +0100
-Message-ID: <a6704ef5b3a8dcbaf645ddb5407e8f13553502b0.1761481839.git.linux@leemhuis.info>
+Subject: [PATCH v1 06/30] docs: reporting-issues: replace TLDR guide with more of an into
+Date: Sun, 26 Oct 2025 13:41:57 +0100
+Message-ID: <bffecd192c73909b8ceb58a123842c943e51200f.1761481839.git.linux@leemhuis.info>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1761481839.git.linux@leemhuis.info>
 References: <cover.1761481839.git.linux@leemhuis.info>
@@ -64,95 +64,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1761482551;009d26c6;
-X-HE-SMSGID: 1vD04m-001mXP-12
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1761482552;81a32109;
+X-HE-SMSGID: 1vD04m-001mXP-22
 
-Replace the closing words with a section that describes why reporting
-Linux kernel bugs is more complicated than in other FLOSS projects.
+Remove the TLDR guide and just describe the essence: a email is all that
+is needed.
 
 Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
 ---
- .../admin-guide/reporting-issues.rst          | 67 ++++++++++++++++---
- 1 file changed, 59 insertions(+), 8 deletions(-)
+---
+ .../admin-guide/reporting-issues.rst          | 90 +++++++------------
+ 1 file changed, 32 insertions(+), 58 deletions(-)
 
 diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 745e698cb6be8b..2629fde3aa4b8f 100644
+index 2629fde3aa4b8f..7dfb3ca4b3e322 100644
 --- a/Documentation/admin-guide/reporting-issues.rst
 +++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -1756,14 +1756,65 @@ But do not worry too much about all of this, a lot of drivers have active
- maintainers who are quite interested in fixing as many issues as possible.
+@@ -4,49 +4,34 @@
+ Reporting issues
+ ++++++++++++++++
  
- 
--Closing words
--=============
 -
--Compared with other Free/Libre & Open Source Software it's hard to report
--issues to the Linux kernel developers: the length and complexity of this
--document and the implications between the lines illustrate that. But that's how
--it is for now. The main author of this text hopes documenting the state of the
--art will lay some groundwork to improve the situation over time.
-+Why reporting Linux kernel bugs is somewhat complicated
-+-------------------------------------------------------
+-The short guide (aka TL;DR)
+-===========================
+-
+-Are you facing a regression with vanilla kernels from the same stable or
+-longterm series? One still supported? Then search the `LKML
+-<https://lore.kernel.org/lkml/>`_ and the `Linux stable mailing list
+-<https://lore.kernel.org/stable/>`_ archives for matching reports to join. If
+-you don't find any, install `the latest release from that series
+-<https://kernel.org/>`_. If it still shows the issue, report it to the stable
+-mailing list (stable@vger.kernel.org) and CC the regressions list
+-(regressions@lists.linux.dev); ideally also CC the maintainer and the mailing
+-list for the subsystem in question.
+-
+-In all other cases try your best guess which kernel part might be causing the
+-issue. Check the :ref:`MAINTAINERS <maintainers>` file for how its developers
+-expect to be told about problems, which most of the time will be by email with a
+-mailing list in CC. Check the destination's archives for matching reports;
+-search the `LKML <https://lore.kernel.org/lkml/>`_ and the web, too. If you
+-don't find any to join, install `the latest mainline kernel
+-<https://kernel.org/>`_. If the issue is present there, send a report.
+-
+-The issue was fixed there, but you would like to see it resolved in a still
+-supported stable or longterm series as well? Then install its latest release.
+-If it shows the problem, search for the change that fixed it in mainline and
+-check if backporting is in the works or was discarded; if it's neither, ask
+-those who handled the change for it.
+-
+-**General remarks**: When installing and testing a kernel as outlined above,
+-ensure it's vanilla (IOW: not patched and not using add-on modules). Also make
+-sure it's built and running in a healthy environment and not already tainted
+-before the issue occurs.
+-
+-If you are facing multiple issues with the Linux kernel at once, report each
+-separately. While writing your report, include all information relevant to the
+-issue, like the kernel and the distro used. In case of a regression, CC the
+-regressions mailing list (regressions@lists.linux.dev) to your report. Also try
+-to pinpoint the culprit with a bisection; if you succeed, include its
+-commit-id and CC everyone in the sign-off-by chain.
+-
+-Once the report is out, answer any questions that come up and help where you
+-can. That includes keeping the ball rolling by occasionally retesting with newer
+-releases and sending a status update afterwards.
++An email with a problem description sent to the appropriate developers and
++mailing lists -- that is all it takes to report a Linux kernel bug.
 +
-+The Linux kernel's development model differs from typical Open Source projects
-+in a few important aspects. Four of those complicate bug reporting:
++This might sound easy, but be aware: Your bug reporting experience is likely to
++become tedious or fruitless unless you get a few implicit aspects right.
 +
-+1. Developers are free to solely focus on the latest mainline codebase.
++The Linux kernel used, for example, must ideally be a recent mainline version;
++longterm kernels will rarely do the trick, unless for reporting series-specific
++regressions. That alone makes the vast majority of kernels shipped by hardware
++vendors and Linux distributors unsuitable for upstream reporting. But those
++almost always are inadequate anyway, as most are built from modified sources or
++use externally developed kernel modules. Both aspects can lead to issues that
++never occurred with the upstream Linux kernel, which is why most of its
++developers do not really care about bugs reported with such kernels.
 +
-+2. The 'stable team' maintains the stable and longterm kernel series, but is not
-+   allowed to fix many bugs just there if they happen in mainline, too.
++Identifying how to submit a report is also easier said than done. The file
++MAINTAINERS answers this and usually points to email addresses. But a small
++number of subsystems prefer reports through one of various bug trackers. Bugs
++with most graphics drivers have to go to https://gitlab.freedesktop.org/drm/;
++https://bugzilla.kernel.org seems like a universal place, but it is rarely the
++right destination, as submissions there often do not even reach the developers.
 +
-+3. There is no central bug tracker.
++The stable team, furthermore, is only the right point of contact for regressions
++within a particular stable or longterm kernel series that at the same time do
++not happen with latest mainline -- which you thus have to rule out first.
 +
-+4. Most kernels used in Linux distributions are totally unsuitable for reporting
-+   bugs upstream.
-+
-+Due to the first aspect, some of the developers ignore or react coldly to
-+reports about bugs in, say, Linux 6.1 when 6.2-rc1 is already out.
-+
-+The combination of the first and the second aspect is why some of the
-+developers are unwilling to look into reports with stable or longterm kernels:
-+the problem might never have happened in the code they work on, for example
-+because the stable team did something wrong between 6.1.1 and 6.1.2.
-+
-+The stable team due to those two aspects is often in a similar but opposite
-+situation when it comes to bugs reported using a kernel like 6.1.2: If that
-+issue already happened in 6.1 and still happens in the latest mainline kernel,
-+then it must be fixed there first. That is among the reasons why reporters in
-+the end always have to check if mainline is affected, as the stable team often
-+is the wrong point of contact, unless it is a series specific regression.
-+
-+There are various reasons why no central bug tracker exists. They, among others,
-+were not a thing yet when Linux started, which is why reporting my email was
-+the norm initially -- and still is, as quite a few developers prefer to handle
-+all aspects of kernel development via email. Some, on the other hand, saw
-+benefits in trackers and set up bugzilla.kernel.org, which due to the
-+aforementioned aspect never became mandatory and has some problematic aspects;
-+this is why it frequently does not even forward newly filed reports to the
-+appropriate developers. Yet other developers prefer the comfort of Git forges
-+for development and issue tracking; but subsystems use various forges, so those
-+trackers are spread over the web.
-+
-+The fourth aspect is explained in the second point of the reference section
-+already: Old codebases, modified sources, and add-ons lead to bugs that were
-+fixed a long time ago already or never happened upstream in the first place.
-+These are problems for many other software packaged by Linux distributions as
-+well. But there it is usually a smaller problem, as the modifications and
-+extensions distributors apply to the kernel are often much bigger and more
-+dangerous; the kernel also changes way more quickly, is a lot more
-+complex, and naturally more fragile. Due to these aspects, many developers
-+expect reports to be based on fresh and vanilla kernels. Furthermore, most of
-+them receive way more bug reports than they are able to handle, which is
-+why they prioritize the ones that look more promising.
-+
-+Reporting a bug due to these and other unmentioned aspects is harder than in
-+other Free/Libre & Open Source Software projects -- the complexity of this
-+document proves that. But that is the state of affairs for now. The primary
-+author of this text hopes documenting it will lay some groundwork to improve
-+the situation over time.
- 
++To avoid an ineffective, frustrating, or fruitless bug reporting experience, it
++thus is in your best interest to follow the step-by-step guide below.
  
  ..
+    Note: If you see this note, you are reading the text's source file. You
+@@ -58,22 +43,11 @@ releases and sending a status update afterwards.
+    https://docs.kernel.org/admin-guide/reporting-issues.html
+ 
+ 
+-Step-by-step guide how to report issues to the kernel maintainers
+-=================================================================
+-
+-The above TL;DR outlines roughly how to report issues to the Linux kernel
+-developers. It might be all that's needed for people already familiar with
+-reporting issues to Free/Libre & Open Source Software (FLOSS) projects. For
+-everyone else there is this section. It is more detailed and uses a
+-step-by-step approach. It still tries to be brief for readability and leaves
+-out a lot of details; those are described below the step-by-step guide in a
+-reference section, which explains each of the steps in more detail.
++Step-by-step guide on reporting Linux kernel issues
++===================================================
+ 
+-Note: this section covers a few more aspects than the TL;DR and does things in
+-a slightly different order. That's in your interest, to make sure you notice
+-early if an issue that looks like a Linux kernel problem is actually caused by
+-something else. These steps thus help to ensure the time you invest in this
+-process won't feel wasted in the end:
++Note: Only the steps starting with '*you must*' are strictly required -- but
++following the others is usually in your own interest.
+ 
+  * Are you facing an issue with a Linux kernel a hardware or software vendor
+    provided? Then in almost all cases you are better off to stop reading this
 -- 
 2.51.0
 
