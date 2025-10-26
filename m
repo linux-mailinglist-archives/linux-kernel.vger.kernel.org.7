@@ -1,104 +1,123 @@
-Return-Path: <linux-kernel+bounces-870597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D95C0B3E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B31BC0B3E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 543A34E5903
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:08:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A6A74E47C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 21:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AE7280331;
-	Sun, 26 Oct 2025 21:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69B284663;
+	Sun, 26 Oct 2025 21:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gCSFO0eb"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUR1M4l/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF8472633;
-	Sun, 26 Oct 2025 21:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEC972633;
+	Sun, 26 Oct 2025 21:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761512929; cv=none; b=UtPLIFClALUSQOBQnD6sN0buBr79iubmh1TtpCqZRtx0py3rOrzB2p0bQJRQ3lCj4/DxRrwEbLgFJwyNvgEnJi5jd/iC+Kq+HGBYm9zrJXMK5hkIkog2tyMKbYojd/ymaThaCIegCvfGEi0WCgG++4O6mqEYMrr2EAf9FIhRXb0=
+	t=1761512947; cv=none; b=m5rYzDYAkIP/0VpoRwDVJde95OaAmNV3kyQeCO1UgB9HhB+FmSFoYZ/K6StsMj9ZJ6pYfCSZL4POA+nP1zPNisqxyOhoHy640rt0yP2jQDYYC5uzUAuKK9BBXxtpgiOroe6D+4aFUUcyB768EMLqU1u8YNQzCOKR7IqE5Wdt/Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761512929; c=relaxed/simple;
-	bh=wtmaUcmUQO2/j1dA5UlzGbNz1/zPq+JvqBmW1XNu4hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nUrGoIwCVbVkT/mcDngjkNn0O/DHfR9R3c3Y1nZSgwfc+Uglqtm5xF0erq/AL6bR842XYOGnj+nnF2FdM98rGL9YqlYgHdJkJjkeHVK382YYCM7JedFgAHmSJveIApJYpQGMweIZWLns7AixF4UgCkYa0Q8quFrC8H2xmVZL2F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gCSFO0eb; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761512916;
-	bh=KNGlZDI97pDFpHcN6XMMluyye9W7EKnY2DtK4oajiHE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gCSFO0ebq2Fviw+0lRsWmsXzviw/58EoRoC5cFFESZCQilTQ9ls3KGdfxH45BUhBr
-	 zvcEciyytMp71Rnx5RFh/0BIsefhTc3jZdQ8eFw3WeWmYG/rumwMc/+BaKXDScei8T
-	 GxlwQ75DIKWI40ao6IMVLMxdMbiK9kh4uXB4oyirxQxo7tCZypCRrPi9FLwHpn+Tes
-	 rrfcGb3rc7cy4xKh2S8R9KmA4lJI564cLIAdyBC8oF+Gwu+Vtydjzwj2O2cNYaMMAO
-	 JMuGv97jfoPQMAJV4gIynaG6sh6HJmxcOSIgtHe0a5mwtRnjPGtGx1d0/hC1cmtrO/
-	 Zy4hof8/rIqTg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cvq4N1Nh0z4wCV;
-	Mon, 27 Oct 2025 08:08:36 +1100 (AEDT)
-Date: Mon, 27 Oct 2025 08:08:35 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the mfd-fixes tree
-Message-ID: <20251027080835.04e0a4c2@canb.auug.org.au>
+	s=arc-20240116; t=1761512947; c=relaxed/simple;
+	bh=PgGZkxx9eVXClCW73EbY+KTGYweRYJk4TsXoUCP0ekU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8bH4Ahtv/DplOi7oWo/kFnHRmFjGTAqidTbsIQ9ikV++cM0jC0i20tqLrAxi17a/hl9voxG6C7ts+9CQfsMUPUG+B9ifUNwZ3Ci1QAPkss1OKAjUNI5aJ13G/md+VECHuaPQ7/uPXb5p/KGY9aDVfFFtnDFmIJcJcWfumyqgAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUR1M4l/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0288BC4CEE7;
+	Sun, 26 Oct 2025 21:09:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761512947;
+	bh=PgGZkxx9eVXClCW73EbY+KTGYweRYJk4TsXoUCP0ekU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lUR1M4l/hP8HpiVUCzrPwKHQLA71phjUp7BimzWp+4GClN0UQGwSfzsd8fVfX8wRV
+	 0KoytM0amuJJnfRidVHRhWF4gVgqbUjaYBkx0UgwbwhUxE7brFWpTs3cfPKaXZM/I8
+	 n6dJKg1SqGyGQ0zzhY5F6uCksj42hmsX7iazM8feVgjyg6S9EWHkRQHbXDLxKUzJbJ
+	 c3RU3rCDY8rckM0EqsfDfWfpuz1NJQluvNWhvQ0sPexN6jKfSq5Uibhp/z7R5ims10
+	 /y4N93U9eb/LS2ZoU9sCmehKWKB0ja+59U53OG8NS5eVEGuiB3tGhyqAPKBeWVZ09p
+	 VJDTdJX0SgnXw==
+Date: Sun, 26 Oct 2025 16:09:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: iuncuim <iuncuim@gmail.com>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>,
+	Yangtao Li <tiny.windzz@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: thermal: sun8i: Add A523 THS0/1
+ controllers
+Message-ID: <20251026210905.GA2941518-robh@kernel.org>
+References: <20251025043129.160454-1-iuncuim@gmail.com>
+ <20251025043129.160454-2-iuncuim@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OiQeCwxxs9cyHX.b1aGV1x9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025043129.160454-2-iuncuim@gmail.com>
 
---Sig_/OiQeCwxxs9cyHX.b1aGV1x9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Oct 25, 2025 at 12:31:24PM +0800, iuncuim wrote:
+> From: Mikhail Kalashnikov <iuncuim@gmail.com>
+> 
+> Add a binding for D1/T113s thermal sensor controller. Add dt-bindings
+> description of the thermal sensors in the A523 processor.
+> The controllers require activation of the additional frequency of the
+> associated gpadc controller, so a new clock property has been added.
+> 
+> The calibration data is split into two cells that are in different areas
+> of nvmem. Both controllers require access to both memory cell, so a new
+> property nvmem-cells has been added. To maintain backward compatibility,
+> the name of the old cell remains the same and the new nvmem-cell-names is
+> called calibration-second-part
+> 
+> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+> ---
+>  .../thermal/allwinner,sun8i-a83t-ths.yaml     | 56 ++++++++++++++++++-
+>  1 file changed, 53 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> index 3e61689f6..b2f750ef2 100644
+> --- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> @@ -24,18 +24,23 @@ properties:
+>        - allwinner,sun50i-h5-ths
+>        - allwinner,sun50i-h6-ths
+>        - allwinner,sun50i-h616-ths
+> +      - allwinner,sun55i-a523-ths0
+> +      - allwinner,sun55i-a523-ths1
+>  
+>    clocks:
+>      minItems: 1
+>      items:
+>        - description: Bus Clock
+>        - description: Module Clock
+> +      - description: GPADC Clock
+>  
+>    clock-names:
+>      minItems: 1
+> +    maxItems: 2
 
-Hi all,
+How can the max be both 2 and...
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+>      items:
+>        - const: bus
+>        - const: mod
+> +      - const: gpadc
 
-  91a3e1f5453a ("mfd: ls2kbmc: Check for devm_mfd_add_devices() failure")
-  fdff3cadeea9 ("mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()")
-
-These are commits
-
-  4af66c2bcab0 ("mfd: ls2kbmc: check for devm_mfd_add_devices() failure")
-  0892507f4a0b ("mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OiQeCwxxs9cyHX.b1aGV1x9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj+jdMACgkQAVBC80lX
-0GwspAgAnVOdEQYjIuoFHKwnfEQthnwIeLBhSGg7byoTvzilQr96WKiiDmY8OIXT
-tHVDMvg2qKVLdgaPt8K05Yugs7NX7w3WOOB1rlbsNI1u6iLUvgn+U0GnauxXS0UY
-4Br8Fr9Vo0lh2ks4gYpv3cOD6DeAsNwrl0ibiRfvxBbDfi7ws+8ZNA1oj2EQRgwl
-QX/Rq+DElcwtoB01TqlDymxdTRVcwml/CEohuzDujhi3lrdr2c1SkJ0nxvT+Sa2q
-YAM5rXDVnzBKXXsxY6Sw3/9B51u9MlLsRPZ/MccMcQJb+qClX//WevbGzXxebx6s
-w6msYSa86s3PSU43nUKePT1JEoMSGQ==
-=pS8G
------END PGP SIGNATURE-----
-
---Sig_/OiQeCwxxs9cyHX.b1aGV1x9--
+...3 entries?
 
