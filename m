@@ -1,85 +1,134 @@
-Return-Path: <linux-kernel+bounces-870632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F376DC0B539
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:11:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E504DC0B545
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B24B43B12E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CD81890093
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AB827E074;
-	Sun, 26 Oct 2025 22:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A25E283159;
+	Sun, 26 Oct 2025 22:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnKfiX4h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N3fUNtwK"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AE91D90DF;
-	Sun, 26 Oct 2025 22:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0851E1D90DF;
+	Sun, 26 Oct 2025 22:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761516681; cv=none; b=sPXFoqtPCTurzNjemqHTN12KJ5JPLIu++Wf9Odt9LrLdmFzszeSgJ0ktjl5Pn/uA5DW9r5evA2dWLNfdAMCFp0KIy/7X41fDc9XVsBe6/92QfzjI4chHj5/5Nz1tG1udOtXmRXWt31mDjKk4ncgBzJXsPi41AwJKXlAaevNqSy4=
+	t=1761516729; cv=none; b=BkUcL7GnFeavVvk1PlUrycagE/8QzXcV+/qZpIIY/NnOeD0DUmtXF/A5mzPXMg+wd8iH8EGRaF3S9sV5+CQ9xqcjZV+vRASQdbrXB16HN9XqkOAQcr2kAlCpowRllexREHDR3Bxp/VvXJkeuHXa3GZN4ekqRFHgpEg+fmxfuRJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761516681; c=relaxed/simple;
-	bh=9xm02AGCq9f35Pl0ykXDcv9Pxwm1nzshMInrzYpBjvc=;
+	s=arc-20240116; t=1761516729; c=relaxed/simple;
+	bh=2FItP0Jr2f51sPq6GWmj36Vulpiy8YWMunvCKYHvpME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ius9E8uOf3OME1h4CcLW7C3z3S1POGYVOZu1sB7UyPqjSbf5veV6mz/WoO9SSxQB89KhKq5c5LBYi5PgVsZYEfotzYIuH+XOK/pidkANpq8jISezKJQrNtmqbjys1IfxV0Y7AQbSwc7fDa+8RxCs10P5hh7nE+i3HDcF2Eb0hXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnKfiX4h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A2BDC4CEE7;
-	Sun, 26 Oct 2025 22:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761516680;
-	bh=9xm02AGCq9f35Pl0ykXDcv9Pxwm1nzshMInrzYpBjvc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EuW9d/Hqt9LLo4NC0LrjcXZpFwHnC9TN893nN7KVp6OM+HhOS0k8WSHq4FJ+g47wvKhHA8+gCL2Gu6AE+BLsFrt/02GopgbZU87mFnpKicNYDONSCqW3UaTfZE2vIxRTNqFeTwP6Oj1swCFKsBE8K3lWtqf58QFY5g9mLw7N3oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N3fUNtwK; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id DD2EA1F0E;
+	Sun, 26 Oct 2025 23:10:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761516618;
+	bh=2FItP0Jr2f51sPq6GWmj36Vulpiy8YWMunvCKYHvpME=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gnKfiX4hX7Tk8jjmygo1dNTKfNRji6Ds0/eC4hxD6NtamWsNWqf8MIf02EvR9TCtK
-	 BOgEKIMB8usNr0TWqhFln9qibWV4js9SdMj3j6nfYHuI96zjPRLe8DCbh5dYPLjq/y
-	 28QPvEDRKIQsQWYvUrLNkC/EecAzXxH1u35adqbI4uIwv/P6RvenscXH6QbE7hXvke
-	 YynrTDAFJ4zL2KOfeAOGYQ/NoQGVIOIou5pD3tYTPEYpELBaaxLtqfzxyZRskHe7DH
-	 l+91Z0Z29sa/hiRBizO7gKtm/HBMy7jcIArR9SXyK9YAqDPTcZ8e02WxNVr18RBX23
-	 FAHWMZaCG+n4g==
-Date: Sun, 26 Oct 2025 17:11:18 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+	b=N3fUNtwKJBmAVHGQzv0Xh1/8neLjL3T4tJVOxQHLUNcOEiS5jmGXuIdzTm4lq8aTV
+	 mL5SyqSe9TKkk67L5lzXHsmls9HbvezFzy7lF1VhlzJBrRso+NDiXmXSzYmsBSN1Rr
+	 08yIf6p1xYtyQ/nwbMmAz1lhZwQuMXaMAa2abYmE=
+Date: Mon, 27 Oct 2025 00:11:49 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Guoniu Zhou <guoniu.zhou@oss.nxp.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, trilok.soni@oss.qualcomm.com,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aiqun.yu@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com
-Subject: Re: [PATCH v2] dt-bindings: mailbox: qcom: Add CPUCP mailbox
- controller bindings for Kaanapali
-Message-ID: <176151667552.3027028.7193532259261459150.robh@kernel.org>
-References: <20251021-knp-cpufreq-v2-1-95391d66c84e@oss.qualcomm.com>
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH 2/3] media: nxp: imx8-isi: Keep the default value for
+ BLANK_PXL field
+Message-ID: <20251026221149.GH13023@pendragon.ideasonboard.com>
+References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
+ <20251024-isi_imx95-v1-2-3ad1af7c3d61@nxp.com>
+ <aPuCHltyz9Ed7wcF@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251021-knp-cpufreq-v2-1-95391d66c84e@oss.qualcomm.com>
+In-Reply-To: <aPuCHltyz9Ed7wcF@lizhi-Precision-Tower-5810>
 
-
-On Tue, 21 Oct 2025 23:32:30 -0700, Jingyi Wang wrote:
-> Document CPUSS Control Processor (CPUCP) mailbox controller for Qualcomm
-> Kaanapali, which is compatible with X1E80100, use fallback to indicate
-> this.
+On Fri, Oct 24, 2025 at 09:41:50AM -0400, Frank Li wrote:
+> On Fri, Oct 24, 2025 at 05:46:53PM +0800, Guoniu Zhou wrote:
+> > From: Guoniu Zhou <guoniu.zhou@nxp.com>
+> >
+> > The field provides the value of the blank pixel to be inserted in the
 > 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - patch rebased
-> - Link to v1: https://lore.kernel.org/r/20250924-knp-cpufreq-v1-1-1bda16702bb1@oss.qualcomm.com
-> ---
->  Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> The field BLANK_PXL provides
 > 
+> > image in case an overflow error occurs in the output buffers of the
+> > channel. Its default value is 0xff, so no need to set again.
+> >
+> > Besides, the field only exist in i.MX8QM/XP ISI version. Other versions
+> > like mscale series, remove the field since it won't send data to AXI bus
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+What's the mscale series ? Is that i.MX 8M ?
 
+> > when overflow error occurs and set the field as reserved. i.MX9 series
+> 
+> mark BLANK_PXL as reserved. i.MX9 series use it for other purposes.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> 
+> > use the field as other purposes.
+> >
+> > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> > ---
+> >  drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c
+> > index 9225a7ac1c3ee7e42e64983982eb4b6c27e356fe..0187d4ab97e8e28fca9013f6864a094e08f2c570 100644
+> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c
+> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c
+> > @@ -309,8 +309,8 @@ static void mxc_isi_channel_set_control(struct mxc_isi_pipe *pipe,
+> >
+> >  	val = mxc_isi_read(pipe, CHNL_CTRL);
+> >  	val &= ~(CHNL_CTRL_CHNL_BYPASS | CHNL_CTRL_CHAIN_BUF_MASK |
+> > -		 CHNL_CTRL_BLANK_PXL_MASK | CHNL_CTRL_SRC_TYPE_MASK |
+> > -		 CHNL_CTRL_MIPI_VC_ID_MASK | CHNL_CTRL_SRC_INPUT_MASK);
+> > +		 CHNL_CTRL_SRC_TYPE_MASK | CHNL_CTRL_MIPI_VC_ID_MASK |
+> > +		 CHNL_CTRL_SRC_INPUT_MASK);
+> >
+> >  	/*
+> >  	 * If no scaling or color space conversion is needed, bypass the
+> > @@ -323,8 +323,6 @@ static void mxc_isi_channel_set_control(struct mxc_isi_pipe *pipe,
+> >  	if (pipe->chained)
+> >  		val |= CHNL_CTRL_CHAIN_BUF(CHNL_CTRL_CHAIN_BUF_2_CHAIN);
+> >
+> > -	val |= CHNL_CTRL_BLANK_PXL(0xff);
+> > -
+> >  	/* Input source (including VC configuration for CSI-2) */
+> >  	if (input == MXC_ISI_INPUT_MEM) {
+> >  		/*
+
+-- 
+Regards,
+
+Laurent Pinchart
 
