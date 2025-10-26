@@ -1,125 +1,164 @@
-Return-Path: <linux-kernel+bounces-870651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8760BC0B5E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:28:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27DA0C0B5E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 23:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 703194E8DCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A2D3B74FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Oct 2025 22:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23122FD7DD;
-	Sun, 26 Oct 2025 22:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103342F12C0;
+	Sun, 26 Oct 2025 22:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="razqeGsB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YvIzxQ/6"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F8F1F4CAE;
-	Sun, 26 Oct 2025 22:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68CA48CFC
+	for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761517726; cv=none; b=iTVy+trKzmx32QFpJROOf+FTlyByB5MJ5nLYP/wXhANDu9vBqiwcK/O8NB+6b7TXA2Yla++TKvXIfszg1ILVg5KMAtSlII5rqLmUXfQ+j98bBLcUGay9TbAvwjPJ4f/SNR/5gz9Tv5XbLYUvEXJ3bZb8skz1R8B/ltsiJy36SSQ=
+	t=1761517767; cv=none; b=Tt1KHqtdZKh0AguvBOKPo7zbVHUOLNKaBnbOJ2L1m5tlGvrp3vb3KUmKNXGaqOpxKP3EZeh0kyVhHcHEXLeseIVB7x2u3bIjzbSWlVHyld/mEOp4SW11i811stVrcmQUYKIeIcFVAp7G8oxg4+WbgNedsizet/0H4N+rdsmW/eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761517726; c=relaxed/simple;
-	bh=VKQFo2wPNIL18CuB3qiB0jANg2tkXXNSpvhyiVgRsMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YzC0ZZwAg4kOL3eLSj0+s8QBycapg1Q77Al0c+Wu0QVFAj1gNxVvbAYv+slIagB9GtbzxIMgPVFeahWYepU3aJQLSFRVDz4pRX4sQBixKXJPcqlNgAVr4UlCeB6xTmvZMVoS7nbvbX0XNVSUer2pDztnffT2EIW8ZAmSq8edUW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=razqeGsB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id C0CFF1F0E;
-	Sun, 26 Oct 2025 23:26:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761517614;
-	bh=VKQFo2wPNIL18CuB3qiB0jANg2tkXXNSpvhyiVgRsMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=razqeGsBxSglcceb1F4Gdb98xf7ZRp6vHkqCOab9W65FnNoegiSim+m2Fk8fj/49C
-	 MrM6YyoR7BoGpLT0pWLToks4e4XLehxL1gMaMbf2ifuo7vwxdXtfqEk5x0cK7Xt1FF
-	 Th5s1naHJYqOzkVLYsfVdGGHKcErOyyYxSKhqZ8U=
-Date: Mon, 27 Oct 2025 00:28:26 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Guoniu Zhou <guoniu.zhou@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] media: imx8mq-mipi-csi2: Add output filed in
- csi2_pix_format
-Message-ID: <20251026222826.GJ13023@pendragon.ideasonboard.com>
-References: <20250820-csi2_imx8mq-v5-0-e04a6fc593bd@nxp.com>
- <20250820-csi2_imx8mq-v5-2-e04a6fc593bd@nxp.com>
- <aKXcPVQnQzCx6C5z@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1761517767; c=relaxed/simple;
+	bh=Y0P2AWqPYjaMFSx/E/QMTTsAvv5s6apFpZPwSBNhObU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=f+kkdSi6tU52mCE0SBfF95boem2kv88c6jTqvf4Tb4ySiI5aGL8+xt49kuILCzeBX9xkTHr35o16P8izo4LaI/us784xDUueGzp5k9zYq1sh/j31dU9RKSD74i5sip7Vj2ubW6+OzxTmVL89Xn+HRPsI07/JODAl1LpjN/HfHyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YvIzxQ/6; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-63c4999fa3dso277441a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 15:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761517764; x=1762122564; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=66iqL1wQDJrMjUMimUYRUQT7RhtIF8bdulrGmkclbmU=;
+        b=YvIzxQ/6U5c5SMq6JGippU091DZSzSWjnadHhpacIJ7VqbHw9AN0LAR0IvwlvM9tMr
+         oXmXMkgMwJ1EOWA9ONJePTVOKyRKrnr+af09vZ5KUVNiAQwGJQj3NgYMcT1LuX5jhrzU
+         497ZWhHo/1Hj27TeZPxisYH20CYUUTaXgcbxjzKatNFCAlJXXx+k6yV2mhGwF33awFY6
+         7eoJo5g3adCaxCopj/0cHbzY+mU2nWN8FnO4Bieel5mV+ihBkNs0uuKRMlih+rap3RMb
+         Kk25as94xVBi8AWrQA2viOJbHwo1xtoqWXOQj9W5ttDpaPHypJqlG49kXQNu7kuph2cJ
+         1xOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761517764; x=1762122564;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=66iqL1wQDJrMjUMimUYRUQT7RhtIF8bdulrGmkclbmU=;
+        b=LPZX+9fD/yB4BKqid/E6HeYeynX2tbBAJyDTcSjzV5w2MoTrBSbjAwJiZxEN2tJyh3
+         lD5LuUpQX26ITzsbYUd75qd/YbPYMIxB8ZKGD1dd2yECWDu8b24i3y/0UEYMC6tJnQrY
+         Rb7RZgbCeMNO5W8+W7KtWYvij2jWoj1k5VdzN1VYdpTGCAoPm5qKVh0EmX94//qo7QKu
+         jMg+7caQIbOrrvC1n76PlC5RuqyoJnME3t7n98lRGO6Jw3xwczF0E2WZtEqB+SUvXPpX
+         BVGxfsMXkXFu7gUWoBSrDxS18g0h/gOkN44hBYDOM2xDqvbEzg5le9s+D5VoR1pM3nv5
+         ppwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLmkAgTu4RTFaJxA3HRld8WtlhcptAG3ZEyXXSBqfejxC/86CERvBNaPjrMjd+SpZwflbfKHvJrrLa41Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl24s8isLw1cT9Z9fAlmIJc5TS52F3GJzJ3KG5hapb99Zh9Y4o
+	a5i2T/O+18iZnYhSBc9CeuqF8Y0vVC65DEtnKS8VaJR8GCHKS35zOazK4iObIrlLatl5u1MbOcG
+	bldd71ofuDoBYuQ==
+X-Google-Smtp-Source: AGHT+IEFiLJX44hMWNXHZC3Aih1gij7lk8DQBXxxJ2bwgJL5TDkN/S5/hEJ472CJdxkQKTEOJdcGAy+su2hzzQ==
+X-Received: from edf6.prod.google.com ([2002:a05:6402:21c6:b0:639:c8c6:de62])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:26d1:b0:63e:14c2:2818 with SMTP id 4fb4d7f45d1cf-63e14c22f06mr15645925a12.17.1761517763982;
+ Sun, 26 Oct 2025 15:29:23 -0700 (PDT)
+Date: Sun, 26 Oct 2025 22:29:23 +0000
+In-Reply-To: <20251025114801.GWaPy48dhlZ_EVoqKi@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aKXcPVQnQzCx6C5z@lizhi-Precision-Tower-5810>
+Mime-Version: 1.0
+References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
+ <20250924-b4-asi-page-alloc-v1-3-2d861768041f@google.com> <20251025114801.GWaPy48dhlZ_EVoqKi@fat_crate.local>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDSLXKU87HTE.G0XUZ5BG5M8K@google.com>
+Subject: Re: [PATCH 03/21] x86/mm: factor out phys_pgd_init()
+From: Brendan Jackman <jackmanb@google.com>
+To: Borislav Petkov <bp@alien8.de>, Brendan Jackman <jackmanb@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, <peterz@infradead.org>, 
+	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>, 
+	<akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
+	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
+	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
+	<vbabka@suse.cz>, <x86@kernel.org>, <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 20, 2025 at 10:31:25AM -0400, Frank Li wrote:
-> On Wed, Aug 20, 2025 at 07:04:57PM +0800, Guoniu Zhou wrote:
-> > Add output filed in csi2_pix_format since the format on the
-> > source pad might change due to unpacking.
-> 
-> Nit: wrap at 75 chars position
-> 
-> Add output filed in csi2_pix_format since the format on the source pad
+On Sat Oct 25, 2025 at 11:48 AM UTC, Borislav Petkov wrote:
+> On Wed, Sep 24, 2025 at 02:59:38PM +0000, Brendan Jackman wrote:
+>> +static unsigned long __meminit
+>> +__kernel_physical_mapping_init(unsigned long paddr_start,
+>> +			       unsigned long paddr_end,
+>> +			       unsigned long page_size_mask,
+>> +			       pgprot_t prot, bool init)
+>> +{
+>> +	bool pgd_changed;
+>
+> I have to say, that pgd_changed is yuck but I don't have a better idea and
+> this has happened a long time ago anyway.
+>
+> How about you have the caller pass in false:
+>
+> 	bool pgd_changed = false;
+>
+> and then callee sets it to true when it does so?
 
-s/filed/field/
+Sure.
 
-> might change due to unpacking.
-> 
-> Treat 0 as meaning the output uses the same format as the input.
-> 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> 
-> > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > ---
-> >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > index 85700655ecad334c61e9b5f9f073e10b6db2618f..ad7adc677e389e0f35b0cf63195279e197907f8c 100644
-> > --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > @@ -139,6 +139,7 @@ struct csi_state {
-> >
+Per Dave's feedback I am still slightly hopeful I can find a way to
+come in and refactor this code so that it's gets cleaner for you guys
+and then ASI becomes a natural addition. So far I don't come up with
+anything in init_64.c but I'm still planning to stare at set_memory.c a
+while longer and see if anything comes to mind. So maybe we'll be able
+to reduce the yuck factor a bit.
 
-A kerneldoc block would be good here to document the fields, it's not
-very clear from the name what the output field is.
+>> +	unsigned long paddr_last;
+>
+> The tip-tree preferred ordering of variable declarations at the
+> beginning of a function is reverse fir tree order::
+>
+> 	struct long_struct_name *descriptive_name;
+> 	unsigned long foo, bar;
+> 	unsigned int tmp;
+> 	int ret;
+>
+> The above is faster to parse than the reverse ordering::
+>
+> 	int ret;
+> 	unsigned int tmp;
+> 	unsigned long foo, bar;
+> 	struct long_struct_name *descriptive_name;
+>
+> And even more so than random ordering::
+>
+> 	unsigned long foo, bar;
+> 	int ret;
+> 	struct long_struct_name *descriptive_name;
+> 	unsigned int tmp;
 
-> >  struct csi2_pix_format {
-> >  	u32 code;
-> > +	u32 output;
-> >  };
-> >
-> >  /* -----------------------------------------------------------------------------
-> > @@ -634,6 +635,9 @@ static int imx8mq_mipi_csi_set_fmt(struct v4l2_subdev *sd,
-> >  	fmt = v4l2_subdev_state_get_format(sd_state, MIPI_CSI2_PAD_SOURCE);
-> >  	*fmt = sdformat->format;
-> >
-> > +	/* The format on the source pad might change due to unpacking. */
-> > +	fmt->code = csi2_fmt->output ? : csi2_fmt->code;
-> > +
-> >  	return 0;
-> >  }
-> >
+Ack
 
--- 
-Regards,
+>> +
+>> +	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
+>> +				   prot, init, &pgd_changed);
+>> +	if (pgd_changed)
+>> +		sync_global_pgds((unsigned long)__va(paddr_start),
+>> +				 (unsigned long)__va(paddr_end) - 1);
+>> +
+>> +	return paddr_last;
+>> +}
+>>  
+>>  /*
+>>   * Create page table mapping for the physical memory for specific physical
+>> 
+>> -- 
+>> 2.50.1
+>> 
 
-Laurent Pinchart
 
