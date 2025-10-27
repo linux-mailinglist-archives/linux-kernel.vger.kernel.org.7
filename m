@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-870786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06472C0BAF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:28:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9105C0BB01
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F26534972B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:28:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74AE34E2C52
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A102D0635;
-	Mon, 27 Oct 2025 02:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514872D0C8F;
+	Mon, 27 Oct 2025 02:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="RkSX6cAE"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9Vo/wKD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FCA2C08D4;
-	Mon, 27 Oct 2025 02:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E8B1DFFC;
+	Mon, 27 Oct 2025 02:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761532117; cv=none; b=IzPoTpACX+noK4wPelzeI199nIfWGwW+/V6qJWY3z11VM7slAmleAIqVcEIkAxghSnNSGqtn81rGzuV+c9F88GkRmoB5vigzmxTDKohpRzyjDIwuR5mssGdOI+oDT1tyKfZNTm+1W0H30+NkzwfR3v9Gir42L/g19zIZKJiBCGs=
+	t=1761532185; cv=none; b=kZg8oVdfTX4cAGs+NFBu3IgROLvTylrhA4HYIzq49e54Kp/UrLo2Mgyoxg2URULJ7LV6bgVlM8uZmfDZCBLnerJ+LyzY/sVlf9MGaF//UCThyZpX9qUm9EHxrKD2E1AXs0SxjVsYU1JrRmC0m/935vy8as9CGinSCEbA2dZM+b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761532117; c=relaxed/simple;
-	bh=u83twR9OiwbSgnrLOPsQ/qeevQIpIACX0JjFu5egPMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AFcxlzn6CsvRTMKPYPP6CKJnPriB5TWOI1i/sxNCzSWZ0byPkyVjSgNmZYpg3a1pnBDAcfPyfKTL/9r9EAbw9x5IeVxCbTHmv7PNYYFAZeqEYrq2jKotM6E8EyZvDq8oTYe7MEWx35uVFq4cEKw2DVEEkAejt+qZ/vn+xL5tTCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=RkSX6cAE; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=X3q1pkIg21024rAyEiQr9DMPlEj5XAufmPzfN6iNKK8=;
-	b=RkSX6cAEuq0u5M46qTxKLRPIUptWGjUloHkAgCoYcBtwrh7MMoNwqzfmbg79Qh8OxdZa4wPmL
-	yel6iaZzJ8tQN3n5asReXoNylV1AziOxlyYCy6npJHF8HnPu8SIEF+OS0CG6lcORffQr9wO+9Hg
-	bjK0FT6cxDAgJQeklKMaJn8=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cvy8C54LNz1T4HL;
-	Mon, 27 Oct 2025 10:27:23 +0800 (CST)
-Received: from kwepemr200004.china.huawei.com (unknown [7.202.195.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 655DF180B69;
-	Mon, 27 Oct 2025 10:28:24 +0800 (CST)
-Received: from [10.67.121.62] (10.67.121.62) by kwepemr200004.china.huawei.com
- (7.202.195.241) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Oct
- 2025 10:28:23 +0800
-Message-ID: <651ffa3f-9098-4d00-877b-d22e3e8cd64a@huawei.com>
-Date: Mon, 27 Oct 2025 10:28:23 +0800
+	s=arc-20240116; t=1761532185; c=relaxed/simple;
+	bh=Jv0StzLdkPw7Qg9z8uEgyVO5Bn1RJ64wxzXC6DVC2TY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VFB6eUN3fNkrQ1WSdNBA2sn7YX1goViWGPEUj5bcovR5FN72FutKfUTA1zAuq73tudgXmqgO0pby68UDO+HDtwkR4XOoksv3OCjl9stuURBD0IIPzJbVr9qXGUSKNv7xSvHn8NxrqAT2WZVPYnZQyisg0yGHg8uKobOZ8XYVbyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9Vo/wKD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC2BFC4CEE7;
+	Mon, 27 Oct 2025 02:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761532185;
+	bh=Jv0StzLdkPw7Qg9z8uEgyVO5Bn1RJ64wxzXC6DVC2TY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c9Vo/wKDewFAO95sAbUUfzBcIIrwLYXwl11n70C70LnH/SRsZG4SZKClOTqX7sNGg
+	 8muV+pnX0khJDJQzpbKarmehAOJcRb1x9dCkRM+mrpebzSDX71j0WM01OlCvVfjE+F
+	 t+bymSOZLVB+rK3B8YGxwlWIwGzvXfLkH9W/LTNJy3kGIiZWzw9grdlmseXOTKq2AJ
+	 rhbA77IeJVMSBU66HM6cFtYgAP96KgHOI7MOULEcqK+DPD8dodR4xEHUwqQEMWajm1
+	 68SIrV2b1jeuHiSHyhIpyu3RT0PgZuL7kL06uHXew6OZjU7enbK0Aw2LRBvTMKYpwI
+	 O8SmIOPPrRapQ==
+Date: Mon, 27 Oct 2025 11:29:38 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
+ Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
+ wprobe
+Message-Id: <20251027112938.bd34197bdbb5394bb2b220d9@kernel.org>
+In-Reply-To: <aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
+References: <175859019940.374439.7398451124225791618.stgit@devnote2>
+	<175859026716.374439.14852239332989324292.stgit@devnote2>
+	<aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM / devfreq: hisi: Fix potential UAF in OPP handling
-To: <myungjoo.ham@samsung.com>, <kyungmin.park@samsung.com>,
-	<cw00.choi@samsung.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <lihuisong@huawei.com>,
-	<yubowen8@huawei.com>, <linhongye@h-partners.com>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>
-References: <20250915062135.748653-1-zhangpengjie2@huawei.com>
-From: "zhangpengjie (A)" <zhangpengjie2@huawei.com>
-In-Reply-To: <20250915062135.748653-1-zhangpengjie2@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemr200004.china.huawei.com (7.202.195.241)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 9/15/2025 2:21 PM, Pengjie Zhang wrote:
-> Ensure all required data is acquired before calling dev_pm_opp_put(opp)
-> to maintain correct resource acquisition and release order.
->
-> Fixes: 7da2fdaaa1e6 ("PM / devfreq: Add HiSilicon uncore frequency scaling driver")
-> Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
-> ---
->   drivers/devfreq/hisi_uncore_freq.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/devfreq/hisi_uncore_freq.c b/drivers/devfreq/hisi_uncore_freq.c
-> index 96d1815059e3..c1ed70fa0a40 100644
-> --- a/drivers/devfreq/hisi_uncore_freq.c
-> +++ b/drivers/devfreq/hisi_uncore_freq.c
-> @@ -265,10 +265,11 @@ static int hisi_uncore_target(struct device *dev, unsigned long *freq,
->   		dev_err(dev, "Failed to get opp for freq %lu hz\n", *freq);
->   		return PTR_ERR(opp);
->   	}
-> -	dev_pm_opp_put(opp);
->   
->   	data = (u32)(dev_pm_opp_get_freq(opp) / HZ_PER_MHZ);
->   
-> +	dev_pm_opp_put(opp);
-> +
->   	return hisi_uncore_cmd_send(uncore, HUCF_PCC_CMD_SET_FREQ, &data);
->   }
+On Fri, 24 Oct 2025 22:31:06 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
-Gentle ping on this reviewed patch. 🙂
+> On Tue, Sep 23, 2025 at 10:17:47AM +0900, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Add 'add_remove_wprobe.tc' testcase for testing wprobe event that
+> > tests adding and removing operations of the wprobe event.
+> 
+> Since this series has landed in -next we've been seeing hangs on a range
+> of arm64 platforms running the ftrace tests, it looks like it's all of
+> them.  Unfortunately the systems lock up with no output as soon as they
+> start trying to do something with wprobes:
+
+Oh, thanks for reporting!
+
+> 
+> # ok 19 Generic dynamic event - add/remove kprobe events
+> # ok 20 Generic dynamic event - add/remove synthetic events
+> # ok 21 Generic dynamic event - add/remove tracepoint probe events
+> # ok 22 Generic dynamic event - add/remove tracepoint probe events on module
+> # ok 23 Generic dynamic event - add/remove/test uprobe events
+
+OK, let me check.
+
+> 
+> the next test being add_remove_wprobe.tc, which doesn't seem to
+> complete.  Full log (for what little it's worth):
+> 
+>    https://lava.sirena.org.uk/scheduler/job/2000440#L1860
+> 
+> I turned on -vvv logging and that generated the rather spectacularly
+> more verbose:
+> 
+>    https://lava.sirena.org.uk/scheduler/job/2000676/log_file/plain
+> 
+> (in a somewhat processed format unfortunately.).  Looking at that log I
+> do notice a bunch of "unexpected operators" reported by the shell, these
+> systems are running dash not bash, though that doesn't seem related.  It
+> looks like the script hangs in reset_trigger_file while grepping the
+> trigger files rather than actually trying to do the test.
+
+Yeah, it seems do nothing on wprobe. Let me check why it happens.
 
 Thanks!
 
+> 
+> Sorry about the delay in reporting this.
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
