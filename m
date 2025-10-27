@@ -1,115 +1,183 @@
-Return-Path: <linux-kernel+bounces-872617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC488C11973
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 517CEC11964
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F6B19C066B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2821891A7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2682D948A;
-	Mon, 27 Oct 2025 21:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566B231282F;
+	Mon, 27 Oct 2025 21:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BlVpWzoo"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDOWOWpY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD5830BBBF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833722D948A;
+	Mon, 27 Oct 2025 21:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761602231; cv=none; b=eTyAfTsNvEbcED5OAlkK6PQWS0DyBiKwxbKap+9AzXpuxnOgaULgDToAcxIJnKsSagis5LgTMSLbFiaj44SdhjOnUgHgC3zLqdCnBp/HB9fDzNtXhJ98bWzn2HlH3a9N34OMBkQ9QvteihCDE+7CJsJpngwLodL2p6ftpLw59X4=
+	t=1761602220; cv=none; b=cEP2sn7LVfrLHqD0G+GSpeFkFKATh98epg9nbXsGF7v/m9btzdmiXLH+Yt08AwbiCZUwt0ODnnNeiu4ppfWf8cFD46m4REBC755BoOSMfZR8GF3AR4ezWIB+ZqnW8AGYjdMnubxG+Y9lfI8ASN3aIj/iidRs9dewpOD9//FMt8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761602231; c=relaxed/simple;
-	bh=uzn59MLbFi/gXQcmwNKcLTbahfjA0CxJvaROiMoRzOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kWdp5kj7VFrgMhhPPP3nw+RtrQ4cK13Y0M2DeOhk39GMggKPmxzIyQHObl1pqGKGPY0Th38RqJu8P/PDe9O/ncPxyMdMDsOGyOwjPJkyUCPrYUddV70gOX56h5pIfz+uJBl1vuNBoOM2RHe+Us9xwmNzn1ZykzxXRWAtc8O3S4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BlVpWzoo; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-362e291924aso43110381fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761602228; x=1762207028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0HsbPG1hM4cDOntTcBmV/JBGBT4YKc3N+I+tTErEYG4=;
-        b=BlVpWzoouqoZFjnFj9d0RFZNURDXt/jj+N38Tx92AD5sfPL6kPzMCNlPFwHVa4CceT
-         PuwkIYX9jKb2+26YeKUxiG2D0AgsHvUVVknLZrp2ixiRxLj3p+zDhoZCEswRpUC3S91T
-         7QbH05IwTFSYKl9UTn8zrsOW06Evf4yYurnPXESvn/t8oyZ0hR7TSDZbXWwThnJPz8Oi
-         Fh4Iqs++cdQjm44dlwHAUIQRb2LYof6ENm+ZwrilwNhbxrRhjNvsqvJuJ50phiSAzB/T
-         JYxBGW0HieRTXts3JY7z20kyUU4+661VVXdcVOQaU2AMzaRBABtOIGKjaI29IPs+mCVz
-         7yow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761602228; x=1762207028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0HsbPG1hM4cDOntTcBmV/JBGBT4YKc3N+I+tTErEYG4=;
-        b=J7Cpp0vqU2XwK6WAvG6uMm/PMZTSDiZo1cLi3XZ8RdeUrQbR0gkzl+2hSFgM8zKFnG
-         7r4H2RhxxT/Ec/5c/Pw3OOT5d8DA2lVEMaRjnmDrzxirQG43NX37e+srSUe7pzQ+mgOR
-         eNysZfHZHMLl59TgOWySrN7z7I1zuliXrah1vD+gH1JlYXlZ7WDZaj9LhEwituar4IZH
-         KZLfgRQVJVumJ1EcEcDPMcs+9qRJyZeFB3Emi3j4qoJUYuQzMVPJeaq4IHW6Wsb6NiRS
-         vX8ceWDxWDrI4ej4KceeM1xsHe5rPwNU2SY1MbM9AyFeKduNzFD9LZqFS8gS0uLl5QFt
-         mkYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPiXOHwCJ+22/1ANz3SyZ155/FlxF4SO9nQraaLzZP0vcsHtW82fN8MW+W+0x8lhWYXAkDKWftplXUFlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1iDkXgn99JFNktfJKM8I5Y/muooGlnn4SXlN3hL4cbz4tFCr+
-	gECn0BSyxCoj0HTUOZIY3K6CChP0Nc2StIUA2Bb2gpFAcma6xH80J1GlA+uogzTTdAX9IoLeDXi
-	6R+IVs4VLTYg2R98qaY+FonUx/MvL8wUHQOT1RvQ5qA==
-X-Gm-Gg: ASbGncsPka2QpYGOIvNWXwPZE7tXhqUBScvkZrmTZPKfToB9bP192CkNU3/ifvBGiaV
-	XSrmLxbEfz6BTsFKMXaHuuTMJAqgW+YvnmhsRO7p3LgVN8DSiTyu3w/btq9ePAl/PfCQqmOXTlC
-	uglLrN8ZO2BQHngcYHBruxLQS4eWznnCCFXwixG+Udwq8kCNkWQn3VO2uma+ZHzjJhcKx3GRTXC
-	HiWdiBZ5nlgcvEOhBDmFBfjpiHebUTxS/sxQY/1/KZFi5iRnUJMokvC8m/lBBXHokqRAXE=
-X-Google-Smtp-Source: AGHT+IEjLIfgc64R5us95+fFPO8BWmx3IOi8cmIKmJ8GeDaDyGf81wbf02WQ2hQUkaBk66OHmS0+B2OIi4naaYvPItc=
-X-Received: by 2002:a05:651c:4356:10b0:36b:631e:2aee with SMTP id
- 38308e7fff4ca-379076daf0cmr3058091fa.21.1761602227957; Mon, 27 Oct 2025
- 14:57:07 -0700 (PDT)
+	s=arc-20240116; t=1761602220; c=relaxed/simple;
+	bh=PhTuulUnuNJxdh+bqpaUAUviCKrrigpWKFSlbU6eK6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQx3meM/h578ygSf6JPiu6xbJqp1P67ZLAN2VBE5MAPo2+vwCrbavSWWAA6mMdqOECQod3SN5U7enwccN1xHlVkhaPG71tqC00yEJ3DTM1s4PC+tKhfh7Sy5t2arl7RfIBUfyNId1082pV2ugFu4nrFgUQ4ejFkZrxVIsREOT6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDOWOWpY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E989C4CEF1;
+	Mon, 27 Oct 2025 21:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761602220;
+	bh=PhTuulUnuNJxdh+bqpaUAUviCKrrigpWKFSlbU6eK6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UDOWOWpYdC3iUEABEyDdOZfN1doQMoHd828VGip0za1SZuOHiwWMA7pSWpquVqMV/
+	 ZbUh8mqPfyHEXOooC8nlSyJraxoZ0FNwf/TwtcNDo4JLEyGqvqArNdwNHqBP44icRT
+	 Wt113dUBaFBPEAlEEDDLrCTTyyF2K/MLBYM5+TvrqCHC79wZga6yGa0dwqrQmgF8sQ
+	 jRfG3yT6AWyI8vJbLEyInWEuN82QA0H5LE7Ak3ZAlR9VKXpGW5RrH2I9BWSN+2uuWL
+	 /qCt18OSTflX/srFi8SmJfygw288pjHN2AxzKmXCOJGFc/DzdZzkW2fyPGHPBrl0AZ
+	 BgAgeWLr63cVQ==
+Date: Mon, 27 Oct 2025 18:56:57 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Anton Protopopov <a.s.protopopov@gmail.com>,
+	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>
+Subject: Re: pahole next->master. Was: [PATCH bpf-next v1] selftests/bpf:
+ Guard addr_space_cast code with __BPF_FEATURE_ADDR_SPACE_CAST
+Message-ID: <aP_qqVvDjB99NQNk@x1>
+References: <20251022071825.238909-1-jiayuan.chen@linux.dev>
+ <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
+ <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
+ <84906f32-955d-4fda-b87d-56c052ddfd87@linux.dev>
+ <8a94c764c5fa4ff04fa7dd69ed47fcdf782b814e@linux.dev>
+ <CAADnVQKNpd8SCawQbW69ALWNZMoOvxwRbBQELqzh0P52iXG=kw@mail.gmail.com>
+ <aP-InycOjSO8EqcO@x1>
+ <aP-LE7ssid10iKw-@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021070410.3585997-1-gary.yang@cixtech.com>
-In-Reply-To: <20251021070410.3585997-1-gary.yang@cixtech.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 Oct 2025 22:56:56 +0100
-X-Gm-Features: AWmQ_bm-rkyY9e4T7v9WO6_vxIZ23JzEk1iQHKpy0OXLbJlzhTYiKf9B8Mvl6g8
-Message-ID: <CACRpkdZAaEim0yJLkXNctJA0jBFj7LGyTGVvy7_mMf5G+vUWOQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Add pinctrl support for Sky1
-To: Gary Yang <gary.yang@cixtech.com>, Peter Chen <peter.chen@cixtech.com>, 
-	Fugang Duan <fugang.duan@cixtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	cix-kernel-upstream@cixtech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aP-LE7ssid10iKw-@x1>
 
-Hi Gary,
+On Mon, Oct 27, 2025 at 12:09:11PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, Oct 27, 2025 at 11:58:43AM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Thu, Oct 23, 2025 at 08:42:34AM -0700, Alexei Starovoitov wrote:
+> > > On Thu, Oct 23, 2025 at 12:50 AM Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
+> > > > thanks, but version 1.30 didn't work in my tests - even pahole's master branch fails, only the next branch works...
+> > 
+> > > > It seems that the 'old' pahole parses some kfuncs incorrectly, for example bpf_dynptr_slice().
 
-On Tue, Oct 21, 2025 at 9:04=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> w=
-rote:
+> > > the introduction of the 'next' branch screwed up the workflow for many people.
+> > > Let's remove it and merge everything into master.
+> > > People expect master branch to be the one where active development
+> > > is happening and the source of truth for the latest features.
 
-> Gary Yang (3):
->   dt-bindings: pinctrl: Add cix,sky1-pinctrl
->   pinctrl: cix: Add pin-controller support for sky1
+> > My bad, I've been away for too long, next is supposed to be with things
+> > for a short while, testing for a few days, for CI consumption, then move
+> > to master, rinse repeat.
 
-Patches 1 & 2 applied to the pin control tree for v6.19!
+> > I think we should go back to that model.
 
->   arm64: dts: cix: Add pinctrl nodes for sky1
+> The difference is small but can explain as has changes to the btf
+> loader, and the reporter, as I now checked the whole thread, says that
+> 'next' works for him, so I'll move what is in 'next' to 'master' now.
 
-This third patch should be applied to the SoC tree, Peter Chen or
-Fugang Duan takes care of that I think? Not sure.
+> Just for reference since I had done it, my investigation is below.
 
-Good work with the pin controller, now is a good time to just
-go on from here and fix the GPIO controllers using the pin
-controller as back-end too :)
-
-Yours,
-Linus Walleij
+So I had some random 'korg/next' local branch and a 'korg' remote and
+that messed up my analysis, there are more csets in the 'next' branch,
+so I'm doing more tests, tomorrow I'll probably have more news.
+ 
+- Arnaldo
+> 
+> ⬢ [acme@toolbx pahole]$ git remote update korg
+> Fetching korg
+> ⬢ [acme@toolbx pahole]$ 
+> ⬢ [acme@toolbx pahole]$ git remote -v | grep korg
+> korg	https://git.kernel.org/pub/scm/devel/pahole/pahole.git (fetch)
+> korg	https://git.kernel.org/pub/scm/devel/pahole/pahole.git (push)
+> ⬢ [acme@toolbx pahole]$ git diff --stat korg/master korg/next 
+> warning: refname 'korg/next' is ambiguous.
+>  .github/scripts/build-pahole.sh      | 23 +++++++++++++++++++++++
+>  .github/scripts/compare-functions.sh | 30 ++++++++++++++++++++++++++++++
+>  .github/workflows/test.yml           |  4 ++--
+>  .github/workflows/vmtest.yml         |  4 ++++
+>  CMakeLists.txt                       |  5 -----
+>  README                               |  4 ++++
+>  btf_loader.c                         | 23 ++++++++++++++++++++---
+>  dwarves_fprintf.c                    |  2 +-
+>  8 files changed, 84 insertions(+), 11 deletions(-)
+> ⬢ [acme@toolbx pahole]$
+ 
+> Related to btf bitfields:
+ 
+> diff --git a/btf_loader.c b/btf_loader.c
+> index f4f9f65289b5acac..64ea68022ab04e60 100644
+> --- a/btf_loader.c
+> +++ b/btf_loader.c
+> @@ -645,9 +645,15 @@ static int class__fixup_btf_bitfields(const struct conf_load *conf, struct tag *
+>                 pos->byte_size = tag__size(type, cu);
+>                 pos->bit_size = pos->byte_size * 8;
+>  
+> -               /* if BTF data is incorrect and has size == 0, skip field,
+> -                * instead of crashing */
+> +               /* If the BTF data is incorrect and has size == 0, skip field
+> +                * instead of crashing. However the field can be a zero or
+> +                * variable-length array and we still need to infer alignment.
+> +                */
+>                 if (pos->byte_size == 0) {
+> +                       pos->alignment = class__infer_alignment(conf,
+> +                                                               pos->byte_offset,
+> +                                                               tag__natural_alignment(type, cu),
+> +                                                               smallest_offset);
+>                         continue;
+>                 }
+>  
+> @@ -672,7 +678,18 @@ static int class__fixup_btf_bitfields(const struct conf_load *conf, struct tag *
+>                                                         pos->byte_offset,
+>                                                         tag__natural_alignment(type, cu),
+>                                                         smallest_offset);
+> -               smallest_offset = pos->byte_offset + pos->byte_size;
+> +
+> +               /* Compute the smallest offset between this field and the next
+> +                * one.
+> +                *
+> +                * In case of bitfields we need to take into account the
+> +                * actual size being used instead of the underlying type one as
+> +                * it could be larger, otherwise we could miss a hole.
+> +                */
+> +               smallest_offset = pos->byte_offset;
+> +               smallest_offset += pos->bitfield_size ?
+> +                       (pos->bitfield_offset + pos->bitfield_size + 7) / 8 :
+> +                       pos->byte_size;
+>         }
+>  
+>         tag_type->alignment = class__infer_alignment(conf,
 
