@@ -1,125 +1,60 @@
-Return-Path: <linux-kernel+bounces-872202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAD9C0F8B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:10:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FED1C0F89C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:09:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1A3189C675
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4AF403280
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED9F314B9D;
-	Mon, 27 Oct 2025 17:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B289314D17;
+	Mon, 27 Oct 2025 17:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AP/QchWX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etsx/zfb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D5E1E1C22;
-	Mon, 27 Oct 2025 17:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72130BBA2;
+	Mon, 27 Oct 2025 17:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585016; cv=none; b=Z/izMP2DOS8WUxz2l8heQ1ctbmOsdL/onpbXRCKBzQzXtAdC9QFa0Ol1B1fujom0HcAxBIXX9bQLAHnZE+CWZmgaJ2zNNWbZlYrsOCkQyaFITc06zJUeKOaQn1q7A+xZydlVPAGG+wG7AaDSgHvnuYC8l0083Oe5/JihTTQrCcQ=
+	t=1761584727; cv=none; b=tNFfNN7ubcQi2KLl0KRwLo3G80aHU3OYsswNr/ub3qZR+Rmty4pbo4aTODD5+jx26vZr9rxZazfYNItSu27fppL7u3y7JMrybSbK42fdIEARKZdcHwrF4ooByt6cT2Q4Mt8krYz+1cPJNx5JTSCm5L9tET7oeVVrHqIY6Bop1gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585016; c=relaxed/simple;
-	bh=3HQMtPV6eZuKv9gYREhBpKelmhByRKtNvBJgbJRSotA=;
+	s=arc-20240116; t=1761584727; c=relaxed/simple;
+	bh=AO2mJ/+tjiSaEhQl/oIQeLy2Ernp7A4F4bsWfQ7Hwug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6jfx4OdQh+k/0mkowSGvHIJOhI3DTGOmxSh/NAVvrL3h7jcVLgQPa9Ak/2kgleSUK231pmxND+Xno5gOySVwUNEDaxToJJI2tXXEppvP3CAZ6mzB9miBUFHgVIwTYj45Qsq8Zfl6AgsZCn/u08UXUqSLUatAPYJLE9UL1T0yMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AP/QchWX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59RDLf4u023398;
-	Mon, 27 Oct 2025 17:08:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=A+YnKl1CrIrZJI+jzZyMIk5/iGctAv
-	k+Uu1N1BWz42o=; b=AP/QchWXQdne0bWePAXyCKclddZNZu8i7WZ40JhWINNNns
-	khjrDlMyURhVdb9kHc42jGzAz7CBzpNUBgEq+6q2tbFoKGzH/cAaK/RYRUnNToy9
-	LjVI7YwDog4t9349PpoFGDzBFJcVlAvIzhkvb9TD1sYtMon8BG1CsnZsjBdrETUs
-	f7hEv4npvsZtb0uJmpPGTwCrjH0Y/CliZmVvGKr5m4GLYmZoZeZBKDBS6h8hePLE
-	imndMVNyFR2VfBS9gltwla51oGbYqy9CsVcN59X7pjz/BuPDEN8jMDzoPDHbcwzQ
-	pTIjW36NsD6VQf0vJ9ZBc05VnA+L7nhvOlzwlgRw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p71yv4m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 17:08:23 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59RH5imf010059;
-	Mon, 27 Oct 2025 17:08:22 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p71yv4j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 17:08:22 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59RFEl3L030460;
-	Mon, 27 Oct 2025 17:08:21 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a1acjpmx2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 17:08:21 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59RH8HXh36962730
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 17:08:17 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 582A220043;
-	Mon, 27 Oct 2025 17:08:17 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 23B1820040;
-	Mon, 27 Oct 2025 17:08:16 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 27 Oct 2025 17:08:16 +0000 (GMT)
-Date: Mon, 27 Oct 2025 18:08:14 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Gregory Price <gourry@gourry.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-        Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-        Leon Romanovsky <leon@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
-Message-ID: <e8483d5a-7b03-4ae7-97c7-157af55879c6-agordeev@linux.ibm.com>
-References: <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
- <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
- <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
- <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
- <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
- <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
- <20251027161146.GG760669@ziepe.ca>
- <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
- <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
- <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ujh9jCuQuHudbPFHYxj9zhRkCYZxv3fRkHKiFPjxX3G4RFXwk0v4A8jbT1f5vh5Gn3bjirndUeM6tnga3jIlT1CjMEgIrrwFmxJqSIzkFkOorBePFfGUtPdF4Nohsaov4mkhtbmIvnXRboOS42NalfymDXniArzxuqTTzqaTK6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etsx/zfb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E012C4CEF1;
+	Mon, 27 Oct 2025 17:05:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761584726;
+	bh=AO2mJ/+tjiSaEhQl/oIQeLy2Ernp7A4F4bsWfQ7Hwug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=etsx/zfb1G5MuzgmsCQ8tvw7iX0SmmEOYLlF5Q1Cj8tSVGUaTUCsLWcH+la8PVO3j
+	 Vd/vLwiZYi1+aILtGPrPzk9DHQNfDX5I0NCs2266vJVJZvtqBWnll6jbeVM/R2ZO9K
+	 3717tNds0/vcV2stdN8tIptnmjPWjZdB6xvOe47VHn8wUrl7WG/dI1d64a/HLfnpQ9
+	 pvTtyQcy5vJiuNU+lRXXVypm4AqI02JPGES/Jnmw1oNFk7BQTpOeXDLRSv+jZSWQPF
+	 Atmwk7NCG09biz3B6AzBL0IufBpHDAEbzlJItvy9/GO5SGxI10bxSRnlC97pjYPeAi
+	 9rXkdPyEdIaKg==
+Date: Mon, 27 Oct 2025 12:08:19 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: david@ixit.cz
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Casey Connolly <casey.connolly@linaro.org>, 
+	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	phone-devel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>
+Subject: Re: [PATCH v7 1/3] Input: add ABS_SND_PROFILE
+Message-ID: <vdnfmgtfclntb2xnvv7gdj65235aa2nufcsnssrkrsbdwr5wfc@ppkldnwzrtjy>
+References: <20251014-op6-tri-state-v7-0-938a6367197b@ixit.cz>
+ <20251014-op6-tri-state-v7-1-938a6367197b@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -128,38 +63,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EK7LLW1zqR14UEm-qP1tp6NfXAmFReR6
-X-Proofpoint-ORIG-GUID: VOJEHKfLfHkaI1BCCtzOrXAtTP6TyvpG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAyNCBTYWx0ZWRfX0P0eV63ApyQa
- JVYUBiJ7e4hixThpPeihq5N8pK5i/dDm2AJ4IHrwG8jN/xtE7o3Iwn2cflFYUh6HSfmZgsV9azu
- V732AzY82NfPEJySFQ1r+DcKCH0s7d3K7a+qUN2nyZ9GKRkPvReFreSu1RLlKyOwqPNoPdVIOOC
- D2blpK243mcc/RCz20BtbxMitQkJanHtA7dK8R7y7rrakkQ7bqJUOFM/ZfSMFFErkhIrf2VxOEr
- CYUtzbqL93R2NQID7p8SiXfQitlzxuR6FYZFHcj3uzh3k9puJ2ZuPA2Oel7HpuhMCY1joaApUeg
- YyR4UHMtRLe3T6AZwwjT0tO9WMoUyCjaXc8kkshXPt5aAfNcr0SaMgQFKD9Zom54ot/XFgY6L1f
- ky123Y4Sh+nUYIfv2Zlk6bhTjCCPPQ==
-X-Authority-Analysis: v=2.4 cv=G/gR0tk5 c=1 sm=1 tr=0 ts=68ffa707 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=OE0-M_IHMqe_YGGL9GEA:9 a=CjuIK1q_8ugA:10 a=DXsff8QfwkrTrK3sU8N1:22
- a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_06,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- spamscore=0 priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250024
+In-Reply-To: <20251014-op6-tri-state-v7-1-938a6367197b@ixit.cz>
 
-On Mon, Oct 27, 2025 at 04:38:05PM +0000, Lorenzo Stoakes wrote:
-> Yeah but leaf_entry_t encapsulates BOTH swap and non-swap entries.
+On Tue, Oct 14, 2025 at 11:20:33AM +0200, David Heidelberg via B4 Relay wrote:
+> From: Gergo Koteles <soyer@irl.hu>
 > 
-> So that's nice.
+> ABS_SND_PROFILE used to describe the state of a multi-value sound profile
+> switch. This will be used for the alert-slider on OnePlus phones or other
+> phones.
 > 
-> What do you propose calling non-swap leaf entries? It starts spiralling down a
-> bit there.
+> Profile values added as SND_PROFLE_(SILENT|VIBRATE|RING) identifiers
+> to input-event-codes.h so they can be used from DTS.
+> 
+> Signed-off-by: Gergo Koteles <soyer@irl.hu>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
 
-Absent?
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+> ---
+>  Documentation/input/event-codes.rst    | 6 ++++++
+>  drivers/hid/hid-debug.c                | 1 +
+>  include/uapi/linux/input-event-codes.h | 9 +++++++++
+>  3 files changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
+> index 1ead9bb8d9c64..e4f065dd5a1da 100644
+> --- a/Documentation/input/event-codes.rst
+> +++ b/Documentation/input/event-codes.rst
+> @@ -241,6 +241,12 @@ A few EV_ABS codes have special meanings:
+>      emitted only when the selected profile changes, indicating the newly
+>      selected profile value.
+>  
+> +* ABS_SND_PROFILE:
+> +
+> +  - Used to describe the state of a multi-value sound profile switch.
+> +    An event is emitted only when the selected profile changes,
+> +    indicating the newly selected profile value.
+> +
+>  * ABS_MT_<name>:
+>  
+>    - Used to describe multitouch input events. Please see
+> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+> index 7107071c7c516..c58500d8b94b5 100644
+> --- a/drivers/hid/hid-debug.c
+> +++ b/drivers/hid/hid-debug.c
+> @@ -3513,6 +3513,7 @@ static const char *absolutes[ABS_CNT] = {
+>  	[ABS_DISTANCE] = "Distance",	[ABS_TILT_X] = "XTilt",
+>  	[ABS_TILT_Y] = "YTilt",		[ABS_TOOL_WIDTH] = "ToolWidth",
+>  	[ABS_VOLUME] = "Volume",	[ABS_PROFILE] = "Profile",
+> +	[ABS_SND_PROFILE] = "SoundProfile",
+>  	[ABS_MISC] = "Misc",
+>  	[ABS_MT_SLOT] = "MTSlot",
+>  	[ABS_MT_TOUCH_MAJOR] = "MTMajor",
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 4a9fbf42aa9fa..962168c661ccd 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -879,6 +879,7 @@
+>  
+>  #define ABS_VOLUME		0x20
+>  #define ABS_PROFILE		0x21
+> +#define ABS_SND_PROFILE		0x22
+>  
+>  #define ABS_MISC		0x28
+>  
+> @@ -988,4 +989,12 @@
+>  #define SND_MAX			0x07
+>  #define SND_CNT			(SND_MAX+1)
+>  
+> +/*
+> + * ABS_SND_PROFILE values
+> + */
+> +
+> +#define SND_PROFILE_SILENT	0x00
+> +#define SND_PROFILE_VIBRATE	0x01
+> +#define SND_PROFILE_RING	0x02
+> +
+>  #endif
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
