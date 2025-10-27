@@ -1,178 +1,219 @@
-Return-Path: <linux-kernel+bounces-871319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1E2C0CE8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:16:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7E2C0CE97
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FDB4400858
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC09404AF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263FF2F547D;
-	Mon, 27 Oct 2025 10:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A467B2F531A;
+	Mon, 27 Oct 2025 10:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rTOPVYaH"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnDrKbSu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F9E481B1;
-	Mon, 27 Oct 2025 10:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AA22F363F;
+	Mon, 27 Oct 2025 10:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761560102; cv=none; b=pNzGz+/xOEF2ehdxhcNOaCzvfGzx86iy7VXXVV5dk6VM3X/T57V2ilFKg3Q5Wj3Oj6MT5Nwwc6h2GDa/ujIfgQ71Kng4jbQtF2QTGvOqYg/RO730jCYslDa+1P3WH2PBfH3G0R+AQtqXi0sK5aL4kIk7HCAkDy7N+5qaZh6kK7Y=
+	t=1761560117; cv=none; b=qTe3l4n+f9lbugTdKDqWVHRl7iR32EFu+aSf57Afb8bKzwvHhHV9Scemnaas9O6oEGLcK3i6s9hWcibmTcJX1YoHZRz6iV11XEy6GCnNsgVGM459w2IET7aEyZno4uT6zmI1e6HfYoAYSruvL1gwPG1mxVcdF94vCS2uGVEoJZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761560102; c=relaxed/simple;
-	bh=YxD/X+Zkz5NAxSDIV78g1kUEZbNuMcFdoxtofLlVpWg=;
+	s=arc-20240116; t=1761560117; c=relaxed/simple;
+	bh=vTE9LPxg24iHozkReY1+Mh5ofYB4jYBXOkSmeqSjVnQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PUkW3EElp6vb4xkIhxnbw1ryCyh8iGWfHBInGGBhs6NH0QSx5eU0pU6EsYYtOijz/XOvYJ/k9X+zCuQLGJcoPFfdyMCEpbe5k61/Ls0q+Uutl0nWknfBRSzOJvqzH4cHf0XK0u0iu370Cglmb7AbRrvWilkelPLF6gXyDZD2Yjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rTOPVYaH; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59QJEFTd026055;
-	Mon, 27 Oct 2025 10:15:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=rWBDg1fyrFQM4Iw+1y1rcnG/tHO8KV
-	uI29ViOAB18wo=; b=rTOPVYaHMCmt307F50YAOucrUvwc0JUpLCAyNMYL8xUr2r
-	rnNQ1UIDkCMcABGQXNVg6k5qPHn40SxaNxdGP3B4IAn0uRMYmxdfBJUHH0ri1YWh
-	q7bKpuqPYQLH2mPDSUj0DiLQjy1kZUGuKgvkxonlYQsG3uyjM/a/PFqMQ7XDe2C9
-	i8huDCOUdaqWYidaic+sd9FLfdpYyCv9VNTbd3KI5HORwkXiS0BVSJOicN1GdouG
-	I3Y3u1n08wDYkUnMI+BLngDGBN04lxxXrt7xL9tddrVzU/oQs6dwnsTQskqK7J7f
-	Rv4gWLgMm5D2SHZEE4xuwQrQ1fu4fBof3EVIRBgw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p98x6qg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 10:14:59 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59RA67s2004845;
-	Mon, 27 Oct 2025 10:14:59 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p98x6qd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 10:14:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59R7eV70030460;
-	Mon, 27 Oct 2025 10:14:58 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a1acjmxgh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 10:14:58 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59RAEraG59638056
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 10:14:53 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A13020043;
-	Mon, 27 Oct 2025 10:14:53 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CDA320040;
-	Mon, 27 Oct 2025 10:14:53 +0000 (GMT)
-Received: from osiris (unknown [9.111.14.160])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 27 Oct 2025 10:14:52 +0000 (GMT)
-Date: Mon, 27 Oct 2025 11:14:51 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] s390/mm: Fix memory leak in add_marker() when kvrealloc
- fails
-Message-ID: <20251027101451.14551A49-hca@linux.ibm.com>
-References: <20251026091351.36275-1-linmq006@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDElHIDJ210mut+a/ect81NuJoUqzyvsyzX7KVPmA/EFZNJmhgpMZdkU4WZPwVkCBnyNLWbJPe/TGtzZryhh2R+2PO+EJr9NnbvTTJrm6zrJ3TTFO2UDM6hxti1h7NSg0txWYwqWUuXRJI6tReoX6N9GdznvsPArJ7BooDpTpMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnDrKbSu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 752E1C4CEF1;
+	Mon, 27 Oct 2025 10:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761560117;
+	bh=vTE9LPxg24iHozkReY1+Mh5ofYB4jYBXOkSmeqSjVnQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YnDrKbSuingOWZuuo7QqceaTUEXdzwjscNGyHpBW4pAWvtqmychPnVk2SZTkChp0v
+	 0faQCyL0fdJSQ9DMxtNd8cMuYpWTR6k4ixDHluJOQH4xZi7/RFKC70hyAqCVClGV3m
+	 O2TyzB681P+B/n3SY6g+6AWRQktdCo51qDGgrqfcZXxLPR0lFE20Kqq/FVhkHGcTm1
+	 VNq22vv4vAH8At2Sjl83UyXjLs/2Vd9XqSxhGddBKH5Q1NPk6OzbFzp2FqLVk1YEQt
+	 fGCzpL+QaDItGvzdA3RoNdgfofBddS2oWdfp+47hrOkEkgHpOqEr6ItCNaGdNWbXpr
+	 UdS1ySw+kCpzQ==
+Date: Mon, 27 Oct 2025 11:14:55 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 7/7] sysctl: Wrap do_proc_douintvec with the public
+ function proc_douintvec_conv
+Message-ID: <wxumqnq4u6c3m3oqycvryjghtrrfqn3nbgvrxv2goitprsttdd@i7lilfbyptye>
+References: <20251017-jag-sysctl_jiffies-v1-7-175d81dfdf82@kernel.org>
+ <202510221719.3ggn070M-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gcejqfjgqta6hmek"
 Content-Disposition: inline
-In-Reply-To: <20251026091351.36275-1-linmq006@gmail.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=JqL8bc4C c=1 sm=1 tr=0 ts=68ff4623 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=jc1liYX81a5ejJq0xPAA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: nqp_ljURjxT5ZWM6dC13yGjre5M5eLG0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxOSBTYWx0ZWRfX9xedVJW1l3eK
- pJxCjmXAlXe18IdzuCBgVrB/y+gQuw2Tjm6OLlSRNCoRqhIBSIN7iPDI+rraP7LIQ4TZOvVNYU9
- D6WaCRBGslLeUPz1TBH7KYoGPYkREZaN59RAcIVozYlmDO0XDvLg8wrD+dSlkkQQ9v5DWX62Tus
- rr1aKCd6IBNWS5NQ+Xfo05KER8TiA3s3fno2lKwjysfljaDEjz744ynHo1gN8rsjgQNQNx030ug
- 5ih1Di/y1uFBT/zMzhu+FKhEoBxhpssS6sEmTac7rfWeuhlYUGBasuqZR7YWlj8rijA2alkA+yl
- 6pEvarZQnRVzUQ5SRsr+pz0ucfqoIPMdb7rmnuUFqQFxTFcXNi5o+JmHTLiTr7WuVrb8yAQavYh
- rykhvSVJhoxv16WkEZzTkiX/fH3zNQ==
-X-Proofpoint-ORIG-GUID: xxSUkK-B4XJutQ9f-DCOJClNhNQBOaok
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250019
+In-Reply-To: <202510221719.3ggn070M-lkp@intel.com>
 
-On Sun, Oct 26, 2025 at 05:13:51PM +0800, Miaoqian Lin wrote:
-> When kvrealloc() fails, the original markers memory is leaked
-> because the function directly assigns the NULL to the markers pointer,
-> losing the reference to the original memory.
-> 
-> As a result, the kvfree() in pt_dump_init() ends up freeing NULL instead
-> of the previously allocated memory.
-> 
-> Fix this by using a temporary variable to store kvrealloc()'s return
-> value and only update the markers pointer on success.
-> 
-> Found via static anlaysis and this is similar to commit 42378a9ca553
-> ("bpf, verifier: Fix memory leak in array reallocation for stack state")
-> 
-> Fixes: d0e7915d2ad3 ("s390/mm/ptdump: Generate address marker array dynamically")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->  arch/s390/mm/dump_pagetables.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/s390/mm/dump_pagetables.c b/arch/s390/mm/dump_pagetables.c
-> index 9af2aae0a515..0f2e0c93a1e0 100644
-> --- a/arch/s390/mm/dump_pagetables.c
-> +++ b/arch/s390/mm/dump_pagetables.c
-> @@ -291,16 +291,19 @@ static int ptdump_cmp(const void *a, const void *b)
->  
->  static int add_marker(unsigned long start, unsigned long end, const char *name)
->  {
-> +	struct addr_marker *new_markers;
->  	size_t oldsize, newsize;
->  
->  	oldsize = markers_cnt * sizeof(*markers);
->  	newsize = oldsize + 2 * sizeof(*markers);
->  	if (!oldsize)
-> -		markers = kvmalloc(newsize, GFP_KERNEL);
-> +		new_markers = kvmalloc(newsize, GFP_KERNEL);
->  	else
-> -		markers = kvrealloc(markers, newsize, GFP_KERNEL);
-> -	if (!markers)
-> +		new_markers = kvrealloc(markers, newsize, GFP_KERNEL);
-> +	if (!new_markers)
->  		goto error;
-> +
-> +	markers = new_markers;
 
-This is not better to the situation before. If the allocation fails,
-markers_cnt will be set to zero, but the old valid markers pointer will stay,
-which means that the next call to add_marker() will allocate a new area via
-kvmalloc() instead of kvrealloc(), and thus leaking the old area too.
+--gcejqfjgqta6hmek
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-add_marker() needs to changes to return in a manner that both marker and
-marker_cnt correlate with each other. And I guess it is also easily possible
-to get rid of the two different allocation paths.
+On Wed, Oct 22, 2025 at 05:18:51PM +0800, kernel test robot wrote:
+> Hi Joel,
+>=20
+> kernel test robot noticed the following build warnings:
+>=20
+> [auto build test WARNING on 130e5390ba572bffa687f32ed212dac1105b654a]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/Joel-Granados/sysc=
+tl-Allow-custom-converters-from-outside-sysctl/20251017-163832
+> base:   130e5390ba572bffa687f32ed212dac1105b654a
+> patch link:    https://lore.kernel.org/r/20251017-jag-sysctl_jiffies-v1-7=
+-175d81dfdf82%40kernel.org
+> patch subject: [PATCH 7/7] sysctl: Wrap do_proc_douintvec with the public=
+ function proc_douintvec_conv
+> config: i386-randconfig-063-20251022 (https://download.01.org/0day-ci/arc=
+hive/20251022/202510221719.3ggn070M-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251022/202510221719.3ggn070M-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510221719.3ggn070M-lkp=
+@intel.com/
+>=20
+> sparse warnings: (new ones prefixed by >>)
+> >> kernel/kstack_erase.c:34:56: sparse: sparse: incorrect type in argumen=
+t 3 (different address spaces) @@     expected void *buffer @@     got void=
+ [noderef] __user *buffer @@
+>    kernel/kstack_erase.c:34:56: sparse:     expected void *buffer
+>    kernel/kstack_erase.c:34:56: sparse:     got void [noderef] __user *bu=
+ffer
+This is probably a false positive where the warning was already there
+but it moved up in the output (probably due to the function moving up in
+the header?)
 
-Care to send a new version?
+This made me look a bit more into the issue and I believe that it does
+show an issue. Not with the current series, but with commit 0df8bdd5e3b3
+("stackleak: move stack_erasing sysctl to stackleak.c"). In this commit
+the buffer argument was changed frim void* to void __user*
+but in 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+the "__user" was removed. I'll post another patch to fix this up.
+
+
+Best
+
+>    kernel/kstack_erase.c:54:35: sparse: sparse: incorrect type in initial=
+izer (incompatible argument 3 (different address spaces)) @@     expected i=
+nt ( [usertype] *proc_handler )( ... ) @@     got int ( * )( ... ) @@
+>    kernel/kstack_erase.c:54:35: sparse:     expected int ( [usertype] *pr=
+oc_handler )( ... )
+>    kernel/kstack_erase.c:54:35: sparse:     got int ( * )( ... )
+>=20
+> vim +34 kernel/kstack_erase.c
+>=20
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  23 =20
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  24  #ifdef=
+ CONFIG_SYSCTL
+> 78eb4ea25cd5fd kernel/stackleak.c Joel Granados    2024-07-24  25  static=
+ int stack_erasing_sysctl(const struct ctl_table *table, int write,
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  26  			voi=
+d __user *buffer, size_t *lenp, loff_t *ppos)
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  27  {
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  28  	int r=
+et =3D 0;
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  29  	int s=
+tate =3D !static_branch_unlikely(&stack_erasing_bypass);
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  30  	int p=
+rev_state =3D state;
+> 0e148d3cca0dc1 kernel/stackleak.c Thomas Wei=DFschuh 2024-05-03  31  	str=
+uct ctl_table table_copy =3D *table;
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  32 =20
+> 0e148d3cca0dc1 kernel/stackleak.c Thomas Wei=DFschuh 2024-05-03  33  	tab=
+le_copy.data =3D &state;
+> 0e148d3cca0dc1 kernel/stackleak.c Thomas Wei=DFschuh 2024-05-03 @34  	ret=
+ =3D proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  35  	state=
+ =3D !!state;
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  36  	if (r=
+et || !write || state =3D=3D prev_state)
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  37  		retu=
+rn ret;
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  38 =20
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  39  	if (s=
+tate)
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  40  		stat=
+ic_branch_disable(&stack_erasing_bypass);
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  41  	else
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  42  		stat=
+ic_branch_enable(&stack_erasing_bypass);
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  43 =20
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  44  	pr_wa=
+rn("stackleak: kernel stack erasing is %s\n",
+> 62e9c1e8ecee87 kernel/stackleak.c Thorsten Blum    2024-12-22  45  					s=
+tr_enabled_disabled(state));
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  46  	retur=
+n ret;
+> 964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  47  }
+> 1751f872cc97f9 kernel/stackleak.c Joel Granados    2025-01-28  48  static=
+ const struct ctl_table stackleak_sysctls[] =3D {
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  49  	{
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  50  		.pro=
+cname	=3D "stack_erasing",
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  51  		.dat=
+a		=3D NULL,
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  52  		.max=
+len		=3D sizeof(int),
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  53  		.mod=
+e		=3D 0600,
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  54  		.pro=
+c_handler	=3D stack_erasing_sysctl,
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  55  		.ext=
+ra1		=3D SYSCTL_ZERO,
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  56  		.ext=
+ra2		=3D SYSCTL_ONE,
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  57  	},
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  58  };
+> 0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  59 =20
+>=20
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
+--=20
+
+Joel Granados
+
+--gcejqfjgqta6hmek
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmj/RhYACgkQupfNUreW
+QU9FlQv/YYZc+g3rOBU0xvyUK50UlyH6BF9vEFQJRIfqnFmnd9UFuO8ZiocZnOum
+ewoSNsEEBwuoyRzIHvLALhmAdImySrrXtpRgYpMxMON2sSWKXat5zzZd6FF2n2ED
+3EbezK9Gt9t5SmhHrUE9hYQSxFJNFYE7BOgO0VKD64XEeT5lIzR7ad2FGg3r0phR
+kjGeQLcvyZlP0X50rRglcNnhJAubalK61pi3ijDdO+0hSPeQ1wjIPWWqmxyKfpk0
+EJMybkXN3UTFvj3gbP8szlXa3PkVGm+SwlPN1b9PYWZ/V0Zoy3RMNZaA313lbM74
+9N7giX2vLNCP8aSkmZv1Pl94B68LKTmo6LWQTU0ivbGMcAJ52y+WoT9rNgqrvohi
+Uhnwvvq/zqDfLotme4uXPluvJY84vdsfIueEx8F2R/GpMx4+xLWVrRuoedIwOj2W
+h9HmS16QgyRoMT1bLLXqyILuBddgqLrNy4aGFLppohtBhR2N9MWMyS1LRUmT15Gp
++o9e/fN8
+=mi27
+-----END PGP SIGNATURE-----
+
+--gcejqfjgqta6hmek--
 
