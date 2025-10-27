@@ -1,77 +1,90 @@
-Return-Path: <linux-kernel+bounces-870928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BDAC0C012
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:55:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5968DC0BFFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6E33BC98A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:52:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B32CA4E4FB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E8C264A86;
-	Mon, 27 Oct 2025 06:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DC12BEC53;
+	Mon, 27 Oct 2025 06:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVIBGndc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="FYn1Hudf"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D7C233155
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9A01991C9;
+	Mon, 27 Oct 2025 06:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761547965; cv=none; b=FnL/GQLxt9W4ZabQye+ryqPyFmpanFVsB809Y1/OfowbW9kNiCk7O6fncFdS0GQhKs8PN4EFGtLRaiAOL7EJ1mARqdxxwtrWzDQmXmajDANPeJzv7AvqFEQ68ObzqQw4TlQznmBpzghudNCZQ9MXm3DqnsWkGxZ/uGN5w4I6EWo=
+	t=1761548061; cv=none; b=N60WFz3+Sh3A7lrQuildcYH4L/Bebaxn8Air2Zm9Dz9FGWKM3oMnDhjB5oRY1b2FyXVgizNgl7eLPjzs5uCiZL7ZF/hVyWNIdT3YAxGx9P4ly3H5xucuCVYTi0OjzZ03jTPVxIXTJXUzzn5GYwfcS+bUJi8bW69+ZeZKN5P0fqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761547965; c=relaxed/simple;
-	bh=jkXvY/rzdsI9gD+gbwG7VuCZ95vvr+WarH7/oglQXg0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P1UK+rJZIkSiExq45orPOvhlE6Vp9CoTt5pfxRJe5Mz4NmtwaFFLZHQrIk3fg8/XZEV9C2sIroqps3fjQjHMpZG0WeLgxlO7oxzCx/Zi6zlAH/YvUPlPUPgQwpLWKRV91oa51P+uuVH6zy7SX9BTTtYzMyKfUxG6CVon4Hpcx9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVIBGndc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A903C4CEF1;
-	Mon, 27 Oct 2025 06:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761547965;
-	bh=jkXvY/rzdsI9gD+gbwG7VuCZ95vvr+WarH7/oglQXg0=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=IVIBGndcChwkGK8tmWxLKO4II4sp1e86nYBvFcCoDr+TE5fXbr88oqdM3lgUB9+3A
-	 9eM2HMtZSOlNu8yy17DQtOqW+f4XNhZ8ZsFVU98tRZ0ervJdFSyJDP4iWruI3VirSN
-	 aMKqgJj3ZF4ZMSlR+2U/g+uvgA9R1vUtw5fuVPGUWArmBgq5uBRNpIfDkeQCuXQZ1B
-	 x3L08EKbmJQpMZGg8M6GCbVx0TJHmzssT1wToe3oN1O2zU9FAM+tAuOuvgkI9jjraj
-	 YSVqdjE9NS8x1sJQ+wrKIfW3poRWKJnp2wwAEa2/gVysPTXq8sOnQb5Lc6Cr52vDRC
-	 icAeRpwQiAM4w==
-Message-ID: <7c983f4d-fd20-4b7e-8ae1-d4cbd6f5a6a8@kernel.org>
-Date: Mon, 27 Oct 2025 14:52:41 +0800
+	s=arc-20240116; t=1761548061; c=relaxed/simple;
+	bh=6jUWtN8aVXsZhcQMBNUEm7MHtJYAISSEkk0g0vkKLA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SkdTkKRK7ArQLUoabOOvchBSlMIhqUYAFzKHuJnON6AGf8ny4EUQKHyA36wGeQlmQUgiY5bcJ94V2uET9dIdmmzaGaI9JYLI8AOIpGKpxJW9UBS++HSNUUJ+NIsY5r1KnzECK1eH664LDFi72e3Y4o0UUo7SLcTNueHJPKsMT0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=FYn1Hudf; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=1Ig3mNz2cheWdXRa0cEaI1NEjXM1NYmX/2zCvx3pS2c=;
+	b=FYn1Hudf6ZDELCRyVnzshezFUNPcDA/bBhg5NDYmrezNvvtySQhpMVX67lmbOh
+	sTznv8a2r4/p1P1F6SU2VVMw4QSB2QWu0c5TGskGdi7C6KID9eyVR6iMNyxJeewR
+	kv0SKy3jz1IMK3Ds0HUq0aI5TFSXiDAbft2moKNVg85xM=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDn76jtFv9o8hu_AA--.25236S3;
+	Mon, 27 Oct 2025 14:53:34 +0800 (CST)
+Date: Mon, 27 Oct 2025 14:53:32 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Frieder Schrempf <frieder.schrempf@kontron.de>, imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Annette Kobou <annette.kobou@kontron.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH] arm64: dts: imx8mp-kontron: Fix USB OTG role switching
+Message-ID: <aP8W7CE2rpLIbcDx@dragon>
+References: <20251020132155.630512-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: erofs: add myself as reviewer
-To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org, zbestahu@gmail.com,
- jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com
-References: <20251027025206.56082-1-guochunhai@vivo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20251027025206.56082-1-guochunhai@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020132155.630512-1-frieder@fris.de>
+X-CM-TRANSID:Ms8vCgDn76jtFv9o8hu_AA--.25236S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JFWxAw4DXFWfKF17Ww1kGrg_yoWxCwc_ua
+	yrWa1DC34xZFWkKFn3KF18KrWvqa1jk34DKw4a9w45JF95AayrGFW8Kry5Zw15u3yDC34D
+	WasrXa1qka1UujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbo7K7UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNg-aQGj-Fu9eXwAA3M
 
-On 10/27/25 10:52, Chunhai Guo wrote:
-> In the past two years, I have focused on EROFS and contributed features
-> including the reserved buffer pool, configurable global buffer pool, and
-> the ongoing direct I/O support for compressed data.
+On Mon, Oct 20, 2025 at 03:21:51PM +0200, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> I would like to continue contributing to EROFS and help with code
-> reviews. Please CC me on EROFS-related changes.
+> The VBUS supply regulator is currently assigned to the PHY node.
+> This causes the VBUS to be always on, even when the controller
+> needs to be switched to peripheral mode.
 > 
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+> Fix the OTG role switching by adding a connector node and moving
+> the VBUS supply regulator to that node. This way the VBUS gets
+> correctly switched according to the current role.
+> 
+> Fixes: 827c007db5f2 ("arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM and BL carrier board")
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Acked-by: Chao Yu <chao@kernel.org>
+Applied, thanks!
 
-Thanks,
 
