@@ -1,125 +1,96 @@
-Return-Path: <linux-kernel+bounces-872217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A58C0F9AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED0FC0F91A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B0E462FD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E3219C347B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3008730596F;
-	Mon, 27 Oct 2025 17:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A0314D3D;
+	Mon, 27 Oct 2025 17:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMSByuf1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCiqRJDA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA4F533D6;
-	Mon, 27 Oct 2025 17:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0BF1E1C22;
+	Mon, 27 Oct 2025 17:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585417; cv=none; b=AAr+qKBeiA9kBGFAlDhrVN9Fb5LVQETg/CQCVYiW5ecN1zzLA+7+wFXMGxNs2BjtAKGNrCteTn9n6SiF+koAq7788VTRPQm1NyjGnmX/hDtKLXVc0lx/kXxeIBfknAVC4kdt2Aqo4tMxe2gm02nfEaCdLim6M3YYLVLT8WvXdFE=
+	t=1761585261; cv=none; b=L38z9UC+ia734L4AryMcpoCgWwpWCHEooAwzNA8hpar9mWSwoft+Y1JPhjxElmMcbEHz8sogOt4JoudGo5OUleJ2F45eTLC+03l7/fDYI1bfSL/urhNFEum9WRnRrDz21e2YrTW+Wo10/+mByH5QnSd4gcsVN3pEPSzNTfWkt4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585417; c=relaxed/simple;
-	bh=K1bFME1YwxBWeHwosnw8XIUjA72KfTmc5TM047ROWSk=;
+	s=arc-20240116; t=1761585261; c=relaxed/simple;
+	bh=riL/1ZLw+rZSAzmG3LWiquvYVubXh4lPo2gMuGTnZhY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggriOsGNjndY1XgfkbJGp2JkO+WU1Z32BR7HdQFgDivWryHlFta60xFf3P9HP8WrVgxiYuYAw7LJ+JM/NYFdh5qHGlZaBLXAM//7+9yVOIrRsDArK4OLh9R6+K5xOPNxnakIRUS7wQzi/qMZIxwNsmx5MEPJ6gj6oPmQe33cRwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMSByuf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CD2C4CEF1;
-	Mon, 27 Oct 2025 17:16:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcX0jRa8YE+xFfAr0E1vYMBzAw4pPbiE8wpiqHlyr+x1nup771qHRf+WF5mWx+vxxVmFf5qS1zZY5unyKrwzrsejiWuFZ3M7cM6yM/2RoYDY/HnaQxCNGCbAyUgAlKzwHZe0Czr+FePAEPjyi0zeJtDMDt9bq+4ByeN8TxcmOCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCiqRJDA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB6DC4CEF1;
+	Mon, 27 Oct 2025 17:14:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761585417;
-	bh=K1bFME1YwxBWeHwosnw8XIUjA72KfTmc5TM047ROWSk=;
+	s=k20201202; t=1761585260;
+	bh=riL/1ZLw+rZSAzmG3LWiquvYVubXh4lPo2gMuGTnZhY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DMSByuf1XXLf6Au6aUnYfG8bCLuACMGK+V/EGr2eAht+Ze7wXl3t+5PQgFt5rNvOA
-	 QcSEdmGF48Bc8LvQIXi35kcAzQmWAlDaQKyTNIJerMIco/ojAxMHIyePWfLgYKDUyv
-	 16cylK7lbdQemQb5e+rbyfSCU1IGPhEIAW6jV3D5ke868yQ4gNVNT02wETLIxTh803
-	 gfixUVu/j5iMM+UCcwQHF/TEvHaEU6k1QSXr+JZ+poh9xObE43MTugOy9ueeFV4/DO
-	 HrD+cmM4GtL7wiW3EUdHOqPjDDrUj+fI1VsAvH3zBjVa47AlL+d6ylQbx0cuSphZ+p
-	 fmaZO7/UmR5eA==
-Date: Mon, 27 Oct 2025 22:46:47 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>, Shuan He <heshuan@bytedance.com>
-Subject: Re: [PATCH] PCI/sysfs: enforce single creation of sysfs entry for
- pdev
-Message-ID: <nst6vubi5f4izjlxahspirg2agar5szmfczfknhiyzb36srfo7@uyzu4k52eoyt>
-References: <20251013223720.8157-1-ansuelsmth@gmail.com>
+	b=nCiqRJDA+4na9AVF0xFYjv6wnEWRHoQPE+dft2faZhJ63T6bpbH3T7/P7P2CP1ptH
+	 ibAvGV3SZKL2+jereFKam6Uhk+MeqCT54fH5vgyTDRnHVPH8sOAhMI8VrotdngPsQ8
+	 MmasD/CkXAAIEh0BPlq8efTYyN398eGNq/1gxjQ6koLjidYgy5GwE8PkVyFXdPLvC6
+	 UnJjQUOnVJurn1sRi3mWnnyI+4x42aiWa5+no/2eStIhgZNbgVaO2t3xPFh5iVPkkc
+	 aFpMszJ1c+sf/S0kFumGn4PI3EFNRKgx2+QtplTloxwFflMZF6LPCIfzSSMwCwvsil
+	 d6hOlrNPl3CHQ==
+Date: Mon, 27 Oct 2025 12:17:13 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Abel Vesa <abel.vesa@linaro.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] soc: qcom: ubwc: Add configuration Glymur platform
+Message-ID: <ump2gq7hta5dzul7bwjmb45dtrxezkbticdwis7opl2drmnuyz@wwlanncd6xlb>
+References: <20251014-glymur-display-v2-0-ff935e2f88c5@linaro.org>
+ <20251014-glymur-display-v2-7-ff935e2f88c5@linaro.org>
+ <7dxq62ltoeerb4g2fgchb2hd7eomvlexfgyvamxsuuirblavtn@4bg3dy2bukdq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251013223720.8157-1-ansuelsmth@gmail.com>
+In-Reply-To: <7dxq62ltoeerb4g2fgchb2hd7eomvlexfgyvamxsuuirblavtn@4bg3dy2bukdq>
 
-On Tue, Oct 14, 2025 at 12:37:16AM +0200, Christian Marangi wrote:
-
-+ Krzysztof Wilczyński, Shuan He (since they were involved in similar discussion
-before)
-
-> In some specific scenario it's possible that the
-> pci_create_resource_files() gets called multiple times and the created
-> entry actually gets wrongly deleted with extreme case of having a NULL
-> pointer dereference when the PCI is removed.
+On Mon, Oct 27, 2025 at 02:29:01PM +0200, Dmitry Baryshkov wrote:
+> On Tue, Oct 14, 2025 at 03:38:32PM +0300, Abel Vesa wrote:
+> > Describe the Universal Bandwidth Compression (UBWC) configuration
+> > for the new Glymur platform.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  drivers/soc/qcom/ubwc_config.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
 > 
-> This mainly happen due to bad timing where the PCI bus is adding PCI
-> devices and at the same time the sysfs code is adding the entry causing
-> double execution of the pci_create_resource_files function and kernel
-> WARNING.
-> 
-> To be more precise there is a race between the late_initcall of
-> pci-sysfs with pci_sysfs_init and PCI bus.c pci_bus_add_device that also
-> call pci_create_sysfs_dev_files.
-> 
-> With correct amount of ""luck"" (or better say bad luck)
-> pci_create_sysfs_dev_files in bus.c might be called with pci_sysfs_init
-> is executing the loop.
-> 
-> This has been reported multiple times and on multiple system, like imx6
-> system, ipq806x systems...
+> Bjorn, do you indent to pick up this patch on your own or would you ack
+> merging it through the drm/msm tree?
 > 
 
-Yes. More recently on the RISC-V platform:
-https://lore.kernel.org/linux-pci/20250702155112.40124-1-heshuan@bytedance.com/
+As there's no dependencies between the trees, I can pick these through
+the qcom tree now.
 
-> To address this, imlement multiple improvement to the implementation:
-> 1. Add a bool to pci_dev to flag when sysfs entry are created
->    (sysfs_init)
-> 2. Implement a simple completion to wait pci_sysfs_init execution.
-> 3. Permit additional call of pci_create_sysfs_dev_files only after
->    pci_sysfs_init has finished.
-> 
-> With such logic in place, we address al kind of timing problem with
-> minimal change to any driver.
-> 
+Regards,
+Bjorn
 
-We do have the same issue with pci_proc_attach_device() as well. I submitted a
-dumb series [1] that removed both pci_create_sysfs_dev_files() and
-pci_proc_attach_device() calls from their _init() calls, but I was pointed out
-that they are required for PCI_ROM_RESOURCE.
-
-Then it was suggested that making the sysfs resource files static would be
-the proper solution (not sure what's about proc). Krzysztof had some work on
-this topic earlier and had plans to revive it, but I guess he didn't get much
-time so far.
-
-Krzysztof, if you do not mind, could you please share your previous work so that
-someone else can try to extend it if you are busy?
-
-- Mani
-
-[1] https://lore.kernel.org/linux-pci/20250723111124.13694-1-manivannan.sadhasivam@oss.qualcomm.com
-
--- 
-மணிவண்ணன் சதாசிவம்
+> -- 
+> With best wishes
+> Dmitry
 
