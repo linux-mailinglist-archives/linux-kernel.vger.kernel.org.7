@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-872419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9CBC10F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:26:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6BBC11036
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1A119C6CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54AE0582B00
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2057631D753;
-	Mon, 27 Oct 2025 19:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CBA32ABF3;
+	Mon, 27 Oct 2025 19:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PMQx/etA"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ircv7Jf+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F21A17F4F6;
-	Mon, 27 Oct 2025 19:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3EF31D754;
+	Mon, 27 Oct 2025 19:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592850; cv=none; b=csQjYFbd5D+IwcLLQ9CJef2I+VVNjjURjG0T3A5gpYpJhVvVdCyqGRryxQjg40x7K1YTmARQsPmNsJJAs23RlFF+0ExhtPL17wW1pD+ZgVUEVtZGhCF8IjdAZGnh6ab0iaR67gp4uTEPNo5Q0Km4KNrmk+Vf3jK5/kNr/68n1R0=
+	t=1761592965; cv=none; b=oo6kDQ7RK4BVq3YpYUuapX87iZgwskfbmUC8tLUwTFRxYvO11QbV5sZsSdSfcCg+CHrfWmzGS5lxfkXaVyo9XslgdARXnCPw4HRck3VT44IYwWRj2hOXrLjaLsFRXZ12hPsXpVyIt/d5yEuJbBmAz4qcieOGUTp8vqG2mkENr/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592850; c=relaxed/simple;
-	bh=Wa6ldUv/zgI4JDq1tbT5Y+zylHVbZFrpTUSzqV/aoa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFCoEn/BwUnXHcw5n1Ysx8QeNw4O6eAgvsEHFvRE64x6Ah0+F+0Ot5JH9ALAUsXdqIz4RJ0n2sNbAuKC7TLoRbLmfT6D38UOkXUnj9/CpGb/k6/3sWGgEdFW/jWgyupZSCpKnjNuyb9Dc9/2V4Ysph1rNRoYGsJ0GRxZY4SnF0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PMQx/etA; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 42B5340E019D;
-	Mon, 27 Oct 2025 19:20:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ggxpkL2yj3s6; Mon, 27 Oct 2025 19:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761592837; bh=1p4W+F+S0SLPkZVenYI4ZocIHZejOQOryBLd3i2s/hU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PMQx/etA73TOv2yFREJkLovtaztTvX/PMpHTTiyqJ9AcqP0fngLzrNoNOlF8oh/tZ
-	 /pGcyYIvopZrVpK0JdbHOLea3u4z1lK5sequd1DQltPfueTatFl2PEZALoWDG25tHB
-	 Y3TAS9yv9PQRNrIIEdnj3rsLYZmUZoxzjcX47TPZhQplzwFgVOl7Vs4tnnIpNMXiMq
-	 YAkUow67hB+uLo+YB/2+/9IOxWskSF4SjlARats4zyvZJqUxqqvWzwfumxO2J26+QS
-	 lRpsuDoBKTbUMjEhgyrrZxoKNBMCp1zxqHnwdRP1A3PMilKxFOnM0ngxPIVwWDLKry
-	 gtIPrEHGpKZV1ZBNnFsEQ7kONYl2qjy0nnVqm51Gy1etpEv02h9qoFMNvXv9MtHMxn
-	 hS+sMyE505DdoxCoQkw2Vj+e5d8K6nB/SW0aptL2zE6A/RFmiVHzc2KTeBQCelGV2E
-	 1dy8BYY+JXq3DFoH3IJssknEQtsHgfr444+AxFTpT36KAu+R3QgRHq3qtbBB9JtoyV
-	 4XWlzB5GCXlcEOk5v6B3uHBCmLPmo7v1YoXNlsgfMAgUXvOOWhF5NULiSgj97RNGgt
-	 fxS+0U2XR4ZDzJLsZpwa7y9OYLvGNDqNX5LaLJWtnCE9TdMwsmUJ+yWCHlMPgeE/E5
-	 fCY/lKHnThXybHSgOzrQnnio=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 72AD940E021A;
-	Mon, 27 Oct 2025 19:20:26 +0000 (UTC)
-Date: Mon, 27 Oct 2025 20:20:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Avadhut Naik <avadhut.naik@amd.com>,
-	John Allen <john.allen@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Mario Limonciello (AMD)" <superm1@kernel.org>
-Subject: Re: [PATCH v2 2/2] RAS/AMD/ATL: Require PRM support for future
- systems
-Message-ID: <20251027192019.GAaP_F8yifQ1TKlqtO@fat_crate.local>
-References: <20251017-wip-atl-prm-v2-0-7ab1df4a5fbc@amd.com>
- <20251017-wip-atl-prm-v2-2-7ab1df4a5fbc@amd.com>
+	s=arc-20240116; t=1761592965; c=relaxed/simple;
+	bh=hQQbdJvuhD/8foS4ARQ8GcU03ZoRHtan+ZrMHcsAB6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBMRcOOzJFfz/6yVjRzkVTIqQprjv183Xk4Jcezi20EvItmdHpPDftTRjXFrW2jW1YkwZnJtAMDlJjhBqtcbRjsssjs56gsc1g5s5555kCwCOdAw3FuZYGKXLa8A52aqtk9daLZRe5LGvttVoGnrt/5aU878VYBSUSqanaywTjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ircv7Jf+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E64AC4CEF1;
+	Mon, 27 Oct 2025 19:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761592965;
+	bh=hQQbdJvuhD/8foS4ARQ8GcU03ZoRHtan+ZrMHcsAB6Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ircv7Jf+nwA1kGvNQxD48lL3DEzeAoD74+yPKt9WZUkleONGceoE5KBzNGNiEXHP+
+	 /UAqMEpxIC6e1lJlmjjA2jZuJD291iDh5B0jCetjbjMc7JHH/dF3yCqHJcXjaWYeZz
+	 KJOHHDpKNjnZeyM87z2XUENY0NBq/WAza3QqMY61GDzUv0par8V62xKlsW5YdYbTUg
+	 GvrgrPkaNRcNVFfJ3ppD6S9CY5c1anIvY45/rSLYwDgRo3fTeL91OuquuxQuEkP64n
+	 2ApurkZymp6E0XnVomY0u4dL275FK5/zZfWBhXhhsE+LpFUvS95CZEUdgwlvZUcqwF
+	 wBkJNbKdek6Hw==
+Message-ID: <8275f7c6-1f2f-4734-8d2a-28bd67e11f6d@kernel.org>
+Date: Mon, 27 Oct 2025 20:22:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251017-wip-atl-prm-v2-2-7ab1df4a5fbc@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net V1 3/3] veth: more robust handing of race to avoid txq
+ getting stuck
+To: netdev@vger.kernel.org
+Cc: Eric Dumazet <eric.dumazet@gmail.com>, makita.toshiaki@lab.ntt.co.jp,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, ihor.solodrai@linux.dev,
+ toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
+ <176123158453.2281302.11061466460805684097.stgit@firesoul>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <176123158453.2281302.11061466460805684097.stgit@firesoul>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 01:26:29PM +0000, Yazen Ghannam wrote:
-> +	/* All other systems should have PRM handlers. */
-> +	if (!acpi_prm_handler_available(&norm_to_sys_guid)) {
-> +		pr_debug("PRM not available\n");
-> +		return -ENODEV;
+
+
+On 23/10/2025 16.59, Jesper Dangaard Brouer wrote:
+[...]
+> ---
+>   drivers/net/veth.c |   42 +++++++++++++++++++++---------------------
+>   1 file changed, 21 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+> index 3976ddda5fb8..1d70377481eb 100644
+> --- a/drivers/net/veth.c
+> +++ b/drivers/net/veth.c
+> @@ -392,14 +392,12 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
+>   		}
+>   		/* Restore Eth hdr pulled by dev_forward_skb/eth_type_trans */
+>   		__skb_push(skb, ETH_HLEN);
+> -		/* Depend on prior success packets started NAPI consumer via
+> -		 * __veth_xdp_flush(). Cancel TXQ stop if consumer stopped,
+> -		 * paired with empty check in veth_poll().
+> -		 */
+>   		netif_tx_stop_queue(txq);
+> -		smp_mb__after_atomic();
+> -		if (unlikely(__ptr_ring_empty(&rq->xdp_ring)))
+> -			netif_tx_wake_queue(txq);
+> +		/* Handle race: Makes sure NAPI peer consumer runs. Consumer is
+> +		 * responsible for starting txq again, until then ndo_start_xmit
+> +		 * (this function) will not be invoked by the netstack again.
+> +		 */
+> +		__veth_xdp_flush(rq);
+>   		break;
+>   	case NET_RX_DROP: /* same as NET_XMIT_DROP */
+>   drop:
+[...]
+> @@ -986,7 +979,8 @@ static int veth_poll(struct napi_struct *napi, int budget)
+>   	if (done < budget && napi_complete_done(napi, done)) {
+>   		/* Write rx_notify_masked before reading ptr_ring */
+>   		smp_store_mb(rq->rx_notify_masked, false);
+> -		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring))) {
+> +		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring) ||
+> +			     (peer_txq && netif_tx_queue_stopped(peer_txq)))) {
+>   			if (napi_schedule_prep(&rq->xdp_napi)) {
+>   				WRITE_ONCE(rq->rx_notify_masked, true);
+>   				__napi_schedule(&rq->xdp_napi);
+> @@ -998,6 +992,12 @@ static int veth_poll(struct napi_struct *napi, int budget)
+>   		veth_xdp_flush(rq, &bq);
+>   	xdp_clear_return_frame_no_direct();
+>   
+> +	/* Release backpressure per NAPI poll */
+> +	if (peer_txq && netif_tx_queue_stopped(peer_txq)) {
+                         ^^^^^^^^^^^^^^^^^^^^^^
+The check netif_tx_queue_stopped() use a non-atomic test_bit().
+Thus, I'm considering adding a smp_rmb() before the if statement, to be
+paired with the netif_tx_stop_queue() in veth_xmit().
+
+
+> +		txq_trans_cond_update(peer_txq);
+> +		netif_tx_wake_queue(peer_txq);
 > +	}
 > +
-> +	df_cfg.flags.prm_only = true;
-> +	return 0;
->  }
->  
->  static int get_dram_hole_base(void)
-> @@ -297,6 +305,9 @@ int get_df_system_info(void)
->  		return ret;
->  	}
->  
-> +	if (df_cfg.flags.prm_only)
-> +		return 0;
-> +
->  	apply_node_id_shift();
->  
->  	get_num_maps();
-> diff --git a/drivers/ras/amd/atl/umc.c b/drivers/ras/amd/atl/umc.c
-> index 6e072b7667e9..18ce419236a5 100644
-> --- a/drivers/ras/amd/atl/umc.c
-> +++ b/drivers/ras/amd/atl/umc.c
-> @@ -422,7 +422,7 @@ unsigned long convert_umc_mca_addr_to_sys_addr(struct atl_err *err)
->  		 socket_id, die_id, coh_st_inst_id, addr);
->  
->  	ret_addr = prm_umc_norm_to_sys_addr(socket_id, err->ipid, addr);
-> -	if (!IS_ERR_VALUE(ret_addr))
-> +	if (!IS_ERR_VALUE(ret_addr) || df_cfg.flags.prm_only)
->  		return ret_addr;
->
+>   	return done;
+>   }
 
-Much better, thanks!
-
-Both applied.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--Jesper
 
