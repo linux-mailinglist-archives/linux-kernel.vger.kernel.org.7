@@ -1,134 +1,177 @@
-Return-Path: <linux-kernel+bounces-872001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39480C0F090
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:47:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67442C0F12C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:54:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9C319C3D9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EEB3428311
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032E03128A7;
-	Mon, 27 Oct 2025 15:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB7031353E;
+	Mon, 27 Oct 2025 15:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfetCQx8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vm8NgZ5m"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2A43126DF;
-	Mon, 27 Oct 2025 15:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1542C25FA29
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579879; cv=none; b=mTbIUIM7xmYPhWpeiaN5H/KXscQUohKlOYoJ4gcgCo7leRmqTvebiOVEGUuA0bTy/U7VmLhVG0dyXO6ggqGPpBjyj9FWGmP4rNzK/w1tv/F3NofbCZJ3jpKHlT3BW3LEg1HUiY92zeKz9bX+w8SrS+rU/HnQ6o0LVaLNKVgD6Sg=
+	t=1761579906; cv=none; b=IRXbpTS6TURP6xeVP3ypJzmhCdthuxDBMRZA1VXMkNYJ7tNfXb6aNCaQs0N412RosnetHu0kTGdl6Djjer8kvL6Yr+rplrGonQ85bDFjO4wnXCQbvWzg3NvqRF1xcaaPad3Tbux65p4X4YQB4vnvIbvud2wtl7aAuWheG99X8eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579879; c=relaxed/simple;
-	bh=irqrm6uQuxnVppFGPRLF54t+DGlSHlPLRooV9JCjiDQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kHUp+S5ZR7qAOcKCXMUpp3bv4lpMUeEI+ZY9WXk9se/Y6olALgJ8qsDboHC4ocrx2Ou5tdgUrKK5kK3aP/jlYeI3g3E6Ya9IkvzLegnfWN4JW+JF/UrAiVyHt5lYEH/5cQc05sH/HrbQNATvYWsfyxJmeQGuQ5z8v4sg+dZQqPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfetCQx8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772A3C4CEF1;
-	Mon, 27 Oct 2025 15:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761579878;
-	bh=irqrm6uQuxnVppFGPRLF54t+DGlSHlPLRooV9JCjiDQ=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=cfetCQx8JQRMhmIHEBzrut79SMh/LybtoUNESImySCl7bpvPebEdWExqAU9utDIcP
-	 X+2whTajAST3e+zKA79i59PzYOmSOf4DPFQLPYV3f8sVr0CErTzqjJkBwbgAMlZMR5
-	 LTZWdv5h4L+HwMLvr4tM0n9avVnL4JwpUP+LtIDsRNTq99YLISW8vdBWbfUkjtGJto
-	 ncnL1ag8wQa7zB+Ey6BTPsCUgh7xVQsaCW1IFKOiLJ3GBNm3R0enr7EKKaDOdC7aQf
-	 KlRDC0kBM10OWUzN3COVPVf9LA2dqO3zwCETrcgd/ETa3X4aeqhw6lEA6owWPlP2nL
-	 ot8Yg9ZrNSixw==
-Message-ID: <bd6262c6-a31c-43a6-8ec5-2735fb2fe0d2@kernel.org>
-Date: Mon, 27 Oct 2025 16:44:30 +0100
+	s=arc-20240116; t=1761579906; c=relaxed/simple;
+	bh=C/+pGWh4ZCGZOy76owpq0eHfBoBaYrs3C2W6uIOqIOM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UG50fFmlWmMegxOdSYphDsrcLNTLCfTNeIuFXVNy7y/+vqoy3XYIdrfxagvv3yQKVQKReC6ff4EeHhvWrLxcxpQ8kO2Fpa8M+oD97VMtEJMLSgHREeO6moeeWZI/FMnttMT4paz7JnsE8qOuhPFdFUCPrDyk+4+EeZvauoEIcoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vm8NgZ5m; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4711b95226dso60215715e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761579902; x=1762184702; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lb4VSxhZ53ib++NoC6OQcXArogDrZtQGJ7FBlNPhbfk=;
+        b=vm8NgZ5mxsa8skQeVO0C576cspmF/3C4v7J0Pg2Na2m+B7L5JvP6wP510VZdW5TJes
+         a3sEtNdWDgcRJ5wjYF2KJzjLjWzBtisfQIqM5MRYi0Qu7WvfL/TMIq80TpS5eyPqQcF6
+         DwqDWmTvcTdTQiyMMKyZmflYFU+dEFurKEiyUFol194UY7kCuI6+iTpXAFZOb6mbAnQh
+         hYuN9W8jWTpRclyUvRNxl49FyjL4r9LV0Pa3b60SyNMyLAepQT/48JqtSHV10PzEgV7u
+         1KX1tA73ligOP7uS+cYswa5BxMSExF+Uy3mfmOZ+cLajzHSJqVHPlR8xtcX9CMYnCVNq
+         sDbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761579902; x=1762184702;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lb4VSxhZ53ib++NoC6OQcXArogDrZtQGJ7FBlNPhbfk=;
+        b=HOJ3yf8rXE221wXF0g+bBlZHkn+95x0LPaodHIAJLkI4ge4boqjMbS28WfW3benbyZ
+         3toF+SHgJDZ2UtYe7kEQs4IyQgmwBoDYXY30++uMNLXH56vPHWI+1liZGwxM+eVIAO73
+         f/9xQbaNvSsO9I588vRm3KXYACKeGWHnCuppFz/lPApxccr4X2AXgjzkRN/jm5e0WFcA
+         0lHbEJZDxy8WN9DudYu0ai3CZv0+WW3FzGfVcAUhp0kiA86sMpVIdmVN8lpWap4nbGp2
+         SKwV+NM4MyCGN5w0bnq6cc94HIQyTRoqUTm0oJxZqlZFrA4wOcLZzTYXoXAdGEkU9Olt
+         yFUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWB37p4EyIQe69LxnHTGmNXoQXaVKIo0n85dMEETCFZ8zlXgnGT8tk0QereliR0BH3sIQ1bhlB3i5OZ4Fk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4kskcZNAQBiVO6C765wjoAKJcQRjS1z+99Br0OgPA5LG8Y8lj
+	CAX6C+fwIBlK04goh85tbrjazGFLdfI54EyhZ32VjOtiuqFnfOBkmSsREJUiCefKeUw=
+X-Gm-Gg: ASbGnctYVoA6xWrvYz7AwI8kv3IGymGs4CpGpX3sEr8XxBoLBCkLwi0JorUbsVtRk12
+	lzgJIsLHtId/YcTZLGPkgINw2kCy0riADtcuZ+CFqJbCisrHw9DnAAdwEbaGUKlXuHRK5GZLblC
+	KMNKRGOogkOrW0757cfeVDEHt5Bx9DhexZfy6nyUwOnHDyTOxOEOOkJJ94l2BwHvBhtEUbK0ZvO
+	/WuE3NAWa/ZKWKT8HdZuhl+T2CgS2RYAXTmfG+m4GQr2TEXkreWEIP0iTuaenJ8x3bCM6P5Tf9l
+	iFsjGuwPLyblOYAicREbxQHQKpM8Ir93AO6NS4DUo8h8mdc1endimCCTWCc74D37XCuzlJBjAsE
+	I0a4Jnue2W6m1V4q2Hfi+neQPobEFE7yaaIsE2QAgDhz7inxLMGD8vVBYf8cmci0H3pkldRbQb8
+	DxrNDk/w==
+X-Google-Smtp-Source: AGHT+IE4u761VTQhz8y8t9/OtyAFKbyH7V0oLh0quuYxb3Ci1sFKCWOHqVBDOe0fEldTYqcbNTrciA==
+X-Received: by 2002:a05:600c:5251:b0:46e:4a13:e6c6 with SMTP id 5b1f17b1804b1-47717e414d2mr927705e9.19.1761579902369;
+        Mon, 27 Oct 2025 08:45:02 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1c6:7dde:fe94:6881])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd477d0esm138708045e9.0.2025.10.27.08.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 08:45:01 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 0/8] net: stmmac: qcom-ethqos: add support for SCMI
+ power domains
+Date: Mon, 27 Oct 2025 16:44:48 +0100
+Message-Id: <20251027-qcom-sa8255p-emac-v3-0-75767b9230ab@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v5 06/23] staging: media: tegra-video: vi: adjust
- get_selection op check
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>,
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling
- <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20251022142051.70400-1-clamor95@gmail.com>
- <20251022142051.70400-7-clamor95@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251022142051.70400-7-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHCT/2gC/22NQQ6CMBBFr0Jm7Zi20FJceQ/DoqkDTCIUWkM0h
+ LtbcevyveS/v0GiyJTgUmwQaeXEYcpQngrwg5t6Qr5nBiWUFrWocPFhxOSs0npGGp1HWxmhSu2
+ 8lgrybo7U8eto3trMA6dniO/jYpVf+6s1UvyprRIFlsrVje8kGWOvD55cDOcQe2j3ff8A+SryR
+ rMAAAA=
+X-Change-ID: 20250704-qcom-sa8255p-emac-8460235ac512
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Jose Abreu <joabreu@synopsys.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2270;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=C/+pGWh4ZCGZOy76owpq0eHfBoBaYrs3C2W6uIOqIOM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo/5N3VBuLTH0yAZ2M7A9DyhsM1dSsCaRksN/eN
+ 7ktQ+jrruaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaP+TdwAKCRARpy6gFHHX
+ cmW/D/4qwTNffsadNq6O2GGPSLLD6/KbqYR6hYjz+j02Ym/SK7B4K4488T2mDJH7VKBfwLNw0F+
+ F8UxgRW2JqCsR88CbbKcqaEHHIf0hjb+CQ/00REwEdis+58fXQ1yM65j68YRE8pnCvr9Z7/6yMr
+ PqzVltEr/mMDst7I17x0N2O0yQeePnBlPVr5CD8xxVvUMPYnQ5VYC0UdaPHnzcdc2owSgdt3UzB
+ EhgXHyWxAYgl5Pk6BDSB7R+q5EJ/4N4T1PU9Sb3H1jG7cVjxBVAfsYRxQHm3WRcKLuQH4pVWnGJ
+ 2hHKyz1YkGJr0JxVVFRDtnzcS/pXpEKdnv4/YhkwS2jZFKnZhs0xvhko2T8w2WWvppneETXCZT4
+ /O2DyyXo/gEXR9ARvrXkQEk+CfUSMfw5RHiqWZ5/x1QoaKDM9MYma6Y0l8jmvcTFZWc0xT2vA8w
+ sTxikCmtkPxWxEnOr4y1f5Ve+bTBge/QhuZV3b2xPJ2Jj6bP1t9dAOFSU8SzNuTaDJH8SB4j2gB
+ v23ItHdt1cXOl+/OxnDhRNaqG2VShqvPvbiBoIcMT9dc5cNNf3v8gjZt2gkjlVcR6oFiT5oNtWm
+ 4fw+J26NqLyZ8ysRPJPREz1TWntL5wyPyYMwSMheLEPgktnGd5NZS6pasFvxQByYGOIUSGSTjY4
+ R4U5VJ/Y4EWoQTQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Svyatoslav,
+Add support for the firmware-managed variant of the DesignWare MAC on
+the sa8255p platform. This series contains new DT bindings and driver
+changes required to support the MAC in the STMMAC driver.
 
-On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
-> Get_selection operation may be implemented only for sink pad and may
-> return error code. Set try_crop to 0 instead of returning error.
+It also reorganizes the ethqos code quite a bit to make the introduction
+of power domains into the driver a bit easier on the eye.
 
-Can you mention why try_crop is set to 0 instead of returning an error?
+The DTS changes will go in separately.
 
-That would be good to have in the commit log. And in fact, it's not
-clear to me either why you want this.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v3:
+- Drop 'power' and 'perf' prefixes from power domain names
+- Rebase on top of Russell's changes to dwmac
+- Rebase on top of even more changes from Russell that are not yet
+  in next (E1vB6ld-0000000BIPy-2Qi4@rmk-PC.armlinux.org.uk)
+- Link to v2: https://lore.kernel.org/all/20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org/
 
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/staging/media/tegra-video/vi.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-> index 7c44a3448588..856b7c18b551 100644
-> --- a/drivers/staging/media/tegra-video/vi.c
-> +++ b/drivers/staging/media/tegra-video/vi.c
-> @@ -476,15 +476,11 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
->  	fse.code = fmtinfo->code;
->  	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, sd_state, &fse);
->  	if (ret) {
-> -		if (!v4l2_subdev_has_op(subdev, pad, get_selection)) {
-> +		if (!v4l2_subdev_has_op(subdev, pad, get_selection) ||
-> +		    v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel)) {
->  			try_crop->width = 0;
->  			try_crop->height = 0;
+Changes in v2:
+- Fix the power-domains property in DT bindings
+- Rework the DT bindings example
+- Drop the DTS patch, it will go upstream separately
+- Link to v1: https://lore.kernel.org/r/20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org
 
-This looks all a bit magical. Which subdev is queried here? I.e. what is the corresponding
-subdev driver that implements get_selection?
+---
+Bartosz Golaszewski (8):
+      dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
+      net: stmmac: qcom-ethqos: use generic device properties
+      net: stmmac: qcom-ethqos: improve typing in devres callback
+      net: stmmac: qcom-ethqos: wrap emac driver data in additional structure
+      net: stmmac: qcom-ethqos: split power management fields into a separate structure
+      net: stmmac: qcom-ethqos: split power management context into a separate struct
+      net: stmmac: qcom-ethqos: define a callback for setting the serdes speed
+      net: stmmac: qcom-ethqos: add support for sa8255p
 
->  		} else {
-> -			ret = v4l2_subdev_call(subdev, pad, get_selection,
-> -					       NULL, &sdsel);
-> -			if (ret)
-> -				return -EINVAL;
-> -
->  			try_crop->width = sdsel.r.width;
->  			try_crop->height = sdsel.r.height;
->  		}
+ .../devicetree/bindings/net/qcom,ethqos-scmi.yaml  | 101 ++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml        |   5 +-
+ MAINTAINERS                                        |   1 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   2 +-
+ .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 342 +++++++++++++++++----
+ 5 files changed, 388 insertions(+), 63 deletions(-)
+---
+base-commit: 5b54ba44a7db08b43d345380857bcf0fd95ab10d
+change-id: 20250704-qcom-sa8255p-emac-8460235ac512
 
-It looks odd (esp. setting try_crop to 0), and I wonder if this code path has been tested.
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Regards,
-
-	Hans
 
