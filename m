@@ -1,162 +1,183 @@
-Return-Path: <linux-kernel+bounces-870742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353BFC0B931
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:12:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AA0C0B928
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:11:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0C8C4E8AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:12:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41374349373
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAEB239567;
-	Mon, 27 Oct 2025 01:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A7E2367D3;
+	Mon, 27 Oct 2025 01:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OhXaW/x7"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mjG63zty"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F94623645D;
-	Mon, 27 Oct 2025 01:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BF328EB;
+	Mon, 27 Oct 2025 01:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761527517; cv=none; b=fhrm4+gXB2LgEL/miqI/JD5mdyLVUzgzTZBhC0HK6aiBRva7AZfHpdvZ8n8JjsSPNcBNa0mr99/vGb1lU7l5x76T4kLnc/SL9EQOJLR5QOiRpDgaNWQ/iJgFJYV6sA58PacbRTnS98iYeJ2lvdMf5wARodK5SIOkCXuP/FGLxto=
+	t=1761527484; cv=none; b=OcWoedfhUb+37rH8e0NM7ImurY8dfmTRfQZACduUGQaZDFLDJIq7GWS269VkHvnDJxUJ6MkQPSDD8yqw9Wbgl+eQGXIJs3YOz8J4ENuq6TFBFZmPlw6xKK4ZoD74J50jJpJsVIGakc6fz+TzNRyp6s6kqX6j6UR6ZPdM3J1hXgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761527517; c=relaxed/simple;
-	bh=f0FbD/KBEVC/wmzpqn+qUp2CmfbQCTx+VZi6wwEc2Qg=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=fDmKVCl0RIfnqJa0A5PxXZBOvXqEnTwNGG9A0ehOqdDBS93lOmxhCijfDkh5LMSTa9tHHCpN/THLZL+LaKFPUECUI2RWhvqUZsNwhzEfoyWAwxZMNbrFju7X8oWNsRK+DB4rYVP2CWDzEeZsvEwWFqc9Y70FYtx080tTylt9b8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OhXaW/x7; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761527505; h=Message-ID:Subject:Date:From:To;
-	bh=sjBcHr5ZOwGk5Nuy3x8242YaFWFprMrxE6xIBZsgAP4=;
-	b=OhXaW/x7UKJDHdqr+xCF9Eh/EnFParWCLS71xAHhBe9g8rS5bRoG7qj6/xfrzzMUY6ePOAEhX55nQqsF1zHOjr7kXjTuMobNeVcUDkGNNqMztJ8aFWrSkKuV0Ln/ZJVS3M+b8JCNwU306O/fXiObKojJJ/pcB3gN96HbheE7Baw=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0Wr-QfaA_1761527504 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 27 Oct 2025 09:11:45 +0800
-Message-ID: <1761527437.6478114-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net v5] virtio-net: fix received length check in big packets
-Date: Mon, 27 Oct 2025 09:10:37 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Gavin Li <gavinl@nvidia.com>,
- Gavi Teitz <gavi@nvidia.com>,
- Parav Pandit <parav@nvidia.com>,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Bui Quang Minh <minhquangbui99@gmail.com>,
- stable@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20251024150649.22906-1-minhquangbui99@gmail.com>
-In-Reply-To: <20251024150649.22906-1-minhquangbui99@gmail.com>
+	s=arc-20240116; t=1761527484; c=relaxed/simple;
+	bh=wDAHYZ2XDq9G1bNOJF4J3PL4MjpM9SKkBVwAR7etS9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWkjWce6zwBJAEd4HWbXfHgftI+RUxeE43Vefb470KWDJXQ8B71lHzw+2Bs1jlXjhb42E1tDAYK2GU4FibeKJhk89054S/8YvMwWFGp0W3NdRHP7Zo5bcRvc8L8i3/IhlOYG6mRqQdvr8gnKB7kobOwKEkJibAV/1cmfdIiziJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mjG63zty; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B938B666;
+	Mon, 27 Oct 2025 02:09:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761527370;
+	bh=wDAHYZ2XDq9G1bNOJF4J3PL4MjpM9SKkBVwAR7etS9I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mjG63zty12ng3dohZnH7VMI9WGMBDwHQaQjSBDAlq4Gky9yqB9GNG9u2SonxF/mtV
+	 3XQaQ2mRydgaXAjfrjcsya5qOrE3t6u7KcaOmp4NVv9V68HSi+OcPXTfyYvTvuu+Gl
+	 sTKzxc5CSXh5A14ko9mvKra4w1Zy3UG1oE3pGrho=
+Date: Mon, 27 Oct 2025 03:11:03 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Marco Felsch <m.felsch@pengutronix.de>, robh@kernel.org,
+	Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dmaengine: add device_link support
+Message-ID: <20251027011103.GR13023@pendragon.ideasonboard.com>
+References: <20250912-v6-16-topic-dma-devlink-v1-0-4debc2fbf901@pengutronix.de>
+ <20250912-v6-16-topic-dma-devlink-v1-1-4debc2fbf901@pengutronix.de>
+ <aNVufDmHjLRauKYo@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aNVufDmHjLRauKYo@lizhi-Precision-Tower-5810>
 
-On Fri, 24 Oct 2025 22:06:49 +0700, Bui Quang Minh <minhquangbui99@gmail.com> wrote:
-> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
-> for big packets"), when guest gso is off, the allocated size for big
-> packets is not MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on
-> negotiated MTU. The number of allocated frags for big packets is stored
-> in vi->big_packets_num_skbfrags.
->
-> Because the host announced buffer length can be malicious (e.g. the host
-> vhost_net driver's get_rx_bufs is modified to announce incorrect
-> length), we need a check in virtio_net receive path. Currently, the
-> check is not adapted to the new change which can lead to NULL page
-> pointer dereference in the below while loop when receiving length that
-> is larger than the allocated one.
->
-> This commit fixes the received length check corresponding to the new
-> change.
->
-> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big packets")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
-> ---
-> Changes in v5:
-> - Move the length check to receive_big
-> - Link to v4: https://lore.kernel.org/netdev/20251022160623.51191-1-minhquangbui99@gmail.com/
-> Changes in v4:
-> - Remove unrelated changes, add more comments
-> - Link to v3: https://lore.kernel.org/netdev/20251021154534.53045-1-minhquangbui99@gmail.com/
-> Changes in v3:
-> - Convert BUG_ON to WARN_ON_ONCE
-> - Link to v2: https://lore.kernel.org/netdev/20250708144206.95091-1-minhquangbui99@gmail.com/
-> Changes in v2:
-> - Remove incorrect give_pages call
-> - Link to v1: https://lore.kernel.org/netdev/20250706141150.25344-1-minhquangbui99@gmail.com/
-> ---
->  drivers/net/virtio_net.c | 25 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index a757cbcab87f..2c3f544add5e 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -910,17 +910,6 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
->  		goto ok;
->  	}
->
-> -	/*
-> -	 * Verify that we can indeed put this data into a skb.
-> -	 * This is here to handle cases when the device erroneously
-> -	 * tries to receive more than is possible. This is usually
-> -	 * the case of a broken device.
-> -	 */
-> -	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
-> -		net_dbg_ratelimited("%s: too much data\n", skb->dev->name);
-> -		dev_kfree_skb(skb);
-> -		return NULL;
-> -	}
->  	BUG_ON(offset >= PAGE_SIZE);
->  	while (len) {
->  		unsigned int frag_size = min((unsigned)PAGE_SIZE - offset, len);
-> @@ -2107,9 +2096,19 @@ static struct sk_buff *receive_big(struct net_device *dev,
->  				   struct virtnet_rq_stats *stats)
->  {
->  	struct page *page = buf;
-> -	struct sk_buff *skb =
-> -		page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
-> +	struct sk_buff *skb;
-> +
-> +	/* Make sure that len does not exceed the allocated size in
-> +	 * add_recvbuf_big.
-> +	 */
-> +	if (unlikely(len > vi->big_packets_num_skbfrags * PAGE_SIZE)) {
+On Thu, Sep 25, 2025 at 12:31:56PM -0400, Frank Li wrote:
+> On Fri, Sep 12, 2025 at 12:00:41AM +0200, Marco Felsch wrote:
+> > Shift the device dependency handling to the driver core by adding
+> > support for devlinks.
+> >
+> > The link between the consumer device and the dmaengine device is
+> > established by the consumer via the dma_request_chan() automatically if
+> > the dmaengine driver supports it (create_devlink flag set).
+> >
+> > By adding the devlink support it is ensured that the supplier can't be
+> > removed while the consumer still uses the dmaengine. Furthermore it
+> > ensures that the supplier driver is present and actual bound before the
+> > consumer is uses the supplier.
 
+How is the latter ensured by this patch ? The link is created in
+dma_request_chan() (which is called by the consumer), after successfully
+obtaining the channel. I don't see how the link improves that mechanism.
 
-I think should be:
+> >
+> > Additional PM and runtime-PM dependency handling can be added easily too
+> > by setting the required flags (not implemented by this commit).
 
-	if (unlikely(len > (vi->big_packets_num_skbfrags + 1) * PAGE_SIZE)) {
+I've long thought that the DMA engine API should offer calls to "prepare"
+and "unprepare" (names subject to bikeshedding) a DMA engine channel, so
+that consumers can explicitly indicate when they are getting ready to
+use DMA, and when they stop.
 
-Thanks
+> >
+> > The new create_devlink flag controlls the devlink creation to not cause
+> > any regressions with existing dmaengine drivers. This flag can be
+> > removed once all drivers are successfully tested to support devlinks.
+> >
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> 
+> Add previous discussion link:
+> https://lore.kernel.org/all/aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810/
+> 
+> Another thread
+> https://lore.kernel.org/dmaengine/20250801120007.GB4906@pendragon.ideasonboard.com/
+> 
+> Add Laurent Pinchart, who may instest this topic also.
+> 
+> Add Rob Herring, who may know why dma engine can't create dev_link default
+> like other provider (clk, phy, gpio ...)
+> 
+> 
+> >  drivers/dma/dmaengine.c   | 15 +++++++++++++++
+> >  include/linux/dmaengine.h |  3 +++
+> >  2 files changed, 18 insertions(+)
+> >
+> > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> > index 758fcd0546d8bde8e8dddc6039848feeb1e24475..e81985ab806ae87ff3aa4739fe6f6328b2587f2e 100644
+> > --- a/drivers/dma/dmaengine.c
+> > +++ b/drivers/dma/dmaengine.c
+> > @@ -858,6 +858,21 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> >  	/* No functional issue if it fails, users are supposed to test before use */
+> >  #endif
+> >
+> > +	/*
+> > +	 * Devlinks between the dmaengine device and the consumer device
+> > +	 * are optional till all dmaengine drivers are converted/tested.
+> > +	 */
+> > +	if (chan->device->create_devlink) {
+> > +		struct device_link *dl;
+> > +
+> > +		dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> 
+> I suggest link to per channel device, instead dma engine devices.
+> chan->dev->device like phy drivers because some dma-engine have per channel
+> resources, like power domain and clocks.
+> 
+> Frank
+> 
+> > +		if (!dl) {
+> > +			dev_err(dev, "failed to create device link to %s\n",
+> > +					dev_name(chan->device->dev));
+> > +			return ERR_PTR(-EINVAL);
+> > +		}
+> > +	}
+> > +
+> >  	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
+> >  	if (!chan->name)
+> >  		return chan;
+> > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> > index bb146c5ac3e4ccd7bc0afbf3b28e5b3d659ad62f..c67737a358df659f2bf050a9ccb8d23b17ceb357 100644
+> > --- a/include/linux/dmaengine.h
+> > +++ b/include/linux/dmaengine.h
+> > @@ -817,6 +817,8 @@ struct dma_filter {
+> >   *	DMA tansaction with no software intervention for reinitialization.
+> >   *	Zero value means unlimited number of entries.
+> >   * @descriptor_reuse: a submitted transfer can be resubmitted after completion
+> > + * @create_devlink: create a devlink between a dma_chan_dev supplier and
+> > + *	dma-channel consumer device
+> >   * @residue_granularity: granularity of the transfer residue reported
+> >   *	by tx_status
+> >   * @device_alloc_chan_resources: allocate resources and return the
+> > @@ -894,6 +896,7 @@ struct dma_device {
+> >  	u32 max_burst;
+> >  	u32 max_sg_burst;
+> >  	bool descriptor_reuse;
+> > +	bool create_devlink;
+> >  	enum dma_residue_granularity residue_granularity;
+> >
+> >  	int (*device_alloc_chan_resources)(struct dma_chan *chan);
+> >
+> > --
+> > 2.47.3
+> >
 
+-- 
+Regards,
 
-> +		pr_debug("%s: rx error: len %u exceeds allocate size %lu\n",
-> +			 dev->name, len,
-> +			 vi->big_packets_num_skbfrags * PAGE_SIZE);
-> +		goto err;
-> +	}
->
-> +	skb = page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
->  	u64_stats_add(&stats->bytes, len - vi->hdr_len);
->  	if (unlikely(!skb))
->  		goto err;
-> --
-> 2.43.0
->
+Laurent Pinchart
 
