@@ -1,221 +1,190 @@
-Return-Path: <linux-kernel+bounces-871191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BDAC0C986
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:16:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1F3C0C980
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3245D19A4816
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:11:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7ECBE4F3179
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803D62367B5;
-	Mon, 27 Oct 2025 09:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942102E5B10;
+	Mon, 27 Oct 2025 09:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jf+wOeo7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WqgEE3C3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jf+wOeo7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WqgEE3C3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="YwnyYSc8"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B58134BD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556172; cv=none; b=mN7QoSDz2l2WMJzKXNL/TddgiA5+S1qN4v5qGtEvSf1tgLbo7vP4HzTH+2gmL3SmqebAs2YOl/zS3Jsy3dm2B3/92Rui+xcxvHhrB/L39LL7ZVy2OnaVyOEBshZ4SRflwlMQxyU4cR/psM5BTyHg549Dio68gVIm3gy4TtpqDBk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556172; c=relaxed/simple;
-	bh=Gtcui8dqa/qQGi4qt9IgdDczsIPejIwG0darUD5Wml0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kui3IU47r5XX0+GlHXReqck1BKJWZD1d6SMupZm9EXGYyqGbqGvo/g1mqHU4db65Lhd5Qnp7g37Ux7IF1JAtjxTM8zHU6WoL7WvYlT5rfFQ4o1Qwvd1J2Paxm9U8n58es6QWKc4ZbPpGK23TstyOosDLAv1cqt0jxpr9zuwchpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jf+wOeo7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WqgEE3C3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jf+wOeo7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WqgEE3C3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A7E2586E8;
+	Mon, 27 Oct 2025 09:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761556243; cv=pass; b=Zsbajqdy87ljk/gkv5/Oy+Hje7GtSQq/41cULde4J9n9Ih+vYmmqiURcvenRR9vSkwXND5mzYQuSHbaq8FhDkOaco+8DJiNKV9gEPXJmAwgrp0d9aqMmRT6PFqLL7VGqj98QjPLO9HcMwP8oaWxWtI3/7jcH0Od800IrHJTbZbg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761556243; c=relaxed/simple;
+	bh=Ij4ohQMcsJcLq06iIAxPqOlod7AhQEs/L0pIdbSbQl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjIKLEfDzea/42eV5ZjKMQDBf1+wHinIeLGp1F0RgvxATpuUu0aeCodnhqiBAq4I4LH+cnmkVgw87MjiTxGF0rWqWaN8b+mxk1h+/XinR4CF4n4e3YYbG1WJ224iCzRKHTbp3zItLeZe9UZgKycHZPM3joC6zNu+2PlqpQzQ5pM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=YwnyYSc8; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 34A471F385;
-	Mon, 27 Oct 2025 09:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761556169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4cw75W5p7qzyT0;
+	Mon, 27 Oct 2025 11:10:39 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1761556239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Vul14eerM87A+4Tvr8jejTW2bah93jw1wD7M5xM7ZQY=;
-	b=jf+wOeo7ATSQ5XpsC9xOboLrFdt0Pa8ta2NJrojjXM0oW/lG2E8P7/weFDpqqIfdI6Iuql
-	mUj6nt3+fE82yK5StKL4n1adnwUrZiVMYq1jIDy+zT7sLIwrFD4MoMXQ2rwRH+OFa04qFD
-	lND44gEtdcBevzsSWDdEkFZIe7y/mUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761556169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=FgI6V23Ri1vReEoNo6plAZiLdf2JKlAnRf/2oXQccV8=;
+	b=YwnyYSc8oChOBrSUdHjqrf2iSqRRIRfeZQDbYFQ2wNsdKyyA/dxdu1vNyPVQRMTC8tweqJ
+	3M8C4h/oU+HsvnnRph7lR51dZJeoh1ICc+yqNlzALf1jJ3JCxFeycpTsh9hc3fkCO3FGFd
+	Xja1pavEtX7bHfj81eGBJWXbmVjDvZA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1761556239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Vul14eerM87A+4Tvr8jejTW2bah93jw1wD7M5xM7ZQY=;
-	b=WqgEE3C3lGqeTL8PcGF8a7WnTr3m70gVe/zC49oTIIpF7rjBYMDvLMtT0Q8P6bhhy10SAI
-	u67knSb7BOUhoIDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jf+wOeo7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WqgEE3C3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761556169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vul14eerM87A+4Tvr8jejTW2bah93jw1wD7M5xM7ZQY=;
-	b=jf+wOeo7ATSQ5XpsC9xOboLrFdt0Pa8ta2NJrojjXM0oW/lG2E8P7/weFDpqqIfdI6Iuql
-	mUj6nt3+fE82yK5StKL4n1adnwUrZiVMYq1jIDy+zT7sLIwrFD4MoMXQ2rwRH+OFa04qFD
-	lND44gEtdcBevzsSWDdEkFZIe7y/mUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761556169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vul14eerM87A+4Tvr8jejTW2bah93jw1wD7M5xM7ZQY=;
-	b=WqgEE3C3lGqeTL8PcGF8a7WnTr3m70gVe/zC49oTIIpF7rjBYMDvLMtT0Q8P6bhhy10SAI
-	u67knSb7BOUhoIDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	bh=FgI6V23Ri1vReEoNo6plAZiLdf2JKlAnRf/2oXQccV8=;
+	b=Re120l8vm66ZP8IRQddsokS4lEtpxb66A7cj4WH2b1H9bqLGfwFs9izE7Ip+7s2AJK+jDq
+	Yb9pRqGBeg59xuIhvy1JRFEKmxNkjudSyl4OwMrAvlr92ZxYgwBa+sk6zMi+7cHuGTxoi9
+	Ofg9T1iUWpW+YT7mwp8Ut/D2r7O1WPU=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1761556239; a=rsa-sha256; cv=none;
+	b=ujjWn5pbp4xouvvewe+keUfMTohYr/knkyTAzdh/fLzBo3WpXgnjDI8fPm/IoT5K83b4uj
+	1e6LMx+lWX9nHzNGfBLPjfNfFRsOlgs1RHEI2r7RbpBQKDtIH9VjgELxl6GxZxD7RT1Sk6
+	R5C/bNWIxd7seTnqDbtDJLXrjypXIQ4=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B6FAB136CF;
-	Mon, 27 Oct 2025 09:09:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a8VDK8g2/2hwSAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 27 Oct 2025 09:09:28 +0000
-Date: Mon, 27 Oct 2025 10:09:28 +0100
-Message-ID: <87frb43e47.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 04/21] ALSA: rename BITS to R_BITS
-In-Reply-To: <20251025162858.305236-5-yury.norov@gmail.com>
-References: <20251025162858.305236-1-yury.norov@gmail.com>
-	<20251025162858.305236-5-yury.norov@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id A00FC634C5B;
+	Mon, 27 Oct 2025 11:10:39 +0200 (EET)
+Date: Mon, 27 Oct 2025 11:10:39 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 17/31] media: synopsys: move imx6-mipi-csi2.c to
+ synopsys/mipi-csi2.c
+Message-ID: <aP83D-ndmlv5Jns8@valkosipuli.retiisi.eu>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-17-c9286fbb34b9@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 34A471F385
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.01
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-95_cam-v3-17-c9286fbb34b9@nxp.com>
 
-On Sat, 25 Oct 2025 18:28:40 +0200,
-Yury Norov (NVIDIA) wrote:
+Hi Frank,
+
+On Thu, Aug 21, 2025 at 04:15:52PM -0400, Frank Li wrote:
+> Move dw MIPI CSI2 common part drivers/staging/media/imx/imx6-mipi-csi2.c
+> under synopsys to let more SoC can reuse it.
 > 
-> In preparation for adding generic BITS() macro, rename the local one.
-> 
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-
-I suppose it'll be taken together with other patches?
-If so,
-
-Acked-by: Takashi Iwai <tiwai@suse.de>
-
-
-thanks,
-
-Takashi
-
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  sound/core/oss/rate.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  drivers/media/platform/synopsys/Kconfig                      | 12 ++++++++++++
+>  drivers/media/platform/synopsys/Makefile                     |  2 ++
+>  .../imx6-mipi-csi2.c => media/platform/synopsys/mipi-csi2.c} |  0
+>  drivers/staging/media/imx/Kconfig                            |  1 +
+>  drivers/staging/media/imx/Makefile                           |  2 +-
+>  5 files changed, 16 insertions(+), 1 deletion(-)
 > 
-> diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
-> index b56eeda5e30e..90a40221e4ce 100644
-> --- a/sound/core/oss/rate.c
-> +++ b/sound/core/oss/rate.c
-> @@ -25,8 +25,8 @@
->  #include "pcm_plugin.h"
+> diff --git a/drivers/media/platform/synopsys/Kconfig b/drivers/media/platform/synopsys/Kconfig
+> index 4fd521f78425a96985fa3b6b017deef36631d1a9..e54dad835349d420dead6d5313c0623567c28c0b 100644
+> --- a/drivers/media/platform/synopsys/Kconfig
+> +++ b/drivers/media/platform/synopsys/Kconfig
+> @@ -1,3 +1,15 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
 >  
->  #define SHIFT	11
-> -#define BITS	(1<<SHIFT)
-> -#define R_MASK	(BITS-1)
-> +#define R_BITS	(1<<SHIFT)
-> +#define R_MASK	(R_BITS-1)
->  
->  /*
->   *  Basic rate conversion plugin
-> @@ -104,7 +104,7 @@ static void resample_expand(struct snd_pcm_plugin *plugin,
->  					src += src_step;
->  				}
->  			}
-> -			val = S1 + ((S2 - S1) * (signed int)pos) / BITS;
-> +			val = S1 + ((S2 - S1) * (signed int)pos) / R_BITS;
->  			if (val < -32768)
->  				val = -32768;
->  			else if (val > 32767)
-> @@ -162,7 +162,7 @@ static void resample_shrink(struct snd_pcm_plugin *plugin,
->  			}
->  			if (pos & ~R_MASK) {
->  				pos &= R_MASK;
-> -				val = S1 + ((S2 - S1) * (signed int)pos) / BITS;
-> +				val = S1 + ((S2 - S1) * (signed int)pos) / R_BITS;
->  				if (val < -32768)
->  					val = -32768;
->  				else if (val > 32767)
-> @@ -191,7 +191,7 @@ static snd_pcm_sframes_t rate_src_frames(struct snd_pcm_plugin *plugin, snd_pcm_
->  		return 0;
->  	data = (struct rate_priv *)plugin->extra_data;
->  	if (plugin->src_format.rate < plugin->dst_format.rate) {
-> -		res = (((frames * data->pitch) + (BITS/2)) >> SHIFT);
-> +		res = (((frames * data->pitch) + (R_BITS/2)) >> SHIFT);
->  	} else {
->  		res = DIV_ROUND_CLOSEST(frames << SHIFT, data->pitch);
->  	}
-> @@ -226,7 +226,7 @@ static snd_pcm_sframes_t rate_dst_frames(struct snd_pcm_plugin *plugin, snd_pcm_
->  	if (plugin->src_format.rate < plugin->dst_format.rate) {
->  		res = DIV_ROUND_CLOSEST(frames << SHIFT, data->pitch);
->  	} else {
-> -		res = (((frames * data->pitch) + (BITS/2)) >> SHIFT);
-> +		res = (((frames * data->pitch) + (R_BITS/2)) >> SHIFT);
->  	}
->  	if (data->old_dst_frames > 0) {
->  		snd_pcm_sframes_t frames1 = frames, res1 = data->old_src_frames;
-> -- 
-> 2.43.0
+> +config VIDEO_SYNOPSYS_MIPI_CSI2
+> +        tristate "Synopsys DesignWare MIPI CSI2 Receiver common library"
+> +        depends on VIDEO_DEV
+> +        select MEDIA_CONTROLLER
+> +        select VIDEO_V4L2_SUBDEV_API
+> +        select VIDEOBUF2_DMA_CONTIG
+> +        help
+> +          Common library for MIPI CSI2 Controller.
+> +
+> +          To compile this driver as a module, choose M here. The module
+> +          will be called synopsys_hdmirx
+> +
+>  source "drivers/media/platform/synopsys/hdmirx/Kconfig"
+> diff --git a/drivers/media/platform/synopsys/Makefile b/drivers/media/platform/synopsys/Makefile
+> index 3b12c574dd67c072901108d88cad64ca3a723938..045ed3177738e6d28aa223804b79e6774e141dc8 100644
+> --- a/drivers/media/platform/synopsys/Makefile
+> +++ b/drivers/media/platform/synopsys/Makefile
+> @@ -1,2 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  obj-y += hdmirx/
+> +
+> +obj-$(CONFIG_VIDEO_SYNOPSYS_MIPI_CSI2) += mipi-csi2.o
+
+Please give the module a more specific name.
+
+> diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/media/platform/synopsys/mipi-csi2.c
+> similarity index 100%
+> rename from drivers/staging/media/imx/imx6-mipi-csi2.c
+> rename to drivers/media/platform/synopsys/mipi-csi2.c
+> diff --git a/drivers/staging/media/imx/Kconfig b/drivers/staging/media/imx/Kconfig
+> index 1cd48028b6416ae16ed69c68186281b6c6bcbec8..53e5c1546ac53e4942974a9acdcf078de1cb6073 100644
+> --- a/drivers/staging/media/imx/Kconfig
+> +++ b/drivers/staging/media/imx/Kconfig
+> @@ -10,6 +10,7 @@ config VIDEO_IMX_MEDIA
+>  	select V4L2_MEM2MEM_DEV
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	select VIDEO_V4L2_SUBDEV_API
+> +	select VIDEO_SYNOPSYS_MIPI_CSI2
+>  	help
+>  	  Say yes here to enable support for video4linux media controller
+>  	  drivers for the i.MX5/6 SOC.
+> diff --git a/drivers/staging/media/imx/Makefile b/drivers/staging/media/imx/Makefile
+> index 064a6c6c069aa440c72a483080cbedf89d370193..1978b82fd1876566acbb952a4d14cf9aca35e996 100644
+> --- a/drivers/staging/media/imx/Makefile
+> +++ b/drivers/staging/media/imx/Makefile
+> @@ -11,4 +11,4 @@ imx6-media-csi-objs := imx-media-csi.o imx-media-fim.o
+>  obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx-media-common.o
+>  obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-media.o
+>  obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-media-csi.o
+> -obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-mipi-csi2.o imx6-csi2.o
+> +obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-csi2.o
 > 
+
+-- 
+Regards,
+
+Sakari Ailus
 
