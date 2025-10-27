@@ -1,150 +1,118 @@
-Return-Path: <linux-kernel+bounces-871347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74850C0CFF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD2EC0D007
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 230024E4FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:43:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51E7D4E411C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96762F6932;
-	Mon, 27 Oct 2025 10:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l7tF6X2h"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAA72C2ACE;
+	Mon, 27 Oct 2025 10:45:29 +0000 (UTC)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AF82E543B;
-	Mon, 27 Oct 2025 10:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887617464
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761561831; cv=none; b=l3autcLz7B+5zlYurBl2t3vSL+TPkkC8niJJMNIJhD4BOCQIhJc2Mr70HELiitwyWrG7ltbkfl4SXgTO5pUo7fTYFrmfqGqgBABJFYDjemqTr+MpNvlZVE32Rt+nZDvCHA60YQJXOoosI/nDpvY1OoWA7Fo6RDFW7sHe3Kzu1OI=
+	t=1761561929; cv=none; b=sV61la6YO7LvllAihR39iAy/t1CpaNiHccIsXQbfqZm6YG5YyuBt/AYeHiCckNOPwNtAj5pHSg2JEVIkwFezWgQCronRQkS2qoYWefcAsaMrkS3sjx446vHsuQtKv3ryjYCT3gIRvqKQlps+ocXQgaJsVbY+pvpX1Ymjk3Hm0KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761561831; c=relaxed/simple;
-	bh=dnFWroSYpgKTr53sV/u987Z7MyBid44fWzMJtS7rNbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pTqPob4B6cRMGx4SwMBd55E/1alln9AIrMpqQ6lsdlFVo8sIsRG4Nqdg3U6ajoBK8IDLoOoenUVI3DqKR1VG/k2v7EhIjZecDE2yQhUYTCbQUYKc+xyDGE7rod1yc/liHGgI1P/bEJD9cjdeATrL+a9tbXLj09PMU9JwDZwjZTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l7tF6X2h; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761561826;
-	bh=dnFWroSYpgKTr53sV/u987Z7MyBid44fWzMJtS7rNbQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l7tF6X2h3MPJ5hdPR+ZmZ/oW8il+SALAIJhV77rZLNlwk3+9fORla1icaFg8wdT/e
-	 RZzCuaQgV0d3W/2+PkFa1aV2KBgHmU9oPn5CXmUhr9VXhx2SGM1aHbKUXC7fd1HWH8
-	 7a4KoJr9pyV04xRCqu4UhBzU8+8PwIe4NElWEnTZhF/M71+/DyqwbCbZDxDZkSXOXm
-	 /viuN8U3RFjOj7kmMqKr1u+iwiCCG3v0vxYNNaTflRD7I2hBrU3YTffPW5+nlNVUNO
-	 Z9bi7t6/8L9Ecxz0GmTNh8oMAGtNrADhYjye6qzRHnKP4pyTE291LHR/g8cefNsHTs
-	 Uu4+LeKBXO+ew==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3E02C17E12AE;
-	Mon, 27 Oct 2025 11:43:46 +0100 (CET)
-Message-ID: <7a8bf2e9-5033-4588-923c-53ad23c12924@collabora.com>
-Date: Mon, 27 Oct 2025 11:43:45 +0100
+	s=arc-20240116; t=1761561929; c=relaxed/simple;
+	bh=WASv8vPf9FPyquyQDbPoOdROvffB+ReSLfQNpiWjqIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IegrY/rMauPcAYtwvEwd7OQnvEmTMp+18mOqp13TnarNOM2iIJZi69g0M/8er5j3m3ft9XOgTGOqgcjfk0LGmEv0aZ7o3vwwkLBAxsszvfPHFSwrO+WPQQyVPPWk0Tr4VJgDsODYH4DFtBUnnBRQD/ZF3XdvvC4AR7zURW3zQ+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-8eafd5a7a23so3428214241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:45:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761561926; x=1762166726;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xFi78x1MtIeYqpVCKC1DBSPNonZlJu7dJLYb6jM72vk=;
+        b=pE18gbP4CsoijuGt5dbaDyFGgxbbBnrUyiPk60EBvA8sTfA/iY1NThdqIg7DcgYsBe
+         n6mgoXyeOFNdeqstmaXttFYsIJaoAcieZhcbR3UmWKmDxBdPmVh82LLCTqK2fjejMmlz
+         LmJKHvpmIbhjF4zPVRLi6mVfmPrFSKaNybWXa92gUV2elukUfIBk+KggFPO3piQC7idO
+         NQC6Y4Hwrmdy+7Tpi58YXi/e9Lpqa5IeRipULLFisKPFfS/pt6VRFUKQje/NB9WKNwWv
+         aW61fG+M5+S0OayWdggtv+/F5q31eW/If/hL8mIrZPCTBwdHQ5SvYqW6GCS2mClqLfnV
+         L2GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcPgpw4DvcdqfeIKPDpYW/laTJy0MdeI22I65nNYubOwui3HvAUUjxLAFEMXqOhhMvnKbEtz9AGGpomqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQt18lfZPrxVIKaBqkvT2CIt2Gmao1GZM+73mjDJ3C1W3w6m7u
+	h7rORXPl4pFBX7/YeslSJUaTaaNXgOGa/i5u7UZvHIVUMB95E6UHMDug4fhqn/Mi
+X-Gm-Gg: ASbGncvbT0rL+9yuc6Qc0rPQo79WK/8l/7FD7Jqsjy4YDidxAngiwde8N/iNX1ghMIm
+	W61OQdc+sCLJakH+72mXNc2uGVqfbfEAH8X2ASOG+IlBU5Z8p0NXepLcy9rnrh5iz3wNP0qeydz
+	Ct9ls5+274PdXLBhzqEkLxLFw5DOTzEoRqKVaG/tn7G/YA0AoiQjcMjG8QH9/90blqyv6+b077Z
+	YP1DN4dKxeg66oot6715T00ZR5XgzSk//Y89Yr6f1XeBlFd9bonsmm/rVRGDbFZpo5CMLEjI0v4
+	3oPB/bVwo1g9NEyRWTAvnse+WKXbCGvpAtmvM9s79trLhjV7gbEwgdm71JdA7hXonY9P97TeWyY
+	fS2g/yPxp7vLx9+yn4Q4oDI2eV6hFiaJ4yiNL43zCEFAdBwObwXFYBPzSxW4+vvddak5c0cD14F
+	ulNSwExVCmFuT4RbfzE4DGITL7VDcbM14FGtUYOQ==
+X-Google-Smtp-Source: AGHT+IGncIUa+rfAptyrvmiDhIl0Ge7MEr+KAjwcIW1PPZlpQC9zEP+tw3cb7mCc7YCE1XUwEvClug==
+X-Received: by 2002:a05:6122:1693:b0:557:c538:699e with SMTP id 71dfb90a1353d-557cdb38845mr2763642e0c.5.1761561926118;
+        Mon, 27 Oct 2025 03:45:26 -0700 (PDT)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557ddac1518sm2837688e0c.0.2025.10.27.03.45.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 03:45:25 -0700 (PDT)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so5242754137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:45:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2+CyupWnlQvr7q2JuhUjm1HL2W0Q9ow75W6gXY8aaTJ7q0t57wa0bKqvMUqcccBq4LkiC7bhoJzo0REY=@vger.kernel.org
+X-Received: by 2002:a05:6102:30d2:20b0:5d5:f6ae:3905 with SMTP id
+ ada2fe7eead31-5db3e25962bmr2803354137.22.1761561924836; Mon, 27 Oct 2025
+ 03:45:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] dt-bindings: thermal: mediatek: make interrupt
- only required for current SoCs
-To: Frank Wunderlich <linux@fw-web.de>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Mason Chang <mason-cw.chang@mediatek.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Balsam CHIHI <bchihi@baylibre.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20251026122143.71100-1-linux@fw-web.de>
- <20251026122143.71100-2-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251026122143.71100-2-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251023081925.2412325-2-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251023081925.2412325-2-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Oct 2025 11:45:13 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUnom39_Rj+6Jc2g69i+Z4V7UkfXT791buK3h9cpOFpsQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnn-hFWk4Ur68Qi3gdEa85bXZjpybdjIi4iorAZW0HIZJSSUE0PNnuk68o
+Message-ID: <CAMuHMdUnom39_Rj+6Jc2g69i+Z4V7UkfXT791buK3h9cpOFpsQ@mail.gmail.com>
+Subject: Re: [PATCH 01/10] clk: renesas: r9a09g077: add TSU module clock
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: John Madieu <john.madieu.xa@bp.renesas.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Il 26/10/25 13:21, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Upcoming MT7987 does not have a IRQ we have to make interrupt-property only
-> required for current supported SoCs.
+On Thu, 23 Oct 2025 at 10:20, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a TSU
+> peripheral with controlled by a module clock.
+>
+> The TSU module clock is enabled in register MSTPCRG (0x30c), at bit 7,
 
-Hmm. Thermal sensor IP with no interrupt? Looks really strange.
+MSTPCRD
 
-This is odd, because LVTS always has multiple interrupts, and if this doesn't
-actually feature any, it really feels like the hardware is broken somehow.
+I will fix that while applying.
 
-MediaTek, can you please confirm whether the LVTS IP in MT7987 is really
-like that, or can you please give the right interrupt number to Frank?
+> resulting in a (0x30c - 0x300) / 4 * 100 + 7 = 307 index.
 
-Thanks,
-Angelo
+Gr{oetje,eeting}s,
 
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->   .../bindings/thermal/mediatek,lvts-thermal.yaml | 17 ++++++++++++++++-
->   1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/mediatek,lvts-thermal.yaml b/Documentation/devicetree/bindings/thermal/mediatek,lvts-thermal.yaml
-> index 0259cd3ce9c5..7ec9c46eef22 100644
-> --- a/Documentation/devicetree/bindings/thermal/mediatek,lvts-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/mediatek,lvts-thermal.yaml
-> @@ -58,6 +58,16 @@ properties:
->   allOf:
->     - $ref: thermal-sensor.yaml#
->   
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt7988-lvts-ap
-> +    then:
-> +      required:
-> +        - interrupts
-> +
->     - if:
->         properties:
->           compatible:
-> @@ -75,6 +85,9 @@ allOf:
->           nvmem-cell-names:
->             maxItems: 1
->   
-> +      required:
-> +        - interrupts
-> +
->     - if:
->         properties:
->           compatible:
-> @@ -91,10 +104,12 @@ allOf:
->           nvmem-cell-names:
->             minItems: 2
->   
-> +      required:
-> +        - interrupts
-> +
->   required:
->     - compatible
->     - reg
-> -  - interrupts
->     - clocks
->     - resets
->     - nvmem-cells
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
