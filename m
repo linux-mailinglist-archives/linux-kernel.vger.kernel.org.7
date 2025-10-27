@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-872576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742FBC117CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:13:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F61C117D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A54E1B6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B651A268D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3F1328633;
-	Mon, 27 Oct 2025 21:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0E6326D45;
+	Mon, 27 Oct 2025 21:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Op/X1Tkr"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4030326D45;
-	Mon, 27 Oct 2025 21:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ECos1Apu";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="CTJmc6Yh"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FB42F1FE7;
+	Mon, 27 Oct 2025 21:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599477; cv=none; b=ulbvCHGihryNX1g4V8uGvfhgQo39sPYHAXX9bDrV774bOhctboALfAtlBBALz2y8L4Q4BfxKUTOLu+BgjfDcpuRJWnYhudcYs/PnDHCHPVySzY5AVPq5PHWx+yvjaUGPQEtf/0RxiSA3HaYBEM1wE6cKMpHyLIxR6nBttR0sRqQ=
+	t=1761599587; cv=none; b=VzckmuqCZan1W4HI3gpB4bcA46cJgiWzg5TOr+VdueYb2f8f2+Cx+RPr9gLs/pQeXvjatNbN2b6Gcji1E+7DVbom0/gXhGVST/cxy9/79YkTlUXxG32+iU/iUqE4wTKdpsbixg78D+QpKASakDSLjdiYg/vY9C9kDe5LfKAw72g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599477; c=relaxed/simple;
-	bh=4n9QIdJQ3ilSVQij+WP1ABTTm2Q8Tv5JdHLCiFPkaO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FAdKheZhcWx9i1T+d3+uQOM0ygIDPsPUREV+d4zQQnAl7V/0AbXIC/v/YL3T/wnsZzMsCqlCKIddcu2jMXcvpq9YiQJMxAcQoJhn70aTnyyJao2AJcrKaxNwtNN7q+FmEiSOUXuByxwUu8k8vW/roQkov+EdgM/0BeF6pLuN3pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Op/X1Tkr; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.76.96.75] (unknown [20.97.10.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 63B17200FE4D;
-	Mon, 27 Oct 2025 14:11:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 63B17200FE4D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761599474;
-	bh=emPHTxDsECB1m3bST7rxoZFSUDfKsuIuBI3rEmfSJOY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Op/X1Tkr31eLC6+9hJman1GDU3oFw0FxhzgJFqT0ai9xc6oxeQG+luAkboWClfYRX
-	 XX1jcGGKQ9g6Gg1VEN+jdRUqbPJqSH+1eGEB4rNMWg83t79lHbPw5ChLmIfDnVZ6c1
-	 9rdosqOPabi3A8+1MzZsLb3GGxZgI03Hu3+CNaZo=
-Message-ID: <a50ef2a9-44da-4154-8a4a-a21a7bf15836@linux.microsoft.com>
-Date: Mon, 27 Oct 2025 16:11:13 -0500
+	s=arc-20240116; t=1761599587; c=relaxed/simple;
+	bh=jTdE400yq/ajNb8WdhfrvI4VJVwqniWouH/qHirbl4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DbhbSl54GjEWuGFpTH9ZRL/atQDphFOf3+5laDfw7VoaoYf3fg+mnwVcrjY7QR6D8mOhashghNg/AdHnvr/MMO+J9fPooQJIng4pQxJPgqLvYVQy0ddaYhvfN+pUBAgIbN5c52oA1/JXomkg7VQlc2aVmXxW96HZunN9fWOzqVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ECos1Apu; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=CTJmc6Yh; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cwR721FWcz9t39;
+	Mon, 27 Oct 2025 22:13:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761599582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P9OYt/TVtRqFlVbtQUwUoKw4zIYro3RdYxyw20BMr/A=;
+	b=ECos1Apu5Egkw9B6hybGFMS2K73AwLbCk1La+iEOSBIr30wb954icsuHAVwNIQnUG/QWZG
+	+hUr7zGF5mXJkSuuE+pDAz+ADSxSYMLjOdc4jU/a3jKexShIOUX/PHZYFJxONokwClkka7
+	r1JT/XwjrAgZlR7N0XWIAkg9Y6sK31rSCqgs44NNm9zbNZ45PaD1fs9D8P9PaeOFDGkY4l
+	ZGMWO/W/6y3+/zzuzzJBdscFyCGn4xLn2OE1t/hmoC7htYZ7wRPe87R1PKDPwFqGm61BN+
+	+3w8ed8AVqZWG9Kf3/3gEBredClj5nRwvxG3jdUjVdtkoAXSROkIiX4SKcDO8g==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=CTJmc6Yh;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761599580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P9OYt/TVtRqFlVbtQUwUoKw4zIYro3RdYxyw20BMr/A=;
+	b=CTJmc6Yh+S0Gg5bcv/Nn0L3KzDM6vko5mIe+/OwS7prAQCpm30rodgFSb221KgJNdjXx+Y
+	XyqNp6AGq3p+Wg3xLO3idZJtZJ70KLZLyCX1poY1f+gdkydUPzDlNeqnXVQpWS0+e34Kwj
+	XJRAydl/2HiQyYZsoK3UOX3nzZtdXDIXVRQ+aRuK3Q3wrHLP8LZKzGZtNHbExJProIxgfm
+	vPEm8tYHJagCw4Bf3xcNeTAZi69sWxYgqvV7W+SQPC71LjwJw7H59U5yRDYL/ZYH/mY2Qo
+	kDBYHizj6iE7gAJYhfvL0+K9MpcOlhcwoFyeXcy+Qi7eg9s4+pkigmDbOo3qeg==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/5] arm64: dts: renesas: r8a77960-ulcb: Enable GPU support
+Date: Mon, 27 Oct 2025 22:12:17 +0100
+Message-ID: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] Add support for clean shutdown with MSHV
-To: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de,
- anbelski@linux.microsoft.com, nunodasneves@linux.microsoft.com,
- skinsburskii@linux.microsoft.com
-References: <20251027202859.72006-1-prapal@linux.microsoft.com>
- <9097e99c-8d80-44c2-9dab-87166760af9b@linux.microsoft.com>
-Content-Language: en-US
-From: Praveen K Paladugu <prapal@linux.microsoft.com>
-In-Reply-To: <9097e99c-8d80-44c2-9dab-87166760af9b@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: aqa83zx3pbeywqrbia83sjswxm745px3
+X-MBO-RS-ID: 92c7b2c63661db9e584
+X-Rspamd-Queue-Id: 4cwR721FWcz9t39
 
+Enable GPU on M3ULCB with R-Car M3-W.
 
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ arch/arm64/boot/dts/renesas/r8a77960-ulcb.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 10/27/2025 3:56 PM, Easwar Hariharan wrote:
-> On 10/27/2025 1:28 PM, Praveen K Paladugu wrote:
->> Add support for clean shutdown of the root partition when running on MSHV
->> hypervisor.
->>
->> v3:
->>   - Dropped acpi_sleep handlers as they are not used on mshv
->>   - Applied ordering for hv_reboot_notifier
->>   - Fixed build issues on i386, arm64 architectures
->>
->> v2:
->>    - Addressed review comments from v1.
->>    - Moved all sleep state handling methods under CONFIG_ACPI stub
->>    - - This fixes build issues on non-x86 architectures.
->>
->> Praveen K Paladugu (2):
->>    hyperv: Add definitions for MSHV sleep state configuration
->>    hyperv: Enable clean shutdown for root partition with MSHV
->>
->>   arch/x86/hyperv/hv_init.c       |   8 +++
->>   arch/x86/include/asm/mshyperv.h |   2 +
->>   drivers/hv/mshv_common.c        | 103 ++++++++++++++++++++++++++++++++
->>   include/hyperv/hvgdk_mini.h     |   4 +-
->>   include/hyperv/hvhdk_mini.h     |  33 ++++++++++
->>   5 files changed, 149 insertions(+), 1 deletion(-)
->>
-> 
-> This series seems to assume that Mukesh's hypervisor crash series has been merged, but that's not the case.
-> I don't see any code context or logical dependency on that series, but correct me if I'm wrong. If there's no
-> dependency, can you send a v4 based on Linus' tree or hyperv-next to avoid a merge conflict?
-> 
-
-I rebased this patchset on top of hyperv/hyperv-next branch, which has 
-crashdump patches: 
-https://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git/log/?h=hyperv-next
-
-Let me know if I missed/misunderstood anything.
-
-
-> Thanks,
-> Easwar (he/him)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77960-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a77960-ulcb.dts
+index 4bfeb1df0488d..c3282593346bc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77960-ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77960-ulcb.dts
+@@ -36,3 +36,7 @@ &du {
+ 	clock-names = "du.0", "du.1", "du.2",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2";
+ };
++
++&gpu {
++	status = "okay";
++};
+-- 
+2.51.0
 
 
