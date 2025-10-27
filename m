@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-872166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876E9C0F731
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:50:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5475FC0F671
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FE242160C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32367188370E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D66312815;
-	Mon, 27 Oct 2025 16:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFF530EF62;
+	Mon, 27 Oct 2025 16:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkQjl9h9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ec5NEWwt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65540239E63;
-	Mon, 27 Oct 2025 16:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7917FEAE7;
+	Mon, 27 Oct 2025 16:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583532; cv=none; b=PsBkOCq/FqE/4xc6BXqPrCATYhqRVJPgpDk9uY+kEKnOxUc2SjSS0TJyZMwa3bon3EXeyFcmMAdijGIGt3BexuavkExgVCZjoffukppHOym2Dke+NEG/x32edFk+OiGrpSciTNLBzUIZC+SibOSB6iU4coQl93ggksYWGKL/iBQ=
+	t=1761583375; cv=none; b=BoVuvVqs2QDIdOSKVayLbQXpjiMp6kx92CqScnD7KyqBDrQwEk/Vr7mfI+OqbnOuc+NIDrJgCIwgXJNv9GBidRx1N3+6SFRSYo65lGvDJzdg3SNFOzubIo58g7IKlqzX1nimGKCNlT0wSx0CWm+hqnX5KSFg5l1zQRkvej5J1c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583532; c=relaxed/simple;
-	bh=iKOVWF2RnfnIr0oOaw/PDTKY+Q3jxgn4qKv3p2eNTkw=;
+	s=arc-20240116; t=1761583375; c=relaxed/simple;
+	bh=xi3p1plspiMb+oEZCo7OhEMYcKsZn5qpqNZLgN6rP+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPYhKR7UEta/E9EKy6AAwQ8rpKuvV5HEFikwzgcCABNqJW7MHLxOsJ3Nyq6Wectj/dOCm+ASqv09MuzO2QVMXrzWggM4+IBbkn+jDjD4xtaEsK234xRzICFyQ4Lq7s3xOpUWrUn5DYFdJrf1T22jKoU2vHmvAnien0NRPruWgUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkQjl9h9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0377CC4CEFD;
-	Mon, 27 Oct 2025 16:45:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FjTmJEueUtPK+7EsTsq48iNXS/YUx/qqbjtGr8CIiCs012ZUQw3I8RooqmjNYH07khnmpZxTzESIjl6XbaW5cYAPpGtwkjcY3bTO9FrJLJIvd8tbZnCI09g23McOTUzIncrdQ9XtsNVRwiAd/RUKdRT1pLNxZA1YmNbHg3R44ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ec5NEWwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5A6C4CEF1;
+	Mon, 27 Oct 2025 16:42:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761583531;
-	bh=iKOVWF2RnfnIr0oOaw/PDTKY+Q3jxgn4qKv3p2eNTkw=;
+	s=k20201202; t=1761583375;
+	bh=xi3p1plspiMb+oEZCo7OhEMYcKsZn5qpqNZLgN6rP+o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pkQjl9h9KohVvz65bHU+yH04xkh+S8fYTnr8QeHrTV4PSsCyK71TLKAPocn4quoeS
-	 ntVDFx10SoLftdxXvKGbgOFZKokROQylrGH0FYJ9IJs5bdrEXbpki0LTSn8qx9CjJm
-	 8EA4N8ot1fReXS9FxgYFa1M+G9EBiF6N1QQhbQsdrE6GHoBXTOSJyGqx92rNgEFIZE
-	 nv5LCIgrybSDCuXTvlCZJY23r0TccWdxSS/MTbl5QJlK4Em8N4ycnMR/fzEo7dq4Cf
-	 J9LDNjjZs9PE1dSbCNCs+debXClghryq+/W2++unwGI5THXvUk1EbAKYU2D3HncncK
-	 wgC1Ld0SOho3w==
-Date: Mon, 27 Oct 2025 16:45:27 +0000
-From: Simon Horman <horms@kernel.org>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next 01/12] selftests/vsock: improve logging in
- vmtest.sh
-Message-ID: <aP-hpxMgB5tN7KJ3@horms.kernel.org>
-References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
- <20251022-vsock-selftests-fixes-and-improvements-v1-1-edeb179d6463@meta.com>
+	b=ec5NEWwtwvUCT6XBtM30FRyNeTIbKbBWMFgtw9LzwDx6ZWi9+5AyNzOBc9X4f3Z+V
+	 FusgcgRRSvXTxBGeqihCsRuqODvJmiE+oLrCxAAeewIh2Q1v/WAYIBWga/f3BxqKdy
+	 xrzezf2wCOQHlSrtEMj7cB4IuL2TQOXaKRFDFPj8yttzu5m8WY2ZHlZZf6wlNqigIT
+	 tXpRdMBVlZJhqpjbwSIQoYy3vecXuCBik9BeYYGYKvMkB2gNjLa0VP8Te1muHXG636
+	 yR8w7cbtkqQScQd0OzqEWxve8Q26aJ3J4cP2ytwzw2oikUj6WWRsWXwtA0uZIZAYAN
+	 XDpq4uZ6/lLrg==
+Date: Mon, 27 Oct 2025 11:45:48 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Alexander Martinz <amartinz@shiftphones.com>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: qcm6490-shift-otter: Add
+ missing reserved-memory
+Message-ID: <3ryhntdf52cukvcbfad5prlggqsee54nsf7us6hdd5h5f73pog@yrgo6o6j22gw>
+References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
+ <20251009-otter-further-bringup-v2-3-5bb2f4a02cea@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,91 +62,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022-vsock-selftests-fixes-and-improvements-v1-1-edeb179d6463@meta.com>
+In-Reply-To: <20251009-otter-further-bringup-v2-3-5bb2f4a02cea@fairphone.com>
 
-On Wed, Oct 22, 2025 at 06:00:05PM -0700, Bobby Eshleman wrote:
-> From: Bobby Eshleman <bobbyeshleman@meta.com>
+On Thu, Oct 09, 2025 at 11:06:33AM +0200, Luca Weiss wrote:
+> From: Alexander Martinz <amartinz@shiftphones.com>
 > 
-> Improve usability of logging functions. Remove the test name prefix from
-> logging functions so that logging calls can be made deeper into the call
-> stack without passing down the test name or setting some global. Teach
-> log function to accept a LOG_PREFIX variable to avoid unnecessary
-> argument shifting.
+> It seems we also need to reserve a region of 81 MiB called "removed_mem"
+> otherwise we can easily hit memory errors with higher RAM usage.
 > 
-> Remove log_setup() and instead use log_host(). The host/guest prefixes
-> are useful to show whether a failure happened on the guest or host side,
-> but "setup" doesn't really give additional useful information. Since all
-> log_setup() calls happen on the host, lets just use log_host() instead.
-> 
-> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 
-...
+If you make sure CONFIG_MEMTEST is enabled, you can boot with memtest=1
+on the command line to catch such issues, without relying on "higher RAM
+usage" (or randomness).
 
->  log() {
-> -	local prefix="$1"
-> +	local redirect
-> +	local prefix
+Regards,
+Bjorn
+
+> Fixes: 249666e34c24 ("arm64: dts: qcom: add QCM6490 SHIFTphone 8")
+> Signed-off-by: Alexander Martinz <amartinz@shiftphones.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+> index 0d331bda4a82..31650c29b1ca 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+> @@ -118,6 +118,11 @@ cdsp_mem: cdsp@88f00000 {
+>  			no-map;
+>  		};
 >  
-> -	shift
-> -	local redirect=
->  	if [[ ${VERBOSE} -eq 0 ]]; then
->  		redirect=/dev/null
->  	else
->  		redirect=/dev/stdout
->  	fi
->  
-> +	prefix="${LOG_PREFIX:-}"
+> +		removed_mem: removed@c0000000 {
+> +			reg = <0x0 0xc0000000 0x0 0x5100000>;
+> +			no-map;
+> +		};
 > +
->  	if [[ "$#" -eq 0 ]]; then
-> -		__log_stdin | tee -a "${LOG}" > ${redirect}
-> +		if [[ -n "${prefix}" ]]; then
-> +			cat | awk -v prefix="${prefix}" '{printf "%s: %s\n", prefix, $0}'
-
-FIWIIW, I would drop cat from this line.
-
-> +		else
-> +			cat
-> +		fi
->  	else
-> -		__log_args "$@" | tee -a "${LOG}" > ${redirect}
-> -	fi
-> -}
-> -
-> -log_setup() {
-> -	log "setup" "$@"
-> +		if [[ -n "${prefix}" ]]; then
-> +			echo "${prefix}: " "$@"
-> +		else
-> +			echo "$@"
-> +		fi
-> +	fi | tee -a "${LOG}" > ${redirect}
->  }
->  
->  log_host() {
-> -	local testname=$1
-> -
-> -	shift
-> -	log "test:${testname}:host" "$@"
-> +	LOG_PREFIX=host log $@
-
-shellcheck suggests keeping the quoting of $@.
-This seems reasonable to me. Although in practice I don't think
-it will change the behaviour of this script.
-
->  }
->  log_host
->  log_guest() {
-> -	local testname=$1
-> -
-> -	shift
-> -	log "test:${testname}:guest" "$@"
-> +	LOG_PREFIX=guest log $@
-
-shellcheck also points out that log_guest is never passed
-arguments, so $@ can be dropped. If you prefer to keep
-it then, as per log_host, it seems reasonable for it to be quoted.
-
->  }
-
-...
+>  		rmtfs_mem: rmtfs@f8500000 {
+>  			compatible = "qcom,rmtfs-mem";
+>  			reg = <0x0 0xf8500000 0x0 0x600000>;
+> 
+> -- 
+> 2.51.0
+> 
 
