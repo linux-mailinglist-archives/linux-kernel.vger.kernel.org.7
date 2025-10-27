@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-872727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF79C11E42
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E86C11E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:51:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91519500179
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:49:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56B0C4F9FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664A1335BA7;
-	Mon, 27 Oct 2025 22:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7FB32E73D;
+	Mon, 27 Oct 2025 22:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3bOrsLM"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lg2piTrF"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B1932E723
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE51032D43D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761605185; cv=none; b=NBYKE4G4f+kLCiDAAkoONgtbnQJvl82WUihFRTDOHaadeD66AFR47JuMF+l5blj7WhRABxfhLEdupxdSK4nKgs9fwmZxi8GBus5hs8nWZPDHDYcD3magarOvEKGMjSfHJLCq5q31YKCsr2gi9ioiCKuNPsoodg1wmKp70R4x4vE=
+	t=1761605209; cv=none; b=V6bjbT3V7wateHI8ecq7kjbMwyNDBi0fnU11ZTLSQKPvSjqFP6g/Fk6GOjKAwjH+19Zz3jL4w7Tk/skOrqRvVrW3aF8LkqXTrVw1e3h090Tst/1u30GuX9tw+HlLMhnPDFo7i50+iKLfUtWQnRz/WS1Wv2dmRC4eZKdH7+iBjAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761605185; c=relaxed/simple;
-	bh=YbNF9xBLgvPcEJ73q19bteNh3qQ4EWHWmqaSpEAAHPI=;
+	s=arc-20240116; t=1761605209; c=relaxed/simple;
+	bh=ZzWPnnOZXKXFtrtRoq6w5dfem/sBKT4+3f4vAqBe2dA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RyU3XKWNgm53O3bMwrd/xNUmKFR9aE7mecG7jeAGKyNLqr5nVYi7or30ClEOrj1m2QF5weMFCwhl8nFZsoCZkNsLlznJQ6zZsqA2aMRafNhEZAgaKxkBMOixrGMrakmp0audsG/ghSR+hya3q4stjboWGFjSXl3Nkt2drJJSXXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3bOrsLM; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47118259fd8so39765665e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:46:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=cCoEJY1bvDx1Ha/Yzwd6NRPE0b7QQiCFa4nlifrori1hPSP96A5MBEthwiDzCeW5DamRQUW95mJFVMqSLWghEORuhj4KWFNerLcoRU9kNvMFQs3Jr51xdEl1nZhPOPUHDfjYyf2k8eHVEWgn+YB9z1d+vilDzEmyUSoCiaPBaCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lg2piTrF; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-78356c816fdso54605297b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761605182; x=1762209982; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761605205; x=1762210005; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YbNF9xBLgvPcEJ73q19bteNh3qQ4EWHWmqaSpEAAHPI=;
-        b=R3bOrsLM90ph+zhd05Sn7igSwGIPADBCQVTuFiwym7wQ8MlicFuMlUzlwD2gBHkY3f
-         1KuwPuFQ8RbZMqTBSMUpT/qtBmK5aMAQ7cc0iuJVDgU5uJ2JP8ELO+8oOF9euAndL0ZV
-         z2KYBXeHISmwQsR38TzkRPbMniliWRieXTugL++3ur17WWTnGkzyWiuGywC56NZcbsDg
-         cjbrKZy+OqahFx7qRKsT+L1Xl6g3ibUFErq/MNJguA8hRjaxIMnqHW+y3JV1JUvGjPH/
-         +5UkA1HTvjPxAFujFHJBPFPWPsFWNbOUUW9S6zQhcecFM0Z4hIzTmG4E9iGm+Wo72lRi
-         APZw==
+        bh=ZzWPnnOZXKXFtrtRoq6w5dfem/sBKT4+3f4vAqBe2dA=;
+        b=Lg2piTrFtmJAqKxJ6VeXW4HVBFDh6ExN9b6wbHYawq9Ue/Oemy5aUWRGDAeBaUVSWL
+         0qc56s8Fd9rOg2Wcyp5zDxjTU5qi/USEd/TsIGiW++zb6APOXbEZMIzQ09M2jUmSA47k
+         uewJ4Baq83ac06n4Fgku8Vsi92c4YOeGAluUbghouvhpMotXvaXBot/syCKPB6w9d7dJ
+         h8AUaS8h3Bvr1J0b8wRTTSYi5z8cD56NAt1xvf3jUDTNf6vNx/5AHDQPsE1qLhlgBNY8
+         RNmtA2l6lI/gY/zEVglbFtpBFitoAQp/i6exFH9oY3XoHPguWYIkWFuFLFCJxrhZ47mb
+         J/Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761605182; x=1762209982;
+        d=1e100.net; s=20230601; t=1761605205; x=1762210005;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YbNF9xBLgvPcEJ73q19bteNh3qQ4EWHWmqaSpEAAHPI=;
-        b=sd9673q7m8tmq9xZItaFp5pLC9p6DfpzKXqcDXJN5A31OvZdrVLwg34D54DoidKaEg
-         5WK0neHr5QAj1vkd2jCcM95c+Pu23APpCgqBlomajc5yPGOrRXPT+uACGdZxoDTdFKQY
-         MqwXnmemSEfKWTGME6NiXcqDYdxKJaRyoDrqnc1FUbPPPWzbid0JJ0J3KiWvzEQQq2Oy
-         Ib4NJnjHCfFQwFuoMuNxhbCegdhsBmTktAxgVx8mOZcWKp37zfDmbtR8nTOYQ+ukmAzA
-         neBPz/262IPlZ286NdIHXanGqbn1+46NBj8bAk6ZwqzaagktGZZACKhI6dm3tlFDeT4O
-         Qb3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWzt0TAVvPBTq0X51L1KpEBqZOPLEZsDADq6kqlgT4lDjrnorOFXP8+3J5X8J7q+GjeKi9bK9iPgwQuWIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhsZmzG7GSMjaI0afkgz1kcXV77OJtE5G5aIBjovbc29/OB0Wq
-	PfsblJbW/2oLj4T+ycf/HkhCbZ9HG5g0ykLHjZxkE30mIhOTnsaojrX8C+heSTosdLvYuOdNWaM
-	p5NbCz9ftyjvwWnHw4sRJ5GNYckFxftk=
-X-Gm-Gg: ASbGncs9vbdPD+/6CbK+AYmjaHEr77w9FfsBZK7B8yEpvxPRQ7Wh7AMnOYCZIcPnN4t
-	5/gFnjLy9c8jgRdwuv+PwsnarcXcNwGSFIWUVYEfGXJoIF7Su4DiAhhQSYYMsnpSeX+oUY9NnNt
-	ed8UfzM2L9hpwHn4v3eeNwiEsQMTV3wp/5KCzRtlUDoQZdhfIKVbNjiTvpe/TbMjut6w6oSi2tX
-	DaqQ+NwCygLQOoOwCNI4WgY1RPthCsj5FJystnsPW5jvG0+rKq1bmRKoaC0MoXN4s/iDw==
-X-Google-Smtp-Source: AGHT+IEeNWo2bsGLLqGLfQNsY0L6lNVZZ2khSDzRsqsRr6Jo8tC6B0Avoq1yBzRM+ieeQ79ZgiTz+pEgGuOt7PLnUe4=
-X-Received: by 2002:a05:600c:46d3:b0:471:1415:b545 with SMTP id
- 5b1f17b1804b1-47717def6demr11070845e9.7.1761605181955; Mon, 27 Oct 2025
- 15:46:21 -0700 (PDT)
+        bh=ZzWPnnOZXKXFtrtRoq6w5dfem/sBKT4+3f4vAqBe2dA=;
+        b=sUsd2JckV6C1gWrJDCywD9TwOyitfyWh9Bm+412EeWPJrgahO12GyD3iCxVGnZYtjs
+         m2N0BDnlNyOyQw+0454JP7Ns9GxLJSRLA9qUb01fBSMHm8iC3d9NLoL1diEO5aQs0C5X
+         GtglmSRE+78P7n6DaqSHNXj1mF1tglhQEIZ42sQPW3hCX37D8g/2zayYw1DDCUb/BBN8
+         vVD3/ylsjoAIVsk+4MuvVv3epz/mbO40p30mTQ4R4GY/6cVDUGdf+6BRfjSH0GB1M1uw
+         yQtbpRD+5yXCPsjzRRmOXIqj2euP2iXLay9lbT9V2eJJ+12p26yz5V8XAz17B4lsapIv
+         OnEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/RR/XhL0/NOcQzl9wdVMwyOz6oIRPcOVe524IyDMCqkTuTfmJUxBiCza5uXhIrdp239u+elWMO39lp24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcRUHjZNpzR6EJn73HJpyK74HrtBUi6vlqoXxZ+G2X9ABZe6Eq
+	GQv5h5IlbaGVU4WzlEw/HIsZhCmG8Zn/V8h8Y+OP5Zsu20HThz0a+q79fJcNdNMVKlYtJTqyb4B
+	OrqGAFiWAx5Yvdc+VANRqoP9rK+cmmHcu0tc9MdButg==
+X-Gm-Gg: ASbGncsTBVJFQAhetmL/J9t89mcbRqmSkOVfohjnWhWGbNIahqA5oevqBFtX0xpmo92
+	+g0SNftJ1v7tz1RInIxQsNBIwQyz4UrEKopAuiE9cejjhPgMP4Iq1YDq6tjOyUwMCFr1kSV4M6A
+	awXvSjr0Gx/YtJn8hIqTXodXkru54EcXqkpKL5LKTuPQvQR+je55kLXrs5LrSXaKqed0irPoTAe
+	LymufbY6Hs03HqtNsBv4SROTGJC4v6b/2Duhj+jFNbKln0RKUiBxw1yMwDYyTHp9Bi57F6Dt4eb
+	9KM4KA==
+X-Google-Smtp-Source: AGHT+IF58gu9w/k3l8GdP1g5RlDJqG0NNSjKKeSe9p6ePIJR4FON1eLAwoxl+nhLHyhOGuGLmO/nO8EfMXRInSW0EWM=
+X-Received: by 2002:a05:690e:15d5:b0:639:2794:3416 with SMTP id
+ 956f58d0204a3-63f6b9d159dmr1313309d50.19.1761605204155; Mon, 27 Oct 2025
+ 15:46:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761439133.git.jinji.z.zhong@gmail.com>
-In-Reply-To: <cover.1761439133.git.jinji.z.zhong@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Mon, 27 Oct 2025 15:46:10 -0700
-X-Gm-Features: AWmQ_bma6lyHlpvPtwTt1egk70m2KnBJDjgat6AjIDzKFfoBCYrn6d-bXve4s8M
-Message-ID: <CAKEwX=MqsyWki+DfzePb3SwXWTZ_2tcDV-ONBQu62=otnBXCiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] Introduce per-cgroup compression priority
-To: jinji zhong <jinji.z.zhong@gmail.com>
-Cc: minchan@kernel.org, senozhatsky@chromium.org, philipp.reisner@linbit.com, 
-	lars.ellenberg@linbit.com, christoph.boehmwalder@linbit.com, corbet@lwn.net, 
-	tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, axboe@kernel.dk, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	akpm@linux-foundation.org, terrelln@fb.com, dsterba@suse.com, 
-	muchun.song@linux.dev, linux-kernel@vger.kernel.org, 
-	drbd-dev@lists.linbit.com, linux-doc@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-mm@kvack.org, zhongjinji@honor.com, 
-	liulu.liu@honor.com, feng.han@honor.com, 
-	YoungJun Park <youngjun.park@lge.com>
+References: <20251027-gpio-mmio-refactor-v1-0-b0de7cd5a4b9@linaro.org> <20251027-gpio-mmio-refactor-v1-2-b0de7cd5a4b9@linaro.org>
+In-Reply-To: <20251027-gpio-mmio-refactor-v1-2-b0de7cd5a4b9@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 Oct 2025 23:46:30 +0100
+X-Gm-Features: AWmQ_bmpt0BdgJRwL5QER5dmVrqtyW3pITM-90osLs6GzKPhyaRFTjOuGCubgCQ
+Message-ID: <CACRpkdaYUbMbVGK-qfUMuBij=+fNfzuED=E3NTGRP8jzR-QYFg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: mmio: drop the "bgpio" prefix
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25, 2025 at 6:53=E2=80=AFPM jinji zhong <jinji.z.zhong@gmail.co=
-m> wrote:
+On Mon, Oct 27, 2025 at 2:48=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> Hello everyone,
+> The "bgpio" prefix is a historical left-over. We no longer use it in any
+> user-facing symbol. Let's drop it from the module's internals as well
+> and replace it with "gpio_mmio_".
 >
-> On Android, different applications have varying tolerance for
-> decompression latency. Applications with higher tolerance for
-> decompression latency are better suited for algorithms like ZSTD,
-> which provides high compression ratio but slower decompression
-> speed. Conversely, applications with lower tolerance for
-> decompression latency can use algorithms like LZ4 or LZO that
-> offer faster decompression but lower compression ratios. For example,
-> lightweight applications (with few anonymous pages) or applications
-> without foreground UI typically have higher tolerance for decompression
-> latency.
->
-> Similarly, in memory allocation slow paths or under high CPU
-> pressure, using algorithms with faster compression speeds might
-> be more appropriate.
->
-> This patch introduces a per-cgroup compression priority mechanism,
-> where different compression priorities map to different algorithms.
-> This allows administrators to select appropriate compression
-> algorithms on a per-cgroup basis.
->
-> Currently, this patch is experimental and we would greatly
-> appreciate community feedback. I'm uncertain whether obtaining
-> compression priority via get_cgroup_comp_priority in zram is the
-> best approach. While this implementation is convenient, it seems
-> somewhat unusual. Perhaps the next step should be to pass
-> compression priority through page->private.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I agree with TJ's and Shakeel's take on this. You (or some other
-zram/zswap users) will have to present a more compelling case for the
-necessity of a hierarchical structure for this property :)
+I don't even know why it was named like that. "Binary gpio"?
 
-The semantics itself is unclear to me - what's the default? How should
-inheritance be defined? What happens when cgroups are killed etc?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-As a side note, seems like there is a proposal for swap device
-priority (+ Youngjun)
-
-https://lore.kernel.org/all/20250716202006.3640584-1-youngjun.park@lge.com/
-
-Is this something you can leverage?
-
-Another alternative is to make this zram-internal, i.e add knobs to
-zram sysfs, or extend the recomp parameter. I'll defer to zram
-maintainers and users to comment on this :)
+Yours,
+Linus Walleij
 
