@@ -1,152 +1,766 @@
-Return-Path: <linux-kernel+bounces-872325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADE0C0FEF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:36:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0235EC0FF6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 903044E5F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81F919C51EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8413191BF;
-	Mon, 27 Oct 2025 18:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4DE31B100;
+	Mon, 27 Oct 2025 18:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CzTzYsmR"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WU8A8Vv6"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47306FBF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E442EDD62
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761590184; cv=none; b=d9xplThUB6AvIop+13/7x928e/xO8BtbccG0CNXJlDXtqoJfFzDrgmIrU+nvrkyV/yrzkdUeh8bXU19Dd4XVG6Y2EL4r6I+xnmeXq5sirhAWaGb0QVS6rAVplovZR+ENqZ+IZ3QSR3wc35FDs/hDzNmUiSQfbNsyjHYra+8R6DA=
+	t=1761590429; cv=none; b=XAjmpdRtk4m2G9+boHurdeE5alQzIR7FyDaiIaQbh8dr3aLxHBW5wJGSaG4Zlv1RVfH7qSfMp2212ONkD+DeUUkNo2/E+P2MFmVhro399Xk1UMxOnNAWCstMf9RyYRADrbTvflGJESYmb+f1pSoE4NA4vzyfCttgdI9YVeaYhXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761590184; c=relaxed/simple;
-	bh=ZOwRdq5M1dlQoQp9lG51OLqKoqkwMBEDLxwqQawgzXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ufjB18JQtOA96RChBmJGQWU1E7u69QBC3EWy4LM7R7TOYsTjP2HP3i4StdV5TyFXXg6YQSRup0LIZogogQF3PvxkAf7DD6gF42LHILXGZjqfAt4IKUkIyJTXQjWBiEhNhZVN8Lz2EjHCYFZ/3UUE1yHPFDvXVn4fA1rI5YYhmmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CzTzYsmR; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4eccff716f4so53041cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:36:21 -0700 (PDT)
+	s=arc-20240116; t=1761590429; c=relaxed/simple;
+	bh=w5KxVgRr3e+HKMqnL0mlpeCZQqaUsw/g9mNX4fLvGck=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nhLD52v7spE3peh2DohMdqxW1z+gbb3F1i/SFU6yksfy11c/9ZLuFx4dTZ/f20XQxVvxEGC8L4chXh9erPjIFql2FGxj7rCjfKWtDpt/SI+qHGiQsUPz1UE7M+2nRsLvKOdSjMvaTDr47atWgvYIarfEg3WKkGU7BAtZpKov1tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WU8A8Vv6; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso4151685a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761590181; x=1762194981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1xq6G+u7Mv77qfaJS2gzpOCja2SPSkCLWRcJsgep2UA=;
-        b=CzTzYsmRWOtPiQ1D8CgK6JzyCw3MWyhcqebPMKOA5XWIT1/Y6GtCb0SGR+FVwpQ44b
-         ir0JfNl99leoM/ytHiZrQR5aMOPo8DH1tbnTzv6tPkmqXpGp6N2rjyelSXazgFIe7dQP
-         YHDixlXJHO8as17QbP4CAgje5dPU/fZyMYzG7mzsT6Ih4v+4ALIfrywr/7vdKl7DP0Qa
-         c0/F5E+gKvvUOcDfedeZQaT2Cz0Z/hBQIkNwV4JnpciJO08q7B8KWy7j/Ry6E8KTNCoM
-         D9PRl9swH0vEW99Ti0ZO1KeH5B0PhjTDgH5NajWDm3fuT1irgB24PIyP9ngXMU2FujWG
-         pLWw==
+        d=gmail.com; s=20230601; t=1761590426; x=1762195226; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gQlKf8vLkZj4zJyjmnZT1xVDVRltU5vGOgkpPqZX5gM=;
+        b=WU8A8Vv6klRQUBe3STZJDMQa/vRLk9n3bs3qs4/GaLp5Azh1pCfnZHHCsRDdbSjKtc
+         gkWLBxswdPmlpNXpOFPhR7f4/J9tRTAMOjqjk+EkU9o9VI3c8cdb5FsLiqpLD0IZexTU
+         Z2IOtE7DYGC1tQTpjBKAX/TiageufLyHmL+E+ks8HgdAaaG7O+XxXa1avZWhVtWCv29k
+         Dst2sjnQHirRMMW7vxE6m3uHBRwx0eNOMaQc63P3WyHx0M2kaIfOZrN7c4tac1mTMkbr
+         lTJJBcW3GLbJzQYvJTv+PV5JRHHjQprVS1EgxJ0Mnf0Iq7sGcrTbStkUxKD+s2m9YFTr
+         UptQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761590181; x=1762194981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1xq6G+u7Mv77qfaJS2gzpOCja2SPSkCLWRcJsgep2UA=;
-        b=P44cjRjpQNF5z+WrChGwLILp5Y20qc+WpRbNRxdRBMcckEYRIJNoi3HtzGqfjVbxt6
-         KZyGyd/rQTPLa5gtxMx+lo0mOw6j9IHEK6B72Dda+c4Ro5EgwMVLKCmJfxghuVuTET5L
-         6944D1cR7sWGlbI+nJlJ/RQueoK0v8zKp01o6e1TBaRd61mXY2sWNDARiRkSTqJHjWgH
-         oE3v6MMctX8Gic6eMWWkpSPCsHnYD6wH9EagUeTk7TIye77Y92fPTY8ti3r9duwwiP3Z
-         htPryuRHnjtMLvOO6aVVVM8oH02hFxSsFlppAHOoJW2osb+eWpMmVblHMZ4uxDCNTi0Z
-         VuRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMmb8F2oxk1X0B/YSrt5aSf7jaSqVzNGMXBtFVe11X/tMVVrPIEdk9KYXhXd1K+xBM+CKkOWQZN4PMGg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLcRalQJcejuhxHwm8bIf61lb3/0iEkB0FX0Zh1lYKfjIATDIu
-	jyYTqq76+lh/+bSFNOqkQX7vi/HVlR8x8m0CvJiwCYyIBJh0K6xbZcVgBeUz6QCrqOVK6N0QSGf
-	6P5iOaUi4d3FUd3toMISuqIwi3lfjq+j+KdgkHfOB
-X-Gm-Gg: ASbGncsiT/7t3nMGXwXwsl3QHUzT4+CmQDkOOCIA4wdciFuM78x9UyvBPQ6bE1TNI0M
-	+CYCIIGkKIBGmzP7AAZ6sELN+X6zzx27LCtrxtFRgHE9ydrARRfhCm6wQY59+40EdCWqYTRH+Vw
-	FNFs7WkHGwTvjfLeM9loZi34Q299Uf7Z7t9NNUZ6+PMQxDnPowvAijPuMpDG660GrZeR8UDLSNL
-	8VvbU4fMSFqee+CUFpRQaQtqGfrS6U3+ezMLQDfuw9pHYKztbrD+K6ZxhRVhA==
-X-Google-Smtp-Source: AGHT+IElpJjCAG8/FRUMHt7bqVIwzkE9VRWUkg0eb9I3Keo3gBEzc6H7MLuebBvjLENKbJ2B4lYx4d6kp0IWlmdw8rs=
-X-Received: by 2002:ac8:7fcb:0:b0:4e8:b04a:82e3 with SMTP id
- d75a77b69052e-4ed08f1af35mr843001cf.10.1761590180483; Mon, 27 Oct 2025
- 11:36:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761590426; x=1762195226;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gQlKf8vLkZj4zJyjmnZT1xVDVRltU5vGOgkpPqZX5gM=;
+        b=rozAV+okoAlzpb7afO1kxpld5IiJx6+7XMf+nHn+6u6KcvpxS42hKjrfY0dFK6PYKy
+         KR75YiQVVNmDEyqQlwPlJBzX++jd+p+2JAAJ+8B4Kx9hDLxrhXCM1S6Vny5FnypmpKf9
+         NNl4NA6OsnMlI/I5b6EDhmfhgBp/KCZlvQ15A+Nt4N4P9iM8ZBRvBHPrM7vv/a879jKU
+         CkWFLplCKawkpwcdT8FJfCab8gll+MCmmwKxqS7A+0UANVQN7VJLwb0B9jF35leQ0P1V
+         DCGcqE5HeREtRinW+pbSQA/JNNR1Ro85qAoAgmJYDrrfiYGOCbn2a4qPn7L8elOnxAtr
+         VFTg==
+X-Gm-Message-State: AOJu0Yz+uKh/IfWqUJ2nyUpkn5JeZbjGK1Vm26gcAYvfnYzkuZScVpNK
+	8M9Tn3SIHEdPhdEfapfmmAa8e7GGua65E/EEuv7dMl/J/J2H5ooO58On1UBHPcl4
+X-Gm-Gg: ASbGncuwMr1IpbZPTbjCg5p5A0LdrXnjErA4RXeH8xoS+wemcmlO8gcVr1yre4EyO5V
+	a6/V61sLrsBttY/EJ85k5skKPp/Wh3viu7YxM9cpcPbke/AvQGkv12C1zmbTLR2YV/VYc7wVXTx
+	xumXJ0eBm7c5pFoJrBbJngVudMJQxYmREQN0E3nwV9gm2JdsHffGPR6OHo//jqE9WrkbNWUPRr5
+	U58Jqv3snWMLXKzNBSQLFXGQoCdC5E/0W2lpeXX3G3F2nqPM3GZ4gQVZVWU9YS0KdXt5wxZlk7l
+	bBSDu60RM7GxGZVf2YHjl+wz2MFgFzaq2Ql87S2cOEZml64l0HpT3T2wAWkMcwAdyZ/5cYumCQ7
+	3nuY2vPFZtRCmJX9vqPm/S2h7TtzftX/k7gseyPSKUiTcZbV4cjggK+Y7Sedy2ntFNuODWZ5YZQ
+	==
+X-Google-Smtp-Source: AGHT+IHP4bEY/nxSKrhX7kyno5hOcbT92ZbbD4V8usAh7PoCI7LeXnix+Ike0Wg3iMoy007E8oTliQ==
+X-Received: by 2002:a17:90b:288a:b0:330:6d5e:f174 with SMTP id 98e67ed59e1d1-34027bcb2f0mr875727a91.20.1761590426434;
+        Mon, 27 Oct 2025 11:40:26 -0700 (PDT)
+Received: from [192.168.0.226] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3402942f298sm86823a91.5.2025.10.27.11.40.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 11:40:26 -0700 (PDT)
+Message-ID: <b4258ba5ace4c422cdbcde659bb5304408aaec14.camel@gmail.com>
+Subject: Re: [RFC PATCH v3 1/3] btf: implement BTF type sorting for
+ accelerated lookups
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Andrii Nakryiko	
+ <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song
+ Liu	 <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Date: Mon, 27 Oct 2025 11:40:23 -0700
+In-Reply-To: <20251027135423.3098490-2-dolinux.peng@gmail.com>
+References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
+	 <20251027135423.3098490-2-dolinux.peng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <006c9df2-b691-47f1-82e6-e233c3f91faf@oracle.com> <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
-In-Reply-To: <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
-From: Josh Don <joshdon@google.com>
-Date: Mon, 27 Oct 2025 11:36:08 -0700
-X-Gm-Features: AWmQ_bmxfrHEy7fCuXVJiRa0yPduu_wqZu9H-9jpEHZmSss1dVZ2O2Z0pUpkbxw
-Message-ID: <CABk29Nt6ovn0Ltsqx82X_nciQJemBvLimzi=0k+DN1BbJ3+R+A@mail.gmail.com>
-Subject: Re: [REGRESSION][v6.17-rc1]sched/fair: Bump sd->max_newidle_lb_cost
- when newidle balance fails
-To: Chris Mason <clm@meta.com>
-Cc: Joseph Salisbury <joseph.salisbury@oracle.com>, clm@fb.com, 
-	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>, dietmar.eggemann@arm.com, 
-	Steven Rostedt <rostedt@goodmis.org>, bsegall@google.com, mgorman@suse.de, 
-	vschneid@redhat.com, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hey Chris,
+On Mon, 2025-10-27 at 21:54 +0800, Donglin Peng wrote:
+> This patch introduces a new libbpf interface btf__permute() to reorganize
+> BTF types according to a provided mapping. The BTF lookup mechanism is
+> enhanced with binary search capability, significantly improving lookup
+> performance for large type sets.
+>=20
+> The pahole tool can invoke this interface with a sorted type ID array,
+> enabling binary search in both user space and kernel. To share core logic
+> between kernel and libbpf, common sorting functionality is implemented
+> in a new btf_sort.c source file.
+>=20
+> Cc: Eduard Zingerman <eddyz87@gmail.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Alan Maguire <alan.maguire@oracle.com>
+> Cc: Song Liu <song@kernel.org>
+> Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
+> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> ---
+> v2->v3:
+> - Remove sorting logic from libbpf and provide a generic btf__permute() i=
+nterface
+> - Remove the search direction patch since sorted lookup provides sufficie=
+nt performance
+>   and changing search order could cause conflicts between BTF and base BT=
+F
+> - Include btf_sort.c directly in btf.c to reduce function call overhead
+> ---
 
-On Mon, Oct 6, 2025 at 2:25=E2=80=AFPM Chris Mason <clm@meta.com> wrote:
->
-> On 10/6/25 4:23 PM, Joseph Salisbury wrote:
-> > Hi Chris,
-> >
-> > During testing, we are seeing a ~6% performance regression with the
-> > upstream stable v6.12.43 kernel (And Oracle UEK
-> > 6.12.0-104.43.4.el9uek.x86_64 kernel) when running the Phoronix
-> > pts/apache benchmark with 100 concurrent requests [0].  The regression
-> > is seen with the following hardware:
-> >
-> > PROCESSOR: Intel Xeon Platinum 8167M Core Count: 8 Thread Count: 16
-> > Extensions: SSE 4.2 + AVX512CD + AVX2 + AVX + RDRAND + FSGSBASE Cache
-> > Size: 16 MB Microcode: 0x1 Core Family: Cascade Lake
-> >
-> > After performing a bisect, we found that the performance regression was
-> > introduced by the following commit:
-> >
-> > Stable v6.12.43: fc4289233e4b ("sched/fair: Bump sd->max_newidle_lb_cos=
-t
-> > when newidle balance fails")
-> > Mainline v6.17-rc1: 155213a2aed4 ("sched/fair: Bump
-> > sd->max_newidle_lb_cost when newidle balance fails")
-> >
-> > Reverting this commit causes the performance regression to not exist.
-> >
-> > I was hoping to get your feedback, since you are the patch author.  Do
-> > you think gathering any additional data will help diagnose this issue?
->
-> Hi everyone,
->
-> Peter, we've had a collection of regression reports based on this
-> change, so it sounds like we need to make it less aggressive, or maybe
-> we need to make the degrading of the cost number more aggressive?
->
-> Joe (and everyone else who has hit this), can I talk you into trying the
-> drgn from
-> https://lore.kernel.org/lkml/2fbf24bc-e895-40de-9ff6-5c18b74b4300@meta.co=
-m/
->
-> I'm curious if it degrades at all or just gets stuck up high.
->
-> -chris
->
 
-Adding another +1 to seeing this regression (for us, it's with a low
-level storage system).
+Could you please split this in two commits:
+- one handling BTF sortedness
+- another handling btf__permute()
+?
 
-Historically it has been difficult to tune newidle balance in a single
-way to support multiple different types of workloads. I'm wondering if
-it might make sense to put a sched feature on toggling the cost
-scaling for newidle balance, or otherwise making the aggressiveness
-tunable.
+>  tools/lib/bpf/btf.c            | 262 ++++++++++++++++++++++++++++++---
+>  tools/lib/bpf/btf.h            |  17 +++
+>  tools/lib/bpf/btf_sort.c       | 174 ++++++++++++++++++++++
+>  tools/lib/bpf/btf_sort.h       |  11 ++
+>  tools/lib/bpf/libbpf.map       |   6 +
+>  tools/lib/bpf/libbpf_version.h |   2 +-
+>  6 files changed, 447 insertions(+), 25 deletions(-)
+>  create mode 100644 tools/lib/bpf/btf_sort.c
+>  create mode 100644 tools/lib/bpf/btf_sort.h
+>=20
+> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> index 18907f0fcf9f..d20bf81a21ce 100644
+> --- a/tools/lib/bpf/btf.c
+> +++ b/tools/lib/bpf/btf.c
+> @@ -23,6 +23,7 @@
+>  #include "libbpf_internal.h"
+>  #include "hashmap.h"
+>  #include "strset.h"
+> +#include "btf_sort.h"
+> =20
+>  #define BTF_MAX_NR_TYPES 0x7fffffffU
+>  #define BTF_MAX_STR_OFFSET 0x7fffffffU
+> @@ -92,6 +93,12 @@ struct btf {
+>  	 *   - for split BTF counts number of types added on top of base BTF.
+>  	 */
+>  	__u32 nr_types;
+> +	/* number of sorted and named types in this BTF instance:
+> +	 *   - doesn't include special [0] void type;
+> +	 *   - for split BTF counts number of sorted and named types added on
+> +	 *     top of base BTF.
+> +	 */
+> +	__u32 nr_sorted_types;
+>  	/* if not NULL, points to the base BTF on top of which the current
+>  	 * split BTF is based
+>  	 */
+> @@ -624,6 +631,11 @@ const struct btf *btf__base_btf(const struct btf *bt=
+f)
+>  	return btf->base_btf;
+>  }
+> =20
+> +__u32 btf__start_id(const struct btf *btf)
+> +{
+> +	return btf->start_id;
+> +}
+> +
+>  /* internal helper returning non-const pointer to a type */
+>  struct btf_type *btf_type_by_id(const struct btf *btf, __u32 type_id)
+>  {
+> @@ -915,38 +927,16 @@ __s32 btf__find_by_name(const struct btf *btf, cons=
+t char *type_name)
+>  	return libbpf_err(-ENOENT);
+>  }
+> =20
+> -static __s32 btf_find_by_name_kind(const struct btf *btf, int start_id,
+> -				   const char *type_name, __u32 kind)
+> -{
+> -	__u32 i, nr_types =3D btf__type_cnt(btf);
+> -
+> -	if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
+> -		return 0;
+> -
+> -	for (i =3D start_id; i < nr_types; i++) {
+> -		const struct btf_type *t =3D btf__type_by_id(btf, i);
+> -		const char *name;
+> -
+> -		if (btf_kind(t) !=3D kind)
+> -			continue;
+> -		name =3D btf__name_by_offset(btf, t->name_off);
+> -		if (name && !strcmp(type_name, name))
+> -			return i;
+> -	}
+> -
+> -	return libbpf_err(-ENOENT);
+> -}
+> -
+>  __s32 btf__find_by_name_kind_own(const struct btf *btf, const char *type=
+_name,
+>  				 __u32 kind)
+>  {
+> -	return btf_find_by_name_kind(btf, btf->start_id, type_name, kind);
+> +	return _btf_find_by_name_kind(btf, btf->start_id, type_name, kind);
+>  }
+> =20
+>  __s32 btf__find_by_name_kind(const struct btf *btf, const char *type_nam=
+e,
+>  			     __u32 kind)
+>  {
+> -	return btf_find_by_name_kind(btf, 1, type_name, kind);
+> +	return _btf_find_by_name_kind(btf, 1, type_name, kind);
+>  }
+> =20
+>  static bool btf_is_modifiable(const struct btf *btf)
+> @@ -1091,6 +1081,7 @@ static struct btf *btf_new(const void *data, __u32 =
+size, struct btf *base_btf, b
+>  	err =3D err ?: btf_sanity_check(btf);
+>  	if (err)
+>  		goto done;
+> +	btf_check_sorted(btf, btf->start_id);
+> =20
+>  done:
+>  	if (err) {
+> @@ -1715,6 +1706,8 @@ static void btf_invalidate_raw_data(struct btf *btf=
+)
+>  		free(btf->raw_data_swapped);
+>  		btf->raw_data_swapped =3D NULL;
+>  	}
+> +	if (btf->nr_sorted_types)
+> +		btf->nr_sorted_types =3D 0;
+>  }
+> =20
+>  /* Ensure BTF is ready to be modified (by splitting into a three memory
+> @@ -5829,3 +5822,224 @@ int btf__relocate(struct btf *btf, const struct b=
+tf *base_btf)
+>  		btf->owns_base =3D false;
+>  	return libbpf_err(err);
+>  }
+> +
+> +struct btf_permute;
+> +
+> +static struct btf_permute *btf_permute_new(struct btf *btf, const struct=
+ btf_permute_opts *opts);
+> +static void btf_permute_free(struct btf_permute *p);
+> +static int btf_permute_shuffle_types(struct btf_permute *p);
+> +static int btf_permute_remap_types(struct btf_permute *p);
+> +static int btf_permute_remap_type_id(__u32 *type_id, void *ctx);
+> +
+> +/*
+> + * Permute BTF types in-place using the ID mapping from btf_permute_opts=
+->ids.
+> + * After permutation, all type ID references are updated to reflect the =
+new
+> + * ordering. If a struct btf_ext (representing '.BTF.ext' section) is pr=
+ovided,
+> + * type ID references within the BTF extension data are also updated.
+> + */
+> +int btf__permute(struct btf *btf, const struct btf_permute_opts *opts)
+> +{
+> +	struct btf_permute *p;
 
-Best,
-Josh
+Maybe allocate this on stack?
+(Or just use btf_permute_opts directly and have 'map' as local variable?).
+
+> +	int err =3D 0;
+> +
+> +	if (!OPTS_VALID(opts, btf_permute_opts))
+> +		return libbpf_err(-EINVAL);
+> +
+> +	p =3D btf_permute_new(btf, opts);
+> +	if (!p) {
+> +		pr_debug("btf_permute_new failed: %ld\n", PTR_ERR(p));
+> +		return libbpf_err(-EINVAL);
+> +	}
+> +
+> +	if (btf_ensure_modifiable(btf)) {
+> +		err =3D -ENOMEM;
+> +		goto done;
+> +	}
+> +
+> +	err =3D btf_permute_shuffle_types(p);
+> +	if (err < 0) {
+> +		pr_debug("btf_permute_shuffle_types failed: %s\n", errstr(err));
+> +		goto done;
+> +	}
+> +	err =3D btf_permute_remap_types(p);
+> +	if (err) {
+> +		pr_debug("btf_permute_remap_types failed: %s\n", errstr(err));
+> +		goto done;
+> +	}
+> +
+> +done:
+> +	btf_permute_free(p);
+> +	return libbpf_err(err);
+> +}
+> +
+> +struct btf_permute {
+> +	/* .BTF section to be permuted in-place */
+> +	struct btf *btf;
+> +	struct btf_ext *btf_ext;
+> +	/* Array of type IDs used for permutation. The array length must equal
+> +	 * the number of types in the BTF being permuted, excluding the special
+> +	 * void type at ID 0. For split BTF, the length corresponds to the
+> +	 * number of types added on top of the base BTF.
+> +	 */
+> +	__u32 *ids;
+> +	/* Array of type IDs used to map from original type ID to a new permute=
+d
+> +	 * type ID, its length equals to the above ids */
+> +	__u32 *map;
+> +};
+> +
+> +static struct btf_permute *btf_permute_new(struct btf *btf, const struct=
+ btf_permute_opts *opts)
+> +{
+> +	struct btf_permute *p =3D calloc(1, sizeof(struct btf_permute));
+> +	__u32 *map;
+> +	int err =3D 0;
+> +
+> +	if (!p)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	p->btf =3D btf;
+> +	p->btf_ext =3D OPTS_GET(opts, btf_ext, NULL);
+> +	p->ids =3D OPTS_GET(opts, ids, NULL);
+> +	if (!p->ids) {
+> +		err =3D -EINVAL;
+> +		goto done;
+> +	}
+> +
+> +	map =3D calloc(btf->nr_types, sizeof(*map));
+> +	if (!map) {
+> +		err =3D -ENOMEM;
+> +		goto done;
+> +	}
+> +	p->map =3D map;
+> +
+> +done:
+> +	if (err) {
+> +		btf_permute_free(p);
+> +		return ERR_PTR(err);
+> +	}
+> +
+> +	return p;
+> +}
+> +
+> +static void btf_permute_free(struct btf_permute *p)
+> +{
+> +	if (p->map) {
+> +		free(p->map);
+> +		p->map =3D NULL;
+> +	}
+> +	free(p);
+> +}
+> +
+> +/*
+> + * Shuffle BTF types.
+> + *
+> + * Rearranges types according to the permutation map in p->ids. The p->m=
+ap
+> + * array stores the mapping from original type IDs to new shuffled IDs,
+> + * which is used in the next phase to update type references.
+> + */
+> +static int btf_permute_shuffle_types(struct btf_permute *p)
+> +{
+> +	struct btf *btf =3D p->btf;
+> +	const struct btf_type *t;
+> +	__u32 *new_offs =3D NULL;
+> +	void *l, *new_types =3D NULL;
+> +	int i, id, len, err;
+> +
+> +	new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
+> +	new_types =3D calloc(btf->hdr->type_len, 1);
+> +	if (!new_types || !new_offs) {
+> +		err =3D -ENOMEM;
+> +		goto out_err;
+> +	}
+> +
+> +	l =3D new_types;
+> +	for (i =3D 0; i < btf->nr_types; i++) {
+> +		id =3D p->ids[i];
+> +		t =3D btf__type_by_id(btf, id);
+> +		len =3D btf_type_size(t);
+> +		memcpy(l, t, len);
+> +		new_offs[i] =3D l - new_types;
+> +		p->map[id - btf->start_id] =3D btf->start_id + i;
+> +		l +=3D len;
+> +	}
+> +
+> +	free(btf->types_data);
+> +	free(btf->type_offs);
+> +	btf->types_data =3D new_types;
+> +	btf->type_offs =3D new_offs;
+> +	return 0;
+> +
+> +out_err:
+> +	return err;
+> +}
+> +
+> +/*
+> + * Remap referenced type IDs into permuted type IDs.
+> + *
+> + * After BTF types are permuted, their final type IDs may differ from or=
+iginal
+> + * ones. The map from original to a corresponding permuted type ID is st=
+ored
+> + * in btf_permute->map and is populated during shuffle phase. During rem=
+apping
+> + * phase we are rewriting all type IDs  referenced from any BTF type (e.=
+g.,
+> + * struct fields, func proto args, etc) to their final deduped type IDs.
+> + */
+> +static int btf_permute_remap_types(struct btf_permute *p)
+> +{
+> +	struct btf *btf =3D p->btf;
+> +	int i, r;
+> +
+> +	for (i =3D 0; i < btf->nr_types; i++) {
+> +		struct btf_type *t =3D btf_type_by_id(btf, btf->start_id + i);
+> +		struct btf_field_iter it;
+> +		__u32 *type_id;
+> +
+> +		r =3D btf_field_iter_init(&it, t, BTF_FIELD_ITER_IDS);
+> +		if (r)
+> +			return r;
+> +
+> +		while ((type_id =3D btf_field_iter_next(&it))) {
+
+The code below repeats logic it btf_permute_remap_type_id(), please
+use it here. Better yet, generalize btf_dedup_remap_types() and avoid
+a copy-paste altogether.
+
+> +			__u32 new_id =3D *type_id;
+> +
+> +			/* skip references that point into the base BTF */
+> +			if (new_id < btf->start_id)
+> +				continue;
+> +
+> +			new_id =3D p->map[new_id - btf->start_id];
+> +			if (new_id > BTF_MAX_NR_TYPES)
+> +				return -EINVAL;
+> +
+> +			*type_id =3D new_id;
+> +		}
+> +	}
+> +
+> +	if (!p->btf_ext)
+> +		return 0;
+> +
+> +	r =3D btf_ext_visit_type_ids(p->btf_ext, btf_permute_remap_type_id, p);
+> +	if (r)
+> +		return r;
+> +
+> +	return 0;
+> +}
+> +
+> +static int btf_permute_remap_type_id(__u32 *type_id, void *ctx)
+> +{
+> +	struct btf_permute *p =3D ctx;
+> +	__u32 new_type_id =3D *type_id;
+> +
+> +	/* skip references that point into the base BTF */
+> +	if (new_type_id < p->btf->start_id)
+> +		return 0;
+> +
+> +	new_type_id =3D p->map[*type_id - p->btf->start_id];
+> +	if (new_type_id > BTF_MAX_NR_TYPES)
+> +		return -EINVAL;
+> +
+> +	*type_id =3D new_type_id;
+> +	return 0;
+> +}
+> +
+> +/*
+> + * btf_sort.c is included directly to avoid function call overhead
+> + * when accessing BTF private data, as this file is shared between
+> + * libbpf and kernel and may be called frequently.
+> + */
+> +#include "./btf_sort.c"
+> diff --git a/tools/lib/bpf/btf.h b/tools/lib/bpf/btf.h
+> index ccfd905f03df..3aac0a729bd5 100644
+> --- a/tools/lib/bpf/btf.h
+> +++ b/tools/lib/bpf/btf.h
+> @@ -149,6 +149,7 @@ LIBBPF_API __s32 btf__find_by_name_kind(const struct =
+btf *btf,
+>  					const char *type_name, __u32 kind);
+>  LIBBPF_API __u32 btf__type_cnt(const struct btf *btf);
+>  LIBBPF_API const struct btf *btf__base_btf(const struct btf *btf);
+> +LIBBPF_API __u32 btf__start_id(const struct btf *btf);
+>  LIBBPF_API const struct btf_type *btf__type_by_id(const struct btf *btf,
+>  						  __u32 id);
+>  LIBBPF_API size_t btf__pointer_size(const struct btf *btf);
+> @@ -273,6 +274,22 @@ LIBBPF_API int btf__dedup(struct btf *btf, const str=
+uct btf_dedup_opts *opts);
+>   */
+>  LIBBPF_API int btf__relocate(struct btf *btf, const struct btf *base_btf=
+);
+> =20
+> +struct btf_permute_opts {
+> +	size_t sz;
+> +	/* optional .BTF.ext info along the main BTF info */
+> +	struct btf_ext *btf_ext;
+> +	/* Array of type IDs used for permutation. The array length must equal
+> +	 * the number of types in the BTF being permuted, excluding the special
+> +	 * void type at ID 0. For split BTF, the length corresponds to the
+> +	 * number of types added on top of the base BTF.
+> +	 */
+> +	__u32 *ids;
+> +	size_t :0;
+> +};
+> +#define btf_permute_opts__last_field ids
+> +
+> +LIBBPF_API int btf__permute(struct btf *btf, const struct btf_permute_op=
+ts *opts);
+> +
+>  struct btf_dump;
+> =20
+>  struct btf_dump_opts {
+> diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
+> new file mode 100644
+> index 000000000000..553c5f5e61bd
+> --- /dev/null
+> +++ b/tools/lib/bpf/btf_sort.c
+> @@ -0,0 +1,174 @@
+> +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> +/* Copyright (c) 2025 Xiaomi */
+> +
+> +#ifndef _GNU_SOURCE
+> +#define _GNU_SOURCE
+> +#endif
+> +
+> +#ifdef __KERNEL__
+> +
+> +#define btf_type_by_id				(struct btf_type *)btf_type_by_id
+> +#define btf__str_by_offset			btf_str_by_offset
+> +#define btf__type_cnt				btf_nr_types
+> +#define btf__start_id				btf_start_id
+> +#define libbpf_err(x)				x
+> +
+> +#else
+> +
+> +#define notrace
+> +
+> +#endif /* __KERNEL__ */
+> +
+> +/*
+> + * Skip the sorted check if the number of BTF types is below this thresh=
+old.
+> + * The value 4 is chosen based on the theoretical break-even point where
+> + * linear search (N/2) and binary search (LOG2(N)) require approximately
+> + * the same number of comparisons.
+> + */
+> +#define BTF_CHECK_SORT_THRESHOLD  4
+> +
+> +struct btf;
+> +
+> +static int cmp_btf_kind_name(int ka, const char *na, int kb, const char =
+*nb)
+> +{
+> +	return (ka - kb) ?: strcmp(na, nb);
+> +}
+> +
+> +/*
+> + * Sort BTF types by kind and name in ascending order, placing named typ=
+es
+> + * before anonymous ones.
+> + */
+> +static int btf_compare_type_kinds_names(const void *a, const void *b, vo=
+id *priv)
+> +{
+> +	struct btf *btf =3D (struct btf *)priv;
+> +	struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
+> +	struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
+> +	const char *na, *nb;
+> +	bool anon_a, anon_b;
+> +	int ka, kb;
+> +
+> +	na =3D btf__str_by_offset(btf, ta->name_off);
+> +	nb =3D btf__str_by_offset(btf, tb->name_off);
+> +	anon_a =3D str_is_empty(na);
+> +	anon_b =3D str_is_empty(nb);
+> +
+> +	/* ta w/o name is greater than tb */
+> +	if (anon_a && !anon_b)
+> +		return 1;
+> +	/* tb w/o name is smaller than ta */
+> +	if (!anon_a && anon_b)
+> +		return -1;
+> +
+> +	ka =3D btf_kind(ta);
+> +	kb =3D btf_kind(tb);
+> +
+> +	if (anon_a && anon_b)
+> +		return ka - kb;
+> +
+> +	return cmp_btf_kind_name(ka, na, kb, nb);
+> +}
+> +
+> +static __s32 notrace __btf_find_by_name_kind(const struct btf *btf, int =
+start_id,
+> +				   const char *type_name, __u32 kind)
+> +{
+> +	const struct btf_type *t;
+> +	const char *tname;
+> +	int err =3D -ENOENT;
+> +
+> +	if (!btf)
+> +		goto out;
+> +
+> +	if (start_id < btf__start_id(btf)) {
+> +		err =3D __btf_find_by_name_kind(btf->base_btf, start_id, type_name, ki=
+nd);
+> +		if (err =3D=3D -ENOENT)
+> +			start_id =3D btf__start_id(btf);
+> +	}
+> +
+> +	if (err =3D=3D -ENOENT) {
+> +		if (btf->nr_sorted_types) {
+> +			/* binary search */
+> +			__s32 start, end, mid, found =3D -1;
+> +			int ret;
+> +
+> +			start =3D start_id;
+> +			end =3D start + btf->nr_sorted_types - 1;
+> +			/* found the leftmost btf_type that matches */
+> +			while(start <=3D end) {
+> +				mid =3D start + (end - start) / 2;
+> +				t =3D btf_type_by_id(btf, mid);
+> +				tname =3D btf__str_by_offset(btf, t->name_off);
+> +				ret =3D cmp_btf_kind_name(BTF_INFO_KIND(t->info), tname,
+> +							kind, type_name);
+> +				if (ret < 0)
+> +					start =3D mid + 1;
+> +				else {
+> +					if (ret =3D=3D 0)
+> +						found =3D mid;
+> +					end =3D mid - 1;
+> +				}
+> +			}
+> +
+> +			if (found !=3D -1)
+> +				return found;
+> +		} else {
+> +			/* linear search */
+> +			__u32 i, total;
+> +
+> +			total =3D btf__type_cnt(btf);
+> +			for (i =3D start_id; i < total; i++) {
+> +				t =3D btf_type_by_id(btf, i);
+> +				if (btf_kind(t) !=3D kind)
+> +					continue;
+> +
+> +				tname =3D btf__str_by_offset(btf, t->name_off);
+> +				if (tname && !strcmp(tname, type_name))
+> +					return i;
+> +			}
+> +		}
+> +	}
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +/* start_id specifies the starting BTF to search */
+> +static __s32 notrace _btf_find_by_name_kind(const struct btf *btf, int s=
+tart_id,
+> +				   const char *type_name, __u32 kind)
+> +{
+> +	if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
+> +		return 0;
+> +
+> +	return libbpf_err(__btf_find_by_name_kind(btf, start_id, type_name, kin=
+d));
+> +}
+> +
+> +static void btf_check_sorted(struct btf *btf, int start_id)
+> +{
+> +	const struct btf_type *t;
+> +	int i, n, nr_sorted_types;
+> +
+> +	n =3D btf__type_cnt(btf);
+> +	if (btf->nr_types < BTF_CHECK_SORT_THRESHOLD)
+> +		return;
+> +
+> +	n--;
+> +	nr_sorted_types =3D 0;
+> +	for (i =3D start_id; i < n; i++) {
+> +		int k =3D i + 1;
+> +
+> +		if (btf_compare_type_kinds_names(&i, &k, btf) > 0)
+> +			return;
+> +
+> +		t =3D btf_type_by_id(btf, k);
+> +		if (!str_is_empty(btf__str_by_offset(btf, t->name_off)))
+> +			nr_sorted_types++;
+> +	}
+> +
+> +	t =3D btf_type_by_id(btf, start_id);
+> +	if (!str_is_empty(btf__str_by_offset(btf, t->name_off)))
+> +		nr_sorted_types++;
+> +
+> +	if (nr_sorted_types < BTF_CHECK_SORT_THRESHOLD)
+> +		return;
+> +
+> +	btf->nr_sorted_types =3D nr_sorted_types;
+> +}
+> diff --git a/tools/lib/bpf/btf_sort.h b/tools/lib/bpf/btf_sort.h
+> new file mode 100644
+> index 000000000000..4dedc67286d9
+> --- /dev/null
+> +++ b/tools/lib/bpf/btf_sort.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause) */
+> +/* Copyright (c) 2025 Xiaomi */
+> +
+> +#ifndef __BTF_SORT_H
+> +#define __BTF_SORT_H
+> +
+> +static __s32 _btf_find_by_name_kind(const struct btf *btf, int start_id,=
+ const char *type_name, __u32 kind);
+> +static int btf_compare_type_kinds_names(const void *a, const void *b, vo=
+id *priv);
+> +static void btf_check_sorted(struct btf *btf, int start_id);
+> +
+> +#endif
+> diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+> index 8ed8749907d4..8ce7b1d08650 100644
+> --- a/tools/lib/bpf/libbpf.map
+> +++ b/tools/lib/bpf/libbpf.map
+> @@ -452,3 +452,9 @@ LIBBPF_1.7.0 {
+>  		bpf_map__set_exclusive_program;
+>  		bpf_map__exclusive_program;
+>  } LIBBPF_1.6.0;
+> +
+> +LIBBPF_1.8.0 {
+
+I think we are still at 1.7.
+
+> +	global:
+> +		btf__start_id;
+> +		btf__permute;
+> +} LIBBPF_1.7.0;
+> diff --git a/tools/lib/bpf/libbpf_version.h b/tools/lib/bpf/libbpf_versio=
+n.h
+> index 99331e317dee..c446c0cd8cf9 100644
+> --- a/tools/lib/bpf/libbpf_version.h
+> +++ b/tools/lib/bpf/libbpf_version.h
+> @@ -4,6 +4,6 @@
+>  #define __LIBBPF_VERSION_H
+> =20
+>  #define LIBBPF_MAJOR_VERSION 1
+> -#define LIBBPF_MINOR_VERSION 7
+> +#define LIBBPF_MINOR_VERSION 8
+> =20
+>  #endif /* __LIBBPF_VERSION_H */
 
