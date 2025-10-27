@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-871323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E4C0CEAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:17:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFC5C0CE85
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CC8404B54
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78753BB802
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44A12F5A36;
-	Mon, 27 Oct 2025 10:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8503C2586E8;
+	Mon, 27 Oct 2025 10:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="IQ/6Q4LA"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013049.outbound.protection.outlook.com [40.107.159.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2djFAOX"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB831DFF0;
-	Mon, 27 Oct 2025 10:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761560178; cv=fail; b=EcPV2zvUE47n7y8JftSAUC5C3CB658pC6tYsQETHDJ1OxxeWjVyGfRKeSZfFVX2NHoTWW5H5weq2KgJdEM09tTCYoKq1POHJxosjpEMJbEdAJTRwl/GJVvEIyxdpn8hj3ULDM+LoUncE2YSXlLj22sOAIdp3/hAJLHFxg/Asrew=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761560178; c=relaxed/simple;
-	bh=zHemGpe9wadVAqZG6/fq9ZZQfRdwjK/o8hzmwaVVGCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=FJ6zvjkTNgv/8wIsLwsbdTZVZa8vq9n+k2iuK8gJeig29xXIXMV6rZBqBgtvTh4liU9MZlQdZxCfHP2uYfxVBe71n6xZcrjZ7LAyxRr9Sp5XvsjwfSBEm0JC0JKsLIEAu7qqUCYCUqaXOeHWAeTPjkUKLv/ON2ZYWLFeGDIlizw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=IQ/6Q4LA; arc=fail smtp.client-ip=40.107.159.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FObPoAKvKhrSt/GvX23gR9hU+e/kHkqSNSI3hDYtFo+jFnGtFQZn6BtnHxZCCqnXb0hZwjDDFkJqB909QoW8ftYAzMn2HXZcj3nBls0+P/SnW2OUKEQtSMDsMvbuu0Ib5dwFNzxOhGnH16cDXeuKV4y4yG7jdtL5SS4RFejsERYJGupD32QPfymrziX2E4d1JEZ1JHfQxQFmLOqLCgiWO/PM+gmbbq3YBhKMyXD3MKKjl0lGhKi8ucLcz1ot5iaDZRO88j06aHIigy+H5ibQfc79CUBNDiXCUP/Z9Rv/ZtXBep8V695D4nelZgYG8ZhsUigAZMdsSwrvYz3Vnkh3bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tWwgLn+/izdy91Tp4bfYi3nFcJRy365ZxzDd8FwLGB8=;
- b=uGYB6EUMqILH/AtyH9lBn+ZTa6kkz2iu3mUCLI5eK12TEKIKSc4ZZG3gzD6XZaJ47fBB4AUNnVqsesBHrvRzouqEj2OQrRZcq0R15yGuOoxPv0RB0gvTxb1bbO7Vjk5vpJtb2edGuCv43+GTDvYaWpTMMs+ucMwzO4cveoaRsvLbcok4T+SBeCjquuANWooXpMQhQRT2V1WkSUIGTCp6uHfxNuzx13QFHEQPnBtWgB6JcUZ3thTs9y0hwF6wrcrBeN1qK4XTOYtWKVyRsFqJjrN2HVDpvU30ytzTC9i4tYsK7Blg66d4txOp3HbCisnFtKGAaUSDO7RmD7IaQ03jqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tWwgLn+/izdy91Tp4bfYi3nFcJRy365ZxzDd8FwLGB8=;
- b=IQ/6Q4LAvUKC/F6ecLFlHY7G3Y2w/R02elUtIDnorZ9MPGuZ+3cNpXzuBgTB4YgA172qK1N/l9TMtZo8J2rJHMHH1ZCc3GPmqiai9SsowlJfLJb0aewXNoqoc9cthkCn5h65xafdpPONQ8YG4lE9LLamWM+0YfpCeSXBcArpVn7FeKyMUJcYliUxlHJfKUP7ZKA/VTc/Xn3fu2/U9ey4GAsdZgqZaovLQhcSwM/ZiIo8P0Kz54yHMH1fAP9E5ll3TYy2jZzyNIFW1H86S6gG55P3ouHg6/Z5fpMO0VpA+bEVsE3n0sP+nBsTuxUM6PgUp6R9pZgBzNGEhfBQnxWDiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nokia.com;
-Received: from PAWPR07MB9688.eurprd07.prod.outlook.com (2603:10a6:102:383::17)
- by AS8PR07MB8373.eurprd07.prod.outlook.com (2603:10a6:20b:444::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 10:16:14 +0000
-Received: from PAWPR07MB9688.eurprd07.prod.outlook.com
- ([fe80::3a2d:5997:c1c7:3809]) by PAWPR07MB9688.eurprd07.prod.outlook.com
- ([fe80::3a2d:5997:c1c7:3809%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 10:16:14 +0000
-From: Stefan Wiehler <stefan.wiehler@nokia.com>
-To: Xin Long <lucien.xin@gmail.com>,
-	"David S . Miller " <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>
-Cc: linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Wiehler <stefan.wiehler@nokia.com>
-Subject: [PATCH net v2] sctp: Prevent TOCTOU out-of-bounds write
-Date: Mon, 27 Oct 2025 11:13:29 +0100
-Message-ID: <20251027101328.2312025-2-stefan.wiehler@nokia.com>
-X-Mailer: git-send-email 2.51.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0285.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::19) To PAWPR07MB9688.eurprd07.prod.outlook.com
- (2603:10a6:102:383::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573AB4C9D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761560057; cv=none; b=GkjdcZKjgVrcuFXxGLGS1wfRLAVuYgEIlQYUL13HzoWd2SE5sRzzb13pJoMe6IqnlOZKRV6CEIxYegrEav/7T9r5qrcDNplQSi4zTcSkMmhgC1VIIEJ47Sde2R9TUK1SGv5EVS2FofDhj45znmDUnlor8bTFMUpemoWFj1q1wns=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761560057; c=relaxed/simple;
+	bh=0W198tq9syL7RzHk/dg2UdWGrq6EP/bXXQ1FwXijpt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrhatecDNsJgu+8Yacqj+4eh1XMRGA6nqQbKXLg/rM+CnQhOhIdx0TGHpVe1cmz7NSr607mC/VJJxbBkHKQCu5WaUxzne2v+RbtkASzhUMKYCWnYvswjY+fJWAvrVpFpFP/gb4twvrCXte6da/CpHUdg3KwGfw8K86kk5IMRlfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2djFAOX; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b6d83bf1077so483616866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761560054; x=1762164854; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aTqsNz7aSAEuO3Qu/0965qQzJTzUJ1fOn9AY/UKGfhc=;
+        b=B2djFAOXEp7ojeBJHXNcT7VFPHajCRAQwlHImGisF1DDe8zbvXSPl1jH5d1x030DZU
+         nxfESPYiVeMuKcFOJ2Hl6T70KSUtXY39VMWo3mYPMG6LrJpbvt1sKHu/eW2lC2kUe79B
+         kGM0R2Kx8m5R8GZWKlfifiYpCdwZBsYjdS6qIm1dCDAlYjJ9wot9w8husZN+/DkWEDG2
+         MHxG8Sm7wEfuXMHht+56BKyrBdL3mkz9HZXOisTgKfxjppibmSLtRVuKGeFlBhSEzAjr
+         4e+a6XvCChMpoijIRZpX2CskXGx+XJoxK7m9WZ3AgvqxGgEPFEvk3st6QVuMDQQtWURu
+         jHxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761560055; x=1762164855;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aTqsNz7aSAEuO3Qu/0965qQzJTzUJ1fOn9AY/UKGfhc=;
+        b=S3YRgp1/lV5XrgoDJjB68eSEwAgitGKOtH3fHvNS6rIrFvQALYTCVG0cWPrK3fOQcm
+         Y83eYHSnWmvSADAxvYHDXkgHz1y0VPh94AMifDmJhpWutSgvJipSFWOpIMhovjIhlS+t
+         M+jxx1yyz9/6er7c19O4f5VxhGFwvKd5uTXrz/EjIANkjDnH0d3Kyvo3+sJeZGtCe3Ry
+         GZV1PAZ26v+5MnKkAHk6orTa20jN3C1Ib7uNOeA2IeMtbK4lHlvgAToTzJroRwfqxnRx
+         DGsjxZOtfakf5bbbBy7fMxub7N6/xicNnR5TQCsZpuHEGaZTfSIqK45ofWs/TD8+cF1Q
+         egnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOuu0pVkxDFkKb90B1BCL+ph8zBX6/RkiHE/Kna0Y4ZjZcc4w+ykbaQfUHikAj4WAdgFh555GUtAznIIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpXzZzMxUSqhRsPe7oHUdAG0hnIwwQBMbMgHu2mfdqf+uXcDy/
+	B7M2tZzr9GF2m7+E3ei1iFvWw4tpQSzPGhWR5jylOj7Sxj/T1xtFXhIn
+X-Gm-Gg: ASbGncsoMDxTkBUtWnf4dBP1IeARpa5X+cVPSXZnV5t6x6QRpq/pCCNG0F3uORA0MFL
+	o7MjvVrBbD6QnLxkoi69nOvi/vbekprVs3PYTlVdjHuUZYnZCtYec+hvgi9e0x3aABQ3Oes235R
+	MJtsiqa9tLmCHK9VNq8aWr6nRX6PP9+2y6FEKaTFzN5n4kwTeyk+Kohf7GkDUMq/DDq4dCFtOyW
+	n8y0q7Ota+IEwMt70E8Cv5JQjsCrCXZtYOo+Xv17yofvvWK5W6a4NzcVricZWvpVCbQbYmJ4kGC
+	JGfSBUYIVomTQzmyEPbzpYMVa6Dmk8jAvwcrV9jhrDJdrGRoPvHaH5xIb8Tti+dvxDj83EOuyzr
+	94kMPJfq6JuldfCuNKzheQPaEE2fIUS21+U7y3kCFhIgshTcw8GsZ2H1I17dJPX8HbMVOO/vj6s
+	vF1KWr4WrGlRNF+jZtHL6cerxZtqlz+RyvYqnXd9/eA5c6HsoGfRpl5eihLTYrH8ImJAE=
+X-Google-Smtp-Source: AGHT+IHuypx/1E4ZSbA9a3TW5kaMs8g53ODTMc8NURVmeWR0+FhA3IWWamFa9Wtwow5u6cxfiIDvDA==
+X-Received: by 2002:a17:907:7e8e:b0:b41:4e72:309f with SMTP id a640c23a62f3a-b6473f4543fmr4207388166b.50.1761560054349;
+        Mon, 27 Oct 2025 03:14:14 -0700 (PDT)
+Received: from toolbox (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853696aesm725747766b.30.2025.10.27.03.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 03:14:13 -0700 (PDT)
+Date: Mon, 27 Oct 2025 11:14:12 +0100
+From: Max Krummenacher <max.oss.09@gmail.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Max Krummenacher <max.krummenacher@toradex.com>,
+	Adrien Grassein <adrien.grassein@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: lontium-lt8912b: Do not generate HFP
+Message-ID: <aP9F9ETIipU55zI6@toolbox>
+References: <20250728150059.2642055-1-max.oss.09@gmail.com>
+ <20250911153453.GA80715@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAWPR07MB9688:EE_|AS8PR07MB8373:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a6b2ddc-332a-4282-5f4c-08de1541dbe4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?trOrmDMDbGWtcHZNAw820WYPfJeX8EXk14rhF6efWI7yTEGtXxi4lT5pmcYR?=
- =?us-ascii?Q?RqpxvmqsEYwvY2dPKIbAT8Me1x6n7SNvpG1aeGMBC/Aewbco7zyvoNSgBQ7U?=
- =?us-ascii?Q?m1nfVDP5BTCtf0YvAeYe6JMovmw1PAGJRh20I3mP+okm8LMPUqJY3ZC/4+b3?=
- =?us-ascii?Q?5IKudW8e3dxmsLw6fYXg2JmU03d6MEpzSvJEH3fPMyptXYQdGd0x0XB9xLXB?=
- =?us-ascii?Q?V2Jq/NIGWOgy6ohSSjnFwoKTTVFapGxv28biTqS5wFcqrOzLjDK1KR0FnMXe?=
- =?us-ascii?Q?EtSc61PqZn4Rt7Z2kQcqbg44Vf8/ptM4gV4MfIyLhjjZwSjDER3EEwB1u8/c?=
- =?us-ascii?Q?0x6FCLUh12SHWS0p4wIe9WWATVGs47oRaEsHMsoQWtQaw7xSCgqt+yvVl4cn?=
- =?us-ascii?Q?l2rsPHk2REaszHGtvyCaQsLAVgC7lNbKR+GM2xYfBJLsuQCQH/h6hXHpqdVo?=
- =?us-ascii?Q?4iDWvhTBd9HSIdSLcxPaTdKv7Y3WMRju21ssuSWoeITdD1qDqnFGzt44P3xR?=
- =?us-ascii?Q?j4cAEEgLTrkt2DkAwF2sKt0akqD4RJ8xzhtyLuNpab1cpzPPf7zoghFLtTDc?=
- =?us-ascii?Q?jPaWt5dIanpAarL0O8r4koUeBXoEA2Z5MYqvs8H91RxqRQWVj236JGWUnG2C?=
- =?us-ascii?Q?hFo7ENvwpKiuFagwSI2AJcioJ5/Ns86CMTAMRdRvuTGNocORO3qKFS4fXf9s?=
- =?us-ascii?Q?mFGZLRrB2sc+erGZ/fHdmmLeezK4zmI8UvKk3mIbVrOT4/LvnYYaIIhATczd?=
- =?us-ascii?Q?XtSiZVJ96eWyB9hlEs7Z+R2wUCNnuGixxgOXFSasdB1esoivTVGY/00zp3hd?=
- =?us-ascii?Q?sIxEK4/OwRm6aZCXuBaTUUn4kZmQxh7Df1viZZTpIvY/jkLyFY318+tSU9Qc?=
- =?us-ascii?Q?+fDRLfaUTFWL8ogEjjMaiId+/c8nqk1duz2U3xvJz8nwAXaTVFPQkv55BwxD?=
- =?us-ascii?Q?12EAiWmW78uMTFQsy3rQdjkUPmup54PKBShuAIFsWT5sdykzp8nVHf4AiOFS?=
- =?us-ascii?Q?QM0giLFkWuMNRl1cPlIywitFCiz4jmP7ycm4A77rpaTdaU3efARAW10WVjVQ?=
- =?us-ascii?Q?eNKiLRrM2Mlp84djokhVSW0N2fP7GgbIcGuyy5GzMsWuyP9Haq4pqQ/Fojpr?=
- =?us-ascii?Q?XI+leWcUld1Kw2HhXuDxrxKsSx+cZS27m9HZ7pt/qwA4C8HzbWUehGG74Zu0?=
- =?us-ascii?Q?By9d3POjn9Jq9Y9F2Qbaav7VZB37uRyRtnwjfXOl9ZwcoPnPjj5mggXhcd8+?=
- =?us-ascii?Q?s1P0WcfhNoJCmbJdQSM5nJEZI35SD/uIqUw0ZnCszbsxsSyrXAocbMuX/Eec?=
- =?us-ascii?Q?skbhdIOBfLSr8m4O2Qf3IVRvJV1sZFg0PcuN+VfI+GHcoaSzKWFgr8gOkv3r?=
- =?us-ascii?Q?vjIpXY2jo1OVawpbVbdqK6/UsYaPAG7i4IbIs/sSXYxmr7jTiA5MxZSD0c90?=
- =?us-ascii?Q?jGszegH0PDJx100qPj0tN9RpmGgLXJUQ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR07MB9688.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0P+Y8dX8iJhI8/qgxzAcKR1dpGO8DPJeBRq4qPIa+pcTYT3+LhfwrIljDStS?=
- =?us-ascii?Q?o4pTGP/lGcgyhEQTs5a8zKLkmNr4gWng5QVhke+iDIdG5zOFranmAfbO5ssw?=
- =?us-ascii?Q?XpY9Upp4Bhhdxbz39ENzDNuMEa710EEhepAZfhMvkvyJXOprVFGut8ePgHLI?=
- =?us-ascii?Q?LbXFmwMq37uO8l0s3XatMRgKJjaaN3ovk8HtR98wib4VNG7ov14nl9KC2J9q?=
- =?us-ascii?Q?KwOOjNfsjpQh8/VCz7o5pJbP39NIKraVvEdS7mVTY100Qg39wOKqwZu6eZHz?=
- =?us-ascii?Q?//8p0QWtrdT7bKpzytYRCfT5l2V/SN/UFgiZdxUjQ0ctwDjcb1ZZVFuWkQ0M?=
- =?us-ascii?Q?kXikk1wb4mGR4S7Y3dCFOdz/RtO43YrlnFA4/dpKur2WyTa6Bc3rideS/G3h?=
- =?us-ascii?Q?2mL7bf89BbTd83R7VasYv3qnG1L24m3bEx8qskJjELqyMoORVDxSzf3HFt35?=
- =?us-ascii?Q?+dDiuB7Fx525oXI/CV7GsoCqd//VMadhysdHoqS1WaEch1lUTQgmlUftiSTD?=
- =?us-ascii?Q?LhBMi2E/CpvyfHsvPmc78mob/MY+SF5PGUX6LrgbdgqcYieK4nblawPdU1Er?=
- =?us-ascii?Q?d4Uxrgb5Mum3Y7g7yRQ2zLyrK93u1+RoOahGEYKcifwxtdoY1+alV9FlOL0w?=
- =?us-ascii?Q?l/XM4++zmmhdnbiwo9i82qAuAGXxwZIAMUT9twWBxhUKxXuCuyne8zaKP7z2?=
- =?us-ascii?Q?pIElbQa+BEOG1u2qfP0YsngtUKfLYIyQsX58SESMCg+wLYykTiBySQeOMYI3?=
- =?us-ascii?Q?ZjCweOzaQNzk5gYCYlkMPtquoAN1yfCQtKzwCNClu/4/M9cQW5IJe1MBl7Ul?=
- =?us-ascii?Q?09cI5ECmGWCKTCfnPpzgbMHJ1Ky8Bvf5oe0YQgzXVS+tqYp3rfyKOwG6C1Rm?=
- =?us-ascii?Q?1VWYuF4wMbq2rWlb4giCdpOhqoUtl2JcGxnjZ0IlVRUoky6L38AWaJ8j6fJs?=
- =?us-ascii?Q?JU5sBbi/3Uh23lmVV1gtW/b17yzId0Lc/9KSh7MmYTVR7RFZdahTDmfgQi88?=
- =?us-ascii?Q?cjm52XTkrbxsx0BgFKL4zR/nfyEi4dL+X/2+afgkUTKECm0941NA/PC2zR8N?=
- =?us-ascii?Q?7HMkKodclzoqsHbc27dQtbr8jfU8ZarCsOFJLIL4kHseq6n2mYesqXMjMOz/?=
- =?us-ascii?Q?sCnRpa9VuiY8jSru0hKdXH1cQpUlAMKDcOc03LoDgbMj9iTf2cFGSVXixtvV?=
- =?us-ascii?Q?cJ0dm742Gcj6zJvlcVYWUy3mChOPfbm3wEFpm0jE3a+YnBP2pGmMrG+Pm2G9?=
- =?us-ascii?Q?HHyoGVU3Iam4em6nzvQWnsLsIiUyaLairJuvVVmy5z8TQqfZEt3ZGB6e4epv?=
- =?us-ascii?Q?STLUL1whrTMBaydpYTSB6LZCB0tRQV8aPwcpkMBsk3uTpULjPVnOnyE1BUq6?=
- =?us-ascii?Q?Hju/Ho78H8KSGQjkpa4LKPasyXoGKQ4UuC3Qxt9BR725GyPO18Lq3wK1a7Z3?=
- =?us-ascii?Q?PbRXhjeZMxCDUblstPGUqHPiWoJ/WfF5jEEzIiviqy+huBVP53MeMo6DBRVa?=
- =?us-ascii?Q?DZ0wPrcNY9Fax7bAWQFLHRdPBOnqzEJVT8ZyjrNmH64eV3Wop8PKB7FZB8ul?=
- =?us-ascii?Q?gt2bJUMKCsyDF8aoSU3vFVo7mDXZ83iwKa/41OBIdKU6AVWYsD1aQgKZ4fRm?=
- =?us-ascii?Q?/TlRCsAcGPlYxF732sIKs340tz4yCJO+zrKsA7hMc4nO6RY2v9eSSyltmzqr?=
- =?us-ascii?Q?c7F2VA=3D=3D?=
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a6b2ddc-332a-4282-5f4c-08de1541dbe4
-X-MS-Exchange-CrossTenant-AuthSource: PAWPR07MB9688.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 10:16:14.1720
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XXAWhHIhMCZrIaCrzQOyV2z0ytBwaQlh+oU0c0EkfJe+uH55Lsm4Zf4ALXh8+naQFWGQOsxTuetuB/SxPdj5jc2YYvEnC6I/36BsRAALgOY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB8373
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911153453.GA80715@francesco-nb>
 
-Make sure not to exceed bounds in case the address list has grown
-between buffer allocation (time-of-check) and write (time-of-use).
+On Thu, Sep 11, 2025 at 05:34:53PM +0200, Francesco Dolcini wrote:
+> Hello all,
+> 
+> On Mon, Jul 28, 2025 at 05:00:50PM +0200, max.oss.09@gmail.com wrote:
+> > From: Max Krummenacher <max.krummenacher@toradex.com>
+> > 
+> > The datasheet of lontium-lt8912b doesn't require blanking during
+> > the HFP period. Thus use LP during HFP.
+> > 
+> > Tested with a samsung-dsim (i.MX8 MM) and a tc358768 DPI to DSI bridge
+> > as the DSI host.
+> > 
+> > Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+> 
+> Just a gently ping on this
 
-Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
-Fixes: 8f840e47f190 ("sctp: add the sctp_diag.c file")
-Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
----
-V1 -> V2: Add changelog and credit
----
- net/sctp/diag.c | 3 +++
- 1 file changed, 3 insertions(+)
+Any opinion on this?
+Max
 
-diff --git a/net/sctp/diag.c b/net/sctp/diag.c
-index 996c2018f0e6..4ee44e0111ae 100644
---- a/net/sctp/diag.c
-+++ b/net/sctp/diag.c
-@@ -85,6 +85,9 @@ static int inet_diag_msg_sctpladdrs_fill(struct sk_buff *skb,
- 		memcpy(info, &laddr->a, sizeof(laddr->a));
- 		memset(info + sizeof(laddr->a), 0, addrlen - sizeof(laddr->a));
- 		info += addrlen;
-+
-+		if (!--addrcnt)
-+			break;
- 	}
- 
- 	return 0;
--- 
-2.51.0
-
+> 
+> Francesco
 
