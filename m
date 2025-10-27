@@ -1,136 +1,167 @@
-Return-Path: <linux-kernel+bounces-872072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5C9C0F41F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:25:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA129C0F425
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:26:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DEE428081
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA8F563080
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE72F3115AF;
-	Mon, 27 Oct 2025 16:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD33311960;
+	Mon, 27 Oct 2025 16:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VbZDnglb"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ohx/7NO4"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979CD30CD9D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C6630EF69
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761581454; cv=none; b=U6KoeJ2I4QmW4d6xS4vMopzefJnOhoYOxDiKB0xBMZl92ictiVqWW6Ppq+Bm25YoHXCjPqDC6tnkItSnRh649tsJpCu/1O87SL3PKPb5NFek8uFLjKPEuiv+20epSFHgBHpgrnY+SZBPcvieZxsY/FBrWXRil6adD/fZLZ9Mi6U=
+	t=1761581511; cv=none; b=gwfX6+3uuH3mexQiu33EVvhqqvp/vDRSXygF9fuqOrqNy4sff8S6+Jvc71r0qQ0vzM7X6NUczjIjN6WafbntHyci7i4sm/RBAd8yYbz4E8xCo16NDPMFHFMCoOvC1pW+h739WLi2hhs/BJFfNwr+4fNdi5egH9JouL/6R9j9vKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761581454; c=relaxed/simple;
-	bh=cT+JbXkJCjUndBEl4/KvRhHpw6r6Ue8YLOgh13Ob7jo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uHmscjEH3mCZOGu7MUfAUCHqY57agy9sPxH9+FZQ7J1jq1R13BqEPVz/tiL71sRFJFNrychr6KjRA2Z6Extlq6PoJLqqrfhOXOy5WB/7pVxDbn1wijjGzuGgn3ze/BrfsonZqvpDgOJ0TpCysti1yNJhVp4hW1kf6Cb4zRtKtIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=VbZDnglb; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b6d4e44c54aso856418566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:10:52 -0700 (PDT)
+	s=arc-20240116; t=1761581511; c=relaxed/simple;
+	bh=QASK2aUkAxKfkFOMA/cYGhoLhloD9yCkGn3YMzpW+18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3ZxF5VBa9Hca/uFYXRZmG3oNPLd7j5LQVXOztu5yQkIwAI9QakB+Cu5TzJrEF1TmoYwHxhMuk9T/hwObQollGY6pkt3a1CkyWsdbY84GPBtEUekrFkDfU/upVst1d1XAilJ9rWYkgOWtZ/U/E1OWgdOIkrk3nvqe6HMjhGkaIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Ohx/7NO4; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8a3eac7ca30so91835785a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1761581450; x=1762186250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kT3v2aN8EQq8AgHMNf1v3TkZG4Dh+2CDgf66x9dYHZg=;
-        b=VbZDnglbj8QgAvXUTOxUh4wYb6ZiInjWzB23yHH2/TGAjkX5AKR9yqXhthS4y/YbnZ
-         CXbhSomL8XO8A/uezZR7me1NlC6EReZjnmtry8G2APAe1u3bo48KzMLtzjFYPUkmWocK
-         JJ6apsQ5MfWRXKlcEQMpaERrx6w/0vDSkOmhI=
+        d=ziepe.ca; s=google; t=1761581508; x=1762186308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUcoeTWEWXvPiJKMdWmX3nawwIDQdRa9/4C7h6Fu0G0=;
+        b=Ohx/7NO4ciCWHNL73Cns7VAJ1PwwArjUkkOkpZszVRjDT/J1ZHSrYFfu6AeFhiv9hy
+         rfv6DKkzI8zzm/s7UbRRFKdYqrEEHcVxOo+x/By7F5iTQ5J7uGND1htBgXYn/B7WCcfE
+         RFrAJAvyaWQ7jSp5JtYVoOQ2fCyiCPhCT/vT/n8Xymi+ShqmJ43M2EEVpiFEiMQ6/K4y
+         nZIXxOiiIFj/97EJczGs+oUlgG57l8e6hACg3+pJOPl5W9ijwpOHIU6x0FjUXG2R+cow
+         PKCE/wfleDyFf38YFwiBxDNFxNYPEG9IjLiwd26ygh30jWHQZzcZ8eL9mbeLpTpEYd6Q
+         5BWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761581450; x=1762186250;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kT3v2aN8EQq8AgHMNf1v3TkZG4Dh+2CDgf66x9dYHZg=;
-        b=EmDA6cjjDHdGd56+hi0d9m8Nr6ZUQ3oHX9aOcZnkfLVZIR0p05BLZwUJpp2F+/Z266
-         gOJhSgeYBhf7lRIdos4BRSVZf9CSduL5+h2wx+cZ3xkndqW9/LUAjRvVy/bF3i/iP43T
-         Y2mBQFZVai0AZqmXRMDT9DAoId2EAAqNwNO4I4jlB0e+bsQhex4+G2z9WwjKN+qdlN0d
-         QiwvLaZYvyJ63WBhamcGUQ5OU4JLLM6RiRSCNlT/vob2KgLvtvSdCtC2eV14xaM1Ns7s
-         Nh8WCcwsdxKU8rdnTwpHdOwuzP1+hrOhcdZaqrGPJiVFwJtGgSZBgMgjGxzPCtzjSZph
-         /CWQ==
-X-Gm-Message-State: AOJu0Yxfhfb+PuknQ32MRhm3qzCllquB0hth/22jiPBZ75gJOqFirIHH
-	5nh3Wjc/fdftZEPb9V3ea6rs0jgdBnxI/IJtr2k1WEb2TShaCppv6ch/nMFIdIdIssQpT1V29I+
-	6ZH//
-X-Gm-Gg: ASbGncsctPYb2POPFu+t2Ad8jwtfuGYUtfZwC2KFGn1q/gQbbaNm+wgQdoa5fvBP8RR
-	8lQKt4CrfmrsGDT1knNAkAIuSXT4kLEakp0+oENgTUIiYDgw8i+v92LDQbxa7KFoJMwutFodiwf
-	/G8VZ7hi/ITGT4qzLxyUXLy9AiCd2vDsj9DKQTH5Fujc4EZ+icByoK81cuIN/Pusf+FCY4V+jge
-	zyFcmUKILp66yXma/Yj8I2oUosG0lhR0tNp2Al6jlXr/R1gGh1C7EfYN4TDtrXAmvOdb76i53xc
-	azDkynlkB73a0mJBV07k9jEftQsUEndvzdXZQ8fDznPwsVTG3ua9DM3pMlTmot9NvvhGWvtcbD2
-	uUhOP+grXhbMfB3tbNjU37kJJ7jyMXOJER36Kv1W6lSX7mmIzvz3obwN9qGJcojLBoimUct0XBU
-	mGNPMJ12tl/3dBYlSn0SrWBwO9GlRJ6tlTjaNgJtUiG6ylfywVML94wneO7q/vHwrVrx2+d75Q+
-	9sG5nT5cFv78B0JraKWYG3C42CXNdpIwRYQSjArbC+v7lzYcZ21gT4=
-X-Google-Smtp-Source: AGHT+IGpgYAzuEZ5slMssED+lqV263t1SAtoTQLAQnIGqZGLNwmT1wHA5r73stv598+NcofTsL2dCA==
-X-Received: by 2002:a17:906:4787:b0:afe:cbee:7660 with SMTP id a640c23a62f3a-b6dba487ad0mr49506766b.21.1761581450341;
-        Mon, 27 Oct 2025 09:10:50 -0700 (PDT)
-Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-82-50-34-170.retail.telecomitalia.it. [82.50.34.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8ceeaffasm742437466b.45.2025.10.27.09.10.48
+        d=1e100.net; s=20230601; t=1761581508; x=1762186308;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YUcoeTWEWXvPiJKMdWmX3nawwIDQdRa9/4C7h6Fu0G0=;
+        b=wM7aAO+34n1H23FCwNrbNi5HD0UBExTOkt+cJiTbwxc7N7NKeTQuxvKfNDIBpCt7A/
+         tN7a0BhfEqVLLViEkU+yOs1xLpKFLG4VrX+k0Lbm/RwNkC0gBJhhwlZpXHYpYEF1ySim
+         tb5seqNojq87Vnjlfq6163pHH9L2GQ0fIQKXFg2GWg5qo77WlQ2gwXBpQRch8wbO/QxV
+         rlAckCBDyg4IswP/UiTyeiN134nwBjx2AhegEcaDGh1iO8JN+VUmIPeKZo3uHhR4cx3H
+         ABOUalczrTIPuiumif+CLAMaiPKKIekjXmSd8cQb5+iMWt959h7U3+XFs/g4W3WcT3MN
+         6UYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIw3Ew+XhKuPuMD5Ffks/il9CK2bIfmzL1rjFD3NAqPr6BbxzFMXfO+Gc1sV4QA1nA4DaLKvSiC0H+5DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbLmCPj4y3ZYfRUd5ofi89TybrL4oIUc8sobvYjqYA5I+PXoz3
+	KCeKpH9jQ/Qvxr96BS8WEC68Nmyf3xoBWRSdNAXFCz8ZZ2QISqEcYPYICmGIWzWaUC0=
+X-Gm-Gg: ASbGnctzjx1wzN7xchR8SDTGd4LxVWglqfVtERSZ451zGG/rM1p6+tTdXCG2Vhl6Fai
+	HyajslyCCVGUWcYHdj/v8d5rI4PSzsi5OpwAi2S6kQd1Uz80G41hamJPUThwPeMXrCx4FKMkGTe
+	dABjdmF5t+c4CzYIBdCg5tUjiAFbCQrs5DvfW3xzfXx+x1seX4mPjYrlkowrhY5CkDb3eYCxM6A
+	FX5RkJMkk/EvemDHActS1iyjc/zzbxS4ao5CbxiE4psLvK5NXaJv8mMFh70NSougMcB2G/lvGlr
+	c1pxpOosf79uf+tEMjjm7P5FkCQkSujdCR2YwBpbgmdjjJfsitu4FfSHi9H8t/kmg+lVSU4/ziA
+	XCfHYo+iTiK4bId4x9Ar8ke1VhShJb25CJjCHcL0ooHhjYYLxgNIdmmW+NUPIeOqagD6UUQgR/s
+	Yp7K08TZcT/DEB990CGet0eVycytt7T2YLvx6NdGhSnE7lYI0XP3W7IOI9
+X-Google-Smtp-Source: AGHT+IFJf0BibtsNlfavgV+F1phwUBGZobfoErAK4Dl+j0mvBEo1idyt8ArsRwOA8zB/HM5HTcYQOw==
+X-Received: by 2002:a05:620a:4627:b0:8a2:2233:c151 with SMTP id af79cd13be357-8a70118c82fmr40354785a.75.1761581507673;
+        Mon, 27 Oct 2025 09:11:47 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25c8b517sm628453785a.45.2025.10.27.09.11.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 09:10:49 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	linux-amarula@amarulasolutions.com,
-	Mark Brown <broonie@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/2] ARM: mxs_defconfig: enable sound drivers for imx28-amarula-rmm
-Date: Mon, 27 Oct 2025 17:10:24 +0100
-Message-ID: <20251027161040.2020623-2-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251027161040.2020623-1-dario.binacchi@amarulasolutions.com>
-References: <20251027161040.2020623-1-dario.binacchi@amarulasolutions.com>
+        Mon, 27 Oct 2025 09:11:47 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vDPow-00000004HUZ-2jWh;
+	Mon, 27 Oct 2025 13:11:46 -0300
+Date: Mon, 27 Oct 2025 13:11:46 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Gregory Price <gourry@gourry.net>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
+Message-ID: <20251027161146.GG760669@ziepe.ca>
+References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+ <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
+ <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
+ <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+ <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
+ <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
+ <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
 
-Enable TLV320AIC3X I2C codec and simple-card support used on Amarula
-rmm board.
+On Fri, Oct 24, 2025 at 04:37:18PM -0400, Gregory Price wrote:
+> On Fri, Oct 24, 2025 at 09:15:59PM +0100, Lorenzo Stoakes wrote:
+> > On Fri, Oct 24, 2025 at 03:12:08PM -0400, Gregory Price wrote:
+> > 
+> > So maybe actually that isn't too bad of an idea...
+> > 
+> > Could also be
+> > 
+> > nonpresent_or_swap_t but that's kinda icky...
+> 
+> clearly we need:
+> 
+> union {
+> 	swp_entry_t swap;
+> 	nonpresent_entry_t np;
+> 	pony_entry_t pony;
+> 	plum_emtry_t beer;
+> } leaf_entry_t;
+> 
+> with
+> 
+> leaf_type whats_that_pte(leaf_entry_t);
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+I think if you are going to try to rename swp_entry_t that is a pretty
+good idea. Maybe swleaf_entry_t to pace emphasis that it is not used
+by the HW page table walker would be a good compromise to the ugly
+'non-present entry' term.
 
----
-
-Changes in v2:
-- Drop 1/3 patch "ASoC: mxs-saif: support usage with simple-audio-card"
-  because merged in linux-next.
-
- arch/arm/configs/mxs_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index 3b08c63b6de4..603fb003b223 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -100,6 +100,8 @@ CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_MXS_SOC=y
- CONFIG_SND_SOC_MXS_SGTL5000=y
-+CONFIG_SND_SOC_TLV320AIC3X_I2C=y
-+CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_STORAGE=y
--- 
-2.43.0
-
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-branch: imx28-amarula-rmm-audio
+Jason
 
