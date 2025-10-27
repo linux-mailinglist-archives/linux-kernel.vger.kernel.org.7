@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-871427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE95C0D398
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0E6C0D3A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6840640242E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83F85404A5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3592FC871;
-	Mon, 27 Oct 2025 11:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="uKEGJJ+S"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049802FC012;
-	Mon, 27 Oct 2025 11:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB12FD1B9;
+	Mon, 27 Oct 2025 11:44:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93CD2FC88C;
+	Mon, 27 Oct 2025 11:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565390; cv=none; b=kCc3DbjaSoza+yUcLGwjzqOOvNnfpA7fyltsSVfwlfUc0uxx2JwVqNLhg4ofrdvxwZ3JK4m2EkVwezE5Uv8cG6si3GsLNOi/irjw4D6W7XcjcUa/bruYODv0s4DxtbezTjW7XTntSWx0aX582J2k9uUxq+lrKH/vZaAP+lwakIo=
+	t=1761565444; cv=none; b=BXR3okCo6ndLCVRRkc/ozYaSv5HeBAhE3p854iVqBRlvmjZfwkU2VAjxmF4TsG3SkfY0ljuHRdtTkYPhqU4Eq+1Ir2MpXL+WSa3peGZ467W6PpugPYgrHFPf248lliFyxOGfCIZQW9p3HSPQ8UMdooSP/7O5/tmSLEymI1fUpUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565390; c=relaxed/simple;
-	bh=QHB7ogBviW1sk+l+lwC23glCf9NdDmpFfN6Z4qzApQ4=;
+	s=arc-20240116; t=1761565444; c=relaxed/simple;
+	bh=8SGdPTxUHSUvdkvomZFHBaqkm2RreBRK43eClYZlDO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TlBWdUJ27aeuSan4Cvd9PBfMCVoEYKs873JeS0N0T/qFVB9YB2U6AyIoJwCFHCf6teFJ/9zhWDp0ostjWhxnP11Ezjw8BXCpeNEFM6UzQia7bbal0AzxgYHEb44RRVP210yFN904TQZj5vc+ZXihUhGNevG0kzsBq9LkQkNK+3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=uKEGJJ+S; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549214ac.dip0.t-ipconnect.de [84.146.20.172])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id D04BC598D5;
-	Mon, 27 Oct 2025 12:43:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1761565388;
-	bh=QHB7ogBviW1sk+l+lwC23glCf9NdDmpFfN6Z4qzApQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uKEGJJ+S41J6K4x7ujgqrKO56V8Tg6vOhZ+scdGG+hkOKQ8V7EnAvOKfHeOWJIRtJ
-	 HppkmxRZIR7H3bo/lA9JjEfz8Fe3VVWlcO3ocesdAItzupOIPSX8Cbitj4lnkhtK/N
-	 VlicelCFx4F3oilFlsHZUSaGBdTa2cY6nk1KdHuWqH27xxYNIB3b/zn51NYXmzvwJn
-	 xzhiX7VfL7vcfacK1KVuXVSd1WlURNVWbKz8RWWmB9RFkyPX8hsHtid0jNZvbuNcEC
-	 oWt9yJrIZToTAuYdNHssW9VHpG12yr00lHPVzBgaPrApQ/0aOlc6Sru2368nDTuF+S
-	 vKjzvcHY/dhJw==
-Date: Mon, 27 Oct 2025 12:43:06 +0100
-From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-mm@kvack.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net, will@kernel.org, 
-	robin.murphy@arm.com, akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com, 
-	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	rppt@kernel.org
-Subject: Re: [RFC PATCH 2/4] drivers/iommu: Add calls for iommu debug
-Message-ID: <hu7ozrdn6la24apa4pco5nkhow2dmthahjomjj6hy4nrefx6j4@lcdfbykoafw4>
-References: <20251003173229.1533640-1-smostafa@google.com>
- <20251003173229.1533640-3-smostafa@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=khjN0Mc4tvAFdHIi7+dfxUeaGBpH5RIIhoZrt3XH1R8rQoeO3JjGAVxoWtcbByaY9K9G6bRwom5JBt3iFjeAcYS9fYdHbTex9WWeV/TzbgdLhVDhaPgJpCoYQ5MMp5obnmY4L4tjD49lcNAwkiS6GEbZcGj3fk5ztNIxR31yj8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43CDD169E;
+	Mon, 27 Oct 2025 04:43:53 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEC9E3F673;
+	Mon, 27 Oct 2025 04:43:59 -0700 (PDT)
+Date: Mon, 27 Oct 2025 11:43:49 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Tony Luck <tony.luck@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl: Slightly optimize cbm_validate()
+Message-ID: <aP9a9ZtigAWCWSWk@e133380.arm.com>
+References: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,111 +50,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003173229.1533640-3-smostafa@google.com>
+In-Reply-To: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
 
-On Fri, Oct 03, 2025 at 05:32:27PM +0000, Mostafa Saleh wrote:
-> Add calls for the new iommu debug config IOMMU_DEBUG_PAGEALLOC:
-> - iommu_debug_init: Enable the debug mode if configured by the user.
-> - iommu_debug_map: Track iommu pages mapped, using physical address.
-> - iommu_debug_unmap: Track iommu pages unmapped, using IO virtual
->   address.
-> - iommu_debug_remap: Track iommu pages, already mapped using IOVA.
+Hi,
+
+[Tony, I have a side question on min_cbm_bits -- see below.]
+
+On Sun, Oct 26, 2025 at 08:39:52AM +0100, Christophe JAILLET wrote:
+> 'first_bit' is known to be 1, so it can be skipped when searching for the
+> next 0 bit. Doing so mimics bitmap_next_set_region() and can save a few
+> cycles.
+
+This seems reasonable, although:
+
+Nit: missing statement of what the patch does.  (Your paragraph
+describes only something that _could_ be done and gives rationale for
+it.)
+
 > 
-> We have to do the unmap/remap as once pages are unmapped we lose the
-> information of the physical address.
-> This is racy, but the API is racy by construction as it uses refcounts
-> and doesn't attempt to lock/synchronize with the IOMMU API as that will
-> be costly, meaning that possibility of false negative exists.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/iommu/iommu-debug.c | 23 +++++++++++++++++++++++
->  drivers/iommu/iommu.c       | 21 +++++++++++++++++++--
->  include/linux/iommu-debug.h |  6 ++++++
->  3 files changed, 48 insertions(+), 2 deletions(-)
+> Compile tested only.
 > 
-> diff --git a/drivers/iommu/iommu-debug.c b/drivers/iommu/iommu-debug.c
-> index 297a35137b38..607f1fcf2235 100644
-> --- a/drivers/iommu/iommu-debug.c
-> +++ b/drivers/iommu/iommu-debug.c
-> @@ -5,11 +5,13 @@
->   * IOMMU API santaizers and debug
->   */
->  #include <linux/atomic.h>
-> +#include <linux/iommu.h>
->  #include <linux/iommu-debug.h>
->  #include <linux/kernel.h>
->  #include <linux/page_ext.h>
->  
->  static bool needed;
-> +static DEFINE_STATIC_KEY_FALSE(iommu_debug_initialized);
->  
->  struct iommu_debug_metadate {
->  	atomic_t ref;
-> @@ -25,6 +27,27 @@ struct page_ext_operations page_iommu_debug_ops = {
->  	.need = need_iommu_debug,
->  };
->  
-> +void iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size_t size)
-> +{
-> +}
-> +
-> +void iommu_debug_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
-> +{
-> +}
-> +
-> +void iommu_debug_remap(struct iommu_domain *domain, unsigned long iova, size_t size)
-> +{
-> +}
-> +
-> +void iommu_debug_init(void)
-> +{
-> +	if (!needed)
-> +		return;
-> +
-> +	pr_info("iommu: Debugging page allocations, expect overhead or disable iommu.debug_pagealloc");
-> +	static_branch_enable(&iommu_debug_initialized);
-> +}
-> +
->  static int __init iommu_debug_pagealloc(char *str)
->  {
->  	return kstrtobool(str, &needed);
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 060ebe330ee1..56c89636a33c 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -18,6 +18,7 @@
->  #include <linux/errno.h>
->  #include <linux/host1x_context_bus.h>
->  #include <linux/iommu.h>
-> +#include <linux/iommu-debug.h>
->  #include <linux/iommufd.h>
->  #include <linux/idr.h>
->  #include <linux/err.h>
-> @@ -231,6 +232,9 @@ static int __init iommu_subsys_init(void)
->  	if (!nb)
->  		return -ENOMEM;
->  
-> +#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
-> +	iommu_debug_init();
-> +#endif
->  	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++) {
->  		nb[i].notifier_call = iommu_bus_notifier;
->  		bus_register_notifier(iommu_buses[i], &nb[i]);
-> @@ -2518,10 +2522,14 @@ int iommu_map_nosync(struct iommu_domain *domain, unsigned long iova,
+> For the records, on x86, the diff of the asm code is:
+> --- fs/resctrl/ctrlmondata.s.old        2025-10-26 08:21:46.928920563 +0100
+> +++ fs/resctrl/ctrlmondata.s    2025-10-26 08:21:40.864024143 +0100
+> @@ -1603,11 +1603,12 @@
+>         call    _find_first_bit
+>  # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
+>         movq    %r12, %rsi
+> -       leaq    48(%rsp), %rdi
+> -       movq    %rax, %rdx
+> +# fs/resctrl/ctrlmondata.c:133:        zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
+> +       leaq    1(%rax), %rdx
+>  # ./include/linux/find.h:214:  return _find_first_bit(addr, size);
+>         movq    %rax, 8(%rsp)
+>  # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
+> +       leaq    48(%rsp), %rdi
+
+(This is really only showing that the compiler works.  The real
+question is whether the logic is still sound after this change to the
+arguments of _find_first_bit()...)
+
+>         call    _find_next_zero_bit
+>  # fs/resctrl/ctrlmondata.c:136:        if (!r->cache.arch_has_sparse_bitmasks &&
+>         leaq    28(%rbx), %rdi
+> ---
+>  fs/resctrl/ctrlmondata.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
+> index 0d0ef54fc4de..1ff479a2dbbc 100644
+> --- a/fs/resctrl/ctrlmondata.c
+> +++ b/fs/resctrl/ctrlmondata.c
+> @@ -130,7 +130,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
 >  	}
 >  
->  	/* unroll mapping in case something went wrong */
-> -	if (ret)
-> +	if (ret) {
->  		iommu_unmap(domain, orig_iova, orig_size - size);
-> -	else
-> +	} else {
->  		trace_map(orig_iova, orig_paddr, orig_size);
-> +#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
-> +		iommu_debug_map(domain, orig_paddr, orig_size);
-> +#endif
+>  	first_bit = find_first_bit(&val, cbm_len);
+> -	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
+> +	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
 
-These #ifdefs need to be in a header file, not the actual source code.
+Does this definitely do the right thing if val was zero?
 
+>  
+>  	/* Are non-contiguous bitmasks allowed? */
+>  	if (!r->cache.arch_has_sparse_bitmasks &&
+
+Also, what about the find_first_bit() below?
+
+
+[...]
+
+<aside>
+
+Also, not directly related to this patch, but, looking at the final if
+statement:
+
+	if ((zero_bit - first_bit) < r->cache.min_cbm_bits) {
+	        rdt_last_cmd_printf("Need at least %d bits in the mask\n",
+	                            r->cache.min_cbm_bits);
+	        return false;
+	}
+
+If min_cbm_bits is two or greater, this can fail if the bitmap has
+enough contiguous set bits but not in the first block of set bits,
+and it can succeed if there are blocks of set bits beyond the first
+block, that have fewer than min_cbm_bits.
+
+Is that intended?  Do we ever expect arch_has_sparse_bitmasks alongside
+min_cbm_bits > 1, or should these be mutually exclusive?
+
+</aside>
+
+Cheers
+---Dave
 
