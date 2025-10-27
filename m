@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-872657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95238C11B7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:33:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF71C11B9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:34:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68D9E4E2980
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BB25627BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8F12F12A8;
-	Mon, 27 Oct 2025 22:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6469B2F12A0;
+	Mon, 27 Oct 2025 22:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cnSO/D1L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5q5hdt1"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584CC286D55;
-	Mon, 27 Oct 2025 22:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90C92E2667
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604405; cv=none; b=raTU0tXs/y8zxPyBZsLN94uoXb27af0KWDbSOldSQS7R5T0qwbcRPALTIZmYESNQbB+ngleme4FOjcatbFo3SMrIx5LjymRnIE2QtMzU35puBgjdu7l3xcVnf9CNu/1hKTSCY5JUiTZL8B9+GsMJRWbGlATVU9ZIdaoPjYbCxeM=
+	t=1761604462; cv=none; b=hIYoz2jJgzS8Lhkosmc5zsSG2ZNCG/y/EXf5qvfl6/5R/o72e4fOH4Zi3ijp0yUoNarPsWngxbecCaIjyXJwz0S2pGzW+XCVjGrzROVIE/O/HYIptyWKJCyz8Wt8xAkmTcKJT+6qVZI9NptBRDSRdm0WYrEcbl3BDjdP/Jgd3p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604405; c=relaxed/simple;
-	bh=fLsY2IaNWnElQm8sDAaq+THCaLKaSE7zFkFyiMd/pwA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=hlnTNaC2iFR/7lOZOc1PN0ETHNVSgeHWbB8EzPabCLJaNd7Uq1dQZ04Oz9WMnNgZqNY+rMQ5RsdvwAWd5zD7//1TK97SYPCOPkejRThsoMVW/dtWthVHo6trqccIHZroPQEbA0sPt4cg9q+o8is8ZAsUsWL3b7uuV2oGQPAt6eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cnSO/D1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2ADC4CEF1;
-	Mon, 27 Oct 2025 22:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761604404;
-	bh=fLsY2IaNWnElQm8sDAaq+THCaLKaSE7zFkFyiMd/pwA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cnSO/D1LcebBp6Cvsxk9vKxyPgcagZU6mdww6XBNtxYkyCiMfAsT5j4lcUVeAnhfC
-	 OWW6vW1QACOUuuIwVrW1DkbWyM+MZBf87+OD0yON0oWFpumPZCD6Q4isbVVnibzLEe
-	 Yud1wYYJ6PuguEptiBR7VdwBj/F23lsh6Mj+2D2w=
-Date: Mon, 27 Oct 2025 15:33:23 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
- <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt
- <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-Id: <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
-In-Reply-To: <20251027115636.82382-2-kirill@shutemov.name>
-References: <20251027115636.82382-1-kirill@shutemov.name>
-	<20251027115636.82382-2-kirill@shutemov.name>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761604462; c=relaxed/simple;
+	bh=6FK4Cywp2kPqN6IZB7Pn8a9qrx5ElGyAJ2bbf8tmYpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lsl9VgrOjGuebvBAYTQIfV1SBjuhdREVYW9uXG0QlBlM9KexwVdMuJaVKxIuM/9Qe77srro/f7+pOMsI55EDTeuGrgCZ7KeE7pq2VOXR9N/gXEW4n4ZT6jeEszCOBf1bWkyjVYu0Tn1pRdGPo3NHoVWI11CxaEL3Ide9fjojCDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b5q5hdt1; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-78617e96ae1so5533947b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761604460; x=1762209260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6FK4Cywp2kPqN6IZB7Pn8a9qrx5ElGyAJ2bbf8tmYpc=;
+        b=b5q5hdt1cL9wVjYbAkH1AYKzJIgDa5TsWEjX8dyjivJOfapORAREYYvKyA/iPWm2tj
+         jdLTg/5lfN55rkoJPgsEVGdUUKXpnBalcjBCv9TtrNcFVVjF7GtDNvgnSNmVkkIaYPXX
+         hpudTMw0ZlFb0tm9eSu2JnJQUikJ6zvK8L86g2qIJIf79h3o34sKAoMSgGLTUlqpgwX3
+         1TlTTn4jYV6lUjIyYNmvhByncI+JbC3ej7P1WNKFYhjzWg0Nrp8AEllBjroEKywayMr6
+         C7hDksahGiwpPgmSCsPbroAyx8bvOirouB7KbQG7gjXbTgpmTH4QdM/Hwct/DAefQ9No
+         nbvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761604460; x=1762209260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6FK4Cywp2kPqN6IZB7Pn8a9qrx5ElGyAJ2bbf8tmYpc=;
+        b=GysobnggwtoN+KJRbFwOycH9daUa+l1TJlaQm+QUtFf/9kppHE5OyxoidlvFinJ4oU
+         4TvCsl9I8Jov+1rpmNZb5lIvP+1soH1Q2iOhC6TRz+z2/hSspNGhwKt8dTeZ1hRPluOS
+         J+a0dKt19XYFKLko/fdSzMAqqvUXGzm2ZfnxIdqIgseWkmnIOOVmUZJDmTjLxN4vjeHL
+         RislcOPV5z2gYuPk08EOVzvTHBE8FgwgGm6CkOKXNrXln5Z4e2KHfQerPcD5BHg11gn1
+         AJ4Z+quuiFDrC9UBWddjkH+1fiQR5CvyZS87dwm+IJ7QnKLNrK8Lydztgdl5mnxInOZ9
+         TM4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXhKRiglFrSREN6Z0dZwc/pEvJd5sMbOSfWmq38xelryCafCaShqpX4Aetgp6IuQoHHQRQZBK2glBXboA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx33DVp7LaqEOUaeMrbPRLj35r5Q0Z+fctvKBTHOL4DFLVYiVh6
+	l/ErHfEswuCqXJ4tNtY2ezRC0RKxf8tWmWvZ5opOC8dacgzNecGyWRdnTUn+i9DHT9gJgDy0/Km
+	M93kX5CBVtpgb1Ftebt3H7PPt0p18/L/dd1f/qDhzcw==
+X-Gm-Gg: ASbGncvy6/DsGitPFyCHuoDzTFz1jLbHai1b5+n9TACeHtAoRdPdDjeOmdaW/Its4n3
+	xE7a7C/nb2Fg2S55jMCohbzVOD0M+QNypj9x3V7SlV05D8xUbf/hGYkiw2/jlNlgjURUU226LuR
+	23XjV56GgH1QbsfL42z+9ty168XZR1LJfuFA3iR/RVf9z0rMbPlid59+dg2E3xEF3pTdJTLVehA
+	dlgHIk6EJTY/ybwEF1RYIa0YbV/bKXCV3CDHLm/KZOe+Uxcu5PCFJQFQdvv
+X-Google-Smtp-Source: AGHT+IHFxrQwcIAfHl/EDjyJgU4+jEXTaSyjinBJCcTfFFs/TuXmdRuhxaYs6OB/9vERDl+26CgqDxFOu0ooMCeyJi8=
+X-Received: by 2002:a05:690c:a00e:b0:781:1c1a:98f0 with SMTP id
+ 00721157ae682-78617e5fb66mr12794187b3.18.1761604459817; Mon, 27 Oct 2025
+ 15:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <cover.1761564043.git.mazziesaccount@gmail.com> <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
+In-Reply-To: <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 Oct 2025 23:34:05 +0100
+X-Gm-Features: AWmQ_bmCeM1hCEpCcloBtHCP-z98b1djEaHpBG8dS_Pa6X6P_LL8sPGseuESUz4
+Message-ID: <CACRpkdbfjqbmy5EbLApee3p9TEsEzBKOcGMrbspeWxqUc_niiw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/15] dt-bindings: power: supply: BD72720 managed battery
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025 11:56:35 +0000 Kiryl Shutsemau <kirill@shutemov.name> wrote:
+On Mon, Oct 27, 2025 at 12:45=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-> From: Kiryl Shutsemau <kas@kernel.org>
-> 
-> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-> supposed to generate SIGBUS.
-> 
-> Recent changes attempted to fault in full folio where possible. They did
-> not respect i_size, which led to populating PTEs beyond i_size and
-> breaking SIGBUS semantics.
-> 
-> Darrick reported generic/749 breakage because of this.
-> 
-> However, the problem existed before the recent changes. With huge=always
-> tmpfs, any write to a file leads to PMD-size allocation. Following the
-> fault-in of the folio will install PMD mapping regardless of i_size.
-> 
-> Fix filemap_map_pages() and finish_fault() to not install:
->   - PTEs beyond i_size;
->   - PMD mappings across i_size;
-> 
-> Make an exception for shmem/tmpfs that for long time intentionally
-> mapped with PMDs across i_size.
-> 
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
-> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
-> Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
+> The BD72720 PMIC has a battery charger + coulomb counter block. These
+> can be used to manage charging of a lithium-ion battery and to do fuel
+> gauging.
+>
+> ROHM has developed a so called "zero-correction" -algorithm to improve
+> the fuel-gauging accuracy close to the point where battery is depleted.
+> This relies on battery specific "VDR" tables, which are measured from
+> the battery, and which describe the voltage drop rate. More thorough
+> explanation about the "zero correction" and "VDR" parameters is here:
+> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohme=
+urope.com/
+>
+> Document the VDR zero-correction specific battery properties used by the
+> BD72720 and some other ROHM chargers.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Multiple Fixes: are confusing.
+From my PoV this looks good, and makes it easy for engineers
+to read the DTS file and understand what is going on, so after
+addressing Rob's final comments you can add:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-We have two 6.18-rcX targets and one from 2020.  Are we asking people
-to backport this all the way back to 2020?  If so I'd suggest the
-removal of the more recent Fixes: targets.
-
-Also, is [2/2] to be backported?  The changelog makes it sound that way,
-but no Fixes: was identified?
+Yours,
+Linus Walleij
 
