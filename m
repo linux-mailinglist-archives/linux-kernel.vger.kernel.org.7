@@ -1,243 +1,150 @@
-Return-Path: <linux-kernel+bounces-872139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88775C0F5A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:37:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30559C0F674
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A98C4F810D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:35:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB1584263B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F6632142B;
-	Mon, 27 Oct 2025 16:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A65E314B69;
+	Mon, 27 Oct 2025 16:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UA1RQzrj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pdob8Enc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULVYsaY6"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569D630AD05;
-	Mon, 27 Oct 2025 16:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79B331352C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582687; cv=none; b=m50hau8MnJbc65yRGFY8fL+fNIwuLvj6U6or31WhmMRBjrA/wZINFQVVbS89FzJ+qvfE8iBUIiHnW9OluJEe28ndtwVm/WKdyObBvQDOiBQpcLDhOuI8l7bx05UP7JZq5iGgF5FGfVBkbNwjPFoG2Mg/oYY2teE/gz/18RQgL6A=
+	t=1761582705; cv=none; b=YarcibRJ/pvh9mxBC8OUFTICtbB1JCRw9e2T40AS44aTnkTLZ9QbFFngHJYUooni9r2sAA4yB+4AX5E2PlPoEBRJTMMLktJeAylHStZH36sNiEZ8ioPgBFZnPHLMii/efQSQhJ7NALYKmH50V2BiIm6YjTItzGY3NAY25T5eNTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582687; c=relaxed/simple;
-	bh=s/0floMfv2onszxCMeNNs0Iu9+YtvNYjoM1HGbUJAkQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=oeikm0Ud28YEZQWjrZjudv4oKpEkfSMyYql1QgoOOPVeMCMjHqLvSmwBjeX/npu+aDZHkJTSPCfCeC3yK1WC+Ef11/8Gd1KkdklfVsGowtslpL5ia9xRnynKqJg5CU5WNq++BZesV9hyY+90hjiNVXyKe0/h5E0lT7jw9AXoDLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UA1RQzrj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pdob8Enc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 16:31:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761582683;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tM/QMafYYVvbsgGICg31uh5fs1D2fRZX3tkjyVleNrE=;
-	b=UA1RQzrjz+Dh9yy87Y6EGLforSSAm0ydUzSjvUKo4FvLIMVm+gc33uOvIWvUovEB++SLPE
-	TW/+2ScK5kb2cQhnthnCXnzPywa5N09txdjGhbs0KCqrhEBcbCU+KTIqZgVaGWT/AyXYRI
-	Bjyrmg+/zyuMC/8KTvQc+hAKfSnSPDeXvp7tJXjXewHG+ZF2voQ9aq3sqvaBYbntP4+F9A
-	dufYztSmPmFblmfbrXxAiltRZii+AoRI2BtcTFFlALowOVxb7+7mHPVkDBr/DgMzkLk8Vh
-	GnC28wZM5PT3fqjk6Abmx8L4jQDh/DTX1zbsF2PEx/3dFemuv4rAwOXcAc5eow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761582683;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tM/QMafYYVvbsgGICg31uh5fs1D2fRZX3tkjyVleNrE=;
-	b=pdob8Enc/ebFwroY8OE6914XYRldKBKzW8HNKcRQ9pjVgdfqPUu9fEKn6F6TNzCDgwsRK0
-	1k7D8D/h/JyeULCg==
-From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Add firmware info reporting interface
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251020122944.3074811-2-maz@kernel.org>
-References: <20251020122944.3074811-2-maz@kernel.org>
+	s=arc-20240116; t=1761582705; c=relaxed/simple;
+	bh=u0gnzZoUVwZGmc0CbqBeoDdTI2LNBosTaViTZaZ4Das=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WFdrUbZ/WoG/OW9NfM8GOuJFTVYm9hyAtYcPMg0+CESvQNqW8WS/6SzZz1qRztSKiLKOJWe+VLPA2i8u79sjiRWuZ0bLNKWotqv/AtI8aeT9GlWoFbWibXESWcWfRexf3SNd1H25NuxDiz2NSt7/Ir5pqK9sM6KgAH/g6UGcUlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULVYsaY6; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so7854995a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761582702; x=1762187502; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IgLf2SVScm95+f02HH0OAwFjGNzD1ph15QV31vmZKhE=;
+        b=ULVYsaY64HxwJFkmrOm3Uwh0Dpf9MGQlMCLrihVCdXsmi6m6GT+IUVfOTJ8qiNoxeo
+         7Bl2Zvz9MNg5EgXFqTkgaagFBJebYQUAha3wuaD3V1+Uopttor/rxaJXleXbocvejGdw
+         jKtzb207thW9VR8aJtajRJ6cYCW5DxJVak3siBxJNIGH2es8SeL7V5Yk5W2mur0lRM8J
+         G5OMtk8dW0LHJtpWgrMn6sIlOzeg7b2twTbDyJhT9+Ea6V7apPBL+tDG4mxKNS0LE9rW
+         VQuwsIeopHMNpmz4Vgu/EKc4CAJat5fYDQuVNUEros/oHMcvxGDKCVIZdH9ZMOP+PcZa
+         ZH3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761582702; x=1762187502;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IgLf2SVScm95+f02HH0OAwFjGNzD1ph15QV31vmZKhE=;
+        b=eOHf6mwTRUTvqzKuJ3I9U4wt0SznGT7NcmxBXJT1a53F4LdrZltw8gyPVFEQIs4u2e
+         bVUOQWD0U2tCRTvzqGBeC0rBt/VcdWklpFhx3lIQC16sA+kO9EM6wuwmHA92Wcv8x/UL
+         tp45P6Urd13vTCxGhxVv2nD0s9364ntFnCSvOEXD8W+b7eKEzgTM89zquY+0NHCuSSyn
+         E7SF2Ar3vlueTBqkenjuD3sKXju8gW7v6wT5bTjHZYkgbsJHgMF25HPgkO679JMmEUvs
+         c6KgCbg7UlOxBUs4SVf3TR+nQoAHNmR23UTr8lFoTkzN00jD7SOSXC9U7HfmNkvHNB6+
+         2pZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn2ifhb59TCMni7joCj6L1P/+OwSXJgMrg504Fezz94LBvygOGNGK61/TfAR5q0583F4uuJx3jCxKayso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZDiZRFC9tBjhXbH2ZzXyUeQSRmHAvyAn0sOo64FJsfP98Iu9M
+	iTG3B+zwg1zluS0NQsKBKJXjCj+mRdQkdaJVLnLbaGz4B3xPiQ2yXcfQ/JjPuWR2RcKi2WywjqO
+	F1E/2GSuYVs7TDFD0N1REZGgXV2zfl8g=
+X-Gm-Gg: ASbGncsN5/Im8kdgL8+f2z8D9/aSoiFGRJDxpI1ZW0fJE45EHpjvpBkts+/psGqb7bk
+	5vcs576gAnpAG+cNzOXLIp/k4NmVNC+LAL1DhRUJ9qKaDMNW3SvnbglURH8iVN81OKJzi08Y2qn
+	7dX2BWp9R6ehrCpu+Mj8M5/YKBuEWG0VMuCBtgyWM7RDZdUGeF5ptDHCkRvIixwN19pBsHkKXVO
+	U7zPfHrlvRfRAYe/RQjJbnCnTPRCSB/8TyAGL19c0IVwSDuQ+8iaQgYCCA=
+X-Google-Smtp-Source: AGHT+IG/IzMgRJGe0oU595mEmHs6fWEe0QVZBG2v7Ej1G6fm9/HYSbgpPg786Jnq6SwSPlQ24dt/1V+XJmYkuCP5oq0=
+X-Received: by 2002:a05:6402:280d:b0:63e:914e:5159 with SMTP id
+ 4fb4d7f45d1cf-63ed810957cmr526172a12.13.1761582701754; Mon, 27 Oct 2025
+ 09:31:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176158268239.2601451.11267754028108675159.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-2-linux.amoon@gmail.com> <5235617.GXAFRqVoOG@workhorse>
+In-Reply-To: <5235617.GXAFRqVoOG@workhorse>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 27 Oct 2025 22:01:23 +0530
+X-Gm-Features: AWmQ_bmuEGyIyVMM2F7v93d4eNawEzucpBZ6agLVtw_PaD2oW-53hrPDNMYJwI8
+Message-ID: <CANAwSgTmOvOZ35=3XjhrKu2iPCMOU8c8prK5XVAkf3cF1DHekQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, Hans Zhang <18255117159@163.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Nicolas,
 
-Commit-ID:     87b0031f7f73dac2ebb874fc8f331a66ee3b5cbd
-Gitweb:        https://git.kernel.org/tip/87b0031f7f73dac2ebb874fc8f331a66ee3=
-b5cbd
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Mon, 20 Oct 2025 13:29:18 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 27 Oct 2025 17:16:32 +01:00
+Thanks for your review comments.
 
-irqdomain: Add firmware info reporting interface
+On Mon, 27 Oct 2025 at 20:42, Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> On Monday, 27 October 2025 15:55:29 Central European Standard Time Anand Moon wrote:
+> > Introduce a .remove() callback to the Rockchip DesignWare PCIe
+> > controller driver to ensure proper resource deinitialization during
+> > device removal. This includes disabling clocks and deinitializing the
+> > PCIe PHY.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > index 87dd2dd188b4..b878ae8e2b3e 100644
+> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+> >       return ret;
+> >  }
+> >
+> > +static void rockchip_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev = &pdev->dev;
+> > +     struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
+> > +
+> > +     /* Perform other cleanups as necessary */
+> > +     clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+> > +     rockchip_pcie_phy_deinit(rockchip);
+>
+> You may want to add a
+>
+>     if (rockchip->vpcie3v3)
+>             regulator_disable(rockchip->vpcie3v3);
+>
+> here, since it's enabled in the probe function if it's found.
+>
+> Not doing so means the regulator core will produce a warning
+> splat when devres removes it I'm fairly sure.
+>
+I've removed the dependency on vpcie3v3 in the following commit:
+ c930b10f17c0 ("PCI: dw-rockchip: Simplify regulator setup with
+devm_regulator_get_enable_optional()")
+Please review this commit and confirm if everything looks good.
 
-Add an irqdomain callback to report firmware-provided information that is
-otherwise not available in a generic way. This is reported using a new data
-structure (struct irq_fwspec_info).
-
-This callback is optional and the only information that can be reported
-currently is the affinity of an interrupt. However, the containing
-structure is designed to be extensible, allowing other potentially relevant
-information to be reported in the future.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Will Deacon <will@kernel.org>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Link: https://patch.msgid.link/20251020122944.3074811-2-maz@kernel.org
----
- include/linux/irqdomain.h | 27 +++++++++++++++++++++++++++
- kernel/irq/irqdomain.c    | 32 +++++++++++++++++++++++++++-----
- 2 files changed, 54 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 4a86e6b..9d6a5e9 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -44,6 +44,23 @@ struct irq_fwspec {
- 	u32			param[IRQ_DOMAIN_IRQ_SPEC_PARAMS];
- };
-=20
-+/**
-+ * struct irq_fwspec_info - firmware provided IRQ information structure
-+ *
-+ * @flags:		Information validity flags
-+ * @cpumask:		Affinity mask for this interrupt
-+ *
-+ * This structure reports firmware-specific information about an
-+ * interrupt. The only significant information is the affinity of a
-+ * per-CPU interrupt, but this is designed to be extended as required.
-+ */
-+struct irq_fwspec_info {
-+	unsigned long		flags;
-+	const struct cpumask	*affinity;
-+};
-+
-+#define IRQ_FWSPEC_INFO_AFFINITY_VALID	BIT(0)
-+
- /* Conversion function from of_phandle_args fields to fwspec  */
- void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
- 			       unsigned int count, struct irq_fwspec *fwspec);
-@@ -69,6 +86,9 @@ void of_phandle_args_to_fwspec(struct device_node *np, cons=
-t u32 *args,
-  * @translate:	Given @fwspec, decode the hardware irq number (@out_hwirq) and
-  *		linux irq type value (@out_type). This is a generalised @xlate
-  *		(over struct irq_fwspec) and is preferred if provided.
-+ * @get_fwspec_info:
-+ *		Given @fwspec, report additional firmware-provided information in
-+ *		@info. Optional.
-  * @debug_show:	For domains to show specific data for an interrupt in debugf=
-s.
-  *
-  * Functions below are provided by the driver and called whenever a new mapp=
-ing
-@@ -96,6 +116,7 @@ struct irq_domain_ops {
- 	void	(*deactivate)(struct irq_domain *d, struct irq_data *irq_data);
- 	int	(*translate)(struct irq_domain *d, struct irq_fwspec *fwspec,
- 			     unsigned long *out_hwirq, unsigned int *out_type);
-+	int	(*get_fwspec_info)(struct irq_fwspec *fwspec, struct irq_fwspec_info *i=
-nfo);
- #endif
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
- 	void	(*debug_show)(struct seq_file *m, struct irq_domain *d,
-@@ -602,6 +623,8 @@ void irq_domain_free_irqs_parent(struct irq_domain *domai=
-n, unsigned int irq_bas
-=20
- int irq_domain_disconnect_hierarchy(struct irq_domain *domain, unsigned int =
-virq);
-=20
-+int irq_populate_fwspec_info(struct irq_fwspec *fwspec, struct irq_fwspec_in=
-fo *info);
-+
- static inline bool irq_domain_is_hierarchy(struct irq_domain *domain)
- {
- 	return domain->flags & IRQ_DOMAIN_FLAG_HIERARCHY;
-@@ -685,6 +708,10 @@ static inline bool irq_domain_is_msi_device(struct irq_d=
-omain *domain)
- 	return false;
- }
-=20
-+static inline int irq_populate_fwspec_info(struct irq_fwspec *fwspec, struct=
- irq_fwspec_info *info)
-+{
-+	return -EINVAL;
-+}
- #endif	/* CONFIG_IRQ_DOMAIN_HIERARCHY */
-=20
- #ifdef CONFIG_GENERIC_MSI_IRQ
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index dc473fa..2652c4c 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -867,13 +867,9 @@ void of_phandle_args_to_fwspec(struct device_node *np, c=
-onst u32 *args,
- }
- EXPORT_SYMBOL_GPL(of_phandle_args_to_fwspec);
-=20
--unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
-+static struct irq_domain *fwspec_to_domain(struct irq_fwspec *fwspec)
- {
- 	struct irq_domain *domain;
--	struct irq_data *irq_data;
--	irq_hw_number_t hwirq;
--	unsigned int type =3D IRQ_TYPE_NONE;
--	int virq;
-=20
- 	if (fwspec->fwnode) {
- 		domain =3D irq_find_matching_fwspec(fwspec, DOMAIN_BUS_WIRED);
-@@ -883,6 +879,32 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec=
- *fwspec)
- 		domain =3D irq_default_domain;
- 	}
-=20
-+	return domain;
-+}
-+
-+#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
-+int irq_populate_fwspec_info(struct irq_fwspec *fwspec, struct irq_fwspec_in=
-fo *info)
-+{
-+	struct irq_domain *domain =3D fwspec_to_domain(fwspec);
-+
-+	memset(info, 0, sizeof(*info));
-+
-+	if (!domain || !domain->ops->get_fwspec_info)
-+		return 0;
-+
-+	return domain->ops->get_fwspec_info(fwspec, info);
-+}
-+#endif
-+
-+unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
-+{
-+	unsigned int type =3D IRQ_TYPE_NONE;
-+	struct irq_domain *domain;
-+	struct irq_data *irq_data;
-+	irq_hw_number_t hwirq;
-+	int virq;
-+
-+	domain =3D fwspec_to_domain(fwspec);
- 	if (!domain) {
- 		pr_warn("no irq domain found for %s !\n",
- 			of_node_full_name(to_of_node(fwspec->fwnode)));
+> Kind regards,
+> Nicolas Frattaroli
+>
+Thanks
+-Anand
 
