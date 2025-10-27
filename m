@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-871658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B01C0DFF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F81C0DFFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15ACE18882DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98681891D65
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A5E2882BB;
-	Mon, 27 Oct 2025 13:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D674429AB02;
+	Mon, 27 Oct 2025 13:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GRt4zW2J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEEp38Gj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED33E28C014;
-	Mon, 27 Oct 2025 13:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9732528727B;
+	Mon, 27 Oct 2025 13:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761571476; cv=none; b=Jc1BnW5OPgIIQfxNXTrmqVaCdjPs7IOTRaelVnE9V1bD5uHuuHugRBJxPpbBfWlSi2zEoTWbeeD1lQtRpIqgCgtbZ1AIc7JGJyMqw7L+9PBXvaUV/ixTEi6px3zUyM5KpscUcaWqj0t0Zk9kA3YPM3TZQAR2e1LEwFrU8HC66Jw=
+	t=1761571492; cv=none; b=oVKc1sg6KpijGI4iGKX+3+pmI5tFSE+T+igDtbAMDthPr/eNCdUb38F+pEq2T11+7eU8M5G98yZJb7gx9zqUN1Z2iuvBAhKfQahwlBtPR3/WaSUvsuUD4uG0qjj2EDahaYLT6pmHes04aKoGXjPrKDGykWTK8o/2vovC1QvMSrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761571476; c=relaxed/simple;
-	bh=TKU+4j7gWYZtpLSZ5pjQ0NQoGKApNys6GUcTFacHHQM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=thVQP+Jt23DhsrbZl3oF7gOU6xkLv7ErLdSRU9e2/hRWj5OfmUJErG8YYbzBhSFSDhx87CkZBx/RRtqsdz+d4lSxZ/MwNQR/poIMoQAsjYo+y46yhz/wch5ymWP12yuv5zaLiOYGgdZEPKPUxKfLNELMDN5mZgRiQLWrMFQUqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GRt4zW2J; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1761571492; c=relaxed/simple;
+	bh=W9/MQBoV9l8yb26yTYT5WoQtZ832sVzXBDGoSSTXZOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kyjqxFTdeDgP3Ybu5Lc2Ch6tItjsknr/soJ6Ml5fBhYTwgysyrxZTGx1LuO3fMfq/OIrxLXNWG7h1jZQS3UW+a/2iGIuOWK0s5GcCN+eRN5J3KKz0KCDUEUlc9ocxtAU8MkkHdPuN2nR3W9DMg0nUSJ6oleIYyPc0KwzlblAoI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEEp38Gj; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761571475; x=1793107475;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TKU+4j7gWYZtpLSZ5pjQ0NQoGKApNys6GUcTFacHHQM=;
-  b=GRt4zW2JdBe9bdyfCNpFmzdrGcufmy2hYRMR/VBno/DkZCUV2n63wqaz
-   QXcax0ACLWOa7mHr+idK82Glfe9q3bxsQRTiWbIItk+XDkkChfCwQ5OhR
-   gRF1E5TFzF05/vCWbbdfZ5CG5tm+SRISjmPSHYcK8//tM5J0+SnqEoJ55
-   j079dioSUCn4GJls42OCLpmijdAg6OjHq/a6n737Hyz8hOGUar9Sqo5v+
-   LVwa3hcl4W/Rcgux5HXeeGLNnVBX3+lFkgPFJpjkZS9T+LECZGzjeqWMW
-   yF9FySBhH3MQKqdXmFAQLy1KrBJtfvh7IrO/M8KRkxSkzFRNYZDAyTMZ9
-   g==;
-X-CSE-ConnectionGUID: yU4q3xSyRyG/KZAkPPg3LQ==
-X-CSE-MsgGUID: fHfu5MLaTyC3wdpsmQw/Xw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67292435"
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="67292435"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 06:24:34 -0700
-X-CSE-ConnectionGUID: ULjEZh7qQbWQHc4Ak8XAqg==
-X-CSE-MsgGUID: n8/bv+/cQ+2XTKosE6tGUg==
+  t=1761571491; x=1793107491;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W9/MQBoV9l8yb26yTYT5WoQtZ832sVzXBDGoSSTXZOE=;
+  b=jEEp38Gjxex4CIE6gNZt0BfcZgnwif04cNYcdCbd7jmWmReiUoWqGVrE
+   wzl310O4fkWpm00IdCYtmGMiqnwSaWSu/aw6wTClhZJs/aQcvMABTSc6w
+   AoxhsEvVnrnXYP9+GKCwnFC71kMCsX3BADWrw+wsRUvH/2B45VeXm5fAM
+   aPQAm6j9v9TwTa5YGqJDU/6pmYruUbfQwmytYeT0aGMYbsOGljtOAjSEd
+   0WjaYYE6aH0TsgUavsqDKK6+Cq4ExQ7oBEolVi5yoFmOXrILf5L1a/WuS
+   hCrZNItwuHTrGS40OFQEuPbq0LzC/+bI3NYgO4LzxpyW4oB0mf14Vm3+U
+   w==;
+X-CSE-ConnectionGUID: UII35A/ZTvqDKjskaypyrQ==
+X-CSE-MsgGUID: e+KuxH58Q7GK2AALkE5o1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67483467"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67483467"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 06:24:51 -0700
+X-CSE-ConnectionGUID: OzzNk+a6QXSe4LjLGkV3KQ==
+X-CSE-MsgGUID: FO5tyBiIQWiPJ4sDAXL9IA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="184936352"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.41])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 06:24:32 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Klaus Kudielka <klaus.kudielka@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] PCI: Do not size non-existing prefetchable window
-Date: Mon, 27 Oct 2025 15:24:23 +0200
-Message-Id: <20251027132423.8841-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+   d="scan'208";a="222253344"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.222.172])
+  by orviesa001.jf.intel.com with SMTP; 27 Oct 2025 06:24:47 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 27 Oct 2025 15:24:45 +0200
+Date: Mon, 27 Oct 2025 15:24:45 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID
+ pin state
+Message-ID: <aP9ynU8tDho5PBAx@kuha.fi.intel.com>
+References: <20251027072741.1050177-1-krishna.kurapati@oss.qualcomm.com>
+ <20251027072741.1050177-3-krishna.kurapati@oss.qualcomm.com>
+ <aP8_oZlJ4466BEf0@kuha.fi.intel.com>
+ <34atfkavrxtv5xdekrlhhkxx4rxs3ueclxrmou5pquym5fsycv@i7mv7ssdlm2v>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34atfkavrxtv5xdekrlhhkxx4rxs3ueclxrmou5pquym5fsycv@i7mv7ssdlm2v>
 
-pbus_size_mem() should only be called for bridge windows that exist but
-__pci_bus_size_bridges() may point 'pref' to a resource that does not
-exist (has zero flags) in case of non-root buses.
+On Mon, Oct 27, 2025 at 03:19:04PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Oct 27, 2025 at 11:47:13AM +0200, Heikki Krogerus wrote:
+> > Hi Krishna,
+> > 
+> > > +static int hd3ss3220_get_vbus_supply(struct hd3ss3220 *hd3ss3220)
+> > > +{
+> > > +	struct device_node *hd3ss3220_node = hd3ss3220->dev->of_node;
+> > > +	struct device_node *np;
+> > > +
+> > > +	np = of_graph_get_remote_node(hd3ss3220_node, 0, 0);
+> > > +	if (!np) {
+> > > +		dev_err(hd3ss3220->dev, "failed to get device node");
+> > > +		return -ENODEV;
+> > > +	}
+> > 
+> > So I guess that's the connector node. Why can't you just place the
+> > regulator reference to the hd3ss3220 controller node instead of the
+> > connector like the port controllers do?
+> > 
+> > That would allow us to do a simple devm_regulator_get_optional() call
+> > that's not tied to DT only.
+> 
+> But we have devm_of_regulator_get_optional(), it was mentioned in the
+> previous email if I'm not mistaken. If we need, we should add
+> devm_fwnode_regulator_get(_optional).
+> 
+> vbus supply is described as a part of the usb-c-connector schema, so
+> it is not that logical to describe it as a part of the Type-C
+> controller.
 
-When prefetchable bridge window does not exist, the same
-non-prefetchable bridge window is sized more than once which may result
-in duplicating entries into the realloc_head list. Duplicated entries
-are shown in this log and trigger a WARN_ON() because realloc_head had
-residual entries after the resource assignment algorithm:
+Okay, got it. This is OK by me then.
 
-pci 0000:00:03.0: [11ab:6820] type 01 class 0x060400 PCIe Root Port
-pci 0000:00:03.0: PCI bridge to [bus 00]
-pci 0000:00:03.0:   bridge window [io  0x0000-0x0fff]
-pci 0000:00:03.0:   bridge window [mem 0x00000000-0x000fffff]
-pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02] add_size 200000 add_align 200000
-pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02] add_size 200000 add_align 200000
-pci 0000:00:03.0: bridge window [mem 0xe0000000-0xe03fffff]: assigned
-pci 0000:00:03.0: PCI bridge to [bus 02]
-pci 0000:00:03.0:   bridge window [mem 0xe0000000-0xe03fffff]
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at drivers/pci/setup-bus.c:2373 pci_assign_unassigned_root_bus_resources+0x1bc/0x234
+Thanks Dmitry,
 
-Check resource flags of 'pref' and only size the prefetchable window if
-the resource has the IORESOURCE_PREFETCH flag.
-
-Fixes: ae88d0b9c57f ("PCI: Use pbus_select_window_for_type() during mem window sizing")
-Link: https://lore.kernel.org/linux-pci/51e8cf1c62b8318882257d6b5a9de7fdaaecc343.camel@gmail.com/
-Reported-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/setup-bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 362ad108794d..7cb6071cff7a 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -1604,7 +1604,7 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
- 		pbus_size_io(bus, realloc_head ? 0 : additional_io_size,
- 			     additional_io_size, realloc_head);
- 
--		if (pref) {
-+		if (pref && (pref->flags & IORESOURCE_PREFETCH)) {
- 			pbus_size_mem(bus,
- 				      IORESOURCE_MEM | IORESOURCE_PREFETCH |
- 				      (pref->flags & IORESOURCE_MEM_64),
-
-base-commit: 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
 -- 
-2.39.5
-
+heikki
 
