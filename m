@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-871218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A490EC0CA80
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:30:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF565C0CA6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB433BBD01
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:25:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B6DC4F2622
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373BA26FA50;
-	Mon, 27 Oct 2025 09:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5EB2F0C6E;
+	Mon, 27 Oct 2025 09:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QvifwJYk"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="js7nSl2f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C7F2E6CC6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B36F2E92D6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557129; cv=none; b=oGYjIkVspbqrC1COvi2zY0cQUy26ZaAICdW887tW8BiIWfQU0NLHU/DYrXVOI3qSGj1BVIJ61nkAQYQFdIxUyJVw6k1Q1/b3qqOyZgFvG4ijPZHAwda/00d76KcVEzUR7V2PjILzNQHkveonhsrjf9c8O7Ti1prWzqx8DXk9ecg=
+	t=1761557162; cv=none; b=mDWDuHfb1jWT5xC2L4YRr11Owxmbc9f7JZnHWmOhvW2dmTa235U/fXXFMThEbdZtyquSWCMNCRxEkFNdfm98dLyr85+VN+HwJnu+yNr3h5c1MnfU92mS3yq4VadE1yWKc6AR3shy0LuxSCJMgt1CPdB32X7yiNfq+walbtbvzfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557129; c=relaxed/simple;
-	bh=YJ3Na5nmh5DDcjGriWUnHW8mLHF0cCL13X2wMKwKkZs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ku/1piCiXI73x5M/QsnF4nJ67ebnLeJx7WKUPVg2u+r3czHSlWgerPI0ag7daZgYPBVF8Rne4FXjgxdf6DIXANCp3MmRvZVMqG2KkbD6tGheACcXm1J/ltQ8IToWsBYFqgTFJo16fA80iz66d+snYJlQFQebetHN2boMb+llZGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QvifwJYk; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7930132f59aso5780121b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761557127; x=1762161927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YJ3Na5nmh5DDcjGriWUnHW8mLHF0cCL13X2wMKwKkZs=;
-        b=QvifwJYkJnnKP+TjMgC30TrsGQM675Pv5fHKYcevIQ7AbDKujy1eWdWf6RhhlrmkPQ
-         vgWA5EEZ4oQ3Y9xH3KH8bLGgjYMBHWrv4i+FaDchgiDoFBsOo2hRnLn10NecAPqUTfNR
-         gfcuVKSOe8lbS3V2CSTeo/lgs8b0zvqJlIGC8+XUR0pWFk/s95lPsATouQbmurxLioZk
-         tWGYVtTzLeE+bHZ6XIt4jI4nZfDaql3HxSPY9V3DUoYHI6+BAWzn6K5DQB/vP9533Ooq
-         q1U2VIsgy1rPR8BFuStatnPsWnM/oypjsjgtnAGZ0a5W1jkt8v9pjH+VisGv9Smrqc4G
-         5Bgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761557127; x=1762161927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YJ3Na5nmh5DDcjGriWUnHW8mLHF0cCL13X2wMKwKkZs=;
-        b=mEKJpHA66tunoUROokgyRektXQsebUkmZ8o2uldCn7JRI4et2vDaux68rRmF4N7u5f
-         LaW+UL1Hq0iTpKoLv1u9rm7iUtpd3Twt++QupV8ruT6PkCJMhTrFWvVds/dLKTACGjc6
-         +utM77BTypoAleNeMQHysBQLfE1SSBwoP6+EXa9sTCnozy0O1n7Z8jbD3YSaIYXx7XXY
-         tfbSOjjeVwIVxEDCWuca1Pn50YjEBgQd1TIvr0IozP16vKV4Cb4tA3BlFp0IvcXRTbgE
-         ZQ/Hb26fli4NnHXOcpym37rFzKtuwllP6eX/KD3qpabL0Yy/mfa0rq0nFwENaj7L9Uxq
-         GRig==
-X-Forwarded-Encrypted: i=1; AJvYcCUvGyqTxixEDnY+5p0zbWY7h8GWlDCOjbxvtQJDNghH5bHNnANIJ36cUb5edwXty7OTCoc927yPdNpqyIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsjq3dEGSfBTb8EbQ5ukC2Uau53KRpiAoWdBiLp44Mg49lBa0A
-	dWc3ddGRiNh5UPuLrZqyBaij0cSHfNlN7ZDnuMkQZS7OfzVQ7l5b+CYjF0WSkCQ53JQ/dQwdxAo
-	MOmjZYhxTSr4HPznq81RyNX8a+fxp1FA=
-X-Gm-Gg: ASbGncvEIV4UPLwW2FIjPyTFGY1bEUgzYhQRdPEG/h5J55R2WtrHaqOE/LAME4+dRai
-	efjnrrlQZhSmczT/jarZL5jBVmKFNfOjGYf1J8fyosDIwUKxKKyRZEV22T199siszagC/vaU/Ry
-	Af3I9/lgAfJSp689vqhbDFLGcG7rYt1x8DTG2hdX419FYYmPgkzWma6qX43HQS1yyAe6WZtJ2UQ
-	SlDUw58HKakHAdD+7l/G3UxH7dd6ZmmXqjNQ3dtFxAtyixUk03BZ2NwQcWY
-X-Google-Smtp-Source: AGHT+IEiG1Heztw+sAzc6C9orRdKxxd8nUg5Hwrgtqpqrdenw2oiLdlGPf8acbWrVKMFxCxLmp8gxM8EFG6JHJGyBFc=
-X-Received: by 2002:a17:903:1ab0:b0:290:c0b1:edb8 with SMTP id
- d9443c01a7336-2948ba56285mr114949085ad.40.1761557127361; Mon, 27 Oct 2025
- 02:25:27 -0700 (PDT)
+	s=arc-20240116; t=1761557162; c=relaxed/simple;
+	bh=uRzDmP22qj2u7aubae4ntiHX4IicNLHES5v9DycmtNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qb+HsaY1nrsf4JLJ4y57oSY33eX/VEQDAgM6kB8+MhHngGrISGfMGwGb47NicTeNhe/98/cwe61AeWaDbE4Zd4fj9GBbxT1cAI0NhyS9F2H8J6INTazt0hArLKN2mmnd+KUMJQHWC+5/e88Q+EpiBizZ/5Y7Yf/lQYA5jSBjKPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=js7nSl2f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C07C4CEF1;
+	Mon, 27 Oct 2025 09:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761557161;
+	bh=uRzDmP22qj2u7aubae4ntiHX4IicNLHES5v9DycmtNQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=js7nSl2fC5cU//XC7LoC6Ev3mRM97Ux6UQp5a4ksHLC7y8Z99M+7ISEtXnIYlAc4a
+	 EExJAN2wtDZQSkFXqXQU8UnidmPhkNykR2MBfH1oNfhY2kV809JbMR7KSULmYiewdO
+	 dKf6pIeXt8Lc7zNujB8JMpv4lSu/2F/VoOTU2FGIUTS4OCmPi1nRGigUxdKuZHuJP0
+	 bPwag9XEEiq3rE+i5iT3rxwb/4A2WDXZ1HO5Sk5RE+AlR/cDtaQW05mFnr0MLg1S83
+	 bbkWiRbZuLX8ZsfP7GNg9566XfiG0F3sD/h8hslw1jwT4FNcF+YxKGuRP7T6Ih1g3/
+	 b4dahlci+xjFA==
+Message-ID: <7730d4bd-0d7a-452c-ae95-a472d8c99de5@kernel.org>
+Date: Mon, 27 Oct 2025 10:25:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251025102008.253566-1-kriish.sharma2006@gmail.com>
- <CAHp75Vc=LeYEowm4HOa4iPJSMQmu75ch-wbKT4WNOyWvYH3u9A@mail.gmail.com>
- <CAL4kbRPy67Vkq1A_H_E=B99+M-09s7xWMYHCMPYFaCG0nMWWnA@mail.gmail.com> <CAHp75VcB9yLZq31zHa8wuE2DtxJ0j5hoco3q=F4WG8yDuTrtkg@mail.gmail.com>
-In-Reply-To: <CAHp75VcB9yLZq31zHa8wuE2DtxJ0j5hoco3q=F4WG8yDuTrtkg@mail.gmail.com>
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-Date: Mon, 27 Oct 2025 14:55:15 +0530
-X-Gm-Features: AWmQ_bnQqMCu_7fuK1sZJyFkgn5UMbNBZRiMmlLawMoRHvGlI9KxSUmDU_eS-jM
-Message-ID: <CAL4kbRNi+B1Fm9fnEvmLS_n1SWQnb+BC=xht4=qJOrnEUqqGhA@mail.gmail.com>
-Subject: Re: [PATCH] iio: document @chan parameter in iio_backend_oversampling_ratio_set
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] checkpatch: Don't warn on "orhapned" DT schema
+ file
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-kernel@vger.kernel.org
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+References: <20251027091742.1741742-1-andriy.shevchenko@linux.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251027091742.1741742-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thanks, Andy
-I've sent a v2 that combines both kernel-doc fixes into a single patch.
+On 27/10/2025 10:17, Andy Shevchenko wrote:
+> Currently checkpatch warns is the DT schema file is absent in MAINTAINERS.
+> However the DT schema files are self-contained in this sense and
+> have embedded information about maintainers of it. This is a requirement.
+> Hence, avoid checkpatch warning about it.
+> 
+> Requested-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-https://lore.kernel.org/all/20251027092159.918445-1-kriish.sharma2006@gmail=
-.com/
+No, that's not true.
+
+First, there is no such tag. Second, I never requested it.
+
+NAK
 
 
-
-On Mon, Oct 27, 2025 at 2:24=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Sat, Oct 25, 2025 at 5:12=E2=80=AFPM Kriish Sharma
-> <kriish.sharma2006@gmail.com> wrote:
-> > On Sat, Oct 25, 2025 at 7:05=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > Is this the only issue with the kernel-doc? Can you run manually
-> > > scripts/kernel-doc against this file (with -Wall) and check, please?
-> > > The change itself is okay, FWIW,
-> > > Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> >
-> > Thanks for the review!
-> > Looks like I missed another warning in the latest linux-next:
-> > Warning: drivers/iio/industrialio-backend.c:1069 No description found
-> > for return value of 'iio_backend_get_priv'
-> > I can send another patch to address this if you=E2=80=99d like.
->
-> You can combine in one patch, there are no strict objections for
-> fixing all (small) kernel-doc issues in one file at once.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+Best regards,
+Krzysztof
 
