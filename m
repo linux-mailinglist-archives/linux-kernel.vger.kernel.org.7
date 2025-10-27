@@ -1,214 +1,207 @@
-Return-Path: <linux-kernel+bounces-871511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FA1C0D7DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:24:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA11C0D7BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589CC1894097
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:23:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 852F84F0969
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F2F2F7471;
-	Mon, 27 Oct 2025 12:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDB42FD7DD;
+	Mon, 27 Oct 2025 12:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="kDy9KX24"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mBs6Fgk9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCE12FBE01;
-	Mon, 27 Oct 2025 12:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567739; cv=pass; b=TA9r7Vpu6AWhAZ9pq6VPu72BB6aR2cRlNrMfjDdwbunvFxdirbuovo26kRA4/ollcjssL/PA47tajapzw3t5YHlWtgJ27dlJVE7EPzpJsM38qmdh3Z4EG/PoLVMwkINVhTj06d564YmN76s9EmpHPkJ7io9NUUvFF1NK/sp9Qk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567739; c=relaxed/simple;
-	bh=fcotC1b6A2/LrvzLBc7zjE2lH146EvlS4iCMh/bfYp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K3eDXkOm+efbh6C3KwytIISKMQORkhmrj03irda9BSBOvsmsE+BMTrDgrHI7c2EuryHHkqBZ9w591JfyaOGaQxpY0ijlrhpYwSkQFYgiPna/iuxi7RT/VjOHrxAASLqFrAImIoCWOy6ZedyG5jZL/IsTw3mU9BsqJVZgvU8ZeXk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=kDy9KX24; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761567688; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=B37m3tRXg9231oauumFgq3IS919cZOBg5SjkoJsfAAEv3xg7NZzheR2/o1Z6DWXuET3Phh+B65kMnrMCibaDLL47gqWercUuzNjDdQ/QEDk4PDMfokyzUxleEz3k8oEQQE8eM/LGA6cXBQj3Z5m2bCDyEdLFNH72QNvwSyqfTHs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761567688; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JzOl43h72qIg903VcLgPPqEaQOxJyebUM6Y8SFlK3FI=; 
-	b=PHxByQ8byaqaWcg7cDcy7ZXDXysm3SbInlN64ODpr8FHXGPi7kW3HXHt+zOniUMSCoQtu7DUByVBCUDCbhdmo00hUk8zNn6A7YdjO/9J7MEh1bEETNOogOlizsXIBRbcRpyX3gSWzK3sSO0p/n4fuKKbZFBpqUY9Cjzvie0NDxU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761567688;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=JzOl43h72qIg903VcLgPPqEaQOxJyebUM6Y8SFlK3FI=;
-	b=kDy9KX2417EVcr5ZvR/y8uZmt2IgIbpSIydVjZEiNT4mUYn+LTARqHpo2PI9/c+O
-	XrqA+KwqLPKUa7++D+dlwBTP8fipyA2OMRQQKoikyQmHtIagGSU4zKzvjDMhQPiCI7W
-	A4THQcscyFyTp2lEGrAOYogNvIgC0YM8dyTtux88=
-Received: by mx.zohomail.com with SMTPS id 1761567685152749.0643459384486;
-	Mon, 27 Oct 2025 05:21:25 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Sandy Huang <hjc@rock-chips.com>,
- Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, kernel@collabora.com, linux-mmc@vger.kernel.org,
- linux-sound@vger.kernel.org, "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 11/21] drivers: don't use GENMASK() in FIELD_PREP_WM16()
-Date: Mon, 27 Oct 2025 13:21:15 +0100
-Message-ID: <2824034.mvXUDI8C0e@workhorse>
-In-Reply-To: <20251025164023.308884-12-yury.norov@gmail.com>
-References:
- <20251025164023.308884-1-yury.norov@gmail.com>
- <20251025164023.308884-12-yury.norov@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A439E2F12DE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761567735; cv=none; b=EjfXsB/J/2DBlt7OpRjsT3bRwFEho6g84KDzdfYolJxR1BiUOHkLDvbEH+smlayd08nGcbYAvUvp6HKtgzmVDgXHrk1ueMKa/oaMBYKLu3bPXneda5HmhVWgY1+n0OtcjHcJoOs/v/LibXuul3f6Gpngqth7MJlIbXWNnWYpUYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761567735; c=relaxed/simple;
+	bh=5HTqrOYqCuummTRQY5R3kBtRSlzJ1dTedKBPppB19TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwSYvRyZzmIiRvpLYXwmXtdUbepgiq+msOOm39t2JuyqH7v3qpEBxg9bKs5vP9spWbld7a5KpEtOzyy/AUldFOBQRyOS2k+iFX2/9gbTBB1AakC/NU/t0/04SARFiSc/6iETiwQk1hxao4a4twIeJv/9rNG5waqeJjd7hvlkklk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mBs6Fgk9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R9FXER1294976
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:22:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Psg+67BfDLKR1waGwn5a3FoQ
+	zpaxCzLH0+T9U8DBvbg=; b=mBs6Fgk95ffbn4ieruXYrS9Ov7pW4DuApfupuktD
+	bX+M9/sG7KIZXUhn+qqhj100+ee+Iv5KD2GbjThnS4Yhp53XXfxDuex4rPALtaIj
+	Fcpz1NKhX3QA1O75SAhUAC1YG399L0jTTLEXYrBLQ4XQGFwktwrkPkKVQrsF6vkA
+	gzXRTmfqrUQvFbCLXpbqm5K//BKz0vLluu/2Srtx/T1Bin3VOpkZGJRg+5u1Mgv2
+	hXcpprUqVZT4lrMiXbNwjpCWqxOHJwO6pS5wDPUIYgF7a2A/lQq/U4jFsGqEUitM
+	oAte68UO9chMnRCUZy5W/CTreeeuHk3HxAiuT5CutnrrGQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a0nnb4k8k-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:22:12 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4eba247f3efso53611911cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:22:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761567732; x=1762172532;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Psg+67BfDLKR1waGwn5a3FoQzpaxCzLH0+T9U8DBvbg=;
+        b=A1vP4bk/SJSBHjHGCfPeFzSr+EWan3YgnCYQxzKXK66DsV59wiRJ7S/cQ3h4RfONe7
+         R4WUGppbd+xRhBIk/gB/J7SmUAhoQHE7/ZSWoQiFc71n3ibX+btC3drQp0SZKG5tVhXZ
+         okNd8M2T1yerZKt3jubD1IFkl+2ZThG4TwURTj4AOzDQ04P9Yt5FS2AErKMR/yA3tsd7
+         6Kt5T0Fn+0sFeDTufDyzKZjMHUG7P76f4v6Zi44H+CmUJMcS57Z33hceKvX17bf+xf6V
+         DdkpZUaqSsjkYeiXYmGxHPcEprUkUUNEIBrsl50EifAv0P4XymSdKs0V+9sqwLdxl6W0
+         eyTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmFl7Gw15nVkpl0MPuk4drtakBfLNuWfZzbZ08dN8qdN4fD0mVGA1RFPdzI05cWHFCYWSX8s/pER7Bsnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJi7FYJeLpDX3xIi7RNdq2rwLJSE7jLSEHVo+set9oJ6iwkoKm
+	xvYqONFK8mjgRVKKtmm+P8D47rDsWCwgks8R1toZq3bSnbTnKEuerEB3nP1Uzs42Yo/SdzZIf4t
+	wPGZiotTp+PJ9SnEqdcptVJbB+lFgUyXbRTRkUXGUxlC+kbvW03AsCVDf3ZYqv8trdIs=
+X-Gm-Gg: ASbGncvB1nX9a+3tct808ePJq/hQkNTDJq1jrqWCvvvgi7FfEiuQj+mk5K6CzmAdQzL
+	N46wKVUmFZMsv/VuERwzxR1/ptD3EEuuWTJUf51/yUEbG/Nr3+UlltO02nLQyP2MNepGm7x/SXs
+	nA9VASKYmsSbE0foFUhy3L/q+z+IgYGnLxm/45nr1Bc6GC1e5+frQAhkzwHq/Z8TaOecQVwEIXC
+	RylVzlaTekw4e317NtAm565/uVzIsVTtoTpBBvRi51R+i7hbgPqri1DVOmeXBzESTWnbWkjE7B+
+	V8eRVA0CFNjKjlwF4LtNST6LoZ3VPa5WJ08HFCS1FVClIwQJduJUnHLSilm9aFavOXxlnHq9nIu
+	67KNYzOo8QjAMDa3a16NjIVZF2VtEEo0JdFtQDgpinQWfnNE3F30FaJ/S/c5df4LILZhwj1Cv9T
+	uqqC9dg5C1QMvj
+X-Received: by 2002:a05:622a:2291:b0:4ec:f017:9e2c with SMTP id d75a77b69052e-4ecf017a075mr61636221cf.35.1761567728681;
+        Mon, 27 Oct 2025 05:22:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGYgD/La2Tib5FQl2fihboVZ7Zt1I5VSs9oXv2jbhiaDS8YaEpcF2SppZieSQXcjQmVktSMA==
+X-Received: by 2002:a05:622a:2291:b0:4ec:f017:9e2c with SMTP id d75a77b69052e-4ecf017a075mr61634961cf.35.1761567727214;
+        Mon, 27 Oct 2025 05:22:07 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0c342csm19672521fa.26.2025.10.27.05.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 05:22:06 -0700 (PDT)
+Date: Mon, 27 Oct 2025 14:22:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
+        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 07/12] drm/panel: Set sufficient voltage for panel nt37801
+Message-ID: <4bnvh2ydtrmejknzpsxoalxoyjpq5g5cjbrico5ezbek24r52s@u5zy6ekh6lps>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023080609.1212-2-yuanjie.yang@oss.qualcomm.com>
+ <zxofh6bwee3vjjlntlfqy7yg2iu2mipjvl7s5bcm6gbh233cjq@nuicjojawd2d>
+ <aPsWEhM7i+gDjXE0@yuanjiey.ap.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPsWEhM7i+gDjXE0@yuanjiey.ap.qualcomm.com>
+X-Proofpoint-GUID: rDeF8vEcvzCTQ-wmRf4n0wy4vZBMFk85
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDExNSBTYWx0ZWRfX/68ZQHP3nIxm
+ D0FmoAtp5UNVzM6RXzZWcd+FtLl1W/Lq8XjcKt6geiG0zgFNgINxvO8GeoTqUL/816wJCzZCSIo
+ qd+XcWnZ8JeW3FDsWEkxKJsQn1LYPImV7e/p41d8f/lV5PT6ZuPMt1kz0EXJpD4YILqwVGsTbCw
+ 8q7/dAqU7ZoJ/LqpqoeD/QCf3Y3H9npgphSsBnoPZrmDPc5pKyXLH3FOgGasuSwFgAk01EVm0op
+ LnXJEC0DzsPNbO6lelo/TEKbIpEqqZhVgfOO0MuaTrDb7pJStdcgSFulBvfTyAwZvMUvbXrw7Zz
+ 7E91hx4ZAhQuOnowHa2xsLyAd/L8wufh1OKgie7HGEUqmxZG6IlgR/hCFlL7lBmYjfQ1dVDBQKj
+ Y1MU9796clfWOd8R/fc9DtIWkuKGAQ==
+X-Authority-Analysis: v=2.4 cv=AJoZt3K7 c=1 sm=1 tr=0 ts=68ff63f4 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
+ a=UzKOEE2XrYQWi1Oh8k0A:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+ a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-ORIG-GUID: rDeF8vEcvzCTQ-wmRf4n0wy4vZBMFk85
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ phishscore=0 suspectscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270115
 
-On Saturday, 25 October 2025 18:40:10 Central European Standard Time Yury Norov (NVIDIA) wrote:
-> Recently added FIELD_PREP_WM16() in a few places uses GENMASK. It's
-> confusing and may mislead readers. Switch to BITS() or FIRST_BITS()
-> as appropriate.
+On Fri, Oct 24, 2025 at 02:00:50PM +0800, yuanjiey wrote:
+> On Thu, Oct 23, 2025 at 03:14:38PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, Oct 23, 2025 at 04:06:04PM +0800, yuanjie yang wrote:
+> > > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > > 
+> > > The NT37801 Sepc V1.0 chapter "5.7.1 Power On Sequence" states
+> > > VDDI=1.65V~1.95V, so set sufficient voltage for panel nt37801.
+> > > 
+> > > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > > Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > > ---
+> > >  drivers/gpu/drm/panel/panel-novatek-nt37801.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/panel/panel-novatek-nt37801.c b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
+> > > index d6a37d7e0cc6..7eda16e0c1f9 100644
+> > > --- a/drivers/gpu/drm/panel/panel-novatek-nt37801.c
+> > > +++ b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
+> > > @@ -267,6 +267,11 @@ static int novatek_nt37801_probe(struct mipi_dsi_device *dsi)
+> > >  	if (ret < 0)
+> > >  		return ret;
+> > >  
+> > > +	ret = regulator_set_voltage(ctx->supplies[0].consumer,
+> > > +				    1650000, 1950000);
+> > 
+> > This should be done in the DT. Limit the voltage per the user.
+> Two reason:
+> 1.
+> I see https://patchwork.freedesktop.org/patch/354612/
 > 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/all/CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com/
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->  drivers/gpu/drm/rockchip/rockchip_lvds.h             | 2 +-
->  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c         | 4 ++--
->  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h | 4 ++--
->  drivers/mmc/host/dw_mmc-rockchip.c                   | 4 ++--
->  drivers/soc/rockchip/grf.c                           | 4 ++--
->  sound/soc/rockchip/rockchip_i2s_tdm.h                | 2 +-
->  6 files changed, 10 insertions(+), 10 deletions(-)
+> panel panel-novatek-nt35510.c also use regulator_set_voltage set right voltage,
+> so I do the same work.
+
+Please look for the majority rather than the exceptions. Out of all
+panel drivers only two set the voltage directly.
+
 > 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.h b/drivers/gpu/drm/rockchip/rockchip_lvds.h
-> index 2d92447d819b..e79e6031be59 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.h
-> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.h
-> @@ -115,7 +115,7 @@
->  #define   PX30_LVDS_INVERT_DCLK(val)		FIELD_PREP_WM16(BIT(5), (val))
->  
->  #define PX30_LVDS_GRF_PD_VO_CON1		0x438
-> -#define   PX30_LVDS_FORMAT(val)			FIELD_PREP_WM16(GENMASK(14, 13), (val))
-> +#define   PX30_LVDS_FORMAT(val)			FIELD_PREP_WM16(BITS(13, 14), (val))
->  #define   PX30_LVDS_MODE_EN(val)		FIELD_PREP_WM16(BIT(12), (val))
->  #define   PX30_LVDS_MSBSEL(val)			FIELD_PREP_WM16(BIT(11), (val))
->  #define   PX30_LVDS_P2S_EN(val)			FIELD_PREP_WM16(BIT(6), (val))
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> index 38c49030c7ab..438fea5f6f6d 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> @@ -1698,7 +1698,7 @@ static unsigned long rk3588_set_intf_mux(struct vop2_video_port *vp, int id, u32
->  		val = rk3588_get_hdmi_pol(polflags);
->  		regmap_write(vop2->vop_grf, RK3588_GRF_VOP_CON2, FIELD_PREP_WM16(BIT(1), 1));
->  		regmap_write(vop2->vo1_grf, RK3588_GRF_VO1_CON0,
-> -			     FIELD_PREP_WM16(GENMASK(6, 5), val));
-> +			     FIELD_PREP_WM16(BITS(5, 6), val));
->  		break;
->  	case ROCKCHIP_VOP2_EP_HDMI1:
->  		div &= ~RK3588_DSP_IF_EDP_HDMI1_DCLK_DIV;
-> @@ -1711,7 +1711,7 @@ static unsigned long rk3588_set_intf_mux(struct vop2_video_port *vp, int id, u32
->  		val = rk3588_get_hdmi_pol(polflags);
->  		regmap_write(vop2->vop_grf, RK3588_GRF_VOP_CON2, FIELD_PREP_WM16(BIT(4), 1));
->  		regmap_write(vop2->vo1_grf, RK3588_GRF_VO1_CON0,
-> -			     FIELD_PREP_WM16(GENMASK(8, 7), val));
-> +			     FIELD_PREP_WM16(BITS(7, 8), val));
->  		break;
->  	case ROCKCHIP_VOP2_EP_EDP0:
->  		div &= ~RK3588_DSP_IF_EDP_HDMI0_DCLK_DIV;
-> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-> index b13f58e31944..14df3f53ff8f 100644
-> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-> @@ -12,8 +12,8 @@
->  #include <linux/bitops.h>
->  #include <linux/hw_bitfield.h>
->  
-> -#define UPDATE(x, h, l)		FIELD_PREP(GENMASK((h), (l)), (x))
-> -#define HIWORD_UPDATE(v, h, l)	FIELD_PREP_WM16(GENMASK((h), (l)), (v))
-> +#define UPDATE(x, h, l)		FIELD_PREP(BITS((l), (h)), (x))
-> +#define HIWORD_UPDATE(v, h, l)	FIELD_PREP_WM16(BITS((l), (h)), (v))
->  
->  /* SYS_GRF */
->  #define SYS_GRF_SOC_CON1			0x0304
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-> index 82dd906bb002..7fac1a7281bf 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -148,10 +148,10 @@ static int rockchip_mmc_set_internal_phase(struct dw_mci *host, bool sample, int
->  
->  	if (sample)
->  		mci_writel(host, TIMING_CON1,
-> -			   FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
-> +			   FIELD_PREP_WM16(BITS(1, 11), raw_value));
->  	else
->  		mci_writel(host, TIMING_CON0,
-> -			   FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
-> +			   FIELD_PREP_WM16(BITS(1, 11), raw_value));
->  
->  	dev_dbg(host->dev, "set %s_phase(%d) delay_nums=%u actual_degrees=%d\n",
->  		sample ? "sample" : "drv", degrees, delay_num,
-> diff --git a/drivers/soc/rockchip/grf.c b/drivers/soc/rockchip/grf.c
-> index 344870da7675..89fd4a4c69eb 100644
-> --- a/drivers/soc/rockchip/grf.c
-> +++ b/drivers/soc/rockchip/grf.c
-> @@ -125,8 +125,8 @@ static const struct rockchip_grf_info rk3566_pipegrf __initconst = {
->  #define RK3576_SYSGRF_SOC_CON1		0x0004
->  
->  static const struct rockchip_grf_value rk3576_defaults_sys_grf[] __initconst = {
-> -	{ "i3c0 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(GENMASK(7, 6), 3) },
-> -	{ "i3c1 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(GENMASK(9, 8), 3) },
-> +	{ "i3c0 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(BITS(6, 7), 3) },
-> +	{ "i3c1 weakpull", RK3576_SYSGRF_SOC_CON1, FIELD_PREP_WM16_CONST(BITS(8, 9), 3) },
->  };
->  
->  static const struct rockchip_grf_info rk3576_sysgrf __initconst = {
-> diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.h b/sound/soc/rockchip/rockchip_i2s_tdm.h
-> index 0171e05ee886..eee6db372ee7 100644
-> --- a/sound/soc/rockchip/rockchip_i2s_tdm.h
-> +++ b/sound/soc/rockchip/rockchip_i2s_tdm.h
-> @@ -287,7 +287,7 @@ enum {
->  #define I2S_TDM_RXCR	(0x0034)
->  #define I2S_CLKDIV	(0x0038)
->  
-> -#define HIWORD_UPDATE(v, h, l)	(FIELD_PREP_WM16_CONST(GENMASK((h), (l)), (v)))
-> +#define HIWORD_UPDATE(v, h, l)	(FIELD_PREP_WM16_CONST(BITS((l), (h)), (v)))
->  
->  /* PX30 GRF CONFIGS */
->  #define PX30_I2S0_CLK_IN_SRC_FROM_TX		HIWORD_UPDATE(1, 13, 12)
+> 2.     Kaanapali vddio regulator:
 > 
+> 		vreg_l12b_1p8: ldo12 {
+> 			regulator-name = "vreg_l12b_1p8";
+> 			regulator-min-microvolt = <1200000>;
+> 			regulator-max-microvolt = <1800000>;
+> 
+> 	Voltage is from 1.2~.1.8 V , So I can not set it 1.65~1.95 V from DT(1.95V is beyond the allowed range).
+> 	So I use regulator_set_voltage to set voltage, and regulator_set_voltage will choose the appropriate voltage.
 
-Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+DT has to list the voltage values that work for the devices on that
+particular platform. So, ldo12 should be listing 1.64 - 1.8 V.
 
-I made sure there were no accidental changes introduced by the
-swapping of values, so in terms of correctness, this appears
-all good to me.
+> 
+> 
+> Thanks,
+> Yuanjie
+> 
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > >  	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> > >  	if (IS_ERR(ctx->reset_gpio))
+> > >  		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
+> > > -- 
+> > > 2.34.1
+> > > 
+> > 
+> > -- 
+> > With best wishes
+> > Dmitry
 
-Kind regards,
-Nicolas Frattaroli
-
-
-
+-- 
+With best wishes
+Dmitry
 
