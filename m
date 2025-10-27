@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-872816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3B7C121C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:50:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86814C121B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A19CC560C5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:49:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3303D352357
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFF5332EC4;
-	Mon, 27 Oct 2025 23:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ip4AuaoN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FB1330D32;
+	Mon, 27 Oct 2025 23:48:46 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC925332916;
-	Mon, 27 Oct 2025 23:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABA32E7F29;
+	Mon, 27 Oct 2025 23:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761608906; cv=none; b=X0LfdgyziR9BLtFM1gQgDdAXgMT00qid571izBJxdT7tn0AygePf+UIrttnf9Ne8/Qa+cYpVoYtDD5bO9SPyYsfFDHGoTrjv/uUbyUlgVm/D7tkKdlrI/NHZQeLhPuhUDu7t9bmYTpZUnehXi0vs5ZiqNZL51Q83xzEurEjQamM=
+	t=1761608926; cv=none; b=Q75BdSbTsqtYw8EUCZatHQvwceF587DlLBHPKgNzGSBOXUOpGeGdE3ueAAAex+9rzuvXCjt/7Jfrr6Vbgk/UIpo7bfVw98+xek7tOS9B1RV2/7qvGuZojZcK9nirckmzf3aOx9R0w2JKw//Vy3a+ApnAQVqYHukNPBTDL0wwnHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761608906; c=relaxed/simple;
-	bh=Ymrk/bnWDm2vxd/nlsLHXR0AGQ17YZKwVmvB5bIG/UQ=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=mHq6bXCuq4grd11jv3L62dgvE2lVXzxgvT47F/73ijlBRhqbBqzjAzdnVKhDUaHrqyTc7MMlgVTPSMWgdhFQgLQnxRMK4foLg7A5Pz77aR/f+Y0ff41YEP1ZJ3ctJ6j783vMPypZAUZV79F0m8M9vGEKbvWThjfahlnP6QWfvn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ip4AuaoN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E68C113D0;
-	Mon, 27 Oct 2025 23:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761608906;
-	bh=Ymrk/bnWDm2vxd/nlsLHXR0AGQ17YZKwVmvB5bIG/UQ=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=ip4AuaoNa+2WWxf+izH396ZLhnsd/7XBE26w4xIzGTJgtZn8K932+c9sMUNuwAqkZ
-	 vcMLNsWCbeZsH7HhNPpueq2Oxeum7lgdSqilydy4isaJN8WGoEuJBOuYXkndDByQMl
-	 up/nvZDWqorYxBwD2lv4mmIeGOae/TQnDS8uzehub6NKnu+GTspISnZNiuYlyqRAN2
-	 dI4bogd2tfpkKHRXbuMIaMgbf0aogoC/p/9CXCjdAFRSiI8VT6Rrfxux5RjRnJFiNU
-	 +hU/AOHoinvhfn4LDK17radRPA8GQ1MzFt73YBFVND+Y2NxW6eRWtDjdLSdAgMD3jA
-	 f8PWukPa8bvFQ==
-Content-Type: multipart/mixed; boundary="===============7910205454797298679=="
+	s=arc-20240116; t=1761608926; c=relaxed/simple;
+	bh=RyuheOr7KUHRCZ0DHpD522l5GBSjeCB0/rIpoJcMwbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M85OgCfYY8iK839J/HOR4iq6ZJVxBPbMWIDPSYgXgRBicWiA7Wq1T65CSRjwN7zttKYhFyKQzKC33s+VdITfNF/kdx2CVpFrFZltFYUHOfU5jEipb6rHaHraG/zcJCdPWYwvrfdY3HU8tolmpZVALjMD2fbNdkNpf5wabOGgYjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vDWwv-000000005i7-2paV;
+	Mon, 27 Oct 2025 23:48:29 +0000
+Date: Mon, 27 Oct 2025 23:48:26 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v3 09/12] net: dsa: lantiq_gswip: add vendor
+ property to setup MII refclk output
+Message-ID: <aQAEyn08Q3DCedUU@makrotopia.org>
+References: <cover.1761521845.git.daniel@makrotopia.org>
+ <869f4ea37de1c54b35eb92f1b8c55a022d125bd3.1761521845.git.daniel@makrotopia.org>
+ <20251027233626.d6vzb45gwcfvvorh@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <58dd6b759499f212f626e6d7658dd558b3e6a334e0780898002cb2cb84dbcb85@mail.kernel.org>
-In-Reply-To: <20251027232206.473085-7-roman.gushchin@linux.dev>
-References: <20251027232206.473085-7-roman.gushchin@linux.dev>
-Subject: Re: [PATCH v2 17/23] bpf: selftests: introduce read_cgroup_file() helper
-From: bot+bpf-ci@kernel.org
-To: roman.gushchin@linux.dev,akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,ast@kernel.org,surenb@google.com,mhocko@kernel.org,shakeel.butt@linux.dev,hannes@cmpxchg.org,andrii@kernel.org,inwardvessel@gmail.com,linux-mm@kvack.org,cgroups@vger.kernel.org,bpf@vger.kernel.org,martin.lau@kernel.org,song@kernel.org,memxor@gmail.com,tj@kernel.org,roman.gushchin@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Mon, 27 Oct 2025 23:48:24 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027233626.d6vzb45gwcfvvorh@skbuf>
 
---===============7910205454797298679==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On Tue, Oct 28, 2025 at 01:36:26AM +0200, Vladimir Oltean wrote:
+> On Sun, Oct 26, 2025 at 11:47:21PM +0000, Daniel Golle wrote:
+> > Read boolean Device Tree property "maxlinear,rmii-refclk-out" and switch
+> > the RMII reference clock to be a clock output rather than an input if it
+> > is set.
+> > 
+> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > ---
+> >  drivers/net/dsa/lantiq/lantiq_gswip_common.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/net/dsa/lantiq/lantiq_gswip_common.c b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+> > index 60a83093cd10..bf38ecc13f76 100644
+> > --- a/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+> > +++ b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+> > @@ -1442,6 +1442,10 @@ static void gswip_phylink_mac_config(struct phylink_config *config,
+> >  		return;
+> >  	}
+> >  
+> > +	if (of_property_read_bool(dp->dn, "maxlinear,rmii-refclk-out") &&
+> > +	    !(miicfg & GSWIP_MII_CFG_MODE_RGMII))
+> > +		miicfg |= GSWIP_MII_CFG_RMII_CLK;
+> > +
+> 
+> What did you mean with the !(miicfg & GSWIP_MII_CFG_MODE_RGMII) test?
+> If the schema says "Only applicable for RMII mode.", what's the purpose
+> of this extra condition? For example, GSWIP_MII_CFG_MODE_GMII also has
+> the "GSWIP_MII_CFG_MODE_RGMII" bit (0x4) unset. Does this have any significance?
 
+You are right, probably the best would be to test (if at all) that
+(miicfg == GSWIP_MII_CFG_MODE_RMIIM || miicfg ==
+GSWIP_MII_CFG_MODE_RMIIP) and only in this case allow setting the
+GSWIP_MII_CFG_RMII_CLK bit.
 
-```
-commit 712137918bba1b0a9c7c670bab9200b0f0d6a7e8
-Author: Roman Gushchin <roman.gushchin@linux.dev>
-
-bpf: selftests: introduce read_cgroup_file() helper
-
-This patch adds a new helper function read_cgroup_file() to read from
-cgroup control files in BPF selftests. The function opens a file,
-reads into a buffer, and returns the result.
-
-> diff --git a/tools/testing/selftests/bpf/cgroup_helpers.c b/tools/testing/selftests/bpf/cgroup_helpers.c
-> index 20cede4db..8fb02fe4c 100644
-> --- a/tools/testing/selftests/bpf/cgroup_helpers.c
-> +++ b/tools/testing/selftests/bpf/cgroup_helpers.c
-> @@ -126,6 +126,45 @@ int enable_controllers(const char *relative_path, const char *controllers)
->  	return __enable_controllers(cgroup_path, controllers);
->  }
->
-> +static size_t __read_cgroup_file(const char *cgroup_path, const char *file,
-> +				 char *buf, size_t size)
-> +{
-> +	char file_path[PATH_MAX + 1];
-> +	size_t ret;
-> +	int fd;
-> +
-> +	snprintf(file_path, sizeof(file_path), "%s/%s", cgroup_path, file);
-> +	fd = open(file_path, O_RDONLY);
-> +	if (fd < 0) {
-> +		log_err("Opening %s", file_path);
-> +		return -1;
-
-Can __read_cgroup_file() return -1 when its return type is size_t?
-
-The function signature declares size_t (unsigned), but returns -1 here.
-When -1 is implicitly converted to size_t, it becomes SIZE_MAX
-(18446744073709551615 on 64-bit systems). Callers checking for errors
-with "if (ret < 0)" will fail because size_t is unsigned, and callers
-checking "if (ret == -1)" will also fail after the cast.
-
-> +	}
-> +
-> +	ret = read(fd, buf, size);
-> +	close(fd);
-> +	return ret;
-
-Does this handle read() errors correctly?
-
-The read() syscall returns ssize_t which can be negative on error.
-Assigning this to size_t (line 143) converts negative error codes into
-large positive numbers. For example, read() returning -1 becomes SIZE_MAX
-when stored in ret.
-
-Should the return type be ssize_t instead of size_t to properly propagate
-both success (byte count) and error (negative values) to callers?
-
-> +}
-> +
-> +/**
-> + * read_cgroup_file() - Read to a cgroup file
-> + * @relative_path: The cgroup path, relative to the workdir
-> + * @file: The name of the file in cgroupfs to read to
-> + * @buf: Buffer to read from the file
-> + * @size: Size of the buffer
-> + *
-> + * Read to a file in the given cgroup's directory.
-> + *
-> + * If successful, the number of read bytes is returned.
-> + */
-> +size_t read_cgroup_file(const char *relative_path, const char *file,
-> +			char *buf, size_t size)
-> +{
-> +	char cgroup_path[PATH_MAX - 24];
-> +
-> +	format_cgroup_path(cgroup_path, relative_path);
-> +	return __read_cgroup_file(cgroup_path, file, buf, size);
-> +}
-> +
-
-[ ... ]
-
-> diff --git a/tools/testing/selftests/bpf/cgroup_helpers.h b/tools/testing/selftests/bpf/cgroup_helpers.h
-> index 3857304be..9f9bb6b5d 100644
-> --- a/tools/testing/selftests/bpf/cgroup_helpers.h
-> +++ b/tools/testing/selftests/bpf/cgroup_helpers.h
-> @@ -11,6 +11,8 @@
->
->  /* cgroupv2 related */
->  int enable_controllers(const char *relative_path, const char *controllers);
-> +size_t read_cgroup_file(const char *relative_path, const char *file,
-> +			char *buf, size_t size);
->  int write_cgroup_file(const char *relative_path, const char *file,
->  		      const char *buf);
-
-[ ... ]
-
-
-```
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-In-Reply-To-Subject: `bpf: selftests: introduce read_cgroup_file() helper`
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18859027430
-
---===============7910205454797298679==--
+I forgot that there is older hardware which supports "full" MII, and MII
+MAC as well as MII PHY modes also shouldn't allow to set the
+GSWIP_MII_CFG_RMII_CLK bit to not end up with undefined behavior.
 
