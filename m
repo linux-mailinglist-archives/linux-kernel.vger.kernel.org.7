@@ -1,232 +1,135 @@
-Return-Path: <linux-kernel+bounces-871043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082E3C0C4D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:29:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183ECC0C504
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E3C19A0B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:29:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FFD84F061A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512D42E7BA3;
-	Mon, 27 Oct 2025 08:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C67E2E7BDA;
+	Mon, 27 Oct 2025 08:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ES/UzCCw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e4cnJE4P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB1B2E6CD4;
-	Mon, 27 Oct 2025 08:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25041D6AA;
+	Mon, 27 Oct 2025 08:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761553749; cv=none; b=cyyqwbE19rOpE5fW+RnTL1/3ai5nysqiJBe8XutiwO8BYkWkPQwyl8HEHKeRXJ+bGrzLJf3LywAKFwvbjlg4B+7TDVvcE0XhZV3sp0WuzNGHCrlA2vr9Q4f1o1TsSrmkA6NCfuei4CvDHR7mNCo3cnq4RDaszBfUR1jpQEv11SQ=
+	t=1761553862; cv=none; b=LF0x3ctEy2ej8hbExvmi+b7q/AL8NskTAnH3vIgNmYjGtuT0CY28TPED7cFFqMlmESJbD6wX7C6Lw06WMLdLBd71ggKidQ6YjAjTq0SBvZnTCRkD97QLch8RN2oC1v/XMp3CX5KwMHiARMpsPq8JhNPDP1/Zpe5ECNHwdoDv2L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761553749; c=relaxed/simple;
-	bh=1hQUazNcpeZTrpD6AB4wL1Y+5y2Z6029RCNtFDvnnkQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IZGp7ZHagbWbcAgEpeEyBoFuXMukAMzmbPOE7azKAFmuBJ/Kfuu+z2OVLtIJxSIeH79Bh1qd83IG700DP0I6R/rmW8GZi6Wb8kzVrHE+vAkBx9QXLzqlbbzQ7kHB2kqQmegGeAyxAAv3LTdfuXC/29Rvs0mRJ4eMSkrZjyT49C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ES/UzCCw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59QMtQiO013199;
-	Mon, 27 Oct 2025 08:28:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=pKZXXN
-	Ya8yxe9p/HY93/8btDa6q0PDS2UDuGBCqgOHQ=; b=ES/UzCCwF0G9JHkxWM4Gca
-	Wom7om48HOOnJSWRIc1CifX45I/C8R08beiveFQKlwydPzbGHHTzFKXKu4lnRvod
-	r2fC2KNhLWxahXvYYQ+7cNESG5ATjNIqUWFd4ZGqCOyA7B+0v36dCuUiaO7oTe/z
-	RXLU1KnbZdoeCNTDVizfNh7uh4qDVS2fYs4t+lrnDf6q++CF2KWu27sAQviFtTJy
-	XFkT7KgBMIyCv0uEyBnuA4u3fP7/q+l5h4NifWsG4nfxBijpg8uw3Yh594icbkuX
-	ejX1WIyGknFIg4FKpQede6t2RyahXHLt4iNzcWj+rCUt14fqNVJIyZC0UIFQfSjg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p98wrvf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 08:28:55 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59R8JQNb016069;
-	Mon, 27 Oct 2025 08:28:55 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p98wrvb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 08:28:55 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59R3tRqf009404;
-	Mon, 27 Oct 2025 08:28:54 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a1b3hvcbr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 08:28:54 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59R8Sq0p22807132
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 08:28:53 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 975D758043;
-	Mon, 27 Oct 2025 08:28:52 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED8C558053;
-	Mon, 27 Oct 2025 08:28:48 +0000 (GMT)
-Received: from [9.111.45.227] (unknown [9.111.45.227])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 27 Oct 2025 08:28:48 +0000 (GMT)
-Message-ID: <6deed02fcbf2c359382f9e96a4f6883d34f5df28.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 1/2] PCI: Fix isolated PCI function probing with ARI
- and SR-IOV
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, Huacai Chen
- <chenhuacai@kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>, loongarch@lists.linux.dev,
-        Farhan Ali <alifm@linux.ibm.com>,
-        Matthew
- Rosato <mjrosato@linux.ibm.com>,
-        Tianrui Zhao <zhaotianrui@loongson.cn>,
-        Gerald Schaefer	 <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Sven Schnelle	 <svens@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Gerd Bayer
- <gbayer@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, jailhouse-dev@googlegroups.com
-Date: Mon, 27 Oct 2025 09:28:48 +0100
-In-Reply-To: <20251023-ari_no_bus_dev-v4-1-8482e2ed10bd@linux.ibm.com>
-References: <20251023-ari_no_bus_dev-v4-0-8482e2ed10bd@linux.ibm.com>
-	 <20251023-ari_no_bus_dev-v4-1-8482e2ed10bd@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761553862; c=relaxed/simple;
+	bh=A5/SKv0LoCB75dMRgjs+vVsYbkBrNxa68MZbhjTXs88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVYPI8YZR80Mkrh7ZGkArA/l8BJPmKicef+/Ft6ot3zD+c1qYOtV1EJn5awpZBeuwqualt5yzILYtwQ1RF8JkvJCNdlHjicdSFT2coww0pcoc6ZLl8Hy75Rj4r9uBFVzRP7neCsDPUfivzaAOKfqYponK7sMXRPbe5Y5baJELAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e4cnJE4P; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761553861; x=1793089861;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=A5/SKv0LoCB75dMRgjs+vVsYbkBrNxa68MZbhjTXs88=;
+  b=e4cnJE4Po45XrFSHY/VHFzxO5woyexPkiKLuNT+8+2hECWSv9cPUk4as
+   gsLY6l7DvcgVl6E6QVEqYBs5FHR92rToM+MUMZlcfESlTblez680J21bw
+   XM1OyW1+O/w38prD3/RkmlLA8Gvu55dRxlwktL55hnCokMjFFghmPIGFJ
+   5VJKDCWuwCsKzlLnzp2p8BYz7fDVuQ9sNSCs24NtPcVNqeJXX3GaGuCdF
+   o1YUWG2YYq+SVWsvtk815YLuX98rg142w57USUCZPQd7Gba/W24L0UE5i
+   jBnfOpAUEEc9RbBFlIhqo0vQcJGO+K5LKyrhRwZnnJkwMuHfv4nTmXrWN
+   Q==;
+X-CSE-ConnectionGUID: PQpfSZTkQ5yctdgiLYOD2A==
+X-CSE-MsgGUID: ZHdauaiWSYagLfp3w6JvKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63721379"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="63721379"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 01:31:00 -0700
+X-CSE-ConnectionGUID: HtXxKZduTUG8wYB8pdWJjg==
+X-CSE-MsgGUID: xL6z9lUdSEqM3pq8l9qOHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="185335793"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.5])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 01:30:58 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDIcx-00000002wr0-0rbc;
+	Mon, 27 Oct 2025 10:30:55 +0200
+Date: Mon, 27 Oct 2025 10:30:54 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Gary =?utf-8?B?Q2h1KOalmuWFieW6hik=?= <chuguangqing@inspur.com>
+Cc: lars <lars@metafoo.de>,
+	"Michael.Hennerich" <Michael.Hennerich@analog.com>,
+	jic23 <jic23@kernel.org>, dlechner <dlechner@baylibre.com>,
+	"nuno.sa" <nuno.sa@analog.com>, andy <andy@kernel.org>,
+	"subhajit.ghosh" <subhajit.ghosh@tweaklogic.com>,
+	"javier.carrasco.cruz" <javier.carrasco.cruz@gmail.com>,
+	linux-iio <linux-iio@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH 4/4] iio: light: apds9960: convert to use maple tree
+ register cache
+Message-ID: <aP8tvj_IPbv65m0T@smile.fi.intel.com>
+References: <abf45488369cbcce6298cc0ea19c0b3a24-10-25intel.com@sslemail.net>
+ <aPs9HdeTZKoqFqdk@smile.fi.intel.com>
+ <68fc4591.1.gk94qBPVZajhk94q@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=JqL8bc4C c=1 sm=1 tr=0 ts=68ff2d47 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=-XlZ1Vyswo3uM5Ee-MYA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: v-qIo_EKR-7DRtwJq6tIJkQ1CQse3Tje
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxOSBTYWx0ZWRfX8jnFSXHUvUUU
- VI5XAWCjnJZnf4loag1XrLyBf0GAnW9vXkbLYV3vPMXK+O/m1/8pQUNdYfjF5dt7O7WENVKkL79
- gXOPYJvAfvT2CzY1H/DHl7kwDUmjpS/PHepTK9X1JZP+sP+aPvCBsr/TBaWCZWaeTYElCaUvIBc
- okVSSENRSFVGHcrIpXy/ankSoRDjATqE9/VPQM9Y6jI/ks0T+MO55qo5aTkK3MPPCwdbhdwy6ZI
- fndewSlduwsuIE0UVPRBTST+kRKBnFNWUP1cd1ajNhH7giSGa6zxrcXqJMd8rs/l+xkdgqBlGSt
- 9DcyylISL0vPjeyy3/RDEqoZaF4yJEQb5RxnClFW5cyZERMBJtZMAuYBgSoTmk/LkFEblQRKUxW
- hV+6kV+UvbR0KUHR3tJJ1cVwP5f/SQ==
-X-Proofpoint-ORIG-GUID: KrEU8UmrU9pmpMprLms_b75I_9BvyL_N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250019
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <68fc4591.1.gk94qBPVZajhk94q@inspur.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 2025-10-23 at 17:20 +0200, Niklas Schnelle wrote:
-> When the isolated PCI function probing mechanism is used in conjunction
-> with ARI or SR-IOV it may not find all available PCI functions. In the
-> case of ARI the problem is that next_ari_fn() always returns -ENODEV if
-> dev is NULL and thus if fn 0 is missing the scan stops.
->=20
-> For SR-IOV things are more complex. Here the problem is that the check
-> for multifunction may fail. One example where this can occur is if the
-> first passed-through function is a VF with devfn 8. Now in
-> pci_scan_slot() this means it is fn 0 and thus multifunction doesn't get
-> set. Since VFs don't get multifunction set via PCI_HEADER_TYPE_MFD it
-> remains unset and probing stops even if there is a devfn 9.
->=20
-> Now at the moment both of these issues are hidden on s390. The first one
-> because ARI is detected as disabled as struct pci_bus's self is NULL
-> even though firmware does enable and use ARI. The second issue is hidden
-> as a side effect of commit 25f39d3dcb48 ("s390/pci: Ignore RID for
-> isolated VFs"). This is because VFs are either put on their own virtual
-> bus if the parent PF is not passed-through to the same instance or VFs
-> are hotplugged once SR-IOV is enabled on the parent PF and then
-> pci_scan_single_device() is used.
->=20
-> Still especially the first issue prevents correct detection of ARI and
-> the second might be a problem for other users of isolated function
-> probing. Fix both issues by keeping things as simple as possible. If
-> isolated function probing is enabled simply scan every possible devfn.
->=20
-> Fixes: 189c6c33ff42 ("PCI: Extend isolated function probing to s390")
+On Sat, Oct 25, 2025 at 11:36:45AM +0800, Gary Chu(楚光庆) wrote:
+> >On Fri, Oct 24, 2025 at 03:38:23PM +0800, Chu Guangqing wrote:
+> >> The maple tree register cache is based on a much more modern data structure
+> >> than the rbtree cache and makes optimisation choices which are probably
+> >> more appropriate for modern systems than those made by the rbtree cache.
 
-Since I'm adding a fixes tag, I should also add Cc stable. Added for
-next revision.
+...
 
-> Link: https://lore.kernel.org/linux-pci/d3f11e8562f589ddb2c1c83e74161bd89=
-48084c3.camel@linux.ibm.com/
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  drivers/pci/probe.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
->=20
---- snip ---
+> >>   .reg_defaults = apds9960_reg_defaults,
+> >>   .num_reg_defaults = ARRAY_SIZE(apds9960_reg_defaults),
+> >
+> >^^^^ Be careful with such cases, the cache implementations may behave
+> >differently. Have you tested this on the actual HW?
+> >
+> We have conducted tests on some hardware, and performance improvements were observed,
+>  though tests have not been carried out on all hardware models.
+> Neither rbtree nor maple tree directly depends on hardware types (such as CPU or peripheral
+>  models). Instead, they rely on the address distribution characteristics (discrete/continuous)
+>  of hardware registers. The optimal cache type is determined by the hardware layout.
+> Red-black trees excel at individual operations on discrete addresses, while Maple Trees are
+>  proficient in range operations on contiguous addresses.
+
+It's not about the low-level cache implementation, it's about regmap
+abstraction implementation that might differ from cache to cache
+implementations. This all in regard how the cold cache is getting filled up.
+There is a separate discussion (unrelated to the topic of your series) where
+this was brought up. That's why I asked how this was tested.
+
+In any case, up to Jonathan, but I had to rise a potential misbehave, so in my
+opinion this kind of corner cases needs to be tested on real HW.
+
+> >>   .max_register = APDS9960_REG_GFIFO_DIR(RIGHT),
+> >> - .cache_type = REGCACHE_RBTREE,
+> >> + .cache_type = REGCACHE_MAPLE,
+> >>  };
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
