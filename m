@@ -1,205 +1,116 @@
-Return-Path: <linux-kernel+bounces-872200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0470C0F878
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:08:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DBDC0F881
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:08:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DB071895F12
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3828A19A0F75
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D924315760;
-	Mon, 27 Oct 2025 17:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C05314B7A;
+	Mon, 27 Oct 2025 17:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VpzI92Hu"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d58SYbVP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAD6311C2D;
-	Mon, 27 Oct 2025 17:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B637E31354E;
+	Mon, 27 Oct 2025 17:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761584851; cv=none; b=dIdKCqOYXzSD05cMWHcUfv7bUGH4tY9ReAB/pcMtSTL3pR+kdMn50xUGZ+oQba9XwT35sn2TO5LwExH/dnFNrENkSppD7jOwi/PGJEyYsYrvmgPgD89Wkyj/iCz31Ajsgk0kR1aeyuF+tVpdao5+tyCICnHAruEKJM0NQpHOTsU=
+	t=1761584889; cv=none; b=WDqgBLj+I4Qwb2TSZgmQwkc5Iwp1RbQME9++PMQRG3Sh+yfq02jxd8h3U6qeLZ+ahkzNJ6IiX+Fdwst+qQq1eDPuHBzYPql2qWOyjm3lLBymtV1KoZ7QlJ4FTLeUsjXJri39091QjfskLR5Cz9GZZtqqVsd3gF+SLqw5PXWTGqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761584851; c=relaxed/simple;
-	bh=ucM7fRjoKoYUxznSURIg0AaZ/8S8CI4eHh5vkRbca48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VflWnyV+R3Yp0n6GNBpF+1CNbYcLrKThXH79vl8ZGogBguHSE1Fx1xBOYHx1LgY+56FDDjzV7j99VnlZfKCmleptDiHgOk3jx5djayjQE3/uGrrTVF2pEap5RyINJQxIRGfJCHvV6GoLogB1IqYb6Kcy3ZdmYm/z+DPTzjYBj0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VpzI92Hu; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59RA70wc020576;
-	Mon, 27 Oct 2025 17:07:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=uLKyjT
-	8M3k/3o9glefxJgDuOwAZQD7YNtpBoB/AX1a0=; b=VpzI92HunhVJDXeN+0r72U
-	CyprHH8CjAHe+V+Ts/v5A9ASyy2fnbOcTYOUGCzTOD7UJ6kkCPkmIByg38V4wVZ3
-	sg9PHYawfeAkZljtTZAiSu9r0zTfyT9bQdNJ+M/zKosMwwmnSww4opFmJNe7KAfu
-	tVgixzWHERqN/PiwEpWR6Q45YEnfdDFQKlzXIDqcixl+elQt+pawl1syPABgKJIw
-	nngABrl3Gk1bbBCwosB7w6/e6zhP6p/wFamka+cFidjb/m4RsTETxhc5W/fvue2e
-	7U2idyaC4+LbQqcxIjDsi3p4L3vf1tNkkyyBM+YB9oVHZaaZ9N7KyCtMCPgOsYCQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p98yxvw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 17:07:05 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59RH3AUj003786;
-	Mon, 27 Oct 2025 17:07:04 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p98yxvq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 17:07:04 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59RFJMVi030075;
-	Mon, 27 Oct 2025 17:07:03 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a19vmepph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 17:07:03 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59RH6xWt53084528
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 17:06:59 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 221052004B;
-	Mon, 27 Oct 2025 17:06:59 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5FD2D20040;
-	Mon, 27 Oct 2025 17:06:57 +0000 (GMT)
-Received: from [9.111.6.91] (unknown [9.111.6.91])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 27 Oct 2025 17:06:57 +0000 (GMT)
-Message-ID: <d4a09cc8-84b2-42a8-bd03-7fa3adee4a99@linux.ibm.com>
-Date: Mon, 27 Oct 2025 18:06:56 +0100
+	s=arc-20240116; t=1761584889; c=relaxed/simple;
+	bh=EilW+nxGrIUIpn2MiL43G+5U1z6hqpgMZANWtWAe0qI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9n+MDIb8yVipBQ6pbPDcoJ4+SDwDKfYpv3lOzwaJjOXgL+JWkyoYGCm38xtASTSnQ162RIUt+bpdp3egzFw5WZ+C1dsxsKFC4QfYJ6DPB27YQLJZKZPWXsQ0sXJNa7HgVeUM+rTVoGy6Imhf1A+fNRp/A6SF5nWKD1J6vffxg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d58SYbVP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FC9C4CEF1;
+	Mon, 27 Oct 2025 17:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761584888;
+	bh=EilW+nxGrIUIpn2MiL43G+5U1z6hqpgMZANWtWAe0qI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d58SYbVPB+S4nASv/FYx1vUTcI7rYAqA0IL2HECu/iknwt0uJxsm+0yfTlU+dul2X
+	 apIp7WafXevK3+wxWdalpq89/F1LlrZA9+01IBpE14YCjuLyZW0+sJ20pZwzBlRvDc
+	 XsuICJ86eyNIPqx15FaHw/5TV1ysMLUrjW2dMDID3aivDMagBG+7Fiy1+x6DOrh6Ny
+	 FiCWFYrv8ODRM/BuoNKhBIeoJgqrWgozByZpMGB0GvPIDbjCMXIDamuin9zhLnXCCD
+	 g8xu7mUlwOl9vkfNrx6c0mJuH/VL/eCH8/v7p5SZgcLnfg36ooBMtHmv/MxJPJrY+O
+	 zvVScxptlwPnw==
+Date: Mon, 27 Oct 2025 11:08:05 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Dmitry Bogdanov <d.bogdanov@yadro.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stuart Hayes <stuart.w.hayes@gmail.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux@yadro.com, stable@vger.kernel.org
+Subject: Re: [RESEND] [PATCH] nvme-tcp: fix usage of page_frag_cache
+Message-ID: <aP-m9btCap_dt32Y@kbusch-mbp>
+References: <20251027163627.12289-1-d.bogdanov@yadro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: KVM/s390x regression
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>
-Cc: Balbir Singh <balbirs@nvidia.com>, Liam.Howlett@oracle.com,
-        airlied@gmail.com, akpm@linux-foundation.org, apopple@nvidia.com,
-        baohua@kernel.org, baolin.wang@linux.alibaba.com, byungchul@sk.com,
-        dakr@kernel.org, dev.jain@arm.com, dri-devel@lists.freedesktop.org,
-        francois.dugast@intel.com, gourry@gourry.net, joshua.hahnjy@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        lorenzo.stoakes@oracle.com, lyude@redhat.com, matthew.brost@intel.com,
-        mpenttil@redhat.com, npache@redhat.com, osalvador@suse.de,
-        rakie.kim@sk.com, rcampbell@nvidia.com, ryan.roberts@arm.com,
-        simona@ffwll.ch, ying.huang@linux.alibaba.com, ziy@nvidia.com,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-next@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-References: <20251001065707.920170-4-balbirs@nvidia.com>
- <20251017144924.10034-1-borntraeger@linux.ibm.com>
- <9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
- <c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
- <8c778cd0-5608-4852-9840-4d98828d7b33@redhat.com>
- <74272098-cfb7-424b-a55e-55e94f04524e@linux.ibm.com>
- <84349344-b127-41f6-99f1-10f907c2bd07@redhat.com>
- <c9f28d0c-6b06-47a2-884d-7533f7b49c45@nvidia.com>
- <f5debf87-0477-4d6a-8280-0cd95cd09412@linux.ibm.com>
- <748cdc18-e32d-41bd-90d1-a102b1c51e06@redhat.com>
- <20251027174726.5d8fcce7@p-imbrenda>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <20251027174726.5d8fcce7@p-imbrenda>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=JqL8bc4C c=1 sm=1 tr=0 ts=68ffa6b9 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=msJL1EFK9IJUNjeMVdoA:9 a=QEXdDO2ut3YA:10
- a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: MOGZH8ccG6tAEu5_hBx4-eegLHC9lfEW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxOSBTYWx0ZWRfXwpspLYoyGC4+
- qsI0n+NSKZgi2CbdZ86s6swgxKXBUX6FUOCYnyJuTIaEIQTzZxGUZXbv11Qv99Q3jDEEQPSV/Hv
- cRJKZ9kbiUug8UrRmGxUnNW3X8Nn0VEk9L+Lw4TX2zS6MfHVWFxq2Ou9vPcFgm4ZVdYdHv3Fx9g
- mELAbHjLJMQR4dMSJGTeZCMgNTj0M8g/W1DPWrYTmv7LUsZrITgfioTkX6BzH9Pm5VJTO3KJ3k1
- 6IfYKsIOcUdgS/rZglHitQeCEaUU3lDhb8Ol/tFbNpeGZ9IkF4TVgMMhzNRa3n1qRRnHjWPsoXQ
- dmqQ6ElJco+pM3CsyDTZII1pgXxT2gTjVluCpZYRMoIw/4XdoPmF/uJA+NjBJzOEyDbP3DByT0y
- p6rQ0kgUriDFhIPWChquqz4pnEmaHQ==
-X-Proofpoint-ORIG-GUID: dUb5HY34K2zBB1zAL-pOCzz2ztjXwk1X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_06,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250019
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027163627.12289-1-d.bogdanov@yadro.com>
 
-Am 27.10.25 um 17:47 schrieb Claudio Imbrenda:
-> On Mon, 20 Oct 2025 10:41:28 +0200
-> David Hildenbrand <david@redhat.com> wrote:
+On Mon, Oct 27, 2025 at 07:36:27PM +0300, Dmitry Bogdanov wrote:
+> nvme uses page_frag_cache to preallocate PDU for each preallocated request
+> of block device. Block devices are created in parallel threads,
+> consequently page_frag_cache is used in not thread-safe manner.
+> That leads to incorrect refcounting of backstore pages and premature free.
 > 
->> On 20.10.25 09:00, Christian Borntraeger wrote:
->>> Am 17.10.25 um 23:56 schrieb Balbir Singh:
->>>    
->>>> In the meanwhile, does this fix/workaround work?
->>>>
->>>> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->>>> index 0c847cdf4fd3..31c1754d5bd4 100644
->>>> --- a/mm/pgtable-generic.c
->>>> +++ b/mm/pgtable-generic.c
->>>> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
->>>>     
->>>>     	if (pmdvalp)
->>>>     		*pmdvalp = pmdval;
->>>> -	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
->>>> +	if (unlikely(pmd_none(pmdval) || is_pmd_non_present_folio_entry(pmdval)))
->>>>     		goto nomap;
->>>>     	if (unlikely(pmd_trans_huge(pmdval)))
->>>>     		goto nomap;
->>>>   
->>>
->>> Yes, this seems to work.
->>
->> Right, but that's not what we will want here. We'll have to adjust s390x
->> gmap code (which is getting redesigned either way) to only take the page
->> lock.
->>
->> In the end, we'll want here later a single
->>
->> if (!pmd_present(pmdval))
->> 	goto nomap;
->>
+> That can be catched by !sendpage_ok inside network stack:
 > 
-> this seems to do the trick:
+> WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
+> 	tcp_sendmsg_locked+0x782/0xce0
+> 	tcp_sendmsg+0x27/0x40
+> 	sock_sendmsg+0x8b/0xa0
+> 	nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
+> Then random panic may occur.
 > 
-> diff --git a/arch/s390/mm/gmap.c b/arch/s390/mm/gmap.c
-> index 8ff6bba107e8..22c448b32340 100644
-> --- a/arch/s390/mm/gmap.c
-> +++ b/arch/s390/mm/gmap.c
-> @@ -599,8 +599,9 @@ int __gmap_link(struct gmap *gmap, unsigned long
-> gaddr, unsigned long vmaddr) | _SEGMENT_ENTRY_GMAP_UC
->                                          | _SEGMENT_ENTRY;
->                          } else
-> -                               *table = pmd_val(*pmd) &
-> -                                       _SEGMENT_ENTRY_HARDWARE_BITS;
-> +                               *table = (pmd_val(*pmd) &
-> +                                       _SEGMENT_ENTRY_HARDWARE_BITS)
-> +                                       | _SEGMENT_ENTRY;
->                  }
->          } else if (*table & _SEGMENT_ENTRY_PROTECT &&
->                     !(pmd_val(*pmd) & _SEGMENT_ENTRY_PROTECT)) {
+> Fix that by serializing the usage of page_frag_cache.
 > 
+> Cc: stable@vger.kernel.org # 6.12
+> Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
+> Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+> ---
+>  drivers/nvme/host/tcp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
+> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> index 1413788ca7d52..823e07759e0d3 100644
+> --- a/drivers/nvme/host/tcp.c
+> +++ b/drivers/nvme/host/tcp.c
+> @@ -145,6 +145,7 @@ struct nvme_tcp_queue {
+>  
+>  	struct mutex		queue_lock;
+>  	struct mutex		send_mutex;
+> +	struct mutex		pf_cache_lock;
+>  	struct llist_head	req_list;
+>  	struct list_head	send_list;
+>  
+> @@ -556,9 +557,11 @@ static int nvme_tcp_init_request(struct blk_mq_tag_set *set,
+>  	struct nvme_tcp_queue *queue = &ctrl->queues[queue_idx];
+>  	u8 hdgst = nvme_tcp_hdgst_len(queue);
+>  
+> +	mutex_lock(&queue->pf_cache_lock);
+>  	req->pdu = page_frag_alloc(&queue->pf_cache,
+>  		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
+>  		GFP_KERNEL | __GFP_ZERO);
+> +	mutex_unlock(&queue->pf_cache_lock);
+>  	if (!req->pdu)
+>  		return -ENOMEM;
 
-Tested-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-
-can you send a proper patch? I guess we should add it to Andrews mm true to keep it close to the patch that uncovered the issue.
-s390 maintainers cced.
+Just a bit confused by this. Everything related to a specific TCP queue
+should still be single threaded on the initialization of its tagset, so
+there shouldn't be any block devices accessing the queue's driver
+specific data before the tagset is initialized. 
 
