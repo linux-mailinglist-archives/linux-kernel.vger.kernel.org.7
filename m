@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-871631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B16C0DDC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20B7C0DDDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35A43A18A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E04422BB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B229A9CD;
-	Mon, 27 Oct 2025 13:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBA427877D;
+	Mon, 27 Oct 2025 13:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3wWirdwW"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwFg2t9S"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8113D248166;
-	Mon, 27 Oct 2025 13:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBAD248F4D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570098; cv=none; b=ovTvakrb4+8y2Iu8QShoeYR4eltyBhsoRHKPsLwfodoV2udX7Q+9b66eivgmjhf9AISOLokkcr/LDKpCl6TmoyZm2ahAe0u+uxm9PaawBsj2KnoRt7hfdRz6CnJbodtiRhBf6kLVqieY0BKUc4BDC8o4hvpPE5A/dChQ3YcHQe0=
+	t=1761570133; cv=none; b=AV6Cu4Oj5sC+zK3VttYLVeaSHWPAxaN2IcncILGFdv2wQc8FUsB0iUAE0NUoGAwMXGFNRU62eTPCHr2bFpMHVPyJmzFSKxxFUunwMX30B8J1oKHmAbXvkeeLWUIZJhIsSUrpVIuWO5qmGEGwxtlRNnIIeWfKLPFb3XFA8tdB0Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570098; c=relaxed/simple;
-	bh=AKKN2c1kBYwMdSjaTh3C9AgUeN+bJF5BFv8aHmXQN2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXuuWc+wgCerXwG5ZzwMuxYWdFlR0u7A2NSoM9X64yUQYNnl/642TWxjNy0bMKfmj1U46cShC0473adVpmGq3FFMDg1JgshBVWcXNpvKW1xbXAhKtwW8AfjM5aB0yJennu78PnQTcW83qLf6jB2IambOUluJLrUUo0ru25CPDkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3wWirdwW; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=eqMmPsbXkPqmT8ZSYhoENewFeCKX7DIxuxmp0MwYrk8=; b=3wWirdwWDGSewTR2fQLrCPlupw
-	ymc8Z1nfEg52zHsRzg4YU8MmDkNeOGDTUFhGX75tc7zgeewRctVUTGc+U0tG1A3zjmNrkqITq2Lov
-	KBVPQu1fy88izGFYuJQFkiKKf0oYZQUKrsEIiADbOJvXDz/0kIvWJDQQLLiCTrseRp4Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDMqm-00CC0J-K2; Mon, 27 Oct 2025 14:01:28 +0100
-Date: Mon, 27 Oct 2025 14:01:28 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Paul SAGE <paul.sage@42.fr>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, linux-kernel@vger.kernel.org, mchan@broadcom.com,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	pavan.chebbi@broadcom.com, vinc@42.fr
-Subject: Re: Andrew Lunn
-Message-ID: <76aaa176-9012-4897-9403-92802610188c@lunn.ch>
-References: <6e1641fe-e681-414e-bd51-e20cf511f85a@lunn.ch>
- <20251027095139.399855-1-paul.sage@42.fr>
+	s=arc-20240116; t=1761570133; c=relaxed/simple;
+	bh=1bB7L68kzJayTBvOhwCV/SjorHR+hB0GqpWfqKFMQiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mv7X46hKV0KFBvzMhqk5mZ3Hs7hQHk94xU/TBu8Um/1OW/eiNAG6VfV4Z6XKvnw8eKtHUrHrhg+JDbdxgQSg6jo22ctm4NJ9lmtDcAF55MRBpYrgNPIVNemJaze3O81igsl0+EGiMMoDtVUCnPvL2WFjY/N0R5wRwVeBEuaWC4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwFg2t9S; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3737d09d123so65483061fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761570130; x=1762174930; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pxCTtcPsN8230LeCJx3j5DlRF4pEORPX1pABk9GNfEI=;
+        b=fwFg2t9SG/sQuwHr+iOuOpC3wwIySvcp88EAW5Qw6/Py2Yfu/2U3pqbMMiloyGL1yn
+         G9+B5zMpSpXM4hzVroUx7nDp4F1WdWzgZg3/FxjVAiX/Cn2Qg5zLHAX0lZEjldlbL2p3
+         sByH1SDT+v5XdZLtuZLBrns3GsT6co610lr6RHkGvnsXR3xhPpteK5/q/8y+qpLRVKv9
+         tqxel4Y+g408wgC2IBHHrud94bIMJraSCJnK06sYsrH0aUCYiyPkLl3PKUu3WFvxd7fU
+         BmmnRXhLT5m0u7X26zANng3rEGNz/8K0OXYPDigWUZrtMZdikTBFGHkLk6rpt4Ib2ehe
+         kBBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761570130; x=1762174930;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pxCTtcPsN8230LeCJx3j5DlRF4pEORPX1pABk9GNfEI=;
+        b=DfHVJZyuIIGWqRYPqbSb+w3RHBBhEW5meV3SPHPnaTCBh1i3w3U4lLVeccPCoQdp9g
+         8ItZNYjatkwdFpczQAaZjbQtpbstn9UWgVas0XWOXNjLHce0IRPKsi6bJ4P6oIPdts8r
+         y6OHG7X59EiAD0xeoPW07vYSUismQuPFewkm+YtIqSXdWt0ZIbQ1sku99YotygMah4mQ
+         MfGyqXOFRcRL7FNoNrQhRdMC7V8vgQW3+6U0ToUwuXbIQFKHyIT2MvHkFqTs8IabuTEd
+         7DUjdLA84pMpgvGvuVHasWHDS3LdEelDCRMkHmNHTZIM6RgR/uidBo79Fvgjs7xTakjI
+         UCHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHTI+GEYiNQnt2EaAn45rmUl/NnaupSurVVvlHYwoolXD4U+jC7a+Su0f5PVLU4Pk8L28OURFdFvqdS2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmMD3D7VAAAwQBwQ7S8YOCrGGPbmvxyayw3sJJrGRLabjVLnrQ
+	NMu4aS4VyN8EhOIx8y9RZIDjt7epBGZz2lnP04bKMJTyHDRLWs5YX/uz
+X-Gm-Gg: ASbGncuMSEsoxoW1uoP3Bw79blk1luY0DTrRNaMXY5z/+bw6hqNmEJWxnYovzV+xuDG
+	7/WDyeQjBGOj5oKO5JIv1ORfI+2iDE4rJggA8ymbXONnbkWACV1DkNrE5JiyqccgPxEA4qTNy32
+	4zfZoE8w1Mc9YI3GOYnBd2TSkF7404O8XrOh+CaIAIlw/ykeo4FYI3Wz0u06lVgJHfpIS3iF6YX
+	bu+7g4VGuSDcIQwjs3IxTjpAEciobwHnquJ4RHE2eXH/Rogayuk+hQDbKE2QTcni3X453pffsHs
+	kVvlDybU7GK4PVCSBAScqdX+ViixB97K78GhFFyJ9ifsEzFJygf4ikRxT/R0gyOjEXpk/nxy8J1
+	Ktvaiz6zQPzC1Mn3l45baBVQW2D2u78kB+90CBdJ5QHRA6ordklM2NpPqrWjQ5NhpVHKTwPc7t+
+	wzdZOmesNGUlBPwDVBDmQizz9q5dCHmnTWhh8jfBKJyW5efWSzhPkbE3yxOqoXBLl/SSEb
+X-Google-Smtp-Source: AGHT+IEl/ogSJ08y9LQ2dV4OaLLEyD6Fjj0ThgIRaIYYP5R3v0fiFqlQt8CBQpsPUF3Equew6ssOkw==
+X-Received: by 2002:a2e:b893:0:b0:36c:f6:a4e1 with SMTP id 38308e7fff4ca-377978c6d84mr104935861fa.14.1761570129393;
+        Mon, 27 Oct 2025 06:02:09 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0d0028sm19860371fa.35.2025.10.27.06.02.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 06:02:08 -0700 (PDT)
+Message-ID: <a74c9c52-7c39-4c66-bdcf-0fb9e1b8f77c@gmail.com>
+Date: Mon, 27 Oct 2025 15:02:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027095139.399855-1-paul.sage@42.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/15] rtc: bd70528: Support BD72720 rtc
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <380ea1fdbb94a796418e8f463c6a9436001d572d.1761564043.git.mazziesaccount@gmail.com>
+ <202510271238195ef3bdfb@mail.local>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <202510271238195ef3bdfb@mail.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 10:51:39AM +0100, Paul SAGE wrote:
-> The tg3 currently call eth_platform_get_mac_address to retrieve the
-> MAC address from the device tree before trying the mailbox,
-> NVRAM and MAC registers.
-> However, this function only retrieves the MAC address from the device
-> tree using of_get_mac_address.
+On 27/10/2025 14:38, Alexandre Belloni wrote:
+> On 27/10/2025 13:47:51+0200, Matti Vaittinen wrote:
+>> The BD72720 has similar RTC block as a few other ROHM PMICs.
+>>
+>> Add support for BD72720 RTC.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
 > 
-> We are using device_get_mac_address, which use fwnode to obtain a MAC
-> address using the ACPI, so as we understand fwnode is an
-> abstraction layer for both the device tree (on ARM) and ACPI (on x86)
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > 
-> If true, it could be appropriate to replace the call to replace
-> eth_platform_get_mac_address with device_get_mac_address. This would
-> avoid running the entire function only to later check for a dummy
-> address.
-> 
-> Do you see any regression possible with this change ?
+> Note that we didn't get 07/15 that adds linux/mfd/rohm-bd72720.h which
+> this patch depends on.
 
-I don't know ACPI too well, DT is more advanced, and i tend to keep to
-ARM platforms.
+Thanks for the heads-up Alexandre!
 
-Does ACPI actually have a standardised mechanism for storing MAC
-address? Is there anything in the standard?
+For some reason the SMTP server seems to be blocking the 7/15 :/ I will 
+try to figure out a way to send it :(
 
-If you do make use of device_get_mac_address(), how is the MAC address
-stored in ACPI?
-
-Documentation/firmware-guide/acpi/dsd/phy.rst says:
-
-  These properties are defined in accordance with the "Device
-  Properties UUID For _DSD" [dsd-guide] document and the
-  daffd814-6eba-4d8c-8a91-bc9bbf4aa301 UUID must be used in the Device
-  Data Descriptors containing them.
-
-Is that what you are doing?
-
-Have you looked through other MAC drivers? Are there any others
-getting the MAC address from ACPI? Is it all proprietary, or is there
-some standardisation?
-
-If you do decide ACPI is missing this, and you want to move forward,
-please also add a document under Documentation/firmware-guide/acpi/dsd
-describing it.
-
-	Andrew
+Yours,
+	-- Matti
 
