@@ -1,129 +1,392 @@
-Return-Path: <linux-kernel+bounces-871632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20B7C0DDDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161B1C0DDF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E04422BB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF5A423339
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBA427877D;
-	Mon, 27 Oct 2025 13:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00116257AD1;
+	Mon, 27 Oct 2025 13:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwFg2t9S"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyrB0YhT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBAD248F4D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF62225782A;
+	Mon, 27 Oct 2025 13:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570133; cv=none; b=AV6Cu4Oj5sC+zK3VttYLVeaSHWPAxaN2IcncILGFdv2wQc8FUsB0iUAE0NUoGAwMXGFNRU62eTPCHr2bFpMHVPyJmzFSKxxFUunwMX30B8J1oKHmAbXvkeeLWUIZJhIsSUrpVIuWO5qmGEGwxtlRNnIIeWfKLPFb3XFA8tdB0Fw=
+	t=1761570152; cv=none; b=AJeruXG6vfJwqNDIA6mgVxW/qa06Rpp0/U0h98FPcRmQ1AF8kS8niFiOY/SbgUFloyutGF2Zzo61zA53r7u432jlOK0njtZRzrpxNsEAHEl0uufjCnRP5PBeXuxY2wDnlO9NJKX+AXhx5BScpJU2pcsYepC0XqSWP4zvK1ByBXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570133; c=relaxed/simple;
-	bh=1bB7L68kzJayTBvOhwCV/SjorHR+hB0GqpWfqKFMQiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mv7X46hKV0KFBvzMhqk5mZ3Hs7hQHk94xU/TBu8Um/1OW/eiNAG6VfV4Z6XKvnw8eKtHUrHrhg+JDbdxgQSg6jo22ctm4NJ9lmtDcAF55MRBpYrgNPIVNemJaze3O81igsl0+EGiMMoDtVUCnPvL2WFjY/N0R5wRwVeBEuaWC4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwFg2t9S; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3737d09d123so65483061fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761570130; x=1762174930; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pxCTtcPsN8230LeCJx3j5DlRF4pEORPX1pABk9GNfEI=;
-        b=fwFg2t9SG/sQuwHr+iOuOpC3wwIySvcp88EAW5Qw6/Py2Yfu/2U3pqbMMiloyGL1yn
-         G9+B5zMpSpXM4hzVroUx7nDp4F1WdWzgZg3/FxjVAiX/Cn2Qg5zLHAX0lZEjldlbL2p3
-         sByH1SDT+v5XdZLtuZLBrns3GsT6co610lr6RHkGvnsXR3xhPpteK5/q/8y+qpLRVKv9
-         tqxel4Y+g408wgC2IBHHrud94bIMJraSCJnK06sYsrH0aUCYiyPkLl3PKUu3WFvxd7fU
-         BmmnRXhLT5m0u7X26zANng3rEGNz/8K0OXYPDigWUZrtMZdikTBFGHkLk6rpt4Ib2ehe
-         kBBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761570130; x=1762174930;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pxCTtcPsN8230LeCJx3j5DlRF4pEORPX1pABk9GNfEI=;
-        b=DfHVJZyuIIGWqRYPqbSb+w3RHBBhEW5meV3SPHPnaTCBh1i3w3U4lLVeccPCoQdp9g
-         8ItZNYjatkwdFpczQAaZjbQtpbstn9UWgVas0XWOXNjLHce0IRPKsi6bJ4P6oIPdts8r
-         y6OHG7X59EiAD0xeoPW07vYSUismQuPFewkm+YtIqSXdWt0ZIbQ1sku99YotygMah4mQ
-         MfGyqXOFRcRL7FNoNrQhRdMC7V8vgQW3+6U0ToUwuXbIQFKHyIT2MvHkFqTs8IabuTEd
-         7DUjdLA84pMpgvGvuVHasWHDS3LdEelDCRMkHmNHTZIM6RgR/uidBo79Fvgjs7xTakjI
-         UCHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHTI+GEYiNQnt2EaAn45rmUl/NnaupSurVVvlHYwoolXD4U+jC7a+Su0f5PVLU4Pk8L28OURFdFvqdS2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmMD3D7VAAAwQBwQ7S8YOCrGGPbmvxyayw3sJJrGRLabjVLnrQ
-	NMu4aS4VyN8EhOIx8y9RZIDjt7epBGZz2lnP04bKMJTyHDRLWs5YX/uz
-X-Gm-Gg: ASbGncuMSEsoxoW1uoP3Bw79blk1luY0DTrRNaMXY5z/+bw6hqNmEJWxnYovzV+xuDG
-	7/WDyeQjBGOj5oKO5JIv1ORfI+2iDE4rJggA8ymbXONnbkWACV1DkNrE5JiyqccgPxEA4qTNy32
-	4zfZoE8w1Mc9YI3GOYnBd2TSkF7404O8XrOh+CaIAIlw/ykeo4FYI3Wz0u06lVgJHfpIS3iF6YX
-	bu+7g4VGuSDcIQwjs3IxTjpAEciobwHnquJ4RHE2eXH/Rogayuk+hQDbKE2QTcni3X453pffsHs
-	kVvlDybU7GK4PVCSBAScqdX+ViixB97K78GhFFyJ9ifsEzFJygf4ikRxT/R0gyOjEXpk/nxy8J1
-	Ktvaiz6zQPzC1Mn3l45baBVQW2D2u78kB+90CBdJ5QHRA6ordklM2NpPqrWjQ5NhpVHKTwPc7t+
-	wzdZOmesNGUlBPwDVBDmQizz9q5dCHmnTWhh8jfBKJyW5efWSzhPkbE3yxOqoXBLl/SSEb
-X-Google-Smtp-Source: AGHT+IEl/ogSJ08y9LQ2dV4OaLLEyD6Fjj0ThgIRaIYYP5R3v0fiFqlQt8CBQpsPUF3Equew6ssOkw==
-X-Received: by 2002:a2e:b893:0:b0:36c:f6:a4e1 with SMTP id 38308e7fff4ca-377978c6d84mr104935861fa.14.1761570129393;
-        Mon, 27 Oct 2025 06:02:09 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0d0028sm19860371fa.35.2025.10.27.06.02.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 06:02:08 -0700 (PDT)
-Message-ID: <a74c9c52-7c39-4c66-bdcf-0fb9e1b8f77c@gmail.com>
-Date: Mon, 27 Oct 2025 15:02:07 +0200
+	s=arc-20240116; t=1761570152; c=relaxed/simple;
+	bh=B5/2fJuj0llEydCKzz1l5nP8dp2nKovmE+gnGvEMlNk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=STCBJjYjXm1fzu9QoXi0Zt+RfL1ZcLlsXbz4c9ER7joidox9XrG25cloE0YYi/WvihqkQQ/JfH+xdHsly+xbKbCUIQyLqhvT42WwxL2hUBDQoQWHJVQ03fWW/7pG8kpi7Juh+eLeH3xm5BPMr5OFKPfCxdnPfovqNutXzdF1flY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyrB0YhT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A01C4CEF1;
+	Mon, 27 Oct 2025 13:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761570149;
+	bh=B5/2fJuj0llEydCKzz1l5nP8dp2nKovmE+gnGvEMlNk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=PyrB0YhT8GeeebNw8jB6EQ8x29mKYzlhoyltkd8yD6X7fcpiFYthcG3YGxuqFf+UL
+	 Cd7mHsHqV8CY38nnjmrjyNBWPVBomqIQdwrsiOjALL12C9fnG5rRMyT/87z4+xOxzn
+	 pOS8bQR1lncBBraoOg1U44Q6GIAeSMOQIV++OsFj2BX4rXHuqIAEyKdyBSqmOGpyqC
+	 tzqQ2ZzryG2pNk7rdeCkacBwqRB2rmaWVFnerJ2U4QzpHF//obx/IMK/5nKn7yA5IB
+	 wE6rWb2WFf4i13tqe+m+hchESes4zweIzlGZz6uOwS7QJkTiM+Lmu5bF3NCsobvWat
+	 3mkIy9Cm+PTLg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 27 Oct 2025 14:02:14 +0100
+Subject: [PATCH] soc: qcom: pmic_glink_altmode: Consume TBT3/USB4 mode
+ notifications
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/15] rtc: bd70528: Support BD72720 rtc
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <380ea1fdbb94a796418e8f463c6a9436001d572d.1761564043.git.mazziesaccount@gmail.com>
- <202510271238195ef3bdfb@mail.local>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <202510271238195ef3bdfb@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251027-topic-pg_altmode_usb4-v1-1-2931a3ecc146@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAFZt/2gC/x3MWwqAIBBA0a3EfCf46EFtJSJMpxqoFK0Ior0nf
+ Z6Pex+IGAgjtNkDAS+K5PYEkWdgFr3PyMgmg+SyFFzW7HCeDPPzoNdjcxaHM44F06ZorFbKcFF
+ Ban3Aie7/2/Xv+wHVM0HTZwAAAA==
+X-Change-ID: 20251027-topic-pg_altmode_usb4-ac49da33c016
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: usb4-upstream@oss.qualcomm.com, 
+ Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Jack Pham <jack.pham@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761570146; l=10513;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=NwKHVA9VTFHEowes5xL+aTOPpTXiWQTkEyzUXnkrDdE=;
+ b=3k29Fv2M68O4PpPIySOf66WvJiUwpiYlvMpcPT6No+3AXp+bF6CSOqbbSKrZcNdlGvzibL+DW
+ C3j/asnJsIJC1V7fK9TkoMKd60GeEvQVFbzQijKpuWiNjuU6i4fxVHv
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 27/10/2025 14:38, Alexandre Belloni wrote:
-> On 27/10/2025 13:47:51+0200, Matti Vaittinen wrote:
->> The BD72720 has similar RTC block as a few other ROHM PMICs.
->>
->> Add support for BD72720 RTC.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
-> 
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> Note that we didn't get 07/15 that adds linux/mfd/rohm-bd72720.h which
-> this patch depends on.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Thanks for the heads-up Alexandre!
+Some compute SoCs support additional operation modes, extending the
+existing set of USB3/safe/DP-alt-mode.
 
-For some reason the SMTP server seems to be blocking the 7/15 :/ I will 
-try to figure out a way to send it :(
+The firmware performs all the necessary handshakes for
+us and there is no room for error on that level (i.e. the sequences
+will match what happens on Windows).
 
-Yours,
-	-- Matti
+The trade-off with that approach is that the received notifications
+trim some of the PDO/EUDO data (particularly the cable/plug parts),
+offering a set of similar-in-nature-but-not-the-same indicators.
+
+In an attempt to remedy this, I reconstructed some of it, so that the
+connected mux/retimer drivers can continue to behave as expected.
+
+Add support for parsing the aforementioned data coming from PMIC_GLINK
+and passing it on to the various Type-C components.
+
+Reviewed-by: Jack Pham <jack.pham@oss.qualcomm.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+note: I carried Jack's r-b from an internal pre-review
+---
+ drivers/soc/qcom/pmic_glink_altmode.c | 188 +++++++++++++++++++++++++++++-----
+ 1 file changed, 165 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
+index 7f11acd33323..d0afdcb96ee1 100644
+--- a/drivers/soc/qcom/pmic_glink_altmode.c
++++ b/drivers/soc/qcom/pmic_glink_altmode.c
+@@ -14,10 +14,12 @@
+ #include <linux/soc/qcom/pdr.h>
+ #include <drm/bridge/aux-bridge.h>
+ 
++#include <linux/usb/pd.h>
+ #include <linux/usb/typec_altmode.h>
+ #include <linux/usb/typec_dp.h>
+ #include <linux/usb/typec_mux.h>
+ #include <linux/usb/typec_retimer.h>
++#include <linux/usb/typec_tbt.h>
+ 
+ #include <linux/soc/qcom/pmic_glink.h>
+ 
+@@ -37,11 +39,38 @@ struct usbc_write_req {
+ 	__le32 reserved;
+ };
+ 
+-#define NOTIFY_PAYLOAD_SIZE 16
++struct usbc_sc8280x_dp_data {
++	u8 pin_assignment : 6;
++	u8 hpd_state : 1;
++	u8 hpd_irq : 1;
++	u8 res[7];
++};
++
++/* Used for both TBT and USB4 notifications */
++struct usbc_sc8280x_tbt_data {
++	u8 usb_speed : 3;
++	u8 cable_type : 3;
++	/* This field is NOP on USB4, all cables support rounded rates by spec */
++	u8 rounded_cable : 1;
++	u8 power_limited : 1;
++	u8 res[11];
++};
++
+ struct usbc_notify {
+ 	struct pmic_glink_hdr hdr;
+-	char payload[NOTIFY_PAYLOAD_SIZE];
+-	u32 reserved;
++	u8 port_idx;
++	u8 orientation;
++	u8 mux_ctrl;
++#define MUX_CTRL_STATE_NO_CONN			0
++#define MUX_CTRL_STATE_TUNNELING		4
++
++	u8 res;
++	__le16 vid;
++	__le16 svid;
++	union usbc_sc8280x_extended_data {
++		struct usbc_sc8280x_dp_data dp;
++		struct usbc_sc8280x_tbt_data tbt;
++	} extended_data;
+ };
+ 
+ struct usbc_sc8180x_notify {
+@@ -74,6 +103,7 @@ struct pmic_glink_altmode_port {
+ 	struct typec_retimer *typec_retimer;
+ 	struct typec_retimer_state retimer_state;
+ 	struct typec_altmode dp_alt;
++	struct typec_altmode tbt_alt;
+ 
+ 	struct work_struct work;
+ 
+@@ -81,10 +111,12 @@ struct pmic_glink_altmode_port {
+ 
+ 	enum typec_orientation orientation;
+ 	u16 svid;
++	struct usbc_sc8280x_tbt_data tbt_data;
+ 	u8 dp_data;
+ 	u8 mode;
+ 	u8 hpd_state;
+ 	u8 hpd_irq;
++	u8 mux_ctrl;
+ };
+ 
+ #define work_to_altmode(w) container_of((w), struct pmic_glink_altmode, enable_work)
+@@ -170,6 +202,102 @@ static void pmic_glink_altmode_enable_dp(struct pmic_glink_altmode *altmode,
+ 		dev_err(altmode->dev, "failed to setup retimer to DP: %d\n", ret);
+ }
+ 
++static void pmic_glink_altmode_enable_tbt(struct pmic_glink_altmode *altmode,
++					  struct pmic_glink_altmode_port *port)
++{
++	struct usbc_sc8280x_tbt_data *tbt = &port->tbt_data;
++	struct typec_thunderbolt_data tbt_data = {};
++	u32 cable_speed;
++	int ret;
++
++	/* Device Discover Mode VDO */
++	tbt_data.device_mode = TBT_MODE;
++	tbt_data.device_mode |= TBT_SET_ADAPTER(TBT_ADAPTER_TBT3);
++
++	/* Cable Discover Mode VDO */
++	tbt_data.cable_mode = TBT_MODE;
++
++	if (tbt->usb_speed == 0) {
++		cable_speed = TBT_CABLE_USB3_PASSIVE;
++	} else if (tbt->usb_speed == 1) {
++		cable_speed = TBT_CABLE_10_AND_20GBPS;
++	} else {
++		dev_err(altmode->dev,
++			"Got illegal TBT3 cable speed value (%u), falling back to passive\n",
++			tbt->usb_speed);
++		cable_speed = TBT_CABLE_USB3_PASSIVE;
++	}
++	tbt_data.cable_mode |= TBT_SET_CABLE_SPEED(cable_speed);
++
++	if (tbt->cable_type) {
++		tbt_data.cable_mode |= TBT_CABLE_ACTIVE_PASSIVE;
++		tbt_data.cable_mode |= TBT_SET_CABLE_ROUNDED(tbt->rounded_cable);
++	}
++
++	/* Enter Mode VDO */
++	tbt_data.enter_vdo |= TBT_MODE;
++	tbt_data.enter_vdo |= TBT_ENTER_MODE_CABLE_SPEED(cable_speed);
++
++	if (tbt->cable_type) {
++		tbt_data.enter_vdo |= TBT_CABLE_ACTIVE_PASSIVE;
++		tbt_data.enter_vdo |= TBT_SET_CABLE_ROUNDED(tbt->rounded_cable);
++	}
++
++	port->state.alt = &port->tbt_alt;
++	port->state.data = &tbt_data;
++	port->state.mode = TYPEC_MODAL_STATE(port->mode);
++
++	ret = typec_mux_set(port->typec_mux, &port->state);
++	if (ret)
++		dev_err(altmode->dev, "failed to switch mux to USB: %d\n", ret);
++
++	port->retimer_state.alt = &port->tbt_alt;
++	port->retimer_state.data = &tbt_data;
++	port->retimer_state.mode = TYPEC_MODAL_STATE(port->mode);
++
++	ret = typec_retimer_set(port->typec_retimer, &port->retimer_state);
++	if (ret)
++		dev_err(altmode->dev, "failed to setup retimer to USB: %d\n", ret);
++}
++
++static void pmic_glink_altmode_enable_usb4(struct pmic_glink_altmode *altmode,
++					   struct pmic_glink_altmode_port *port)
++{
++	struct usbc_sc8280x_tbt_data *tbt = &port->tbt_data;
++	struct enter_usb_data data = {};
++	int ret;
++
++	data.eudo = FIELD_PREP(EUDO_USB_MODE_MASK, EUDO_USB_MODE_USB4);
++
++	if (tbt->usb_speed == 0) {
++		data.eudo |= FIELD_PREP(EUDO_CABLE_SPEED_MASK, EUDO_CABLE_SPEED_USB4_GEN2);
++	} else if (tbt->usb_speed == 1) {
++		data.eudo |= FIELD_PREP(EUDO_CABLE_SPEED_MASK, EUDO_CABLE_SPEED_USB4_GEN3);
++	} else {
++		pr_err("Got illegal USB4 cable speed value (%u), falling back to G2\n",
++		       tbt->usb_speed);
++		data.eudo |= FIELD_PREP(EUDO_CABLE_SPEED_MASK, EUDO_CABLE_SPEED_USB4_GEN2);
++	}
++
++	data.eudo |= FIELD_PREP(EUDO_CABLE_TYPE_MASK, tbt->cable_type);
++
++	port->state.alt = NULL;
++	port->state.data = &data;
++	port->state.mode = TYPEC_MODE_USB4;
++
++	ret = typec_mux_set(port->typec_mux, &port->state);
++	if (ret)
++		dev_err(altmode->dev, "failed to switch mux to USB: %d\n", ret);
++
++	port->retimer_state.alt = NULL;
++	port->retimer_state.data = &data;
++	port->retimer_state.mode = TYPEC_MODE_USB4;
++
++	ret = typec_retimer_set(port->typec_retimer, &port->retimer_state);
++	if (ret)
++		dev_err(altmode->dev, "failed to setup retimer to USB: %d\n", ret);
++}
++
+ static void pmic_glink_altmode_enable_usb(struct pmic_glink_altmode *altmode,
+ 					  struct pmic_glink_altmode_port *port)
+ {
+@@ -222,15 +350,15 @@ static void pmic_glink_altmode_worker(struct work_struct *work)
+ 
+ 	typec_switch_set(alt_port->typec_switch, alt_port->orientation);
+ 
+-	if (alt_port->svid == USB_TYPEC_DP_SID) {
+-		if (alt_port->mode == 0xff) {
+-			pmic_glink_altmode_safe(altmode, alt_port);
+-		} else {
+-			pmic_glink_altmode_enable_dp(altmode, alt_port,
+-						     alt_port->mode,
+-						     alt_port->hpd_state,
+-						     alt_port->hpd_irq);
+-		}
++	if (alt_port->mux_ctrl == MUX_CTRL_STATE_NO_CONN) {
++		pmic_glink_altmode_safe(altmode, alt_port);
++	} else if (alt_port->svid == USB_TYPEC_TBT_SID) {
++		pmic_glink_altmode_enable_tbt(altmode, alt_port);
++	} else if (alt_port->svid == USB_TYPEC_DP_SID) {
++		pmic_glink_altmode_enable_dp(altmode, alt_port,
++					     alt_port->mode,
++					     alt_port->hpd_state,
++					     alt_port->hpd_irq);
+ 
+ 		if (alt_port->hpd_state)
+ 			conn_status = connector_status_connected;
+@@ -238,6 +366,8 @@ static void pmic_glink_altmode_worker(struct work_struct *work)
+ 			conn_status = connector_status_disconnected;
+ 
+ 		drm_aux_hpd_bridge_notify(&alt_port->bridge->dev, conn_status);
++	} else if (alt_port->mux_ctrl == MUX_CTRL_STATE_TUNNELING) {
++		pmic_glink_altmode_enable_usb4(altmode, alt_port);
+ 	} else {
+ 		pmic_glink_altmode_enable_usb(altmode, alt_port);
+ 	}
+@@ -314,11 +444,10 @@ static void pmic_glink_altmode_sc8280xp_notify(struct pmic_glink_altmode *altmod
+ 					       u16 svid, const void *data, size_t len)
+ {
+ 	struct pmic_glink_altmode_port *alt_port;
++	const struct usbc_sc8280x_tbt_data *tbt;
++	const struct usbc_sc8280x_dp_data *dp;
+ 	const struct usbc_notify *notify;
+ 	u8 orientation;
+-	u8 hpd_state;
+-	u8 hpd_irq;
+-	u8 mode;
+ 	u8 port;
+ 
+ 	if (len != sizeof(*notify)) {
+@@ -329,11 +458,8 @@ static void pmic_glink_altmode_sc8280xp_notify(struct pmic_glink_altmode *altmod
+ 
+ 	notify = data;
+ 
+-	port = notify->payload[0];
+-	orientation = notify->payload[1];
+-	mode = FIELD_GET(SC8280XP_DPAM_MASK, notify->payload[8]) - DPAM_HPD_A;
+-	hpd_state = FIELD_GET(SC8280XP_HPD_STATE_MASK, notify->payload[8]);
+-	hpd_irq = FIELD_GET(SC8280XP_HPD_IRQ_MASK, notify->payload[8]);
++	port = notify->port_idx;
++	orientation = notify->orientation;
+ 
+ 	if (port >= ARRAY_SIZE(altmode->ports) || !altmode->ports[port].altmode) {
+ 		dev_dbg(altmode->dev, "notification on undefined port %d\n", port);
+@@ -343,9 +469,21 @@ static void pmic_glink_altmode_sc8280xp_notify(struct pmic_glink_altmode *altmod
+ 	alt_port = &altmode->ports[port];
+ 	alt_port->orientation = pmic_glink_altmode_orientation(orientation);
+ 	alt_port->svid = svid;
+-	alt_port->mode = mode;
+-	alt_port->hpd_state = hpd_state;
+-	alt_port->hpd_irq = hpd_irq;
++	alt_port->mux_ctrl = notify->mux_ctrl;
++
++	if (svid == USB_TYPEC_DP_SID) {
++		dp = &notify->extended_data.dp;
++
++		alt_port->mode = dp->pin_assignment - DPAM_HPD_A;
++		alt_port->hpd_state = dp->hpd_state;
++		alt_port->hpd_irq = dp->hpd_irq;
++	} else if (alt_port->mux_ctrl == MUX_CTRL_STATE_TUNNELING) {
++		/* Valid for both USB4 and TBT3 */
++		tbt = &notify->extended_data.tbt;
++
++		alt_port->tbt_data = *tbt;
++	}
++
+ 	schedule_work(&alt_port->work);
+ }
+ 
+@@ -471,6 +609,10 @@ static int pmic_glink_altmode_probe(struct auxiliary_device *adev,
+ 		alt_port->dp_alt.mode = USB_TYPEC_DP_MODE;
+ 		alt_port->dp_alt.active = 1;
+ 
++		alt_port->tbt_alt.svid = USB_TYPEC_TBT_SID;
++		alt_port->tbt_alt.mode = TYPEC_TBT_MODE;
++		alt_port->tbt_alt.active = 1;
++
+ 		alt_port->typec_mux = fwnode_typec_mux_get(fwnode);
+ 		if (IS_ERR(alt_port->typec_mux)) {
+ 			fwnode_handle_put(fwnode);
+
+---
+base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
+change-id: 20251027-topic-pg_altmode_usb4-ac49da33c016
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
