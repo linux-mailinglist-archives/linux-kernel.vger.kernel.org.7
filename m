@@ -1,270 +1,185 @@
-Return-Path: <linux-kernel+bounces-871119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1E1C0C772
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 653BCC0C77E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 141654F6E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:53:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1BA594F369D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742E62F6910;
-	Mon, 27 Oct 2025 08:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67742F7AAD;
+	Mon, 27 Oct 2025 08:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aQ7VYtha";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="99+iJSC2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="C9rP9vCN"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB632F3C1A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E132F6918
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554732; cv=none; b=oAwoUx+3oajn47Q/yO1+jXKAjRPC04bXQLfc/4xCXWRx9CFEIUoCN3zIXl0jFHUbE0xB1g7a6lMlg+dceDdJrhPrtLLvhV6F5YDEB0orRs6/WpTA4tFva2o04i/EN2DhrC52qPLcyKHgsLexXhFe3pASk6XiYc9UVGYZoPBoZps=
+	t=1761554756; cv=none; b=kXLxVGICig3T1DHM6q2/9L6t9qOb/JweinCO2eG/45Bgh1MsIS8NoOc+3soYLM329oKWH0ZeJHuBXzYNt2lkCIzYavkbgiuZPZyhhuesisPIk7qQ9sNj1VvXNZeiSltEaXi5aXbocbiEEsfjM6NFm2JXpUNSvas5C7LLkgLLQGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554732; c=relaxed/simple;
-	bh=MLJlR5gDufQoHuLihUB41vDLrVPi96PJBglzaw+py24=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=VzXPHSY0brTezjYi2h9aRsSvmgnez/eBiVqSss4msjgGr4Cdae5Yqg3KmyEy7VI7gXKJtWlja45uJcaMGSss4KWWs1/ig6URe7548DX79OcaLgHPpRwY8MZhk8Q1ew9jtKPq2Z+4HMsoqq2IwvHzYojuoi4piixlK6ES2yy0W2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aQ7VYtha; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=99+iJSC2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251027084307.903622031@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761554727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=tSfZiFEU/OVr8nUKt3URejIK7nghCq2swoGI8UYKJ6w=;
-	b=aQ7VYtha/J7Ywu1ewiv8XNXJLpra9q5WM6Wa0yBpuW4yfdT0TivTGmgxuzvBIYt2tCLBPn
-	MYG8F7LVO/044FKcybgo7/PHAKkrkuUC5hq2+/DcMOg3mEPs03DvgUI6Z1gt7Q9zYG/CJ9
-	yAxYOu1eeoEYhguZ8Jt9e+rF6VwpUdbOA164Pzl+XNVTgIuDE20E3Z/vpj/X4KLq1CXe7U
-	HEHx7f0FZkFvHgecqMkQgyCldE1b/fb10GHx9LqG7yYtwxO0FzTk1Dnr6bAPX2ye+Iw7Kl
-	zP7d9dCNM4X/PVuegOyn3wE0bLchz7Bi/hLpIv5C9lLsVVCXC93b8hpty7RJsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761554727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=tSfZiFEU/OVr8nUKt3URejIK7nghCq2swoGI8UYKJ6w=;
-	b=99+iJSC2kim8Zb8jdzIUm4ScIVeLRLHxBuW1q22xF4MPd+gB7W2obGy7fUIbghGmwCKo2M
-	ZrWC1kq3MTEx1KCg==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
- Jens Axboe <axboe@kernel.dk>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- x86@kernel.org,
- Sean Christopherson <seanjc@google.com>,
- Wei Liu <wei.liu@kernel.org>
-Subject: [patch V6 31/31] rseq: Switch to TIF_RSEQ if supported
-References: <20251027084220.785525188@linutronix.de>
+	s=arc-20240116; t=1761554756; c=relaxed/simple;
+	bh=yblexPAF1yXmhpUYnJ7sU72VNu9PiHvfkeydduKfwwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXDOIExr7auFbra66g4FVj142Ztbk776QhpXi9PNxyYVANt0qauFcpwWfvRL3tO6q7Z1w7ChM86M0QnX7H8ke6jBGsRVZZmPQt2UPv+XChs1e3bX4GLMYWAi7p0tcE/YqJ2f5K4FETsNImJrVjmipGpuKGjnpWzipfLjvy0UrpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=C9rP9vCN; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 304001014863
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:15:43 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 304001014863
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1761554743; bh=yblexPAF1yXmhpUYnJ7sU72VNu9PiHvfkeydduKfwwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C9rP9vCNYcVnpzORl+MACWkj3IGTHR+OrS8K1jh4y3G0XHnSoRca6Up8chQ6OKDKB
+	 6S7ijcYlng7G89oL2ALAzhT3YzqlBgOeEHuB4jDhhveRc59reMIBOVVGpHt05hQ6oQ
+	 gY2hiD+NvAtEunxUszalXT0+qMr4nB81E2n0QPms=
+Received: (qmail 24705 invoked by uid 510); 27 Oct 2025 14:15:43 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.344548 secs; 27 Oct 2025 14:15:43 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 27 Oct 2025 14:15:40 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id CD1AD360035;
+	Mon, 27 Oct 2025 14:15:39 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 9D5161E813F2;
+	Mon, 27 Oct 2025 14:15:39 +0530 (IST)
+Date: Mon, 27 Oct 2025 14:15:31 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org,
+	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
+	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
+	salah.triki@gmail.com, skhan@linuxfoundation.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
+Message-ID: <20251027-84531-1235547@bhairav-test.ee.iitb.ac.in>
+References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
+ <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
+ <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
+ <c45309cf-bd2c-41fe-b893-7e0a91de84a8@kernel.org>
+ <aPs6HAJabFMRzX9Y@smile.fi.intel.com>
+ <aPs6raLIcM3QbQXJ@smile.fi.intel.com>
+ <20251024-175010-876729@bhairav-test.ee.iitb.ac.in>
+ <aP8sLeR7eTBntozI@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Oct 2025 09:45:26 +0100 (CET)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aP8sLeR7eTBntozI@smile.fi.intel.com>
 
-TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is suboptimal especially
-with the RSEQ fast path depending on it, but not really handling it.
+On Mon, Oct 27, 2025 at 10:24:13AM +0200, Andy Shevchenko wrote:
+> On Fri, Oct 24, 2025 at 11:20:10PM +0530, Akhilesh Patil wrote:
+> > On Fri, Oct 24, 2025 at 11:37:01AM +0300, Andy Shevchenko wrote:
+> > > On Fri, Oct 24, 2025 at 11:34:37AM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Oct 24, 2025 at 08:18:21AM +0200, Krzysztof Kozlowski wrote:
+> > > > > On 23/10/2025 20:51, Andy Shevchenko wrote:
+> > > > > > On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
+> > > > > >> On 11/10/2025 16:10, Andy Shevchenko wrote:
+> > > > > >>> On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+> 
+> ...
+> 
+> > > > > >>>> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
+> > > > > >>>> +F:     drivers/iio/pressure/adp810.c
+> > > > > >>>
+> > > > > >>> Some tools will report an orphaned yaml file if you apply patch 1
+> > > > > >>> without patch 2.
+> > > > > >>
+> > > > > >> You mean checkpatch? That warning is not really relevant. Adding
+> > > > > >> maintainers entry here for both files is perfectly fine and correct.
+> > > > > > 
+> > > > > > It's relevant as long as I see (false positive) warnings from it. Can somebody
+> > > > > 
+> > > > > No, it is not relevant. Just because tool is inefficient does not allow
+> > > > > you to point such nitpicks. You as reviewer are supposed to find
+> > > > > difference which checkpatch warnings are important and which are not and
+> > > > > DO NOT bother contributors with useless points that there is some
+> > > > > orphaned file according to checkpatch.
+> > > > > 
+> > > > > > shut the checkpatch up about missing DT files in the MAINTAINERS?
+> > > > > 
+> > > > > That would be great but, if no one does it your comments on "orphaned
+> > > > > file" are counter productive.
+> > > > 
+> > > > Something like this?
+> > > > 
+> > > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > > > index 6729f18e5654..818b49d314ce 100755
+> > > > --- a/scripts/checkpatch.pl
+> > > > +++ b/scripts/checkpatch.pl
+> > > > @@ -3441,11 +3441,17 @@ sub process {
+> > > >  		     ($line =~ /\{\s*([\w\/\.\-]*)\s*\=\>\s*([\w\/\.\-]*)\s*\}/ &&
+> > > >  		      (defined($1) || defined($2))))) {
+> > > >  			$is_patch = 1;
+> > > > -			$reported_maintainer_file = 1;
+> > > > -			WARN("FILE_PATH_CHANGES",
+> > > > -			     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
+> > > > +			# DT bindings are incorporate maintainer information, no need to report
+> > > > +			if ($realfile !~ m@^Documentation/devicetree/bindings/@)) {
+> > > > +				$reported_maintainer_file = 1;
+> > > > +				WARN("FILE_PATH_CHANGES",
+> > > > +				     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
+> > > > +			}
+> > > >  		}
+> > > 
+> > > > +		    ($realfile =~ m@^Documentation/devicetree/bindings/.*\.txt$@)) {
+> > > > +			if ($realfile =~ m@^include/asm/@) {
+> > > 
+> > > These two lines are leftovers that needs to be removed, of course.
+> > > 
+> > > Akhilesh, can you give a try of this change and see if the original DT schema
+> > > binding patch is not reported anymore?
+> > 
+> > Hi Andy. I tested checkpatch.pl patch you suggested here. checkpatch
+> > does NOT show the warning now on my dt-bindings patch. Thanks for
+> > initiating this script improvement.
+> > I believe this is kernel wide script improvement and best to take
+> > independently if I understood correctly.
+> 
+> Definitely. May I use your Tested-by tag?
 
-Define a seperate TIF_RSEQ in the generic TIF space and enable the full
-seperation of fast and slow path for architectures which utilize that.
+Yes. Sure. 
 
-That avoids the hassle with invocations of resume_user_mode_work() from
-hypervisors, which clear TIF_NOTIFY_RESUME. It makes the therefore required
-re-evaluation at the end of vcpu_run() a NOOP on architectures which
-utilize the generic TIF space and have a seperate TIF_RSEQ.
+Tested-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 
-The hypervisor TIF handling does not include the seperate TIF_RSEQ as there
-is no point in doing so. The guest does neither know nor care about the VMM
-host applications RSEQ state. That state is only relevant when the ioctl()
-returns to user space.
+anyways, I can ack on your patch with this, once you create it.
 
-The fastpath implementation still utilizes TIF_NOTIFY_RESUME for failure
-handling, but this only happens within exit_to_user_mode_loop(), so
-arguably the hypervisor ioctl() code is long done when this happens.
+Regards,
+Akhilesh
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
----
-V4: Adjust it to the new outer loop mechanism
-
-V3: Updated the comment for rseq_virt_userspace_exit() - Sean
-    Added a static assert for TIF_RSEQ != TIF_NOTIFY_RESUME - Sean
----
- include/asm-generic/thread_info_tif.h |    3 +++
- include/linux/irq-entry-common.h      |    2 +-
- include/linux/rseq.h                  |   22 +++++++++++++++-------
- include/linux/rseq_entry.h            |   27 +++++++++++++++++++++++++--
- include/linux/thread_info.h           |    5 +++++
- kernel/entry/common.c                 |   10 ++++++++--
- 6 files changed, 57 insertions(+), 12 deletions(-)
---- a/include/asm-generic/thread_info_tif.h
-+++ b/include/asm-generic/thread_info_tif.h
-@@ -45,4 +45,7 @@
- # define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
- #endif
- 
-+#define TIF_RSEQ		11	// Run RSEQ fast path
-+#define _TIF_RSEQ		BIT(TIF_RSEQ)
-+
- #endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -30,7 +30,7 @@
- #define EXIT_TO_USER_MODE_WORK						\
- 	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |		\
- 	 _TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |			\
--	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |			\
-+	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL | _TIF_RSEQ |		\
- 	 ARCH_EXIT_TO_USER_MODE_WORK)
- 
- /**
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -42,7 +42,7 @@ static inline void rseq_signal_deliver(s
- 
- static inline void rseq_raise_notify_resume(struct task_struct *t)
- {
--	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
-+	set_tsk_thread_flag(t, TIF_RSEQ);
- }
- 
- /* Invoked from context switch to force evaluation on exit to user */
-@@ -114,17 +114,25 @@ static inline void rseq_force_update(voi
- 
- /*
-  * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
-- * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
-- * that case just to do it eventually again before returning to user space,
-- * the entry resume_user_mode_work() invocation is ignored as the register
-- * argument is NULL.
-+ * which clears TIF_NOTIFY_RESUME on architectures that don't use the
-+ * generic TIF bits and therefore can't provide a separate TIF_RSEQ flag.
-  *
-- * After returning from guest mode, they have to invoke this function to
-- * re-raise TIF_NOTIFY_RESUME if necessary.
-+ * To avoid updating user space RSEQ in that case just to do it eventually
-+ * again before returning to user space, because __rseq_handle_slowpath()
-+ * does nothing when invoked with NULL register state.
-+ *
-+ * After returning from guest mode, before exiting to userspace, hypervisors
-+ * must invoke this function to re-raise TIF_NOTIFY_RESUME if necessary.
-  */
- static inline void rseq_virt_userspace_exit(void)
- {
- 	if (current->rseq.event.sched_switch)
-+	/*
-+	 * The generic optimization for deferring RSEQ updates until the next
-+	 * exit relies on having a dedicated TIF_RSEQ.
-+	 */
-+	if (!IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS) &&
-+	    current->rseq.event.sched_switch)
- 		rseq_raise_notify_resume(current);
- }
- 
---- a/include/linux/rseq_entry.h
-+++ b/include/linux/rseq_entry.h
-@@ -507,13 +507,36 @@ static __always_inline bool __rseq_exit_
- 	return false;
- }
- 
--static __always_inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
-+/* Required to allow conversion to GENERIC_ENTRY w/o GENERIC_TIF_BITS */
-+#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
-+static __always_inline bool test_tif_rseq(unsigned long ti_work)
- {
-+	return ti_work & _TIF_RSEQ;
-+}
-+
-+static __always_inline void clear_tif_rseq(void)
-+{
-+	static_assert(TIF_RSEQ != TIF_NOTIFY_RESUME);
-+	clear_thread_flag(TIF_RSEQ);
-+}
-+#else
-+static __always_inline bool test_tif_rseq(unsigned long ti_work) { return true; }
-+static __always_inline void clear_tif_rseq(void) { }
-+#endif
-+
-+static __always_inline bool
-+rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
-+{
-+	if (likely(!test_tif_rseq(ti_work)))
-+		return false;
-+
- 	if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
- 		current->rseq.event.slowpath = true;
- 		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
- 		return true;
- 	}
-+
-+	clear_tif_rseq();
- 	return false;
- }
- 
-@@ -557,7 +580,7 @@ static inline void rseq_debug_syscall_re
- }
- #else /* CONFIG_RSEQ */
- static inline void rseq_note_user_irq_entry(void) { }
--static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
-+static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
- {
- 	return false;
- }
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -67,6 +67,11 @@ enum syscall_work_bit {
- #define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
- #endif
- 
-+#ifndef TIF_RSEQ
-+# define TIF_RSEQ	TIF_NOTIFY_RESUME
-+# define _TIF_RSEQ	_TIF_NOTIFY_RESUME
-+#endif
-+
- #ifdef __KERNEL__
- 
- #ifndef arch_set_restart_data
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -11,6 +11,12 @@
- /* Workaround to allow gradual conversion of architecture code */
- void __weak arch_do_signal_or_restart(struct pt_regs *regs) { }
- 
-+#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
-+#define EXIT_TO_USER_MODE_WORK_LOOP	(EXIT_TO_USER_MODE_WORK & ~_TIF_RSEQ)
-+#else
-+#define EXIT_TO_USER_MODE_WORK_LOOP	(EXIT_TO_USER_MODE_WORK)
-+#endif
-+
- static __always_inline unsigned long __exit_to_user_mode_loop(struct pt_regs *regs,
- 							      unsigned long ti_work)
- {
-@@ -18,7 +24,7 @@ static __always_inline unsigned long __e
- 	 * Before returning to user space ensure that all pending work
- 	 * items have been completed.
- 	 */
--	while (ti_work & EXIT_TO_USER_MODE_WORK) {
-+	while (ti_work & EXIT_TO_USER_MODE_WORK_LOOP) {
- 
- 		local_irq_enable_exit_to_user(ti_work);
- 
-@@ -68,7 +74,7 @@ static __always_inline unsigned long __e
- 	for (;;) {
- 		ti_work = __exit_to_user_mode_loop(regs, ti_work);
- 
--		if (likely(!rseq_exit_to_user_mode_restart(regs)))
-+		if (likely(!rseq_exit_to_user_mode_restart(regs, ti_work)))
- 			return ti_work;
- 		ti_work = read_thread_flags();
- 	}
-
+> 
+> > > >  # Check for adding new DT bindings not in schema format
+> > > >  		if (!$in_commit_log &&
+> > > >  		    ($line =~ /^new file mode\s*\d+\s*$/) &&
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
