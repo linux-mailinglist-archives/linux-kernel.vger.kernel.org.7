@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-872214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93FAC0F968
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:16:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD275C0F9A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B2794F6EA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79108428346
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA7F315D4E;
-	Mon, 27 Oct 2025 17:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C2930E0C5;
+	Mon, 27 Oct 2025 17:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S+1joJJK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RCyckc7o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="s//7eFe2"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A51E3168EB;
-	Mon, 27 Oct 2025 17:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7A3533D6;
+	Mon, 27 Oct 2025 17:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585309; cv=none; b=MEvReKAhrauUG44mf7eYdxc7ca3etg28kvnpG8Vx8hMZc6kguHCJ5++LkIh/SEx5tmRsvqGEJ13HPzKdjWakjLXDlsJKXQvNCwmoyb4w0h84jFpZcB+nJkRx//94sz29s6TAeSUqL5nDOSxLb9Hz9KCEoCEFPwv1cMWB98Nhzro=
+	t=1761585384; cv=none; b=VbwtR7fVOf6lChLBY6Ew2c9t5o3amiCxcAEfvWcrr7jbjkm3ogqVwWgb4BfFEK45Njf3UYO/DO+y91C4Z+c+xBtD6FXkS9evebT0oyHjXIozB2pKPyD8h5FYXH6L1NueXAusIKyFOLesNG8jnv48jRY47Hpt1Vw+5Ux8Yd+6yGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585309; c=relaxed/simple;
-	bh=bbg2yU5WDCd/y1piJqwaFFX8rwD+L6pzaMgcKs8Sy9E=;
+	s=arc-20240116; t=1761585384; c=relaxed/simple;
+	bh=SGpo5zbLkYNSYLhZSQlZopf0gXlOu07LHyQlsl9f/yo=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=umVeAjtc4lQSx2SfsOtLIioTmOnxb3p6DDmVe0AHfs2qqr6VPf41DJwKqbJVhzygS4wYtxWGMCTglYP5OAJ93OWoxyxmP3lw4R0InWBBcpfk2XY4POJaOFz6EwNvD9Q5FZnljx6RPNIWO8BNH1dSExffeuzQVyvJFds+oeSVtM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S+1joJJK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RCyckc7o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761585306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a0Kmg0M/pihg+3mchefRKJW/8qhO0EXT2ncDeCzUrSc=;
-	b=S+1joJJKL5HOP2QI7bePmaQsErjZHts/8tAjGua3A3++P+uxwhzP6Fx+CgA+saMowyM/Un
-	qF1s+8Z1CTSJc278sFPw14sZSSoNPm71h0PyF/0QKybtsp+jpWQPmjC4zruRYx0vkSIFvy
-	UWhtf5ww4Zpghxxms4sRdmPlCamm85FHT9I1E+9CpPa2boPNMt2j3JjdgppUSlh1Sn1bNR
-	FmzEyEDDyPeq7kQKP/vw2ziBPXIDOqE3QlkAYQCKJeOmJf5nSl66AotEtUGLuhrOdu3wzs
-	JDiizpLx+fpfP8M8doVAcRU9Vj/rT8NqbqjYG4J6tCYaCDxF4BmEUlPc/ZDVMA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761585306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a0Kmg0M/pihg+3mchefRKJW/8qhO0EXT2ncDeCzUrSc=;
-	b=RCyckc7oww7LF/Ey96p7Gohn/JMg7811PjAJquXTWtNmny2y8jawDxqgoepfeTcokWQ1pv
-	GYPaiP3kZRgFcxBg==
-To: Ulf Hansson <ulf.hansson@linaro.org>, Ben Horgan <ben.horgan@arm.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>, Maulik Shah
- <quic_mkshah@quicinc.com>, Sudeep Holla <sudeep.holla@arm.com>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, Vincent Guittot
- <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] smp: Introduce a helper function to check for
- pending IPIs
-In-Reply-To: <CAPDyKFrY5kOsoOH-mcWFiaiggV4q84xOtiKHdNN4bMfFmYOQPQ@mail.gmail.com>
-References: <20251020141718.150919-1-ulf.hansson@linaro.org>
- <20251020141718.150919-2-ulf.hansson@linaro.org>
- <a0120876-0f00-4e1a-aa17-5fe7c3512276@arm.com>
- <CAPDyKFrY5kOsoOH-mcWFiaiggV4q84xOtiKHdNN4bMfFmYOQPQ@mail.gmail.com>
-Date: Mon, 27 Oct 2025 18:15:04 +0100
-Message-ID: <874irkw9k7.ffs@tglx>
+	 MIME-Version:Content-Type; b=rgthbgqwgM0hEvkWHg2OkCi4sS1a8jsMk2irThW94eXWhy9BEm3Yx48UYo7A9sBz7RNgfMkTZKnGEItymrAuUWIyVumnWRUW2QANuwON4ppZ8PzDgOklWc+s+SA6098I6tV76HCRChWHVVjRT0oQR6gPHa/PWK9+yftAA0s9Po4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=s//7eFe2; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8252E406FB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1761585382; bh=4AJkw0JNiYt/C/Q0w7OHk2noFttalBttxGpAF09CdDM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=s//7eFe2ZlRxqEGUnYz7qSLdLireCzjsBeXes20zIZK7P6e356dtfgfxHq8uJB4K8
+	 x8hO7shSOQMM8wmEYHtvgAyKsS+ZQ+W3uZoX1g1hLsqxXWvT+P6QCJAxhqba5MZfoU
+	 jhAIcbOdImOHUqsg5wGPYpqleaxTEX7VlHUmz8g1OMDiKeStlQrm2K9sxBfXkg8fw8
+	 MF91Y1aO6dfMLnbzyG4XPcib1rv2sOPuRTTyjzvtxcmSAHbVVXAUexM27OnNhP5pWL
+	 Bcs79RgDT7WPmMfa7ydl9W/DsKB6Xag0cUz45rFU99jiZtMemRi6U8nB/Y3sAtuH68
+	 MQ8+/pTZbu/cg==
+Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 8252E406FB;
+	Mon, 27 Oct 2025 17:16:22 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/30] docs: reporting-issues: rework
+In-Reply-To: <cover.1761481839.git.linux@leemhuis.info>
+References: <cover.1761481839.git.linux@leemhuis.info>
+Date: Mon, 27 Oct 2025 11:16:21 -0600
+Message-ID: <87zf9cnu3e.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21 2025 at 12:08, Ulf Hansson wrote:
+Thorsten Leemhuis <linux@leemhuis.info> writes:
 
-> On Mon, 20 Oct 2025 at 21:11, Ben Horgan <ben.horgan@arm.com> wrote:
->>
->> Hi Ulf,
->>
->> Only a comment on the naming rather than a full review.
->>
->> On 10/20/25 15:17, Ulf Hansson wrote:
->> > When governors used during cpuidle, tries to find the most optimal
->> > idlestate for a CPU or a group of CPUs, they are known to quite often fail.
->> > One reason for this, is that we are not taking into account whether there
->> > has been an IPI scheduled for any of the CPUs that are affected by the
->> > selected idlestate.
->> >
->> > To enable pending IPIs to be taken into account for cpuidle decisions,
->> > let's introduce a new helper function, cpus_may_have_pending_ipi().
->>
->> To me, "may" indicates permission, i.e. is allowed, rather than
->> correctness. Would "likely" be better here, cpus_likely_have_pending_ipi()?
->
-> Sure, that sounds better to me too.
+>  I worked on-and-off on this for maybe two years and the problem is:
+> what started as fine tuning in various places piled up. That together
+> with the newly added links & anchors and some text movements makes the
+> patchset huge. When you ignore those two aspects and look at individual
+> patches using a word diff algorithm it looks a lot less scary, but it
+> remains big =E2=80=93 and thus sadly puts some load on reviewers and
+> translators. Sorry. I think it's worth it and tried to split things up
+> to facilitate handling.
 
-cpus_peek_for_pending_ipis() perhaps?
-  
+It is indeed a lot, it's going to be hard to get people (including me)
+to look at it all.  I think you should really consider breaking this
+into smaller sets and getting them through one at a time...
+
+I'll look at a few of these, but certainly won't get through the whole
+set today.
+
+Thanks,
+
+jon
+
+P.S. Grumbling aside, it's good to have you back...
 
