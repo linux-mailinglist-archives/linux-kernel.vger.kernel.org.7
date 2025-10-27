@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-871618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB90BC0DF6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:18:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 339F6C0DE51
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E35EA504BF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6C00504BEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD062FFFB1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6958B2FFF98;
 	Mon, 27 Oct 2025 12:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHZDMTLr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mqs824nK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656CE25D202;
-	Mon, 27 Oct 2025 12:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14519299948;
+	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569820; cv=none; b=T36VdFTBt/tgPo8vbJBk5ferupslNJ0a4Fh6+Q5ku6UaF59wLYLDk+Xa37mSFl8i+wUYT+vjyrIjnTJY9pzUJbba71ngA71HQ+bEUhsMGAd2QPcncOCFaCI9CouhOMZ/aS+zeP53VqEbOemuh2Zt/15cPodKWP1uZ700ZOhOtGw=
+	t=1761569822; cv=none; b=dIXWLzwdI6IjBFct+PQIOwXZFk9PqLUMQ4yzfY+474myOkJahamHgmK4dCwACrvEwcy8x8CIycIL+0yyqbFmGVVdhipP8f6Tfmwe2wN1fbcTEAOK8mJHqxGsq2D6udG2LGsaL4v6JwLP9q2VfGm7dq96RU/UVedc3uVZrt+JTHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569820; c=relaxed/simple;
-	bh=zxJ79mA1lCmnOVxEdjNKKgjbhpuWz79NbCyv/SzMZnU=;
+	s=arc-20240116; t=1761569822; c=relaxed/simple;
+	bh=f0SoP/zvRQAOERqGrbZ2nIh2yRiuv79vNh/YNhiYisw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sV0DUhKxSlLLIuCkincZeGztwJ1xTK6UwL4bD+WTpG3LomElM5fwRf7DnNhqH4vm/VTndTOgqGRj5OiZFs3lC71m+ME3uwJ/y8J9OdxwmJUXjVI5tPsioErahR1yC+E6wjiU0VfSzy9Z+L8QnHCoB72KPNXNHH0YG8SOgVTfmFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHZDMTLr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9365C19421;
-	Mon, 27 Oct 2025 12:56:59 +0000 (UTC)
+	 MIME-Version; b=IrY1LlEVXyPDHBMwOqqDWyIbX+niV9rynaAXthkH+jI/2nv0WNrgQuOIcGlwdQ2vMs7Dd2xQh/Do0UpxJdtE2q/zUlXBOnMdBV2of5BISwYMtUj5nASV5LS+dlZav1cuzSg4+avFK1m4Csoacf4SEFjcPs1dwmhnifzZtjxe3UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mqs824nK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8501BC113D0;
+	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761569820;
-	bh=zxJ79mA1lCmnOVxEdjNKKgjbhpuWz79NbCyv/SzMZnU=;
+	s=k20201202; t=1761569821;
+	bh=f0SoP/zvRQAOERqGrbZ2nIh2yRiuv79vNh/YNhiYisw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YHZDMTLr3lwyO8l6wrInwbdUuhdncaCwZ9Zhr1SZXbEfLFaNW0Fea+0g8ZCksTdXl
-	 w3jM0ZTCu/3tEkV2pcKDgTzYmob7A8A/UtHCOUcHvfDjprmNT+rdrFj+vWZCyeUf8b
-	 kLGIOCIz+FqoySc3Apx1fY7Yc+iwzlWUV0DkNM41wWLEHi4rd8m2yJBtqAJBAmHxBr
-	 BPzovagqCU838CIrey56iuHp75/IxTxqYCecIqs8Cr0euOhjxzw1tv0w6CMwzhId+H
-	 J9xRafULE7Txu4/Dm5OewCkiPep+pOYHJUbBTEZdynXcx92f2h6g7OFvu0AKhBeSiV
-	 emgADGE+zq/Lg==
+	b=Mqs824nK/IIPtizqFpAnhI2rX4aRkfAg+jwVA5oVxmxbdQClrPE7CszShxsjr6iyq
+	 mgxON4vZ4z+8asFVhBA1/vTHiHZVoQKfW4Gg6yIicdXWCRcUDfKfQrN5Y/7uT+jRRH
+	 0d+3tk6ASvDZs/1+UjUZ9H6wZFQ6d7+0AkcuSDBOzciTavPewMZU/s8NZGjETwOvBe
+	 vjPmZFvYXndf/vXJooLdmIjEx09dZtwknBp+gI06mVbEBlLcM+AejPQoXxcLnD0X0E
+	 e7bCocBVhxFuAJpGCioLwPnYIXYeMsVZCSWENqXE4FH2uUdnWfYwfuHYfXICYHYDrM
+	 dyupOIZ8E8PQg==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 89EE15FF19; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
+	id 9AF925FF56; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej@kernel.org>,
@@ -56,10 +56,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/10] ASoC: sun4i-spdif: Support SPDIF output on A523 family
-Date: Mon, 27 Oct 2025 20:56:45 +0800
-Message-ID: <20251027125655.793277-5-wens@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: [PATCH v2 06/10] arm64: dts: allwinner: a523: Add device node for SPDIF block
+Date: Mon, 27 Oct 2025 20:56:47 +0800
+Message-ID: <20251027125655.793277-7-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251027125655.793277-1-wens@kernel.org>
 References: <20251027125655.793277-1-wens@kernel.org>
@@ -71,90 +72,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TX side of the SPDIF block on the A523 is almost the same the
-previous generations, the only difference being that it has separate
-module clock inputs for the TX and RX side.
+The A523 has a SPDIF interface that is capable of both playback and
+capture.
 
-Since this driver currently only supports TX, add support for a
-different clock name so that TX and RX clocks can be separated
-if RX support is ever added. Then add support for the A523.
+Add a node for it.
 
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
-
 ---
-Changes since v1:
-- Dropped bogus name removal
-- Dropped clock rate debug message
----
- sound/soc/sunxi/sun4i-spdif.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdif.c
-index 34e5bd94e9af..2e7ac8ab71bb 100644
---- a/sound/soc/sunxi/sun4i-spdif.c
-+++ b/sound/soc/sunxi/sun4i-spdif.c
-@@ -177,6 +177,7 @@ struct sun4i_spdif_quirks {
- 	bool has_reset;
- 	unsigned int val_fctl_ftx;
- 	unsigned int mclk_multiplier;
-+	const char *tx_clk_name;
- };
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+index 8edbd3873199..33f991dbd00b 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+@@ -818,6 +818,21 @@ mcu_ccu: clock-controller@7102000 {
+ 			#reset-cells = <1>;
+ 		};
  
- struct sun4i_spdif_dev {
-@@ -572,6 +573,14 @@ static const struct sun4i_spdif_quirks sun50i_h6_spdif_quirks = {
- 	.mclk_multiplier = 1,
- };
- 
-+static const struct sun4i_spdif_quirks sun55i_a523_spdif_quirks = {
-+	.reg_dac_txdata = SUN8I_SPDIF_TXFIFO,
-+	.val_fctl_ftx   = SUN50I_H6_SPDIF_FCTL_FTX,
-+	.has_reset      = true,
-+	.mclk_multiplier = 1,
-+	.tx_clk_name	= "tx",
-+};
++		spdif: spdif@7116000 {
++			compatible = "allwinner,sun55i-a523-spdif";
++			reg = <0x07116000 0x400>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mcu_ccu CLK_BUS_MCU_SPDIF>,
++				 <&mcu_ccu CLK_MCU_SPDIF_TX>,
++				 <&mcu_ccu CLK_MCU_SPDIF_RX>;
++			clock-names = "apb", "tx", "rx";
++			resets = <&mcu_ccu RST_BUS_MCU_SPDIF>;
++			dmas = <&mcu_dma 2>, <&mcu_dma 2>;
++			dma-names = "rx", "tx";
++			#sound-dai-cells = <0>;
++			status = "disabled";
++		};
 +
- static const struct of_device_id sun4i_spdif_of_match[] = {
- 	{
- 		.compatible = "allwinner,sun4i-a10-spdif",
-@@ -594,6 +603,15 @@ static const struct of_device_id sun4i_spdif_of_match[] = {
- 		/* Essentially the same as the H6, but without RX */
- 		.data = &sun50i_h6_spdif_quirks,
- 	},
-+	{
-+		.compatible = "allwinner,sun55i-a523-spdif",
-+		/*
-+		 * Almost the same as H6, but has split the TX and RX clocks,
-+		 * has a separate reset bit for the RX side, and has some
-+		 * expanded features for the RX side.
-+		 */
-+		.data = &sun55i_a523_spdif_quirks,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_spdif_of_match);
-@@ -635,6 +653,7 @@ static int sun4i_spdif_probe(struct platform_device *pdev)
- 	const struct sun4i_spdif_quirks *quirks;
- 	int ret;
- 	void __iomem *base;
-+	const char *tx_clk_name = "spdif";
- 
- 	dev_dbg(&pdev->dev, "Entered %s\n", __func__);
- 
-@@ -671,9 +690,12 @@ static int sun4i_spdif_probe(struct platform_device *pdev)
- 		return PTR_ERR(host->apb_clk);
- 	}
- 
--	host->spdif_clk = devm_clk_get(&pdev->dev, "spdif");
-+	if (quirks->tx_clk_name)
-+		tx_clk_name = quirks->tx_clk_name;
-+	host->spdif_clk = devm_clk_get(&pdev->dev, tx_clk_name);
- 	if (IS_ERR(host->spdif_clk)) {
--		dev_err(&pdev->dev, "failed to get a spdif clock.\n");
-+		dev_err(&pdev->dev, "failed to get the \"%s\" clock.\n",
-+			tx_clk_name);
- 		return PTR_ERR(host->spdif_clk);
- 	}
- 
+ 		mcu_dma: dma-controller@7121000 {
+ 			compatible = "allwinner,sun55i-a523-mcu-dma",
+ 				     "allwinner,sun50i-a100-dma";
 -- 
 2.47.3
 
