@@ -1,181 +1,153 @@
-Return-Path: <linux-kernel+bounces-872175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CBAC0F773
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:53:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7E5C0F77C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11143B3B61
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:50:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E4EB4F69B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92B5313549;
-	Mon, 27 Oct 2025 16:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4C6313E0B;
+	Mon, 27 Oct 2025 16:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ff/jTan1"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Q95Ns8BC"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60BA313E0B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6AB2BCF4C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583812; cv=none; b=Epk/Sa+LBxwit8gW4Fcx96PdiwIszqBzxXAD23CyjIj1ox/YDQBZIu80GsQYoYyujl7y3hAGgaQwoJKjLqH/zX1YHsb+8+vlPZ1mlAhWttbFGYt/j1cP7cJPDJO5IQx4juQDSxjmdpkDLxqD3/Y5tqo0BJ+1b0jQZZKDS8nJRAA=
+	t=1761583869; cv=none; b=kXM3pcOv+RxGWcmgBamG9sXgyvfozHK3YaJ9DfXNViiTW+HRDvKoHJO7u8YQjS87H/NVm7ueqSxGzpITAxa0CUBwt/C6ajZHoe6pRwtY2rC8ExdBYmabwRMCVloOuM2Vjs6TvQ8muqNZn9k2fiLk36ZXVEc/8pQGleZQ97yUdkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583812; c=relaxed/simple;
-	bh=f9gyr+50VXCzFRqzh5h2Eocs+kwwPbsfidV5wgRt5Ys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=thOVdm6Dyjtfs2QrdmSim3E8lEzN5Za2o0UTD55ZOjckO8+FKrFGip40ROevgYwN4QOWb7TzqjxFjaAipeo+fW6G8kHl5nOlsOj+dS3muJU2V9ekdp8hL9u3+nAQKK5C51cLDcEvr9dkZspdKGTermCgVBal8jcrmQHjqFzg3gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ff/jTan1; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4270491e9easo4045165f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:50:10 -0700 (PDT)
+	s=arc-20240116; t=1761583869; c=relaxed/simple;
+	bh=EqepgGC/l3BkBwlCg2C9JuMnjeSRmoKoLRq7E9G076I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cEHIungCSy3hHizzk97d6flyaJI8TjnTOjkMJDR5xSCgf90maR3XdyriYepaFTT/CHVoeuDdAPv3mlRlQPPbh65HS463FEPlaPJcsZJNY1rRSzO50qt34IqOk9TFm+gwbNKB34aj6jrUjNtFa6aRdSi198sz+l8PHcy4j+RoA0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Q95Ns8BC; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-290ac2ef203so45494185ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761583809; x=1762188609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1761583864; x=1762188664; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=llXiWHJLf2syx3blZo0CXJGIyiry1LJYTByzcLi8/h0=;
-        b=ff/jTan1lkgWUNpwMGoLzGON5a2N4mfXOajPZajkFvH4cHFDFH+FASZNEuimReQO6t
-         h0XaH+V4MjEnkv28OfQ38Tvg38vlkJkkq4RD92MGqt/zQzWhEXU9Bnvg1i80vEXdEdfA
-         cPku+D2MAL+xeB9+xGkOr3NIEkdA9WjcUHW/zNNC01W5n8bMhqxRohJO2bTq8sDwdKg/
-         TP51AnWBRMZtN4dZo+3KFvGCIG8D3ae6YO8rH91kqj9XOGkFJFFhWjSakU6jYCOY5FpC
-         zC7XbRmD/bv7A9azMVoI1YHeqMiVCcNUVfG5RDf6ZRtAqWq+FH1HTRInCvxfxnB2DpZy
-         38FA==
+        bh=8nKP8LnlisYPvQbnTYeeSfnr4LDRpnlUnYi1OfgjBiU=;
+        b=Q95Ns8BC1mIDmzv0mpGrKifIFnoZUW/vak+MzT2rfniEFPd8JOxHe4RMPBCeu18BaV
+         09l25kmvgFVNBZr+2ODYGcnze1cTYftMXUa0pStPocmM6uNWxqIjdmCKA+/hC3B0Cf/d
+         xZVOkncz5jUyyoFbn0Iu+tjlEzhYXJanRvOZrpUPJjdWg5qGu0FqyzcyxF5OJ6/Ke7NG
+         HlzwnVgEt07cgI5GvQToxb7cJ/XUCbbgIrM1XhEexiDKSWM9H2riqYZfDiBjkAqLZOYx
+         ZxCY1FMqUQ1ly8AnueK522+6CGCp0F7bvOmvgrBJYWBx97tEne4Anl9emrT8xoUqKr7k
+         SMqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761583809; x=1762188609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761583864; x=1762188664;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=llXiWHJLf2syx3blZo0CXJGIyiry1LJYTByzcLi8/h0=;
-        b=Zhh/KoOe6+nWenG7s/pIUbW73xZxKP137im7vpD4n1Lk74+V7E5OyWj76Fqoj+dpQJ
-         sN6IO+QZ9yKSyLkKoPn+KG7HmtDvlT5EeW1ChO1AkHeukZe7/GFtXjupRwVCfvrAltMW
-         yfMzlS7Rpw6kcxcbPnOQcwA+wQ1bSXP3HFOlHyy7sLGyXBWQx6Un4Cj1gdj0bGQXqN7B
-         A7o0vQdmZEbR8a/XbSvGqLoeBJnzNh5AnSyXdNnRchDibdyYskdu3iLmYUnRTNXxC3q8
-         A5vJg5wKKVCLSuV4gKJwl3yiHY+4Pv/FOdusWRmUN4S0OFoiQzqcK/2M/RNCoQ7Ww1vA
-         V7Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVzXv2klR/5p7VynvU+wc3apECXhT4zO2yhhRrHRpVum24liM/MVfDoC8FIWfuB5/VyjwaOmSdLRxUeaX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkC5xtHNvbHPLX5ogvyZV3bvx9a3E/RgX1dyKwzco2HSX+zx73
-	Km/m6faShE5s+fwc9CFUCmfPyXRtUw2TyrS0NW0xdCNaSd55UMso1pWalmsQt2y1Ejmj6NbzC1u
-	o3NWqvjeIdW537Mh2P1qbcaXXskbPlYM=
-X-Gm-Gg: ASbGncv/CUH+52/CsMkyvIh10X7tmBVIDjkxBf3n5hrXZ4QQdizyN98wMoR17wNZ9Yp
-	I5ScA3JRmo7EKjZeArpoSwnJomCGv4blbZg+yPoEiUCfXMuNb9NtqYW642Ievlmrim254jOd8q/
-	+csFvmixMZrnhKu8bOV0AcYjamtguHbbd568eGrFwB8SlsZ+/rd6G+/gAXUfkqomYgQGj6J+B2J
-	kZDmOcw5ltGqMIIjnM6gKcwgSqkWHCkdj0GfTbGZlpeVkTVgASHF58csGb4Dg==
-X-Google-Smtp-Source: AGHT+IH4XlaBzxcnNj5YFZ0kloDrzQaT1eJpLjTjeIpDU2XpK4VeABDkTozkzcR3WZnwD6TgVQ+f15BePNjDYvfetA4=
-X-Received: by 2002:a05:6000:186e:b0:428:476e:e0ab with SMTP id
- ffacd0b85a97d-429a7e97661mr333005f8f.60.1761583808872; Mon, 27 Oct 2025
- 09:50:08 -0700 (PDT)
+        bh=8nKP8LnlisYPvQbnTYeeSfnr4LDRpnlUnYi1OfgjBiU=;
+        b=Frp9jzquE3Z4Y8Yx6e4F0iXICRm0LiGCJComtYiyLU5JMEjop2KUGrQgetcZENvYzY
+         ZvSvV8qWviMddOFe928oBNWDThWghdoCE5YrikmoHPbZIhiwoAXMBNTDQC1IqHrBWHLE
+         zQjQqGZ94JuUV2t2m88SROv3jANEUyYbOETcY5t+aYOTlv0Dn6M/kRBE5jRXhQTJ8RFw
+         MDvU9n6PwbAZ3ZpxJ8reORk99yvVmpWBK01JVZVbCthW3uDBu7ciPcIArizKQNX4vZqC
+         QhroWvskfQNzqbTEwej33hypX7OQY4CZvF7fKgWIFWe16ykfLP2WcPOvu3+lTzJxSSW7
+         T+Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFrxh2dFD3HcINxeiKbSrKZRSjHYGASacj66wLyQ+ohImzJjnhWDgl7xeWeyfJrGK+MG39b6cjoibOwKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/cW/IHc0J9W1L0mgGMl1IWG0XujSlhshXTNeZvP86koDS5/4/
+	7xyF5O7KzGuCx3EZhe7zcBCLmMqtZfzF8cCh+BgiJ08EsMJOSiHIMVTxvMMeKxjh/aI=
+X-Gm-Gg: ASbGncupqKVTLL/7TVeHLNtHnY+4r8oqCYRKSI/LAX06oR2T7GRl/kb3yF+AvJO2mDN
+	VxQ74MCbOUl2ysziOfEUoGhvLNAGu3qNdHcF40hIXHzGWXvkbaH9+VSV54b8l4MyQbzpt4iWJCq
+	uF1moQost7g9r9zTv9t2120dNX9RI8Gs5VIESi55wmGYuy9ab8VX0wsJFBXHqkyi6n/z+jBcDpF
+	h62ciUS6MheJvWuxjenDmBroKMTBQray7YwUA+QMNW1SAmFtDc4FGCiCQ8oHd+w1F106od04HEo
+	+AjrORmIS2mNB+NYRF29FB3ySvVp6QqF/76rtbY3gPooEOSEW0HkDEi7jatTlC5O4/GROaljitN
+	eZKp2p2hvcx/dQnru8/1garzvttKYSSvguCIK0RYLGey32ov9C4DYPkggS2ax6HZ6kKT0iGGpiV
+	vEK5S3jYpfA/6wU6/C5XoVcf3TkBw+nD40m8fVmEtC6C4t
+X-Google-Smtp-Source: AGHT+IGjTdmlbc2UYCLdzv9SaAZWrdWKW4UkBxQqwzd5S6LRB2MyeaD63PJEhKAkXPLm5tJfWml8NA==
+X-Received: by 2002:a17:902:b281:b0:269:8f0c:4d86 with SMTP id d9443c01a7336-294cb67176dmr3769265ad.53.1761583863479;
+        Mon, 27 Oct 2025 09:51:03 -0700 (PDT)
+Received: from 5CG3510V44-KVS.bytedance.net ([203.208.189.10])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e70b5sm9075326a91.10.2025.10.27.09.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 09:51:02 -0700 (PDT)
+From: Jinhui Guo <guojinhui.liam@bytedance.com>
+To: joro@8bytes.org,
+	suravee.suthikulpanit@amd.com
+Cc: guojinhui.liam@bytedance.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [RESEND PATCH] iommu/amd: Fix pci_segment memleak in alloc_pci_segment()
+Date: Tue, 28 Oct 2025 00:50:17 +0800
+Message-Id: <20251027165017.4189-1-guojinhui.liam@bytedance.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250928053657.1205-1-guojinhui.liam@bytedance.com>
+References: <20250928053657.1205-1-guojinhui.liam@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022142051.70400-1-clamor95@gmail.com> <20251022142051.70400-7-clamor95@gmail.com>
- <bd6262c6-a31c-43a6-8ec5-2735fb2fe0d2@kernel.org>
-In-Reply-To: <bd6262c6-a31c-43a6-8ec5-2735fb2fe0d2@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 27 Oct 2025 18:49:57 +0200
-X-Gm-Features: AWmQ_blgGtMyE7YToN26_Q2JZoB8VDufuUc2Jv2Dui7Z-P7sPMVoiu7__HneWyw
-Message-ID: <CAPVz0n277DZ8S5wX5n0gCaOpng64uEfx3VVue4Zp0n5bsDevqQ@mail.gmail.com>
-Subject: Re: [PATCH v5 06/23] staging: media: tegra-video: vi: adjust
- get_selection op check
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-=D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 17:4=
-4 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi Svyatoslav,
->
-> On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
-> > Get_selection operation may be implemented only for sink pad and may
-> > return error code. Set try_crop to 0 instead of returning error.
->
-> Can you mention why try_crop is set to 0 instead of returning an error?
->
-> That would be good to have in the commit log. And in fact, it's not
-> clear to me either why you want this.
->
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/staging/media/tegra-video/vi.c | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/m=
-edia/tegra-video/vi.c
-> > index 7c44a3448588..856b7c18b551 100644
-> > --- a/drivers/staging/media/tegra-video/vi.c
-> > +++ b/drivers/staging/media/tegra-video/vi.c
-> > @@ -476,15 +476,11 @@ static int __tegra_channel_try_format(struct tegr=
-a_vi_channel *chan,
-> >       fse.code =3D fmtinfo->code;
-> >       ret =3D v4l2_subdev_call(subdev, pad, enum_frame_size, sd_state, =
-&fse);
-> >       if (ret) {
-> > -             if (!v4l2_subdev_has_op(subdev, pad, get_selection)) {
-> > +             if (!v4l2_subdev_has_op(subdev, pad, get_selection) ||
-> > +                 v4l2_subdev_call(subdev, pad, get_selection, NULL, &s=
-dsel)) {
-> >                       try_crop->width =3D 0;
-> >                       try_crop->height =3D 0;
->
-> This looks all a bit magical. Which subdev is queried here? I.e. what is =
-the corresponding
-> subdev driver that implements get_selection?
->
+Fix a memory leak of struct amd_iommu_pci_segment in alloc_pci_segment()
+when system memory (or contiguous memory) is insufficient.
 
-Camera sensor subdev, Tegra VI driver directly interacts with camera sensor=
-.
+Fixes: 04230c119930 ("iommu/amd: Introduce per PCI segment device table")
+Fixes: eda797a27795 ("iommu/amd: Introduce per PCI segment rlookup table")
+Fixes: 99fc4ac3d297 ("iommu/amd: Introduce per PCI segment alias_table")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
+---
 
-> >               } else {
-> > -                     ret =3D v4l2_subdev_call(subdev, pad, get_selecti=
-on,
-> > -                                            NULL, &sdsel);
-> > -                     if (ret)
-> > -                             return -EINVAL;
-> > -
-> >                       try_crop->width =3D sdsel.r.width;
-> >                       try_crop->height =3D sdsel.r.height;
-> >               }
->
-> It looks odd (esp. setting try_crop to 0), and I wonder if this code path=
- has been tested.
->
+Hi,
 
-Yes it was tested.
+Just a friendly ping—resending the unchanged patch in case it got
+buried. If there is anything I can do to ease review, please let me
+know.
 
-Original code checked if the camera sensor has get_selection
-implemented and if such operation is supported then it applies width
-and height from get_selection, else zeroes. This works just fine with
-most cameras and v4l2 compliance tests pass fine, with most but not
-with mt9m114 which implements get_selection only for its ifp source
-pad while sink pad always returns -EINVAL, hence VI driver fails with
--EINVAL too. To address drivers like mt9m114 instead of just fail with
--EINVAL if get_selection returns error try_crop width and height will
-be set the same as get_selection is not implemented.
+Thanks,
+Jinhui
 
-> Regards,
->
->         Hans
+ drivers/iommu/amd/init.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+index ba9e582a8bbe..77afd5884984 100644
+--- a/drivers/iommu/amd/init.c
++++ b/drivers/iommu/amd/init.c
+@@ -1608,13 +1608,22 @@ static struct amd_iommu_pci_seg *__init alloc_pci_segment(u16 id,
+ 	list_add_tail(&pci_seg->list, &amd_iommu_pci_seg_list);
+ 
+ 	if (alloc_dev_table(pci_seg))
+-		return NULL;
++		goto err_free_pci_seg;
+ 	if (alloc_alias_table(pci_seg))
+-		return NULL;
++		goto err_free_dev_table;
+ 	if (alloc_rlookup_table(pci_seg))
+-		return NULL;
++		goto err_free_alias_table;
+ 
+ 	return pci_seg;
++
++err_free_alias_table:
++	free_alias_table(pci_seg);
++err_free_dev_table:
++	free_dev_table(pci_seg);
++err_free_pci_seg:
++	list_del(&pci_seg->list);
++	kfree(pci_seg);
++	return NULL;
+ }
+ 
+ static struct amd_iommu_pci_seg *__init get_pci_segment(u16 id,
+-- 
+2.20.1
+
 
