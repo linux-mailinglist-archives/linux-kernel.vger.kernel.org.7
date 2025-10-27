@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-871942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D742C0ED90
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:14:03 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94481C0EDBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D3821341D0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:14:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40A9E34DE04
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A384308F13;
-	Mon, 27 Oct 2025 15:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjHqcYc/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D022D8793;
-	Mon, 27 Oct 2025 15:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894CB308F18;
+	Mon, 27 Oct 2025 15:14:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAC274BE1;
+	Mon, 27 Oct 2025 15:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761578036; cv=none; b=uZXMkxQPAvdwGKFik1i0KP9jxzxqPF3zh5rNVkKXchWERfymmwPTZMVmdMhS4mrs1mJ2cswDtKczOiMJKT64IRZvr6n+uWWawA23JUPGQkXWGKkSoP0Remt5hs3ksYxAviJczmapglh6XYk1yhep6QgI0+fxFgqZaxMMDQ/uEkw=
+	t=1761578082; cv=none; b=nVMC7lexh4m75Ew/tLP2ymQVcizLWwRZPmspLN6+jyOSGOdxo2byXmUlgQsF72NSMPx7PPGqCL7KueCIkBez7BcgLnxOml+3Y1+PMOxdUu19/Vuj1ZkEGj9raWTex1OVJNuTmvJt993QsY+cRziNhWvWG+y90eTuLqN+hHvcp0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761578036; c=relaxed/simple;
-	bh=W2Fm/JXD3DZoOXC3XAzhtcZToQPBAK1HXhOkauQfS8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Re62jwoQ4TAWk1KwtoCZUDN3/2JoENEOx9puJkss+1MP0VsIRFSdvSEyQVZyjRG9BRsi8ITfNsTiNIsxTLenlOXYFoZIf0Vmti3/t5zD5TOTQ69TFBBEqavTJF+0lA2Zq0ozXQI0pezpoLiCmq1jiDLrL/pkXpzfVZ21kfeftG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjHqcYc/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C6ABC4CEF1;
-	Mon, 27 Oct 2025 15:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761578035;
-	bh=W2Fm/JXD3DZoOXC3XAzhtcZToQPBAK1HXhOkauQfS8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FjHqcYc/bPckDKMAfWyb04uL6xHe4Sfz7haCynNGyDUcz3ouzLeBxJzZb/HA0Q0S4
-	 SDfbr+exnE4dssaEmxfq51u1izA5kQd0331hzYLOaWtMsrSqU55Mo2ENaScUFqRr6/
-	 D9vPKEluFb32VANqEU/Yp9I0PF5S5XhhkQeW2KlqzXTaGNa2XxyW7LkS5t6jqKNUZb
-	 ApCpg0waTEa8vzr5ILz7EnK5R9kGIzqL/L7iCHoNRRFEzGxppbOSxwxl62DxWYP4O+
-	 7BzIDSnHw0z/p5/XqJ8j6ND4hsURGHnwpb0cttb/GtYiVBqLMQqNoDKQxfFDrlc1uY
-	 CCL4BPcbUhfdA==
-Date: Mon, 27 Oct 2025 10:13:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Longbin Li <looong.bin@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Yu Yuan <yu.yuan@sjtu.edu.cn>, Ze Huang <huangze@whut.edu.cn>,
-	devicetree@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: soc: sophgo: add TOP syscon for
- CV18XX/SG200X series SoC
-Message-ID: <20251027151352.GA765054-robh@kernel.org>
-References: <20251024030528.25511-1-looong.bin@gmail.com>
- <20251024030528.25511-2-looong.bin@gmail.com>
- <20251024-hangout-designing-33e96c0d35fc@spud>
- <oymxspgopaqja63nipufgzn6kpobkdopemfaw3azhom3ikvk5f@e7cg4lq64j2o>
- <20251025-shakable-jujitsu-3a5e9c8895a5@spud>
- <ugmphokne6ssc7ou7apvbldxg7xxk24wp5jrzdasjiplnu6gfy@ebbuxnjqlsw4>
- <20251026-registrar-impart-0f714e11e410@spud>
+	s=arc-20240116; t=1761578082; c=relaxed/simple;
+	bh=fvuIxFVY0VinRklAAcgP+RHzJIaYc4gZ/7BZTLABnLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f7k+J2GkfiyuUWUQqSGH4Erf9MqsQAIS6FVeKhWGVsCZg98Cqm9xC7mVCUGZ/CnwuE+wIH4UUw0aPN0/QPdYMjGQfR0c/QS/kCh5LuoIy3dhRT9kaapw/yj8QE/sSNDEWgUgC75zsF65eyXRWOCwf0554+Ccj1qJ9AZLLviqhog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C09EB175D;
+	Mon, 27 Oct 2025 08:14:31 -0700 (PDT)
+Received: from [10.57.67.85] (unknown [10.57.67.85])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97B553F673;
+	Mon, 27 Oct 2025 08:14:36 -0700 (PDT)
+Message-ID: <3885b81f-1f14-4a34-9362-bd86dd675ac5@arm.com>
+Date: Mon, 27 Oct 2025 15:14:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251026-registrar-impart-0f714e11e410@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: add CTCU device for QCS8300
+Content-Language: en-GB
+To: Jie Gan <jie.gan@oss.qualcomm.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+ Mao Jinlong <jinlong.mao@oss.qualcomm.com>, Jie Gan
+ <quic_jiegan@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20251013-enable-ctcu-for-qcs8300-v3-0-611e6e0d3085@oss.qualcomm.com>
+ <20251013-enable-ctcu-for-qcs8300-v3-1-611e6e0d3085@oss.qualcomm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20251013-enable-ctcu-for-qcs8300-v3-1-611e6e0d3085@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 26, 2025 at 09:44:12PM +0000, Conor Dooley wrote:
-> Rob, Longbin,
+On 13/10/2025 09:34, Jie Gan wrote:
+> The CTCU device for QCS8300 shares the same configurations as SA8775p. Add
+> a fallback to enable the CTCU for QCS8300 to utilize the compitable of the
+> SA8775p.
 > 
-> On Sun, Oct 26, 2025 at 05:47:32PM +0800, Longbin Li wrote:
-> > On Sat, Oct 25, 2025 at 01:44:00PM +0100, Conor Dooley wrote:
-> > > On Sat, Oct 25, 2025 at 10:27:13AM +0800, Longbin Li wrote:
-> > > > On Fri, Oct 24, 2025 at 05:46:03PM +0100, Conor Dooley wrote:
-> > > > 
-> > > > > > ...
-> > > > > > +
-> > > > > > +properties:
-> > > > > > +  compatible:
-> > > > > > +    oneOf:
-> > > > > > +      - items:
-> > > > > > +          - const: sophgo,cv1800b-top-syscon
-> > > > > > +          - const: syscon
-> > > > > > +          - const: simple-mfd
-> > > > > > +
-> > > > > > +  reg:
-> > > > > > +    maxItems: 1
-> > > > > > +
-> > > > > > +  "#address-cells":
-> > > > > > +    const: 1
-> > > > > > +
-> > > > > > +  "#size-cells":
-> > > > > > +    const: 1
-> > > > > > +
-> > > > > > +  ranges: true
-> > > > > 
-> > > > > Do you actually use ranges?
-> > > > > 
-> > 
-> > Actually, I do not use it.
-> > I added it following Rob's suggestion in
-> > https://lore.kernel.org/all/20251015134144.GA3265377-robh@kernel.org/.
-> > Should I drop it or not?
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
+>   Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> I don't know why he suggested it, if it is not being used. Rob?
+> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> index c969c16c21ef..460f38ddbd73 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> @@ -26,8 +26,13 @@ description: |
+>   
+>   properties:
+>     compatible:
+> -    enum:
+> -      - qcom,sa8775p-ctcu
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - qcom,qcs8300-ctcu
+> +          - const: qcom,sa8775p-ctcu
+> +      - enum:
+> +          - qcom,sa8775p-ctcu
+>   
+>     reg:
+>       maxItems: 1
+> 
 
-Child nodes are memory-mapped, right? MMIO should have 'ranges' all the 
-way down. Doesn't matter if Linux (currently) uses it or not.
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Rob
+
 
