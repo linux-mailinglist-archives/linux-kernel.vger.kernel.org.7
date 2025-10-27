@@ -1,679 +1,156 @@
-Return-Path: <linux-kernel+bounces-872042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5296C0F348
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:15:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13063C0F207
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:02:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47766481122
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0E71898283
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5103081D4;
-	Mon, 27 Oct 2025 15:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8667930CD9D;
+	Mon, 27 Oct 2025 15:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbnR2BbD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="h53lYP0r"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB8A229B2E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A38130B518
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580249; cv=none; b=r4t0uqpaiqdtnoQtrE45Qd1Avnx9viJEiM7xazaQ1IPT8NbTmXFmhClEDceUT5qWjcEGDLnifMLGQJ8GXaJNXCfCT4rfbjhN4XIh3yN4Q6NEu9HZ16WGmlRSFmUU4f4o9rh8RlF5q2eQ19m9KNehhpxuMR1lFZ3mbdNmjGk68V0=
+	t=1761580275; cv=none; b=mNAQM6cjIxiRQ23rluF1y6zZPRglqChVj7KZB/9o8WTzWvozC+u6EGPTcehiFe8L+1L7U/m/lS9YJNI47HGvhyGypqOZ7WecknA4q/k5Ndpvg0DK85rQ52gr6DLZrk2/6YOIPMchFuXpEArqTqSZUpieEtu4gAEiPD87uP0rwUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580249; c=relaxed/simple;
-	bh=t72j+ItUKqmjEVIKjlp8ozusn4PAVfWRUx2HEwjKlZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=glNIhUXLubW3L62cq/Byth4HavwwkLAqjt48jMPwe+OFSgMDWZk1Gz0sMGzkr6Lp3RPEPKlLohPl7vaja+QOLDUzz9U7XOnxGvmAvA1iFkpms4WKnYVrRuHUZkGpO6lR8DgEL/tcVNQN9Vew1p5OPC5y7baGdWFBGfu6T4q+s50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbnR2BbD; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761580248; x=1793116248;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=t72j+ItUKqmjEVIKjlp8ozusn4PAVfWRUx2HEwjKlZU=;
-  b=UbnR2BbDn6SfJpxRh1B/nrrAEOqjlFRIfKWOT2k0ke9IpIg2JXYGDaC0
-   Q0MVCPnufhMJZzMjixQ/M1jhmm6Oiqu+VHD4+sYEHkv3fNruYEnBl2/Ac
-   VHX+ncBdCldPk9bIlT3g5vefq8tK5WMkPKXRbv7JOxF+XwEyxkA1T3INn
-   7NoRN2y/ubpy8vNumim0a5pw1tnsaTRse1jMeU7IYBAjfTfvoxhwjdFOP
-   WJVA1XdfKWdglr9XJZC/NFDoHYyJTOD9KPKLFEyUcbexfXdRwdqeFJumd
-   qEWg8nBzQLoE5GpqBhpMxY+clkcy1Ncwli0d+ufnqgr3deqAGTgOWZNJo
-   Q==;
-X-CSE-ConnectionGUID: +hMj4/y4QAGQbTJ4zUReiw==
-X-CSE-MsgGUID: gRby0lEGSaaSy6w0Ujirgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73950739"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="73950739"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 08:50:17 -0700
-X-CSE-ConnectionGUID: 1Ff+dZ4XTsKDX36s75Ci+A==
-X-CSE-MsgGUID: sbv4qarjQJO0KXm4OsVnRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="222288120"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.111]) ([10.125.109.111])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 08:50:16 -0700
-Message-ID: <658755f6-d8d5-474b-8dd1-e5fd27cd48c0@intel.com>
-Date: Mon, 27 Oct 2025 08:50:15 -0700
+	s=arc-20240116; t=1761580275; c=relaxed/simple;
+	bh=Td6PjAe6oZGWpKeVHOgaPYgxhjJM0vHRuXn7TA1UKwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PyGY20bZ7uXFP/pPIHd4gIGnLHHkRIo0ez2JjQHR2/Ze7abnM9VVf0av3EJ6YS3JgXcVyECn6HCbstM/nyJCVlE9qcQNkRqOU3oUIuU18805RTm9VVRbfld58qjU7Bu6ru+0YT3d7iqlDVIWvTGPiLJnBNnS50F0seB96upEC90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=h53lYP0r; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso1045104366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1761580271; x=1762185071; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fz5OAU8C9T/9dkzlT3ECgLDp03ETYSkJWqABI4th3fM=;
+        b=h53lYP0rNGiBH0moKeHCPBApiQTakOzE8iLhc2zPDrFuzvKZHRi6eHQt9grrp0+/4L
+         KEXejVWwYVxQgGjbZFSNNZ55KBkN7xnpEmmb6MG3liSZRfZ0IoFjmKz/pueCUEhLFrv9
+         2HDgSAZyxFiYgeHjg5Mufft/u3p4oNYWBPy9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761580271; x=1762185071;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fz5OAU8C9T/9dkzlT3ECgLDp03ETYSkJWqABI4th3fM=;
+        b=Q+VU+oW9SHe4LfYh3OKL8Veo7fZqBJYzfEqAuu3XMNzztq3mRiNczqfBPJCeSoZMnO
+         RkBlhncnOO91Ag/5rt1dHDmagGwoRJkBqfBA4xzFTAt+U3nCUaKha+XhBmeYcOV0uMJg
+         Ao0826FPjTdrMB2v57ekmWsImKM6tqI8lp7vyy9UMTaRFky+sCYzY5wrj2weT/thPJsr
+         MHPnku+STXz04D2TkqeXy3fVnIFMMa26r6Pj8wHrjSAm9DhG4wHWfn0jDKjUS0XwwzgN
+         FUUiMoUuqlj3sUfW1PblXWjVau04A/YkrgbBdNOhx42duhsiP/eFxoJePQwYwozpW8ou
+         V1Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWieJfmZV4Zk+C24JEQIeH+Dm/npgoZI65YNuzEX9e2fmOu9eXL4xHAcBxd9vIwVmv00A4W7rSksjkQIsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuSe1N7XSmG1oHItwDVMdXUulyjIdJG6Rhmtw09/gHgqhlMfc+
+	p51AzlZ18AU4+nq20I8/CogRUq8lLq3SQjw5bYZBKTfVcHELstU/kz5NGuP7S8i2eExSmQMmlgx
+	VogcOGG0=
+X-Gm-Gg: ASbGncua40DggmSSSJUDwkcVYZC9Z/mMagZUHIRcCOvqOI4aLM0n+suxjcjTKlYpZ1N
+	WbNy9HCO3IWf6tq0LvBVlBpCK4geVK+fKMM1aH7Ly0gOb1Mp9xJcyBE+bXxdYX/hfkqc53Jtlbt
+	AHm1qKKSsxFTEmlvq/lS6YLpacyAGuFoDLA1jpJgwZ7Afqdvri4LzsshudKwpt7tlv+u2kqDu2c
+	oimFAiSnMHkJg/qmjbWf6Lwyc3UUZ8ww9NlxeG7BB+RHNy/z8FfIesh5+ur8eDRS3+xceiwfCRy
+	tfDB03G9iI3ZgnMazgQA9tuR5cOmwUYUTXjaBOl/ilygQweBHVUSZ744+PriZcVkW0Xb44Fmudy
+	XrMRHvXN8RvYpu0qL55qa6GKRLc2WibXr8FhmTLx59gKhHq8SuoEzweGMXvaRzRBxyd4cFdcZjy
+	BjAqbAceWQkmQKVd9O6teh9Ikq3GJzFwrPoRp0p/YQnuAXSKg0OXoUGb8Ubzvw
+X-Google-Smtp-Source: AGHT+IG2cXgHQ2toSKHM7XaSC0bnYTl0KfoHzdW9qSQGmuf36FnUpdOCcrXOn8kZ7tddhChRzWGv+w==
+X-Received: by 2002:a17:907:2d0a:b0:b6d:3fc9:e60c with SMTP id a640c23a62f3a-b6dba4886ccmr42451866b.20.1761580271339;
+        Mon, 27 Oct 2025 08:51:11 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853077e8sm798363666b.14.2025.10.27.08.51.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 08:51:10 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63e12a55270so7032948a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:51:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUlHxFb/zxdMdi75BVt0YpBizQ3pyIgWYugU9tKb+186pU6xdTFgEVg+Cbb1jDknjhnfThsInrLq3oysoI=@vger.kernel.org
+X-Received: by 2002:a05:6402:5208:b0:63c:45da:2878 with SMTP id
+ 4fb4d7f45d1cf-63ed8262ceemr407724a12.25.1761580269751; Mon, 27 Oct 2025
+ 08:51:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] NTB: ntb_transport: Support multi-channel DMA via
- module parameters
-To: Koichiro Den <den@valinux.co.jp>, ntb@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: jdmason@kudzu.us, allenbh@gmail.com
-References: <20251027004331.562345-1-den@valinux.co.jp>
- <20251027004331.562345-5-den@valinux.co.jp>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251027004331.562345-5-den@valinux.co.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251017141536.577466-1-kirill@shutemov.name> <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+ <CAHbLzkpx7iv40Tt+CDpbSsOupkGXKcix0wfiF6cVGrLFe0dvRQ@mail.gmail.com> <b8e56515-3903-068c-e4bd-fc0ca5c30d94@google.com>
+In-Reply-To: <b8e56515-3903-068c-e4bd-fc0ca5c30d94@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 27 Oct 2025 08:50:53 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiWmTpQwz5FZ_=At_Tw+Nm_5Fcy-9is_jXCMo9T0mshZQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bmga7yjIxTmcYa49QdMzCJ_rjqDZmpAlOCSXqWKYw9598-EirU5Tn5Et44
+Message-ID: <CAHk-=wiWmTpQwz5FZ_=At_Tw+Nm_5Fcy-9is_jXCMo9T0mshZQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+To: Hugh Dickins <hughd@google.com>
+Cc: Kiryl Shutsemau <kirill@shutemov.name>, David Hildenbrand <david@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Yang Shi <shy828301@gmail.com>, Dave Chinner <david@fromorbit.com>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 27 Oct 2025 at 03:49, Hugh Dickins <hughd@google.com> wrote:
+>
+> This makes a fundamental change to speculative page cache assumptions.
 
+Yes, but I'm a bit surprised by people who find that scary.
 
-On 10/26/25 5:43 PM, Koichiro Den wrote:
-> The reclamation delay of ntb_queue_entry can be a key performance
-> limiter and the MEMCPY portion often accounts for a large part of the
-> round-trip latency when DMA MEMCPY is used. Distributing work across
-> multiple channels can improve overall throughput on busy systems by
-> increasing the average service rate of the MEMCPY part, as observed on
-> R-Car S4.
-> 
-> Allow ntb_transport to use multiple DMA engine channels per queue to
-> better utilize hardware under load with the new module parameters:
-> 
->   - num_tx_dma_chan: TX DMA channels per queue (default 1)
->   - num_rx_dma_chan: RX DMA channels per queue (default 1)
-> 
-> Channel selection is a simple round-robin driven by an atomic counter.
-> A least-used policy was also tested on R-Car S4, but showed not much
-> benefit, so the simpler round-robin approach is chosen.
-> 
-> Behavior is unchanged when DMA is disabled or only one channel is used,
-> and the CPU memcpy fallback remains.
-> 
-> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+The page cache does *much* more scary things elsewhere, particularly
+the whole folio_try_get() dance (in filemap_get_entry() and other
+places).
 
-Thanks for adding the improvements!
+I suspect you ignore that just because it's been that way forever, so
+you're comfortable with it.
 
-Is it possible to split the tx and rx changes for this patch? May help with git bisect in the future if there are problems in one of the paths. Otherwise the series LGTM.
+I'd argue that that is much *much* more subtle because it means that
+somebody may be incrementing the page count of a page that has already
+been re-allocated by somebody else.
 
-DJ
+Talk about cognitive load: that code makes you think that "hey, the
+tryget means that if it has been released, we don't get a ref to it",
+because that's how many of our *other* speculative RCU accesses do in
+fact work.
 
-> ---
->  drivers/ntb/ntb_transport.c | 368 ++++++++++++++++++++++++------------
->  1 file changed, 252 insertions(+), 116 deletions(-)
-> 
-> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-> index aee6793812bc..1860e15295b3 100644
-> --- a/drivers/ntb/ntb_transport.c
-> +++ b/drivers/ntb/ntb_transport.c
-> @@ -47,6 +47,7 @@
->   * Contact Information:
->   * Jon Mason <jon.mason@intel.com>
->   */
-> +#include <linux/atomic.h>
->  #include <linux/debugfs.h>
->  #include <linux/delay.h>
->  #include <linux/dmaengine.h>
-> @@ -102,6 +103,14 @@ static bool use_rx_dma;
->  module_param(use_rx_dma, bool, 0644);
->  MODULE_PARM_DESC(use_rx_dma, "Use DMA engine to perform large data copy on RX");
->  
-> +static unsigned int num_tx_dma_chan = 1;
-> +module_param(num_tx_dma_chan, uint, 0644);
-> +MODULE_PARM_DESC(num_tx_dma_chan, "Number of TX DMA channels per queue (round-robin). 1 by default");
-> +
-> +static unsigned int num_rx_dma_chan = 1;
-> +module_param(num_rx_dma_chan, uint, 0644);
-> +MODULE_PARM_DESC(num_rx_dma_chan, "Number of RX DMA channels per queue (round-robin). 1 by default");
-> +
->  static bool use_msi;
->  #ifdef CONFIG_NTB_MSI
->  module_param(use_msi, bool, 0644);
-> @@ -137,12 +146,21 @@ struct ntb_rx_info {
->  	unsigned int entry;
->  };
->  
-> +struct ntb_transport_dma {
-> +	struct dma_chan **chan;
-> +	unsigned int num_chan;
-> +	atomic_t cur_chan;
-> +	/* cache for graceful teardown */
-> +	dma_cookie_t *last_cookie;
-> +};
-> +
->  struct ntb_transport_qp {
->  	struct ntb_transport_ctx *transport;
->  	struct ntb_dev *ndev;
->  	void *cb_data;
-> -	struct dma_chan *tx_dma_chan;
-> -	struct dma_chan *rx_dma_chan;
-> +
-> +	struct ntb_transport_dma tx_dma;
-> +	struct ntb_transport_dma rx_dma;
->  
->  	bool client_ready;
->  	bool link_is_up;
-> @@ -161,7 +179,7 @@ struct ntb_transport_qp {
->  	void __iomem *tx_mw;
->  	phys_addr_t tx_mw_phys;
->  	size_t tx_mw_size;
-> -	dma_addr_t tx_mw_dma_addr;
-> +	dma_addr_t *tx_mw_dma_addr;
->  	unsigned int tx_index;
->  	unsigned int tx_max_entry;
->  	unsigned int tx_max_frame;
-> @@ -178,7 +196,6 @@ struct ntb_transport_qp {
->  	unsigned int rx_max_entry;
->  	unsigned int rx_max_frame;
->  	unsigned int rx_alloc_entry;
-> -	dma_cookie_t last_cookie;
->  	struct tasklet_struct rxc_db_work;
->  
->  	void (*event_handler)(void *data, int status);
-> @@ -549,10 +566,10 @@ static ssize_t debugfs_read(struct file *filp, char __user *ubuf, size_t count,
->  			       "\n");
->  	out_offset += scnprintf(buf + out_offset, out_count - out_offset,
->  			       "Using TX DMA - \t%s\n",
-> -			       qp->tx_dma_chan ? "Yes" : "No");
-> +			       qp->tx_dma.num_chan > 0 ? "Yes" : "No");
->  	out_offset += scnprintf(buf + out_offset, out_count - out_offset,
->  			       "Using RX DMA - \t%s\n",
-> -			       qp->rx_dma_chan ? "Yes" : "No");
-> +			       qp->rx_dma.num_chan > 0 ? "Yes" : "No");
->  	out_offset += scnprintf(buf + out_offset, out_count - out_offset,
->  			       "QP Link - \t%s\n",
->  			       qp->link_is_up ? "Up" : "Down");
-> @@ -1559,16 +1576,43 @@ static inline struct page *ntb_vaddr_to_page(const void *addr)
->  	return is_vmalloc_addr(addr) ? vmalloc_to_page(addr) : virt_to_page(addr);
->  }
->  
-> +static inline struct dma_chan *
-> +ntb_pick_dma_chan(struct ntb_transport_dma *dma, unsigned int *idx_out)
-> +{
-> +	unsigned int n = dma->num_chan;
-> +	unsigned int cur, idx;
-> +
-> +	if (unlikely(!n))
-> +		return NULL;
-> +
-> +	if (n == 1) {
-> +		if (idx_out)
-> +			*idx_out = 0;
-> +		return dma->chan[0];
-> +	}
-> +
-> +	cur = (unsigned int)atomic_inc_return(&dma->cur_chan) - 1;
-> +	idx = cur % n;
-> +	if (idx_out)
-> +		*idx_out = idx;
-> +	return dma->chan[idx];
-> +}
-> +
->  static int ntb_async_rx_submit(struct ntb_queue_entry *entry, void *offset)
->  {
-> -	struct dma_async_tx_descriptor *txd;
->  	struct ntb_transport_qp *qp = entry->qp;
-> -	struct dma_chan *chan = qp->rx_dma_chan;
-> -	struct dma_device *device;
-> -	size_t pay_off, buff_off, len;
-> +	struct dma_async_tx_descriptor *txd;
->  	struct dmaengine_unmap_data *unmap;
-> -	dma_cookie_t cookie;
-> +	size_t pay_off, buff_off, len;
-> +	struct dma_device *device;
->  	void *buf = entry->buf;
-> +	struct dma_chan *chan;
-> +	unsigned int cidx = 0;
-> +	dma_cookie_t cookie;
-> +
-> +	chan = ntb_pick_dma_chan(&qp->rx_dma, &cidx);
-> +	if (unlikely(!chan))
-> +		return -ENODEV;
->  
->  	len = entry->len;
->  	device = chan->device;
-> @@ -1613,7 +1657,9 @@ static int ntb_async_rx_submit(struct ntb_queue_entry *entry, void *offset)
->  
->  	dmaengine_unmap_put(unmap);
->  
-> -	qp->last_cookie = cookie;
-> +	dma_async_issue_pending(chan);
-> +
-> +	qp->rx_dma.last_cookie[cidx] = cookie;
->  
->  	qp->rx_async++;
->  
-> @@ -1630,10 +1676,9 @@ static int ntb_async_rx_submit(struct ntb_queue_entry *entry, void *offset)
->  static void ntb_async_rx(struct ntb_queue_entry *entry, void *offset)
->  {
->  	struct ntb_transport_qp *qp = entry->qp;
-> -	struct dma_chan *chan = qp->rx_dma_chan;
->  	int res;
->  
-> -	if (!chan)
-> +	if (!qp->rx_dma.chan)
->  		goto err;
->  
->  	if (entry->len < copy_bytes)
-> @@ -1742,9 +1787,6 @@ static void ntb_transport_rxc_db(unsigned long data)
->  			break;
->  	}
->  
-> -	if (i && qp->rx_dma_chan)
-> -		dma_async_issue_pending(qp->rx_dma_chan);
-> -
->  	if (i == qp->rx_max_entry) {
->  		/* there is more work to do */
->  		if (qp->active)
-> @@ -1842,17 +1884,22 @@ static int ntb_async_tx_submit(struct ntb_transport_qp *qp,
->  			       struct ntb_queue_entry *entry)
->  {
->  	struct dma_async_tx_descriptor *txd;
-> -	struct dma_chan *chan = qp->tx_dma_chan;
-> +	struct dmaengine_unmap_data *unmap;
->  	struct dma_device *device;
-> +	size_t dest_off, buff_off;
->  	size_t len = entry->len;
->  	void *buf = entry->buf;
-> -	size_t dest_off, buff_off;
-> -	struct dmaengine_unmap_data *unmap;
-> -	dma_addr_t dest;
-> +	struct dma_chan *chan;
-> +	unsigned int cidx = 0;
->  	dma_cookie_t cookie;
-> +	dma_addr_t dest;
-> +
-> +	chan = ntb_pick_dma_chan(&qp->tx_dma, &cidx);
-> +	if (unlikely(!chan))
-> +		return -ENODEV;
->  
->  	device = chan->device;
-> -	dest = qp->tx_mw_dma_addr + qp->tx_max_frame * entry->tx_index;
-> +	dest = qp->tx_mw_dma_addr[cidx] + qp->tx_max_frame * entry->tx_index;
->  	buff_off = (size_t)buf & ~PAGE_MASK;
->  	dest_off = (size_t)dest & ~PAGE_MASK;
->  
-> @@ -1901,7 +1948,6 @@ static void ntb_async_tx(struct ntb_transport_qp *qp,
->  			 struct ntb_queue_entry *entry)
->  {
->  	struct ntb_payload_header __iomem *hdr;
-> -	struct dma_chan *chan = qp->tx_dma_chan;
->  	void __iomem *offset;
->  	int res;
->  
-> @@ -1913,7 +1959,7 @@ static void ntb_async_tx(struct ntb_transport_qp *qp,
->  	iowrite32(entry->len, &hdr->len);
->  	iowrite32((u32)qp->tx_pkts, &hdr->ver);
->  
-> -	if (!chan)
-> +	if (!qp->tx_dma.chan)
->  		goto err;
->  
->  	if (entry->len < copy_bytes)
-> @@ -1999,8 +2045,99 @@ static bool ntb_dma_filter_fn(struct dma_chan *chan, void *node)
->  	return dev_to_node(&chan->dev->device) == (int)(unsigned long)node;
->  }
->  
-> +static void ntb_transport_teardown_dma(struct ntb_transport_dma *dma,
-> +				       dma_addr_t *mem, size_t size)
-> +{
-> +	struct dma_chan *chan;
-> +	unsigned int i;
-> +
-> +	if (!dma)
-> +		return;
-> +
-> +	if (!dma->chan) {
-> +		kfree(dma->last_cookie);
-> +		dma->last_cookie = NULL;
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < dma->num_chan; i++) {
-> +		chan = dma->chan[i];
-> +		if (!chan)
-> +			continue;
-> +
-> +		if (dma->last_cookie)
-> +			/* Try to be nice and wait for any queued DMA engine
-> +			 * transactions to process before smashing it with a rock
-> +			 */
-> +			dma_sync_wait(chan, dma->last_cookie[i]);
-> +
-> +		dmaengine_terminate_all(chan);
-> +		if (mem && mem[i])
-> +			dma_unmap_resource(chan->device->dev, mem[i], size,
-> +					   DMA_FROM_DEVICE, 0);
-> +		dma_release_channel(chan);
-> +		dma->chan[i] = NULL;
-> +	}
-> +
-> +	kfree(dma->chan);
-> +	kfree(dma->last_cookie);
-> +	dma->chan = NULL;
-> +	dma->num_chan = 0;
-> +	dma->last_cookie = NULL;
-> +}
-> +
-> +static unsigned int ntb_transport_setup_dma(struct pci_dev *pdev,
-> +					    struct ntb_transport_dma *dma,
-> +					    unsigned int req, int node)
-> +{
-> +	dma_cap_mask_t dma_mask;
-> +	struct dma_chan *c;
-> +	unsigned int i = 0;
-> +
-> +	dma_cap_zero(dma_mask);
-> +	dma_cap_set(DMA_MEMCPY, dma_mask);
-> +
-> +	dma->last_cookie = NULL;
-> +	dma->num_chan = 0;
-> +	dma->chan = kcalloc_node(req, sizeof(*dma->chan), GFP_KERNEL, node);
-> +	if (!dma->chan) {
-> +		dev_info(&pdev->dev, "Unable to alloc DMA arrays\n");
-> +		return 0;
-> +	}
-> +
-> +	atomic_set(&dma->cur_chan, 0);
-> +	for (i = 0; i < req; i++) {
-> +		c = dma_request_channel(dma_mask, ntb_dma_filter_fn,
-> +					(void *)(unsigned long)node);
-> +		if (!c) {
-> +			if (!i)
-> +				dev_info(&pdev->dev,
-> +					 "Unable to allocate DMA channel(s)\n");
-> +			break;
-> +		}
-> +		dma->chan[i] = c;
-> +		dma->num_chan++;
-> +	}
-> +	if (!dma->num_chan)
-> +		goto err_out;
-> +
-> +	dma->last_cookie = kcalloc_node(dma->num_chan, sizeof(dma_cookie_t),
-> +					GFP_KERNEL, node);
-> +	if (!dma->last_cookie)
-> +		goto err_out;
-> +
-> +	return dma->num_chan;
-> +
-> +err_out:
-> +	for (i = 0; i < dma->num_chan; i++)
-> +		dma_release_channel(dma->chan[i]);
-> +	kfree(dma->chan);
-> +	dma->chan = NULL;
-> +	dma->num_chan = 0;
-> +	return 0;
-> +}
-> +
->  /**
-> - * ntb_transport_create_queue - Create a new NTB transport layer queue
->   * @data: pointer for callback data
->   * @client_dev: &struct device pointer
->   * @handlers: pointer to various ntb queue (callback) handlers
-> @@ -2024,7 +2161,8 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
->  	struct ntb_transport_qp *qp;
->  	u64 qp_bit;
->  	unsigned int free_queue;
-> -	dma_cap_mask_t dma_mask;
-> +	struct dma_chan *c;
-> +	dma_addr_t mw_dma;
->  	int node;
->  	int i;
->  
-> @@ -2036,7 +2174,7 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
->  
->  	free_queue = ffs(nt->qp_bitmap_free);
->  	if (!free_queue)
-> -		goto err;
-> +		return NULL;
->  
->  	/* decrement free_queue to make it zero based */
->  	free_queue--;
-> @@ -2051,54 +2189,70 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
->  	qp->tx_handler = handlers->tx_handler;
->  	qp->event_handler = handlers->event_handler;
->  
-> -	dma_cap_zero(dma_mask);
-> -	dma_cap_set(DMA_MEMCPY, dma_mask);
-> -
->  	if (use_dma) {
->  		use_tx_dma = true;
->  		use_rx_dma = true;
->  	}
-> -	if (use_tx_dma) {
-> -		qp->tx_dma_chan =
-> -			dma_request_channel(dma_mask, ntb_dma_filter_fn,
-> -					    (void *)(unsigned long)node);
-> -		if (!qp->tx_dma_chan)
-> -			dev_info(&pdev->dev, "Unable to allocate TX DMA channel\n");
-> -	} else
-> -		qp->tx_dma_chan = NULL;
-> -
-> -	if (use_rx_dma) {
-> -		qp->rx_dma_chan =
-> -			dma_request_channel(dma_mask, ntb_dma_filter_fn,
-> -					    (void *)(unsigned long)node);
-> -		if (!qp->rx_dma_chan)
-> -			dev_info(&pdev->dev, "Unable to allocate RX DMA channel\n");
-> -	} else
-> -		qp->rx_dma_chan = NULL;
-> -
-> -	qp->tx_mw_dma_addr = 0;
-> -	if (qp->tx_dma_chan) {
-> -		qp->tx_mw_dma_addr =
-> -			dma_map_resource(qp->tx_dma_chan->device->dev,
-> -					 qp->tx_mw_phys, qp->tx_mw_size,
-> -					 DMA_FROM_DEVICE, 0);
-> -		if (dma_mapping_error(qp->tx_dma_chan->device->dev,
-> -				      qp->tx_mw_dma_addr)) {
-> -			qp->tx_mw_dma_addr = 0;
-> -			goto err1;
-> +
-> +	/* setup TX dma if requested */
-> +	qp->tx_dma.chan = NULL;
-> +	qp->tx_dma.num_chan = 0;
-> +	if (use_tx_dma)
-> +		ntb_transport_setup_dma(pdev, &qp->tx_dma, num_tx_dma_chan ?: 1,
-> +					node);
-> +
-> +	/* setup RX dma if requested */
-> +	qp->rx_dma.chan = NULL;
-> +	qp->rx_dma.num_chan = 0;
-> +	if (use_rx_dma)
-> +		ntb_transport_setup_dma(pdev, &qp->rx_dma, num_rx_dma_chan ?: 1,
-> +					node);
-> +
-> +	/* setup TX dma dest map */
-> +	if (qp->tx_dma.num_chan > 0) {
-> +		qp->tx_mw_dma_addr = kcalloc_node(qp->tx_dma.num_chan,
-> +				sizeof(*qp->tx_mw_dma_addr), GFP_KERNEL, node);
-> +		if (!qp->tx_mw_dma_addr)
-> +			/* this sets qp->tx_dma.num_chan back to 0 */
-> +			ntb_transport_teardown_dma(&qp->tx_dma, NULL, 0);
-> +
-> +		for (i = 0; i < qp->tx_dma.num_chan; i++) {
-> +			c = qp->tx_dma.chan[i];
-> +			mw_dma = dma_map_resource(c->device->dev,
-> +						  qp->tx_mw_phys,
-> +						  qp->tx_mw_size,
-> +						  DMA_FROM_DEVICE, 0);
-> +			if (dma_mapping_error(c->device->dev, mw_dma)) {
-> +				dev_info(&pdev->dev,
-> +					 "TX MW dma_map_resource failed for channel %u\n", i);
-> +				break;
-> +			}
-> +			qp->tx_mw_dma_addr[i] = mw_dma;
->  		}
-> +		if (qp->tx_dma.num_chan > 0 && i < qp->tx_dma.num_chan)
-> +			/* this sets qp->tx_dma.num_chan back to 0 */
-> +			ntb_transport_teardown_dma(&qp->tx_dma,
-> +						   qp->tx_mw_dma_addr,
-> +						   qp->tx_mw_size);
->  	}
->  
-> -	dev_dbg(&pdev->dev, "Using %s memcpy for TX\n",
-> -		qp->tx_dma_chan ? "DMA" : "CPU");
-> +	if (qp->tx_dma.num_chan > 0)
-> +		dev_dbg(&pdev->dev, "Using DMA memcpy for TX (num_chan = %u)\n",
-> +			qp->tx_dma.num_chan);
-> +	else
-> +		dev_dbg(&pdev->dev, "Using CPU memcpy for TX\n");
->  
-> -	dev_dbg(&pdev->dev, "Using %s memcpy for RX\n",
-> -		qp->rx_dma_chan ? "DMA" : "CPU");
-> +	if (qp->rx_dma.num_chan > 0)
-> +		dev_dbg(&pdev->dev, "Using DMA memcpy for RX (num_chan = %u)\n",
-> +			qp->rx_dma.num_chan);
-> +	else
-> +		dev_dbg(&pdev->dev, "Using CPU memcpy for RX\n");
->  
-> +	/* alloc and link entries */
->  	for (i = 0; i < NTB_QP_DEF_NUM_ENTRIES; i++) {
->  		entry = kzalloc_node(sizeof(*entry), GFP_KERNEL, node);
->  		if (!entry)
-> -			goto err1;
-> +			goto err;
->  
->  		entry->qp = qp;
->  		ntb_list_add(&qp->ntb_rx_q_lock, &entry->entry,
-> @@ -2109,7 +2263,7 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
->  	for (i = 0; i < qp->tx_max_entry; i++) {
->  		entry = kzalloc_node(sizeof(*entry), GFP_KERNEL, node);
->  		if (!entry)
-> -			goto err2;
-> +			goto err;
->  
->  		entry->qp = qp;
->  		ntb_list_add(&qp->ntb_tx_free_q_lock, &entry->entry,
-> @@ -2123,23 +2277,20 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
->  
->  	return qp;
->  
-> -err2:
-> +err:
->  	while ((entry = ntb_list_rm(&qp->ntb_tx_free_q_lock, &qp->tx_free_q)))
->  		kfree(entry);
-> -err1:
-> -	qp->rx_alloc_entry = 0;
->  	while ((entry = ntb_list_rm(&qp->ntb_rx_q_lock, &qp->rx_free_q)))
->  		kfree(entry);
-> -	if (qp->tx_mw_dma_addr)
-> -		dma_unmap_resource(qp->tx_dma_chan->device->dev,
-> -				   qp->tx_mw_dma_addr, qp->tx_mw_size,
-> -				   DMA_FROM_DEVICE, 0);
-> -	if (qp->tx_dma_chan)
-> -		dma_release_channel(qp->tx_dma_chan);
-> -	if (qp->rx_dma_chan)
-> -		dma_release_channel(qp->rx_dma_chan);
-> +	qp->rx_alloc_entry = 0;
-> +
-> +	ntb_transport_teardown_dma(&qp->rx_dma, NULL, 0);
-> +	ntb_transport_teardown_dma(&qp->tx_dma, qp->tx_mw_dma_addr,
-> +				   qp->tx_mw_size);
-> +	kfree(qp->tx_mw_dma_addr);
-> +	qp->tx_mw_dma_addr = NULL;
-> +
->  	nt->qp_bitmap_free |= qp_bit;
-> -err:
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(ntb_transport_create_queue);
-> @@ -2163,40 +2314,11 @@ void ntb_transport_free_queue(struct ntb_transport_qp *qp)
->  
->  	qp->active = false;
->  
-> -	if (qp->tx_dma_chan) {
-> -		struct dma_chan *chan = qp->tx_dma_chan;
-> -		/* Putting the dma_chan to NULL will force any new traffic to be
-> -		 * processed by the CPU instead of the DAM engine
-> -		 */
-> -		qp->tx_dma_chan = NULL;
-> -
-> -		/* Try to be nice and wait for any queued DMA engine
-> -		 * transactions to process before smashing it with a rock
-> -		 */
-> -		dma_sync_wait(chan, qp->last_cookie);
-> -		dmaengine_terminate_all(chan);
-> -
-> -		dma_unmap_resource(chan->device->dev,
-> -				   qp->tx_mw_dma_addr, qp->tx_mw_size,
-> -				   DMA_FROM_DEVICE, 0);
-> -
-> -		dma_release_channel(chan);
-> -	}
-> -
-> -	if (qp->rx_dma_chan) {
-> -		struct dma_chan *chan = qp->rx_dma_chan;
-> -		/* Putting the dma_chan to NULL will force any new traffic to be
-> -		 * processed by the CPU instead of the DAM engine
-> -		 */
-> -		qp->rx_dma_chan = NULL;
-> -
-> -		/* Try to be nice and wait for any queued DMA engine
-> -		 * transactions to process before smashing it with a rock
-> -		 */
-> -		dma_sync_wait(chan, qp->last_cookie);
-> -		dmaengine_terminate_all(chan);
-> -		dma_release_channel(chan);
-> -	}
-> +	ntb_transport_teardown_dma(&qp->rx_dma, NULL, 0);
-> +	ntb_transport_teardown_dma(&qp->tx_dma, qp->tx_mw_dma_addr,
-> +				   qp->tx_mw_size);
-> +	kfree(qp->tx_mw_dma_addr);
-> +	qp->tx_mw_dma_addr = NULL;
->  
->  	qp_bit = BIT_ULL(qp->qp_num);
->  
-> @@ -2444,17 +2566,31 @@ EXPORT_SYMBOL_GPL(ntb_transport_qp_num);
->  unsigned int ntb_transport_max_size(struct ntb_transport_qp *qp)
->  {
->  	unsigned int max_size;
-> -	unsigned int copy_align;
-> +	unsigned int copy_align = 0;
->  	struct dma_chan *rx_chan, *tx_chan;
-> +	unsigned int i;
->  
->  	if (!qp)
->  		return 0;
->  
-> -	rx_chan = qp->rx_dma_chan;
-> -	tx_chan = qp->tx_dma_chan;
-> -
-> -	copy_align = max(rx_chan ? rx_chan->device->copy_align : 0,
-> -			 tx_chan ? tx_chan->device->copy_align : 0);
-> +	if (qp->rx_dma.chan) {
-> +		for (i = 0; i < qp->rx_dma.num_chan; i++) {
-> +			rx_chan = qp->rx_dma.chan[i];
-> +			if (!rx_chan)
-> +				continue;
-> +			copy_align = max(copy_align,
-> +					 rx_chan->device->copy_align);
-> +		}
-> +	}
-> +	if (qp->tx_dma.chan) {
-> +		for (i = 0; i < qp->tx_dma.num_chan; i++) {
-> +			tx_chan = qp->tx_dma.chan[i];
-> +			if (!tx_chan)
-> +				continue;
-> +			copy_align = max(copy_align,
-> +					 tx_chan->device->copy_align);
-> +		}
-> +	}
->  
->  	/* If DMA engine usage is possible, try to find the max size for that */
->  	max_size = qp->tx_max_frame - sizeof(struct ntb_payload_header);
+But that's not how the page cache works, exactly because freeing isn't
+actually RCU-delayed.
 
+So while the code visually follows the exact same pattern as some
+other "look up speculatively under RCU, skip if it's not there any
+more", it actually does exactly the same thing as the "copy data under
+RCU, then check later if it was ok". Except it does "increment
+refcount under RCU, then check later if it was actually valid".
+
+That said, I wonder if we might not consider making page cache freeing
+be RCU-delayed. This has come up before (exactly *because* of that
+"folio_try_get()").
+
+Because while I am pretty sure that filemap_get_entry() is fine (and a
+number of other core users), I'm not convinced that some of the other
+users of folio_try_get() are necessarily aware of just how subtle that
+thing is.
+
+Anyway, I'm certainly not going to push that patch very hard.
+
+But I do think that a "3x performance improvement on a case that is
+known to be an issue for at least one real-world customer"  shouldn't
+be called "a niche case". I've seen *way* more niche than that.
+
+(I do think RCU-freeing folios would potentially be an interesting
+thing to look into, but I don't think the patch under discussion is
+necessarily the reason to do so).
+
+               Linus
 
