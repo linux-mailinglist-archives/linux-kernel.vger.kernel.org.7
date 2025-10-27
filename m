@@ -1,392 +1,318 @@
-Return-Path: <linux-kernel+bounces-871633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161B1C0DDF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:10:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9977DC0DE49
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF5A423339
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 803904F7298
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00116257AD1;
-	Mon, 27 Oct 2025 13:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373EE25F97C;
+	Mon, 27 Oct 2025 13:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyrB0YhT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AP2G+gny"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF62225782A;
-	Mon, 27 Oct 2025 13:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231152472BA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570152; cv=none; b=AJeruXG6vfJwqNDIA6mgVxW/qa06Rpp0/U0h98FPcRmQ1AF8kS8niFiOY/SbgUFloyutGF2Zzo61zA53r7u432jlOK0njtZRzrpxNsEAHEl0uufjCnRP5PBeXuxY2wDnlO9NJKX+AXhx5BScpJU2pcsYepC0XqSWP4zvK1ByBXM=
+	t=1761570205; cv=none; b=Q0kHlsS+hAmQycysEigfa850fV+Nzc2j5K400IqK7x6IqpqYT2lrJ+KYdJTPYJBGOO7LXGf0bnxslUdsZgbIW/2dPBVbr7sQankUv11/Up70unntGqhs2VzlFHukSbGxa+km0FDLU7tycumEP+v6GSdp0re67g29H5deH/Yham0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570152; c=relaxed/simple;
-	bh=B5/2fJuj0llEydCKzz1l5nP8dp2nKovmE+gnGvEMlNk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=STCBJjYjXm1fzu9QoXi0Zt+RfL1ZcLlsXbz4c9ER7joidox9XrG25cloE0YYi/WvihqkQQ/JfH+xdHsly+xbKbCUIQyLqhvT42WwxL2hUBDQoQWHJVQ03fWW/7pG8kpi7Juh+eLeH3xm5BPMr5OFKPfCxdnPfovqNutXzdF1flY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyrB0YhT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A01C4CEF1;
-	Mon, 27 Oct 2025 13:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761570149;
-	bh=B5/2fJuj0llEydCKzz1l5nP8dp2nKovmE+gnGvEMlNk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=PyrB0YhT8GeeebNw8jB6EQ8x29mKYzlhoyltkd8yD6X7fcpiFYthcG3YGxuqFf+UL
-	 Cd7mHsHqV8CY38nnjmrjyNBWPVBomqIQdwrsiOjALL12C9fnG5rRMyT/87z4+xOxzn
-	 pOS8bQR1lncBBraoOg1U44Q6GIAeSMOQIV++OsFj2BX4rXHuqIAEyKdyBSqmOGpyqC
-	 tzqQ2ZzryG2pNk7rdeCkacBwqRB2rmaWVFnerJ2U4QzpHF//obx/IMK/5nKn7yA5IB
-	 wE6rWb2WFf4i13tqe+m+hchESes4zweIzlGZz6uOwS7QJkTiM+Lmu5bF3NCsobvWat
-	 3mkIy9Cm+PTLg==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Mon, 27 Oct 2025 14:02:14 +0100
-Subject: [PATCH] soc: qcom: pmic_glink_altmode: Consume TBT3/USB4 mode
- notifications
+	s=arc-20240116; t=1761570205; c=relaxed/simple;
+	bh=f3k/z3I0y5Ok43lqfeNHh7kQLWGPGLB7Q+pEbC0I+SQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LOxbqGfzZX81V9KeIaTzXKDGuYplY+umzo4QsvavsyW3Y630TfBD/4HBIpaW4XaK45+DQYM2kktqqNY5SvySVRZzKRmmY5UJch7eLcUcz+LACj4fMn9Yx/tIj0hCG7hNMhPM6UqVBw3Q0FDDRuRkESFSKYLGgRog6Slk55nwLJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AP2G+gny; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee130237a8so3001244f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761570200; x=1762175000; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=N31s0m6iPpe/D8ht+rzuSz/UgKSh2B3HnxendLz+41M=;
+        b=AP2G+gnyoMx/xh0SQDVkdJ+Yf++GzuAignKEoFQxXBU2IUkRMgzoa3/5oolOslS+5Z
+         NkYVJLjcbR+VNJQiDWrPO56SRsp9R9JgAaAxJnwKBaT8AoF9WWTv9IKv92aH6Th77LI+
+         V9uxjEdLgqO5fM+2h8b/MzqBKEtAOYxY7AD47ReLP9EiFo3bTKBcqeAl7ARPsZEw+s9Z
+         BNMfKzpKa+9laGMxjHJgoO51oonCNwQy4hyN5T58cBZMXU1ouBuszADyydLHdTqxt4gE
+         eIQR2mwi+m9RiuKSOGhhrPiCm8VhY74E1TN/F/Nv6SFBJ+DOtgc4uVulb2bn051QBSen
+         mRKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761570200; x=1762175000;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N31s0m6iPpe/D8ht+rzuSz/UgKSh2B3HnxendLz+41M=;
+        b=vw4PPuc2OpvS7wKGYUMA+9U6ky+TFLWowSpIASpvnzg8KYZMMEf9e5Awn2PIDacpo1
+         ghEEaC3PMEBCbV2l56xyQoyT6lOdru5UQnm5plactFvhWc0m0jrdijPJsVYM18Igsg5h
+         3sY3Eoim2SqddG26TGTyUSjBzN2InOXUG0RCdCX8jzQNGT1yxN9gmHAzhtuceMKK8KT2
+         B16f4hXRue7zO/UcIdmipFVeBeczmXW5WgequFkMNyyXPt9gwP8CVje8Zb3iArcg1C2i
+         0tdtruGzYwkmiCKDURwI2NsDVZV65wN1TqZ4RWpEfcRmGUJa2wctVCxklEPF8Fbk9rc0
+         m9ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaSWsAdb5nEikZBa5iuCbEINEYKwxmNK+e4Vz8D7E3zGeztjYz3MpQFE071LHsZWttxmpZy/cubCeBU5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEZ0vJbD+P2u9NVWzt6A3zFO+w66Yue/z5pzPvaEH8V67Bbcs6
+	wGHv1hQ4hGfThKIYTBcJd2v34Y9jLJfRPED7LN05I/k0aIHOz57sQq+M
+X-Gm-Gg: ASbGncs1/M29DrvrN/6IG2mnXl3d8rlUzeYeomJj/iqeYoalpr7tQzOGpR5wApk4RfT
+	3FPufedboC9T9QPtVR2lvu2FPExfFFXgRdjz06F7x199/8odxk79kgE3fUMV0U+1gETkfwUotiN
+	dLkmOJekJS5Q+4T+lL12BZGieUtpFwJnaPt3apA2YJ+t29+C0YYRBFwSvhfaIGvd0Oar5ALyrWT
+	jfiUJ3bihlJ4GxcO03+e74yd/5jTaOxdEXAH6F56kh0gP0TsOIBaY3VJSUST+xB1arRWUV7SWsE
+	19N8B1LsPAOlqAThAEOcOFmYJ95hTVy+QoQASEu1bKWCSfruMdyw2V9/5T5mxzuvwhtHfBlQIKz
+	OF1ZbNN+gMjltoj4gjf5kTeKAwyoW/KHQgvSZlQVF58cWvwLL63tsmokIvBVNzCyzipyIJ7EQXL
+	qelu+JQnbq
+X-Google-Smtp-Source: AGHT+IFy4lHfZKYAUxpChiM/+pJgD0sz9c2mg6bmQSCoUd2BbEXzPK96ZbwUpKX3z8ifK+plNRNF8Q==
+X-Received: by 2002:a05:6000:22c7:b0:426:ff8f:a0a3 with SMTP id ffacd0b85a97d-4299072c0femr9120280f8f.34.1761570200163;
+        Mon, 27 Oct 2025 06:03:20 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df3c7sm14013153f8f.40.2025.10.27.06.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 06:03:19 -0700 (PDT)
+Message-ID: <ff1af8b4d43ce31cbf94623e36b721b057ca4077.camel@gmail.com>
+Subject: Re: [PATCH] iio: imu: adis: fix all kernel-doc warnings in header
+ file
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, 	linux-iio@vger.kernel.org
+Date: Mon, 27 Oct 2025 13:03:54 +0000
+In-Reply-To: <20251026024759.433956-1-rdunlap@infradead.org>
+References: <20251026024759.433956-1-rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251027-topic-pg_altmode_usb4-v1-1-2931a3ecc146@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAFZt/2gC/x3MWwqAIBBA0a3EfCf46EFtJSJMpxqoFK0Ior0nf
- Z6Pex+IGAgjtNkDAS+K5PYEkWdgFr3PyMgmg+SyFFzW7HCeDPPzoNdjcxaHM44F06ZorFbKcFF
- Ban3Aie7/2/Xv+wHVM0HTZwAAAA==
-X-Change-ID: 20251027-topic-pg_altmode_usb4-ac49da33c016
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: usb4-upstream@oss.qualcomm.com, 
- Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Jack Pham <jack.pham@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761570146; l=10513;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=NwKHVA9VTFHEowes5xL+aTOPpTXiWQTkEyzUXnkrDdE=;
- b=3k29Fv2M68O4PpPIySOf66WvJiUwpiYlvMpcPT6No+3AXp+bF6CSOqbbSKrZcNdlGvzibL+DW
- C3j/asnJsIJC1V7fK9TkoMKd60GeEvQVFbzQijKpuWiNjuU6i4fxVHv
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Sat, 2025-10-25 at 19:47 -0700, Randy Dunlap wrote:
+> Correct and add to adis.h to resolve all kernel-doc warnings:
+>=20
+> - add a missing struct member description
+> - change one non-kernel-doc comment to use /* instead of /**
+> - correct function parameter @value to @val (7 locations)
+> - add function return value comments (13 locations)
+>=20
+> Warning: include/linux/iio/imu/adis.h:97 struct member 'has_fifo'
+> =C2=A0not described in 'adis_data'
+> Warning: include/linux/iio/imu/adis.h:139 Incorrect use of kernel-doc
+> =C2=A0format: * The state_lock is meant to be used during operations that
+> =C2=A0require
+> Warning: include/linux/iio/imu/adis.h:158 struct member '"__adis_"'
+> =C2=A0not described in 'adis'
+> Warning: include/linux/iio/imu/adis.h:264 function parameter 'val'
+> =C2=A0not described in 'adis_write_reg'
+> Warning: include/linux/iio/imu/adis.h:371 No description found for
+> =C2=A0return value of 'adis_update_bits_base'
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
 
-Some compute SoCs support additional operation modes, extending the
-existing set of USB3/safe/DP-alt-mode.
+Thanks!
 
-The firmware performs all the necessary handshakes for
-us and there is no room for error on that level (i.e. the sequences
-will match what happens on Windows).
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-The trade-off with that approach is that the received notifications
-trim some of the PDO/EUDO data (particularly the cable/plug parts),
-offering a set of similar-in-nature-but-not-the-same indicators.
-
-In an attempt to remedy this, I reconstructed some of it, so that the
-connected mux/retimer drivers can continue to behave as expected.
-
-Add support for parsing the aforementioned data coming from PMIC_GLINK
-and passing it on to the various Type-C components.
-
-Reviewed-by: Jack Pham <jack.pham@oss.qualcomm.com>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
-note: I carried Jack's r-b from an internal pre-review
----
- drivers/soc/qcom/pmic_glink_altmode.c | 188 +++++++++++++++++++++++++++++-----
- 1 file changed, 165 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
-index 7f11acd33323..d0afdcb96ee1 100644
---- a/drivers/soc/qcom/pmic_glink_altmode.c
-+++ b/drivers/soc/qcom/pmic_glink_altmode.c
-@@ -14,10 +14,12 @@
- #include <linux/soc/qcom/pdr.h>
- #include <drm/bridge/aux-bridge.h>
- 
-+#include <linux/usb/pd.h>
- #include <linux/usb/typec_altmode.h>
- #include <linux/usb/typec_dp.h>
- #include <linux/usb/typec_mux.h>
- #include <linux/usb/typec_retimer.h>
-+#include <linux/usb/typec_tbt.h>
- 
- #include <linux/soc/qcom/pmic_glink.h>
- 
-@@ -37,11 +39,38 @@ struct usbc_write_req {
- 	__le32 reserved;
- };
- 
--#define NOTIFY_PAYLOAD_SIZE 16
-+struct usbc_sc8280x_dp_data {
-+	u8 pin_assignment : 6;
-+	u8 hpd_state : 1;
-+	u8 hpd_irq : 1;
-+	u8 res[7];
-+};
-+
-+/* Used for both TBT and USB4 notifications */
-+struct usbc_sc8280x_tbt_data {
-+	u8 usb_speed : 3;
-+	u8 cable_type : 3;
-+	/* This field is NOP on USB4, all cables support rounded rates by spec */
-+	u8 rounded_cable : 1;
-+	u8 power_limited : 1;
-+	u8 res[11];
-+};
-+
- struct usbc_notify {
- 	struct pmic_glink_hdr hdr;
--	char payload[NOTIFY_PAYLOAD_SIZE];
--	u32 reserved;
-+	u8 port_idx;
-+	u8 orientation;
-+	u8 mux_ctrl;
-+#define MUX_CTRL_STATE_NO_CONN			0
-+#define MUX_CTRL_STATE_TUNNELING		4
-+
-+	u8 res;
-+	__le16 vid;
-+	__le16 svid;
-+	union usbc_sc8280x_extended_data {
-+		struct usbc_sc8280x_dp_data dp;
-+		struct usbc_sc8280x_tbt_data tbt;
-+	} extended_data;
- };
- 
- struct usbc_sc8180x_notify {
-@@ -74,6 +103,7 @@ struct pmic_glink_altmode_port {
- 	struct typec_retimer *typec_retimer;
- 	struct typec_retimer_state retimer_state;
- 	struct typec_altmode dp_alt;
-+	struct typec_altmode tbt_alt;
- 
- 	struct work_struct work;
- 
-@@ -81,10 +111,12 @@ struct pmic_glink_altmode_port {
- 
- 	enum typec_orientation orientation;
- 	u16 svid;
-+	struct usbc_sc8280x_tbt_data tbt_data;
- 	u8 dp_data;
- 	u8 mode;
- 	u8 hpd_state;
- 	u8 hpd_irq;
-+	u8 mux_ctrl;
- };
- 
- #define work_to_altmode(w) container_of((w), struct pmic_glink_altmode, enable_work)
-@@ -170,6 +202,102 @@ static void pmic_glink_altmode_enable_dp(struct pmic_glink_altmode *altmode,
- 		dev_err(altmode->dev, "failed to setup retimer to DP: %d\n", ret);
- }
- 
-+static void pmic_glink_altmode_enable_tbt(struct pmic_glink_altmode *altmode,
-+					  struct pmic_glink_altmode_port *port)
-+{
-+	struct usbc_sc8280x_tbt_data *tbt = &port->tbt_data;
-+	struct typec_thunderbolt_data tbt_data = {};
-+	u32 cable_speed;
-+	int ret;
-+
-+	/* Device Discover Mode VDO */
-+	tbt_data.device_mode = TBT_MODE;
-+	tbt_data.device_mode |= TBT_SET_ADAPTER(TBT_ADAPTER_TBT3);
-+
-+	/* Cable Discover Mode VDO */
-+	tbt_data.cable_mode = TBT_MODE;
-+
-+	if (tbt->usb_speed == 0) {
-+		cable_speed = TBT_CABLE_USB3_PASSIVE;
-+	} else if (tbt->usb_speed == 1) {
-+		cable_speed = TBT_CABLE_10_AND_20GBPS;
-+	} else {
-+		dev_err(altmode->dev,
-+			"Got illegal TBT3 cable speed value (%u), falling back to passive\n",
-+			tbt->usb_speed);
-+		cable_speed = TBT_CABLE_USB3_PASSIVE;
-+	}
-+	tbt_data.cable_mode |= TBT_SET_CABLE_SPEED(cable_speed);
-+
-+	if (tbt->cable_type) {
-+		tbt_data.cable_mode |= TBT_CABLE_ACTIVE_PASSIVE;
-+		tbt_data.cable_mode |= TBT_SET_CABLE_ROUNDED(tbt->rounded_cable);
-+	}
-+
-+	/* Enter Mode VDO */
-+	tbt_data.enter_vdo |= TBT_MODE;
-+	tbt_data.enter_vdo |= TBT_ENTER_MODE_CABLE_SPEED(cable_speed);
-+
-+	if (tbt->cable_type) {
-+		tbt_data.enter_vdo |= TBT_CABLE_ACTIVE_PASSIVE;
-+		tbt_data.enter_vdo |= TBT_SET_CABLE_ROUNDED(tbt->rounded_cable);
-+	}
-+
-+	port->state.alt = &port->tbt_alt;
-+	port->state.data = &tbt_data;
-+	port->state.mode = TYPEC_MODAL_STATE(port->mode);
-+
-+	ret = typec_mux_set(port->typec_mux, &port->state);
-+	if (ret)
-+		dev_err(altmode->dev, "failed to switch mux to USB: %d\n", ret);
-+
-+	port->retimer_state.alt = &port->tbt_alt;
-+	port->retimer_state.data = &tbt_data;
-+	port->retimer_state.mode = TYPEC_MODAL_STATE(port->mode);
-+
-+	ret = typec_retimer_set(port->typec_retimer, &port->retimer_state);
-+	if (ret)
-+		dev_err(altmode->dev, "failed to setup retimer to USB: %d\n", ret);
-+}
-+
-+static void pmic_glink_altmode_enable_usb4(struct pmic_glink_altmode *altmode,
-+					   struct pmic_glink_altmode_port *port)
-+{
-+	struct usbc_sc8280x_tbt_data *tbt = &port->tbt_data;
-+	struct enter_usb_data data = {};
-+	int ret;
-+
-+	data.eudo = FIELD_PREP(EUDO_USB_MODE_MASK, EUDO_USB_MODE_USB4);
-+
-+	if (tbt->usb_speed == 0) {
-+		data.eudo |= FIELD_PREP(EUDO_CABLE_SPEED_MASK, EUDO_CABLE_SPEED_USB4_GEN2);
-+	} else if (tbt->usb_speed == 1) {
-+		data.eudo |= FIELD_PREP(EUDO_CABLE_SPEED_MASK, EUDO_CABLE_SPEED_USB4_GEN3);
-+	} else {
-+		pr_err("Got illegal USB4 cable speed value (%u), falling back to G2\n",
-+		       tbt->usb_speed);
-+		data.eudo |= FIELD_PREP(EUDO_CABLE_SPEED_MASK, EUDO_CABLE_SPEED_USB4_GEN2);
-+	}
-+
-+	data.eudo |= FIELD_PREP(EUDO_CABLE_TYPE_MASK, tbt->cable_type);
-+
-+	port->state.alt = NULL;
-+	port->state.data = &data;
-+	port->state.mode = TYPEC_MODE_USB4;
-+
-+	ret = typec_mux_set(port->typec_mux, &port->state);
-+	if (ret)
-+		dev_err(altmode->dev, "failed to switch mux to USB: %d\n", ret);
-+
-+	port->retimer_state.alt = NULL;
-+	port->retimer_state.data = &data;
-+	port->retimer_state.mode = TYPEC_MODE_USB4;
-+
-+	ret = typec_retimer_set(port->typec_retimer, &port->retimer_state);
-+	if (ret)
-+		dev_err(altmode->dev, "failed to setup retimer to USB: %d\n", ret);
-+}
-+
- static void pmic_glink_altmode_enable_usb(struct pmic_glink_altmode *altmode,
- 					  struct pmic_glink_altmode_port *port)
- {
-@@ -222,15 +350,15 @@ static void pmic_glink_altmode_worker(struct work_struct *work)
- 
- 	typec_switch_set(alt_port->typec_switch, alt_port->orientation);
- 
--	if (alt_port->svid == USB_TYPEC_DP_SID) {
--		if (alt_port->mode == 0xff) {
--			pmic_glink_altmode_safe(altmode, alt_port);
--		} else {
--			pmic_glink_altmode_enable_dp(altmode, alt_port,
--						     alt_port->mode,
--						     alt_port->hpd_state,
--						     alt_port->hpd_irq);
--		}
-+	if (alt_port->mux_ctrl == MUX_CTRL_STATE_NO_CONN) {
-+		pmic_glink_altmode_safe(altmode, alt_port);
-+	} else if (alt_port->svid == USB_TYPEC_TBT_SID) {
-+		pmic_glink_altmode_enable_tbt(altmode, alt_port);
-+	} else if (alt_port->svid == USB_TYPEC_DP_SID) {
-+		pmic_glink_altmode_enable_dp(altmode, alt_port,
-+					     alt_port->mode,
-+					     alt_port->hpd_state,
-+					     alt_port->hpd_irq);
- 
- 		if (alt_port->hpd_state)
- 			conn_status = connector_status_connected;
-@@ -238,6 +366,8 @@ static void pmic_glink_altmode_worker(struct work_struct *work)
- 			conn_status = connector_status_disconnected;
- 
- 		drm_aux_hpd_bridge_notify(&alt_port->bridge->dev, conn_status);
-+	} else if (alt_port->mux_ctrl == MUX_CTRL_STATE_TUNNELING) {
-+		pmic_glink_altmode_enable_usb4(altmode, alt_port);
- 	} else {
- 		pmic_glink_altmode_enable_usb(altmode, alt_port);
- 	}
-@@ -314,11 +444,10 @@ static void pmic_glink_altmode_sc8280xp_notify(struct pmic_glink_altmode *altmod
- 					       u16 svid, const void *data, size_t len)
- {
- 	struct pmic_glink_altmode_port *alt_port;
-+	const struct usbc_sc8280x_tbt_data *tbt;
-+	const struct usbc_sc8280x_dp_data *dp;
- 	const struct usbc_notify *notify;
- 	u8 orientation;
--	u8 hpd_state;
--	u8 hpd_irq;
--	u8 mode;
- 	u8 port;
- 
- 	if (len != sizeof(*notify)) {
-@@ -329,11 +458,8 @@ static void pmic_glink_altmode_sc8280xp_notify(struct pmic_glink_altmode *altmod
- 
- 	notify = data;
- 
--	port = notify->payload[0];
--	orientation = notify->payload[1];
--	mode = FIELD_GET(SC8280XP_DPAM_MASK, notify->payload[8]) - DPAM_HPD_A;
--	hpd_state = FIELD_GET(SC8280XP_HPD_STATE_MASK, notify->payload[8]);
--	hpd_irq = FIELD_GET(SC8280XP_HPD_IRQ_MASK, notify->payload[8]);
-+	port = notify->port_idx;
-+	orientation = notify->orientation;
- 
- 	if (port >= ARRAY_SIZE(altmode->ports) || !altmode->ports[port].altmode) {
- 		dev_dbg(altmode->dev, "notification on undefined port %d\n", port);
-@@ -343,9 +469,21 @@ static void pmic_glink_altmode_sc8280xp_notify(struct pmic_glink_altmode *altmod
- 	alt_port = &altmode->ports[port];
- 	alt_port->orientation = pmic_glink_altmode_orientation(orientation);
- 	alt_port->svid = svid;
--	alt_port->mode = mode;
--	alt_port->hpd_state = hpd_state;
--	alt_port->hpd_irq = hpd_irq;
-+	alt_port->mux_ctrl = notify->mux_ctrl;
-+
-+	if (svid == USB_TYPEC_DP_SID) {
-+		dp = &notify->extended_data.dp;
-+
-+		alt_port->mode = dp->pin_assignment - DPAM_HPD_A;
-+		alt_port->hpd_state = dp->hpd_state;
-+		alt_port->hpd_irq = dp->hpd_irq;
-+	} else if (alt_port->mux_ctrl == MUX_CTRL_STATE_TUNNELING) {
-+		/* Valid for both USB4 and TBT3 */
-+		tbt = &notify->extended_data.tbt;
-+
-+		alt_port->tbt_data = *tbt;
-+	}
-+
- 	schedule_work(&alt_port->work);
- }
- 
-@@ -471,6 +609,10 @@ static int pmic_glink_altmode_probe(struct auxiliary_device *adev,
- 		alt_port->dp_alt.mode = USB_TYPEC_DP_MODE;
- 		alt_port->dp_alt.active = 1;
- 
-+		alt_port->tbt_alt.svid = USB_TYPEC_TBT_SID;
-+		alt_port->tbt_alt.mode = TYPEC_TBT_MODE;
-+		alt_port->tbt_alt.active = 1;
-+
- 		alt_port->typec_mux = fwnode_typec_mux_get(fwnode);
- 		if (IS_ERR(alt_port->typec_mux)) {
- 			fwnode_handle_put(fwnode);
-
----
-base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
-change-id: 20251027-topic-pg_altmode_usb4-ac49da33c016
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: David Lechner <dlechner@baylibre.com>
+> Cc: Nuno S=C3=A1 <nuno.sa@analog.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: linux-iio@vger.kernel.org
+> ---
+> =C2=A0include/linux/iio/imu/adis.h |=C2=A0=C2=A0 45 +++++++++++++++++++++=
++++++-------
+> =C2=A01 file changed, 36 insertions(+), 9 deletions(-)
+>=20
+> --- linux-next-20251024.orig/include/linux/iio/imu/adis.h
+> +++ linux-next-20251024/include/linux/iio/imu/adis.h
+> @@ -57,6 +57,7 @@ struct adis_timeout {
+> =C2=A0 * @enable_irq: Hook for ADIS devices that have a special IRQ enabl=
+e/disable
+> =C2=A0 * @unmasked_drdy: True for devices that cannot mask/unmask the dat=
+a ready
+> pin
+> =C2=A0 * @has_paging: True if ADIS device has paged registers
+> + * @has_fifo: True if ADIS device has a hardware FIFO
+> =C2=A0 * @burst_reg_cmd:	Register command that triggers burst
+> =C2=A0 * @burst_len:		Burst size in the SPI RX buffer. If @burst_max_len =
+is
+> defined,
+> =C2=A0 *			this should be the minimum size supported by the
+> device.
+> @@ -136,7 +137,7 @@ struct adis {
+> =C2=A0	const struct adis_data	*data;
+> =C2=A0	unsigned int		burst_extra_len;
+> =C2=A0	const struct adis_ops	*ops;
+> -	/**
+> +	/*
+> =C2=A0	 * The state_lock is meant to be used during operations that requi=
+re
+> =C2=A0	 * a sequence of SPI R/W in order to protect the SPI transfer
+> =C2=A0	 * information (fields 'xfer', 'msg' & 'current_page') between
+> @@ -166,7 +167,7 @@ int __adis_reset(struct adis *adis);
+> =C2=A0 * adis_reset() - Reset the device
+> =C2=A0 * @adis: The adis device
+> =C2=A0 *
+> - * Returns 0 on success, a negative error code otherwise
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_reset(struct adis *adis)
+> =C2=A0{
+> @@ -183,7 +184,9 @@ int __adis_read_reg(struct adis *adis, u
+> =C2=A0 * __adis_write_reg_8() - Write single byte to a register (unlocked=
+)
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the register to be written
+> - * @value: The value to write
+> + * @val: The value to write
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int __adis_write_reg_8(struct adis *adis, unsigned in=
+t reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 u8 val)
+> @@ -195,7 +198,9 @@ static inline int __adis_write_reg_8(str
+> =C2=A0 * __adis_write_reg_16() - Write 2 bytes to a pair of registers (un=
+locked)
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> - * @value: Value to be written
+> + * @val: Value to be written
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int __adis_write_reg_16(struct adis *adis, unsigned i=
+nt reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 val)
+> @@ -207,7 +212,9 @@ static inline int __adis_write_reg_16(st
+> =C2=A0 * __adis_write_reg_32() - write 4 bytes to four registers (unlocke=
+d)
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the four register
+> - * @value: Value to be written
+> + * @val: Value to be written
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int __adis_write_reg_32(struct adis *adis, unsigned i=
+nt reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 val)
+> @@ -220,6 +227,8 @@ static inline int __adis_write_reg_32(st
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> =C2=A0 * @val: The value read back from the device
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int __adis_read_reg_16(struct adis *adis, unsigned in=
+t reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 u16 *val)
+> @@ -239,6 +248,8 @@ static inline int __adis_read_reg_16(str
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> =C2=A0 * @val: The value read back from the device
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int __adis_read_reg_32(struct adis *adis, unsigned in=
+t reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 u32 *val)
+> @@ -257,8 +268,10 @@ static inline int __adis_read_reg_32(str
+> =C2=A0 * adis_write_reg() - write N bytes to register
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> - * @value: The value to write to device (up to 4 bytes)
+> + * @val: The value to write to device (up to 4 bytes)
+> =C2=A0 * @size: The size of the @value (in bytes)
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_write_reg(struct adis *adis, unsigned int re=
+g,
+> =C2=A0				 unsigned int val, unsigned int size)
+> @@ -273,6 +286,8 @@ static inline int adis_write_reg(struct
+> =C2=A0 * @reg: The address of the lower of the two registers
+> =C2=A0 * @val: The value read back from the device
+> =C2=A0 * @size: The size of the @val buffer
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static int adis_read_reg(struct adis *adis, unsigned int reg,
+> =C2=A0			 unsigned int *val, unsigned int size)
+> @@ -285,7 +300,9 @@ static int adis_read_reg(struct adis *ad
+> =C2=A0 * adis_write_reg_8() - Write single byte to a register
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the register to be written
+> - * @value: The value to write
+> + * @val: The value to write
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_write_reg_8(struct adis *adis, unsigned int =
+reg,
+> =C2=A0				=C2=A0=C2=A0 u8 val)
+> @@ -297,7 +314,9 @@ static inline int adis_write_reg_8(struc
+> =C2=A0 * adis_write_reg_16() - Write 2 bytes to a pair of registers
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> - * @value: Value to be written
+> + * @val: Value to be written
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_write_reg_16(struct adis *adis, unsigned int=
+ reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0 u16 val)
+> @@ -309,7 +328,9 @@ static inline int adis_write_reg_16(stru
+> =C2=A0 * adis_write_reg_32() - write 4 bytes to four registers
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the four register
+> - * @value: Value to be written
+> + * @val: Value to be written
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_write_reg_32(struct adis *adis, unsigned int=
+ reg,
+> =C2=A0				=C2=A0=C2=A0=C2=A0 u32 val)
+> @@ -322,6 +343,8 @@ static inline int adis_write_reg_32(stru
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> =C2=A0 * @val: The value read back from the device
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_read_reg_16(struct adis *adis, unsigned int =
+reg,
+> =C2=A0				=C2=A0=C2=A0 u16 *val)
+> @@ -341,6 +364,8 @@ static inline int adis_read_reg_16(struc
+> =C2=A0 * @adis: The adis device
+> =C2=A0 * @reg: The address of the lower of the two registers
+> =C2=A0 * @val: The value read back from the device
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_read_reg_32(struct adis *adis, unsigned int =
+reg,
+> =C2=A0				=C2=A0=C2=A0 u32 *val)
+> @@ -366,6 +391,8 @@ int __adis_update_bits_base(struct adis
+> =C2=A0 * @size: Size of the register to update
+> =C2=A0 *
+> =C2=A0 * Updates the desired bits of @reg in accordance with @mask and @v=
+al.
+> + *
+> + * Returns: %0 on success, a negative error code otherwise
+> =C2=A0 */
+> =C2=A0static inline int adis_update_bits_base(struct adis *adis, unsigned=
+ int reg,
+> =C2=A0					const u32 mask, const u32 val, u8
+> size)
 
