@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-872066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB86C0F2DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:10:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C10C0F3B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5D2018940E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4B856608A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F7C3112AD;
-	Mon, 27 Oct 2025 16:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2F3311975;
+	Mon, 27 Oct 2025 16:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bg1mmsGy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mcGpyXKe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8BA30C60C;
-	Mon, 27 Oct 2025 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B793101AD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761581320; cv=none; b=X4NoJUruUn2xtnDSALVBtSs2yBgH4dLo6w0QWXYEA2Oa+UMJeqMw29EgVXfexLfm+IDuAx1vtE1x5uD5bPnawT0D4dTMHdQbqhxWQG9nePRuUZUZeNFqDY5Hgw5omtr1A6UVB8x4TNedaV06shJrcvNT9663+eit9C5IJ9R+gQA=
+	t=1761581336; cv=none; b=jfVJ9vQ9oVMv5dEZYSDOrI7ashvkoOR4H9altjVlI9p6JMM3Kf+9Ua8BepHkmRdhYxqhPj6RCwMWngXz/F91wrBnvUa8vQ79XlvOO+wT9hEk8ZcHi9qC2y//u6iBqQJ8fL+BN4Cjz5LCn0kA16GOIvku2APY3DxgVx6EnM8twl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761581320; c=relaxed/simple;
-	bh=0qurQEcCeZYwnzmNk0lbdUhOqCeujh+OZZ7pr7d4vWA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YLyDRQMNWTeM6dO25cRGNlHZsqx/zW+ntLdrwp46ZicULLMc93GCxxnGAiYvFQehaqvxzCbt3yf3I/dtptFoF2CLOJiO49QxRSaCBxH4frLxDvoYsQIPsmahFOx/AE4s9zttkG0Qiy6WTo9ZBLP8XwANHTaTiJhcaZ2p1hyZk4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bg1mmsGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73763C4CEF1;
-	Mon, 27 Oct 2025 16:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761581319;
-	bh=0qurQEcCeZYwnzmNk0lbdUhOqCeujh+OZZ7pr7d4vWA=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=bg1mmsGyeYPsovM1F0Tq4nEw20gfWYynK3MHZ7jxJuJY17d7vtN6CIx7db4Q3pvu5
-	 puDkrsmy7UcPEk9/YB9PY1gbwXT9eHUKLt4fqTnuARzUokgMvBXp2IvGAA4vzj5Sjn
-	 ggpK0qqihbpjmlAHkS/EKn6i9xM7FjMcUh8ZH9w6ID6+7zhXwRu/w4riSqFJIp5FRJ
-	 4c7MNB+jl1JZX2epbGuIhYgMCi/XcJC60t7eXSh355R7OW0zbj/JHyr8tZ8eEKvTfn
-	 XI+W5Dl/UOIJ8BCWaWyuRpmuNy65UCSNiIDMfZNNOkm3rPwdCSkAxCcrGp9djd/z++
-	 66WZ+4huDCMXw==
-Message-ID: <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
-Date: Mon, 27 Oct 2025 17:08:31 +0100
+	s=arc-20240116; t=1761581336; c=relaxed/simple;
+	bh=uzC1MIwCWLUYwFvOfQujj7KX1k+1FpE+mz/zZk2ENgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=r63gJZFyQDrbBJuf6BqBaEw7edP6izk3ZB2baviJqz09CdvJHsuYuF44+XizlfCJpByM695nx2Vera9P0tDKbOE7PCzqXnEOCIQPboYCTgGUL14aEK8MZ0qI5BNtCKStfz2QofCqZzW/EbfVMd9N8SXorI7/awIJbvKsOe+Gmec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mcGpyXKe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59RG3CXb3207235
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:08:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KgRMpIuzEklhMyLqeSgTqelB6K/jP1FY8xNuF/F7waE=; b=mcGpyXKeJIl3if0g
+	BTHBHMbOb5aFzf8YLocOxs83v1pY7wAmIyfj/BIAB05engfqIrH8DQ7Dze48c6V5
+	jUkJSqKFQihpS/LuCSe55d0lqn4kiJO6svl7GdaUM3r77/bQcB04FoBJTPxYiiVV
+	oa/EVozhJoNDzSGj+gguASqcrQZDUEkNHgfvcB5ZJqk8Adqtwcz9E3Q0j8pfWibY
+	iPs8skpBVponxxBsg4fBAE3GYhx/gSSrArMH39KJtG3WfN2viTmYsO3KA6PPIHGi
+	YUREWHeHZGQPrTYgWB5VJ+9meKoTXlHnMNzARJM7e3FHDOpd9fG2H7pXlOtQ39QB
+	+Fc7Mg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2bwtg0qc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:08:53 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a2878dca50so5822329b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761581332; x=1762186132;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KgRMpIuzEklhMyLqeSgTqelB6K/jP1FY8xNuF/F7waE=;
+        b=SttCqdka91lbnHkFcnTnIs9rmtg4hhrx0LA5RKdegJTKtxHw02SDqu4thpX0z0Hhyb
+         FN5rXnj79J82WQI4HOpZgqLcvZTPsvsX3AmPnbxqTaXaiIarL58ewzqNxRObnLf7TwaH
+         HyvmUxdIqvZCzap7uAXD7lKmkmdCM4u4pobDSPBG5sJNs0dbwGVJHkcOIH9TxY3uT4sW
+         YNTIYG3wJUs8DXYgF/Vpj+4BFFqwqpDp4VNze56KB4nGyRQHvj1dvZbW78zDQBotanY/
+         rX2xmtVIrkFvSNeRnCxq9wPzgKCxzB6QXPk/9t0OYVD6Nfxv2HRV9R5356miFtInfNDf
+         Z7ig==
+X-Forwarded-Encrypted: i=1; AJvYcCULzsmDRBZbu1de5TPkZ7GGFFy8nfIbmKk/Qlf8Sv25VpQeo8ZymrjJQ28gS7hmN8N43gEERm2I/NhLg7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvpYibhtL2DPdOylDAsQi1+kmUCzRGeS7M/a2x6pL+CNzuP+hS
+	mrtzy03GXBA18//3rfod+yZZgby/iuMGw8RIA5BAUFCGVJzUwDjw8/g3bSF/k/HvhG3WDChM4vQ
+	w9zen2VrntKn532t1Xo1HNZX8FjoBtEXQ3upbadfOrlvTGohB412cPMYPAWOgvGWt15w=
+X-Gm-Gg: ASbGncvUbaTn32CHzAfyLG/ed2nVKK8/Jgb43/sn7F3QQCNr6wSINCJy3yojZHuggsC
+	GHpIPPyCOg3X17p359srSLXigNb9i3s2iINCm2nmxMukUAYdvmc+/fTPBM2Ueff9pUiSxXEG1uJ
+	pJUatFqtGPoR2NCVXu8DinO5i90l5Y0bN+CHcXN9HdQoA+Tl4mFArODyZkBvQgaE0y1fi6UYfwF
+	gYDRcMoldovOt0OCrH19jTRon6uP81SW1P3uZHm4Bkto2sKT5vYygZwdhJRJSY7voJPSwKdu8mC
+	yPVhNkr0AokDlBmpCGLdqdF57VGp/r0LAYOkj++gXsuKXVqg/Hd0mIePgLpHPr8e6W9fXfVdD3x
+	LS4ge/uuK5Sm9ykI/d0kPjJHbUCQaMMgf5kbgU/WDSJpZI/G9u+q7mwA3SZU=
+X-Received: by 2002:a05:6a00:b42:b0:7a2:8201:e35a with SMTP id d2e1a72fcca58-7a441c377b7mr521887b3a.19.1761581332076;
+        Mon, 27 Oct 2025 09:08:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7riuKLotC98dQqIszw6mdR718UOVWaI+4GmJRuMzQgpAmf75t39TRUDzdW3vneRdu0UeB2Q==
+X-Received: by 2002:a05:6a00:b42:b0:7a2:8201:e35a with SMTP id d2e1a72fcca58-7a441c377b7mr521838b3a.19.1761581331421;
+        Mon, 27 Oct 2025 09:08:51 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414049c01sm8540758b3a.37.2025.10.27.09.08.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 09:08:50 -0700 (PDT)
+Message-ID: <b002e4e7-fb35-4c2b-8414-b26aa7f71f25@oss.qualcomm.com>
+Date: Mon, 27 Oct 2025 09:08:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,182 +89,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and
- Tegra30
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>,
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling
- <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20251022142051.70400-1-clamor95@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
+Subject: Re: [PATCH 21/21] Docs: add Functions parameters order section
+To: Jani Nikula <jani.nikula@intel.com>,
+        "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20251025162858.305236-1-yury.norov@gmail.com>
+ <20251025163305.306787-14-yury.norov@gmail.com>
+ <723c936f92352352c3b1a84b858d684f5b7a0834@intel.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <723c936f92352352c3b1a84b858d684f5b7a0834@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=L40QguT8 c=1 sm=1 tr=0 ts=68ff9915 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pGLkceISAAAA:8 a=9sl_EADGoQNm_DCWk-wA:9 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: kwcL3b5BoBcSaqLWZuMOlBeqj7AuxeTL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDE1MCBTYWx0ZWRfX0yu0gQxYsFod
+ II6t/5X8zPbpcdJ5Jtd6neal2jqG0Q6oQXwbCATSqJWpTasCgLBMQTuqzKLAwSKxrpuztrStMCk
+ jAIjla1Njh0atuHlChMVsWu/LH1rLymFAePMS18tpMov0arGC/2tTtYHJozJBc6Mbz0dlzhX1kX
+ efshLihCks5n8fJw3N8fjgcAQnacb7FxwznuOkHwsemhWJcRUhxm7yI3MD/30FocUMysQ6WBJu9
+ ZBXhaOMUNauRJWBV7rOjMSFiBcgykQOqabiVcg4E8YuNwQYzDiWJeXrL4ELiT8fMQ5UrPdIRJNQ
+ d2obMU4eUoeb3x5lpciQIYKHBrR7aymzoA6uGqaYm52UulspodjdfUJEQzRy4eKkyQlaxI7fodF
+ bf0A7XnvnDLTrRVyD1riyq4GAbrCFw==
+X-Proofpoint-ORIG-GUID: kwcL3b5BoBcSaqLWZuMOlBeqj7AuxeTL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 adultscore=0 clxscore=1015 suspectscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270150
 
-Hi Svyatoslav,
-
-On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
-> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
-> with a set of changes required for that.
-
-Other than patch 06/23 that looked iffy (although the original code was iffy as
-already), for which I posted a review, this series looks almost ready.
-
-Should the clk patches be merged together with the media patches? Or can those
-go in via the clk subsystem? If it is the latter, then I'll need an Acked-by from the
-clk subsystem maintainer.
-
-Regarding the bindings: all except 21/23 are Acked.
-
-I have one question regarding testing: in the past I tested this driver with a
-Jetson TX1 devkit and a camera sensor. One of the main reasons this driver is still
-in staging is that I never got that to work reliably: after 10-30 minutes it would
-lose sync and streaming would stop.
-
-Unfortunately I never had the time to dig deeper into that.
-
-So have you tested this with a camera sensor? And if so, does it stream reliably?
-I.e. just let it stream for 24 hours and see if that works.
-
-If it is reliable for you, then I think this driver should be moved to drivers/media.
-
-Regards,
-
-	Hans
-
+On 10/27/2025 2:02 AM, Jani Nikula wrote:
+> On Sat, 25 Oct 2025, "Yury Norov (NVIDIA)" <yury.norov@gmail.com> wrote:
+>> Standardize parameters ordering in some typical cases to minimize
+>> confusion.
+>>
+>> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+>> ---
+>>  Documentation/process/coding-style.rst | 48 ++++++++++++++++++++++++++
+>>  1 file changed, 48 insertions(+)
+>>
+>> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+>> index d1a8e5465ed9..dde24148305c 100644
+>> --- a/Documentation/process/coding-style.rst
+>> +++ b/Documentation/process/coding-style.rst
+>> @@ -523,6 +523,54 @@ below, compared to the **declaration** example above)::
+>>  	...
+>>   }
+>>  
+>> +6.2) Function parameters order
+>> +------------------------------
+>> +
+>> +The order of parameters is important both for code generation and readability.
+>> +Passing parameters in an unusual order is a common source of bugs. Listing
+>> +them in standard widely adopted order helps to avoid confusion.
+>> +
+>> +Many ABIs put first function parameter and return value in R0. If your
+>> +function returns one of its parameters, passing it at the very beginning
+>> +would lead to a better code generation. For example::
+>> +
+>> +        void *memset64(uint64_t *s, uint64_t v, size_t count);
+>> +        void *memcpy(void *dest, const void *src, size_t count);
+>> +
+>> +If your function doesn't propagate a parameter, but has a meaning of copying
+>> +and/or processing data, the best practice is following the traditional order:
+>> +destination, source, options, flags.
+>> +
+>> +for_each()-like iterators should take an enumerator the first. For example::
+>> +
+>> +        for_each_set_bit(bit, mask, nbits);
+>> +                do_something(bit);
+>> +
+>> +        list_for_each_entry(pos, head, member);
+>> +                do_something(pos);
+>> +
+>> +If function operates on a range or ranges of data, corresponding parameters
+>> +may be described as ``start - end`` or ``start - size`` pairs. In both cases,
+>> +the parameters should follow each other. For example::
+>> +
+>> +        int
+>> +        check_range(unsigned long vstart, unsigned long vend,
+>> +                    unsigned long kstart, unsigned long kend);
+>> +
+>> +        static inline void flush_icache_range(unsigned long start, unsigned long end);
+>> +
+>> +        static inline void flush_icache_user_page(struct vm_area_struct *vma,
+>> +                                            struct page *page,
+>> +                                            unsigned long addr, int len);
+>> +
+>> +Both ``start`` and ``end`` of the interval are inclusive.
+>> +
+>> +Describing intervals in order ``end - start`` is unfavorable. One notable
+>> +example is the ``GENMASK(high, low)`` macro. While such a notation is popular
+>> +in hardware context, particularly to describe registers structure, in context
+>> +of software development it looks counter intuitive and confusing. Please switch
+>> +to an equivalent ``BITS(low, high)`` version.
+>> +
 > 
-> ---
-> Changes in v2:
-> - vi_sensor gated through csus
-> - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
-> - adjusted commit titles and messages
-> - clk_register_clkdev dropped from pad clock registration
-> - removed tegra30-vi/vip and used tegra20 fallback
-> - added separate csi schema for tegra20-csi and tegra30-csi
-> - fixet number of VI channels
-> - adjusted tegra_vi_out naming
-> - fixed yuv_input_format to main_input_format
-> - MIPI calibration refsctored for Tegra114+ and added support for
->   pre-Tegra114 to use CSI as a MIPI calibration device
-> - switched ENOMEM to EBUSY
-> - added check into tegra_channel_get_remote_csi_subdev
-> - moved avdd-dsi-csi-supply into CSI
-> - next_fs_sp_idx > next_fs_sp_value
-> - removed host1x_syncpt_incr from framecounted syncpoint
-> - csi subdev request moved before frame cycle
-> 
-> Changes in v3:
-> - tegra20 and tegra30 csi schema merged
-> - removed unneeded properties and requirements from schema
-> - improved vendor specific properties description
-> - added tegra20 csus parent mux
-> - improved commit descriptions
-> - redesigned MIPI-calibration to expose less SoC related data into header
-> - commit "staging: media: tegra-video: csi: add support for SoCs with integrated
->   MIPI calibration" dropped as unneeded
-> - improved tegra_channel_get_remote_device_subdev logic
-> - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
-> - software syncpoint counters switched to direct reading
-> - adjusted planar formats offset calculation
-> 
-> Changes in v4:
-> - removed ifdefs from tegra_mipi_driver
-> - document Tegra132 MIPI calibration device
-> - switched to use BIT macro in tegra114-mipi
-> - pinctrl changes moved to a separate patch
-> - ERESTARTSYS workaround preserved for now
-> - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
-> - reworked bytesperline and sizeimage calculaion
-> 
-> Changes in v5:
-> - dropped patch 1/24 of v4 since it was picked to pinctrl tree
-> - added reasoning for tegra132 comaptible into commit desctiption
-> - moved clocks into common section in tegra20-csi schema
-> - added note regarding ERESTARTSYS
-> ---
-> 
-> Svyatoslav Ryhel (23):
->   clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
->     Tegra114
->   dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
->   clk: tegra30: add CSI pad clock gates
->   dt-bindings: display: tegra: document Tegra30 VI and VIP
->   staging: media: tegra-video: expand VI and VIP support to Tegra30
->   staging: media: tegra-video: vi: adjust get_selection op check
->   staging: media: tegra-video: vi: add flip controls only if no source
->     controls are provided
->   staging: media: tegra-video: csi: move CSI helpers to header
->   gpu: host1x: convert MIPI to use operation function pointers
->   dt-bindings: display: tegra: document Tegra132 MIPI calibration device
->   staging: media: tegra-video: vi: improve logic of source requesting
->   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
->     CSI
->   arm64: tegra: move avdd-dsi-csi-supply into CSI node
->   staging: media: tegra-video: tegra20: set correct maximum width and
->     height
->   staging: media: tegra-video: tegra20: add support for second output of
->     VI
->   staging: media: tegra-video: tegra20: adjust format align calculations
->   staging: media: tegra-video: tegra20: set VI HW revision
->   staging: media: tegra-video: tegra20: increase maximum VI clock
->     frequency
->   staging: media: tegra-video: tegra20: expand format support with
->     RAW8/10 and YUV422/YUV420p 1X16
->   staging: media: tegra-video: tegra20: adjust luma buffer stride
->   dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
->   ARM: tegra: add CSI nodes for Tegra20 and Tegra30
->   staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
-> 
->  .../display/tegra/nvidia,tegra114-mipi.yaml   |   1 +
->  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 +++
->  .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
->  .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
->  arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
->  arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
->  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
->  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
->  drivers/clk/tegra/clk-tegra114.c              |   7 +-
->  drivers/clk/tegra/clk-tegra20.c               |  20 +-
->  drivers/clk/tegra/clk-tegra30.c               |  21 +-
->  drivers/gpu/drm/tegra/dsi.c                   |   1 +
->  drivers/gpu/host1x/Makefile                   |   1 +
->  drivers/gpu/host1x/mipi.c                     | 525 ++---------
->  drivers/gpu/host1x/tegra114-mipi.c            | 483 +++++++++++
->  drivers/staging/media/tegra-video/Makefile    |   1 +
->  drivers/staging/media/tegra-video/csi.c       |  70 +-
->  drivers/staging/media/tegra-video/csi.h       |  16 +
->  drivers/staging/media/tegra-video/tegra20.c   | 820 +++++++++++++++---
->  drivers/staging/media/tegra-video/vi.c        |  56 +-
->  drivers/staging/media/tegra-video/vi.h        |   6 +-
->  drivers/staging/media/tegra-video/video.c     |   8 +-
->  drivers/staging/media/tegra-video/vip.c       |   4 +-
->  include/dt-bindings/clock/tegra30-car.h       |   3 +-
->  include/linux/host1x.h                        |  10 -
->  include/linux/tegra-mipi-cal.h                |  57 ++
->  26 files changed, 1657 insertions(+), 670 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
->  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
->  create mode 100644 include/linux/tegra-mipi-cal.h
-> 
+> GENMASK when used for defining hardware registers is completely fine,
+> and *much* easier to deal with when you cross check against the specs
+> that almost invariably define high:low.
 
+Not only that, there is no common definition of BITS
+
+Defined in 7 files as a macro:
+arch/arc/include/asm/disasm.h, line 32 (as a macro)
+drivers/mfd/db8500-prcmu-regs.h, line 15 (as a macro)
+drivers/net/wireless/intel/iwlwifi/fw/api/coex.h, line 14 (as a macro)
+fs/select.c, line 415 (as a macro)
+lib/zlib_inflate/inflate.c, line 232 (as a macro)
+sound/core/oss/rate.c, line 28 (as a macro)
+tools/perf/dlfilters/dlfilter-show-cycles.c, line 22 (as a macro)
+
+Most of these do NOT have a (low, high) signature.
+
+And GENMASK will throw a compile error if you swap the high and low:
+#define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
+
+IMO the real confusion with GENMASK(), which would be the same with the
+proposed BITS(), is that without knowledge of the implementation, when looking
+at an instance of usage you can't tell if the parameters are two bit numbers
+or a start bit and number of bits.
+
+/jeff
 
