@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-871899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC832C0EC88
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:04:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777BCC0EB46
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D6295023B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2031889F10
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0721E30C60C;
-	Mon, 27 Oct 2025 14:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC5E3093CD;
+	Mon, 27 Oct 2025 14:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2IonNmH"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kk4MyiPY"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3CF30C609
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C1F3090CE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761576972; cv=none; b=WY/G5QiQWtYCEvV/uX18X9Z51/Ie/ZlOJjLEanlnLjUb6OU3Ic+YFc2rGFtn5vG/jtgVdNRQam3+9FRhzFiLfio/6YLcH/9ulaZN8Yi3yugc7XTLAhIYksdWz7VKjjTC0PFhTAY4bTXlS+SY7uq73GFT2tOQsVEBOoR5O/r28xo=
+	t=1761576981; cv=none; b=ZsNReAHzCH30zyFVHIGRmJPrJ6RG2cSWNxSbMrppXdC1v/GplwcmWyLJpNySzues+9VSXOZpYeP8Nrp3Ihm/VvvRCpEFivtQwzXP5xicbkDyCr4sWK/N29NEQi2lUFGFGQWAXIY/QQp7ND1LRfn6zrJPIXjplPiwYaC4BU+wtno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761576972; c=relaxed/simple;
-	bh=JQ2Eg/fxzgQwaU0erBgyehxjwvhanKuWBXC39MUZvkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UA8wLnbH7ePAfk+935yHjk7qFxL/YACcHuFIjDjuQWq+uJZ8Qd5ZkExt/9WoV4mG1m2Wkc9nck+kqtVkJMz0D9yKGzMGZNsAVBroELkAE7QnCfxLuXOhwJ7XCmIy4LT9PvenNvs5v4Af2SHe6ifdD24OI0qH8E36RNYZVOql/9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2IonNmH; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1761576981; c=relaxed/simple;
+	bh=udVyNr40B8fK2PACtFKkWz3iKvyMvgVcKAD+ZkyK2CE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z5gTpTVuzLZsCVOVvGbE8A/FfIQWX8zaHZrX7F7iJ6uYT9YiZLDCw25lZLH5CsIsiXP8h0B25dQZH3/bAD4WmYQbNFOs7K3Dfcy3XNWt9Ud0pYtnYbSHA+hHU6nf85uRZi2l/RanrGqkWisr4/nZycdOJqW3QEeEXiNSY0d89Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kk4MyiPY; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7a435a3fc57so928537b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:56:10 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a2738daea2so4007179b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761576970; x=1762181770; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8yVMi7V8qTRELGGfV+IcZ9w9BuBp+eY7s7IocvDD4Ig=;
-        b=e2IonNmHnm5w6HS+St6D0v35hy7/3yisM8VKUesngmTpdBvpCdCFcV3p52Z0I0Ouam
-         USsY9KfytMQ3SV+KK3J/HoGllCTEtT8NBEUaDiY2tw+MaEMhSFkngOejGidqgRWX6a/o
-         ZefxMXngBMVtsxPu+W6fBZhnnzBxAndZ+NrmKsoefM7PlzfCXdaRCyg5UiIxddFS/zYO
-         f91ppe0YhGMdK8m6IzGwULhtlQldiPRbNFK6z1f5JpC5Ts/E0RAWoh3LT8NhVLSn6Ume
-         YHgdSKEKv3HPK2dxLwh4dpdL7tyScNxdN28q9BP+8I9vF0rLPHcid08iLXnEEKZR+mZt
-         hslA==
+        d=gmail.com; s=20230601; t=1761576979; x=1762181779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gyBK5HLss/zF/tM/K4qW2J+Z3asnvx9H1hG28ozg6Qk=;
+        b=kk4MyiPYBN9pIwb8uastv/cK8Cf2jYE3QD8rZQLEcoVViMNFU3Eb+0rh6MU06fHBK/
+         9Fvk190nbLj/X6yv2+2kleyu0lwhx9Xp+QtW3ZZ0WSyX2Td/N4tMtWTTvwJfTCtjTLCS
+         q2dY/C1VfLyY+U/05F8wZVzKokG+pmtyLpDtscZCXeSvCZvAJN1BtKs59MWpMHoDnVO0
+         fAN3SUTV8hh9MAy2htkcgOWXHrmo0+rnmjjRFc0f3+dTtt4CsDf6jYA0nKabQ8V6VtWF
+         XCJnLCAxdmM5JfMsBw7esyOd5UQp03+Lthdgr4T7o/OuuwtyIQ8VqVN+GFE6rgageWvh
+         AAcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761576970; x=1762181770;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8yVMi7V8qTRELGGfV+IcZ9w9BuBp+eY7s7IocvDD4Ig=;
-        b=JdUfojXXw7JmJSg1Wg+qHBjMboKgbGLD4Pvb9QLKAQ3ggZ13flYaB06FT+w23ZfWL+
-         ENOlKeoEVSLxIWNF2EbdOiRLzU+JQd5CAPyykAbVvIq1M356PbMxHzYTFLuK6fof0pdj
-         hJ+lBBL6TCMPbxyojBFu4/Ne54HuBsY/jot+/n0BxUzAi7R6xHnpyFvouwpIoCFJ0oK8
-         IjuoENlebqC0CE53JaEN+XhAyoZEubQ63WOIQqdYXub2FB9SI3G6NuzFboCy8QFe8INQ
-         CEc52Fvvvt8W1Lmv3k9L5gQ5BKStu+nsyR46dUBty7V3Lo2UDbBRruJBw4optGfNh5iX
-         OHUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUojaQB/uoUDEvneQMohUp+E/qpdKKepUqHJ868hjmzoExM/3aK97GDYSKiK3k2x9ELhGPLb9/qrExAxfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNNiOvCwYCFSN2nIyO+OdmjEG5LBZ6R8QWunxgpC6L0PchmUAx
-	7Mq6+myg4CTJgwQq6hkXLmerEI2DKKuBxjH5IBL4FEx9+ErUtKyrLj3v
-X-Gm-Gg: ASbGnct5q8IOylTA3RBp5Z1RhaTm+JFB4EShrkj1Qeyid9W/vNZDYlvKd/FhxsTcaYJ
-	0gmicxuokjT5wp+AhnlabtMBVdVbjaA+qnBY11O98Z0qxvN2Oy/sZI2cPNg9ZcnCCyBN0N3CzAk
-	1ixXB0qvId3OpDJ83fYy3jOsxFKTs2py3cc8SP7uEcfIrcuEGWuid2j6k1DIGlCGF+c6IgZdJB/
-	tM2AzcDVsXg/TS38C1u5lm7xnek9kkDbU4W8tr3RwBQ440IJV3rnGtAcev6kUDOVcZLLxOJWhXa
-	gnXQ4IgEAOZtrBbNHyDoejs8qaW/wq890z1tEjzth9bDICYsfBJPjMj4mPt2uwrqlo5kPNS+YfA
-	O7MbVOEFjBNdLtqnNPZWwwjav9XvOPfRtQ5NXfejHTujvqCic5HeudyWjMwUw1hhobi+82CO3ou
-	xDJBV3rrLo/Xo+NOBulXc=
-X-Google-Smtp-Source: AGHT+IFNNRsqOAD0ej4MkP02YIZHAarj1O7wDlGaz+jF0eTKJU0nb26xxgTWECACFe3NIf0baZUBNA==
-X-Received: by 2002:a05:6a00:c86:b0:77f:324a:6037 with SMTP id d2e1a72fcca58-7a441b7aa11mr318696b3a.7.1761576970098;
-        Mon, 27 Oct 2025 07:56:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761576979; x=1762181779;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gyBK5HLss/zF/tM/K4qW2J+Z3asnvx9H1hG28ozg6Qk=;
+        b=CTl7IBhvbf1mytOtP8iwrWfocMmlZqnIxPjfAog1fXmtJKUz1xRJDLh4X+CxVc5wY6
+         yMp/pFECzHktwJwUzqGYeEZWSti617NRs1RCIeuPpdv63jjiSXI9k43eN0OYH+fwWYBK
+         Jqldq00WavZ1X9Ebgca0Dp0XoVCHxwVvRJP7wepHeYbpGTZ8DvUnHlsc3bASw714G0r3
+         DyJmqoJ90lvvbtYX9cgIaYCMcRiUyNHZOCiHZo1kpDHBSZVruflcfS9BFV3nHq0fv6EQ
+         L8lTylZ3rv3T92pzoKZlLYvkTN1bq3xwCrj3WGmRfYkhz35WqNwudAdtqHghyjxU10pI
+         bqLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAuil3xlabLkS/mtuWDkOBSJrWflcCA9haiCxrvIpaZ20oBIndCkxR/sPYC/OeBhh0E5K1jbqG7BqlTaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg6c2mi1jbUyr3zdSwDJ9W0kk2ixKoF9qXSfs3nY31U+H/no5l
+	3B2wXnLvAW9PM7b3Vh9XAG9eQw6wQtYcvAlYllgYDDhbloADTrz4Zunh
+X-Gm-Gg: ASbGncvcF1hA/0073vde6LvBTG48Q/szcpgwHi+d4nnD/lv7QsZcVN8v+o0nRemjR2F
+	DF2txj/LdlDssSvR5dNKA3j4W13xxiHxw2vaPVKbpna/666om771EnOBYNykKC2v13rpdxDbMHz
+	gWS3X5NaD3cNgrf0xhEpH5gT8jEU5jyc5KHsGXw6LSCWLM9k6h1ArT9X7Y+EB7qqT33omghXm8Z
+	WdpvDA9debsQYg5y3yj+Uo+vhhz70ccwLQfWEhxnpeAUZDVAr3rUxVSpDTE11MnmK8ug5zF6VON
+	DeIQEhEp6t5/ftBSYpINiM7QOhRGJhcqD6jQ8zwuN1fumBW7g7EeDwMYd3t+NrLzjaUZ8MVhAPh
+	qjRyQ0jgcyuTWTny/eBC3Eh3tDxcogmMOZXHG7vgj8y9bXyMJkw6HUMzBOWxeXMkNufVBM2GzrQ
+	==
+X-Google-Smtp-Source: AGHT+IF+HmWWIbu4RONj+wms//aaht+5AP20I8+4ooWFn7x7evY1F6ZZlpjlb36aBgMXfZJZOoYYlQ==
+X-Received: by 2002:a05:6a00:928a:b0:781:9a6:116a with SMTP id d2e1a72fcca58-7a441bdb5ecmr276136b3a.9.1761576979105;
+        Mon, 27 Oct 2025 07:56:19 -0700 (PDT)
 Received: from rockpi-5b ([45.112.0.108])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012b19sm8373372b3a.12.2025.10.27.07.56.05
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012b19sm8373372b3a.12.2025.10.27.07.56.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 07:56:09 -0700 (PDT)
+        Mon, 27 Oct 2025 07:56:18 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
@@ -87,10 +89,12 @@ To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
 	linux-kernel@vger.kernel.org (open list)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1 0/2] Add runtime PM support to Rockchip DW PCIe driver
-Date: Mon, 27 Oct 2025 20:25:28 +0530
-Message-ID: <20251027145602.199154-1-linux.amoon@gmail.com>
+Subject: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
+Date: Mon, 27 Oct 2025 20:25:29 +0530
+Message-ID: <20251027145602.199154-2-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251027145602.199154-1-linux.amoon@gmail.com>
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,29 +103,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce runtime power management support in the Rockchip DesignWare PCIe
-controller driver.  These changes allow the PCIe controller to suspend and
-resume dynamically, improving power efficiency on supported platforms.
+Introduce a .remove() callback to the Rockchip DesignWare PCIe
+controller driver to ensure proper resource deinitialization during
+device removal. This includes disabling clocks and deinitializing the
+PCIe PHY.
 
-Can Patch 1 can be backpoted to stable? It helps clean shutdown of PCIe.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Clarification: the series is based on
-
-git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
-branch : controller/dw-rockchip
-
-Thanks
--Anand
-
-Anand Moon (2):
-  PCI: dw-rockchip: Add remove callback for resource cleanup
-  PCI: dw-rockchip: Add runtime PM support to Rockchip PCIe driver
-
- drivers/pci/controller/dwc/pcie-dw-rockchip.c | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-
-base-commit: 7ad31f88429369ada44710176e176256a2812c3f
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index 87dd2dd188b4..b878ae8e2b3e 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static void rockchip_pcie_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
++
++	/* Perform other cleanups as necessary */
++	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
++	rockchip_pcie_phy_deinit(rockchip);
++}
++
+ static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
+ 	.mode = DW_PCIE_RC_TYPE,
+ };
+@@ -754,5 +764,6 @@ static struct platform_driver rockchip_pcie_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = rockchip_pcie_probe,
++	.remove = rockchip_pcie_remove,
+ };
+ builtin_platform_driver(rockchip_pcie_driver);
 -- 
 2.50.1
 
