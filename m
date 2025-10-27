@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-872573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645F8C117B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:09:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BF1C117C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B88467035
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA12B1A63167
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED073254B1;
-	Mon, 27 Oct 2025 21:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B53932861E;
+	Mon, 27 Oct 2025 21:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/R5h7Gq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXutbyWa"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459AD28935A;
-	Mon, 27 Oct 2025 21:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D273323403
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599388; cv=none; b=M7ol5HPISRRcq62FKEuJOU+P/8RE2T4OcraZNnTKM8tf0aA5/fLKitgfiXSPuKRdEeU5OURybn6dP5Dqh75RpvPakSUZcpXiDrj8TYKcAQoC2jfPUqbQzIxSvLBw7/edMeZdC9b+xjAaqCONI0LUAHZz1RpmAzM24jVEdgEZaok=
+	t=1761599411; cv=none; b=Of+efa50Q1qm9G5fbivBs96L3IE+N7h3PbnkOgqWSSu7lmfZ1mHXmdSpIhEDf7muzVE9be+GYZ2NG12XlAtGEBlYT6MiN2QCRhNjoBny0OVS30g3meZvBbdU9XbxKYUmeSTaRilOTwYn8ETkUx2tAN7x7Vs8n5MUktTdNXZLxa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599388; c=relaxed/simple;
-	bh=jiJc43oKsUwQXXTUSjasJzpDSd7ISfaLkcwQgh9XI2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kk8xmKRkqrL2zHXizfhN714NbZZjxTlJypoAWagLU8B+BfeVVFPdw4FfsdmMFtyGt1L7DAEBQW3w5HcQGLDK4hA0geVsvUIp77Y/VW+V/GNlg1JPcCYo/z5dlZY++EKZKIpIIXBHgPtfeA7G3fobJ2U+63016CJU39mj1TjuBc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/R5h7Gq; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761599386; x=1793135386;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jiJc43oKsUwQXXTUSjasJzpDSd7ISfaLkcwQgh9XI2o=;
-  b=D/R5h7Gqgu2NWtJbdZH2pJ/EhyrTz0SYcBIqG5Y7MKvWGZg9QDLVy8DZ
-   hmoE5+/C94wCQexNaDspa0jjTo99+cXIxShfEjXIGbfKk5j3DSw1B1lbX
-   FZufJlcnbdApOk06LEo4U/sRopyPe4Dxzw3KBtT/Eldb2r6RfLzXDY8xB
-   +KQGrt0NeKogD0jRkvUhSez7vj/ISi8SpAIUXTPJAV9TbykZ4SP4w2SI/
-   7mvWK9VroQh/N1iTnzxJ7mhj5ps8hTIHX9nIUzhZ+M6aJdMrmMelTB24d
-   /Wa+MzkQJa8dk+/OpwWpVPTqPjMLXEvckYR64E9msWC0V1h1sPAFbuIvr
-   Q==;
-X-CSE-ConnectionGUID: qJY4cX67QAulo7zNe7mbCQ==
-X-CSE-MsgGUID: HJw1p+5ZRwmQLM26R6IUGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67555734"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="67555734"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 14:09:45 -0700
-X-CSE-ConnectionGUID: BUa17DKbSuumsIqrZc9wkQ==
-X-CSE-MsgGUID: w2lESQ+hTLq/TaN9RzO4vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="185914189"
-Received: from jjgreens-desk15.amr.corp.intel.com (HELO desk) ([10.124.222.186])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 14:09:45 -0700
-Date: Mon, 27 Oct 2025 14:09:39 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Brendan Jackman <jackmanb@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D
- cache flush is skipped
-Message-ID: <20251027210939.53e4ippuz7c6qo4b@desk>
-References: <20251016200417.97003-1-seanjc@google.com>
- <20251016200417.97003-2-seanjc@google.com>
- <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
- <aPe5XpjqItip9KbP@google.com>
- <20251021233012.2k5scwldd3jzt2vb@desk>
+	s=arc-20240116; t=1761599411; c=relaxed/simple;
+	bh=DWnX1zOzPhdonNNHjblxPaHF1bDlcTCehEAK+AuBlz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bYNgzjLeqzqxJMXWbrNasLxiAuk7c4ojXhZCjdYPB+SOEckXhV0LMl0nNfCvHQZDgT8HHIcU24DZyG8jf9TEluOjXh0HZpEkHfDwjWMCYgWvVfc7ZpyaaY4D75UJrgaj871EZbTO1K6bYQg1f/NbpctAZ9US1QQVHD8Yst2UlO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXutbyWa; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-78af743c232so4741811b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:10:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761599409; x=1762204209; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2e588IPpQNnTE/fdefFVwu578KcqtJc5SaJtmTlNKd4=;
+        b=VXutbyWanvs2QyGJiw7wDAUA6VZmCO21vWXhm/IUoq3GfOzwTAQnRO7/uSuD5Bmlh1
+         ETcgext6dChYTGVsqR/rQ6gVx0ToM12yT3TVTDN7f9vY3hskAhtfH4S9HLXZ+pY6ihRi
+         dqbmEUfnBXjWmlPIIuOzK+OGBHTPOdAN38arHN+kA52BxYSegTYycfrz/hYtVahntbpH
+         Lb96LrgRrTIhqWZF7U5QM44nWjYLqOrDE6eCNfqIHu1Sbrf8eqkdY/BTPYeLP+ceqMdc
+         K8IbK+pIIvNvkMWaF1ZUHGykfMg6ND4PICGQtoSGSbELppIWdWCM8x+Z+26zG5wdPtpX
+         RFKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761599409; x=1762204209;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2e588IPpQNnTE/fdefFVwu578KcqtJc5SaJtmTlNKd4=;
+        b=UoGItAuaQiEMHLi2FzvQ/81CnTgtKWClZUTXo89/TPAFWK++5vV+gZoNo/uGNFJJRa
+         CxSohqOR9joStER5hpvBPoxwdMaLXUjGF8JmRaavDZ+wuJHAJ9q+lgE1sKXL92+l4fTS
+         pTE95kluKg/LP+80uIWS2NOXYW6Z1KOjOqAFTlm2ablLU/csB6X6Pj7/1HdTXxL1a3AY
+         ig7p3TqMvYV4xGWTHsSteAV43bp9lMDRCs71FZQQNDAjwBPoG77Ulqa5FnXYxvgDA1x3
+         hFf8ahJHWFjJtmMt0CCkNlRfT5ujmoDyQ1ID6B7U0ikLxZCBaxErdF2jvxTvvBsJBjlr
+         OEHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVceYuWyK9/ARi6IYxTXiiOJxhv5qHcR5oi2XgQ/Ifj4KXFGMVr8ZXgpaXifXom+LzFVQNnD+ImbmuUe4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh743ru5Wk/07SafLvWLbpnZL/1/oM/8ZU6j1FJrjpxQNyeNKE
+	hKcT+ocQQ+neRG/PQOJyUfYjZdFlfu8pJzWdx6EuxNGAmSNhr3b9fgyb
+X-Gm-Gg: ASbGncvNAwqLP7gh8XUfeXZeYVnzxMQKKwbWJxnzd89FGKIuKA+GcwA45UOsg3Y8k/u
+	gDCQz2GdxGx+2P/HaAzLbrSmptdbz4IMn5M9ae/QvehNylU9n5hHIRu06zFhLJbkeBRi2U3ZEXh
+	RltwOjjqz/wVJ12FrUPz0U4bNEYY6w8zV9WAVuFqIS5gmMRcztYiK15YP38XK9Oj8iyNt454dO0
+	APZHUExzNGW+Sdn+xAQBUD4wkPYNUgNBdM8ut+jXESKdEgG1lDipxXYwQZDVfn0EMAj+sc60q9O
+	eXKyf9ny2ZMA8gUukZBgnI9tTj/7N4d8M1Y+Ae3ptbP07mIuTu/2EbRObivnWQGbHQXm2ru5npe
+	oLBjrKqwkqpT5tR3fT10QA+psJUo3xKcYnoFZR+4UeEz8PFiyVz8Snjs7Bjrk+3uF2w3U4UYxSd
+	PxWQPdzHvs6xDsnvkmAzp/MQ4CUVI=
+X-Google-Smtp-Source: AGHT+IGAcXx8rnRjjfBbyvkfw7eeVqpM0QJvdpLkgNwEN8JNPyBVKydtR6Di4SIU3+wjvCHp1ZaLog==
+X-Received: by 2002:a17:903:32cc:b0:290:c317:a34e with SMTP id d9443c01a7336-294cb3dba25mr11873225ad.25.1761599409461;
+        Mon, 27 Oct 2025 14:10:09 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e9f9asm9559753a91.11.2025.10.27.14.10.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 14:10:08 -0700 (PDT)
+Message-ID: <70c3a401-3fa4-47b4-b8ea-a8e5ca75dcc6@gmail.com>
+Date: Mon, 27 Oct 2025 14:10:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021233012.2k5scwldd3jzt2vb@desk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/157] 6.1.158-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+ sr@sladewatkins.com
+References: <20251027183501.227243846@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 04:30:12PM -0700, Pawan Gupta wrote:
-> On Tue, Oct 21, 2025 at 09:48:30AM -0700, Sean Christopherson wrote:
-> > On Tue, Oct 21, 2025, Brendan Jackman wrote:
-> > > On Thu Oct 16, 2025 at 8:04 PM UTC, Sean Christopherson wrote:
-> > > > If the L1D flush for L1TF is conditionally enabled, flush CPU buffers to
-> > > > mitigate MMIO Stale Data as needed if KVM skips the L1D flush, e.g.
-> > > > because none of the "heavy" paths that trigger an L1D flush were tripped
-> > > > since the last VM-Enter.
-> > > 
-> > > Presumably the assumption here was that the L1TF conditionality is good
-> > > enough for the MMIO stale data vuln too? I'm not qualified to assess if
-> > > that assumption is true, but also even if it's a good one it's
-> > > definitely not obvious to users that the mitigation you pick for L1TF
-> > > has this side-effect. So I think I'm on board with calling this a bug.
-> > 
-> > Yeah, that's where I'm at as well.
-> > 
-> > > If anyone turns out to be depending on the current behaviour for
-> > > performance I think they should probably add it back as a separate flag.
-> > 
-> > ...
-> > 
-> > > > @@ -6722,6 +6722,7 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
-> > > >  		:: [flush_pages] "r" (vmx_l1d_flush_pages),
-> > > >  		    [size] "r" (size)
-> > > >  		: "eax", "ebx", "ecx", "edx");
-> > > > +	return true;
-> > > 
-> > > The comment in the caller says the L1D flush "includes CPU buffer clear
-> > > to mitigate MDS" - do we actually know that this software sequence
-> > > mitigates the MMIO stale data vuln like the verw does? (Do we even know if
-> > > it mitigates MDS?)
-> > > 
-> > > Anyway, if this is an issue, it's orthogonal to this patch.
-> > 
-> > Pawan, any idea?
+On 10/27/25 11:34, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.158 release.
+> There are 157 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I want to say yes, but let me first confirm this internally and get back to
-> you.
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.158-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The software sequence for L1D flush was not validated to mitigate MMIO
-Stale Data. To be on safer side, it is better to not rely on the sequence.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-OTOH, if a user has not updated the microcode to mitigate L1TF, the system
-will not have the microcode to mitigate MMIO Stale Data either, because the
-microcode for MMIO Stale Data was released after L1TF. Also I am not aware
-of any CPUs that are vulnerable to L1TF and vulnerable to MMIO Stale Data
-only(not MDS).
-
-So in practice, decoupling L1D flush and MMIO Stale Data won't have any
-practical impact on functionality, and makes MMIO Stale Data mitigation
-consistent with MDS mitigation. I hope that makes things clear.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
