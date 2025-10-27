@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-871637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99621C0DDFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:10:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0D7C0DDC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22F6318946B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77E842007A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3742580EE;
-	Mon, 27 Oct 2025 13:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF01D2C11D6;
+	Mon, 27 Oct 2025 13:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTuZSqWb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b="Mrdusd4/"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A25A2472A4;
-	Mon, 27 Oct 2025 13:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CC12957C2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570374; cv=none; b=hoKhKKBXzrHjVoMyVE9PptlhXRkBblPCsiZWtnr/O0dWuctxKSCin3bsSFWQ6o2RH2tn/b55MUtm5Mo9haQRcCam93ng7y195QCO/ZEcux6rxBnGIF4f6/lCdNl+piwwVgF2cz87dWRln1WSQnj9bYzmkVv8DuwCVUyAa5PrKHQ=
+	t=1761570080; cv=none; b=uGBxSU3u0mglUjDeD/0fyW/+LgTwzNA0SjkBFSBKHCK1mFybVNIprQaPICMncfvpSOMa5GuThw8vX9q8WSTj4pPCRMEnZRf1LyyVF51pHTcWAE205q6xXmhepm0o2j/CXsCGMt4GW5m1szaJpNCPjyHybEuk5+SpLUBSgTuGYow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570374; c=relaxed/simple;
-	bh=PsQsp861Ykv1mY2uESLxhH32w+HggUC3IjQqF4o6Zns=;
+	s=arc-20240116; t=1761570080; c=relaxed/simple;
+	bh=986YysIn8Fe1HXmKjFlWdhnJPvdFAuoGinhshsvQYEQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+1do+yqrbEqmtFRboCoViGQeaKxzLbGdTBpsN/FCyip7y47Dzf7eBhaeBEWDTSuGHyXu793HZbOei8rs3RiXKOWXNuTmffXxHaOMreskHl3GOMn1SwTdo8LqvAxpJzlcSnTzTlHGVj45b7RPCEPli3dAS2wamqb8tjgNekC5sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTuZSqWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6AA7C4CEF1;
-	Mon, 27 Oct 2025 13:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761570373;
-	bh=PsQsp861Ykv1mY2uESLxhH32w+HggUC3IjQqF4o6Zns=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZTuZSqWbRWHOJ9iQJkpEpEFtJxFv7qeEqU68tQmKjnT0rwUymr4wLIAKcrQP6jVSX
-	 b2s9fkfbr++IvxtY8qUO81CW2Uj1cpPIwfqngNPtBOeOuMu2gXTyCDLHcC70P238pq
-	 QqYq0Jm7jGOKlaOmsKECrEQKw7amnu1Cf9jxPsLMTC86PrgesBYMVXxcxX2cMSRsJN
-	 fUp7g4sAv+cAuG43odFdgUUbhfjMKtAr2MAgGALhCsg19w682zXSh4JWaG36rguyWw
-	 ezDGki/dTkMP+/wnOAt5JPUCNODNOt1Jjz8puoiQPZrN0WzJ66av4h2fM9rybgjTeO
-	 NRqbHSG/7enJQ==
-Message-ID: <43280bcc-5afd-4b46-a83d-d81c80405e71@kernel.org>
-Date: Mon, 27 Oct 2025 14:06:08 +0100
+	 In-Reply-To:Content-Type; b=VgwIDatxE7Mcv4vRzIqSuO7mTXZ0+tBnSV8lpy+v9sJ3o6nNEI7qhbM7d+O5n+YW/0mcwzvVZTeJUdLXv0oF3tNXTWXjIX6fRrs+9gKbq5muyDxfV7uFoagipJFyK8IX0aJjFk0h1JW9WcNVJeQ0k8wO6TEo9R/QWl3zXb28SOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com; spf=pass smtp.mailfrom=tweaklogic.com; dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b=Mrdusd4/; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tweaklogic.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7810289cd4bso4596716b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tweaklogic.com; s=google; t=1761570077; x=1762174877; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7jhqQbXCqzrcL3E+XppIF1w4lMrJvn7tFwhW0pKGsNs=;
+        b=Mrdusd4/UrHujgfIM3r9y+6fHUre8j/Vk6SV+/p1jSR893iCoGBRnKgKAAw97QS6Qo
+         Sq0LS5AQzWrHZYRCw+vxwpxeu1PnH9q9sXs6vx9TUbLQqovrBd73ac4abA03sI68fd5V
+         1plCq2miZezlAPOnSFNWn5upPFO4KtPHs4XVEvXMkZfCAuP9vZq6s54Y25iIdc4iERKh
+         6nvxfXDfy0rrvoOE61czW+p53S93Ixltx1YxVlZESLMlHQ/jZqpBV1mi+Yzq9oHCfazs
+         jAOtdvu/+gX0qxJ/esm511fMTkFd9GNTWb5o6p8EykNOe06EibYxrYLpJkTzYbFAxJ9q
+         RzKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761570077; x=1762174877;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7jhqQbXCqzrcL3E+XppIF1w4lMrJvn7tFwhW0pKGsNs=;
+        b=vj9AM7T18ZhWWyuasAZPSm4Nvt9NZ7Oqw2yPuCpm0KNzr8K/4U/DogWRltunrorMVI
+         59P6n6V04mY1LRCQn2lWEctmozLnE7XOAxZ8yNmUavhlhsqeUGYIIVYs5AZu4WoNUkZe
+         sVZs/e2pfp95ve3xXmPoFfuBccfge4kh28bkO5DOUEn1k7Iy6VAKEneFpbpyyMOx6CZo
+         sEDj+QYiHBFfVCKqzzka5j4T5am24uk5kiW/eX6s95TKHbScH63xk1+6MZhz2prC6Jhh
+         Gmu5hVc327bRTzaLzqEGTrCr1sLndxvWqD+UYP71LNqeK4UZAymj1CaBZkUIHIkaMTJI
+         9Mgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlduPgqyanUNGqX/lQQ5B2LMDQYeSoHXn6sFCrRGvMyBXOqRkerKND74JYGD88sXgSzHS4EukrcL+HSoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnbDO9OphaVA53qOkFQXQjCII+LAymTnkrgwkkQBs22bjHSH/h
+	xZuzOy+gcY65dcIT7n/EKY3NVd4pPrPQJj6HSWkOi91+IpAesVjETLT/l5B99RiBR5A=
+X-Gm-Gg: ASbGncufHC7DKXqKqxqFLPfQnlV3EzF44ZA3FPIvkwyw0zkcd0gNTWpIKxEgX22js5o
+	L9n3Det+Maux4CP97qbj2Z/tnUoa0lfu+Yxxv3AskFJAhAoaO4DZilDgzP7/JyZJy8Km+1LcYeC
+	G5ltxTJeF58mcYnmC0bOL+fj1hm2BF9WEFxEClRroBgD0+VUe4i0JcID4UF8n7AWEY8ZnOl1U12
+	vvUzU+4L/uW7QceDhQZ0eNJiYOgS4NVMxnK3llRsyn4e88MOncmY5KK2MSRR/Omm0ratXtmh38l
+	fv6HbNctQceTgen1czNWqo5b8J+Ip0jsD4+JIBzoaVKA3yXsPWZXZuHfuiRnV6YQPFYbg9DClNv
+	A7Ii9+05PhW3CN0isoyAlvSba/VcSU2BPOGqnVOsQ6gcSHIj9Ya0xsPWmwWgRjyFtY5FdhjZxcE
+	hsCaLhZ+KrZq8TplQbM3hJeLLhxNSPAj98ikPq08I2iX9Ulgi//HVB/T+IJTcYaWjZJm4=
+X-Google-Smtp-Source: AGHT+IFz597Y7d5Kn0G6bkVUP3oCOfoggvomYjxgDPnOcMBnKIl/JIfYJkpaxyKj8FEWIIYpt3UWbg==
+X-Received: by 2002:a05:6a00:8c5:b0:7a2:8853:28f6 with SMTP id d2e1a72fcca58-7a2885329f8mr12142180b3a.22.1761570076019;
+        Mon, 27 Oct 2025 06:01:16 -0700 (PDT)
+Received: from [192.168.50.161] (61-245-156-102.3df59c.adl.nbn.aussiebb.net. [61.245.156.102])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414049a44sm8034589b3a.35.2025.10.27.06.01.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 06:01:15 -0700 (PDT)
+Message-ID: <301aff96-5565-47cf-b519-27234ea53ea8@tweaklogic.com>
+Date: Mon, 27 Oct 2025 23:36:32 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +82,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dts: decoder: Support V4L2 stateless decoder dt node
- for S4
-To: zhentao.guo@amlogic.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org
-References: <20251027-b4-s4-vdec-upstream-v1-0-620401813b5d@amlogic.com>
- <20251027-b4-s4-vdec-upstream-v1-2-620401813b5d@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 3/4] iio: light: apds9306: convert to use maple tree
+ register cache
+To: Chu Guangqing <chuguangqing@inspur.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, javier.carrasco.cruz@gmail.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251024073823.35122-1-chuguangqing@inspur.com>
+ <20251024073823.35122-4-chuguangqing@inspur.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251027-b4-s4-vdec-upstream-v1-2-620401813b5d@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+From: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+In-Reply-To: <20251024073823.35122-4-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27/10/2025 06:42, Zhentao Guo via B4 Relay wrote:
-> From: Zhentao Guo <zhentao.guo@amlogic.com>
+On 24/10/25 18:08, Chu Guangqing wrote:
+> The maple tree register cache is based on a much more modern data structure
+> than the rbtree cache and makes optimisation choices which are probably
+> more appropriate for modern systems than those made by the rbtree cache.
 > 
-> Add vcodec_dec to the s4 dtsi for the V4L2 stateless decoder driver
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> ---
+>   drivers/iio/light/apds9306.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Zhentao Guo <zhentao.guo@amlogic.com>
+> diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
+> index 389125675caa..7e68cca0edfa 100644
+> --- a/drivers/iio/light/apds9306.c
+> +++ b/drivers/iio/light/apds9306.c
+> @@ -350,7 +350,7 @@ static const struct regmap_config apds9306_regmap = {
+>   	.volatile_table = &apds9306_volatile_table,
+>   	.precious_table = &apds9306_precious_table,
+>   	.max_register = APDS9306_ALS_THRES_VAR_REG,
+> -	.cache_type = REGCACHE_RBTREE,
+> +	.cache_type = REGCACHE_MAPLE,
+>   };
+>   
+>   static const struct reg_field apds9306_rf_sw_reset =
+Looks good. I will test it on a real hardware soon. Thank you.
+Jonathan will know more about regmap internal implementations.
 
+Acked-by: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-Please order the patchset as expressed in submitting patches DT
-document. Or SoC maintainer profile.
-
-
-Best regards,
-Krzysztof
+Regards,
+Subhajit Ghosh
 
