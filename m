@@ -1,308 +1,318 @@
-Return-Path: <linux-kernel+bounces-871046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE01C0C50D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:33:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C382C0C50A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8F7189E0D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B08C18807FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EDE2F12BE;
-	Mon, 27 Oct 2025 08:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCECE2F12A0;
+	Mon, 27 Oct 2025 08:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="QfaRNvfm"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="SVci1QMI"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A982F0C79
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761553903; cv=none; b=f44vcG5/q/RPKni7lcaN8Uacs548ZHahCIGL9q6/xsqTa1qtvKWlKTERfqXNpx5ZsiaWOHJ12Gskwz61mk4WcVjONMXUC/NYGkT1GpEa7gK18V9kNwfIQOFmbhrBysvWT+5t5UP70UkWw6acRNgaUTc3n9o61ubg7TZVQTSB7kg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761553903; c=relaxed/simple;
-	bh=9V+c8u5zVCcQj7t0NocsND2ynLaX2XLpcSMPdPXXUcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pv9/UOwd7bmNV22HItjV8jo8sy6aFBO5bMBDv044Avlvo/bRVYf2RwaWE2IoCMDD7IZlscRsD7c7R1t9fMH+f7xj6Z1PRgAkmLd13Hez3k5dPSrBSsaMLBuFqomLq4oSx5Lm6FCz7rP0NnBlkk0OB/mPE3nRGnROzRHOGNZyE5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=QfaRNvfm; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id 6FFA0C3AE1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:31:38 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9961C84B9;
+	Mon, 27 Oct 2025 08:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761553900; cv=pass; b=L8M4YoFhvhBJOslX/qKaNc0aiXdg4R1UruKcOSW9Q0ZL3dim7NUrdm2KP4EeJH/yTj0zriM1f3Jt8VBRIddSn7dh2KpmggKy/XHSV99G+/znm7y34CWh5kmmMqfV6uSnwbCs9PxpKLmLixWZ1iYz/M0SAuEM4g4k4WlAoq6cdLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761553900; c=relaxed/simple;
+	bh=McrhOuzhrnLYLJ3Yd+2aPpk7WDKuLddjS6Ppo7mJKKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXu/bC0xy3U2lPv9BV2FusP2dg+UI2twURTHg6s5y7purKMJl8rTmaVT9ORsCs3UJ/IEnSegTqlllirmFZXllVbVh9ysUbSGScvR2+dwcaMOtaT4SYsS/5yYzf7s4gm8Fi2ALIdXC+h2/DpzWBwXc1+dcZmWfTo6bDxInU4wROE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=SVci1QMI; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 8B7D4C3ACA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:31:37 +0200 (EET)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id D52E31FF3DD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:31:36 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761553897;
-	bh=6RwCK0VurZytvmkMh4u79GFzDSrKDS0i0KfMobygAGs=;
-	h=Received:From:Subject:To;
-	b=QfaRNvfmLh1RZZSCwH0ZA1wjOkEOaEg44Uol89lX/87tBXfM/lydwv48iv9l0hD6U
-	 7vx/ZqbiWOGB9q9wdZ/zs9AWGOGIH80yufjtsUzXZrm4Y/sWS3z2kq1CkCj02XyRoC
-	 Zugo2Mq5+q1MlHF4GmQUVxhusmXu8ODCwhEgq/xboim7dvLlDUkJ9j5MzWMYT4Ggtu
-	 EMc3HvvsPCpc0LokTtUXrD+Pa+7xV9JGb9Nsq8qHPBEuHD5DJYj1QhJJMr+fND5zP6
-	 kzROFB8HehUf/FpSJ6vEBV3zE9b3tt7I8yIzTHnlcK1FegRUTXcxfFJqxczU3/YYQq
-	 YngGi9zOzNRzw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.167.52) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f52.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lf1-f52.google.com with SMTP id
- 2adb3069b0e04-57bd482dfd2so4768469e87.2
-        for <linux-kernel@vger.kernel.org>;
- Mon, 27 Oct 2025 01:31:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWAC7Nbp/jh5HKAEMn8cs/SFNQs/NUtya+ymAE7aYMWq4FGiIkoisvGdkYZkQq4B7xWgFXmG+bwXoEbmPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh301wzQLmgKGqGByw88bBSq0yoQmgH5D5xcWHBfFm6YHNeQ2O
-	RkNjHaA2PDkGNRHhuej+P14X1kQRmoJrG1Hz7/ezMZ27zdU19P9vxA0NJLR0CDC0+54KUh46rjd
-	nDP+3M2+4WW//LiuQr5e56KBk8wLVy7I=
-X-Google-Smtp-Source: 
- AGHT+IEDMVW90A/430m6Bs5FRF8/ZQ9GPwk60tq16fOBZ0SWa2mn6iKG7CUxJ8SDua+Wch4rxP7AjPTA6NQfAbsFitE=
-X-Received: by 2002:a05:6512:3e19:b0:592:f263:a8b4 with SMTP id
- 2adb3069b0e04-592f263ab5amr5643668e87.50.1761553896271; Mon, 27 Oct 2025
- 01:31:36 -0700 (PDT)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4cw6DG3ZVczyS8;
+	Mon, 27 Oct 2025 10:31:26 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1761553888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0vcpvhF5urzAN7K3wpgk7xwaAxcma2kFDIrKQc/Gknc=;
+	b=SVci1QMIf6DQF3QJGG6IvxwWPCCbeqZpjSffOVgw1knI3OfEpMa+G6gdxdn2Yzy9prXKlg
+	4raZJXlHxv1qKxzaZRr/UGPh/FRPZnDXRB1Vta9BvD/O5DZLotO3ffjLskNvHNu+getjJh
+	xomqgH/huEHMNVf9Xy3nng+mq+sUZeQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1761553888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0vcpvhF5urzAN7K3wpgk7xwaAxcma2kFDIrKQc/Gknc=;
+	b=OgulRCt6/GZcUbYBPfcrCRPu+lmQT1TxrG7z/LT4wj+NJisiYYy1d/gbKmn+2qOwBGr6wW
+	OIb9jJlAeQSyjfmf3aQEJBs1Y+jimmhzgLgUDp6P4pYpRRQvA14BlF3pZYLcz5qFoH0gjQ
+	9AwvIj8IXmsmpEnxa6Z0rjCPN78fJkk=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1761553888; a=rsa-sha256; cv=none;
+	b=Z6M5vn5d0QQk5z/e5iYJ7DRxmHK4SMNRhbBubBTvj2QrecRm7CrcadKe+bud7GW1yetIvu
+	VFDSbnEv4nI353DHC8Unb92tNPpPiCc/rJ4n2nUdS8IYLhbFQGtWNQWVdA10QP4wlhL4Nm
+	g/G84m8AW/FJogYPDXDBuy7847tmU9o=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id A06EA634C5E;
+	Mon, 27 Oct 2025 10:31:25 +0200 (EET)
+Date: Mon, 27 Oct 2025 10:31:25 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
+Subject: Re: [PATCH v3 01/31] dt-bindings: media: add DW MIPI CSI-2 Host
+ support
+Message-ID: <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024152152.3981721-1-lkml@antheas.dev>
- <20251024152152.3981721-2-lkml@antheas.dev>
- <3792db59-7dc1-4e34-9436-84df4b6c3e10@amd.com>
- <CAGwozwFTDD2QrHy37axhanwQYv6ty9K_hfhxS05djKpv8HfY6g@mail.gmail.com>
- <2684d3ab-d7cf-4eab-acd4-91bdd5debb6b@amd.com>
- <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
-In-Reply-To: <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 27 Oct 2025 09:31:24 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwGELOK_4KNADW6OvGi4TyiJsrbtEceaXRpk4CRNpqweZw@mail.gmail.com>
-X-Gm-Features: AWmQ_bl4UMyB6odidPWGa-1mQ9I-bfNM6bIzI__iqt3FqM0SxSO9BrzxRhuherU
-Message-ID: 
- <CAGwozwGELOK_4KNADW6OvGi4TyiJsrbtEceaXRpk4CRNpqweZw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] platform/x86/amd/pmc: Add support for Van Gogh SoC
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176155389716.22540.10897634482441774787@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
 
-On Mon, 27 Oct 2025 at 09:22, Shyam Sundar S K <Shyam-sundar.S-k@amd.com> wrote:
->
->
->
-> On 10/24/2025 22:02, Mario Limonciello wrote:
-> >
-> >
-> > On 10/24/2025 11:08 AM, Antheas Kapenekakis wrote:
-> >> On Fri, 24 Oct 2025 at 17:43, Mario Limonciello
-> >> <mario.limonciello@amd.com> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
-> >>>> The ROG Xbox Ally (non-X) SoC features a similar architecture to the
-> >>>> Steam Deck. While the Steam Deck supports S3 (s2idle causes a crash),
-> >>>> this support was dropped by the Xbox Ally which only S0ix suspend.
-> >>>>
-> >>>> Since the handler is missing here, this causes the device to not
-> >>>> suspend
-> >>>> and the AMD GPU driver to crash while trying to resume afterwards
-> >>>> due to
-> >>>> a power hang.
-> >>>>
-> >>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
-> >>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >>>> ---
-> >>>>    drivers/platform/x86/amd/pmc/pmc.c | 3 +++
-> >>>>    drivers/platform/x86/amd/pmc/pmc.h | 1 +
-> >>>>    2 files changed, 4 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/
-> >>>> platform/x86/amd/pmc/pmc.c
-> >>>> index bd318fd02ccf..cae3fcafd4d7 100644
-> >>>> --- a/drivers/platform/x86/amd/pmc/pmc.c
-> >>>> +++ b/drivers/platform/x86/amd/pmc/pmc.c
-> >>>> @@ -106,6 +106,7 @@ static void amd_pmc_get_ip_info(struct
-> >>>> amd_pmc_dev *dev)
-> >>>>        switch (dev->cpu_id) {
-> >>>>        case AMD_CPU_ID_PCO:
-> >>>>        case AMD_CPU_ID_RN:
-> >>>> +     case AMD_CPU_ID_VG:
-> >>>>        case AMD_CPU_ID_YC:
-> >>>>        case AMD_CPU_ID_CB:
-> >>>>                dev->num_ips = 12;
-> >>>> @@ -517,6 +518,7 @@ static int amd_pmc_get_os_hint(struct
-> >>>> amd_pmc_dev *dev)
-> >>>>        case AMD_CPU_ID_PCO:
-> >>>>                return MSG_OS_HINT_PCO;
-> >>>>        case AMD_CPU_ID_RN:
-> >>>> +     case AMD_CPU_ID_VG:
-> >>>>        case AMD_CPU_ID_YC:
-> >>>>        case AMD_CPU_ID_CB:
-> >>>>        case AMD_CPU_ID_PS:
-> >>>> @@ -717,6 +719,7 @@ static const struct pci_device_id
-> >>>> pmc_pci_ids[] = {
-> >>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
-> >>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SP) },
-> >>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SHP) },
-> >>>> +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_VG) },
-> >>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
-> >>>> PCI_DEVICE_ID_AMD_1AH_M20H_ROOT) },
-> >>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
-> >>>> PCI_DEVICE_ID_AMD_1AH_M60H_ROOT) },
-> >>>>        { }
-> >>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.h b/drivers/
-> >>>> platform/x86/amd/pmc/pmc.h
-> >>>> index 62f3e51020fd..fe3f53eb5955 100644
-> >>>> --- a/drivers/platform/x86/amd/pmc/pmc.h
-> >>>> +++ b/drivers/platform/x86/amd/pmc/pmc.h
-> >>>> @@ -156,6 +156,7 @@ void amd_mp2_stb_deinit(struct amd_pmc_dev *dev);
-> >>>>    #define AMD_CPU_ID_RN                       0x1630
-> >>>>    #define AMD_CPU_ID_PCO                      AMD_CPU_ID_RV
-> >>>>    #define AMD_CPU_ID_CZN                      AMD_CPU_ID_RN
-> >>>> +#define AMD_CPU_ID_VG                        0x1645
-> >>>
-> >>> Can you see if 0xF14 gives you a reasonable value for the idle mask if
-> >>> you add it to amd_pmc_idlemask_read()?  Make a new define for it
-> >>> though,
-> >>> it shouldn't use the same define as 0x1a platforms.
-> >>
-> >> It does not work. Reports 0. I also tested the other ones, but the
-> >> 0x1a was the same as you said. All report 0x0.
-> >
-> > It's possible the platform doesn't report an idle mask.
-> >
-> > 0xF14 is where I would have expected it to report.
-> >
-> > Shyam - can you look into this to see if it's in a different place
-> > than 0xF14 for Van Gogh?
->
-> Van Gogh is before Cezzane? I am bit surprised that pmc is getting
-> loaded there.
+Hei Eugen,
 
-The device only came out last week, so I suppose they had to add it
+On Thu, Aug 21, 2025 at 04:15:36PM -0400, Frank Li wrote:
+> From: Eugen Hristev <eugen.hristev@linaro.org>
+> 
+> Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
+> and i.MX95 platform.
+> 
+> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change in v3
+> - drop remote-endpoint: true
+> - drop clock-lanes
+> 
+> Change in v2
+> - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
+> - update ugen Hristev's s-o-b tag to align original author's email address
+> - remove single snps,dw-mipi-csi2-v150 compatible string
+> - move additionalProperties after required
+> ---
+>  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 151 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 152 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d950daa4ee9cfd504ef84b83271b2a1b710ffd6b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+> @@ -0,0 +1,151 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description:
+> +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
+> +  camera. It will convert the incoming CSI-2 stream into a dedicated
+> +  interface called the Synopsys IDI (Image Data Interface).
+> +  This interface is a 32-bit SoC internal only, and can be assimilated
+> +  with a CSI-2 interface.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - fsl,imx93-mipi-csi2
+> +      - const: snps,dw-mipi-csi2-v150
+> +
+> +  reg:
+> +    items:
+> +      - description: MIPI CSI-2 core register
+> +
+> +  reg-names:
+> +    items:
+> +      - const: core
+> +
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: per
+> +      - const: pixel
+> +
+> +  phys:
+> +    maxItems: 1
+> +    description: MIPI D-PHY
+> +
+> +  phy-names:
+> +    items:
+> +      - const: rx
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port node, single endpoint describing the input port.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +            description: Endpoint connected to input device
+> +
+> +            properties:
+> +              bus-type:
+> +                const: 4
 
-> Antheas - what is the output of
->
-> #lspci -s 00:00.0
->
-> 0xF14 index is meant for 1Ah (i.e. Strix and above)
+If 4 is the only value supported, you can drop the property altogether.
 
-lspci -s 00:00.0 -nn
-00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] VanGogh
-Root Complex [1022:1645]
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +                items:
+> +                  maximum: 4
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Output port node, single endpoint describing the output port.
+> +
+> +        properties:
+> +          endpoint:
+> +            unevaluatedProperties: false
+> +            $ref: video-interfaces.yaml#
+> +            description: Endpoint connected to output device
+> +
+> +            properties:
+> +              bus-type:
+> +                const: 4
 
-> >
-> >>
-> >> Any idea why the OS hint only works 90% of the time?
->
-> What is the output of amd_pmc_dump_registers() when 10% of the time
-> when the OS_HINT is not working?
+Are both input and output of this block CSI-2 with D-PHY?
 
-First sleep with initial data:
-[   63.569557] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   63.569581] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:73f
-[   63.569597] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:9
-[   63.583472] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   63.583497] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:735677a0
-[   63.583513] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:5
-[   63.607472] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   63.607496] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[   63.607512] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:4
-[   63.607687] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   63.607702] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[   63.607709] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:7
-[   63.608417] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   63.608436] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[   63.608452] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:6
-[   63.608603] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   63.608621] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:1
-[   63.608637] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:3
-[   64.764466] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   64.764490] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[   64.764506] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:3
-[   64.764631] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[   64.764646] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[   64.764660] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:8
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    csi@3000 {
+> +        compatible = "fsl,imx93-mipi-csi2", "snps,dw-mipi-csi2-v150";
+> +        reg = <0x03000 0x1000>;
+> +        reg-names = "core";
+> +        phys = <&mipi_dphy_rx 0>;
+> +        phy-names = "rx";
+> +        resets = <&dw_rst 1>;
+> +        interrupts = <2>;
+> +
+> +        ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            port@0 {
+> +                reg = <0>;
+> +
+> +                endpoint {
+> +                    bus-type = <4>; /* MIPI CSI2 D-PHY */
+> +                    remote-endpoint = <&camera_1>;
+> +                    data-lanes = <1 2>;
+> +                    clock-lanes = <0>;
+> +                };
+> +            };
+> +
+> +            port@1 {
+> +                reg = <1>;
+> +
+> +                endpoint {
+> +                    remote-endpoint = <&idi_receiver>;
+> +                    bus-type = <4>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9d9d2be7be8037dfa96f1c9edd24a0cf997b9393..ecb7bc7cc8ad797f43173075ca8973804bf335f7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15334,6 +15334,7 @@ F:	Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
+>  F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
+>  F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
+>  F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> +F:	Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+>  F:	drivers/media/platform/nxp/imx-mipi-csis.c
+>  F:	drivers/media/platform/nxp/imx-parallel-csi.c
+>  F:	drivers/media/platform/nxp/imx7-media-csi.c
+> 
 
-Second sleep (successful):
-[  235.211752] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  235.211776] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  235.211790] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:7
-[  235.211931] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  235.211946] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  235.211960] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:6
-[  235.212083] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  235.212096] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:1
-[  235.212109] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:3
-[  236.520156] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  236.520177] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  236.520192] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:3
-[  236.520330] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  236.520346] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  236.520360] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:8
+-- 
+Regards,
 
-Failed sleep:
-[  152.839926] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  152.839951] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  152.839965] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:7
-[  152.840115] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  152.840134] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  152.840148] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:6
-[  152.840270] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  152.840276] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:1
-[  152.840280] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:3
-[  158.037073] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  158.037097] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  158.037111] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:3
-[  158.037252] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_RESPONSE:1
-[  158.037268] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_ARGUMENT:0
-[  158.037282] amd_pmc AMDI0005:00: AMD_PMC_REGISTER_MESSAGE:8
-
-So it is the same
-
-> What I can surmise is, though pmc driver is sending the hint PMFW is
-> not taking any action (since the support in FW is missing)
-
-The hint is working... 90% of the time. Without the hint in the patch,
-sleep never works.
-
-> >
-> > If we get the idle mask reporting working we would have a better idea
-> > if that is what is reported wrong.
-> >
->
-> IIRC, The concept of idlemask came only after cezzane that too after a
-> certain PMFW version. So I am not sure if idlemask actually exists.
->
->
-> > If I was to guess though; maybe GFX is still active.
-> >
-> > Depending upon what's going wrong smu_fw_info might have some more
-> > information too.
->
-> That's a good point to try it out.
->
-> Thanks,
-> Shyam
->
->
-
+Sakari Ailus
 
