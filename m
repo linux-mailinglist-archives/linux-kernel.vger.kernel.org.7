@@ -1,149 +1,104 @@
-Return-Path: <linux-kernel+bounces-871057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0970CC0C586
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:40:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521EEC0C58C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 400EE4EF87B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC83189C796
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDEF2E8B8A;
-	Mon, 27 Oct 2025 08:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932A2E8B7E;
+	Mon, 27 Oct 2025 08:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOpKhK+D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rufVP4OS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6971C6A3;
-	Mon, 27 Oct 2025 08:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9502D24A7;
+	Mon, 27 Oct 2025 08:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554411; cv=none; b=tq3nqF5CTCU+aNDnmorKFL0H3ZgBs44AHQXOvNKNlQMmhf6BkjFiMxVatIM0imJwql+gK6nZzI0Fklf6LRrNVfhDy8L76Zh3GWg1sMXfwgkRdHIRQAAjXsJta819sNvmIJz0P23mdiezRFv1lw1TDIrc7p2AhwKafedwSWR2JbI=
+	t=1761554474; cv=none; b=QP9DRe/TXcZkmSh2zIoAW1Xp1mJHBrwHZPbGABT8CWGHcGTJKJWYPtKdd+3HYe3dwO+nQdvrP0+o4OGl2e4K4KAyQApaUvgz7zl55ksJu2RLMw0jGO7WhfqgL0RWfAwwdejbkAQMQRjmdO0u99rDgimfv8VDkg55Ahb7borKIe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554411; c=relaxed/simple;
-	bh=pvUgbE/oVYUfBoByjaAA8fILG3lKoJTDuLSKJdOS/A4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d5o4FG8URXExV3LdhOg+ZsPtjm7g/MqCVsMb/4d7kmx7mVPXdDwzq1tKYJplxwvyb+6J5DEnuvphVxvsV2Gqv7A0vBYBK5aK6UgoGG5h3MDo9LeDiSegi3nfuCkfQrVw2WRLX4EJFGLGGrHlU25aorgG3oNODXtgnHACyOR4aZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOpKhK+D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A44CC4CEF1;
-	Mon, 27 Oct 2025 08:40:08 +0000 (UTC)
+	s=arc-20240116; t=1761554474; c=relaxed/simple;
+	bh=p7L1ppdjpTPK5vdV3Mi+mMZfy8PqxfrJ0ZCIY6BoM3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jirHwokdigZ1MccY1q3t7ulQe0K8hzt4ncQYg5r2ad0meM/RPr8gXY5Mf0v9R7xD9ldcBhx/RCyKFJ6/Kq8fVnOgN3EM1P91330beAmSVvJevcbcZA2xq7aXbCHVZenVSpCGel8nSAU2CeBE38iTsQP/Wsx7CGdS20PglIz16do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rufVP4OS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADEC6C4CEF1;
+	Mon, 27 Oct 2025 08:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761554411;
-	bh=pvUgbE/oVYUfBoByjaAA8fILG3lKoJTDuLSKJdOS/A4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MOpKhK+DgLDZizQPWOGImQ/dASJaYmJwdQj44QvPvg7uNIOMhw5+TbGkYW8PJvU+q
-	 20H3lfjcN4Zai/LHogBPlspM1hXZ0wcVASpm8txMIMpRpLRJ3+uR9mfdtUmz5Q5uiV
-	 CZ44NKHjzOJIYyyUqn9VUaucJyYZqizP+H3cVcAekWm/XcPqrkkoDCicm2BTbTb2x2
-	 g/yVV3NJ++u4NhjMUkOKFxGM+e3xIsamFHZYKeySCgBkY1o2MvAL+l1n9Ff3WLHeOL
-	 vKfpgDSg8FdXuz7rXqzDUEp7N360OZu/yycoBB27XoZ8aNKOPm9eUd0PwxGH7xxTGf
-	 5zF8CtFjruJhA==
-Message-ID: <112db7fd-3c0e-4c56-a553-5aca12965bdf@kernel.org>
-Date: Mon, 27 Oct 2025 09:40:06 +0100
+	s=k20201202; t=1761554473;
+	bh=p7L1ppdjpTPK5vdV3Mi+mMZfy8PqxfrJ0ZCIY6BoM3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rufVP4OSJtQ3/mqTsI9HPHrUO+OB+vlQGbAQqIDt1z1/AZr7oI74LCqffPdj8vLew
+	 JW1i1LFS8BrXSqZRhEm8DGIdLLQVtvMjlTR4+W3Nd5kmSFHSa0+5cnJLiMCDqe1zZi
+	 BZNURd+k0QiE1zTDpsPp4znfOXhDST9Y3ZAdAzHCG4QUeEz2dKvoj2FRR+7KtARw0K
+	 x93tfow3vIZdl4w3bnKt+Aq0n8eljgp5LLbcx8nSChwFpPFXxJxXmmuBeEl5qZ6Ewt
+	 QStYGjeV2llAJvn5SGcXYs1zeEWXAMkH7z30MF1MUyoV1y4kbm/N2jrDV4GJAx84ZL
+	 F0pZYbv/EemuQ==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vDImy-000000000Gc-2Ow9;
+	Mon, 27 Oct 2025 09:41:16 +0100
+Date: Mon, 27 Oct 2025 09:41:16 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	CK Hu <ck.hu@mediatek.com>, Ma Ke <make24@iscas.ac.cn>,
+	Sjoerd Simons <sjoerd@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] drm/mediatek: fix device use-after-free on unbind
+Message-ID: <aP8wLMrFTsJI-Lr3@hovoldconsulting.com>
+References: <20251006093937.27869-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641
- power monitor
-To: Guenter Roeck <linux@roeck-us.net>,
- Igor Reznichenko <igor@reznichenko.net>
-Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
- devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- skhan@linuxfoundation.org
-References: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
- <20251026184641.631641-1-igor@reznichenko.net>
- <a45ad6b8-b4d5-4e0c-8f1a-3641dddb240d@kernel.org>
- <e51c3dfa-406b-4dfa-bbb5-c31d1a2e0007@roeck-us.net>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e51c3dfa-406b-4dfa-bbb5-c31d1a2e0007@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006093937.27869-1-johan@kernel.org>
 
-On 26/10/2025 20:58, Guenter Roeck wrote:
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  shunt-resistor-micro-ohms:
->>>>> +    description: Shunt resistor value in micro-ohms. Since device has internal
->>>>> +      16-bit RSHUNT register with 10 uOhm LSB, the maximum value is capped at
->>>>> +      655.35 mOhm.
->>>>> +    minimum: 100
->>>>> +    default: 1000
->>>>> +    maximum: 655350
->>>>> +
->>>>> +  st,alert-polarity-active-high:
->>>>
->>>> Isn't this just interrupt? You need proper interrupts property and then
->>>> its flag define the type of interrupt.
->>>
->>> This controls a bit written into device register.
->>> I omitted interrupt property after looking at existing power monitor bindings,
->>> especially hwmon/ti,ina2xx.yaml. INA226 has very similar bit controlling alert
->>> pin polarity and binding doesn't define alert pin as interrupt. Overall, I didn't
->>> find many power monitor bindings defining alert pins as interrupts.
->>
->>
->> On INA2xx that's SMBUS Alert. Is this the case here as well?
->>
+Hi Chun-Kuang,
+
+On Mon, Oct 06, 2025 at 11:39:37AM +0200, Johan Hovold wrote:
+> A recent change fixed device reference leaks when looking up drm
+> platform device driver data during bind() but failed to remove a partial
+> fix which had been added by commit 80805b62ea5b ("drm/mediatek: Fix
+> kobject put for component sub-drivers").
 > 
-> It could be wired to SMBus alert, or it could be wired to a CPU interrupt pin.
+> This results in a reference imbalance on component bind() failures and
+> on unbind() which could lead to a user-after-free.
+> 
+> Make sure to only drop the references after retrieving the driver data
+> by effectively reverting the previous partial fix.
+> 
+> Note that holding a reference to a device does not prevent its driver
+> data from going away so there is no point in keeping the reference.
+> 
+> Fixes: 1f403699c40f ("drm/mediatek: Fix device/node reference count leaks in mtk_drm_get_all_drm_priv")
+> Reported-by: Sjoerd Simons <sjoerd@collabora.com>
+> Link: https://lore.kernel.org/r/20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com
+> Cc: stable@vger.kernel.org
+> Cc: Ma Ke <make24@iscas.ac.cn>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-So please explain me why CPU interrupt pin, which in every really every
-device called "interrupts", would not be "interrupts" here? How CPU can
-even guess the number of the interrupt in such case, without
-"interrupts" property?
+This patch fixes a regression in 6.17-rc4 that apparently breaks boot
+for some users. To make things worse, the offending commit was also
+backported to the stable trees.
 
-Best regards,
-Krzysztof
+You need to get this one into mainline as soon as possible, that is,
+this week and into 6.18-rc4.
+
+Johan
 
