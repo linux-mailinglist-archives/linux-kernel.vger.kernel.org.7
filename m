@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-871199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06904C0C9CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:20:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49514C0CA08
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2AC1881737
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77D13A6E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF822E8DF3;
-	Mon, 27 Oct 2025 09:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E322E7BB4;
+	Mon, 27 Oct 2025 09:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RqHJYXQa"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T/XiaqOq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA372741DA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977382E7F11
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556569; cv=none; b=Mr6gdfe+ejoq/mWSQRjewpCF3oV4GJda0jNjSOoJYyBStEoG2KlO+rujLVFQc3iwnvvBM9LfOh877hSkSHQbyPHFFi6LhWwlYB78w4cYi8VeAgwydoilaBcS1U7Kod57ix3qB/+Tpm3M2Yv8E6lHO6j2N5pUAdnWwNL8OqrK2rg=
+	t=1761556669; cv=none; b=savePoPs2yt4MJQsPlTNz7RqG88A2xaZtUBBJCgXtAtTQsPOir3vS8ufqmJ7JvcBpqo5X6Bf0aCXjF5Bqyak7ndJzPsXch/Ti18CI1BBwqDYcUVE8RcqJ/g+Q3y/51loD1h8EB06S/2j8Spjb1zf+GV3hfEIS2Qo9AnITfLbot4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556569; c=relaxed/simple;
-	bh=oN9S/ByE6z4oE1dK1xupBGPnFsMKYjqe/Wd1H2/tmxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P3cZt+GxIHhgJV+7TolFsfNEpShNMjmsHq1Ou9uaG+X3mwWt2MGD4UIQmKeRR3TvvNsdXScxrNHuIDeJFEMqiHgZ8bKm1Tggj8qPu88zMUIpDcwTf6vKVCZX9Zb51uo2ghmOWx7CskZiAKspacYMYuuwimQs/nHf9z2GHCKW4fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RqHJYXQa; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-89f07fee490so335791185a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761556566; x=1762161366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9M7flweXiGej+Q06p6wHFNjm3oIgkIVuhJ5x8DaGW0s=;
-        b=RqHJYXQa8BI0kdiRX5hfZ6cTTGLHHJnd8QRkhPsf1baR6dvrQqjYGn+LGLLouyE3R6
-         a8cIYdCU1UVugipVqjn1cy6WfDBwxckNvOxCxGfirYr90y4YLWJWKZVSvYt0oLh9O6ep
-         PyQJK7sBiJhyxDAZfq6r2V1XVvf6Qm8PMmj21WFpZaH1VQBJUWOAQJ8sxwWoF2PaVsPa
-         DpU/nIoj035V1nlRYoXur9iwx/2IVsAXEfDgaOxEA+2/suiu8Sh+Mqbrufumb660jXT6
-         4IPHASMImGwckrHpeKzfchWrBDiHCvlr1ZdlVwUrNVDiH9VVnfp/M+UiqZBBe91KsAi0
-         DEqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556566; x=1762161366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9M7flweXiGej+Q06p6wHFNjm3oIgkIVuhJ5x8DaGW0s=;
-        b=ZUy7B64De4/cRHArUbzv9g+rCejtGj3cO93RtKkrtYWav7+X/fO7iipxscC/CTvlSS
-         3NICUvSp5yqNQZeIJ3tBfMytUi6dWWVM7uN6IIF6GM2OUmGwAWFHEPie536DCNZF/DLe
-         nMzyKdaWQzZ5a5zW5Hho+7WwII5asNbBRdYwb0tB1yoWHu3QozoLPSDXJUqIrYNQ8cPJ
-         xLiry//AareFgplmu3S9/2eEgYz81UJRxbBaqOzLCNXHeMQnmcJ5P7f81pOrheNus9Ff
-         wb6bXzofhEn7zkbMAJApEAKzOEiKbSztVKkH5JhmhH6tM+YtTTrR4EsewbY7ZRZqnxPV
-         v/dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH62h1/kOVb/R3yezcdcTc1cyOEUF1fXmHWvIgz2EDhKibdH6rKmPzRi/H1WFVyxPBBfYI3KJDGPAvAZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx15CL+l2HmvNUt/a8nMMv8NOH+LvNv2PuFkKnHdLZYRoSMjg1D
-	99PH3Wvty+fUqmMR9HvSbz3Zn24EzOnQoHPBFxF2qwhFVtu+kCFGLMUfOFSiEzCakGzQqQzmhQA
-	E8bXcHz5l/FVvvYimTt3LoZ8muz+sW7cRCAlB0CZU
-X-Gm-Gg: ASbGncvEUC4sb9r/dTUzKgYni4CvCr137oNrs3nzQ7ZSul0cdZBnc9cDal4Q2JSV/gm
-	jwuGZiYtyOlqKjDiZ/BAW5KNbqzaF1op8lR2+rqiJ/vHl2QC/dS4eoUVoYeijvTTd+QUYp/7/G2
-	B0Elg6lq2YLtjz6p63qW6u31f06Mufns9Rq/xeVAup8Eh9SYc3XrhfyVzgQh3/oITbfZQgbXofL
-	TwvAf9YJOKPy8Nsupgu6C7GqXNEWrOfKQzG1fmB6xs5xfu05uJlri7K4UgGmo2++RKtBZM=
-X-Google-Smtp-Source: AGHT+IG0vxrk8P548hMiYXEr5yuQrLVzL4lCysrZOaHo4+AlkvkNAKs2QduZs+9ZwIJ4FPzozx2n/rIWJmZ0OVid1xI=
-X-Received: by 2002:a05:620a:4005:b0:89e:6902:3e11 with SMTP id
- af79cd13be357-89e69024424mr914542685a.35.1761556565812; Mon, 27 Oct 2025
- 02:16:05 -0700 (PDT)
+	s=arc-20240116; t=1761556669; c=relaxed/simple;
+	bh=VCNUVKbAdb2+h7EleaRRC4KU1wzGu293L+c3xLH8YPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IhTkSbgx/M4Jw3CMPLhYPAaGgu5QhPELX6IGCovkcDIx3gij7woETQmOR7LMvYWOx95dAxxq+Oq8NhNibVe46JSs5FMrqYN/HWDfUZXkEFXBZZDP9SYRQ/7Y14bUheLUgt7VR/Z3lXdPJbP5XXL7Ao2vlvflfJDCwDhoYbp6mg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T/XiaqOq; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761556667; x=1793092667;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VCNUVKbAdb2+h7EleaRRC4KU1wzGu293L+c3xLH8YPU=;
+  b=T/XiaqOqJ5V5kJcUPdi5EM4EUaH6xE2b++EoKpK1mZhUKdBrZcjn5lb1
+   lbpItCR2HPgRXE+stqiYWd/4Qjx2Nab6MdlJJ1mkOwZX5AtJ1jY5QQwqs
+   MSa3LPggrY4HiUQe6IsjDRS0ag6bYDvv6Mv2EGcFrFDJu2Ia6DnVjWsJA
+   tkxDxJX8Wty0WqNNeYNfSt8PoTKPdH+qgIBccYX+29KmadQsY+43DyGyH
+   4ZUL5yMP9B+xJYVCjI36ZxPYy0B0M6GCHeZUa+J3obnrXCzth6OKdCzge
+   uXB1IvZZeNPaqtxJ3lih6+NUSLeN78LjnC+jcA1jfvvheN7H2z+4CqdUB
+   w==;
+X-CSE-ConnectionGUID: aFyMU2UgTvaN+dWttL5otA==
+X-CSE-MsgGUID: /0Oavld3TZKHOR8AuWzc8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74974978"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="74974978"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:17:47 -0700
+X-CSE-ConnectionGUID: XfB2QgpiT4WXIfHWXmb8/w==
+X-CSE-MsgGUID: 1TYKMS33SmeZw9Q/PXTimg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="184612046"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa009.jf.intel.com with ESMTP; 27 Oct 2025 02:17:44 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 3E04D95; Mon, 27 Oct 2025 10:17:44 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Subject: [PATCH v2 1/1] checkpatch: Don't warn on "orhapned" DT schema file
+Date: Mon, 27 Oct 2025 10:17:24 +0100
+Message-ID: <20251027091742.1741742-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027084835.2257860-1-stefan.wiehler@nokia.com>
-In-Reply-To: <20251027084835.2257860-1-stefan.wiehler@nokia.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 27 Oct 2025 02:15:54 -0700
-X-Gm-Features: AWmQ_bmDUmU_tcEMhsKWxImXqueUJYr--H9ftZLY576HiZQiOI1zh4Y5ZwoSHbo
-Message-ID: <CANn89iKSP6pCtn2vu8D=5-Y7LSxCtQA4s=qXjvHsMeOTstfbOQ@mail.gmail.com>
-Subject: Re: [PATCH net] sctp: Prevent TOCTOU out-of-bounds write
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: Xin Long <lucien.xin@gmail.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-No changelog ?
+Currently checkpatch warns is the DT schema file is absent in MAINTAINERS.
+However the DT schema files are self-contained in this sense and
+have embedded information about maintainers of it. This is a requirement.
+Hence, avoid checkpatch warning about it.
 
-Also no mention/credits of who diagnosed this issue ?
+Requested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-Please do not forget to give credits.
+v2: drop some leftovers
 
+ scripts/checkpatch.pl | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-On Mon, Oct 27, 2025 at 1:49=E2=80=AFAM Stefan Wiehler <stefan.wiehler@noki=
-a.com> wrote:
->
-> Fixes: 8f840e47f190 ("sctp: add the sctp_diag.c file")
-> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
-> ---
->  net/sctp/diag.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/net/sctp/diag.c b/net/sctp/diag.c
-> index 996c2018f0e6..4ee44e0111ae 100644
-> --- a/net/sctp/diag.c
-> +++ b/net/sctp/diag.c
-> @@ -85,6 +85,9 @@ static int inet_diag_msg_sctpladdrs_fill(struct sk_buff=
- *skb,
->                 memcpy(info, &laddr->a, sizeof(laddr->a));
->                 memset(info + sizeof(laddr->a), 0, addrlen - sizeof(laddr=
-->a));
->                 info +=3D addrlen;
-> +
-> +               if (!--addrcnt)
-> +                       break;
->         }
->
->         return 0;
-> --
-> 2.51.0
->
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 6729f18e5654..db274a7c2fb0 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3441,9 +3441,12 @@ sub process {
+ 		     ($line =~ /\{\s*([\w\/\.\-]*)\s*\=\>\s*([\w\/\.\-]*)\s*\}/ &&
+ 		      (defined($1) || defined($2))))) {
+ 			$is_patch = 1;
+-			$reported_maintainer_file = 1;
+-			WARN("FILE_PATH_CHANGES",
+-			     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
++			# DT bindings are incorporate maintainer information, no need to report
++			if ($realfile !~ m@^Documentation/devicetree/bindings/@)) {
++				$reported_maintainer_file = 1;
++				WARN("FILE_PATH_CHANGES",
++				     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
++			}
+ 		}
+ 
+ # Check for adding new DT bindings not in schema format
+-- 
+2.50.1
+
 
