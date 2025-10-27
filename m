@@ -1,127 +1,261 @@
-Return-Path: <linux-kernel+bounces-871342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA60CC0CF9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:35:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B92C0CFAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:35:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F6718914F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:35:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ECF5534C96C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02EE2F693B;
-	Mon, 27 Oct 2025 10:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9801C2F3C1A;
+	Mon, 27 Oct 2025 10:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jSOGqmRS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xCLu2o22"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2732F2609
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A684B2D5C68
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761561294; cv=none; b=cJfGzrKk1JoojLiBlPN4q6p7h0+0R0rTQnYR73bi1WYXuV5BryRPPUzMfOcO0tesTWjfLF02MH0jY/DMaISvngxWprIUEMDXvbcAqvNDUPXR53FJhTbL6xsJIgJLHIqV2HN2Rforcisyi/vFm4bGL8d73Gx/bMrWMNgPqj8Ezh4=
+	t=1761561348; cv=none; b=kXZ+KBfzhHsIAqa93ry5FoOiFqUUvvknqFBlF5D+Fe/i/IR5CT+LZpV0768RMDTlcZ91zYPMDNs/qBFucytBy9LodH3JUsd02yP08J9EilVKVJjBXjaiHrgFEFZ/gsZFOqOI+1F65QJUwAilEGOtYgSvEXQv/zZVCSHbhqABSPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761561294; c=relaxed/simple;
-	bh=0zfQEgX62c0H2fOQ9iB6Cl5Nh9lHz1NMVAjMrWxNOMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p3o13pQ2QMQODOiLqiaTT9IMcviyPrWaKMzsgxfn0Fptwwod4g9AASc8YIhSMEJnvUQLY4ShhUhBvO6Vk4pRV4Jq5Dkjo29VWteGUu2lA79PwAKie6WsrAkSWfK8MOYuq2y2n7J4CytsioVO7EU5zcjFDBoNfjCVUzxmstQOgoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jSOGqmRS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761561290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0zfQEgX62c0H2fOQ9iB6Cl5Nh9lHz1NMVAjMrWxNOMY=;
-	b=jSOGqmRSqqOechJ8OzUt3h5hyWUQ4+/kqeGp6BdE/Sov8+hfRdEGCxuv+flTv8VZNB/n3w
-	xnu448uvraqdqMfPxw7cKzLZetO94hTt6I/yhW3kuVTVfhsJlD+GY9C/BFoSvzqvtyCwfS
-	KsLPVi1ZXZeq1YJfTww1Z/OBa0QlR8U=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-552-myYWsG3KMrGQ7ZEZX_VgqQ-1; Mon, 27 Oct 2025 06:34:49 -0400
-X-MC-Unique: myYWsG3KMrGQ7ZEZX_VgqQ-1
-X-Mimecast-MFC-AGG-ID: myYWsG3KMrGQ7ZEZX_VgqQ_1761561288
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d7405e6a8so276392766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:34:49 -0700 (PDT)
+	s=arc-20240116; t=1761561348; c=relaxed/simple;
+	bh=V0xT/F6pKcz8ylzVL894eSbp5yjD9vZ0v47uUsLy0cU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p3iZS78PUI+lfl4lU4rRENNEpn6HQ/hS22ttqdcNvX/U2+Man7IhelobXxzkEDtKi8Y+qtBebT9idc7Apl9syqz/Fc/LSTsqpYyFfZCKIyFpWFZqqMZ3SnGHfZi9b/T66O+Ly8DZgh++GSePkHAl3CSXCDZ4rM5ohdfaq+5epls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xCLu2o22; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-475dfb5f8e2so349315e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761561345; x=1762166145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1eC2sjSfHiIWN4j8w+yh7atvloipy18ZE5R0r29G0js=;
+        b=xCLu2o224zktFlNgPogYuGEV07pkR3T3D7Y/DZRsEQZAM6fVqAM0JAelsPN2FBIpaR
+         EMtZXkVf92ebM4U5a6LUM1esRAbW0Mi0Rpa0eFh1gVOy/3kbNmMduL8DCUl3KWXv4xFQ
+         o6BM9gZfNB3XNkLg9WO7Txjj8TNaO4qtpvbYdX5+hnXJWsak37A/+uvTl+x0X19wy+WJ
+         q+IBBT+/KVj5Q0OReXRsGl4ykbAKShv4rtX1fOU0mK9PIybwuC0si+vzKGKgBfHoOKfm
+         3FWDNeT9nA3h6UkyKeW/YXJ0Az8v1XQbLirl7q9o0w1z4gM20TzG8H5a0MG7DoK+kAed
+         LTYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761561288; x=1762166088;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0zfQEgX62c0H2fOQ9iB6Cl5Nh9lHz1NMVAjMrWxNOMY=;
-        b=BaWBdCmtH5WjLZeqXfFTVKs01fq5IfnSKSsHqKgAxQfhiJZIGj4jZgoA3MaUOpZtqT
-         G2/JpUEzqURomwAnI6ftfInyu2y//fOm65SaEWqhg6TisucNXfs23GjpHyS3lcvXMLSp
-         HQsSVxRuJ1uS6ikYVGcc0ckcmcvEGMSKTVX+QvOFAw6BGFNtNuUXEUsgGPDaxbL1ISeN
-         ivKyHEWB7PwL7De9vDP2Sx2yyKS3kaWt5OTRdMtofJyvEhkS6wYQRR8r5ddWBQx2aNql
-         harunCDPdK3orOXNj3Jq3HFr4K4C3gGND/H9DeeHAqOsxiaOLBQ3VO+IlIQY0jAwqKDw
-         IcjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUM2oEls7pPcDjfCwi+1SUa8K1NfGs98T7iGerFBl2DUYRMH9VkBffgsWs09hdCK2W8njHssRYkNPYDzOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTkNtBQCQfyN5bGbvS4kNI7ebBOhRBIcnZbDTUniCMyhBfQ9EC
-	WEIIrCdJX0LHa//I9UksrRRRIRyFFYT23Fala2P8SEeP3/ExLm03Wc1sd0lCfV3KaUl/KKRMEQl
-	b9DqIAFGR8lYhhV3NU9pX6vGS+Uk92uabeAqABFa3bMsnPi3+upgQ4FxTBxETopxCRm65wtLABK
-	ErE7OSNKhdaGHU7louyKzJ31CPjoHHM5rgCdbDNCF+
-X-Gm-Gg: ASbGncsb47GVzLDW75OSbqpL0k/akTYSFqccWJle+S6L7fVERb9CjQTjY87WeA09Ecb
-	DiPSF/YI0aiFnLkOTPKn7TKvmKhWKHdWuIc2XJlfIoeNVrV88tS4JUWewoAPdikiXX9rasQnn/o
-	Ws+2Ph4CsM1R4vTir04VmjshFcJHgQ17wEao5PbaIML8XmLm2VCCjQS983j4tfqaQCh72PI3PdU
-	aS72Zd69u4OEw==
-X-Received: by 2002:a17:907:9725:b0:b6d:5338:f6e6 with SMTP id a640c23a62f3a-b6d6bcfbbf1mr1050211666b.18.1761561288055;
-        Mon, 27 Oct 2025 03:34:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHibjOYCk2sKkZzgs00m9DngU0+qufH2rg1LAx0LsarP6NwDbhgx9VF+0BCzU6yodoPha+MLbmyZv8fOXt2cn4=
-X-Received: by 2002:a17:907:9725:b0:b6d:5338:f6e6 with SMTP id
- a640c23a62f3a-b6d6bcfbbf1mr1050208466b.18.1761561287510; Mon, 27 Oct 2025
- 03:34:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761561345; x=1762166145;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1eC2sjSfHiIWN4j8w+yh7atvloipy18ZE5R0r29G0js=;
+        b=ndEJ6nh907Y3HTKM4/KCXdSEObRpPccIRi1FZH6Sqqw8dar7VvyVmvxCSIePFqfx6s
+         m+I4UW9O99UlB9Z8n1gc5Fm9goYF7BYHXBXrR68WOkv40NH1V04VQ2nnixM+w9eKOGCC
+         Fwy5QRQGapJLWMzyAKeJUyimY2IZyHsZXdoIKaX+02C0pxnIdRtHlkZFwjCpdZMy33jE
+         Q+9L0hBHu/r4LQy3h0YPZeuByVdtv/MxyzBtUwWlyRjtSG2APRP8e8CEuW/CAVO5TQVK
+         mY+t6VCTbVirKmym7Y146pNWFs7E0ZgP789nGoOOQ5TdScWXqdUswP+WKXuG51bF6Yjn
+         3lPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnXEWYYqt8E+5qbvxmEUlGZ4t/SpTcLWzk7SGcGYEA5+cXDI9d7SAHMgsJYXnFYQGW5KBVbFUIwsqoJnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDbc8HVB9O/+U+paZbi5yko5pdYps+/ZeQx51s5QUJ/ImNNBYF
+	ORtDVCAwXGZkcn1ubJOr3/1rRkJKcPj9WQvC3Sxnk2AuBIBn4vPRbYbnx18IEK0XAG8=
+X-Gm-Gg: ASbGncvhsg36YbX5C3HmKWJWRqSoFnSOEkSASPj+YAxrTi5sJjdk4zNM2jdCKV78A5N
+	DSp5x9K9rCqeIrG7qGIh1Cdlpgb7hf6XR6b4cHTtyhOOurahxMczdw8gai7Y8KnW5WlBcr61Ajy
+	noedMf4Ex/3AHx/eN4KPamE8reURWdSuKXAgWTX20KvbD6XJiW8d1GIvstofeTpHBnOakHlNurg
+	4ZwMKR0ad6KUcb5/+zJPo1F6ih1b+TZHQljnWnA8K2QPC/6e0FIRkUwm55kRGEEOr5CFidYnSnU
+	Mi5mztgboE16UWwDxYJlwoxrnQ2gSaie1gIwKnGOaMzzNGs5bGS6SUB1sluxt9Ph1YrFtbP0nEz
+	33DjvY8V1Dw3IGM4uk57PrL4uiF2fGi+ST4Byg4GIU4SqVBJsmHEhHBtrL3KWpWWFk70DthCD3W
+	0jX6IcHDaxs7nhKpaOw+F/
+X-Google-Smtp-Source: AGHT+IHoKMtB0k7tD+QS9RPEtlM0Hd0nVYHf0+EztHHBmQYdUIcuy9l+kJwZ92M2NezWHb90uo3n5g==
+X-Received: by 2002:a05:600c:4449:b0:475:dca0:d457 with SMTP id 5b1f17b1804b1-475dca0d543mr29474985e9.8.1761561344933;
+        Mon, 27 Oct 2025 03:35:44 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd035e05sm128895305e9.7.2025.10.27.03.35.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 03:35:44 -0700 (PDT)
+Message-ID: <f2c9d3f8-f63b-4645-9899-49f2abb1ff3f@linaro.org>
+Date: Mon, 27 Oct 2025 11:35:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017144650.663238-1-tglozar@redhat.com> <20251017144650.663238-4-tglozar@redhat.com>
- <c52490c9c2f682fd3c30d6f8a198be2ba408c4fe.camel@redhat.com>
- <CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
- <aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
- <20251021130232.2ca75863@gandalf.local.home> <321181e1e5060f0c68e0430d69e0e89688b08235.camel@redhat.com>
- <CAP4=nvQGM_L3dpVpb36umrwZiCT+S4kGQOfENHBXRRNcy0MA8g@mail.gmail.com> <ecedb0d1f2d0e51c56e462adf75df47e8d593a8c.camel@redhat.com>
-In-Reply-To: <ecedb0d1f2d0e51c56e462adf75df47e8d593a8c.camel@redhat.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Mon, 27 Oct 2025 11:34:36 +0100
-X-Gm-Features: AWmQ_bnyHDmK7R_EUxRmXlMxvG0jeeU550EUjV6zxo81kllIiout1FznW4JnhgE
-Message-ID: <CAP4=nvR86-pmQWdx8rCksp9Dj1mRvgS4961C6my0sVSj1h01Sg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
-To: Crystal Wood <crwood@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, 
-	Luis Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>, 
-	Wander Lairson Costa <wander@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] drm/msm/dsi/phy: Fix reading zero as PLL rates when
+ unprepared
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250908094950.72877-2-krzysztof.kozlowski@linaro.org>
+ <50a49d72-2b1e-471d-b0c4-d5a0b38b2a21@linaro.org>
+ <05d6ea2a-c1ae-422d-b178-5d2a306f3669@linaro.org>
+ <7d8e9395-d2e4-413c-9058-fe22e3d2d68f@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <7d8e9395-d2e4-413c-9058-fe22e3d2d68f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-p=C3=A1 24. 10. 2025 v 3:49 odes=C3=ADlatel Crystal Wood <crwood@redhat.com=
-> napsal:
->
-> OK, but as far as I can tell there's no way to get the non-BPF "stop
-> tracing hit" messages without adding a call to trace_array_init_printk()
-> into trace_osnoise.c.
->
+On 24/10/2025 16:48, Neil Armstrong wrote:
+> On 10/24/25 16:34, Krzysztof Kozlowski wrote:
+>> On 24/10/2025 14:43, Neil Armstrong wrote:
+>>> Hi,
+>>>
+>>> On 9/8/25 11:49, Krzysztof Kozlowski wrote:
+>>>> Hardware Programming Guide for DSI PHY says that PLL_SHUTDOWNB and
+>>>> DIGTOP_PWRDN_B have to be asserted for any PLL register access.
+>>>> Whenever dsi_pll_7nm_vco_recalc_rate() or dsi_pll_7nm_vco_set_rate()
+>>>> were called on unprepared PLL, driver read values of zero leading to all
+>>>> sort of further troubles, like failing to set pixel and byte clock
+>>>> rates.
+>>>>
+>>>> Asserting the PLL shutdown bit is done by dsi_pll_enable_pll_bias() (and
+>>>> corresponding dsi_pll_disable_pll_bias()) which are called through the
+>>>> code, including from PLL .prepare() and .unprepare() callbacks.
+>>>>
+>>>> The .set_rate() and .recalc_rate() can be called almost anytime from
+>>>> external users including times when PLL is or is not prepared, thus
+>>>> driver should not interfere with the prepare status.
+>>>>
+>>>> Implement simple reference counting for the PLL bias, so
+>>>> set_rate/recalc_rate will not change the status of prepared PLL.
+>>>>
+>>>> Issue of reading 0 in .recalc_rate() did not show up on existing
+>>>> devices, but only after re-ordering the code for SM8750.
+>>>
+>>> It happens this breaks the bonded DSI use-case, mainly because both PHYs
+>>> uses the same PLL, and trying to enable the DSI0 PHY PLL from the DSI1
+>>> PHY fails because the DSI0 PHY enable_count == 0.
+>>
+>>
+>> If it is ==0, the check you removed would not be hit and enable would
+>> work. I don't quite get the analysis.
+>>
+>>>
+>>> Reverting part the the patch makes the bonded work again:
+>>> ===================><===============================
+>>> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>>> index 32f06edd21a9..24811c52d34c 100644
+>>> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>>> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>>> @@ -426,11 +426,8 @@ static void dsi_pll_enable_pll_bias(struct dsi_pll_7nm *pll)
+>>>    	u32 data;
+>>>
+>>>    	spin_lock_irqsave(&pll->pll_enable_lock, flags);
+>>> -	if (pll->pll_enable_cnt++) {
+>>> -		spin_unlock_irqrestore(&pll->pll_enable_lock, flags);
+>>> -		WARN_ON(pll->pll_enable_cnt == INT_MAX);
+>>> -		return;
+>>> -	}
+>>> +	pll->pll_enable_cnt++;
+>>> +	WARN_ON(pll->pll_enable_cnt == INT_MAX);
+>>>
+>>>    	data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+>>>    	data |= DSI_7nm_PHY_CMN_CTRL_0_PLL_SHUTDOWNB;
+>>> @@ -965,10 +962,8 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
+>>>    	u32 const delay_us = 5;
+>>>    	u32 const timeout_us = 1000;
+>>>    	struct msm_dsi_dphy_timing *timing = &phy->timing;
+>>> -	struct dsi_pll_7nm *pll = phy->pll_data;
+>>>    	void __iomem *base = phy->base;
+>>>    	bool less_than_1500_mhz;
+>>> -	unsigned long flags;
+>>>    	u32 vreg_ctrl_0, vreg_ctrl_1, lane_ctrl0;
+>>>    	u32 glbl_pemph_ctrl_0;
+>>>    	u32 glbl_str_swi_cal_sel_ctrl, glbl_hstx_str_ctrl_0;
+>>> @@ -1090,13 +1085,10 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
+>>>    		glbl_rescode_bot_ctrl = 0x3c;
+>>>    	}
+>>>
+>>> -	spin_lock_irqsave(&pll->pll_enable_lock, flags);
+>>
+>> This should not be removed.
+>>
+>>> -	pll->pll_enable_cnt = 1;
+>>
+>> So you basically remoevd pll_enable_cnt everywhere and reverted entirely
+>> my commit. How is this patch different than revert?
+> 
+> No I did not, I kept the dsi_pll_disable_pll_bias() refcounting and call from
 
-I'm not sure what you mean. The --bpf-action functionality is
-exclusive for BPF mode, bpf_trace_printk() / bpf_printk(), as Steven
-clarified, is a BPF helper that triggers a trace event, defined in
-kernel/trace/bpf_trace.c and kernel/trace/bpf_trace.h.
+Indeed, I see now.
 
-Either way, it seems that the event is not always recorded in the RTLA
-trace instance due to a bug. It might have something to do with the
-trace instance recording both osnoise:timerlat_sample and
-bpf_trace_printk, and failing to record a trace event generated during
-the handling of another trace event. So this is not a reliable way to
-test the BPF actions feature, and I'll probably have to use my
-original idea.
+> all the clock ops, which is basically needed here to never access PLL without
+> PLL_SHUTDOWNB and DIGTOP_PWRDN_B being asserted.
+> 
+> I only removed the pll_enable_cnt from dsi_7nm_phy_enable/disable because the
+> PHY code is designed to allow setting the PLL rate while the PHY is disabled.
+> And the bonded DSI hits this use case by setting the DSI0 PHY PLL rate while
+> configuring the PLL1 PHY.
 
-Tomas
+OK, I understand now.
 
+> 
+> So I wonder why it was added in the beginning because since you call dsi_pll_disable_pll_bias()
+> in each clk op, the Hardware Programming Guide for DSI PHY is satisfied ?
+
+Don't remember anymore.
+
+> 
+> The commit message doesn't say anything related to dsi_7nm_phy_enable/disable.
+> 
+With your patch it works fine and does not produce clock warnings, so
+seems fine. If you send proper fix, then:
+
+
+Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
 
