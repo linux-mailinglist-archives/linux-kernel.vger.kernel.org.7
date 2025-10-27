@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-871830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FB5C0E768
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:38:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D07C0E750
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002BB3BB33B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F033BBD0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4636C30CD8F;
-	Mon, 27 Oct 2025 14:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D753090C9;
+	Mon, 27 Oct 2025 14:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="n6EH7dyo"
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Yz3Xgf8n"
 Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA19030BB87;
-	Mon, 27 Oct 2025 14:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D202C11FA;
+	Mon, 27 Oct 2025 14:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761575414; cv=none; b=REINZMF73bpBX5djqa11P7bMnFcUGAC50+uj23G+1fjSXICJmGYCG5SvzamGz2WJ7oEeCnNQ6PhcnwZPz28qxGu5pC5dmTwwpmd01TGAU5XSHFlmDCaOi7uAxHyeNfZ82b1nsGJNQeeGK/NQCrFceY9+VEadv1CQiQEn3FZ9dR0=
+	t=1761575410; cv=none; b=SLmYjZLzH+64NO136o8KjQQQ7A3lQy/RmNwA9r6HySbd0AmkVQBsQ3TyeUkbLAeSsrcGrA+cFNOmOgZvDAjQPkus6cZTcJ1k57rJDpS4gOE9LzamlBlYgZQ1BpMxD08CfLPgGx1a8m/Lx3VrizVCG3cYhMDxCJ0YHsFjd+h9Ne8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761575414; c=relaxed/simple;
-	bh=1DAS4rdhFoWP3g/phk9RE5Jk9RdcoTqceCOsHOSwo1E=;
+	s=arc-20240116; t=1761575410; c=relaxed/simple;
+	bh=alnAlEaa3VhrHS5fE/2q3E8Q4I3DCkMJzv3wETeAjd4=;
 	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
-	 Subject; b=Cw+Q5EQp+7Zj8tH1YbrHBlGVIN0X+mtQnVHEzSfXRpiprPJNC9N8jLEx72g+sFF9/1IcwHeIvVyZQwITwI6s5KjaHFun5h51x2grkvfegJV3wZo3JReED4fAdkUeufIVMZOeqvJ6V1i8dpmvWDp2z08ZrlsyGbqm9hXqgTjUM7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=n6EH7dyo; arc=none smtp.client-ip=162.243.120.170
+	 Subject; b=dF8KkszagRpM7ePrSRn4yctHDPtZViC8a+bZIGSrDn1uUGbMDGGjWcn14POp28U0NkUN6jzCBt0VwiDKGFd49wxQYjdZBtAgxQwwogYQ+T3DQi7nCG6kXmuL7YvKyqfJFdk7TdsvnxPBRCToVUug8M6PawQRXrVF+wsJpIbc2Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Yz3Xgf8n; arc=none smtp.client-ip=162.243.120.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
 	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
 	:From:subject:date:message-id:reply-to;
-	bh=jfX0u/k11WtqaDvYGV08FTUGbESdLYPWBkzZWH4ORMg=; b=n6EH7dyoADHnJL77BCFRTRGahF
-	HJgh3CbHq1vJ9z0A37hpN1GD2CdqyZ+zNaNaWYCD4ZEnyjkZXjFRFBIK95FTuVHR4A1rL0O0wMB4O
-	7KWnd8EzWl6WYQ9PAgZudVW3COVDgAAzHMXbljvuS0jxQAkh5YhkTnnXz/kZSLLMWedY=;
+	bh=uHg8PKvTJuxb1S+SGCKDBR4VebV7fuq1HHKPiPau62Y=; b=Yz3Xgf8ngSnIWBtBNSv1H1ILpa
+	78mTkMkfo3FG2lSL3+gQFyNH36FcJOZJJucz0edKL8cLSQtYdlNalacLPJo45ZnWxaINgw3FUCA22
+	vCJeVbBMc/i9lrnPgSgJ4XUUH93pb3jF1sgHRUxyqfm8YQd/n6GkZCV44dbGCaXzCUAY=;
 Received: from [70.80.174.168] (port=45472 helo=pettiford.lan)
 	by mail.hugovil.com with esmtpa (Exim 4.92)
 	(envelope-from <hugo@hugovil.com>)
-	id 1vDOEX-0007wg-Pj; Mon, 27 Oct 2025 10:30:06 -0400
+	id 1vDOEZ-0007wg-8K; Mon, 27 Oct 2025 10:30:07 -0400
 From: Hugo Villeneuve <hugo@hugovil.com>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Date: Mon, 27 Oct 2025 10:29:47 -0400
-Message-Id: <20251027142957.1032073-6-hugo@hugovil.com>
+Date: Mon, 27 Oct 2025 10:29:48 -0400
+Message-Id: <20251027142957.1032073-7-hugo@hugovil.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251027142957.1032073-1-hugo@hugovil.com>
 References: <20251027142957.1032073-1-hugo@hugovil.com>
@@ -63,96 +63,36 @@ X-SA-Exim-Mail-From: hugo@hugovil.com
 X-Spam-Level: 
 X-Spam-Report: 
 	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH v3 05/14] serial: sc16is7xx: use guards for simple mutex locks
+Subject: [PATCH v3 06/14] serial: sc16is7xx: drop -ENOMEM error message
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
 From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Guards can help to make the code more readable, so use them wherever they
-do so.
-
-In sc16is7xx_port_irq(), labels and 'rc' locals are eliminated completely.
+Core already prints detailed error messages on ENOMEM errors and drivers
+should avoid repeating it.
 
 Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-
 ---
-
-Based on patch by Jiri Slaby (SUSE) <jirislaby@kernel.org>:
-commit("serial: use guards for simple mutex locks")
----
- drivers/tty/serial/sc16is7xx.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/tty/serial/sc16is7xx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 335695d0e7aa7..1acf5be03d489 100644
+index 1acf5be03d489..ce2a0967ffdf4 100644
 --- a/drivers/tty/serial/sc16is7xx.c
 +++ b/drivers/tty/serial/sc16is7xx.c
-@@ -11,6 +11,7 @@
- #define DEFAULT_SYMBOL_NAMESPACE "SERIAL_NXP_SC16IS7XX"
+@@ -1527,10 +1527,8 @@ int sc16is7xx_probe(struct device *dev, const struct sc16is7xx_devtype *devtype,
  
- #include <linux/bits.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -778,18 +779,15 @@ static void sc16is7xx_update_mlines(struct sc16is7xx_one *one)
- 
- static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- {
--	bool rc = true;
- 	unsigned int iir, rxlen;
- 	struct uart_port *port = &s->p[portno].port;
- 	struct sc16is7xx_one *one = to_sc16is7xx_one(port, port);
- 
--	mutex_lock(&one->lock);
-+	guard(mutex)(&one->lock);
- 
- 	iir = sc16is7xx_port_read(port, SC16IS7XX_IIR_REG);
--	if (iir & SC16IS7XX_IIR_NO_INT_BIT) {
--		rc = false;
--		goto out_port_irq;
+ 	/* Alloc port structure */
+ 	s = devm_kzalloc(dev, struct_size(s, p, devtype->nr_uart), GFP_KERNEL);
+-	if (!s) {
+-		dev_err(dev, "Error allocating port structure\n");
++	if (!s)
+ 		return -ENOMEM;
 -	}
-+	if (iir & SC16IS7XX_IIR_NO_INT_BIT)
-+		return false;
  
- 	iir &= SC16IS7XX_IIR_ID_MASK;
- 
-@@ -829,10 +827,7 @@ static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- 		break;
- 	}
- 
--out_port_irq:
--	mutex_unlock(&one->lock);
--
--	return rc;
-+	return true;
- }
- 
- static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
-@@ -873,9 +868,8 @@ static void sc16is7xx_tx_proc(struct kthread_work *ws)
- 	    (port->rs485.delay_rts_before_send > 0))
- 		msleep(port->rs485.delay_rts_before_send);
- 
--	mutex_lock(&one->lock);
-+	guard(mutex)(&one->lock);
- 	sc16is7xx_handle_tx(port);
--	mutex_unlock(&one->lock);
- }
- 
- static void sc16is7xx_reconf_rs485(struct uart_port *port)
-@@ -942,9 +936,8 @@ static void sc16is7xx_ms_proc(struct kthread_work *ws)
- 	struct sc16is7xx_port *s = dev_get_drvdata(one->port.dev);
- 
- 	if (one->port.state) {
--		mutex_lock(&one->lock);
--		sc16is7xx_update_mlines(one);
--		mutex_unlock(&one->lock);
-+		scoped_guard(mutex, &one->lock)
-+			sc16is7xx_update_mlines(one);
- 
- 		kthread_queue_delayed_work(&s->kworker, &one->ms_work, HZ);
- 	}
+ 	/* Always ask for fixed clock rate from a property. */
+ 	device_property_read_u32(dev, "clock-frequency", &uartclk);
 -- 
 2.39.5
 
