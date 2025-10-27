@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-872521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61FCC115E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2359C115EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:22:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3BB2A3537D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:22:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 38F1D3538A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1805531C580;
-	Mon, 27 Oct 2025 20:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6355E31BC91;
+	Mon, 27 Oct 2025 20:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gtcp7i2T";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vvA4/Hp1"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Kj5zLy7y";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CrQaUepk"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309E2E11DC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130262E040E
 	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761596510; cv=fail; b=a+ZCuw7JQGcOSC9CGEivW6FsND5jNXHECI3pxpxXQ0m+fmabHTNqGv1go0QwejQuCDVmfhPX0pERfw5y5W8qtJSmZ97OlQFn77JCqSeVzM0mb0rKMVMoc609AsfhVaXxFuuh174pKTK7mAC7xY6l5DQfuOJSkHGsqDlRqEnmCNE=
+	t=1761596510; cv=fail; b=OCg5kNtsI804O9GXz2Ezots9m4x3Z6dVLb0Dhj69ik7KUS1Qizu6s8JVEwkvh91JXTYrxyElb4bHcKV+0eNupnUDV05DBkebouHBe9Tbhre7iP930DtxroCmbr3ks8cxloFXhWgWnBGYFgo/w94eLGnEcJrQA7U1qSiHG95AUOU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761596510; c=relaxed/simple;
-	bh=YQ0a3E84/QLmEZtTZr407VBYdR6Lm3oYWR2aOjLvj9M=;
+	bh=ey6zLklXrLQw2XfumlMgwwBTPmO6AP1u2tFN0dh4DKA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h7JgXvdFtPTURzTI+F3rpn/stUGHonOxvn7ZM9RxbEtHKoo2qyLZ44tK4nx3MLY7CD4ir0TUuuVXMGex1Az0oug35vx9xUGC0/CP7bXaWB12DgkijYiFOAzN52w+GcuvwA5QUXpNLizM8mf7/T9dFCaNKojbLXbtZhmf4/GAxJY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gtcp7i2T; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vvA4/Hp1; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Type:MIME-Version; b=ZQLYRBcRo7E7kpOZL6upFiHxMx0zBUw6b9hALRCio8wAJKwrQhIEwmDzo4IblydaOGpxH2TVg0lKYWrFOmOQroRpqpgMdr3HMr6wCYMqyc9NkDSMfUTXu5F4IpcmXqy6oGfS2bzbl7A92zV3C0zEEH0nOaq6OGlR1CtuclTJE+s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Kj5zLy7y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CrQaUepk; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59RKCgRo008134;
-	Mon, 27 Oct 2025 20:21:15 GMT
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59RKCRNA014710;
+	Mon, 27 Oct 2025 20:21:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=bknBLPBuO3NbGUhn2FA2BsLXM32BZbsWn4nAoGLowlQ=; b=
-	gtcp7i2T3m09u0S6yA+hmFlmaEmgoYbCmCy1ygMFRSEQ4AL6sPDRmYxXS/huBiEe
-	G+j0v3NSPUNU7DtB3i5pL1YCOiBMJ1frLW+4YBza1CNF4BYJoiOLzleeOcrM7kX8
-	2lFj0zr4RaqprZnNWmoXCbjoIL4dRUKi4hDu1Zt2Qks8SqiaQFtF7/AjNZ/44/a6
-	d7X/i54SU3nM1QFWTIeG8+YuLEGihMKcyww8JANFETSIfLo+mkiv1fE2ZcEOnFht
-	MAV0Udf4K9HrcD6+PeFi4rCIW1caQFpHmzvT0W9GQsI7/gOv2sEF2Z8xlz/SsgS4
-	EfZ2gZOjyEdr22Qyrz993Q==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a22x6sv5d-1
+	corp-2025-04-25; bh=MwaTfrtWKegNLWYGFbytOmtquO53i/sYm1JRyCEPomc=; b=
+	Kj5zLy7yxfe9MHcK1C70+bHj2ejzSLIwbjrom7rPx8c2DwERDpOdoHiuNvBLNTAp
+	WCr1Vi2/3Uwb3krGI/zw2gVdbsKiGToxN5rop4MkUbQsHPGCSUJGXUp8HHl0ZS6v
+	RX8HGIV6Li1M/ZWCUQEkSxApbO0+sZLm8UCHFCda528ZnmbBBgRfhpRXQmGuU13M
+	uoMHBba6UOXTQjAW8IVS4+H8a98V3rLgdJ6KKSTI8HRQEYKRl0xga0estvK31b5v
+	DpH5WGxzhcoqX1WL0hMm5OOETw5pdJu8pH7Cd/Il4+ldRaC6kEVXkSVtJDs//u0l
+	OqCFzbZuaxphdAp3vocHIg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a23gvhvan-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 20:21:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59RIu8Lt009148;
-	Mon, 27 Oct 2025 20:21:14 GMT
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010026.outbound.protection.outlook.com [52.101.193.26])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n0eh5a6-2
+	Mon, 27 Oct 2025 20:21:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59RJjLDm025120;
+	Mon, 27 Oct 2025 20:21:16 GMT
+Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011035.outbound.protection.outlook.com [40.107.208.35])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n07h7eb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 20:21:14 +0000
+	Mon, 27 Oct 2025 20:21:16 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=naCHQb9t8tQ9lVR/JOvc/1sjJR5jVyQOREuikCNTExFlxz1R4rCObwRp/KegdRfn0wOt5TJ74lHJlDMr55HWQ9M6HTBu6dYLGsXONI/HcFNoqo0bu6qc7d/5nEdc8Zig6ZINGRSv8m4aTb6A0pngZg3S/rwXTV6RMRpneX9u9gxP158SBUj/C2EGQ12l3f86deX+ysaX7cFXzTspOfdq7deoKxdriiBoPP5TwtE/Qqpk8Sdd1JyT6VU7hBI7Y6oNleAko1h/o0TBpLNMFseJh6CiZpJb087WLOyiKVysezwl7Vyc1wceKi+5WL+cm3K1aTUfVEcGXf6f1ASDzvGzxA==
+ b=SEA3hfHpOo7N+v5cEDh5ZzSNB9lv0Y696PteZGooEuGbINqPL/RgIu7uo3FE9/sOCGBZe9LIOaXZ27OY5z7G9EGf2dW8pfYJ90dvy3VES3ydmyKU61SUg8HApfoWTF/sjXwzMnIY0JRb2LJ0A4g2kYlL3FMlzurnBPvZAYjmI+YJksmG8QXbyaRxzt1QvjhFgmHAmw0E2FwJiLZFAUZVcHo+vsX22rqXSf/pWFq+wWlrweAisuM2pDy2X91CGpucA2tFiL10jQa7YHG8xfdd4ALALyKCoDyG0pS+4LtQZ0xvgC/T+I6QjfR5V8roE2c/lCglksmWd+xI2LqGK9J/ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bknBLPBuO3NbGUhn2FA2BsLXM32BZbsWn4nAoGLowlQ=;
- b=j/xydjzI0qVrKcdDgLtJ1RGh2oaiQR64531HCB+Mx8Ud0s9b9kFy/jUQLoeYdcIp3X0ueqia3Y9uFrOhiXK3q3oj2dlQFRWsE/neER/6uaEFdmidKJgJPznYdKDD+ZDvURB3WRYFSmV4u9mx7Cpzi9GO5uNl5AIG8Z85f+cbUiids4dIKn+8bNw9GhQ5W8DyLSrvzXgBZG0gHQJj1G1AXVUbbXU6N98/Um2osxQqmcYRqhVFGwq6akcJDSkOVUMOHhwvB208IIOOKbJPtfrFRGgG8yC/T/DX5NZkgsMDl3xlPEuiHItc16u/pRyhEyOP1ccc1+pg/iQdRrk9sxEpXg==
+ bh=MwaTfrtWKegNLWYGFbytOmtquO53i/sYm1JRyCEPomc=;
+ b=jAyJPfq3iL4xx7ukYXX6lgYm8FYvTivrL3/IICLQJVOnSkHRID8tCUvwoHuhCSNlLTtlIhY4aKOhniwSGHDu9KldIUhjI1nbgsXnCGm7uEvR7C7os+7eRnhS01aNjodK0mJC2VQM77p1jgljoYc8AuZAny20tX+IUAbHfGsQT6DvB1xnPkUsUKBIPJ3YJO/bLr1zTXYto/zeH7fi2f2io0JWdwLJU8gqeN5UuIXrWCPxkQt0fYSSLQPgJLFjNJdxpymPTdDGpV3mO963AvZlDnA+TE0I1mUzJ1Zab4BCqiJdLJHO9Lqa2T1AovfvnW8eBDPBYVcVZA/e83UNdPe3Bw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bknBLPBuO3NbGUhn2FA2BsLXM32BZbsWn4nAoGLowlQ=;
- b=vvA4/Hp1Gb9Fak5wybD40lflPqEBz3b0KOUQFTuDIV7hg0nRLJHv8gKkdKXMVTHlwW+ZCTIke/tMg9BWJ9K8lwPh1s0P+7XMaQqNlla2SnGbTisYx0bvKWWJ10Mw3mSG/MNrWDPVofsjz5qtf+mkK7BnmXpK00AxbNUMbv9YvOI=
+ bh=MwaTfrtWKegNLWYGFbytOmtquO53i/sYm1JRyCEPomc=;
+ b=CrQaUepko/gHuBaLvoalXXThRmlyxrtBuu0/M+D3Akmed2P+vQiTDoTSG8BFPwPP2u/uWgvhpzhEc3QV+aajsfe6omObJiXfi9vjqeVfVLShNX9DhjwNGaJQGjgBD8Yj5CpAdohZFeE6Aj5WxlHZulYEbpDRtvbRPsFISUoV+NE=
 Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by DM3PPF1A29160CF.namprd10.prod.outlook.com (2603:10b6:f:fc00::c0d) with
+ by CH2PR10MB4120.namprd10.prod.outlook.com (2603:10b6:610:7d::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Mon, 27 Oct
- 2025 20:21:12 +0000
+ 2025 20:21:13 +0000
 Received: from CO6PR10MB5409.namprd10.prod.outlook.com
  ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
  ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 20:21:12 +0000
+ 20:21:13 +0000
 From: Ankur Arora <ankur.a.arora@oracle.com>
 To: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
 Cc: akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
@@ -88,16 +88,16 @@ Cc: akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
         willy@infradead.org, raghavendra.kt@amd.com,
         boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
         ankur.a.arora@oracle.com
-Subject: [PATCH v8 1/7] treewide: provide a generic clear_user_page() variant
-Date: Mon, 27 Oct 2025 13:21:03 -0700
-Message-Id: <20251027202109.678022-2-ankur.a.arora@oracle.com>
+Subject: [PATCH v8 2/7] mm: introduce clear_pages() and clear_user_pages()
+Date: Mon, 27 Oct 2025 13:21:04 -0700
+Message-Id: <20251027202109.678022-3-ankur.a.arora@oracle.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20251027202109.678022-1-ankur.a.arora@oracle.com>
 References: <20251027202109.678022-1-ankur.a.arora@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0079.namprd03.prod.outlook.com
- (2603:10b6:303:b6::24) To CO6PR10MB5409.namprd10.prod.outlook.com
+X-ClientProxiedBy: MW4PR03CA0082.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::27) To CO6PR10MB5409.namprd10.prod.outlook.com
  (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -106,474 +106,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DM3PPF1A29160CF:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ac1f2d8-6273-416d-8387-08de15965f3e
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|CH2PR10MB4120:EE_
+X-MS-Office365-Filtering-Correlation-Id: d055b344-8410-4b0e-c8dd-08de1596601c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QbnZPgr1pWtzfLNDB1tsMY5jWpNzutA649vJgNCJDifMqflgdrn5cee7h8C/?=
- =?us-ascii?Q?lazqguaz1+HuUxiwjHt+P8Wj8tTJ0nhEfHe50orSt/4fkEsdkO3QZ956Mo7c?=
- =?us-ascii?Q?I2G3jAR3TdiapIovbcenBfdgI53uOjn0mZbRe385Pny0FCe/ZApHvgZbtjyq?=
- =?us-ascii?Q?FbKNTWRtysm7KmEz1wFDd6nsjD5tIVR/8y2jBagtIfpC6+n+e22TllYcvpcB?=
- =?us-ascii?Q?JyW5DmJl4XNdGViiMnxoXNMXNsM1fu9jf0aZFz1B3F8oyeXt9nI1PW4XEZud?=
- =?us-ascii?Q?FhS9UatrH4yd31k7PBGeo5aGOYU40FO1puRUCiO9hAcTi2z/zb6xFokZtVC5?=
- =?us-ascii?Q?c8GT7gatCglgX42CBCNey4fRbHz6vk+xfvbdgCPj0gx9IaETL7zNXaiNgDYG?=
- =?us-ascii?Q?V4kFd0BJdtQZB1+bbx9l1AbyQy1MSO/SodIFeNthppLpluWNFJ1y8XdZo+at?=
- =?us-ascii?Q?MaZwDxnXJyjagN72lACRp9jpC5q+u0uQ7oYpRdOsI1jgZow+jHjSEnIL3dkm?=
- =?us-ascii?Q?QMoaNwHxv5RsRcTOTBc904XwE0AGr+kFpJxl2Q9sZzdskQ1U2BzkYQAPS0yZ?=
- =?us-ascii?Q?KRkg9EMIU1Mi/b9qFLCljcafdQRjWMQpcc93BDBB1oUQF/m2o+NKbf9P6tL3?=
- =?us-ascii?Q?44qft3eaPY0C6Uz8zSaPZBARJOjiPCH5Sx8mhSF9X5CWdrNwI3inWds2B24h?=
- =?us-ascii?Q?uTz1zpUQQix19oOiPtkx2OLzNa6rM0wfZIbd3gBeCV2Ti91K/dL9Gb04lOSx?=
- =?us-ascii?Q?zynOYtDdFg/pIcq1X+SF6P7MkvEAvJpOEtpAuo33snw/4sMrzgqkGBNequuQ?=
- =?us-ascii?Q?LQAB2k1fFNUQZiTniV3Y3QDvu90nNroDrZ5M3/tMRf7E2fCQPGy+cFpPn3Uw?=
- =?us-ascii?Q?cTUjoLoPb/a5YLWk6EEgg1IAmg1Mvk8TwbCv+n+Cihv1oZdIE1fMZrcWyCXl?=
- =?us-ascii?Q?3c802LldrkeGlkenzXvniQu/FFm3JhAD83onV36cND/8U2F3+60TdcZfg3d5?=
- =?us-ascii?Q?lDZHi1wAFxy9pbh37KAiaAgg9ZSu3xmVyxAeOvFWPaAuoD2Lp8C1/tiG/WW4?=
- =?us-ascii?Q?2px8W1leuPpE7IWZ4djzKJwSMWtK03fWlIBT7aI4ChLLbSpSQeOtHRIascW8?=
- =?us-ascii?Q?/nNqBRptAWwqgCm0eUI1fQMvmQS2AZTombSRn5GVC44s/cvDF2CKcbAyJ0lk?=
- =?us-ascii?Q?K1RC/O+3telld5ZIz2quZzVJU5j219580nvYhxDmL8plcgSizz/tgYLl1Mrw?=
- =?us-ascii?Q?EYEyMeGYjAU+22K27LvSRm5wrIZF2XbjHMNDF2t5h44gwIkb2YtJp3sGgRq5?=
- =?us-ascii?Q?ndhHH2hYp5shuPPM76O4wj4PAtTr4WGi3dZR9txMJMKPudMBEH/4RkuIDqSB?=
- =?us-ascii?Q?q2BtJi49Q/KHfE8eA564n/aj6nG3asDDB4iOpyAiNanXbnCOCWci0IasLm6m?=
- =?us-ascii?Q?VGC88t6RYK0eT1IU444APmqZTieQHGwG?=
+	=?us-ascii?Q?5sUpAZRfTTJ94YttrbgHo296IH6/665AML3PySjX5Udbjoo3TGneAlqp6Wi7?=
+ =?us-ascii?Q?aFt1XNFLIy2LSp7ZhIuwumxZ6NYvi4omh5p7k2UF0QqC0MCGtWW92j59hxRB?=
+ =?us-ascii?Q?4g9+40Av8eEvR6zwOJ8jIlaZWpu9kOJp9UrpZSxlIInxb4M+h8CsF1gWWiUr?=
+ =?us-ascii?Q?VG6C+JIj84RG0BcMpDOJd3wkI1YQncXTWyy5tA0VxyjwDrRuC2BEetw1uTqq?=
+ =?us-ascii?Q?4qIXpBp1V56W7G5GdxR5hJTqnc0ILy12WEq2mHCy8qAo6Zzp5im33XvPiYpS?=
+ =?us-ascii?Q?548I0/ULfTnHKDfhZAWAM0WjJCfDzzPyDzYSFVn76FU2Kx1pOmm+xTC9hoTV?=
+ =?us-ascii?Q?qEfH06sJNDhCm4H78b5J5UL5F3dCzHkXX3KTQYYjrwTofopo8gCaLXhBWSG/?=
+ =?us-ascii?Q?TLw8hXzgDdTtv5MQ6gjGP1lWNtKVwXA0UeHXaxZY1OCV8xQc8iIXUYZl97J+?=
+ =?us-ascii?Q?+a3sS5PEln3Pi+rOvHmho4nqFu/TbipI4uabaPvmKI4MJOQhv6yxJsFCsa6U?=
+ =?us-ascii?Q?XpdrEa3RahcgXtF1LTICmJ60KzHnZcdle3RNSExvb/COcovY9/JlupexiYeZ?=
+ =?us-ascii?Q?w9yrBxvhZ+07P93Ax2nBKXsCGmnJkrjr5fabeOY9Hk98+Oi5NPEbvUyTs+yN?=
+ =?us-ascii?Q?vhptjithJVTM/xclz8GeoXgPT/dYte39M7WTgPyHkhhFFr5T1WJFlxGUPjS0?=
+ =?us-ascii?Q?uWS7ilJl5UayF08f0qXjFjjt5mYMXPpE9DvNtdaLX3rdhmwOxyUr64MtYRBO?=
+ =?us-ascii?Q?vYqnpG8d232uqM4lcmCZlYn73ThcH7F8mq/cYbxXR3tE6BES2+whhKr+Kub1?=
+ =?us-ascii?Q?SQBYST52+wX6G+R2wJpI1759noY7tBX7l7mMUCIiv6M1cuzoOQHOOAcvACvb?=
+ =?us-ascii?Q?+P4JLBkTI2qwx24EthC9cTZtIu2fC/zE4HtfJBM55fg/hJKmTbSFCB5ksay9?=
+ =?us-ascii?Q?QOYpXxcO5vAFWtyvb8+oVHqmVKcLjcRdg37qiwaPsjTMgTXuWGL/rqWtlWHG?=
+ =?us-ascii?Q?HPE3KJQzo/kPeAzL5y9FyHouCe92WoGpFT4MM0Uiqw3kPPMq+b4EXZli0N+6?=
+ =?us-ascii?Q?87XAX4y4hTFvh4+Z9T9mTA+HZPoPg5VFCtwMDVxQCy5YbrzXkLRUXAmMyucE?=
+ =?us-ascii?Q?H0AEK3IQZbcIICAVJQ92pqBGsUnjK+ltEI5FZ2Dg1XwYqyvCpIKlmhENti+p?=
+ =?us-ascii?Q?B7lk6ugFY/Og/wNJiSuk2j6ruov9GqZ+g7nG/d/qwzsdFFUjCDJdbFoeF5GW?=
+ =?us-ascii?Q?tdSji2nTtu6I+An+KSOV/fXd08QH/zSjP3i4n2Vh+Poeqn/shtO4lJVsqnCM?=
+ =?us-ascii?Q?1ZGx9DkJqva0iNFNaiKRV3SZxP/NVB1FOCGXPlniaBXQGH7mRK2+kvFRazTu?=
+ =?us-ascii?Q?zCnk+RzRcDfvtLQS3nXbEwvnQxeykjppMIyNHPwLcwYF/+UcYs309JncsGbP?=
+ =?us-ascii?Q?3pMQ618qO4/5Pi3bcmau9qo8mLV2v/ZF?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ewvaYDbZqhgXQ7qiavsPyRqOa1Cf60FtjVjWoTzfGzgwFG2igYR6P82mEnPw?=
- =?us-ascii?Q?+JFIU9ime4HPhb7DrkT7SDdOc7qdBf7xEZ11qBvdp0yxubivlFoqxJiMXF5m?=
- =?us-ascii?Q?5kEQ7aNKLboL0ugSdX+LhNG1Xmuilov9tPZuuMWTO2SlKnaWHGFx+vM5J1BO?=
- =?us-ascii?Q?72DYte5/S0ejxZBGmJnmlIP5CBMwXb7qO5SwLVNLYGDMtECBKTQFGOr1SCnX?=
- =?us-ascii?Q?itkGeGURVtX+nF+DP3Jx/GwguJPZiuI2llk4kxVA5tQ0WXdehJeNVZQOLTNl?=
- =?us-ascii?Q?bwEGAcwZVRGEYfS9taHRu8chB4QHCY+LZcjKw7AA4QnBKxLGcGS9l9zuqIaU?=
- =?us-ascii?Q?Ve6A8/4OqYZi6mhw/3xCzd7wQwP29mXh56yMkOe2E76ewZIoXAEIS882SxPA?=
- =?us-ascii?Q?wJgx5YexTYM9fQQGG4Xq8hc6zRpWBD/X7AYL9vvdwG/K8axwTdsNIZbpP08c?=
- =?us-ascii?Q?S9DT0T7kRHMD/DM3TYsuO1NTO4wa2P5BqjBqE98JIYWIajBm++D4zfeD2ejw?=
- =?us-ascii?Q?Xx6btPT0eUpXcY3kVTPMzEiAZ1RVTScVcW9YJIZb9E64B0TNPHDmsa5fFwP7?=
- =?us-ascii?Q?PvhQ0BKsy34d+NSpNQ4RVuOrbRfRSRjwLM0PWBPv2Gv8ob86JF8N9SPCZzGo?=
- =?us-ascii?Q?uReLc/gDQhy4p/OypcLxwpiMERAh8cgCO/R9ELkoxKPi0SY42+CjHyjrjdDW?=
- =?us-ascii?Q?XgD1bBtMUcJgLKBB9ppix3FoRHHXbUf/JKOcqlV/zOqTwX2v45GKacs89n2n?=
- =?us-ascii?Q?SWxbzQUxTT835qIa73hCqvbH1bY1XuTTpKkZQyjOPEDHP5Ntd/sJT+YDEUoP?=
- =?us-ascii?Q?FDQ06UjUPR4BN7WVmMBkFbkFRiLAcX8KcP97qUvMZq08ZaL6uUNV7ppRaSFv?=
- =?us-ascii?Q?ssWXuwqoC5BfPYC6KWY4cn9e3ruzfA5u+diNzVqV/HiHcOqUc0uiHW7NrV2Z?=
- =?us-ascii?Q?+AkuwIVBOBysP5CMV8E4KI6qRSdvRIdzu4j47yJQK9EsMJcgMFH02kMn0Sv1?=
- =?us-ascii?Q?jgWqIhEUlmmpt3GfbQbnPxISozdojiSZMsRYfXu1+cbQ1DDgQQ0/Dyeya3h1?=
- =?us-ascii?Q?7IhAWOX9CJpoPf8LT4anCJBMbDALdqoLr0WQgo1VCC7xn3lZsSPwXHYp8dGS?=
- =?us-ascii?Q?aNDpVtoOR43wOXJXmXZyBOuxRONf/V9lBjS8ijS6uwbW2S1a244HDPy3gy48?=
- =?us-ascii?Q?ZrtHooZAC+yGw7YPVWtYMdn6DhHsKxVGnPvG5EQ2odWpa7vjP8VVD3Bn6Aet?=
- =?us-ascii?Q?wDk9QaBZHPP6w1UsGN/qFdN63oic4m/f9krfYVkhBYTLLrX+UsGHncNb67/3?=
- =?us-ascii?Q?rlvBoo29OFxNnlFxWBFRyXxoX/CII4aBQnFXC1y83fZRHtIY/fnLE/d5BN6z?=
- =?us-ascii?Q?9t5LzAWZASrplVpbqFFBQwXYdRGY16PNe3WCioGu6f5UOhL522WJJXg6jaa9?=
- =?us-ascii?Q?hoPfcv7Tgmd3qGGpnT5RftLzyIICdzEUgOChQ+zX78X+qSSOWahnC3tOMIGc?=
- =?us-ascii?Q?fHpN7xEOYX3Zd7bPa8svkLUd/aY3u5xCmTcQQhn+aZ2WgXcwTONM1/rSy/I5?=
- =?us-ascii?Q?FFQspfngO1Ys3uGDge15Dp/f7lp87hLVT2cJ5Yi5Ea4ZASh6zdB/0qrwIAtE?=
- =?us-ascii?Q?rg=3D=3D?=
+	=?us-ascii?Q?ehzCHFwTQ+nNMUo161lT4fBzsUNgGP7ejNLcz9qN8syb8HSJ2/s1Krrcnjj+?=
+ =?us-ascii?Q?h4L9D1eFh1Gtez4WqFM61ZOlVgIoWgBf6pz52X0d7kchMtaeT9p/iT6EVtbU?=
+ =?us-ascii?Q?cGvz9bblidinokocQ9M6rVF2oZEopOeEvXkWVkvqx7jh/41NWdfsRV51QQPl?=
+ =?us-ascii?Q?1ChloP9JP0wssNCU+P5GBmNeEkb4gJvjTqrLC/hwJ1E5gLQqZyNqpFEAiBuY?=
+ =?us-ascii?Q?dSj4ADSnVV4qZhmnIkZJcW6O79wclF+K26D2wlFQ6klsXfSYBAQumR1SHdht?=
+ =?us-ascii?Q?lQ17YymB4gphegyJTVRkv7bnH/8BY+gneBS37M2If8Jk4m0E5XglTM7u5lya?=
+ =?us-ascii?Q?K3E1vO5+0O1e1JJGhodFmxh0LX27lyva7VmHs0HYTIC7Hv36UyuLvVwD6AHi?=
+ =?us-ascii?Q?6RVu50vsEmDArFcgADJpJtT4ImrkRu+Y7JRItRzB1OiXN6RRc9RIGFZ9+nAg?=
+ =?us-ascii?Q?4BCHq3am6i8A5rOjzEUCV9LCgtxwmQL+fgN42CvTROtCd0vdvH6/eqgQb0Tc?=
+ =?us-ascii?Q?scz4in2RXOv3fqJdYKmqzsxHXVT6dzohopsKX7pMlpy19su0GEUm3fcf0jsB?=
+ =?us-ascii?Q?SCAZhBtQzozE8tc4ez3jP0KXbn6G5dR5jkLvpkbS3HeHvslCywKEeBXm7Z23?=
+ =?us-ascii?Q?CK0Tvv26UwyEka8/CapNq0sWFsI/3zDQ8v8zfKTjTw1Qtx4vjJnIaiukETvr?=
+ =?us-ascii?Q?1ywnPMmTecXlEyEVAnJQQqcZ7BTp/1ol/N9fbeAMxfeS2n/gf1BJHzjc750m?=
+ =?us-ascii?Q?p5dg5/tcNFG9cYyaaWF75BwBElGakBKuXBnTJHGM+PEUNMzKwmdL2ooy61lz?=
+ =?us-ascii?Q?hWIxZeG21df48750mRXdWo1S/kwbGUwwFOpKrTE2/YzC6cM07ZRrwWeXjrLn?=
+ =?us-ascii?Q?8Z8LfWuwoOMXKydUH9b8K+nNDEwFDtcDXs1at73FPMUNcmH8u9+Cl+hG/R0l?=
+ =?us-ascii?Q?5kZGU68Byofpt4jnmagO4hafO2fY/LrswcDY1b3HKKClkfOzBPq19OOEqEAR?=
+ =?us-ascii?Q?8clwWgGR689Rv6tqmPgP/TNs9RjhqAy95CgJwoHOF68QZ9AWywjh+NToBA54?=
+ =?us-ascii?Q?+stmXxnyIH403kySVQSuWLqK8h4fI5m97gJU72KqT1jUrz8UU8FFXzkzNXaK?=
+ =?us-ascii?Q?LQDCzLGLFkHI/Kaxn7uVJa98FqZLkbLME0G7THVGfjAoCdXfrOTdCmu/zIgP?=
+ =?us-ascii?Q?+Pe2OiwRniLZR/BZGRJooZ0YHitWqTul1SR4K11aYmtJelPt1kMu/dnWa+fj?=
+ =?us-ascii?Q?OP1EbA8bsqFN1SgJ/UDpDWL9yAjAn8oohUe4VBhfHVDA8OJTenUjHjzI6l/R?=
+ =?us-ascii?Q?vcZZqMQjKCcu79uPOmlvpYWHAbNs0jnESIAun89hDnyRBUQXQz+Mh4Q1ltsh?=
+ =?us-ascii?Q?YTzNPy0kr1fEs/zWd4+m8iI8fW+YEKwjhtPcBofPP8bA5hGWywjz2OSYZaIJ?=
+ =?us-ascii?Q?avlhF4/bf9M8zAn+E0bN2BOE6Lr5I8SNNsVSVSPt6d0HiOQEiX87aEE7upxA?=
+ =?us-ascii?Q?YRJbyMUm/t/GyxDvcB2zhHq6S0Za+EQQ8UKULkz1HWOvnIVF6EDHeF2KmSlT?=
+ =?us-ascii?Q?nhH2HUqF0qNzy/yUqWocNLA6QQC/Bcz2CwLBn6lw6tawkvu44hy/BaUkcIh7?=
+ =?us-ascii?Q?Yg=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DKmgAfzWAt5YMNcKHXXUVxox33vncmZCTQrsxLKDXrcYK5ML/DqH35TtyEFU8je1LU5nNbkrdErwt9320RXLzAZlXrBLxHelWe2BEogPoWc1LRT+7YlCnWnwu4pX0mpep0HMXGr5lqeZlcyHDreOis9Owlx5wmiRQBC2i/3s0DuGG2jg/m4nptQkSE/EOCJwacjC/NIpnvee8TJjwLYtAZcYms7oLPAjmiPOE/8ceDpFFCQW2vzMd4sWjxBfpjvpQ28hB2NBRYwC1bP9k62Fsz5E0L+sDnr3Ldz7zmSqC1a31pr77vZ84Hmyvxg3oVwInChOlka6XcmRfEY+izFwwXARBie2R58sRQJ/r4gg6QQzT/Y68FFCVM3rIfnkmEKrtaXpq/2ltmfiOdgHVu6RoBn3hB9WSi3aJMIF7SfM7CW5V9cLNgmAaaADFUhOLoQIiRYZ5VZy6WZdDtmXys/RjLf/rSdkVQ3iX8zWgn+Yef9s/OPWT/QoO/CQ7+XKwxYwEkEafS9/WOe0Xi1EiYzZWwtMqOymvBDnZkhY5rN//7no/17g6pKTwr9aupsZVskTvrESlKPQAUkkOb29Z8RIX31iKPf8etpkgk3HWwWWEW4=
+	RLPTZVSyWc9zrGg6JGa6RKYVc0SHWdrSEklvWm8LsrcKp9tCR0Oih0T3HKI+jFZVwW11Ay2hUV1EmxO9M+rHx5/5oiGB8euBS050cCkprCOy4+i++om/aj3LNPGbKI5t4/FYHwZ26bFN2pVpxctU4jk67ZHJwTnpyltPRvHACjo7tJ/gNFmGSusgkLRWUwjCwlBgGKsxMX2spgueCRPLACRXBweltgkZKGEt0zS1hcXHCwK1U1hh26B1nKG7yKRDeQDrwnAqJbB2F4K5cz/V/wPoX+PxvAr6JMgFsJmOc6TmzpDz85roWwEx6+SmMyrbksIMtWlrwMfzIVT0ChJD4wDg4oKZjfOEGwXGdA5fnVaMWldalvecsQmzaVAGO9UpNUTcQIRcTu0rWTOUHPNH2/7u6g/8KJLWWm0uI9o8rPzaTVbtQXDXusLIi7VI9gXWRyzUh0Adr8o5JHG3MyEBd/EoznysGjmkAQT6muZfjiwfGt6quJBEr9n5CH3eGYXpqZjtI6lwrXXJeIMsqABDFrKhX9uLYl1vNrFw9SqznPyCyfOVzwjXawYh0skFh2c1Ma47hvBQOcjGa3tZjKOdABSvZWR6VLTnEcLHMhjcSCA=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ac1f2d8-6273-416d-8387-08de15965f3e
+X-MS-Exchange-CrossTenant-Network-Message-Id: d055b344-8410-4b0e-c8dd-08de1596601c
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 20:21:12.2679
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 20:21:13.6469
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qWdD5Uda94wSk2rjaULVfnwRMiSHK9bgr86OT3EeaSO7rPNChxAdgp2DN1ErEI1/D981saq++wC90qLa+NgpBCyDdNOP7Ormj56JLCtFRo0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF1A29160CF
+X-MS-Exchange-CrossTenant-UserPrincipalName: deJUByN/u/Dg2fY3iBPx3IZWD4ShTw8ZbRZb867zD4HTGiCoxyMWkLyljAZ8xsDZ3chStcQ75dCCOPakppgrtKUqc0DKC94jwLcJ0/7GlXE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4120
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-27_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=914
- adultscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510270187
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1MiBTYWx0ZWRfXx66Km7WHdgBJ
- kkdlRSiPhtj9RXHqViaxTj0Pe4RDMljOp5ZkTRPic2To+3zmT/aaV4LzPASvd1Wm/zDoX1sSI24
- isb+OzP26r6yd3SE3yy2IckvQizXdjPAV7X5TfKGnfWB8w2YEb0xXpMcaxdibdfZSMxWMBzEJn0
- nTUZN8+/QyoA9HYreOv0rXQjAeoP+gP7hSSh8J+G2ZZQ8HxHbDVZrtiDT1N1UN5TfI863KW8oY9
- 6Hx54Xqam2QGidWdRHiGbJKraIKtinOXbqgHNrBytSHUbL/btNKvujiHFwBKcNs3QAePMDZgxcq
- X8JxuI0pxSXTCfEfsu78fJ+QArFZ2Bgfr2F75LAAtI7V8FhoFDcq8egnkv92tI9uRd4LJ28E7aa
- sJF0tTnT/GY5ESc/szAAfG6WvH12Mc2tWlVf31DpyBPuiJZCk/w=
-X-Proofpoint-GUID: 2ztVNufoXELHgXCTu1cgWeMckYVWkh9k
-X-Proofpoint-ORIG-GUID: 2ztVNufoXELHgXCTu1cgWeMckYVWkh9k
-X-Authority-Analysis: v=2.4 cv=dbiNHHXe c=1 sm=1 tr=0 ts=68ffd43b b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510270187
+X-Proofpoint-GUID: 6QqfPG2tpEjrcPketsm6eDmBMP24Bb8T
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1OCBTYWx0ZWRfX0UrA98vuzlRO
+ XYIC3ykaYXl01/i3KuCNL5B7xDzzeVoTUv70bmi0Bh/guERUVFdXIlwHulQrCwjhszADhaSZJf4
+ pj+5AdSBbb5WGVxvzE5C4qJWMhvJaTZIYRTQsLLVRxhJaAQc1mKtpARr/DCq06Wt2xJVy/PW/Br
+ yvCeerxanpDdunXAwQ4GOBTQjzv9JAMyOHEwZjqcTWfWupmXmSVlCjWX/bbs+BHJXHi8nrff9bE
+ wWOR8mXOP5O1tz8wyr15q+JkkBT9RMy0j2Sht6dsy0ho8D7wRWN1NTFd2vXWOYP/K7eAwOMS2Ni
+ KnwIIMtsYbFSXLhqTtb1X38Y9kF/BkyvfH4uAstUXb2odG5CzmrIahTDZiui14qc/pVc6ZssIh9
+ B6CqFFqY1x5qGOo9eEsYJ1osNlKe+g==
+X-Authority-Analysis: v=2.4 cv=HsN72kTS c=1 sm=1 tr=0 ts=68ffd43d b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=20KFwNOVAAAA:8
- a=LYJYA6JT04DgVVByVqkA:9 cc=ntf awl=host:12123
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=jAc279nnwvjaFhRRfOAA:9
+X-Proofpoint-ORIG-GUID: 6QqfPG2tpEjrcPketsm6eDmBMP24Bb8T
 
-From: David Hildenbrand <david@redhat.com>
+Introduce clear_pages(), to be overridden by architectures that
+support more efficient clearing of consecutive pages.
 
-Let's drop all variants that effectively map to clear_page() and
-provide it in a generic variant instead.
+Also introduce clear_user_pages(), however, we will not expect
+this function to be overridden anytime soon.
 
-We'll use __HAVE_ARCH_CLEAR_USER_PAGE, similar to
-__HAVE_ARCH_COPY_USER_HIGHPAGE, to indicate whether an architecture
-provides it's own variant.
+We have to place the clear_user_pages() variant that uses
+clear_user_page() into mm/util.c for now to work around
+macro magic on sparc and m68k.
 
-We have to be a bit careful if an architecture provides a custom
-clear_user_highpage(), because then it's very likely that some special
-flushing magic is happening behind the scenes.
-
-Maybe at some point these should be CONFIG_ options.
-
-Note that for parisc, clear_page() and clear_user_page() map to
-clear_page_asm(), so we can just get rid of the custom clear_user_page()
-implementation. There is a clear_user_page_asm() function on parisc,
-that seems to be unused. Not sure what's up with that.
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 ---
- arch/alpha/include/asm/page.h      |  1 -
- arch/arc/include/asm/page.h        |  2 ++
- arch/arm/include/asm/page-nommu.h  |  1 -
- arch/arm64/include/asm/page.h      |  1 -
- arch/csky/abiv1/inc/abi/page.h     |  1 +
- arch/csky/abiv2/inc/abi/page.h     |  7 -------
- arch/hexagon/include/asm/page.h    |  1 -
- arch/loongarch/include/asm/page.h  |  1 -
- arch/m68k/include/asm/page_mm.h    |  1 +
- arch/m68k/include/asm/page_no.h    |  1 -
- arch/microblaze/include/asm/page.h |  1 -
- arch/mips/include/asm/page.h       |  1 +
- arch/nios2/include/asm/page.h      |  1 +
- arch/openrisc/include/asm/page.h   |  1 -
- arch/parisc/include/asm/page.h     |  1 -
- arch/powerpc/include/asm/page.h    |  1 +
- arch/riscv/include/asm/page.h      |  1 -
- arch/s390/include/asm/page.h       |  1 -
- arch/sparc/include/asm/page_32.h   |  2 ++
- arch/sparc/include/asm/page_64.h   |  1 +
- arch/um/include/asm/page.h         |  1 -
- arch/x86/include/asm/page.h        |  6 ------
- arch/xtensa/include/asm/page.h     |  1 -
- include/linux/mm.h                 | 22 ++++++++++++++++++++++
- 24 files changed, 32 insertions(+), 26 deletions(-)
+ include/linux/mm.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ mm/util.c          | 13 +++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/arch/alpha/include/asm/page.h b/arch/alpha/include/asm/page.h
-index 5ec4c77e432e..d71ef845deca 100644
---- a/arch/alpha/include/asm/page.h
-+++ b/arch/alpha/include/asm/page.h
-@@ -11,7 +11,6 @@
- #define STRICT_MM_TYPECHECKS
- 
- extern void clear_page(void *page);
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- 
- #define vma_alloc_zeroed_movable_folio(vma, vaddr) \
- 	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr)
-diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-index 9720fe6b2c24..cb4d69b473e6 100644
---- a/arch/arc/include/asm/page.h
-+++ b/arch/arc/include/asm/page.h
-@@ -32,6 +32,8 @@ struct page;
- 
- void copy_user_highpage(struct page *to, struct page *from,
- 			unsigned long u_vaddr, struct vm_area_struct *vma);
-+
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- void clear_user_page(void *to, unsigned long u_vaddr, struct page *page);
- 
- typedef struct {
-diff --git a/arch/arm/include/asm/page-nommu.h b/arch/arm/include/asm/page-nommu.h
-index 7c2c72323d17..e74415c959be 100644
---- a/arch/arm/include/asm/page-nommu.h
-+++ b/arch/arm/include/asm/page-nommu.h
-@@ -11,7 +11,6 @@
- #define clear_page(page)	memset((page), 0, PAGE_SIZE)
- #define copy_page(to,from)	memcpy((to), (from), PAGE_SIZE)
- 
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- /*
-diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-index 2312e6ee595f..0cb8853c0af4 100644
---- a/arch/arm64/include/asm/page.h
-+++ b/arch/arm64/include/asm/page.h
-@@ -36,7 +36,6 @@ struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
- void tag_clear_highpage(struct page *to);
- #define __HAVE_ARCH_TAG_CLEAR_HIGHPAGE
- 
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- typedef struct page *pgtable_t;
-diff --git a/arch/csky/abiv1/inc/abi/page.h b/arch/csky/abiv1/inc/abi/page.h
-index 2d2159933b76..08a37f5990cc 100644
---- a/arch/csky/abiv1/inc/abi/page.h
-+++ b/arch/csky/abiv1/inc/abi/page.h
-@@ -10,6 +10,7 @@ static inline unsigned long pages_do_alias(unsigned long addr1,
- 	return (addr1 ^ addr2) & (SHMLBA-1);
- }
- 
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- static inline void clear_user_page(void *addr, unsigned long vaddr,
- 				   struct page *page)
- {
-diff --git a/arch/csky/abiv2/inc/abi/page.h b/arch/csky/abiv2/inc/abi/page.h
-index cf005f13cd15..a5a255013308 100644
---- a/arch/csky/abiv2/inc/abi/page.h
-+++ b/arch/csky/abiv2/inc/abi/page.h
-@@ -1,11 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--
--static inline void clear_user_page(void *addr, unsigned long vaddr,
--				   struct page *page)
--{
--	clear_page(addr);
--}
--
- static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
- 				  struct page *page)
- {
-diff --git a/arch/hexagon/include/asm/page.h b/arch/hexagon/include/asm/page.h
-index 137ba7c5de48..f0aed3ed812b 100644
---- a/arch/hexagon/include/asm/page.h
-+++ b/arch/hexagon/include/asm/page.h
-@@ -113,7 +113,6 @@ static inline void clear_page(void *page)
- /*
-  * Under assumption that kernel always "sees" user map...
-  */
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- static inline unsigned long virt_to_pfn(const void *kaddr)
-diff --git a/arch/loongarch/include/asm/page.h b/arch/loongarch/include/asm/page.h
-index a3aaf34fba16..b83415fe4ffb 100644
---- a/arch/loongarch/include/asm/page.h
-+++ b/arch/loongarch/include/asm/page.h
-@@ -30,7 +30,6 @@
- extern void clear_page(void *page);
- extern void copy_page(void *to, void *from);
- 
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- extern unsigned long shm_align_mask;
-diff --git a/arch/m68k/include/asm/page_mm.h b/arch/m68k/include/asm/page_mm.h
-index ed782609ca41..10798156121d 100644
---- a/arch/m68k/include/asm/page_mm.h
-+++ b/arch/m68k/include/asm/page_mm.h
-@@ -52,6 +52,7 @@ static inline void clear_page(void *page)
- #define copy_page(to,from)	memcpy((to), (from), PAGE_SIZE)
- #endif
- 
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- #define clear_user_page(addr, vaddr, page)	\
- 	do {	clear_page(addr);		\
- 		flush_dcache_page(page);	\
-diff --git a/arch/m68k/include/asm/page_no.h b/arch/m68k/include/asm/page_no.h
-index 39db2026a4b4..d2532bc407ef 100644
---- a/arch/m68k/include/asm/page_no.h
-+++ b/arch/m68k/include/asm/page_no.h
-@@ -10,7 +10,6 @@ extern unsigned long memory_end;
- #define clear_page(page)	memset((page), 0, PAGE_SIZE)
- #define copy_page(to,from)	memcpy((to), (from), PAGE_SIZE)
- 
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- #define vma_alloc_zeroed_movable_folio(vma, vaddr) \
-diff --git a/arch/microblaze/include/asm/page.h b/arch/microblaze/include/asm/page.h
-index 90ac9f34b4b4..e1e396367ba7 100644
---- a/arch/microblaze/include/asm/page.h
-+++ b/arch/microblaze/include/asm/page.h
-@@ -45,7 +45,6 @@ typedef unsigned long pte_basic_t;
- # define copy_page(to, from)			memcpy((to), (from), PAGE_SIZE)
- # define clear_page(pgaddr)			memset((pgaddr), 0, PAGE_SIZE)
- 
--# define clear_user_page(pgaddr, vaddr, page)	memset((pgaddr), 0, PAGE_SIZE)
- # define copy_user_page(vto, vfrom, vaddr, topg) \
- 			memcpy((vto), (vfrom), PAGE_SIZE)
- 
-diff --git a/arch/mips/include/asm/page.h b/arch/mips/include/asm/page.h
-index bc3e3484c1bf..6b41650c27ab 100644
---- a/arch/mips/include/asm/page.h
-+++ b/arch/mips/include/asm/page.h
-@@ -90,6 +90,7 @@ static inline void clear_user_page(void *addr, unsigned long vaddr,
- 	if (pages_do_alias((unsigned long) addr, vaddr & PAGE_MASK))
- 		flush_data_cache_page((unsigned long)addr);
- }
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- 
- struct vm_area_struct;
- extern void copy_user_highpage(struct page *to, struct page *from,
-diff --git a/arch/nios2/include/asm/page.h b/arch/nios2/include/asm/page.h
-index 00a51623d38a..ea9cac9e1bc1 100644
---- a/arch/nios2/include/asm/page.h
-+++ b/arch/nios2/include/asm/page.h
-@@ -45,6 +45,7 @@
- 
- struct page;
- 
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- extern void clear_user_page(void *addr, unsigned long vaddr, struct page *page);
- extern void copy_user_page(void *vto, void *vfrom, unsigned long vaddr,
- 				struct page *to);
-diff --git a/arch/openrisc/include/asm/page.h b/arch/openrisc/include/asm/page.h
-index 85797f94d1d7..d2cdbf3579bb 100644
---- a/arch/openrisc/include/asm/page.h
-+++ b/arch/openrisc/include/asm/page.h
-@@ -30,7 +30,6 @@
- #define clear_page(page)	memset((page), 0, PAGE_SIZE)
- #define copy_page(to, from)	memcpy((to), (from), PAGE_SIZE)
- 
--#define clear_user_page(page, vaddr, pg)        clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)     copy_page(to, from)
- 
- /*
-diff --git a/arch/parisc/include/asm/page.h b/arch/parisc/include/asm/page.h
-index 8f4e51071ea1..3630b36d07da 100644
---- a/arch/parisc/include/asm/page.h
-+++ b/arch/parisc/include/asm/page.h
-@@ -21,7 +21,6 @@ struct vm_area_struct;
- 
- void clear_page_asm(void *page);
- void copy_page_asm(void *to, void *from);
--#define clear_user_page(vto, vaddr, page) clear_page_asm(vto)
- void copy_user_highpage(struct page *to, struct page *from, unsigned long vaddr,
- 		struct vm_area_struct *vma);
- #define __HAVE_ARCH_COPY_USER_HIGHPAGE
-diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-index b28fbb1d57eb..da56e7d42e25 100644
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -271,6 +271,7 @@ static inline const void *pfn_to_kaddr(unsigned long pfn)
- 
- struct page;
- extern void clear_user_page(void *page, unsigned long vaddr, struct page *pg);
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- extern void copy_user_page(void *to, void *from, unsigned long vaddr,
- 		struct page *p);
- extern int devmem_is_allowed(unsigned long pfn);
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index ffe213ad65a4..061b60b954ec 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -50,7 +50,6 @@ void clear_page(void *page);
- #endif
- #define copy_page(to, from)			memcpy((to), (from), PAGE_SIZE)
- 
--#define clear_user_page(pgaddr, vaddr, page)	clear_page(pgaddr)
- #define copy_user_page(vto, vfrom, vaddr, topg) \
- 			memcpy((vto), (vfrom), PAGE_SIZE)
- 
-diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
-index 9240a363c893..6635ba56d4b2 100644
---- a/arch/s390/include/asm/page.h
-+++ b/arch/s390/include/asm/page.h
-@@ -65,7 +65,6 @@ static inline void copy_page(void *to, void *from)
- 		: : "memory", "cc");
- }
- 
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- #define vma_alloc_zeroed_movable_folio(vma, vaddr) \
-diff --git a/arch/sparc/include/asm/page_32.h b/arch/sparc/include/asm/page_32.h
-index c1bccbedf567..572f62619254 100644
---- a/arch/sparc/include/asm/page_32.h
-+++ b/arch/sparc/include/asm/page_32.h
-@@ -17,6 +17,8 @@
- 
- #define clear_page(page)	 memset((void *)(page), 0, PAGE_SIZE)
- #define copy_page(to,from) 	memcpy((void *)(to), (void *)(from), PAGE_SIZE)
-+
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- #define clear_user_page(addr, vaddr, page)	\
- 	do { 	clear_page(addr);		\
- 		sparc_flush_page_to_ram(page);	\
-diff --git a/arch/sparc/include/asm/page_64.h b/arch/sparc/include/asm/page_64.h
-index d764d8a8586b..52213c92ee94 100644
---- a/arch/sparc/include/asm/page_64.h
-+++ b/arch/sparc/include/asm/page_64.h
-@@ -43,6 +43,7 @@ void _clear_page(void *page);
- #define clear_page(X)	_clear_page((void *)(X))
- struct page;
- void clear_user_page(void *addr, unsigned long vaddr, struct page *page);
-+#define __HAVE_ARCH_CLEAR_USER_PAGE
- #define copy_page(X,Y)	memcpy((void *)(X), (void *)(Y), PAGE_SIZE)
- void copy_user_page(void *to, void *from, unsigned long vaddr, struct page *topage);
- #define __HAVE_ARCH_COPY_USER_HIGHPAGE
-diff --git a/arch/um/include/asm/page.h b/arch/um/include/asm/page.h
-index 6f54254aaf44..8cea97a9c8f9 100644
---- a/arch/um/include/asm/page.h
-+++ b/arch/um/include/asm/page.h
-@@ -26,7 +26,6 @@ struct page;
- #define clear_page(page)	memset((void *)(page), 0, PAGE_SIZE)
- #define copy_page(to,from)	memcpy((void *)(to), (void *)(from), PAGE_SIZE)
- 
--#define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
- typedef struct { unsigned long pte; } pte_t;
-diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-index 9265f2fca99a..416dc88e35c1 100644
---- a/arch/x86/include/asm/page.h
-+++ b/arch/x86/include/asm/page.h
-@@ -22,12 +22,6 @@ struct page;
- extern struct range pfn_mapped[];
- extern int nr_pfn_mapped;
- 
--static inline void clear_user_page(void *page, unsigned long vaddr,
--				   struct page *pg)
--{
--	clear_page(page);
--}
--
- static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
- 				  struct page *topage)
- {
-diff --git a/arch/xtensa/include/asm/page.h b/arch/xtensa/include/asm/page.h
-index 20655174b111..059493256765 100644
---- a/arch/xtensa/include/asm/page.h
-+++ b/arch/xtensa/include/asm/page.h
-@@ -126,7 +126,6 @@ void clear_user_highpage(struct page *page, unsigned long vaddr);
- void copy_user_highpage(struct page *to, struct page *from,
- 			unsigned long vaddr, struct vm_area_struct *vma);
- #else
--# define clear_user_page(page, vaddr, pg)	clear_page(page)
- # define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- #endif
- 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d16b33bacc32..683168b522b3 100644
+index 683168b522b3..ecbcb76df9de 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -3872,6 +3872,28 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
+@@ -3872,6 +3872,26 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
  				unsigned int order) {}
  #endif	/* CONFIG_DEBUG_PAGEALLOC */
  
-+#ifndef __HAVE_ARCH_CLEAR_USER_PAGE
++#ifndef __HAVE_ARCH_CLEAR_PAGES
 +/**
-+ * clear_user_page() - clear a page to be mapped to user space
-+ * @addr: the address of the page
-+ * @vaddr: the address of the user mapping
-+ * @page: the page
++ * clear_pages() - clear a page range for kernel-internal use.
++ * @addr: start address
++ * @npages: number of pages
++ *
++ * Use clear_user_pages() instead when clearing a page range to be
++ * mapped to user space.
++ *
++ * Does absolutely no exception handling.
 + */
-+static inline void clear_user_page(void *addr, unsigned long vaddr, struct page *page)
++static inline void clear_pages(void *addr, unsigned int npages)
 +{
-+#ifdef clear_user_highpage
-+	/*
-+	 * If an architecture defines its own clear_user_highpage() variant,
-+	 * then we have to be a bit more careful here and cannot simply
-+	 * rely on clear_page().
-+	 */
-+	clear_user_highpage(page, vaddr);
-+#else
-+	clear_page(addr);
-+#endif
++	do {
++		clear_page(addr);
++		addr += PAGE_SIZE;
++	} while (--npages);
 +}
 +#endif
++
+ #ifndef __HAVE_ARCH_CLEAR_USER_PAGE
+ /**
+  * clear_user_page() - clear a page to be mapped to user space
+@@ -3894,6 +3914,27 @@ static inline void clear_user_page(void *addr, unsigned long vaddr, struct page
+ }
+ #endif
+ 
++/**
++ * clear_user_pages() - clear a page range to be mapped to user space
++ * @addr: start address
++ * @vaddr: start address of the user mapping
++ * @page: start page
++ * @npages: number of pages
++ *
++ * Assumes that the region (@addr, +@npages) has been validated
++ * already so this does no exception handling.
++ */
++#ifdef __HAVE_ARCH_CLEAR_USER_PAGE
++void clear_user_pages(void *addr, unsigned long vaddr,
++		struct page *page, unsigned int npages);
++#else /* !__HAVE_ARCH_CLEAR_USER_PAGE */
++static inline void clear_user_pages(void *addr, unsigned long vaddr,
++		struct page *page, unsigned int npages)
++{
++	clear_pages(addr, npages);
++}
++#endif /* __HAVE_ARCH_CLEAR_USER_PAGE */
 +
  #ifdef __HAVE_ARCH_GATE_AREA
  extern struct vm_area_struct *get_gate_vma(struct mm_struct *mm);
  extern int in_gate_area_no_mm(unsigned long addr);
+diff --git a/mm/util.c b/mm/util.c
+index 8989d5767528..d3b662b71f33 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -1344,3 +1344,16 @@ bool page_range_contiguous(const struct page *page, unsigned long nr_pages)
+ }
+ EXPORT_SYMBOL(page_range_contiguous);
+ #endif
++
++#ifdef __HAVE_ARCH_CLEAR_USER_PAGE
++void clear_user_pages(void *addr, unsigned long vaddr,
++		struct page *page, unsigned int npages)
++{
++	do {
++		clear_user_page(addr, vaddr, page);
++		addr += PAGE_SIZE;
++		vaddr += PAGE_SIZE;
++		page++;
++	} while (--npages);
++}
++#endif /* __HAVE_ARCH_CLEAR_USER_PAGE */
 -- 
 2.43.5
 
