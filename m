@@ -1,157 +1,203 @@
-Return-Path: <linux-kernel+bounces-872167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64001C0F6D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:47:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7036EC0F72E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 100CC34F988
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:47:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAA584F6961
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBCD313525;
-	Mon, 27 Oct 2025 16:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D2B313545;
+	Mon, 27 Oct 2025 16:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIRBPzyb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j+S6nQ74"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C74E30AAC8;
-	Mon, 27 Oct 2025 16:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47308313260;
+	Mon, 27 Oct 2025 16:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583638; cv=none; b=PNLIELpLVCwcsRhYGkJXF7piB4v8lKI6WZEUH3nVkj7yd3ixmQ/SLwUkumQiGrVs1yJiTESMxdtvuBB3Fkh/z+uBgMbzV2x6fuW5Et2YhrOoZSq73SNv+cjETUMNl+shFRLNENlqwvMzV14nzZ4eUuoRvmRAc6r2yJ3oq5ajKfs=
+	t=1761583681; cv=none; b=IGYMZg7VVmzO5zU49z/BEaf7DYaxHReP+PYYLNK4h5m6dFenZuDqZkxjrbZ1G+5byyZyTcKIoRlX4F/qaFLBFQSdNYmgwnRdjRcBwVKjfrQNnaRndv8Tvd0Pu2+DxXGDuqIAisjHaaJxTn9xz81ATzJyoc3J4SOvxwL9Pplu6rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583638; c=relaxed/simple;
-	bh=32yOyFVynkfVIvnGVgJ92i0Ip1krG1hpIICP4cn0SOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NuhH1+9VceVb5qZGfi1t3v4vfrpRHCnxwfdwD5VTZeF9cR5VV8pFKhxAILC3CFdI09NcZn+SRNCYoc36k2LubsCbK4e6HCj7QMTawJm82b0oG4eroSBQvWJNl/sT98uRPpF9/uP8p9PCVj0GJXM6eNsxGzf7hxMKiW+HHqOfUHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIRBPzyb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CE3C113D0;
-	Mon, 27 Oct 2025 16:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761583637;
-	bh=32yOyFVynkfVIvnGVgJ92i0Ip1krG1hpIICP4cn0SOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nIRBPzybk9NCdARzw23obr4pZMzwR/6XNdofj1qMoexG/4DU8IIk2+PM8X5IDn/gG
-	 /y1QthXqj9X6dblAsvAyIqeUiVOMpdrDk5BKx96RXacgKJFftP5+Z13HaYlb04F6gq
-	 SrY6R7NHuQFVjki4d6xx9Wy63ZuftiRH6jf5zyzitCSlTM24JBfK9VMx58eDCqgeEb
-	 odSzeccOojfaQ6ZC5gt0zyFnw20uNcDtwcX1cA3ifbaBMmhHwEa5G4hymHgg4yLhdk
-	 2hNg51IkIJRIObKlWkpVtrQwI0MckKkOLBzJJR5Vw9swl3jZwaB3lIPodHTno/fNvH
-	 B/GM2H8mSaPyw==
-Date: Mon, 27 Oct 2025 16:47:11 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
-	heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com, finley.xiao@rock-chips.com
-Subject: Re: [PATCH v5 6/7] dt-bindings: clock: rockchip: Add RK3506 clock
- and reset unit
-Message-ID: <20251027-await-wound-0aee2d20e0a3@spud>
-References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
- <20251027084147.4148739-7-zhangqing@rock-chips.com>
+	s=arc-20240116; t=1761583681; c=relaxed/simple;
+	bh=rpOaMzD4tQjBivPFOAY7vSm96wEOM162NESlopH6JYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PYzlsxHMSCYh5znV05lPKhsKeQPXegriq5dQHJwTeV7+kKPhvAaGbBt0Go/Ye6MzZ2vhyY/6tcqMQxVsusd68C42BsjPocnrtlxyr18djOq8dHo4EtCwjc+vXUpP9oyJ9+PRHagRgNPgMYkkcmypSjjUft+zxSEXHWHc9U0QRAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=j+S6nQ74; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59RD8UQE032633;
+	Mon, 27 Oct 2025 16:47:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=1Z/0C6
+	4ctaozs3ABvQcRCVXmOnEYI0cdXgxwFEI+wK8=; b=j+S6nQ74Se7giUxmRQfDzo
+	0fHXyJt9Lgj5bSsrWtdQlcW/roLoLbYuUk7XXfEPscwj+Ier7Gw3pZ+MtYB/mbQh
+	5zuyM1wmgFz0nm0QmuLMGxmbGA85R4Tt+f5obJoHkNaLwRs5NFy8TjQaad1XrZ2Y
+	pruWJ55VfwMm53S9DVHJ23TIZQT+mc13OXbtSZp8JfZ1hffB5RORFuoZter1Tjlp
+	g2/0uRFYQ9bxCPjJzqJFMfzzfBgLx6CiG6fubEPSlZTUrxQkxf13JSI77IP7lV8Z
+	rh8/aGe2OWouWG0n9O9OJPJ8CbbcTRDk5beLBOGyNeXhvDtFrcw9MQJ/UH8stllw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0kyt7yx5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 16:47:33 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59RGjbRp004340;
+	Mon, 27 Oct 2025 16:47:32 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0kyt7yx0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 16:47:32 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59RFIZ0s030114;
+	Mon, 27 Oct 2025 16:47:31 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a19vmekkw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 16:47:31 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59RGlT109896284
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 16:47:29 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 87CB220043;
+	Mon, 27 Oct 2025 16:47:29 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C59A320040;
+	Mon, 27 Oct 2025 16:47:28 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.155.209.42])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 27 Oct 2025 16:47:28 +0000 (GMT)
+Date: Mon, 27 Oct 2025 17:47:26 +0100
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Balbir Singh
+ <balbirs@nvidia.com>, Liam.Howlett@oracle.com,
+        airlied@gmail.com, akpm@linux-foundation.org, apopple@nvidia.com,
+        baohua@kernel.org, baolin.wang@linux.alibaba.com, byungchul@sk.com,
+        dakr@kernel.org, dev.jain@arm.com, dri-devel@lists.freedesktop.org,
+        francois.dugast@intel.com, gourry@gourry.net, joshua.hahnjy@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        lorenzo.stoakes@oracle.com, lyude@redhat.com, matthew.brost@intel.com,
+        mpenttil@redhat.com, npache@redhat.com, osalvador@suse.de,
+        rakie.kim@sk.com, rcampbell@nvidia.com, ryan.roberts@arm.com,
+        simona@ffwll.ch, ying.huang@linux.alibaba.com, ziy@nvidia.com,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-next@vger.kernel.org
+Subject: Re: linux-next: KVM/s390x regression
+Message-ID: <20251027174726.5d8fcce7@p-imbrenda>
+In-Reply-To: <748cdc18-e32d-41bd-90d1-a102b1c51e06@redhat.com>
+References: <20251001065707.920170-4-balbirs@nvidia.com>
+	<20251017144924.10034-1-borntraeger@linux.ibm.com>
+	<9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
+	<c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
+	<8c778cd0-5608-4852-9840-4d98828d7b33@redhat.com>
+	<74272098-cfb7-424b-a55e-55e94f04524e@linux.ibm.com>
+	<84349344-b127-41f6-99f1-10f907c2bd07@redhat.com>
+	<c9f28d0c-6b06-47a2-884d-7533f7b49c45@nvidia.com>
+	<f5debf87-0477-4d6a-8280-0cd95cd09412@linux.ibm.com>
+	<748cdc18-e32d-41bd-90d1-a102b1c51e06@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eSWQ1Ctgvp2pmYfz"
-Content-Disposition: inline
-In-Reply-To: <20251027084147.4148739-7-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ubob-5LekCHHco6DkR2SSF7gBcYPozRH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAwMSBTYWx0ZWRfX76PA6OE8xQR1
+ w6FqXRJhMr8hQX2vlEjfyQrEeLlINNckKrCpHqV9x3C8T+/0MOhO77PRRlZuHvtxhrvJ14q4LDO
+ gy6rQVqHOBPRsjm8rzQ8UM+K3vmNugEiNmmNaWYNYuyqgAXHCYVezSpfCtook6eZfohpVsMTAMS
+ 5pCfRkzynTMtXsJm4Shk77fu6hXApSLdiPXkdeRzPU6K1xQ04NwgFg0yewqrHjtiOSFUCftOrCi
+ omXYZd64bQs5akgGifdp5LPzr8OIZUb23x6uhz2nt728Y1Oj8Cm8sHG2RjBZ5hjnfHNj9VV9gYq
+ BwYfWdkAHiGeFDchPidmxmgC7VQQkseyNKh6QrnlvNqYyhG7dK2opBh9/BoJMwi2G/meyseDjdq
+ GWSKir29IsZ3GOZL1FJz7G8+NgayeA==
+X-Proofpoint-GUID: 6rmIiatZmSL_xPvg8AlM1iNfS4Hou4ZO
+X-Authority-Analysis: v=2.4 cv=FaE6BZ+6 c=1 sm=1 tr=0 ts=68ffa225 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=20KFwNOVAAAA:8 a=ph-KnSEqExXM2Mgme_gA:9 a=CjuIK1q_8ugA:10
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250001
+
+On Mon, 20 Oct 2025 10:41:28 +0200
+David Hildenbrand <david@redhat.com> wrote:
+
+> On 20.10.25 09:00, Christian Borntraeger wrote:
+> > Am 17.10.25 um 23:56 schrieb Balbir Singh:
+> >   
+> >> In the meanwhile, does this fix/workaround work?
+> >>
+> >> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> >> index 0c847cdf4fd3..31c1754d5bd4 100644
+> >> --- a/mm/pgtable-generic.c
+> >> +++ b/mm/pgtable-generic.c
+> >> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
+> >>    
+> >>    	if (pmdvalp)
+> >>    		*pmdvalp = pmdval;
+> >> -	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
+> >> +	if (unlikely(pmd_none(pmdval) || is_pmd_non_present_folio_entry(pmdval)))
+> >>    		goto nomap;
+> >>    	if (unlikely(pmd_trans_huge(pmdval)))
+> >>    		goto nomap;
+> >>  
+> > 
+> > Yes, this seems to work.  
+> 
+> Right, but that's not what we will want here. We'll have to adjust s390x 
+> gmap code (which is getting redesigned either way) to only take the page 
+> lock.
+> 
+> In the end, we'll want here later a single
+> 
+> if (!pmd_present(pmdval))
+> 	goto nomap;
+> 
+
+this seems to do the trick:
+
+diff --git a/arch/s390/mm/gmap.c b/arch/s390/mm/gmap.c
+index 8ff6bba107e8..22c448b32340 100644
+--- a/arch/s390/mm/gmap.c
++++ b/arch/s390/mm/gmap.c
+@@ -599,8 +599,9 @@ int __gmap_link(struct gmap *gmap, unsigned long
+gaddr, unsigned long vmaddr) | _SEGMENT_ENTRY_GMAP_UC
+                                        | _SEGMENT_ENTRY;
+                        } else
+-                               *table = pmd_val(*pmd) &
+-                                       _SEGMENT_ENTRY_HARDWARE_BITS;
++                               *table = (pmd_val(*pmd) &
++                                       _SEGMENT_ENTRY_HARDWARE_BITS)
++                                       | _SEGMENT_ENTRY;
+                }
+        } else if (*table & _SEGMENT_ENTRY_PROTECT &&
+                   !(pmd_val(*pmd) & _SEGMENT_ENTRY_PROTECT)) {
 
 
---eSWQ1Ctgvp2pmYfz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 04:41:46PM +0800, Elaine Zhang wrote:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
->=20
-> Add device tree bindings for clock and reset unit on RK3506 SoC.
-> Add clock and reset IDs for RK3506 SoC.
->=20
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
->  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
->  3 files changed, 547 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk35=
-06-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.=
-yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> new file mode 100644
-> index 000000000000..ecb5fa497747
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RK3506 Clock and Reset Unit (CRU)
-> +
-> +maintainers:
-> +  - Finley Xiao <finley.xiao@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +description: |
-> +  The RK3506 CRU generates the clock and also implements reset for SoC
-> +  peripherals.
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3506-cru
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
+it marks non-leaf gmap segment (pmd) entries as present, just as normal
+pmds would be.
 
-Can you explain somewhere why the input clock is not required?
-Feels like it really should be required, if it is what the output clocks
-are generated from, but I can also see why it might be optional either.
-pw-bot: changes-requested
+I think it's a good enough fix for now, pending the rewrite, which I
+hope to get in the next merge window
 
-> +
-> +  clock-names:
-> +    const: xin24m
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-
---eSWQ1Ctgvp2pmYfz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaP+iDwAKCRB4tDGHoIJi
-0o54AP98UXzeSXPMJY9coqV6N4MEVJH9zwk04uZhVRES8i7hMgEAysyNVT4D/cF6
-jLYYWNYeQbkblle37SMJSItJT554Rgc=
-=vAfi
------END PGP SIGNATURE-----
-
---eSWQ1Ctgvp2pmYfz--
 
