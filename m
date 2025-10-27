@@ -1,124 +1,171 @@
-Return-Path: <linux-kernel+bounces-871659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F81C0DFFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1DBC0E006
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98681891D65
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1A61889373
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D674429AB02;
-	Mon, 27 Oct 2025 13:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F177319ADBA;
+	Mon, 27 Oct 2025 13:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEEp38Gj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZU8Krlld"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9732528727B;
-	Mon, 27 Oct 2025 13:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D4023EAA7;
+	Mon, 27 Oct 2025 13:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761571492; cv=none; b=oVKc1sg6KpijGI4iGKX+3+pmI5tFSE+T+igDtbAMDthPr/eNCdUb38F+pEq2T11+7eU8M5G98yZJb7gx9zqUN1Z2iuvBAhKfQahwlBtPR3/WaSUvsuUD4uG0qjj2EDahaYLT6pmHes04aKoGXjPrKDGykWTK8o/2vovC1QvMSrw=
+	t=1761571525; cv=none; b=nUfya5vyR+4y/L/QrZhCsGM/N3gK1LypPcWzHrDqLBpi3a0JetAWk2N7/XdNyQJE7vXLpyV+vo734ajUJGF9sl8nEf6hCUpHeq5cgw7uOGnBenk1KqT0RO/UxvD/oLe+sHvZfI+eOHN+uTrsFwKT4ZaVdRxOc4glct124BQZkPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761571492; c=relaxed/simple;
-	bh=W9/MQBoV9l8yb26yTYT5WoQtZ832sVzXBDGoSSTXZOE=;
+	s=arc-20240116; t=1761571525; c=relaxed/simple;
+	bh=dFkgoufaNMPNcNu22JUe9K6hYmvZv9p3G2j09geRwu0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kyjqxFTdeDgP3Ybu5Lc2Ch6tItjsknr/soJ6Ml5fBhYTwgysyrxZTGx1LuO3fMfq/OIrxLXNWG7h1jZQS3UW+a/2iGIuOWK0s5GcCN+eRN5J3KKz0KCDUEUlc9ocxtAU8MkkHdPuN2nR3W9DMg0nUSJ6oleIYyPc0KwzlblAoI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEEp38Gj; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761571491; x=1793107491;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W9/MQBoV9l8yb26yTYT5WoQtZ832sVzXBDGoSSTXZOE=;
-  b=jEEp38Gjxex4CIE6gNZt0BfcZgnwif04cNYcdCbd7jmWmReiUoWqGVrE
-   wzl310O4fkWpm00IdCYtmGMiqnwSaWSu/aw6wTClhZJs/aQcvMABTSc6w
-   AoxhsEvVnrnXYP9+GKCwnFC71kMCsX3BADWrw+wsRUvH/2B45VeXm5fAM
-   aPQAm6j9v9TwTa5YGqJDU/6pmYruUbfQwmytYeT0aGMYbsOGljtOAjSEd
-   0WjaYYE6aH0TsgUavsqDKK6+Cq4ExQ7oBEolVi5yoFmOXrILf5L1a/WuS
-   hCrZNItwuHTrGS40OFQEuPbq0LzC/+bI3NYgO4LzxpyW4oB0mf14Vm3+U
-   w==;
-X-CSE-ConnectionGUID: UII35A/ZTvqDKjskaypyrQ==
-X-CSE-MsgGUID: e+KuxH58Q7GK2AALkE5o1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67483467"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67483467"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 06:24:51 -0700
-X-CSE-ConnectionGUID: OzzNk+a6QXSe4LjLGkV3KQ==
-X-CSE-MsgGUID: FO5tyBiIQWiPJ4sDAXL9IA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="222253344"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.222.172])
-  by orviesa001.jf.intel.com with SMTP; 27 Oct 2025 06:24:47 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 27 Oct 2025 15:24:45 +0200
-Date: Mon, 27 Oct 2025 15:24:45 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID
- pin state
-Message-ID: <aP9ynU8tDho5PBAx@kuha.fi.intel.com>
-References: <20251027072741.1050177-1-krishna.kurapati@oss.qualcomm.com>
- <20251027072741.1050177-3-krishna.kurapati@oss.qualcomm.com>
- <aP8_oZlJ4466BEf0@kuha.fi.intel.com>
- <34atfkavrxtv5xdekrlhhkxx4rxs3ueclxrmou5pquym5fsycv@i7mv7ssdlm2v>
+	 Content-Type:Content-Disposition:In-Reply-To; b=usLj1YNp2LlEjAqq+qQZYJHu9sTXe8UY0ZbpP0fNSky4DGuaedO0Kex5yGOkNyjKu1u02wJ5B6u3XNuzP1SRPeEH6z4VRbi3B4Tr0ZQDB1kgTTOOCmzq060mGwcwLqRbuZexMHH3ZycO5VSb6y2kfEvPHKyHjOBemM7YJCLi3E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZU8Krlld; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=6yAaSpVe7rlneuNUMCQd/n4cqFTVCZP+SQLMX8bewCo=; b=ZU
+	8KrlldZNgql/8qkwAb9uhuNxVsd5I1H7INbVtNN/MzB1LIReTVz+0ZlxgBninTWx9NT36V/aLO4U3
+	WG1xe+i6zNumIz/YFU5KxbMOXwo2Jdkt+qYxAxgXo5jVaFy8IujCr3MAmfCmZieSlG4YGEQFnm88/
+	im47h56njpZ39sw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vDNDk-00CCDQ-R4; Mon, 27 Oct 2025 14:25:12 +0100
+Date: Mon, 27 Oct 2025 14:25:12 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] net: phy: dp83867: Disable EEE support as not
+ implemented
+Message-ID: <df3aac25-e8e9-46cb-bd92-637822665080@lunn.ch>
+References: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
+ <ae723e7c-f876-45ef-bc41-3b39dc1dc76b@lunn.ch>
+ <664ef58b-d7e6-4f08-b88f-e7c2cf08c83c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <34atfkavrxtv5xdekrlhhkxx4rxs3ueclxrmou5pquym5fsycv@i7mv7ssdlm2v>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <664ef58b-d7e6-4f08-b88f-e7c2cf08c83c@gmail.com>
 
-On Mon, Oct 27, 2025 at 03:19:04PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Oct 27, 2025 at 11:47:13AM +0200, Heikki Krogerus wrote:
-> > Hi Krishna,
-> > 
-> > > +static int hd3ss3220_get_vbus_supply(struct hd3ss3220 *hd3ss3220)
-> > > +{
-> > > +	struct device_node *hd3ss3220_node = hd3ss3220->dev->of_node;
-> > > +	struct device_node *np;
-> > > +
-> > > +	np = of_graph_get_remote_node(hd3ss3220_node, 0, 0);
-> > > +	if (!np) {
-> > > +		dev_err(hd3ss3220->dev, "failed to get device node");
-> > > +		return -ENODEV;
-> > > +	}
-> > 
-> > So I guess that's the connector node. Why can't you just place the
-> > regulator reference to the hd3ss3220 controller node instead of the
-> > connector like the port controllers do?
-> > 
-> > That would allow us to do a simple devm_regulator_get_optional() call
-> > that's not tied to DT only.
+On Mon, Oct 27, 2025 at 01:57:48PM +0100, Emanuele Ghidoli wrote:
 > 
-> But we have devm_of_regulator_get_optional(), it was mentioned in the
-> previous email if I'm not mistaken. If we need, we should add
-> devm_fwnode_regulator_get(_optional).
 > 
-> vbus supply is described as a part of the usb-c-connector schema, so
-> it is not that logical to describe it as a part of the Type-C
-> controller.
+> On 27/10/2025 00:45, Andrew Lunn wrote:
+> >> Since the introduction of phylink-managed EEE support in the stmmac driver,
+> >> EEE is now enabled by default, leading to issues on systems using the
+> >> DP83867 PHY.
+> > 
+> > Did you do a bisect to prove this?
+> Yes, I have done a bisect and the commit that introduced the behavior on our
+> board is 4218647d4556 ("net: stmmac: convert to phylink managed EEE support").
+> 
+> > 
+> >> Fixes: 2a10154abcb7 ("net: phy: dp83867: Add TI dp83867 phy")
+> > 
+> > What has this Fixes: tag got to do with phylink?
+> I think that the phylink commit is just enabling by default the EEE support,
+> and my commit is not really fixing that. It is why I didn't put a Fixes: tag
+> pointing to that.
+> 
+> I’ve tried to trace the behavior, but it’s quite complex. From my testing, I
+> can summarize the situation as follows:
+> 
+> - ethtool, after that patch, returns:
+> ethtool --show-eee end0
+> EEE settings for end0:
+>         EEE status: enabled - active
+>         Tx LPI: 1000000 (us)
+>         Supported EEE link modes:  100baseT/Full
+>                                    1000baseT/Full
+>         Advertised EEE link modes:  100baseT/Full
+>                                     1000baseT/Full
+>         Link partner advertised EEE link modes:  100baseT/Full
+>                                                  1000baseT/Full
+> - before that patch returns, after boot:
+> EEE settings for end0:
+>         EEE status: disabled
+>         Tx LPI: disabled
+>         Supported EEE link modes:  100baseT/Full
+>                                    1000baseT/Full
+>         Advertised EEE link modes:  Not reported
+>         Link partner advertised EEE link modes:  100baseT/Full
+>                                                  1000baseT/Full
+> - Enabling EEE manually using ethtool, triggers the problem too (and ethtool
+> -show-eee report eee status enabled):
+> ethtool --set-eee end0 eee on tx-lpi on
+> ethtool --show-eee end0
+> EEE settings for end0:
+>         EEE status: enabled - active
+>         Tx LPI: 1000000 (us)
+>         Supported EEE link modes:  100baseT/Full
+>                                    1000baseT/Full
+>         Advertised EEE link modes:  100baseT/Full
+>                                     1000baseT/Full
+>         Link partner advertised EEE link modes:  100baseT/Full
+>                                                  1000baseT/Full
+> 
+> I understand Russell point of view but from my point of view EEE is now
+> enabled by default, and before it wasn't, at least on my setup.
 
-Okay, got it. This is OK by me then.
+We like to try to understand what is going on, and give accurate
+descriptions. You have given us important information here, which at
+minimum should go into the commit message, but more likely, it will
+help lead us to the correct fix.
 
-Thanks Dmitry,
+So, two things here. You say:
 
--- 
-heikki
+> I think that the phylink commit is just enabling by default the EEE support,
+
+That needs confirming, because you are blaming the conversion to
+phylink, not that phylink now enabled EEE by default. Russell also
+tries to avoid behaviour change, which this clearly is. We want a
+better understanding what caused this behaviour change.
+
+Also:
+
+> - Enabling EEE manually using ethtool, triggers the problem too (and ethtool
+> -show-eee report eee status enabled):
+
+This indicates EEE has always been broken. This brokenness has been
+somewhat hidden in the past, and it is the change in behaviour in
+phylink which exposed this brokenness. A commit message using these
+words would be much more factually correct, and it would also fit with
+the Fixes: tag you used.
+
+So, please work with Russell. I see two things which would be good to
+understand before a new version of the patch is submitted:
+
+What cause the behaviour change such that EEE is now enabled? Was it
+deliberate? Should something be change to revert that behaviour
+change?
+
+Given that EEE has always been broken, do we understand it
+sufficiently to say it is not fixable? Is there an errata? Are we sure
+it is the PHY and not the MAC which is broken?
+
+	Andrew
 
