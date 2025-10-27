@@ -1,437 +1,181 @@
-Return-Path: <linux-kernel+bounces-872785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79578C12017
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:26:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCC5C1203E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4EB1A2149D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEFC23B816F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3773314BC;
-	Mon, 27 Oct 2025 23:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDD832E6B5;
+	Mon, 27 Oct 2025 23:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E7E4LM8d"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZLEYKlS"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08235330D43;
-	Mon, 27 Oct 2025 23:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AB232ED2B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607398; cv=none; b=C5dY3tf3PTfSDAXtcXBGH5pVE+NSo/NAvzf5RSfGOmqtYowLEEWX9mFiuHjwMXVdza7PCokU90wtblf3QQNXkZ2TbtPE3k8cBVxjuQI5F9QWUHPpA3mDTUEnFT+uuKvLBBsKuXvlepMO7QWI4co21vqP8YGg2iHPwl1IQuBrzdk=
+	t=1761607353; cv=none; b=tSZqNMXk79spEGs6L5XFz+cxfd1sVDgmUZ4ikyWqcXEv9mBsgCeoAtiJE9vHIEgREthhiGMO+vgM1Qp49ko+yLjAWU1NqDQLnHNR6juVPe63gawi1hVmv/Qu28b6pZxto5KqHfXeBp8cORG1bYBIX/wBCUw8/yZdaEwnMa/U99s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607398; c=relaxed/simple;
-	bh=VQVKdTMAyi6QHS87Ca/J1BY2fX1H1tye+2yFXSneJ1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MzHwBeA+1NvAGBiHIetmrMbex/jCvK6c5jL2QRErgYf6uv+e2bANZYLpPLcJleRrrBNhNFTC86GqDLAgmCnzJGYageaHzM4JfqaehaTDesIGTsj5BpuJ09WsAYJfMfgsAh7zKlHhoV6d2ikTlm0cCF6nvYcmBsFE9ASiu+g+Mjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E7E4LM8d; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761607395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zUole0fevJNTWH/QrfuoUDEj281F+dD7fcGUfbGb1V8=;
-	b=E7E4LM8dJ/rehFz/AdqoNoWUiisJMzEZYiPcspGMTpSMJc+isYT5KpRiWBUtC5bvTBEnNk
-	13DwqOcebTOKCNjdutYBUn2zf223HSkRZ5HqzVB273/Zs6Rdy+/02MadYY8X6GmkTqxUzb
-	SEzFrJjrfveD/JJz9dwULbYzl65J9uY=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH v2 23/23] bpf: selftests: PSI struct ops test
-Date: Mon, 27 Oct 2025 16:22:06 -0700
-Message-ID: <20251027232206.473085-13-roman.gushchin@linux.dev>
-In-Reply-To: <20251027232206.473085-1-roman.gushchin@linux.dev>
-References: <20251027232206.473085-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1761607353; c=relaxed/simple;
+	bh=mJWc8tuamwRvKBHwqvZqDIpGBJpXDSGuAbIa52ymKvw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YjtOIYUGL2dK99EOBeOGcRc5auzHHSYnAyYJw7hvEkjmfmVkNiNjnRPW+TF8a6FoK0F+AGBMYUxUHZXIpFmDxAcifbwdJVfu2s647eGmWRr6q78/QFYIE9Z4ZRBME6jj2NsKX995dLX7aKpDQwVRZBmEFdHYDpZHCfe77DIaAyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZLEYKlS; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso17120665e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761607349; x=1762212149; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mJWc8tuamwRvKBHwqvZqDIpGBJpXDSGuAbIa52ymKvw=;
+        b=gZLEYKlSyaY7U9LEWIi47p19Q9/JOhfXOlb4Hdw+HXaZHLdu1LYjJvDkdaFXCk7XBU
+         ZDrusxMzNEAbTalACjyz4XWHZ65PHNsDDYdsR2GYD0WyNc1+8UtxpMF82gJwoHnPU+G5
+         5PdK0yOdmjWeQGhahsllfnBXrWTb3QkzbS7udTfBvUHwXv5lZdrWFHkEwidZAb+mbicz
+         a7FCABirZVq6Ib3D1aLmAIjiqz8XMJX7THpALho+rA+H+SLNYMMJAMMNwiuMJaOatZ+W
+         k4MscIy/Yh+TID/wg6A8Zhd61HkCVvxS+YR7giXlnsqdE9Z5zTTo3+acZGCsm6SnAmqg
+         0jvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761607349; x=1762212149;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mJWc8tuamwRvKBHwqvZqDIpGBJpXDSGuAbIa52ymKvw=;
+        b=Cc08ye+oQdOLVj34TNVW0sxfsRn/07P9hdxygCFlzovkXOIQkv7JiqO7HjJt6widjn
+         ha1XOU1o9tEJPbt0jE2+lpt8IATJ2fQdRz6kHvsneD4irGaQy3YgNns3aKJxd5HxqJ5d
+         iYxK3wfhX+9KzDnAQQexMQtyx5ftY3NQRN3SFRDuxkmAx5b9x1BNHDZ0WMeFzVycd5gB
+         I1m1cvuxVAEWSvA3vmnEzZH6/e3kZVlst7ZX4ewIhhDza16lcefDlySMZeC2XSWo1iAW
+         f641QfnPj3VbmW8yG+2QOlFNiE/LK8r9LR4qPEH9k9i/O7Cr73SKhQOWMbx2JZAalfEC
+         MSKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtST7CnhnwLJgCYWEQWdNc572CvsYzH7ClMzW9xghvzpJ5qxE9efVlRy/HLXGKJ2Ns50sQcypo/Xbo+is=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGVvQqqxAAu7pUpHYmFwox91bFMTDaRIqDWb9wqbQ3gesHVSvG
+	vVMaqzgxVDsYhjUySVlX0I8gz+X6TloxKXvEbWhkwHR0ht7yF+Lm+pGA
+X-Gm-Gg: ASbGnctXn3NnYi2EGSakPTExZbc9pdd9+DN0x0SUGHIhJy99CJ4PPiLhqnzcFLnINyV
+	fxD1KAvKta3RNTldxcwZPY8FdkfG05Gqk3BRuL+MS22aH35URTtHYV/bUeEQb1QcXHFKaoZxMWQ
+	+bsNGQZMOO+bo7pQ05t75Wi8UumqYosx/PWtUkuRyBcNThbNGSUUIzpFhlYU7lrZGnaezkEodJc
+	PGhwu/SxNf/be81VoozrfVD9pwFEii0UztiRwYhU0PHCTExXyjjWgoEKvRoRWcluFhAuYZJyQGH
+	hEq2SQYfmg+iddpk6Er+nu6pNNlHAmYdH7uA2tWfF9IqyiJkmFATZOBIIdwjxdQqhUsucsKGQE4
+	UH8WTWzUUeffkAngDI8pGOSlIHGDUP4B89p4hG5tXrscUZmTzf0bNMAc3zQpxYKUqsRK2rSFDk+
+	rrDCXMmx1vRAE8zS63uWciAnA=
+X-Google-Smtp-Source: AGHT+IGTSUIpvShoog+TN7Pzwlu9mDf4kFChPIBSClN9rsKLNQK1m4VTu25fdbNyZoOiI5cHKpmkOw==
+X-Received: by 2002:a05:600c:3f0d:b0:46e:3f75:da49 with SMTP id 5b1f17b1804b1-47717e7a69amr9320825e9.37.1761607348617;
+        Mon, 27 Oct 2025 16:22:28 -0700 (PDT)
+Received: from vitor-nb.Home (bl19-170-125.dsl.telepac.pt. [2.80.170.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771900dad7sm4540145e9.6.2025.10.27.16.22.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 16:22:28 -0700 (PDT)
+Message-ID: <2c3e4bdefb306dc89c15bebc549d854ea2b4cc32.camel@gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: PCI: ti,j721e-pci-host: Add
+ optional regulator supplies
+From: Vitor Soares <ivitro@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Vitor Soares <vitor.soares@toradex.com>, linux-pci@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 27 Oct 2025 23:22:26 +0000
+In-Reply-To: <20251020-kickass-fervent-capybara-9c48a0@kuoka>
+References: <20251014112553.398845-1-ivitro@gmail.com>
+	 <20251014112553.398845-2-ivitro@gmail.com>
+	 <20251020-kickass-fervent-capybara-9c48a0@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Add a PSI struct ops test.
+Hi Krzysztof,
 
-The test creates a cgroup with two child sub-cgroups, sets up
-memory.high for one of those and puts there a memory hungry
-process (initially frozen).
+Thank you for the feedback.
 
-Then it creates 2 PSI triggers from within a init() BPF callback and
-attaches them to these cgroups.  Then it deletes the first cgroup,
-creates another one and runs the memory hungry task. From the cgroup
-creation callback the test is creating another trigger.
+On Mon, 2025-10-20 at 13:14 +0200, Krzysztof Kozlowski wrote:
+> On Tue, Oct 14, 2025 at 12:25:48PM +0100, Vitor Soares wrote:
+> > From: Vitor Soares <vitor.soares@toradex.com>
+> >=20
+> > Add optional regulator supply properties for PCIe endpoints on TI SoCs.
+> > Some boards provide dedicated regulators for PCIe devices, such as
+> > 1.5V (miniPCIe), 3.3V (common for M.2 or miniPCIe), or 12V
+> > (for high-power devices). These supplies are now described as optional
+> > properties to allow the driver to control endpoint power where supporte=
+d.
+>=20
+> Last sentence is completely redundant. Please do not describe DT, we
+> all can read the patch. Driver is irrelevant here.
+>=20
+>=20
+Ack, I will remove last sentence.
 
-The memory hungry task is creating a high memory pressure in one
-memory cgroup, which triggers a PSI event. The PSI BPF handler
-declares a memcg oom in the corresponding cgroup. Finally the checks
-that both handle_cgroup_free() and handle_psi_event() handlers were
-executed, the correct process was killed and oom counters were
-updated.
+>=20
+> How you described here and in descriptions, suggests these are rather
+> port properties, not the controller.
 
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
----
- .../selftests/bpf/prog_tests/test_psi.c       | 238 ++++++++++++++++++
- tools/testing/selftests/bpf/progs/test_psi.c  |  82 ++++++
- 2 files changed, 320 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/test_psi.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_psi.c
+You are right - these supplies power the PCIe slot/connector, not the contr=
+oller
+itself. However, as per my understanding, the current kernel practice is to
+place slot supplies in the root complex node rather than the endpoint node.=
+ as
+seen in e.g.:
+- imx6q-pcie.yaml
+- rockchip-dw-pcie.yaml
+- rcar-pci-host.yaml
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_psi.c b/tools/testing/selftests/bpf/prog_tests/test_psi.c
-new file mode 100644
-index 000000000000..b294cea0a6fe
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/test_psi.c
-@@ -0,0 +1,238 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <test_progs.h>
-+#include <bpf/btf.h>
-+#include <bpf/bpf.h>
-+
-+#include "cgroup_helpers.h"
-+#include "test_psi.skel.h"
-+
-+enum psi_res {
-+	PSI_IO,
-+	PSI_MEM,
-+	PSI_CPU,
-+	PSI_IRQ,
-+	NR_PSI_RESOURCES,
-+};
-+
-+struct cgroup_desc {
-+	const char *path;
-+	unsigned long long id;
-+	int pid;
-+	int fd;
-+	size_t target;
-+	size_t high;
-+	bool victim;
-+};
-+
-+#define MB (1024 * 1024)
-+
-+static struct cgroup_desc cgroups[] = {
-+	{ .path = "/psi_test" },
-+	{ .path = "/psi_test/cg1" },
-+	{ .path = "/psi_test/cg2", .target = 500 * MB,
-+	  .high = 40 * MB, .victim = true },
-+};
-+
-+static int spawn_task(struct cgroup_desc *desc)
-+{
-+	char *ptr;
-+	int pid;
-+
-+	pid = fork();
-+	if (pid < 0)
-+		return pid;
-+
-+	if (pid > 0) {
-+		/* parent */
-+		desc->pid = pid;
-+		return 0;
-+	}
-+
-+	/* child */
-+	ptr = (char *)malloc(desc->target);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	memset(ptr, 'a', desc->target);
-+
-+	while (1)
-+		sleep(1000);
-+
-+	return 0;
-+}
-+
-+static void setup_environment(void)
-+{
-+	int i, err;
-+
-+	err = setup_cgroup_environment();
-+	if (!ASSERT_OK(err, "setup_cgroup_environment"))
-+		goto cleanup;
-+
-+	for (i = 0; i < ARRAY_SIZE(cgroups); i++) {
-+		cgroups[i].fd = create_and_get_cgroup(cgroups[i].path);
-+		if (!ASSERT_GE(cgroups[i].fd, 0, "create_and_get_cgroup"))
-+			goto cleanup;
-+
-+		cgroups[i].id = get_cgroup_id(cgroups[i].path);
-+		if (!ASSERT_GT(cgroups[i].id, 0, "get_cgroup_id"))
-+			goto cleanup;
-+
-+		/* Freeze the top-level cgroup and enable the memory controller */
-+		if (i == 0) {
-+			err = write_cgroup_file(cgroups[i].path, "cgroup.freeze", "1");
-+			if (!ASSERT_OK(err, "freeze cgroup"))
-+				goto cleanup;
-+
-+			err = write_cgroup_file(cgroups[i].path, "cgroup.subtree_control",
-+						"+memory");
-+			if (!ASSERT_OK(err, "enable memory controller"))
-+				goto cleanup;
-+		}
-+
-+		/* Set memory.high */
-+		if (cgroups[i].high) {
-+			char buf[256];
-+
-+			snprintf(buf, sizeof(buf), "%lu", cgroups[i].high);
-+			err = write_cgroup_file(cgroups[i].path, "memory.high", buf);
-+			if (!ASSERT_OK(err, "set memory.high"))
-+				goto cleanup;
-+
-+			snprintf(buf, sizeof(buf), "0");
-+			write_cgroup_file(cgroups[i].path, "memory.swap.max", buf);
-+		}
-+
-+		/* Spawn tasks creating memory pressure */
-+		if (cgroups[i].target) {
-+			char buf[256];
-+
-+			err = spawn_task(&cgroups[i]);
-+			if (!ASSERT_OK(err, "spawn task"))
-+				goto cleanup;
-+
-+			snprintf(buf, sizeof(buf), "%d", cgroups[i].pid);
-+			err = write_cgroup_file(cgroups[i].path, "cgroup.procs", buf);
-+			if (!ASSERT_OK(err, "put child into a cgroup"))
-+				goto cleanup;
-+		}
-+	}
-+
-+	return;
-+
-+cleanup:
-+	cleanup_cgroup_environment();
-+}
-+
-+static int run_and_wait_for_oom(void)
-+{
-+	int ret = -1;
-+	bool first = true;
-+	char buf[4096] = {};
-+	size_t size;
-+
-+	/* Unfreeze the top-level cgroup */
-+	ret = write_cgroup_file(cgroups[0].path, "cgroup.freeze", "0");
-+	if (!ASSERT_OK(ret, "unfreeze cgroup"))
-+		return -1;
-+
-+	for (;;) {
-+		int i, status;
-+		pid_t pid = wait(&status);
-+
-+		if (pid == -1) {
-+			if (errno == EINTR)
-+				continue;
-+			/* ECHILD */
-+			break;
-+		}
-+
-+		if (!first)
-+			continue;
-+		first = false;
-+
-+		/* Check which process was terminated first */
-+		for (i = 0; i < ARRAY_SIZE(cgroups); i++) {
-+			if (!ASSERT_OK(cgroups[i].victim !=
-+				       (pid == cgroups[i].pid),
-+				       "correct process was killed")) {
-+				ret = -1;
-+				break;
-+			}
-+
-+			if (!cgroups[i].victim)
-+				continue;
-+
-+			/* Check the memcg oom counter */
-+			size = read_cgroup_file(cgroups[i].path, "memory.events",
-+						buf, sizeof(buf));
-+			if (!ASSERT_OK(size <= 0, "read memory.events")) {
-+				ret = -1;
-+				break;
-+			}
-+
-+			if (!ASSERT_OK(strstr(buf, "oom_kill 1") == NULL,
-+				       "oom_kill count check")) {
-+				ret = -1;
-+				break;
-+			}
-+		}
-+
-+		/* Kill all remaining tasks */
-+		for (i = 0; i < ARRAY_SIZE(cgroups); i++)
-+			if (cgroups[i].pid && cgroups[i].pid != pid)
-+				kill(cgroups[i].pid, SIGKILL);
-+	}
-+
-+	return ret;
-+}
-+
-+void test_psi(void)
-+{
-+	struct test_psi *skel;
-+	u64 deleted_cgroup_id;
-+	int new_cgroup_fd;
-+	u64 new_cgroup_id;
-+	int err;
-+
-+	setup_environment();
-+
-+	skel = test_psi__open_and_load();
-+	err = libbpf_get_error(skel);
-+	if (CHECK_FAIL(err))
-+		goto cleanup;
-+
-+	skel->bss->deleted_cgroup_id = cgroups[1].id;
-+	skel->bss->high_pressure_cgroup_id = cgroups[2].id;
-+
-+	err = test_psi__attach(skel);
-+	if (CHECK_FAIL(err))
-+		goto cleanup;
-+
-+	/* Delete the first cgroup, it should trigger handle_cgroup_offline() */
-+	remove_cgroup(cgroups[1].path);
-+
-+	new_cgroup_fd = create_and_get_cgroup("/psi_test_new");
-+	if (!ASSERT_GE(new_cgroup_fd, 0, "create_and_get_cgroup"))
-+		goto cleanup;
-+
-+	new_cgroup_id = get_cgroup_id("/psi_test_new");
-+	if (!ASSERT_GT(new_cgroup_id, 0, "get_cgroup_id"))
-+		goto cleanup;
-+
-+	/* Unfreeze all child tasks and create the memory pressure */
-+	err = run_and_wait_for_oom();
-+	CHECK_FAIL(err);
-+
-+	/* Check the result of the handle_cgroup_offline() handler */
-+	deleted_cgroup_id = skel->bss->deleted_cgroup_id;
-+	ASSERT_EQ(deleted_cgroup_id, cgroups[1].id, "deleted cgroup id");
-+
-+	/* Check the result of the handle_cgroup_online() handler */
-+	ASSERT_EQ(skel->bss->new_cgroup_id, new_cgroup_id,
-+		  "new cgroup id");
-+
-+cleanup:
-+	cleanup_cgroup_environment();
-+	test_psi__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_psi.c b/tools/testing/selftests/bpf/progs/test_psi.c
-new file mode 100644
-index 000000000000..4ddec7ec3eda
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_psi.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define PSI_FULL 0x80000000
-+
-+/* cgroup which will experience the high memory pressure */
-+u64 high_pressure_cgroup_id;
-+
-+/* cgroup which will be deleted */
-+u64 deleted_cgroup_id;
-+
-+/* cgroup which will be created */
-+u64 new_cgroup_id;
-+
-+/* cgroup which was deleted */
-+u64 deleted_cgroup_id;
-+
-+char constraint_name[] = "CONSTRAINT_BPF_PSI_MEM";
-+
-+SEC("struct_ops.s/init")
-+int BPF_PROG(psi_init, struct bpf_psi *bpf_psi)
-+{
-+	int ret;
-+
-+	ret = bpf_psi_create_trigger(bpf_psi, high_pressure_cgroup_id,
-+				     PSI_MEM | PSI_FULL, 100000, 1000000);
-+	if (ret)
-+		return ret;
-+
-+	return bpf_psi_create_trigger(bpf_psi, deleted_cgroup_id,
-+				      PSI_IO, 100000, 1000000);
-+}
-+
-+SEC("struct_ops.s/handle_psi_event")
-+void BPF_PROG(handle_psi_event, struct bpf_psi *bpf_psi, struct psi_trigger *t)
-+{
-+	u64 cgroup_id = t->cgroup_id;
-+	struct mem_cgroup *memcg;
-+	struct cgroup *cgroup;
-+
-+	cgroup = bpf_cgroup_from_id(cgroup_id);
-+	if (!cgroup)
-+		return;
-+
-+	memcg = bpf_get_mem_cgroup(&cgroup->self);
-+	if (!memcg) {
-+		bpf_cgroup_release(cgroup);
-+		return;
-+	}
-+
-+	bpf_out_of_memory(memcg, 0, BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK,
-+			  constraint_name);
-+
-+	bpf_put_mem_cgroup(memcg);
-+	bpf_cgroup_release(cgroup);
-+}
-+
-+SEC("struct_ops.s/handle_cgroup_online")
-+void BPF_PROG(handle_cgroup_online, struct bpf_psi *bpf_psi, u64 cgroup_id)
-+{
-+	new_cgroup_id = cgroup_id;
-+
-+	bpf_psi_create_trigger(bpf_psi, cgroup_id, PSI_IO, 100000, 1000000);
-+}
-+
-+SEC("struct_ops.s/handle_cgroup_offline")
-+void BPF_PROG(handle_cgroup_offline, struct bpf_psi *bpf_psi, u64 cgroup_id)
-+{
-+	deleted_cgroup_id = cgroup_id;
-+}
-+
-+SEC(".struct_ops.link")
-+struct bpf_psi_ops test_bpf_psi = {
-+	.init = (void *)psi_init,
-+	.handle_psi_event = (void *)handle_psi_event,
-+	.handle_cgroup_online = (void *)handle_cgroup_online,
-+	.handle_cgroup_offline = (void *)handle_cgroup_offline,
-+};
--- 
-2.51.0
+This seems consistent with those existing bindings, but please let me know =
+if
+I=E2=80=99m overlooking something specific to this case.
 
+>=20
+> >=20
+> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> > ---
+> > =C2=A0.../devicetree/bindings/pci/ti,j721e-pci-host.yaml | 14 +++++++++=
++++++
+> > =C2=A01 file changed, 14 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.ya=
+ml
+> > b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+> > index c704099f134b..a20b03406448 100644
+> > --- a/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+> > @@ -110,6 +110,18 @@ properties:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupts:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > =C2=A0
+> > +=C2=A0 vpcie1v5-supply:
+>=20
+> How is it called in this device datasheet (not the board schematics)?
+
+The TI SoC datasheet describes the controller interface but doesn=E2=80=99t=
+ define these
+external supply rails - they are board-level regulators specific to the slo=
+t.
+
+>=20
+> > +=C2=A0=C2=A0=C2=A0 description: 1.5V regulator used to power PCIe inte=
+rfaces,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 typically present on miniPCIe slots.
+>=20
+> Best regards,
+> Krzysztof
+>=20
+
+Best regards,
+Vitor Soares
 
