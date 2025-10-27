@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-872473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35498C11484
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:56:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE67CC114B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 275D1352994
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:56:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CA2C4FEE9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80DE30C630;
-	Mon, 27 Oct 2025 19:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2A8304BDD;
+	Mon, 27 Oct 2025 19:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkV0gjLe"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YCWrZn+X"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28AB2DF14D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92024175BF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761594976; cv=none; b=gDuYaotsDWt3lBSkvhdvtqkgpVfblTJ8RQWGVEaUI90cBntwCyYIvnFyYCqdQYyTQfmXsSoh4aKvrOP0kPSJdSVMLLfsD5q/sD1ykQMQLBwEgOIRLTVcU9jTNWUUYVxrs1WGErO6fajc4HnS8IGYwxNR3rVsEDvKuRN0hcLrJF4=
+	t=1761595035; cv=none; b=K8tAwNbBPa8ODgDfWb5aLI57YaaRv76h86SeQWyzkLVuJfwRrSxfATDbljsvEOJ7uciJ7P0rg1kb+NWZTpPs29LeHvbHkMGtLeFVBsOseHvTupdO53KJffOAO9DOQLHkVK86HPTTavh87q2slgB4vfJHjJwOi7WBLVyQ1WJ7zNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761594976; c=relaxed/simple;
-	bh=Av/b87o60kt4fRKuXDsBRbb4urtiij5xxToz7XJ6ECA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ByqxUq77p08uCBR9aWfQ9UY/FFOH/+CpB9OvpEpJaaZcSRHKybQstDuE/j3qxnpjcRc19fb+f6ISAyww5OSnDQifLmNRbpdm83cLPqiFNJlhzUWE7CHPv93RVOVZmDSbpV1xr/B7T7Hy/YHjMZkNbW+DBNRcNxXYNNswpdXZiLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkV0gjLe; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee64bc6b90so3785056f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761594973; x=1762199773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Av/b87o60kt4fRKuXDsBRbb4urtiij5xxToz7XJ6ECA=;
-        b=TkV0gjLePAiR9NVnGk0Ebkp8ltL6D1pW8xT3+0GVNZnMCEvF8UbggHtCA7+hVU/KWT
-         wCc+CeNX9Nb4sZ45MID5qYrtTlePJS0XJjl/N6oobWa/8nCD+CAqhTzmlf/Hg/aiu14a
-         jx85C2CNleixLgywFw4Z3U1iO8440DPa8cWR94M13lfX+1qvMLPZq2eqh9CMF9mpz2cI
-         1E5TuBD8EZoS3wuUglXCscQVVvez6JQuFsbYd82ZQZchMPUgC/+Okrd9zfAgwgTvxr3D
-         73L9Q574gv+C2wb+9rJbaBXTjyiwEyshoZQgb2KgBp4VWiIfH33ISwC0apYgGujfQONi
-         OfxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761594973; x=1762199773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Av/b87o60kt4fRKuXDsBRbb4urtiij5xxToz7XJ6ECA=;
-        b=lzDK3Uqp/6prdz0hieDFs3ZYJLLpLeeGUXTobNRxD3r2kvdDH6IdkP8QBt2NJTseyV
-         vV0tU7r+zggYgsHdC5Ln9pnSfUn7iw/zaVRKwM62yL0kgXftvL1qHm8DW8oFN/jxhjWx
-         KDeO7JvW6++QxXAXDbh539nxHTkuiyGzoaygUwmjXesH0+00opvLejtnzXYbg/xN4Yrh
-         f1WWgsyg1O+CACYKYGiDB7uFdoPuP8jssHIMNELrBnRygj0ONP2oyQhY4T2/Yg32sX7T
-         zaCTg0v0b/d28VnW9R860+uLrkSR2qllxTCP0//P8B3oOCJmetENirZKPKCexw8CqcSL
-         ATjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUq8b3eIoMMcOZgn0yDLvk8pcOo+8Cy/p5ADZYKLBVOR+LFG/noAg8lwhVlb4xAWZ5diCVdhNZNEYX20Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk6I6LlbWm9n6JG001WY2QGnay58WoewolQC42VdlQKIHH2RwR
-	Z8wel8r5ZyTBODyn1PbU2+e7BUmuQEC97McXgVBt+rc0/uFVe0PNTPQyClNO1puV94Binw3Q3Ef
-	OveunashzbwHKHIqNDOqFd6OS7O1eDNU=
-X-Gm-Gg: ASbGnctszNXgL8h5QIt6/p0n8xYJ9QXoRx5w0014V0G/tU+4TDcokgURIfmJmEjkOoO
-	FinBqwb7pxD2FTjSaEIgzbJCCYZFKpiLGw+IpDLphRJOmx61xCvJaossK0aRynoyZtQh6gnL7Mr
-	KffhTsQ7V3mGsB0XGGOSyaQ3agPYCHmCuIXL2FZ+fq5VkssuW4+ayVbxBya9+Cz4ecW6atq5kKF
-	UNCVAzTDLRoQxwS3Z+9SZEF62VT2LnDgWpStRc/qPEjJyuIUJZ2yuM/DZMu0Uhnn2Pc3fibmuCE
-	F7IUbM9GMd0=
-X-Google-Smtp-Source: AGHT+IGkJe6IxQG3ZzGtCnUTzisW5p8uuoW+35RXoa4Vr2RavhP+QJRYfvEMxbh86JMQ6VV/YhWT8jH06guakc/3B9k=
-X-Received: by 2002:a05:6000:2383:b0:429:8d28:4079 with SMTP id
- ffacd0b85a97d-429a7e86f31mr788123f8f.62.1761594972792; Mon, 27 Oct 2025
- 12:56:12 -0700 (PDT)
+	s=arc-20240116; t=1761595035; c=relaxed/simple;
+	bh=qAPZZex0lVUhqdgvO2+gS+2GyG7nqZeqDTQDdU5S9vo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Fr3Xtk/feu4i97T8DrBLYqOo9U0+2/hgqd0gLCBcrvqG2URPnRGpIxIOwyf2j5s3NbubsrZt4BIUnxtf5stFgkMqVm75XKFIQsO8YsnO2N0xlPv/61gVxf8kiIp5bWwTYN38JR1qoXIfrZLKJYwEvLatYhL0AnorZ+H/b4LvWxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YCWrZn+X; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761595028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3Azl3a9SNX0GoOWOneAU2iKMSfUOpvleOE0L4lf+CU=;
+	b=YCWrZn+X5Jo3XCCmcY/VjxSa2nEnbNv831sE8IWd23Aao0H4O9vaHhBUcbhaaF6xvhOB6j
+	0XNOSL7SbImfCucK00i3RR9jYegS8K8pcwRwwsZXmVHpzl9YIBq8QE1MvhiazltPKpz2sh
+	Pgr/pf7cSk5S9ejJxt1179vzFKb5/uw=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com> <20251027135423.3098490-4-dolinux.peng@gmail.com>
-In-Reply-To: <20251027135423.3098490-4-dolinux.peng@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 27 Oct 2025 12:55:59 -0700
-X-Gm-Features: AWmQ_blwlF2Rd-fsxsnykdevc7MNfMtJZXyA0h87WpXOe2WdLWBp8FO-pfhQLEc
-Message-ID: <CAADnVQLdN1mU-jR70WkkrWcfHXU1OOKDfWLdHS5Ji3-Fe++-xA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
- verification and binary search
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] x86/smpboot: Mark native_play_dead() as __noreturn
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <i4o6cr4x364xsk7ftas5guggjt4xdvawurrohveahi75iba5aj@dl6plusoxtin>
+Date: Mon, 27 Oct 2025 20:56:18 +0100
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Kai Huang <kai.huang@intel.com>,
+ Brian Gerst <brgerst@gmail.com>,
+ Thomas Huth <thuth@redhat.com>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ Zheyun Shen <szy0127@sjtu.edu.cn>,
+ Kevin Loughlin <kevinloughlin@google.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Li Chen <chenl311@chinatelecom.cn>,
+ Tim Chen <tim.c.chen@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <EA25BB49-DCF0-4868-878D-8BC5217380A1@linux.dev>
+References: <20251027155107.183136-1-thorsten.blum@linux.dev>
+ <i4o6cr4x364xsk7ftas5guggjt4xdvawurrohveahi75iba5aj@dl6plusoxtin>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> +
-> +/*
-> + * btf_sort.c is included directly to avoid function call overhead
-> + * when accessing BTF private data, as this file is shared between
-> + * libbpf and kernel and may be called frequently (especially when
-> + * funcgraph-args or func-args tracing options are enabled).
-> + */
-> +#include "../../tools/lib/bpf/btf_sort.c"
+On 27. Oct 2025, at 20:28, Josh Poimboeuf wrote:
+> On Mon, Oct 27, 2025 at 04:51:02PM +0100, Thorsten Blum wrote:
+>> native_play_dead() ends by calling the non-returning function
+>> hlt_play_dead() and therefore also never returns.
+>> 
+>> The !CONFIG_HOTPLUG_CPU stub version of native_play_dead()
+>> unconditionally calls BUG() and does not return either.
+>> 
+>> Add the __noreturn attribute to both function definitions and their
+>> declaration to document this behavior and to potentially improve
+>> compiler optimizations.
+>> 
+>> Remove the obsolete comment, and add native_play_dead() to the objtool's
+>> list of __noreturn functions.
+>> 
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> 
+> Is there an objtool warning that this fixes?  If so, it would be helpful
+> to put it in the description above.
 
-function call overhead? I don't believe it's measurable.
+Not that I'm aware of.
 
-Don't do it on libbpf side either.
-
-pw-bot: cr
 
