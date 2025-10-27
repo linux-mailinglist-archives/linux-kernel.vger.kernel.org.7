@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-871279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018E7C0CCB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:57:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9688BC0CCC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E4D18922BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:57:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC5F44F12E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E272F6912;
-	Mon, 27 Oct 2025 09:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E742F3C23;
+	Mon, 27 Oct 2025 09:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuMef+jl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hJhThr6T";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ncxeZr/B";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o+PNqcrg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5v2b7Iyf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51572F28FF;
-	Mon, 27 Oct 2025 09:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F2419E968
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761558993; cv=none; b=gjC7pVEiJyNcV+EgSPZqGVSVBvEwIJ8tayXKPAn4kA2zofPLL5t8Ts6KIUtSg8y5unY4yPhF/lO0Z1/0PPjOoDDM3Sin7F7+2Jr3HwXFqW+SYQBYeoybP6EOjNnBh+gjYsbLZ46dvUh7xVosLyqUZhnhLCo6XZtjhESKzeN+Om4=
+	t=1761558958; cv=none; b=RRL2H8DZfsy7qh2JfoPXH3l0TL1KS17gsEbtnFWEyXM+fkuvGStbjpEqLqQltR0O3s+WU76Gl3zPGhwBlF/KA7p0Tqkz3UGiboFCfbbYYgyQZAMh2LzYcPDEZuEkwrJSqCoIxnWUlHW776QIgXztzHVWLFvrhdzs+9NTAGyXdrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761558993; c=relaxed/simple;
-	bh=pC+eGt5qR3M3nYfPyNbPQUDtDiJDp1JmXs8kzQjP70M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TbXzg6AUE661TPKuV4O3c0UI3KW3dN97FMGMeuhGybD7foKrRujiYqjJnSKRbHWj9wkwFhQIFwASVeX1rfhmMNR4FNlM7zVP12pysdSI2GMdy3pol2jbsDOCSN7INQs53+xygQ71tEwRtUEmntT8VL3pABqmkMusEUpwFqakiuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuMef+jl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC34C4CEFF;
-	Mon, 27 Oct 2025 09:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761558992;
-	bh=pC+eGt5qR3M3nYfPyNbPQUDtDiJDp1JmXs8kzQjP70M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YuMef+jlbvnSIszQtRbbNbzNF/skEyrkvd626H5XDvcCCR+znXv9sEJ4s3scLOt4a
-	 1S3zYonPGAsbp8kNwGsRUCG3ZbDJ+JzU47QcWxiH7hnCDqWhDu62HsmRuW6WwUw0kO
-	 PJer9YzUlI1vTMrNEHIGgl0w+vHHI9O/pKhcutr3IQ2xDZiFgbRqBc7EMj9kV3hcO2
-	 hB1EGrHo/MEDkEATbLEiNxj76xl+Ye9q1ZEAEQNQkQBLSe8L0bW2PwdNgyEYljxL0b
-	 wWEQiQP3Kyl4+x3emER1M4AvL8IwEjNpGWBTx1TIpXzqzsnPytu/8P/lz9Aq/DtEyg
-	 djADykjNi0oVA==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dan.j.williams@intel.com,
-	aik@amd.com,
-	lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Subject: [PATCH RESEND v2 01/12] KVM: arm64: RMI: Export kvm_has_da_feature
-Date: Mon, 27 Oct 2025 15:25:51 +0530
-Message-ID: <20251027095602.1154418-2-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
+	s=arc-20240116; t=1761558958; c=relaxed/simple;
+	bh=UfCLvv3D/FHQpRiOiHwlLZb87bJPcCR06sZGGlg/3Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C3vD3mlqLwdDTtSFCsJ8ExZ9CRUPjYP23HmlcCB+PbZfTCGp/8kowTItw/Cs9+ivROYUQ1Lz6H0STYzcT5HfKwcGM2FglocO+zvPly2BapIZqqZFs9YEwSnRcB7R/a1meUgRq+IUH9V7QLLNfwT4TKbocs5rQ8IPUIuODk/XEjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hJhThr6T; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ncxeZr/B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o+PNqcrg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5v2b7Iyf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 23BEF218F8;
+	Mon, 27 Oct 2025 09:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761558955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+TESXJivhsVzke6gCi9MxzocOEMcQDQbrv8+ih2jzD8=;
+	b=hJhThr6T29fzVREluqb3hIvyxRa7ZFpoBH1rzIqnaqF/e+uPZeJ658pOM6rmZaTvWMhhLl
+	2YqvpxJzwxmxJ7M7aI29PmM9M5COPkwNuoCeJWbMmfBueV79sTdWc0Sq/26cUtLa+AsqPB
+	OOZYhbBqU0Vp7uLQFTLCgguKziz1KHE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761558955;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+TESXJivhsVzke6gCi9MxzocOEMcQDQbrv8+ih2jzD8=;
+	b=ncxeZr/BP5AH59oDaQyNeCiyZCMKqNQ9apFx+yUld0ikRHW8ZbeQeHwJGYRof1i63NH1DM
+	Pu8lV8oziMIB9PBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=o+PNqcrg;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5v2b7Iyf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761558954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+TESXJivhsVzke6gCi9MxzocOEMcQDQbrv8+ih2jzD8=;
+	b=o+PNqcrgTPKZwZkneY6s38vHrTrY+zFw5l5oink1F2DPPpVAa2kUQwHz3JxEmmIaRDKTh3
+	9K3Mvo5hspGHEcdsNXKcPGeMVh6hWMujdNy4dO8QIEYmREgkP83wNxTGYm2gAukKlAXuVW
+	MFDEZx2HTauA8iayTBZ4WUqCAyVqhmU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761558954;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+TESXJivhsVzke6gCi9MxzocOEMcQDQbrv8+ih2jzD8=;
+	b=5v2b7IyfNkSKtv5HjNWUqzjFlVTbs3nE3L6zbSBnhnEaqMyv5xpjVsPBCFjVxCobcSQC1n
+	s7apbN2iCAB9HTDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C2CA136CF;
+	Mon, 27 Oct 2025 09:55:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Yv24E6lB/2iNeAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 27 Oct 2025 09:55:53 +0000
+Date: Mon, 27 Oct 2025 10:55:52 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
+	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, David Hildenbrand <david@redhat.com>,
+	Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: [PATCH v3] page_alloc: allow migration of smaller hugepages
+ during contig_alloc.
+Message-ID: <aP9BqHy3ksstIxfU@localhost.localdomain>
+References: <20251024192849.2765667-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024192849.2765667-1-gourry@gourry.net>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 23BEF218F8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kvack.org,vger.kernel.org,meta.com,linux-foundation.org,suse.cz,google.com,suse.com,cmpxchg.org,nvidia.com,redhat.com,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost.localdomain:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.01
 
-This will be used in later patches
+On Fri, Oct 24, 2025 at 03:28:49PM -0400, Gregory Price wrote:
+> We presently skip regions with hugepages entirely when trying to do
+> contiguous page allocation.  Instead, if hugepage migration is enabled,
+> consider regions with hugepages smaller than the target contiguous
+> allocation request as valid targets for allocation.
+> 
+> isolate_migrate_pages_block() already expects requests with hugepages
+> to originate from alloc_contig, and hugetlb code also does a migratable
+> check when isolating in folio_isolate_hugetlb().
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
----
- arch/arm64/include/asm/kvm_rmi.h | 1 +
- arch/arm64/include/asm/rmi_smc.h | 1 +
- arch/arm64/kvm/rmi.c             | 6 ++++++
- 3 files changed, 8 insertions(+)
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-diff --git a/arch/arm64/include/asm/kvm_rmi.h b/arch/arm64/include/asm/kvm_rmi.h
-index 1b2cdaac6c50..a967061af6ed 100644
---- a/arch/arm64/include/asm/kvm_rmi.h
-+++ b/arch/arm64/include/asm/kvm_rmi.h
-@@ -90,6 +90,7 @@ u32 kvm_realm_ipa_limit(void);
- u32 kvm_realm_vgic_nr_lr(void);
- u8 kvm_realm_max_pmu_counters(void);
- unsigned int kvm_realm_sve_max_vl(void);
-+bool kvm_has_da_feature(void);
  
- u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
- 
-diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-index 1000368f1bca..2ea657a87402 100644
---- a/arch/arm64/include/asm/rmi_smc.h
-+++ b/arch/arm64/include/asm/rmi_smc.h
-@@ -87,6 +87,7 @@ enum rmi_ripas {
- #define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
- #define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
- #define RMI_FEATURE_REGISTER_0_Reserved		GENMASK(63, 42)
-+#define RMI_FEATURE_REGISTER_0_DA		BIT(42)
- 
- #define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
- #define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
-diff --git a/arch/arm64/kvm/rmi.c b/arch/arm64/kvm/rmi.c
-index 478a73e0b35a..08f3d2362dfd 100644
---- a/arch/arm64/kvm/rmi.c
-+++ b/arch/arm64/kvm/rmi.c
-@@ -1738,6 +1738,12 @@ int kvm_init_realm_vm(struct kvm *kvm)
- 	return 0;
- }
- 
-+bool kvm_has_da_feature(void)
-+{
-+	return rmi_has_feature(RMI_FEATURE_REGISTER_0_DA);
-+}
-+EXPORT_SYMBOL_GPL(kvm_has_da_feature);
-+
- void kvm_init_rmi(void)
- {
- 	/* Only 4k page size on the host is supported */
+
 -- 
-2.43.0
-
+Oscar Salvador
+SUSE Labs
 
