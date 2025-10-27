@@ -1,113 +1,130 @@
-Return-Path: <linux-kernel+bounces-871309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DE7C0CDF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:06:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63451C0CE46
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A8819A6148
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44D4421282
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887F92F1FE7;
-	Mon, 27 Oct 2025 10:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B60D2F1FE7;
+	Mon, 27 Oct 2025 10:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jnNW8aaQ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C9813B280;
-	Mon, 27 Oct 2025 10:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvypO9YL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036F1DE4E1;
+	Mon, 27 Oct 2025 10:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559417; cv=none; b=KpZZAnu9wVVQvhqghoUnA5AT1jYHEehwuuhVanSJPCs/bk/73ILSx7V5O+e8oIpF3YgLoPjRSypM/fo/RAwBDN2oBoxyl0c+sZqIm2b6sHvO974xg+o8leUM2Tupp3tz3phyIEsWBgN5agxZHjtfNYXmys5OzrhZp8eMnCgPlMM=
+	t=1761559446; cv=none; b=M9X9t4dWyFOen0NuHXh6zxfTuU+2fVLysOC/kbZy2mXvc9Uvj/RvHw/SIskwmIl4I8FWDnnwd16sGcCCuYWau28jkBav1qfbI+5lhbZcriAYJ+tg9RK6WmN55mhx/1fKXqj//rooEIYvxaAkMKLSz76DcX1LXko6WgI9YQYEwdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559417; c=relaxed/simple;
-	bh=JHwarkqBPq72JFpOasQzHaDBamKHSrbmH4YRuweybHs=;
-	h=From:To:Subject:Date:Message-Id; b=FrMYIu82mMCtITTv/3gFpqT58TdkqSxdPI1hQ4jTWo97EbNMzATxzbFXj1eE2ONYHhVIXk9EKMipaR9I8wDOsddcbBYempO90OlCdw5uLIt+0rSsiUiGxTd00lXoh8y7sPSn0s/PPTAtIQU3DmOr0btSJrutJ8rhPPAnpDX/9Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jnNW8aaQ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id AD1F2211D8D8; Mon, 27 Oct 2025 03:03:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AD1F2211D8D8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761559410;
-	bh=EuEAS/gEv10XHC56mPN6AvDAFFpqsTPL7sGSBrWVkXg=;
-	h=From:To:Subject:Date:From;
-	b=jnNW8aaQWFLG60KQSHonqS8ElLyVj/5WkHt+1CWbbsffYBag6VmwPSBmVZvcwkOeq
-	 O84blQ+3W9eSYscSv8nvc3x5es91LV38pa/R0F7MvwD0O7tNO22ogfzQfRXRdZ2Y9D
-	 Jbn9tAum4UvzGvIs17nMZibO2ha7Pjed43XouiDs=
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com,
-	ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com,
-	kotaranov@microsoft.com,
-	longli@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: mana: Fix incorrect speed reported by debugfs
-Date: Mon, 27 Oct 2025 03:03:28 -0700
-Message-Id: <1761559408-22534-1-git-send-email-ernis@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1761559446; c=relaxed/simple;
+	bh=FEYyRZalr4maxs1O5gjP6c07nUsJ1QW2+RR+Es6ITdE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WgNKHgX+mDrAve91Tkfu3GrA2shf9+Ui86IpGT9RpbWBLmmREfeLKL+TXbM5P5KxkmCMPX0dir2kWepVqZxmPKqoD0jEqv/1N7tY+5HpwGo7kBmxjeqp2xoF6YgAvlw4YWJ6fCr1TGC9p5bXoL9UOsUTLIkw7fBHvSC3KnTCr/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvypO9YL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9696C4CEF1;
+	Mon, 27 Oct 2025 10:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761559445;
+	bh=FEYyRZalr4maxs1O5gjP6c07nUsJ1QW2+RR+Es6ITdE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YvypO9YLTOGII68Cfo8hyfMsCsNmD3b7glgVKpGE1svHuDNRdoqjFVCHjWGeuCXHH
+	 lhWBYD2vO40TC5nn7oZPZlvgndboLeSgjAHLJp9+UofQJak0gGLY69VihVYNCMo5ph
+	 MONSZFN+iMHKfV8W71hDnZ9HG+JjK6Zlr/yj6pE8qlNULcDZQ6poJ5kOKDsgv61R9L
+	 RidTwdw5w1bA/fiAC4BnXa97Gog/ZGwVQL4vZFN+ZkUEwaznotUzk8bpPYGWFqZJJz
+	 RvxmQqFHyFPATiX9MGf/U/Z2juImn2cEVAwuHkjZgH/EX88j42wGDvUC2gfVjM4VU4
+	 OTV58vHHiul8Q==
+X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dan.j.williams@intel.com, aik@amd.com, lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH 01/12] KVM: arm64: RMI: Export kvm_has_da_feature
+In-Reply-To: <20251027094916.1153143-1-aneesh.kumar@kernel.org>
+References: <20251027094916.1153143-1-aneesh.kumar@kernel.org>
+Date: Mon, 27 Oct 2025 15:33:57 +0530
+Message-ID: <yq5awm4goe42.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Once the netshaper is created for MANA, the current bandwidth
-is reported in debugfs like this:
 
-$ sudo ./tools/net/ynl/pyynl/cli.py \
-  --spec Documentation/netlink/specs/net_shaper.yaml \
-  --do set \
-  --json '{"ifindex":'3',
-           "handle":{ "scope": "netdev", "id":'1' },
-           "bw-max": 200000000 }'
-None
+Kindly ignore this series. The correct one can be found https://lore.kernel.org/all/20251027095602.1154418-1-aneesh.kumar@kernel.org
 
-$ sudo cat /sys/kernel/debug/mana/1/vport0/current_speed
-200
+-aneesh
 
-After the shaper  is deleted, it is expected to report
-the maximum speed supported by the SKU. But currently it is
-reporting 0, which is incorrect.
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> writes:
 
-Fix this inconsistency, by resetting apc->speed to apc->max_speed
-during deletion of the shaper object. This will improve
-readability and debuggability.
-
-Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 0142fd98392c..9d56bfefd755 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -814,7 +814,7 @@ static int mana_shaper_del(struct net_shaper_binding *binding,
- 		/* Reset mana port context parameters */
- 		apc->handle.id = 0;
- 		apc->handle.scope = NET_SHAPER_SCOPE_UNSPEC;
--		apc->speed = 0;
-+		apc->speed = apc->max_speed;
- 	}
- 
- 	return err;
--- 
-2.43.0
-
+> This will be used in later patches
+>
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_rmi.h | 1 +
+>  arch/arm64/include/asm/rmi_smc.h | 1 +
+>  arch/arm64/kvm/rmi.c             | 6 ++++++
+>  3 files changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/kvm_rmi.h b/arch/arm64/include/asm/kvm_rmi.h
+> index 1b2cdaac6c50..a967061af6ed 100644
+> --- a/arch/arm64/include/asm/kvm_rmi.h
+> +++ b/arch/arm64/include/asm/kvm_rmi.h
+> @@ -90,6 +90,7 @@ u32 kvm_realm_ipa_limit(void);
+>  u32 kvm_realm_vgic_nr_lr(void);
+>  u8 kvm_realm_max_pmu_counters(void);
+>  unsigned int kvm_realm_sve_max_vl(void);
+> +bool kvm_has_da_feature(void);
+>  
+>  u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
+>  
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> index 1000368f1bca..2ea657a87402 100644
+> --- a/arch/arm64/include/asm/rmi_smc.h
+> +++ b/arch/arm64/include/asm/rmi_smc.h
+> @@ -87,6 +87,7 @@ enum rmi_ripas {
+>  #define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
+>  #define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
+>  #define RMI_FEATURE_REGISTER_0_Reserved		GENMASK(63, 42)
+> +#define RMI_FEATURE_REGISTER_0_DA		BIT(42)
+>  
+>  #define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
+>  #define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
+> diff --git a/arch/arm64/kvm/rmi.c b/arch/arm64/kvm/rmi.c
+> index 478a73e0b35a..08f3d2362dfd 100644
+> --- a/arch/arm64/kvm/rmi.c
+> +++ b/arch/arm64/kvm/rmi.c
+> @@ -1738,6 +1738,12 @@ int kvm_init_realm_vm(struct kvm *kvm)
+>  	return 0;
+>  }
+>  
+> +bool kvm_has_da_feature(void)
+> +{
+> +	return rmi_has_feature(RMI_FEATURE_REGISTER_0_DA);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_has_da_feature);
+> +
+>  void kvm_init_rmi(void)
+>  {
+>  	/* Only 4k page size on the host is supported */
+> -- 
+> 2.43.0
 
