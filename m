@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-871230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F146CC0CB28
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:37:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7AFC0CADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379053BBF7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:33:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3B14EE2F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4442F2617;
-	Mon, 27 Oct 2025 09:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E702F1FD8;
+	Mon, 27 Oct 2025 09:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IavK31t9"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdvVfgXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EA92773EC;
-	Mon, 27 Oct 2025 09:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A006A2652BD;
+	Mon, 27 Oct 2025 09:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557583; cv=none; b=Vl1nQu+YXqWO2e5AvX4SALu/hUkPE69FeFtp6AQWlO/Db79au2+HmmGyFihRtQsxVjoNs6y8zcfr87+5dss24hoigZ3o8WL/olD1N2rh9tlM6DyG8AB3yVWN1jejxXGcy4HD+5lqifFROnXnWNjPNpqKM0AqFygJInjO3LlblyQ=
+	t=1761557650; cv=none; b=a3cgpkX+dSQuId8aRLZUoZPGjCVnI9uTN6ARQfifZvj5AJ6UEM0fVxUf7Lok/NxJs2rGLonVDwLodvoSbFAs4tpE22RI30qpH1OOJM/edAVQNfIqbmRmq3nC9ykUO2ItOo+PqSS06bmpXftWK58Qv1U0lIHOf/R1VBgNWKOf4ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557583; c=relaxed/simple;
-	bh=rTgPzkbHTz6CLV0HalVq6PovgVJUM7yM8MpMHc6txvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+G3+hxGFTexkFOvNHI4uqagSPR3tKmVLIB4ovSBKJ+fusn0/0nfQngQpEQq6YPUh/Vn/XM4cvVhdNgiTXk5fL2DSQ68zbu4fWb9bRcGl+g0QfcuLU4guRCzBl9LehUcOfDJl50gtyhSEE4TstW22PlI8qWgNaIX03RpfnE793c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IavK31t9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761557574;
-	bh=rTgPzkbHTz6CLV0HalVq6PovgVJUM7yM8MpMHc6txvU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IavK31t9oKFUguKtvnj6uUkl+zZI+2ndJShUTkxMkNWpcz2bSvDuzD5rtx60eMNt8
-	 NDmQKPXEFtuCJJWZMwkxMrnG3rMnZVoqZMJYeFFz17yMfxjVufSmsS2QKdryuAjeNx
-	 muCM3jfql29XKccecm0ynWrjB1jGjzICzT79uuefqvgthH4u9IRtTNN2vSRXVtmRSR
-	 h8L6R8tyqkEHVsb7t6+dMJvp0jTCBs5fZNZ4HFGlM9HywZ3XswhoQf4IT1hswUjLOl
-	 jgGqJVhhFBykQja9wHsa+7QwEE0fds7lb/cwX2y5D9ewxRdVJ0EjHCtl6mdmZv5Bpg
-	 bJoUySTZRf2og==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C691017E1340;
-	Mon, 27 Oct 2025 10:32:53 +0100 (CET)
-Message-ID: <158c16f0-9d50-45f9-a3cb-5deb36d09366@collabora.com>
-Date: Mon, 27 Oct 2025 10:32:53 +0100
+	s=arc-20240116; t=1761557650; c=relaxed/simple;
+	bh=6XkTlKpjvq7IawQ+0bCGl/BetTBZ7NlEyKu1Fl+CgP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZUXUCP5lXadMhQ+dAGmZvLSvD2+6CH0EXMAbgmcY6Rf5FlEjGV8vUMCrSdlkVTXuqOp4zZJbaXq57HN3meLtWxv07miI/i5zFxyisqM4nu/+wz3wa2oIp0qq1oclbCbdBTM0+sC5nyRxwQAf/D2RfFE6p0aFkR/Fk/v/O0NeIrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdvVfgXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86490C4CEF1;
+	Mon, 27 Oct 2025 09:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761557650;
+	bh=6XkTlKpjvq7IawQ+0bCGl/BetTBZ7NlEyKu1Fl+CgP0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hdvVfgXYErfi2ktvCDcZV339zsYT6JN6M54V8Mxhc85nGDlwet6GgNThIs/+q8o22
+	 /d3D0dwzKfHc85Ifa+90gPStikrQJsv/uoA94YpiHwi+hDiV7iDzC+gF/tS796Gfgz
+	 Jd0uc9CxfYnpTL6vKinppofdvawDNrWqy2xPeh2Dn6voxKbySBtPblU+WfUSRBEmes
+	 uC5A2lKSlWRgUoH7F67RFhyNtetPPcdqy9je/brQbFz0HeezpdtX7DPz56IS0XShqw
+	 MkqxqqxvtAzWyARZ7jC/FI4AWP1LD0naH4ohjcJqCzvzvHM4GAKW4t0Sh0FCib9Ael
+	 gW0XzJnV9N2nQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>
+Subject: [PATCH mlx5-next 0/2] Add support for direct steering tag mode for RDMA mlx5_ib driver
+Date: Mon, 27 Oct 2025 11:34:00 +0200
+Message-ID: <20251027-st-direct-mode-v1-0-e0ad953866b6@nvidia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <aP8agyKj73bLZrTQ@stanley.mountain>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <aP8agyKj73bLZrTQ@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251027-st-direct-mode-8d7d874a7d36
+X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-Il 27/10/25 08:08, Dan Carpenter ha scritto:
-> The snprintf() calls here work but they have several minor style issues:
-> 
-> 1) It uses ARRAY_SIZE() which is the number of elements in an array.
->     Since were talking about char that works, but it's more common to
->     use sizeof() which is the number of bytes.
-> 2) The printf format is "%1d".  The "1" ensures we always print at
->     least 1 character but since numbers all have at least 1 digit this
->     can be removed.
-> 3) The kernel implementation of snprintf() cannot return negative error
->     codes.  Also these particular calls to snprintf() can't return zero
->     and the code to handle that zero return is sort of questionable.
-> 4) In the current kernel the only "core_id" we print is "0" but if it
->     was more than 9 then the output would be truncated so GCC complains.
->     Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+From Yishai:
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Add support for direct steering mode where ST table location equals
+PCI_TPH_LOC_NONE.
 
-> ---
-> v2: The v1 introduced a W=1 warning because of the truncation issue.
->      It's a false positive because GCC assumes that "core_id" can be
->      every possible value of int but actually it can only be zero.  And
->      also generally, in the kernel, truncating is fine and it is fine
->      here too.
-> 
->      But let's use that as an opportunity to do more cleanups.
-> 
->   drivers/remoteproc/mtk_scp.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 10e3f9eb8cd2..db8fd045468d 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
->   		return ERR_PTR(-EINVAL);
->   
->   	if (core_id >= 0)
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
->   	else
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
-> -	if (ret <= 0)
-> -		return ERR_PTR(ret);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
-> +	if (ret >= sizeof(scp_fw_file))
-> +		return ERR_PTR(-ENAMETOOLONG);
->   
->   	/* Not using strchr here, as strlen of a const gets optimized by compiler */
->   	soc = &compatible[strlen("mediatek,")];
+In that case, no steering table exists, the steering tag itself will be
+used directly by the SW, FW, HW from the mkey.
 
+In that mode of work, the driver is not limited any more to the 64 max
+entries of the capability config space table.
+
+The first patch in the series exposes the pcie_tph_get_st_table_loc()
+API to let drivers detect the ST table location.
+
+The second patch uses the direct mode in case the location equals
+PCI_TPH_LOC_NONE.
+
+This enables RDMA users working in that direct mode.
+
+Thanks
+
+---
+Yishai Hadas (2):
+      PCI/TPH: Expose pcie_tph_get_st_table_loc()
+      net/mlx5: Add direct ST mode support for RDMA
+
+ drivers/net/ethernet/mellanox/mlx5/core/lib/st.c | 29 ++++++++++++++++++++----
+ drivers/pci/tph.c                                |  7 +++---
+ include/linux/pci-tph.h                          |  1 +
+ 3 files changed, 30 insertions(+), 7 deletions(-)
+---
+base-commit: eea31f21dce10814e34dc7ef7ed5136269c7bb59
+change-id: 20251027-st-direct-mode-8d7d874a7d36
+
+Best regards,
+--  
+Leon Romanovsky <leonro@nvidia.com>
 
 
