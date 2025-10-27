@@ -1,244 +1,143 @@
-Return-Path: <linux-kernel+bounces-871691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAAFC0E173
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:37:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3449BC0E16A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6A8B4F84B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9CD18869A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0867D21B1BC;
-	Mon, 27 Oct 2025 13:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DCC261574;
+	Mon, 27 Oct 2025 13:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBSv5mTm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FXBlTFkx"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC91DDC1B;
-	Mon, 27 Oct 2025 13:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AB7253340
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761571981; cv=none; b=RtIo0TJxUz9JxJ4wqEZeIohgHcSK5kf/Z+E+ZRVFVVz7xyunNeUG4sEnVZnabamIXcTwBU/Frshp3ul17ZDSsU90SYtf8Vfxj58xYQbDj4tFeTKeb5KgxFNOrkZAqIQCcAIYsMCpxbsVXfDuUeXLWrSAeYI7T0vm8u0eSD/f3mI=
+	t=1761572088; cv=none; b=Vu3JzZuKYr+BYtTQuZAV50BlYGrIXZ/EKDVzdt3zIKK7y1POIKOMljJMjooy4BPCj75P4hP6WPmt1aZk3OnBIzry5N00XsjbmKAQ1DodocrZH32z81kd9iZ6rv8r9G8kBdaC+wwZ+wWResYqhrH5zUJ8gff0VuhsToPQLSxx0uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761571981; c=relaxed/simple;
-	bh=P4DbulHAwkzTyBkjJrEUk1RWxytjAEbeIn35F+Fbh8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lazbQGb57YMG5IcJYqckmxRH+z8Ngza5QxgOuz7u1lTaPhkCvhZwT95lQ/wD5zYuFm0373J2R/uvS+12+nYVjlSEAkjggfKQfz8qKI/IIGJ9Q9fikpoLI+890aczS0bfDA1Pq4FUgSMK0XV6bhlQ/9TRPpd2QU4qML0IDu19lY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBSv5mTm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CEF8C4CEF1;
-	Mon, 27 Oct 2025 13:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761571980;
-	bh=P4DbulHAwkzTyBkjJrEUk1RWxytjAEbeIn35F+Fbh8s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pBSv5mTmA07fr8PMlqRQYefyLcuv7Ws/eHkezh4VGS3bIvOprYg1JpVqlCkrhsU2J
-	 5Sf85zdO/WtyfbudC37SNP/sbeJJrBXpRUxCuN9yvhoCnUBr08DIF6AhpNrlo1BHMR
-	 jSm+FfbzAv1vWD0h1e37XCXgzMFdhJFsx4iBerQOn4iAIPMdHTVGrCaN5247cD12V4
-	 q+pgpofGNxd3EK4BpkvaTWoNas4L+kO9zx/wXLBGfeHOi70XeI4xs0PKkDVbdesxoT
-	 cS7RoAqlZt1PQ3xxHLdGmKlR+WVXBVX1f7qn+kwooTt9pJhhiHXFbFaFOwOhdKWmxV
-	 Nihf2o0vZftjw==
-Date: Mon, 27 Oct 2025 08:32:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jonas Jelonek <jelonek.jonas@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: add gpio-line-mux controller
-Message-ID: <20251027133258.GA112219-robh@kernel.org>
-References: <20251026231754.2368904-1-jelonek.jonas@gmail.com>
- <20251026231754.2368904-2-jelonek.jonas@gmail.com>
+	s=arc-20240116; t=1761572088; c=relaxed/simple;
+	bh=dBeKk1/idDQw0wDoERycwQ2Fq+supEkRK3SBPCdRMJw=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=moSXQss44wv+XwyrPzlFwiERCBRoMD3TF11Lg3NVOJR2pHMeKBY7s7NlDCn5XViC0PyN+po9GxH4wZ6WiNj4kHm4cLychtinX6U0u2xNmHWc0HU4AZftZ1qtlokljr3PxwAJ02A606aOaEuoqAloyzAbekoI9FiTEACYfXxAu1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FXBlTFkx; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso3856668a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761572085; x=1762176885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftlerGiLvsqHMKW12Y2m8WjwJauqRh5+By8P2iMxPlE=;
+        b=FXBlTFkx2+g+rudCBCMcWp/2tLkqODxx1A4n6QC6byI0EWADXP1oVkrJ5nI9yXlype
+         yl2FDIuehpjrEjrs3VPmvoS00pVT70mE+A61oOMPUWOmoXbsnLv2gXqSpEhXMGSDUElP
+         T/jkC05I4qmGlSP9DzQbfnF5eSPhDAUYb1o6yXIBkiFXKkgIkWjYpckswMTYmb0dnE5f
+         Zc3SUbNIHSKQUfOcaozicoGm31RvPGPM7gYQNuNjmwNmKXVR9WsJgAuDvqXehxAxDrHD
+         QYoPvRaI7Mj8LdmBEEKDJURc3alrBaSdFv+uD/PizRIUnJ4R5Ve3QHw2xL8ZJdBhrPjS
+         nS9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761572085; x=1762176885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftlerGiLvsqHMKW12Y2m8WjwJauqRh5+By8P2iMxPlE=;
+        b=U1o9o6UMOjFvSpV5W2nuuWipo4IIK2W0gabZn3hjhsrFM5HDTZNwXzoCnxI1LVB+Rg
+         UO0F7HmvO4WVAJB30J2OvaxAzQ/F/dKR23a7VBIYOiS/y1nRPkSwiqZSq9PfDqt7EPOd
+         pI/MX+t0XNxSz8qq5Vp5rb2MtVEi1VYgIlsqopk5163coxm70geoq/L74BuuG2CiWcbr
+         CdC92lJdZz/HeholPv9ZSoHxS38ZQr3b/gYO/hOQI5LBZP8khj4KItRI9LtLhTOvoZwH
+         gV6UDIJsDvp/K/nurlJPPMkp9HwWW7dZaDZoaZc3e+PGomPcC1/dqKEIXj4tvyinIgUr
+         shjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaFu2f1P/qziiEyIiyGa9Fo5IizT/twxKIvutbsS+Mpi+MKwp2w3uTGMzBwCwXLN427KlGIET1wEF7iSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRYGUD4uFiEnEM6zdNZfeL0+HrLvN/Cf0eN9azg1DKGmpDn1sq
+	cqhGu+Dgo2w4zIm9hrUzTSW0el0n1c/OQzs9K/MpfYXaVLYZ5E6KSkEyI74De2P6ho4=
+X-Gm-Gg: ASbGncsFQoa/hE2nhU9EQ4WRSFGVndhgxLkdBVBWoPCiSnlcJ5MWDj9LHepUAusY6d3
+	Jww4ZLbfsa9nN0SR5Ttyufej+8M7G9W8WFoxLagmm6GP9i1K9YvGX/hd4aqX8oEsTCiMavQTw7K
+	JGq6p3imLAVPqGp6qUAgqmhwyDE4l2hi0lSyAgsFdUE+IPz4ILDco71XJ/gGXl6I1ACZRGvJ/tv
+	2qxSyP/LjqsiosHeG8mUz7atn+YEosXPU/MeBay0Y27pWLzWVP2Nbn0TGZsew5PFjFUmvA2IBlA
+	4lAZrCD1Oy+13hkBtxLoTjzoMSWjwDJNhEGCrSxiWVg7U3/Vv9pMjg+D8KS4chCAW6ZrEBP22Vd
+	PKl2rQEI/UA4ng68ZKUvMtHy3f6xowjCep0xzE3PJJHW3zNLl7HXzBbNSCG7feoQHCozSGSsNJo
+	A8syYSR94vZaeE9lzvNUW8do3/lVCYBESXHAbPcGDQ3zus
+X-Google-Smtp-Source: AGHT+IG6w1KMqpMxHVYtcXLWfWv6qAK46PDDTGlJxfBJd5VbTvHc1tDB2FJNJAj6MmKM6UQUhJNb1w==
+X-Received: by 2002:a17:903:19e5:b0:24e:593b:d107 with SMTP id d9443c01a7336-290caf85236mr459702545ad.32.1761572085156;
+        Mon, 27 Oct 2025 06:34:45 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.234])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d42558sm82144935ad.69.2025.10.27.06.34.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 06:34:44 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	conor@kernel.org,
+	cuiyunhui@bytedance.com,
+	luxu.kernel@bytedance.com,
+	atishp@rivosinc.com,
+	cleger@rivosinc.com,
+	ajones@ventanamicro.com,
+	apatel@ventanamicro.com,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	songshuaishuai@tinylab.org,
+	bjorn@rivosinc.com,
+	charlie@rivosinc.com,
+	masahiroy@kernel.org,
+	valentina.fernandezalanis@microchip.com,
+	jassisinghbrar@gmail.com,
+	conor.dooley@microchip.com
+Subject: [PATCH 0/3] Add NMI Support to RISC-V via SSE
+Date: Mon, 27 Oct 2025 21:34:28 +0800
+Message-Id: <20251027133431.15321-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251026231754.2368904-2-jelonek.jonas@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 26, 2025 at 11:17:53PM +0000, Jonas Jelonek wrote:
-> Add dt-schema for a gpio-line-mux controller which exposes virtual
-> GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
-> 
-> The gpio-line-mux controller is a gpio-controller, thus has mostly the
-> same semantics. However, it requires a mux-control to be specified upon
-> which it will operate.
-> 
-> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> ---
->  .../bindings/gpio/gpio-line-mux.yaml          | 108 ++++++++++++++++++
->  .../devicetree/bindings/mux/gpio-mux.yaml     |  30 +++++
->  2 files changed, 138 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml b/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
-> new file mode 100644
-> index 000000000000..4c907a35eb4d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
-> @@ -0,0 +1,108 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/gpio-line-mux.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GPIO line mux
-> +
-> +maintainers:
-> +  - Jonas Jelonek <jelonek.jonas@gmail.com>
-> +
-> +description:
+We thank Clément Léger (Rivos Inc.) for his foundational SSE
+work ([1]), upon which this patch series builds. This series adds
+NMI support to RISC-V via SSE, with two key focuses:
+1. A PR to the RISC-V SBI spec ([2]) for unknown NMI handling, with
+matching Linux kernel changes.
+2. Extending NMI usage to all system scenarios where it boosts
+robustness—e.g., stopping CPUs during crashes.
 
-You need '>' or '|' to preserve formatting here.
+[1] https://lore.kernel.org/all/20250908181717.1997461-1-cleger@rivosinc.com/
+[2] https://github.com/riscv-non-isa/riscv-sbi-doc/pull/223
 
-> +  A GPIO controller to provide virtual GPIOs for a 1-to-many mapping backed by
-> +  a single shared GPIO and a multiplexer. A simple illustrated example is
-> +
-> +            +----- A
-> +    IN/OUT /
-> +    <-----o------- B
-> +        / |\
-> +        | | +----- C
-> +        | |  \
-> +        | |   +--- D
-> +        | |
-> +       M1 M0
-> +
-> +    MUX CONTROL
-> +
-> +     M1 M0   IN/OUT
-> +      0  0   A
-> +      0  1   B
-> +      1  0   C
-> +      1  1   D
-> +
-> +  This can be used in case a real GPIO is connected to multiple inputs/outputs
-> +  and controlled by a multiplexer, and another subsystem/driver does not work
-> +  directly with the multiplexer subsystem.
-> +
-> +properties:
-> +  compatible:
-> +    const: gpio-line-mux
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-line-mux-states:
-> +    description: Mux states corresponding to the virtual GPIOs.
-> +    minItems: 1
-> +    items:
-> +      type: string
-> +
-> +  gpio-line-names: true
-> +
-> +  mux-controls:
-> +    maxItems: 1
-> +    $ref: /schemas/mux/mux-controller.yaml#
-> +    description:
-> +      Phandle to the multiplexer to control access to the GPIOs.
-> +
-> +  ngpios: false
-> +
-> +  shared-gpio:
+Yunhui Cui (3):
+  drivers: firmware: riscv: add SSE NMI support
+  riscv: crash: move IPI crash handling logic to crash.c
+  riscv: crash: use NMI to stop the CPU
 
-'-gpio' is deprecated. Use '-gpios'.
+ MAINTAINERS                      |   7 ++
+ arch/riscv/include/asm/crash.h   |  17 ++++
+ arch/riscv/include/asm/sbi.h     |   2 +
+ arch/riscv/include/asm/smp.h     |  14 +++
+ arch/riscv/kernel/Makefile       |   2 +-
+ arch/riscv/kernel/crash.c        | 111 +++++++++++++++++++++++
+ arch/riscv/kernel/smp.c          |  99 +-------------------
+ drivers/firmware/riscv/Kconfig   |  10 +++
+ drivers/firmware/riscv/Makefile  |   1 +
+ drivers/firmware/riscv/sse_nmi.c | 150 +++++++++++++++++++++++++++++++
+ include/linux/sse_nmi.h          |   8 ++
+ 11 files changed, 323 insertions(+), 98 deletions(-)
+ create mode 100644 arch/riscv/include/asm/crash.h
+ create mode 100644 arch/riscv/kernel/crash.c
+ create mode 100644 drivers/firmware/riscv/sse_nmi.c
+ create mode 100644 include/linux/sse_nmi.h
 
-> +    description:
-> +      GPIO which is the '1' in 1-to-many and is shared by the virtual GPIOs
-> +      and controlled via the mux.
-> +
-> +required:
-> +  - compatible
-> +  - gpio-controller
-> +  - gpio-line-mux-states
-> +  - mux-controls
-> +  - shared-gpio
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/mux/mux.h>
-> +
-> +    sfp_gpio_mux: gpio-mux {
-> +        compatible = "gpio-mux";
-> +        mux-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
-> +                    <&gpio0 1 GPIO_ACTIVE_HIGH>;
-> +        #mux-control-cells = <0>;
-> +        idle-state = <MUX_IDLE_AS_IS>;
-> +    };
-> +
-> +    sfp1_gpio: sfp-gpio-1 {
-> +        compatible = "gpio-line-mux";
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +
-> +        mux-controls = <&sfp_gpio_mux>;
-> +        shared-gpio = <&gpio0 2 GPIO_ACTIVE_HIGH>;
-> +
-> +        gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "SFP1_TX_FAULT";
-> +        gpio-line-mux-states = <0>, <1>, <3>;
-> +    };
-> +
-> +    sfp1: sfp-p1 {
-> +        compatible = "sff,sfp";
-> +
-> +        los-gpios = <&sfp1_gpio 0 GPIO_ACTIVE_HIGH>;
-> +        mod-def0-gpios = <&sfp1_gpio 1 GPIO_ACTIVE_LOW>;
-> +        tx-fault-gpios = <&sfp1_gpio 2 GPIO_ACTIVE_HIGH>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/mux/gpio-mux.yaml b/Documentation/devicetree/bindings/mux/gpio-mux.yaml
-> index ef7e33ec85d4..57eb1e9ef4cf 100644
-> --- a/Documentation/devicetree/bindings/mux/gpio-mux.yaml
-> +++ b/Documentation/devicetree/bindings/mux/gpio-mux.yaml
-> @@ -100,4 +100,34 @@ examples:
->              };
->          };
->      };
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    sfp_mux: mux-controller {
-> +        compatible = "gpio-mux";
-> +        #mux-control-cells = <0>;
-> +
-> +        mux-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
-> +                    <&gpio0 1 GPIO_ACTIVE_HIGH>;
-> +    };
-> +
-> +    sfp_gpio: sfp-gpio-1 {
-> +        compatible = "gpio-line-mux";
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +
-> +        mux-controls = <&sfp_mux>;
-> +        shared-gpio = <&gpio0 2 GPIO_ACTIVE_HIGH>;
-> +
-> +        gpio-line-names = "SFP_LOS", "SFP_MOD_ABS", "SFP_TX_F";
-> +        gpio-line-mux-states = <0>, <1>, <2>;
-> +    };
-> +
-> +    sfp0: sfp-p0 {
-> +        compatible = "sff,sfp";
-> +
-> +        los-gpios = <&sfp_gpio 0 GPIO_ACTIVE_HIGH>;
-> +        mod-def0-gpios = <&sfp_gpio 1 GPIO_ACTIVE_LOW>;
-> +        tx-fault-gpios = <&sfp_gpio 2 GPIO_ACTIVE_HIGH>;
-
-Drop. We don't need the same example twice.
-
-Rob
+-- 
+2.39.5
 
 
