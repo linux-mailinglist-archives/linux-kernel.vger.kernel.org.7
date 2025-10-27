@@ -1,100 +1,159 @@
-Return-Path: <linux-kernel+bounces-870868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB0BC0BDF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:54:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35059C0BDEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:54:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7752E4E8C73
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:54:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD23189FF15
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED4D2D7812;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A292D6E70;
 	Mon, 27 Oct 2025 05:54:35 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27DD2D63F6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80652D46CE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761544475; cv=none; b=TZarHEutqzilnrdjbjB+7hDzhgnyH7Opmhi/AS5Gc0CwVp0CQ3VOzoIQHq72eaA7h2PpQfcDcYMj1ArwwMtPEz1QGHnVnxKeW60zVisE2RGS3sJ6fiKA6NHf1qNrcCxj4y+M0Fd4z5RDLYc3uxv4qn3977qYsvQUAvHTO73da2w=
+	t=1761544474; cv=none; b=NZUlss7vmvvIhDEd2H6dPpmb1HFeIG/tw92E+VD8Ljcci0HgKSGerZk908D4o0898iHumT/dWa5usM12WsYWtB0vWwENXH/93wafv8CEhTNYZYn23oaE7elif/I60HEh/s6OXq6xsKoraYTd172hJ6sKJS8GfbuIIKgcj0YCHMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761544475; c=relaxed/simple;
-	bh=oX8hJRy7IBEIAZ/1zm+0hkLe7OsbAjVeMtyeB0Q9dLU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DHEmk0j+ud/p33HaeOvOrUntRBQVLpJME/+LLlWqtyLBf596zdNCKrRtxkW8SV7USKGNf2t4fgJYcNhyKLRpnGX9zE9B5A7Ad02WQS9cdMP/jDn9KWWAvqhlgIDUAyWsWhWJOXFPgWhEQICTo//LpfHBSh0lKZDrQx7bfnMedqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	s=arc-20240116; t=1761544474; c=relaxed/simple;
+	bh=SNmai1IOLY+pup+5LYY/q0U2eZq7K8fuJB8K0RS7rxQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Yg6b+Mov1jOivOf0qB0lswhSTMH3+itmjfoVA+yANpo9MRG7VF1P41nvYgn9WjRYwWSkrgGniJXaokP4VQBoo14j76SU2qwr28HhMyf8vFmiO0H/TEPiHRBaRCcDb/oSJPM7wXz6AOegJgvc8jqnTPznw4IzEYfTRQLFf+ZGe/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430b3c32f75so44453545ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:54:33 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430d4a4dea3so62208855ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:54:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761544473; x=1762149273;
+        d=1e100.net; s=20230601; t=1761544472; x=1762149272;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T9HuDiteO2SZsDgJsN6+6JREKwnlgoCNbEs58bpVhLU=;
-        b=dbWOD14QFo4u4ex1Za92C/v1+W0qU4h8EXDLB+HeKF+4uxC7th6u5shdLTX2jir79F
-         gzLL8m2bkkxKTy352wXQ1B5eZHAYWRBx7tyU9wPaUW2toovd6YiQG+NijhUo+pWymXOz
-         VjGZbASBVObgJQWhA/7aANfClg6z/JqVScQtljAD+2PtZiF2QbOlwJqZBtBt7ntgFEKo
-         DTbcMgERd3Yzb0OGB2qIc3JGU97ScylZqkh6il7bJMS5ARC/vUEgtwULfNQnclA50xHW
-         aISIPhceSCYKO4iwDyf+5G5/0v7+2o8IzkQvQrDRldjVKAbZlZRrCdX7RCWNyUDDUzDm
-         86cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFhSJtBQCDpH1/ePT+DBUs42ltHGhBqWs2mEYVwYXIrSNjgPOeUyBxLGkIVJAq/Gh39+A65nRMnatc2YM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXT4SNqqoO2Gpiu6gpqslUz3otFw2kc97UkgM9aas6jsJwWvV1
-	YL6RUe2Ak+8+vJnvRXHHMJ4WsA7ZuuWB1i9I8Ril05b4D9bkur3gVeNPL05WZ+o/GAEoJWZteF8
-	q4ZK2zjpgAk/4v7vQAQ2GzceJllu1JNRLOM1oubimvyhFYbY9zVMHQbff3VM=
-X-Google-Smtp-Source: AGHT+IHfSwoDwEH++j2Dx7/xHP1y+OQTZzYZ/Wt09xZShEqKiuhnU1Y9NTvEUrZBaaO0VYLteaTM0kNA7lQZip729pWXA80ePN1F
+        bh=GKC11teTiEOM5vQjUmVTNkUGadJpuIO6RJHtwgVzfnQ=;
+        b=pPPWr/pNoW7KL5qfS/2lq1lXUcAxefTfWTvhQKhTYx9IIdcqDZf3XvtnM+uP4jC9Qp
+         2Xs1lzyJiR+NinDGi0I+ez2nMKax65c3zGnbUbMeKjLhGAq6YNatnoPC+qcFV/Z4F2hO
+         eiDFScAevKOOWOYSWKu9me9xwxPINh/AO0PPvNhMwI3eTgG6pO9PGloSWkJcvYwiC+eT
+         KUYz7ao3PgRmQnpcmD+oIy0V1QYVHeIqESoqGXcDAn5844eK2rG7wQlI77XNmR1SwT86
+         d3tIdIntOd8l0eGu3vK8n8/lnElYBEHgjqvp0AEww7BK0zB4NS31Tq70aGRB7NYE1pYA
+         Zmmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVON5yLXRu+DwULvm/WZtpqkYZ6r/umbUAlw8liNSuvnA8SJMoGZJ5yGV9fm3fvDOK44o1qZOmz+6MzOCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybIsw9JCnAaADOpnFa1Ha0M32fD+0x6P/zFfsQRE66hNp4zBjz
+	xskBye3HIzKaUk03kKJnkS1bD5YvwhXW+jM1YAfcdL54sMRDC2e7SYwswgbJ6teHDIjcVX2oj3L
+	n+o3afbtZxQUwLZEd70z4GmtNgWLWs6YdCmVI3+mnZTAktIqcfMP20H7gh7U=
+X-Google-Smtp-Source: AGHT+IFFxWhXZUUoFvo6paTouupqI4Adh7UBpqa2Z4tR45DaNuUz00lT2knpS82K/lGQvBIoUmrin3NOkRlmFo6fQYAfUcRqQ94U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1522:b0:42f:e334:5ec3 with SMTP id
- e9e14a558f8ab-430c527fc65mr446839375ab.26.1761544472906; Sun, 26 Oct 2025
+X-Received: by 2002:a05:6e02:188f:b0:42f:8bdd:6e9c with SMTP id
+ e9e14a558f8ab-431eb66bd70mr135622495ab.14.1761544472098; Sun, 26 Oct 2025
  22:54:32 -0700 (PDT)
 Date: Sun, 26 Oct 2025 22:54:32 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ff0918.050a0220.3344a1.0289.GAE@google.com>
-Subject: [syzbot] Monthly comedi report (Oct 2025)
-From: syzbot <syzbot+list1daaf45abb4087c8cf3a@syzkaller.appspotmail.com>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <68ff0918.050a0220.3344a1.0287.GAE@google.com>
+Subject: [syzbot] [i2c?] WARNING: refcount bug in i2c_get_adapter
+From: syzbot <syzbot+76501d32a94a432940a8@syzkaller.appspotmail.com>
+To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, wsa+renesas@sang-engineering.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello comedi maintainers/developers,
+Hello,
 
-This is a 31-day syzbot report for the comedi subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/comedi
+syzbot found the following issue on:
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 9 issues are still open and 9 have already been fixed.
+HEAD commit:    211ddde0823f Linux 6.18-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=156b4d42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=216353986aa62c5d
+dashboard link: https://syzkaller.appspot.com/bug?extid=76501d32a94a432940a8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-Some of the still happening issues:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Ref Crashes Repro Title
-<1> 1039    Yes   BUG: unable to handle kernel paging request in subdev_8255_io
-                  https://syzkaller.appspot.com/bug?extid=f7ad508e3c76c097483f
-<2> 471     Yes   BUG: unable to handle kernel paging request in parport_attach
-                  https://syzkaller.appspot.com/bug?extid=c47f45cfb7fc1640ced7
-<3> 5       No    possible deadlock in comedi_do_insn
-                  https://syzkaller.appspot.com/bug?extid=4a6138c17a47937dcea1
-<4> 2       No    inconsistent lock state in valid_state (6)
-                  https://syzkaller.appspot.com/bug?extid=a0cafc3f8cfebb67a088
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/07371cf02d4e/disk-211ddde0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/27220c94ca08/vmlinux-211ddde0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/12abd01b8291/bzImage-211ddde0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+76501d32a94a432940a8@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: addition on 0; use-after-free.
+WARNING: CPU: 1 PID: 6572 at lib/refcount.c:25 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
+Modules linked in:
+CPU: 1 UID: 0 PID: 6572 Comm: syz.2.237 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
+Code: 00 00 e8 e9 f5 3d fd 5b 41 5e c3 cc cc cc cc cc e8 db f5 3d fd c6 05 b8 91 60 0a 01 90 48 c7 c7 a0 9a 3e 8b e8 e7 3d 02 fd 90 <0f> 0b 90 90 eb d7 e8 bb f5 3d fd c6 05 99 91 60 0a 01 90 48 c7 c7
+RSP: 0018:ffffc9000cdef6d8 EFLAGS: 00010246
+RAX: 07f404c01321b500 RBX: 0000000000000002 RCX: 0000000000080000
+RDX: ffffc90005d09000 RSI: 00000000000008d8 RDI: 00000000000008d9
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101712487b R12: ffffffff8b995c88
+R13: dffffc0000000000 R14: ffff88805dd48390 R15: dffffc0000000000
+FS:  00007fd67c35e6c0(0000) GS:ffff888126cc2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3001eff8 CR3: 000000003a534000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __refcount_add include/linux/refcount.h:-1 [inline]
+ __refcount_inc include/linux/refcount.h:366 [inline]
+ refcount_inc include/linux/refcount.h:383 [inline]
+ kref_get include/linux/kref.h:45 [inline]
+ kobject_get+0xfd/0x120 lib/kobject.c:643
+ i2c_get_adapter+0x6d/0xa0 drivers/i2c/i2c-core-base.c:2612
+ i2cdev_open+0x48/0x190 drivers/i2c/i2c-dev.c:604
+ chrdev_open+0x4cf/0x5e0 fs/char_dev.c:414
+ do_dentry_open+0x9b1/0x1350 fs/open.c:965
+ vfs_open+0x3b/0x350 fs/open.c:1097
+ do_open fs/namei.c:3975 [inline]
+ path_openat+0x2ef1/0x3840 fs/namei.c:4134
+ do_filp_open+0x1fa/0x410 fs/namei.c:4161
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_openat fs/open.c:1468 [inline]
+ __se_sys_openat fs/open.c:1463 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1463
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd67e0fd810
+Code: 48 89 44 24 20 75 93 44 89 54 24 0c e8 69 95 02 00 44 8b 54 24 0c 89 da 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 89 44 24 0c e8 bc 95 02 00 8b 44
+RSP: 002b:00007fd67c35db70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000002603 RCX: 00007fd67e0fd810
+RDX: 0000000000002603 RSI: 00007fd67c35dc10 RDI: 00000000ffffff9c
+RBP: 00007fd67c35dc10 R08: 0000000000000000 R09: 00232d6332692f76
+R10: 0000000000000000 R11: 0000000000000293 R12: cccccccccccccccd
+R13: 00007fd67e356038 R14: 00007fd67e355fa0 R15: 00007ffec547dee8
+ </TASK>
+
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-You may send multiple commands in a single email message.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
