@@ -1,283 +1,182 @@
-Return-Path: <linux-kernel+bounces-872103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A5AC0F440
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9FEC0F443
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55AD54E4265
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:26:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49104E642B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC583128DC;
-	Mon, 27 Oct 2025 16:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3EF307AFC;
+	Mon, 27 Oct 2025 16:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLa74pib"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UEFVTzV3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6Ug8NWBU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE2C25392D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594D125392D;
+	Mon, 27 Oct 2025 16:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582386; cv=none; b=NFdBKTYlwGuS2W/zxKaOHgLOUC1z3DlH+C8ZC6+/brsLuO4TqKhK5ZaR+yMj5PW9NO949ZbXqVKtoikNjwa53sOti6fJd3VzfhOc5FDDe0nCQHxI/cRDZsI91DjHlkOeADsivm8WT9+IMqlPDvuXHlwgGh4XllE+C7iX5botvlo=
+	t=1761582397; cv=none; b=eyLJyhYlK5oUkialZ+i+8RL9Aabu5FecMv7dPemONHOsQjLvA7G+SPmi+5XXbxz6vSN8W5/bQ0KE2vjlPR2M162U/ExpvU0DNCou8Lx4YXqCezi6ShcSNXCIPND13zvOtv0Uw+03ipMXyGEd/gk4eBFO0ya+ETH51Us2FG58k3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582386; c=relaxed/simple;
-	bh=Bs4B8/uykKw1jcppFuo9rBAa0l4UHhlbTVgzfpm/mNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FocAvHmmnr3tRoSP1RoSy3JFDoXfADMw4KChUtoY8yLJHCQuGTeHHBTl1QsJRYHcRbfmCjUYURrkWcVqXBS7L4L1+EUsdsspX/Gpr5ZW+UqvYbHh4wFc6XR5VAQ9oMnJIolKcbzi5CCCc/cnCp8bt4SP1B2D4BxTkh4xV0/QU08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLa74pib; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4285169c005so2248502f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761582383; x=1762187183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5SrTb8IVi1M+UPh4x4SyPxsMBzZTSdlA/Lo+QiBLzFo=;
-        b=WLa74pibiOKry6Zo3ZBWIm22nFO5FMxyQ4eMt2zdr697we6dHC8IwN1IMjiTm7PmCM
-         z744oQ/9G7pEnhcjH4S/jYrnTVYHVyljCxJt1TmYr6ZrUk6EhGHGdTgWYeczesQMAsds
-         B/pPs+z1owWXKXx+PPYbvmS49Auejbk0/S4xA9n6t6kdn8g7VeP1wSR6X4HGLP3opEn1
-         6+Ifte9S+4cZKN4lTiBwzPxKjuRG/DTH5ZWoPlQWvnxBVtuZ0XGZ09YuM5+4FzUK6rhb
-         iBCMAZXSzBnll4fL4aYOJxxKBb2E/g5w4me0XnfDa8cn5BshdkF4RlZsLoqYxQa+wV71
-         B04g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761582383; x=1762187183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5SrTb8IVi1M+UPh4x4SyPxsMBzZTSdlA/Lo+QiBLzFo=;
-        b=PbyUacQxvf8R99X4P13KgXn0GB74LHfGmSBjs2DhtL2GOdUhXjzN3NEw0pcbojxX8A
-         6fLgfzpuweSWMhwQAarckFk7BKxcHiY/rIEGiBD5kASJbGjNcWRKWIGq6llA0d3g5RxX
-         yYRSwOTL856iEpBUxwhEak7oKKEbEDd/y2MYVZeuMrdpP2ofUAo4xQ9CoxilqTgWgxIx
-         3BNUR0O0MlVm/A/c6BX0BtXIXibw14NXLMbt/BveysnVWHesDSDhXBxAQWnLFnBkhk/x
-         1l45JTrgtuvUWumdpOCAttvgCwQeKV6eQTk0qn5AzAOCG5CAPPs59396TaM0ubDyN/T8
-         1wsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrIu4G2uHVWO9zt+po1vz28mcZn5dmion2qRkghAAYVHM1albFKh/V0OxQoIj5Lj82bE1qx+9Gfz4sBvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt8ODeFasGUtg9bJv+/P84zcWVKa9PUzaeL832AGN2cRmrlFoN
-	VSbFSItzCzhrfKHGK7VW26UGD4sOUFbsZcaQghwwdHBNPvmYJ5R0lRftUu7pzo8JypdwAMALHOV
-	qQ2vxFplehbV0Y/onkNGxasDJnlXCHr4=
-X-Gm-Gg: ASbGncuKJSpPsqim18WvsWZhn7OPMTK+BqQgptvBQ3jhDzclYqIu0qdrazpoSrpiRL/
-	9h0+yTywxMG8hDIqCkthY4JV/okx0psoQaOl4DabOiXshbXgwXVFFm3lIAGdfA0cy9jHvpqA/Hv
-	sSNuCvxMG+8FV+ADQaSBrYYQUpBmvJs5ggs5wqaxnJQQfki+60OheMrtNMaTq8FaF/eswc0vOTU
-	kFWs1Y7Adf3ziA8iM3h9X4jzV+ohKUHYsrKCSUIyUEL9t5X8C3rZ928QURvXV+si4Egep+A
-X-Google-Smtp-Source: AGHT+IHFJxRu5qBnlqFAzxiFl/DfUrP65/+IhuceL8h0odWrzhYK3yEz43INR8RoomWFqZX8ENb8Yl5j8aUnmvnmeyI=
-X-Received: by 2002:a05:6000:22c1:b0:429:8d8b:fef7 with SMTP id
- ffacd0b85a97d-429a7e8af59mr280669f8f.49.1761582382833; Mon, 27 Oct 2025
- 09:26:22 -0700 (PDT)
+	s=arc-20240116; t=1761582397; c=relaxed/simple;
+	bh=c4oRNhhcQ+/+8ZCzZZkt3EIJEucxRX7qrZHg/OkK2xk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NCgwA1Ip9RbH8fH2VhE3pYsh/3U3jLYPGqUq0xgKLnZ+ppe/3FcIgaogIMOxfR+CUXVb+9HgYdN4f7eCv2N4vpL+7CYfNDI4PcjmDs0jf5zXqos0OlLTkBd/G0/liAljJ1ANV80z1t5M04gxgmaXoUA3FW+mgTkYWcD7QNCdwPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UEFVTzV3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6Ug8NWBU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761582390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7UTZdrGauEFQJGAQ8e14nk+CHN/D+NILuEeSTu4MFPE=;
+	b=UEFVTzV31PISf4qWF6yp8IFFo3L2YhNCuwiL0T3dI6yXCKJ8fYw5cSJp6AaDjJnEm4jrmg
+	5JPla0ObAVKHvYRzwagGyPuPdLr4ece3QBWOapM07bWJzPF7Q66ESsktW56agE5i3cP8My
+	Zh4GPEBo4IT4PC2g5rQc9tIzKkAZj3R7zMiypQilOEQ7r12j/PnyW/rJbj7VZW77Si33Hd
+	xS5hcT06BIbPEwql/k5C41N5SqGxBe+M02SvfohSu14drFDh8XiYkBCEOE74cew792hNsl
+	4YVGdfKlVQn2aiNz2vgSZd9fzOnO2go1AKmDGBi+ctWVB6HN0OYf3slO/HA3Yw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761582390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7UTZdrGauEFQJGAQ8e14nk+CHN/D+NILuEeSTu4MFPE=;
+	b=6Ug8NWBUEkvcph/iclZVumFfycbVOULnTkFyXx2dogne5ccwoLylCci+m0dIqhYdDi0fWU
+	ffzmIi6Yz8kKuBCQ==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
+ <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
+ <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+Subject: Re: [patch V2 08/12] rseq: Implement time slice extension
+ enforcement timer
+In-Reply-To: <20251027113822.UfDZz0mf@linutronix.de>
+References: <20251022110646.839870156@linutronix.de>
+ <20251022121427.406689298@linutronix.de>
+ <20251027113822.UfDZz0mf@linutronix.de>
+Date: Mon, 27 Oct 2025 17:26:29 +0100
+Message-ID: <87cy68wbt6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022142051.70400-1-clamor95@gmail.com> <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
-In-Reply-To: <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 27 Oct 2025 18:26:11 +0200
-X-Gm-Features: AWmQ_bndZ_UMW04Dj_5iuem6GBL-JfBmCI1w73hLOMnrt2c_rPQxhjX1IsYuHlw
-Message-ID: <CAPVz0n1aj8A5L50WcO-W4jSH2t6kfi6qXN-2FkmZxiAYJUN3vg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 18:0=
-8 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Mon, Oct 27 2025 at 12:38, Sebastian Andrzej Siewior wrote:
+> On 2025-10-22 14:57:38 [+0200], Thomas Gleixner wrote:
+>> +static enum hrtimer_restart rseq_slice_expired(struct hrtimer *tmr)
+>> +{
+>> +	struct slice_timer *st =3D container_of(tmr, struct slice_timer, timer=
+);
+>> +
+>> +	if (st->cookie =3D=3D current && current->rseq.slice.state.granted) {
+>> +		rseq_stat_inc(rseq_stats.s_expired);
+>> +		set_need_resched_current();
+>> +	}
 >
-> Hi Svyatoslav,
->
-> On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
-> > Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
-> > with a set of changes required for that.
->
-> Other than patch 06/23 that looked iffy (although the original code was i=
-ffy as
-> already), for which I posted a review, this series looks almost ready.
+> You arm the timer while leaving to userland. Once in userland the task
+> can be migrated to another CPU. Once migrated, this CPU can host another
+> task while the timer fires and does nothing.
 
-06/23 addresses issue I have encountered while testing with mt9m114 I
-will add detailed explanation later in the 06/23 commit discussion.
+That's inevitable. If the scheduler decides to do that then there is
+nothing which can be done about it and that's why the cookie pointer
+exists.
 
+>> +	return HRTIMER_NORESTART;
+>> +}
+>> +
+> =E2=80=A6
+>> +static void rseq_cancel_slice_extension_timer(void)
+>> +{
+>> +	struct slice_timer *st =3D this_cpu_ptr(&slice_timer);
+>> +
+>> +	/*
+>> +	 * st->cookie can be safely read as preemption is disabled and the
+>> +	 * timer is CPU local. The active check can obviously race with the
+>> +	 * hrtimer interrupt, but that's better than disabling interrupts
+>> +	 * unconditionally right away.
+>> +	 *
+>> +	 * As this is most probably the first expiring timer, the cancel is
+>> +	 * expensive as it has to reprogram the hardware, but that's less
+>> +	 * expensive than going through a full hrtimer_interrupt() cycle
+>> +	 * for nothing.
+>> +	 *
+>> +	 * hrtimer_try_to_cancel() is sufficient here as with interrupts
+>> +	 * disabled the timer callback cannot be running and the timer base
+>> +	 * is well determined as the timer is pinned on the local CPU.
+>> +	 */
+>> +	if (st->cookie =3D=3D current && hrtimer_active(&st->timer)) {
+>> +		scoped_guard(irq)
+>> +			hrtimer_try_to_cancel(&st->timer);
 >
-> Should the clk patches be merged together with the media patches? Or can =
-those
-> go in via the clk subsystem? If it is the latter, then I'll need an Acked=
--by from the
-> clk subsystem maintainer.
+> I don't see why hrtimer_active() and IRQ-disable is a benefit here.
+> Unless you want to avoid a branch to hrtimer_try_to_cancel().
 >
+> The function has its own hrtimer_active() check and disables interrupts
+> while accessing the hrtimer_base lock. Since preemption is disabled,
+> st->cookie remains stable.
+> It can fire right after the hrtimer_active() here. You could just
+>
+> 	if (st->cookie =3D=3D current)
+> 		hrtimer_try_to_cancel(&st->timer);
+>
+> at the expense of a branch to hrtimer_try_to_cancel() if the timer
+> already expired (no interrupts off/on).
 
-I suppose this should be discussed between staging and clk subsystem
-maintainers I am fine with any conclusion.
+That's not equivalent. As this is CPU local the interrupt disable
+ensures that the timer is not running on this CPU. Otherwise you need
+hrtimer_cancel(). Read the comment. :)
 
-> Regarding the bindings: all except 21/23 are Acked.
+If it fired already, then the task is reaching this code too
+late. Nothing to see there.
 
-Maybe you did not notice, but 21/23 has reviewed-by from Rob Herring.
+>> +		.extra1		=3D (unsigned int *)&rseq_slice_ext_nsecs_min,
+>> +		.extra2		=3D (unsigned int *)&rseq_slice_ext_nsecs_max,
+> =E2=80=A6
+>
+> maybe +
+>
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/=
+admin-guide/sysctl/kernel.rst
+> index f3ee807b5d8b3..ed34d21ed94e4 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -1228,6 +1228,12 @@ reboot-cmd (SPARC only)
+>  ROM/Flash boot loader. Maybe to tell it what to do after
+>  rebooting. ???
+>=20=20
+> +rseq_slice_extension_nsec
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> +
+> +A task may ask to delay its scheduling if it is in a critical section vi=
+a the
+> +prctl(PR_RSEQ_SLICE_EXTENSION_SET) mechanism. This sets the maximum allo=
+wed
+> +extension in nanoseconds before a mandatory scheduling of the task is fo=
+rced.
 
->
-> I have one question regarding testing: in the past I tested this driver w=
-ith a
-> Jetson TX1 devkit and a camera sensor. One of the main reasons this drive=
-r is still
-> in staging is that I never got that to work reliably: after 10-30 minutes=
- it would
-> lose sync and streaming would stop.
->
-> Unfortunately I never had the time to dig deeper into that.
->
-> So have you tested this with a camera sensor? And if so, does it stream r=
-eliably?
-> I.e. just let it stream for 24 hours and see if that works.
->
-> If it is reliable for you, then I think this driver should be moved to dr=
-ivers/media.
+Yes. Forgot about it as I already documented it in the time slice
+extension docs. Let me add that.
 
-Streaming works but I did not tested for such prolonged periods of
-time. Scope of this patchset is bringing CSI support for
-Tegra20/Tegra30, extended testing and move to media can be done in
-followup.
+Thanks,
 
->
-> Regards,
->
->         Hans
->
-> >
-> > ---
-> > Changes in v2:
-> > - vi_sensor gated through csus
-> > - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
-> > - adjusted commit titles and messages
-> > - clk_register_clkdev dropped from pad clock registration
-> > - removed tegra30-vi/vip and used tegra20 fallback
-> > - added separate csi schema for tegra20-csi and tegra30-csi
-> > - fixet number of VI channels
-> > - adjusted tegra_vi_out naming
-> > - fixed yuv_input_format to main_input_format
-> > - MIPI calibration refsctored for Tegra114+ and added support for
-> >   pre-Tegra114 to use CSI as a MIPI calibration device
-> > - switched ENOMEM to EBUSY
-> > - added check into tegra_channel_get_remote_csi_subdev
-> > - moved avdd-dsi-csi-supply into CSI
-> > - next_fs_sp_idx > next_fs_sp_value
-> > - removed host1x_syncpt_incr from framecounted syncpoint
-> > - csi subdev request moved before frame cycle
-> >
-> > Changes in v3:
-> > - tegra20 and tegra30 csi schema merged
-> > - removed unneeded properties and requirements from schema
-> > - improved vendor specific properties description
-> > - added tegra20 csus parent mux
-> > - improved commit descriptions
-> > - redesigned MIPI-calibration to expose less SoC related data into head=
-er
-> > - commit "staging: media: tegra-video: csi: add support for SoCs with i=
-ntegrated
-> >   MIPI calibration" dropped as unneeded
-> > - improved tegra_channel_get_remote_device_subdev logic
-> > - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
-> > - software syncpoint counters switched to direct reading
-> > - adjusted planar formats offset calculation
-> >
-> > Changes in v4:
-> > - removed ifdefs from tegra_mipi_driver
-> > - document Tegra132 MIPI calibration device
-> > - switched to use BIT macro in tegra114-mipi
-> > - pinctrl changes moved to a separate patch
-> > - ERESTARTSYS workaround preserved for now
-> > - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
-> > - reworked bytesperline and sizeimage calculaion
-> >
-> > Changes in v5:
-> > - dropped patch 1/24 of v4 since it was picked to pinctrl tree
-> > - added reasoning for tegra132 comaptible into commit desctiption
-> > - moved clocks into common section in tegra20-csi schema
-> > - added note regarding ERESTARTSYS
-> > ---
-> >
-> > Svyatoslav Ryhel (23):
-> >   clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
-> >     Tegra114
-> >   dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
-> >   clk: tegra30: add CSI pad clock gates
-> >   dt-bindings: display: tegra: document Tegra30 VI and VIP
-> >   staging: media: tegra-video: expand VI and VIP support to Tegra30
-> >   staging: media: tegra-video: vi: adjust get_selection op check
-> >   staging: media: tegra-video: vi: add flip controls only if no source
-> >     controls are provided
-> >   staging: media: tegra-video: csi: move CSI helpers to header
-> >   gpu: host1x: convert MIPI to use operation function pointers
-> >   dt-bindings: display: tegra: document Tegra132 MIPI calibration devic=
-e
-> >   staging: media: tegra-video: vi: improve logic of source requesting
-> >   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
-> >     CSI
-> >   arm64: tegra: move avdd-dsi-csi-supply into CSI node
-> >   staging: media: tegra-video: tegra20: set correct maximum width and
-> >     height
-> >   staging: media: tegra-video: tegra20: add support for second output o=
-f
-> >     VI
-> >   staging: media: tegra-video: tegra20: adjust format align calculation=
-s
-> >   staging: media: tegra-video: tegra20: set VI HW revision
-> >   staging: media: tegra-video: tegra20: increase maximum VI clock
-> >     frequency
-> >   staging: media: tegra-video: tegra20: expand format support with
-> >     RAW8/10 and YUV422/YUV420p 1X16
-> >   staging: media: tegra-video: tegra20: adjust luma buffer stride
-> >   dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
-> >   ARM: tegra: add CSI nodes for Tegra20 and Tegra30
-> >   staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
-> >
-> >  .../display/tegra/nvidia,tegra114-mipi.yaml   |   1 +
-> >  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 +++
-> >  .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
-> >  .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
-> >  arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
-> >  arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
-> >  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
-> >  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
-> >  drivers/clk/tegra/clk-tegra114.c              |   7 +-
-> >  drivers/clk/tegra/clk-tegra20.c               |  20 +-
-> >  drivers/clk/tegra/clk-tegra30.c               |  21 +-
-> >  drivers/gpu/drm/tegra/dsi.c                   |   1 +
-> >  drivers/gpu/host1x/Makefile                   |   1 +
-> >  drivers/gpu/host1x/mipi.c                     | 525 ++---------
-> >  drivers/gpu/host1x/tegra114-mipi.c            | 483 +++++++++++
-> >  drivers/staging/media/tegra-video/Makefile    |   1 +
-> >  drivers/staging/media/tegra-video/csi.c       |  70 +-
-> >  drivers/staging/media/tegra-video/csi.h       |  16 +
-> >  drivers/staging/media/tegra-video/tegra20.c   | 820 +++++++++++++++---
-> >  drivers/staging/media/tegra-video/vi.c        |  56 +-
-> >  drivers/staging/media/tegra-video/vi.h        |   6 +-
-> >  drivers/staging/media/tegra-video/video.c     |   8 +-
-> >  drivers/staging/media/tegra-video/vip.c       |   4 +-
-> >  include/dt-bindings/clock/tegra30-car.h       |   3 +-
-> >  include/linux/host1x.h                        |  10 -
-> >  include/linux/tegra-mipi-cal.h                |  57 ++
-> >  26 files changed, 1657 insertions(+), 670 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvi=
-dia,tegra20-csi.yaml
-> >  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
-> >  create mode 100644 include/linux/tegra-mipi-cal.h
-> >
->
+        tglx
 
