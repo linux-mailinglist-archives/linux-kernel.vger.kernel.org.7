@@ -1,129 +1,304 @@
-Return-Path: <linux-kernel+bounces-871303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F44C0CE04
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:07:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D90C0CE2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CAF4404B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F222E405880
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754561C84B9;
-	Mon, 27 Oct 2025 10:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56032E6116;
+	Mon, 27 Oct 2025 10:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqNkvpuJ"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFRL+UEu"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B825F984
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31881F92E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559228; cv=none; b=V0EQzzwtkjHnbch7GLIvhG0AF4lP9SbiRiqEK/4I/YUjPa0n2wCVTZuwynu4wu1rvXdJHe7BE6tF7a20Bkb+/TB2+fFazA1hkLWwL+dAmnQXkrOQsBS9RlTMOrJN54n6KsaVEu6NTFPSwc49+AsCaqjfuBFBg2BtX6qpOKAiCLM=
+	t=1761559386; cv=none; b=czR8q4zHDqJNHZCj7TzLqbV1TjPU8H+Avs0lByxb6Zhf7AqDwNX6YPwtA4L6zbCI8KvHNwH7v/x0hZduhZQKJiloHbRHMFKoBE+ufFRCX5gKiWz6Ok+8n/nJ2wEkabM4LhCS2TQBxnDl/rJymrr1mjVb81+CzZsydvtSGzxXGA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559228; c=relaxed/simple;
-	bh=llevhbx7w2gVPSgxchYQykyfF3P6kCmvO3Z+1l6bNEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tgHkxiTFGioEOtXeYEW8bRbn/VmKwMnFtCvmd5Q2eWss9194kCJeWkrz2VMdEVmwknlTpy0MlMR5LUgEtp1vIHJW4nJovknMWgafGzI+hoDd0A8VQivDB1/Xkds0L6USMrRP9fZ1PwXnr2wYNF3wEWo2CZIAFl0+6tdMoWs8mwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BqNkvpuJ; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1761559386; c=relaxed/simple;
+	bh=wSQhLyLVVBmeJLZo0528PfkrJqdciTos0SsYkvc8nkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S98enVIh/boVq8hJrDxsWPo2mQFB2fdwVWOk8aVW3IS0/yPH4Wq60NEyS6waGxq0t349Nmg/3NEPIHnU3zRqZexKSGF5GsmkmJscHe2boi45Vz4x9dESha9W9fFYEhXrLanhfWT6WA5wPF7xj5BjmJ8KBqZ6KfyEbwh1eiphyiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RFRL+UEu; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b608df6d2a0so4040909a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:00:27 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4711810948aso31932675e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761559227; x=1762164027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=llevhbx7w2gVPSgxchYQykyfF3P6kCmvO3Z+1l6bNEw=;
-        b=BqNkvpuJxdLFFaYQmH6TFx2FCGfBO5dYTF27G1SnJK+kZOD3xPEY+kn1E9UrVkf25g
-         zkawesYiDwVSXoFYjTeE77r/8zObUTIRlzXL7I7x3RpZAQmCJsGfvZHw5E0vXocKVcyx
-         qa7vHdSpwKSv+QjfiXm/kKdWU7rLhXRza5V9xNeEBz0mNKF65ObfuLGrUHDL8ePslbzR
-         Uk1eaVlqxFoH6Lq1DJVUd0EDiEk8KFT4xIPDOV1QpJI4Ol5kw3qZzxtuyTMD5NCWZ2aD
-         M23eFzYXu92ymZdM4P86C8lXJt6ha8Un5PRq8uEbBwg7ShdTZ+5T6vwFaENWI1YBiMLm
-         7Xog==
+        d=gmail.com; s=20230601; t=1761559382; x=1762164182; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ColHiiG/qinTBnjmfHXEdZo/afW+oA9OJEzlrf1jxbY=;
+        b=RFRL+UEu05kQ8o0z+Kb9MfkV3NtB7EAcznaoh5XJaV24T43AmWU09ePgf6lEezcQFY
+         Z15iOtvsVDCzfFNediPEWEfc8cUixuzpDGEXyg5NtujYRAvvKeIZBB2KMXRIa23SWKSo
+         EurpQaoD0oGGA3ek8QuSzlvh2M2bydJIQMPrc10ke2SXsQeUg52Cpwcdqlbo8THx7BCc
+         gqLYSZC/RZ/BZYEb2Nqmr4Z9LZt2gQOMylFwkgEPkQZrdRTT7APT8JCkcrWIcqFGEau0
+         tKR/LrvIYqOY13CLUGRgiA/CUnca7t6R439RII256dh6FuvXInBY24qdLQL4n7do4Y7Y
+         aINw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761559227; x=1762164027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=llevhbx7w2gVPSgxchYQykyfF3P6kCmvO3Z+1l6bNEw=;
-        b=cuKkk07epVKJEQEpYLWbUzesCc5lmK0h8Gd0LUWocQB8GSnwHdp6EjPhauk0SX1U+V
-         KshE8ATB+jLy1gID90Y8LdKZsbRtpR12KmAl+7AB6uMUC5z6pdPVJpLB2T/eP8Zcl4TO
-         YE3wz+AB/iTSpKz3iTvnT26OTlr5gnT801n/DphzwnNPZj4b/mTGAYGal4EV++V4IRYt
-         xYgrvQ++wiDRs0DMBcqltgWclgLZmivD/hRTpjXZaUStqiwp7SrG6EjaJQCfYanmfM/Q
-         ZOxhGjaZnqkj5FleN0AZ2Z/wWKGxQ0fVZ+/pokb8ChcGMCVXEAFAiEXozqtz4Tb+yR3R
-         OG7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYkrPLrtU7VLPtntubMAz+VHJrvUC/nUfeUQRDDl0fxnb26vwnCLX/MmzbpOsRSb1yPtkKz3jwI9A5mYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNj1Yq6IXw8mk6aiuWINe/XE9LmOAmkdkUlcrv6QirUk2KDppi
-	BjhXC8340/icbWJZM9IPLJJNIl1ZwJC5nrw96J1vpcpbLGwuCynbWCcSQcrHT3qDfxkG4d0lmRb
-	vrfYxUfsXyN+vdrXEeZ/1Qj2UICY1eOQ=
-X-Gm-Gg: ASbGncuE/ljR5iSQSFN+9twQ/H1AuN4dDrUZcA+upd28qT0NoUnTONpEAJEP262lCFa
-	zeS+Bk7E4atcz3yhZLcu6E/Cz7iSbvd6eZylppu2AklInA4TFkNDJqLV8zVuEOAOUITQFyhWA7n
-	oF++ZF6u7AFdNsUIRZk30oVd/f5Nadk4hxSIN5T9dzEdZNDuQfi03YcZEXhK74MKfdrQbUFkOZj
-	0Ygs+Hwwzdh5iEkTFMNZ/Crt3eZGaWs+3A/8Me0OgucaBD7RQT4TmbUHFBAHYkZRryZ2tb6hyVh
-	V0+ocWgfUN+1tmXvJaqbsxpt5jGPD6uobDw=
-X-Google-Smtp-Source: AGHT+IEVKeBh2X8nn5edN2JNYH0ip6RRsXlkactmrlxMJ24ltADBqpxEPIq5x0ftvH+xeOzwVb5LwOMRmctLYx+ASlY=
-X-Received: by 2002:a17:903:18d:b0:269:b2ff:5c0e with SMTP id
- d9443c01a7336-2948ba5aac4mr144470455ad.46.1761559225678; Mon, 27 Oct 2025
- 03:00:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761559382; x=1762164182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ColHiiG/qinTBnjmfHXEdZo/afW+oA9OJEzlrf1jxbY=;
+        b=tY6rVCXSIgd4Gnf0ADqEKAB8dze4JdHdqmSLkLSodRFs3PtPBh0gJSNo3BFGKMOD2x
+         mWZW/cKhGdby7znI/jJnISBd9kqjrz/j7To3p/mfAzr5W/ZkAys+oKijLFCX5XJnchtt
+         UolItDK3GQ3bV7b/Xe7pvEnBWD2y9Q0IM0SSSe4FXu6F/7Y7x7gUN9khUeHDjzFRddl6
+         5Qs+3DOQ0OPJbWeeptmi7alQr0RG8yzAx6HFfMXYlA0spXTP8NGVDpfr+5QISVn+/k7v
+         FlOVRhmcQa5VMiujb6cywbTRjCjkEDWC3TDcoWJ+tcIMg+7nzu5ul3y3ESjtFWHPVqYg
+         ALjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8GlskUmX6ol5qELCqIe0nelIWGeTan6UmpsH7xDR7WSdrUDtPmo3D2jMhObaccTnPkh7lhopNpD3IWjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTGQDKJ/fx0w8o1M0spo4A02D6EbZWoxDvScaZtomKUwC6kUJ8
+	pph6gbMtp+YyCmhMskwB6L25fQqOppxpdriIBhGOVjpWJQMC9AW7ga9N
+X-Gm-Gg: ASbGncubpZ+U2sagY2U+zhSpw7n6lHeUrHeMW2NCCI45KRwaci6bbO7YFSPKpQBudge
+	04Ql6o659Bkk6GJ2eZehctH+al/wPQpfpASRVXD++A8MUTRMa9NMUgWXWNnARU1ODaQMWaZIOwH
+	RDj+U65odVUs2Rlw6zxpneZBpgYQjTDz+hPVRk29NIvsEAQNy1uJQfNKiIVYfd50PO8iqusq3Vq
+	BCBTKfes6wnSP6RqzY5kuwRhglA4oN5JzoY5goe77W6hwLJ8fgz5DRNs5TcIyKI8xZI7FonUFW6
+	uIFd1FoUNHePCW8y2/TtRRIkEC/hMSzdr3XK+KHyt/YgHHIeoZU1JiLlLu64vMORL1ufwLEqXQZ
+	d3NLivsHUCMZsLQONfIVbdw3sH4SMVTxInhUbTS1zgolGDmexLRP5a94a+DP1uPYit0fT1NV6Ig
+	dlIZXSKel+
+X-Google-Smtp-Source: AGHT+IEhJgRbhZWxAtcGo/HkTUbtQh4nuBOxFDXFQPWt87Z+E3yOA3FIVntFGRPGhKTYH/ky4bgtag==
+X-Received: by 2002:a05:600c:5392:b0:477:bcb:24cd with SMTP id 5b1f17b1804b1-4770bcb27a0mr35415935e9.22.1761559381856;
+        Mon, 27 Oct 2025 03:03:01 -0700 (PDT)
+Received: from fedora ([94.73.38.14])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4a36easm128111685e9.10.2025.10.27.03.03.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 03:03:01 -0700 (PDT)
+Date: Mon, 27 Oct 2025 11:02:59 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	victoria@system76.com, sebastian.wick@redhat.com,
+	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 18/22] drm/vkms: Introduce config for connector EDID
+Message-ID: <aP9DU6g_qbEn1lHn@fedora>
+References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
+ <20251018-vkms-all-config-v1-18-a7760755d92d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
- <20251017112025.11997-5-laurentiumihalcea111@gmail.com> <aPJWUDXmGkb8QGMz@lizhi-Precision-Tower-5810>
-In-Reply-To: <aPJWUDXmGkb8QGMz@lizhi-Precision-Tower-5810>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 27 Oct 2025 12:02:50 +0200
-X-Gm-Features: AWmQ_bnztc34-LVMElYU3hA5bxPnJsvEFVV1IWI00q3s-IiPzNkbThRFF6roaYA
-Message-ID: <CAEnQRZBFCi9GPaAw+NdKboADSpzPKGL-1B3WNh1M4Nuxd_9rqw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] reset: imx8mp-audiomix: Drop unneeded macros
-To: Frank Li <Frank.li@nxp.com>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Abel Vesa <abelvesa@kernel.org>, 
-	Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018-vkms-all-config-v1-18-a7760755d92d@bootlin.com>
 
-On Fri, Oct 17, 2025 at 5:47=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Fri, Oct 17, 2025 at 04:20:21AM -0700, Laurentiu Mihalcea wrote:
-> > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> >
-> > The macros defining the mask values for the EARC, EARC PHY resets,
-> > and the DSP RUN_STALL signal can be dropped as they are not and will
-> > not be used anywhere else except to set the value of the "mask" field
-> > from "struct imx8mp_reset_map". In this particular case, based on the
-> > name of the "mask" field, you can already deduce what these values are
-> > for, which is why defining macros for them doesn't offer any new
-> > information, nor does it help with the code readability.
-> >
-> > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > ---
->
-> Register define still prefer use macro.
->
-> So far const string, hexvalue prefer use value if only use once.
+On Sat, Oct 18, 2025 at 04:01:18AM +0200, Louis Chauvet wrote:
+> Allows configuration of EDID for each connector.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/tests/vkms_config_test.c |  2 +
+>  drivers/gpu/drm/vkms/vkms_config.h            | 77 +++++++++++++++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_connector.c         | 48 +++++++++++++++--
+>  3 files changed, 123 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> index a89ccd75060d..d1e380da31ff 100644
+> --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> @@ -190,6 +190,8 @@ static void vkms_config_test_default_config(struct kunit *test)
+>  		KUNIT_EXPECT_EQ(test,
+>  				vkms_config_connector_get_supported_colorspaces(connector_cfg),
+>  				0);
+> +		KUNIT_EXPECT_EQ(test, vkms_config_connector_get_edid_enabled(connector_cfg),
+> +				false);
+>  	}
+>  
+>  	KUNIT_EXPECT_TRUE(test, vkms_config_is_valid(config));
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index ec614c2d4a30..eaf76a58aab6 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -129,6 +129,8 @@ struct vkms_config_encoder {
+>   * @type: Store the type of connector using DRM_MODE_CONNECTOR_* values
+>   * @config: The vkms_config this connector belongs to
+>   * @status: Status (connected, disconnected...) of the connector
 
-This is simple enough that we can use the BIT() macro directly to express
-the masks.
+@edid_enabled: If true, @edid and @edid_len are taken into account
 
-As you said you can use the const value (including BIT()) when the value is=
- used
-only once as it is this case.
+(or similar)
 
-So I think this patch is fine:
+> + * @edid: Stores the current EDID
+> + * @edid_len: Current EDID length
+>   * @possible_encoders: Array of encoders that can be used with this connector
+>   * @connector: Internal usage. This pointer should never be considered as valid.
+>   *             It can be used to store a temporary reference to a VKMS connector
+> @@ -142,6 +144,9 @@ struct vkms_config_connector {
+>  	int type;
+>  	enum drm_connector_status status;
+>  	u32 supported_colorspaces;
+> +	bool edid_enabled;
+> +	u8 *edid;
+> +	unsigned int edid_len;
+>  	struct xarray possible_encoders;
+>  
+>  	/* Internal usage */
+> @@ -265,6 +270,78 @@ vkms_config_connector_get_supported_colorspaces(struct vkms_config_connector *co
+>  	return connector_cfg->supported_colorspaces;
+>  }
+>  
+> +/**
+> + * vkms_config_connector_get_edid_enabled() - Check if EDID is enabled for a connector
+> + * @connector_cfg: Connector configuration to check
+> + *
+> + * Returns:
+> + * True if EDID is enabled for this connector, false otherwise.
+> + */
+> +static inline bool
+> +vkms_config_connector_get_edid_enabled(struct vkms_config_connector *connector_cfg)
+> +{
+> +	return connector_cfg->edid_enabled;
+> +}
+> +
+> +/**
+> + * vkms_config_connector_set_edid_enabled() - Enable or disable EDID for a connector
+> + * @connector_cfg: Connector configuration to modify
+> + * @enabled: Whether to enable EDID for this connector
+> + */
+> +static inline void
+> +vkms_config_connector_set_edid_enabled(struct vkms_config_connector *connector_cfg,
+> +				       bool enabled)
+> +{
+> +	connector_cfg->edid_enabled = enabled;
+> +}
+> +
+> +/**
+> + * vkms_config_connector_get_edid() - Get the EDID data for a connector
+> + * @connector_cfg: Connector configuration to get the EDID from
+> + * @len: Pointer to store the length of the EDID data
+> + *
+> + * Returns:
+> + * Pointer to the EDID data buffer, or NULL if no EDID is set.
+> + * The length of the EDID data is stored in @len.
+> + */
+> +static inline const u8 *
+> +vkms_config_connector_get_edid(const struct vkms_config_connector *connector_cfg, int *len)
+> +{
+> +	*len = connector_cfg->edid_len;
+> +	return connector_cfg->edid;
+> +}
+> +
+> +/**
+> + * vkms_config_connector_set_edid() - Set the EDID data for a connector
+> + * @connector_cfg: Connector configuration to modify
+> + * @edid: Pointer to the EDID data buffer
+> + * @len: Length of the EDID data
+> + *
+> + * If @len is 0, the EDID data will be cleared. If memory allocation fails,
+> + * the existing EDID data will be preserved.
+> + */
+> +static inline void
+> +vkms_config_connector_set_edid(struct vkms_config_connector *connector_cfg,
+> +			       const u8 *edid, unsigned int len)
+> +{
+> +	if (len) {
+> +		void *edid_tmp = krealloc(connector_cfg->edid, len, GFP_KERNEL);
+> +
+> +		if (edid_tmp) {
+> +			connector_cfg->edid = edid_tmp;
+> +			memcpy(connector_cfg->edid, edid, len);
+> +			connector_cfg->edid_len = len;
+> +		} else {
+> +			kfree(connector_cfg->edid);
+> +			connector_cfg->edid_len = 0;
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+I wonder if in case of error it makes sense to NULL connector_cfg->edid and
+vkms_config_connector_set_edid_enabled(false)?
+
+It'd be also nice to print the EDID in hex format in vkms_config_show().
+
+> +		}
+> +	} else {
+> +		kfree(connector_cfg->edid);
+> +		connector_cfg->edid = NULL;
+> +		connector_cfg->edid_len = len;
+> +	}
+> +}
+> +
+>  /**
+>   * vkms_config_get_device_name() - Return the name of the device
+>   * @config: Configuration to get the device name from
+> diff --git a/drivers/gpu/drm/vkms/vkms_connector.c b/drivers/gpu/drm/vkms/vkms_connector.c
+> index cc59d13c2d22..339d747e729e 100644
+> --- a/drivers/gpu/drm/vkms/vkms_connector.c
+> +++ b/drivers/gpu/drm/vkms/vkms_connector.c
+> @@ -42,13 +42,53 @@ static const struct drm_connector_funcs vkms_connector_funcs = {
+>  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>  };
+>  
+> +static int vkms_connector_read_block(void *context, u8 *buf, unsigned int block, size_t len)
+> +{
+> +	struct vkms_config_connector *config = context;
+> +	unsigned int edid_len;
+> +	const u8 *edid = vkms_config_connector_get_edid(config, &edid_len);
+> +
+> +	if (block * len + len > edid_len)
+> +		return 1;
+> +	memcpy(buf, &edid[block * len], len);
+> +	return 0;
+> +}
+> +
+>  static int vkms_conn_get_modes(struct drm_connector *connector)
+>  {
+> -	int count;
+> +	struct vkms_connector *vkms_connector = drm_connector_to_vkms_connector(connector);
+> +	const struct drm_edid *drm_edid = NULL;
+> +	int count = 0;
+> +	struct vkms_config_connector *context = NULL;
+> +	struct drm_device *dev = connector->dev;
+> +	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
+> +	struct vkms_config_connector *connector_cfg;
+>  
+> -	/* Use the default modes list from DRM */
+> -	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
+> -	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
+> +	vkms_config_for_each_connector(vkmsdev->config, connector_cfg) {
+> +		if (connector_cfg->connector == vkms_connector)
+> +			context = connector_cfg;
+> +	}
+> +	if (context) {
+> +		if (vkms_config_connector_get_edid_enabled(context)) {
+> +			drm_edid = drm_edid_read_custom(connector,
+> +							vkms_connector_read_block, context);
+> +
+> +			/*
+> +			 * Unconditionally update the connector. If the EDID was read
+> +			 * successfully, fill in the connector information derived from the
+> +			 * EDID. Otherwise, if the EDID is NULL, clear the connector
+> +			 * information.
+> +			 */
+> +			drm_edid_connector_update(connector, drm_edid);
+> +
+> +			count = drm_edid_connector_add_modes(connector);
+> +
+> +			drm_edid_free(drm_edid);
+> +		} else {
+> +			count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
+> +			drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
+> +		}
+> +	}
+>  
+>  	return count;
+>  }
+> 
+> -- 
+> 2.51.0
+> 
 
