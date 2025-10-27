@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-872654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F69BC11B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:29:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FE0C11B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49A04E2F59
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58015466D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A543B32C951;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE7132D0C5;
 	Mon, 27 Oct 2025 22:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i5702t1l"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnG2PwBE"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D028221DAC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52DB30C37C
 	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604177; cv=none; b=S8x9O5THnkvRrZnOcCPs8QF2fG4D3j0+u78X4RUstR/0YM2mRVL8bKr3O6GQv5D9NfSumRREkPeyOh8SR2Y7Ir6M4Jc3nii0rv6M6V/kFq3unjw2/EkpLtaV2JK5T1859C3ZQLs9QTXyljBkEzU/OUJEu7EcAbmUD3mcJ3h3He0=
+	t=1761604177; cv=none; b=M0IGxL5NLxX9aKJgCBm+zSfXw2DGvRic/dUu/DyN3/uE8PVG1q91HKjPjlj4caCC+I6bsGFnKQn399YKPtcmvtUCxXk3LjeNRqxLFcG936U6F1hND7RDmhsh7K/uICvXRcp5gXVCjIvN1ss6Z28PSkccKEKKx16x7nLZtasz5xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761604177; c=relaxed/simple;
-	bh=qCctqqmuCWipVL8GughzbbRKWgiygHwz0qUsY2oTFoo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S1bI+k+pDhxo94LQk1v619d8z4dH8oVo3Cm3cMO5Q01eepX+n4KjNY3xZgta+vHwT3AeK8qahFuSdtNhLRd1nwhUHqZTtf6pK1JJOiHjd+mHfAP8dZv6zAW1fn4QYAGUxyBd//l2QRS300qqK1Oy4QKm38TZdB6yFmNu27BL8Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i5702t1l; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-36bf096b092so50831251fa.1
+	bh=0C1yl0AA49JmE9XLwRyxffj0R5guaYcIk3f9PZ1hd+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPKwh80qcaA51UMN6EbYHPGVhroZiKlyq2iaKE794mqPHxPniadmlPEtseJkXHQ+0z7PCGmidnVtY79Ma6v8uoU6BcGjGl2VaPCehPWyzRGSiCn3oqL+e2lwds8/Tmo5E27H6KmqQ9pFd4FjiN+ErPDM4HAh/mr+mNFQ7eNOLmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnG2PwBE; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b6d8b70197cso51508466b.3
         for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:29:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761604173; x=1762208973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8OllJa5cnTv18Hb5rtu0WqFYbEpD7McBb4G8sNHUxU=;
-        b=i5702t1lHofL4kd8TbEJQuRdtOKuGOjC6zkq6Q7Bk0BuTRiJFdCd4Z9I2wNiSjduhw
-         5CuzI/+PgoQRVQ7wp1KMYkVLkL8nXonzXlK6sRjLzcLKSbBazQJdjtT2yvjJO04vToPV
-         SrdxhcsReyr6HzS5bA7GwJZzbi77mrRu3iVIHa4y0zURm4fDk4GgQx9zOLq5Gw1kZ8HP
-         9IH258d+YyCIp2+pmRggC7bmYZn6HmllfyxNHMB72QYzqFuFB1TOe25AJeJ84O1ahhCS
-         eq2L/QK5ODTzibmQ3DQwTADdWZppO9jnZKyIatPJF+LrSxs+CVmSNHV5uchJdoHE3Ivk
-         rDPg==
+        d=gmail.com; s=20230601; t=1761604174; x=1762208974; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RE56wPPSVhzI0oadNjkluabeK5GwNJ3pnD3l3rW33bI=;
+        b=JnG2PwBETF8wvT2ZcvOCs4655f3/PEA7WPpHBAfeVkYJCJZ/4zu3OPZr8IM28MqeHB
+         XK5M/I+bCzHZ0joMqS6C899uuVIBax7Hll3Poxyw6wKWrw8kynwD8V/S+IzWWTee+/md
+         1ocKTwqHoQu9Smf0VFNevIMrhcJJ4LV58QwOICElPEIXxudBBJNYLj3sle2tWsiVUB/7
+         wyBCJCzY//hEDnTzy1TcWlRD3H9bzhVdrdIKYc49S+3YeHOqwWwHl3vYFPGXKh2SjHZJ
+         wxjpl2849RoxDq3QCN30j5kJuVA4PLsxpTzHOJGUSlH43TMcTv3XS1mh5uYDbRQNVKCy
+         rMYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761604173; x=1762208973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q8OllJa5cnTv18Hb5rtu0WqFYbEpD7McBb4G8sNHUxU=;
-        b=JmAuVzTk6qc81JOK1ZE8Hfl8YCB77U2FgX1fI7Zr8OjDq4N17VWM6Hc/R+5J9C7U96
-         nJZ093DzeRMBLFut+c7rfT0QwosuxJ3xwRJwCimdoXTG9WZkRV1yPm5mPIfg1MgWbFyo
-         R54Cpi6Rx2tj98TzzFfj0QTWg+954SMbGf0E/+tU69fLXNpoaCz606pUfoqFWSZ0vxc4
-         tpuj2DIgIijXi/+BihlnNlqF1FHkfHcXBN3d5zUMDXCdoqodfLIOmOSJ+SE+O/5ZEK9H
-         wNVNUc+gP0CDqAroRYLVacIrfMjs1aRhTE+uNwSlddpJkgL8mzv0aTr0RtqrWtfmzFWL
-         gbWg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7sCt4+a6h+7+liKxKCJA3+jeWNIvWln6MrmiazJBvrof9AUaiFEzoYmdk2X8w5cTKGjAJco+mOtlxXiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5uf5dmMx+mnu/kV6H7kj8IvikLn4+1NgSWZvCF1U7cU7TYbXM
-	a3a9wbx3PgX1BzkQ7IziAbyIWRZeEIx6IMwGLOAI20jxBNtx2Znf+zfkqn+YhgJwZfT3R97Ru31
-	NdmrZY4ZndjxLKjzgdPIdLSkA+a/9UWmkpDnLOyAn
-X-Gm-Gg: ASbGncuHDy1Fd4/dSDMOwQs004yqY0ZYhQVKJatQ8mtTU1SvJ+xD8pL0sCnTLJ08GIs
-	ZO7eiIaGGdqgibNLY1LrR2CJ/K830lN+TEJLRtgBWN77koTwrvk6CHB8rBXXB9Fi32I8BKcSBQf
-	I7HUk2kSzxGdxmTD0GZ8IU4wPqmcc8SOz5HEEUq92YXcIiXknwMe3TG0ke/V2uep/6yLGat4T4v
-	d80IpXK6gqi7ih+EBCBVYjnKkc2Emrk3de+M4v0Ln4AHMAd5ZPSdYEvFn4q+Nn1AJ82yxw=
-X-Google-Smtp-Source: AGHT+IG3oQ1hLD3e0hS3PRFF5ObbhSTcrKhhLRIEURqvM4Ky9aK8pSzbBQH6dOSSLG+Z8K1fnWad+2c0m7IK5ji+AAc=
-X-Received: by 2002:a2e:9a0b:0:b0:376:49b1:7909 with SMTP id
- 38308e7fff4ca-379077694a9mr3618351fa.49.1761604173336; Mon, 27 Oct 2025
- 15:29:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761604174; x=1762208974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RE56wPPSVhzI0oadNjkluabeK5GwNJ3pnD3l3rW33bI=;
+        b=gByYsL3Sqm17T7PfPPhrjncigG3WA47fSZJyVoKj+XNuOKSMagUHkK76zN6iHTQRnt
+         U7bplzfX86CackDcXdMtpSWKkW/tQRnVXeVqGZEnQBx0t+BMuHgmiGf62MCXl2WEVy4e
+         bBEAz3ZUuVCdD9IHtRzw/q/nj2E91r9aqkfVnPs1jts//0jxCT3wVxVhZ88UrgFYS8zf
+         bGr1OamkRBpS/xMHdRTXQlZ03vPDnEFIAsbu4295N/03WjXy0OOjGHdJBV5bgmPG+l05
+         4iWM/pC+gBVjfTi+5ilG+yiNEQ06lsI79T+ZoZ5lHwA9oP5h2FNxkAua6fNglEAwkd/V
+         ufGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWDFjHkMhYFufnaFWyLw7xaM3t59rqOvDRmdOA3tXYU6I7Kx1fdKVsB2DBZhzbN89Bu9DH15Tfotii8Gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziKX54/hu68moAiFRsACybV1vw9/Ghn4o2vgMCDXx0WFNAh1Nr
+	KtOAFEgtJ1uY28q7PY/c84fH+dNLjRhYZOy1WHieveFXFZcdYmNZezPS
+X-Gm-Gg: ASbGnctNjGT4PpTJxl/oezpLpVhnIokVzr/xhoGYFhHLM2eRHFr0hOjcJ6rvX7L963D
+	iDXrZAmqBQl6aHWgXC8rQCgELHV/e0uZrf8HsOaIqkDF51kd6ihTGrSFZvmONwDuOTTGOrjbJaT
+	T4qn/HUI7+Z6zjS0uQjh/ls5dXqZ9SsxNHAdoaPEafkCc7MZOjPAwHz7Xpa16LC5hSAhO4HQHsC
+	uv/uSNTCI/hXoehpR7NutVljHrRKistah10a/dNhgkq/QP5/eG93iW+F31lPIxB7F1zeTk9exIZ
+	KW+4nABAuwLQDXz65qtdM41MKSwv3t0GMCJaUkVMuk9Zas1BcL7Z5uuodgoc08yuRpK68ODeu9W
+	mnJdaDeU7MLt7kFujSrwUE8GHWm0eCFzD3kaWjDp7K807tTIf8Wp6VjiEfJAqcgVhFANUfVVQU9
+	Nqxp4=
+X-Google-Smtp-Source: AGHT+IFNb/PYIFtOJ/7JMMnUbjO9bbIUFWO6ORtTCt2r4/hNn2eMPmn5diQOKKm+4iULlasCLfApLg==
+X-Received: by 2002:a17:907:d8a:b0:b41:873d:e215 with SMTP id a640c23a62f3a-b6dba45b0a1mr82457466b.1.1761604173725;
+        Mon, 27 Oct 2025 15:29:33 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d406:ee00:3eb9:f316:6516:8b90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8ceeaffasm835503466b.45.2025.10.27.15.29.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 15:29:33 -0700 (PDT)
+Date: Tue, 28 Oct 2025 00:29:29 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v3 02/12] net: dsa: lantiq_gswip: support
+ enable/disable learning
+Message-ID: <20251027222929.7fhlf63e2piwityt@skbuf>
+References: <cover.1761521845.git.daniel@makrotopia.org>
+ <cover.1761521845.git.daniel@makrotopia.org>
+ <816b2e277d22dae9b3e9e3c4828309a17a3fad7b.1761521845.git.daniel@makrotopia.org>
+ <816b2e277d22dae9b3e9e3c4828309a17a3fad7b.1761521845.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com> <20251021000852.2924827-2-pasha.tatashin@soleen.com>
-In-Reply-To: <20251021000852.2924827-2-pasha.tatashin@soleen.com>
-From: David Matlack <dmatlack@google.com>
-Date: Mon, 27 Oct 2025 15:29:05 -0700
-X-Gm-Features: AWmQ_blnDmlMSHWHiBFbsh6uAwbzzxnGfxP2Tc8ntIAjm82iRY3rUDbemvTKIT8
-Message-ID: <CALzav=egQiF6tanYxR9Tow7TnT_UK9bNAR_4DQ2P=2EJ+H4ZJA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, rppt@kernel.org, 
-	tj@kernel.org, jasonmiu@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <816b2e277d22dae9b3e9e3c4828309a17a3fad7b.1761521845.git.daniel@makrotopia.org>
+ <816b2e277d22dae9b3e9e3c4828309a17a3fad7b.1761521845.git.daniel@makrotopia.org>
 
-On Mon, Oct 20, 2025 at 5:08=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> It is invalid for KHO metadata or preserved memory regions to be located
-> within the KHO scratch area, as this area is overwritten when the next
-> kernel is loaded, and used early in boot by the next kernel. This can
-> lead to memory corruption.
->
-> Adds checks to kho_preserve_* and KHO's internal metadata allocators
-> (xa_load_or_alloc, new_chunk) to verify that the physical address of the
-> memory does not overlap with any defined scratch region. If an overlap
-> is detected, the operation will fail and a WARN_ON is triggered. To
-> avoid performance overhead in production kernels, these checks are
-> enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
+On Sun, Oct 26, 2025 at 11:44:03PM +0000, Daniel Golle wrote:
+> Switch API 2.2 or later supports enabling or disabling learning on each
+> port. Implement support for BR_LEARNING bridge flag and announce support
+> for BR_LEARNING on GSWIP 2.2 or later.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v2: initialize supported flags with 0
 
-How many scratch regions are there in practice? Checking
-unconditionally seems like a small price to pay to avoid possible
-memory corruption. Especially since most KHO preservation should
-happen while the VM is still running (so does not have to by
-hyper-optimized).
-
->  static void *xa_load_or_alloc(struct xarray *xa, unsigned long index, si=
-ze_t sz)
->  {
-> -       void *elm, *res;
-> +       void *res =3D xa_load(xa, index);
->
-> -       elm =3D xa_load(xa, index);
-> -       if (elm)
-> -               return elm;
-> +       if (res)
-> +               return res;
-> +
-> +       void *elm __free(kfree) =3D kzalloc(sz, GFP_KERNEL);
-
-nit: This breaks the local style of always declaring variables at the
-beginning of blocks.
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
