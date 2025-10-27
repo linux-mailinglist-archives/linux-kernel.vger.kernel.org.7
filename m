@@ -1,194 +1,118 @@
-Return-Path: <linux-kernel+bounces-871235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE87C0CB13
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:36:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E23C0CAE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5400C4F47D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:35:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 631F034C33C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775042F1FD8;
-	Mon, 27 Oct 2025 09:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9792E9EB2;
+	Mon, 27 Oct 2025 09:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jED3ioSl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D0Ai/bIj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265AB245012
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443DA24EAB1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557692; cv=none; b=lIx7+BBXCt0JSCwdBRo0r70g+FPHyxUsFbHrZjbEFxeKCd1bXR8TaHfGmwvyfhDFfuJhjmQr6HKbc5aAn8HWepiZ6XTXt+/QwhGkKdZGcLI6g4eg2PCMt3NVL69mVjMIVfbqMYJDnl+j6COf7k65RYHO87v3/0IO6SLEj3371Lc=
+	t=1761557739; cv=none; b=ZUpq+QWf2KHfMByjh4E7o7tFoDAqU/7oV8K80uN2IclBaGbMkaynXnLXLaiTfcFhF15iP4oywGjeJLYTxOHUgLSFUuZjcCm6NnhWbI6LJCi1VHFpCqSAiT/Ufcn45gaet/fpUmV0ctLwxc03LlVC19oA+X2477gQNtMPqfHkr5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557692; c=relaxed/simple;
-	bh=c7pWnfUI5l93xQMWezruXtzU0006jy+k7UTgGV61vbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iW5jCiHuLpLhxc2GG3NpeA6X7b+e1gZbopbN7ecmFBYQuHVWnku4SSxAvmAq7zFfNVOPJPEKb9RvLgj8rZbOIGgRcwhcYGqVPJIRVfg5+IESRa5Qdl+eAe4zFuXgExYFteDQJuedvku1PXT3rjw6zxuJPwRoHuFZF/MpQYmsVBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jED3ioSl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761557690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=enI7LZNpEoEgG2kCIqkqYuUnATtEoWBy7Pep0LNgBPY=;
-	b=jED3ioSlNDzyRnVlA5d2JKz84s4Hx+gvlGp9us1FkFfvvA0nR4IdNdhwhoZJw9IaxX6c7H
-	yRk8G49Th6EAoXmzQ2pGQQnyCMdx2/yGpLu5tOV11I7Q8Xbm60z6exI73whe1XVyAUNRCg
-	Rw76/i/CM6l3bliE7qpGew5dO/0qLvw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-206-HPEByvRJOnyFhOTTYdFQzA-1; Mon, 27 Oct 2025 05:34:48 -0400
-X-MC-Unique: HPEByvRJOnyFhOTTYdFQzA-1
-X-Mimecast-MFC-AGG-ID: HPEByvRJOnyFhOTTYdFQzA_1761557687
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso11790185e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:34:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761557687; x=1762162487;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=enI7LZNpEoEgG2kCIqkqYuUnATtEoWBy7Pep0LNgBPY=;
-        b=E5HQqgGQvfBALm29LFMSb8IN78cmvt2HgEVKOmsui1MAcucft72/wwYw+Z5vgWCMbp
-         ozp/ecqjrVhERGN+TB4UFKfmd9hOnV4itKn/ElXCj5FPz7CF0obPelKk7nkw8YXcssN/
-         +Ev4BatSbcwiwmFMN6p7zV2yLq4Sd5ueaME/OXgqf17cD05KTr+FFZut7pPtb6H6nGHp
-         hNRvZcIOU5g/pHtvb/HLuhNjdkIBXiXeKpw48CFuo6mn4gQ6y78d97BcZnFMSif5eDWT
-         SF+bKacJhi6ev8hzYaUZANjkgEQxQh7cnpgU4ae4fDszOlgS/x8zqzk9gTjkl9d9Tfgy
-         Vi2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWTfzz4xveapDRJNawv6GuVnOhKEY2rgwN387agQHMLjF/C2FjCAusOwIHg2mPvh9x2Khq2p2dXoDZURso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI1STlmlw1uUh8yFkjHSgUNOtZak0NaClgJ/OUcZxu7akvyzmM
-	mn7hO+NnEQhpYVoH3fHpLCQta1JnBTgseXe5BYDiY84DOVtyybFlY1NkL3H3pvCutPQH/sNJwNE
-	RJH8/hK8dSlNZ0DTB5DGvVlxHbh9hnivHtQqFdhWcNd0kRXYCv2mDZ5SS98dD6b5PFQ==
-X-Gm-Gg: ASbGnctMnrtfGDkJMbtpUc+7vtaZ1GgdM720Rg/kaOPev34+Os8eaKcTpEtiwaT/TPR
-	RiiG0c/nvdwdz3+ikNCeh77EQNi3YqpyS1GCjBoEMAiR8eeHdRl4QjWJiaCATPPuVQyPJbGqhWo
-	GaecbD7iT91rwCFRq8kmezyp4iKjKP1TGFT3DcRixHcmZlv3GC2BXbQkBrgMN5xMxbAf55l+Ubk
-	59RfD1EBzzisG1s71wK8WXj4+IaF8HR1D3kQ0++lfbGVPRGPGuMXT19ehg5WPxrCfTr2FW4SSKq
-	LjsIAeYjFBF5Gsr3kStgCDH3AIiRHvFIYWj9QLwE0xTdzyy0zsdom4yIlGfGdLUTInP3GS+xV8d
-	kO6T+yGa6eskvpz7yLlpoJyKPRQk9Cw28olphIeH5UUpHJneoOlxbatKZLsRT2RKjh35qBIqkTo
-	CxdjaJfmI7IieI+P5baMopmhK2ZrA=
-X-Received: by 2002:a05:600c:800f:b0:471:672:3486 with SMTP id 5b1f17b1804b1-475d2e7e9c3mr74954745e9.15.1761557687239;
-        Mon, 27 Oct 2025 02:34:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbYhXBdD/2sb21JkRwYqN4qMp1O+MlBYVpVhQAmAEtPEi4yKtKC4y56wL69hYkHpXzsclqsw==
-X-Received: by 2002:a05:600c:800f:b0:471:672:3486 with SMTP id 5b1f17b1804b1-475d2e7e9c3mr74954495e9.15.1761557686886;
-        Mon, 27 Oct 2025 02:34:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dcbe5587sm146578635e9.0.2025.10.27.02.34.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 02:34:46 -0700 (PDT)
-Message-ID: <0fd86682-0679-48ee-8622-d9d7a977d69c@redhat.com>
-Date: Mon, 27 Oct 2025 10:34:43 +0100
+	s=arc-20240116; t=1761557739; c=relaxed/simple;
+	bh=kvh9yvDC6N4rX0GbG2Y9InaT0bqEJa5Xe3f9dfBnp+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dn0t+zi8k3QfGpHQ4isE9ugmXuJ5EJh35/okbi3ad6BhlSs5UjLlrEJhgYTK2c1g42SdAWCf7T1/bo8ToakuhvZndmpkCUbhdpA4L1Ana/DSXdrMUxRqRNbHo6FSRgVsbYwWFHrcnjPiHRG05XXtVI0GeWj6czHeD1LUJTvgupM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D0Ai/bIj; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761557738; x=1793093738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kvh9yvDC6N4rX0GbG2Y9InaT0bqEJa5Xe3f9dfBnp+Y=;
+  b=D0Ai/bIjFfgJpk21PfVyNoGWV919A0iXq2vRwlHwidhxVTkOtDibEwRq
+   7RZxnbqzLDTdPpX0pAHrUY8rCYL0sPTdhS2k6th+0EH+/6GbFfMtBjVrW
+   +XyLapDPKeF9JWVHOT/nnfDrIRe81zMWK1nteNnDEt4z9nhzqOuwnhZox
+   Wd6pLL2AZE8EIWnfeefVLPxVVrbd97kRugREfDcPfPReZ9qJeJIGpwsPP
+   Z7bUYLA9GL8KXHYAEUmIwZnx212JjUOz2WgVB3pGuN2Ktef+c2yr9p/TL
+   uSqGGhevRcLcwW8ByLsgt9IUow2qywmzNwqH+sgNf7i4INHptfN7D3YTh
+   w==;
+X-CSE-ConnectionGUID: HBjMS9eVRr2x9ehLS5/Zcw==
+X-CSE-MsgGUID: p0OuzZA6RQS6ca/6ASJSBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66247618"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="66247618"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:35:37 -0700
+X-CSE-ConnectionGUID: ePaDMegjQOi5ILua/Et3bA==
+X-CSE-MsgGUID: BKVYYjPZSnqDSS8peu28Aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="185349016"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.5])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:35:36 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vDJdV-00000002xwJ-1wrd;
+	Mon, 27 Oct 2025 11:35:33 +0200
+Date: Mon, 27 Oct 2025 11:35:33 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Subject: Re: [PATCH v2 1/1] checkpatch: Don't warn on "orhapned" DT schema
+ file
+Message-ID: <aP885cVvKxE5xMBW@smile.fi.intel.com>
+References: <20251027091742.1741742-1-andriy.shevchenko@linux.intel.com>
+ <7730d4bd-0d7a-452c-ae95-a472d8c99de5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-To: "Kirill A. Shutemov" <kirill@shutemov.name>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
- linux-mm <linux-mm@kvack.org>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org,
- Kiryl Shutsemau <kas@kernel.org>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-2-kirill@shutemov.name>
- <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
- <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7730d4bd-0d7a-452c-ae95-a472d8c99de5@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 24.10.25 21:32, Kirill A. Shutemov wrote:
+On Mon, Oct 27, 2025 at 10:25:58AM +0100, Krzysztof Kozlowski wrote:
+> On 27/10/2025 10:17, Andy Shevchenko wrote:
+> > Currently checkpatch warns is the DT schema file is absent in MAINTAINERS.
+> > However the DT schema files are self-contained in this sense and
+> > have embedded information about maintainers of it. This is a requirement.
+> > Hence, avoid checkpatch warning about it.
+> > 
+> > Requested-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
+> No, that's not true.
 > 
-> On Fri, Oct 24, 2025, at 16:42, David Hildenbrand wrote:
->> On 23.10.25 11:32, Kiryl Shutsemau wrote:
->>>    	addr0 = addr - start * PAGE_SIZE;
->>>    	if (folio_within_vma(folio, vmf->vma) &&
->>> -	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
->>> +	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
->>
->> Isn't this just testing whether addr0 is aligned to folio_size(folio)?
->> (given that we don't support folios > PMD_SIZE), like
->>
->> 	IS_ALIGNED(addr0, folio_size(folio))
+> First, there is no such tag.
+
+No, that's not true.
+
+$ git log --oneline --grep ^Requested-by: | wc -l
+357
+
+> Second, I never requested it.
 > 
-> Actually, no. VMA can be not aligned to folio_size().
+> NAK
 
-Ah, I missed that we can also have folio sizes besides PMD_SIZE here.
-
-So it's all about testing whether the complete folio would be mapped by 
-a single page table.
-
-(a helper would be nice, but cannot immediately come up with a good name)
+Fair enough, I'll drop the tag.
 
 -- 
-Cheers
+With Best Regards,
+Andy Shevchenko
 
-David / dhildenb
 
 
