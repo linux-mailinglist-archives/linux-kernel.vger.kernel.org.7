@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-872644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2CFC11A94
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:18:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46777C11A8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 733064FB5D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:17:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFFAC4F2645
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F7332861D;
-	Mon, 27 Oct 2025 22:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A437326D57;
+	Mon, 27 Oct 2025 22:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DieTegfv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9sW0++M"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D18328612;
-	Mon, 27 Oct 2025 22:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB06E2E54BC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761603463; cv=none; b=vCCrTQhKkwC8i+C15qrXpGehiOB+6pguGP/cDyMYgOMezkbkEAY35GjdUSf43MfITP1aZUV31KkNj10aOsCXFnzjHjG2eEBoCnsLEDiNfAI2LZMSg2P7hXD20Q8Vb3clNJ96tO+dxQzTqdp67Qydde14nYGsaXzKiorQi3p2FVE=
+	t=1761603453; cv=none; b=uLjyCcl2mYmQWHG30vjeg6rGHAwdTru03Szm1QL5eIqpsu3zHbCltfhQo8z26dvZM6GHyhCBhUaM7g/PwRqcLF35B8rVPXh6MuVvTIYtxuXcxBNDwlCFgHgb3TqiRQdXIEiIIf3EVtkagCA7rkKEodUcyPotnyrlQjV5utIVSf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761603463; c=relaxed/simple;
-	bh=LnEMgE/x17qT33vbhJOy4L+6r8csHSGMtdfdlckf+jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgEJO651hGIzkFE0uppz0cg7s1xND4vlvGr1/59yHPRTjoEYt8Rkn5unmtjr68Hqc4diCSS/bYSvukQRzGcAdMlSmwHouqjGHsOGeSQF07mo2QIS8vYAQqGB3XrayqciJ/dWZoR27Pikg8Nnsmi4BiqepX91513AqEGoUJzyJ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DieTegfv; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761603462; x=1793139462;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LnEMgE/x17qT33vbhJOy4L+6r8csHSGMtdfdlckf+jg=;
-  b=DieTegfv+GcqNXVolUPGSCS0toGRI3p1FF0/9G6e8DzXmOTFPh0TU2Xk
-   /+Q0cZKSot+Y+lZ0Q5lhqaL6PU+jpmKXRG4X2LvuUEQp5puYirtOGFluh
-   2YoFSK93I6VMIYFLY3OsOdNY8tBrBzib7q+AtlYpUL1C7fgap9yN0vt77
-   OFnMhsMCNsAknXa+DkC6xYndmLTD1Aj6W4DFAcH5CgpX2gl7oCCu1zfjJ
-   Ow9e6YeU//MypjtsUUGjPM9krKPrGoSr6SXKOuhSH45nVGJvgta8ZL22W
-   gH5OOuzgjMxm1lOFuZeObWvp1qQkGkmx9uE+x82JF31QMP/ituYOGCOOw
-   A==;
-X-CSE-ConnectionGUID: E/uEN9+nQ3C6/kN6ay5FPw==
-X-CSE-MsgGUID: Jh/7VyU+SnKXN8x8FDyrmA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63398598"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="63398598"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 15:17:41 -0700
-X-CSE-ConnectionGUID: PnyRSWRdSliwVE5cOE6Eww==
-X-CSE-MsgGUID: UOMBThvtTMKZvp6QtmnRgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="185634646"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Oct 2025 15:17:39 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDVWs-000IW5-0T;
-	Mon, 27 Oct 2025 22:17:32 +0000
-Date: Tue, 28 Oct 2025 06:17:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Prashanth K <prashanth.k@oss.qualcomm.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Prashanth K <prashanth.k@oss.qualcomm.com>
-Subject: Re: [PATCH] phy: qualcomm: m31-eusb2: Add runtime pm ops
-Message-ID: <202510280637.c18uAF98-lkp@intel.com>
-References: <20251027062458.1411096-1-prashanth.k@oss.qualcomm.com>
+	s=arc-20240116; t=1761603453; c=relaxed/simple;
+	bh=Gu9c7lWkxgnzHfgy0KZY7zp67ms1gfmmcEaQ5l83Deg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WCcC6CAHO0cNZJmKm6XD5RKjM1FLmFb/BkkgjR2TxLk/6yCnsHM12IqUN3/qJepcWQL6PuUK60ZAt3R8CJzLydzHnSd6nTDjsHw0Gn54heu6fpqLHKS5V5O45nrgX7SQ8TqrYVH3IKXV2QYDanAFOXivU7PL+6xN1tepR5ulHh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9sW0++M; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-378e8d10494so40700931fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761603450; x=1762208250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gu9c7lWkxgnzHfgy0KZY7zp67ms1gfmmcEaQ5l83Deg=;
+        b=m9sW0++MVtdUGdCPa/EY3aCj4cz84G/E9UKMkw07drMblsYj4eVaiBWgEINfXgIIrM
+         YuWy38Ph1XzdGnUAfngfhMButYBGly+ldecqQH08y5Wh4uSMNQUVfZbM1C/Lu1geAVxt
+         W+KhooWgPZRJBjbiCqztmuOMymyfve/LlXir6x35j+BnjifF6Wo9VJMIC2dNkgvx//Mc
+         pl2kIfPkj1PLhcSZQJIdbPBO1QAlK1yGXdHoDV7h3eu/UzSGIOHmiKOSAwWlICry+Feg
+         Y8r6tEAuV0xeHruFIE5Fw9cfAyHg8aiCmKxp0pdeBuXjSaWBnBHKfIkHv6HJQ8AWKpGi
+         G1KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761603450; x=1762208250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gu9c7lWkxgnzHfgy0KZY7zp67ms1gfmmcEaQ5l83Deg=;
+        b=hQvUZfA2Sn9Vl3ZPBno9qOHuDLeO5rrtO4xg4jZUAfK6EbUCnRaP0o65zv5IAaWNqn
+         Kty8izdH0Bk0/2cL0OHVvt4CGzQoB68Ct0VY7m7L9T/wspWctw5ybLxNb2mA8wzgGI+Z
+         6o5H/QB4/Zn/pbVx+8YNKI7gldAB46g8CiKQBkS3wI87GPtU4iUl51E+19gXRrJtMZH0
+         jGVoGORUz6o62bsKonubgCQFkGzFFFO2wHl0lF490T3DfDOwoXPl+nf7E0o+raoRWHzm
+         30M4KSuw97KAYekPiGw1bfKsELvg76ChZungZtRYVm+OlwBxyRuNFyDlFlqExRdwgpGx
+         DZpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxEwTjfUJMa4lwVO7D5DwvITASs/uvxGv6tU/WqspSjuGzsRjFgiaK1CzsKC16lchHiKutaxPS8S2JZAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybwM+UOiVbQqTMw3Ej/mmQusaWGL5D1cIbijziWEguPB6gA2yS
+	lS6Qh+m5N5MDhL6ax7WzI+adDBk64Nw95RYT1EZLonpHZdIWU1UBoFCDHIByKRHbf273AJJRen6
+	lFLSaoujczIb8dTiAPjdOwtiAYNWoQVjUTKQQK7yWaA==
+X-Gm-Gg: ASbGnct0hUhmMv5iJOvkVE0iC+JXrQ7iBDijyDiZDsAMHI0vjtc2wtO6zqUEkV275Li
+	biDxIzA1TYGac6qaBc2L1piD1YnfqH4aF7ynnbB/xCyWMYHVUNtuR7gK+bWVJbWWKVMHKDv2XYa
+	Dhl2ennSxIBkisQeQFsmEx4KnQyAwUZT+Xf3k5bF8zqCizQR357UuQc5XU6/670WAxaKJjLbfQN
+	LVc+uTZwls46lcdTIKqTqJCSOttvTS+tOF7Tqgsnw5yWV7rSRHr6fPEea1K
+X-Google-Smtp-Source: AGHT+IHJkZ6eE1AkncVU3lyfeHAfgwuxN0K4vqQ9jMi+HxWP78OGiBunIzAgT3y/91LM4yJ4y7mIdTa25YZ1xkf/4xk=
+X-Received: by 2002:a2e:9395:0:b0:36d:860c:d98c with SMTP id
+ 38308e7fff4ca-379077ad874mr2869931fa.45.1761603449931; Mon, 27 Oct 2025
+ 15:17:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027062458.1411096-1-prashanth.k@oss.qualcomm.com>
+References: <20251023132700.1199871-1-antonio.borneo@foss.st.com> <20251023132700.1199871-13-antonio.borneo@foss.st.com>
+In-Reply-To: <20251023132700.1199871-13-antonio.borneo@foss.st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 Oct 2025 23:17:19 +0100
+X-Gm-Features: AWmQ_bmnRcLAntimuZ53EMjWeghfhO7r4GpgnvkhG3-R4hWIysmsmbmnWQXNJ4M
+Message-ID: <CACRpkdbGjsGwvJ5gA-HhUQ4_XrQJAaMa0pdzHS19sgLXv0XUag@mail.gmail.com>
+Subject: Re: [PATCH v4 12/12] arm64: dts: st: Add I/O sync to eth pinctrl in stm32mp25-pinctrl.dtsi
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, 
+	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Prashanth,
+On Thu, Oct 23, 2025 at 3:27=E2=80=AFPM Antonio Borneo
+<antonio.borneo@foss.st.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> On board stm32mp257f-ev1, the propagation delay between eth1/eth2
+> and the external PHY requires a compensation to guarantee that no
+> packet get lost in all the working conditions.
+>
+> Add I/O synchronization properties in pinctrl on all the RGMII
+> data pins, activating re-sampling on both edges of the clock.
+>
+> Co-developed-by: Christophe Roullier <christophe.roullier@foss.st.com>
+> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.18-rc3 next-20251027]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Please merge this last patch through the ARM SoC tree!
+FWIW:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Prashanth-K/phy-qualcomm-m31-eusb2-Add-runtime-pm-ops/20251027-142647
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20251027062458.1411096-1-prashanth.k%40oss.qualcomm.com
-patch subject: [PATCH] phy: qualcomm: m31-eusb2: Add runtime pm ops
-config: sh-randconfig-002-20251028 (https://download.01.org/0day-ci/archive/20251028/202510280637.c18uAF98-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510280637.c18uAF98-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510280637.c18uAF98-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/phy/qualcomm/phy-qcom-m31-eusb2.c:253:12: warning: 'm31eusb2_phy_runtime_resume' defined but not used [-Wunused-function]
-     253 | static int m31eusb2_phy_runtime_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/phy/qualcomm/phy-qcom-m31-eusb2.c:243:12: warning: 'm31eusb2_phy_runtime_suspend' defined but not used [-Wunused-function]
-     243 | static int m31eusb2_phy_runtime_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/m31eusb2_phy_runtime_resume +253 drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
-
-   242	
- > 243	static int m31eusb2_phy_runtime_suspend(struct device *dev)
-   244	{
-   245		struct m31eusb2_phy *phy = dev_get_drvdata(dev);
-   246	
-   247		dev_dbg(dev, "Suspending M31 eUSB2 Phy\n");
-   248		clk_disable_unprepare(phy->clk);
-   249	
-   250		return 0;
-   251	}
-   252	
- > 253	static int m31eusb2_phy_runtime_resume(struct device *dev)
-   254	{
-   255		struct m31eusb2_phy *phy = dev_get_drvdata(dev);
-   256		int ret = 0;
-   257	
-   258		dev_dbg(dev, "Resuming M31 eUSB2 Phy\n");
-   259		ret = clk_prepare_enable(phy->clk);
-   260		if (ret)
-   261			dev_err(dev, "failed to enable ref clock, %d\n", ret);
-   262	
-   263		return ret;
-   264	}
-   265	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yours,
+Linus Walleij
 
