@@ -1,183 +1,113 @@
-Return-Path: <linux-kernel+bounces-872616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517CEC11964
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:57:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D256CC11982
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2821891A7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:57:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B870C4E770A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566B231282F;
-	Mon, 27 Oct 2025 21:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3889030BBBF;
+	Mon, 27 Oct 2025 21:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDOWOWpY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVbFPix/"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833722D948A;
-	Mon, 27 Oct 2025 21:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064AD2E092D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761602220; cv=none; b=cEP2sn7LVfrLHqD0G+GSpeFkFKATh98epg9nbXsGF7v/m9btzdmiXLH+Yt08AwbiCZUwt0ODnnNeiu4ppfWf8cFD46m4REBC755BoOSMfZR8GF3AR4ezWIB+ZqnW8AGYjdMnubxG+Y9lfI8ASN3aIj/iidRs9dewpOD9//FMt8I=
+	t=1761602337; cv=none; b=mjTnwh3oWHO05GOm2V28+jPtM0nTk29d4LUPavMg5MOHayuXVDV4UUnbMFXpv7mXtqPRcwakVQdzOppie++NvogVfXsZEbdnNv6DEDP6gBtwnLx/PdpYuwa1jpam4OaawMJzIFWzz+qLcTdEJN5jQOOt7qtLJnw0CN4HWhIPLHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761602220; c=relaxed/simple;
-	bh=PhTuulUnuNJxdh+bqpaUAUviCKrrigpWKFSlbU6eK6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EQx3meM/h578ygSf6JPiu6xbJqp1P67ZLAN2VBE5MAPo2+vwCrbavSWWAA6mMdqOECQod3SN5U7enwccN1xHlVkhaPG71tqC00yEJ3DTM1s4PC+tKhfh7Sy5t2arl7RfIBUfyNId1082pV2ugFu4nrFgUQ4ejFkZrxVIsREOT6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDOWOWpY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E989C4CEF1;
-	Mon, 27 Oct 2025 21:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761602220;
-	bh=PhTuulUnuNJxdh+bqpaUAUviCKrrigpWKFSlbU6eK6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UDOWOWpYdC3iUEABEyDdOZfN1doQMoHd828VGip0za1SZuOHiwWMA7pSWpquVqMV/
-	 ZbUh8mqPfyHEXOooC8nlSyJraxoZ0FNwf/TwtcNDo4JLEyGqvqArNdwNHqBP44icRT
-	 Wt113dUBaFBPEAlEEDDLrCTTyyF2K/MLBYM5+TvrqCHC79wZga6yGa0dwqrQmgF8sQ
-	 jRfG3yT6AWyI8vJbLEyInWEuN82QA0H5LE7Ak3ZAlR9VKXpGW5RrH2I9BWSN+2uuWL
-	 /qCt18OSTflX/srFi8SmJfygw288pjHN2AxzKmXCOJGFc/DzdZzkW2fyPGHPBrl0AZ
-	 BgAgeWLr63cVQ==
-Date: Mon, 27 Oct 2025 18:56:57 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Anton Protopopov <a.s.protopopov@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: pahole next->master. Was: [PATCH bpf-next v1] selftests/bpf:
- Guard addr_space_cast code with __BPF_FEATURE_ADDR_SPACE_CAST
-Message-ID: <aP_qqVvDjB99NQNk@x1>
-References: <20251022071825.238909-1-jiayuan.chen@linux.dev>
- <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
- <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
- <84906f32-955d-4fda-b87d-56c052ddfd87@linux.dev>
- <8a94c764c5fa4ff04fa7dd69ed47fcdf782b814e@linux.dev>
- <CAADnVQKNpd8SCawQbW69ALWNZMoOvxwRbBQELqzh0P52iXG=kw@mail.gmail.com>
- <aP-InycOjSO8EqcO@x1>
- <aP-LE7ssid10iKw-@x1>
+	s=arc-20240116; t=1761602337; c=relaxed/simple;
+	bh=+mU5C7SFfUC6J4CkhOJClsnPEoZvWyJV/mtXvk0G7No=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukRSu8X0D9RcU09j9U4FcX7CeT5GhZrCLa87u+S4TGxpqY1EzKrh9xRI/SpwzMfNCSH2Wsn8oIUcZZpJ0NOal2iBKCPDVhIKtpl5m6Sf2xy3jOtEfdu8HlnB9RG6+Xi9mAl4TvkZg8PNawcDcwJsakS8Z1EBtwffKN+f6xyW9J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TVbFPix/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-592fdbeb7b2so5075153e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761602334; x=1762207134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+mU5C7SFfUC6J4CkhOJClsnPEoZvWyJV/mtXvk0G7No=;
+        b=TVbFPix/MEpkDHpX0aZDlETK1VkYOmtlsAs1c1kR+oesvKyM3uq5XWm55MG1STEo/h
+         mO77I/TOqg53ZsHi9lvEAOSumIzBnVQPQp5G6cFmvDUDVn5SaWl1m59AHpRtTHFEshfJ
+         HrjKwY57adUt/mJ2r0jyDw4zMR+7zBuxaZ1z7qAdggaEB6CuCb5u2ocCwSAFOl+FZDeD
+         UsmLz0jTR5SynSNJ/NPefnsWTnRgHmGUzt762P3+QvCWDNjulKbUO8U4JWQCoFLI6EuG
+         UPYbZ5sYYASVDcuJB63EUcom1U2If0J+BTi0cDmQrgzw6LWOLD0Jadl9SXLoGZ12Wzng
+         SHoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761602334; x=1762207134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+mU5C7SFfUC6J4CkhOJClsnPEoZvWyJV/mtXvk0G7No=;
+        b=nooMRlfVFKIzbmQ3fNWN7w89ek80DvntnPMwgPHqvIl0W25CN5l9CWraqeGSPtmfVZ
+         ZlByJ+kdhURj2ekrPlQTmrkeGrfyf+LY84gMwY7UQyKpA4HFuSctaEs0fQF20mP/Vpmp
+         9o8ePQ/5WDN6gnjT2lRc1Klot+jsUqkFtjDOac58To+CXARfUaccMfs3GoXfbF6F9XqW
+         kvb+McJ4r6AHtuITaeXVykL661Nhz5xgYbDDfp+Pi0vL8kcqqnlkZakhHGzuUJ7dCzSi
+         cKtfX0aOJs/jXR5Jm7j/FYLZQ1FPfuh5/4saBLrl9bONab7pBdVvnRxOofXU2EdJpTPA
+         XLdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxa0v24Z3MFctAy4g0JRBFnHqKQB8B/2jZQehL2MuNUrMoqwrSUePnEQImwS1vBrs05Vu1oz7zYnmZGTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ7MheMVlQz15+H0hV+eL1m6dn0ciqfr/4yRd+c/KOL5aSmATd
+	WgSinjXJIuO78ce22rf6Z5YllziFrkZVGHsxuOwLJOGnpS/WsqhnPh9BdCZXWlQ/FpsMnlqimV1
+	l9nM1IbKIPw5bT4yxQbdiVzUxdKuTeqFBv18NRo81rg==
+X-Gm-Gg: ASbGncuUmOmBMvvSpnmZxz7v61Dn9oqZR6bi3HQUuVnb46f56BOgB/QKYkSCrTIVm4j
+	YYOqIQqm8zeTrD0G+suLRrj4oRnzQApdHqSPkRNcb7rZ8Bws2Qyk2A07r7PSKjXEsx2l/VWAXQf
+	CzXX4oVQoENaNN7xzvs7ZCeXzBWUKgSi71y4wWISRyFEsnlj0Yhullk3LHzp+WjylRC4iYhQmAm
+	buNwSiZUF9pPDagiwL2WdVVVI7l+l4A6S9mUQXnYe4pUicSjwROKGj8/8u8
+X-Google-Smtp-Source: AGHT+IH74o4YwHFrblcCgtKny6KnIQvfpnqGtyi6DTdYt7rXfkYKCJxr/ADLzmPlUwLvMuIMarNyWU51gxQT7nyU5+s=
+X-Received: by 2002:a05:6512:3f0e:b0:592:eeb7:93ed with SMTP id
+ 2adb3069b0e04-5930e9cc2admr556166e87.32.1761602334166; Mon, 27 Oct 2025
+ 14:58:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aP-LE7ssid10iKw-@x1>
+References: <20251022165509.3917655-2-robh@kernel.org>
+In-Reply-To: <20251022165509.3917655-2-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 Oct 2025 22:58:43 +0100
+X-Gm-Features: AWmQ_blAMBN4XZpjKBnIGmFZUkW4sspYUvqfxOKik98qDG_Txt9XayPb2-OwUdA
+Message-ID: <CACRpkdYioyktQ5is6TJnkgX=MHk2-zf-XO-gx6sKcST2GABNiA@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: arm: Convert Marvell CP110 System
+ Controller to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 12:09:11PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Oct 27, 2025 at 11:58:43AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Thu, Oct 23, 2025 at 08:42:34AM -0700, Alexei Starovoitov wrote:
-> > > On Thu, Oct 23, 2025 at 12:50 AM Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
-> > > > thanks, but version 1.30 didn't work in my tests - even pahole's master branch fails, only the next branch works...
-> > 
-> > > > It seems that the 'old' pahole parses some kfuncs incorrectly, for example bpf_dynptr_slice().
+On Wed, Oct 22, 2025 at 6:56=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
 
-> > > the introduction of the 'next' branch screwed up the workflow for many people.
-> > > Let's remove it and merge everything into master.
-> > > People expect master branch to be the one where active development
-> > > is happening and the source of truth for the latest features.
+> Convert the Marvell CP110 System Controller binding to DT schema
+> format.
+>
+> There's not any specific compatible for the whole block which is a
+> separate problem, so just the child nodes are documented. Only the
+> pinctrl and clock child nodes need to be converted as the GPIO node
+> already has a schema.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-> > My bad, I've been away for too long, next is supposed to be with things
-> > for a short while, testing for a few days, for CI consumption, then move
-> > to master, rinse repeat.
+Patch applied!
 
-> > I think we should go back to that model.
-
-> The difference is small but can explain as has changes to the btf
-> loader, and the reporter, as I now checked the whole thread, says that
-> 'next' works for him, so I'll move what is in 'next' to 'master' now.
-
-> Just for reference since I had done it, my investigation is below.
-
-So I had some random 'korg/next' local branch and a 'korg' remote and
-that messed up my analysis, there are more csets in the 'next' branch,
-so I'm doing more tests, tomorrow I'll probably have more news.
- 
-- Arnaldo
-> 
-> ⬢ [acme@toolbx pahole]$ git remote update korg
-> Fetching korg
-> ⬢ [acme@toolbx pahole]$ 
-> ⬢ [acme@toolbx pahole]$ git remote -v | grep korg
-> korg	https://git.kernel.org/pub/scm/devel/pahole/pahole.git (fetch)
-> korg	https://git.kernel.org/pub/scm/devel/pahole/pahole.git (push)
-> ⬢ [acme@toolbx pahole]$ git diff --stat korg/master korg/next 
-> warning: refname 'korg/next' is ambiguous.
->  .github/scripts/build-pahole.sh      | 23 +++++++++++++++++++++++
->  .github/scripts/compare-functions.sh | 30 ++++++++++++++++++++++++++++++
->  .github/workflows/test.yml           |  4 ++--
->  .github/workflows/vmtest.yml         |  4 ++++
->  CMakeLists.txt                       |  5 -----
->  README                               |  4 ++++
->  btf_loader.c                         | 23 ++++++++++++++++++++---
->  dwarves_fprintf.c                    |  2 +-
->  8 files changed, 84 insertions(+), 11 deletions(-)
-> ⬢ [acme@toolbx pahole]$
- 
-> Related to btf bitfields:
- 
-> diff --git a/btf_loader.c b/btf_loader.c
-> index f4f9f65289b5acac..64ea68022ab04e60 100644
-> --- a/btf_loader.c
-> +++ b/btf_loader.c
-> @@ -645,9 +645,15 @@ static int class__fixup_btf_bitfields(const struct conf_load *conf, struct tag *
->                 pos->byte_size = tag__size(type, cu);
->                 pos->bit_size = pos->byte_size * 8;
->  
-> -               /* if BTF data is incorrect and has size == 0, skip field,
-> -                * instead of crashing */
-> +               /* If the BTF data is incorrect and has size == 0, skip field
-> +                * instead of crashing. However the field can be a zero or
-> +                * variable-length array and we still need to infer alignment.
-> +                */
->                 if (pos->byte_size == 0) {
-> +                       pos->alignment = class__infer_alignment(conf,
-> +                                                               pos->byte_offset,
-> +                                                               tag__natural_alignment(type, cu),
-> +                                                               smallest_offset);
->                         continue;
->                 }
->  
-> @@ -672,7 +678,18 @@ static int class__fixup_btf_bitfields(const struct conf_load *conf, struct tag *
->                                                         pos->byte_offset,
->                                                         tag__natural_alignment(type, cu),
->                                                         smallest_offset);
-> -               smallest_offset = pos->byte_offset + pos->byte_size;
-> +
-> +               /* Compute the smallest offset between this field and the next
-> +                * one.
-> +                *
-> +                * In case of bitfields we need to take into account the
-> +                * actual size being used instead of the underlying type one as
-> +                * it could be larger, otherwise we could miss a hole.
-> +                */
-> +               smallest_offset = pos->byte_offset;
-> +               smallest_offset += pos->bitfield_size ?
-> +                       (pos->bitfield_offset + pos->bitfield_size + 7) / 8 :
-> +                       pos->byte_size;
->         }
->  
->         tag_type->alignment = class__infer_alignment(conf,
+Yours,
+Linus Walleij
 
