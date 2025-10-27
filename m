@@ -1,97 +1,61 @@
-Return-Path: <linux-kernel+bounces-872544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD96C116A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:38:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA87EC116A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDFA5563E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:37:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3548D4E6398
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7AD31D75B;
-	Mon, 27 Oct 2025 20:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22130316912;
+	Mon, 27 Oct 2025 20:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D0FvDvo6"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpLYzdk/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5324E4B4;
-	Mon, 27 Oct 2025 20:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D93424E4B4;
+	Mon, 27 Oct 2025 20:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761597457; cv=none; b=FTJbrdb9j82IbdOxfUlP7n6+7zD0E9tK44pXyfiFe7rK5zUEhKpRNTwbR4YERwUh06TPNbODVG+HShyXM2AxcncrbhSVBgWJl7ZuNnM2TM1LsJfX9rzUP4wcG0xmQOrSLylRr/fILMFCWp4IMoA29C4kVvYzetCeLaL5wlryfVw=
+	t=1761597431; cv=none; b=WIC+i9OgdY56/lxhVmB70c+WGzLAGsZqIvOBjUnztY1Juc0MIqz3V5lJ6BkaCYtawJB56gb8qgL3ay3ZcKsJHcMJoVvpYdMzaeb3+GFf64r3rTXcjldCcW8MekAYA5+ua5TnRN7ROBwffzW0BgKdM2zQig1kaWBGWT+b1VRU9bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761597457; c=relaxed/simple;
-	bh=5m1IrsDTkf+F/nhzqJRjiWrZIfJDK8f7MvjheZ4CUKk=;
+	s=arc-20240116; t=1761597431; c=relaxed/simple;
+	bh=6lY3BsqhQbFTxzhuIPudK7AkEkn6POgGkZeDfcPxB2o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CP/dmW+0WfJj5gL3EzZQNEGCMci9r4BvFTFa9PUQCi+rnzXaStbsVHZAH1xgaIDLUE88y44xzIbzmmrZkeS4J0Bhz7GmzGC1gjqFCMOZeSiKM4sHu9G+2iOFTBecMbrqKm8pZySH/FRab3/ipu2oxGIYDHNqf4vfwSvR/thYWAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D0FvDvo6; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 27B114E4137B;
-	Mon, 27 Oct 2025 20:37:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D91106062C;
-	Mon, 27 Oct 2025 20:37:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B6F94102F2494;
-	Mon, 27 Oct 2025 21:36:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761597449; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=ivu3nqaTqww2kM8ddgXsb86XR8Ecjso6qu9XWZHw9NQ=;
-	b=D0FvDvo6wBdzyM4yGf/Mo92JGsnDp3FEhnzQXToKT1lTmRgmCAobeQwwgIerEldSavB9Wj
-	8Fa1YqUSJN1a+KiX1LsgxoTiLAWFpjtTkZ/psXHq539twWXUsfVfZ1tOA47yFwLd40ImsE
-	G9WDXQxl4673JnnqnSaS0aJnztT1jPuWGeK5RQylZ1VZl0DiiBjKRSdLHbVPGru9aMBn/L
-	/NPFjf5YF1MLpjQf7UlDDcAIkfmZHS4oVHjAeodKNVAVJDdwuc8RjEgecO9ymeKN374J5m
-	aI0g1qxMk56Vwb3LCXgHJanQvqdAAA00oe5CNpFNb2x5v0Y/CqIa0frpfHITdQ==
-Date: Mon, 27 Oct 2025 21:36:40 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/23] clk: at91: pmc: #undef field_{get,prep}()
- before definition
-Message-ID: <20251027203640291d726b@mail.local>
-References: <cover.1761588465.git.geert+renesas@glider.be>
- <a26cfb39f4ac309ffbff339ffa5f54db12bd8c12.1761588465.git.geert+renesas@glider.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwGZUdh+/CO5KFu/Dsfr3AxrAXcTwBCSNrNFRzqrcS9EB9F47yY3IaSlxPRrbNMQrHU7nZv2nCwud14+TRTuOeYnXHxMu3WaJ1FYW8Teh+M1u8zK5gjc9JcV/vw45YOawKs7V6LRDKQgl6uNgQUw1q+1TM95PzlFrAkGCfcS7i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpLYzdk/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A615C4CEF1;
+	Mon, 27 Oct 2025 20:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761597430;
+	bh=6lY3BsqhQbFTxzhuIPudK7AkEkn6POgGkZeDfcPxB2o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IpLYzdk/zLNP6UX4LTpN+fRbiGwM28QfznWD4Nc5sYbq1jZK6PW8Pk5xb5M4JPlIT
+	 PC+QIAL1enGh4RxdWnJ6P7KbBknGa2nmL0ZoVIXLGD4qGT0ba86tB4NlSqDMPVUrhZ
+	 yOrCC+EiB8ceu4RBWHDNjYluIxZ6io78kTcbEhLVaKEqLiBQQn4ZjkWyoQCZwokUGg
+	 euEVjO4/7jx1hq6X2FPUQWOIs55ldXhARNo+ZqngSv1M9JIIfnbxJVYDDK7IlCq1MB
+	 wWmN36Tpx1hAZP1spDbXxU88dc60j59WGmkEyFjztdERkYC8zi1tvD9hDS5scxI4fq
+	 qRrjCBMZ0tNJw==
+Date: Mon, 27 Oct 2025 20:37:06 +0000
+From: Simon Horman <horms@kernel.org>
+To: clingfei <clf700383@gmail.com>
+Cc: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com,
+	davem@davemloft.net, edumazet@google.com,
+	herbert@gondor.apana.org.au, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, steffen.klassert@secunet.com,
+	syzkaller-bugs@googlegroups.com,
+	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>,
+	Edward Adam Davis <eadavis@qq.com>
+Subject: Re: [PATCH net] net: key: Fix potential integer overflow in
+ set_ipsecrequest
+Message-ID: <aP_X8sFJKWVycTn0@horms.kernel.org>
+References: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
+ <20251023122451.606435-1-1599101385@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,47 +64,189 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a26cfb39f4ac309ffbff339ffa5f54db12bd8c12.1761588465.git.geert+renesas@glider.be>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20251023122451.606435-1-1599101385@qq.com>
 
-On 27/10/2025 19:41:35+0100, Geert Uytterhoeven wrote:
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
++ Shaurya Rane and + Edward Adam Davis
+
+On Thu, Oct 23, 2025 at 08:24:51PM +0800, clingfei wrote:
+> syzbot found that there is a kernel bug in set_ipsecrequest:
 > 
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> skbuff: skb_over_panic: text:ffffffff8a1fdd63 len:392 put:16 head:ffff888073664d00 
+> data:ffff888073664d00 tail:0x188 end:0x180 dev:<NULL>
+> ------------[ cut here ]------------
+> kernel BUG at net/core/skbuff.c:212!
+> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+> CPU: 1 UID: 0 PID: 6012 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+> RIP: 0010:skb_panic+0x157/0x160 net/core/skbuff.c:212
+> Code: c7 60 10 6e 8c 48 8b 74 24 08 48 8b 54 24 10 8b 0c 24 44 8b 44 24 04 4d 89 e9 50 55 
+> 41 57 41 56 e8 6e 54 f5 ff 48 83 c4 20 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 
+> 90 90 90 90 90 90 90
+> RSP: 0018:ffffc90003d5eb68 EFLAGS: 00010282
+> RAX: 0000000000000088 RBX: dffffc0000000000 RCX: bc84b821dc35fd00
+> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> RBP: 0000000000000180 R08: ffffc90003d5e867 R09: 1ffff920007abd0c
+> R10: dffffc0000000000 R11: fffff520007abd0d R12: ffff8880720b7b50
+> R13: ffff888073664d00 R14: ffff888073664d00 R15: 0000000000000188
+> FS:  000055555b9e7500(0000) GS:ffff888125e0c000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055555b9e7808 CR3: 000000007ead6000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  skb_over_panic net/core/skbuff.c:217 [inline]
+>  skb_put+0x159/0x210 net/core/skbuff.c:2583
+>  skb_put_zero include/linux/skbuff.h:2788 [inline]
+>  set_ipsecrequest+0x73/0x680 net/key/af_key.c:3532
+>  pfkey_send_migrate+0x11f2/0x1de0 net/key/af_key.c:3636
+>  km_migrate+0x155/0x260 net/xfrm/xfrm_state.c:2838
+>  xfrm_migrate+0x2020/0x2330 net/xfrm/xfrm_policy.c:4698
+>  xfrm_do_migrate+0x796/0x900 net/xfrm/xfrm_user.c:3144
+>  xfrm_user_rcv_msg+0x7a3/0xab0 net/xfrm/xfrm_user.c:3501
+>  netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+>  xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+>  netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+>  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x21c/0x270 net/socket.c:742
+>  ____sys_sendmsg+0x505/0x830 net/socket.c:2630
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
+>  __sys_sendmsg net/socket.c:2716 [inline]
+>  __do_sys_sendmsg net/socket.c:2721 [inline]
+>  __se_sys_sendmsg net/socket.c:2719 [inline]
+>  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> The root cause is that there is an integer overflow when calling set_ipsecrequest, 
+> causing the result of `pfkey_sockaddr_pair_size(family)` is not consistent with 
+> that used in alloc_skb, thus exceeds the total buffer size and the kernel panic.
+> 
+> The issue was detected on bpf-next and linux-next, but the mainstream should also 
+> have this problem.
+> 
+> This patch has been tested by syzbot and dit not trigger any issue:
+> >
+> > Hello,
+> >
+> > syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> >
+> > Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+> > Tested-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+> >
+> > Tested on:
+> >
+> > commit:         7361c864 selftests/bpf: Fix list_del() in arena list
+> > git tree:       bpf-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1089f52f980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
+> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> > patch:          https://syzkaller.appspot.com/x/patch.diff?x=12bf83cd980000
+> >
+> > Note: testing is done by a robot and is best-effort only.
+> 
+> 
+> >From 6dc2deb09faf7d53707cc9e75e175b09644fd181 Mon Sep 17 00:00:00 2001
+> From: Cheng Lingfei <clf700383@gmail.com>
+> Date: Mon, 20 Oct 2025 13:48:54 +0800
+> Subject: [PATCH] fix integer overflow in set_ipsecrequest
+> 
+> syzbot reported a kernel BUG in set_ipsecrequest() due to an skb_over_panic.
+> 
+> The mp->new_family and mp->old_family is u16, while set_ipsecrequest receives
+> family as uint8_t,  causing a integer overflow and the later size_req calculation
+> error, which exceeds the size used in alloc_skb, and ultimately triggered the
+> kernel bug in skb_put.
+> 
+> Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
+> Signed-off-by: Cheng Lingfei <clf700383@gmail.com>
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Firstly, this is not the correct way to structure a commit message.  Please
+look at the example at [1] for an example of a well structure commit
+message. And please look over [2] for documentation of how to structure
+patch submissions, and [3] for documentation of the Networking subsystem's
+processes.
 
-> --
-> v5:
->   - New.
+[1] https://lore.kernel.org/all/7c6b33e4d6e6f2831992bb4631595b1aa1da35c1.1739899357.git.pabeni@redhat.com/
+[2] https://docs.kernel.org/process/submitting-patches.html#submittingpatches
+[3] https://docs.kernel.org/process/maintainer-netdev.html
+
+Next, this patch is for IPsec code, and is a fix, so probably
+it should target the ipsec tree. It should apply cleanly to,
+and have been tested against that tree. And the target tree
+should be noted in the Subject like this:
+
+Subject: [PATCH ipsec] ...
+
+And there should be a fixes tag.
+According to the link in the Closes tag that would be
+
+Fixes: 14ad6ed30a10 ("net: allow small head cache usage with large MAX_SKB_FRAGS values")
+
+But that is not obviously correct to me. More on that in a moment.
+
 > ---
->  drivers/clk/at91/pmc.h | 2 ++
->  1 file changed, 2 insertions(+)
+>  net/key/af_key.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index 5daa32c4cf2540d7..78a87d31463e98b0 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -117,7 +117,9 @@ struct at91_clk_pms {
->  	unsigned int parent;
->  };
+> diff --git a/net/key/af_key.c b/net/key/af_key.c
+> index 2ebde0352245..08f4cde01994 100644
+> --- a/net/key/af_key.c
+> +++ b/net/key/af_key.c
+> @@ -3518,7 +3518,7 @@ static int set_sadb_kmaddress(struct sk_buff *skb, const struct xfrm_kmaddress *
 >  
-> +#undef field_get
->  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +#undef field_prep
->  #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
->  
->  #define ndck(a, s) (a[s - 1].id + 1)
-> -- 
-> 2.43.0
-> 
+>  static int set_ipsecrequest(struct sk_buff *skb,
+>  			    uint8_t proto, uint8_t mode, int level,
+> -			    uint32_t reqid, uint8_t family,
+> +			    uint32_t reqid, uint16_t family,
+>  			    const xfrm_address_t *src, const xfrm_address_t *dst)
+>  {
+>  	struct sadb_x_ipsecrequest *rq;
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I agree that it would be better if family was 16-bits rather than 8-bits,
+as the value passed is 16 bits, and pfkey_sockaddr_len() expects a 16 bit
+argument. But I don't think this is sufficient to fix to the problem.
+
+The lines following the hunk above are:
+
+        u8 *sa;
+        int socklen = pfkey_sockaddr_len(family);
+        int size_req;
+
+And the implementation of pfkey_sockaddr_len() is as follows:
+
+static inline int pfkey_sockaddr_len(sa_family_t family)
+{
+        switch (family) {
+        case AF_INET:
+                return sizeof(struct sockaddr_in);
+#if IS_ENABLED(CONFIG_IPV6)
+        case AF_INET6:
+                return sizeof(struct sockaddr_in6);
+#endif                                                                                  }
+        return 0;
+}
+
+Where AF_INET is 4 and AF_INET6 is 10. Both of which fit in 8 bits.
+
+And 0 should be returned for any other value, including those with
+bits in the upper byte of the 16-bit family set.
+
+It seems to me that a combination of your change, and that proposed
+by the following patches - which checks for a 0 return value from
+set_ipsecrequest() - is needed.
+
+- net: key: Validate address family in set_ipsecrequest()
+  https://lore.kernel.org/all/CANNWa05pX3ratdawb2A6AUBocUgYo+EKZeHBZohQWuBC6_W1AA@mail.gmail.com/T/
+
+- key: No support for family zero
+  https://lore.kernel.org/all/tencent_57525DE2DDF41911CFDB8DF525A08D9D9207@qq.com/
+
+Both of those patches cite the following
+Fixes: 08de61beab8a ("[PFKEYV2]: Extension for dynamic update of endpoint address(es)")
+
+Which seems correct to me.
 
