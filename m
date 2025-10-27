@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-871564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81B8C0DA8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:47:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97738C0D989
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA849422E85
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F0BE34DE41
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F592E6CAA;
-	Mon, 27 Oct 2025 12:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9CE30E0E3;
+	Mon, 27 Oct 2025 12:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiGe9bio"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUkKMtA1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F33F2AD32;
-	Mon, 27 Oct 2025 12:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDB8311C20;
+	Mon, 27 Oct 2025 12:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568625; cv=none; b=f7vBqqhtBTJKlSx1mtpVdDLJc2CSbIUpsxdCRWoKIpUGY8Ytawxlpp/4tmQFjsLMO38AEXcsP4LJHUglqIrG29ts02ft+xq8RWXZYm7AltIbhcELLqDCTuC7EoqVI9AkT3QySXL2WDGlGifp9KfUdI3lWA0n5mDkuEGGi4Zie4s=
+	t=1761568628; cv=none; b=ImmS9xvimLXYLcgMJtdVfdt+PZ7jYIzK+zZgUnv2ghgr9eWC6ifFoLPHi5sPLjdJp67nrcoRb8kp/mJK45Hu4Azv16yenPh2UynuOyBaPoN4yPJhxZgGpb03s/EVqfb/QunDiK5uZAsLpioe6z08lm01Fa0kskkXBb+0Slt+HfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568625; c=relaxed/simple;
-	bh=redh+vh8l4GMLQmHYsINwMcHjcch2Bk0h1hWDsj/HHc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Lz43eubSCJIAHbghV8LGYryHe/wKRtyzcQry5KOS8NtpWq5+6g9ZP5EUf/oZgNl1jShyB652XPuhXxdQrtkq4Bbd0vqbnx6EvKF7tlyo787FNJZh18ksSGHHUIJxY8sQGgzhwR2O0zqv7B3899JAN9kUh92OnuNG75QBgzKO45Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiGe9bio; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45DAC4CEF1;
-	Mon, 27 Oct 2025 12:37:01 +0000 (UTC)
+	s=arc-20240116; t=1761568628; c=relaxed/simple;
+	bh=O7wPv4QpTRw78qivSWIaU96EqkWfkdAYzMszaHVERm4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Tzlz2j949IR02Y44o0Z2C1u1EDvtzBk9L/KBUPTh3qW8Es6z5+kqFlbj3p+uovUdn3b9bozC5foCj3QSCtF0bdYw+viXulamVbFGbJfaDw95GgSU5KKLRr+InfYqz5k96S9+zd1J1kXcR7J3ZSrtTbAJ6NHJo91Lmr/0Jpdksv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUkKMtA1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03E2C4CEF1;
+	Mon, 27 Oct 2025 12:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761568623;
-	bh=redh+vh8l4GMLQmHYsINwMcHjcch2Bk0h1hWDsj/HHc=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=kiGe9bio/BCXg1Mz24lBo+4pYFrQzTCfydQGdSfCxckn8Ix03lFLFb0GoxxgTOXsD
-	 NifB3Erz440S0iRhzyKdg7zeQIXzPGE75SnEg0fX1uqDeksklPJzTdhvgw8SpmNSn1
-	 aZroYI2BaRy7CI9ZQS4q2FH0qfRg7OTNc7ZL9+rmwet6pi43ORSSrK/9gxc5kDstlK
-	 uJ7VGJy7Orx01z9y1mwo9keT7xRnqhkqT7UIlD0Z5BmPHSm/Wz595Bg0fwpjJloO2g
-	 gdgThxiHdKR7OHWSlAlK1zxEM9RthfrufIyiIFFF8tT8DsK3IwzIowoLLWJM1Rju47
-	 /m7VWp59VEqGg==
+	s=k20201202; t=1761568627;
+	bh=O7wPv4QpTRw78qivSWIaU96EqkWfkdAYzMszaHVERm4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=TUkKMtA1UWpAOfIwCQWcAE20v1PJ11TY2O4atvut12Bj3GR9sqpzLjkH0FzI8MTdt
+	 6E5zjBvpchZ9HuqQhuwOgF9iRHWOp2TchvnH2lnJLrKbrRrCQajCGIaVBe3hhBi4Ly
+	 2uP0bRRMDHO3yYeO5cWxxu9Cxk76joo/rkJ6/QYSCAyKpaKGga0pdNgZV6rW9tq3QF
+	 i0hxzOX26y02bMLuu9F1ISjeS19L4w/mn7no23gzPJSbPyo70Yq9K0Igqm00CfJv3e
+	 oZlQcHHFkTlmZIO6H9/dYgOK2rTNuXvLSYAN8T+9TKrrtWWf14lSxtlQ6Mr30lFiNE
+	 pVYnkRWOdnRIQ==
 From: Mark Brown <broonie@kernel.org>
-To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <20251023064538.368850-1-shengjiu.wang@nxp.com>
-References: <20251023064538.368850-1-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH 0/2] ASoC: fsl: correct the bit order issue for DSD
-Message-Id: <176156862139.24382.1000390767821381636.b4-ty@kernel.org>
-Date: Mon, 27 Oct 2025 12:37:01 +0000
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+In-Reply-To: <20251020170440.585-1-vulab@iscas.ac.cn>
+References: <20251020170440.585-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] ASoC: mediatek: Fix double pm_runtime_disable in
+ remove functions
+Message-Id: <176156862550.24382.7526074553836824881.b4-ty@kernel.org>
+Date: Mon, 27 Oct 2025 12:37:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,14 +62,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Thu, 23 Oct 2025 14:45:36 +0800, Shengjiu Wang wrote:
-> The DSD little endian format requires the msb first, the previous
-> understanding is not correct. The issue is found by testing with
-> pipewire.
+On Tue, 21 Oct 2025 01:04:40 +0800, Haotian Zhang wrote:
+> Both mt8195-afe-pcm and mt8365-afe-pcm drivers use devm_pm_runtime_enable()
+> in probe function, which automatically calls pm_runtime_disable() on device
+> removal via devres mechanism. However, the remove callbacks explicitly call
+> pm_runtime_disable() again, resulting in double pm_runtime_disable() calls.
 > 
-> Shengjiu Wang (2):
->   ASoC: fsl_sai: fix bit order for DSD format
->   ASoC: fsl_micfil: correct the endian format for DSD
+> Fix by removing the redundant pm_runtime_disable() calls from remove
+> functions, letting the devres framework handle it automatically.
 > 
 > [...]
 
@@ -77,10 +79,8 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: fsl_sai: fix bit order for DSD format
-      commit: d9fbe5b0bf7e2d1e20d53e4e2274f9f61bdcca98
-[2/2] ASoC: fsl_micfil: correct the endian format for DSD
-      commit: ba3a5e1aeaa01ea67067d725710a839114214fc6
+[1/1] ASoC: mediatek: Fix double pm_runtime_disable in remove functions
+      commit: 79a6f2da168543c0431ade57428f673c19c5b72f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
