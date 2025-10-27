@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-871735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68098C0E344
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:58:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0799DC0E35C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AE6423C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B98420973
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA572309BE;
-	Mon, 27 Oct 2025 13:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE27306B15;
+	Mon, 27 Oct 2025 13:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xs3/lL0L";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WLHnlkM4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Zom4EKxh"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B556F303CBB;
-	Mon, 27 Oct 2025 13:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4687830597A;
+	Mon, 27 Oct 2025 13:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573112; cv=none; b=tNRUoxLZoQhkpVZ1yGbllnFhBaw3WERFx67+aajq9AhIsxbDuR1Z8o1J/3PuKDL54FbzDFHeADG7mPaxovPAj4FPy9XmL/BT1ru5eEnVCsipVlug5iZCkveN6g9gltx4tRmeISkiad68/ihUfzHJ1xsNQaPNZOk8oPB1TFVi8yo=
+	t=1761573164; cv=none; b=Ljz2G7g38XGPzvJW9bEadGNsH5zh4MYpdXctk/ebATxc7MVFVWTjsjfNmwrEyMHDKT1gZ4UNXHyXa0LtjIl1rX8ClVHBBcEbbHmjvgO3ijMZfHpibC9Z0M1jYRtfqi766nO0DdEPnfdryoJpYkkwKTqX4CKmdvmj/6E9NDDP8ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573112; c=relaxed/simple;
-	bh=dKXFxi9uY0k5yVjlqeQwn8clNgwSrBI6UnyGSznsrY0=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=bdraSq7Q+vt9mdUA+vAWPJxjokZKmUtIf9UGK6W89qmLWN5dCQz6TM49vkgL1c2u4aiILgjHf2vSdRhRw1xmNKtrHTnAfZ24Yu4fU1roRhFed1TIG0t2g5l6rs327WW2lLbsy5PhEAhNBGt0Lc9L8yyHU2RfWZwftswF223htlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xs3/lL0L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WLHnlkM4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 13:51:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761573108;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=8nJasAAcTeVqTX51l8EAYWv8mQMJQmZQuHANfuv3jYc=;
-	b=Xs3/lL0L+ftJ2w1x0I8ppL4ntMBLEPKnLkwFo7vEAq34DYIhH+Kz2F2KGnuRt2ObDZtxpa
-	Usi6pWxtmR7gMMsvwtbHLNGm0OAL4i77gBU9LyNBujXWSImN3orcdB3cnLq97M0AA4f17B
-	eLihCiy1064wSACfh29+HwKzzSN4JiTqGJyTAAcANaLVKPCN9pDRFWyKO0wTiP8wlJF21i
-	41RNQddBTJEBSt7mXV9qPmKFe1Af9Uw5u+Nwr2rqDTIh45uX9mZ0RSW/jCQDkCmWHCl/Ko
-	EMITegGGjrpB8CW6SP/ZDnjfaKnYb2REBVcO+S9589iJ2CyQRfPJHyNYl4MtJw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761573108;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=8nJasAAcTeVqTX51l8EAYWv8mQMJQmZQuHANfuv3jYc=;
-	b=WLHnlkM4BobWwIwfCdWEeKkDrirbRGSMMkvDQ1jc8yEd6eJl/gkDfT+5cS6XVePYW1oTmd
-	l2y6KMw7ee5uDBAg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/microcode/AMD: Limit Entrysign signature
- checking to known generations
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1761573164; c=relaxed/simple;
+	bh=mKZXgmC0J5LBgztr81FWGG2KayDzmjGl5hVIlR61sKk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAecag9gwzsxMWpgn+SKb9847+f14tx8jGG+vosGpBnGFS0po+LSwx210P2mwnL7xlM25VMZcmxfPgsqfTkFtGwQ8xaRW0IMfUkgGfZhB8lH+jRleOTaKdqjcN+J/pQdYVqQNCMP18PZEcu4f90/YdWjf7Siuxc1cxO/emxKYyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Zom4EKxh; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1761573153;
+	bh=3kzLSOuCsNwd3PzYAldLRKtwAf4LDDOP8IpojHoSDqA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=Zom4EKxhkk0iWK5+i3HgvWF1OGkldxxuwR1H06v/WAki7s4cNLSgUvlRMMaGFZzyr
+	 xRgOyIdYcqjU+IqBLy46bs44SjUMCm81D/Yy3fdWGNSJoC91ME+6j0bgn1PWmlmTZ/
+	 3HsqubF6BKxqhNCprBWN29BZhmXkm5m3no+xtaD4=
+X-QQ-mid: zesmtpip4t1761573148td27e7fff
+X-QQ-Originating-IP: UrvBgtWjK2nHPKDaDc+5eztGAGq+puoGJrqONWDB7do=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 27 Oct 2025 21:52:26 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3589194371110630699
+EX-QQ-RecipientCnt: 14
+Date: Mon, 27 Oct 2025 21:52:27 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-i2c@vger.kernel.org, linux-rtc@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 0/4] fix the SpacemiT P1 Kconfig and resend the K1 I2C
+ ILCR patch.
+Message-ID: <DE3BC758D99A2110+aP95G3ppc_mZaDpq@troy-wujie14pro-arch>
+References: <20251027-p1-kconfig-fix-v2-0-49688f30bae8@linux.spacemit.com>
+ <aP9IVckJT-k2_O4K@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176157310666.2601451.1829123270158335667.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP9IVckJT-k2_O4K@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: Mh0xRtMdhgZRanLwuwAVcqmp1P5pal50KAfMbD3eUBhbrg5PthVOPmEf
+	sGCN4jmRdbbe5xpLy1i2t+h30110rqU3JDOIWeHHzRRD60R2HH+2BHxviT2E0WSmyEwlnId
+	CC0jO8m1mZ/IBWmmc5+6nERrwOOdw+eHvVboDE+E2Gm21uXExF9vHLiV+62SCxpZBFp6nKF
+	onSpJLykJBQnVJ0IglQ/pe+ngk1wkw2+8N76DVd7W0c7Ho3ak2oxLpgxRPowcq4+9CPj9/n
+	6DENo9CAn6S+3yrMXpnuQEZEGeY6BY8fo12HTF7vKHq4zkAqOnoNgj1igiwpVhxhz+zWtw5
+	1VApAhZD1W80QnYqz7ZOJOx+v/RT+RaA1SRjUbRJbmSUOBfq4TcIdp8DVGMLsErq79dlGeN
+	8Pu26+hhV1+YTtJpLOuGNRhsa7PFC3/y8l9+ueD3dPVxcFZ4YX0rP/jfK8m0Jk5TQsh2M4n
+	R/G9DGS3LvBzj3nzlcJfVvgOk+l+LZCiSsGOt/GHQg6ec2NjBL6Xuj3gviWnnmviyupOEVN
+	qzqUvYy/NAhgJ6HwNQ+Jqqwtb2P6Q0hp/DpFW+Ke+SNCnuZ+eNZlmLDcrymbM1KUHV9TxYf
+	RHxFbhLw4KD3V9xzNNz22a+HfDST0HzhMQZi+YCDdnkn1io1r3TybjQCCHUCiVE4+sIV69F
+	V9sO4pIRinHvLbIj3x9WLT6UWl/z6rLx9SgEgsIHYr1qoPbT1nMaB/VprXxq7wKKH2gjU0I
+	/8E6NLCir7Of0PZiWQ/rh7EeqD3/N2clFkDdmC8FWMcevvrWI41xAdUfZPpornXRyM0+sfD
+	bWptv9DdWT/yo8yi6o0Lbjreu5OT8XKxuwpdtsSDCO1A8/IU7yEUD7wtAj2lYe3bO8wwhxG
+	1QgNzitFphMUzcFKn1efkit0E4kFrfFKIsaVIOuJGgUduzkaZIZG0ovBhLx7ZDphrJunTNm
+	oe8aYjAEekfdG7ZLnjm1e9GGvqx2gqgZuEAmsyn76Twb71DMFzCIGFruu3YFM237WIsbk47
+	JheZa21s+p/n7/YhbEVzJavzd0pbtJdyKZGF/yrzAkgzn5jqpMBD7pemfRgH8ivUMbcbL9B
+	CQTufCOfcne/7aJsNllQ3asTFYIBG4Xjg==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Oct 27, 2025 at 11:24:21AM +0100, Aurelien Jarno wrote:
+> Hi,
+> 
+> On 2025-10-27 13:48, Troy Mitchell wrote:
+> > Since P1 Kconfig directly selects K1_I2C, after the I2C ILCR patch was
+> > merged, the driver would fail [1] when COMMON_CLK was not selected.
+> > 
+> > This series fixes the P1 Kconfig and resends the I2C ILCR patch(This
+> > patch has reverted by maintainer [2]). In addition, the Kconfig for
+> > P1's two subdevices, regulator and RTC, has been updated to use
+> > 'depends on MFD_SPACEMIT_P1' instead of 'select'.
+> > 
+> > Link: https://lore.kernel.org/oe-kbuild-all/202510202150.2qXd8e7Y-lkp@intel.com/ [1]
+> > Link: https://lore.kernel.org/all/sdhkjmi5l2m4ua4zqkwkecbihul5bc2dbmitudwfd57y66mdht@6ipjfyz7dtmx/ [2]
+> > 
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> 
+> I think this series misses a patch to add a default value for 
+> MFD_SPACEMIT_P1. Otherwise it doesn't make sense to define a default 
+> value for the ones depending on it (RTC_DRV_SPACEMIT_P1, 
+> REGULATOR_SPACEMIT_P1).
+Yes, I forgot that. I'll add it in the next version. Thanks!
 
-Commit-ID:     9e954398cebcc72779798dc1bae03b746ee1ef98
-Gitweb:        https://git.kernel.org/tip/9e954398cebcc72779798dc1bae03b746ee=
-1ef98
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Thu, 23 Oct 2025 14:46:29 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 27 Oct 2025 14:43:15 +01:00
-
-x86/microcode/AMD: Limit Entrysign signature checking to known generations
-
-Limit Entrysign sha256 signature checking to CPUs in the range Zen1-Zen5.
-
-X86_BUG cannot be used here because the loading on the BSP happens way
-too early, before the cpufeatures machinery has been set up.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://patch.msgid.link/all/20251023124629.5385-1-bp@kernel.org/
----
- arch/x86/kernel/cpu/microcode/amd.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microc=
-ode/amd.c
-index 28ed8c0..2a573fa 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -233,13 +233,31 @@ static bool need_sha_check(u32 cur_rev)
- 	return true;
- }
-=20
-+static bool cpu_has_entrysign(void)
-+{
-+	unsigned int fam   =3D x86_family(bsp_cpuid_1_eax);
-+	unsigned int model =3D x86_model(bsp_cpuid_1_eax);
-+
-+	if (fam =3D=3D 0x17)
-+		return true;
-+
-+	if (fam =3D=3D 0x19) {
-+		if (model <=3D 0x2f ||
-+		    (0x40 <=3D model && model <=3D 0x4f) ||
-+		    (0x60 <=3D model && model <=3D 0x6f))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, =
-unsigned int len)
- {
- 	struct patch_digest *pd =3D NULL;
- 	u8 digest[SHA256_DIGEST_SIZE];
- 	int i;
-=20
--	if (x86_family(bsp_cpuid_1_eax) < 0x17)
-+	if (!cpu_has_entrysign())
- 		return true;
-=20
- 	if (!need_sha_check(cur_rev))
+                                  - Troy
+> 
+> Regards
+> Aurelien
+> 
+> -- 
+> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+> aurelien@aurel32.net                     http://aurel32.net
+> 
 
