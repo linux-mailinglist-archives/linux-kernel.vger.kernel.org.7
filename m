@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-870719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C134C0B870
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:19:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF74C0B867
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D7D3BC33A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE2418A1D0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92A82206AC;
-	Mon, 27 Oct 2025 00:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2022248B0;
+	Mon, 27 Oct 2025 00:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eOZuMP3Y"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T4PKl5X+"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C2D21D00A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309D4211A14
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761524334; cv=none; b=POI7gncXpqx5ANg7xFWEWkmnRAZ1Q6geH8PRkrG12D4UJh58s/xEcvmdE2rhyuT18ngL6dCz/w8KfXSLRexdACO99gM2d4RAz5a2XzkRkpwdWPBYrxXII/ZqT/2qK9uJDgL+hmbTdGu8xI5Ec16fpcp49ppAgpaVvwMU87oHM30=
+	t=1761524335; cv=none; b=QjyJElQYS2p3jUsS3CrJBw9iTZLSEqf7T+Ks+sFGWd78oBFbzaubm4O1DdwVZonWtSodZlvDxCRvFb+MO4cxwhyHOzxW6SMvJryc6y4ElkloMBKnnMHD5l/MnlMNJpKH3asb6q057fy0HjDGEGwGqefnFxPZZUkYqyoS9zgM8ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761524334; c=relaxed/simple;
-	bh=3BGzPF/5VpNXrRT172DmrvHLqGBDLyHCCXwQhR82DVQ=;
+	s=arc-20240116; t=1761524335; c=relaxed/simple;
+	bh=9DoCjxBOtuHLpHgIlbx76kr9AICQ+StOVxBkqP6vrGA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kvM+Ses/wHmHTOGEdioK+X0UHBOv4AtEBb7gIXySoVJuJYymNIZ2iIV++tq1PqJSInnm6MfbZz5AvdR5JKCinf+jPoIiHf2bXcid15G86sqk5w0B+16sJo1RknEo8xExCqmtq3lFMJ/Sn2n985rMQrN/UXnE2DhCpJJAKcvKlvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eOZuMP3Y; arc=none smtp.client-ip=91.218.175.186
+	 MIME-Version; b=Zy6NQGLjeo4khq6PphbL0BhIaq+Z1mRnVbTpUtVkfCFLv34xXeOVd8C43q/FMDu3hqKzkAjDd2h8ang/qimbWmPZWMy0GyH6MrZQHW1oXP23R1/GhAOfRAoyK3/og+COV95yahoFlDIdFSwhGtfrec/waWKOFETbpdM9FMSF0rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T4PKl5X+; arc=none smtp.client-ip=91.218.175.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761524329;
+	t=1761524332;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bl37ymUxPOSh0uADw//c0j6dKMZwyMMccmkvzyDx4iM=;
-	b=eOZuMP3YnOEWGFWVtF/ftO+8SRUHWmHScyHnXOlOguZMARhIFfjX6sqmO47lRG+itvrsHM
-	VJbcALMJ2V6BS3ViFqh6zBNwGFDtmBMcmAwdyTK1+X8+MWv4ww2WP3ptm+SvR80zQMPiss
-	GaKUK0KelWKyr+AlBBknSDXoK/f99HM=
+	bh=Qv8GrhWWLvpi+yXjcVXvopwH0zWKk+Fo+xAzYv1qf0M=;
+	b=T4PKl5X+6V424JgZsHbjgohHFQmgP76ww0hRCuAU8l0OHdP80gOU4h5zkGhwT54VMt6IiR
+	g/0xY78vvtuBWUgD/WDWefBPq53HQnlB1K8Xq7XZZgmL5nsY2iJjmGFPmkGGV8PZPjd2t3
+	CQmBS+q7pZDeiog2t+/nDV+DmIglumA=
 From: Tiwei Bie <tiwei.bie@linux.dev>
 To: richard@nod.at,
 	anton.ivanov@cambridgegreys.com,
@@ -51,10 +51,10 @@ Cc: linux-um@lists.infradead.org,
 	arnd@arndb.de,
 	tiwei.btw@antgroup.com,
 	tiwei.bie@linux.dev,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH v4 6/8] um: vdso: Remove getcpu support on x86
-Date: Mon, 27 Oct 2025 08:18:13 +0800
-Message-Id: <20251027001815.1666872-7-tiwei.bie@linux.dev>
+	linux-arch@vger.kernel.org
+Subject: [PATCH v4 7/8] asm-generic: percpu: Add assembly guard
+Date: Mon, 27 Oct 2025 08:18:14 +0800
+Message-Id: <20251027001815.1666872-8-tiwei.bie@linux.dev>
 In-Reply-To: <20251027001815.1666872-1-tiwei.bie@linux.dev>
 References: <20251027001815.1666872-1-tiwei.bie@linux.dev>
 Precedence: bulk
@@ -68,71 +68,44 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Tiwei Bie <tiwei.btw@antgroup.com>
 
-We are going to support SMP on UML/x86, so we can't hard code
-the CPU and NUMA node in __vdso_getcpu() anymore. Let's just
-remove it and let applications fall back to the syscall.
+Currently, asm/percpu.h is directly or indirectly included by
+some assembly files on x86. Some of them (e.g., checksum_32.S)
+are also used on um. But x86 and um provide different versions
+of asm/percpu.h -- um uses asm-generic/percpu.h directly.
 
-Suggested-by: Johannes Berg <johannes.berg@intel.com>
+When SMP is enabled, asm-generic/percpu.h will introduce C code
+that cannot be assembled. Since asm-generic/percpu.h currently
+is not designed for use in assembly, and these assembly files
+do not actually need asm/percpu.h on um, let's add the assembly
+guard in asm-generic/percpu.h to fix this issue.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org
 Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/um/vdso/um_vdso.c  | 20 --------------------
- arch/x86/um/vdso/vdso.lds.S |  2 --
- 2 files changed, 22 deletions(-)
+ include/asm-generic/percpu.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/um/vdso/um_vdso.c b/arch/x86/um/vdso/um_vdso.c
-index cbae2584124f..43a5ffcc7158 100644
---- a/arch/x86/um/vdso/um_vdso.c
-+++ b/arch/x86/um/vdso/um_vdso.c
-@@ -10,14 +10,12 @@
- #define DISABLE_BRANCH_PROFILING
+diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
+index 02aeca21479a..6628670bcb90 100644
+--- a/include/asm-generic/percpu.h
++++ b/include/asm-generic/percpu.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_GENERIC_PERCPU_H_
+ #define _ASM_GENERIC_PERCPU_H_
  
- #include <linux/time.h>
--#include <linux/getcpu.h>
- #include <asm/unistd.h>
++#ifndef __ASSEMBLER__
++
+ #include <linux/compiler.h>
+ #include <linux/threads.h>
+ #include <linux/percpu-defs.h>
+@@ -557,4 +559,5 @@ do {									\
+ 	this_cpu_generic_cmpxchg(pcp, oval, nval)
+ #endif
  
- /* workaround for -Wmissing-prototypes warnings */
- int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts);
- int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz);
- __kernel_old_time_t __vdso_time(__kernel_old_time_t *t);
--long __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused);
- 
- int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
- {
-@@ -58,21 +56,3 @@ __kernel_old_time_t __vdso_time(__kernel_old_time_t *t)
- 	return secs;
- }
- __kernel_old_time_t time(__kernel_old_time_t *t) __attribute__((weak, alias("__vdso_time")));
--
--long
--__vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused)
--{
--	/*
--	 * UML does not support SMP, we can cheat here. :)
--	 */
--
--	if (cpu)
--		*cpu = 0;
--	if (node)
--		*node = 0;
--
--	return 0;
--}
--
--long getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *tcache)
--	__attribute__((weak, alias("__vdso_getcpu")));
-diff --git a/arch/x86/um/vdso/vdso.lds.S b/arch/x86/um/vdso/vdso.lds.S
-index 73c508587a98..401600effc0a 100644
---- a/arch/x86/um/vdso/vdso.lds.S
-+++ b/arch/x86/um/vdso/vdso.lds.S
-@@ -22,8 +22,6 @@ VERSION {
- 		__vdso_clock_gettime;
- 		gettimeofday;
- 		__vdso_gettimeofday;
--		getcpu;
--		__vdso_getcpu;
- 		time;
- 		__vdso_time;
- 	local: *;
++#endif /* __ASSEMBLER__ */
+ #endif /* _ASM_GENERIC_PERCPU_H_ */
 -- 
 2.34.1
 
