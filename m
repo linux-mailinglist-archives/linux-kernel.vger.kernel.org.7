@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-870775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88256C0BA90
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:05:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28726C0BA51
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E708818A308A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:05:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D1194E1508
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EBB2D540D;
-	Mon, 27 Oct 2025 02:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0C12C21C5;
+	Mon, 27 Oct 2025 02:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nhKPw3BB"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="M5rop7MM"
+Received: from mail-ej1-f97.google.com (mail-ej1-f97.google.com [209.85.218.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030352D29CE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1A129E11B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761530598; cv=none; b=Aea695q26kNKgc9rPwl0LMrUX5tcpcNmakHcvjlGwRBDuUAUtZ7Ey/fOhNts/x80l7RcyLm8KRnDIeJaLPVFwf1Qtx269SMA5V/popFDiZjEA2KXqX42oYc7uyu0LOOlooofq1htCqli12PpJYdSwp3KwesP5igucy0cNZgL0mI=
+	t=1761530591; cv=none; b=Fi8tJvddKBVRLivrAOF4pa69HrLNZVMCaK2+wFjvN+f/7XVHMh4kxcSIzFQeRltTNEhHVkaNqeZ8VzPf//rg6JUQ8aNBYvlb1L41nRGcmapc0pWcu/TOLxDAGRfCkxoYh4EJAa8kaYq/g7LNeBPtIkzE8c7/cJoolr0RI1vuTgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761530598; c=relaxed/simple;
-	bh=YnlLfSeWaLmzhIjuiLSDNwjYJ9vS/n7XL/YYh6heIuM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SmyG+SkcEoVSAThuh+n9HBWWRCIX7/3Ei4y5hOfzcVs50tlvLbYZkJB2LHpwBpx8vt/tasRLmQ87THuGTKZIRE5XhzIbe6GHTvATeFcxTbyssOeVLB7xjZ2KreQulKPsjsLu/MpRS1XmLycgeB13EMqUHOGlE9mjBl5HZvmZXFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nhKPw3BB; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761530586; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=mx+VoEY0CT/CKfx1nDM5Jt1hgguzcel3vSopk965SuI=;
-	b=nhKPw3BBHwGISurGxwZiowwYw0ZzMIplqhfKtTecUWxRZcof6V3ukmaHnoyVa4qePMjTqQklydHgVI1QjQTTOAtD0k116dUoBAA/4/66DSJjfL1dx2RTeUMafZ+x0oMw/KWLYtKZwGS0k4P+e71P4TUtEbBzylISUt5geajHw+w=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wr-dZdy_1761530575 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 27 Oct 2025 10:03:04 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Andrew Morton <akpm@linux-foundation.org>,  Catalin Marinas
- <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>,  David Hildenbrand <david@redhat.com>,
-  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,  Vlastimil Babka
- <vbabka@suse.cz>,  Zi Yan <ziy@nvidia.com>,  Baolin Wang
- <baolin.wang@linux.alibaba.com>,  Ryan Roberts <ryan.roberts@arm.com>,
-  Yang Shi <yang@os.amperecomputing.com>,  "Christoph Lameter (Ampere)"
- <cl@gentwo.org>,  Dev Jain <dev.jain@arm.com>,  Barry Song
- <baohua@kernel.org>,  Anshuman Khandual <anshuman.khandual@arm.com>,
-  Kefeng Wang <wangkefeng.wang@huawei.com>,  Kevin Brodsky
- <kevin.brodsky@arm.com>,  Yin Fengwei <fengwei_yin@linux.alibaba.com>,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org
-Subject: Re: [PATCH -v3 0/2] arm, tlbflush: avoid TLBI broadcast if page
- reused in write fault
-In-Reply-To: <20251023013524.100517-1-ying.huang@linux.alibaba.com> (Huang
-	Ying's message of "Thu, 23 Oct 2025 09:35:22 +0800")
-References: <20251023013524.100517-1-ying.huang@linux.alibaba.com>
-Date: Mon, 27 Oct 2025 10:02:54 +0800
-Message-ID: <87cy69hzjl.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761530591; c=relaxed/simple;
+	bh=8EGXy5b1kSFodiuuzawK6wvaYbLLM08GPPPMMQ8zI7c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pkIIoAAWjYfRG2Qo2dvBRXVfOUhnakYD/nHn9SVRY/GI8aR12scC+wp4opXGcI0Wx2enpHFnC9sVgghi0NJ/yFSTPzguj7cvXMWtw6LT0QGYeJIaJOFPAzWVo6qpjI9l9CwlSztbTzFlu/lQ8dNT1NtnVdWaLQWF3AaoY4VX8nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=M5rop7MM; arc=none smtp.client-ip=209.85.218.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ej1-f97.google.com with SMTP id a640c23a62f3a-b6d955816bdso28730466b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1761530587; x=1762135387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jCh4WemE9mdSnciEK2Wq3FeBaRoVhjwvxKmTI6eKr9I=;
+        b=M5rop7MMq5hk2TzNK10RdeSGsBICc4P8G5UR62QY+Go8EUicxYUbV7yKF0Ewknd+3C
+         VMkIwFI1srO6yQ4Ecb1XkU2abPONncSeLRtmJT8NcicRp0s6TAqVFGOmmjiI80dxMLvx
+         ypX5+L0JchNz6mqkvEnQFM3y7iFrzfC6kLU8lHWge50XHc/Cx/DyHlrT0SYKY/92Crtk
+         vNMwJsdtLabuDa29cKqFsQ3e7mWCg9OiYqVG9SbRUMKUp0C1qda9+m1hHKoVy+v1tJmn
+         qDkL3sZXTEpf+AM9krAsrF/gZSQplLkX+52qJDh/hHFmMWJrolJMYt+tgOIqGoYwJ/Wy
+         n21w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761530587; x=1762135387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jCh4WemE9mdSnciEK2Wq3FeBaRoVhjwvxKmTI6eKr9I=;
+        b=hnKjyptS+KiWRsvRsMjtmRr1qx1f/aETrj2e4Lj5yJedGNvUPiClKKq7/yHRx1q4vQ
+         bLqyZj10vC9AntdkWejnKmbRAhpb6myXVJk96xviXwcCca3c9brlh5NSzDLAM3yjYpGM
+         bhFZE1UiVsH3oT+6qUI7NumAKlbXxhSM1TJbQLOI/7UcvblNsZ7RBcgOEH4HkS7p9TNw
+         wNYnOkGm4b+/VdwkY3xB7DOsYKN77psK0T5+nHf+2ruBM2I1hTd9ao1Nc31K3bZtpyqm
+         gs/s4ZfOSRSiRM9XRV31QQBd6Ez+03t6E7weI5nDZWtxBrVPRIbkgyH5o1WFaB6fTCjj
+         +zAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEvhGr1QiDaL4zeNYFhxzRRWM4TCIPk6sC11otdcuqLq8ioBTOTM2WgONoFNQiq6AXluq7qMTlG9UsqWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6gTLDvJRaBeLQ185b+g0rHUACEW0B8eZnliHyDaCzwhLIt2iv
+	Y7oV2WgeNltiVFoSAEBlgWBDXBByfpnSUz8RbNNOe2O9PKXzT/W884529SKKEnWtysxsBbk571B
+	0fyZMBpiD/856dwOSjyDJSmupN3hky4ANaeCA
+X-Gm-Gg: ASbGnct54EimCFvJ3a+mu+gCq2oOuP/ucgDCz7RNCoqbYbauyXs+4JLJ/GekMMIQiK9
+	ZA74q48CjgQETFl0h4BmEFpJ8PIegcJtLb9G5nVI/bwWrvvVlpeJViSzSwVJjT1aQjawcW/h05c
+	IS5gKxg6XcsG91wg6vQShpcISRhrdN2F3tmp1L0LVmo0dxFrjfax+0hvDU75UUOPUbRoef0x+Dl
+	HtRPETAoDRPoFdX4SsCsxKeLqc2IJ1rK8WOojbDzU7t+w+mBSNtll+p37RY0vMBV/xGAF1Zcj4N
+	hgQFEsZsbo270aCKeu+wdgz2xV3lLqL+eYCon++UpsIUIBzX8WsgCCi/6iSQDcL7mL/qf2jyTo4
+	yHnPxwaU2ntpnf24vhugM5os6kXVYYrk=
+X-Google-Smtp-Source: AGHT+IE4hiP03f6lofOOS2+HxUXFo5vKINW/jUKRpaO25HyrXJmcC0Z82zfs5/zGzfiuKTm+aQhmKlmbZdW6
+X-Received: by 2002:a17:907:c24:b0:b38:7f08:8478 with SMTP id a640c23a62f3a-b6c72716445mr1473292866b.0.1761530586723;
+        Sun, 26 Oct 2025 19:03:06 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id a640c23a62f3a-b6d85418ef1sm55541366b.47.2025.10.26.19.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 19:03:06 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 46DBB3402DD;
+	Sun, 26 Oct 2025 20:03:05 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 3C232E46586; Sun, 26 Oct 2025 20:03:05 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Ming Lei <ming.lei@redhat.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>
+Cc: io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH v3 0/4] io_uring/uring_cmd: avoid double indirect call in task work dispatch
+Date: Sun, 26 Oct 2025 20:02:58 -0600
+Message-ID: <20251027020302.822544-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Huang Ying <ying.huang@linux.alibaba.com> writes:
+Define uring_cmd implementation callback functions to have the
+io_req_tw_func_t signature to avoid the additional indirect call and
+save 8 bytes in struct io_uring_cmd. Additionally avoid the
+io_should_terminate_tw() computation in callbacks that don't need it.
 
-> This series is to optimize the system performance via avoiding TLBI
-> broadcast if page is reused in the write protect fault handler.  More
-> details of the background and the test results can be found in [2/2].
->
-> Changelog:
->
-> v3:
->
-> - Various code cleanup and improved design and document in [1/2],
->   Thanks Lorenzo and David's comments!
-> - Fixed a typo and improved function interface in [2/2], Thanks Ryan's
->   comments!
->
-> v2:
->
-> - Various code cleanup in [1/2], Thanks David's comments!
-> - Remove unnecessary __local_flush_tlb_page_nosync() in [2/2], Thanks Ryan's comments!
-> - Add missing contpte processing, Thanks Rayn and Catalin's comments!
->
-> Huang Ying (2):
->   mm: add spurious fault fixing support for huge pmd
->   arm64, tlbflush: don't TLBI broadcast if page reused in write fault
->
->  arch/arm64/include/asm/pgtable.h  | 14 ++++---
->  arch/arm64/include/asm/tlbflush.h | 56 ++++++++++++++++++++++++++++
->  arch/arm64/mm/contpte.c           |  3 +-
->  arch/arm64/mm/fault.c             |  2 +-
->  include/linux/huge_mm.h           |  2 +-
->  include/linux/pgtable.h           |  4 ++
->  mm/huge_memory.c                  | 33 ++++++++++------
->  mm/internal.h                     |  2 +-
->  mm/memory.c                       | 62 +++++++++++++++++++++++--------
->  9 files changed, 140 insertions(+), 38 deletions(-)
+v3:
+- Hide io_kiocb from uring_cmd implementations
+- Label the 8 reserved bytes in struct io_uring_cmd (Ming)
 
-Hi, Andrew and Catalin,
+v2:
+- Define the uring_cmd callbacks with the io_req_tw_func_t signature
+  to avoid the macro defining a hidden wrapper function (Christoph)
 
-This patchset needs to be merged across trees.  [1/2] is a mm change,
-[2/2] is an arm64 change, and [2/2] depends on [1/2].  Because the
-user-visible change is in arm64, I think it may be slightly better to
-merge the patchset through the arm64 tree.  The opposite way works for
-me too.  If you were OK with the patchset itself, which way do you
-prefer?
+Caleb Sander Mateos (4):
+  io_uring: expose io_should_terminate_tw()
+  io_uring/uring_cmd: call io_should_terminate_tw() when needed
+  io_uring: add wrapper type for io_req_tw_func_t arg
+  io_uring/uring_cmd: avoid double indirect call in task work dispatch
 
----
-Best Regards,
-Huang, Ying
+ block/ioctl.c                  |  4 +++-
+ drivers/block/ublk_drv.c       | 15 +++++++++------
+ drivers/nvme/host/ioctl.c      |  5 +++--
+ fs/btrfs/ioctl.c               |  4 +++-
+ fs/fuse/dev_uring.c            |  7 ++++---
+ include/linux/io_uring.h       | 14 ++++++++++++++
+ include/linux/io_uring/cmd.h   | 29 +++++++++++++++++++----------
+ include/linux/io_uring_types.h |  7 +++++--
+ io_uring/futex.c               | 16 +++++++++-------
+ io_uring/io_uring.c            | 21 ++++++++++++---------
+ io_uring/io_uring.h            | 17 ++---------------
+ io_uring/msg_ring.c            |  3 ++-
+ io_uring/notif.c               |  5 +++--
+ io_uring/poll.c                | 11 ++++++-----
+ io_uring/poll.h                |  2 +-
+ io_uring/rw.c                  |  5 +++--
+ io_uring/rw.h                  |  2 +-
+ io_uring/timeout.c             | 18 +++++++++++-------
+ io_uring/uring_cmd.c           | 17 ++---------------
+ io_uring/waitid.c              |  7 ++++---
+ 20 files changed, 116 insertions(+), 93 deletions(-)
+
+-- 
+2.45.2
+
 
