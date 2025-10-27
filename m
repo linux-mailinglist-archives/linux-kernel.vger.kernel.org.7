@@ -1,97 +1,172 @@
-Return-Path: <linux-kernel+bounces-872302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7C7C0FDC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:10:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B47C0FDCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D55824E333C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB33F3A4EAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1489314D05;
-	Mon, 27 Oct 2025 18:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F5B31A044;
+	Mon, 27 Oct 2025 18:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FGlyah3J"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HuCGleei"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF73930C60C;
-	Mon, 27 Oct 2025 18:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545DF316911
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588635; cv=none; b=TQteGKlLIV7h7W7la4ghDKV2b5ADqPj/FlzKvNDW7EcEiToz1Sz7Z0nzjLFLRrpo8nYDiV97bQywYdZFqNz7BcMGwvZtMX0F7ajRHExHmBAyGkymzzWRbyyCZiuEA9CdDMQgycTg6nnay6ZMp+8yRko2qnzOtAdL+2Sib6/qMcE=
+	t=1761588654; cv=none; b=c7U2bZZIiaLGQAhJSFirejQQrnLCAoS6T4/KDJq+5qecJ2dUSQCC6W8t4u6NUYtM1i/yBWnJTUt42NGawQET3bpzBNVXzHIGaN+Rg8JYP20NbOyM/b2Wjw9yWqfQHzapgeJwGCB3YscgguLMbCSR6IIJKJpzpFZX05PyA+F5FyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588635; c=relaxed/simple;
-	bh=wcVGvIWetF4/U0cU72L71ISJY4OdIlmPrB/who+CJWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJyMhnQosxZsEv+qHnTv5baBgdLZkl7sMXFBaWim+ITBKsTfz+aNobn2xFMZxEDNKPbixTuu0ogrfnZaBThKBYPl4aWu1fkHbWPg7P14vuszaaQg6whnTCL9PDIt0WmZzqc8tGvlXTNR5CUQNpFB2YS6JxtZs4vkd4Ypy5bignA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FGlyah3J; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=I8rPE0cdAXnJTHr6KpJ7Uz7Vy+8FrpME9wcPdicA9I0=; b=FGlyah3JRsFbfly6gXjDY5Njzg
-	6aX6nzZPMpUcoqPGkTqPbjVAnq6sHhKyg3Quyaxz7YonwjAuU7mS34BDptOCvH7xRX9vuqLg+vwKm
-	8ZHnSRYNnuNurnOb4IC21o/UBwYAmMpIYEkJsV5BDH1SWM6okg5YpDsQznV8HQ92Fh43zH1r1VPg1
-	sm9kFFUnmuUqLz8YSxbhAXDtuy9MABxzJRu3ln2Prayjjhik74BgQ6ulXB7fTb9JoVKo3y80VO1ua
-	8NqlrpJObWCi8hUxJIUDoY2f53lz1Z6fPuKB6TcNydyqTMReIdtG3pfUe/zD2iHvnGHw+66Yipw9Y
-	mIfwzwLw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDRfn-00000008pcO-2BNP;
-	Mon, 27 Oct 2025 18:10:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4265A300323; Mon, 27 Oct 2025 19:10:28 +0100 (CET)
-Date: Mon, 27 Oct 2025 19:10:28 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
-Subject: Re: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
- called from anywhere
-Message-ID: <20251027181028.GB988547@noisy.programming.kicks-ass.net>
-References: <20251025001849.1915635-1-tj@kernel.org>
- <20251025001849.1915635-4-tj@kernel.org>
- <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
- <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
+	s=arc-20240116; t=1761588654; c=relaxed/simple;
+	bh=qWDqTHSGtqyDCU4AAlHRJ9mq1s1hvPRErQWu8I/AXzI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=besXoQUZaBo8GS3xm2VXQhcCfANbS6INj1lQk0ZunNDFX8ODKQOsofRFao5xdz+z18ZozcuyMpC6JknBfkbaeB8vLTh70lgQ5b5/QzNJ/Kngod0z6llQPRqNzkoby3gtnC6jcBe3BzwMxz5SVExPEUxhYrfW+y3+hmjsqYQ0gXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HuCGleei; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bcb779733so4316407a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761588652; x=1762193452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bO0HNahSQ0zli7kg4xL2kKu/rPaiGOzpKxwGHDcn9b4=;
+        b=HuCGleeiQ5Vxy5Vm6iVJmpzhZDeJqlXsJ4ydurVEc9/ZGzkVMS4db2w0kFx5bkp/U8
+         3gR7DX2O+HFR0p19vdYCebpHLNlkyGiR4JU01K6YP5KmrV4ULoCZui6X30jTohAs1pR5
+         S8y1o315i2d1AHoziPTQ6hNOKr1UWSBVZDUaedQC+XAfG9WiRhHrACSpjtwPAbYpGjod
+         rh7auUeEvfA/zOpnenjrJy0niGuH+NNaqewEcSB4YsA4uUOqvI8d9v6LFzMBHXzqXWtb
+         8ugXSA423oiRRcjmHFyCZb8qhHiMaEzygqYmtwBbfTI0I9CEYpBbWUCvEKDuQt4wzijK
+         9iyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761588652; x=1762193452;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bO0HNahSQ0zli7kg4xL2kKu/rPaiGOzpKxwGHDcn9b4=;
+        b=PdDEYONsJ2Riub9AMJ569ElLpomNpGpaMvlrmMXFKf6VRMc4zDk0Qh5HvcfVXIUQNu
+         9tK6Z+T2YYg5aaXzVEF0naKC87M8yFZw89sYPRpk4t37xrI4UIqoOfHJwaTLluFnIa2i
+         tIm4wLJOr+TBar6rk7r1fydRaG2jZPHdl2DsqAiRWeic5KCeugIPELe6VfEWsHBtAsBa
+         0yucl1cx7l7tFEHbktKKyx7o6NsY0LgEVGcSW52UsnN0DRfWoJlSMLfBwn8puGeY395m
+         M7rdpZ9EscevfqhOYvKik8SPXAUOcWv5/hVY8CxQ1T6tBZzQbwMAcpkXfNv8VfbA7CVa
+         PPug==
+X-Forwarded-Encrypted: i=1; AJvYcCUsqcKFe9VrP/uR7rw0FDB0gnKEucaETWxm0cRK5KzHHvdJfPbs7PBqf3HFvwbgjJ4UdKtAOOunSUQiXvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxyIkl9pE93MOPtZjxjM6S4IWKOFPsNcxi0230LNDf2Lmwc/j1
+	PMgia+KLpCeCCO7yN5cIlJGi9C3hwZRNe/6GNGXldIAbgKA1LliPnuno409MFkOyMXQpsWWj6pZ
+	Z9aNZSg==
+X-Google-Smtp-Source: AGHT+IFYM0pQ56UGeUzsOnJj3+Ow3Uhx6HMXZ6WjKUcRvfRsyB3bsUItowqHfr7m0JixZWoiV89rDaaCMlA=
+X-Received: from pjbrs15.prod.google.com ([2002:a17:90b:2b8f:b0:33b:51fe:1a73])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f81:b0:32e:52aa:3973
+ with SMTP id 98e67ed59e1d1-340279e5fc5mr862252a91.8.1761588651707; Mon, 27
+ Oct 2025 11:10:51 -0700 (PDT)
+Date: Mon, 27 Oct 2025 11:10:50 -0700
+In-Reply-To: <77d8a0d9541ce3fc2b2c76b58add50d152b52e39.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-25-seanjc@google.com>
+ <aPtOtzGLigbY0Vqw@yzhao56-desk.sh.intel.com> <aPuv8F8iDp3SLb9q@google.com>
+ <aP86sdBZxXm5I17f@yzhao56-desk.sh.intel.com> <77d8a0d9541ce3fc2b2c76b58add50d152b52e39.camel@intel.com>
+Message-ID: <aP-1qlTkmFUgTld-@google.com>
+Subject: Re: [PATCH v3 24/25] KVM: TDX: Guard VM state transitions with "all"
+ the locks
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"x86@kernel.org" <x86@kernel.org>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Vishal Annapurve <vannapurve@google.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
+	"maobibo@loongson.cn" <maobibo@loongson.cn>, "maz@kernel.org" <maz@kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "anup@brainfault.org" <anup@brainfault.org>, 
+	Kai Huang <kai.huang@intel.com>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
+	"pjw@kernel.org" <pjw@kernel.org>, "zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ira Weiny <ira.weiny@intel.com>, 
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
+	"imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, "kas@kernel.org" <kas@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 06:00:00AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Oct 27, 2025 at 10:18:22AM +0100, Peter Zijlstra wrote:
-> ...
-> > > The main use case for cpu_release() was calling scx_bpf_reenqueue_local() when
-> > > a CPU gets preempted by a higher priority scheduling class. However, the old
-> > > scx_bpf_reenqueue_local() could only be called from cpu_release() context.
-> > 
-> > I'm a little confused. Isn't this the problem where balance_one()
-> > migrates a task to the local rq and we end up having to RETRY_TASK
-> > because another (higher) rq gets modified?
-> 
-> That's what I thought too and the gap between balance() and pick_task() can
-> be closed that way. However, while plugging that, I realized there's another
-> bigger gap between ttwu() and pick_task() because ttwu() can directly
-> dispatch a task into the local DSQ of a CPU. That one, there's no way to
-> close without a global hook.
+On Mon, Oct 27, 2025, Rick P Edgecombe wrote:
+> On Mon, 2025-10-27 at 17:26 +0800, Yan Zhao wrote:
+> > > Ugh, I'd rather not?=C2=A0 Refresh me, what's the story with "v1"?=C2=
+=A0 Are we now on
+> > > v2?
+> > No... We are now on v1.
+> > As in [1], I found that TDX module changed SEAMCALL TDH_VP_INIT behavio=
+r to
+> > require exclusive lock on resource TDR when leaf_opcode.version > 0.
+> >=20
+> > Therefore, we moved KVM_TDX_INIT_VCPU to tdx_vcpu_unlocked_ioctl() in p=
+atch
+> > 22.
+> >=20
+> > [1] https://lore.kernel.org/all/aLa34QCJCXGLk%2Ffl@yzhao56-desk.sh.inte=
+l.com/
+>=20
+> Looking at the PDF docs, TDR exclusive locking in version =3D=3D 1 is cal=
+led out at
+> least back to the oldest ABI docs I have (March 2024). Not sure about the
+> assertion that the behavior changed, but if indeed this was documented, i=
+t's a
+> little bit our bad. We might consider being flexible around calling it a =
+TDX ABI
+> break?
+>=20
+> Sean, can you elaborate why taking mmu_lock is objectionable here, though=
+?
 
-Just for my elucidation and such.. This is when ttwu() happens and the
-CPU is idle and you dispatch directly to it, expecting it to then go run
-that task. After which another wakeup/balance movement happens which
-places/moves a task from a higher priority class to that CPU, such that
-your initial (ext) task doesn't get to run after all. Right?
+It's not, I was just hoping we could avoid yet more complexity.
+
+Assuming we do indeed need to take mmu_lock, can you send a patch that appl=
+ies
+on top?  I'm not planning on sending any of this to stable@, so I don't see=
+ any
+reason to try and juggle patches around.
+
+> Note, myself (and I think Yan?) determined the locking by examining TDX m=
+odule
+> source. For myself, it's possible I misread the locking originally.
+>=20
+> Also, I'm not sure about switching gears at this point, but it makes me w=
+onder
+> about the previously discussed option of trying to just duplicate the TDX=
+ locks
+> on the kernel side.
+
+Please no.  At best that will yield a pile of effectively useless code.  At=
+ worst,
+it will make us lazy and lead to real bugs because we don't propery guard t=
+he *KVM*
+flows that need exclusivity relative to what is going on in the TDX-Module.
+
+> Or perhaps make some kind of debug time lockdep type thing to document/ch=
+eck
+> the assumptions in the kernel. Something along the lines of this patch, b=
+ut
+> to map the TDX locks to KVM locks or something. As we add more things (DP=
+AMT,
+> etc), it doesn't seem like the TDX locking is getting tamer...
+
+Hmm, I like the idea, but actually getting meaningful coverage could be qui=
+te
+difficult.
 
