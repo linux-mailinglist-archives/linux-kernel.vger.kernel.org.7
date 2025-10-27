@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-872397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0156C10B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:17:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F1CC10E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218AC566812
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EEA581F80
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAECA30E0C0;
-	Mon, 27 Oct 2025 19:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433B92BD033;
+	Mon, 27 Oct 2025 19:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XPYWUnA8"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jGrrSqD0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7C32D542A;
-	Mon, 27 Oct 2025 19:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F190632BF32;
+	Mon, 27 Oct 2025 19:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592090; cv=none; b=TR5U1dKs6td4tgxbpuHBvij6Ms8UKJC4jB7iCl0LSEuE6wFx9csUgidn825x3MYiY+g9W0/2l6JilIXLMvWwAlTbY1dpvH1HQx6ZKOjbsaQsJIp01Czy0vVgoFXQVkOR6yWRjmGLRSYl2cfp1crAWZoupoiKIMo//h8mftW0eT0=
+	t=1761592518; cv=none; b=FRuPqqE5KBht2gnRJaNmNxCIuSdLXaqc48KG1KP+ARhZJ7RvoZV4d9zxoETUtbTt2BDx1N8VYTUgM5/SPJBwddMcJkIoRUhHCs3fNH39RsiEvOVjlht6ajq0U8Jb5SWeBzq1Y5qq5S93yClJaSYUJjibm2P43R8bpsvFEBZdzVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592090; c=relaxed/simple;
-	bh=jflKjM+q3ZKnQJgKmwXokm84Mq6UjgN5G0HimLleXhM=;
+	s=arc-20240116; t=1761592518; c=relaxed/simple;
+	bh=gBbc+fotrX+RMKMSBXJ7BVOBwokjef2x+YQQmRlPdos=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PMBQh2Jwg2nuUnTfSjA6D+RsyI4vBWqK4Kp1beZztR/Z4tZoubTcNahPFdIohn9m0fIfqVDgJcNrDMQFtzelBzzEs9Dj2HtBoDjLCtsLZQOGLMY4GDhLMgQoNtfuPz8ACGMAvKOON5p/33t35ts10INv6sUDCbUiOAbf+5fJEGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XPYWUnA8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AAAC4CEF1;
-	Mon, 27 Oct 2025 19:08:09 +0000 (UTC)
+	 MIME-Version; b=PKgIaFFyCabM7KWB03DfvgndGvfR4FZNvAA1mYc2ArFYXhonKeg2WcZN3T/H4B0T4wla/7ZkS1E3Qvtt84IHnrdRnDll9up2TOqtCeFWuICP3KvtBjXlnWQyzuzUVTc6oUd2eQK8kXcrctk46XKMaCmUguZZKqcHoWlLBGxlYCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jGrrSqD0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B078C4CEF1;
+	Mon, 27 Oct 2025 19:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761592090;
-	bh=jflKjM+q3ZKnQJgKmwXokm84Mq6UjgN5G0HimLleXhM=;
+	s=korg; t=1761592517;
+	bh=gBbc+fotrX+RMKMSBXJ7BVOBwokjef2x+YQQmRlPdos=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XPYWUnA8qImfuEPH4jYbRuC2aY/m1O4eQYvHXnJkMAO1wHM+FVoOu2zP4+8MupXTs
-	 NeXvGRAlMuNyd1T3B9zxTB/aTlUPyPOvgFApAfGQCukLBMPAIkf/AnHKhTSBr1dbOV
-	 8bIwQ5F7xccjp0uom3Cuq5zMzarbposIk+yKT5Y4=
+	b=jGrrSqD0A2IJKNvmrMiTCuKsDj6iVr3jKkK7laY+CqZpjIe9E6pY7nyuFeRfwVAy4
+	 6PsfafUDodXdAVNXcd05yHpZvshksbnPiJSFYyOkPQDBgHnT5YJxgdhwNMzrkFSreq
+	 yxW1cJ6xvwArvun/yc/P2EY88Rj5ny1ni9pEmb0Y=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,12 +50,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Matthew Brost <matthew.brost@intel.com>,
 	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 114/123] devcoredump: Fix circular locking dependency with devcd->mutex.
-Date: Mon, 27 Oct 2025 19:36:34 +0100
-Message-ID: <20251027183449.436290514@linuxfoundation.org>
+Subject: [PATCH 6.1 150/157] devcoredump: Fix circular locking dependency with devcd->mutex.
+Date: Mon, 27 Oct 2025 19:36:51 +0100
+Message-ID: <20251027183505.318771749@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183446.381986645@linuxfoundation.org>
-References: <20251027183446.381986645@linuxfoundation.org>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+References: <20251027183501.227243846@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
