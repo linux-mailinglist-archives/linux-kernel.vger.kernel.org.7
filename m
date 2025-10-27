@@ -1,113 +1,91 @@
-Return-Path: <linux-kernel+bounces-872511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E754FC11591
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A06C11567
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D272B1A271C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9A61A25BDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9383E32C938;
-	Mon, 27 Oct 2025 20:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4FF3254AC;
+	Mon, 27 Oct 2025 20:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjbPN3uR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bYCau8sW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9C5321F5F;
-	Mon, 27 Oct 2025 20:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DBF31D72E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761596001; cv=none; b=hiKUGS9+DzPH//MaKzDsUpuLw3rBFzUckV1LESwgABudYlQX4PFBLL71mZtnrUaZXENymLukTQHUX/U7hNCyS/uo+VElXCbX/73Ep7wEcjYKmzGkl173WpNnzRuRPtiqkcE8wTv6PTkC7FR824Ss3T0El6nmLfF4XEPwAhEN650=
+	t=1761595990; cv=none; b=dVys2efuYaqgT/W/a47oW6bZZmmX5TnbAhjkgGYUxwK+x6l2YYqPgJl8qa/jdP3xC7ofZwavgPJ4Fbtqf+PXSctlgROjo4HBTB6SpM3vD/eZ9svTF8m+kQU+Ix319tJ5+B74AkkmD2ilXcBtxIuamoqPNHNUPRhxnHlWmyAYdaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761596001; c=relaxed/simple;
-	bh=cWmHocblzK6HrbCInkBPidE1YaTRod4k9KFD2JoSyNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKjWrU9QmQyiSKTh9qqhNWYOVYR+m6smU0959kOWvHQ6VX/MwmZzzdqpHMA1eHPud0WnhgxPBIVxoPSOEms21YaAg73EIK9K6Wmgde0yZA5TKi3gwWy5rCTqqlZKs4Xv9lNuo+qmDDC7IUpRvoHMnSVfa2PaVVkR2H6RgUCHL6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjbPN3uR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7D7C113D0;
-	Mon, 27 Oct 2025 20:13:20 +0000 (UTC)
+	s=arc-20240116; t=1761595990; c=relaxed/simple;
+	bh=8kO6bfrvYWFjH1sLDqs+Sn9M6TIE/kNEqnjYR7TtBa4=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=bb4awb3SnHIO6uhYENwXsc/CJO73CxINxkISoO8MH+6D2/fe2XAySHVwFeTwfwigCgg//YI7Ey8ZLWgqawgkLgfT6xQCWmxP+t0n0p5bp9WSWq8aLK9dJfV2S9/nj+/dd1+6Fi+rM+TQaR0u+EKUVfsv5lrmOjkj2DC3K5dt7UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bYCau8sW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF8EC4CEFD;
+	Mon, 27 Oct 2025 20:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761596000;
-	bh=cWmHocblzK6HrbCInkBPidE1YaTRod4k9KFD2JoSyNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VjbPN3uReqMVb+iVO2VgAt0BGa5IdW7iGxflEswrsIWXBrKphqy+p2mxPY2XTjAKH
-	 dnvqcg8Ppsf+5HqWHgynZy5whafA8H4loeWHd5+0/aBhefnligKvJgRW3vQNpNANDZ
-	 yEos8Zbpysf1gZI1iwjnQcempTRuf5LRS1Wd4sYMwxyXWjkkBED6Y7Vho1I6TxDVaN
-	 hTHullSMH81oPwzNd/Iecv+Hhsiqfp+gHOghCTLx26sgsmeQ6zZtfWd4c7cVzBygbK
-	 SKlr/RwCb/+atHiP3lgbBIP6SGZvJAqqfpK+GwlwYiDtI8mGIVCwve0VOQpziRcTLX
-	 VN0FkKBTOlaxQ==
-Date: Mon, 27 Oct 2025 22:13:17 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] keys: Fix typos in 'struct key_type' function pointer
- comments
-Message-ID: <aP_SXZq7TuYau4Kx@kernel.org>
-References: <20251025095519.84361-1-thorsten.blum@linux.dev>
+	s=k20201202; t=1761595989;
+	bh=8kO6bfrvYWFjH1sLDqs+Sn9M6TIE/kNEqnjYR7TtBa4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bYCau8sWik0eAkwpdHytgyyDPGi0wZkFeEFncnqQog/eIrE3u8LtLcecoaJ9Vrt1z
+	 1Csd23ZUcLfwBCAqltRJ2NTwqhCQosdRADB9usjblLY57I88V13r81uurwLrnuFc4i
+	 Fm7TPHPR5EqrCFFRUdAheEr9+m1re4RrnI6XbYadGvUUt5Wryt70mnsHOoGdOVEtF7
+	 A8o5/liuPLRmTLo2r/Q24RPvluQ+GaBKL+c5dwh0fVcaZiDPhrGfNsOi/MtUh0580Y
+	 GsVmDJZWlvbY0MTeVry84EiPoipvKzlL5PkUZBkHVKCWnJo77RXG7NV0ggqhsZE00I
+	 D5vkCGOP+FsHA==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1vDTb8-00000004Pm4-0NR3;
+	Mon, 27 Oct 2025 16:13:46 -0400
+Message-ID: <20251027201325.076180660@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 27 Oct 2025 16:13:25 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/5] tracing: Detect unused tracepoints for v6.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025095519.84361-1-thorsten.blum@linux.dev>
 
-On Sat, Oct 25, 2025 at 11:55:19AM +0200, Thorsten Blum wrote:
-> s/it/if/ and s/revokation/revocation/ and adjust the formatting to be
-> consistent with the other comments.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Changes in v2:
-> - Adjust the trailing '*/' as suggested by Jarkko
-> - Link to v1: https://lore.kernel.org/lkml/20251016123619.98728-2-thorsten.blum@linux.dev/
-> ---
->  include/linux/key-type.h | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-> index 5caf3ce82373..5dfda728ff69 100644
-> --- a/include/linux/key-type.h
-> +++ b/include/linux/key-type.h
-> @@ -107,11 +107,12 @@ struct key_type {
->  	 */
->  	int (*match_preparse)(struct key_match_data *match_data);
->  
-> -	/* Free preparsed match data (optional).  This should be supplied it
-> -	 * ->match_preparse() is supplied. */
-> +	/* Free preparsed match data (optional).  This should be supplied if
-> +	 * ->match_preparse() is supplied.
-> +	 */
->  	void (*match_free)(struct key_match_data *match_data);
->  
-> -	/* clear some of the data from a key on revokation (optional)
-> +	/* clear some of the data from a key on revocation (optional)
 
-A sentence starts with capital.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+unused-tracepoints/for-next
 
->  	 * - the key's semaphore will be write-locked by the caller
+Head SHA1: 01ecf7af00b86daf7ac441b9f94d4873d2b8fc74
 
-And end with preiod. It makes no to fix surgical issue in a source
-code commit if you still leave it half broken.
 
->  	 */
->  	void (*revoke)(struct key *key);
+Steven Rostedt (5):
+      sorttable: Move ELF parsing into scripts/elf-parse.[ch]
+      tracing: Add a tracepoint verification check at build time
+      tracepoint: Do not warn for unused event that is exported
+      tracing: Allow tracepoint-update.c to work with modules
+      tracing: Add warnings for unused tracepoints for modules
 
-Please address the comment format ie. have it.
-
-/*
- * text
-
-> -- 
-> 2.51.0
-> 
-
-BR, Jarkko
+----
+ Makefile                          |  21 ++
+ include/asm-generic/vmlinux.lds.h |   1 +
+ include/linux/tracepoint.h        |  13 ++
+ scripts/Makefile                  |   6 +
+ scripts/Makefile.modfinal         |   5 +
+ scripts/elf-parse.c               | 198 ++++++++++++++++
+ scripts/elf-parse.h               | 305 ++++++++++++++++++++++++
+ scripts/link-vmlinux.sh           |   7 +
+ scripts/sorttable.c               | 477 +++-----------------------------------
+ scripts/tracepoint-update.c       | 261 +++++++++++++++++++++
+ 10 files changed, 851 insertions(+), 443 deletions(-)
+ create mode 100644 scripts/elf-parse.c
+ create mode 100644 scripts/elf-parse.h
+ create mode 100644 scripts/tracepoint-update.c
 
