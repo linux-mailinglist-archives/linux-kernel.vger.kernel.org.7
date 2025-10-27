@@ -1,536 +1,185 @@
-Return-Path: <linux-kernel+bounces-872148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E19C0F5CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:38:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2AFC0F6B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 93752348117
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:38:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DDEB4FABF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97499318144;
-	Mon, 27 Oct 2025 16:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F641312819;
+	Mon, 27 Oct 2025 16:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmFyTw6A"
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="WKg6Nwue";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="NZm544+G"
+Received: from mta-01.yadro.com (mta-01.yadro.com [195.3.219.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694CBEAE7
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9151EAE7;
+	Mon, 27 Oct 2025 16:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.3.219.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582889; cv=none; b=Zw9hQmVEHSbxrOy6zGXGsDi4iSmXy9b8xXtaFlhacl54WA16KsQp9U7EdSxRicy3pecaq/3cHt3/ULgBJwk/eaB0ztZHTpsJH6ZkC/RHKanQTrKdkcr/WGU9y2ZzWRHGSBnnIlQA4y/qhxG1PVGUi6870UaRH1xgsbfbSDumn3M=
+	t=1761583409; cv=none; b=JaKWsuk2IJ++Li+oW+dmmes6w90FwW7a15zFBfnxHlGQxtC9Ts8SgYxDlPYWGPNaq25bGR2Xxzchrf3bmLjqfFiKcEJjjXeiA8921aw/CzOg7W+znpv6zJXonbASrtIDoiWAuHnOXhzxuVIcYU76QiLjXOST7YOEh1kqstxzbN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582889; c=relaxed/simple;
-	bh=n5TEM1afolr0fvJZtAfC1qG7H/lr9VlwwwTcdaPzfRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iil8Fk+gPEMwfSnH4BCjjip4MqT2becmGnjwvN1zUWrW8q/GcKjZ3b9csKP4ApWtMfGeXmTpKBgTC+UR2pNMVmEMpYbofudxUJhEy7MNRRkimBYx2rNHPMmdPcNdLIlYoZym2UgSY/KRSKFikk+S0biEOc8DhJt94OIcS1GEU4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmFyTw6A; arc=none smtp.client-ip=74.125.224.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-63bcfcb800aso5507990d50.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761582885; x=1762187685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nyWKGU091VIE4/s/XIlw2whglPJqy2Jcesh+HJLjU4=;
-        b=OmFyTw6AsaS4VxLQ7QzNBderkSQFMeW+VUdnIteh/IxXJqNErZf8Q7KF6JiC8IgMo2
-         XClWQsXDVmjB2iQU9WdQonfeXcB7PQ07udENkSy8LYqiuv6tJ86QPmOZj3PmBw+8JsRT
-         tc40UnBZzJj0RfesbIsdv4F2BEi4YRhect44QUnZSF+joK0MrlH5h7MnH2i3YBJgRR6V
-         hg5GKJi+BZQUPzEa4/C+MB/OEFkWG7xK6iqYRLvmcyc62xrBj2dLZ5sUCK4xmmImtu72
-         GBL+5/7ASH8THmZi3oRiy2IJE2ICp9epx6W+gmB/dRceSvzYEfQkJuggqKJ9/lJnBir5
-         eFLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761582885; x=1762187685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8nyWKGU091VIE4/s/XIlw2whglPJqy2Jcesh+HJLjU4=;
-        b=BTziyd6T9WOZvHdxVCqttzpmJHUTLB+Jxa0a05gyLpWEgcKeCEewgdhuvTeLTfb2px
-         u8yS7VI1BtioNyLZXXBqfC3y8xIaWm+6SHKIuRc8FZSTqtQRvl2/q4yFAE0LNz8oRNoC
-         FhsJJUHRw028lWXvnHH2wNDcRS6sJ1Swqr/5L+uGyYPESdfClpeBCLZ+adoSMwd3pVTV
-         E5cJG62LLaqfUyg7i6aY7R+/SUPOx7bcyPj1czPDOrKdlrAiEidKz7ZTb3OfrczMANyo
-         WaYx48dVSuDhFyu1qoA0ITbY21C6bNw2LEdoujL862l/FcZUv+kd/wUM0flRwVyZhE8R
-         /XQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwY71PoyeSN0P2K3i2+dTI0O1b/e9QwaN2C+OGL2I53WxmFS+yzZWFo/Kl9JIkDIfQcUta3dqZlASRGj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGlHCQ14JGS21VevVUQYIlA/Moq66x8uR0VD4rMBil/8Qy+1HF
-	501oK1dah6PgsyOZlmjRHntwO3O3h+lbrAxCcSexl0ipoX0wU985WgaLBMdCHNrYcbCDSaYlprZ
-	77VeJB116hXjGYrB/iCiUQEGZRKyxNrw=
-X-Gm-Gg: ASbGnctBMqzgTZMlaxdkSsrYq8smmF/fP74sp6hYCIAY/7ozTD39QDNxLBgUFLPhWoH
-	jxtjCPzToHaF39PiAuL6gsHdqPLdlTtrZbrPYOIK6TUkL2Udq7obua8ePgkjTen4T4UMozErvHK
-	sqkyv+Jtmw+oP6e9Boj+kVUGu9LYc0GrwXm7nAJc+rm3IAqxNcQqCIt/BkbMYvV2ZUQ5Fq7Vyes
-	Hzh0RRjYzFp1aLxm8/lFggnCjut6wQo3/1vmww+Y5YSk809+mYiReQUkEOe
-X-Google-Smtp-Source: AGHT+IEh4YlQX4psHQhxloclmAiDeafwHZKvyYl+2SjsEySdI2EWeMnulzFvj5VKI7ep/5g5P/lLQwr/NDdnMiJCnHQ=
-X-Received: by 2002:a53:bb51:0:b0:63f:2db0:9968 with SMTP id
- 956f58d0204a3-63f6ba7c459mr382922d50.44.1761582885138; Mon, 27 Oct 2025
- 09:34:45 -0700 (PDT)
+	s=arc-20240116; t=1761583409; c=relaxed/simple;
+	bh=FThlKf9mPp6z/y8Uoh/3G44IfMfSzTwr6+FTkAYPw3c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GOopZ20UE/DVa8IJ0dKhlxHMHSewzshQ2Vgg+GyFa9smxdVEukf5d+jQ3PmQOeqWd5TAqGBVI5CzGwS9C0KXqJ2eAkcTRSDYcme+2LOivIRCUl5i5QZqW/q0iqp43yKh5tMM+JsJFRdLy844oOy0iIuTuKklCpKE2wHISgo/eWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=WKg6Nwue; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=NZm544+G; arc=none smtp.client-ip=195.3.219.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+Received: from mta-01.yadro.com (localhost [127.0.0.1])
+	by mta-01.yadro.com (Postfix) with ESMTP id 554912001D;
+	Mon, 27 Oct 2025 19:36:34 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-01.yadro.com 554912001D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-02;
+	t=1761582994; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=WKg6Nwue+SQpZixo1Qa11K0XLgor805rhCZKtmkmrZGguGMnxyUXyvjaKTLGp/Qn9
+	 z68Ihw4D4X+GKUzJ6qpvvpWJ6+SgAHzatzycjl4Amgtjigi9kEc+g37yEQ/7KGIKcK
+	 tTWMvmWRXQs/WDQjGTZPZdbfLrL6YF0UIA0yyLKM61EQvV8DQ32ENy4HIZhdU5USfA
+	 RuEIcZgRvU7D0If0ORnVZVMAhIC6ujySOoQZY8xjt3L9fQA8gM6LUxVXS20EvKKbY4
+	 vbK9jUlfYuMx+qx/7NEb/ykuJVJ7fsocoPkIvcdnnqbQlFyqe2rD/ppPEXe6sQbIz6
+	 mrZPs0oVL8cew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1761582994; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=NZm544+GMjcaupdkmKaXqnUi+5IreZ+91utfh17h6prAW7SCgZA8IDLh0otwCxH96
+	 F3LlwgSph05pu8sitPWSA45CvzJGAXesqN2wPVwpwA41NVY9Zqa+wRnxvNl7DQTEF0
+	 /+mayEvQU0psPxL/1fY3VOn42zI+M9DBkJI4NK8g+/R5xUPqgYZP6mPxSAJObzEgYb
+	 cKc8fB4g3c5nUtNPGGVSyLIzDhy+W4ydnahftU4LM1F1qG4PmLTpj7ui8uGzVs72za
+	 9PdAZZvYVZlLkoh9THs5Zd3Rz0pc8dDVtIWIEx3BlTCtZiZOIVSLxIvwGzqF5di9Ql
+	 kmxXpgv+Jyhlw==
+Received: from RTM-EXCH-01.corp.yadro.com (unknown [10.34.9.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mta-01.yadro.com (Postfix) with ESMTPS;
+	Mon, 27 Oct 2025 19:36:30 +0300 (MSK)
+Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
+ RTM-EXCH-01.corp.yadro.com (10.34.9.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 27 Oct 2025 19:36:36 +0300
+Received: from NB-591.corp.yadro.com (172.17.34.55) by
+ T-EXCH-12.corp.yadro.com (10.34.9.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Mon, 27 Oct 2025 19:36:35 +0300
+From: Dmitry Bogdanov <d.bogdanov@yadro.com>
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, "Christoph
+ Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Stuart Hayes
+	<stuart.w.hayes@gmail.com>, <linux-nvme@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux@yadro.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
+	<stable@vger.kernel.org>
+Subject: [RESEND] [PATCH] nvme-tcp: fix usage of page_frag_cache
+Date: Mon, 27 Oct 2025 19:36:27 +0300
+Message-ID: <20251027163627.12289-1-d.bogdanov@yadro.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026154000.34151-1-leon.hwang@linux.dev> <20251026154000.34151-5-leon.hwang@linux.dev>
-In-Reply-To: <20251026154000.34151-5-leon.hwang@linux.dev>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Mon, 27 Oct 2025 09:34:32 -0700
-X-Gm-Features: AWmQ_bnMZlWvfUEnkUckZL1A05xlSxYdkEQi_S_1L9zXig7AURZggoQVtHsOKI4
-Message-ID: <CAMB2axN6bsrMH6_qVz9eHY1HLp6SQmM-nOUEXUOOiibZFMzXMw@mail.gmail.com>
-Subject: Re: [PATCH bpf v3 4/4] selftests/bpf: Add tests to verify freeing the
- special fields when update hash and local storage maps
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, eddyz87@gmail.com, 
-	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	memxor@gmail.com, linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTM-EXCH-04.corp.yadro.com (10.34.9.204) To
+ T-EXCH-12.corp.yadro.com (10.34.9.214)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/27 14:30:00 #27802224
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-KATA-Status: Not Scanned
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-On Sun, Oct 26, 2025 at 8:42=E2=80=AFAM Leon Hwang <leon.hwang@linux.dev> w=
-rote:
->
-> Add tests to verify that updating hash and local storage maps decrements
-> refcount when BPF_KPTR_REF objects are involved.
->
-> The tests perform the following steps:
->
-> 1. Call update_elem() to insert an initial value.
-> 2. Use bpf_refcount_acquire() to increment the refcount.
-> 3. Store the node pointer in the map value.
-> 4. Add the node to a linked list.
-> 5. Probe-read the refcount and verify it is *2*.
-> 6. Call update_elem() again to trigger refcount decrement.
-> 7. Probe-read the refcount and verify it is *1*.
->
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> ---
->  .../bpf/prog_tests/refcounted_kptr.c          | 178 +++++++++++++++++-
->  .../selftests/bpf/progs/refcounted_kptr.c     | 160 ++++++++++++++++
->  2 files changed, 337 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/t=
-ools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> index d6bd5e16e6372..0a60330a1f4b3 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> @@ -3,7 +3,7 @@
->
->  #include <test_progs.h>
->  #include <network_helpers.h>
-> -
-> +#include "cgroup_helpers.h"
->  #include "refcounted_kptr.skel.h"
->  #include "refcounted_kptr_fail.skel.h"
->
-> @@ -44,3 +44,179 @@ void test_refcounted_kptr_wrong_owner(void)
->         ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval"=
-);
->         refcounted_kptr__destroy(skel);
->  }
-> +
-> +static void test_refcnt_leak(void *values, size_t values_sz, u64 flags, =
-struct bpf_map *map,
-> +                            struct bpf_program *prog_leak, struct bpf_pr=
-ogram *prog_check)
-> +{
-> +       int ret, fd, key =3D 0;
-> +       LIBBPF_OPTS(bpf_test_run_opts, opts,
-> +                   .data_in =3D &pkt_v4,
-> +                   .data_size_in =3D sizeof(pkt_v4),
-> +                   .repeat =3D 1,
-> +       );
-> +
-> +       ret =3D bpf_map__update_elem(map, &key, sizeof(key), values, valu=
-es_sz, flags);
-> +       if (!ASSERT_OK(ret, "bpf_map__update_elem init"))
-> +               return;
-> +
-> +       fd =3D bpf_program__fd(prog_leak);
-> +       ret =3D bpf_prog_test_run_opts(fd, &opts);
-> +       if (!ASSERT_OK(ret, "test_run_opts"))
-> +               return;
-> +       if (!ASSERT_EQ(opts.retval, 2, "retval refcount"))
-> +               return;
-> +
-> +       ret =3D bpf_map__update_elem(map, &key, sizeof(key), values, valu=
-es_sz, flags);
-> +       if (!ASSERT_OK(ret, "bpf_map__update_elem dec refcount"))
-> +               return;
-> +
-> +       fd =3D bpf_program__fd(prog_check);
-> +       ret =3D bpf_prog_test_run_opts(fd, &opts);
-> +       ASSERT_OK(ret, "test_run_opts");
-> +       ASSERT_EQ(opts.retval, 1, "retval");
-> +}
+nvme uses page_frag_cache to preallocate PDU for each preallocated request
+of block device. Block devices are created in parallel threads,
+consequently page_frag_cache is used in not thread-safe manner.
+That leads to incorrect refcounting of backstore pages and premature free.
 
-Just use syscall BPF programs across different subtests, and you can
-share this test_refcnt_leak() across subtests.
+That can be catched by !sendpage_ok inside network stack:
 
-It also saves you some code setting up bpf_test_run_opts. You can just
-call bpf_prog_test_run_opts(prog_fd, NULL) as you don't pass any input
-from ctx.
+WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
+	tcp_sendmsg_locked+0x782/0xce0
+	tcp_sendmsg+0x27/0x40
+	sock_sendmsg+0x8b/0xa0
+	nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
+Then random panic may occur.
 
-> +
-> +static void test_percpu_hash_refcount_leak(void)
-> +{
-> +       struct refcounted_kptr *skel;
-> +       size_t values_sz;
-> +       u64 *values;
-> +       int cpu_nr;
-> +
-> +       cpu_nr =3D libbpf_num_possible_cpus();
-> +       if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
-> +               return;
-> +
-> +       values =3D calloc(cpu_nr, sizeof(u64));
-> +       if (!ASSERT_OK_PTR(values, "calloc values"))
-> +               return;
-> +
-> +       skel =3D refcounted_kptr__open_and_load();
-> +       if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
-> +               free(values);
-> +               return;
-> +       }
-> +
-> +       values_sz =3D cpu_nr * sizeof(u64);
-> +       memset(values, 0, values_sz);
-> +
-> +       test_refcnt_leak(values, values_sz, 0, skel->maps.pcpu_hash,
-> +                        skel->progs.pcpu_hash_refcount_leak,
-> +                        skel->progs.check_pcpu_hash_refcount);
-> +
-> +       refcounted_kptr__destroy(skel);
-> +       free(values);
-> +}
-> +
-> +struct lock_map_value {
-> +       u64 kptr;
-> +       struct bpf_spin_lock lock;
-> +       int value;
-> +};
-> +
-> +static void test_hash_lock_refcount_leak(void)
-> +{
-> +       struct lock_map_value value =3D {};
-> +       struct refcounted_kptr *skel;
-> +
-> +       skel =3D refcounted_kptr__open_and_load();
-> +       if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load"))
-> +               return;
-> +
-> +       test_refcnt_leak(&value, sizeof(value), BPF_F_LOCK, skel->maps.lo=
-ck_hash,
-> +                        skel->progs.hash_lock_refcount_leak,
-> +                        skel->progs.check_hash_lock_refcount);
-> +
-> +       refcounted_kptr__destroy(skel);
-> +}
-> +
-> +static void test_cgrp_storage_refcount_leak(u64 flags)
-> +{
-> +       int server_fd =3D -1, client_fd =3D -1;
-> +       struct lock_map_value value =3D {};
-> +       struct refcounted_kptr *skel;
-> +       struct bpf_link *link;
-> +       struct bpf_map *map;
-> +       int cgroup, err;
-> +
-> +       cgroup =3D test__join_cgroup("/cg_refcount_leak");
-> +       if (!ASSERT_GE(cgroup, 0, "test__join_cgroup"))
-> +               return;
-> +
-> +       skel =3D refcounted_kptr__open_and_load();
-> +       if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load"))
-> +               goto out;
-> +
-> +       link =3D bpf_program__attach_cgroup(skel->progs.cgroup_storage_re=
-fcount_leak, cgroup);
-> +       if (!ASSERT_OK_PTR(link, "bpf_program__attach_cgroup"))
-> +               goto out;
-> +       skel->links.cgroup_storage_refcount_leak =3D link;
-> +
-> +       server_fd =3D start_server(AF_INET6, SOCK_STREAM, "::1", 0, 0);
-> +       if (!ASSERT_GE(server_fd, 0, "start_server"))
-> +               goto out;
-> +
-> +       client_fd =3D connect_to_fd(server_fd, 0);
-> +       if (!ASSERT_GE(client_fd, 0, "connect_to_fd"))
-> +               goto out;
-> +
-> +       map =3D skel->maps.cgrp_strg;
-> +       err =3D bpf_map__lookup_elem(map, &cgroup, sizeof(cgroup), &value=
-, sizeof(value), flags);
-> +       if (!ASSERT_OK(err, "bpf_map__lookup_elem"))
-> +               goto out;
-> +
-> +       ASSERT_EQ(value.value, 2, "refcount");
-> +
-> +       err =3D bpf_map__update_elem(map, &cgroup, sizeof(cgroup), &value=
-, sizeof(value), flags);
-> +       if (!ASSERT_OK(err, "bpf_map__update_elem"))
-> +               goto out;
-> +
-> +       err =3D bpf_link__detach(skel->links.cgroup_storage_refcount_leak=
-);
-> +       if (!ASSERT_OK(err, "bpf_link__detach"))
-> +               goto out;
-> +
-> +       link =3D bpf_program__attach(skel->progs.check_cgroup_storage_ref=
-count);
-> +       if (!ASSERT_OK_PTR(link, "bpf_program__attach"))
-> +               goto out;
-> +       skel->links.check_cgroup_storage_refcount =3D link;
-> +
-> +       close(client_fd);
-> +       client_fd =3D connect_to_fd(server_fd, 0);
-> +       if (!ASSERT_GE(client_fd, 0, "connect_to_fd"))
-> +               goto out;
-> +
-> +       err =3D bpf_map__lookup_elem(map, &cgroup, sizeof(cgroup), &value=
-, sizeof(value), flags);
-> +       if (!ASSERT_OK(err, "bpf_map__lookup_elem"))
-> +               goto out;
-> +
-> +       ASSERT_EQ(value.value, 1, "refcount");
-> +out:
-> +       close(cgroup);
-> +       refcounted_kptr__destroy(skel);
-> +       if (client_fd >=3D 0)
-> +               close(client_fd);
-> +       if (server_fd >=3D 0)
-> +               close(server_fd);
-> +}
+Fix that by serializing the usage of page_frag_cache.
 
-Then, you won't need to set up server, connection.... just to
-read/write cgroup local storage. Just call test_refcnt_leak() that
-runs the two BPF syscall programs for cgroup local storage.
+Cc: stable@vger.kernel.org # 6.12
+Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
+Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+---
+ drivers/nvme/host/tcp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> +
-> +static void test_cgroup_storage_refcount_leak(void)
-> +{
-> +       test_cgrp_storage_refcount_leak(0);
-> +}
-> +
-> +static void test_cgroup_storage_lock_refcount_leak(void)
-> +{
-> +       test_cgrp_storage_refcount_leak(BPF_F_LOCK);
-> +}
-> +
-> +void test_kptr_refcount_leak(void)
-> +{
-> +       if (test__start_subtest("percpu_hash_refcount_leak"))
-> +               test_percpu_hash_refcount_leak();
-> +       if (test__start_subtest("hash_lock_refcount_leak"))
-> +               test_hash_lock_refcount_leak();
-> +       if (test__start_subtest("cgroup_storage_refcount_leak"))
-> +               test_cgroup_storage_refcount_leak();
-> +       if (test__start_subtest("cgroup_storage_lock_refcount_leak"))
-> +               test_cgroup_storage_lock_refcount_leak();
-> +}
-> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/=
-testing/selftests/bpf/progs/refcounted_kptr.c
-> index 893a4fdb4b6e9..09efae9537c9b 100644
-> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-> @@ -7,6 +7,7 @@
->  #include <bpf/bpf_core_read.h>
->  #include "bpf_misc.h"
->  #include "bpf_experimental.h"
-> +#include "bpf_tracing_net.h"
->
->  extern void bpf_rcu_read_lock(void) __ksym;
->  extern void bpf_rcu_read_unlock(void) __ksym;
-> @@ -568,4 +569,163 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_l=
-ock,
->         return 0;
->  }
->
-> +private(leak) u64 ref;
-> +
-> +static u32 probe_read_refcount(void)
-> +{
-> +       u32 refcnt;
-> +
-> +       bpf_probe_read_kernel(&refcnt, sizeof(refcnt), (void *) ref);
-> +       return refcnt;
-> +}
-> +
-> +static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_=
-lock *lock,
-> +                           struct node_data __kptr **node)
-> +{
-> +       struct node_data *n, *m;
-> +
-> +       n =3D bpf_obj_new(typeof(*n));
-> +       if (!n)
-> +               return -1;
-> +
-> +       m =3D bpf_refcount_acquire(n);
-> +       n =3D bpf_kptr_xchg(node, n);
-> +       if (n) {
-> +               bpf_obj_drop(n);
-> +               bpf_obj_drop(m);
-> +               return -2;
-> +       }
-> +
-> +       bpf_spin_lock(lock);
-> +       bpf_list_push_front(head, &m->l);
-> +       ref =3D (u64)(void *) &m->ref;
-> +       bpf_spin_unlock(lock);
-> +       return probe_read_refcount();
-> +}
-> +
-> +static void *__lookup_map(void *map)
-> +{
-> +       int key =3D 0;
-> +
-> +       return bpf_map_lookup_elem(map, &key);
-> +}
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_PERCPU_HASH);
-> +       __type(key, int);
-> +       __type(value, struct map_value);
-> +       __uint(max_entries, 1);
-> +} pcpu_hash SEC(".maps");
-> +
-> +SEC("tc")
-> +int pcpu_hash_refcount_leak(void *ctx)
-> +{
-> +       struct map_value *v;
-> +
-> +       v =3D __lookup_map(&pcpu_hash);
-> +       if (!v)
-> +               return 0;
-> +
-> +       return __insert_in_list(&head, &lock, &v->node);
-> +}
-> +
-> +SEC("tc")
-> +int check_pcpu_hash_refcount(void *ctx)
-> +{
-> +       return probe_read_refcount();
-> +}
-> +
-> +struct lock_map_value {
-> +       struct node_data __kptr *node;
-> +       struct bpf_spin_lock lock;
-> +       int value;
-> +};
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_HASH);
-> +       __type(key, int);
-> +       __type(value, struct lock_map_value);
-> +       __uint(max_entries, 1);
-> +} lock_hash SEC(".maps");
-> +
-> +SEC("tc")
-> +int hash_lock_refcount_leak(void *ctx)
-> +{
-> +       struct lock_map_value *v;
-> +
-> +       v =3D __lookup_map(&lock_hash);
-> +       if (!v)
-> +               return 0;
-> +
-> +       bpf_spin_lock(&v->lock);
-> +       v->value =3D 42;
-> +       bpf_spin_unlock(&v->lock);
-> +       return __insert_in_list(&head, &lock, &v->node);
-> +}
-> +
-> +SEC("tc")
-> +int check_hash_lock_refcount(void *ctx)
-> +{
-> +       return probe_read_refcount();
-> +}
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_CGRP_STORAGE);
-> +       __uint(map_flags, BPF_F_NO_PREALLOC);
-> +       __type(key, int);
-> +       __type(value, struct lock_map_value);
-> +} cgrp_strg SEC(".maps");
-> +
-> +SEC("cgroup/connect6")
-> +int cgroup_storage_refcount_leak(struct bpf_sock_addr *ctx)
-> +{
-> +       struct lock_map_value *v;
-> +       struct tcp_sock *tsk;
-> +       struct bpf_sock *sk;
-> +       u32 refcnt;
-> +
-> +       if (ctx->family !=3D AF_INET6 || ctx->user_family !=3D AF_INET6)
-> +               return 1;
-> +
-> +       sk =3D ctx->sk;
-> +       if (!sk)
-> +               return 1;
-> +
-> +       tsk =3D bpf_skc_to_tcp_sock(sk);
-> +       if (!tsk)
-> +               return 1;
-> +
-> +       v =3D bpf_cgrp_storage_get(&cgrp_strg, tsk->inet_conn.icsk_inet.s=
-k.sk_cgrp_data.cgroup, 0,
-> +                                BPF_LOCAL_STORAGE_GET_F_CREATE);
-> +       if (!v)
-> +               return 1;
-> +
-> +       refcnt =3D __insert_in_list(&head, &lock, &v->node);
-> +       bpf_spin_lock(&v->lock);
-> +       v->value =3D refcnt;
-> +       bpf_spin_unlock(&v->lock);
-> +       return 1;
-> +}
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 1413788ca7d52..823e07759e0d3 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -145,6 +145,7 @@ struct nvme_tcp_queue {
+ 
+ 	struct mutex		queue_lock;
+ 	struct mutex		send_mutex;
++	struct mutex		pf_cache_lock;
+ 	struct llist_head	req_list;
+ 	struct list_head	send_list;
+ 
+@@ -556,9 +557,11 @@ static int nvme_tcp_init_request(struct blk_mq_tag_set *set,
+ 	struct nvme_tcp_queue *queue = &ctrl->queues[queue_idx];
+ 	u8 hdgst = nvme_tcp_hdgst_len(queue);
+ 
++	mutex_lock(&queue->pf_cache_lock);
+ 	req->pdu = page_frag_alloc(&queue->pf_cache,
+ 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
+ 		GFP_KERNEL | __GFP_ZERO);
++	mutex_unlock(&queue->pf_cache_lock);
+ 	if (!req->pdu)
+ 		return -ENOMEM;
+ 
+@@ -1420,9 +1423,11 @@ static int nvme_tcp_alloc_async_req(struct nvme_tcp_ctrl *ctrl)
+ 	struct nvme_tcp_request *async = &ctrl->async_req;
+ 	u8 hdgst = nvme_tcp_hdgst_len(queue);
+ 
++	mutex_lock(&queue->pf_cache_lock);
+ 	async->pdu = page_frag_alloc(&queue->pf_cache,
+ 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
+ 		GFP_KERNEL | __GFP_ZERO);
++	mutex_unlock(&queue->pf_cache_lock);
+ 	if (!async->pdu)
+ 		return -ENOMEM;
+ 
+@@ -1450,6 +1455,7 @@ static void nvme_tcp_free_queue(struct nvme_ctrl *nctrl, int qid)
+ 	kfree(queue->pdu);
+ 	mutex_destroy(&queue->send_mutex);
+ 	mutex_destroy(&queue->queue_lock);
++	mutex_destroy(&queue->pf_cache_lock);
+ }
+ 
+ static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
+@@ -1772,6 +1778,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
+ 	INIT_LIST_HEAD(&queue->send_list);
+ 	mutex_init(&queue->send_mutex);
+ 	INIT_WORK(&queue->io_work, nvme_tcp_io_work);
++	mutex_init(&queue->pf_cache_lock);
+ 
+ 	if (qid > 0)
+ 		queue->cmnd_capsule_len = nctrl->ioccsz * 16;
+@@ -1903,6 +1910,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
+ err_destroy_mutex:
+ 	mutex_destroy(&queue->send_mutex);
+ 	mutex_destroy(&queue->queue_lock);
++	mutex_destroy(&queue->pf_cache_lock);
+ 	return ret;
+ }
+ 
+-- 
+2.25.1
 
-
-And in syscall BPF program, you can simply get the cgroup through the
-current task
-
-SEC("syscall")
-int syscall_prog(void *ctx)
-{
-        struct task_struct *task =3D bpf_get_current_task_btf();
-
-        v =3D bpf_cgrp_storage_get(&cgrp_strg, task->cgroups->dfl_cgrp, 0,
-                               BPF_LOCAL_STORAGE_GET_F_CREATE);
-        ...
-}
-
-> +
-> +SEC("fexit/inet_stream_connect")
-> +int BPF_PROG(check_cgroup_storage_refcount, struct socket *sock, struct =
-sockaddr *uaddr, int addr_len,
-> +            int flags)
-> +{
-> +       struct lock_map_value *v;
-> +       u32 refcnt;
-> +
-> +       if (uaddr->sa_family !=3D AF_INET6)
-> +               return 0;
-> +
-> +       v =3D bpf_cgrp_storage_get(&cgrp_strg, sock->sk->sk_cgrp_data.cgr=
-oup, 0, 0);
-> +       if (!v)
-> +               return 0;
-> +
-> +       refcnt =3D probe_read_refcount();
-> +       bpf_spin_lock(&v->lock);
-> +       v->value =3D refcnt;
-> +       bpf_spin_unlock(&v->lock);
-> +       return 0;
-> +}
-> +
->  char _license[] SEC("license") =3D "GPL";
-> --
-> 2.51.0
->
->
 
