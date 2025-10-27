@@ -1,186 +1,182 @@
-Return-Path: <linux-kernel+bounces-871566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9D2C0D996
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16006C0D9A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7663B34DE8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9037A34DD7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEEF30EF8E;
-	Mon, 27 Oct 2025 12:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ECA30E0FC;
+	Mon, 27 Oct 2025 12:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bjFU2cIR"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kXq9dojZ"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A999E2FF675
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983C62FF675
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568687; cv=none; b=oWtzekGySCo/nIosMsiNnIyNFKKVS63a9VkR2sGY/Wll/ZnPruPDcZ/Rn7j17I4BKsN/F9VPlTWjHBMGruO8oiM/ribJE/FBsqppVa+u+WR3IFEeKEZSu8mw51xhjsyU9YU0Z37KGQXQT1NkIqpuKGe34tROHC8rBCIa4MJFg/U=
+	t=1761568715; cv=none; b=oA+AN2Pia3L6oBKrCF74JpYCBJ6gYtaXKCiNF+5KF4/dShlq+lnwOcosn7zPDbhpofI7ms0FLvuG2MrVLOr6Pw85zh25CylZI3MPoRUcKBDK6wqfU2DBhWTkPznMLTDZWovhMrRbaC+mr2ztKYXV+BeVlbH4A7yFHeA+G1U4DrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568687; c=relaxed/simple;
-	bh=lPiYTDtRjDZmT217lCKABlCpCvxK42i4gTfeJsqcnDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IqB00PAj4xQq84hhvJ6fdWZS/fqIkKXNXqLxeqYhT42LwnzTPbc1FSG8QRcisC7KLaBMZDLyhXVR5yw+98Xvq+7AZgtKIZ8T1iU3g6xeVH+Z6Le1A28eltoHEboBzgVWeptFEM+XNAz+XLPeV9xsGDVW0MWOWbKEPJmvvA7XEvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bjFU2cIR; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-471d83da4d1so1705435e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761568684; x=1762173484; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RHGUu/H89+nPNkVnAmHWGAl8x9ue4UGzIIMtUhE6fgY=;
-        b=bjFU2cIRarJGL2zNOe4Y6PKrxCb97KDnSpKZq/n+tt8W65nGg/1K6Gy9wbphqZltym
-         5DsKywlktXoDvXrPQKDWlszY8Ftg2+ssTRk7l7Uj8F95lPiysi4xH+ybpTKklu6ZO5PT
-         5N8hYTAcqQgB0Bo//5CZiTgxnuckGTvbcQZXCymaUMD54dIMfoHD46XPYDjkMAjPvmKJ
-         8iTILt+v6uN2KFDGkJesz06TY6+FQug3PavpyFAh4qBZY6ZK5pFMdUmRT6mgubv3Q1Yb
-         SEHIAFdmsLntt8JBF9CYYoGEYIkb1yzb62hdl1uppdTrJMlKSifpumMc0ruSMW3EDs0s
-         8X6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761568684; x=1762173484;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RHGUu/H89+nPNkVnAmHWGAl8x9ue4UGzIIMtUhE6fgY=;
-        b=Wg1DH52af4uB809XJjlNj4IWSrWTTKbu6yq2ureSODa7XnbVzWfJ+BRMBgD7c1Yn1v
-         xpEtal9FqZA1660M0KUAxHuQH7k8Og/Jyi4+dzjrv607jEj56F5HEmJlo3fEZnOotQsI
-         K4s8I5gVxsOuo5EY71E15W8Q7ohDWuSreonMDz3gWKZ0kK+kbI6Vit7yMCfP0/iAySqs
-         HAWNRvJwNn3wMZSNiBZjRR8QgS3CmLjevxpWhmUix0ZcgFQm24ynOFpb14SHKf+7Aw94
-         RGQnXPIt7lj0wqjikw+CYlGUK/leQ1byDjfalSjFy/gx5UjLSBNQhyCjln/SndaZ2Ofi
-         6Kig==
-X-Forwarded-Encrypted: i=1; AJvYcCV1vwl2b8G4cfmsjQUsH4h4XAvsApi1/FCPPaxihdg99aqYKM6ciBHB5QTdElWc9LeA0TXdpDwzQViRSF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpcKaIG/mSF3ZYDVMP1g/gtQf504dMRISeMo3L399w0PKJmNDP
-	901KhqSpy7b+rTsYPR9GP2QRZYbtvG6xEdXsZrAHZm1c38zijgIy++VPzNxR4IMsxD4=
-X-Gm-Gg: ASbGncuwyjEvisBF35DnD2Q6/Aw4lzQhCTeKEx0iyT+hWUE5IHM9vslXZSoVW2OzU0b
-	q9B7c4WGKpDCIPYQk15qaelKFQnY0UJACkouZ/NPt0ENPqIvzf1lDUOHCAdKphhAQqGl71lrnLB
-	CnOoMS+8AmoVLTFzlW66uF4TdyRMt/U00ShIFUrkCRoQ6oAp5c2X43+C8bevsrUbIQrgVV6BBJ1
-	JEmJy7PugO7olAwSCjdPfIyE0sKHmSTgnACd5M5WafhO/9Gxq0T1hE6y66IQbo6xIuezt1E6BDO
-	L1YjOQ0uM4kaoj9vXJuyNlCj4ikuftmmvDMYDHVw99xRFSmQ/OiwIHgl6yUplWBA8h5GY4tXEen
-	ngRu4XTurW/U5KwxfYmfZ/pBodHhoOkzY1HJRVAYZxOnXj9EQpfBtATln5x+01J+ZlBW+CiRSDU
-	Hv8za0xhEiOLlnTKffFOtF
-X-Google-Smtp-Source: AGHT+IGNtmCu4D763h6+9G3lrm83csyPVRDnPaCSfA4fw/nANSongHAbjp7WQaqw83gqqPcc+kuLHA==
-X-Received: by 2002:a05:600c:4f81:b0:475:de51:ccce with SMTP id 5b1f17b1804b1-475de51cd8dmr32268755e9.1.1761568683944;
-        Mon, 27 Oct 2025 05:38:03 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm14127748f8f.38.2025.10.27.05.38.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 05:38:03 -0700 (PDT)
-Message-ID: <a3808dca-2356-4871-83e8-c535cd0cce86@linaro.org>
-Date: Mon, 27 Oct 2025 13:38:01 +0100
+	s=arc-20240116; t=1761568715; c=relaxed/simple;
+	bh=t9hkT+4zAAhz5+o+QG2fo27oXgveTo7i7m6LBWKxhfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jrna2hW5QJ4pUN0ePixO6rbux1+jCdbpVSq4EHvnyOBjeYHhwzggc4MomA7YfsLQgmByZxBpgI4gYPwPzJ9pAmCeGBEQhwS6uDu64Dwm4DGBd6cpgpQsA2sFgAoLpYOQ7SZhwrp9jnGJASZ1JNsiSDiG96FdNA+jvBqJ1Clq824=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kXq9dojZ; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id C9D7DC0C437;
+	Mon, 27 Oct 2025 12:38:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F2B756062C;
+	Mon, 27 Oct 2025 12:38:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49FD9102F24FC;
+	Mon, 27 Oct 2025 13:38:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761568710; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=LIcovSWKnBA+L7voLcFHvTGbDw/RTZnlp4fA0bZ/QEc=;
+	b=kXq9dojZmGm6Ef0a7GVd/BQliyMkvrAcJiCiXAw9LT8hdLsHlV5tISKRqILw5M8Rzfmm1b
+	c1C536eyX14TLOfkOG+71IXH8VlV4qjgrpmoU8J1GbXUDjk+LN5PDq47kWgLfOZfj3shPw
+	Uu/iiMcrr4GsRAIbG7C/VEiFAwxi5URrh/XciNr1PEYjufdGC+gBqrRVPPCPDYKW0UUE+Y
+	sRf8GjhF7ceb/UsmPTgY1lKovKdb3qutucuN0MSxBcyBG5/JYXaGo/pglf2QW1+mliuzJq
+	OtDAUk/qiv+3XpIKnXAQ0DVrZWEMG7VAwFCaw3hMY+0pbsarUiCIQGyS9xVxwA==
+Date: Mon, 27 Oct 2025 13:38:19 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 12/15] rtc: bd70528: Support BD72720 rtc
+Message-ID: <202510271238195ef3bdfb@mail.local>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <380ea1fdbb94a796418e8f463c6a9436001d572d.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e78100-t14s: Add audio playback
- over DisplayPort
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251021111050.28554-3-krzysztof.kozlowski@linaro.org>
- <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
- <51da0617-db4f-4c6f-9f46-0492e49c9a2f@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <51da0617-db4f-4c6f-9f46-0492e49c9a2f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <380ea1fdbb94a796418e8f463c6a9436001d572d.1761564043.git.mazziesaccount@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 27/10/2025 13:20, Konrad Dybcio wrote:
-> On 10/21/25 1:10 PM, Krzysztof Kozlowski wrote:
->> Add necessary DAI links and DAI name prefixes to enable audio playback
->> over USB/DisplayPort and HDMI.  The HDMI port is not yet enabled, but it
->> should carry respective DAI name prefix regardless.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
->>
->> ALSA UCM and audioreach topology will follow up as well.
->> ---
+On 27/10/2025 13:47:51+0200, Matti Vaittinen wrote:
+> The BD72720 has similar RTC block as a few other ROHM PMICs.
 > 
-> [...]
+> Add support for BD72720 RTC.
 > 
->>  &mdss_dp0 {
->> +	sound-name-prefix = "DisplayPort0";
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 > 
-> We should probably push this into SoC dtsi since #sound-dai-cells
-> is there
+
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+Note that we didn't get 07/15 that adds linux/mfd/rohm-bd72720.h which
+this patch depends on.
+
+> ---
+> Revision history:
+>  RFCv1 =>:
+>  - No changes
+> ---
+>  drivers/rtc/Kconfig       |  3 ++-
+>  drivers/rtc/rtc-bd70528.c | 21 ++++++++++++++-------
+>  2 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index 2933c41c77c8..418f6c28847a 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -561,7 +561,8 @@ config RTC_DRV_BD70528
+>  	depends on MFD_ROHM_BD71828
+>  	help
+>  	  If you say Y here you will get support for the RTC
+> -	  block on ROHM BD71815 and BD71828 Power Management IC.
+> +	  block on ROHM BD71815, BD71828 and BD72720 Power
+> +	  Management ICs.
+>  
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called rtc-bd70528.
+> diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
+> index 954ac4ef53e8..4c8599761b2e 100644
+> --- a/drivers/rtc/rtc-bd70528.c
+> +++ b/drivers/rtc/rtc-bd70528.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/bcd.h>
+>  #include <linux/mfd/rohm-bd71815.h>
+>  #include <linux/mfd/rohm-bd71828.h>
+> +#include <linux/mfd/rohm-bd72720.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -262,13 +263,13 @@ static int bd70528_probe(struct platform_device *pdev)
+>  
+>  		/*
+>  		 * See also BD718XX_ALM_EN_OFFSET:
+> -		 * This works for BD71828 and BD71815 as they have same offset
+> -		 * between ALM0 start and ALM0_MASK. If new ICs are to be
+> -		 * added this requires proper check as ALM0_MASK is not located
+> -		 * at the end of ALM0 block - but after all ALM blocks so if
+> -		 * amount of ALMs differ the offset to enable/disable is likely
+> -		 * to be incorrect and enable/disable must be given as own
+> -		 * reg address here.
+> +		 * This works for BD71828, BD71815, and BD72720 as they all
+> +		 * have same offset between the ALM0 start and the ALM0_MASK.
+> +		 * If new ICs are to be added this requires proper check as
+> +		 * the  ALM0_MASK is not located at the end of ALM0 block -
+> +		 * but after all ALM blocks. If amount of ALMs differ, the
+> +		 * offset to enable/disable is likely to be incorrect and
+> +		 * enable/disable must be given as own reg address here.
+>  		 */
+>  		bd_rtc->bd718xx_alm_block_start = BD71815_REG_RTC_ALM_START;
+>  		hour_reg = BD71815_REG_HOUR;
+> @@ -278,6 +279,11 @@ static int bd70528_probe(struct platform_device *pdev)
+>  		bd_rtc->bd718xx_alm_block_start = BD71828_REG_RTC_ALM_START;
+>  		hour_reg = BD71828_REG_RTC_HOUR;
+>  		break;
+> +	case ROHM_CHIP_TYPE_BD72720:
+> +		bd_rtc->reg_time_start = BD72720_REG_RTC_START;
+> +		bd_rtc->bd718xx_alm_block_start = BD72720_REG_RTC_ALM_START;
+> +		hour_reg = BD72720_REG_RTC_HOUR;
+> +		break;
+>  	default:
+>  		dev_err(&pdev->dev, "Unknown chip\n");
+>  		return -ENOENT;
+> @@ -337,6 +343,7 @@ static int bd70528_probe(struct platform_device *pdev)
+>  static const struct platform_device_id bd718x7_rtc_id[] = {
+>  	{ "bd71828-rtc", ROHM_CHIP_TYPE_BD71828 },
+>  	{ "bd71815-rtc", ROHM_CHIP_TYPE_BD71815 },
+> +	{ "bd72720-rtc", ROHM_CHIP_TYPE_BD72720 },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(platform, bd718x7_rtc_id);
+> -- 
+> 2.51.0
+> 
 
 
-Hm, that's important for user-space and represents actual naming or
-wiring on the board, so it is strictly a board property. IOW, there
-could be a board which does not have DP0, thus mdss_dp1 should be called
-DP0.
 
-If you are sure that such case does not exist, then indeed we can make
-it shared.
-
-Best regards,
-Krzysztof
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
