@@ -1,130 +1,139 @@
-Return-Path: <linux-kernel+bounces-871310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63451C0CE46
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:11:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391C3C0CE01
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44D4421282
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B5C1894A47
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B60D2F1FE7;
-	Mon, 27 Oct 2025 10:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035602EFDBA;
+	Mon, 27 Oct 2025 10:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvypO9YL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PhxPZcnv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036F1DE4E1;
-	Mon, 27 Oct 2025 10:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D225F984
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559446; cv=none; b=M9X9t4dWyFOen0NuHXh6zxfTuU+2fVLysOC/kbZy2mXvc9Uvj/RvHw/SIskwmIl4I8FWDnnwd16sGcCCuYWau28jkBav1qfbI+5lhbZcriAYJ+tg9RK6WmN55mhx/1fKXqj//rooEIYvxaAkMKLSz76DcX1LXko6WgI9YQYEwdo=
+	t=1761559540; cv=none; b=lfQXRhF8PAcH/WeHXDdB6o8Eq5aFueiwBQmgrQtResJZjhY9Efn9VueEt+WvhbsT2Sjuv+dLmy6d25CFr77GPAyPhvhG9LqX8U+Y2EMBI9M2qZcazRVSO+8Os+GvF5xO85A52pewnREXpW1uW1DuhfFU8D/eeaIWj9oPqQqGRm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559446; c=relaxed/simple;
-	bh=FEYyRZalr4maxs1O5gjP6c07nUsJ1QW2+RR+Es6ITdE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WgNKHgX+mDrAve91Tkfu3GrA2shf9+Ui86IpGT9RpbWBLmmREfeLKL+TXbM5P5KxkmCMPX0dir2kWepVqZxmPKqoD0jEqv/1N7tY+5HpwGo7kBmxjeqp2xoF6YgAvlw4YWJ6fCr1TGC9p5bXoL9UOsUTLIkw7fBHvSC3KnTCr/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvypO9YL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9696C4CEF1;
-	Mon, 27 Oct 2025 10:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761559445;
-	bh=FEYyRZalr4maxs1O5gjP6c07nUsJ1QW2+RR+Es6ITdE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YvypO9YLTOGII68Cfo8hyfMsCsNmD3b7glgVKpGE1svHuDNRdoqjFVCHjWGeuCXHH
-	 lhWBYD2vO40TC5nn7oZPZlvgndboLeSgjAHLJp9+UofQJak0gGLY69VihVYNCMo5ph
-	 MONSZFN+iMHKfV8W71hDnZ9HG+JjK6Zlr/yj6pE8qlNULcDZQ6poJ5kOKDsgv61R9L
-	 RidTwdw5w1bA/fiAC4BnXa97Gog/ZGwVQL4vZFN+ZkUEwaznotUzk8bpPYGWFqZJJz
-	 RvxmQqFHyFPATiX9MGf/U/Z2juImn2cEVAwuHkjZgH/EX88j42wGDvUC2gfVjM4VU4
-	 OTV58vHHiul8Q==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.j.williams@intel.com, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH 01/12] KVM: arm64: RMI: Export kvm_has_da_feature
-In-Reply-To: <20251027094916.1153143-1-aneesh.kumar@kernel.org>
-References: <20251027094916.1153143-1-aneesh.kumar@kernel.org>
-Date: Mon, 27 Oct 2025 15:33:57 +0530
-Message-ID: <yq5awm4goe42.fsf@kernel.org>
+	s=arc-20240116; t=1761559540; c=relaxed/simple;
+	bh=eHA0hlYfdYZE/4LDQg1sbznUefERn3QEhxPIRLem2e4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HE/mst84oZSWTifZfUhydFxqwhfwVLlkQ0XCh7grkt+sHuUHFCRjIXmuKPBuiKWxYeWdAZVUtJRrAQKrYAY+hqkKWGfsTYRmX2o0sZNDHrFK1FFUAzzWla+XpXZGTc8+A6Cphm7GkDmHR2monjXzV8J/Oo1UYhY2Bch2ySsg4I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PhxPZcnv; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761559538; x=1793095538;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=eHA0hlYfdYZE/4LDQg1sbznUefERn3QEhxPIRLem2e4=;
+  b=PhxPZcnv5VC6xbpngnNb+Wr+CA/7ud7+i4R9Sv8iTL7FmXOiglieilKI
+   O/osoOhk3ohnKJI0Rca+iPtAkQGPPWYhmF+XmhfG36K5ZPLrGZYau++5B
+   VRiOlfnLXb55ZLPuasjmGcAX3MCfFbWdR5g7WJCdg8XK1zM/4mRkq93/v
+   a5P2GcETlX4b4hUSR9j6XxXzXO9WOwNV2FCJLN5jPaK43sAlsSKAtfCAL
+   cD6ietBLGDIIOb0ko8hSmIrIcW0jpzJuU1RWJ0xxdxuhBiqFWgJjIdbqz
+   7DZ9VVhA9o0ejKLtY+S1kGI48MEa/BzrxUUPJQvsiW9hsZiRCnRTr/RNH
+   A==;
+X-CSE-ConnectionGUID: +EJo5Cu1ShqdnQRxaU0V1Q==
+X-CSE-MsgGUID: WiZfcVZdS+uAD0TRQS1GkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86264387"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="86264387"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 03:05:37 -0700
+X-CSE-ConnectionGUID: GYJkGqFpS4yIICYnpwQgsw==
+X-CSE-MsgGUID: Az4NuaHTTFO6h6LxJ3vaVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="215656140"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa002.jf.intel.com with ESMTP; 27 Oct 2025 03:05:33 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 5DCC195; Mon, 27 Oct 2025 11:05:32 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Aaron Lu <ziqianlu@bytedance.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] sched/fair: Remove dead code which might prevent from building
+Date: Mon, 27 Oct 2025 11:05:29 +0100
+Message-ID: <20251027100529.1806944-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
+Clang, in particular, is not happy about dead code:
 
-Kindly ignore this series. The correct one can be found https://lore.kernel.org/all/20251027095602.1154418-1-aneesh.kumar@kernel.org
+kernel/sched/fair.c:5233:19: error: unused function 'cfs_rq_throttled' [-Werror,-Wunused-function]
+ 5233 | static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+      |                   ^~~~~~~~~~~~~~~~
+1 error generated.
 
--aneesh
+kernel/sched/fair.c:6736:19: error: unused function 'cfs_rq_throttled' [-Werror,-Wunused-function]
+ 6736 | static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+      |                   ^~~~~~~~~~~~~~~~
+1 error generated.
 
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> writes:
+Remove a leftover from the previous cleanup.
 
-> This will be used in later patches
->
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  arch/arm64/include/asm/kvm_rmi.h | 1 +
->  arch/arm64/include/asm/rmi_smc.h | 1 +
->  arch/arm64/kvm/rmi.c             | 6 ++++++
->  3 files changed, 8 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/kvm_rmi.h b/arch/arm64/include/asm/kvm_rmi.h
-> index 1b2cdaac6c50..a967061af6ed 100644
-> --- a/arch/arm64/include/asm/kvm_rmi.h
-> +++ b/arch/arm64/include/asm/kvm_rmi.h
-> @@ -90,6 +90,7 @@ u32 kvm_realm_ipa_limit(void);
->  u32 kvm_realm_vgic_nr_lr(void);
->  u8 kvm_realm_max_pmu_counters(void);
->  unsigned int kvm_realm_sve_max_vl(void);
-> +bool kvm_has_da_feature(void);
->  
->  u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
->  
-> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-> index 1000368f1bca..2ea657a87402 100644
-> --- a/arch/arm64/include/asm/rmi_smc.h
-> +++ b/arch/arm64/include/asm/rmi_smc.h
-> @@ -87,6 +87,7 @@ enum rmi_ripas {
->  #define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
->  #define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
->  #define RMI_FEATURE_REGISTER_0_Reserved		GENMASK(63, 42)
-> +#define RMI_FEATURE_REGISTER_0_DA		BIT(42)
->  
->  #define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
->  #define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
-> diff --git a/arch/arm64/kvm/rmi.c b/arch/arm64/kvm/rmi.c
-> index 478a73e0b35a..08f3d2362dfd 100644
-> --- a/arch/arm64/kvm/rmi.c
-> +++ b/arch/arm64/kvm/rmi.c
-> @@ -1738,6 +1738,12 @@ int kvm_init_realm_vm(struct kvm *kvm)
->  	return 0;
->  }
->  
-> +bool kvm_has_da_feature(void)
-> +{
-> +	return rmi_has_feature(RMI_FEATURE_REGISTER_0_DA);
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_has_da_feature);
-> +
->  void kvm_init_rmi(void)
->  {
->  	/* Only 4k page size on the host is supported */
-> -- 
-> 2.43.0
+Fixes: fe8d238e646e ("sched/fair: Propagate load for throttled cfs_rq")
+Fixes: eb962f251fbb ("sched/fair: Task based throttle time accounting")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ kernel/sched/fair.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 273e2871b59e..0370f11e5c25 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5230,7 +5230,6 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ }
+ 
+ static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
+-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+ 
+ static void
+ requeue_delayed_entity(struct sched_entity *se);
+@@ -6733,11 +6732,6 @@ static void dequeue_throttled_task(struct task_struct *p, int flags) {}
+ static bool enqueue_throttled_task(struct task_struct *p) { return false; }
+ static void record_throttle_clock(struct cfs_rq *cfs_rq) {}
+ 
+-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+-{
+-	return 0;
+-}
+-
+ static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
+ {
+ 	return false;
+-- 
+2.50.1
+
 
