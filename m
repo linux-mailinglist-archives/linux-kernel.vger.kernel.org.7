@@ -1,161 +1,287 @@
-Return-Path: <linux-kernel+bounces-870833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E96C0BCD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597FDC0BCD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1446D3B4106
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB5BF188B731
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C965B198A11;
-	Mon, 27 Oct 2025 05:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6835F246770;
+	Mon, 27 Oct 2025 05:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aleRRhcY"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oRJFo7xy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3329216605
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEED822F389
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761541756; cv=none; b=T3fNiS0Nv73xFgMtahSCYReu18zozy/dTlhpf6CS9jwy3BqQJoToDFHj2IvtplnB0obnTtfioFx/ga4KoKgChTRtgwMsXq3n8lMaBVrqsALkPz5lRMGyT4jB/2anpW5k3oZdgYaJboImORVwZUeT9Ycuxg5dRs9OAKoijd2qD4w=
+	t=1761541912; cv=none; b=BapEiLUxwUITwGgwnNyWroDr42vjNo3Tqcne2Xf/kYMMBlrIVCA+Kn6Mc++7BnusYRthCyoo4AOw6GwObaNMcQFWQKrT/q+2IqlEQEeQ/D2JabfFH7k+DEDd9KvTa9rL+ncdaU1fB/28ZiXPBZjYp2baFI8s38G8ISzNfa3UvHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761541756; c=relaxed/simple;
-	bh=OUqLcKZeL7sNozc0Va2ked5/A40+JIYc+5qBszOKEbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YG1r3YEivptsCOyoVrDEn1s7owH+aDZIBru++oWqhHR/zqonIvDvvR0TfleRpXqWSRSevk+4pQwRHUGn5mOzq9OqKepyphi79ivXyH9Pk3RJ8dcFX+4pN/jx/9qDbaCTqpdRx3mm5JjL1e/BpwfmSeFReCJ765jO35n4iODLDg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aleRRhcY; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-b55517e74e3so3914564a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761541753; x=1762146553; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o0q0YaFBfANSAS3+T3VacFx8v2x4tPgl7we+mN7jZKc=;
-        b=aleRRhcYHxFy0BNMmRIImR8E5/NzHSjv3T8BkE4ybprCTJaraUgK0xyx3aAlI3e+8s
-         nVu7CQZMXbY5Vy06sNOKSwpY0Dj05vxxGHvJy92ODQw3E8ephIx9eXp4iJ8NmfVqp+1e
-         D4dIkTalQGNQI2kQOfsKgGZ/LMzFyCdjCmquep5LG4B8tLU/XHDPfMw7cbkuD9W6WHd9
-         uS4KliCVQsd4keggHjINPHxu7WRBYM1i8lveCZJ5qrUetnU4KQmu4YJlxLRdif+75XwF
-         6OSWIMBqBZnt+vL0nsYPvRAR+UDp2uWqyrZlFSynk/wIgTo4kY6bcyGdVBZqqiPqCUKw
-         LjMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761541753; x=1762146553;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o0q0YaFBfANSAS3+T3VacFx8v2x4tPgl7we+mN7jZKc=;
-        b=dxKLJkv/f365MyqYIaxaaro7rqGQxx+nA1jIo3KGal1v7KczRdVnIiOkSp+1oLyGDB
-         mhBL7fn8mRBCUhKgbRC8niBJgTOGFrCk6a9ROJYqYzj3kNwGHjBa5bqi3nb3KrfqNtwJ
-         BzvAp6kdUmItj9oTcTW+loCVxouXi9Khba9BYEej4usRCjACTb/MAEjS8OAcNzsh4DnB
-         WbwmatWvhn64WfaDjsRdY8FJunC2W/OtSTQ1vEiidmc8ooMgc1j9J7Sd7X3+kAOjFR1/
-         vGIQx3ImOKuBaCaJ+3Lqk/aJhJzitoNcQ47pdeAu3gbjd8jJ4kWgtm8VbI+0SCJH7yVw
-         skDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWALCR+b/1Um5sUTur8cwEJl3S9Rf2VJAmREC75Gboty6zlWOc8QVrhyImHTW5CuxyKlJj65agSmZERFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHgNrgviyv3bvyJ8AahInR2VWGtwB4usu6I4MG55Ot9TcO5FaR
-	4NFELa9qe2WCyKUcwkM/WzCjlxVzxVTvGQJ1YXhmCbfby1Ztz/DXsfdc
-X-Gm-Gg: ASbGncvVX31Yl7hU2WStHtztBkHZDlSAtyoObKebBbYhigkbm8C54/n/iaAOybK1nua
-	F56BFOoNc7OVpYx4MA8V7/LP2ri9IlX5TYdI26wy0XFr7FjoW4DEKFbGsaDQYgag9atFeJMXjKb
-	edsaeYUEDp7/Z6LiQc/MYgisk1I7TVIbU+jPjpxoQLojWpOG4zQ/vVXJWMS8PLTIPiNRrow4TF/
-	oTfQwK686RMiwn0QOLUPI/K9gQLHOhXrBeVGcDHFfGt9WkOncMIt5xPeER3fn5nI5g5wYP1GdXi
-	XRmpJGV+zhPsh07TzyYGF9dXlfJqjtrXHBy7vxR0ZKJGhdIsA6O2QrvVV0CNcYeYhjruYL+NJf2
-	/gS08akNOdcsBY2q0cNGsC/s0kjQkjT+NDrs5+HCqjO9uYM3+GZRkI7FAt4ypBVKBSmqVZzvfA1
-	l15vZvakYaMrYbjf2wvII=
-X-Google-Smtp-Source: AGHT+IGtH6XbDGJuGDFIuaox3wBmr6QQpVXy9N2GYRgtuZR8X9dTVLYjDB8WtOHQERgIjr6dDk9zog==
-X-Received: by 2002:a17:902:ce8d:b0:272:a900:c42e with SMTP id d9443c01a7336-290caf850b1mr476300195ad.35.1761541752993;
-        Sun, 26 Oct 2025 22:09:12 -0700 (PDT)
-Received: from fedora ([103.120.31.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d23226sm67843525ad.49.2025.10.26.22.09.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 22:09:12 -0700 (PDT)
-From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jason Xing <kernelxing@tencent.com>
-Cc: netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-Subject: [PATCH] selftest: net: fix variable sized type not at the end of struct warnings
-Date: Mon, 27 Oct 2025 10:38:56 +0530
-Message-ID: <20251027050856.30270-1-ankitkhushwaha.linux@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761541912; c=relaxed/simple;
+	bh=noMKfFaQO+gVw+gglb4mfTbz7dugyklYlM9VDAcONRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7YFKbDIHX7QKRcUZDRvIxA2T6AmMGpJKp2VGyMKifQiZ6b577JNf7/FK7321NuuwzfUEsM4V293nQnCjgdzQavch7x//whVVjz0tXn7Y8235UvPLLvIy4+SLYWFckDVOspiOyAxIFyz5uzMT03rmbIjlhE0R3JeTfxKtMihWpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oRJFo7xy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59QKkB4w030560;
+	Mon, 27 Oct 2025 05:11:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2/nC74
+	uSUqMlsUvRH3XfkivYLhm7VQUsnl3hzHfOKfs=; b=oRJFo7xyXmi9wxxkrhWW7W
+	keffUwm02wpvJWNDcB14JgNvZiZJg/Whuye0hzP5Etwo+ZaqbW/1PEWh+hG376ok
+	w/EFPulUA1w++ApGMTujTciIOH/dwnHC5LfuKp2Fc6q01rk05OkhliU45yV0Tr2+
+	umYaVmZu4E+P/frVE4OyZmWT6yLqP7Xlxot/iR2bCx0sxY8FK9x4CKaBC0rRIF6O
+	k20L6nX7Epn/CIzEKc8uJ3Eq1dpPG5JMd2wuE2ied2gEQBwFUiA4TgxOfChKyXd0
+	9k2lEkiauy09JNbokI0b45c6ydvJjghtpZgs0nWNosRbEmO4BmXzq5DmC8yQMXbg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0myrw4xd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 05:11:10 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59R52BjG029945;
+	Mon, 27 Oct 2025 05:11:09 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0myrw4xa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 05:11:09 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59R2ef5q030103;
+	Mon, 27 Oct 2025 05:11:08 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a19vmbwuy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 05:11:08 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59R5B62e42205694
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 05:11:06 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AAD4920043;
+	Mon, 27 Oct 2025 05:11:06 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B004920040;
+	Mon, 27 Oct 2025 05:11:03 +0000 (GMT)
+Received: from [9.109.215.252] (unknown [9.109.215.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 27 Oct 2025 05:11:03 +0000 (GMT)
+Message-ID: <9076c353-a22b-4c38-bd30-fb10eb0ae851@linux.ibm.com>
+Date: Mon, 27 Oct 2025 10:41:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V2 16/20] sched/mmcid: Provide new scheduler CID mechanism
+To: Thomas Gleixner <tglx@linutronix.de>, LKML
+ <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Gabriele Monaco <gmonaco@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+        Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>
+References: <20251022104005.907410538@linutronix.de>
+ <20251022110556.399477196@linutronix.de>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <20251022110556.399477196@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: q0rtEQYVrEhu4ceqO9Z2MDfWqcBHrNec
+X-Authority-Analysis: v=2.4 cv=ct2WUl4i c=1 sm=1 tr=0 ts=68fefeee cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=p9TLJcio2fSzq28u2DUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxMCBTYWx0ZWRfX3zzevpRDf43H
+ UyAsAKmLIsxnGEJjPUGCcY729+Nv74FExM2YRwnGZDUEeokyNPoWqEx6Pej3to1j1cUqx+BJMyU
+ ucZz+sGUfZO31l2c5xxMOiv89/d8rDTFp5La0cRq5SszN3YL5poDvFXw/zz5X3JIHPvRD34neZP
+ QvgfWRMooFPtqMKiSEkYegBX8EkMkXCC8RkTaniiiu5eev4C0GQ1eUeqDXU+l39pgVelnIRsUuk
+ /KGToatt1yUAtET7S+DofdklwLqihovznngXsfwZEfVOlHv4yxIN9NdDHdv/8Ugt4x811ExNURu
+ zyZ8M+dUVIMan/C/M9sMdp8lhtAs3mmfp3WaExAVgipHBa3712OTxS+aJT9SByvaMcZ6CoT0zDw
+ LYnNU62vddx1BbitCOGBF6te1GJOrA==
+X-Proofpoint-GUID: qK5GAvC7aqLbEZxtu7KdVcHcqgwN6XjS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ spamscore=0 adultscore=0 priorityscore=1501 clxscore=1011 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250010
 
-Some network selftests defined variable-sized types defined at the end of
-struct causing -Wgnu-variable-sized-type-not-at-end warning.
 
-warning:
-timestamping.c:285:18: warning: field 'cm' with variable sized type 
-'struct cmsghdr' not at the end of a struct or class is a GNU 
-extension [-Wgnu-variable-sized-type-not-at-end]
-  285 |                 struct cmsghdr cm;
-      |                                ^
+Hi Thomas,
 
-ipsec.c:835:5: warning: field 'u' with variable sized type 'union 
-(unnamed union at ipsec.c:831:3)' not at the end of a struct or class 
-is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
-  835 |                 } u;
-      |                   ^
+On 10/22/25 6:25 PM, Thomas Gleixner wrote:
+> The MM CID management has two fundamental requirements:
+> 
+>    1) It has to guarantee that at no given point in time the same CID is
+>       used by concurrent tasks in userspace.
+> 
+>    2) The CID space must not exceed the number of possible CPUs in a
+>       system. While most allocators (glibc, tcmalloc, jemalloc) do not
+>       care about that, there seems to be at least some LTTng library
+>       depending on it.
+> 
+> The CID space compaction itself is not a functional correctness
+> requirement, it is only a useful optimization mechanism to reduce the
+> memory foot print in unused user space pools.
+> 
 
-This patch move these field at the end of struct to fix these warnings.
+Just wondering, if there is no user space request for CID, this whole mechanism
+should be under a static check to avoid any overhead?
 
-Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
----
- tools/testing/selftests/net/ipsec.c        | 2 +-
- tools/testing/selftests/net/timestamping.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+(Trying to understand this change. Very interesting. ignore if this is not applicable)
 
-diff --git a/tools/testing/selftests/net/ipsec.c b/tools/testing/selftests/net/ipsec.c
-index 0ccf484b1d9d..36083c8f884f 100644
---- a/tools/testing/selftests/net/ipsec.c
-+++ b/tools/testing/selftests/net/ipsec.c
-@@ -828,12 +828,12 @@ static int xfrm_state_pack_algo(struct nlmsghdr *nh, size_t req_sz,
- 		struct xfrm_desc *desc)
- {
- 	struct {
-+		char buf[XFRM_ALGO_KEY_BUF_SIZE];
- 		union {
- 			struct xfrm_algo	alg;
- 			struct xfrm_algo_aead	aead;
- 			struct xfrm_algo_auth	auth;
- 		} u;
--		char buf[XFRM_ALGO_KEY_BUF_SIZE];
- 	} alg = {};
- 	size_t alen, elen, clen, aelen;
- 	unsigned short type;
-diff --git a/tools/testing/selftests/net/timestamping.c b/tools/testing/selftests/net/timestamping.c
-index 044bc0e9ed81..ad2be2143698 100644
---- a/tools/testing/selftests/net/timestamping.c
-+++ b/tools/testing/selftests/net/timestamping.c
-@@ -282,8 +282,8 @@ static void recvpacket(int sock, int recvmsg_flags,
- 	struct iovec entry;
- 	struct sockaddr_in from_addr;
- 	struct {
--		struct cmsghdr cm;
- 		char control[512];
-+		struct cmsghdr cm;
- 	} control;
- 	int res;
- 
--- 
-2.51.0
+> The optimal CID space is:
+> 
+>      min(nr_tasks, nr_cpus_allowed);
+> 
+> Where @nr_tasks is the number of actual user space threads associated to
+> the mm and @nr_cpus_allowed is the superset of all task affinities. It is
+> growth only as it would be insane to take a racy snapshot of all task
+> affinities when the affinity of one task changes just do redo it 2
+> milliseconds later when the next task changes it's affinity.
+> 
+> That means that as long as the number of tasks is lower or equal than the
+> number of CPUs allowed, each task owns a CID. If the number of tasks
+> exceeds the number of CPUs allowed it switches to per CPU mode, where the
+> CPUs own the CIDs and the tasks borrow them as long as they are scheduled
+> in.
+> 
+> For transition periods CIDs can go beyond the optimal space as long as they
+> don't go beyond the number of possible CPUs.
+> 
+> The current upstream implementation tries to keep the CID with the task
+> even in overcommit situations, which complicates task migration. It also
+> has to do the CID space consolidation work from a task work in the exit to
+> user space path. As that work is assigned to a random task related to a MM
+> this can inflict unwanted exit latencies.
+> 
+> Implement the context switch parts of a strict ownership mechanism to
+> address this.
+> 
+> This removes most of the work from the task which schedules out. Only
+> during transitioning from per CPU to per task ownership it is required to
+> drop the CID when leaving the CPU to prevent CID space exhaustion. Other
+> than that scheduling out is just a single check and branch.
+> 
+> The task which schedules in has to check whether:
+> 
+>      1) The ownership mode changed
+>      2) The CID is within the optimal CID space
+> 
+> In stable situations this results in zero work. The only short disruption
+> is when ownership mode changes or when the associated CID is not in the
+> optimal CID space. The latter only happens when tasks exit and therefore
+> the optimal CID space shrinks.
+> 
+> That mechanism is strictly optimized for the common case where no change
+> happens. The only case where it actually causes a temporary one time spike
+> is on mode changes when and only when a lot of tasks related to a MM
+> schedule exactly at the same time and have eventually to compete on
+> allocating a CID from the bitmap.
+> 
+> In the sysbench test case which triggered the spinlock contention in the
+> initial CID code, __schedule() drops significantly in perf top on a 128
+> Core (256 threads) machine when running sysbench with 255 threads, which
+> fits into the task mode limit of 256 together with the parent thread:
+> 
+>    Upstream  rseq/perf branch  +CID rework
+>    0.42%     0.37%             0.32%          [k] __schedule
+> 
+> Increasing the number of threads to 256, which puts the test process into
+> per CPU mode looks about the same.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
 
+[...]   
+> +static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
+> +{
+> +	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
+> +
+> +	if (cid >= max_cids)
+> +		return MM_CID_UNSET;
+> +	if (test_and_set_bit(cid, mm_cidmask(mm)))
+> +		return MM_CID_UNSET;
+> +	return cid;
+> +}
+> +
+> +static inline unsigned int mm_get_cid(struct mm_struct *mm)
+> +{
+> +	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+> +
+> +	for (; cid == MM_CID_UNSET; cpu_relax())
+
+This triggers an compile error on ppc64le.
+
+In file included from ./include/vdso/processor.h:10,
+                  from ./arch/powerpc/include/asm/processor.h:9,
+                  from ./include/linux/sched.h:13,
+                  from ./include/linux/sched/affinity.h:1,
+                  from kernel/sched/sched.h:8,
+                  from kernel/sched/rq-offsets.c:5:
+kernel/sched/sched.h: In function ‘mm_get_cid’:
+./arch/powerpc/include/asm/vdso/processor.h:26:9: error: expected expression before ‘asm’
+    26 |         asm volatile(ASM_FTR_IFCLR(                                     \
+       |         ^~~
+kernel/sched/sched.h:3615:37: note: in expansion of macro ‘cpu_relax’
+  3615 |         for (; cid == MM_CID_UNSET; cpu_relax())
+
+
++linux-ppc dev.
+
+
+Moving it into a while seems to make compiling happy.
+Need to see why, but thought of informing fist.
+
+  kernel/sched/sched.h | 7 +++++--
+  1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 50bc0eb08a66..8a6ad4fc9534 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3612,8 +3612,11 @@ static inline unsigned int mm_get_cid(struct mm_struct *mm)
+  {
+  	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+  
+-	for (; cid == MM_CID_UNSET; cpu_relax())
+-		cid = __mm_get_cid(mm, num_possible_cpus());
++	while(1) {
++		if (cid == MM_CID_UNSET)
++			break;
++		cpu_relax();
++	}
+  
+  	return cid;
+  }
+
+
+
+
+> +		cid = __mm_get_cid(mm, num_possible_cpus());
+> +
+> +	return cid;
+> +}
+> +
 
