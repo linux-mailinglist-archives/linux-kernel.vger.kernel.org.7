@@ -1,126 +1,188 @@
-Return-Path: <linux-kernel+bounces-872549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3059FC116D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:43:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97167C116E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCBF1A61E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:43:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 076094E34B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0542D94B2;
-	Mon, 27 Oct 2025 20:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3917132143E;
+	Mon, 27 Oct 2025 20:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im/ryDRG"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193652D8764
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SkM+8bQ6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201112D739D;
+	Mon, 27 Oct 2025 20:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761597780; cv=none; b=plgmUGuJyEeoV69V+FHsAZcNn+C8Qvm2Lf+Ce7vMCTY7PsgtD4lAEtkOz9RNDBz9VsC1efc+kkihdO01lcJ3JPkrzCTEx0Eoz34lirAe/UvO0Nz023gKxBIAUq29nseboSddmg3yLg59J+a5KYjoT9LHmM358Gx4WyRGW9zBkMs=
+	t=1761597874; cv=none; b=EOWrnBoB7GkZN8bzKvxjlJf7cud0TpLrU0q0mauc5Fo7JGA2w7zSxvWbYlPnwiR5t9t6g9SCYlSjyiQfjQveCGwpA9FMWk8p/G//zaVjwYsEIWS3hpTI80RySgX+37Lb+SqyrK8xbRRlHhFgCze9RWUIGhmcQEbeyXt+uzK7IP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761597780; c=relaxed/simple;
-	bh=gWWe3paV3a/kYxDO1EPMAPiCjS1sugw4GH1dIZqDEUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q71+OG9smSOmqpcnwTK6Gc+DlLGIYppi1rilSJMwNQp89/h5uu5f5gxhEtShis70h2f933OpJ6SRiAzmoKzvGnVrL3OWGvhFLHjgsEmGkBI9BlXquDOmfy7jx68XvzUsosvAuT2sdUnQm1XYzq31mhJv56WJmRN6UWjkBkJ4eQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im/ryDRG; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-89f3a6028a8so306303485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761597778; x=1762202578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zODHDgIVcThjNTQxncSaZSJNvBOcC1ZxkNJs06nMyxk=;
-        b=im/ryDRGW2j/YpVX8OxMpPCvo0UtWJLR7fTUWzxpou0Hs195/+gLryw2HFUf9Cvn5K
-         ugcqH9FjyMnzb3of4LfPT+tCUNhVBBNX2nEaGoLiDXRy6xtGqFRNVNCorjnrG3w02Vmr
-         8fEJW+FzCWUpjdLI0GNVA3/a7VJW/igG2Mekfw5EtrE3e1FmVCGBQMZUkSmWgzICnfgx
-         t/QSst0rsXtFO+RuHS5RW0K2/XLMGHq5On81ws3ZRa15E/VzEtEi5AheDQUdOHIKaU2N
-         PpN6RQM+vI5VqR5SjMGbZkv+gwX6Ht2e+c0ghboVEYAN04uL5XgYOjwmgroE/mdCbq3G
-         FRPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761597778; x=1762202578;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zODHDgIVcThjNTQxncSaZSJNvBOcC1ZxkNJs06nMyxk=;
-        b=bXGUXvOtD4UdKlFqSM36CgkTCHnMYfbdPxH89khE5Hy4AElXiMIlB3yoqztJttdC2Y
-         7WXbIJEg20SNNxFiR7NhNN+Jf0z6nb+akqRUu7mM1mT3kjbskm0N8eFiQ41AY4dkF73h
-         TXkAlpLPWh0ZsQ2Ca3HLZgXRhcGU9ii59e9kb1ZJtKkT9JrVFPNBtTWwePIviDatAaSK
-         pWEPRFHMfeRNB2nWrtPSqVUYM0mpxH8y/acFpoYgTBajW2Fd6kHosG8WBDbhLXhD/6AA
-         YExtf2lZrrwlXMl/KblzSOuCU1x1v7+uyK/5TD81Rh6AY2W0SCq/z45ACbe0cZlHJYUO
-         pSjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnasc2lHCs6tXwWqUAqTCmy3uCOjLxlwkmPLJqydEafoIF6NvUP4VofJvGDiGChb5krUj99GPO3EXG2yY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfgGIq2rlt88OAdRMEWnFhp6xrUHHYx/VMRPjvKK8R9xdArx6E
-	F136kds4h9aonOFMvGDUr9qSIuDE9eRoGXaOVm0glTrhGIo13A/xbnnL1A/YFIfy
-X-Gm-Gg: ASbGncvOzw765d6rvHzVVdW1JuhzN9UbDFCKwowvz79jda3nECWEhDwgTXPshP0XGgJ
-	ZieQzQBDUp4Tw7ms3XStdXYPXYcVmoty2Y0iZDDqeCAtCDEFCae9ysdqGLblDw40ax/YMOAkJYg
-	Ig6yfPd+ldDmIFr5yBczlauj2BOdxLrcY2Ut0hv/y8+n1I5ArQhzC1uQW9QUnxVOef8GrrFPIJX
-	DzqMKZbpreqrfktf2fu4/ag94TRLU/ZPiNDe7Aapkd+xD0AdlZwX9R6HrdWTm5kbkRC2V5PG2km
-	2TyCldtzWUF80AYmfks+3Cm+jlcQtZDU/UsGYvnpUuqcBUHg7Oo9WmGAZJOPxqGmjfPmGGBqKbN
-	I6lMMNw1qEXIdmPvhIDKaSPveFZzYPeUjsSzXERHK26kpye7SUYR4Zwrt1FfD+BnaYHxaU4qRpn
-	SOIN4WEMihOedXRa6XOQOxWPTAzBw=
-X-Google-Smtp-Source: AGHT+IHjY1h62yk27PivH7Y+anegVGVxs9iDSQpJ7ULwNyIzYPD2WxXDfIKBytoxE1XNdGRwtGRCmw==
-X-Received: by 2002:a05:620a:2953:b0:8a1:b5ab:bbd6 with SMTP id af79cd13be357-8a6fa37ded9mr168442885a.71.1761597777922;
-        Mon, 27 Oct 2025 13:42:57 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f3497793esm657733485a.1.2025.10.27.13.42.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 13:42:57 -0700 (PDT)
-Message-ID: <4d3df05a-36af-4e1e-b904-a995a3744e55@gmail.com>
-Date: Mon, 27 Oct 2025 13:42:54 -0700
+	s=arc-20240116; t=1761597874; c=relaxed/simple;
+	bh=qlgYcDP3wPNQcYNQoPgAxQlQpIKroMyhIMV31tcTFB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qk9Oynw2wudLMot2lvcIWQcdxgPFOAImo30JgurfT7cJs8V7C59wsm9IEz/am5+Pq24yIso1EkyDdb37Vpg27TWM4nzFZIsBSsxcYggWpfYYqPi9BZMDo9eS24gF08WM8UO5c5OFshw3BuVW6FJ6tQjfd0hxOA0c2yRV8DqW0Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SkM+8bQ6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [52.148.138.235])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6625E200FE48;
+	Mon, 27 Oct 2025 13:44:31 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6625E200FE48
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761597872;
+	bh=O55qdQEOty0YMJyCMjA7a55Zsy7WOextVLJ/m8n7aNc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SkM+8bQ6HvDK3JCyAa3H5XwZhgsBqyi2+LZ6YFbx7CCgLp7y7ik+goeWx+YNH0OE0
+	 Y84Iuea7wlo7sdzrMRzH/9NOZopwGxxQ6Sfdcx3HS9sGE5kHt4+oAu70GqW/PyaftN
+	 z/yZVMGkRGY/+t7ME6Jzffzb4DhwJ1iCVs5H8U80=
+Date: Mon, 27 Oct 2025 13:44:30 -0700
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: bhelgaas@google.com, alex.williamson@redhat.com,
+ pasha.tatashin@soleen.com, dmatlack@google.com, jgg@ziepe.ca,
+ graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
+ chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com, parav@nvidia.com,
+ saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com,
+ david@redhat.com, jgowans@amazon.com, dwmw2@infradead.org,
+ epetron@amazon.de, junaids@google.com, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Jacob Pan <jacob.pan@linux.microsoft.com>
+Subject: Re: [RFC PATCH 06/21] vfio/pci: Accept live update preservation
+ request for VFIO cdev
+Message-ID: <20251027134430.00007e46@linux.microsoft.com>
+In-Reply-To: <20251018000713.677779-7-vipinsh@google.com>
+References: <20251018000713.677779-1-vipinsh@google.com>
+	<20251018000713.677779-7-vipinsh@google.com>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/332] 5.10.246-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- sr@sladewatkins.com
-References: <20251027183524.611456697@linuxfoundation.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20251027183524.611456697@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/27/25 11:30, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.246 release.
-> There are 332 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.246-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Fri, 17 Oct 2025 17:06:58 -0700
+Vipin Sharma <vipinsh@google.com> wrote:
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+> Return true in can_preserve() callback of live update file handler, if
+> VFIO can preserve the passed VFIO cdev file. Return -EOPNOTSUPP from
+> prepare() callback for now to fail any attempt to preserve VFIO cdev
+> in live update.
+>=20
+> The VFIO cdev opened check ensures that the file is actually used for
+> VFIO cdev and not for VFIO device FD which can be obtained from the
+> VFIO group.
+>=20
+> Returning true from can_preserve() tells Live Update Orchestrator that
+> VFIO can try to preserve the given file during live update. Actual
+> preservation logic will be added in future patches, therefore, for
+> now, prepare call will fail.
+>=20
+> Signed-off-by: Vipin Sharma <vipinsh@google.com>
+> ---
+>  drivers/vfio/pci/vfio_pci_liveupdate.c | 16 +++++++++++++++-
+>  drivers/vfio/vfio_main.c               |  3 ++-
+>  include/linux/vfio.h                   |  2 ++
+>  3 files changed, 19 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/vfio/pci/vfio_pci_liveupdate.c
+> b/drivers/vfio/pci/vfio_pci_liveupdate.c index
+> 088f7698a72c..2ce2c11cb51c 100644 ---
+> a/drivers/vfio/pci/vfio_pci_liveupdate.c +++
+> b/drivers/vfio/pci/vfio_pci_liveupdate.c @@ -8,10 +8,17 @@
+>   */
+> =20
+>  #include <linux/liveupdate.h>
+> +#include <linux/vfio.h>
+>  #include <linux/errno.h>
+> =20
+>  #include "vfio_pci_priv.h"
+> =20
+> +static int vfio_pci_liveupdate_prepare(struct
+> liveupdate_file_handler *handler,
+> +				       struct file *file, u64 *data)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  static int vfio_pci_liveupdate_retrieve(struct
+> liveupdate_file_handler *handler, u64 data, struct file **file)
+>  {
+> @@ -21,10 +28,17 @@ static int vfio_pci_liveupdate_retrieve(struct
+> liveupdate_file_handler *handler, static bool
+> vfio_pci_liveupdate_can_preserve(struct liveupdate_file_handler
+> *handler, struct file *file) {
+> -	return -EOPNOTSUPP;
+> +	struct vfio_device *device =3D vfio_device_from_file(file);
+> +
+> +	if (!device)
+> +		return false;
+> +
+> +	guard(mutex)(&device->dev_set->lock);
+> +	return vfio_device_cdev_opened(device);
+IIUC, vfio_device_cdev_opened(device) will only return true after
+vfio_df_ioctl_bind_iommufd(). Where it does:
+	device->cdev_opened =3D true;
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Does this imply that devices not bound to an iommufd cannot be
+preserved?
+
+If so, I am confused about your cover letter step #15
+> 15. It makes usual bind iommufd and attach page table calls.
+
+Does it mean after restoration, we have to bind iommufd again?
+
+I have a separate question regarding noiommu devices. I=E2=80=99m currently
+working on adding noiommu mode support for VFIO cdev under iommufd.
+=46rom my understanding, these devices should naturally be included in
+your patchset, provided that I ensure the noiommu cdev follows the same
+open/bind process. Is that correct?
+
+>  }
+> =20
+>  static const struct liveupdate_file_ops vfio_pci_luo_fops =3D {
+> +	.prepare =3D vfio_pci_liveupdate_prepare,
+>  	.retrieve =3D vfio_pci_liveupdate_retrieve,
+>  	.can_preserve =3D vfio_pci_liveupdate_can_preserve,
+>  	.owner =3D THIS_MODULE,
+> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+> index 38c8e9350a60..4cb47c1564f4 100644
+> --- a/drivers/vfio/vfio_main.c
+> +++ b/drivers/vfio/vfio_main.c
+> @@ -1386,7 +1386,7 @@ const struct file_operations vfio_device_fops =3D
+> { #endif
+>  };
+> =20
+> -static struct vfio_device *vfio_device_from_file(struct file *file)
+> +struct vfio_device *vfio_device_from_file(struct file *file)
+>  {
+>  	struct vfio_device_file *df =3D file->private_data;
+> =20
+> @@ -1394,6 +1394,7 @@ static struct vfio_device
+> *vfio_device_from_file(struct file *file) return NULL;
+>  	return df->device;
+>  }
+> +EXPORT_SYMBOL_GPL(vfio_device_from_file);
+> =20
+>  /**
+>   * vfio_file_is_valid - True if the file is valid vfio file
+> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+> index eb563f538dee..2443d24aa237 100644
+> --- a/include/linux/vfio.h
+> +++ b/include/linux/vfio.h
+> @@ -385,4 +385,6 @@ int vfio_virqfd_enable(void *opaque, int
+> (*handler)(void *, void *), void vfio_virqfd_disable(struct virqfd
+> **pvirqfd); void vfio_virqfd_flush_thread(struct virqfd **pvirqfd);
+> =20
+> +struct vfio_device *vfio_device_from_file(struct file *file);
+> +
+>  #endif /* VFIO_H */
+
 
