@@ -1,190 +1,193 @@
-Return-Path: <linux-kernel+bounces-870708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DA3C0B831
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:06:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE03C0B837
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07B004E72B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:06:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8599F341A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5839BEAE7;
-	Mon, 27 Oct 2025 00:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392AB8634C;
+	Mon, 27 Oct 2025 00:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fLLij5vd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="DCXpnB2b"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011007.outbound.protection.outlook.com [52.101.125.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B82C46B5;
-	Mon, 27 Oct 2025 00:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761523555; cv=none; b=BLtGVMcdXamHVNvWi6fa23v4yi1Z/K7q7VveY5vyGVRj3gduY9KT5oIWaxnlAiPejjB8+lesraTzQZl8Q1KYW4X0jee0ZBM0CiazGEHk3ZgbRGlUOyGl93IVG2qPmJGE/V9RqG7++Wjug+D0XgEUXw8MYGKVE0cLbvq1bRttb0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761523555; c=relaxed/simple;
-	bh=auHda76l+GnxC4l4AX5IUbUQ0/OD6TFUuSzzllIMoqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/BI+7faxSSa4pq6qBXjIuo0Xt5R9m+9uwqWT6AYpJs4MNNKMhxwXcFDovsfqJF+OkxsX/PNGkxGSP8b3akulTviqYu/jtCpnuQH8HQ8LS4AEumy5N5LcY+PBPLAD13qhloGNR+Bel8BRp/xpatJkPyx0tifUJlAfCjBFHD625k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fLLij5vd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 22ABD1440;
-	Mon, 27 Oct 2025 01:04:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761523444;
-	bh=auHda76l+GnxC4l4AX5IUbUQ0/OD6TFUuSzzllIMoqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLLij5vdwxx78VYqIbIQ13SNB7tBegPvOc5vBzcKSKHeZNO8Ess/4v88akdINieS5
-	 c6XpNEGOBGxaCcazwaQQYVzLt1wT8w99Vs7rtI3rLMk6ImLsXMS9eje7T18tXylEZz
-	 y5o0p/EeKkKbR9JVwvbDY4dSkQMcjFzCYIJvc8+o=
-Date: Mon, 27 Oct 2025 02:05:37 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 1/5] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-Message-ID: <20251027000537.GM13023@pendragon.ideasonboard.com>
-References: <20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com>
- <20251023-csi2_imx8ulp-v7-1-5ecb081ce79b@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F0F4A07;
+	Mon, 27 Oct 2025 00:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761523672; cv=fail; b=UCZIhmvegYLQevWmv13YDIsa7G1W913HWPBlI2xmJk3CmVIqsXi885WV51j8arndEpXmHEN8jGRtgKAOzcZnFm64W/e38dQZbb0X9GYTJp+v+yZn/3ahI7v3nCwZEN7g+s854sVj6WTejPHJiwiywhOCqgr1RRGtzRPmRpBI8S0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761523672; c=relaxed/simple;
+	bh=FikyT5k6XDtO1QbIA27qgeRFuThgvqvL3YWliPG8y3M=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=NN7DDZFpKfm83mcem2Br9akJHnltebk+xEvzJ7XrNBQEgfOKXVUTrSFep0/sEEMxI2xuOFJj90k2gvi+vcxLS2X9/j7l9GZ6P7Je5IvAwpO+x0UJ7R782AeuWReVLBCgJiQD8DRMjGcDu5Jh2K2r1BMfTv/aAEVxkOI1vAeW5Io=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=DCXpnB2b; arc=fail smtp.client-ip=52.101.125.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vbI1w0UKtkLKYtXjpuFUv2wDnBHimfEPG5Ifvcc/YVc4MkCdtzy89wCzXvWrDHaHcnQDOqW8tDNTwROi+lF3usclfps8YU//BJrI+foCcsOtPoIxOTOuDlR0j7RtCvXGV7+ndzQL2WVWCziNiR45EXSH9YbC4g2cRPLIVacAm6ePRA0SNgHdlvkxFb04J7q5J71CdoOcpJvh81Ljmsc6uWmohbAIFkPebDDy6b6pwi+9/po3nCBMgcBjYq1pbEs5ATyquLW4KUrX0B0qhiUx/IkqDOBYjEHTQWStZJgM998oiBiW2umqay9z00f8m0uwOhOUCnhMoTcs13m+wugsNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z/nMCVT/Qjr8NpV+YeFq/Q0BujIi40l9PuyLY1XUNpQ=;
+ b=dfiOWPoxTf93vF4xOC4FGoJtGzdN+5yWLX3xxmgEGZgTybRShaFJAqhiJ5PNMTdxmzMx6wiCVQefFdw5mUEri9APrGy1x+kAApjkriS1e1pwCV7RsPg5PL4SEkRL+ZeRWshC5zohoUon0a7GSgC6ejO7HwWFekJW5DvNpd7xRlKOu7zYRefwlHq7BsD5RNsCAqfLuNiXSbO40685o/2IMmzMIX4o5uUqE8izofLZfoXmBLJfhhilodCtEy0y9KMQRcu/ocBTe43xxGoJb22BUOYGdo/BArzRhUUEYJSirqMS1LPxqMrAEw1+vdJUZVCt7bzjEWfrDN5+pOTo8nruUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z/nMCVT/Qjr8NpV+YeFq/Q0BujIi40l9PuyLY1XUNpQ=;
+ b=DCXpnB2bSu7QD7HQoygzzUCs0RXnFrimM+KBE7J8NPNX0tVLtWdADFrkFNsIeVLpWWS3lSIGhzUyMYvA2kcwT0g99ls7dRm1rOdK7hE/kpbOg+Xfkr76oakNE+P29V0T6NkKgENar4wRMk2xj9zAc5PAjxPl2EvTaq2XB37KV7c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by OS9PR01MB16060.jpnprd01.prod.outlook.com
+ (2603:1096:604:3dc::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Mon, 27 Oct
+ 2025 00:07:46 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%3]) with mapi id 15.20.9275.011; Mon, 27 Oct 2025
+ 00:07:46 +0000
+Message-ID: <87qzupgqb2.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ASoC: renesas: fsi: Constify struct fsi_stream_handler
+In-Reply-To: <88ca34df9006b74a7596b91714e700bcff666c4b.1761507792.git.christophe.jaillet@wanadoo.fr>
+References: <88ca34df9006b74a7596b91714e700bcff666c4b.1761507792.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 27 Oct 2025 00:07:46 +0000
+X-ClientProxiedBy: TYCP286CA0029.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::19) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251023-csi2_imx8ulp-v7-1-5ecb081ce79b@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS9PR01MB16060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7472b743-9ef7-41fb-c7e6-08de14ecdb9a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Sj+ydzgXMUm1EimvQs5WnYSBSSgPfbgfb4u7xwvHoqNbPjw/yrixNsejERJr?=
+ =?us-ascii?Q?70Mu5kKSUmC51LMIhefXRnJA0OXXE/VXMknrfUIAulBFGfkoOIjWHluS+2L8?=
+ =?us-ascii?Q?ceqMT09bPqHGJSD7XQfYqQOldsmWguu+gSe7Xw0qWR/zKCrZzqP1giC84N/b?=
+ =?us-ascii?Q?oME4gdTDPwQqIjRdtjw4g0vQT8CESMtAhl8LZ5e6dPcPSZUnc5zuWHD0JOMU?=
+ =?us-ascii?Q?iRskIRwSud3O7bv1y4DIOx2hiCzju9KYiEGbwFfZ3bKHqt42PGXvlXpfnivw?=
+ =?us-ascii?Q?Db/Px5dMXqr9l9CO+Gnktq+j7/qZogEBXOL8BpmvRq06u00HmYDU4LodWspM?=
+ =?us-ascii?Q?nhLkeQGBR1V6yqkb7gOm46ZsaUp5KSu3rniRWc0LgtQiMN3+IeXnTUR5Yrda?=
+ =?us-ascii?Q?Az276Yq+WBlUkT6DdixLzxaa2nj/klWB/x8ATy/dOW+GapTDWoo5OBoRDd40?=
+ =?us-ascii?Q?tJih1Tt3HP/9JdPW0kfr26/CF1TwMZ4YUBvTBkHQUrimE2BcD+dZ7Op2j5yQ?=
+ =?us-ascii?Q?qsytzFHulgRi8C6x+9ki3QQqc3tM32p/vmNF3JMA1QofCyUJwNooZFy0JzB8?=
+ =?us-ascii?Q?8fjYIZlEQexYGh86mAKRoKrBdF5Klnva2eKVk/P2Efgnfe0cgbt5x7z7NFHv?=
+ =?us-ascii?Q?eUHFUrWkXwE1/4KRFNmf48h6/3VIYHnV8ACwCPelJKsPxBWkL/oSQh5F85R4?=
+ =?us-ascii?Q?Tg71Tvylty0uid3SN/0Wve4XM3HBjb3oJ0cl9SlzTc5VkOzFIxaHY1ooD+on?=
+ =?us-ascii?Q?kQlwQNrU+K5m333OUqgvyPokOWWlCdbLhIJdylqUehb4PZNQUUxQT0ZxZFD4?=
+ =?us-ascii?Q?iedca+O16S/sgMvHu1vGYfuZL7najfOlmbRB2fc928sVShGOkSPQR44fAjr9?=
+ =?us-ascii?Q?V6FVN/20EDh7KSls1HwSb7obQTj7m6IGBYwAVNJLz2tnGuw20D5k0h7wugWw?=
+ =?us-ascii?Q?d0POHG3P65BdF3Yt+RmkJ8pLNCxCcr6JgsLwB9k0WjPPGucMjvaZOlhfSpua?=
+ =?us-ascii?Q?pSP3l0KrsbxOX4a3DwwUn3SQMTQuhTl1oxl3xYg9UVQLVX+fO0IcaR6XIlzZ?=
+ =?us-ascii?Q?ONtQ7GzJshnisndn8uah9NG+nQnKnH23SwuASQ433f5TekoVi1rqGlkT4mJq?=
+ =?us-ascii?Q?MIdmRtiw1q7Yx7wnZwHgwwd5VloVe2ZluKHZX7a4S/8BVtpjE2hqqAICTnwW?=
+ =?us-ascii?Q?I1QJMWaKzPzDAZDdLRnI0q9qMUHNJTX3OboH3I6TPIgwdEFU9VkP9XF0y7Uq?=
+ =?us-ascii?Q?CefOiZYEmsHyKlHZ9VwYasSpBl6Uod7TI9mdwLjET4Bsyu2huK8V6h1El1PP?=
+ =?us-ascii?Q?mkOurI2e/zvJWYpkqDjtwC/VNFEUI+Nt0G3Fjhkby7uwyaktxgfUWsP3Nn+4?=
+ =?us-ascii?Q?sUoOysUvEehFUtSJN/IbwDWWkzAEpVYuRq3DCLBcqK02/pecb6WiFPNphQJ0?=
+ =?us-ascii?Q?scY5mCjQUMCSoWYsKDiW+ft+w0JNcXxekkKMzZfRh5bpm8uuOX21Ap/fw7rf?=
+ =?us-ascii?Q?bjTMbNvFJBPUGEqWlbf9e0eafRgFvdeJvRwB?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AOHZEmbdT958ZIFwAcuLwZD9H0Dn5f+fjNSjskEBtbwJUdITFrA0z5nOLjUl?=
+ =?us-ascii?Q?F0+cMSyBkcSb72aPGg/hQIxLo/KJjl4+pX2nyPN7Mj7ft6LPwJ+mj/e3mMek?=
+ =?us-ascii?Q?nZ2Hux44CLqBXL3MrHilx3sMiX4OiiBuLHZKhx7586199efaXIX6XXZgL5mB?=
+ =?us-ascii?Q?T6A45+iPG0ENKjx8zc6E1Gm0XJWjbKdMlBEP8Z2vmlbu6DwTmKpxskgYKajw?=
+ =?us-ascii?Q?ClgCWX2sYH2BPdD3sVmjGmcxzd1LGmzPlWWuCbADpvzbp/xZzXCcC3WlU5XQ?=
+ =?us-ascii?Q?MOqVP8NL23YiECNggAbWUzFYdOkuzDWAX9f5ZqoMSconzmlLLXK1gH4dEnkt?=
+ =?us-ascii?Q?gM40qx0pJ2gOEEIciJdj3j2QWieOfRzRjTRhcRThw/8SWigpfOHff8F4HJcX?=
+ =?us-ascii?Q?y/kvkI8eW9p7713mz3UVcY+/mVCHpA9Bajrg9kWbGfO06IVlFI+SqAFB/CjW?=
+ =?us-ascii?Q?pFrQUd5If7qgZqtksGgW+UiOQN81tUZLvxkGCTNllaV9tBYOR37nj/GYcGoE?=
+ =?us-ascii?Q?pCzQDWI7Z8vKzi3v+S3lbkeawgcTDt/fvfkU1yHJe5pXwNJu238hvBGfSFGX?=
+ =?us-ascii?Q?WC+uzeLxcNbI0rlnob1S6iZWwFZcKZ9OpJZF4eoYfMFqenmualzV+hudURau?=
+ =?us-ascii?Q?scjg4fblMdTffql5E7NwgDyuLKDUqwzkoOjoY3g3MHE/UYGwAKXbBQy7DcvG?=
+ =?us-ascii?Q?KnhDD2CNmV7czpdTS3uYFMPnIeX1iojLZH1zOnIM+TkY5ytNzmyLFk3msgm3?=
+ =?us-ascii?Q?/sF1oTDnJi8WgudusNn3r+qakLpeCTxKtqiZwUnUASk/SBxKmLwIxm4ie/Y6?=
+ =?us-ascii?Q?aZMm3fFEBbPefI7RxevnjWThewcP5W+aO/y/2hJ7BbMnU2WN/7swSLwo90id?=
+ =?us-ascii?Q?EeKhY2kUcODtYyZiZVAPJSyjBcX2QpgE25DDDBxtYkHShTS7I7j1f8jBpMbf?=
+ =?us-ascii?Q?C25IRvItw8ktruzlvyoY/DojATNNZmMHxJcV/5XQc09QzYkumJOFdN5PUDzq?=
+ =?us-ascii?Q?19er8FJ7cM10zRLBwhIBsH2lkBi4ZKO578opeXOdye9gf6kBgTzgGk5hRhsz?=
+ =?us-ascii?Q?Ybilps/qReInWL72Gy/jYmzx2RHE8bbwSOxd4iS3zgKd2ZzHX3ulp8ipQ6Wz?=
+ =?us-ascii?Q?9aKmos2I5ybEXpPh+tCrYxu30FTX/wemP1cdWnQFMzuieUvlTQ7LLdIuYR/j?=
+ =?us-ascii?Q?jVgUb8eGPTs5U8XT+uqOPwWsbpH1npU4x0DtUsXiLzL1avOMnLLdJETLu39v?=
+ =?us-ascii?Q?OrjEBuxIqQx2xBsPrU4YYMzu9C5OR+G4Bxpn+vlxMpSNLLq1wKPhzahwR9qh?=
+ =?us-ascii?Q?5+F5Xruze7DDEQ0ckLrB+VC3LwOit3T0Ox1swFkJgb7+1KiHeZPt7CTPXWlA?=
+ =?us-ascii?Q?Pgrs4EjsJ1yhbKmH93iVatpzOfPOKSEOAZBga6d32KA6SoN8dvPCXi25HEu6?=
+ =?us-ascii?Q?o2BXYTzgYEhjWxBj8sm3beNZHV5Tb9YxLtwuq0nBXbkx0SbCk5ppo5tJdXjv?=
+ =?us-ascii?Q?Bufcb95UqaTl13ZlG88tP4dWS04TyFjBe8nk8gRrHnWBgqn531rLN0xFf0VC?=
+ =?us-ascii?Q?bcwvrRHbAbs+7Pgw9wRk/7PuvTtDvmvNTlhEiD2XE7fpJltC22icS0JOHVKn?=
+ =?us-ascii?Q?PBWxvHeLfLJnlXglSoepFeU=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7472b743-9ef7-41fb-c7e6-08de14ecdb9a
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 00:07:46.4179
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8m0z/SQWON6gAe1r4AZUDKPMllYhGNwFiHjn4+AFXFHz1rfX9IKCF72cDfXM8SB/KU47Sx49b/Db6KBOhXoL4srPzcV7zVTQtAZ6nTZz6RmK+xFRnbvygE+G5PPopFUP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB16060
 
-Hi Guoniu,
 
-On Thu, Oct 23, 2025 at 05:19:42PM +0800, Guoniu Zhou wrote:
-> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+Hi
+
+> 'struct fsi_stream_handler' is not modified in this driver.
 > 
-> The CSI-2 receiver in the i.MX8ULP is almost identical to the version
-> present in the i.MX8QXP/QM, but i.MX8ULP CSI-2 controller needs pclk
-> clock as the input clock for its APB interface of Control and Status
-> register(CSR). So add compatible string fsl,imx8ulp-mipi-csi2 and
-> increase maxItems of Clocks (clock-names) to 4 from 3.  And keep the
-> same restriction for existing compatible.
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
 > 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   51837	  12312	     64	  64213	   fad5	sound/soc/renesas/fsi.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   52125	  12024	     64	  64213	   fad5	sound/soc/renesas/fsi.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       | 41 ++++++++++++++++++++--
->  1 file changed, 39 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> index 3389bab266a9adbda313c8ad795b998641df12f3..da3978da1cab75292ada3f24837443f7f4ab6418 100644
-> --- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> +++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> @@ -20,6 +20,7 @@ properties:
->        - enum:
->            - fsl,imx8mq-mipi-csi2
->            - fsl,imx8qxp-mipi-csi2
-> +          - fsl,imx8ulp-mipi-csi2
->        - items:
->            - const: fsl,imx8qm-mipi-csi2
->            - const: fsl,imx8qxp-mipi-csi2
-> @@ -39,12 +40,16 @@ properties:
->                       clock that the RX DPHY receives.
->        - description: ui is the pixel clock (phy_ref up to 333Mhz).
->                       See the reference manual for details.
-> +      - description: pclk is clock for csr APB interface.
-> +    minItems: 3
->  
->    clock-names:
->      items:
->        - const: core
->        - const: esc
->        - const: ui
-> +      - const: pclk
-> +    minItems: 3
->  
->    power-domains:
->      maxItems: 1
-> @@ -130,19 +135,51 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> -              - fsl,imx8qxp-mipi-csi2
-> +              - fsl,imx8ulp-mipi-csi2
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +        resets:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clocks:
-> +          minItems: 4
-> +        clock-names:
-> +          minItems: 4
 
-Do we need the clock-names constraint ? The DT schemas will enforce that
-clocks and clock-names always have the same number of elements.
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,imx8qxp-mipi-csi2
->      then:
->        properties:
->          reg:
->            minItems: 2
->          resets:
->            maxItems: 1
-> -    else:
-> +        clocks:
-> +          maxItems: 3
-> +        clock-names:
-> +          maxItems: 3
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8mq-mipi-csi2
-> +    then:
->        properties:
->          reg:
->            maxItems: 1
->          resets:
->            minItems: 3
-> +        clocks:
-> +          maxItems: 3
-> +        clock-names:
-> +          maxItems: 3
->        required:
->          - fsl,mipi-phy-gpr
->  
+Thank you for your help !!
 
-Could you please sort those conditional blocks by alphabetical order of
-the compatible strings ?
-
--- 
-Regards,
-
-Laurent Pinchart
+Best regards
+---
+Kuninori Morimoto
 
