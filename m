@@ -1,245 +1,123 @@
-Return-Path: <linux-kernel+bounces-871187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C82C0C962
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:15:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95068C0C8EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D1614F7EDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:09:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9E0734BEAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3493D2E7BC3;
-	Mon, 27 Oct 2025 09:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD21E2F3C12;
+	Mon, 27 Oct 2025 09:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PRwHfYS1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O4EipB+W"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26D12E92B7
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31B02F39B5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556087; cv=none; b=dRcS/NN/k8DIFQZpaRLHp4PefZWvtZNoFnoyCTYbsOGOj6ASMWXBJaqYj/d8Mgj1HDHdkwpg9T9cyaOzscSkY5c1Wwj8f3NJ/TKVPXd8C5/KWSd+gz93emB4TMppizyuDmfan5YSk5+MQ8ffxGrVQ92e8GOZzYBNYPX7zTIJQzg=
+	t=1761556118; cv=none; b=cNrNQBjSyntZTFWjwmh0l5lu/90804iMcQyF8I9ykC9Kgo4WE0kbCC73fPBYnDtNnWi0c0xGDo9FZCyfFluxqbAOJ8kwBN4JmbI+vkwIHWya6q4fRsRXjPnPXGLp5+M66VrxyxS2F4J7GBnBpSVfeRqEd0+uz45Z3EPYM3Gx0k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556087; c=relaxed/simple;
-	bh=xaZy/gj16Beuz4L45VtLG5e24gzCwOGdymyIAcSww2s=;
+	s=arc-20240116; t=1761556118; c=relaxed/simple;
+	bh=KMLUCx37oodkWW/ecGieGDWDnscNn3RkvSQo3ZEJYSk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O9HTlEXByyg82AyDYC0xTPPL6sjY0Dt4oPT+JWqCwfo2VC6Fdr42sW0ryBbOA1WnS5CcRcek8wcxb4JenRX/MnK4uDNMhoWARXGGyf1khzhpzZFdiCcCBBoDmg4KJTPRHAANx1gw4i6QPK+WIlAb3C+734Qa18asStdinS5rqD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PRwHfYS1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R7JunI2059252
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	e4Y1a+e599JZIO5suSb7imEw71m3XxSWFRXejVg4+6g=; b=PRwHfYS1w/Zq8YeX
-	gEa1IpV5vr6wl6YUP/oGTkEcIyc8SzCGmSqTtbkSdWaWryzUNHUH1xRAsh89ae+w
-	G/QHdrV55D+8fJhFJBnVKVtmjlZyG5+AyThG0JIfn49tpk6XAZu5k5l2S3XQhIe1
-	p59f7mRPN23wA1g+4VG1zHm+F47cqxUB1MwKJu+xMeVjE3UUSCF/zFXgMqJ3VMj2
-	zUUd+bRgnOBh/Q7OGkWai3SjerNQQ7mM7mtm4s3lz107nvpx+t9QUnTZszunlEPf
-	OHoGcOkF6zVnbniu/nrFjWfjG8xcBwyYVoObFidmH9KnjQyBLBY3UJN7JFpJil2/
-	GLs7Kw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a248p89jq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:04 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso2799378a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:08:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556084; x=1762160884;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4Y1a+e599JZIO5suSb7imEw71m3XxSWFRXejVg4+6g=;
-        b=FRWwa5/kpMscjAPdls9fdc6KCYWYVvzhBaZfUEHqa0tOWudZ99sqeF+3eFOcxMIa8p
-         UYBYOU8lCnluArw5yCkwVFkfC1u8yJ0lMCw6NBpWoppEE15l3YkHI95xd+wCF29XIWUE
-         E3i9boXPUv6/o/y8V1os4jGbcSR17/uINkCU/06MZ6gxq+d8MQqUa4qIPibZCOqSblCV
-         2OST6eQnuZ4VnDIrt1EgXzuD/DHctFFwkDdEzD4cpNvL03A9BalWHrubOAk2SeNvoaLT
-         fTgAwPbLlIMg0xYkfCpDEZe7fX3pcvAmxyMMnN9NQ54RS34EdPv+S/yGbyg+SgYQJoPJ
-         VaZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXad1WkFgFVp8POeg5nOO8s2rU/quRp9pD+N+MqaBlxNxjX1R+Beb7GYoZaJ2/89W15p5/Azp3x+47NNNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaR7PdET+jbt5VuWutshOg9WTmRNWKKCHo/DHveAzVwDNUTnNk
-	5yG+rh4QJj2XaFVqqGZCJw+BM3QriwcNIZIZZVg+uA+3nwU335YZmmO1oIa40FpbtHrL18/agQL
-	4KqljF0HUt0c++hqujlL7Wi5e0/6RkwHYty0tiZ6KmBUwm007qYerpGspmbk3l2V939U=
-X-Gm-Gg: ASbGncvyFj3auSLjDww8nhL1LJI+9ru9hjKiKjKwdUFDMf+Li1EX5snMh6k45q2ebg8
-	IRCgI3aeqqHR9H1V3bfFS22V7NDjcNMCPZfO1GnewcPUQp38cMJ2CnOygJw9fOMj3QcTurAn+Xz
-	0oM5A9mxG5sLQJ+5Qiukz17QafuAlF+rG+gjBo4W2ii9bNvlA0iEUrNCedlfN45jjrEYQouviYQ
-	Pt2RO2FWdA7xBhLIYTIhNSy8fIWsjhOBcFy5xHnPnL2iOn98w4YFrZszQ/ksrxDT2Qn5HsgxdB4
-	wbgtznXGq9w7FOaMxUd7nbte7mzZjoFpu1TnoKjQeXPn4Uahl8sUgH0lx5PcplzRnrZBEg/0ub0
-	OdfW8q9K05y2nsrnzB5aUT1GpwkE6IIE=
-X-Received: by 2002:a17:90b:3f8d:b0:32e:6fae:ba52 with SMTP id 98e67ed59e1d1-33bcf861b1amr45274324a91.6.1761556084097;
-        Mon, 27 Oct 2025 02:08:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0/79wQGGq3i/2KRwCbvC13rn0zdVoPUj1sxcPuVD15ZoSzM0WOdn3jI17amdl/sfebNMkjQ==
-X-Received: by 2002:a17:90b:3f8d:b0:32e:6fae:ba52 with SMTP id 98e67ed59e1d1-33bcf861b1amr45274288a91.6.1761556083591;
-        Mon, 27 Oct 2025 02:08:03 -0700 (PDT)
-Received: from [10.0.0.3] ([106.222.229.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed70a83csm7668596a91.4.2025.10.27.02.08.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 02:08:03 -0700 (PDT)
-Message-ID: <36543c8c-5a69-56ed-7d96-a3f5d7396b89@oss.qualcomm.com>
-Date: Mon, 27 Oct 2025 14:37:59 +0530
+	 In-Reply-To:Content-Type; b=kX2AV9jcfmgfXsaKdHEDohzMDX2DKm9wAPeHHdM68rR3MpqqrTdZb+d25sXLwXke+kquxRKkk+XiXjFL5iEfB2IsFKuHKA4egGSZCJg4xpPqzhGDQeqNTvkQT60iYpb/ylAv5aLWDJzlHTbZWcca/HSZJPMldEmjhLWluOJKAg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O4EipB+W; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761556115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BTIAdX/dwL5w1YKSS37dOxKFZ3s8yXzfHwYPH8iK7Nk=;
+	b=O4EipB+WkCYO2p6RFvr2JH5SvCAPxXgiNqa2uvsRz77cTLGgs6LqX7xpYUMwSsVFNCfjRR
+	JLXuReu0Q7+3fi3iGxi1XlFSRL3cuelvFIgUu0oJ3QrunIO3USMQRg6wx92cgRk5U0JfFt
+	KTFp71KQDlpGhIQOb5GZcPbjZAkHZns=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-JhhY5nsMP_-U--IKn9Wj1w-1; Mon,
+ 27 Oct 2025 05:08:29 -0400
+X-MC-Unique: JhhY5nsMP_-U--IKn9Wj1w-1
+X-Mimecast-MFC-AGG-ID: JhhY5nsMP_-U--IKn9Wj1w_1761556108
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 308BF180035A;
+	Mon, 27 Oct 2025 09:08:28 +0000 (UTC)
+Received: from [10.45.225.43] (unknown [10.45.225.43])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 94A9D19560AD;
+	Mon, 27 Oct 2025 09:08:24 +0000 (UTC)
+Message-ID: <b479b307-b590-467f-83df-837259a64b6c@redhat.com>
+Date: Mon, 27 Oct 2025 10:08:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 5/5] media: iris: Add internal buffer calculation for
- AV1 decoder
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] tools: ynl: fix string attribute length to include
+ null terminator
+To: Petr Oros <poros@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>,
+ "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: mschmidt@redhat.com
+References: <20251024132438.351290-1-poros@redhat.com>
 Content-Language: en-US
-To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20251017-av1_irisdecoder-v2-0-964a5478139e@oss.qualcomm.com>
- <20251017-av1_irisdecoder-v2-5-964a5478139e@oss.qualcomm.com>
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-In-Reply-To: <20251017-av1_irisdecoder-v2-5-964a5478139e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20251024132438.351290-1-poros@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Zvzg6t7G c=1 sm=1 tr=0 ts=68ff3674 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=EzenAR4kRIeeF1N0nxAA:9 a=QEXdDO2ut3YA:10
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA4NCBTYWx0ZWRfXzBdMKi/BdIDX
- 4U+b44LH43gFuzV4NEYdbpMh7oa8S5HrIbp+CElO5ocKpmafZ4LxbS7NEtLf1Ix7ul4nPAngSwT
- PAr3MDPZQR0GGWqzyQ9RMIOEaWhPxRRecic0RWMxhFuevD6qFCyBfmoQ++T64SmtaGhH4XT6LSI
- vYrtaOwFZyA5uQu652jOhptxFgDwNaz+EmYLXdny2ol3E2KZ8A/MAofWW0WhFr6edr/Bv8OpB0J
- ydr5A3dM4wVvLyEnUktMswZGaaS+2tl3OCnIMZ6QZBw/7pkhp9DLx2ebtKFdFC1xOxbPiHREZvK
- MSyrPuYL/KAb+yoRv4Nh3/8qU/pfiKsIQOdeJ3GNfU3C5nT5IWZDS6OEwCuIX0jF8i1GJOvljIU
- p+s0xWxKaI4SPsizDopjiVzmdzef0Q==
-X-Proofpoint-ORIG-GUID: UqBzsTQwrZJT-l66NbZ0F-VC5zr1bmy_
-X-Proofpoint-GUID: UqBzsTQwrZJT-l66NbZ0F-VC5zr1bmy_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270084
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
 
 
-On 10/18/2025 12:05 AM, Deepa Guthyappa Madivalara wrote:
-> Implement internal buffer count and size calculations for AV1 decoder
-> for all the buffer types required by the AV1 decoder, including BIN,
-> COMV, PERSIST, LINE, and PARTIAL.
+On 10/24/25 3:24 PM, Petr Oros wrote:
+> The ynl_attr_put_str() function was not including the null terminator
+> in the attribute length calculation. This caused kernel to reject
+> CTRL_CMD_GETFAMILY requests with EINVAL:
+> "Attribute failed policy validation".
 > 
-> This ensures the hardware decoder has properly allocated memory for AV1
-> decoding operations, enabling correct AV1 video playback.
+> For a 4-character family name like "dpll":
+> - Sent: nla_len=8 (4 byte header + 4 byte string without null)
+> - Expected: nla_len=9 (4 byte header + 5 byte string with null)
 > 
-> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_buffer.h     |   1 +
->  drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 298 ++++++++++++++++++++-
->  drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 116 ++++++++
->  3 files changed, 411 insertions(+), 4 deletions(-)
+> The bug was introduced in commit 15d2540e0d62 ("tools: ynl: check for
+> overflow of constructed messages") when refactoring from stpcpy() to
+> strlen(). The original code correctly included the null terminator:
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/media/platform/qcom/iris/iris_buffer.h
-> index 5ef365d9236c7cbdee24a4614789b3191881968b..75bb767761824c4c02e0df9b765896cc093be333 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.h
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
-> @@ -27,6 +27,7 @@ struct iris_inst;
->   * @BUF_SCRATCH_1: buffer to store decoding/encoding context data for HW
->   * @BUF_SCRATCH_2: buffer to store encoding context data for HW
->   * @BUF_VPSS: buffer to store VPSS context data for HW
-> + * @BUF_PARTIAL: buffer for AV1 IBC data
->   * @BUF_TYPE_MAX: max buffer types
->   */
->  enum iris_buffer_type {
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..e03ae7cfc9551dd2450b27d5d19ef1d23bba4c99 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> @@ -9,6 +9,17 @@
->  #include "iris_hfi_gen2_defines.h"
->  
+>    end = stpcpy(ynl_attr_data(attr), str);
+>    attr->nla_len = NLA_HDRLEN + NLA_ALIGN(end -
+>                                  (char *)ynl_attr_data(attr));
+> 
+> Since stpcpy() returns a pointer past the null terminator, the length
+> included it. The refactored version using strlen() omitted the +1.
+> 
+> The fix also removes NLA_ALIGN() from nla_len calculation, since
+> nla_len should contain actual attribute length, not aligned length.
+> Alignment is only for calculating next attribute position. This makes
+> the code consistent with ynl_attr_put().
+> 
+> CTRL_ATTR_FAMILY_NAME uses NLA_NUL_STRING policy which requires
+> null terminator. Kernel validates with memchr() and rejects if not
+> found.
+> 
+> Fixes: 15d2540e0d62 ("tools: ynl: check for overflow of constructed messages")
+> Signed-off-by: Petr Oros <poros@redhat.com>
 
-<snip>
+Reviewed-by: Ivan Vecera <ivecera@redhat.com>
 
->  static u32 iris_vpu_dec_bin_size(struct iris_inst *inst)
->  {
->  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-> @@ -472,6 +718,8 @@ static u32 iris_vpu_dec_bin_size(struct iris_inst *inst)
->  		return hfi_buffer_bin_h265d(width, height, num_vpp_pipes);
->  	else if (inst->codec == V4L2_PIX_FMT_VP9)
->  		return hfi_buffer_bin_vp9d(width, height, num_vpp_pipes);
-> +	else if (inst->codec == V4L2_PIX_FMT_AV1)
-> +		return hfi_buffer_bin_av1d(width, height, num_vpp_pipes);
->  
->  	return 0;
->  }
-> @@ -487,18 +735,33 @@ static u32 iris_vpu_dec_comv_size(struct iris_inst *inst)
->  		return hfi_buffer_comv_h264d(width, height, num_comv);
->  	else if (inst->codec == V4L2_PIX_FMT_HEVC)
->  		return hfi_buffer_comv_h265d(width, height, num_comv);
-> -
-> +	else if (inst->codec == V4L2_PIX_FMT_AV1) {
-> +		if (inst->fw_caps[DRAP].value)
-> +			return 0;
-> +		else
-> +			return hfi_buffer_comv_av1d(width, height, num_comv);
-> +	}
-
-newline is required before return.
-
->  	return 0;
->  }
->  
-
-<snip>
-
-> +static u32 iris_vpu_dec_partial_size(struct iris_inst *inst)
-> +{
-> +	struct v4l2_format *f = inst->fmt_src;
-> +	u32 height = f->fmt.pix_mp.height;
-> +	u32 width = f->fmt.pix_mp.width;
-> +
-> +	return hfi_buffer_ibc_av1d(width, height);
-> +}
-> +
->  static inline
->  u32 hfi_buffer_comv_enc(u32 frame_width, u32 frame_height, u32 lcu_size,
->  			u32 num_recon, u32 standard)
-> @@ -1414,7 +1688,9 @@ static int output_min_count(struct iris_inst *inst)
->  
->  	/* fw_min_count > 0 indicates reconfig event has already arrived */
->  	if (inst->fw_min_count) {
-> -		if (iris_split_mode_enabled(inst) && inst->codec == V4L2_PIX_FMT_VP9)
-> +		if (iris_split_mode_enabled(inst) &&
-> +		    (inst->codec == V4L2_PIX_FMT_VP9 ||
-> +		     inst->codec == V4L2_PIX_FMT_VP9))
-
-This change doesn't make any sense, do you mean V4L2_PIX_FMT_AV1?
-
->  			return min_t(u32, 4, inst->fw_min_count);
->  		else
->  			return inst->fw_min_count;
-> @@ -1422,6 +1698,8 @@ static int output_min_count(struct iris_inst *inst)
->  
->  	if (inst->codec == V4L2_PIX_FMT_VP9)
->  		output_min_count = 9;
-> +	else if (inst->codec == V4L2_PIX_FMT_AV1)
-> +		output_min_count = 11;
->  
->  	return output_min_count;
->  }
-> @@ -1444,6 +1722,7 @@ u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
->  		{BUF_PERSIST,     iris_vpu_dec_persist_size         },
->  		{BUF_DPB,         iris_vpu_dec_dpb_size             },
->  		{BUF_SCRATCH_1,   iris_vpu_dec_scratch1_size        },
-> +		{BUF_PARTIAL,     iris_vpu_dec_partial_size         },
->  	};
->  
 
