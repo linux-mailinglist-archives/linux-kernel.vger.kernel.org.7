@@ -1,149 +1,162 @@
-Return-Path: <linux-kernel+bounces-870915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCBEC0BF91
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:41:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0A4C0BFA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF43188F172
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:41:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB02C4EFCC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C963F2D5A01;
-	Mon, 27 Oct 2025 06:40:52 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7242D6614;
+	Mon, 27 Oct 2025 06:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b="ad57ETgB"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59654220694;
-	Mon, 27 Oct 2025 06:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE6323B632
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761547252; cv=none; b=aJPp8mcxiOWnmGvqm4d3RWH3GvPl6Z+2EOcG1jDColaFY9e3dIC+38MwskZ44TaNyYoKLFLboIDR1hr7dhgjW1/iBYZMehHjklP6sappzfRkSEKJiM0S418bKPEd5izY9w1IekzPOjvWEzdGJaMyp8cBXbAcDD7S0gszKwvAdiY=
+	t=1761547293; cv=none; b=Ir4gqjkX3gkzWQejtHFcm0hizfSkGMlebKjkDTHSfnnksC3aQxRUwYM2uiXu+neXpusy+XUSx9VRz/J54f70oTwbBm5menpD5jEcxi0uJKm2kvu8Y3oM3FiJN853tIszi32SvCM7OlzBiluzg1AZfuqOfOsx1ENIT4mxN8tjUvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761547252; c=relaxed/simple;
-	bh=1cPgG+9C6oCZXG+WREjZDOcDEmwQbfny6TBzvDyPlRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thghfVGbA7xOZZ86eTFYqXz3Vr2GVL60A0aOPUNB2JKSxskw1rzTECM6W40j5q12d7g3qKwCYxBsneTQsJ4bxxhTnQX/NEeKlxcAmYQOv8IDkbq+UdMJzARUy60UuuAsTOKF6nhfDh/yjhqZPmDv+8W7jubdaNJixr13NQw44mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 138682C051FB;
-	Mon, 27 Oct 2025 07:40:47 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id BABE74B2A; Mon, 27 Oct 2025 07:40:46 +0100 (CET)
-Date: Mon, 27 Oct 2025 07:40:46 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Crystal Wood <crwood@redhat.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
-	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver OHalloran <oohall@gmail.com>
-Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
- handler
-Message-ID: <aP8T7rahGYzJqnP5@wunner.de>
-References: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
- <87348g95yd.ffs@tglx>
- <aM_5uXlknW286cfg@wunner.de>
- <1b3684b424af051b5cb1fbce9ab65fc5cdf2b1a1.camel@redhat.com>
- <20251024133332.wSQOgUZb@linutronix.de>
- <de1ec7fcc1711e3062cc321ab55552339630de30.camel@redhat.com>
+	s=arc-20240116; t=1761547293; c=relaxed/simple;
+	bh=NPMQeSnux1WgQoNx4rxVtVlmNiImFDKpyKy8ElUhOgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G7D8agkVjYbO6RrudLfd16clhzxwssY81RhQaMMLk6HWkPh+Jv7U4wt/mWjzDJN0Nrj/Zdaf5gE9lxMkvJlRQC8ixLLqPA9IQCPWTWgN2pHsJBWQA9odB4xqw9iNKB0Sk3YjwG+UnMllGZibLuLen3+ciN0ceDQVqnxQ0JQMD68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net; spf=none smtp.mailfrom=dpplabs.com; dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b=ad57ETgB; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dpplabs.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33d7589774fso4168728a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:41:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=reznichenko.net; s=google; t=1761547291; x=1762152091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BNYKZ3q1Auj7hMkOKDK6a1DLo0lCG1SQUrXtOHXGU90=;
+        b=ad57ETgBYBam3lMPV2kfwPCdckEBTejF9rB1d800BMCNlzO6inDfKMLuLA+eze7v5Q
+         NJko8MP6zTZ865XM4J7h5F5bg3JLln8mx2/Sduau2Fqcv5aiG4bAXfYrTpca3+p3u0CO
+         HjdCoYohJykQsJ2LVrT6spYk39HApfj4+CWn/O0uOeL+FRl2FJ8jWBI8i5CZ/cdgd+uS
+         MTF38HsZFslgBfMDEeHP4ThrPqL0zgZC1z3WBwOsuM97VzuJPGmQ0bTT+OJRHZ1XGPo8
+         l7yeVBgQTUV72V71MeKesPnB9EItaxHEdmsKnL4AyQo9JADbLQrealTy/Abln87M6SJg
+         MNdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761547291; x=1762152091;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BNYKZ3q1Auj7hMkOKDK6a1DLo0lCG1SQUrXtOHXGU90=;
+        b=p77jw/zODCSOKaRchDVUWgR6ijUsivOKpqfvjOdt1M84PQxl91vi606rHC0gTSRqfr
+         rbWD+0krv2698NfJTq8Byda53pNA6Xwr//CmYFJ41sl2zo6xaBgJtg6+IXWROoa3gRSx
+         kYbgIXmWVn9mwu6AiRRn3Y/YT1XF98vPxU+C5L9Fs5XyLkjVOTv5XyFPaPQBnrNhTE47
+         Vi6k638Q1HZQc7wund9StovN1m4zE13vkevLWNjM/eFiH8Qk9TSVsTZwiwSSFMfz8Fhs
+         lqetNECtbNFwRsL5qq+B92AHXb4gZm/pEHC/346xKvA6L0jzsYw4k5QScWDgt9vFwBf9
+         pM8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnh5qSHBgNGYHaDCezx18AiY3fFEd9NbClqM8P6xTH9sDtmzIre4UOl+PdcbXRsjHXLScqKirUOOOKHso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJn0nCviLYtg+bytd37Ql+eCeyLXRaEkwWX4yO1UBNBTRMCfIA
+	DEmvT8S0e8CfiP7ac/J/a+cbvgv8AdRtjHKVPXkFuEOfVs95mtjOeYbWhTXgSEQU8Xw=
+X-Gm-Gg: ASbGncs8Po0c5uZ9UDaZ1+rblenN17D9RyG9ilagLc2hVfm1pMILA+h4I1f762ajwgq
+	hjO0f7PqoKQMQTGDYqZPwXYH9Omnd6MJYo5/dTCIZa2Re5cPdQHrI22W8re3uO3k+wKJ6581bEM
+	3wJvoTyRSN2MicsGhoht/dXcGksjPB3LaJAve4X+VfyZkE56SCpXHM7736j6mBRemcIfzgKavhn
+	RhRcx8ThcG7VXXjzNyy7GbTneHs/e30emgn1gL8bNjBHHHTzIAqi4o70NU9F7INueMKdGFbiTAI
+	1WzBlwy5XVVT9EMJL3MgZOlhmoE+2Nrv1qvk614R75iFbgYvHTK43ebawAVUkAY0FSizpMNMaMr
+	92uQx+7bd3Fybawwwvy2bIXQgcr/98YZbyUVzs4BMGtyIwq7MCk4o70pj2VZRMIy8TGalNlf70a
+	dSwphPpq1fZI/hYuA6aOQtlBLUr/g=
+X-Google-Smtp-Source: AGHT+IE8qvj8HBsTwz5HGw5OIU28tMFtEpb+ccgQfqfh/iRW6PjNGYH658OE70RjYaYmTrjBpzvyzA==
+X-Received: by 2002:a17:90b:2690:b0:33b:b453:c900 with SMTP id 98e67ed59e1d1-33bcf8e3d67mr49587249a91.19.1761547290681;
+        Sun, 26 Oct 2025 23:41:30 -0700 (PDT)
+Received: from z440.. ([2601:1c0:4502:2d00:599c:824:af74:2513])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed81c9e5sm7276917a91.17.2025.10.26.23.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 23:41:30 -0700 (PDT)
+From: Igor Reznichenko <igor@reznichenko.net>
+To: linux@roeck-us.net
+Cc: conor+dt@kernel.org,
+	corbet@lwn.net,
+	david.hunter.linux@gmail.com,
+	devicetree@vger.kernel.org,
+	krzk+dt@kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v2 2/2] hwmon: Add TSC1641 I2C power monitor driver
+Date: Sun, 26 Oct 2025 23:41:27 -0700
+Message-ID: <20251027064127.648712-1-igor@reznichenko.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <d3365f32-dc92-4a55-91a1-c4a446558c5a@roeck-us.net>
+References: <d3365f32-dc92-4a55-91a1-c4a446558c5a@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de1ec7fcc1711e3062cc321ab55552339630de30.camel@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 04:00:02PM -0500, Crystal Wood wrote:
-> On Fri, 2025-10-24 at 15:33 +0200, Sebastian Andrzej Siewior wrote:
-> > On 2025-10-03 13:25:53 [-0500], Crystal Wood wrote:
-> > > On Sun, 2025-09-21 at 15:12 +0200, Lukas Wunner wrote:
-> > > > On Sat, Sep 20, 2025 at 11:20:26PM +0200, Thomas Gleixner wrote:
-> > > > > I obviously understand that the proposed change squashs the whole
-> > > > > class of similar (not yet detected) issues, but that made me look at
-> > > > > that particular instance nevertheless.
-> > > > > 
-> > > > > All aer_irq() does is reading two PCI config words, writing one and
-> > > > > then sticking 64bytes into a KFIFO. All of that is hard interrupt
-> > > > > safe. So arguably this AER problem can be nicely solved by the below
-> > > > > one-liner, no?
-> > > > 
-> > > > The one-liner (which sets IRQF_NO_THREAD) was what Crystal originally
-> > > > proposed:
-> > > > 
-> > > > https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
-> > > 
-> > > So, is the plan to apply the original patch then?
-> > 
-> > Did we settle on something?
-> > I wasn't sure if you can mix IRQF_NO_THREAD with IRQF_ONESHOT for shared
-> > handlers. If that is a thing, we Crystal's original would do it.
-> 
-> Do you mean mixing IRQF_NO_THREAD on this irq (which should eliminate
-> the forced IRQF_ONESHOT) with another shared irq that still has
-> IRQF_ONESHOT?
-> 
-> I suspect it was a non-issue because of IRQCHIP_ONESHOT_SAFE disabling
-> the forced oneshot (the other irq was pciehp).  Given that these are
-> pcie-specific, do they ever get used without MSI (which sets
-> IRQCHIP_ONESHOT_SAFE)[1]?
+>In some way this is inconsistent: It accepts a shunt resistor value of, say, 105
+>even though the chip can only accept multiples of 10 uOhm. In situations like this
+>I suggest to expect devicetree values to be accurate and to clamp values entered
+>through sysfs. More on that below.
+>
+>> +	return 0;
+>> +}
+>> +
+>> +static int tsc1641_set_shunt(struct tsc1641_data *data, u32 val)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	long rshunt_reg;
+>> +
+>> +	if (tsc1641_validate_shunt(val) < 0)
+>> +		return -EINVAL;
+>> +
+>> +	data->rshunt_uohm = val;
+>> +	data->current_lsb_ua = DIV_ROUND_CLOSEST(TSC1641_VSHUNT_LSB_NVOLT * 1000,
+>> +						 data->rshunt_uohm);
+>> +	/* RSHUNT register LSB is 10uOhm so need to divide further*/
+>> +	rshunt_reg = DIV_ROUND_CLOSEST(data->rshunt_uohm, TSC1641_RSHUNT_LSB_UOHM);
+>
+>This means that all calculations do not use the actual shunt resistor values used
+>by the chip, but an approximation. I would suggest to store and use the actual shunt
+>resistor value instead, not the one entered by the user.
 
-It seems fragile to depend on IRQCHIP_ONESHOT_SAFE.  What about irqchips
-which don't set that?  What about PCIe ports which use legacy INTx
-instead of MSI?
+By "actual shunt" you mean defined in devicetree? Then does it mean disabling 
+writing value by user via sysfs and making "shunt_resistor" read-only or leaving it
+writable and clamping to devicetree value, thus discarding the user provided value?
 
-As Sebastian pointed out, setting IRQF_NO_THREAD for the AER driver but
-not for any of the other PCIe port services risks starving the AER
-primary handler if any of the other PCIe port services' (threaded)
-primary handlers take a long time:
+>See below - clamping is insufficient for negative values, and it is not clear to me if
+>the limit register is signed or unsigned.
 
-https://lore.kernel.org/r/20250904073024.YsLeZqK_@linutronix.de/
+>Also, the datasheet doesn't say that the limit value would be signed. Did you verify
+>that negative temperature limit values are actually treated as negative values ?
 
-I went through all PCIe port services to see if IRQF_NO_THREAD could be
-set on all of them.  Alas that's not possible:
+SUL, SOL, TOL are signed, I verified. The negative limits for current and temperature
+work well based on my testing.
 
-pciehp's primary handler acquires a spinlock because of runtime PM API
-calls (device->power.lock).  It's not a raw_spin_lock_t, so it becomes
-a sleeping lock on RT which cannot be acquired in hardirq context and
-converting to a raw_spin_lock_t would be non-trivial and probably
-undesirable.
+>This doesn't work as intended for negative values. regmap doesn't expect to see
+>negative register values and returns an error if trying to write one, so clamping
+>against SHRT_MIN and SHRT_MAX is insufficient. You also need to mask the result
+>against 0xffff.
 
-pme's primary handler also acquires a spinlock, this one could be
-converted to a raw_spin_lock_t.
+I was under impression regmap would handle this masking correctly when defining
+.val_bits = 16. E.g. in regmap.c:973 it selects formatting function for 16bit values.
+I can mask explicitly if it's required.
+It certainly doesn't throw error since negative alerts work as mentioned.
 
-FWIW, PCIe port services requesting a (potentially shared) interrupt are:
-drivers/pci/hotplug/pciehp_hpc.c
-drivers/pci/pcie/aer.c
-drivers/pci/pcie/dpc.c
-drivers/pci/pcie/pme.c
-drivers/pci/pcie/bwctrl.c
+>Why did you choose lcrit/crit attributes instead of min/max ? If there is only
+>one alert limit, that usually means the first level of alert, not a critical level.
+>Raising an alert does not mean it is a critical alert. Please reconsider.
 
-Long story short, I'll respin the patch to reduce the forced secondary
-thread's priority, taking into account Thomas' feedback.
-(Apologies for not having done this earlier.)
+I used hwmon/ina2xx.c as a reference. It covers many similar power monitors which
+have single threshold alerts and defines only lcrit/crit. If this is a wrong approach
+I'll change to min/max.
 
-Thanks,
+The rest of the things are clear, I'll fix those.
 
-Lukas
+Thanks, Igor
 
