@@ -1,175 +1,189 @@
-Return-Path: <linux-kernel+bounces-871066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5620FC0C622
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:45:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8FDC0C63D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49765188ED19
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:44:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 055B64F2BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2F82E8E1F;
-	Mon, 27 Oct 2025 08:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYwM17SY"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6472ED844;
+	Mon, 27 Oct 2025 08:42:49 +0000 (UTC)
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022094.outbound.protection.outlook.com [52.101.126.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356162E88BB
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554564; cv=none; b=Mp8bQIMfIobgADG/OWm6jKOslhWAZxabwVxy164Wn2tz6FkSR1Tc1xAi3d6BN+QpJzhU3rEEr1VzJu2u+RXIx6rlM+DfuMIHJYwqKeF0ZHaVg9cUPbECCYDZTWea4fFcnOZHQWRKMHvijeMOA5BX0+U9ykK/QptzWZaphFs/CQE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554564; c=relaxed/simple;
-	bh=hqG+5l/LrvFbIM2Tk/d5FE11cjQxVeAHFu9KCJp7GSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s2msS+h2RaOmq4lgSAQ5vmmOSXgm6hLhKrbEuc3DoZ8MJ1XKdJgMv/WQyD2I+H9zGQPVHDICkqMe/N47I7fk27ZIYgcmbRIW+KM0oAGZDbm7iRsgvSb8yrxIlJMFnIEVGu1vH4xuc3dm3WF4+B3vaKsLISAmuYTuLSc4PeL830c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYwM17SY; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-85a4ceb4c3dso421834785a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761554561; x=1762159361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8OiplbvxRK3PGzaWxhrNct+/g/8F7ug0XbeVAkGeME=;
-        b=KYwM17SY+Ul9nobSvVebLG2hB5yAPMGiRbBAtpPEJ0VI9s/XJEapK5Oda5RmgDhPSS
-         iYr0wcKBqqlxWGE36+LrHAKb6+NccjSTZqUh+UTfDc/hO5cxvmwf94AkVv4rusdFyidh
-         M1uXxuyokgYY1jwxUQryKbaQAbnuTUez6CIYsqCck32V2X/llFYuAyTdZ/QMdlW4aoN3
-         rmomdjRJJw85yJ0dbL+mqKyD7wxJ/S4yxJlDwzjT++wADFcd46r9gljfc/E0D0iEHxRM
-         UpM6KJuxmiQMX0180ftxGwbCyWu+XQ1PdHCCIrngFrgMivfVaQk4MTqWpstV2hRvCl43
-         D39w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761554561; x=1762159361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S8OiplbvxRK3PGzaWxhrNct+/g/8F7ug0XbeVAkGeME=;
-        b=w6RGh+4+wwzFfNoo0yq5T0CRwE4wJ0BumT2cDNQ//1A2N//A5+xqtM4hNG9sMg4qCd
-         vu/lM9XYzmou1jdmfwiqbrH1eP3o1PfU2Zm82Uap3+RkQM7x5rGYGa9hph5hrNoSXXn5
-         doq2s8ReSoowwZz8y33sZm7Ihrsdih+B8rp6Z+DNRiQewtfWvCK1Q6ojg3vzZhT4J6f8
-         Lca3AXDOyFlkv9pmdQaL6xvJHtTwg+ypVJj/mmCdppeU9sR9lKWnP8xLzz/ebIcHoy3O
-         MNSd1PGQFpL6flzGk9tYOTvjFNOc/XK4ocTSuko+LavIbSEC3cL3Y7PO9rJ6WFmpKOi5
-         xKAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCiOEttePMb8ld3KrSuzQYppDIoby/fgiy1WyksETnqd0YxqBS8AlZ0W+edJXjUoTGmDddz9zumUvO1ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3zH2/H+DAnoCHkfDOaKwGTyulzLq3zuuOneFqoG7QQ14MSZEn
-	0gUsQtSZUaGMjb3pzPZSBF5ZCA3VYWWCFyy7tpIDP44GRQzXYQWdHCEocoaBJdRsQVfnnLNISbJ
-	WudkIRTT4jrNF7bIxOtS3ALX5e8T9vtU=
-X-Gm-Gg: ASbGnctMlhj0wPdbm0R7R6txYB3iHVh5yabdTC5NPKeMmoH8Tc69H0jMBBnuc5T7j9r
-	vpNxe6BUAkBASzPr14fJ/Ympt8CnGJTHE+wPdST9tBM+G4vZ/+MY7Xq8tRHIJUGKVioxq3uCu8o
-	a8O3M6GyaL+EdViC1QgPrDODvuS6NFJZSqoxzI2BNZmw8gTU8GZ4pOlLmQ0Dy/y8jqPkgowP8N6
-	a8qJ9jLhNWwjyaTP64Q6sWBHjzrEguANq17CLr5wtMMuQypDNEJPdGZ0K8JrsN1rjWiUM04Itql
-	FQii6b0KrpO/HWbSbi16qOnES3g=
-X-Google-Smtp-Source: AGHT+IFX+mR137xrvZDcqT/67/gVBqUrAWDajbuXrFM2dAwerxuXEYH48nepHi6uQYXhfp0Am9+yzl1UMhOb2c+aXlg=
-X-Received: by 2002:a05:620a:294f:b0:8a4:6ac1:ae9 with SMTP id
- af79cd13be357-8a46ac112f4mr279316485a.3.1761554560864; Mon, 27 Oct 2025
- 01:42:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B2D2E92D6;
+	Mon, 27 Oct 2025 08:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761554569; cv=fail; b=k69t4fp43PKwyP2GMm8r7IgIIwcQ0g2Je9w4c+hh+E5noWtJu1hVBEGgLVW5qhYfpaz4TA8MR/voWTiSzafp4x7zxuRokq8K0UsGuAYH4i91wwBvnOqmz/ZWwuQ24y9jaNZmPN5rJERZCOM0SEpogEsiOHTAlkrLDvwN8xej2Bo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761554569; c=relaxed/simple;
+	bh=IuNd4PpekNoO2enGBpmDuEnYtMPnfSYALTrug4znXn4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HDb7PnqdHy+7eiSrGpyIfavZTHnhkZRznoeQ4Uapy1fq2/+nUGbT8s5VK6f7MOiI3Zco/xn/ONMwXDN+pa7rOs4wgeS8c5q3CoFViZcNCYFL7RGNIZUKwToI4U8aS+UNKBwV1TEyVxMP2dGSvlDT/vYQAIaEpCo7WPVqRjoG1V4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.126.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I9EIzpLh6XvANM6F1s3QoncLvHj0nWIlu7RKK231IVEABycGNwWdXp08nb9YviyAYVTCYS4BNl80NTlA1OzTPFZ+d0pner++86cGhqSiljE76vAeyUPR8jKOdTMcOR9li+LizsUFF4KYDEYQP4G9YOF1EDBjRZ89aXO/blvEU/AV4un8GGTnaKPjcBlX6FzvxWHEutdIfAnaR8kd/osXRLc0mXPNI6y5YlJJ7KQnskjjk4EEakmy5xoKEx/j2B+9neauiJDiAPcFXvuW+iJwH8glcP9Wg1rXlwSpbKoO5vBJ3qQgcKGqm/od86lpQPWa4L9EbZ27xb0TjvbVKyYTmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hSXFYNKwS9yno4Se2GxuIhBdajm0fxixE7UyTDvrezs=;
+ b=vqavH/qQ3YDGkFT6Bk/qge95SiI27+l09HysSWTQrJX6k7t4c/jEDA/sjm+dKeq2J4g+hdZCkbcQS2/1CefW26KK9ys+Ns/otfot1QJWbZsSmuf7Y0XHhUUKE56NwYknRi79gK0m1zpjAn0X/m0C7k0nEF9ck1aYQWOzE1VX6h0H01Tl1KajEyb3gwhpOWurUxG4Z/86DqF3j1AyvjEiEdFr0wJlqRA9OglkXhbUmzmdb+zic5JAKX+rSycJScFkR3qrcFdEni82Ul/NcyGUlg37m3bYxP2oP7KmKhDj1Bf02+icbQqSVQQ7wglwdug3sJZzm5M80qruAK6m0jNKCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=amd.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI1PR02CA0019.apcprd02.prod.outlook.com (2603:1096:4:1f4::15)
+ by PUZPR06MB5748.apcprd06.prod.outlook.com (2603:1096:301:f3::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
+ 2025 08:42:41 +0000
+Received: from SG1PEPF000082E5.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4:cafe::cc) by SI1PR02CA0019.outlook.office365.com
+ (2603:1096:4:1f4::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.18 via Frontend Transport; Mon,
+ 27 Oct 2025 08:42:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E5.mail.protection.outlook.com (10.167.240.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Mon, 27 Oct 2025 08:42:41 +0000
+Received: from guoo-System-Product-Name.. (unknown [172.20.64.188])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 391CD41C0145;
+	Mon, 27 Oct 2025 16:42:40 +0800 (CST)
+From: Jun Guo <jun.guo@cixtech.com>
+To: peter.chen@cixtech.com,
+	fugang.duan@cixtech.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	broonie@kernel.org
+Cc: linux-spi@vger.kernel.org,
+	michal.simek@amd.com,
+	cix-kernel-upstream@cixtech.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jun Guo <jun.guo@cixtech.com>
+Subject: [PATCH v2 0/3] spi-cadence: support transmission with bits_per_word of 16 and 32
+Date: Mon, 27 Oct 2025 16:42:36 +0800
+Message-Id: <20251027084239.2610141-1-jun.guo@cixtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023013524.100517-1-ying.huang@linux.alibaba.com> <20251023013524.100517-3-ying.huang@linux.alibaba.com>
-In-Reply-To: <20251023013524.100517-3-ying.huang@linux.alibaba.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 27 Oct 2025 16:42:29 +0800
-X-Gm-Features: AWmQ_bk9pI0TtC_0goeD9hHvk9ke19jrv2VrqxdCfcyf-qPwd6ST0IlyubPCsHY
-Message-ID: <CAGsJ_4y46gUWNR_Gc8A12UkTPybR=dc-1vmH_f6WHEFih-CqnQ@mail.gmail.com>
-Subject: Re: [PATCH -v3 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-To: Huang Ying <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Kevin Brodsky <kevin.brodsky@arm.com>, Yin Fengwei <fengwei_yin@linux.alibaba.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E5:EE_|PUZPR06MB5748:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ca77c2d-243c-4c10-4d98-08de1534ca73
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?REx6NUl5T0lwSW5JTVdBS2tIUXhkWUtTNVMrL1VUVytJYjNDbjJ6dVBJN3JM?=
+ =?utf-8?B?QXg0Y3FNczhLaXJXVDJBQkpqN2krenVJZFFQcFhyRVVSRHMxOGhVY1UwM3NO?=
+ =?utf-8?B?ZE1iVEp1TUJnVjkvMjVQODJDbUFLYm81OTRLYXVneEJHOFYzSWNidVdKbFRU?=
+ =?utf-8?B?d3NySnJwRkd3WFZHcmJsMDByS3FtOEJoRXhTY1VNeFRNOGQwdEJJajc5ejVC?=
+ =?utf-8?B?RlBZMFNYUmVZNkxMdVFKSEZnNloxYU5ZQzdoWTJ5SVRxNEJpdmY3QlpIYXh6?=
+ =?utf-8?B?anpWamhKNmgvajI3MUNnbEFWd1JLdUQ1TkZOQUVUc0xmNG8wMzJBWlhiZ1Ey?=
+ =?utf-8?B?WmtMbDlKSnRDa3Y1Y3NoVGJleE9nSUg3V3NmVFRjQ21PYWUvMWRxYWhyUW5w?=
+ =?utf-8?B?RW5CZlhXVHhYVStFZXU3NVArMDBvSDVXNzdFS3RFOVZHVVpLejAvQzdZQ000?=
+ =?utf-8?B?a3F5VWROK1RXakxYL0NlWVJXRUhpMXZ0UGFDcHI2TFpkZXpSR3lWajFTTG5u?=
+ =?utf-8?B?d3lDTVFtdUdnRTZlb1E0bUt1bDhvRFB6bTFQM0MxSDl5YWk5bXJNVEVTVk44?=
+ =?utf-8?B?bURSYnorNWc2UXBlQVgyZ2UyMzcvaUgxVjB5bWNISnhabExtREt0UisvRi92?=
+ =?utf-8?B?d3FuM3JFczJQMWRVOWdzSGF5R0RNdDNuTjQ3b2FocEt0Y0wzUldtT0NmazVQ?=
+ =?utf-8?B?MXhROFRreUtnQkR0UngrdXBXQjBYWUhHZENyNHA1b3l1RFhaT3hoTVFQMmFD?=
+ =?utf-8?B?TzlKNlcyYzBJZk1mbHJlbUx0REFvaG1BL3VrVTZOOVowa2podHhLOVE3WEVL?=
+ =?utf-8?B?cytVZFZYdEVZWHpPT09Wb0tTK0poa1M2eXd5ZGhMSWJONFVCd3B5bGExUE53?=
+ =?utf-8?B?RnJ4N1hhVE5nOEdZOEtsd29HbGt3UHBTaTFtaTV3TXRzQnluSXdJbHN4Z0Iy?=
+ =?utf-8?B?aUNDMHl2MjJKMURYRWlzY0xzb1VGbCttckQxMnBkMGExclNqWHpuTVJJYThD?=
+ =?utf-8?B?VUhNK1hJaVNyR3BMWGNsZ1BBSlpLTzczSm52L1pDbUUzbEVPNGJwUk1zemM4?=
+ =?utf-8?B?ZWVDUVBwZFBQUkpBLzdKMVpNenB0RFFxZm9nODhUdGJqbWNZc0wrSzR2bXJK?=
+ =?utf-8?B?azZtWmY5enUvK1BxSGM1TkZKdVJwZElLRjVKNUVvR05WcytOektjejB3M0Nj?=
+ =?utf-8?B?ZW4wSEcyMGQ0VGh6MnVHZjhZWVRNbXYvWXMycldZTVFPS1dZeHk0MTE4a1FE?=
+ =?utf-8?B?eEFRbFRPVEpudWdsYm0rVlVTS0h5TkhrSEhiNE9RZ1RYRU45VWozSmwvdzhl?=
+ =?utf-8?B?N2NWM3o4VURkTThjNXVkdEtqdnlvVjUwWUhjUmFyNWx2TnhSa0ExOStpTFFy?=
+ =?utf-8?B?Rld0dEd4WW5SV3ZoUmJzRG42czNiK1Uyb1Z0SEt3Ti9JMDVKQzNJZ3BmdmNZ?=
+ =?utf-8?B?TnI2M3NRMXhnTkZoVndqNUlqQ05uSFFpdTVoVFdIYzBob0IwZC8zZWxVb3Mz?=
+ =?utf-8?B?Z1pYSHFEU0hiRzN5a1VxbTF4anZjbWZVeTJ2UCtSS1B2RGpBZExvVWg5M2Ur?=
+ =?utf-8?B?cGM3bDRqZUMrdjJqbGlxYUt4aERLVzM4SHY2R0N0TW1kRkh5ZXdBYUE5VTVR?=
+ =?utf-8?B?WGR1RkdnN1RoeitRckpscC9mOFRkd0M1RFJVd0Z4MVhkQmV6VWxBQXplWkwv?=
+ =?utf-8?B?MEpubHhyd2JveG1hSVkvNjJLT3p5QVhONUwra3k0VDI2cUZUUVQvdnU4YVh2?=
+ =?utf-8?B?U255OC9RNTF5MTc0QjVFeUNsSzVKaEZSaEp1U3ZiUXo3R2dYN2VuK1VBc2Z5?=
+ =?utf-8?B?NGpmVktyTDhEOG9pbzEvUnVjcHkrd200eGN1OTVoS3hISk5OYkIrZS9VRkk4?=
+ =?utf-8?B?N3hTV25VZ1lqd1Z5TitPT0J3L1lmdm1zVzdWSDRCR0hwWVpucWxVMzhBcG9y?=
+ =?utf-8?B?bHBEcExrdmRoMlp1eUlmRlBxSkhZaGpyMmdMNnhZb2FxOUxvYlZLNW54YlFq?=
+ =?utf-8?B?cnJXZjVCYm52S1ZJODJxNk5QZkRWd2lHTDdnTlo2Rzc5QVpHY0orQ0FvVXUw?=
+ =?utf-8?B?ZnNpa1U0SWpYWEJWTTBZQ2E5NDJJOEdLd25MS2dqakZjbnh1dTkrSDdSdXVl?=
+ =?utf-8?Q?kD3M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:42:41.0424
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ca77c2d-243c-4c10-4d98-08de1534ca73
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E5.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5748
 
-On Thu, Oct 23, 2025 at 2:23=E2=80=AFPM Huang Ying <ying.huang@linux.alibab=
-a.com> wrote:
->
-> A multi-thread customer workload with large memory footprint uses
-> fork()/exec() to run some external programs every tens seconds.  When
-> running the workload on an arm64 server machine, it's observed that
-> quite some CPU cycles are spent in the TLB flushing functions.  While
-> running the workload on the x86_64 server machine, it's not.  This
-> causes the performance on arm64 to be much worse than that on x86_64.
->
-> During the workload running, after fork()/exec() write-protects all
-> pages in the parent process, memory writing in the parent process
-> will cause a write protection fault.  Then the page fault handler
-> will make the PTE/PDE writable if the page can be reused, which is
-> almost always true in the workload.  On arm64, to avoid the write
-> protection fault on other CPUs, the page fault handler flushes the TLB
-> globally with TLBI broadcast after changing the PTE/PDE.  However, this
-> isn't always necessary.  Firstly, it's safe to leave some stale
-> read-only TLB entries as long as they will be flushed finally.
-> Secondly, it's quite possible that the original read-only PTE/PDEs
-> aren't cached in remote TLB at all if the memory footprint is large.
-> In fact, on x86_64, the page fault handler doesn't flush the remote
-> TLB in this situation, which benefits the performance a lot.
->
-> To improve the performance on arm64, make the write protection fault
-> handler flush the TLB locally instead of globally via TLBI broadcast
-> after making the PTE/PDE writable.  If there are stale read-only TLB
-> entries in the remote CPUs, the page fault handler on these CPUs will
-> regard the page fault as spurious and flush the stale TLB entries.
->
-> To test the patchset, make the usemem.c from
-> vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-sc=
-alability.git).
-> support calling fork()/exec() periodically.  To mimic the behavior of
-> the customer workload, run usemem with 4 threads, access 100GB memory,
-> and call fork()/exec() every 40 seconds.  Test results show that with
-> the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
-> flush functions reduces from ~50.5% to ~0.3% in perf profile.
->
-> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-> Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> ---
->  arch/arm64/include/asm/pgtable.h  | 14 +++++---
->  arch/arm64/include/asm/tlbflush.h | 56 +++++++++++++++++++++++++++++++
->  arch/arm64/mm/contpte.c           |  3 +-
->  arch/arm64/mm/fault.c             |  2 +-
->  4 files changed, 67 insertions(+), 8 deletions(-)
->
+The Cadence SPI IP supports configurable FIFO data widths during
+integration. On some SoCs, the FIFO data width is designed to be 16 or
+32 bits at the chip design stage. However, the current driver only
+supports communication with an 8-bit FIFO data width. Therefore, these
+patches are added to enable the driver to support communication with
+16-bit and 32-bit FIFO data widths.
 
-Many thanks to Ryan and Ying for providing such a clear explanation to me i=
-n v2.
-The patch looks very reasonable to me now.
+This series introduces the following enhancements for Cadence SPI
+controller support on arm64 platforms:
 
-Reviewed-by: Barry Song <baohua@kernel.org>
+Patch 1: Add a compatible string "cix,sky1-spi-r1p6" for the cix
+sky1 SoC.
+Patch 2: Update DT binding docs to support cix sky1 SoC.
+Patch 3: Enhance the SPI Cadence driver to support data transmission
+with bits_per_word values of 16 and 32.
 
-Thanks
-Barry
+The CIX Sky1 SPI supported patch is added:
+https://lore.kernel.org/all/20250919013118.853078-1-jun.guo@cixtech.com/
+
+The patches have been tested on CIX SKY1 platform.
+
+Changes for v2:
+- Remove the fifo-width property and add a compatible string for the
+  cix sky1 SoC to control the FIFO data width configuration.
+
+Jun Guo (3):
+  arm64: dts: cix: add a compatible string for the cix sky1 SoC
+  dt-bindings: spi: spi-cadence: update DT binding docs to support cix
+    sky1 SoC
+  spi: spi-cadence: supports transmission with bits_per_word of 16 and
+    32
+
+ .../devicetree/bindings/spi/spi-cadence.yaml  |  11 +-
+ arch/arm64/boot/dts/cix/sky1.dtsi             |   4 +-
+ drivers/spi/spi-cadence.c                     | 106 +++++++++++++++---
+ 3 files changed, 103 insertions(+), 18 deletions(-)
+
+-- 
+2.34.1
+
 
