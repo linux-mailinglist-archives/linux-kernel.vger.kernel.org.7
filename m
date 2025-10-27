@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-871479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B06C0D6E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:13:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE5BC0D6EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE424077F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBDD406F36
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAD13002D3;
-	Mon, 27 Oct 2025 12:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD6A3002BD;
+	Mon, 27 Oct 2025 12:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PDPPFJC9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AgzCiSqE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E4F2FFDE6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5B12FFDCE;
+	Mon, 27 Oct 2025 12:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761566818; cv=none; b=j0vDrzLIVUOGQw1UxIfJwTAPmkGk3SnOjWfAaFI1PDEXnzjO+Hpi07FytnEnSjuUo7zXxiYwuLu7ZlbNrnobWzIoW5FuD+5HKpvAqDmdrB/tb9RLP5OJ309YuKe4G/o9EjcrhUzYB+WaOKDgCpOD17pf3iadVpCGRKX5Wkqwsc8=
+	t=1761566818; cv=none; b=LCsoED8luityQzFP02TeBssAf0ikjkBKrZWG3fmBsvC645vK8YX6VTUUtCyVxV++TE8VGkvYRmKsGowZnUW7MhT9Ml3M4rJk9/XHi+H8W2dL3ecArhfYfepfY+gi4LMejHvq2TANeDafnUTFqNlCV/0X2BTzVOgOTeyEI/t0Jrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761566818; c=relaxed/simple;
-	bh=1NfKMDtvOLYr/WPpOHrQJJ7c0my6rBmiQfB1Ha0Z+3o=;
+	bh=qfSQMGH8684PV9GofVq3RRdPqjTx28fFX9bGKIByYqg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZDAhLVoaJ3IrKXM8iyNZWoom98ou3YhmbDLd8lGnRUc25bz/wQiapIolA54c1w6vau96BMCkwZ/VPC2vpxymrvLNOrVsLV9B9rB2k+ERn7QWHxtMsXANEdZ2sdtev1iuZT487fSf8IoaoR9RJgGp86ZG2kYb2mzqNZbe9uc9yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PDPPFJC9; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=uzzlyOAJWBMF1w5Ifok5ZJ/rxH2Raet3uZ+kyXWRlzSm0q/BC5I4XWzA8uhvZclMQyp/dmJa4BC9oXmnOTMov+6GK7lH4rUzPbdQjL0/gCDMo9ZU4I9kR2nMFrWNOlh1tEy8UCo5twvtVgVNI1KJVJlMCunlYqsJO2SduplPndE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AgzCiSqE; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,44 +35,49 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1761566816; x=1793102816;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=1NfKMDtvOLYr/WPpOHrQJJ7c0my6rBmiQfB1Ha0Z+3o=;
-  b=PDPPFJC930HB+4PGNO75PpnyPXAufOenTEW4y3gTog2Zz3dc3Sn5dygh
-   BSJaV8YSkR76wyUO58+aFeV/EQK+eFtGDi+2u27/gdL5SG6NMvGohpdBN
-   CMAbPqxhhJlchPtZwpvSTYthzc5+hk5JlUnf42AwCkYobP8SHMNm7+yf1
-   zBVT0nFJeKQ7jAbeDKLMfy3AOEarUNkRwupfUkJLkyhJFDJwrHQsFiZWU
-   xQL8OS38+HifPk+39OkSU1o5M8D2IJxDRgiPPM01zgvipTlnsiwLcXhgM
-   LvonyiJ6q4EDpNQcDBsNl7xlUCPGDSz0R4dboczMSaY2WvTCP6iAaRtz8
-   g==;
-X-CSE-ConnectionGUID: Xsc2VsFqT6GPbPelP+iDOQ==
-X-CSE-MsgGUID: OTOkfvW+SGOcOG/EyVfreA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67477143"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67477143"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 05:06:56 -0700
-X-CSE-ConnectionGUID: HEfFwD6pRvaNzyn9whTRHw==
-X-CSE-MsgGUID: Pfb7jr26RFCjJExVu8kKUQ==
+  bh=qfSQMGH8684PV9GofVq3RRdPqjTx28fFX9bGKIByYqg=;
+  b=AgzCiSqEQzyPe6rqdfKdrRKeT/yftaCUDlH/V76T1sht9MpZ4UDcfjwa
+   g8qfAxbVQntIEfem8MCa5765cY4grc1YzrbkTgSI9NGOvxRFoZhpFY20b
+   AErFikKC5TU7sLlr9dsNfh8RyVfbCzYxmOOyQonjdvz3ywHuZPOc7u9OV
+   lu9Bcnb7oIV297fd8fV0hiqlBBg5BX1Wt7uRrJJqOP9sT0dEnricHlnTl
+   l0YO/D6Q3VYaKS3gTSl0iDbu/8Eb8+lntjjwCvfSyyZUr+haTa9JxVhW8
+   AFZo8YtqRkTNJ8z5Tx1EzEKaDSHwP09lKhso/mUr8ztq5LB/mLAK+H3cU
+   Q==;
+X-CSE-ConnectionGUID: jcbn48dNSxyrSHTa3TXCcA==
+X-CSE-MsgGUID: MJAO8GGTSpCNPxzGvmGbfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81067559"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="81067559"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 05:06:55 -0700
+X-CSE-ConnectionGUID: vQhMdnKpTf6sS/ASuqqzYg==
+X-CSE-MsgGUID: MaEyVA1lRXuMyA6jhTxsBg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="184205655"
+   d="scan'208";a="190239785"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 27 Oct 2025 05:06:52 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 27 Oct 2025 05:06:52 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vDLzu-000Gl1-0Q;
+	id 1vDLzu-000Gkz-0M;
 	Mon, 27 Oct 2025 12:06:50 +0000
-Date: Mon, 27 Oct 2025 20:06:03 +0800
+Date: Mon, 27 Oct 2025 20:06:18 +0800
 From: kernel test robot <lkp@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org, jgg@nvidia.com
-Cc: oe-kbuild-all@lists.linux.dev, jean-philippe@linaro.org,
-	robin.murphy@arm.com, joro@8bytes.org, balbirs@nvidia.com,
-	miko.lenczewski@arm.com, peterz@infradead.org, kevin.tian@intel.com,
-	praan@google.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <202510271909.iEzPjNv4-lkp@intel.com>
-References: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
+To: Junjie Cao <caojunjie650@gmail.com>, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	Junjie Cao <caojunjie650@gmail.com>,
+	Pengyu Luo <mitltlatltl@gmail.com>
+Subject: Re: [PATCH 2/2] backlight: aw99706: Add support for Awinic AW99706
+ backlight
+Message-ID: <202510271932.kN86aCge-lkp@intel.com>
+References: <20251026123923.1531727-3-caojunjie650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,274 +86,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
+In-Reply-To: <20251026123923.1531727-3-caojunjie650@gmail.com>
 
-Hi Nicolin,
+Hi Junjie,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linus/master v6.18-rc3 next-20251027]
+[auto build test WARNING on lee-backlight/for-backlight-next]
+[also build test WARNING on lee-leds/for-leds-next linus/master lee-backlight/for-backlight-fixes v6.18-rc3 next-20251027]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommu-arm-smmu-v3-Explicitly-set-smmu_domain-stage-for-SVA/20251016-034754
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc%40nvidia.com
-patch subject: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain arm_smmu_invs array
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20251027/202510271909.iEzPjNv4-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251027/202510271909.iEzPjNv4-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Junjie-Cao/backlight-aw99706-Add-support-for-Awinic-AW99706-backlight/20251026-214135
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git for-backlight-next
+patch link:    https://lore.kernel.org/r/20251026123923.1531727-3-caojunjie650%40gmail.com
+patch subject: [PATCH 2/2] backlight: aw99706: Add support for Awinic AW99706 backlight
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20251027/202510271932.kN86aCge-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251027/202510271932.kN86aCge-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510271909.iEzPjNv4-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510271932.kN86aCge-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
->> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1062:23: error: static declaration of 'arm_smmu_invs_merge' follows non-static declaration
-    1062 | struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
-         |                       ^~~~~~~~~~~~~~~~~~~
-   In file included from drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:34:
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:731:23: note: previous declaration of 'arm_smmu_invs_merge' with type 'struct arm_smmu_invs *(struct arm_smmu_invs *, struct arm_smmu_invs *)'
-     731 | struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
-         |                       ^~~~~~~~~~~~~~~~~~~
->> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1157:8: error: static declaration of 'arm_smmu_invs_unref' follows non-static declaration
-    1157 | size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
-         |        ^~~~~~~~~~~~~~~~~~~
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:733:8: note: previous declaration of 'arm_smmu_invs_unref' with type 'size_t(struct arm_smmu_invs *, struct arm_smmu_invs *, void (*)(struct arm_smmu_inv *))' {aka 'long unsigned int(struct arm_smmu_invs *, struct arm_smmu_invs *, void (*)(struct arm_smmu_inv *))'}
-     733 | size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
-         |        ^~~~~~~~~~~~~~~~~~~
->> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1227:23: error: static declaration of 'arm_smmu_invs_purge' follows non-static declaration
-    1227 | struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
-         |                       ^~~~~~~~~~~~~~~~~~~
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:736:23: note: previous declaration of 'arm_smmu_invs_purge' with type 'struct arm_smmu_invs *(struct arm_smmu_invs *, size_t)' {aka 'struct arm_smmu_invs *(struct arm_smmu_invs *, long unsigned int)'}
-     736 | struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
-         |                       ^~~~~~~~~~~~~~~~~~~
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1227:23: warning: 'arm_smmu_invs_purge' defined but not used [-Wunused-function]
-    1227 | struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
-         |                       ^~~~~~~~~~~~~~~~~~~
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1157:8: warning: 'arm_smmu_invs_unref' defined but not used [-Wunused-function]
-    1157 | size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
-         |        ^~~~~~~~~~~~~~~~~~~
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1062:23: warning: 'arm_smmu_invs_merge' defined but not used [-Wunused-function]
-    1062 | struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
-         |                       ^~~~~~~~~~~~~~~~~~~
+>> drivers/video/backlight/aw99706.c:468:12: warning: 'aw99706_resume' defined but not used [-Wunused-function]
+     468 | static int aw99706_resume(struct device *dev)
+         |            ^~~~~~~~~~~~~~
+>> drivers/video/backlight/aw99706.c:461:12: warning: 'aw99706_suspend' defined but not used [-Wunused-function]
+     461 | static int aw99706_suspend(struct device *dev)
+         |            ^~~~~~~~~~~~~~~
 
 
-vim +/arm_smmu_invs_merge +1062 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+vim +/aw99706_resume +468 drivers/video/backlight/aw99706.c
 
-  1043	
-  1044	/**
-  1045	 * arm_smmu_invs_merge() - Merge @to_merge into @invs and generate a new array
-  1046	 * @invs: the base invalidation array
-  1047	 * @to_merge: an array of invlidations to merge
-  1048	 *
-  1049	 * Return: a newly allocated array on success, or ERR_PTR
-  1050	 *
-  1051	 * This function must be locked and serialized with arm_smmu_invs_unref() and
-  1052	 * arm_smmu_invs_purge(), but do not lockdep on any lock for KUNIT test.
-  1053	 *
-  1054	 * Both @invs and @to_merge must be sorted, to ensure the returned array will be
-  1055	 * sorted as well.
-  1056	 *
-  1057	 * Caller is resposible for freeing the @invs and the returned new one.
-  1058	 *
-  1059	 * Entries marked as trash will be purged in the returned array.
-  1060	 */
-  1061	VISIBLE_IF_KUNIT
-> 1062	struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
-  1063						  struct arm_smmu_invs *to_merge)
-  1064	{
-  1065		struct arm_smmu_invs *new_invs;
-  1066		struct arm_smmu_inv *new;
-  1067		size_t num_trashes = 0;
-  1068		size_t num_adds = 0;
-  1069		size_t i, j;
-  1070	
-  1071		for (i = j = 0; i != invs->num_invs || j != to_merge->num_invs;) {
-  1072			int cmp = arm_smmu_invs_cmp(invs, i, to_merge, j);
-  1073	
-  1074			/* Skip any unwanted trash entry */
-  1075			if (cmp < 0 && !refcount_read(&invs->inv[i].users)) {
-  1076				num_trashes++;
-  1077				i++;
-  1078				continue;
-  1079			}
-  1080	
-  1081			if (cmp < 0) {
-  1082				/* not found in to_merge, leave alone */
-  1083				i++;
-  1084			} else if (cmp == 0) {
-  1085				/* same item */
-  1086				i++;
-  1087				j++;
-  1088			} else {
-  1089				/* unique to to_merge */
-  1090				num_adds++;
-  1091				j++;
-  1092			}
-  1093		}
-  1094	
-  1095		new_invs = arm_smmu_invs_alloc(invs->num_invs - num_trashes + num_adds);
-  1096		if (IS_ERR(new_invs))
-  1097			return new_invs;
-  1098	
-  1099		new = new_invs->inv;
-  1100		for (i = j = 0; i != invs->num_invs || j != to_merge->num_invs;) {
-  1101			int cmp = arm_smmu_invs_cmp(invs, i, to_merge, j);
-  1102	
-  1103			if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-  1104				i++;
-  1105				continue;
-  1106			}
-  1107	
-  1108			if (cmp < 0) {
-  1109				*new = invs->inv[i];
-  1110				i++;
-  1111			} else if (cmp == 0) {
-  1112				*new = invs->inv[i];
-  1113				refcount_inc(&new->users);
-  1114				i++;
-  1115				j++;
-  1116			} else {
-  1117				*new = to_merge->inv[j];
-  1118				refcount_set(&new->users, 1);
-  1119				j++;
-  1120			}
-  1121	
-  1122			if (new != new_invs->inv)
-  1123				WARN_ON_ONCE(arm_smmu_inv_cmp(new - 1, new) == 1);
-  1124			new++;
-  1125		}
-  1126	
-  1127		WARN_ON(new != new_invs->inv + new_invs->num_invs);
-  1128	
-  1129		return new_invs;
-  1130	}
-  1131	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_merge);
-  1132	
-  1133	/**
-  1134	 * arm_smmu_invs_unref() - Find in @invs for all entries in @to_unref, decrease
-  1135	 *                         the user counts without deletions
-  1136	 * @invs: the base invalidation array
-  1137	 * @to_unref: an array of invlidations to decrease their user counts
-  1138	 * @flush_fn: A callback function to invoke, when an entry's user count reduces
-  1139	 *            to 0
-  1140	 *
-  1141	 * Return: the number of trash entries in the array, for arm_smmu_invs_purge()
-  1142	 *
-  1143	 * This function will not fail. Any entry with users=0 will be marked as trash.
-  1144	 * All tailing trash entries in the array will be dropped. And the size of the
-  1145	 * array will be trimmed properly. All trash entries in-between will remain in
-  1146	 * the @invs until being completely deleted by the next arm_smmu_invs_merge()
-  1147	 * or an arm_smmu_invs_purge() function call.
-  1148	 *
-  1149	 * This function must be locked and serialized with arm_smmu_invs_merge() and
-  1150	 * arm_smmu_invs_purge(), but do not lockdep on any mutex for KUNIT test.
-  1151	 *
-  1152	 * Note that the final @invs->num_invs might not reflect the actual number of
-  1153	 * invalidations due to trash entries. Any reader should take the read lock to
-  1154	 * iterate each entry and check its users counter till the last entry.
-  1155	 */
-  1156	VISIBLE_IF_KUNIT
-> 1157	size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
-  1158				   struct arm_smmu_invs *to_unref,
-  1159				   void (*flush_fn)(struct arm_smmu_inv *inv))
-  1160	{
-  1161		unsigned long flags;
-  1162		size_t num_trashes = 0;
-  1163		size_t num_invs = 0;
-  1164		size_t i, j;
-  1165	
-  1166		for (i = j = 0; i != invs->num_invs || j != to_unref->num_invs;) {
-  1167			int cmp;
-  1168	
-  1169			/* Skip any existing trash entry */
-  1170			if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-  1171				num_trashes++;
-  1172				i++;
-  1173				continue;
-  1174			}
-  1175	
-  1176			cmp = arm_smmu_invs_cmp(invs, i, to_unref, j);
-  1177			if (cmp < 0) {
-  1178				/* not found in to_unref, leave alone */
-  1179				i++;
-  1180				num_invs = i;
-  1181			} else if (cmp == 0) {
-  1182				/* same item */
-  1183				if (refcount_dec_and_test(&invs->inv[i].users)) {
-  1184					/* KUNIT test doesn't pass in a flush_fn */
-  1185					if (flush_fn)
-  1186						flush_fn(&invs->inv[i]);
-  1187					num_trashes++;
-  1188				} else {
-  1189					num_invs = i + 1;
-  1190				}
-  1191				i++;
-  1192				j++;
-  1193			} else {
-  1194				/* item in to_unref is not in invs or already a trash */
-  1195				WARN_ON(true);
-  1196				j++;
-  1197			}
-  1198		}
-  1199	
-  1200		/* Exclude any tailing trash */
-  1201		num_trashes -= invs->num_invs - num_invs;
-  1202	
-  1203		/* The lock is required to fence concurrent ATS operations. */
-  1204		write_lock_irqsave(&invs->rwlock, flags);
-  1205		WRITE_ONCE(invs->num_invs, num_invs); /* Remove tailing trash entries */
-  1206		write_unlock_irqrestore(&invs->rwlock, flags);
-  1207	
-  1208		return num_trashes;
-  1209	}
-  1210	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_unref);
-  1211	
-  1212	/**
-  1213	 * arm_smmu_invs_purge() - Purge all the trash entries in the @invs
-  1214	 * @invs: the base invalidation array
-  1215	 * @num_trashes: expected number of trash entries, typically returned by a prior
-  1216	 *               arm_smmu_invs_unref() call
-  1217	 *
-  1218	 * Return: a newly allocated array on success removing all the trash entries, or
-  1219	 *         NULL on failure
-  1220	 *
-  1221	 * This function must be locked and serialized with arm_smmu_invs_merge() and
-  1222	 * arm_smmu_invs_unref(), but do not lockdep on any lock for KUNIT test.
-  1223	 *
-  1224	 * Caller is resposible for freeing the @invs and the returned new one.
-  1225	 */
-  1226	VISIBLE_IF_KUNIT
-> 1227	struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
-  1228						  size_t num_trashes)
-  1229	{
-  1230		struct arm_smmu_invs *new_invs;
-  1231		size_t i, j;
-  1232	
-  1233		if (WARN_ON(invs->num_invs < num_trashes))
-  1234			return NULL;
-  1235	
-  1236		new_invs = arm_smmu_invs_alloc(invs->num_invs - num_trashes);
-  1237		if (IS_ERR(new_invs))
-  1238			return NULL;
-  1239	
-  1240		for (i = j = 0; i != invs->num_invs; i++) {
-  1241			if (!refcount_read(&invs->inv[i].users))
-  1242				continue;
-  1243			new_invs->inv[j] = invs->inv[i];
-  1244			j++;
-  1245		}
-  1246	
-  1247		WARN_ON(j != new_invs->num_invs);
-  1248		return new_invs;
-  1249	}
-  1250	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_purge);
-  1251	
+   460	
+ > 461	static int aw99706_suspend(struct device *dev)
+   462	{
+   463		struct aw99706_device *aw = dev_get_drvdata(dev);
+   464	
+   465		return aw99706_update_brightness(aw, 0);
+   466	}
+   467	
+ > 468	static int aw99706_resume(struct device *dev)
+   469	{
+   470		struct aw99706_device *aw = dev_get_drvdata(dev);
+   471	
+   472		return aw99706_hw_init(aw);
+   473	}
+   474	
 
 -- 
 0-DAY CI Kernel Test Service
