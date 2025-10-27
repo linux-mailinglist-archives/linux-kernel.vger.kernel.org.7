@@ -1,154 +1,183 @@
-Return-Path: <linux-kernel+bounces-872805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F2FC12148
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:42:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E47C12157
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85821A23A31
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C93D4274AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C69532E695;
-	Mon, 27 Oct 2025 23:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8474632E695;
+	Mon, 27 Oct 2025 23:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQpSmeEg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQ8PzH3i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5302BE7A1;
-	Mon, 27 Oct 2025 23:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D118313E36;
+	Mon, 27 Oct 2025 23:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761608549; cv=none; b=T/jP0zLbO5dWxN2GtyHLSiCxtI3tmyycF+pI3SnuJtPIZnWBNnD1wXiQFH3LRIJ4cb3cbw8Ygy1F24xL3SmO5vAy2WMAfIV4/W4iBJHau9SeICqJjz8Wa+gbETZIvpLyXhkOeLweQHVZmIvmOwQX5BTu2QjoC/801YhH38Q0+gk=
+	t=1761608589; cv=none; b=igJhNxPb7PjxUuE8FRI3akQ2J1z5HYEvRQjSOxGHtqY5ZC5cgovwauWHA74mZKX+SagMBTUDW9iJDMeLXk/G8qmiglPpCna7GBD/9QnwZwDSZyGJZsTRuUmY4STqsLoRigR3wlMgIwPXFISc4yzu+zJ6ttBR7ITMpkRc6DUN7aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761608549; c=relaxed/simple;
-	bh=gG2hH7WhbSVVnynsoyf11RN3a15KjJlc/LYqB/bQr6k=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=nYEH8FCsyMCVJVB6KkX2bstb89eY138wCNvF+oaNbomCX8DXD8HCpbO+v6S0AUn+BnopMJzjyzdFfwc7Oshl+Zriktt/96yc2ERgSbmNOybthFK31/YQ7ZrMGmA50/zOUj5vp8sz7mU9zUUFBtaAv278UH1c75gSXEsF3gON3BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQpSmeEg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC26C4CEF1;
-	Mon, 27 Oct 2025 23:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761608548;
-	bh=gG2hH7WhbSVVnynsoyf11RN3a15KjJlc/LYqB/bQr6k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UQpSmeEgbKeE7n0VTh1TeiAoBQeZG363+PEtwIjtQe3waPrX5COqSqnSB3dTl5zM7
-	 EhFzUbRu/xaFK9nfgaqPoI6GQustslioWdYRrTd2lTCVTdbpq4VHII9jKsRkYbM2Ed
-	 Tgx6d1sPvXCGeuk4i8ZD/VC/ykUd1mJs9kuqvB4ga89qztME1MkgXQK2BWsOAc2IO5
-	 0BOS2jSCzXb61VuE3MneYqCloavjOBJGeaQcWcj6SGl4eI+7yRXh9sfSCi9KDHE0AL
-	 /b27W35ABmF0Su1mqLITW45SMmGgGo5yRDwIKoy8DgmoqbkIuc7XXrP8xUXbbMBBzI
-	 TxDpfTeZqNkyw==
-Date: Tue, 28 Oct 2025 08:42:22 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
- wprobe
-Message-Id: <20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
-In-Reply-To: <20251027224347.4c887cc956df63602f377550@kernel.org>
-References: <175859019940.374439.7398451124225791618.stgit@devnote2>
-	<175859026716.374439.14852239332989324292.stgit@devnote2>
-	<aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
-	<20251027224347.4c887cc956df63602f377550@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761608589; c=relaxed/simple;
+	bh=8PRSZOz3OHjeA+6W6Lo45QLVMwA5TUUX9b5Mwbql8Uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IqOL6yGCszf5gq4k2HXjirUhVgeVIwyBzHG+5/Us6pRqLDME6EMYQfcIrcfOu1VYT1c5rp4Jd390lnJnuqSfOzFuCLqsedwZBFbVm4105177YqK4CqTw3ygiyQJUXMolweqT0qLgcJdqO5trqlMP89gTMr9Pf81dDefXtx4jsOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQ8PzH3i; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761608588; x=1793144588;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8PRSZOz3OHjeA+6W6Lo45QLVMwA5TUUX9b5Mwbql8Uw=;
+  b=YQ8PzH3iIOa4X/cictbrCgtpgxNddzUgNWRjhB5S5ieyqOzBZLyxHFQc
+   9Sm0hS9u8ndLu9cmRjTXLBOWLXwHkeQWmv0CPRlFluOMDGKZyGl3zUvZn
+   eWV8s22vcRjfuid38etIi7lCw5xKvM/KcO4SeuGwJdSKNIWRmeQ4zCxkW
+   5MYuE+rx55GAx6HT5rmdiTFFImvbqyu5+DvMf6xpF2UZNhwqm6UG0OOAG
+   ab8mQ60GnW9sFI9KimPstHbrbUeA5pVKVipEY4gWfxEmu0X7ASPKE97P4
+   3GnwZ2V+PLr6pf/HDH7jz9W1oPr0J0fmvpRnLs9/kJqWQfia9utYfD3Z4
+   A==;
+X-CSE-ConnectionGUID: I7x+TO67TrOTbx9LCA25Gw==
+X-CSE-MsgGUID: eRJTTxcaQoKePKuqDbH6NQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63738218"
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="63738218"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:43:06 -0700
+X-CSE-ConnectionGUID: h/cpjumCT8aP81cn0/PXhw==
+X-CSE-MsgGUID: ibRSYSv2SeKJ5NYRSgod4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="184366016"
+Received: from jjgreens-desk15.amr.corp.intel.com (HELO desk) ([10.124.222.186])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:43:05 -0700
+Date: Mon, 27 Oct 2025 16:43:04 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: [PATCH v3 0/3] VMSCAPE optimization for BHI variant
+Message-ID: <20251027-vmscape-bhb-v3-0-5793c2534e93@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAKvr/2gC/2XNvQrCMBQF4FeRzKYk6R9xUlwcHdzEIU1ubKBNS
+ 1JDpfTdDRGE4nju4X5nQR6cAY8OuwU5CMabwcaQ73dItsI+ARsVM2KElYTTCofeSzECbtoGq1o
+ VFed1rZlG8WN0oM2ctDu6nm7nC3rEc2v8NLh32gg0lV+OFRsuUEywEiXVBCjPC3XsjH3NmbETd
+ Jkc+qQF9hMooeVWYFHgVDZKcZkLXv0L67p+APjxREb1AAAA
+X-Change-ID: 20250916-vmscape-bhb-d7d469977f2f
+X-Mailer: b4 0.14.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 27 Oct 2025 22:43:47 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+v3:
+- s/x86_pred_flush_pending/x86_predictor_flush_exit_to_user/ (Sean).
+- Removed IBPB & BHB-clear mutual exclusion at exit-to-userspace.
+- Collected tags.
 
-> On Fri, 24 Oct 2025 22:31:06 +0100
-> Mark Brown <broonie@kernel.org> wrote:
-> 
-> > On Tue, Sep 23, 2025 at 10:17:47AM +0900, Masami Hiramatsu (Google) wrote:
-> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > > 
-> > > Add 'add_remove_wprobe.tc' testcase for testing wprobe event that
-> > > tests adding and removing operations of the wprobe event.
-> > 
-> > Since this series has landed in -next we've been seeing hangs on a range
-> > of arm64 platforms running the ftrace tests, it looks like it's all of
-> > them.  Unfortunately the systems lock up with no output as soon as they
-> > start trying to do something with wprobes:
-> > 
-> > # ok 19 Generic dynamic event - add/remove kprobe events
-> > # ok 20 Generic dynamic event - add/remove synthetic events
-> > # ok 21 Generic dynamic event - add/remove tracepoint probe events
-> > # ok 22 Generic dynamic event - add/remove tracepoint probe events on module
-> > # ok 23 Generic dynamic event - add/remove/test uprobe events
-> > 
-> > the next test being add_remove_wprobe.tc, which doesn't seem to
-> > complete.  Full log (for what little it's worth):
-> > 
-> >    https://lava.sirena.org.uk/scheduler/job/2000440#L1860
-> > 
-> > I turned on -vvv logging and that generated the rather spectacularly
-> > more verbose:
-> > 
-> >    https://lava.sirena.org.uk/scheduler/job/2000676/log_file/plain
-> > 
-> > (in a somewhat processed format unfortunately.).  Looking at that log I
-> > do notice a bunch of "unexpected operators" reported by the shell, these
-> > systems are running dash not bash, though that doesn't seem related.  It
-> > looks like the script hangs in reset_trigger_file while grepping the
-> > trigger files rather than actually trying to do the test.
-> > 
-> > Sorry about the delay in reporting this.
-> 
-> OK, eventually, I confirmed it is stopped on enabling wprobe
-> 
-> + . /mnt/ftrace/test.d/dynevent/add_remove_wprobe.tc
-> + echo 0
-> + echo
-> + TARGET=jiffies
-> + echo 'w:my_wprobe w@jiffies'
-> + grep -q my_wprobe dynamic_events
-> + '[' 0 -ne 0 ]
-> + test -d events/wprobes/my_wprobe
-> + '[' 0 -ne 0 ]
-> + echo 1
-> 
+v2: https://lore.kernel.org/r/20251015-vmscape-bhb-v2-0-91cbdd9c3a96@linux.intel.com
+- Added check for IBPB feature in vmscape_select_mitigation(). (David)
+- s/vmscape=auto/vmscape=on/ (David)
+- Added patch to remove LFENCE from VMSCAPE BHB-clear sequence.
+- Rebased to v6.18-rc1.
 
-Interestingly, this stops in the cpu_function_call(). It does not call
-__perf_install_in_context().
+v1: https://lore.kernel.org/r/20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com
 
-~ # cd /sys/kernel/tracing/
-/sys/kernel/tracing # echo 'w:my_wprobe w@jiffies' >> dynamic_events 
-/sys/kernel/tracing # echo 1 > events/wprobes/my_wprobe/enable 
-[   54.942288] trace_wprobe: enable_trace_wprobe called
-[   54.945306] trace_wprobe: trying to register wprobes
-[   54.947367] trace_wprobe: __register_trace_wprobe called
-[   54.949586] trace_wprobe: registering wprobe at addr: 0xffffb6ce429fb200, len: 4, type: 2
-[   54.951639] Creating wide hw breakpoint on CPU 0
-[   54.966390] Creating kernel counter on CPU 0 for event type 5
-[   54.967758] perf_install_in_context: event 00000000736da1d9 ctx 000000005d4db900 cpu 0
-[   54.972015] perf_install_in_context2: event 00000000736da1d9 ctx set to 000000005d4db900
-[   54.976697] cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2c8
+Hi All,
 
-What happen if the cpu calls function on itself by
-smp_call_function_single() on arm64?
+These patches aim to improve the performance of a recent mitigation for
+VMSCAPE[1] vulnerability. This improvement is relevant for BHI variant of
+VMSCAPE that affect Alder Lake and newer processors.
 
-  smp_call_function_single(this_cpu, remote_function, &data, 1);
+The current mitigation approach uses IBPB on kvm-exit-to-userspace for all
+affected range of CPUs. This is an overkill for CPUs that are only affected
+by the BHI variant. On such CPUs clearing the branch history is sufficient
+for VMSCAPE, and also more apt as the underlying issue is due to poisoned
+branch history.
 
-Thank you,
+Roadmap:
 
+- First patch introduces clear_bhb_long_loop() for processors with larger
+  branch history tables.
+- Second patch replaces IBPB on exit-to-userspace with branch history
+  clearing sequence.
+
+Below is the iPerf data for transfer between guest and host, comparing IBPB
+and BHB-clear mitigation. BHB-clear shows performance improvement over IBPB
+in most cases.
+
+Platform: Emerald Rapids
+Baseline: vmscape=off
+
+(pN = N parallel connections)
+
+| iPerf user-net | IBPB    | BHB Clear |
+|----------------|---------|-----------|
+| UDP 1-vCPU_p1  | -12.5%  |   1.3%    |
+| TCP 1-vCPU_p1  | -10.4%  |  -1.5%    |
+| TCP 1-vCPU_p1  | -7.5%   |  -3.0%    |
+| UDP 4-vCPU_p16 | -3.7%   |  -3.7%    |
+| TCP 4-vCPU_p4  | -2.9%   |  -1.4%    |
+| UDP 4-vCPU_p4  | -0.6%   |   0.0%    |
+| TCP 4-vCPU_p4  |  3.5%   |   0.0%    |
+
+| iPerf bridge-net | IBPB    | BHB Clear |
+|------------------|---------|-----------|
+| UDP 1-vCPU_p1    | -9.4%   |  -0.4%    |
+| TCP 1-vCPU_p1    | -3.9%   |  -0.5%    |
+| UDP 4-vCPU_p16   | -2.2%   |  -3.8%    |
+| TCP 4-vCPU_p4    | -1.0%   |  -1.0%    |
+| TCP 4-vCPU_p4    |  0.5%   |   0.5%    |
+| UDP 4-vCPU_p4    |  0.0%   |   0.9%    |
+| TCP 1-vCPU_p1    |  0.0%   |   0.9%    |
+
+| iPerf vhost-net | IBPB    | BHB Clear |
+|-----------------|---------|-----------|
+| UDP 1-vCPU_p1   | -4.3%   |   1.0%    |
+| TCP 1-vCPU_p1   | -3.8%   |  -0.5%    |
+| TCP 1-vCPU_p1   | -2.7%   |  -0.7%    |
+| UDP 4-vCPU_p16  | -0.7%   |  -2.2%    |
+| TCP 4-vCPU_p4   | -0.4%   |   0.8%    |
+| UDP 4-vCPU_p4   |  0.4%   |  -0.7%    |
+| TCP 4-vCPU_p4   |  0.0%   |   0.6%    |
+
+[1] https://comsec.ethz.ch/research/microarch/vmscape-exposing-and-exploiting-incomplete-branch-predictor-isolation-in-cloud-environments/
+
+---
+Pawan Gupta (3):
+      x86/bhi: Add BHB clearing for CPUs with larger branch history
+      x86/vmscape: Replace IBPB with branch history clear on exit to userspace
+      x86/vmscape: Remove LFENCE from BHB clearing long loop
+
+ Documentation/admin-guide/hw-vuln/vmscape.rst   |  8 ++++
+ Documentation/admin-guide/kernel-parameters.txt |  4 +-
+ arch/x86/entry/entry_64.S                       | 63 ++++++++++++++++++-------
+ arch/x86/include/asm/cpufeatures.h              |  1 +
+ arch/x86/include/asm/entry-common.h             | 12 +++--
+ arch/x86/include/asm/nospec-branch.h            |  5 +-
+ arch/x86/kernel/cpu/bugs.c                      | 53 +++++++++++++++------
+ arch/x86/kvm/x86.c                              |  5 +-
+ 8 files changed, 110 insertions(+), 41 deletions(-)
+---
+base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
+change-id: 20250916-vmscape-bhb-d7d469977f2f
+
+Best regards,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Pawan
+
 
