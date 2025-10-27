@@ -1,213 +1,147 @@
-Return-Path: <linux-kernel+bounces-871215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D68BC0CA47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:26:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A5BC0CA41
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBC954EF562
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6ED1892C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9006D1C1F02;
-	Mon, 27 Oct 2025 09:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36602F12B6;
+	Mon, 27 Oct 2025 09:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Nv+qhXxZ"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="JpPZECOn"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ECC2E717C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4439D2F068F;
+	Mon, 27 Oct 2025 09:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557060; cv=none; b=srVzv03CDTybGK/H3cU9BKwQ2jYzTTwHAON9is69klUYBXH7olX8885VZWMqrTZocgoSuUzezgaEQ+qYEfkWBRbLxTwXcClGx9wRutja9SAaAXWXNFxqFCn1CRsD5YqjpPstGNlTTNp4UrWTflhtiBMZFfeEg0HjG3RIm8EZ3iA=
+	t=1761557099; cv=none; b=eXPCpJlbI/O9CIxCKOupSEcr9lgT8X4NbeTG4jPHs92Es9ZjNgitLykaBe68bjADApB4EXScCZWrnerJ5+KJXNpwQQ73d7YqypZQnp6I8HZb+XwcswoOMgSnYBk42cUadzNeSI+ATitARiT35wDDcWTpGGVJTSjCFOcVJa9Jioo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557060; c=relaxed/simple;
-	bh=53CKdD4ogqQhr2ms2TfSWhL3ujfqvSEgJ3WZQhEy8io=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cFe7H8blAyzeC5y3yBoUAyaMCJM7+3kn/Lhrkbvwtu5VuCv4ZS0EEi+CdQL9YPLzLixufYVAi9bub5Bi13YmnRADBzpzrkthBzO/X9jO3w3LL8Qjf+2wRN+r4ajjCLfVVHneh6/58KWb+GIWU9umJS6ahzitJcs8UD2sIB84q68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Nv+qhXxZ; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oB
-	P7+tHGxe9BmbqxkJRcuHmO2ZjvxtiBHaeh2QGjUL0=; b=Nv+qhXxZzR7Ok2d+VM
-	Ix7vgAHJHdeai35Z4TQP0OYIS3o/8/12wAD7VDZZ129mRvkv77oPm+fNsfgRLvPS
-	IIs9tGlVtt/Z8EFiJ9EyBOKtpbXRbGs/MIxtXmoXxhDPXVdcSI0WxRH5hGf+7LM3
-	SuXVPGzLpyiE9XNjx/+bzQq5Y=
-Received: from gt-ubuntu22-04-cmd-v3-0-64gb-25m.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3p5YgOv9otPZyAg--.9797S2;
-	Mon, 27 Oct 2025 17:23:45 +0800 (CST)
-From: Xiaole He <hexiaole1994@126.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	jaegeuk@kernel.org,
-	chao@kernel.org,
-	stable@kernel.org,
-	Xiaole He <hexiaole1994@126.com>
-Subject: [PATCH v2] f2fs: fix age extent cache insertion skip on counter overflow
-Date: Mon, 27 Oct 2025 17:23:41 +0800
-Message-Id: <20251027092341.5011-1-hexiaole1994@126.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251023035416.7943-1-hexiaole1994@126.com>
-References: <20251023035416.7943-1-hexiaole1994@126.com>
+	s=arc-20240116; t=1761557099; c=relaxed/simple;
+	bh=jfdUwDgnq3QfeqzXUtLRsl6YPhRoNT1QEbmdgk2ch84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t259oRb8AiUoBlAgI6hOoCoQQIM6S1oJqAt08CP1B8npipL1k7Hf3wIFShhxWhUS3jae2chv1ZZhm8XRgK5TJFDN+VuY9apeFIyfKSQ4pQTQBQf1fNjBE58o07nDR57dZMADDSZMtjTvwn1/tTwGrV3u9EFU3KuLguXI8vgg60w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=JpPZECOn; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id AC628260B6;
+	Mon, 27 Oct 2025 10:24:54 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id fBjG5FigbkBP; Mon, 27 Oct 2025 10:24:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1761557090; bh=jfdUwDgnq3QfeqzXUtLRsl6YPhRoNT1QEbmdgk2ch84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JpPZECOnKi87MZULsBuohtO3XHj9JWS0ZQmI9CIwmblDBg1PNP/DVR/VPhE3FE3/N
+	 krnmsUymLHPPKod8YPhGBFwK3iGfTcTQ3QwaE555bF3FCUr/1AS7SIF4horTM+Meci
+	 K4sFQkXbsPolJpnectPctepeKNgsxt5f/ReIjNVT+Fq0O/8m9YXBm9IoMGK3qzM0r1
+	 7NpTEOvJYSHA+kMMF7ZwABd3sWNKIs34O2N8QOcNSps0a9tKN+D/qnU8rpyA+pmd6Z
+	 JfnIF+KRicxclrDJxePl/xQOuTqeAhHmrc3UOsroq+rUB8ajsSa8/zLPSg3AXYkkrc
+	 Ff4VXpTW2YS1Q==
+Date: Mon, 27 Oct 2025 09:24:30 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Andreas Schwab <schwab@suse.de>
+Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Aurelien Jarno <aurelien@aurel32.net>, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] driver: reset: spacemit-p1: add driver for
+ poweroff/reboot
+Message-ID: <aP86TltQ2uqeK6FY@pie>
+References: <20251026224424.1891541-1-aurelien@aurel32.net>
+ <20251026224424.1891541-2-aurelien@aurel32.net>
+ <A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org>
+ <aP8QHwsYDlbQxQJo@pie>
+ <mvmh5vk67in.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3p5YgOv9otPZyAg--.9797S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Gr43CFWDXrW7ur4fCw4Durg_yoW7CrWDp3
-	4xCF15Kr45uw48Xa92vr1kCF1S9w4kJFWxGrZFy34jva45X34fWF1kt345ZrWvqF4rXF1D
-	Za1Y934UJw1UGaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziK0PfUUUUU=
-X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbijgnzBmj-NLOCkQAAsx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mvmh5vk67in.fsf@suse.de>
 
-The age extent cache uses last_blocks (derived from
-allocated_data_blocks) to determine data age. However, there's a
-conflict between the deletion
-marker (last_blocks=0) and legitimate last_blocks=0 cases when
-allocated_data_blocks overflows to 0 after reaching ULLONG_MAX.
+On Mon, Oct 27, 2025 at 10:03:44AM +0100, Andreas Schwab wrote:
+> On Okt 27 2025, Yao Zi wrote:
+> 
+> > On Mon, Oct 27, 2025 at 11:20:33AM +0800, Troy Mitchell wrote:
+> >> On Sun, Oct 26, 2025 at 11:41:14PM +0100, Aurelien Jarno wrote:
+> >> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
+> >> > chip, which is commonly paired with the SpacemiT K1 SoC.
+> >> > 
+> >> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
+> >> > done directly through the regmap interface. Reboot or poweroff is
+> >> > triggered by setting a specific bit in a control register, which is
+> >> > automatically cleared by the hardware afterwards.
+> >> > 
+> >> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> >> > ---
+> >> > v2:
+> >> >  - Replace the "select" by a "depends on"
+> >> >  - Remove outdated Reviewed-by
+> >> > 
+> >> >  drivers/power/reset/Kconfig              |  9 +++
+> >> >  drivers/power/reset/Makefile             |  1 +
+> >> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
+> >> >  3 files changed, 98 insertions(+)
+> >> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
+> >> > 
+> >> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> >> > index 8248895ca9038..61c16f3d5abc7 100644
+> >> > --- a/drivers/power/reset/Kconfig
+> >> > +++ b/drivers/power/reset/Kconfig
+> >> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
+> >> >  	help
+> >> >  	  Reboot support for the KEYSTONE SoCs.
+> >> >  
+> >> > +config POWER_RESET_SPACEMIT_P1
+> >> > +	tristate "SpacemiT P1 poweroff and reset driver"
+> >> > +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> >> > +	depends on MFD_SPACEMIT_P1
+> >> > +	default m
+> >> default m if ARCH_SPACEMIT? Or default ARCH_SPACEMIT?
+> >> I believe that reboot and shutdown are actually essential functionalities,
+> >> so it might make more sense: default ARCH_SPACEMIT?
+> >
+> > I don't think there's anything preventing it to be built as module by
+> > default: even though it's "essential", it's unnecessary during kernel
+> > and userspace startup, thus I see no reason to build it in the image.
+> 
+> Wouldn't it be needed in a reboot-on-panic situation?
 
-In this case, valid extents are incorrectly skipped due to the
-"if (!tei->last_blocks)" check in __update_extent_tree_range().
+Oops, yeah, I missed this stuff. Seems systemd automatic boot assessment
+could switch to another boot option if one fails to boot. And if it's
+caused by a (very early) kernel panic, then reboot support does play a
+part here.
 
-This patch fixes the issue by:
-1. Reserving ULLONG_MAX as an invalid/deletion marker
-2. Limiting allocated_data_blocks to range [0, ULLONG_MAX-1]
-3. Using F2FS_EXTENT_AGE_INVALID for deletion scenarios
-4. Adjusting overflow age calculation from ULLONG_MAX to (ULLONG_MAX-1)
+So my statement, maybe as well as the module's default value, should be
+re-evaluated. Yixun, Emil, what do you think about it?
 
-Reproducer (using a patched kernel with allocated_data_blocks
-initialized to ULLONG_MAX - 3 for quick testing):
+Best regards,
+Yao Zi
 
-Step 1: Mount and check initial state
-  # dd if=/dev/zero of=/tmp/test.img bs=1M count=100
-  # mkfs.f2fs -f /tmp/test.img
-  # mkdir -p /mnt/f2fs_test
-  # mount -t f2fs -o loop,age_extent_cache /tmp/test.img /mnt/f2fs_test
-  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
-  Allocated Data Blocks: 18446744073709551612 # ULLONG_MAX - 3
-  Inner Struct Count: tree: 1(0), node: 0
-
-Step 2: Create files and write data to trigger overflow
-  # touch /mnt/f2fs_test/{1,2,3,4}.txt; sync
-  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
-  Allocated Data Blocks: 18446744073709551613 # ULLONG_MAX - 2
-  Inner Struct Count: tree: 5(0), node: 1
-
-  # dd if=/dev/urandom of=/mnt/f2fs_test/1.txt bs=4K count=1; sync
-  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
-  Allocated Data Blocks: 18446744073709551614 # ULLONG_MAX - 1
-  Inner Struct Count: tree: 5(0), node: 2
-
-  # dd if=/dev/urandom of=/mnt/f2fs_test/2.txt bs=4K count=1; sync
-  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
-  Allocated Data Blocks: 18446744073709551615 # ULLONG_MAX
-  Inner Struct Count: tree: 5(0), node: 3
-
-  # dd if=/dev/urandom of=/mnt/f2fs_test/3.txt bs=4K count=1; sync
-  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
-  Allocated Data Blocks: 0 # Counter overflowed!
-  Inner Struct Count: tree: 5(0), node: 4
-
-Step 3: Trigger the bug - next write should create node but gets skipped
-  # dd if=/dev/urandom of=/mnt/f2fs_test/4.txt bs=4K count=1; sync
-  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
-  Allocated Data Blocks: 1
-  Inner Struct Count: tree: 5(0), node: 4
-
-  Expected: node: 5 (new extent node for 4.txt)
-  Actual: node: 4 (extent insertion was incorrectly skipped due to
-  last_blocks = allocated_data_blocks = 0 in __get_new_block_age)
-
-After this fix, the extent node is correctly inserted and node count
-becomes 5 as expected.
-
-Fixes: 71644dff4811 ("f2fs: add block_age-based extent cache")
-Cc: stable@kernel.org
-Signed-off-by: Xiaole He <hexiaole1994@126.com>
----
-Changes in v2:
-- Added Fixes tag and Cc stable
-- Updated reproducer to use 'grep -A 4' for better output clarity
----
- fs/f2fs/extent_cache.c | 5 +++--
- fs/f2fs/f2fs.h         | 6 ++++++
- fs/f2fs/segment.c      | 9 +++++++--
- 3 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 33e09c453c70..0ed84cc065a7 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -808,7 +808,7 @@ static void __update_extent_tree_range(struct inode *inode,
- 	}
- 	goto out_read_extent_cache;
- update_age_extent_cache:
--	if (!tei->last_blocks)
-+	if (tei->last_blocks == F2FS_EXTENT_AGE_INVALID)
- 		goto out_read_extent_cache;
- 
- 	__set_extent_info(&ei, fofs, len, 0, false,
-@@ -912,7 +912,7 @@ static int __get_new_block_age(struct inode *inode, struct extent_info *ei,
- 			cur_age = cur_blocks - tei.last_blocks;
- 		else
- 			/* allocated_data_blocks overflow */
--			cur_age = ULLONG_MAX - tei.last_blocks + cur_blocks;
-+			cur_age = (ULLONG_MAX - 1) - tei.last_blocks + cur_blocks;
- 
- 		if (tei.age)
- 			ei->age = __calculate_block_age(sbi, cur_age, tei.age);
-@@ -1114,6 +1114,7 @@ void f2fs_update_age_extent_cache_range(struct dnode_of_data *dn,
- 	struct extent_info ei = {
- 		.fofs = fofs,
- 		.len = len,
-+		.last_blocks = F2FS_EXTENT_AGE_INVALID,
- 	};
- 
- 	if (!__may_extent_tree(dn->inode, EX_BLOCK_AGE))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5b4e9548a231..fa3c676adc30 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -707,6 +707,12 @@ enum extent_type {
- 	NR_EXTENT_CACHES,
- };
- 
-+/*
-+ * Reserved value to mark invalid age extents, hence valid block range
-+ * from 0 to ULLONG_MAX-1
-+ */
-+#define F2FS_EXTENT_AGE_INVALID	ULLONG_MAX
-+
- struct extent_info {
- 	unsigned int fofs;		/* start offset in a file */
- 	unsigned int len;		/* length of the extent */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b45eace879d7..a473cd1fb37d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3863,8 +3863,13 @@ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct folio *folio,
- 	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
- 	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
- 
--	if (IS_DATASEG(curseg->seg_type))
--		atomic64_inc(&sbi->allocated_data_blocks);
-+	if (IS_DATASEG(curseg->seg_type)) {
-+		unsigned long long new_val;
-+
-+		new_val = atomic64_inc_return(&sbi->allocated_data_blocks);
-+		if (unlikely(new_val == ULLONG_MAX))
-+			atomic64_set(&sbi->allocated_data_blocks, 0);
-+	}
- 
- 	up_write(&sit_i->sentry_lock);
- 
--- 
-2.34.1
-
+> -- 
+> Andreas Schwab, SUSE Labs, schwab@suse.de
+> GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+> "And now for something completely different."
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
