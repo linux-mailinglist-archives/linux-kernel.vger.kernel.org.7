@@ -1,177 +1,269 @@
-Return-Path: <linux-kernel+bounces-872160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48D5C0F70A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:49:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F21C0F6B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F257427B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D3B481C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956A6313531;
-	Mon, 27 Oct 2025 16:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BBF314D16;
+	Mon, 27 Oct 2025 16:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=hendrik-noack@gmx.de header.b="kFxbWRJb"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="K/l88JqT"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013068.outbound.protection.outlook.com [52.101.83.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FB2311C32;
-	Mon, 27 Oct 2025 16:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583344; cv=none; b=aVkMJlap10d2kfZHeAdaPEsE1B3nQtiFbJCKhbYPxKRQ2KYSnTw1avx0p9zkA0LbH1J5zW3IsL/fHd3DKyPN3F0+nm0pC17efoXtHOuddgOUhXyY2yT0WYukOx0msS0Lr/ilXW0re5mw9NSEJam86xo7UMU55T0LBz9rFrsh6Mo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583344; c=relaxed/simple;
-	bh=SsHdZ25xCvtFBqedql5pR7f928ab+bzGC8496+VFiYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D/nUWf7WcbM1OzVOey8WujnWTydNXorxz53Sb0Gjjx1nIwNf31gijXEijoOmKXSmOS01mQK/2c80ntNyjA3G2I9JxlEAN8p7lg/rd5WCK/wlRxwpapk6NWyBFP2nfQib+fTr0JmTJPfjFUb9pNQqXc53wnZ1DLry9E36DWSVoX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=hendrik-noack@gmx.de header.b=kFxbWRJb; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761583340; x=1762188140; i=hendrik-noack@gmx.de;
-	bh=C3ct9384JvzpeFOW0JMSzQYjvWTxzKv6eLhEAKeWWYM=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kFxbWRJbQgR7M48TVnrudXJBGIOL3MBNR23yTfjS+2mIhCcD+pvcB6qz9VK+T8e6
-	 py9EY7Tr2H7VuwRttQR/PzCeK0db0BELQNeXa4jF1edjjNx9ZDhVtj8GBDPexPC+5
-	 oSyJjVuuOyuFcuu9Q+kNQCnvw6dyi9spMIW+AQl1UNVW5YcHb6nzZtEpktMhgqEG0
-	 TrWj3a05jQGZKgGGSxO1JqF8YuwYL2ysbgsJygeYTavYsj6THKR07TWK1cpkRyrTg
-	 GG8ZSAWDPSEGzMILZ/DQegc3S3/HS7PI7FVIAd44v7hdE+fQ+skJtsPUNHYigw7ks
-	 0ZHLzTfd8LVG3CTuZA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from Hendrik-Linux ([217.85.39.201]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1McpNy-1udXVx31lq-00bL5O; Mon, 27
- Oct 2025 17:42:19 +0100
-From: Hendrik Noack <hendrik-noack@gmx.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50538313546;
+	Mon, 27 Oct 2025 16:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761583071; cv=fail; b=korficWbLuQF74XKms4XRPZeOF/i4pAe0iFCX16BjR/mGpfPhe7FwNzgqO5m+EouFhdlt7rkSFZzpFjldXyPAFQp6gP7f6s4z/Dqy67dVvplriokZj/61UL9hWtblnmi8PAQY06VzzPjmu/Mfd6w+LzCNkBFFDdWp15zij6S1W4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761583071; c=relaxed/simple;
+	bh=3srIsHAyO+KZPbYzjJMQk8rWcocJJvoNd5RVTR0VcBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nIP8ytHZ5auj2SyZ7Avzd6q6Ap9fyg5PVi3cdrwMGb2NOllrkPEK0KfECUZz3qHiV+JCmrMloxNcXQ6jm2BQ8JbJPvMUCMle6StkVzvL1OWgspj27sLZAnqiEaUjDCWgjdvPU66oONrLjllKAJxOIN8LGgX97OVU8XWGrxIC+vQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=K/l88JqT; arc=fail smtp.client-ip=52.101.83.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LH7HMQzKiOAdFgAu1M7+laSWIjlb37RPlVOePpjNkQRiMMOvSOytXbHj6j8UDbKs3hIf5CfyhYJUjP6radUSsj/DgV6nHgqwTlP1xFHiNuMQ3FSELdUIsFtV4mxJtg09TMQtAVR234+bVc3TBVbBmfu/akmANzVu3mEADkKQPiWi2leCQsd/FD7ZZ3ZOWBQX0gLJkIkLjrnVCsPHWOnv5FFBGgGKtU1RwvKFCJWb/mYw5Jnmbn3lnwx3rdXBcLN1tvePNTOfWs4f9kODG61+iJnHu468KUW73BsT/R6EnHbcQH0fkpW8b37Nx66WK6mLm3fd3vg0tEHME8Ee5KMiFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fZVqj13zf9rjeanEVKbBUp5jMM/9jeTt8chrpQDbxqY=;
+ b=QE1v4A2XfAGAMgXkQiL6Q1Gb1bFW9YnXEtQHvKu33xwriqjpfPC+oS2WT9W8BYyDfgYVftQkS1yslREvrRNirlp+xjeoQMUF+UuMBKOtGc3vmxblkGtFtQEoAGOIQbfiGWQugZbWZ0EzGlnfC7gdjvH2OQ3lOX19A2d1frkJf5mjg35JAJBOB0yQPSciTRaXgLf9hUMyrYqX7P2Uevlv8MJZlCR+TKspgZuMOdtxIXwOWGs3mVQLFIe7dEA96zVm/gvCgRLTqcP54fu2N2D+WQSJg6uJGQJcexSudDPBSgal4DkqihcxfX4VD4GTjqfbHuApEHECAIw/XNXdq1wwZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fZVqj13zf9rjeanEVKbBUp5jMM/9jeTt8chrpQDbxqY=;
+ b=K/l88JqTaqaVYE/oklQdlWVo//rkxSNP1FvcuoEooQdluwsXyHjkEjvGyIAWPa/+EpGVxL7W276Q70Ds/Wl4K+Gz4hmyLRtjWJDCgyWuJfKZpV/w0aLPbRoJr6aapJigy4hTflThKqq3I6KnDeSpKRUF/eHU25LkUyvlVA9RIJT4zBaGW3LTeWUgGJGJZe8A+epM0UOPGuCdsj0/iyuZJVZ+1c6a4tpbC53gvl04NZ+pDtzug/e1n3onZCOsHeWpWC9ZKPH2nYtFukJdkUQ2urqZg/2T/rkfndpPs3zFCuKIVpa78wsDXWL2BZD97bSP9KeB3FXbhkvyZy7Km6Wk/w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AS8PR04MB8248.eurprd04.prod.outlook.com (2603:10a6:20b:3fd::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 16:37:45 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 16:37:45 +0000
+Date: Mon, 27 Oct 2025 12:37:34 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Hendrik Noack <hendrik-noack@gmx.de>,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Add support for Wacom W9000-series penabled touchscreens
-Date: Mon, 27 Oct 2025 17:36:59 +0100
-Message-ID: <20251027164050.113623-1-hendrik-noack@gmx.de>
-X-Mailer: git-send-email 2.43.0
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 17/31] media: synopsys: move imx6-mipi-csi2.c to
+ synopsys/mipi-csi2.c
+Message-ID: <aP+fztk12FK4IWYK@lizhi-Precision-Tower-5810>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-17-c9286fbb34b9@nxp.com>
+ <aP83D-ndmlv5Jns8@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP83D-ndmlv5Jns8@valkosipuli.retiisi.eu>
+X-ClientProxiedBy: SJ0PR05CA0131.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::16) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iW/V621wLGB//froWQUVpqYUexPaqC6GZSTklH0TmXqITIXDQkj
- hwsXhrZGjtbJjLABVJVpDRr39IMn3fnbmSCIEvLLmyTS30Nrk06p1TYoDKwveP2S05+segZ
- EbdtpGAOf9MBYxqGaDrDAtSMehQkuSGtvOPnnNS8Y6oTEBajJWtHXLRENUrJWqthEoE/NLa
- 6aahuuLOdVELjS2Bnggjw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:un/QzTzQFGI=;e7XuMIpUa5msnfz0EAvCghWqYgR
- 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
- OBKrA==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS8PR04MB8248:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35d8439f-7843-4ea4-785f-08de15772857
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|376014|19092799006|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?62gtCPB855U9mxWi0uFL8sv3M0vtyeoxX7gfQJibz+85jJ11xvdHQcp2OLZX?=
+ =?us-ascii?Q?prLWVjFtEBs6sT78sdWnR8OZM0I2UrZSmIaTyWSOlCF8itDqZKZQvCjyLk8H?=
+ =?us-ascii?Q?V2Oqm4grXos2MwGbjS6O5arWeaQAK8Adkxu1OFX4PdpR5f8LyaQXj8kRwhri?=
+ =?us-ascii?Q?75/w3eaAHe3Yt3rnG5tnjDU1r/GOaDHkarP17bV1i8s2AD6vW3xnj2Ou75po?=
+ =?us-ascii?Q?2ik2YOlkVWQdxSa2kI8avN/lS3fGPtmMcRrcpATYhhiHkSE4O4KVbBFIoEzp?=
+ =?us-ascii?Q?iCBc0UHo3hy7gIb22X3sIO5wusrKPlZqLWyggN8DEu5mNZd9YUR+V/FyzM3/?=
+ =?us-ascii?Q?LAlcP1zdxyv2d4n4XjZmhnKrynHzDVC4Zp3Q0JGbCOAnK4uOD9kBSgl0jGrS?=
+ =?us-ascii?Q?Dye1kWzoC20AIp4Nh6DlZHQzF9NPz4u0HUg3TUtKbJiGhWiL1gK9Ca9DY4sq?=
+ =?us-ascii?Q?rI6EyeSQOTQenRValfnmwtZFVdOg2Ev51LvkaUJUwTqXSguSw5R8pvrLGAsu?=
+ =?us-ascii?Q?QoNBkYEbwKTvFgyQJ7oeUXJ8q70d7gHUQ+mKeLu0RSMA4UPz65N4xj1Cf8VO?=
+ =?us-ascii?Q?Gb9sUtQH9Ekwzq8iIYr5yZaaX43gZ3fEIznkmFoB/C8X+tIJwAL14lzhdT+i?=
+ =?us-ascii?Q?nk2nONIJAGO6tmyqhac1iTUrjBlOS356A5IeHjfxWiLOErA+zpU77iL8qbJ0?=
+ =?us-ascii?Q?r0KnA6BRXs6l6+sFiMiC/HmHsFL0opF7B8wXFHDVfkLOESLm8w4iWBIG6E9K?=
+ =?us-ascii?Q?5OlwqUuwaz3aK5P6784RJ6J5mGUN081sGfee27IhE/JQ5JTAxuKQluJTfG1s?=
+ =?us-ascii?Q?4SDeyjQMEEXOlyDQI08roIz+T4/ACrgcBbfvd+NUPkjnlvRVLpHmyUcdqheP?=
+ =?us-ascii?Q?U9l9LrZmPtcek/qZFu3cJ6nNPeNH3+1U77Ti/6I96VPjnA4X26JXAHtqIfJF?=
+ =?us-ascii?Q?gu6JKNnsW4BE2+FGM2MaUiDFAibE1E0CQU5nk7CiAPDuSgAAqTtdogPDJOau?=
+ =?us-ascii?Q?XSdr3F+P6VLIEotW5GbEmK4pmpMz84xEg4j0IDyQKMEGWDf29gq4nMrfverN?=
+ =?us-ascii?Q?V87izuvC8ldJUH2+AxLQHiWsfSI6a076LgM7uLYvkSRRhgbq2QnMpCo3P7q+?=
+ =?us-ascii?Q?BNv9bDN439aCpNreo0tBHAj5u9VAMJHSXbZjdMx8WYcEhKflhqmSxEAKGOZi?=
+ =?us-ascii?Q?Bgv95OiS61EXoFGEc85s2cWbyVyOT+COtrrs8A0Qgc1XhO+1LNLFH1LrmIdR?=
+ =?us-ascii?Q?STlrhzAtCZX92dK26zvnHvj2fKcw1sDMtYEdA6WSyaE4VeYpVYrEk/VlAkZz?=
+ =?us-ascii?Q?lemIo7q4xmIn9XeGapmhswNJs9TFLaWZUuNbv4CaKpcSSZFCjs1SC3jZjVkX?=
+ =?us-ascii?Q?7Eg+IT1Saek69IVwFv0qYIGHKGAEDqPX/fgV5stviQGwOnFdfo17Scfue3DM?=
+ =?us-ascii?Q?Pb05NNMVjM5niBf0LCDolkkhYg4Iycu+EwVhT/UXjLZVLThebN9mM/fCcqol?=
+ =?us-ascii?Q?649ymwnc+Bs5uwH5bv06Y03Zo3uDfu81O6sM?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(19092799006)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?7NgYE6YUL/xJhKSftIFReVNHyIxBR7syOVWe96yRf1cUnuRPLUfsO03mGssv?=
+ =?us-ascii?Q?tZKC6uBcBCZyADkZqWdzCO7PRE9A9YR/+G7KrYENP6VILH0IyaEb6r0gGQ8M?=
+ =?us-ascii?Q?mLlOsi3vBl/bhSmXXJnb2XAPr5zOOBjpoaem58JLRQfISTumIiP7amfxZ+5R?=
+ =?us-ascii?Q?rSpKayl4uTNIPa5lnGQTqjh7WKL2b+4Fq9i4E/Jz8wyGCw4qkFSSco7+DJRw?=
+ =?us-ascii?Q?VCKzqE/OGjmqU1Mp11AfZ8o2vyXUXq+J1kyMGR3QqnO0rHq2VmQO47/rR23X?=
+ =?us-ascii?Q?btkGbbwY9Vza7/vPPcgqAr8QMS9iGiX8xTYdJxgo6sVxUxMqKn+a4NTLmuM1?=
+ =?us-ascii?Q?0gGw3Om49dJVjlYbZalXSHqTXBTp/DKEA3sDgghvZJNQ2rlaSwtbw6UE49NK?=
+ =?us-ascii?Q?qgQxO2MLp6jhfRhModcaCGCx1NoQpkLFC/jIa7SD/IgXjxO8EMLNyz/xjCdu?=
+ =?us-ascii?Q?H785dpKXYtjBzVESQlL6XyMBDGZTEvwzDuB47ncH+/zZ7qirh9EHBUICtgNx?=
+ =?us-ascii?Q?riqYX1if0pdkug++VHgH/alscC/WSeL2D8MswPtw2Rt1ACu9s0btytAER/2+?=
+ =?us-ascii?Q?Q72Vc/q0BmhMgpJrTxWFJMTvJBDYLfCXIFB8CcOu9sI7W05SLcQmRyPLLe5M?=
+ =?us-ascii?Q?fd2j+hLcFW3TQ/49c+leKtr/WqnpKtUVZp758qmVShy0Q18hdbQqVBwIlz/n?=
+ =?us-ascii?Q?qaxUMaIkj62cNu9/KRo3VemhCL3jlpkhgChBbHX7J9OeCyq4CWy3d99GFbhj?=
+ =?us-ascii?Q?bHKVLGzRp5laMsq5AHXWIxgt0RyPwWEkaa3ELV2IsVtOGAkR4y9Jn0893ddR?=
+ =?us-ascii?Q?XC4Qa5lzDzrBznu1YzkfHJ1wWtaDCzTWLSjuVGp5he5IEnbz2qR4j5ehKcB4?=
+ =?us-ascii?Q?J7J8vAm52yczLJUR/oaUirxyVGPR9o24grgCDGShgRc8yavYpQo4v2PKG4NI?=
+ =?us-ascii?Q?x+ajESZeyG4cL0nvvvNdSZmRvJ8/0U9U4gldZnsTazwoFjyP8dZVEJU6dZFG?=
+ =?us-ascii?Q?Wh2PXjXQwnzQx4+W3K5yl8uTJWhru3TEEa7H9jrYv5kqW45mRp+ihbSipikQ?=
+ =?us-ascii?Q?ox2IAjg/DVyWkxTYxA7jONeT/hz3DGhh9CflrLv8FsCvvliS0J28Z+4fi4a9?=
+ =?us-ascii?Q?HIs2FtE+c0NXXlO+RJgxiRpjSLH/WqRE4BxIzCe65u2CUJz4Lw6C3XtTuD7r?=
+ =?us-ascii?Q?TFgv8AFYoaSpEqaj1WKQzme+8yrZbMSCC0cGsdNVUwiE4zAGrNK6IE06A6vt?=
+ =?us-ascii?Q?hhIo29m4A+639D38Xq7pw3OnhHX5tgkouZ8ZJZCezgzMig/FSnCcj6VRcayh?=
+ =?us-ascii?Q?fkGjF6BAd66SJLrsF3zz1fDLXdxpzEozh8TinK4NY9r21MqOkQGXlzW7tO6/?=
+ =?us-ascii?Q?AfGXNiejTvacdz6ciJVYkbpCald9ntSPiXXo4xrDtkI+06GCJAtso2ol4waA?=
+ =?us-ascii?Q?rPa47Otaeq30c2MHzqYOp51gTZL7Ie3TgroCAeSlX2nRaGvfdUrqRz5xVYjC?=
+ =?us-ascii?Q?ohPMvqYIAn22hYSI97ReVzcXPVakR8QVWNOqxH5ivI477dcS+AO9ofgW+8mQ?=
+ =?us-ascii?Q?QZXaVOgFeHV8ySIDubxacvVcwAzHBFVRw9O0DWJ9?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35d8439f-7843-4ea4-785f-08de15772857
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 16:37:45.7598
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NR7cin2a+GE5exN/GYm/eBdDt0+5dM0E36m9dQ+dUSu3UrQJovEfx7fxjdd1Rn1KQYhDyUXToXXctFXW5dYpYg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8248
 
-Add devicetree bindings and a driver for the Wacom W9000-series penabled
-touchscreens.
+On Mon, Oct 27, 2025 at 11:10:39AM +0200, Sakari Ailus wrote:
+> Hi Frank,
+>
+> On Thu, Aug 21, 2025 at 04:15:52PM -0400, Frank Li wrote:
+> > Move dw MIPI CSI2 common part drivers/staging/media/imx/imx6-mipi-csi2.c
+> > under synopsys to let more SoC can reuse it.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  drivers/media/platform/synopsys/Kconfig                      | 12 ++++++++++++
+> >  drivers/media/platform/synopsys/Makefile                     |  2 ++
+> >  .../imx6-mipi-csi2.c => media/platform/synopsys/mipi-csi2.c} |  0
+> >  drivers/staging/media/imx/Kconfig                            |  1 +
+> >  drivers/staging/media/imx/Makefile                           |  2 +-
+> >  5 files changed, 16 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/platform/synopsys/Kconfig b/drivers/media/platform/synopsys/Kconfig
+> > index 4fd521f78425a96985fa3b6b017deef36631d1a9..e54dad835349d420dead6d5313c0623567c28c0b 100644
+> > --- a/drivers/media/platform/synopsys/Kconfig
+> > +++ b/drivers/media/platform/synopsys/Kconfig
+> > @@ -1,3 +1,15 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >
+> > +config VIDEO_SYNOPSYS_MIPI_CSI2
+> > +        tristate "Synopsys DesignWare MIPI CSI2 Receiver common library"
+> > +        depends on VIDEO_DEV
+> > +        select MEDIA_CONTROLLER
+> > +        select VIDEO_V4L2_SUBDEV_API
+> > +        select VIDEOBUF2_DMA_CONTIG
+> > +        help
+> > +          Common library for MIPI CSI2 Controller.
+> > +
+> > +          To compile this driver as a module, choose M here. The module
+> > +          will be called synopsys_hdmirx
+> > +
+> >  source "drivers/media/platform/synopsys/hdmirx/Kconfig"
+> > diff --git a/drivers/media/platform/synopsys/Makefile b/drivers/media/platform/synopsys/Makefile
+> > index 3b12c574dd67c072901108d88cad64ca3a723938..045ed3177738e6d28aa223804b79e6774e141dc8 100644
+> > --- a/drivers/media/platform/synopsys/Makefile
+> > +++ b/drivers/media/platform/synopsys/Makefile
+> > @@ -1,2 +1,4 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  obj-y += hdmirx/
+> > +
+> > +obj-$(CONFIG_VIDEO_SYNOPSYS_MIPI_CSI2) += mipi-csi2.o
+>
+> Please give the module a more specific name.
 
-The driver currently only contains the information for the W9007A, which I
-tested on my devices. It should also work with other chips, such as W9001 =
-or
-W9010. However, I couldn't test it on these and the message length would
-need to be added.
+How about dw-mipi-csi2.o? but it is already under synopsys. Our spec only
+show synopsys mipi csi2, and have not code naming for it.
 
-Note: This is my first driver I have ever worked on so if there is
-anything I can do to improve it please let me know!
+Or mipi-csi2-v150.o (but it also supports more versions).
 
-Signed-off-by: Hendrik Noack <hendrik-noack@gmx.de>
-=2D--
-Hendrik Noack (2):
-  dt-bindings: Input: Add Wacom W9000-series penabled touchscreens
-  Input: Add support for Wacom W9000-series penabled touchscreens
+which one do you prefer?
 
- .../input/touchscreen/wacom,w9000-series.yaml |  79 +++
- drivers/input/touchscreen/Kconfig             |  12 +
- drivers/input/touchscreen/Makefile            |   1 +
- drivers/input/touchscreen/wacom_w9000.c       | 525 ++++++++++++++++++
- 4 files changed, 617 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/wa=
-com,w9000-series.yaml
- create mode 100644 drivers/input/touchscreen/wacom_w9000.c
+Frank
 
-=2D-=20
-2.43.0
-
+>
+> > diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/media/platform/synopsys/mipi-csi2.c
+> > similarity index 100%
+> > rename from drivers/staging/media/imx/imx6-mipi-csi2.c
+> > rename to drivers/media/platform/synopsys/mipi-csi2.c
+> > diff --git a/drivers/staging/media/imx/Kconfig b/drivers/staging/media/imx/Kconfig
+> > index 1cd48028b6416ae16ed69c68186281b6c6bcbec8..53e5c1546ac53e4942974a9acdcf078de1cb6073 100644
+> > --- a/drivers/staging/media/imx/Kconfig
+> > +++ b/drivers/staging/media/imx/Kconfig
+> > @@ -10,6 +10,7 @@ config VIDEO_IMX_MEDIA
+> >  	select V4L2_MEM2MEM_DEV
+> >  	select VIDEOBUF2_DMA_CONTIG
+> >  	select VIDEO_V4L2_SUBDEV_API
+> > +	select VIDEO_SYNOPSYS_MIPI_CSI2
+> >  	help
+> >  	  Say yes here to enable support for video4linux media controller
+> >  	  drivers for the i.MX5/6 SOC.
+> > diff --git a/drivers/staging/media/imx/Makefile b/drivers/staging/media/imx/Makefile
+> > index 064a6c6c069aa440c72a483080cbedf89d370193..1978b82fd1876566acbb952a4d14cf9aca35e996 100644
+> > --- a/drivers/staging/media/imx/Makefile
+> > +++ b/drivers/staging/media/imx/Makefile
+> > @@ -11,4 +11,4 @@ imx6-media-csi-objs := imx-media-csi.o imx-media-fim.o
+> >  obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx-media-common.o
+> >  obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-media.o
+> >  obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-media-csi.o
+> > -obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-mipi-csi2.o imx6-csi2.o
+> > +obj-$(CONFIG_VIDEO_IMX_MEDIA) += imx6-csi2.o
+> >
+>
+> --
+> Regards,
+>
+> Sakari Ailus
 
