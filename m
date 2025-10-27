@@ -1,146 +1,147 @@
-Return-Path: <linux-kernel+bounces-870942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0C1C0C0BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:09:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A58BC0C0C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB9E33B9DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:09:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB1CB4E30D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678702DC34B;
-	Mon, 27 Oct 2025 07:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A425A2D6E69;
+	Mon, 27 Oct 2025 07:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PwQIx+zL"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PaFD+1zb"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F32D9EF2
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B9A4A32;
+	Mon, 27 Oct 2025 07:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761548940; cv=none; b=kfK4jKRjviH2WRyz5bqr8NuadM6dPigTMsmxk98BntzfPNaQbcD9sHwl4Eh2M2HGQEcQpWDghJL/C+4xlNxjF+N14YHbxZYfv+JguJpwxeNYAKXyh0slyKsthxd2qEcec0J2fSBkCDNyyXfOQPEDkOj0aD4ITI56qPd+FhdrVOQ=
+	t=1761549325; cv=none; b=cKtBXDPYRjOt+q3/IPr3EnBFHt9r5xPcc11C4OoV56brI5Z274lOWeZxt+MS1BcKwoWYveZSnPubTW6sFZo0Z2xCKdIfr7ShlICXx5+4Dbq3yabIOzmFq/2JTyIIAHt2MP5c3kwu6qGHgCSe5B0a0WAJjre51kktZHrERluH5Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761548940; c=relaxed/simple;
-	bh=HQvYDUNf198EKKAxVvh+ZSxI78/Ij69G0JiG7PtT5fU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QQI9feHWWdZ9fpimJqHCG28rXFBmEPP4H7gFruF/X8POFl/yS/317N46xflZ+I72t74Y69KX4XGTa04Yhywol2cQcjJv5U/YERdJnd1+STIraTSVl6gB6uBGa+XBHYDBB5G/7YWaUyn8nuCAsON7oon9R3dVkyEFGfksvQD9COw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PwQIx+zL; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-427091cd4fdso2439312f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761548936; x=1762153736; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2VCn7I67W0lot093gUV4e8FUZ2HcsegXwgZoOoSOv7c=;
-        b=PwQIx+zLauUHHEW8zaqrUsBUrTClf76jPTZtESzTKlGd6SmI/lyTRiWjV2aq3XKLt1
-         2e7HGVUgC0PA3jC4M57VHP5eMsac2tYnF2mbEkIQS+CN8H6Evhu/db3eYOEaK1pZX+Nt
-         Q2LoEgS4uSMYYQqBCyfjdjKP2qdeiCip/s3jQFLKOKeZNGSvBu0f9r9DPtfypLbOxp8k
-         zs2K0U/DIxoetHY+/1B3jsN4anL/+kf1wEx7E7vl5I/uA4xXEfbvhkzMB/qmMFIT1tH/
-         Tizc9iafVA9a/QAsbkTCxMmyKP85rO5AGKvjAAQKmT75q9Z52DAmxHhTs1S8Xjw4NzYq
-         LuEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761548936; x=1762153736;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2VCn7I67W0lot093gUV4e8FUZ2HcsegXwgZoOoSOv7c=;
-        b=dY1TYkIpCVdKk0Yx0bd92SdKlYj/WS5+TyZEl+sb4u3SZ/bBscQksRv5il6V7ke3eC
-         u62gH4/orU+Bp00o1lUu1NsITb3YyU23q7ChDQbDZnkpqQTpgkhBcmRe7xBD4Y6ucuCI
-         uRq0IIDQGUDZAoLuvWhpcmnfsDqNcRPjYoYCT/WBGx6RL85V5ClBJEX9NRi0+5nj7GYP
-         fh1zURlSrD/CaXvg3nMLRhaoNELhxaZmDwwSAHDxin67/ZdIPEHD9tEatJc5vO6gRNjG
-         SUpOUnDevZMxyzLDdRD8uK5wQU07IX9S8gaPn7C57L6Er0zWUNc/RVbhDNRll6SiFL2n
-         MaIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCQZBD6vRgypLapW9Z8PwA1zpCDCBaZqzINVxrOgqclZqm+sb7WMIPf6vwSIm5Agce5bhzJKFRQcCeRy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcH1FITK5PEBWCQryOtwrok1gYMVOQ5m2IlSqFSZPPEL/uWqGJ
-	MRGS2ueoYx875EF6i4ZFOYliiMb1wDxjmuJ2DJae4vAM7ROUN+wVO2WqVl7BuVw39TM=
-X-Gm-Gg: ASbGnctWqU1U4kQlyg16wvoU25C/UtHolw58lZgWS0gADD0szOyI77KN/bnhkUieiYG
-	/U+q/OdG0lJCV7z9V/sOB2vlygLKATjShrQCngQ1gbOiHW10s9S+kWyZw/3PXJ2NUzoq80siv7o
-	eJ+d5gAJ+JadcuDn0ydVKi6CP8mgAsR6gyLApZeqE8uya5FSP3gnKEUgnG1YtZoNGw92QfSmD12
-	FuzkxY7CwLvpLPN+53rCnbYkiAAPzWkvP4kHevCxrVrktt4an4zcRMJ4rVIPbafhWi5J0P9F2yZ
-	qQXZ6YPMehtyDef5Fs1D6t9D9K7uOluJTEPFZheANddzOyeslh8P9wHuNSYw9oszjkI3OPcmBYY
-	aO29EqvyPn4TOhmgwZPneNlFH2ZOcUNs3ZSTymUC2gu0xZ+OTHbFlGqadi1lVgsfo60PYHVhvaE
-	Uwi4uEd2DQ+ABi9M5l
-X-Google-Smtp-Source: AGHT+IGoQx8B5H77NlYFS00H5yXNOz5JUZs/694lcXu0yPBw3rKGoC7GgPX+DZXHN83AY89E6HX4rA==
-X-Received: by 2002:a5d:5f82:0:b0:3ec:db87:e8fa with SMTP id ffacd0b85a97d-42704d768b6mr25913703f8f.26.1761548935732;
-        Mon, 27 Oct 2025 00:08:55 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952e3201sm12634747f8f.47.2025.10.27.00.08.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 00:08:55 -0700 (PDT)
-Date: Mon, 27 Oct 2025 10:08:51 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
-Message-ID: <aP8agyKj73bLZrTQ@stanley.mountain>
+	s=arc-20240116; t=1761549325; c=relaxed/simple;
+	bh=Pe+CdUNq7xPhOHBLPZEjDbQCc3DQanoxkFozOCx35eU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hBL+eGlhwbXzAydwcf5Th1fYFU7sxpinXRYXanC2mqL879T33YvUkFYqYipFZfCTSVikGIsbYEkxnCZRWdMoSEIKTU8hH9HEmoe/goM+rhsszbDX/W/d5pReHyguOlpx351VMktumLYZopoY/BXU7RoxaP9VDmHOKipMZ83ANAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PaFD+1zb; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761549319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T9e1nf1/1euwPJDsBGHv64szmanH5wpqLiBTycBujNY=;
+	b=PaFD+1zbWYTkjb8PjRH1oqkbaB2saVyKjQ0mJJN/f6vlZbrfQKi4c9UQ2SEHsQraZp9+5o
+	8HtpE4xX3og/x82rGRe2BGZnW47cTuqOdbXj3q+Yhf+GInBkZbEJ7i8FeeBIjTkpyHoax0
+	N8XB3K00RRhs4GPrhgZR9mmQs6ueEmo=
+From: chenxiaosong.chenxiaosong@linux.dev
+To: sfrench@samba.org,
+	smfrench@gmail.com,
+	linkinjeon@kernel.org,
+	linkinjeon@samba.org,
+	christophe.jaillet@wanadoo.fr
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ChenXiaoSong <chenxiaosong@kylinos.cn>
+Subject: [PATCH v4 00/24] smb: move duplicate definitions to common header file
+Date: Mon, 27 Oct 2025 15:12:52 +0800
+Message-ID: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The snprintf() calls here work but they have several minor style issues:
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 
-1) It uses ARRAY_SIZE() which is the number of elements in an array.
-   Since were talking about char that works, but it's more common to
-   use sizeof() which is the number of bytes.
-2) The printf format is "%1d".  The "1" ensures we always print at
-   least 1 character but since numbers all have at least 1 digit this
-   can be removed.
-3) The kernel implementation of snprintf() cannot return negative error
-   codes.  Also these particular calls to snprintf() can't return zero
-   and the code to handle that zero return is sort of questionable.
-4) In the current kernel the only "core_id" we print is "0" but if it
-   was more than 9 then the output would be truncated so GCC complains.
-   Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
+The following patches from v3 have already been merged into the mainline:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: The v1 introduced a W=1 warning because of the truncation issue.
-    It's a false positive because GCC assumes that "core_id" can be
-    every possible value of int but actually it can only be zero.  And
-    also generally, in the kernel, truncating is fine and it is fine
-    here too.
+  - smb/server: fix possible memory leak in smb2_read(): https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6fced056d2cc8d01b326e6fcfabaacb9850b71a4
+  - smb/server: fix possible refcount leak in smb2_sess_setup(): https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=379510a815cb2e64eb0a379cb62295d6ade65df0
+  - smb: move some duplicate definitions to common/cifsglob.h: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d877470b59910b5c50383d634dda3782386bba51
 
-    But let's use that as an opportunity to do more cleanups.
+In order to maintain the code more easily, move some duplicate definitions
+to common header file.
 
- drivers/remoteproc/mtk_scp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Add some MS documentation references for macro and struct definitions.
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 10e3f9eb8cd2..db8fd045468d 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
- 		return ERR_PTR(-EINVAL);
- 
- 	if (core_id >= 0)
--		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
-+		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
- 	else
--		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
--	if (ret <= 0)
--		return ERR_PTR(ret);
-+		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
-+	if (ret >= sizeof(scp_fw_file))
-+		return ERR_PTR(-ENAMETOOLONG);
- 
- 	/* Not using strchr here, as strlen of a const gets optimized by compiler */
- 	soc = &compatible[strlen("mediatek,")];
+v3->v4:
+  - The following modifications were made according to Namjae's suggestions.
+  - Create patch #01, rename it to "smbglob.h".
+  - Patch #02 #03 #04: move definitions to common/smbglob.h instead of common/cifsglob.h.
+  - Patch #05: do not move "BAD_PROT".
+  - Patch #05 ~ #15: move definitions to common/smb1pdu.h instead of common/cifspdu.h.
+  - Create #16 ~ #19: move some durable handle structures to common/smb2pdu.h.
+  - Fix warnings from script checkpatch.pl: WARNING: Prefer __packed over __attribute__((packed)).
+  - Update some commit message descriptions.
+
+v3: https://lore.kernel.org/all/20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev/
+
+ChenXiaoSong (16):
+  smb: move some duplicate definitions to common/smb1pdu.h
+  smb: move file access permission bits definitions to common/smb1pdu.h
+  smb: move SMB frame definitions to common/smb1pdu.h
+  smb: move FILE_SYSTEM_ATTRIBUTE_INFO to common/smb1pdu.h
+  smb: move FILE_SYSTEM_DEVICE_INFO to common/smb1pdu.h
+  smb: move FILE_SYSTEM_INFO to common/smb1pdu.h
+  smb: move FILE_DIRECTORY_INFO to common/smb1pdu.h
+  smb: move FILE_FULL_DIRECTORY_INFO to common/smb1pdu.h
+  smb: move FILE_BOTH_DIRECTORY_INFO to common/smb1pdu.h
+  smb: move SEARCH_ID_FULL_DIR_INFO to common/smb1pdu.h
+  smb: move FILE_SYSTEM_POSIX_INFO to common/smb1pdu.h
+  smb: move create_durable_req_v2 to common/smb2pdu.h
+  smb: move create_durable_handle_reconnect_v2 to common/smb2pdu.h
+  smb: move create_durable_rsp_v2 to common/smb2pdu.h
+  smb/server: remove create_durable_reconn_req
+  smb: move smb2_file_network_open_info to common/smb2pdu.h
+
+ZhangGuoDong (8):
+  smb: rename common/cifsglob.h to common/smbglob.h
+  smb: move smb_version_values to common/smbglob.h
+  smb: move get_rfc1002_len() to common/smbglob.h
+  smb: move SMB1_PROTO_NUMBER to common/smbglob.h
+  smb: move smb_sockaddr_in and smb_sockaddr_in6 to common/smb2pdu.h
+  smb: move copychunk definitions to common/smb2pdu.h
+  smb: move resume_key_ioctl_rsp to common/smb2pdu.h
+  smb: move some duplicate definitions to common/smb2pdu.h
+
+ fs/smb/client/cifsacl.c       |   4 +-
+ fs/smb/client/cifsglob.h      |  30 +--
+ fs/smb/client/cifspdu.h       | 435 +-------------------------------
+ fs/smb/client/cifssmb.c       |  10 +-
+ fs/smb/client/cifstransport.c |   8 +-
+ fs/smb/client/connect.c       |   2 +-
+ fs/smb/client/misc.c          |   2 +-
+ fs/smb/client/smb2ops.c       |  18 +-
+ fs/smb/client/smb2pdu.c       |  14 +-
+ fs/smb/client/smb2pdu.h       | 112 ---------
+ fs/smb/common/cifsglob.h      |  30 ---
+ fs/smb/common/smb1pdu.h       | 462 ++++++++++++++++++++++++++++++++++
+ fs/smb/common/smb2pdu.h       | 144 ++++++++++-
+ fs/smb/common/smbglob.h       |  68 +++++
+ fs/smb/server/oplock.c        |   8 +-
+ fs/smb/server/smb2misc.c      |   2 +-
+ fs/smb/server/smb2ops.c       |  38 +--
+ fs/smb/server/smb2pdu.c       | 136 +++++-----
+ fs/smb/server/smb2pdu.h       | 107 --------
+ fs/smb/server/smb_common.c    |  10 +-
+ fs/smb/server/smb_common.h    | 291 +--------------------
+ fs/smb/server/smbacl.c        |   2 +-
+ fs/smb/server/vfs.c           |   2 +-
+ 23 files changed, 800 insertions(+), 1135 deletions(-)
+ delete mode 100644 fs/smb/common/cifsglob.h
+ create mode 100644 fs/smb/common/smb1pdu.h
+ create mode 100644 fs/smb/common/smbglob.h
+
 -- 
-2.51.0
+2.43.0
 
 
