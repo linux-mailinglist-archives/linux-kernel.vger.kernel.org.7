@@ -1,236 +1,215 @@
-Return-Path: <linux-kernel+bounces-871924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0BBC0ED0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:10:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF40AC0F0DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11D219C3C1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104A04252CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540BF2D94BB;
-	Mon, 27 Oct 2025 15:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F31311C17;
+	Mon, 27 Oct 2025 15:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UXuiiI+Y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="vhpgpzbi"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559FE4A3E;
-	Mon, 27 Oct 2025 15:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E442C30DD35
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577464; cv=none; b=RWsfDDzA9s7HOZbEopxbeCaA5XetFOYGDM2nFXiH/4MvvByIW3wycy9WV3x5+Qlfvqc/b68CsOG9pPGLmit9gOYck0bZ73yIBdlRlQehXPT6luqvgnmqKorpRlU4DQpmTYsE6y3KJl0BQ1IQZjgo8HeQUs9dceeh1apzZdtLJgk=
+	t=1761579874; cv=none; b=MWiqo2Dg7LbZh2GhYle+ILDs0jZMMON38Ova8iwZNQm3s5W1eKAQyNwPg/iIhXwdTPEJJE42plwFLTbkXCZdpNM/uhJDPhO2x/V3JOBmRzOGs+PghXzLnsfJZ4ZWH7Ar+gKjpsfONPWdmj3p5rCnCLAWqdPe7AMGPSCgLs/9vhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577464; c=relaxed/simple;
-	bh=Oyvud8Xrb31jPdkUgL/nSFBCVRBEWFiP8+m62AJySW8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lJspPMURD+iW4aOHRpDEHeoTuVZI1l08xZbxgF1nSlp3ZxD1CG9xeag5jWJRwVj4RTMIi+A6HPQ5TpGvSjhXb3u4ocAQGvPtSKbo6W65btRg/f6TmdrIFI9ajNFKgt++mKLdzDgzIS8ZE9o9ehJ517lmzplokF0Yhhf/nA68f30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UXuiiI+Y; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761577462; x=1793113462;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=Oyvud8Xrb31jPdkUgL/nSFBCVRBEWFiP8+m62AJySW8=;
-  b=UXuiiI+YHMUuxEHRISGkXmHuvoC3/N44Fowoq95Dhblb0cNJqjNXZNnI
-   9pt/5mt6jFqIgfmoj5rxOT3N7VPztm542kIODwfD1o0Ipe2qUHveEt+hH
-   EqCXm4w+p9fi8X2K1ZxZS4O5aWHk2mQk7asKSln8gBSytM+xCuhyzle8D
-   fr8MEnNZuhAcoaro3IXNvQrWoJ7x5Jii2MqFwVYhv8GTWKinppa6bcG5L
-   1VjA8o6Pg6z33RL6mNmjxJVW1bhqEz8NwlkP9l24RBVcTZXKK58oWdeP1
-   i4ZqQ0sASVTYgYq8ccQjGb/8N+oFjJAvW9hkdRQ92YL/GREp1dCLmeJOZ
-   Q==;
-X-CSE-ConnectionGUID: 31wauQOsSq2fPfoVMMUA1A==
-X-CSE-MsgGUID: +01nb+TsR4W4u84KGp4mbQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63696132"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="63696132"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 08:04:22 -0700
-X-CSE-ConnectionGUID: 8+IRZ5reQvGEkYVV6ZajvA==
-X-CSE-MsgGUID: Of8F0flcS4i+xSIy6S8wgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="184960852"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.41])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 08:04:15 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 27 Oct 2025 17:04:11 +0200 (EET)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Lucas De Marchi <lucas.demarchi@intel.com>, intel-xe@lists.freedesktop.org, 
-    linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-    Icenowy Zheng <uwu@icenowy.me>, Vivian Wang <wangruikang@iscas.ac.cn>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-    Simon Richter <Simon.Richter@hogyros.de>, 
-    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: Release BAR0 of an integrated bridge to allow
- GPU BAR resize
-In-Reply-To: <20251024224401.GA1371085@bhelgaas>
-Message-ID: <5fa35d10-e3c6-9661-9287-47ebdcaca0d1@linux.intel.com>
-References: <20251024224401.GA1371085@bhelgaas>
+	s=arc-20240116; t=1761579874; c=relaxed/simple;
+	bh=A7Ytmx+msXbCMLv7qizf3sUsu6PFFcNzN3DCqr+RMMk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jV3bDf1l9zOP8BWzKxNgdCuQ30bCtou0QTpUlzWMOcSvShjH0T3OQZrTllPSZpWrphmksXBhJMJHESg6lIokEvRKUi7RN1Xqh4bemJ7ytD/T64F/fKtZw67sSh2o40+tFwyhyVIndpDJVRneF+jqnppgYcvdtVhUomC7ISkvsH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=vhpgpzbi; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from fedora (p3796170-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [180.53.173.170])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59RF4hAa090988
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 28 Oct 2025 00:04:45 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=qn1+tAAVX5cF2gzds3Icn8juF28uRNlDHtH6BY/VYYc=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=From:To:Subject:Date:Message-ID;
+        s=rs20250315; t=1761577485; v=1;
+        b=vhpgpzbiRT7MvFblbPzybnrt8Rq7StII0xjn4IJfrcUbkvyW2Uy/nu0OaIuIfEzP
+         yaHR0+uSkSMaV3k8PAHgUNDUx2FcaCi78VUY9ESCEWKOM6AgkHKirsVn7O6vptDc
+         c9y2lzq5iicxVhaSNBlxB/QsGaGDwHij8tXjFAIENoeRdoSaTs9TsXeWfizastJ0
+         Df3qv6DiDm9uIIgQRjkVeQuScWS57psPjIaWX/LLtpgEbiFyCgWASoikEwoNjH4S
+         lqmIfkCFlVBdb98WA9bJrNylw3Gf/qlzOCbtv9e9+NNsYvmNiSfg7t7Ke+9D9ZbU
+         dg+auOrrEbHBWMEuN5S9ug==
+From: Kenta Akagi <k@mgml.me>
+To: Song Liu <song@kernel.org>, Yu Kuai <yukuai@fnnas.com>,
+        Shaohua Li <shli@fb.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kenta Akagi <k@mgml.me>
+Subject: [PATCH v5 00/16] Don't set MD_BROKEN on failfast bio failure
+Date: Tue, 28 Oct 2025 00:04:17 +0900
+Message-ID: <20251027150433.18193-1-k@mgml.me>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1098205246-1761576381=:970"
-Content-ID: <9d0e426b-9aa1-0ef7-b2f1-bd48534fcf9a@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Changes from V4:
+- Use device_lock to serialize md_error() instead of adding a new
+  spinlock_t.
+- Rename new function md_bio_failure_error() to md_cond_error().
+- Add helper function pers->should_error() to determine whether to fail
+  rdev in failfast bio failure, instead of using the LastDev flag.
+- Avoid changing the behavior of the LastDev flag.
+- Drop fix for R{1,10}BIO_Uptodate not being set despite successful
+  retry; this will be sent separately after Nan's refactor.
+- Drop fix for the message 'Operation continuing on 0 devices'; as it is
+  outside the scope of this patch, it will be sent separately.
+- Improve logging when metadata writing fails.
+- Rename LastDev to RetryingSBWrite.
+Changes from V3:
+- The error handling in md_error() is now serialized, and a new helper
+  function, md_bio_failure_error, has been introduced.
+- MD_FAILFAST bio failures are now processed by md_bio_failure_error
+  instead of signaling via FailfastIOFailure.
+- RAID10: Fix missing reschedule of failfast read bio failure
+- Regardless of failfast, in narrow_write_error, writes that succeed
+  in retry are returned to the higher layer as success
+Changes from V2:
+- Fix to prevent the array from being marked broken for all
+  Failfast IOs, not just metadata.
+- Reflecting the review, update raid{1,10}_error to clear
+  FailfastIOFailure so that devices are properly marked Faulty.
+Changes from V1:
+- Avoid setting MD_BROKEN instead of clearing it
+- Add pr_crit() when setting MD_BROKEN
+- Fix the message may shown after all rdevs failure:
+  "Operation continuing on 0 devices"
 
---8323328-1098205246-1761576381=:970
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <3bac46db-7de1-f5bc-b075-6d9ffad99397@linux.intel.com>
+v4: https://lore.kernel.org/linux-raid/20250915034210.8533-1-k@mgml.me/
+v3: https://lore.kernel.org/linux-raid/20250828163216.4225-1-k@mgml.me/
+v2: https://lore.kernel.org/linux-raid/20250817172710.4892-1-k@mgml.me/
+v1: https://lore.kernel.org/linux-raid/20250812090119.153697-1-k@mgml.me/
 
-On Fri, 24 Oct 2025, Bjorn Helgaas wrote:
-> On Thu, Sep 18, 2025 at 01:58:56PM -0700, Lucas De Marchi wrote:
-> > From: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> >=20
-> > Resizing BAR to a larger size has to release upstream bridge windows in
-> > order make the bridge windows larger as well (and to potential relocate
-> > them into a larger free block within iomem space). Some GPUs have an
-> > integrated PCI switch that has BAR0. The resource allocation assigns
-> > space for that BAR0 as it does for any resource.
-> >=20
-> > An extra resource on a bridge will pin its upstream bridge window in
-> > place which prevents BAR resize for anything beneath that bridge.
-> >=20
-> > Nothing in the pcieport driver provided by PCI core, which typically is
-> > the driver bound to these bridges, requires that BAR0. Because of that,
-> > releasing the extra BAR does not seem to have notable downsides but
-> > comes with a clear upside.
-> >=20
-> > Therefore, release BAR0 of such switches using a quirk and clear its
-> > flags to prevent any new invocation of the resource assignment
-> > algorithm from assigning the resource again.
-> >=20
-> > Due to other siblings within the PCI hierarchy of all the devices
-> > integrated into the GPU, some other devices may still have to be
-> > manually removed before the resize is free of any bridge window pins.
-> > Such siblings can be released through sysfs to unpin windows while
-> > leaving access to GPU's sysfs entries required for initiating the
-> > resize operation, whereas removing the topmost bridge this quirk
-> > targets would result in removing the GPU device as well so no manual
-> > workaround for this problem exists.
-> >=20
-> > Reported-by: Lucas De Marchi <lucas.demarchi@intel.com>
-> > Link: https://lore.kernel.org/linux-pci/fl6tx5ztvttg7txmz2ps7oyd745wg3l=
-wcp3h7esmvnyg26n44y@owo2ojiu2mov/
-> > Link: https://lore.kernel.org/intel-xe/20250721173057.867829-1-uwu@icen=
-owy.me/
-> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Cc: <stable@vger.kernel.org> # v6.12+
-> > Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
-> > ---
-> >=20
-> > Remarks from Ilpo: this feels quite hacky to me and I'm working towards=
- a
-> > better solution which is to consider Resizable BAR maximum size the
-> > resource fitting algorithm. But then, I don't expect the better solutio=
-n
-> > to be something we want to push into stable due to extremely invasive
-> > dependencies. So maybe consider this an interim/legacy solution to the
-> > resizing problem and remove it once the algorithmic approach works (or
-> > more precisely retain it only in the old kernel versions).
-> > ---
-> >  drivers/pci/quirks.c | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >=20
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index d97335a401930..9b1c08de3aa89 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -6338,3 +6338,26 @@ static void pci_mask_replay_timer_timeout(struct=
- pci_dev *pdev)
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_GLI, 0x9750, pci_mask_replay_tim=
-er_timeout);
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_GLI, 0x9755, pci_mask_replay_tim=
-er_timeout);
-> >  #endif
-> > +
-> > +/*
-> > + * PCI switches integrated into Intel Arc GPUs have BAR0 that prevents
-> > + * resizing the BARs of the GPU device due to that bridge BAR0 pinning=
- the
-> > + * bridge window it's under in place. Nothing in pcieport requires tha=
-t
-> > + * BAR0.
-> > + *
-> > + * Release and disable BAR0 permanently by clearing its flags to preve=
-nt
-> > + * anything from assigning it again.
->=20
-> Does "disabling BAR0" actually work?  This quirk keeps the PCI core
-> from assigning resources to the BAR, but I don't think we have a way
-> to actually disable an individual BAR, do we?
+When multiple MD_FAILFAST bios fail simultaneously on Failfast-enabled
+rdevs in RAID1/RAID10, the following issues can occur:
+* MD_BROKEN is set and the array halts, even though this should not occur
+  under the intended Failfast design.
+* Writes retried through narrow_write_error succeed, but the I/O is still
+  reported as BLK_STS_IOERR
+  * NOTE: a fix for this was removed in v5, will be send separetely
+    https://lore.kernel.org/linux-raid/6f0f9730-4bbe-7f3c-1b50-690bb77d5d90@huaweicloud.com/
+* RAID10 only: If a Failfast read I/O fails, it is not retried on any
+  remaining rdev, and as a result, the upper layer receives an I/O error.
 
-No, we don't and that was just sloppy wording from me. The same problem
-applies to any other non-assigned BAR resource, they too are there with
-a dangling address that could conflict.
+Simultaneous bio failures across multiple rdevs are uncommon; however,
+rdevs serviced via nvme-tcp can still experience them due to something as
+simple as an Ethernet fault. The issue can be reproduced using the
+following steps.
 
-> I think the only control is PCI_COMMAND_MEMORY, and the bridge must
-> have PCI_COMMAND_MEMORY enabled so memory accesses to downstream
-> devices work.
->=20
-> No matter what we do to the struct resource, the hardware BAR still
-> contains some address, and the bridge will decode any accesses that
-> match the address in the BAR.
->=20
-> Maybe we could effectively disable the BAR by setting it to some
-> impossible address, i.e., something outside both the upstream and
-> downstream bridge windows so memory accesses could never be routed to
-> it?
+# prepare nvmet/nvme-tcp and md array #
+sh-5.2# cat << 'EOF' > loopback-nvme.sh
+set -eu
+nqn="nqn.2025-08.io.example:nvmet-test-$1"
+back=$2
+cd /sys/kernel/config/nvmet/
+mkdir subsystems/$nqn
+echo 1 > subsystems/${nqn}/attr_allow_any_host
+mkdir subsystems/${nqn}/namespaces/1
+echo -n ${back} > subsystems/${nqn}/namespaces/1/device_path
+echo 1 > subsystems/${nqn}/namespaces/1/enable
+ports="ports/1"
+if [ ! -d $ports ]; then
+        mkdir $ports
+        cd $ports
+        echo 127.0.0.1 > addr_traddr
+        echo tcp       > addr_trtype
+        echo 4420      > addr_trsvcid
+        echo ipv4      > addr_adrfam
+        cd ../../
+fi
+ln -s /sys/kernel/config/nvmet/subsystems/${nqn} ${ports}/subsystems/
+nvme connect -t tcp -n $nqn -a 127.0.0.1 -s 4420
+EOF
 
-I'm not entire sure how one should acquire address outside of the valid=20
-address ranges? Is the resource-to-bus mapping even valid outside a=20
-window?
+sh-5.2# chmod +x loopback-nvme.sh
+sh-5.2# modprobe -a nvme-tcp nvmet-tcp
+sh-5.2# truncate -s 1g a.img b.img
+sh-5.2# losetup --show -f a.img
+/dev/loop0
+sh-5.2# losetup --show -f b.img
+/dev/loop1
+sh-5.2# ./loopback-nvme.sh 0 /dev/loop0
+connecting to device: nvme0
+sh-5.2# ./loopback-nvme.sh 1 /dev/loop1
+connecting to device: nvme1
+sh-5.2# mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 \
+--failfast /dev/nvme0n1 --failfast /dev/nvme1n1
+...
+mdadm: array /dev/md0 started.
 
-Perhaps find either min(start address) or max(end address) over all
-windows as those boundary addresses should be still mappable and place=20
-the BAR right below or above either of those by subtracting the resource=20
-size or adding +1). How does that approach sound?
+# run fio #
+sh-5.2# fio --name=test --filename=/dev/md0 --rw=randrw --rwmixread=50 \
+--bs=4k --numjobs=9 --time_based --runtime=300s --group_reporting --direct=1
 
-(There could be cases where a simple approach like that fails when both=20
-ends of the range are in use but then I wouldn't want to over-engineer the=
-=20
-approach at this point unless we know there are such problematic cases
-in practice.)
+# It can reproduce the issue by block nvme traffic during fio #
+sh-5.2# iptables -A INPUT -m tcp -p tcp --dport 4420 -j DROP;
+sh-5.2# sleep 10; # twice the default KATO value
+sh-5.2# iptables -D INPUT -m tcp -p tcp --dport 4420 -j DROP
 
-It would be nice to do it eventually for any non-assigned BAR but it=20
-requires preserving those res->flags (for non-window resources too) in=20
-order to know which of them are even even usable as BARs.
 
---=20
- i.
+Patch 1-2 serialize the md_error() with device_lock
+Patch 3-6 introduce md_cond_error() and dependent helpers
+Patch 7-8 preparation refactor for patch 11-12
+Patch 9 adds the missing retry path for Failfast read errors in RAID10.
+Patch 10-12 prevents MD_FAILFAST bio failure causing the array to fail;
+this is what I want to achieve.
+Patch 13-14 add the error log when the array stops functioning.
+Patch 15 simply rename the LastDev flag.
+Patch 16 add the mddev and rdev name to the error log when metadata
+writing fails.
+ 
+Kenta Akagi (16):
+  md: move device_lock from conf to mddev
+  md: serialize md_error()
+  md: add pers->should_error() callback
+  md: introduce md_cond_error()
+  md/raid1: implement pers->should_error()
+  md/raid10: implement pers->should_error()
+  md/raid1: refactor handle_read_error()
+  md/raid10: refactor handle_read_error()
+  md/raid10: fix failfast read error not rescheduled
+  md: prevent set MD_BROKEN on super_write failure with failfast
+  md/raid1: Prevent set MD_BROKEN on failfast bio failure
+  md/raid10: Prevent set MD_BROKEN on failfast bio failure
+  md/raid1: add error message when setting MD_BROKEN
+  md/raid10: Add error message when setting MD_BROKEN
+  md: rename 'LastDev' rdev flag to 'RetryingSBWrite'
+  md: Improve super_written() error logging
 
-> > + */
-> > +static void pci_release_bar0(struct pci_dev *pdev)
-> > +{
-> > +=09struct resource *res =3D pci_resource_n(pdev, 0);
-> > +
-> > +=09if (!res->parent)
-> > +=09=09return;
-> > +
-> > +=09pci_release_resource(pdev, 0);
-> > +=09res->flags =3D 0;
-> > +}
-> > +DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, 0x4fa0, pci_release_bar0=
-);
-> > +DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, 0x4fa1, pci_release_bar0=
-);
-> > +DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, 0xe2ff, pci_release_bar0=
-);
-> >=20
-> > --=20
-> > 2.50.1
-> >=20
->=20
---8323328-1098205246-1761576381=:970--
+ drivers/md/md-linear.c   |   1 +
+ drivers/md/md.c          |  58 ++++++++++++++--
+ drivers/md/md.h          |  12 +++-
+ drivers/md/raid0.c       |   1 +
+ drivers/md/raid1.c       | 111 ++++++++++++++++++++-----------
+ drivers/md/raid1.h       |   2 -
+ drivers/md/raid10.c      | 116 ++++++++++++++++++++------------
+ drivers/md/raid10.h      |   1 -
+ drivers/md/raid5-cache.c |  16 ++---
+ drivers/md/raid5.c       | 139 +++++++++++++++++++--------------------
+ drivers/md/raid5.h       |   1 -
+ 11 files changed, 283 insertions(+), 175 deletions(-)
+
+-- 
+2.50.1
+
 
