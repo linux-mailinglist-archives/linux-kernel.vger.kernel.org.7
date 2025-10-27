@@ -1,98 +1,78 @@
-Return-Path: <linux-kernel+bounces-872499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C0CC1158B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:14:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9976C11585
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B079507531
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:10:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9584E4FAFC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1E532A3C0;
-	Mon, 27 Oct 2025 20:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0FD32548B;
+	Mon, 27 Oct 2025 20:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+WJCknY"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JelPj4FP"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D643322A22
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22A131D740;
+	Mon, 27 Oct 2025 20:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761595760; cv=none; b=FVKAln8qoEHYrpjPtGz97+y+uPbNlLIATKYhUgagGXEJClkqkHBrUXdd4fRDgSUAHjQBwSto0kX4AfLkT8ydzXRwduOrU+FY0GqvDl69fYUYlUU40Nm6yCqyrYXG4BtkV2WuF8c1pBc6dHXmNSpjS357ys4mBNEUM2xrLt8EiG8=
+	t=1761595779; cv=none; b=NwGW2WAbJaeS7KO4S0wOY3CRS4TWmPFwtcJDfGJH7oTK7BwE1n7QVOwTh7gdJ2Tqy2H6mNO75JXLo1Hb/U9PeYuggta90cWSaptAqPH/Hd0LpTueUgk/q6v30lgOd8i6XpjLpgz1YYfIMkDJoPIyloPf17EfuVLs3dcBvfTqeSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761595760; c=relaxed/simple;
-	bh=VrzfHj3otmmBCDNQvZHD/YIyZ6ahyrf9WNnnwjmbVIY=;
+	s=arc-20240116; t=1761595779; c=relaxed/simple;
+	bh=XicmhcsPf//ND3V4Aj+NICI73LN/3zknK2a8Pytztvs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qIiQuN2DSUYktupVmxZiuXgHh0kaGsQaWh/FNtbgOwIlRkmMLNn1nZSOT63WAb34zz0G/pEnW7RvQUeOKX+RNX5S3YE8JJWP+utYN8CrmNzMe+T9bDXJFBIxHNnBD4Ed6r5f3TzXinIaMxU3UgEqsF/1SGxYU1s+0NuFgqfNdKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+WJCknY; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33e27cda4d7so6379837a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:09:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761595757; x=1762200557; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=00/tGJs0RfNksXOaDOXennpkTn/k8VAdCGvJj00dDEc=;
-        b=C+WJCknYInavndh00gYe5TCpC3X9Q1qhw5H55Ng0Ckc7zE4U5h844bdohWIMVAlH01
-         zgBMDaRrcY657BQ9c+Incsfv63Tc6olZaYAhyXunO7UO1AjGghRzYuzc1fWN4SU0wOLJ
-         094kiyG+U1GlNSHQy3DXev+EwNmfGRWkGg4QpECQbMERnvKPeC3X/s0UtRvKRvnl6J+Z
-         3asCCAzVO4XsrhCHZ1l7OAZhZvYf8ZGZdofwMHE14W/Wle75V54nuPFEjvyvwX4Lk7bJ
-         E5ENb+KqDIpiOq4XMiAWgsCQfcr8LvOKW5y1HEdy1fx05iqxiWjLIb+G6gkA9cg+2vsW
-         8f9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761595757; x=1762200557;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=00/tGJs0RfNksXOaDOXennpkTn/k8VAdCGvJj00dDEc=;
-        b=kfi8dLZFdPejiPSEGzeeDj1Z9l9ObO1EajTdZLeIu26dQVpYd6ebpQ/oT9/xwlcwJ/
-         QOySAQGLMx2YPJP3vaom+kr3reuLbz1GNCuV6JBoeIPr2ean+RpjcOTeMOKPbNMFo1V0
-         pbgazf6szgkYop9k4Stwn9ko8j7BTWZVH5OGbJauaSekamQk8ZwQ2IbXJu7zvRr+3DSL
-         IEFGoppFRn0pDb+R7CYO8h7xNdaj8iJAxeTkdMZj8zgYQXrX60xMw+gA402NDRTvCDCi
-         S55bSahQPlTqG75iJv+XWUDgv2lOj11l9UIIgjDLj+sMgGY5vOgT7hSHXd8bmUAjs3mT
-         S9kA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvHy5NVtZjMYR8uPsZ8mLF0no+46Q/n24C/ZQD2ezgNk6LjWVW4WQ1a/inWRDobPypGIR0HrrCh08HoyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxohkV8l2xv9waijVYAyFxSJ0vA9UntUwmuOgBNMcZ537h77S65
-	oQdWoRT69swDJKVO2TKMZ+aSGZbxWOWMUu5Pg/AH2PiwODrH6peJJmwn
-X-Gm-Gg: ASbGncs+3KF0nzqMzP/Y/fB/LreipMWl+ZdYDLK0gduyQnaYV3/imBpJ0fzixdfDrav
-	nZPcijktUEK96o6BHMZLrc2OkqSj2gzrhrUeMEvc8Jt3p+n62ym5E95E9LoJWIzljebpDj+m1S9
-	UQHEF4TOGZDloekEkkbQQ4Ls7bhYjVtppLG5P1nUf410TohhU92bexUYoucDUehiY4Rt+asA8CP
-	/GgeoYjl5lTblng8EnQEr7/wNzaFpxNPVOfDIJkTfTC9F7J8VocWD4zaXRP0+ycMdNWJN7VnR4c
-	NnQwIY6OthG0Bospat5pWKuO4H8ZTRuAoxMDk1vJa7d3jnq0/dkT5VU+2KFh3Y8oz7PmjYxxE62
-	Us79SVd/fh9XmAId+YmzY4biE4hZxkRA2oCpIspUWbUNZhWqUx8h3yxNKMvWasD59YeBIOtfZGy
-	jTN4G9XvGr
-X-Google-Smtp-Source: AGHT+IFl4hWhOQRPaNuwDWpNGSweJYl2JxtBvdEdtnPBHu5jRqebty3eUExo/muCgqOvDIJ7QiPuXg==
-X-Received: by 2002:a17:90b:38cf:b0:33d:a6a6:2e26 with SMTP id 98e67ed59e1d1-34028989872mr853354a91.13.1761595757297;
-        Mon, 27 Oct 2025 13:09:17 -0700 (PDT)
-Received: from [192.168.0.226] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3402910b3f8sm207808a91.1.2025.10.27.13.09.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 13:09:16 -0700 (PDT)
-Message-ID: <51769170ba3cf9eb4007fb0fc22f2434302d9aa5.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: Skip bounds adjustment for
- conditional jumps on same register
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- song@kernel.org, 	yonghong.song@linux.dev, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org, shuah@kernel.org,
- paul.chaignon@gmail.com, m.shachnai@gmail.com, 
-	harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
- luis.gerhorst@fau.de, 	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: Kaiyan Mei <M202472210@hust.edu.cn>, Yinhao Hu <dddddd@hust.edu.cn>
-Date: Mon, 27 Oct 2025 13:09:13 -0700
-In-Reply-To: <20251025053017.2308823-2-kafai.wan@linux.dev>
-References: <20251025053017.2308823-1-kafai.wan@linux.dev>
-	 <20251025053017.2308823-2-kafai.wan@linux.dev>
+	 Content-Type:MIME-Version; b=ZhVZhbNS0kuBAdcxIKAE5bhWCjFP0nFqTUt5MkfLb9wpOHEAG4bToxG8kPDnFJZcxl9qi36OyIqFtqBR90TsKUx0+IObRXlzNoOhAgLDtu1KUpxiIaJPWey7IXUvKfAg7DrNLlvn6MIhi6ICr1JEhOvhFCYi/Afw1JzbXVF/kM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JelPj4FP; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1761595776;
+	bh=XicmhcsPf//ND3V4Aj+NICI73LN/3zknK2a8Pytztvs=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=JelPj4FPYyiLi7qkfDDjyjP5RO/NDj6rg6w7gd35C45ON9OP+Sj2H5SXQpOaJqK2J
+	 QdkfkFTL+vekhiF4mMmVovFKHd0PqvO8qd0F2XE6ZAIemQtEtAjuKj2QUFKMgJRswh
+	 Q4HRUEE/a7QAtlYDMkrDOwgpKsWKkMimBmByeEIU=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 53D6E1C003D;
+	Mon, 27 Oct 2025 16:09:36 -0400 (EDT)
+Message-ID: <feb863c3e73f0b73b53d7d6f9889c79d37476855.camel@HansenPartnership.com>
+Subject: Re: [PATCH v3 4/4] tpm: Allow for exclusive TPM access when using
+ /dev/tpm<n>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>
+Cc: Jonathan McDowell <noodles@earth.li>, Peter Huewe <peterhuewe@gmx.de>, 
+	Jason Gunthorpe
+	 <jgg@ziepe.ca>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	zohar@linux.ibm.com
+Date: Mon, 27 Oct 2025 16:09:35 -0400
+In-Reply-To: <aP_KT0GiQSzt1ClO@kernel.org>
+References: <cover.1760958898.git.noodles@meta.com>
+	 <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
+	 <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
+	 <aP_KT0GiQSzt1ClO@kernel.org>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,132 +80,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Sat, 2025-10-25 at 13:30 +0800, KaFai Wan wrote:
-> When conditional jumps are performed on the same register (e.g., r0 <=3D =
-r0,
-> r0 > r0, r0 < r0) where the register holds a scalar with range, the verif=
-ier
-> incorrectly attempts to adjust the register's min/max bounds. This leads =
-to
-> invalid range bounds and triggers a BUG warning:
+On Mon, 2025-10-27 at 21:38 +0200, Jarkko Sakkinen wrote:
+> On Mon, Oct 20, 2025 at 01:53:30PM +0200, Roberto Sassu wrote:
+[...]
+> > Hi Jonathan
+> >=20
+> > do I understand it correctly, that a process might open the TPM
+> > with O_EXCL, and this will prevent IMA from extending a PCR until
+> > that process closes the file descriptor?
+> >=20
+> > If yes, this might be a concern, and I think an additional API to
+> > prevent such behavior would be needed (for example when IMA is
+> > active, i.e. there is a measurement policy loaded).
 >=20
-> verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds violatio=
-n u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x0] var_o=
-ff=3D(0x0, 0x0)
-> WARNING: CPU: 0 PID: 92 at kernel/bpf/verifier.c:2731 reg_bounds_sanity_c=
-heck+0x163/0x220
-> Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-de=
-bian-1.16.3-2 04/01/2014
-> RIP: 0010:reg_bounds_sanity_check+0x163/0x220
-> Call Trace:
->  <TASK>
->  reg_set_min_max+0xf7/0x1d0
->  check_cond_jmp_op+0x57b/0x1730
->  ? print_bpf_insn+0x3d5/0xa50
->  do_check_common+0x33ac/0x33c0
->  ...
+> Also this would be a problem with hwrng.
 >=20
-> The root cause is in regs_refine_cond_op() where BPF_JLT/BPF_JSLT operati=
-ons
-> adjust both min/max bounds on the same register, causing invalid bounds.
->=20
-> Since comparing a register with itself should not change its bounds (the
-> comparison result is always known: r0 =3D=3D r0 is always true, r0 < r0 i=
-s
-> always false), the bounds adjustment is unnecessary.
->=20
-> Fix this by:
-> 1. Enhance is_branch_taken() and is_scalar_branch_taken() to properly
->    handle branch direction computation for same register comparisons
->    across all BPF jump operations
-> 2. For unknown branch directions (e.g., BPF_JSET), add early return in
->    reg_set_min_max() to avoid bounds adjustment on the same register
->=20
-> The fix ensures that unnecessary bounds adjustments are skipped, preventi=
-ng
-> the verifier bug while maintaining correct branch direction analysis.
->=20
-> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
-aiyanm@hust.edu.cn/
-> Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> ---
->  kernel/bpf/verifier.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->=20
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 6d175849e57a..653fa96ed0df 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -16037,6 +16037,12 @@ static int is_scalar_branch_taken(struct bpf_reg=
-_state *reg1, struct bpf_reg_sta
->  		}
->  		break;
->  	case BPF_JSET:
-> +		if (reg1 =3D=3D reg2) {
-> +			if (tnum_is_const(t1))
-> +				return t1.value !=3D 0;
-> +			else
-> +				return (smin1 <=3D 0 && smax1 >=3D 0) ? -1 : 1;
-> +		}
+> This probably needs to be refined somehow. I don't have a solution at
+> hand but "invariant" is that in-kernel caller should override user
+> space exclusion, even when O_EXCL is used.
 
-I think this logic is fine, but it needs tests for multiple cases.
+Also, are we sure we need O_EXCL in the first place?  A well
+functioning TPM is supposed to be able to cope with field upgrade while
+it receives other commands.  When it's in this state, it's supposed to
+return TPM_RC_UPGRADE to inappropriate commands, so if we made sure we
+can correctly handle that in the kernel, that might be enough to get
+all this to work correctly without needing an exclusive open.
 
->  		if (!is_reg_const(reg2, is_jmp32)) {
->  			swap(reg1, reg2);
->  			swap(t1, t2);
-> @@ -16172,6 +16178,25 @@ static int is_pkt_ptr_branch_taken(struct bpf_re=
-g_state *dst_reg,
->  static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf_reg_st=
-ate *reg2,
->  			   u8 opcode, bool is_jmp32)
->  {
-> +	if (reg1 =3D=3D reg2) {
-> +		switch (opcode) {
-> +		case BPF_JGE:
-> +		case BPF_JLE:
-> +		case BPF_JSGE:
-> +		case BPF_JSLE:
-> +		case BPF_JEQ:
-> +			return 1;
-> +		case BPF_JGT:
-> +		case BPF_JLT:
-> +		case BPF_JSGT:
-> +		case BPF_JSLT:
-> +		case BPF_JNE:
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
+Of course, Field Upgrade is likely to be the least well tested of any
+TPM capability, so there's a good chance at least one TPM out there
+isn't going to behave as the standard says it should.
 
-I think Alexei was against my suggestion to put it in
-is_branch_taken() and preferred is_scalar_branch_taken() instead.
+Regards,
 
->  	if (reg_is_pkt_pointer_any(reg1) && reg_is_pkt_pointer_any(reg2) && !is=
-_jmp32)
->  		return is_pkt_ptr_branch_taken(reg1, reg2, opcode);
-> =20
-> @@ -16429,6 +16454,13 @@ static int reg_set_min_max(struct bpf_verifier_e=
-nv *env,
->  	if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=3D SCALAR_=
-VALUE)
->  		return 0;
-> =20
-> +	/* We compute branch direction for same registers in is_branch_taken() =
-and
-> +	 * is_scalar_branch_taken(). For unknown branch directions (e.g., BPF_J=
-SET)
-> +	 * on the same registers, we don't need to adjusts the min/max values.
-> +	 */
-> +	if (false_reg1 =3D=3D false_reg2)
-> +		return 0;
-> +
->  	/* fallthrough (FALSE) branch */
->  	regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode), is_jmp3=
-2);
->  	reg_bounds_sync(false_reg1);
+James
+
 
