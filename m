@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-871426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA68C0D353
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:42:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE95C0D398
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C95FA34CDB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:42:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6840640242E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A482FC026;
-	Mon, 27 Oct 2025 11:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3592FC871;
+	Mon, 27 Oct 2025 11:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="UBWAu1Le"
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="uKEGJJ+S"
 Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B842FB962;
-	Mon, 27 Oct 2025 11:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049802FC012;
+	Mon, 27 Oct 2025 11:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565334; cv=none; b=dH2kwDBqwN0Sz4SyfwszEr9rUZu34HOJEHb0pSxfthh4qG1nXih8kzj/S0KW6kqzzGI62y4FOrHl4hr1HzaFNg0Qe/AmrXWRREsLiHlbDk4U2pw6O0k5k0FOam+9OnTKSK7Ylt+JhhcEm50ni47+V0G5kGaDv8BLx8gOZdUtEZY=
+	t=1761565390; cv=none; b=kCc3DbjaSoza+yUcLGwjzqOOvNnfpA7fyltsSVfwlfUc0uxx2JwVqNLhg4ofrdvxwZ3JK4m2EkVwezE5Uv8cG6si3GsLNOi/irjw4D6W7XcjcUa/bruYODv0s4DxtbezTjW7XTntSWx0aX582J2k9uUxq+lrKH/vZaAP+lwakIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565334; c=relaxed/simple;
-	bh=yqzIBFJW1n+nS1+66mDfajB+nxaPKXUzfOcuF+B4uPU=;
+	s=arc-20240116; t=1761565390; c=relaxed/simple;
+	bh=QHB7ogBviW1sk+l+lwC23glCf9NdDmpFfN6Z4qzApQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxREQEPbdaTmHEZw3EV19ClueKuDjCfACrW4HYLQWyvKBUIbWj+EgFtF9nmIu4FevA9ErIPXH6Ry2sNeLHjsR4bNY2v7SCNPF4wLT0hvbg1oalAKUgn8LA0q2j40WmKQuP4HFTN8N3s9N+9KHy2M9t2ylQZ8F19dISg+b0ekoY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=UBWAu1Le; arc=none smtp.client-ip=85.214.250.239
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlBWdUJ27aeuSan4Cvd9PBfMCVoEYKs873JeS0N0T/qFVB9YB2U6AyIoJwCFHCf6teFJ/9zhWDp0ostjWhxnP11Ezjw8BXCpeNEFM6UzQia7bbal0AzxgYHEb44RRVP210yFN904TQZj5vc+ZXihUhGNevG0kzsBq9LkQkNK+3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=uKEGJJ+S; arc=none smtp.client-ip=85.214.250.239
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Received: from 8bytes.org (p549214ac.dip0.t-ipconnect.de [84.146.20.172])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 11C1B598D5;
-	Mon, 27 Oct 2025 12:42:11 +0100 (CET)
+	by mail.8bytes.org (Postfix) with ESMTPSA id D04BC598D5;
+	Mon, 27 Oct 2025 12:43:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1761565331;
-	bh=yqzIBFJW1n+nS1+66mDfajB+nxaPKXUzfOcuF+B4uPU=;
+	s=default; t=1761565388;
+	bh=QHB7ogBviW1sk+l+lwC23glCf9NdDmpFfN6Z4qzApQ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UBWAu1LednunpDwWyA6dN/T5o++Ac0xIHSNyHI2q6aNwwGBoDzmOu5fPBEFc8ArbW
-	 /tt8/W2BQ1vmQ4IAz1Nyb104x9b2KteD0nGMUiIeCt12QtQa7PBYD6YBCnrGAnBc3/
-	 Qn0JhNAhnoCOhZV98otZjkfHLqNDdxzdtqE+wUKrNuac+jsIeeqfsfsGAH/ne5A61+
-	 fJVgnYxkRNIdWQ6FVublLLmG5wjH46QN/ie1gMaNbSwwI4m4daasyct7wC0Ne/pUUf
-	 lpUvTiLRC205Aa4QBlQdiUIjcR8HkRzg6GlsEj28ZWB+3Gdl+rXI9orww+F0KE4FtQ
-	 tusBXnMM4yTlA==
-Date: Mon, 27 Oct 2025 12:42:09 +0100
+	b=uKEGJJ+S41J6K4x7ujgqrKO56V8Tg6vOhZ+scdGG+hkOKQ8V7EnAvOKfHeOWJIRtJ
+	 HppkmxRZIR7H3bo/lA9JjEfz8Fe3VVWlcO3ocesdAItzupOIPSX8Cbitj4lnkhtK/N
+	 VlicelCFx4F3oilFlsHZUSaGBdTa2cY6nk1KdHuWqH27xxYNIB3b/zn51NYXmzvwJn
+	 xzhiX7VfL7vcfacK1KVuXVSd1WlURNVWbKz8RWWmB9RFkyPX8hsHtid0jNZvbuNcEC
+	 oWt9yJrIZToTAuYdNHssW9VHpG12yr00lHPVzBgaPrApQ/0aOlc6Sru2368nDTuF+S
+	 vKjzvcHY/dhJw==
+Date: Mon, 27 Oct 2025 12:43:06 +0100
 From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
 To: Mostafa Saleh <smostafa@google.com>
 Cc: linux-mm@kvack.org, iommu@lists.linux.dev, 
@@ -53,11 +53,10 @@ Cc: linux-mm@kvack.org, iommu@lists.linux.dev,
 	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
 	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
 	rppt@kernel.org
-Subject: Re: [RFC PATCH 1/4] drivers/iommu: Add page_ext for
- IOMMU_DEBUG_PAGEALLOC
-Message-ID: <uwznrzdsbfpbalzf5jxxpguf2ykslphfs47u7gf66ssiwzpqju@dh7nw3van6sr>
+Subject: Re: [RFC PATCH 2/4] drivers/iommu: Add calls for iommu debug
+Message-ID: <hu7ozrdn6la24apa4pco5nkhow2dmthahjomjj6hy4nrefx6j4@lcdfbykoafw4>
 References: <20251003173229.1533640-1-smostafa@google.com>
- <20251003173229.1533640-2-smostafa@google.com>
+ <20251003173229.1533640-3-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +65,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003173229.1533640-2-smostafa@google.com>
+In-Reply-To: <20251003173229.1533640-3-smostafa@google.com>
 
-On Fri, Oct 03, 2025 at 05:32:26PM +0000, Mostafa Saleh wrote:
-> +config IOMMU_DEBUG_PAGEALLOC
-> +	bool "Debug page memory allocations against IOMMU"
-> +	depends on DEBUG_PAGEALLOC && IOMMU_API && PAGE_EXTENSION
-> +	help
-> +		This config checks when a page is freed by the kernel
-> +		it's not mapped in any IOMMU domain. It can help with
-> +		debugging use-after-free from driver doing DMA.
-> +		This santaizer can have false-negative cases where some
-> +		problems won't be detected.
-> +		Expect overhead when enabling this + enabling the kernel
-> +		command line iommu.debug_pagealloc.
-> +
-> +		If unsure, say N here.
-
-Expected indentation here is <tab><space><space> and not <tab><tab>.
-
-> --- /dev/null
+On Fri, Oct 03, 2025 at 05:32:27PM +0000, Mostafa Saleh wrote:
+> Add calls for the new iommu debug config IOMMU_DEBUG_PAGEALLOC:
+> - iommu_debug_init: Enable the debug mode if configured by the user.
+> - iommu_debug_map: Track iommu pages mapped, using physical address.
+> - iommu_debug_unmap: Track iommu pages unmapped, using IO virtual
+>   address.
+> - iommu_debug_remap: Track iommu pages, already mapped using IOVA.
+> 
+> We have to do the unmap/remap as once pages are unmapped we lose the
+> information of the physical address.
+> This is racy, but the API is racy by construction as it uses refcounts
+> and doesn't attempt to lock/synchronize with the IOMMU API as that will
+> be costly, meaning that possibility of false negative exists.
+> 
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> ---
+>  drivers/iommu/iommu-debug.c | 23 +++++++++++++++++++++++
+>  drivers/iommu/iommu.c       | 21 +++++++++++++++++++--
+>  include/linux/iommu-debug.h |  6 ++++++
+>  3 files changed, 48 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu-debug.c b/drivers/iommu/iommu-debug.c
+> index 297a35137b38..607f1fcf2235 100644
+> --- a/drivers/iommu/iommu-debug.c
 > +++ b/drivers/iommu/iommu-debug.c
+> @@ -5,11 +5,13 @@
+>   * IOMMU API santaizers and debug
+>   */
+>  #include <linux/atomic.h>
+> +#include <linux/iommu.h>
+>  #include <linux/iommu-debug.h>
+>  #include <linux/kernel.h>
+>  #include <linux/page_ext.h>
+>  
+>  static bool needed;
+> +static DEFINE_STATIC_KEY_FALSE(iommu_debug_initialized);
+>  
+>  struct iommu_debug_metadate {
+>  	atomic_t ref;
+> @@ -25,6 +27,27 @@ struct page_ext_operations page_iommu_debug_ops = {
+>  	.need = need_iommu_debug,
+>  };
+>  
+> +void iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size_t size)
+> +{
+> +}
+> +
+> +void iommu_debug_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
+> +{
+> +}
+> +
+> +void iommu_debug_remap(struct iommu_domain *domain, unsigned long iova, size_t size)
+> +{
+> +}
+> +
+> +void iommu_debug_init(void)
+> +{
+> +	if (!needed)
+> +		return;
+> +
+> +	pr_info("iommu: Debugging page allocations, expect overhead or disable iommu.debug_pagealloc");
+> +	static_branch_enable(&iommu_debug_initialized);
+> +}
+> +
+>  static int __init iommu_debug_pagealloc(char *str)
+>  {
+>  	return kstrtobool(str, &needed);
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 060ebe330ee1..56c89636a33c 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/host1x_context_bus.h>
+>  #include <linux/iommu.h>
+> +#include <linux/iommu-debug.h>
+>  #include <linux/iommufd.h>
+>  #include <linux/idr.h>
+>  #include <linux/err.h>
+> @@ -231,6 +232,9 @@ static int __init iommu_subsys_init(void)
+>  	if (!nb)
+>  		return -ENOMEM;
+>  
+> +#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
+> +	iommu_debug_init();
+> +#endif
+>  	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++) {
+>  		nb[i].notifier_call = iommu_bus_notifier;
+>  		bus_register_notifier(iommu_buses[i], &nb[i]);
+> @@ -2518,10 +2522,14 @@ int iommu_map_nosync(struct iommu_domain *domain, unsigned long iova,
+>  	}
+>  
+>  	/* unroll mapping in case something went wrong */
+> -	if (ret)
+> +	if (ret) {
+>  		iommu_unmap(domain, orig_iova, orig_size - size);
+> -	else
+> +	} else {
+>  		trace_map(orig_iova, orig_paddr, orig_size);
+> +#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
+> +		iommu_debug_map(domain, orig_paddr, orig_size);
+> +#endif
 
-Is there a plan for this file to contain more than page-alloc debugging? If
-not, it should get a more specific name, like iommu-debug-pagealloc.c or
-similar.
+These #ifdefs need to be in a header file, not the actual source code.
 
 
