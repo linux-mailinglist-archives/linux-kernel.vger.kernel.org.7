@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-872036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40B0C0F2AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:07:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCFBC0F2C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC4F4677E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE93480328
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4C0324B09;
-	Mon, 27 Oct 2025 15:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8738313547;
+	Mon, 27 Oct 2025 15:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mgORrcLr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F/+G8YxZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618B4322A27
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796CE304BD3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580053; cv=none; b=rDoDiI3KSbDnIX49MiBL00T5B6UDeBOwiLTWB88hHifyNHBIgaYCY05YgbvDbjGFqPo8Fs638BD+aKalvLxkz3rsAckOoM7jjBhFfbATdygXEbes6woaL4CC61Ws7s+Ag17Jl95KBuG45huIVX7LYqb3e9aMZrIBA//PdKs75ys=
+	t=1761580116; cv=none; b=FT8HZRP8jSmLiSq5f1aSVRPXEvwDrRN1xZDLgQOnje0jd6BOpUS4SD8Sd/Lk8T+vnd2Yza9K8/vrnIjWm1h/sodssu9TDzk5/z9iKzFOTLcA32ngraP4BwrynBeQgdUNkPyxYqbPed2k8b2EwurhspirDPRWA5hr6FNeOXMJT3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580053; c=relaxed/simple;
-	bh=tQL6TIWCl8aDOrH0GaFalhGYJg12eSESkwTpBcEYy4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VU9uUFQJWwiq0xUOGERbc6QcP6lliF+/wJWUSv7G8qdYb9hL8elunuhwI8u+r3QHtXGWaecpZC3rgkHFimKsf/+PwZ4E1gHfFyGJgI1551FO6OOTpFNquITU6MqOlVAe9KAypHETIwmpuuHkEzAK3SzyH/zd+Zu6D4JzQHEKN+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mgORrcLr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59RE4R6N3018086
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:47:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zaCZneb5YWhjC19k4/2yPgAXlS8d0rH/p95cOFgMm+o=; b=mgORrcLra9bOxg7T
-	BMlgLI0vpCS8JfbfdZmTNX0ukmVnYaCpmYmWzEf9SWuwytvlRiEBXxsUP1r73M+k
-	i3KI+Eu/H0GFZOTcH+H/5CeDEas0/dg7o3H4THI/rBwGZ7r5jOsQ4V+NwlZg2MJM
-	IIyhvpaN633LsfXiXUC1MCdII7Ta3e5eBfYYfC9unGEVgNuCQ3mSpcp1Rzagoclo
-	PkfAPKz8DXlp7lVLNVocXSQlSwcKAE86x+cDI5YzTuc2hVU+yKcMnHe7/ytKyoIo
-	R4O1TVc8gtDAN8msWB7dFgrhVUEbmIAqpsDfz3YlSCHK9gIDS2w0urzi6wlAHZwD
-	veOKWw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2a6a8dgt-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:47:30 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ecf8fad13dso3338881cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:47:30 -0700 (PDT)
+	s=arc-20240116; t=1761580116; c=relaxed/simple;
+	bh=l32Q+ViHVt0CnLpD8jT886v+aqGAVux0lDm8a78ktS4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FfaaoWnmPbmEX5+tp4E0e10DNjjcnZnB6Nd+4W7CMpCxGwfWm3VSwRs/5fOOmeeiKMCLVHcA3un4SMI9dV7mXuWS1mQidwGmSN7XEqbmGE3sQ219uV3P4E1NPNOhvCvZ1eiIzdn4FBBD3QE7MniHfZsJ9+BTdgxfkfnbgGtWc04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F/+G8YxZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761580113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2NM+sK8pHWgjF7zbZgQzGUhI0C0MDr9RLoLcNYdtUY0=;
+	b=F/+G8YxZAjJ/YP7ItoSLBX0gVMFPfhykBZvUUkGqRF52lkFIxdoHyVp5Vyf+3VtRl5o4Kn
+	DtjxaDpGdeQfsYiKhUO26VUZg5h3PFJEtygwifs5Z1cQBRxNFh+P+VSWuKRWMwlTmd2gHB
+	Xe2oBYGAXPyhIkmExeMqDNt4XjajvWo=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-394-qiSFkDEwNJCT0Owfnfai7g-1; Mon, 27 Oct 2025 11:48:31 -0400
+X-MC-Unique: qiSFkDEwNJCT0Owfnfai7g-1
+X-Mimecast-MFC-AGG-ID: qiSFkDEwNJCT0Owfnfai7g_1761580111
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ecf2adbd3bso8575501cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:48:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761580049; x=1762184849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1761580111; x=1762184911;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zaCZneb5YWhjC19k4/2yPgAXlS8d0rH/p95cOFgMm+o=;
-        b=ozpUlHvaYtxCQX0u+BMj9G0PvYHGeBJZ+MWGgjHE45/uyMLA//F6r9BK8N7690TEQs
-         geTcevn2uWzoy3ZYH+1Y6YNQ3gZV2WTNc3DOANGlhOL5My8ULoM9ouNNRZMes8wIM0Gn
-         sTyrTO/SWrTbRK4pdH71evxg0g3vKwlmwxUFiEwhZnuGC9SP7s96yU03FH9ZFVXaXgJz
-         4R0KNW/SyX/igD8yotPWvSECV+MrcmmoKEigh0u2U17W0B55oc8IC1hj3Dyy4uLjXsRY
-         JrLPnU97IykagqUx/90aZGA6Qxrxry2+DLJpmNBY5QSm+Tl1SWy1zDanhf/UPnNnMw4g
-         1XFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfN/xvgDKLrNUMNIWz03lpet9RXazICaPWLyfTbL4Lfb4U0avuC/F5HTS1lZxYlNBuJ4MKSVjyMElZCKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYP21gS4R8+T1xYiJPvsWibcWsFm8sHdTZo4M+c+HhjgKEhApY
-	UIpJSLGYs8jCUoxJlRQr/Ye8yqzkgM2/tOzY6ZfpBjXR8xPWudMksNJg0TlfuZpvGud6OWcLQ7o
-	oREt6K1uHcpBpc9mzBRVml1kALfopwM7kWBOgNeEMOM6VnUYKhJsZjCmXuX6ozLfuaeU=
-X-Gm-Gg: ASbGncsNo+5PuY6b/uZkx5yBdwy4EG9eZsd6WU/WUqqPEIvDLUx+EwMkESuM3GoNyu4
-	AJ1c1Gkw5GjT7t/Sr7KUdGYjLbwoL53Mq31gVYpeepxZrmEOLunpS2f9FNRaOH0f8H35voLH+Z+
-	MvtMJX2ZaC4Bg6xJT+U6YXdcfRs3h4N0hksUl7NjoUMnUluoPsunPyxk2S4TlmuLEPbqO44pxeW
-	4mAkPKEMhijTKm66ez169GNvTbCc3GZgHv7VgJs0rJN8dW2pjRLxbxuzdbEpahcTtTxSbq2n0AJ
-	GZRHs/CGQHDPjRqHpfRwxXfiZn789GULNoHV12lggCOLd3MTzGPmewgGVC8lYDpDyWhWm8weVqn
-	WImW0h6b3uJy/+szh5UqLtoPS+/KmUUVUAeITUx7fJlODmZOLfAPix5fO
-X-Received: by 2002:a05:622a:15c2:b0:4ec:f075:50cb with SMTP id d75a77b69052e-4ed07425e39mr4975221cf.2.1761580049431;
-        Mon, 27 Oct 2025 08:47:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIgcSp0xCZswOedEYchtLWxCtcXToz2VeG+CLk8VsDBcRyNSlY/6wzGEsHr6w4SRPPrVI0GQ==
-X-Received: by 2002:a05:622a:15c2:b0:4ec:f075:50cb with SMTP id d75a77b69052e-4ed07425e39mr4974841cf.2.1761580048893;
-        Mon, 27 Oct 2025 08:47:28 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85413b88sm778566566b.55.2025.10.27.08.47.27
+        bh=2NM+sK8pHWgjF7zbZgQzGUhI0C0MDr9RLoLcNYdtUY0=;
+        b=nVsfmwsyERXPJJWtvce2F3e4pTaysjNftDlbn/2TVCnVX5VuW38nS+UW0kkvrPGBEc
+         4YOuJzcgyxizI8tmT8owkFi469j0U6KM0y4VIRZGiYJd+lijwwN8ga6rdbhGnCOphN22
+         xe5HAtXVeNv7s158/mx4Vqg2DQ4SC2zQTrPJ0MQ5AZjeRV2gqxFyNtnhAcn9gUhnNq0g
+         7ozBWWv0nU8CGxxIsjcYdMtkkanoR27G97FpgZe8M6YxQ0hL5qw1mLK7RojfOa1wuk8+
+         Xi4AWeq3XpvEjguBZnEE2L+MyMA8LbCZ9m7HJcby1jYmFwuAadjy6znW1J+jyZiwjLPv
+         B/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCwURdgOk+LA6tPf/xwqeQl706oSzamHjnITA24Upf4MM6beNBGhIGo3Ij+DVdoN1aWL5O+EgLTomj4NU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkWH8Z+QmD0g9N1fr5lpyoqfG/KieJ2Op54GPdQTsnLKXGAQJs
+	2b/+7czJylBOqO5mb2k4tdRXQCNv1dVFU7zJS6vrTlj7L6CxSGCT3XNjZxDdcReXdqhTXHEZl6H
+	AgVtCtcFjQEaC3lmIcH7aF7XQkzIEAg9Me/KO/YduAugeDIkfrn4QbvFwvq45yvzoMQ==
+X-Gm-Gg: ASbGnctPqQDLEyCv7uIk62jOL8WD016OE6HgjlcYcEjJKc4pm6okNmQRxetav/uLfYG
+	GSQ00R1y50LWIqhNAGd4wYAWRmtsy+7icNw8br/LdY0QQboMWcUq4ilCbhwKYozFtVwudQqdwqr
+	6yKL2HxLkR9KXyEGxB+1Cl5TdLGGemVfXTN5d8IyQjzEzn5PkWW5UHzm50DXFFNY9XxdBoQBYW4
+	OaGxnf0lib5CpNJM7oKk9UvucjkYVqjd67tu7VnHN6n/I0SnrOvoEbRz8Nfnx2F73dwMhL0BNOP
+	YUH4yPOfIg8F055uhLzYqD7ZWO1fND7BcQbmEqaFkspfNbQvwi5axwuCOJSnKiUQCzbkUBvVEro
+	qOedBmL3Bp793pooyK9Cn0a5PQZCyx3oOLSYW4H8KIWoYBA==
+X-Received: by 2002:a05:622a:1350:b0:4e8:9ade:108c with SMTP id d75a77b69052e-4ed07546a0amr5094161cf.34.1761580110786;
+        Mon, 27 Oct 2025 08:48:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFK35+20Rhg4dVp30yWQ9wI0KCKkP5ZsLL+5MDIkbSzrQdWjPPT62US5+KZQ8oEE9VvBV2n3w==
+X-Received: by 2002:a05:622a:1350:b0:4e8:9ade:108c with SMTP id d75a77b69052e-4ed07546a0amr5093561cf.34.1761580109885;
+        Mon, 27 Oct 2025 08:48:29 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48dee2esm58031186d6.23.2025.10.27.08.48.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 08:47:28 -0700 (PDT)
-Message-ID: <7b68381a-0f7f-43ff-b934-9db5d9b2e69f@oss.qualcomm.com>
-Date: Mon, 27 Oct 2025 16:47:26 +0100
+        Mon, 27 Oct 2025 08:48:29 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <4be37a6a-0a04-48f8-9399-25ecb4638cdc@redhat.com>
+Date: Mon, 27 Oct 2025 11:48:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,112 +90,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] soc: qcom: rpmh: Add support to read back resource
- settings
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        "Maulik Shah (mkshah)" <maulik.shah@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251022-add-rpmh-read-support-v2-0-5c7a8e4df601@oss.qualcomm.com>
- <20251022-add-rpmh-read-support-v2-2-5c7a8e4df601@oss.qualcomm.com>
- <litd6qcxuios7uwwcrz55ea24kj26onrjo2aekouynsce6wslj@vatjbulg64mb>
- <4831d12b-a42a-464a-a70f-e0e40cf4ae4b@oss.qualcomm.com>
- <5c0b4712-4a54-4a1a-ad73-dc3bdb21a0ff@oss.qualcomm.com>
- <cb361d77-6845-45c9-b418-67649880495e@oss.qualcomm.com>
- <ef247fe6-6d9c-4a74-b3f8-a56857332758@oss.qualcomm.com>
- <9a227c15-dc60-4086-8d81-f80e3398a083@oss.qualcomm.com>
- <18e8d5db-e32a-4893-9d1f-5003670cedeb@oss.qualcomm.com>
- <7656e8f6-e281-4f7b-9ff4-1b2722234091@linaro.org>
+Subject: Re: x86/smpboot: Question regarding native_play_dead() __noreturn
+ warning
+To: Peter Zijlstra <peterz@infradead.org>,
+ Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <47A8B84B-2685-4DA2-B39B-E55812374426@linux.dev>
+ <20251027125045.GX4067720@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <7656e8f6-e281-4f7b-9ff4-1b2722234091@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251027125045.GX4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDE0NyBTYWx0ZWRfXxXKotcUtFAi6
- oOkoiTNZu7mcKl9jadJLxx4Tozoo2+61aSJSamx9oACc8/UZIQCJ7QVk9HxD/T7FAejpYC5T2Hu
- EG7aJTZmUbc0YQhKZqHO7F2YHRj9TuNa8rvOIIP3ewTTnmmsvwvJi/BzZakXNna0WL6UA0kx6j0
- z0X+KgLPyfrHUrDohXdLWM0fjb3qC3tzVQO4J9Azq91egXunDmjpRENE4HbjS3E66BF8qqNTev3
- kZrFyqlE6OyvCUddpWuvHZm3V16NG16nnrnrU2P/nfbtj86BNL9e0XGx8fAuuEBt/tn0tBCF4/S
- oj93ypKhEcnWve56Vt77JZpUYZEqKP70tO5+f/6PE1uZ5tDuBN7WrHbKfrGJxPZ+9r9qxG/5wqM
- Dyy1thMPDIMqJWjEeqDuuQWDDGOpQQ==
-X-Proofpoint-ORIG-GUID: Fe1CijrEr9T7NqR0cd7pwWCedyKWt8SS
-X-Proofpoint-GUID: Fe1CijrEr9T7NqR0cd7pwWCedyKWt8SS
-X-Authority-Analysis: v=2.4 cv=A6Jh/qWG c=1 sm=1 tr=0 ts=68ff9412 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=gzx7cS8GTzoW4zH438oA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_06,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270147
 
-On 10/27/25 3:38 PM, Neil Armstrong wrote:
-> On 10/27/25 14:29, Konrad Dybcio wrote:
->> On 10/23/25 11:46 AM, Maulik Shah (mkshah) wrote:
->>>
->>>
->>> On 10/23/2025 2:39 PM, Konrad Dybcio wrote:
->>>> On 10/23/25 10:57 AM, Maulik Shah (mkshah) wrote:
->>>>>
->>>>>
->>>>> On 10/23/2025 1:47 PM, Konrad Dybcio wrote:
->>>>>> On 10/23/25 6:46 AM, Maulik Shah (mkshah) wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 10/23/2025 2:51 AM, Bjorn Andersson wrote:
->>>>>>>> On Wed, Oct 22, 2025 at 02:38:54AM +0530, Kamal Wadhwa wrote:
->>>>>>>>> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
->>>>>>>>>
->>>>>>>>> All rpmh_*() APIs so far have supported placing votes for various
->>>>>>>>> resource settings but the H/W also have option to read resource
->>>>>>>>> settings.
->>>>>>>>>
->>>>>>>>> This change adds a new rpmh_read() API to allow clients
->>>>>>>>> to read back resource setting from H/W. This will be useful for
->>>>>>>>> clients like regulators, which currently don't have a way to know
->>>>>>>>> the settings applied during bootloader stage.
->>>>>>>>>
->>>>>>>>
->>>>>>>> Allow me to express my disappointment over the fact that you sat on this
->>>>>>>> for 7 years!
->>>>>>>
->>>>>>> This was a dead API (even in downstream) with no user since SDM845/ 7 years.
->>>>>>> Read support was eventually removed from downstream driver too for the same reason.
->>>>>>> There were early discussions to remove read support from RSC H/W, due to lack of users.
->>>>>>> Its not realized yet and all SoCs still supports read.
->>>>>>
->>>>>> Can we read BCM states from HLOS this way too?
->>>>>
->>>>> Yes, Any of ARC/BCM/VRM can be read to get HLOS/DRV2 votes.
->>>>
->>>> Wow this is amazing..
->>>>
->>>> Do you have code for this already, or should I hack on it?
->>>
->>> No, it won't be of much help, as i said above it gets HLOS/DRV2 votes only for a given resource.
->>> More specifically, the read does not give the aggregated vote result across all the DRVs.
+On 10/27/25 8:50 AM, Peter Zijlstra wrote:
+> On Mon, Oct 27, 2025 at 01:23:02PM +0100, Thorsten Blum wrote:
+>> Hi,
 >>
->> Hm, perhaps it could still be of *some* use
+>> I just came across this comment in arch/x86/kernel/smpboot.c:
 >>
->> But maybe reading back rpmhpd and rpmhcc states would be of more
->> use!
-> 
-> The interconnect core definitely supports reading back the state at boot.
+>> /*
+>> * native_play_dead() is essentially a __noreturn function, but it can't
+>> * be marked as such as the compiler may complain about it.
+>> */
+>> void native_play_dead(void) {
+>> 	...
+>> }
+>>
+>> and when I mark native_play_dead() as __noreturn, neither gcc nor clang
+>> complain about it.
+>>
+>> The commit message 2743fe89d4d4 ("x86/idle: Disable IBRS when CPU is
+>> offline to improve single-threaded performance") says:
+>>
+>> "Add a comment to say that native_play_dead() is a __noreturn function,
+>> but it can't be marked as such to avoid confusion about the missing
+>> MSR restoration code."
+>>
+>> Unfortunately, that doesn't really help me either. Can someone explain
+>> what the issue was and if the comment is still valid? Otherwise, I'd
+>> like to submit a patch adding __noreturn and removing the comment.
+> I'm not sure either, it wasn't there in v2 but appeared in v3.
+>
+> v2: 20230620140625.1001886-3-longman@redhat.com
+> v3: 20230622003603.1188364-2-longman@redhat.com
+>
+> The difference is that v2 tried to restore the msr after 'play_dead'
+> which is silly, since it would never reach that code. v3 removed that
+> dead restore code and added the confusing comment.
+>
+> There is a clue here though:
+>
+>    20230622054053.uy577qezu5a65buc@treble
+>
+> Josh suggests play_dead() should be marked noreturn (which it is in
+> current kernels).
+>
+> Waiman then replies:
+>
+>    921e1b98-af36-1f51-5abe-dea36425b706@redhat.com
+>
+> which is utterly confused again.
 
-Maulik probably isn't impressed with us only being able to provide
-information about HLOS votes, as e.g. ADSP could be voting on the same
-bus in parallel.
+I don't remember exactly how I got the warning when __noreturn is added 
+to native_play_dead(). It may be a limitation of the objtool or gcc that 
+I was using at that time. If Thorsten doesn't have problem adding 
+__noreturn, I won't mind him doing that and taking out the the comment. 
+We can see if there is other issue coming up in the future.
 
-I suppose the very same applies to what I suggested with clk and rpmhpd
-although probably it's less of a problem there
+Cheers,
+Longman
 
-Konrad
 
