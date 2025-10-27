@@ -1,138 +1,186 @@
-Return-Path: <linux-kernel+bounces-870759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D68C0B9BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:41:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680F0C0B9C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3031F4E1347
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:41:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DBFC34A7EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7728928D8E8;
-	Mon, 27 Oct 2025 01:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C7A29B224;
+	Mon, 27 Oct 2025 01:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V/l1R8D9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="elZ5s9EU"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6636D289E17;
-	Mon, 27 Oct 2025 01:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8EF4315E;
+	Mon, 27 Oct 2025 01:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761529271; cv=none; b=mTyEPQaPrL6L+TqTxseUdvWQHB4v030EezS4Uhg9vN8bynJYRLXPYQtTEbch+y5G3mYl83XYJFgTjHP7KUZfcIViWUqCIXYUvrJX6fLNS/VJeS3gwrg82jO4E5l1gM4TBLqRp6hfvK2U6j6nXzzc3VhcRkG0al/7TvfOS5OwvbQ=
+	t=1761529382; cv=none; b=Di3sXy5VFily16BI/g/uiFHZEoN+TyeOmVotMGl7tvROf2ES5agq9Lj1ZIQIQnUbGFRmQNMYwEUh2Xwo8ddUsk03rrc2SiCbxtDko3Uxq8Cqv48Dvo5w2efzTxKaRROgfFFNe2nX6No8z4n2SLhUbUj3qYQKoP61vfaWDNT7dbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761529271; c=relaxed/simple;
-	bh=n2izf+vNSxdejnbRHxRXfCo5yW8E26f7kiMpnt+M1RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ay4IBiElf4H4N/AUK5fRmuv/3oqyAnUHWP/QrzE1hW2eNpboPdFYZZA6N3uhkqylxBidWyHWRUYljcVGUq/7Ylut6PR9lMQ8aHfKZ2D/ugoKMeMimuLIKRE2LqLni4aRCRHEtszrYBxEteZgj3AkqChcSzJcTSlNiVBcC5Zq9Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V/l1R8D9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 99B671661;
-	Mon, 27 Oct 2025 02:39:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761529159;
-	bh=n2izf+vNSxdejnbRHxRXfCo5yW8E26f7kiMpnt+M1RY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V/l1R8D94FVYffJ/y1K80bQndqw60xN08/Gyck75Ld4b+RZwAxdzBgzbM/r9VJOnG
-	 33iB5BHXrR88goAvPfcxeWnsU/Aq6ubb5yvrBqkZ/NPOwHyCLfTYGS0qGYdXr0tMir
-	 UZXEHiuuXgjO8lDf5bbuyGws3cD/1gF1NvLcL8u8=
-Date: Mon, 27 Oct 2025 03:40:52 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v3 10/31] media: staging: media: imx6-mipi-csi2: use
- devm_platform_ioremap_resource() simplify code
-Message-ID: <20251027014052.GU13023@pendragon.ideasonboard.com>
-References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
- <20250821-95_cam-v3-10-c9286fbb34b9@nxp.com>
+	s=arc-20240116; t=1761529382; c=relaxed/simple;
+	bh=IVeZ7hAy7RNUpQh8Rh7q8cY6WrErlY9sM+xxsWl9ynE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZptoixNDm/JcDla1bEOi2y2TUvf1KLzXRVjeoUyKItU4C4HHtAa5ffwfL41OOYQ4xZyzlqA9A/QjwDMSGHErgqJxk0/IWI7bTA6J4IGezlJfMoObnAbKxt6I0TuuBH209d3fpqnoK0x1JHntzkoylBEkQcWvyDwP1wdKW9GSKkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=elZ5s9EU; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=NkCoTJfTbuhScNbhpAvICZ/VNOsqCz0G1J1WauGdrg4=;
+	b=elZ5s9EULnSfe9sonKeHX4ndGTMiQn8timHDKJC6x4pCTcHntTbGw7KDp1RuCq51X9kP5e872
+	xTx1F/MmefePlYPY0BhxMSMzCuMGkEtqTzfkUOcWb+nMGcpinDdxHQikpneoro2J6Tcnuar5P1W
+	DjM5Bvl+5kG7rHlNXngOjH8=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cvx8H2GtJzLlZ1;
+	Mon, 27 Oct 2025 09:42:23 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id C069A1402CA;
+	Mon, 27 Oct 2025 09:42:50 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 27 Oct 2025 09:42:48 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Oct
+ 2025 09:42:48 +0800
+Message-ID: <37fb4e84-d404-449e-986a-e5ccb327bd78@huawei.com>
+Date: Mon, 27 Oct 2025 09:42:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821-95_cam-v3-10-c9286fbb34b9@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/9] ACPI: processor: idle: Add the verification of
+ processor FFH LPI state
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
+References: <20250929093754.3998136-1-lihuisong@huawei.com>
+ <20250929093754.3998136-6-lihuisong@huawei.com>
+ <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
+ <92b1b431-9855-43fb-8bb3-801649064438@huawei.com>
+ <CAJZ5v0g0PgicTEAb3gAeF2D3ZqONNt+6odt2SfGE7XtY3zoPyg@mail.gmail.com>
+ <ab814879-37d6-49dc-8a38-6b94cabf9327@huawei.com>
+ <CAJZ5v0hHO_vuQ71sQ2=vmjEMNr3jYh6Wx_nk55gQVdGgWFDHKQ@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0hHO_vuQ71sQ2=vmjEMNr3jYh6Wx_nk55gQVdGgWFDHKQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Thu, Aug 21, 2025 at 04:15:45PM -0400, Frank Li wrote:
-> Use devm_platform_ioremap_resource() simplify code. No functional change.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/staging/media/imx/imx6-mipi-csi2.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging/media/imx/imx6-mipi-csi2.c
-> index b04c1b98c088b8bfa66eb3f61cca8bb735b7eae4..7b8911bea3fad8187fafb1d0916d730fd6fa671c 100644
-> --- a/drivers/staging/media/imx/imx6-mipi-csi2.c
-> +++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
-> @@ -738,7 +738,6 @@ static void csi2_nf_cleanup(void *data)
->  static int csi2_probe(struct platform_device *pdev)
->  {
->  	struct csi2_dev *csi2;
-> -	struct resource *res;
->  	int i, ret;
->  
->  	csi2 = devm_kzalloc(&pdev->dev, sizeof(*csi2), GFP_KERNEL);
-> @@ -772,15 +771,10 @@ static int csi2_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res) {
-> -		v4l2_err(&csi2->sd, "failed to get platform resources\n");
-> -		return -ENODEV;
-> -	}
-> -
-> -	csi2->base = devm_ioremap(&pdev->dev, res->start, PAGE_SIZE);
-> -	if (!csi2->base)
-> -		return -ENOMEM;
-> +	csi2->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(csi2->base))
-> +		return dev_err_probe(&pdev->dev, -ENOMEM,
-> +				     "failed to get platform resources");
 
-devm_platform_ioremap_resource() prints error messages internally with
-dev_err_probe(), so you can just
-
-		return PTR_ERR(csi2->base);
-
-here. With that,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->  
->  	ret = devm_mutex_init(&pdev->dev, &csi2->lock);
->  	if (ret)
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+在 2025/10/26 20:40, Rafael J. Wysocki 写道:
+> On Fri, Oct 24, 2025 at 11:40 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>
+>> 在 2025/10/23 18:35, Rafael J. Wysocki 写道:
+>>> On Thu, Oct 23, 2025 at 12:17 PM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>>> 在 2025/10/22 3:42, Rafael J. Wysocki 写道:
+>>>>> On Mon, Sep 29, 2025 at 11:38 AM Huisong Li <lihuisong@huawei.com> wrote:
+>>>>>> Both ARM64 and RISCV architecture would validate Entry Method of LPI
+>>>>>> state and SBI HSM or PSCI cpu suspend. Driver should return failure
+>>>>>> if FFH of LPI state are not ok.
+>>>>> First of all, I cannot parse this changelog, so I don't know the
+>>>>> motivation for the change.
+>>>> Sorry for your confusion.
+>>>>> Second, if _LPI is ever used on x86, the
+>>>>> acpi_processor_ffh_lpi_probe() in acpi_processor_get_power_info() will
+>>>>> get in the way.
+>>>> AFAICS, it's also ok if X86 platform use LPI.
+>>> No, because it returns an error by default as it stands today.
+>>>
+>>>>> Why does the evaluation in acpi_processor_setup_cpuidle_dev() not work?
+>>>> The acpi_processor_ffh_lpi_probe does verify the validity of LPI for ARM
+>>>> and RISCV.
+>>>> But the caller of the acpi_processor_setup_cpuidle_dev()don't verify the
+>>>> return value.
+>>>> In addition, from the name of acpi_processor_setup_cpuidle_dev(), its
+>>>> main purpose is to setup cpudile device rather than to verify LPI.
+>>> That's fair enough.
+>>>
+>>> Also, the list of idle states belongs to the cpuidle driver, not to a
+>>> cpuidle device.
+>>>
+>>>> So I move it to a more prominent position and redefine the
+>>>> acpi_processor_setup_cpuidle_dev to void in patch 9/9.
+>>>>>> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Idle(LPI) states")
+>>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>>>>>> ---
+>>>>>>     drivers/acpi/processor_idle.c | 10 ++++++++--
+>>>>>>     1 file changed, 8 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>>>>>> index 5684925338b3..b0d6b51ee363 100644
+>>>>>> --- a/drivers/acpi/processor_idle.c
+>>>>>> +++ b/drivers/acpi/processor_idle.c
+>>>>>> @@ -1264,7 +1264,7 @@ static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
+>>>>>>
+>>>>>>            dev->cpu = pr->id;
+>>>>>>            if (pr->flags.has_lpi)
+>>>>>> -               return acpi_processor_ffh_lpi_probe(pr->id);
+>>>>>> +               return 0;
+>>>>>>
+>>>>>>            return acpi_processor_setup_cpuidle_cx(pr, dev);
+>>>>>>     }
+>>>>>> @@ -1275,7 +1275,13 @@ static int acpi_processor_get_power_info(struct acpi_processor *pr)
+>>>>>>
+>>>>>>            ret = acpi_processor_get_lpi_info(pr);
+>>>>>>            if (ret)
+>>> So I think it would be better to check it here, that is
+>>>
+>>> if (!ret) {
+>>>          ret = acpi_processor_ffh_lpi_probe(pr->id));
+>>>          if (!ret)
+>>>                  return 0;
+>>>
+>>>          pr_info("CPU%d: FFH LPI state is invalid\n", pr->id);
+>>>          pr->flags.has_lpi = 0;
+>>> }
+>>>
+>>> return acpi_processor_get_cstate_info(pr);
+>>>
+>>> And the default acpi_processor_ffh_lpi_probe() needs to be changed to return 0.
+>> Sorry, I don't understand why pr->flags.has_lpi is true if
+>> acpi_processor_ffh_lpi_probe() return failure.
+> It is set by acpi_processor_get_lpi_info() on success and
+> acpi_processor_ffh_lpi_probe() does not update it.
+The acpi_processor_get_lpi_info() will return failure on X86 platform 
+because this function first call acpi_processor_ffh_lpi_probe().
+And acpi_processor_ffh_lpi_probe return EOPNOTSUPP because X86 platform 
+doesn't implement it.
+So I think pr->flags.has_lpi is false on X86 plaform.
+>
+>> In addition, X86 platform doesn't define acpi_processor_ffh_lpi_probe().
+>> this function will return EOPNOTSUPP.
+> Which is exactly why it is a problem.  x86 has no reason to implement
+> it because FFH always works there.
+Sorry, I still don't understand why X86 has no reason to implement it.
+I simply think that X86 doesn't need it.
+AFAICS, the platform doesn't need to get LPI info if this platform 
+doesn't implement acpi_processor_ffh_lpi_probe().
+>
+>>>>>> -               ret = acpi_processor_get_cstate_info(pr);
+>>>>>> +               return acpi_processor_get_cstate_info(pr);
+>>>>>> +
+>>>>>> +       if (pr->flags.has_lpi) {
+>>>>>> +               ret = acpi_processor_ffh_lpi_probe(pr->id);
+>>>>>> +               if (ret)
+>>>>>> +                       pr_err("Processor FFH LPI state is invalid.\n");
+>>>>>> +       }
+>>>>>>
+>>>>>>            return ret;
+>>>>>>     }
+>>>>>> --
 
