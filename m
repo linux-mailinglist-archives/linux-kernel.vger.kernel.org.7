@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-871551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3453BC0DA3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:44:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9E1C0DA0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F24FA10F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C00DF4205C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD49303A16;
-	Mon, 27 Oct 2025 12:34:09 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F63230E85D;
+	Mon, 27 Oct 2025 12:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xOHj51J/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E61D301471
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAB02FE58E;
+	Mon, 27 Oct 2025 12:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568448; cv=none; b=Hcqx8iXXVbqVCbhUk1wDWpX5ijlbgZo8StuBheUs08Rj2IxX1QTmP6wBYgTtBawWfqaVfQM6CIxIPCFfXJRQ8Dxu+5A3ftI9xzefHyR5+D9vwe1ZLgn4hEt/tPSiDRNa5OAco0Nlo5Yw8K3+4JgTqtgiU/w1ECWoy/5bh8cb/J4=
+	t=1761568504; cv=none; b=ZMzTXcLIi0iwSP/YTGtO44woSbTE3rAfEq8oO3v0eYy692vHvZ++lTS8kxIQT/0lNvE8K+Xnr9cMsPExVDNzLa0I8JYSLd142cQ0cqmLu5N3Bgn+QmxVbulLBtNrXyxfceCgj2TMWh2Xr4y3sMEiXg0CRNc8U55WD3s06Hpg588=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568448; c=relaxed/simple;
-	bh=io7mF9Ojy0BoRlwV+mjIXEtpy1VbwNZ3UMqr+9dyWFU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ARa2xGafLQNsLvo6obpwoPWps+odCJplIn/ougcH+i4hplKWtEtn9QEpI2pSK5OyC7OOz+V10T5uePRgt+id6ny5hR9RicaeqG6ISVrE2MYfqWVRwaTPiTaGEbkfv9o5URMwyYjp3FK8jKWPZPuOuzcGk8TDe7gyv+WcXM9gbU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431d8643856so194889955ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761568445; x=1762173245;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QYLF+k9f8VF3bSUqwqDFfWqYlJzvmKm55+2Qd1cz89E=;
-        b=Oc9m7oRjfS0Q2w8LeXGQ0y0xtH6J9BCvTJpFjhgeTB+Q+FOcMe/VV55ymQuu4TJkoJ
-         L1BuBqPlp7Q5hEESP68dhKNoXyn2lCC0Hdv5BEuQtW2JlCQafxhF7Ybiaxfx/TUITFxd
-         /V+C/qgXk51Xo1PcAqffeqsjKgLKfRclRMvJFlR3pw0KU4ifcvKmRjZXkJ6XtiGhKKDb
-         alneWt459Ad/49yyTLyAxAAyWB2+r2H2pTJRBsPrJzNvcWr0Gx11ukyHawPA7VcqskEt
-         OFBabRbECaR1B3qsSC3VSCif4ETDr5YYAG5CqBnjVVZueF9bTPAdJa4itw4FjOvHjO0V
-         g0tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvUfDEghHv05hP+xJuP2rIyeqR2OZoL4qfIhFAF6ZoOn2aKI5DYTFG4QOxTgTPq87IWRbdq7jhVGm08Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw57BC42f0oGBiBfyC5jJLYyUqDs4CrXrQN/EnDsHH2XrVMM2BQ
-	oS4qPvknxxbmk6FWFnT7IZXt0DsyHQgMkNlA7XuWCMUnOfXZPxJfYStTmeVmDPG75PVg2xDcpCz
-	tdJd9NWcSYOLuIZW4DKuyM0oP/UCGp57PwB4dr0e/XNRSzFD9wnq5h7cAsEU=
-X-Google-Smtp-Source: AGHT+IHZnxvZidojPJtc8IsUazWF1lxD/uEbFdFsLSvPouu/jvYpXzaWnpbe7fCYKv2BbYniOjAT0XCsluJ0EAEtAtVbJi17sTgJ
+	s=arc-20240116; t=1761568504; c=relaxed/simple;
+	bh=P+3UXldEAR7K0LP2DEUeWZ6b1BjyHAZunBfUNmacYL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9L2TU0PCXbRYxwfpBGfR7DNxCk1ZqVonziCycDvggLlu3AXZYbuDJZmdUJLDaMjgmdx02Q/Rog9gryTGXlZvzaCZKMPbtEZLABw32Zzpsq52h7wzazpUt0f0ZP/I5g5h3qLVTbWt68YCNQshQaMLUV2m76rcEBgKMSpOzYz6DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xOHj51J/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iA7t2Iu5WmijCKzI4GOFbP1+sQVyXkrlu3SiinRY5fE=; b=xOHj51J/BGH7TW8B1tue9x+1cZ
+	ciRjmO0LOkcfCgqKGjCBlhej8qpS2adZBtz83L4kTWr2SWApaY5YfMZ2y2Ezd/LwY8+ytZgOHpVEC
+	5g2JJQlARRG/mEHbQFcddVjttfvRkuIDkru5t5BQhF1yh4cYwCY8enA2+QPSZI+5AZyY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vDMQs-00CBov-Nc; Mon, 27 Oct 2025 13:34:42 +0100
+Date: Mon, 27 Oct 2025 13:34:42 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: BMC-SW <BMC-SW@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [net-next 0/3] Add Aspeed
+ G7 MDIO support
+Message-ID: <ad12992b-2ddf-406f-a024-dd402f8a3f0c@lunn.ch>
+References: <20241118104735.3741749-1-jacky_chou@aspeedtech.com>
+ <7368c77e-08fe-4130-9b62-f1008cb5a0dc@lunn.ch>
+ <SEYPR06MB513478C462915513DE7BE1AE9DFCA@SEYPR06MB5134.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa7:b0:430:b32d:c1a1 with SMTP id
- e9e14a558f8ab-431dc139f4dmr207243565ab.7.1761568445190; Mon, 27 Oct 2025
- 05:34:05 -0700 (PDT)
-Date: Mon, 27 Oct 2025 05:34:05 -0700
-In-Reply-To: <20251027121326.8868-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ff66bd.050a0220.3344a1.0390.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill (3)
-From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEYPR06MB513478C462915513DE7BE1AE9DFCA@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
-Hello,
+On Mon, Oct 27, 2025 at 02:44:23AM +0000, Jacky Chou wrote:
+> Hi Andrew,
+> 
+> This is Jacky from ASPEED.
+> Last year, I submitted a series of patches to add a new compatible string
+> "aspeed,ast2700-mdio". At that time, the feedback I received was that if there
+> were no functional changes, a new compatible string would not be necessary.
+> Recently, we are submitting the AST2700 platform support to the Linux kernel.
+> In the following discussion thread, it appears that the MDIO driver might need
+> a new compatible string for the AST2700 platform:
+> https://lore.kernel.org/all/b048afc1-a143-4fd0-94c9-3677339d7f56@lunn.ch/
+> I would like to confirm whether this case should be submitted separately to
+> net-next, and in general, if there are no hardware or design changes, is it
+> still required to introduce a new compatible string?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Are you sure it is identical? And are you sure there are no bugs in
+the driver which would require breaking backwards compatibility, like
+you are going to be doing for the MAC driver?
 
-Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-Tested-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
+Take the reset handling for example. It looks like it was added after
+basic support for the 2600 has added, so it had to be optional, to not
+break backwards compatibility with older DT blobs. But since there is
+no support for the 2700 yet, you could make the reset mandatory,
+without breaking anything.
 
-Tested on:
+How is the clock handled on this hardware? The MDC is currently
+ticking at 2.5MHz. However many PHYs and MDIO based Ethernet switches
+will happy run at a faster speed. So you could implemented
+'clock-frequency'. But for that, do you need a clock listed? Should
+that clock be listed now, as a mandatory property for the 2700?
 
-commit:         dcb6fa37 Linux 6.18-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1316d614580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=929790bc044e87d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15e8a7e2580000
+Having a specific compatible and a fallback costs nothing, so i would
+do it. 
 
-Note: testing is done by a robot and is best-effort only.
+	Andrew
 
