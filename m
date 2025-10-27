@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-871795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179CEC0E57C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:17:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C37C0E617
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE0419A34BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:14:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 452454F38BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6376330E844;
-	Mon, 27 Oct 2025 14:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39077309DC0;
+	Mon, 27 Oct 2025 14:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dp4ar7Wm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueDnygwb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055330ACE1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896503090D7;
+	Mon, 27 Oct 2025 14:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761574312; cv=none; b=qbf/RlMRIfN60KZqzXiONIMZ+4aYgQIMBHMH8VTdIpPgrmWECFaNm3Gm5HlhwPrVbM/r4noXOuDHk3FBj363fBvDNV16lX1HgayPQstiepRwh1hKZ1rZN7SmDF0Hxm1RqkD1SznxZjFSFkEM3aTvAnnbX10s4/aBmzbDnTWFhsc=
+	t=1761574309; cv=none; b=QXCj+KpBNVNqx7zd/c7I9uUpVsIAnXcyedimycft5RD+wr2tIBYu3x5/h/u4HbA9IFrL8VP4j7R+dFzJjqFmv9DweowsqNRNfhSvn8hcKRF6g2+EWxFaheT7Wbi1L32Wn2plcWLe5Zh2/+RsWSujQhyb6ega5wmAoMKLeUweqyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761574312; c=relaxed/simple;
-	bh=8pSKogHAV0YCMjRL6oB8JJn2I1t630qC+Zdgt1EdXNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u0fPB5izLfOg0WxrDmdnJu1UVLpuqxt01LrisY5lh/JHI7hxuU44ni0dmziz1E+UeJNgVKKFqaGCS2RQMNBwloS+qyiOnOlrJMzGsoVIdk+Dt7kewoWm4OMeV57R3+NYvwzIaFcD7JpXCdgsQdQ6b+3JWIyK9G6Clmymep1SbWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dp4ar7Wm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43D0C113D0
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:11:52 +0000 (UTC)
+	s=arc-20240116; t=1761574309; c=relaxed/simple;
+	bh=n3msU3UD9GX+xWDWAp/rD8x8/U0Q4zeDFmIgKJ5TDYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iJ8y3G66YmZ3DCZp0Z7ZcBYvTfVrW9nmWE4Av9rfm8y4ysekz014YdBGhTI82DGhSJPL6JsbFBwBcgTEpouVK2bSfQ3Lfy45RlkvgFLh6oNlFWsSUpE24bUhFkfeYmx7ZWz5KsXsl70pMtWuT7JqZNxYmOrwBg77DsbjWlKsgqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueDnygwb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A813C4CEF1;
+	Mon, 27 Oct 2025 14:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761574312;
-	bh=8pSKogHAV0YCMjRL6oB8JJn2I1t630qC+Zdgt1EdXNw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Dp4ar7WmuEdc4ozF6d8Mnvrz2aoSjAxj7SGB3kpSF18DQ/dYLlG7ogeL2YDXioqhE
-	 MFC5Rdf+QYbyTChRkOixVB+ZNc0fTjlmbEYRG29PrQYhcKelByyWh4mg3WOWGIo7Ra
-	 UPhkgk6ukoQjYMDzh4q/XLJI/s/DKqmQgn154dAMMPKdjDaTRzhCn3r0wjOS1jiuAX
-	 l4bGCxmtwsZbBxgsUIvFkOEKpXENqYQz/r7bH0cFhipBplFKDjZAVHZmIN91/rvCC4
-	 HvOk3KQENw+o/RQikHBDGLffJ2tdGex/tAz8+UAsNNIeCGr6BNXrbcp2PcuFxHqv0r
-	 B/+6oZkuiJpEw==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b5a8184144dso751046666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:11:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5ILUYu4pNug81uQolBZuPkHTPOqRDMnTkqy1L9XRpZpRMqZygbORxbs9gDhZ4zJmOlMvxFUNNB1UF2ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLMrkvSrjdnuAtIIigyARGBYu5lQAFckCyz2bF3NFBq+hNlxlv
-	BXU2X+Y0qh6sTjsRAaJxWKaTvuHLOm5/QZ0dU9hpKx/ZSoLOB+Mss2OGD+h9xU56vSozZqrk79R
-	q9qONDUPhVUS8A0xc7hiioTdG+0RszA==
-X-Google-Smtp-Source: AGHT+IFj8EZV8kIUyITeEbObKp3pkSpn/VEF/SrKqfhWlJrQlAhj3nZehJL5G/aueVs5l/+xNxsm1tQL0HMrR6Qn2y4=
-X-Received: by 2002:a17:906:f58a:b0:afe:7b8c:a583 with SMTP id
- a640c23a62f3a-b6dba3f306bmr9821366b.13.1761574311195; Mon, 27 Oct 2025
- 07:11:51 -0700 (PDT)
+	s=k20201202; t=1761574309;
+	bh=n3msU3UD9GX+xWDWAp/rD8x8/U0Q4zeDFmIgKJ5TDYY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ueDnygwbu8cdrg7gRKAFmnFxZ9YqXXIn8KS6nqfGnVBcoGinYtR5TAZ9UsHyzQ8Ur
+	 e+JnItcDhMtC4q7P6bWWTDEGSA256PgdjGFhX0PY+OXE2VlG8qRigghA0CUCATO4+Z
+	 6lqizi6tiUU7xiYGCtwwPvL4y/LBVsp5lE1jSfC2YmDn/In63l2lthUNIE/+PFmhK1
+	 tPDLJD9D9xp7ShMZW4D2pAhwLyXt0hVPVajNgKmtP3RpFGr4WU343avMHEdsXGCS9l
+	 ILILYwNLCIegQ5196JUaz+LzRuVa9xJEBijbiyD7U7bFyFXD2akMzEzJAVRHB7MMHU
+	 PIF2gQu2sFvPQ==
+Date: Mon, 27 Oct 2025 14:11:42 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iio: accel: bma220: move set_wdt() out of bma220_core
+Message-ID: <20251027141142.555a05e7@jic23-huawei>
+In-Reply-To: <aP8Cx7gMxGfpfb6n@sunspire.home.arpa>
+References: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
+	<aPjE-n0wKNIJd2-M@smile.fi.intel.com>
+	<20251023182318.00004319@huawei.com>
+	<aP8Cx7gMxGfpfb6n@sunspire.home.arpa>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813214949.897858-1-robh@kernel.org> <CAL_Jsq+vUNtMw6JS0ac6a8LTdJBB+UepadpDxP_S8vr6QwUiNA@mail.gmail.com>
- <0bb932e4-9fb5-4ee0-bd21-6e30d6c8044c@linaro.org>
-In-Reply-To: <0bb932e4-9fb5-4ee0-bd21-6e30d6c8044c@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 27 Oct 2025 09:11:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJHzPUyB6nDaTS87eHysoh5W8o=CefWt6hH8zbpM_aQJw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnwI83EeKQTO-531dVAI_XpG-oG19djxHv8cu5QJqGiPGiiOZXN0MqZNC4
-Message-ID: <CAL_JsqJHzPUyB6nDaTS87eHysoh5W8o=CefWt6hH8zbpM_aQJw@mail.gmail.com>
-Subject: Re: [PATCH v2] media: Use of_reserved_mem_region_to_resource() for "memory-region"
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Dikshita Agarwal <quic_dikshita@quicinc.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Ming Qian <ming.qian@oss.nxp.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 18, 2025 at 4:25=E2=80=AFPM Bryan O'Donoghue
-<bryan.odonoghue@linaro.org> wrote:
->
-> On 18/09/2025 21:22, Rob Herring wrote:
-> > On Wed, Aug 13, 2025 at 4:50=E2=80=AFPM Rob Herring (Arm) <robh@kernel.=
-org> wrote:
-> >>
-> >> Use the newly added of_reserved_mem_region_to_resource() function to
-> >> handle "memory-region" properties.
-> >>
-> >> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >> Reviewed-by: Ming Qian <ming.qian@oss.nxp.com>
-> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >> ---
-> >> v2:
-> >>   - Rebase on v6.17-rc1
-> >> ---
-> >>   drivers/media/platform/amphion/vpu_core.c     | 40 +++++------------=
---
-> >>   .../media/platform/qcom/iris/iris_firmware.c  | 18 +++------
-> >>   drivers/media/platform/qcom/venus/firmware.c  | 19 +++------
-> >>   3 files changed, 21 insertions(+), 56 deletions(-)
-> >
-> > Ping!
-> I'll pick this one up.
+On Mon, 27 Oct 2025 07:27:35 +0200
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-I still don't see this showing up in next.
+> Hello Jonathan.
+> 
+> On Thu, Oct 23, 2025 at 06:23:18PM +0100, Jonathan Cameron wrote:
+> > On Wed, 22 Oct 2025 14:50:18 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >   
+> > > On Tue, Oct 21, 2025 at 01:31:49PM +0300, Petre Rodan wrote:  
+> > > > Move bma220_set_wdt() into bma220_i2c.c instead of using a conditional
+> > > > based on i2c_verify_client() in bma220_core.c that would make core
+> > > > always depend on the i2c module.    
+> > > 
+> > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > 
+> > > But Kconfig for this driver is a bit strange. Usually we do other way around,
+> > > i.e. make user visible selection of the glue drivers, while core is selected if
+> > > at least one of the leaf driver selected by the user.
+> > >   
+> > This comes up from time to time.  There kind of isn't a right answer
+> > to my mind in the trade off between complexity of configuration 
+> > and desire for minimum useful set of Kconfig symbols and people wanting
+> > to build only exactly what they want.  So we've ended up with a mix.
+> > 
+> > I don't mind setting a policy on this for new code going forwards, but
+> > that means we need to decide which approach we prefer and document
+> > it somewhere.  
+> 
+> I will come back with a new patch to Kconfig once you decide what is the best way to handle dependecies, but in the meantime can you please accept this current patch?
+> 
+> I keep getting automated errors that would be fixed by it:
+> 
+> https://lore.kernel.org/oe-kbuild-all/202510210604.mAtgE54g-lkp@intel.com/
+> https://lore.kernel.org/oe-kbuild-all/202510222324.SxYlIaLW-lkp@intel.com/
+> https://lore.kernel.org/oe-kbuild-all/202510271347.115BMnsC-lkp@intel.com/
 
-Rob
+Done. Was travelling (and on wrong computer).
+
+Should be resolved now.
+> 
+> If the current patch does not correctly reference the automated 0day-ci reports please tell me what I should change within my b4 workflow.
+> 
+> thank you,
+> peter
+
 
