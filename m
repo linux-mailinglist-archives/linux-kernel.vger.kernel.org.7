@@ -1,240 +1,274 @@
-Return-Path: <linux-kernel+bounces-872552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5ADDC116F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:48:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9366C11709
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B305661C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A194F566849
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426F2311973;
-	Mon, 27 Oct 2025 20:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9879731B81C;
+	Mon, 27 Oct 2025 20:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="h/mtSurW"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="LKPxbNso"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555C8312824
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761598095; cv=none; b=s0IOyX1H0nxSEt0Jjd1psjEB8fpXUs9dpCsKU14cxQljtaBr0Hi89y19aHLPXoWeMGC1rEYu3juiGSphiXrYRuPQs4fH3WD27X2O2PWYn0k24JH9dqpFjqFpcXmY7k8X2k5NSk8IZVAy+ylzEMlp6Cmf7iV9ce2l40pJ88Fp2p8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761598095; c=relaxed/simple;
-	bh=sJsw8YqC2+Q9Yy6z0L0bQIMoNW9TgEgn7bMgyzZD194=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q+Dj/t/CatGpyQtyOA+GtFIsmjLFNGpg4aw3II9vqEXxZExYTbhZS7EIAlGLiXxUKzTySPCbeEqHSDGv9NUlPv2CgfSByt4NbrGMThh3SXjImswNcI1Hsbc676diB8H1xCD2VErGN9t4gGPCMKa073XPMWEFb3J7PREFgbvemS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=h/mtSurW; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C02B0406FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761598091; bh=mJwyGX4PRVUBddS2gWM4fiDzzPkMQyE5o6Kn9o7cZjM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=h/mtSurWWV5w+2La90lLNfKPnda0gIAU48Re3xdYfQumhwGOvoJxWsP9moUgdccxx
-	 kjWZSXskWVa4utmuMf0qSXuX3UXOm8PqB5Y12lDiTcnyDpyjYKF9UPZ61NAuY5uZQi
-	 kVgdmmMN2+QJniFeppsZee/JsYJlwx/wFsYJ2qbvnSU2B6hgnNLU4jTK8P96YSY179
-	 WwToXZw0Exmm/Pn0XRpwEiotUA9PhDTOr43J9nrZ+IcVUAZF0axI9Gji0Wy7wAcCsz
-	 yN9M+byJ7pc+SO3Y0ELH7/nHp+i7krQjel6t87mhY1gZ8N7glMXVMo94oximfXfPZ9
-	 UeIpyxksVb0Tw==
-Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0592D8377;
+	Mon, 27 Oct 2025 20:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761598289; cv=pass; b=G7leLNArcyK9UiZUP3H9hVpjIF4ygXaxrBsFbySHGQBfWCsOHV5RrqlChE9SLSlZDTN2oTb6VrRsapIfTqBT8Chzov/nqSUgOpSfHwwLh86K4pA1Ay/7BNFZ8LVTdKBZiUH1w8dwek974Rhc/9ABq2/qGVvRCmZJabqAwMWzDVE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761598289; c=relaxed/simple;
+	bh=lhAHUj5bxXShVg5mBPT4K+s1waC5K/onTf9I+kANIjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgF3up66gC6lozUoHdUDlwLv2OHqM/C9M0FbfIUAqdNVckk0Oq6lE9/xJDTrZlfCY3s9frZagzrVmCac8w2v4qXGn9qwdHmrM0QcNd7drqS71mvAdcDkbsedpyFzLEYpdB8Vi79/t9ofXPtS6fVeYcshl5f/fl+DyqgtEefo4JM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=LKPxbNso; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C02B0406FB;
-	Mon, 27 Oct 2025 20:48:11 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Steven Rostedt
- <rostedt@goodmis.org>, Dan Williams <dan.j.williams@intel.com>, Theodore
- Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>, Kees Cook
- <kees@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel
- Ojeda <miguel.ojeda.sandonis@gmail.com>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] Documentation: Provide guidelines for kernel
- development tools
-In-Reply-To: <20251027201204.352890-1-dave.hansen@linux.intel.com>
-References: <20251027201204.352890-1-dave.hansen@linux.intel.com>
-Date: Mon, 27 Oct 2025 14:48:10 -0600
-Message-ID: <87o6psm5px.fsf@trenco.lwn.net>
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4cwQf25Mg0zyRb;
+	Mon, 27 Oct 2025 22:51:22 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1761598283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0UzmCaPVoiS1w/FUaOytewjvTtIauYLev6TJBsSgl38=;
+	b=LKPxbNsoEvumyCTzXvaXlwgGq7tpa8L6cRk3TshEApKiWUUsZkFYI/+VQenMjQqJOdm7Bk
+	PtVOG5iOsJT+7gFJk9fGny3dcD89o6QQf2ZDypYDlOs2JyGN1Zn6p4yLr8WHbRBjKfseu0
+	AITo0O6gJ1Yv1ew1ARkHQ/SDbJhc2Og=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1761598283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0UzmCaPVoiS1w/FUaOytewjvTtIauYLev6TJBsSgl38=;
+	b=yrFxCASLbHlVMhaVYYeTZrnnylCerNggsiAtDRErJ8QL/KVVJot4XfqITy0TMSlwsFhfeU
+	HoyMvf5HSVu6SwAbEpA176RblHLEe/y9HDCoygdUUNiftb24i+RYb843ONWvBOgZX80iuB
+	a4Pl4QDq78Hk6LjgaKmF3GiyuPpzRyk=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1761598283; a=rsa-sha256; cv=none;
+	b=LjaE/ud729xDvyU4alpwesfOqW8/XoXctkMEPWaona1Io78nhyPB7/ACsEOOXsMT+Nqdz1
+	SmR/ML3OGn/P18BkwFNPCHE+MXzs66/09La6yPfZMOI1G/2WSUKpdLRDgi1zKMdSlBraMr
+	v7r0bJcB3NFx5Y+Bv0dSOyidef24giI=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id AF27B634C51;
+	Mon, 27 Oct 2025 22:51:21 +0200 (EET)
+Date: Mon, 27 Oct 2025 22:51:21 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
+Subject: Re: [PATCH v3 01/31] dt-bindings: media: add DW MIPI CSI-2 Host
+ support
+Message-ID: <aP_bSQUIle_9-L-7@valkosipuli.retiisi.eu>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
+ <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
+ <aP+enPOHPkvZAkzS@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP+enPOHPkvZAkzS@lizhi-Precision-Tower-5810>
 
-Dave Hansen <dave.hansen@linux.intel.com> writes:
+Hi Frank,
 
-> In the last few years, the capabilities of coding tools have exploded.
-> As those capabilities have expanded, contributors and maintainers have
-> more and more questions about how and when to apply those
-> capabilities.
->
-> The shiny new AI tools (chatbots, coding assistants and more) are
-> impressive.  Add new Documentation to guide contributors on how to
-> best use kernel development tools, new and old.
->
-> Note, though, there are fundamentally no new or unique rules in this
-> new document. It clarifies expectations that the kernel community has
-> had for many years. For example, researchers are already asked to
-> disclose the tools they use to find issues in
-> Documentation/process/researcher-guidelines.rst. This new document
-> just reiterate existing best practices for development tooling.
->
-> In short: Please show your work and make sure your contribution is
-> easy to review.
->
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: Sasha Levin <sashal@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> Cc: Shuah Khan <shuah@kernel.org>
->
-> --
->
-> This document was a collaborative effort from all the members of
-> the TAB. I just reformatted it into .rst and wrote the changelog.
+On Mon, Oct 27, 2025 at 12:32:28PM -0400, Frank Li wrote:
+> On Mon, Oct 27, 2025 at 10:31:25AM +0200, Sakari Ailus wrote:
+> > Hei Eugen,
+> >
+> > On Thu, Aug 21, 2025 at 04:15:36PM -0400, Frank Li wrote:
+> > > From: Eugen Hristev <eugen.hristev@linaro.org>
+> > >
+> > > Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
+> > > and i.MX95 platform.
+> > >
+> > > Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> > > Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > Change in v3
+> > > - drop remote-endpoint: true
+> > > - drop clock-lanes
+> > >
+> > > Change in v2
+> > > - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
+> > > - update ugen Hristev's s-o-b tag to align original author's email address
+> > > - remove single snps,dw-mipi-csi2-v150 compatible string
+> > > - move additionalProperties after required
+> > > ---
+> > >  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 151 +++++++++++++++++++++
+> > >  MAINTAINERS                                        |   1 +
+> > >  2 files changed, 152 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..d950daa4ee9cfd504ef84b83271b2a1b710ffd6b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+> > > @@ -0,0 +1,151 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
+> > > +
+> > > +maintainers:
+> > > +  - Frank Li <Frank.Li@nxp.com>
+> > > +
+> > > +description:
+> > > +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
+> > > +  camera. It will convert the incoming CSI-2 stream into a dedicated
+> > > +  interface called the Synopsys IDI (Image Data Interface).
+> > > +  This interface is a 32-bit SoC internal only, and can be assimilated
+> > > +  with a CSI-2 interface.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - fsl,imx93-mipi-csi2
+> > > +      - const: snps,dw-mipi-csi2-v150
+> > > +
+> > > +  reg:
+> > > +    items:
+> > > +      - description: MIPI CSI-2 core register
+> > > +
+> > > +  reg-names:
+> > > +    items:
+> > > +      - const: core
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 2
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: per
+> > > +      - const: pixel
+> > > +
+> > > +  phys:
+> > > +    maxItems: 1
+> > > +    description: MIPI D-PHY
+> > > +
+> > > +  phy-names:
+> > > +    items:
+> > > +      - const: rx
+> > > +
+> > > +  resets:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +  ports:
+> > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > +
+> > > +    properties:
+> > > +      port@0:
+> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > +        unevaluatedProperties: false
+> > > +        description:
+> > > +          Input port node, single endpoint describing the input port.
+> > > +
+> > > +        properties:
+> > > +          endpoint:
+> > > +            $ref: video-interfaces.yaml#
+> > > +            unevaluatedProperties: false
+> > > +            description: Endpoint connected to input device
+> > > +
+> > > +            properties:
+> > > +              bus-type:
+> > > +                const: 4
+> >
+> > If 4 is the only value supported, you can drop the property altogether.
+> 
+> Sorry, What's your means here? There are more options in video-interfaces.yaml.
+> here just add restriction for bus-type. otherwise other value can be
+> provide in dts file.
 
-Generally seems good to me, but I have a few nits
+It could, but wouldn't any other value be incorrect?
 
-> ---
->  Documentation/process/development-tools.rst | 92 +++++++++++++++++++++
->  1 file changed, 92 insertions(+)
->  create mode 100644 Documentation/process/development-tools.rst
+In other words, this property is redundant and should be dropped.
 
-You didn't add it to index.rst, so it won't be part of the docs build.
+> 
+> >
+> > > +
+> > > +              data-lanes:
+> > > +                minItems: 1
+> > > +                maxItems: 4
+> > > +                items:
+> > > +                  maximum: 4
+> > > +
+> > > +      port@1:
+> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > +        unevaluatedProperties: false
+> > > +        description:
+> > > +          Output port node, single endpoint describing the output port.
+> > > +
+> > > +        properties:
+> > > +          endpoint:
+> > > +            unevaluatedProperties: false
+> > > +            $ref: video-interfaces.yaml#
+> > > +            description: Endpoint connected to output device
+> > > +
+> > > +            properties:
+> > > +              bus-type:
+> > > +                const: 4
+> >
+> > Are both input and output of this block CSI-2 with D-PHY?
+> 
+> Yes, input from camera sensor, output to others image processors to do data
+> transfer or format convert.
 
-"development-tools" is a fairly generic file name that doesn't really
-tell readers what they might find within it.  Maybe this shed is better
-named "generated-content.rst" or something like that?
+The description appears to be saying this is "Synopsys IDI", not CSI-2 with
+D-PHY. We don't have a bus-type for IDI. Couldn't you simply drop it?
 
-> diff --git a/Documentation/process/development-tools.rst b/Documentation/=
-process/development-tools.rst
-> new file mode 100644
-> index 0000000000000..ab6596cc595ac
-> --- /dev/null
-> +++ b/Documentation/process/development-tools.rst
-> @@ -0,0 +1,92 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Kernel Guidelines for Tool Generated Content
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Purpose
-> +=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Kernel contributors have been using tooling to generate contributions
-> +for a long time. These tools are constantly becoming more capable and
-> +undoubtedly improve developer productivity. At the same time, reviewer
-> +and maintainer bandwidth is a very scarce resource. Understanding
-> +which portions of a contribution come from humans versus tools is
-> +critical to maintain those resources and keep kernel development
-> +healthy.
-> +
-> +The goal here is to clarify community expectations around tools. This
-> +lets everyone become more productive while also maintaining high
-> +degrees of trust between submitters and reviewers.
-> +
-> +Out of Scope
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +These guidelines do not apply to tools that make trivial tweaks to
-> +preexisting content. Nor do they pertain to AI tooling that helps with
-> +menial tasks. Some examples:
-> +
-> + - Spelling and grammar fix ups, like rephrasing to imperative voice
-> + - Typing aids like identifier completion, common boilerplate or
-> +   trivial pattern completion
-> + - Purely mechanical transformations like variable renaming
-> + - Reformatting, like running scripts/Lindent.
-> +
-> +Even if your tool use is out of scope you should still always consider
-> +if it would help reviewing your contribution if the reviewer knows
-> +about the tool that you used.
-> +
-> +In Scope
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +These guidelines apply when a meaningful amount of content in a kernel
-> +contribution was not written by a person in the Signed-off-by chain,
-> +but was instead created by a tool.
-> +
-> +Some examples:
-> + - =E2=80=9Ccheckpatch.pl --fix=E2=80=9D output, or any tool suggested f=
-ix.
-> + - coccinelle scripts
-> + - ChatGPT generated a new function in your patch to sort list entries.
-> + - A .c file in the patch was originally generated by Gemini but cleaned
-> +   up by hand.
+-- 
+Regards,
 
-Might we want to use some sort of generic term rather than listing
-specific proprietary systems here?
-
-> + - The changelog was generated by handing the patch to a generative AI
-> +   tool and asking it to write the changelog.
-> + - The changelog was translated from another language.
-> + - Detection of a problem is also a part of the development process; if
-> +   a tool was used to find a problem addressed by a change, that should
-> +   be noted in the changelog. This not only gives credit where it is
-> +   due, it also helps fellow developers find out about these tools.
-> +
-> +If in doubt, choose transparency and assume these guidelines apply to
-> +your contribution.
-> +
-> +Guidelines
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +First, read the Developer's Certificate of Origin:
-> +``Documentation/process/submitting-patches.rst`` Its rules are simple
-> +and have been in place for a long time. They have covered many
-> +tool-generated contributions.
-
-I'd drop the ``literal`` formatting so that the automatic
-cross-reference magic can happen.
-
-> +
-> +Second, when making a contribution, be transparent about the origin of
-> +content in cover letters and changelogs. You can be more transparent
-> +by adding information like this:
-> +
-> + - What tools were used?
-> + - The input to the tools you used, like the coccinelle source script.
-> + - If code was largely generated from a single or short set of
-> +   prompts, include those prompts in the commit log. For longer
-> +   sessions, include a summary of the prompts and the nature of
-> +   resulting assistance.
-> + - Which portions of the content were affected by that tool?
-> +
-> +As with all contributions, individual maintainers have discretion to
-> +choose how they handle the contribution. For example, they might:
-> +
-> + - Treat it just like any other contribution
-> + - Reject it outright
-> + - Review the contribution with extra scrutiny
-> + - Suggest a better prompt instead of suggesting specific code changes
-> + - Ask for some other special steps, like asking the contributor to
-> +   elaborate on how the tool or model was trained
-> + - Ask the submitter to explain in more detail about the contribution
-> +   so that the maintainer can feel comfortable that the submitter fully
-> +   understands how the code works.
-> --=20
-> 2.34.1
-
-Like I said, nits; the policy side seems to align with how the
-discussions have gone.
-
-Thanks,
-
-jon
+Sakari Ailus
 
