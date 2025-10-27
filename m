@@ -1,319 +1,232 @@
-Return-Path: <linux-kernel+bounces-872250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E13C0FB83
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:41:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D244C0FBC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 788FE465327
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85B6189852D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FEF31960D;
-	Mon, 27 Oct 2025 17:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD49318131;
+	Mon, 27 Oct 2025 17:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MrOUfsWW"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="McVDlNq6"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012030.outbound.protection.outlook.com [40.107.209.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7067E1DED64
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761586849; cv=none; b=SdMJsxeGcOHLzSobesWfPwwSI3X9Cnnz0dUB8aWdTvUH1qJfLsHyAs/UYMHY0QYJ/HYZyEi0j4qVRwh+qJ0TDkJK8CeACbQXR5Evhh1atxyPDinVtt4lmAGpL0ymdq57gmD7oLsMf7eyDRnNwNkr0Du8zOfZwsY/o0mroSuDwo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761586849; c=relaxed/simple;
-	bh=yrssoTy4jgd8O3sgebe7ei17neZ6MLQm24uhci7teas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ws7nl/WAOlXFJYZ1KQNu6NipcMAjpMe5pLFlz4WN3MI2Rcje+SfOlBm5dUkUf5kziLPwoBcAhjv2FAFUYZzPgDAey2YNAtNgESMRvT07ihl1vOV9S33OESRzIJ399IlEmS3VSFtmsQ520Adz4jek8zuXTQUIz/UF7hj+5xT/jqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MrOUfsWW; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso4094951a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761586847; x=1762191647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tPCmzMn2A+XBQUun/a12vKmCiqo+GJ3W6P9jrYY7W5U=;
-        b=MrOUfsWWP/iTKArYbhaYldiXnaTfKohRUtmHBf8Tfm0EelKvr24IUvJ0qpvzVZUa7Z
-         O4AavCKEK5bZVb/gWTCw7TIpqbOEHPyzca00GQnWruuvBJpKEoyAg0TKxc5TXXfWHep6
-         yuC3nert32fn1nTetN6yHaNWWvJz9T917jQ+j13XpKg9t5L8dKvV3OBpfTjkzka5NvkK
-         FKljmn2NnLqr6W900Atxyn0upaeAI9yrql3z7AslPtsna5Q86jAd4OSbDpBXQmlkdwTr
-         uVJDKIbhjqRsdTgFDOuQ+yl13OJ/FMZctUW+gw9w67dLB7zcONL9yqGk/oRU5fa4bzJE
-         u/+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761586847; x=1762191647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tPCmzMn2A+XBQUun/a12vKmCiqo+GJ3W6P9jrYY7W5U=;
-        b=R0LzHNGSER9QqMnr20hb4oAewEUVlr96mRf4uk6wPOH5fpBT0DQPRDentrHTMaXN8u
-         XIvYnovIcZbdoKuQAUHD9XtEVkq7RSyqKHZxH2CfZ5sU0V6KUqyoJilpwYamAESJSonp
-         LMZUxjdJUUzJae1Yo/GmlwQPcLztYplToNWct/ESeNP3PNonL2f58uc83P14rxp3jyoU
-         Y3Vc3hJqbniXfUCbOYpoght3JxQxzUQ7z4x3OYxuLc2H3bjxbcQiq3Pm+z9kirQk0UQu
-         1GA/DgNIhaq/CdUV74gKtYwzKzbp9m4fQlZwwCEXbPfU+luQ14kLzzEQE9h4mT4RS4bO
-         cR8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvHw4KZkehYRCzNWktj8wq9x6B0yz5zlV+e3SvhOAQjdKyQe7/PQJZ0MVmicPfKO4DNoCtKhUn0Aj8gDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCcTAHIt8SwLrs2osFyw4ro4G8QQJrsi3iM4QowwZsvKoA5fW8
-	GYv1BzdqT0HRVBW1pnVQx8hxotF+evspIbMK6Ifc8yZEPI06pIubJAz5zIGPjeOydOu4IZaotNN
-	YkvThVDhlrm7Wpegep7KJuGuOrte7w58bHvoNJ0HF
-X-Gm-Gg: ASbGncteSxYRbS0iXKRBvJk/EKYTgzQfC3kHo7/I6zn7CUE0yUyaQrvRGuN6uVRaWsx
-	25FEMVbcoDKcZM9+wBfDLYDOluGzWET40BeFZ/3s2U9OXJUPnkHvhbBEZMTz3vd+fKiufEta1PG
-	we+VanTFEND533XB4fRThXuaHnBq9V6iWZC6yU65DUyJ4KLww6yS8E6upgtiJLv/t51BvHh1nL8
-	pb6cd0DKFxZN6HnM+Lf/2Nr3CyHuabRj7ZOSsWZiIaLx0bDEc3b3CWBn1uGBG72Eg2ntcVDOvlz
-	k6Ue4uKSAx8FoRazp83bi4zWvw==
-X-Google-Smtp-Source: AGHT+IGvLrA+njYshjEDvqusYQk/lL0ezsX0X9xwbHI10HNYnNH7O8L8mtGr8v7dpjz1zoeXbp5G9y8cGj5M/gZEOiE=
-X-Received: by 2002:a17:902:e845:b0:290:c5c8:941d with SMTP id
- d9443c01a7336-294cb51121fmr8719025ad.39.1761586846290; Mon, 27 Oct 2025
- 10:40:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51158298CA7;
+	Mon, 27 Oct 2025 17:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761586920; cv=fail; b=pOAxV913H2GDDjmETk12XhJ/fexNZBA9Euh8paQxx12g1sbnVCbtHm8T6zyJzZBjfgx73/ZkfVGU8VtSzo57KTX+yjlI6KtUtnG8yDxq3fDmDQzQbHUZtWo2u9hluVUIsk15iTHILpGY8IwU+0Xx9d7HIRzs4sD6IV6YYbgGEx0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761586920; c=relaxed/simple;
+	bh=cPsSrJd7qq5OcLoaFI/mu1A+wGqhg+TAzDKhG8DSvhA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BccGw2oPTij7yrwh/3wKRmx5T7VQKtyL7DxGDolo5OQE5oy/QrJ0ovNVI21Q8qJ92QLkAWGnOdCuXnLkw1r6FmQbp7zT9dgU7sUAhRelFP6lqlC6nOKUYuDe1PQTrQmsk0qy4mq9sNIZXHVS+UpAZ82UoL2wY9hsdVRRnvRP5ts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=McVDlNq6; arc=fail smtp.client-ip=40.107.209.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TnM045KRQp1rbwWoDZ/iusTidksnmz6OhcmiEObN/jZKQ0vS1i5G55JELCpwl6m3Vn3Vl0hRU2hJzdtjKwr51F4hiTUMtrX7k0hRNYbzH38YRh6yBnzXhF2tbN22O+s0c3IhXV0axO4D4VJnDqFjc7kDAXJqvw/htpcTymiyxJ52NP9SXwX3yfMQ45aCQ6pmLGUVR90AxKrw5jAzZVRQDL+skqhqTIrF4EhtYc+YkiuTaRdB1kvPLtgQX9WboFkdGvBI0w6mgC9yAPlMVc+c8VdToOjjvaVZlbwNhEPdBP4Wn/SB569038J5W4n1s+eb7aQopUU4Ew2Gr4RdEuPwPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j4C26b/Sm0HTAxzbE60WtRalaiV53+eWbnfxxShNeEg=;
+ b=SDyj2YOrnv4Hz6NBn1F2eJiKoykk9IAtOJeNqbHhDcsmBFDVBXbOQVKi0IuyGWI+7/6ud9l1wrWCE6ocnpcJ8YU2WtCD4LuY+6iCkLXWqhWOUZWD2wnvOJJx/lIRxnWno3pWZTjmYJnJXB0gSDcqOvmFwCWaXzyXlc7JFV7KTIj2wW8/qMIkgOaFAN0+c1BN+PJTHpe/KSZ6IMBTVcWLm7e5/KITPbMWHFqro2prfW9R4DnciIHWvYXh6EPyf6U8HfzSUQMJIzx+8wCUTxwXAMrCdLdNvAS9Hy9xJmORmBUi5U8RfUiYbFZaai9uC+QHBwODOAKDYQV6Fcf70YQr+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j4C26b/Sm0HTAxzbE60WtRalaiV53+eWbnfxxShNeEg=;
+ b=McVDlNq6fkTd6UMisN2niyUEWJPtTJIMSEtd6DoElEzOE2SmZ3A9IUAKxXU7rUTWiv7lPJngYHyvoVRaoOED86wuHDYygaoF7ncnFPw5No8mgXiG5J4Dy0Qzm6RQcaBgrkSugUEEBPRC63Eo1v69XX58UD4+vgM/Yl/9CmDly3jbi1DNfEqy5+ntd0Gu2V8XUGZkYmk5Pbd3Vc++E7u6r+hiRYHQSukLe5Jp8tBsjhRxbEtF3HLm/m0wj8nRTSfUQJNTZb3o4Rm5bYZz+Ci6aHRs2Jr6eOyQPjJfItQOHf21/sehcqXRlHmKdI92+uhUVJIchYGEc9zoeUSzH7aEHA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA4PR12MB9836.namprd12.prod.outlook.com (2603:10b6:208:5d0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 17:41:51 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Mon, 27 Oct 2025
+ 17:41:50 +0000
+Message-ID: <50f8b846-aead-43d3-b3f0-49e67b1952b5@nvidia.com>
+Date: Mon, 27 Oct 2025 13:41:47 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] gpu: nova-core: vbios: remove unneeded u8
+ conversions
+To: Alexandre Courbot <acourbot@nvidia.com>, Alice Ryhl
+ <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>
+Cc: John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+ Timur Tabi <ttabi@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
+ <20251027-nova-as-v2-2-a26bd1d067a4@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <20251027-nova-as-v2-2-a26bd1d067a4@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BLAPR03CA0114.namprd03.prod.outlook.com
+ (2603:10b6:208:32a::29) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAVpQUAEBgTZF5GMvRgZybC0pHUuaN-4JBaff79L6AABNKSNWw@mail.gmail.com>
- <20251025075314.3275350-1-lizhi.xu@windriver.com>
-In-Reply-To: <20251025075314.3275350-1-lizhi.xu@windriver.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Mon, 27 Oct 2025 10:40:34 -0700
-X-Gm-Features: AWmQ_bnEM1KrRr71L9tmkILbF5hbRJqWIFE8_lnlj1yNvYaGqplbdRBECxLymzE
-Message-ID: <CAAVpQUA1v+LDYfpGGcTJ3sGGhmo6BCBrwWUwaj9cUbBVrw28GQ@mail.gmail.com>
-Subject: Re: [PATCH V3] net: rose: Prevent the use of freed digipeat
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jreuter@yaina.de, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA4PR12MB9836:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66e890de-e288-487c-4e25-08de15801bcb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YlFPZG9MU2tXcnNnalkwMEZXOFQ4anNVQ0tVd0VxZUNrTWVjTWpNTDVQdGhW?=
+ =?utf-8?B?VDFOVllkU2dlZ1JwRWRVbUZ0RFJ5dmp1ZVJQM2xLRGcxRG5EWkt5NU5hL1Bt?=
+ =?utf-8?B?K2piVnRRVnJUMkpQb0g4NE55Wmk1bFg4K2xUcmdOQ3lxZkRPbDl2YnV1MGRP?=
+ =?utf-8?B?TG01M1NxU0E5RjE5VEY0ckxrY0t1YlBRUDZwS3QzU3hZVjJSRDBDOWRhanRZ?=
+ =?utf-8?B?c1I0ci9wZWVHVUlZdmdzOGNLczZxdWpHN3lzMmtSS09lMklnb3lTUml4M1Vh?=
+ =?utf-8?B?NEs4VEpGNmVpTC9pWGp3c2FIODVpVHdHNkN6UkpoSUlDd2kvRXNTVW5oWlpv?=
+ =?utf-8?B?SGhCTEdxOVVKSXhMTTRFbVI5eWhZaFJCcUgxR2QwbjRXS3RCaVlkczhZOEwr?=
+ =?utf-8?B?amFYemo5QVYzT3AyZVd2Q3dWV2wyU2RwQXByajRoblBHNHB1bmtld3lIVUMy?=
+ =?utf-8?B?RFV6eEdzRTBaVkc2a3hZQm1tVThMeGI0MVpsdElNaWhBdUFtSVZnaWErUVJx?=
+ =?utf-8?B?V3ZMclJFN01BNGorUXlhV29lU3RRQnBaMDVoSmZUWVcxZlprSzBicHlRZXY5?=
+ =?utf-8?B?M1VLNFBnNDFOc3RsSGtFR2ZmNEdWenZqN3QzT3FMSGt2WEp4QzJFL3VyVlRE?=
+ =?utf-8?B?MjIrdXo0RHEyck1RTk15cW1FOVhQL0hTRVB0MHdSSW1EOUdqaHlQK1pGd3dG?=
+ =?utf-8?B?UXFSY2ZDOFp4WXNBQm16bW04VW5HRDhsZExYQXVuQjlnSW41RFZKUk03bTh0?=
+ =?utf-8?B?R2lzZURKS2MvamtmZXZSZjYxcVlwczhoRm0zQlNLNllMbjF1K1paR0xvNjJi?=
+ =?utf-8?B?RldBaDZ4WnhDMFUwdFZET1YyRGJWdGFmL2o1WUdlOStyeTFha0JzU0JEb01Y?=
+ =?utf-8?B?V0lYWVhZM3pFY0pldVExT0pVd3F0RVM3cDJKcElZWCtiU0hvNmZDTzlBRFl4?=
+ =?utf-8?B?dEJOeHdtck1waG9INDZwTHl0SlNiRFIxdzN6N2dzVFByQ3g3VmtHZml1elVY?=
+ =?utf-8?B?b0lnWUl4Y2pVRUdGK1dDR1JpZi9KUWZiaUNmUWcvY0ZaallUK28wQkduemdY?=
+ =?utf-8?B?SjdSaVRVWGpOY1RaODBXMytpVlFXeGxiUkNLMGkxajVpYXUxUnFzVG11K0xZ?=
+ =?utf-8?B?cW5sNDRsOXc3Mkpwdm4xZ04wOHQ0eVZaa0RLc3YxNWdLRThRamJKcVQyOEF0?=
+ =?utf-8?B?ZUNSaDR4RWM4WWYxM25yeERpN0UvTmd0SUdPQTZSa2JENWd6SW9CTXdpUCsr?=
+ =?utf-8?B?cmhLYkJuR2FtZUp3TWxpZEwxTmNPZXV1YUdNL0JMU3dEMWVFTFF5VlpHZ25T?=
+ =?utf-8?B?b0xHSjh6VTFrSkM5cXJXaG8xMldHeDRMMHVZTFZKZDZXR2VaMjM4RlZhVjcz?=
+ =?utf-8?B?Tjl2LzFhYVFJbDVhZUhtQnRNRHpKeVk4ZUNmL3pJNkRHNlpxUUpmVURwSEJj?=
+ =?utf-8?B?UFljKzRIaEJyUzNWKzg3MzVqd1kvbjgwUS9TbllBV0dYV1JyQ0sxdFRWNVpl?=
+ =?utf-8?B?OS9GZ1NFZU1qbDQ5TE1Ob3VnTU9uakJFbFhIV2pvREtLdzVHb3Jnb25QWW9z?=
+ =?utf-8?B?SWx3NEQ3c0Z0VjBzS1FycllqQ0ZZOE9FQXdRYXNuUTY4eFRPc0kvMzZvZG1K?=
+ =?utf-8?B?Uk9GL0J2aXpmMFR0MWxOYktxS1RLY1JtM2hTMlF5Z3RzQkZuTkxaNEhTYmgw?=
+ =?utf-8?B?VzlJTjZZaFdENVQ3M1NjNjJvZnA1NEVOakFOWnBQVThsa1p3eUZTOE12RFNk?=
+ =?utf-8?B?NElMRVZiVVlPVzRpMWh4U2lhQ2ZCTk9pSWF5b2ZKMVRXQk9CUTN0SVdMUUhk?=
+ =?utf-8?B?aHFNaUh2aUQ2ZVpDeVZ1b2VWNXEzajRRd0VZbWRwbnhqRWF3V1VpKzB0QU1t?=
+ =?utf-8?B?MytFT2lwaW5GZk9xckdoRVBHOVRCdUFsUGlIK00xdmx5MFVKcXg4Q0RxbWth?=
+ =?utf-8?B?ZmtUc0IydUVPcjlYR3FwUjRwc0NkSHZ6WlpsSFlyUmp0SUJMMWdyRzNRcUhL?=
+ =?utf-8?Q?MIn06X4mgm+4x1YiV+pci9ZNIxUTzQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QTVwNXlkOUtkQ0U0UXMzT2kvZTdrT1dUUHdzVjFZazJFWUIyYTlXRVhBNlQ5?=
+ =?utf-8?B?MmFHWkxVUGNtYi80czBNVFhxKzZwU1VEZmNNZTB3b1BteXFHL1VjSktZaWhW?=
+ =?utf-8?B?amthcE1Ob0trU3R6SDVDWXhFSCt2Rit0RjFNKzlZeG9ydGY3blU3WkRnTXlj?=
+ =?utf-8?B?Z0lIdVBIVzVHVFJSQXdIcVZBblJMYktsQWRHRHdOdHg1UDV2YkkxK1QwejRP?=
+ =?utf-8?B?Mms5ZlQ1akJBOFZHVXI1ZERKdUoyU3J3WEhVQ2RUVUJ5c2l1cnhETjQxamYr?=
+ =?utf-8?B?OFYveTBsYlVuaXZSeU5UMkljbU1UNHR4dmlpYjhMSU43TFpNOGR3N0VKdSty?=
+ =?utf-8?B?UDRnN0tKUGVmMTFYVmdLMm4vbVFrQktVRE5MUWI0RjQydklXTnJVUWVOTFRa?=
+ =?utf-8?B?NVNnWVQyZFdYMnFFOU4wZ0oyR1A3TUdzZUdCeU5ha0hLRDgrTldaUE5NeEor?=
+ =?utf-8?B?a3RVanJXekJsRUdnRmdxVHR3UmYyNElFaGx4d1dKbnpYRkhHVVA4QXhXNHdW?=
+ =?utf-8?B?R012aitoNE41S0ZCQi94alk5TXRJWTZwSTJpVjVHRmNvZDV4Ni9HN204T2xl?=
+ =?utf-8?B?K0g4bDVTaW9LV0dsb2Z6UXY0UFN0cXJocXd4b2hPM283aDdtV0M1M0tIV1JC?=
+ =?utf-8?B?YjlMbHJ6dUxzdVJEWmRZeEJBRlE0SFFTL1hiVHFJVXliOHhYQzgzN2hqbWNt?=
+ =?utf-8?B?UzFZZEJ4ZVludUxGRlJBTFJTZGo1VzBKd0I1djVPRG9NT1pYZmhKWHByY0Fn?=
+ =?utf-8?B?eURaaXdCd2ZrdzNxODl4bEhibnVTUjRPV2tJVnlrZnR6SnJCSDJrNTk3ZUNw?=
+ =?utf-8?B?MEJQSGlhOXdMelFkSnhWTjRvRUpXN1oveSthWnFoWWVNZEVWUHJkTEVreXha?=
+ =?utf-8?B?QnJEZTN4Y1dwUzZ1K1d2TnpCYXlqUUwwKzkzRW95dlhoRm92UmRuWjgxWGo4?=
+ =?utf-8?B?TDRpdVNNSWpCSXdJaDRXVFJGWldCS2VySEM3ak0wZzc1eHV3NFl3NDh1S3pL?=
+ =?utf-8?B?WkhGamJSY2xsMDNyd050V01qMlh0MzR4KzhFZGQ3bG5lMnBSLzMzNFJKRVFI?=
+ =?utf-8?B?NEROZzRkL205NDJNT09WSUxPdkpPSkZrZlFyMlJkelIyTmFBaDJqcVNFZWc3?=
+ =?utf-8?B?R0NjRjk4MjFCaTRMS004U2FQZGtqUmkydnhHek5VS0ExNlQzcTNRZDFUTm0z?=
+ =?utf-8?B?VmdBUEt1MGxRYi9NMGR4KzZBT2RneHpMaWJ4OUVvQXorZHNlNHhPeGRLYXVQ?=
+ =?utf-8?B?Nmw4U2VUR05JK0NZL3d5RlMxbk4yT2tEM2NhWTJOL0grNzN3b215SHA1dUF0?=
+ =?utf-8?B?YzhhbmhqQ2RJeklrcHVkenI3R0pnbmttS2p6Zit5bjVZRDJLME1Oc0kyUkFG?=
+ =?utf-8?B?V291bU9MNVdBODBBQThsOWltQWExZFpFTlg4V3FxWWV5TTZpdjRlWm0zVUhi?=
+ =?utf-8?B?cndCdVNFMzFHNGZZRzVNWEd2NUk2QStBTVIzUzNrNnhtSDhMcGJFbEJ3QTFv?=
+ =?utf-8?B?djVaNyt3djdmczBFS0ViWWhld0c4QitnWVNXMEc2UFZweElSbklIK0NIWjZv?=
+ =?utf-8?B?U2JDa3ZSOGVvWFhKcTFhZEFvbVJZRDdNc0tWR2haVUpuaFVWcEUyVmU1V3BQ?=
+ =?utf-8?B?ajJtVFJtaHRGUDhtWnNBZzdLTFhsSkE4b2ZuUHlCeDRCZHRJL0wzS1h5M3Jr?=
+ =?utf-8?B?NEV1NS9YY2ZkK3NZSks3UlRqUVd4aUxyMWE4eFJZVExzVTFEUlJ4VENjUDd1?=
+ =?utf-8?B?MFJvVzJOcDQ1THdPN2pnRzdXVSs0OGxzZU8yWGtabWNmMmQzTWZ4NjhQeFZM?=
+ =?utf-8?B?a1B0MndMZUUwUndGd2FVbGFhZG51N1hEV2VqY3FkalVRZFV2S243anhqZFhp?=
+ =?utf-8?B?MVVmdU0zVm9ZSkZLaDhJbEZPY1JEOERTZjVMNFRieVJ3a21MNmNaeDVGSi9O?=
+ =?utf-8?B?NXNNR1BxZDJYdjdkWS9RVUFFWjYwTGxIY2lLYlFKbTVSZm1DeGc2VzlORlpw?=
+ =?utf-8?B?dkNCSWhTTytDWWlSVTh1c3VDOW5XUzMrZlRTWmdhYnNzdXdVUC9KRGVMT2NE?=
+ =?utf-8?B?bVJodG5vY0pqenJTb1cxMjBNSnIxRUQ2QnJFOGNDbUdzMmVVcjE0cXgxeE4r?=
+ =?utf-8?Q?gr6K89T/T6CullRbA/kxNUgTU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66e890de-e288-487c-4e25-08de15801bcb
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 17:41:50.1126
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GzNSZ8viCWh/v45x3RroF6pmSDscSVr9F/ujVFcN2jpAOB240s2xPV8RbGtMUJxFreSuepBs4cJ3pVyafdTu+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9836
 
-On Sat, Oct 25, 2025 at 12:53=E2=80=AFAM Lizhi Xu <lizhi.xu@windriver.com> =
-wrote:
->
-> On Sat, 25 Oct 2025 00:15:51 -0700, Kuniyuki Iwashima <kuniyu@google.com>=
- wrote:
-> > On Fri, Oct 24, 2025 at 11:46 PM Lizhi Xu <lizhi.xu@windriver.com> wrot=
-e:
-> > >
-> > > On Fri, 24 Oct 2025 21:25:20 -0700, Kuniyuki Iwashima <kuniyu@google.=
-com> wrote:
-> > > > On Fri, Oct 24, 2025 at 8:51 PM Lizhi Xu <lizhi.xu@windriver.com> w=
-rote:
-> > > > >
-> > > > > On Fri, 24 Oct 2025 19:18:46 -0700, Kuniyuki Iwashima <kuniyu@goo=
-gle.com> wrote:
-> > > > > > On Fri, Oct 24, 2025 at 2:39 AM Lizhi Xu <lizhi.xu@windriver.co=
-m> wrote:
-> > > > > > >
-> > > > > > > There is no synchronization between the two timers, rose_t0ti=
-mer_expiry
-> > > > > > > and rose_timer_expiry.
-> > > > > > > rose_timer_expiry() puts the neighbor when the rose state is =
-ROSE_STATE_2.
-> > > > > > > However, rose_t0timer_expiry() does initiate a restart reques=
-t on the
-> > > > > > > neighbor.
-> > > > > > > When rose_t0timer_expiry() accesses the released neighbor mem=
-ber digipeat,
-> > > > > > > a UAF is triggered.
-> > > > > > >
-> > > > > > > To avoid this UAF, defer the put operation to rose_t0timer_ex=
-piry() and
-> > > > > > > stop restarting t0timer after putting the neighbor.
-> > > > > > >
-> > > > > > > When putting the neighbor, set the neighbor to NULL. Setting =
-neighbor to
-> > > > > > > NULL prevents rose_t0timer_expiry() from restarting t0timer.
-> > > > > > >
-> > > > > > > syzbot reported a slab-use-after-free Read in ax25_find_cb.
-> > > > > > > BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 n=
-et/ax25/af_ax25.c:237
-> > > > > > > Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17=
-200
-> > > > > > > Call Trace:
-> > > > > > >  ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> > > > > > >  ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
-> > > > > > >  rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
-> > > > > > >  rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link=
-.c:198
-> > > > > > >  rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
-> > > > > > >
-> > > > > > > Freed by task 17183:
-> > > > > > >  kfree+0x2b8/0x6d0 mm/slub.c:6826
-> > > > > > >  rose_neigh_put include/net/rose.h:165 [inline]
-> > > > > > >  rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
-> > > > > > >
-> > > > > > > Fixes: d860d1faa6b2 ("net: rose: convert 'use' field to refco=
-unt_t")
-> > > > > > > Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmai=
-l.com
-> > > > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > > > > > ---
-> > > > > > > V1 -> V2: Putting the neighbor stops t0timer from automatical=
-ly starting
-> > > > > > > V2 -> V3: add rose_neigh_putex for set rose neigh to NULL
-> > > > > > >
-> > > > > > >  include/net/rose.h   | 12 ++++++++++++
-> > > > > > >  net/rose/rose_link.c |  5 +++++
-> > > > > > >  2 files changed, 17 insertions(+)
-> > > > > > >
-> > > > > > > diff --git a/include/net/rose.h b/include/net/rose.h
-> > > > > > > index 2b5491bbf39a..33de310ba778 100644
-> > > > > > > --- a/include/net/rose.h
-> > > > > > > +++ b/include/net/rose.h
-> > > > > > > @@ -167,6 +167,18 @@ static inline void rose_neigh_put(struct=
- rose_neigh *rose_neigh)
-> > > > > > >         }
-> > > > > > >  }
-> > > > > > >
-> > > > > > > +static inline void rose_neigh_putex(struct rose_neigh **rose=
-neigh)
-> > > > > > > +{
-> > > > > > > +       struct rose_neigh *rose_neigh =3D *roseneigh;
-> > > > > > > +       if (refcount_dec_and_test(&rose_neigh->use)) {
-> > > > > > > +               if (rose_neigh->ax25)
-> > > > > > > +                       ax25_cb_put(rose_neigh->ax25);
-> > > > > > > +               kfree(rose_neigh->digipeat);
-> > > > > > > +               kfree(rose_neigh);
-> > > > > > > +               *roseneigh =3D NULL;
-> > > > > > > +       }
-> > > > > > > +}
-> > > > > > > +
-> > > > > > >  /* af_rose.c */
-> > > > > > >  extern ax25_address rose_callsign;
-> > > > > > >  extern int  sysctl_rose_restart_request_timeout;
-> > > > > > > diff --git a/net/rose/rose_link.c b/net/rose/rose_link.c
-> > > > > > > index 7746229fdc8c..334c8cc0876d 100644
-> > > > > > > --- a/net/rose/rose_link.c
-> > > > > > > +++ b/net/rose/rose_link.c
-> > > > > > > @@ -43,6 +43,9 @@ void rose_start_ftimer(struct rose_neigh *n=
-eigh)
-> > > > > > >
-> > > > > > >  static void rose_start_t0timer(struct rose_neigh *neigh)
-> > > > > > >  {
-> > > > > > > +       if (!neigh)
-> > > > > > > +               return;
-> > > > > > > +
-> > > > > > >         timer_delete(&neigh->t0timer);
-> > > > > > >
-> > > > > > >         neigh->t0timer.function =3D rose_t0timer_expiry;
-> > > > > > > @@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct ti=
-mer_list *t)
-> > > > > > >  {
-> > > > > > >         struct rose_neigh *neigh =3D timer_container_of(neigh=
-, t, t0timer);
-> > > > > > >
-> > > > > >
-> > > > > > What prevents rose_timer_expiry() from releasing the
-> > > > > > last refcnt here ?
-> > > > > The issue reported by syzbot is that rose_t0timer_expiry() is tri=
-ggered
-> > > > > first, followed by rose_timer_expiry().
-> > > >
-> > > > I don't see how you read that ordering from the report.
-> > > > https://syzkaller.appspot.com/bug?extid=3Dcaa052a0958a9146870d
-> > > Here's my understanding: See the two calltraces below.
-> >
-> > The same question still applies.
-> >
-> > What prevents rose_timer_expiry() from releasing the last
-> > refcnt before [1] ?
-> @@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_list *t)
->  {
->         struct rose_neigh *neigh =3D timer_container_of(neigh, t, t0timer=
-);
->
-> +       rose_neigh_hold(neigh); // [3] This prevents rose_timer_expiry() =
-from putting neigh.
+Hello Alex,
 
-If you ask yourself the same question once more here,
-you will notice the fix is broken.
+On 10/27/2025 8:54 AM, Alexandre Courbot wrote:
+> These variables were read from the u8 array `data` and converted to a
+> `usize`, before being converted back to a `u8`. Just re-read them from
+> the source to avoid using `as`.
+> 
+> Acked-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/vbios.rs | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
+> index 943b0dac31df..dbe0d6e4a015 100644
+> --- a/drivers/gpu/nova-core/vbios.rs
+> +++ b/drivers/gpu/nova-core/vbios.rs
+> @@ -911,9 +911,9 @@ fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
+>  
+>          Ok(PmuLookupTable {
+>              version: data[0],
+> -            header_len: header_len as u8,
+> -            entry_len: entry_len as u8,
+> -            entry_count: entry_count as u8,
+> +            header_len: data[1],
+> +            entry_len: data[2],
+> +            entry_count: data[3],
+>              table_data,
 
-What prevents rose_timer_expiry() from releasing the
-last refcnt before rose_neigh_hold() ?
+Why not just change PmuLookupTable to:
 
-Do you add another rose_neigh_hold() before
-rose_neigh_hold() ?
+struct PmuLookupTable {
+    version: u8,
+    header_len: usize,
+    entry_len: usize,
+    entry_count: usize,
+    table_data: KVec<u8>,
+}
 
-... and the same question applies as long as you are
-trying to fix the bug by adding changes in rose_t0timer_expiry().
+That is cleaner and removes the issue while allowing to use the local variables
+(and also makes sense to be usize as these 3 fields are size-like fields).
 
+thanks,
 
->         rose_transmit_restart_request(neigh);
->
->         neigh->dce_mode =3D 0;
->
-> +       rose_neigh_putex(&neigh); // [4] This prevents t0timer from resta=
-rting by setting neigh to NULL.
->         rose_start_t0timer(neigh);
->  }
-> >
-> > For example, why is accessing neigh->dev in rose_send_frame()
-> > safe then ?
-> >
-> > The commit message mentions that two timers are not
-> > synchronised, but the diff adds no such synchronisation.
-> >
-> >
-> > > [1] Line 111 occurs after rose_neigh_put(). Otherwise, accessing
-> > > neigh->digipeat would result in a UAF. Therefore, rose_t0timer_expiry=
-()
-> > > must be triggered before rose_timer_expiry().
-> > >
-> > > [2] syzbot reports that line 237 generates a UAF when accessing digi-=
->ndigi.
-> > >
-> > > UAF Task1:
-> > > rose_t0timer_expiry()->
-> > >   rose_transmit_restart_request()->
-> > >     rose_send_frame(.., neigh->digipeat, ..)-> // [1] line 111
-> > >       ax25_find_cb()->
-> > >         if (digi !=3D NULL && digi->ndigi !=3D 0)  // [2] line 237
-> > >
-> > > Freed neigh Task2:
-> > >  rose_timer_expiry()->
-> > >    rose_neigh_put(neigh)->
-> > >      kfree(neigh)
-> > > >
-> > > > The only ordering I can find is that kfree() in rose_timer_expiry()
-> > > > happened before ax25_find_cb () in rose_t0timer_expiry().
-> > > >
-> > > > > Therefore, in rose_t0timer_expiry(), the reference count of neigh=
- is
-> > > > > increased before entering rose_transmit_restart_request() to prev=
-ent
-> > > > > neigh from being put in rose_timer_expiry(). Then, in rose_t0time=
-r_expiry(),
-> > > > > neigh is put before executing rose_start_t0timer() and the neigh =
-value is
-> > > > > set to NULL to prevent t0timer restarts.
-> > > > >
-> > > > > The case where rose_timer_expiry() is triggered before rose_t0tim=
-er_expiry()
-> > > > > is not considered at this time.
-> > > >
-> > > > So this change just papers over the root cause.
-> > > >
-> > > >
-> > > > > >
-> > > > > > The t0timer could be triggered even after that happens.
-> > > > > >
-> > > > > >
-> > > > > > > +       rose_neigh_hold(neigh);
-> > > > > > >         rose_transmit_restart_request(neigh);
-> > > > > > >
-> > > > > > >         neigh->dce_mode =3D 0;
-> > > > > > >
-> > > > > > > +       rose_neigh_putex(&neigh);
-> > > > > > >         rose_start_t0timer(neigh);
-> > > > > > >  }
-> > > > > > >
-> > > > > > > --
-> > > > > > > 2.43.0
-> > > > > > >
+ - Joel
+
 
