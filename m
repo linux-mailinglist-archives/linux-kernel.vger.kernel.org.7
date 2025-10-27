@@ -1,145 +1,230 @@
-Return-Path: <linux-kernel+bounces-871213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E486BC0CA32
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:25:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C64BEC0CA23
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9891885A0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:23:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8A1F4F189B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA712F1FD0;
-	Mon, 27 Oct 2025 09:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A050A2E7F39;
+	Mon, 27 Oct 2025 09:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PF+BQEob"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZeArEhqO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C02F0C6E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDEA2E7BB4
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556952; cv=none; b=aq2ctAdOAXO/lKPe9figxya4sQ5R46gCsPAR6+wuruLSJReEPoy68+YoFmoPBYrpu9cGsLhpwVVJ6oOly7z5Ty8lDK/MMXkFSqoNIHOIjlO8W2WMDJ9JXa17aOBu7X4pHyZhWL706QZ2sdtQvBE5KbtEkdXh+prRg68PXnLEQsc=
+	t=1761556937; cv=none; b=BomDZ0bVZR6Q2VzUSxugbbJAK/PhoSc5w/Nw0f69CuoEIyOLMhbuSbblo0XOvWNXHwPXFoG6kAwuwx9D5nYS8J7cwJLv3pyh7U2J0TXgIDredsMDwoThQLG+1hClRkDUrbsT0e+DIb1LIGW1UhFduOFzB1jErCZkuGD+tsdT/lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556952; c=relaxed/simple;
-	bh=xYwtmwuJN16UYCCSQN8XegEXdxrET5pvT1doRsmv3E8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PuDLchFH/xdod8ei84WJpMAilsv4bHGNUi+TTHaQq1Z/I8myW3J9XH30mpCmugIa8l9NF2euwnUCv6s2AM5yf9Wr27/IPwrWaSjvQuOUbPV40GW0dU7jjHOsPc1G+rWWEvOa3NuOL6Ek/czIZM6yOOHKg2RgFpBKwdzGlfddlQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PF+BQEob; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b553412a19bso2821344a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761556950; x=1762161750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6nduzgu7uJv/ofQU5aPueTUIbSwgz6Tuyh1NKtEMbzw=;
-        b=PF+BQEobK7D0zbxYfd0kE2ABm0+wJ9bJfwYkjqd1jTMoV+FKUN6OrTi2j64vhuRSEg
-         nzVKGZmbKULQNBnzrGV17L026LmMKEaUhTI2I8ZZoeVCjt+LCS8N8BFIoJ16xgTJORIB
-         IwiYfWsYq/GrMfDdxA8XKUX+DU3IS5wsVIgKZNlzYsEuZPsAzGA8sfT02xyXB2ODpaOq
-         hu4lwZxNugWxSD+rXe2I2dB965e1dyIJHgc8v0ECpvSL8xRNQ6SrausFHiASuPGc6Hj8
-         BKMaVRyIMco4DL+1qLHtrc+4pPi5D6KrhAo8QcgFjobs9SD82bO0+CX5Pb1Kf8WYksE2
-         3yRQ==
+	s=arc-20240116; t=1761556937; c=relaxed/simple;
+	bh=NMH9CbbvFmTV0ED5geaJqAzjDltegQCfOWjYkTn1ZPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/6Wct8/J80pGn9vkqfXIrP5+1V9TedBtzHmDvTK81JAYVHUl8bLNTuSD8l8YpE/2vMYGtscJ/7rmKSs79TJsM4XqYqy74WUG3U59HHLm7sShxJZM/FShE0FqPD9whu3WNoms76r7GJlCApZ0IOQDTuDJr2fJmxOWvHlcPOpRdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZeArEhqO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761556934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=A/GXeoHonKMlzjFGTYijF05WfyyHRvFPdjwbyNeXc3Y=;
+	b=ZeArEhqOB2nPgT9UQdOsrhP+1You61yRQzP5NqROTx89v6lck5+75GFDk0LIDtb7amFQs+
+	B/bndFWgO5eZ6CkdyOyPB/q9QgegFXScqpIETZYzej3ZQb4g07FK7yGJI/JdWzrx+nvRaD
+	q34NxUqAonKLh8PeMRSsmlIuYx54b1k=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-57-4wgFUxU4PUOfBev5H5M4TQ-1; Mon, 27 Oct 2025 05:22:13 -0400
+X-MC-Unique: 4wgFUxU4PUOfBev5H5M4TQ-1
+X-Mimecast-MFC-AGG-ID: 4wgFUxU4PUOfBev5H5M4TQ_1761556932
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-42855d6875fso3978639f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:22:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556950; x=1762161750;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761556932; x=1762161732;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6nduzgu7uJv/ofQU5aPueTUIbSwgz6Tuyh1NKtEMbzw=;
-        b=wucHDju38kQYh8pkHhkvQftaig7S+YPo107Zyf/7dqK0vZkz/ryqPWAOGrD1SPDGlI
-         AKJJJbwh/KjJf0uXCVG1DXwFEVnzQgDm+rH1c/ehqL/dQP5dMBHjt7rlPVsodg+/Uey9
-         8+KrQJ2sI5hjJLbkzQy6EJYXrU3nj2ZH34p2AVwSCinnIkWIjm4Cjc/sNH/GK18AwBND
-         HubIjElOwr+z8uoYwzmEgQ83nf2WziXRpVbcJy82b2gboa/6HNiLGTd/nJNtCzGJQDea
-         O6GxSO23lOwNdawbIcFnlq9V7U0M/be/wjIDWc2Hd9sq7KkcCUR+MoZn0yu5AjortwO0
-         zTAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrv/LP+mlGatN5/WEntV9ICbCzWD6C5wF2Wsdk3TeAIftFM+FHKD2Qvz4x9YhFvvGSShKI/Es2FFxgNZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEcHoMf3Bz8L/kANl+Q4oxX9iV+hHGU2QyqyrvdfgsNJoYnqE6
-	RmTon3ZI7HurD2aVcxUpZKzf6jS5NA3i8vx/gIyNFzOGwqDAzNrEESW2
-X-Gm-Gg: ASbGnctcyR64PoNEMOd1fQ+MvqQ0oSG3PcG22HWstvXzguAvUw+kTpbmI720fZ2+ceD
-	o9vALFLniQR9L4eMkQbi+9j/hMH2y1Vs90hWSg2oUyC96Hd0SBios2tUjRqPDgVccOt9L57/mtk
-	zxWpqotAaOQ8QGJrVuGyCEgmVAZZDIk6HADj3uCqZSLh8HNt+UIQ9tyZyVB8uT/ZMTFdFyPZujz
-	2dkI+RQsO0XWRZ4mTgQgOHqh5fiFqGNsIS+8q2ZNXDAmy4gRabG6QngNW5nvf7lma2Mgj4VYHlp
-	1xOpDZoDtQakb5zp02MtxezUux/anMcHloXQjGJyBSkqKfutU9rGI8JBgeV2A6FexJfQ7iitkZC
-	hzy59fl0GDiPNQnjXaf6fzDQXNVn6YpwivLwNPTSAQOjqFJlnUoBfJp0TkmZNyL/t3TbaZntC7Q
-	Tm+BqHWCc5Ez9FARAtrZInyuXupjo=
-X-Google-Smtp-Source: AGHT+IHwKsgYliTV2wTCbc/bXnkML5X5seoRKr9zuhkrIEJy2H+HHcWXKc/mPlJxZe1MtqxZedPn8w==
-X-Received: by 2002:a17:903:11cd:b0:28a:5b8b:1f6b with SMTP id d9443c01a7336-2948b976577mr140872255ad.21.1761556949865;
-        Mon, 27 Oct 2025 02:22:29 -0700 (PDT)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7d1fdesm7842857a91.5.2025.10.27.02.22.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 02:22:28 -0700 (PDT)
-From: KRIISHSHARMA <kriish.sharma2006@gmail.com>
-To: nuno.sa@analog.com,
-	olivier.moysan@foss.st.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	andy@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] iio: fix kernel-doc warnings in industrialio-backend.c
-Date: Mon, 27 Oct 2025 09:21:59 +0000
-Message-Id: <20251027092159.918445-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=A/GXeoHonKMlzjFGTYijF05WfyyHRvFPdjwbyNeXc3Y=;
+        b=NeVAfKU2M62FXfmPrjNifpUKxgnC2oyC5XWHAFWIX6iGR5hr0sK3SH62yzCDCgMXV5
+         +fTKFJCi1xtHZRPysfAw6vPnQpTl+BX82jU7WylHfSNM2RTjeGQn7TO/OD+SH7GdI1mF
+         WjNk7UxaHn510UaHm7iOO9e57NOMBj6wlHaXiK3ZPPyRIeZz7oK+MJNzzP2KYR3A0ArO
+         R28bqqajeJaXtk+fvZ5+hZ6klLXlRu/aiD640uJHZufrTGcRqJtDtXKpfkaPC++FK8IW
+         LO47DTfEHkpF5eIHqW1slsTR4hOmOYS8d91ofUtuSZDx20CabLhiyO1x3Qr3xy2ftmkg
+         psVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV79yDmLKq9cvrh5RddJOsiGrR10xEx1IQZdhjCjZBt3dRnqYsOq50FVGD2hKkQ8OI8EEyu09D0Q6m6Y4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCl6KqUghzT7t5DIYG6wSWkEOoWUiPfZOA27rKbbuaiQ+Og6L1
+	YuE7RAm0vcXlWvuj0i20Sjy63OcTztzG++Kl0SGn5lJU/tPidgqLLeamwQqtUUxObG6WHYLX7AY
+	M3R4dSEifovYFPLeoREL2JXoIDSezbaPO/QC+WTzLVn2Q9XZdoJ+H49CWAayI1w9c0w==
+X-Gm-Gg: ASbGncsjf/78G7NqY5AJ6RrCJ1NrUTyKMsUhkgN64TAteYY4q3KJF4xlvlrE5/fhOnj
+	5X9EBTinYgFZ1oZQX56lVqzFUT0Ed493VDBLWdyIXSnuLjExZJkaHIht5V0rjXrnLGassWl/GpU
+	IKnnRFbsj8Di+E+Fm6J0lyn2qhEJkvWVnCoO3kavfFTWcBo7w+IpJUCyJIw2eL5hAcbvgr/Oa0j
+	ldxqfxEuPGBblHrTJ9F6TtJlzLzBapGJ+sAGgxeVtY0mDwDqm8edN1mbEa1dau0vhhCUSLv++Za
+	y4y2FNrNdkZS7oDndVP1W5VrTUWCQswb9a/3BfYsQmW5fU7dZqFOW1jpLRluCNh/sCH46mM7HiI
+	QQStLWUYWIDcJ2z31Seo9e4Umss42o23A0wNTcUIOzmfcfIf1xcER7PYP4gc0UP+IszDkEbXVwh
+	22jhpkwrX+LPk0kHJcjzqZcjGc54M=
+X-Received: by 2002:a05:6000:4024:b0:3e9:a1cb:ea8f with SMTP id ffacd0b85a97d-42704da3924mr26721890f8f.52.1761556931768;
+        Mon, 27 Oct 2025 02:22:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDRyzbYNgapAsDQVUP/dfMOneGlFTnaQdS54xLTyrz5QcB73wRWvx5krJws1/xS1I2xHKHjw==
+X-Received: by 2002:a05:6000:4024:b0:3e9:a1cb:ea8f with SMTP id ffacd0b85a97d-42704da3924mr26721844f8f.52.1761556931254;
+        Mon, 27 Oct 2025 02:22:11 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb7dcsm13518433f8f.11.2025.10.27.02.22.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 02:22:10 -0700 (PDT)
+Message-ID: <8fc01e1d-11b4-4f92-be43-ea21a06fcef1@redhat.com>
+Date: Mon, 27 Oct 2025 10:22:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+To: Hugh Dickins <hughd@google.com>, Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-2-kirill@shutemov.name>
+ <96102837-402d-c671-1b29-527f2b5361bf@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <96102837-402d-c671-1b29-527f2b5361bf@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
+On 27.10.25 09:20, Hugh Dickins wrote:
+> On Thu, 23 Oct 2025, Kiryl Shutsemau wrote:
+> 
+>> From: Kiryl Shutsemau <kas@kernel.org>
+>>
+>> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+>> supposed to generate SIGBUS.
+>>
+>> Recent changes attempted to fault in full folio where possible. They did
+>> not respect i_size, which led to populating PTEs beyond i_size and
+>> breaking SIGBUS semantics.
+>>
+>> Darrick reported generic/749 breakage because of this.
+>>
+>> However, the problem existed before the recent changes. With huge=always
+>> tmpfs, any write to a file leads to PMD-size allocation. Following the
+>> fault-in of the folio will install PMD mapping regardless of i_size.
+>>
+>> Fix filemap_map_pages() and finish_fault() to not install:
+>>    - PTEs beyond i_size;
+>>    - PMD mappings across i_size;
+> 
+> Sorry for coming in late as usual, and complicating matters.
+> 
 
-Fix multiple kernel-doc warnings in drivers/iio/industrialio-backend.c,
-including a missing description for the @chan parameter in
-iio_backend_oversampling_ratio_set() and a missing return value
-description in iio_backend_get_priv().
+No problem, we CCed you on earlier versions to get your input, and we 
+were speculating that shmem behavior might be intended (one way or the 
+other).
 
-This addresses the warnings reported by kernel-doc and the kernel test
-robot.
+>>
+>> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+>> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+>> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> 
+> ACK to restoring the correct POSIX behaviour to those filesystems
+> which are being given large folios beyond EOF transparently,
+> without any huge= mount option to permit it.
+> 
+>> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> 
+> But NAK to regressing the intentional behaviour of huge=always
+> on shmem/tmpfs: the page size, whenever possible, is PMD-sized.  In
+> 6.18-rc huge=always is currently (thanks to Baolin) behaving correctly
+> again, as it had done for nine years: I insist we do not re-break it.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506292344.HLJbrrgR-lkp@intel.com
-Suggested-by: Andy Shevchenko <andy@kernel.org>
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
+Just so we are on the same page: this is not about which folio sizes we 
+allocate (like what Baolin fixed) but what/how much to map.
 
-v2:
-- Fixed another kernel-doc warning.
+I guess this patch here would imply the following changes
 
-v1: https://lore.kernel.org/all/20251025102008.253566-1-kriish.sharma2006@gmail.com
+1) A file with a size that is not PMD aligned will have the last 
+(unaligned part) not mapped by PMDs.
 
- drivers/iio/industrialio-backend.c | 4 ++++
- 1 file changed, 4 insertions(+)
+2) Once growing a file, the previously-last-part would not be mapped by 
+PMDs.
 
-diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-index 23760652a046..73704cc1bd03 100644
---- a/drivers/iio/industrialio-backend.c
-+++ b/drivers/iio/industrialio-backend.c
-@@ -717,6 +717,7 @@ EXPORT_SYMBOL_NS_GPL(iio_backend_data_size_set, "IIO_BACKEND");
- /**
-  * iio_backend_oversampling_ratio_set - set the oversampling ratio
-  * @back: Backend device
-+ * @chan: Channel number
-  * @ratio: The oversampling ratio - value 1 corresponds to no oversampling.
-  *
-  * Return:
-@@ -1064,6 +1065,9 @@ EXPORT_SYMBOL_NS_GPL(__devm_iio_backend_get_from_fwnode_lookup, "IIO_BACKEND");
- /**
-  * iio_backend_get_priv - Get driver private data
-  * @back: Backend device
-+ *
-+ * RETURNS:
-+ * Pointer to the driver private data associated with the backend.
-  */
- void *iio_backend_get_priv(const struct iio_backend *back)
- {
+
+Of course, we would have only mapped the last part of the file by PMDs 
+if the VMA would have been large enough in the first place. I'm curious, 
+is that something that is commonly done by applications with shmem files 
+(map beyond eof)?
+
 -- 
-2.34.1
+Cheers
+
+David / dhildenb
 
 
