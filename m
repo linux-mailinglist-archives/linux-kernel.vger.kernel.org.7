@@ -1,318 +1,187 @@
-Return-Path: <linux-kernel+bounces-871045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C382C0C50A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:32:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297DBC0C528
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B08C18807FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:33:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F9294F2B2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCECE2F12A0;
-	Mon, 27 Oct 2025 08:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630842749D6;
+	Mon, 27 Oct 2025 08:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="SVci1QMI"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nNzumApB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9961C84B9;
-	Mon, 27 Oct 2025 08:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761553900; cv=pass; b=L8M4YoFhvhBJOslX/qKaNc0aiXdg4R1UruKcOSW9Q0ZL3dim7NUrdm2KP4EeJH/yTj0zriM1f3Jt8VBRIddSn7dh2KpmggKy/XHSV99G+/znm7y34CWh5kmmMqfV6uSnwbCs9PxpKLmLixWZ1iYz/M0SAuEM4g4k4WlAoq6cdLs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761553900; c=relaxed/simple;
-	bh=McrhOuzhrnLYLJ3Yd+2aPpk7WDKuLddjS6Ppo7mJKKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXu/bC0xy3U2lPv9BV2FusP2dg+UI2twURTHg6s5y7purKMJl8rTmaVT9ORsCs3UJ/IEnSegTqlllirmFZXllVbVh9ysUbSGScvR2+dwcaMOtaT4SYsS/5yYzf7s4gm8Fi2ALIdXC+h2/DpzWBwXc1+dcZmWfTo6bDxInU4wROE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=SVci1QMI; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4cw6DG3ZVczyS8;
-	Mon, 27 Oct 2025 10:31:26 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1761553888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0vcpvhF5urzAN7K3wpgk7xwaAxcma2kFDIrKQc/Gknc=;
-	b=SVci1QMIf6DQF3QJGG6IvxwWPCCbeqZpjSffOVgw1knI3OfEpMa+G6gdxdn2Yzy9prXKlg
-	4raZJXlHxv1qKxzaZRr/UGPh/FRPZnDXRB1Vta9BvD/O5DZLotO3ffjLskNvHNu+getjJh
-	xomqgH/huEHMNVf9Xy3nng+mq+sUZeQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1761553888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0vcpvhF5urzAN7K3wpgk7xwaAxcma2kFDIrKQc/Gknc=;
-	b=OgulRCt6/GZcUbYBPfcrCRPu+lmQT1TxrG7z/LT4wj+NJisiYYy1d/gbKmn+2qOwBGr6wW
-	OIb9jJlAeQSyjfmf3aQEJBs1Y+jimmhzgLgUDp6P4pYpRRQvA14BlF3pZYLcz5qFoH0gjQ
-	9AwvIj8IXmsmpEnxa6Z0rjCPN78fJkk=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1761553888; a=rsa-sha256; cv=none;
-	b=Z6M5vn5d0QQk5z/e5iYJ7DRxmHK4SMNRhbBubBTvj2QrecRm7CrcadKe+bud7GW1yetIvu
-	VFDSbnEv4nI353DHC8Unb92tNPpPiCc/rJ4n2nUdS8IYLhbFQGtWNQWVdA10QP4wlhL4Nm
-	g/G84m8AW/FJogYPDXDBuy7847tmU9o=
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id A06EA634C5E;
-	Mon, 27 Oct 2025 10:31:25 +0200 (EET)
-Date: Mon, 27 Oct 2025 10:31:25 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
-Subject: Re: [PATCH v3 01/31] dt-bindings: media: add DW MIPI CSI-2 Host
- support
-Message-ID: <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
-References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
- <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3174E3C33
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761553925; cv=none; b=S0tRBRC2+GMbOcT0u/J6LlTX5lDPegZcz/h3X54dunbNOpzliD470jfH2FbHIsneuspw88RnU2lcaDiG+0/TKU6INRL5gRfqbTFUumrKT+ynxgA4V4BOALL0uM6Z0Q9jjxNe7G5SnjSbkxF/vfvI9P01/6qdK1QYMpWONn58r+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761553925; c=relaxed/simple;
+	bh=RSfpfphYkf73MtZSBd82Y1Axxx/IQ+C0kNZbF1z7ZpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g9SNbLPJFgWQZYE/zp7uvNx4SbEfrv3RZf0IRT4bEdYZwB1FISP/q/JBnR2TxrIQ68PoUmtq9sD/aWdaHGvJ5KerMC3PnNis57tOmOVpJ2Mk9g0mpAvuv4/oK6TIv6xbzRggmgmR4TYRBejMnfZe245AovlHcE+oO9r2QDCm9ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nNzumApB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59QLFRla852402
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:32:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sx63s+VEGub670xFqR/IElGnwDWu9CRZ/VDK1Eqvsfs=; b=nNzumApBBadV2W8f
+	P66xcqTSanCcCCMHYJtUWYzjf2B85ip0FS+lIhm6g6sVeoLOKPpNTAgdOVUtVl6T
+	nWnXoOrGV5sHHIsb5a9eoUI7GCd/03MB0ABWhs0OGLcPRASVdZ30/2JK4+fGd2Ux
+	cuHwTLvstHhN77xqbjy38xNgBweO5eHOeabb5yEJFhwJTc3gSzVn5LtsaSl41pEt
+	CkiEz7HuQIslr4tCgt5KEb3AGLGlasX8dKk9KISmT9dhXKIDjxZq+HhbAr40lPoo
+	o/9Tm/pwom/OSDpmTKBjfICwqQlHjhh/eOENKJJnsnfhL+at1Xdwz9W38XU0v9ZK
+	WOjQfQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a1ud1s8d8-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:32:03 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-290992f9693so41935135ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761553922; x=1762158722;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sx63s+VEGub670xFqR/IElGnwDWu9CRZ/VDK1Eqvsfs=;
+        b=kWEQgT+CWUq4aZZ8TmGd3hnA0QJiFxLEOO34rNF/MsAAzR4ZUIm031rwxDJuMrqSIU
+         sNAcuZm7bpr73LaAa1qgxqTQkVe7+4gsWCnn4YdQ703wjXAzUgGkYnP/zP8rWl2JqUwz
+         GEU4RxEPFoyJg/8Oh7EmJC7jsgnm4P61IueAUyQDKVA0eSuNdvEcRMtpIUY0iHM0gqBx
+         9NRoHvvD6S4vL460hG+BBLSoXQPVM07uqPhVJFjF8Jt2OUy4CtVe3eguGZpx8M51E2hs
+         hFVC10LltHxAXYwNyOzhr2Msr+w0VWvv9boL7pxrp9kzp8fq3EYnV9HwB4RwvVYs4WKn
+         EjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+jOpMFFJIpJgMi0HFSpm79IcQdKyua+/a57WxgGRUrPhYHpsqvcVvaW0+GnPFwS5vgQMXnYfTzNJTxVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7V9YQUNFoRS26ACsgbA0EXf3EshT8TEV4P7/RK2MizUShVYUb
+	a4Nh8g0b6bcvGMhEsBS/bjBM4AlWOebYbiH2wdRBR2etmboAY+Rd+dMmPggCiVW3AC28B28OLzx
+	zH+H246qZ1wYc8aV+879G9muS3UkgiXaFQWGnY241pI9W/LSSn/YKGZwwUIy0v79IKV3Sjg2OU2
+	s=
+X-Gm-Gg: ASbGncsYfCpfB9IzLIeAHRWuuJSPQE1Z07ihbldo5/EHvM+gses1YmTr+e7Scj1tAV6
+	v2R3mw1k24e1odYsq9UVcfkJMJcEccin8lAI+yfPhVsaFUDw4/CoskOrNwnf7bDZzjM70MIpRoH
+	Co/bp39VAbITxjdplc6Wg3U4PWoCxjy79tiVse8WRUErdvkmMWRCS2H98HtMRUn0r5xPvcdBv70
+	t1w41Dcu1jSnpZaXv9gjaKS1oew/+xCJiAUo8uQTfK0JhQWxDJZjdw83mcfU90jgdC2XuOLpHKe
+	S3Jrh/Zwv8CMDWnUncb0nJ5IZ7ObSx1Oe4TpSEPM5RnVQ0v+Td5CWVo8sfpURFSBUMP9sxH7lPD
+	XXQ+eLADx7sY2ipeczUSTkOg7DTYd/oGB
+X-Received: by 2002:a17:903:185:b0:269:8ace:cd63 with SMTP id d9443c01a7336-29489e773fcmr141431395ad.30.1761553922370;
+        Mon, 27 Oct 2025 01:32:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0XF2U4phwBqiDvn2bL/HXA0I40/tXYhgsNsdk2eMlASGSo5k9irm8PXwBWuFXZfmiIvaHag==
+X-Received: by 2002:a17:903:185:b0:269:8ace:cd63 with SMTP id d9443c01a7336-29489e773fcmr141431075ad.30.1761553921898;
+        Mon, 27 Oct 2025 01:32:01 -0700 (PDT)
+Received: from [10.218.1.199] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d2903csm72918725ad.63.2025.10.27.01.31.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 01:32:01 -0700 (PDT)
+Message-ID: <e4ebf454-93ae-47be-bb12-2ab363812b1b@oss.qualcomm.com>
+Date: Mon, 27 Oct 2025 14:01:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] dt-bindings: usb: ti,hd3ss3220: Add support for
+ VBUS based on ID state
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251027072741.1050177-1-krishna.kurapati@oss.qualcomm.com>
+ <20251027072741.1050177-2-krishna.kurapati@oss.qualcomm.com>
+ <TY3PR01MB113460779967E7BC8FEE11DEF86FCA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <TY3PR01MB113460779967E7BC8FEE11DEF86FCA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA3OCBTYWx0ZWRfXxFOA+1nWwIRf
+ Nc09AuQfzxkO4s9Yuq/eZKiMVlUbkKLl3jMCHayZ84XHLtzU2N1QyedH0T6W7BRfk/qgF3mKpge
+ MCK4AN5zSCwSFRaiTzH61lbRkoTZwVO/jnKRBYq/HsyvQXO49vlJBDpjbXQ6UNPowyW8Rn/Xt6j
+ 3cen86qDlL/yo7+p4sJhZEWWBT0cDMISelywap+0/RKU+kASUWR39hKNyNNe0Cu60b6inoDQI7A
+ kE4t/aWuVmXLQze6S2NzvDOhzHtIZGSyt0Oyj5M3cGtZmfglqeOMkVaOAfCvd98tyZwuT0qY3Hb
+ AbrYddZKd+MulMi2jxOyyhXSMWA+KfNCM9oCkA8Ad5NwWlareRwN6Us3NfBiNYOofR4SQLec4nY
+ jEA1zTk8XhpV3jns8/wG+7G+nw9zPA==
+X-Proofpoint-GUID: A_WHNz5MtmOh0_rPDmw5WxC2gTUhHLHd
+X-Proofpoint-ORIG-GUID: A_WHNz5MtmOh0_rPDmw5WxC2gTUhHLHd
+X-Authority-Analysis: v=2.4 cv=UqNu9uwB c=1 sm=1 tr=0 ts=68ff2e03 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=uVO98WeOcy1yjMVTFfcA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_04,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 spamscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
+ definitions=main-2510270078
 
-Hei Eugen,
 
-On Thu, Aug 21, 2025 at 04:15:36PM -0400, Frank Li wrote:
-> From: Eugen Hristev <eugen.hristev@linaro.org>
+
+On 10/27/2025 1:02 PM, Biju Das wrote:
 > 
-> Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
-> and i.MX95 platform.
 > 
-> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
-> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change in v3
-> - drop remote-endpoint: true
-> - drop clock-lanes
+>> -----Original Message-----
+>> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> Sent: 27 October 2025 07:28
+> .kernel.org; linux-kernel@vger.kernel.org; Krishna
+>> Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> Subject: [PATCH v5 1/2] dt-bindings: usb: ti,hd3ss3220: Add support for VBUS based on ID state
+>>
+>> Update the bindings to support reading ID state and VBUS, as per the
+>> HD3SS3220 data sheet. The ID pin is kept high if VBUS is not at VSafe0V and asserted low once VBUS is
+>> at VSafe0V, enforcing the Type-C requirement that VBUS must be at VSafe0V before re-enabling VBUS.
+>>
+>> Add id-gpios property to describe the input gpio for USB ID pin.
+>>
+>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> ---
+>>   Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>> b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>> index bec1c8047bc0..06099e93c6c3 100644
+>> --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>> @@ -25,6 +25,14 @@ properties:
+>>     interrupts:
+>>       maxItems: 1
+>>
+>> +  id-gpios:
+>> +    description:
+>> +      An input gpio for USB ID pin. Upon detecting a UFP device, HD3SS3220
+>> +      will keep ID pin high if VBUS is not at VSafe0V. Once VBUS is at VSafe0V,
+>> +      the HD3SS3220 will assert ID pin low. This is done to enforce Type-C
+>> +      requirement that VBUS must be at VSafe0V before re-enabling VBUS.
+>> +    maxItems: 1
+>> +
 > 
-> Change in v2
-> - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
-> - update ugen Hristev's s-o-b tag to align original author's email address
-> - remove single snps,dw-mipi-csi2-v150 compatible string
-> - move additionalProperties after required
-> ---
->  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 151 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 152 insertions(+)
+> Maybe to help DT users, add an example for this use case??
 > 
-> diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d950daa4ee9cfd504ef84b83271b2a1b710ffd6b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
-> @@ -0,0 +1,151 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +description:
-> +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
-> +  camera. It will convert the incoming CSI-2 stream into a dedicated
-> +  interface called the Synopsys IDI (Image Data Interface).
-> +  This interface is a 32-bit SoC internal only, and can be assimilated
-> +  with a CSI-2 interface.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,imx93-mipi-csi2
-> +      - const: snps,dw-mipi-csi2-v150
-> +
-> +  reg:
-> +    items:
-> +      - description: MIPI CSI-2 core register
-> +
-> +  reg-names:
-> +    items:
-> +      - const: core
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: per
-> +      - const: pixel
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: MIPI D-PHY
-> +
-> +  phy-names:
-> +    items:
-> +      - const: rx
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port node, single endpoint describing the input port.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +            description: Endpoint connected to input device
-> +
-> +            properties:
-> +              bus-type:
-> +                const: 4
+Hi Biju,
 
-If 4 is the only value supported, you can drop the property altogether.
+  Adding GPIO to dt is a generic thing. Also this is an optional 
+proprety. Can we skip adding an example.
 
-> +
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +                items:
-> +                  maximum: 4
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Output port node, single endpoint describing the output port.
-> +
-> +        properties:
-> +          endpoint:
-> +            unevaluatedProperties: false
-> +            $ref: video-interfaces.yaml#
-> +            description: Endpoint connected to output device
-> +
-> +            properties:
-> +              bus-type:
-> +                const: 4
-
-Are both input and output of this block CSI-2 with D-PHY?
-
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    csi@3000 {
-> +        compatible = "fsl,imx93-mipi-csi2", "snps,dw-mipi-csi2-v150";
-> +        reg = <0x03000 0x1000>;
-> +        reg-names = "core";
-> +        phys = <&mipi_dphy_rx 0>;
-> +        phy-names = "rx";
-> +        resets = <&dw_rst 1>;
-> +        interrupts = <2>;
-> +
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-> +
-> +                endpoint {
-> +                    bus-type = <4>; /* MIPI CSI2 D-PHY */
-> +                    remote-endpoint = <&camera_1>;
-> +                    data-lanes = <1 2>;
-> +                    clock-lanes = <0>;
-> +                };
-> +            };
-> +
-> +            port@1 {
-> +                reg = <1>;
-> +
-> +                endpoint {
-> +                    remote-endpoint = <&idi_receiver>;
-> +                    bus-type = <4>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9d9d2be7be8037dfa96f1c9edd24a0cf997b9393..ecb7bc7cc8ad797f43173075ca8973804bf335f7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15334,6 +15334,7 @@ F:	Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
->  F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
->  F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
->  F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> +F:	Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
->  F:	drivers/media/platform/nxp/imx-mipi-csis.c
->  F:	drivers/media/platform/nxp/imx-parallel-csi.c
->  F:	drivers/media/platform/nxp/imx7-media-csi.c
-> 
-
--- 
 Regards,
-
-Sakari Ailus
+Krishna,
 
