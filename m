@@ -1,151 +1,93 @@
-Return-Path: <linux-kernel+bounces-871628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8731BC0DD70
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:07:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638CBC0DE1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536BE19A6B59
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:02:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4D29506FEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6A325BEF1;
-	Mon, 27 Oct 2025 12:59:44 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F82286D55;
+	Mon, 27 Oct 2025 13:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jBA31kvc"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4237E253351;
-	Mon, 27 Oct 2025 12:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CC6DF6C;
+	Mon, 27 Oct 2025 13:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569983; cv=none; b=HL+gYe9pY98SUAD9SIkc0UzSG+9/Ngm8TC6Snw+a4uvm8UakLX6mn+Q7TawCnKWh7E1kAeLAdlrKMxBxN8JBu2XEkvy0rIvDWAykcngmAAkeshm2NPba2plWndop3MdQSAs9pztuxDe6JxRVd60k17i4bXCz2kOpCsa2J6amB9k=
+	t=1761570030; cv=none; b=cQiy2nEg8SCmdqa2zqcA50SLGm2CTGFaEYcxYfDahP36Fu+ButJPFAY77ZM7VHxvzPyhzQ52c45LwFvl9yC96wPwSkVP9b4nSztGd7K+/Vdjgq4WQ3Vw0UcikLlQ9fo4yeilAvHOCqLmP0JYuJaWoGc5nzUwp/3tvYRgDct5tPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569983; c=relaxed/simple;
-	bh=J8qgNCynV5meCt/pHV8As+NH0RQDFbG0j8LEmL9hv1s=;
-	h=Message-Id:From:Date:Subject:To:Cc; b=ecRY15lRusEV7clk6jsYzQ01K8KI8eBz3q6OseGyo0H9e8kkbFwgEC3BQi7f9nHpaYAiUzN7EILJRz/S0wMJb++lzIRxbRZBxBGjS6NLkYJC7eFUwzr5A0S8YEIODgx5V09G2t7dbwF3h7b4vgG+8Whkzl3LrU0V/STqA44kfOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=pass smtp.mailfrom=wunner.de; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wunner.de
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	s=arc-20240116; t=1761570030; c=relaxed/simple;
+	bh=5788PWM/VBgk1tGTTY2kWxTv5vFa3dzGCv9B4Lw0uE0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ViP3VV4XmZ4eNG7IFhbcSnHVbfPnywCY4IcxNZU+NXCDDLemjDhNWRjTwSA1Mbh03k4nPEmzclp6xpzk2DP8TP0Ok6sy6C5/bV3ONwnX9sUDn2iTZ7xX0wJefDYj1mmXq67exsE7IO2SdLdUmkHjA6L+S1IC5Tbk0226fSdBtBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jBA31kvc; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 1142A2C06442;
-	Mon, 27 Oct 2025 13:59:32 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id E07792A88; Mon, 27 Oct 2025 13:59:31 +0100 (CET)
-Message-Id: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Mon, 27 Oct 2025 13:59:31 +0100
-Subject: [PATCH v2] genirq/manage: Reduce priority of forced secondary
- interrupt handler
-To: Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Crystal Wood <crwood@redhat.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>, linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev, Bjorn Helgaas <helgaas@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver OHalloran <oohall@gmail.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cwDBc5hb1z9str;
+	Mon, 27 Oct 2025 14:00:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761570024; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5788PWM/VBgk1tGTTY2kWxTv5vFa3dzGCv9B4Lw0uE0=;
+	b=jBA31kvc5mDtFmdGEQ/0gMKqXWZI5B3jOZpTnCIzzdlnOK2i9w4bYVF4vCiCdoP/FLcmzA
+	kLdB03QzkgKDb2rJt+PeEoiffmkTcsbXaMz7Y1pAwiDW+pHzO9A3g1hUrGva46WUhn7yzK
+	lZFdfqpLxTyD4XcJ+hqCNkpN8DkmNwdjaBoy/Pzu1ks94NZJKPkkuhltGUdYAsNwDbuL0t
+	M4ZxgcqMme5UasmeV1iF0784ST9VdAiMAhEfyHR1uS31C2/Gvx0HrNteRUpqdaQ4f5kOC4
+	hiUgqT8oJeuFzT5HnGwo4b5QQVeHJmj6LRx9CZBByYdcVSeqG4iH558CPdOxRw==
+Message-ID: <5b22257b90d5df1c4a6b02f9472f11588208c4b5.camel@mailbox.org>
+Subject: Re: [PATCH] drm/nouveau: Fix race in nouveau_sched_fini()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Mon, 27 Oct 2025 14:00:15 +0100
+In-Reply-To: <25c97722-e05d-467c-908e-baa31e636a44@kernel.org>
+References: <20251024161221.196155-2-phasta@kernel.org>
+	 <25c97722-e05d-467c-908e-baa31e636a44@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MBO-RS-META: t19ydhdbzc3pnxf3frk84k717hbxabab
+X-MBO-RS-ID: ad959cffc22c1f1fbba
 
-Crystal reports that the PCIe Advanced Error Reporting driver gets stuck
-in an infinite loop on PREEMPT_RT:
+On Fri, 2025-10-24 at 18:17 +0200, Danilo Krummrich wrote:
+> On 10/24/25 6:12 PM, Philipp Stanner wrote:
+> > nouveau_sched_fini() uses a memory barrier before wait_event().
+> > wait_event(), however, is a macro which expands to a loop which might
+> > check the passed condition several times. The barrier would only take
+> > effect for the first check.
+> >=20
+> > Replace the barrier with a function which takes the spinlock.
+> >=20
+> > Cc: stable@vger.kernel.org=C2=A0# v6.8+
+> > Fixes: 5f03a507b29e ("drm/nouveau: implement 1:1 scheduler - entity rel=
+ationship")
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>=20
+> Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-Both the primary interrupt handler aer_irq() as well as the secondary
-handler aer_isr() are forced into threads with identical priority.
-Crystal writes that on the ARM system in question, the primary handler
-has to clear an error in the Root Error Status register...
+Applied to drm-misc-fixes
 
-   "before the next error happens, or else the hardware will set the
-    Multiple ERR_COR Received bit.  If that bit is set, then aer_isr()
-    can't rely on the Error Source Identification register, so it scans
-    through all devices looking for errors -- and for some reason, on
-    this system, accessing the AER registers (or any Config Space above
-    0x400, even though there are capabilities located there) generates
-    an Unsupported Request Error (but returns valid data).  Since this
-    happens more than once, without aer_irq() preempting, it causes
-    another multi error and we get stuck in a loop."
 
-The issue does not show on non-PREEMPT_RT because the primary handler
-runs in hardirq context and thus can preempt the threaded secondary
-handler, clear the Root Error Status register and prevent the secondary
-handler from getting stuck.
-
-Emulate the same behavior on PREEMPT_RT by assigning a lower default
-priority to the secondary handler if the primary handler is forced into
-a thread.
-
-Reported-by: Crystal Wood <crwood@redhat.com>
-Tested-by: Crystal Wood <crwood@redhat.com>
-Closes: https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
----
-Changes v1 -> v2:
- * Rename to sched_set_fifo_secondary() (Thomas)
- * Rephrase commit message and code comment (Thomas)
-
-Link to v1:
- https://lore.kernel.org/r/83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de/
-
- include/linux/sched.h   |  1 +
- kernel/irq/manage.c     |  5 ++++-
- kernel/sched/syscalls.c | 13 +++++++++++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index cbb7340..cd6be74 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1901,6 +1901,7 @@ static inline int task_nice(const struct task_struct *p)
- extern int sched_setscheduler_nocheck(struct task_struct *, int, const struct sched_param *);
- extern void sched_set_fifo(struct task_struct *p);
- extern void sched_set_fifo_low(struct task_struct *p);
-+extern void sched_set_fifo_secondary(struct task_struct *p);
- extern void sched_set_normal(struct task_struct *p, int nice);
- extern int sched_setattr(struct task_struct *, const struct sched_attr *);
- extern int sched_setattr_nocheck(struct task_struct *, const struct sched_attr *);
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index c948373..268d751 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1239,7 +1239,10 @@ static int irq_thread(void *data)
- 
- 	irq_thread_set_ready(desc, action);
- 
--	sched_set_fifo(current);
-+	if (action->handler == irq_forced_secondary_handler)
-+		sched_set_fifo_secondary(current);
-+	else
-+		sched_set_fifo(current);
- 
- 	if (force_irqthreads() && test_bit(IRQTF_FORCED_THREAD,
- 					   &action->thread_flags))
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 77ae87f..0f00ac7 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -856,6 +856,19 @@ void sched_set_fifo_low(struct task_struct *p)
- }
- EXPORT_SYMBOL_GPL(sched_set_fifo_low);
- 
-+/*
-+ * For when the primary interrupt handler is forced into a thread, in addition
-+ * to the (always threaded) secondary handler.  The secondary handler gets a
-+ * slightly lower priority so that the primary handler can preempt it, thereby
-+ * emulating the behavior of a non-PREEMPT_RT system where the primary handler
-+ * runs in hardirq context.
-+ */
-+void sched_set_fifo_secondary(struct task_struct *p)
-+{
-+	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 - 1 };
-+	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
-+}
-+
- void sched_set_normal(struct task_struct *p, int nice)
- {
- 	struct sched_attr attr = {
--- 
-2.51.0
-
+P.
 
