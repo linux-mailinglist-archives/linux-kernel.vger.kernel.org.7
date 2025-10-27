@@ -1,208 +1,106 @@
-Return-Path: <linux-kernel+bounces-872456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8D7C11324
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:41:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E0CC1133C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE7B1899DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F87D188290A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA422D836A;
-	Mon, 27 Oct 2025 19:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7E62D7DDA;
+	Mon, 27 Oct 2025 19:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="di9viXEs"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011007.outbound.protection.outlook.com [52.101.52.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQfA/FZ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147351BC5C;
-	Mon, 27 Oct 2025 19:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761593850; cv=fail; b=p5EP1gyyvynrilUqVw2psP3f5THvbJ3z1P5PIhQ7pGMvAbK7dsfWs8jEEfEnzjWltBKdqAho/5M1J9+cQ/xfXvjkuQmCRwXvOJzbDGscSUXL8WxosrSo4wMQbhJfTXp8tkBlXrNGB6bUnjsjM/AG7d1za9z0R6FCtOVWiBm2U/4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761593850; c=relaxed/simple;
-	bh=nD13QhoKwMksp0bJp3V6JF7v+7y9IevUphELlUYatDk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kcisXlWxpLkK1eU60u6cfPGBe3Ti2jMf7u+o8Ta4MfzD1qd3RpVC6JSZWwjKwz//56jRWUgouMMWqBDhNh6EHEGOXx8h/cgurked/QzeSJCP3im3lvKRu1B5cPYzYVHql4KX780FOXfg2BE8L4vE6+PuaoNCM0oZQyEpC6z3484=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=di9viXEs; arc=fail smtp.client-ip=52.101.52.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mz6IVNtOa4gJ3TxvBKguUtBWFX3yd9sR1Gy6gVJQ01UMopGtqAETUcqEm067h18ltFxHcgAeG4jGWOfT7W8mvyF5UKpfB2ibr/tyo1J0dcC7vQ3Q8+BZ0gdA+pn5EYgs2m2vM0b8tApCHT3EiX3VHHge81I+4ipLsBl0hByxxDE+sLmIdJ4+4iEbnI8k6c1NAhfX0dyCHz6MG+sQboy/DgO4Jn+k/nUnswFJ03wvFRoiGMiwiGjvKCK/p8awS5To785aoyfMcC7URuvM+Tf/EiyePPqO2Ed9Wi0H9586OwltYunVWKs0mcyRJXkp5bdxP7ZAUkVkF56wDucf0OX+Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1yF7S1x4c3lkd+AVt2AaNP0rSknPUPDQKlVdGas8l24=;
- b=nlCIZW3aiQIoRXQix89BgvlugT/DB0oGsNloGJ8NOFiC7SZwZNNGLE2QYRO+U7VnyzuX+/av6EpJq7Nb+eLaRs8hTE+j6DzL7sK1PCkFUKmOGw5OYgKjLYATMFRpPEV0CU6oc5nLeLgQ1hgd82cHwsNDsAI0zv0vPnTTX83DolIFPLl8lK65ZoJLavZ2MomsCJva3O7h8Kx3aBGlZRfp9M4aXbGU4IjvVURer6UBdt6FW/DCzOf62dYKGn+8gUEPruoalZZJX7efwVhkYWHJ9vrVaCpB5ySOF4PxQELXCCChLwZGXg+kGnA/H8vYXBpjAIPFTOQTtUX2y6byvubqTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1yF7S1x4c3lkd+AVt2AaNP0rSknPUPDQKlVdGas8l24=;
- b=di9viXEsmTe+Z8+6UEDYQD7Ab26jK6xToMP8+u5+PnKYN0K7jZn1iI6oO0QPr+oQLaW34cZf8mO7TawHMdbXafhEnO+H+7edd4q5eRFAGf0QsETX9eQnaT3LzpyUazMUo4E6IvndIx1ptqZmtZdBlrD/C4j4WDm6+4zW/fCGlyDPQojdbOYRTE3yezElvVdZV4V8T0EWih0z7pjU/1gXIJ5xK9LfS/vMO5JcgV77zol5CZx7UunjKyWg1KGhs0I7FuspnCej/HCkxoq+/9fqsulFNWlyovM7BfIB+nzgFfPuDOu+mE1nkwN8DMiEIUkvmj6VxDyI3lruicJjRhVfgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SA1PR12MB8947.namprd12.prod.outlook.com (2603:10b6:806:386::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 19:37:22 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Mon, 27 Oct 2025
- 19:37:22 +0000
-Message-ID: <080c5b19-818c-4f18-81ac-93eabc8fe65b@nvidia.com>
-Date: Mon, 27 Oct 2025 15:37:19 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] gpu: nova-core: add extra integer conversion
- functions and traits
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Alice Ryhl
- <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
- Timur Tabi <ttabi@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
- <20251027-nova-as-v2-5-a26bd1d067a4@nvidia.com>
- <c94dd17e-0e81-47cc-9482-e8743d3bc68f@nvidia.com>
- <10945c03-8642-4c19-b0ed-ffb20c075291@kernel.org>
- <4ec735c2-d0cc-43ad-8184-b30359c8d570@kernel.org>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <4ec735c2-d0cc-43ad-8184-b30359c8d570@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN0PR05CA0025.namprd05.prod.outlook.com
- (2603:10b6:208:52c::13) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99343296BC5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761593927; cv=none; b=hW+0JJnOq+3mcsiEr1guowJUfw2bo4M5Ea4he5lEaLhhMoN9MsosZVBYC7PdLvY3Xofxo8T6ChYLviTkTiqjGrmW7u8wxMrly3mhDRqm1GxexjRVIlVPvMkVlJsKxOcZntYOVLZNhoRQtWZMvnIpMTMZ8gBWHWILfdoQq5DH17A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761593927; c=relaxed/simple;
+	bh=6D/vadzULQm6byWSb6yy7xi0Eg8k+Seb5Ly5iPlDX7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oFtG20FgETlW0/Dx74fIeUlYhAC2YXVCE2Qu1fWTl3yBf3iU/VY5lxQTrpAqQ/hSQ7KZKhZVposHZcTGlw+VzRMpEmgXk+hIxua1b3VHFRtWHsC/7PpsbGzh/0QzwwlA54nJGIs0x3DYyzNNqN4cM1DO0l1+NZue/ORk11a730o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQfA/FZ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FF0CC4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761593927;
+	bh=6D/vadzULQm6byWSb6yy7xi0Eg8k+Seb5Ly5iPlDX7w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EQfA/FZ+eL3IbONuUpadDAL168wvwF/8dEGTo2/dG+vRXTvJZzxu462ac7SrKxyq/
+	 nm/wPq8hLESYMv4/oEaMxcHUZ9Q3a/yb552FTS/Spt31FBRkqPA+8cwz+ShaULnMPk
+	 VYAB9qJF9aRZ8Ot9Jw+6vfSIPOQBT1RzMF44to53xX9j5wvxOJgeKr8Qtfned/F/gb
+	 pScPaJR1WQhN37fsK3d8YUFRgxQuxGpSIxD4ikAGaQTRkC70Il8sSbHhw5LlICrqNZ
+	 uU7euAMUQqYoxlSXY4+9ej/o4S0h5yySbMA4RZxI2sriVGlokgIpdwwchAEAnSRye/
+	 ojPgD3L4yLy+A==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-653652a4256so2540001eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXVFQUNLZ5slGkN1bjg1oS4Q6nzP9tnTeeceOG6PZsHwHopzXj2FpLWGCmtOES8EwCBT6J7+qZikv9kzbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6lwkxpgDh17yGSRVfeloWZEH+5IIzcXYtzXPpakWKNOnwPqHL
+	GSNMySKYLqCOprrFwjwrhobOj2gs7pFml6/BP2zmvt2Q2LnUyj2/ppO5ld8DN+iU8jisKmw5PDH
+	bsz3FAFKKEnblqv7850FByz+Rf01WeyQ=
+X-Google-Smtp-Source: AGHT+IFmnlDgQUImb9t/NaXrezavKItkeIFXPau2RUm7yfbUBFYRHMh3VQTJqHSg5g8FDOXQJ8P1rVS54gf95+/TZ4A=
+X-Received: by 2002:a05:6820:2113:b0:651:c86b:528e with SMTP id
+ 006d021491bc7-6566f1337demr598730eaf.1.1761593926586; Mon, 27 Oct 2025
+ 12:38:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB8947:EE_
-X-MS-Office365-Filtering-Correlation-Id: d551866b-131c-4469-74a3-08de15903f86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?djV4YUxzRllTZTkwRlo3S1I0SVJrL01lL1BYZTdHOE55NEl5cHR0c0M0Y1Y1?=
- =?utf-8?B?ZEU5bXllRFRsN0JYckkxbUVac0lZM2Rvd0ZqaGtnSm1SY1R6ZE1Gcyt5RDNJ?=
- =?utf-8?B?WW51U3JaanFEV1ZaekJrejdxQ3NoNzI3aXI3ekVPM3I2WWJVSExZTk1mdFBa?=
- =?utf-8?B?S09Ua2dKd1JBUGpqcDlCNm5FdE1sL0hSUmRkYkt3UUJMeUMwVjF0M3pNenNp?=
- =?utf-8?B?aTgzcDlTclNRYmlsYzk3MXJzL1lKL0lTL3YrZ0RCTXJXb1VSK1BOeEozUlRZ?=
- =?utf-8?B?RklVZ2JKYkR6VHB0cmwrdXk5eE4zNTdxbEppdFZOR081U1dXSmY0OFVCTklF?=
- =?utf-8?B?VjljL20yZVNHN2xCTlR0TlcxL0pHbzhTc0ZuMnJWMUpNUlNNSGlSVXNTS0tJ?=
- =?utf-8?B?TTFsdXJiaDFTaDh4UmxRZk1sOUlydCtiTVlvYlI1UFllWGlxYk9Tc0JINU5w?=
- =?utf-8?B?RXczVkJxSmo1bExuZGtnMzZFQytGVlQvQ1U2RDZkOE5QcEJxVnRRMnY0MEs4?=
- =?utf-8?B?WmZDZVVrWms1RDhzdUhKcnJpRnZtRTVIZHQrWVFXL1RjZFZGWjRFK0VwZmhI?=
- =?utf-8?B?RUQxSXpJeEw4SE04NEtXS0l0NVBiTHVaU2l5TFZHVWlwYWdKU0krK1hHTUxx?=
- =?utf-8?B?Wlp1T0RVNE8xbzVnVVcrVHZUbWRPZ0xSOW1tMlhYWnFSS0w4ZVo3UkJXSW9D?=
- =?utf-8?B?WUppS3MxZmJ3Nmt6cW5wNGJFTEJFbGNWMUJjS2c0d21McFNIVjBuUTVoSDBx?=
- =?utf-8?B?cFNra0RYUHFoZmZPMnA1TTExYkY3bGR5OFBMQWtNcU8yTkMwQkU1NFc5UW4v?=
- =?utf-8?B?MExKelo4eHNyOTZhYTJVNFlaMEtsdlVsZjRvOTFGUGdxYy9ncE03Ym5jbWZQ?=
- =?utf-8?B?a3I2RXFTSUdSTmhseS9TMzhEYnRrMHVmQmtaNUZFT0dFaUlBL2R3TWQzSUUr?=
- =?utf-8?B?b1d2eHM2aXBGZjVzbEo5NUNQT2FrRXQvV3QyZjlUczlBeUtaME1Za1h1OEVC?=
- =?utf-8?B?UXlSSmFFdjVLSXh1WlVXbnBRQUJQM3RJVzd6THlJYlJnSm5rQlg4TVM2cDhU?=
- =?utf-8?B?ZG5LVWpuQStPVUxQOTlhQlpYV2FtYnUvczh6QlF5OG43L1lJZkkrM2s1SFIz?=
- =?utf-8?B?aHZhZ3YwN0hFOGxlekZnNm4vZ3o5SWk4N0dDK1JPZm5lclNid3ptdExLWCsr?=
- =?utf-8?B?U2hBYWpPTCtWdzhpcDFzNllBM2FJQmtsbzBVWE9USzV5VndVNnpKbHN0a290?=
- =?utf-8?B?NjUrV2ZMeVFQcGNRNFkrcTl6ZTJnRjhMVzNtOXhsZWRnR3hSS3dsOG5aTmRJ?=
- =?utf-8?B?V0E0cmZkMHJMYXlNZklMaFV5bER6cDVZMW1QT251bFBqeTZUNTVlR2xwYVoz?=
- =?utf-8?B?WmY5enppZlBWOTZINTgwcy9iSXVBRSttSHFOby9CMDF4K3FJUm02Nk9ERDRR?=
- =?utf-8?B?WDhtcHZPT2lZTm5XR3ZJTGNMajNJYjh1TzBwbUd2MVRVNTg1c1UxOU9INTkx?=
- =?utf-8?B?MEZMN2FoV2xJTUNySUg1WmR6VlZXNHlhcXB4NTloeEozY05pY01zcEJtRVBo?=
- =?utf-8?B?QnN6V3FoZ25KbjY4d2RwVUtwNW5iK3RSWW9wUVpwQlNHU1lzVXNJM0R5K1dH?=
- =?utf-8?B?aVVjalVXZGZvdi8vdUwvWjUvNkU2eTk5SUljV21MME5LcjJCeWJXMW1IUnFr?=
- =?utf-8?B?R2luTE5ISFVhUW5EQWZDOFhyNFNlMmxVdU1GMGU5Q3ZjMzBHUEI2SjY1ZzVG?=
- =?utf-8?B?UXZjTkF4L0dVdloyeU95SVByTlhZZTBqYm9lS0JZVHJCazJaNURmbWhaN2Uy?=
- =?utf-8?B?LzkvSldCS3hrbHhMSTVkMzIrTHZMV25majlHSkViK1ZVR3NYWHdmTkhzcHJw?=
- =?utf-8?B?dVY4bExHMDJpUFMrdXdUbnFGdXR6cHRBdFJsZitScGlUQ2ludGxpWGN3WUI2?=
- =?utf-8?B?M1BzN2hkMnVSR3hnTmJDaHI1aURJQzcvcElZaFhkQ2E1aXhqYmF3eDNxTTJO?=
- =?utf-8?B?ekxNZ3VrQ0tBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aFlxOVRNU0FCRTc2dFh2UmRzRURDS3lra3dvTW9FTGp3TGErYndRRGNFMm5W?=
- =?utf-8?B?QklOemdranFEQ0ZvaXZGQnY3K2NwZ0wreVIyeXpUZkhZd3FQQ1FEVDZNZUpL?=
- =?utf-8?B?Z2YzNU9EWVcwZ1VBMG1zMVpVTTJOWG9EbE9QaVFiZUEzVnN1SU5zK3lWZ3FR?=
- =?utf-8?B?SjdIKzJ2T21xVjVQa3pPSzJhS0doQ3N4VXRneFo0amhZMWZjbkJtUklEbmVi?=
- =?utf-8?B?a3RoRmlRNW81eUo2YnRJM3dtZjRtQUZGaDlJcmJmYWNPVS9XN3J5U21lTytH?=
- =?utf-8?B?SFd2S2ZEN0NaeXBMUk5XbUszaGRmejRJMkxIQUNVeWV1cVVCdHB6S0JycGwz?=
- =?utf-8?B?OFJWSzMrblNic1UyUi8wdDlUQnlYOVhmWVBvK2xGdWxkTFVTTlNsVGlqclBN?=
- =?utf-8?B?TzZHQUJNUWE2S3FxeGZuN2p6VGI4YWhvMDRaTUZlTTNzbGFHVmpDSlZWcmcy?=
- =?utf-8?B?Qk9xR1lRcU9ocmNFQnJSdCtqeTVWTzFQYm53cU1Cc0I2bTgwNENOL0hiZ2Qr?=
- =?utf-8?B?OHhEYzR5NmV3S1pHQjNzemRXMllyR1BpVjhkMW9MT0lpTUNoVWJ4a2lYRWxU?=
- =?utf-8?B?bmc3a29iS3VXbVZHSkRrNVJjMHBGaEpmNHQ0ZTZBTi9ITVB5bU9kVXdqUmJY?=
- =?utf-8?B?a2xIUVViVFd1OXdyNjlJUWlQdnMyL3A2cWRDWm14d0psdmhZSUFtMjJRRHhS?=
- =?utf-8?B?VnZ3NXpiaW41ek0vbjBjTzJoL1JvclRhV1B3aDRTa1FLSENqNUczOEEzUGpn?=
- =?utf-8?B?cldwODdZMld6N1BIZ29CZzBBRDduWEhLZm5tQjZnSWUzRVpzRjNhV3QxWWxh?=
- =?utf-8?B?QVBrZGptTFJvVWlycDI3VG1vb0F6OHdUckpmL3hIOVVaWW02NEw0a21ueXhB?=
- =?utf-8?B?OURpS0pzTXhQUlU3ekxHM0VZbVg1RlhQTm04M0FwcDJ0cmx3NjNzZGp6U3V0?=
- =?utf-8?B?VHhNZzZTQzFjN1hDOUp4N0dhVXpkTnQyOElPK01WaEV3Vks2bXVrYTdjOUlp?=
- =?utf-8?B?WEdldnBkYmt3Sk82K1NqeDJVMW5Xa1ZweFU5eDVyWXJCQnBmam5RcTIrUGx1?=
- =?utf-8?B?SW1MUkV4N01NV1pRYXc0bUVOWTJON2U3TFgrTzQwWWlPeVl2SDAyLzloQVFx?=
- =?utf-8?B?TjdPQnlpMHlNZGdjYzJOYWFQRjMvbWhpZzY1SGVDVHVoL0wwVUFwVktRT0Zy?=
- =?utf-8?B?L1dqbEhlS2xJZVBBOXNDWDZlODFzZ0ZUWjV1MFUrYzNLWEpjQjJRdzBsd2Vw?=
- =?utf-8?B?dDdsTWo2U0ZESnZvQitnY0hVSGZ5cE5aUXNFY3Nmc0dUOFFiRytlUVpZTytz?=
- =?utf-8?B?bTVaZ1N6THNQRkJjZTRReHRLUlNiL044U0E1RkJoZms3NWdaL3Z3eTFIV3Qy?=
- =?utf-8?B?VWVaQXZvN1NMYTdrRzhnRnl4ZUs2TWFWdFQxTFJIOFRUL3RUNEU3TmF4ZmZW?=
- =?utf-8?B?VFp3V3pScVorcXlFRlpMeTQ4aWp5eWhKWXZKRTlwMGh4ZVA2b2RmTHdaenNx?=
- =?utf-8?B?QmZoWnJyV0UweXBzMUloS2NhaEFDbFp6R0NiMHlIejE4eUViU3lWYXZSR3NT?=
- =?utf-8?B?SXE3VVRPTnRkajhrcW9ldFUrNmcxd0Q4RGpKTWdkckljVGJKOENYdUtTQ095?=
- =?utf-8?B?Nmk3QTFGN3piaGNVY1V3QWdnZjU5eFpuVVhjV2xzRldkVEU5MWt3WFRhaXJu?=
- =?utf-8?B?ZVBmT0pGMTRLMzZVY2IxdU5vV0JCY0JoczV4RWdqekNYZnNaa1hlREFxYVB4?=
- =?utf-8?B?MlJtU2VJMTk4enVETUx4WDE2YVVMeWFxMjBlQXJYSGx3VDNlUTRoN3V2ZWR3?=
- =?utf-8?B?TTRKMzFTWEszcXp3L2p3cmo5S0I3ZWxCeitvWnYvZ0pUNDQ2dmdjWnRJb2ZM?=
- =?utf-8?B?aUhEVUxFaGEzOXBxZndYTUxYRlhyRERBNjFuRlhDYnJMVW05RlhKMjV3dnJm?=
- =?utf-8?B?T3hOL3lkRkxHaGUwNXowTWYrUGZWRDRZa2VOT29mKzZodnlKajJVTmlxRFlK?=
- =?utf-8?B?VnVCVU1ibzQvckRsMmRXUU1ma09taGpFUjRQYXVGMFVmZVJIU0ZpdUkxSXZ0?=
- =?utf-8?B?TVFyaWFOdTJPbWkrWGZXd2FxazRyZUdiYm1uYXlreHU1dkh6N3dhaklWVHE4?=
- =?utf-8?Q?0Ql2eVx5IINFL+A7rETO1YhZk?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d551866b-131c-4469-74a3-08de15903f86
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 19:37:22.0319
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XZCiYkFiKmOv/2NqBsfTy/CofFcnZp5bM037HX7my6GLM/W2o0LDSYM+pL4Sk8LFdnV4riVKTnvRWs0aIxnEWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8947
+References: <20251022204523.10752-1-tony.luck@intel.com> <CAJZ5v0hhnAq-HJhXU8VTAWKNg0PJkYbeocCKEffYOurZn0U81Q@mail.gmail.com>
+ <SJ1PR11MB60835AF413CB53076304AABCFCF0A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <CAJZ5v0io8xoh2zgdo7A6sMRA9XU=s8_EF0PcUpgkH8xmui3YAw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0io8xoh2zgdo7A6sMRA9XU=s8_EF0PcUpgkH8xmui3YAw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 27 Oct 2025 20:38:35 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hFb_SMYvbEuWJt2cfzYxAwAyUfAvWKwNaae_hz+Bj==w@mail.gmail.com>
+X-Gm-Features: AWmQ_blS7zvmaYu9bszfN45eqFj1tLh-FZoNqpy6MJYGGdncg0-fYfi8wtt49v4
+Message-ID: <CAJZ5v0hFb_SMYvbEuWJt2cfzYxAwAyUfAvWKwNaae_hz+Bj==w@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: MRRM: Check revision of MRRM table
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/27/2025 3:28 PM, Danilo Krummrich wrote:
-> On 10/27/25 8:23 PM, Danilo Krummrich wrote:
->> On 10/27/25 8:09 PM, Joel Fernandes wrote:
->>> Why not just implement `From` and `Into` for the types missing it then, with
->>> adequate comments about why such conversions are Ok for the kernel, instead of
->>> introducing a new trait? This is exactly what `From`/`Into` is for right?
->>
->> https://doc.rust-lang.org/reference/items/implementations.html#r-items.impl.trait.orphan-rule.intro
-> 
-> (Sorry, I didn't mean to send the link without additional comment.)
-> 
-> We can't do this due to the orphan rule, but even if we could I think a separate
-> trait indicating the reason for the conversions to be valid is a good thing.
-> 
+On Thu, Oct 23, 2025 at 6:01=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Thu, Oct 23, 2025 at 5:56=E2=80=AFPM Luck, Tony <tony.luck@intel.com> =
+wrote:
+> >
+> > >> Before trying to parse the MRRM table, check that the table revision
+> > >> is the one that is expected.
+> > >
+> > > OK, so should there be a Fixes: tag?  Or is it just a tidy-up of the =
+code?
+> >
+> > I'd be surprised if this table changed. But the h/w team that proposed =
+the
+> > MRRM table nagged me to check the revision "just in case". Which seems
+> > like good practice.
+> >
+> > Might as well add a Fixes to get this back ported in case someone locks=
+ onto
+> > v6.16 or v6.17.
+> >
+> > Fixes: b9020bdb9f76 ("ACPI: MRRM: Minimal parse of ACPI MRRM table")
+> >
+> > Would you like me to post a V2, or can you just edit this in as you app=
+ly?
+>
+> No worries, I can edit it.
 
-Thanks for clarifying, yeah its not ideal then as the user of the conversion
-needs to remember when to use from vs from_as. I don't think its terrible, just
-a bit confusing.
-
-Thanks.
+Applied with the Fixed: tag added as 6.18-rc material, thanks!
 
