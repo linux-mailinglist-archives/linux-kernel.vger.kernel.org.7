@@ -1,229 +1,214 @@
-Return-Path: <linux-kernel+bounces-870710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5BCC0B845
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:09:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4009DC0B84B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8503B4D03
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:08:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B22313488C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EDF1509AB;
-	Mon, 27 Oct 2025 00:08:34 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EE319D07A;
+	Mon, 27 Oct 2025 00:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PCRgDUuk"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930201388;
-	Mon, 27 Oct 2025 00:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381A517BEBF;
+	Mon, 27 Oct 2025 00:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761523714; cv=none; b=uv56OKpuOjT7E1C9MJKlxqlFJVlll8bHAjFFmRyX9WSHAD0EbKIIihxISwUfl0wce1QXZkd9Br/+Un6+Z84JzVtBN74myOUjAosd2fOf/7rtVPTwloH9IYkBs0WN3IR3HWdY22e1msJRvmlXIh53GRiQBk5u0eMurvq1LOaMKZY=
+	t=1761523929; cv=none; b=ID7bpkVHIs6FS++StgkLyOCtFR+cNfMq9Wn9rL72iR3wkGeI4Xs9qKQnTagcTCINDACKMAmaOy0+uYnONaFvOTP1Ttw3qeXDixwquHr58q8SCIMWzQ3dEv2WczY5tY8sjlpiRlVRAYvLv485z5fkzhVslaQboJawSlxaj0Dw1hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761523714; c=relaxed/simple;
-	bh=98yruYel77rmM913pXEoK+w2NRx8Q3hzcTD9iLuIYTQ=;
+	s=arc-20240116; t=1761523929; c=relaxed/simple;
+	bh=dez6YFJNAe9fXT5kQOjmTfkn5kSj5xwm+V5rTduKeEg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMj/TEvd7XwSq93/FP7OABSjVXOwjc9Mt/EdcbNFTnqQAjbgjkb5zatOmAW83j8WIxJOmcoOdeq/jd2mqR4YCUWubnHBV3LtQUxlTmhP9GzQVcCTkHCuZBDx26Ph17qFVJHtu4hbrWP4wJkKOh/a+z0jEiQhMLctqR0w1WvdhBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vDAmg-000000007mw-3V9M;
-	Mon, 27 Oct 2025 00:08:26 +0000
-Date: Mon, 27 Oct 2025 00:08:23 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=d+5+mOFFNRmTcrUpbYOoaeVBzWG+Tiow9wRh3Vy4hx2iZj04VbkawCpRMwV9/1KpCLuZumununuLq+z0xem/5k6of4YGpCPzibyAEr/gBbPG8NrpAf9WPQc+H5Y1c2gZRifRL64Qh0223CKWtyQwLayJf7AFgg2iBvb9ETRSdnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PCRgDUuk; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id BA551E9B;
+	Mon, 27 Oct 2025 01:10:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761523819;
+	bh=dez6YFJNAe9fXT5kQOjmTfkn5kSj5xwm+V5rTduKeEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PCRgDUukM8dqnY+dIYWfBYmpme14h53UICqHDtoo+ZojXcZfWboNyQQlJgA/q1A9v
+	 HFKcnqX5UKMEDYFbWqaRxlS++tO5bXye/vckyxn+yXzHQAcuA/7uuiwjOqc0ZE9I9g
+	 TcBKpCLbzM6fI4oBBJvmE4sbkC0SFZjARnx6PuKY=
+Date: Mon, 27 Oct 2025 02:11:51 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v2 13/13] net: dsa: add driver for MaxLinear
- GSW1xx switch family
-Message-ID: <aP6395j1lbzld4U6@makrotopia.org>
-References: <cover.1761402873.git.daniel@makrotopia.org>
- <5a586b0441a18a1e0eca9ebe77668d6ebde79d1c.1761402873.git.daniel@makrotopia.org>
- <aP0ae1rxKnaJUO-_@shell.armlinux.org.uk>
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v7 2/5] media: imx8mq-mipi-csi2: Use
+ devm_clk_bulk_get_all() to fetch clocks
+Message-ID: <20251027001151.GN13023@pendragon.ideasonboard.com>
+References: <20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com>
+ <20251023-csi2_imx8ulp-v7-2-5ecb081ce79b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aP0ae1rxKnaJUO-_@shell.armlinux.org.uk>
+In-Reply-To: <20251023-csi2_imx8ulp-v7-2-5ecb081ce79b@nxp.com>
 
-Hi Russell,
-
-thank you for the review and for not getting tired to teach me ;)
-
-On Sat, Oct 25, 2025 at 07:44:11PM +0100, Russell King (Oracle) wrote:
-> On Sat, Oct 25, 2025 at 03:51:23PM +0100, Daniel Golle wrote:
-> > [...]
-> > +	/* Assert and deassert SGMII shell reset */
-> > +	ret = regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-> > +			      GSW1XX_RST_REQ_SGMII_SHELL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = regmap_clear_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-> > +				GSW1XX_RST_REQ_SGMII_SHELL);
-> > +	if (ret < 0)
-> > +		return ret;
+On Thu, Oct 23, 2025 at 05:19:43PM +0800, Guoniu Zhou wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
 > 
-> So this is disruptive. Overall, at this point, having added every other
-> comment below, this code has me wondering whether you are aware of the
-> documentation I have written in phylink.h for pcs_config(). This code
-> goes against this paragraph in that documentation:
+> Use devm_clk_bulk_get_all() helper to simplify clock handle code.
 > 
-> "
->  * pcs_config() will be called when configuration of the PCS is required
->  * or when the advertisement is possibly updated. It must not unnecessarily
->  * disrupt an established link.
-> "
+> No functional changes intended.
 > 
-> Low quality implementations lead to poor user experiences.
-
-I've improved this in v3 which I have just sent, unless the TBI block came
-out of reset or the interface mode had changed since the previous call to
-.pcs_config() I'm now avoiding any disruptive operations.
-
-> > [...]
-> > +	if (interface == PHY_INTERFACE_MODE_SGMII) {
-> > +		txaneg = ADVERTISE_SGMII;
-> > +		if (sgmii_mac_mode) {
-> > +			txaneg |= BIT(14); /* MAC should always send BIT 14 */
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 52 ++++++++-------------------
+>  1 file changed, 15 insertions(+), 37 deletions(-)
 > 
-> Bit 14 is ADVERTISE_LPACK.
+> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> index d333ff43539f061b8b9cf88af2cda8c44b3ec2a9..fd202601d401145da8be23df4451f6af660642c5 100644
+> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> @@ -71,21 +71,6 @@ enum {
+>  	ST_SUSPENDED	= 4,
+>  };
+>  
+> -enum imx8mq_mipi_csi_clk {
+> -	CSI2_CLK_CORE,
+> -	CSI2_CLK_ESC,
+> -	CSI2_CLK_UI,
+> -	CSI2_NUM_CLKS,
+> -};
+> -
+> -static const char * const imx8mq_mipi_csi_clk_id[CSI2_NUM_CLKS] = {
+> -	[CSI2_CLK_CORE] = "core",
+> -	[CSI2_CLK_ESC] = "esc",
+> -	[CSI2_CLK_UI] = "ui",
+> -};
+> -
+> -#define CSI2_NUM_CLKS	ARRAY_SIZE(imx8mq_mipi_csi_clk_id)
+> -
+>  struct imx8mq_plat_data {
+>  	int (*enable)(struct csi_state *state, u32 hs_settle);
+>  	void (*disable)(struct csi_state *state);
+> @@ -111,7 +96,8 @@ struct csi_state {
+>  	struct device *dev;
+>  	const struct imx8mq_plat_data *pdata;
+>  	void __iomem *regs;
+> -	struct clk_bulk_data clks[CSI2_NUM_CLKS];
+> +	struct clk_bulk_data *clks;
+> +	int num_clks;
+>  	struct reset_control *rst;
+>  	struct regulator *mipi_phy_regulator;
+>  
+> @@ -384,24 +370,16 @@ static void imx8mq_mipi_csi_set_params(struct csi_state *state)
+>  			      CSI2RX_SEND_LEVEL);
+>  }
+>  
+> -static int imx8mq_mipi_csi_clk_enable(struct csi_state *state)
+> -{
+> -	return clk_bulk_prepare_enable(CSI2_NUM_CLKS, state->clks);
+> -}
+> -
+> -static void imx8mq_mipi_csi_clk_disable(struct csi_state *state)
+> +static struct clk *find_esc_clk(struct csi_state *state)
 
-Thanks for that, always learning ;)
+This is one of the reasons why I don't like devm_clk_bulk_get_all(). I
+won't object to this patch, but I don't like it. At the very lest, you
+should look up the clock at probe time and cache it in the
+imx8mq_plat_data structure, to avoid looking it up multiple times at
+runtime.
 
-> 
-> I think I'd prefer:
-> 
-> 			txaneg = ADVERTISE_SGMII | ADVERTISE_LPACK;
-> 
-> and...
-> 
-> > +			anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
-> > +					      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_SGMII_MAC);
-> > +		} else {
-> > +			txaneg |= LPA_SGMII_1000FULL;
-> 
-> 			txaneg = LPA_SGMII | LPA_SGMII_1000FULL;
-> 
-> here.
+>  {
+> -	clk_bulk_disable_unprepare(CSI2_NUM_CLKS, state->clks);
+> -}
+> -
+> -static int imx8mq_mipi_csi_clk_get(struct csi_state *state)
+> -{
+> -	unsigned int i;
+> +	int i;
+>  
+> -	for (i = 0; i < CSI2_NUM_CLKS; i++)
+> -		state->clks[i].id = imx8mq_mipi_csi_clk_id[i];
+> +	for (i = 0; i < state->num_clks; i++) {
 
-Ack.
+Make state->num_clks unsigned instead of making i signed.
 
-> 
-> > +			anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
-> > +					      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_SGMII_PHY);
-> 
-> So this seems to be yet another case of reverse SGMII. Andrew, please
-> can we get to a conclusion on PHY_INTERFACE_MODE_REVSGMII before we
-> end up with a crapshow of drivers doing their own stuff *exactly*
-> like we see here?
+> +		if (!strcmp(state->clks[i].id, "esc"))
+> +			return state->clks[i].clk;
+> +	}
+>  
+> -	return devm_clk_bulk_get(state->dev, CSI2_NUM_CLKS, state->clks);
+> +	return NULL;
 
-I agree that PHY_INTERFACE_MODE_REVSGMII would make sense, and I have
-now at least added a comment indicating that.
-As on DSA switches it is very common for the same SerDes interface
-being potentially used to connect a PHY or SFP cage, but be used as CPU
-port, it will be important to clearly state which end of such links
-is described as SGMII or REVSGMII, as one side is always MAC side and
-the other side is PHY side, so its a bit ambigous to use the 'foward'
-(aka. 'normal') vs. 'reverse' language...
+This needs to become a probe error.
 
-> > [...] (regarding GSW1XX_SGMII_TBI_ANEGCTL_OVRANEG and
-> >        GSW1XX_SGMII_TBI_ANEGCTL_OVRABL bits)
-> Please add a comment describing what is going on here. What does this
-> register bit do...
+>  }
+>  
+>  static int imx8mq_mipi_csi_calc_hs_settle(struct csi_state *state,
+> @@ -456,7 +434,7 @@ static int imx8mq_mipi_csi_calc_hs_settle(struct csi_state *state,
+>  	 * documentation recommends picking a value away from the boundaries.
+>  	 * Let's pick the average.
+>  	 */
+> -	esc_clk_rate = clk_get_rate(state->clks[CSI2_CLK_ESC].clk);
+> +	esc_clk_rate = clk_get_rate(find_esc_clk(state));
+>  	if (!esc_clk_rate) {
+>  		dev_err(state->dev, "Could not get esc clock rate.\n");
+>  		return -EINVAL;
+> @@ -783,7 +761,7 @@ static void imx8mq_mipi_csi_pm_suspend(struct device *dev)
+>  
+>  	if (state->state & ST_POWERED) {
+>  		imx8mq_mipi_csi_stop_stream(state);
+> -		imx8mq_mipi_csi_clk_disable(state);
+> +		clk_bulk_disable_unprepare(state->num_clks, state->clks);
+>  		state->state &= ~ST_POWERED;
+>  	}
+>  
+> @@ -801,7 +779,7 @@ static int imx8mq_mipi_csi_pm_resume(struct device *dev)
+>  
+>  	if (!(state->state & ST_POWERED)) {
+>  		state->state |= ST_POWERED;
+> -		ret = imx8mq_mipi_csi_clk_enable(state);
+> +		ret = clk_bulk_prepare_enable(state->num_clks, state->clks);
+>  	}
+>  	if (state->state & ST_STREAMING) {
+>  		sd_state = v4l2_subdev_lock_and_get_active_state(sd);
+> @@ -1027,9 +1005,9 @@ static int imx8mq_mipi_csi_probe(struct platform_device *pdev)
+>  	if (IS_ERR(state->regs))
+>  		return PTR_ERR(state->regs);
+>  
+> -	ret = imx8mq_mipi_csi_clk_get(state);
+> -	if (ret < 0)
+> -		return ret;
+> +	state->num_clks = devm_clk_bulk_get_all(dev, &state->clks);
+> +	if (state->num_clks < 0)
+> +		return dev_err_probe(dev, state->num_clks, "Failed to get clocks\n");
+>  
+>  	platform_set_drvdata(pdev, &state->sd);
+>  
 
-I've added a comment describing the override bits in detail and it
-also turned out that it makes most sense to always set both override
-bits.
+-- 
+Regards,
 
-> 
-> > +	} else if (interface == PHY_INTERFACE_MODE_1000BASEX ||
-> > +		   interface == PHY_INTERFACE_MODE_2500BASEX) {
-> > +		txaneg = BIT(5) | BIT(7);
-> 
-> ADVERTISE_1000XFULL | ADVERTISE_1000XPAUSE ?
-
-Actually phylink_mii_c22_pcs_encode_advertisement() seemed like a good
-match here and I've used that for the Base-X modes.
-
-> > [...]
-> > +
-> > +static const struct phylink_pcs_ops gsw1xx_sgmii_pcs_ops = {
-> > +	.pcs_an_restart = gsw1xx_sgmii_pcs_an_restart,
-> > +	.pcs_config = gsw1xx_sgmii_pcs_config,
-> > +	.pcs_disable = gsw1xx_sgmii_pcs_disable,
-> > +	.pcs_enable = gsw1xx_sgmii_pcs_enable,
-> > +	.pcs_get_state = gsw1xx_sgmii_pcs_get_state,
-> > +	.pcs_link_up = gsw1xx_sgmii_pcs_link_up,
-> 
-> Please order these in the same order as they appear in the struct, and
-> please order your functions above in the same order. This makes it
-> easier in future if new methods need to be added.
-
-Ack, done.
-
-> 
-> Also, please add the .pcs_inband_caps method to describe the
-> capabilities of the PCS.
-
-Ack.
-
-> 
-> It seems to me that this is not just a Cisco SGMII PCS, but also
-> supports IEEE 802.3 1000BASE-X. "SGMII" is an ambiguous term. Please
-> avoid propagating this ambigutiy to the kernel. I think in this case
-> merely "gsw1xx_pcs_xyz" will do.
-
-I've renamed all functions according to your suggestions, but kept
-register names as-is to still match how they are called in the (btw
-public) datasheet.
-
-> > [...]
-> > +static struct phylink_pcs *gsw1xx_phylink_mac_select_pcs(struct phylink_config *config,
-> > +							 phy_interface_t interface)
-> > +{
-> > +	struct dsa_port *dp = dsa_phylink_to_port(config);
-> > +	struct gswip_priv *gswip_priv = dp->ds->priv;
-> > +	struct gsw1xx_priv *gsw1xx_priv = container_of(gswip_priv,
-> > +						       struct gsw1xx_priv,
-> > +						       gswip);
-> 
-> Reverse christmas tree?
-
-Not possible as each declaration uses the previously declared
-variable in its initializer.
-
-
-Cheers
-
-
-Daniel
+Laurent Pinchart
 
