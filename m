@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-871682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10CDC0E105
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:34:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9C7C0E11C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A10424473
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1A542499A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1C0274643;
-	Mon, 27 Oct 2025 13:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40CB2853EE;
+	Mon, 27 Oct 2025 13:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="tPiPBn7X"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="dR3M/IXZ"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4148325F7A5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FDA273D81
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761571825; cv=none; b=RiteJewfu26MIXFrDfu/yblIopMNyg0hpSJ/RNvz4ol5OhCQ9d8N5H3wdjDJvrwARRNlFRMK6sR7J9m5q3vw3EvuNIh+L0vKgPziqvEv0lK9wsFlvwXeSlbVbNPZCzxiMRlCn9x93Y0NWlvsq21/UyV0PnXGmF2hc3zY5g00LvI=
+	t=1761571828; cv=none; b=R49d1P9tDkcAo/Fuu9u1/Ggpc80mz4D3W6K3JshdWR1nmZ8nbVEmd38uXiYqacby8KMU+v5FvYwtg9Dq44vYqd5RHlYQdHGUdE+gCZ4NAfnTSTpoUDpvDHfrC2eF2Kr8KmQ8BzCqY39i8LXvvRtimFGarNVsyfDGBcuevtbLJm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761571825; c=relaxed/simple;
-	bh=irpydtjBnNGkoYUkduEdVKqR1Dq2M0mmWm+e59RVSDs=;
+	s=arc-20240116; t=1761571828; c=relaxed/simple;
+	bh=BwADLFKGpa+de95hFRvgOEPMyxxO0x+ASxPYf2FXvD0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lBLxc+AszJ6uxkM6JW0XdL/EzZPlVS1r0wZB9M+MTu8/TAJ/PXhXca1+vBYPdftMKQOiqcFJ7W8dGkoXDppKBDDF1OjWOdwEYR+VBS4Cqi/pg/FibQlu4ePwucSgy1M8sq/FOWC5VjlEr4BheH6vqKIkIKJqglUJnWsfAQJwgqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=tPiPBn7X; arc=none smtp.client-ip=209.85.166.43
+	 MIME-Version; b=If6IZ0wUdUSY0H2NMHTFo/uBGJc3yYdOwpz3rjSdGVfKME9scKYb0zb9LkMJVHRpcyHTvxCzB1CBFdUT0dBx2lgvSF2/4MSLkfxgMW8B4Aw/25Bmb9SNx+JPfUN32FjkndeEZ1rAbJhQ3F1+Zkc01svY4Mdpsvyzi+lwh87/L3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=dR3M/IXZ; arc=none smtp.client-ip=209.85.166.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-940f8a73275so541830939f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:30:22 -0700 (PDT)
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-92aee734585so200349239f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:30:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761571822; x=1762176622; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761571825; x=1762176625; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WwBrji1LVVqX5QLhYIQg8MHPDU19g5B0S1hpvpp4hEc=;
-        b=tPiPBn7X2yd1/B/lsF2mH6Jef2O2lF11qrqQoQ0OX4KrDNRUEAWqK5lHqlWZpakjwq
-         hxcR4DwnEqPqK6TBCNCHUe12tTVhoBB4f/X4u2uJzFaL2fsBCoGEPhAqqRC7cASZoE8s
-         53of9LLSbmPxEz5CQ8aRNfxx9vDK/brH4xTPV7UCmlqCINzJs6gUJlHM+pb2JefDhsdp
-         2Id+lN2aRrayfXuYhtcm1UI3r03iLP5zKmesZbXrnVjn4Od9SHW7YtjjlEvjFw+LeFEu
-         WfrR0LSxDXdwOE5nMFkwiZSz5+jcj7Htz4DCnk+ZWiH9+uNx+25VaqXF/VWxZUeirHSO
-         hnxg==
+        bh=NPbR25sftlpl2ir5v+hHNY+KLBX0TEvDp8d/P1ZTVnE=;
+        b=dR3M/IXZtU2s58ejwIK/zWwDNFBAW9xP5a7R8ql66X2FR5zC/jib2m2nwDAaeDc4T7
+         xz+eeI/RX2oa2wJCBa/5P0x2IO0ODKaea+5Sy1byT6NudKbRi8stRNLnxWSqo+XZOdFI
+         yG10ONE9D7uMBAfCm0vptWN0xcZA6wYbcSqlsLN7Ovt9YMGEc4Q1LrLMDmoFTJoM98SW
+         wXjzWCeo5HN/IC+lX+VFze656vTvbZ4vmAylMZVYnoOBkR+r9d7lcdJAsWZtbaZY+1Cn
+         e3AiXXHsFUTqkBhdXXCuV0rJ9/Ml+vaavvXU+I37zXsr/l/MzqbEhW+SGalCTRwInm/v
+         C9fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761571822; x=1762176622;
+        d=1e100.net; s=20230601; t=1761571825; x=1762176625;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WwBrji1LVVqX5QLhYIQg8MHPDU19g5B0S1hpvpp4hEc=;
-        b=Cl1pPK1W6b7HCKWbB9jXk606oawRVE3+UUe+ONiiWzKQC4o8jh4/jMdMp8jEJpzP+w
-         uAHavWwvZsWOozyoEPhpVr1qs3DVe5qPE9gM14RGSuDrO0ex4XIeHZr0mP6dcEyuuxI+
-         Qu4hKlaRVX0K59QcSd/nGwgxaAZiN7WLzATyWJoNxr/6YrgSdMcitAaX1ob62i0+ZgKQ
-         lHzB426gSJtO0TukFjXpei63qWeMrawciAvXAWe5VuoXcVqASEcjXjwq23WLkYZaKTbj
-         QRSWQf7dtIFIplHfUhuZ47LHsSk0O1Aij6SzHp5RURvltK/PUGmJLBt8xzXMQn1smbMA
-         JeBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeVyKf33tNXcrI3CFe+SAly5Mwd/BFlKCEwt+jmJjyO2Mtg+QxRSkXFi/2XZEC67fkis20apMZjZNnLCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzowiFnoODuxY93fqlEKAEs7ciRKVTEXEZXqiiF9BjIBagLdH2C
-	hVimvAml9BMRaXZ7p+5zK8n4/maosbMOhGvZn8FjjFFJmeApGMHp55uZ5ZVwwaUu1bk=
-X-Gm-Gg: ASbGncslL9ysWCXR2/rHBRKviyHMEpN/Cr/xibUHmSec6h56AzETkwZfhcSZ+PG5Xow
-	n+5fzK3sbPwkIVBGQp3b4g+zlQ2gjR4t7TWtUPcEy0PLWclyvbbOBX/Ir/yOgG6MuLtY18avdrO
-	76BWJEj5CWaey29CbxdwrFf/UbC0uZQCLmQ0sxc1Ra+U/9O6UlbqC2tLdQ6I38+itwdBzYMvy4Z
-	wEhhVAzA+h8iVtTq/wCk+gB3JcO8m8TmFF85+PRr9dVhl64lOqMasdSgUNbcVsFg9AY0Xj6an1M
-	yCtlDoGQRXY+XHV+mAVBoH6zlFQQTAaAjirWUyGmf65KrH0rzKPMxxfDCR1r8p8DpYyfjlFY0Vf
-	i+lRm0+N5jsU67SdVWGhAFpMy9neGRBMQ5qRtmfiGRWvWV57vf06/+7OqYt93nVf6XD5KqTXkip
-	lCvuQmOCaWZZF2Q0dB4od+/aotcd7oWtULwzlBv0on7+0NKSV+F/+bYYbhlM1bogLp
-X-Google-Smtp-Source: AGHT+IEea/t006sDIUwyJirb8lhRy1y9vqvFLUYDpT5bn8joxV7TPLkwITOKKA0xlex/9Fj770b8Lw==
-X-Received: by 2002:a05:6602:1687:b0:93e:8c1e:cc5d with SMTP id ca18e2360f4ac-945b819d91amr15227739f.5.1761571821923;
-        Mon, 27 Oct 2025 06:30:21 -0700 (PDT)
+        bh=NPbR25sftlpl2ir5v+hHNY+KLBX0TEvDp8d/P1ZTVnE=;
+        b=s+MD02ZBR7nE5xGes+7prfIRMhrZ26aYfnQNOVC0giBAezVyOChLO/aHehZaz03Je0
+         4ynx2w8lepT6XMx4dG/za8HZ35j0dd/J0UVEDRZ+m8r559g8n5EHb3j/sN4Rrd+1bRHu
+         izgYUWJ1gs4hP6jWjp9ocAqdLbLljCg35LK2RYAYpMz3MC+625TrRlbcXXJiPHfOZDY6
+         qB6pjL2lxmfw03YZfFPmY7vOOkYvoRBi6yJQeZS0P9U2GLcvtD+nJaRVw3cnRONoohhO
+         Khn1T684JGr4kaqY133vi2sm4O92esKZo2rT72Si+vNMozA4An4NzunbbG/6sVnYDggs
+         29LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAroeXpadEe5HAOUnARMX0Wc0kzxwZiQ9coXLtW37qKn9mVd/Y+RXWf975K9em+U2xS3KuiXyHYU5j308=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVfRTy5Epu0bAq5Xrhqvx1c1eAhU5Jaf2nHTms/cx1PLgJyMEc
+	LH7henqFhcreNCLwKwCI3EbC2tSt0907VPrsXYlLLoM/C7z6y0GstoGQUolDJOCAc+k=
+X-Gm-Gg: ASbGncss/zVaEtXSq+4du1xD7EFRUQ7nqbsWOJ4uoDS69+NoFXI5rRgJaGYrlEyx8QA
+	GUmB1hFRdsiNUCcN/fr71HpLbpOh7Q7M8VJMTrXW+atencdQXnYndSvPrKyNyrZywnI+6yuEjDx
+	Fvn1UY94jlEursZxdk6FffhjbJt5WSv7FLLluGwtoXjKs6if3Sl2SzmcD8s5uNH157+Y8IMhdXM
+	Z+6mqS/9G7iM1rSMvq1S7UPWiQ2oMRzXbYX6cskTqyU9F/kbR9AJmN2essLXw9hd+rvFS+nHU7H
+	fTkVKFKOY8NOUB4DO62MWAEKLI6Z+zRZfiD3v3la8aGgQ6C9m7SF8MtVpXHpp6aAjNR6hVd1JtR
+	FF1SvUX50y69eyhZdrJO6zDbpcIBIsF9ZFaC6gK7Afs/ndstcog0MA3NatNOTzSzon4/HS7wynr
+	li2iavJa47k6PISTIKjPtQrXmWwGhPzWzRz+udpYTMcik=
+X-Google-Smtp-Source: AGHT+IE4vZfshbOMDVZNKh1eoFq+Ds25y5NT2j8sGmj2MHLjX5lybRWfL/HsmrZ3kz3tWd7cuHz3wQ==
+X-Received: by 2002:a05:6e02:16c6:b0:430:a7d5:235f with SMTP id e9e14a558f8ab-4320f77378dmr1192385ab.15.1761571825149;
+        Mon, 27 Oct 2025 06:30:25 -0700 (PDT)
 Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea78e2fd4sm3093057173.26.2025.10.27.06.30.20
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea78e2fd4sm3093057173.26.2025.10.27.06.30.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 06:30:21 -0700 (PDT)
+        Mon, 27 Oct 2025 06:30:22 -0700 (PDT)
 From: Alex Elder <elder@riscstar.com>
 To: han.xu@nxp.com,
 	broonie@kernel.org
@@ -85,9 +85,9 @@ Cc: dlan@gentoo.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v4 5/9] spi: fsl-qspi: add a clock disable quirk
-Date: Mon, 27 Oct 2025 08:30:03 -0500
-Message-ID: <20251027133008.360237-6-elder@riscstar.com>
+Subject: [PATCH v4 6/9] spi: fsl-qspi: introduce sfa_size devtype data
+Date: Mon, 27 Oct 2025 08:30:04 -0500
+Message-ID: <20251027133008.360237-7-elder@riscstar.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251027133008.360237-1-elder@riscstar.com>
 References: <20251027133008.360237-1-elder@riscstar.com>
@@ -99,68 +99,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SpacemiT K1 SoC QSPI implementation needs to avoid shutting off the
-clock when changing its rate.  Add a new quirk to indicate that disabling
-and enabling the clock should be skipped when changing its rate.
+In fsl_qspi_default_setup(), four registers define the size of blocks of
+data to written to each of four chips that comprise SPI NOR flash storage.
+They are currently defined to be the same as the AHB buffer size.
+
+The SpacemiT QSPI has an AHB buffer size of 512 bytes, but requires these
+four sizes to be multiples of 1024 bytes.
+
+Define a new field sfa_size in the fsl_qspi_devtype_data structure that, if
+non-zero, will be used instead of the AHB buffer size to define the size of
+these chip regions.
 
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Alex Elder <elder@riscstar.com>
 ---
-v4: - Added Frank Li's Reviewed-by
-
- drivers/spi/spi-fsl-qspi.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ drivers/spi/spi-fsl-qspi.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-index 1944e63169d36..2c030dd6facc7 100644
+index 2c030dd6facc7..46a3187b33548 100644
 --- a/drivers/spi/spi-fsl-qspi.c
 +++ b/drivers/spi/spi-fsl-qspi.c
-@@ -197,6 +197,11 @@
-  */
- #define QUADSPI_QUIRK_USE_TDH_SETTING	BIT(5)
- 
-+/*
-+ * Do not disable the "qspi" clock when changing its rate.
-+ */
-+#define QUADSPI_QUIRK_SKIP_CLK_DISABLE	BIT(6)
-+
- struct fsl_qspi_devtype_data {
- 	unsigned int rxfifo;
+@@ -207,6 +207,7 @@ struct fsl_qspi_devtype_data {
  	unsigned int txfifo;
-@@ -306,6 +311,11 @@ static bool needs_tdh_setting(struct fsl_qspi *q)
- 	return !!(q->devtype_data->quirks & QUADSPI_QUIRK_USE_TDH_SETTING);
- }
+ 	int invalid_mstrid;
+ 	unsigned int ahb_buf_size;
++	unsigned int sfa_size;
+ 	unsigned int quirks;
+ 	bool little_endian;
+ };
+@@ -737,6 +738,7 @@ static int fsl_qspi_default_setup(struct fsl_qspi *q)
+ {
+ 	void __iomem *base = q->iobase;
+ 	u32 reg, addr_offset = 0;
++	u32 sfa_size;
+ 	int ret;
  
-+static bool needs_clk_disable(struct fsl_qspi *q)
-+{
-+	return !(q->devtype_data->quirks & QUADSPI_QUIRK_SKIP_CLK_DISABLE);
-+}
-+
- /*
-  * An IC bug makes it necessary to rearrange the 32-bit data.
-  * Later chips, such as IMX6SLX, have fixed this bug.
-@@ -536,15 +546,18 @@ static void fsl_qspi_select_mem(struct fsl_qspi *q, struct spi_device *spi,
- 	if (needs_4x_clock(q))
- 		rate *= 4;
+ 	/* disable and unprepare clock to avoid glitch pass to controller */
+@@ -795,17 +797,17 @@ static int fsl_qspi_default_setup(struct fsl_qspi *q)
+ 	 * In HW there can be a maximum of four chips on two buses with
+ 	 * two chip selects on each bus. We use four chip selects in SW
+ 	 * to differentiate between the four chips.
+-	 * We use ahb_buf_size for each chip and set SFA1AD, SFA2AD, SFB1AD,
+-	 * SFB2AD accordingly.
++	 *
++	 * By default we write the AHB buffer size to each chip, but
++	 * a different size can be specified with devtype_data->sfa_size.
++	 * The SFA1AD, SFA2AD, SFB1AD, and SFB2AD registers define the
++	 * top (end) of these four regions.
+ 	 */
+-	qspi_writel(q, q->devtype_data->ahb_buf_size + addr_offset,
+-		    base + QUADSPI_SFA1AD);
+-	qspi_writel(q, q->devtype_data->ahb_buf_size * 2 + addr_offset,
+-		    base + QUADSPI_SFA2AD);
+-	qspi_writel(q, q->devtype_data->ahb_buf_size * 3 + addr_offset,
+-		    base + QUADSPI_SFB1AD);
+-	qspi_writel(q, q->devtype_data->ahb_buf_size * 4 + addr_offset,
+-		    base + QUADSPI_SFB2AD);
++	sfa_size = q->devtype_data->sfa_size ? : q->devtype_data->ahb_buf_size;
++	qspi_writel(q, addr_offset + 1 * sfa_size, base + QUADSPI_SFA1AD);
++	qspi_writel(q, addr_offset + 2 * sfa_size, base + QUADSPI_SFA2AD);
++	qspi_writel(q, addr_offset + 3 * sfa_size, base + QUADSPI_SFB1AD);
++	qspi_writel(q, addr_offset + 4 * sfa_size, base + QUADSPI_SFB2AD);
  
--	fsl_qspi_clk_disable_unprep(q);
-+	if (needs_clk_disable(q))
-+		fsl_qspi_clk_disable_unprep(q);
- 
- 	ret = clk_set_rate(q->clk, rate);
- 	if (ret)
- 		return;
- 
--	ret = fsl_qspi_clk_prep_enable(q);
--	if (ret)
--		return;
-+	if (needs_clk_disable(q)) {
-+		ret = fsl_qspi_clk_prep_enable(q);
-+		if (ret)
-+			return;
-+	}
- 
- 	q->selected = spi_get_chipselect(spi, 0);
+ 	q->selected = -1;
  
 -- 
 2.48.1
