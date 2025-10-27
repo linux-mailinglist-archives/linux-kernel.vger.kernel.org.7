@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-872056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4D5C0F373
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:18:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19AFC0F249
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BDD426CA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A851519C3D40
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F119730BF66;
-	Mon, 27 Oct 2025 16:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A76D313263;
+	Mon, 27 Oct 2025 15:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FCiAbTRk"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KSjIdFqO"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4192D63F2
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F4B3128C8
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580935; cv=none; b=DvvARPh+liOFqAOS4GgYx1Ckvj2rV/nRTCKNnTavdNIEProGQ0GY3NGQYfd55x6ILSM8E6xwccOLnyku4BQNlbrx3suqfe0U8+Zs1P0TMNCTKdW5YdmjglQNrnmPXz3D6Veex0qk4FfjvS90/eg8De1zvD2fACxrp/jZuPjoAM4=
+	t=1761580469; cv=none; b=eOR8a258jJY/wFju3R/fzz76rXEt38rlNGk1lNccZtdtiI1NxekNpYWhK2SkaTI9EZaRzSCdEB+pyHlAl6EkOq34Vdr7ydAKcuqv4kOPmqOM3gdCtCXsY8DfC385azHW0QnuK/+Zmi17kS9TuHLeSHIgt7iq68ReZ1tzqBAISw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580935; c=relaxed/simple;
-	bh=3vakKTarVQ1LmVyja0G1VxJygmwKNqNAyvUgHSG/kHE=;
+	s=arc-20240116; t=1761580469; c=relaxed/simple;
+	bh=VrcGekrA0V4MeKOK1C3SdiVffncJbm6tZX8UDVo5Re8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p7GqyDGabSACi+vNQbCBoYG47UdFzrMf7cHUb7e3NnuJXHU0cdmbWySARPhbdSl2CKiSO5Sr5DvPxnnNzrbOTXANjzuEiwHIFb2j7i7Qyo6L74EiYtgGXrq0qTdjbXJ7bBq+mPcyd9siedSrTldWJtFjSi/OHPLnTUFehvilH9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FCiAbTRk; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso6264684e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:02:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=NtKtds5P3hU4O56V+DPb6tMal99AtvbaIywED43QxQzuUJPcfg7EYtCN5MN3bZgiA2WTKMZGDNSfEh7q5uAUs1OY7+uIwp2OWlU6JkcOjYVM4uDEgrRRwLRVpCkWt82quvqfQoEm7RxG3S8NtDYc2gcGpCbvl26hLo+0GVn8/fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KSjIdFqO; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27eeafd4882so427905ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:54:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761580930; x=1762185730; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lyo3P6jUrO11oV/07r7VEk3+sHuM/zfcTZIIBqJLkxg=;
-        b=FCiAbTRkKR7K7Netno9M+9dcRlZjGVPq2WutfmMcy6p5JvMXIgZ4+Al9NkOcgE1nmH
-         F/br7pwfnkbN5T7Yg/vTVMwCAzgwq4e2AtxiOoNnyDNREkqaPok+tBAOQNx6mPJQI8WT
-         AhwTBzAG0KwNQBE050XdKNhFoSCPaMhyoFr9c=
+        d=google.com; s=20230601; t=1761580467; x=1762185267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TOV2usxAVtrzpjNrsCDY6+oTbSzm7HQ0OagyrYKBhwU=;
+        b=KSjIdFqOe/MCbCS1S8E1ShV7EwZ6B9Xct+/1VqAOiFwfYRVGFGGJU5LpJqlNmeopxs
+         Xt2bDvTfovAyE1q2eZmGQCW2f50j1dHma/hTKMCo/NkoAjTDhvzZwmRXpyj/cdkh+bpI
+         arT4Ke9r85cPXF1Oyt0YE6iILlV4BlCdBkV4FYOc2HI7vuoUTx81r9Iv46JHW7GUoSTL
+         3m69QTJmyP8ft23JyVSDU13hY+Y8FjKVc1DCja7FKIiXSflegGMWb5KXEK0QfEbQfEEA
+         hd15ZOHqan/iWXsC6f3LzdDLLx1OvXhJU4+NFVyA5kNFzsnaNBSaRMkUpYh6YmG0xfHg
+         x3iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761580930; x=1762185730;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lyo3P6jUrO11oV/07r7VEk3+sHuM/zfcTZIIBqJLkxg=;
-        b=PKi4Pvvya2WoWVoh92l2X1J6DBco27PerUIlo2lGHQx3qSagU7VW4heX8WhNqb83Ad
-         C0OSVis3pS8abYxfoVEb13aE5ejmbaR4TlGjCoGzKOIRbIFowebPUSEHecmgdXngYuxB
-         MreiIzLHrtzbCmXZeJXIvfhEFTnwtYf5Sk1Fqlksy3SJfM56f9ePMBHQlkbMYOMRHAO+
-         r/EA0IJNsMni6k7mbhH8IMAOoJJYlRIfFr4/FwNIUneeFWjZrI8xeNH6ByEaewmnSB/J
-         pzqnNGf9Zn29pzXtgcD4SUhHwkWM+5vClzQ5ppfcmmnqOKKKKnWRQ3LFo9GF4ffg5Kgm
-         PE5w==
-X-Gm-Message-State: AOJu0YwV/cLIQWRFXmAWusV66dQEQEyDvhMigibYYQ+GHUkt/oWdTXHv
-	3FVFC5PmLoIRUTEP1BgV0h0H9Qi78ITSJwb3vVMNv3CTv+gpL9TuN4nSzu0CGsiz4mJ611sbeIJ
-	FNa2xILM=
-X-Gm-Gg: ASbGncvsZ5ZBCzE4/kbGYoj06cp0IBnGwZX8ickVGAOcjwi57xLodvR0XRf8YUkpFuW
-	bhTYnx05O6KJmdXEWC9FcxLuK+L5kdSnb+/UQBacnH50vnztBivNF+r/VFP6XLOQ92jYaR9UqSA
-	7XA2Zqcq+0XwcFGwUv9sqbPxpVQLJsUmdvVjA9caKgSD51qIXJJHXT+8CiijI2oO0koj9S+dK5/
-	Fzawx29i6f9IxIVbZnEmIaBu35al5cDALAUfGpfxqrWVj0C+kEEjlFZOLuGsWsaVw3ScK/gIBs6
-	9u47iM9zm8AkUzQ9wTgusYDe2mAkYHj3qNFM4fJTpjxo72AxbzatUMwna1fo/NKCs+nljqMSOLv
-	nowb1ifG8Qe6HHahAYw+auojcTE9R/LGMX0Jwj6c/ISg2KwaBbc+VzTpdzRrkeo1FcmCRk4tsYd
-	Wu+gLSFVqqgAJdYWbLIF2jJ0f5mzASev90XvV5Y8cgCTXVNP/55PvALE1nyrPW
-X-Google-Smtp-Source: AGHT+IHTxm7o6s8+qVcTNdIAeIrEaVoswkdbpS1PpV43DvkedxQyS8UiDTTan2HmKaw1jR25cvzcIg==
-X-Received: by 2002:a05:6512:3ca6:b0:591:ec83:3183 with SMTP id 2adb3069b0e04-5930e9e1168mr138123e87.57.1761580929850;
-        Mon, 27 Oct 2025 09:02:09 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f50996sm2371501e87.36.2025.10.27.09.02.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 09:02:09 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso6264636e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:02:09 -0700 (PDT)
-X-Received: by 2002:a05:6402:4412:b0:628:b619:49bd with SMTP id
- 4fb4d7f45d1cf-63ed84db9e2mr369134a12.25.1761580437926; Mon, 27 Oct 2025
- 08:53:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761580467; x=1762185267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TOV2usxAVtrzpjNrsCDY6+oTbSzm7HQ0OagyrYKBhwU=;
+        b=QqWaO//nfR4oXO2QjTLB5On3UZCuePyrPb/42hJDV2/FPZB7HnJoLQqSmnqQBDEJng
+         ZPKp4+IIuexEdZu18MjBKA1wYqcL6VYuaNgK/ZPfXKY/pKBcLHwHqPfvKFRnwO1vyEzj
+         WwbZRBXWMtLAge39zBoe62rd47RWVPvGofuRWpccGC0/V/pIs7PXIhOqrURGD6BNHHcn
+         VsoUvPE3NYDlFtDHNezHzJKQNvi1OL0qH3KIYdt7aMBKaLWfKzpDTMoGz/NDbTCIVazm
+         SEVCW2qytywUkDJoGW74/qxgcV4wzvW36DFCSxbOLbHbo/UY0vZPulC5DVtxBC2JmOMt
+         s6Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsLYLxn3ZgMJdeOA8GCKJOrBhuJJdj3XzeAYy/5mwXKHsUsKUekr7lUvappKgFj89t0IBRddSOceVeL3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo9Mkp3DDXxOltmxBL7WI5SLwXi/3LZh73aQ0sabsdKsgOL0p7
+	FD0fzsN1+m1tEC/wKZ33FHOXPpsW5NhsRMcHnRV+LgwVq5C0hQIFzaaLHwsoVlC0EbDIEQ1hV7j
+	ltGz4hAG/ODk5VFBlzUzsq5dMgSVChGuJvkQ92aPD
+X-Gm-Gg: ASbGncvV8+390Y3rFsFD1q8LWesIQCHp3AIt0Sxjk8Py4hF2etUcCTVALXkRDboB9cG
+	/i5ZcWphHqlwSKoG8jzLqvpvga96DkEneQTVvNvTjPxGPntUrOI2olRhjGfO0s9FaVGfYBrjaI7
+	/iuO6qKdFSPYYdwgy3GRIxJi0cIugjXJPQP+RHe8m8U+3eOsEVGSTwZK1QowqZhuY/6tfbkbitm
+	TQ9b/4gK+xo95YKzXigJQJjQH68mGNxkISRpMGDEzEm5zyClV+2NW0Cq1YdWjdTzV7H
+X-Google-Smtp-Source: AGHT+IGd2VC+1ri7Tm8Icu43HfhHP31Eha9krNlCyWKJpXSqm52Nv3U4r4IDiw+4iGHBWYRgukstDdR1FrBi6TFHiUE=
+X-Received: by 2002:a17:902:c40c:b0:25b:d970:fe45 with SMTP id
+ d9443c01a7336-294ca876b46mr835215ad.1.1761580466893; Mon, 27 Oct 2025
+ 08:54:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027083700.573016505@linutronix.de>
-In-Reply-To: <20251027083700.573016505@linutronix.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 27 Oct 2025 08:53:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiZ0RdDzpafUUduCn3gOVX3a=ZmGOw7wu1s-jqe8KypDA@mail.gmail.com>
-X-Gm-Features: AWmQ_blZNXFTqWGx07mPO-qNDyYJc9sRx0MxijvPg_spVplnaBKcigb1OKRcACM
-Message-ID: <CAHk-=wiZ0RdDzpafUUduCn3gOVX3a=ZmGOw7wu1s-jqe8KypDA@mail.gmail.com>
-Subject: Re: [patch V5 00/12] uaccess: Provide and use scopes for user access
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>, 
-	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	David Laight <david.laight.linux@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Nicolas Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
+References: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
+ <20251025-idpf-fix-arm-kcfi-build-error-v1-2-ec57221153ae@kernel.org>
+In-Reply-To: <20251025-idpf-fix-arm-kcfi-build-error-v1-2-ec57221153ae@kernel.org>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Mon, 27 Oct 2025 08:53:49 -0700
+X-Gm-Features: AWmQ_bkZ-boZ1PO-DZE1ghKe_XcmKdU5EzkIpPpXzyaf8mX9qkr6Gzs7ALPdxQ0
+Message-ID: <CABCJKuesdSH2xhm_NZOjxHWpt5M866EL_RUBdQNZ54ov7ObH-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: Select ARCH_USES_CFI_GENERIC_LLVM_PASS
+To: Nathan Chancellor <nathan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Kees Cook <kees@kernel.org>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Russell King <linux@armlinux.org.uk>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Michal Kubiak <michal.kubiak@intel.com>, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
+	intel-wired-lan@lists.osuosl.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025 at 01:43, Thomas Gleixner <tglx@linutronix.de> wrote:
+Hi Nathan,
+
+On Sat, Oct 25, 2025 at 1:53=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
 >
-> This is a follow up on the V4 feedback:
+> Prior to clang 22.0.0 [1], ARM did not have an architecture specific
+> kCFI bundle lowering in the backend, which may cause issues. Select
+> CONFIG_ARCH_USES_CFI_GENERIC_LLVM_PASS to enable use of __nocfi_generic.
+>
+> Link: https://github.com/llvm/llvm-project/commit/d130f402642fba3d065aacb=
+506cb061c899558de [1]
+> Link: https://github.com/ClangBuiltLinux/linux/issues/2124
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  arch/arm/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 2e3f93b690f4..4fb985b76e97 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -44,6 +44,8 @@ config ARM
+>         select ARCH_USE_BUILTIN_BSWAP
+>         select ARCH_USE_CMPXCHG_LOCKREF
+>         select ARCH_USE_MEMTEST
+> +       # https://github.com/llvm/llvm-project/commit/d130f402642fba3d065=
+aacb506cb061c899558de
+> +       select ARCH_USES_CFI_GENERIC_LLVM_PASS if CLANG_VERSION < 220000
 
-This series looks all sane to me, and I think the naming etc now all
-makes perfect sense.
+Instead of working around issues with the generic pass, would it make
+more sense to just disable arm32 CFI with older Clang versions
+entirely? Linus, any thoughts?
 
-                  Linus
+Sami
 
