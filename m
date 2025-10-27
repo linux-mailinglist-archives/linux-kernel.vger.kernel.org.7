@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-871497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B844C0D74C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:16:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE9AC0D759
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C77DA4F335B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:16:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E0674F1584
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A612EF660;
-	Mon, 27 Oct 2025 12:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AD42FBE01;
+	Mon, 27 Oct 2025 12:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goJwogGi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8xm93v+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E1234CDD;
-	Mon, 27 Oct 2025 12:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6142417C6;
+	Mon, 27 Oct 2025 12:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567350; cv=none; b=BzY0pB5tu7rYIWl3gwegr20amwB5idy1cOjzmYXfWfNQMwEZQdgpBQXpCLuScH8DgiJosLaJ9iFPPjApdbgBKZKlj09NpkDppFrzuef2fLDo7p10m6OuzzCH+wuCGnQZUr3WFmAlYcxo02wsXiQMOl9WmClkK/qkJ6JOvJqSwco=
+	t=1761567366; cv=none; b=K4lK8DHzIvXG1BdgS3mWAzY6YXF4pALluV7XOnroFMTGZfnUD2+Zx1WD6rhnwxF8Arhm3CeEvHje6nGK7TzaxtlvUocG6ALCYApCwOK7JdV1o/vUFIvedpvwhYxgU6kg8Sd60WFgGR+/I0GUuQtgQNLfk8o33vdo04rXCRxkc8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567350; c=relaxed/simple;
-	bh=tXiVqGv2VriRVuycYbx30w53ZLM4GSUJn3DkQxYaGUQ=;
+	s=arc-20240116; t=1761567366; c=relaxed/simple;
+	bh=8REW9LKAMBJhiS0mstI+h8mwfhMdGAOr9OXOtnMD0Uk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSk7B+2GZg4j1fsyj1mwmuJpCsty+m78bktyqggOPwbNliejCtIHYROu4mhdAsBrVOQ+dxqin98Zu1gtWDVi3hb8n+PM9tU7Ivl5na1T9tnXv7MoNSYhnC5MDbGeQqseruxBL4vL9ILiBsWEEY5Au18fDLi+XKocUh/KpPIaCrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goJwogGi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DE44C4CEF1;
-	Mon, 27 Oct 2025 12:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761567347;
-	bh=tXiVqGv2VriRVuycYbx30w53ZLM4GSUJn3DkQxYaGUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=goJwogGi1VkxLLiMt8s6kdmYmRaFSAe1PqnPeXpUSbMNlbiXaDUwt6zl/EdysDaYj
-	 sDeIVAvM7r8FHEXh7709edushUMiu/+QExY2ivd6DB3o35JBHOjfSB4FCeEwdM6iYS
-	 puOoo1U6tr+G0qoUyl/OjZgLpkQ23M/Rm/JXzoIY1lYA+iquVbM0tTvj2oDFHwOm7h
-	 jDHeARI9Y4JNWXklQE/75tezRB5wjw75ho5m3dZgY7hxdDqmqdg8BjdmCdw5k28GIY
-	 SFM+Z96eIHI0KNZKym7El9yro4bBhi+lY0OusIyhjUaADTYPYz+PMIMQEnxMCRBZOU
-	 lKUpCSDcyWICw==
-Date: Mon, 27 Oct 2025 12:15:37 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 09/15] regulator: bd71828: Support ROHM BD72720
-Message-ID: <ad7357b6-8f9a-42c1-b287-201059e86e33@sirena.org.uk>
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <28f888c9784058b2d727a4b6185ac49874552847.1761564043.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSDn62nkFrr6xIo4ENdmM/vhZPjXRKXOFsoHDQ27PeSO9L/LRPVPq96BLZOaZ5Pwra0Ec5TTWV5MZaXSqytVYnlqOxlk9OT1HxTUPC+6NQ5+w+SJ/pOOKhAzDcICDvPtGgvlcvQ4vhCdGdQxgGc2Ulf4c12+kdix2UStfUQ1+P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8xm93v+; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761567363; x=1793103363;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8REW9LKAMBJhiS0mstI+h8mwfhMdGAOr9OXOtnMD0Uk=;
+  b=e8xm93v+66fqVBJf6Cb+M3YTTxA7aEvPirSvSbbKNL0o0smVFH4dENqV
+   GJNQoFYvw6i3WFZk/EqE3wBUEW3AoicJ49/grkYdwLNJHAPTn221+aZ3T
+   mkBcV5kX21XKFO+EWBfPauDDKysEGkvSPlJ4T3uT5NsomJWRqZtszAlpt
+   8TkmtUEyJ38QU00yB3x7wQJIHXV8QeTwzugV6YG7AHcRtLkpTMPm7tjWa
+   gz7W7fiOq31hWZEL0ibDIBh9y9QIZ/tNTiOinQhCcDuHGVHjr460kMaFT
+   RW1qofgdKD133hZXKh7Z3gICRVLUWP5ePMulELva5Xit9HNzSh4+CoLbX
+   A==;
+X-CSE-ConnectionGUID: Tc2q9bcqTcClu3hKqswe5g==
+X-CSE-MsgGUID: 80O+vkqqTpK38000zhvywA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74318623"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="74318623"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 05:16:02 -0700
+X-CSE-ConnectionGUID: kdjWm1B2Qb+/jb+kz3dkCQ==
+X-CSE-MsgGUID: TzrTW4HSTBGRQ7bZdVSNpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="185113205"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.5])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 05:16:01 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDM8k-000000030ZN-19vW;
+	Mon, 27 Oct 2025 14:15:58 +0200
+Date: Mon, 27 Oct 2025 14:15:58 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: ad7124: change setup reg allocation strategy
+Message-ID: <aP9ifk-ms8RJi5ff@smile.fi.intel.com>
+References: <20250923-iio-adc-ad7124-change-setup-reg-allocation-strategy-v2-1-d9bf01bb3ad8@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RalfM7p0fJtqcro2"
-Content-Disposition: inline
-In-Reply-To: <28f888c9784058b2d727a4b6185ac49874552847.1761564043.git.mazziesaccount@gmail.com>
-X-Cookie: How do I get HOME?
-
-
---RalfM7p0fJtqcro2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250923-iio-adc-ad7124-change-setup-reg-allocation-strategy-v2-1-d9bf01bb3ad8@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Oct 27, 2025 at 01:47:10PM +0200, Matti Vaittinen wrote:
-> ROHM BD72720 is a power management IC which integrates 10 buck and 11 LDO
-> regulators. This PMIC has plenty of commonalities with the BD71828 and
-> BD71879.
+On Tue, Sep 23, 2025 at 04:48:04PM -0500, David Lechner wrote:
+> Change the allocation strategy of the 8 SETUP registers from a least-
+> recently-used (LRU) to a first-come-first-served basis.
+> 
+> The AD7124 chips can have up to 16 channels enabled at a time in the
+> sequencer for buffered reads, but only have 8 SETUP configurations
+> (namely the OFFSET, GAIN, CONFIG and FILTER registers) that must be
+> shared among the 16 channels.  This means some of the channels must use
+> the exact same configuration parameters so that they can share a single
+> SETUP group of registers.  The previous LRU strategy did not keep track
+> of how many different configurations were requested at the same time,
+> so if there were more than 8 different configurations requested, some
+> channels would end up using the incorrect configuration because the slot
+> assigned to them would also be assigned to a different configuration
+> that wrote over it later.
+> 
+> Adding such tracking to solve this would make an already complex
+> algorithm even more complex.  Instead we can replace it with a simpler
+> first-come-first-serve strategy.  This makes it easy to track how many
+> different configurations are being requested at the same time.  This
+> comes at the expense of slightly longer setup times for buffered reads
+> since all setup registers must be written each time when a buffered read
+> is enabled.  But this is generally not considered a hot path where
+> performance is critical, so should be acceptable.
+> 
+> This new strategy also makes hardware debugging easier since SETUPs are
+> now assigned in a deterministic manner and in a logical order.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+...
 
---RalfM7p0fJtqcro2
-Content-Type: application/pgp-signature; name="signature.asc"
+> +#define AD7124_CFG_SLOT_UNASSIGNED	~0U
 
------BEGIN PGP SIGNATURE-----
+Perhaps one of Uxx_MAX should be used instead?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj/YmgACgkQJNaLcl1U
-h9B5dAf/cu/765SnwjfbjyK4dMHR/rt+cksNZQ9fRPOg08y6Xlu3+MASYltjYY7J
-yuZesa4qBrBafg4I9uRwOuEKJYY8AqDsCLQRZDAnEtCNeuxwgMG7dKumgzfFL/zJ
-kPXRf+2b70A4hFCgfFzXH4Y9yfEARoTlD4saNAKu9PIv+AzEhcBZly5clyS0sKDZ
-D/3c5woMxUiBGFJn3wWrWidDWMJ0D4gfxE5A2NBJ/LFLjqU8oWBd/+zKk4JOLmGA
-lJYxz9LP1Qvl5wVZNX+xodzZ5fkWkgDoZJwik64DSaZq7X3AEKw2LzpmDPouSD0k
-e9TQpuiElAnRZoU+EqqQ9A9QBRTceQ==
-=IHgl
------END PGP SIGNATURE-----
+-- 
+With Best Regards,
+Andy Shevchenko
 
---RalfM7p0fJtqcro2--
+
 
