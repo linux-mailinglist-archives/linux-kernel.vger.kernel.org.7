@@ -1,166 +1,223 @@
-Return-Path: <linux-kernel+bounces-872005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0091EC0F09F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:49:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886F5C0F19E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:57:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9BA219C3E05
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F24403DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835132D8DCA;
-	Mon, 27 Oct 2025 15:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA543164B8;
+	Mon, 27 Oct 2025 15:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fx+jkrkg"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bmKNVYYq"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374A82D595B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE354314D11
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579907; cv=none; b=dBXGejYcF2crYVebE3n4FcRFw7/97WFq8/BjBHThnPxyn3iQ0aJzzS7ScFybD+xBBcWIRAE4xTyT1sZpI+6u38dvWxuCelR1bJjsqWtIJSdomlf3zsa09EDpxuLURGnkjs5qiwCeh2kkO2/MIANULXNBxjFdTuE/E+MAC2YPhTg=
+	t=1761579915; cv=none; b=YSm6E4wInF798sK2evEWPWAKFDaH3OU2ctahDwZirAQaWGZD77FWXvARjXioWfVSF+FN3x62dVLETMCZwudzyZjkMZsSvHU4/cCW/CO0l/3THWcVINiKNIMizRyjB+4AnB9sMZDP0BGhhb3s33T1HIjbelprG6nGJ6mIQfiOIF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579907; c=relaxed/simple;
-	bh=qgXmkNhAhY6WchRH7Q4rsd2FBpG4g/uYCUhhcPv5dAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QGqtlxYoMtG2TgDF6MhusYZ4hO1hUkLckeOEuZs+U2QaG1hZn7HFyIx/IUcc8x6oJ5NhL1F5JtrvwIoqm5VnTHolSociYbjUTIXjW9hXbqgDHwR1vq3FfEwyQo2rwqUFT6HX3E1w3X371DWztBR6nymuEPv9ANvulV5jDDKl3w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fx+jkrkg; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-784807fa38dso54986597b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:04 -0700 (PDT)
+	s=arc-20240116; t=1761579915; c=relaxed/simple;
+	bh=vqAQ6/vT/bVKVkAXMLO9ry32/KCXXrRCURyvHpvIC8g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QnMePLmuiH8xPESQxK1K1hZlINucU26mwcAaHOgKTcx9UIgDLu9Q02LYJumVLtv+IUm2r64/nzsv9pWXEPZj6JX+yXFgPa8Cjj8sHU78nOOWO2DvumziQFlu1Rm6ZcoKwYWHX8UiqqVe3sLdpNCN04xPc4L41ulfbT8sSghXN4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bmKNVYYq; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4711810948aso35215735e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761579904; x=1762184704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jBQiLZSwF/LNIt8C2mTIJJ7RPYKplhz+h76J6R2gIAY=;
-        b=fx+jkrkgeH9QSQjTxN9T8lY8s1AyubSw5U6+FW9C5DI02357iT2bwN85Nx0m7ErYxB
-         woBbapX4kDWldVuyI794AJtr5oLwbSxkxiRtLMZ3zk2WeTYJIwpsTgJ8so5h5/rLW3nf
-         G9dW8W/DymEzYPrTjRQJbnp57EkLeTyZMe5m/w82XAbbwQX7I35LSAXArgGeqOYkXMLy
-         5aJ194iyRkKx4benygsi/L4sJvpSGSwqLtLLjj4rOma43mgaA471nMI1hjrEySCGuAPT
-         zc1rHcxl2zfD1OIGdc4iitzFsP9o6aTXI+e6SdSIPjDhABTsM0mzyq4lvSLviKR9MZxG
-         BsBQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761579911; x=1762184711; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gbnM+7JUoQu99psJVRjfGTzLa9V8XPsbrju+vMCFuVM=;
+        b=bmKNVYYqXkj6qVSCHMSmKyUZfaEqZS65CQJ7SgjTmJkaixG7Gfz8Sn2cSxP6JDu991
+         VA6EwdEN06gbS+DQcm+Hku9Dt2GM4p9qanMcqEpREFLC3pcV9YWy1sPy9yGBXiqxWv16
+         FdAnvt/pD+3o/2B0bsrtaP2bWS4e/2hNRvgTQ+g3WIwFF9UJs7a161HgUvXNi7sYsqMv
+         CxU0XQRXeFB18jEhIFYiLKZjs8XsCGwxvm8Laj62hNuTv/kGofw5HYhmBsAElW8dz7uC
+         kOX20ekywTvFRsbHCGu/mX2i8nZ89uKo/uZstTDDESE7hUP9nXyoW/0M5VpYZfCbCJv7
+         nouw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761579904; x=1762184704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761579911; x=1762184711;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jBQiLZSwF/LNIt8C2mTIJJ7RPYKplhz+h76J6R2gIAY=;
-        b=B+FPENH4sWU33zJx7rfqDl3o/euc44waHz8pWC88QoxuJyd+G5KEym6yYgglv5Bz0U
-         FPJwl5Qo6SCU1tUrLEf2Snhi6RoZeGrH3dk/a1m3OBB3JXTwfVhlixUh+ewugUpPaIVY
-         2RM6z+4tMxZpyGkpxz+cgdUMICS78a9S5oj80ppwVEWfgY8lYMVt1qQMDTOaaFA3qKnK
-         jSV8uHe3Dg+/bsiHjgd1iHihMjHC/YDzyipih+Qf6ABYfICA/+5Na86rHm9AOi28JBfW
-         Q/umPnLWCCy6NDLX9I51SjCdQlHXAQIEQqkVL0f70BoPcw0jebQ31EmwFEJR37upOFZT
-         5o0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWQLkttlQRrX+dxJ8eauBI6sOfZNlaXfBHyQ/XGX2+yDYrf74yD5PpwokmxmhGBV7J+YdXux8YUt+lgR90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX1BgTFaRNepGA9jZk5Sa2Kqn7t/g4mLG7/Dmf4FHoycWLKd4v
-	8JYAjn+c8iIuXfFLUNnhqXfk0gZumkcyG9Pv1pL1Z/zSzKFxwDaj9VRamHSjDCkK9WHjIHI8VxV
-	c87Z0lUc1qXzm5BmpSydLPimaCr7wo38=
-X-Gm-Gg: ASbGncskQnJUzxhjjHmUhpgPxwiguOjEY93TzQiqIFk3FzUN7Yd2VYKxBWbQNYevwYB
-	29tGrT2XXXT0vSJ3Ojlz5ny0ujzqEYUcjW+LvMfbypujmDfgEZEN8S6M9ur4lDN/aKC9pETSwm8
-	gPTvQvfNhwRBXPCm4q08IQgeDm8DbwJ0bu5PwW9UlPK3NVaI3FaAHgsppGNnenIDUX84+x/ACtD
-	edSQCqf8tJ3fQQbA0fSrgYYreUHQJ9mQx+1DoABiG7ujouHoSPVy/oMHd4K2jJuqstIS0M=
-X-Google-Smtp-Source: AGHT+IExotPP9DeycZFzjGUJtTiClWmPd9kW9XEQYVHSF3lBLy99xgpcnLYzoQeFuBkOlvR/aO1x4UpiEz1jnJW67ac=
-X-Received: by 2002:a05:690c:4d06:b0:76c:1926:8029 with SMTP id
- 00721157ae682-78617f70da2mr2804767b3.54.1761579903991; Mon, 27 Oct 2025
- 08:45:03 -0700 (PDT)
+        bh=gbnM+7JUoQu99psJVRjfGTzLa9V8XPsbrju+vMCFuVM=;
+        b=CmzayCt67X3sVxglx82aHZHZ0ZJqyOvHziQybgPphUWhOW6RY4GYdNeKDBvdIMv/Rf
+         vnc/CjuuMbLq2wGqHsPNkCRp7vCgMsy0StL1omRIPDRL9bDkUJSYg/TlLuRYjq1O7OTm
+         BOHdn2fBwx0BLE7XUCkuiSy9nqvVvCUXtLetJ2m25toBC0eGmrJZh0qHMT1dPWyvL2I6
+         /9+osfxkeGhWxwf9aAOrZwgBmgO5jWrD1TDO8TbIGgD/o32mBhcj/Q/6VrCEBQFm46PP
+         RbMZENc2UFdwDXfLJVKDNhFPtzao5RXAx7IzBfHe0E7zhFxA0TZPHLm5QCONe39dhe1D
+         c5Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDSRO7XH+a+Wkajppg5XbiYKqOznTi+7KNJ9nOSKixEpPutqctBpULiRTRv92CEXlOlanyfvkyFjUMhWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye3YMAOpA7ziTr2RATXVBmirqb/goJWeSLXu1uBdn86alnAwEe
+	AtfyZAcn76IKcVOebNWAwZxhC5HbyWR0y8kSWnFnthOEdu8yXSb/0AjnoJW3qGMUetI=
+X-Gm-Gg: ASbGncuY6Tl0hXCvMQvi6xR5GeF4K9cD0wE0mEKWU7CbTYoAe1r3KO7d+jLTy4vHrHP
+	MgUj45eCgVe0TkReHtM1/KIziX7Ir+gnOlDDewsCW7a0ltr4u59megBMA+Kriqt9CHFZ1fn4Jcn
+	B2H26Qnv9fytdv+Esre9COQu638YqAsiCvQiYZaYqggtVwScoVXEtpQtgjiWM+tbx0SeKqOB21t
+	bO05QfCzeC7gnJSIOBSJiFB5HbD1B8cPGpiJHzStQgypVeczXkTsFQ7N70w01aOxmDjMNhwL/to
+	ZZ1H4lBbc1yI0PSANS/oBu0z0D5+MEWRFVBiBrkDIHwiUR60mJAvLhbQWi1SEAf3fqX/5bN6XGd
+	JZgUE7aL4D8kkfbVAhxrsFRgU2Zmw4FSy6ASxdywJcplpDs30CwQuYsA3SgUTPunYLwN3zT5Aig
+	6NUJapiQ==
+X-Google-Smtp-Source: AGHT+IGvMG3wu3r+IbbZg/5/7mILxDWAzW1LalNld5Mwz0HOjM2EkN8wK4I3r8TzG4x6hIzWvNeibA==
+X-Received: by 2002:a05:600c:3154:b0:46e:39e1:fc3c with SMTP id 5b1f17b1804b1-47717def755mr1118575e9.5.1761579910577;
+        Mon, 27 Oct 2025 08:45:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1c6:7dde:fe94:6881])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd477d0esm138708045e9.0.2025.10.27.08.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 08:45:09 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 27 Oct 2025 16:44:53 +0100
+Subject: [PATCH v3 5/8] net: stmmac: qcom-ethqos: split power management
+ fields into a separate structure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026154000.34151-1-leon.hwang@linux.dev> <20251026154000.34151-4-leon.hwang@linux.dev>
-In-Reply-To: <20251026154000.34151-4-leon.hwang@linux.dev>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Mon, 27 Oct 2025 08:44:53 -0700
-X-Gm-Features: AWmQ_blhWwrOs7XJgSMOEnYRZPoMEn0YxuvdEaBupfg1qMVmRp8bsrdLudOgbSQ
-Message-ID: <CAMB2axPhcYctJYz0bH032-Kc1h2LcJL74O5iS5g=8Qp74GPK_g@mail.gmail.com>
-Subject: Re: [PATCH bpf v3 3/4] bpf: Free special fields when update local
- storage maps
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, eddyz87@gmail.com, 
-	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	memxor@gmail.com, linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251027-qcom-sa8255p-emac-v3-5-75767b9230ab@linaro.org>
+References: <20251027-qcom-sa8255p-emac-v3-0-75767b9230ab@linaro.org>
+In-Reply-To: <20251027-qcom-sa8255p-emac-v3-0-75767b9230ab@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Jose Abreu <joabreu@synopsys.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3440;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=EQbFLUJhBusR5R/WLS2zY6u2a3Qrdavc6CuZtxM8a7Y=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo/5N732qdepXwjTMMy3gsuitEVbWcrcVZjQoR7
+ Zsfgri/RgSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaP+TewAKCRARpy6gFHHX
+ ckPzD/4iZm89XdVS11zAr9khaNEvnEltpu59g4ozId5XbAMVxDZglviYveiLmqycpJ4ruDOay49
+ QW1IHD1qaIiGbhzj398upRiUvk9h/6XjjVtjFG8h/iRWzkg/sduilnVGPPUsHDqZq5Fehm2XRNJ
+ +HgergEpmyi871x5T4LIKxW13HzuAECg2FMLBAoNR8hRvM34p/DC5+pdOQeQJj+kJxWrzbeF5Sl
+ Qt38NSuIlBYV0vWL9ALsuipnZIMVDXp3eGMjhoAeoFjJJckDGV45yqFswWYUQ9B7C2D4wpCfhGY
+ ZIpFGiDQiXFw5LPO+6HxTzXEdPf83Yz9SUwNkld9kCx4+rBCbiTdkTapduBAlehxo0VtIC/DYKl
+ WLlXvRpr8IFaKzRidwPY8RLhWPhdZUZtLWno2DWzcbtRDbN8KWVAInmJPv6Hx9EsBjKwUXD0Ts3
+ 3moUpB+I6nWUjWebMCedX0U/T7KpoehAJyeHSjDOAOSs9vs94pLqQvObv1iUJUpLgks+Vg9y4lB
+ GrTebcmkkjB0L7yJEpEsHAJrPI0EKTTWnzowh8DbHTP5+THcTfcEeAEpzM/7OTM8UV+AOeCUfcs
+ shy3tH23ZNwVhY/ycIRVx2l7pLj0uuZLC3EbnnRGUcC+eDoXhViB0YFdmI0b/x1IJ/j7JJivvAm
+ wxZsoJrM/fwHA3g==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Sun, Oct 26, 2025 at 8:41=E2=80=AFAM Leon Hwang <leon.hwang@linux.dev> w=
-rote:
->
-> When updating local storage maps with BPF_F_LOCK on the fast path, the
-> special fields were not freed after being replaced. This could cause
-> memory referenced by BPF_KPTR_{REF,PERCPU} fields to be held until the
-> map gets freed.
->
-> Similarly, on the other path, the old sdata's special fields were never
-> freed regardless of whether BPF_F_LOCK was used, causing the same issue.
->
-> Fix this by calling 'bpf_obj_free_fields()' after
-> 'copy_map_value_locked()' to properly release the old fields.
->
-> Fixes: 9db44fdd8105 ("bpf: Support kptrs in local storage maps")
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> ---
->  kernel/bpf/bpf_local_storage.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storag=
-e.c
-> index b931fbceb54da..8e3aea4e07c50 100644
-> --- a/kernel/bpf/bpf_local_storage.c
-> +++ b/kernel/bpf/bpf_local_storage.c
-> @@ -609,6 +609,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
-l_storage_map *smap,
->                 if (old_sdata && selem_linked_to_storage_lockless(SELEM(o=
-ld_sdata))) {
->                         copy_map_value_locked(&smap->map, old_sdata->data=
-,
->                                               value, false);
-> +                       bpf_obj_free_fields(smap->map.record, old_sdata->=
-data);
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-[ ... ]
+Now that we have a separate wrapper for device match data, let's extend
+this structure with a pointer to the structure containing fields related
+to power-management only. This is done because a device may have the
+same device settings but different power management mode (e.g.: firmware
+vs manual).
 
->                         return old_sdata;
->                 }
->         }
-> @@ -641,6 +642,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
-l_storage_map *smap,
->         if (old_sdata && (map_flags & BPF_F_LOCK)) {
->                 copy_map_value_locked(&smap->map, old_sdata->data, value,
->                                       false);
-> +               bpf_obj_free_fields(smap->map.record, old_sdata->data);
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ .../net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c   | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-The one above and this make sense. Thanks for fixing it.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 2739bc00e7525a5913bd3a5d28d9c9a8871fb7cf..7ed07142f67c931cb2c2c0e8806f5a7fbd68945d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -95,14 +95,18 @@ struct ethqos_emac_driver_data {
+ 	unsigned int num_por;
+ 	bool rgmii_config_loopback_en;
+ 	bool has_emac_ge_3;
+-	const char *link_clk_name;
+ 	u32 dma_addr_width;
+ 	struct dwmac4_addrs dwmac4_addrs;
+ 	bool needs_sgmii_loopback;
+ };
+ 
++struct ethqos_emac_pm_data {
++	const char *link_clk_name;
++};
++
+ struct ethqos_emac_match_data {
+ 	const struct ethqos_emac_driver_data *drv_data;
++	const struct ethqos_emac_pm_data *pm_data;
+ };
+ 
+ struct qcom_ethqos {
+@@ -296,7 +300,6 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
+ 	.num_por = ARRAY_SIZE(emac_v4_0_0_por),
+ 	.rgmii_config_loopback_en = false,
+ 	.has_emac_ge_3 = true,
+-	.link_clk_name = "phyaux",
+ 	.needs_sgmii_loopback = true,
+ 	.dma_addr_width = 36,
+ 	.dwmac4_addrs = {
+@@ -317,8 +320,13 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
+ 	},
+ };
+ 
++static const struct ethqos_emac_pm_data emac_sa8775p_pm_data = {
++	.link_clk_name = "phyaux",
++};
++
+ static const struct ethqos_emac_match_data emac_sa8775p_data = {
+ 	.drv_data = &emac_v4_0_0_data,
++	.pm_data = &emac_sa8775p_pm_data,
+ };
+ 
+ static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
+@@ -785,11 +793,13 @@ static void ethqos_ptp_clk_freq_config(struct stmmac_priv *priv)
+ static int qcom_ethqos_probe(struct platform_device *pdev)
+ {
+ 	const struct ethqos_emac_driver_data *drv_data;
++	const struct ethqos_emac_pm_data *pm_data;
+ 	const struct ethqos_emac_match_data *data;
+ 	struct plat_stmmacenet_data *plat_dat;
+ 	struct stmmac_resources stmmac_res;
+ 	struct device *dev = &pdev->dev;
+ 	struct qcom_ethqos *ethqos;
++	const char *clk_name;
+ 	int ret, i;
+ 
+ 	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+@@ -837,6 +847,9 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+ 
+ 	data = device_get_match_data(dev);
+ 	drv_data = data->drv_data;
++	pm_data = data->pm_data;
++	clk_name = pm_data && pm_data->link_clk_name ?
++				pm_data->link_clk_name : "rgmii";
+ 
+ 	ethqos->por = drv_data->por;
+ 	ethqos->num_por = drv_data->num_por;
+@@ -844,7 +857,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+ 	ethqos->has_emac_ge_3 = drv_data->has_emac_ge_3;
+ 	ethqos->needs_sgmii_loopback = drv_data->needs_sgmii_loopback;
+ 
+-	ethqos->link_clk = devm_clk_get(dev, drv_data->link_clk_name ?: "rgmii");
++	ethqos->link_clk = devm_clk_get(dev, clk_name);
+ 	if (IS_ERR(ethqos->link_clk))
+ 		return dev_err_probe(dev, PTR_ERR(ethqos->link_clk),
+ 				     "Failed to get link_clk\n");
 
->                 selem =3D SELEM(old_sdata);
->                 goto unlock;
->         }
-> @@ -654,6 +656,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
-l_storage_map *smap,
->
->         /* Third, remove old selem, SELEM(old_sdata) */
->         if (old_sdata) {
-> +               bpf_obj_free_fields(smap->map.record, old_sdata->data);
+-- 
+2.48.1
 
-Is this really needed? bpf_selem_free_list() later should free special
-fields in this selem.
-
-
->                 bpf_selem_unlink_map(SELEM(old_sdata));
->                 bpf_selem_unlink_storage_nolock(local_storage, SELEM(old_=
-sdata),
->                                                 true, &old_selem_free_lis=
-t);
-> --
-> 2.51.0
->
->
 
