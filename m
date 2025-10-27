@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-871189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95068C0C8EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:10:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD23C0C974
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9E0734BEAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:10:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A88B189998B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD21E2F3C12;
-	Mon, 27 Oct 2025 09:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA93F2F25F4;
+	Mon, 27 Oct 2025 09:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O4EipB+W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ccTXQRot";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="glWsukJw";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ccTXQRot";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="glWsukJw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31B02F39B5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C87A2E3AF2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556118; cv=none; b=cNrNQBjSyntZTFWjwmh0l5lu/90804iMcQyF8I9ykC9Kgo4WE0kbCC73fPBYnDtNnWi0c0xGDo9FZCyfFluxqbAOJ8kwBN4JmbI+vkwIHWya6q4fRsRXjPnPXGLp5+M66VrxyxS2F4J7GBnBpSVfeRqEd0+uz45Z3EPYM3Gx0k4=
+	t=1761556109; cv=none; b=JWHRb/lRX53hThBkHF5t46GnkwZL4SlffYhw9N5dGqMYrVwFUGyM0xOnjF1J5b6DKF5V0gjQJr1a1YlwkBNINARkToQLTV70PUlA0T5St9ZTBkIJ7j6OldExx5odJ+uB8Pah6LhKevhahprf1OBcMvh9lGLbIik3a78cPadOP/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556118; c=relaxed/simple;
-	bh=KMLUCx37oodkWW/ecGieGDWDnscNn3RkvSQo3ZEJYSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kX2AV9jcfmgfXsaKdHEDohzMDX2DKm9wAPeHHdM68rR3MpqqrTdZb+d25sXLwXke+kquxRKkk+XiXjFL5iEfB2IsFKuHKA4egGSZCJg4xpPqzhGDQeqNTvkQT60iYpb/ylAv5aLWDJzlHTbZWcca/HSZJPMldEmjhLWluOJKAg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O4EipB+W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761556115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BTIAdX/dwL5w1YKSS37dOxKFZ3s8yXzfHwYPH8iK7Nk=;
-	b=O4EipB+WkCYO2p6RFvr2JH5SvCAPxXgiNqa2uvsRz77cTLGgs6LqX7xpYUMwSsVFNCfjRR
-	JLXuReu0Q7+3fi3iGxi1XlFSRL3cuelvFIgUu0oJ3QrunIO3USMQRg6wx92cgRk5U0JfFt
-	KTFp71KQDlpGhIQOb5GZcPbjZAkHZns=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-JhhY5nsMP_-U--IKn9Wj1w-1; Mon,
- 27 Oct 2025 05:08:29 -0400
-X-MC-Unique: JhhY5nsMP_-U--IKn9Wj1w-1
-X-Mimecast-MFC-AGG-ID: JhhY5nsMP_-U--IKn9Wj1w_1761556108
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1761556109; c=relaxed/simple;
+	bh=L1bFiyMc0yMNUn7YfXsVdvNaa76ss5DHKKPYcqoZLvU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MNCqiTRXe3d7d/6Jf06td33r/MhzVv9w4UzkyixpCj+Tby4jSbahGTh91GxDna2MxAyPtASVwbDnoOkXmI478KjHpoajFSNMwr5/eRXolFMxYmXB1fkjwRtCUvVy1bvZ7sCqf3i2VeR0o5e6xMqZlTkzZKZxevZbyU830PZn8ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ccTXQRot; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=glWsukJw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ccTXQRot; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=glWsukJw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 308BF180035A;
-	Mon, 27 Oct 2025 09:08:28 +0000 (UTC)
-Received: from [10.45.225.43] (unknown [10.45.225.43])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 94A9D19560AD;
-	Mon, 27 Oct 2025 09:08:24 +0000 (UTC)
-Message-ID: <b479b307-b590-467f-83df-837259a64b6c@redhat.com>
-Date: Mon, 27 Oct 2025 10:08:22 +0100
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9D1292115B;
+	Mon, 27 Oct 2025 09:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761556105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EzkgZOlW5Ew7TsM2l/uMKjTEqtL4QdDKfQ93Hy/a1cc=;
+	b=ccTXQRotqycIFjThC/E1w5IbzQ2Q4GY6WpqmO1Zktc7T96T3hwCYgs0gcx/pENSZ6O4k9b
+	/bL3tCd0auVnmzcO3+/NC69v5ZhFgwlc4Le9nrJBamqop9U1ZN2okHUEkMchoQh3N+QTFs
+	Dy3puiWtSd/ZqevKa+3nhL6N2S8uh/g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761556105;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EzkgZOlW5Ew7TsM2l/uMKjTEqtL4QdDKfQ93Hy/a1cc=;
+	b=glWsukJw2lWPdHOrLmACZ9vU1xmvcjXlOvVVqk1ie4+dXYne4/xSOJ2sTRFJ01zU4rULAS
+	KiYtqxlWGym2w+AQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761556105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EzkgZOlW5Ew7TsM2l/uMKjTEqtL4QdDKfQ93Hy/a1cc=;
+	b=ccTXQRotqycIFjThC/E1w5IbzQ2Q4GY6WpqmO1Zktc7T96T3hwCYgs0gcx/pENSZ6O4k9b
+	/bL3tCd0auVnmzcO3+/NC69v5ZhFgwlc4Le9nrJBamqop9U1ZN2okHUEkMchoQh3N+QTFs
+	Dy3puiWtSd/ZqevKa+3nhL6N2S8uh/g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761556105;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EzkgZOlW5Ew7TsM2l/uMKjTEqtL4QdDKfQ93Hy/a1cc=;
+	b=glWsukJw2lWPdHOrLmACZ9vU1xmvcjXlOvVVqk1ie4+dXYne4/xSOJ2sTRFJ01zU4rULAS
+	KiYtqxlWGym2w+AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62ECA136CF;
+	Mon, 27 Oct 2025 09:08:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MZffFok2/2ieRwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 27 Oct 2025 09:08:25 +0000
+Date: Mon, 27 Oct 2025 10:08:25 +0100
+Message-ID: <87h5vk3e5y.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: tanze <tanze@kylinos.cn>
+Cc: phasta@mailbox.org,
+	perex@perex.cz,
+	phasta@kernel.org,
+	tiwai@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: maestro3: using vmalloc_array() to handle the code
+In-Reply-To: <20251024105549.210654-1-tanze@kylinos.cn>
+References: <20251024105549.210654-1-tanze@kylinos.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] tools: ynl: fix string attribute length to include
- null terminator
-To: Petr Oros <poros@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
- =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>,
- "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: mschmidt@redhat.com
-References: <20251024132438.351290-1-poros@redhat.com>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20251024132438.351290-1-poros@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
+
+On Fri, 24 Oct 2025 12:55:49 +0200,
+tanze wrote:
+> 
+> Change array_size() to vmalloc_array(), due to vmalloc_array()
+> being optimized better, using fewer instructions, and handles
+> overflow more concisely.
+> 
+> Signed-off-by: tanze <tanze@kylinos.cn>
+> ---
+> Hi, Philipp Stanner,
+> 
+> Thank you for your suggestions.
+> I have made revisions according to your requirements.
+> 
+> Regarding the issue of my full name, thank you for your 
+> attention to detail. Since I am in China, I use the name 
+> "tanze" on many occasions, and the code I previously submitted 
+> to the upstream community was also under this name.
+> ---
+> Changes in v2:
+>  - Fix some issues in the commit message.
+> 
+> v1:
+>  - patch: https://lore.kernel.org/all/20251022092339.551438-1-tanze@kylinos.cn/
+> 
+> Best regards,
+> Ze Tan 
+
+Applied now to for-next branch.
+
+A name spelling like "tanze" seems seen often for Chinese names, so I
+don't think it's a problem (although it appears somehow strange for
+western countries).
 
 
+thanks,
 
-On 10/24/25 3:24 PM, Petr Oros wrote:
-> The ynl_attr_put_str() function was not including the null terminator
-> in the attribute length calculation. This caused kernel to reject
-> CTRL_CMD_GETFAMILY requests with EINVAL:
-> "Attribute failed policy validation".
-> 
-> For a 4-character family name like "dpll":
-> - Sent: nla_len=8 (4 byte header + 4 byte string without null)
-> - Expected: nla_len=9 (4 byte header + 5 byte string with null)
-> 
-> The bug was introduced in commit 15d2540e0d62 ("tools: ynl: check for
-> overflow of constructed messages") when refactoring from stpcpy() to
-> strlen(). The original code correctly included the null terminator:
-> 
->    end = stpcpy(ynl_attr_data(attr), str);
->    attr->nla_len = NLA_HDRLEN + NLA_ALIGN(end -
->                                  (char *)ynl_attr_data(attr));
-> 
-> Since stpcpy() returns a pointer past the null terminator, the length
-> included it. The refactored version using strlen() omitted the +1.
-> 
-> The fix also removes NLA_ALIGN() from nla_len calculation, since
-> nla_len should contain actual attribute length, not aligned length.
-> Alignment is only for calculating next attribute position. This makes
-> the code consistent with ynl_attr_put().
-> 
-> CTRL_ATTR_FAMILY_NAME uses NLA_NUL_STRING policy which requires
-> null terminator. Kernel validates with memchr() and rejects if not
-> found.
-> 
-> Fixes: 15d2540e0d62 ("tools: ynl: check for overflow of constructed messages")
-> Signed-off-by: Petr Oros <poros@redhat.com>
-
-Reviewed-by: Ivan Vecera <ivecera@redhat.com>
-
+Takashi
 
