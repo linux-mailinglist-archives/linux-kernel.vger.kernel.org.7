@@ -1,229 +1,248 @@
-Return-Path: <linux-kernel+bounces-871365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1FCC0D0AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8B2C0D0B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 636704F06B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:04:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D5214EA978
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24AD2F8BDC;
-	Mon, 27 Oct 2025 11:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477012F99AE;
+	Mon, 27 Oct 2025 11:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="A7blTARr"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BcW4d8eh"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4DC2DE6F5;
-	Mon, 27 Oct 2025 11:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761563069; cv=fail; b=GDMy3pZULfBuvuxdQB1CNzkTrwWPrevsO7Yjv7fXbf42xwWSfTaTnsMXwWkxH5lhOTbe3v865CUe07/XVgxk/mnLqHm5zj/ugCGOZ4koy1kqtZTFnwlZPYK0cIck4EaX84zB/osWWW+PAIZt82x3bZcMF/znPax9EYeBXFevNYk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761563069; c=relaxed/simple;
-	bh=KEPsNHEVaSrAMFLHjvzSwBfgE8fwxgDdRheRaKvFoJk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=IsnKnHscLx8Eg9CiU8umpN50mtPuGzqzyysENTrmkPzkqQY3CKTSr13vq8u80a5mOj1Opkb8cq9lCzO1fR0daEtkAcUfuEpAw0BYY6m/lGoLFf0jmFNSvtEBQebUTG8qZTcKbtJ0ClqRl/xdzoVrWiiaepDQ2OKO4chGk52HLk0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=A7blTARr; arc=fail smtp.client-ip=52.101.72.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oWrzEr7YYoicMzd6Xf2cnt3m2OtLDWedHlS4Q4WO0hutSpN5+vwRqiw3q1S0psj7DE22qke2rVZJrnr4zrwlhN2X6AdXtgJvPxuPLjVfvghmXOj1SV5oMOYlDIzEBMb6tMdszTJtoccg7971qgZCHXqaSggc+c3SXizgmmVAQsSSbO3aVBjVQqMT6y+IeAiKSfG3ysb7UWNDCbVtJWXGO5oMLnZ40jzWKQJIR8YQhWI91g8ina4F1U0caKPpynEPqrZUkf22ZasYSiRyIMBtMJFjzHbhH8y7wGVVOHv11YXMDD32pOO32DA378dO93a9VydMpuvsxYurQ7APfsc7dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FY8KTf/SKIloNouMH5CvNEIHgJ6dIEi51RFyjpJNQss=;
- b=Fy6PdfprlnFKnV+XnTUwGql1A4VOHOAVMkpbWtI/jI0clPsNpmke8Tr4FcIDALiFaYMf4Rtd55bvWkBS12zVvx1+VtEINudtA6RWeb2eL59q2qV0hb6RJ95pi8DCd+Q6d65CDwjmUuu0anAjQgQTAGThXKwQWOcgV+4E6VXh/AnSvD/29+A0wUK6WEFXWWODUgWscTsC8YLaOKZ4Ac7urHKttHD7fey+JFYbZFqdEvDHIrHkaN2R3UAboOjgT/oMwHqcS4P+FgrhlWEcnhSU2119DdC2xyuALZxnKOQQVa3Z731ruciqvdc7Bs76xxn/QSY4OwPmpwfftz+u8qJq7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FY8KTf/SKIloNouMH5CvNEIHgJ6dIEi51RFyjpJNQss=;
- b=A7blTARrPqJTAUcQSCFY8vLi8in/VulY/fuyDKHyQoTQREhGeKFex3BUb8+KMc7iVwIgugXctvlAPflmkPC/zS/gl+hJWL4MlKCFOHHGjG41z6MZYS/R+BBEM00BLOJIktNk7KY0p+obXt+nVqbOCq6YwPOHBW7keulJ5JNuIEC1HpIzMzm+/oBqGuSuYDASV04eX2GevH1nhY37m9OkGGhuE2sPM3mV4FOJshNJKMc0agBnV7osGPje3BP/xhqKc1Rj6PajL+BWYDTAyq9xWQNm1eSfjf7e56LHN6NjNwQ1HzjXnET0UN1iyKXFPZ/WsX4/6l7HiJeRq/HOStgFFQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
- (2603:10a6:800:293::14) by VI0PR04MB11955.eurprd04.prod.outlook.com
- (2603:10a6:800:31f::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.16; Mon, 27 Oct
- 2025 11:04:24 +0000
-Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
- ([fe80::75ad:fac7:cfe7:b687]) by VI2PR04MB11147.eurprd04.prod.outlook.com
- ([fe80::75ad:fac7:cfe7:b687%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 11:04:24 +0000
-From: carlos.song@nxp.com
-To: frank.li@nxp.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438252DE6F5;
+	Mon, 27 Oct 2025 11:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761563137; cv=none; b=CLixQ3BP8QaeATLCvKst9KA9MS+KZzvTWxhskKC+04UbOs2oWhwNI453rFnLA7jCF/wxRiWY0FUnqCtmr+cRskD4xozfqh32GfmSjPOCCumdYA+neWS+WtomPMNgIlxW68poa/VD3imKg1m2J3vC8EDCh2pRPZkqk8ZFcjIf1lE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761563137; c=relaxed/simple;
+	bh=IWto035l40+fJaTY2m3Tpy98wIXGiNE2cvLuilb0WyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aNcxYfmxUQIdG+Sy4XfkDBO5DH2qDOLOqeNVTEkry64WQ6rYE9P0BlKUrj+2HvJhxeg4xQY1NN11uLiSZWOQ+Wk49SpgSZfKhYT/0Ef2uJ8br5XerUIOk9AjF2xwPitX7IDvXKBzJ5QXjxXZP9tGH2IpsXZlJ6ts1dHpJ+I50S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BcW4d8eh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761563133;
+	bh=IWto035l40+fJaTY2m3Tpy98wIXGiNE2cvLuilb0WyM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BcW4d8ehuXlhmjGDAvjhvlFbZkhIpJQLjnkf7/l2mRMdAbtFeAdAd+OHhsazYBu+J
+	 Kvq3cU8wxpcoh+3NZh6jMgyzSiST8ZxYglJJWAHsBqqjO4LNaKs+tmeXw23WYlGbSO
+	 fJB2hhfOZGAi759dpa+n7EfclPLuZoUhLxB9EmqUHHOyC7cEbx3jTbeKE7+fE/6Y/a
+	 BM3mVX7TTW4lbiARpqXtI/AlnkAgH7qdLJjkQyRfB2Ay+BLbl5r0LP46x1e9sYbd6+
+	 bYcBSXFplpEEWrJqZmOMqlW6IvR9Tqt2wxCg9td2um9HRPBJJgBb3coMJSxgMPFO9z
+	 lB+aR5u6h6kOQ==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B167E17E1276;
+	Mon, 27 Oct 2025 12:05:32 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	lgirdwood@gmail.com,
 	broonie@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-spi@vger.kernel.org,
-	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] spi: imx: keep dma request disabled before dma transfer setup
-Date: Mon, 27 Oct 2025 19:04:06 +0800
-Message-Id: <20251027110406.543370-1-carlos.song@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P189CA0013.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d7::16) To VI2PR04MB11147.eurprd04.prod.outlook.com
- (2603:10a6:800:293::14)
+	kernel@collabora.com,
+	wenst@chromium.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: [PATCH v11 0/9] Add support MT6316/6363/MT6373 PMICs regulators and MFD
+Date: Mon, 27 Oct 2025 12:05:18 +0100
+Message-ID: <20251027110527.21002-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI2PR04MB11147:EE_|VI0PR04MB11955:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f799f68-01f8-4626-ec4c-08de154896a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?THqGuEx/pfCqE8nzEv0vIOUq1m1V9BbIIiWWxIoEDRJJdIVgT2l9E1aEQdZK?=
- =?us-ascii?Q?b30T5RLqgf/5oY5k4phx9SliccY4m4UrqY9z/W8KVR35A/mKw7JG3vQznrBa?=
- =?us-ascii?Q?xNqeJStkmam2s11cX/fS/iPs20yydJwWm7XCrtWwzj1JycIypbanXNKmQDXw?=
- =?us-ascii?Q?u8ca/awu3G5prBVdLgH3bzqo1O7UzpqhYp9K0B+TZUgdhPiHIwSq3aNf4NMy?=
- =?us-ascii?Q?3XjaeidxSQ7hOTlaVpOLLJ3QGvpI26aYl6SIV504a77k1nFiVHCl89oL6EEE?=
- =?us-ascii?Q?9O/fFKnmQeTmZtQ/rrvcQo+x7CeqhOCDAdQGi1Smzl3wzSl5WAdQT00IEwrY?=
- =?us-ascii?Q?DiC/oGn4tXNFCaaf1u1wAdfcbVu+je5coHpc4ZezQDzJp4NqIU/B3bvweb/l?=
- =?us-ascii?Q?e2Hb9KyRTkEK7x04Yk8OrERMu+ov8qC6nB52pFOEg2JfiAoViwhfc/TzxSPc?=
- =?us-ascii?Q?Tgj0qdRAtBuGi1Tm57qOwDG/jNJQyidOASgomAah9mhf/gRwmFMx8E448cKz?=
- =?us-ascii?Q?vs+AHI4agMMuaiv4C6isMKnkqbnKd9UmHilLyS0gVWE6CyuYGD4wd3Iwy+O/?=
- =?us-ascii?Q?OdqkXGAKlzK1BvUNfe8FJe13ZVtKtqZMVcvSurfdnaOVikLVrcpjR+HV9CrF?=
- =?us-ascii?Q?pdNnGIiVUjNrNsqQNiwdpcorMSolcCNiAbsVf5Q25Oql7LO+QxSnMgVH9s/y?=
- =?us-ascii?Q?eiW14QfLydVcrevvIMO3ytiYaFVFbwu+fZ6JrNOvthY8F4ToiWDT+CLeGtNA?=
- =?us-ascii?Q?+SG8YUqK4VI4tMwquktQm5I6//35s3YKcmhebA/+MIT95qJtfgkEbv3o7jeL?=
- =?us-ascii?Q?bgvw++HNctBBDb9GTIwhMmqXjfB7HqXGSDxOtYg5dfSU1lR006x+mpgCYvCM?=
- =?us-ascii?Q?P4VkblArRViVdkTPRdoNkBW/SONYke4MgVVn0ZZjI0RBfBHu9++c9j3wFRb/?=
- =?us-ascii?Q?stR1MrSuMrkQqysTSqSRsnbV4GhsLDU5ya2NErRYj+N2imxA3ryx5JXKzz6Q?=
- =?us-ascii?Q?ZNxbzQwvvk0ed5BRml1evog/kK9nao/eZo3kY5+ta/zCSEhBrR3ew3oYTRbj?=
- =?us-ascii?Q?M7H7marPuS6/i1UvCpSmarSxwEzTpBdzOaEdO+c4TUd3oORs+SffxJ2HJO5s?=
- =?us-ascii?Q?KIfNonU7DJ6B7NFvm4j8PsiiOOhdWmMpCRuhTR9cfZxvAYK53bQa7LtUUMJK?=
- =?us-ascii?Q?WnJP8w/Khghw7z+yYwHaCp7A3ww4uUqzG54svcP7NgY+bThmzV7u90L20/iZ?=
- =?us-ascii?Q?ksyFTrmPhRp07gc6Lpq7N8wLayv6TCSvoPFPSd+rmeDnW5uvxDHFjy9b53RI?=
- =?us-ascii?Q?iU+PSa73K7hRjz3gz7OWy/49rOZwLbnqG/36bdgwv6f7iG8txTHdtNb5P8pf?=
- =?us-ascii?Q?hHYXsCayizKtzeQxU12RkngYToItc0Bt4yhw963TiKWX6QcsT3voFc/RpwgK?=
- =?us-ascii?Q?Jrbfil6rlNba/VW2NpuO6jjQCrQZMR0wkj1wmBTfmyiVu6VnRbKVsN4qXW1i?=
- =?us-ascii?Q?KWm+aThMp4c1hY5SUAkzbro3qTfi7bem5oYY?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI2PR04MB11147.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Zn/7+WjoOw/81O47MPdetGEQXi73QARhy6q6oCP0KjrVwQ8S2jtoT1STivrQ?=
- =?us-ascii?Q?gNsMf9WuhrrDsDPlJJtvAz+dor5i+Mrn3I53I46A0mSLLUSmRHfbGdbev3P8?=
- =?us-ascii?Q?Ir07n9u/1i+LEJZdDXL57e8ceXCfQXkKtEZyOtlzaihGvbBuLg39VEGKpAuy?=
- =?us-ascii?Q?2ktT5X6Ap3+h0aPLZMEoZVuyzWgVe+tpZu2PEwkFE9DMxrsymthkxIrTNGMQ?=
- =?us-ascii?Q?1JP3HY5y5xb3ynbHvj1ZV1AZ8zCmPQiRmNIaqdijLgtIpnuXkbGeAqWs1GUw?=
- =?us-ascii?Q?8cYNQRan3fIVNuNZsMEAcVUlIXPvbX25tsZtqhTPzdDCXNh9PvxhZLGssE2h?=
- =?us-ascii?Q?OkF3pOgWbw6V7uffzf/zWZML7bnoRBJPQi3bIUBKby/BF2GvtyXLPIpVAxQA?=
- =?us-ascii?Q?6+DgDl292grYlgLCoFjhBZjZnr5IQ+YkZ56zi+nqf5smk16UwtzsZUpso/0s?=
- =?us-ascii?Q?S9NjJSgvAtnJvFQ/wxrGeOeiRJlqu/8PwYgp67de989zPqAW1dw3h3ml88f2?=
- =?us-ascii?Q?1aCC1tmI1K4H7rwktsVwNSCyUL6sXg2fN1WQjkqenUaAjNVSA+mZeRudbT+w?=
- =?us-ascii?Q?TVZMOrKpOTrOqy5+sxCD3XEGanL6NczuxZe0BLnzTrdzubcKPs78+JINr5sy?=
- =?us-ascii?Q?09mq0yNtEhcHtbdu7XEwpMAc93/TavoFwRFhi+LshU+2etAWN7BSUWp1izJw?=
- =?us-ascii?Q?BU8iXrelj1DVnqTqKQHqRcoM6+IuBcNCGqzJqjxc+b9yp2Hf/reHufAV/yvG?=
- =?us-ascii?Q?sDfOpVUFjAF9hK2iYgxvh29VJ9yp3ZmLWMybJJj9UDLQ+Nvx9CT3X6DO0Qkj?=
- =?us-ascii?Q?48xQJe4F9nYOZVZ/dYGDenESzWGrThdK87oaF7frJrXVTkr93N3m9v+n/aPa?=
- =?us-ascii?Q?9QPF0ThbsjXHuTgsl5CvfGYDJ0k16s+DG2PIzAZIn3kJa1HwPT3s3Nin/zNO?=
- =?us-ascii?Q?MpqAtgJ3bcBrQsdyykkVoRxhQgH2EmhLY59X6JC34ppsxS5lJ9dIWj5WP6lJ?=
- =?us-ascii?Q?NRUHBdk23nRcNjTEJwiHmbzDdGC0VMgDqe4pbyy/RE2ZL/0+TKxtQ+OsNu4o?=
- =?us-ascii?Q?l15sB95jethoaGW8cuz6qJNoW5Mh9A5BZarfUOSsZMzwZkNAFP9mZ2xThjJm?=
- =?us-ascii?Q?bDmvlbVnhj09Ard0xzYzb4eiqtDrkJ1tXcfSVxSk3TNHKJZEB8hL10emhiId?=
- =?us-ascii?Q?LQTgXc9YXuMY6skvsVPg6G6+S+RVmtK3U52J263SpgzTyDb44ZbLspnR7cMU?=
- =?us-ascii?Q?stiSsw9UcwgLuKQF2pGf5+Fx2eSLYPK8tRGGA1E39VABxWQdNR475JkViA1r?=
- =?us-ascii?Q?fKVAgKKwpStuWdMG9re9sQQ7oc9r0/jwBQeEylJxbyoEn2euWT2vUZXM9k4N?=
- =?us-ascii?Q?d+KudWGYfLzv1C/upekNV5LLkgwn0FOo6/zXlLKZTZwn9b4F2kSmZPTPXwPU?=
- =?us-ascii?Q?PI40QxOZFFJJ0oVq6dm//i7HZdBWBJ4XgbyXno35t5IhgZo5jMJgr8iXkGno?=
- =?us-ascii?Q?ONwx36JNrv2qhHYqWHTP+oDXurp8Uxz75tfWgl+uv0RnLLppiIXhW9O2stJ5?=
- =?us-ascii?Q?OfB211heMkXuf7vIcku3fR1FCCMxmkmX9aForpA6?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f799f68-01f8-4626-ec4c-08de154896a4
-X-MS-Exchange-CrossTenant-AuthSource: VI2PR04MB11147.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 11:04:24.8213
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FKPArF7ASMDx3Hrvarg81fd6uIsihhrmu40fxRj7M8s1kx3qEvmSmDj6tDJN3WloV8wRkwAMWUwOZjBfU0EsFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11955
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Robin Gong <yibin.gong@nxp.com>
+Changes in v11:
+ - Removed unnecessary #address-cells in all mt6316 bindings
 
-Due to a hardware limitation on SDMA event enable (ENBLn), the DMA request
-must remain disabled until the DMA transfer setup is complete.
+Changes in v10:
+ - Added "struct" prefix to structs kerneldoc
+ - Renamed struct mtk_spmi_pmic_pdata to mtk_spmi_pmic_variant
+ - Added "REG_" to MT6363/73 mfd register definitions to disambiguate
+ - Expanded MTK_SPMI_PMIC_IRQ_GROUP macro parameter names as suggested
+ - Some rewording of comments as suggested, addition of more comments
+ - Refactored IRQ domain handling due to deprecation of function
+   irq_domain_add_tree() to use the new irq_domain_create_tree()
+ - Fixed to use generic_handle_domain_irq_safe() to avoid races
+ - Added support for two interrupt cells in translation
+ - Removed .irq_lock() and .irq_unlock() in favor of lockdep classes
+ - Added support for handling PMICs without IRQ Group register for
+   upcoming MT6685 implementation
 
-Refer SDMA 2.6.28 Channel Enable RAM (SDMAARMx_CHNENBLn) section:
+Changes in v9:
+ - Applied more bindings fixes as pointed out by Rob
+ - Changed irq fwspec to have 3 cells as the mfd driver handles 3
+ - Using intsize instead of fwspec.param_count in xlate (thanks Nicolas!)
 
-"
-It is thus essential for the Arm platform to program them before any DMA
-request is triggered to the SDMA, otherwise an unpredictable combination
-of channels may be started.
-"
+Changes in v8:
+ - Added REGMAP_SPMI selection in Kconfig for all of MT6316/6363/6373
+   to satisfy __devm_regmap_init_spmi_ext() dependency in case they
+   are built with COMPILE_TEST (+randconfig) configuration
+ - Fixed indentation in Kconfig on help lines (some were using spaces
+   instead of tab + 2 spaces, don't know how that happened)
+ - Removed forgotten final blank line on mt63{6,7}3-regulator.h header
+ - Fixed error checks in mt6363-regulator, mt6373-regulator for call
+   to mt63{6,7}e_spmi_register_regmap()
+ - Tested again on MT8196 Chromebook.
 
-SDMA hardware configuration is postponed to transfer phase, so enabling
-the DMA request too early may cause unpredictable channel activation.
-Then keep dma request disabled before dma transfer setup.
+Changes in v7:
+ - Removed unintentionally added, useless Link tags from all patches
+ - #size-cells is now required in mfd mt6363 binding
+ - Further fixes in mt6363/73 regulator bindings
+ - Mentioned weird 9-bits BE format and usage of undocumented set/clr
+   registers in commit description for the MT6316 regulator driver
+ - Refactored bindings for MT6316 PMIC (regulators):
+   - Added reg, #address-cells as required properties
+   - Added regulator-allowed-modes and its description
+   - Changed mt6316b/mt6316c to use patternProperties instead, as it
+     now makes sense to avoid duplication while keeping documentation
+     for the regulator-allowed-modes property in all vbuck entries
+   - Added decent examples that correctly describes the MT6316 PMICs
 
-Signed-off-by: Carlos Song <carlos.song@nxp.com>
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
----
-Change for V2:
-- Change commit log with spec doc
----
- drivers/spi/spi-imx.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+Changes in v6:
+ - Added missing bitfield.h header inclusion in mt6363-regulator.c
+ - Added commit "dt-bindings: iio: adc: mt6359: Allow reg for SPMI PMICs AuxADC"
+   to fix warnings on specifying reg property in adc node
+ - Added $ref in mt6363/73 regulator bindings to reduce duplication on LDOs
+ - Moved MT6363 regulators example to MFD binding
+ - Rebased on next-20250929
 
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index 9a1113ea4ba2..00132f300e38 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -528,9 +528,15 @@ static void mx51_ecspi_trigger(struct spi_imx_data *spi_imx)
- {
- 	u32 reg;
- 
--	reg = readl(spi_imx->base + MX51_ECSPI_CTRL);
--	reg |= MX51_ECSPI_CTRL_XCH;
--	writel(reg, spi_imx->base + MX51_ECSPI_CTRL);
-+	if (spi_imx->usedma) {
-+		reg = readl(spi_imx->base + MX51_ECSPI_DMA);
-+		reg |= MX51_ECSPI_DMA_TEDEN | MX51_ECSPI_DMA_RXDEN;
-+		writel(reg, spi_imx->base + MX51_ECSPI_DMA);
-+	} else {
-+		reg = readl(spi_imx->base + MX51_ECSPI_CTRL);
-+		reg |= MX51_ECSPI_CTRL_XCH;
-+		writel(reg, spi_imx->base + MX51_ECSPI_CTRL);
-+	}
- }
- 
- static void mx51_ecspi_disable(struct spi_imx_data *spi_imx)
-@@ -771,7 +777,6 @@ static void mx51_setup_wml(struct spi_imx_data *spi_imx)
- 	writel(MX51_ECSPI_DMA_RX_WML(spi_imx->wml - 1) |
- 		MX51_ECSPI_DMA_TX_WML(tx_wml) |
- 		MX51_ECSPI_DMA_RXT_WML(spi_imx->wml) |
--		MX51_ECSPI_DMA_TEDEN | MX51_ECSPI_DMA_RXDEN |
- 		MX51_ECSPI_DMA_RXTDEN, spi_imx->base + MX51_ECSPI_DMA);
- }
- 
-@@ -1535,6 +1540,8 @@ static int spi_imx_dma_transfer(struct spi_imx_data *spi_imx,
- 	reinit_completion(&spi_imx->dma_tx_completion);
- 	dma_async_issue_pending(controller->dma_tx);
- 
-+	spi_imx->devtype_data->trigger(spi_imx);
-+
- 	transfer_timeout = spi_imx_calculate_timeout(spi_imx, transfer->len);
- 
- 	/* Wait SDMA to finish the data transfer.*/
+Changes in v5:
+ - This time the dt-bindings commits are the right ones... sorry again :-)
+ - Removed accidentally added Link: tags in all patches.
+
+Changes in v4:
+ - Rewritten all register definitions for both MT6363 and MT6373
+   regulators to be register offsets instead
+ - Added the appropriate supply_name to all vregs in 6363 and 6373
+ - Simplified the macro parameters for all vregs in 6363 and 6373
+   - Added common definitions pattern in macros to avoid plain writing
+     register definitions in every macro call
+ - Added registration of SPMI sub-device in MT6363/73 and setup of
+   regmap reg_base based on `reg` parsed from devicetree
+ - Removed interrupts parsing from devicetree
+   - Moved (pmic-internal) IRQs to macros
+ - mtk-spmi-pmic: Added parsing if irqspec with param_count=2 for
+   easier irqs registration from regulator drivers
+
+Changes in v3:
+ - Added buck and ldo supplies to mt6363 and mt6373 drivers and bindings;
+ - Removed interrupts from mt6363 and mt6373 bindings;
+ - Added registering interrupts in mt6363/73 drivers instead:
+   this avoids big arrays in the mfd driver, which will grow
+   uncontrollably (as it already happened in multiple MediaTek
+   drivers) and with each new(future) supported PMIC;
+ - Removed "ldo-" and "buck-" prefixes from mt6363 regulators
+   - Renamed "vbX" to "vbuckX", reflecting datasheet name
+ - Changed all LDOs in MT6363 and MT6373 to add VOCAL usage, both
+   increasing the number of voltage steps (2.5 or 10mV increments
+   depending on the LDO) and the accuracy of the reported voltages
+ - Tested again on MT8196 board
+
+Changes in v2:
+ - Merged MFD and regulator in one series
+ - Split mediatek,mt6316-regulator.yaml in three files as
+   suggested by krzk
+ - Added interrupt-names list in MT6363/MT6373 bindings as
+   suggested by krzk
+ - Documented regulator modes in MT6363/73 as suggested by krzk
+ - Fixed interrupt and interrupt-names maxItems in both 6363/73
+   because, well... I miscounted them in v1 :-)
+ - Removed keys from mt6363 binding: the compatible was not yet
+   added to the keys binding and doing that will take quite a
+   while, as I have to find a way to test the code before that
+   as unfortunately my HW does not provide any way to test the
+   PMIC keys (thought it did, but then turns out it doesn't...)
+ - Completed the mt6363 MFD example with ADC as suggested by Rob
+ - Avoided applying regulator schemas multiple times as pointed
+   out by Rob (in mfd binding)
+ - Fixed MT6363/73 issues pointed out by lkp (eh, sorry, that
+   happened during a last minute cleanup... ugh!).
+ - Brewed some more coffee :-)
+
+
+This series adds support for three new MediaTek PMICs: MT6316, MT6363
+and MT6373 and their variants - used in board designs featuring the
+MediaTek MT8196 Chromebook SoC, or the MT6991 Dimensity 9400 Smartphone
+SoC.
+
+In particular, MT6316 is a regulator, but the MT6363 and MT6373 PMICs
+are multi-function devices, as they have and expose multiple sub-devices;
+moreover, some of those also contain an interrupt controller, managing
+internal IPs interrupts: for those, a chained interrupt handler is
+registered, which parent is the SPMI controller itself.
+
+This series adds support for all of the MT6316 regulator variants and
+for MT6363, MT6373 SPMI PMICs and their interrupt controller.
+
+AngeloGioacchino Del Regno (9):
+  dt-bindings: regulator: Document MediaTek MT6316 PMIC Regulators
+  regulator: Add support for MediaTek MT6316 SPMI PMIC Regulators
+  dt-bindings: regulator: Document MediaTek MT6363 PMIC Regulators
+  regulator: Add support for MediaTek MT6363 SPMI PMIC Regulators
+  dt-bindings: regulator: Document MediaTek MT6373 PMIC Regulators
+  regulator: Add support for MediaTek MT6373 SPMI PMIC Regulators
+  dt-bindings: iio: adc: mt6359: Allow reg for SPMI PMICs AuxADC
+  dt-bindings: mfd: Add binding for MediaTek MT6363 series SPMI PMIC
+  mfd: Add support for MediaTek SPMI PMICs and MT6363/73
+
+ .../iio/adc/mediatek,mt6359-auxadc.yaml       |  17 +
+ .../bindings/mfd/mediatek,mt6363.yaml         | 109 ++
+ .../regulator/mediatek,mt6316b-regulator.yaml |  76 ++
+ .../regulator/mediatek,mt6316c-regulator.yaml |  76 ++
+ .../regulator/mediatek,mt6316d-regulator.yaml |  75 ++
+ .../regulator/mediatek,mt6363-regulator.yaml  | 146 +++
+ .../regulator/mediatek,mt6373-regulator.yaml  | 137 +++
+ drivers/mfd/Kconfig                           |  16 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/mtk-spmi-pmic.c                   | 427 ++++++++
+ drivers/regulator/Kconfig                     |  30 +
+ drivers/regulator/Makefile                    |   3 +
+ drivers/regulator/mt6316-regulator.c          | 345 +++++++
+ drivers/regulator/mt6363-regulator.c          | 938 ++++++++++++++++++
+ drivers/regulator/mt6373-regulator.c          | 772 ++++++++++++++
+ include/linux/mfd/mt63x3_spmi/registers.h     |  34 +
+ include/linux/regulator/mt6363-regulator.h    | 330 ++++++
+ include/linux/regulator/mt6373-regulator.h    | 161 +++
+ 18 files changed, 3693 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316c-regulator.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316d-regulator.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6373-regulator.yaml
+ create mode 100644 drivers/mfd/mtk-spmi-pmic.c
+ create mode 100644 drivers/regulator/mt6316-regulator.c
+ create mode 100644 drivers/regulator/mt6363-regulator.c
+ create mode 100644 drivers/regulator/mt6373-regulator.c
+ create mode 100644 include/linux/mfd/mt63x3_spmi/registers.h
+ create mode 100644 include/linux/regulator/mt6363-regulator.h
+ create mode 100644 include/linux/regulator/mt6373-regulator.h
+
 -- 
-2.34.1
+2.51.1
 
 
