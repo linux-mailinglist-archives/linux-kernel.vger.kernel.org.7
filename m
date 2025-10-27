@@ -1,90 +1,73 @@
-Return-Path: <linux-kernel+bounces-871969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCDDC0EFE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:37:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF6DC0EFFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DFB3AE596
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:33:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0C2B4E61A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C867B30BF79;
-	Mon, 27 Oct 2025 15:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339FB30BF6C;
+	Mon, 27 Oct 2025 15:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiIdaDij"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pu4c0rBK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9A02C21DC
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C7A301030
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579215; cv=none; b=VjIPyb4LmL1uycK6mTDh1/NIGEcusZ3wsyGz4I+RXtHBV5IR7nZacMwjSGDScifsmE/A8aGJ5QV5oqRI8N5nxlk50tBufdsKdb7DeVGEQRYHo4S4yISp7X71O0pj4NbhfThxcd3afvv8gEL92TU0H+VGcIZd3nlmGd9jQs24wao=
+	t=1761579259; cv=none; b=Rqf4Ne6TJck4lXHj9dApm5SQ7lJLNS3xv1HzkLJKyxt36lE9FSSY6A6AqxmtuPjTHtF4MoiicXq4st7G0ZUwSUuU2tvepJY+d7pHuiXTxVKY/qowdBP2QWeZxwc6ua3ieoHLkayMTiZlOF7CEwaMsz3pDTyTqaWP6VXlUL/NizY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579215; c=relaxed/simple;
-	bh=WdBEdLpSforioHhbukeXfUmMVDWPeJnblF0f8wKYRHA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=revxQk518I8UreCAbt3zK95rKOpjnAHUD2mGaPE9RvU48PcIozrNfDcS0bsF6sCLMfPlDsFtWwK0xq5ubGAr2hTamUZD9i35e4Ct8BmOV8JQL5ZjDYgj7nZssFurqCGtv/kdOosMo4CBr3gohhlc/Qi2floNHeLrc8ScpxYwgQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiIdaDij; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b6a225b7e9eso3459021a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761579213; x=1762184013; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gyCJFEF05gZrJ9JMkK8QYJcfOxWfVMGePa9EE1L1ZCg=;
-        b=NiIdaDij8RPnXWj5KP9bBwW3FrHfB1ghyPDE6n0usJ9YA8UycbUr3YgbZG6mQqrl0C
-         72emAI2qz26zXXMge2PohWi7BIchYLVh3yTPyDC5rUQd5g41O1yX49NxVx2kbMO0/uqk
-         k1AKn+GP7QwYp1gAZYlSrhv0NMentposByT5A7ucW9TSaG9sE8v2r2OxDeH03xzWAGll
-         RPjOEYjuxxRQoCXOp/wYVDcREfLlsRpGehLV86qjGeQRDL5nfjrPGbsVFCFIuM7Aj8aG
-         72lg8xsHUz6MWUB5o7oTcIcIpXM8E6XcZwO7aE2VL9x5uaP1wknA2GwB/nTnOANX97pZ
-         VkrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761579213; x=1762184013;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gyCJFEF05gZrJ9JMkK8QYJcfOxWfVMGePa9EE1L1ZCg=;
-        b=NnOEklbS7h3UqVDV3xoPe8Ee31yLCaQuGCtE5YhAlTCOfVSsmdBV+/q9//ALsZDN1Y
-         Uv0HXOCzq2Wc7Iit8nPbFxUzr5tCsS2hmhCAFYfUwSUdhza5Gdw2AIxTM8vGl7FJRIgK
-         IBoJoBbpzkGiVzDX95hG7SeHerxxnVgzW7+4ZJlm1F/oZUwWkagrT0ATquN1THpRD0eN
-         csfDfx/WPASw+NmpWJ1dqd/sZ0sRD9u6q6m3RE4o8R0zdHqnX/ghkyMrP7+1McTpI2Mw
-         XAo3CP2glAWYK1g3yq3Oe0rOl6mCPhRNQaBkniZAvWJeUzX6NdjKVbjpkk5LB5PX6vVo
-         BvEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNBWHRwEyG9gPTa92yXADA3k+snx69qLVRJUtQvHILg07+7IuEWMCHuGQIXQTCVpcJ8k+IzmmLXN8bCgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9CJ14hMZHIa1vtZY7Z7WV+osdTlecSfARvRIJtjctnxRq55oN
-	Oo4dW2odmm8yyZFFOSVVW/BL/yVTIY7rmgiiRNCHA87c3dQmudAgcaKh
-X-Gm-Gg: ASbGncvzTa7D5/jdt5l4NXwDSIuGSqt7WiSpKQRrts+seBawWeVoltX1qoMJLdjMJzE
-	e00EcpqDHM/88T9uYBRWKZB1d+vcgvnuKBg+HIwJqmCPNvYf7d7wqDplqOA4EX1aZH1nfAfea0+
-	GSJb3mES8L0aVgCfImBnWvnAseUD7TMh8fww0YUwj8OmhpNpmGHnH/SWj57Luxw0V9He/lcaLA4
-	ZlGyHyFCV70h+zLQuPljqFWwmDyO6IApZq6PRxdf7PJ2fBivAPZc2o+0EaRGrYuXEzZ0PD/BJTR
-	QLw2LPTSNIBWaZduotr7c594vUFYiqe/q0kP1GQeN3VXR/Lb1AYHRdAVKr7hgat58cTukMkQL0g
-	vrnTiUTqSgWxF2V841MPGh/zJK9K8fr6x+ju9k/faciU2DxXQlWUDHdB1nkB9/POiCS1D/8jLcM
-	PeRCYaRODlTeMhmIz9y+NYTlM3bUI488eR
-X-Google-Smtp-Source: AGHT+IEshwgNJwDO9dUyM9pXppLasDaedDty5cozPvWHVpiDiRN+D5hXAsbWqdxeVF4eaG1w7MO3rw==
-X-Received: by 2002:a17:903:124e:b0:24b:270e:56cb with SMTP id d9443c01a7336-294cb3e5310mr4051855ad.27.1761579213005;
-        Mon, 27 Oct 2025 08:33:33 -0700 (PDT)
-Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498cf4a40sm87272165ad.0.2025.10.27.08.33.29
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 27 Oct 2025 08:33:32 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephen Warren <swarren@nvidia.com>,
-	Hiroshi DOYU <hdoyu@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] amba: tegra-ahb: fix reference count leak in tegra_ahb_enable_smmu
-Date: Mon, 27 Oct 2025 23:33:15 +0800
-Message-Id: <20251027153317.66454-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1761579259; c=relaxed/simple;
+	bh=m9HAqtHEDODV1Tq89zMk21K6Tjw2WP0raOQyntR2cpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QHnv6EQ8bQwg1kYoIEHHxWK92STsOl2Uhpo2rTVUYLZ4I9cuYiQycxGLXFnzkb0wISGjBkgC1f2egG93Zh1Dsh6B1PvjdF8pQ96W/71uK8aI303ho92rpB8TGpo9v9dUf9wEDMn7L2Ava9cW5W1arejmLEm7bihFZ0aTPSgAykk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pu4c0rBK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761579256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CD4i2iZFS9xedSj3xP6wgeh57TGwEaIr7MnRTFTZx0I=;
+	b=Pu4c0rBKCnRju+nkMbw+fvUmIQ4XocbR4L/j+uEKJxBaov0a5uBwvrq/b0khrXa36As1+x
+	t6wZDf4NfduNe7t31KVjsOXAXLAqoB2Bw0mY2caFRr+afSXDVcEesyZpy8lSoTu+g+4qqK
+	XN79vffcZnC/zrOOaRFGAepJDVeYs5A=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-152-DGroyKNtNL6yXZBNOaE6AA-1; Mon,
+ 27 Oct 2025 11:34:12 -0400
+X-MC-Unique: DGroyKNtNL6yXZBNOaE6AA-1
+X-Mimecast-MFC-AGG-ID: DGroyKNtNL6yXZBNOaE6AA_1761579251
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68779180065F;
+	Mon, 27 Oct 2025 15:34:11 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.224.137])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E1871955F1B;
+	Mon, 27 Oct 2025 15:34:07 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Crystal Wood <crwood@redhat.com>,
+	Wander Lairson Costa <wander@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH v3 0/7] rtla/timerlat: Add --bpf-action option
+Date: Mon, 27 Oct 2025 16:33:54 +0100
+Message-ID: <20251027153401.1039217-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,37 +75,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The driver_find_device_by_of_node() function returns a device with its
-reference count incremented. driver_find_device_by_of_node() is an inline
-wrapper that calls driver_find_device(), which calls get_device(dev) and
-returns the found device with an incremented reference count.
+This patchset extends rtla-timerlat's BPF support with the option of
+executing a user-supplied BPF program on latency threshold overflow.
 
-Fix this by adding the missing put_device() call after the device
-operations are completed.
+See the supplied example and documentation for how to create a program.
+bpf_tail_call() is used to chain the program with the built-in BPF
+sample collection program, if the threshold is hit.
 
-Found via static analysis.
+The feature can be used for both in-kernel data collection and sending
+signals to userspace directly from the kernel, if the kernel version
+allows it.
 
-Fixes: 89c788bab1f0 ("ARM: tegra: Add SMMU enabler in AHB")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/amba/tegra-ahb.c | 1 +
- 1 file changed, 1 insertion(+)
+Note: The patchset will have to be rebased on top of [1], or vice versa,
+since they both touch stop_tracing() ([1] adds one call of it, and this
+patchset adds an extra argument to it).
 
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index c0e8b765522d..6c306d017b67 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -147,6 +147,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
- 	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
- 	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
- 	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
-+	put_device(dev);
- 	return 0;
- }
- EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+I have contemplated adding this as --on-threshold bpf,... but it does
+not fit the existing actions infrastructure very well, since the action
+happens in the BPF program, not in RTLA, and only one BPF action is
+supported.
+
+[1] https://lore.kernel.org/linux-trace-kernel/20251006143100.137255-1-tglozar@redhat.com/
+
+v3 changes:
+- Add tests/bpf/bpf_action_map.c to test commit (forgot to run
+git add before).
+
+v2 changes:
+- Properly bpf__object_close() also when bpf__object_load() fails.
+- Use goto for error paths in timerlat_load_bpf_action_program().
+- Remove unneeded NULLing of obj and prog in timerlat_bpf_init().
+- Add entry to Makefile to build example.
+- Add test for BPF actions.
+- Rename sample/ directory to example/, also in docs.
+- Run Test::Harness in verbose mode during "make check".
+
+Thanks to Crystal and Wander for their input.
+
+Tomas Glozar (7):
+  rtla/timerlat: Support tail call from BPF program
+  rtla/timerlat: Add --bpf-action option
+  rtla/timerlat: Add example for BPF action program
+  rtla/tests: Test BPF action program
+  rtla/tests: Run Test::Harness in verbose mode
+  Documentation/rtla: Rename sample/ to example/
+  Documentation/rtla: Document --bpf-action option
+
+ .../tools/rtla/common_timerlat_options.rst    | 22 ++++++-
+ tools/tracing/rtla/Makefile                   | 19 +++++-
+ .../rtla/example/timerlat_bpf_action.c        | 16 +++++
+ .../rtla/{sample => example}/timerlat_load.py |  0
+ tools/tracing/rtla/src/timerlat.bpf.c         | 23 ++++++-
+ tools/tracing/rtla/src/timerlat.c             | 11 ++++
+ tools/tracing/rtla/src/timerlat.h             |  2 +-
+ tools/tracing/rtla/src/timerlat_bpf.c         | 66 +++++++++++++++++++
+ tools/tracing/rtla/src/timerlat_bpf.h         |  7 +-
+ tools/tracing/rtla/src/timerlat_hist.c        |  5 ++
+ tools/tracing/rtla/src/timerlat_top.c         |  5 ++
+ tools/tracing/rtla/tests/bpf/bpf_action_map.c | 25 +++++++
+ tools/tracing/rtla/tests/engine.sh            |  1 -
+ tools/tracing/rtla/tests/timerlat.t           | 15 +++++
+ 14 files changed, 207 insertions(+), 10 deletions(-)
+ create mode 100644 tools/tracing/rtla/example/timerlat_bpf_action.c
+ rename tools/tracing/rtla/{sample => example}/timerlat_load.py (100%)
+ create mode 100644 tools/tracing/rtla/tests/bpf/bpf_action_map.c
+
 -- 
-2.39.5 (Apple Git-154)
+2.51.0
 
 
