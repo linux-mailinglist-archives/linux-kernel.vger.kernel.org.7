@@ -1,75 +1,116 @@
-Return-Path: <linux-kernel+bounces-870924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8BCC0BFDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:49:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFFDC0C009
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFB1F4E332B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A5D3B9519
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188E4262815;
-	Mon, 27 Oct 2025 06:49:33 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E133C26FDBF;
+	Mon, 27 Oct 2025 06:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="rWiYegTf"
+Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C431BC5C;
-	Mon, 27 Oct 2025 06:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECFC21A436;
+	Mon, 27 Oct 2025 06:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761547772; cv=none; b=ZrVHolKYYnc1+cCaV216glRRNPqbnZfmp0qkGtE/NZyqr4n2ped/DjxJdK4nNaqE1gfbb86Cz2u86/xeFh2J0JrQAPYa0ukCSuszYMPT3GC+9QIeYx2SpZH4awzW4Tp5V/AgFkIDsnfndtEDL76JfQBO7gUpvYOIUBkuBbioGis=
+	t=1761547932; cv=none; b=rN7WE5rDgDzoeblZkfcwS+h4Jk3CFqGj4Jqmj/8t4MYGWlz2mDAaQaVzSfCqndsKo7e7Z2E+yyFhk0bRhESpIDzgTctTbsk+f4uDhklv4l/rstZ8QQL9jpi9wfVRJg9rMzK6j9wGC2F9Kf3oPCVHVSm0FS9swJj8EG/5iO5++Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761547772; c=relaxed/simple;
-	bh=dy3hG9lcSRFajtflUdOASNs8cxHjWZ3khoJ1Pn+foxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFzMdSWncX5mj3hMlYRF6bMUEOL68qiA70+V6iSVYr8IwdVYSVLLvUsVVbwNjqxTJnOQbNPDBj07Uqmn314d5bsmd52EFXUdZOb+4p/ZLI1KhEjcPBgpIbksKu/cT9L0emxeGynbno+XKqdtwMw1wCttZm38VN6Gm+kj8x0zjis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 4660C227A87; Mon, 27 Oct 2025 07:49:26 +0100 (CET)
-Date: Mon, 27 Oct 2025 07:49:26 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] nvme-pci: migrate to dma_map_phys instead of
- map_page
-Message-ID: <20251027064926.GA13214@lst.de>
-References: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com> <20251020-block-with-mmio-v2-1-147e9f93d8d4@nvidia.com> <20251022061418.GC4317@lst.de> <20251026123804.GD12554@unreal>
+	s=arc-20240116; t=1761547932; c=relaxed/simple;
+	bh=iK6up+/8Pq3Fl4e98omnNziWoIIl2ApW2ZRnkJvKFBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UwmWCQaKhbXQ/dSmVknQUKh11E2cyi+2T8Ly4Eg1PPaX1E2lhk5U7i+iShco0V4epcU0MkX7UyMJ+LAUaDRel7RM/ubCT9BUIN1Q5JGdPTlaUe4swR4Zub5q3SDKpcayMzm6n/XK1YWSll9bpVeHwG/YTBvZps/VRlgu4Suzcl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=rWiYegTf; arc=none smtp.client-ip=178.154.239.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1a8f:0:640:2fa2:0])
+	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 6E6ABC0120;
+	Mon, 27 Oct 2025 09:50:35 +0300 (MSK)
+Received: from i111667286.ld.yandex.ru (unknown [2a02:6bf:8080:98f::1:22])
+	by mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id WoVJJd1FuW20-3bBUDgdQ;
+	Mon, 27 Oct 2025 09:50:34 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1761547834;
+	bh=ADaE+bps9i8oyssyZfSTIRhA8Vx3sy1KVMgi5sFeLkY=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=rWiYegTfanA5WjotGX2O4m4TkKpDAqw12ZrXWqdHp1QtNzIwSwMUKOEhtCo4+imsi
+	 B0FMF/6g5xuOC75L94NVda2g43lYsAqA7P+DVtJS+v/uIyV+VBeDYBvH5/FRo+hHLj
+	 07Dcbc1Cxs+NOT/IINiPAwZqzYmMfUwI4820RP74=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Andrey Troshin <drtrosh@yandex-team.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrey Troshin <drtrosh@yandex-team.ru>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] scsi: target: target_core_configfs: Add length check to avoid buffer overflow
+Date: Mon, 27 Oct 2025 09:50:48 +0300
+Message-ID: <20251027065048.2023-1-drtrosh@yandex-team.ru>
+X-Mailer: git-send-email 2.51.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251026123804.GD12554@unreal>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 26, 2025 at 02:38:04PM +0200, Leon Romanovsky wrote:
-> On Wed, Oct 22, 2025 at 08:14:18AM +0200, Christoph Hellwig wrote:
-> > This actually has block and nvme bits, so the subject line should
-> > say that.
-> > 
-> > > +	unsigned int attrs = 0;
-> > 
-> > attrs is always zero here, no need to start passing it for the
-> > map_phys conversion alone.
-> > 
-> > > +	unsigned int attrs = 0;
-> > 
-> > Same here.
-> 
-> It gave me more clean second patch where I only added new attribute, but
-> if it doesn't look right to you, let's change.
+scsi: target: target_core_configfs: Add length check to avoid buffer overflow
+A buffer overflow arises from the usage of snprintf to write into the
+buffer "buf" in target_lu_gp_members_show function located in
+/drivers/target/target_core_configfs.c. This buffer is allocated with
+size LU_GROUP_NAME_BUF (256 bytes).
 
-The usual rule is do one thing at a time.  There might be an occasinal
-slight bend of the rule to make life easier, but I don't think that
-really fits here.
+snprintf(...) formats multiple strings into buf with the HBA name
+(hba->hba_group.cg_item), a slash character, a devicename (dev->
+dev_group.cg_item) and a newline character, the total formatted string
+length may exceed the buffer size of 256 bytes.
+
+Since snprintf() returns the total number of bytes that would have been
+written (the length of %s/%sn ), this value may exceed the buffer length
+(256 bytes) passed to memcpy(), this will ultimately cause function
+memcpy reporting a buffer overflow error.
+
+An additional check of the return value of snprintf() can avoid this
+buffer overflow.
+
+Reported-by: Wang Haoran <haoranwangsec@gmail.com>
+Reported-by: ziiiro <yuanmingbuaa@gmail.com>
+Signed-off-by: Wang Haoran <haoranwangsec@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[Andrey Troshin: patch adaptation for linux-5.10]
+Signed-off-by: Andrey Troshin <drtrosh@yandex-team.ru>
+---
+Backport fix for CVE-2025-39998
+Link: https://nvd.nist.gov/vuln/detail/CVE-2025-39998
+---
+ drivers/target/target_core_configfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index 4d2fbe1429b6..e6996428c07d 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -2637,7 +2637,7 @@ static ssize_t target_lu_gp_members_show(struct config_item *item, char *page)
+ 			config_item_name(&dev->dev_group.cg_item));
+ 		cur_len++; /* Extra byte for NULL terminator */
+ 
+-		if ((cur_len + len) > PAGE_SIZE) {
++		if ((cur_len + len) > PAGE_SIZE || cur_len > LU_GROUP_NAME_BUF) {
+ 			pr_warn("Ran out of lu_gp_show_attr"
+ 				"_members buffer\n");
+ 			break;
+-- 
+2.34.1
+
 
