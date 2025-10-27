@@ -1,87 +1,151 @@
-Return-Path: <linux-kernel+bounces-871980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAC2C0EFD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:36:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7D6C0F012
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5120319A32B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:36:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A9CD34E25A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F4A30FF3B;
-	Mon, 27 Oct 2025 15:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E76B30C37A;
+	Mon, 27 Oct 2025 15:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TK8FXR/Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="TQNoZsK6"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392BF30DEC0;
-	Mon, 27 Oct 2025 15:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031DD261B67;
+	Mon, 27 Oct 2025 15:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579304; cv=none; b=B1GMathwLXVFJaOUz3ITuWWHdYnbDMVBshLElNGHeTegJGPxpOuhs1XYW5nzzWYma7MrvBTOlA1AIUs5Dp6HeFyJfQOR+/+OuvD5u3QFJjxgA+epI3ON7FtQgY1mhZLNCGTLZ34V7cnolUJOXtdyi8qo/aYzVzO4jK7tWzYPCdw=
+	t=1761579573; cv=none; b=mkMMTob1d6zufGq/eD440vmDKYhsZhMj1+cnrEnEbusFMLQhlPKIEeD1ObJi8VtzVmifRD96/4O2qFR9LPj0aok8VNoJS0GhsJxVSYi9+COYJfpL6CLrhTfKtVA0QY5T1n71CiwPDn15FKlwODIFnLAcKWyqmhbilrV0utcz8o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579304; c=relaxed/simple;
-	bh=SPlI2EZARTa+512LejXq1waPtkaEetiuqdFs5jbL/ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptJGuPqWedvb0iFFcGqeiPyQxjRUOJWzNGF+JNWCozbFs1fAtqFg4VOtd3RwG+4N9DSmjyoRvoaD7wKlyLVJm08V8+vbMLIu3dHSJBY1ZLZpg7/lLLjPHaVyjmOOx5tUZr0haVo3UvVLWNM8px4tgLwx534zsNwtrcaPSp335LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TK8FXR/Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B16C4CEF1;
-	Mon, 27 Oct 2025 15:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761579303;
-	bh=SPlI2EZARTa+512LejXq1waPtkaEetiuqdFs5jbL/ss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TK8FXR/Yx20ezp0gb+qc97oBpI5Iybq+2PPTOTVgzSOkkGmG19qpM5URLowQFrJeC
-	 oTfrgNypbztOP3nwqeVqQHftLS3aWg8wBs6Edmsrw/K0VALpoEnDS4l+eWzaHuamIe
-	 eOodCz6UG1bFzdWHJ+iqXXx3Ufyi17d8Zgg50kc7HL4bungfBZAzwSFx1iHKgR9Y1U
-	 IG8tqQJGM8hhkpAzlU+ddVTGHNyLiR1bD0PyBTzl9kHtNBVeXcpr//Lwm50mMEqh9T
-	 svmzaLjFVRQGFKvrsBXzdSU2N3/MRFnsBFhHxIDmfpzZhKWXGucDVCVk4qZ7WnrpAN
-	 QtBmZtZBEsgdQ==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vDPFS-000000001zo-37a4;
-	Mon, 27 Oct 2025 16:35:07 +0100
-Date: Mon, 27 Oct 2025 16:35:06 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Patrice CHOTARD <patrice.chotard@foss.st.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH] media: c8sectpfe: fix probe device leaks
-Message-ID: <aP-RKjqX36TtT5n9@hovoldconsulting.com>
-References: <20250923151605.17689-1-johan@kernel.org>
- <aP91OoGkrSxxpsf1@hovoldconsulting.com>
- <8487acd9-3c8f-4eba-99e4-6a937618aa55@foss.st.com>
+	s=arc-20240116; t=1761579573; c=relaxed/simple;
+	bh=Xn8b3bCIzYzuWQ8cWcCYwddcDVqJymBApr+78ba2bgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEBWUybcEpAmckmGx3gChdGK67h4fW2PqunQ7MApOHigNBjzqhozwKG72sNGY7lIu2qPd2ZJoidX8iLYxxjTKloRustlG7utYFajv6CjZ407o3ACm0C8I5m5Y/j8ItktAjZOYAxFeH94z69Y4129bYEvXvOpPXekEWUnlgBF+3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=TQNoZsK6; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.240] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id C4C0E53400B6;
+	Mon, 27 Oct 2025 16:39:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1761579566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cL315XW4pfdU0pTGrE/+2ByvMyxYlQl+i2+yeNFA/vY=;
+	b=TQNoZsK6AvuPXU256G/VnGE4pOFpESLQGSkr8PS67C/BmonjHuot+r8degA4oGNzjW7C8x
+	S0OAKJ9lqspCDaZUSd0CwDxja80AdpNdBYSi7FaQ8SjpTbN9ixvrLDNHdxzEzwkVJ4eeBz
+	NkhR6/b2MMuuDXXbjQjI/4A/Qa/FkrA=
+Message-ID: <c53477c2-7002-41b4-a4ba-46730bb465d3@ixit.cz>
+Date: Mon, 27 Oct 2025 16:39:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8487acd9-3c8f-4eba-99e4-6a937618aa55@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] Input: add ABS_SND_PROFILE
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-input@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ Gergo Koteles <soyer@irl.hu>
+References: <20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz>
+ <20250731-op6-tri-state-v6-1-569c25cbc8c2@ixit.cz>
+ <rdryhql5vrjckh2yvcgbdcnlu2f4aiq6hbokgfzvrtdu33lp5u@fctqxdftabsy>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <rdryhql5vrjckh2yvcgbdcnlu2f4aiq6hbokgfzvrtdu33lp5u@fctqxdftabsy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 03:28:57PM +0100, Patrice CHOTARD wrote:
-> On 10/27/25 14:35, Johan Hovold wrote:
-> > On Tue, Sep 23, 2025 at 05:16:05PM +0200, Johan Hovold wrote:
-> >> Make sure to drop the references taken to the I2C adapters during probe
-> >> on probe failure (e.g. probe deferral) and on driver unbind.
-> >>
-> >> Fixes: c5f5d0f99794 ("[media] c8sectpfe: STiH407/10 Linux DVB demux support")
-> >> Cc: stable@vger.kernel.org	# 4.3
-> >> Cc: Peter Griffin <peter.griffin@linaro.org>
-> >> Signed-off-by: Johan Hovold <johan@kernel.org>
-> >> ---
-> > 
-> > Can this one be picked up for 6.19?
+On 27/10/2025 15:52, Bjorn Andersson wrote:
+> On Thu, Jul 31, 2025 at 11:17:01PM +0200, David Heidelberg via B4 Relay wrote:
+>> From: Gergo Koteles <soyer@irl.hu>
+>>
+>> ABS_SND_PROFILE used to describe the state of a multi-value sound profile
+>> switch. This will be used for the alert-slider on OnePlus phones or other
+>> phones.
+>>
+>> Profile values added as SND_PROFLE_(SILENT|VIBRATE|RING) identifiers
+>> to input-event-codes.h so they can be used from DTS.
+>>
+> 
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-> The removal of c8sectpfe driver has been initiated see https://lore.kernel.org/linux-media/c3a35ad6-c4f6-46ad-9b5b-1fe43385ecc5@foss.st.com/
+There is already v7 [1], this patch is without a change in the series,
+so I assume your R-b applies there too! :)
 
-Ah, ok, thanks.
+Thank you Bjorn.
 
-Johan
+David
+
+[1] 
+https://patchwork.kernel.org/project/linux-input/patch/20251014-op6-tri-state-v7-1-938a6367197b@ixit.cz/> 
+
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Gergo Koteles <soyer@irl.hu>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
 
