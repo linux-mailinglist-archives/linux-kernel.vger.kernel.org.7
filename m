@@ -1,124 +1,291 @@
-Return-Path: <linux-kernel+bounces-871571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137FFC0DAE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:51:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A577AC0DAF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF9514FCBEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:40:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F69D3BBCA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B371310640;
-	Mon, 27 Oct 2025 12:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1C822F772;
+	Mon, 27 Oct 2025 12:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N6vRJVha"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Jy3oKCA2"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC9231076A;
-	Mon, 27 Oct 2025 12:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFDA226CFD;
+	Mon, 27 Oct 2025 12:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568747; cv=none; b=ZqCAyKm+/sIwDHMZj0arAo394fOCv0yElsiHX4pGXFDpi6/Xfr0TOxOAwAMwKhxIdLuLsEV88ZN+osQS2SSsoDDLF5ocL649Mv06D7M7ZOYzXvM6T/VGbzOdg8fOj5AlToyqXlmLlFqrb0OyMkqO5ASKH9OXwUugCg7vT/72xek=
+	t=1761569176; cv=none; b=kwLft0q1BE+W2tFeiUJyunX/z8QzhbuWChTU0zA87UPHpLHkcB++g6ulLFHOVSQ3DmlJzSCUCvicLxF4SCBE7//gsoBPFqte/9UBRD2tLKT4o9QRFzv+5SWuAznnVcEBRjY7pQxPYJswpO/4hfMM1ieGyrCy6RYGf9BC0T5hSyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568747; c=relaxed/simple;
-	bh=ic23nmo9lgfOG3Z3HGilbKWoY/RcEgbzf3VPutvzob4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EWg/hdN/zgodKcwqrtZohpXzD9bZGxoS4DYpMGYlqC04W4pDimyhaZC/g0ovBvlF6OdnFDOsQAc0Mr5gUIgb+0yqQTRFL2p8f61yvXllx4NgMlkUQj33xW81nZMkZ3T7JeKPmySCMbo67cwrlmHfKI/Ooh3qlb6e6QZOuv0PV6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=N6vRJVha; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761568743;
-	bh=ic23nmo9lgfOG3Z3HGilbKWoY/RcEgbzf3VPutvzob4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N6vRJVhaiEkHsez1pDm7qCVveefUoUXgEwiGf0Hxl/Jf0HRoQKn9Iz+MbCPsaNHi+
-	 T5w/5RNIA0FQL4WRZ+dafcRIwodzJtXuHu1V1EWkoea7alkWmyfDnPF/00R6D4AuFo
-	 qkZlGaWVPQOQVfrq85FPJtr4ARCt5g7hMvVo8vJ5aG+vokYy47F4V+SVwWQiwGBQOX
-	 8LyTUKxSk9RxiOXVfCjlJaHDVz8cU/2Yx5PO0dQmI0xcKalAaieCzpcfdSWJcKIOgo
-	 2l8VGGa6BttkTBLzoa4bOgekD2KXUpRrSikDo5xQrJ6MEDinPsIgiVu5DJ0KNlrP8v
-	 ggOd7pxr9D1hg==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B23017E0927;
-	Mon, 27 Oct 2025 13:39:03 +0100 (CET)
-Message-ID: <1499f50e-aa4f-454a-b8b5-c9a21bef7f72@collabora.com>
-Date: Mon, 27 Oct 2025 13:39:02 +0100
+	s=arc-20240116; t=1761569176; c=relaxed/simple;
+	bh=TdxuPqLZziFnxsPOgN04mmsgtUByweKcrhEQE8hk0ok=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eRViZIJzOQdkvibf40gEtH8wHQeGenG0mDgeYFPYD+vEfIP5usMLrxXahqpi8YGODxYmbxnWaPxz2nHj39eENZq7mjDcAumOT32+1VJc+rp6dxFVabZQuybNWfTy15dw5NCypaQ3i7/AS8GGFwINDfFE7sr83E32VlmP6/5SSSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Jy3oKCA2; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761569175; x=1793105175;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TdxuPqLZziFnxsPOgN04mmsgtUByweKcrhEQE8hk0ok=;
+  b=Jy3oKCA2noVmg7nRXyXIVjhuqYjCmVBLxOAtNgxF5plaKMJ/nCpVOCwN
+   wTF/T6lDjn93LYFteqo7Vqh9xJpkfewvEKKNEWAEmMzB/+USdUuGV7NbF
+   glGBEOhr0dSWsH2vp1uYv0qe3/eO26/osUE5Yp+qZew4AaXpDeLVG/p0m
+   mOc7kuAv+mRZK1AUcfdfKq8lju1RMrSOkrXOs1ZVxTjCXRbl3NKin3GPL
+   LJP0Uu1kwhOq6qz/Nqo2iOAbJffc/UwZSoOfCfn8fnSUKt1EQLhzIx1Q6
+   kzXrnN63WY87xjzIFFH/f5w0E1W+uKXbK8UXe78AKiwC+SuV/zrvo4I9P
+   w==;
+X-CSE-ConnectionGUID: CRg2JnddQXqvHrHDe8eZOQ==
+X-CSE-MsgGUID: p1KyY9n1TaCHml4dmxlesg==
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="279676605"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Oct 2025 05:46:08 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 27 Oct 2025 05:45:45 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 27 Oct 2025 05:45:43 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net-next] net: phy:  micrel: lan8842 erratas
+Date: Mon, 27 Oct 2025 13:40:26 +0100
+Message-ID: <20251027124026.64232-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: orangepi-5: fix PCIe 3.3V regulator
- voltage
-To: Mykola Kvach <xakep.amatop@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Cenk Uluisik <cenk.uluisik@googlemail.com>, Johan Jonker <jbx6244@gmail.com>
-Cc: Jimmy Hon <honyuenkwun@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Muhammed Efe Cetin <efectn@6tel.net>
-References: <20251024173830.49211-1-xakep.amatop@gmail.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20251024173830.49211-1-xakep.amatop@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Mykola,
+Add two erratas for lan8842. The errata document can be found here [1].
+This is fixing the module 2 ("Analog front-end not optimized for
+PHY-side shorted center taps") and module 7 ("1000BASE-T PMA EEE TX wake
+timer is non-compliant")
 
-Thanks for your patch.
+[1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/Errata/LAN8842-Errata-DS80001172.pdf
 
-Cc: Muhammed who is the author of commit b6bc755d806e
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/net/phy/micrel.c | 166 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 166 insertions(+)
 
-On 10/24/25 19:38, Mykola Kvach wrote:
-> The vcc3v3_pcie20 fixed regulator powers the PCIe device-side 3.3V
-> rail for pcie2x1l2 via vpcie3v3-supply. The DTS mistakenly set its
-> regulator-min/max-microvolt to 1800000. Correct both to 3300000
-> to match the rail name, the PCIe/M.2 power requirement, and the
-> actual hardware wiring on Orange Pi 5.
-> 
-
-I guess a "Fixes" tag is in order here:
-
-Fixes: b6bc755d806e ("arm64: dts: rockchip: Add Orange Pi 5")
-
-And make sure to Cc: <stable@vger.kernel.org>
-
-> Signed-off-by: Mykola Kvach <xakep.amatop@gmail.com>
-
-The change itself makes sense to me.
-
-Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
-
-Best regards,
-Michael
-
-> ---
->  arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> index ad6d04793b0a..83b9b6645a1e 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> @@ -14,8 +14,8 @@ vcc3v3_pcie20: regulator-vcc3v3-pcie20 {
->  		gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
->  		regulator-name = "vcc3v3_pcie20";
->  		regulator-boot-on;
-> -		regulator-min-microvolt = <1800000>;
-> -		regulator-max-microvolt = <1800000>;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
->  		startup-delay-us = <50000>;
->  		vin-supply = <&vcc5v0_sys>;
->  	};
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index edca0024b7c73..60788dba3ee8d 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -2837,6 +2837,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
+  */
+ #define LAN8814_PAGE_PCS_DIGITAL 2
+ 
++/**
++ * LAN8814_PAGE_EEE - Selects Extended Page 3.
++ *
++ * This page contains EEE registers
++ */
++#define LAN8814_PAGE_EEE 3
++
+ /**
+  * LAN8814_PAGE_COMMON_REGS - Selects Extended Page 4.
+  *
+@@ -2855,6 +2862,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
+  */
+ #define LAN8814_PAGE_PORT_REGS 5
+ 
++/**
++ * LAN8814_PAGE_POWER_REGS - Selects Extended Page 28.
++ *
++ * This page contains analog control registers and power mode registers.
++ */
++#define LAN8814_PAGE_POWER_REGS 28
++
+ /**
+  * LAN8814_PAGE_SYSTEM_CTRL - Selects Extended Page 31.
+  *
+@@ -5918,6 +5932,153 @@ static int lan8842_probe(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++#define LAN8814_POWER_MGMT_MODE_3_ANEG_MDI		0x13
++#define LAN8814_POWER_MGMT_MODE_4_ANEG_MDIX		0x14
++#define LAN8814_POWER_MGMT_MODE_5_10BT_MDI		0x15
++#define LAN8814_POWER_MGMT_MODE_6_10BT_MDIX		0x15
++#define LAN8814_POWER_MGMT_MODE_7_100BT_TRAIN		0x15
++#define LAN8814_POWER_MGMT_MODE_8_100BT_MDI		0x15
++#define LAN8814_POWER_MGMT_MODE_9_100BT_EEE_MDI_TX	0x15
++#define LAN8814_POWER_MGMT_MODE_10_100BT_EEE_MDI_RX	0x15
++#define LAN8814_POWER_MGMT_MODE_11_100BT_MDIX		0x1b
++#define LAN8814_POWER_MGMT_MODE_12_100BT_EEE_MDIX_TX	0x15
++#define LAN8814_POWER_MGMT_MODE_13_100BT_EEE_MDIX_RX	0x15
++#define LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX	0x1e
++
++#define LAN8814_POWER_MGMT_DLLPD_D			BIT(0)
++#define LAN8814_POWER_MGMT_ADCPD_D			BIT(1)
++#define LAN8814_POWER_MGMT_PGAPD_D			BIT(2)
++#define LAN8814_POWER_MGMT_TXPD_D			BIT(3)
++#define LAN8814_POWER_MGMT_DLLPD_C			BIT(4)
++#define LAN8814_POWER_MGMT_ADCPD_C			BIT(5)
++#define LAN8814_POWER_MGMT_PGAPD_C			BIT(6)
++#define LAN8814_POWER_MGMT_TXPD_C			BIT(7)
++#define LAN8814_POWER_MGMT_DLLPD_B			BIT(8)
++#define LAN8814_POWER_MGMT_ADCPD_B			BIT(9)
++#define LAN8814_POWER_MGMT_PGAPD_B			BIT(10)
++#define LAN8814_POWER_MGMT_TXPD_B			BIT(11)
++#define LAN8814_POWER_MGMT_DLLPD_A			BIT(12)
++#define LAN8814_POWER_MGMT_ADCPD_A			BIT(13)
++#define LAN8814_POWER_MGMT_PGAPD_A			BIT(14)
++#define LAN8814_POWER_MGMT_TXPD_A			BIT(15)
++
++#define LAN8814_POWER_MGMT_C_D		(LAN8814_POWER_MGMT_DLLPD_D | \
++					 LAN8814_POWER_MGMT_ADCPD_D | \
++					 LAN8814_POWER_MGMT_PGAPD_D | \
++					 LAN8814_POWER_MGMT_DLLPD_C | \
++					 LAN8814_POWER_MGMT_ADCPD_C | \
++					 LAN8814_POWER_MGMT_PGAPD_C)
++
++#define LAN8814_POWER_MGMT_B_C_D	(LAN8814_POWER_MGMT_C_D | \
++					 LAN8814_POWER_MGMT_DLLPD_B | \
++					 LAN8814_POWER_MGMT_ADCPD_B | \
++					 LAN8814_POWER_MGMT_PGAPD_B)
++
++#define LAN8814_POWER_MGMT_VAL1		(LAN8814_POWER_MGMT_C_D | \
++					 LAN8814_POWER_MGMT_ADCPD_B | \
++					 LAN8814_POWER_MGMT_PGAPD_B | \
++					 LAN8814_POWER_MGMT_ADCPD_A | \
++					 LAN8814_POWER_MGMT_PGAPD_A)
++
++#define LAN8814_POWER_MGMT_VAL2		LAN8814_POWER_MGMT_C_D
++
++#define LAN8814_POWER_MGMT_VAL3		(LAN8814_POWER_MGMT_C_D | \
++					 LAN8814_POWER_MGMT_DLLPD_B | \
++					 LAN8814_POWER_MGMT_ADCPD_B | \
++					 LAN8814_POWER_MGMT_PGAPD_A)
++
++#define LAN8814_POWER_MGMT_VAL4		(LAN8814_POWER_MGMT_B_C_D | \
++					 LAN8814_POWER_MGMT_ADCPD_A | \
++					 LAN8814_POWER_MGMT_PGAPD_A)
++
++#define LAN8814_POWER_MGMT_VAL5		LAN8814_POWER_MGMT_B_C_D
++
++#define LAN8814_EEE_WAKE_TX_TIMER			0x0e
++#define LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL		0x1f
++
++static int lan8842_erratas(struct phy_device *phydev)
++{
++	int ret;
++
++	/* Magjack center tapped ports */
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_3_ANEG_MDI,
++				    LAN8814_POWER_MGMT_VAL1);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_4_ANEG_MDIX,
++				    LAN8814_POWER_MGMT_VAL1);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_5_10BT_MDI,
++				    LAN8814_POWER_MGMT_VAL1);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_6_10BT_MDIX,
++				    LAN8814_POWER_MGMT_VAL1);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_7_100BT_TRAIN,
++				    LAN8814_POWER_MGMT_VAL2);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_8_100BT_MDI,
++				    LAN8814_POWER_MGMT_VAL3);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_9_100BT_EEE_MDI_TX,
++				    LAN8814_POWER_MGMT_VAL3);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_10_100BT_EEE_MDI_RX,
++				    LAN8814_POWER_MGMT_VAL4);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_11_100BT_MDIX,
++				    LAN8814_POWER_MGMT_VAL5);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_12_100BT_EEE_MDIX_TX,
++				    LAN8814_POWER_MGMT_VAL5);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_13_100BT_EEE_MDIX_RX,
++				    LAN8814_POWER_MGMT_VAL4);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
++				    LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
++				    LAN8814_POWER_MGMT_VAL4);
++	if (ret < 0)
++		return ret;
++
++	/* Refresh time Waketx timer */
++	return lanphy_write_page_reg(phydev, LAN8814_PAGE_EEE,
++				     LAN8814_EEE_WAKE_TX_TIMER,
++				     LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL);
++}
++
+ static int lan8842_config_init(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -5930,6 +6091,11 @@ static int lan8842_config_init(struct phy_device *phydev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	/* Apply the erratas for this device */
++	ret = lan8842_erratas(phydev);
++	if (ret < 0)
++		return ret;
++
+ 	/* Even if the GPIOs are set to control the LEDs the behaviour of the
+ 	 * LEDs is wrong, they are not blinking when there is traffic.
+ 	 * To fix this it is required to set extended LED mode
+-- 
+2.34.1
 
 
