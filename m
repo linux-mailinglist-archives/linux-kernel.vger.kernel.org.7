@@ -1,110 +1,76 @@
-Return-Path: <linux-kernel+bounces-872637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F2FC11A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9582FC11A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 183B04E566D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADED63BCDD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403E432ABEC;
-	Mon, 27 Oct 2025 22:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mcFFAINK"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1665A329C41;
+	Mon, 27 Oct 2025 22:13:45 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9852F99BE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B8C2D94A3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761603217; cv=none; b=ai7kqwfItpeoviaW51o+AFYFbaUUy3rok0BPb4GzZgtT15/9J7wT56v0sPAXP0nalBF4QIpypEUX7i2Tnm7Vtw/lfrwNB8poPGC5ELysJP7wPh6N2IK4XdupooWJjwADq8eULznXCi9NPCByQVphztkD6v+7lC+KCJlRHGiCyZI=
+	t=1761603224; cv=none; b=qz60nokx+OEsoXaKqPCePI/30hEEIUx0uwD6oqm8Q5GtsaNkvcGR1bDdYLMLpMR6xw8RGrfLh0Q3fxI/Uflszq4m6RDGQn227ajEslo6P0bXqHdDeezpXOslUWKtluXxhreF/YrFMmq6IvSvy3ZCfXNZ+slmgB7wNAernrCUF3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761603217; c=relaxed/simple;
-	bh=mQTKJScatLYjbszW8Nmlz+tuTFmWhnW9yYaJmefda44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mnbXrBIwd2YwWMs8Hu0ziZqG/N2hWBwCJILogEEcwXg3eQ0XT+N53SJmXkOh9D7gxgap24Hnrls3aA6c6JXn5o8amj/Jt/3suLlrzclO4merHqUoOESLn5ruHJm7SUzR2R1HbwIZcEZcKe+gYM3GO8HfUAVTRYyQoeZsIBfCt98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mcFFAINK; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-591c9934e0cso7492727e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761603214; x=1762208014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQTKJScatLYjbszW8Nmlz+tuTFmWhnW9yYaJmefda44=;
-        b=mcFFAINKBKl1oFJOdmUNYBj3q0Z1Yl5W5xNtzDyJBzoffk0hginF+vLPh24NCDWDwE
-         7BW7Sz5S5UAt0c3nr/huh+Npyudh+fU6MefMLr4HCsZmSggcy3zfdqUq7cy9kvBAZYXc
-         +VlhYJsFznVt4mNLVehv19PGbi5dt2QiT2rhQP/+vSmY61MBGhaI41xV/+N/ZG9b/4pD
-         Red9o0IXhGjODfW5KXfvdowtp6RDKPmLTHUkxdFkktAMo7+TZQOjFXFqaA4w43rB5HvE
-         2cJIEN+ccBR5x6Dbxy46Dj9zwwaAif+dLSlsGdGOSM9kisYlKYnctm9/CuKD83KP0v7M
-         lYQg==
+	s=arc-20240116; t=1761603224; c=relaxed/simple;
+	bh=MZIUTDUlLfJirMX9evaXHDyNYsjcHZ9WEC/P7k9Odow=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VKs7FltMkHeChTwqEHV2BV70OqfgNb9+zAv74oQgbLbje6+EAE2szmhL+EC8TxIMBUAngBUSb7K+2JZKjXsODIsTcnGizLgFtOHfLLDIL9oPTKwFERfe2g20gh1O64uoIL5hW3m0F61Z6urtx9KQHMuZVzL1oUoEuQsUwONx9bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430ced58cd2so189571775ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:13:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761603214; x=1762208014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQTKJScatLYjbszW8Nmlz+tuTFmWhnW9yYaJmefda44=;
-        b=e//cnn1FWnrsgc6Mn4K6Qlb7hPqwuP9g1/8eT2CX7PUoFBDNG6eeAD3sONXqYXuA0o
-         HygmpCUM7v/G1VsbKsu3HZOxokN2BWe1sRvcJgrjPjGHXcvEMdi/WrWYJMmn71Wa1nr4
-         a8SPf4jH9Ohe5hrIkRsFfHq9BDtEU/5s+9mDQBJEtqzPGxeqbn9gabT+IJuxbbjNxZAX
-         KPSR4zWdPWySu/Xk2JWAyXJAUPgjqmzLbaMyn295LGe8oxotNh1bm3MssAtOULhaBi0s
-         q9pGvggbKR2aC37a4bfbkxGwf8iVpbcSSqmqOha5/8xtiRatnpYb0vkKAK7HiK1i5PL/
-         NO/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfEWAnkleFdtUpWrChUJGSo1TL8GNjqX3LoOa3RuiFpLpZhORX8idSMfe0jKSRNLMs3C1jUm/AxpvaAK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd1oNjVGRFWR6dnX0YC9R3AcA+Dkpt/qs6A50m4B/6rQf0XqgA
-	rIiPTkvyfxdOskzHoVngn/TvUYLuXIwTn+Dil5NwBLPr7U7aiWQV/HR8MOYr/qAOB3xpaQjmZrt
-	ky7NodmDYOH8lqTIVIb24LcbJ0mNpXkG1rRohAEemXQ==
-X-Gm-Gg: ASbGnctICp+6YQ9wZNkWx0kBQyKpjxrC7aQKkNiTn9ZpzvNESIA61CIErtcSdYjxJd5
-	gAi0m/PaB+2G9AisWylMoORHcR2eSyq1p1dg5+qGgntbf7AQr2PBntLjWL8Z7mLe1nF3vjwO5T5
-	7B47BW4uIMHLiaBQQm6NX+BWUN3BD+3kl1ia+uzB6NGnh9sVg68MwgBCMGyjLjhK9Rza3jilLo8
-	Kkw/fCXrif53seZPuWMgLtKhMZINaZy0P6jw+SS83OHlwZZRZFqkj1VC1bX0GhmMixdXbc9YOBj
-	NUeTow==
-X-Google-Smtp-Source: AGHT+IGiyuhAd/g3j8DFK8VW5m7bOjesol+1DXV+h5pePcwa0TlxwvPOrfmVLR7Li8szmQf8I82fLHqa33iH+2F8eRE=
-X-Received: by 2002:a05:6512:ea1:b0:586:8a68:9c4d with SMTP id
- 2adb3069b0e04-5930e9dd17cmr516262e87.52.1761603214129; Mon, 27 Oct 2025
- 15:13:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761603222; x=1762208022;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZIUTDUlLfJirMX9evaXHDyNYsjcHZ9WEC/P7k9Odow=;
+        b=GEo4tHMPNn5au0RbDbSdT0y962utcTMOKw0ob/M8yxEKRcZhCclKAYktHIxlGhDM9V
+         oa7/Y3Fuz95FrgTeJj/Chrg3J02i9AQ1+mT6ygINhF4FJ9ONE19oq+kVb5+akaUnEoA0
+         km6xXXNUGrKXMY771tgcCr3uETWSCtQ72L4XoW6ncz3HNXZmovHNVgDIFKiMTTmHyOcD
+         xa5o5kpxP7QhMnWeApEHDwsVbU8bi8nxM7TddyGSvUo0Fi9VRyvxLVvHIhnUeFKSE+rN
+         xMKHXhb7lRMrORTaJqSlQgLXvxD1UbTiqbBigNbZNPb2fw7lIYkVSMabMNtx7hJ63F25
+         RTGg==
+X-Gm-Message-State: AOJu0YwyTiT5oN8xwBqlFBWLBf20T1Iw+ARnAlWC2Z/R3xSgjbaWbVUx
+	sZDr+/OCC710TQwtY70t0S6NpfClfLpCdtgFwzjsKFAlOeoZmG1zPxhmrEqV8BrVRhTrJkD0abf
+	5jzH4pkhmcrjZWwQ6TvHFe2pLPmIPVou1VAcmm3AO1e6hOcgfrG7VweGB3hg=
+X-Google-Smtp-Source: AGHT+IFTDsEpehPXr2n42WpJpBYd8DE3/MDlQClpWm9OWI+LgJq98WsDKyFNthJmhRswXIcq14VfhdUxUdOMtiEgdivegQ2dpuuL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023132700.1199871-1-antonio.borneo@foss.st.com> <20251023132700.1199871-8-antonio.borneo@foss.st.com>
-In-Reply-To: <20251023132700.1199871-8-antonio.borneo@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 Oct 2025 23:13:23 +0100
-X-Gm-Features: AWmQ_bnPVCXY1Dpjano01hZ_Z8pqJmAtt3_jZEXugTZ4oHs4-VjsvtZbv--6EHg
-Message-ID: <CACRpkda1d+WquYsUq-ntWRC0J37w6=UBcSSAwL_nroS4_h_dZw@mail.gmail.com>
-Subject: Re: [PATCH v4 07/12] pinctrl: stm32: Drop useless spinlock save and restore
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, 
-	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
+X-Received: by 2002:a05:6e02:3708:b0:430:a183:7b with SMTP id
+ e9e14a558f8ab-4320f7a87b5mr28901835ab.3.1761603222453; Mon, 27 Oct 2025
+ 15:13:42 -0700 (PDT)
+Date: Mon, 27 Oct 2025 15:13:42 -0700
+In-Reply-To: <68dadf0e.050a0220.1696c6.001d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ffee96.050a0220.17b81f.0002.GAE@google.com>
+Subject: Forwarded: WARNING in f2fs_delete_entry (2)
+From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 3:27=E2=80=AFPM Antonio Borneo
-<antonio.borneo@foss.st.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> There is no need to acquire a spinlock to only read a register for
-> debugfs reporting.
-> Drop such useless spinlock save and restore.
->
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+***
 
-Patch applied!
+Subject: WARNING in f2fs_delete_entry (2)
+Author: zlatistiv@gmail.com
 
-Yours,
-Linus Walleij
+#syz test
 
