@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-871165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7B0C0C905
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:11:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4CEC0C8ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934164040D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D456B189A6ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86502EDD76;
-	Mon, 27 Oct 2025 09:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9FE2F25FA;
+	Mon, 27 Oct 2025 09:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fn92Uak3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p/+LU4LE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WpccB66u";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p/+LU4LE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WpccB66u"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9752DE6F5;
-	Mon, 27 Oct 2025 09:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A025D2E5B08
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555721; cv=none; b=ul4FOq4ZzLerCWzW0bGNXn+/GiG43H0iQZdYrmpBnczOfARx69mklQ2MDP8afxTPsORHqoj/9+BpyzeJPqdNb2OCBP5+Gyj/cBBP1ucsphs2eMUUSWmdJ+cK7OLzeKMsKtsU+G9M5aDiX9jg0/Hqqo7t3r0Ap8V26YP8Ml7hKgc=
+	t=1761555731; cv=none; b=NiZs+oS35+C+CLDjX2gpMiAPj7JwxgvfUpqgSxGGeB0ay10lD81lV3JPdxn/49V3hLqEr5sO3KlnbSp9rM7D3J2vuaGlwf6jr5z3G9z0FdMwpSO2gKdNjvxh/Zje0RpgKesJSWAulGzed5AdewlwFr6Ldk4XX11USAjSRnHSuZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555721; c=relaxed/simple;
-	bh=275YkRCyZVfjEDUsCr12iYfs5/SgTlKkXm5iRoBP66c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTkWiickBbDcYj9HVArT/uulGYaZ++47UmmfbjA2K8KotCu5VUZ+tplcnYm+9HNDq86GsOeUdWqQPWn1cT134EhT0fqEHl+mDPeSKZ9WYkJoBK8uHBOdBASn6J2W3isESOOpJF9rYAhD2Tjpj/2+31E/WN2HNt3QFJGpgiex7Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fn92Uak3; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761555720; x=1793091720;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=275YkRCyZVfjEDUsCr12iYfs5/SgTlKkXm5iRoBP66c=;
-  b=Fn92Uak3va2SCJY6D4AlJ/Bar4OEIFtUlohQEASvWtQohpeW4oFN//S8
-   5hJAaMFqdkvwP5GrwdPV6H6Q6jV27AZJ7JY5JQOq461XIgy7vVnwaCz6s
-   0FI7ob3QRmy8UioPEILE9lmZQyDoDrgtBxGGrRXj5q9jYAgPmVnEY539B
-   WZ8/0Qd29a/UplxD5QdR9dsRaC8MsB2PTbRycypbcfPZ1AofP7YtzCKdS
-   HaQkjppODpZ4vVZ7WuYDYXsuIxcjZRFU3TQU4tgiyQ5n8v43Sg+9bER52
-   Kf0GsoJ9rKwQGklmZdmjNyUvnJcrnmVR3dr6Zfl1JQtSLxnW+QFkIVrwS
-   g==;
-X-CSE-ConnectionGUID: mHpOW1faQCC77K26FFV05w==
-X-CSE-MsgGUID: gM+WzI8jTnimGfrSyWr3Ng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67464789"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67464789"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:01:59 -0700
-X-CSE-ConnectionGUID: iCVeVDcZSguedVPvO1GnIg==
-X-CSE-MsgGUID: rPVV21LWTqG3HlsE3kXlFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="184892900"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:01:51 -0700
-Message-ID: <59ae9957-88a8-4777-9bd2-196e8b4eb8ac@linux.intel.com>
-Date: Mon, 27 Oct 2025 17:01:49 +0800
+	s=arc-20240116; t=1761555731; c=relaxed/simple;
+	bh=5yDMD5SPHiQ/2N0GD+XLRmqOKlTDVH/VQHlyBzIFPBM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNvHZeQFDEfP4OQwOr6Jibg2P6RUEDMgQtZMSr6M5iPfruhITO9XdsDR4CltEO1wnReLgGEJwajdU2TAUSydzLQljFIdTjd8w2wdJCAbeB4YURQXvrwbYE4GhRYgYlgfmo5YZEvUNHpmd9Eu3Wq9d7btrx+X5CeKzIuT7wg74vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p/+LU4LE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WpccB66u; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p/+LU4LE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WpccB66u; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B31971F385;
+	Mon, 27 Oct 2025 09:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761555727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=grxlaZtodfngfRM/DpYNmglZ5nY6vDltXt0NMp0Ywjw=;
+	b=p/+LU4LEeVq08aML9tInxaCAvvb2HImNkg/740OqJiPxBlVB6dWdmlFSvEI0X2vS6451Sj
+	aBh6QoXFWaHnMa5l9npFTR57lYxcXwWF9r+G+0wtq56t7AirPe5MZIMq2csBbDAKHZyyUI
+	P3Krowt2QMI7q7YtK1VhMO2SBQeAnnk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761555727;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=grxlaZtodfngfRM/DpYNmglZ5nY6vDltXt0NMp0Ywjw=;
+	b=WpccB66uxh+epXC99yIGrQ9vk5HkoWmcmkxmafIuCwZSl1O08tBByvCjc+Ww+YfdxAw90h
+	UXev+KrZLUbckfBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="p/+LU4LE";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WpccB66u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761555727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=grxlaZtodfngfRM/DpYNmglZ5nY6vDltXt0NMp0Ywjw=;
+	b=p/+LU4LEeVq08aML9tInxaCAvvb2HImNkg/740OqJiPxBlVB6dWdmlFSvEI0X2vS6451Sj
+	aBh6QoXFWaHnMa5l9npFTR57lYxcXwWF9r+G+0wtq56t7AirPe5MZIMq2csBbDAKHZyyUI
+	P3Krowt2QMI7q7YtK1VhMO2SBQeAnnk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761555727;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=grxlaZtodfngfRM/DpYNmglZ5nY6vDltXt0NMp0Ywjw=;
+	b=WpccB66uxh+epXC99yIGrQ9vk5HkoWmcmkxmafIuCwZSl1O08tBByvCjc+Ww+YfdxAw90h
+	UXev+KrZLUbckfBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79281136CF;
+	Mon, 27 Oct 2025 09:02:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kr4rHA81/2ikQQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 27 Oct 2025 09:02:07 +0000
+Date: Mon, 27 Oct 2025 10:02:07 +0100
+Message-ID: <87jz0g3egg.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 00/11] ALSA: cs35l56: Add support for factory calibration
+In-Reply-To: <c45840e4-af1e-4658-9e13-bd6b9f66598f@sirena.org.uk>
+References: <20251021105022.1013685-1-rf@opensource.cirrus.com>
+	<c45840e4-af1e-4658-9e13-bd6b9f66598f@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/25] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
- into its sole caller
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251017003244.186495-1-seanjc@google.com>
- <20251017003244.186495-14-seanjc@google.com>
- <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com>
- <aPuqYz3ly5a3__mf@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <aPuqYz3ly5a3__mf@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B31971F385
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
+
+On Wed, 22 Oct 2025 21:14:45 +0200,
+Mark Brown wrote:
+> 
+> On Tue, Oct 21, 2025 at 11:50:11AM +0100, Richard Fitzgerald wrote:
+> 
+> > NOTE: unfortunately this is yet another series that is mainly ASoC but
+> > also needs some changes to the HDA driver, and they have build dependencies
+> > on the ASoC code. I suggest taking this all through Mark's tree and we'll
+> > avoid sending any other commits to the HDA driver until it has all landed
+> > in Takashi's tree.
+> 
+> That seems like a reasonable plan to me, Takashi?
+
+Sorry for the late reaction, as I was off in the last week.
+
+Let's get them through Mark's tree as suggested.
+Feel free to take my ack:
+
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
 
+thanks,
 
-On 10/25/2025 12:33 AM, Sean Christopherson wrote:
-> On Fri, Oct 24, 2025, Binbin Wu wrote:
->>
->> On 10/17/2025 8:32 AM, Sean Christopherson wrote:
->>> Fold tdx_mem_page_record_premap_cnt() into tdx_sept_set_private_spte() as
->>> providing a one-off helper for effectively three lines of code is at best a
->>> wash, and splitting the code makes the comment for smp_rmb()  _extremely_
->>> confusing as the comment talks about reading kvm->arch.pre_fault_allowed
->>> before kvm_tdx->state, but the immediately visible code does the exact
->>> opposite.
->>>
->>> Opportunistically rewrite the comments to more explicitly explain who is
->>> checking what, as well as _why_ the ordering matters.
->>>
->>> No functional change intended.
->>>
->>> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
->>
->> One nit below.
->>
->> [...]
->>> +	/*
->>> +	 * If the TD isn't finalized/runnable, then userspace is initializing
->>> +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the number of
->>> +	 * pages that need to be mapped and initialized via TDH.MEM.PAGE.ADD.
->>> +	 * KVM_TDX_FINALIZE_VM checks the counter to ensure all mapped pages
->>                                                                     ^
->>                                                  Nit: Is pre-mapped better?
-> Yeah, updated (and then it gets deleted a few commits later :-) ).
-Oh, right, nr_premapped will be dropped later.
-
-Since the whole nr_premapped will be dropped, do we still need a cleanup patch
-like patch 12 which will be dropped finally?
+Takashi
 
