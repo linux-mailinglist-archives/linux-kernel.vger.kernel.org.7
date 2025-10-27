@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-871867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E888CC0E95B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:49:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EEBC0EA8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 782EF4EE86D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D02D3B11CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5851E505;
-	Mon, 27 Oct 2025 14:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BF625D546;
+	Mon, 27 Oct 2025 14:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1ecJbEg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="N30VL9c6"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9B74A3E;
-	Mon, 27 Oct 2025 14:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761576213; cv=none; b=T2F5ALQ9zJEknqlSVoNpWNbpsQ0ljdZwFk4/C4G0J53Dx1WJ1QnfIyIVRQInmTY37f0iL0ODytmp5iR7S5jafzZjCuy56L50BGBL3D0aOOZEHWqrtgB2kuqSdY0vELQig2GMe2sRhcbmlB9M0TfAkbl1Bs1SVzO4flivy6/YRAQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761576213; c=relaxed/simple;
-	bh=DhOX7cgjBI/Y2+aAqeEvHLgr6AQ4KXFc7yQ7G3VryxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P5IjQxahpVdR8si7LtulSaZgGyNexUIn4XsADe2aXaqKAwB71IINeucnvyOUVXwzv3sgbhU3sCuHcplRr6xLgyo2MD3stssQniLo7JqTSe2czbCgRuDLn2/cWvXmU4AXaxRywR+Gnsgb3Dohqc1uI1hsxkWbY/WXnDzChccfN4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1ecJbEg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77BC1C4CEF1;
-	Mon, 27 Oct 2025 14:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761576213;
-	bh=DhOX7cgjBI/Y2+aAqeEvHLgr6AQ4KXFc7yQ7G3VryxI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=g1ecJbEgErVHmKLNUgl7HW1vwRzEYHpLa5eYuRzZDd8RVrclOPXaZb+jJCKBLgG6/
-	 hGjTS8VtdoKsfmv764odRmy5Uq8c/EJsMoRmRTgD+BD0MN+ALCMyXdLti1usz29hTA
-	 3nHWsRk10afHLlyRAz7cDJXJSo1RNKwA79GOHRX04tzURZSPvmh1fmLkquM87vyl3+
-	 8ja/N7zoruhCEQ6j8lLnkYq4+yF3isBc/omhDPSrVeKW2ety6K6hMqkmS1ZAc4tI5Y
-	 fbGxAHeh4DDkJpB1i/dVHpT6Z9DqYXBZhg0iQ5boQ8tBGY6+CEJ9r7rVAQ8voZnRIg
-	 v4BeqTFJ/9gJw==
-Date: Mon, 27 Oct 2025 14:43:27 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: core: Use datasheet name as fallback for label
-Message-ID: <20251027144327.09f59982@jic23-huawei>
-In-Reply-To: <20251027124210.788962-1-wens@kernel.org>
-References: <20251027124210.788962-1-wens@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB0522D7A5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761576323; cv=pass; b=PzfNXHcN0JMbFJDWt/05g69eSoXXRNKu6v1pfYD1GriIjMhVYoSW5bMz/HSUwHcEFChrL3TwrYOSbR5uJMIN3mSuDhWyNrKl6BFlW15nA3UOiUY/fa7PzfNg3XDGMCuAi8KEZVfCCnJjfDSU87Ty28pkukq6XMx9j/jL9YlJ/cU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761576323; c=relaxed/simple;
+	bh=xUTsy9NdCobCgLwR+2xt+UrazBZbG42Ld9SJG3JtqLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sNXLvd/dBBQcGcXBHYxpNSph9Iuv6+fsW+J9xK2d0ZRYTfEno/Reksval7Ywweo+xLPSm7eRMRRCyvhAVarm6JLx0XwaxOudAmUm10PzE6/MVYu2VBxALsi1T12eZzGfSS/Nl+0ILjdEE+wYpcqknmaGb0Tk5+Sr2KdWdeXA18Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=N30VL9c6; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761576285; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lTdsw6N0xXzLaD7EGlrs5qL1gxQ9UlbOmXohNYZ3AC4eLnaugKEnyGo1TOnpCjCG86bUCp0eUf3BdyR5rjGWyvmMq7YriKxAUPztPE+wAyx+fMnNHr86Pjf2GWZ20hgHLFwAKwRfOsniymnVswG3vr49JxhvZ5ZajK2uKhLIn2E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761576285; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oZrYDMRouHneyMB8tCbVdocN1AD7BicDvh/8ht3WR5s=; 
+	b=Lnr+Ef4UoyA4ERzapTmeBqzezUXDR3B2t5E7t98SCs8NMYgCpZbwAkT07XAzUhrpZtJrtqlL/yTJyo2R0z+XViCHDvjCTMa8mOYyoZOo70Ow6yvfGb1p7U7KtKyiaWij3wh8uzojttrkJ2FiPrJ3kR1Ow9tk6tPVUlxTi+uBSGE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761576285;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=oZrYDMRouHneyMB8tCbVdocN1AD7BicDvh/8ht3WR5s=;
+	b=N30VL9c61TjBWFtJhsGNPVwxmPGVzLfWFgwLLqwfVBxi7qKWkCPuX4j5zewqOCFR
+	f7nZDE+KZvLLtnG9IMnVcRm3n6Ie80e4Z9957oSqiWS69rk0MuSFgGCnihbQD1O/c5a
+	xOgFW3e1SfIUIbseUZPFo7MlAKJ+sgOBZmtPj22w=
+Received: by mx.zohomail.com with SMTPS id 176157628274924.30349710427663;
+	Mon, 27 Oct 2025 07:44:42 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject:
+ Re: [PATCH v2 0/3] drm/display: bridge_connector: get/put the stored bridges:
+ fix NULL pointer regression
+Date: Mon, 27 Oct 2025 15:44:33 +0100
+Message-ID: <5954683.DvuYhMxLoT@workhorse>
+In-Reply-To:
+ <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
+References:
+ <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 27 Oct 2025 20:42:09 +0800
-Chen-Yu Tsai <wens@kernel.org> wrote:
-
-> Some IIO drivers do not provide labels or extended names for their
-> channels. However they may provide datasheet names. axp20x-adc is
-> one such example.
+On Friday, 17 October 2025 18:15:03 Central European Standard Time Luca Ceresoli wrote:
+> A patch of mine recently merged in drm-misc-next [1] has a NULL pointer
+> deref regression (reported here [2] and here [3]). Being in lack of a quick
+> fix, I sent a revert proposal [4].
 > 
-> Use the datasheet name as a fallback for the channel label. This mainly
-> benefits iio-hwmon by letting the produced hwmon sensors have more
-> meaningful names rather than in_voltageX.
-
-I definitely don't want to have different behaviour for in kernel requests
-and for people reading the _label attributes.  
-https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/iio/industrialio-core.c#L1232
-would need modifying to allow for the sysfs attributes to be created.
-
-In general I'm not sure I want to do this.  Datasheet names can be exceptionally
-obscure which is why we've kept them hidden from userspace.  At least dts writers
-tend to have those names on their circuit diagrams and tend to have datasheet access.
-
-Let's see if anyone else has feedback on this suggestion over next week or so.
-
-Thanks,
-
-Jonathan
-
+> The revert proposal has no answers currenty, and in the meanwhile I have a
+> patch that implements the original idea but without the same bug. So here's
+> a v2 series with:
 > 
-> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+>  - the same revert patch
+>  - the original patch but rewritten without the same bug (and even simpler)
+> 
+> Also the re-written patch is now split in two for clarity because it was
+> doing two somewhat different things.
+> 
+> [1] https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
+> [2] https://lore.kernel.org/lkml/336fbfdd-c424-490e-b5d1-8ee84043dc80@samsung.com/
+> [3] https://lore.kernel.org/lkml/CA+G9fYuKHp3QgPKjgFY3TfkDdh5Vf=Ae5pCW+eU41Bu=D7th2g@mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v1-1-81d6984c5361@bootlin.com/
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > ---
->  drivers/iio/industrialio-core.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Changes in v2:
+> - No changes to the revert patch
+> - Added the (corrected) patch introducing the same feature as the original
+>   buggy patch, and also split it in two fir clarity
+> - Link to v1: https://lore.kernel.org/r/20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v1-1-81d6984c5361@bootlin.com
 > 
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index 88c3d585a1bd..d410ea2e7963 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -749,6 +749,9 @@ ssize_t do_iio_read_channel_label(struct iio_dev *indio_dev,
->  	if (c->extend_name)
->  		return sysfs_emit(buf, "%s\n", c->extend_name);
->  
-> +	if (c->datasheet_name)
-> +		return sysfs_emit(buf, "%s\n", c->datasheet_name);
-> +
->  	return -EINVAL;
->  }
->  
+> ---
+> Luca Ceresoli (3):
+>       Revert "drm/display: bridge_connector: get/put the stored bridges"
+>       drm/display: bridge_connector: get/put the stored bridges
+>       drm/display: bridge_connector: get/put the panel_bridge
+> 
+>  drivers/gpu/drm/display/drm_bridge_connector.c | 92 +++++++++++---------------
+>  1 file changed, 39 insertions(+), 53 deletions(-)
+> ---
+> base-commit: 84a0a3f014cda68ff10b8517d09e9f0c1cd942a2
+> change-id: 20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-9a429ddb48e2
+> 
+> Best regards,
+> 
+
+Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
+Fixes a null pointer dereference on boot on my Radxa ROCK 5T
+(RK3588) that's present in next-20251027.
+
+Kind regards,
+Nicolas Frattaroli
+
 
 
