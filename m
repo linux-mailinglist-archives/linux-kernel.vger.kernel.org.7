@@ -1,188 +1,107 @@
-Return-Path: <linux-kernel+bounces-872551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97167C116E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:44:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D584C116BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 076094E34B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:44:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EBC34F896E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3917132143E;
-	Mon, 27 Oct 2025 20:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17FD31BCBD;
+	Mon, 27 Oct 2025 20:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SkM+8bQ6"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201112D739D;
-	Mon, 27 Oct 2025 20:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epbD1kNT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB66305E29;
+	Mon, 27 Oct 2025 20:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761597874; cv=none; b=EOWrnBoB7GkZN8bzKvxjlJf7cud0TpLrU0q0mauc5Fo7JGA2w7zSxvWbYlPnwiR5t9t6g9SCYlSjyiQfjQveCGwpA9FMWk8p/G//zaVjwYsEIWS3hpTI80RySgX+37Lb+SqyrK8xbRRlHhFgCze9RWUIGhmcQEbeyXt+uzK7IP4=
+	t=1761597499; cv=none; b=kTtewusQhSqOHBdoojLi0X70o8aeAqAoXIQ7GArbN7uO55fZO4QdV2BYFa041TJABerp+U1g/iTJcUqhqABvxv8ZfdNufdXZrXmW3sRC0lfvMTCoTyIl29EvkLFUeF4l/wEHfgXFXPN/4bmNbMPnPBUJkHdQFQhn67Se6rVEfvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761597874; c=relaxed/simple;
-	bh=qlgYcDP3wPNQcYNQoPgAxQlQpIKroMyhIMV31tcTFB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qk9Oynw2wudLMot2lvcIWQcdxgPFOAImo30JgurfT7cJs8V7C59wsm9IEz/am5+Pq24yIso1EkyDdb37Vpg27TWM4nzFZIsBSsxcYggWpfYYqPi9BZMDo9eS24gF08WM8UO5c5OFshw3BuVW6FJ6tQjfd0hxOA0c2yRV8DqW0Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SkM+8bQ6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [52.148.138.235])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6625E200FE48;
-	Mon, 27 Oct 2025 13:44:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6625E200FE48
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761597872;
-	bh=O55qdQEOty0YMJyCMjA7a55Zsy7WOextVLJ/m8n7aNc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SkM+8bQ6HvDK3JCyAa3H5XwZhgsBqyi2+LZ6YFbx7CCgLp7y7ik+goeWx+YNH0OE0
-	 Y84Iuea7wlo7sdzrMRzH/9NOZopwGxxQ6Sfdcx3HS9sGE5kHt4+oAu70GqW/PyaftN
-	 z/yZVMGkRGY/+t7ME6Jzffzb4DhwJ1iCVs5H8U80=
-Date: Mon, 27 Oct 2025 13:44:30 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: bhelgaas@google.com, alex.williamson@redhat.com,
- pasha.tatashin@soleen.com, dmatlack@google.com, jgg@ziepe.ca,
- graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
- chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com, parav@nvidia.com,
- saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com,
- david@redhat.com, jgowans@amazon.com, dwmw2@infradead.org,
- epetron@amazon.de, junaids@google.com, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Jacob Pan <jacob.pan@linux.microsoft.com>
-Subject: Re: [RFC PATCH 06/21] vfio/pci: Accept live update preservation
- request for VFIO cdev
-Message-ID: <20251027134430.00007e46@linux.microsoft.com>
-In-Reply-To: <20251018000713.677779-7-vipinsh@google.com>
-References: <20251018000713.677779-1-vipinsh@google.com>
-	<20251018000713.677779-7-vipinsh@google.com>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761597499; c=relaxed/simple;
+	bh=5UQm7v/j9A/hzLS0XZZ9DQ+j2ooCVmH3POGZzPBRr54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WnzrBgIorHeiujz9qybsd+0vIuVpEQFU/mwsBREj6GeVw0HU+8H6qVDlualfjJHkQNYb9OG2ESWpX8kwmnSHk6kxklnbJgl4RJCUwETh8UYyBf4cY1WvhT6V9K8zMZooKOp6qT2Dvgy7bZqNh/yWDwkA6ppp8wg+UDjsyqMITJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epbD1kNT; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761597497; x=1793133497;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5UQm7v/j9A/hzLS0XZZ9DQ+j2ooCVmH3POGZzPBRr54=;
+  b=epbD1kNTday+NqVJtsQzEGJLe65ofy1iKOLOEaeGHDj2ywxB75ODurFv
+   xaTJAptJ6BHqKoXOC/MG4xd9id86wkFFtGMO4OqDVAjEBIBMGcdNp7c9u
+   Y54SaSPkgJ9Gpg9ThyxiDIBOwdWWicgE1EmA0x+QzZendiIZyTTidBfuz
+   PxhQKfi15Qm+IZX/KuRQodxik/NQn4sqvnK9jnjgOPWBAQaSPywwmqkRn
+   4O5vA9RzFGn4/qYDTjY4lEwBn5rxW26UsVoiBmmzcnmBzHDugrMjP4IW1
+   Dxw/PaXQavjfaA6ACcppcdvl9g+bGG1kVdEnImr04MLo/TkDOgxBp0HAB
+   g==;
+X-CSE-ConnectionGUID: JYUGpnhlTqacRCiblxWWKQ==
+X-CSE-MsgGUID: U04Iml9iSKyij0gAIfvAaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75033727"
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="75033727"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 13:38:17 -0700
+X-CSE-ConnectionGUID: 843NkRjgSAK5pPp1mxXvXQ==
+X-CSE-MsgGUID: 5vBnlc7qTWCD6sOE7pOpYA==
+X-ExtLoop1: 1
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 13:38:16 -0700
+Date: Mon, 27 Oct 2025 13:45:38 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Chris Oo <cho@microsoft.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+	linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Yunhong Jiang <yunhong.jiang@linux.intel.com>
+Subject: Re: [PATCH v6 03/10] dt-bindings: reserved-memory: Wakeup Mailbox
+ for Intel processors
+Message-ID: <20251027204538.GA14161@ranerica-svr.sc.intel.com>
+References: <20251016-rneri-wakeup-mailbox-v6-0-40435fb9305e@linux.intel.com>
+ <20251016-rneri-wakeup-mailbox-v6-3-40435fb9305e@linux.intel.com>
+ <20251027142244.GZaP-ANLSidOxk0R_W@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027142244.GZaP-ANLSidOxk0R_W@fat_crate.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Fri, 17 Oct 2025 17:06:58 -0700
-Vipin Sharma <vipinsh@google.com> wrote:
+On Mon, Oct 27, 2025 at 03:22:44PM +0100, Borislav Petkov wrote:
+> On Thu, Oct 16, 2025 at 07:57:25PM -0700, Ricardo Neri wrote:
+> > Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Co-developed-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> 
+> This is missing an ack from the devicetree maintainers:
+> 
+> ./scripts/get_maintainer.pl -f Documentation/devicetree/
 
-> Return true in can_preserve() callback of live update file handler, if
-> VFIO can preserve the passed VFIO cdev file. Return -EOPNOTSUPP from
-> prepare() callback for now to fail any attempt to preserve VFIO cdev
-> in live update.
->=20
-> The VFIO cdev opened check ensures that the file is actually used for
-> VFIO cdev and not for VFIO device FD which can be obtained from the
-> VFIO group.
->=20
-> Returning true from can_preserve() tells Live Update Orchestrator that
-> VFIO can try to preserve the given file during live update. Actual
-> preservation logic will be added in future patches, therefore, for
-> now, prepare call will fail.
->=20
-> Signed-off-by: Vipin Sharma <vipinsh@google.com>
-> ---
->  drivers/vfio/pci/vfio_pci_liveupdate.c | 16 +++++++++++++++-
->  drivers/vfio/vfio_main.c               |  3 ++-
->  include/linux/vfio.h                   |  2 ++
->  3 files changed, 19 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/vfio_pci_liveupdate.c
-> b/drivers/vfio/pci/vfio_pci_liveupdate.c index
-> 088f7698a72c..2ce2c11cb51c 100644 ---
-> a/drivers/vfio/pci/vfio_pci_liveupdate.c +++
-> b/drivers/vfio/pci/vfio_pci_liveupdate.c @@ -8,10 +8,17 @@
->   */
-> =20
->  #include <linux/liveupdate.h>
-> +#include <linux/vfio.h>
->  #include <linux/errno.h>
-> =20
->  #include "vfio_pci_priv.h"
-> =20
-> +static int vfio_pci_liveupdate_prepare(struct
-> liveupdate_file_handler *handler,
-> +				       struct file *file, u64 *data)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->  static int vfio_pci_liveupdate_retrieve(struct
-> liveupdate_file_handler *handler, u64 data, struct file **file)
->  {
-> @@ -21,10 +28,17 @@ static int vfio_pci_liveupdate_retrieve(struct
-> liveupdate_file_handler *handler, static bool
-> vfio_pci_liveupdate_can_preserve(struct liveupdate_file_handler
-> *handler, struct file *file) {
-> -	return -EOPNOTSUPP;
-> +	struct vfio_device *device =3D vfio_device_from_file(file);
-> +
-> +	if (!device)
-> +		return false;
-> +
-> +	guard(mutex)(&device->dev_set->lock);
-> +	return vfio_device_cdev_opened(device);
-IIUC, vfio_device_cdev_opened(device) will only return true after
-vfio_df_ioctl_bind_iommufd(). Where it does:
-	device->cdev_opened =3D true;
-
-Does this imply that devices not bound to an iommufd cannot be
-preserved?
-
-If so, I am confused about your cover letter step #15
-> 15. It makes usual bind iommufd and attach page table calls.
-
-Does it mean after restoration, we have to bind iommufd again?
-
-I have a separate question regarding noiommu devices. I=E2=80=99m currently
-working on adding noiommu mode support for VFIO cdev under iommufd.
-=46rom my understanding, these devices should naturally be included in
-your patchset, provided that I ensure the noiommu cdev follows the same
-open/bind process. Is that correct?
-
->  }
-> =20
->  static const struct liveupdate_file_ops vfio_pci_luo_fops =3D {
-> +	.prepare =3D vfio_pci_liveupdate_prepare,
->  	.retrieve =3D vfio_pci_liveupdate_retrieve,
->  	.can_preserve =3D vfio_pci_liveupdate_can_preserve,
->  	.owner =3D THIS_MODULE,
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index 38c8e9350a60..4cb47c1564f4 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -1386,7 +1386,7 @@ const struct file_operations vfio_device_fops =3D
-> { #endif
->  };
-> =20
-> -static struct vfio_device *vfio_device_from_file(struct file *file)
-> +struct vfio_device *vfio_device_from_file(struct file *file)
->  {
->  	struct vfio_device_file *df =3D file->private_data;
-> =20
-> @@ -1394,6 +1394,7 @@ static struct vfio_device
-> *vfio_device_from_file(struct file *file) return NULL;
->  	return df->device;
->  }
-> +EXPORT_SYMBOL_GPL(vfio_device_from_file);
-> =20
->  /**
->   * vfio_file_is_valid - True if the file is valid vfio file
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index eb563f538dee..2443d24aa237 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -385,4 +385,6 @@ int vfio_virqfd_enable(void *opaque, int
-> (*handler)(void *, void *), void vfio_virqfd_disable(struct virqfd
-> **pvirqfd); void vfio_virqfd_flush_thread(struct virqfd **pvirqfd);
-> =20
-> +struct vfio_device *vfio_device_from_file(struct file *file);
-> +
->  #endif /* VFIO_H */
-
+Agreed. They are in the "To:" field of my submission. Rob has reviewed the
+patchset.
 
