@@ -1,175 +1,165 @@
-Return-Path: <linux-kernel+bounces-872289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CB7C0FD69
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:04:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D038C0FD75
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C2F94FAEFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:02:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B15434FBE79
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA36331B833;
-	Mon, 27 Oct 2025 18:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B24031B82A;
+	Mon, 27 Oct 2025 18:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx5moz92"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQFuoY6s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7263231B825
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C8E2D73B3;
+	Mon, 27 Oct 2025 18:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588106; cv=none; b=mnDD6bBS4616U0mm4zykOOGldAmR05vwSvyhbblIXK+HYx4JqaavL+uWvDQDxUvoe47n1sd+/uPZ3j6jrZtZ3XGqGin70rS5Q0T0oI0mbisTtIFvy4+0wZMK2Qa2FXre9r5JjpFIOdKIYpIS8TPN9YmqMzrlGzDCDSUPpImCuR4=
+	t=1761588113; cv=none; b=D59MQRslpDNpghp4sgUXPuuvK4pJJrthhQSgNV84zyx4l9S/URPcWYySOWGS8RH7KMhDBYjFC6Q61Mkt6hIZ7x+wYsAySpfUNdFXey+YN1MPVHGUtzWMTxmMfI+taTs+6uo55pXaVqwYgPWB+9E03nKTAV77GiGuQOnD4sDy//0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588106; c=relaxed/simple;
-	bh=LmXKYxgq5l0W1tOnLSE425z4xENAzicgJcfmXTzUxfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bExx4DvFm8W7EV5FswuXKAp5xjfhUMwkH9dyugiTYtevu/XpXjBMI8NQPxyjabMDOq4gz7Bv2tfr+WBt0wavklo4HOpgawtclXUnXIz1DxWfmmpKVZsYYWHY3SF6gc7mmcsGZ5iYvSW5qSSJY5a+DA1b1mD/JvHVu9nGdFMaI7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx5moz92; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42966ce6dbdso3614884f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:01:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761588103; x=1762192903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6aYSYqxdTQx1adiba7waOFSEBjrwgCAPGP21S/4z0WQ=;
-        b=Tx5moz92OOoFHoRRXwIYJebf6dF5m3mqO4VQjP59hFXZImi51pdi3e0QbL1AweBYiS
-         VXXooAHpLDwaZSy2zCJ4Rc+gdqDEJcuARq22s/gzusWQRZD8rr3N3xZl3aXg35f84628
-         VMfqlI9elpdll9HXGvsAXFKSK94dJjVYuplDslwbc3VAVkJurlIBZPSEeJ13vgRrZXY/
-         5SA83jgDGcZLzdk0ObBPIUC2yDRKb+rSa4ieKq1KRqj16FFKK5D5o98NICeY2+kN6eDu
-         F53XSetxkp0+s7yZvVgh1SfySBPv0PI+JIUbkG9EwFCLxshx4fwWRQMOvL0l1aUtBbiU
-         1XEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761588103; x=1762192903;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6aYSYqxdTQx1adiba7waOFSEBjrwgCAPGP21S/4z0WQ=;
-        b=R7FoJlft98448ymf2FutF+kOuu5QnaNB8skvsF6/3zxJf5Y9FQvsu3qG2zvc8Mm1CB
-         DctlszmhJ/UxSCgpu07eFlUIwAuJSe8TPqS/vz7qWCt2D+7sppWuXVMka7H6o1rhORMG
-         8i2mxla2GkU7ScesSwz8O5aefGcVJqINeqBiFQ9OZLzzx+TKPH281NSH4drYCjnB+JxH
-         Y6ZWem4qYDiItt8w1FzvSqyB8v1PJvPkpsaBqwu7wWvEeXGcDBY+hu18u/Jjc4Vxx+1q
-         7mJON54x89d40UWEQ+6FSEBVXg1sp5Evsj7Tf+HkwwDkesms4uJiARB3KSpf9AN25Fll
-         YuQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRu9WxU7b0sBgYY1p7YUByZsVI3uhTdXufjWbmXDs8jKvKf18yCQxQEBrxuVB4HhomxQ7gSrpfrsJYGRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB/1rMQuNC6kLJZRjwzCMFACbGx2+sHRN8ANfK7GGAZDeZ67JS
-	yNDq9Ikcp2j+GiGRz6x9lohshkEw09/nBGcgqJJtqEg79yskJR9hdt/b
-X-Gm-Gg: ASbGnctP/vuXb8YtQTBdflZXSKewbre30v3apao+lZN2cv5/OQG1GDCDwK+lwX/IA1X
-	+HB0rCscjBjnw1jciWDBBQk8rXhaEIB8luMLd8UtbtEOa1qVYMTWo8T9IueoPLAOh4KVdDz13Op
-	1Qz2lz1m4YfVI5MW2jTmtsCGpF+5tr7fFAUzG9zCdG0ZyKU8IDDeJdvA/LY1rBwuKJA9pOEuVPm
-	H60lQGyVh/yxkZKSI7kRvNnHjGFFInfabJsL/mRBG2jIOH03ZCTQeFuljkJs0skt6vryoWJY4tb
-	unKmL/N4OrEp3iVxJ34YsetyCjEm9cIYv22t7U43b7k3Eyu8TbVvQslmE9ZrWOmTrnXxEmqil0P
-	88rsXSUXhpPJp2ni0wDPECNk7ohCLljc10YdFWt8CYArLRmrfm+Wn43m78nXaKfnE23wOusqr6Z
-	I+VDkDvhlwybzHYeVvn0VPc1V1hhZdYpFVucYOovFioJtRnI4i8LyujBgEkib1JOz2m8pY
-X-Google-Smtp-Source: AGHT+IEqakiIVgvkmH1mzvZg1woizmOdLx0SAbkLPTVvCw4c/LMFkRt84r69g+UhZ/bheKm0gmAdSA==
-X-Received: by 2002:a05:6000:25f4:b0:429:a7f1:bdda with SMTP id ffacd0b85a97d-429a7f1bf31mr546028f8f.47.1761588102726;
-        Mon, 27 Oct 2025 11:01:42 -0700 (PDT)
-Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b6fsm15648567f8f.1.2025.10.27.11.01.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 11:01:42 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>,
- Yangtao Li <tiny.windzz@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v3 1/6] dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
-Date: Mon, 27 Oct 2025 19:01:40 +0100
-Message-ID: <1935223.tdWV9SEqCh@jernej-laptop>
-In-Reply-To: <20251026210905.GA2941518-robh@kernel.org>
-References:
- <20251025043129.160454-1-iuncuim@gmail.com>
- <20251025043129.160454-2-iuncuim@gmail.com>
- <20251026210905.GA2941518-robh@kernel.org>
+	s=arc-20240116; t=1761588113; c=relaxed/simple;
+	bh=FzhkkPx/bJH57tjT+tQuLUmnAYh7kimWNyLeFkyJm2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i1Y0/8AY9AaKqKu6etrXH+uqLAS5GBqOrPK7vpNQX8oxs1J0+oHjXieJcyaujaVxN+se4tfRvVOJts7ujPUUfclrWk1w5yvC6D4RlG6eLNgeUMTbQfBMQ1FduIH6OF8IvaaPqNuBNloTuCL0mknoJF6WNsMwwTTz80lSctfjX/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQFuoY6s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA6AC4CEF1;
+	Mon, 27 Oct 2025 18:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761588112;
+	bh=FzhkkPx/bJH57tjT+tQuLUmnAYh7kimWNyLeFkyJm2g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QQFuoY6sOPhRmbUaIIYGwELjo037kSApUYRJs+P3EQqCdDBecvGL5xDPX+E7Pe3eX
+	 NPpObbBuncxo0rBnfO9rpv71PnBBaYt1mYR1/JzZqKplaJorhf1OgHpOZPzL17zsrr
+	 PiKLqiT6q5LLGqnbO+NxbEpztdNm0NbzJ5Fr8uZwVJEP9dllYX3sfTltvRfVQiXHUC
+	 6lwMushn+ymlRRFNEn32wtHRiWmfX8XCWrGCz9nC6QHoa02QRmDljNPqOx0AsAnqLV
+	 m9DLUUs9NC3B/vnBAt7fHiJz7NvhJUaB0sVITCYNN7/NChH5U8C+VHmi/LZWkW7vx3
+	 3eRSZou3PZjtg==
+Message-ID: <ea00a07b-d0d6-49a2-a9d6-ef6c1ecf57dd@kernel.org>
+Date: Mon, 27 Oct 2025 19:01:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641
+ power monitor
+To: Guenter Roeck <linux@roeck-us.net>,
+ Igor Reznichenko <igor@reznichenko.net>
+Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ skhan@linuxfoundation.org
+References: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
+ <20251026184641.631641-1-igor@reznichenko.net>
+ <a45ad6b8-b4d5-4e0c-8f1a-3641dddb240d@kernel.org>
+ <e51c3dfa-406b-4dfa-bbb5-c31d1a2e0007@roeck-us.net>
+ <112db7fd-3c0e-4c56-a553-5aca12965bdf@kernel.org>
+ <0dfcfcde-d207-44af-ae7f-d90d623bac02@roeck-us.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <0dfcfcde-d207-44af-ae7f-d90d623bac02@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 27/10/2025 17:53, Guenter Roeck wrote:
+> On 10/27/25 01:40, Krzysztof Kozlowski wrote:
+>> On 26/10/2025 20:58, Guenter Roeck wrote:
+>>>>>>> +  reg:
+>>>>>>> +    maxItems: 1
+>>>>>>> +
+>>>>>>> +  shunt-resistor-micro-ohms:
+>>>>>>> +    description: Shunt resistor value in micro-ohms. Since device has internal
+>>>>>>> +      16-bit RSHUNT register with 10 uOhm LSB, the maximum value is capped at
+>>>>>>> +      655.35 mOhm.
+>>>>>>> +    minimum: 100
+>>>>>>> +    default: 1000
+>>>>>>> +    maximum: 655350
+>>>>>>> +
+>>>>>>> +  st,alert-polarity-active-high:
+>>>>>>
+>>>>>> Isn't this just interrupt? You need proper interrupts property and then
+>>>>>> its flag define the type of interrupt.
+>>>>>
+>>>>> This controls a bit written into device register.
+>>>>> I omitted interrupt property after looking at existing power monitor bindings,
+>>>>> especially hwmon/ti,ina2xx.yaml. INA226 has very similar bit controlling alert
+>>>>> pin polarity and binding doesn't define alert pin as interrupt. Overall, I didn't
+>>>>> find many power monitor bindings defining alert pins as interrupts.
+>>>>
+>>>>
+>>>> On INA2xx that's SMBUS Alert. Is this the case here as well?
+>>>>
+>>>
+>>> It could be wired to SMBus alert, or it could be wired to a CPU interrupt pin.
+>>
+>> So please explain me why CPU interrupt pin, which in every really every
+>> device called "interrupts", would not be "interrupts" here? How CPU can
+>> even guess the number of the interrupt in such case, without
+>> "interrupts" property?
+>>
+> 
+> I thought we were discussing the need for the st,alert-polarity-active-high
+> property, sorry.
 
-Dne nedelja, 26. oktober 2025 ob 22:09:05 Srednjeevropski standardni =C4=8D=
-as je Rob Herring napisal(a):
-> On Sat, Oct 25, 2025 at 12:31:24PM +0800, iuncuim wrote:
-> > From: Mikhail Kalashnikov <iuncuim@gmail.com>
-> >=20
-> > Add a binding for D1/T113s thermal sensor controller. Add dt-bindings
-> > description of the thermal sensors in the A523 processor.
-> > The controllers require activation of the additional frequency of the
-> > associated gpadc controller, so a new clock property has been added.
-> >=20
-> > The calibration data is split into two cells that are in different areas
-> > of nvmem. Both controllers require access to both memory cell, so a new
-> > property nvmem-cells has been added. To maintain backward compatibility,
-> > the name of the old cell remains the same and the new nvmem-cell-names =
-is
-> > called calibration-second-part
-> >=20
-> > Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
-> > ---
-> >  .../thermal/allwinner,sun8i-a83t-ths.yaml     | 56 ++++++++++++++++++-
-> >  1 file changed, 53 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-=
-a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a=
-83t-ths.yaml
-> > index 3e61689f6..b2f750ef2 100644
-> > --- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-th=
-s.yaml
-> > +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-th=
-s.yaml
-> > @@ -24,18 +24,23 @@ properties:
-> >        - allwinner,sun50i-h5-ths
-> >        - allwinner,sun50i-h6-ths
-> >        - allwinner,sun50i-h616-ths
-> > +      - allwinner,sun55i-a523-ths0
-> > +      - allwinner,sun55i-a523-ths1
-> > =20
-> >    clocks:
-> >      minItems: 1
-> >      items:
-> >        - description: Bus Clock
-> >        - description: Module Clock
-> > +      - description: GPADC Clock
-> > =20
-> >    clock-names:
-> >      minItems: 1
-> > +    maxItems: 2
->=20
-> How can the max be both 2 and...
->=20
-> >      items:
-> >        - const: bus
-> >        - const: mod
-> > +      - const: gpadc
->=20
-> ...3 entries?
->=20
 
-Because old variant uses "bus" and "mod" and new variant uses "bus" and
-"gpadc" and none of them uses all 3 entries.
+Yes, we kind of do, I am just trying to understand what is expressed
+here. If this is a CPU interrupt, its flags should mark the proper
+signal level, including inverter.
 
-Although, I guess we can simplify and just use "mod" in both cases.
+If this is something else (or both), then this property might make
+sense, I just don't know what is this.
 
 Best regards,
-Jernej
-
-
-
+Krzysztof
 
