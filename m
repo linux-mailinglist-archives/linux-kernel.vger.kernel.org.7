@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-871212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5782C0CA2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:24:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC171C0CA5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C4544F3684
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2583AEDAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142212F12A8;
-	Mon, 27 Oct 2025 09:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2DF2E8DF3;
+	Mon, 27 Oct 2025 09:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UpRN0My4"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ky8e1dnd"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5852F0C6E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AC42ED871
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556944; cv=none; b=XB79e6EM2MABSrhtFCa4rim4QbSWWZ3WWs9OLYbpZQ5fUca7h8BPN5ql0n6GoqmPRww7SWPznBSidK/kak5GTs/z7YixRSEdde0XX9lx978MC9KukK/BxYvUbpzMt9DT6RFaag7llVrPDoQEbw60+4nCCrcknl3eWVHYbxJpgXE=
+	t=1761556976; cv=none; b=mo2uK/QtcMczH6s6GDHnIE3CuGBAriUxbuhdZ5HYvoZsMnKoj1gI4z1sP7zYPM7dOyAoZOqGO43gWNkJYckWbRdobjd1sxfHNEGBYLnwgzpmrr2t557aJ/RlaoGyfiagdDcRuMVk3PEgegOyZzUfvpAYpJ1febyAF0JpQ9yOfgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556944; c=relaxed/simple;
-	bh=EygS2TtS9sjd9uhhTZR0iRRgToB3z2xpYU7/QJ7sfn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=go4lux0OYL6v/EuMNTKrROx3crre2EY5yCQpep4Bgbc1ehZT9dMqcJic+y+AudUdlL1rqY7Bib5LfCoy/ivxr//pj+ysjBLqWdZw17KSU6TWcRmf/LxMjaDFoA6oFP9y9f+khRE3h6XN9vbx4pbyq+H9Aw21IGBSkyEMlRA7sr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UpRN0My4; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee12807d97so3793515f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:22:21 -0700 (PDT)
+	s=arc-20240116; t=1761556976; c=relaxed/simple;
+	bh=fxDesR92Xwhzeu84eJzm6w44tjPoXglJapFmerEbwME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ipn6MC75/Q1W1lSO2Bir3G047SUHq2BaVx1jWVbcb6GLSvgKtNzhhHv6y7jKZ+ljrfUDmUzaVGbDwAuJj3devDxyElxVMAGaOxVmtE6tPqA1zIGbOxbmLz0tFpDZvYt5gNQFvraDUac5d2MS9YnKkhXIssKjQLOpxaPAzZsTax4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ky8e1dnd; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso597834066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:22:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761556940; x=1762161740; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CN6+7jGqC7vygWHJ9ykCqM62GuGs6l4t2Imuua1CC2M=;
-        b=UpRN0My4cGAblPwXwQtdkaPNp10EaNpxsTn4k9SykmuFXmeb5luLPLLehQg9OTteWE
-         VRZ86e6eP2c2PGuLZrAPsStIL8XKr+TRFw4EbYXZpnYvs26BpUB08qnlwIUtxk7bEgkj
-         SVwZD2GmIt2sG/DmWqmpQLCZM+Whr/YRvA9AcFzzhGbF/zpTWo20qU92hibo0uCaxvou
-         R7xIe0+ky8INdvUjlMFGqzwY9/NwnEux1kwxAb0/kgQS6Fb04fqSl5kcnUVZ6PGXZdy5
-         HW9Q7EFIQy2Eah18IKMdAR4ZEtdm/g9Sh3D54xi1BRDeUr4h24IyZNm2uYLHSpzIe0o2
-         +dRA==
+        d=linaro.org; s=google; t=1761556972; x=1762161772; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=idLQEGHawEowPnMFpADe7JKEtzSuZ6zkkitTWQDADFM=;
+        b=ky8e1dndF7dQqxPPfxlYUxrHVn7o18SwU6bie45obaI/wx4EeP2K16CpcjLOQbmzWt
+         iR/FACtdzWt0utqG0vIn3b4eAbYPvR7CnvVJVKyBekwBMOOY0dFumiF0Kz4UIVukFvAj
+         iLI0pCFmk6EKbCioADk+/bn56h1r5nQ537gsjTeWTe2xDSJxCDod6UJP+V/LP7f9J7hS
+         sHu9Z9WSEpGm20exjDWLViNx2s1siDlilYUJNUQ/B/rmDc9T32+mB26hL2Ye/iNzq9f+
+         wrn6BJIhXJjZ6EfHiVXAFt59KI1SrN+tutqpkq6jtY7btrM9Fa86mj3Cqvi4QGwHik2M
+         xrIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556940; x=1762161740;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CN6+7jGqC7vygWHJ9ykCqM62GuGs6l4t2Imuua1CC2M=;
-        b=ho8tsKtlNplCfMXLRN0Dv//lAYXY1l3ToNAzIlem50tZcyxgVzTwObD9ACzu5zdr08
-         1xH9XbYuBrk+5TmYtkj3d76Pox11NEwbIyFiaBHGrs6pCp6Svzmw+VsMaxd8XOQhVz5L
-         QofhMc3O16LVV7meHKHVZJe+KP1UZD9wM86ahritWeNNEv7z8jTOu0wZuDZ4EjnoG0L5
-         R3n0HNB5i2VDta7HsBPdkgFRtDfxh+hTsDKDw7HZlNpUsjNe1h3FQ/hfc0ewsOIFBYE1
-         k7XQOfiWnbUv+FSQ3Z9HesNBvVN62T7q88X/8Tyb5QHgbQ6j8U4shZS9iCyKxeuzahpJ
-         08QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXa7puTiOuoOsxTx4w60yvA5d4UlcIhoPohlGh86gII50G1JDPWxM7I4RBWK85/fHfWaotODiiVf1iEBp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmCghc9DYBAWyZ1A5Sb7ysPFC0YddLRfisAHvg7gD7JOyBLdgc
-	ILPdklJ2b6euM+xp0x93GYiizYVp10dVEqL5WqP9qvicgsCp23/j5P2aqqDjQ9t7nKc=
-X-Gm-Gg: ASbGncuYKPL0+/+WRD1aV+KcpLqDk0ga4/Rto7HH6OmhgLpKG9TG5uXEBVMWJEvJqLY
-	qpeMnDD0fdaFY7oeyJ/zN2kdIB3FyzfbVOEPO4XNKRavGMID4gX55oatZSS2F/yAwTPpeR9Q9Gn
-	mOV2T3r0MzVCAyNmJh2MG73zJMet/Ao0ZMFziuqNUGqmQFB54yRFVotDdjoy0cVVnTR6IFCL916
-	eiPd+FeovWYTbPGvmvKo6NCodckLDAlMk2tfO8sjsMHvBEfpDNEtWmzirSt6qXrpy9hM0fJL/mx
-	REVZSE2NBkT9LPJwhGZV6mDvteCPToLpeqESuJpXXVoK8jXZmneaCmX551X7xGYAgWgpEee0112
-	Ndjjfu6Gg1IXJXoyjQ3LPfZteydWP00AJdnZx/tzMumoGFtzij/xeEE3ccqfEXm2/m9IFvfN/t3
-	b34lQv/s76H8MO3tOGmt+wAC9XZy0a
-X-Google-Smtp-Source: AGHT+IFjv8/SvEFPTeRukOsaZIbDYdgPb3YMOFJjFA/Dtcnsoa0LNl9W2Ve/oJm4UDBTW8UQQZRszw==
-X-Received: by 2002:a05:6000:2c0e:b0:429:94c3:77f with SMTP id ffacd0b85a97d-42994c30ab6mr5090975f8f.37.1761556939948;
-        Mon, 27 Oct 2025 02:22:19 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0acecsm74108445ad.38.2025.10.27.02.22.16
+        d=1e100.net; s=20230601; t=1761556972; x=1762161772;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=idLQEGHawEowPnMFpADe7JKEtzSuZ6zkkitTWQDADFM=;
+        b=eLv98Csza9xKeraJzv6+nxPtiaH8f0zhxVzAMVYMq9Kdrr66lEBNh4uQ+leXLMWul4
+         BvKwyMozN3a3hDT2W0ijc+q2SmuMmRYNdSDLAvQmwaaloTkAG/Vu5w84D9s/8QErN6vC
+         zgu7qmxbUV/nHOaMnxLLZs8k4jDYU4rcGGJ832WTdByQAE2xOnh6tgEWuqprJ/rox45i
+         dPx9p3p66xzC/C+dl3bWtpcRNJjaA7uv8NvrxdEL8UmEvfqik5nYFvbf7ZPNvRKTTe/Q
+         2yQ6eBba6HILWaC1jaI9hruou2a5fFu7XbUl0dHKibpnXp6Mn2KQ8IFkE/1lK1vnoSCc
+         VVKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlbEUynbxEWWriWpI897b/sTf7FA5naWqaXaAzKZKGr39O3veMnOqF3yQTFbpAIky1Cb9lJ/R94KLN9e0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz456N4j35jjjdg4VCVpE2ityn2uUFcRMhaVR1qyS395nd6hVhd
+	R9owrpDNSNC+MIey7+QBDMb5Giv4I0CPa5E93pcg4z+i//N2U/Li5CTLCjM7xHVv9HQ=
+X-Gm-Gg: ASbGnctUULIQe7KkZY5r/pxHtRYNatL3o70LAf/+0bneJbrby1rwb8GWX+2CjYBuk03
+	tAa9DO0iWADPWEKUA6HJC2r2rJYWf5fsi1z8rHiLKfGu9s+rxaRUnVW2thlZ6mYCU8UJgr2VHMp
+	lkknitcSxV1NQ7pGyuHEhuzTUk7P5n87tZGGODOZJErF4rqpGWDjyA9LOBA7ZYVs1/A9jq06AYC
+	lPVy+6H/2Xkex4wg+lrWCOHh7WGlWgBAFCOyUNJ3tZShYRJ8Ou2hU0qzXpWEGRO7sBbgq1uGgDj
+	cZ08E6I00G4L0aNvGish/CfvxYFkyTcSktdcewFsnwCZVByd9EkEoeKkjZ7LFJ4riiy2jIcLBdr
+	x5LDRSSXsqJ1iP5JChw1qAAB8Ol15/WQdA2oFjAaGulUNke/hnqsqCGr468QQnxTX5pTIYtdh5P
+	4soWhKOaLN7LCzqe+pvA==
+X-Google-Smtp-Source: AGHT+IFgheBk8plPZFOvo1Fh8CqMw+IDlX5zjqqJtiHnOJ15bA0846Akm4ZoeAvbvhHYf1Mdb/gfzw==
+X-Received: by 2002:a17:907:6d20:b0:b6d:6a35:99a0 with SMTP id a640c23a62f3a-b6d6a359c49mr1253713666b.33.1761556971534;
+        Mon, 27 Oct 2025 02:22:51 -0700 (PDT)
+Received: from [192.168.0.39] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853c549fsm708029666b.37.2025.10.27.02.22.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 02:22:19 -0700 (PDT)
-Message-ID: <d955a21d-762f-4686-b099-7f7939798b13@suse.com>
-Date: Mon, 27 Oct 2025 19:52:14 +1030
+        Mon, 27 Oct 2025 02:22:51 -0700 (PDT)
+Message-ID: <56a13c84-7d8b-42f1-97f6-c338b931f205@linaro.org>
+Date: Mon, 27 Oct 2025 11:22:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,147 +82,251 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [btrfs?] WARNING in lookup_inline_extent_backref (2)
-To: syzbot <syzbot+b0e66d3779134f468156@syzkaller.appspotmail.com>,
- clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68ff35d4.050a0220.32483.0015.GAE@google.com>
+Subject: Re: [PATCH v3 01/31] dt-bindings: media: add DW MIPI CSI-2 Host
+ support
+To: Sakari Ailus <sakari.ailus@iki.fi>, Frank Li <Frank.Li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+ Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Steve Longerbeam <slongerbeam@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
+ <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
+From: Eugen Hristev <eugen.hristev@linaro.org>
 Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <68ff35d4.050a0220.32483.0015.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-在 2025/10/27 19:35, syzbot 写道:
-> Hello,
+On 10/27/25 10:31, Sakari Ailus wrote:
+> Hei Eugen,
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    dbfc6422a34d Merge tag 'x86_urgent_for_v6.18_rc3' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11d993cd980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=25811b07889c90db
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b0e66d3779134f468156
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-dbfc6422.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/73c799811c6a/vmlinux-dbfc6422.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e1bb4619e00f/bzImage-dbfc6422.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b0e66d3779134f468156@syzkaller.appspotmail.com
+> On Thu, Aug 21, 2025 at 04:15:36PM -0400, Frank Li wrote:
+>> From: Eugen Hristev <eugen.hristev@linaro.org>
 
-This one is injecting an -ENOMEM at a critical path, which makes btrfs 
-to abort the current transaction.
+Hi everyone,
 
-To be honest, syzbot should not expect a completely quite system for 
-such injected error.
+While I originally wrote this patch, and Frank keeping me as author, I
+have not contributed more to it, so, I think you can drop me as author
+and Frank you can put your name to it.
 
-Thanks,
-Qu
+Thanks for continuing the work on it.
+
+Eugen
+>>
+>> Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
+>> and i.MX95 platform.
+>>
+>> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+>> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>> ---
+>> Change in v3
+>> - drop remote-endpoint: true
+>> - drop clock-lanes
+>>
+>> Change in v2
+>> - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
+>> - update ugen Hristev's s-o-b tag to align original author's email address
+>> - remove single snps,dw-mipi-csi2-v150 compatible string
+>> - move additionalProperties after required
+>> ---
+>>  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 151 +++++++++++++++++++++
+>>  MAINTAINERS                                        |   1 +
+>>  2 files changed, 152 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..d950daa4ee9cfd504ef84b83271b2a1b710ffd6b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+>> @@ -0,0 +1,151 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
+>> +
+>> +maintainers:
+>> +  - Frank Li <Frank.Li@nxp.com>
+>> +
+>> +description:
+>> +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
+>> +  camera. It will convert the incoming CSI-2 stream into a dedicated
+>> +  interface called the Synopsys IDI (Image Data Interface).
+>> +  This interface is a 32-bit SoC internal only, and can be assimilated
+>> +  with a CSI-2 interface.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - fsl,imx93-mipi-csi2
+>> +      - const: snps,dw-mipi-csi2-v150
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: MIPI CSI-2 core register
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: core
+>> +
+>> +  clocks:
+>> +    maxItems: 2
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: per
+>> +      - const: pixel
+>> +
+>> +  phys:
+>> +    maxItems: 1
+>> +    description: MIPI D-PHY
+>> +
+>> +  phy-names:
+>> +    items:
+>> +      - const: rx
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description:
+>> +          Input port node, single endpoint describing the input port.
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: video-interfaces.yaml#
+>> +            unevaluatedProperties: false
+>> +            description: Endpoint connected to input device
+>> +
+>> +            properties:
+>> +              bus-type:
+>> +                const: 4
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5319 at fs/btrfs/extent-tree.c:836 lookup_inline_extent_backref+0x12c7/0x17f0 fs/btrfs/extent-tree.c:836
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5319 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:lookup_inline_extent_backref+0x12c7/0x17f0 fs/btrfs/extent-tree.c:836
-> Code: 05 fe 26 a5 0e 48 3b 84 24 e0 01 00 00 0f 85 8e 04 00 00 89 d8 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 5b 4b 81 07 cc 90 <0f> 0b 90 48 8b 44 24 78 42 80 3c 30 00 74 0a 48 8b 7c 24 20 e8 90
-> RSP: 0000:ffffc9000d23e820 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000000
-> RDX: ffff888000784900 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: ffffc9000d23ea48 R08: 0000000000000000 R09: 1ffffd40002891c8
-> R10: dffffc0000000000 R11: fffff940002891c9 R12: 1ffff1100a23a242
-> R13: 00000000000000b2 R14: dffffc0000000000 R15: ffff8880110e2000
-> FS:  00007f1616ed56c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f7e2ed37000 CR3: 000000003f2e0000 CR4: 0000000000352ef0
-> Call Trace:
->   <TASK>
->   insert_inline_extent_backref+0xa8/0x2f0 fs/btrfs/extent-tree.c:1205
->   __btrfs_inc_extent_ref+0x263/0x9e0 fs/btrfs/extent-tree.c:1503
->   run_one_delayed_ref fs/btrfs/extent-tree.c:-1 [inline]
->   btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:1972 [inline]
->   __btrfs_run_delayed_refs+0xebd/0x4130 fs/btrfs/extent-tree.c:2047
->   btrfs_run_delayed_refs+0xe6/0x3b0 fs/btrfs/extent-tree.c:2159
->   btrfs_start_dirty_block_groups+0xd3d/0x10a0 fs/btrfs/block-group.c:3534
->   btrfs_commit_transaction+0x674/0x3950 fs/btrfs/transaction.c:2241
->   btrfs_sync_file+0xd30/0x1160 fs/btrfs/file.c:1818
->   generic_write_sync include/linux/fs.h:3046 [inline]
->   btrfs_do_write_iter+0x59a/0x710 fs/btrfs/file.c:1469
->   iter_file_splice_write+0x975/0x10e0 fs/splice.c:738
->   do_splice_from fs/splice.c:938 [inline]
->   direct_splice_actor+0x101/0x160 fs/splice.c:1161
->   splice_direct_to_actor+0x5a8/0xcc0 fs/splice.c:1105
->   do_splice_direct_actor fs/splice.c:1204 [inline]
->   do_splice_direct+0x181/0x270 fs/splice.c:1230
->   do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
->   __do_sys_sendfile64 fs/read_write.c:1431 [inline]
->   __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1615f8efc9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f1616ed5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-> RAX: ffffffffffffffda RBX: 00007f16161e6090 RCX: 00007f1615f8efc9
-> RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000008
-> RBP: 00007f1616011f91 R08: 0000000000000000 R09: 0000000000000000
-> R10: 000000007ffff000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f16161e6128 R14: 00007f16161e6090 R15: 00007fff32122a28
->   </TASK>
+> If 4 is the only value supported, you can drop the property altogether.
 > 
+>> +
+>> +              data-lanes:
+>> +                minItems: 1
+>> +                maxItems: 4
+>> +                items:
+>> +                  maximum: 4
+>> +
+>> +      port@1:
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description:
+>> +          Output port node, single endpoint describing the output port.
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            unevaluatedProperties: false
+>> +            $ref: video-interfaces.yaml#
+>> +            description: Endpoint connected to output device
+>> +
+>> +            properties:
+>> +              bus-type:
+>> +                const: 4
 > 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Are both input and output of this block CSI-2 with D-PHY?
 > 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+>> +
+>> +    required:
+>> +      - port@0
+>> +      - port@1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - interrupts
+>> +  - ports
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    csi@3000 {
+>> +        compatible = "fsl,imx93-mipi-csi2", "snps,dw-mipi-csi2-v150";
+>> +        reg = <0x03000 0x1000>;
+>> +        reg-names = "core";
+>> +        phys = <&mipi_dphy_rx 0>;
+>> +        phy-names = "rx";
+>> +        resets = <&dw_rst 1>;
+>> +        interrupts = <2>;
+>> +
+>> +        ports {
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            port@0 {
+>> +                reg = <0>;
+>> +
+>> +                endpoint {
+>> +                    bus-type = <4>; /* MIPI CSI2 D-PHY */
+>> +                    remote-endpoint = <&camera_1>;
+>> +                    data-lanes = <1 2>;
+>> +                    clock-lanes = <0>;
+>> +                };
+>> +            };
+>> +
+>> +            port@1 {
+>> +                reg = <1>;
+>> +
+>> +                endpoint {
+>> +                    remote-endpoint = <&idi_receiver>;
+>> +                    bus-type = <4>;
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> +
+>> +...
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 9d9d2be7be8037dfa96f1c9edd24a0cf997b9393..ecb7bc7cc8ad797f43173075ca8973804bf335f7 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15334,6 +15334,7 @@ F:	Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
+>>  F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
+>>  F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
+>>  F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+>> +F:	Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
+>>  F:	drivers/media/platform/nxp/imx-mipi-csis.c
+>>  F:	drivers/media/platform/nxp/imx-parallel-csi.c
+>>  F:	drivers/media/platform/nxp/imx7-media-csi.c
+>>
 > 
 
 
