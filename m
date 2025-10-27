@@ -1,150 +1,103 @@
-Return-Path: <linux-kernel+bounces-871878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE448C0EA83
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:56:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E237CC0E9FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13BC40584D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003FB19C22AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B682D0C9A;
-	Mon, 27 Oct 2025 14:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE03081D7;
+	Mon, 27 Oct 2025 14:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbBxtZHl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fe+pUVq1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657CF296BB6;
-	Mon, 27 Oct 2025 14:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A0D2D2397;
+	Mon, 27 Oct 2025 14:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761576554; cv=none; b=C/ns/iT4f9/YtTMWKflcnihNondq9D4WxBtVQ7HSevJL/0Glo7bqQ0ECANDRQFi8dAm5rhqBu7Q4yYKE2asXTWX2I5sUGlNeo6XCw//ImakflGLtbwwQgTN5zzgx+U+w47Y0LqZZFQx2LFY0Q51Y+eggN0O3GoGV8zZHJyw0j4s=
+	t=1761576743; cv=none; b=o6uj28sAvLfG4vL9Hfg5PdxE3QEy3EKH848VOZnr3GW0mhz1RjBEXQ7ViH5/ohWZZmIPZpF8hd8m3qax+YHB2n0n9fSX0gILHg+Y0dqq6kJgkke8PgGp4ZjU5XII7h9DksLED0BDfEE4iWcqPppbXPb3BMz/+KW8zVKLPZmQxKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761576554; c=relaxed/simple;
-	bh=LKPXVhbMLyJFUAhnFO5LZpjuc3Rzz6MeJrFVEJFp7mA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbXmIkaG/6vWqgCg4rrgjeTPRZoQZv3/3Zdtew7yB8gEU92MXQVDTALKCbAJEs+A38km2cJhrl1kIOPzZR0oxOVAAorc0q5K+f1G15GIs6p9G304F1Wb0oMpUNZdW7XuLuY7tgEccgv0khb7wNcsswbwLxHQFtKYUhLCJE6PUJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbBxtZHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3858C4CEFF;
-	Mon, 27 Oct 2025 14:49:12 +0000 (UTC)
+	s=arc-20240116; t=1761576743; c=relaxed/simple;
+	bh=hMoZeN45muKbdsQekDeFF0hXb2M3KyQgu5l5pmlKZ50=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+Nm773cDQy2GphdCK50tDreE6khYh+Ruycrk8wRmG8UP1VVe+ywhfjR7srQpo/byanp9hL4YDxfLI7LuT7FIKXqntSHdweF3W9irMA6Flk/JDFXVqkJEhBNF0dsslyDsppF55oR1AMtQdp2xYFlUvg2L2Ha3AYIVTo2ffGJYu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fe+pUVq1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C78D9C113D0;
+	Mon, 27 Oct 2025 14:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761576553;
-	bh=LKPXVhbMLyJFUAhnFO5LZpjuc3Rzz6MeJrFVEJFp7mA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PbBxtZHlvX/bylN0gO7RmgmI1dJ6TVW/yV6mzrZWNpynfqPhTZR7w1rQHJeKICXh/
-	 UGBdvZI6obJHTrEqqiFRO3IgxxPU9bt2jPQBVWLxaQGxMgJY1OFkigiE94tqhx2sqp
-	 rmDp8Y1v3g6y2x6ajwN2A76WojDYI/ck1l3t12c+yJrKa65Jg4SARDjvtviAVCy5tA
-	 9MJp4a3/SXseyXzwUS860jqERdID2eSU2zt6OjEuCuhXZqYlqMfA5cUez7k+3SX5GF
-	 opGzvvC4/hkZMWW0PEeCwVTzrXX3aMiZomZlqivHX54FGqm5HIUbAuFay5h4+vfcYp
-	 90cLX1ygDjgrA==
-Date: Mon, 27 Oct 2025 09:52:06 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: david@ixit.cz
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	Gergo Koteles <soyer@irl.hu>
-Subject: Re: [PATCH v6 1/2] Input: add ABS_SND_PROFILE
-Message-ID: <rdryhql5vrjckh2yvcgbdcnlu2f4aiq6hbokgfzvrtdu33lp5u@fctqxdftabsy>
-References: <20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz>
- <20250731-op6-tri-state-v6-1-569c25cbc8c2@ixit.cz>
+	s=k20201202; t=1761576741;
+	bh=hMoZeN45muKbdsQekDeFF0hXb2M3KyQgu5l5pmlKZ50=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Fe+pUVq1tg8WkyXyBgvDaSXq0Q9GES6UBDqpbqbgLyib4H2QiXJ51g/dNQfFslicb
+	 fT0/rzsvPKTRglCWyLLNsdo2+k/Jw+9vQfB3NZG+9Q0wCzhceGeKRn2kJyUQgIpnJy
+	 FqFdYIgrYii05INTlFwlQtkNCtrkK9HjSwfe603b4uWAC5NLg/brS4NdnwQURoPSOd
+	 o+CUqCy4wf+fakyDyQ1JUiG4RBO5xW7B5uVCipa8K6DSVsz4vAT1y+UIc/IbuuiFSv
+	 LVWe637KlDOOxqmFXJWSp28uDySDzLQY27yaYAqTVCqUH9q0rKB//gdfNxo6tD9Evf
+	 29jSwIgMf5mPg==
+Date: Mon, 27 Oct 2025 14:52:13 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-iio@vger.kernel.org, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Benson Leung <bleung@chromium.org>, Guenter
+ Roeck <groeck@chromium.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Subject: Re: [PATCH v1 2/6] units: Add value of =?UTF-8?B?z4A=?= *
+ =?UTF-8?B?MTDigbk=?=
+Message-ID: <20251027145213.7c93a3e2@jic23-huawei>
+In-Reply-To: <20251027143850.2070427-3-andriy.shevchenko@linux.intel.com>
+References: <20251027143850.2070427-1-andriy.shevchenko@linux.intel.com>
+	<20251027143850.2070427-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731-op6-tri-state-v6-1-569c25cbc8c2@ixit.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2025 at 11:17:01PM +0200, David Heidelberg via B4 Relay wrote:
-> From: Gergo Koteles <soyer@irl.hu>
-> 
-> ABS_SND_PROFILE used to describe the state of a multi-value sound profile
-> switch. This will be used for the alert-slider on OnePlus phones or other
-> phones.
-> 
-> Profile values added as SND_PROFLE_(SILENT|VIBRATE|RING) identifiers
-> to input-event-codes.h so they can be used from DTS.
-> 
+On Mon, 27 Oct 2025 15:34:51 +0100
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> There are a few drivers that want to have this value, and at least one
+> known to come soon. Let's define a value for them.
 
-Regards,
-Bjorn
+Is there any way we can make the x10^9 bit obvious in the naming?  Or do
+something a bit nasty like defining a macro along the lines of
 
-> Signed-off-by: Gergo Koteles <soyer@irl.hu>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+PI(scale)?
+e.g. PI(NANO), PI(10000)=20
+
+
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  Documentation/input/event-codes.rst    | 6 ++++++
->  drivers/hid/hid-debug.c                | 1 +
->  include/uapi/linux/input-event-codes.h | 9 +++++++++
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
-> index b4557462edd7b3fef9e9cd6c2c3cb2d05bb531ab..d43336e64d6aa4fe8a41b7e9947f4f214df6e1ab 100644
-> --- a/Documentation/input/event-codes.rst
-> +++ b/Documentation/input/event-codes.rst
-> @@ -241,6 +241,12 @@ A few EV_ABS codes have special meanings:
->      emitted only when the selected profile changes, indicating the newly
->      selected profile value.
->  
-> +* ABS_SND_PROFILE:
+>  include/linux/units.h | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/include/linux/units.h b/include/linux/units.h
+> index f626e212d4ca..82bdc2041328 100644
+> --- a/include/linux/units.h
+> +++ b/include/linux/units.h
+> @@ -21,6 +21,9 @@
+>  #define PICO	1000000000000ULL
+>  #define FEMTO	1000000000000000ULL
+> =20
+> +/* Value of =CF=80 * 10=E2=81=B9 */
+> +#define PI	3141592653LL
 > +
-> +  - Used to describe the state of a multi-value sound profile switch.
-> +    An event is emitted only when the selected profile changes,
-> +    indicating the newly selected profile value.
-> +
->  * ABS_MT_<name>:
->  
->    - Used to describe multitouch input events. Please see
-> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-> index 7107071c7c516af48c0c5fc1206c1e01bae3889f..c58500d8b94b581e41ae098d6ce99db7783986b7 100644
-> --- a/drivers/hid/hid-debug.c
-> +++ b/drivers/hid/hid-debug.c
-> @@ -3513,6 +3513,7 @@ static const char *absolutes[ABS_CNT] = {
->  	[ABS_DISTANCE] = "Distance",	[ABS_TILT_X] = "XTilt",
->  	[ABS_TILT_Y] = "YTilt",		[ABS_TOOL_WIDTH] = "ToolWidth",
->  	[ABS_VOLUME] = "Volume",	[ABS_PROFILE] = "Profile",
-> +	[ABS_SND_PROFILE] = "SoundProfile",
->  	[ABS_MISC] = "Misc",
->  	[ABS_MT_SLOT] = "MTSlot",
->  	[ABS_MT_TOUCH_MAJOR] = "MTMajor",
-> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-> index 08cb157ab59364a41ac425fc9a4ea8eb2fae0e86..f443f61f9bb8e3c212da522d9b99a386a13c4475 100644
-> --- a/include/uapi/linux/input-event-codes.h
-> +++ b/include/uapi/linux/input-event-codes.h
-> @@ -875,6 +875,7 @@
->  
->  #define ABS_VOLUME		0x20
->  #define ABS_PROFILE		0x21
-> +#define ABS_SND_PROFILE		0x22
->  
->  #define ABS_MISC		0x28
->  
-> @@ -984,4 +985,12 @@
->  #define SND_MAX			0x07
->  #define SND_CNT			(SND_MAX+1)
->  
-> +/*
-> + * ABS_SND_PROFILE values
-> + */
-> +
-> +#define SND_PROFILE_SILENT	0x00
-> +#define SND_PROFILE_VIBRATE	0x01
-> +#define SND_PROFILE_RING	0x02
-> +
->  #endif
-> 
-> -- 
-> 2.50.1
-> 
-> 
+>  /* Hz based multipliers */
+>  #define NANOHZ_PER_HZ		1000000000UL
+>  #define MICROHZ_PER_HZ		1000000UL
+
 
