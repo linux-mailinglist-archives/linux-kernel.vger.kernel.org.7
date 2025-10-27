@@ -1,288 +1,164 @@
-Return-Path: <linux-kernel+bounces-871507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43E5C0D84C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:29:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BAEC0D7AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D3A3B2A3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:21:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1EC9834D5DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EF62FABE3;
-	Mon, 27 Oct 2025 12:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CE93009F2;
+	Mon, 27 Oct 2025 12:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YGqhksdw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mh4W2s9i"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EDD34CDD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E642FABE1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567658; cv=none; b=XpQBYPDX8cfaAJSF0cxAp8oCZpQJf73V4wdY50C2zc7N7mXPGxWMWq5TJ73K9gDQ8YlDB4QRpeUW31JyJO5iOzXu7js2aSWaxHY7HBIPXRkBG+TpFAAyr0P77t6wll1HdOBgJ21KUqO5HNepTW0vwuJ81FAh2AzmQNTFkuioBtE=
+	t=1761567664; cv=none; b=a6w0CazIoWnb8cPNAeIyzAXuDtyiOBS/v65Lq/9Fk4AO9mjhXSjQ/OILRQ6p6SqK6StzzU0xG8u4vqcfGDpHUkU4WWq/l8yV8f0zOB8mtqPlI0XAvMvYnoQx2FMXUk/pyBo1dRGLTBEwMlEq6cmoSIGpcm8N4f2qr+g46IYmn5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567658; c=relaxed/simple;
-	bh=8+SPhn7qqMJrmXX2oM/ERKmut/L/wxL9NKjHEeV08B8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pqPwVpJuFzwUsLs6JRhArR5kNBwngSGAI/E7Nz58x2GYhRlAdTDFppDwrDgpWmsgG1zXlbvXZ2OVV/cM0EjC7Em4jhcS0+dDcS0a3aJ1P5b9uTcQ0zk6fJirC36nRuKkD/DmoDuObYT+lTSooJu5vn5+xmKNj2m1Y0ubFOY2vCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YGqhksdw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761567653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m8yw+KdoDk1+GlObHpWFGVZEPL4sfsRTgvMthBW335I=;
-	b=YGqhksdwhiC4wvKzqTmK6M+zDtaj7MULdjCeB42++BYypeNNdmucbWYFe7MfZdaohvtrha
-	4tE8x4tC6GndYc87FpClFprDT8k5C21jR2cbuYhCNkmm37sOnbDDrcF6r/rBnijmvaXz9s
-	WGtGzEuJ7w+uQ1z15SDBi8j0lBQmR+M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-29-28da1pSANem8n77FDZpiKQ-1; Mon, 27 Oct 2025 08:20:52 -0400
-X-MC-Unique: 28da1pSANem8n77FDZpiKQ-1
-X-Mimecast-MFC-AGG-ID: 28da1pSANem8n77FDZpiKQ_1761567651
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471168953bdso43157095e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:20:51 -0700 (PDT)
+	s=arc-20240116; t=1761567664; c=relaxed/simple;
+	bh=nxPWAEJRSRpuGJj36axWvM+AKJHgISMgHq4fyA83R84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UgVhny0nzI0qJX6nbcahEW1oRGgrtmHw4gAnjtYiwpsLYfVgVUnLJ1IeWABLTjM3pcMaIsQE2hYYlQeYm7WAhkpNxart68O2himSoRXfIts+U/1+EwX5dVI3k46oREBo8ZwMk41bPIjDVSodXGRyNGqabYIX1Al78kM9VgNspHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mh4W2s9i; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R7JtOk2059245
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:21:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aP4mxhUOOvb5sFzTA2872hnI8+YOJ+Fa/nda32UGswI=; b=Mh4W2s9iCZTmOG/W
+	eiIFJyfeRI84xvhv9CLFGqr7pVww6ukMC+1WntxshoS2QBlBGiyNzZQbab4vU03T
+	x2NhEP65/wuehfB0uS64BV2OCCbF+Hp7LTcMjY1KdVxzSDNJkzoKQby8spZ/jNIl
+	0Iti/RVC0Af7lX8O450WcUbVPfcXp0OqV9iW4hhffprkXvBlFnmw4nNzinVVT9xf
+	AFeisaiUmfGxGbNFKWpgdhJYKxwHABwUXwJ/FAIeXCF3X0DKKJ099YkRBbt10l3C
+	LcwEdhew1qtui/XWreVyqvweyydqcBYpFXIzvDDD/zu04WvPLn3k5hY+GrUH5sQl
+	Ab9riQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a248p8tkr-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:21:01 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e8934ae68aso16913021cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:21:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761567651; x=1762172451;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
+        d=1e100.net; s=20230601; t=1761567661; x=1762172461;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8yw+KdoDk1+GlObHpWFGVZEPL4sfsRTgvMthBW335I=;
-        b=DaXtSF1itrDvucBuRj77j42glUMxO3oJDOlpfPHYbh+fBCSAgQqL6M6JQoFkTIiy0P
-         iZoHjeMOy7gRxY+f/K6fDzsi3kpadap6BATxtnZQm/qH1GPIMzaSgsioo8Gi5/UQMuwv
-         ixxs/qq4hJXcRxbOuNKYQDFdulETsr6qSMZW4/opMGziGuRWT6YfhvRS/DQM1MEsx/om
-         ly2fAPeLhQUBkbyzCLTjxabeScgEVaPaWZHvksaPiNBlkwhKwSpKMwyDVl2AB7s25JXd
-         0qomSprd0HDsRWf7jqc13x0kxtUgNmZ0nhVFdn4hlwotCZwZuqwWQ0QhGckhSpsZO8YV
-         AHAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwSjWc/GezWkFOMKIgm/4Jh+CiIbVUH6979B0pUWWZUg7o51rYmWB11mF/qegVrCdNTSEcPBFkRq7eNr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7cRYJGHczLoIdTrBP+ZqklfNJeHUF9PqTCyy9Qj+dNFz8Z7NS
-	/krfgdUwyUz/az4cc5hytcOrtYp7XxQDRwyq3j1jggu5CZp2Gi7bW/uRksNojPViutO9QQ9OHfq
-	bzilHIzDIi1ZitPhInziioWFJ6KCs040TWBEQ5Q0gAdfpJ4tcJq7SZ9NSwyJ32qDlgdfr3pEWIu
-	QA
-X-Gm-Gg: ASbGncsxS2iQZK6sa9R1YQssqAqi1tvG8DhLFUdwSh0gSZkXaixOkYDBnr99t4n1i7D
-	GejOwGjufp4Mpqkh4w8xPO6QIOO7pQei1eayqzjskmfQ9E8wqjdiXGPdvTGvVmPk+ziPKX3Nf+m
-	WgKnvzppU+1VkdjdLdsxZ3vAgTLc8KBWcMtxOks2y6LdexYL9ikO2mL4cGs1nDRHZWMFoXWaX9Q
-	2RJj88+hWZAgm91uHnWzFvxaJqdCfWC2uT3c+Nl4eSDp7/0Xe6cwYhWd70mA0/86JVv74Bj+7tf
-	h+0OOw2FqUT20mbPHiWfI8352FAych61w/epGFYfShkclPAkXYbp25xmaEESk0/JVCQN8dSz0Ku
-	Wbw0GWmV1cpz3BP5u79t/Hj8y
-X-Received: by 2002:a05:600c:3b84:b0:477:c68:b4da with SMTP id 5b1f17b1804b1-4770c68b594mr44482245e9.20.1761567650865;
-        Mon, 27 Oct 2025 05:20:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUHD5VEEMHXlx8Mtjq4Vh0L1doDEtzRU6V1VECOo/Fbuys+lVjtxXIKlXHDWL4p5T28mhLPg==
-X-Received: by 2002:a05:600c:3b84:b0:477:c68:b4da with SMTP id 5b1f17b1804b1-4770c68b594mr44481995e9.20.1761567650452;
-        Mon, 27 Oct 2025 05:20:50 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd02cd6dsm137827585e9.2.2025.10.27.05.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 05:20:50 -0700 (PDT)
-Message-ID: <d23d133b52ef574d669f1656789b78d07c91c9f5.camel@redhat.com>
-Subject: Re: [Question] Detecting Sleep-in-Atomic Context in PREEMPT_RT via
- RV (Runtime Verification) monitor rtapp:sleep
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Yunseong Kim <ysk@kzalloc.com>, Nam Cao <nam.cao@linaro.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Tomas Glozar	
- <tglozar@redhat.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>, Byungchul Park	
- <byungchul@sk.com>, syzkaller@googlegroups.com,
- linux-rt-devel@lists.linux.dev,  LKML <linux-kernel@vger.kernel.org>
-Date: Mon, 27 Oct 2025 13:20:48 +0100
-In-Reply-To: <32839fb6-dbcb-4c5c-9e3f-d46f27ae9a73@kzalloc.com>
-References: <32839fb6-dbcb-4c5c-9e3f-d46f27ae9a73@kzalloc.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
- cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
- T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
- eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
- 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        bh=aP4mxhUOOvb5sFzTA2872hnI8+YOJ+Fa/nda32UGswI=;
+        b=w98QyKjB8VuptLBX/nl7myYFezTdi2NDiL9FHXMAJozr0PbhJyGPYl2L9nRplifoWU
+         6cadEDD2RQ592/0WpHXjNtHnqpvEku82EjWCNBw3M2wWFyKZZ8UJJ8PKWgEFWLADmmSI
+         NYB0QVV3tcI+qD9wwkt4x0D6oHVNMBpPnUANIwIxWBXvlpJKSbfUF7HKaz564uPidnep
+         foNsLThZ0VaBEyW5mEQGVvx8hLhyNnjHEVO2BdvKYpwgBsZ62SZwdywSNvycTZXiRdrZ
+         F/rz/ul8JgW8EpasIvJAUNdqZqZaDtO82ZShMRJf8EaDEFZNx4+DXCu0Ptpo9qwwVXPz
+         cpvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlH3LcU9dWTqqDIx2kd9V08AVmcT03dW1ibW44hwy7ETHttBI/u5Pxn6FL2nCkHKFguctTnxAi1PnK2p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFibUXHZrx1YT7JObxJG9tSzAjGlMM0cgA9JC6tGe+6K8LIzcH
+	NouuTy/FciTYlnjww8HsoEuQZ5MIX8RFOPvr0W7OWicZBtGHLJ8J4a1r8XdtigmhMGmoAFliFfp
+	ng5blUI3iyXHIjW7q7q8dOrVHu9PEj+XIR00XNAXxsVLa+BacdC64sBhBUdxVBmNkKbA=
+X-Gm-Gg: ASbGncvqaItgvLOVDutT/1aY03V6JIzgk5Ig16wTFNYt6mAFXqPhO90CyoYBVW/psnh
+	P4ucHISR0OVqCI4qMoyxJt15Cj9Lc6jsReXD79rL0vrHXX0zImo90hu3zRj3nKl1zR+21MFrUIz
+	a2in1E65FSlTRQOzuB4o0eTrwTFMpQcGdE00acLRVoix0U17f7u5VQ+ZC7kFw+6d6KwuQPELsiX
+	bwnb1zAMfa+ekQeBiDeJ69kCpqG9N7GcIHazF7z3S9oxY4Jn5uwEJhfAl4rQqeg4rBZmetyC3RX
+	L0zon7d/Gd49bat7BVAcVL99PePXm5+WPYDFBC21aYY42JsETYaSx03kBTmRwnBp2WNdp7muG13
+	J5ga/HkQLHetLs80tr4ZOxu2o5aQaQAj4NTGg4Vg/83SzNmdtcMBiO8ND
+X-Received: by 2002:a05:622a:289:b0:4ec:ed46:ab6d with SMTP id d75a77b69052e-4eced46b36dmr54348741cf.9.1761567660973;
+        Mon, 27 Oct 2025 05:21:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/Ymwp4j4U76wtRZGQW8EHbN2uGqMPPJ/w80E3/mCrIAWR0RdpJNVmK9Zxy1Lr+Yj9F1bPnQ==
+X-Received: by 2002:a05:622a:289:b0:4ec:ed46:ab6d with SMTP id d75a77b69052e-4eced46b36dmr54348351cf.9.1761567660538;
+        Mon, 27 Oct 2025 05:21:00 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853f9a0fsm746527466b.50.2025.10.27.05.20.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 05:21:00 -0700 (PDT)
+Message-ID: <51da0617-db4f-4c6f-9f46-0492e49c9a2f@oss.qualcomm.com>
+Date: Mon, 27 Oct 2025 13:20:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e78100-t14s: Add audio playback
+ over DisplayPort
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021111050.28554-3-krzysztof.kozlowski@linaro.org>
+ <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Zvzg6t7G c=1 sm=1 tr=0 ts=68ff63ae cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=KKAkSRfTAAAA:8 a=PIn3yDVZNjJHwrb619wA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDExNCBTYWx0ZWRfXyqbEXU+vgYa/
+ ODiwS1SQc9VC85GjKW8sgvfSh03KKWahAV9Ks7QThgbxhuN5DFD6zUUMiNa2irov+xE+XY/FvYg
+ czO/hOkm9I7qsrTRmwg4bHWd/pB7FQE8N0T8oFnrDcTf1SK04g+slvpSaA4zFPiJPtQiGiEfDS/
+ rJRE9agleQVIV3dBtjN4+b65didSMD6BpfOmgE7woxtT5WVrmTow8s1zqG1SzFlTJTYUbWBVBcM
+ giOPGe1aenZDKdHIu3AVlF4nx3e9WglhvD4m6Tp9kWbBR09Q68VE75GNmM2zMRDXSdf/fyQI/PP
+ 0R64q+EwlhO8CMfY5FAz2JNXRqMrjMfrgbk60guaGPK12kqfLUMR5DOUOqCe7Nu0E7bXnCrvjM7
+ nZ1CHxWLusnUHaPUpjwtwiJ3WKsBpg==
+X-Proofpoint-ORIG-GUID: h4-SWVPYpGhUyysEErwEIAM14MgEACpn
+X-Proofpoint-GUID: h4-SWVPYpGhUyysEErwEIAM14MgEACpn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270114
 
-On Mon, 2025-10-27 at 15:54 +0900, Yunseong Kim wrote:
-> Hi Nam,
->=20
-> I've been very interested in RV (Runtime Verification) to proactively det=
-ect
-> "sleep in atomic" scenarios on PREEMPT_RT kernels. Specifically, I'm look=
-ing
-> for ways to find cases where sleeping spinlocks or memory allocations are=
- used
-> within preemption-disabled or irq-disabled contexts. While searching for
-> solutions, I discovered the RV subsystem.
->=20
+On 10/21/25 1:10 PM, Krzysztof Kozlowski wrote:
+> Add necessary DAI links and DAI name prefixes to enable audio playback
+> over USB/DisplayPort and HDMI.  The HDMI port is not yet enabled, but it
+> should carry respective DAI name prefix regardless.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> ALSA UCM and audioreach topology will follow up as well.
+> ---
 
-Hi Yunseong,
+[...]
 
-I'm sure Nam can be more specific on this, but let me add my 2 cents here.
+>  &mdss_dp0 {
+> +	sound-name-prefix = "DisplayPort0";
 
-The sleep monitor doesn't really do what you want, its violations are real =
-time
-tasks (typically userspace tasks with RR/FIFO policies) sleeping in a way t=
-hat
-might incur latencies. For instance using non PI locks or imprecise sleep.
+We should probably push this into SoC dtsi since #sound-dai-cells
+is there
 
-What you need here is to validate kernel code, RV was actually designed for
-that, but there's currently no monitor that does what you want.
-
-The closest thing I can think of is monitors like scpd and snep in the sche=
-d
-collection [1]. Those however won't catch what you need because they focus =
-on
-the preemption tracepoints and schedule, which works fine also in your scen=
-ario.
-
-We could add similar monitors to catch what you want though:
-
-                     |
-                     |
-                     v
-                   +-----------------+
-                   |   cant_sleep    | <+
-                   +-----------------+  |
-                     |                  |
-                     | preempt_enable   | preempt_disable
-                     v                  |
-    kmalloc                             |
-    lock_acquire                        |
-  +---------------      can_sleep       |
-  |                                     |
-  +-------------->                     -+
-
-which would become slightly more complicated if considering irq enable/disa=
-ble
-too. This is a deterministic automaton representation (see [1] for examples=
-),
-you could use an LTL like sleep as well, I assume (needs a per-CPU monitor =
-which
-is not merged yet for LTL).
-
-This is simplified but you can of course put conditions on what kind of
-allocations and locks you're interested in.
-
-Now this specific case would require lockdep for the definition of lock_acq=
-uire
-tracepoints. So I'm not sure how useful this monitor would be since lockdep=
- is
-going to complain too. You could use contention tracepoints to catch exactl=
-y
-when sleep is going to occur and not /potential/ failures.
-
-I only gave a quick thought on this, there may be better models/event fitti=
-ng
-your usecase, but I hope you get the idea.
-
-[1] - https://docs.kernel.org/trace/rv/monitor_sched.html#monitor-scpd
-
-> Here are my questions:
->=20
-> 1. Does the rtapp:sleep monitor proactively detect scenarios that
-> =C2=A0=C2=A0 could lead to sleeping in atomic context, perhaps before
-> =C2=A0=C2=A0 CONFIG_DEBUG_ATOMIC_SLEEP (enabled) would trigger at the act=
-ual point of
-> =C2=A0=C2=A0 sleeping?
-
-I guess I answered this already, but TL;DR no, you'd need a dedicated monit=
-or.
-
-> 2. Is there a way to enable this monitor (e.g., rtapp:sleep)
-> =C2=A0=C2=A0 immediately as soon as the RV subsystem is loaded during boo=
-t time?
-> =C2=A0=C2=A0 (How to make this "default turn on"?)
-
-Currently not, but you could probably use any sort of startup script to tur=
-n it
-on soon enough.
-
-> 3. When a "violation detected" message occurs at runtime, is it
-> =C2=A0=C2=A0 possible to get a call stack of the location that triggered =
-the
-> =C2=A0=C2=A0 violation? The panic reactor provides a full stack, but I'm
-> =C2=A0=C2=A0 wondering if this is also possible with the printk reactor.
-
-You can use ftrace and rely on error tracepoints instead of reactors. Each =
-RV
-violation triggers a tracepoint (e.g. error_sleep) and you can print a call
-stack there. E.g.:
-
-  echo stacktrace > /sys/kernel/tracing/events/rv/error_sleep/trigger
-
-Here I use sleep as an example, but all monitors have their own error event=
-s
-(e.g. error_wwnr, error_snep, etc.).
-
-Does this all look useful in your scenario?
-
-Gabriele
-
->=20
-> Here is some background on why I'm so interested in this topic:
->=20
-> Recently, I was fuzzing the PREEMPT_RT kernel with syzkaller but ran into
-> issues where fuzzing wouldn't proceed smoothly. It turned out to be a pro=
-blem
-> in the kcov USB API. This issue was fixed after I reported it, together
-> with Sebastian=E2=80=99s patch.
->=20
-> [PATCH] kcov, usb: Don't disable interrupts in kcov_remote_start_usb_soft=
-irq()
-> =C2=A0- https://lore.kernel.org/all/20250811082745.ycJqBXMs@linutronix.de=
-/
->=20
-> After this fix, syzkaller fuzzing ran well and was able to detect several
-> runtime "sleep in atomic context" bugs:
->=20
-> [PATCH] USB: gadget: dummy-hcd: Fix locking bug in RT-enabled kernels
-> =C2=A0-
-> https://lore.kernel.org/all/bb192ae2-4eee-48ee-981f-3efdbbd0d8f0@rowland.=
-harvard.edu/
->=20
-> [BUG] usbip: vhci: Sleeping function called from invalid context in
-> vhci_urb_enqueue on PREEMPT_RT
-> =C2=A0-
-> https://lore.kernel.org/all/c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.=
-com/
->=20
-> This led me to research ways to find these issues proactively at a
-> static analysis level, and I created some regex and coccinelle scripts
-> to detect them.
->=20
-> [BUG] gfs2: sleeping lock in gfs2_quota_init() with preempt disabled
-> on PREEMPT_RT
-> =C2=A0- https://lore.kernel.org/all/20250812103808.3mIVpgs9@linutronix.de=
-/t/#u
->=20
-> [PATCH] md/raid5-ppl: Fix invalid context sleep in
-> ppl_io_unit_finished() on PREEMPT_RT
-> =C2=A0-
-> https://lore.kernel.org/all/f2dbf110-e2a7-4101-b24c-0444f708fd4e@kernel.o=
-rg/t/#u
->=20
-> Tomas, the author of the rtlockscope project, also gave me some deep
-> insights into this static analysis approach.
->=20
-> Re: [WIP] coccinelle: rt: Add coccicheck on sleep in atomic context on
-> PREEMPT_RT
-> =C2=A0-
-> https://lore.kernel.org/all/CAP4=3DnvTOE9W+6UtVZ5-5gAoYeEQE8g4cgG602FJDPe=
-sNko-Bgw@mail.gmail.com/
->=20
->=20
-> Thank you!
->=20
-> Best regards,
-> Yunseong Kim
-
+Konrad
 
