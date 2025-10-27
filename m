@@ -1,116 +1,1040 @@
-Return-Path: <linux-kernel+bounces-871552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9E1C0DA0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:43:13 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31693C0D90C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C00DF4205C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:36:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8534034DB35
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F63230E85D;
-	Mon, 27 Oct 2025 12:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B52035975;
+	Mon, 27 Oct 2025 12:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xOHj51J/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="a/lAxtx8"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAB02FE58E;
-	Mon, 27 Oct 2025 12:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47B22AD32
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568504; cv=none; b=ZMzTXcLIi0iwSP/YTGtO44woSbTE3rAfEq8oO3v0eYy692vHvZ++lTS8kxIQT/0lNvE8K+Xnr9cMsPExVDNzLa0I8JYSLd142cQ0cqmLu5N3Bgn+QmxVbulLBtNrXyxfceCgj2TMWh2Xr4y3sMEiXg0CRNc8U55WD3s06Hpg588=
+	t=1761568525; cv=none; b=sviTlcmvXgkxB/hTD7Hw94+zAmNhuUEmOpBPLEiydTFFdGn3fwa3rUTr5fpoDhVyhTATT1IUl+2q9BP8VmIvIVkv+vNzi493k97rsjNDElweh8PxAmo8IaItRX1iYB7Z65dWpYuXL3SsN9xISYTTGw7LQmlfpnEeLrYEvxyqxOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568504; c=relaxed/simple;
-	bh=P+3UXldEAR7K0LP2DEUeWZ6b1BjyHAZunBfUNmacYL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9L2TU0PCXbRYxwfpBGfR7DNxCk1ZqVonziCycDvggLlu3AXZYbuDJZmdUJLDaMjgmdx02Q/Rog9gryTGXlZvzaCZKMPbtEZLABw32Zzpsq52h7wzazpUt0f0ZP/I5g5h3qLVTbWt68YCNQshQaMLUV2m76rcEBgKMSpOzYz6DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xOHj51J/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iA7t2Iu5WmijCKzI4GOFbP1+sQVyXkrlu3SiinRY5fE=; b=xOHj51J/BGH7TW8B1tue9x+1cZ
-	ciRjmO0LOkcfCgqKGjCBlhej8qpS2adZBtz83L4kTWr2SWApaY5YfMZ2y2Ezd/LwY8+ytZgOHpVEC
-	5g2JJQlARRG/mEHbQFcddVjttfvRkuIDkru5t5BQhF1yh4cYwCY8enA2+QPSZI+5AZyY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDMQs-00CBov-Nc; Mon, 27 Oct 2025 13:34:42 +0100
-Date: Mon, 27 Oct 2025 13:34:42 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: BMC-SW <BMC-SW@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [net-next 0/3] Add Aspeed
- G7 MDIO support
-Message-ID: <ad12992b-2ddf-406f-a024-dd402f8a3f0c@lunn.ch>
-References: <20241118104735.3741749-1-jacky_chou@aspeedtech.com>
- <7368c77e-08fe-4130-9b62-f1008cb5a0dc@lunn.ch>
- <SEYPR06MB513478C462915513DE7BE1AE9DFCA@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1761568525; c=relaxed/simple;
+	bh=Q2NzvIxax4G/tlPqfUaYqie+eX4Pk8mRTHPpbn5ndPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gFLnVBvFSLwhc/gehxVVewlM73zgwcvj8xygZSW0KrMBgMkqcUYbye0/VdpmaFAljzzYMfgXSDwTdLUcxBx9UwJAeiM2IZ4ErNB9ubX7WcfiKobkrpHLZgiHpMXKXzrZhq2jNzuZ4ShI3Yf2DG5v3Tl6Csv1N1njYNfQd3b4mdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=a/lAxtx8; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4eb75e8e47eso53663561cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:35:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1761568521; x=1762173321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJ+Be098HoM26N8A2UJtuQGVKtlWgNy8GcqNwJN/6XY=;
+        b=a/lAxtx8vQCNC/4tF29o9OjveZwlt17ARAW9LmLTi1Dy7bxjIiOcPo+90IPfJZcjaj
+         GDjODODzc7xTyhuFyMFmS5+mzB70Y4NbVXHMulP/Ax1nVIFnnZZG20XWvkIGOkeUBsdE
+         lbOyYpAQH9jK2uCDmbvi6rXHR6b/0fObotIBdSc9GyieM1Xb/lpruLpahURTnRqrBd9z
+         AHeaXVbfuyAXnC9r06Ks+riR+EEgEEgvZNPNPnGuwdqtyhjVKyUtcvufNAwJ/4endNS+
+         SWF6aU7He9taPxl83B5LrITsVrnt3vB76XAxZQS8DyX2Nx5XSkaE/qY3phaicNOxb7tX
+         rzUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761568521; x=1762173321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zJ+Be098HoM26N8A2UJtuQGVKtlWgNy8GcqNwJN/6XY=;
+        b=Dz/h4U/hwRZ35o9/nzxYYrLiecMpSauDTvsTR3v7O7SJPlHoZo3YUroSX5ftHCaLdE
+         KtIkVJZSi0+JF/U5ncoLk90qglXLQpkZeM/UNXkuRvH6atFqNm1l24R2+cvQAMqNoxu1
+         ldsn0/dzm8kf96iCIhCltF1yhnHtDoZwk/oJ+AHzNHbnKWTbyEUdLcj0J5utv4w43C3G
+         baxUW44phwWcI1gkz+Hlsmz1rX3EVTCp22A4kWPcu+KRrAQ23MK62hpyuuRaso3mJRx2
+         TE7BMra/GFLDsuNuwwUQ9SFB9aLlZanLW6m3jD0JTfGWk1JO/Pqpb3sFnoPpuTlw8FGP
+         o27Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmMQ1m7q7+AJJH6RPhSsw0TWXnk89XWpOn5+AchrcCVOtuVe4RD0UOVQ+8BQnYLWZHShLikxJzXEmxcVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs/r3fvl5bK9dc8lpFlO2/raCE0e0bbSwYMy2Bdd60IUJ4te+z
+	J7SN0z9o4TVrwYwKtSjyDVnTorioQpCZbTt6U7X2WXbZEaXIq+H2WLdlywpObOosz29M3o/ejUh
+	PsvyJkTcjXys1IIumw9snKhA8QNQeOjm/P/gkAULTfQ==
+X-Gm-Gg: ASbGncv1A6fGYB2KGUKXs/jKorNfufYVfE1FeStDnbEyTHFLXNDvmojk2q3vJJkFc+3
+	9Ux4fwaXDQdREGUCScC8/vywLw4KDf0jecmNT/19qtf8Ui604k7aJeid3tP1KEv4izRbr2iEPRb
+	LSgBaV571jOsRgk5FQeRMzi8Yj00ZXZL2nCyDsHp86OGLJ7GJQe868m73GCcl3bilFy+xAFgQ2J
+	cNwnFOa20+x4IOHLD2SPcvN2jMRuX6C8fSLqH5s8A0ATR+msRx2iV8Zc0JO8bbr1/yaZQVjx8yx
+	PYJbJ1hBTlY/4pFWvabbOjQaQLNB
+X-Google-Smtp-Source: AGHT+IHy7yniXUoD5/kLU2X1SjWyXwKBtFpoV3ipBe4vnN9L442ScXMe68CUxopLYXyz27q5aku63pwNI7eV2QFYVO8=
+X-Received: by 2002:a05:622a:488e:b0:4ed:137:1c46 with SMTP id
+ d75a77b69052e-4ed01371decmr13661971cf.3.1761568521468; Mon, 27 Oct 2025
+ 05:35:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB513478C462915513DE7BE1AE9DFCA@SEYPR06MB5134.apcprd06.prod.outlook.com>
+References: <20250908181717.1997461-1-cleger@rivosinc.com> <20250908181717.1997461-4-cleger@rivosinc.com>
+In-Reply-To: <20250908181717.1997461-4-cleger@rivosinc.com>
+From: Himanshu Chauhan <hchauhan@ventanamicro.com>
+Date: Mon, 27 Oct 2025 18:05:10 +0530
+X-Gm-Features: AWmQ_bmoeJuCSP8J4I1FlnGo4GW4uO_vzv_loXZXU9WaOztW6AfPd3v-6tOyS2M
+Message-ID: <CAPd4WezLU2TdpyUQ_UOT0SO=N+jbwEs4iVUKZ2_ngcGEJpSbNw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/5] drivers: firmware: add riscv SSE support
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Anup Patel <apatel@ventanamicro.com>, 
+	Xu Lu <luxu.kernel@bytedance.com>, Atish Patra <atishp@atishpatra.org>, 
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>, Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 02:44:23AM +0000, Jacky Chou wrote:
-> Hi Andrew,
-> 
-> This is Jacky from ASPEED.
-> Last year, I submitted a series of patches to add a new compatible string
-> "aspeed,ast2700-mdio". At that time, the feedback I received was that if there
-> were no functional changes, a new compatible string would not be necessary.
-> Recently, we are submitting the AST2700 platform support to the Linux kernel.
-> In the following discussion thread, it appears that the MDIO driver might need
-> a new compatible string for the AST2700 platform:
-> https://lore.kernel.org/all/b048afc1-a143-4fd0-94c9-3677339d7f56@lunn.ch/
-> I would like to confirm whether this case should be submitted separately to
-> net-next, and in general, if there are no hardware or design changes, is it
-> still required to introduce a new compatible string?
+Hi Clement,
 
-Are you sure it is identical? And are you sure there are no bugs in
-the driver which would require breaking backwards compatibility, like
-you are going to be doing for the MAC driver?
+On Mon, Sep 8, 2025 at 11:49=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
+>
+> Add driver level interface to use RISC-V SSE arch support. This interface
+> allows registering SSE handlers, and receive them. This will be used by
+> PMU and GHES driver.
+>
+> Co-developed-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
+> Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  MAINTAINERS                            |  15 +
+>  drivers/firmware/Kconfig               |   1 +
+>  drivers/firmware/Makefile              |   1 +
+>  drivers/firmware/riscv/Kconfig         |  15 +
+>  drivers/firmware/riscv/Makefile        |   3 +
+>  drivers/firmware/riscv/riscv_sbi_sse.c | 701 +++++++++++++++++++++++++
+>  include/linux/riscv_sbi_sse.h          |  57 ++
+>  7 files changed, 793 insertions(+)
+>  create mode 100644 drivers/firmware/riscv/Kconfig
+>  create mode 100644 drivers/firmware/riscv/Makefile
+>  create mode 100644 drivers/firmware/riscv/riscv_sbi_sse.c
+>  create mode 100644 include/linux/riscv_sbi_sse.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..684d23f852c3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21648,6 +21648,13 @@ T:     git git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/iommu/linux.git
+>  F:     Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
+>  F:     drivers/iommu/riscv/
+>
+> +RISC-V FIRMWARE DRIVERS
+> +M:     Conor Dooley <conor@kernel.org>
+> +L:     linux-riscv@lists.infradead.org
+> +S:     Maintained
+> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git
+> +F:     drivers/firmware/riscv/*
+> +
+>  RISC-V MICROCHIP FPGA SUPPORT
+>  M:     Conor Dooley <conor.dooley@microchip.com>
+>  M:     Daire McNamara <daire.mcnamara@microchip.com>
+> @@ -21712,6 +21719,14 @@ F:     arch/riscv/boot/dts/spacemit/
+>  N:     spacemit
+>  K:     spacemit
+>
+> +RISC-V SSE DRIVER
+> +M:     Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+> +R:     Himanshu Chauhan <himanshu@thechauhan.dev>
+> +L:     linux-riscv@lists.infradead.org
+> +S:     Maintained
+> +F:     drivers/firmware/riscv/riscv_sse.c
+> +F:     include/linux/riscv_sse.h
+> +
+>  RISC-V THEAD SoC SUPPORT
+>  M:     Drew Fustini <fustini@kernel.org>
+>  M:     Guo Ren <guoren@kernel.org>
+> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+> index bbd2155d8483..1894df87b08e 100644
+> --- a/drivers/firmware/Kconfig
+> +++ b/drivers/firmware/Kconfig
+> @@ -294,6 +294,7 @@ source "drivers/firmware/meson/Kconfig"
+>  source "drivers/firmware/microchip/Kconfig"
+>  source "drivers/firmware/psci/Kconfig"
+>  source "drivers/firmware/qcom/Kconfig"
+> +source "drivers/firmware/riscv/Kconfig"
+>  source "drivers/firmware/samsung/Kconfig"
+>  source "drivers/firmware/smccc/Kconfig"
+>  source "drivers/firmware/tegra/Kconfig"
+> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+> index 4ddec2820c96..6cdd84570ea7 100644
+> --- a/drivers/firmware/Makefile
+> +++ b/drivers/firmware/Makefile
+> @@ -34,6 +34,7 @@ obj-y                         +=3D efi/
+>  obj-y                          +=3D imx/
+>  obj-y                          +=3D psci/
+>  obj-y                          +=3D qcom/
+> +obj-y                          +=3D riscv/
+>  obj-y                          +=3D samsung/
+>  obj-y                          +=3D smccc/
+>  obj-y                          +=3D tegra/
+> diff --git a/drivers/firmware/riscv/Kconfig b/drivers/firmware/riscv/Kcon=
+fig
+> new file mode 100644
+> index 000000000000..ed5b663ac5f9
+> --- /dev/null
+> +++ b/drivers/firmware/riscv/Kconfig
+> @@ -0,0 +1,15 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +menu "Risc-V Specific firmware drivers"
+> +depends on RISCV
+> +
+> +config RISCV_SBI_SSE
+> +       bool "Enable SBI Supervisor Software Events support"
+> +       depends on RISCV_SBI
+> +       default y
+> +       help
+> +         The Supervisor Software Events support allows the SBI to delive=
+r
+> +         NMI-like notifications to the supervisor mode software. When en=
+abled,
+> +         this option provides support to register callbacks on specific =
+SSE
+> +         events.
+> +
+> +endmenu
+> diff --git a/drivers/firmware/riscv/Makefile b/drivers/firmware/riscv/Mak=
+efile
+> new file mode 100644
+> index 000000000000..c8795d4bbb2e
+> --- /dev/null
+> +++ b/drivers/firmware/riscv/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_RISCV_SBI_SSE)            +=3D riscv_sbi_sse.o
+> diff --git a/drivers/firmware/riscv/riscv_sbi_sse.c b/drivers/firmware/ri=
+scv/riscv_sbi_sse.c
+> new file mode 100644
+> index 000000000000..57b6dad92482
+> --- /dev/null
+> +++ b/drivers/firmware/riscv/riscv_sbi_sse.c
+> @@ -0,0 +1,701 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Rivos Inc.
+> + */
+> +
+> +#define pr_fmt(fmt) "sse: " fmt
+> +
+> +#include <linux/cpu.h>
+> +#include <linux/cpuhotplug.h>
+> +#include <linux/cpu_pm.h>
+> +#include <linux/hardirq.h>
+> +#include <linux/list.h>
+> +#include <linux/percpu-defs.h>
+> +#include <linux/reboot.h>
+> +#include <linux/riscv_sbi_sse.h>
+> +#include <linux/slab.h>
+> +
+> +#include <asm/sbi.h>
+> +#include <asm/sse.h>
+> +
+> +struct sse_event {
+> +       struct list_head list;
+> +       u32 evt_id;
+> +       u32 priority;
+> +       sse_event_handler_fn *handler;
+> +       void *handler_arg;
+> +       /* Only valid for global events */
+> +       unsigned int cpu;
+> +
+> +       union {
+> +               struct sse_registered_event *global;
+> +               struct sse_registered_event __percpu *local;
+> +       };
+> +};
+> +
+> +static int sse_hp_state;
+> +static bool sse_available __ro_after_init;
+> +static DEFINE_SPINLOCK(events_list_lock);
+> +static LIST_HEAD(events);
+> +static DEFINE_MUTEX(sse_mutex);
+> +
+> +struct sse_registered_event {
+> +       struct sse_event_arch_data arch;
+> +       struct sse_event *event;
+> +       unsigned long attr;
+> +       bool is_enabled;
+> +};
+> +
+> +void sse_handle_event(struct sse_event_arch_data *arch_event,
+> +                     struct pt_regs *regs)
+> +{
+> +       int ret;
+> +       struct sse_registered_event *reg_evt =3D
+> +               container_of(arch_event, struct sse_registered_event, arc=
+h);
+> +       struct sse_event *evt =3D reg_evt->event;
+> +
+> +       ret =3D evt->handler(evt->evt_id, evt->handler_arg, regs);
+> +       if (ret)
+> +               pr_warn("event %x handler failed with error %d\n", evt->e=
+vt_id, ret);
+> +}
+> +
+> +static struct sse_event *sse_event_get(u32 evt)
+> +{
+> +       struct sse_event *event =3D NULL;
+> +
+> +       scoped_guard(spinlock, &events_list_lock) {
+> +               list_for_each_entry(event, &events, list) {
+> +                       if (event->evt_id =3D=3D evt)
+> +                               return event;
+> +               }
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static phys_addr_t sse_event_get_attr_phys(struct sse_registered_event *=
+reg_evt)
+> +{
+> +       phys_addr_t phys;
+> +       void *addr =3D &reg_evt->attr;
+> +
+> +       if (sse_event_is_global(reg_evt->event->evt_id))
+> +               phys =3D virt_to_phys(addr);
+> +       else
+> +               phys =3D per_cpu_ptr_to_phys(addr);
+> +
+> +       return phys;
+> +}
+> +
+> +static struct sse_registered_event *sse_get_reg_evt(struct sse_event *ev=
+ent)
+> +{
+> +       if (sse_event_is_global(event->evt_id))
+> +               return event->global;
+> +       else
+> +               return per_cpu_ptr(event->local, smp_processor_id());
+> +}
+> +
+> +static int sse_sbi_event_func(struct sse_event *event, unsigned long fun=
+c)
+> +{
+> +       struct sbiret ret;
+> +       u32 evt =3D event->evt_id;
+> +       struct sse_registered_event *reg_evt =3D sse_get_reg_evt(event);
+> +
+> +       ret =3D sbi_ecall(SBI_EXT_SSE, func, evt, 0, 0, 0, 0, 0);
+> +       if (ret.error) {
+> +               pr_warn("Failed to execute func %lx, event %x, error %ld\=
+n",
+> +                       func, evt, ret.error);
+> +               return sbi_err_map_linux_errno(ret.error);
+> +       }
+> +
+> +       if (func =3D=3D SBI_SSE_EVENT_DISABLE)
+> +               reg_evt->is_enabled =3D false;
+> +       else if (func =3D=3D SBI_SSE_EVENT_ENABLE)
+> +               reg_evt->is_enabled =3D true;
+> +
+> +       return 0;
+> +}
+> +
+> +int sse_event_disable_local(struct sse_event *event)
+> +{
+> +       return sse_sbi_event_func(event, SBI_SSE_EVENT_DISABLE);
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_disable_local);
+> +
+> +int sse_event_enable_local(struct sse_event *event)
+> +{
+> +       return sse_sbi_event_func(event, SBI_SSE_EVENT_ENABLE);
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_enable_local);
+> +
+> +static int sse_event_attr_get_no_lock(struct sse_registered_event *reg_e=
+vt,
+> +                                     unsigned long attr_id, unsigned lon=
+g *val)
+> +{
+> +       struct sbiret sret;
+> +       u32 evt =3D reg_evt->event->evt_id;
+> +       unsigned long phys;
+> +
+> +       phys =3D sse_event_get_attr_phys(reg_evt);
+> +
+> +       sret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_READ, evt, att=
+r_id, 1,
+> +                        phys, 0, 0);
+> +       if (sret.error) {
+> +               pr_debug("Failed to get event %x attr %lx, error %ld\n", =
+evt,
+> +                        attr_id, sret.error);
+> +               return sbi_err_map_linux_errno(sret.error);
+> +       }
+> +
+> +       *val =3D reg_evt->attr;
+> +
+> +       return 0;
+> +}
+> +
+> +static int sse_event_attr_set_nolock(struct sse_registered_event *reg_ev=
+t,
+> +                                    unsigned long attr_id, unsigned long=
+ val)
+> +{
+> +       struct sbiret sret;
+> +       u32 evt =3D reg_evt->event->evt_id;
+> +       unsigned long phys;
+> +
+> +       reg_evt->attr =3D val;
+> +       phys =3D sse_event_get_attr_phys(reg_evt);
+> +
+> +       sret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_WRITE, evt, at=
+tr_id, 1,
+> +                        phys, 0, 0);
+> +       if (sret.error)
+> +               pr_debug("Failed to set event %x attr %lx, error %ld\n", =
+evt,
+> +                        attr_id, sret.error);
+> +
+> +       return sbi_err_map_linux_errno(sret.error);
+> +}
+> +
+> +static void sse_global_event_update_cpu(struct sse_event *event,
+> +                                       unsigned int cpu)
+> +{
+> +       struct sse_registered_event *reg_evt =3D event->global;
+> +
+> +       event->cpu =3D cpu;
+> +       arch_sse_event_update_cpu(&reg_evt->arch, cpu);
+> +}
+> +
+> +static int sse_event_set_target_cpu_nolock(struct sse_event *event,
+> +                                          unsigned int cpu)
+> +{
+> +       unsigned long hart_id =3D cpuid_to_hartid_map(cpu);
+> +       struct sse_registered_event *reg_evt =3D event->global;
+> +       u32 evt =3D event->evt_id;
+> +       bool was_enabled;
+> +       int ret;
+> +
+> +       if (!sse_event_is_global(evt))
+> +               return -EINVAL;
+> +
+> +       was_enabled =3D reg_evt->is_enabled;
+> +       if (was_enabled)
+> +               sse_event_disable_local(event);
+> +
+> +       ret =3D sse_event_attr_set_nolock(reg_evt, SBI_SSE_ATTR_PREFERRED=
+_HART,
+> +                                       hart_id);
+> +       if (ret =3D=3D 0)
+> +               sse_global_event_update_cpu(event, cpu);
+> +
+> +       if (was_enabled)
+> +               sse_event_enable_local(event);
+> +
+> +       return 0;
+> +}
+> +
+> +int sse_event_set_target_cpu(struct sse_event *event, unsigned int cpu)
+> +{
+> +       int ret;
+> +
+> +       scoped_guard(mutex, &sse_mutex) {
+> +               scoped_guard(cpus_read_lock) {
+> +                       if (!cpu_online(cpu))
+> +                               return -EINVAL;
+> +
+> +                       ret =3D sse_event_set_target_cpu_nolock(event, cp=
+u);
+> +               }
+> +       }
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_set_target_cpu);
+> +
+> +static int sse_event_init_registered(unsigned int cpu,
+> +                                    struct sse_registered_event *reg_evt=
+,
+> +                                    struct sse_event *event)
+> +{
+> +       reg_evt->event =3D event;
+> +
+> +       return arch_sse_init_event(&reg_evt->arch, event->evt_id, cpu);
+> +}
+> +
+> +static void sse_event_free_registered(struct sse_registered_event *reg_e=
+vt)
+> +{
+> +       arch_sse_free_event(&reg_evt->arch);
+> +}
+> +
+> +static int sse_event_alloc_global(struct sse_event *event)
+> +{
+> +       int err;
+> +       struct sse_registered_event *reg_evt;
+> +
+> +       reg_evt =3D kzalloc(sizeof(*reg_evt), GFP_KERNEL);
+> +       if (!reg_evt)
+> +               return -ENOMEM;
+> +
+> +       event->global =3D reg_evt;
+> +       err =3D sse_event_init_registered(smp_processor_id(), reg_evt, ev=
+ent);
+> +       if (err)
+> +               kfree(reg_evt);
+> +
+> +       return err;
+> +}
+> +
+> +static int sse_event_alloc_local(struct sse_event *event)
+> +{
+> +       int err;
+> +       unsigned int cpu, err_cpu;
+> +       struct sse_registered_event *reg_evt;
+> +       struct sse_registered_event __percpu *reg_evts;
+> +
+> +       reg_evts =3D alloc_percpu(struct sse_registered_event);
+> +       if (!reg_evts)
+> +               return -ENOMEM;
+> +
+> +       event->local =3D reg_evts;
+> +
+> +       for_each_possible_cpu(cpu) {
+> +               reg_evt =3D per_cpu_ptr(reg_evts, cpu);
+> +               err =3D sse_event_init_registered(cpu, reg_evt, event);
+> +               if (err) {
+> +                       err_cpu =3D cpu;
+> +                       goto err_free_per_cpu;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +
+> +err_free_per_cpu:
+> +       for_each_possible_cpu(cpu) {
+> +               if (cpu =3D=3D err_cpu)
+> +                       break;
+> +               reg_evt =3D per_cpu_ptr(reg_evts, cpu);
+> +               sse_event_free_registered(reg_evt);
+> +       }
+> +
+> +       free_percpu(reg_evts);
+> +
+> +       return err;
+> +}
+> +
+> +static struct sse_event *sse_event_alloc(u32 evt, u32 priority,
+> +                                        sse_event_handler_fn *handler, v=
+oid *arg)
+> +{
+> +       int err;
+> +       struct sse_event *event;
+> +
+> +       event =3D kzalloc(sizeof(*event), GFP_KERNEL);
+> +       if (!event)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       event->evt_id =3D evt;
+> +       event->priority =3D priority;
+> +       event->handler_arg =3D arg;
+> +       event->handler =3D handler;
+> +
+> +       if (sse_event_is_global(evt))
+> +               err =3D sse_event_alloc_global(event);
+> +       else
+> +               err =3D sse_event_alloc_local(event);
+> +
+> +       if (err) {
+> +               kfree(event);
+> +               return ERR_PTR(err);
+> +       }
+> +
+> +       return event;
+> +}
+> +
+> +static int sse_sbi_register_event(struct sse_event *event,
+> +                                 struct sse_registered_event *reg_evt)
+> +{
+> +       int ret;
+> +
+> +       ret =3D sse_event_attr_set_nolock(reg_evt, SBI_SSE_ATTR_PRIO,
+> +                                       event->priority);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return arch_sse_register_event(&reg_evt->arch);
+> +}
+> +
+> +static int sse_event_register_local(struct sse_event *event)
+> +{
+> +       int ret;
+> +       struct sse_registered_event *reg_evt;
+> +
+> +       reg_evt =3D per_cpu_ptr(event->local, smp_processor_id());
+> +       ret =3D sse_sbi_register_event(event, reg_evt);
+> +       if (ret)
+> +               pr_debug("Failed to register event %x: err %d\n", event->=
+evt_id,
+> +                        ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static int sse_sbi_unregister_event(struct sse_event *event)
+> +{
+> +       return sse_sbi_event_func(event, SBI_SSE_EVENT_UNREGISTER);
+> +}
+> +
+> +struct sse_per_cpu_evt {
+> +       struct sse_event *event;
+> +       unsigned long func;
+> +       cpumask_t error;
+> +};
+> +
+> +static void sse_event_per_cpu_func(void *info)
+> +{
+> +       int ret;
+> +       struct sse_per_cpu_evt *cpu_evt =3D info;
+> +
+> +       if (cpu_evt->func =3D=3D SBI_SSE_EVENT_REGISTER)
+> +               ret =3D sse_event_register_local(cpu_evt->event);
+> +       else
+> +               ret =3D sse_sbi_event_func(cpu_evt->event, cpu_evt->func)=
+;
+> +
+> +       if (ret)
+> +               cpumask_set_cpu(smp_processor_id(), &cpu_evt->error);
+> +}
+> +
+> +static void sse_event_free(struct sse_event *event)
+> +{
+> +       unsigned int cpu;
+> +       struct sse_registered_event *reg_evt;
+> +
+> +       if (sse_event_is_global(event->evt_id)) {
+> +               sse_event_free_registered(event->global);
+> +               kfree(event->global);
+> +       } else {
+> +               for_each_possible_cpu(cpu) {
+> +                       reg_evt =3D per_cpu_ptr(event->local, cpu);
+> +                       sse_event_free_registered(reg_evt);
+> +               }
+> +               free_percpu(event->local);
+> +       }
+> +
+> +       kfree(event);
+> +}
+> +
+> +static int sse_on_each_cpu(struct sse_event *event, unsigned long func,
+> +                          unsigned long revert_func)
+> +{
+> +       struct sse_per_cpu_evt cpu_evt;
+> +
+> +       cpu_evt.event =3D event;
+> +       cpumask_clear(&cpu_evt.error);
+> +       cpu_evt.func =3D func;
+> +       on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
+> +       /*
+> +        * If there are some error reported by CPUs, revert event state o=
+n the
+> +        * other ones
+> +        */
+> +       if (!cpumask_empty(&cpu_evt.error)) {
+> +               cpumask_t revert;
+> +
+> +               cpumask_andnot(&revert, cpu_online_mask, &cpu_evt.error);
+> +               cpu_evt.func =3D revert_func;
+> +               on_each_cpu_mask(&revert, sse_event_per_cpu_func, &cpu_ev=
+t, 1);
+> +
+> +               return -EIO;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +int sse_event_enable(struct sse_event *event)
+> +{
+> +       int ret =3D 0;
+> +
+> +       scoped_guard(mutex, &sse_mutex) {
+> +               scoped_guard(cpus_read_lock) {
+> +                       if (sse_event_is_global(event->evt_id)) {
+> +                               ret =3D sse_event_enable_local(event);
+> +                       } else {
+> +                               ret =3D sse_on_each_cpu(event,
+> +                                                     SBI_SSE_EVENT_ENABL=
+E,
+> +                                                     SBI_SSE_EVENT_DISAB=
+LE);
+> +                       }
+> +               }
+> +       }
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_enable);
+> +
+> +static int sse_events_mask(void)
+> +{
+> +       struct sbiret ret;
+> +
+> +       ret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_HART_MASK, 0, 0, 0, 0, 0, =
+0);
+> +
+> +       return sbi_err_map_linux_errno(ret.error);
+> +}
+> +
+> +static int sse_events_unmask(void)
+> +{
+> +       struct sbiret ret;
+> +
+> +       ret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_HART_UNMASK, 0, 0, 0, 0, 0=
+, 0);
+> +
+> +       return sbi_err_map_linux_errno(ret.error);
+> +}
+> +
+> +static void sse_event_disable_nolock(struct sse_event *event)
+> +{
+> +       struct sse_per_cpu_evt cpu_evt;
+> +
+> +       if (sse_event_is_global(event->evt_id)) {
+> +               sse_event_disable_local(event);
+> +       } else {
+> +               cpu_evt.event =3D event;
+> +               cpu_evt.func =3D SBI_SSE_EVENT_DISABLE;
+> +               on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
+> +       }
+> +}
+> +
+> +void sse_event_disable(struct sse_event *event)
+> +{
+> +       scoped_guard(mutex, &sse_mutex) {
+> +               scoped_guard(cpus_read_lock) {
+> +                       sse_event_disable_nolock(event);
+> +               }
+> +       }
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_disable);
+> +
+> +struct sse_event *sse_event_register(u32 evt, u32 priority,
+> +                                    sse_event_handler_fn *handler, void =
+*arg)
+> +{
+> +       struct sse_event *event;
+> +       int cpu;
+> +       int ret =3D 0;
+> +
+> +       if (!sse_available)
+> +               return ERR_PTR(-EOPNOTSUPP);
+> +
+> +       guard(mutex)(&sse_mutex);
+> +       if (sse_event_get(evt))
+> +               return ERR_PTR(-EEXIST);
+> +
+> +       event =3D sse_event_alloc(evt, priority, handler, arg);
+> +       if (IS_ERR(event))
+> +               return event;
+> +
+> +       scoped_guard(cpus_read_lock) {
+> +               if (sse_event_is_global(evt)) {
+> +                       unsigned long preferred_hart;
+> +
+> +                       ret =3D sse_event_attr_get_no_lock(event->global,
+> +                                                       SBI_SSE_ATTR_PREF=
+ERRED_HART,
+> +                                                       &preferred_hart);
+> +                       if (ret)
+> +                               goto err_event_free;
+> +
+> +                       cpu =3D riscv_hartid_to_cpuid(preferred_hart);
+> +                       sse_global_event_update_cpu(event, cpu);
+> +
+> +                       ret =3D sse_sbi_register_event(event, event->glob=
+al);
+> +                       if (ret)
+> +                               goto err_event_free;
+> +
+> +               } else {
+> +                       ret =3D sse_on_each_cpu(event, SBI_SSE_EVENT_REGI=
+STER,
+> +                                             SBI_SSE_EVENT_DISABLE);
+> +                       if (ret)
+> +                               goto err_event_free;
+> +               }
+> +       }
+> +
+> +       scoped_guard(spinlock, &events_list_lock)
+> +               list_add(&event->list, &events);
+> +
+> +       return event;
+> +
+> +err_event_free:
+> +       sse_event_free(event);
+> +
+> +       return ERR_PTR(ret);
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_register);
+> +
+> +static void sse_event_unregister_nolock(struct sse_event *event)
+> +{
+> +       struct sse_per_cpu_evt cpu_evt;
+> +
+> +       if (sse_event_is_global(event->evt_id)) {
+> +               sse_sbi_unregister_event(event);
+> +       } else {
+> +               cpu_evt.event =3D event;
+> +               cpu_evt.func =3D SBI_SSE_EVENT_UNREGISTER;
+> +               on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
+> +       }
+> +}
+> +
+> +void sse_event_unregister(struct sse_event *event)
+> +{
+> +       scoped_guard(mutex, &sse_mutex) {
+> +               scoped_guard(cpus_read_lock)
+> +                       sse_event_unregister_nolock(event);
+> +
+> +               scoped_guard(spinlock, &events_list_lock)
+> +                       list_del(&event->list);
+> +
+> +               sse_event_free(event);
+> +       }
+> +}
+> +EXPORT_SYMBOL_GPL(sse_event_unregister);
+> +
+> +static int sse_cpu_online(unsigned int cpu)
+> +{
+> +       struct sse_event *event;
+> +
+> +       scoped_guard(spinlock, &events_list_lock) {
+> +               list_for_each_entry(event, &events, list) {
+> +                       if (sse_event_is_global(event->evt_id))
+> +                               continue;
+> +
+> +                       sse_event_register_local(event);
+> +                       if (sse_get_reg_evt(event))
+> +                               sse_event_enable_local(event);
+> +               }
+> +       }
+> +
+> +       /* Ready to handle events. Unmask SSE. */
+> +       return sse_events_unmask();
+> +}
+> +
+> +static int sse_cpu_teardown(unsigned int cpu)
+> +{
+> +       int ret =3D 0;
+> +       unsigned int next_cpu;
+> +       struct sse_event *event;
+> +
+> +       /* Mask the sse events */
+> +       ret =3D sse_events_mask();
+> +       if (ret)
+> +               return ret;
+> +
+> +       scoped_guard(spinlock, &events_list_lock) {
+> +               list_for_each_entry(event, &events, list) {
+> +                       if (!sse_event_is_global(event->evt_id)) {
+> +                               if (event->global->is_enabled)
+> +                                       sse_event_disable_local(event);
+> +
+> +                               sse_sbi_unregister_event(event);
+> +                               continue;
+> +                       }
+> +
+> +                       if (event->cpu !=3D smp_processor_id())
+> +                               continue;
+> +
+> +                       /* Update destination hart for global event */
+> +                       next_cpu =3D cpumask_any_but(cpu_online_mask, cpu=
+);
+> +                       ret =3D sse_event_set_target_cpu_nolock(event, ne=
+xt_cpu);
+> +               }
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static void sse_reset(void)
+> +{
+> +       struct sse_event *event;
+> +
+> +       list_for_each_entry(event, &events, list) {
+> +               sse_event_disable_nolock(event);
+> +               sse_event_unregister_nolock(event);
+> +       }
+> +}
+> +
+> +static int sse_pm_notifier(struct notifier_block *nb, unsigned long acti=
+on,
+> +                          void *data)
+> +{
+> +       WARN_ON_ONCE(preemptible());
+> +
+> +       switch (action) {
+> +       case CPU_PM_ENTER:
+> +               sse_events_mask();
+> +               break;
+> +       case CPU_PM_EXIT:
+> +       case CPU_PM_ENTER_FAILED:
+> +               sse_events_unmask();
+> +               break;
+> +       default:
+> +               return NOTIFY_DONE;
+> +       }
+> +
+> +       return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block sse_pm_nb =3D {
+> +       .notifier_call =3D sse_pm_notifier,
+> +};
+> +
+> +/*
+> + * Mask all CPUs and unregister all events on panic, reboot or kexec.
+> + */
+> +static int sse_reboot_notifier(struct notifier_block *nb, unsigned long =
+action,
+> +                              void *data)
+> +{
+> +       cpuhp_remove_state(sse_hp_state);
+> +       sse_reset();
 
-Take the reset handling for example. It looks like it was added after
-basic support for the 2600 has added, so it had to be optional, to not
-break backwards compatibility with older DT blobs. But since there is
-no support for the 2700 yet, you could make the reset mandatory,
-without breaking anything.
+Is this sse_reset required?
+I was running the poweroff command. The CPU teardown function is
+called and events are disabled & unregistered as part of it.
+when sse_reset is called, it again tries to call disable & unregister
+events for all cpus (nolock version). So I see errors from SBI that
+event is in invalid state. Commenting out sse_reset() works and
+shutdown happens without any issue.
 
-How is the clock handled on this hardware? The MDC is currently
-ticking at 2.5MHz. However many PHYs and MDIO based Ethernet switches
-will happy run at a faster speed. So you could implemented
-'clock-frequency'. But for that, do you need a clock listed? Should
-that clock be listed now, as a mandatory property for the 2700?
-
-Having a specific compatible and a fallback costs nothing, so i would
-do it. 
-
-	Andrew
+> +
+> +       return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block sse_reboot_nb =3D {
+> +       .notifier_call =3D sse_reboot_notifier,
+> +};
+> +
+> +static int __init sse_init(void)
+> +{
+> +       int ret;
+> +
+> +       if (sbi_probe_extension(SBI_EXT_SSE) <=3D 0) {
+> +               pr_err("Missing SBI SSE extension\n");
+> +               return -EOPNOTSUPP;
+> +       }
+> +       pr_info("SBI SSE extension detected\n");
+> +
+> +       ret =3D cpu_pm_register_notifier(&sse_pm_nb);
+> +       if (ret) {
+> +               pr_warn("Failed to register CPU PM notifier...\n");
+> +               return ret;
+> +       }
+> +
+> +       ret =3D register_reboot_notifier(&sse_reboot_nb);
+> +       if (ret) {
+> +               pr_warn("Failed to register reboot notifier...\n");
+> +               goto remove_cpupm;
+> +       }
+> +
+> +       ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "riscv/sse:online"=
+,
+> +                               sse_cpu_online, sse_cpu_teardown);
+> +       if (ret < 0)
+> +               goto remove_reboot;
+> +
+> +       sse_hp_state =3D ret;
+> +       sse_available =3D true;
+> +
+> +       return 0;
+> +
+> +remove_reboot:
+> +       unregister_reboot_notifier(&sse_reboot_nb);
+> +
+> +remove_cpupm:
+> +       cpu_pm_unregister_notifier(&sse_pm_nb);
+> +
+> +       return ret;
+> +}
+> +arch_initcall(sse_init);
+> diff --git a/include/linux/riscv_sbi_sse.h b/include/linux/riscv_sbi_sse.=
+h
+> new file mode 100644
+> index 000000000000..a1b58e89dd19
+> --- /dev/null
+> +++ b/include/linux/riscv_sbi_sse.h
+> @@ -0,0 +1,57 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2024 Rivos Inc.
+> + */
+> +
+> +#ifndef __LINUX_RISCV_SBI_SSE_H
+> +#define __LINUX_RISCV_SBI_SSE_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/linkage.h>
+> +
+> +struct sse_event;
+> +struct pt_regs;
+> +
+> +typedef int (sse_event_handler_fn)(u32 event_num, void *arg,
+> +                                  struct pt_regs *regs);
+> +
+> +#ifdef CONFIG_RISCV_SBI_SSE
+> +
+> +struct sse_event *sse_event_register(u32 event_num, u32 priority,
+> +                                    sse_event_handler_fn *handler, void =
+*arg);
+> +
+> +void sse_event_unregister(struct sse_event *evt);
+> +
+> +int sse_event_set_target_cpu(struct sse_event *sse_evt, unsigned int cpu=
+);
+> +
+> +int sse_event_enable(struct sse_event *sse_evt);
+> +
+> +void sse_event_disable(struct sse_event *sse_evt);
+> +
+> +int sse_event_enable_local(struct sse_event *sse_evt);
+> +int sse_event_disable_local(struct sse_event *sse_evt);
+> +
+> +#else
+> +static inline struct sse_event *sse_event_register(u32 event_num, u32 pr=
+iority,
+> +                                                  sse_event_handler_fn *=
+handler,
+> +                                                  void *arg)
+> +{
+> +       return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +
+> +static inline void sse_event_unregister(struct sse_event *evt) {}
+> +
+> +static inline int sse_event_set_target_cpu(struct sse_event *sse_evt,
+> +                                          unsigned int cpu)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int sse_event_enable(struct sse_event *sse_evt)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+> +static inline void sse_event_disable(struct sse_event *sse_evt) {}
+> +#endif
+> +#endif /* __LINUX_RISCV_SBI_SSE_H */
+> --
+> 2.43.0
+>
 
