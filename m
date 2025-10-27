@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-871938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D5AC0ED30
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:11:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73BDC0EE45
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7B82434864E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299EE19C4BAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C369306D26;
-	Mon, 27 Oct 2025 15:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C848305E28;
+	Mon, 27 Oct 2025 15:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GmYOQkyR"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+thIMVp"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751E42E7645
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A2A5695
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577861; cv=none; b=tNMTZIYEJzWJA5HC3VdBBzAeS5GrWmYQGokj/gKgC4kiQimr0hVdE7OAvnBHQOUCriNmtuYfxTFXmazWZe9Q5uY09h6sYZWGI5gHlQY/5aNqmieUyNvCExLyNC+yTsYfAVb0yayzi3tFYeltWZLyCuOaKaPhJkJ/vf/inw6S300=
+	t=1761577889; cv=none; b=GAHz1+v9I3b8jM/IXwZ8DvRz4mJf9a1I56vT7o/oU5MBPYSvAUZFe8h2pgIuJAm5M7np9SyXvs+cMco9OQ2HVl9EEU7YyX06SnnT/u4xVhzy+bqPZUIsNGpyIw7R/ek0KcOhQA+gNw3mB5TgCC9XVDmjrxZ42sr9FYfXn+8rLxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577861; c=relaxed/simple;
-	bh=EAoPt6jv7RYVLe51KJHBeGBxB13CL2PFw+2NcmecyJo=;
+	s=arc-20240116; t=1761577889; c=relaxed/simple;
+	bh=lMeTx8WKACZxktYPopjCcShpWfkYkjFg0gmpDilv+Pw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LVEfVC9XbwEbtq14KM41wzZCH3b43OxZIH8dtim5tiCHyixMPWchvOI4m+9RrRKyTHU+Xo9CAADLKVoY4vUQp6K0ofbtosZw9uh7XRm9yOgjEAidM/TqVtHUTs0ItMCRp0bfC8Qfww177TH+4Q3SZKgWOeHy44bjOL5brAYMRpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GmYOQkyR; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-3d37c1fb05aso447466fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:10:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=URKAasuVs6G07tQz6A4gzGckxH9LQezPErkvWKAXIwfivEj7GQfdSArBxObpdOjvWpvej50BuTgPxb3YcqIeNf2YFwQWN2cw6Ulppyb0IWH9T6TefPpayKliFh+BDB2tdAkPCId5O9n6RfAHj7MkdG36bHHtW0sHyNgFRe43Qk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+thIMVp; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29292eca5dbso63520995ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:11:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761577858; x=1762182658; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DMx/DtxK2+AXbHtbFOgTT8Th+LDWX/DlurisQVihNgA=;
-        b=GmYOQkyRyB4gCvtCHjsZAqrRcL9IRUU65wWy+XC6rOhmcw17MG4FNFiQskzvwGoTF8
-         krAeC8Z6ks9seQGu72rUdPTASi+1gMHxUcYYWWZo8rMCGhJzwScLj6ki9KvGn6gstbQB
-         Bs1kraj1TMKuFPph44WgGDDIlm/9mjYxGKu1efF+5uVvb7OdvDVYsZDZPRaXfOX9HDFD
-         PB7trGBlBV9kTbSs4QlhWxQ2UHuy6mj+jQwqbCguuWgqK+DBBxNphLc0Fueq1hDVZskU
-         +yIk5IdncTy5dHmz5659WxD1B7KC54iaXhFBj/J94fdsFuU7o9K5NuadE5Vf8/7gZRUl
-         jsrA==
+        d=gmail.com; s=20230601; t=1761577887; x=1762182687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMXfMmOIM1+x1qfpV6gLLOVtUUnpEoN0L/vCSNSTs1w=;
+        b=B+thIMVpBN16Gcx2VvajHtZJLAfJC/dNCLmb4yVo3jr6NKGTotr1p5fL/Ji6x5YxHe
+         ESs8cbLxREQVayRyUs06QnKgJHPSQ2cFma8nI3cKwszNGS583LzYJ1Kdd5ANewDPONRH
+         VExdztEYXKtzDzgvyl0EXjOG3T8+oKiOCVLr4TPyy5sTwg17odtixN6vHLY4TdpqqlGV
+         T2H7ebjfoPC5CNp24lKawV6HQVM1yGVj14VMiK6mGWYJHdDko+F8hG2vMWdkxAsEIsXJ
+         lO1qjtVzrCK/RqxcIy0lo+WMydnldlYMRqLpxo5y7Vgf+KAvj9791QHOTixfrLtJa3SF
+         MNpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761577858; x=1762182658;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DMx/DtxK2+AXbHtbFOgTT8Th+LDWX/DlurisQVihNgA=;
-        b=PwLUcfom4luRFMWEHfVgbnYNlV90Ph+xJEIB9TrvT7+vOzdXKUzJM/hL9V1LUumKXE
-         eTA9s+Ofs1ik4DugLUToZlZUxxxCyxqCcUkGfWeeSSFcMG5uUnkSRWz2zXHdIg01/83O
-         NX3UjkQtAbeRayLu0PNuA+gL05aIksapWNzkxlpQDVJ+kyWbStVoeKHyF22fei0mxryk
-         tFDiRv8rIjIEgHZbR2xvuugQbKRfh4V555n00iat168iRABeh/3PEBQenTnHQ6uQ9jBm
-         WsXbNE0DlxonPoqM2UQpbLK1jrvn2EYNY7oIuxYLnlMYoiXRkkCk0ZiQa+03sE4X8NKx
-         po5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+++bDWo9+xK2dPiyWeuXq1xJrAE7vlc9mFHu0Bd2HtwwdxKoMo5BGs1T3nom1eZRlDw0X54k4zPHrdIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbTGIcN7GF7JFrzC+BnREKfsvJCpaKSghNdrgXC5YLfYHNB2Gw
-	n1BOcH9F4eyQGTGllK3LaIDLLm71/Rfwwzh6DNjnPUhAarOdINYkCxQCTmyiSFZnClOk67pGjuZ
-	MALV5nj4IUBaqZuSEiDrUKgW+tfrXnc306dr+C9/DRA==
-X-Gm-Gg: ASbGncu+6/pwsak7CTmleOf9ptkS9w6PtPewZYdWO4F/+yu0wlbRJhBu8pTfsEIb3px
-	st6LPFwxRQt1Nyg1m8VkrEwzPAfFC3k4VDraL//6uF+icOCtb40z34umv9DmQ5x7mPAs8aTD1QX
-	tFoQivtlPgGkh233x60tsbkqKEcv4EzCDh6EUlpqdiYs32NSokJZrxo0xnR/NHys6wAM5r73kz+
-	2Du4zhgU1OFHtkHYw+M7fEjCh8lD0biehEmJaNo0ncTUgEl26wu5y2X6GN3IX5mS18ks7Do
-X-Google-Smtp-Source: AGHT+IHd+W4IcFgJ85hqjhm+BkDqXnza/5grh6+beTj8ol5IgsaZlL3T/yI5duqd9WMVuK7QnVMu5fYn0lx+pNPIZGo=
-X-Received: by 2002:a05:6870:de10:b0:3cd:aa5b:9d1f with SMTP id
- 586e51a60fabf-3d17757ce8cmr4451260fac.51.1761577858254; Mon, 27 Oct 2025
- 08:10:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761577887; x=1762182687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EMXfMmOIM1+x1qfpV6gLLOVtUUnpEoN0L/vCSNSTs1w=;
+        b=Eorsc522qvWuilINPpzRGS6fS8yKY2ysXG4L/RjTWhP8n6jdv5VGDkCzh+a1c3Dc9o
+         I58nO2aBRq5h45Llj9zX5l4G/jgruQcd9HH/QHaziJq2prGGIWJLsOEdNmuvt50l2fvH
+         0cFcuQzS0iO9xeVNh6QlSNtprgtodMSXqn3ehIcnQOEGOFDz+KNak74+h27hFI8q6086
+         fnOgl8tFy8Z1+ZjfdUSXpyHSn06rd31EgQV8XOtetwXIp9KtpYWbrlw3e1e7HhkMAN1+
+         UZW9DgXE9kalwd3pY0tjIgSF5Po0hKzNjVvhUdlGHqmoyKg1fRbZtNp0nJFL+w+JCEVt
+         /bvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhG6Qw4Mh84jdkRZVE3Nz2ncl7TD95FiPTqsdUvY8jgJn9RYBoB32mPlreTPyC1AqYsoTr00Zv885cXUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKGBCsMtToLOe3QCxtpRQmCyfc2RNLNuvxXKJPcjr/vDwn8UoJ
+	efhCBZGmIuSwi1Y5U47X0Ni4OTLn9JYADTkbNhAzAxQDJxKTLAPEA59Yyys/amm915idK8HdLgr
+	k6VcT62j8Hamp9PFaCai/cd+Yx0aQwOg=
+X-Gm-Gg: ASbGncsbOCWvh8zeDpfN0oIikNKlKre8mR7vQSkOdCNeuNldsNf5fXO/Rp2OlY4rbl0
+	Cz6Vp729bk7StAROZ8J4RqJbW4JQtrtTRoaN9QbFj6w/uONWn5hhozSn7z7o/rHw0J3OWtn6FDf
+	H/7jISE/jSesYJi8JtjFUlNAk8NNGQRt6GQYW+EPRGv5ryiIezBcUwYoiFG9VDRoxwsDBkE5Sji
+	SdxuiizAMKeuf5w01WMFlFjDgnuB32+FFA2YOG4QJh+KrpUTg/x2RP2OuEofOCMIE1d43E=
+X-Google-Smtp-Source: AGHT+IHvEIpzH61YALLxG8gdFqbGgN4XUy+Tq01KU2r2KGY59iowe6I+O3qMno8P0Baluus2Jy1haBpQChfxeUeLEjQ=
+X-Received: by 2002:a17:902:d4c6:b0:290:c516:8c53 with SMTP id
+ d9443c01a7336-294cb51bbdbmr2289265ad.40.1761577887232; Mon, 27 Oct 2025
+ 08:11:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923151605.17689-1-johan@kernel.org> <aP91OoGkrSxxpsf1@hovoldconsulting.com>
- <8487acd9-3c8f-4eba-99e4-6a937618aa55@foss.st.com>
-In-Reply-To: <8487acd9-3c8f-4eba-99e4-6a937618aa55@foss.st.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 27 Oct 2025 15:10:46 +0000
-X-Gm-Features: AWmQ_bk8-GIOj3a66ntdRL-XYsBVqfxaejexXxbTpzCfX6YeH3gwqk-lE3Q3OUY
-Message-ID: <CADrjBPrez1Zi3njGMUVgKeyYu_XCt3qNWATfpsrJZk3ALevOVg@mail.gmail.com>
-Subject: Re: [PATCH] media: c8sectpfe: fix probe device leaks
-To: Patrice CHOTARD <patrice.chotard@foss.st.com>
-Cc: Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251026044335.19049-2-jckeep.cuiguangbo@gmail.com>
+ <20251026044335.19049-3-jckeep.cuiguangbo@gmail.com> <20251027081125.n7far5BO@linutronix.de>
+In-Reply-To: <20251027081125.n7far5BO@linutronix.de>
+From: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Date: Mon, 27 Oct 2025 23:11:16 +0800
+X-Gm-Features: AWmQ_blGbxBV7S4l3PmDu4W7QBNWl1J0weVSFn5wNOneG3HXMQQG5CZN34vqzOU
+Message-ID: <CAH6oFv+pqPx_0Q=bRmoi4vwxeXmt_D0gQGtxprL_8G43j5pC8w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] PCI/aer_inject: Convert inject_lock to raw_spinlock_t
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi folks,
-
-On Mon, 27 Oct 2025 at 14:34, Patrice CHOTARD
-<patrice.chotard@foss.st.com> wrote:
->
->
->
-> On 10/27/25 14:35, Johan Hovold wrote:
-> > On Tue, Sep 23, 2025 at 05:16:05PM +0200, Johan Hovold wrote:
-> >> Make sure to drop the references taken to the I2C adapters during probe
-> >> on probe failure (e.g. probe deferral) and on driver unbind.
-> >>
-> >> Fixes: c5f5d0f99794 ("[media] c8sectpfe: STiH407/10 Linux DVB demux support")
-> >> Cc: stable@vger.kernel.org   # 4.3
-> >> Cc: Peter Griffin <peter.griffin@linaro.org>
-> >> Signed-off-by: Johan Hovold <johan@kernel.org>
-> >> ---
+On Mon, Oct 27, 2025 at 09:11:25AM +0100, Sebastian Andrzej Siewior wrote:
+> > @@ -445,7 +445,7 @@ static int aer_inject(struct aer_error_inj *einj)
+> >             rperr->source_id &=3D 0x0000ffff;
+> >             rperr->source_id |=3D PCI_DEVID(einj->bus, devfn) << 16;
+> >     }
+> > -   spin_unlock_irqrestore(&inject_lock, flags);
+> > +   raw_spin_unlock_irqrestore(&inject_lock, flags);
 > >
-> > Can this one be picked up for 6.19?
-> >
-> > Johan
+> >     if (aer_mask_override) {
+> >             pci_write_config_dword(dev, pos_cap_err + PCI_ERR_COR_MASK,
 >
->
-> Hi Johan
->
-> The removal of c8sectpfe driver has been initiated see https://lore.kernel.org/linux-media/c3a35ad6-c4f6-46ad-9b5b-1fe43385ecc5@foss.st.com/
+> This is the last hunk. You miss the module exit part. This won't
+> compile on its own, as such it can't be applied. It might be chosen for
+> a backport. A change must always be self-contained.
 
-Interesting, I hadn't seen that. I guess I should dispose of my b2120
-board then!
+I haven=E2=80=99t yet developed the good habit of keeping each patch fully
+self-contained. I will fix this in the next version.
 
-Peter.
+Best regards,
+Guangbo
 
