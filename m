@@ -1,157 +1,356 @@
-Return-Path: <linux-kernel+bounces-871476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9609EC0D626
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:04:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B06C0D6E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B699B1890E17
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE424077F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B47C2F99B8;
-	Mon, 27 Oct 2025 12:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAD13002D3;
+	Mon, 27 Oct 2025 12:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+QgGaWi"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PDPPFJC9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E85E198A2F
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E4F2FFDE6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761566681; cv=none; b=N0kBedEJZ1LON73/0nSyI14nvMsrF16FT8hVg4bPZWK6QWh1yQGlAKRCzJliM+Fy8onYEkU6+qfUHmxyfn/j+BVaywu8MFJ495ah+L23w3kmN2mb2h2VjMiFO7WsKCGqmUBrXxH+giE25YrLttSZfEcvusedA0RW1WZvaz6kZ0w=
+	t=1761566818; cv=none; b=j0vDrzLIVUOGQw1UxIfJwTAPmkGk3SnOjWfAaFI1PDEXnzjO+Hpi07FytnEnSjuUo7zXxiYwuLu7ZlbNrnobWzIoW5FuD+5HKpvAqDmdrB/tb9RLP5OJ309YuKe4G/o9EjcrhUzYB+WaOKDgCpOD17pf3iadVpCGRKX5Wkqwsc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761566681; c=relaxed/simple;
-	bh=16kcW1vwy0bkn+TiQg3w/ZY6ygpWEmFvU/+qcKQlcXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RFZmUcdtSHdBEovGejw3q1/tB3enytP4j49Gck1SxAyXaasGjbIgvjmaSsfsLCoueuS3T9g2o+stU4V2s7F9eMxLZuMEUxw6sfr/tRVL7gg9V5sjHd3wkt+HubXPxMQ6hCbC5M/OOKyHxWj/Du79xAGgElD1YWR3ni8iNwLxN5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U+QgGaWi; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-362e291924aso38253271fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:04:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761566678; x=1762171478; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6g9H7PF7mEVi0u1u3dpEiWwxRgH9FFCM/t0Z2Ioht4U=;
-        b=U+QgGaWipwhSDSZBaLqk+vinjEjElxpsH/gfesBUraYOl3hsB0YNSebfzZvXaAshFc
-         +SzmQPZ1B25zm5cNnE0huWuSNjMFtPQ2JlLtyQq2++FCCnjqGpIxHA9yljFxNiunOZdT
-         G2T4ByRqrx6VS3Ucn82WqIQJuWjW4lK1kkGpAx0olL0iB3jaiVzamKdcics4tUDkCpqA
-         dlBSufPWH65FQnnx3EvAem69l3Y3Kbe6ttTuZcO1S4L3hJGUpmQrP1KY9jOzJ01UoHSU
-         ITLsqnNbRQd/bvggZv25sytrUE1p2fjgDJsx8+tW5lIdLTigswG4cE1hmTgsgBsT8hRe
-         HUqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761566678; x=1762171478;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6g9H7PF7mEVi0u1u3dpEiWwxRgH9FFCM/t0Z2Ioht4U=;
-        b=VKHRUze/16mEKEQTTb5By4MG4rtji+WAAx0QzBpGl7WBK6k9j6eSFgipxnP9NpMBZu
-         6fHmebi19vjmuZCnNM6OIM4B82DJigg25WtH8GuLd+CfhPwvKYZzMWGpt7asYKBvVY2M
-         c2FpzbEgdORJ4X89M9We4pVNLLpH47LSymw51Sy+FnniYwKp3T9t1cVvfyc1TFdlDdj+
-         QnouExf9c7WqkkfR2BOEm6wMFeBTuakA0vEYLWqmHkGrAZwqWxAhZMCRZGs7pZrSZnIk
-         qswnUn2Gc4GqfPSDmnlHYSMn3I6ZNUrF49qWw94zEX24RwGdGnahz3JXCxyX/s6KuuBU
-         Jhig==
-X-Forwarded-Encrypted: i=1; AJvYcCW2k1wH8Ds3pFhz/YO2iAOMlCYeeln3ao7E8uDxbFxaijXUEOag03cmI0slwcuQS4POrwe3WyroapCcgJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfYC923VTKvOUj5FmgfAwwEgePUm5jF/CKD3HobR55EeXGBLKt
-	sJYGimzm1oIv1Xi7A7adnwpKlgV6tv0hx8rN/0doS+qqGHN7NfMvs/cKwp6+Ff4p5deb7+klDQc
-	WN3FzQ30JYfFPPnSGGVvWB3011/Ud1/8=
-X-Gm-Gg: ASbGncvSNoeXf8ugIZLYqtUzM2p8AOyGp2GL+gdIDrUPAKSNjspAqL3bJJ0WSN0eFi9
-	eyEwiiwYD9RetbHATGeKIDwt7K82MA4sEv7KmzFn/WfAuyUhciJe8HX6ov0Z1lBwj5CTRizhG2p
-	0mk6Y4EWBrxWXVDF0E95YATa1nquLNPGwKSanRz02DoLBBnEpJzJNKFT63WCTboy5SIkCiJUoTH
-	N5z+DMqSLMWIFhlx+Rza0ISqYnCmhPD5CRfuhWWoc+j18trwduWiayZTdG8
-X-Google-Smtp-Source: AGHT+IHeM6o+1NeH7y9elXAOqGuDEbIOBj2Dz9Q7y4BEyDykBU6XK3Lhc7JnFNNSaJY5YrPw3A/CGhC8oI8H4vQXi+k=
-X-Received: by 2002:a05:651c:983:b0:337:e697:c9aa with SMTP id
- 38308e7fff4ca-378d6cc598dmr38773831fa.15.1761566677862; Mon, 27 Oct 2025
- 05:04:37 -0700 (PDT)
+	s=arc-20240116; t=1761566818; c=relaxed/simple;
+	bh=1NfKMDtvOLYr/WPpOHrQJJ7c0my6rBmiQfB1Ha0Z+3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DZDAhLVoaJ3IrKXM8iyNZWoom98ou3YhmbDLd8lGnRUc25bz/wQiapIolA54c1w6vau96BMCkwZ/VPC2vpxymrvLNOrVsLV9B9rB2k+ERn7QWHxtMsXANEdZ2sdtev1iuZT487fSf8IoaoR9RJgGp86ZG2kYb2mzqNZbe9uc9yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PDPPFJC9; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761566816; x=1793102816;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1NfKMDtvOLYr/WPpOHrQJJ7c0my6rBmiQfB1Ha0Z+3o=;
+  b=PDPPFJC930HB+4PGNO75PpnyPXAufOenTEW4y3gTog2Zz3dc3Sn5dygh
+   BSJaV8YSkR76wyUO58+aFeV/EQK+eFtGDi+2u27/gdL5SG6NMvGohpdBN
+   CMAbPqxhhJlchPtZwpvSTYthzc5+hk5JlUnf42AwCkYobP8SHMNm7+yf1
+   zBVT0nFJeKQ7jAbeDKLMfy3AOEarUNkRwupfUkJLkyhJFDJwrHQsFiZWU
+   xQL8OS38+HifPk+39OkSU1o5M8D2IJxDRgiPPM01zgvipTlnsiwLcXhgM
+   LvonyiJ6q4EDpNQcDBsNl7xlUCPGDSz0R4dboczMSaY2WvTCP6iAaRtz8
+   g==;
+X-CSE-ConnectionGUID: Xsc2VsFqT6GPbPelP+iDOQ==
+X-CSE-MsgGUID: OTOkfvW+SGOcOG/EyVfreA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67477143"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67477143"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 05:06:56 -0700
+X-CSE-ConnectionGUID: HEfFwD6pRvaNzyn9whTRHw==
+X-CSE-MsgGUID: Pfb7jr26RFCjJExVu8kKUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="184205655"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 27 Oct 2025 05:06:52 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDLzu-000Gl1-0Q;
+	Mon, 27 Oct 2025 12:06:50 +0000
+Date: Mon, 27 Oct 2025 20:06:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org, jgg@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, jean-philippe@linaro.org,
+	robin.murphy@arm.com, joro@8bytes.org, balbirs@nvidia.com,
+	miko.lenczewski@arm.com, peterz@infradead.org, kevin.tian@intel.com,
+	praan@google.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain
+ arm_smmu_invs array
+Message-ID: <202510271909.iEzPjNv4-lkp@intel.com>
+References: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027104746.282351-1-bigunclemax@gmail.com> <aP9cSArwCdvPZff3@smile.fi.intel.com>
-In-Reply-To: <aP9cSArwCdvPZff3@smile.fi.intel.com>
-From: Maxim Kiselev <bigunclemax@gmail.com>
-Date: Mon, 27 Oct 2025 15:04:25 +0300
-X-Gm-Features: AWmQ_blw3uLCth3OfrIpO6fLuc77YQYKuRcZ3MAWpV9Ij1-dgaYnXNaj9BJMSfk
-Message-ID: <CALHCpMjy=J7PNuDBPGOWzf35pmTAzw846DabGuHjN8nn3CftCA@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: mcp23s08: init reg_defaults from HW at probe
- and switch cache type
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, akaessens@gmail.com, 
-	arturas.moskvinas@gmail.com, e.shatokhin@yadro.com, linus.walleij@linaro.org, 
-	linux-kernel@vger.kernel.org, mastichi@gmail.com, mike.looijmans@topic.nl, 
-	radim.pavlik@tbs-biometrics.com, u.kleine-koenig@pengutronix.de, 
-	zou_wei@huawei.com, Sander Vanheule <sander@svanheule.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
 
-Hi !
+Hi Nicolin,
 
-=D0=BF=D0=BD, 27 =D0=BE=D0=BA=D1=82. 2025=E2=80=AF=D0=B3. =D0=B2 14:49, And=
-y Shevchenko
-<andriy.shevchenko@linux.intel.com>:
->
-> On Mon, Oct 27, 2025 at 01:46:26PM +0300, bigunclemax@gmail.com wrote:
-> >
-> > The probe function does not guarantee that chip registers are in their
-> > default state. Thus using reg_defaults for regmap is incorrect.
-> >
-> > For example, the chip may have already been configured by the bootloade=
-r
-> > before the Linux driver loads, or the mcp might not have a reset at all
-> > and not reset a state between reboots.
-> >
-> > In such cases, using reg_defaults leads to the cache values diverging
-> > from the actual registers values in the chip.
-> >
-> > Previous attempts to fix consequences of this issue were made in
-> > 'commit 3ede3f8b4b4b ("pinctrl: mcp23s08: Reset all pins to input at
-> > probe")', but this is insufficient. The OLAT register reset is also
-> > required. And there's still potential for new issues arising due to cac=
-he
-> > desynchronization of other registers.
-> >
-> > Therefore, remove reg_defaults and provide num_reg_defaults_raw. In tha=
-t
-> > case the cache defaults being initialized from hardware.
-> >
-> > Also switch cache type to REGCACHE_MAPLE, which is aware of (in)valid
-> > cache entries.
-> >
-> > And remove the force reset all pins to input at probe as it is no longe=
-r
-> > required.
->
-> > ---
->
-> No changelog? No need to resend, just reply with the missing piece.
+kernel test robot noticed the following build errors:
 
-Sorry, my bad.
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on linus/master v6.18-rc3 next-20251027]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Changelog:
-v3:
- - changed cache type from REGCACHE_FLAT to REGCACHE_MAPLE
- - added .num_reg_defaults_raw to init regs cache from HW at probe
+url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommu-arm-smmu-v3-Explicitly-set-smmu_domain-stage-for-SVA/20251016-034754
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc%40nvidia.com
+patch subject: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain arm_smmu_invs array
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20251027/202510271909.iEzPjNv4-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251027/202510271909.iEzPjNv4-lkp@intel.com/reproduce)
 
-v2:
- - rollback v1 changes
- - dropped .reg_defaults of mcp23x regmaps
- - dropped reset all pins to input at probe (commit 3ede3f8b4b4b)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510271909.iEzPjNv4-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1062:23: error: static declaration of 'arm_smmu_invs_merge' follows non-static declaration
+    1062 | struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
+         |                       ^~~~~~~~~~~~~~~~~~~
+   In file included from drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:34:
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:731:23: note: previous declaration of 'arm_smmu_invs_merge' with type 'struct arm_smmu_invs *(struct arm_smmu_invs *, struct arm_smmu_invs *)'
+     731 | struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
+         |                       ^~~~~~~~~~~~~~~~~~~
+>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1157:8: error: static declaration of 'arm_smmu_invs_unref' follows non-static declaration
+    1157 | size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
+         |        ^~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:733:8: note: previous declaration of 'arm_smmu_invs_unref' with type 'size_t(struct arm_smmu_invs *, struct arm_smmu_invs *, void (*)(struct arm_smmu_inv *))' {aka 'long unsigned int(struct arm_smmu_invs *, struct arm_smmu_invs *, void (*)(struct arm_smmu_inv *))'}
+     733 | size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
+         |        ^~~~~~~~~~~~~~~~~~~
+>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1227:23: error: static declaration of 'arm_smmu_invs_purge' follows non-static declaration
+    1227 | struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
+         |                       ^~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:736:23: note: previous declaration of 'arm_smmu_invs_purge' with type 'struct arm_smmu_invs *(struct arm_smmu_invs *, size_t)' {aka 'struct arm_smmu_invs *(struct arm_smmu_invs *, long unsigned int)'}
+     736 | struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
+         |                       ^~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1227:23: warning: 'arm_smmu_invs_purge' defined but not used [-Wunused-function]
+    1227 | struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
+         |                       ^~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1157:8: warning: 'arm_smmu_invs_unref' defined but not used [-Wunused-function]
+    1157 | size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
+         |        ^~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1062:23: warning: 'arm_smmu_invs_merge' defined but not used [-Wunused-function]
+    1062 | struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
+         |                       ^~~~~~~~~~~~~~~~~~~
 
 
->
-> >  drivers/pinctrl/pinctrl-mcp23s08.c | 40 +++---------------------------
-> >  1 file changed, 4 insertions(+), 36 deletions(-)
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+vim +/arm_smmu_invs_merge +1062 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+
+  1043	
+  1044	/**
+  1045	 * arm_smmu_invs_merge() - Merge @to_merge into @invs and generate a new array
+  1046	 * @invs: the base invalidation array
+  1047	 * @to_merge: an array of invlidations to merge
+  1048	 *
+  1049	 * Return: a newly allocated array on success, or ERR_PTR
+  1050	 *
+  1051	 * This function must be locked and serialized with arm_smmu_invs_unref() and
+  1052	 * arm_smmu_invs_purge(), but do not lockdep on any lock for KUNIT test.
+  1053	 *
+  1054	 * Both @invs and @to_merge must be sorted, to ensure the returned array will be
+  1055	 * sorted as well.
+  1056	 *
+  1057	 * Caller is resposible for freeing the @invs and the returned new one.
+  1058	 *
+  1059	 * Entries marked as trash will be purged in the returned array.
+  1060	 */
+  1061	VISIBLE_IF_KUNIT
+> 1062	struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
+  1063						  struct arm_smmu_invs *to_merge)
+  1064	{
+  1065		struct arm_smmu_invs *new_invs;
+  1066		struct arm_smmu_inv *new;
+  1067		size_t num_trashes = 0;
+  1068		size_t num_adds = 0;
+  1069		size_t i, j;
+  1070	
+  1071		for (i = j = 0; i != invs->num_invs || j != to_merge->num_invs;) {
+  1072			int cmp = arm_smmu_invs_cmp(invs, i, to_merge, j);
+  1073	
+  1074			/* Skip any unwanted trash entry */
+  1075			if (cmp < 0 && !refcount_read(&invs->inv[i].users)) {
+  1076				num_trashes++;
+  1077				i++;
+  1078				continue;
+  1079			}
+  1080	
+  1081			if (cmp < 0) {
+  1082				/* not found in to_merge, leave alone */
+  1083				i++;
+  1084			} else if (cmp == 0) {
+  1085				/* same item */
+  1086				i++;
+  1087				j++;
+  1088			} else {
+  1089				/* unique to to_merge */
+  1090				num_adds++;
+  1091				j++;
+  1092			}
+  1093		}
+  1094	
+  1095		new_invs = arm_smmu_invs_alloc(invs->num_invs - num_trashes + num_adds);
+  1096		if (IS_ERR(new_invs))
+  1097			return new_invs;
+  1098	
+  1099		new = new_invs->inv;
+  1100		for (i = j = 0; i != invs->num_invs || j != to_merge->num_invs;) {
+  1101			int cmp = arm_smmu_invs_cmp(invs, i, to_merge, j);
+  1102	
+  1103			if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
+  1104				i++;
+  1105				continue;
+  1106			}
+  1107	
+  1108			if (cmp < 0) {
+  1109				*new = invs->inv[i];
+  1110				i++;
+  1111			} else if (cmp == 0) {
+  1112				*new = invs->inv[i];
+  1113				refcount_inc(&new->users);
+  1114				i++;
+  1115				j++;
+  1116			} else {
+  1117				*new = to_merge->inv[j];
+  1118				refcount_set(&new->users, 1);
+  1119				j++;
+  1120			}
+  1121	
+  1122			if (new != new_invs->inv)
+  1123				WARN_ON_ONCE(arm_smmu_inv_cmp(new - 1, new) == 1);
+  1124			new++;
+  1125		}
+  1126	
+  1127		WARN_ON(new != new_invs->inv + new_invs->num_invs);
+  1128	
+  1129		return new_invs;
+  1130	}
+  1131	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_merge);
+  1132	
+  1133	/**
+  1134	 * arm_smmu_invs_unref() - Find in @invs for all entries in @to_unref, decrease
+  1135	 *                         the user counts without deletions
+  1136	 * @invs: the base invalidation array
+  1137	 * @to_unref: an array of invlidations to decrease their user counts
+  1138	 * @flush_fn: A callback function to invoke, when an entry's user count reduces
+  1139	 *            to 0
+  1140	 *
+  1141	 * Return: the number of trash entries in the array, for arm_smmu_invs_purge()
+  1142	 *
+  1143	 * This function will not fail. Any entry with users=0 will be marked as trash.
+  1144	 * All tailing trash entries in the array will be dropped. And the size of the
+  1145	 * array will be trimmed properly. All trash entries in-between will remain in
+  1146	 * the @invs until being completely deleted by the next arm_smmu_invs_merge()
+  1147	 * or an arm_smmu_invs_purge() function call.
+  1148	 *
+  1149	 * This function must be locked and serialized with arm_smmu_invs_merge() and
+  1150	 * arm_smmu_invs_purge(), but do not lockdep on any mutex for KUNIT test.
+  1151	 *
+  1152	 * Note that the final @invs->num_invs might not reflect the actual number of
+  1153	 * invalidations due to trash entries. Any reader should take the read lock to
+  1154	 * iterate each entry and check its users counter till the last entry.
+  1155	 */
+  1156	VISIBLE_IF_KUNIT
+> 1157	size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
+  1158				   struct arm_smmu_invs *to_unref,
+  1159				   void (*flush_fn)(struct arm_smmu_inv *inv))
+  1160	{
+  1161		unsigned long flags;
+  1162		size_t num_trashes = 0;
+  1163		size_t num_invs = 0;
+  1164		size_t i, j;
+  1165	
+  1166		for (i = j = 0; i != invs->num_invs || j != to_unref->num_invs;) {
+  1167			int cmp;
+  1168	
+  1169			/* Skip any existing trash entry */
+  1170			if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
+  1171				num_trashes++;
+  1172				i++;
+  1173				continue;
+  1174			}
+  1175	
+  1176			cmp = arm_smmu_invs_cmp(invs, i, to_unref, j);
+  1177			if (cmp < 0) {
+  1178				/* not found in to_unref, leave alone */
+  1179				i++;
+  1180				num_invs = i;
+  1181			} else if (cmp == 0) {
+  1182				/* same item */
+  1183				if (refcount_dec_and_test(&invs->inv[i].users)) {
+  1184					/* KUNIT test doesn't pass in a flush_fn */
+  1185					if (flush_fn)
+  1186						flush_fn(&invs->inv[i]);
+  1187					num_trashes++;
+  1188				} else {
+  1189					num_invs = i + 1;
+  1190				}
+  1191				i++;
+  1192				j++;
+  1193			} else {
+  1194				/* item in to_unref is not in invs or already a trash */
+  1195				WARN_ON(true);
+  1196				j++;
+  1197			}
+  1198		}
+  1199	
+  1200		/* Exclude any tailing trash */
+  1201		num_trashes -= invs->num_invs - num_invs;
+  1202	
+  1203		/* The lock is required to fence concurrent ATS operations. */
+  1204		write_lock_irqsave(&invs->rwlock, flags);
+  1205		WRITE_ONCE(invs->num_invs, num_invs); /* Remove tailing trash entries */
+  1206		write_unlock_irqrestore(&invs->rwlock, flags);
+  1207	
+  1208		return num_trashes;
+  1209	}
+  1210	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_unref);
+  1211	
+  1212	/**
+  1213	 * arm_smmu_invs_purge() - Purge all the trash entries in the @invs
+  1214	 * @invs: the base invalidation array
+  1215	 * @num_trashes: expected number of trash entries, typically returned by a prior
+  1216	 *               arm_smmu_invs_unref() call
+  1217	 *
+  1218	 * Return: a newly allocated array on success removing all the trash entries, or
+  1219	 *         NULL on failure
+  1220	 *
+  1221	 * This function must be locked and serialized with arm_smmu_invs_merge() and
+  1222	 * arm_smmu_invs_unref(), but do not lockdep on any lock for KUNIT test.
+  1223	 *
+  1224	 * Caller is resposible for freeing the @invs and the returned new one.
+  1225	 */
+  1226	VISIBLE_IF_KUNIT
+> 1227	struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
+  1228						  size_t num_trashes)
+  1229	{
+  1230		struct arm_smmu_invs *new_invs;
+  1231		size_t i, j;
+  1232	
+  1233		if (WARN_ON(invs->num_invs < num_trashes))
+  1234			return NULL;
+  1235	
+  1236		new_invs = arm_smmu_invs_alloc(invs->num_invs - num_trashes);
+  1237		if (IS_ERR(new_invs))
+  1238			return NULL;
+  1239	
+  1240		for (i = j = 0; i != invs->num_invs; i++) {
+  1241			if (!refcount_read(&invs->inv[i].users))
+  1242				continue;
+  1243			new_invs->inv[j] = invs->inv[i];
+  1244			j++;
+  1245		}
+  1246	
+  1247		WARN_ON(j != new_invs->num_invs);
+  1248		return new_invs;
+  1249	}
+  1250	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_purge);
+  1251	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
