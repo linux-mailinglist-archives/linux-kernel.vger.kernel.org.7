@@ -1,222 +1,286 @@
-Return-Path: <linux-kernel+bounces-872246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2BFC0FB35
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:38:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F1CC0FB38
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E55E46041A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:38:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AED264E293B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444D8316907;
-	Mon, 27 Oct 2025 17:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E734331690A;
+	Mon, 27 Oct 2025 17:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M/UQn/v3"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011036.outbound.protection.outlook.com [52.101.62.36])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ii+GwD6R"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D508C1A5B8B;
-	Mon, 27 Oct 2025 17:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761586683; cv=fail; b=UQNtMateuBlbc/woivhLLDhA1FbsYDPOjbABpDL6faDKVADSwTtMk1Xqos5c+y9JWNZVRNP+6GFRCeRKsDmw5Sf4qWP2C3Eg0nQA73wtFnS5V+RZpIRtKgquHpgsJ8/Yrd854RMXB/rBGOwsK1UF//CVUytsUTZS+T40yIacQEs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761586683; c=relaxed/simple;
-	bh=BuKi1tHTYbXxvj9Mk4JkDfYYha5JpiGW0Ck1WFUtd1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oMOm6aAm4Un2XwzMrKMazUn6NeIljBSmpw7pKQlK4jeXjwCSn/qr5wJ8oqgWBDvHA9G1djfKsv4d1vJWpgX+dSU9abbX+maoqULTsGWSP6WUPzlFAiVuiRyeW7htymr1Sgtd8zeUxi9qRlU52fW0VZL7/V/DAnm2obSbaQ1QfR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M/UQn/v3; arc=fail smtp.client-ip=52.101.62.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QNbrTwS1JiXQuBTl+UfuZoapIS77LRDYv3MFZ25Fg68xjHrgZtkXYGKsg91FlspXFPMTekzQETRmCkNXg7eeJED5tFVh39lb15YEK4M57vZxU+6/aDapGb4KGd2++XBEutikd+6IZxOG3nQmE6+uBqdCDxbBWtw05Y6J2+qFX7QIVGZw/fVuyHma3f3LSAAEppcLAavv06E+oP5BWbmD3YYbhyQPpz+Y0jRxnw7Oi77+VrXUJOLHO5qum93kMStpc80xKSQ7uSJimDe6+0c8iNze/v2VyEFk7zeXuztt842xcyis2CfBBobaocezcFiiSgp52FY3GMpNcd1jY5917Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t0LESYIu5Xu2BoZEen3TsmF3SRKu6EQEA4H4XSJplNU=;
- b=HsS8aDrw8oMLEn27EgTNzQ1D/F9A/8WzBau/bJqAKYIbyoy/TW7ylp7zu/838/NpYiM/gbzTtoFJKFPAUpZO4dAqFoi38OkJIUxebcIuewobz3sTqWxgm2sxEFWtgVseR6L7adNutJYRvSbhN1F+4TbRT2zp4SHTshKzi3RPfuYWjFOD8Mh1aS0xFCrULLoSQ24EbMOoWI8LD6kr//FUcnptDHg9OenMiSRKDratWzFdHsR4O7zCz7pgcl4MIm0+orPJS0SIPX3SuPn2WUapWC2MrcRJZxY6tLafc2fOsfvjWTw1jYIPzNsOPadebtJ5H+Pg+/w2m6DGQIVClezSbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t0LESYIu5Xu2BoZEen3TsmF3SRKu6EQEA4H4XSJplNU=;
- b=M/UQn/v3uz9RMZRg1z90itPAXrk1XAjQr/jVxrEuYh1hfmMZJsr86V/Jh2C2bIfoQQmCQ4/HvJ2T+BuiyIF7prcytHFKu4DMf5lB+VEdzppbKSjCf60kro8O81NztSQjJnqaPrv0NDK1FDsBmM7I4kGaZ4fLtsr6Bn9rNOVI2YtLu+mEwqCnrByOWfx4K00CVR1aAnwxlyVPG04WiFFexmLgYupWflq3Grdf5THNCihBoE2E86rkHKWdxdzCI8cfcXXXnV2+TxodBBF+DzR9MOhyrOM8IGQVxysoV2Toc0wQ5N17GPIERhpRUMTcvTVLGzZ3JGQdNbUgTpWXlagVOw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by MN0PR12MB6003.namprd12.prod.outlook.com (2603:10b6:208:37f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Mon, 27 Oct
- 2025 17:37:57 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Mon, 27 Oct 2025
- 17:37:57 +0000
-Date: Mon, 27 Oct 2025 13:37:56 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 3/7] gpu: nova-core: vbios: add conversion to u8 for
- BiosImageType
-Message-ID: <20251027173756.GA3188703@joelbox2>
-References: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
- <20251027-nova-as-v2-3-a26bd1d067a4@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027-nova-as-v2-3-a26bd1d067a4@nvidia.com>
-X-ClientProxiedBy: BL0PR02CA0066.namprd02.prod.outlook.com
- (2603:10b6:207:3d::43) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764972E1F08;
+	Mon, 27 Oct 2025 17:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761586703; cv=none; b=bSVOSl5vU2I1FyIrBd9KaITBXE+PiIHc9+M2JEqysfhxfjkJBzdUiACMN99ivUi/YFjO4AnBq6Uax+JhklzurOK42qiRAfupyuk2tNCPMiF6QlUMF26kvErY/zmw1yMnDPTkTMVWqsOsLl9Mt39XMGdt9Ff+rLoiE5aHMlAMdm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761586703; c=relaxed/simple;
+	bh=GvhDZlnk50CCjacgyYud/c9r8wNqk8fRi43gqbwVcFE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GwDCl7C6unrBW0mmG59ITMIgyAGvepBo+E1Eak86/gyAVo4iMMLKfIgARt69Ccfcjpfr12ZLAT4K46J5cifnpBTSvxm3Zwp/FTeHZaS5a4Bv0oqW6pemUmCHVuh/+6M4LWRRwaZnhYT4gW2TJTVYBcWqVkDvVHzy0UfKh33uA0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ii+GwD6R; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5A65B40AF3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1761586700; bh=0qTu7Z36JdCJpGOQY+Of2paQEfbW5A6xh4FYCaBA0hU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ii+GwD6REbnFJXsMN+jacVjV7o6+uv0+36TAnnD5depQOlOIfn+Bs29mm34Gqvmqd
+	 fNi+mCZCkiXvgmuMdoeBojIDciP+REeIB297m7OPO9iDSuU6fmdoYlvPR5FMJzuJ2r
+	 uEKIm+JRvvD/om7k8m+PgYwZ6C0SWakJe0lPg+CRWvTLmWNeyz0OW/HMvteCP435sn
+	 k2xXA9oVfkbR3g/RvRFAD2cFQbKGcKf+aC7cbA2IKw0rTFY+cZcbpSfZJIUuTTy6d1
+	 rFCZvdJsmQkRehdFX+Oq9VYoRIpPt1MRgfd8DEhH1BCRFp8FGvVBwPKSEyAbcQmYJE
+	 6UmrlShWeoeeA==
+Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5A65B40AF3;
+	Mon, 27 Oct 2025 17:38:20 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 04/30] docs: reporting-issues: add proper appendix
+In-Reply-To: <c3d92d4e74557bfff3627d8ceb6a9911612af52a.1761481839.git.linux@leemhuis.info>
+References: <cover.1761481839.git.linux@leemhuis.info>
+ <c3d92d4e74557bfff3627d8ceb6a9911612af52a.1761481839.git.linux@leemhuis.info>
+Date: Mon, 27 Oct 2025 11:38:19 -0600
+Message-ID: <87ikg0nt2s.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MN0PR12MB6003:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5e46d80-bbaa-4505-b034-08de157f9127
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dkI93bn8eNR5bjE7X/tjC1qd95Cj+nodYUFXxKTGuC+0aPQSJYUpG6yEH54/?=
- =?us-ascii?Q?af4TPsub/k6HmGI4ZzOOgnPaBwA8Fazg2UNF03qrDeNlqBU8l4jDvEX5g6RU?=
- =?us-ascii?Q?xKkAwR+wFJ/kzBHFxu8ajbnXtmjABpvyMlZTUokCME7BcGo/j+MntjqvUpZj?=
- =?us-ascii?Q?HrPUSKKeyexS4Ha4AZkgOkg3UdqlywELU6DdtlYveElQ6xAQAuR39Y2kD4Fa?=
- =?us-ascii?Q?4wrmfgcoFMLyI2g3xlqdu5JL9cB+KF3YFCtH8NO+IV6TnQGtJGgdPrbVHjuH?=
- =?us-ascii?Q?oUaq8j9y4qdTG1oolNkBD9UXIJHeSzHoBxWNhsWPRdvN4xygASo70oS/nkp+?=
- =?us-ascii?Q?bTab4WB9Tkz19L1/RlIAUl1ukx6BNth7hp4+d08Y7Oo4jf+7bdp8Vrl0TxaF?=
- =?us-ascii?Q?FIFr7n/kE+mteAHXS6KLVKHnoWiuLAdkDZaezlVIeTfUmbi1k/dYrBl9rZof?=
- =?us-ascii?Q?+GDR1deFKetOXCJxgT9UlfdJ8KweIn7k4nPDdvCXcQC8H9wB2gk/Sbdc4whS?=
- =?us-ascii?Q?MHKFDYRYYZkARQN1NQKGh8U8QrwgqXzewDr2uYMc8BQ6e3nqHEIL22TomTzV?=
- =?us-ascii?Q?Bph7Svxg+UpZb26XeZuRGWsabXm+ppfQPbOdytA6w3aGE3seiKFz7K73cedi?=
- =?us-ascii?Q?WqPoA+lEdgsSOD4ErqUW6hUMCEOTBBG4cbO3R97XD2XqQz6F26x6gFa3r2z2?=
- =?us-ascii?Q?ere1dZdMOu65gACAyjZExCAvNQQ7orJgb4xt4r6URNDoHo39POB1TWP6kEH/?=
- =?us-ascii?Q?69zcmJuzw8zo0DeSZtqhuAybf2jjTkRjglB8+ps8O7nZU88JlgtaiUibFBUf?=
- =?us-ascii?Q?eB0vUN/M41w0WezA7mP3RXzJgOaQVOfEqDXxqRUlprTYYzSnZSDDJpCOmw74?=
- =?us-ascii?Q?nt/4cNvjFqYSvyb/KC/CPD58KXQDkjgSknYk+A4U8VgjLWIZ7Xfwfxytdj8W?=
- =?us-ascii?Q?ae0+YjIE475eFIf1TFEiuPiyA3C5mqamZKPt3mrA3X1ZFLOztToRLgQzeQ98?=
- =?us-ascii?Q?L/moTINW9KMyOcvgdVMsPj5LoKgZmUXAqjKldwWuI8BMls6ABxbsHJAtTxLK?=
- =?us-ascii?Q?+5Fm1StswdcHprALCZqjqBSCciNf6kxFH/JXz0AoBF3p7eJ04bRD6WxB21RO?=
- =?us-ascii?Q?9cPEUxrvSyUUT8cw60yCkOfM/w/nBdFmsBlbul9RsGlbTqCTcIdLmQMOCqnI?=
- =?us-ascii?Q?UklbJwPwNH0v2/xMW1O8TahDlWdoNaqrrpY+K8hM7efCmklEsxiE5fGAoI1T?=
- =?us-ascii?Q?r2VSOcshScZyandJTOpXsCq5RDyd0lKSCLtl9SKBBmFo9/pqG1Y0NKfgPJEl?=
- =?us-ascii?Q?rHIpAI1zHXPmU77hqMNm31820RHijjCE3CpeTyPPi1IgyAHaV8/QX3+RQiMv?=
- =?us-ascii?Q?t5hZ9xQI2SjHObb4gZAsfnVbc0yiNFup+ORyvGXpz8eOcxeSVmnsAecB5byM?=
- =?us-ascii?Q?qNtOfb4U8T4RH5aoMr2bVWo+JzDxaMVb?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o4Hvs2lVMCG9JBNPBkaCYIlB0UHe2XgyQcjZ+CSJSNNgDvUR1s4TeP0HqVSp?=
- =?us-ascii?Q?5VzlSadRuTb9aqzqXrRGIWOq91AO/72x6CwE37epsFsQ2MKKWEON5j1eANap?=
- =?us-ascii?Q?I9Z3myvMEDfxxHHyGtVwapPjHXleko0Yo9yYSs6TC6KeHbxz4lYhvDfMviky?=
- =?us-ascii?Q?bvKPBGIokgh5v3VDkBhHjxs4NLa90HV9/vFWTqPwjefkStM+xG6qhoRyURDX?=
- =?us-ascii?Q?dZaA7uGAfwjez/qrpTKwrhJ2Jx30SG20HwhbDH6aotc5VaHi9Lp7PaGLLnlc?=
- =?us-ascii?Q?zysLi3BBvIfdYqx6sRLAku2Ghvl/F9teohCl6NGCZnWMQFS/V93T67gGZdwd?=
- =?us-ascii?Q?oVf2lEwWC3IkgkI2i59Cl0N5r3K7bF+S8+wd8uqRPd/fG9D05uztOE60gGra?=
- =?us-ascii?Q?5mXsgsxBqs9o3YUW/e1E//oJA/onrKAN2Jic/WxI3CiADZAcYEShRyWLP+R+?=
- =?us-ascii?Q?+XiN30K/rWOe+zLfbmt7iHiSXcy15z9guwa7bmhemHDxJ351Ci+Ur6Bdq59M?=
- =?us-ascii?Q?ecZiUvhCKqKQlMCttVi5bZnCF1QOVizF3/o8qQVvaw00MQTYN+5/cboQAqho?=
- =?us-ascii?Q?PRcRNxNPdZNQ01+BpsjlMGRHLuXidKB4ID8wmD9Cb5xfdzeDDqg60QVng6P2?=
- =?us-ascii?Q?DVEQCbgsdKUgyCRvkHF8IrrdocsXi8R9bw3eO9iXjacnh3VEPd/cGrMxbbDo?=
- =?us-ascii?Q?qQBCvjJ0CJTwzS+ggwRfDxQQJy5p0tyPFJY2/NuLzsnQ0zZyIseZCpUoGHpq?=
- =?us-ascii?Q?85cDMx1OheLPwj66UaNpWv9jJddx35/SVPuQ5gfrxJOSQdwH7RlbGtQ5l8wC?=
- =?us-ascii?Q?4bUle/NwGQ4R5TVCKPJ/AJ5lnK5+R26AGnNFq+oI2MH2LInHhSnvNCTtNNHi?=
- =?us-ascii?Q?dA9gEHhBhYL/Ft857sf+0PmZPojvwhqdIAl8z65fPKlyI5RfCYBx3QfEsGiB?=
- =?us-ascii?Q?Mn44G3Qx+H8sIBbmRpUGXhuaXlV/4jIWzl9casKyjJLXuce6QAW/AKRwgS7p?=
- =?us-ascii?Q?gn9ndOeDuKlrYM6cCQXWqJgiO4BJXJnf/88YXMjCJxEC4gyD7zpa3vPRGSmU?=
- =?us-ascii?Q?wD9icnL/WaOCn8KempUB8ZDeD4btKDTvkPxj+m/WRiuKOa+H9sAcyxcs2Ags?=
- =?us-ascii?Q?OyJKTR8jhAaGGjOEg1WO55CCGMSq8Q1X8SHa2Sit1QPwrqpMDnqFekMYS9Yq?=
- =?us-ascii?Q?8Z5tW2fT7RjKb6z06dWD1GMTfPnNL59SYnAJAeqV5FCfTo2cgK7VAbNaSuDD?=
- =?us-ascii?Q?/3EVGTsdz+F1ymLQc3hAE+EUBQxC2mn5/We6u10jp2W0XnnOw0N+dBtoi1sK?=
- =?us-ascii?Q?iVWEqFqYUZYENO1jEfKmZnmoG1X28Jf0o3+QbuthIq63bLcRmBDsIUlJWkho?=
- =?us-ascii?Q?1tNKQJLZSA+qWX0RbEkX6QEixteGvSkJozTCrHiYkYJmpeO9btnTkoSHOhFq?=
- =?us-ascii?Q?6KywavMchnk8VRT0c+/k6ogr0XchVE3SGEuEH/XwneQtvNLk0sv3InQPqXSs?=
- =?us-ascii?Q?3ENzBGKTgkMNJ9rvBI60bFuE/A/6AQsXDUAh8bldItammH10/hEi8Ueh+z7T?=
- =?us-ascii?Q?6gr3+llcnqbGFuv3Y/eNdozo259aVNqz+1PzMyy3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5e46d80-bbaa-4505-b034-08de157f9127
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 17:37:57.5483
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Sb24q0hQ0wptkWu4nth9PAKsW0dn4KhhCZvjvOFLXm3M1txVkspkaFtyq2D1b4nri+CUE5sZxWgwTuK/qf5GQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6003
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Alex,
+Thorsten Leemhuis <linux@leemhuis.info> writes:
 
-On Mon, Oct 27, 2025 at 09:54:43PM +0900, Alexandre Courbot wrote:
-> Since `BiosImageType` is `repr(u8)`, if can safely be converted into a
-> `u8` but this is not obvious when doing this in the code.
-> 
-> Instead, implement `From<BiosImageType>` for `u8` so the cast can be
-> done in a single place, with a justifying comment.
-> 
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Turn the "Why some bugs remain unfixed and some report are ignored"
+> section into a proper appendix while improving it slightly.
+>
+> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
 > ---
->  drivers/gpu/nova-core/vbios.rs | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
-> index dbe0d6e4a015..a521c0a4df0f 100644
-> --- a/drivers/gpu/nova-core/vbios.rs
-> +++ b/drivers/gpu/nova-core/vbios.rs
-> @@ -50,6 +50,13 @@ fn try_from(code: u8) -> Result<Self> {
->      }
->  }
->  
-> +impl From<BiosImageType> for u8 {
-> +    fn from(value: BiosImageType) -> Self {
-> +        // `BiosImageType` is `repr(u8)` and thus convertible without loss.
-> +        value as u8
-> +    }
-> +}
+>  .../admin-guide/reporting-issues.rst          | 102 +++++++++---------
+>  1 file changed, 54 insertions(+), 48 deletions(-)
+
+Some comments below, but I have to ask: do we really need this section
+at all?  Getting people to read long documents is hard, and this adds a
+fair amount of length to, essentially, say that the kernel is an
+open-source program like any other and its developers are not required
+to address your problems...?
+
+> diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentati=
+on/admin-guide/reporting-issues.rst
+> index 9676ba85e1b73c..745e698cb6be8b 100644
+> --- a/Documentation/admin-guide/reporting-issues.rst
+> +++ b/Documentation/admin-guide/reporting-issues.rst
+> @@ -1693,60 +1693,66 @@ for the subsystem where the issue seems to have i=
+ts roots; CC the mailing list
+>  for the subsystem as well as the stable mailing list (stable@vger.kernel=
+.org).
+>=20=20
+>=20=20
+> -Why some issues won't get any reaction or remain unfixed after being rep=
+orted
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +Appendix: additional background information
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20=20
+> -When reporting a problem to the Linux developers, be aware only 'issues =
+of high
+> -priority' (regressions, security issues, severe problems) are definitely=
+ going
+> -to get resolved. The maintainers or if all else fails Linus Torvalds him=
+self
+> -will make sure of that. They and the other kernel developers will fix a =
+lot of
+> -other issues as well. But be aware that sometimes they can't or won't he=
+lp; and
+> -sometimes there isn't even anyone to send a report to.
+> +.. _unfixedbugs_repiapdx:
+
+This label is seemingly unused?
+
+> -This is best explained with kernel developers that contribute to the Lin=
+ux
+> -kernel in their spare time. Quite a few of the drivers in the kernel were
+> -written by such programmers, often because they simply wanted to make th=
+eir
+> -hardware usable on their favorite operating system.
+> +Why some bugs remain unfixed and some report are ignored
+
+report*s*
+
+> +--------------------------------------------------------
 > +
->  // PMU lookup table entry types. Used to locate PMU table entries
->  // in the Fwsec image, corresponding to falcon ucodes.
->  #[expect(dead_code)]
-> @@ -711,7 +718,7 @@ fn image_type(&self) -> Result<BiosImageType> {
->      fn is_last(&self) -> bool {
->          // For NBSI images (type == 0x70), return true as they're
->          // considered the last image
-> -        if self.pcir.code_type == BiosImageType::Nbsi as u8 {
-> +        if self.pcir.code_type == BiosImageType::Nbsi.into() {
+> +When reporting a problem to the Linux developers, be aware that they are=
+ only
+> +obliged to fix regressions, security issues, and severe problems. Develo=
+pers,
+> +maintainers, or, if all else fails, Linus Torvalds himself will make sur=
+e of
+> +that. They will fix a lot of other issues as well, but sometimes they ca=
+n't or
+> +won't help -- and sometimes there isn't even anyone to send a report to.
+> +
+> +This situation is best explained using kernel developers that contribute=
+ to the
 
-I strongly prefer u8::from(BiosImageType::Nbsi) here so there is no loss of
-readability of the type. Can we please use ::from()?
+"using" is weird; "highlighting" or some such?
 
-thanks,
+> +Linux kernel in their spare time. Quite a few of the drivers in the kern=
+el were
+> +written by such programmers; often they simply wanted to make the
+> +hardware they owned usable on their favorite operating system.
 
- - Joel
+This really kind of reinforces the old "developed in their parents'
+basement" stuff we used to hear; again, do we really need this?
 
+>  These programmers most of the time will happily fix problems other people
+> -report. But nobody can force them to do, as they are contributing volunt=
+arily.
+> -
+> -Then there are situations where such developers really want to fix an is=
+sue,
+> -but can't: sometimes they lack hardware programming documentation to do =
+so.
+> -This often happens when the publicly available docs are superficial or t=
+he
+> -driver was written with the help of reverse engineering.
+> -
+> -Sooner or later spare time developers will also stop caring for the driv=
+er.
+> -Maybe their test hardware broke, got replaced by something more fancy, o=
+r is so
+> -old that it's something you don't find much outside of computer museums
+> -anymore. Sometimes developer stops caring for their code and Linux at al=
+l, as
+> -something different in their life became way more important. In some cas=
+es
+> -nobody is willing to take over the job as maintainer =E2=80=93 and nobod=
+y can be forced
+> -to, as contributing to the Linux kernel is done on a voluntary basis. Ab=
+andoned
+> -drivers nevertheless remain in the kernel: they are still useful for peo=
+ple and
+> -removing would be a regression.
+> +report. But nobody can force them to do so, as they are contributing
+> +voluntarily.
+> +
+> +There are also situations where such developers would like to fix issues,
+> +but can't: They might lack programming documentation to do so or hardwar=
+e to
+> +test. The former can happen when the publicly available docs are superfi=
+cial or
+> +when a driver was written with the help of reverse engineering.
+> +
+> +Sooner or later, spare-time developers usually stop caring for the drive=
+r.
+> +Maybe their test hardware broke, was replaced by something more fancy, or
+> +became so old that it is something you don't find much outside of comput=
+er
+> +museums anymore. Other times developers also stop caring when
+> +something different in life becomes more important to them. Then sometim=
+es
+> +nobody is willing to take over the job as maintainer -- and nobody else =
+can be
+> +forced to, as contributing is voluntary. The code nevertheless often sta=
+ys
+> +around, as it is useful for people; removing it would also cause a regre=
+ssion,
+> +which is not allowed in Linux.
+>=20=20
+>  The situation is not that different with developers that are paid for th=
+eir
+> -work on the Linux kernel. Those contribute most changes these days. But =
+their
+> -employers sooner or later also stop caring for their code or make its
+> -programmer focus on other things. Hardware vendors for example earn thei=
+r money
+> -mainly by selling new hardware; quite a few of them hence are not invest=
+ing
+> -much time and energy in maintaining a Linux kernel driver for something =
+they
+> -stopped selling years ago. Enterprise Linux distributors often care for a
+> -longer time period, but in new versions often leave support for old and =
+rare
+> -hardware aside to limit the scope. Often spare time contributors take ov=
+er once
+> -a company orphans some code, but as mentioned above: sooner or later the=
+y will
+> -leave the code behind, too.
+> -
+> -Priorities are another reason why some issues are not fixed, as maintain=
+ers
+> -quite often are forced to set those, as time to work on Linux is limited.
+> -That's true for spare time or the time employers grant their developers =
+to
+> -spend on maintenance work on the upstream kernel. Sometimes maintainers =
+also
+> -get overwhelmed with reports, even if a driver is working nearly perfect=
+ly. To
+> -not get completely stuck, the programmer thus might have no other choice=
+ than
+> -to prioritize issue reports and reject some of them.
+> -
+> -But don't worry too much about all of this, a lot of drivers have active
+> +work on the upstream Linux kernel. Those contribute the most changes the=
+se days.
+> +But their employers set the priorities. And those sooner or later stop c=
+aring
+> +for some code or make their
+> +employees focus on other things. Hardware vendors, for example, earn the=
+ir money
+> +mainly by selling new hardware -- they thus often are not much intereste=
+d in
+> +investing much time and energy in maintaining a Linux kernel driver for =
+a chip
+> +they stopped selling years ago. Enterprise Linux distributors often care=
+ for a
+> +longer time period, but in new versions might set support for old and ra=
+re
+> +hardware aside to limit the scope, too. Often spare-time contributors ta=
+ke over
+> +once employed developers orphan some code, but as mentioned earlier: Soo=
+ner or
+> +later they will usually leave the code behind, too.
+> +
+> +Priorities are another reason why some issues are not fixed, as develope=
+rs
+> +quite often are forced to set those: The spare-time of volunteers or the=
+ time
+> +employers allot for upstream Linux kernel work is often limited. Sometim=
+es
+> +developers are also flooded with good and bad reports, even if a driver =
+is
+> +working well. To
+> +not get completely stuck, the programmers might have no other choice than
+> +to prioritize bug reports and ignore some.
+> +
+> +But do not worry too much about all of this, a lot of drivers have active
+>  maintainers who are quite interested in fixing as many issues as possibl=
+e.
 
->              return true;
->          }
->  
-> 
-> -- 
-> 2.51.0
-> 
+Otherwise OK, I guess, but my overall question stands: do we really need
+this text?
+
+Thanks,
+
+jon
 
