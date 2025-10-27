@@ -1,96 +1,126 @@
-Return-Path: <linux-kernel+bounces-871302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B255C0CDFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:07:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1AEC0CDD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDDCF3A7800
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4335189667E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E7730FC1A;
-	Mon, 27 Oct 2025 09:58:49 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7D02F6922;
+	Mon, 27 Oct 2025 10:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pE1ta6m8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49CB30F95E;
-	Mon, 27 Oct 2025 09:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDED2F6569;
+	Mon, 27 Oct 2025 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559128; cv=none; b=cNmULt2psGN/GW/jONU6v1PpytnaicID1ahha+PAVrlegM68KIyZw6iCpwtfD39YwYFIbniDCamqSn/P0Y6xmvUDE7jNXz2Jrio01gotb4kkDb9aqu957Sz24XJY1qVKTM2EXZLt7yAbrPPYSaa6MsfWxyRcmj+MQgEEi7RcCiM=
+	t=1761559240; cv=none; b=FosGXDaZPjPEZ7lIm8MoLIjPFFZkyCFD/WAhrRTIFUzSX2ZerVak3+X5cIuQMfdoKXK+D65rPAfrXD70O3jwKDQndJaHPVW7ep1T1wOfZiizYfdbMLEktS6QCZk1wZNde3GNjxuSBQBDfOJMM90fOnydgh4sjVNtcoeJAGzo2ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559128; c=relaxed/simple;
-	bh=c39kvDKJgec3BMQtsofCZjYDFHHwSUo1eDt0oC48dMk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LlY8pM920pFyrMZtuxikb1JEU4eDJVwFXS43QHuw6EQgiY76mw2P68WjBeJ4sn4Nk6WGI8G1mbPlmzg4RSQVhhQwTYo8AzuND4rM1kbFYb+4kRxkcEofbIn+/pmE1fFuls6gKR9ySsH3s68vx3kE0DdooS8ZNTwFVTUSxAqkjCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 27 Oct
- 2025 17:58:26 +0800
-Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 27 Oct 2025 17:58:26 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
-	<vkoul@kernel.org>, <kishon@kernel.org>, <linus.walleij@linaro.org>,
-	<p.zabel@pengutronix.de>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-phy@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
-	<linux-gpio@vger.kernel.org>
-CC: <jacky_chou@aspeedtech.com>
-Subject: [PATCH v4 9/9] MAINTAINERS: Add ASPEED PCIe RC driver
-Date: Mon, 27 Oct 2025 17:58:25 +0800
-Message-ID: <20251027095825.181161-10-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251027095825.181161-1-jacky_chou@aspeedtech.com>
-References: <20251027095825.181161-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1761559240; c=relaxed/simple;
+	bh=+xMfW2hYgWUM+DUd/Q4D7QQsf+nszvvdVnL2yFSt6Bo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1q9OVcFzP8WlOBpokrrfQNNJhww9GAQeavnfc/st7D0Ljgi/5H70ElHfb8TjKULDcc3utb4Zy3JQeFl1hJ1jpf9uhKPE1DxgYgmCtIxmNlrc2o/Hhae2aki/owaUxsH2y4lTwQbLxQQYFlQlcJ9M21/FQF4WZ1chZCRQ2K8UEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pE1ta6m8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B176C4CEF1;
+	Mon, 27 Oct 2025 10:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761559240;
+	bh=+xMfW2hYgWUM+DUd/Q4D7QQsf+nszvvdVnL2yFSt6Bo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pE1ta6m8XcyYS8r7GxUKvmy90HBEUoOVw0WeiSEQFRic39Eb48KbfkpRdvEiattVv
+	 9HBcZOPx1q8E2EF2ouxuxabXs4FyhCMjux40rwGbDExeUXsvebwwwB8dNFJqiYGrw4
+	 KOsi6eJ/wViCTdhET2xPpgZycWT1jBvnFlrAH8Of8gZysWvhCrpm2UOK9DHEcWf9z2
+	 BSnldWQENrlL8uC/LDI8iKzPjFMa2rBD0YxcULT5G9YT/ZT7lzVck8Uh0XDgrP/fpt
+	 GI8Ki4TK5sM9Ie9UmqFIUC/ogAppt66+uEACikr7o+8YemGff3sH2QgpR5cd5pr0+h
+	 ma2igso0Uf1lg==
+Date: Mon, 27 Oct 2025 10:00:32 +0000
+From: Simon Horman <horms@kernel.org>
+To: Fan Gong <gongfan1@huawei.com>
+Cc: Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+	Xin Guo <guoxin09@huawei.com>,
+	Shen Chenyang <shenchenyang1@hisilicon.com>,
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+	Shi Jing <shijing34@huawei.com>,
+	Luo Yang <luoyang82@h-partners.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>,
+	Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Suman Ghosh <sumang@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next v01 1/9] hinic3: Add PF framework
+Message-ID: <aP9CwKkLdgcqHvkc@horms.kernel.org>
+References: <cover.1760502478.git.zhuyikai1@h-partners.com>
+ <905df406fd870da528361f47c48067802588cfb5.1760502478.git.zhuyikai1@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <905df406fd870da528361f47c48067802588cfb5.1760502478.git.zhuyikai1@h-partners.com>
 
-Add maintainer for ASPEED PCIe RC driver.
+On Wed, Oct 15, 2025 at 03:15:27PM +0800, Fan Gong wrote:
+> Add support for PF framework based on the VF code.
+> 
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3da2c26a796b..cf13c890fb5d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3836,6 +3836,17 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/aspeed,video-engine.yaml
- F:	drivers/media/platform/aspeed/
- 
-+ASPEED PCIE CONTROLLER DRIVER
-+M:	Jacky Chou <jacky_chou@aspeedtech.com>
-+L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
-+L:	linux-pci@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
-+F:	Documentation/devicetree/bindings/phy/aspeed,ast2600-pcie-phy.yaml
-+F:	Documentation/devicetree/bindings/soc/aspeed/aspeed,ast2700-pcie-cfg.yaml
-+F:	drivers/pci/controller/pcie-aspeed.c
-+F:	drivers/phy/aspeed/pcie-phy-aspeed.c
-+
- ASUS EC HARDWARE MONITOR DRIVER
- M:	Eugene Shalygin <eugene.shalygin@gmail.com>
- L:	linux-hwmon@vger.kernel.org
--- 
-2.34.1
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
+> index 979f47ca77f9..2b93026845ff 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
+> @@ -117,17 +117,49 @@ int hinic3_set_port_mtu(struct net_device *netdev, u16 new_mtu)
+>  					 &func_tbl_cfg);
+>  }
+>  
+> +#define PF_SET_VF_MAC(hwdev, status) \
+> +	(HINIC3_IS_VF(hwdev) && (status) == HINIC3_PF_SET_VF_ALREADY)
+> +
 
+nit: I think the above could be a function rather than a macro.
+
+...
+
+> @@ -157,9 +189,9 @@ int hinic3_set_mac(struct hinic3_hwdev *hwdev, const u8 *mac_addr, u16 vlan_id,
+>  		return -EIO;
+>  	}
+>  
+> -	if (mac_info.msg_head.status == MGMT_STATUS_PF_SET_VF_ALREADY) {
+> +	if (PF_SET_VF_MAC(hwdev, mac_info.msg_head.status)) {
+>  		dev_warn(hwdev->dev, "PF has already set VF mac, Ignore set operation\n");
+> -		return 0;
+> +		return HINIC3_PF_SET_VF_ALREADY;
+
+It seems to me that this custom return value can be propagated up
+and returned by the probe function. If so, this doesn't seem desirable.
+And, overall, I would recommend against the custom calling convention
+that custom return values imply.
+
+>  	}
+>  
+>  	if (mac_info.msg_head.status == MGMT_STATUS_EXIST) {
+
+...
 
