@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-872348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394E1C1029C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:50:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C7FC104DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B860480763
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:48:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A23A561F15
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5A431D374;
-	Mon, 27 Oct 2025 18:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3C332C93E;
+	Mon, 27 Oct 2025 18:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adrHCve0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEdxdewS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59CC32C33A;
-	Mon, 27 Oct 2025 18:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029EC322DD6;
+	Mon, 27 Oct 2025 18:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761590672; cv=none; b=ZGSUjOu6nZ4wAGrs5pf/IpH2CduZdrYfB6FskaKuDyI8zyw+4URFRl0ymJE4OVzomPw+/Tfw5GFWc1OJy1Ly8VWQfO2n84/HePa6NiYCkmqn1AoqfMKsKG6/m8BxtamYYhoMVAzOQOpNVq0LDdD39sO/KXs8sk29SRZci9G/NZo=
+	t=1761590912; cv=none; b=m0MJt81GZpFgF1aZDIay56yZ+LETLUmIEPHodg7EG3Zcr5qumf6PtpuC9GAptHCNt9RHvt76q56r6gEXxN5R7Oxcl9wnMdo07iTYinmngopBk5wPK4AiXiDMMa+Zvii8mg12f7rKA4MRTn/gz3rGvKlBG1rt30FApXr8HaVFoOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761590672; c=relaxed/simple;
-	bh=RvUxiEGFeW3NMtfz/dRup2oPdxZ5E6k0VP0dKpiXn0c=;
+	s=arc-20240116; t=1761590912; c=relaxed/simple;
+	bh=JyX5IiNpi+mT5A3b1mPJfwg7kWiJXFyu6cjoHIuw+Ns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9Cj+rrwL+t8ryR/D/P5M6eY5U+PX3DT8GBRDN4XqwKN7lXpz1m/VKP+yeug06p1Rn47tFtBbIr7NeuxcaufwaTOGO1tBBGecAp2nL9/qqmINIDd7FBSRhXYsLhCO9BIuWvysaR1+1PLjDmbUWChqFlITH0lh2mKPFJC1LYTtGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adrHCve0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB83FC116C6;
-	Mon, 27 Oct 2025 18:44:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFI1qOWDELlpMbRRTOT8B9spo/tKQG41GmrQ1mX653qXcgHc/h4VddKgoqgiDU0oU8ogN0fjkCMfUJuOtLIGUunWFUMspH1PYk1IoJUsza8ZUjhvHq+oxByS/fJKNy3vWJ/zH+j7MiQBQXbtwMWJ3PGYeMWM6/5/BFFAjiqVqJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEdxdewS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F5CC4CEF1;
+	Mon, 27 Oct 2025 18:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761590672;
-	bh=RvUxiEGFeW3NMtfz/dRup2oPdxZ5E6k0VP0dKpiXn0c=;
+	s=k20201202; t=1761590911;
+	bh=JyX5IiNpi+mT5A3b1mPJfwg7kWiJXFyu6cjoHIuw+Ns=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=adrHCve0oH8U/FiBIAqdGZn/1mq1SHOWzy/ikWGq0Q3uRrBQbArugdE8T5xknY0KD
-	 QSpFpaXnCy11T4f164BZNc2vWRhZ5aak9TIOQr6tojS+ofdciBa9cFHZY7rIfCO+T6
-	 pVMobUrfx1qsAVTcT5zTO8K+1RNquDT1y7gSgEc5H9wPbVI9pef6mJcWg4pYG5MvES
-	 XKCo9y4B95EiJdoVJjamk28P4sF4JjgPHBofsfMT8JRcITrS0wJCYpGGd+poaxIiNm
-	 0SdHoXcCFpN/Ez5WScIz5AKMdmSv7SLz3RUmEwoMFpk1nMgGY3lT7jEOYKsRdtIkkh
-	 TxMLN1+bI6WIg==
-Date: Mon, 27 Oct 2025 13:47:26 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com, 
-	kathiravan.thirumoorthy@oss.qualcomm.com
-Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: add cooling maps for CPU
- thermal zones
-Message-ID: <lnabvjseahtfgc32zuvnd47vwv7fefpvmubgqo3rfpl7mr4k53@fprkvzsimgim>
-References: <20251023043838.1603673-1-quic_mmanikan@quicinc.com>
+	b=EEdxdewSUd4k0K182nSh1VF2uVzRwo6dOycwlY9E34w0rGftGhsJtjg4g2i5kmVck
+	 UJLNtvMJU+BxbS9hOZQh151Vud1CGRXvsbX5KrdbPWD4juOjFZGJOLI7ad/b49/9op
+	 YAraHXS4pyXK4zLrSE9KaGnV3Um/lGWZFDLLhcZGImfhtobKtSjadbVTBDhgzSah2e
+	 4GaLLV0BHpjZWt/TTA4RZg6PGfykteVVa56c53QbtpNLb+k8IqeNBPhUwzw8ExX0qE
+	 Q/GWATNQNOm2+mS261PsZxIMgCuS0QC3DbdvL3PcKioRZL7ZGbVK1Y0GYGV2w6xHrM
+	 EFThu4CANBp2g==
+Date: Mon, 27 Oct 2025 13:48:30 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	andrea.porta@suse.com
+Subject: Re: [PATCH] of: overlay: Avoid spurious error messages in
+ of_overlay_remove()
+Message-ID: <176159090855.1395199.16848791379867357248.robh@kernel.org>
+References: <f756e04e8bc239b33a0428c2dd055f202e214f0b.1761335298.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,197 +59,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023043838.1603673-1-quic_mmanikan@quicinc.com>
+In-Reply-To: <f756e04e8bc239b33a0428c2dd055f202e214f0b.1761335298.git.christophe.jaillet@wanadoo.fr>
 
-On Thu, Oct 23, 2025 at 10:08:38AM +0530, Manikanta Mylavarapu wrote:
-> Add cooling-maps to the cpu1, cpu2, and cpu3 thermal zones to associate
-> passive trip points with CPU cooling devices. This enables proper
-> thermal mitigation by allowing the thermal framework to throttle CPUs
-> based on temperature thresholds. Also, label the trip points to allow
-> referencing them in the cooling maps.
+
+On Fri, 24 Oct 2025 21:50:58 +0200, Christophe JAILLET wrote:
+> Make of_overlay_remove() tolerate ovcs_id being 0 without logging an error.
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-
-Please use oss.qualcomm.com going forward.
-
-Regards,
-Bjorn
-
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  arch/arm64/boot/dts/qcom/ipq5424.dtsi | 61 +++++++++++++++++++++++----
->  1 file changed, 53 insertions(+), 8 deletions(-)
+> This is needed for drivers/misc/rp1/rp1_pci.c where things are taken from
+> DT or at runtime. In the former case, ovcs_id is unused and left to 0.
+> Being able to tolerate such cases simplify error handling.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> index ef2b52f3597d..e4a51eeefeac 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> @@ -13,6 +13,7 @@
->  #include <dt-bindings/reset/qcom,ipq5424-gcc.h>
->  #include <dt-bindings/interconnect/qcom,ipq5424.h>
->  #include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/thermal/thermal.h>
->  
->  / {
->  	#address-cells = <2>;
-> @@ -57,6 +58,7 @@ cpu0: cpu@0 {
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
->  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
-> +			#cooling-cells = <2>;
->  
->  			l2_0: l2-cache {
->  				compatible = "cache";
-> @@ -82,6 +84,7 @@ cpu1: cpu@100 {
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
->  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
-> +			#cooling-cells = <2>;
->  
->  			l2_100: l2-cache {
->  				compatible = "cache";
-> @@ -101,6 +104,7 @@ cpu2: cpu@200 {
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
->  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
-> +			#cooling-cells = <2>;
->  
->  			l2_200: l2-cache {
->  				compatible = "cache";
-> @@ -120,6 +124,7 @@ cpu3: cpu@300 {
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
->  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
-> +			#cooling-cells = <2>;
->  
->  			l2_300: l2-cache {
->  				compatible = "cache";
-> @@ -1235,18 +1240,28 @@ cpu0-thermal {
->  			thermal-sensors = <&tsens 14>;
->  
->  			trips {
-> -				cpu-critical {
-> +				cpu0_crit: cpu-critical {
->  					temperature = <120000>;
->  					hysteresis = <9000>;
->  					type = "critical";
->  				};
->  
-> -				cpu-passive {
-> +				cpu0_alert: cpu-passive {
->  					temperature = <110000>;
->  					hysteresis = <9000>;
->  					type = "passive";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu0_alert>;
-> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu1-thermal {
-> @@ -1254,18 +1269,28 @@ cpu1-thermal {
->  			thermal-sensors = <&tsens 12>;
->  
->  			trips {
-> -				cpu-critical {
-> +				cpu1_crit: cpu-critical {
->  					temperature = <120000>;
->  					hysteresis = <9000>;
->  					type = "critical";
->  				};
->  
-> -				cpu-passive {
-> +				cpu1_alert: cpu-passive {
->  					temperature = <110000>;
->  					hysteresis = <9000>;
->  					type = "passive";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu1_alert>;
-> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu2-thermal {
-> @@ -1273,18 +1298,28 @@ cpu2-thermal {
->  			thermal-sensors = <&tsens 11>;
->  
->  			trips {
-> -				cpu-critical {
-> +				cpu2_crit: cpu-critical {
->  					temperature = <120000>;
->  					hysteresis = <9000>;
->  					type = "critical";
->  				};
->  
-> -				cpu-passive {
-> +				cpu2_alert: cpu-passive {
->  					temperature = <110000>;
->  					hysteresis = <9000>;
->  					type = "passive";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu2_alert>;
-> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu3-thermal {
-> @@ -1292,18 +1327,28 @@ cpu3-thermal {
->  			thermal-sensors = <&tsens 13>;
->  
->  			trips {
-> -				cpu-critical {
-> +				cpu3_crit: cpu-critical {
->  					temperature = <120000>;
->  					hysteresis = <9000>;
->  					type = "critical";
->  				};
->  
-> -				cpu-passive {
-> +				cpu3_alert: cpu-passive {
->  					temperature = <110000>;
->  					hysteresis = <9000>;
->  					type = "passive";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu3_alert>;
-> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		wcss-tile2-thermal {
+> This was suggested by Dan as a reply to patch [1].
 > 
-> base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
-> -- 
-> 2.34.1
+> [1]: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
 > 
+> ---
+>  drivers/of/overlay.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+
+Applied, thanks!
+
 
