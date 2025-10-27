@@ -1,182 +1,286 @@
-Return-Path: <linux-kernel+bounces-871567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16006C0D9A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BD2C0DAE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:51:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9037A34DD7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F6634F9124
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ECA30E0FC;
-	Mon, 27 Oct 2025 12:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BAE30F95F;
+	Mon, 27 Oct 2025 12:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kXq9dojZ"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FruOG2al"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983C62FF675
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5311130F931
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568715; cv=none; b=oA+AN2Pia3L6oBKrCF74JpYCBJ6gYtaXKCiNF+5KF4/dShlq+lnwOcosn7zPDbhpofI7ms0FLvuG2MrVLOr6Pw85zh25CylZI3MPoRUcKBDK6wqfU2DBhWTkPznMLTDZWovhMrRbaC+mr2ztKYXV+BeVlbH4A7yFHeA+G1U4DrU=
+	t=1761568722; cv=none; b=ML24pNg8QMFF70/uo6/tTxhmDELsFsvLii7pU2z7uzwafe2hZrO8jC/KkvMZen0vdxp0ZSd7W0xz40kgMXgBITqe2sYapB2DeqWKjKPJh1RLWSjIqqXMmkRrsyMtnI6+cRYNriaZDJgb4SBCQZ7nNnA2umwYc6BH28iUuAp206I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568715; c=relaxed/simple;
-	bh=t9hkT+4zAAhz5+o+QG2fo27oXgveTo7i7m6LBWKxhfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jrna2hW5QJ4pUN0ePixO6rbux1+jCdbpVSq4EHvnyOBjeYHhwzggc4MomA7YfsLQgmByZxBpgI4gYPwPzJ9pAmCeGBEQhwS6uDu64Dwm4DGBd6cpgpQsA2sFgAoLpYOQ7SZhwrp9jnGJASZ1JNsiSDiG96FdNA+jvBqJ1Clq824=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kXq9dojZ; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id C9D7DC0C437;
-	Mon, 27 Oct 2025 12:38:11 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id F2B756062C;
-	Mon, 27 Oct 2025 12:38:31 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49FD9102F24FC;
-	Mon, 27 Oct 2025 13:38:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761568710; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=LIcovSWKnBA+L7voLcFHvTGbDw/RTZnlp4fA0bZ/QEc=;
-	b=kXq9dojZmGm6Ef0a7GVd/BQliyMkvrAcJiCiXAw9LT8hdLsHlV5tISKRqILw5M8Rzfmm1b
-	c1C536eyX14TLOfkOG+71IXH8VlV4qjgrpmoU8J1GbXUDjk+LN5PDq47kWgLfOZfj3shPw
-	Uu/iiMcrr4GsRAIbG7C/VEiFAwxi5URrh/XciNr1PEYjufdGC+gBqrRVPPCPDYKW0UUE+Y
-	sRf8GjhF7ceb/UsmPTgY1lKovKdb3qutucuN0MSxBcyBG5/JYXaGo/pglf2QW1+mliuzJq
-	OtDAUk/qiv+3XpIKnXAQ0DVrZWEMG7VAwFCaw3hMY+0pbsarUiCIQGyS9xVxwA==
-Date: Mon, 27 Oct 2025 13:38:19 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 12/15] rtc: bd70528: Support BD72720 rtc
-Message-ID: <202510271238195ef3bdfb@mail.local>
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <380ea1fdbb94a796418e8f463c6a9436001d572d.1761564043.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1761568722; c=relaxed/simple;
+	bh=K9MThje/vm7kyGUxpZSfGbgu+RMSGEzgFkQaowpjs5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HF4xBl2rN2lTNHNjwYdmFRmdE0iDmtDLTCDPSAgoTJga6eU4xXHAaX65Pz/9RXW48Pz8tn6SjGCP3oG0+PlLJplECHPFbB5HTJaGZz2s5TsuVEK32Wbx8MTAmBuc2PcXgapFWbTjYGLbh6OUhskloUvY0Sr0TGOrjcajIIe2f+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FruOG2al; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R8oc4H1132695
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HM+QV7hPsWe4JbQ7/slMutv3h5j0OmFuFixBv/5OW7c=; b=FruOG2alL63ed/yA
+	IpthnH3fl5GFRE8Tp+dPczSezeBEdGXaL88AfTkFwKALAFufmqgZqYL25sBQlawS
+	cGtOJMY6/jPGJ355JTNLuJKZn4IL+gX5fjhyk571qSZtISNjbyq8Iay7gtUI9G6O
+	kk0WsGd6McOMtirTuBT1YMoOElT1bO3hbarLHdmA0mqlJCGGOGuDMbbxOF4ON5DZ
+	F/Ygjjux98Uloy96YP78V/mJHOEaq3g3GlN2tM/wpkh5J/J07rFbWTblqCU2eczu
+	HdpTcfCkuc5OHFEux+HDJui5z7llyYFYKOqbUI9ZtLRnAPAqT7xNxoeZPVFR3X3v
+	9bA+AA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a0p4g4hgw-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:39 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7a432101881so1801060b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:38:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761568718; x=1762173518;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HM+QV7hPsWe4JbQ7/slMutv3h5j0OmFuFixBv/5OW7c=;
+        b=VmRL78NNmPZhIeZGx5uObUigyDTVj/lDz1A4FoOmkP/oUCtNKduEQym+2fv4Jg4TZQ
+         pKDA1kJfLKoqTVKf3R7P5Ze6K90x62EPbevKGQe3PEkLANfucOyNhHX5az0o5diZCeWD
+         SQG2EcaNPEgKTyWrHfEwHo77748IW0Va7y+cBcEq/D+Ry3+osM4Srsy+C+WuW87GSbDo
+         jbtnJPHKTwK6kJZEd9pq/m8qhdcTwvk4+dALkackyfkD1tAZofnWmhPZaIkzJIoQXQXc
+         xw0ju844jnwNhBW+O/zqtY57+aeKvSWQ8nZzgFCnsdwasvX/yFb+h/NviJE4pGg7Ty/T
+         O1pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAK/M7xQEz71oeS1tai5qkXKacrgTId/Df8vHF50XjKMxGdrBIVLWFj8FSbcbfsbb6GSyPelam6MZGOBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmZx9OurW0kRKlG8uZq7uv8TOm5buHYMfP9k9F6o0Wbe/VFLb4
+	EnOUku16dsZLtnSMxloEaz7coKxiH7nW+vv8E9pn0JmduoSUtbX0nSIfsiyCQr+8FHgT8wTwaxG
+	CP6As9xv43Y90tv1So8ghMKGqX8UwaU4PvA150hngP0VFeG20ReQaZd5MTjibTx0tT/w=
+X-Gm-Gg: ASbGnctbePXZ0DNxpCanqHzAxAV19uZBQxbp1boLduoSkNZ9QcfEABTasmXpr6RVEWf
+	ZZDT/YdxHUptJ2aw1tHEZLg2SekdMyyfSImmKP4NVbSHh13ksE2gTse6EzpZLU/j71gXqezXzx5
+	9P+Tm3g3E+ddZIrEQtlCgI/Yp7IwISeVoVU5xUOI31kSrWxfGMwCqIyx21TStSdpAUSNyclhM2b
+	07QgK9w32xT/FRhw8+3e8cTmy0EmQTxnCZ80sVcir+IuBKw4DU13MjCCqtRRpsUR4L00Y0xZNhI
+	/n6MJizVGIlsfgm9B6Ls+eTzwARg8gX6kbQQe+X87EujkzvZEOoyJCsBSJCJDmPuCpMFYYCBeqK
+	n99+qkKUq+xjNFsIeJ4QoWIAUCI/H6B4GjeWruDp7Mff2j3MNoUGT0X0BynM=
+X-Received: by 2002:a05:6a00:13a0:b0:781:189:ae43 with SMTP id d2e1a72fcca58-7a220b06cd9mr35721417b3a.20.1761568718178;
+        Mon, 27 Oct 2025 05:38:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPSGwlBz+HN+tj7YlXXDid70Q5ThXSM/+InuvM9haESMOarKb3WO/5QpH1uFNnSINTjzomOA==
+X-Received: by 2002:a05:6a00:13a0:b0:781:189:ae43 with SMTP id d2e1a72fcca58-7a220b06cd9mr35721382b3a.20.1761568717536;
+        Mon, 27 Oct 2025 05:38:37 -0700 (PDT)
+Received: from [10.133.33.217] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012899sm8170181b3a.0.2025.10.27.05.38.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 05:38:37 -0700 (PDT)
+Message-ID: <4108296c-399c-453d-b339-7e70a423d14c@oss.qualcomm.com>
+Date: Mon, 27 Oct 2025 20:38:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <380ea1fdbb94a796418e8f463c6a9436001d572d.1761564043.git.mazziesaccount@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
+ resctrl integration
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org,
+        lenb@kernel.org, pavel@kernel.org, tony.luck@intel.com,
+        reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
+        amit.kucheria@linaro.org, christian.loehle@arm.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lukasz.luba@arm.com, zhongqiu.han@oss.qualcomm.com
+References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+ <CAPDyKFprP1d-9Ojwz7QaVBbdFumPmRoVnifrP8v+eL6FHR3Unw@mail.gmail.com>
+ <7acba50b-8c1e-4509-8100-3a65467d2d87@oss.qualcomm.com>
+ <CAPDyKFqVKWCApVFjYpgXa2x3N9F7O1bGBBPz0JfNrWBYtg=M0A@mail.gmail.com>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <CAPDyKFqVKWCApVFjYpgXa2x3N9F7O1bGBBPz0JfNrWBYtg=M0A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 90WDPVKYqLqiUmXL3zZtRtlqvgpMXXqb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDExNyBTYWx0ZWRfX3PXKzBss98x1
+ XjeuVIbkWS0I8TiPrjiUSI7oJ6nMLbDnh36gJAifrCTtncGMlOmuH2JjYOXtJDDSQLHnPOZFlYe
+ g0DJwFkNWqltPKJOot82OCnL1CENk4/TErffWt7QLhRysAd/ak/RBTQlXYxJW6WLAtLrqXw2QuZ
+ wBog5QEPjn1LlPH+AtENv1NpHSjJVBa/VdLAQ4jIAqq4cEg0gvz6ZPI4lcXzI7DclDRItsuHgFK
+ n47lkirwNkwykzRiuSF2lnSLb1uWy3lKxDwYhKhZOc9C1t+Wq00HjbDtdHqn/Mi4psJQFf3eUf+
+ O7dyLgUFPC6v+xzkYFIanlV1B7AwmnKXH5M9NNYoTRgfhUdu97pAyqs3NVnPdSS/ALnwOP+Yp/2
+ xnejiNgus/IhfxKApa+m3VZ3MLxC+g==
+X-Authority-Analysis: v=2.4 cv=L9YQguT8 c=1 sm=1 tr=0 ts=68ff67cf cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=l6s8cBgvcr9gq9MuNTsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 90WDPVKYqLqiUmXL3zZtRtlqvgpMXXqb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270117
 
-On 27/10/2025 13:47:51+0200, Matti Vaittinen wrote:
-> The BD72720 has similar RTC block as a few other ROHM PMICs.
+On 10/24/2025 6:44 PM, Ulf Hansson wrote:
+> On Fri, 24 Oct 2025 at 10:40, Zhongqiu Han
+> <zhongqiu.han@oss.qualcomm.com> wrote:
+>>
+>> On 10/23/2025 7:03 PM, Ulf Hansson wrote:
+>>> On Mon, 21 Jul 2025 at 14:41, Zhongqiu Han <quic_zhonhan@quicinc.com> wrote:
+>>>>
+>>>> Hi all,
+>>>>
+>>>> This patch series introduces support for CPU affinity-based latency
+>>>> constraints in the PM QoS framework. The motivation is to allow
+>>>> finer-grained power management by enabling latency QoS requests to target
+>>>> specific CPUs, rather than applying system-wide constraints.
+>>>>
+>>>> The current PM QoS framework supports global and per-device CPU latency
+>>>> constraints. However, in many real-world scenarios, such as IRQ affinity
+>>>> or CPU-bound kernel threads, only a subset of CPUs are
+>>>> performance-critical. Applying global constraints in such cases
+>>>> unnecessarily prevents other CPUs from entering deeper C-states, leading
+>>>> to increased power consumption.
+>>>>
+>>>> This series addresses that limitation by introducing a new interface that
+>>>> allows latency constraints to be applied to a CPU mask. This is
+>>>> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
+>>>> embedded systems where power efficiency is critical for example:
+>>>>
+>>>>                           driver A       rt kthread B      module C
+>>>>     CPU IDs (mask):         0-3              2-5              6-7
+>>>>     target latency(us):     20               30               100
+>>>>                             |                |                |
+>>>>                             v                v                v
+>>>>                             +---------------------------------+
+>>>>                             |        PM  QoS  Framework       |
+>>>>                             +---------------------------------+
+>>>>                             |                |                |
+>>>>                             v                v                v
+>>>>     CPU IDs (mask):        0-3            2-3,4-5            6-7
+>>>>     runtime latency(us):   20             20, 30             100
+>>>>
+>>>> The current implementation includes only cpu_affinity_latency_qos_add()
+>>>> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
+>>>> planned for future submission, along with PM QoS optimizations in the UFS
+>>>> subsystem.
+>>>
+>>> My apologies for the very late reply.
+>>>
+>>
+>> Hi Uffe,
+>> I truly appreciate your review and discussion~
+>>
+>>
+>>> To fully understand how this new QoS interface is going to be used, I
+>>> really think we need to include a user of it, as part of the $subject
+>>> series.
+>>
+>> Yes, Patch 5/5 using the cpu_affinity_latency_qos_* helper functions to
+>> replace the logic in pseudo-locking that uses dev_pm_qos_request to
+>> restrict CPU latency for known CPUs (via a mask). Actually, I'm also
+>> looking for more users — for example, we plan to use these interfaces
+>> in our UFS module in the future to implement optimizations. And I also
+>> plan to support it in userspace on patch V3.
 > 
-> Add support for BD72720 RTC.
+> Right, in regards to the resctrl/pseudo-locking user of this new QoS
+> interface, this whole series looks more like a refactoring to me.
 > 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-Note that we didn't get 07/15 that adds linux/mfd/rohm-bd72720.h which
-this patch depends on.
-
-> ---
-> Revision history:
->  RFCv1 =>:
->  - No changes
-> ---
->  drivers/rtc/Kconfig       |  3 ++-
->  drivers/rtc/rtc-bd70528.c | 21 ++++++++++++++-------
->  2 files changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 2933c41c77c8..418f6c28847a 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -561,7 +561,8 @@ config RTC_DRV_BD70528
->  	depends on MFD_ROHM_BD71828
->  	help
->  	  If you say Y here you will get support for the RTC
-> -	  block on ROHM BD71815 and BD71828 Power Management IC.
-> +	  block on ROHM BD71815, BD71828 and BD72720 Power
-> +	  Management ICs.
->  
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rtc-bd70528.
-> diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
-> index 954ac4ef53e8..4c8599761b2e 100644
-> --- a/drivers/rtc/rtc-bd70528.c
-> +++ b/drivers/rtc/rtc-bd70528.c
-> @@ -7,6 +7,7 @@
->  #include <linux/bcd.h>
->  #include <linux/mfd/rohm-bd71815.h>
->  #include <linux/mfd/rohm-bd71828.h>
-> +#include <linux/mfd/rohm-bd72720.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> @@ -262,13 +263,13 @@ static int bd70528_probe(struct platform_device *pdev)
->  
->  		/*
->  		 * See also BD718XX_ALM_EN_OFFSET:
-> -		 * This works for BD71828 and BD71815 as they have same offset
-> -		 * between ALM0 start and ALM0_MASK. If new ICs are to be
-> -		 * added this requires proper check as ALM0_MASK is not located
-> -		 * at the end of ALM0 block - but after all ALM blocks so if
-> -		 * amount of ALMs differ the offset to enable/disable is likely
-> -		 * to be incorrect and enable/disable must be given as own
-> -		 * reg address here.
-> +		 * This works for BD71828, BD71815, and BD72720 as they all
-> +		 * have same offset between the ALM0 start and the ALM0_MASK.
-> +		 * If new ICs are to be added this requires proper check as
-> +		 * the  ALM0_MASK is not located at the end of ALM0 block -
-> +		 * but after all ALM blocks. If amount of ALMs differ, the
-> +		 * offset to enable/disable is likely to be incorrect and
-> +		 * enable/disable must be given as own reg address here.
->  		 */
->  		bd_rtc->bd718xx_alm_block_start = BD71815_REG_RTC_ALM_START;
->  		hour_reg = BD71815_REG_HOUR;
-> @@ -278,6 +279,11 @@ static int bd70528_probe(struct platform_device *pdev)
->  		bd_rtc->bd718xx_alm_block_start = BD71828_REG_RTC_ALM_START;
->  		hour_reg = BD71828_REG_RTC_HOUR;
->  		break;
-> +	case ROHM_CHIP_TYPE_BD72720:
-> +		bd_rtc->reg_time_start = BD72720_REG_RTC_START;
-> +		bd_rtc->bd718xx_alm_block_start = BD72720_REG_RTC_ALM_START;
-> +		hour_reg = BD72720_REG_RTC_HOUR;
-> +		break;
->  	default:
->  		dev_err(&pdev->dev, "Unknown chip\n");
->  		return -ENOENT;
-> @@ -337,6 +343,7 @@ static int bd70528_probe(struct platform_device *pdev)
->  static const struct platform_device_id bd718x7_rtc_id[] = {
->  	{ "bd71828-rtc", ROHM_CHIP_TYPE_BD71828 },
->  	{ "bd71815-rtc", ROHM_CHIP_TYPE_BD71815 },
-> +	{ "bd72720-rtc", ROHM_CHIP_TYPE_BD72720 },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(platform, bd718x7_rtc_id);
-> -- 
-> 2.51.0
+> My point is, for this reason alone, I don't think it makes sense to
+> introduce this new QoS interface. We need another user too, like UFS,
+> to understand how this would work in real practice and to allow it to
+> be merged.
 > 
 
+Thanks Uffe, I will continue to collaborate with our UFS team, or find
+other users as examples.
+
+>>
+>>>
+>>> Besides the comments from Rafael and Christian, I also wonder how the
+>>> user of the interface should know what CPU-mask it should use? For
+>>> example, how does it know the CPU-mask for the big-cores and for the
+>>> little-cores? In particular as I assume the user isn't a platform
+>>> specific driver, but rather a generic driver that should work across
+>>> various platforms.
+>>
+>> This patch introduces cpu_affinity_latency_qos_* helper functions as an
+>> extension to the kernel existing cpu_latency_qos_* interfaces. These new
+>> helpers enable users to apply latency constraints to specific CPUs via a
+>> mask, allowing for more precise power management when the target CPUs
+>> are known in advance.
+>> If the user is a generic driver, there are two options:
+>>
+>> 1.One is to use the existing cpu_latency_qos_* interfaces to directly
+>> restrict all CPUs from entering idle, since the driver may not know
+>> which specific CPUs need to be constrained.
+> 
+> Right, which is how UFS does it currently.
+
+Yes, exactly.
+
+> 
+>>
+>>
+>> 2.However, for generic drivers with specific workload characteristics
+>> such as the ufshcd driver in this patch:
+>>
+>> https://lore.kernel.org/all/20231213124353.16407-1
+>> -quic_mnaresh@quicinc.com/
+>> — if a user knows exactly which CPUs should be restricted, they can
+>> provide a custom mask via a hook function and use the extended API
+>> accordingly. The default return value of the hook is the system-wide
+>> possible CPUs, so it won't affect other users.
+> 
+> Sorry, but I couldn't find in the above series how exactly UFS knows
+> about which CPUs it should constrain.
+> 
+> Again, please provide a user (UFS for example) of the new QoS
+> interface as a part of the series.
+> 
+
+Sure, will do that.
+
+>>
+>> In summary, this patch is mainly intended for users who know which CPUs
+>> they want to restrict. For users who don't, the extended API can still
+>> be used by passing a system-wide CPU mask, or they can simply use the
+>> existing cpu_latency_qos_* interfaces.
+> 
+> I understand, thanks for clarifying.
+
+Thanks for the review and discussion~
+
+> 
+> This all said, I have to admit that it kind of starts to worry me when
+> I see the number of different users of cpu_latency_qos interface
+> increasing in the kernel. To me, it feels like these are just papering
+> of another real problem that ideally should be solved in a more
+> central place, for everyone. But hey, that's another separate problem
+> that we can discuss at some other point.
+
+Yes, We should strive to avoid unnecessary overhead. I will also look
+into modules where it's clear which CPUs' PM QoS constraints are being
+applied, as those might be optimized. I will also do an investigation.
+
+
+
+> 
+> Kind regards
+> Uffe
 
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thx and BRs,
+Zhongqiu Han
 
