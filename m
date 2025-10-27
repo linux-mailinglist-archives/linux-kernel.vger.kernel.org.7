@@ -1,122 +1,175 @@
-Return-Path: <linux-kernel+bounces-872287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5788C0FD39
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:02:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CB7C0FD69
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6422A35040F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:01:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C2F94FAEFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D087931812E;
-	Mon, 27 Oct 2025 18:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA36331B833;
+	Mon, 27 Oct 2025 18:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6Cx6GGS"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx5moz92"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887652D238A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7263231B825
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588101; cv=none; b=nRL7MjPZ/jeRtDEwQezHz03AdiBwyqxr3yqS22JMhuZNzXDkXVkK70Vw2AwL6qO9kahfp+Nkgf2D/QmcIW9Jr+w7csIzVS0jph6BOezBQRWyzdaDhF6ro8+jLMiPX+LjxN0a1uqnS8Xqi+sWvZAO/tvi0+7SG0U7o+U85XBy1oA=
+	t=1761588106; cv=none; b=mnDD6bBS4616U0mm4zykOOGldAmR05vwSvyhbblIXK+HYx4JqaavL+uWvDQDxUvoe47n1sd+/uPZ3j6jrZtZ3XGqGin70rS5Q0T0oI0mbisTtIFvy4+0wZMK2Qa2FXre9r5JjpFIOdKIYpIS8TPN9YmqMzrlGzDCDSUPpImCuR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588101; c=relaxed/simple;
-	bh=F+dHEiFLnh8A5KzJ58bksVScGa0jeuzf/tPIICsdU6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuT5ydU0u8Apuy6q7x9kxIBZszgn2NgtbuVQyWdsQgKUVQ5qGM7Gk4pYhmp2BgJrbBuMiVW4TC7tPFUDE53EpzO55tAQVqWSMYuj63sKD0XREnis/Uf+4qPT+fgEskQ3V/wP6PTM6CuH3Iy8KyvxxKJkeHdcFY39hc0BHyQudXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6Cx6GGS; arc=none smtp.client-ip=209.85.128.182
+	s=arc-20240116; t=1761588106; c=relaxed/simple;
+	bh=LmXKYxgq5l0W1tOnLSE425z4xENAzicgJcfmXTzUxfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bExx4DvFm8W7EV5FswuXKAp5xjfhUMwkH9dyugiTYtevu/XpXjBMI8NQPxyjabMDOq4gz7Bv2tfr+WBt0wavklo4HOpgawtclXUnXIz1DxWfmmpKVZsYYWHY3SF6gc7mmcsGZ5iYvSW5qSSJY5a+DA1b1mD/JvHVu9nGdFMaI7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx5moz92; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-784807fa38dso56957887b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:01:39 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42966ce6dbdso3614884f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:01:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761588098; x=1762192898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BiovYXP3PtaA9Kfj7XU3nz29JiqSsYJIIOo4G6t3ivA=;
-        b=O6Cx6GGSJIbiI2nx+yk+XY+6BIUZ60igmRyRnixex/8rG+NRQXEQ7mt9+dHbkKPida
-         BMChyTjviwcfxMxqNp+wP4i7iO2D7FWRgC6MaZR7/GqQ6KYGC37nvhB/MRCmY58teC8w
-         sztrkM+/oQORh7mDIDZ1gFI823xwKucQ4cdAyazgCqwWGNXR1nI9HJ5PqYY3tZ9p1yNz
-         5cZEOeQLJ8Rz2CZ+7avlKRQFpW2Wax5/oJElUYrPpxAeVuEg6YqGBi5nanESCKYoYqGw
-         b9ZITqXUzv0m+7aQ269qHr7ppIWhhRoNPZHlMjBDPwfnqyI5mQLDUBiXVcLb/hg4Nn9D
-         mDOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761588098; x=1762192898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761588103; x=1762192903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BiovYXP3PtaA9Kfj7XU3nz29JiqSsYJIIOo4G6t3ivA=;
-        b=gSE1D09S9NDCGeWQO7UKX+lSiqnc3s81WuwtkDnaxDqL/RB5wojgC9Env4iHD0t0zT
-         FMLPppDZXUWSrliQw8SSVo7xV8cGJZZNtDIMWIgdtlT2anRAj2LIYRRwLPc+FGvk879I
-         frDVEMOC02qyhBO0nUoVWiv5l3A1aUgH11Y5bNCn+igDTAGTkSQIaMIGP0cRVQqag5qo
-         2/zln6lD1sn4j3gC1y2vSsFBfWKs3JDplYw4yAAnHuV/r2vg1AdqLN/8kTk0weOsymPW
-         s7pHlStwVulPfYx8CTVvgyLwFuKrFjAKczNS16UOSmrXiyjeRKMn1EHJAx+ioIjyAhfk
-         rHtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkLWRiHEdJ2zgyoDORG+AuqFJbxHdtTIaBTpDVWT7CWKeQfcP0FMrcbMv3b6LxSZXrOPV4+efstmOtjiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx52vqiufzwNm1uGFSgh9PXi89TEcf6kdON3bpEO8apN6mAj5+2
-	+Z9X9m+3riURQ0gzRQev98IJPxvbuDY7CoebAg/RIRDlASguhJfa2VGD6mX8ItIC
-X-Gm-Gg: ASbGnctKWffYNOXRmCQzfflH6Bby/ZuxyBD2m2e/JJrNGk3wnXHYl103/B7CUzoCBAd
-	Ti8AoT1+blEePcirtwIEXDuaekwsfDvVotMybpCOU1tK7Dw4NJ4JoDWwSvRGQWvsLs8Kb0f5MfW
-	2JNPnPNmfuxmg8+vjJbTYNNSDZ9iHAju6uG3CsumuF9lI5pymiMx3CqqsNQGEEZ0lxNpva6HmMQ
-	ezKs9Go7PTcLgI2DiSEBcYrJvmozuxpwUHc2QWNYQ8KSkd+CJl2csF+wZaX037vxlS4nnl2AfLH
-	s8FybJu/q5Q5qPwuvYPhs8fGvqUYqSDP/JJgL3ojwinri+6wFykZrL9f1fpktEVdVub/CIpNX8E
-	qua7SZWpoiq3PymGFj7S5j6gNaXxRR0QCgfPjk4XnKkZ3s+X1gYYbauJ7kWXHF2/ZKR4xo714TA
-	zpo5cHyVF9e72Mx7e8SUS9BAvTeQEyt0SSaqQ3
-X-Google-Smtp-Source: AGHT+IGY7m5xCBIjhFzMJJMeIr2LMm+2g2vwUGpyuiJ3FoHQ+eVB5BYIwqC2NkP1JlPdGSmbLHfPDg==
-X-Received: by 2002:a05:690c:ec9:b0:785:bfd8:c4c0 with SMTP id 00721157ae682-78617e03ba5mr7395497b3.4.1761588098317;
-        Mon, 27 Oct 2025 11:01:38 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:70::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed1c875bsm20767397b3.46.2025.10.27.11.01.37
+        bh=6aYSYqxdTQx1adiba7waOFSEBjrwgCAPGP21S/4z0WQ=;
+        b=Tx5moz92OOoFHoRRXwIYJebf6dF5m3mqO4VQjP59hFXZImi51pdi3e0QbL1AweBYiS
+         VXXooAHpLDwaZSy2zCJ4Rc+gdqDEJcuARq22s/gzusWQRZD8rr3N3xZl3aXg35f84628
+         VMfqlI9elpdll9HXGvsAXFKSK94dJjVYuplDslwbc3VAVkJurlIBZPSEeJ13vgRrZXY/
+         5SA83jgDGcZLzdk0ObBPIUC2yDRKb+rSa4ieKq1KRqj16FFKK5D5o98NICeY2+kN6eDu
+         F53XSetxkp0+s7yZvVgh1SfySBPv0PI+JIUbkG9EwFCLxshx4fwWRQMOvL0l1aUtBbiU
+         1XEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761588103; x=1762192903;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6aYSYqxdTQx1adiba7waOFSEBjrwgCAPGP21S/4z0WQ=;
+        b=R7FoJlft98448ymf2FutF+kOuu5QnaNB8skvsF6/3zxJf5Y9FQvsu3qG2zvc8Mm1CB
+         DctlszmhJ/UxSCgpu07eFlUIwAuJSe8TPqS/vz7qWCt2D+7sppWuXVMka7H6o1rhORMG
+         8i2mxla2GkU7ScesSwz8O5aefGcVJqINeqBiFQ9OZLzzx+TKPH281NSH4drYCjnB+JxH
+         Y6ZWem4qYDiItt8w1FzvSqyB8v1PJvPkpsaBqwu7wWvEeXGcDBY+hu18u/Jjc4Vxx+1q
+         7mJON54x89d40UWEQ+6FSEBVXg1sp5Evsj7Tf+HkwwDkesms4uJiARB3KSpf9AN25Fll
+         YuQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRu9WxU7b0sBgYY1p7YUByZsVI3uhTdXufjWbmXDs8jKvKf18yCQxQEBrxuVB4HhomxQ7gSrpfrsJYGRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB/1rMQuNC6kLJZRjwzCMFACbGx2+sHRN8ANfK7GGAZDeZ67JS
+	yNDq9Ikcp2j+GiGRz6x9lohshkEw09/nBGcgqJJtqEg79yskJR9hdt/b
+X-Gm-Gg: ASbGnctP/vuXb8YtQTBdflZXSKewbre30v3apao+lZN2cv5/OQG1GDCDwK+lwX/IA1X
+	+HB0rCscjBjnw1jciWDBBQk8rXhaEIB8luMLd8UtbtEOa1qVYMTWo8T9IueoPLAOh4KVdDz13Op
+	1Qz2lz1m4YfVI5MW2jTmtsCGpF+5tr7fFAUzG9zCdG0ZyKU8IDDeJdvA/LY1rBwuKJA9pOEuVPm
+	H60lQGyVh/yxkZKSI7kRvNnHjGFFInfabJsL/mRBG2jIOH03ZCTQeFuljkJs0skt6vryoWJY4tb
+	unKmL/N4OrEp3iVxJ34YsetyCjEm9cIYv22t7U43b7k3Eyu8TbVvQslmE9ZrWOmTrnXxEmqil0P
+	88rsXSUXhpPJp2ni0wDPECNk7ohCLljc10YdFWt8CYArLRmrfm+Wn43m78nXaKfnE23wOusqr6Z
+	I+VDkDvhlwybzHYeVvn0VPc1V1hhZdYpFVucYOovFioJtRnI4i8LyujBgEkib1JOz2m8pY
+X-Google-Smtp-Source: AGHT+IEqakiIVgvkmH1mzvZg1woizmOdLx0SAbkLPTVvCw4c/LMFkRt84r69g+UhZ/bheKm0gmAdSA==
+X-Received: by 2002:a05:6000:25f4:b0:429:a7f1:bdda with SMTP id ffacd0b85a97d-429a7f1bf31mr546028f8f.47.1761588102726;
+        Mon, 27 Oct 2025 11:01:42 -0700 (PDT)
+Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b6fsm15648567f8f.1.2025.10.27.11.01.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 11:01:37 -0700 (PDT)
-Date: Mon, 27 Oct 2025 11:01:36 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next 03/12] selftests/vsock: reuse logic for
- vsock_test through wrapper functions
-Message-ID: <aP+zgF7zF9T3ovuS@devvm11784.nha0.facebook.com>
-References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
- <20251022-vsock-selftests-fixes-and-improvements-v1-3-edeb179d6463@meta.com>
- <aP-kmqhvo4AFv1qm@horms.kernel.org>
+        Mon, 27 Oct 2025 11:01:42 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>,
+ Yangtao Li <tiny.windzz@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v3 1/6] dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
+Date: Mon, 27 Oct 2025 19:01:40 +0100
+Message-ID: <1935223.tdWV9SEqCh@jernej-laptop>
+In-Reply-To: <20251026210905.GA2941518-robh@kernel.org>
+References:
+ <20251025043129.160454-1-iuncuim@gmail.com>
+ <20251025043129.160454-2-iuncuim@gmail.com>
+ <20251026210905.GA2941518-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP-kmqhvo4AFv1qm@horms.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Oct 27, 2025 at 04:58:02PM +0000, Simon Horman wrote:
-> On Wed, Oct 22, 2025 at 06:00:07PM -0700, Bobby Eshleman wrote:
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> > 
-> > Add wrapper functions vm_vsock_test() and host_vsock_test() to invoke
-> > the vsock_test binary. This encapsulates several items of repeat logic,
-> > such as waiting for the server to reach listening state and
-> > enabling/disabling the bash option pipefail to avoid pipe-style logging
-> > from hiding failures.
-> > 
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> 
-> shellcheck has some (new) things to say about this patch too.
-> Could you take a look over them?
-> 
-> ...
+Hi,
 
-No problem, will do.
+Dne nedelja, 26. oktober 2025 ob 22:09:05 Srednjeevropski standardni =C4=8D=
+as je Rob Herring napisal(a):
+> On Sat, Oct 25, 2025 at 12:31:24PM +0800, iuncuim wrote:
+> > From: Mikhail Kalashnikov <iuncuim@gmail.com>
+> >=20
+> > Add a binding for D1/T113s thermal sensor controller. Add dt-bindings
+> > description of the thermal sensors in the A523 processor.
+> > The controllers require activation of the additional frequency of the
+> > associated gpadc controller, so a new clock property has been added.
+> >=20
+> > The calibration data is split into two cells that are in different areas
+> > of nvmem. Both controllers require access to both memory cell, so a new
+> > property nvmem-cells has been added. To maintain backward compatibility,
+> > the name of the old cell remains the same and the new nvmem-cell-names =
+is
+> > called calibration-second-part
+> >=20
+> > Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+> > ---
+> >  .../thermal/allwinner,sun8i-a83t-ths.yaml     | 56 ++++++++++++++++++-
+> >  1 file changed, 53 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-=
+a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a=
+83t-ths.yaml
+> > index 3e61689f6..b2f750ef2 100644
+> > --- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-th=
+s.yaml
+> > +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-th=
+s.yaml
+> > @@ -24,18 +24,23 @@ properties:
+> >        - allwinner,sun50i-h5-ths
+> >        - allwinner,sun50i-h6-ths
+> >        - allwinner,sun50i-h616-ths
+> > +      - allwinner,sun55i-a523-ths0
+> > +      - allwinner,sun55i-a523-ths1
+> > =20
+> >    clocks:
+> >      minItems: 1
+> >      items:
+> >        - description: Bus Clock
+> >        - description: Module Clock
+> > +      - description: GPADC Clock
+> > =20
+> >    clock-names:
+> >      minItems: 1
+> > +    maxItems: 2
+>=20
+> How can the max be both 2 and...
+>=20
+> >      items:
+> >        - const: bus
+> >        - const: mod
+> > +      - const: gpadc
+>=20
+> ...3 entries?
+>=20
 
-Thanks for the reviews!
+Because old variant uses "bus" and "mod" and new variant uses "bus" and
+"gpadc" and none of them uses all 3 entries.
 
-Best,
-Bobby
+Although, I guess we can simplify and just use "mod" in both cases.
+
+Best regards,
+Jernej
+
+
+
 
