@@ -1,122 +1,179 @@
-Return-Path: <linux-kernel+bounces-871907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E41C0ECD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:08:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F5CC0ECC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 890C24FBC90
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EBE4407560
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FDE308F36;
-	Mon, 27 Oct 2025 14:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB57A308F13;
+	Mon, 27 Oct 2025 14:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X/36PQcf"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rIPGffuA"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3974E2D239B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243332D1F7C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577155; cv=none; b=RexJOSKBhXAoSBmw2kL9kbsdbSb02m9PV7JxM1+urp21IyYk/O8WbSAD/QNtmtbhcZfsWmtWQXfFKmNhWsuuEbf4YuDzXeTNZIOih5YvwBNjd+ikhVw6QFrHA36hbjPv3g3iWx3Czl2jOGbiw1z3UP9otRTbXgHm6//a5N9v4yw=
+	t=1761577178; cv=none; b=rNZB4zm5z1gCqzZ0QZA5PHX/VmcNvan1gZYRUH8KtmjN8mlIZEpf2/+PXIWg0RTXZeVKLSGOXmMuuRDwXJRy2F2Ue/i0AOTDWrodBxnxMeD8BhwmCMOdQABD9nQjj3JhUUzUef8Bzdx1AZtAf92mB2fDF9DtWyZ89UjBO1aiTIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577155; c=relaxed/simple;
-	bh=7wL4+1onpcS68N8zd7qV0fUv0eIqqqeHEAHM6Nw9pSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p/RGxqbuYW8Xaa+6nqq65e9sx62/WqNNfgRcMC3YvPRhXeK4QgAU67czLU/XG1KkrD5DkZJiCJOlA28zIkDr91SGwCxoFZKwTuDAxytsLqmMlog0YpMgrjMP3PagoXE0TVtxASJCObnbE0+EJ1eT5F6PW0YCpc8mMKwNhP3dnxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X/36PQcf; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3d275090417so1375204fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:59:12 -0700 (PDT)
+	s=arc-20240116; t=1761577178; c=relaxed/simple;
+	bh=eDQhQASOEmRkcfF1cnh05g0ZSLG33Cazfq+HFLkLeDs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rIbS12JtSV0cRulwHcAntAYePq2mhNYd2UntkARimiBEL+/CERFFhAXNE4Mxec90XlmI7uldT2qvTxIodF0Fr80r60JjuaOJWj3dZ7ckx2L35ilBC4c7jRSY/cRVlZEco/51oWXSbMeGVpyjSS4FrNjtoit4rteVMxAPxfYhg98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rIPGffuA; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4711f3c386eso36089015e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761577152; x=1762181952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=42PPEESTPRM1MqRXwgq0RfVuUgixMW7zVQ9CGj4vqjk=;
-        b=X/36PQcfCZBVZF/dPsIyUvxa/CJMFGvsJ0hTekYcOxUk3SyIdaN+3lmWUPcqkeqTck
-         AQGE62bhBkWyHB9ZJZtQZMnqnSY/iy4jaCSrkGahSFMjGl3+q2URy2Q+Xi2XeKm6WQfa
-         CQgOPwGbBaychxI7ZLwg9pjb6FlfjsCCSR7iyRua88EpUcvoo5DaqVRrsuj7KplYynpA
-         BJnXU36gPehHoLXyUtqpVJR8gA6T4VIyzSVywFuYGbvvsi50MlZZaPFVCeRDtZkODf5O
-         I7/qf1NY/Qdpu+bcOoyOpfpBaQweiO49Z+SpawHFr8V6xNyGnG6tB5clajx4qJfruYDt
-         Pm8w==
+        d=linaro.org; s=google; t=1761577175; x=1762181975; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NW0g4MULUKaMYiJnLBpd0Ri5YM5rWj5Eltx5XndG2Gs=;
+        b=rIPGffuAY6AQHZZNFiCD1Y8w0uiUMlIPpcjrxDSVqcX9UeJxz8yELoAeKtlJcju5uO
+         IMP4QXOEeFDiXopA2pec0PcVpgj9Am12WQnaLNPBtaUMdfZx7L/c1O0xFElT+Rb/4Pdu
+         IPLRojf4gJqiKvBpuGNrK+cxx5i/c6q4nsbxr6nbZsDcj6EZFwT2ut2jT5lVtcrqqlmR
+         r2jNRAihzBTad1LXEIOU7WgedAeFebdDXcbzpa3s33vFIPPf3p3eH4MxnT9fbKnA5/Fk
+         HeqDVcDVWeyk9KS2Vvx+0nqpqNaf1qYFexpwlvQyA6vKhbWOx5SSV5EPihu+tC4R/pk1
+         mneQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761577152; x=1762181952;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=42PPEESTPRM1MqRXwgq0RfVuUgixMW7zVQ9CGj4vqjk=;
-        b=pDAttj1QPqEqil0DWM4EgQoWfxzQqDnKFNpbf1FH7vH9e7kdND3C8Qyrl/PWG9fLNM
-         SYJy8I57fPSLDUSSj64YB3S5LN9iBEmRvCnJkT9BcPsJtV0kcE1hZFGGC+0VsfNNMRwS
-         iCLjzLS91dgOdYOSczp/VQFY3mJueHk2jPnERYqKKZODITRU2ScABBcwleRPVoaI8kn4
-         6qLyQu5QmvQh0V/B0M8F5SH1kO4AH4WzEU5HczQIzb5sh/PjdiIisqzh08Ys7tLCjJEq
-         CseWG1EyIxKOBkqxj9ShbLOX2kfBqNOgnXnR5NopX1F2bnafZPm++GbpYQu3PJr0OR7+
-         vR7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWn1CfMlaQbG7oxpbaDPjJZGkB5UX+42PDSYh5bxBl9TUHtNB7q3vc92QhRLp5L7q+oKHh0RyLmxbl9BVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/BfdKMwbcVKQjW2rzyrVQ5oZawN+bN1Rf0HoDZjvt0E9uBGhN
-	WQpguH9/lbiDG0b3Z+2UQJGR1kCMeJWoigpKbVc6E828MoAVwkHUus1YeYMPhxBUfbc=
-X-Gm-Gg: ASbGncvRzpFbMY8Hkr91/eMtsznXMNH659oZEZyBNggoWOZWzj0w8tnUCDTE1WWIUv0
-	hdOsVoe+5xi2iz782DOivQO8aRte2g2wDYbQJtcEmvfsNSuw/nli0DSrcEpj/9a+zQaQDm/SqHg
-	N4lqtB1GOcsSSZ8OgyarQ/znDFNr4boo24myKkUBnIdg7wwt/wHUorFqg/h8A24olALAnxssR9F
-	k+0VMNRnBiJBwEVe10a5xkVcmp2iDxwe7pGRHBi9HxFTpbpxGijZhabvmytEg4BvFDo0FSl+/7N
-	w6m8ZCZQ9EO7nsf3JT7mgwT8u3qhhoh6Bhvp4YagOltkAPY1+GCimumw9Ru2vnI5/IocWqmB48L
-	WC82gUD6KcNoeIc6rPrlGxMMANHTx5j6S9SIC8DCEJwDxY8eRUu1fvVUTOogfy5zbOU5SmRZORj
-	kyOtZjVDGs6HXZFQ/jNgib6OH8jJb6WTqL7//7VitirN7FGM/Y8Q==
-X-Google-Smtp-Source: AGHT+IHzuM7f2/mhqN6TNTjfjdCykv8WqRrQS182YAqAkII2xhAQD50KGvCHAYvbwychNayps4clAw==
-X-Received: by 2002:a05:6871:ac0e:b0:343:13e4:9d3 with SMTP id 586e51a60fabf-3c98d18e2bdmr17563909fac.49.1761577152296;
-        Mon, 27 Oct 2025 07:59:12 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:46d5:c880:64c8:f854? ([2600:8803:e7e4:500:46d5:c880:64c8:f854])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3d1e2c30b50sm2536302fac.11.2025.10.27.07.59.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 07:59:11 -0700 (PDT)
-Message-ID: <66c8f410-6bba-41d2-88e2-46dbe133adaa@baylibre.com>
-Date: Mon, 27 Oct 2025 09:59:10 -0500
+        d=1e100.net; s=20230601; t=1761577175; x=1762181975;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NW0g4MULUKaMYiJnLBpd0Ri5YM5rWj5Eltx5XndG2Gs=;
+        b=ONL/xfSY5XPF+YNVqaC9yZY0S+zqdhv7KCWP+CLtoHFzX9RidlYIrecqdH/f6eGsun
+         Lb3gezilUcSVRzKfXIlf7BuMCUbxKHhCZ/yFMfFbrd1SyRS7TNGvPB0t/3wnLVxC4LEe
+         XQVKDAZd9eAlHIOyQwgST5EP4sUe5d7ZbLDfyWyvBBcHSWhYWD9J0HnPZ9ehfOcpRE6+
+         85sOwrgWvW6mSdmupfoJ8JY1rD9wpPwqCTrIskDmpImsmB47BRn+/0iLAH9P2JZkYvhw
+         1Q7ZCMdgOnj9wAPI/11byoehOYgHJVQKD/OxRsFWlywZg+zNYVToCVAZlRa2t0lAe7N5
+         Wp0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWKU7RXlhc+J2xiZb7bKspXF/110uydNyPyQ35M32xVLn0pUE/GTeaYMZkZQ4QDzMyohOuRoAcNtGFVSwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJFjIfFxaUOA0DIZFarQbKlmGW+xQ8ZX30aSZtiu4t4sM631LJ
+	CX/lNqcUr9EDgR2xwx2Wo0+Aja3xQBfsyCu7KGBsnnXYn36Eoe4akgXVSE2yL6rR1T8=
+X-Gm-Gg: ASbGncvuvBLYfdMKSoIeeEn5jhbKMZ6B6wWj/YNo/HeOpS2tpaCRIJIFdruP4M9kP6m
+	x96VKwJ7FmL6sexEyagckI/NwCiJvwAuQClPBHwRsFJftYSbixGEazsrTMIw3JAawPqt4jIpuv5
+	fN6IBKQrHBN4QLargfhLLVojFfz5AXubMW6v+hYoo37+5YbLS1Q7K3WthCzDYq28UiMGUE4y9k9
+	aAzAQOUAooZxwsLYlMV1LArC+elz0hhHr8465XpLmx6BPjobJgdMNl9GOpCifwbyIHAXCZzZL58
+	EIqRfgboH1nY2FKYRgzAhj/+pr3+rKLkjymiNRfMoD8+DbB22rYNYaKohp4KN4E9our6Mkjy077
+	UFZtqN/RcDkTVTl5ljijlzsFtIvy/mWffwkRW1xVZolfdq2hwSKsR6kNKy7DAUQYKxZ00XCii6f
+	WA5KDoTVWt
+X-Google-Smtp-Source: AGHT+IEaQneBk0C8dLzRUnxt31IA4a5BDhI6aZOrP71p5Fx9l+6YUOmnTLZBOBxL2PTxl1832j9iLQ==
+X-Received: by 2002:a05:600c:34c4:b0:477:171f:65f with SMTP id 5b1f17b1804b1-477171f0938mr4731325e9.38.1761577175395;
+        Mon, 27 Oct 2025 07:59:35 -0700 (PDT)
+Received: from hackbox.lan ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df682sm14624801f8f.43.2025.10.27.07.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 07:59:34 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH v3 0/7] drm/msm: Add display support for Glymur platform
+Date: Mon, 27 Oct 2025 16:59:17 +0200
+Message-Id: <20251027-glymur-display-v3-0-aa13055818ac@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v1_2/6=5D_units=3A_Add_value_of_=CF=80_*_1?=
- =?UTF-8?B?MOKBuQ==?=
-To: Jonathan Cameron <jic23@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-iio@vger.kernel.org, chrome-platform@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Benson Leung <bleung@chromium.org>,
- Guenter Roeck <groeck@chromium.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-References: <20251027143850.2070427-1-andriy.shevchenko@linux.intel.com>
- <20251027143850.2070427-3-andriy.shevchenko@linux.intel.com>
- <20251027145213.7c93a3e2@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20251027145213.7c93a3e2@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMWI/2gC/2XM0QqCMBTG8VeRXbfYOVNyXfUe0cVymx4wJ1uNR
+ Hz3plBQXX4f/H8zizaQjexYzCzYRJH8kIfcFazp9NBaTiZvhgIroUDwtp9uj8ANxbHXEwc0UGu
+ 8mkMJLEdjsI6eG3i+5N1RvPswbX6C9X1T8Esl4IIbqUDLUqJCe+pp0MHvfWjZaiX89CCg/Osx9
+ 84pWVl0dd1UX/2yLC+vRk6p7QAAAA==
+X-Change-ID: 20250910-glymur-display-12d18a2bd741
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2209; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=eDQhQASOEmRkcfF1cnh05g0ZSLG33Cazfq+HFLkLeDs=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo/4jL4e2P0M+fEJRpcgfUYt16mHELFJZJztSOL
+ H5lBOKx5SOJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaP+IywAKCRAbX0TJAJUV
+ VsFfEAC7FmOy5w629PPMnlYGOFdHi2vJe6IBqwe/XMzgVyHN6nqMBH4VKVuJWuqEIlCZXYin6i1
+ qFByl4U3Bu3WpLYhlyWU2Oyb1Q0kIhVPpnYiSfjUtVPKKKrGrPxcLQXaj54P6ulqwh4dE6FQL4j
+ FPmwZw1xotu9jIYmdKEgQpzDkZBgPu/hfMptiKHN7s8nTF5BxTvdqvkcMKjLJTMPqqjqLNWOfTx
+ MzwCTH8bohm+AjllsfN0rtejPO3I0/I5vXQ0UxgnYm1RhWsji4FpZA+gNS4EimDdotp2ds3Pmu9
+ 2sIuL/QG2kO7x+tsj9GugfUbUaeynxaVLm+MR9j0F1GVT9tdvlVR5a5o1KCviKcuZ519grI3iTJ
+ T9ZmDXNt+MSv3blgzpkP7mgQFZ/rWqwJvwsNjzdvKLARgWuCpUmOWVV/zJzK2KCQOCK6LW3XPjo
+ kECMxjfouAxQAIzc5TJ0waCWuPnLK+LUVOnFW0eS6vEDXuhCPuXdKhI/c18+pVNN9IVnM4g8592
+ 7CNNu1KDOxu3ILGiUPOek81NTRII9//VhsqTt8jHhR27Z/D5ysUPVMmnlQgpabVtd6EJC7+wYZK
+ 57U4rCzSbhvKZHBkzIUNkfWaP5asFUIz2+Gq4cIHWLr0m2wndOk6KoUBZzHUZQW/UvVa6xAcl+U
+ LLklForAsQbzbTA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On 10/27/25 9:52 AM, Jonathan Cameron wrote:
-> On Mon, 27 Oct 2025 15:34:51 +0100
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
->> There are a few drivers that want to have this value, and at least one
->> known to come soon. Let's define a value for them.
-> 
-> Is there any way we can make the x10^9 bit obvious in the naming?  Or do
-> something a bit nasty like defining a macro along the lines of
-> 
-> PI(scale)?
-> e.g. PI(NANO), PI(10000) 
-> 
-This was my first thought when looking at this as well.
+The Glymur MDSS is based on the one found in SM8750, with 2 minor number
+version bump.
 
-Or something like PI_x10(6).
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v3:
+ - Re-worded first commit in order to better suggest the incompatiblity
+   with previous platforms.
+ - Picked up Krzysztof R-b tag for 1st patch.
+ - Picked up Dmitry's R-b tag for 7th patch.
+ - Link to v2: https://lore.kernel.org/r/20251014-glymur-display-v2-0-ff935e2f88c5@linaro.org
+
+Changes in v2:
+ - Picked-up Krzysztof's and Dmitry's R-b tags.
+ - Fixed the bindings check reported by Rob.
+ - Fixed indentation reported by Krzysztof.
+ - Re-worded the commits to better explain the incompatibility
+   with previous platforms.
+ - Add the UBWC config patch, as suggested by Dmitry.
+ - Link to v1: https://lore.kernel.org/r/20250911-glymur-display-v1-0-d391a343292e@linaro.org
+
+---
+Abel Vesa (7):
+      dt-bindings: display: msm: Document the Glymur Mobile Display SubSystem
+      dt-bindings: display: msm: Document the Glymur Display Processing Unit
+      dt-bindings: display: msm: Document the Glymur DiplayPort controller
+      drm/msm/mdss: Add Glymur device configuration
+      drm/msm/dpu: Add support for Glymur
+      drm/msm/dp: Add support for Glymur
+      soc: qcom: ubwc: Add configuration Glymur platform
+
+ .../bindings/display/msm/dp-controller.yaml        |   3 +
+ .../bindings/display/msm/qcom,glymur-mdss.yaml     | 264 ++++++++++
+ .../bindings/display/msm/qcom,sm8650-dpu.yaml      |   1 +
+ .../drm/msm/disp/dpu1/catalog/dpu_12_2_glymur.h    | 541 +++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |   6 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+ drivers/gpu/drm/msm/dp/dp_display.c                |   9 +
+ drivers/gpu/drm/msm/msm_mdss.c                     |   1 +
+ drivers/soc/qcom/ubwc_config.c                     |  12 +
+ 11 files changed, 840 insertions(+)
+---
+base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
+change-id: 20250910-glymur-display-12d18a2bd741
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
