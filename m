@@ -1,74 +1,58 @@
-Return-Path: <linux-kernel+bounces-872602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB00DC118EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:27:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C559C118F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F55425A9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:27:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9906D568119
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9F132B9B2;
-	Mon, 27 Oct 2025 21:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26332548D;
+	Mon, 27 Oct 2025 21:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XzKwNxAO"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6S8EENe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8BB3054FA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9531D378;
+	Mon, 27 Oct 2025 21:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761600434; cv=none; b=Mk6aoc8NrUAhISzbuaOM7Uq801hJ/QKK3QmCXWDhJuQ6IOf2Rh5f6+hMgdSqpfNnR87AbzIE/g9HuDwpkbLL+yzDliW35LEvprk8N4iViaOukIQRqBl9VngyJOypJzqTKOlLV9PauSnsWebgt2uXj5V/USwIGOhB9EUasR5WUIE=
+	t=1761600461; cv=none; b=saTiP56q96V88XwdZuMYfUeU+xKdYbp0oAySGtb2gWDhNRjVU2tPLJJ8+ZZYtDxYrDd/UfNOE4ekCNaP+vYtfYwATUuGnrqlVqEsgTvYxyPX9OQA8AQw6DElSQDh8kPSnIazQSpqJUXEU1kE4cErCjmPDa/sj/Dm4sZ/k31noEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761600434; c=relaxed/simple;
-	bh=tjpIOWnUK5vdeyKJ6ZpoiRZp9WEV2eeTnEiLMN6Hha8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JbxAeIKZpSSzEI0CepAnmskKUUUs6oLwG1L6rkFSA+xwgjezWf/PvIe+UeVIVhOjOj+HlUcvQQWMXqN6qX1I37HOJnIqTdFmAr4dfBArwxONdvON292uM4F+oHHrO3wGM69CsCKwfNAjp1mDsk9uIFbG6t6paKphuFWHV+btod4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XzKwNxAO; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59RLQd7m2490420;
-	Mon, 27 Oct 2025 16:26:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761600399;
-	bh=9iqKGNULG93Mahxgc9Y04ieslV3U/KXOSXDAHgNKDxc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=XzKwNxAOaMHEmlps6sbqGPpCsgovMFEbCLYGLb4WFLbIwAhiI9l09FnOgiuu8reUr
-	 EBSdY7/Vej4okIN9lZ1KjN1mIefDRtS4IDxaZsaT+R4Ayb36+Vh4E6x3mKcA1kjXS0
-	 Yc5Pv2077IefkRQ5pZ4spRQHfBMvl22/zbSUmi/s=
-Received: from DLEE204.ent.ti.com (dlee204.ent.ti.com [157.170.170.84])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59RLQdQX1491705
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 Oct 2025 16:26:39 -0500
-Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Oct
- 2025 16:26:39 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE201.ent.ti.com
- (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 27 Oct 2025 16:26:39 -0500
-Received: from a0512632.dhcp.ti.com (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59RLQP5m1301370;
-	Mon, 27 Oct 2025 16:26:35 -0500
-From: Swamil Jain <s-jain1@ti.com>
-To: <aradhya.bhatia@linux.dev>, <devarsht@ti.com>, <mripard@kernel.org>,
-        <tomi.valkeinen@ideasonboard.com>, <jyri.sarha@iki.fi>,
-        <maarten.lankhorst@linux.intel.com>, <simona@ffwll.ch>,
-        <airlied@gmail.com>, <tzimmermann@suse.de>, <h-shenoy@ti.com>
-CC: <praneeth@ti.com>, <u-kumar1@ti.com>, <vigneshr@ti.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <s-jain1@ti.com>
-Subject: [PATCH v7 2/2] drm/tidss: Move OLDI mode validation to OLDI bridge mode_valid hook
-Date: Tue, 28 Oct 2025 02:56:24 +0530
-Message-ID: <20251027212624.359235-3-s-jain1@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251027212624.359235-1-s-jain1@ti.com>
-References: <20251027212624.359235-1-s-jain1@ti.com>
+	s=arc-20240116; t=1761600461; c=relaxed/simple;
+	bh=X6pkdu0tJ794P0POvorV12Or0aSlCL4ApK90UQHYZlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W1o21DcDSLsvKpBa+o2ZTlstT5uwDgKUSsW8we5wQP24EtoWr0uuSgXlQy0iwPgULMLybiXfxMV31XLKlKdyQ3nuY7PC18w2FtzxiuBRBrpbmeUbq1ny0xIbGSYXBeoqbqNdReVkxlTDOR5Dh1yd+EIt9Ei2H4RhHnpc8uFmPms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6S8EENe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F098C4CEF1;
+	Mon, 27 Oct 2025 21:27:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761600460;
+	bh=X6pkdu0tJ794P0POvorV12Or0aSlCL4ApK90UQHYZlo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E6S8EENeEKg6GAmdQ0ZWzGAfFNvPGJAa+xtvfmIfepALcEwm+MKi4uiQdhGXrgsvT
+	 JhLcuz81GgGQYTdqYvmxvdkZiTkP4wr/jIdZbPzZRSGBri4pP7VjRqz/ZbUkM0iCa+
+	 otZ+G8ONrFs8HEwyqghqyp1ef24BhXqk7zSc9PlGvEer/KImMB4vIkXoTSbvx58GdL
+	 PPWXBT/DAUZi6mPUOBRt1v1M/yLH9GNoLEpOpCpcQev0TWFKRjF9/AubCjxG+4+CDY
+	 KAa7KP9+jnAU7iq7EpsVVm/3ySoEySPpW5kFMfS7pDVc5sDkN/2F4DWmh9P23kWewF
+	 DxquAntfXDwdA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: Convert sprd,sc9860-pinctrl to DT schema
+Date: Mon, 27 Oct 2025 16:26:41 -0500
+Message-ID: <20251027212642.1710144-2-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,120 +60,395 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Jayesh Choudhary <j-choudhary@ti.com>
+Convert the sprd,sc9860-pinctrl binding to DT schema format. What's
+valid for the the sleep mode child nodes wasn't well defined. The schema
+is based on the example (as there's no .dts with pin states) and the
+driver's register definitions.
 
-After integrating OLDI support[0], it is necessary to identify which VP
-instances use OLDI, since the OLDI driver owns the video port clock
-(as a serial clock). Clock operations on these VPs must be delegated to
-the OLDI driver, not handled by the TIDSS driver. This issue also
-emerged in upstream discussions when DSI-related clock management was
-attempted in the TIDSS driver[1].
-
-To address this, add an 'is_ext_vp_clk' array to the 'tidss_device'
-structure, marking a VP as 'true' during 'tidss_oldi_init()' and as
-'false' during 'tidss_oldi_deinit()'. TIDSS then uses 'is_ext_vp_clk'
-to skip clock validation checks in 'dispc_vp_mode_valid()' for VPs
-under OLDI control.
-
-Since OLDI uses the DSS VP clock directly as a serial interface and
-manages its own rate, mode validation should be implemented in the OLDI
-bridge's 'mode_valid' hook. This patch adds that logic, ensuring proper
-delegation and avoiding spurious clock handling in the TIDSS driver.
-
-[0]: https://lore.kernel.org/all/20250528122544.817829-1-aradhya.bhatia@linux.dev/
-[1]: https://lore.kernel.org/all/DA6TT575Z82D.3MPK8HG5GRL8U@kernel.org/
-
-Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-Tested-by: Michael Walle <mwalle@kernel.org>
-Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-Signed-off-by: Swamil Jain <s-jain1@ti.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/gpu/drm/tidss/tidss_dispc.c |  2 ++
- drivers/gpu/drm/tidss/tidss_drv.h   |  2 ++
- drivers/gpu/drm/tidss/tidss_oldi.c  | 21 +++++++++++++++++++++
- 3 files changed, 25 insertions(+)
+With this, all the pinctrl bindings used on arm64 are converted!
 
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 07731b02490f..0c3337a7b163 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.c
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -1315,6 +1315,8 @@ static int check_pixel_clock(struct dispc_device *dispc,
- {
- 	unsigned long round_clock;
- 
-+	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
-+		return 0;
- 	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
- 	/*
- 	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-index 84454a4855d1..e1c1f41d8b4b 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.h
-+++ b/drivers/gpu/drm/tidss/tidss_drv.h
-@@ -24,6 +24,8 @@ struct tidss_device {
- 
- 	const struct dispc_features *feat;
- 	struct dispc_device *dispc;
-+	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
+ .../bindings/pinctrl/sprd,pinctrl.txt         |  83 --------
+ .../bindings/pinctrl/sprd,sc9860-pinctrl.txt  |  70 ------
+ .../bindings/pinctrl/sprd,sc9860-pinctrl.yaml | 199 ++++++++++++++++++
+ 3 files changed, 199 insertions(+), 153 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt
+deleted file mode 100644
+index 779b8ef0f6e6..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt
++++ /dev/null
+@@ -1,83 +0,0 @@
+-* Spreadtrum Pin Controller
+-
+-The Spreadtrum pin controller are organized in 3 blocks (types).
+-
+-The first block comprises some global control registers, and each
+-register contains several bit fields with one bit or several bits
+-to configure for some global common configuration, such as domain
+-pad driving level, system control select and so on ("domain pad
+-driving level": One pin can output 3.0v or 1.8v, depending on the
+-related domain pad driving selection, if the related domain pad
+-select 3.0v, then the pin can output 3.0v. "system control" is used
+-to choose one function (like: UART0) for which system, since we
+-have several systems (AP/CP/CM4) on one SoC.).
+-
+-There are too much various configuration that we can not list all
+-of them, so we can not make every Spreadtrum-special configuration
+-as one generic configuration, and maybe it will add more strange
+-global configuration in future. Then we add one "sprd,control" to
+-set these various global control configuration, and we need use
+-magic number for this property.
+-
+-Moreover we recognise every fields comprising one bit or several
+-bits in one global control register as one pin, thus we should
+-record every pin's bit offset, bit width and register offset to
+-configure this field (pin).
+-
+-The second block comprises some common registers which have unified
+-register definition, and each register described one pin is used
+-to configure the pin sleep mode, function select and sleep related
+-configuration.
+-
+-Now we have 4 systems for sleep mode on SC9860 SoC: AP system,
+-PUBCP system, TGLDSP system and AGDSP system. And the pin sleep
+-related configuration are:
+-- input-enable
+-- input-disable
+-- output-high
+-- output-low
+-- bias-pull-up
+-- bias-pull-down
+-
+-In some situation we need set the pin sleep mode and pin sleep related
+-configuration, to set the pin sleep related configuration automatically
+-by hardware when the system specified by sleep mode goes into deep
+-sleep mode. For example, if we set the pin sleep mode as PUBCP_SLEEP
+-and set the pin sleep related configuration as "input-enable", which
+-means when PUBCP system goes into deep sleep mode, this pin will be set
+-input enable automatically.
+-
+-Moreover we can not use the "sleep" state, since some systems (like:
+-PUBCP system) do not run linux kernel OS (only AP system run linux
+-kernel on SC9860 platform), then we can not select "sleep" state
+-when the PUBCP system goes into deep sleep mode. Thus we introduce
+-"sprd,sleep-mode" property to set pin sleep mode.
+-
+-The last block comprises some misc registers which also have unified
+-register definition, and each register described one pin is used to
+-configure drive strength, pull up/down and so on. Especially for pull
+-up, we have two kind pull up resistor: 20K and 4.7K.
+-
+-Required properties for Spreadtrum pin controller:
+-- compatible: "sprd,<soc>-pinctrl"
+-  Please refer to each sprd,<soc>-pinctrl.txt binding doc for supported SoCs.
+-- reg: The register address of pin controller device.
+-- pins : An array of pin names.
+-
+-Optional properties:
+-- function: Specified the function name.
+-- drive-strength: Drive strength in mA.
+-- input-schmitt-disable: Enable schmitt-trigger mode.
+-- input-schmitt-enable: Disable schmitt-trigger mode.
+-- bias-disable: Disable pin bias.
+-- bias-pull-down: Pull down on pin.
+-- bias-pull-up: Pull up on pin.
+-- input-enable: Enable pin input.
+-- input-disable: Enable pin output.
+-- output-high: Set the pin as an output level high.
+-- output-low: Set the pin as an output level low.
+-- sleep-hardware-state: Indicate these configs in this state are sleep related.
+-- sprd,control: Control values referring to databook for global control pins.
+-- sprd,sleep-mode: Sleep mode selection.
+-
+-Please refer to each sprd,<soc>-pinctrl.txt binding doc for supported values.
+diff --git a/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt
+deleted file mode 100644
+index 5a628333d52f..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt
++++ /dev/null
+@@ -1,70 +0,0 @@
+-* Spreadtrum SC9860 Pin Controller
+-
+-Please refer to sprd,pinctrl.txt in this directory for common binding part
+-and usage.
+-
+-Required properties:
+-- compatible: Must be "sprd,sc9860-pinctrl".
+-- reg: The register address of pin controller device.
+-- pins : An array of strings, each string containing the name of a pin.
+-
+-Optional properties:
+-- function: A string containing the name of the function, values must be
+-  one of: "func1", "func2", "func3" and "func4".
+-- drive-strength: Drive strength in mA. Supported values: 2, 4, 6, 8, 10,
+-  12, 14, 16, 20, 21, 24, 25, 27, 29, 31 and 33.
+-- input-schmitt-disable: Enable schmitt-trigger mode.
+-- input-schmitt-enable: Disable schmitt-trigger mode.
+-- bias-disable: Disable pin bias.
+-- bias-pull-down: Pull down on pin.
+-- bias-pull-up: Pull up on pin. Supported values: 20000 for pull-up resistor
+-  is 20K and 4700 for pull-up resistor is 4.7K.
+-- input-enable: Enable pin input.
+-- input-disable: Enable pin output.
+-- output-high: Set the pin as an output level high.
+-- output-low: Set the pin as an output level low.
+-- sleep-hardware-state: Indicate these configs in this state are sleep related.
+-- sprd,control: Control values referring to databook for global control pins.
+-- sprd,sleep-mode: Choose the pin sleep mode, and supported values are:
+-  AP_SLEEP, PUBCP_SLEEP, TGLDSP_SLEEP and AGDSP_SLEEP.
+-
+-Pin sleep mode definition:
+-enum pin_sleep_mode {
+-	AP_SLEEP = BIT(0),
+-	PUBCP_SLEEP = BIT(1),
+-	TGLDSP_SLEEP = BIT(2),
+-	AGDSP_SLEEP = BIT(3),
+-};
+-
+-Example:
+-pin_controller: pinctrl@402a0000 {
+-	compatible = "sprd,sc9860-pinctrl";
+-	reg = <0x402a0000 0x10000>;
+-
+-	grp1: sd0 {
+-		pins = "SC9860_VIO_SD2_IRTE", "SC9860_VIO_SD0_IRTE";
+-		sprd,control = <0x1>;
+-	};
+-
+-	grp2: rfctl_33 {
+-		pins = "SC9860_RFCTL33";
+-		function = "func2";
+-		sprd,sleep-mode = <AP_SLEEP | PUBCP_SLEEP>;
+-		grp2_sleep_mode: rfctl_33_sleep {
+-			pins = "SC9860_RFCTL33";
+-			sleep-hardware-state;
+-			output-low;
+-		}
+-	};
+-
+-	grp3: rfctl_misc_20 {
+-		pins = "SC9860_RFCTL20_MISC";
+-		drive-strength = <10>;
+-		bias-pull-up = <4700>;
+-		grp3_sleep_mode: rfctl_misc_sleep {
+-			pins = "SC9860_RFCTL20_MISC";
+-			sleep-hardware-state;
+-			bias-pull-up;
+-		}
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.yaml
+new file mode 100644
+index 000000000000..59d23eb8aa97
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.yaml
+@@ -0,0 +1,199 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/sprd,sc9860-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 
- 	unsigned int num_crtcs;
- 	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
-diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-index 7688251beba2..d1a5fdac93ff 100644
---- a/drivers/gpu/drm/tidss/tidss_oldi.c
-+++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-@@ -309,6 +309,24 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
- 	return input_fmts;
- }
- 
-+static enum drm_mode_status
-+tidss_oldi_mode_valid(struct drm_bridge *bridge,
-+		      const struct drm_display_info *info,
-+		      const struct drm_display_mode *mode)
-+{
-+	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-+	unsigned long round_clock;
++title: Spreadtrum SC9860 Pin Controller
 +
-+	round_clock = clk_round_rate(oldi->serial, mode->clock * 7 * 1000);
-+	/*
-+	 * To keep the check consistent with dispc_vp_set_clk_rate(),
-+	 * we use the same 5% check here.
-+	 */
-+	if (dispc_pclk_diff(mode->clock * 7 * 1000, round_clock) > 5)
-+		return -EINVAL;
-+	return 0;
-+}
++maintainers:
++  - Baolin Wang <baolin.wang@linux.alibaba.com>
 +
- static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
- 	.attach	= tidss_oldi_bridge_attach,
- 	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
-@@ -317,6 +335,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
- 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
- 	.atomic_reset = drm_atomic_helper_bridge_reset,
-+	.mode_valid = tidss_oldi_mode_valid,
- };
- 
- static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
-@@ -430,6 +449,7 @@ void tidss_oldi_deinit(struct tidss_device *tidss)
- 	for (int i = 0; i < tidss->num_oldis; i++) {
- 		if (tidss->oldis[i]) {
- 			drm_bridge_remove(&tidss->oldis[i]->bridge);
-+			tidss->is_ext_vp_clk[tidss->oldis[i]->parent_vp] = false;
- 			tidss->oldis[i] = NULL;
- 		}
- 	}
-@@ -580,6 +600,7 @@ int tidss_oldi_init(struct tidss_device *tidss)
- 		oldi->bridge.timings = &default_tidss_oldi_timings;
- 
- 		tidss->oldis[tidss->num_oldis++] = oldi;
-+		tidss->is_ext_vp_clk[oldi->parent_vp] = true;
- 		oldi->tidss = tidss;
- 
- 		drm_bridge_add(&oldi->bridge);
++description: >
++  The Spreadtrum pin controller are organized in 3 blocks (types).
++
++  The first block comprises some global control registers, and each
++  register contains several bit fields with one bit or several bits
++  to configure for some global common configuration, such as domain
++  pad driving level, system control select and so on ("domain pad
++  driving level": One pin can output 3.0v or 1.8v, depending on the
++  related domain pad driving selection, if the related domain pad
++  select 3.0v, then the pin can output 3.0v. "system control" is used
++  to choose one function (like: UART0) for which system, since we
++  have several systems (AP/CP/CM4) on one SoC.).
++
++  There are too much various configuration that we can not list all
++  of them, so we can not make every Spreadtrum-special configuration
++  as one generic configuration, and maybe it will add more strange
++  global configuration in future. Then we add one "sprd,control" to
++  set these various global control configuration, and we need use
++  magic number for this property.
++
++  Moreover we recognize every fields comprising one bit or several
++  bits in one global control register as one pin, thus we should
++  record every pin's bit offset, bit width and register offset to
++  configure this field (pin).
++
++  The second block comprises some common registers which have unified
++  register definition, and each register described one pin is used
++  to configure the pin sleep mode, function select and sleep related
++  configuration.
++
++  Now we have 4 systems for sleep mode on SC9860 SoC: AP system,
++  PUBCP system, TGLDSP system and AGDSP system. And the pin sleep
++  related configuration are:
++    - input-enable
++    - input-disable
++    - output-high
++    - output-low
++    - bias-pull-up
++    - bias-pull-down
++
++  In some situation we need set the pin sleep mode and pin sleep related
++  configuration, to set the pin sleep related configuration automatically
++  by hardware when the system specified by sleep mode goes into deep
++  sleep mode. For example, if we set the pin sleep mode as PUBCP_SLEEP
++  and set the pin sleep related configuration as "input-enable", which
++  means when PUBCP system goes into deep sleep mode, this pin will be set
++  input enable automatically.
++
++  Moreover we can not use the "sleep" state, since some systems (like:
++  PUBCP system) do not run linux kernel OS (only AP system run linux
++  kernel on SC9860 platform), then we can not select "sleep" state
++  when the PUBCP system goes into deep sleep mode. Thus we introduce
++  "sprd,sleep-mode" property to set pin sleep mode.
++
++  The last block comprises some misc registers which also have unified
++  register definition, and each register described one pin is used to
++  configure drive strength, pull up/down and so on. Especially for pull
++  up, we have two kind pull up resistor: 20K and 4.7K.
++
++properties:
++  compatible:
++    const: sprd,sc9860-pinctrl
++
++  reg:
++    maxItems: 1
++
++additionalProperties:
++  $ref: '#/$defs/pin-node'
++  unevaluatedProperties: false
++
++  properties:
++    function:
++      description: Function to assign to the pins.
++      enum:
++        - func1
++        - func2
++        - func3
++        - func4
++
++    drive-strength:
++      description: Drive strength in mA.
++      $ref: /schemas/types.yaml#/definitions/uint32
++      enum: [2, 4, 6, 8, 10, 12, 14, 16, 20, 21, 24, 25, 27, 29, 31, 33]
++
++    input-schmitt-disable: true
++
++    input-schmitt-enable: true
++
++    bias-pull-up:
++      enum: [20000, 4700]
++
++    sprd,sleep-mode:
++      description: Pin sleep mode selection.
++      $ref: /schemas/types.yaml#/definitions/uint32
++      maximum: 0x1f
++
++    sprd,control:
++      description: Control values referring to databook for global control pins.
++      $ref: /schemas/types.yaml#/definitions/uint32
++
++  patternProperties:
++    'sleep$':
++      $ref: '#/$defs/pin-node'
++      unevaluatedProperties: false
++
++      properties:
++        bias-pull-up:
++          type: boolean
++
++        sleep-hardware-state:
++          description: Indicate these configs in sleep related state.
++          type: boolean
++
++$defs:
++  pin-node:
++    type: object
++    allOf:
++      - $ref: /schemas/pinctrl/pincfg-node.yaml#
++      - $ref: /schemas/pinctrl/pinmux-node.yaml#
++
++    properties:
++      pins:
++        description: Names of pins to configure.
++        $ref: /schemas/types.yaml#/definitions/string-array
++
++      bias-disable:
++        description: Disable pin bias.
++        type: boolean
++
++      bias-pull-down:
++        description: Pull down on pin.
++        type: boolean
++
++      bias-pull-up: true
++
++      input-enable:
++        description: Enable pin input.
++        type: boolean
++
++      input-disable:
++        description: Enable pin output.
++        type: boolean
++
++      output-high:
++        description: Set the pin as an output level high.
++        type: boolean
++
++      output-low:
++        description: Set the pin as an output level low.
++        type: boolean
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    pin_controller: pinctrl@402a0000 {
++        compatible = "sprd,sc9860-pinctrl";
++        reg = <0x402a0000 0x10000>;
++
++        grp1: sd0 {
++            pins = "SC9860_VIO_SD2_IRTE", "SC9860_VIO_SD0_IRTE";
++            sprd,control = <0x1>;
++        };
++
++        grp2: rfctl_33 {
++            pins = "SC9860_RFCTL33";
++            function = "func2";
++            sprd,sleep-mode = <3>;
++            grp2_sleep_mode: rfctl_33_sleep {
++                pins = "SC9860_RFCTL33";
++                sleep-hardware-state;
++                output-low;
++            };
++        };
++
++        grp3: rfctl_misc_20 {
++            pins = "SC9860_RFCTL20_MISC";
++            drive-strength = <10>;
++            bias-pull-up = <4700>;
++            grp3_sleep_mode: rfctl_misc_sleep {
++                pins = "SC9860_RFCTL20_MISC";
++                sleep-hardware-state;
++                bias-pull-up;
++            };
++        };
++    };
+-- 
+2.51.0
+
 
