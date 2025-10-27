@@ -1,756 +1,324 @@
-Return-Path: <linux-kernel+bounces-871470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D2CC0D5AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BBDC0D602
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D31CB34D01B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A980518914A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7A62F7AD6;
-	Mon, 27 Oct 2025 12:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA4D2FF649;
+	Mon, 27 Oct 2025 12:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LMIXn3xu"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A49eSCi8";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="AAcG5okQ"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCD1270ED2
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761566427; cv=none; b=KeZLgCBmc7l3jIcZwT8j9bytLJrFo4RDbVyUurdlRyZLDNL/uwi1QmKHub393+NfjntDlgymOn52eB0AewWyHDOyMA5T3kAStj2kP0LFAOUAGHbsKjep6EVyxDIT+RAzhtEq4PeGXcxZ7NeS0/XPDJpGGMmiPTwRk3G9is8X91E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761566427; c=relaxed/simple;
-	bh=onlCz0W745Ia9nOLGjikQmnKGE9kiz1IRudD+YFySGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B01kQNG7I6o4GpRDexz2Nw6lw809Ir7Bgg7saE50C6wc7V9zM+fncd49qx1y9BETV4kaaY78yFJJSr1UZxpxFl30jtV7NRyHBV4yzoEeYn8i/wlRbon2SacNXJKXlfSLcaxNivLhdNdlrGB1j8WjT8xDs+4E/raGcBbfDJ6Hnj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LMIXn3xu; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5db2dc4e42dso4730298137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:00:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951572F7AD6;
+	Mon, 27 Oct 2025 12:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761566573; cv=fail; b=dsdHkuRwXwB04OgoXoMtreJdDZHQWWHm//h+dJ9u4FLrDohRlVsRoT6UzbwF8yBlMCVanaLjqVY5H8WYvlBYRRBlLCc7L6ug3y4gf6x79CRZ/YJIsv+i13HOCJgU7AvzirR7fJiTynF5MytlOlMQkT9OonGH+A0UgLyOQKOp5ac=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761566573; c=relaxed/simple;
+	bh=UhWutsjTxxM6Nj+UXReKC/ybqUq+A8VKz+HbDQERPUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NaqfPQOBm1X9TAgDtRLo0ZbdsdwOL0Wx4dGlFMBtGZsSRYA423bn5fFVHDn9CsfIkfScIFD/Vql89LXeM3tgUSRetLr1100NuPron8cGpPq1Ve9rt2zg/ctkfXVCrMXQWlbBcpw/kbPiJp/Ni+q2yuPsLbZIysFqz4BCZPJSSUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A49eSCi8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=AAcG5okQ; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59R9CW8B005061;
+	Mon, 27 Oct 2025 12:00:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=y4pj9AHLwkFMEr9c
+	9kBvOVzrpFujuuv7Gqfc/uc1z9E=; b=A49eSCi8V7Hf7JJMRnHBuS00dKNDQ2oQ
+	NjA57uXRyUu9u86YLTidELr0YDJwYPO2xYFNAZ+i0zhzBC4hJzimc+LUUB5DaGEL
+	t7Qbwuozq2C8rhHUwpejlFt5AV0eQOdDB6nomkeIr45qPs+vFmMIaYHqAEkYdi5S
+	d6HS/+W3NX16T0Wf7rLRK6lx1slGBjpHJffmaTrniC31wQ+dSDQdKcdS7hy9+4R6
+	RDvUqk8Z94JNF5c15DyG9AALd0++EUrOkJBNafJeGOF+FTu9fMTxzoN/PUK6+DuH
+	ZLxPKG3sfCgEkX08cYd6JZxoG5fa/UXSkqgDgJ7sOzq1A9V3tk+ivg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a2357gpec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 12:00:41 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59RBrqWf013433;
+	Mon, 27 Oct 2025 12:00:40 GMT
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010063.outbound.protection.outlook.com [40.93.198.63])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n06q1gv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 12:00:39 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SNg1TCW9sB7hzn/2vut9GZIBo/CEsjSIaP0N7DjWYLcI6GF4FcB2s1amLlLJ30AWFqjB4iqL3bpqrpedHGOXyuuTPp3+G5Bzqfo1XVp5TzHrxC9pSa8gFH3Iec5Hs+N+MpoVgDvIY9+gsrVnaDbnLbDV3kXDlYvZCGNKGx0onulNyum5oMy7UGeDaBmnGj9TGLQUnTsCIgZd1VfvY1HMFgjA6O3xNQhXS7xpbGitYznUwbQ6cCxSPZz7oxTgKo3HxZ653W5qsjtQ9YDiGiiL3mm1k56CKW/cOMb62NgYK4PD7Em+UJgQfr+UYC0oICI66gN+9voUkUJADP1deGNcrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y4pj9AHLwkFMEr9c9kBvOVzrpFujuuv7Gqfc/uc1z9E=;
+ b=dmDNwkpQL8SjgD782LjZ54Kq5Dx/VMaIwZhVp8iu+BmI1rDNr+/DK3+UXvtmIAbHYw4pFj0NOIi/L+1rQBWpIkiLLZBkKFG0D2dToo9b/xU3pHviFKz7vYH2KfBUdBSGJ6TdbuLS8RDyc29C+5w+AAeLhtnozunvxYHXRihAh//TK35qkgQZJEpSWeRRwH2HBxb7qmdhyZm6fhDqkPNTa+eu7c8YxikaVj4+bPUYIz+EjrfAK4zKJgqnKM2NZBY6CTUT4B0MziQ/gwTLef6/C7HSG9mhe0r2bk0tRlBSzdS3qaLk5nNYY+22ozme3YtHeQlygIjRxB4+dKki7vt9Nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761566423; x=1762171223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/Ek69utHb+AfaGxzGs1kO33G5UhqmdOfj2jpDtXH+g=;
-        b=LMIXn3xupdUQD+qYvTpwZ4hwy1DdwCLVZzsEU841SMEKL+pZSHwwA9e0ytdbAJB5qM
-         hjce5qLOE/WAsemeTA+qSmdoHNkuFtrLfnhsbFVEjgBf5KLPFTB1o7pdN+VAOCUl/K86
-         bFgciPdQouFZHvngfnq8cL807C1Z3oXktb2Iik3+0P5x49+hSrvMO0/QWIqAKwMYVZaF
-         3X6cXawNPvYl/WVTaARIQ2LAEq/4yKQjeBkSLGwJhn89lmWrE1TWB0WT6TohDRXi1sgK
-         qy7+uZ79KlsoLz0vycd/Hm/CexownexpN5zTxTXf8Ry6xN/4euh7rfOMRgzCtJw0RW68
-         2LTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761566423; x=1762171223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J/Ek69utHb+AfaGxzGs1kO33G5UhqmdOfj2jpDtXH+g=;
-        b=AJD+jtENtq1pY31EtxQE1WVZPs5fM/YtZHMI5sXzI/x64b65tnFg95uSeAq1GZfZ2V
-         q5IW59LvkiJN7/mdRr/PksqXAu3TRvS5jBICA5WnEpKXsWij+rwS+26Vh6UXjUkkOMfH
-         kiuyD8C+EaD1RKyKoG5m67WTTbqAoH3r5xpWbVs4+yrEFuXH2aGHV6Mn1M/yYEfXXZsx
-         uhptWcrdl4WzOwiTsSHazO3oUsalZMmK5UC/0pY8KQDiwLU5FelDGcKuKIU2bsoFlDI9
-         z0htoAsvhifv8xsEHTyFebBFsgFEwPbXKyVPWHpqOr8pY0lyRDdDMlwMcYyRG8nSP/8p
-         qghA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm/2SPyiJn859CnE2kzqTzhiTqClKTz+nYnP4FUeng11l91ogtz+24Uk/0iQ3zX8tjA4pv0gjyFrt185M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlNigbdWY6TfC+BV1TyDAySb27B9cdlelqaDuoPcP7kkTwcGgl
-	L5pL8V3uE8+MwVbVQcWUyLhKpZ/WK0/gZaVyY1GIWq88DXPP52ID7oBdMxYHuLOZcEgom1BqJDa
-	636qp9/yALV/1wwY1kTVrelr5M1wqJKMPqo5pMjRXSg==
-X-Gm-Gg: ASbGncveiU3pYrhwkjxx87Jl9me+SBQbINs+HDEWAqaKUSM4pnVRViA1UurD3QJF4EP
-	4dZPxmeAs2a8z0LYH5AA+n7I8CuNUmaDcxZT17VfCASK9TaZr3k+Rg8ugafNnKi4sFChDU2dX6g
-	zpW0FPB/U96L7lhYxH4xtzYguENjeK7AZ4ZoE8weyj93K2oG547ZUdvBvCt89M2yunKaajXR4wp
-	AJPIHLZvOC/5WvUEL4c2tfwOQbqMjWftlvXlBSr4p6ACUU8hpHz2lIL8D6il+I18vT3P5NCS/Ip
-	IJeLiCxo
-X-Google-Smtp-Source: AGHT+IG6bqM/wPCWR652EUOCHAARXfJbRuDTf92USEunsCE7HjS0usBH+GOh3Rf0EFVRhZK0N/pQWTS2hjxhm64gC0g=
-X-Received: by 2002:a05:6102:1610:b0:51c:4443:16c7 with SMTP id
- ada2fe7eead31-5db3e124a07mr4343228137.6.1761566422416; Mon, 27 Oct 2025
- 05:00:22 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y4pj9AHLwkFMEr9c9kBvOVzrpFujuuv7Gqfc/uc1z9E=;
+ b=AAcG5okQGX1tLO9RBa5QS30aD4yIFmUqDoxDNf21ZWoJGye6CvaURp+Eb+o+5mTPX0hOOgvLjQx7T4RkAoO8HQjvmwTjNNdzSMqjRbvW+AuzxNVWnJOA9EtvsyWzP47meLjl5pkSOaiGEf1Oy95qzlYfbsdWewHOhFweXSoTNZ0=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by MW5PR10MB5737.namprd10.prod.outlook.com (2603:10b6:303:190::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 12:00:35 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 12:00:35 +0000
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: David Rientjes <rientjes@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Harry Yoo <harry.yoo@oracle.com>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Feng Tang <feng.79.tang@gmail.com>, Christoph Lameter <cl@gentwo.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>, linux-mm@kvack.org,
+        Pedro Falcato <pfalcato@suse.de>, linux-kernel@vger.kernel.org,
+        kasan-dev@googlegroups.com, stable@vger.kernel.org
+Subject: [PATCH V2] mm/slab: ensure all metadata in slab object are word-aligned
+Date: Mon, 27 Oct 2025 21:00:28 +0900
+Message-ID: <20251027120028.228375-1-harry.yoo@oracle.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SEWP216CA0133.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2c0::10) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908181717.1997461-1-cleger@rivosinc.com> <20250908181717.1997461-3-cleger@rivosinc.com>
-In-Reply-To: <20250908181717.1997461-3-cleger@rivosinc.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Mon, 27 Oct 2025 20:00:11 +0800
-X-Gm-Features: AWmQ_bmYSYOktWVqDnG7qQb31huRrG1ETDDxWo5XFgw973gCYPiQwHFRn1NbS4Y
-Message-ID: <CAPYmKFuVC3CwHbytPzQCHOYPoQp2LhucbLRRRRsqHk9upkrW8A@mail.gmail.com>
-Subject: Re: [External] [PATCH v7 2/5] riscv: add support for SBI Supervisor
- Software Events extension
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Himanshu Chauhan <hchauhan@ventanamicro.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Yunhui Cui <cuiyunhui@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|MW5PR10MB5737:EE_
+X-MS-Office365-Filtering-Correlation-Id: d8801c7e-7e44-41db-718e-08de15506fd1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?X0P2lt4dMmSucrlh41INcrwppknLkn4lfebrcKYGduTjnz+ivQkuwhBPSsXr?=
+ =?us-ascii?Q?gpaVp2CS+YjjhN1BH4lFqdSgPtPC584fN7KKipSLvQeAtA7dgv6dnWXXEnmX?=
+ =?us-ascii?Q?OfNzfqAEmAeNQxspvZZgwtMwqzgG3sBmKWzq7ml6u+USbMBij7I2zbiUd1t7?=
+ =?us-ascii?Q?UUEew0nWwY1BUo+uCeVq4oS6SzaLTspBi/vMFQCCc+7Zwel660NdGRqNzeF2?=
+ =?us-ascii?Q?F9iGl5VdDgzxK8K/uXSz1dsE9vAA3/+qTAeZOdbgBZdv53GjMKm9cd9107KZ?=
+ =?us-ascii?Q?2xVj+3mRBHGYi4vJjmRZiZcNqu76lrxaQdj4nw0ldKdknysrwvyY/4rMDJqJ?=
+ =?us-ascii?Q?zWYcN8xpk1ZP3Ei3sHFV09RNYdT5ZxovwVLIewlv9dX3ppJ1599fKkyMmq8E?=
+ =?us-ascii?Q?dpSdHTx7dbccVuH8XZtc0u9pD3nxaSJnHtPYHPoDH7cf2BRZm1cWZdclGPSw?=
+ =?us-ascii?Q?IusNoCFOokxknLVpuDytvdQk9IJFfOTghxagKzcYwzcxgO1l99Z+EdMZHyCj?=
+ =?us-ascii?Q?H7q7vRHOR9rN6yCdQvReCZsqJoUB/RCdqFH9vBn3U7EyioIUO+Ymfo2dWF0l?=
+ =?us-ascii?Q?43Z7XDcDVCR/SSaUXS+8oBV5LkjDgCj83Cb0FO0ZzoTa27ay0FPGGbFbiOds?=
+ =?us-ascii?Q?6OZ604XhBF3X6JISB4+5p92NdtOW66g+blfXC1WlpGt5xjzB4GAO6hiwi7gs?=
+ =?us-ascii?Q?uQ6aX1d7Fz9UovfqXQsGzLSD2FSc+4dEfrrCIjvXHsUCiZhr9cC4gD2AFe20?=
+ =?us-ascii?Q?b1bvxtg8J8axqAcN70kNcEIql3LnI7P07jW61nLMWYy3j4MqFA4yfoj7CbHu?=
+ =?us-ascii?Q?heGRrFPoYQyNYUYqliufXQP9tnIF2x6Gd6H3j+jUK+xONj34vd70G3Eao9D9?=
+ =?us-ascii?Q?Jle1d2b+TrleUByTQcsStvnPfdIB05B5euG9yxTWAMnndCYpiATm06D1bheP?=
+ =?us-ascii?Q?mDyulkFJxSt6LXxPkfuCjsCGkSePY/2Vo/sBuu+5f3xkcRlNIEjSLUYbsK6I?=
+ =?us-ascii?Q?c3mwVSFGXHTYADjSqknsciWQt5Njt86RaPGcMfTr8zVIyP5i6FhYq1iEINZq?=
+ =?us-ascii?Q?AdfsaqAKoKlF1aCRWTypcodPHW0VooQXPx+mf8xuqDbhCO6HWIQ5nbvOU4Yk?=
+ =?us-ascii?Q?BWVP8B2o94oxFnb70caiJOWiAYWlW1ShqJu5YV+vtX5I+kYsW3WEUEOA4aJq?=
+ =?us-ascii?Q?AiFfDtf0mSzBEcqGZ7/bM4J6NtV03yLUxKdOXQy1qHuaIkRb89K9ZTdSTP6J?=
+ =?us-ascii?Q?Pwq+FuwtjdY/Aw7WT5Ki2agyqeT3YBkEgC2ZAgkcpjQqUTi3nT3vbjLeQcNs?=
+ =?us-ascii?Q?1V7t9w8FoLZMZsFgbhOxxTXqMoqsKj7EfBhDNVmzQMZLxk/RMxzSp27ouyQZ?=
+ =?us-ascii?Q?q6gRXx99yj7hRfFNk3KvlYJSlElY3T7IbXt69iC6VlyIsDUsixJq/wckWvQ/?=
+ =?us-ascii?Q?rfGRuz8gRBIsqE53R7BaiIWtUU0tXzw2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uFD64CGq1Ohjy3awKpe/F0NV8gE3/F9EdM5/10gQUHZLPMw+qToTtO+QEO35?=
+ =?us-ascii?Q?J/SXTrq46ZrTE3kSLC/9mgpKHAZviY7MwfPhbwMs4amNlCRAa984jDpc3fXb?=
+ =?us-ascii?Q?r7hQGkJslnHYIlakB31M+YSyqH0+odEzKzH0P+88U03x239G0qbTS1SjtGjg?=
+ =?us-ascii?Q?AVt5PAuzC9BePL3Go4W5GImdHhd67tN3KxxLk2mZ7H4a4E1LUCmCSxikdAw+?=
+ =?us-ascii?Q?10f6wFdzzVasC24dZbwvYq0PjMtbUUXCe/f3bBuX1GZ6tUmWcwu+Douw41zK?=
+ =?us-ascii?Q?k8bwR8Iv2v80L4QR4PVfg/mtxRqx4FJUstq5RLOs41RweGYwGrXudpbaDj4t?=
+ =?us-ascii?Q?xgO5AvjKIeSk3q8UYowXo8x39rxOmNKl9Y7bl+d/9u8VwyRF7Tx7bCMIRwLl?=
+ =?us-ascii?Q?rsBvZYMJ0hQHkvc3POO8zCKohy4b/l29RLzYvQuJh+KdyG91BzdgMmundTWH?=
+ =?us-ascii?Q?jHXZ9o3LH7wJnBPYiwoY7/rbGWuBuRyVxVjduotI0q9cO7nlpg0W9nJq07Iq?=
+ =?us-ascii?Q?0Qqd2xkjO2cSGe+OzKkh9gCVi0jRT2zoUttJfMhPGkn6APSi2wmOcJTlcUkx?=
+ =?us-ascii?Q?psYVoJuZsgu1gxH5f6tRdLZQZ1nqOlW9m2z7eW15deZl91A3NCJ9Oc3fL+q/?=
+ =?us-ascii?Q?Gkl1OhfmxgY5MaqtlTVCWdxBCWy1QJlVJm7HTnsq/RgVnM163ZMryD+a/WPE?=
+ =?us-ascii?Q?SbbCHfp6d31JtRG6/YQq9D8ygSOSjYFrP0ICeBAVLmPyCfgUylz/ghGk3mf5?=
+ =?us-ascii?Q?MjGeM/VgBst9atOIlwMqwA5i0TmJWl8+0fo8iJaAgEvA0mvlzGqjtB2jz44+?=
+ =?us-ascii?Q?CgC6SHIRt6+Vf8iFy1G6C309r8h8Uvz1BhEGZv9HsoHm242I4jfhie6i9Y3A?=
+ =?us-ascii?Q?HZi9KCuc++IwQJ0JWi7S+6s0cOGDUnu5LtUOPGtAu1QvPD7pflIIlX6NcCBC?=
+ =?us-ascii?Q?3mnHGLHqHk7ygLQ5t0DZ78X87HA7MfOk7EE65UMQnGS5Ovg4LdO3q6zNzGM3?=
+ =?us-ascii?Q?JfM0nE7bXMGf+hpY4xmL2XlR6pX2Cqo9XTRQVUkU7QuT+E8swAbexVxmczRC?=
+ =?us-ascii?Q?29IIIa2NIfEt1trOvxKWIZjsZLNr18kiR9is5AefYwJj2Kmb57XEuAzA+OPF?=
+ =?us-ascii?Q?psjb1Cs+b6SnYQHgstv79Zq2oMPFkolf4v+6/zEe8Ri/XyRMEGj6sIqAuEvV?=
+ =?us-ascii?Q?5ejE9kPE2ONYH0VeJiUbP9DIYqiVT1uHNrEhlJ3owz5HQv1S5l7cICPxoQPl?=
+ =?us-ascii?Q?JYKvo08ARuJ2iNFh6IBXa8XH7w5RP1WKunmG/HU722gFzmlwZ5KP1RTcpWSK?=
+ =?us-ascii?Q?9buL25JpnS9aVIrCPGRp/R6pLUlHqrXRW6ojXIEhaGYBl15edcLG43zc0688?=
+ =?us-ascii?Q?N7Cl7bZ1ycIJDql2cos1Tsu4uQBUOsLq8HRax/aN+Kt9HE+7f+32pwMzJHUG?=
+ =?us-ascii?Q?bAc2fAe0YubAZJ+dlBTMKkrluGXvPyqtVAKgABR68TDnTQCRUgKVWAVID2Fh?=
+ =?us-ascii?Q?BbVLPXcfBAFHDD2oE+4wVcTlBXsCD5eBuFScQ3ZhcVjvryHhiQbdzJWLBHpA?=
+ =?us-ascii?Q?22kg4jFchHH/UXKA3iCUG752W84H7XB96JtUV4t9?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Qkn+SrykPh09H1q2XT6ghyvfT3HIDKDqs+Y8GkXJoolOCv9kn+hGYWzUVPOZZNR4qLOh/Cj0UtSL4Da/eccApfixiUkGUwnQHIkOVqKmX041kbFlvsyWuMLhE6jIt/z/bcsusNjiC3uZnGFnqBDnZ3EBhcmvLndmRhuMe3IQIRMgk1jBt5Zv4l9Vg6DroM3dIVaGsl25RhYS9rVGOiWsxckjgZup+nAnRws79kxn8j6xlEqWaspspaE1VuvEOjX2nPeMRzXsq+tQ5cJ5YxvUC0Knu9HtFd8D2d2DOul6lrbb/b323O5Wq9oC1fcCHOTzI6JdrDuagXb6nEOYEY/GeuELP2d7PpYpTUiKt1EuemfW6gjM5yrDN1HX8W8cbAyZQIYPO5FTEFzsYXR1OZwZLpFLDvIS0+NV/byVVW6iJ7D/Gw3LFBbtWH1EcPGgiFcI8v3IO9Xv1KxcXLOknATwKQ2h/ZIk2XFhNuzR/yAH0Q4QL6geCiOpqD+dbqAys/BRVECT/t9T2iJzHqeOQCYSUcwJhOEJ3Rx8b13S8VW5QlHQxkTHiXm1km8+9ROf5Nv5y5nuni6eLMuaD8dFbG3JoWmndvpoyDKuQYlmtwQptz4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8801c7e-7e44-41db-718e-08de15506fd1
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 12:00:35.3015
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lpfJLC3GRbrWJSi5go2UhD2N1xZNm6/2SAHITxfoVpAfl5g8TLSXEp2PuR8Gt0jCTVXeqvGhxF8B66uuEr3JIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5737
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510270111
+X-Authority-Analysis: v=2.4 cv=Bt2QAIX5 c=1 sm=1 tr=0 ts=68ff5ee9 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+ a=yPCof4ZbAAAA:8 a=60bAUpEqyJ0hnt3RZ0MA:9 cc=ntf awl=host:13624
+X-Proofpoint-GUID: YOXAiuxnodo4cZmxgGIDBMe7HzYiy_Os
+X-Proofpoint-ORIG-GUID: YOXAiuxnodo4cZmxgGIDBMe7HzYiy_Os
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1NCBTYWx0ZWRfX2gaPL8uCKjWD
+ +t//X9Cdr4KWUwQxozYWEKg663nZLaS48Y4XQB31XMo8cerJP04eJJs8UAZOEQEg1IOdCLXsvTG
+ xaZeVx2FKHSLj78p7jRGSyWPGUTY+zXZC4QKjV3bkUaCKvrnlHCinmQfyfMhiXcKIJE/P1rkzeb
+ jfyXldKR3bj8V/06PiBPFIGc7kGzsPd+nk5qZNX5ATZDWIfXM0ep+Kj07V3pEGS8HcMyQLJ9L56
+ 4WVqp6QsBEEKyfqe4cT5nhDfaD/zkCR2xCxNRjiBoTicT26nEFTW1ww6RFgIYMu4+XQAWh8BUjr
+ jIJWzy8ZzvJ89RXF8OgFRF8HuUVDIYf8Y7t/80EDzKrzlA0Vz2/VW+bqyPYkzQ51gEorBqWnsKA
+ LCIjIZHWs+oftyswW8YGY7l14gwjgA5VDuYetJtpq13eaeVlJUs=
 
-Hi Cl=C3=A9ment,
+When the SLAB_STORE_USER debug flag is used, any metadata placed after
+the original kmalloc request size (orig_size) is not properly aligned
+on 64-bit architectures because its type is unsigned int. When both KASAN
+and SLAB_STORE_USER are enabled, kasan_alloc_meta is misaligned.
 
-On Tue, Sep 9, 2025 at 2:19=E2=80=AFAM Cl=C3=A9ment L=C3=A9ger <cleger@rivo=
-sinc.com> wrote:
->
-> The SBI SSE extension allows the supervisor software to be notified by
-> the SBI of specific events that are not maskable. The context switch is
-> handled partially by the firmware which will save registers a6 and a7.
-> When entering kernel we can rely on these 2 registers to setup the stack
-> and save all the registers.
->
-> Since SSE events can be delivered at any time to the kernel (including
-> during exception handling, we need a way to locate the current_task for
-> context tracking. On RISC-V, it is sotred in scratch when in user space
-> or tp when in kernel space (in which case SSCRATCH is zero). But at a
-> at the beginning of exception handling, SSCRATCH is used to swap tp and
-> check the origin of the exception. If interrupted at that point, then,
-> there is no way to reliably know were is located the current
-> task_struct. Even checking the interruption location won't work as SSE
-> event can be nested on top of each other so the original interruption
-> site might be lost at some point. In order to retrieve it reliably,
-> store the current task in an additional __sse_entry_task per_cpu array.
-> This array is then used to retrieve the current task based on the
-> hart ID that is passed to the SSE event handler in a6.
->
-> That being said, the way the current task struct is stored should
-> probably be reworked to find a better reliable alternative.
->
-> Since each events (and each CPU for local events) have their own
-> context and can preempt each other, allocate a stack (and a shadow stack
-> if needed for each of them (and for each cpu for local events).
->
-> When completing the event, if we were coming from kernel with interrupts
-> disabled, simply return there. If coming from userspace or kernel with
-> interrupts enabled, simulate an interrupt exception by setting IE_SIE in
-> CSR_IP to allow delivery of signals to user task. For instance this can
-> happen, when a RAS event has been generated by a user application and a
-> SIGBUS has been sent to a task.
->
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
-> ---
->  arch/riscv/include/asm/asm.h         |  14 ++-
->  arch/riscv/include/asm/scs.h         |   7 ++
->  arch/riscv/include/asm/sse.h         |  47 +++++++
->  arch/riscv/include/asm/switch_to.h   |  14 +++
->  arch/riscv/include/asm/thread_info.h |   1 +
->  arch/riscv/kernel/Makefile           |   1 +
->  arch/riscv/kernel/asm-offsets.c      |  14 +++
->  arch/riscv/kernel/sbi_sse.c          | 174 ++++++++++++++++++++++++++
->  arch/riscv/kernel/sbi_sse_entry.S    | 178 +++++++++++++++++++++++++++
->  9 files changed, 447 insertions(+), 3 deletions(-)
->  create mode 100644 arch/riscv/include/asm/sse.h
->  create mode 100644 arch/riscv/kernel/sbi_sse.c
->  create mode 100644 arch/riscv/kernel/sbi_sse_entry.S
->
-> diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-> index 2a16e88e13de..416dddd37d67 100644
-> --- a/arch/riscv/include/asm/asm.h
-> +++ b/arch/riscv/include/asm/asm.h
-> @@ -90,16 +90,24 @@
->  #define PER_CPU_OFFSET_SHIFT 3
->  #endif
->
-> -.macro asm_per_cpu dst sym tmp
-> -       lw    \tmp, TASK_TI_CPU_NUM(tp)
-> -       slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
-> +.macro asm_per_cpu_with_cpu dst sym tmp cpu
-> +       slli  \tmp, \cpu, PER_CPU_OFFSET_SHIFT
->         la    \dst, __per_cpu_offset
->         add   \dst, \dst, \tmp
->         REG_L \tmp, 0(\dst)
->         la    \dst, \sym
->         add   \dst, \dst, \tmp
->  .endm
-> +
-> +.macro asm_per_cpu dst sym tmp
-> +       lw \tmp, TASK_TI_CPU_NUM(tp)
-> +       asm_per_cpu_with_cpu \dst \sym \tmp \tmp
-> +.endm
->  #else /* CONFIG_SMP */
-> +.macro asm_per_cpu_with_cpu dst sym tmp cpu
-> +       la    \dst, \sym
-> +.endm
-> +
->  .macro asm_per_cpu dst sym tmp
->         la    \dst, \sym
->  .endm
-> diff --git a/arch/riscv/include/asm/scs.h b/arch/riscv/include/asm/scs.h
-> index 0e45db78b24b..62344daad73d 100644
-> --- a/arch/riscv/include/asm/scs.h
-> +++ b/arch/riscv/include/asm/scs.h
-> @@ -18,6 +18,11 @@
->         load_per_cpu gp, irq_shadow_call_stack_ptr, \tmp
->  .endm
->
-> +/* Load the per-CPU IRQ shadow call stack to gp. */
-> +.macro scs_load_sse_stack reg_evt
-> +       REG_L gp, SSE_REG_EVT_SHADOW_STACK(\reg_evt)
-> +.endm
-> +
->  /* Load task_scs_sp(current) to gp. */
->  .macro scs_load_current
->         REG_L   gp, TASK_TI_SCS_SP(tp)
-> @@ -41,6 +46,8 @@
->  .endm
->  .macro scs_load_irq_stack tmp
->  .endm
-> +.macro scs_load_sse_stack reg_evt
-> +.endm
->  .macro scs_load_current
->  .endm
->  .macro scs_load_current_if_task_changed prev
-> diff --git a/arch/riscv/include/asm/sse.h b/arch/riscv/include/asm/sse.h
-> new file mode 100644
-> index 000000000000..d3ce8c2b5221
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/sse.h
-> @@ -0,0 +1,47 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2024 Rivos Inc.
-> + */
-> +#ifndef __ASM_SSE_H
-> +#define __ASM_SSE_H
-> +
-> +#include <asm/sbi.h>
-> +
-> +#ifdef CONFIG_RISCV_SBI_SSE
-> +
-> +struct sse_event_interrupted_state {
-> +       unsigned long a6;
-> +       unsigned long a7;
-> +};
-> +
-> +struct sse_event_arch_data {
-> +       void *stack;
-> +       void *shadow_stack;
-> +       unsigned long tmp;
-> +       struct sse_event_interrupted_state interrupted;
-> +       unsigned long interrupted_phys;
-> +       u32 evt_id;
-> +       unsigned int hart_id;
-> +       unsigned int cpu_id;
-> +};
-> +
-> +static inline bool sse_event_is_global(u32 evt)
-> +{
-> +       return !!(evt & SBI_SSE_EVENT_GLOBAL);
-> +}
-> +
-> +void arch_sse_event_update_cpu(struct sse_event_arch_data *arch_evt, int=
- cpu);
-> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32 evt_id=
-,
-> +                       int cpu);
-> +void arch_sse_free_event(struct sse_event_arch_data *arch_evt);
-> +int arch_sse_register_event(struct sse_event_arch_data *arch_evt);
-> +
-> +void sse_handle_event(struct sse_event_arch_data *arch_evt,
-> +                     struct pt_regs *regs);
-> +asmlinkage void handle_sse(void);
-> +asmlinkage void do_sse(struct sse_event_arch_data *arch_evt,
-> +                      struct pt_regs *reg);
-> +
-> +#endif
-> +
-> +#endif
-> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/=
-switch_to.h
-> index 0e71eb82f920..70e68e630216 100644
-> --- a/arch/riscv/include/asm/switch_to.h
-> +++ b/arch/riscv/include/asm/switch_to.h
-> @@ -88,6 +88,19 @@ static inline void __switch_to_envcfg(struct task_stru=
-ct *next)
->                         :: "r" (next->thread.envcfg) : "memory");
->  }
->
-> +#ifdef CONFIG_RISCV_SBI_SSE
-> +DECLARE_PER_CPU(struct task_struct *, __sbi_sse_entry_task);
-> +
-> +static inline void __switch_sbi_sse_entry_task(struct task_struct *next)
-> +{
-> +       __this_cpu_write(__sbi_sse_entry_task, next);
-> +}
-> +#else
-> +static inline void __switch_sbi_sse_entry_task(struct task_struct *next)
-> +{
-> +}
-> +#endif
-> +
->  extern struct task_struct *__switch_to(struct task_struct *,
->                                        struct task_struct *);
->
-> @@ -122,6 +135,7 @@ do {                                                 =
-       \
->         if (switch_to_should_flush_icache(__next))      \
->                 local_flush_icache_all();               \
->         __switch_to_envcfg(__next);                     \
-> +       __switch_sbi_sse_entry_task(__next);                    \
->         ((last) =3D __switch_to(__prev, __next));         \
->  } while (0)
->
-> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/as=
-m/thread_info.h
-> index f5916a70879a..28e9805e61fc 100644
-> --- a/arch/riscv/include/asm/thread_info.h
-> +++ b/arch/riscv/include/asm/thread_info.h
-> @@ -36,6 +36,7 @@
->  #define OVERFLOW_STACK_SIZE     SZ_4K
->
->  #define IRQ_STACK_SIZE         THREAD_SIZE
-> +#define SSE_STACK_SIZE         THREAD_SIZE
->
->  #ifndef __ASSEMBLY__
->
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index c7b542573407..16637e01a6b3 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -99,6 +99,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)  +=3D mcount-dyn.o
->  obj-$(CONFIG_PERF_EVENTS)      +=3D perf_callchain.o
->  obj-$(CONFIG_HAVE_PERF_REGS)   +=3D perf_regs.o
->  obj-$(CONFIG_RISCV_SBI)                +=3D sbi.o sbi_ecall.o
-> +obj-$(CONFIG_RISCV_SBI_SSE)    +=3D sbi_sse.o sbi_sse_entry.o
->  ifeq ($(CONFIG_RISCV_SBI), y)
->  obj-$(CONFIG_SMP)              +=3D sbi-ipi.o
->  obj-$(CONFIG_SMP) +=3D cpu_ops_sbi.o
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
-ets.c
-> index 6e8c0d6feae9..1b0d8624ef6e 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -14,6 +14,8 @@
->  #include <asm/ptrace.h>
->  #include <asm/cpu_ops_sbi.h>
->  #include <asm/stacktrace.h>
-> +#include <asm/sbi.h>
-> +#include <asm/sse.h>
->  #include <asm/suspend.h>
->
->  void asm_offsets(void);
-> @@ -528,4 +530,16 @@ void asm_offsets(void)
->         DEFINE(FREGS_A6,            offsetof(struct __arch_ftrace_regs, a=
-6));
->         DEFINE(FREGS_A7,            offsetof(struct __arch_ftrace_regs, a=
-7));
->  #endif
-> +
-> +#ifdef CONFIG_RISCV_SBI_SSE
-> +       OFFSET(SSE_REG_EVT_STACK, sse_event_arch_data, stack);
-> +       OFFSET(SSE_REG_EVT_SHADOW_STACK, sse_event_arch_data, shadow_stac=
-k);
-> +       OFFSET(SSE_REG_EVT_TMP, sse_event_arch_data, tmp);
-> +       OFFSET(SSE_REG_HART_ID, sse_event_arch_data, hart_id);
-> +       OFFSET(SSE_REG_CPU_ID, sse_event_arch_data, cpu_id);
-> +
-> +       DEFINE(SBI_EXT_SSE, SBI_EXT_SSE);
-> +       DEFINE(SBI_SSE_EVENT_COMPLETE, SBI_SSE_EVENT_COMPLETE);
-> +       DEFINE(ASM_NR_CPUS, NR_CPUS);
-> +#endif
->  }
-> diff --git a/arch/riscv/kernel/sbi_sse.c b/arch/riscv/kernel/sbi_sse.c
-> new file mode 100644
-> index 000000000000..626912a0927d
-> --- /dev/null
-> +++ b/arch/riscv/kernel/sbi_sse.c
-> @@ -0,0 +1,174 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2024 Rivos Inc.
-> + */
-> +#include <linux/nmi.h>
-> +#include <linux/scs.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/percpu-defs.h>
-> +
-> +#include <asm/asm-prototypes.h>
-> +#include <asm/switch_to.h>
-> +#include <asm/irq_stack.h>
-> +#include <asm/sbi.h>
-> +#include <asm/sse.h>
-> +
-> +DEFINE_PER_CPU(struct task_struct *, __sbi_sse_entry_task);
-> +
-> +void __weak sse_handle_event(struct sse_event_arch_data *arch_evt, struc=
-t pt_regs *regs)
-> +{
-> +}
-> +
-> +void do_sse(struct sse_event_arch_data *arch_evt, struct pt_regs *regs)
-> +{
-> +       nmi_enter();
-> +
-> +       /* Retrieve missing GPRs from SBI */
-> +       sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_READ, arch_evt->evt_id,
-> +                 SBI_SSE_ATTR_INTERRUPTED_A6,
-> +                 (SBI_SSE_ATTR_INTERRUPTED_A7 - SBI_SSE_ATTR_INTERRUPTED=
-_A6) + 1,
-> +                 arch_evt->interrupted_phys, 0, 0);
-> +
-> +       memcpy(&regs->a6, &arch_evt->interrupted, sizeof(arch_evt->interr=
-upted));
-> +
-> +       sse_handle_event(arch_evt, regs);
-> +
-> +       /*
-> +        * The SSE delivery path does not uses the "standard" exception p=
-ath
-> +        * (see sse_entry.S) and does not process any pending signal/soft=
-irqs
-> +        * due to being similar to a NMI.
-> +        * Some drivers (PMU, RAS) enqueue pending work that needs to be =
-handled
-> +        * as soon as possible by bottom halves. For that purpose, set th=
-e SIP
-> +        * software interrupt pending bit which will force a software int=
-errupt
-> +        * to be serviced once interrupts are reenabled in the interrupte=
-d
-> +        * context if they were masked or directly if unmasked.
-> +        */
-> +       csr_set(CSR_IP, IE_SIE);
+Note that 64-bit architectures without HAVE_EFFICIENT_UNALIGNED_ACCESS
+are assumed to require 64-bit accesses to be 64-bit aligned.
+See HAVE_64BIT_ALIGNED_ACCESS and commit adab66b71abf ("Revert:
+"ring-buffer: Remove HAVE_64BIT_ALIGNED_ACCESS"") for more details.
 
-IE_SIE may not always be enabled in CSR_IE(for example when we disable
-CONFIG_ACLINT_SSWI and use imsic for ipi). Maybe we should send ipi to
-the current cpu here.
+Because not all architectures support unaligned memory accesses,
+ensure that all metadata (track, orig_size, kasan_{alloc,free}_meta)
+in a slab object are word-aligned. struct track, kasan_{alloc,free}_meta
+are aligned by adding __aligned(__alignof__(unsigned long)).
 
-Best regards,
-Xu Lu
+For orig_size, use ALIGN(sizeof(unsigned int), sizeof(unsigned long)) to
+make clear that its size remains unsigned int but it must be aligned to
+a word boundary. On 64-bit architectures, this reserves 8 bytes for
+orig_size, which is acceptable since kmalloc's original request size
+tracking is intended for debugging rather than production use.
 
-> +
-> +       nmi_exit();
-> +}
-> +
-> +static void *alloc_to_stack_pointer(void *alloc)
-> +{
-> +       return alloc ? alloc + SSE_STACK_SIZE : NULL;
-> +}
-> +
-> +static void *stack_pointer_to_alloc(void *stack)
-> +{
-> +       return stack - SSE_STACK_SIZE;
-> +}
-> +
-> +#ifdef CONFIG_VMAP_STACK
-> +static void *sse_stack_alloc(unsigned int cpu)
-> +{
-> +       void *stack =3D arch_alloc_vmap_stack(SSE_STACK_SIZE, cpu_to_node=
-(cpu));
-> +
-> +       return alloc_to_stack_pointer(stack);
-> +}
-> +
-> +static void sse_stack_free(void *stack)
-> +{
-> +       vfree(stack_pointer_to_alloc(stack));
-> +}
-> +
-> +static void arch_sse_stack_cpu_sync(struct sse_event_arch_data *arch_evt=
-)
-> +{
-> +       void *p_stack =3D arch_evt->stack;
-> +       unsigned long stack =3D (unsigned long) stack_pointer_to_alloc(p_=
-stack);
-> +       unsigned long stack_end =3D stack + SSE_STACK_SIZE;
-> +
-> +       /*
-> +        * Flush the tlb to avoid taking any exception when accessing the
-> +        * vmapped stack inside the SSE handler
-> +        */
-> +       if (sse_event_is_global(arch_evt->evt_id))
-> +               flush_tlb_kernel_range(stack, stack_end);
-> +       else
-> +               local_flush_tlb_kernel_range(stack, (unsigned long) stack=
-_end);
-> +}
-> +#else /* CONFIG_VMAP_STACK */
-> +static void *sse_stack_alloc(unsigned int cpu)
-> +{
-> +       void *stack =3D kmalloc(SSE_STACK_SIZE, GFP_KERNEL);
-> +
-> +       return alloc_to_stack_pointer(stack);
-> +}
-> +
-> +static void sse_stack_free(void *stack)
-> +{
-> +       kfree(stack_pointer_to_alloc(stack));
-> +}
-> +
-> +static void arch_sse_stack_cpu_sync(struct sse_event_arch_data *arch_evt=
-) {}
-> +#endif /* CONFIG_VMAP_STACK */
-> +
-> +static int sse_init_scs(int cpu, struct sse_event_arch_data *arch_evt)
-> +{
-> +       void *stack;
-> +
-> +       if (!scs_is_enabled())
-> +               return 0;
-> +
-> +       stack =3D scs_alloc(cpu_to_node(cpu));
-> +       if (!stack)
-> +               return -ENOMEM;
-> +
-> +       arch_evt->shadow_stack =3D stack;
-> +
-> +       return 0;
-> +}
-> +
-> +void arch_sse_event_update_cpu(struct sse_event_arch_data *arch_evt, int=
- cpu)
-> +{
-> +       arch_evt->cpu_id =3D cpu;
-> +       arch_evt->hart_id =3D cpuid_to_hartid_map(cpu);
-> +}
-> +
-> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32 evt_id=
-,
-> +                       int cpu)
-> +{
-> +       void *stack;
-> +
-> +       arch_evt->evt_id =3D evt_id;
-> +       stack =3D sse_stack_alloc(cpu);
-> +       if (!stack)
-> +               return -ENOMEM;
-> +
-> +       arch_evt->stack =3D stack;
-> +
-> +       if (sse_init_scs(cpu, arch_evt)) {
-> +               sse_stack_free(arch_evt->stack);
-> +               return -ENOMEM;
-> +       }
-> +
-> +       if (sse_event_is_global(evt_id)) {
-> +               arch_evt->interrupted_phys =3D
-> +                                       virt_to_phys(&arch_evt->interrupt=
-ed);
-> +       } else {
-> +               arch_evt->interrupted_phys =3D
-> +                               per_cpu_ptr_to_phys(&arch_evt->interrupte=
-d);
-> +       }
-> +
-> +       arch_sse_event_update_cpu(arch_evt, cpu);
-> +
-> +       return 0;
-> +}
-> +
-> +void arch_sse_free_event(struct sse_event_arch_data *arch_evt)
-> +{
-> +       scs_free(arch_evt->shadow_stack);
-> +       sse_stack_free(arch_evt->stack);
-> +}
-> +
-> +int arch_sse_register_event(struct sse_event_arch_data *arch_evt)
-> +{
-> +       struct sbiret sret;
-> +
-> +       arch_sse_stack_cpu_sync(arch_evt);
-> +
-> +       sret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_REGISTER, arch_evt-=
->evt_id,
-> +                        (unsigned long)handle_sse, (unsigned long)arch_e=
-vt, 0,
-> +                        0, 0);
-> +
-> +       return sbi_err_map_linux_errno(sret.error);
-> +}
-> diff --git a/arch/riscv/kernel/sbi_sse_entry.S b/arch/riscv/kernel/sbi_ss=
-e_entry.S
-> new file mode 100644
-> index 000000000000..612510b98445
-> --- /dev/null
-> +++ b/arch/riscv/kernel/sbi_sse_entry.S
-> @@ -0,0 +1,178 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2024 Rivos Inc.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/linkage.h>
-> +
-> +#include <asm/asm.h>
-> +#include <asm/csr.h>
-> +#include <asm/scs.h>
-> +
-> +/* When entering handle_sse, the following registers are set:
-> + * a6: contains the hartid
-> + * a7: contains a sse_event_arch_data struct pointer
-> + */
-> +SYM_CODE_START(handle_sse)
-> +       /* Save stack temporarily */
-> +       REG_S sp, SSE_REG_EVT_TMP(a7)
-> +       /* Set entry stack */
-> +       REG_L sp, SSE_REG_EVT_STACK(a7)
-> +
-> +       addi sp, sp, -(PT_SIZE_ON_STACK)
-> +       REG_S ra, PT_RA(sp)
-> +       REG_S s0, PT_S0(sp)
-> +       REG_S s1, PT_S1(sp)
-> +       REG_S s2, PT_S2(sp)
-> +       REG_S s3, PT_S3(sp)
-> +       REG_S s4, PT_S4(sp)
-> +       REG_S s5, PT_S5(sp)
-> +       REG_S s6, PT_S6(sp)
-> +       REG_S s7, PT_S7(sp)
-> +       REG_S s8, PT_S8(sp)
-> +       REG_S s9, PT_S9(sp)
-> +       REG_S s10, PT_S10(sp)
-> +       REG_S s11, PT_S11(sp)
-> +       REG_S tp, PT_TP(sp)
-> +       REG_S t0, PT_T0(sp)
-> +       REG_S t1, PT_T1(sp)
-> +       REG_S t2, PT_T2(sp)
-> +       REG_S t3, PT_T3(sp)
-> +       REG_S t4, PT_T4(sp)
-> +       REG_S t5, PT_T5(sp)
-> +       REG_S t6, PT_T6(sp)
-> +       REG_S gp, PT_GP(sp)
-> +       REG_S a0, PT_A0(sp)
-> +       REG_S a1, PT_A1(sp)
-> +       REG_S a2, PT_A2(sp)
-> +       REG_S a3, PT_A3(sp)
-> +       REG_S a4, PT_A4(sp)
-> +       REG_S a5, PT_A5(sp)
-> +
-> +       /* Retrieve entry sp */
-> +       REG_L a4, SSE_REG_EVT_TMP(a7)
-> +       /* Save CSRs */
-> +       csrr a0, CSR_EPC
-> +       csrr a1, CSR_SSTATUS
-> +       csrr a2, CSR_STVAL
-> +       csrr a3, CSR_SCAUSE
-> +
-> +       REG_S a0, PT_EPC(sp)
-> +       REG_S a1, PT_STATUS(sp)
-> +       REG_S a2, PT_BADADDR(sp)
-> +       REG_S a3, PT_CAUSE(sp)
-> +       REG_S a4, PT_SP(sp)
-> +
-> +       /* Disable user memory access and floating/vector computing */
-> +       li t0, SR_SUM | SR_FS_VS
-> +       csrc CSR_STATUS, t0
-> +
-> +       load_global_pointer
-> +       scs_load_sse_stack a7
-> +
-> +#ifdef CONFIG_SMP
-> +       lw t4, SSE_REG_HART_ID(a7)
-> +       lw t3, SSE_REG_CPU_ID(a7)
-> +
-> +       bne t4, a6, .Lfind_hart_id_slowpath
-> +
-> +.Lcpu_id_found:
-> +#else
-> +       mv t3, zero
-> +#endif
-> +
-> +       asm_per_cpu_with_cpu t2 __sbi_sse_entry_task t1 t3
-> +       REG_L tp, 0(t2)
-> +
-> +       mv a1, sp /* pt_regs on stack */
-> +
-> +       /*
-> +        * Save sscratch for restoration since we might have interrupted =
-the
-> +        * kernel in early exception path and thus, we don't know the con=
-tent of
-> +        * sscratch.
-> +        */
-> +       csrrw s4, CSR_SSCRATCH, x0
-> +
-> +       mv a0, a7
-> +
-> +       call do_sse
-> +
-> +       csrw CSR_SSCRATCH, s4
-> +
-> +       REG_L a0, PT_STATUS(sp)
-> +       REG_L a1, PT_EPC(sp)
-> +       REG_L a2, PT_BADADDR(sp)
-> +       REG_L a3, PT_CAUSE(sp)
-> +       csrw CSR_SSTATUS, a0
-> +       csrw CSR_EPC, a1
-> +       csrw CSR_STVAL, a2
-> +       csrw CSR_SCAUSE, a3
-> +
-> +       REG_L ra, PT_RA(sp)
-> +       REG_L s0, PT_S0(sp)
-> +       REG_L s1, PT_S1(sp)
-> +       REG_L s2, PT_S2(sp)
-> +       REG_L s3, PT_S3(sp)
-> +       REG_L s4, PT_S4(sp)
-> +       REG_L s5, PT_S5(sp)
-> +       REG_L s6, PT_S6(sp)
-> +       REG_L s7, PT_S7(sp)
-> +       REG_L s8, PT_S8(sp)
-> +       REG_L s9, PT_S9(sp)
-> +       REG_L s10, PT_S10(sp)
-> +       REG_L s11, PT_S11(sp)
-> +       REG_L tp, PT_TP(sp)
-> +       REG_L t0, PT_T0(sp)
-> +       REG_L t1, PT_T1(sp)
-> +       REG_L t2, PT_T2(sp)
-> +       REG_L t3, PT_T3(sp)
-> +       REG_L t4, PT_T4(sp)
-> +       REG_L t5, PT_T5(sp)
-> +       REG_L t6, PT_T6(sp)
-> +       REG_L gp, PT_GP(sp)
-> +       REG_L a0, PT_A0(sp)
-> +       REG_L a1, PT_A1(sp)
-> +       REG_L a2, PT_A2(sp)
-> +       REG_L a3, PT_A3(sp)
-> +       REG_L a4, PT_A4(sp)
-> +       REG_L a5, PT_A5(sp)
-> +
-> +       REG_L sp, PT_SP(sp)
-> +
-> +       li a7, SBI_EXT_SSE
-> +       li a6, SBI_SSE_EVENT_COMPLETE
-> +       ecall
-> +
-> +#ifdef CONFIG_SMP
-> +.Lfind_hart_id_slowpath:
-> +
-> +       /* Restore current task struct from __sbi_sse_entry_task */
-> +       li t1, ASM_NR_CPUS
-> +       /* Slowpath to find the CPU id associated to the hart id */
-> +       la t0, __cpuid_to_hartid_map
-> +
-> +.Lhart_id_loop:
-> +       REG_L t2, 0(t0)
-> +       beq t2, a6, .Lcpu_id_found
-> +
-> +       /* Increment pointer and CPU number */
-> +       addi t3, t3, 1
-> +       addi t0, t0, RISCV_SZPTR
-> +       bltu t3, t1, .Lhart_id_loop
-> +
-> +       /*
-> +        * This should never happen since we expect the hart_id to match =
-one
-> +        * of our CPU, but better be safe than sorry
-> +        */
-> +       la tp, init_task
-> +       la a0, sse_hart_id_panic_string
-> +       la t0, panic
-> +       jalr t0
-> +#endif
-> +
-> +SYM_CODE_END(handle_sse)
-> +
-> +SYM_DATA_START_LOCAL(sse_hart_id_panic_string)
-> +    .ascii "Unable to match hart_id with cpu\0"
-> +SYM_DATA_END(sse_hart_id_panic_string)
-> --
-> 2.43.0
->
+Cc: stable@vger.kernel.org
+Fixes: 6edf2576a6cc ("mm/slub: enable debugging memory wasting of kmalloc")
+Acked-by: Andrey Konovalov <andreyknvl@gmail.com>
+Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
+---
+
+v1 -> v2:
+- Added Andrey's Acked-by.
+- Added references to HAVE_64BIT_ALIGNED_ACCESS and the commit that
+  resurrected it.
+- Used __alignof__() instead of sizeof(), as suggested by Pedro (off-list).
+  Note: either __alignof__ or sizeof() produces the exactly same mm/slub.o
+  files, so there's no functional difference.
+
+Thanks!
+
+ mm/kasan/kasan.h |  4 ++--
+ mm/slub.c        | 16 +++++++++++-----
+ 2 files changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index 129178be5e64..b86b6e9f456a 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -265,7 +265,7 @@ struct kasan_alloc_meta {
+ 	struct kasan_track alloc_track;
+ 	/* Free track is stored in kasan_free_meta. */
+ 	depot_stack_handle_t aux_stack[2];
+-};
++} __aligned(__alignof__(unsigned long));
+ 
+ struct qlist_node {
+ 	struct qlist_node *next;
+@@ -289,7 +289,7 @@ struct qlist_node {
+ struct kasan_free_meta {
+ 	struct qlist_node quarantine_link;
+ 	struct kasan_track free_track;
+-};
++} __aligned(__alignof__(unsigned long));
+ 
+ #endif /* CONFIG_KASAN_GENERIC */
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index a585d0ac45d4..462a39d57b3a 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -344,7 +344,7 @@ struct track {
+ 	int cpu;		/* Was running on cpu */
+ 	int pid;		/* Pid context */
+ 	unsigned long when;	/* When did the operation occur */
+-};
++} __aligned(__alignof__(unsigned long));
+ 
+ enum track_item { TRACK_ALLOC, TRACK_FREE };
+ 
+@@ -1196,7 +1196,7 @@ static void print_trailer(struct kmem_cache *s, struct slab *slab, u8 *p)
+ 		off += 2 * sizeof(struct track);
+ 
+ 	if (slub_debug_orig_size(s))
+-		off += sizeof(unsigned int);
++		off += ALIGN(sizeof(unsigned int), __alignof__(unsigned long));
+ 
+ 	off += kasan_metadata_size(s, false);
+ 
+@@ -1392,7 +1392,8 @@ static int check_pad_bytes(struct kmem_cache *s, struct slab *slab, u8 *p)
+ 		off += 2 * sizeof(struct track);
+ 
+ 		if (s->flags & SLAB_KMALLOC)
+-			off += sizeof(unsigned int);
++			off += ALIGN(sizeof(unsigned int),
++				     __alignof__(unsigned long));
+ 	}
+ 
+ 	off += kasan_metadata_size(s, false);
+@@ -7820,9 +7821,14 @@ static int calculate_sizes(struct kmem_cache_args *args, struct kmem_cache *s)
+ 		 */
+ 		size += 2 * sizeof(struct track);
+ 
+-		/* Save the original kmalloc request size */
++		/*
++		 * Save the original kmalloc request size.
++		 * Although the request size is an unsigned int,
++		 * make sure that is aligned to word boundary.
++		 */
+ 		if (flags & SLAB_KMALLOC)
+-			size += sizeof(unsigned int);
++			size += ALIGN(sizeof(unsigned int),
++				      __alignof__(unsigned long));
+ 	}
+ #endif
+ 
+-- 
+2.43.0
+
 
