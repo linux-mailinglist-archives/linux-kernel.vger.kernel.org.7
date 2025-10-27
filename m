@@ -1,169 +1,94 @@
-Return-Path: <linux-kernel+bounces-871512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DF0C0D7E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:24:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7C0C0D89A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43275189ED63
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6A93BDC8D
 	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFD23002B9;
-	Mon, 27 Oct 2025 12:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4672F12CD;
+	Mon, 27 Oct 2025 12:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hqwl73ze";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4JJ8vfEQ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hqwl73ze";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4JJ8vfEQ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CaM2lqts"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B713019AD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A772EFDB2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567747; cv=none; b=MxH6uxsDQ6ZuiufLBaFRD3iFFUezSEp4X2XNnuH1r2miYUyObYYtLJjnBTLJ2eC5xfTWz/bP1m5NG6NSn2lCFguvGE+rjQHcouZSAyFQ/p6yL/0tvi8PKOrXMDjWi2UZTU1iB8RnTqzOqcr8yrvfa0S68n8rEU8jdMY4duuBGGY=
+	t=1761567790; cv=none; b=RHF0Qlx5/ZEYwSuXIuwLyez2eUjHFezcEm8p7c39hffNwr5b4LU77lgdQfRH2R/tcauqnkVLHw//YaACn2LDvi6SVbtQKnRkGv6OMvknPJ4K55P0e5AXSEySQk8H9HIGSUEDH85faA0PtnQw4POlr4MVtckQsr4TJgAO2mcnz2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567747; c=relaxed/simple;
-	bh=wklBSxlYFPH4ehGNgfItw0mg1sN0At+V0vO153soUfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WX1PvhbGGaiJ0ohPkUazlPs9cO3zZJ9svUnvA156JpsgTfb+fFD1oizugg9rTbyoAMxXmTtaVljXZQNI9rwhZbEcGu0ftWdXwpq4kMdva0/gU7o5U7qRfVp94kmyTW9R9yCjihnVNBulk6624XLwx//j8MrWu5ZFJmRZtFBUKM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hqwl73ze; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4JJ8vfEQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hqwl73ze; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4JJ8vfEQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0CD951F45B;
-	Mon, 27 Oct 2025 12:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761567744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1761567790; c=relaxed/simple;
+	bh=kZd+uJXSOqkobA+ypEeT0daeXVSJcNxd3LoIqnwunV8=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=do6G+6jAzISrkrEmVJLEh7J+ArHO7O3R167xk7ev3E61+pvf/+TbgM1usbdq/pzYxuSclRwqaUNiFRX2TnehDmw5ISoKOUMZdrmMCXKTptYuKlFNC7wzK8u/YeQTbUSG0GfsFeIKEvjR6OdSbE9MsglDcOQyu8HksR+JfQLA9Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CaM2lqts; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761567785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=2yDrc8KAXYzzuXLapf9I3dz+qempeGT0obqSKelVbhM=;
-	b=hqwl73zeGObFtmoDQmXEyl9M8zjy3U/dWFiCT7yQlWyjpTQKiMoToaV5w6CUETyhCl1h4p
-	nqZOd9iRNMg4PAPoYaeory86Dk+WFd1It9rhWLNZNZ6mZw9EHzoPRbLvb/Wpt9o1nSzm3r
-	gJ+2/ucaTk1beKgVVSCzlQwXzvfRjLo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761567744;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2yDrc8KAXYzzuXLapf9I3dz+qempeGT0obqSKelVbhM=;
-	b=4JJ8vfEQlnz1tpH2/Z7ZNY+EzxFhRjnNrfzrRjoKYhlXLoweU4pxBuWq6+6CwtKZbtUBGu
-	U8+AWBPgSuQYl+Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hqwl73ze;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4JJ8vfEQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761567744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2yDrc8KAXYzzuXLapf9I3dz+qempeGT0obqSKelVbhM=;
-	b=hqwl73zeGObFtmoDQmXEyl9M8zjy3U/dWFiCT7yQlWyjpTQKiMoToaV5w6CUETyhCl1h4p
-	nqZOd9iRNMg4PAPoYaeory86Dk+WFd1It9rhWLNZNZ6mZw9EHzoPRbLvb/Wpt9o1nSzm3r
-	gJ+2/ucaTk1beKgVVSCzlQwXzvfRjLo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761567744;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2yDrc8KAXYzzuXLapf9I3dz+qempeGT0obqSKelVbhM=;
-	b=4JJ8vfEQlnz1tpH2/Z7ZNY+EzxFhRjnNrfzrRjoKYhlXLoweU4pxBuWq6+6CwtKZbtUBGu
-	U8+AWBPgSuQYl+Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C10DE13693;
-	Mon, 27 Oct 2025 12:22:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 60HQLP9j/2hwDgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Mon, 27 Oct 2025 12:22:23 +0000
-Date: Mon, 27 Oct 2025 13:22:19 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: Marek Vasut <marex@denx.de>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] regulator: Let raspberrypi drivers depend on ARM
-Message-ID: <20251027132219.2f3274f0@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	bh=+YoMZdrakavnIv1PNZCagRBexFYBPMnzcN+XmTYqHPU=;
+	b=CaM2lqtsU3efUNlCFYjJF+ydxw/V5kkAYzz3dnKgKtThJY+ZbwYWQrVLofxP2EuwusfSE5
+	k9EHG4UVhaLy0FYXt4D1dTA7I1wNZfeiMR1hkxj2UYFjHFIAa727tJsTJ9KBn3hEaygcBa
+	A0TDVQkdSKm0Y025Lm4x8xo/jY62qe8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0CD951F45B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: x86/smpboot: Question regarding native_play_dead() __noreturn warning
+Message-Id: <47A8B84B-2685-4DA2-B39B-E55812374426@linux.dev>
+Date: Mon, 27 Oct 2025 13:23:02 +0100
+Cc: linux-kernel@vger.kernel.org,
+ x86@kernel.org
+To: Waiman Long <longman@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+X-Migadu-Flow: FLOW_OUT
 
-The Raspberry Pi drivers aren't useful on other architectures, so
-only offer them on ARM and ARM64, except for build testing purposes.
+Hi,
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
----
-Marek, Dave, would you be OK with that change?
+I just came across this comment in arch/x86/kernel/smpboot.c:
 
- drivers/regulator/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+/*
+* native_play_dead() is essentially a __noreturn function, but it can't
+* be marked as such as the compiler may complain about it.
+*/
+void native_play_dead(void) {
+	...
+}
 
---- linux-6.17.orig/drivers/regulator/Kconfig
-+++ linux-6.17/drivers/regulator/Kconfig
-@@ -1144,6 +1144,7 @@ config REGULATOR_RAA215300
- 
- config REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY
- 	tristate "Raspberry Pi 7-inch touchscreen panel ATTINY regulator"
-+	depends on ARM || ARM64 || COMPILE_TEST
- 	depends on BACKLIGHT_CLASS_DEVICE
- 	depends on I2C
- 	depends on OF_GPIO
-@@ -1155,6 +1156,7 @@ config REGULATOR_RASPBERRYPI_TOUCHSCREEN
- 
- config REGULATOR_RASPBERRYPI_TOUCHSCREEN_V2
- 	tristate "Raspberry Pi 7-inch touchscreen panel V2 regulator"
-+	depends on ARM || ARM64 || COMPILE_TEST
- 	depends on GPIOLIB
- 	depends on I2C && OF
- 	select GPIO_REGMAP
+and when I mark native_play_dead() as __noreturn, neither gcc nor clang
+complain about it.
 
+The commit message 2743fe89d4d4 ("x86/idle: Disable IBRS when CPU is
+offline to improve single-threaded performance") says:
 
--- 
-Jean Delvare
-SUSE L3 Support
+"Add a comment to say that native_play_dead() is a __noreturn function,
+but it can't be marked as such to avoid confusion about the missing
+MSR restoration code."
+
+Unfortunately, that doesn't really help me either. Can someone explain
+what the issue was and if the comment is still valid? Otherwise, I'd
+like to submit a patch adding __noreturn and removing the comment.
+
+Thanks,
+Thorsten
+
 
