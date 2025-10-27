@@ -1,215 +1,138 @@
-Return-Path: <linux-kernel+bounces-870857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FDAC0BD9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:48:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324E2C0BDB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D10594E5EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 922C73B52AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7749E258EF3;
-	Mon, 27 Oct 2025 05:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806DF2D63F6;
+	Mon, 27 Oct 2025 05:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sTN+bFHC"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="tOeFrQfk"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A808200BAE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E3200BAE;
+	Mon, 27 Oct 2025 05:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761543986; cv=none; b=pcIP1XoONSc4cC1Rz0/boOUGsd0/QubHuqWrPYTBM++604jclyejrTTz16eHQ2B4C352MF+1OnzNZprHwu1baE8H5YAeOWJ8BZ1LDyl1s7qg1u47VEoQGcBYoKSp1jAr9eraFgKXEqwj2rtbmemjGhPAnRnZ9bPhCdXcttvzPjE=
+	t=1761544105; cv=none; b=YkeNPaMgDSNHaLXuSKtwVRIqZy82sdqZO1N9qjg/UA45sroAwVV+fJNpzKKnrqL0/jBWXM8hf/4OKT1b9k/sOCt8LCHFBP4WD/CHw8vnjI4Rvu8T2rI0fWZarYGmnhkXSj2BQ0+W+1cXNLZdzO4gTyDWpxVQg/uluKmJRebW82Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761543986; c=relaxed/simple;
-	bh=KSDTo+SpsgR0aqUCafmnWpWWNzdUuqpwO6xad3JovZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvD/tcVcWtqm/n91zqP5uuW2/IvVQz0TZCkIK5Dwk1KT7n4cWZ0Lo9u6M3VRhA/E40dj5NcZGUG2ToX4G1YNY5MJEk9bOIL7QH4dmNOZQD0yirbR8GDXClPO5cLSQupBemnL6TCTQpMd8UMb5pfNN4poZDRes7jXCTkp8CdEPsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sTN+bFHC; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59QLHF8q022264;
-	Mon, 27 Oct 2025 05:45:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=d0p1aV
-	ypKBYFgcnq6YIhYp1sH0UHGKhoATT8LoIZJwo=; b=sTN+bFHCNnTklOW8z3A25y
-	7+qF7UoRWgLNvi5m8ccJWZfSUGpj7WQXDbXT63J7l2eB1aCJfsrl8YeDpmWz57Us
-	eb8jhgreCKOioEmrzHYMR8p/94nvs+V7lWJWPA34EfOBMXLCyAz1DkuSzkrc1h8g
-	trl+508VvcoEld3SkVxApRoMXdx5SWa6nbx+lWEozIe4osb3HFY3PYUBa2XQdD4A
-	40dq4dvIYHHfvLQUU4md2j+mG3In3RuEC0OPcU4qel7O/oO2SSiPWk00BeiorA8m
-	nM0wB6CbJwjZi3cZL6yPzRtl24aqXfQOUvB5ln2rvmbIlrNAhxxNZpbP33ooEphQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81n72d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 05:45:48 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59R5e6IT007685;
-	Mon, 27 Oct 2025 05:45:47 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81n72b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 05:45:47 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59R2A2CQ023418;
-	Mon, 27 Oct 2025 05:45:46 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a198xc46v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 05:45:46 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59R5jiRB40763716
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 05:45:44 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 368052004E;
-	Mon, 27 Oct 2025 05:45:44 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D2A6B20040;
-	Mon, 27 Oct 2025 05:45:41 +0000 (GMT)
-Received: from [9.109.215.252] (unknown [9.109.215.252])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 27 Oct 2025 05:45:41 +0000 (GMT)
-Message-ID: <6f7b0688-6c92-4901-ab18-d348e667703e@linux.ibm.com>
-Date: Mon, 27 Oct 2025 11:15:41 +0530
+	s=arc-20240116; t=1761544105; c=relaxed/simple;
+	bh=96aC389yABIKi820ambhl0cjJ7tBBL4EZCK0/odqlGk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dVXHHXCNGsiJjRZipVT+ZwEs3b9SU634lZmyaqngU5EbWISC3nsY/0uGbUw4/CdYO1IfBHtCKh1dFHCotbYPUUd2qgUVsW1ounVi2dClmEkpRb2PToiL49ahyIczXkTuZRaXsUVdp8PIdSCzYilRuJ2a0oaWExKxhe16xXfb6x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=tOeFrQfk; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1761544096;
+	bh=WfFn7N0mc1wHwAiznNZBnReSRfRT2Yj3MVPqoP4mDEU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=tOeFrQfkDzo+mH1IhEPC8RHikgfnxJZSt1YUlDmm20f/rwcwj6Y1lR0DyyxVJ3s0X
+	 am4T2T8vs1kZgAAyw7y8aXHWVt4vJD/52gJt/kcnnaTSj+rP8/zrUvq1h5DHEzPy02
+	 rFlgCQUxlBsXFHGgwkwnWMixIJykkrIJsfknWfU4=
+X-QQ-mid: esmtpsz19t1761544091tcb13cbc9
+X-QQ-Originating-IP: E90Q48vY5pZc+ZER2E/GzZ66qCzJUQPL0AnAd+/lUTM=
+Received: from = ( [183.48.247.177])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 27 Oct 2025 13:48:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13782442783455841640
+EX-QQ-RecipientCnt: 14
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH v2 0/4] fix the SpacemiT P1 Kconfig and resend the K1 I2C
+ ILCR patch.
+Date: Mon, 27 Oct 2025 13:48:04 +0800
+Message-Id: <20251027-p1-kconfig-fix-v2-0-49688f30bae8@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V2 10/20] sched/mmcid: Convert mm CID mask to a bitmap
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Gabriele Monaco <gmonaco@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-        Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
-        Yury Norov <yury.norov@gmail.com>
-References: <20251022104005.907410538@linutronix.de>
- <20251022110556.029862568@linutronix.de>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <20251022110556.029862568@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=fIQ0HJae c=1 sm=1 tr=0 ts=68ff070c cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=TL4G1yhqxUJCxPvYYi8A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: m-pbacdc9QTzPys0p8l30qa-K_5Qo01j
-X-Proofpoint-GUID: YydS-xM-Oh8-FNbgIYfQlfuB6ueBIoAa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAyNCBTYWx0ZWRfX8CwU/rkFIupb
- 8b/mTZrN4qHlQVUV6U/2UlmBTqqfFGpNl77PPLiWhXMg7glteQ+SJxMO1YB0oiT26QSzpsY65lD
- klXXlBJWCJky4bHsZ4ea8015v4tMqrvPNxJBT81cwbgWc9Q7cUZKknxOmJoKd9W9NjX4HGLpU31
- 8Q5feJ8tMoK8X3/Hg9O0HtjP540rLCP+P9Z5lVsLOrxI3FudmbCySF5wKjw4rL2F3Y5lGDMRKX2
- k/oexUIUaL/AJffGTxxg1G/NblDri9q6BnSlBseWehVTcDRn8iFdODUYzEc+v3jki2chcNizvPA
- WSoljYkkQZNL16VJkF8OWXiPbNym8YJpJDKIIOkGDJdlyGguoEtKOolbPgpYY4NwkyvLTrgeysz
- RVxne42FqpBghPbqoSqw/gq/667Kvw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250024
+X-B4-Tracking: v=1; b=H4sIAJQH/2gC/13MQQ6CMBCF4auQWTukU8WgK+9hWEA7wERpSYsEQ
+ 7i7lcSNy/8l71shchCOcM1WCDxLFO9S6EMGpq9dxyg2NWilC1KacCR8GO9a6bCVBc9WN8XFqmN
+ TtpBOY+A07+C9St1LnHx47/5M3/VH6X9qJiQ0dNK2IKZGlbenuNeSx7E2PMiUGz9AtW3bB4We5
+ YO1AAAA
+X-Change-ID: 20251021-p1-kconfig-fix-6d2b59d03b8f
+To: Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Andi Shyti <andi.shyti@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-i2c@vger.kernel.org, 
+ linux-rtc@vger.kernel.org, Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761544088; l=1382;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=96aC389yABIKi820ambhl0cjJ7tBBL4EZCK0/odqlGk=;
+ b=97JBHNALbGENyElZmpwiUy7eXNO28dNsBJA/+Ag4XaDhraAr701WQkmJKN7Vllq7Csxl/CdT9
+ NjjCaUwfPUtDen7qvUf1el9pqUmYK0i3xVkY9dndhMapSAoKv97Y1Zq
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NH+njjzUOij/ZIe26MRjOqDHhwRGRs5beEL7fs8Mpqwe88D5etDoDb4Q
+	GGTeyzIZPV02d7wrEGRPDafKYL95xhER6EE1lu5XMdR/ympZPol9vBBu+nS56a+fbRssU/r
+	oRR3hYuhH1nQBBpg+1CEMXzriAgVL3Cm0N6qhQbBPe8KFdseyqJCK8E2LZJLic5CtZhGZid
+	r1H/bXcCQLOTYrEN+vp3aMkftLGhrvMJHKms6t3jF+vhXxdYEkdaKrTJPyc7223bU/JJv0R
+	XMVUk5bcCtVVOpmt1gSJAvcaDbgc/haR6jk22yoJzPOoFXVYCLOm8Gc2/Nula0ev1xqkdb1
+	aMIEqdII+nOju1sNLxY87OgdDlHGMB2WjU/3h2nY/SvWyIn8jc8VL+WEWnoNsP8to7yezOb
+	TdkQzcWo01flJybgIiHTsKSVEuCaT8KmfdvjqnJdg4Mu5PabyPozXqZj165k+BZDHGNdPkN
+	9OUV3SzRz079f/vXrD5NKdjL35ku1xqBg2Pa1yqgHDppvZE0aEaJU2kCxIH9ehipoMUshjX
+	wf5R4lEM6gOHAOGv0dwAeR2VvRvBgt8Hn1SHnRwht8cBLoQ2VBgnkNYlqN5jfZFhu3tNN45
+	XuzT/4a8VarpvWGvrZCAgBIXB84GaXhDIntKe12tvQDdYp3dXKEweTZz2ZyLyesyrSSsPdV
+	1oSvmbKfNABXuG99YhD19MIbsb0uOyB7OpSTlcNOF8tM99N55pGoNKdzVS3N+DGWUMfByue
+	48fHfdXgK5bWV89FnLLPW4lLWskZ+vF2VEJjkV3k/BGuNHmIulw4G6XsfMVtZJnI+QypLGe
+	RvhPioX9itTrYG1T7ZnzlbLV7vlPqV08tpCL1xtl1iSL/x8wBlqeHbYAGy+gnIJRv8YphgX
+	R+MOX3ijvKDORaOFNuzcOxrnTjH7bRLaSBE47Yv71Dt+/4nZMsUXbNI5D7PHd8Kz0LrARrE
+	I4C34QMLUh40R+Xz3lX6qhSj037UdoP4mzMQ3VEQe3fzSViLNBrrQ4/4zcdY2mXtSDGU+MG
+	718jxQf62AKvOgnEt2zP0cRpu0h2yrM6apUJkTnNXQR2nim7uFhzM8kNKVW2WL8qrnm7MgR
+	uLJ9B3bkc21mc9vOI4QsJfDzAAx3X8qz8pCR22rMr/YtETBpjmzAJbEtZizZeF/6NKkMZ75
+	u4/jP4JiUhSphZT3qwI439r56g==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
+Since P1 Kconfig directly selects K1_I2C, after the I2C ILCR patch was
+merged, the driver would fail [1] when COMMON_CLK was not selected.
 
+This series fixes the P1 Kconfig and resends the I2C ILCR patch(This
+patch has reverted by maintainer [2]). In addition, the Kconfig for
+P1's two subdevices, regulator and RTC, has been updated to use
+'depends on MFD_SPACEMIT_P1' instead of 'select'.
 
-On 10/22/25 6:25 PM, Thomas Gleixner wrote:
-> This is truly a bitmap and just conveniently uses a cpumask because the
-> maximum size of the bitmap is nr_cpu_ids.
-> 
-> But that prevents to do searches for a zero bit in a limited range, which
-> is helpful to provide an efficient mechanism to consolidate the CID space
-> when the number of users decreases.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->   include/linux/mm_types.h |    6 +++---
->   kernel/sched/core.c      |    2 +-
->   kernel/sched/sched.h     |    6 +++---
->   3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1342,13 +1342,13 @@ static inline cpumask_t *mm_cpus_allowed
->   }
->   
->   /* Accessor for struct mm_struct's cidmask. */
-> -static inline cpumask_t *mm_cidmask(struct mm_struct *mm)
-> +static inline unsigned long *mm_cidmask(struct mm_struct *mm)
->   {
->   	unsigned long cid_bitmap = (unsigned long)mm_cpus_allowed(mm);
->   
->   	/* Skip mm_cpus_allowed */
->   	cid_bitmap += cpumask_size();
-> -	return (struct cpumask *)cid_bitmap;
-> +	return (unsigned long *)cid_bitmap;
->   }
->   
->   static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
-> @@ -1363,7 +1363,7 @@ static inline void mm_init_cid(struct mm
->   	mm->mm_cid.nr_cpus_allowed = p->nr_cpus_allowed;
->   	raw_spin_lock_init(&mm->mm_cid.lock);
->   	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
-> -	cpumask_clear(mm_cidmask(mm));
-> +	bitmap_zero(mm_cidmask(mm), cpumask_size());
+Link: https://lore.kernel.org/oe-kbuild-all/202510202150.2qXd8e7Y-lkp@intel.com/ [1]
+Link: https://lore.kernel.org/all/sdhkjmi5l2m4ua4zqkwkecbihul5bc2dbmitudwfd57y66mdht@6ipjfyz7dtmx/ [2]
 
-Could use num_possible_cpus() here? CID are bound to be less than it no?
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+Troy Mitchell (4):
+      mfd: simple-mfd-i2c: remove select I2C_K1
+      i2c: spacemit: configure ILCR for accurate SCL frequency
+      rtc: spacemit: MFD_SPACEMIT_P1 as dependencies
+      regulator: spacemit: MFD_SPACEMIT_P1 as dependencies
 
->   }
->   
->   static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -10399,7 +10399,7 @@ void sched_mm_cid_exit_signals(struct ta
->   	guard(preempt)();
->   	t->mm_cid.active = 0;
->   	if (t->mm_cid.cid != MM_CID_UNSET) {
-> -		cpumask_clear_cpu(t->mm_cid.cid, mm_cidmask(mm));
-> +		clear_bit(t->mm_cid.cid, mm_cidmask(mm));
->   		t->mm_cid.cid = MM_CID_UNSET;
->   	}
->   }
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3558,7 +3558,7 @@ static inline bool __mm_cid_get(struct t
->   
->   	if (cid >= max_cids)
->   		return false;
-> -	if (cpumask_test_and_set_cpu(cid, mm_cidmask(mm)))
-> +	if (test_and_set_bit(cid, mm_cidmask(mm)))
->   		return false;
->   	t->mm_cid.cid = t->mm_cid.last_cid = cid;
->   	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
-> @@ -3581,7 +3581,7 @@ static inline bool mm_cid_get(struct tas
->   		return true;
->   
->   	/* Try the first zero bit in the cidmask. */
-> -	return __mm_cid_get(t, cpumask_first_zero(mm_cidmask(mm)), max_cids);
-> +	return __mm_cid_get(t, find_first_zero_bit(mm_cidmask(mm), num_possible_cpus()), max_cids);
->   }
->   
->   static inline void mm_cid_select(struct task_struct *t)
-> @@ -3602,7 +3602,7 @@ static inline void switch_mm_cid(struct
->   {
->   	if (prev->mm_cid.active) {
->   		if (prev->mm_cid.cid != MM_CID_UNSET)
-> -			cpumask_clear_cpu(prev->mm_cid.cid, mm_cidmask(prev->mm));
-> +			clear_bit(prev->mm_cid.cid, mm_cidmask(prev->mm));
->   		prev->mm_cid.cid = MM_CID_UNSET;
->   	}
->   
-> 
+ drivers/i2c/busses/Kconfig  |   2 +-
+ drivers/i2c/busses/i2c-k1.c | 159 ++++++++++++++++++++++++++++++++++++++++----
+ drivers/mfd/Kconfig         |   1 -
+ drivers/regulator/Kconfig   |   3 +-
+ drivers/rtc/Kconfig         |   2 +-
+ 5 files changed, 148 insertions(+), 19 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251021-p1-kconfig-fix-6d2b59d03b8f
+
+Best regards,
+-- 
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
