@@ -1,216 +1,255 @@
-Return-Path: <linux-kernel+bounces-872357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24924C1033E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:51:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394E1C1029C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9D145352CA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B860480763
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEB33321DA;
-	Mon, 27 Oct 2025 18:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5A431D374;
+	Mon, 27 Oct 2025 18:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t1CIT+n9"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010000.outbound.protection.outlook.com [52.101.46.0])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adrHCve0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A92331A69;
-	Mon, 27 Oct 2025 18:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761590808; cv=fail; b=eF4MEhCgpTR5YND3Tk/ja8+T2e/bmcBR9FVSlZ3JWO5InQ6Y51mYZccx6vspDaIQ4XxGFIpP0W35cDPAsXllam907BZkC1b6zDgYQ9AjZqREiz8kcEgvVWR8aIm+atEGbiKYEA59GWDrhDqeI2420Mbzv/FzAZTwuOU68FhuN+s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761590808; c=relaxed/simple;
-	bh=aTPq802CAA9w21XhZ8VpEoqQCdJWSt0IAuD8chP/xnY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XB5mL1uhPqSLFH042jB4XBtRxoQlv7irsreBYny5Zr6IKW6y8bFp24avHiDv6rtlGrdaHhxl2ZEkLRtuGwcVMsbWo01os8824ALZCJgx+gnVAE/UuYGWMELQACcOKggKeDhuz9VQyC7adA2APNQFJxyITt1jGvIxNiISY/AS2YI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t1CIT+n9; arc=fail smtp.client-ip=52.101.46.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r+oKoeni5e941iH25QOUSsRLux/FaBRz30mxoFAlwciSLLXAUcxbS8uRVB6x7P0/OoVuXrR2o5xX9JnafUvJs70ie4IpjDvULwv/yOViq3c2xBxeiSMMzZKMznkUcX3GFQy/yQFwuPQiFGa94S8YyPxoF3gT8iUigmyjwdbv/14x+tPGZ4ViEhCkTAWSlVgWG35RuxXCuwm8YjzYSxt6QSDoUpfzlLRze9D/ER7PR8bSYPd3teL8kpwLPdUquRPWLkSfZ6iJWGcigL06ez5MwRuNNksepAc9rtoAv1UFGcP4iY/uEUyGNqKYfhXpPFpxvkj+ePCXyHqnX3Fi8okx9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e3HI1NzA/Of9P67y+pjugCCbvMjdRgUMAq7c/0s9KNI=;
- b=OIdrn3Rn/lZv/D4bVjVPcD4f6q0mnAauSmQTveHDuFP6mrsrFJbDp+GX/vckk+juKhC0OuX2MwPavlqozeVzMrkls9zBAfpE4QuehfreACOK6PSWYES3A44ar6vZyI0yWSJ9Utbsj5qI4UJycPpwB6Qc+IfhB0bdopl7/WTo0lLV2aMQmiJGknf4ckH800UMXdn3fieXAeB+pT6Jyt/O4jlYnU2inTSOmt/u1oYEURUFyxH896UkszNcotq/g36hci6YJGt9wNWpborrqo18grnIAEko5toFjrk3Q4ZzFfQZgNfmTdG/qbGoI4oiTeBhBexs9xouJeEBWkxji4D4Aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e3HI1NzA/Of9P67y+pjugCCbvMjdRgUMAq7c/0s9KNI=;
- b=t1CIT+n9AYcAk8dVioRFtHW1u0SbEtp6phmi9pFKJQmgFNi3iNjq7usXjcrvMEMhaiFP3lVi8VOl2xg5Rng+LZfyUrjcmjJPiowF6LBARbYJqNWLhzIWBeslRnNPj/f4ws6GquJOPTBjrNDOyxIthKo3mqfhaeoUYJnM7wTYGrib5w0K1hSPNxsMqw2pNNECxcJmnXZ4+vVjiILGwbWCnjv87DFk9VuyJTFrTswS1IJvm5lU7FgQLAHtb1sd36vF4bLoZ1XqAAwUUdeXRFHGp95AWaoP43AkYUmF3tEXOfwj93f5YwpeuzCD2gPdxuNG+5HoRELeGWq6xHCq0ORtcA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by CH0PR12MB8488.namprd12.prod.outlook.com (2603:10b6:610:18d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Mon, 27 Oct
- 2025 18:46:42 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 18:46:40 +0000
-Message-ID: <de796658-ed1d-41f1-b153-f3d1089656ba@nvidia.com>
-Date: Mon, 27 Oct 2025 11:46:36 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] gpu: nova-core: add extra conversion functions and
- traits
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Alistair Popple <apopple@nvidia.com>, Joel Fernandes
- <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
- Matthew Wilcox <willy@infradead.org>
-References: <20251026-nova-as-v1-0-60c78726462d@nvidia.com>
- <20251026-nova-as-v1-5-60c78726462d@nvidia.com>
- <CANiq72mgoW_TyWf9Nv=5t3Qij_dsDjicNpGsa=F1t+sg23vxSA@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CANiq72mgoW_TyWf9Nv=5t3Qij_dsDjicNpGsa=F1t+sg23vxSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0289.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::24) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59CC32C33A;
+	Mon, 27 Oct 2025 18:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761590672; cv=none; b=ZGSUjOu6nZ4wAGrs5pf/IpH2CduZdrYfB6FskaKuDyI8zyw+4URFRl0ymJE4OVzomPw+/Tfw5GFWc1OJy1Ly8VWQfO2n84/HePa6NiYCkmqn1AoqfMKsKG6/m8BxtamYYhoMVAzOQOpNVq0LDdD39sO/KXs8sk29SRZci9G/NZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761590672; c=relaxed/simple;
+	bh=RvUxiEGFeW3NMtfz/dRup2oPdxZ5E6k0VP0dKpiXn0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9Cj+rrwL+t8ryR/D/P5M6eY5U+PX3DT8GBRDN4XqwKN7lXpz1m/VKP+yeug06p1Rn47tFtBbIr7NeuxcaufwaTOGO1tBBGecAp2nL9/qqmINIDd7FBSRhXYsLhCO9BIuWvysaR1+1PLjDmbUWChqFlITH0lh2mKPFJC1LYTtGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adrHCve0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB83FC116C6;
+	Mon, 27 Oct 2025 18:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761590672;
+	bh=RvUxiEGFeW3NMtfz/dRup2oPdxZ5E6k0VP0dKpiXn0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=adrHCve0oH8U/FiBIAqdGZn/1mq1SHOWzy/ikWGq0Q3uRrBQbArugdE8T5xknY0KD
+	 QSpFpaXnCy11T4f164BZNc2vWRhZ5aak9TIOQr6tojS+ofdciBa9cFHZY7rIfCO+T6
+	 pVMobUrfx1qsAVTcT5zTO8K+1RNquDT1y7gSgEc5H9wPbVI9pef6mJcWg4pYG5MvES
+	 XKCo9y4B95EiJdoVJjamk28P4sF4JjgPHBofsfMT8JRcITrS0wJCYpGGd+poaxIiNm
+	 0SdHoXcCFpN/Ez5WScIz5AKMdmSv7SLz3RUmEwoMFpk1nMgGY3lT7jEOYKsRdtIkkh
+	 TxMLN1+bI6WIg==
+Date: Mon, 27 Oct 2025 13:47:26 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com, 
+	kathiravan.thirumoorthy@oss.qualcomm.com
+Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: add cooling maps for CPU
+ thermal zones
+Message-ID: <lnabvjseahtfgc32zuvnd47vwv7fefpvmubgqo3rfpl7mr4k53@fprkvzsimgim>
+References: <20251023043838.1603673-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CH0PR12MB8488:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06c8f06c-eedc-4914-ddf1-08de15892a44
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L0t0alIxTUZyOEsvUTdWdFdtM2VCZW15ZDBYSHBQdWprREhsQ2t4Sm15QjJw?=
- =?utf-8?B?LzNOZTkvbFVLVERkTEM1eTY4MzFLekJkT0daUWMxNnBTYzBwQ2QxZmlTa242?=
- =?utf-8?B?NEQ3SjEyM1VxYTQxNUtXNzhZSkRBODVhamZaemR3bWY4RDZka3liMWcwbkJT?=
- =?utf-8?B?YWZQQ1hzTWRRTFBjNEZoUUhMSDBNQkJWVFk0UlFOTjhGRXVlcjZEdVZUMGlM?=
- =?utf-8?B?K1F4U0ZabGVVbUJ6SWo4Mi8vUXovTW1TU2ZCWUU3RWlSODNYbXlDRVY5WkYw?=
- =?utf-8?B?bkNCbDJGUFZZTFR0YkJoeGZFZlRFaXpKOHoyMGJWWFFsYkdtSFZ3dmRwQWZq?=
- =?utf-8?B?Q3dSSDBxOHJzSUdsb2kvUW5iVFNEclZzMnErSUsrTCs2Z3RqM3k3cVZsQkc2?=
- =?utf-8?B?VUIzckZIWkJUejd4MkpLSHVYVVFTUzRqM2pxeFV0Qzl4Sk43aS9Lc0gvSTJQ?=
- =?utf-8?B?ZkZ6OFF0RjZsZkMyK1UweHFoNHNLWVZVcERSRFQ2MHczQlV4NVNuaHFpOUVt?=
- =?utf-8?B?TEVXVHUwaFAvSEg2dE9IRi96V1kzdEpGd1pDRE5iZHY5VzQ1SHhBQUVSQ3lw?=
- =?utf-8?B?eExZZmJrd2dwMTZIejhlTTJOTUtQTWc1V3lqa2plbkNGWVdFL1NmeGgrWlhT?=
- =?utf-8?B?YWJHejA5Q0tmL3pkSHJWTE9tRHdXZmMrSWUxWHJOTWI2L0NQVzVPUXVKR0py?=
- =?utf-8?B?LzlXdDkrYnhhcnBnNmdpRGJhRHp3UTFiaDMyaG01RFY4VUF2ZE0rUHp1cTZH?=
- =?utf-8?B?Mk55M0tFRUlKczRmK05nakZYMEFkT2JvZ1hpOXlwdXVMUmdpb0hIY2hpYUFq?=
- =?utf-8?B?T001NXQ1b21VRG95UTBCa0J6L2kxdWREK2dmVkVPVFJGRGk1akRyL1V2cmZn?=
- =?utf-8?B?NTE5VU5SSitaME42RXczWmJUVUlyUk9oM003K3FOMXdZUGJIMktPaGR0UHkx?=
- =?utf-8?B?UjNML3ZmbjFMdDl4Nk1PQzVLWk91b1RlK1pxdFhEK2JaRSszRUp3K1pjQWtl?=
- =?utf-8?B?MW8rVUxCaHJOaUhFMW1YY0JuaHUwbkhSQkNqSHJxQW15OUZlUTFnVWVENTFh?=
- =?utf-8?B?ZXdTRm9iYWlzUDM2SXhJcG9nbzVsTWRJOVJuYTlHb0hSRXltKzlGbjAzeFk5?=
- =?utf-8?B?WnYzNDliRlE0aVlMb1RQTEtPeEVOVlVjd3NqRkhIYTJhbEd0Y3paaXgzSlll?=
- =?utf-8?B?cU1VQ1RCTXNCbkE4Q3RnQW9TOGZIQ0tTRVBuVzVlVnVVNG5pWmRUTDROcTFX?=
- =?utf-8?B?aEZiUDBiN1Yxc0hpL0xBMjMzeG53cS9TYm1kOW9PbC9pekV4K1M5WENmQUtE?=
- =?utf-8?B?RzlQZnlWK2Q4RzB1bjd1Z0FJUjFwVUlVbWI3QnB4NXVvcVhoeFZPWlB0eHNE?=
- =?utf-8?B?MUVtUFQvbzF6SFBVczBoeXNITEYvYVY1REVLTHFOWDZ4cnJack9FL3lDNk10?=
- =?utf-8?B?SGFCMHBUaEJXN09tc3lGcTlqSnFGWkZWcEhlRTdCQVVMMVd5b3M4TzZKaHFH?=
- =?utf-8?B?YUJ3dDdQY3Rrc0ZTRFlZN3Nvajdhc1VnUEZ3cW9pT2haRkxicU9WdnNDMnZa?=
- =?utf-8?B?ak5JcmFDNkQ1aGlvNUdldDlGQnBDamRMVTNEVjdkeFR0TG5VR3YrV1Bmd1Vo?=
- =?utf-8?B?dzh6K1pHcUFqckkzRHJ1dE9DSzJCVHlPcHNsVGFVdlBIRDdGYzBoZnhzdTQy?=
- =?utf-8?B?RjRvOVA5MFJWMlY0YjZ0RFdCL2VPaElNYTBPSG0xaUhkRjdySWdkeWlyMGFj?=
- =?utf-8?B?cGhvQ3I2cTBaYy9aWUp2QmZMdzJSWC9iOVdCRGdhTlJoSERjdlAxMTNHQ1RL?=
- =?utf-8?B?Y3MzWHNRZ1FkdVFtRjF2cVM3cDh0VE1wWHpwRnBTY2hWYkxhMmNZazFvVzBP?=
- =?utf-8?B?ejVBdjdEckhVMnNQRFZMaFprRWVDMFN3SU5mY1FRRktOVVNDT1Q0Ym15WWsx?=
- =?utf-8?Q?VWtHD54zZIq+UHJrIKm086TstB8FcJNf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b1BtNEh3U1VTQlpRTVhxNmNpcWZZQ2JFSGV3R09TM2tSUWZ2VlBEcjQ4U3d2?=
- =?utf-8?B?ejFSaWxRWUZ0Skg2WnBFSVBxdEkvYU5VTEhzK0lEcXNqNWhYWnU4cWhMeTM0?=
- =?utf-8?B?UzYxeVNLdVhOZ1pGMkJnTGhFUTJldC9yeGtRVXpJdjVMZ2RMWUR2YkFyRysy?=
- =?utf-8?B?eVBLTkpjTlhYL09oaHdXRDRhTW1rWm1JN0lhSXZ2VDhNNGppM0srbzRoUUNR?=
- =?utf-8?B?MlRFcm5PV1AwN1VIek9kWFVHNkVvYTlZd2tVSGxaV2MyVG5vN25IVVZZbmVn?=
- =?utf-8?B?bXhtTGNCNVczb0t3SWM3MjdyeVAzYytYbUNySWNva2lEc1Y2NlUzc1pnNDB4?=
- =?utf-8?B?UmpET3lVZzJNN3dsRFFRSnAybkVKTzAwVjZQV2dMb25USVZqUFVpdVF5MUFw?=
- =?utf-8?B?N1UxdFlYN2Q0R1lZZVJTRHB6dC9ja0lST1lnRFZUS3FZM2NDTXh3SWs3MjMr?=
- =?utf-8?B?VjhFVUlmNEg1ekdaWnJtRk9LTG9TcjZXYjh1enFPdkhOWmkxeVQyakwrb2Rm?=
- =?utf-8?B?b0Ewd2ltRmlUTmpqNzliSlF6ekxtNzRxZHVnaWJMY2VHVk1sNVlBTzJldGVY?=
- =?utf-8?B?MHE5ZUhVR2ZoMTI2eGpXTkFpb282UTV6VDhGbC9ZTzRuV3VaaHk5MWtSTGpK?=
- =?utf-8?B?LzAzUmloM2hSRHJOeHdEZjdEQ2gyZUt6WUdEK2oxeWtzVi95OStBeXVEdUNO?=
- =?utf-8?B?eVNZdmljbDNWZ1ZsSnROcHB1bDhhK0liODF3YjFMOHFZeXNmdS9iL0szb0JK?=
- =?utf-8?B?YWRKVGx2QUVmbnB1S293SjJmMzlzbmNlTk9ibWVNZCt6dTMwRjBRRjZQdmZB?=
- =?utf-8?B?NHNGS2xXeVF6VVFVRlJpbGR2UFk3ajRWOVlkanlacHplRnhsVFNLVVNkdXVx?=
- =?utf-8?B?b1JIOTVVek1JRlZ3ejVIcE5wYXdDRDhVN2pGd2Z0QjdqVmRqankxZlFmdktB?=
- =?utf-8?B?eEUwNGgyZ3g5aHFCcVBJVG1pMTJDSFR4U1VOSy85SHpBbHNnU1RWMUxxK0hL?=
- =?utf-8?B?Q3lSUU1pY2hxbldNM1JPTXg5Ylc1VXY1VXhHWnc4VlpXNWpsZlpqRkxXUmRU?=
- =?utf-8?B?UTFPLzEvNGpXUGs1Z2tvNnh2K1JCUmxNeHhicTN5eXltQWNJMUFMNis3aTZY?=
- =?utf-8?B?anB3WnZHT2Z1TVdKK0J1bGV2SmxoOGJEVWJPQ21oYWRxOTJ4K2tpMEUxckxs?=
- =?utf-8?B?Qkx4eXhmbkQ3N0Z5aEtEZ09WMnV3ZEJ4NCs4RjN4QThWMXk4UFJPNDBRcWtu?=
- =?utf-8?B?OG1pa21uK2ZiS0Qzekw2VXJBajBscmNESzZZVG1yUjY4N25Yd2Rza3A3TUp2?=
- =?utf-8?B?YmNxSDNHODRFZHVQQkhEYnk5RldleWVxYS9KaXNhRnRwakRJK01zRDFrSllh?=
- =?utf-8?B?Wm41VnMwODliUjlPSSs3WE9oSVpkTWFPbW1xV291SVY5RzZKOGZ1R0ludFk3?=
- =?utf-8?B?eitWcVJoVXpsOStyRDMzZytPSGpCR3cyNVRid2Y5alRhQVo3ZFVNMnIvdm5w?=
- =?utf-8?B?S0hnZnFvaFhpdW14UWxFTEhHU0gxajY2Zlo2ZWllaUtKalUvQ25EUWN4azRI?=
- =?utf-8?B?VHl0R3NycFg5RzhISGhuTk1FaG5ZQk44Qy9SWUtXV0hJOGNGRlBETFFQb3ZW?=
- =?utf-8?B?ZmtkQk0yaXNNb0ZMMk9XcUdHMGFxVStrK1lRV1lNTWVMTXdTK01qVmxlNnlE?=
- =?utf-8?B?Vnc1d2tGZXQrYTR3R25NVkVObmxyWHM3dGZhU3IvRTA5dHYrSC9jdnV4YTls?=
- =?utf-8?B?SUR2NHFaQ1g4MmhzcVZyRkpxcXdPSytGUWw1eXd5cVNXSU1CS005dE4xeURB?=
- =?utf-8?B?S1RacmVsZnR5djI2djIvTU5ORVBVVnBDcTd0RUdwazFITDFXQzRMdTBtNlFY?=
- =?utf-8?B?M0RZanNZNXFuWk04YmxLazBuNmpiaWZZUmcwMDF6MEtCQk1xY3laYnUycjJw?=
- =?utf-8?B?dVlCMW1vTzJQYWl1VXpXeXg3MzdoNEtrUHdHNXRNOVhCeENOQVRkMEtnT2k3?=
- =?utf-8?B?bkZkcGdIeVg3SC9HMVlRWmd6SDBVWTVzSk03QjNWSnBaZ2duQlMzc3dBN0x6?=
- =?utf-8?B?YVFRUHIvd1cyUjRsN0s4Y2pqVXc1elJBdnA3SWpRYkwzVWt5T1dHeUNxeXhV?=
- =?utf-8?Q?rvhv92thf+vAn0cyz9AHDxDNW?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06c8f06c-eedc-4914-ddf1-08de15892a44
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 18:46:39.9017
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KfJZHToLRQGttx6OEluopOzl76wQek7Vi6wxkybTrAlyLBK0o+okA78ot8Orf9ypdMaVreMLA9Q1s0LKprHuNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8488
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023043838.1603673-1-quic_mmanikan@quicinc.com>
 
-On 10/26/25 9:44 AM, Miguel Ojeda wrote:
-> On Sun, Oct 26, 2025 at 3:40 PM Alexandre Courbot <acourbot@nvidia.com> wrote:
-...
-
-> Regarding the `.into_as()` name, it makes sense, but it can be a bit
-> surprising when reading out of context... The standalone functions are
-> super clear, in comparison. But I am not sure what could be better.
-> `into_in_this_arch()` or similar could emphasize that this will only
-> work in certain architectures, i.e. it is "an `into()` for this arch"
-> rather than the general one.
-> That would go well with the idea that you didn't implement it for
-> other obvious types, which I guess was to avoid developers using this
-> instead of `into()` by mistake, right?
+On Thu, Oct 23, 2025 at 10:08:38AM +0530, Manikanta Mylavarapu wrote:
+> Add cooling-maps to the cpu1, cpu2, and cpu3 thermal zones to associate
+> passive trip points with CPU cooling devices. This enables proper
+> thermal mitigation by allowing the thermal framework to throttle CPUs
+> based on temperature thresholds. Also, label the trip points to allow
+> referencing them in the cooling maps.
 > 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 
-Exactly: the into-as, from-as naming suffers from *appearing* to be
-familiar and readable, but actually, the naming gives no hint as to 
-what it is really doing--nor how it is subtly different from the
-basic from/as/into standard conversions.
+Please use oss.qualcomm.com going forward.
 
-Instead, we need to add something (almost anything) to the name, to
-make it clearly different from the from/as/into.
+Regards,
+Bjorn
 
-into_for_arch() goes in that direction, for example.
-
-thanks,
--- 
-John Hubbard
-
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5424.dtsi | 61 +++++++++++++++++++++++----
+>  1 file changed, 53 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> index ef2b52f3597d..e4a51eeefeac 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> @@ -13,6 +13,7 @@
+>  #include <dt-bindings/reset/qcom,ipq5424-gcc.h>
+>  #include <dt-bindings/interconnect/qcom,ipq5424.h>
+>  #include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/thermal/thermal.h>
+>  
+>  / {
+>  	#address-cells = <2>;
+> @@ -57,6 +58,7 @@ cpu0: cpu@0 {
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
+> +			#cooling-cells = <2>;
+>  
+>  			l2_0: l2-cache {
+>  				compatible = "cache";
+> @@ -82,6 +84,7 @@ cpu1: cpu@100 {
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
+> +			#cooling-cells = <2>;
+>  
+>  			l2_100: l2-cache {
+>  				compatible = "cache";
+> @@ -101,6 +104,7 @@ cpu2: cpu@200 {
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
+> +			#cooling-cells = <2>;
+>  
+>  			l2_200: l2-cache {
+>  				compatible = "cache";
+> @@ -120,6 +124,7 @@ cpu3: cpu@300 {
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
+> +			#cooling-cells = <2>;
+>  
+>  			l2_300: l2-cache {
+>  				compatible = "cache";
+> @@ -1235,18 +1240,28 @@ cpu0-thermal {
+>  			thermal-sensors = <&tsens 14>;
+>  
+>  			trips {
+> -				cpu-critical {
+> +				cpu0_crit: cpu-critical {
+>  					temperature = <120000>;
+>  					hysteresis = <9000>;
+>  					type = "critical";
+>  				};
+>  
+> -				cpu-passive {
+> +				cpu0_alert: cpu-passive {
+>  					temperature = <110000>;
+>  					hysteresis = <9000>;
+>  					type = "passive";
+>  				};
+>  			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu0_alert>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+>  		};
+>  
+>  		cpu1-thermal {
+> @@ -1254,18 +1269,28 @@ cpu1-thermal {
+>  			thermal-sensors = <&tsens 12>;
+>  
+>  			trips {
+> -				cpu-critical {
+> +				cpu1_crit: cpu-critical {
+>  					temperature = <120000>;
+>  					hysteresis = <9000>;
+>  					type = "critical";
+>  				};
+>  
+> -				cpu-passive {
+> +				cpu1_alert: cpu-passive {
+>  					temperature = <110000>;
+>  					hysteresis = <9000>;
+>  					type = "passive";
+>  				};
+>  			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu1_alert>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+>  		};
+>  
+>  		cpu2-thermal {
+> @@ -1273,18 +1298,28 @@ cpu2-thermal {
+>  			thermal-sensors = <&tsens 11>;
+>  
+>  			trips {
+> -				cpu-critical {
+> +				cpu2_crit: cpu-critical {
+>  					temperature = <120000>;
+>  					hysteresis = <9000>;
+>  					type = "critical";
+>  				};
+>  
+> -				cpu-passive {
+> +				cpu2_alert: cpu-passive {
+>  					temperature = <110000>;
+>  					hysteresis = <9000>;
+>  					type = "passive";
+>  				};
+>  			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu2_alert>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+>  		};
+>  
+>  		cpu3-thermal {
+> @@ -1292,18 +1327,28 @@ cpu3-thermal {
+>  			thermal-sensors = <&tsens 13>;
+>  
+>  			trips {
+> -				cpu-critical {
+> +				cpu3_crit: cpu-critical {
+>  					temperature = <120000>;
+>  					hysteresis = <9000>;
+>  					type = "critical";
+>  				};
+>  
+> -				cpu-passive {
+> +				cpu3_alert: cpu-passive {
+>  					temperature = <110000>;
+>  					hysteresis = <9000>;
+>  					type = "passive";
+>  				};
+>  			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu3_alert>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+>  		};
+>  
+>  		wcss-tile2-thermal {
+> 
+> base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+> -- 
+> 2.34.1
+> 
 
