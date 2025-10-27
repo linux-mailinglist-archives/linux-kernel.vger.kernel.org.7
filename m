@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-872472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48C9C1149C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:58:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35498C11484
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:56:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06B75500ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:55:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 275D1352994
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CD6309F1E;
-	Mon, 27 Oct 2025 19:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80DE30C630;
+	Mon, 27 Oct 2025 19:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEzUc52X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkV0gjLe"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CF74A00;
-	Mon, 27 Oct 2025 19:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28AB2DF14D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761594901; cv=none; b=YW0MrIAU1BISglhAjUjrxEnp27arOsLHcDlOJ5RxmX6skQyNOoAUzqcqzuUPCgEvusEcCYVs03OwMK3PtGUTBrlqQoWmTXUFjbx9WU8KIBnUIqjO9TqgAO5pVzOc6UkKUCU1bVcycY8yHe0G2iyZf8Oe1p8jmEwwi+h/701hC9o=
+	t=1761594976; cv=none; b=gDuYaotsDWt3lBSkvhdvtqkgpVfblTJ8RQWGVEaUI90cBntwCyYIvnFyYCqdQYyTQfmXsSoh4aKvrOP0kPSJdSVMLLfsD5q/sD1ykQMQLBwEgOIRLTVcU9jTNWUUYVxrs1WGErO6fajc4HnS8IGYwxNR3rVsEDvKuRN0hcLrJF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761594901; c=relaxed/simple;
-	bh=DG2vmndPjXqWsweCjoe61ED7B3TMjtN8Gp4+TXHtf2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jt8nOBFL4IESvBTQIDqnV8bWVaRoU5iP4QaqRSg8ME9CJWZu+JTnGCZO6MtvRz468ndqw5pOtSQnTawRWw2pY4cZNygeZlJRPx0rzhDD+QvAe7nFGBONePKpwBxN6jPSKx9pymqOX4uUFe/tMFI256QZu9rYAIlb992n7p0/H64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEzUc52X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF79DC4CEF1;
-	Mon, 27 Oct 2025 19:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761594901;
-	bh=DG2vmndPjXqWsweCjoe61ED7B3TMjtN8Gp4+TXHtf2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEzUc52XJNenKdw4wJYy5/EDDgad/uFgBENUwgymWsMNMjvQiIXVkryZT4byIUuNH
-	 HuqgRFGvHsReeoKYt5W4IGVw5WR8FQLbZ/rkt5aiyjxpSRG9NtIcDQMHmq4kUmvgGZ
-	 FCpupTHSPWVMuwRmfX/zimwLZcKBqxeCItCmzajFYsfmRSpRDVHmkflLdNoQsPZ4Jo
-	 oPteQ1BzIZA+TsSHn/cq4xGrxuw/jD9bSHRqNnVkYyyeMW5FpQbEQ9dY0SlpVsQpPP
-	 2tXLFxz8V006RhdZyaMrkjN7jULuOAkdTRNeBIRZ2RLnnX6/+FWMgMQeCz8aQIczuQ
-	 OphCsRYa8KfgA==
-Date: Mon, 27 Oct 2025 21:54:57 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] keys: Remove unnecessary local variable from
- proc_keys_show
-Message-ID: <aP_OEQs2RcBNfn0M@kernel.org>
-References: <20251023143231.2086-2-thorsten.blum@linux.dev>
- <20251023143231.2086-4-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761594976; c=relaxed/simple;
+	bh=Av/b87o60kt4fRKuXDsBRbb4urtiij5xxToz7XJ6ECA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ByqxUq77p08uCBR9aWfQ9UY/FFOH/+CpB9OvpEpJaaZcSRHKybQstDuE/j3qxnpjcRc19fb+f6ISAyww5OSnDQifLmNRbpdm83cLPqiFNJlhzUWE7CHPv93RVOVZmDSbpV1xr/B7T7Hy/YHjMZkNbW+DBNRcNxXYNNswpdXZiLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkV0gjLe; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee64bc6b90so3785056f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761594973; x=1762199773; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Av/b87o60kt4fRKuXDsBRbb4urtiij5xxToz7XJ6ECA=;
+        b=TkV0gjLePAiR9NVnGk0Ebkp8ltL6D1pW8xT3+0GVNZnMCEvF8UbggHtCA7+hVU/KWT
+         wCc+CeNX9Nb4sZ45MID5qYrtTlePJS0XJjl/N6oobWa/8nCD+CAqhTzmlf/Hg/aiu14a
+         jx85C2CNleixLgywFw4Z3U1iO8440DPa8cWR94M13lfX+1qvMLPZq2eqh9CMF9mpz2cI
+         1E5TuBD8EZoS3wuUglXCscQVVvez6JQuFsbYd82ZQZchMPUgC/+Okrd9zfAgwgTvxr3D
+         73L9Q574gv+C2wb+9rJbaBXTjyiwEyshoZQgb2KgBp4VWiIfH33ISwC0apYgGujfQONi
+         OfxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761594973; x=1762199773;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Av/b87o60kt4fRKuXDsBRbb4urtiij5xxToz7XJ6ECA=;
+        b=lzDK3Uqp/6prdz0hieDFs3ZYJLLpLeeGUXTobNRxD3r2kvdDH6IdkP8QBt2NJTseyV
+         vV0tU7r+zggYgsHdC5Ln9pnSfUn7iw/zaVRKwM62yL0kgXftvL1qHm8DW8oFN/jxhjWx
+         KDeO7JvW6++QxXAXDbh539nxHTkuiyGzoaygUwmjXesH0+00opvLejtnzXYbg/xN4Yrh
+         f1WWgsyg1O+CACYKYGiDB7uFdoPuP8jssHIMNELrBnRygj0ONP2oyQhY4T2/Yg32sX7T
+         zaCTg0v0b/d28VnW9R860+uLrkSR2qllxTCP0//P8B3oOCJmetENirZKPKCexw8CqcSL
+         ATjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUq8b3eIoMMcOZgn0yDLvk8pcOo+8Cy/p5ADZYKLBVOR+LFG/noAg8lwhVlb4xAWZ5diCVdhNZNEYX20Rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk6I6LlbWm9n6JG001WY2QGnay58WoewolQC42VdlQKIHH2RwR
+	Z8wel8r5ZyTBODyn1PbU2+e7BUmuQEC97McXgVBt+rc0/uFVe0PNTPQyClNO1puV94Binw3Q3Ef
+	OveunashzbwHKHIqNDOqFd6OS7O1eDNU=
+X-Gm-Gg: ASbGnctszNXgL8h5QIt6/p0n8xYJ9QXoRx5w0014V0G/tU+4TDcokgURIfmJmEjkOoO
+	FinBqwb7pxD2FTjSaEIgzbJCCYZFKpiLGw+IpDLphRJOmx61xCvJaossK0aRynoyZtQh6gnL7Mr
+	KffhTsQ7V3mGsB0XGGOSyaQ3agPYCHmCuIXL2FZ+fq5VkssuW4+ayVbxBya9+Cz4ecW6atq5kKF
+	UNCVAzTDLRoQxwS3Z+9SZEF62VT2LnDgWpStRc/qPEjJyuIUJZ2yuM/DZMu0Uhnn2Pc3fibmuCE
+	F7IUbM9GMd0=
+X-Google-Smtp-Source: AGHT+IGkJe6IxQG3ZzGtCnUTzisW5p8uuoW+35RXoa4Vr2RavhP+QJRYfvEMxbh86JMQ6VV/YhWT8jH06guakc/3B9k=
+X-Received: by 2002:a05:6000:2383:b0:429:8d28:4079 with SMTP id
+ ffacd0b85a97d-429a7e86f31mr788123f8f.62.1761594972792; Mon, 27 Oct 2025
+ 12:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023143231.2086-4-thorsten.blum@linux.dev>
+References: <20251027135423.3098490-1-dolinux.peng@gmail.com> <20251027135423.3098490-4-dolinux.peng@gmail.com>
+In-Reply-To: <20251027135423.3098490-4-dolinux.peng@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 27 Oct 2025 12:55:59 -0700
+X-Gm-Features: AWmQ_blwlF2Rd-fsxsnykdevc7MNfMtJZXyA0h87WpXOe2WdLWBp8FO-pfhQLEc
+Message-ID: <CAADnVQLdN1mU-jR70WkkrWcfHXU1OOKDfWLdHS5Ji3-Fe++-xA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
+ verification and binary search
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 04:32:33PM +0200, Thorsten Blum wrote:
-> The local variable 'rc' is only used to temporary store the result of
-> calling key_task_permission(). Use the result directly and remove the
-> local variable.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  security/keys/proc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/security/keys/proc.c b/security/keys/proc.c
-> index 4f4e2c1824f1..39af57af2aad 100644
-> --- a/security/keys/proc.c
-> +++ b/security/keys/proc.c
-> @@ -160,7 +160,6 @@ static int proc_keys_show(struct seq_file *m, void *v)
->  	char xbuf[16];
->  	short state;
->  	u64 timo;
-> -	int rc;
->  
->  	struct keyring_search_context ctx = {
->  		.index_key		= key->index_key,
-> @@ -188,8 +187,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
->  	}
->  
->  	/* check whether the current task is allowed to view the key */
-> -	rc = key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW);
-> -	if (rc < 0)
-> +	if (key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW) < 0)
->  		return 0;
+On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
+m> wrote:
+>
+> +
+> +/*
+> + * btf_sort.c is included directly to avoid function call overhead
+> + * when accessing BTF private data, as this file is shared between
+> + * libbpf and kernel and may be called frequently (especially when
+> + * funcgraph-args or func-args tracing options are enabled).
+> + */
+> +#include "../../tools/lib/bpf/btf_sort.c"
 
-I absolutely dislike combining return value check to the call.
+function call overhead? I don't believe it's measurable.
 
-The old version documents that we ignore the return value, which
-is convoluted in the new version.
+Don't do it on libbpf side either.
 
->  
->  	now = ktime_get_real_seconds();
-> -- 
-> 2.51.0
-> 
-
-BR, Jarkko
+pw-bot: cr
 
