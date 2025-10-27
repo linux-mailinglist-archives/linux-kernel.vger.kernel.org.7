@@ -1,143 +1,182 @@
-Return-Path: <linux-kernel+bounces-871649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CE9C0DF00
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:15:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5086C0DFB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E544134D051
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:15:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91F5D4FD53C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5547E27A907;
-	Mon, 27 Oct 2025 13:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293D82571D7;
+	Mon, 27 Oct 2025 13:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drrchgbP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pjh+2Rii"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0C0277013;
-	Mon, 27 Oct 2025 13:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CDA25B30D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570889; cv=none; b=gUfpYbzEczxG10e8tZgu3Wt7kMu2mNw0lq7Y0oZdGsmin0CXElC59OMYKSFrjeU5hRtjcbj5CTNmkKK6PLkc7aAUM5dPmVeJIU66c7RsK+Ha86Xt9ILQKqjYIecb7Ye96tu+51u3HwtCJzplwbS/M0rLxfIBQ/5Q7/kP8H/MKxo=
+	t=1761570887; cv=none; b=flULk/XAEt6dWXdjpP88N/pldP7dV+lDn2jKX84jUFZusnz/0Ac0qWiFmzz/AjDICpIASJA0q7u14a4pHJHGz2YgrXw/n5iH2MzhC6p/hDBmch/vyxKQ3z85lqO2SaY5TYXrYXIrXoJIpkIylokswVcB4Yts8zC7DIwNm+7oIQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570889; c=relaxed/simple;
-	bh=XuN3krT3VrB+Dun/3yc/k+0qdjnIcRXAYhDM84Mny+A=;
+	s=arc-20240116; t=1761570887; c=relaxed/simple;
+	bh=yurVmvxSOFrWw32vD2Z36RTMlvMH+DXhPVbXI0Zm9yE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlcpIstYMScxwmTcZd3qUR6c1MdxyS2bCcO+854IcC+cA/mmHe7L8GCtoGlhx7b5/4dgnazfirepm0hSpTIyHEmasHjw18gEx5HUestngPBHsOoUBwm6OFq39xGpTybZ+/UiGDk+VMFaJ9Rlhe6JpiQfLdeG9TMrc1rt13FM8gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drrchgbP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BACC4CEF1;
-	Mon, 27 Oct 2025 13:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761570888;
-	bh=XuN3krT3VrB+Dun/3yc/k+0qdjnIcRXAYhDM84Mny+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=drrchgbPRwY7oQumnMjLGZOM6Rh0ki+cX156YrWkf4iFYcxJWm6TFCF2Zmuw65obA
-	 jrhZigPralblTl4s8KOTZFdgSMFDSydxbVvVcUVyUkAeuGnyUkMuGwgaYhCiJ5i3I7
-	 puj9nkUs2j02igv945LuTeWo4r3FtVerhOWVT1Tqj9GY9x3PWfN9f3m77cywWdHhIC
-	 42s3OzxCrh+jxffqYJmQlC54CHr7tL1cb6NHRDTCTuYFuWiUI5pM6ts/gKob+gZ85f
-	 2RxVLGDuoBjVp0u/z5oVTSlcr8BICb9H2THWEGN79LhenOzX6HOkbhJxkUHgK/7zvF
-	 6SQsAmNzes38A==
-Date: Mon, 27 Oct 2025 18:44:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Devendra K Verma <devendra.verma@amd.com>
-Cc: bhelgaas@google.com, vkoul@kernel.org, dmaengine@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, michal.simek@amd.com
-Subject: Re: [PATCH RESEND v4 2/2] dmaengine: dw-edma: Add non-LL mode
-Message-ID: <4rmlsvc4zffwlv6iye4sotpe3ezhblhlps6qglokrztno3wxte@tqiuci6fvcmn>
-References: <20251014121635.47914-1-devendra.verma@amd.com>
- <20251014121635.47914-3-devendra.verma@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWNh1cK3LL5xPwLUYsPz+JsXLTCx+77UeG6sJT0J0nvbVU2mLKCvZE6CSnD5rX404z+I8XGhWfLosAj6MWEgpWZgdc+a3TGf67DNLcxwrPLMmw17WfmLD8/70wWi6XVzWbilqqZKD2Lxf2UyyfNF3TJp0P8BIMKN6kmjnpnZcuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pjh+2Rii; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R7Juqh2059256
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:14:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=nFyzKi5bv7XzhZEu4Cpk+WRY
+	5dnAaHHoSnvN/ez9mr0=; b=pjh+2RiiyRIkOe3N+YJqN3TwoEj4CEejkjcAuiqg
+	eTNuHP0Os9Sz7E6MkyxZ7yPTKOTbVK6TAJMmFrSCsjvC860dongX6tGYnABRWVzS
+	wVYrnEqc9vFYFjjDuuYVIAXx3SVif6ZwmvJZwqvxE86/Q+LwSCYANe3T68ptbJrP
+	v9lVlF5LWEBQm6lIWoPKAyuai8LKrkTxNuw7UizS7jBGk/ZKo45otfCbUXpxU3Tx
+	gUH9KaOaJxEuNcrJ1+4zX1LQ3jHNlREa7Xz7JO3+5YVL/1GoYjbUcLmhYHDcpiBZ
+	Eb1JL06WICkHrog0IZHMk4odthMZx6HQNWiniq32TGyhow==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a248p8yfc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:14:45 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e8916e8d4aso45558221cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:14:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761570884; x=1762175684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nFyzKi5bv7XzhZEu4Cpk+WRY5dnAaHHoSnvN/ez9mr0=;
+        b=ki9oIMS9rOOnDqF6nGa2MWmJbfPH4rxfm5/8cyIWzpnc+xed8Hcfr/hWs5OgqkfFmz
+         pLGCn9kZVAu3C2FDpd3Yv4L8kdfL0luvhYjFHSe5+vNyA9fpRVBC9Rt52DtRZ+a8ISb3
+         idnTBEA1XkO2NBoVasX0LHV5sCZKCxGmRKjEM2irbY97rIspEETJhlBAqaRybYDcpDLp
+         MzX72iokfhkGN0MzI/0vXRwx9NJh0E/L6aglVqxK8Vj9B26xP9S2fXxNZlH3ge1xXGVW
+         wqXSp6w6wMA5mM5UePBrsuVlLeWwITAntSGvuHN48fV6pfvpMPUYHtaOruEBl77r2G1C
+         rsmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeAOoeWRaFDEjnH5mFALxoCxt8HWU7IP+mbXcklcPSE9c2qrw8wDJg1PvQwR1qnQJmYCJnxgDZW7STUEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9YbNZa3x++E7y8qdNYa2ADVZOnrvxoPKdEqru+IHGNymgrqwe
+	PFnwdLfbUrpNyYi96QNlufq//YuRmo+kmSqBCYwRt3fb0cq6o9rTseZJoazwAJh8DGCf5euWKzb
+	RNuSzaTZ0sYHGss70A150DTYc2VbC3SHwmgXs9QlpoJ0hOGy+i0AbSPUSNixjCLP2XHk=
+X-Gm-Gg: ASbGncvMqWcEpJZf/ee1yd9mwHT5tvR+CuZRkF2WUEhtx9C7upPZpFb6aiGxgE4OwdS
+	/pC9aKNnwh2ZAGLvvHuP791CYXSBV+HNv2QAShpiF0NwSfmIST1jEbOuX3DmCcwN9c7ux2RMuVv
+	8XdP0vsi0VO+NeWYieZmey7/5kQ+hHITK+TmMbfH9j1e5J6mvl9z36N+Ge3ja4i0c4/nEIUZkH5
+	Sn48SiWmQCla2r88KBeHhK2tGDvM7RoicjjqayieuR/Tp2v21EluBnqquWF3HhA1MaCaV7HjLeb
+	kNWomOEGSP5KgWLSikDNFqvgnWPUiBHolKucpafji7DMYjK1k13ouhuead+I1rvgCesw9ybZKlI
+	zoi5BEg1NypLtBQsev6rs6+5RGP/DyMvNB2Lc/D10+dDmAymaTx45b2Ce57gQTO5oMgsC8nx4X7
+	/fiPTYFn6dro1z
+X-Received: by 2002:a05:622a:1b28:b0:4ec:ef85:cfbd with SMTP id d75a77b69052e-4ecef85d368mr61632081cf.80.1761570884058;
+        Mon, 27 Oct 2025 06:14:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvwWHynaMcFsCoJT3Ymx6akKgKGq+AVYZliRWBvt3fl/sJ+nyNZdGM11CdtSCxGsRp/Z4JPA==
+X-Received: by 2002:a05:622a:1b28:b0:4ec:ef85:cfbd with SMTP id d75a77b69052e-4ecef85d368mr61631541cf.80.1761570883540;
+        Mon, 27 Oct 2025 06:14:43 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0a5655sm19154971fa.21.2025.10.27.06.14.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 06:14:42 -0700 (PDT)
+Date: Mon, 27 Oct 2025 15:14:40 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        robin.clark@oss.qualcomm.com, lumag@kernel.org,
+        abhinav.kumar@linux.dev, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 01/12] drm/msm/dsi/phy: Add support for Kaanapali
+Message-ID: <einog245dsbqtx3by2cojyzmyctk2fffpwndwoe24puwqq4fta@cu6iiidxqgr4>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023075401.1148-2-yuanjie.yang@oss.qualcomm.com>
+ <omlhiywjr46ik6bj2aiutgcf4aifen4vsvtlut7b44ayu4g4vl@zn4u3zkf6cqx>
+ <ad906eb5-c08f-4b66-9e37-aaba99889ad4@oss.qualcomm.com>
+ <aPryORKIuSwtXpon@yuanjiey.ap.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014121635.47914-3-devendra.verma@amd.com>
+In-Reply-To: <aPryORKIuSwtXpon@yuanjiey.ap.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=Zvzg6t7G c=1 sm=1 tr=0 ts=68ff7045 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=ACmnMjwJHZESoQLvWlYA:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDEyMyBTYWx0ZWRfX1mD4elQqFHHD
+ uz3gRnMITb2wOp3leePFBCuaMn95/QA1kPmIeJY0m7U3ogdZhKZupVHitHShGzewjIvrcK/Rffi
+ f1GIPXKtOot1CP3VlFMG5DcZ5Fi6uLO+s7xSJN+eXwUBnfDSDMDIaNUN8g/Qk6F/xzbzX/YjCLx
+ ksUSD8MwIsVwtOTjUqyoumbhS2Ew0vxYwcvh7asHeR8fDR7sQKZtvc4+rBT1/BRNy1ylXGZ6yc8
+ zVoRe8HwXzvfjWxrGRDcUVoMRH4b3zBIxihMnmWTgrhFv/PtWUdw3ms8lj1+ElwgXflgQ8vNEhm
+ VB8+nUWbe8LAs0b6YxRgkPuGHYIfCecWZMsDkFHbOunZg5IeLNz6j+R9SQMMpJPT6djGoo6yYya
+ P3THgt3ah9+rA92e8lwDb5rBOC2aVg==
+X-Proofpoint-ORIG-GUID: 2FymYvs5tW3DjqQIRGSQQu1wEJWXaeYw
+X-Proofpoint-GUID: 2FymYvs5tW3DjqQIRGSQQu1wEJWXaeYw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270123
 
-On Tue, Oct 14, 2025 at 05:46:34PM +0530, Devendra K Verma wrote:
-> AMD MDB IP supports Linked List (LL) mode as well as non-LL mode.
-
-Isn't the patch adding non-LL mode for all platforms, not just for AMD?
-
-> The current code does not have the mechanisms to enable the
-> DMA transactions using the non-LL mode. The following two cases
-> are added with this patch:
-> - When a valid physical base address is not configured via the
->   Xilinx VSEC capability then the IP can still be used in non-LL
->   mode. The default mode for all the DMA transactions and for all
->   the DMA channels then is non-LL mode.
-> - When a valid physical base address is configured but the client
->   wants to use the non-LL mode for DMA transactions then also the
->   flexibility is provided via the peripheral_config struct member of
->   dma_slave_config. In this case the channels can be individually
->   configured in non-LL mode. This use case is desirable for single
->   DMA transfer of a chunk, this saves the effort of preparing the
->   Link List.
+On Fri, Oct 24, 2025 at 11:27:53AM +0800, yuanjiey wrote:
+> On Thu, Oct 23, 2025 at 02:02:45PM +0200, Konrad Dybcio wrote:
+> > On 10/23/25 1:48 PM, Dmitry Baryshkov wrote:
+> > > On Thu, Oct 23, 2025 at 03:53:50PM +0800, yuanjie yang wrote:
+> > >> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > >>
+> > >> Add DSI PHY support for the Kaanapali platform.
+> > >>
+> > >> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > >> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > >> ---
+> > 
+> > [...]
+> > 
+> > >> +	.io_start = { 0x9ac1000, 0xae97000 },
+> > > 
+> > > These two addresses are very strange. Would you care to explain? Other
+> > > than that there is no difference from SM8750 entry.
+> > 
+> > They're correct.
+> > Although they correspond to DSI_0 and DSI_2..
+> > 
+> > Yuanjie, none of the DSI patches mention that v2.10.0 is packed with
+> > new features. Please provide some more context and how that impacts
+> > the hw description.
 > 
-> Signed-off-by: Devendra K Verma <devendra.verma@amd.com>
-> ---
-> Changes in v4
->   No change
+> Thanks for your reminder.
 > 
-> Changes in v3
->   No change
+> Correct here:
+> io_start = { 0x9ac1000, 0x9ac4000 }  DSI_Phy0 DSI_phy1
 > 
-> Changes in v2
->   Reverted the function return type to u64 for
->   dw_edma_get_phys_addr().
+> And v2.10.0 no clearly meaningful changes compared to v2.9.0.
+> just some register address change.
+
+Addition of DSI2 is a meaningful change, which needs to be handled both
+in the core and in the DSI / DSI PHY drivers.
+
 > 
-> Changes in v1
->   Changed the function return type for dw_edma_get_phys_addr().
->   Corrected the typo raised in review.
-> ---
->  drivers/dma/dw-edma/dw-edma-core.c    | 38 ++++++++++++++++++---
->  drivers/dma/dw-edma/dw-edma-core.h    |  1 +
->  drivers/dma/dw-edma/dw-edma-pcie.c    | 44 +++++++++++++++++--------
->  drivers/dma/dw-edma/dw-hdma-v0-core.c | 62 ++++++++++++++++++++++++++++++++++-
->  include/linux/dma/edma.h              |  1 +
->  5 files changed, 127 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/dma/dw-edma/dw-edma-core.c b/drivers/dma/dw-edma/dw-edma-core.c
-> index b43255f..3283ac5 100644
-> --- a/drivers/dma/dw-edma/dw-edma-core.c
-> +++ b/drivers/dma/dw-edma/dw-edma-core.c
-> @@ -223,8 +223,28 @@ static int dw_edma_device_config(struct dma_chan *dchan,
->  				 struct dma_slave_config *config)
->  {
->  	struct dw_edma_chan *chan = dchan2dw_edma_chan(dchan);
-> +	int nollp = 0;
-
-s/nollp/non_ll
-
-> +
-> +	if (WARN_ON(config->peripheral_config &&
-> +		    config->peripheral_size != sizeof(int)))
-
-Use proper dev_err(), not WARN_ON.
-
-> +		return -EINVAL;
+> Thanks,
+> Yuanjie
 >  
->  	memcpy(&chan->config, config, sizeof(*config));
-> +
-> +	/*
-> +	 * When there is no valid LLP base address available
-> +	 * then the default DMA ops will use the non-LL mode.
-> +	 * Cases where LL mode is enabled and client wants
-> +	 * to use the non-LL mode then also client can do
-> +	 * so via providing the peripheral_config param.
-
-Make use of 80 columns for comments throughout this patch.
-
-Rest LGTM!
-
-- Mani
+> > Konrad
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With best wishes
+Dmitry
 
