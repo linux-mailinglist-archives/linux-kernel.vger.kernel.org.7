@@ -1,185 +1,100 @@
-Return-Path: <linux-kernel+bounces-872163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2AFC0F6B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:46:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F57C0F5D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DDEB4FABF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:43:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B6D123489CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F641312819;
-	Mon, 27 Oct 2025 16:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AF2319615;
+	Mon, 27 Oct 2025 16:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="WKg6Nwue";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="NZm544+G"
-Received: from mta-01.yadro.com (mta-01.yadro.com [195.3.219.148])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ey7n90JD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xoIbsUk2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9151EAE7;
-	Mon, 27 Oct 2025 16:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.3.219.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7274830AAC8;
+	Mon, 27 Oct 2025 16:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583409; cv=none; b=JaKWsuk2IJ++Li+oW+dmmes6w90FwW7a15zFBfnxHlGQxtC9Ts8SgYxDlPYWGPNaq25bGR2Xxzchrf3bmLjqfFiKcEJjjXeiA8921aw/CzOg7W+znpv6zJXonbASrtIDoiWAuHnOXhzxuVIcYU76QiLjXOST7YOEh1kqstxzbN8=
+	t=1761582990; cv=none; b=TQsRAK0ApbGR9hjH+fQW93uUhMw8UIsYUrvaRK1CSAzlDvDXwfIk3I+uZXqJYqfPnvq/K8lqOTGriXk+RyZAQ6ymJlIppLNJSdb/VuQx67MJ/X2GiZa39MIQ2dnK0wCYPaiCT5+Cq9HGryrK343KeutyRFjPGEcOHSBYbZ6T864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583409; c=relaxed/simple;
-	bh=FThlKf9mPp6z/y8Uoh/3G44IfMfSzTwr6+FTkAYPw3c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GOopZ20UE/DVa8IJ0dKhlxHMHSewzshQ2Vgg+GyFa9smxdVEukf5d+jQ3PmQOeqWd5TAqGBVI5CzGwS9C0KXqJ2eAkcTRSDYcme+2LOivIRCUl5i5QZqW/q0iqp43yKh5tMM+JsJFRdLy844oOy0iIuTuKklCpKE2wHISgo/eWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=WKg6Nwue; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=NZm544+G; arc=none smtp.client-ip=195.3.219.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-Received: from mta-01.yadro.com (localhost [127.0.0.1])
-	by mta-01.yadro.com (Postfix) with ESMTP id 554912001D;
-	Mon, 27 Oct 2025 19:36:34 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-01.yadro.com 554912001D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-02;
-	t=1761582994; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=WKg6Nwue+SQpZixo1Qa11K0XLgor805rhCZKtmkmrZGguGMnxyUXyvjaKTLGp/Qn9
-	 z68Ihw4D4X+GKUzJ6qpvvpWJ6+SgAHzatzycjl4Amgtjigi9kEc+g37yEQ/7KGIKcK
-	 tTWMvmWRXQs/WDQjGTZPZdbfLrL6YF0UIA0yyLKM61EQvV8DQ32ENy4HIZhdU5USfA
-	 RuEIcZgRvU7D0If0ORnVZVMAhIC6ujySOoQZY8xjt3L9fQA8gM6LUxVXS20EvKKbY4
-	 vbK9jUlfYuMx+qx/7NEb/ykuJVJ7fsocoPkIvcdnnqbQlFyqe2rD/ppPEXe6sQbIz6
-	 mrZPs0oVL8cew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1761582994; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=NZm544+GMjcaupdkmKaXqnUi+5IreZ+91utfh17h6prAW7SCgZA8IDLh0otwCxH96
-	 F3LlwgSph05pu8sitPWSA45CvzJGAXesqN2wPVwpwA41NVY9Zqa+wRnxvNl7DQTEF0
-	 /+mayEvQU0psPxL/1fY3VOn42zI+M9DBkJI4NK8g+/R5xUPqgYZP6mPxSAJObzEgYb
-	 cKc8fB4g3c5nUtNPGGVSyLIzDhy+W4ydnahftU4LM1F1qG4PmLTpj7ui8uGzVs72za
-	 9PdAZZvYVZlLkoh9THs5Zd3Rz0pc8dDVtIWIEx3BlTCtZiZOIVSLxIvwGzqF5di9Ql
-	 kmxXpgv+Jyhlw==
-Received: from RTM-EXCH-01.corp.yadro.com (unknown [10.34.9.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mta-01.yadro.com (Postfix) with ESMTPS;
-	Mon, 27 Oct 2025 19:36:30 +0300 (MSK)
-Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
- RTM-EXCH-01.corp.yadro.com (10.34.9.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 27 Oct 2025 19:36:36 +0300
-Received: from NB-591.corp.yadro.com (172.17.34.55) by
- T-EXCH-12.corp.yadro.com (10.34.9.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.12; Mon, 27 Oct 2025 19:36:35 +0300
-From: Dmitry Bogdanov <d.bogdanov@yadro.com>
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, "Christoph
- Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Stuart Hayes
-	<stuart.w.hayes@gmail.com>, <linux-nvme@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux@yadro.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
-	<stable@vger.kernel.org>
-Subject: [RESEND] [PATCH] nvme-tcp: fix usage of page_frag_cache
-Date: Mon, 27 Oct 2025 19:36:27 +0300
-Message-ID: <20251027163627.12289-1-d.bogdanov@yadro.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761582990; c=relaxed/simple;
+	bh=NF5bSX0dyXfyOuPerzSokt+xmjFMmp5Twg/WVnHSNyg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ieuymSF2TINMxXy0pJUb6SJu5c9OF/TQJY7CAtwjvy72TLxyjQzxpxYvrplfIq2IJXpt5qiGQNKEl3QYhMt9U/ncBzQPJ/IFSlXa3kFRSihUtYy3TayC1uMx7i0mgP3rI1BfAkdYI+hdV7bZ0b8hgIhFQrjGiBaAx9yDD/L0ukc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ey7n90JD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xoIbsUk2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761582987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OY0q5YKTtT4E1ub/SpSB1ESrYQ5WABlmRfW9bRPjcDE=;
+	b=ey7n90JDMTUM2Zplf9hrF7CfTAUl/zYjlBdAveeVDbOc8ldRGQ5IgDRhRHEC4SjTCRCAwm
+	HOCpUiOITgnmyeuHcEyYNMhcgEr0MtJAvrjVP/dp9ZcO9VnXu1MlG19lmGMZFXK8pE9byb
+	qCvo2rU7soYJu5SvFyaIDcW3yws89FFOgfppQqSiXlA9smFcFvpdrpGARE1JWRzDS1xhjp
+	jAg2IyMcqyMUSfceTXxqam6QPuUYKbSBaWv++3QRy+0t5LncQkdMhcgyww7vKgjLgCUjvn
+	eyPFg3cyEP76bok5mJwZOa+CzK0KpYoJJm+3ZYX+aoDhkSnFpiQlm2+T2GoLEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761582987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OY0q5YKTtT4E1ub/SpSB1ESrYQ5WABlmRfW9bRPjcDE=;
+	b=xoIbsUk2+vEfPCpIpLkF4GC+uw2r8MliQIR0TvsBpdisw3Dy96mpl0L1ViaoVKsVRemTKD
+	kVWEc+FYaY5tk6DA==
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, Zbigniew
+ =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering
+ <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa
+ Sarai <cyphar@cyphar.com>, Amir Goldstein <amir73il@gmail.com>, Tejun Heo
+ <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 11/70] ns: add active reference count
+In-Reply-To: <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
+References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
+ <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
+Date: Mon, 27 Oct 2025 17:36:27 +0100
+Message-ID: <87a51cwbck.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: RTM-EXCH-04.corp.yadro.com (10.34.9.204) To
- T-EXCH-12.corp.yadro.com (10.34.9.214)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/27 14:30:00 #27802224
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-KATA-Status: Not Scanned
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
 
-nvme uses page_frag_cache to preallocate PDU for each preallocated request
-of block device. Block devices are created in parallel threads,
-consequently page_frag_cache is used in not thread-safe manner.
-That leads to incorrect refcounting of backstore pages and premature free.
+On Fri, Oct 24 2025 at 12:52, Christian Brauner wrote:
+> diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+> index ee05cad288da..2e7c110bd13f 100644
+> --- a/kernel/time/namespace.c
+> +++ b/kernel/time/namespace.c
+> @@ -106,6 +106,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
+>  	ns->offsets = old_ns->offsets;
+>  	ns->frozen_offsets = false;
+>  	ns_tree_add(ns);
+> +	ns_ref_active_get_owner(ns);
 
-That can be catched by !sendpage_ok inside network stack:
+It seems all places where ns_ref_active_get_owner() is added it is
+preceeded by a variant of ns_tree_add(). So why don't you stilck that
+refcount thing into ns_tree_add()? I'm probably missing something here.
 
-WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
-	tcp_sendmsg_locked+0x782/0xce0
-	tcp_sendmsg+0x27/0x40
-	sock_sendmsg+0x8b/0xa0
-	nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
-Then random panic may occur.
+Thanks,
 
-Fix that by serializing the usage of page_frag_cache.
+        tglx
 
-Cc: stable@vger.kernel.org # 6.12
-Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
-Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
----
- drivers/nvme/host/tcp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 1413788ca7d52..823e07759e0d3 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -145,6 +145,7 @@ struct nvme_tcp_queue {
- 
- 	struct mutex		queue_lock;
- 	struct mutex		send_mutex;
-+	struct mutex		pf_cache_lock;
- 	struct llist_head	req_list;
- 	struct list_head	send_list;
- 
-@@ -556,9 +557,11 @@ static int nvme_tcp_init_request(struct blk_mq_tag_set *set,
- 	struct nvme_tcp_queue *queue = &ctrl->queues[queue_idx];
- 	u8 hdgst = nvme_tcp_hdgst_len(queue);
- 
-+	mutex_lock(&queue->pf_cache_lock);
- 	req->pdu = page_frag_alloc(&queue->pf_cache,
- 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
- 		GFP_KERNEL | __GFP_ZERO);
-+	mutex_unlock(&queue->pf_cache_lock);
- 	if (!req->pdu)
- 		return -ENOMEM;
- 
-@@ -1420,9 +1423,11 @@ static int nvme_tcp_alloc_async_req(struct nvme_tcp_ctrl *ctrl)
- 	struct nvme_tcp_request *async = &ctrl->async_req;
- 	u8 hdgst = nvme_tcp_hdgst_len(queue);
- 
-+	mutex_lock(&queue->pf_cache_lock);
- 	async->pdu = page_frag_alloc(&queue->pf_cache,
- 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
- 		GFP_KERNEL | __GFP_ZERO);
-+	mutex_unlock(&queue->pf_cache_lock);
- 	if (!async->pdu)
- 		return -ENOMEM;
- 
-@@ -1450,6 +1455,7 @@ static void nvme_tcp_free_queue(struct nvme_ctrl *nctrl, int qid)
- 	kfree(queue->pdu);
- 	mutex_destroy(&queue->send_mutex);
- 	mutex_destroy(&queue->queue_lock);
-+	mutex_destroy(&queue->pf_cache_lock);
- }
- 
- static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
-@@ -1772,6 +1778,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
- 	INIT_LIST_HEAD(&queue->send_list);
- 	mutex_init(&queue->send_mutex);
- 	INIT_WORK(&queue->io_work, nvme_tcp_io_work);
-+	mutex_init(&queue->pf_cache_lock);
- 
- 	if (qid > 0)
- 		queue->cmnd_capsule_len = nctrl->ioccsz * 16;
-@@ -1903,6 +1910,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
- err_destroy_mutex:
- 	mutex_destroy(&queue->send_mutex);
- 	mutex_destroy(&queue->queue_lock);
-+	mutex_destroy(&queue->pf_cache_lock);
- 	return ret;
- }
- 
--- 
-2.25.1
 
 
