@@ -1,186 +1,126 @@
-Return-Path: <linux-kernel+bounces-871393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8BBC0D1E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:16:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412B5C0D1E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA624070E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4108119A4FA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FE22FAC05;
-	Mon, 27 Oct 2025 11:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838862F6904;
+	Mon, 27 Oct 2025 11:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UhE4ZwIZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Qk0A740d"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274CC2DE6F5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C0D2DE6F5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761563645; cv=none; b=OECO7aNiEvGonClmCnMQwEyu2NQupEEMMaOMFMm8mJwp/p07Iew5VD3BLt3wAohMUPiHIFFIB1qiBYEwfeSM4EX6/gNpGNKQwGKrFMFHDInPQHlY9CAD42LAx4zy0er9kyqWsC57Ee04NCrXFaQ7v7yhUctOBh8Ay44Vh2vN4tk=
+	t=1761563774; cv=none; b=OC3GH1kDHwkBP+phi5nsb+Uq3LzpuS0loCqptlxEGoUvoVIW+hebRX2zgQkUYCbJ/c1kVaijGLhOWdWUqh1Vdgx7quhnom2IOLQCGRjsssR8TuxRqzCOQzcp4t96XcgsSoSNhNgTx7/WnMPZcG72TSAExgdv8W5VmLnGzsIPiBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761563645; c=relaxed/simple;
-	bh=EKc8hDTMB42cCGLrOZ0jON6pGfmIi6RBZ+wF1dn2KZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OjKKuTCYUaVUNXyO/RIPcof4HPVQcJaCS0Vfu5quzvVbEpeB3TwfEjZBnvjL07+ZMskYobzTbIDjr5HZTCpoVaSCh+0Ul0Qbt7i1GgBQGY1zZsJC7Kv7OdXxySYjMv0Cgp0vliY/NGDkT7+qtIr7PFuzbswTbVEUvMsdEIwS3nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UhE4ZwIZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761563643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ED6aJ6VtNbe3dTLwkfXNyk6CAnAGzuoKM+uc6M/7ELA=;
-	b=UhE4ZwIZpEKm8SPNp1b8uRo2nyypnckCJGGPcX6lhCZIWav4JAPo3vk3J+dcRG+Xm2SG0+
-	vw6VfbcqJRrf57bx4WOOE7RmN1U6phXGIKvV1/GcxmfXWjJwfLVqzOJgQmCtm5zHge+AcC
-	0+f3c6XztrQhwGyEqeBlHb1oZOXo+DU=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-550-JDy8gwhLPsGHoUfxaN1qCA-1; Mon, 27 Oct 2025 07:14:01 -0400
-X-MC-Unique: JDy8gwhLPsGHoUfxaN1qCA-1
-X-Mimecast-MFC-AGG-ID: JDy8gwhLPsGHoUfxaN1qCA_1761563640
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b4635c413a7so335842566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:14:01 -0700 (PDT)
+	s=arc-20240116; t=1761563774; c=relaxed/simple;
+	bh=LB1x7BTh2A7aT4Ar9EAQILXWwWs6rqT8BpARa22vuVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDguCr2u25BK24DE/WEAYQVO2rLyn9psPavrsgPkDAfbaLQHiBr9fPQOzMwv0Hh5tJJAh8frbuMPZD5oylX+N38qZOjoC5i+R1uVqyP4rOh400FUFkuGGv4abl9DGN37hfPnA3+2ENAyzFdm38SdZJMAqQOs/ldCQRK1OUzyo2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Qk0A740d; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a28c7e3577so2052889b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:16:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761563771; x=1762168571; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2EuCROQjNcUGO3SGHRGo+0eYSMk802EES6aqkHgOAUk=;
+        b=Qk0A740dMrAPcVxGJR1GpLsbSoyJKWbUJW4QTm73OTNwYuY3E5jg1Mtbnv/tJg+Ocz
+         Df1uYg61S7JyeBBBZq13Xay/6TJ/CX/ijBvo3bMYl8NO1iVhxk6n3s9dBQefj0ZGDEX8
+         AzEZF7pjsDKE+BWPMCunguKP6480PEDlK0u7YF96kkhb0VNYXTbBAaf2usSDdjWqGth9
+         yXZpSbykAwCx+2c0C82ubvCB5vcuINzI5nYQ37b8rbd5Y9PFSfYUnojCfz6xfcmKzc4q
+         AP1ETI/WmHkgd0GiOhU0YrrtD0JS5O3p4sucM+5+Jn2YUFEe+RmTS/Ye6Tz5IGReVVL3
+         oItg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761563640; x=1762168440;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ED6aJ6VtNbe3dTLwkfXNyk6CAnAGzuoKM+uc6M/7ELA=;
-        b=FZBhEi0yco3CO/TfaKdUIFL8Djb9wUxK8X4mfhitq6IbU1GJ8o969fLVGCdVOFo2V+
-         bm5y90NrN+IWtrFxFip3RScRbsVvEdCThjd881ZztiAIcm2eT0SIFkLS8VYcbSEFYRds
-         /+M1NTXEyDBjrXHw4bdgS4tiEw6i27nvARfGSttqL/Jajt3VnHiU+gFYLf6/FjM9dakK
-         guzrSpIsGeXP0pSIewpsrxZLUO9gpTABPjRh4eh+bYKWD1e7muwqGn/ZxTbm7oSk4+XN
-         gYvuHSLlEfftUL1qi8JBSIgNaQGh/Qf9QyoQ2gMfsmd3IiKI04rJKJ73jAN5uLPacqaK
-         Daiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVP/QR80MGOUYBq/b+am0y/XlLH7BzqP8kfBzQlbG/IHMxjuodqMyy3qqFwVnBsRvwZ0P+1AYdvbwFT6XY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1wx9JQzZ4e+sZ+lX4S0Tx8EEnEadDQtiVRbTCJXmcZ8khmn51
-	kAa0R4II8V3Mu4hZEmgID/iMNJbEMFdA2d+eulx7my3r3+lel/nRwpAXF7lEZM1U/vlvglEVlAP
-	C3rpAFg3d2EPsqVx6ucxVdXOLg57YVzdBPMra3BcsPiKIQCb0hqCaVMPtBn3mwCpXqA==
-X-Gm-Gg: ASbGncsxidGhhG5DvUeONBLRjEVCd1nJBsDoqh9WUMuV5sUiVBiDOmxjG/PkhEdqSZs
-	1G0GVvoh56to9fCMi+ou5lvVq4yjuYp8qXkEUFiyRWTOCBjjb+BnFREhB6gMZ8OMunCNGNyODBF
-	acSN/IW7b7AdBPS8BVbvpLkOyEYJ+A94OOInWcv2r3pU/wyV7LlCQHNJpV4tmYuF4xlXZBhYbQr
-	WrV87oNcUNiySzzGBU8SO80cqJ8vJcpZmachpvh0xDRziCKPrNi3x+3P969EU7T+d4ClZrAMzGm
-	FyEht6ZLjItkKo43kgWEeT1n+PQIFW16iUC9kzW+6SD6CCBQJBMv+CDoGR/j3EcahGVWchlDWU9
-	NQeptXQ1KXRj0Oa65JLMEtWx3zArJO1Iit4Q6dCxFW40wBQ==
-X-Received: by 2002:a17:906:f59f:b0:b40:cfe9:ed2c with SMTP id a640c23a62f3a-b6d700613a8mr1017087766b.64.1761563640171;
-        Mon, 27 Oct 2025 04:14:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFM5QX7q+ulmwr25IwswirGQJy8OMcID1rEEuQvZTUQ/p5vsFN8TPgYvpCoC3nOmLXfz83gsw==
-X-Received: by 2002:a17:906:f59f:b0:b40:cfe9:ed2c with SMTP id a640c23a62f3a-b6d700613a8mr1017085966b.64.1761563639732;
-        Mon, 27 Oct 2025 04:13:59 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:3d68:200:6e75:6a50:1d0f:8f29? ([2001:16b8:3d68:200:6e75:6a50:1d0f:8f29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853f97f7sm725914266b.51.2025.10.27.04.13.58
+        d=1e100.net; s=20230601; t=1761563771; x=1762168571;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2EuCROQjNcUGO3SGHRGo+0eYSMk802EES6aqkHgOAUk=;
+        b=gC9Ii30Ww10rnPWr+bn+62DfRlAlUH61biaKY3juJGg3NKHdTABBITn56Mr6PO94Z8
+         is9O22Lyie+zpqqDe4/0+0KP0nT7pKVdqM/NPTk3KXwezBc970nanvO48evJw1jZoj71
+         lkS1prCUD0lEnup67zvRhfiSRimK4xgCdr/Fp/HTvfvQ0xcwV3Lc/1Z7LO5Q8ZhKNYfY
+         ofe7XZd2tI8/y08L9PA04tySKq+bfH12b4gxSkxVBNnl/z8UE/ty/Wk6928imUmupuhh
+         rosOUBJY+65TGaRBBSJjJ4xzYHNFCk/MyKAt5aFGR1KY6sOp9W/TURERqeqx+9l+ZJsN
+         9scA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqyFeYgoSzdrxZ2IEgVt8LUYVO6wjpRZjtEXSoVfnPbn2BK9Sgnz9M1F9/QS6M2s1IjjFdwbwpMtyIBBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkausD+n4plvx9BzFLXLOpl0hgi2ACWel+Hhs0zhXghRAvcBP+
+	jACiIDJFEZUdHaTEdXYl01cF6AiIBr/ZayYQlAtPXsjGZpq+//6S/TO0RjX9zm3rlw==
+X-Gm-Gg: ASbGncua4OiAtGvl7+1lOdU51rrGDthBNo2sD+OPTcXvrj4trlGuPUhisP0DrJcZubQ
+	2YjW9vCfrBQg3hhPFv6KSSWPpuEbeHs2pk76+7EYrKxvtt2klyY0cKT0Xnh+b32bLgSoQ2AygxC
+	TmWTzRV6jx6tIhKEvnQ1OFjYT5Uq9DSx9DrHH8Lp2fmOCfdVgkLIqRKqPuDZ+sohlyvURz83Zn0
+	DHzM9pSGF4V0RC+A9Un+h8rnBIG4du3f6tGK9cdpQoK3XkBHqDSvcClPyse1o1L36niH+ui2QIZ
+	S02CYAEoXsjCj+Ih32nhgjk38yhhcPHIBzOCjTDgovitiHMqKoDxM1kUAfWD6mnD0wcJgFZRS2W
+	Ju5PpDBGWDqvBiTledHqV/lDchGvn9H5sgdIc+Ky+k4QCCYg/d1wAuShXPk1JQU6bgD3R9il0BW
+	MVCDAiNnJ/7Q1ZAeNlpLZMg+HNkvj2nXo=
+X-Google-Smtp-Source: AGHT+IHjcNKIqHx7XlVV4F+FWNuGokV68s61fjE1WVvhohLMYjdAGDU/gdAXYEut+xcuQ4GTYWJd+g==
+X-Received: by 2002:a05:6a21:32aa:b0:340:e7d3:2f40 with SMTP id adf61e73a8af0-340e7e272bbmr11991133637.25.1761563771317;
+        Mon, 27 Oct 2025 04:16:11 -0700 (PDT)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7d2869sm8127511a91.7.2025.10.27.04.16.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 04:13:59 -0700 (PDT)
-Message-ID: <537bdebf2112a080ae92526ecfa41d63668d90a3.camel@redhat.com>
-Subject: Re: [RFC PATCH 3/3] drm/sched: Prevent adding dependencies to an
- armed job
-From: Philipp Stanner <pstanner@redhat.com>
-To: Matthew Brost <matthew.brost@intel.com>, intel-xe@lists.freedesktop.org,
-  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: jiangshanlai@gmail.com, tj@kernel.org, simona.vetter@ffwll.ch, 
-	christian.koenig@amd.com, dakr@kernel.org
-Date: Mon, 27 Oct 2025 12:13:58 +0100
-In-Reply-To: <20251021213952.746900-4-matthew.brost@intel.com>
-References: <20251021213952.746900-1-matthew.brost@intel.com>
-	 <20251021213952.746900-4-matthew.brost@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        Mon, 27 Oct 2025 04:16:10 -0700 (PDT)
+Date: Mon, 27 Oct 2025 19:15:52 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v1 1/1] sched/fair: Remove dead code which might prevent
+ from building
+Message-ID: <20251027111552.GA33@bytedance>
+References: <20251027100529.1806944-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027100529.1806944-1-andriy.shevchenko@linux.intel.com>
 
-I've got a kernel.org addr by now by the way
+On Mon, Oct 27, 2025 at 11:05:29AM +0100, Andy Shevchenko wrote:
+> Clang, in particular, is not happy about dead code:
+> 
+> kernel/sched/fair.c:5233:19: error: unused function 'cfs_rq_throttled' [-Werror,-Wunused-function]
+>  5233 | static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+>       |                   ^~~~~~~~~~~~~~~~
+> 1 error generated.
+> 
+> kernel/sched/fair.c:6736:19: error: unused function 'cfs_rq_throttled' [-Werror,-Wunused-function]
+>  6736 | static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+>       |                   ^~~~~~~~~~~~~~~~
+> 1 error generated.
+> 
+> Remove a leftover from the previous cleanup.
+> 
+> Fixes: fe8d238e646e ("sched/fair: Propagate load for throttled cfs_rq")
+> Fixes: eb962f251fbb ("sched/fair: Task based throttle time accounting")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Tue, 2025-10-21 at 14:39 -0700, Matthew Brost wrote:
-> According to the DMA scheduler documentation, once a job is armed, it
-> must be pushed. Drivers should avoid calling the failing code path that
-> attempts to add dependencies after a job has been armed.
->=20
+Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
 
-Why is that a "failing code path"?
-
-The issue with adding callbacks is that adding them to an already
-signaled fence is a bad idea. I'm not sure if it's illegal, though.
-dma_fence_add_cb() merely returns an error then, but the driver could
-in priniciple then execute its cb code itself.
-
-And even if we agree that this is a hard rule that must be followed,
-then drm_sched_job_arm() *might* not be the right place, because just
-because a job is armed doesn't mean that its fence is about to get
-signaled. drm_sched_entity_push_job() would be the critical place.
-
-
->  This change
-> enforces that rule.
->=20
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Philipp Stanner <phasta@kernel.org>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 7 ++++++-
-> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
-eduler/sched_main.c
-> index 676484dd3ea3..436cb2844161 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -873,7 +873,8 @@ EXPORT_SYMBOL(drm_sched_job_arm);
-> =C2=A0 * @job: scheduler job to add the dependencies to
-> =C2=A0 * @fence: the dma_fence to add to the list of dependencies.
-> =C2=A0 *
-> - * Note that @fence is consumed in both the success and error cases.
-> + * Note that @fence is consumed in both the success and error cases. Thi=
-s
-> + * function cannot be called if the job is armed.
-> =C2=A0 *
-> =C2=A0 * Returns:
-> =C2=A0 * 0 on success, or an error on failing to expand the array.
-> @@ -886,6 +887,10 @@ int drm_sched_job_add_dependency(struct drm_sched_jo=
-b *job,
-> =C2=A0	u32 id =3D 0;
-> =C2=A0	int ret;
-> =C2=A0
-> +	/* Do not allow additional dependencies when job is armed */
-> +	if (WARN_ON_ONCE(job->sched))
-
-One would probably want an 'armed' boolean for that. At the very least
-one wants to document in the struct's docstring that job->sched has
-this semantic meaning. Otherwise it's only obvious for people who have
-been hacking on the scheduler for years.
-
-
-By the way I think that we use WARN_ON*() too much in DRM. It generates
-difficult to read, non-descriptive error messages compared to
-dev_warn() and similar helpers, and it's often a bit overkill. I would
-only use it when there is no other choice, such as in an interrupt-
-handler or widely used void func() where you cannot simply add a return
-code.
-
-
-P.
-
-> +		return -EINVAL;
-
-
-> +
-> =C2=A0	if (!fence)
-> =C2=A0		return 0;
-> =C2=A0
-
+Thanks.
 
