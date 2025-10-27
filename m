@@ -1,475 +1,208 @@
-Return-Path: <linux-kernel+bounces-872455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F1BC1145B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:52:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8D7C11324
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A077505254
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE7B1899DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F82296BC8;
-	Mon, 27 Oct 2025 19:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA422D836A;
+	Mon, 27 Oct 2025 19:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5lRJdzs"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="di9viXEs"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011007.outbound.protection.outlook.com [52.101.52.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D165F24E4A8
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761593835; cv=none; b=p2CyLGj7pb9E4HFeYYVt8zw/SiN7RJoY2nQlnUw4UDRplGOPAgNPqOk3lwPXGAAuK7YNdR8iBy9+/SZmgXgJPvTGLSjScQmajZpUwm6FPTn0bmvGEk62ahYKod/prtcphT/5aCSFRJOjeB+cezxjNalocdCMVbFZBwQl/o3DAqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761593835; c=relaxed/simple;
-	bh=FAN+cp7/iXQcCiQaqEfnKLoy5OzaSQH1DwttBjttG5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N2Lc4f5PPUsGa/OcpnJ6UxftngbmKD1HnwsoQuJGi2C+CzTftCmHCiY5OOt1LFH23C1N4/i5F6dWRJVOLio0oRqobWL2mhjOlhBL+RqqU2m3wO6N4xuR9XoUcpOOnRUwlrgGWjN6l/af12OwU5ShLqzQA7sguKcnzLhmcA0tGQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5lRJdzs; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-273a0aeed57so66545045ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761593833; x=1762198633; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7PzERk20GXsHrw5CMgJj9lC0f+SY6YgTHGtrocYmgxs=;
-        b=T5lRJdzswG5dcC18OGmeXMtYe1PrFf4YJ3GCI/7aoazxgQHqCauB9nx/LYu+zvdeLS
-         8Gj6d89xIHLzfcrKhP1AdRbjMZCtik5m3+7Ym4j6r3uXyYaA65ARgtISTRtK6+/JauvV
-         8y15BlHU9IOC5R8P8NnJF3mSiSWGIok+A7uaOFGaSBUc1OiWJGa9lsSOV8PCzEdxjkUq
-         crLzcrEsKVxaZwPbxBxN0XpDtZyx9WEnJeQcIRgYEk+7aVIiWFdSE7zxwwZDM8WueqAh
-         mJ7WocQMk5Gvd5gWtR2Gehs/jVbdaBvkDrmttvhdXZR5zcQHxRiVeNu4T3DO1KIes5uy
-         YGLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761593833; x=1762198633;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7PzERk20GXsHrw5CMgJj9lC0f+SY6YgTHGtrocYmgxs=;
-        b=hIr21Zq0KBN3BovPpWhZ8irFSzpqKcYM70j5Tr3zZw3v3Iecv2W5Vb6la02s3oSUZd
-         qAv107fBtNW6tpCVT8zQ1RxB0o0FRI+ufUuyGum1/7ftGQX63OzKvWKEuvhzYVukaWyB
-         z9dJel6wFNutq0zIqS/mpXFknFUT0K/bPafnnTcZJqZrUUeqDqMUCOujiuvmTlRsX9LA
-         cU2+38yaLnGMLZG33clP5kp/sBnLDxZUAyzwa5Mn5Ln4vHwcB8+XsUvBt04D1eOVo8/G
-         cYif8lkI6SQUtkuGM99iGIGK0WPGLR7Pvnzgz94E7/r+POvl+pR5Hxdm1iZ+P8n1bnCT
-         ooig==
-X-Gm-Message-State: AOJu0YzZOt3Fis3pTTcx4bvIjDo3ThvwkJIzO7xXbPNIFXhY08W7iQjq
-	bS0oFwBuF6QYU0yuw+HnFn+2hlFTQHuXoc2ViA6yeYp3tjFVOoVd0ZtrmzqMhA==
-X-Gm-Gg: ASbGnctA/eONSmYpHz5/i8taSaRlrrGrQVFGil7Op9FiAUiwCzsbE3JJMCcm+KuM71G
-	K8/F3ruZL+mXv0AAoIj2ovlXxSEnh3vnbQfU1w/bVHOtUkFfp14XCs5l8N/XmHO17qNMbWba+us
-	MsTkOCe1sGCUlS9JW3uqkjZJaVYY2dJnT6ygrnmh7Lp+Yu0Ymz2wpeo4MLOu9S54HcM0UmC3aqb
-	jzx83Wl5NP7TEbSpNhMdekDKuR5uJpbywVaPwDDXyAI4EyAmWpzLIa28zs8fkfQzHTWcv/hkKWg
-	TJzhITOzdljsIV7LiL1LRSbxfdrxFpiDzjiL1M1JjxR5HQjbehp4XsILwWKoxBb14uczGcTXRdI
-	3D7NDZr2Y/Lq1bwv2nG/sr5eRgNU+rdcvgVRlJURyiHKVXjfjK0M4GtzFIkJTfDJqj6JiQV2Jka
-	yawimd9YS+8YxnWsSQFGzqhsu7RkbVGFu9BVUnH1Yv502uk99UvXmrj5QxUZJ8PuFgFDk=
-X-Google-Smtp-Source: AGHT+IGvMqgQI+w0hkebEbGFsjJIZBz1kd0QLgNNLkHW9scdCUOUEu/g3nU1ep70LU8xVBgs8UhfFQ==
-X-Received: by 2002:a17:903:22c8:b0:265:f460:ab26 with SMTP id d9443c01a7336-294cc686835mr7457915ad.3.1761593832656;
-        Mon, 27 Oct 2025 12:37:12 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e7c:8:88a3:d9a1:52ff:2597])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d23218sm89736445ad.51.2025.10.27.12.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 12:37:12 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH v4] f2fs: revert summary entry count from 2048 to 512 in 16kb block support
-Date: Mon, 27 Oct 2025 12:37:07 -0700
-Message-ID: <20251027193707.4089180-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.51.1.838.g19442a804e-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147351BC5C;
+	Mon, 27 Oct 2025 19:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761593850; cv=fail; b=p5EP1gyyvynrilUqVw2psP3f5THvbJ3z1P5PIhQ7pGMvAbK7dsfWs8jEEfEnzjWltBKdqAho/5M1J9+cQ/xfXvjkuQmCRwXvOJzbDGscSUXL8WxosrSo4wMQbhJfTXp8tkBlXrNGB6bUnjsjM/AG7d1za9z0R6FCtOVWiBm2U/4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761593850; c=relaxed/simple;
+	bh=nD13QhoKwMksp0bJp3V6JF7v+7y9IevUphELlUYatDk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kcisXlWxpLkK1eU60u6cfPGBe3Ti2jMf7u+o8Ta4MfzD1qd3RpVC6JSZWwjKwz//56jRWUgouMMWqBDhNh6EHEGOXx8h/cgurked/QzeSJCP3im3lvKRu1B5cPYzYVHql4KX780FOXfg2BE8L4vE6+PuaoNCM0oZQyEpC6z3484=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=di9viXEs; arc=fail smtp.client-ip=52.101.52.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mz6IVNtOa4gJ3TxvBKguUtBWFX3yd9sR1Gy6gVJQ01UMopGtqAETUcqEm067h18ltFxHcgAeG4jGWOfT7W8mvyF5UKpfB2ibr/tyo1J0dcC7vQ3Q8+BZ0gdA+pn5EYgs2m2vM0b8tApCHT3EiX3VHHge81I+4ipLsBl0hByxxDE+sLmIdJ4+4iEbnI8k6c1NAhfX0dyCHz6MG+sQboy/DgO4Jn+k/nUnswFJ03wvFRoiGMiwiGjvKCK/p8awS5To785aoyfMcC7URuvM+Tf/EiyePPqO2Ed9Wi0H9586OwltYunVWKs0mcyRJXkp5bdxP7ZAUkVkF56wDucf0OX+Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1yF7S1x4c3lkd+AVt2AaNP0rSknPUPDQKlVdGas8l24=;
+ b=nlCIZW3aiQIoRXQix89BgvlugT/DB0oGsNloGJ8NOFiC7SZwZNNGLE2QYRO+U7VnyzuX+/av6EpJq7Nb+eLaRs8hTE+j6DzL7sK1PCkFUKmOGw5OYgKjLYATMFRpPEV0CU6oc5nLeLgQ1hgd82cHwsNDsAI0zv0vPnTTX83DolIFPLl8lK65ZoJLavZ2MomsCJva3O7h8Kx3aBGlZRfp9M4aXbGU4IjvVURer6UBdt6FW/DCzOf62dYKGn+8gUEPruoalZZJX7efwVhkYWHJ9vrVaCpB5ySOF4PxQELXCCChLwZGXg+kGnA/H8vYXBpjAIPFTOQTtUX2y6byvubqTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1yF7S1x4c3lkd+AVt2AaNP0rSknPUPDQKlVdGas8l24=;
+ b=di9viXEsmTe+Z8+6UEDYQD7Ab26jK6xToMP8+u5+PnKYN0K7jZn1iI6oO0QPr+oQLaW34cZf8mO7TawHMdbXafhEnO+H+7edd4q5eRFAGf0QsETX9eQnaT3LzpyUazMUo4E6IvndIx1ptqZmtZdBlrD/C4j4WDm6+4zW/fCGlyDPQojdbOYRTE3yezElvVdZV4V8T0EWih0z7pjU/1gXIJ5xK9LfS/vMO5JcgV77zol5CZx7UunjKyWg1KGhs0I7FuspnCej/HCkxoq+/9fqsulFNWlyovM7BfIB+nzgFfPuDOu+mE1nkwN8DMiEIUkvmj6VxDyI3lruicJjRhVfgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SA1PR12MB8947.namprd12.prod.outlook.com (2603:10b6:806:386::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 19:37:22 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Mon, 27 Oct 2025
+ 19:37:22 +0000
+Message-ID: <080c5b19-818c-4f18-81ac-93eabc8fe65b@nvidia.com>
+Date: Mon, 27 Oct 2025 15:37:19 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] gpu: nova-core: add extra integer conversion
+ functions and traits
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Alice Ryhl
+ <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+ Timur Tabi <ttabi@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
+ <20251027-nova-as-v2-5-a26bd1d067a4@nvidia.com>
+ <c94dd17e-0e81-47cc-9482-e8743d3bc68f@nvidia.com>
+ <10945c03-8642-4c19-b0ed-ffb20c075291@kernel.org>
+ <4ec735c2-d0cc-43ad-8184-b30359c8d570@kernel.org>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <4ec735c2-d0cc-43ad-8184-b30359c8d570@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN0PR05CA0025.namprd05.prod.outlook.com
+ (2603:10b6:208:52c::13) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB8947:EE_
+X-MS-Office365-Filtering-Correlation-Id: d551866b-131c-4469-74a3-08de15903f86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djV4YUxzRllTZTkwRlo3S1I0SVJrL01lL1BYZTdHOE55NEl5cHR0c0M0Y1Y1?=
+ =?utf-8?B?ZEU5bXllRFRsN0JYckkxbUVac0lZM2Rvd0ZqaGtnSm1SY1R6ZE1Gcyt5RDNJ?=
+ =?utf-8?B?WW51U3JaanFEV1ZaekJrejdxQ3NoNzI3aXI3ekVPM3I2WWJVSExZTk1mdFBa?=
+ =?utf-8?B?S09Ua2dKd1JBUGpqcDlCNm5FdE1sL0hSUmRkYkt3UUJMeUMwVjF0M3pNenNp?=
+ =?utf-8?B?aTgzcDlTclNRYmlsYzk3MXJzL1lKL0lTL3YrZ0RCTXJXb1VSK1BOeEozUlRZ?=
+ =?utf-8?B?RklVZ2JKYkR6VHB0cmwrdXk5eE4zNTdxbEppdFZOR081U1dXSmY0OFVCTklF?=
+ =?utf-8?B?VjljL20yZVNHN2xCTlR0TlcxL0pHbzhTc0ZuMnJWMUpNUlNNSGlSVXNTS0tJ?=
+ =?utf-8?B?TTFsdXJiaDFTaDh4UmxRZk1sOUlydCtiTVlvYlI1UFllWGlxYk9Tc0JINU5w?=
+ =?utf-8?B?RXczVkJxSmo1bExuZGtnMzZFQytGVlQvQ1U2RDZkOE5QcEJxVnRRMnY0MEs4?=
+ =?utf-8?B?WmZDZVVrWms1RDhzdUhKcnJpRnZtRTVIZHQrWVFXL1RjZFZGWjRFK0VwZmhI?=
+ =?utf-8?B?RUQxSXpJeEw4SE04NEtXS0l0NVBiTHVaU2l5TFZHVWlwYWdKU0krK1hHTUxx?=
+ =?utf-8?B?Wlp1T0RVNE8xbzVnVVcrVHZUbWRPZ0xSOW1tMlhYWnFSS0w4ZVo3UkJXSW9D?=
+ =?utf-8?B?WUppS3MxZmJ3Nmt6cW5wNGJFTEJFbGNWMUJjS2c0d21McFNIVjBuUTVoSDBx?=
+ =?utf-8?B?cFNra0RYUHFoZmZPMnA1TTExYkY3bGR5OFBMQWtNcU8yTkMwQkU1NFc5UW4v?=
+ =?utf-8?B?MExKelo4eHNyOTZhYTJVNFlaMEtsdlVsZjRvOTFGUGdxYy9ncE03Ym5jbWZQ?=
+ =?utf-8?B?a3I2RXFTSUdSTmhseS9TMzhEYnRrMHVmQmtaNUZFT0dFaUlBL2R3TWQzSUUr?=
+ =?utf-8?B?b1d2eHM2aXBGZjVzbEo5NUNQT2FrRXQvV3QyZjlUczlBeUtaME1Za1h1OEVC?=
+ =?utf-8?B?UXlSSmFFdjVLSXh1WlVXbnBRQUJQM3RJVzd6THlJYlJnSm5rQlg4TVM2cDhU?=
+ =?utf-8?B?ZG5LVWpuQStPVUxQOTlhQlpYV2FtYnUvczh6QlF5OG43L1lJZkkrM2s1SFIz?=
+ =?utf-8?B?aHZhZ3YwN0hFOGxlekZnNm4vZ3o5SWk4N0dDK1JPZm5lclNid3ptdExLWCsr?=
+ =?utf-8?B?U2hBYWpPTCtWdzhpcDFzNllBM2FJQmtsbzBVWE9USzV5VndVNnpKbHN0a290?=
+ =?utf-8?B?NjUrV2ZMeVFQcGNRNFkrcTl6ZTJnRjhMVzNtOXhsZWRnR3hSS3dsOG5aTmRJ?=
+ =?utf-8?B?V0E0cmZkMHJMYXlNZklMaFV5bER6cDVZMW1QT251bFBqeTZUNTVlR2xwYVoz?=
+ =?utf-8?B?WmY5enppZlBWOTZINTgwcy9iSXVBRSttSHFOby9CMDF4K3FJUm02Nk9ERDRR?=
+ =?utf-8?B?WDhtcHZPT2lZTm5XR3ZJTGNMajNJYjh1TzBwbUd2MVRVNTg1c1UxOU9INTkx?=
+ =?utf-8?B?MEZMN2FoV2xJTUNySUg1WmR6VlZXNHlhcXB4NTloeEozY05pY01zcEJtRVBo?=
+ =?utf-8?B?QnN6V3FoZ25KbjY4d2RwVUtwNW5iK3RSWW9wUVpwQlNHU1lzVXNJM0R5K1dH?=
+ =?utf-8?B?aVVjalVXZGZvdi8vdUwvWjUvNkU2eTk5SUljV21MME5LcjJCeWJXMW1IUnFr?=
+ =?utf-8?B?R2luTE5ISFVhUW5EQWZDOFhyNFNlMmxVdU1GMGU5Q3ZjMzBHUEI2SjY1ZzVG?=
+ =?utf-8?B?UXZjTkF4L0dVdloyeU95SVByTlhZZTBqYm9lS0JZVHJCazJaNURmbWhaN2Uy?=
+ =?utf-8?B?LzkvSldCS3hrbHhMSTVkMzIrTHZMV25majlHSkViK1ZVR3NYWHdmTkhzcHJw?=
+ =?utf-8?B?dVY4bExHMDJpUFMrdXdUbnFGdXR6cHRBdFJsZitScGlUQ2ludGxpWGN3WUI2?=
+ =?utf-8?B?M1BzN2hkMnVSR3hnTmJDaHI1aURJQzcvcElZaFhkQ2E1aXhqYmF3eDNxTTJO?=
+ =?utf-8?B?ekxNZ3VrQ0tBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aFlxOVRNU0FCRTc2dFh2UmRzRURDS3lra3dvTW9FTGp3TGErYndRRGNFMm5W?=
+ =?utf-8?B?QklOemdranFEQ0ZvaXZGQnY3K2NwZ0wreVIyeXpUZkhZd3FQQ1FEVDZNZUpL?=
+ =?utf-8?B?Z2YzNU9EWVcwZ1VBMG1zMVpVTTJOWG9EbE9QaVFiZUEzVnN1SU5zK3lWZ3FR?=
+ =?utf-8?B?SjdIKzJ2T21xVjVQa3pPSzJhS0doQ3N4VXRneFo0amhZMWZjbkJtUklEbmVi?=
+ =?utf-8?B?a3RoRmlRNW81eUo2YnRJM3dtZjRtQUZGaDlJcmJmYWNPVS9XN3J5U21lTytH?=
+ =?utf-8?B?SFd2S2ZEN0NaeXBMUk5XbUszaGRmejRJMkxIQUNVeWV1cVVCdHB6S0JycGwz?=
+ =?utf-8?B?OFJWSzMrblNic1UyUi8wdDlUQnlYOVhmWVBvK2xGdWxkTFVTTlNsVGlqclBN?=
+ =?utf-8?B?TzZHQUJNUWE2S3FxeGZuN2p6VGI4YWhvMDRaTUZlTTNzbGFHVmpDSlZWcmcy?=
+ =?utf-8?B?Qk9xR1lRcU9ocmNFQnJSdCtqeTVWTzFQYm53cU1Cc0I2bTgwNENOL0hiZ2Qr?=
+ =?utf-8?B?OHhEYzR5NmV3S1pHQjNzemRXMllyR1BpVjhkMW9MT0lpTUNoVWJ4a2lYRWxU?=
+ =?utf-8?B?bmc3a29iS3VXbVZHSkRrNVJjMHBGaEpmNHQ0ZTZBTi9ITVB5bU9kVXdqUmJY?=
+ =?utf-8?B?a2xIUVViVFd1OXdyNjlJUWlQdnMyL3A2cWRDWm14d0psdmhZSUFtMjJRRHhS?=
+ =?utf-8?B?VnZ3NXpiaW41ek0vbjBjTzJoL1JvclRhV1B3aDRTa1FLSENqNUczOEEzUGpn?=
+ =?utf-8?B?cldwODdZMld6N1BIZ29CZzBBRDduWEhLZm5tQjZnSWUzRVpzRjNhV3QxWWxh?=
+ =?utf-8?B?QVBrZGptTFJvVWlycDI3VG1vb0F6OHdUckpmL3hIOVVaWW02NEw0a21ueXhB?=
+ =?utf-8?B?OURpS0pzTXhQUlU3ekxHM0VZbVg1RlhQTm04M0FwcDJ0cmx3NjNzZGp6U3V0?=
+ =?utf-8?B?VHhNZzZTQzFjN1hDOUp4N0dhVXpkTnQyOElPK01WaEV3Vks2bXVrYTdjOUlp?=
+ =?utf-8?B?WEdldnBkYmt3Sk82K1NqeDJVMW5Xa1ZweFU5eDVyWXJCQnBmam5RcTIrUGx1?=
+ =?utf-8?B?SW1MUkV4N01NV1pRYXc0bUVOWTJON2U3TFgrTzQwWWlPeVl2SDAyLzloQVFx?=
+ =?utf-8?B?TjdPQnlpMHlNZGdjYzJOYWFQRjMvbWhpZzY1SGVDVHVoL0wwVUFwVktRT0Zy?=
+ =?utf-8?B?L1dqbEhlS2xJZVBBOXNDWDZlODFzZ0ZUWjV1MFUrYzNLWEpjQjJRdzBsd2Vw?=
+ =?utf-8?B?dDdsTWo2U0ZESnZvQitnY0hVSGZ5cE5aUXNFY3Nmc0dUOFFiRytlUVpZTytz?=
+ =?utf-8?B?bTVaZ1N6THNQRkJjZTRReHRLUlNiL044U0E1RkJoZms3NWdaL3Z3eTFIV3Qy?=
+ =?utf-8?B?VWVaQXZvN1NMYTdrRzhnRnl4ZUs2TWFWdFQxTFJIOFRUL3RUNEU3TmF4ZmZW?=
+ =?utf-8?B?VFp3V3pScVorcXlFRlpMeTQ4aWp5eWhKWXZKRTlwMGh4ZVA2b2RmTHdaenNx?=
+ =?utf-8?B?QmZoWnJyV0UweXBzMUloS2NhaEFDbFp6R0NiMHlIejE4eUViU3lWYXZSR3NT?=
+ =?utf-8?B?SXE3VVRPTnRkajhrcW9ldFUrNmcxd0Q4RGpKTWdkckljVGJKOENYdUtTQ095?=
+ =?utf-8?B?Nmk3QTFGN3piaGNVY1V3QWdnZjU5eFpuVVhjV2xzRldkVEU5MWt3WFRhaXJu?=
+ =?utf-8?B?ZVBmT0pGMTRLMzZVY2IxdU5vV0JCY0JoczV4RWdqekNYZnNaa1hlREFxYVB4?=
+ =?utf-8?B?MlJtU2VJMTk4enVETUx4WDE2YVVMeWFxMjBlQXJYSGx3VDNlUTRoN3V2ZWR3?=
+ =?utf-8?B?TTRKMzFTWEszcXp3L2p3cmo5S0I3ZWxCeitvWnYvZ0pUNDQ2dmdjWnRJb2ZM?=
+ =?utf-8?B?aUhEVUxFaGEzOXBxZndYTUxYRlhyRERBNjFuRlhDYnJMVW05RlhKMjV3dnJm?=
+ =?utf-8?B?T3hOL3lkRkxHaGUwNXowTWYrUGZWRDRZa2VOT29mKzZodnlKajJVTmlxRFlK?=
+ =?utf-8?B?VnVCVU1ibzQvckRsMmRXUU1ma09taGpFUjRQYXVGMFVmZVJIU0ZpdUkxSXZ0?=
+ =?utf-8?B?TVFyaWFOdTJPbWkrWGZXd2FxazRyZUdiYm1uYXlreHU1dkh6N3dhaklWVHE4?=
+ =?utf-8?Q?0Ql2eVx5IINFL+A7rETO1YhZk?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d551866b-131c-4469-74a3-08de15903f86
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 19:37:22.0319
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XZCiYkFiKmOv/2NqBsfTy/CofFcnZp5bM037HX7my6GLM/W2o0LDSYM+pL4Sk8LFdnV4riVKTnvRWs0aIxnEWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8947
 
-From: Daeho Jeong <daehojeong@google.com>
+On 10/27/2025 3:28 PM, Danilo Krummrich wrote:
+> On 10/27/25 8:23 PM, Danilo Krummrich wrote:
+>> On 10/27/25 8:09 PM, Joel Fernandes wrote:
+>>> Why not just implement `From` and `Into` for the types missing it then, with
+>>> adequate comments about why such conversions are Ok for the kernel, instead of
+>>> introducing a new trait? This is exactly what `From`/`Into` is for right?
+>>
+>> https://doc.rust-lang.org/reference/items/implementations.html#r-items.impl.trait.orphan-rule.intro
+> 
+> (Sorry, I didn't mean to send the link without additional comment.)
+> 
+> We can't do this due to the orphan rule, but even if we could I think a separate
+> trait indicating the reason for the conversions to be valid is a good thing.
+> 
 
-The recent increase in the number of Segment Summary Area (SSA) entries
-from 512 to 2048 was an unintentional change in logic of 16kb block
-support. This commit corrects the issue.
+Thanks for clarifying, yeah its not ideal then as the user of the conversion
+needs to remember when to use from vs from_as. I don't think its terrible, just
+a bit confusing.
 
-To better utilize the space available from the erroneous 2048-entry
-calculation, we are implementing a solution to share the currently
-unused SSA space with neighboring segments. This enhances overall
-SSA utilization without impacting the established 8MB segment size.
-
-Fixes: d7e9a9037de2 ("f2fs: Support Block Size == Page Size")
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
-v4: add a feature to prevent from mounting deprecated format
-v3: error handling for a failure of f2fs_get_meta_folio().
-v2: detect legacy layout and prevent mount.
----
- fs/f2fs/f2fs.h          |   1 +
- fs/f2fs/gc.c            | 117 +++++++++++++++++++++++-----------------
- fs/f2fs/recovery.c      |   2 +-
- fs/f2fs/segment.c       |  29 ++++++----
- fs/f2fs/segment.h       |   8 ++-
- fs/f2fs/super.c         |  14 +++++
- include/linux/f2fs_fs.h |   5 +-
- 7 files changed, 113 insertions(+), 63 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b6e35fdd5fd3..b4eac9a6e5ae 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -245,6 +245,7 @@ struct f2fs_mount_info {
- #define F2FS_FEATURE_COMPRESSION		0x00002000
- #define F2FS_FEATURE_RO				0x00004000
- #define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
-+#define F2FS_FEATURE_PACKED_SSA			0x00010000
- 
- #define __F2FS_HAS_FEATURE(raw_super, mask)				\
- 	((raw_super->feature & cpu_to_le32(mask)) != 0)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 8abf521530ff..af2f4d28462c 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1732,7 +1732,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
- 						SUM_TYPE_DATA : SUM_TYPE_NODE;
- 	unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
--	int submitted = 0;
-+	int submitted = 0, sum_blk_cnt;
- 
- 	if (__is_large_section(sbi)) {
- 		sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
-@@ -1766,22 +1766,28 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 
- 	sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
- 
-+	segno = rounddown(segno, SUMS_PER_BLOCK);
-+	sum_blk_cnt = DIV_ROUND_UP(end_segno - segno, SUMS_PER_BLOCK);
- 	/* readahead multi ssa blocks those have contiguous address */
- 	if (__is_large_section(sbi))
- 		f2fs_ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno),
--					end_segno - segno, META_SSA, true);
-+					sum_blk_cnt, META_SSA, true);
- 
- 	/* reference all summary page */
- 	while (segno < end_segno) {
--		struct folio *sum_folio = f2fs_get_sum_folio(sbi, segno++);
-+		struct folio *sum_folio = f2fs_get_sum_folio(sbi, segno);
-+
-+		segno += SUMS_PER_BLOCK;
- 		if (IS_ERR(sum_folio)) {
- 			int err = PTR_ERR(sum_folio);
- 
--			end_segno = segno - 1;
--			for (segno = start_segno; segno < end_segno; segno++) {
-+			end_segno = segno - SUMS_PER_BLOCK;
-+			segno = rounddown(start_segno, SUMS_PER_BLOCK);
-+			while (segno < end_segno) {
- 				sum_folio = filemap_get_folio(META_MAPPING(sbi),
- 						GET_SUM_BLOCK(sbi, segno));
- 				folio_put_refs(sum_folio, 2);
-+				segno += SUMS_PER_BLOCK;
- 			}
- 			return err;
- 		}
-@@ -1790,68 +1796,83 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 
- 	blk_start_plug(&plug);
- 
--	for (segno = start_segno; segno < end_segno; segno++) {
--		struct f2fs_summary_block *sum;
-+	segno = start_segno;
-+	while (segno < end_segno) {
-+		unsigned int cur_segno;
- 
- 		/* find segment summary of victim */
- 		struct folio *sum_folio = filemap_get_folio(META_MAPPING(sbi),
- 					GET_SUM_BLOCK(sbi, segno));
-+		unsigned int block_end_segno = rounddown(segno, SUMS_PER_BLOCK)
-+					+ SUMS_PER_BLOCK;
-+
-+		if (block_end_segno > end_segno)
-+			block_end_segno = end_segno;
- 
- 		if (is_cursec(sbi, GET_SEC_FROM_SEG(sbi, segno))) {
- 			f2fs_err(sbi, "%s: segment %u is used by log",
- 							__func__, segno);
- 			f2fs_bug_on(sbi, 1);
--			goto skip;
-+			goto next_block;
- 		}
- 
--		if (get_valid_blocks(sbi, segno, false) == 0)
--			goto freed;
--		if (gc_type == BG_GC && __is_large_section(sbi) &&
--				migrated >= sbi->migration_granularity)
--			goto skip;
- 		if (!folio_test_uptodate(sum_folio) ||
- 		    unlikely(f2fs_cp_error(sbi)))
--			goto skip;
-+			goto next_block;
- 
--		sum = folio_address(sum_folio);
--		if (type != GET_SUM_TYPE((&sum->footer))) {
--			f2fs_err(sbi, "Inconsistent segment (%u) type [%d, %d] in SIT and SSA",
--				 segno, type, GET_SUM_TYPE((&sum->footer)));
--			f2fs_stop_checkpoint(sbi, false,
--				STOP_CP_REASON_CORRUPTED_SUMMARY);
--			goto skip;
--		}
-+		for (cur_segno = segno; cur_segno < block_end_segno;
-+				cur_segno++) {
-+			struct f2fs_summary_block *sum;
- 
--		/*
--		 * this is to avoid deadlock:
--		 * - lock_page(sum_page)         - f2fs_replace_block
--		 *  - check_valid_map()            - down_write(sentry_lock)
--		 *   - down_read(sentry_lock)     - change_curseg()
--		 *                                  - lock_page(sum_page)
--		 */
--		if (type == SUM_TYPE_NODE)
--			submitted += gc_node_segment(sbi, sum->entries, segno,
--								gc_type);
--		else
--			submitted += gc_data_segment(sbi, sum->entries, gc_list,
--							segno, gc_type,
--							force_migrate);
-+			if (get_valid_blocks(sbi, cur_segno, false) == 0)
-+				goto freed;
-+			if (gc_type == BG_GC && __is_large_section(sbi) &&
-+					migrated >= sbi->migration_granularity)
-+				continue;
- 
--		stat_inc_gc_seg_count(sbi, data_type, gc_type);
--		sbi->gc_reclaimed_segs[sbi->gc_mode]++;
--		migrated++;
-+			sum = SUM_BLK_PAGE_ADDR(sum_folio, cur_segno);
-+			if (type != GET_SUM_TYPE((&sum->footer))) {
-+				f2fs_err(sbi, "Inconsistent segment (%u) type "
-+						"[%d, %d] in SSA and SIT",
-+						cur_segno, type,
-+						GET_SUM_TYPE((&sum->footer)));
-+				f2fs_stop_checkpoint(sbi, false,
-+						STOP_CP_REASON_CORRUPTED_SUMMARY);
-+				continue;
-+			}
- 
--freed:
--		if (gc_type == FG_GC &&
--				get_valid_blocks(sbi, segno, false) == 0)
--			seg_freed++;
-+			/*
-+			 * this is to avoid deadlock:
-+			 *  - lock_page(sum_page)     - f2fs_replace_block
-+			 *   - check_valid_map()        - down_write(sentry_lock)
-+			 *    - down_read(sentry_lock) - change_curseg()
-+			 *                               - lock_page(sum_page)
-+			 */
-+			if (type == SUM_TYPE_NODE)
-+				submitted += gc_node_segment(sbi, sum->entries,
-+						cur_segno, gc_type);
-+			else
-+				submitted += gc_data_segment(sbi, sum->entries,
-+						gc_list, cur_segno,
-+						gc_type, force_migrate);
- 
--		if (__is_large_section(sbi))
--			sbi->next_victim_seg[gc_type] =
--				(segno + 1 < sec_end_segno) ?
--					segno + 1 : NULL_SEGNO;
--skip:
-+			stat_inc_gc_seg_count(sbi, data_type, gc_type);
-+			sbi->gc_reclaimed_segs[sbi->gc_mode]++;
-+			migrated++;
-+
-+freed:
-+			if (gc_type == FG_GC &&
-+					get_valid_blocks(sbi, cur_segno, false) == 0)
-+				seg_freed++;
-+
-+			if (__is_large_section(sbi))
-+				sbi->next_victim_seg[gc_type] =
-+					(cur_segno + 1 < sec_end_segno) ?
-+					cur_segno + 1 : NULL_SEGNO;
-+		}
-+next_block:
- 		folio_put_refs(sum_folio, 2);
-+		segno = block_end_segno;
- 	}
- 
- 	if (submitted)
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 215e442db72c..af72309b9bfc 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -519,7 +519,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
- 	sum_folio = f2fs_get_sum_folio(sbi, segno);
- 	if (IS_ERR(sum_folio))
- 		return PTR_ERR(sum_folio);
--	sum_node = folio_address(sum_folio);
-+	sum_node = SUM_BLK_PAGE_ADDR(sum_folio, segno);
- 	sum = sum_node->entries[blkoff];
- 	f2fs_folio_put(sum_folio, true);
- got_it:
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b45eace879d7..77aa2125b8ca 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2712,7 +2712,10 @@ struct folio *f2fs_get_sum_folio(struct f2fs_sb_info *sbi, unsigned int segno)
- void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
- 					void *src, block_t blk_addr)
- {
--	struct folio *folio = f2fs_grab_meta_folio(sbi, blk_addr);
-+	struct folio *folio = f2fs_get_meta_folio_retry(sbi, blk_addr);
-+
-+	if (IS_ERR(folio))
-+		return;
- 
- 	memcpy(folio_address(folio), src, PAGE_SIZE);
- 	folio_mark_dirty(folio);
-@@ -2720,9 +2723,17 @@ void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
- }
- 
- static void write_sum_page(struct f2fs_sb_info *sbi,
--			struct f2fs_summary_block *sum_blk, block_t blk_addr)
-+		struct f2fs_summary_block *sum_blk, unsigned int segno)
- {
--	f2fs_update_meta_page(sbi, (void *)sum_blk, blk_addr);
-+	struct folio *folio;
-+
-+	folio = f2fs_get_sum_folio(sbi, segno);
-+	if (IS_ERR(folio))
-+		return;
-+
-+	memcpy(SUM_BLK_PAGE_ADDR(folio, segno), sum_blk, sizeof(*sum_blk));
-+	folio_mark_dirty(folio);
-+	f2fs_folio_put(folio, true);
- }
- 
- static void write_current_sum_page(struct f2fs_sb_info *sbi,
-@@ -2987,7 +2998,7 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
- 	int ret;
- 
- 	if (curseg->inited)
--		write_sum_page(sbi, curseg->sum_blk, GET_SUM_BLOCK(sbi, segno));
-+		write_sum_page(sbi, curseg->sum_blk, segno);
- 
- 	segno = __get_next_segno(sbi, type);
- 	ret = get_new_segment(sbi, &segno, new_sec, pinning);
-@@ -3046,7 +3057,7 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
- 	struct folio *sum_folio;
- 
- 	if (curseg->inited)
--		write_sum_page(sbi, curseg->sum_blk, GET_SUM_BLOCK(sbi, curseg->segno));
-+		write_sum_page(sbi, curseg->sum_blk, curseg->segno);
- 
- 	__set_test_and_inuse(sbi, new_segno);
- 
-@@ -3065,7 +3076,7 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
- 		memset(curseg->sum_blk, 0, SUM_ENTRY_SIZE);
- 		return PTR_ERR(sum_folio);
- 	}
--	sum_node = folio_address(sum_folio);
-+	sum_node = SUM_BLK_PAGE_ADDR(sum_folio, new_segno);
- 	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
- 	f2fs_folio_put(sum_folio, true);
- 	return 0;
-@@ -3154,8 +3165,7 @@ static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, int type)
- 		goto out;
- 
- 	if (get_valid_blocks(sbi, curseg->segno, false)) {
--		write_sum_page(sbi, curseg->sum_blk,
--				GET_SUM_BLOCK(sbi, curseg->segno));
-+		write_sum_page(sbi, curseg->sum_blk, curseg->segno);
- 	} else {
- 		mutex_lock(&DIRTY_I(sbi)->seglist_lock);
- 		__set_test_and_free(sbi, curseg->segno, true);
-@@ -3833,8 +3843,7 @@ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct folio *folio,
- 	if (segment_full) {
- 		if (type == CURSEG_COLD_DATA_PINNED &&
- 		    !((curseg->segno + 1) % sbi->segs_per_sec)) {
--			write_sum_page(sbi, curseg->sum_blk,
--					GET_SUM_BLOCK(sbi, curseg->segno));
-+			write_sum_page(sbi, curseg->sum_blk, curseg->segno);
- 			reset_curseg_fields(curseg);
- 			goto skip_new_segment;
- 		}
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 1ce2c8abaf48..e883f14c228f 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -85,8 +85,12 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
- #define GET_ZONE_FROM_SEG(sbi, segno)				\
- 	GET_ZONE_FROM_SEC(sbi, GET_SEC_FROM_SEG(sbi, segno))
- 
--#define GET_SUM_BLOCK(sbi, segno)				\
--	((sbi)->sm_info->ssa_blkaddr + (segno))
-+#define SUMS_PER_BLOCK (F2FS_BLKSIZE / F2FS_SUM_BLKSIZE)
-+#define GET_SUM_BLOCK(sbi, segno)	\
-+	(SM_I(sbi)->ssa_blkaddr + (segno / SUMS_PER_BLOCK))
-+#define GET_SUM_BLKOFF(segno) (segno % SUMS_PER_BLOCK)
-+#define SUM_BLK_PAGE_ADDR(folio, segno)	\
-+	(folio_address(folio) + GET_SUM_BLKOFF(segno) * F2FS_SUM_BLKSIZE)
- 
- #define GET_SUM_TYPE(footer) ((footer)->entry_type)
- #define SET_SUM_TYPE(footer, type) ((footer)->entry_type = (type))
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6e52e36c1f1a..707e24551fdd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4052,6 +4052,20 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	if (sanity_check_area_boundary(sbi, folio, index))
- 		return -EFSCORRUPTED;
- 
-+	/*
-+	 * Check for legacy summary layout on 16KB+ block devices.
-+	 * Modern f2fs-tools packs multiple 4KB summary areas into one block,
-+	 * whereas legacy versions used one block per summary, leading
-+	 * to a much larger SSA.
-+	 */
-+	if (SUMS_PER_BLOCK > 1 &&
-+		    !(__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_PACKED_SSA))) {
-+		f2fs_info(sbi, "Error: Device formatted with a legacy version. "
-+			"Please reformat with a tool supporting the packed ssa "
-+			"feature for block sizes larger than 4kb.");
-+		return -EOPNOTSUPP;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 6afb4a13b81d..a7880787cad3 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -17,6 +17,7 @@
- #define F2FS_LOG_SECTORS_PER_BLOCK	(PAGE_SHIFT - 9) /* log number for sector/blk */
- #define F2FS_BLKSIZE			PAGE_SIZE /* support only block == page */
- #define F2FS_BLKSIZE_BITS		PAGE_SHIFT /* bits for F2FS_BLKSIZE */
-+#define F2FS_SUM_BLKSIZE		4096	/* only support 4096 byte sum block */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
- #define F2FS_EXTENSION_LEN		8	/* max size of extension */
- 
-@@ -441,7 +442,7 @@ struct f2fs_sit_block {
-  * from node's page's beginning to get a data block address.
-  * ex) data_blkaddr = (block_t)(nodepage_start_address + ofs_in_node)
-  */
--#define ENTRIES_IN_SUM		(F2FS_BLKSIZE / 8)
-+#define ENTRIES_IN_SUM		(F2FS_SUM_BLKSIZE / 8)
- #define	SUMMARY_SIZE		(7)	/* sizeof(struct f2fs_summary) */
- #define	SUM_FOOTER_SIZE		(5)	/* sizeof(struct summary_footer) */
- #define SUM_ENTRY_SIZE		(SUMMARY_SIZE * ENTRIES_IN_SUM)
-@@ -467,7 +468,7 @@ struct summary_footer {
- 	__le32 check_sum;		/* summary checksum */
- } __packed;
- 
--#define SUM_JOURNAL_SIZE	(F2FS_BLKSIZE - SUM_FOOTER_SIZE -\
-+#define SUM_JOURNAL_SIZE	(F2FS_SUM_BLKSIZE - SUM_FOOTER_SIZE -\
- 				SUM_ENTRY_SIZE)
- #define NAT_JOURNAL_ENTRIES	((SUM_JOURNAL_SIZE - 2) /\
- 				sizeof(struct nat_journal_entry))
--- 
-2.51.1.838.g19442a804e-goog
-
+Thanks.
 
