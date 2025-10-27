@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-871622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53628C0DDF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:10:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2509C0DCF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93492504B59
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35FAA3BEDBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB8D25C838;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E5130100D;
 	Mon, 27 Oct 2025 12:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qg0MZF86"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AytX+UM2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB22C375E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9945F2D8792;
 	Mon, 27 Oct 2025 12:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569822; cv=none; b=uCvZ2cVffR1dHr3xTGrQo7XFHV9dssYK6bDc3ou8nQHj0WG0i3DyohZx4yiV4JLBsKUXuGYJA67xZZDkjbzZcw8y18oElJytlmIQIMWWGKJXxtLtLiZp0mC3xT70TzSDqH51mzAz1Q/k258PyYlkdV3BUL1uSrEi0oh9xjV3E7A=
+	t=1761569822; cv=none; b=m1WqNcEgYFGubV3Jt5Enoq01mFVfEq2szRj1uFVCM7PfJhKTzTwfFmKkYWrEeJg5HO8MNfB78u44FwYMcsJYSLn5a4pURd5ckumazRDSafHHebiY1H2KZaQFHMeoNHiW8qkdMHgO7AJJlfb0tVoEzCpxolFXvU9MHgCeTAtcbi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761569822; c=relaxed/simple;
-	bh=ojezu/Uo+J/jAdJIMpppL/LYPdk+yEgDql0KTa8tpLY=;
+	bh=7WylpHCfl5v2xSL09jxwrG9Ik/L6u+sN2kDjKM+sdbI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gcoPBIm/908P2SI5lA+AYcAhmEdfvf9LxoTaJPeEH9FgFnb9o+SBAHCNx3LJnosSE96sbLGDt5f4P9Nr3cDU30Bd+4GRfOFBe2hZOqrq5CUYUOwZ6UTdDCcopn5jAMew3vh7X9+jn3TSUlGS66oY3Djxy6bglM67FjDCBofM+Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qg0MZF86; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE238C2BCAF;
+	 MIME-Version; b=sPplHthEXJKouMLRFkFj1H0ofXkGUpjNNC/Pzn9TRtlqic38iKEOPf+PzYDJUD9FYWOmQAR5mr0d2YvlWbaETMWNIrk+h6cZnhJncnw+9pWl3JkMTzV5fkFU8xKgNxSyKqgjLCRwHqAwEEg70h3YWa/3tApJlOKc7wygHb3wpcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AytX+UM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1EFC2BC87;
 	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761569822;
-	bh=ojezu/Uo+J/jAdJIMpppL/LYPdk+yEgDql0KTa8tpLY=;
+	bh=7WylpHCfl5v2xSL09jxwrG9Ik/L6u+sN2kDjKM+sdbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qg0MZF86i4vHoRckQjlkDFV5bPrs3QDJSL2A9/3OY1IGg5jIiM9/gdlkeXeNcL3Rl
-	 mQOl8sNE44ENaSnQYXf7Z2OLHb21+6XH7Y3Gnb73lPdKC5Ls18135AKkstxdUh2wjZ
-	 FBX9vwtDrO5bCWnFOqhoekD4k2PIgQjENgtiSpFlnUQHqJ78L8sOeoZwryi2jiAbLX
-	 iwCaLAPPKT7jTzkv/Xa0cygTc3lAQ8FHPMCcwD4R3k0NXJxw7igG9OVoJ3MS3Pqs0h
-	 fk6EBlAhndWAy0Ug3f11LupepS9nQFX9S0tsq9PrObIKXrjVq8idNusltjb4xnwrUN
-	 xtgNDCwMI/FKw==
+	b=AytX+UM2VJpPevBJmVH1Guw+dpV6MPA9jbKvvQQHiS7kw9AfqGTx0FrICPKUZUkXe
+	 6e4CkYRLhzVMvy9sfDOv4HX/uKFcb2Xhp8o3JgnjwFvQbtA0Cw+EzT64dtVckmdoFz
+	 6asLarvlAUHXRrNNH4kghjBNEsz1CdIdiLz9bhFE8+cyEPA3z3C+C9omB/nvfR6C2R
+	 GLLFeU4geEafPxvRycr9XsIIfF6i4j2bCzOclYbNvEb0XEmyTJ6R4py5QrsHBDFZeJ
+	 btAiPlc5igKle+32Ffzt5Se1r0B2XjcnRSvWzPd+xuKic36v1TwvSYeduYk3jdLebl
+	 2Q73IV9Kql5Fw==
 Received: by wens.tw (Postfix, from userid 1000)
-	id BBDE85FFCF; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
+	id C5E7E5FFAB; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/10] arm64: dts: allwinner: a523: Add SPDIF TX pin on PB and PI pins
-Date: Mon, 27 Oct 2025 20:56:50 +0800
-Message-ID: <20251027125655.793277-10-wens@kernel.org>
+Subject: [PATCH v2 10/10] [EXAMPLE] arm64: dts: allwinner: a527-cubie-a5e: Enable I2S and SPDIF output
+Date: Mon, 27 Oct 2025 20:56:51 +0800
+Message-ID: <20251027125655.793277-11-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251027125655.793277-1-wens@kernel.org>
 References: <20251027125655.793277-1-wens@kernel.org>
@@ -71,53 +71,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SPDIF TX (called OWA OUT in the datasheet) is available on three
-pins. Of those, the PH pin is unlikely to be used since it conflicts
-with the first Ethernet controller.
+This is an example change.
 
-The Radxa Cubie A5E exposes SPDIF TX through the PI pin group on the
-40-pin GPIO header.
+The Radxa Cubie A5E exposes I2S2 and SPDIF on the 40-pin header. Enable
+both.
 
-The Orange Pi 4A exposes SPDIF TX through both the PB and PI pin
-groups on the 40-pin GPIO header. The PB pin alternatively would be
-used for I2S0 though.
-
-Add pinmux settings for both options so potential users can directly
-reference either one.
+In this example, I2S2 is connected to adafruit speaker bonnet, which
+sports a pair of MAX98357A for speaker amplication. SPDIF is connected
+to a SPDIF interface card for PCs, which has both coaxial and optical
+outputs. The output was connected via optical cable to a dumb SPDIF to
+analog audio converter.
 
 Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 ---
-Changes since v1:
-- New patch; missing from v1 causing dts to not compile
----
- arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .../dts/allwinner/sun55i-a527-cubie-a5e.dts   | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index cebd8e16e845..42dab01e3f56 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -200,6 +200,20 @@ rgmii1_pins: rgmii1-pins {
- 				bias-disable;
- 			};
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+index bfdf1728cd14..828d101d28e8 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+@@ -64,6 +64,46 @@ reg_usb_vbus: vbus {
+ 		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>;	/* PL8 */
+ 		enable-active-high;
+ 	};
++
++	codec: audio-codec {
++		compatible = "maxim,max98360a";
++		#sound-dai-cells = <0>;
++	};
++
++	sound-i2s {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "I2S";
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&dailink_cpu>;
++		simple-audio-card,frame-master = <&dailink_cpu>;
++		simple-audio-card,mclk-fs = <128>;
++
++		dailink_cpu: simple-audio-card,cpu {
++			sound-dai = <&i2s2>;
++		};
++
++		dailink0_master: simple-audio-card,codec {
++			sound-dai = <&codec>;
++		};
++	};
++
++	sound-spdif {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "spdif-out";
++
++		simple-audio-card,cpu {
++			sound-dai = <&spdif>;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&spdif_out>;
++		};
++	};
++
++	spdif_out: spdif-out {
++		#sound-dai-cells = <0>;
++		compatible = "linux,spdif-dit";
++	};
+ };
  
-+			/omit-if-no-ref/
-+			spdif_out_pb_pin: spdif-pb-pin {
-+				pins = "PB8";
-+				function = "spdif";
-+				allwinner,pinmux = <2>;
-+			};
+ &ehci0 {
+@@ -101,6 +141,12 @@ &gpu {
+ 	status = "okay";
+ };
+ 
++&i2s2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2s2_pi_pins>;
++	status = "okay";
++};
 +
-+			/omit-if-no-ref/
-+			spdif_out_pi_pin: spdif-pi-pin {
-+				pins = "PI10";
-+				function = "spdif";
-+				allwinner,pinmux = <2>;
-+			};
+ &mdio0 {
+ 	ext_rgmii0_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+@@ -344,6 +390,12 @@ &r_pio {
+ 	vcc-pm-supply = <&reg_aldo3>;
+ };
+ 
++&spdif {
++	pinctrl-names = "default";
++	pinctrl-0 = <&spdif_out_pi_pin>;
++	status = "okay";
++};
 +
- 			uart0_pb_pins: uart0-pb-pins {
- 				pins = "PB9", "PB10";
- 				allwinner,pinmux = <2>;
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
 2.47.3
 
