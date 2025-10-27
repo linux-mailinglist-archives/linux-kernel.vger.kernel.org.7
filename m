@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-872407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F1CC10E26
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:23:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EE5C10F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EEA581F80
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:16:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 549B9503090
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433B92BD033;
-	Mon, 27 Oct 2025 19:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C95D31D39A;
+	Mon, 27 Oct 2025 19:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jGrrSqD0"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BO/7IOkv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F190632BF32;
-	Mon, 27 Oct 2025 19:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723101E47CA;
+	Mon, 27 Oct 2025 19:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592518; cv=none; b=FRuPqqE5KBht2gnRJaNmNxCIuSdLXaqc48KG1KP+ARhZJ7RvoZV4d9zxoETUtbTt2BDx1N8VYTUgM5/SPJBwddMcJkIoRUhHCs3fNH39RsiEvOVjlht6ajq0U8Jb5SWeBzq1Y5qq5S93yClJaSYUJjibm2P43R8bpsvFEBZdzVY=
+	t=1761592735; cv=none; b=NVQW4FmUodjBHlILyl64IC1CTaDnuqcipUM5PHKYr83SodTz8lYIJAPLSV0ioc/CvTVJsxcrWzu4I8BrxQAWB4CefOE589RMIZe+NSw/uhobuiPrcWvfqGY6zyU4Kv1CPA6k5k9Kx34LgjCcxcttuD3QkW+uyue2C/QhmtsPI3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592518; c=relaxed/simple;
-	bh=gBbc+fotrX+RMKMSBXJ7BVOBwokjef2x+YQQmRlPdos=;
+	s=arc-20240116; t=1761592735; c=relaxed/simple;
+	bh=1wIslPZn74tqD42ozrhDVJu5AEtovvgZ/ChkyjAYukE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PKgIaFFyCabM7KWB03DfvgndGvfR4FZNvAA1mYc2ArFYXhonKeg2WcZN3T/H4B0T4wla/7ZkS1E3Qvtt84IHnrdRnDll9up2TOqtCeFWuICP3KvtBjXlnWQyzuzUVTc6oUd2eQK8kXcrctk46XKMaCmUguZZKqcHoWlLBGxlYCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jGrrSqD0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B078C4CEF1;
-	Mon, 27 Oct 2025 19:15:17 +0000 (UTC)
+	 MIME-Version; b=L1MQaqO+m6xW7iDt7qGJ5dN/fBJEPwvjAczremKuFvfLnwEKtTGd/p+krGOu3l8g+lSsrm3TjBzYOcBMYDVIAfyaEP533WAR9apwELWRzW75ZbYdTmo0YDBgFumEJZOE7rOFOMNmMyUIRknCXkMLjH0CNwvtUC0HrpUxTAE0zw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BO/7IOkv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B49C4CEF1;
+	Mon, 27 Oct 2025 19:18:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761592517;
-	bh=gBbc+fotrX+RMKMSBXJ7BVOBwokjef2x+YQQmRlPdos=;
+	s=korg; t=1761592735;
+	bh=1wIslPZn74tqD42ozrhDVJu5AEtovvgZ/ChkyjAYukE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jGrrSqD0A2IJKNvmrMiTCuKsDj6iVr3jKkK7laY+CqZpjIe9E6pY7nyuFeRfwVAy4
-	 6PsfafUDodXdAVNXcd05yHpZvshksbnPiJSFYyOkPQDBgHnT5YJxgdhwNMzrkFSreq
-	 yxW1cJ6xvwArvun/yc/P2EY88Rj5ny1ni9pEmb0Y=
+	b=BO/7IOkvlS4M/54dhCnF0Mzc97gS+lNwX5xUPpU0xpjTESasazpiXRSlX7Y0nEBlt
+	 NLk3PeC1f7T6vIxkiiJlf99/P7ckebgY5hF4G4h23pJhcbHJzzh+LvPYK8caeHK0vb
+	 zWh0PcOuEtZ6nE9hr1teDkyUq5Dj0GmtcnGvZCUo=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,12 +50,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Matthew Brost <matthew.brost@intel.com>,
 	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 150/157] devcoredump: Fix circular locking dependency with devcd->mutex.
-Date: Mon, 27 Oct 2025 19:36:51 +0100
-Message-ID: <20251027183505.318771749@linuxfoundation.org>
+Subject: [PATCH 6.6 77/84] devcoredump: Fix circular locking dependency with devcd->mutex.
+Date: Mon, 27 Oct 2025 19:37:06 +0100
+Message-ID: <20251027183440.861260776@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
-References: <20251027183501.227243846@linuxfoundation.org>
+In-Reply-To: <20251027183438.817309828@linuxfoundation.org>
+References: <20251027183438.817309828@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -388,7 +388,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	mutex_unlock(&devcd->mutex);
  	return 0;
  }
-@@ -186,12 +205,10 @@ static ssize_t disabled_show(struct clas
+@@ -186,12 +205,10 @@ static ssize_t disabled_show(const struc
   *                                                                 put_device() <- last reference
   *             error = fn(dev, data)                           devcd_dev_release()
   *             devcd_free(dev, data)                           kfree(devcd)
@@ -403,7 +403,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
   * put_device(). However, this will not happens as fn(dev, data) runs
   * with its own reference to device via klist_node so it is not its last reference.
   * so, above situation would not occur.
-@@ -353,7 +370,7 @@ void dev_coredumpm(struct device *dev, s
+@@ -352,7 +369,7 @@ void dev_coredumpm(struct device *dev, s
  	devcd->read = read;
  	devcd->free = free;
  	devcd->failing_dev = get_device(dev);
@@ -412,7 +412,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  	mutex_init(&devcd->mutex);
  	device_initialize(&devcd->devcd_dev);
-@@ -362,8 +379,14 @@ void dev_coredumpm(struct device *dev, s
+@@ -361,8 +378,14 @@ void dev_coredumpm(struct device *dev, s
  		     atomic_inc_return(&devcd_count));
  	devcd->devcd_dev.class = &devcd_class;
  
@@ -428,7 +428,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if (device_add(&devcd->devcd_dev))
  		goto put_device;
  
-@@ -380,13 +403,20 @@ void dev_coredumpm(struct device *dev, s
+@@ -379,13 +402,20 @@ void dev_coredumpm(struct device *dev, s
  
  	dev_set_uevent_suppress(&devcd->devcd_dev, false);
  	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
