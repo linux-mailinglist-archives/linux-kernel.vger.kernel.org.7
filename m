@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-871172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5333C0C911
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:11:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D965C0C92C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6E8188562D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:06:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F3D04F97D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A4E7263B;
-	Mon, 27 Oct 2025 09:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D0E2E7641;
+	Mon, 27 Oct 2025 09:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMV1rXdU"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LA/mC7Gv";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xwiKYER+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LA/mC7Gv";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xwiKYER+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0602F9DAA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF5F2FB62A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555814; cv=none; b=UKIi6Ny0uZV1Q0cU++RoSh/kMFIDFs4ofuDEZ/LxhzokjGII1YIuTct8h1t2fZf/4VACHd9LrAYZwz4g6J/Cpwb2dX8pJnqHRcSwi53U4siAK+u3mrCArWWYUMDDkmMkmOo1xIhFcBqNs/TRM3OpQr8mbrVyY9+INsdN4tkJ130=
+	t=1761555828; cv=none; b=M4mXbOcdvPTTA7qAcFcXSNS6LEQaySjxTh8bVKNBcdPII3VGDtsY3fzFTeCnm0U3dcs6Ij6v/I42RA6qbL2TOj6d633XDU/eMpcwpK2PCLqyfRckQ9mBQJnHxiM3Q4+rL2//6Ywf/XF3wb+q8TCzwtyAGUTHm7sQW0A8YqsHQ1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555814; c=relaxed/simple;
-	bh=OvUDbo5pGuUu7qotyzejFUWD0f6M8h+6eVPsJH2aFMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qxYfWRtkx1oGLKoCbjp2wNB3OwzAz2yfM9wcNH4/5WIIiA0+wkQawgQDHYg0rifCa49+sXKBB3YclY3tVDjFVwmsc0WsHFWdAdtW1WkZaH8DCNbZz/R0lnja9LlR7WqyFBvSdC/J4ZJBF194H/Hop35w8QJl52D+bZl9/1aQIZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMV1rXdU; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-28a5b8b12a1so44679285ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761555812; x=1762160612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zoTpyL8LPqpthgwVzy0CiG0xAa+lw5VtWyKYbKOT8QE=;
-        b=dMV1rXdUJDSL7ZIEqmUbuTc4SonyFxw7qN50GjxH3wPhCs8Sv8qiPUZ1azC+us72AI
-         FOnyGPVBRD1T9VQxK0Z8G971Hrn/Q1NsDXCPLovscO1GEn5/V46aaiBtQJ4lWLYtaaCZ
-         adDgsxrjKq6tPoJQoDK6ng6WZYHZgIDfmUK3vcyqKjpRgmd7ra3EUu28jyXTP+GDf5Kh
-         IPEMYq2mX2x9XMiPtMuI+Jg94aBUu0ui9LGLtvx2f8FSEPYzWGh5tr9kYlzrbw5TSQdt
-         /cizUhs7mo7MLLayxQt8GnyRmEN8l2GfC41DfIezpWurU+yrUTnesMbpf+zYLOMphrv8
-         slVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761555812; x=1762160612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zoTpyL8LPqpthgwVzy0CiG0xAa+lw5VtWyKYbKOT8QE=;
-        b=o/AAEKzkWWmNROcvuV9nRj7wmuYrkDn728W7PUlzjdR+gVB3Db/C146gGm5PT2y3Fm
-         9JhPGICalbTD3wmtS3AtEiw4a3ipqY4mg9Yw0pz6zappC1TRODK/sUGWNHYooDm5uRBG
-         NciE7fYAohw7QZWnarxuMhqCgQvnvLyv/nV2nReRjzK6OFWoSHMTXrBIG67e2nv19Lc1
-         n13XtRrK1/6rkGeWTZ3azc611fzTyszHwAT2OEqnbkoaZr67MhvDvzCf69ZiBVA3H80b
-         QeQ7gRAwFX0KTcW2lqCI1jnsP3vaa4gK/KFd9fFiA6COFp/vnXs8RPsHJZEn3l0VbTMm
-         Hswg==
-X-Forwarded-Encrypted: i=1; AJvYcCW86dEvNCSADLiamHAmsiE1hayZRk5CWQC2N2FlEFibnp6MA1QflRBoMO/tGfy1xzM/iovox+v8B9GCWik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc/0NKESlMkEzqbmC78sSDmhgsuA7cvglE5ODFsVd0aIfSgB0X
-	hc6jx0UDbtnHVjEyOEv2Ox0MSV3baJY+z4tqitrTB96zFoiqgO/xq6dm
-X-Gm-Gg: ASbGnctmSsyEt+kVbUI3q8o296HkQ22RGJir1DYp6QXvirmLDOY69HV3mFCm1nKePLZ
-	bmYKnEtB4sG09jL0/al8vhRQDH5mPjG3k7MqHEUcpMy9IvYptLmxlJ2gknVBQnpwdLDdxhbXW16
-	J1S6zHJ7/9wateMAI/zgFc6rjS7d5uOV1PxUJ1JTEPCrq6dQxBt5HbkKvbsin16wFboDWaobdkh
-	d8UZzOpm62y38M0z7LnLLI0rLzNDQHWn4Kgx4SvjtBmm/qep/e5oTbW0GiBWYfj+quiNnilnJZQ
-	woehfdypPTgIAkmQzMMNnkPf4Hg4YFTDyX6tWEctCiRKlCAu2SixFeLkiAOFIk4UZQM+zUI3+w9
-	GSpzGStxvwG9EMjgqnz8SGol+6GXKcBrPtDSguf6LSUDFuXvvh7uFC8UARwXqK6RS0/G+njuXzC
-	KtqRivy6HF/WNi81ioSA4=
-X-Google-Smtp-Source: AGHT+IGXwneCAjsjJPL0hWiNqGqUVbp6EE3p4IZGCMQRdN0SZJ+QzldDOpFCpQQntrr/66rhZtbW2Q==
-X-Received: by 2002:a17:902:e944:b0:290:b14c:4f36 with SMTP id d9443c01a7336-290cba4edaemr464679185ad.31.1761555812013;
-        Mon, 27 Oct 2025 02:03:32 -0700 (PDT)
-Received: from rockpi-5b ([45.112.0.108])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3433sm73881335ad.21.2025.10.27.02.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 02:03:31 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-omap@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
-	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
-	linux-arm-kernel@lists.infradead.org (moderated list:PCI DRIVER FOR TI DRA7XX/J721E),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v3 2/2] PCI: j721e: Use inline reset GPIO assignment and drop local variable
-Date: Mon, 27 Oct 2025 14:33:06 +0530
-Message-ID: <20251027090310.38999-3-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251027090310.38999-1-linux.amoon@gmail.com>
-References: <20251027090310.38999-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1761555828; c=relaxed/simple;
+	bh=vQPs3K6Ka4RKxdyvekcQUqD4Pn6qxfT7zetNE77Dp/w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZmQTDoeNlzxZO76HcrO4J0/hozBk5CcowHL04rxlAX/xR6GjfZlolAnwPLd8wqbBWXRla8pUFF7dSWPNPSbtvFCWRuqo7eezVpzF2oVbPzl7N5gxsh1PgE5hwKpwsNgnhLzpI1NBXUUio4KMQarYooqqP8/Ij1e9mUo5OzjhE1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LA/mC7Gv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xwiKYER+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LA/mC7Gv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xwiKYER+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from hawking.nue2.suse.org (unknown [IPv6:2a07:de40:a101:3:92b1:1cff:fe69:ddc])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 411041F387;
+	Mon, 27 Oct 2025 09:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761555824; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dMBkmHj4Il5WIq7tDNPinD42JrN2hAdCrLiWHZU59ug=;
+	b=LA/mC7GvBSYag5NCN1zSBUpPzUZIZrpIP0cSg2PNRiMcYySavYblijSOy6uT1pCpQccP2y
+	AMpExBsBSqiwti/wph3D/5Q+tLEFv3DsshFY6CuprLJq/VgfgSISg4fgByDR4Zc5aFJnAt
+	OAaiGtEAwwU4iPNT41OaFyKu3ng+qBc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761555824;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dMBkmHj4Il5WIq7tDNPinD42JrN2hAdCrLiWHZU59ug=;
+	b=xwiKYER+J7hn7pFMSEntBZ6A3dku7r5fvF07Y4j0KGHkHL4z/Sg2MLPTOFvm05reGdMqmp
+	CHE++/6NcY3FFcAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="LA/mC7Gv";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=xwiKYER+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761555824; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dMBkmHj4Il5WIq7tDNPinD42JrN2hAdCrLiWHZU59ug=;
+	b=LA/mC7GvBSYag5NCN1zSBUpPzUZIZrpIP0cSg2PNRiMcYySavYblijSOy6uT1pCpQccP2y
+	AMpExBsBSqiwti/wph3D/5Q+tLEFv3DsshFY6CuprLJq/VgfgSISg4fgByDR4Zc5aFJnAt
+	OAaiGtEAwwU4iPNT41OaFyKu3ng+qBc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761555824;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dMBkmHj4Il5WIq7tDNPinD42JrN2hAdCrLiWHZU59ug=;
+	b=xwiKYER+J7hn7pFMSEntBZ6A3dku7r5fvF07Y4j0KGHkHL4z/Sg2MLPTOFvm05reGdMqmp
+	CHE++/6NcY3FFcAw==
+Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
+	id 2ECB84A05B4; Mon, 27 Oct 2025 10:03:44 +0100 (CET)
+From: Andreas Schwab <schwab@suse.de>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>,  Aurelien Jarno
+ <aurelien@aurel32.net>,  linux-kernel@vger.kernel.org,  Lee Jones
+ <lee@kernel.org>,  Sebastian Reichel <sre@kernel.org>,  Yixun Lan
+ <dlan@gentoo.org>,  Paul Walmsley <pjw@kernel.org>,  Palmer Dabbelt
+ <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,  Alexandre Ghiti
+ <alex@ghiti.fr>,  "open list:RISC-V ARCHITECTURE:Keyword:riscv"
+ <linux-riscv@lists.infradead.org>,  "open list:RISC-V SPACEMIT SoC
+ Support:Keyword:spacemit" <spacemit@lists.linux.dev>,  "open list:SYSTEM
+ RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] driver: reset: spacemit-p1: add driver for
+ poweroff/reboot
+In-Reply-To: <aP8QHwsYDlbQxQJo@pie> (Yao Zi's message of "Mon, 27 Oct 2025
+	06:24:31 +0000")
+References: <20251026224424.1891541-1-aurelien@aurel32.net>
+	<20251026224424.1891541-2-aurelien@aurel32.net>
+	<A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org> <aP8QHwsYDlbQxQJo@pie>
+Date: Mon, 27 Oct 2025 10:03:44 +0100
+Message-ID: <mvmh5vk67in.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 411041F387
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: 2.59
+X-Spam-Level: **
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [2.59 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
+	RDNS_NONE(2.00)[];
+	ONCE_RECEIVED(1.20)[];
+	HFILTER_HELO_IP_A(1.00)[hawking.nue2.suse.org];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HFILTER_HELO_NORES_A_OR_MX(0.30)[hawking.nue2.suse.org];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	RCVD_NO_TLS_LAST(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DIRECT_TO_MX(0.00)[Gnus/5.13 (Gnus v5.13)];
+	DKIM_TRACE(0.00)[suse.de:+];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[from(RLajr16mudzow8bnf6sy)];
+	RCVD_COUNT_ONE(0.00)[1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.de:dkim]
+X-Spamd-Bar: ++
 
-The result of devm_gpiod_get_optional() is now assigned directly
-assigned to pcie->reset_gpio. This removes a superfluous local gpiod
-variable, improving code readability and compactness. The functionality
-remains unchanged, but the code is now more streamlined
+On Okt 27 2025, Yao Zi wrote:
 
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/pci/controller/cadence/pci-j721e.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+> On Mon, Oct 27, 2025 at 11:20:33AM +0800, Troy Mitchell wrote:
+>> On Sun, Oct 26, 2025 at 11:41:14PM +0100, Aurelien Jarno wrote:
+>> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
+>> > chip, which is commonly paired with the SpacemiT K1 SoC.
+>> > 
+>> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
+>> > done directly through the regmap interface. Reboot or poweroff is
+>> > triggered by setting a specific bit in a control register, which is
+>> > automatically cleared by the hardware afterwards.
+>> > 
+>> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+>> > ---
+>> > v2:
+>> >  - Replace the "select" by a "depends on"
+>> >  - Remove outdated Reviewed-by
+>> > 
+>> >  drivers/power/reset/Kconfig              |  9 +++
+>> >  drivers/power/reset/Makefile             |  1 +
+>> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
+>> >  3 files changed, 98 insertions(+)
+>> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
+>> > 
+>> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+>> > index 8248895ca9038..61c16f3d5abc7 100644
+>> > --- a/drivers/power/reset/Kconfig
+>> > +++ b/drivers/power/reset/Kconfig
+>> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
+>> >  	help
+>> >  	  Reboot support for the KEYSTONE SoCs.
+>> >  
+>> > +config POWER_RESET_SPACEMIT_P1
+>> > +	tristate "SpacemiT P1 poweroff and reset driver"
+>> > +	depends on ARCH_SPACEMIT || COMPILE_TEST
+>> > +	depends on MFD_SPACEMIT_P1
+>> > +	default m
+>> default m if ARCH_SPACEMIT? Or default ARCH_SPACEMIT?
+>> I believe that reboot and shutdown are actually essential functionalities,
+>> so it might make more sense: default ARCH_SPACEMIT?
+>
+> I don't think there's anything preventing it to be built as module by
+> default: even though it's "essential", it's unnecessary during kernel
+> and userspace startup, thus I see no reason to build it in the image.
 
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index a88b2e52fd78..ecd1b0312400 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -477,7 +477,6 @@ static int j721e_pcie_probe(struct platform_device *pdev)
- 	struct j721e_pcie *pcie;
- 	struct cdns_pcie_rc *rc = NULL;
- 	struct cdns_pcie_ep *ep = NULL;
--	struct gpio_desc *gpiod;
- 	void __iomem *base;
- 	u32 num_lanes;
- 	u32 mode;
-@@ -589,12 +588,12 @@ static int j721e_pcie_probe(struct platform_device *pdev)
- 
- 	switch (mode) {
- 	case PCI_MODE_RC:
--		gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
--		if (IS_ERR(gpiod)) {
--			ret = dev_err_probe(dev, PTR_ERR(gpiod), "Failed to get reset GPIO\n");
-+		pcie->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+		if (IS_ERR(pcie->reset_gpio)) {
-+			ret = dev_err_probe(dev, PTR_ERR(pcie->reset_gpio),
-+					    "Failed to get reset GPIO\n");
- 			goto err_get_sync;
- 		}
--		pcie->reset_gpio = gpiod;
- 
- 		ret = cdns_pcie_init_phy(dev, cdns_pcie);
- 		if (ret) {
-@@ -616,9 +615,9 @@ static int j721e_pcie_probe(struct platform_device *pdev)
- 		 * This shall ensure that the power and the reference clock
- 		 * are stable.
- 		 */
--		if (gpiod) {
-+		if (pcie->reset_gpio) {
- 			msleep(PCIE_T_PVPERL_MS);
--			gpiod_set_value_cansleep(gpiod, 1);
-+			gpiod_set_value_cansleep(pcie->reset_gpio, 1);
- 		}
- 
- 		ret = cdns_pcie_host_setup(rc);
+Wouldn't it be needed in a reboot-on-panic situation?
+
 -- 
-2.50.1
-
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
 
