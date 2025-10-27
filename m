@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-872430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872E0C11114
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:32:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6535C10A8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6519219A44CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7E0561FF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FD432AAAA;
-	Mon, 27 Oct 2025 19:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C535531D742;
+	Mon, 27 Oct 2025 19:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N8np0sM3"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NUHY9px8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E6329C43;
-	Mon, 27 Oct 2025 19:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186D23126A0;
+	Mon, 27 Oct 2025 19:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761593198; cv=none; b=CIc3OxrSeVn/xYhFplMREh1gDMdz7EBIZB5O3KxJayWZk3iwD/jViM9bXxN3SEtDaLTFqv1Y7s59murRLPdwlxYB4ylQEKBFJZWxZWviDssl+PHGe/uGyrh4nAYbfQZ0FWMoTBHyh5TROJqh9gmP8y3zrvrnI/2dClyqc9Vavgc=
+	t=1761591956; cv=none; b=H+69ufSNt4aN+rzM574ZYP0vBwoEQoj8YRiLvLL0PyZ1MvhB9GWYGkh+wKhb5pGE4Ud2TtilTcFPvCKkEQtf6H5vwKSwMwy9rlJ6a3Y6HPXZCstzn8Kj//MW7T3UsFKsm2dZdAD/5qCXfXlYysD+LT0I2e9Cx2hGSEEkKVz53Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761593198; c=relaxed/simple;
-	bh=awzUQQq1hAueQzk/+8e4kIr8PEpBvD5wGpesCIyObFg=;
+	s=arc-20240116; t=1761591956; c=relaxed/simple;
+	bh=+dMRimA0mwlWIdgWF6jQ+Oy8xAibGJZZuh5b9HIOpW8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aoWYQZyUAVvRud3B1BCOpchPxaG6LvSPg7ioOdAaIiNIJ8VrK3wBuiukBrMhi/e9P845cmm0OWxfz6X0ByR5yBditgeu1Sjn0AzTg8xJzr2/xHBwgm6638cisHwcMHXE9HnATm3lj01Mz1SifrzaMSWAEovkylLG6LJw4bbOPUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N8np0sM3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF21C4CEF1;
-	Mon, 27 Oct 2025 19:26:37 +0000 (UTC)
+	 MIME-Version; b=OeuTW1GZLhsrxFKiCLDbQPbECcSpxOvDu6ktYKT/zbI4jLdUJedyrnM3PxQqLHmST5tDXMdpnSywACnKnQGXneKAMnmLAR/oo5zb8hFXuQFx0DHq0PuHIXMGDfFkFE4NS/BFvrEBN7/pLj4WpHxqrl540E2GZzTTjXlHKkffnQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NUHY9px8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C1CC4CEF1;
+	Mon, 27 Oct 2025 19:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761593197;
-	bh=awzUQQq1hAueQzk/+8e4kIr8PEpBvD5wGpesCIyObFg=;
+	s=korg; t=1761591955;
+	bh=+dMRimA0mwlWIdgWF6jQ+Oy8xAibGJZZuh5b9HIOpW8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N8np0sM3jFGyrJmpNQbfDG/+SHkBiUmI7t+Kb7tsfl+EpeMvfuCebQvWWIXwGWKMn
-	 11wocQDQb/ODOvfMnkPUsnusMQIKh+41vkRuF3DDB/DFxjw0/S2htR+gtPFuPwPl+G
-	 kw/trdigvAyXGiGBGbPX799PrlWcsLyJSW0EpIn0=
+	b=NUHY9px8/bWW2zpAkXA/Gs3ldmLcWdMUdWbygJgYDmS/nBl85iq0Yjc7nyNK3BeDh
+	 UazZvwa8ccPrgk0MeBOHb01ZRWbPYEIVRD4g8Z8ZhCkaQ+jQ2H9gfUI444NtA+Ood3
+	 LnN+pIPECEwSa+kqSkY7urMWCzt16dx0EzHSqrpE=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,12 +53,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.17 050/184] arm64, mm: avoid always making PTE dirty in pte_mkwrite()
-Date: Mon, 27 Oct 2025 19:35:32 +0100
-Message-ID: <20251027183516.248198636@linuxfoundation.org>
+Subject: [PATCH 5.15 061/123] arm64, mm: avoid always making PTE dirty in pte_mkwrite()
+Date: Mon, 27 Oct 2025 19:35:41 +0100
+Message-ID: <20251027183448.029112365@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183514.934710872@linuxfoundation.org>
-References: <20251027183514.934710872@linuxfoundation.org>
+In-Reply-To: <20251027183446.381986645@linuxfoundation.org>
+References: <20251027183446.381986645@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.17-stable review patch.  If anyone has any objections, please let me know.
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -124,11 +124,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index abd2dee416b3b..e6fdb52963303 100644
+index a0bfa9cd76dab..a1902dcf7a7e3 100644
 --- a/arch/arm64/include/asm/pgtable.h
 +++ b/arch/arm64/include/asm/pgtable.h
-@@ -293,7 +293,8 @@ static inline pmd_t set_pmd_bit(pmd_t pmd, pgprot_t prot)
- static inline pte_t pte_mkwrite_novma(pte_t pte)
+@@ -175,7 +175,8 @@ static inline pmd_t set_pmd_bit(pmd_t pmd, pgprot_t prot)
+ static inline pte_t pte_mkwrite(pte_t pte)
  {
  	pte = set_pte_bit(pte, __pgprot(PTE_WRITE));
 -	pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
