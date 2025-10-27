@@ -1,88 +1,70 @@
-Return-Path: <linux-kernel+bounces-872802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A59EC12124
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:37:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945F9C12136
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:41:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C641A2145B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:37:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6F354E242E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A65032E68C;
-	Mon, 27 Oct 2025 23:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m7JaOIIl"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320C132E720;
+	Mon, 27 Oct 2025 23:41:27 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8277B2F1FDA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60CA39ACF;
+	Mon, 27 Oct 2025 23:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761608237; cv=none; b=Rp5qw0mqu2+N4tPJnEA2pmC0yo0zlFs9FJynqTWE+6cUEb+97KJ9SR6XbzgzGv/Q4kB7axZtd5jMMbiJh1gi05sOHlTWeB1eKXPg81gccJfKNrwbCQC87iROa04AyehuBwPEIgPKJQ8gMwoMldGkDGeykECWcpDulyewfNW3+cI=
+	t=1761608486; cv=none; b=JPaneRDXYx+RKSkbHJPY05y64km6eidg4A+FgDfYjdF00WNF5UVrEuSuSp0qRJ+0t7QDPonAKqNQVi9yWr6aMRrO8bMmT1XQzc1vLwAZI/bcsLWi2H4RSG1m+nujKh+/6KuY+uAkemlx9wQ4eahIoVvJTf2jBrmEB0HEUlFj6K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761608237; c=relaxed/simple;
-	bh=5fxdEJqLRN1tb+ss8xTO6a1FlGbLgSxQYup7sfAznOQ=;
+	s=arc-20240116; t=1761608486; c=relaxed/simple;
+	bh=32fYWnaIMPU9AkYqGR9xgWgNQ7QLYLvhQjbl9a1CEps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XI9JqRMV+6H10w5xSd43uPB5XqUkpF4/3b5dj4s/qL+0ZRg80DE6DmfsUm9NsnLwUKuY+q8lqga/knSdcCTaYVrv6W84zNXt+4+gQq7sVuYogCDfsbv/xDTKg6UYYhoeAjE0IK4yd1iQaUijcFFwzJvC/t6rL4aqsdErPuOMb3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m7JaOIIl; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so5119576a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761608236; x=1762213036; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y25RVEc5uqdT77E62cdiRIe7zTZsno+Zu/0KbIShg9A=;
-        b=m7JaOIIlQm+eKJYwobgLwOcOTA0ZD7WCnE9bwrhCdmJDTZ9zga2Jy9w7UPHVwTGWIY
-         swWt2dWlH6+XSnffAMJnNnsC0FNi57A4mwQheMPq4KqZEqLDP+QXPj075aUYBQa66vZE
-         o7xRjOwaBJ3KcdmqwjPK3luN1t5m5eArnXISeiE78Gy9GTYv2/XQZIWaGTvYNKoksCva
-         WtY/+sLfWH/ehuVOVulmlZxQPd9SWw1K+1Z6LAdo3Kz0F0joyyUG+eFIbT5SECxLxX1v
-         DL/bHJfX+NBKfDq9hPJ200jBYBY5GNEMoJ0H1O2FODsldLDe87s4rjSUXEtV7aUitrhw
-         HATg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761608236; x=1762213036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y25RVEc5uqdT77E62cdiRIe7zTZsno+Zu/0KbIShg9A=;
-        b=X7OIsBsuFj1mhpdX1CNxA3vm75r7vuoQN4IdJIOtYWpmpdGLFkNFs7u7RAGwNn6JN7
-         dEdNS/L2nMmFDit5qjfbGggrijWL18Jk7Fp7jm9h36I4AqRKDDOqfkQRzU4IYKVoCeT/
-         MCIDDt96IC7cwvMP3FwPRlx/aMQSdrOLPvwvxEeKDu3Ezfz01ObTKwU2cguweZP60MLE
-         bbjDqr0mXLoRqBaR5WaE+fWzkjXIz3isy0NWHH4H/C2YdvIwnUzMtjpaz0s7WNN7O46l
-         M2gE51B5Yig4dRg2tuS3/GE2L17dTptG7Z9at6u+pfcpZGQscSDRqZ7EHq8EMxxZxLa2
-         O8rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGA/owt+h5DM3t+MAI9Jyt0Qu9zbpZxZg8mHVmPIJWuxTaVJIWWKQoSHmXzYEW7Za3GsELBrSyKD7yyxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKheQ+22Jo5sA87uyohZt4+thqoNKH0zsSqf4qRra/3XsOOtgn
-	MsNF+muAjDSaVuo+nH4FiUziLdRvqMXQk5ef/s4OLBFDE8dUM98Cckhs0NWJs25usQ==
-X-Gm-Gg: ASbGncseYow2z7SHnGwLiBtYOH76w1b0ndkhGxtnQnTY3F8i6No+pSZxO9LXq78Glq+
-	zkE6JTidELN/QId7Eho/YfMYVp35IGI6CzOad3ElEyXX5vvW1QPH2gAu7Nmi6XZhgACl2omko3Z
-	vJJ/axCSTjloMMFF5PTDxrWVirYnErOQXtE1813efjp/Bgf6w5ho2vDcRnu8Kq1qJdzJZxy8SJJ
-	VuizT9Qy+ecp2q3/QFUuPm7Sx1jwFUq2DXwHfTVt9It0BJM/e7X8pPSYpzEll9pk1lUhQPhyfpb
-	/K79gLRDwF2+MY+j22msD/unATGIp0iRZeY47Aitc4xb0SX/RPuw8Fj+SgJdPVIzW99pAyOAvp7
-	gNphv1e7qHL2czMH00n7Wq//bvEtTVtnX9BQw5BHvCIHrqYGG017YGFDhUVHl/UqTXVsF59JERJ
-	wSvSZuxRNj27vgM7HHc22GiUqP0l2AnN6wE3igxMqHlIdyCbBnreLGikkHOZwumb4=
-X-Google-Smtp-Source: AGHT+IGmKX74epTI3A/iK0KHRQ0gJ5rV+oqAQAXmFZTOi70Jf1LkFq+8kZDCItWUYfvqvUNhL5cm4Q==
-X-Received: by 2002:a17:90b:4d0c:b0:32b:9774:d340 with SMTP id 98e67ed59e1d1-34027ab36bcmr1685369a91.33.1761608235576;
-        Mon, 27 Oct 2025 16:37:15 -0700 (PDT)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed80aa48sm9919097a91.13.2025.10.27.16.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 16:37:14 -0700 (PDT)
-Date: Mon, 27 Oct 2025 23:37:10 +0000
-From: David Matlack <dmatlack@google.com>
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] vfio: selftests: update DMA map/unmap helpers to
- support more test kinds
-Message-ID: <aQACJucKne4DRv06@google.com>
-References: <20251027-fix-unmap-v5-0-4f0fcf8ffb7d@fb.com>
- <20251027-fix-unmap-v5-4-4f0fcf8ffb7d@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rALs5pvlFJP04uj0Vc/slH6005g3B6EGx7PYa7gYQx91fypiORb4bvSz73Ugfip5RTE1tEXhYonriHXK1n105eWO/kH4M0S4tgd9BA2fgztP5OnQZPBp3ec1W42PDA27qbH6b4YMmZ90nZj6LgB3YFA3Br676q0GvtyvC+bTKbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vDWpt-000000005gg-3ylV;
+	Mon, 27 Oct 2025 23:41:14 +0000
+Date: Mon, 27 Oct 2025 23:41:10 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v3 06/12] dt-bindings: net: dsa: lantiq,gswip:
+ add support for MII delay properties
+Message-ID: <aQADFttLJeUXRyRF@makrotopia.org>
+References: <cover.1761521845.git.daniel@makrotopia.org>
+ <cover.1761521845.git.daniel@makrotopia.org>
+ <e7a4dadf49c506ff71124166b7ca3009e30d64d8.1761521845.git.daniel@makrotopia.org>
+ <e7a4dadf49c506ff71124166b7ca3009e30d64d8.1761521845.git.daniel@makrotopia.org>
+ <20251027230439.7zsi3k6da3rohrfo@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,66 +73,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027-fix-unmap-v5-4-4f0fcf8ffb7d@fb.com>
+In-Reply-To: <20251027230439.7zsi3k6da3rohrfo@skbuf>
 
-On 2025-10-27 10:33 AM, Alex Mastro wrote:
-> Add __vfio_pci_dma_* helpers which return -errno from the underlying
-> ioctls.
+On Tue, Oct 28, 2025 at 01:04:39AM +0200, Vladimir Oltean wrote:
+> On Sun, Oct 26, 2025 at 11:45:19PM +0000, Daniel Golle wrote:
+> > Add support for standard tx-internal-delay-ps and rx-internal-delay-ps
+> > properties on port nodes to allow fine-tuning of RGMII clock delays.
+> > 
+> > The GSWIP switch hardware supports delay values in 500 picosecond
+> > increments from 0 to 3500 picoseconds, with a default of 2000
+> > picoseconds for both TX and RX delays.
+> > 
+> > This corresponds to the driver changes that allow adjusting MII delays
+> > using Device Tree properties instead of relying solely on the PHY
+> > interface mode.
+> > 
+> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > ---
+> > v3:
+> >  * redefine ports node so properties are defined actually apply
+> >  * RGMII port with 2ps delay is 'rgmii-id' mode
+> > 
+> >  .../bindings/net/dsa/lantiq,gswip.yaml        | 29 +++++++++++++++++--
+> >  1 file changed, 26 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> > index f3154b19af78..b0227b80716c 100644
+> > --- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> > +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> > @@ -6,8 +6,29 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >  
+> >  title: Lantiq GSWIP Ethernet switches
+> >  
+> > -allOf:
+> > -  - $ref: dsa.yaml#/$defs/ethernet-ports
+> > +$ref: dsa.yaml#
+> > +
+> > +patternProperties:
+> > +  "^(ethernet-)?ports$":
+> > +    type: object
+> > +    patternProperties:
+> > +      "^(ethernet-)?port@[0-6]$":
+> > +        $ref: dsa-port.yaml#
+> > +        unevaluatedProperties: false
+> > +
+> > +        properties:
+> > +          tx-internal-delay-ps:
+> > +            enum: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500]
+> > +            default: 2000
 > 
-> Add __vfio_pci_dma_unmap_all to test more unmapping code paths. Add an
-> out unmapped arg to report the unmapped byte size.
-
-nit: Please append () to function names in commit messages and comments
-(e.g. "Add __vfio_pci_dma_unmap_all() to test ..."). It helps make it
-obvious you are referring to a function.
-
-> The existing vfio_pci_dma_* functions, which are intended for happy-path
-> usage (assert on failure) are now thin wrappers on top of the
-> double-underscore helpers.
+> No. This is confusing and wrong. I looked at the driver implementation
+> code, wanting to note that it has the potential of being a breaking
+> change for device trees without the "tx-internal-delay-ps" and
+> "rx-internal-delay-ps" properties.
 > 
-> Signed-off-by: Alex Mastro <amastro@fb.com>
+> But then I saw that the driver implementation is subtly different.
+> "tx-internal-delay-ps" defaults to 2000 only if "rx-internal-delay-ps" is set, and
+> "rx-internal-delay-ps" defaults to 2000 only if "tx-internal-delay-ps" is set.
+> 
+> So when implemented in this way, it won't cause the regressions I was
+> concerned about, but it is misrepresented in the schema.
+> 
+> Why overcomplicate this and just not set a default? Modify the RX clock
+> skew if set, and the TX clock skew if set.
 
-Aside from the commit message and the braces nits,
+The problem is that before adding support for both *-internal-delay-ps
+properties the internal delays would be set exclusively based on the
+interface mode -- and are inverted logic:
 
-  Reviewed-by: David Matlack <dmatlack@google.com>
+```
+         switch (state->interface) {
+         case PHY_INTERFACE_MODE_RGMII_ID:
+                 gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_TXDLY_MASK |
+                                           GSWIP_MII_PCDU_RXDLY_MASK, 0, port);
+                 break;
+         case PHY_INTERFACE_MODE_RGMII_RXID:
+                 gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_RXDLY_MASK, 0, port);
+                 break;
+         case PHY_INTERFACE_MODE_RGMII_TXID:
+                 gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_TXDLY_MASK, 0, port);
+                 break;
+         default:
+                 break;
+         }
+```
 
-> @@ -152,10 +153,13 @@ static void vfio_iommu_dma_map(struct vfio_pci_device *device,
->  		.size = region->size,
->  	};
->  
-> -	ioctl_assert(device->container_fd, VFIO_IOMMU_MAP_DMA, &args);
-> +	if (ioctl(device->container_fd, VFIO_IOMMU_MAP_DMA, &args))
-> +		return -errno;
+As you can see the delays are set to 0 in case of the interface mode
+being RGMII_ID (and the same for RGMII_RXID and RGMII_TXID
+respectively).
 
-Interesting. I was imagining this would would return whatever ioctl()
-returned and then the caller could check errno if it wanted to. But I
-actually like this better, since it simplifies the assertions at the
-caller (like in your next patch).
+This is probably the result of the delays being initialized to 2000ps by
+default, and if the **PHY connected to the switch port** is set to take
+care of the clk/data delay then the switch port RGMII interface doesn't
+have to do it.
 
-> +int __vfio_pci_dma_unmap_all(struct vfio_pci_device *device, u64 *unmapped)
-> +{
-> +	int ret;
-> +	struct vfio_dma_region *curr, *next;
-> +
-> +	if (device->iommufd)
-> +		ret = iommufd_dma_unmap(device->iommufd, 0, UINT64_MAX,
-> +					device->ioas_id, unmapped);
+From my understanding this is a bit awkward as "internal delay" usually
+means the delay is taken care of by the PHY rather than by discrete
+parts of the board design. Here, however, it is *never* part of the
+board design and always handled by either the switch RGMII interface
+(MAC side) or the connected PHY.
 
-This reminds me, I need to get rid of INVALID_IOVA in vfio_util.h.
+So in order to not break existing board device trees expecting this
+behavior I've decided to only fall-back to adjust the delay based on the
+interface mode in case both properties are missing.
 
-__to_iova() can just return int for success/error and pass the iova up
-to the caller via parameter.
-
-> +	else
-> +		ret = vfio_iommu_dma_unmap(device->container_fd, 0, 0,
-> +					   VFIO_DMA_UNMAP_FLAG_ALL, unmapped);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	list_for_each_entry_safe(curr, next, &device->dma_regions, link) {
-> +		list_del_init(&curr->link);
-> +	}
-
-nit: No need for {} for single-line loop.
+Please correct me if that's the wrong thing to do or if my understanding
+is flawed in any way.
 
