@@ -1,140 +1,78 @@
-Return-Path: <linux-kernel+bounces-872304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2B5C0FDE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:13:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FA1C0FDE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DF504E97C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:12:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBCCA4FA2F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B192195FE8;
-	Mon, 27 Oct 2025 18:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C642D6E64;
+	Mon, 27 Oct 2025 18:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGX2uF5d"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvOfvztv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FEA3101DF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D9C1E502;
+	Mon, 27 Oct 2025 18:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588717; cv=none; b=mHmoNneQdWUsN+/sZ6AJAFo/OoYHvcrJdoRdj3oCgc5k5weTCz/QE7ugsGJwhqZc88DZzWdx6Zy2WIXYo+cc0iW0jVw+RtIsO/f63Gm/jmIF9AzQab3EdLsLMNzgyzrv1xmmSZaZiqeQpSRiY7PFy2Ktm8K945QDtz8wEKDglxY=
+	t=1761588735; cv=none; b=Y3uhbHO1zvyXlISLEePsO+fvcEtqXUm1y/LdATcynygD2VrylhMWaznrsFy8rF0svyyU3AHzDE9uHMIil5qYC6u67jj1+i/l1GFdtYPA+hbwq1prIB2/HRRXKH4mMVa7h7lDbhJtg3rYuSQflnPp0rizr9SuXmbD7IfZvSEebgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588717; c=relaxed/simple;
-	bh=0K4nXT5/Js7e6nb85QjbFOWa38zA+AS+tQP3Aiw5h+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AlqD0DMYSsyqh8nH3OnlJxK/Z/e0zWnVdnP8QOo08XvbNgTPj5XiPiv7szpxN3GyWLbCUOgHJgSCmgkLoZclr28dTYZS0a1sgs6stYZKwqmO29TL2iGA0KZnNMVVf+y44scv3XTaahzxkENDxnnWEJceTOp+EozgrpXuvQ5dp30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGX2uF5d; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so50134365e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761588714; x=1762193514; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/tr4wNuP/viUV2bLwDGJ/MFnyH+q9BQY2mO1mUn+Lc=;
-        b=FGX2uF5dgjoCBzO2V8QzR5tHbSMFjqtBjypzh8aNg9Fd8CxIr3x/sfixcphY8KDQzY
-         XUUR0KaAETnhe2Ih6731OIiUo1StqKcbhqB4zeiKyPp1PtBGd4Twf27ukGksnnrag1SG
-         wlGMju8F42a6yo7u6DMo2kiIpMESwQ8NdcPwSC65zjBGTA7Dbugo/UGE52AA8CwJDiyO
-         YtxikUOdgsHnFmB6Q0vNb0X8+0/jgMdVAW6o4skGiGV9T+KQRMDZxgt6HTl6Hrn6IWwl
-         /qM9bVWaBTyG1LZKzy7LkyyaZlLRurWeP/JEfWwESqa4HZsdBjcvezps4a3Fb0x9pUQu
-         g7IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761588714; x=1762193514;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h/tr4wNuP/viUV2bLwDGJ/MFnyH+q9BQY2mO1mUn+Lc=;
-        b=t/45zFn2GUj29jim8kNMTqe4T5/fouxAJVeHa3eCjXZESVW3wLaZX+uOEgNO8LohSm
-         JYe7JOKkjJ9nMlSsTYQzJyKUMRpCjbW334MHIR3ckOideO+EuI+oVbAGxcMO6OMU51rF
-         Jce3bt7l6Lqslub53MDpQh75E0oxHIWaRpB4xKN/WfaK8DFnJ6P4LRotVGWD+0x8d/Ut
-         ZXtQEnQz1qtChluD/LDjdD+YEREfKBK+d/zZ7fZyN5dCh2hlFtmV8UBDPD0IyF0z5P2/
-         28Z6s2PXgjgPwJlrgUiogvKzlWefqexfBZN0il7ghZlukY525AVha1f++kPLoshHEuZ3
-         HsqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaUE/SBXcEVbj87/8K6kUB0zyLw6SNk4Bc+SEULKNagp1TUO8/JYXOGr0Szcz0ktb0RJDsXh2lbMoQbzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+3ESFUTGN0GEG2J9Q2fPcUjzS9i9aWyq4sR3kGRtpR9CicGOO
-	BRbv4A7HaqfFOdADtca5sIfEkEW7q64skVoR70dzUYgaSLYuGYCEvXr8
-X-Gm-Gg: ASbGnctaWh1hwvuITed04y1pzGLi7QdhANO+yMMa6PfaiwmkLenfttopXDg0W3B7a8t
-	0qCIXeDsM+Psnzp+e94U9KTNrD3KiSnMZFeYJpJUB36MODLeJtmfFwYe5P5DbPRL/f3Ijd6eQKW
-	Xmb2+fabvF3SYUf/6f6/KAtu4deh5HBZOJcxjBB/jdYZcJkj2ZuT7QKBaHxdtJw5s8maoLg8XX9
-	+tiFzEmseYaWXSM6RvYeOuDFizoTDr2jErc8/8PSrudpGrJkaP0/FrDjIb2LPN7EK4MA+UVdz5r
-	xV/RJksZGErQ+TPcd5y/QqJmKPRbXVe5J0bxp/EziMBA/7xcj3EiNw4u/QcqpMBLU2bNnL60LLM
-	18oDpU22jD0Dvn0skqKpeVd033Vw2T/i6QJqQ3Qyaym9Oiqw2/q7vE0mEKm0dE68Osl5CfpFAmF
-	FmuXb4GuQlMjgqO1z4dPId1GMErjADJKxh9fRniKHOFvkCyuzzGKNZQJOOagVQC8yZrsnB
-X-Google-Smtp-Source: AGHT+IGXaCcfOwLIrQj9yH9WMbrO4UAf1AZg1ch/afDpC4pXgTmkjf1NdqvThLXtmMqqXSWGbWSmXg==
-X-Received: by 2002:a05:600c:4446:b0:46e:4a30:2b0f with SMTP id 5b1f17b1804b1-47717e6ab4bmr5964995e9.29.1761588713974;
-        Mon, 27 Oct 2025 11:11:53 -0700 (PDT)
-Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952da645sm14913054f8f.30.2025.10.27.11.11.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 11:11:53 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: wens@csie.org
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/30] drm/sun4i: Move blender config from layers to mixer
-Date: Mon, 27 Oct 2025 19:11:52 +0100
-Message-ID: <3382705.44csPzL39Z@jernej-laptop>
-In-Reply-To:
- <CAGb2v65KEKPtg=WZw9su_DBc5JKsjjYV3DmpUD+LXGhX96sEfA@mail.gmail.com>
-References:
- <20251012192330.6903-1-jernej.skrabec@gmail.com>
- <20251012192330.6903-8-jernej.skrabec@gmail.com>
- <CAGb2v65KEKPtg=WZw9su_DBc5JKsjjYV3DmpUD+LXGhX96sEfA@mail.gmail.com>
+	s=arc-20240116; t=1761588735; c=relaxed/simple;
+	bh=vLstSCUk1o+6ywkGzzcIFbH8XsDfRUe8i7evrUJc+2w=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=fOa91CWlXWkYxWPQzAQN++NXWszR7gkjnh8WO67eJ+TsVhoox8NALS9y2aw0AXP2vWJ3ZoQseoGhPgWac+0heFL41i241XtNnml7LWzp3LrG2UJJSPYsMLw2OoKDIjOt6X5WN7JHe/27W5owkkBI/8fX+fbe+hsr0LaDIrA+utY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvOfvztv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42210C113D0;
+	Mon, 27 Oct 2025 18:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761588735;
+	bh=vLstSCUk1o+6ywkGzzcIFbH8XsDfRUe8i7evrUJc+2w=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=bvOfvztvnKLeCbmZSJMKMQDdBVH1IAo7qCFyFY51BAFqrZqLkVMRKWXHWRzZRGrfa
+	 XcCBJcbtGUVYZSDs56PEQJ4kXcLbtTSaAidgq3nU7uhNQy5gu5zYcO3OrwaLDzd5pT
+	 aj3HEqw7YlEg799FKBCdXc/mnsP8OyewMNY9yaHpVU2bJnK/IBcsjG+0yeejjAfzPv
+	 FHLojbrkCwCeTxXxKa+vXQ6PchK6ce5ubMYye1KbNnODbTyooXA3anX1Vt0qnRHkT/
+	 8goaSv3ktlPApwQjRdDHWsrr/TwT6Qv21gDAnzl8nspNpgTHAdKpFnlS6x2kq+22WC
+	 ibRsh0zXtij8w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0D739D0C1D;
+	Mon, 27 Oct 2025 18:11:54 +0000 (UTC)
+Subject: Re: [GIT PULL] sched_ext: Fixes for v6.18-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <36450bebbc782be498d762fcbcd99451@kernel.org>
+References: <36450bebbc782be498d762fcbcd99451@kernel.org>
+X-PR-Tracked-List-Id: <sched-ext.lists.linux.dev>
+X-PR-Tracked-Message-Id: <36450bebbc782be498d762fcbcd99451@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git tags/sched_ext-for-6.18-rc3-fixes
+X-PR-Tracked-Commit-Id: a3c4a0a42e61aad1056a3d33fd603c1ae66d4288
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fd57572253bc356330dbe5b233c2e1d8426c66fd
+Message-Id: <176158871335.1476308.10182501536965113186.pr-tracker-bot@kernel.org>
+Date: Mon, 27 Oct 2025 18:11:53 +0000
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Dne ponedeljek, 27. oktober 2025 ob 17:00:05 Srednjeevropski standardni =C4=
-=8Das je Chen-Yu Tsai napisal(a):
-> On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gm=
-ail.com> wrote:
-> >
-> > With upcoming DE33 support, layer management must be decoupled from
-> > other operations like blender configuration. There are two reasons:
-> > - DE33 will have separate driver for planes and thus it will be harder
-> >   to manage different register spaces
->=20
-> So if I understand correctly:
->=20
-> - the "layer" is from DMA up to CSC, which is the last stage before routi=
-ng
-> - in DE30 and before, routing was limited to within one mixer
-> - in DE33 and onward, routing is global
+The pull request you sent on Mon, 27 Oct 2025 06:51:28 -1000:
 
-If you mean routing layers, then yes.
+> https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git tags/sched_ext-for-6.18-rc3-fixes
 
-=46or example, you have pool of 4 UI planes and 3 VI planes. You can assign=
- them
-in any combination to both mixers. Later you have additional Z-pos routing =
-too
-within mixer.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fd57572253bc356330dbe5b233c2e1d8426c66fd
 
->=20
-> > - Architecturaly it's better to split access by modules. Blender is now
-> >   exclusively managed by mixer.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
->=20
-> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
->=20
+Thank you!
 
-Thanks.
-
-Best regards,
-Jernej
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
