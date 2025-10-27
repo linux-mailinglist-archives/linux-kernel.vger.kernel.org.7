@@ -1,104 +1,135 @@
-Return-Path: <linux-kernel+bounces-871209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CEEC0CA48
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:26:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D178C0CA1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:24:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CD83A2D15
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:20:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97644F1782
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A532D9EDF;
-	Mon, 27 Oct 2025 09:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505042E7165;
+	Mon, 27 Oct 2025 09:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="USdvLj2b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gz4VuvRN"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372812E8DF3;
-	Mon, 27 Oct 2025 09:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AA42E6CA8
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556827; cv=none; b=nPgRNHPjkHfAKhO3zPTw0fsLnDik7mIWBysXo/siN/No2j20eK+kEsERgFT2KqR8OYrxoRE7sLgGTORUWmukld2QjqZpgBf58p087OeZ2jKSpnfk1QW8y4MKLMdfw6ME+KJk8cNhOfCDZZ16p8XXC5GQbbXNgxSKnByUpQGw7I8=
+	t=1761556871; cv=none; b=F57Gu5il1WiZPCkf8Zd0vXaFX9LWJgDmFlCIi5I8Wa4m237YxHI8NQPcr3pICWiDtv/t6x/2RA45w45rMIh/4QSJslR9EZabjitpFh9iwQ5OlEBAUOYSyoqLtOe3C+JmWFPvVuwwjCaKpp20DIXSe3GHoimPSemGIx/A/tnwsYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556827; c=relaxed/simple;
-	bh=gu5MxH5sG3fDzaQ9kU6hnz6FMzhah4jViGZGU19k1a4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDQFFuIjJ1g7kI0qUP//H+Doo7QGkdHle3fRbPuWS69PaZrQ9i9En08T51XWY6GYri1unVM20PnSnKmQ5kX6VKywzVZeCqgFn/jXbJGvY9LoPT0rDjTSRouTi/edm8J5RpSFbapipo/5BGKoksgBe468vjRN2sAYpPpaYZOswcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=USdvLj2b; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761556826; x=1793092826;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gu5MxH5sG3fDzaQ9kU6hnz6FMzhah4jViGZGU19k1a4=;
-  b=USdvLj2bBCyfTC6mRRgDTY9wAa9Nh6U5Kx3Lw90/bVVQej5QmaJNlxwW
-   6uR1GDKOMkJ+svSTSc4Vvxykzs/NpP5A0c4PckzIr9HVd/15Oala5e0RV
-   c13KH0VMTlViNRZBOsSvNDOafK39rtnT4laL6MAF+m+rTDVfzIektAKwZ
-   a74GNbi9wpb8DvmPVIx3udykV/e+Cf5c0KqaoWfB7UJijEREbvGwWOORY
-   D/W5SX316kc0cG6JN5LEE9BlszJnhR6kxIRSVLfhhmHJPSVrq5YtIusyU
-   qup0VqsLRJGEuTJM9SMPY4tB+EJQ6VlXJDBVzwATf0Co1b6/mgcKOEljq
-   Q==;
-X-CSE-ConnectionGUID: VENHXK9LStupCtvp62QjkA==
-X-CSE-MsgGUID: k52jQMNfT2+bEh6mCutJ8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63669177"
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="63669177"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:20:26 -0700
-X-CSE-ConnectionGUID: JJR21utGSf+SkQNhDEUtLw==
-X-CSE-MsgGUID: PWxOW3svRki5zuAOe197Dw==
-X-ExtLoop1: 1
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.5])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:20:22 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vDJOl-00000002xjF-1m0G;
-	Mon, 27 Oct 2025 11:20:19 +0200
-Date: Mon, 27 Oct 2025 11:20:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH v4 2/2] iio: pressure: adp810: Add driver for adp810
- sensor
-Message-ID: <aP85UwWqkuE_rQKn@smile.fi.intel.com>
-References: <cover.1761372227.git.akhilesh@ee.iitb.ac.in>
- <cb51289f0f1c38a7ea24ee5ba3566c787f203ce7.1761372227.git.akhilesh@ee.iitb.ac.in>
+	s=arc-20240116; t=1761556871; c=relaxed/simple;
+	bh=T2FiuKY307QUDrwGy2QITvUy0qfdAG9Duzl2cYto9vA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=okabpmBMDYjspvFG1Jjt2/UO+l0fydTcWyhY5q+DkLQydShXvW0R5mcZnoK1CcisHJGjwxTypwX9FGPKF8u5xvNDJXnc3ew9KmFQ5c4tvyebmRqV3SZRrHaBkT1Ku2VDr1ZxLNechIHSkM8eYk91STU9rjp9w3v5McUn3vURE94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gz4VuvRN; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7a27bf4fbcbso3538728b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761556870; x=1762161670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/gIU/tSFOCdbD2UtPR/QSZA0FQ48iXUTaxg/wbjKYU=;
+        b=gz4VuvRNEdsyV2CwQzjgnFa8e2EC1C+ncCogYY5YYBJfGvdT137LLLvEldbGt9Skdd
+         piyvtiRZfVdUqmIqBH5fenhgFCzGbf8DFKT9X/Cp8/nig4/KvxBZ3doKipj7WIPxaer3
+         HqFTrOLdImrd+il0+dAV2e/kj3J05gmGq8Kdnz2Zl3sisYBZ0zi7B/PnTy58EFRb36Q1
+         BNoEe7EziK1UnKnYwVp0+9U/AOVTaJ4+bDgGMXr56I4rQXVSKQoGvDJcI8l8vhX9lMWO
+         irnIotddwQ2cv5YYM08QuWCwX5poJxmi9J1ec66ioFsZkXi+FOCPkm2ios66KL1gPBvp
+         n9xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761556870; x=1762161670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/gIU/tSFOCdbD2UtPR/QSZA0FQ48iXUTaxg/wbjKYU=;
+        b=HNYQiYW71+X4RgjRy3Xnn47U751wv0ow9HpVHHGoftIwLRDvp7UjUxRy2lS3Do639Y
+         smwNF31PF19JsGGeaF7XgdYQxI0pOhcGmO6I2lvkvO4KAHb/Qt0bmgQHaRByDAFncaNo
+         PkSQvUmSzHQQfCDPoRGgWIZBii0ytuiBbvFnTHXLxZxhwjb1Jilrvk5PnRim4jC6Pe7g
+         rOYI0G1i9QyNs1M2NGbpChctBmmgQBdOixYi3nTqwE3/QXI5yPWKD1ZWVBApO9XGFEGN
+         555/LmagrA46UzfN9ENCK2/4T1MlfgI64B78OSLqAmjgtMUDLcH+qKhQqF98TqvSSzcQ
+         TXTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOMgAEhkAy8IetKU3sBc1UAFPhLbXqX8QJY3qLQLhBk4FoMgfCx9mNd0ekBq7WGcWucALNDEwQJQLhyjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwfrsMr/8SYkIh5XMHPYXUWc2d5VOlVSt8Mo7gg0kMsGnMHdCP
+	iK1hGsBn6E8tRHa4e45RFpCOcRtNGw2LpKiufWjWr7+8GBQ1SLKlPZ+Y
+X-Gm-Gg: ASbGncuho53AoR1V5eS44Era/H3DCKdZlQIHbbROn2GZiGrlx7s95sls6+MZLG6Rc1i
+	aA7wobqS0SpTOFADjKfEy9FsqOo6gTykp7BafIVIPAO0f2CehVTkBgGW7PxrkxEEa2IX3BnDiyx
+	20spCj+5HlI6Al0AaJTYpuHilaOp+U2teKFCKvFFRb2Kxmi9plrF8KaAqr9wuwcn7ZXLiEZ4q5W
+	chBrltwFfeVWQXpFlV9U9PX16LHRyBH8HzyRL2Gl8gajvH4LKf9VB/fhIyuxOrM2Ku+zfr1YqGo
+	Csr8Qk+tMrt7GJRu0+wBZA0hR/dMi8rC5U3HDYljnIN+aMonqCJT0fRbpSJiuqz05GoF60VpZOC
+	DAGl0QQNPIOW/Zw63AaIIV1NUjt/alYcN0BGfCVMik7PIeh0zQZOtw6ulel0YpxalM68e3rD5M5
+	Gjn8N80CC/kJYF22yKIoabqZ+Tlbeq+Xd9
+X-Google-Smtp-Source: AGHT+IEcpagKOyJV1fsrM6dM/HwYD5VenCjDTs/rQ5hoHhvZqYSFHENXuZ7ikBTfiwnPt270HOJ/6A==
+X-Received: by 2002:a17:902:e552:b0:290:ac36:2ed8 with SMTP id d9443c01a7336-290c9ce63d6mr414278245ad.24.1761556869605;
+        Mon, 27 Oct 2025 02:21:09 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b712ce3a90bsm7017409a12.25.2025.10.27.02.21.06
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 02:21:09 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nam Cao <namcao@linutronix.de>,
+	Toshiyuki Sato <fj6611ie@aa.jp.fujitsu.com>,
+	Miroslav Ondra <ondra@faster.cz>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] serial: amba-pl011: prefer dma_mapping_error() over explicit address checking
+Date: Mon, 27 Oct 2025 17:20:50 +0800
+Message-Id: <20251027092053.87937-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb51289f0f1c38a7ea24ee5ba3566c787f203ce7.1761372227.git.akhilesh@ee.iitb.ac.in>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 25, 2025 at 11:50:55AM +0530, Akhilesh Patil wrote:
-> Add driver for Aosong adp810 differential pressure and temperature sensor.
-> This sensor provides an I2C interface for reading data.
-> Calculate CRC of the data received using standard crc8 library to verify
-> data integrity.
-> 
-> Tested on TI am62x sk board with sensor connected at i2c-2.
+Check for returned DMA addresses using specialized dma_mapping_error()
+helper which is generally recommended for this purpose by
+Documentation/core-api/dma-api.rst:
 
-LGTM,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+  "In some circumstances dma_map_single(), ...
+will fail to create a mapping. A driver can check for these errors
+by testing the returned DMA address with dma_mapping_error()."
 
+Found via static analysis and this is similar to commit fa0308134d26
+("ALSA: memalloc: prefer dma_mapping_error() over explicit address checking")
+
+Fixes: 58ac1b379979 ("ARM: PL011: Fix DMA support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/tty/serial/amba-pl011.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 22939841b1de..7f17d288c807 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -628,7 +628,7 @@ static int pl011_dma_tx_refill(struct uart_amba_port *uap)
+ 	dmatx->len = count;
+ 	dmatx->dma = dma_map_single(dma_dev->dev, dmatx->buf, count,
+ 				    DMA_TO_DEVICE);
+-	if (dmatx->dma == DMA_MAPPING_ERROR) {
++	if (dma_mapping_error(dma_dev->dev, dmatx->dma)) {
+ 		uap->dmatx.queued = false;
+ 		dev_dbg(uap->port.dev, "unable to map TX DMA\n");
+ 		return -EBUSY;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.5 (Apple Git-154)
 
 
