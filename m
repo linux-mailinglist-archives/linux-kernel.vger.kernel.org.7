@@ -1,166 +1,77 @@
-Return-Path: <linux-kernel+bounces-871018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A81EC0C3F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:11:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E5D3C0C40B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D183AB6D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:11:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55FFE4F0D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCE32E717B;
-	Mon, 27 Oct 2025 08:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4B82E7186;
+	Mon, 27 Oct 2025 08:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7oZVPKG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="hHikxe38"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F6F2DF706;
-	Mon, 27 Oct 2025 08:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E75D2E6CB3;
+	Mon, 27 Oct 2025 08:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761552695; cv=none; b=XVAKnPtnOApfnQ5qkt1PQGo2VDvQuKrP2IYtIhGnoJngAJiOU9yMHJ2pnS7sHCKoVwusZWFAnevP1BqT5mo38WFZeI0NYlM3liPVVg3BaKWGxMwFeEZfOb0M74/NhX1zNCVC2aG42rpEd6jbeGDJTZIXAGH4Sjo0oqh5+RdeXLQ=
+	t=1761552704; cv=none; b=gvxt66CHIZoH8orjm+YAbNDRxTdyvXJjgijav/LuzQ++7q7YkCfXVXulOEe7TtJeg9AdlhGZKQ7wsEpBhGlRhQHtNkrHnFrHPcMulrn7GpH6eTrIze7On2IhuNnqAaKyVYH7lnQi4jBLVnAcRmTwHjXja1Ry2Kh+/P+DmrEIsDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761552695; c=relaxed/simple;
-	bh=S2kesE2CPmL5w4UG7wIR5tLRwgyhQgeo4xLNlKAHzfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rY6TtA1KWtCwz7uobGej+7wMYedYtViBXR+PpQZrTC5nbDhtoQyXvEaiFUL80xTK9WFuuUzmtibFjhVycRqjgwAqbpPadEI3TfBeNH4y6ppKLKg1gRAu9DLeqVpgSivtlThZFjLw5LZ7N/1L0YHfZYiVXdfYr6ThPG5j90e2pi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7oZVPKG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18919C4CEF1;
-	Mon, 27 Oct 2025 08:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761552695;
-	bh=S2kesE2CPmL5w4UG7wIR5tLRwgyhQgeo4xLNlKAHzfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X7oZVPKGzUXfB/h3HcMueBaU9YUIXRghqI1PyundCNg6bxtwa9IUfsKHIVaDKjUiu
-	 RWcZcHggXxCAcoLwDlUs3D8gf4YGUDMddjH44c2XXXx2mdvffzbpgn8F6NEUO+o/dS
-	 2hmgFWb6kK0OHH9qDQQaajlNQPyA9LU8SutiK/0ReAK/iBA/DgD/q5+X8jnxrHQfgz
-	 7looz/dmh0lAvLcoaz65eQn1eDX4uUbbN0Vfmj3MGdmNuohabRWLJL1qMWsVyd66Cm
-	 +ndYD6Cg96GQPdnMjjeQ6DVIOe32aF0tfWWOzEGnGIgeaoydfMzcewqqFGEpakhFbT
-	 mwdVBCiWMimww==
-Date: Mon, 27 Oct 2025 09:11:31 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Peter Colberg <pcolberg@redhat.com>, 
-	Lyude Paul <lyude@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: build failure after merge of the pwm tree
-Message-ID: <22fl35khmbf6ufyjzbfvxor7b6nohqakqovjoya3v4mmlenz5c@6wbdednrd2pb>
-References: <20251027125148.7f7d8ed6@canb.auug.org.au>
+	s=arc-20240116; t=1761552704; c=relaxed/simple;
+	bh=s0c7nWYP4a8uTeRDD/AlFLRmr5kf20OBf9Y1FDUOwoU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uUxtTQD58Glgicw901meZ2HA90YXzP5RRw7/Nlnv0/NaAPikXzoAEL5cLOhir4krIj0xU3O7lT4bzkYRrcGVKZcpUP8vfpHWEDAllHe2tUKEhQaO9a/TYk9nqTR5nPJBAx2JrZRr1UObM3D4ROohgQ2hFQnblOs/I+hIrA/F7Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=hHikxe38; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=s0c7nWYP4a8uTeRDD/AlFLRmr5kf20OBf9Y1FDUOwoU=;
+	t=1761552703; x=1762762303; b=hHikxe38We3QxevWDVihu76VW/ChWJF62jDRt2CDR8gDlXG
+	3L9KxvlLbxGoAk4NKHkD5X0GcCgrSNP5LB0i5dBtYxUs/7hs+tipbI/fczC6oBJg22lrA6bqKKHtr
+	Dumo+HWYFk8zTn4zs2wWrXr5Ey1ialjkqheo4dGl3dqnk4b3sHQpGRUKDZwj2eJniZDajr4zf46g7
+	URich0vy3+Bg6cDAVgRDTjyHSUFa91NN5Xk4poOCPTibywcOY065keeQZCGybPPRfjmMQqVppvZsV
+	wCMbBivj2VT0PeXkS4/jjsOMhBP/8g6uPk3KqTZJCeItxL2JpcvsFEePQWKiW0EA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vDIKE-0000000ADkt-0E1z;
+	Mon, 27 Oct 2025 09:11:34 +0100
+Message-ID: <fdea25fdcd19079988bd3ba38be8fc88e39af9e1.camel@sipsolutions.net>
+Subject: Re: [PATCH 0/4] wifi: mac80211_hwsim: code cleanup patches
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Amol Dhamale <amoldhamale1105@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sriram.g@kpit.com
+Date: Mon, 27 Oct 2025 09:11:33 +0100
+In-Reply-To: <cover.1761078139.git.amoldhamale1105@gmail.com>
+References: <cover.1761078139.git.amoldhamale1105@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4qthniw2576jrrej"
-Content-Disposition: inline
-In-Reply-To: <20251027125148.7f7d8ed6@canb.auug.org.au>
+X-malware-bazaar: not-scanned
 
-
---4qthniw2576jrrej
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: build failure after merge of the pwm tree
-MIME-Version: 1.0
-
-Hello Stephen,
-
-thanks for your report (and creating next each day!)
-
-On Mon, Oct 27, 2025 at 12:51:48PM +1100, Stephen Rothwell wrote:
-> After merging the pwm tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+On Tue, 2025-10-21 at 20:50 +0000, Amol Dhamale wrote:
+> Fix all open checkpatch errors for the mac80211_hwsim module.
+> Patches can be applied in any sequence.
 >=20
-> error[E0277]: the trait bound `core::result::Result<core::pin::Pin<Box<Th=
-1520PwmPlatformDriver, Kmalloc>>, kernel::error::Error>: PinInit<Th1520PwmP=
-latformDriver, kernel::error::Error>` is not satisfied
->    --> drivers/pwm/pwm_th1520.rs:331:10
->     |
-> 331 |     ) -> Result<Pin<KBox<Self>>> {
->     |          ^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
->     |
->     =3D help: the trait `PinInit<Th1520PwmPlatformDriver, kernel::error::=
-Error>` is not implemented for `Result<Pin<Box<Th1520PwmPlatformDriver, Kma=
-lloc>>, Error>`
->             but trait `PinInit<core::pin::Pin<Box<Th1520PwmPlatformDriver=
-, Kmalloc>>, kernel::error::Error>` is implemented for it
->     =3D help: for that trait implementation, expected `core::pin::Pin<Box=
-<Th1520PwmPlatformDriver, Kmalloc>>`, found `Th1520PwmPlatformDriver`
-> note: required by a bound in `kernel::platform::Driver::{synthetic#0}`
->    --> rust/kernel/platform.rs:196:15
->     |
-> 196 |     ) -> impl PinInit<Self, Error>;
->     |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `Drive=
-r::{synthetic#0}`
->=20
-> error: aborting due to 1 previous error
->=20
-> For more information about this error, try `rustc --explain E0277`.
->=20
-> Caused by commit
->=20
->   fb3957af9ec6 ("pwm: Add Rust driver for T-HEAD TH1520 SoC")
->=20
-> presumably interacting with something merged earlier in my tree.
-> If someone could provide me with an appropriate merge resolution, I will
-> apply it.
 
-Having no relevant clue about Rust, I bisected that. The bisection points to
-0242623384c7 ("rust: driver: let probe() return impl PinInit<Self, Error>").
+Please go play with staing or something instead, there's no reason to do
+random checkpatch cleanups on this.
 
-Translating the changes that commit does to
-drivers/gpu/drm/nova/driver.rs for drivers/pwm/pwm_th1520.rs results in:
-
-diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
-index 0ad38b78be85..dd554574adc8 100644
---- a/drivers/pwm/pwm_th1520.rs
-+++ b/drivers/pwm/pwm_th1520.rs
-@@ -328,7 +328,7 @@ impl platform::Driver for Th1520PwmPlatformDriver {
-     fn probe(
-         pdev: &platform::Device<Core>,
-         _id_info: Option<&Self::IdInfo>,
--    ) -> Result<Pin<KBox<Self>>> {
-+    ) -> impl PinInit<Self, Error> {
-         let dev =3D pdev.as_ref();
-         let request =3D pdev.io_request_by_index(0).ok_or(ENODEV)?;
-=20
-@@ -365,7 +365,7 @@ fn probe(
-=20
-         pwm::Registration::register(dev, chip)?;
-=20
--        Ok(KBox::new(Th1520PwmPlatformDriver, GFP_KERNEL)?.into())
-+        Ok(Th1520PwmPlatformDriver)
-     }
- }
-=20
-which builds again.
-
-Best regards
-Uwe
-
---4qthniw2576jrrej
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj/KTAACgkQj4D7WH0S
-/k4/DQf9HF0l+WfiUJ80xVvublUyDd9KIbNKYkZvQeLSwPMWIFa+Vhil6MH4AFXl
-a7qBB7dyow2nUHc3u1Sf8GuzLIokUFLtCyKNmARvY3KFBsuYjWvAkR8MiUMlZfnL
-W0g0RdaWeUw53XoxL1BDp589p47i4i6OR62QUeFTBIWJ5C0VtweX680oeR42w6jc
-oD7Rhm/S95cOuaieNXHKBQmlrrFrfsex+QqnyXxwwO3K01A2Lc1HAnp49IlfHRuq
-kHKtbGuL/aobkFLs1o2fBf8ojCr23tZZYuZ8x1nHtuilpbKez0XpRIvp4aAkMsOe
-1w8yXsMan8KCH018aQ4sBIdp/nlUvw==
-=i/va
------END PGP SIGNATURE-----
-
---4qthniw2576jrrej--
+johannes
 
