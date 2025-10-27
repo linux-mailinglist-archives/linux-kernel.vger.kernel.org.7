@@ -1,220 +1,192 @@
-Return-Path: <linux-kernel+bounces-871466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48DFC0D638
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:06:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4186C0D5A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA81421627
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:57:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50BE31886EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F013002D3;
-	Mon, 27 Oct 2025 11:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C022FF161;
+	Mon, 27 Oct 2025 11:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="JgXUErhS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c1+dniXl"
-Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmdGv+iW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BADF3002BD;
-	Mon, 27 Oct 2025 11:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD1E2FFFB6;
+	Mon, 27 Oct 2025 11:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761566214; cv=none; b=mX53yX1qocFskJ6ZzzhRztQs7InYod3CC4TwXR6Wf8PWnJ8447dJ3zjnPL7BhRrez5jKrrf7Ppbi8InpzsZmr23Is7T/xtFlTAa/eK/0wnBQa+VLnSc/dc9SBvdCNA6E4KM0LJimekX6qQtGZf1vzwfxAnrO3rWZ95Qr1rsyQGI=
+	t=1761566310; cv=none; b=SN8/a3hbrrgEG0PNTVset9oH/FS0bpjaEwKM30sqU1TTF1Gky4HNrhqFu+dejjzuAMvcLmjAzHNXwEAD0XosLubRCjAhLsMp4mi9ZhhEPrGwVYYRVd26IQXZDJcd8LKdt1lsvwoKHtmGmsx+x1RRanln6GzpGv7m6ktFhjgPZ/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761566214; c=relaxed/simple;
-	bh=jltUd+YsZDBz1K3JVTVPMH5Lps5gj1uliM54pjmNZ7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oyf3TKnsLyZu/qGo3NsuzdttjaSzD/zmHtj45ILc18O2dT+FtoupyTdeLvsUikYP+4aZZnzPgSVRgjC8rKUAQyifHV0igNh915uvE/iDpPAeha/eBr5wGM6J7fRJXFMjj7bEZTlPcZnmIww8bSh+O/kz7bc3/rnBhe1t2rgvlac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=JgXUErhS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c1+dniXl; arc=none smtp.client-ip=103.168.172.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 1D85E138026E;
-	Mon, 27 Oct 2025 07:56:51 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 27 Oct 2025 07:56:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761566211; x=
-	1761573411; bh=K3fQ2fEoyjQsfqeD80DG/98tb3JsUKWLI+ymnihBKZ4=; b=J
-	gXUErhSWuZVAtKi8moOJOqmc5aoBDcOEaWX1mwnXUdmPhGK+tIZqpzdUl+FpCvSx
-	074QdIvn3KUhh8GwEIddVren7KuYmpE4RprMoQYMtin4SQ1CsUYYL+4p1qwpaOqN
-	piTECd0loRLFafAswOP8eHjBX6Hn69qDVSmd5IKnr0mOZcPfLgIM27oSjaf//brV
-	L4VkrZ0iuCF13hQLup0736cGRQ1qXKewuIjCeN1ae43Vp4TrNUmnsk0paXPiM9AD
-	XpuQOO/3GHxCZFI9yMAMRB5bqBx19MLkVnUqJlfUzbxbk+oOMH2vB9y899m+nK6r
-	sD5VS01VbFUB/YAqxrZ0Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1761566211; x=1761573411; bh=K
-	3fQ2fEoyjQsfqeD80DG/98tb3JsUKWLI+ymnihBKZ4=; b=c1+dniXl1Jm+aRbgu
-	hNs/r6PllBXokTSetn1vUY/FHeXtwdFyjpIXs0l/yVF097lGFYv6MJQCco+n/Zjj
-	rRtKffdZhd4oC/YYDheQHUV6+ow+nMPKYsYMUbMUzKY8jDPTbtbt5dUT28Kbta4h
-	/4/3rIT+QM1w6Ei9/LaLr0BT6h9n9hhdrXhPUgJ4Yn09tAy1wer1LxIRDHkIjJQa
-	V1N32j/lsCKFcu0x9oZbJyq8RIVGP4Nzeg2mxSzMJpfbwPgAxYbxs8zmevn0dFRV
-	y8boD/odka6CE+62LuswRvxVs4CP1MEAS1pxNdJSU0vaTBX+9N/nd+kH22A08PbT
-	N3NxQ==
-X-ME-Sender: <xms:Al7_aC5IuUdzJqK3iP8eLwKCiHI8gAls2sxDUHgrzo9mU6ZphfpM6A>
-    <xme:Al7_aAwDdnG3plAFjSOAuXKUJCQNoXraShk1clljJR9vjNjFl0BVwNl1wjMnyOUaS
-    rLVgsVrxyOW1GloZ_J9n9DkjmBjq4JayRjDG0weQWRSZK-gYdyeiLA>
-X-ME-Received: <xmr:Al7_aPAkOOXH4XfGVOWUniHLloKqzN80GbDARzvXypfLcf1RGQvVwZWhatfRVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheejleduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepgeevhedtgfdvhfdugeffueduvdegveejhfevveeghfdvveeiveet
-    iedvheejhfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfoh
-    hunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:Al7_aBMq-kOmga7bCEzut5AgYefmNmDwOSaZ-O_TGXzLgWzOsMCWkQ>
-    <xmx:Al7_aFRVHZOp9IFZGohrX1EBQ_ko5Nt4iCkzd63ee2m7TR400goGag>
-    <xmx:Al7_aCsUwU37XITVB9K7Z_eMbIcBZwsjQfeyS1Lidrv_8z-_inEYdw>
-    <xmx:Al7_aDV4tb0_boeDmoFDjtwGrSrjWsbzqDsZK0Y6noLl8H0oNaPdrQ>
-    <xmx:A17_aLjWiwemAVVxhDloKxT3SckY4vHvc1iyiDO7BYQvIHg6LnCop8mf>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Oct 2025 07:56:50 -0400 (EDT)
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: [PATCHv3 2/2] mm/truncate: Unmap large folio on split failure
-Date: Mon, 27 Oct 2025 11:56:36 +0000
-Message-ID: <20251027115636.82382-3-kirill@shutemov.name>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251027115636.82382-1-kirill@shutemov.name>
-References: <20251027115636.82382-1-kirill@shutemov.name>
+	s=arc-20240116; t=1761566310; c=relaxed/simple;
+	bh=UUwYyJrAG3l/4bwYSl4hCmy1CBY+TsGQILEbXLVni7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gy1sDJJ/lNRD4IMmQLv/KQ0F120zDV3FR9d8dwhxS7pAD+h79Gu++iG613BPrdgs455Xi5Z2DWK64U4k3YJYPLNiZH3SIW2+08KDA9HytMKRbS8krge/JvUiz9/5OZj9GLodL/h2tf+rK4/Ukw/uDa6OB+WHJbi90mEWaHT7BNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmdGv+iW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC18EC4CEFF;
+	Mon, 27 Oct 2025 11:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761566309;
+	bh=UUwYyJrAG3l/4bwYSl4hCmy1CBY+TsGQILEbXLVni7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OmdGv+iWS9B4ECThXIJ4LARg3TUDxeHhlnkhUDNYXAXD9mXY16fLpqVKu/fqz5sHg
+	 JI5p6+EyUZdOGjekL7QeWTDFp4RNQgPJcIp5blRAaZ3WFQSRVCjZ0IqXtizTVylh6D
+	 Du7m4csQ5lQCuEDOpDphH+hstwlHzc9KyKAPxM/X4tfiy15Tn3EAp74oKcw3XosvaF
+	 LO1ZxJQCI35YWBaWmYtW/1pmLLiaoQpq+UfobA+iKFdiPdbO2f2HfnrtBmaWGVyAfc
+	 QbOYfTYlNO3nF1QMPPyT0Th0j4DpwSZnEpqxDHkrnJ6faaDyooE33uJUR5KCe9BCbF
+	 3vMuiLR9n0OUw==
+Date: Mon, 27 Oct 2025 17:28:13 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Frank Li <Frank.li@nxp.com>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh@kernel.org>, 
+	"David E . Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>, 
+	Han Jingoo <jingoohan1@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
+Message-ID: <zjlinz3xpkyfbvqxjvx3bq3c3z2vp52ytimsbfmz7zgzlgagyb@iibcp7xlnlr7>
+References: <20251024210514.1365996-1-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251024210514.1365996-1-helgaas@kernel.org>
 
-From: Kiryl Shutsemau <kas@kernel.org>
+On Fri, Oct 24, 2025 at 04:04:57PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> This reverts commit a729c16646198872e345bf6c48dbe540ad8a9753.
+> 
+> Prior to a729c1664619 ("PCI: qcom: Remove custom ASPM enablement code"),
+> the qcom controller driver enabled ASPM, including L0s, L1, and L1 PM
+> Substates, for all devices powered on at the time the controller driver
+> enumerates them.
+> 
+> ASPM was *not* enabled for devices powered on later by pwrctrl (unless the
+> kernel was built with PCIEASPM_POWERSAVE or PCIEASPM_POWER_SUPERSAVE, or
+> the user enabled ASPM via module parameter or sysfs).
+> 
+> After f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for
+> devicetree platforms"), the PCI core enabled all ASPM states for all
+> devices whether powered on initially or by pwrctrl, so a729c1664619 was
+> unnecessary and reverted.
+> 
+> But f3ac2ff14834 was too aggressive and broke platforms that didn't support
+> CLKREQ# or required device-specific configuration for L1 Substates, so
+> df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> enabled only L0s and L1.
+> 
+> On Qualcomm platforms, this left L1 Substates disabled, which was a
+> regression.  Revert a729c1664619 so L1 Substates will be enabled on devices
+> that are initially powered on.  Devices powered on by pwrctrl will be
+> addressed later.
+> 
+> Fixes: df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-supposed to generate SIGBUS.
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
 
-This behavior might not be respected on truncation.
+- Mani
 
-During truncation, the kernel splits a large folio in order to reclaim
-memory. As a side effect, it unmaps the folio and destroys PMD mappings
-of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-are preserved.
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 32 ++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 6948824642dc..c48a20602d7f 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -247,6 +247,7 @@ struct qcom_pcie_ops {
+>  	int (*get_resources)(struct qcom_pcie *pcie);
+>  	int (*init)(struct qcom_pcie *pcie);
+>  	int (*post_init)(struct qcom_pcie *pcie);
+> +	void (*host_post_init)(struct qcom_pcie *pcie);
+>  	void (*deinit)(struct qcom_pcie *pcie);
+>  	void (*ltssm_enable)(struct qcom_pcie *pcie);
+>  	int (*config_sid)(struct qcom_pcie *pcie);
+> @@ -1038,6 +1039,25 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static int qcom_pcie_enable_aspm(struct pci_dev *pdev, void *userdata)
+> +{
+> +	/*
+> +	 * Downstream devices need to be in D0 state before enabling PCI PM
+> +	 * substates.
+> +	 */
+> +	pci_set_power_state_locked(pdev, PCI_D0);
+> +	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> +
+> +	return 0;
+> +}
+> +
+> +static void qcom_pcie_host_post_init_2_7_0(struct qcom_pcie *pcie)
+> +{
+> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> +
+> +	pci_walk_bus(pp->bridge->bus, qcom_pcie_enable_aspm, NULL);
+> +}
+> +
+>  static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+> @@ -1312,9 +1332,19 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
+>  	pcie->cfg->ops->deinit(pcie);
+>  }
+>  
+> +static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (pcie->cfg->ops->host_post_init)
+> +		pcie->cfg->ops->host_post_init(pcie);
+> +}
+> +
+>  static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+>  	.init		= qcom_pcie_host_init,
+>  	.deinit		= qcom_pcie_host_deinit,
+> +	.post_init	= qcom_pcie_host_post_init,
+>  };
+>  
+>  /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
+> @@ -1376,6 +1406,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>  	.get_resources = qcom_pcie_get_resources_2_7_0,
+>  	.init = qcom_pcie_init_2_7_0,
+>  	.post_init = qcom_pcie_post_init_2_7_0,
+> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  	.config_sid = qcom_pcie_config_sid_1_9_0,
+> @@ -1386,6 +1417,7 @@ static const struct qcom_pcie_ops ops_1_21_0 = {
+>  	.get_resources = qcom_pcie_get_resources_2_7_0,
+>  	.init = qcom_pcie_init_2_7_0,
+>  	.post_init = qcom_pcie_post_init_2_7_0,
+> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  };
+> -- 
+> 2.43.0
+> 
+> 
 
-However, if the split fails, PMD mappings are preserved and the user
-will not receive SIGBUS on any accesses within the PMD.
-
-Unmap the folio on split failure. It will lead to refault as PTEs and
-preserve SIGBUS semantics.
-
-Make an exception for shmem/tmpfs that for long time intentionally
-mapped with PMDs across i_size.
-
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
----
- mm/truncate.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
-
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 9210cf808f5c..3c5a50ae3274 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -177,6 +177,32 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
- 	return 0;
- }
- 
-+static int try_folio_split_or_unmap(struct folio *folio, struct page *split_at,
-+				    unsigned long min_order)
-+{
-+	enum ttu_flags ttu_flags =
-+		TTU_SYNC |
-+		TTU_SPLIT_HUGE_PMD |
-+		TTU_IGNORE_MLOCK;
-+	int ret;
-+
-+	ret = try_folio_split_to_order(folio, split_at, min_order);
-+
-+	/*
-+	 * If the split fails, unmap the folio, so it will be refaulted
-+	 * with PTEs to respect SIGBUS semantics.
-+	 *
-+	 * Make an exception for shmem/tmpfs that for long time
-+	 * intentionally mapped with PMDs across i_size.
-+	 */
-+	if (ret && !shmem_mapping(folio->mapping)) {
-+		try_to_unmap(folio, ttu_flags);
-+		WARN_ON(folio_mapped(folio));
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Handle partial folios.  The folio may be entirely within the
-  * range if a split has raced with us.  If not, we zero the part of the
-@@ -226,7 +252,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 
- 	min_order = mapping_min_folio_order(folio->mapping);
- 	split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
--	if (!try_folio_split_to_order(folio, split_at, min_order)) {
-+	if (!try_folio_split_or_unmap(folio, split_at, min_order)) {
- 		/*
- 		 * try to split at offset + length to make sure folios within
- 		 * the range can be dropped, especially to avoid memory waste
-@@ -250,13 +276,10 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 		if (!folio_trylock(folio2))
- 			goto out;
- 
--		/*
--		 * make sure folio2 is large and does not change its mapping.
--		 * Its split result does not matter here.
--		 */
-+		/* make sure folio2 is large and does not change its mapping */
- 		if (folio_test_large(folio2) &&
- 		    folio2->mapping == folio->mapping)
--			try_folio_split_to_order(folio2, split_at2, min_order);
-+			try_folio_split_or_unmap(folio2, split_at2, min_order);
- 
- 		folio_unlock(folio2);
- out:
 -- 
-2.50.1
-
+மணிவண்ணன் சதாசிவம்
 
