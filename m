@@ -1,149 +1,94 @@
-Return-Path: <linux-kernel+bounces-871755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03796C0E452
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:12:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEB5C0E446
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF78F4FAC08
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:02:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD8C64FB397
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149342C0294;
-	Mon, 27 Oct 2025 14:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6472BEFEF;
+	Mon, 27 Oct 2025 14:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKRUaqy6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nTHj0Gv6"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B81A2797B5;
-	Mon, 27 Oct 2025 14:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21DD2C0265
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573774; cv=none; b=Ce25DHvvxZUGt+5yNm3Y5/EMQLMOSisORE0qnicI8K6FQeAlgglyqdDjO2QzAvlbbrpv7srscocJr3dk1oEJ3SNQxDeg3VqwFlGWCsqn4lacnmvlf4J/Wje1ehe30NzNEM7rRnG39xxw0sR4o1PlGYV00oKvB5oeBquwiEKrny8=
+	t=1761573778; cv=none; b=Xw6JUS8Xd3Sis0jpjqakz5rcATW3l+Pjhc8MvUzslOgMvkcVxfeqijGA4cpLelHzNPH4Wi0gjAJw/7uAWtvYeptNFT4rbrAXOudmzAadHYFHcWy5Zz6KnQ2c8bM7PNmGeMGy/CVvcZxySoOZum/iTNL5PWwvLdLwCiA2wsHxnyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573774; c=relaxed/simple;
-	bh=+ST9ufHu58j28Ts6nVeN1rz7S/b1aHIA8XFSEZT4kHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uKRhIh4iTAvy7sHsrdLEE38BG+O/BVBa5Y8xKPUbBImVPL5lWD/xLhSVkMsSTgy3KyqLc5b9L9JBM8Qo+EslP+gQGHjiJU1l685txvygD2JIb3r1+3lkpUhJnR3i5ayA0OplTek8xeQMqe5JLNpFN9R1596P8q3fv20KqUSDvkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKRUaqy6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E169C4CEF1;
-	Mon, 27 Oct 2025 14:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761573774;
-	bh=+ST9ufHu58j28Ts6nVeN1rz7S/b1aHIA8XFSEZT4kHM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iKRUaqy6VsiPeaGL+9xgk6jV32mELION86nQQkiqDChs0Qk89z+omcC67+xbup0d/
-	 VpfxTlEB/mZtuRdmTonKQSWXNOF6xy23jYpCA1NfVG8ZyQliCuq1+CwefvSpaOF0Pj
-	 i5miS2VH8zhL+1edoYy22EzdY37lvbUuK+qjBtGp6oGTIH2C/tx/PX6WlNX5spat9M
-	 gqMnPcPzcuDea1TI4DUcFhAaOSoAU+vGwYj8Z99pBnCeZPAWpJJECknkwgQwCBFren
-	 +H43pDHrHVVcUtxmqeAqn+PQP6qMc9ZHA/MnuQKdLeIj6Na1IUbwCNG2lyGFRtCTrU
-	 5Pm8r0PQSl91Q==
-Message-ID: <8e4c8875-10bc-4f4c-a675-a7cefc68c863@kernel.org>
-Date: Mon, 27 Oct 2025 15:02:48 +0100
+	s=arc-20240116; t=1761573778; c=relaxed/simple;
+	bh=ZdgVPMepOJok5hDkKhI0H2GiYXaHtJZ3hU8XQmcY7LI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rrI9N4wPrILqKJ+I0cWJYfC4UJl4lPgE6PXrFzEBojTgVKqxdiyVFXJi0gylfZ/1g+RdevLWzyi7881Jet5GL2tebg7V/k6mh+Gd9AXLlede7VP3cuRGFU2sAD9yC2zDwRxFkEbxoZ5Qq0Z2prg9B0oy8dWrSmyNbwG/iTAzMGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nTHj0Gv6; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=TzkRKGIlc/o7rNaRSYplFXt4cJ/hxYcmoSd6y1EVT/k=;
+	b=nTHj0Gv6+IcxCkuZdK9h/iEIQRi17XLgdPrh7V51tZICYs0XWXNokqVeqOt7buhl8SDjmVpGS
+	2DuJLZExrPlHl727O16LKWBFuUSSOO1ijmc7KmcOFifJOOIohsSx+urM+QNf0ZR/4DzokFwYgSw
+	v+g1wZuqAker4THd971VXEM=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4cwFZ82bMFzmV6g;
+	Mon, 27 Oct 2025 22:02:24 +0800 (CST)
+Received: from dggpemf500012.china.huawei.com (unknown [7.185.36.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1654F1402C6;
+	Mon, 27 Oct 2025 22:02:52 +0800 (CST)
+Received: from huawei.com (10.50.85.135) by dggpemf500012.china.huawei.com
+ (7.185.36.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Oct
+ 2025 22:02:51 +0800
+From: Zhang Qilong <zhangqilong3@huawei.com>
+To: <akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
+	<jannh@google.com>, <pfalcato@suse.de>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+Subject: [RFC PATCH 0/3] mm: PTEs batch optimization in mincore and mremap
+Date: Mon, 27 Oct 2025 22:03:12 +0800
+Message-ID: <20251027140315.907864-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20251017235159.2417576-1-royluo@google.com>
- <20251017235159.2417576-2-royluo@google.com>
- <20251023-collie-of-impossible-plenty-fc9382@kuoka>
- <CA+zupgwQTLEs8_7i-VsGbGV7O2Y3XFA1C3aV7iuv2HLOwKns3w@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+zupgwQTLEs8_7i-VsGbGV7O2Y3XFA1C3aV7iuv2HLOwKns3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500012.china.huawei.com (7.185.36.8)
 
-On 24/10/2025 00:22, Roy Luo wrote:
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: USB2 PHY clock.
->>> +      - description: USB2 PHY APB clock.
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: usb2_phy
->>
->> core
->>
->>> +      - const: u2phy_apb
->>
->> apb
->>
-> 
-> Just to provide the full context, these two clocks/resets
-> (usb2_phy and u2phy_apb) are specifically for eUSB2 PHY.
-> USB3/DP combo PHY has its own clock/reset that hasn't
-> been added yet, we would have to differentiate them once
+This first patch extract a new interface named can_pte_batch_count()
+from folio_pte_batch_flags() for pte batch. Thew new interface avoids
+folio access, and counts more pte, not just limited to entries mapped
+within a single folio. Caller need pass a range within a single VMA
+and a single page and it detect consecutive (present) PTEs that map
+consecutive pages. The 2th and 3rd patches use can_pte_batch_count()
+do pte batch.
 
-That's confusing a bit. You must add all clocks, all resets, all power
-domains, all pins etc. Bindings are supposed to be complete, see writing
-bindings doc.
+Zhang Qilong (3):
+  mm: Introduce can_pte_batch_count() for PTEs batch optimization.
+  mm/mincore: Use can_pte_batch_count() in mincore_pte_range() for pte
+    batch mincore_pte_range()
+  mm/mremap: Use can_pte_batch_count() instead of folio_pte_batch() for
+    pte batch
 
+ mm/internal.h | 76 +++++++++++++++++++++++++++++++++++++++------------
+ mm/mincore.c  | 10 ++-----
+ mm/mremap.c   | 16 ++---------
+ 3 files changed, 64 insertions(+), 38 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+2.43.0
+
 
