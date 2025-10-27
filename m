@@ -1,154 +1,190 @@
-Return-Path: <linux-kernel+bounces-871332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF49C0CF29
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:25:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E78C0CF7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DA4F0E5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:25:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67DFE34C917
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B34E2F5A36;
-	Mon, 27 Oct 2025 10:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4F428A1E6;
+	Mon, 27 Oct 2025 10:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="Ny1kEvvM"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="aKip5H3V"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E652F3C12
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DD6226D14
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761560718; cv=none; b=kL3DGyRf9pDtTKAVbxtqA/JO/P4c6a7LpiFpour10R1c3yJWda28h++q/LOd2L5cVOWN9QMq3agCT5rSJKenACBTC6MdrW9bnrJnkHUTCZYS7b5MZ/Z9BKqnnhNFwRNDTS6Nf6RKQs6FRR/PR3FuvKtfQMgOTt0RdI9Bba5MjLE=
+	t=1761561148; cv=none; b=VGUFeoBs8ECvMslcnlmhqZ7Ymuw53rCTWMKA/M9USPx5K0O6llLHZSqFFWLI1tbcVe7jolQkIj80nm/PuiogvogsmA3CSBJIUW/CwMHfY38NmZmhOXZTqbQA5ApjE/Fpk/HeDiykqDrKCsfw4NCbqgXIZr8pEio4j8FjDJklRGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761560718; c=relaxed/simple;
-	bh=SQBuNsRqqdj8/7b8hx6Gcd/hWl54K9RgVTNi0Hm0Kho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YV0RQB0GRLsLzahYuYeJVt3qQEQwkwN6BBJMAJ4Hj3dfqbcXJ37UeU/iwRmQczDrLMj+rhu+BlOVZMTUcv3xU5ihbVz7gGw4q+82aCTy4K3MR2652QG0HM1r5obBaYgjWHwIoLi8jHr4t5RidAY8zZOnmsiP1qA26fTWE9NI8u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=Ny1kEvvM; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 1F9F41D24;
-	Mon, 27 Oct 2025 10:21:53 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=Ny1kEvvM;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id CA8F8217E;
-	Mon, 27 Oct 2025 10:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1761560687;
-	bh=y1JvDIp1oNzIWo8rgtPOFtXMHW2j570whSBQvdvv6h8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Ny1kEvvM5yJiEY1KgCrvP5JwqALzKdy4ck1+Shf7YvRYUtI/8MgDWX6tEpwpq4yCq
-	 IH5yE4er/Edlk8CKjWj6NzNmxdmr5H5uvny26NMcqjge+SHa6sRk7EON+LrS6hIlCq
-	 hM+yDW1+BXAK/irV2N/qDAyLGJ0wAQ7FJ5EeCsUQ=
-Received: from [192.168.95.128] (172.30.20.206) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 27 Oct 2025 13:24:46 +0300
-Message-ID: <d3d93d11-9895-4d4b-853d-729be06ead4e@paragon-software.com>
-Date: Mon, 27 Oct 2025 11:24:44 +0100
+	s=arc-20240116; t=1761561148; c=relaxed/simple;
+	bh=L2IzAn4ESmWJ/Va8+/7dlmBGOTw1hw0qVf7Aqztrinw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O5zJP0C06jmVSTpMf+cxpx8WLRhkQoGqmVRu7RBZ+9LqR8lWQ2xqD3LCoRErswzoURAw/YjSstoFDgYe80ef6QG5JQWem464LaQBQqsoujgO/zKOe9CKdiS9s+YhOMJTFgCa2l0v0H4Mr+1yWgr2eXkK5WIMMDRL8TPZK7s2L8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=aKip5H3V; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1761560725; bh=kizbgZvklvMXOG6pO1Ki/BcFsT/5S5oMvzZSn/JC6xw=;
+	h=From:Message-Id:From;
+	b=aKip5H3V4LqCKpDGWIxdTth3Z47o8/u4GwxpTMjscd1fx+Vu+QJhaJrWxXXR8JAk5
+	 YTkQl+CNmpcHhnxPrLNjMFXboOpR9zkiLli8Bd6jjzzQiE/6BVuBJEEE+qgODSMcPL
+	 Ta04WIhntyLKVVPlsoGnF60Q3O2iEzJIcBOTJlI0=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id 4F673C0952;
+	Mon, 27 Oct 2025 11:25:25 +0100 (CET)
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas Weissschuh <linux@weissschuh.net>
+Cc: linux-kernel@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: [PATCH] tools/nolibc: x86: fix section mismatch caused by asm "mem*" functions
+Date: Mon, 27 Oct 2025 11:24:57 +0100
+Message-Id: <20251027102457.11280-1-w@1wt.eu>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/ntfs3: fix KMSAN uninit-value in ni_create_attr_list
-To: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-CC: <david.hunter.linux@gmail.com>, <skhan@linuxfoundation.org>,
-	<linux-kernel-mentees@lists.linuxfoundation.org>, <khalid@kernel.org>,
-	<syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com>,
-	<ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-References: <20251006223805.139206-1-nirbhay.lkd@gmail.com>
- <4aeceb66-ceea-4171-8806-95bd11a928b3@gmail.com>
-Content-Language: en-US
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <4aeceb66-ceea-4171-8806-95bd11a928b3@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On 10/25/25 17:07, Nirbhay Sharma wrote:
->
->
-> On 10/7/25 4:08 AM, Nirbhay Sharma wrote:
->> The call to kmalloc() to allocate the attribute list buffer is given a
->> size of al_aligned(rs). This size can be larger than the data
->> subsequently copied into the buffer, leaving trailing bytes 
->> uninitialized.
->>
->> This can trigger a KMSAN "uninit-value" warning if that memory is
->> later accessed.
->>
->> Fix this by using kzalloc() instead, which ensures the entire
->> allocated buffer is zero-initialized, preventing the warning.
->>
->> Reported-by: syzbot+83c9dd5c0dcf6184fdbf@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=83c9dd5c0dcf6184fdbf
->> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
->> ---
->> The following syzbot test commands were used to verify the fix against
->> both linux-next and a specific mainline commit. Both kernels were
->> configured with CONFIG_KMSAN=y, and no KMSAN warnings were observed
->> with the patch applied.
->>
->> An attempt to test against the latest mainline tip failed due to an
->> unrelated boot failure in the SCSI subsystem (KMSAN: use-after-free in
->> scsi_get_vpd_buf). Therefore, testing was done on the last known-good
->> mainline commit below.
->>
->> For mainline commit 9b0d551bcc05 ("Merge tag 'pull-misc' of..."):
->> #syz test: 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 
->> 9b0d551bcc05
->>
->> For the linux-next branch:
->> #syz test: 
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 
->> master
->>
->>   fs/ntfs3/frecord.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
->> index 8f9fe1d7a690..4fe8da7fc034 100644
->> --- a/fs/ntfs3/frecord.c
->> +++ b/fs/ntfs3/frecord.c
->> @@ -767,7 +767,7 @@ int ni_create_attr_list(struct ntfs_inode *ni)
->>        * Skip estimating exact memory requirement.
->>        * Looks like one record_size is always enough.
->>        */
->> -    le = kmalloc(al_aligned(rs), GFP_NOFS);
->> +    le = kzalloc(al_aligned(rs), GFP_NOFS);
->>       if (!le)
->>           return -ENOMEM;
-> Hi Konstantin,
->
-> I sent this patch about 3 weeks ago and haven't heard back yet. I wanted
-> to check if there are any concerns with the patch or if any changes are
-> needed. The fix addresses a KMSAN uninit-value bug and has been tested
-> successfully on both linux-next and the commit from the syzbot report.
->
-> Please let me know if you need any additional information or testing.
->
-> Thanks,
-> Nirbhay
+I recently got occasional build failures at -Os or -Oz that would always
+involve waitpid(), where the assembler would complain about this:
 
-Hello,
+   init.s: Error: .size expression for waitpid.constprop.0 does not evaluate to a constant
 
-Your patch has been applied, but it hasn’t been pushed to our repository
-yet. It will be there as soon as possible.
+And without -fno-asynchronous-unwind-tables it could also spit such
+errors:
 
-I’ll let you know once it’s merged into kernel. Thanks for your patience.
+  init.s:836: Error: CFI instruction used without previous .cfi_startproc
+  init.s:838: Error: .cfi_endproc without corresponding .cfi_startproc
+  init.s: Error: open CFI at the end of file; missing .cfi_endproc directive
 
-Regards,
-Konstantin
+A trimmed down reproducer is as simple as this:
+
+  int main(int argc, char **argv)
+  {
+        int ret, status;
+
+        if (argc == 0)
+                ret = waitpid(-1, &status, 0);
+        else
+                ret = waitpid(-1, &status, 0);
+
+        return status;
+  }
+
+It produces the following asm code on x86_64:
+
+        .text
+  .section .text.nolibc_memmove_memcpy
+  .weak memmove
+  .weak memcpy
+  memmove:
+  memcpy:
+        movq %rdx, %rcx
+	(...)
+        retq
+  .section .text.nolibc_memset
+  .weak memset
+  memset:
+        xchgl %eax, %esi
+        movq  %rdx, %rcx
+        pushq %rdi
+        rep stosb
+        popq  %rax
+        retq
+
+        .type	waitpid.constprop.0.isra.0, @function
+  waitpid.constprop.0.isra.0:
+        subq	$8, %rsp
+        (...)
+        jmp	*.L5(,%rax,8)
+        .section	.rodata
+        .align 8
+        .align 4
+  .L5:
+        .quad	.L10
+        (...)
+        .quad	.L4
+        .text
+  .L10:
+        (...)
+        .cfi_def_cfa_offset 8
+        ret
+        .cfi_endproc
+  .LFE273:
+        .size	waitpid.constprop.0.isra.0, .-waitpid.constprop.0.isra.0
+
+It's a bit dense, but here's the explanation: the compiler has emitted a
+".text" statement because it knows it's working in the .text section.
+
+Then, our hand-written asm code for the mem* functions forced the section
+to .text.something without the compiler knowing about it, so it thinks
+the code is still being emitted for .text. As such, without any .section
+statement, the waitpid.constprop.0.isra.0 label is in fact placed in the
+previously created section, here .text.nolibc_memset.
+
+The waitpid() function involves a switch/case statement that can be
+turned to a jump table, which is what the compiler does with the .rodata
+section, and after that it restores .text, which is no longer the
+previous .text.nolibc_memset section. Then the CFI statements cross a
+section, so does the .size calculation, which explains the error.
+
+While a first approach consisting in placing an explicit ".text" at the
+end of these functions was verified to work, it's still unreliable as
+it depends on what the compiler remembers having emitted previously. A
+better approach is to replace the ".section" with ".pushsection", and
+place a ".popsection" at the end, so that these code blocks are agnostic
+to where they're placed relative to other blocks.
+
+Fixes: 553845eebd60 ("tools/nolibc: x86-64: Use `rep movsb` for `memcpy()` and `memmove()`")
+Fixes: 12108aa8c1a1 ("tools/nolibc: x86-64: Use `rep stosb` for `memset()`")
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+---
+ tools/include/nolibc/arch-x86.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/tools/include/nolibc/arch-x86.h b/tools/include/nolibc/arch-x86.h
+index d3efc0c3b8ad..c8b0c3e624a5 100644
+--- a/tools/include/nolibc/arch-x86.h
++++ b/tools/include/nolibc/arch-x86.h
+@@ -351,7 +351,7 @@ void *memcpy(void *dst, const void *src, size_t len);
+ void *memset(void *dst, int c, size_t len);
+ 
+ __asm__ (
+-".section .text.nolibc_memmove_memcpy\n"
++".pushsection .text.nolibc_memmove_memcpy\n"
+ ".weak memmove\n"
+ ".weak memcpy\n"
+ "memmove:\n"
+@@ -371,8 +371,9 @@ __asm__ (
+ 	"rep movsb\n\t"
+ 	"cld\n\t"
+ 	"retq\n"
++".popsection\n"
+ 
+-".section .text.nolibc_memset\n"
++".pushsection .text.nolibc_memset\n"
+ ".weak memset\n"
+ "memset:\n"
+ 	"xchgl %eax, %esi\n\t"
+@@ -381,6 +382,7 @@ __asm__ (
+ 	"rep stosb\n\t"
+ 	"popq  %rax\n\t"
+ 	"retq\n"
++".popsection\n"
+ );
+ 
+ #endif /* !defined(__x86_64__) */
+-- 
+2.35.3
 
 
