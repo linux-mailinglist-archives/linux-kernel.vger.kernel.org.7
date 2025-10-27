@@ -1,209 +1,108 @@
-Return-Path: <linux-kernel+bounces-872625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB42C119BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:04:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749A9C119C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B7E84EE29E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F46819C7401
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89E72FE057;
-	Mon, 27 Oct 2025 22:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3769C31BCBC;
+	Mon, 27 Oct 2025 22:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="10LKB9LC"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AY1Ok+NS"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A256C2EF65F
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45DB2DEA6E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761602653; cv=none; b=gctzMuKQiVZ4D+wqnuoQQ2DmPN7fMlbreFWHFA0sSn3PK2hY6lhj1+RMzoitxcS0tk3kKNrFlhVsJM56MlvrNxwoFl+SMwDRmovbiIsPH9SGn31OFIq4fOxvA0i5uxpRkbWvDXq7b5wkfv1BS0+zZsQ5MoDsZp/1feJE+UZCQVM=
+	t=1761602705; cv=none; b=es566yPLne9e/REea/txiRRh/hH+iv4B4SsuPs5rxaYtcXuMpLqA8l10Yj6Kc6CdD1bLhVMmUXicCyPxnWCXA9ReESseoR6xD0DIKlh4ROouzPLvMMINrwT/ZNqr6X1suWjEpEQFwjc/H5cyhTf5VJNdovUTMGGZLmO5tT3uZt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761602653; c=relaxed/simple;
-	bh=mDNBf9VaT4m5FDUFI/a6dWRitHA6UrUSUcgu24qbcLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eqfa6Jniw6w4Dbu+cwzF3SxhzmDKXjlJs9XBo08j9BPeIJZ2O5Zgp+zgbfN18W9E2xJwqzJV0Ss1jHmBggM0uy7mTMVT7WSAxI51Lxi+CE3eI/DxOWQfVoUDov0avOQyHRrlHu0qj6EhCejrbnLtp59Ml2BnC9jNr9U+TOGcYRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=10LKB9LC; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-430d06546d3so47345375ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:04:08 -0700 (PDT)
+	s=arc-20240116; t=1761602705; c=relaxed/simple;
+	bh=881iDkPEZh85ObsSmrMAZ48Htve0Wj9g+gfovyJ15uM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VYIsM5Lv0BLv2uXHy8lDOxbRzenusKMCfU4MeGpsCRxljQDQaa3OlxHpGEbOHekXLiqkdR7rO89veqLP1osz5aPO6MTcfdkMdjQ0nFAZwKE6aMwkWEuBuNJcZOmkG6TvGfQCkc9OCoeZjpS1VBnn2bkJdVi+HHqyfHoQEjxrVoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AY1Ok+NS; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-592fdbeb7b2so5081561e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761602648; x=1762207448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1DGwtRYivJI/9/ePCg3GK9WG1nAdTuerTKUBAFg18NU=;
-        b=10LKB9LCjIN7c3rosnYfByTEVePrQUIcefh4WzavGXEHZRSfHPgXQ6qPnJ+jkBV1TR
-         0qYLCODk2zpYtqi/6f0HHn19qbw0VN99ZFLiFU4T5EmCZ6T5cleCtcV40GHV0qnzSBPH
-         Ay5PjO06PrUc/zEX6Me4/gvkmoCnTQoJ9HEe4vx4vJPW5S8h6zEuNAFNdMSH6t7eLilg
-         PxdIjQo6F6F9s+gOlpWULtApazDaAVeCQKxqENlDASLzNx3cO4qaS7DtBMNGY1hIq5Vk
-         5BY4wdbY5Y/fmp3Tkxo+o2Me8+8wjNF3K+m5sOws7xpNZ4CCrPj7ZynRcnlIQCFM8sHJ
-         suKA==
+        d=linaro.org; s=google; t=1761602701; x=1762207501; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=881iDkPEZh85ObsSmrMAZ48Htve0Wj9g+gfovyJ15uM=;
+        b=AY1Ok+NSj05rf5B6Qk9YA4ZHIYVjoSO1m2vXDJeJK5UNKe9mRGKsXW5EnjQ0+JwY6L
+         bInfp+u8gcsWJtvLp6SYv5te/smbG06Hrx7cLF85ElCL1bWXT+uTCn2Emih0ODIR7t5x
+         HBLmm0G33Xx1mX8/lmv2UH6YLP6fZytuQTv/frdf3MnQz/QHmHrt64Q4OKtAeUiMcezu
+         L15qNzUqKfgFWdeS37d+PdpwXF/5wVxbb4ohDQ3FbZjiZQrnXPF2TR+NQX126RWOO054
+         7y+dcqJ0DhZBbZ+k2auEkaEG2j0cyzAOyMEnGX8Qpw21DUJCAz4NXickpHwIsoEl0lXr
+         +NXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761602648; x=1762207448;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1DGwtRYivJI/9/ePCg3GK9WG1nAdTuerTKUBAFg18NU=;
-        b=AuLQp8rL5GJmW5PSL7LcICfrt0LaoBAJguwJx0UyIoNPY2sw1fxbyAgxSyOV+GyRUe
-         g9eNhP/UY9muv17q9Zepv37aZ4dK4teEiF9eQMmej/4iGLpyC5dmxl3tOyhqUFvcT/ZH
-         JU1efbaFy13VG0nuFpiFRNQ+cU80NNg84yt8SeUsdQRwI4wJcY5MmPYgXuOv1D2iMjb7
-         RF6qKDOl4ipt7VCM3NiQ2rZUsVa7Kt7jP87raFLVFAdF7TlOyCZRjZ24zlSQiJspTh+n
-         8G9KhauFhtjQRqDf9HMO/8LuJhc/nez09Qsyb6JHn2KCSxqqy6wtuQvqFCV7EFo+vA04
-         vMpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyU1CRZssC1rpg8EJ9cXjLm1BLxLKCon7M3ySLVLRI7QZFUe9IENQQSWS0SfVLHEHHUjegSUMgaIW0VUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1iiqd7CwUO5Mk7aa0mAqHcMe213XdlGLQjY2Tdi8G6NT2mCip
-	oQ0R5eUBUSmtgYMO+OH+1mIDJnHWi4yVBCGZ6Rjb18KDnAKTDMxQNTNIXiEVgvEVkME=
-X-Gm-Gg: ASbGncv/ZIQOBGjW7hj6mIXttLIZVQVTE8fncuBvg1WoBRa4YmQWb4bnWVk9npjCy34
-	OOwRInUD4uHHma3V7lUzEhgHJG7/uBodT3Fk4nSnOB1tTwGD9T6FHPHvRdwIl7iOgLTNSWc22IM
-	kOR/HBqEb8eUTOvruqobz1l2BT+eBAeJiblLdNpLyQnwFpILJxRppGr2nV2ZywVybRzR5py3+Uu
-	nyDan5TYgfxVNt0L4JuN7xI3LkhlBH9cQF6ck2TrqQmC6v5gtYHL/HZZy/Z6aub8FSSdeitSFFz
-	NXo8qDMIUQwuiUpFqyaO5WgGQH9UMOGJDmynWP0BYmgauypDdnNzpHQ2qt8cQo6KH1kVYTiLy7E
-	RA0zjutwuaMexdoK1eyY6tFnppERy+As4DESn3TZOJmAQOm8gdxV/PEzJh4DF0Eb05YryjX0AQg
-	==
-X-Google-Smtp-Source: AGHT+IGEqsw+ql+25KlKysVMbdQvsh8plbbkD4ishSElZSeGl+KywOGvbUA62Fk7G5E/px3LHD70Sg==
-X-Received: by 2002:a05:6e02:1fca:b0:430:ab29:e75b with SMTP id e9e14a558f8ab-4320f8382f4mr21545175ab.17.1761602647606;
-        Mon, 27 Oct 2025 15:04:07 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431f67dcae3sm36275455ab.3.2025.10.27.15.04.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 15:04:06 -0700 (PDT)
-Message-ID: <d0cd8a65-b565-4275-b87d-51d10e88069f@kernel.dk>
-Date: Mon, 27 Oct 2025 16:04:05 -0600
+        d=1e100.net; s=20230601; t=1761602701; x=1762207501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=881iDkPEZh85ObsSmrMAZ48Htve0Wj9g+gfovyJ15uM=;
+        b=UZhr2dmozpfT/Jp5hgaFiXAQr0q3V1yKA9YIMILjmB/OCby6Y2J1VJchUKAZUEtKEZ
+         d1mlZxCaNDNUfH3INpy7LCEe+oGgzqi6XLbNYBK8P7d9Cs/bPbBrpxRsp1EGLYdHfoPb
+         sy3ndLe6pCC412ypATSynlPZEVg1FglNk+f5ow6l5YqrSXZ3Cik7Ep24SxRpEhJMstfE
+         FNiGnxBZwTtloA+aVXaCY5aejzDravUcNCZZpLs7EDEpluX+WpRF6IfPFa+Xi3GodtH6
+         NnYNK+InEjRXzN9Mkud1VdwtdC8RU+FVNt3m62TGdinUp5PWsSqd/lwQwhY5cjQ/Hics
+         CKjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9lnELqzpuezx2XnepydXSZ9Ou0QmKgjgbAcPYSeghwzLg4SnGi4UCGtqTVLC8Xk+aLkp7ZZds7DCOZnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt3Aa7B0apitAbHynTdzHDa61kpyDqJTxRufBzfCvZpILhvCZW
+	+rCe9dFRc6/BrWL71YLGYM8j9WkECqS+1syI963TkdniKM0BmYhPRJXFzUgqcBGOkYHQreMn4nk
+	rDETYpg+JnVAosIjwPTZHk3bcdWB5Zni+FkO57Gy2mhsv27izHorK
+X-Gm-Gg: ASbGncs1dgGa8PpTdQhrVly0FXBfmr7wHn0Kbhho3epITtEx1AmyksMmwD+3LwR/IVF
+	qcjcBiY77zm5GUllo+y8NBeDnWuRZmNwda3kpSeDK5hxnbKd9IT1t1EbiYiuOSNBHVYLCr1f9lf
+	rwSmHtM4en5STan0R43hBkyJfCXZ4L4sacQ/xwtLXKMJJ1y4XZj6rrrXuXi/65sNyvkXDWSw+pl
+	RSztW9Zz9g0SwC/QrC9k6cFtYquOfDL8yr6+ZZ1/sna0s2ppUd9Yii+qeceBNn29jeCpVg=
+X-Google-Smtp-Source: AGHT+IHoUF4RHiTK1ixTbcpPhI4tBBI8uNgdSo0LDy74WVyTiTCN+lBwjm/Roz3VFn6Yvs6CWMINeSQ/2LwI3eIrZ6o=
+X-Received: by 2002:a2e:ac13:0:b0:378:d757:d307 with SMTP id
+ 38308e7fff4ca-379076bc3a7mr3168981fa.11.1761602701023; Mon, 27 Oct 2025
+ 15:05:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_uring_del_tctx_node
- (5)
-To: syzbot <syzbot+10a9b495f54a17b607a6@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, Keith Busch <kbusch@kernel.org>
-References: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251023132700.1199871-1-antonio.borneo@foss.st.com> <20251023132700.1199871-2-antonio.borneo@foss.st.com>
+In-Reply-To: <20251023132700.1199871-2-antonio.borneo@foss.st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 Oct 2025 23:04:49 +0100
+X-Gm-Features: AWmQ_bkqvtHBv2ihzMqbHUb5leNu-ZCVXzL1Rr2PRCeRlwPcmd2dgcjDCOHd-pw
+Message-ID: <CACRpkdYUt3mZX_KjFps_BSRQVrPcn70SrwEJGKRQUjHq3VXcDw@mail.gmail.com>
+Subject: Re: [PATCH v4 01/12] pinctrl: pinconf-generic: Fix minor typos in comments
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, 
+	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/27/25 3:07 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    72fb0170ef1f Add linux-next specific files for 20251024
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13087be2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e812d103f45aa955
-> dashboard link: https://syzkaller.appspot.com/bug?extid=10a9b495f54a17b607a6
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14725d2f980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11233b04580000
+On Thu, Oct 23, 2025 at 3:27=E2=80=AFPM Antonio Borneo
+<antonio.borneo@foss.st.com> wrote:
 
-[snip]
+> s/specyfying/specifying/
+> s/propertity/property/
+>
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-> RAX: ffffffff82431501 RBX: 0000000000000018 RCX: ffffffff824315fd
-> RDX: 0000000000000001 RSI: 0000000000000018 RDI: ffffc9000383f880
-> RBP: 0000000000000000 R08: ffffc9000383f897 R09: 1ffff92000707f12
-> R10: dffffc0000000000 R11: fffff52000707f13 R12: 0000000000000003
-> R13: ffff888079527128 R14: fffff52000707f13 R15: 1ffff92000707f10
-> FS:  00007f4e567906c0(0000) GS:ffff888125cdc000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055db9a726918 CR3: 000000002ec48000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  __asan_memset+0x22/0x50 mm/kasan/shadow.c:84
->  seq_printf+0xad/0x270 fs/seq_file.c:403
->  __io_uring_show_fdinfo io_uring/fdinfo.c:142 [inline]
->  io_uring_show_fdinfo+0x734/0x17d0 io_uring/fdinfo.c:256
->  seq_show+0x5bc/0x730 fs/proc/fd.c:68
->  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
->  seq_read+0x369/0x480 fs/seq_file.c:162
->  vfs_read+0x200/0xa30 fs/read_write.c:570
->  ksys_read+0x145/0x250 fs/read_write.c:715
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Patch applied!
 
-Keith, I'm pretty sure your change:
-
-commit 1cba30bf9fdd6c982708f3587f609a30c370d889
-Author: Keith Busch <kbusch@kernel.org>
-Date:   Thu Oct 16 11:09:38 2025 -0700
-
-    io_uring: add support for IORING_SETUP_SQE_MIXED
-
-leaves fdinfo open up to being broken. Before, we had:
-
-sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
-
-as a cap for the loop, now you just have:
-
-while (sq_head < sq_tail) {
-
-which seems like a bad idea. It's also missing an sq_head increment if
-we hit this condition:
-
-if (sq_idx > sq_mask)
-	continue;
-
-which is also something you can trigger, and which would also end up in
-an infinite loop.
-
-Totally untested, but how about something like the below:
-
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 7fb900f1d8f6..3f254ae0ad61 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -66,6 +66,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 	unsigned int cq_head = READ_ONCE(r->cq.head);
- 	unsigned int cq_tail = READ_ONCE(r->cq.tail);
- 	unsigned int sq_shift = 0;
-+	unsigned int sq_entries;
- 	int sq_pid = -1, sq_cpu = -1;
- 	u64 sq_total_time = 0, sq_work_time = 0;
- 	unsigned int i;
-@@ -88,17 +89,18 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 	seq_printf(m, "CqTail:\t%u\n", cq_tail);
- 	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
- 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
--	while (sq_head < sq_tail) {
-+	sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
-+	for (i = 0; i < sq_entries; i++) {
-+		unsigned int entry = i + sq_head;
- 		struct io_uring_sqe *sqe;
- 		unsigned int sq_idx;
- 		bool sqe128 = false;
- 		u8 opcode;
- 
- 		if (ctx->flags & IORING_SETUP_NO_SQARRAY)
--			sq_idx = sq_head & sq_mask;
-+			sq_idx = entry & sq_mask;
- 		else
--			sq_idx = READ_ONCE(ctx->sq_array[sq_head & sq_mask]);
--
-+			sq_idx = READ_ONCE(ctx->sq_array[entry & sq_mask]);
- 		if (sq_idx > sq_mask)
- 			continue;
- 
-@@ -140,7 +142,6 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 			}
- 		}
- 		seq_printf(m, "\n");
--		sq_head++;
- 	}
- 	seq_printf(m, "CQEs:\t%u\n", cq_tail - cq_head);
- 	while (cq_head < cq_tail) {
-
--- 
-Jens Axboe
+Yours,
+Linus Walleij
 
