@@ -1,140 +1,163 @@
-Return-Path: <linux-kernel+bounces-870877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80435C0BE28
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:01:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E37C0BE31
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D0B23BC29C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0320B1892B3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B56A2D97BC;
-	Mon, 27 Oct 2025 06:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C6C2D97BA;
+	Mon, 27 Oct 2025 06:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="ToPggUCo"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eW3t6yED"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D114C236454;
-	Mon, 27 Oct 2025 06:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3509236454
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761544890; cv=none; b=rv9tC+n7qvNHkms8GwXwf1WlP5RNA3p5S3kee0bTXkg5kgyrbyKkI4Nmjp6vGtyIBPMU/z7obInsYPv4ev6aO2K0v9QouK+YPqtRNJYIwaje37Xm+YVTxrKwHYs6A6eXeLX8FASTL9qT1A6lVZZxI5rA6YorVpxlqik993ogHtE=
+	t=1761544955; cv=none; b=BRIloTO8AupGRO91dso4NTkTIgSMjZGbWezkQ0p1La4+c7velUeGh/dKPdkxUd4l/qLgXMkF88IupGQuzroKVdG3YAz/hxNMK72J4Vd5NnPCr2lXgOmPR9lOVOkKFgrfqGex7P6Mpwwryw8XON68rJ0NTehPeyf+EmR4Cso4WXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761544890; c=relaxed/simple;
-	bh=/uSTh9jnNHxZr8l0AmC9H14h3So3FspudvBB4vT9/A0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCQft3jH5XOZ7htdBUdnHBrBuK8ZBcOwZhDJdqWHIqc1p6EyAwNyZ9ZOLzydSmElxYadM7ynbbClkFYXdGS7BchovcOYWJ1xxk4wx829a+7ql8hLjRdGT64LHpwgwDlBx6DPt1krPQpS29tDgLOwKlXiBbRelIKuSiN25mCY4kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=ToPggUCo; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=gaYFdwY891p4uuTCbTw+bn5GIMXkeSKRlnDMN0uMIbE=; b=ToPggUCoz7Enp03xT9VVYhZwRd
-	DctaY9+fMIm0Jilb2UDw/quz1ygSP/8HF+mp9o8kCfX8GX1P/HTMDJ+UpjisBVIgPVJOnSadvCuHB
-	UL3bnQ2YIRWTEkCMge+FLHnEQKvv9gFbm+LYbTRCMSuv32HoiFd3vzE8GjbNWcugqcmecS6zeIloH
-	ZthKdMOBOov2OM7RJ72b1v42dUjzCi/DFXdTlB6GCrIO1XAHFUdHQF2yBsolPJrvuFyg/Mrl/gQT4
-	TLemeuJIuny0dJy+hfn+UsWXm45JNlpcaYlBa50wuqRbHD8C5xScwBeP3bG6LSnI7zVVac5nYK7ZX
-	bWQY/v5Q==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1vDGI5-006Wiq-2q;
-	Mon, 27 Oct 2025 07:01:13 +0100
-Date: Mon, 27 Oct 2025 07:01:13 +0100
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] driver: reset: spacemit-p1: add driver for
- poweroff/reboot
-Message-ID: <aP8KqZ1hlqfQVPii@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
-References: <20251026224424.1891541-1-aurelien@aurel32.net>
- <20251026224424.1891541-2-aurelien@aurel32.net>
- <A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org>
+	s=arc-20240116; t=1761544955; c=relaxed/simple;
+	bh=wwxjb9DR1LvG1RHmq4IzS3Xkgi6qBkuv3E66RDriplY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=r964zqqq3Eru8WPTKh531okXVIg07SiUkhs08yA5/JqmN3ghKD52sywgBKExt+QNzpt6Exs7oO+vcFlmziDfm3aeOM44X1yObKJoj76y1antUZknw9OnlYf8chGk3Qk9BxAfiHUmy+GBHOyTbqvlQ1WEMXLcBmr9KajKvD0zT+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eW3t6yED; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761544944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bj8GkUukbIV/nY1dITAAUkOq2qqZTJboBaZcti6jOVo=;
+	b=eW3t6yEDhpSPFgg2UJi5MB6cQTIbszIT8oDC7AjP4L3JyOp2HpNkvz00n6WHt/U2KGx+Ut
+	RI61OU/Q/LncM/4s6Q3kJevv80jt51KK5SCbahc7PsDAmjBxRYip9U50cYBXHq0aJtDqch
+	gpeQzoAP3Lpd/sOj54YC0svDbY+Y+Xs=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH v1 2/2] ALSA: hda/realtek: Add match for ASUS Xbox Ally
+ projects
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Matthew Schwartz <matthew.schwartz@linux.dev>
+In-Reply-To: <CAGwozwEwPj9VRRo2U50ccg=_qSM7p-1c_hw2y=OYA-pFc=p13w@mail.gmail.com>
+Date: Sun, 26 Oct 2025 23:01:54 -0700
+Cc: Shenghao Ding <shenghao-ding@ti.com>,
+ Baojun Xu <baojun.xu@ti.com>,
+ Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <35A5783A-CA60-4B10-8C7B-5820B65307FE@linux.dev>
+References: <20251026191635.2447593-1-lkml@antheas.dev>
+ <20251026191635.2447593-2-lkml@antheas.dev>
+ <CAGwozwEwPj9VRRo2U50ccg=_qSM7p-1c_hw2y=OYA-pFc=p13w@mail.gmail.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-10-27 11:20, Troy Mitchell wrote:
-> On Sun, Oct 26, 2025 at 11:41:14PM +0100, Aurelien Jarno wrote:
-> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
-> > chip, which is commonly paired with the SpacemiT K1 SoC.
-> > 
-> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
-> > done directly through the regmap interface. Reboot or poweroff is
-> > triggered by setting a specific bit in a control register, which is
-> > automatically cleared by the hardware afterwards.
-> > 
-> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > ---
-> > v2:
-> >  - Replace the "select" by a "depends on"
-> >  - Remove outdated Reviewed-by
-> > 
-> >  drivers/power/reset/Kconfig              |  9 +++
-> >  drivers/power/reset/Makefile             |  1 +
-> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
-> >  3 files changed, 98 insertions(+)
-> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
-> > 
-> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> > index 8248895ca9038..61c16f3d5abc7 100644
-> > --- a/drivers/power/reset/Kconfig
-> > +++ b/drivers/power/reset/Kconfig
-> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
-> >  	help
-> >  	  Reboot support for the KEYSTONE SoCs.
-> >  
-> > +config POWER_RESET_SPACEMIT_P1
-> > +	tristate "SpacemiT P1 poweroff and reset driver"
-> > +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> > +	depends on MFD_SPACEMIT_P1
-> > +	default m
-> default m if ARCH_SPACEMIT?
 
-As explained here, this is equivalent:
-https://lore.kernel.org/spacemit/CAJM55Z_BzfRo5aKf2VrneTymSizwDQq6OfMK_LNgyoGjp43K8Q@mail.gmail.com/
 
-But I can make a v5 to change that, if it's the preferred form on the 
-SpacemiT side.
+> On Oct 26, 2025, at 12:19=E2=80=AFPM, Antheas Kapenekakis =
+<lkml@antheas.dev> wrote:
+>=20
+> On Sun, 26 Oct 2025 at 20:16, Antheas Kapenekakis <lkml@antheas.dev> =
+wrote:
+>>=20
+>> Bind the realtek codec to TAS2781 I2C audio amps on ASUS Xbox Ally
+>> projects. While these projects work without a quirk, adding it =
+increases
+>> the output volume significantly.
+>=20
+> Also, if you can upstream the firmware files:
+> TAS2XXX13840.bin
+> TAS2XXX13841.bin
+> TAS2XXX13940.bin
+> TAS2XXX13941.bin
 
-> Or default ARCH_SPACEMIT?
-> I believe that reboot and shutdown are actually essential functionalities,
-> so it might make more sense: default ARCH_SPACEMIT?
+This is the firmware at [1], correct? I=E2=80=99m testing the series =
+with that firmware on my ROG Xbox Ally X, and I found something =
+interesting.
 
-That was already changed in v3, following a request on v2:
-https://lore.kernel.org/spacemit/CANBLGczi3GeaC4aWECV8NS-zqSHgRa-5onynz9fGsZeN8qgysg@mail.gmail.com/
+By default, with just your kernel patches and the firmware files hosted =
+at [1], my unit is loading:
 
-Regards
-Aurelien
+tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840.bin, =
+sha256: 58cffa36ae23a2d9b2349ecb6c1d4e89627934cd79218f6ada06eaffe6688246
 
--- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+However, with this firmware file,  TAS2XXX13840.bin, there is =
+significant audio clipping above 75% speaker level on my individual =
+unit.
+
+Then, I tried renaming the other firmware file, TAS2XXX13841.bin, into =
+TAS2XXX13840.bin. Now my unit is loading:
+
+tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840.bin, =
+sha256: 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4b8c
+
+With this firmware file, audio is perfect all the way to 100% speaker =
+level.
+
+If I recall, there have been other ASUS products that required matching =
+amplifier hardware with firmware correctly, right? It looks like this =
+might be another case of since it seems my unit is loading the wrong =
+firmware for its amplifiers.
+
+Matt
+
+[1]: https://github.com/hhd-dev/hwfirm
+
+>=20
+> That would be great :)
+>=20
+> Antheas
+>=20
+>> Cc: stable@vger.kernel.org # 6.17
+>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>> ---
+>> sound/hda/codecs/realtek/alc269.c | 2 ++
+>> 1 file changed, 2 insertions(+)
+>>=20
+>> diff --git a/sound/hda/codecs/realtek/alc269.c =
+b/sound/hda/codecs/realtek/alc269.c
+>> index 8ad5febd822a..d1ad84eee6d1 100644
+>> --- a/sound/hda/codecs/realtek/alc269.c
+>> +++ b/sound/hda/codecs/realtek/alc269.c
+>> @@ -6713,6 +6713,8 @@ static const struct hda_quirk =
+alc269_fixup_tbl[] =3D {
+>>        SND_PCI_QUIRK(0x1043, 0x12f0, "ASUS X541UV", =
+ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
+>>        SND_PCI_QUIRK(0x1043, 0x1313, "Asus K42JZ", =
+ALC269VB_FIXUP_ASUS_MIC_NO_PRESENCE),
+>>        SND_PCI_QUIRK(0x1043, 0x1314, "ASUS GA605K", =
+ALC285_FIXUP_ASUS_GA605K_HEADSET_MIC),
+>> +       SND_PCI_QUIRK(0x1043, 0x1384, "ASUS RC73XA", =
+ALC287_FIXUP_TXNW2781_I2C),
+>> +       SND_PCI_QUIRK(0x1043, 0x1394, "ASUS RC73YA", =
+ALC287_FIXUP_TXNW2781_I2C),
+>>        SND_PCI_QUIRK(0x1043, 0x13b0, "ASUS Z550SA", =
+ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
+>>        SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", =
+ALC269VB_FIXUP_ASUS_ZENBOOK),
+>>        SND_PCI_QUIRK(0x1043, 0x1433, "ASUS =
+GX650PY/PZ/PV/PU/PYV/PZV/PIV/PVV", ALC285_FIXUP_ASUS_I2C_HEADSET_MIC),
+>> --
+>> 2.51.1
+>>=20
+>>=20
+>=20
+>=20
+
 
