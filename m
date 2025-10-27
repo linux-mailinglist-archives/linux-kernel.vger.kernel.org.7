@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-872411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA34C10C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:19:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE22C10EDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C208352559
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E19A583038
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287E32AACD;
-	Mon, 27 Oct 2025 19:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED1832B9B2;
+	Mon, 27 Oct 2025 19:17:39 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A6E3090CC
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192F732ABC5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592657; cv=none; b=N60KrxhFGHgnTFiDeNLl0Rdnxw8cY58ntp9vI6wD5YvMEQ4iN4ybHKAqhleq+St4+epQrJ/BKCibC0Ev8YQY812L8Rx9V4HGmNt4nCL4rEf7AvVhjCW2xHbMqIKBXgnkoL5xYjoBOLDVwFTgxxUznTR2XabEMtCobEuKTWC2fbw=
+	t=1761592659; cv=none; b=FtguCYmkD144CKB5yC06DnPCfiRkinU8l5JL/prnNICJVxskMpwYfn4jjLN/G7CkWc+RB9tB/gNT1LUTyNJQrSasHKDDf3jNbaoH53eOcsovVyWePOvpdOc6NJwN5AsQ9yZLRaUPiXjV988jp06pMktWEQc7ndaMC+EHMNFV+Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592657; c=relaxed/simple;
-	bh=uylQ8N0Tj3MThIcXCRxuc9igscliSHHERr3Sag3b2eI=;
+	s=arc-20240116; t=1761592659; c=relaxed/simple;
+	bh=GiYHP4eOLFxhxNGk7qH8zk5E/0fAQTENJvmg4lqvZsg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QMXSlKDazj6AZRnsokgKV1a+L9p4HkbLp5+6wYrit+ew39+1qSPCTHmqYzcFjpA/YOo4K4sWw+wIMm0NC3l4MPEljCuKFSsWQ+FFnZIu5KuX+DENbeZY+AZewyb6owevKZhjZiq9sicnGdjLiWOpKEfiMRROXIpADE61O+BGCnw=
+	 MIME-Version; b=VzMbOZ6zAFsYPzhWK6gokW3e+j8SjG1kYlIHTbzhIRU04XILAvkKCigeD1xjXbEvCM/3QRoePszP2uLQonVCmfdQmokBp4QOrxKyt+4Ei8UIkhnnAMuWqHR8RNr+B5Sg1l+TLsbyI/qBRR3HfgFW9pIoofvvBF0U7otilZB0+eg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 799381DB5;
-	Mon, 27 Oct 2025 12:17:27 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A26CF2574;
+	Mon, 27 Oct 2025 12:17:29 -0700 (PDT)
 Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 69D843F63F;
-	Mon, 27 Oct 2025 12:17:33 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 91BAC3F63F;
+	Mon, 27 Oct 2025 12:17:35 -0700 (PDT)
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: maz@kernel.org,
 	oliver.upton@linux.dev,
@@ -46,9 +46,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 1/2] KVM: arm64: fix FF-A call failure when ff-a driver is built-in
-Date: Mon, 27 Oct 2025 19:17:28 +0000
-Message-Id: <20251027191729.1704744-2-yeoreum.yun@arm.com>
+Subject: [PATCH 2/2] KVM: arm64: support optional calls of FF-A v1.2
+Date: Mon, 27 Oct 2025 19:17:29 +0000
+Message-Id: <20251027191729.1704744-3-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251027191729.1704744-1-yeoreum.yun@arm.com>
 References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
@@ -58,58 +58,59 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Until has_version_negotiated is set to true,
-all FF-A function calls fail except FFA_VERSION.
-The has_version_negotiated flag is set to true when
-the first FFA_VERSION call is made after init_hyp_mode().
-
-This works fine when the FF-A driver is built as a module,
-since ffa_init() is invoked after kvm_arm_init(), allowing do_ffa_version()
-to set has_version_negotiated to true.
-
-However, when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y),
-all FF-A calls fail. This happens because ffa_init() runs before
-kvm_arm_init() — the init level of ffa_init() is rootfs_initcall.
-As a result, the hypervisor cannot set has_version_negotiated,
-since the FFA_VERSION call made in ffa_init() does not trap to the hypervisor
-(HCR_EL2.TSC is cleared before kvm_arm_init()).
-
-Consequently, this causes failures when using EFI variable services
-with secure partitions that rely on FFA_SEND_DIRECT_MSG.
-
-To fix this, call hyp_ffa_post_init() and set has_version_negotiated
-during hyp_ffa_init() when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y).
+To use TPM drvier which uses CRB over FF-A with FFA_DIRECT_REQ2,
+support the FF-A v1.2's optinal calls by querying whether
+SPMC supports those.
 
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 ---
- arch/arm64/kvm/hyp/nvhe/ffa.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 4e16f9b96f63..0ae87ff61758 100644
+index 0ae87ff61758..9ded1c6369b9 100644
 --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
 +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -984,5 +984,17 @@ int hyp_ffa_init(void *pages)
- 	};
- 
- 	version_lock = __HYP_SPIN_LOCK_UNLOCKED;
-+
-+	if (IS_BUILTIN(CONFIG_ARM_FFA_TRANSPORT)) {
-+		hyp_spin_lock(&version_lock);
-+		if (hyp_ffa_post_init()) {
-+			hyp_spin_unlock(&version_lock);
-+			return -EOPNOTSUPP;
-+		}
-+
-+		smp_store_release(&has_version_negotiated, true);
-+		hyp_spin_unlock(&version_lock);
-+	}
-+
- 	return 0;
+@@ -646,6 +646,22 @@ static void do_ffa_mem_reclaim(struct arm_smccc_1_2_regs *res,
+ 		ffa_to_smccc_res(res, ret);
  }
+ 
++static bool ffa_1_2_optional_calls_supported(u64 func_id)
++{
++	struct arm_smccc_1_2_regs res;
++
++	if (!smp_load_acquire(&has_version_negotiated) ||
++		(FFA_MINOR_VERSION(FFA_VERSION_1_2) < 2))
++		return false;
++
++	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
++		.a0 = FFA_FEATURES,
++		.a1 = func_id,
++	}, &res);
++
++	return res.a0 == FFA_SUCCESS;
++}
++
+ /*
+  * Is a given FFA function supported, either by forwarding on directly
+  * or by handling at EL2?
+@@ -678,12 +694,13 @@ static bool ffa_call_supported(u64 func_id)
+ 	case FFA_NOTIFICATION_SET:
+ 	case FFA_NOTIFICATION_GET:
+ 	case FFA_NOTIFICATION_INFO_GET:
++		return false;
+ 	/* Optional interfaces added in FF-A 1.2 */
+ 	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
+ 	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
+ 	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
+ 	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
+-		return false;
++		return ffa_1_2_optional_calls_supported(func_id);
+ 	}
+ 
+ 	return true;
 -- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
