@@ -1,131 +1,79 @@
-Return-Path: <linux-kernel+bounces-872591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB7FC1186E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:20:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4015CC1187D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 282474EC7CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:20:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C9164E9D8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7944732A3C1;
-	Mon, 27 Oct 2025 21:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D555329C55;
+	Mon, 27 Oct 2025 21:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nBl+hOJt"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="ZzCJ2mvl"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728A314A8D;
-	Mon, 27 Oct 2025 21:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F61B2DCC1A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599999; cv=none; b=aghSMD/d3sasozkGg2G5vfZ1JJrBsY4O7Nzm7ilNi2MiJ0ymRIfS7sTrkL1+DUDsB4dilgWAYv9P6es7R5oDD4mA3Hd8d9WjuFnIVyOVyybam2bIXXM8UJRr55AP/OO3+5JoVpxxz3s10zi6Ybr7HSP8wCyiwHQrxRucxEx6p5o=
+	t=1761600030; cv=none; b=shPEuse+b4Q3Z7ku3ag43DB/c6xRNPG0VbOYdtC7B8O/GQnBbHastPseqJfOP2R+AGL/3oK4Hv9anGStnEGGae0/U3VLHBIKDCy6y8xWosgRXOiz0mXVfoc4trj8mx+5H30Wn42dbFVnjzSdIa201HkifpDBiH1A4tiZLK4Q6rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599999; c=relaxed/simple;
-	bh=IaKAlAq36x6FQovo76KHJGi2+lwcn8LjsjjqBNZdne4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f32cqM9Az41qCLB78G/Dih5kLqcL3GXNdkX4QhKIE3UVCpmaG7q0wYB5y18pZyyhsM/jm3I90yJAQDImcfhC8UT9SeBrz/fr3StTJA4eS+YWBg6HejX9M8vYfZhfZYbSoiApr1SE744LtnA2gtUcZJC4y2y6Klrn+/wINYmMkHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nBl+hOJt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=9Iv+ffZpjEZjAYosvgj1AxYfj8Ex0TWhrhWzH//VRvQ=; b=nBl+hOJtJiTxm7KhGiNJ/Q71dn
-	T9DUH3zO9MGalAUW4ruw7kg0OdrzIJoDdR5Egq17KkEjUo0tdXIp3flaqD5ZKGjhqpn27Qj3/ehpC
-	FcRYP6yofjDMNPd0VycSu6PaJurniVxvcYo43iWQwGpDDcxmPtmC0r+qqg7Yr7Im5R6RChjNTIgiK
-	ALQ194/8LCHUjX8neIBt/tdRkr+/Q/7oXGoANAtNxkziBF8kayvNFYbj18ENYhlhGwQyvWm6NjncX
-	zF7KHIvIlSlxpiNZjeqmh+u5aOh7Jpv65BFnJUYly7U53K4m71Ks6rj+6tSlu6hVGtbHxC9bSLNCz
-	OAkFcj5g==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDUd8-0000000EmzQ-37s7;
-	Mon, 27 Oct 2025 21:19:54 +0000
-Message-ID: <09faee6c-4075-4eb7-bb2b-1c6650e3f053@infradead.org>
-Date: Mon, 27 Oct 2025 14:19:54 -0700
+	s=arc-20240116; t=1761600030; c=relaxed/simple;
+	bh=5xdpCgI9+Y6cN5MSmGFBKONZOL4IJqg+NR9Qk85kt80=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=cqy0BNA5LkWcizT8QoiAoWJ5bRU+NqJemlJv57f9QVY/FPo5zWIXW59mDpPmHGuvNT51rKQ7ojSslgv5tyABpm9xqfdv7WSv9G7vb25QJJ4OcTZs3UgmrXChp6v0cBK2svOe15eAfK+gksWRlG3rD7s4Duo8gXO5sgLEHvlrtnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=ZzCJ2mvl; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/30] docs: reporting-issues: mention text is best
- viewed rendered
-To: Thorsten Leemhuis <linux@leemhuis.info>, Jonathan Corbet <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <cover.1761481839.git.linux@leemhuis.info>
- <4f7e2de2a2336c52e55cc49dcda627a4e86b8793.1761481839.git.linux@leemhuis.info>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <4f7e2de2a2336c52e55cc49dcda627a4e86b8793.1761481839.git.linux@leemhuis.info>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1761600021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xdpCgI9+Y6cN5MSmGFBKONZOL4IJqg+NR9Qk85kt80=;
+	b=ZzCJ2mvlyM+oBKlKupVVpGp9PaleFmZxoOk6obZmhBvosz4iw+2eUciwBFZLxJZ4DVMsYo
+	aOS84kkPO+Wfv6bKDUrlWJhAAEhk6X8TOp79J3xdxG/PhfCUWA+dCMvQAyhFHY0oaaH5dJ
+	ylyBWIddMlEyQlCHODpPizWU2DVVELpXFUDVzORSZLltmiFNtab4+ATRxiXFbPJw3RwE4V
+	0wXb5+3/B2oYfw3NBxOsCXqCEWLjD51LN+aPmurrE3vUAx/YYhU3SwjOCV0QRUj7FriQGc
+	mI8bxn+QAE+UU9PmFZ9/HH28MR/bFpnTmpHQ6Ds9rnTFy4N9vXe8fMmM1NcbWQ==
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Mon, 27 Oct 2025 22:20:15 +0100
+Message-Id: <DDTF376168GE.27A08H5NLTCRF@cknow-tech.com>
+Cc: <sigmaris@gmail.com>, <conor+dt@kernel.org>,
+ <devicetree@vger.kernel.org>, <heiko@sntech.de>, <krzk+dt@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>, <robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: rockchip: pwm-fan overlay for NanoPC-T6
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+To: "Dragan Simic" <dsimic@manjaro.org>, "Alexey Charkov"
+ <alchark@gmail.com>
+References: <d583ee43-38c4-40fb-b33b-ce3153c9723b@gmail.com>
+ <20251027200213.1821809-1-dsimic@manjaro.org>
+ <CABjd4Yzfx-4xBHVB=W_r6nEdbwNJKdpHYB6bN3Xsk8dZOegJWw@mail.gmail.com>
+ <2cfeeb0c-f7e0-b101-62c4-3b6eae40a30b@manjaro.org>
+In-Reply-To: <2cfeeb0c-f7e0-b101-62c4-3b6eae40a30b@manjaro.org>
+X-Migadu-Flow: FLOW_OUT
 
+On Mon Oct 27, 2025 at 10:15 PM CET, Dragan Simic wrote:
+> FWIW, the most user-friendly SBC family in the world, Raspberry
+> Pi, :) requires manual enabling of the fan on Raspberry Pi 4.
+> I haven't researched what's the background for that, perhaps the
 
-
-On 10/26/25 5:41 AM, Thorsten Leemhuis wrote:
-> Add a comment before the step-by-step guide explaining that the document
-> is best viewed in the rendered form, as there the internal links will
-> work that later patches will add.
-> 
-> While at it change the double quotes in the license hint at the end of
-> the document into single quotes, which is the preferred style.
-> 
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
-> ---
->  Documentation/admin-guide/reporting-issues.rst | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-> index a68e6d90927471..3bc47afaf85ea0 100644
-> --- a/Documentation/admin-guide/reporting-issues.rst
-> +++ b/Documentation/admin-guide/reporting-issues.rst
-> @@ -48,6 +48,16 @@ Once the report is out, answer any questions that come up and help where you
->  can. That includes keeping the ball rolling by occasionally retesting with newer
->  releases and sending a status update afterwards.
->  
-> +..
-> +   Note: If you see this note, you are reading the text's source file. You
-> +   might want to switch to a rendered version: It makes it a lot easier to
-> +   read and navigate this document -- especially when you want to look something
-> +   up in the reference section, then jump back to where you left off.
-> +..
-> +   Find the latest rendered version of this text here:
-> +   https://docs.kernel.org/admin-guide/reporting-issues.html
-> +
-> +
->  Step-by-step guide how to report issues to the kernel maintainers
->  =================================================================
->  
-> @@ -1748,13 +1758,13 @@ art will lay some groundwork to improve the situation over time.
->     you spot a typo or small mistake, feel free to let him know directly and
->     he'll fix it. You are free to do the same in a mostly informal way if you
->     want to contribute changes to the text, but for copyright reasons please CC
-> -   linux-doc@vger.kernel.org and "sign-off" your contribution as
-> -   Documentation/process/submitting-patches.rst outlines in the section "Sign
-> -   your work - the Developer's Certificate of Origin".
-> +   linux-doc@vger.kernel.org and 'sign-off' your contribution as
-> +   Documentation/process/submitting-patches.rst outlines in the section 'Sign
-> +   your work - the Developer's Certificate of Origin'.
-
-Can you have a single quote (Developer's) inside single quotes?
-Anyway, nack on the quote marks changes.
-
->  ..
->     This text is available under GPL-2.0+ or CC-BY-4.0, as stated at the top
->     of the file. If you want to distribute this text under CC-BY-4.0 only,
-> -   please use "The Linux kernel developers" for author attribution and link
-> +   please use 'The Linux kernel developers' for author attribution and link
->     this as source:
->     https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/admin-guide/reporting-issues.rst
->  ..
-
--- 
-~Randy
+RPi's have been using DT overlays basically from their start (ie way
+before it became practically usable on the upstream kernel).
 
 
