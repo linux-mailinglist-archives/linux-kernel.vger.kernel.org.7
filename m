@@ -1,321 +1,314 @@
-Return-Path: <linux-kernel+bounces-872258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BE6C0FBFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:48:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF38C0FC0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DED465A8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:47:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6174C4E4C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBF1296BC5;
-	Mon, 27 Oct 2025 17:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2483E309EF3;
+	Mon, 27 Oct 2025 17:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tmc36Yqp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="PY1mPrOU";
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="PY1mPrOU"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023098.outbound.protection.outlook.com [52.101.83.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B36D1E2614
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761587271; cv=none; b=UlqM9kMSeBmNezic2ebCX/4I9Y1NiE5owlA3EKy8OTEIxscZNSTTpjGWJo7Fca320Bvg8x+o8tDBy7OeaeU5e0XkwoLIO62T8jYkBz8X8tAfxHRf8xzVNAvrWqbaMiNRHHoyhJ0OFYXoOhj6CFjp4CWR8HPJrPrk1KHSfO0CCpw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761587271; c=relaxed/simple;
-	bh=lEDwiAkaOmOaXP65JPO7UPrE8f0UT4oZYKTFFx6yKoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mkNr+ug3YWu/Yw5A9hF5vY7QDPgtq2NnIrDsU0kVnlCGa/HHJ1m80Y9ZFN4BWsCv+4ObDBH7/P60o4GtqVML2NxPrMGYI2inGuxNFMy/rryYg4fNhsCoQp9hrMtC7Hl5cH0lgnjwT21p5Ssc3Re8ukm+1bpldAeiEeQEd2FqLNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tmc36Yqp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761587267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ivFzYCwRxbqfHnGcadZCNnv5FrvdqFe/7nCBoNuqOws=;
-	b=Tmc36Yqp0bhZXJuR99WIoOWQXZ728hx7bfdWYIVPig1qaGSCuUds3UAm2jQTut5UBevzss
-	OTOfy4xwHG1WORPjkRj+kem5LMOcm3UV3ggWDrG1NF0FZicnOynBRNwYsZOkebR8klMFfM
-	YDbN50g682GN55ZgPjlVGm3ionZk3hI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-a0fazt7AMGuuoMdgNU31UA-1; Mon,
- 27 Oct 2025 13:47:44 -0400
-X-MC-Unique: a0fazt7AMGuuoMdgNU31UA-1
-X-Mimecast-MFC-AGG-ID: a0fazt7AMGuuoMdgNU31UA_1761587263
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5C6A1800D86;
-	Mon, 27 Oct 2025 17:47:42 +0000 (UTC)
-Received: from cmirabil.redhat.com (unknown [10.22.64.253])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2D6981800452;
-	Mon, 27 Oct 2025 17:47:41 +0000 (UTC)
-From: Charles Mirabile <cmirabil@redhat.com>
-To: lkp@intel.com
-Cc: cmirabil@redhat.com,
-	linux-kernel@vger.kernel.org,
-	lzampier@redhat.com,
-	oe-kbuild-all@lists.linux.dev,
-	tglx@linutronix.de,
-	x86@kernel.org
-Subject: Re: [tip:irq/drivers 22/22] drivers/irqchip/irq-sifive-plic.c:590:55: sparse: sparse: incorrect type in argument 1 (different address spaces)
-Date: Mon, 27 Oct 2025 13:47:23 -0400
-Message-ID: <20251027174725.1014197-1-cmirabil@redhat.com>
-In-Reply-To: <202510271316.AQM7gCCy-lkp@intel.com>
-References: <202510271316.AQM7gCCy-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1692C11FA;
+	Mon, 27 Oct 2025 17:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.98
+ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761587309; cv=fail; b=Lqdg6uq0XJ2uKeYM2uUJFpDf0TNePTnwAsUGplY0NpH71giP2cFuaHuZiSPkGTgnQ66DQ/Zq56BY4KRZ1l3+FvEvU8xbxoIV+rHbhNig5S3ZRtONlTyQMOMGjL/n5ZH0eYclY2fHQEqsc8vYvHEsVBZilNipgiJyN6EclgxZwHY=
+ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761587309; c=relaxed/simple;
+	bh=HwgqJwSadvCpIBx1deJfUOTj3GYHSXrZicKEPPnfJPY=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=u1/1pj1gHCvYT7SYXaYOYuuzOIFyXp2PQl5oslSvTYMPZX07ZVoMOGep0blwuRTpKQcP8dZQSEIugijqqrMOParH5wBcno6HdPTay5VKgpL4MZ1vE4EeDuCl1Ij4t5amJOHhYHoytoV7pUxsY4khim4K4C60h4oARZH/TIq9NgQ=
+ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=PY1mPrOU; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=PY1mPrOU; arc=fail smtp.client-ip=52.101.83.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
+ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=DaJggNcj6z0sprNFLhFqM1637PG4baylWApVRD4qhmBAREAo19Buj+KmYdMxEVDD5d4Wr0aZuSIiCKvftwnHrO3MDHsyPShmWPg5DImIpdBdVCr9PI4gD0H20SpvWk6RHWb9yOg84PpQGiTphQNjomBQQlPA0xGUASkW8aPvjhjOvJjjROrcvn2GxRNdYLrPi+h1BzRv1Iw/OoLfVKDyPK1AZXK5QHR7Rdz5ajMNBE+2FHhbeDV0pk57HC/eHOuUqs3TDaoKJVjx0qKOLHyFmLhj1GSNj8HTip9y+2qOMpR4CVXtamJVeNOA2QQvN1oh6iIc8YtSgwOinqouOSX8fg==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uGjvaMCMfaje2nCV+FCFgB7ju0NF0TRbRSgq3es6QTk=;
+ b=aGIvwnHDFtEAmcvbVyThhq9xC9cx+248gPl73lKXHVrT/ZdDhsb8GsxP07xqEZd6khya3LmGiKaUZfwoKlorNlJNAe2u9t1AIceJpCnsZavnd4PPUfBX3yNuKCp7oBHFkZSjIUcLMfcmVH6DNu24Bl40Ty1UyQPYYqhhJohN7WqYQL7Z12A3o3CCdC473BOsOTXqaiz46G0M8AZDN9zKl2j6xO/2CrSNjcVyRBW/8BY+Op9GafmYJhJKIgLRJjmJzYLbSA35J2wZcJ4L+ZSeQIRLGD5pjmDEgULR3WtSgoBr/PwQfdb2XLFVDBVis2jCvXbeR+nUxyQ0MWHYaUX1Dg==
+ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
+ 52.17.62.50) smtp.rcpttodomain=ffwll.ch smtp.mailfrom=solid-run.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=solid-run.com;
+ dkim=pass (signature was verified) header.d=solidrn.onmicrosoft.com; arc=pass
+ (0 oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=solid-run.com]
+ dkim=[1,1,header.d=solid-run.com] dmarc=[1,1,header.from=solid-run.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uGjvaMCMfaje2nCV+FCFgB7ju0NF0TRbRSgq3es6QTk=;
+ b=PY1mPrOUh120KGQFJvmu18dlEmAZIOFWHeWsn8XnXNAHwBCGiNiEuHVTdr/Z3yXMeTvFtOnQHNo7o2mzQEejkxYnbpN/cbj/pmzU30cC3ccCIgXub09rkgXYnYE3WtIrSYEpC4+JvVaQAsUYoa6s8u+YFyZe/6w9NCJRUJFwNuk=
+Received: from DU2PR04CA0084.eurprd04.prod.outlook.com (2603:10a6:10:232::29)
+ by AM9PR04MB8470.eurprd04.prod.outlook.com (2603:10a6:20b:415::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 17:48:24 +0000
+Received: from DU2PEPF00028D02.eurprd03.prod.outlook.com
+ (2603:10a6:10:232:cafe::b7) by DU2PR04CA0084.outlook.office365.com
+ (2603:10a6:10:232::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.18 via Frontend Transport; Mon,
+ 27 Oct 2025 17:48:24 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
+ smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
+ header.d=solidrn.onmicrosoft.com;dmarc=fail action=none
+ header.from=solid-run.com;
+Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
+ designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
+Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
+ DU2PEPF00028D02.mail.protection.outlook.com (10.167.242.186) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
+ via Frontend Transport; Mon, 27 Oct 2025 17:48:24 +0000
+Received: from emails-3807103-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-5-121.eu-west-1.compute.internal [10.20.5.121])
+	by mta-outgoing-dlp-431-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id F32A4802C8;
+	Mon, 27 Oct 2025 17:48:23 +0000 (UTC)
+ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com; arc=pass;
+  dkim=none header.d=none
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
+ d=checkpointcloudsec.com; s=arcselector01; t=1761587303; h=from : to :
+ subject : date : message-id : content-type : mime-version;
+ bh=uGjvaMCMfaje2nCV+FCFgB7ju0NF0TRbRSgq3es6QTk=;
+ b=ntf3q+hLZp/ZqAdWYRDIfFL+aP/gbEPa5ev7XNQn7CZIBDzoa/b9R7Xdz4fXNdkIYo0hv
+ k8a8Hfbk9jAtfjanLDbg9l7n60JvJ3elVcn/ZdeyERrnk1IAV77cbZ3e3HJ+H+pKORkubaZ
+ bfZHzf8tSU8BmykB5PmAEZWidoQItW0=
+ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
+ s=arcselector01; t=1761587303;
+ b=CgSOSlREOQD2fzVWyT4WFAo63KrvSt8ryhtXtKbCWXQZfjKWCF3oYsOeLk26eS1nsgIJi
+ 6/z1CvX0PoQtR5Igh0eh2u1+bm+h2PJ3anhrlnjteRp5KMFFWdiahlf3fQHgoGTivjeMf27
+ U/PG+/mq6Q5TGk+M6PSGas8iRLZGR54=
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r1QuC3oqiKyS+4a7AfY4leeceC5ZWyRh5i8YmbpUhyXuW2V+y7pYxoitkm5WhD2b8Uh+JcpvnHnZkxKwKZjMbXIHJpzKN80xOIkD/FH3AC/56JWdpZBdstP0Q2BH1SSOyGQtkrxYoSec0vGYq6Wv48WO7CM8DvMZA7JKcIsUwvuscM2Pny+/z4p6X58YSzxRXyceVRounuM38PZ+e1kNt8bKoyPR0L9B38F1w/jVLr7q3kf3RZKd6v33XNUC1Scv6mUzH9LKKxhGmKHziE1IaWIAzOlfytz+gKAVYIXT5MJ6QOX66ZQXY52+ZEB1RpwCvjW5UbC1faaimpy29cL9uA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uGjvaMCMfaje2nCV+FCFgB7ju0NF0TRbRSgq3es6QTk=;
+ b=DCXZ8rmg4B/CkVHbcj4ntNlUBfs6pxCDBu42K9Sy4WDUQxSMRPbOS3xvo6xNh+EHe9qvwKTvnBJzpymyjpqVOujVx0skQ4Q226zanFdGZILx1kzhTpq/FNfiyJvvARgC9vWLxZ5mxo5KpPkqnS8Ye3TIJxf2ibcx5U+V0vCJYq3T9ZfZ8SGDPPZWJmJeT0aPOq0wAU+CoOq8y5sl/N6ekK11NgENDgf58fxCArIhUJr09SOIT4kAR3fD6qCbsAXJ2UydpQKeyfCXWULPaRZUVym+3faxeJYSofy/2s6dOz6quYsaNw4QjZ68x6yTpatTVIBn58qoxLT67IFIoAG2xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=solid-run.com; dmarc=pass action=none
+ header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uGjvaMCMfaje2nCV+FCFgB7ju0NF0TRbRSgq3es6QTk=;
+ b=PY1mPrOUh120KGQFJvmu18dlEmAZIOFWHeWsn8XnXNAHwBCGiNiEuHVTdr/Z3yXMeTvFtOnQHNo7o2mzQEejkxYnbpN/cbj/pmzU30cC3ccCIgXub09rkgXYnYE3WtIrSYEpC4+JvVaQAsUYoa6s8u+YFyZe/6w9NCJRUJFwNuk=
+Received: from PAXPR04MB8749.eurprd04.prod.outlook.com (2603:10a6:102:21f::22)
+ by DBAPR04MB7365.eurprd04.prod.outlook.com (2603:10a6:10:1a2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 27 Oct
+ 2025 17:48:16 +0000
+Received: from PAXPR04MB8749.eurprd04.prod.outlook.com
+ ([fe80::aa83:81a0:a276:51f6]) by PAXPR04MB8749.eurprd04.prod.outlook.com
+ ([fe80::aa83:81a0:a276:51f6%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 17:48:16 +0000
+From: Josua Mayer <josua@solid-run.com>
+Subject: [PATCH 00/10] arm64: dts: add description for solidrun imx8mp
+ hummingboard-iiot
+Date: Mon, 27 Oct 2025 18:48:09 +0100
+Message-Id: <20251027-imx8mp-hb-iiot-v1-0-683f86357818@solid-run.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFmw/2gC/x3MTQqAIBBA4avIrBuwCSW6SrTQmmoW/aARgnj3p
+ OW3eC9D5CAcYVAZAr8S5Tor2kbBvLtzY5SlGkiTaTVZlCP1x427R5HrQUPG684zO0tQozvwKuk
+ fjlMpHz2Rx/VgAAAA
+X-Change-ID: 20251026-imx8mp-hb-iiot-525b03beea62
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Jon Nettleton <jon@solid-run.com>,
+ Mikhail Anikin <mikhail.anikin@solid-run.com>,
+ Yazan Shhady <yazan.shhady@solid-run.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-input@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Josua Mayer <josua@solid-run.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: FR4P281CA0080.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::15) To PAXPR04MB8749.eurprd04.prod.outlook.com
+ (2603:10a6:102:21f::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-MS-TrafficTypeDiagnostic:
+	PAXPR04MB8749:EE_|DBAPR04MB7365:EE_|DU2PEPF00028D02:EE_|AM9PR04MB8470:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2e2084a-beab-43a3-9b77-08de158106c3
+X-CLOUD-SEC-AV-Info: solidrun,office365_emails,sent,inline
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|52116014|376014|366016|7416014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?a2V3ZzRPN3hLZVh5aG9xVjVDalNidy9nSzZJNncySjljclpDSU1HbHBXZFRT?=
+ =?utf-8?B?YldFL1dsWTFuQmNPNXNHUlRrNnN0ZlZoVVNqVWFYeTJGZHdjeU5UNW1JK2Rp?=
+ =?utf-8?B?QlFNMzlmcUJodFI0SWRVSjk1OUZkeGtvZUY5Mmd4cWFTU0NEUS96K2V1SkdS?=
+ =?utf-8?B?Ri9OQWYyMHkycVhWM0U1RmxqRmhMUTZiMG5tU1BYSEhmcTkyZlgyeHNvL0py?=
+ =?utf-8?B?MCtzcVJVald0eklLcmkxTm9TZzZlV28xQjhzTXh1a2R1L2NpS2EraUI3U044?=
+ =?utf-8?B?aHg5RHc2NTNNTjlzTlRzeWxoV1RpSytodURlVVZnZXdXVlpCdDREcC9wdElZ?=
+ =?utf-8?B?aksra24ycXJxQ1hEVVNST3lEVERuNzdEZW1TbDhBODJRRlIxSkozdkl3RzRt?=
+ =?utf-8?B?aW5PcGp1ckI5WG9Yc0tlSnN5ejB2SjlTcWY3cGJWcXhieTlLL1I5cjFxUEJP?=
+ =?utf-8?B?anJOT2VJNUJ0OXUyMy85TU5ZSVgrVXFXVGN5ODZ4TmNxdUk3ZGU2VTVPRlM5?=
+ =?utf-8?B?dnl5SFZnc3BWOG8zV3puVS81MVpnVmFwenJPR0Z1WldUYStsQU81UDlRZm4v?=
+ =?utf-8?B?M0JtUEVjbjVIS0VQaXZRQWMvMWZ4VFJzTDVWNjNuZ2I1Y3ljOWVQcml3ZU1B?=
+ =?utf-8?B?clZvcllnUW5OMHhRQmkvN2hmbjVITUFWYUk1QklDS1M4RDdCR3BMSHZZNmpp?=
+ =?utf-8?B?V3laeGc3N1VlOGFRc0hpYkhQQkNzWnNNdExVc2dqN1R0VWZMeUUrQXJaR04r?=
+ =?utf-8?B?VTBJdkQxK3MxSlV1NzByL2Q0S3VhNGFPNzBDUTA1RlBPaEhZUjRVTTl4N0tj?=
+ =?utf-8?B?UW84VmE4T1dKVTg4WW9MM1dsYUh5M2V2Q2VpVEdwU1RwYy96RWZ4U09LVVNF?=
+ =?utf-8?B?MUtuWVpKbTlJbk5qemlZMUp3VlNpVUxpSTlUS2NCVnVMZDJMelJwMTY2VjFl?=
+ =?utf-8?B?THI1aElJZkVMb0tOYnNMSHBEbnFadDZBVkEwVUY2U0lYNHdpdzcwMnJlRURC?=
+ =?utf-8?B?WUk1RHhKRGJMa3hmMXdLdDVXdGZzNm41aFJ0WmwzUmZUS0ozRG5aK0UwMFVF?=
+ =?utf-8?B?cEZnT1ZVNDlwS01RbndQZlBRcmRTUEhTdGhBd3VVTEdXS3VJeUlnVnMyVktU?=
+ =?utf-8?B?NEU2ejg5MlZ6eW1kYkkxOERlTjlWdW5XaEV2eU1xanNDZnBDaTFqN09Mcnh6?=
+ =?utf-8?B?bFBidUJYSUYvL2hBN3ZrR0xnUm04QzlNL2lsbUtEcWYxL0FkMCtha3IrY2RB?=
+ =?utf-8?B?cWtLZjkxMUNURkZ4c3h3MGNqRnduSzZjbS9xckdmcTczdFd3ODZCam95WFR6?=
+ =?utf-8?B?YzNVVHRqQzc3RlArN0xBZ0FNWDBJVjdaRm5FTytOcG0xU3hXbEliRFN0dWI5?=
+ =?utf-8?B?NW1pWDZOUU5uTW9OQkZmSlVIR1krQXBPTUdCSUd2aUk2VzRQL1htTU14K21P?=
+ =?utf-8?B?QVdCbUZRNUZaSHNlOTRmbmtuQ2ZXeEdsUGJPd3JpTWhMRzFkNGdRbzdZaTBV?=
+ =?utf-8?B?dXJwSnM3NjBYVFo3cVVOZkRvYW5tbHo0Vy9CYUZFSW1yWWc2RG5KSHVjV2lT?=
+ =?utf-8?B?Q3lUYUdzb1FMeFVqUzRJVVloa2p4VHg3OS9BQXVod0JIWWVsSFVSd1dKdjB6?=
+ =?utf-8?B?QUVOeHBvWVlvOFdKMUs2bm00c1AvRHp1QWxzb0hTOWZrZWRaZmFaTVZSVXR5?=
+ =?utf-8?B?Q0VadHVvWS9veTR2NEJPUHJsZWdlQThvcWExNFNmbXhabFhrTnhnVi91dzR2?=
+ =?utf-8?B?Z2pBNzRsZkF5aGF4SFl2S1Y4TXo4VjhuSXJPZUdMMThkaDNvc1pXVlJnUmJz?=
+ =?utf-8?B?UENwTmtYcUN2S2JiNHFCejFCRjhXTVNlQWJVNlZ4OHN0cGVkM3RHRjVTWi83?=
+ =?utf-8?B?a0V6T21XNTNKWHEzcVV2SHZzVmpWbW5SZHpESjdOdzljNkdHZytEQjlESmQx?=
+ =?utf-8?B?ZFYxQnRHN1FZRTFuUTE3UVhhWUF1dko0eUVDL0dBb1J1aHJSaExLM1dnRC9J?=
+ =?utf-8?B?VG9aMEtoaUlWVzNvZzVHMzhzRmNJK3B2OTBhbmlWMUVReGhUQy9ER1I1aDNj?=
+ =?utf-8?B?QVNhZGFScUJIREZBa1d1K2I3N3M5eDhDelU0Zz09?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8749.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7365
+X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
+X-CLOUD-SEC-AV-UUID: 052242c88b6f41019b6e99fd4b87a7fb:solidrun,office365_emails,sent,inline:debd18510902b80412e2749450943e78
+Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
+ dkim=none header.d=none
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DU2PEPF00028D02.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	16c28513-a441-48c1-bf51-08de1581015f
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|82310400026|376014|7416014|1800799024|36860700013|35042699022|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDJBN2xrbGRSUndYb2VaaXN4Z0NFMlljdzAwUnUwTDVib1FaeGlyTzRhTy9B?=
+ =?utf-8?B?aEFHSzFXa0V1R2hQZlU5bDlDazIwdTc4bldFcnlUcll4Y1lObm5TZHRBUU4v?=
+ =?utf-8?B?SzNQdDM0UWtabXVrc3d0WEpPcTJZcWJ2Rzg1aktHV2h4T1RGNjNSVVBFbTJM?=
+ =?utf-8?B?RVlnSmdVWnNlUHRWNmQ3Rk83cUswSGZneDBwVHBvby9rUGNKYlg0bjUzNHo5?=
+ =?utf-8?B?SVNEakdWbk1QOHdZR3N2RlArMTZlUHM4YmV4end1WjI4MUduVzZyTGhIcUho?=
+ =?utf-8?B?TTVkU1FRWWY3QlVaRmR4alpGVEh1aGtIMjlyY0thOE5aM01rV0JuaGdlb3Fu?=
+ =?utf-8?B?dlF0VGFkZkR1VWFmdHlteUxyQmkvQ1JPNUZLTlBxdTlQWlRiN3pzN25od0Q4?=
+ =?utf-8?B?NFQ3NDk3cWxkYmV4OGM5a2VTa3NCMW1mQnhCOTVwL3YyY3hYTS9Xbm5SRGxW?=
+ =?utf-8?B?STJhUHNzd05ZRytOUlVTUUJIKzMyZk5ndS85eWRSaGRjREtHMjAvcnU1SHor?=
+ =?utf-8?B?d29HSDdNa0VoQ1BKdnJMemZtWFVEb2RONUVRb2FRZnp2Y21Hdm5RUC9BYXgy?=
+ =?utf-8?B?K1pHSU9vQzc0YTRLUmJId3p1V21pL0NBV0pRWDhjbjAxNWxCOGp4amE0ZXB6?=
+ =?utf-8?B?Z3lBbFpkUjJIQVUxOGNsWTZ2cWdUOVg1aGdIMWl6MHgvSjNUUUZkbmNDcWhN?=
+ =?utf-8?B?OGkxaVI5R3EwMm4xZXhFb1F0bmZMZzJCa1E4Qm56TUhxWnRLZiswbVkzNGZH?=
+ =?utf-8?B?N3RtOVBEejd1WjNuSmswdnVwSTM1TXV4N3Bxa0E4MVNIbXB4RWpkY3dCZUd5?=
+ =?utf-8?B?VlBnbGU3UGtETUZmcUU5Vmp4bnNmcTl1U1VDdHdlUUtob0ZxeERkVU1uMGxW?=
+ =?utf-8?B?aGR2L1hBaUJVTnR4ZXdkN2RSWTlmdVlsM2wzbG0rL3pkeVR6SUtEN0ZYVXN4?=
+ =?utf-8?B?UENHMU5abEpac1pwQjExUVdiTU4xbHNWZGszRnhTZDlOVE9TUDJsWEN6V0Ns?=
+ =?utf-8?B?bThqM0ZpS1IxY0lOVjJydTNRcnljMmhsT1dCWC90NDBYQndubWx3L3VxMFNJ?=
+ =?utf-8?B?YkNzQndGMEw4c2ExT2VDekk0SW53azgvUnBrNDlrM3g5bUFUc2pXM1ZSSTJT?=
+ =?utf-8?B?TFhwZ0VpS2xBVzVaWTQzQ2RrdCt6d2xYRTQ2ZXZnMXlkNmFVWlZDZEVhQ2ox?=
+ =?utf-8?B?V2IweVpCOTZ1dldQbzN2OWxHcU5RampiNFF0MjMvaVd4NWNvdjZHN0hGNTB2?=
+ =?utf-8?B?dE1RT1JpWVVJUEpISnNKTEh2YnY3bldmYURzdkREajk5SXlPN1ZoOUpKNmRa?=
+ =?utf-8?B?MXZ0dUljTXd0czlITHpCTCtPdUxOSVdoZFZ2MGx4RW9zS2kvMWlzNU1sb3ZX?=
+ =?utf-8?B?Qk9HcE1kQjBzT3BIMGxnOHErckZUeUttMHpTYzRzU25kYXNEdTFReXgwWnVK?=
+ =?utf-8?B?Tnl0T28wSUVKc0o0YUZlbkZFdWdlM3BxVXFpUSsvcHFZRGlsT1lLYlp4WXpL?=
+ =?utf-8?B?UTJmWEtUMFBqZFRmQXdtOEJhRHZPeXlzR1RzUEpEQTN6YWx3OWlWcXNIeWlx?=
+ =?utf-8?B?WTdqUER6eUkzZGJWeGlLaUwxY2FzKzRvbXUyZlVUTUxGUWFob1Vhcncxd0dn?=
+ =?utf-8?B?ektycGJiTFVPVDFXRnQ3NUk4U1RCT3dsOVpWNS8rUnZqQVYxSk5YUndvVGFa?=
+ =?utf-8?B?Ky8walRiMEJhTG1UTHBtTU5rdWVLY3lXUjhTSFFlL2dwcHRKMnZLZ1M1dm5y?=
+ =?utf-8?B?TC81R3lvTU00TU8wTis1YUEzYzFReE9hZmo4cHVIcS9SMTB3SlV2U2RacnNW?=
+ =?utf-8?B?OWtOVzBHcVFLaEtrTWRsdlRqR0JzeU9saGEwL08yWlJrNHhQTjlnRjNuckFH?=
+ =?utf-8?B?NWZuWUc4d00yVXhxNlNlNDk5czhIS2pmdXh6a1hYMDhOd3pVMDBFNW1zL1Ri?=
+ =?utf-8?B?UWNvZGNlUVFLbFB4RVNpUzR0U0lnTlVQT3JObk55NDV2RzlhVFpQaUsyWTZ4?=
+ =?utf-8?B?QUgvOGhLUVpDQ0JnNFJjMHV6M3gvK0U3Y1NTb1BqbjJkZ01zZTgzNkRxKy8z?=
+ =?utf-8?B?bTFSRC95eVo4anBUeTMyYVNFV1QwNmhCamNCMmNTcVFwdDJPWVVrQkJvZUEy?=
+ =?utf-8?Q?iMecSE9lp3YZIMbxhpNy7PrjQ?=
+X-Forefront-Antispam-Report:
+	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(14060799003)(82310400026)(376014)(7416014)(1800799024)(36860700013)(35042699022)(921020);DIR:OUT;SFP:1102;
+X-OriginatorOrg: solid-run.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 17:48:24.1231
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2e2084a-beab-43a3-9b77-08de158106c3
+X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D02.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8470
 
-Hi all—
+This patchset mainly adds description for SolidRun HummingBoard IIoT
+based on i.MX8MP SoM.
 
-On Mon, Oct 27, 2025 at 01:16:01PM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-> head:   14ff9e54dd14339776afff78e2d29e0edb3a4402
-> commit: 14ff9e54dd14339776afff78e2d29e0edb3a4402 [22/22] irqchip/sifive-plic: Cache the interrupt enable state
-> config: riscv-randconfig-r132-20251027 (https://download.01.org/0day-ci/archive/20251027/202510271316.AQM7gCCy-lkp@intel.com/config)
-> compiler: riscv64-linux-gcc (GCC) 14.3.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251027/202510271316.AQM7gCCy-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510271316.AQM7gCCy-lkp@intel.com/
-> 
-> sparse warnings: (new ones prefixed by >>)
-> >> drivers/irqchip/irq-sifive-plic.c:590:55: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct plic_handler *handler @@     got void [noderef] __iomem *enable_base @@
->    drivers/irqchip/irq-sifive-plic.c:590:55: sparse:     expected struct plic_handler *handler
->    drivers/irqchip/irq-sifive-plic.c:590:55: sparse:     got void [noderef] __iomem *enable_base
+This includes dt bindings and a range of bug-fixes:
 
-This is related to https://git.kernel.org/tip/tip/c/14ff9e54
+- dt bindings for the board
+- fix to dsi panel bindings adding port property
+- cosmetic fix to ther solidrun imx8mp boards for regulator gpio
+   polarity
+- fix dsi hdmi bridge on hummingboard pulse
+- compile dtbs with symbols to support overlays
+- gpiod_set_value _can_sleep conversion for panel and touchscreen
+   drivers
 
-> 
-> vim +590 drivers/irqchip/irq-sifive-plic.c
-> 
-> a15587277a246c Anup Patel        2024-02-22  508  
-> 4d936f10ff8027 Anup Patel        2024-08-20  509  static int plic_probe(struct fwnode_handle *fwnode)
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  510  {
-> a15587277a246c Anup Patel        2024-02-22  511  	int error = 0, nr_contexts, nr_handlers = 0, cpu, i;
-> 8ec99b033147ef Anup Patel        2024-02-22  512  	unsigned long plic_quirks = 0;
-> 2234ae846ccb9e Anup Patel        2020-05-18  513  	struct plic_handler *handler;
-> a15587277a246c Anup Patel        2024-02-22  514  	u32 nr_irqs, parent_hwirq;
-> 8ec99b033147ef Anup Patel        2024-02-22  515  	struct plic_priv *priv;
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  516  	irq_hw_number_t hwirq;
-> 4d936f10ff8027 Anup Patel        2024-08-20  517  	void __iomem *regs;
-> 206dd13a101196 Sunil V L         2024-08-27  518  	int id, context_id;
-> 206dd13a101196 Sunil V L         2024-08-27  519  	u32 gsi_base;
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  520  
-> 4d936f10ff8027 Anup Patel        2024-08-20  521  	if (is_of_node(fwnode)) {
-> 8ec99b033147ef Anup Patel        2024-02-22  522  		const struct of_device_id *id;
-> 8ec99b033147ef Anup Patel        2024-02-22  523  
-> 4d936f10ff8027 Anup Patel        2024-08-20  524  		id = of_match_node(plic_match, to_of_node(fwnode));
-> 8ec99b033147ef Anup Patel        2024-02-22  525  		if (id)
-> 8ec99b033147ef Anup Patel        2024-02-22  526  			plic_quirks = (unsigned long)id->data;
-> 4d936f10ff8027 Anup Patel        2024-08-20  527  
-> 4d936f10ff8027 Anup Patel        2024-08-20  528  		regs = of_iomap(to_of_node(fwnode), 0);
-> 4d936f10ff8027 Anup Patel        2024-08-20  529  		if (!regs)
-> 4d936f10ff8027 Anup Patel        2024-08-20  530  			return -ENOMEM;
-> 4d936f10ff8027 Anup Patel        2024-08-20  531  	} else {
-> 206dd13a101196 Sunil V L         2024-08-27  532  		regs = devm_platform_ioremap_resource(to_platform_device(fwnode->dev), 0);
-> 206dd13a101196 Sunil V L         2024-08-27  533  		if (IS_ERR(regs))
-> 206dd13a101196 Sunil V L         2024-08-27  534  			return PTR_ERR(regs);
-> 8ec99b033147ef Anup Patel        2024-02-22  535  	}
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  536  
-> 206dd13a101196 Sunil V L         2024-08-27  537  	error = plic_parse_nr_irqs_and_contexts(fwnode, &nr_irqs, &nr_contexts, &gsi_base, &id);
-> 95652106478030 Anup Patel        2024-02-22  538  	if (error)
-> 4d936f10ff8027 Anup Patel        2024-08-20  539  		goto fail_free_regs;
-> 95652106478030 Anup Patel        2024-02-22  540  
-> 4d936f10ff8027 Anup Patel        2024-08-20  541  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> 4d936f10ff8027 Anup Patel        2024-08-20  542  	if (!priv) {
-> 4d936f10ff8027 Anup Patel        2024-08-20  543  		error = -ENOMEM;
-> 4d936f10ff8027 Anup Patel        2024-08-20  544  		goto fail_free_regs;
-> 4d936f10ff8027 Anup Patel        2024-08-20  545  	}
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  546  
-> 4d936f10ff8027 Anup Patel        2024-08-20  547  	priv->fwnode = fwnode;
-> dd46337ca69662 Lad Prabhakar     2022-06-30  548  	priv->plic_quirks = plic_quirks;
-> 95652106478030 Anup Patel        2024-02-22  549  	priv->nr_irqs = nr_irqs;
-> 4d936f10ff8027 Anup Patel        2024-08-20  550  	priv->regs = regs;
-> 206dd13a101196 Sunil V L         2024-08-27  551  	priv->gsi_base = gsi_base;
-> 206dd13a101196 Sunil V L         2024-08-27  552  	priv->acpi_plic_id = id;
-> dd46337ca69662 Lad Prabhakar     2022-06-30  553  
-> 4d936f10ff8027 Anup Patel        2024-08-20  554  	priv->prio_save = bitmap_zalloc(nr_irqs, GFP_KERNEL);
-> 4d936f10ff8027 Anup Patel        2024-08-20  555  	if (!priv->prio_save) {
-> 4d936f10ff8027 Anup Patel        2024-08-20  556  		error = -ENOMEM;
-> 4d936f10ff8027 Anup Patel        2024-08-20  557  		goto fail_free_priv;
-> 4d936f10ff8027 Anup Patel        2024-08-20  558  	}
-> e80f0b6a2cf302 Mason Huo         2023-04-04  559  
-> 6adfe8d2f5b353 Anup Patel        2019-02-12  560  	for (i = 0; i < nr_contexts; i++) {
-> 206dd13a101196 Sunil V L         2024-08-27  561  		error = plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu,
-> 206dd13a101196 Sunil V L         2024-08-27  562  						  priv->acpi_plic_id);
-> a15587277a246c Anup Patel        2024-02-22  563  		if (error) {
-> 4d936f10ff8027 Anup Patel        2024-08-20  564  			pr_warn("%pfwP: hwirq for context%d not found\n", fwnode, i);
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  565  			continue;
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  566  		}
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  567  
-> 206dd13a101196 Sunil V L         2024-08-27  568  		if (is_of_node(fwnode)) {
-> 206dd13a101196 Sunil V L         2024-08-27  569  			context_id = i;
-> 206dd13a101196 Sunil V L         2024-08-27  570  		} else {
-> 206dd13a101196 Sunil V L         2024-08-27  571  			context_id = acpi_rintc_get_plic_context(priv->acpi_plic_id, i);
-> 206dd13a101196 Sunil V L         2024-08-27  572  			if (context_id == INVALID_CONTEXT) {
-> 206dd13a101196 Sunil V L         2024-08-27  573  				pr_warn("%pfwP: invalid context id for context%d\n", fwnode, i);
-> 206dd13a101196 Sunil V L         2024-08-27  574  				continue;
-> 206dd13a101196 Sunil V L         2024-08-27  575  			}
-> 206dd13a101196 Sunil V L         2024-08-27  576  		}
-> 206dd13a101196 Sunil V L         2024-08-27  577  
-> a4c3733d32a72f Christoph Hellwig 2019-10-28  578  		/*
-> a4c3733d32a72f Christoph Hellwig 2019-10-28  579  		 * Skip contexts other than external interrupts for our
-> a4c3733d32a72f Christoph Hellwig 2019-10-28  580  		 * privilege level.
-> a4c3733d32a72f Christoph Hellwig 2019-10-28  581  		 */
-> a15587277a246c Anup Patel        2024-02-22  582  		if (parent_hwirq != RV_IRQ_EXT) {
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  583  			/* Disable S-mode enable bits if running in M-mode. */
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  584  			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  585  				void __iomem *enable_base = priv->regs +
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  586  					CONTEXT_ENABLE_BASE +
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  587  					i * CONTEXT_ENABLE_SIZE;
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  588  
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  589  				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
-> 098fdbc3531f06 Niklas Cassel     2022-03-02 @590  					__plic_toggle(enable_base, hwirq, 0);
-
-I wasn't running sparse so I missed fixing this call to the dunder version
-of the toggle function. I don't think we actually want to run the code to
-update the caches for this anyways since these are unrelated enable bits
-for other contexts. I have attached a patch to fix it that just directly
-issues the mmio writes (faster too because we can just disable in groups
-of 32 with a single write instead of the machinery to update a single bit
-from the __plic_toggle impl).
-
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  591  			}
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  592  			continue;
-> 098fdbc3531f06 Niklas Cassel     2022-03-02  593  		}
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  594  
-> fc03acaeab358c Atish Patra       2019-02-12  595  		if (cpu < 0) {
-> 4d936f10ff8027 Anup Patel        2024-08-20  596  			pr_warn("%pfwP: Invalid cpuid for context %d\n", fwnode, i);
-> fc03acaeab358c Atish Patra       2019-02-12  597  			continue;
-> fc03acaeab358c Atish Patra       2019-02-12  598  		}
-> fc03acaeab358c Atish Patra       2019-02-12  599  
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  600  		/*
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  601  		 * When running in M-mode we need to ignore the S-mode handler.
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  602  		 * Here we assume it always comes later, but that might be a
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  603  		 * little fragile.
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  604  		 */
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  605  		handler = per_cpu_ptr(&plic_handlers, cpu);
-> 3fecb5aac28888 Anup Patel        2019-02-12  606  		if (handler->present) {
-> 4d936f10ff8027 Anup Patel        2024-08-20  607  			pr_warn("%pfwP: handler already present for context %d.\n", fwnode, i);
-> ccbe80bad571c2 Atish Patra       2020-03-02  608  			plic_set_threshold(handler, PLIC_DISABLE_THRESHOLD);
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  609  			goto done;
-> 3fecb5aac28888 Anup Patel        2019-02-12  610  		}
-> 3fecb5aac28888 Anup Patel        2019-02-12  611  
-> f1ad1133b18f2a Atish Patra       2020-03-02  612  		cpumask_set_cpu(cpu, &priv->lmask);
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  613  		handler->present = true;
-> 0d3616bbd03cdf Niklas Cassel     2022-03-02  614  		handler->hart_base = priv->regs + CONTEXT_BASE +
-> 206dd13a101196 Sunil V L         2024-08-27  615  			context_id * CONTEXT_SIZE;
-> 86c7cbf1e8d1d4 Anup Patel        2019-02-12  616  		raw_spin_lock_init(&handler->enable_lock);
-> 0d3616bbd03cdf Niklas Cassel     2022-03-02  617  		handler->enable_base = priv->regs + CONTEXT_ENABLE_BASE +
-> 206dd13a101196 Sunil V L         2024-08-27  618  			context_id * CONTEXT_ENABLE_SIZE;
-> f1ad1133b18f2a Atish Patra       2020-03-02  619  		handler->priv = priv;
-> e80f0b6a2cf302 Mason Huo         2023-04-04  620  
-> 4d936f10ff8027 Anup Patel        2024-08-20  621  		handler->enable_save = kcalloc(DIV_ROUND_UP(nr_irqs, 32),
-> e80f0b6a2cf302 Mason Huo         2023-04-04  622  					       sizeof(*handler->enable_save), GFP_KERNEL);
-> 6eabf656048d90 Charlie Jenkins   2024-09-03  623  		if (!handler->enable_save) {
-> 6eabf656048d90 Charlie Jenkins   2024-09-03  624  			error = -ENOMEM;
-> a15587277a246c Anup Patel        2024-02-22  625  			goto fail_cleanup_contexts;
-> 6eabf656048d90 Charlie Jenkins   2024-09-03  626  		}
-> 9ce06497c2722a Christoph Hellwig 2019-09-03  627  done:
-> a1706a1c5062e0 Samuel Holland    2022-07-01  628  		for (hwirq = 1; hwirq <= nr_irqs; hwirq++) {
-> 86c7cbf1e8d1d4 Anup Patel        2019-02-12  629  			plic_toggle(handler, hwirq, 0);
-> a1706a1c5062e0 Samuel Holland    2022-07-01  630  			writel(1, priv->regs + PRIORITY_BASE +
-> a1706a1c5062e0 Samuel Holland    2022-07-01  631  				  hwirq * PRIORITY_PER_ID);
-> a1706a1c5062e0 Samuel Holland    2022-07-01  632  		}
-> 6adfe8d2f5b353 Anup Patel        2019-02-12  633  		nr_handlers++;
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  634  	}
-> 8237f8bc4f6eb7 Christoph Hellwig 2018-07-26  635  
-> 206dd13a101196 Sunil V L         2024-08-27  636  	priv->irqdomain = irq_domain_create_linear(fwnode, nr_irqs + 1,
-> b68d0ff529a939 Anup Patel        2024-02-22  637  						   &plic_irqdomain_ops, priv);
-> 6eabf656048d90 Charlie Jenkins   2024-09-03  638  	if (WARN_ON(!priv->irqdomain)) {
-> 6eabf656048d90 Charlie Jenkins   2024-09-03  639  		error = -ENOMEM;
-> a15587277a246c Anup Patel        2024-02-22  640  		goto fail_cleanup_contexts;
-> 6eabf656048d90 Charlie Jenkins   2024-09-03  641  	}
-> b68d0ff529a939 Anup Patel        2024-02-22  642  
-> 2234ae846ccb9e Anup Patel        2020-05-18  643  	/*
-> e306a894bd5118 Samuel Holland    2024-05-29  644  	 * We can have multiple PLIC instances so setup global state
-> 8ec99b033147ef Anup Patel        2024-02-22  645  	 * and register syscore operations only once after context
-> 8ec99b033147ef Anup Patel        2024-02-22  646  	 * handlers of all online CPUs are initialized.
-> 2234ae846ccb9e Anup Patel        2020-05-18  647  	 */
-> e306a894bd5118 Samuel Holland    2024-05-29  648  	if (!plic_global_setup_done) {
-> e306a894bd5118 Samuel Holland    2024-05-29  649  		struct irq_domain *domain;
-> e306a894bd5118 Samuel Holland    2024-05-29  650  		bool global_setup = true;
-> e306a894bd5118 Samuel Holland    2024-05-29  651  
-> 8ec99b033147ef Anup Patel        2024-02-22  652  		for_each_online_cpu(cpu) {
-> 8ec99b033147ef Anup Patel        2024-02-22  653  			handler = per_cpu_ptr(&plic_handlers, cpu);
-> 8ec99b033147ef Anup Patel        2024-02-22  654  			if (!handler->present) {
-> e306a894bd5118 Samuel Holland    2024-05-29  655  				global_setup = false;
-> 8ec99b033147ef Anup Patel        2024-02-22  656  				break;
-> 8ec99b033147ef Anup Patel        2024-02-22  657  			}
-> 8ec99b033147ef Anup Patel        2024-02-22  658  		}
-> e306a894bd5118 Samuel Holland    2024-05-29  659  
-> e306a894bd5118 Samuel Holland    2024-05-29  660  		if (global_setup) {
-> e306a894bd5118 Samuel Holland    2024-05-29  661  			/* Find parent domain and register chained handler */
-> e306a894bd5118 Samuel Holland    2024-05-29  662  			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
-> e306a894bd5118 Samuel Holland    2024-05-29  663  			if (domain)
-> e306a894bd5118 Samuel Holland    2024-05-29  664  				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
-> e306a894bd5118 Samuel Holland    2024-05-29  665  			if (plic_parent_irq)
-> e306a894bd5118 Samuel Holland    2024-05-29  666  				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
-> e306a894bd5118 Samuel Holland    2024-05-29  667  
-> ccbe80bad571c2 Atish Patra       2020-03-02  668  			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
-> ccbe80bad571c2 Atish Patra       2020-03-02  669  					  "irqchip/sifive/plic:starting",
-> ccbe80bad571c2 Atish Patra       2020-03-02  670  					  plic_starting_cpu, plic_dying_cpu);
-> f99b926f6543fa Anup Patel        2023-10-25  671  			register_syscore_ops(&plic_irq_syscore_ops);
-> e306a894bd5118 Samuel Holland    2024-05-29  672  			plic_global_setup_done = true;
-> 2234ae846ccb9e Anup Patel        2020-05-18  673  		}
-> 8ec99b033147ef Anup Patel        2024-02-22  674  	}
-> 2234ae846ccb9e Anup Patel        2020-05-18  675  
-> 
-> :::::: The code at line 590 was first introduced by commit
-> :::::: 098fdbc3531f06aae2426b3a6f9bd730e7691258 irqchip/sifive-plic: Disable S-mode IRQs if running in M-mode
-> 
-> :::::: TO: Niklas Cassel <niklas.cassel@wdc.com>
-> :::::: CC: Marc Zyngier <maz@kernel.org>
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-
-Best—Charlie
-
+Signed-off-by: Josua Mayer <josua@solid-run.com>
 ---
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 9c4af7d58846..fbf7378899d3 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -590,12 +590,12 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 		if (parent_hwirq != RV_IRQ_EXT) {
- 			/* Disable S-mode enable bits if running in M-mode. */
- 			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
--				void __iomem *enable_base = priv->regs +
-+				u32 __iomem *enable_base = priv->regs +
- 					CONTEXT_ENABLE_BASE +
- 					i * CONTEXT_ENABLE_SIZE;
- 
--				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
--					__plic_toggle(enable_base, hwirq, 0);
-+				for (int j = 0; j <= nr_irqs / 32; j++)
-+					writel(0, enable_base + j);
- 			}
- 			continue;
- 		}
+Josua Mayer (10):
+      dt-bindings: arm: fsl: Add binding for various solidrun imx8 boards
+      dt-bindings: display: panel: ronbo,rb070d30: add port property
+      Input: ilitek_ts_i2c: fix warning with gpio controllers that sleep
+      drm/panel: ronbo-rb070d30: fix warning with gpio controllers that sleep
+      arm64: dts: imx8mp-hummingboard-pulse/cubox-m: fix vmmc gpio polarity
+      arm64: dts: imx8mp-hummingboard-pulse: fix mini-hdmi dsi port reference
+      arm64: dts: imx8mp-sr-som: build dtbs with symbols for overlay support
+      arm64: dts: add description for solidrun imx8mp hummingboard-iiot
+      arm64: dts: add description for solidrun solidsense-n8 board
+      arm64: dts: add description for solidrun i.mx8mm som and evb
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   9 +
+ .../bindings/display/panel/ronbo,rb070d30.yaml     |   1 +
+ arch/arm64/boot/dts/freescale/Makefile             |  15 +
+ .../dts/freescale/imx8mm-hummingboard-ripple.dts   | 335 ++++++++
+ arch/arm64/boot/dts/freescale/imx8mm-sr-som.dtsi   | 395 ++++++++++
+ .../dts/freescale/imx8mn-solidsense-n8-compact.dts | 852 +++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8mp-cubox-m.dts   |   2 +-
+ ...hummingboard-iiot-panel-dsi-WJ70N3TYJHMNG0.dtso |  70 ++
+ ...ummingboard-iiot-panel-lvds-WF70A8SYJHLNGA.dtso | 105 +++
+ .../imx8mp-hummingboard-iiot-rs485-a.dtso          |  18 +
+ .../imx8mp-hummingboard-iiot-rs485-b.dtso          |  18 +
+ .../dts/freescale/imx8mp-hummingboard-iiot.dts     | 710 +++++++++++++++++
+ .../imx8mp-hummingboard-pulse-common.dtsi          |   2 +-
+ .../imx8mp-hummingboard-pulse-mini-hdmi.dtsi       |  11 +-
+ drivers/gpu/drm/panel/panel-ronbo-rb070d30.c       |   8 +-
+ drivers/input/touchscreen/ilitek_ts_i2c.c          |   4 +-
+ 16 files changed, 2540 insertions(+), 15 deletions(-)
+---
+base-commit: d105bf1b138560f0e45127578fd14cd0d70c679e
+change-id: 20251026-imx8mp-hb-iiot-525b03beea62
+
+Best regards,
 -- 
-2.51.0
+Josua Mayer <josua@solid-run.com>
 
 
