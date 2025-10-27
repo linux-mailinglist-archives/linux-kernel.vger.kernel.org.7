@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-871491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1FBC0D6EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:13:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D3BC0D710
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2863F4EAE6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:13:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1822B4EC2B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6213002BD;
-	Mon, 27 Oct 2025 12:13:37 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6323C301025;
+	Mon, 27 Oct 2025 12:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVFbo6i0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDCC2E5412
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB2EEAB;
+	Mon, 27 Oct 2025 12:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567217; cv=none; b=bbyV81tsbwWh7bmpWEkQUWB3OWl2Iib0wQ+A0I621h9njigeEVa2rTyDe1MvSir9fKhTNuNxpjo/OQ/+CGwkkxyRJqIg3/oZnWEW1Me9ujnKJp4JKrtWd0W7ywB4jq6OBRPkGox6jZ0VN6GJrSbrEoMiEfCyVy4whVNBAuUYkwE=
+	t=1761567268; cv=none; b=gtlsnLAihHoYdm5mnZg7jm7wdBdfXuQiSdfcR7A4jgXD4lnpM2HUudWsf+dv1LsAtVk60sgZM/f03rULUAlLsCvHi94tNdaAQspuQvS6oDjqfU/ikjFEjMR0b3QSx857frudb5boCiss3V4HYlwT48BudepLRnE+oqQeCfAeLw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567217; c=relaxed/simple;
-	bh=L0+0JAAo2osHAZw5j1mf394gD80poYYTvd3RIyhk7Nw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SIxceKjIibW8Zj6aob6s/LzPw09SEmPkpcFef8t//1H5bsPmJ7MPfHxeu5D+dIG+SaLmz/QqRyc/49oOUhB5XgLpFz3I7J6lV4uAKJkvR9d2/EDdymFCa/EJEgusE/T2y/jLFhpDOTf35CUtLnTW9yhpQYP5Q+TRUe6EaJILbV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d4a4dec5so176203865ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:13:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761567214; x=1762172014;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOpw1oIGSA54cfCdEjOoY0t6/NnZkLADdkVfFEUQgPs=;
-        b=U10w0rfsyhcoVyqTdLQcqaXcVJYTc7HsAcE7wT/KJP6MIsiG6Gj5Vc6ZlcTsiZG+Kj
-         5Gv2y7Ao8nvF+ALEoH3WARCmKfqtO9DBaUjHIS9fK+xBXdOY68Xvk+X+QNeDRaxpXxTf
-         h3E6Z0Ie0dHs4xyA3o9Jt+4dO/tPyUdjXcBJR34EtezTo0vHPUiO4KCMBy6UWUeOr1ev
-         M/80+kP4QmtP8azFWjBtMPQeigVGmzcLHdHPDDqJGJe46/k1mZ1IhbUgUw1YcAdwNnOV
-         HR+WnjlibRRg2RRc//00leB0Oi8uuIEE/YkhtFZzET/C8o6PsN5ku/wIWIo/Ijf5ZD99
-         hOEg==
-X-Gm-Message-State: AOJu0YzTgP80TgUnuJoGo03ZBffrRn6Ic5HNiLRbIwwNbEcFYwqJ0BA7
-	yNoyk0Xm293c8HRiAIfL7hUM1L+IqCQip27ZNBb1/v588rpYenzNu5aW8e6i9jT3B8iSzGQJjHz
-	ZUkqRTj8P/18jbJ5zbCH0iK8qydRrDUDUMyTLxkAZY1ESosIxsrxbWrSENwE=
-X-Google-Smtp-Source: AGHT+IHudxGFlEks5njQmDPCei8o0hpwo/JQBNp5Dhx7BqtDzBt3N5t7GqoFvLNAELA4KXQYYy9LyPj3VnSjiKlQa1Kjskf7PlwI
+	s=arc-20240116; t=1761567268; c=relaxed/simple;
+	bh=rWHdHSJPVLgMn3etblo03n9fmEXg8Q3LI4UBHrXAqeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ljx86qHU0TtHlw2dxbCM6bVb9wQEIdzWFRe1LPN5Xv/abCQpgnavuX8k9PQyxjDlm6nhUkuUov8jXE8Xh3dOhmHMu6BynzKLloSC6U8ygODoGSfNuw1Evn3bGh64yb/1hNvelukuqGDXO5cBEj4m9llxzhaXzsn+tb4gUcq5Dbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVFbo6i0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF80C4CEF1;
+	Mon, 27 Oct 2025 12:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761567268;
+	bh=rWHdHSJPVLgMn3etblo03n9fmEXg8Q3LI4UBHrXAqeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LVFbo6i0j8oUWrOC68//sH6s67P3CS8SShwRk1eyPZOI7fZ8dKHEN+el+eCGZH426
+	 /SvlLPhf48fwtfjRMFPs3tsBVc6ES6/P7rckdD/WvDk9+G9dz35Db+G6031yEmjUy5
+	 EqHHJvE5nAnM24ht3FoM+X+sfmwZtHu0l48tdWvefHMndQMNwoMKH+MVXdGccnAruQ
+	 MvPhWh/8oxl7KP9n4xbWYYagRxRBtBJVVomhkI0qtbfZ85Tb/W+ndI0wRWSACsmIv3
+	 XAiSeyclFV6nDNr0XcTKDFETTGsEWbOlYAlG9kpG/JEeVCZ+UUSntUrBNiZlA2h7hv
+	 6b2naZCEO9G3w==
+Date: Mon, 27 Oct 2025 12:14:18 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 08/15] regulator: bd71828: rename IC specific entities
+Message-ID: <c4bdf649-0623-4529-b8e9-43d6701f0111@sirena.org.uk>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <aa2b31267e6cc93bad4c823ef1ba07ba43efd572.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19ca:b0:430:c477:fce2 with SMTP id
- e9e14a558f8ab-431dc13b541mr173428825ab.1.1761567214607; Mon, 27 Oct 2025
- 05:13:34 -0700 (PDT)
-Date: Mon, 27 Oct 2025 05:13:34 -0700
-In-Reply-To: <68f4abbe.050a0220.1186a4.052a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ff61ee.050a0220.3344a1.038e.GAE@google.com>
-Subject: Forwarded: [PATCH v2] ocfs2: validate cl_bpc in allocator inodes to
- prevent divide-by-zero
-From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IGal/9MH6MaJjMWW"
+Content-Disposition: inline
+In-Reply-To: <aa2b31267e6cc93bad4c823ef1ba07ba43efd572.1761564043.git.mazziesaccount@gmail.com>
+X-Cookie: How do I get HOME?
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+--IGal/9MH6MaJjMWW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Subject: [PATCH v2] ocfs2: validate cl_bpc in allocator inodes to prevent divide-by-zero
-Author: kartikey406@gmail.com
+On Mon, Oct 27, 2025 at 01:46:57PM +0200, Matti Vaittinen wrote:
+> The new ROHM BD72720 PMIC has similarities with the BD71828. It makes
+> sense to support the regulator control for both PMICs using the same
+> driver. It is often more clear to have the IC specific functions and
+> globals named starting with the chip-name. So, as a preparatory step,
+> prefix the BD71828 specific functions and globals with the bd71828.
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Acked-by: Mark Brown <broonie@kernel.org>
 
-The chain allocator field cl_bpc (blocks per cluster) is read from disk
-and used in division operations without validation. A corrupted filesystem
-image with cl_bpc=0 causes a divide-by-zero crash in the kernel:
+--IGal/9MH6MaJjMWW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  divide error: 0000 [#1] PREEMPT SMP KASAN
-  RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
-  RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
-  Call Trace:
-   ocfs2_block_group_alloc+0x7e9/0x1330 fs/ocfs2/suballoc.c:703
-   ocfs2_reserve_suballoc_bits+0x20a6/0x4640 fs/ocfs2/suballoc.c:834
-   ocfs2_reserve_new_inode+0x4f4/0xcc0 fs/ocfs2/suballoc.c:1074
-   ocfs2_mknod+0x83c/0x2050 fs/ocfs2/namei.c:306
+-----BEGIN PGP SIGNATURE-----
 
-This patch adds validation in ocfs2_validate_inode_block() to ensure cl_bpc
-matches the expected value calculated from the superblock's cluster size
-and block size for chain allocator inodes (identified by OCFS2_CHAIN_FL).
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj/YhkACgkQJNaLcl1U
+h9Af5Af6Ax86Rk1w2Lm8l+WtM+HeqNG9SJTaC/xDAlF9R/wpX008syrILJMQXVEF
+BaXHf+QKJMvTFJeM3pSzKKdQ5NJmoPKlUtKiXSNBhceZGLet2eXw/MuqNR4nRmFC
+2iVksMbfY+P3YPg8ebdn6Zf1icxTngM1raSOPPQMeVAMDt+6MLxdKYbg0I+DMhG1
+Xp9Nz99ObSw5UinFmo7l2ZLaXsNnkQ8jRV4rS2C5uTV0vszr0Op+ym/9KAyLs+N/
+TVnbQ7H+84sRYeLEg/4JIzYyW7tDlg7EerOaP75F9MstIULAFDDZaHRVtVlAKxPV
+BSxxGZyJlVVu6loQH4yvZQimzgUWBQ==
+=lhBS
+-----END PGP SIGNATURE-----
 
-Moving the validation to inode validation time (rather than allocation time)
-has several benefits:
-- Validates once when the inode is read, rather than on every allocation
-- Protects all code paths that use cl_bpc (allocation, resize, etc.)
-- Follows the existing pattern of inode validation in OCFS2
-- Centralizes validation logic
-
-The validation catches both:
-- Zero values that cause divide-by-zero crashes
-- Non-zero but incorrect values indicating filesystem corruption or
-  mismatched filesystem geometry
-
-With this fix, mounting a corrupted filesystem produces:
-  OCFS2: ERROR (device loop0): ocfs2_validate_inode_block: Inode 74
-         has corrupted cl_bpc: ondisk=0 expected=16
-
-Instead of a kernel crash.
-
-Link: https://lore.kernel.org/ocfs2-devel/20251026132625.12348-1-kartikey406@gmail.com/T/#u [v1]
-Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
-Tested-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
-Changes in v2:
-- Moved validation from ocfs2_block_group_alloc() to ocfs2_validate_inode_block()
-  as suggested by Joseph Qi to benefit all code paths
-- Added OCFS2_CHAIN_FL check to only validate chain allocator inodes
-- Updated commit message to reflect the new location
----
- fs/ocfs2/inode.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index fcc89856ab95..1b30bf336961 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1502,7 +1502,22 @@ int ocfs2_validate_inode_block(struct super_block *sb,
- 				 le16_to_cpu(di->i_suballoc_slot));
- 		goto bail;
- 	}
--
-+	/* Validate cl_bpc for chain allocator inodes */
-+	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
-+		struct ocfs2_super *osb = OCFS2_SB(sb);
-+		struct ocfs2_chain_list *cl = &di->id2.i_chain;
-+		u16 cl_bpc = le16_to_cpu(cl->cl_bpc);
-+		u16 expected_bpc = 1 << (osb->s_clustersize_bits -
-+					 sb->s_blocksize_bits);
-+
-+		if (cl_bpc != expected_bpc) {
-+			rc = ocfs2_error(sb,
-+				"Inode %llu has corrupted cl_bpc: ondisk=%u expected=%u\n",
-+				(unsigned long long)bh->b_blocknr,
-+				cl_bpc, expected_bpc);
-+			goto bail;
-+		}
-+	}
- 	rc = 0;
- 
- bail:
--- 
-2.43.0
-
+--IGal/9MH6MaJjMWW--
 
