@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-871989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9389C0F0AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:49:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227DEC0F0B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8E3403DB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:44:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 504844F6B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA74A30E825;
-	Mon, 27 Oct 2025 15:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C513112AD;
+	Mon, 27 Oct 2025 15:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="cj8u3Riv"
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="KvCLLbTt"
 Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4490A30DEA2
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7896D3101D3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579850; cv=none; b=E4kPKfmZPjAZ0ytcdwVlgIZwzCTSH/WjLfIKXGCQor9gsyP/Id8BCV8Qg2sDCZ/FmcQ+owXnpDtVKoL5dPfMYP5fx6bsbiO3bcHqwWFPR9AYRNSyrXvdJwUm/9+tD7xCKmQW2ILH5YT20DboJzaKCgursLTUAb6DnxCI0d1K0Q4=
+	t=1761579864; cv=none; b=T9r7IvNEh9Yz7YHg/HLrg8SE/zToCzcGrkxpL/qL9b0sZrQdLE2H9aEptqPgzfwtzmJIEmIWc6sW8aCgk0djGuu5iyyRAYOk2NOEOCIM0HXchxFlzLhcZEpCEn/YOGgBAZFX3TbYWBWztr+fq+PFBPaUih28kUYcSZ577oor4mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579850; c=relaxed/simple;
-	bh=GiJM0j7XIJSrgiGU1nODsCDYyTYNrdzvNSTEM+cNYuY=;
+	s=arc-20240116; t=1761579864; c=relaxed/simple;
+	bh=JftAzuJvItUdTzJGOjax1orfbl6WY88s1ki2ITRQhm4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kbwrCxxTINEGwz7Tuav+UkpWKsDwb2kzWYnS86MvM7kyoo6usu3/2MJLgn5rzc00Cq2uINZyzIffzsKwq3oggk8oSiVBesc8cF4yD9f6ru7XROpsrc5e3x6rsLneGBlLQO4CcAE/iA9dmwhkbLbEXQ2M+yOIxU2LhDxgOgwaIqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=cj8u3Riv; arc=none smtp.client-ip=133.167.8.150
+	 MIME-Version; b=qJa9mZ1V8ydnaz5HzrsfXboibWcOcmmPJiKyaNGhAx2XdcZ5ENzRp5hBnPXdFREy0dcDzsmQk7L3yMc0rSDSGsvJjjC2/vWk128/tPtdQgtldOGqb8Ib18g3YSVkj8F0gRX6Uz663YB1R4BlwrtMOwymeBjEwct/SPZgWdxjD48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=KvCLLbTt; arc=none smtp.client-ip=133.167.8.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
 Received: from fedora (p3796170-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [180.53.173.170])
 	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59RF4hAd090988
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59RF4hAe090988
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Tue, 28 Oct 2025 00:04:45 +0900 (JST)
 	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=uy9KH+7/iFBaIvHnHGGLWrehk7S8042ac77AEgzmD8M=;
+DKIM-Signature: a=rsa-sha256; bh=J14c/B9Favd/mX6dP+sPNqMYNuSw3DFvUvW1zTATqCA=;
         c=relaxed/relaxed; d=mgml.me;
         h=From:To:Subject:Date:Message-ID;
         s=rs20250315; t=1761577485; v=1;
-        b=cj8u3RivypG8IY8lsq8zpbl2E0PkY+x+0CBtfHuILaIVWQ9v7oGhJHpxmfqmXk2E
-         w0k0ICQWBw5piRtGWhYj0RJJU+zMNktNurrmbXAQMeVHlXH9E+8eUa/3LgsdJgZP
-         0XrOatl7b2nFGJgTvnkeRfsh/XZU8YvoZE742AySo2ouQYoC9ady2hkfSoxLiqrJ
-         qMN8Snkhvg3wDm0Hl30F0Dk3yPgrG7zD4HjuMdHfTr52k9KhmbbygKyGrMq7ZQlZ
-         atfVa4fo5mmP92M1ch/ioBofZsAJgIjxz3PlxqLEKIkCqykxYb6v/zj60lSBcWG3
-         i7HRCMi+xjqd23WZvy8njQ==
+        b=KvCLLbTtt1cVehdqV5PiQPPTHsAXF6EA44jHDd1nQ+3dtCVk45xZ/rMfAjjrfwFd
+         MvKLh147T8yyWamY74/Ii4onnT/CagE6UpUIHJXqpKiZwppvZgP0CLtkoO7G0xvo
+         CsuNnKF2egiuNWMwoVbnJTeAEffjRlZYpWT5BVuHm57qY2FqzMl9ziY6IXRL+mhT
+         zN15RqIRJhZ/bCPcnMYUWQbOMaDGGN5KjNaycjmlKLEK9EEIw+9FXA/BAtUproK4
+         FY+nP1egM7N4zeCLn39cnvVrghoAxKZo39/bsYAKeJ5yJffn39P6bRxI6Tx55VeI
+         BNX5c2d55yETg9s+EYoUFA==
 From: Kenta Akagi <k@mgml.me>
 To: Song Liu <song@kernel.org>, Yu Kuai <yukuai@fnnas.com>,
         Shaohua Li <shli@fb.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
         Guoqing Jiang <jgq516@gmail.com>
 Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kenta Akagi <k@mgml.me>
-Subject: [PATCH v5 03/16] md: add pers->should_error() callback
-Date: Tue, 28 Oct 2025 00:04:20 +0900
-Message-ID: <20251027150433.18193-4-k@mgml.me>
+Subject: [PATCH v5 04/16] md: introduce md_cond_error()
+Date: Tue, 28 Oct 2025 00:04:21 +0900
+Message-ID: <20251027150433.18193-5-k@mgml.me>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251027150433.18193-1-k@mgml.me>
 References: <20251027150433.18193-1-k@mgml.me>
@@ -74,30 +74,76 @@ However, the current implementation can cause the array to lose
 its last in-sync device or be marked as MD_BROKEN, which breaks the
 assumption and can lead to array failure.
 
-To address this issue, a new handler md_cond_error() will be introduced
-to ensure that failfast I/O does not mark the array as broken.
+To address this issue, introduce md_cond_error() that handles failfast
+bio errors without stopped the array. This function checks whether the
+array will become inoperable if a rdev fails, and if so, it skips
+error handling to ensure the array remains in an operational state.
 
-As preparation, this commit adds a helper pers->should_error() to determine
-from outside the personality whether an rdev can fail safely, which is
-needed by md_cond_error().
+Callers of md_error() will be updated to use this new function in
+subsequent commits to properly handle failfast scenarios.
 
 Signed-off-by: Kenta Akagi <k@mgml.me>
 ---
- drivers/md/md.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/md.c | 33 +++++++++++++++++++++++++++++++++
+ drivers/md/md.h |  1 +
+ 2 files changed, 34 insertions(+)
 
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 4ad9cb0ac98c..e33ab564f26b 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8479,6 +8479,39 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
+ }
+ EXPORT_SYMBOL(md_error);
+ 
++/** md_cond_error() - conditionally md_error()
++ * @mddev: affected md device
++ * @rdev: member device to fail
++ * @bio: bio whose triggered device failure
++ *
++ * Check if the personality wants to fail this rdev for this bio,
++ * and if so, call _md_error().
++ * This function has no different behavior from md_error except
++ * for the raid1/10 with failfast enabled rdevs.
++ *
++ * Returns: %true if rdev already or become Faulty, %false if not.
++ */
++bool md_cond_error(struct mddev *mddev, struct md_rdev *rdev, struct bio *bio)
++{
++	if (WARN_ON_ONCE(!mddev->pers))
++		/* return true because we don't want caller to retry */
++		return true;
++
++	spin_lock(&mddev->device_lock);
++
++	if (mddev->pers->should_error &&
++	    !mddev->pers->should_error(mddev, rdev, bio)) {
++		spin_unlock(&mddev->device_lock);
++		return test_bit(Faulty, &rdev->flags);
++	}
++
++	_md_error(mddev, rdev);
++	spin_unlock(&mddev->device_lock);
++
++	return !WARN_ON_ONCE(!test_bit(Faulty, &rdev->flags));
++}
++EXPORT_SYMBOL(md_cond_error);
++
+ /* seq_file implementation /proc/mdstat */
+ 
+ static void status_unused(struct seq_file *seq)
 diff --git a/drivers/md/md.h b/drivers/md/md.h
-index c982598cbf97..01c8182431d1 100644
+index 01c8182431d1..38f9874538a6 100644
 --- a/drivers/md/md.h
 +++ b/drivers/md/md.h
-@@ -763,6 +763,7 @@ struct md_personality
- 	 * if appropriate, and should abort recovery if needed
- 	 */
- 	void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev);
-+	bool (*should_error)(struct mddev *mddev, struct md_rdev *rdev, struct bio *bio);
- 	int (*hot_add_disk) (struct mddev *mddev, struct md_rdev *rdev);
- 	int (*hot_remove_disk) (struct mddev *mddev, struct md_rdev *rdev);
- 	int (*spare_active) (struct mddev *mddev);
+@@ -916,6 +916,7 @@ extern void md_write_end(struct mddev *mddev);
+ extern void md_done_sync(struct mddev *mddev, int blocks, int ok);
+ void _md_error(struct mddev *mddev, struct md_rdev *rdev);
+ extern void md_error(struct mddev *mddev, struct md_rdev *rdev);
++extern bool md_cond_error(struct mddev *mddev, struct md_rdev *rdev, struct bio *bio);
+ extern void md_finish_reshape(struct mddev *mddev);
+ void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
+ 			struct bio *bio, sector_t start, sector_t size);
 -- 
 2.50.1
 
