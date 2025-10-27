@@ -1,119 +1,101 @@
-Return-Path: <linux-kernel+bounces-871862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEC2C0EA17
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:55:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7629C0E792
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32281420EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD79F188ADD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CE130DD31;
-	Mon, 27 Oct 2025 14:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF8930AD10;
+	Mon, 27 Oct 2025 14:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMIk6eBx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XaMIeQ/e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1688530ACEC;
-	Mon, 27 Oct 2025 14:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9442B1E505;
+	Mon, 27 Oct 2025 14:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761575943; cv=none; b=rxIBBUIy83eqs5XvkxCQxF8IxsTFmbyQM5w4BbnU0myvlqOu6xLswxOmDo9oDm2fXFbf7Tjor90VGOWKMaLUEA/6154m6MdJ2vLlWmYxNyiqh8a7HUtfYEtAOkTF407A+vA3l7rrgaZvEmkQaNv4Xn07FBAq19Z+CrQS7w9HjVQ=
+	t=1761575721; cv=none; b=rvHv5Png3Ut+QztvsOPOfRMqwB/3vGOaTmxEdMk6D2y73GtkKK2Mv7NNqQdKwxkjdWpdHn1fz+7dD4nT2hagc1jH/PQ7BKT79s4A9rFm9CAXuwjpszR+MHnpaNWkwUU7Lq0WJQVdqKZ0A4cqd4CC5o0JQE5eDE/iNUSrJSSi4Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761575943; c=relaxed/simple;
-	bh=0mf6KVr/j+MOBfxqbaBzUm0ypZGxlXyGgTneCJcNaf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r1zHohN2neI09cYLzAtnNYKCHyqlYPio3f0re3XZqeqIuqwhG0vgGd5XvH4J656a5raR+skYPzzc6014+BEv+D6/H/8lgjdJJYFeZ3UjDzRQyS3m/oziTof9PTOyzrFVZnjdGtXjntooc5D5KIf3dkORi3yQGtbhfvgMvnIotQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMIk6eBx; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761575941; x=1793111941;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0mf6KVr/j+MOBfxqbaBzUm0ypZGxlXyGgTneCJcNaf8=;
-  b=ZMIk6eBxzJyWYeWNs4Ag8zaMmmsei9ZLQpUlEuxGCNufA3eq0VsBZsob
-   /V3BJ4UirKJrB4E7Mip3tstGFNrHCpXiox4umSBNqbgEcR2/BN4MAwal9
-   WzfCOd0+dG50Uxk63LcGvgBy8UHzDSnKyRAwMAsSrIz2J5ZJ1ceg8qcDj
-   0c5m46VWgAMkwnYpzJV7qRWEJAxAjQZ2fmrGjfAFzcI9Z4r0v9XpyFSUh
-   FisnI4o8LZvFmNfYtDhG6YeRHeesxmUvFe/0KuBAjkBrGx7KbFaxYw18k
-   /R+ZA8q2bwik+LYMa/qqxxmRmnoc4eL2yzZ4bUguoE8UA7UTAJC7y0yz7
-   g==;
-X-CSE-ConnectionGUID: cQBkssl/Q3y3CyrK+djgwg==
-X-CSE-MsgGUID: fj7IYf+mQnyumR9tBvbB2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67299503"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="67299503"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 07:39:00 -0700
-X-CSE-ConnectionGUID: bu4SSwf0Tuq5K1xZT9spYw==
-X-CSE-MsgGUID: Gb8a2lmTQkuVLnzjbCuitQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="208673521"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Oct 2025 07:38:56 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 632509B; Mon, 27 Oct 2025 15:38:53 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-iio@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Subject: [PATCH v1 6/6] iio: position: iqs624-pos: Convert to use PI definition
-Date: Mon, 27 Oct 2025 15:34:55 +0100
-Message-ID: <20251027143850.2070427-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251027143850.2070427-1-andriy.shevchenko@linux.intel.com>
-References: <20251027143850.2070427-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1761575721; c=relaxed/simple;
+	bh=KMompSoz2y155bQ0qAq+gXfUc2mS23P0LNhll3E9WTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6YTMtcopsEVKBBFFUxhtOofqR1gz4+yJzFe5qUcpBi/d88hgBM0rGr81JsZmuzEf2ISgt+TIKhsY0DSEwngjfvoqpIuRbxAHwmDKuYqwJvz8pP3zq68yB/BHZ/Tx1ZoEcxS9UCaqva6ClDfM0kMGZlorRS2wasDxPGJNOmrQ94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XaMIeQ/e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675D3C4CEF1;
+	Mon, 27 Oct 2025 14:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761575720;
+	bh=KMompSoz2y155bQ0qAq+gXfUc2mS23P0LNhll3E9WTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XaMIeQ/eSyQhHs7WHZc9h4YqLc0maiNnXKRd2uaZ4BgTf0RaK1k8bmUk2aP1Ipn8Y
+	 +Nmyk+egooCCFU36HOKl6kx61fakn4cjNphws4vBq+WWMVvWV8qj+VlVMA6SV3SiuY
+	 mTBDNLuyv7crVgGufGn2U79JBaH53NrRYinr1awex6tIHZPtX/5VnVKoZiDQKPw86K
+	 T6MatMgXg8qP3NKpxXllnH7IhvLD+VfuXRPRI7f5e2eVSAwnfxB9QlOf0DyOBDP9mt
+	 Fheg6jppmylgV7cYRhVt1veBbXRi0hhODu7dpCyfDnz7hKgBFweoP4Li2vZackV7Fn
+	 4zpDae+1iLrIw==
+Date: Mon, 27 Oct 2025 16:35:16 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: cooldavid@cooldavid.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-next 1/1] net: jme: migrate to dma_map_phys instead
+ of map_page
+Message-ID: <20251027143516.GN12554@unreal>
+References: <20251024070734.34353-1-chuguangqing@inspur.com>
+ <20251024070734.34353-2-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024070734.34353-2-chuguangqing@inspur.com>
 
-Convert to use PI definition instead of open coded value of it.
+On Fri, Oct 24, 2025 at 03:07:34PM +0800, Chu Guangqing wrote:
+> After introduction of dma_map_phys(), there is no need to convert
+> from physical address to struct page in order to map page. So let's
+> use it directly.
+> 
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> ---
+>  drivers/net/ethernet/jme.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+> index d8be0e4dcb07..7ceeb706939d 100644
+> --- a/drivers/net/ethernet/jme.c
+> +++ b/drivers/net/ethernet/jme.c
+> @@ -735,9 +735,10 @@ jme_make_new_rx_buf(struct jme_adapter *jme, int i)
+>  	if (unlikely(!skb))
+>  		return -ENOMEM;
+>  
+> -	mapping = dma_map_page(&jme->pdev->dev, virt_to_page(skb->data),
+> -			       offset_in_page(skb->data), skb_tailroom(skb),
+> -			       DMA_FROM_DEVICE);
+> +	mapping = dma_map_phys(&jme->pdev->dev, virt_to_phys(skb->data),
+> +			       skb_tailroom(skb),
+> +			       DMA_FROM_DEVICE,
+> +			       0);
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/position/iqs624-pos.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Same comment as before, dma_map_phys() should be paired with dma_unmap_phys().
 
-diff --git a/drivers/iio/position/iqs624-pos.c b/drivers/iio/position/iqs624-pos.c
-index 8239239c6ee2..da432d1b515c 100644
---- a/drivers/iio/position/iqs624-pos.c
-+++ b/drivers/iio/position/iqs624-pos.c
-@@ -15,10 +15,11 @@
- #include <linux/notifier.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/units.h>
- 
- #define IQS624_POS_DEG_OUT			0x16
- 
--#define IQS624_POS_SCALE1			(314159 / 180)
-+#define IQS624_POS_SCALE1			DIV_ROUND_UP_ULL(PI, 1800000)
- #define IQS624_POS_SCALE2			100000
- 
- struct iqs624_pos_private {
--- 
-2.50.1
+Thanks
 
+>  	if (unlikely(dma_mapping_error(&jme->pdev->dev, mapping))) {
+>  		dev_kfree_skb(skb);
+>  		return -ENOMEM;
+> -- 
+> 2.43.7
+> 
+> 
 
