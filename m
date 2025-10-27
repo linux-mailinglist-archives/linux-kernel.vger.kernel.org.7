@@ -1,332 +1,213 @@
-Return-Path: <linux-kernel+bounces-871214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC171C0CA5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:28:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D68BC0CA47
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2583AEDAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:23:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBC954EF562
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2DF2E8DF3;
-	Mon, 27 Oct 2025 09:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9006D1C1F02;
+	Mon, 27 Oct 2025 09:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ky8e1dnd"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Nv+qhXxZ"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AC42ED871
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ECC2E717C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556976; cv=none; b=mo2uK/QtcMczH6s6GDHnIE3CuGBAriUxbuhdZ5HYvoZsMnKoj1gI4z1sP7zYPM7dOyAoZOqGO43gWNkJYckWbRdobjd1sxfHNEGBYLnwgzpmrr2t557aJ/RlaoGyfiagdDcRuMVk3PEgegOyZzUfvpAYpJ1febyAF0JpQ9yOfgU=
+	t=1761557060; cv=none; b=srVzv03CDTybGK/H3cU9BKwQ2jYzTTwHAON9is69klUYBXH7olX8885VZWMqrTZocgoSuUzezgaEQ+qYEfkWBRbLxTwXcClGx9wRutja9SAaAXWXNFxqFCn1CRsD5YqjpPstGNlTTNp4UrWTflhtiBMZFfeEg0HjG3RIm8EZ3iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556976; c=relaxed/simple;
-	bh=fxDesR92Xwhzeu84eJzm6w44tjPoXglJapFmerEbwME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ipn6MC75/Q1W1lSO2Bir3G047SUHq2BaVx1jWVbcb6GLSvgKtNzhhHv6y7jKZ+ljrfUDmUzaVGbDwAuJj3devDxyElxVMAGaOxVmtE6tPqA1zIGbOxbmLz0tFpDZvYt5gNQFvraDUac5d2MS9YnKkhXIssKjQLOpxaPAzZsTax4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ky8e1dnd; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso597834066b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761556972; x=1762161772; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=idLQEGHawEowPnMFpADe7JKEtzSuZ6zkkitTWQDADFM=;
-        b=ky8e1dndF7dQqxPPfxlYUxrHVn7o18SwU6bie45obaI/wx4EeP2K16CpcjLOQbmzWt
-         iR/FACtdzWt0utqG0vIn3b4eAbYPvR7CnvVJVKyBekwBMOOY0dFumiF0Kz4UIVukFvAj
-         iLI0pCFmk6EKbCioADk+/bn56h1r5nQ537gsjTeWTe2xDSJxCDod6UJP+V/LP7f9J7hS
-         sHu9Z9WSEpGm20exjDWLViNx2s1siDlilYUJNUQ/B/rmDc9T32+mB26hL2Ye/iNzq9f+
-         wrn6BJIhXJjZ6EfHiVXAFt59KI1SrN+tutqpkq6jtY7btrM9Fa86mj3Cqvi4QGwHik2M
-         xrIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556972; x=1762161772;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=idLQEGHawEowPnMFpADe7JKEtzSuZ6zkkitTWQDADFM=;
-        b=eLv98Csza9xKeraJzv6+nxPtiaH8f0zhxVzAMVYMq9Kdrr66lEBNh4uQ+leXLMWul4
-         BvKwyMozN3a3hDT2W0ijc+q2SmuMmRYNdSDLAvQmwaaloTkAG/Vu5w84D9s/8QErN6vC
-         zgu7qmxbUV/nHOaMnxLLZs8k4jDYU4rcGGJ832WTdByQAE2xOnh6tgEWuqprJ/rox45i
-         dPx9p3p66xzC/C+dl3bWtpcRNJjaA7uv8NvrxdEL8UmEvfqik5nYFvbf7ZPNvRKTTe/Q
-         2yQ6eBba6HILWaC1jaI9hruou2a5fFu7XbUl0dHKibpnXp6Mn2KQ8IFkE/1lK1vnoSCc
-         VVKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlbEUynbxEWWriWpI897b/sTf7FA5naWqaXaAzKZKGr39O3veMnOqF3yQTFbpAIky1Cb9lJ/R94KLN9e0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz456N4j35jjjdg4VCVpE2ityn2uUFcRMhaVR1qyS395nd6hVhd
-	R9owrpDNSNC+MIey7+QBDMb5Giv4I0CPa5E93pcg4z+i//N2U/Li5CTLCjM7xHVv9HQ=
-X-Gm-Gg: ASbGnctUULIQe7KkZY5r/pxHtRYNatL3o70LAf/+0bneJbrby1rwb8GWX+2CjYBuk03
-	tAa9DO0iWADPWEKUA6HJC2r2rJYWf5fsi1z8rHiLKfGu9s+rxaRUnVW2thlZ6mYCU8UJgr2VHMp
-	lkknitcSxV1NQ7pGyuHEhuzTUk7P5n87tZGGODOZJErF4rqpGWDjyA9LOBA7ZYVs1/A9jq06AYC
-	lPVy+6H/2Xkex4wg+lrWCOHh7WGlWgBAFCOyUNJ3tZShYRJ8Ou2hU0qzXpWEGRO7sBbgq1uGgDj
-	cZ08E6I00G4L0aNvGish/CfvxYFkyTcSktdcewFsnwCZVByd9EkEoeKkjZ7LFJ4riiy2jIcLBdr
-	x5LDRSSXsqJ1iP5JChw1qAAB8Ol15/WQdA2oFjAaGulUNke/hnqsqCGr468QQnxTX5pTIYtdh5P
-	4soWhKOaLN7LCzqe+pvA==
-X-Google-Smtp-Source: AGHT+IFgheBk8plPZFOvo1Fh8CqMw+IDlX5zjqqJtiHnOJ15bA0846Akm4ZoeAvbvhHYf1Mdb/gfzw==
-X-Received: by 2002:a17:907:6d20:b0:b6d:6a35:99a0 with SMTP id a640c23a62f3a-b6d6a359c49mr1253713666b.33.1761556971534;
-        Mon, 27 Oct 2025 02:22:51 -0700 (PDT)
-Received: from [192.168.0.39] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853c549fsm708029666b.37.2025.10.27.02.22.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 02:22:51 -0700 (PDT)
-Message-ID: <56a13c84-7d8b-42f1-97f6-c338b931f205@linaro.org>
-Date: Mon, 27 Oct 2025 11:22:48 +0200
+	s=arc-20240116; t=1761557060; c=relaxed/simple;
+	bh=53CKdD4ogqQhr2ms2TfSWhL3ujfqvSEgJ3WZQhEy8io=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cFe7H8blAyzeC5y3yBoUAyaMCJM7+3kn/Lhrkbvwtu5VuCv4ZS0EEi+CdQL9YPLzLixufYVAi9bub5Bi13YmnRADBzpzrkthBzO/X9jO3w3LL8Qjf+2wRN+r4ajjCLfVVHneh6/58KWb+GIWU9umJS6ahzitJcs8UD2sIB84q68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Nv+qhXxZ; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oB
+	P7+tHGxe9BmbqxkJRcuHmO2ZjvxtiBHaeh2QGjUL0=; b=Nv+qhXxZzR7Ok2d+VM
+	Ix7vgAHJHdeai35Z4TQP0OYIS3o/8/12wAD7VDZZ129mRvkv77oPm+fNsfgRLvPS
+	IIs9tGlVtt/Z8EFiJ9EyBOKtpbXRbGs/MIxtXmoXxhDPXVdcSI0WxRH5hGf+7LM3
+	SuXVPGzLpyiE9XNjx/+bzQq5Y=
+Received: from gt-ubuntu22-04-cmd-v3-0-64gb-25m.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3p5YgOv9otPZyAg--.9797S2;
+	Mon, 27 Oct 2025 17:23:45 +0800 (CST)
+From: Xiaole He <hexiaole1994@126.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	jaegeuk@kernel.org,
+	chao@kernel.org,
+	stable@kernel.org,
+	Xiaole He <hexiaole1994@126.com>
+Subject: [PATCH v2] f2fs: fix age extent cache insertion skip on counter overflow
+Date: Mon, 27 Oct 2025 17:23:41 +0800
+Message-Id: <20251027092341.5011-1-hexiaole1994@126.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251023035416.7943-1-hexiaole1994@126.com>
+References: <20251023035416.7943-1-hexiaole1994@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/31] dt-bindings: media: add DW MIPI CSI-2 Host
- support
-To: Sakari Ailus <sakari.ailus@iki.fi>, Frank Li <Frank.Li@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
- Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Steve Longerbeam <slongerbeam@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
-References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
- <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
- <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3p5YgOv9otPZyAg--.9797S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gr43CFWDXrW7ur4fCw4Durg_yoW7CrWDp3
+	4xCF15Kr45uw48Xa92vr1kCF1S9w4kJFWxGrZFy34jva45X34fWF1kt345ZrWvqF4rXF1D
+	Za1Y934UJw1UGaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziK0PfUUUUU=
+X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbijgnzBmj-NLOCkQAAsx
 
+The age extent cache uses last_blocks (derived from
+allocated_data_blocks) to determine data age. However, there's a
+conflict between the deletion
+marker (last_blocks=0) and legitimate last_blocks=0 cases when
+allocated_data_blocks overflows to 0 after reaching ULLONG_MAX.
 
+In this case, valid extents are incorrectly skipped due to the
+"if (!tei->last_blocks)" check in __update_extent_tree_range().
 
-On 10/27/25 10:31, Sakari Ailus wrote:
-> Hei Eugen,
-> 
-> On Thu, Aug 21, 2025 at 04:15:36PM -0400, Frank Li wrote:
->> From: Eugen Hristev <eugen.hristev@linaro.org>
+This patch fixes the issue by:
+1. Reserving ULLONG_MAX as an invalid/deletion marker
+2. Limiting allocated_data_blocks to range [0, ULLONG_MAX-1]
+3. Using F2FS_EXTENT_AGE_INVALID for deletion scenarios
+4. Adjusting overflow age calculation from ULLONG_MAX to (ULLONG_MAX-1)
 
-Hi everyone,
+Reproducer (using a patched kernel with allocated_data_blocks
+initialized to ULLONG_MAX - 3 for quick testing):
 
-While I originally wrote this patch, and Frank keeping me as author, I
-have not contributed more to it, so, I think you can drop me as author
-and Frank you can put your name to it.
+Step 1: Mount and check initial state
+  # dd if=/dev/zero of=/tmp/test.img bs=1M count=100
+  # mkfs.f2fs -f /tmp/test.img
+  # mkdir -p /mnt/f2fs_test
+  # mount -t f2fs -o loop,age_extent_cache /tmp/test.img /mnt/f2fs_test
+  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
+  Allocated Data Blocks: 18446744073709551612 # ULLONG_MAX - 3
+  Inner Struct Count: tree: 1(0), node: 0
 
-Thanks for continuing the work on it.
+Step 2: Create files and write data to trigger overflow
+  # touch /mnt/f2fs_test/{1,2,3,4}.txt; sync
+  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
+  Allocated Data Blocks: 18446744073709551613 # ULLONG_MAX - 2
+  Inner Struct Count: tree: 5(0), node: 1
 
-Eugen
->>
->> Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
->> and i.MX95 platform.
->>
->> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
->> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
->> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->> ---
->> Change in v3
->> - drop remote-endpoint: true
->> - drop clock-lanes
->>
->> Change in v2
->> - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
->> - update ugen Hristev's s-o-b tag to align original author's email address
->> - remove single snps,dw-mipi-csi2-v150 compatible string
->> - move additionalProperties after required
->> ---
->>  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 151 +++++++++++++++++++++
->>  MAINTAINERS                                        |   1 +
->>  2 files changed, 152 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..d950daa4ee9cfd504ef84b83271b2a1b710ffd6b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
->> @@ -0,0 +1,151 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
->> +
->> +maintainers:
->> +  - Frank Li <Frank.Li@nxp.com>
->> +
->> +description:
->> +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
->> +  camera. It will convert the incoming CSI-2 stream into a dedicated
->> +  interface called the Synopsys IDI (Image Data Interface).
->> +  This interface is a 32-bit SoC internal only, and can be assimilated
->> +  with a CSI-2 interface.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - fsl,imx93-mipi-csi2
->> +      - const: snps,dw-mipi-csi2-v150
->> +
->> +  reg:
->> +    items:
->> +      - description: MIPI CSI-2 core register
->> +
->> +  reg-names:
->> +    items:
->> +      - const: core
->> +
->> +  clocks:
->> +    maxItems: 2
->> +
->> +  clock-names:
->> +    items:
->> +      - const: per
->> +      - const: pixel
->> +
->> +  phys:
->> +    maxItems: 1
->> +    description: MIPI D-PHY
->> +
->> +  phy-names:
->> +    items:
->> +      - const: rx
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +
->> +    properties:
->> +      port@0:
->> +        $ref: /schemas/graph.yaml#/$defs/port-base
->> +        unevaluatedProperties: false
->> +        description:
->> +          Input port node, single endpoint describing the input port.
->> +
->> +        properties:
->> +          endpoint:
->> +            $ref: video-interfaces.yaml#
->> +            unevaluatedProperties: false
->> +            description: Endpoint connected to input device
->> +
->> +            properties:
->> +              bus-type:
->> +                const: 4
-> 
-> If 4 is the only value supported, you can drop the property altogether.
-> 
->> +
->> +              data-lanes:
->> +                minItems: 1
->> +                maxItems: 4
->> +                items:
->> +                  maximum: 4
->> +
->> +      port@1:
->> +        $ref: /schemas/graph.yaml#/$defs/port-base
->> +        unevaluatedProperties: false
->> +        description:
->> +          Output port node, single endpoint describing the output port.
->> +
->> +        properties:
->> +          endpoint:
->> +            unevaluatedProperties: false
->> +            $ref: video-interfaces.yaml#
->> +            description: Endpoint connected to output device
->> +
->> +            properties:
->> +              bus-type:
->> +                const: 4
-> 
-> Are both input and output of this block CSI-2 with D-PHY?
-> 
->> +
->> +    required:
->> +      - port@0
->> +      - port@1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - interrupts
->> +  - ports
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    csi@3000 {
->> +        compatible = "fsl,imx93-mipi-csi2", "snps,dw-mipi-csi2-v150";
->> +        reg = <0x03000 0x1000>;
->> +        reg-names = "core";
->> +        phys = <&mipi_dphy_rx 0>;
->> +        phy-names = "rx";
->> +        resets = <&dw_rst 1>;
->> +        interrupts = <2>;
->> +
->> +        ports {
->> +            #address-cells = <1>;
->> +            #size-cells = <0>;
->> +
->> +            port@0 {
->> +                reg = <0>;
->> +
->> +                endpoint {
->> +                    bus-type = <4>; /* MIPI CSI2 D-PHY */
->> +                    remote-endpoint = <&camera_1>;
->> +                    data-lanes = <1 2>;
->> +                    clock-lanes = <0>;
->> +                };
->> +            };
->> +
->> +            port@1 {
->> +                reg = <1>;
->> +
->> +                endpoint {
->> +                    remote-endpoint = <&idi_receiver>;
->> +                    bus-type = <4>;
->> +                };
->> +            };
->> +        };
->> +    };
->> +
->> +...
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 9d9d2be7be8037dfa96f1c9edd24a0cf997b9393..ecb7bc7cc8ad797f43173075ca8973804bf335f7 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -15334,6 +15334,7 @@ F:	Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
->>  F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
->>  F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
->>  F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
->> +F:	Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
->>  F:	drivers/media/platform/nxp/imx-mipi-csis.c
->>  F:	drivers/media/platform/nxp/imx-parallel-csi.c
->>  F:	drivers/media/platform/nxp/imx7-media-csi.c
->>
-> 
+  # dd if=/dev/urandom of=/mnt/f2fs_test/1.txt bs=4K count=1; sync
+  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
+  Allocated Data Blocks: 18446744073709551614 # ULLONG_MAX - 1
+  Inner Struct Count: tree: 5(0), node: 2
+
+  # dd if=/dev/urandom of=/mnt/f2fs_test/2.txt bs=4K count=1; sync
+  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
+  Allocated Data Blocks: 18446744073709551615 # ULLONG_MAX
+  Inner Struct Count: tree: 5(0), node: 3
+
+  # dd if=/dev/urandom of=/mnt/f2fs_test/3.txt bs=4K count=1; sync
+  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
+  Allocated Data Blocks: 0 # Counter overflowed!
+  Inner Struct Count: tree: 5(0), node: 4
+
+Step 3: Trigger the bug - next write should create node but gets skipped
+  # dd if=/dev/urandom of=/mnt/f2fs_test/4.txt bs=4K count=1; sync
+  # cat /sys/kernel/debug/f2fs/status | grep -A 4 "Block Age"
+  Allocated Data Blocks: 1
+  Inner Struct Count: tree: 5(0), node: 4
+
+  Expected: node: 5 (new extent node for 4.txt)
+  Actual: node: 4 (extent insertion was incorrectly skipped due to
+  last_blocks = allocated_data_blocks = 0 in __get_new_block_age)
+
+After this fix, the extent node is correctly inserted and node count
+becomes 5 as expected.
+
+Fixes: 71644dff4811 ("f2fs: add block_age-based extent cache")
+Cc: stable@kernel.org
+Signed-off-by: Xiaole He <hexiaole1994@126.com>
+---
+Changes in v2:
+- Added Fixes tag and Cc stable
+- Updated reproducer to use 'grep -A 4' for better output clarity
+---
+ fs/f2fs/extent_cache.c | 5 +++--
+ fs/f2fs/f2fs.h         | 6 ++++++
+ fs/f2fs/segment.c      | 9 +++++++--
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 33e09c453c70..0ed84cc065a7 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -808,7 +808,7 @@ static void __update_extent_tree_range(struct inode *inode,
+ 	}
+ 	goto out_read_extent_cache;
+ update_age_extent_cache:
+-	if (!tei->last_blocks)
++	if (tei->last_blocks == F2FS_EXTENT_AGE_INVALID)
+ 		goto out_read_extent_cache;
+ 
+ 	__set_extent_info(&ei, fofs, len, 0, false,
+@@ -912,7 +912,7 @@ static int __get_new_block_age(struct inode *inode, struct extent_info *ei,
+ 			cur_age = cur_blocks - tei.last_blocks;
+ 		else
+ 			/* allocated_data_blocks overflow */
+-			cur_age = ULLONG_MAX - tei.last_blocks + cur_blocks;
++			cur_age = (ULLONG_MAX - 1) - tei.last_blocks + cur_blocks;
+ 
+ 		if (tei.age)
+ 			ei->age = __calculate_block_age(sbi, cur_age, tei.age);
+@@ -1114,6 +1114,7 @@ void f2fs_update_age_extent_cache_range(struct dnode_of_data *dn,
+ 	struct extent_info ei = {
+ 		.fofs = fofs,
+ 		.len = len,
++		.last_blocks = F2FS_EXTENT_AGE_INVALID,
+ 	};
+ 
+ 	if (!__may_extent_tree(dn->inode, EX_BLOCK_AGE))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5b4e9548a231..fa3c676adc30 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -707,6 +707,12 @@ enum extent_type {
+ 	NR_EXTENT_CACHES,
+ };
+ 
++/*
++ * Reserved value to mark invalid age extents, hence valid block range
++ * from 0 to ULLONG_MAX-1
++ */
++#define F2FS_EXTENT_AGE_INVALID	ULLONG_MAX
++
+ struct extent_info {
+ 	unsigned int fofs;		/* start offset in a file */
+ 	unsigned int len;		/* length of the extent */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b45eace879d7..a473cd1fb37d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3863,8 +3863,13 @@ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct folio *folio,
+ 	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+ 	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+ 
+-	if (IS_DATASEG(curseg->seg_type))
+-		atomic64_inc(&sbi->allocated_data_blocks);
++	if (IS_DATASEG(curseg->seg_type)) {
++		unsigned long long new_val;
++
++		new_val = atomic64_inc_return(&sbi->allocated_data_blocks);
++		if (unlikely(new_val == ULLONG_MAX))
++			atomic64_set(&sbi->allocated_data_blocks, 0);
++	}
+ 
+ 	up_write(&sit_i->sentry_lock);
+ 
+-- 
+2.34.1
 
 
