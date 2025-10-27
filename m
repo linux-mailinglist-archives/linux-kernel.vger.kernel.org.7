@@ -1,397 +1,167 @@
-Return-Path: <linux-kernel+bounces-870774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881DEC0BA8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE055C0BA99
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536AB3BBA32
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:04:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7B3118A2B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A842D3A94;
-	Mon, 27 Oct 2025 02:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9262C08CF;
+	Mon, 27 Oct 2025 02:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="QZQW5OdK"
-Received: from mail-wm1-f97.google.com (mail-wm1-f97.google.com [209.85.128.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="GmXYF015"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE812C0F64
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257FE29E11B;
+	Mon, 27 Oct 2025 02:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761530594; cv=none; b=lwxvJtbKni0IZuzDPDk008xenwyWpgSt6mgNdNBTev+7XGI38VmZ//yB/3MwLsWSQ6j63pMRhnNpu2JqlJd0oSb6vSQKga5OvRfOJw4tIqFDQt1jzzXpQi4IhWUsHLOXrDuuHv5BxqW/OipwYlxpE1NhyaPfd5V/BRkxaRBAOA0=
+	t=1761530729; cv=none; b=hdaxCgaW0hjKOyilQ5UUJ7a3VXLKWTJs6o0iaMWsDt8kgKzaPj22ITSyRhn7lc+V81RzeISDr+qhybMGepb591azjWqHau/z7+Srb+Wawbdi+z1rEVoShiuKBkcUVmCa1+GZOe5Cfk7jJH7CsqNilMVphTGS2+g6ON4AJpi3j4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761530594; c=relaxed/simple;
-	bh=sxkKbdlsh3OuceAnLMYjBI941r+CSc45HUmaifG7JaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bZjO7rp5VnJRQogs/GD6ATVvpmlDRdfluUSLK7bZwRYozbTREBp+5N0W8nP6Q4I/OloEzTOaOnjnwxmA5Pt7EoOaUcZnQ71zEB2+VscJBo47bPRz31cgvBKns6YwjTsxq/4nVDVkn+ajKVVvODgAzUV432NORIYRreFmVpbIZIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=QZQW5OdK; arc=none smtp.client-ip=209.85.128.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-wm1-f97.google.com with SMTP id 5b1f17b1804b1-472cbd003feso1987315e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761530588; x=1762135388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTHIrYr/JL4uQvWk8eoQKjYhwgUps+99ZLq7CmULDbo=;
-        b=QZQW5OdKhGYBuBxt2mPjc6WzFgIbkJTRRRHRUeKGXNCbDaF3NI1hP+7kkDjR+KiJ1F
-         fGNa8xmPr9kPGZapGTAi+Uhwobk1/3zSd+PrWFsFBeSXGJvnOYM8xB8WowEKgPb7T2q8
-         6gRdxLeLqTGNyRNEYYodXVAWV06TA+B2ymR5lmldK8KDkc6q4P0v3q9mviWD1VroUAw+
-         rkN9zdWvbT2B2u/ehbTvedXcD7hEIbqHyBb2GizSKwx/lueMwboTjYmRbnYkH4NuXK4E
-         3zqbeDMmElzFaozP67tCbVsTFCBVFlfPfkm/9mKwmkerUjsBBPExerxsqOitvbhpsF3m
-         kAKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761530588; x=1762135388;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gTHIrYr/JL4uQvWk8eoQKjYhwgUps+99ZLq7CmULDbo=;
-        b=f40zBpuz2hJBpWFSolkS7pnFFxqIGuNc9Rr2fBIvl+0qQB+BPMeKgsZNgSrFOMkmmD
-         mNtOmhm45KlqVcBwsuE6Ody318+M853wCtqFwu8XsYaOA8JRYMntfC6BsKtHBru82yHP
-         OfErTs6eBznYT2Jcczm+uoVyHylGehPmpP196vEj4lYwm4LDZSHW4a+VSVwoZazOkx2C
-         0wlvOh+2Tqiiywbw1ZxPamTOm/ZjH5D3tuJR71oPJHWaAgNTRtfFEbEnKcgV2sJlJ0HD
-         OI+HHL4ZX8+5Z5Tra1n/MBUO4VaachtBjXIqonkqrb6WiDTJJnxAzPMLYFeViylggEaE
-         qUDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBkPunre2KduZ+Wn/fu7/GGRaAGP+UMY4ETpxKVld/ytJecmBwSmMjV5jv47sk4t9zWChAyxJhFn0BUuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWw/CvXdMcw3Xpw6AUaC6JW88NUwShbEbQnVNKpe9Y6Qb8byFB
-	xx4O2KPQowW8CeqzGI9JSWNrbQ91WkIhdUfVVB1Ke3R8Ef66uuCXSBH7pKYA/KEkAFJjJGm+2WT
-	F6ep0lGZYlZKFBD1XnCH7eCCEPv8UUdwkT5P7vowg5wMtxlio4QoL
-X-Gm-Gg: ASbGnctRNV0sy+sN+Uuqd5QAvtdPeH1GsI+DxsemwuCv/Or4v86H4qQkTYiyJBoVT2O
-	o5VjJ1Gel4jKC1m1jAb/fv1bG3HnhBnfMPk4UHiuM2JoNsosdof+5VyxpqcoKkDQJ6lBU71KtsJ
-	9bFBDZOiKhKMNXTFl4nVeFaWpT5bIqMXI+UO6+AaFpVF1K4NqCUCOvwvHJ0oSbJebh2sYQ1zMRb
-	JrGW9ZMhCxY/crSjT9iS2qiZNXbVkq6l6d4tWO9IT1BRgfvD1meC5pvKZhddoz/LmWNF+ZjAhFF
-	u4s5kFqJsKw/PFqDJKNHJnHkx1dBaLLkZLLZ1D6Yi9rDd7K8fdWUNsSh+QtX7fmLMDxxiwTO/Wt
-	vFZju/KAS76O/CXcV
-X-Google-Smtp-Source: AGHT+IEzJHwSYBWzz7Sy75kcuAarkrE8pEDkVMhr61B/a1LvJ1VT5CSEpon9FdrgrKuk8HVDvv4MPWdgxEtI
-X-Received: by 2002:a05:600c:4fcb:b0:471:c4c:5ef with SMTP id 5b1f17b1804b1-4749437b584mr97004145e9.4.1761530588469;
-        Sun, 26 Oct 2025 19:03:08 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 5b1f17b1804b1-475dd021cb9sm6122735e9.4.2025.10.26.19.03.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 19:03:08 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 297753420A1;
-	Sun, 26 Oct 2025 20:03:07 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 266E0E46586; Sun, 26 Oct 2025 20:03:07 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Ming Lei <ming.lei@redhat.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>
-Cc: io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v3 4/4] io_uring/uring_cmd: avoid double indirect call in task work dispatch
-Date: Sun, 26 Oct 2025 20:03:02 -0600
-Message-ID: <20251027020302.822544-5-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251027020302.822544-1-csander@purestorage.com>
-References: <20251027020302.822544-1-csander@purestorage.com>
+	s=arc-20240116; t=1761530729; c=relaxed/simple;
+	bh=wZ9Rmky0Ju7/r3CCR8vvqxWiziSgV9uMm0GnpAYq7PM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Zq6zuRfxAzxN65mQy3yHUS58x3GWzV1o7+673PV/BDvZEI1An6zYx+cxO+ZmyWSdpKgSEw+xcg1ng6BwpSA9sy+pI0xctrR2I6KRHY0rIqjV2RelbkQxN2F5y0QR4ek2uX1KH9RRVh7w7FDC33PV0+d/LXpjYJCbwpf7tavWrus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=GmXYF015 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=td4L7MLtFab0E+yv45f4US5pOy9YUbhDBrZdLxXlFro=; b=G
+	mXYF015/H0xaxb8xZMf9LEepSD1RkeYpF4xpZjEzndTMnm5r/8xdrqZE8V1Gs71U
+	eIKvONZUuK3unNzNoAJn1wFLWppRtTKDvEZVahdu/py6MlvCoyMaXqGLsb7+l7uE
+	+iiPhycpaQRBmKPw69MSACw+k+wS7DqpJabRB0YHWc=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-143 (Coremail) ; Mon, 27 Oct 2025 10:03:57 +0800
+ (CST)
+Date: Mon, 27 Oct 2025 10:03:57 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Sebastian Reichel" <sebastian.reichel@collabora.com>
+Cc: "Heiko Stuebner" <heiko@sntech.de>,
+	"Quentin Schulz" <quentin.schulz@cherry.de>, mturquette@baylibre.com,
+	sboyd@kernel.org, zhangqing@rock-chips.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, "Andy Yan" <andy.yan@rock-chips.com>
+Subject: Re:Re: [PATCH] clk: rockchip: rk3588: Don't change PLL rates when
+ setting dclk_vop2_src
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <j6ondk5xnwbm36isdoni5vtdq5mf5ak4kp63ratqlnpwsgrqj2@paw5lzwqa2ze>
+References: <20251008133135.3745785-1-heiko@sntech.de>
+ <2749454.BddDVKsqQX@diego>
+ <eumxn7lvp34si2gik33hcavcrsstqqoxixiznjbertxars7zcx@xsycorjhj3id>
+ <4856104.usQuhbGJ8B@phil>
+ <j6ondk5xnwbm36isdoni5vtdq5mf5ak4kp63ratqlnpwsgrqj2@paw5lzwqa2ze>
+X-NTES-SC: AL_Qu2dA/mYv04o4SacYukfmUgWjuw/WsG1v/Ul1YBSP556jC/r9AQFYUF9G1/47+GNFiCiuyqKVwhE0uhmb5F8ZYQUU2a0aDa9tFCtXmfgYh43rA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <7fb0eadb.1d09.19a23686d5a.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:jygvCgA3eIQN0_5oSN8TAA--.1306W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgfzXmj+zQBbegAFsH
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-io_uring task work dispatch makes an indirect call to struct io_kiocb's
-io_task_work.func field to allow running arbitrary task work functions.
-In the uring_cmd case, this calls io_uring_cmd_work(), which immediately
-makes another indirect call to struct io_uring_cmd's task_work_cb field.
-Change the uring_cmd task work callbacks to functions whose signatures
-match io_req_tw_func_t. Add a function io_uring_cmd_from_tw() to convert
-from the task work's struct io_tw_req argument to struct io_uring_cmd *.
-Define a constant IO_URING_CMD_TASK_WORK_ISSUE_FLAGS to avoid
-manufacturing issue_flags in the uring_cmd task work callbacks. Now
-uring_cmd task work dispatch makes a single indirect call to the
-uring_cmd implementation's callback. This also allows removing the
-task_work_cb field from struct io_uring_cmd, freeing up 8 bytes for
-future storage.
-
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- block/ioctl.c                |  4 +++-
- drivers/block/ublk_drv.c     | 15 +++++++++------
- drivers/nvme/host/ioctl.c    |  5 +++--
- fs/btrfs/ioctl.c             |  4 +++-
- fs/fuse/dev_uring.c          |  5 +++--
- include/linux/io_uring/cmd.h | 22 +++++++++++++---------
- io_uring/uring_cmd.c         | 14 ++------------
- 7 files changed, 36 insertions(+), 33 deletions(-)
-
-diff --git a/block/ioctl.c b/block/ioctl.c
-index d7489a56b33c..44de038660e7 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -767,12 +767,14 @@ long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
- struct blk_iou_cmd {
- 	int res;
- 	bool nowait;
- };
- 
--static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
-+static void blk_cmd_complete(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *cmd = io_uring_cmd_from_tw(tw_req);
- 	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
- 
- 	if (bic->res == -EAGAIN && bic->nowait)
- 		io_uring_cmd_issue_blocking(cmd);
- 	else
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 0c74a41a6753..bdccd15ba577 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1346,13 +1346,14 @@ static void ublk_dispatch_req(struct ublk_queue *ubq,
- 
- 	if (ublk_prep_auto_buf_reg(ubq, req, io, issue_flags))
- 		ublk_complete_io_cmd(io, req, UBLK_IO_RES_OK, issue_flags);
- }
- 
--static void ublk_cmd_tw_cb(struct io_uring_cmd *cmd,
--			   unsigned int issue_flags)
-+static void ublk_cmd_tw_cb(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *cmd = io_uring_cmd_from_tw(tw_req);
- 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
- 	struct ublk_queue *ubq = pdu->ubq;
- 
- 	ublk_dispatch_req(ubq, pdu->req, issue_flags);
- }
-@@ -1364,13 +1365,14 @@ static void ublk_queue_cmd(struct ublk_queue *ubq, struct request *rq)
- 
- 	pdu->req = rq;
- 	io_uring_cmd_complete_in_task(cmd, ublk_cmd_tw_cb);
- }
- 
--static void ublk_cmd_list_tw_cb(struct io_uring_cmd *cmd,
--		unsigned int issue_flags)
-+static void ublk_cmd_list_tw_cb(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *cmd = io_uring_cmd_from_tw(tw_req);
- 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
- 	struct request *rq = pdu->req_list;
- 	struct request *next;
- 
- 	do {
-@@ -2521,13 +2523,14 @@ static inline struct request *__ublk_check_and_get_req(struct ublk_device *ub,
- fail_put:
- 	ublk_put_req_ref(io, req);
- 	return NULL;
- }
- 
--static void ublk_ch_uring_cmd_cb(struct io_uring_cmd *cmd,
--		unsigned int issue_flags)
-+static void ublk_ch_uring_cmd_cb(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *cmd = io_uring_cmd_from_tw(tw_req);
- 	int ret = ublk_ch_uring_cmd_local(cmd, issue_flags);
- 
- 	if (ret != -EIOCBQUEUED)
- 		io_uring_cmd_done(cmd, ret, issue_flags);
- }
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index c212fa952c0f..6a2a0ef29674 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -396,13 +396,14 @@ static inline struct nvme_uring_cmd_pdu *nvme_uring_cmd_pdu(
- 		struct io_uring_cmd *ioucmd)
- {
- 	return io_uring_cmd_to_pdu(ioucmd, struct nvme_uring_cmd_pdu);
- }
- 
--static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
--			       unsigned issue_flags)
-+static void nvme_uring_task_cb(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *ioucmd = io_uring_cmd_from_tw(tw_req);
- 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
- 
- 	if (pdu->bio)
- 		blk_rq_unmap_user(pdu->bio);
- 	io_uring_cmd_done32(ioucmd, pdu->status, pdu->result, issue_flags);
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 185bef0df1c2..1936927ee6a4 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4647,12 +4647,14 @@ struct btrfs_uring_priv {
- struct io_btrfs_cmd {
- 	struct btrfs_uring_encoded_data *data;
- 	struct btrfs_uring_priv *priv;
- };
- 
--static void btrfs_uring_read_finished(struct io_uring_cmd *cmd, unsigned int issue_flags)
-+static void btrfs_uring_read_finished(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *cmd = io_uring_cmd_from_tw(tw_req);
- 	struct io_btrfs_cmd *bc = io_uring_cmd_to_pdu(cmd, struct io_btrfs_cmd);
- 	struct btrfs_uring_priv *priv = bc->priv;
- 	struct btrfs_inode *inode = BTRFS_I(file_inode(priv->iocb.ki_filp));
- 	struct extent_io_tree *io_tree = &inode->io_tree;
- 	pgoff_t index;
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 71b0c9662716..30923495e80f 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -1207,13 +1207,14 @@ static void fuse_uring_send(struct fuse_ring_ent *ent, struct io_uring_cmd *cmd,
- /*
-  * This prepares and sends the ring request in fuse-uring task context.
-  * User buffers are not mapped yet - the application does not have permission
-  * to write to it - this has to be executed in ring task context.
-  */
--static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
--				    unsigned int issue_flags)
-+static void fuse_uring_send_in_task(struct io_tw_req tw_req, io_tw_token_t tw)
- {
-+	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
-+	struct io_uring_cmd *cmd = io_uring_cmd_from_tw(tw_req);
- 	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
- 	struct fuse_ring_queue *queue = ent->queue;
- 	int err;
- 
- 	if (!io_uring_cmd_should_terminate_tw(cmd)) {
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index b84b97c21b43..8e3322fb6fa5 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -9,21 +9,17 @@
- /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
- #define IORING_URING_CMD_CANCELABLE	(1U << 30)
- /* io_uring_cmd is being issued again */
- #define IORING_URING_CMD_REISSUE	(1U << 31)
- 
--typedef void (*io_uring_cmd_tw_t)(struct io_uring_cmd *cmd,
--				  unsigned issue_flags);
--
- struct io_uring_cmd {
- 	struct file	*file;
- 	const struct io_uring_sqe *sqe;
--	/* callback to defer completions to task context */
--	io_uring_cmd_tw_t task_work_cb;
- 	u32		cmd_op;
- 	u32		flags;
- 	u8		pdu[32]; /* available inline for free use */
-+	u8		unused[8];
- };
- 
- static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
- {
- 	return sqe->cmd;
-@@ -58,11 +54,11 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
-  */
- void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret, u64 res2,
- 			 unsigned issue_flags, bool is_cqe32);
- 
- void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
--			    io_uring_cmd_tw_t task_work_cb,
-+			    io_req_tw_func_t task_work_cb,
- 			    unsigned flags);
- 
- /*
-  * Note: the caller should never hard code @issue_flags and only use the
-  * mask provided by the core io_uring code.
-@@ -107,11 +103,11 @@ static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
- static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret,
- 		u64 ret2, unsigned issue_flags, bool is_cqe32)
- {
- }
- static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
--			    io_uring_cmd_tw_t task_work_cb, unsigned flags)
-+			    io_req_tw_func_t task_work_cb, unsigned flags)
- {
- }
- static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
-@@ -130,19 +126,27 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
- {
- 	return true;
- }
- #endif
- 
-+static inline struct io_uring_cmd *io_uring_cmd_from_tw(struct io_tw_req tw_req)
-+{
-+	return io_kiocb_to_cmd(tw_req.req, struct io_uring_cmd);
-+}
-+
-+/* task_work executor checks the deferred list completion */
-+#define IO_URING_CMD_TASK_WORK_ISSUE_FLAGS IO_URING_F_COMPLETE_DEFER
-+
- /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
- static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
--			io_uring_cmd_tw_t task_work_cb)
-+			io_req_tw_func_t task_work_cb)
- {
- 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
- }
- 
- static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
--			io_uring_cmd_tw_t task_work_cb)
-+			io_req_tw_func_t task_work_cb)
- {
- 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
- }
- 
- static inline bool io_uring_cmd_should_terminate_tw(struct io_uring_cmd *cmd)
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index fc2955e8caaf..5a80d35658dc 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -111,30 +111,20 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- 		io_ring_submit_unlock(ctx, issue_flags);
- 	}
- }
- EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
- 
--static void io_uring_cmd_work(struct io_tw_req tw_req, io_tw_token_t tw)
--{
--	struct io_kiocb *req = tw_req.req;
--	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
--
--	/* task_work executor checks the deffered list completion */
--	ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
--}
--
- void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
--			io_uring_cmd_tw_t task_work_cb,
-+			io_req_tw_func_t task_work_cb,
- 			unsigned flags)
- {
- 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
- 
- 	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
- 		return;
- 
--	ioucmd->task_work_cb = task_work_cb;
--	req->io_task_work.func = io_uring_cmd_work;
-+	req->io_task_work.func = task_work_cb;
- 	__io_req_task_work_add(req, flags);
- }
- EXPORT_SYMBOL_GPL(__io_uring_cmd_do_in_task);
- 
- static inline void io_req_set_cqe32_extra(struct io_kiocb *req,
--- 
-2.45.2
-
+CkhlbGxvLAoKQXQgMjAyNS0xMC0yMSAwMDowMDo1OSwgIlNlYmFzdGlhbiBSZWljaGVsIiA8c2Vi
+YXN0aWFuLnJlaWNoZWxAY29sbGFib3JhLmNvbT4gd3JvdGU6Cj5IaSwKPgo+T24gTW9uLCBPY3Qg
+MjAsIDIwMjUgYXQgMDI6NDk6MTBQTSArMDIwMCwgSGVpa28gU3R1ZWJuZXIgd3JvdGU6Cj4+IEFt
+IERvbm5lcnN0YWcsIDE2LiBPa3RvYmVyIDIwMjUsIDAwOjU3OjE1IE1pdHRlbGV1cm9ww6Rpc2No
+ZSBTb21tZXJ6ZWl0IHNjaHJpZWIgU2ViYXN0aWFuIFJlaWNoZWw6Cj4+ID4gT24gV2VkLCBPY3Qg
+MTUsIDIwMjUgYXQgMDM6Mjc6MTJQTSArMDIwMCwgSGVpa28gU3TDvGJuZXIgd3JvdGU6Cj4+ID4g
+PiBBbSBNaXR0d29jaCwgMTUuIE9rdG9iZXIgMjAyNSwgMTQ6NTg6NDYgTWl0dGVsZXVyb3DDpGlz
+Y2hlIFNvbW1lcnplaXQgc2NocmllYiBRdWVudGluIFNjaHVsejoKPj4gPiA+ID4gT24gMTAvOC8y
+NSAzOjMxIFBNLCBIZWlrbyBTdHVlYm5lciB3cm90ZToKPj4gPiA+ID4gPiBkY2xrX3ZvcDJfc3Jj
+IGN1cnJlbnRseSBoYXMgQ0xLX1NFVF9SQVRFX1BBUkVOVCB8IENMS19TRVRfUkFURV9OT19SRVBB
+UkVOVAo+PiA+ID4gPiA+IGZsYWdzIHNldCwgd2hpY2ggaXMgdmFzdGx5IGRpZmZlcmVudCB0aGFu
+IGRjbGtfdm9wMF9zcmMgb3IgZGNsa192b3AxX3NyYywKPj4gPiA+ID4gPiB3aGljaCBoYXZlIG5v
+bmUgb2YgdGhvc2UuCj4+ID4gPiA+ID4gCj4+ID4gPiA+ID4gV2l0aCB0aGVzZSBmbGFncyBpbiBk
+Y2xrX3ZvcDJfc3JjLCBhY3R1YWxseSBzZXR0aW5nIHRoZSBjbG9jayB0aGVuIHJlc3VsdHMKPj4g
+PiA+ID4gPiBpbiBhIGxvdCBvZiBvdGhlciBwZXJpcGhlcmFscyBicmVha2luZywgYmVjYXVzZSBz
+ZXR0aW5nIHRoZSByYXRlIHJlc3VsdHMKPj4gPiA+ID4gPiBpbiB0aGUgUExMIHNvdXJjZSBnZXR0
+aW5nIGNoYW5nZWQ6Cj4+ID4gPiA+ID4gCj4+ID4gPiA+ID4gWyAgIDE0Ljg5ODcxOF0gY2xrX2Nv
+cmVfc2V0X3JhdGVfbm9sb2NrOiBzZXR0aW5nIHJhdGUgZm9yIGRjbGtfdm9wMiB0byAxNTI4NDAw
+MDAKPj4gPiA+ID4gPiBbICAgMTUuMTU1MDE3XSBjbGtfY2hhbmdlX3JhdGU6IHNldHRpbmcgcmF0
+ZSBmb3IgcGxsX2dwbGwgdG8gMTY4MDAwMDAwMAo+PiA+ID4gPiA+IFsgY2xrIGFkanVzdGluZyBl
+dmVyeSBncGxsIHVzZXIgXQo+PiA+ID4gPiA+IAo+PiA+ID4gPiA+IFRoaXMgaW5jbHVkZXMgcG9z
+c2libHkgdGhlIG90aGVyIHZvcHMsIGkycywgc3BkaWYgYW5kIGV2ZW4gdGhlIHVhcnRzLgo+PiA+
+ID4gPiA+IEFtb25nIG90aGVyIHBvc3NpYmxlIHRoaW5ncywgdGhpcyBicmVha3MgdGhlIHVhcnQg
+Y29uc29sZSBvbiBhIGJvYXJkCj4+ID4gPiA+ID4gSSB1c2UuIFNvbWV0aW1lcyBpdCByZWNvdmVy
+cyBsYXRlciBvbiwgYnV0IHRoZXJlIHdpbGwgYmUgYSBiaWcgYmxvY2sKPj4gPiA+ID4gCj4+ID4g
+PiA+IEkgY2FuIHJlcHJvZHVjZSBvbiB0aGUgc2FtZSBib2FyZCBhcyB5b3VycyBhbmQgdGhpcyBm
+aXhlcyB0aGUgaXNzdWUgCj4+ID4gPiA+IGluZGVlZCAobm90ZSBJIGNhbiBvbmx5IHJlcHJvZHVj
+ZSBmb3Igbm93IHdoZW4gZGlzcGxheSB0aGUgbW9kZXRlc3QgCj4+ID4gPiA+IHBhdHRlcm4sIG90
+aGVyd2lzZSBhZnRlciBib290IHRoZSBjb25zb2xlIHNlZW1zIGZpbmUgdG8gbWUpLgo+PiA+ID4g
+Cj4+ID4gPiBJIGJvb3QgaW50byBhIERlYmlhbiByb290ZnMgd2l0aCBmYmNvbiBvbiBteSBzeXN0
+ZW0sIGFuZCB0aGUgc2VyaWFsCj4+ID4gPiBjb25zb2xlIHByb2R1Y2VzIGdhcmJsZWQgb3V0cHV0
+IHdoZW4gdGhlIHZvcCBhZGp1c3RzIHRoZSBjbG9jawo+PiA+ID4gCj4+ID4gPiBTb21ldGltZXMg
+aXQgcmVjb3ZlcnMgYWZ0ZXIgYSBiaXQsIGJ1dCBvdGhlciB0aW1lcyBpdCBkb2Vzbid0Cj4+ID4g
+PiAKPj4gPiA+ID4gUmV2aWV3ZWQtYnk6IFF1ZW50aW4gU2NodWx6IDxxdWVudGluLnNjaHVsekBj
+aGVycnkuZGU+Cj4+ID4gPiA+IFRlc3RlZC1ieTogUXVlbnRpbiBTY2h1bHogPHF1ZW50aW4uc2No
+dWx6QGNoZXJyeS5kZT4gIyBSSzM1ODggVGlnZXIgdy9EUCBjYXJyaWVyYm9hcmQKPj4gPiAKPj4g
+PiBJJ20gcHJldHR5IHN1cmUgSSd2ZSBzZWVuIHRoaXMgd2hpbGUgcGxheWluZyB3aXRoIFVTQi1D
+IERQIEFsdE1vZGUKPj4gPiBvbiBSb2NrIDVCLiBTbyBmYXIgSSBoYWQgbm8gdGltZSB0byBpbnZl
+c3RpZ2F0ZSBmdXJ0aGVyLgo+PiA+IAo+PiA+IFdoYXQgSSdtIG1pc3NpbmcgaW4gdGhlIGNvbW1p
+dCBtZXNzYWdlIGlzIHRoZSBpbXBhY3Qgb24gVk9QLiBBbHNvCj4+ID4gaXQgbWlnaHQgYmUgYSBn
+b29kIGlkZWEgdG8gaGF2ZSBBbmR5IGluIENjLCBzbyBJJ3ZlIGFkZGVkIGhpbS4KPj4gCj4+IEht
+bSwgaXQgYnJpbmdzIFZQMiBpbiBsaW5lIHdpdGggdGhlIG90aGVyIHR3byBWUHMsIG9ubHkgVlAy
+IGhhZCB0aGlzCj4+IHNwZWNpYWwgc2V0dGluZyAtIGV2ZW4gcmlnaHQgZnJvbSB0aGUgc3RhcnQs
+IHNvIGl0IGNvdWxkIHZlcnkgd2VsbAo+PiBoYXZlIGJlZW4gbGVmdCB0aGVyZSBhY2NpZGVudGlh
+bGx5IGR1cmluZyBzdWJtaXNzaW9uLgo+Cj5JIGRpZCB0aGUgaW5pdGlhbCB1cHN0cmVhbSBzdWJt
+aXNzaW9uIGJhc2VkIG9uIGRvd25zdHJlYW0gKHRoZSBUUk0KPmlzIHF1aXRlIGJhZCByZWdhZGlu
+ZyBkZXNjcmliaW5nIHRoZSBjbG9jayB0cmVlcywgc28gbm90IG11Y2gKPnZhbGlkYXRpb24gaGFz
+IGJlZW4gZG9uZSBieSBtZSkuIFRoZSBvbGQgdmVuZG9yIGtlcm5lbCB0cmVlIGhhZCBpdAo+bGlr
+ZSB0aGlzLCBidXQgdGhhdCBhbHNvIGNoYW5nZWQgYSBiaXQgb3ZlciB0aW1lIGFmdGVyd2FyZHMg
+YW5kIG5vCj5sb25nZXIgaGFzIGFueSBzcGVjaWFsIGhhbmRsaW5nIGZvciBWUDIuIE9UT0ggaXQg
+ZG9lcyBzZXQKPkNMS19TRVRfUkFURV9OT19SRVBBUkVOVCBmb3IgYWxsIGRjbGtfdm9wPG51bWJl
+cj5fc3JjLCB3aGljaCB5b3UKPmFyZSBub3cgcmVtb3ZpbmcgZm9yIFZQMi4KPgo+RldJVyB0aGVz
+ZSBhcmUgdGhlIHR3byBmbGFnczoKPgo+I2RlZmluZSBDTEtfU0VUX1JBVEVfUEFSRU5UICAgICBC
+SVQoMikgLyogcHJvcGFnYXRlIHJhdGUgY2hhbmdlIHVwIG9uZSBsZXZlbCAqLwo+I2RlZmluZSBD
+TEtfU0VUX1JBVEVfTk9fUkVQQVJFTlQgQklUKDcpIC8qIGRvbid0IHJlLXBhcmVudCBvbiByYXRl
+IGNoYW5nZSAqLwo+Cj5TbyBieSByZW1vdmluZyBDTEtfU0VUX1JBVEVfTk9fUkVQQVJFTlQgeW91
+IGFyZSBhbGxvd2luZyBkY2xrX3ZvcDJfc3JjCj50byBiZSBzd2l0Y2hlZCB0byBhIGRpZmZlcmVu
+dCBQTEwgd2hlbiBhIGRpZmZlcmVudCByYXRlIGlzIGJlaW5nCj5yZXF1ZXN0ZWQuIFRoYXQgY2hh
+bmdlIGlzIGNvbXBsZXRsZXkgdW5yZWxhdGVkIHRvIHRoZSBidWcgeW91IGFyZQo+c2VlaW5nIHJp
+Z2h0IG5vdz8KPgo+PiBTbyBpbiB0aGUgZW5kIFZQMiB3aWxsIGhhdmUgdG8gZGVhbCB3aXRoIHRo
+aXMsIGJlY2F1c2Ugd2hlbiB0aGUgVlAKPj4gY2F1c2VzIGEgcmF0ZSBjaGFuZ2UgaW4gdGhlIEdQ
+TEwsIHRoaXMgY2hhbmdlcyBzbyBtYW55IGNsb2NrcyBvZgo+PiBvdGhlciBwb3NzaWJseSBydW5u
+aW5nIGRldmljZXMuIE5vdCBvbmx5IHRoZSB1YXJ0LCBidXQgYWxzbyBlbW1jCj4+IGFuZCBtYW55
+IG1vcmUuIEFuZCBhbGwgdGhvc2UgZGV2aWNlcyBkbyBub3QgbGlrZSBpZiB0aGVpciBjbG9jayBn
+ZXRzCj4+IGNoYW5nZWQgdW5kZXIgdGhlbSBJIHRoaW5rLgo+Cj5JdCdzIGNlcnRhaW5seSB3ZWly
+ZCwgdGhhdCBWUDIgd2FzIChhbmQgc3RpbGwgaXMgaW4gdXBzdHJlYW0pIGhhbmRsZWQKPnNwZWNp
+YWwuIE5vdGUgdGhhdCBHUExMIGJlaW5nIGNoYW5nZWQgaXMgbm90IHJlYWxseSBuZWNlc3Nhcnku
+Cj5kY2xrX3ZvcDJfc3JjIHBhcmVudCBjYW4gYmUgR1BMTCwgQ1BMTCwgVjBQTEwgb3IgQVVQTEwu
+IEVmZmVjdHMgb24KPm90aGVyIGhhcmR3YXJlIElQIHZlcnkgbXVjaCBkZXBlbmRzIG9uIHRoZSBw
+YXJlbnQgc2V0dXAuIFdoYXQgSSB0cnkKPnRvIHVuZGVyc3RhbmQgaXMgaWYgdGhlcmUgaXMgYWxz
+byBhIGJ1ZyBpbiB0aGUgcm9ja2NoaXBkcm0gZHJpdmVyCj5hbmQvb3IgaWYgcmVtb3ZpbmcgQ0xL
+X1NFVF9SQVRFX05PX1JFUEFSRU5UIGlzIGEgZ29vZCBpZGVhLiBUaGF0J3MKPndoeSBJIGhvcGVk
+IEFuZHkgY291bGQgY2hpbWUgaW4gYW5kIHByb3ZpZGUgc29tZSBiYWNrZ3JvdW5kIDopCgpUaGUg
+bWFpbiBsaW1pdGF0aW9uIGlzIHRoYXQgdGhlcmUgYXJlIG5vdCBlbm91Z2ggUExMcyBvbiB0aGUg
+U29DIHRvIGJlIHVzZWQgZm9yIHRoZSBkaXNwbGF5IHNpZGUuIApJbiBvdXIgZG93bnN0cmVhbSBj
+b2RlIGltcGxlbWVudGF0aW9uLCB3ZSB1c3VhbGx5IGV4Y2x1c2l2ZWx5IGFzc2lnbiBWMFBMTCB0
+byBhIGNlcnRhaW4gVlAuCk90aGVyIFZQcyBnZW5lcmFsbHkgbmVlZCB0byBzaGFyZSB0aGUgUExM
+IHdpdGggb3RoZXIgcGVyaXBoZXJhbHMgLCBvciB1c2UgdGhlIEhETUkgUEhZIFBMTC4KCkZvciBH
+UExMIGFuZCBDUExMLCAgdGhleSB3aWxsIGJlIHNldCB0byBhIGZpeGVkIGZyZXF1ZW5jeSBkdXJp
+bmcgdGhlIHN5c3RlbSBzdGFydHVwIHN0YWdlLCBhbmQKdGhleSBzaG91bGQgbm90IGJlIG1vZGlm
+aWVkIGFnYWluIGFzIHRoZXNlIHR3byBQTEwgYWx3YXlzIHNoYXJlZCBieSBvdGhlciBwZXJpcGhl
+cmFscy4KCldoZW4gc2hhcmVkIHdpdGggb3RoZXIgcGVyaXBoZXJhbHMsICB3ZSBjYW4gbm90IGRv
+IENMS19TRVRfUkFURV9QQVJFTlQsLgpIb3dldmVyLCB3aGVuIHdlIG5lZWQgYSByZWxhdGl2ZWx5
+IHByZWNpc2UgZnJlcXVlbmN5IGluIGNlcnRhaW4gc2NlbmFyaW9zLCBzdWNoIGFzIGRyaXZpbmcg
+YW4gZURQCm9yIERTSSBwYW5lbO+8iHNlZSB3aGF0IHdlIGRvIGZvciBlRFAgb24gcmszNTg4cy1l
+dmIxLXYxMC5kdHMgYW5kIHJrMzU4OC1jb29scGktY201LWdlbmJvb2suZHRzIO+8iSwgCndlIHRl
+bmQgdG8gdXNlIFYwUExMLiBCdXQgc2luY2UgVjBQTEwgZG9lcyBub3QgcHJvcGVyIGluaXRpYWxp
+emF0ZWQgYXQgc3lzdGVtIHN0YXJ0dXAsIHdlIHRoZW4gbmVlZCBDTEtfU0VUX1JBVEVfUEFSRU5U
+LiAKVGhpcyBkb2VzIGluZGVlZCBzZWVtIHRvIGJlIGEgY29udHJhZGljdGlvbi4KCgoKPgo+R3Jl
+ZXRpbmdzLAo+Cj4tLSBTZWJhc3RpYW4K
 
