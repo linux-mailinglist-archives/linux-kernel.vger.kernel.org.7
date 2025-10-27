@@ -1,186 +1,103 @@
-Return-Path: <linux-kernel+bounces-870760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680F0C0B9C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58032C0B9D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DBFC34A7EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:43:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 03C9F34A84E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C7A29B224;
-	Mon, 27 Oct 2025 01:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2355829C35A;
+	Mon, 27 Oct 2025 01:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="elZ5s9EU"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vqKT+cw7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8EF4315E;
-	Mon, 27 Oct 2025 01:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548329BDA2;
+	Mon, 27 Oct 2025 01:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761529382; cv=none; b=Di3sXy5VFily16BI/g/uiFHZEoN+TyeOmVotMGl7tvROf2ES5agq9Lj1ZIQIQnUbGFRmQNMYwEUh2Xwo8ddUsk03rrc2SiCbxtDko3Uxq8Cqv48Dvo5w2efzTxKaRROgfFFNe2nX6No8z4n2SLhUbUj3qYQKoP61vfaWDNT7dbI=
+	t=1761529451; cv=none; b=Lq12efr/y0YRhRnTw+fTkvxddCT8UjEF5LiELAkVh1H/Gy4iWCI/NFde7/AyF42qowUXKYSqT+vOc3Ot94+qwUY6VL4OG5XOU1WvxPbJRV/ZVJWIGkncAX3+KZKVWhXsPPLhhHxx+4sqlr0uIWkAWHMUj+NPjAiXi/9AODcbrSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761529382; c=relaxed/simple;
-	bh=IVeZ7hAy7RNUpQh8Rh7q8cY6WrErlY9sM+xxsWl9ynE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZptoixNDm/JcDla1bEOi2y2TUvf1KLzXRVjeoUyKItU4C4HHtAa5ffwfL41OOYQ4xZyzlqA9A/QjwDMSGHErgqJxk0/IWI7bTA6J4IGezlJfMoObnAbKxt6I0TuuBH209d3fpqnoK0x1JHntzkoylBEkQcWvyDwP1wdKW9GSKkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=elZ5s9EU; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=NkCoTJfTbuhScNbhpAvICZ/VNOsqCz0G1J1WauGdrg4=;
-	b=elZ5s9EULnSfe9sonKeHX4ndGTMiQn8timHDKJC6x4pCTcHntTbGw7KDp1RuCq51X9kP5e872
-	xTx1F/MmefePlYPY0BhxMSMzCuMGkEtqTzfkUOcWb+nMGcpinDdxHQikpneoro2J6Tcnuar5P1W
-	DjM5Bvl+5kG7rHlNXngOjH8=
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cvx8H2GtJzLlZ1;
-	Mon, 27 Oct 2025 09:42:23 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id C069A1402CA;
-	Mon, 27 Oct 2025 09:42:50 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 27 Oct 2025 09:42:48 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Oct
- 2025 09:42:48 +0800
-Message-ID: <37fb4e84-d404-449e-986a-e5ccb327bd78@huawei.com>
-Date: Mon, 27 Oct 2025 09:42:47 +0800
+	s=arc-20240116; t=1761529451; c=relaxed/simple;
+	bh=E+QMND24/WP/zTvdXff8gp6hTMK1AKq41bsw0S6dp8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KuuxdwhnbT3c/kxNgdsNbD4PYAe4+rAq4+nkDV3FdKfb+StbzHvdlQBravoiqlMk1NsiEhA4F28+WO6+3lS7u3vKlf8HqJkP8xkDXpnixEAgZXtgz/nsjAAskxMSwwdzX2rNaJ9aWhcQVPA3NUJVhUVgkdD3aLO0X+7ccmufKfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vqKT+cw7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7a/EwuumQpo2swNq1SpUCucENGWBvUDAitJ2riFGT+Q=; b=vqKT+cw7qfCksSfiPz3S4iHhrx
+	VA30MsXAzH6jQu6JS9fR8f45Gp3ooOLXKwGx4yGeJiduyc1fWA+bZflGabd8ESumpM+8PMl/qaSGX
+	uoGN3n/PJTTN/Ovs+5D16m3RoKgoPXO3stpKVCzTFxGasaOu5qvgLwseqVQbSNm4OKMI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vDCGa-00C9BP-I8; Mon, 27 Oct 2025 02:43:24 +0100
+Date: Mon, 27 Oct 2025 02:43:24 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, BMC-SW <BMC-SW@aspeedtech.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Jeremy Kerr <jk@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Nishanth Menon <nm@ti.com>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC
+ device tree
+Message-ID: <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch>
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
+ <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
+ <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
+ <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <71df9bdf-53b2-45e2-a9e3-5b00a556f957@lunn.ch>
+ <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/9] ACPI: processor: idle: Add the verification of
- processor FFH LPI state
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
-References: <20250929093754.3998136-1-lihuisong@huawei.com>
- <20250929093754.3998136-6-lihuisong@huawei.com>
- <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
- <92b1b431-9855-43fb-8bb3-801649064438@huawei.com>
- <CAJZ5v0g0PgicTEAb3gAeF2D3ZqONNt+6odt2SfGE7XtY3zoPyg@mail.gmail.com>
- <ab814879-37d6-49dc-8a38-6b94cabf9327@huawei.com>
- <CAJZ5v0hHO_vuQ71sQ2=vmjEMNr3jYh6Wx_nk55gQVdGgWFDHKQ@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0hHO_vuQ71sQ2=vmjEMNr3jYh6Wx_nk55gQVdGgWFDHKQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
 
+> SoC0, referred to as the CPU die, contains a dual-core Cortex-A35
+> cluster and two Cortex-M4 cores, along with its own clock/reset
+> domains and high-speed peripheral set.
 
-在 2025/10/26 20:40, Rafael J. Wysocki 写道:
-> On Fri, Oct 24, 2025 at 11:40 AM lihuisong (C) <lihuisong@huawei.com> wrote:
->>
->> 在 2025/10/23 18:35, Rafael J. Wysocki 写道:
->>> On Thu, Oct 23, 2025 at 12:17 PM lihuisong (C) <lihuisong@huawei.com> wrote:
->>>> 在 2025/10/22 3:42, Rafael J. Wysocki 写道:
->>>>> On Mon, Sep 29, 2025 at 11:38 AM Huisong Li <lihuisong@huawei.com> wrote:
->>>>>> Both ARM64 and RISCV architecture would validate Entry Method of LPI
->>>>>> state and SBI HSM or PSCI cpu suspend. Driver should return failure
->>>>>> if FFH of LPI state are not ok.
->>>>> First of all, I cannot parse this changelog, so I don't know the
->>>>> motivation for the change.
->>>> Sorry for your confusion.
->>>>> Second, if _LPI is ever used on x86, the
->>>>> acpi_processor_ffh_lpi_probe() in acpi_processor_get_power_info() will
->>>>> get in the way.
->>>> AFAICS, it's also ok if X86 platform use LPI.
->>> No, because it returns an error by default as it stands today.
->>>
->>>>> Why does the evaluation in acpi_processor_setup_cpuidle_dev() not work?
->>>> The acpi_processor_ffh_lpi_probe does verify the validity of LPI for ARM
->>>> and RISCV.
->>>> But the caller of the acpi_processor_setup_cpuidle_dev()don't verify the
->>>> return value.
->>>> In addition, from the name of acpi_processor_setup_cpuidle_dev(), its
->>>> main purpose is to setup cpudile device rather than to verify LPI.
->>> That's fair enough.
->>>
->>> Also, the list of idle states belongs to the cpuidle driver, not to a
->>> cpuidle device.
->>>
->>>> So I move it to a more prominent position and redefine the
->>>> acpi_processor_setup_cpuidle_dev to void in patch 9/9.
->>>>>> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Idle(LPI) states")
->>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->>>>>> ---
->>>>>>     drivers/acpi/processor_idle.c | 10 ++++++++--
->>>>>>     1 file changed, 8 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->>>>>> index 5684925338b3..b0d6b51ee363 100644
->>>>>> --- a/drivers/acpi/processor_idle.c
->>>>>> +++ b/drivers/acpi/processor_idle.c
->>>>>> @@ -1264,7 +1264,7 @@ static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
->>>>>>
->>>>>>            dev->cpu = pr->id;
->>>>>>            if (pr->flags.has_lpi)
->>>>>> -               return acpi_processor_ffh_lpi_probe(pr->id);
->>>>>> +               return 0;
->>>>>>
->>>>>>            return acpi_processor_setup_cpuidle_cx(pr, dev);
->>>>>>     }
->>>>>> @@ -1275,7 +1275,13 @@ static int acpi_processor_get_power_info(struct acpi_processor *pr)
->>>>>>
->>>>>>            ret = acpi_processor_get_lpi_info(pr);
->>>>>>            if (ret)
->>> So I think it would be better to check it here, that is
->>>
->>> if (!ret) {
->>>          ret = acpi_processor_ffh_lpi_probe(pr->id));
->>>          if (!ret)
->>>                  return 0;
->>>
->>>          pr_info("CPU%d: FFH LPI state is invalid\n", pr->id);
->>>          pr->flags.has_lpi = 0;
->>> }
->>>
->>> return acpi_processor_get_cstate_info(pr);
->>>
->>> And the default acpi_processor_ffh_lpi_probe() needs to be changed to return 0.
->> Sorry, I don't understand why pr->flags.has_lpi is true if
->> acpi_processor_ffh_lpi_probe() return failure.
-> It is set by acpi_processor_get_lpi_info() on success and
-> acpi_processor_ffh_lpi_probe() does not update it.
-The acpi_processor_get_lpi_info() will return failure on X86 platform 
-because this function first call acpi_processor_ffh_lpi_probe().
-And acpi_processor_ffh_lpi_probe return EOPNOTSUPP because X86 platform 
-doesn't implement it.
-So I think pr->flags.has_lpi is false on X86 plaform.
->
->> In addition, X86 platform doesn't define acpi_processor_ffh_lpi_probe().
->> this function will return EOPNOTSUPP.
-> Which is exactly why it is a problem.  x86 has no reason to implement
-> it because FFH always works there.
-Sorry, I still don't understand why X86 has no reason to implement it.
-I simply think that X86 doesn't need it.
-AFAICS, the platform doesn't need to get LPI info if this platform 
-doesn't implement acpi_processor_ffh_lpi_probe().
->
->>>>>> -               ret = acpi_processor_get_cstate_info(pr);
->>>>>> +               return acpi_processor_get_cstate_info(pr);
->>>>>> +
->>>>>> +       if (pr->flags.has_lpi) {
->>>>>> +               ret = acpi_processor_ffh_lpi_probe(pr->id);
->>>>>> +               if (ret)
->>>>>> +                       pr_err("Processor FFH LPI state is invalid.\n");
->>>>>> +       }
->>>>>>
->>>>>>            return ret;
->>>>>>     }
->>>>>> --
+> SoC1, referred to as the I/O die, contains the Boot MCU and its own
+> clock/reset domains and low-speed peripheral set, and is responsible
+> for system boot and control functions.
+
+So is the same .dtsi file shared by both systems? How do you partition
+devices so each CPU cluster knows it has exclusive access to which
+peripherals?
+
+Seems like a fun system to play core wars on.
+
+	Andrew
 
