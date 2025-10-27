@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-871312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391C3C0CE01
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:07:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72B0C0CE43
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B5C1894A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0413E4219F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035602EFDBA;
-	Mon, 27 Oct 2025 10:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E882E6116;
+	Mon, 27 Oct 2025 10:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PhxPZcnv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WD1KCBdt"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D225F984
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5FC2D3EE0
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559540; cv=none; b=lfQXRhF8PAcH/WeHXDdB6o8Eq5aFueiwBQmgrQtResJZjhY9Efn9VueEt+WvhbsT2Sjuv+dLmy6d25CFr77GPAyPhvhG9LqX8U+Y2EMBI9M2qZcazRVSO+8Os+GvF5xO85A52pewnREXpW1uW1DuhfFU8D/eeaIWj9oPqQqGRm4=
+	t=1761559477; cv=none; b=iulgQwQPyZa3B5VxNhPCk94pYpDF6xhbHbOXlXPMnkMKWXIx85+msIxtSvk1BD3lHF22zcf9QhVwvywhfNlKSsMIfMgExRpELQ1JOW3wGlr505/kz2saNsPwOUhLJIEA2zbUf+/bObmQDYhX0gB3lrTSkYexOAPWVFjGj0KCOSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559540; c=relaxed/simple;
-	bh=eHA0hlYfdYZE/4LDQg1sbznUefERn3QEhxPIRLem2e4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HE/mst84oZSWTifZfUhydFxqwhfwVLlkQ0XCh7grkt+sHuUHFCRjIXmuKPBuiKWxYeWdAZVUtJRrAQKrYAY+hqkKWGfsTYRmX2o0sZNDHrFK1FFUAzzWla+XpXZGTc8+A6Cphm7GkDmHR2monjXzV8J/Oo1UYhY2Bch2ySsg4I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PhxPZcnv; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761559538; x=1793095538;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=eHA0hlYfdYZE/4LDQg1sbznUefERn3QEhxPIRLem2e4=;
-  b=PhxPZcnv5VC6xbpngnNb+Wr+CA/7ud7+i4R9Sv8iTL7FmXOiglieilKI
-   O/osoOhk3ohnKJI0Rca+iPtAkQGPPWYhmF+XmhfG36K5ZPLrGZYau++5B
-   VRiOlfnLXb55ZLPuasjmGcAX3MCfFbWdR5g7WJCdg8XK1zM/4mRkq93/v
-   a5P2GcETlX4b4hUSR9j6XxXzXO9WOwNV2FCJLN5jPaK43sAlsSKAtfCAL
-   cD6ietBLGDIIOb0ko8hSmIrIcW0jpzJuU1RWJ0xxdxuhBiqFWgJjIdbqz
-   7DZ9VVhA9o0ejKLtY+S1kGI48MEa/BzrxUUPJQvsiW9hsZiRCnRTr/RNH
-   A==;
-X-CSE-ConnectionGUID: +EJo5Cu1ShqdnQRxaU0V1Q==
-X-CSE-MsgGUID: WiZfcVZdS+uAD0TRQS1GkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86264387"
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="86264387"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 03:05:37 -0700
-X-CSE-ConnectionGUID: GYJkGqFpS4yIICYnpwQgsw==
-X-CSE-MsgGUID: Az4NuaHTTFO6h6LxJ3vaVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="215656140"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa002.jf.intel.com with ESMTP; 27 Oct 2025 03:05:33 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 5DCC195; Mon, 27 Oct 2025 11:05:32 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Aaron Lu <ziqianlu@bytedance.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] sched/fair: Remove dead code which might prevent from building
-Date: Mon, 27 Oct 2025 11:05:29 +0100
-Message-ID: <20251027100529.1806944-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1761559477; c=relaxed/simple;
+	bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cocPfV0BbHwcXJ0RbYCjqzmridJFEvzCglLG9cyByHliucBwLD3rTxITpBLknFoZ6R0egfkOh4xdrGdzhQ/IIE8q+LifwUP8s+Cnbn2RY0n+Y6wqozf7GN4aXvoGO4XkEj60uxDLuo/iZox/8nlKi7Vsqan+ds6kxjNSkN1c87Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WD1KCBdt; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b6ceb3b68eeso3334175a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761559475; x=1762164275; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
+        b=WD1KCBdtVr6Uaf9+9XtB5USN+vvFfrFollNT/kQurwRdF5GgPxZU6Piej6sbf/Nmso
+         pS3WSR2v5QqFrKbcDiAWkIf6U5tgqeh2lJ3tNNAsToEv7ldL0UerM22oPjbPXurjPPKy
+         Zfh9h48ml1aDyZoqIwPT8djKKyIGTTg8iNowpKfnZ4/qWLgPq72lNYYFbu152iDyUgjO
+         zyOq9DUHZUfTg0U/SLqr/LAfqxg8x+pGcheMMrfV7kR6fzZOSGG7vE1GiXHC2IZD+UTG
+         MfDj/5pDUVv5aVrizCoakLxOHa8njkfTRA5kk8mTbz1nxtqF5NmyKqIXGd+8TJFPoWtI
+         iqsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761559475; x=1762164275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
+        b=DNcge6HVctIfQegjsi/l4XjV9f9zL21P3U4gwGwprSxoPxoOq4Hy0GTRtBnEmZ8cIO
+         OBR/aavYIHThzVkdbtwBWp2FgTx0DFKNAg+z7RjnEntRWKty0yNbXRRELKpPSjYn52lI
+         vmLweCY9HpsHTWpdNXpD1PsVaZPqWARbgiO8SObyaCMnCsED6wmkHxc0RyCf6R22mzQb
+         KXwdwNY+pDzkRcIyDYWfStwBsBz7vEJgahzj7BOrWvsf7Sk+SFSfpAWi3rebvVFO9YI7
+         SG//leZGJrM0D3IXDzK57cbPUmG8Ro1NEYPhQg0rv0X6nlUbSJxUlVnK18GPn6bzJqvv
+         0f4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNR3oSL0wz8flNeVLjGRx/6in1anRi9LDubNyluip+K1P4GLuxU8oRPyI4xRMcAi4gOml+xeNZ5aDp/Bs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFUyqqb7g7zJueyzIZ92P3S+uVCFCHYHeHJBk6SFqrnJpYbW5d
+	zw/f6wOwceP4RVy/sH676dCPD1/d4LnKNQFyl7eLoiXDPzn1qcpj5XMsuHhkMY1Mi1GAZvzqy42
+	U5YSgqSL5NTBIx6e4XDAzwCHwdHdrLfU=
+X-Gm-Gg: ASbGnctHcJ6TGwwAdafX9wpu+Sj6jyFmdLo38Gs5nI8q8IQDKyy83sBmgl2b3Py7xNN
+	uIJbfe0DdMV6mOT5ft8CeREplkp/bemN/6YD/SD8HcsGBAcrC3TB0xn/dkoofq/bvD7EvvfyS04
+	J9qksv2seXiVUAoA1bK7yDAlhbNB2kjnGtGbyaZa7r131Z1/CReCzsWVFd2Qr9QLJmmxaBSWa66
+	ahj1yGRIXORuTAJe7MHTiul/ygdg/f54VmgZLGQbaWfMvPwO9j1FvnVd/YQgEp8+70nbTLEseqw
+	tIK1+pl11P+8ZQ==
+X-Google-Smtp-Source: AGHT+IGw9d1pKeseKB3lkBBW02LMj7kEUpU+h4+fmOwbWm1TH6VnLmuaWiTPpQmTwuE7imUFGIVOUC22U7kWNosjmns=
+X-Received: by 2002:a17:902:ec88:b0:293:57e:cd70 with SMTP id
+ d9443c01a7336-293057ecfddmr246648875ad.28.1761559475507; Mon, 27 Oct 2025
+ 03:04:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com> <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Mon, 27 Oct 2025 12:07:00 +0200
+X-Gm-Features: AWmQ_bkbCiTHPHYYWScVXCVLYPxiC042hgQVGHC_daQ-QvhcSia1ZdA6dYYMWm4
+Message-ID: <CAEnQRZAN0Kn=3hnw6dvCDsXXrQc17E87_hRT1R78ueKh+PzKjw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] arm64: dts: imx8ulp: add sim lpav node
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clang, in particular, is not happy about dead code:
+On Fri, Oct 17, 2025 at 2:24=E2=80=AFPM Laurentiu Mihalcea
+<laurentiumihalcea111@gmail.com> wrote:
+>
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+> Add DT node for the SIM LPAV module.
+>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-kernel/sched/fair.c:5233:19: error: unused function 'cfs_rq_throttled' [-Werror,-Wunused-function]
- 5233 | static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
-      |                   ^~~~~~~~~~~~~~~~
-1 error generated.
-
-kernel/sched/fair.c:6736:19: error: unused function 'cfs_rq_throttled' [-Werror,-Wunused-function]
- 6736 | static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
-      |                   ^~~~~~~~~~~~~~~~
-1 error generated.
-
-Remove a leftover from the previous cleanup.
-
-Fixes: fe8d238e646e ("sched/fair: Propagate load for throttled cfs_rq")
-Fixes: eb962f251fbb ("sched/fair: Task based throttle time accounting")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- kernel/sched/fair.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 273e2871b59e..0370f11e5c25 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5230,7 +5230,6 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- }
- 
- static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
--static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
- 
- static void
- requeue_delayed_entity(struct sched_entity *se);
-@@ -6733,11 +6732,6 @@ static void dequeue_throttled_task(struct task_struct *p, int flags) {}
- static bool enqueue_throttled_task(struct task_struct *p) { return false; }
- static void record_throttle_clock(struct cfs_rq *cfs_rq) {}
- 
--static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
--{
--	return 0;
--}
--
- static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
- {
- 	return false;
--- 
-2.50.1
-
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
