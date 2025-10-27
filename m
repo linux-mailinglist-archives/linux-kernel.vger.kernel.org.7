@@ -1,217 +1,88 @@
-Return-Path: <linux-kernel+bounces-870957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBCBC0C14E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3A0C0C166
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:19:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 518AB345AF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:18:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 84DAD346E69
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB65E2E3391;
-	Mon, 27 Oct 2025 07:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2BD2D6E69;
+	Mon, 27 Oct 2025 07:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="loz9ZqSu"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kgL/6KBF"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4922E2EE4
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791DF5C96;
+	Mon, 27 Oct 2025 07:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761549356; cv=none; b=q+AKQkGwD5g7c9X04X6z6TWG7HzSQQCFT789SyDej7AI0NVEEI7ED1anR4MYpIVnvO/gbOwNrv4Du9N+6nKNIpnvcey/cce/+1laC3PlqPNqW8ghd+6sfdAN/hSgwetsvlqCfw0gUKxvyGp0YrioMO8V/19Uva9pQl11hhW6FMU=
+	t=1761549580; cv=none; b=Kyx9+KiXO2O3OcM0WpwMUNk4kL7UvY2r3cAga3FB2JbR53RJrpryHQnzstnWCZNztwF1fZUqE5CxwFaTOA88sUDA99ihhd30HXJ9e/XSVolybK+KM6MLffsXSIgEPNUiQJcEmbWBGlQI4vZMmj21AmgqgAxbyGsKo/8f+S6DEsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761549356; c=relaxed/simple;
-	bh=wunBsqhsP068NiMoELqQshZ2wU0PGypzj8sZSqysckI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZzsdvYO029PHHVaGp2RPRPDvBt+Ks3A0oPQYTUk54J47LEVZhaSTBPiLpOcpBoZwUCKzPaoG5BcZT4maRex8+1WNb4hxISZkc9xzbm9SGZh6dWA7CIfbm2j5qreKCRZdx/CDE4bj2tQlT+TeraDjQWjjZqNutYqH1pD+QiyXzak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=loz9ZqSu; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761549352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z/npw3UtVzzHKnhWtUxEh+GVZ5zLFBAoolGZR5y2DWw=;
-	b=loz9ZqSu9aQa6azazaDz56X0xJQFykTZsgk6bOh47LE53uDB1j1gZ1Xd2Rj4rsYiXjiJVW
-	N0uZT+96MIv236wpBNZjFAfciYFF9y7zIXmaFXTvOuf4PuPJfH+zBN3zSBfYklNmWsViOB
-	Pp6B3QYhcRfxiW/3KMqPCpWSy6JSxQQ=
-From: chenxiaosong.chenxiaosong@linux.dev
-To: sfrench@samba.org,
-	smfrench@gmail.com,
-	linkinjeon@kernel.org,
-	linkinjeon@samba.org,
-	christophe.jaillet@wanadoo.fr
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: [PATCH v4 14/24] smb: move SEARCH_ID_FULL_DIR_INFO to common/smb1pdu.h
-Date: Mon, 27 Oct 2025 15:13:06 +0800
-Message-ID: <20251027071316.3468472-15-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+	s=arc-20240116; t=1761549580; c=relaxed/simple;
+	bh=aaJCDSML3FZ+MH9deasVl4DlO3quoQIcstqOFYS0cL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2yPjsXdmRWdXPTU+JbPUKd897fV2bUxlo0ZvGB80r16//2U2RmeAFig+HqQfT2VzfvVJb6BEY+yQCKxT1r8lyHk5LmEs0+rXxf/X4HpqK/8SIU5OHTqcXPtL3LraBUOBMCoKeM3qgAFuyCm2YgB8g7xb0dufE22+HWzlzK6WLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kgL/6KBF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=obBfXq/4PFU+KpTi0KZjQ7Er/5WIK1rjxPy7aLZfp6M=; b=kgL/6KBFneORiiXMhDoYe++1gC
+	7nqoLH1pDgCk6A0jXdJmkhv01SVEgLAjcrc8RD3r7SqEhdkMtoaBL3tmdafEoGbq78rNv2zgUZJi7
+	f5uu6uirsLGH9Wuvggz4ssqZu2k6H+2SLKegh+FK6g9VQwCLi8kcqqTmhgzr8hHKC5TyEY+DZppXb
+	3se2bHNv8o9neovrxOvv0Cnk86fvWAiAiNQtsHRMyLnJvwOiquuBftROck1ksFKi58yZvOhXG0MUq
+	ogi5Uc73BOeV89nOz1Y8MUh3lOZgUHXywsE3L/jpzaa1T8f67zg9UXGmiTl3PnVzg1hHfY62gdfNB
+	TiTfXdYA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDHVs-0000000DGdW-2xY4;
+	Mon, 27 Oct 2025 07:19:32 +0000
+Date: Mon, 27 Oct 2025 00:19:32 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: Vyacheslav Kovalevsky <slava.kovalevskiy.2014@gmail.com>, clm@fb.com,
+	dsterba@suse.com, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Directory is not persisted after writing to the file within
+ directory if system crashes
+Message-ID: <aP8dBBlWgpGB4OCQ@infradead.org>
+References: <03c5d7ec-5b3d-49d1-95bc-8970a7f82d87@gmail.com>
+ <CAL3q7H5ggWXdptoGH9Bmk-hc2CMBLz-YmC1A8U-hx9q=ZZ0BHw@mail.gmail.com>
+ <d039a3c8-c4f7-487c-a848-2a26ea26f77d@gmail.com>
+ <CAL3q7H5ewZROWz0384L_pLvqWrjNK8mX=-kQb26ZDmpAbBUQ4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL3q7H5ewZROWz0384L_pLvqWrjNK8mX=-kQb26ZDmpAbBUQ4A@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+On Sun, Oct 26, 2025 at 09:04:13AM +0000, Filipe Manana wrote:
+> >
+> > The test itself is quite weird (why would `dir` be gone after seemingly
+> > unrelated operation?), any detail can matter.
+> 
+> "dir" should be persisted as well as "dir/file2", according to the
+> SOMC (Strictly Ordered Metadata Consistency) that Dave Chinner
+> discussed many times in the past in fstests and btrfs mailing lists.
+> 
+> You should also reach the xfs mailing list and mention that
+> "dir/file2" is not persisted.
 
-Rename "struct file_id_full_dir_info" to "SEARCH_ID_FULL_DIR_INFO",
-then move duplicate definitions to common header file.
-
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
----
- fs/smb/client/cifspdu.h    | 17 -----------------
- fs/smb/common/smb1pdu.h    | 18 ++++++++++++++++++
- fs/smb/server/smb2pdu.c    | 14 +++++++-------
- fs/smb/server/smb_common.h | 17 -----------------
- 4 files changed, 25 insertions(+), 41 deletions(-)
-
-diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-index 8aac0e04f9fd..d106c6850807 100644
---- a/fs/smb/client/cifspdu.h
-+++ b/fs/smb/client/cifspdu.h
-@@ -2159,23 +2159,6 @@ typedef struct {
- 	};
- } __attribute__((packed)) FILE_UNIX_INFO; /* level 0x202 */
- 
--typedef struct {
--	__le32 NextEntryOffset;
--	__u32 FileIndex;
--	__le64 CreationTime;
--	__le64 LastAccessTime;
--	__le64 LastWriteTime;
--	__le64 ChangeTime;
--	__le64 EndOfFile;
--	__le64 AllocationSize;
--	__le32 ExtFileAttributes;
--	__le32 FileNameLength;
--	__le32 EaSize; /* EA size */
--	__le32 Reserved;
--	__le64 UniqueId; /* inode num - le since Samba puts ino in low 32 bit*/
--	char FileName[];
--} __attribute__((packed)) SEARCH_ID_FULL_DIR_INFO; /* level 0x105 FF rsp data */
--
- typedef struct {
- 	__u32  ResumeKey;
- 	__le16 CreationDate; /* SMB Date */
-diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
-index 0bc1e2373210..82331a8f70e8 100644
---- a/fs/smb/common/smb1pdu.h
-+++ b/fs/smb/common/smb1pdu.h
-@@ -399,6 +399,24 @@ typedef struct {
- 	char FileName[];
- } __packed FILE_FULL_DIRECTORY_INFO; /* level 0x102 rsp data */
- 
-+/* See MS-SMB 2.2.8.1.2 */
-+typedef struct {
-+	__le32 NextEntryOffset;
-+	__u32 FileIndex;
-+	__le64 CreationTime;
-+	__le64 LastAccessTime;
-+	__le64 LastWriteTime;
-+	__le64 ChangeTime;
-+	__le64 EndOfFile;
-+	__le64 AllocationSize;
-+	__le32 ExtFileAttributes;
-+	__le32 FileNameLength;
-+	__le32 EaSize; /* EA size */
-+	__le32 Reserved;
-+	__le64 UniqueId; /* inode num - le since Samba puts ino in low 32 bit*/
-+	char FileName[];
-+} __packed SEARCH_ID_FULL_DIR_INFO; /* level 0x105 FF rsp data */
-+
- /* See MS-CIFS 2.2.8.1.7 */
- typedef struct {
- 	__le32 NextEntryOffset;
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index b6daac1cd080..47fab72a3588 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -3804,7 +3804,7 @@ static int readdir_info_level_struct_sz(int info_level)
- 	case FILE_NAMES_INFORMATION:
- 		return sizeof(struct file_names_info);
- 	case FILEID_FULL_DIRECTORY_INFORMATION:
--		return sizeof(struct file_id_full_dir_info);
-+		return sizeof(SEARCH_ID_FULL_DIR_INFO);
- 	case FILEID_BOTH_DIRECTORY_INFORMATION:
- 		return sizeof(struct file_id_both_directory_info);
- 	case SMB_FIND_FILE_POSIX_INFO:
-@@ -3859,9 +3859,9 @@ static int dentry_name(struct ksmbd_dir_info *d_info, int info_level)
- 	}
- 	case FILEID_FULL_DIRECTORY_INFORMATION:
- 	{
--		struct file_id_full_dir_info *dinfo;
-+		SEARCH_ID_FULL_DIR_INFO *dinfo;
- 
--		dinfo = (struct file_id_full_dir_info *)d_info->rptr;
-+		dinfo = (SEARCH_ID_FULL_DIR_INFO *)d_info->rptr;
- 		d_info->rptr += le32_to_cpu(dinfo->NextEntryOffset);
- 		d_info->name = dinfo->FileName;
- 		d_info->name_len = le32_to_cpu(dinfo->FileNameLength);
-@@ -4000,9 +4000,9 @@ static int smb2_populate_readdir_entry(struct ksmbd_conn *conn, int info_level,
- 	}
- 	case FILEID_FULL_DIRECTORY_INFORMATION:
- 	{
--		struct file_id_full_dir_info *dinfo;
-+		SEARCH_ID_FULL_DIR_INFO *dinfo;
- 
--		dinfo = (struct file_id_full_dir_info *)kstat;
-+		dinfo = (SEARCH_ID_FULL_DIR_INFO *)kstat;
- 		dinfo->FileNameLength = cpu_to_le32(conv_len);
- 		dinfo->EaSize =
- 			smb2_get_reparse_tag_special_file(ksmbd_kstat->kstat->mode);
-@@ -4250,9 +4250,9 @@ static int reserve_populate_dentry(struct ksmbd_dir_info *d_info,
- 	}
- 	case FILEID_FULL_DIRECTORY_INFORMATION:
- 	{
--		struct file_id_full_dir_info *dinfo;
-+		SEARCH_ID_FULL_DIR_INFO *dinfo;
- 
--		dinfo = (struct file_id_full_dir_info *)d_info->wptr;
-+		dinfo = (SEARCH_ID_FULL_DIR_INFO *)d_info->wptr;
- 		memcpy(dinfo->FileName, d_info->name, d_info->name_len);
- 		dinfo->FileName[d_info->name_len] = 0x00;
- 		dinfo->FileNameLength = cpu_to_le32(d_info->name_len);
-diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-index 649b45695449..6141ca8f7e1c 100644
---- a/fs/smb/server/smb_common.h
-+++ b/fs/smb/server/smb_common.h
-@@ -108,23 +108,6 @@ struct file_id_both_directory_info {
- 	char FileName[];
- } __packed;
- 
--struct file_id_full_dir_info {
--	__le32 NextEntryOffset;
--	__u32 FileIndex;
--	__le64 CreationTime;
--	__le64 LastAccessTime;
--	__le64 LastWriteTime;
--	__le64 ChangeTime;
--	__le64 EndOfFile;
--	__le64 AllocationSize;
--	__le32 ExtFileAttributes;
--	__le32 FileNameLength;
--	__le32 EaSize; /* EA size */
--	__le32 Reserved;
--	__le64 UniqueId; /* inode num - le since Samba puts ino in low 32 bit*/
--	char FileName[];
--} __packed; /* level 0x105 FF rsp data */
--
- struct filesystem_posix_info {
- 	/* For undefined recommended transfer size return -1 in that field */
- 	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
--- 
-2.43.0
+No.  The fsync is on the root directory.  So the only thing that is
+needed to per persisted is transactions touching that.  The transaction
+to created dir is persisted because it is an entry in the root directly.
+creating and writing to file2 has nothing to do with the root directly
+and absolutely should not be effected by an fsync on an unrelated inode.
 
 
