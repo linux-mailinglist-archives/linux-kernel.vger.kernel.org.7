@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-870720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF74C0B867
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:19:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C350C0B873
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE2418A1D0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:20:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5D994EF6C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 00:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2022248B0;
-	Mon, 27 Oct 2025 00:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DFC22A4E1;
+	Mon, 27 Oct 2025 00:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T4PKl5X+"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RPgmt2Zq"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309D4211A14
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ABF224AF7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761524335; cv=none; b=QjyJElQYS2p3jUsS3CrJBw9iTZLSEqf7T+Ks+sFGWd78oBFbzaubm4O1DdwVZonWtSodZlvDxCRvFb+MO4cxwhyHOzxW6SMvJryc6y4ElkloMBKnnMHD5l/MnlMNJpKH3asb6q057fy0HjDGEGwGqefnFxPZZUkYqyoS9zgM8ac=
+	t=1761524338; cv=none; b=pwDeFruPf4pbE7q8gh6ds7Lj1BzvM1jhHPCraV1i9/P/BiCb0a8iNu0tx+Imkp5/KMFmdFyyYviDw/OjkcMogWQ9qJcMdESq2kh1R84bUd8LBAlUNvSbC+BGI14Ul6vj7X4lI+WZ790kL6Wr9VLKEbaXB4Jc2nuv08C0ngyMgLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761524335; c=relaxed/simple;
-	bh=9DoCjxBOtuHLpHgIlbx76kr9AICQ+StOVxBkqP6vrGA=;
+	s=arc-20240116; t=1761524338; c=relaxed/simple;
+	bh=gQC8pzFStzV9HCUhKstI64TzErxvRdTVTp4p2D5OXC0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Zy6NQGLjeo4khq6PphbL0BhIaq+Z1mRnVbTpUtVkfCFLv34xXeOVd8C43q/FMDu3hqKzkAjDd2h8ang/qimbWmPZWMy0GyH6MrZQHW1oXP23R1/GhAOfRAoyK3/og+COV95yahoFlDIdFSwhGtfrec/waWKOFETbpdM9FMSF0rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T4PKl5X+; arc=none smtp.client-ip=91.218.175.183
+	 MIME-Version; b=AJj67nd/gqOZ37rPHLDoRe/IWPTWDAJJLR1oeNrJB6pjkrzAb7BX11hzI2Z/pwTEB2aY9mV4PiUOdvT6nsShnbP2Vp0of/FY5ZZ7fUZOFq0hbI1nkAczXWxkSs6CVFeJESxHxMyuE/mucx7djOqwauhvMQ0IYia2KsL/KWJC1aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RPgmt2Zq; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761524332;
+	t=1761524334;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Qv8GrhWWLvpi+yXjcVXvopwH0zWKk+Fo+xAzYv1qf0M=;
-	b=T4PKl5X+6V424JgZsHbjgohHFQmgP76ww0hRCuAU8l0OHdP80gOU4h5zkGhwT54VMt6IiR
-	g/0xY78vvtuBWUgD/WDWefBPq53HQnlB1K8Xq7XZZgmL5nsY2iJjmGFPmkGGV8PZPjd2t3
-	CQmBS+q7pZDeiog2t+/nDV+DmIglumA=
+	bh=5PrMNLYQkZylc5n1vPcSLoxov+KMpq+EjdZMAgd4fn0=;
+	b=RPgmt2Zq6/tx29vMni0i4vk0rs03J2goYZRIH8kXNfJhbpqasu7y1B0zMn8hKwCXEPeRP2
+	qwDRg3vvxoovXEYMOlt9+n+Z0yig9GffQJYFsm/34VSXyt2CPF9HjxN5bm4nQXrTs1vluh
+	LWujaIofUYT619yAVrtIlDeTgGBqcJw=
 From: Tiwei Bie <tiwei.bie@linux.dev>
 To: richard@nod.at,
 	anton.ivanov@cambridgegreys.com,
@@ -50,11 +50,10 @@ Cc: linux-um@lists.infradead.org,
 	benjamin@sipsolutions.net,
 	arnd@arndb.de,
 	tiwei.btw@antgroup.com,
-	tiwei.bie@linux.dev,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v4 7/8] asm-generic: percpu: Add assembly guard
-Date: Mon, 27 Oct 2025 08:18:14 +0800
-Message-Id: <20251027001815.1666872-8-tiwei.bie@linux.dev>
+	tiwei.bie@linux.dev
+Subject: [PATCH v4 8/8] um: Enable SMP support on x86
+Date: Mon, 27 Oct 2025 08:18:15 +0800
+Message-Id: <20251027001815.1666872-9-tiwei.bie@linux.dev>
 In-Reply-To: <20251027001815.1666872-1-tiwei.bie@linux.dev>
 References: <20251027001815.1666872-1-tiwei.bie@linux.dev>
 Precedence: bulk
@@ -68,44 +67,52 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Tiwei Bie <tiwei.btw@antgroup.com>
 
-Currently, asm/percpu.h is directly or indirectly included by
-some assembly files on x86. Some of them (e.g., checksum_32.S)
-are also used on um. But x86 and um provide different versions
-of asm/percpu.h -- um uses asm-generic/percpu.h directly.
+Implement spinlock support for SMP on UML/x86, leveraging x86's
+spinlock implementation. In addition, to support SMP on CPUs that
+do not support CX8, some additional work is required. However,
+considering that such CPUs are already very outdated, and x86 is
+also removing support for them [1], let's enable SMP support only
+on CPUs that support CX8.
 
-When SMP is enabled, asm-generic/percpu.h will introduce C code
-that cannot be assembled. Since asm-generic/percpu.h currently
-is not designed for use in assembly, and these assembly files
-do not actually need asm/percpu.h on um, let's add the assembly
-guard in asm-generic/percpu.h to fix this issue.
+[1] https://lore.kernel.org/lkml/20250515085708.2510123-1-mingo@kernel.org/
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch@vger.kernel.org
 Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/asm-generic/percpu.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/um/Kconfig        | 3 +++
+ arch/x86/um/asm/spinlock.h | 8 ++++++++
+ 2 files changed, 11 insertions(+)
+ create mode 100644 arch/x86/um/asm/spinlock.h
 
-diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
-index 02aeca21479a..6628670bcb90 100644
---- a/include/asm-generic/percpu.h
-+++ b/include/asm-generic/percpu.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_GENERIC_PERCPU_H_
- #define _ASM_GENERIC_PERCPU_H_
+diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
+index 986045d5e638..c52fb5cb8d21 100644
+--- a/arch/x86/um/Kconfig
++++ b/arch/x86/um/Kconfig
+@@ -9,8 +9,11 @@ endmenu
+ config UML_X86
+ 	def_bool y
+ 	select ARCH_BINFMT_ELF_EXTRA_PHDRS if X86_32
++	select ARCH_USE_QUEUED_RWLOCKS
++	select ARCH_USE_QUEUED_SPINLOCKS
+ 	select DCACHE_WORD_ACCESS
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
++	select UML_SUBARCH_SUPPORTS_SMP if X86_CX8
  
-+#ifndef __ASSEMBLER__
+ config 64BIT
+ 	bool "64-bit kernel" if "$(SUBARCH)" = "x86"
+diff --git a/arch/x86/um/asm/spinlock.h b/arch/x86/um/asm/spinlock.h
+new file mode 100644
+index 000000000000..20fc77514214
+--- /dev/null
++++ b/arch/x86/um/asm/spinlock.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __ASM_UM_SPINLOCK_H
++#define __ASM_UM_SPINLOCK_H
 +
- #include <linux/compiler.h>
- #include <linux/threads.h>
- #include <linux/percpu-defs.h>
-@@ -557,4 +559,5 @@ do {									\
- 	this_cpu_generic_cmpxchg(pcp, oval, nval)
- #endif
- 
-+#endif /* __ASSEMBLER__ */
- #endif /* _ASM_GENERIC_PERCPU_H_ */
++#include <asm/qspinlock.h>
++#include <asm/qrwlock.h>
++
++#endif /* __ASM_UM_SPINLOCK_H */
 -- 
 2.34.1
 
