@@ -1,84 +1,137 @@
-Return-Path: <linux-kernel+bounces-871708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A28C0E218
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:45:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B92DC0E215
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5483719C4E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:40:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BED5C4FC42E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621A81DFCB;
-	Mon, 27 Oct 2025 13:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55C42FBE15;
+	Mon, 27 Oct 2025 13:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7rTHVOu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6JXYwhi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABE522D4DC;
-	Mon, 27 Oct 2025 13:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B0823278D;
+	Mon, 27 Oct 2025 13:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572288; cv=none; b=QABNZmDfKLrSf59wmOImbC/wiDNaMKFRnhITInSaer+5UDR2zcOEluN6VwJyfi4hOHt+y32KVcA3wYru7nTR9jnP4LBRcEZkhtG4blTYc+C6SYiQ7Tw7O6ffsWQpETOU7EXmpcz5HP8NcW0Gd4Ug28lHL/WGCV1EyoTWiYpcVik=
+	t=1761572295; cv=none; b=mb+qaArMYbEj8Ca7lni+i37tM970R2ICIOc2p46BI61WnFL8P5nALIWmufh4uEwq/Yz3Usfr3fZXi6InNtMFFaqIcu96rDisVrrfQIQ0zr89mmJGtzY2iy1beX8TvVO4rInXY0G2OZYShT2eJbwrUZlHMbPIjWCb5W2Vl3m3ZsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572288; c=relaxed/simple;
-	bh=gqvuTK2airj61pCPi99n7PP0OTEYVHFTeCG5nZFFdzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgKraQE3nQAzntcW4Lw6I10YBpg/HiZpLqkQLLzQFYT7uce71ghoDCZ4sC2xGh8gPhoSAYbNGgjlCLDLWLcV0rSY4vWI7v8U0xE9qdEDCFOtdEn/lM2dHogsK0hoKtqn4j7a/fib3UkZ5SNyNivh9shKvr2YvhLOwxv4Ypb+kvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7rTHVOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 099C1C4CEF1;
-	Mon, 27 Oct 2025 13:38:06 +0000 (UTC)
+	s=arc-20240116; t=1761572295; c=relaxed/simple;
+	bh=zSptyYtFfKSNjdrCkurPmb000eL/ldikUBQsQMghc4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l59FYHoiDajOtjo9SHoO5NYGpqmhHlbo5+fT7zaJf+sn+Ci+wy6biikYVYAhPU+NGFuxhUoRD35pWhBt81kQ/+sm5qAvJ3KqJWEhD08mOvb0Dymtl7C/MnR4FXiC49D1z+s1YNYrHQdu5erwyWO7jJYI/wrTivKzXQ2p3yiotqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6JXYwhi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68B2C4CEF1;
+	Mon, 27 Oct 2025 13:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761572287;
-	bh=gqvuTK2airj61pCPi99n7PP0OTEYVHFTeCG5nZFFdzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n7rTHVOu0MVumBdZo9ViIt/dHyGzHfHHi7pdbUP3eF9Ubg5CmW/X3t9S6LGI3OYtB
-	 UZoPhdl+Rj1NpD2KiIAbMnTJCiju0ZtQDG7RSZx2uPhTZ0M0+zfHYTOXTFE691Cufb
-	 mMcsmB21miV4uJmANZCj/Gm0GLo1wz3rTUBQw9HA+DSCA7zZ1N3dLiKKXYBL1f+iww
-	 Yuu3bcc7JGpNmd3+TyrXQuqGdmIgqlKTs/lovY3DiqLlQnY9sqJO+qZcB5bBNDh+ZN
-	 qFKX4DKjEHU4BZosKAnG/SMyoQV9AVb86ozyRx2HfeT3kX9GG6JYt1hq/hlogpm7p2
-	 Ye2JjJC7I1LZw==
-Date: Mon, 27 Oct 2025 08:38:04 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Randolph Lin <randolph@andestech.com>
-Cc: kwilczynski@kernel.org, aou@eecs.berkeley.edu,
-	thippeswamy.havalige@amd.com, jingoohan1@gmail.com,
-	palmer@dabbelt.com, linux-kernel@vger.kernel.org,
-	krzk+dt@kernel.org, randolph.sklin@gmail.com, namcao@linutronix.de,
-	tim609@andestech.com, linux-riscv@lists.infradead.org,
-	alex@ghiti.fr, bhelgaas@google.com, lpieralisi@kernel.org,
-	shradha.t@samsung.com, conor+dt@kernel.org, ben717@andestech.com,
-	devicetree@vger.kernel.org, inochiama@gmail.com,
-	linux-pci@vger.kernel.org, mani@kernel.org,
-	paul.walmsley@sifive.com, pjw@kernel.org
-Subject: Re: [PATCH v9 1/4] dt-bindings: PCI: Add Andes QiLai PCIe support
-Message-ID: <176157228191.240954.997388702686594192.robh@kernel.org>
-References: <20251023120933.2427946-1-randolph@andestech.com>
- <20251023120933.2427946-2-randolph@andestech.com>
+	s=k20201202; t=1761572293;
+	bh=zSptyYtFfKSNjdrCkurPmb000eL/ldikUBQsQMghc4A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u6JXYwhiPTtbRbre+25SUFNxnlONKFtnf6ZepA8Sh0l5GOXAbe9Pby0wh59jARz1i
+	 98eicKGjUyzQwlMq91etT4h1G0myaFcx/g3zjzaBjEW3S7Msm6cZYHRoeigvdUwVNi
+	 0ZXGGBBJeKPUDBxUKuNcTOt8DXnMWCYeNtsZaM61s9V3RaosmVNqiwft/WpBdbqk8F
+	 g5GrgqWqGjQnBSZV9siJE18MbElSApk6vDSAlnYauoNywozCUcRVFdhxCM7L8b29VP
+	 yLYz15SyRMK1zC3kheJ2em7CuvI2Emi+qHHh3t4fzvlGN8wRj+oJIjqH9G8eFgQl7U
+	 ULbvoigDnX/aw==
+Date: Mon, 27 Oct 2025 13:38:06 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: "Gary =?UTF-8?B?Q2h1?=(=?UTF-8?B?5qWa5YWJ5bqG?=)"
+ <chuguangqing@inspur.com>, lars <lars@metafoo.de>, "Michael.Hennerich"
+ <Michael.Hennerich@analog.com>, dlechner <dlechner@baylibre.com>, "nuno.sa"
+ <nuno.sa@analog.com>, andy <andy@kernel.org>, "subhajit.ghosh"
+ <subhajit.ghosh@tweaklogic.com>, "javier.carrasco.cruz"
+ <javier.carrasco.cruz@gmail.com>, linux-iio <linux-iio@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] iio: light: apds9960: convert to use maple tree
+ register cache
+Message-ID: <20251027133806.5e4368bc@jic23-huawei>
+In-Reply-To: <aP8tvj_IPbv65m0T@smile.fi.intel.com>
+References: <abf45488369cbcce6298cc0ea19c0b3a24-10-25intel.com@sslemail.net>
+	<aPs9HdeTZKoqFqdk@smile.fi.intel.com>
+	<68fc4591.1.gk94qBPVZajhk94q@inspur.com>
+	<aP8tvj_IPbv65m0T@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023120933.2427946-2-randolph@andestech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 27 Oct 2025 10:30:54 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+
+> On Sat, Oct 25, 2025 at 11:36:45AM +0800, Gary Chu(=E6=A5=9A=E5=85=89=E5=
+=BA=86) wrote:
+> > >On Fri, Oct 24, 2025 at 03:38:23PM +0800, Chu Guangqing wrote: =20
+> > >> The maple tree register cache is based on a much more modern data st=
+ructure
+> > >> than the rbtree cache and makes optimisation choices which are proba=
+bly
+> > >> more appropriate for modern systems than those made by the rbtree ca=
+che. =20
+>=20
+> ...
+>=20
+> > >>   .reg_defaults =3D apds9960_reg_defaults,
+> > >>   .num_reg_defaults =3D ARRAY_SIZE(apds9960_reg_defaults), =20
+> > >
+> > >^^^^ Be careful with such cases, the cache implementations may behave
+> > >differently. Have you tested this on the actual HW?
+> > > =20
+> > We have conducted tests on some hardware, and performance improvements =
+were observed,
+> >  though tests have not been carried out on all hardware models.
+> > Neither rbtree nor maple tree directly depends on hardware types (such =
+as CPU or peripheral
+> >  models). Instead, they rely on the address distribution characteristic=
+s (discrete/continuous)
+> >  of hardware registers. The optimal cache type is determined by the har=
+dware layout.
+> > Red-black trees excel at individual operations on discrete addresses, w=
+hile Maple Trees are
+> >  proficient in range operations on contiguous addresses. =20
+>=20
+> It's not about the low-level cache implementation, it's about regmap
+> abstraction implementation that might differ from cache to cache
+> implementations. This all in regard how the cold cache is getting filled =
+up.
+> There is a separate discussion (unrelated to the topic of your series) wh=
+ere
+> this was brought up.
+
+I appreciate these things can be hard to track down with lots of threads in=
+ flight
+but any chance of a reference for that? I'd be a little surprised if these =
+uses
+are complicated enough to hit corner cases but would like to know more.
+I've taken a few similar changes in the past thinking there would be no
+practical difference.
+
+Jonathan
 
 
-On Thu, 23 Oct 2025 20:09:30 +0800, Randolph Lin wrote:
-> Add the Andes QiLai PCIe node, which includes 3 Root Complexes.
-> Only one example is required in the DTS bindings YAML file.
-> 
-> Signed-off-by: Randolph Lin <randolph@andestech.com>
-> ---
->  .../bindings/pci/andestech,qilai-pcie.yaml    | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-> 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> That's why I asked how this was tested.
+>=20
+> In any case, up to Jonathan, but I had to rise a potential misbehave, so =
+in my
+> opinion this kind of corner cases needs to be tested on real HW.
+>=20
+> > >>   .max_register =3D APDS9960_REG_GFIFO_DIR(RIGHT),
+> > >> - .cache_type =3D REGCACHE_RBTREE,
+> > >> + .cache_type =3D REGCACHE_MAPLE,
+> > >>  }; =20
+>=20
 
 
