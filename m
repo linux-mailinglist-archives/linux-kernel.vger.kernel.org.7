@@ -1,225 +1,222 @@
-Return-Path: <linux-kernel+bounces-871334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E77CC0CF44
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:27:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13ED1C0CF3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98FA403C16
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:27:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BA8734C770
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DD22F6935;
-	Mon, 27 Oct 2025 10:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5D42F60BC;
+	Mon, 27 Oct 2025 10:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="Fon/lqKC"
-Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nh4+rk0m"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013063.outbound.protection.outlook.com [40.93.201.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E8D2F3C26;
-	Mon, 27 Oct 2025 10:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761560844; cv=none; b=QxrDW+tjShm97ljd99nHEmc5WSxvzEBG4bgSAbnPUhYUCSIJYmK2GX4xDHgPOz0+BTc+vfUZmjqGmeqjrchMSamtE+qVpMSJIkpxi3x7DBFJMcEIQxMCJcrwbIG5+pbz4F+SjXRMUhr8IN/nbrPA1gx8mdZQYjTgY+PdsD27+34=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761560844; c=relaxed/simple;
-	bh=jXAAj67VByP6AXYtptL0mITMT/dGFN5VXSakFK1aluQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AVoC+qPVO5Y40gZVpGzDbeZaILNe3i+oQ+JiKuVfsG5xQ/SlFuqPWVHKqqEO6i6TPTx2l5+eWlUIpXVytDHeb3n84KKmiS/w2PY87L2d8E7hKQI+EPJCBZiqBQRSEa9zfLzbIaS6LVxHT/NZuJaMQ6p08Zsm9GBI9ncvau0CBkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=Fon/lqKC; arc=none smtp.client-ip=67.231.149.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0122333.ppops.net [127.0.0.1])
-	by mx0a-00190b01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59RA1oEW3083451;
-	Mon, 27 Oct 2025 10:27:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=jan2016.eng; bh=vjpGgOHUOzQBJjbmi3ZzYe0ig6bvhvg6P
-	zLW4ciotmE=; b=Fon/lqKCUNmllPTKFr/WJwBjjFND8w0JqGTOH6vAchohzKkQf
-	ZfICq86h8skzCX4V6dO5fu2Io86e5TslrImL9bqHV5c3RMOm6a2WHI95zRDpV10d
-	UD/EvSl0N7fkZBJJELJyHQAyeZMA5B5qXaN86LmdzKpU8EGXrFQZj8QvCLxFW7n2
-	IGAxwKt46/a4Zrb0xne/SHkrl+h4pUY6SnDwXn+Ox7EKVTNA86AMQc7LA1cAG83q
-	i7MX6QfjGzqKmm7UbE6Db/UtY5pheXAntDNBp1NK9RnXMmvNTl0I36jNGi6HqvUz
-	DviL8vhPHxIrkXW3YalcPaLCuknuFi0ImKXIg==
-Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60])
-	by mx0a-00190b01.pphosted.com (PPS) with ESMTPS id 4a0nt8sqmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 10:27:11 +0000 (GMT)
-Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
-	by prod-mail-ppoint5.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 59R73c2B025840;
-	Mon, 27 Oct 2025 03:27:10 -0700
-Received: from prod-mail-relay02.akamai.com ([172.27.118.35])
-	by prod-mail-ppoint5.akamai.com (PPS) with ESMTP id 4a0vh86pyc-1;
-	Mon, 27 Oct 2025 03:27:09 -0700
-Received: from muc-lhvdhd.munich.corp.akamai.com (muc-lhvdhd.munich.corp.akamai.com [172.29.2.201])
-	by prod-mail-relay02.akamai.com (Postfix) with ESMTP id 9162C83;
-	Mon, 27 Oct 2025 10:27:08 +0000 (UTC)
-From: Nick Hudson <nhudson@akamai.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-Cc: Nick Hudson <nhudson@akamai.com>, Max Tottenham <mtottenh@akamai.com>,
-        kvm@vger.kernel.org, virtualization@lists.linux.dev,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] vhost: add a new ioctl VHOST_GET_VRING_WORKER_INFO and use in net.c
-Date: Mon, 27 Oct 2025 10:26:44 +0000
-Message-Id: <20251027102644.622305-1-nhudson@akamai.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47ED29D28B;
+	Mon, 27 Oct 2025 10:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761560834; cv=fail; b=nNfCRnPi/STD1Cpkg+igzyOt11FnCoklHVDnLOE03Pkbg2eC+LUrsj9okbvM0zMdu2U90Pyj3TeXMpGNreSexjTCza5QQBdORReQuF/cHksMjf4MVTQRT/0K4YIA6WGlcdi91wN4gX21iW0WbWVyUobkKvAWkFdmU5VE8mNVKFM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761560834; c=relaxed/simple;
+	bh=1cQ7e+IaH5jEkj4UrAlXWDMmqG+knUCtF5rQ0CMA3c8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PY8Ze9bc3F503TZReMuFD+8lXcQ2+o2VIYEIrLcVsUy+X6YcfufbfPUmfkzOmprwMB3x32oXOWDB8ChxcoRaiyqzmeeWe2idl3EQpmsylbvjEijBeFhvKg0dw0EJE2n6CA0W8haYymXGlmfSVlI0juchon/hfdMFrc49Ou5GQAA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nh4+rk0m; arc=fail smtp.client-ip=40.93.201.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BwK0yoSYhNTcBvp8gdyfuYQwOCV0pBdsklVE1u/7DE6Nqj5J1/I+pbPwUnkgyA50vso1xino6BS5AGHRzCAwloLaZ9yiJ6jmcjuFBG1R36kCxUi/HutneWZuZkRhVufsu/nieABfsB/nWBUTTwDeTPbbyPYEoKYgvnxEpCQsYuwfQojV/2ZLkiCjkGEwxRgL5jmpGbK/clnuqlBKwtH5X+Z1BM/qfE3SaBZS44P9JHhXE9beQ0/ei3g1rxwX6EyWTxFvWvXBDd/28L2lT6AAK2ortf8Fg3LC0LeyekVFIVFG3hgOUenBDoq3Kn6tVwpqrtFJDd88EcngRzSYQ3k3ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pFFxY48s/XZ3f6VHWCeRn9J54fqVLa/izDPG1C2rmsY=;
+ b=fr6cmFu62BvT2py3Xx7YH/Z4bMRHQ5iI5TQtRqTyaetloE6IzgnzeCLxc8Lxt/8ayWLubLP98zf8et4SfdFOBDoa2Sa/fiCWxGlZpcFf7D0kHei1OLWq4ZoIcf2jywJzJo6bY+0iDnURMOv4cngHfpItmtMiuuE7ak/Ly0zj3DOflZkhj4CvScTGmwyqPGPYs6KLG6wCbFNdBdim1tRh3lpB6g9p2RD/HN1lq9/XptBbMqY6zPT1a0AngdCGhs2pcMYnuPJqv+fg8+1tZzT66FvaqwxKF6eru4F1HKO7bSHQhU2LUOF71NCbM+FUsplprIlkc2n4Ln7mEdB5ABiksw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pFFxY48s/XZ3f6VHWCeRn9J54fqVLa/izDPG1C2rmsY=;
+ b=nh4+rk0mXdkkhOMIU+9tTOHGY3a97nVI4g7Z/sbt+3gXzppha7OVpjwfbDHwCAdx80uq/GUa+GGg1jZrfxmyjSmK+iQ9FcUcLzWm4jtmBVQ9QVmC7MsLLyddDSOCW6AsHRv0Sjf6yH5odEN8IFW7lKgIPUDodRFDf2fWa0iQS+E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SA1PR12MB7175.namprd12.prod.outlook.com (2603:10b6:806:2b2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 10:27:09 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 10:27:09 +0000
+Message-ID: <2c91b3ed-258c-46e1-8bf2-50c70d982cf6@amd.com>
+Date: Mon, 27 Oct 2025 11:27:02 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-fence: Fix safe access wrapper to call timeline name
+ method
+To: Tvrtko Ursulin <tursulin@ursulin.net>, Akash Goel <akash.goel@arm.com>,
+ sumit.semwal@linaro.org, gustavo@padovan.org
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, nd@arm.com,
+ stable@vger.kernel.org
+References: <20251021160951.1415603-1-akash.goel@arm.com>
+ <d9c16e9e-8321-41fe-9112-e754445d8bb0@ursulin.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <d9c16e9e-8321-41fe-9112-e754445d8bb0@ursulin.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0146.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:98::7) To SJ0PR12MB5673.namprd12.prod.outlook.com
+ (2603:10b6:a03:42b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- phishscore=0 malwarescore=0 adultscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510270096
-X-Authority-Analysis: v=2.4 cv=QaRrf8bv c=1 sm=1 tr=0 ts=68ff48ff cx=c_pps
- a=NpDlK6FjLPvvy7XAFEyJFw==:117 a=NpDlK6FjLPvvy7XAFEyJFw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=X7Ea-ya5AAAA:8
- a=s2F8ZfxWFg2Xnt8VUUoA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 3_hAfG8Jii9R6Ttd3oyXC2qDXGaXWTnw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA5NyBTYWx0ZWRfX0JYiNUNqObp8
- JSHsznxaXuUnKUXZEPfIh5l+6VdbhfQgEhhbg6uy1bZKkvJsbnTSBGTAKSJNmZLA4Jc+0Y8mEFr
- s3BN1ElBHHIfugkuIJ1VNg2f8XYlWrP1XHSqBD0oEhtv7M64eQR1A+POuA00bIEFhNqZ9MWbpfe
- Sz+KiyUl7g89Bl41ET/JhLkW7E/j+rs8tmsm7sX2rk7WNPgS1RhOHYsm2DuoIxA0hHd35rGgzf6
- iZDfadQ+U8y3tA3ItJ2tELK4tmQkAZaCfWzpilp5+kBhiKEmBAIWXBIP5Xk7Pk0lnKC2qmNj1jT
- tgZgMwgzqyiBerScIUmoG8dyHggPVCj0703xnXza84fpeRpNRmmFe4Muz9jhT45Vc+F2Kok75R+
- b3Iavehd92S2qd/MSPMCfJBbX+kHOg==
-X-Proofpoint-ORIG-GUID: 3_hAfG8Jii9R6Ttd3oyXC2qDXGaXWTnw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 clxscore=1011 phishscore=0
- adultscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510210000 definitions=main-2510270097
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB7175:EE_
+X-MS-Office365-Filtering-Correlation-Id: e442b857-4d2c-4648-7a4f-08de154361e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDBTUWJRaFdYKy8zbEcxcGg1YmdDRG13dWJUaVRFd0pRNWt3T25GR2hLRStM?=
+ =?utf-8?B?S09nODBOcjI3VkU4cDBCYmJPVW82N1dheGprc2xUcHZxWU5VMXJ5cEJncG0v?=
+ =?utf-8?B?enpzdnlhS2ZhWEtCRHJFMlBScWpzVlE2Z3Q0NTM1dS8xcGNGZjFkVGtXak1w?=
+ =?utf-8?B?WnNrWE9JRGpmbElRN3Yrc1BqVlVLZHRyYWNaSnpUL081OFYrTE1aaGVyeGFw?=
+ =?utf-8?B?UlpLVFFUQkhPbWx4dGJzSTRxVnRFbWM4Ym9iY01MS2ZRSFU5byt1YVNieDBj?=
+ =?utf-8?B?akZWM25hT3hHb3pCL04zREFzb0dZRjdkWVdBOG9QNXg4WUhnUkVTTllTZGE2?=
+ =?utf-8?B?UFZDS3RpSUxKMGRxaVpYZVBrUjhQUDhsVGtHVWdOK1RDUjVtckFvTnY5Mm9W?=
+ =?utf-8?B?bk9XLy9xYktzcFdSa3JBaDR2QnVNUlo1T1pMdU5nZUhadFRlM1EzbjBiSnR0?=
+ =?utf-8?B?bHlyRDVWN1hpRkpPNDB5elRCS0x4WXRMSjlTZ0x6ZVQ2cmk3UXp1alFIdStX?=
+ =?utf-8?B?T3lrN09hVXFLWEZVL01rZEpXNU5TWVh3SEJGQUo1My9FNjVSZUxpUFZWZDZT?=
+ =?utf-8?B?akJGc0UrZGRXMnlVbTI2djhvM3BvU29LeURCTkRZWkVEOHJCUVJoQ1MrbS83?=
+ =?utf-8?B?d0xFU0xzSHFYeldvakpoWEdSTFFPSExERjdGbnBRcHh2NzdqUWxYVEZoOFFR?=
+ =?utf-8?B?V1IrQzNEN0ZFK2xGdHpERDdoRGdOUVRJMk9sSTBzV043RkZhUHIwUjBhSTJ6?=
+ =?utf-8?B?QTNac3Y2Mm1qWjVhdXZjK3k4SVRzL1JqZWs3aWliaWRiYVVSNFhQQ1RzeEpY?=
+ =?utf-8?B?L0lLUUw0Tnp4dy80cW5QZk9sS1FlRnk3Q0tYdGpLMllseEZ1cWM3Z0RWNnk4?=
+ =?utf-8?B?VnY1d2lWMGk4NUJGVTQyZlVLTWZKaUw1Ny9mdGN4bFFDSENPQkZOazV0MEU1?=
+ =?utf-8?B?NWlBTklVZkN3MXFsOUdGQjY5UzczbmNpN2FyaVRheHlYTURobU9oOVRSdGFp?=
+ =?utf-8?B?QjU2M09lMVNwdS9pOWdscStVdTJuS20wWnNZNFA3ZE8zdEdGNndhaE0rNEZ0?=
+ =?utf-8?B?UnY3SFErZGozbzE4RTc0Wmc2VWRwZERZaXU1STkrWlZZcmhxRFhRcXRUNlVu?=
+ =?utf-8?B?T0J6SXNVS0dWaUl4aW1HT1pwQzJUSWU4RGdYVTNIZG9aWmtjYXVWVzZRYTBY?=
+ =?utf-8?B?dGVTajd2WmRqU1BRK1drc0VKVWFGdHFUUm5PMmloelowekM1dThQUFFyTlRE?=
+ =?utf-8?B?c1ZQSWhuZ0pIODZSeXBCdHFGSW92U0Y0YXBhREFFMENxVFQxY0JvNXZkZHp3?=
+ =?utf-8?B?ZEN0U1dPZ0tXcGRiaWJPS1dZOUxLTmluaXVLUnBoeFg3NGNlT1UxdStNbTlB?=
+ =?utf-8?B?em8vZ29uZk5xVXNSUHpEOFYwNGdWdDduRXJkL3lzcGpXdmlyb2F1NWlyMExQ?=
+ =?utf-8?B?YTM2ODF1RGFsd21Tam83NDc4NlkwamhGakhqcHlKSnJYN09XekhWTHc1OVZM?=
+ =?utf-8?B?Kyt6Sld3bE9zbE9qMUgyQ2QwVmFwL1ptYXVKNlhrVXdlM1dLTnoreEdOelRF?=
+ =?utf-8?B?VUdvNHoyODNFbFZ5VkRWNFZZWm11R0QyTk9tUHJSNWd3TVRiU29QNWFzK1ZG?=
+ =?utf-8?B?eUVncnN0KzBta2lwcC84Q0tqc2VJRFdvVG8zemRpcTFFWk9MeXFTbzdvajRu?=
+ =?utf-8?B?b0RYc04wKzFMdzlaY1dyRDI5UXdJb3hRdTB1aTI3TytSZmpxS2V5UDhrVC9J?=
+ =?utf-8?B?L3BCa0IzYmo5NkZoM1NVWDgrdm5NdmswTWY2akgzT0x2WGg4MHRSWjNTdEVQ?=
+ =?utf-8?B?VHEvWGlzKzQ0YzN5WG8zS1N6M1lxUmhxYmNuYmJaa2s3U0NlWXBNUjh3Tmtl?=
+ =?utf-8?B?cW9uQThhOW8zdndxS0lmaHo1alRqclgvcVkrUEJPSUNJODdMZ0lNRERqVTVT?=
+ =?utf-8?Q?SsZn4jQiTTna6ucPwVs4UbhGeAl4ZHJk?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UkRxQWwrZnIzcGRjQzNGUzZZd0VmMmx4Tjkrcm1iMUJPaGZIanNTaWFWNU1M?=
+ =?utf-8?B?bVh2R3FpQ0xla3BKSWRNaDNxMjNPUTBlbHpMb2xvU3o4R1loN21jcEFPc1BN?=
+ =?utf-8?B?SEZwakxtQ2NIc0hrNks0VmRGQ3B2aGUxSitTUnp3TTVWN0dMM3lCbXIweDFL?=
+ =?utf-8?B?cVlHN3lPdjcyYzlnemZ6L0RPcnpheEFKSDE2YXZnTllVemVxMnJwQlcrUUtR?=
+ =?utf-8?B?blpwb0g5Uk55c2xUS1BMVktaaDRSeTlpL280OUtmRno2alJ4MzRsWVkwWUQv?=
+ =?utf-8?B?Z040SC92SzdFSE5LOHlQRXZrYm9NR0dNVTlMcjJyd0syT2dwSUtqM2dIMzVX?=
+ =?utf-8?B?VS9nTWY1WjlrejRFeTVBZC8vS3FmMTJOZGhSekc2dE45Y0twSWFvNUpjUU02?=
+ =?utf-8?B?aGVEQ2EyTUZjU20yRTh1WS9vNGFDVUluZmsrMGlEdkltZ0poL3hEb3prajhp?=
+ =?utf-8?B?WmpHYzlOUEY5bU1YenJVT2xHcEJyWks3VUdqeDdHZjZQbXVEQnFTTWFUK245?=
+ =?utf-8?B?Q2dSSGJVaE9UbFZLcWNyVGQ0SnQ5OW5vTXFkYkJ6RDZVWDhtWXRBYVg2eGMr?=
+ =?utf-8?B?R3lmSzFyQ1dNRTAvOHArSldjK2FIemZkUFpZUy9ONkVQemdzeUNLaVNXTkZ5?=
+ =?utf-8?B?c1N2bUdMWTBLVy8rYms1SFZ3Y3BMMlh4NEdoT0pldjJJVm03VUNaY09EZGZw?=
+ =?utf-8?B?ai9LcFRQZy8wY2hUVzQxZFlYZkpDTC83TnVRNk52T0VDejlxWk1vWkR6TWhu?=
+ =?utf-8?B?TEFNUytzMWFialRYUFgySFhlQ2lyOVkyaVB0WldUUFRjNXBBZHQ1Y2FlckRv?=
+ =?utf-8?B?YmUrUlByVU1rTmNiQmlxQzlRWEwrcFI0bnF0QmhONU8xMnRweUpDcS9kWFBI?=
+ =?utf-8?B?TWpaVjZOeWlVRFM0ZlpOdno0NmhLMm9MZlVWMTZJZzdFeTgzRDdJSlVocjNq?=
+ =?utf-8?B?RnZ1TzEzOWxHUnlkbysxQnBkUTVBMi9Jdmgyb3djR2x5cUFtaHAxYU5ydkhN?=
+ =?utf-8?B?M0lLS1VQY3lyN1ppT25rWWl3andhSUZzcE9CRmtOdGJOS1dDa0doV1pTMjJY?=
+ =?utf-8?B?OXkvaGFQWTFxOGdZVEJoTEY3NTQxS1RaRUJEUnBqL0Q4WWgxbDcvNkpRYTN1?=
+ =?utf-8?B?RVhrZHVJdGpGL3BreVgvd2dLQTN1QmF0Sis1REhvLzF1NFBUSWVyTm93RjQv?=
+ =?utf-8?B?RVVLV3V0eUdQQnZlblRZUUVldklyKzVNY09RS2lRZ1FhU1hnZVpPRnRnZXpY?=
+ =?utf-8?B?Wk53cVRGQ0RhOEJUSXVpY2NNU0RUUVo1Qkp2YjhjVVhsNWo1RVg1NW1GV3dv?=
+ =?utf-8?B?M2RadWdqNHp4T2FNaVhzbUZMeVpLMjU2amNyYWNVUzdpYUF4a1RmazYvaStx?=
+ =?utf-8?B?Z2NlUzJHS3d3dGlNQVpibU55SUZYdGoxdUw1UGhwMzY4VWdQMFBkNklHdm0w?=
+ =?utf-8?B?WlczSUJhRXNXOHY4bFlmY3RxOUN5N0JUVjZBaWJ1TFhrMHkrSDlLd2hzN216?=
+ =?utf-8?B?V2JTVHJYR3JYMWNTVTdtREV0cmxaNzNyUkZhV2NPdDBZTEE5aFllOW5rV1Yy?=
+ =?utf-8?B?VHpHSmQ4VHBRNE5HMkc2YjdkQ3diN1hRNzFURnF1RnN5WlBCdEZJUWNIeUt0?=
+ =?utf-8?B?MVR0bGUwZkhJK0IwNWZCL0R6VlhNVnRnYUwwU2lFZXlkVndkWDZDZC9xUG91?=
+ =?utf-8?B?bzN0VjFFQlZISzh5dzdRbno4dDc3dE5BdDBaTG04WmdzemdyVWN1WGxWREh1?=
+ =?utf-8?B?djBIdCt4dkNsUUQxYUQ2K0hIS2NLUkpFVTVBU1FqcHh0OTdWcnhTSElZL0wr?=
+ =?utf-8?B?QUdaV2ZYVDNmNHd4VE9vc0wxODVKeWZ2bGs1NjVLbzViUHp5Y1NkUHJlT3FJ?=
+ =?utf-8?B?RjQyNGdFNW5MV1ZRQzVRUzlBczZ5TlVka0plR0VZc0VDaDFKTWluU1dZQUUr?=
+ =?utf-8?B?ekFBMGpEU1FUL2k1ZlBqN1hhMUNmVWtNWlVjbzFHU1UxWjdzYkZiYm5Zd1BZ?=
+ =?utf-8?B?UFFDaHVBRlV3Zmc4UlZGZHQzbDBlWVhHVDFuRHVQMHBhQXRUTGJMem1ETUNj?=
+ =?utf-8?B?bFcyZGZ6WkV6RVJRMDZpckZEd3UxRjF2OVNqd0RWRk9OM0hmVDZkSzdNMDZj?=
+ =?utf-8?Q?Y4B33MfNbAa5vGg3gGxunivLC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e442b857-4d2c-4648-7a4f-08de154361e0
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5673.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 10:27:09.0880
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Tw7dOrs79tvezWxjDI4BkvW9O0HjNPvsg4+BDbRdPxENaG0X9hJrYpfxCBVlDCED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7175
 
-The vhost_net (and vhost_sock) drivers create worker tasks to handle
-the virtual queues. Provide a new ioctl VHOST_GET_VRING_WORKER_INFO that
-can be used to determine the PID of these tasks so that, for example,
-they can be pinned to specific CPU(s).
+On 10/21/25 20:36, Tvrtko Ursulin wrote:
+> 
+> On 21/10/2025 17:09, Akash Goel wrote:
+>> This commit fixes the wrapper function dma_fence_timeline_name(), that
+>> was added for safe access, to actually call the timeline name method of
+>> dma_fence_ops.
+>>
+>> Cc: <stable@vger.kernel.org> # v6.17+
+>> Signed-off-by: Akash Goel <akash.goel@arm.com>
+> 
+> Fixes: 506aa8b02a8d ("dma-fence: Add safe access helpers and document the rules")
+> 
+> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-Signed-off-by: Nick Hudson <nhudson@akamai.com>
-Reviewed-by: Max Tottenham <mtottenh@akamai.com>
----
- drivers/vhost/net.c              |  5 +++++
- drivers/vhost/vhost.c            | 16 ++++++++++++++++
- include/uapi/linux/vhost.h       |  3 +++
- include/uapi/linux/vhost_types.h | 13 +++++++++++++
- kernel/vhost_task.c              | 12 ++++++++++++
- 5 files changed, 49 insertions(+)
+Good catch, Reviewed-by: Christian König <christian.koenig@amd.com> as well.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 35ded4330431..e86bd5d7d202 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1804,6 +1804,11 @@ static long vhost_net_ioctl(struct file *f, unsigned int ioctl,
- 		return vhost_net_reset_owner(n);
- 	case VHOST_SET_OWNER:
- 		return vhost_net_set_owner(n);
-+	case VHOST_GET_VRING_WORKER_INFO:
-+		mutex_lock(&n->dev.mutex);
-+		r = vhost_worker_ioctl(&n->dev, ioctl, argp);
-+		mutex_unlock(&n->dev.mutex);
-+		return r;
- 	default:
- 		mutex_lock(&n->dev.mutex);
- 		r = vhost_dev_ioctl(&n->dev, ioctl, argp);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 8570fdf2e14a..8b52fd5723c3 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2399,6 +2399,22 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
- 		if (ctx)
- 			eventfd_ctx_put(ctx);
- 		break;
-+	case VHOST_GET_VRING_WORKER_INFO:
-+		worker = rcu_dereference_check(vq->worker,
-+					       lockdep_is_held(&dev->mutex));
-+		if (!worker) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		memset(&ring_worker_info, 0, sizeof(ring_worker_info));
-+		ring_worker_info.index = idx;
-+		ring_worker_info.worker_id = worker->id;
-+		ring_worker_info.worker_pid = task_pid_vnr(vhost_get_task(worker->vtsk));
-+
-+		if (copy_to_user(argp, &ring_worker_info, sizeof(ring_worker_info)))
-+			ret = -EFAULT;
-+		break;
- 	default:
- 		r = -ENOIOCTLCMD;
- 		break;
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index c57674a6aa0d..c32aa8c71952 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -101,6 +101,9 @@
- /* Return the vring worker's ID */
- #define VHOST_GET_VRING_WORKER _IOWR(VHOST_VIRTIO, 0x16,		\
- 				     struct vhost_vring_worker)
-+/* Return the vring worker's ID and PID */
-+#define VHOST_GET_VRING_WORKER_INFO _IOWR(VHOST_VIRTIO, 0x17,	\
-+				     struct vhost_vring_worker_info)
- 
- /* The following ioctls use eventfd file descriptors to signal and poll
-  * for events. */
-diff --git a/include/uapi/linux/vhost_types.h b/include/uapi/linux/vhost_types.h
-index 1c39cc5f5a31..28e00f8ade85 100644
---- a/include/uapi/linux/vhost_types.h
-+++ b/include/uapi/linux/vhost_types.h
-@@ -63,6 +63,19 @@ struct vhost_vring_worker {
- 	unsigned int worker_id;
- };
- 
-+/* Per-virtqueue worker mapping entry */
-+struct vhost_vring_worker_info {
-+	/* vring index */
-+	unsigned int index;
-+	/*
-+	 * The id of the vhost_worker returned from VHOST_NEW_WORKER or
-+	 * allocated as part of vhost_dev_set_owner.
-+	 */
-+	unsigned int worker_id;
-+
-+	__kernel_pid_t worker_pid;  /* PID/TID of worker thread, -1 if none */
-+};
-+
- /* no alignment requirement */
- struct vhost_iotlb_msg {
- 	__u64 iova;
-diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
-index 27107dcc1cbf..aa87a7f0c98a 100644
---- a/kernel/vhost_task.c
-+++ b/kernel/vhost_task.c
-@@ -67,6 +67,18 @@ static int vhost_task_fn(void *data)
- 	do_exit(0);
- }
- 
-+/**
-+ * vhost_get_task - get a pointer to the vhost_task's task_struct
-+ * @vtsk: vhost_task to return the task for
-+ *
-+ * return the vhost_task's task.
-+ */
-+struct task_struct *vhost_get_task(struct vhost_task *vtsk)
-+{
-+	return vtsk->task;
-+}
-+EXPORT_SYMBOL_GPL(vhost_get_task);
-+
- /**
-  * vhost_task_wake - wakeup the vhost_task
-  * @vtsk: vhost_task to wake
--- 
-2.34.1
+Please ping me if you need somebody to push this to drm-misc-fixes.
+
+Thanks,
+Christian.
+
+> 
+> Apologies for the copy and paste snafu.
+> 
+> Regards,
+> 
+> Tvrtko
+> 
+>> ---
+>>   drivers/dma-buf/dma-fence.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
+>> index 3f78c56b58dc..39e6f93dc310 100644
+>> --- a/drivers/dma-buf/dma-fence.c
+>> +++ b/drivers/dma-buf/dma-fence.c
+>> @@ -1141,7 +1141,7 @@ const char __rcu *dma_fence_timeline_name(struct dma_fence *fence)
+>>                "RCU protection is required for safe access to returned string");
+>>         if (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+>> -        return fence->ops->get_driver_name(fence);
+>> +        return fence->ops->get_timeline_name(fence);
+>>       else
+>>           return "signaled-timeline";
+>>   }
+> 
 
 
