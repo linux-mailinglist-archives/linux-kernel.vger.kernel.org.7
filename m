@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-871719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920C4C0E260
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D41C0E272
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 895D94FA66C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:43:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A28A4F63EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5590723E34C;
-	Mon, 27 Oct 2025 13:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C04299ABF;
+	Mon, 27 Oct 2025 13:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmdmKTKA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cipE4dE9"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FD913AD26;
-	Mon, 27 Oct 2025 13:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D029B1F19A;
+	Mon, 27 Oct 2025 13:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572582; cv=none; b=c1r/bzYx40By0vatMpwWX3fVA5WR2fhKgzNNyyNMmC0qtfHExNednfRZp0u/k20m4aDvgTomMZzsje/JaszpxjJUJTWiDCbcqxgQoXjwdyy83CD7KjmjZVF52dwVABvhreSZiLiJBWG7IrNSmjI1Hx2UHu0ms25Eur6tobXyibA=
+	t=1761572635; cv=none; b=dWlLRPmMh4heFQT4HhqYsUn/+7v+K1R7xL02SMllwQkdACtcqZiHPllNrKuIqniv0F7BpXNyzYn46HvoAgXPt5FywHgV0/itlMQWOBrQbe5NIHjAzJ7yuiYVmxAuA3FFPcJB9GouAXMPXcnnlcoN7jZktqDhLN22MNAmPMPs1Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572582; c=relaxed/simple;
-	bh=rcHJcRZKbFz7WhScklCcAlWwdW0d+3OS+btBHZX02T4=;
+	s=arc-20240116; t=1761572635; c=relaxed/simple;
+	bh=Cm+yFJViixHd9wAfOWHpljKCynuqaQNI4yrc1Ij9MJs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=icgVeG2xJ/aQakKxAFj365ZMopBg8pdxJH1LzMPaTAsz6UShk+Wd+4KzVOWikUdJ+MYzhfOaEXXfgVDtQBUuY9WBSb7R3JxJf2pA7ePUDcCWWzIQYfXz4t7CtSiM2vYrCom95mcMs5rsP0KYrg3Ca8nJWfTS7jXVMsFsPSyS0jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmdmKTKA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85E6C4CEF1;
-	Mon, 27 Oct 2025 13:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761572581;
-	bh=rcHJcRZKbFz7WhScklCcAlWwdW0d+3OS+btBHZX02T4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mmdmKTKA2FV+TFYMId/4vvMV39KNtPS/Pl67f+KUCQg4Hz2DJOvXo1yXlhfRYDD39
-	 HCxli1V5ug0wBVqnEeOvb5AK4W8eBRZVh+d60XeDRSLH5/hpOY8L+wEfpk1iSCFJzC
-	 n9BYMsix4EZvdTuQxLPmOnNucp4HqsLCD+7XMqlmcop2tl4TRfiU/kX7Bam5Wt6WjP
-	 VkJ4bz7H2f6nK+OzS104ZsG/AxzB29EjqTNc00xN4ACVQNmLKnpAcOXrfNNAs/dLk/
-	 Rdoo1BOmBiYJLb8U7yBfEQhPF9Y/auayrA1DBNf0zH4daF/ZsQf0NisXdrIPSi3/PN
-	 dV0ddZMZu/m1w==
-Message-ID: <176b8cd1-8c70-4fb8-80c3-69a281dc1d57@kernel.org>
-Date: Mon, 27 Oct 2025 14:42:56 +0100
+	 In-Reply-To:Content-Type; b=IM3QR9S4qQFNwXfWiDQe1y47Z5EtKvEt98WNMbGEacepVVRZsodIoIRFFV8UoZ6zXCR0n/b4DaEFKYCQ3+f9uJOixMXUoivWSa0qwsCvOnELXMar3yqVAdHA06XVTDAhn+eyncU2S3ccOeyY3UhuzaBFpSW2987V+/UMD1CgQhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cipE4dE9; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761572602; x=1762177402; i=markus.elfring@web.de;
+	bh=Cm+yFJViixHd9wAfOWHpljKCynuqaQNI4yrc1Ij9MJs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=cipE4dE9lp0DBJia6gUISDsEB04OYVGEa5otG+fan10nNQs4j+6wazl3s6s1D/st
+	 rikGkoqyfff5Hlca+jL2i6UBcgFv8ltUJoc1lw//9ufURyUjPCY2nmNPeSwFUPzc4
+	 1oPkWYKiahYhZmr0MSqhs9IL5WqbXlvQKqfBZw6prQ1TacCgnYEr8qqnr8YhWuU2z
+	 f3kCUQxk3DDQEhjnqpyXNXDZqm7Be0lT3xM4C0NNw+2RvwyHXaUQ9d4fg6n8azkSU
+	 dggVpo/ccZ5/J6PQlFehsvVZlj8s5z0NZ7FxX50f9g4v+ariE3oYFzFrR3HdqKth5
+	 WIdgon+jBxwEPW5fow==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.179]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCA5-1uHPGD1rrn-017HEI; Mon, 27
+ Oct 2025 14:43:22 +0100
+Message-ID: <f36a77b1-79ce-4bd4-ba4a-b9260bae7f11@web.de>
+Date: Mon, 27 Oct 2025 14:43:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,125 +57,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, horatiu.vultur@microchip.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- daniel.machon@microchip.com, luka.perkov@sartura.hr
-References: <20251024192532.637563-1-robert.marko@sartura.hr>
- <f3bd99c8-eb70-40d3-9b43-fba56546f591@kernel.org>
- <CA+HBbNGZ3FwrGCtHX=mc8LQR9DCU84jqfhjFRGVDCJWtt+gdkA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+HBbNGZ3FwrGCtHX=mc8LQR9DCU84jqfhjFRGVDCJWtt+gdkA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] PCI: j721e: Use inline reset GPIO assignment and
+ drop local variable
+To: Anand Moon <linux.amoon@gmail.com>, linux-omap@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20251027090310.38999-1-linux.amoon@gmail.com>
+ <20251027090310.38999-3-linux.amoon@gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251027090310.38999-3-linux.amoon@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ZHLWrosy4s6wSgyqLDZKbw8qQKJD6M2dAE5JLRR5iJ/Na8Z77kG
+ 4bhabrJwSZPChYihoMrsVUz+/YYCF0z6mc47rOtOyi8XqlK48V8kzmKvTr+5VjMTDYzWcBj
+ zPfttAQOuUxJSL65qqzDsoDRz0NqiclgG/jV/CNVyH8AObQyyxSJhA8lJ5MRpKnRshkKxyV
+ L2hzNqtwR3zDZlD1kVJ2g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:W0X/4SKv7C8=;Fw08P2Mv7mXt3Uh27hzOYtul2VK
+ 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
+ ibXvpjLa6e83AxBdCfHtHpazUY=
 
-On 27/10/2025 13:23, Robert Marko wrote:
-> On Sun, Oct 26, 2025 at 11:10 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 24/10/2025 21:24, Robert Marko wrote:
->>> LAN969x series also has the same HW block, its just 16KB instead of 8KB
->>> like on LAN966x series.
->>>
->>> So, document compatibles for the LAN969x series.
->>>
->>> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
->>> ---
->>>  .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml  | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
->>> index f97c6beb4766..f8c68cf22c1c 100644
->>> --- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
->>> +++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
->>> @@ -23,8 +23,15 @@ properties:
->>>        - items:
->>>            - const: microchip,lan9668-otpc
->>>            - const: microchip,lan9662-otpc
->>> +          - const: microchip,lan9691-otpc
->>> +          - const: microchip,lan9692-otpc
->>> +          - const: microchip,lan9693-otpc
->>> +          - const: microchip,lan9694-otpc
->>> +          - const: microchip,lan9696-otpc
->>> +          - const: microchip,lan9698-otpc
->>
->> Why are you changing lan9668? Nothing on this is explained in commit
->> msg. Also, list of more than 3 items is not really useful.
-> 
-> I am not chaning lan9668 but rather lan9698.
+> The result of devm_gpiod_get_optional() is now assigned directly
+> assigned to pcie->reset_gpio. This removes a superfluous local gpiod
+> variable, improving code readability and compactness. The functionality
+> remains unchanged, but the code is now more streamlined
 
+Would a corresponding imperative wording become helpful for an improved change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.18-rc3#n94
 
-I clearly see lan9668 being affected here.
-
-
-> I agree that a list of all possible SoC models is not ideal but I was
-> just following the current
-> style in the binding.
-> 
-> As far as I know, the whole LAN969x series has identical OTP so just
-> using a single
-> microchip,lan9691-otpc compatible is enough.
-> 
->>
->>>        - enum:
->>>            - microchip,lan9662-otpc
->>> +          - microchip,lan9691-otpc
->>
->> Why is it listed twice? First you say lan9662 is compatible with
->> lan9691, now you say it is not.
-> 
-> They differ in OTP size, LAN966x series has 8KB while LAN969x series
-> has 16KB of OTP space.
-
-This does not explain how they can be compatible and not compatible the
-same time. It's not Shroedinger's cat.
-
-
-Best regards,
-Krzysztof
+Regards,
+Markus
 
