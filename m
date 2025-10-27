@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-872023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB816C0F243
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:03:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3E6C0EF4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79204465268
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B3CA188B2BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704D83128A1;
-	Mon, 27 Oct 2025 15:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA2130ACF7;
+	Mon, 27 Oct 2025 15:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="X/Vmirg8"
-Received: from smtp115.iad3a.emailsrvr.com (smtp115.iad3a.emailsrvr.com [173.203.187.115])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dzvEqUJ1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA0E31282A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7A430B511
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580009; cv=none; b=hcUCDL8Fvmwt0fc8ObvYgxLo5AcKJzxntEQm0arVqDxCWfhJaI98zGCn4HQXaU9dTZ3yk/W2BLCfEeeIpeFt2BaywFRBDCbhJ50QlLx7BjqNTR2z0ig/2Fy9h8obSeznDcL7cb2yqvJu6ux71jMlah1PSw7f3/6QbSl6wctFoig=
+	t=1761578784; cv=none; b=K89WDnO3cKNRO3hZojSpwK4/lK/qdDdNz9DfLtfzZS8XNPZsbBM5wKpP03SGXLc8jH0PDSjLAgLyzBkBFqmJP/KHIVqJTbDUmyxuXLNvFlqxHKwPQcAg3dNNw42tPXej4xGwQ3z/9POL2Sk0SVW7SshKtexPfefRtWDR/kdCFNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580009; c=relaxed/simple;
-	bh=wT8QQC9kkxlb+EzqUvWMeWLHuQDPUieQqNBrMIRatXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rm2miEYUNofKA0nYvISVcDhMpSrGC6bgz+uQc2MTqIeZrqy1l480EfnIE6cpww4Pxi83BMEu4aC1gFn1J5agdZYTSwg9wGZlc7nJBV9nXVTN3W2InmKSqU9BdHj4wAKHFS07UT6jCS/4q2F96R3MI9xZwytZ/ulQuC/mMXywSSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=X/Vmirg8; arc=none smtp.client-ip=173.203.187.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1761579482;
-	bh=wT8QQC9kkxlb+EzqUvWMeWLHuQDPUieQqNBrMIRatXQ=;
-	h=From:To:Subject:Date:From;
-	b=X/Vmirg8srKlv7wC37tXcTQDwZBPcu14HvFJKrlWXWtI2ZFRWavPYy1rpwLHKDUIA
-	 274uNDqD8y2xoilC36jpnWK1McNkLtTBUrNGo0cBmzJhhX2nftgarLJs8dPZsIUKxw
-	 uzI1dpV6/5UsAyoJf981e+5pzc3FLu7pEJhDCSrQ=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp23.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 923812538C;
-	Mon, 27 Oct 2025 11:38:01 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>
-Subject: [PATCH 2/2] comedi: comedi_bond: Check for loops when bonding devices
-Date: Mon, 27 Oct 2025 15:25:03 +0000
-Message-ID: <20251027153748.4569-3-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251027153748.4569-1-abbotti@mev.co.uk>
-References: <20251027153748.4569-1-abbotti@mev.co.uk>
+	s=arc-20240116; t=1761578784; c=relaxed/simple;
+	bh=EMBraBs8daNiJCKlZz99Kc9Uwh/7oGCL3rnwj6gVCVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lM2p7ixhtOExoVb0qlPkv+HodyPXIwhZhSJOz4N3329bJwyxf9XNAG8g3xk9Y8CTYToJuPfFYyhGtW0nKBEQW/Fdw3EbeRxRD1uXSDBVwGi6lM9ogbu3j7Bal3zYm5YrsP8y9a17wTcIAv0FqXfbJ10f0PI3TH9cL1ObPm1mDsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dzvEqUJ1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761578782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7wUoSKh4ptdU13ldJNqwZ2zHLjAmqFPPlpDyTGSZSyQ=;
+	b=dzvEqUJ179AA9aLCfusiIgtqwLR6+UHvHGmx6fsuDLKcQQpohzlwqsZ4W+tC4SU7MVNIzk
+	P9V+vo68Pg5HSTU3c1uDTTLbH950ii6ziGMRLSs4E8fxVYK+lvWo1wfRz82HBoiR2W3M4Z
+	2Iedv6DD8KdI1ncYTe4aCyDrwuacmZo=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-568-ltr0XCBAPgu4eDlxM3msLw-1; Mon, 27 Oct 2025 11:26:20 -0400
+X-MC-Unique: ltr0XCBAPgu4eDlxM3msLw-1
+X-Mimecast-MFC-AGG-ID: ltr0XCBAPgu4eDlxM3msLw_1761578779
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b3cbee9769fso687720266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:26:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761578779; x=1762183579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7wUoSKh4ptdU13ldJNqwZ2zHLjAmqFPPlpDyTGSZSyQ=;
+        b=uY/G3Nr3P9CHjH54VzeXO4zOR68539eJAra2vv2dNWtRcmG6QzgMertznTLj19qrKZ
+         G2nRBWYheIZmVg3SCA9T4WfODN5cD56koG8UKbG6vJHsYSHWADeOEFm1pMZSIZQ/Gx8h
+         U0jEbohCQbds7HUJ6+WbSwaNW83zwnc077j3kaNYzyf/vJ2MvDaYxD+O+ZdFBWBTs9bg
+         5pG69N+mUYVN4GklP8ojgOf5FA0wbHC1C9RoRhDksuDml9vvpmx+pu7p9kXLwSTfXb2x
+         +bMstALQV48SMFcmgP0rA+OaGv18G6VS4ipxOnPF+FpoeaIBeuIP5KHICsBufmOiMgi/
+         j8bA==
+X-Gm-Message-State: AOJu0Yz4UuQleuglxkt4zI2jVItzHFgSIsbKQ5cRZip9U2AvjNN5oQyK
+	Jj4GEFZkLxC24/u8k83ffCHtnojLTkmd3sIpL+Kw34gLqMitIc/8jdpkH2SaQIohHOC1atauM0d
+	qi5BawKHjpQ9wooDzt1SDbNZKpKdx7PE8MHMlG1wDHoOmxXWHjZWBXtu5o1Gbr49wZeSYcR8gpn
+	DFf1BIWsv65BphoBXoW9ZmpMu35Vo+pbxDG2qtCAue
+X-Gm-Gg: ASbGnctJ5nvjIug/IbbT+Is2n7HNtGpTa5tvsob72IhKnTdTqxpMsxTgSwIKjhJHlek
+	CTpJ+hrorwXBFxzhUQ9Cuz5R91bhTPR5Iq/NLSK1vdy8cDDWAXGOz08mvtNgpkBdHsSGM/AJScp
+	41yQeU49WyL8Tpu784A6cA7iY+aGlyEA/cxpqn7QqONyBdyYJ0CQOePFYFsMTffgFdc0nCfiMJj
+	lF+SqcVcAMdrg==
+X-Received: by 2002:a17:907:3da3:b0:b04:2533:e8dd with SMTP id a640c23a62f3a-b6dba610ff5mr26356966b.60.1761578779297;
+        Mon, 27 Oct 2025 08:26:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLo1ZwaZIFeuJXVwFzBBQ1SpO66mEAfnYV9CYSHn1od6IOfi/WXaTASbeK7sdUdigXxhHX38jLLYZ+j/v7l7I=
+X-Received: by 2002:a17:907:3da3:b0:b04:2533:e8dd with SMTP id
+ a640c23a62f3a-b6dba610ff5mr26353866b.60.1761578778781; Mon, 27 Oct 2025
+ 08:26:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 91387a8e-76e7-4b89-824f-f1251498570e-3-1
+References: <20251027144819.1034041-1-tglozar@redhat.com> <20251027144819.1034041-5-tglozar@redhat.com>
+In-Reply-To: <20251027144819.1034041-5-tglozar@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Mon, 27 Oct 2025 16:26:08 +0100
+X-Gm-Features: AWmQ_blAhCDUkFOO5Ihq_UEhuUW_4WgK_7PG_2rl87mzwI4N3JTIUNzoUYRpVGo
+Message-ID: <CAP4=nvQOk_3_YqTFrLfJVPf5xU+SB2X5AUyUu3T8-GPkTAQbRA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] rtla/tests: Test BPF action program
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, 
+	Luis Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>, 
+	Crystal Wood <crwood@redhat.com>, Wander Lairson Costa <wander@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The "comedi_bond" driver allows a composite COMEDI device to be built up
-from the subdevices of other COMEDI devices, although it currently only
-supports digital I/O subdevices.  Although it checks that it is not
-trying to bind to itself, it is possible to end up with a cycle of
-"comedi_bond" devices bound to each other.  For example:
+po 27. 10. 2025 v 15:48 odes=C3=ADlatel Tomas Glozar <tglozar@redhat.com> n=
+apsal:
+>
+> Add a test that implements a BPF program writing to a test map, which
+> is attached to RTLA via --bpf-action to be executed on theshold
+> overflow.
+>
+> A combination of --on-threshold shell with bpftool (which is always
+> present if BPF support is enabled) is used to check whether the BPF
+> program has executed successfully.
+>
+> Suggested-by: Crystal Wood <crwood@redhat.com>
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/Makefile         | 10 ++++++++--
+>  tools/tracing/rtla/tests/timerlat.t | 15 +++++++++++++++
+>  2 files changed, 23 insertions(+), 2 deletions(-)
+>
 
-1. Configure /dev/comedi0 to use some COMEDI hardware device with
-   digital I/O subdevices, but not a "comedi_bond" device.
-2. Configure /dev/comedi1 as a "comedi_bond" device bound to
-   /dev/comedi0.
-3. Unconfigure /dev/comedi0 and reconfigure it as a "comedi_bond" device
-   bound to /dev/comedi1.
+Oops, I missed the actual file with the test!
 
-Now we have /dev/comedi0 and /dev/comedi1 bound in a cycle.  When an
-operation is performed on the digital I/O subdevice of /dev/comedi0 for
-example, it will try and perform the operation on /dev/comedi1, which
-will try and perform the operation on /dev/comedi0.  The task will end
-up deadlocked trying to lock /dev/comedi0's mutex which it has already
-locked.
+I'll send a v3, sorry for the noise.
 
-I discovered that possibility while investigating fix sysbot crash
-https://syzkaller.appspot.com/bug?extid=4a6138c17a47937dcea1 ("possible
-deadlock in comedi_do_insn"), but I think that report may be a false
-positive.
-
-To avoid that, replace the calls to `comedi_open()` and `comedi_close()`
-in "kcomedilib" with calls to `comedi_open_from()` and
-`comedi_close_from()`.  These take an extra parameter that indicates the
-COMEDI minor device number from which the open or close is being
-performed.  `comedi_open_from()` will refuse to open the device if doing
-so would result in a cycle.  The cycle detection depends on the extra
-parameter having the correct value for this device and also for existing
-devices in the chain.
-
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
- drivers/comedi/drivers/comedi_bond.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/comedi/drivers/comedi_bond.c b/drivers/comedi/drivers/comedi_bond.c
-index 78c39fa84177..30650fa36fff 100644
---- a/drivers/comedi/drivers/comedi_bond.c
-+++ b/drivers/comedi/drivers/comedi_bond.c
-@@ -205,7 +205,7 @@ static int do_dev_config(struct comedi_device *dev, struct comedi_devconfig *it)
- 		snprintf(file, sizeof(file), "/dev/comedi%d", minor);
- 		file[sizeof(file) - 1] = 0;
- 
--		d = comedi_open(file);
-+		d = comedi_open_from(file, dev->minor);
- 
- 		if (!d) {
- 			dev_err(dev->class_dev,
-@@ -326,7 +326,7 @@ static void bonding_detach(struct comedi_device *dev)
- 			if (!bdev)
- 				continue;
- 			if (!test_and_set_bit(bdev->minor, devs_closed))
--				comedi_close(bdev->dev);
-+				comedi_close_from(bdev->dev, dev->minor);
- 			kfree(bdev);
- 		}
- 		kfree(devpriv->devs);
--- 
-2.51.0
+Tomas
 
 
