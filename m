@@ -1,156 +1,96 @@
-Return-Path: <linux-kernel+bounces-871289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D76C0CD6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF25C0CED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66D344F3944
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CDE404F20
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852D2FD7BE;
-	Mon, 27 Oct 2025 09:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A372F3C1A;
+	Mon, 27 Oct 2025 10:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="LSSge2FT";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="RdN1USwS"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="F1KwVCjL"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E9E2FCBF3;
-	Mon, 27 Oct 2025 09:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4D2134BD;
+	Mon, 27 Oct 2025 10:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559042; cv=none; b=DpI7ZVsMDpeOLDPld9i4CtEVuWQtQ5BvNTAbN7OcKr+d4ySG87pWl1G2dR/YGck8S7MX8HPR0YiIikRohPB6BoHfhUzV4wRV1Cp82b8zp9XW0WQZuPYcunpyvH1O+inPM1k5KDOktvxqlY+el14aYyaWFfz+q7fIcejohCtfKDI=
+	t=1761560405; cv=none; b=EQsMIBhkTIWaKYb4nT2Dl8r+JF52jLkoIGxr/9eHixYtMdbms9HxvTTq+dPY0WRbK7C4WMprzzoq6EyBv9bOFDY1ndXliZiUdfvIFsM7vARbofEiUC+KjEoIG6o2gzc5Ghk+dv/se9EeGs8a8e+BjjXZ4JtDEHOyoH/dlE2kkvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559042; c=relaxed/simple;
-	bh=thirantOH4kH3f0r2QU+U/UTNUm7Zfvr0Y+urH7YorI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bf2qw02qAin8FpbS6hFFbqbPTrvva6ohaEl9PBB0QtQzGKSceZxwq13Lon9i27IN2VJgiaXb3CGelP7vE+vrk1+kVBAEpDskGAPyTnehVqKj0voCimOnyb10GqfT7uvwMgAqVQJN8M8aiR/T1SBMLUDOT3QxhU5kbn9WhQUJ6og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=LSSge2FT; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=RdN1USwS; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1761559028; bh=thirantOH4kH3f0r2QU+U/UTNUm7Zfvr0Y+urH7YorI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LSSge2FTR6D3qKRjJ42E13VxBPQKSOpHvoA6MooKqxpc9rN2bpRis+EqbJsuKkkIv
-	 9zFH+yK4V3WFUphrnp/VTs9J9sdyGd3LKWAH6dhwVR3WB/yyG05vsCupYVUNK+ryrR
-	 vJsq25+RrpYP1YB2YjffZscbOox7bmmhkjHpa5/hfXYp4VkkQn1e1NnGaEnlGJoeDQ
-	 4CpCX4YhV0k4LnUWtGHZCOWXtiy9hVvhALxvlaLa9AhKSkhXJExQvXUjfGpAY7xMJk
-	 UGA67PKFTzk/LmRowxyivmVpO2xjcRFQWY+n/ngdOq5VjOZosnbqv+B1Gu8we4o8eo
-	 7wCz1Q9juQkDQ==
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id 9D9D9FB03;
-	Mon, 27 Oct 2025 10:57:08 +0100 (CET)
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id xOcFvBNfwfNH; Mon, 27 Oct 2025 10:57:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1761559027; bh=thirantOH4kH3f0r2QU+U/UTNUm7Zfvr0Y+urH7YorI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RdN1USwSr30UpaEyXrknx1J/RlMsNcJW1D+1SgQDqvblndSztBpFLTKWwqGDVYfP+
-	 6gGRNsWD0+asBilsu/M4X7I4BAAcWHPDKebpmcn00ZniJ5AQQq5MfSeikbMe5wSfTP
-	 bxulgTShhIRWA/7A50RBUnXU68pmRzaJbwHsKhw6ZUfkburhzwd2M5zzOBPfYOdg0f
-	 e2fQMnpqgzaKyYO7VABXRkKEbGc3H8W0fs5rPdLeLsNH13oatacn6bh/UIfOrOJjHy
-	 DlAofM7w6pCwgcFaKCONz4UHRxVKqbiRRN+R1Xum1hR6MwNtY2YeipAMUQMPG2dwAk
-	 UY2IbbSFcXSkQ==
-Date: Mon, 27 Oct 2025 10:57:05 +0100
-From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To: david@ixit.cz
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Casey Connolly <casey.connolly@linaro.org>,
-	linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
-	Gergo Koteles <soyer@irl.hu>, Casey Connolly <casey@connolly.tech>
-Subject: Re: [PATCH v7 0/3] Add support for sound profile switching and
- leverage for OnePlus slider
-Message-ID: <aP9B8fPs7y2-dGJi@quark2.heme.sigxcpu.org>
-References: <20251014-op6-tri-state-v7-0-938a6367197b@ixit.cz>
+	s=arc-20240116; t=1761560405; c=relaxed/simple;
+	bh=DOWQ/qcWBC+vO1ciUHEKlchgMHh0M/GSCWHK15XJGWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPErSKpAInDkiTgSba32sZuzrhQRdJz2P6An0t94QD5L0xW+ox9em1It1YdILFfseNGAfo5lUvN3IC3eQ4OiXkmSpQppO+qemUoJkWFMkrnNLbMK08Ajjr030dkfrvisOzBJD4dF6al+ukJukXfIHSWY6yyBmvySjCHIPa0QvoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=F1KwVCjL; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from Nerpa.home (2.general.phlin.uk.vpn [10.172.194.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 4E96040B76;
+	Mon, 27 Oct 2025 09:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1761559044;
+	bh=A3Gnxstn5KeGBqzT49890mWMte1P0ogRO19oSQNc3Rk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=F1KwVCjL6yqOBpLZfGWjrBFwZzC8Fr900IBzwRp0nRhaykzvo70DHRL9GYaDGfsMH
+	 0Niif+D3WWH9aI39Egw3OyRS7+0u+cH3MLuqRuNP8E784YHBtHwilhvWmghRaptTPi
+	 Ff7PHJ0y3rfRRzqLXUpGRhhz98KMT5pgmoAVw/WYeBdQ4DXH2vxoJqMI1BW1SuvLjg
+	 YqIb+nLMLe/Z7Lg3ImSiv+kqvp5dS1sH3Oope/MPi/Jip/eAfAz/5CJ5aU/zfN0J0w
+	 Qn+6bNbk+h5RxT6CFKF5NWlFgd5HZSUZAKNQLa/6oCfPk9q0wHZjO5nwvb2rhc3jIP
+	 5oyUI29Lfhe6tIb/+Ep8eVfVvMrE82RZHDsTUTMKc+E7/HekZnzU6Xfx5JeEAJWrR1
+	 4FEIMqwCPAlJP428aU3HibCRikvSYe2Mj6gpt/v1+KismdfuhIvmevIQX/osg6ma5H
+	 HEyZDd3MtOjKgtaZXpIxofwm/ALXM/RBvEWqceH853PXl9A+Dtzo50xUhUqiF1RWlk
+	 z4kXeXSf0b2c6U7LpMJpOuJhYMwY78p7uPh2nk0uiB3spSenb3DY5g1Pz7o4GiiCpO
+	 OM+Ks8t8iAo6MQpfCbHrtJp3Dg+iWsT4HexGZhgAyDboZtLs5O0lTA++ewNHDudAbg
+	 dtSADPZIv2AZSP+cA4baVtys=
+From: Po-Hsu Lin <po-hsu.lin@canonical.com>
+To: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: po-hsu.lin@canonical.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org,
+	edoardo.canepa@canonical.com
+Subject: [PATCH 0/1] selftests: net: use BASH for bareudp testing
+Date: Mon, 27 Oct 2025 17:57:09 +0800
+Message-ID: <20251027095710.2036108-1-po-hsu.lin@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014-op6-tri-state-v7-0-938a6367197b@ixit.cz>
 
-Hi,
-On Tue, Oct 14, 2025 at 11:20:32AM +0200, David Heidelberg via B4 Relay wrote:
-> This series add initial support for OnePlus 6 and 6T, but other OnePlus
-> phones contains same mechanism to switch sound profiles.
-> 
-> This code was tested for two years within the downstream Snapdragon 845 tree.
-> It is now perfectly integrated with feedbackd in the Phosh environment.
-> 
-> The series is also available (until merged) at
->   git@gitlab.com:dhxx/linux.git b4/op6-tri-state
-> 
-> Changes in v7:
-> - Separated GPIO number fix from the original commit
->   "arm64: dts: qcom: sdm845-oneplus: Add alert-slider"
-> - Rebased again next-20251008
-> - Link to v6: https://lore.kernel.org/r/20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz
-> 
-> Changes in v6:
-> - Rebased again next-20250731, otherwise just a resent.
-> - Link to v5: https://lore.kernel.org/r/20250419-op6-tri-state-v5-0-443127078517@ixit.cz
-> 
-> Changes in v5:
-> - Dropped merged
->   "Input: gpio-keys - add support for linux,input-value DTS property"
-> - Link to v4: https://lore.kernel.org/all/cover.1677022414.git.soyer@irl.hu/
-> 
-> Changes in v4:
-> - DTS: use default debounce-interval, order alphabetically
-> - Link to v3: https://lore.kernel.org/lkml/cover.1676850819.git.soyer@irl.hu/
-> 
-> Changes in v3:
-> - rename tri-state-key to alert-slider, fix DTS warnings,
-> 
-> Changes in v2:
-> - rebase to qcom/for-next
-> add SND_PROFILE_* identifiers to input-event-codes.h
-> 
-> ---
-> Gergo Koteles (3):
->       Input: add ABS_SND_PROFILE
->       arm64: dts: qcom: sdm845-oneplus: Correct gpio used for slider
->       arm64: dts: qcom: sdm845-oneplus: Add alert-slider
+The bareudp.sh script uses /bin/sh and it will load another lib.sh
+BASH script at the very beginning.
 
-feedbackd has support for this since 0.5.0 so it would be nice to see
-that mainlined.
+But on some operating systems like Ubuntu, /bin/sh is actually pointed to
+DASH, thus it will try to run BASH commands with DASH and consequently
+leads to syntax issues.
 
-Tested-by: Guido Günther <agx@sigxcpu.org> # oneplus,fajita & oneplus,enchilada
-Reviewed-by: Guido Günther <agx@sigxcpu.org> 
+This patch fixes syntax failures on systems where /bin/sh is not BASH by
+explicitily using BASH for bareudp.sh.
 
-Cheers,
- -- Guido
+Po-Hsu Lin (1):
+  selftests: net: use BASH for bareudp testing
 
-> 
->  Documentation/input/event-codes.rst                |  6 ++++
->  .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 39 ++++++++++++++++++++--
->  drivers/hid/hid-debug.c                            |  1 +
->  include/uapi/linux/input-event-codes.h             |  9 +++++
->  4 files changed, 53 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 52ba76324a9d7c39830c850999210a36ef023cde
-> change-id: 20250419-op6-tri-state-ed1a05a11125
-> 
-> Best regards,
-> -- 
-> David Heidelberg <david@ixit.cz>
-> 
-> 
+ tools/testing/selftests/net/bareudp.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
