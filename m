@@ -1,133 +1,91 @@
-Return-Path: <linux-kernel+bounces-872661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F5CC11BA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:34:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE79FC11D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E16C7352841
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F11B580B1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6081232D0E0;
-	Mon, 27 Oct 2025 22:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03F34572B;
+	Mon, 27 Oct 2025 22:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cQ6voZcy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwXtzCLu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2ED239E7E;
-	Mon, 27 Oct 2025 22:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E773451A9;
+	Mon, 27 Oct 2025 22:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604467; cv=none; b=IQXrLwZ2mBwmI30dmUSR6Ym1E0F+jP8GNDCN1OS0To8dQEhZuv499LJmuFzUyRquO+ST1KXqveP+FZ2tgik265Xd6vTlx/622LSE3xCdYGtCKxG6X5PNWKuyY69Pny5s1zhV6ovSB5/VBxisIsDNqLR9eR9+WNF+CRXMdUPv4Xs=
+	t=1761604519; cv=none; b=K/dJkhxrhyZ7pgnTGpmg9Up3OHEZ2LO65lhaXp3A2p2USUWUZFBTILwnWJk4WDeyuzfZF37lRdZhRdVe7rQaCAhC3VGmnls5mGcc5hN/gYBe+6FhWckUcLq/pL4OpQ/bhBKy33sTm4AQPYvDGNGta9ohDFqyNObe7OFsjAEv2pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604467; c=relaxed/simple;
-	bh=qU2VxRpbuNiTyHE0Yc8cSi6C0ZRyvAMmh9JzIi0UzHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=keb9MITpiwM+ZKuzIQOQgSCIMgZl42SKCbkrhZ8Y6KLRdF0NNnjCzGp4Rc9Fz7Fw1Dt6CeSEIufK3G9TtKPon7UyXBwmbQg7hY2evELx5dIijbRm0FXwWAQ66e+WlbcxfD8Z+nMNcyjutj+tC8ZnvizaCl8pPpJ1VYqFLkjegjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cQ6voZcy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761604454;
-	bh=MOJvda80GwZKDsl4dcpCDAKcPw5mUM2zrPfFiHahJfw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cQ6voZcy8cFhrsYBqh+IDupU3wIltkSO8UaRFAZ0efRxbMn5mxm+iKOInwsdjN1n5
-	 NN0zqmECOHSyayC4P4SVJJxobijY+SElIkH/IlUJ5YaXbW5X+dlIoa6+kXfCaw1Y4m
-	 gs7JKN8bJq82T8PqnqjNVXXZJsNi7OjLLP5OcabLwFY9pupXeeyow7gz1BHuxsFxzx
-	 uzQ97dLyWdy3YFJyQgvst4d0ou0AWpwQMnUrHb5qzSEx4FZID7AJqHoxi4fpGyymko
-	 nCeIzk/TnGwtNdw/5fgtQ5XUW6po24N3M/WJQGyBKmTHchXgnJKEVipHQSAuWdsBXm
-	 ln/zObVq7U9+w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cwSwj0YzZz4w1h;
-	Tue, 28 Oct 2025 09:34:13 +1100 (AEDT)
-Date: Tue, 28 Oct 2025 09:34:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Bard Liao
- <yung-chuan.liao@linux.intel.com>, Shuming Fan <shumingf@realtek.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc-fixes
- tree
-Message-ID: <20251028093411.605431d0@canb.auug.org.au>
-In-Reply-To: <20251024120920.23f707f5@canb.auug.org.au>
-References: <20251024101931.49f46027@canb.auug.org.au>
-	<86578286-39f7-4d08-a41b-cd7e15f1bfaa@sirena.org.uk>
-	<20251024120920.23f707f5@canb.auug.org.au>
+	s=arc-20240116; t=1761604519; c=relaxed/simple;
+	bh=5VghR/NlRdD4hFwfZJEs1wHDzZ2/GT/7qljl5uZwHlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=aUNiwTVpYblh5cgzJHDwcBny5SckT4/E/PFY+dLdVbP5Sg9qDVhIGwe7k4Eq51qOrhYCk44QI9ZzoD+vi4ozRSMVBbWQtXz/9vKJxw6QyEK9+AgvWmZBBWKKGw2MJYaf5qlNbWwAg4yfOkFlezdtlorqeyHZXk48w12qcIb7fGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwXtzCLu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A020C4CEFB;
+	Mon, 27 Oct 2025 22:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761604519;
+	bh=5VghR/NlRdD4hFwfZJEs1wHDzZ2/GT/7qljl5uZwHlY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HwXtzCLuhgRMR0TNFUUEstGhaKhQvTxspAltPuTlnb4ivZjGChz/zsPuXmXYtlOaJ
+	 5kepQbbF6t6VThTxCeqngQJgTEA6fVx5U2lgzUzX9D6zhnV3pEgnF+A+xMeKaMVTve
+	 pUIeCC1GYi0M5A3TDn0fzEzXFPa8pw/6T9cGa3l8BNpX7O5i56ATXcjTkQK+zk+kj8
+	 zFm1FFCRdMBRabo2IFyKMFsVhpv0stP2xOeEH7ixkhHbPzmYGLL1Vb1uc7r1EEGPHH
+	 4b5tJDGc2Vj13slMxKk+yaJ5eQ+R79azmxhOwxr/Fp9m+xFdMwrhF805mWADzMV1Nj
+	 MHN4ISH/ygtAQ==
+Date: Mon, 27 Oct 2025 17:35:17 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	"David E . Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+	Han Jingoo <jingoohan1@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
+Message-ID: <20251027223517.GA1484052@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YWTe7oIVrMAEcYYA6F4uqR=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP9Ed1Y1lcayFn7Q@hovoldconsulting.com>
 
---Sig_/YWTe7oIVrMAEcYYA6F4uqR=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 27, 2025 at 11:07:51AM +0100, Johan Hovold wrote:
+> On Sun, Oct 26, 2025 at 02:37:54PM -0500, Bjorn Helgaas wrote:
+> > On Sun, Oct 26, 2025 at 08:58:29PM +0530, Manivannan Sadhasivam wrote:
+> 
+> > As far as I know, it's L1SS that has catastrophic effects.  I haven't
+> > seen anything for L0s or L1.
+> 
+> Enabling L0s unconditionally certainly blew up on some Qualcomm
+> machines. See commit d1997c987814 ("PCI: qcom: Disable ASPM L0s for
+> sc8280xp, sa8540p and sa8295p").
 
-Hi all,
+Ah, right, thanks for that reminder.
 
-On Fri, 24 Oct 2025 12:09:20 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Fri, 24 Oct 2025 00:49:11 +0100 Mark Brown <broonie@kernel.org> wrote:
-> >
-> > On Fri, Oct 24, 2025 at 10:19:31AM +1100, Stephen Rothwell wrote: =20
-> > > Hi all,
-> > >=20
-> > > After merging the sound-asoc-fixes tree, today's linux-next build
-> > > (x86_64 allmodconfig) failed like this:
-> > >=20
-> > > sound/soc/sdw_utils/soc_sdw_utils.c:316:18: error: 'struct asoc_sdw_c=
-odec_info' has no member named 'name_prefix'
-> > >   316 |                 .name_prefix =3D "rt1320",
-> > >       |                  ^~~~~~~~~~~
-> > > sound/soc/sdw_utils/soc_sdw_utils.c:316:32: error: initialization of =
-'int' from 'char *' makes integer from pointer without a cast [-Wint-conver=
-sion]
-> > >   316 |                 .name_prefix =3D "rt1320",
-> > >       |                                ^~~~~~~~   =20
-> >=20
-> > And I do x86 allmodconfig builds which should stop something that breaks
-> > getting published... =20
->=20
-> Yeah, so there must be an interaction with something merged before your
-> tree ... but I couldn't find anything obvious, sorry.
-
-I am still getting this failure.  I cannot find anything that would
-have interacted with this addition of name_prefix.  I can only
-speculate that maybe this file was not built in the past for an x86_64
-allmodconfig (i.e. some KCONFIG change) or an update to an include file
-has messed being committed.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YWTe7oIVrMAEcYYA6F4uqR=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj/82MACgkQAVBC80lX
-0GzeNAf/Soo1yTx9xBQBE7bMbVDQPiaUoSq1Ou9liCak/a+ul8gk07kezfSERbPx
-C3k7+f0jN0qch76T7SS2SJQgXg38qwNYuzceKqJNVNW/1Pk2nFAl6Lt+DLKkTZQU
-qmiwsZIUyaDEmPLpWkVHxqnH8947NqK+Bx95RQW/6epV3fNbyObPf+rwC5E4T2oH
-Dvrpctwky4yKAWp/CYtRGy7q1iHp68LQAbenvM3tv35lXMNuOAcvnFcVgYbo/bGm
-sAJ90/jJCY5qiiSQHyFVXh8XQMGHx1mxWUH6JyQqKt6fdDj6dhlRFXGO2Xu0SxBd
-RbdpCnx/QzFxyqP3z+eQNnKkhewpNA==
-=IY6g
------END PGP SIGNATURE-----
-
---Sig_/YWTe7oIVrMAEcYYA6F4uqR=--
+IIUC the qcom_pcie_clear_aspm_l0s() quirk that removes L0s from the
+advertised Link Capabilities is still there and prevents df5192d9bb0e
+("PCI/ASPM: Enable only L0s and L1 for devicetree platforms") from
+being a problem on those platforms, right?
 
