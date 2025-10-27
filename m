@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-872216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD275C0F9A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A58C0F9AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79108428346
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B0E462FD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C2930E0C5;
-	Mon, 27 Oct 2025 17:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3008730596F;
+	Mon, 27 Oct 2025 17:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="s//7eFe2"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMSByuf1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7A3533D6;
-	Mon, 27 Oct 2025 17:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA4F533D6;
+	Mon, 27 Oct 2025 17:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585384; cv=none; b=VbwtR7fVOf6lChLBY6Ew2c9t5o3amiCxcAEfvWcrr7jbjkm3ogqVwWgb4BfFEK45Njf3UYO/DO+y91C4Z+c+xBtD6FXkS9evebT0oyHjXIozB2pKPyD8h5FYXH6L1NueXAusIKyFOLesNG8jnv48jRY47Hpt1Vw+5Ux8Yd+6yGY=
+	t=1761585417; cv=none; b=AAr+qKBeiA9kBGFAlDhrVN9Fb5LVQETg/CQCVYiW5ecN1zzLA+7+wFXMGxNs2BjtAKGNrCteTn9n6SiF+koAq7788VTRPQm1NyjGnmX/hDtKLXVc0lx/kXxeIBfknAVC4kdt2Aqo4tMxe2gm02nfEaCdLim6M3YYLVLT8WvXdFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585384; c=relaxed/simple;
-	bh=SGpo5zbLkYNSYLhZSQlZopf0gXlOu07LHyQlsl9f/yo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rgthbgqwgM0hEvkWHg2OkCi4sS1a8jsMk2irThW94eXWhy9BEm3Yx48UYo7A9sBz7RNgfMkTZKnGEItymrAuUWIyVumnWRUW2QANuwON4ppZ8PzDgOklWc+s+SA6098I6tV76HCRChWHVVjRT0oQR6gPHa/PWK9+yftAA0s9Po4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=s//7eFe2; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8252E406FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761585382; bh=4AJkw0JNiYt/C/Q0w7OHk2noFttalBttxGpAF09CdDM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=s//7eFe2ZlRxqEGUnYz7qSLdLireCzjsBeXes20zIZK7P6e356dtfgfxHq8uJB4K8
-	 x8hO7shSOQMM8wmEYHtvgAyKsS+ZQ+W3uZoX1g1hLsqxXWvT+P6QCJAxhqba5MZfoU
-	 jhAIcbOdImOHUqsg5wGPYpqleaxTEX7VlHUmz8g1OMDiKeStlQrm2K9sxBfXkg8fw8
-	 MF91Y1aO6dfMLnbzyG4XPcib1rv2sOPuRTTyjzvtxcmSAHbVVXAUexM27OnNhP5pWL
-	 Bcs79RgDT7WPmMfa7ydl9W/DsKB6Xag0cUz45rFU99jiZtMemRi6U8nB/Y3sAtuH68
-	 MQ8+/pTZbu/cg==
-Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 8252E406FB;
-	Mon, 27 Oct 2025 17:16:22 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/30] docs: reporting-issues: rework
-In-Reply-To: <cover.1761481839.git.linux@leemhuis.info>
-References: <cover.1761481839.git.linux@leemhuis.info>
-Date: Mon, 27 Oct 2025 11:16:21 -0600
-Message-ID: <87zf9cnu3e.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761585417; c=relaxed/simple;
+	bh=K1bFME1YwxBWeHwosnw8XIUjA72KfTmc5TM047ROWSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggriOsGNjndY1XgfkbJGp2JkO+WU1Z32BR7HdQFgDivWryHlFta60xFf3P9HP8WrVgxiYuYAw7LJ+JM/NYFdh5qHGlZaBLXAM//7+9yVOIrRsDArK4OLh9R6+K5xOPNxnakIRUS7wQzi/qMZIxwNsmx5MEPJ6gj6oPmQe33cRwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMSByuf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CD2C4CEF1;
+	Mon, 27 Oct 2025 17:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761585417;
+	bh=K1bFME1YwxBWeHwosnw8XIUjA72KfTmc5TM047ROWSk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DMSByuf1XXLf6Au6aUnYfG8bCLuACMGK+V/EGr2eAht+Ze7wXl3t+5PQgFt5rNvOA
+	 QcSEdmGF48Bc8LvQIXi35kcAzQmWAlDaQKyTNIJerMIco/ojAxMHIyePWfLgYKDUyv
+	 16cylK7lbdQemQb5e+rbyfSCU1IGPhEIAW6jV3D5ke868yQ4gNVNT02wETLIxTh803
+	 gfixUVu/j5iMM+UCcwQHF/TEvHaEU6k1QSXr+JZ+poh9xObE43MTugOy9ueeFV4/DO
+	 HrD+cmM4GtL7wiW3EUdHOqPjDDrUj+fI1VsAvH3zBjVa47AlL+d6ylQbx0cuSphZ+p
+	 fmaZO7/UmR5eA==
+Date: Mon, 27 Oct 2025 22:46:47 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>, Shuan He <heshuan@bytedance.com>
+Subject: Re: [PATCH] PCI/sysfs: enforce single creation of sysfs entry for
+ pdev
+Message-ID: <nst6vubi5f4izjlxahspirg2agar5szmfczfknhiyzb36srfo7@uyzu4k52eoyt>
+References: <20251013223720.8157-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,29 +58,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251013223720.8157-1-ansuelsmth@gmail.com>
 
-Thorsten Leemhuis <linux@leemhuis.info> writes:
+On Tue, Oct 14, 2025 at 12:37:16AM +0200, Christian Marangi wrote:
 
->  I worked on-and-off on this for maybe two years and the problem is:
-> what started as fine tuning in various places piled up. That together
-> with the newly added links & anchors and some text movements makes the
-> patchset huge. When you ignore those two aspects and look at individual
-> patches using a word diff algorithm it looks a lot less scary, but it
-> remains big =E2=80=93 and thus sadly puts some load on reviewers and
-> translators. Sorry. I think it's worth it and tried to split things up
-> to facilitate handling.
++ Krzysztof Wilczyński, Shuan He (since they were involved in similar discussion
+before)
 
-It is indeed a lot, it's going to be hard to get people (including me)
-to look at it all.  I think you should really consider breaking this
-into smaller sets and getting them through one at a time...
+> In some specific scenario it's possible that the
+> pci_create_resource_files() gets called multiple times and the created
+> entry actually gets wrongly deleted with extreme case of having a NULL
+> pointer dereference when the PCI is removed.
+> 
+> This mainly happen due to bad timing where the PCI bus is adding PCI
+> devices and at the same time the sysfs code is adding the entry causing
+> double execution of the pci_create_resource_files function and kernel
+> WARNING.
+> 
+> To be more precise there is a race between the late_initcall of
+> pci-sysfs with pci_sysfs_init and PCI bus.c pci_bus_add_device that also
+> call pci_create_sysfs_dev_files.
+> 
+> With correct amount of ""luck"" (or better say bad luck)
+> pci_create_sysfs_dev_files in bus.c might be called with pci_sysfs_init
+> is executing the loop.
+> 
+> This has been reported multiple times and on multiple system, like imx6
+> system, ipq806x systems...
+> 
 
-I'll look at a few of these, but certainly won't get through the whole
-set today.
+Yes. More recently on the RISC-V platform:
+https://lore.kernel.org/linux-pci/20250702155112.40124-1-heshuan@bytedance.com/
 
-Thanks,
+> To address this, imlement multiple improvement to the implementation:
+> 1. Add a bool to pci_dev to flag when sysfs entry are created
+>    (sysfs_init)
+> 2. Implement a simple completion to wait pci_sysfs_init execution.
+> 3. Permit additional call of pci_create_sysfs_dev_files only after
+>    pci_sysfs_init has finished.
+> 
+> With such logic in place, we address al kind of timing problem with
+> minimal change to any driver.
+> 
 
-jon
+We do have the same issue with pci_proc_attach_device() as well. I submitted a
+dumb series [1] that removed both pci_create_sysfs_dev_files() and
+pci_proc_attach_device() calls from their _init() calls, but I was pointed out
+that they are required for PCI_ROM_RESOURCE.
 
-P.S. Grumbling aside, it's good to have you back...
+Then it was suggested that making the sysfs resource files static would be
+the proper solution (not sure what's about proc). Krzysztof had some work on
+this topic earlier and had plans to revive it, but I guess he didn't get much
+time so far.
+
+Krzysztof, if you do not mind, could you please share your previous work so that
+someone else can try to extend it if you are busy?
+
+- Mani
+
+[1] https://lore.kernel.org/linux-pci/20250723111124.13694-1-manivannan.sadhasivam@oss.qualcomm.com
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
