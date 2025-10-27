@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-870874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E70C0BE13
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11203C0BE22
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:59:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9F818A21ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7503BC24C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12A92D7DD7;
-	Mon, 27 Oct 2025 05:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E6F2D7DF7;
+	Mon, 27 Oct 2025 05:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zNqDoACA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="KuNZD907"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D332F2D77E3;
-	Mon, 27 Oct 2025 05:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD702C027A;
+	Mon, 27 Oct 2025 05:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761544557; cv=none; b=C5gk35eQ+O1WDUMckeOsSxfaegZnWw8uminmY9WCpd8dgjudAVJmDsJmONGrtv1VZcqHtFAAMwIW3TgOf0IdRSxvM/ngq0ha5xT4JR5x1u/wtPqEUqXJcFbwBeRr7X5sdSyVYkYn2K228ke0a0FA4xWHmjdt7o9rYz+tbeN8oDU=
+	t=1761544777; cv=none; b=TGZFiqagbwzo+5aRVGPBDPcdwA58oD4flr/tGGrPv+t2+MCbrH3227aXzZpHOyyXVwGaMSb9N0bIB1KfMNJvBIlySVhnO0aJlNkYNg6i7yoLxGzNw+Va6axi4QI5m26Dko5x3fu2Igkb27JkSD1agHtGsLRyZQJJtmupZrreTN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761544557; c=relaxed/simple;
-	bh=ybYmKh8/39nPxjAAy3oM4Wv0m5D7zdqQ/h0WxF4fTI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JAPJgV9ky1RFplWxIRoVVdsTkUSyJbK//4ahZ3AGYMX0D18rCgpRuMJY/g8kPh/iZMMfOrKZRthG2PWUyMLL0AKJyCzc+dHeSTc/PGmgiWPMnbKq1eHOgSKUih211XEIQuu0zrceRN06wQOZDb8QTdpj4YMPgzD+sgGLEYEvDas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zNqDoACA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=2PSjt9WH+pBseVt0UIOQSGXPv18u2Yu6JU4vrx0TYeU=; b=zNqDoACAEhpf9GVKEy365h9/91
-	K9bcBF3iL/OTLZjAWzZHocKS9YTocNfXJLJEAOd5vGTUc1YlnvjraZCeA7bs1kAF2X60YgDwbKYtc
-	Bqf9F90iYEpLUvXaTV2uAWajYyxWOSi3imkHYd+uFQkVCf4Xa7vVjTAX590y1Nwp9yvganhAUTIAL
-	SrwZpcTKy2glw1a4Hv/m5uL7ieLatNzVswCm691WIMdtQWgYRCKBpMlKNHyr2yC1SRrBl5USnWpj5
-	MxBzNTNe+Rkr63YgalmMfiY3ctTTVpZqvZTWlTHa7pq1UHsutDJZ3tpEaiAswLIDbVWNcHa+TzlIm
-	RSWaRwsQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDGCu-0000000D9sQ-3p3F;
-	Mon, 27 Oct 2025 05:55:52 +0000
-Message-ID: <766767b3-946a-4ff1-ace6-b7889ba296ae@infradead.org>
-Date: Sun, 26 Oct 2025 22:55:52 -0700
+	s=arc-20240116; t=1761544777; c=relaxed/simple;
+	bh=93Zp0d73yElyssTl11o4xqnsQNybTnAya+0hGW33ZC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ooC/Nv64nqSyD7mJx9JqYGMvaTyfRgNEu39svvx5kXHdGWahFqz9ihcRZIhC4s1uk1CNuZ9RkVUnTiwdy9LWgWwmq7K0VLosiacrWpFYnE4SDC7FD53xHbX454nzGG4vL6Vxrx7sZyEXp7VxIIVpcPODYuYcPtKaQjlT5me9yS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=KuNZD907; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=06tZjU29VwqByqyIrPkQHEnCjRdvf/czRzQRFH3f6Es=;
+	b=KuNZD90719RC4PCN7bHia9QNSl/2bCZTq17vXE0WAnM8BXAykaYGV7Qu4Fl3cg
+	SqmO9LabkeKZXrHWfntfe6ejdjxNi91Y3WKOhAKzBGdu964e3XXVPDe3F4wPpxDL
+	bc19wccwDo5ARVg55yIj854uaCR+zboGPrpCc/BgaOz98=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3_1YeCv9oMlm+AA--.27868S3;
+	Mon, 27 Oct 2025 13:58:56 +0800 (CST)
+Date: Mon, 27 Oct 2025 13:58:54 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>
+Subject: Re: [PATCH v1] arm64: dts: imx8-ss-img: Avoid gpio0_mipi_csi GPIOs
+ being deferred
+Message-ID: <aP8KHmFbGFRmgtQz@dragon>
+References: <20251014-imx8-gpio-csi-deferred-probe-v1-1-62dd1b949731@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: Makefile: Sort Documentation targets
- case-insensitively in make help
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-References: <20251015012922.19467-1-bhanuseshukumar@gmail.com>
- <47844424-302b-4a99-9cce-82924c7b7ebb@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <47844424-302b-4a99-9cce-82924c7b7ebb@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014-imx8-gpio-csi-deferred-probe-v1-1-62dd1b949731@toradex.com>
+X-CM-TRANSID:Ms8vCgD3_1YeCv9oMlm+AA--.27868S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWruFWDKFy5Wr4rWr4kKFW3KFg_yoWxtrg_AF
+	yvgr4kCw4DGrn7Jr4YvF42gFWFkF9xW34UKws3Jr43AFySqw4rAF47tr4rAry3Wrs0qry7
+	JFZIyw43Jw1Y9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjOVy7UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNQCkCmj-CiBa0AAA3s
 
-
-
-On 10/26/25 10:27 PM, Bhanu Seshu Kumar Valluri wrote:
-> On 15/10/25 06:59, Bhanu Seshu Kumar Valluri wrote:
->> Avoid case-sensitive sorting when listing Documentation targets in make help.
->> Previously, targets like PCI and RCU appeared ahead of others due to uppercase
->> names.
->>
->> Normalize casing during _SPHINXDIRS generation to ensure consistent and
->> intuitive ordering.
->>
->> Fixes: 965fc39f7393 ("Documentation: sort _SPHINXDIRS for 'make help'")
->> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
->> ---
->>  Notes
->>  - Patch is tested with make help command.
->>  - Verified case-insensitive sorting.
->>
->>  Documentation/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/Makefile b/Documentation/Makefile
->> index 3609cb86137b..00c81e7947a9 100644
->> --- a/Documentation/Makefile
->> +++ b/Documentation/Makefile
->> @@ -23,7 +23,7 @@ SPHINXOPTS    =
->>  SPHINXDIRS    = .
->>  DOCS_THEME    =
->>  DOCS_CSS      =
->> -_SPHINXDIRS   = $(sort $(patsubst $(srctree)/Documentation/%/index.rst,%,$(wildcard $(srctree)/Documentation/*/index.rst)))
->> +_SPHINXDIRS   = $(shell printf "%s\n" $(patsubst $(srctree)/Documentation/%/index.rst,%,$(wildcard $(srctree)/Documentation/*/index.rst)) | sort -f)
->>  SPHINX_CONF   = conf.py
->>  PAPER         =
->>  BUILDDIR      = $(obj)/output
-> Hi,
+On Tue, Oct 14, 2025 at 09:56:43AM -0300, João Paulo Gonçalves wrote:
+> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 > 
-> I just wanted to check if you had a chance to review the patch or if any changes are needed from my side.
+> The gpio0_mipi_csi DT nodes are enabled by default, but they are
+> dependent on the irqsteer_csi nodes, which are not enabled. This causes
+> the gpio0_mipi_csi GPIOs to be probe deferred. Since these GPIOs can be
+> used independently of the CSI controller, enable irqsteer_csi by default
+> too to prevent them from being deferred and to ensure they work out of
+> the box.
+> 
+> Fixes: 2217f8243714 ("arm64: dts: imx8: add capture controller for i.MX8's img subsystem")
+> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-It's OK with me and it works.
+Applied, thanks!
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
--- 
-~Randy
 
