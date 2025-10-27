@@ -1,247 +1,138 @@
-Return-Path: <linux-kernel+bounces-871164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FFAC0C8D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:09:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC7B0C0C905
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 208184F6168
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934164040D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82B62580E4;
-	Mon, 27 Oct 2025 09:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86502EDD76;
+	Mon, 27 Oct 2025 09:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R2MI8qFP"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fn92Uak3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69139481B1;
-	Mon, 27 Oct 2025 09:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9752DE6F5;
+	Mon, 27 Oct 2025 09:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555666; cv=none; b=OO8mS5YAmf4hG2MTmjam5HbVpH+M8NEijpfh32qSvFAcbQMXX9gFpay1Uz7dyAZTqvIRhokFdWoorvA6k9r+mEcxPiP80gp85LjfxCpDbv3RUtNwp13qyNKep6bn/r0VrMHUc8MtTxWlKVc8w6LVZFlz1UKQRuWPxzk1ao1PGAQ=
+	t=1761555721; cv=none; b=ul4FOq4ZzLerCWzW0bGNXn+/GiG43H0iQZdYrmpBnczOfARx69mklQ2MDP8afxTPsORHqoj/9+BpyzeJPqdNb2OCBP5+Gyj/cBBP1ucsphs2eMUUSWmdJ+cK7OLzeKMsKtsU+G9M5aDiX9jg0/Hqqo7t3r0Ap8V26YP8Ml7hKgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555666; c=relaxed/simple;
-	bh=UPiwTkhB/J6BBNQtWBHJvGhNPiYEsm0JTSBHxuibEq8=;
+	s=arc-20240116; t=1761555721; c=relaxed/simple;
+	bh=275YkRCyZVfjEDUsCr12iYfs5/SgTlKkXm5iRoBP66c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jr4JlkjsQ4BXtDVjprXQiRPOt+CXh9WBHbKyR/OuenV04GLKG6CRJT14QV4BqMT4XpAP7iEjm8MeIEvGtD/8i2OFHv3tP3gXpMxMnDSMuippRNBK5uDEP0FKpD9KPdNN8JfJ4yok4dPNstHyU+9qDWdfiuStI3urLpBL20fKOwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R2MI8qFP; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3aca400f-2fbf-4249-89bc-d683a4e0618d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761555662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rZIxJuwgOmBP+ZkdSSAjjhDddv46eR2/PMPkqFr0INA=;
-	b=R2MI8qFPQ6pU7XLsjr2EjSK0mrr2oa8WAxDi7OPjOOAdBPMpW0J9EDxQakGCniq7rcF56/
-	bbPsAP4TAva0QsNYON1Rg/bEHR36dhrNLVgkH4N11ECbAs79UWe51AIC9WDoPqIJyvwaIn
-	Lg3+8rp3TWZo+4zu0GmV7LT5N4sf1w0=
-Date: Mon, 27 Oct 2025 17:00:31 +0800
+	 In-Reply-To:Content-Type; b=JTkWiickBbDcYj9HVArT/uulGYaZ++47UmmfbjA2K8KotCu5VUZ+tplcnYm+9HNDq86GsOeUdWqQPWn1cT134EhT0fqEHl+mDPeSKZ9WYkJoBK8uHBOdBASn6J2W3isESOOpJF9rYAhD2Tjpj/2+31E/WN2HNt3QFJGpgiex7Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fn92Uak3; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761555720; x=1793091720;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=275YkRCyZVfjEDUsCr12iYfs5/SgTlKkXm5iRoBP66c=;
+  b=Fn92Uak3va2SCJY6D4AlJ/Bar4OEIFtUlohQEASvWtQohpeW4oFN//S8
+   5hJAaMFqdkvwP5GrwdPV6H6Q6jV27AZJ7JY5JQOq461XIgy7vVnwaCz6s
+   0FI7ob3QRmy8UioPEILE9lmZQyDoDrgtBxGGrRXj5q9jYAgPmVnEY539B
+   WZ8/0Qd29a/UplxD5QdR9dsRaC8MsB2PTbRycypbcfPZ1AofP7YtzCKdS
+   HaQkjppODpZ4vVZ7WuYDYXsuIxcjZRFU3TQU4tgiyQ5n8v43Sg+9bER52
+   Kf0GsoJ9rKwQGklmZdmjNyUvnJcrnmVR3dr6Zfl1JQtSLxnW+QFkIVrwS
+   g==;
+X-CSE-ConnectionGUID: mHpOW1faQCC77K26FFV05w==
+X-CSE-MsgGUID: gM+WzI8jTnimGfrSyWr3Ng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67464789"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67464789"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:01:59 -0700
+X-CSE-ConnectionGUID: iCVeVDcZSguedVPvO1GnIg==
+X-CSE-MsgGUID: rPVV21LWTqG3HlsE3kXlFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
+   d="scan'208";a="184892900"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 02:01:51 -0700
+Message-ID: <59ae9957-88a8-4777-9bd2-196e8b4eb8ac@linux.intel.com>
+Date: Mon, 27 Oct 2025 17:01:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v12 mm-new 02/15] introduce collapse_single_pmd to unify
- khugepaged and madvise_collapse
-To: Nico Pache <npache@redhat.com>
-Cc: david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
- willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com,
- usamaarif642@gmail.com, sunnanyong@huawei.com, linux-kernel@vger.kernel.org,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- linux-doc@vger.kernel.org, yang@os.amperecomputing.com, kas@kernel.org,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- vbabka@suse.cz, rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-3-npache@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/25] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
+ into its sole caller
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251017003244.186495-1-seanjc@google.com>
+ <20251017003244.186495-14-seanjc@google.com>
+ <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com>
+ <aPuqYz3ly5a3__mf@google.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251022183717.70829-3-npache@redhat.com>
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aPuqYz3ly5a3__mf@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2025/10/23 02:37, Nico Pache wrote:
-> The khugepaged daemon and madvise_collapse have two different
-> implementations that do almost the same thing.
-> 
-> Create collapse_single_pmd to increase code reuse and create an entry
-> point to these two users.
-> 
-> Refactor madvise_collapse and collapse_scan_mm_slot to use the new
-> collapse_single_pmd function. This introduces a minor behavioral change
-> that is most likely an undiscovered bug. The current implementation of
-> khugepaged tests collapse_test_exit_or_disable before calling
-> collapse_pte_mapped_thp, but we weren't doing it in the madvise_collapse
-> case. By unifying these two callers madvise_collapse now also performs
-> this check. We also modify the return value to be SCAN_ANY_PROCESS which
-> properly indicates that this process is no longer valid to operate on.
-> 
-> We also guard the khugepaged_pages_collapsed variable to ensure its only
-> incremented for khugepaged.
-> 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
+On 10/25/2025 12:33 AM, Sean Christopherson wrote:
+> On Fri, Oct 24, 2025, Binbin Wu wrote:
+>>
+>> On 10/17/2025 8:32 AM, Sean Christopherson wrote:
+>>> Fold tdx_mem_page_record_premap_cnt() into tdx_sept_set_private_spte() as
+>>> providing a one-off helper for effectively three lines of code is at best a
+>>> wash, and splitting the code makes the comment for smp_rmb()  _extremely_
+>>> confusing as the comment talks about reading kvm->arch.pre_fault_allowed
+>>> before kvm_tdx->state, but the immediately visible code does the exact
+>>> opposite.
+>>>
+>>> Opportunistically rewrite the comments to more explicitly explain who is
+>>> checking what, as well as _why_ the ordering matters.
+>>>
+>>> No functional change intended.
+>>>
+>>> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+>>
+>> One nit below.
+>>
+>> [...]
+>>> +	/*
+>>> +	 * If the TD isn't finalized/runnable, then userspace is initializing
+>>> +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the number of
+>>> +	 * pages that need to be mapped and initialized via TDH.MEM.PAGE.ADD.
+>>> +	 * KVM_TDX_FINALIZE_VM checks the counter to ensure all mapped pages
+>>                                                                     ^
+>>                                                  Nit: Is pre-mapped better?
+> Yeah, updated (and then it gets deleted a few commits later :-) ).
+Oh, right, nr_premapped will be dropped later.
 
-Nice cleanup! LGTM.
-
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
-
->   mm/khugepaged.c | 97 ++++++++++++++++++++++++++-----------------------
->   1 file changed, 52 insertions(+), 45 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 6c4abc7f45cf..36e31d99e507 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -2370,6 +2370,53 @@ static int collapse_scan_file(struct mm_struct *mm, unsigned long addr,
->   	return result;
->   }
->   
-> +/*
-> + * Try to collapse a single PMD starting at a PMD aligned addr, and return
-> + * the results.
-> + */
-> +static int collapse_single_pmd(unsigned long addr,
-> +		struct vm_area_struct *vma, bool *mmap_locked,
-> +		struct collapse_control *cc)
-> +{
-> +	struct mm_struct *mm = vma->vm_mm;
-> +	int result;
-> +	struct file *file;
-> +	pgoff_t pgoff;
-> +
-> +	if (vma_is_anonymous(vma)) {
-> +		result = collapse_scan_pmd(mm, vma, addr, mmap_locked, cc);
-> +		goto end;
-> +	}
-> +
-> +	file = get_file(vma->vm_file);
-> +	pgoff = linear_page_index(vma, addr);
-> +
-> +	mmap_read_unlock(mm);
-> +	*mmap_locked = false;
-> +	result = collapse_scan_file(mm, addr, file, pgoff, cc);
-> +	fput(file);
-> +	if (result != SCAN_PTE_MAPPED_HUGEPAGE)
-> +		goto end;
-> +
-> +	mmap_read_lock(mm);
-> +	*mmap_locked = true;
-> +	if (collapse_test_exit_or_disable(mm)) {
-> +		mmap_read_unlock(mm);
-> +		*mmap_locked = false;
-> +		return SCAN_ANY_PROCESS;
-> +	}
-> +	result = collapse_pte_mapped_thp(mm, addr, !cc->is_khugepaged);
-> +	if (result == SCAN_PMD_MAPPED)
-> +		result = SCAN_SUCCEED;
-> +	mmap_read_unlock(mm);
-> +	*mmap_locked = false;
-> +
-> +end:
-> +	if (cc->is_khugepaged && result == SCAN_SUCCEED)
-> +		++khugepaged_pages_collapsed;
-> +	return result;
-> +}
-> +
->   static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->   					    struct collapse_control *cc)
->   	__releases(&khugepaged_mm_lock)
-> @@ -2440,34 +2487,9 @@ static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->   			VM_BUG_ON(khugepaged_scan.address < hstart ||
->   				  khugepaged_scan.address + HPAGE_PMD_SIZE >
->   				  hend);
-> -			if (!vma_is_anonymous(vma)) {
-> -				struct file *file = get_file(vma->vm_file);
-> -				pgoff_t pgoff = linear_page_index(vma,
-> -						khugepaged_scan.address);
-> -
-> -				mmap_read_unlock(mm);
-> -				mmap_locked = false;
-> -				*result = collapse_scan_file(mm,
-> -					khugepaged_scan.address, file, pgoff, cc);
-> -				fput(file);
-> -				if (*result == SCAN_PTE_MAPPED_HUGEPAGE) {
-> -					mmap_read_lock(mm);
-> -					if (collapse_test_exit_or_disable(mm))
-> -						goto breakouterloop;
-> -					*result = collapse_pte_mapped_thp(mm,
-> -						khugepaged_scan.address, false);
-> -					if (*result == SCAN_PMD_MAPPED)
-> -						*result = SCAN_SUCCEED;
-> -					mmap_read_unlock(mm);
-> -				}
-> -			} else {
-> -				*result = collapse_scan_pmd(mm, vma,
-> -					khugepaged_scan.address, &mmap_locked, cc);
-> -			}
-> -
-> -			if (*result == SCAN_SUCCEED)
-> -				++khugepaged_pages_collapsed;
->   
-> +			*result = collapse_single_pmd(khugepaged_scan.address,
-> +						      vma, &mmap_locked, cc);
->   			/* move to next address */
->   			khugepaged_scan.address += HPAGE_PMD_SIZE;
->   			progress += HPAGE_PMD_NR;
-> @@ -2781,34 +2803,19 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
->   		mmap_assert_locked(mm);
->   		memset(cc->node_load, 0, sizeof(cc->node_load));
->   		nodes_clear(cc->alloc_nmask);
-> -		if (!vma_is_anonymous(vma)) {
-> -			struct file *file = get_file(vma->vm_file);
-> -			pgoff_t pgoff = linear_page_index(vma, addr);
->   
-> -			mmap_read_unlock(mm);
-> -			mmap_locked = false;
-> -			result = collapse_scan_file(mm, addr, file, pgoff, cc);
-> -			fput(file);
-> -		} else {
-> -			result = collapse_scan_pmd(mm, vma, addr,
-> -						   &mmap_locked, cc);
-> -		}
-> +		result = collapse_single_pmd(addr, vma, &mmap_locked, cc);
-> +
->   		if (!mmap_locked)
->   			*lock_dropped = true;
->   
-> -handle_result:
->   		switch (result) {
->   		case SCAN_SUCCEED:
->   		case SCAN_PMD_MAPPED:
->   			++thps;
->   			break;
-> -		case SCAN_PTE_MAPPED_HUGEPAGE:
-> -			BUG_ON(mmap_locked);
-> -			mmap_read_lock(mm);
-> -			result = collapse_pte_mapped_thp(mm, addr, true);
-> -			mmap_read_unlock(mm);
-> -			goto handle_result;
->   		/* Whitelisted set of results where continuing OK */
-> +		case SCAN_PTE_MAPPED_HUGEPAGE:
->   		case SCAN_PMD_NULL:
->   		case SCAN_PTE_NON_PRESENT:
->   		case SCAN_PTE_UFFD_WP:
-
+Since the whole nr_premapped will be dropped, do we still need a cleanup patch
+like patch 12 which will be dropped finally?
 
