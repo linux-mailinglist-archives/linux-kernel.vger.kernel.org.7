@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-871568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BD2C0DAE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:51:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819D7C0DAA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F6634F9124
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:40:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 297284F8987
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BAE30F95F;
-	Mon, 27 Oct 2025 12:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7AA30FF3B;
+	Mon, 27 Oct 2025 12:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FruOG2al"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6eRaNEn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5311130F931
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0596A30FC16
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568722; cv=none; b=ML24pNg8QMFF70/uo6/tTxhmDELsFsvLii7pU2z7uzwafe2hZrO8jC/KkvMZen0vdxp0ZSd7W0xz40kgMXgBITqe2sYapB2DeqWKjKPJh1RLWSjIqqXMmkRrsyMtnI6+cRYNriaZDJgb4SBCQZ7nNnA2umwYc6BH28iUuAp206I=
+	t=1761568725; cv=none; b=hW1SEUv/6pS7ob4YT+oJpjmyHOEadAGVztMAmp2fgU7Jf7QDtdus9h3kVwTHBrmjowVpoNt+FYa91RVVRqAwvNHnTEbe+hem53uk0jYB1QZ6lc6tKAEZh6aOkMaI1haPeI2ztDXDPKpDNK5QQiY4gehmRQpGLzQo4eTRvxjMYNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568722; c=relaxed/simple;
-	bh=K9MThje/vm7kyGUxpZSfGbgu+RMSGEzgFkQaowpjs5s=;
+	s=arc-20240116; t=1761568725; c=relaxed/simple;
+	bh=jkimlE3A59Sa174fi2PtZczhP/TbkMPiz9cHBMqY8UM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HF4xBl2rN2lTNHNjwYdmFRmdE0iDmtDLTCDPSAgoTJga6eU4xXHAaX65Pz/9RXW48Pz8tn6SjGCP3oG0+PlLJplECHPFbB5HTJaGZz2s5TsuVEK32Wbx8MTAmBuc2PcXgapFWbTjYGLbh6OUhskloUvY0Sr0TGOrjcajIIe2f+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FruOG2al; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R8oc4H1132695
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HM+QV7hPsWe4JbQ7/slMutv3h5j0OmFuFixBv/5OW7c=; b=FruOG2alL63ed/yA
-	IpthnH3fl5GFRE8Tp+dPczSezeBEdGXaL88AfTkFwKALAFufmqgZqYL25sBQlawS
-	cGtOJMY6/jPGJ355JTNLuJKZn4IL+gX5fjhyk571qSZtISNjbyq8Iay7gtUI9G6O
-	kk0WsGd6McOMtirTuBT1YMoOElT1bO3hbarLHdmA0mqlJCGGOGuDMbbxOF4ON5DZ
-	F/Ygjjux98Uloy96YP78V/mJHOEaq3g3GlN2tM/wpkh5J/J07rFbWTblqCU2eczu
-	HdpTcfCkuc5OHFEux+HDJui5z7llyYFYKOqbUI9ZtLRnAPAqT7xNxoeZPVFR3X3v
-	9bA+AA==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a0p4g4hgw-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:38:39 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7a432101881so1801060b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:38:39 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Cn7Qr8SAHgnNVfoq/k2gveQAXo+WdWwNr+cjmhuPKNGnB1xiDHjydYo2LSBp6tXMeEIeOdcFJxaWQzGnVpTTGHC/9pkptPTGsNA3TEWrkV+g9XTkk1Xfs+3qftAYcQ7L0d08YyRtZRHS5RBHdmwfFkiDm0kL4B6aiaJaDIFXGHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6eRaNEn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761568723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4cvIQRmqmBNV8P6YdgjJbon9LLe8l/9b6yM7q+yxHTQ=;
+	b=c6eRaNEn3DkmXxywCs1O2CdnP4uVd0uKWqn8MuLxzrLgdAQolpaobJhMWi8VS0JUkr8Qpt
+	UoFYqTVUzS8EijmomEI0MjvaTYvZTvy+27EVmx2ybQTMKgs7VXXc9dEDafQ6364giwt3kH
+	IA01NMC0f0p6dCq3j974ufLpu/lOgF4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-685-GfY4iOP0PH-bUoHrWG6ULA-1; Mon, 27 Oct 2025 08:38:41 -0400
+X-MC-Unique: GfY4iOP0PH-bUoHrWG6ULA-1
+X-Mimecast-MFC-AGG-ID: GfY4iOP0PH-bUoHrWG6ULA_1761568721
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e39567579so24147255e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:38:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761568718; x=1762173518;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HM+QV7hPsWe4JbQ7/slMutv3h5j0OmFuFixBv/5OW7c=;
-        b=VmRL78NNmPZhIeZGx5uObUigyDTVj/lDz1A4FoOmkP/oUCtNKduEQym+2fv4Jg4TZQ
-         pKDA1kJfLKoqTVKf3R7P5Ze6K90x62EPbevKGQe3PEkLANfucOyNhHX5az0o5diZCeWD
-         SQG2EcaNPEgKTyWrHfEwHo77748IW0Va7y+cBcEq/D+Ry3+osM4Srsy+C+WuW87GSbDo
-         jbtnJPHKTwK6kJZEd9pq/m8qhdcTwvk4+dALkackyfkD1tAZofnWmhPZaIkzJIoQXQXc
-         xw0ju844jnwNhBW+O/zqtY57+aeKvSWQ8nZzgFCnsdwasvX/yFb+h/NviJE4pGg7Ty/T
-         O1pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAK/M7xQEz71oeS1tai5qkXKacrgTId/Df8vHF50XjKMxGdrBIVLWFj8FSbcbfsbb6GSyPelam6MZGOBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmZx9OurW0kRKlG8uZq7uv8TOm5buHYMfP9k9F6o0Wbe/VFLb4
-	EnOUku16dsZLtnSMxloEaz7coKxiH7nW+vv8E9pn0JmduoSUtbX0nSIfsiyCQr+8FHgT8wTwaxG
-	CP6As9xv43Y90tv1So8ghMKGqX8UwaU4PvA150hngP0VFeG20ReQaZd5MTjibTx0tT/w=
-X-Gm-Gg: ASbGnctbePXZ0DNxpCanqHzAxAV19uZBQxbp1boLduoSkNZ9QcfEABTasmXpr6RVEWf
-	ZZDT/YdxHUptJ2aw1tHEZLg2SekdMyyfSImmKP4NVbSHh13ksE2gTse6EzpZLU/j71gXqezXzx5
-	9P+Tm3g3E+ddZIrEQtlCgI/Yp7IwISeVoVU5xUOI31kSrWxfGMwCqIyx21TStSdpAUSNyclhM2b
-	07QgK9w32xT/FRhw8+3e8cTmy0EmQTxnCZ80sVcir+IuBKw4DU13MjCCqtRRpsUR4L00Y0xZNhI
-	/n6MJizVGIlsfgm9B6Ls+eTzwARg8gX6kbQQe+X87EujkzvZEOoyJCsBSJCJDmPuCpMFYYCBeqK
-	n99+qkKUq+xjNFsIeJ4QoWIAUCI/H6B4GjeWruDp7Mff2j3MNoUGT0X0BynM=
-X-Received: by 2002:a05:6a00:13a0:b0:781:189:ae43 with SMTP id d2e1a72fcca58-7a220b06cd9mr35721417b3a.20.1761568718178;
-        Mon, 27 Oct 2025 05:38:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPSGwlBz+HN+tj7YlXXDid70Q5ThXSM/+InuvM9haESMOarKb3WO/5QpH1uFNnSINTjzomOA==
-X-Received: by 2002:a05:6a00:13a0:b0:781:189:ae43 with SMTP id d2e1a72fcca58-7a220b06cd9mr35721382b3a.20.1761568717536;
-        Mon, 27 Oct 2025 05:38:37 -0700 (PDT)
-Received: from [10.133.33.217] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012899sm8170181b3a.0.2025.10.27.05.38.34
+        d=1e100.net; s=20230601; t=1761568721; x=1762173521;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4cvIQRmqmBNV8P6YdgjJbon9LLe8l/9b6yM7q+yxHTQ=;
+        b=CZhNEYJ1fPNoDzOKrCpWj1D0HH9VKYgRpMh3/K5lQibIQCR2sH9tn8tHIylUOF1hqc
+         f6YuaCqi/NG8e6WLtcpp43T/huYOgUAtJ8kYPSfBvYnVjXXhi/Hk9BJWjbM7jGosgRMx
+         SDg6+K0sYKdDPHUnX8fWc+Qd7SKBYZEVIp+3CG/lZfX8XZ4661uaFYuqsCMNO5x7vdwa
+         DNYNUZJOI/1CGW9SUzx6F3Ey2k36Td0QseWmTmKUhvi3BadliuIZ7LlsEAkH7KTnX+J6
+         UUeYB4RDMlxmjQGMx619IeB7ldkqE1kYOr5inVwh2eUwFZECgfczbCeV4qlJykiMyl0K
+         OLiA==
+X-Gm-Message-State: AOJu0YwyghLRR3olV5QPjq52Z0ahDV6HaT/MuaoEsKRRjlT9vJhfxflu
+	DA5EE09PTk7/LjiGnMsNGZfzzjrrBpfyugztxx9EdYJfv3QfmMGEatcutJzBZRnXF6NXO9uSSxJ
+	N9Mg/LvwDSduMxXvFm56KXkwin9n660BlF4ENdF4Sc7Ne/NULPokv8F6dyOjocrDMXw==
+X-Gm-Gg: ASbGnctcRXjXvGFlsCyj2NdiD4w25/x65c85lDukCdLGqnPP8g8EMYyrNfWnj2boKOx
+	fwZ9ve+JCSZRu16EzjTVx5WICCxCRTCVFhjIyY/3HnFx5BiAf6r5GuKdrBhDS0MzftcCDtp3kV2
+	LJw5FSzI6DOQSssRfMWzqZP3wpkdEY+TxyvM5HyApSApQQ8EY5TUAurTtWv0Q16aNoSRzzDQS5E
+	LCOd2YfPVFqnXoxb2eUuxNMBwefoj1nF7YWt9XVbDIFJT5DLeaEuq8PW14bIiE7ZOeZxr8SAJlT
+	4Qs7Nn/fcAp3HEnLYYlFScv1ZoH5yH9CiUWM8oQ0JmiqGbzMKarmBXkn7wi9WVRG4ERnaVfE4Xb
+	/sqg7dMOLe3sWf5kkK0l8bByqux/NL94=
+X-Received: by 2002:a05:600c:3b03:b0:46e:53cb:9e7f with SMTP id 5b1f17b1804b1-471178a3ff6mr279997745e9.18.1761568720548;
+        Mon, 27 Oct 2025 05:38:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9bbdh4PWkc2jU/rl4KkAQD2PqCSpwK7SfjvxDRuSE3bTT/1W5umiWwesFjMbMJkHNKlChlg==
+X-Received: by 2002:a05:600c:3b03:b0:46e:53cb:9e7f with SMTP id 5b1f17b1804b1-471178a3ff6mr279997395e9.18.1761568720112;
+        Mon, 27 Oct 2025 05:38:40 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff1f1cf.dip0.t-ipconnect.de. [79.241.241.207])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd489e6dsm133581265e9.6.2025.10.27.05.38.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 05:38:37 -0700 (PDT)
-Message-ID: <4108296c-399c-453d-b339-7e70a423d14c@oss.qualcomm.com>
-Date: Mon, 27 Oct 2025 20:38:31 +0800
+        Mon, 27 Oct 2025 05:38:39 -0700 (PDT)
+Message-ID: <7df81ee0-1161-49f4-a93f-4d9245d48e1d@redhat.com>
+Date: Mon, 27 Oct 2025 13:38:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,198 +88,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
- resctrl integration
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org,
-        lenb@kernel.org, pavel@kernel.org, tony.luck@intel.com,
-        reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
-        amit.kucheria@linaro.org, christian.loehle@arm.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lukasz.luba@arm.com, zhongqiu.han@oss.qualcomm.com
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
- <CAPDyKFprP1d-9Ojwz7QaVBbdFumPmRoVnifrP8v+eL6FHR3Unw@mail.gmail.com>
- <7acba50b-8c1e-4509-8100-3a65467d2d87@oss.qualcomm.com>
- <CAPDyKFqVKWCApVFjYpgXa2x3N9F7O1bGBBPz0JfNrWBYtg=M0A@mail.gmail.com>
+Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
+ context-switching
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ David Woodhouse <dwmw2@infradead.org>, Kevin Brodsky
+ <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-12-kevin.brodsky@arm.com>
+ <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
+ <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
+ <70723f4a-f42b-4d94-9344-5824e48bfad1@redhat.com>
+ <cbe0d305cce6d76e00b64e7209f15b4645c15033.camel@infradead.org>
+ <fcd7b731d38b256e59edd532e792a00efa4e144e.camel@physik.fu-berlin.de>
+ <9faf750e-2369-4fae-b58a-ed9052cfd6f6@redhat.com>
+ <1d9f416fd3665faf27841b6305b1e8d661427125.camel@physik.fu-berlin.de>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <CAPDyKFqVKWCApVFjYpgXa2x3N9F7O1bGBBPz0JfNrWBYtg=M0A@mail.gmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <1d9f416fd3665faf27841b6305b1e8d661427125.camel@physik.fu-berlin.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 90WDPVKYqLqiUmXL3zZtRtlqvgpMXXqb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDExNyBTYWx0ZWRfX3PXKzBss98x1
- XjeuVIbkWS0I8TiPrjiUSI7oJ6nMLbDnh36gJAifrCTtncGMlOmuH2JjYOXtJDDSQLHnPOZFlYe
- g0DJwFkNWqltPKJOot82OCnL1CENk4/TErffWt7QLhRysAd/ak/RBTQlXYxJW6WLAtLrqXw2QuZ
- wBog5QEPjn1LlPH+AtENv1NpHSjJVBa/VdLAQ4jIAqq4cEg0gvz6ZPI4lcXzI7DclDRItsuHgFK
- n47lkirwNkwykzRiuSF2lnSLb1uWy3lKxDwYhKhZOc9C1t+Wq00HjbDtdHqn/Mi4psJQFf3eUf+
- O7dyLgUFPC6v+xzkYFIanlV1B7AwmnKXH5M9NNYoTRgfhUdu97pAyqs3NVnPdSS/ALnwOP+Yp/2
- xnejiNgus/IhfxKApa+m3VZ3MLxC+g==
-X-Authority-Analysis: v=2.4 cv=L9YQguT8 c=1 sm=1 tr=0 ts=68ff67cf cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=l6s8cBgvcr9gq9MuNTsA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 90WDPVKYqLqiUmXL3zZtRtlqvgpMXXqb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270117
+Content-Transfer-Encoding: 7bit
 
-On 10/24/2025 6:44 PM, Ulf Hansson wrote:
-> On Fri, 24 Oct 2025 at 10:40, Zhongqiu Han
-> <zhongqiu.han@oss.qualcomm.com> wrote:
->>
->> On 10/23/2025 7:03 PM, Ulf Hansson wrote:
->>> On Mon, 21 Jul 2025 at 14:41, Zhongqiu Han <quic_zhonhan@quicinc.com> wrote:
->>>>
->>>> Hi all,
->>>>
->>>> This patch series introduces support for CPU affinity-based latency
->>>> constraints in the PM QoS framework. The motivation is to allow
->>>> finer-grained power management by enabling latency QoS requests to target
->>>> specific CPUs, rather than applying system-wide constraints.
->>>>
->>>> The current PM QoS framework supports global and per-device CPU latency
->>>> constraints. However, in many real-world scenarios, such as IRQ affinity
->>>> or CPU-bound kernel threads, only a subset of CPUs are
->>>> performance-critical. Applying global constraints in such cases
->>>> unnecessarily prevents other CPUs from entering deeper C-states, leading
->>>> to increased power consumption.
->>>>
->>>> This series addresses that limitation by introducing a new interface that
->>>> allows latency constraints to be applied to a CPU mask. This is
->>>> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
->>>> embedded systems where power efficiency is critical for example:
->>>>
->>>>                           driver A       rt kthread B      module C
->>>>     CPU IDs (mask):         0-3              2-5              6-7
->>>>     target latency(us):     20               30               100
->>>>                             |                |                |
->>>>                             v                v                v
->>>>                             +---------------------------------+
->>>>                             |        PM  QoS  Framework       |
->>>>                             +---------------------------------+
->>>>                             |                |                |
->>>>                             v                v                v
->>>>     CPU IDs (mask):        0-3            2-3,4-5            6-7
->>>>     runtime latency(us):   20             20, 30             100
->>>>
->>>> The current implementation includes only cpu_affinity_latency_qos_add()
->>>> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
->>>> planned for future submission, along with PM QoS optimizations in the UFS
->>>> subsystem.
+On 24.10.25 17:51, John Paul Adrian Glaubitz wrote:
+> Hi David,
+
+Hi,
+
+> 
+> On Fri, 2025-10-24 at 17:47 +0200, David Hildenbrand wrote:
+>>> Please have people test kernel changes on SPARC on real hardware. QEMU does not
+>>> emulate sun4v, for example, and therefore testing in QEMU does not cover all
+>>> of SPARC hardware.
 >>>
->>> My apologies for the very late reply.
->>>
+>>> There are plenty of people on the debian-sparc, gentoo-sparc and sparclinux
+>>> LKML mailing lists that can test kernel patches for SPARC. If SPARC-relevant
+>>> changes need to be tested, please ask there and don't bury such things in a
+>>> deeply nested thread in a discussion which doesn't even have SPARC in the
+>>> mail subject.
 >>
->> Hi Uffe,
->> I truly appreciate your review and discussion~
->>
->>
->>> To fully understand how this new QoS interface is going to be used, I
->>> really think we need to include a user of it, as part of the $subject
->>> series.
->>
->> Yes, Patch 5/5 using the cpu_affinity_latency_qos_* helper functions to
->> replace the logic in pseudo-locking that uses dev_pm_qos_request to
->> restrict CPU latency for known CPUs (via a mask). Actually, I'm also
->> looking for more users — for example, we plan to use these interfaces
->> in our UFS module in the future to implement optimizations. And I also
->> plan to support it in userspace on patch V3.
+>> out of curiosity, do people monitor sparclinux@ for changes to actively
+>> offer testing when required -- like would it be sufficient to CC
+>> relevant maintainers+list (like done here) and raise in the cover letter
+>> that some testing help would be appreciated?
 > 
-> Right, in regards to the resctrl/pseudo-locking user of this new QoS
-> interface, this whole series looks more like a refactoring to me.
-> 
-> My point is, for this reason alone, I don't think it makes sense to
-> introduce this new QoS interface. We need another user too, like UFS,
-> to understand how this would work in real practice and to allow it to
-> be merged.
-> 
+> Yes, that's definitely the case. But it should be obvious that from the subject
+> of the mail that the change affects SPARC as not everyone can read every mail
+> they're receiving through mailing lists.
 
-Thanks Uffe, I will continue to collaborate with our UFS team, or find
-other users as examples.
+Agreed. One would hope that people only CC the sparc mailing list + 
+maintainers when there is actually something relevant in there.
 
->>
->>>
->>> Besides the comments from Rafael and Christian, I also wonder how the
->>> user of the interface should know what CPU-mask it should use? For
->>> example, how does it know the CPU-mask for the big-cores and for the
->>> little-cores? In particular as I assume the user isn't a platform
->>> specific driver, but rather a generic driver that should work across
->>> various platforms.
->>
->> This patch introduces cpu_affinity_latency_qos_* helper functions as an
->> extension to the kernel existing cpu_latency_qos_* interfaces. These new
->> helpers enable users to apply latency constraints to specific CPUs via a
->> mask, allowing for more precise power management when the target CPUs
->> are known in advance.
->> If the user is a generic driver, there are two options:
->>
->> 1.One is to use the existing cpu_latency_qos_* interfaces to directly
->> restrict all CPUs from entering idle, since the driver may not know
->> which specific CPUs need to be constrained.
-> 
-> Right, which is how UFS does it currently.
+Also, it would be nice if someone (e.g., the maintainer or reviewers) 
+could monitor the list to spot that there is testing demand to CC the 
+right people.
 
-Yes, exactly.
+I guess one problem might be that nobody is getting paid to work on 
+sparc I guess (I'm happy to be wrong on that one :) ).
+
+Regarding sparc, I'll keep in mind that we might have to write a 
+separate mail to the list to get some help with testing.
 
 > 
->>
->>
->> 2.However, for generic drivers with specific workload characteristics
->> such as the ufshcd driver in this patch:
->>
->> https://lore.kernel.org/all/20231213124353.16407-1
->> -quic_mnaresh@quicinc.com/
->> — if a user knows exactly which CPUs should be restricted, they can
->> provide a custom mask via a hook function and use the extended API
->> accordingly. The default return value of the hook is the system-wide
->> possible CPUs, so it won't affect other users.
-> 
-> Sorry, but I couldn't find in the above series how exactly UFS knows
-> about which CPUs it should constrain.
-> 
-> Again, please provide a user (UFS for example) of the new QoS
-> interface as a part of the series.
-> 
+> I'm trying to keep up, but since I'm on mailing lists for many different architectures,
+> mails can slip through the cracks.
 
-Sure, will do that.
-
->>
->> In summary, this patch is mainly intended for users who know which CPUs
->> they want to restrict. For users who don't, the extended API can still
->> be used by passing a system-wide CPU mask, or they can simply use the
->> existing cpu_latency_qos_* interfaces.
-> 
-> I understand, thanks for clarifying.
-
-Thanks for the review and discussion~
+Yeah, that's understandable.
 
 > 
-> This all said, I have to admit that it kind of starts to worry me when
-> I see the number of different users of cpu_latency_qos interface
-> increasing in the kernel. To me, it feels like these are just papering
-> of another real problem that ideally should be solved in a more
-> central place, for everyone. But hey, that's another separate problem
-> that we can discuss at some other point.
+> For people that want to test changes on SPARC regularly, I can also offer accounts
+> on SPARC test machines running on a Solaris LDOM (logical domain) on a SPARC T4.
 
-Yes, We should strive to avoid unnecessary overhead. I will also look
-into modules where it's clear which CPUs' PM QoS constraints are being
-applied, as those might be optimized. I will also do an investigation.
+For example, I do have a s390x machine in an IBM cloud where I can test 
+stuff. But I worked on s390x before, so I know how to test and what to 
+test, and how to troubleshoot.
 
-
-
-> 
-> Kind regards
-> Uffe
-
+On sparc I'd unfortunately have a hard time even understanding whether a 
+simple boot test on some machine will actually trigger what I wanted to 
+test :(
 
 -- 
-Thx and BRs,
-Zhongqiu Han
+Cheers
+
+David / dhildenb
+
 
