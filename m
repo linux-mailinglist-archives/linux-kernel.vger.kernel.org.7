@@ -1,99 +1,95 @@
-Return-Path: <linux-kernel+bounces-871785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C14C0E657
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:25:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD07C0E476
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:13:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2AA34FA8DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D25422657
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820F030AD00;
-	Mon, 27 Oct 2025 14:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD37A306B3C;
+	Mon, 27 Oct 2025 14:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmL0bIdq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXOG54m2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C4F2566DD;
-	Mon, 27 Oct 2025 14:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275711F4161;
+	Mon, 27 Oct 2025 14:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761574085; cv=none; b=g5jCjcb32IGfWcxYWcCWj3cFXj86dvSpQ0KFKFSI0XLSJqiSyYHxJvOnqqSGoZLZ0/E1ywYOaX7yvOg1vgSCoHfBB6mpa57Nd9w1geDwq+Eb+tDf2WkrGNo5dapBTh7Er95tia1u4xRLA4VInryLsvjncHSXdwPOQu9UFMBcFlg=
+	t=1761573989; cv=none; b=WqJRkRZ1dfH1xGJZ1dEC//j8Vc7RNz17k/klUm33/6qGeVf0OjfHsetkz2YVj6KcmbflybWjlBaagaXa+WNej/sG53WUrazLetkuDYq+0YNI5qaM9KP9pR/Tn1nYCAHeHqcdiV8ASRbtvG9iTSYtFfBLdcPsorc932AOzmg758I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761574085; c=relaxed/simple;
-	bh=G5enwOxx/IokudK+Rl23Z3f4vUmuTwxMyx1zaA1SnkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VQQo6t1UJORHL/B+mdDVXPhe2lypWQup80fWfSrZCGT2GFOhhF0XqTJED+sXtXzRrhdidICswQV/6FUMgD2EiT/yV1lIxBKT1kaVrhAi3DiHZDGOZZN7U0XXRQIBVXiZBUP988aL8Jlh49jgRIPby9/qE5UIg6xJYdoewmh/8cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmL0bIdq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAB6C4CEF1;
-	Mon, 27 Oct 2025 14:08:02 +0000 (UTC)
+	s=arc-20240116; t=1761573989; c=relaxed/simple;
+	bh=WfPSZu7LSHG4fLrBFHtsbqrLYPx6fVlrmAr8kHkI/Oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dXKaFecJMJUkk7EiPoicGewCZQ+/qNzwxdqEfWVD44GPP4EjWe7+6lL13WOJlqrDZmTbSkPGlcMMFmpsGwTAC92QERu34LdRw/nJvO9oOmnACpQAGsOUcwos255CfMeg32A+9xLB43NADTZ4wcyo7LvVNt0lDhPDz6AdUr9qKOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXOG54m2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F54EC113D0;
+	Mon, 27 Oct 2025 14:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761574085;
-	bh=G5enwOxx/IokudK+Rl23Z3f4vUmuTwxMyx1zaA1SnkM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AmL0bIdqC7DBYq9C/TSivDw3ClX+wqW/taBwy56Vwhx/Ke6hIHkHVN0k80ijlVoFA
-	 4GR7721eu8ej9qR6OEOlyvaDkJCjLSsY7NtMtJyqL2TdpIelAKlqN1KMQX8mFVtlxS
-	 cWIsVIQtOARzYUrPvA1TT242Fm5pAgXWzNm7o3sK9oBZsr3fWdTVmGtb1zLMOMGlUk
-	 8IWNs4TT8vXjfC5AbssU1jv2QQjdhs2kxdnPVbQv9a6q5F44tu3nn9SXvYAaAL1jCy
-	 eAFuUZSRcBna9XgYzCXsoSkpAu7zBccivRewC3+73T3daec2Xb1Ij6IkAOBHEsc931
-	 E2ZSz/D71CJ+g==
-Date: Mon, 27 Oct 2025 14:07:59 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
- <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
- <linux-iio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] iio: adc: clear reference voltage bits before
- configuring vref
-Message-ID: <20251027140759.3d3149bd@jic23-huawei>
-In-Reply-To: <20251021053918.3008654-1-billy_tsai@aspeedtech.com>
-References: <20251021053918.3008654-1-billy_tsai@aspeedtech.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1761573988;
+	bh=WfPSZu7LSHG4fLrBFHtsbqrLYPx6fVlrmAr8kHkI/Oo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NXOG54m2L61PkB2ZoNhNafdgbTAV4c+1x2i8FnfOHtAaPErMALEYp+Wnv3lSJjwWS
+	 77DVS+pIc0WNv1jL8aiMZbtAKoj5qP/MFPqwstn/wFVW7aV+2OsMeVFItIBdaFpnnn
+	 4IRD1Y0bjQzkRwusdZdvCv2WUQwhuyaHaoaAiPIm38mTgQnNr/6k4acll0/9rBOlmK
+	 Yuap6URJimT737azuhwc7AIbJoAD+tK+o9Xc9Q+EQq2tmPLQ9QP6d5Sp2vjDmgFUMC
+	 T6dRtGAxieAHxXmXr01gHtEcmQVLcWbYktZw0dlWqy2QaKaVEG3x+IQJqV3UCo/YWU
+	 rQchvoaUIPC/g==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	David Wronek <david@mainlining.org>,
+	Jens Reidel <adrian@mainlining.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org,
+	linux@mainlining.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: (subset) [PATCH 0/3] Fixes for SM7150 dispcc driver
+Date: Mon, 27 Oct 2025 09:09:02 -0500
+Message-ID: <176157405447.8818.12328266826871564632.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250919-sm7150-dispcc-fixes-v1-0-308ad47c5fce@mainlining.org>
+References: <20250919-sm7150-dispcc-fixes-v1-0-308ad47c5fce@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 21 Oct 2025 13:39:18 +0800
-Billy Tsai <billy_tsai@aspeedtech.com> wrote:
 
-> Ensures the reference voltage bits are cleared in the ADC engine
-> control register before configuring the voltage reference. This
-> avoids potential misconfigurations caused by residual bits.
+On Fri, 19 Sep 2025 14:34:29 +0200, Jens Reidel wrote:
+> The MDSS needs a reference to the MDSS_CORE reset since 6.17-rc,
+> otherwise video mode panel initialization appears to be broken.
 > 
-> Change-Id: I03c036436f376ced8a19fa5d407b7bbb377ae721
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-Make sure the patch title includes the part/driver name.
-
-iio: adc: aspeed: ..
-
-+ the stuff Andy raised already.
-
-Actual change looks correct to me.
-
-> ---
->  drivers/iio/adc/aspeed_adc.c | 1 +
->  1 file changed, 1 insertion(+)
+> Also ensure that the parent of dispcc_mdss_pclk0_clk_src gets prepared
+> and enabled to fix an "rcg didn't update its configuration" warning that
+> started occurring recently.
 > 
-> diff --git a/drivers/iio/adc/aspeed_adc.c b/drivers/iio/adc/aspeed_adc.c
-> index 1d5fd5f534b8..8ab29948214a 100644
-> --- a/drivers/iio/adc/aspeed_adc.c
-> +++ b/drivers/iio/adc/aspeed_adc.c
-> @@ -415,6 +415,7 @@ static int aspeed_adc_vref_config(struct iio_dev *indio_dev)
->  	}
->  	adc_engine_control_reg_val =
->  		readl(data->base + ASPEED_REG_ENGINE_CONTROL);
-> +	adc_engine_control_reg_val &= ~ASPEED_ADC_REF_VOLTAGE;
->  
->  	ret = devm_regulator_get_enable_read_voltage(data->dev, "vref");
->  	if (ret < 0 && ret != -ENODEV)
+> [...]
 
+Applied, thanks!
+
+[2/3] clk: qcom: dispcc-sm7150: Add MDSS_CORE reset
+      commit: 176465fd8c4e2cbb4410b5a66f6ba74ed491d2a5
+[3/3] clk: qcom: dispcc-sm7150: Fix dispcc_mdss_pclk0_clk_src
+      commit: e3c13e0caa8ceb7dec1a7c4fcfd9dbef56a69fbe
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
