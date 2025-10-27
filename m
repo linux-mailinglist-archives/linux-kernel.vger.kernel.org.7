@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-870756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B1C0B99F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:37:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B267AC0B9A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E410A4EA26A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:37:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8CAC4EB9F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A7A28934F;
-	Mon, 27 Oct 2025 01:37:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BA016F288
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59FD28B4F0;
+	Mon, 27 Oct 2025 01:38:39 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F287083C;
+	Mon, 27 Oct 2025 01:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761529019; cv=none; b=TTUDyquP8UwCdF6O6GZ96LQwhzo0cWfSFq+n5g68LHyA/5bL4QMopzKPLHo1wBx5n3ZntirEPgJUdW1z+WTPHbhhwW6YGVubSAf6HSoHojYdrX5+l1x9rZUgk1ZNAg3CHDUg5EI4atGvPyeWvqHQuuM78u98yI1TF35+hCqAmCo=
+	t=1761529119; cv=none; b=gue9L1+jZciuapoHB+FnfEWn5/PM0efwQDAcLsKI0BCjvXJiTqo/cA23/0WlwQN5avmvJq9RgGsaZIOB5fAbtrWue1TMinCTD/ypKmiBCv2ytJGvPPYnufEsAWhqhWU1DsSqGq8DNW/EPicqFh+ntNIg3cCZn4ZW4xBgQsULJzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761529019; c=relaxed/simple;
-	bh=FkJ17JdOa8kqwodupoeKU/kTXkVHWDiswetLtJd7TJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d5uAJvsI1oqiCJMx2xinFNoOYfmulI/a3aJVxemF6lp3XPrMQYtSYP340mUE8eru4qTEgZgkqjfIob/AoAcA/NCaeAdQWEZosbbhWVyQdByYTBaePbysbHpTpPifYQcYocQTRkd6zWdQlTgdBJvMzXyqvn9vMbPn+1T6BUZa7jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC97F175D;
-	Sun, 26 Oct 2025 18:36:43 -0700 (PDT)
-Received: from [10.163.70.164] (unknown [10.163.70.164])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A48F3F673;
-	Sun, 26 Oct 2025 18:36:48 -0700 (PDT)
-Message-ID: <6e7d0bf3-ddf1-44a0-a0cb-7dc994101878@arm.com>
-Date: Mon, 27 Oct 2025 07:06:45 +0530
+	s=arc-20240116; t=1761529119; c=relaxed/simple;
+	bh=sSkiC8PgPA0Qqo06szF3QJjKcn6c0uld0w7sBEAOsbo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=L2vXTxVcdScBnb6W1R8tHStuU+f/5OaALJjp6kNK2kmtfy/Z56+BMl0XNVU54zHjdvTdWNO4h9NftJXegPSWR98pCPT4rr36h7+Xs4hfPQQIZ/FEO7Hn7x/M/oRqbhtlp/ypS5OIUfV/K4eTg6wnI8OFfZUCZ+f7oQJhI7QKN9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowABn7GAAzf5osh13Ag--.14S2;
+	Mon, 27 Oct 2025 09:38:19 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: linux@armlinux.org.uk,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	make24@iscas.ac.cn,
+	hdoyu@nvidia.com,
+	swarren@nvidia.com
+Cc: linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH] ARM: tegra: fix device leak on tegra ahb lookup
+Date: Mon, 27 Oct 2025 09:38:07 +0800
+Message-Id: <20251027013807.25214-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowABn7GAAzf5osh13Ag--.14S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZF4fXr4DJw48JFWkZrW3Awb_yoW8JrW8pr
+	4rGryrAr98GFy8Kw4jvF48ZFy5A3yI9w1rKr97u3yY9rsxXryFkFyxtrn0qa98tr97tF4x
+	KryIyw18CF48WFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
+	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4
+	AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
+	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUmQ6LU
+	UUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, ben.horgan@arm.com,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-References: <20251024040207.137480-1-anshuman.khandual@arm.com>
- <20251024040207.137480-3-anshuman.khandual@arm.com>
- <20251024120014.000020af@huawei.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20251024120014.000020af@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+tegra_ahb_enable_smmu() utilizes driver_find_device_by_of_node() which
+internally calls driver_find_device() to locate the matching device.
+driver_find_device() increments the ref count of the found device by
+calling get_device(), but tegra_ahb_enable_smmu() fails to call
+put_device() to decrement the reference count before returning. This
+results in a reference count leak of the device, which may prevent the
+device from being properly released and cause a memory leak.
 
+Found by code review.
 
-On 24/10/25 4:30 PM, Jonathan Cameron wrote:
-> On Fri, 24 Oct 2025 05:02:07 +0100
-> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
->> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
->> While here replace hard coded page size based shifts but with derived ones
->> via ilog2() thus adding some required context.
->>
->> TLBI_TTL_MASK has been split into separate TLBI_TTL_MASK and TLBI_TG_MASK
->> as appropriate because currently it simultaneously contains both page size
->> and translation table level information. KVM on arm64 has been updated to
->> accommodate these changes to TLBI_TTL_MASK.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Marc Zyngier <maz@kernel.org>
->> Cc: Oliver Upton <oliver.upton@linux.dev>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: kvmarm@lists.linux.dev
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
->>  arch/arm64/kvm/nested.c           |  8 +++++---
->>  2 files changed, 23 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->> index 131096094f5b..cf75fc2a06c3 100644
->> --- a/arch/arm64/include/asm/tlbflush.h
->> +++ b/arch/arm64/include/asm/tlbflush.h
->> @@ -57,9 +57,10 @@
->>  /* This macro creates a properly formatted VA operand for the TLBI */
->>  #define __TLBI_VADDR(addr, asid)				\
->>  	({							\
->> -		unsigned long __ta = (addr) >> 12;		\
->> -		__ta &= GENMASK_ULL(43, 0);			\
->> -		__ta |= (unsigned long)(asid) << 48;		\
->> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
->> +		__ta &= TLBI_BADDR_MASK;			\
->> +		__ta &= ~TLBI_ASID_MASK;			\
->> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\
-> I think you can replace the two lines above with
-> 		FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);
-> 
-> It's a small reduction in code but I don't mind much either way.
+Cc: stable@vger.kernel.org
+Fixes: 89c788bab1f0 ("ARM: tegra: Add SMMU enabler in AHB")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/amba/tegra-ahb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Right. FIELD_MODIFY() might be appropriate in this scenario but
-there will be some additional code churn needed. I don't have a
-strong opinion either way.
-
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -55,13 +55,12 @@
- } while (0)
-
- /* This macro creates a properly formatted VA operand for the TLBI */
--#define __TLBI_VADDR(addr, asid)                               \
--       ({                                                      \
--               unsigned long __ta = (addr) >> ilog2(SZ_4K);    \
--               __ta &= TLBI_BADDR_MASK;                        \
--               __ta &= ~TLBI_ASID_MASK;                        \
--               __ta |= FIELD_PREP(TLBI_ASID_MASK, asid);       \
--               __ta;                                           \
-+#define __TLBI_VADDR(addr, asid)                                       \
-+       ({                                                              \
-+               unsigned long __ta = (addr) >> ilog2(SZ_4K);            \
-+               __ta &= TLBI_BADDR_MASK;                                \
-+               __ta |= FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);      \
-+               __ta;                                                   \
-        })
- > 
->>  		__ta;						\
->>  	})
->>  
->> @@ -100,8 +101,17 @@ static inline unsigned long get_trans_granule(void)
->>   *
->>   * For Stage-2 invalidation, use the level values provided to that effect
->>   * in asm/stage2_pgtable.h.
->> + *
->> + * +----------+------+-------+--------------------------------------+
->> + * |   ASID   |  TG  |  TTL  |                 BADDR                |
->> + * +-----------------+-------+--------------------------------------+
->> + * |63      48|47  46|45   44|43                                   0|
->> + * +----------+------+-------+--------------------------------------+
->>   */
->> -#define TLBI_TTL_MASK		GENMASK_ULL(47, 44)
->> +#define TLBI_ASID_MASK		GENMASK_ULL(63, 48)
->> +#define TLBI_TG_MASK		GENMASK_ULL(47, 46)
->> +#define TLBI_TTL_MASK		GENMASK_ULL(45, 44)
->> +#define TLBI_BADDR_MASK		GENMASK_ULL(43, 0)
->>  
->>  #define TLBI_TTL_UNKNOWN	INT_MAX
->>  
->> @@ -110,10 +120,10 @@ static inline unsigned long get_trans_granule(void)
->>  									\
->>  	if (alternative_has_cap_unlikely(ARM64_HAS_ARMv8_4_TTL) &&	\
->>  	    level >= 0 && level <= 3) {					\
->> -		u64 ttl = level;					\
->> -		ttl |= get_trans_granule() << 2;			\
->> +		arg &= ~TLBI_TG_MASK;					\
->> +		arg |= FIELD_PREP(TLBI_TG_MASK, get_trans_granule());	\
->>  		arg &= ~TLBI_TTL_MASK;					\
->> -		arg |= FIELD_PREP(TLBI_TTL_MASK, ttl);			\
->> +		arg |= FIELD_PREP(TLBI_TTL_MASK, level);		\
-> 
-> Similar potential to use FIELD_MODIFY for these.
-> 
-> Jonathan
-> 
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index c0e8b765522d..6c306d017b67 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -147,6 +147,7 @@ int tegra_ahb_enable_smmu(struct device_node *dn)
+ 	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
+ 	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
+ 	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
++	put_device(dev);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+-- 
+2.17.1
 
 
