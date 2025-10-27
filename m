@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-871725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CC7C0E2E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:53:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183E9C0E2A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:51:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670E13B62E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:47:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E897C4F04B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD2C2FF654;
-	Mon, 27 Oct 2025 13:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F19A1D9A5D;
+	Mon, 27 Oct 2025 13:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvTOOUVY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="voCyTgSO"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0E11E412A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9334E2FE578
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572862; cv=none; b=VCiqEaZnrL5qa8QoTCyFiOJZji9NHxl5Lcv5H3mKv1xfxzYFAYyguaCITupOy/fpm9ddrR40D0UwboAi5MZYZbIZEzDieuiJRjIENyGlZJy5N1/JhUTvamlVua52DjVT7MYtwqWsoXWanbQEoWk0dV8u5vxcW7tfdh90CYlTdrY=
+	t=1761572896; cv=none; b=YEuu5h1NuTtjp4H6vVBN/OL/i664D5ZkR1KJAZTx7dtgnsQKPpMYs6lqOArZsddJjxy8yP1CwsiL5A94eXHM9wPrfgey4LJhs+3UY/gMFuS7OV7Ib8WSfygcA5EC/lCzbd3Dj5sdumrxm6HhnwLLeIN51B1qNMYIdZmg0x5VtTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572862; c=relaxed/simple;
-	bh=LOkZFXZ3ZELJ35KG0nvYUexkDEzKnAuOzNylQjxm22Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FuRz7lbGughLxQBrzA7TG5zcadRk8oYQSND7sem0UyxcuV1X0Et0boNmOB/FMCLlHtx/BoBXJielErvnSSiB4FOJcPpCrtr2V5cPRXlU1+sNkmjMaoCOLKFU7dVLErSXs/kPnK4ui6X9E5qSvMESx1P/b3f+LCVlkL2HKCApf20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvTOOUVY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761572859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rlMGVCW3NO++j4IeyaSGAHEC2AmkaTuwxwXk983vVMs=;
-	b=UvTOOUVYznZPEq9PYUSrgxz5RNupCwJsyAYbgf90YuXohArH9WtIn8AKPoF08QnkmEvNOj
-	RN3TYAp9r+04BGaL5yLJO2BdqZ6k90IC6XJfhbE4H3t0Cx88wlwDh5BA/E/t49Hqk4wCbE
-	JI6ZnKDFVAH/OR9nL7qH9F6iiOD8rOs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-GHNye4dHP9-514ujb-r4-w-1; Mon,
- 27 Oct 2025 09:47:35 -0400
-X-MC-Unique: GHNye4dHP9-514ujb-r4-w-1
-X-Mimecast-MFC-AGG-ID: GHNye4dHP9-514ujb-r4-w_1761572854
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79C8319539A3;
-	Mon, 27 Oct 2025 13:47:33 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.54])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 592AD1955F01;
-	Mon, 27 Oct 2025 13:47:32 +0000 (UTC)
-Date: Mon, 27 Oct 2025 09:47:31 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: mgurtovoy@nvidia.com, izach@nvidia.com, smalin@nvidia.com,
-	vgoyal@redhat.com, miklos@szeredi.hu, eperezma@redhat.com,
-	mst@redhat.com, jasowang@redhat.com, virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, alok.a.tiwarilinux@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio-fs: fix incorrect check for fsvq->kobj
-Message-ID: <20251027134731.GA11774@fedora>
-References: <20251027104658.1668537-1-alok.a.tiwari@oracle.com>
+	s=arc-20240116; t=1761572896; c=relaxed/simple;
+	bh=U0JtqnxtncEX4onOzRy4Hm/hiyMwJ50VlV7u6zYWNEI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mTVNwhuBdH/CZs+/M/76PIRTSd1ptV5SXaadUAJRlNYgfET5a2gxJGGaJP7akvitrgfeDyqj355CNj5vWVXflPoImIBdNinnQN5twx779BsSaT+eL9mSZQnBWZhy1624yo0zDrKVyfONckzmB9Ri86nXBR35Ff0NJ4+xg+w+SIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=voCyTgSO; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47112a73785so29768075e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761572891; x=1762177691; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RzAesypNTPMugraK7XXwIYSosV2Bew+BMi5GpBBgGmo=;
+        b=voCyTgSOvSRJ+zNFuo+xv6ZgQOGQfNiYDMMoC98igmVRInG1Uj5aqB4fLxoE6A9S5S
+         pWVTpBVzehEwOtGsQVMnYa+mZNM9/mdG+ynhxeXgNmUUQdLm5p5py/0scZSePo8+j01a
+         TxfCRmholhMy6zIoDr3swtGaydey8HMXdNQC+J+3fWvBvWOWBK2zrKuV7ShFqOztOdAF
+         oREYM/IHFQEjtY34CYvbWsSWl/5wjWlDkvZwtPCVLEAJlkM9Yi97I1Jb9MNiM7t37c8l
+         Q8TgMJ0LWqbniMGA9MRnRCf8crJLRVwszpT5xpDxQYp0akBWiO9MhPjRCFT3trfedzP9
+         xTgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761572891; x=1762177691;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RzAesypNTPMugraK7XXwIYSosV2Bew+BMi5GpBBgGmo=;
+        b=bJ+bISZsXw5xpeFltQlthVcj6WHDE9ggcAXOZj6O5csts5idvWBPlonlM88jISs5hw
+         A2DNtptZE0CT7NrU5L7YVqWhxAxpa0TP+b1dx2lSRsInJi8um49onWMEjaeI8eWLLeJs
+         djENmEeM7w11nyrg1X3AmLaScyMLxhF+ozQa76oTTC/ho3xJJXx00rmNkTEmtbSNpMa+
+         DBPuV4bY+aMyD+XqI3xpk4/4jPHQFsHzB1ZSZf/G5D1cHP7BqBpkof/zVBbZjdBHYc3r
+         VIPkxscIVe5zKNmtutYHxLjvQC/cDJ7yH40M4oncW7Z0To6L0N18C6Qt3dPvZOj9Los2
+         s0SA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeqw3xQE1IY0fx781F4+SbCyX1w5Klh39y5VIN6OI5RjEqwUGoaOOS6TQp1tkkxZ5OMP9vePpLHk/4hGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl8QZkxe1bcKpEFouefTGtQb6XsqcJrHintW15FCBIG298g4kk
+	xCTTJUhrBsWyA2tVd1gdp6JrWjG1rTZIO8WnYdI95j6wvMrWFbH0zfmSX5QL9q5WAUg=
+X-Gm-Gg: ASbGnct9RjGQzGHScoUPP3osHAOIVT1L7hV30s3oKQTGdR+Wh/IhyVJKXS6pH2C+sgt
+	DmWGEer4O+6qE+iRmkoAbxaZn/n94i8rR2sS1Qe6IuzObDGkdQxuxHA4g900ZuPVljNlpahJEy6
+	w61D/GfQylvTxdaRVt8LFAwhm6l8ubYPEk+qrK7Jx/B3rEpxcsa4+4OlquCvwJpryS+hBBEkGGv
+	yZDBd2n2gjgrOnoMn+trPlL2jUMFiO26A/A3wYnxmYXDGwjB490E3z4TNIKeJycn7c6kGEyVQJc
+	Kyz7D8ZfNSZEut1bS3+uE5mbSfypPNg+qxfqF7t2oNDvoVNduEGNWhuCOugTcjW5RLjGw3tYn7u
+	JhJknqCJpDjmtD836mRU16MvDkqIYsUrJzSdiG6+mCM6YARvKbaV9VET2PWiy6emDfzhhiMOVHD
+	ot2es0GA==
+X-Google-Smtp-Source: AGHT+IG/5Pq2rLhHw/tIky8ys6co6EXR9zSlto+XbPaEqb8hJVQ9Q7NYKXTkS4/CDOj2H1jGjmFujg==
+X-Received: by 2002:a05:600c:3b8d:b0:46e:4883:27d with SMTP id 5b1f17b1804b1-4711791c8d3mr298674945e9.30.1761572890905;
+        Mon, 27 Oct 2025 06:48:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1c6:7dde:fe94:6881])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db964sm14483390f8f.33.2025.10.27.06.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 06:48:10 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] gpio: mmio: further refactoring
+Date: Mon, 27 Oct 2025 14:48:01 +0100
+Message-Id: <20251027-gpio-mmio-refactor-v1-0-b0de7cd5a4b9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="irdcpZZIdkIBl6wD"
-Content-Disposition: inline
-In-Reply-To: <20251027104658.1668537-1-alok.a.tiwari@oracle.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABF4/2gC/x2MQQqAIBBFryKzTlChzK4SLaQmm0UqGhFId29o8
+ +Dx+L9BxUJYYRINCt5UKUUW3QlYDx8DStrYwSjTa2WsDJmSPE9Gwd2vVyoSlUVUo3eDc8DDzIW
+ e/3Re3vcDLgpv1mQAAAA=
+X-Change-ID: 20251027-gpio-mmio-refactor-e07ee08a9699
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=683;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=U0JtqnxtncEX4onOzRy4Hm/hiyMwJ50VlV7u6zYWNEI=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo/3gVzK9p98srMQjjK90qfWIlPnEynp/If32sQ
+ atWvhqJw+iJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaP94FQAKCRARpy6gFHHX
+ ctayD/0V1TlmAHWo2Ux3/bjlynGZuSV6wwdkMMHovKfN8N9xLl7fmChl+WqAqFL37dsHv8C/pJA
+ mmkfjf4oIyO/k7jvxPYWNlgbjCQQQaG1K5S4hADQN5cEEFKw90ErN3agn/qemYwbQh5zg4QIINA
+ ujXqBKOIjna1ljqtcEc7gBV1q4xXO+YupjCQgYylMHFfg5Q8WGOq8pVz1F/5WPnApzTVY6dDfxe
+ YHue3x9qZ+tctp/4Mb+q7QhCPltz2LJQZy8871L8v226K+zgI1Ba1j31y7YN4OD64E+yi747GMH
+ y4hyaCMKOs7sjIv6zQ7o8NVyTYelbbnQhf2e3lzKs3rshHQABlXAYaNddE3gViHHg0DlGSWBoTD
+ HubYbnxuLT45yWS5vfa/plzbJ2yU0VR0j5d9IlB7TiV1bj8MO+J8erUhQO9DbTB4nqKWIKmQske
+ 6/IyYs70zZ85X7t2uqL0oYXJCYzQ1wf5I8TMlLXgeOg6/v83R7e58SpQikj4HKijiRecZ7Lz0cA
+ fuQVjMZhyYEywWfNhCzQyVhCrd0gFL7mVgl+tDFfj6IvneYyzuaqHE8j8DQdjVZOFIpXRM3rehZ
+ WNYlrUPfQB4HRjEFfJ9JhVCHiwrfkHy5qWtypwaPsJCKIVyrn7d9RMqKEIyzx62HuQ8BHq8xkKM
+ Ijt3vfRE3fLbXhQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
+After the big conversion to the new generic GPIO chip API, let's further
+refactor the gpio-mmio module by using lock-guards and dropping the -
+now obsolete - "bgpio" prefix.
 
---irdcpZZIdkIBl6wD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (2):
+      gpio: mmio: use lock guards
+      gpio: mmio: drop the "bgpio" prefix
 
-On Mon, Oct 27, 2025 at 03:46:47AM -0700, Alok Tiwari wrote:
-> In virtio_fs_add_queues_sysfs(), the code incorrectly checks fs->mqs_kobj
-> after calling kobject_create_and_add(). Change the check to fsvq->kobj
-> (fs->mqs_kobj -> fsvq->kobj) to ensure the per-queue kobject is
-> successfully created.
->=20
-> Fixes: 87cbdc396a31 ("virtio_fs: add sysfs entries for queue information")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
->  fs/fuse/virtio_fs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-mmio.c | 335 +++++++++++++++++++++++------------------------
+ 1 file changed, 162 insertions(+), 173 deletions(-)
+---
+base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
+change-id: 20251027-gpio-mmio-refactor-e07ee08a9699
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---irdcpZZIdkIBl6wD
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmj/d/IACgkQnKSrs4Gr
-c8g4VQgAqhNd1hjJGhM4ivPxRFday+L3RXLtrGjXhYmGDNNkN8OQX47mOjkUSJue
-4bzETLFsBBzj1qXzmfLxCAv5W/6YmNArHk7Z1AuNWi30E3Jf15CNz0pdrba27qAE
-9Ggmr/mI3Jo3vad4fnIN+jHgMDkPh2j+IKq700pdS7BZZZGsayc2uSje8zYyunXj
-pAa0dpxtwaW/HmL4D1skL9q46GeupsN87xjkjnzolm2RwtzyljHMgxYrvFqB9DPG
-//k2Hje8HUY8n9sXt2mQvxeayl1mbjJjfYb8eXsHxQwQb3JvuV82gDpa8jW465eT
-xbmwVYW9XpQuE1O4RxuCnz4X+y2IRA==
-=Og4O
------END PGP SIGNATURE-----
-
---irdcpZZIdkIBl6wD--
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
