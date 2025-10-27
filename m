@@ -1,162 +1,172 @@
-Return-Path: <linux-kernel+bounces-870916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0A4C0BFA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:43:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A4FC0BFA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB02C4EFCC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:41:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8321C34AA34
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7242D6614;
-	Mon, 27 Oct 2025 06:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674723EAA5;
+	Mon, 27 Oct 2025 06:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b="ad57ETgB"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqvMEY1U"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE6323B632
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8452D5937
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761547293; cv=none; b=Ir4gqjkX3gkzWQejtHFcm0hizfSkGMlebKjkDTHSfnnksC3aQxRUwYM2uiXu+neXpusy+XUSx9VRz/J54f70oTwbBm5menpD5jEcxi0uJKm2kvu8Y3oM3FiJN853tIszi32SvCM7OlzBiluzg1AZfuqOfOsx1ENIT4mxN8tjUvM=
+	t=1761547338; cv=none; b=e2JCGRtUCni1RtvyQxoLECcu9FoeECVlPjgW2GN5VVrP/K6tRaf615jFEbQVak+YiPwbiU7CgUbltVwjmRvi9WNehxRqkKL30yu23eakGRPOorjPhn15amdoLlsw4ES8p72a7lZ9JElFuzr+YNrVVZvWBg7AzdoEVbj6Nr39lMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761547293; c=relaxed/simple;
-	bh=NPMQeSnux1WgQoNx4rxVtVlmNiImFDKpyKy8ElUhOgc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G7D8agkVjYbO6RrudLfd16clhzxwssY81RhQaMMLk6HWkPh+Jv7U4wt/mWjzDJN0Nrj/Zdaf5gE9lxMkvJlRQC8ixLLqPA9IQCPWTWgN2pHsJBWQA9odB4xqw9iNKB0Sk3YjwG+UnMllGZibLuLen3+ciN0ceDQVqnxQ0JQMD68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net; spf=none smtp.mailfrom=dpplabs.com; dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b=ad57ETgB; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dpplabs.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33d7589774fso4168728a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:41:31 -0700 (PDT)
+	s=arc-20240116; t=1761547338; c=relaxed/simple;
+	bh=oreL+ACETkIuRzK2D2r0xoY5Bjsmctzbdbz0anwCcIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qWoJlyc9PYMFN6yL0NpAqCNajZpqUvn6iYutWR63dnI7wNG6L8SaDgI54EEa0k6YAQd/2wGdlGweFLAOFxITt9ev7ocZLkrU3r2Xdaux6Ma4FvAxaZD8rqIeW/P7cp/gtLFVxr7VLSqTdgpC9Lx5M+R16rxWtSRaKWXkLulj+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqvMEY1U; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c3d913b3bso7226909a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:42:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=reznichenko.net; s=google; t=1761547291; x=1762152091; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BNYKZ3q1Auj7hMkOKDK6a1DLo0lCG1SQUrXtOHXGU90=;
-        b=ad57ETgBYBam3lMPV2kfwPCdckEBTejF9rB1d800BMCNlzO6inDfKMLuLA+eze7v5Q
-         NJko8MP6zTZ865XM4J7h5F5bg3JLln8mx2/Sduau2Fqcv5aiG4bAXfYrTpca3+p3u0CO
-         HjdCoYohJykQsJ2LVrT6spYk39HApfj4+CWn/O0uOeL+FRl2FJ8jWBI8i5CZ/cdgd+uS
-         MTF38HsZFslgBfMDEeHP4ThrPqL0zgZC1z3WBwOsuM97VzuJPGmQ0bTT+OJRHZ1XGPo8
-         l7yeVBgQTUV72V71MeKesPnB9EItaxHEdmsKnL4AyQo9JADbLQrealTy/Abln87M6SJg
-         MNdA==
+        d=gmail.com; s=20230601; t=1761547335; x=1762152135; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tID2O9rtuhA1HdKtwWUF8mN/hhDrcp/NLBhknx3DjcA=;
+        b=cqvMEY1UN9AnTQnHTfUr1TJOPuYkbzDgTNCG8/jhuVLNh/NQD0UoJ5qrgQ8VLacRmf
+         FEOitkfsT9yk0u1fF9Hzo6UtyoAiftygLxr/hyojgfFn1LTSxAYqkxy6FZfNteOYZzZm
+         4BgsHt51yg7Ffl0f++m9FRdHVuLZRtXTwIJEx0J3BZvu1N0bG91eZJNAqbkzIttTriPr
+         DmjtF4Ov2D0DKnzjRzalBmNuRVKOsWMguF7HNrYdDfw1GcAupXFQuUdUzCA9+Byrv9SU
+         ekPHk022TkCjS3D0yuv0BzFVGHsz0Ld1G9TctW9IDdMASDr367Sic3Kbh+HcoolOiHbg
+         QGlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761547291; x=1762152091;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BNYKZ3q1Auj7hMkOKDK6a1DLo0lCG1SQUrXtOHXGU90=;
-        b=p77jw/zODCSOKaRchDVUWgR6ijUsivOKpqfvjOdt1M84PQxl91vi606rHC0gTSRqfr
-         rbWD+0krv2698NfJTq8Byda53pNA6Xwr//CmYFJ41sl2zo6xaBgJtg6+IXWROoa3gRSx
-         kYbgIXmWVn9mwu6AiRRn3Y/YT1XF98vPxU+C5L9Fs5XyLkjVOTv5XyFPaPQBnrNhTE47
-         Vi6k638Q1HZQc7wund9StovN1m4zE13vkevLWNjM/eFiH8Qk9TSVsTZwiwSSFMfz8Fhs
-         lqetNECtbNFwRsL5qq+B92AHXb4gZm/pEHC/346xKvA6L0jzsYw4k5QScWDgt9vFwBf9
-         pM8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWnh5qSHBgNGYHaDCezx18AiY3fFEd9NbClqM8P6xTH9sDtmzIre4UOl+PdcbXRsjHXLScqKirUOOOKHso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJn0nCviLYtg+bytd37Ql+eCeyLXRaEkwWX4yO1UBNBTRMCfIA
-	DEmvT8S0e8CfiP7ac/J/a+cbvgv8AdRtjHKVPXkFuEOfVs95mtjOeYbWhTXgSEQU8Xw=
-X-Gm-Gg: ASbGncs8Po0c5uZ9UDaZ1+rblenN17D9RyG9ilagLc2hVfm1pMILA+h4I1f762ajwgq
-	hjO0f7PqoKQMQTGDYqZPwXYH9Omnd6MJYo5/dTCIZa2Re5cPdQHrI22W8re3uO3k+wKJ6581bEM
-	3wJvoTyRSN2MicsGhoht/dXcGksjPB3LaJAve4X+VfyZkE56SCpXHM7736j6mBRemcIfzgKavhn
-	RhRcx8ThcG7VXXjzNyy7GbTneHs/e30emgn1gL8bNjBHHHTzIAqi4o70NU9F7INueMKdGFbiTAI
-	1WzBlwy5XVVT9EMJL3MgZOlhmoE+2Nrv1qvk614R75iFbgYvHTK43ebawAVUkAY0FSizpMNMaMr
-	92uQx+7bd3Fybawwwvy2bIXQgcr/98YZbyUVzs4BMGtyIwq7MCk4o70pj2VZRMIy8TGalNlf70a
-	dSwphPpq1fZI/hYuA6aOQtlBLUr/g=
-X-Google-Smtp-Source: AGHT+IE8qvj8HBsTwz5HGw5OIU28tMFtEpb+ccgQfqfh/iRW6PjNGYH658OE70RjYaYmTrjBpzvyzA==
-X-Received: by 2002:a17:90b:2690:b0:33b:b453:c900 with SMTP id 98e67ed59e1d1-33bcf8e3d67mr49587249a91.19.1761547290681;
-        Sun, 26 Oct 2025 23:41:30 -0700 (PDT)
-Received: from z440.. ([2601:1c0:4502:2d00:599c:824:af74:2513])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed81c9e5sm7276917a91.17.2025.10.26.23.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 23:41:30 -0700 (PDT)
-From: Igor Reznichenko <igor@reznichenko.net>
-To: linux@roeck-us.net
-Cc: conor+dt@kernel.org,
-	corbet@lwn.net,
-	david.hunter.linux@gmail.com,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH v2 2/2] hwmon: Add TSC1641 I2C power monitor driver
-Date: Sun, 26 Oct 2025 23:41:27 -0700
-Message-ID: <20251027064127.648712-1-igor@reznichenko.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <d3365f32-dc92-4a55-91a1-c4a446558c5a@roeck-us.net>
-References: <d3365f32-dc92-4a55-91a1-c4a446558c5a@roeck-us.net>
+        d=1e100.net; s=20230601; t=1761547335; x=1762152135;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tID2O9rtuhA1HdKtwWUF8mN/hhDrcp/NLBhknx3DjcA=;
+        b=fp+gdeuGxASeLa214LZoy6H72jg37aicMrfuWGye3DVhttoISqCfjUcNiH4Imi92zN
+         bZo77CC2N2BGVREuu4Y8NGBHLoTg9wwxBCDCgmyzxLSI3B6D6Z6jeil/6g8mJQVXCmvC
+         YQO72rgR+s1B6ztmiYU1mVp6pzVqyT0m4XQM1F0WMy5vJx7mBUeofDQBcGUza4yMQvyk
+         TaRR+xa0LIEZageP+YycnKbqFz5hBPYIitLivQIthZoOySTyWv5J+S4u0O3FbB3/VCgk
+         oW+rvObeEpgPVdbcKHRvtoTdJk5bxULDqRqReIxmTFsTU7S1Ejo6qni/rkhcn2E6q6FZ
+         L8kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCqq7hmoc1omItutej6EiILTlY8D8pD9St5ZbL0bVoszM4PPYOxpUmjGmgyAqqihhs+5g3iw3iirbmWFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdguZpm6bFSeICtAkmT/OqqDh7Y3YWdpESlI4P1aKH+Ncw85nC
+	rsqS7U+DjhnCPd6wqwy5mWdxFUa9EBJhKTIjrrEJXW+AlvF8NhsCj9q5TsZ7zyM2wVa+Yet/xpU
+	rrfi6kzlFnsfz+8J1dTNHgtkpfqoZcBo=
+X-Gm-Gg: ASbGncugn8AJnl1knfwnsWGCN/nvpWWybjicIFF+sXPWmKMpG7OEapRv1+1NMB8LYU6
+	tFZkn5OuEDnxDvKkha+JTcRwPpN5a9uBzecVBAJCUPmBTvBcHswonMXb1Dg9gkzFq1G+qDCXK+F
+	j+G+aHXh5hqok9TByyK5Nvu44KNS1UmRU0atMBETjkskgFUe/SZoyfyX7IcUPL6wpC6/nGk69Bq
+	1B8W/JvY/Bj4OCXhDySAfZD36PH6xXmEJDC5C8NPnwP5G48OEnuJ/bQ6Uc=
+X-Google-Smtp-Source: AGHT+IFYyZXaxe+78PDzeedHWs3RAFG6tJ/BOlzbjZKOPUVztXY1AhNbupmOsYKoQaqvdewKBvyACvqak2464exO6W0=
+X-Received: by 2002:a05:6402:40c8:b0:63e:1354:d9ab with SMTP id
+ 4fb4d7f45d1cf-63e3dff6f32mr13460304a12.8.1761547334887; Sun, 26 Oct 2025
+ 23:42:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251025074336.26743-1-linux.amoon@gmail.com> <20251025074336.26743-2-linux.amoon@gmail.com>
+ <e6f4f3c93cfc2f18c36da10d3f86c1a50ab2bbf5.camel@ti.com> <CANAwSgQ2PH1TJLEBVPFJ-RdaNFxn=eTzRYfEmbjx=EYq_YOeQw@mail.gmail.com>
+ <bef3d7015012c4004d21cd829892ca942496a6dd.camel@ti.com>
+In-Reply-To: <bef3d7015012c4004d21cd829892ca942496a6dd.camel@ti.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 27 Oct 2025 12:11:57 +0530
+X-Gm-Features: AWmQ_blmB6e4uKlIUktX-y8N5PH8rT71hGdHJ3kVMKE8HEWamdNJJ_ocuOBGSVs
+Message-ID: <CANAwSgSTncwug+nUpm1pc2H8L0Abvumh8x09AW5p0nr8ufz-Yw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PCI: j721e: Use devm_clk_get_optional_enabled() to
+ get the clock
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"open list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-omap@vger.kernel.org>, 
+	"open list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-pci@vger.kernel.org>, 
+	"moderated list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, Markus Elfring <Markus.Elfring@web.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
->In some way this is inconsistent: It accepts a shunt resistor value of, say, 105
->even though the chip can only accept multiples of 10 uOhm. In situations like this
->I suggest to expect devicetree values to be accurate and to clamp values entered
->through sysfs. More on that below.
+Hi Siddharth,
+
+On Mon, 27 Oct 2025 at 10:42, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
 >
->> +	return 0;
->> +}
->> +
->> +static int tsc1641_set_shunt(struct tsc1641_data *data, u32 val)
->> +{
->> +	struct regmap *regmap = data->regmap;
->> +	long rshunt_reg;
->> +
->> +	if (tsc1641_validate_shunt(val) < 0)
->> +		return -EINVAL;
->> +
->> +	data->rshunt_uohm = val;
->> +	data->current_lsb_ua = DIV_ROUND_CLOSEST(TSC1641_VSHUNT_LSB_NVOLT * 1000,
->> +						 data->rshunt_uohm);
->> +	/* RSHUNT register LSB is 10uOhm so need to divide further*/
->> +	rshunt_reg = DIV_ROUND_CLOSEST(data->rshunt_uohm, TSC1641_RSHUNT_LSB_UOHM);
+> On Sat, 2025-10-25 at 14:07 +0530, Anand Moon wrote:
+> > Hi Siddharth,
+> >
+> > Thanks for your review comments,
+> >
+> > On Sat, 25 Oct 2025 at 13:20, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
+> > >
+> > > On Sat, 2025-10-25 at 13:13 +0530, Anand Moon wrote:
+> > > > Use devm_clk_get_optional_enabled() helper instead of calling
+> > > > devm_clk_get_optional() and then clk_prepare_enable(). It simplifies
+> > > > the clk_prepare_enable() and clk_disable_unprepare() with proper error
+> > > > handling and makes the code more compact.
+> > > > The result of devm_clk_get_optional_enabled() is now assigned directly
+> > > > to pcie->refclk. This removes a superfluous local clk variable,
+> > > > improving code readability and compactness. The functionality
+> > > > remains unchanged, but the code is now more streamlined.
+> > > >
+> > > > Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
+> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > > ---
+> > > > v2: Rephase the commit message and use proper error pointer
+> > > >     PTR_ERR(pcie->refclk) to return error.
+> > > > v1: Drop explicit clk_disable_unprepare as it handled by
+> > > >     devm_clk_get_optional_enabled, Since devm_clk_get_optional_enabled
+> > > >     internally manages clk_prepare_enable and clk_disable_unprepare
+> > > >     as part of its lifecycle, the explicit call to clk_disable_unprepare
+> > > >     is redundant and can be safely removed.
+> > > > ---
+> > > >  drivers/pci/controller/cadence/pci-j721e.c | 21 +++++----------------
+> > > >  1 file changed, 5 insertions(+), 16 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> > > > index 5bc5ab20aa6d..b678f7d48206 100644
+> > > > --- a/drivers/pci/controller/cadence/pci-j721e.c
+> > > > +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> > >
+> > > [TRIMMED]
+> > >
+> > > > @@ -692,7 +682,6 @@ static int j721e_pcie_suspend_noirq(struct device *dev)
+> > > >
+> > > >       if (pcie->mode == PCI_MODE_RC) {
+> > > >               gpiod_set_value_cansleep(pcie->reset_gpio, 0);
+> > > > -             clk_disable_unprepare(pcie->refclk);
+> > >
+> > > j721e_pcie_resume_noirq() contains clk_enable_prepare().
+> > Ok I will drop the clk_prepare_enable and clk_disable_unprepare in
+> > this function?
 >
->This means that all calculations do not use the actual shunt resistor values used
->by the chip, but an approximation. I would suggest to store and use the actual shunt
->resistor value instead, not the one entered by the user.
-
-By "actual shunt" you mean defined in devicetree? Then does it mean disabling 
-writing value by user via sysfs and making "shunt_resistor" read-only or leaving it
-writable and clamping to devicetree value, thus discarding the user provided value?
-
->See below - clamping is insufficient for negative values, and it is not clear to me if
->the limit register is signed or unsigned.
-
->Also, the datasheet doesn't say that the limit value would be signed. Did you verify
->that negative temperature limit values are actually treated as negative values ?
-
-SUL, SOL, TOL are signed, I verified. The negative limits for current and temperature
-work well based on my testing.
-
->This doesn't work as intended for negative values. regmap doesn't expect to see
->negative register values and returns an error if trying to write one, so clamping
->against SHRT_MIN and SHRT_MAX is insufficient. You also need to mask the result
->against 0xffff.
-
-I was under impression regmap would handle this masking correctly when defining
-.val_bits = 16. E.g. in regmap.c:973 it selects formatting function for 16bit values.
-I can mask explicitly if it's required.
-It certainly doesn't throw error since negative alerts work as mentioned.
-
->Why did you choose lcrit/crit attributes instead of min/max ? If there is only
->one alert limit, that usually means the first level of alert, not a critical level.
->Raising an alert does not mean it is a critical alert. Please reconsider.
-
-I used hwmon/ina2xx.c as a reference. It covers many similar power monitors which
-have single threshold alerts and defines only lcrit/crit. If this is a wrong approach
-I'll change to min/max.
-
-The rest of the things are clear, I'll fix those.
-
-Thanks, Igor
+> The clock needs to be disabled on Suspend and enabled on Resume.
+>
+> The reasoning behind replacing:
+> devm_clk_get_optional()  + clk_prepare_enable()
+> with:
+> devm_clk_get_optional_enabled()
+> is clear to me, but the removal of the 'clk_disable_unprepare()' on the
+> Suspend path isn't.
+>
+> Removing 'clk_disable_unprepare()' in the driver's remove path makes sense
+> because the
+> devm() API will automatically disable and unprepare the clock when the
+> device is "unbound".
+> However, to the best of my understanding, the device is not "unbound"
+> during Suspend.
+Thanks for clarifying my doubt. That part makes sense.
+> Can you clarify why 'clk_disable_unprepare()' should be removed in
+> j721e_pcie_suspend_noirq()?
+It happened by mistake.
+> Regards,
+> Siddharth.
+Thanks
+-Anand
 
