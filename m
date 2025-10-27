@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-872819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86814C121B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:50:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA868C121A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3303D352357
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:50:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A13F24E5932
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FB1330D32;
-	Mon, 27 Oct 2025 23:48:46 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC81334369;
+	Mon, 27 Oct 2025 23:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjqGamAZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABA32E7F29;
-	Mon, 27 Oct 2025 23:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C7E33031F;
+	Mon, 27 Oct 2025 23:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761608926; cv=none; b=Q75BdSbTsqtYw8EUCZatHQvwceF587DlLBHPKgNzGSBOXUOpGeGdE3ueAAAex+9rzuvXCjt/7Jfrr6Vbgk/UIpo7bfVw98+xek7tOS9B1RV2/7qvGuZojZcK9nirckmzf3aOx9R0w2JKw//Vy3a+ApnAQVqYHukNPBTDL0wwnHk=
+	t=1761608911; cv=none; b=PZCy3lTVRYEeoMKAfRM6tTLolFTZ19PYahHDr9yuqaKd7dWk7sgms6ddZVP90VQyBIM/pM36JKH8/oE0lZ312mL3CfGvTA2lOSmeRx1d/3js7DY1KZRGZTCg+M9KNWNEHP7O4c3Eht41Pbr14tJNM96S9WU3Wz8ZYXfc5e/cXFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761608926; c=relaxed/simple;
-	bh=RyuheOr7KUHRCZ0DHpD522l5GBSjeCB0/rIpoJcMwbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M85OgCfYY8iK839J/HOR4iq6ZJVxBPbMWIDPSYgXgRBicWiA7Wq1T65CSRjwN7zttKYhFyKQzKC33s+VdITfNF/kdx2CVpFrFZltFYUHOfU5jEipb6rHaHraG/zcJCdPWYwvrfdY3HU8tolmpZVALjMD2fbNdkNpf5wabOGgYjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vDWwv-000000005i7-2paV;
-	Mon, 27 Oct 2025 23:48:29 +0000
-Date: Mon, 27 Oct 2025 23:48:26 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v3 09/12] net: dsa: lantiq_gswip: add vendor
- property to setup MII refclk output
-Message-ID: <aQAEyn08Q3DCedUU@makrotopia.org>
-References: <cover.1761521845.git.daniel@makrotopia.org>
- <869f4ea37de1c54b35eb92f1b8c55a022d125bd3.1761521845.git.daniel@makrotopia.org>
- <20251027233626.d6vzb45gwcfvvorh@skbuf>
+	s=arc-20240116; t=1761608911; c=relaxed/simple;
+	bh=zTR7NNf/0/v66tZ9uBGApZ4ujktgFV1nV9bNyBtCkTQ=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=cFckWawYTWEUskzW5tqIsQDH89x+5VRPBXRESFAD5lQfl6dg6G5J5HplshKVOx5zpWkcADXgJy10UxQOWybadlJ21ABBHsishHZ5HrHRN4ymE56oUqKgoDlCxWLaPZFXgEbITFHYsHLbukgy+5+1xbV2/H6B1LwvNpUkwrslz3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjqGamAZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D59EAC4CEF1;
+	Mon, 27 Oct 2025 23:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761608910;
+	bh=zTR7NNf/0/v66tZ9uBGApZ4ujktgFV1nV9bNyBtCkTQ=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=IjqGamAZxJF+TwcJQx9bAyTi3yBwvFFX9hLNbgr/GOomJEIGfSIqEUz5tZ05Ji0LM
+	 neYa0tZUKxXMHYwhnxTRQhhheBO+DNEz6c2nu0x8Q926psVnohcuVRnDhC8Qzganc7
+	 mHvtqyE0FcEb4/RpZYS7FTsrVQaJj6JArFr8xoPiixfK15bq8uN2FyshkpGEhCBdw9
+	 +Hg/0M4GrSULoixm0TP1DQBFMFLBFVKbXfdQBI2ywVoZK4WALgY39bkAZOQj0ZdnKa
+	 mS3AEn/Efpe02m+N/9/dM5uk84UXGGKd5bPNPZAPawlxUrlS4ttlfu+dOeNS8Dc8RV
+	 bRXHJgbBvP5qw==
+Content-Type: multipart/mixed; boundary="===============1951758182374278910=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027233626.d6vzb45gwcfvvorh@skbuf>
+Message-Id: <ab8c7bf2f312e150c22d83e5ebe91e17f3c4be42b3ff0825623caf3aac4086af@mail.kernel.org>
+In-Reply-To: <20251027232206.473085-13-roman.gushchin@linux.dev>
+References: <20251027232206.473085-13-roman.gushchin@linux.dev>
+Subject: Re: [PATCH v2 23/23] bpf: selftests: PSI struct ops test
+From: bot+bpf-ci@kernel.org
+To: roman.gushchin@linux.dev,akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,ast@kernel.org,surenb@google.com,mhocko@kernel.org,shakeel.butt@linux.dev,hannes@cmpxchg.org,andrii@kernel.org,inwardvessel@gmail.com,linux-mm@kvack.org,cgroups@vger.kernel.org,bpf@vger.kernel.org,martin.lau@kernel.org,song@kernel.org,memxor@gmail.com,tj@kernel.org,roman.gushchin@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Mon, 27 Oct 2025 23:48:28 +0000 (UTC)
 
-On Tue, Oct 28, 2025 at 01:36:26AM +0200, Vladimir Oltean wrote:
-> On Sun, Oct 26, 2025 at 11:47:21PM +0000, Daniel Golle wrote:
-> > Read boolean Device Tree property "maxlinear,rmii-refclk-out" and switch
-> > the RMII reference clock to be a clock output rather than an input if it
-> > is set.
-> > 
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > ---
-> >  drivers/net/dsa/lantiq/lantiq_gswip_common.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/net/dsa/lantiq/lantiq_gswip_common.c b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
-> > index 60a83093cd10..bf38ecc13f76 100644
-> > --- a/drivers/net/dsa/lantiq/lantiq_gswip_common.c
-> > +++ b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
-> > @@ -1442,6 +1442,10 @@ static void gswip_phylink_mac_config(struct phylink_config *config,
-> >  		return;
-> >  	}
-> >  
-> > +	if (of_property_read_bool(dp->dn, "maxlinear,rmii-refclk-out") &&
-> > +	    !(miicfg & GSWIP_MII_CFG_MODE_RGMII))
-> > +		miicfg |= GSWIP_MII_CFG_RMII_CLK;
-> > +
-> 
-> What did you mean with the !(miicfg & GSWIP_MII_CFG_MODE_RGMII) test?
-> If the schema says "Only applicable for RMII mode.", what's the purpose
-> of this extra condition? For example, GSWIP_MII_CFG_MODE_GMII also has
-> the "GSWIP_MII_CFG_MODE_RGMII" bit (0x4) unset. Does this have any significance?
+--===============1951758182374278910==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-You are right, probably the best would be to test (if at all) that
-(miicfg == GSWIP_MII_CFG_MODE_RMIIM || miicfg ==
-GSWIP_MII_CFG_MODE_RMIIP) and only in this case allow setting the
-GSWIP_MII_CFG_RMII_CLK bit.
 
-I forgot that there is older hardware which supports "full" MII, and MII
-MAC as well as MII PHY modes also shouldn't allow to set the
-GSWIP_MII_CFG_RMII_CLK bit to not end up with undefined behavior.
+```
+commit 70a4d534559f5708a811241190cd158e83451a42
+Author: Roman Gushchin <roman.gushchin@linux.dev>
+
+bpf: selftests: PSI struct ops test
+
+This patch adds a BPF selftest for PSI struct ops functionality,
+including cgroup lifecycle callbacks, PSI trigger creation, and
+memory pressure event handling.
+
+> diff --git a/tools/testing/selftests/bpf/prog_tests/test_psi.c b/tools/testing/selftests/bpf/prog_tests/test_psi.c
+> new file mode 100644
+> index 000000000..b294cea0a
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/test_psi.c
+
+[ ... ]
+
+> diff --git a/tools/testing/selftests/bpf/progs/test_psi.c b/tools/testing/selftests/bpf/progs/test_psi.c
+> new file mode 100644
+> index 000000000..4ddec7ec3
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/test_psi.c
+> @@ -0,0 +1,82 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include "vmlinux.h"
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +#define PSI_FULL 0x80000000
+> +
+> +/* cgroup which will experience the high memory pressure */
+> +u64 high_pressure_cgroup_id;
+> +
+> +/* cgroup which will be deleted */
+> +u64 deleted_cgroup_id;
+> +
+> +/* cgroup which will be created */
+> +u64 new_cgroup_id;
+> +
+> +/* cgroup which was deleted */
+> +u64 deleted_cgroup_id;
+>    ^^^^^^^^^^^^^^^^^^
+
+Is deleted_cgroup_id intentionally declared twice here? This appears
+to be a duplicate global variable declaration - the same variable is
+declared at line 13 with comment "cgroup which will be deleted" and
+again at line 19 with comment "cgroup which was deleted".
+
+[ ... ]
+
+
+```
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+In-Reply-To-Subject: `bpf: selftests: PSI struct ops test`
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18859027430
+
+--===============1951758182374278910==--
 
