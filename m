@@ -1,71 +1,133 @@
-Return-Path: <linux-kernel+bounces-870932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C600C0C024
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:56:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C70FC0C02A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CD33BB43A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB583BCA88
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E082BE7D2;
-	Mon, 27 Oct 2025 06:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34C82C3769;
+	Mon, 27 Oct 2025 06:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PxEdLEri"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MpP4Ub6a"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899CD27E06C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF4429AB15
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761548131; cv=none; b=YmeOXHqilnRGojfg48//MHYlMNaKz22Z8C9gJC/YnkJ9CFsTTtSLUVmo+g8rFI5fiGvme7T9vR4MJq+ITltV6fzfkAktbSVIl1G/xqCIoO9Z7Yhax6dGYHyP3cM3vyWQhxJ+XND6Bd7ELmOeJgxrfqlX5Fxl72uxhXXq9G7+sGM=
+	t=1761548145; cv=none; b=i0qW/NhOhIIIJ0mlBnYoEfFt2VWxMPjF+Yjgb48RCWUfl27mmA+0UeQmbvjr46Qg0FvaSOZGfMJ8qiFp0hxKSFLZcxQ6uzIYvMga9bPR0R54RBlsILuSahcfKZBoPPY4qR/2C9H+Q9T6oTglw+Os6Z3ULrr4lYHNRMDg+4HMjyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761548131; c=relaxed/simple;
-	bh=qC9d4NWaL9FhwC8yAhu7hrLw63vbVbx8IYfSo9pcv20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMa6RxuGrUyd4vIC8A4bLo9wKKhmbluJo/i+ZxuNtRVlNK6onBJXdWAMPB5d0ClRoYRbtEBU1HDL76b33l1z6+yQKlbVxp1XagWPTONw55xijlZozk/oPi6TsdPC+pfHJn17L2QK29zQK/XYR4c8cU2JNPw19u1Wi6aH4PvCQgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PxEdLEri; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qC9d4NWaL9FhwC8yAhu7hrLw63vbVbx8IYfSo9pcv20=; b=PxEdLEri4oIGmpbIfVCfoFPsSV
-	9xOQmEW0928WbM41TLDZeC8xO3DtP9iWVAfhTr6lr0k80zozQwHwuL3uilGKo/ewJQ34mXB5f5qJG
-	FYDPza0CxNE4MjlIqBTu2x/BWUJtGcd+H778ol7D/9dPFn9agDL8G71Hq3F7z7gA+EH9yD54AKuhP
-	xFgUUbWcFzdZ2ZPYoJ6wwaZPTdEyocsZtJw1nb6H6DRLUS5dj5PjQSVkPlI6uFg5a/TlvsYw38DsY
-	1SJOXofXyb60qpyOGBqKHhtrrzPWqeuaxRGtlVUD5gKVrbkBp47hO8HmMiyIFgJYq1JU4EI3z9vws
-	6/lC9wmQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDH8b-0000000DEUt-0PMp;
-	Mon, 27 Oct 2025 06:55:29 +0000
-Date: Sun, 26 Oct 2025 23:55:29 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: linux@treblig.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/xxhash: remove more unused xxh functions
-Message-ID: <aP8XYQZIZW2uB2_N@infradead.org>
-References: <20251024205120.454508-1-linux@treblig.org>
+	s=arc-20240116; t=1761548145; c=relaxed/simple;
+	bh=sc6rtIyDPvdKz05utSWmnYw8kiWLVsRumZ8Ghm3lOm0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cYjhJgMCtfC1RnTWaTfaTSxFoRpFsb1dy80Pp6XQcLtrOKml592aMM5eS9X6cfzl9dWo+/jZTTas7v0sW/JWrBC8c8W9JS3SORle+h71ZuLuhumyPzoTCpsR3W3J5pKkFZzHCFx4Ta+mgEpwG4MyBiklwn8Ug86eA2WKShQULek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jinliangw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MpP4Ub6a; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jinliangw.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bb3b235ebso9397358a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 23:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761548143; x=1762152943; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sbmwsTdQ6YF5+TZb3ShGWy43B6VqQWTeWva1HX7Oio4=;
+        b=MpP4Ub6aKetheGoEr7G6WKizTeEax9uja+BPxdtYJM5TaghrQA+6LrrVEm3qj9aMRe
+         +6XBx5mR+HxBSMM0Ala/cnlkEtPt6JaT3AMPPVXsXBw4qQmhchyvjgizrEa4fCyQOsO9
+         vK5/Y5SgSicS1Zk4BSTR/3oXUGBrggyIk0D/iNJ1C8gDywUYryHeADx39a1E4GQ3Fcq1
+         kFOvhnhnm2G5bwU/r3C6UBEZ44SEP67ZjluSdOBUiquJJtnD9CPyFO19kTmO8K+z9aFX
+         XR7TuHQo/aD+s9aphR4LMRzyZ29lPfCi8bZ0nQttdf5dDbHu/Ji1U8PPiYlCqdP0t8fR
+         X5UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761548143; x=1762152943;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sbmwsTdQ6YF5+TZb3ShGWy43B6VqQWTeWva1HX7Oio4=;
+        b=sb/QpRIvwJ7YO+2/+WKMtWP/R/tcaU3ElO8t5TLc97fMroYCZL9a7mkGAeYLGwdxMP
+         frH9ajrLec0+xdaeATSBR3V2mtppNZSaj69JlyX1WHL98i423k9g2qhxOCXHvCRYV5rs
+         /wkUA6BymndytYGgWGXdvfxGy6kHvaRLU3+WDx5/gHP2atYXJz9mJV1BMT15D08zWG8p
+         iCrHh4MaBm4Okp+lkagonXoN83cCAOOyv+YZDiTSGEJqcK0HWZVFCfHzsW2mOeHOMGw0
+         vMG7nj3JFvfV0QCw43uYCxNn+dnVq0MUlfXcvqQYRN6rvrJokVZMV/f1ypfD7uCuj4Xh
+         FEyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfZiYKtiaQ2hBMffXF7JAd4Ug7v/oG2ngifto+qLx8BXbOZOD1bzFYeSvBaw2NMZZc2gaYvHxOZYOM5p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtJUNBbUwxj8A07V2Z3NPiZ+MQ2igRIDLuBC6JrjM4R8tb6jUK
+	G605n6Jma7NOixv0A45RqDDZxulkJvbus2lwX2kDITb77H4dMmUZtvIMaUmoYK/d35RHyjwDEXw
+	5YvN9mJHbTepy2VGV6w==
+X-Google-Smtp-Source: AGHT+IF3S5K3EkYdz6G/UGbPSSLcc9B0pRhGypF5xAPkjtHrQnorxl6vqgEVWtjlAM3op7+8s8GLyOPMR1Z5otA=
+X-Received: from pjbbf19.prod.google.com ([2002:a17:90b:b13:b0:330:8c66:4984])
+ (user=jinliangw job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:17c3:b0:33b:ae39:c297 with SMTP id 98e67ed59e1d1-33fd6502cb7mr13433701a91.16.1761548143005;
+ Sun, 26 Oct 2025 23:55:43 -0700 (PDT)
+Date: Sun, 26 Oct 2025 23:55:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024205120.454508-1-linux@treblig.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
+Message-ID: <20251027065530.2045724-1-jinliangw@google.com>
+Subject: [PATCH net v3] net: mctp: Fix tx queue stall
+From: Jinliang Wang <jinliangw@google.com>
+To: Jeremy Kerr <jk@codeconstruct.com.au>, Matt Johnston <matt@codeconstruct.com.au>, 
+	netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	linux-kernel@vger.kernel.org, Jinliang Wang <jinliangw@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Looks good:
+The tx queue can become permanently stuck in a stopped state due to a
+race condition between the URB submission path and its completion
+callback.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+The URB completion callback can run immediately after usb_submit_urb()
+returns, before the submitting function calls netif_stop_queue(). If
+this occurs, the queue state management becomes desynchronized, leading
+to a stall where the queue is never woken.
 
-(just sending patches to one of my email addresses if preferred, I don't
-care which one).
+Fix this by moving the netif_stop_queue() call to before submitting the
+URB. This closes the race window by ensuring the network stack is aware
+the queue is stopped before the URB completion can possibly run.
+
+Fixes: 0791c0327a6e ("net: mctp: Add MCTP USB transport driver")
+Signed-off-by: Jinliang Wang <jinliangw@google.com>
+---
+v3:
+ - target net tree, add fixes tag
+
+v2:
+ - remove duplicate comment in commit message
+
+---
+ drivers/net/mctp/mctp-usb.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/mctp/mctp-usb.c b/drivers/net/mctp/mctp-usb.c
+index 36ccc53b1797..ef860cfc629f 100644
+--- a/drivers/net/mctp/mctp-usb.c
++++ b/drivers/net/mctp/mctp-usb.c
+@@ -96,11 +96,13 @@ static netdev_tx_t mctp_usb_start_xmit(struct sk_buff *skb,
+ 			  skb->data, skb->len,
+ 			  mctp_usb_out_complete, skb);
+ 
++	/* Stops TX queue first to prevent race condition with URB complete */
++	netif_stop_queue(dev);
+ 	rc = usb_submit_urb(urb, GFP_ATOMIC);
+-	if (rc)
++	if (rc) {
++		netif_wake_queue(dev);
+ 		goto err_drop;
+-	else
+-		netif_stop_queue(dev);
++	}
+ 
+ 	return NETDEV_TX_OK;
+ 
+-- 
+2.51.1.821.gb6fe4d2222-goog
 
 
