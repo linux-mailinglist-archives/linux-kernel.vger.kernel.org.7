@@ -1,187 +1,90 @@
-Return-Path: <linux-kernel+bounces-872097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB588C0F4E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:31:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43522C0F3E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:24:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073AF4670AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:23:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8311893788
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A2B311C17;
-	Mon, 27 Oct 2025 16:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F61312829;
+	Mon, 27 Oct 2025 16:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg/wY72m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="PeKAj31u"
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E75274FE8;
-	Mon, 27 Oct 2025 16:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCEE31354F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582212; cv=none; b=c9c+G6uv6p8vHrjSVF7CMB+08/pTanuAdc8x8lazlt/U5dwHBsz13+A3bFdfQvw/TL67o0Pkkp1eHSgkx/b4LZtIhpuT2sIx/t8kYswa6xAdDfewdsP2/+KlEAD4e4ptiZy2SSsTRDLIFEfMSI3mFVh6IBDufFEOF87B6C4FwDc=
+	t=1761582224; cv=none; b=lD5sWtEALo5wC5Zjq9vIKrg9ShLFn/FrBZyXxjTjkZ189RSIGD5DfBwW7uxc+tvMEiuYDgpL9F1TckqPdd33jcqt7iSvF+tKWJIeG+tYFcZKXR65L8ci90FHK0g7iHXLhdEpj5+u0L4Br1Ur4BMnWpHmxqp7zRd5cfoeOWej+Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582212; c=relaxed/simple;
-	bh=QFbmOufzCSKxHmY0QccnxuCe5JH8xj8PfL6ljCe973Y=;
+	s=arc-20240116; t=1761582224; c=relaxed/simple;
+	bh=f25N++NAgdwRSTuxCQQR0m+neldoOCz7dXKURFjHH9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBlu0o46aSBi3RfLSutPW707sFQCls+QS2RW4X1AGcGpTa3lD7H8ft4SHhrvf8bPxhapo5pe1SAc5uwJ3RGk4D0lK+/fLERyrCjD6l0N0n9G78DCTq7SNsdQKY/zIow21nNnMtNexjGr0gKX2cZ/bwK/rluTeqNL7QTku11c8Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg/wY72m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF85C4CEF1;
-	Mon, 27 Oct 2025 16:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761582212;
-	bh=QFbmOufzCSKxHmY0QccnxuCe5JH8xj8PfL6ljCe973Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bg/wY72mo8btLtpDPdTklIw4ZjgyWtIXqEVuIdpNTnxM+wEilrk3HthuXJkQiCKF8
-	 KgT+GWJ6/wxGh1ouPSxTJY9s17bKffYSux/OM7mQu0s1AiXLHwy2DtZiD2a4j1djak
-	 1YnIVHgGQB+AP+nyOC2wqdviBd4ZWRZJfCWQPZqwgqS48YaC6xbWl8ilFwUB7kpQni
-	 qmn+TlmrIaF7umK2/K3H0FBe6C+5a11TpQdDCYQwgpfY2QgbBTqOaluTcNkYYW/Ey5
-	 m8f4/egrxbUo0/Ta/msccPRkev/U/3FoJYLZB0cQHRxrf4xN4/xmWYyI6CDetLSPg6
-	 oR+IzG5minzyQ==
-Date: Mon, 27 Oct 2025 16:23:28 +0000
-From: Simon Horman <horms@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH iwl-next] ice: implement configurable header split for
- regular Rx
-Message-ID: <aP-cgMiJ-y_PX7Xa@horms.kernel.org>
-References: <20251006162053.3550824-1-aleksander.lobakin@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyuiZ6Pj4ryJIFXVpGwqdkca1UP9+N4G68c6vci/MUS1J68c4RN2UM6/m3Ne9tVjxM8VyvLARLSJV9CSSYaUSQUD49kfjIqALMFNxL/rxwp84E2Le2GE78vPKhRFo0sL5fmCjfJeospjEalenI4eOsdP/xK5Pls3FKXBU9MIfnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=PeKAj31u; arc=none smtp.client-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id 0BA9B9AFE0;
+	Mon, 27 Oct 2025 16:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1761582220;
+	bh=3Wd9jZ/xyaKFNfuiEgH09msyR8RuNPw1/jIEYWNk9Hw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PeKAj31uvlVwbZ4JZNdYKIZMrxmBSQwHpD5PTMWrucnMR8OgH/xH1+4UnNnm95dSL
+	 /uW4LjH0fPhJ+uLcbRwguuYGrdZ+Q6Rg6pv9EaD3nrRXZQVj5z/I8LMrk96D0hs5Gh
+	 owBQTp2y9quYMHcLtYo2CqlP/kUC5Nr747hbhC7A=
+Date: Mon, 27 Oct 2025 16:23:36 +0000
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kiryl Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
+Message-ID: <aP-ciK_NsCPFZLHZ@shell.ilvokhin.com>
+References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
+ <aPstDXRerYqi1O2X@tiehlicka>
+ <aPtg1vUnpkaK1Ce5@shell.ilvokhin.com>
+ <aPvjFuio9lBKf2In@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251006162053.3550824-1-aleksander.lobakin@intel.com>
+In-Reply-To: <aPvjFuio9lBKf2In@casper.infradead.org>
 
-On Mon, Oct 06, 2025 at 06:20:53PM +0200, Alexander Lobakin wrote:
-> Add second page_pool for header buffers to each Rx queue and ability
-> to toggle the header split on/off using Ethtool (default to off to
-> match the current behaviour).
-> Unlike idpf, all HW backed up by ice doesn't require any W/As and
-> correctly splits all types of packets as configured: after L4 headers
-> for TCP/UDP/SCTP, after L3 headers for other IPv4/IPv6 frames, after
-> the Ethernet header otherwise (in case of tunneling, same as above,
-> but after innermost headers).
-> This doesn't affect the XSk path as there are no benefits of having
-> it there.
+On Fri, Oct 24, 2025 at 09:35:34PM +0100, Matthew Wilcox wrote:
+> On Fri, Oct 24, 2025 at 11:19:50AM +0000, Dmitry Ilvokhin wrote:
+> > Primary motivation for adding config option is to enable policy
+> > enforcement at build time. In large-scale production environments
+> > (Meta's for example), the kernel configuration is often maintained
 > 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
-> Applies on top of Tony's next-queue, depends on Michał's Page Pool
-> conversion series.
-> 
-> Sending for review and validation purposes.
-> 
-> Testing hints: traffic testing with and without header split enabled.
-> The header split can be turned on/off using Ethtool:
-> 
-> sudo ethtool -G <iface> tcp-data-split on (or off)
+> So you work for Meta?  It is poor form to send patches without
+> disclosing your employer.  That way, we'd all be able to see that the
+> positive reviews come from your colleagues rather than having it look
+> like everyone's just "oh, i'm a random developer doing this on my own
+> time".
 
-Nice, I'm very pleased to see this feature in the pipeline for the ice driver.
-
-...
-
-> diff --git a/drivers/net/ethernet/intel/ice/ice_txrx.c b/drivers/net/ethernet/intel/ice/ice_txrx.c
-
-...
-
-> @@ -836,6 +858,20 @@ bool ice_alloc_rx_bufs(struct ice_rx_ring *rx_ring, unsigned int cleaned_count)
->  		 */
->  		rx_desc->read.pkt_addr = cpu_to_le64(addr);
->  
-> +		if (!hdr_fq.pp)
-> +			goto next;
-> +
-> +		addr = libeth_rx_alloc(&hdr_fq, ntu);
-> +		if (addr == DMA_MAPPING_ERROR) {
-> +			rx_ring->ring_stats->rx_stats.alloc_page_failed++;
-> +
-> +			libeth_rx_recycle_slow(fq.fqes[ntu].netmem);
-> +			break;
-> +		}
-> +
-> +		rx_desc->read.hdr_addr = cpu_to_le64(addr);
-> +
-> +next:
-
-Is performance the reason that a goto is used here, rather than, say, putting
-the conditional code in an if condition? Likewise in ice_clean_rx_irq?
-
->  		rx_desc++;
->  		ntu++;
->  		if (unlikely(ntu == rx_ring->count)) {
-> @@ -933,14 +969,16 @@ static int ice_clean_rx_irq(struct ice_rx_ring *rx_ring, int budget)
->  		unsigned int size;
->  		u16 stat_err_bits;
->  		u16 vlan_tci;
-> +		bool rxe;
->  
->  		/* get the Rx desc from Rx ring based on 'next_to_clean' */
->  		rx_desc = ICE_RX_DESC(rx_ring, ntc);
->  
-> -		/* status_error_len will always be zero for unused descriptors
-> -		 * because it's cleared in cleanup, and overlaps with hdr_addr
-> -		 * which is always zero because packet split isn't used, if the
-> -		 * hardware wrote DD then it will be non-zero
-> +		/*
-> +		 * The DD bit will always be zero for unused descriptors
-> +		 * because it's cleared in cleanup or when setting the DMA
-> +		 * address of the header buffer, which never uses the DD bit.
-> +		 * If the hardware wrote the descriptor, it will be non-zero.
->  		 */
-
-The update to this comment feels like it could be a separate patch.
-(I know, I often say something like that...)
-
->  		stat_err_bits = BIT(ICE_RX_FLEX_DESC_STATUS0_DD_S);
->  		if (!ice_test_staterr(rx_desc->wb.status_error0, stat_err_bits))
-> @@ -954,12 +992,27 @@ static int ice_clean_rx_irq(struct ice_rx_ring *rx_ring, int budget)
->  
->  		ice_trace(clean_rx_irq, rx_ring, rx_desc);
->  
-> +		stat_err_bits = BIT(ICE_RX_FLEX_DESC_STATUS0_HBO_S) |
-> +				BIT(ICE_RX_FLEX_DESC_STATUS0_RXE_S);
-> +		rxe = ice_test_staterr(rx_desc->wb.status_error0,
-> +				       stat_err_bits);
-> +
-> +		if (!rx_ring->hdr_pp)
-> +			goto payload;
-> +
-> +		size = le16_get_bits(rx_desc->wb.hdr_len_sph_flex_flags1,
-> +				     ICE_RX_FLEX_DESC_HDR_LEN_M);
-> +		if (unlikely(rxe))
-> +			size = 0;
-> +
-> +		rx_buf = &rx_ring->hdr_fqes[ntc];
-> +		libeth_xdp_process_buff(xdp, rx_buf, size);
-> +		rx_buf->netmem = 0;
-> +
-> +payload:
->  		size = le16_to_cpu(rx_desc->wb.pkt_len) &
->  			ICE_RX_FLX_DESC_PKT_LEN_M;
-> -
-> -		stat_err_bits = BIT(ICE_RX_FLEX_DESC_STATUS0_RXE_S);
-> -		if (unlikely(ice_test_staterr(rx_desc->wb.status_error0,
-> -					      stat_err_bits)))
-> +		if (unlikely(rxe))
->  			size = 0;
->  
->  		/* retrieve a buffer from the ring */
-> -- 
-> 2.51.0
-> 
+Thanks for the feedback, Matthew. For transparency: I work for Meta, and
+this patch is being submitted as part of that work. I know it's common
+for many contributors to submit work-related patches using personal
+emails, but I can understand your point and appreciate the guidance.
 
