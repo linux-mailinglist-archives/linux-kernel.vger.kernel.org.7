@@ -1,115 +1,172 @@
-Return-Path: <linux-kernel+bounces-871406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76958C0D27E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BA9C0D284
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F5B1898256
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BFB19A35A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A902E093B;
-	Mon, 27 Oct 2025 11:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7421B2F9DA2;
+	Mon, 27 Oct 2025 11:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aiZpBWl8"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="lf95dUxy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qE4sf2xr"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416F81C6A3
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C7029B8DC;
+	Mon, 27 Oct 2025 11:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761564712; cv=none; b=h5vKBiWi0T6Mv78izBqK3pjSEjEKgrzqSxFnkjMFGIDJPa19/JcXFzzwumLRpoW+LykTpqjULnwIktT6M2Qv69kNnNfJUvGwme10QLs9CPo/nbIC0OX8VzvnuIB0Ht/lOnqB2Jf98fGrBdsj2qZN9MLRobslJ0IAYqVwGEGxX/o=
+	t=1761564729; cv=none; b=C4WzqV6rc5SBq/Kwnv7t7gmNDHGVHe7RbI6QxRvOujGcbmaiL4dLlekDkgKsYo6aacgPA+ADgOGpEypNWf7dfzB8bnnuG3q93G6RQHAGJzYRKJBKuvwRd3U8xzSczmaZY9q/RV+6XO/RhZeXS5OTiI0Dq0pXComkqVc3tRa76v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761564712; c=relaxed/simple;
-	bh=JaOev6RH5sKDkCyOnhMzD01pkFcy+37y3Uaf6kblozw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aF70Owt/ec3LXLcIz/vE8XxzVKwaM3gEJRQ+IWYMtL/K3l1WopVbwl1YQdS/XmLCGHhyLBfcmOlpPldwldK42pVTn58DY+CRYPOst67GLqJxsjLzVEjE+rEBYw+kzHwuo4oQ6hwO9yZrEBlKxUBs/kD1eXa7p35SoIlYWSaQ8p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aiZpBWl8; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761564708;
-	bh=JaOev6RH5sKDkCyOnhMzD01pkFcy+37y3Uaf6kblozw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aiZpBWl8iKR0t8FCiqI+2BWJK86Rbc0FvAjzovQyGgXA2B7Fvhz+UiyYNEagTcSkR
-	 F7D0FPOfvGcLG4ppUXrEFmICHUrZ8Hw7KTuM+ySXt/o/IeF/assHegqLXJEdURA4Bp
-	 y5C1pCsdylTwXOQM7S3iGUuEcULqCZHM7BE0GxAOJXPxxmN4FzoPKEX/ABlmNQAEsK
-	 Mu3tsEEV6XgyGqtntPgUw9LGVf2RZOTxK04DhwFcShZDSdMvzLPK/xF0k/vqNgYmo2
-	 scf7hAtu3a4vE1hxGlBhINBrJDoRVGDkfQGfRrDkrk7tjYkHbELBcMQtIN0F4sQC8z
-	 jX5EG9J9Q8oKQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id ECAD817E10F4;
-	Mon, 27 Oct 2025 12:31:47 +0100 (CET)
-Date: Mon, 27 Oct 2025 12:31:41 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/8] drm/panthor: Support GLB_REQ.STATE field for
- Mali-G1 GPUs
-Message-ID: <20251027123141.089c5a97@fedora>
-In-Reply-To: <6c301d19-7f80-471d-a431-8b936d7eb362@arm.com>
-References: <20251024202117.3241292-1-karunika.choo@arm.com>
-	<20251024202117.3241292-7-karunika.choo@arm.com>
-	<20251026092717.3aae3679@fedora>
-	<6c301d19-7f80-471d-a431-8b936d7eb362@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761564729; c=relaxed/simple;
+	bh=mzJ6tgFelr1ieJHNluyutTvelTfoU7hmkhH46j4QKzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7OstRW7RBL8Eu+zagB4QwPo+72LMuLlOQop7oQJoj3G9iJUnNwe8XMKen/nBnFeemlkjxNTLuUjuvKdzLOeTG0GRdmIjFCLVwwpYY61IOd/lAwyaMfWjAHQ7Q2TVGuQZmwNNtDXNIJksDsPe1Nv9ikNDKg3wyxVONqopTWbyJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=lf95dUxy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qE4sf2xr; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id C97351D00093;
+	Mon, 27 Oct 2025 07:32:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Mon, 27 Oct 2025 07:32:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761564724; x=
+	1761651124; bh=t1ECxHugQwC1OkNvzakKYf0xv9CfVeGrcJAJJJWnXQ4=; b=l
+	f95dUxybDKtE608vj7RLT7i62smFIz3nrtU4wTY4OOQaXYZgHSGBfndRkcMXduRf
+	lr8b1VhQdqtBrUD9ClCgByggGW5KrLSo2TQgaPR/Luyral0dIRmYtegZPkmOjzA1
+	lKQKxgwm7aN+XXZZ8cMhMfyKmuH0YuhvW0enzMUUIdo/zjDm47R1ybfqIrK+ZNEh
+	oQGjcTnTUpvUn2IEnpopyl7SSiVVPhZUONVEbmCMFn3GvoIpsCDCEC44rglK40f5
+	39/JPw7/ERuR03yGZUOX0KgSmlbtG8zpN5+TB/unDFArEyAOph7erRoXbz0Gowa7
+	Nu7zNnEhD36r0RnvTzldg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1761564724; x=1761651124; bh=t1ECxHugQwC1OkNvzakKYf0xv9CfVeGrcJA
+	JJJWnXQ4=; b=qE4sf2xrq00QMi3aVUsYnK3KIjS3GMFE6dOCbg//QvvhOlYqXY+
+	OJe1p8lFwx7L1erlL01bgL7dcP+uvD6GBFhr26NvbB4o5WEr7uD2JQTJFTdUDOsd
+	de6/ncRvFhaqT4fleKbgnfDjT2tmG8xkrthVkEcLerC/wQQwk7DE3MLZq9qbjbZR
+	X/gINeklo9/tiOI5Kg+Bpp0SLQucyxfgdVge+jLSjJu9stzTLaXSDElzdbfQGDKP
+	4KSnZPUMHJuN4mTp9Q+yN1UqeUMR5IQGNPzLY+Xgn/oYNUVELx3Cdu9cEjXwasm6
+	u3fHrax5203zac5d2SXVVjvgc0As32vFUbA==
+X-ME-Sender: <xms:NFj_aL1JpDvxc60KWMktgBtFDfCKlKY_lZjlXQWnJzbkH-YJVOCd4A>
+    <xme:NFj_aNwmNX2HwbaL3dr_LhacYROHOO-hwlKGOiK8rMDhM7tyjsKNjeNEXpVCXgB8u
+    F63EZEc0Qj_9QlzZSWFy3JyeqyJv3hMzLRPpvWxIK33eERXmspWiMY>
+X-ME-Received: <xmr:NFj_aEiB0nL1qlfv1ohBS8DE5_QvA35kJsLnuz2IoZToQQgZVzxC6JEXZheH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheejkeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnheptefghfevheejueehgeekveeuueevgfeggfduieefhfffgfellefgteef
+    iefgvedtnecuffhomhgrihhnpehgihhtlhgrsgdrtghomhenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdr
+    nhgvthdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhfrhgvugdrohhp
+    vghnshhouhhrtggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshht
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmh
+    hlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+    pdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:NFj_aCMDqNK2xsTNO6WUNBa_TxtsPb2bU6qKM5GMhqEmTxCFcqvCLQ>
+    <xmx:NFj_aPdPCQL3S7GvrRZqvgH-KD44AaRzl9BgCxpYtEThfe-g1NmeMQ>
+    <xmx:NFj_aEw1ocP_UjgVnUf4zzM5tihv2VbpKNv2p17lV0BZYIH4LgPPBg>
+    <xmx:NFj_aM2MEQ6jwVwdcHDnWs44a3gxjU6FKHw5tPDnHBScnwMkfBQVZA>
+    <xmx:NFj_aFdre-8YRlbTSx6l6ru3Ovxa9seYmG63-sPmTz64duzxfKCs9QNn>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 27 Oct 2025 07:32:03 -0400 (EDT)
+Date: Mon, 27 Oct 2025 12:32:02 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Wilfred Mallawa <wilfred.opensource@gmail.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Simon Horman <horms@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH net-next v8 1/2] net/tls: support setting the maximum
+ payload size
+Message-ID: <aP9YMiW9V7Dkhu_1@krikkit>
+References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
+ <20251023184404.4dd617f0@kernel.org>
+ <cd557c5b11b04da060f07d3849dc46e7b3625ed1.camel@gmail.com>
+ <20251024163336.5fba5cd1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251024163336.5fba5cd1@kernel.org>
 
-On Mon, 27 Oct 2025 10:43:42 +0000
-Karunika Choo <karunika.choo@arm.com> wrote:
-
-> On 26/10/2025 08:27, Boris Brezillon wrote:
-> > On Fri, 24 Oct 2025 21:21:15 +0100
-> > Karunika Choo <karunika.choo@arm.com> wrote:
-> >   
-> >> +static bool panthor_fw_has_glb_state(struct panthor_device *ptdev)
-> >> +{
-> >> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-> >> +
-> >> +	return glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0);
-> >> +}  
+2025-10-24, 16:33:36 -0700, Jakub Kicinski wrote:
+> On Fri, 24 Oct 2025 12:11:11 +1000 Wilfred Mallawa wrote:
+> > In the previous record_size_limit approach for TLS 1.3, we need to
+> > account for the ContentType byte. Which complicates get/setsockopt()
+> > and tls_get_info(), where in setsockopt() for TLS 1.3 we need to
+> > subtract 1 to the user provided value and in getsockopt() we need add 1
+> > to keep the symmetry between the two (similarly in tls_get_info()). The
+> > underlying assumption was that userspace passes up directly what the
+> > endpoint specified as the record_size_limit.
 > > 
-> > It's okay for now, but if we start having more of these, we probably
-> > want to automate the generation of those has_<featurex>() helpers with
-> > something like:
-> > 
-> > #define FW_FEATURE(feat_name, major, minor)						\
-> > static bool panthor_fw_has_ ## feat_name(struct panthor_device *ptdev) 			\
-> > {											\
-> > 	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev); 	\
-> > 											\
-> > 	return glb_iface->control->version >= CSF_IFACE_VERSION(major, minor, 0);	\
-> > }
-> > 
-> > Same goes for the HW features BTW.
-> >   
+> > With this approach we don't need to worry about it and we can pass the
+> > responsibility to user-space as documented, which I think makes the
+> > kernel code simpler.
 > 
-> I wonder if at that point, would a bitmask as previously proposed be a
-> cleaner solution? I have a minor bone to pick with MACROs that generate
-> functions as they make finding its definition unnecessarily complicated
-> and obtuse. Not to mention if the conditions for a feature changes and
-> is disjoint from all the others, updating the macro to handle these
-> would cause additional churn that I would really hope to avoid.
+> But we haven't managed to avoid that completely:
+> 
+> +	if (value < TLS_MIN_RECORD_SIZE_LIM - (tls_13 ? 1 : 0) ||
 
-Let's do without the macros for now.
+We could, by taking a smaller minimum payload size than what the RFC
+says (anything that allows us to make progress, maybe 8B?). ie, I
+don't think we have to be as strict as rfc8449 (leave the userspace
+library in charge of rejecting bogus values during negotiation of this
+extension).
+
+> I understand the motivation, the kernel code is indeed simpler.
+
+Also more consistent: the kernel syscalls work with record payload (at
+the send()/recv() level). The rest is hidden. Userspace could try an
+approximation by sending max_payload-sized chunks with MSG_EOR.
+
+> Last night I read the RFC and then this patch, and it took me like
+> 10min to get all of it straight in my head.
+
+I don't find this stuff very clear either tbh, but maybe that's a
+problem in the RFC itself.
+
+>  Maybe I was tried but
+> I feel like the user space developers will judge us harshly for 
+> the current uAPI.
+
+But userspace libraries have to do the same computations on their side
+if they want to implement this RFC. They have to figure out what the
+max payload size is as they're building the record, they can't just
+chop off a bit at the end after filling it.
+
+Quick grepping through gnutls got me to this:
+https://gitlab.com/gnutls/gnutls/-/blob/eb3c9febfa9969792b8ac0ca56ee9fbd9b0bd7ee/lib/ext/record_size_limit.c#L104-106
+
+So I have a slight preference for not being tied to a (kind of
+confusing) RFC.
+
+-- 
+Sabrina
 
