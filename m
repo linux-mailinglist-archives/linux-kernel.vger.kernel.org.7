@@ -1,286 +1,164 @@
-Return-Path: <linux-kernel+bounces-871384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5E9C0D188
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:14:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0706AC0D185
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100283BB07D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:13:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD2B44F1731
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863252FA0E9;
-	Mon, 27 Oct 2025 11:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C191C2F9DAF;
+	Mon, 27 Oct 2025 11:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uGziCFHh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3uQV6+DT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YhLo3hnY"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE6A2F7AC3;
-	Mon, 27 Oct 2025 11:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EC12FB09C;
+	Mon, 27 Oct 2025 11:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761563625; cv=none; b=jpJyDV5AON48NP33irEPN+1jRyXthYNOvpNquANyqWx2vqduw94aJgmcQgOM0ZCvU61pfRgNQAFA30hLjlKEZYC+0w+7WkBF63ceDNGUfjMyRRRf8+OyacUnHJGZdy266nB/xqsOWGJhooNcysa2EzaB3v7qnMA7dONyeFL6HAk=
+	t=1761563630; cv=none; b=ldKgbTq+EW5PQSXKMRjANJZoXYl9PPYt2D3mUPyG24ijLx7dPk71Akh44cgNAceWuay2ud502zlFk4+E/b45PHk1BDg8/oUxyg4O7WArCK+uT7f6LY5brlIDGHVOyDGLNbjvlcZKrULbJU+F/n5umEyEdagn5lkdmSzTO1mgUEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761563625; c=relaxed/simple;
-	bh=m6fi3d67tr1FaFPmN5siRcW4h1emzsf62A7nKVWCiVw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ggr8reh09vF29sVejVqd8FNUdg65Avt3sW7stsq3tEp353/brXVHKp4Pi6iRVMuE+HTHBhZvwiZCeKBiS6myUMrPq8WQaEhvN+pY+Ngp5BdHyYUiT/LpP/5784Cz0KhTfXmOB06dT+GG3PYI20SaymNvJpJSnUnt0sApXblIiFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uGziCFHh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3uQV6+DT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 11:13:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761563620;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WE6ky1dBA+qp7/RIMs+05vA5bFzvlvl0qcOE+Pg2jbM=;
-	b=uGziCFHhsIAKFFFdnMogN+LTstaoIrlejKbZNnC3TK45yJR0Owr+wPqfhJx/YN0vDjwzYj
-	fic08lmV6jr1ZNGw/VOlgV67G/y0ZCrAJp4SqYSW81wEHKHHG50nICsD3uML1lGsk7Km5s
-	oFKq/t4LLxHgLplFxeHDMYaRT3ZWuZqvm6ytfbLsy2Mha1/BvISPU8QJ84V1cDO40P0g4f
-	XaOlhfor4FOq+EQ8+UOWILl9vF6YPICzJZm1V3gUrvsn2vSjmdbsvEc3lVde86b2dyo+41
-	19rQa3zbWyPQkwkThCuCMySM0IgqrD08aKU4phDLnQUzZtsBExZdhmBXrWBF4Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761563620;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WE6ky1dBA+qp7/RIMs+05vA5bFzvlvl0qcOE+Pg2jbM=;
-	b=3uQV6+DTk+31wxOxM/1bN74zRuynU5qDKrYd2J3Cq6dojg9BmgFsiNtUPz4YHz2VFNk8+U
-	BunThQXXMb/diXDA==
-From: "tip-bot2 for Charles Mirabile" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/drivers] irqchip/sifive-plic: Add support for UltraRISC DP1000 PLIC
-Cc: Zhang Xincheng <zhangxincheng@ultrarisc.com>,
- Charles Mirabile <cmirabil@redhat.com>, Lucas Zampieri <lzampier@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Samuel Holland <samuel.holland@sifive.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251024083647.475239-5-lzampier@redhat.com>
-References: <20251024083647.475239-5-lzampier@redhat.com>
+	s=arc-20240116; t=1761563630; c=relaxed/simple;
+	bh=GnXom17LPeRNQIG22zsGuukZcFHtFvIHWJ7Waw4tsSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tfaR7a5CqKPPGOWnJSF62RmT9sycl715VttrodLyTswRHDk1062FBHzjyndYsHX30M0rluNavuWPQh89dAjuhSZ25iPpEF2fxt7Q5WffFNxhR34h/wHGe2Kp+cxi9XUBZSzuLa1O74yZSYZjWuskZFKdjPZkZJXJs/9pEdg2dMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YhLo3hnY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761563626;
+	bh=GnXom17LPeRNQIG22zsGuukZcFHtFvIHWJ7Waw4tsSg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YhLo3hnYFIORfQSJhhO3fVp1Np3qphJn4ftm9mVOpuYmYzk786LG2IK0zdPOKQ51f
+	 vzhzWsct1XLj2KNusefo00Drw00bXa3ETa4gSXFNPBAU1xiQAurVMuh0uGtU/sIGX+
+	 OoerBTMQnJ12YQK4iOtbUFIvS1AJMaQDe1uddGD0L4PUTeH7D6/+F66o4xxqFkcAF5
+	 n0ne2fIIiq8eG/ye1vA06BlH9GSf8AZbI4H+F7pCDTiADtwFtKDi7cDjv6pgLANVyz
+	 ruNQNyP7wReHF2fBSBacq1aAl3+H/xZ+G5sLEBtk97Q0h5RX/Pd98KrFjtDcmZx+L4
+	 /MJnoHrIInQ7g==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 46B4A17E12AE;
+	Mon, 27 Oct 2025 12:13:46 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	laura.nao@collabora.com,
+	nfraprado@collabora.com,
+	wenst@chromium.org,
+	y.oudjana@protonmail.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v2 1/7] clk: mediatek: Split out registration from mtk_clk_register_gates()
+Date: Mon, 27 Oct 2025 12:13:37 +0100
+Message-ID: <20251027111343.21723-2-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
+References: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176156361630.2601451.3478597988977891442.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/drivers branch of tip:
+In preparation for adding support for clock controllers over SPMI
+bus, split out the actual registration iterator out of the function
+mtk_clk_register_gates() to a new mtk_clk_register_all_gates()
+private function, taking a handle to regmap and hwv_regmap as
+parameters.
 
-Commit-ID:     539d147ef69c3e2f9817de0fcf1dc8ba12938909
-Gitweb:        https://git.kernel.org/tip/539d147ef69c3e2f9817de0fcf1dc8ba129=
-38909
-Author:        Charles Mirabile <cmirabil@redhat.com>
-AuthorDate:    Fri, 24 Oct 2025 09:36:43 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 27 Oct 2025 12:11:56 +01:00
-
-irqchip/sifive-plic: Add support for UltraRISC DP1000 PLIC
-
-Add a new compatible for the plic found in UltraRISC DP1000 with a quirk to
-work around a known hardware bug with IRQ claiming in the UR-CP100 cores.
-
-When claiming an interrupt on UR-CP100 cores, all other interrupts must be
-disabled before the claim register is accessed to prevent incorrect
-handling of the interrupt. This is a hardware bug in the CP100 core
-implementation, not specific to the DP1000 SoC.
-
-When the PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM flag is present, a
-specialized handler (plic_handle_irq_cp100) disables all interrupts except
-for the first pending one before reading the claim register, and then
-restores the interrupts before further processing of the claimed interrupt
-continues.
-
-This implementation leverages the enable_save optimization, which maintains
-the current interrupt enable state in memory, avoiding additional register
-reads during the workaround.
-
-The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
-SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
-This has no impact on other platforms.
-
-[ tglx: Condensed the code a bit, massaged change log and comments ]
-
-Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Samuel Holland <samuel.holland@sifive.com>
-Link: https://patch.msgid.link/20251024083647.475239-5-lzampier@redhat.com
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 104 ++++++++++++++++++++++++++++-
- 1 file changed, 103 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-gate.c | 43 ++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-p=
-lic.c
-index d518a8b..c03340e 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -49,6 +49,8 @@
- #define CONTEXT_ENABLE_BASE		0x2000
- #define     CONTEXT_ENABLE_SIZE		0x80
-=20
-+#define PENDING_BASE			0x1000
-+
- /*
-  * Each hart context has a set of control registers associated with it.  Rig=
-ht
-  * now there's only two: a source priority threshold over which the hart will
-@@ -63,6 +65,7 @@
- #define	PLIC_ENABLE_THRESHOLD		0
-=20
- #define PLIC_QUIRK_EDGE_INTERRUPT	0
-+#define PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM	1
-=20
- struct plic_priv {
- 	struct fwnode_handle *fwnode;
-@@ -388,6 +391,98 @@ static void plic_handle_irq(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index f6b1429ff757..fd8cec95cd8d 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -252,30 +252,17 @@ static void mtk_clk_unregister_gate(struct clk_hw *hw)
+ 	kfree(cg);
  }
-=20
-+static u32 cp100_isolate_pending_irq(int nr_irq_groups, struct plic_handler =
-*handler)
-+{
-+	u32 __iomem *pending =3D handler->priv->regs + PENDING_BASE;
-+	u32 __iomem *enable =3D handler->enable_base;
-+	u32 pending_irqs =3D 0;
-+	int i, j;
-+
-+	/* Look for first pending interrupt */
-+	for (i =3D 0; i < nr_irq_groups; i++) {
-+		/* Any pending interrupts would be annihilated, so skip checking them */
-+		if (!handler->enable_save[i])
-+			continue;
-+
-+		pending_irqs =3D handler->enable_save[i] & readl_relaxed(pending + i);
-+		if (pending_irqs)
-+			break;
-+	}
-+
-+	if (!pending_irqs)
-+		return 0;
-+
-+	/* Isolate lowest set bit */
-+	pending_irqs &=3D -pending_irqs;
-+
-+	/* Disable all interrupts but the first pending one */
-+	for (j =3D 0; j < nr_irq_groups; j++) {
-+		u32 new_mask =3D j =3D=3D i ? pending_irqs : 0;
-+
-+		if (new_mask !=3D handler->enable_save[j])
-+			writel_relaxed(new_mask, enable + j);
-+	}
-+	return pending_irqs;
-+}
-+
-+static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler, void __=
-iomem *claim)
-+{
-+	int nr_irq_groups =3D DIV_ROUND_UP(handler->priv->nr_irqs, 32);
-+	u32 __iomem *enable =3D handler->enable_base;
-+	irq_hw_number_t hwirq =3D 0;
-+	u32 iso_mask;
-+	int i;
-+
-+	guard(raw_spinlock)(&handler->enable_lock);
-+
-+	/* Existing enable state is already cached in enable_save */
-+	iso_mask =3D cp100_isolate_pending_irq(nr_irq_groups, handler);
-+	if (!iso_mask)
-+		return 0;
-+
-+	/*
-+	 * Interrupts delievered to hardware still become pending, but only
-+	 * interrupts that are both pending and enabled can be claimed.
-+	 * Clearing the enable bit for all interrupts but the first pending
-+	 * one avoids a hardware bug that occurs during read from the claim
-+	 * register with more than one eligible interrupt.
-+	 */
-+	hwirq =3D readl(claim);
-+
-+	/* Restore previous state */
-+	for (i =3D 0; i < nr_irq_groups; i++) {
-+		u32 written =3D i =3D=3D hwirq / 32 ? iso_mask : 0;
-+		u32 stored =3D handler->enable_save[i];
-+
-+		if (stored !=3D written)
-+			writel_relaxed(stored, enable + i);
-+	}
-+	return hwirq;
-+}
-+
-+static void plic_handle_irq_cp100(struct irq_desc *desc)
-+{
-+	struct plic_handler *handler =3D this_cpu_ptr(&plic_handlers);
-+	struct irq_chip *chip =3D irq_desc_get_chip(desc);
-+	void __iomem *claim =3D handler->hart_base + CONTEXT_CLAIM;
-+	irq_hw_number_t hwirq;
-+
-+	WARN_ON_ONCE(!handler->present);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	while ((hwirq =3D cp100_get_hwirq(handler, claim))) {
-+		int err =3D generic_handle_domain_irq(handler->priv->irqdomain, hwirq);
-+
-+		if (unlikely(err)) {
-+			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
-+					    handler->priv->fwnode, hwirq);
-+		}
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
- static void plic_set_threshold(struct plic_handler *handler, u32 threshold)
+ 
+-int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+-			   const struct mtk_gate *clks, int num,
+-			   struct clk_hw_onecell_data *clk_data)
++static int mtk_clk_register_all_gates(struct device *dev, struct device_node *node,
++				      struct regmap *regmap, struct regmap *hwv_regmap,
++				      const struct mtk_gate *clks, int num,
++				      struct clk_hw_onecell_data *clk_data)
  {
- 	/* priority must be > threshold to trigger an interrupt */
-@@ -424,6 +519,8 @@ static const struct of_device_id plic_match[] =3D {
- 	  .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
- 	{ .compatible =3D "thead,c900-plic",
- 	  .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-+	{ .compatible =3D "ultrarisc,cp100-plic",
-+	  .data =3D (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
- 	{}
- };
-=20
-@@ -658,12 +755,17 @@ done:
- 		}
-=20
- 		if (global_setup) {
-+			void (*handler_fn)(struct irq_desc *) =3D plic_handle_irq;
+ 	int i;
+ 	struct clk_hw *hw;
+-	struct regmap *regmap;
+-	struct regmap *regmap_hwv;
+ 
+ 	if (!clk_data)
+ 		return -ENOMEM;
+ 
+-	regmap = device_node_to_regmap(node);
+-	if (IS_ERR(regmap)) {
+-		pr_err("Cannot find regmap for %pOF: %pe\n", node, regmap);
+-		return PTR_ERR(regmap);
+-	}
+-
+-	regmap_hwv = mtk_clk_get_hwv_regmap(node);
+-	if (IS_ERR(regmap_hwv))
+-		return dev_err_probe(
+-			dev, PTR_ERR(regmap_hwv),
+-			"Cannot find hardware voter regmap for %pOF\n", node);
+-
+ 	for (i = 0; i < num; i++) {
+ 		const struct mtk_gate *gate = &clks[i];
+ 
+@@ -311,6 +298,28 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+ 
+ 	return PTR_ERR(hw);
+ }
 +
-+			if (test_bit(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM, &handler->priv->pli=
-c_quirks))
-+				handler_fn =3D plic_handle_irq_cp100;
++int mtk_clk_register_gates(struct device *dev, struct device_node *node,
++			   const struct mtk_gate *clks, int num,
++			   struct clk_hw_onecell_data *clk_data)
++{
++	struct regmap *regmap, *regmap_hwv;
 +
- 			/* Find parent domain and register chained handler */
- 			domain =3D irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_A=
-NY);
- 			if (domain)
- 				plic_parent_irq =3D irq_create_mapping(domain, RV_IRQ_EXT);
- 			if (plic_parent_irq)
--				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
-+				irq_set_chained_handler(plic_parent_irq, handler_fn);
-=20
- 			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 					  "irqchip/sifive/plic:starting",
++	regmap = device_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %pOF: %pe\n", node, regmap);
++		return PTR_ERR(regmap);
++	}
++
++	regmap_hwv = mtk_clk_get_hwv_regmap(node);
++	if (IS_ERR(regmap_hwv))
++		return dev_err_probe(
++			dev, PTR_ERR(regmap_hwv),
++			"Cannot find hardware voter regmap for %pOF\n", node);
++
++	return mtk_clk_register_all_gates(dev, node, regmap, regmap_hwv,
++					  clks, num, clk_data);
++}
+ EXPORT_SYMBOL_GPL(mtk_clk_register_gates);
+ 
+ void mtk_clk_unregister_gates(const struct mtk_gate *clks, int num,
+-- 
+2.51.1
+
 
