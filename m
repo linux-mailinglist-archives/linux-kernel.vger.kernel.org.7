@@ -1,60 +1,64 @@
-Return-Path: <linux-kernel+bounces-872432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFDAC1120D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADA7C10D3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E447E545DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:29:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECDE84F90AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D106132D0C5;
-	Mon, 27 Oct 2025 19:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0EC32145A;
+	Mon, 27 Oct 2025 19:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ETCUEFib"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r9DI4hEk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206AD304BD3;
-	Mon, 27 Oct 2025 19:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E31930F526;
+	Mon, 27 Oct 2025 19:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761593229; cv=none; b=p9cXXftcKX1baE7rR+KQQDZsfOcrDtKybAN+aznhKeyW3twFjpa3NMS51bDaDBSjj7+X7dSxyENj8S2+K+HURlzu9tmTLLCcX3O7da/XvAo4FGkd4mrmiQb2LOJRmViggSrF8ID6NapFNCdFRUsAZtFyEZAK+q5JzIW+E1m+mnA=
+	t=1761592431; cv=none; b=ArHPYHkYyVQ45h/uaBh27CFid4xIjURwPdiU0cisUvO81QT3jl4iNGDFLq7wWPqbLX/U3bk5tvWI29tZj76KKAy7WMZNwSNvRV5RkWWrVEmUWrikoPEjQtS+owKjKG2cSFfsovF7rg+SS7ByU/6ka/1gJlcbMT2mQcjWz7Js/Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761593229; c=relaxed/simple;
-	bh=E+kZsIn/00RIUuNdDPsmsEckBa8NBdUjcNjTNhYm/hc=;
+	s=arc-20240116; t=1761592431; c=relaxed/simple;
+	bh=bMimpoJlR+P0WrJFlVcbVT1/JxN3rw+nSMPMAhbBmQM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CWT/N0Qxpgw/ODMGFye+ZwSvrgJC11JIp3VL6BZsbxtSIKjnpj8Vm7bp1SLG7BYoXVsxmg8X1qDd5W8TBy0SMkuHbTFZAzBm5gZgtrp8OSqfyItvG4bnNJlX0i9vyWd7+rU2BL5vS1ILaGFrU/a4WS3oX/+IvWPMjEYBCKQFgz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ETCUEFib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61919C4CEF1;
-	Mon, 27 Oct 2025 19:27:08 +0000 (UTC)
+	 MIME-Version; b=A3MIs9vRtNR1WbUOQn4278Ldqq9ZQRoMYuvwrsFv6dxMdm7ngBpLlDlDK9aana8y0k3w3MPz0f3yVcO0Gi37mj5vfCB03jYQOBkWTVwBoiHALtBNAKGubL3q6k2epZ5Xo9EHH2O9MXkdmuU/mTu3N5PurVqZzjuFtCI7j3Ve/ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r9DI4hEk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C749C4CEF1;
+	Mon, 27 Oct 2025 19:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761593228;
-	bh=E+kZsIn/00RIUuNdDPsmsEckBa8NBdUjcNjTNhYm/hc=;
+	s=korg; t=1761592431;
+	bh=bMimpoJlR+P0WrJFlVcbVT1/JxN3rw+nSMPMAhbBmQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ETCUEFib2ykscH30bkeDtdsXd/8Ct29QAC6WyVZCf++SloZ5dddIc+bSWwEAbT5eg
-	 AFTjax5W0vztzWWiyg6CQKipfahNl3sNyYpJfJfPybujRpNvGxukJHxCCUqM1n8p9K
-	 9jFeSxHT517e9iC94KzBFPEdH+L/JkL/rRju0Hz8=
+	b=r9DI4hEkFXiQqyhAidHrVMR24297TydLQXyJr4qr/CiVWWORTJ9Q4B+7y19jS0ggS
+	 azBwFo9ZHJqpPRLVWiMiaYvqrA8Jq0CoGpSP80MCyI/VUdurBzSJ3Hpec8eerHmt7I
+	 qD2EW1j+QwyDq0DnStA6Ur6/YMomnwFlG8Tb+fIQ=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Jakub Acs <acsjakub@amazon.de>,
-	Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-unionfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.17 061/184] fs/notify: call exportfs_encode_fid with s_umount
-Date: Mon, 27 Oct 2025 19:35:43 +0100
-Message-ID: <20251027183516.529735185@linuxfoundation.org>
+	Huang Ying <ying.huang@linux.alibaba.com>,
+	Will Deacon <will@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.1 085/157] arm64, mm: avoid always making PTE dirty in pte_mkwrite()
+Date: Mon, 27 Oct 2025 19:35:46 +0100
+Message-ID: <20251027183503.554043304@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183514.934710872@linuxfoundation.org>
-References: <20251027183514.934710872@linuxfoundation.org>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+References: <20251027183501.227243846@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -66,111 +70,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.17-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jakub Acs <acsjakub@amazon.de>
+From: Huang Ying <ying.huang@linux.alibaba.com>
 
-commit a7c4bb43bfdc2b9f06ee9d036028ed13a83df42a upstream.
+[ Upstream commit 143937ca51cc6ae2fccc61a1cb916abb24cd34f5 ]
 
-Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
-the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
+Current pte_mkwrite_novma() makes PTE dirty unconditionally.  This may
+mark some pages that are never written dirty wrongly.  For example,
+do_swap_page() may map the exclusive pages with writable and clean PTEs
+if the VMA is writable and the page fault is for read access.
+However, current pte_mkwrite_novma() implementation always dirties the
+PTE.  This may cause unnecessary disk writing if the pages are
+never written before being reclaimed.
 
-This issue was found by syzkaller.
+So, change pte_mkwrite_novma() to clear the PTE_RDONLY bit only if the
+PTE_DIRTY bit is set to make it possible to make the PTE writable and
+clean.
 
-Race Condition Diagram:
+The current behavior was introduced in commit 73e86cb03cf2 ("arm64:
+Move PTE_RDONLY bit handling out of set_pte_at()").  Before that,
+pte_mkwrite() only sets the PTE_WRITE bit, while set_pte_at() only
+clears the PTE_RDONLY bit if both the PTE_WRITE and the PTE_DIRTY bits
+are set.
 
-Thread 1                           Thread 2
---------                           --------
+To test the performance impact of the patch, on an arm64 server
+machine, run 16 redis-server processes on socket 1 and 16
+memtier_benchmark processes on socket 0 with mostly get
+transactions (that is, redis-server will mostly read memory only).
+The memory footprint of redis-server is larger than the available
+memory, so swap out/in will be triggered.  Test results show that the
+patch can avoid most swapping out because the pages are mostly clean.
+And the benchmark throughput improves ~23.9% in the test.
 
-generic_shutdown_super()
- shrink_dcache_for_umount
-  sb->s_root = NULL
-
-                    |
-                    |             vfs_read()
-                    |              inotify_fdinfo()
-                    |               * inode get from mark *
-                    |               show_mark_fhandle(m, inode)
-                    |                exportfs_encode_fid(inode, ..)
-                    |                 ovl_encode_fh(inode, ..)
-                    |                  ovl_check_encode_origin(inode)
-                    |                   * deref i_sb->s_root *
-                    |
-                    |
-                    v
- fsnotify_sb_delete(sb)
-
-Which then leads to:
-
-[   32.133461] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-[   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-[   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted 6.17.0-rc6 #22 PREEMPT(none)
-
-<snip registers, unreliable trace>
-
-[   32.143353] Call Trace:
-[   32.143732]  ovl_encode_fh+0xd5/0x170
-[   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
-[   32.144425]  show_mark_fhandle+0xbe/0x1f0
-[   32.145805]  inotify_fdinfo+0x226/0x2d0
-[   32.146442]  inotify_show_fdinfo+0x1c5/0x350
-[   32.147168]  seq_show+0x530/0x6f0
-[   32.147449]  seq_read_iter+0x503/0x12a0
-[   32.148419]  seq_read+0x31f/0x410
-[   32.150714]  vfs_read+0x1f0/0x9e0
-[   32.152297]  ksys_read+0x125/0x240
-
-IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
-to NULL in the unmount path.
-
-Fix it by protecting calling exportfs_encode_fid() from
-show_mark_fhandle() with s_umount lock.
-
-This form of fix was suggested by Amir in [1].
-
-[1]: https://lore.kernel.org/all/CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com/
-
-Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias")
-Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
+Fixes: 73e86cb03cf2 ("arm64: Move PTE_RDONLY bit handling out of set_pte_at()")
+Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Gavin Shan <gshan@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Yicong Yang <yangyicong@hisilicon.com>
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/notify/fdinfo.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/include/asm/pgtable.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -17,6 +17,7 @@
- #include "fanotify/fanotify.h"
- #include "fdinfo.h"
- #include "fsnotify.h"
-+#include "../internal.h"
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 426c3cb3e3bb1..62326f249aa71 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -183,7 +183,8 @@ static inline pmd_t set_pmd_bit(pmd_t pmd, pgprot_t prot)
+ static inline pte_t pte_mkwrite(pte_t pte)
+ {
+ 	pte = set_pte_bit(pte, __pgprot(PTE_WRITE));
+-	pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
++	if (pte_sw_dirty(pte))
++		pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
+ 	return pte;
+ }
  
- #if defined(CONFIG_PROC_FS)
- 
-@@ -46,7 +47,12 @@ static void show_mark_fhandle(struct seq
- 
- 	size = f->handle_bytes >> 2;
- 
-+	if (!super_trylock_shared(inode->i_sb))
-+		return;
-+
- 	ret = exportfs_encode_fid(inode, (struct fid *)f->f_handle, &size);
-+	up_read(&inode->i_sb->s_umount);
-+
- 	if ((ret == FILEID_INVALID) || (ret < 0))
- 		return;
- 
+-- 
+2.51.0
+
 
 
 
