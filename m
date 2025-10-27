@@ -1,205 +1,308 @@
-Return-Path: <linux-kernel+bounces-872142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B7AC0F5F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:39:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0954CC0F5A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8AB1894B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:37:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 81E9C34F59D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81AC314D12;
-	Mon, 27 Oct 2025 16:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE813314D28;
+	Mon, 27 Oct 2025 16:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9PenzX7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbvFkYaG"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C938314B75
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA212314D35
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582723; cv=none; b=AGTEcplpL9tvE28vDISGFwiGgJl9IHUgIyM9cmacqqIG7r2/NFPfAPn/BGP0bUZcrpOI0NznkUHn9RYG7J8KRkydZ9wsJQs6G5uRJuXbRL/PwA/W7eDI86R3NFfFYY0d7/OJrJgNhHlay+TBnm8ELj9xlUCFs5c08AgfZGpAHs0=
+	t=1761582746; cv=none; b=inJH9FF5yQbexBlit5v4o+CPvIJM98w3C/xYFCGM+TRPYw50h2ZmGefWy4s05zvEmUMeeiCB8pBxt/oEacOGk0Bd9oDRSwWGjAgrLFpSz+QAphJlE9qQTsXkmlx7e8+OCdnyPkD5smIML6a42j+jL41E800gb+2hR36yDrzBgto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582723; c=relaxed/simple;
-	bh=iNeib+L/sv3iKHk1dJkrzOT6vJ28kpHPaFmhxbuhswo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Chv8Yf5Lzccn9c/Kuc/+dtDxMadryq/CTeheEBChBz4+aXjQ2QYl2xirfo5nU5qVcJpqsJUAomkEAAhY/UdDEHrknz+oIy1rnlv4eYj3nDgh0GZRYN9gmhmGagHXiDnu5GLCzH81K4QRPuluJuRpWMQA9A9qE1MM44MOBjfOr4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9PenzX7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761582721;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a4SSBM/POjfRiBE6DHhiqMi9Y8mKWaQroye8KGKfKMM=;
-	b=f9PenzX7LuspTkC1lFgjl3Isvvqw2B2mBkJhPZQpp8lxnElTL3VSnt/5HhGlND6jAhAMZa
-	WxMg4zam7K5CJnQ/cSFjDdEZTiWa5wQKyYtIeFKHyw+8ntzwHlRkd/JMPqyPBXmbLzK4mm
-	bDb5SA5PLSGEvNBInncDeojle0Vs8fg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-E1su7EpCOwOvkn_yVuExkQ-1; Mon, 27 Oct 2025 12:31:59 -0400
-X-MC-Unique: E1su7EpCOwOvkn_yVuExkQ-1
-X-Mimecast-MFC-AGG-ID: E1su7EpCOwOvkn_yVuExkQ_1761582718
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso34199245e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:31:59 -0700 (PDT)
+	s=arc-20240116; t=1761582746; c=relaxed/simple;
+	bh=YHmmpySQqjP83Ou3NaqWaXxraBHJUZ+AF544Z54Pr3g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6t1K8z8LgxGkT6hUKwUeMDdk/JtZDNyk0E5eYHDlrR2fBCdDW9DEbF7VIjAC77pO96nL18EUuWGa6yqDHJgzhVsesn+bSD6cb0ktOZWlfcrpja0LDGx/fi1Z10MnxkFg4BQGeH/FFaSXp6YPR3YAiwkL91+IDYojgrSrAmAOi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PbvFkYaG; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-421851bcb25so3017459f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761582743; x=1762187543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PF5KpKL469fVTXgAkVCiESe8ar89l86aILwHhnCjqVw=;
+        b=PbvFkYaGA7Z6Wb9/LpXRUApUO5DIjC5IBTppAVFG6iAnyVfya9NXblRa9jIj3TLmp+
+         I3Dq+zawvX8EjPDxb7YoDpgwZzm7Fgg7b5rQ0ftCxXAziFH7DcHaF5cVRY4tbBccnkft
+         Fo1nYCZCRRe9M0ujzLkf6lFO6R0qd7hlMQvHCBkr8oSFhHnKznoe5sghdBS1zRb+H+k+
+         C3cBPPKZZ881+up0ZHxHzbViU11EP4izv+0TrqNkLJ5rahbiCCWvzywzL7ntdPVxjHwo
+         QzbVNxytBPw6OOaXmDEF1yr47aBD4MM0xgzoV1uUwjr1UOJ2IevpSbTH77LJe7ZY/LNW
+         Wnfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761582718; x=1762187518;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a4SSBM/POjfRiBE6DHhiqMi9Y8mKWaQroye8KGKfKMM=;
-        b=mRbKrE5kKbiOHo5G8ahID+H3oKcZj+yYC9hN3xxuiZ7GZmfp9wxK77I78pddO6xdCO
-         9KCzqdFBp1mgaSiwfiJsmYAJSQ1yUyys/Keamq27u5GC3/dwXlv9lDYlwvsm8KsNux+M
-         B0mUCJXGJ0X/6KdJyX05tzRCKSAjuR2sJ1I9Wtr5laGpIJrA1e0UD264U+z1L0SxBWEN
-         ulbN8DE5elDKE+aH32Ik2orLdePBzCl1MeLURnr9BVNaN4CmS9m4F1C69vkpvirhONpZ
-         EwmyY59s5ESyazULRjB4LPSLQOcq5NMJV+e7UtYK11mmfZlpbvPEOBuJ4l+a3XOKXUUx
-         yb4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU2EabzJB0a9VtgRjtiKQjHj9SOoe+VxctrHSIZYMCRKFRAozofSJTHpASfbXkMxe346L1ns879EgMK4Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9zT+7lqgwNNeC+xzVe9ce9VDoN4oUPIRIGQ3T3abAnZ/hVyOC
-	7YeQ2Fhyd1Dei0CDtxb5o+PwdPOya5gFSRa3ylx2aPu6u2iV0sZq9mZ7VSVX+30U6azT0XTyqTF
-	iUAk6mkNdoZFxtRki1FXwLdNtil6cEzPxv1Yif/ITVPOkcRND7JNaOcnRLfNqkO8q2A==
-X-Gm-Gg: ASbGnct+rUMjoeRu1vNWNoFXE9mm8xWdGqguz0dIUEzlMYBMIvG08qTaK6o/dOL9vj5
-	H65kzFQnDG2SAexrhC6swNC0EioJUCCiTztBEv9Xc35/6i0vd2qvdVlr69BHeRGHE0NdnajdfKW
-	K+lspBjy2HCjnujDaYJLNTwrU8WsnPJSZgVOIL8O4njoeCexE4zha8IUAdIzj92GyjpXfkj7/t7
-	ntSDmUqEn9iNaUc7i6YmhhxbpMWZjDbMjxfYu7zL0Yb+bprvJXH/o9VqMtAJWarGrug02/0m/5p
-	WREe0cXvh6FSP8YhjLV1BClp2wvUrt/1snvg8ihE4bjOsKhpyxwzxEbvswoFRspahcW8YwCRKBP
-	E758O2Q8JZdGGNmTGjzsEh36I0dRZGD3s7Jg4fnXPfBiUuYQqW2Zz+Ie9LXAJvEc9j0y3aI0lzi
-	d/tOzsJcahxAMZPQHrBqfj/FpHEhc=
-X-Received: by 2002:a05:600c:540d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-47717e6ae77mr2486395e9.40.1761582718002;
-        Mon, 27 Oct 2025 09:31:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9hBUduL/K2sJ2VMSMKpTvh6O7vT8Cwrl1/5Mssg7iiqgi3rWLBvdxmliRcG5sUi4pRS1k8Q==
-X-Received: by 2002:a05:600c:540d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-47717e6ae77mr2485705e9.40.1761582717529;
-        Mon, 27 Oct 2025 09:31:57 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4894c9sm141374155e9.5.2025.10.27.09.31.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 09:31:56 -0700 (PDT)
-Message-ID: <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
-Date: Mon, 27 Oct 2025 17:31:54 +0100
+        d=1e100.net; s=20230601; t=1761582743; x=1762187543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PF5KpKL469fVTXgAkVCiESe8ar89l86aILwHhnCjqVw=;
+        b=knhjvoqNa7PT6NyxiiCM9u2qg0pXTxTidfUzXWYH5tbxQ2TEF92vbDLpAKhZbDZabx
+         X0CUYVcvPiY0vX0QY2S51wfUjLZGhbIoS8I9AuDQ8XU8u3ux6WtTBHgyBEcY76nZNi65
+         sCpTuVvRsSNcBD98Tx6HXkSPpoTfNTFqIuEwfuWzWnOyYZ4VmKc6yQOFo81RXrWNVNKI
+         wfcpFBjsBOt+NFo9nc21npN7UjD0NIIbvhKGA+FzWCb7bIBCxhS1IjeMMJQp+thAjzGu
+         F40R0zx8J29Va85u1TfyvU09ZGEAsJlHTpANN3hVi8JZ5zxJmKkaVP5GXe7bdLwfGthq
+         eYnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSp0g7nRPmftp7+c6X6Xgqw4ylgwxuDowgjXHTPomlMNVRa0Qp2A9pbtH07QwMFmgQPyPKESZXY/jqQQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMESAM0yG1BWjwyw1ZEyver9vG/XlUAH6iTShDOU1p5V6u17dS
+	U2e6GAUoDHAzEq7ZPXd4hYl7gKwdZ/hz9DnE6TxleAZiFu79TGyQC7IyqnpmOSpZLHs0/9rrcK0
+	AAvD8hew3KFscHq8OpcU3o/R01YiHhl8=
+X-Gm-Gg: ASbGncvkBI1q5geNry1CDj0l+IrDHB15TH6yakr0AS3z+147EgEhFS8iutaXzgOtOeV
+	tO2dbxYxGVGahVV+smRtTCfgPrmfMue/Z8vUe0drNYKi+3C0eCEuIJfh+FBhBfhWgVTZZ8jOikn
+	wHf+nZ8fRAuyUOm0iaAzauBSVI8nPqEq6WC3yxoq/fkS8PeKKIX0kcsSIjqvn73sZoQWkh69sFD
+	gG7N2i3VY1h3hddggkYt9IYnKTpl3Metq7GR8D+/G8/6fyUFBwIK9b3tq+B3imAgUp2L9Ga
+X-Google-Smtp-Source: AGHT+IGnQKSD8LLMcix6lZzwNF5GRcP/d5ntwfmO8bYJcqFggKCrAfVq/BMs9d8iTrMYt/ReQHX0zgxmRp5XUkKSJ3s=
+X-Received: by 2002:a5d:5f82:0:b0:426:d5de:e454 with SMTP id
+ ffacd0b85a97d-429a7e84487mr290406f8f.31.1761582742690; Mon, 27 Oct 2025
+ 09:32:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Gregory Price <gourry@gourry.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
- Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- Leon Romanovsky <leon@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
- <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
- <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
- <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
- <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
- <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
- <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F> <20251027161146.GG760669@ziepe.ca>
- <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251022142051.70400-1-clamor95@gmail.com> <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
+ <CAPVz0n1aj8A5L50WcO-W4jSH2t6kfi6qXN-2FkmZxiAYJUN3vg@mail.gmail.com> <f1ac1e4a-09cf-4cbc-8555-87111ef5810a@kernel.org>
+In-Reply-To: <f1ac1e4a-09cf-4cbc-8555-87111ef5810a@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 27 Oct 2025 18:32:10 +0200
+X-Gm-Features: AWmQ_blYaK_-CilYY_DzPCPq1WabsGLOdAlNNG0enxXFT4qytUlg4j6qbAg5jHY
+Message-ID: <CAPVz0n1nZqhnDQfSHOK3uixJd_t1b04CrWzoTa3smXXD8g0mCg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
+To: Hans Verkuil <hverkuil+cisco@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I don't love the union.
-> 
-> How would we determine what type it is, we'd have to have some
-> generic_leaf_entry_t type or something to contain the swap type field and then
-> cast and... is it worth it?
-> 
-> Intent of non-present was to refer to not-swap swapentry. It's already a
-> convention that exists, e.g. is_pmd_non_present_folio_entry().
+=D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 18:3=
+0 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 27/10/2025 17:26, Svyatoslav Ryhel wrote:
+> > =D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE =
+18:08 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >> Hi Svyatoslav,
+> >>
+> >> On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
+> >>> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC alon=
+g
+> >>> with a set of changes required for that.
+> >>
+> >> Other than patch 06/23 that looked iffy (although the original code wa=
+s iffy as
+> >> already), for which I posted a review, this series looks almost ready.
+> >
+> > 06/23 addresses issue I have encountered while testing with mt9m114 I
+> > will add detailed explanation later in the 06/23 commit discussion.
+> >
+> >>
+> >> Should the clk patches be merged together with the media patches? Or c=
+an those
+> >> go in via the clk subsystem? If it is the latter, then I'll need an Ac=
+ked-by from the
+> >> clk subsystem maintainer.
+> >>
+> >
+> > I suppose this should be discussed between staging and clk subsystem
+> > maintainers I am fine with any conclusion.
+> >
+> >> Regarding the bindings: all except 21/23 are Acked.
+> >
+> > Maybe you did not notice, but 21/23 has reviewed-by from Rob Herring.
+>
+> Ah yes, Rob replied. Good.
+>
+> >
+> >>
+> >> I have one question regarding testing: in the past I tested this drive=
+r with a
+> >> Jetson TX1 devkit and a camera sensor. One of the main reasons this dr=
+iver is still
+> >> in staging is that I never got that to work reliably: after 10-30 minu=
+tes it would
+> >> lose sync and streaming would stop.
+> >>
+> >> Unfortunately I never had the time to dig deeper into that.
+> >>
+> >> So have you tested this with a camera sensor? And if so, does it strea=
+m reliably?
+> >> I.e. just let it stream for 24 hours and see if that works.
+> >>
+> >> If it is reliable for you, then I think this driver should be moved to=
+ drivers/media.
+> >
+> > Streaming works but I did not tested for such prolonged periods of
+> > time. Scope of this patchset is bringing CSI support for
+> > Tegra20/Tegra30, extended testing and move to media can be done in
+> > followup.
+>
+> I'd really appreciate it if you can do a duration test. Perhaps start str=
+eaming on
+> Friday and let it run for the weekend?
 
-Just noting that this was a recent addition (still not upstream) that 
-essentially says "there is a folio here, but it's not in an ordinary 
-present page table entry.
+With all do respect this will not happen any time soon.
 
-So we could change that to something better.
-
--- 
-Cheers
-
-David / dhildenb
-
+> Regards,
+>
+>         Hans
+>
+> >
+> >>
+> >> Regards,
+> >>
+> >>         Hans
+> >>
+> >>>
+> >>> ---
+> >>> Changes in v2:
+> >>> - vi_sensor gated through csus
+> >>> - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+> >>> - adjusted commit titles and messages
+> >>> - clk_register_clkdev dropped from pad clock registration
+> >>> - removed tegra30-vi/vip and used tegra20 fallback
+> >>> - added separate csi schema for tegra20-csi and tegra30-csi
+> >>> - fixet number of VI channels
+> >>> - adjusted tegra_vi_out naming
+> >>> - fixed yuv_input_format to main_input_format
+> >>> - MIPI calibration refsctored for Tegra114+ and added support for
+> >>>   pre-Tegra114 to use CSI as a MIPI calibration device
+> >>> - switched ENOMEM to EBUSY
+> >>> - added check into tegra_channel_get_remote_csi_subdev
+> >>> - moved avdd-dsi-csi-supply into CSI
+> >>> - next_fs_sp_idx > next_fs_sp_value
+> >>> - removed host1x_syncpt_incr from framecounted syncpoint
+> >>> - csi subdev request moved before frame cycle
+> >>>
+> >>> Changes in v3:
+> >>> - tegra20 and tegra30 csi schema merged
+> >>> - removed unneeded properties and requirements from schema
+> >>> - improved vendor specific properties description
+> >>> - added tegra20 csus parent mux
+> >>> - improved commit descriptions
+> >>> - redesigned MIPI-calibration to expose less SoC related data into he=
+ader
+> >>> - commit "staging: media: tegra-video: csi: add support for SoCs with=
+ integrated
+> >>>   MIPI calibration" dropped as unneeded
+> >>> - improved tegra_channel_get_remote_device_subdev logic
+> >>> - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+> >>> - software syncpoint counters switched to direct reading
+> >>> - adjusted planar formats offset calculation
+> >>>
+> >>> Changes in v4:
+> >>> - removed ifdefs from tegra_mipi_driver
+> >>> - document Tegra132 MIPI calibration device
+> >>> - switched to use BIT macro in tegra114-mipi
+> >>> - pinctrl changes moved to a separate patch
+> >>> - ERESTARTSYS workaround preserved for now
+> >>> - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
+> >>> - reworked bytesperline and sizeimage calculaion
+> >>>
+> >>> Changes in v5:
+> >>> - dropped patch 1/24 of v4 since it was picked to pinctrl tree
+> >>> - added reasoning for tegra132 comaptible into commit desctiption
+> >>> - moved clocks into common section in tegra20-csi schema
+> >>> - added note regarding ERESTARTSYS
+> >>> ---
+> >>>
+> >>> Svyatoslav Ryhel (23):
+> >>>   clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
+> >>>     Tegra114
+> >>>   dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+> >>>   clk: tegra30: add CSI pad clock gates
+> >>>   dt-bindings: display: tegra: document Tegra30 VI and VIP
+> >>>   staging: media: tegra-video: expand VI and VIP support to Tegra30
+> >>>   staging: media: tegra-video: vi: adjust get_selection op check
+> >>>   staging: media: tegra-video: vi: add flip controls only if no sourc=
+e
+> >>>     controls are provided
+> >>>   staging: media: tegra-video: csi: move CSI helpers to header
+> >>>   gpu: host1x: convert MIPI to use operation function pointers
+> >>>   dt-bindings: display: tegra: document Tegra132 MIPI calibration dev=
+ice
+> >>>   staging: media: tegra-video: vi: improve logic of source requesting
+> >>>   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI =
+to
+> >>>     CSI
+> >>>   arm64: tegra: move avdd-dsi-csi-supply into CSI node
+> >>>   staging: media: tegra-video: tegra20: set correct maximum width and
+> >>>     height
+> >>>   staging: media: tegra-video: tegra20: add support for second output=
+ of
+> >>>     VI
+> >>>   staging: media: tegra-video: tegra20: adjust format align calculati=
+ons
+> >>>   staging: media: tegra-video: tegra20: set VI HW revision
+> >>>   staging: media: tegra-video: tegra20: increase maximum VI clock
+> >>>     frequency
+> >>>   staging: media: tegra-video: tegra20: expand format support with
+> >>>     RAW8/10 and YUV422/YUV420p 1X16
+> >>>   staging: media: tegra-video: tegra20: adjust luma buffer stride
+> >>>   dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
+> >>>   ARM: tegra: add CSI nodes for Tegra20 and Tegra30
+> >>>   staging: media: tegra-video: add CSI support for Tegra20 and Tegra3=
+0
+> >>>
+> >>>  .../display/tegra/nvidia,tegra114-mipi.yaml   |   1 +
+> >>>  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 +++
+> >>>  .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
+> >>>  .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
+> >>>  arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
+> >>>  arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
+> >>>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
+> >>>  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
+> >>>  drivers/clk/tegra/clk-tegra114.c              |   7 +-
+> >>>  drivers/clk/tegra/clk-tegra20.c               |  20 +-
+> >>>  drivers/clk/tegra/clk-tegra30.c               |  21 +-
+> >>>  drivers/gpu/drm/tegra/dsi.c                   |   1 +
+> >>>  drivers/gpu/host1x/Makefile                   |   1 +
+> >>>  drivers/gpu/host1x/mipi.c                     | 525 ++---------
+> >>>  drivers/gpu/host1x/tegra114-mipi.c            | 483 +++++++++++
+> >>>  drivers/staging/media/tegra-video/Makefile    |   1 +
+> >>>  drivers/staging/media/tegra-video/csi.c       |  70 +-
+> >>>  drivers/staging/media/tegra-video/csi.h       |  16 +
+> >>>  drivers/staging/media/tegra-video/tegra20.c   | 820 +++++++++++++++-=
+--
+> >>>  drivers/staging/media/tegra-video/vi.c        |  56 +-
+> >>>  drivers/staging/media/tegra-video/vi.h        |   6 +-
+> >>>  drivers/staging/media/tegra-video/video.c     |   8 +-
+> >>>  drivers/staging/media/tegra-video/vip.c       |   4 +-
+> >>>  include/dt-bindings/clock/tegra30-car.h       |   3 +-
+> >>>  include/linux/host1x.h                        |  10 -
+> >>>  include/linux/tegra-mipi-cal.h                |  57 ++
+> >>>  26 files changed, 1657 insertions(+), 670 deletions(-)
+> >>>  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
+vidia,tegra20-csi.yaml
+> >>>  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+> >>>  create mode 100644 include/linux/tegra-mipi-cal.h
+> >>>
+> >>
+>
 
