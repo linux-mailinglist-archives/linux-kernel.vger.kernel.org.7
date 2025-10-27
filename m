@@ -1,120 +1,174 @@
-Return-Path: <linux-kernel+bounces-871196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0A7C0C9D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:20:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3242FC0C9D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CBF3A405C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8E83A8306
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F8D26463A;
-	Mon, 27 Oct 2025 09:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BA22DECA1;
+	Mon, 27 Oct 2025 09:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRRDv1lP"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Wpyy6kjb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l9/9wrY/"
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544AD258EDB
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5629F26B777;
+	Mon, 27 Oct 2025 09:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556478; cv=none; b=WVRMKwxYHUs8Gj1892HCbdrN3H6GmzNZgPc9LyxU2RUn46ofpTkSSpK6atUrRA2L+h/cjBxMGNucl+gF5PWEY9ymRgbOHiuRBgUGjjIzF2vDeZA/xYdSunTvwQvmNcmZyDhyi8dUUMhc9rOX2iKSdTDgVLOicuUX2C8gkyG+SWQ=
+	t=1761556487; cv=none; b=gjmNUEsqK/oB7JA2bD0F3T00Gz98G/Wl84SldjwPEEUZvH6bzUU+IpcTU7SQbAxe/pwL/1h34uZXAuxx0Bvgn3r2yMjtLY1HeRMjvHwC39wMtWhmNq5ijEd8MjGFcwrDMHhbnKA3zivb7WIlYskXIJnlMX0PbEDmz6I/qNiZNjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556478; c=relaxed/simple;
-	bh=k3ckgEiSkq+y7z9usMTBGQkVGgGdig/5c1NbkqTAlEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H4ALCMH1JTmdIL/uT348wKK4QCL6dFzuUc9unIsihDLXq8DbZ3GBs9OXqQtlPSR18col71TDxjOhYLT4mPT4yjl0Ux7t/YGjhieaTanpPifdb8U3TefUXD1YVIUoChxjSWdEfqEswWXp8PLX2fxNiVzJTWpVXhSYVpjQHMOT9Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRRDv1lP; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4eba124d189so25624841cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761556476; x=1762161276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k3ckgEiSkq+y7z9usMTBGQkVGgGdig/5c1NbkqTAlEY=;
-        b=CRRDv1lP8cH6TlSx5KFFbFzIyaH3no4/hU0KuR87OQrZ/988ItqS9oWN6Q0ZWSDbU/
-         SBuoqxBvGUuloYbV1Ri4eK5irPspYesW45ywyabPDHVwLwuvspYfCAsN/GG8QXuLLlNB
-         ibreo0M3+eG2FaksDW+5IvGY6tIzrZFufCdx1FZX/C9639j4YQRxxU83U+okp28Y3/Rv
-         X1v23fPpg84vW7VsgPN8u06wBeZXV0TL+pT3uLEi3ENx+MM0BRGgIg6cGTumM/ZW+DfT
-         jzyBIkHgncdxdtzx7967PF5aEabBM+kbAEm5DS0aS4t3YtTQRp2rJkK7Z39JHHpejAMB
-         S3tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556476; x=1762161276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k3ckgEiSkq+y7z9usMTBGQkVGgGdig/5c1NbkqTAlEY=;
-        b=byefIRhQs2jPe9xLXwUY+ExM7E3p8oZ2BwToypJ0ey9GkKRCaZPi8ypeve5Zu7SstI
-         RdMgFMzeNwYykIcmnky+YpK5adOrvxyKcSPzVeR6N8X9CDlKzzP233dc+YMPBZjykOaC
-         ZWmYdzxgTKCtrIgesNujXSOd7dyg8sT9OgHte+AvCCMPGw5obuklry9xS9W9ejeJnoij
-         vTebkZueW7JZTsD+9ex7j7TAri6g2EyYX64iO1p7EerAqAwF1LiB1bzXq9IvWYWxbBTH
-         MWTGt8FvfwshDyiUATPSj3vTVW2lOxfA4TJVnl3WIbRP+ykKxlCFwhkWGbaKN6wB4+jZ
-         CnLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXr19IlMGIe5UR/dp82E2ejQXtV3qLbfyaQkBjdRzyM2q9O1sYxuiLhatpN6cN9A0BApue+BJ1xbAuHae4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu1RAlCh4MzL3R3pMbG2UK4pP2qw8zQybg68MtzbbDGDZBW3HS
-	gNt1QzZDw4yw1NLPBtkRMX3A9RR3JB23e0nmYHzVu8s0VlX4TFLfdrRfm5NEoFtRWf+DoojEITJ
-	L1Wx4xAhMtb1s2M2ehzHeKibzYd95hQw=
-X-Gm-Gg: ASbGnct7lqzvzx5HFYSZPC6Ow1v1spDKzpCQFLW0xVQXzz20NiWnFP7E6feL9sSRjec
-	nO5u1LIDiH5m1EYqyuiV3Gz12mXq2RV1NxcF8DdgJqJohAhVOylYPB44D8XgHIk0XCtkAS4kxtT
-	8bM4EnYKgg4mLWLV4usOEwq7MtJ/BVYJh0K4JE/p/eFsQz83/+DxgrjN8/m/i+VhR1LKRv/01/y
-	ZGV48dZ0Nrx6tAU+m9w2azro9P1S94H67e0RA58XodYooLWhEMLfeypXl3ZRZ1FWE7xCs7DtbTr
-	5hkg2j5cfgXxJfDQsVxP/HzsFIUu
-X-Google-Smtp-Source: AGHT+IF/2QvCzE1TEuKomhBiAScmROMfTstvpHg7L8JdAeBZ1CrC1wuEfqNsUGGYV9Dp9piQXEYqMgRlhzJKaaFXdAc=
-X-Received: by 2002:a05:622a:d16:b0:4eb:a2ab:4182 with SMTP id
- d75a77b69052e-4eba2ab4738mr100138481cf.22.1761556476187; Mon, 27 Oct 2025
- 02:14:36 -0700 (PDT)
+	s=arc-20240116; t=1761556487; c=relaxed/simple;
+	bh=q3GOMSfU5CP70Rt+I//1v3Z34/N3e4cGZm370GirGiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bemN+OPvfpSbx9VkjBHJ1sDxHjZw9uqUn/HGtXE41guO1gUwTcu1S91yHa5JnbLdHmC0XaRvJe0wRdpxysXz5D3G8KrMIhDYEi3C/SRM35+inYK+s0OmBK10EiZ98Rr3ZR4mdKBZw5uEuEGKE/k/XihHASo1xJFhZKrWM2S2oeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Wpyy6kjb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l9/9wrY/; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id 3AE2E138037D;
+	Mon, 27 Oct 2025 05:14:44 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 27 Oct 2025 05:14:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761556484; x=
+	1761563684; bh=ib3gQpzJ+dspAAgN4VDq9O7p0OnCeMLRAxqGQCUWjEk=; b=W
+	pyy6kjbYZIpMNvsn6u8lWrvAgvG7AlrJ2FU/9CxigvrmTZ31s77EK1xWt+PLSSXX
+	QI795DCVU/ll0ieqdqGhKVmVe+ZFD02N6xabxRowpwNWKX59XNkxTBp0XIHS7SLQ
+	jP9Zs/1SUUQS2NDNg26lWETO8ENCwc1HY5xDOIokF1rBYMrhdRG4T0WZVWKXsvxG
+	EC85Tx+VJTAKghTlJuIWVCja6NmFiGwFPqbqXuKfk1YfP9O0zuDRUl5KvNsj04Dw
+	0xn2N1UnFhSj4GqmtOLiYROQ5wnkX6vFwj0rZWxKhzKRyoptDdjXKXkwFLsc/ozx
+	1xquqnUs52ULyFer19YQw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1761556484; x=1761563684; bh=ib3gQpzJ+dspAAgN4VDq9O7p0OnCeMLRAxq
+	GQCUWjEk=; b=l9/9wrY/4m6ICv1BZWsV1B8U8iuzjGoDhnacN2D7lZlqMo3YGh6
+	0dxBonLjSShWUmMVrVZMhLjcvhw4dkmGxhrVtJc1+uQ359X1S4xikGK4/HBtFdwi
+	dtDxLd/nbT4qt7fmS5jOyVk63WracO8WKf6GHRW1wQdtdyEG2kbZARHvHpKsHSUb
+	NaCbOUvDPXBHZEbAqO0pKxtIJaeSWNQmCpDu47XRTFNWx+w3poZQpA3MaoV6pgCy
+	HkMp+V4C0hAXGi2k9kSDAQd6ZswsNvZnWeCt5j2FiobOurKIzAyw3/tixAEk6OGr
+	csIvaI2COCp+3qXuVNT62UMMgggyg+MJv0w==
+X-ME-Sender: <xms:Ajj_aLAd4AjVLn68RIa5dKxZOS2fwdx1RhoJznr51abL8fGa_wDFrA>
+    <xme:Ajj_aKnZykUeegM_rXiJusTi1rwrYye9zHzwpN3VKeCS4cHQviuoS4vXRAeZS_B2k
+    Ny0c0Z-F5w0TwxWxQX70akou3pmoUQy_W0s3fJ6PByUIY-EiLm7jds>
+X-ME-Received: <xmr:Ajj_aJiZWR8aRThPAADi3GInkvQkAazdCu378TuUW4GBMI-5fk539MdqzRDohA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheejheekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
+    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhhughhhugesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopeifih
+    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
+    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
+    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:Ajj_aK0F86OvsqKUuDmWYa16LQ3o-ZC5BZyx3yG0pFU_4B6j9XcVMg>
+    <xmx:Ajj_aNRduC-zzQpaZiuPIkIN9-XuLgLGvxnho_tK99J_X0MfH-I7kA>
+    <xmx:Ajj_aMbU23mxVz9IT9OZnusHvqvI8nnOss5kkS07yko1uufhkWArbw>
+    <xmx:Ajj_aK4xI3Sbk46VwdtUNMgal6bd9PnChr_3OyYCnYa5ST2NlI3eIQ>
+    <xmx:BDj_aGcNSJgQIduzTcOhuub8dUJubkX2r4cmqkFgLr8LLKpFmtr-r-3_>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 27 Oct 2025 05:14:41 -0400 (EDT)
+Date: Mon, 27 Oct 2025 09:14:39 +0000
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+Message-ID: <rn5mz62oyfxn4awnylebnsfwp7ixhe5mgvcmnjt3eydglzv5av@eshh4ipljc3l>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-2-kirill@shutemov.name>
+ <96102837-402d-c671-1b29-527f2b5361bf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026194858.92461-1-sigmaris@gmail.com>
-In-Reply-To: <20251026194858.92461-1-sigmaris@gmail.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Mon, 27 Oct 2025 13:14:28 +0400
-X-Gm-Features: AWmQ_bny2G__jDeyWDUL9Y-J8F57fNDWZftO8M3HOK0HvZdNg6brhmmHAL6LiRE
-Message-ID: <CABjd4YxsfxwEbic8QEabX1h9j0B3DBw9LWwctJx7SzdvXZdDhA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: pwm-fan overlay for NanoPC-T6
-To: Hugh Cole-Baker <sigmaris@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96102837-402d-c671-1b29-527f2b5361bf@google.com>
 
-Hi Hugh,
+On Mon, Oct 27, 2025 at 01:20:42AM -0700, Hugh Dickins wrote:
+> On Thu, 23 Oct 2025, Kiryl Shutsemau wrote:
+> 
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> > 
+> > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> > supposed to generate SIGBUS.
+> > 
+> > Recent changes attempted to fault in full folio where possible. They did
+> > not respect i_size, which led to populating PTEs beyond i_size and
+> > breaking SIGBUS semantics.
+> > 
+> > Darrick reported generic/749 breakage because of this.
+> > 
+> > However, the problem existed before the recent changes. With huge=always
+> > tmpfs, any write to a file leads to PMD-size allocation. Following the
+> > fault-in of the folio will install PMD mapping regardless of i_size.
+> > 
+> > Fix filemap_map_pages() and finish_fault() to not install:
+> >   - PTEs beyond i_size;
+> >   - PMD mappings across i_size;
+> 
+> Sorry for coming in late as usual, and complicating matters.
+> 
+> > 
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+> > Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> 
+> ACK to restoring the correct POSIX behaviour to those filesystems
+> which are being given large folios beyond EOF transparently,
+> without any huge= mount option to permit it.
+> 
+> > Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> 
+> But NAK to regressing the intentional behaviour of huge=always
+> on shmem/tmpfs: the page size, whenever possible, is PMD-sized.  In
+> 6.18-rc huge=always is currently (thanks to Baolin) behaving correctly
+> again, as it had done for nine years: I insist we do not re-break it.
+> 
+> Andrew, please drop this version (and no need to worry about backports).
+> 
+> I'm guessing that yet another ugly shmem_file() or shmem_mapping()
+> exception should be good enough - I doubt you need to consider the
+> huge= option, just go by whether there is a huge folio already there -
+> though that would have an implication for the following patch.
+> 
+> (But what do I mean by "huge folio" above?  Do I mean large or do
+> I mean pmd_mappable?  It's the huge=always pmd_mappable folios I
+> care not to break, the mTHPy ones can be argued either way.)
 
-On Mon, Oct 27, 2025 at 1:09=E2=80=AFPM Hugh Cole-Baker <sigmaris@gmail.com=
-> wrote:
->
-> FriendlyELEC offers an optional heatsink and fan addon for the NanoPC-T6
-> and T6 LTS. Add an overlay which can be applied if the fan is fitted and
-> configures the fan as an active cooling device for the SoC package.
->
-> Signed-off-by: Hugh Cole-Baker <sigmaris@gmail.com>
-> ---
-> FriendlyELEC heatsink with fan addon:
-> https://www.friendlyelec.com/index.php?route=3Dproduct/product&product_id=
-=3D305
-> Vendor DT with trip points and PWM duty cycle values:
-> https://github.com/friendlyarm/kernel-rockchip/blob/4944602540b62f5aad139=
-fe602a76cf7c3176128/arch/arm64/boot/dts/rockchip/rk3588-nanopi6-rev01.dts#L=
-75-L90
+I assume you want the same exception for the second patch as well?
 
-Is there any downside to enabling this unconditionally in the board
-.dts? Overlays require more user configuration, and not all
-bootloaders support them directly (e.g. systemd-boot users would
-struggle). Compiling with overlays enabled also makes .dtb's a lot
-larger due to added symbols information.
-
-Best regards,
-Alexey
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
