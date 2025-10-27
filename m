@@ -1,218 +1,146 @@
-Return-Path: <linux-kernel+bounces-870941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F42C0C088
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:05:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0C1C0C0BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6E23B1526
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB9E33B9DC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC632C027C;
-	Mon, 27 Oct 2025 07:05:01 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678702DC34B;
+	Mon, 27 Oct 2025 07:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PwQIx+zL"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258472F5B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F32D9EF2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761548700; cv=none; b=YYnPgY7lYnIaNOPkqqs+JhWWENi/rJem1ZZy1SFi5pMw6C9K3JStABC9/roiJVZbk5ijbnOMqQO+nEjHXaPsMF8F8T7Sll5yBlunHZ4dEgBIh9izfDOsSK11eaKMBysPcMoNtl8zInmgzNzE4Ki98WXsAOIwwi2ONW5Rl1f7clI=
+	t=1761548940; cv=none; b=kfK4jKRjviH2WRyz5bqr8NuadM6dPigTMsmxk98BntzfPNaQbcD9sHwl4Eh2M2HGQEcQpWDghJL/C+4xlNxjF+N14YHbxZYfv+JguJpwxeNYAKXyh0slyKsthxd2qEcec0J2fSBkCDNyyXfOQPEDkOj0aD4ITI56qPd+FhdrVOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761548700; c=relaxed/simple;
-	bh=qGU9eKrvAy6sRhh2qF+2G1/qW4tdEsW+NXohAD0wJBk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Lp97Gnbzt13/ysmX4SD1tdT7E2ZGKoqRIamgL1r4Fo2V9FgXmz8Se27ZFR6u/gPbs6q4q9/IRuWQKPFwKgr5OCp6qJvELIy/eAd2zdp2LkGOvnRBYCNqxGR7M9ErKwPNWDg3TCbG3WOwH134A24bp48/44rr08Vigm/FZ+lg+As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=linux.spacemit.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-X-QQ-mid: zesmtpsz9t1761548586tdf6a05ae
-X-QQ-Originating-IP: SnvZo6rZqu1HMv/YMlq3zJ3p0SQy28vtuoi/p8hkNJ8=
-Received: from = ( [183.48.247.177])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 27 Oct 2025 15:03:04 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 993538249610758676
-X-QQ-CSender: troy.mitchell@linux.spacemit.com
-Sender: troy.mitchell@linux.spacemit.com
-From: Troy Mitchell <troy.mitchell@linux.dev>
-Date: Mon, 27 Oct 2025 15:03:00 +0800
-Subject: [PATCH v2] riscv/plic: assign context ID based on hartid
+	s=arc-20240116; t=1761548940; c=relaxed/simple;
+	bh=HQvYDUNf198EKKAxVvh+ZSxI78/Ij69G0JiG7PtT5fU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QQI9feHWWdZ9fpimJqHCG28rXFBmEPP4H7gFruF/X8POFl/yS/317N46xflZ+I72t74Y69KX4XGTa04Yhywol2cQcjJv5U/YERdJnd1+STIraTSVl6gB6uBGa+XBHYDBB5G/7YWaUyn8nuCAsON7oon9R3dVkyEFGfksvQD9COw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PwQIx+zL; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-427091cd4fdso2439312f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:08:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761548936; x=1762153736; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2VCn7I67W0lot093gUV4e8FUZ2HcsegXwgZoOoSOv7c=;
+        b=PwQIx+zLauUHHEW8zaqrUsBUrTClf76jPTZtESzTKlGd6SmI/lyTRiWjV2aq3XKLt1
+         2e7HGVUgC0PA3jC4M57VHP5eMsac2tYnF2mbEkIQS+CN8H6Evhu/db3eYOEaK1pZX+Nt
+         Q2LoEgS4uSMYYQqBCyfjdjKP2qdeiCip/s3jQFLKOKeZNGSvBu0f9r9DPtfypLbOxp8k
+         zs2K0U/DIxoetHY+/1B3jsN4anL/+kf1wEx7E7vl5I/uA4xXEfbvhkzMB/qmMFIT1tH/
+         Tizc9iafVA9a/QAsbkTCxMmyKP85rO5AGKvjAAQKmT75q9Z52DAmxHhTs1S8Xjw4NzYq
+         LuEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761548936; x=1762153736;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2VCn7I67W0lot093gUV4e8FUZ2HcsegXwgZoOoSOv7c=;
+        b=dY1TYkIpCVdKk0Yx0bd92SdKlYj/WS5+TyZEl+sb4u3SZ/bBscQksRv5il6V7ke3eC
+         u62gH4/orU+Bp00o1lUu1NsITb3YyU23q7ChDQbDZnkpqQTpgkhBcmRe7xBD4Y6ucuCI
+         uRq0IIDQGUDZAoLuvWhpcmnfsDqNcRPjYoYCT/WBGx6RL85V5ClBJEX9NRi0+5nj7GYP
+         fh1zURlSrD/CaXvg3nMLRhaoNELhxaZmDwwSAHDxin67/ZdIPEHD9tEatJc5vO6gRNjG
+         SUpOUnDevZMxyzLDdRD8uK5wQU07IX9S8gaPn7C57L6Er0zWUNc/RVbhDNRll6SiFL2n
+         MaIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCQZBD6vRgypLapW9Z8PwA1zpCDCBaZqzINVxrOgqclZqm+sb7WMIPf6vwSIm5Agce5bhzJKFRQcCeRy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcH1FITK5PEBWCQryOtwrok1gYMVOQ5m2IlSqFSZPPEL/uWqGJ
+	MRGS2ueoYx875EF6i4ZFOYliiMb1wDxjmuJ2DJae4vAM7ROUN+wVO2WqVl7BuVw39TM=
+X-Gm-Gg: ASbGnctWqU1U4kQlyg16wvoU25C/UtHolw58lZgWS0gADD0szOyI77KN/bnhkUieiYG
+	/U+q/OdG0lJCV7z9V/sOB2vlygLKATjShrQCngQ1gbOiHW10s9S+kWyZw/3PXJ2NUzoq80siv7o
+	eJ+d5gAJ+JadcuDn0ydVKi6CP8mgAsR6gyLApZeqE8uya5FSP3gnKEUgnG1YtZoNGw92QfSmD12
+	FuzkxY7CwLvpLPN+53rCnbYkiAAPzWkvP4kHevCxrVrktt4an4zcRMJ4rVIPbafhWi5J0P9F2yZ
+	qQXZ6YPMehtyDef5Fs1D6t9D9K7uOluJTEPFZheANddzOyeslh8P9wHuNSYw9oszjkI3OPcmBYY
+	aO29EqvyPn4TOhmgwZPneNlFH2ZOcUNs3ZSTymUC2gu0xZ+OTHbFlGqadi1lVgsfo60PYHVhvaE
+	Uwi4uEd2DQ+ABi9M5l
+X-Google-Smtp-Source: AGHT+IGoQx8B5H77NlYFS00H5yXNOz5JUZs/694lcXu0yPBw3rKGoC7GgPX+DZXHN83AY89E6HX4rA==
+X-Received: by 2002:a5d:5f82:0:b0:3ec:db87:e8fa with SMTP id ffacd0b85a97d-42704d768b6mr25913703f8f.26.1761548935732;
+        Mon, 27 Oct 2025 00:08:55 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952e3201sm12634747f8f.47.2025.10.27.00.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 00:08:55 -0700 (PDT)
+Date: Mon, 27 Oct 2025 10:08:51 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
+Message-ID: <aP8agyKj73bLZrTQ@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251027-fix-plic-amp-v2-1-f077b9439112@linux.dev>
-X-B4-Tracking: v=1; b=H4sIACMZ/2gC/3WMyw7CIBBFf6WZtWOA1Aeu+h+mCwpTO0mlBJTUN
- Py72L3Lc2/O2SBRZEpwazaIlDnx4iuoQwN2Mv5ByK4yKKFOUiiBI68YZrZongEvanC61WdtTQt
- VCZHqv+fufeWJ02uJn72e5W/9E8oSJToaSRmtzXAV3cz+vR4dZehLKV9DIY8fqAAAAA==
-X-Change-ID: 20251020-fix-plic-amp-72bd94969ca4
-To: Thomas Gleixner <tglx@linutronix.de>, Paul Walmsley <pjw@kernel.org>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Troy Mitchell <troy.mitchell@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761548584; l=4685;
- i=troy.mitchell@linux.dev; s=20250710; h=from:subject:message-id;
- bh=qGU9eKrvAy6sRhh2qF+2G1/qW4tdEsW+NXohAD0wJBk=;
- b=QVobr7HfSoGD5b6Tn4MJQ1V02hpGGfuq5xC5UmOXs1nE/R7aokxfR3oT8kPnTydcs5YV0Sstq
- IpuJabINtSYCvVzTmMGjUIMYw1QIplZ5vQaxGYPEzvu6K4dgZ4jiuI9
-X-Developer-Key: i=troy.mitchell@linux.dev; a=ed25519;
- pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MExkIg7Bfu69me4zLr5MwX8PeHib5G93/iGwuQEtw41iVS237tUMs31+
-	Gl6cnsEPQc8MTu6VOKMMGZfWtnXGB0GCOFnuHPOKw8oAsgSX9BG0qrLyItntqcerjuC2Ozi
-	O9AxionRuTj9RLRUg3/pcOeXYjZdhfaXL3fn0lTeZeJN2UVbdOxv7qnBnpMaNkchvmBVkvj
-	YVOqqWFDkqEjOMcmP3kJxv5ZHyDM8vS6RS87EGUl5wx2NzXpSyJYYHMml63NI3u3p14CPG5
-	+ov54eO9f0EB2TMpl5kVqEvumBdf8vkjbehW3kW4Ekf3E6nfoTf/kuGAx9ycu62IztSXTCy
-	fERvys0QRsVpTjaxWcy80iV1XFnP25EPcDbxeMPekCtpDTNZ6RAM5pdX4WuEhj9twL7O0Vz
-	6FGi5QCnbQiZpdNoVTq93SoR9BvWQmHErgbEe4Zhx7IPd+skhRvwe/gfmqqUcqQUSiKJwFi
-	GSzRnK5/iPDGrfrrbEs1lhGensUcx/VOM+GyTLiAQk6n4GnEQykG3rEzoh7xhlXuI3mWilN
-	LO83CO5hRfsL+4yh1+0dlBUHL3OSv/yxc4fadN4uAYmHHBpUbTwc0YJtTLqW9roBWunipoR
-	MFhntPEBaaxB6vTB1BbiF5pBhdmA3mRMzIuCsjCbLaaq6U39yzyS/6c8XOdQIL0GfhXvXFd
-	ta21yXiX/XDCtsto2FdF99/bBMp9v4QlYr/wrkVurXUyMCNfbmJu2LfqwpeqrHzpnTWccMJ
-	6Usd4+yg4eFHynFTB2uD7XCeM8mMOjJwaV95gZWyMn8ksOyR3cO0QlKnVSxsgy03To2qbVj
-	aMa5+YWZ89c+aZGZdNBQO96gDOkJWGDUTYztD+l9qIWwnnRfb7GcnFG60cIa3H05ea+AGV2
-	F7Zg+QcZ/mozs8e/t8HKwy8WuNKgYNjWTq1QPwYhsrz7QV21U4c73Cax2MTUR8S30LZHDEk
-	CAmQo1V8QWCHYm/3ecGJvjHx5ahyniZRsDlbcwh8WvqbunBoXBJmNYcyE0bEL000/bk3bU2
-	TMDkiw7bxnmSQzF2lHVOE4xheR9qyIk3I6cTzwuhHRnAexMOQSQ2JGriVy8KdPDbSQje6oh
-	9jGyINl8ZY4638b2zTGgMjbrWbN317XlA==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-The PLIC driver for OF-based platforms currently assigns 'context_id = i'
-within the context loop. This implies an assumption that all harts are
-numbered contiguously starting from 0.
+The snprintf() calls here work but they have several minor style issues:
 
-In Asymmetric Multi-Processing (AMP) systems, where Linux might boot on
-a non-zero hart ID (e.g., hart4), while other harts (e.g., hart0) are
-running a different OS, this assumption is violated. This can lead to
- different system inadvertently sharing the same
-PLIC enable_base register. Consequently, this causes configuration
-conflicts and incorrect interrupt handling.
+1) It uses ARRAY_SIZE() which is the number of elements in an array.
+   Since were talking about char that works, but it's more common to
+   use sizeof() which is the number of bytes.
+2) The printf format is "%1d".  The "1" ensures we always print at
+   least 1 character but since numbers all have at least 1 digit this
+   can be removed.
+3) The kernel implementation of snprintf() cannot return negative error
+   codes.  Also these particular calls to snprintf() can't return zero
+   and the code to handle that zero return is sort of questionable.
+4) In the current kernel the only "core_id" we print is "0" but if it
+   was more than 9 then the output would be truncated so GCC complains.
+   Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
 
-Assign the PLIC context ID based on the actual hart ID provided by the
-OF node. This ensures that each hart context maps to a unique enable
-region within the PLIC, thereby resolving conflicts in AMP setups. This
-change preserves the correct behavior on Symmetric Multi-Processing (SMP)
-and Uniprocessor (UP) systems.
-
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Changelog in v2:
-- add comments
-- modify commit message
-- use `context_id` instead of `i` when skip contexts other than external
-  interrupts for our privilege level
-- Link to v1: https://lore.kernel.org/r/20251020-fix-plic-amp-v1-1-defe2a99ab80@linux.dev
----
- drivers/irqchip/irq-sifive-plic.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+v2: The v1 introduced a W=1 warning because of the truncation issue.
+    It's a false positive because GCC assumes that "core_id" can be
+    every possible value of int but actually it can only be zero.  And
+    also generally, in the kernel, truncating is fine and it is fine
+    here too.
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index cbd7697bc14819cbe3b77096b26901b605491f75..2289eb2f77bbd0da460d22ad3ffcd3e7ef2bde40 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -487,18 +487,18 @@ static int plic_parse_nr_irqs_and_contexts(struct fwnode_handle *fwnode,
- }
- 
- static int plic_parse_context_parent(struct fwnode_handle *fwnode, u32 context,
--				     u32 *parent_hwirq, int *parent_cpu, u32 id)
-+				     u32 *parent_hwirq, int *parent_cpu, u32 id,
-+				     unsigned long *hartid)
- {
- 	struct of_phandle_args parent;
--	unsigned long hartid;
- 	int rc;
- 
- 	if (!is_of_node(fwnode)) {
--		hartid = acpi_rintc_ext_parent_to_hartid(id, context);
--		if (hartid == INVALID_HARTID)
-+		*hartid = acpi_rintc_ext_parent_to_hartid(id, context);
-+		if (*hartid == INVALID_HARTID)
- 			return -EINVAL;
- 
--		*parent_cpu = riscv_hartid_to_cpuid(hartid);
-+		*parent_cpu = riscv_hartid_to_cpuid(*hartid);
- 		*parent_hwirq = RV_IRQ_EXT;
- 		return 0;
- 	}
-@@ -507,19 +507,19 @@ static int plic_parse_context_parent(struct fwnode_handle *fwnode, u32 context,
- 	if (rc)
- 		return rc;
- 
--	rc = riscv_of_parent_hartid(parent.np, &hartid);
-+	rc = riscv_of_parent_hartid(parent.np, hartid);
- 	if (rc)
- 		return rc;
- 
- 	*parent_hwirq = parent.args[0];
--	*parent_cpu = riscv_hartid_to_cpuid(hartid);
-+	*parent_cpu = riscv_hartid_to_cpuid(*hartid);
- 	return 0;
- }
- 
- static int plic_probe(struct fwnode_handle *fwnode)
- {
- 	int error = 0, nr_contexts, nr_handlers = 0, cpu, i;
--	unsigned long plic_quirks = 0;
-+	unsigned long plic_quirks = 0, hartid;
- 	struct plic_handler *handler;
- 	u32 nr_irqs, parent_hwirq;
- 	struct plic_priv *priv;
-@@ -569,14 +569,15 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 
- 	for (i = 0; i < nr_contexts; i++) {
- 		error = plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu,
--						  priv->acpi_plic_id);
-+						  priv->acpi_plic_id, &hartid);
- 		if (error) {
- 			pr_warn("%pfwP: hwirq for context%d not found\n", fwnode, i);
- 			continue;
- 		}
- 
- 		if (is_of_node(fwnode)) {
--			context_id = i;
-+			/* each hart has two contexts: M-mode and S-mode */
-+			context_id = hartid * 2 + i % 2;
- 		} else {
- 			context_id = acpi_rintc_get_plic_context(priv->acpi_plic_id, i);
- 			if (context_id == INVALID_CONTEXT) {
-@@ -594,7 +595,7 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
- 				void __iomem *enable_base = priv->regs +
- 					CONTEXT_ENABLE_BASE +
--					i * CONTEXT_ENABLE_SIZE;
-+					context_id * CONTEXT_ENABLE_SIZE;
- 
- 				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 					__plic_toggle(enable_base, hwirq, 0);
-@@ -694,7 +695,8 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 
- fail_cleanup_contexts:
- 	for (i = 0; i < nr_contexts; i++) {
--		if (plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu, priv->acpi_plic_id))
-+		if (plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu,
-+					      priv->acpi_plic_id, &hartid))
- 			continue;
- 		if (parent_hwirq != RV_IRQ_EXT || cpu < 0)
- 			continue;
+    But let's use that as an opportunity to do more cleanups.
 
----
-base-commit: fdbc36b17e9f2fa24c940959e39df90f53ccce2b
-change-id: 20251020-fix-plic-amp-72bd94969ca4
+ drivers/remoteproc/mtk_scp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 10e3f9eb8cd2..db8fd045468d 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	if (core_id >= 0)
+-		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
++		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
+ 	else
+-		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+-	if (ret <= 0)
+-		return ERR_PTR(ret);
++		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
++	if (ret >= sizeof(scp_fw_file))
++		return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	/* Not using strchr here, as strlen of a const gets optimized by compiler */
+ 	soc = &compatible[strlen("mediatek,")];
 -- 
-Troy Mitchell <troy.mitchell@linux.dev>
+2.51.0
 
 
