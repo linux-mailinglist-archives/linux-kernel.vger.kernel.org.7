@@ -1,112 +1,182 @@
-Return-Path: <linux-kernel+bounces-872224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EC7C0F9BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:21:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3808CC0F9DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE5DE4F462D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C99819C4275
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F532314D21;
-	Mon, 27 Oct 2025 17:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B7831618E;
+	Mon, 27 Oct 2025 17:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y14ZqlD0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A42MOUxI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="g4kE6Pw5"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995D322D7A5;
-	Mon, 27 Oct 2025 17:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A852C11FA;
+	Mon, 27 Oct 2025 17:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585619; cv=none; b=I3Gyv41nQsNPgAF1z7CPWaMV47XQzT52MOwxhWOugFsDVbGKeqB57JjH0m8wkGCcsrrRNTIZPCXqSZfGV5LfJ4v9Ubh5azGADpFGM37QT7c4PC4/r9P4vdPmv5G/p3tjfXE2/M4mTEBex5WQ+APJYj73hybrGBqLbokTTQjT0Os=
+	t=1761585811; cv=none; b=WKlNotpsvPoBvNg5OZnQaCpRWZGnfk+EsIcCq5yJ+7x3c07iFw0mPIp6sJLoexKW66iuYIlriQ6/YfepaX18T4fTIUNqMTWYbvxOC9SVLd4y5O5K1h18UZetoyLLQzLwSiESDv9PSFbvHfDcB24YSJ7AyFAjtHZNnFFbVqjxC9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585619; c=relaxed/simple;
-	bh=8hHDJnAKQ7TkGYVWTB6uVUYjf8D1v5bl3mhnVF4y4sw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UygcL/+FCL98X47fFNJ8kc5UuRlcRSuQOvgaQREo8DoHGQ23jEE3kG/DazRdIx+UfvDnUChr1I1NNoXspBRtEm9QjrXpMXY2R6bOl8f81wxPNh09bPxFeLj6SXm6JA7rqNGCOQQdXVlR6ixSeI4O4fbRJ8Ple3NJ1M2B8eM+cU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y14ZqlD0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A42MOUxI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761585616;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EL18DRmiuTWLATBe5Gs34HIgGkwAeVge3RkC2LhpsLg=;
-	b=Y14ZqlD0EkXH4iXjM70FdXLZ+iOmw30C2f7uSB34GLPzWVrHPR6OXTNqwiVcy3+bZNKHkp
-	6K1KOrw6cVb9UR7MqjEoTKh821zZ8z3a+Pf5p2aA2Axnet/8ZauSCNdRYDrIlU4dJquAFd
-	jKh+n99niLkinU17cVLbaOaySoruhIk8BMB89Pi5toNhruNW+EQiH1SVEZOrH354Y+Yt06
-	Viaw77hlRVAUvWKxKWJR+fynvTuYcuWFp9dNX4qtnWL1NQ0jwc+gwO+NZeRRKmA9lk5f6/
-	CLJS3BiWWLqaZmxUXQuZJvOkCI5iXQEhY2/B/fd6MmpzAlE4oYYVI+jxxZrMsw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761585616;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EL18DRmiuTWLATBe5Gs34HIgGkwAeVge3RkC2LhpsLg=;
-	b=A42MOUxIaJbK5VTM2nYXH7xNrbkEdlYKRkj/alxqESRm5Jg4OCECUkjGTLfYR5G4C0rGLJ
-	SoYRkgVexCygZbBQ==
-To: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
- Maulik Shah <quic_mkshah@quicinc.com>, Sudeep Holla
- <sudeep.holla@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Vincent Guittot <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ulf
- Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/2] smp: Introduce a helper function to check for
- pending IPIs
-In-Reply-To: <20251020141718.150919-2-ulf.hansson@linaro.org>
-References: <20251020141718.150919-1-ulf.hansson@linaro.org>
- <20251020141718.150919-2-ulf.hansson@linaro.org>
-Date: Mon, 27 Oct 2025 18:20:15 +0100
-Message-ID: <871pmow9bk.ffs@tglx>
+	s=arc-20240116; t=1761585811; c=relaxed/simple;
+	bh=W7yYiAve8BRludsH4H9uCvtACWd17oeeVi8WkBjanKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPs1QAS2p4xSEJEZFpjl3wTQvFF9azE/ZiHS4A0sHA5QwBAT6kNL7d28wYymZtI53fVA7iYDNgrdObkcXkeapC+c187pjt+oi+F1g8ku5gBxfU/JZMjghLGhx1Tjt2npR7bOiJAl50Bzi5zbVV+f3IwTfYnpcxX9QNIrjPFIT84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=g4kE6Pw5; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=S+iucMdg9qjVFiWWp9rclLxcWQ4IxlakxagbG/6yZZw=; b=g4kE6Pw5jZjpq7ZZ56ASaZexrk
+	xCIf6N1qjgzbn+P+7RibERhhizgCjTlfUH7wwHs/bWRGIIpjpi213uyYuzE4u43BqDlAzXTSIL7Mb
+	6AcYxzGbvrPkKg30mAzOJjFvp9QVWVB9mSK2IZ/bqhOSDjEj0f/FoDjYgxDOcxr4fTJcVW8QQ59Hv
+	XDSj1nrMRWPNLjtzkLceuWGNov1n6YbkUPeKN3nwYHq8+cM/4mZLJ6GnvtAE7NmeVlIPTv+uNzzq5
+	93ldSxgS9LiapWYxGflYs+lz3AaREUaltZ9cLr+ja+7bxOO9HbQkpKS9EfsbhzXqpD8r1YP6gTOoe
+	KXXQuu6w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56672)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vDQwF-0000000029B-0P41;
+	Mon, 27 Oct 2025 17:23:23 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vDQwD-000000005mD-1Pdj;
+	Mon, 27 Oct 2025 17:23:21 +0000
+Date: Mon, 27 Oct 2025 17:23:21 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] net: phy: dp83867: Disable EEE support as not
+ implemented
+Message-ID: <aP-qiSsYzFDe-xlV@shell.armlinux.org.uk>
+References: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
+ <ae723e7c-f876-45ef-bc41-3b39dc1dc76b@lunn.ch>
+ <664ef58b-d7e6-4f08-b88f-e7c2cf08c83c@gmail.com>
+ <aP-Hgo5mf7BQyee_@shell.armlinux.org.uk>
+ <f65c1650-22c3-4363-8b7e-00d19bf7af88@gmail.com>
+ <aP-hca4pDsDlEGUt@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aP-hca4pDsDlEGUt@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Oct 20 2025 at 16:17, Ulf Hansson wrote:
+On Mon, Oct 27, 2025 at 04:44:33PM +0000, Russell King (Oracle) wrote:
+> On Mon, Oct 27, 2025 at 04:34:54PM +0100, Emanuele Ghidoli wrote:
+> > > So, this needs to be tested - please modify phylib's
+> > > genphy_c45_read_eee_cap1() to print the value read from the register.
+> > > 
+> > > If it is 0xffff, that confirms that theory.
+> > It’s not 0xffff; I verified that the value read is:
+> > TI DP83867 stmmac-0:02: Reading EEE capabilities from MDIO_PCS_EEE_ABLE: 0x0006
+> 
+> Thanks for testing. So the published manual for this PHY is wrong.
+> https://www.ti.com/lit/ds/symlink/dp83867ir.pdf page 64.
+> 
+> The comment I quoted from that page implies that the PCS and AN
+> MMD registers shouldn't be implemented.
+> 
+> Given what we now know, I'd suggest TI PHYs are a mess. Stuff they
+> say in the documentation that is ignored plainly isn't, and their
+> PHYs report stuff as capable but their PHYs aren't capable.
+> 
+> I was suggesting to clear phydev->supported_eee, but that won't
+> work if the MDIO_AN_EEE_ADV register is implemented even as far
+> as exchanging EEE capabilities with the link partner. We use the
+> supported_eee bitmap to know whether a register is implemented.
+> Clearing ->supported_eee will mean we won't write to the advertisement
+> register. That's risky. Given the brokenness so far, I wouldn't like
+> to assume that the MDIO_AN_EEE_ADV register contains zero by default.
+> 
+> Calling phy_disable_eee() from .get_features() won't work, because
+> after we call that method, of_set_phy_eee_broken() will then be
+> called, which will clear phydev->eee_disabled_modes. I think that is
+> a mistake. Is there any reason why we would want to clear the
+> disabled modes? Isn't it already zero? (note that if OF_MDIO is
+> disabled, or there's no DT node, we don't zero this.)
+> 
+> Your placement is the only possible location as the code currently
+> stands, but I would like to suggest that of_set_phy_eee_broken()
+> should _not_ be calling linkmode_zero(modes), and we should be able
+> to set phydev->eee_disabled_modes in the .get_features() method.
+> 
+> Andrew, would you agree?
 
-> When governors used during cpuidle, tries to find the most optimal
+What I'm thinking of is an overall change such as (against net-next):
 
-When governors used during cpuidle trie to ...
+diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+index deeefb962566..f923f3a57b11 100644
+--- a/drivers/net/phy/dp83867.c
++++ b/drivers/net/phy/dp83867.c
+@@ -708,6 +708,21 @@ static int dp83867_probe(struct phy_device *phydev)
+ 	return dp83867_of_init(phydev);
+ }
+ 
++static int dp83867_get_features(struct phy_device *phydev)
++{
++	int err = genphy_read_abilities(phydev);
++
++	/* TI Gigabit PHYs do not support EEE, even though they report support
++	 * in their "ignored" Clause 45 indirect registers, appear to implement
++	 * the advertisement registers and exchange the relevant AN page. Set
++	 * all EEE link modes as disabled, so we still write to the C45 EEE
++	 * advertisement register to ensure it is set to zero.
++	 */
++	linkmode_fill(phydev->eee_disabled_modes);
++
++	return err;
++}
++
+ static int dp83867_config_init(struct phy_device *phydev)
+ {
+ 	struct dp83867_private *dp83867 = phydev->priv;
+@@ -1118,6 +1133,7 @@ static struct phy_driver dp83867_driver[] = {
+ 		/* PHY_GBIT_FEATURES */
+ 
+ 		.probe          = dp83867_probe,
++		.get_features	= dp83867_get_features,
+ 		.config_init	= dp83867_config_init,
+ 		.soft_reset	= dp83867_phy_reset,
+ 
+diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+index 605ca20ae192..43ccbd3a09f8 100644
+--- a/drivers/net/phy/phy-core.c
++++ b/drivers/net/phy/phy-core.c
+@@ -207,8 +207,6 @@ void of_set_phy_eee_broken(struct phy_device *phydev)
+ 	if (!IS_ENABLED(CONFIG_OF_MDIO) || !node)
+ 		return;
+ 
+-	linkmode_zero(modes);
+-
+ 	if (of_property_read_bool(node, "eee-broken-100tx"))
+ 		linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, modes);
+ 	if (of_property_read_bool(node, "eee-broken-1000t"))
 
-Both plural and no comma.
-
-> idlestate for a CPU or a group of CPUs, they are known to quite often fail.
-
-idle state
-
-> One reason for this, is that we are not taking into account whether there
-
-...for this is, that they are not taking into account
-
-> has been an IPI scheduled for any of the CPUs that are affected by the
-> selected idlestate.
->
-> To enable pending IPIs to be taken into account for cpuidle decisions,
-> let's introduce a new helper function, cpus_may_have_pending_ipi().
-
-s/let's//
-
-> Note that, the implementation is intentionally as lightweight as possible,
-> in favor of always providing the correct information.
-
-That sentence doesn't make sense. It's a snapshot and therefore can't
-provide the correct information.
-
->  For cpuidle decisions this is good enough.
-
-Thanks,
-
-        tglx
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
