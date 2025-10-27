@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-871056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AD5C0C570
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:38:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0970CC0C586
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62249188D130
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:39:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 400EE4EF87B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B302E8B7C;
-	Mon, 27 Oct 2025 08:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDEF2E8B8A;
+	Mon, 27 Oct 2025 08:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHbgc7+z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOpKhK+D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005E4254B1F;
-	Mon, 27 Oct 2025 08:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6971C6A3;
+	Mon, 27 Oct 2025 08:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554309; cv=none; b=bP4BoTgLjtvL6bkw+o/oRiHoapBsbh7rbp/Lyk/JLyP/EkeDvGdDfZxpnfVILzdmRBCKmZrKP0ccrKa4VHji9Xw+hBZyCiDWnFJUkGbyO4E+OvU5fYlFhyCYZjf3RF2iQeSfs9PnMtk4h9mktgvaLR7AT/IBUqeEtFcgw4GBfbM=
+	t=1761554411; cv=none; b=tq3nqF5CTCU+aNDnmorKFL0H3ZgBs44AHQXOvNKNlQMmhf6BkjFiMxVatIM0imJwql+gK6nZzI0Fklf6LRrNVfhDy8L76Zh3GWg1sMXfwgkRdHIRQAAjXsJta819sNvmIJz0P23mdiezRFv1lw1TDIrc7p2AhwKafedwSWR2JbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554309; c=relaxed/simple;
-	bh=3UVOZ10a6KVsOB9uBphk7NDnZ8EZ4fSZxfjX8dQKj8c=;
+	s=arc-20240116; t=1761554411; c=relaxed/simple;
+	bh=pvUgbE/oVYUfBoByjaAA8fILG3lKoJTDuLSKJdOS/A4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKOa8lCq0NkM/XnE3f8G0a1w7sUOrq62N7aNgeTieFqrp6W5o9LMgFfm/INBpputSc1ktAj+wrU/K7WZ8MGtPpE8831LVilT/o1uqbAUY6Rdlxg7w91u4rvrIyvkwWfBgITJcIbLip1X+vPzNl/IxelIwErwLHf4c0fKyg5wliA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHbgc7+z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DF5C4CEF1;
-	Mon, 27 Oct 2025 08:38:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=d5o4FG8URXExV3LdhOg+ZsPtjm7g/MqCVsMb/4d7kmx7mVPXdDwzq1tKYJplxwvyb+6J5DEnuvphVxvsV2Gqv7A0vBYBK5aK6UgoGG5h3MDo9LeDiSegi3nfuCkfQrVw2WRLX4EJFGLGGrHlU25aorgG3oNODXtgnHACyOR4aZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOpKhK+D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A44CC4CEF1;
+	Mon, 27 Oct 2025 08:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761554308;
-	bh=3UVOZ10a6KVsOB9uBphk7NDnZ8EZ4fSZxfjX8dQKj8c=;
+	s=k20201202; t=1761554411;
+	bh=pvUgbE/oVYUfBoByjaAA8fILG3lKoJTDuLSKJdOS/A4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mHbgc7+zeFsmcfToHxSHVEecMmuXvsXbqGD06+L22hqz0ePN/C2tyLwMzo1MDOG02
-	 FF/lesCC5W42F5ZQQ9OhCeolEzsxiUhwibDLHtXoev21y9/n/l8RTpjFE147PnDpUB
-	 h1EP4Gt+5TCCooxloYIYMDml9So5JxPGDEOAdPMPZJ43FCpTGOsJX0stlGUiFGwgQz
-	 ddpZuRQ2mJ8WNOBhpTfJM1eye4y1ofvsO6I3wROpXYQ/q+TYnJQWJxlsqp9qh/Abs9
-	 8HmwOwGsHXI3ciO9ZikDPLbn4+Bwcw3OpjIq7NxpvvbqQwypZj6gOHuNbaSts8ZfSS
-	 4ZrnIsOiXRtRw==
-Message-ID: <c32970a8-c1d1-4130-839b-981bca5373f3@kernel.org>
-Date: Mon, 27 Oct 2025 09:38:23 +0100
+	b=MOpKhK+DgLDZizQPWOGImQ/dASJaYmJwdQj44QvPvg7uNIOMhw5+TbGkYW8PJvU+q
+	 20H3lfjcN4Zai/LHogBPlspM1hXZ0wcVASpm8txMIMpRpLRJ3+uR9mfdtUmz5Q5uiV
+	 CZ44NKHjzOJIYyyUqn9VUaucJyYZqizP+H3cVcAekWm/XcPqrkkoDCicm2BTbTb2x2
+	 g/yVV3NJ++u4NhjMUkOKFxGM+e3xIsamFHZYKeySCgBkY1o2MvAL+l1n9Ff3WLHeOL
+	 vKfpgDSg8FdXuz7rXqzDUEp7N360OZu/yycoBB27XoZ8aNKOPm9eUd0PwxGH7xxTGf
+	 5zF8CtFjruJhA==
+Message-ID: <112db7fd-3c0e-4c56-a553-5aca12965bdf@kernel.org>
+Date: Mon, 27 Oct 2025 09:40:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: leds: backlight: Add Awinic AW99706
- backlight
-To: Junjie Cao <caojunjie650@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
- dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <20251026123923.1531727-1-caojunjie650@gmail.com>
- <20251026123923.1531727-2-caojunjie650@gmail.com>
- <c17c10d4-cc1f-46fd-8719-e7bb9ffa91ba@kernel.org>
- <CAK6c68gqHMR-FpH3MY9E_9R+V0J75V9zOii=x81e+bRcnBYOig@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641
+ power monitor
+To: Guenter Roeck <linux@roeck-us.net>,
+ Igor Reznichenko <igor@reznichenko.net>
+Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ skhan@linuxfoundation.org
+References: <408c1698-a8ad-4e16-8def-352c2c265f5a@kernel.org>
+ <20251026184641.631641-1-igor@reznichenko.net>
+ <a45ad6b8-b4d5-4e0c-8f1a-3641dddb240d@kernel.org>
+ <e51c3dfa-406b-4dfa-bbb5-c31d1a2e0007@roeck-us.net>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,182 +106,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAK6c68gqHMR-FpH3MY9E_9R+V0J75V9zOii=x81e+bRcnBYOig@mail.gmail.com>
+In-Reply-To: <e51c3dfa-406b-4dfa-bbb5-c31d1a2e0007@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 27/10/2025 07:58, Junjie Cao wrote:
-> On Sun, Oct 26, 2025 at 9:48 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 26/10/2025 20:58, Guenter Roeck wrote:
+>>>>> +  reg:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  shunt-resistor-micro-ohms:
+>>>>> +    description: Shunt resistor value in micro-ohms. Since device has internal
+>>>>> +      16-bit RSHUNT register with 10 uOhm LSB, the maximum value is capped at
+>>>>> +      655.35 mOhm.
+>>>>> +    minimum: 100
+>>>>> +    default: 1000
+>>>>> +    maximum: 655350
+>>>>> +
+>>>>> +  st,alert-polarity-active-high:
+>>>>
+>>>> Isn't this just interrupt? You need proper interrupts property and then
+>>>> its flag define the type of interrupt.
+>>>
+>>> This controls a bit written into device register.
+>>> I omitted interrupt property after looking at existing power monitor bindings,
+>>> especially hwmon/ti,ina2xx.yaml. INA226 has very similar bit controlling alert
+>>> pin polarity and binding doesn't define alert pin as interrupt. Overall, I didn't
+>>> find many power monitor bindings defining alert pins as interrupts.
 >>
->> On 26/10/2025 13:39, Junjie Cao wrote:
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  enable-gpios:
->>> +    description: GPIO to use to enable/disable the backlight (HWEN pin).
->>> +    maxItems: 1
->>> +
->>> +  awinic,dim-mode:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: >
->>> +      Select dimming mode of the device.
->>> +        0 = Bypass mode.
->>> +        1 = DC mode.
->>> +        2 = MIX mode.
->>> +        3 = MIX-26k.
->>> +    enum: [0, 1, 2, 3]
->>> +    default: 1
->>> +
->>> +  awinic,sw-freq:
 >>
->> Please use proper units, see:
->> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
->> and other examples
->>
->> Same everywhere else.
+>> On INA2xx that's SMBUS Alert. Is this the case here as well?
 >>
 > 
-> ACK
-> 
->>
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Boost switching frequency in kHz.
->>> +    enum: [300, 400, 500, 600, 660, 750, 850, 1000, 1200, 1330, 1500, 1700]
->>> +    default: 750
->>> +
->>> +  awinic,sw-ilmt:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Switching current limitation in mA.
->>> +    enum: [1500, 2000, 2500, 3000]
->>> +    default: 3000
->>> +
->>> +  awinic,iled-max:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Maximum LED current setting in uA.
->>> +    minimum: 5000
->>> +    maximum: 50000
->>> +    multipleOf: 500
->>> +    default: 20000
->>> +
->>> +  awinic,uvlo-thres:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: UVLO(Under Voltage Lock Out) in mV.
->>> +    enum: [2200, 5000]
->>> +    default: 2200
->>> +
->>> +  awinic,fade-time:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Fade In/Out Time(per step) in us.
->>> +    enum: [8, 16, 32, 64, 128, 256, 512, 1024]
->>
->> Why would this be fixed setting? This really looks like runtime, drop.
->>
-> 
-> Yes, it is fixed. I am quoting this from the datasheet.
+> It could be wired to SMBus alert, or it could be wired to a CPU interrupt pin.
 
-Fixed per board.
-
-
-> AW99706B provides Fade in/out mode to transform backlight from one brightness
-> to another or turn on/off backlight with a fixed slope. Writing 0b00 into
-> RAMP_CTR (CFG 0x06) to enter Fade in/out mode, and the the slope of current
-> transition can be set in FADE_TIME (CFG 0x06).
-> 
->>> +    default: 16
->>> +
->>> +  awinic,slope-time:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Slope time in ms.
->>
->> Slope of what?
->>
-> 
-> Ramp time in slope mode, it is retained from downstream drivers, it will
-> be more clear in the next version.
-> 
->>> +    enum: [8, 24, 48, 96, 200, 300, 400, 500]
->>> +    default: 300
->>> +
->>> +  awinic,ramp-ctl:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: >
->>> +      Select ramp control and filter of the device.
->>> +        0 = Fade in/fade out.
->>> +        1 = Light filter.
->>> +        2 = Medium filter.
->>> +        3 = Heavy filter.
->>> +    enum: [0, 1, 2, 3]
->>> +    default: 2
->>> +
->>> +  awinic,brt-mode:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: >
->>> +      Select brightness control of the device.
->>> +        0 = PWM.
->>> +        1 = IIC.
->>> +        2 = IIC x PWM.
->>> +        3 = IIC x PWM(P-ramp).
->>> +    enum: [0, 1, 2, 3]
->>> +    default: 1
->>> +
->>> +  awinic,onoff-time:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Turn on/off time(per step) in ns.
->>> +    enum: [250, 500, 1000, 2000, 4000, 8000, 16000]
->>
->> Not a DT property.
->>
-> 
-> It is mandatory in the downstream driver, I keep it.
-
-Huh? I don't care about downstream driver. Again, not a DT property. You
-cannot add here runtime properties and when, we tell you that, you just
-ignore our review.
-
-NAK
-
-
-> 
-> The following is the description about it,
-> 
-> If the value in ONOFF_CTR(CFG 0x08 [4:3]) is 0b00, the turning on/off ramp of
-> AW99706B is soft start and fast end. In this mode, the ramp time can be
-> programmed by ONOFF_TIME (CFG 0x08 [2:0]).
-> 
->>> +    default: 2000
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - enable-gpios
->>> +
->>> +unevaluatedProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/gpio/gpio.h>
->>> +
->>> +    i2c {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +
->>> +        aw99706@76 {
->>> +            compatible = "awinic,aw99706";
->>> +            reg = <0x76>;
->>> +            enable-gpios = <&tlmm 88 GPIO_ACTIVE_HIGH>;
->>
->> Where are other properties from common.yaml? Looks like you re-invented
->> some parts.
->>
-> 
-> Sorry, I forgot it, when writing the bindings, I used ktz8866.yaml as a
-> template. I  should have dropped the common.yaml. This driver does
-> not require other properties in common.yaml.
-
-
-I don't care about driver much, but anyway it should use common.yaml.
-Please read the feedback very carefully.
+So please explain me why CPU interrupt pin, which in every really every
+device called "interrupts", would not be "interrupts" here? How CPU can
+even guess the number of the interrupt in such case, without
+"interrupts" property?
 
 Best regards,
 Krzysztof
