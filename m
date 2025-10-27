@@ -1,163 +1,120 @@
-Return-Path: <linux-kernel+bounces-872282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF62C0FD00
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:57:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70496C0FD06
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8724C4F663C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A4B3B1EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E75319858;
-	Mon, 27 Oct 2025 17:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95085315785;
+	Mon, 27 Oct 2025 17:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNv7Tnmo"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IS5CI5rQ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D2C31812E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996C22D248E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761587757; cv=none; b=ZQ8qT6N521o1Hafm4iN+yVTdu5aP0t5w+ZK5+FsXBMcCDlZc7BgXjLgZH9jV8MWNmeUDXwMSxoFj3khjAIFo61wysL6GmrsV8v71ZzCuuWH/UC7miAufmxxONHXjDgP4Noz9e/h//DPwytQAbxSs4zKIMjLV7idH8y2UkSJQvHA=
+	t=1761587814; cv=none; b=mOjZzkdlAEk5zBimpXvVi1ik0v3xZqjhE0HIOJL1Jx5UTV2RghEd4E99EiflqOcbHiCVOtuV5jiZc/2M1NleTNEioOFS4k4l8mah2j+11wgTNt9MOkY2yj7RrPVqhTcra5zt/E0hIkWOvwDs1lOthB/itaLhES+x3sEaAl2hOd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761587757; c=relaxed/simple;
-	bh=s0NTkuxgo9nTW1wwUPyDTmWbVEsjdGmA1omaFkoHwoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ku+MvvZkpDBPEy9fsqR15aQV0QIOUTRsRshY/BblcvULhFVTHhPcz0URXYUSbRVWk9VdVRAhSXuOFg/ZRkgSgPgoXYfbx12ORlgsGKhP4aXhRGKuGzk0eBgQFjbXRwjOo3fIVfgAxHuajz95nZ9f8pkERDR2HuTSEzhNpyvwNJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNv7Tnmo; arc=none smtp.client-ip=209.85.128.181
+	s=arc-20240116; t=1761587814; c=relaxed/simple;
+	bh=SCIPeksxx2uDarfAhuXFCN/oVVLcwA7r7uPbkIEyGqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I76Hyt57PLHsyXebhAvy/VgYggsPUXBwF7kz4A0Vye5Rt6beBkGKOKzDex2GAR9bYXF9QylV/nxcqC8xT9GnmfVo3O5kh216K8B8n3Nldcr6rDIv4ZsrYr0tqvKjEvD21NugT1ljudMFGyJtZxefAVPSGOSP4lntlICAh5JjyBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IS5CI5rQ; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7861978aca2so1072437b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:55:55 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-475dae5d473so26858515e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:56:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761587754; x=1762192554; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t90v++bIrJi1Md65JkXT8gm2ApX72FdJn0ubPYfRRrY=;
-        b=NNv7Tnmo+Azwrh0iUS0X2c0KZzVe6HOnkbfCcP3tFCY4MGEDOpb3X4nL4ifDr45dA0
-         EUcN5oQ6VdOxfOzZLS54nVnP7eXTd1Jl7oUrQiNbUlz+b/vF5XilYSc2ERfpX/LW4dNa
-         d9XEAbxlFydDrVh9Lps/H05SNJhrQxRcPXwmPu3Pgy8CAJlv18lbjo6Tfsb8O13GSxEP
-         6D4zYfFjd3xfcWtsB8QzTFIWhXKR74WsX6ZB9NNWoCHvGdf8QqJ6014YOcZ99tSrLIZu
-         rfdOBSw9WQyV+L9HTcgBnzvs33YsBCtPg2Tt6crbteGRjvBwwpTbAoObyHN/kkBOPcbT
-         /GFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761587754; x=1762192554;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761587811; x=1762192611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t90v++bIrJi1Md65JkXT8gm2ApX72FdJn0ubPYfRRrY=;
-        b=hC8G1sjrvNCdte0zLR0vuv2e3+OSvftjPoOtWQWjD53EqcLaobxRn/vRVeW/RFGHeB
-         F6YYOi3vDXj093HF5ISEVbZRjP9mJBPTVO/PzIXrGLqncMBNxBs/8gXejpgUyZkrcswi
-         X25cjduo3bL5s4dT472QYusfsdmHePA4NEM81rmcJp+TyxHFlA9wZbbTpzvmmKiJl+CU
-         ceqOYpiFDpPnNi3MdICNEs5Wn1MewlW48ss224zlmJg3WiSc8x1ENmyYQsUklh0UkO3f
-         AHd5adaTBSgrlz8hiXkLghHOT3qIDPdi+wbTsdsoabi/ZaCawb1BclChx9sHXFHaXvcp
-         O4ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWcDRiBr44rlUzWvukxOBlr9k8Kf1o2+F11x2dI7C+tfkVmSX/ildJnsyS7+OyEqzc5Hqi4el3IpmBeTVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPxdroGeDPIboqloBe4q1Zq2x7lmzLjGRYxb0xsX++srRQGNjT
-	/uv0jhWjNAkR4fy6Z+sWCywRWGZCbhvIgRjRRFdPTMz2fZ2Y4ESb8d3j
-X-Gm-Gg: ASbGncsLFdWRs45ZiP31d0Dz52/Y1wWYgeGu1EZB2QyHghdl0bBJLJeRmZZASyYmk6v
-	O0HhXEzynTMAUFqSI0Y6k8Sbi8Biz6EMnENapKtP1JRst8Qobc13BMd1myWQ7C5aa7QC63Y+PDH
-	PzPXLfNslBHsywQWVCWFfLdLs3QM2gZVtnvf73nRqsb0QoDN5YhIspxmSid8ADprDhl5kHWF5E9
-	z+sY5oX20oNVHdggaJ+CxG2Ooy4JNUnrQtW5XWG8Du/0rOPEaaBkamH02tx54jI0r2apSF43Jnk
-	cnrrSi2aomLzEZa2sKJ1ozIRKMpp9BLGZK/L9YemsePAWOLWtdSIhr/o7KnoNGAUmmdSkNS/Z92
-	D/CuVusKH0CVLUREk6GBMycYh0UPZonQx3b4LlRT82HmoZFkU0xHaUcvUXVkm46hrB7TuoCerBy
-	guOuqnR5A7twMQhvkn44mDwxuTyf3qVXzfPB9SEkaQQf5G7jU=
-X-Google-Smtp-Source: AGHT+IEnq7T6tW6sESfh2/pS/VtVB6j5wsUZrO0cK7EA3RoMmtv5EedE7kUOtkxVYgtnLyJeX69FZg==
-X-Received: by 2002:a05:690c:3510:b0:781:64f:2b74 with SMTP id 00721157ae682-786191bda08mr3102477b3.29.1761587754496;
-        Mon, 27 Oct 2025 10:55:54 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:59::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed1f2457sm20784977b3.58.2025.10.27.10.55.53
+        bh=SCIPeksxx2uDarfAhuXFCN/oVVLcwA7r7uPbkIEyGqU=;
+        b=IS5CI5rQdF27eg/WCpXgLI2Zyv+9BcInRCb9Eu9VOCfKCHxPuKzd3ul3LeVDp2Rz25
+         gv5lDFoGKy+UukPfyev+KGMqnFRw8ZBsw49dGyuiQERap0Ekw2dz9pzDLupUR5pqeAfG
+         tsJloMnfa2Bi7Mo3FtfHqxVSuOLOVuePsGJzdqNtmAQT28TIyIJ1uddZevmBbmJDzSUx
+         KIFizCr2A6Axgcwcj3YBPoyk7AUqNr4zLmghZ827LJZ7qi+z9A6hUVc1akUwjUFQ+Qu/
+         JUhawW2kDFauJuWErOZ9Ho2AYfzYlK3l7gmMQYL9r/QAbDv9ycriWM3IWUOQ9O7tZind
+         H8gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761587811; x=1762192611;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SCIPeksxx2uDarfAhuXFCN/oVVLcwA7r7uPbkIEyGqU=;
+        b=baU+x2Lmkd/W15cy4V4W1T3UJEYJnjtqx1PHaUegbVmzcv8qRYT6d3lZUriytyroPz
+         B2rb28WmbCrHM0cgry/27u0yYktewrAje0Sb9W+cGbVjFMeH0wEPIEUAbHaMiNb7GOEt
+         qBZ4XgM69i41Q4SPpR7iYkYQ9657YkE+puaNC/hWZDxODpEcKmUFyQQpw3nZ2kJ24nM3
+         vISl3kI6E03ISnCi1K935w6NpopCQjtyeLyHIrgFqzeOnYwHBdEfTSnLFF4YzTilwY2j
+         UKL6UMIerAbfBIuFsYi93lCfyBv4tEa8weqQnl7iMY6rTY7+DzW+ao9Wmew4Oz3ea2r4
+         XMEg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1MlNqA55M7FkKCh6uSeYr90OVFlbqNP38Vnsix9DxBryfU8gs+KpRoOOr4aODLHYlNwIQZ/eqzh+SshY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+WXiyzkZ2g5lPQME5vOHnUps7m6iC7/RUglMZ9adRUMxzgrP0
+	9LstxazlSOD5JH3CLea40E9kjDrlVWtmSD0TKYEJEQ3Opxlrmbnb2KeJ
+X-Gm-Gg: ASbGncsl7nf6ZmoPcDtu+CV1qOVLxiiVyzC6NP1PyNMTRf3B1d8XrDzs0sfea54yg0A
+	NKk6gekoLqIWw4HK+iNIyciMmuMNx0e+FLCrzYZ2wzBHCuIk0NaX7ZLzVDA5pgSM7breR7FLSMR
+	nuCtvx0CbmZ/obz5ThHl8zsSfRJwt03SvYl2ljqB+cL+IWkzwxqwVylnvAHUW+4+4BsG7hyXzyi
+	MMjYuUHETnIXQthEqRs8WkSlQGx7gSCr7FovAcGikWxlZ/UuFq+ppgVPVZCdT/UBWrUsJx7npd7
+	jYF32OKelzX2IJI2828PkslsbVlElveZ6IUTlvNtNe8HoCvjk5LazRVD0O0ml6t3ivx8Ql1qmpb
+	474T1PZiovg+63i0RxXk7M9QpCcBmY9j3vUp83FsNYR68icb2umwGT0gcB2xSC8Hy7gxFaMVhJz
+	shVmSRIuwkp0XofyZh1Ry0EHwjtU5XF1779sPdhujtWkehYVhK5T7NU2jjug==
+X-Google-Smtp-Source: AGHT+IEihm/mMfPTi4flOTdp91sIkNaqwi2a8InYOu2pJ2ai1utyKQHaHYaafUG+/91FRnDBC8gdGw==
+X-Received: by 2002:a05:600c:64c4:b0:46e:1abc:1811 with SMTP id 5b1f17b1804b1-47717e512bamr4754785e9.27.1761587810623;
+        Mon, 27 Oct 2025 10:56:50 -0700 (PDT)
+Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4cc596sm152270065e9.15.2025.10.27.10.56.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 10:55:54 -0700 (PDT)
-Date: Mon, 27 Oct 2025 10:55:52 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next 02/12] selftests/vsock: make wait_for_listener()
- work even if pipefail is on
-Message-ID: <aP+yKDYZR6+/kzI2@devvm11784.nha0.facebook.com>
-References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
- <20251022-vsock-selftests-fixes-and-improvements-v1-2-edeb179d6463@meta.com>
- <aP-iXJQVPBCjfPHi@horms.kernel.org>
+        Mon, 27 Oct 2025 10:56:50 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+ Samuel Holland <samuel@sholland.org>, Mark Brown <broonie@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sunxi@lists.linux.dev,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 04/10] ASoC: sun4i-spdif: Support SPDIF output on A523 family
+Date: Mon, 27 Oct 2025 18:56:49 +0100
+Message-ID: <6204310.lOV4Wx5bFT@jernej-laptop>
+In-Reply-To: <20251027125655.793277-5-wens@kernel.org>
+References:
+ <20251027125655.793277-1-wens@kernel.org>
+ <20251027125655.793277-5-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP-iXJQVPBCjfPHi@horms.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Oct 27, 2025 at 04:48:28PM +0000, Simon Horman wrote:
-> On Wed, Oct 22, 2025 at 06:00:06PM -0700, Bobby Eshleman wrote:
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> > 
-> > Save/restore pipefail to not mistakenly trip the if-condition
-> > in wait_for_listener().
-> > 
-> > awk doesn't gracefully handle SIGPIPE with a non-zero exit code, so grep
-> > exiting upon finding a match causes false-positives when the pipefail
-> > option is used. This will enable pipefail usage, so that we can losing
-> > failures when piping test output into log() functions.
-> > 
-> > Fixes: a4a65c6fe08b ("selftests/vsock: add initial vmtest.sh for vsock")
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> > ---
-> >  tools/testing/selftests/vsock/vmtest.sh | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
-> > index 561600814bef..ec3ff443f49a 100755
-> > --- a/tools/testing/selftests/vsock/vmtest.sh
-> > +++ b/tools/testing/selftests/vsock/vmtest.sh
-> > @@ -243,6 +243,7 @@ wait_for_listener()
-> >  	local port=$1
-> >  	local interval=$2
-> >  	local max_intervals=$3
-> > +	local old_pipefail
-> >  	local protocol=tcp
-> >  	local pattern
-> >  	local i
-> > @@ -251,6 +252,13 @@ wait_for_listener()
-> >  
-> >  	# for tcp protocol additionally check the socket state
-> >  	[ "${protocol}" = "tcp" ] && pattern="${pattern}0A"
-> > +
-> > +	# 'grep -q' exits on match, sending SIGPIPE to 'awk', which exits with
-> > +	# an error, causing the if-condition to fail when pipefail is set.
-> > +	# Instead, temporarily disable pipefail and restore it later.
-> > +	old_pipefail=$(set -o | awk '/^pipefail[[:space:]]+(on|off)$/{print $2}')
-> > +	set +o pipefail
-> > +
-> >  	for i in $(seq "${max_intervals}"); do
-> >  		if awk '{print $2" "$4}' /proc/net/"${protocol}"* | \
-> >  		   grep -q "${pattern}"; then
-> 
-> Hi Bobby,
-> 
-> I agree this is a problem. But I'm wondering if you considered
-> moving the pattern matching into the awk script. I'm no awk expert.
-> But suspect that would lead to a more elegant solution.
-> 
+Dne ponedeljek, 27. oktober 2025 ob 13:56:45 Srednjeevropski standardni =C4=
+=8Das je Chen-Yu Tsai napisal(a):
+> The TX side of the SPDIF block on the A523 is almost the same the
+> previous generations, the only difference being that it has separate
+> module clock inputs for the TX and RX side.
+>=20
+> Since this driver currently only supports TX, add support for a
+> different clock name so that TX and RX clocks can be separated
+> if RX support is ever added. Then add support for the A523.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 
-I bet you are right.
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Playing around with awk, I find that this seems to work:
+Best regards,
+Jernej
 
-$ pattern=":$(printf '%04X' ${port}) 0A"
-$ awk -v pattern="${pattern}" 'BEGIN {rc=1} $2" "$4 ~ pattern {rc=0}
-	END {exit rc}' /proc/net/tcp && echo FOUND
 
-I think it beats doing the save/restore on pipefail?
-
-Best,
-Bobby
 
