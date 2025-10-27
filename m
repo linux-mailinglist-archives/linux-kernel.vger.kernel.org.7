@@ -1,205 +1,116 @@
-Return-Path: <linux-kernel+bounces-871418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0AAC0D30E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:40:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71FDC0D2D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A49F04F3780
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B057319A4BC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309EA2FC018;
-	Mon, 27 Oct 2025 11:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B78D2FB635;
+	Mon, 27 Oct 2025 11:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KajU9McI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FWjsy/Tj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="JZcT7et4"
+Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654C42F616B;
-	Mon, 27 Oct 2025 11:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468FF2772D;
+	Mon, 27 Oct 2025 11:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565108; cv=none; b=uBZEdgZpvBL+ZfkTZMLYifQ5GaTC4c+b3VbP7nBo0sQc3T5kSHVVdk7QbWyrAMBqpXGieZy6dTSViJNL8QWqPDCcZBN1KK6KnEzoPxHhUSPfAswqVtYkgLn5fHy1EyXguihEW2BnUyOjmsVcEazJylCLa413L1GYxNXnRLiAUz4=
+	t=1761565130; cv=none; b=DfqWTdW85fF/B/5/8/Q+Pc0BNLpYLw5XSS5g/c5BuK4hr1adEyoAJD0wPZaMZEQ7ckAnjZqLkYb47EqnbcKklSjYasMMRJLiS9Ffu6RSk96ssDkC5nN15snRTxKJYUrANYWXFgkg1lnBHwhhzK4nqRe3lJI+qsiYQS5a1s3iIjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565108; c=relaxed/simple;
-	bh=KvL+uV3iWyurp+bVzQ4UyxpumwZNPH49D0WWiQ1ruek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D7Fla04VZdYr4EUEhug4xVbeKlYaChIhCbSgTWAqtErekz0SJYfeto0KdTr7wmusX3Q0rHwulmspZWQL50qJaOHsZlqUWCT1GEqU+GCexuWpGPGSPVvy9muN1oDGka5gnpOpK3pmPBucRKxVmGKFwNDqPckr/3vkobxqA4GXMi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KajU9McI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FWjsy/Tj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 12:38:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761565104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CyDCdbZCWNxZAe7jFXv4qLbIRYvVEmusggw5T1qlrEM=;
-	b=KajU9McIk08xoVzDH4XUWoxbeHgMaUQOcL3mfIlufbpaNl7EYs9eZk88TvMmFcGrCFW8fj
-	PP80w090WrVmro/amgWsecr02abj68pxqH9oOmrmsg5fP83fqPn3VjAq7Zr5DFEr0oFDll
-	Jq9r388VDXVH2DYdp39Oqm6C2vxwOGnJnaC6IcmEczm7tzzwsMkWrnJEVx2JX9riA113rO
-	q7C75aXzuDOVFTymSFr8zs7oaTVaTLPHmpPt4p7WMZrYKNlWRXaPbV0/0mIESpa+ljoxEp
-	bKf7TAAPkmgve5wzI8QZlidr97A7Jl6ctjevq6BVSPuDgCYiUcRUtRQL2ZY9yw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761565104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CyDCdbZCWNxZAe7jFXv4qLbIRYvVEmusggw5T1qlrEM=;
-	b=FWjsy/TjO6bSSl27ggYmR80mfoxA/AFkBdYS+aTdYXPOISDHz6nZc6JckiezcZfry4fUlI
-	1rLiMtisiG8tt/DA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org
-Subject: Re: [patch V2 08/12] rseq: Implement time slice extension
- enforcement timer
-Message-ID: <20251027113822.UfDZz0mf@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.406689298@linutronix.de>
+	s=arc-20240116; t=1761565130; c=relaxed/simple;
+	bh=fg3boSJuaVR/snHafzjml9FZCZHr3BIKh5VS1BQQFA4=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=Drl0+dfeZFqZgTANAXACUBIrFHpkFpHRPrARYMnfwW0xHhr4kW+2duKfa2hUjpH0PCzIf+MgYPEKqZd8yPg7jcMqpQxQuh648m8CQcdxadDEX85eCaRCIMk9lRpU7LyEG3Cr9auL9MXr/tYEoHZmHwIXAAjvMC8WoqoFDG/Gxok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=JZcT7et4; arc=none smtp.client-ip=142.132.176.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id E89CC40D0D;
+	Mon, 27 Oct 2025 12:38:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
+	t=1761565124; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Pp+cdt5NUUAp/RayY/UAf6z47hnHubbe0RqQqLbK1fg=;
+	b=JZcT7et4yPf/J0RdIhCYH2lB1UyH+WU6CUzpWPc6n0kWLt471Tt4zM9yUi1AE5Xi4VKwkC
+	HSXLev3iMEqkk/raGfqRL11mYQPEADAfaj3BehnvwKmJ/6Y3Q7ath1yHTX975Gy90Dqp2X
+	zTj2GRvGCqV75VyrG7cTJP1bRIFTiTpM5xX7aQlnkrTYOzdFFxzW1HHW8wYSOBtOd6Go7K
+	O5meD131epz7A4ykMfSL9Nr6J1jfQCwwVcsUrohDfENyno0uCpiywCh96zDwiu2OXBBgv9
+	yC4+gWxqRjuVSti29HyeMsnLb76/nCruVcaLuhxlSA6qC9sRt60N6OxOFQ0suw==
+From: "Dragan Simic" <dsimic@manjaro.org>
+In-Reply-To: <DDSFVM1TXN8C.3JNX2M8XX04IF@cknow-tech.com>
+Content-Type: text/plain; charset="utf-8"
+References: <20251026153805.107774-1-diederik@cknow-tech.com> <DDSFVM1TXN8C.3JNX2M8XX04IF@cknow-tech.com>
+Date: Mon, 27 Oct 2025 12:38:42 +0100
+Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Johan Jonker" <jbx6244@gmail.com>
+To: "Diederik de Haas" <diederik@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Message-ID: <d190d649-acd5-4202-4a7a-94b9ada67b17@manjaro.org>
+Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
+ =?utf-8?q?_rockchip=3A?= Harmonize regulator formatting for Pine64 rk3566 
+ devices
+User-Agent: SOGoMail 5.12.3
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251022121427.406689298@linutronix.de>
+X-Last-TLS-Session-Version: None
 
-On 2025-10-22 14:57:38 [+0200], Thomas Gleixner wrote:
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -500,8 +502,82 @@ SYSCALL_DEFINE4(rseq, struct rseq __user
->  }
-> =20
->  #ifdef CONFIG_RSEQ_SLICE_EXTENSION
-> +struct slice_timer {
-> +	struct hrtimer	timer;
-> +	void		*cookie;
-> +};
-> +
-> +unsigned int rseq_slice_ext_nsecs __read_mostly =3D 30 * NSEC_PER_USEC;
-> +static DEFINE_PER_CPU(struct slice_timer, slice_timer);
->  DEFINE_STATIC_KEY_TRUE(rseq_slice_extension_key);
-> =20
-> +static enum hrtimer_restart rseq_slice_expired(struct hrtimer *tmr)
-> +{
-> +	struct slice_timer *st =3D container_of(tmr, struct slice_timer, timer);
-> +
-> +	if (st->cookie =3D=3D current && current->rseq.slice.state.granted) {
-> +		rseq_stat_inc(rseq_stats.s_expired);
-> +		set_need_resched_current();
-> +	}
+Hello Diederik,
 
-You arm the timer while leaving to userland. Once in userland the task
-can be migrated to another CPU. Once migrated, this CPU can host another
-task while the timer fires and does nothing.
+On Sunday, October 26, 2025 18:44 CET, "Diederik de Haas" <diederik@ckn=
+ow-tech.com> wrote:
+> On Sun Oct 26, 2025 at 4:37 PM CET, Diederik de Haas wrote:
+> > The regulator node properties in Pine64 rk3566 devices were formatt=
+ed
+> > rather inconsistently. To name a few:
+> > - 'name' was sometimes put at the top of the list, while at other t=
+imes
+> >   it was (mostly) sorted in alphabetical order
+> > - 'always-on' and 'boot-on' were sometimes at the top of the list,
+> >   sometimes not
+> > - 'state-mem' nodes sometimes had a preceding blank line, as they
+> >   should, but sometimes not
+> > - other properties seem to have been added to the end of the list, =
+not
+> >   in their alphabetical/natural order
+> >
+> > So harmonize the formatting by making all properties sorted
+> > alphabetically/naturally. And harmonize the formatting of the
+> > 'state-mem' nodes so they all have a preceding blank line. While at=
+ it,
+> > also fix 2 incorrectly indented nodes.
+> >
+> > No functional changes.
+>=20
+> I just found some additional ones.
+> If these changes are considered OK (in principle), then I'll send a v=
+2
+> at some point.
 
-> +	return HRTIMER_NORESTART;
-> +}
-> +
-=E2=80=A6
-> +static void rseq_cancel_slice_extension_timer(void)
-> +{
-> +	struct slice_timer *st =3D this_cpu_ptr(&slice_timer);
-> +
-> +	/*
-> +	 * st->cookie can be safely read as preemption is disabled and the
-> +	 * timer is CPU local. The active check can obviously race with the
-> +	 * hrtimer interrupt, but that's better than disabling interrupts
-> +	 * unconditionally right away.
-> +	 *
-> +	 * As this is most probably the first expiring timer, the cancel is
-> +	 * expensive as it has to reprogram the hardware, but that's less
-> +	 * expensive than going through a full hrtimer_interrupt() cycle
-> +	 * for nothing.
-> +	 *
-> +	 * hrtimer_try_to_cancel() is sufficient here as with interrupts
-> +	 * disabled the timer callback cannot be running and the timer base
-> +	 * is well determined as the timer is pinned on the local CPU.
-> +	 */
-> +	if (st->cookie =3D=3D current && hrtimer_active(&st->timer)) {
-> +		scoped_guard(irq)
-> +			hrtimer_try_to_cancel(&st->timer);
+Thanks for this patch!  FWIW, I think that SoC-wide DT cleanups
+and unifications such as this are nice and safe to do, so my vote
+goes towards the v2. :)
 
-I don't see why hrtimer_active() and IRQ-disable is a benefit here.
-Unless you want to avoid a branch to hrtimer_try_to_cancel().
+> > Signed-off-by: Diederik de Haas <diederik@cknow-tech.com>
+> > ---
+> >  .../boot/dts/rockchip/rk3566-pinenote.dtsi    | 52 +++++++++------=
+----
+> >  .../boot/dts/rockchip/rk3566-pinetab2.dtsi    | 29 ++++++++---
+> >  .../boot/dts/rockchip/rk3566-quartz64-a.dts   | 51 +++++++++++----=
+---
+> >  .../boot/dts/rockchip/rk3566-quartz64-b.dts   | 52 ++++++++++-----=
+----
+> >  .../dts/rockchip/rk3566-soquartz-blade.dts    |  6 +--
+> >  .../boot/dts/rockchip/rk3566-soquartz-cm4.dts |  6 +--
+> >  .../dts/rockchip/rk3566-soquartz-model-a.dts  | 10 ++--
+> >  .../boot/dts/rockchip/rk3566-soquartz.dtsi    | 43 ++++++++++-----
+> >  8 files changed, 148 insertions(+), 101 deletions(-)
 
-The function has its own hrtimer_active() check and disables interrupts
-while accessing the hrtimer_base lock. Since preemption is disabled,
-st->cookie remains stable.
-It can fire right after the hrtimer_active() here. You could just
-
-	if (st->cookie =3D=3D current)
-		hrtimer_try_to_cancel(&st->timer);
-
-at the expense of a branch to hrtimer_try_to_cancel() if the timer
-already expired (no interrupts off/on).
-
-> +}
-> +
->  static inline void rseq_slice_set_need_resched(struct task_struct *curr)
->  {
->  	/*
-> @@ -654,6 +731,31 @@ SYSCALL_DEFINE0(rseq_slice_yield)
->  	return 0;
->  }
-> =20
-> +#ifdef CONFIG_SYSCTL
-> +static const unsigned int rseq_slice_ext_nsecs_min =3D 10 * NSEC_PER_USE=
-C;
-> +static const unsigned int rseq_slice_ext_nsecs_max =3D 50 * NSEC_PER_USE=
-C;
-> +
-> +static const struct ctl_table rseq_slice_ext_sysctl[] =3D {
-> +	{
-> +		.procname	=3D "rseq_slice_extension_nsec",
-> +		.data		=3D &rseq_slice_ext_nsecs,
-> +		.maxlen		=3D sizeof(unsigned int),
-> +		.mode		=3D 0644,
-> +		.proc_handler	=3D proc_douintvec_minmax,
-> +		.extra1		=3D (unsigned int *)&rseq_slice_ext_nsecs_min,
-> +		.extra2		=3D (unsigned int *)&rseq_slice_ext_nsecs_max,
-=E2=80=A6
-
-maybe +
-
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/ad=
-min-guide/sysctl/kernel.rst
-index f3ee807b5d8b3..ed34d21ed94e4 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1228,6 +1228,12 @@ reboot-cmd (SPARC only)
- ROM/Flash boot loader. Maybe to tell it what to do after
- rebooting. ???
-=20
-+rseq_slice_extension_nsec
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+A task may ask to delay its scheduling if it is in a critical section via =
-the
-+prctl(PR_RSEQ_SLICE_EXTENSION_SET) mechanism. This sets the maximum allowed
-+extension in nanoseconds before a mandatory scheduling of the task is forc=
-ed.
-=20
- sched_energy_aware
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-
-Sebastian
 
