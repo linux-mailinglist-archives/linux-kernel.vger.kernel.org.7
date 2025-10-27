@@ -1,109 +1,113 @@
-Return-Path: <linux-kernel+bounces-871619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5334AC0DCAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:04:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B03C0DC3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:02:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9C5188E706
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 80FFE34CD36
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DD52FFF82;
-	Mon, 27 Oct 2025 12:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECEA257852;
+	Mon, 27 Oct 2025 12:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYW1H6mW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEbq8ce0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145E029A9CD;
-	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5133825393B;
+	Mon, 27 Oct 2025 12:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569822; cv=none; b=hWqIvryLqMaXcqKuI3KYeizJ0HhbLTOskGdNPpZ9w6XN4bKGO6+r83/gD/mJEYpx9JRqsTWcbjBXc7Vhh8dXF+oOZp4xaPPhl5Asx0GORTl7W7lJXa+qpl9i77VlkEtP8t/GUlyOgh+ZkNdnue57qF9vEO22sAqYht4Uwh1/J2k=
+	t=1761569981; cv=none; b=ZL7MJ98qjq1cVp22WsCMqQ5jjE2RW6qP47qX9w1/YMP70vzmJSyDB830Xm7WSFu3ms3BKr4eC9l5zOSeCnfnNAzsdXW9miJDYLYyhPRQrpAwhXC1I/5wA6rQZ+dHcYFwCjVnxlpj4i+Spmh/WanUqvJ3zY31EZDFBsq0FU0vC9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569822; c=relaxed/simple;
-	bh=cH78ltGLFEwaRc+5sKH7tOpj/oTnWSF/SJD99Q8jJBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qRLsQFKCH1P5uKb1wLrTQ4q3eZbEj7t3FO/TwBzjgstlMYVUek/x5+yIM0f0kq5rPUkqJuzuQQFEsf6D+c6xRl+2xtZ4/14oyic5JwT5aH6Kyl979ylYoBbLyGE3ESekicXaWhnjJ0IhmzX2Zvih5APFxmaeqJKW/ncQFZbwlYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYW1H6mW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 882A6C116C6;
-	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
+	s=arc-20240116; t=1761569981; c=relaxed/simple;
+	bh=eW1OcFnqyrp5QQ5y5xmXHAC1ZnTIFdjryrwStarra9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=upwZLg+iBlVG2Qrad7nVFSKtPNEIuci0U0eVYNHcHb49qKuVzYUtH1/Y7/NflOnvBEaeTQAHhTdF/oZQr/y9PzQAJUGSwOY37Q5212spBelEZ/Tw9lJEXCu2Pr0WvpH9YQFdAO15NF5F8i9taWr9yvoHJjAJ/c6WHHysCOZm4EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEbq8ce0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E42AC4CEF1;
+	Mon, 27 Oct 2025 12:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761569821;
-	bh=cH78ltGLFEwaRc+5sKH7tOpj/oTnWSF/SJD99Q8jJBg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HYW1H6mW7jSbquUJYM2sqUZm38jlpvEbmqNe+my2P3ZAWIGYTjTFCpgEHS9+DemLl
-	 eiO701QwLGQZgcMjyENFmnzaX2DuPiLvU5f5S/jqK5yBncWj4TKpenGg8zLXyON90Y
-	 j6WeTmxg2pTIY5KKnWtWeu1rAR4H55dta7wG/l5kE40i6Xb04Dh+GKUL4az1eKLoKh
-	 iSEB1tkqrY/0I68cXpJeU3s2Gjcu7+Es7P8ZDN8ZffBEzYAw5bxNuFlyXZeevVrDfm
-	 DTUW0B2pCZjZ+0njaESUw78t9iIW5e9nfbHIiMJdYb2oZqLnQNfBzU91eQYD1YFgfC
-	 wVoUJoR+eJlIg==
-Received: by wens.tw (Postfix, from userid 1000)
-	id A9CF25FF8E; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Mark Brown <broonie@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sunxi@lists.linux.dev,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH v2 08/10] arm64: dts: allwinner: a523: Add I2S2 pins on PI pin group
-Date: Mon, 27 Oct 2025 20:56:49 +0800
-Message-ID: <20251027125655.793277-9-wens@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251027125655.793277-1-wens@kernel.org>
-References: <20251027125655.793277-1-wens@kernel.org>
+	s=k20201202; t=1761569980;
+	bh=eW1OcFnqyrp5QQ5y5xmXHAC1ZnTIFdjryrwStarra9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WEbq8ce0cOWHXvIHjN2VMb0Zka5H2ureVvPVX4PMYFAdA6ypmvwLO76hT0X4ryBh8
+	 LRT+MiHpJ0RILflN1BlWFd5xlcgrUOhlYB4FnZ2wekESZmLkpZQtc6W+dJfQwDRHvQ
+	 9/q3d5nf3HAdYjYg/df2Q/xh6pJ5qJT5qg0aYh3WzmHTebjMYrFyLqY9MKxXXqaWjk
+	 wEhowhBZz5mQ9qP+hTHR0auxsM20Cdd2yiMpequj5rJmhdMfpxZS7Wt+KE6xX5aojg
+	 7hJFv4kiTgyw4gqU563jVp18sWDesGamk6s+seJgwRFSpVTE/Q7YZ7w3zUIFBrSItH
+	 6E4cpRZVltz+Q==
+Date: Mon, 27 Oct 2025 14:59:35 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Shuhao Fu <sfual@cse.ust.hk>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/mlx5: Fix refcount inconsistency in
+ mlx5_netdev_event
+Message-ID: <20251027125935.GJ12554@unreal>
+References: <aPe3mnFjQeXaILyR@chcpu18>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPe3mnFjQeXaILyR@chcpu18>
 
-The Radxa Cubie A5E exposes I2S2 through the PI pin group on the 40-pin
-GPIO header.
+On Tue, Oct 21, 2025 at 04:40:58PM +0000, Shuhao Fu wrote:
+> Fix refcount inconsistency related to `mlx5_ib_get_native_port_mdev`.
+> 
+> Function `mlx5_ib_get_native_port_mdev` could increase the counter of 
+> `mpi->mdev_refcnt` if mpi is not master. To ensure refcount consistency,
+> each call to `mlx5_ib_get_native_port_mdev` should have a corresponding
+> call to `mlx5_ib_put_native_port_mdev`. In `mlx5_netdev_event`, two
+> branches fail to do so, leading to a possible bug when unbinding.
+> 
+> Fixes: 379013776222 ("RDMA/mlx5: Handle link status event only for LAG device")
+> Fixes: 35b0aa67b298 ("RDMA/mlx5: Refactor netdev affinity code")
+> Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+> ---
+>  drivers/infiniband/hw/mlx5/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+> index fc1e86f6c..0c4aa7c50 100644
+> --- a/drivers/infiniband/hw/mlx5/main.c
+> +++ b/drivers/infiniband/hw/mlx5/main.c
+> @@ -247,7 +247,7 @@ static int mlx5_netdev_event(struct notifier_block *this,
+>  
+>  		if (!netif_is_lag_master(ndev) && !netif_is_lag_port(ndev) &&
+>  		    !mlx5_core_mp_enabled(mdev))
+> -			return NOTIFY_DONE;
+> +			goto done;
 
-Add a pinmux setting for it so potential users can directly reference
-it.
+mdev_refcnt is increased only for MPV slave, but here we are checking if
+MPV is enabled. It is not in this leaf and "return NOTIFY_DONE" is the
+right thing to do.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
----
- arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+>  
+>  		if (mlx5_lag_is_roce(mdev) || mlx5_lag_is_sriov(mdev)) {
+>  			struct net_device *lag_ndev;
+> @@ -268,7 +268,7 @@ static int mlx5_netdev_event(struct notifier_block *this,
+>  		if (ibdev->is_rep)
+>  			roce = mlx5_get_rep_roce(ibdev, ndev, upper, &port_num);
+>  		if (!roce)
+> -			return NOTIFY_DONE;
+> +			goto done;
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index eea9ce83783c..cebd8e16e845 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -145,6 +145,14 @@ pio: pinctrl@2000000 {
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
- 
-+			/omit-if-no-ref/
-+			i2s2_pi_pins: i2s2-pi-pins {
-+				pins = "PI2", "PI3", "PI4", "PI5";
-+				allwinner,pinmux = <5>;
-+				function = "i2s2";
-+				bias-disable;
-+			};
-+
- 			mmc0_pins: mmc0-pins {
- 				pins = "PF0" ,"PF1", "PF2", "PF3", "PF4", "PF5";
- 				allwinner,pinmux = <2>;
--- 
-2.47.3
+It is not MPV flow either. There is nothing to change here.
 
+Thanks
+
+>  
+>  		ib_ndev = ib_device_get_netdev(&ibdev->ib_dev, port_num);
+>  
+> -- 
+> 2.39.5 (Apple Git-154)
+> 
 
