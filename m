@@ -1,392 +1,182 @@
-Return-Path: <linux-kernel+bounces-871605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41076C0DCA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:04:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD83C0DB75
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 257D14FDE98
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F031898EC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1F62690EC;
-	Mon, 27 Oct 2025 12:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16303255248;
+	Mon, 27 Oct 2025 12:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HqXAzd/m"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010039.outbound.protection.outlook.com [52.101.56.39])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UqHOB+Mi"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7825D208;
-	Mon, 27 Oct 2025 12:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569713; cv=fail; b=P8OcQywbyTkWN8k4VCoQY5//KQK/IEdcI7YxZ7farJnCZkfy4r00MIIKk+68lcnupz1dlRpC/2/e2y0rVIvF17APOW2aRFxlTh0b33tpS6ijZKyfXUucKtiN9Oj7zu85mA3GLSFoyJh922tOVfmuHI2nVngV7UkZhnfqBCEYzdc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569713; c=relaxed/simple;
-	bh=AbY0gCwMO/n3ZFGVqNZ33M4kUPKRS+PmT2pp+RoNiDU=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=VUPnzud5Yi5pmWC5CJpdw5lCEjfBXPplVM9x247KKeKIrwJbXn2tuylp0AKgxdTvyzDYEaERztjSEb4l6QFkKrPWV6cyt1+pk8MLeGGVcZOaE0J150O1gN359/rLSG/gsjeIoYB3PIBkY8KLS+PAZg8/trFYMP2/h9JH2z7VrS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HqXAzd/m; arc=fail smtp.client-ip=52.101.56.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VsqUigeUtMNW6EuIKz3uz5IUd44o4M4dyOwS89klnoqFxDM43YCPI/HRWY5sHnB5x0+kxK6WfPw46A31fSIFkT5O5P9g1cpcu89jSOhQDoS/Ye6Wa8l2SjM6SoocLX1mK0BQfJ7pfXAQasMY8E3Zs79FeMw5Cgj1jZ810YYMDA6EOL2A520pU94Ut0Fn3HtlodDyWNLnw/C82Y70o0nT88m6OZ6/EKETBomL2M8R+0Nkaky0FQA93QQiosMCF+KVuZE6P11apF7O0jPr/gGrxgLy35KWBTWVUHBFLYGf/xEz2lCKG/sdx+Ynush6jr9cLrj9j1XPPGPSZ9LEy68qPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5Nnglzr0ah2hJmNEMvXAoF45FzHTFHHBB3Ew/JCYW54=;
- b=fNa+ek69O+03dI3Q0YpIxay99BVGPQVpaN6yx/FJxnqePIQWFzIPCurBYzontOk+8sXyzoR2KBkQKlgM4e9qD/3AyDVTyQ+8Hc1KoAVMqCve/gljXPEc21dGP1wTV/b5xaYAhuWel6zSN8MLkI5aXiQ8Ma0hHVxAgtsJXq/6X3PXctyaC+IVo/XujdjLL3y4Js+whLjxUKAHGPQp0Q+kvsOZgpgz0BH+Kdyzj8qyxusbpUcabedCP18aVftLudnJFgJjUGTKR+8yzzA7QSc0XCTEgKhRNwb5WGa3X/13EbY6KpjWZe9dNszt4ydah2+r/qb2TXOZYIdws3aRooqKDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5Nnglzr0ah2hJmNEMvXAoF45FzHTFHHBB3Ew/JCYW54=;
- b=HqXAzd/mwzX6gsdH5LMrqK0UUE5IMgq3vUAesRCNBivg0GkP/h4zpuUeFoTUoxBYZRK/afBm5sX7ya3r6BdOKk3f35XkCn6kjJwakM+AvKVFOc9TFIN2ik9OuHQhSOp2vcD9SBxC/5w6sh/aRG3wwQooHTT0vIrlYUv0v4non21yiZu4Mx10bzqL1Js3tVEB5+/7ZFFzbrG/mrTgikv442D87XwfVQZA7mEnKDsHYFgKFBGMFHxSqK0QptAF8WXEnY9qW+htgBQJTbWRVvj/GAnniVGTR5dBbBbdoWYsuj1v+Lqe99uYXpoIdH/RA2VxZfAun5EV41q1FPkxOkrSvQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS7PR12MB5863.namprd12.prod.outlook.com (2603:10b6:8:7a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 12:55:04 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 12:55:04 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Mon, 27 Oct 2025 21:54:45 +0900
-Subject: [PATCH v2 5/7] gpu: nova-core: add extra integer conversion
- functions and traits
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251027-nova-as-v2-5-a26bd1d067a4@nvidia.com>
-References: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
-In-Reply-To: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
-To: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: John Hubbard <jhubbard@nvidia.com>, 
- Alistair Popple <apopple@nvidia.com>, 
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
- Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.3
-X-ClientProxiedBy: TYCPR01CA0152.jpnprd01.prod.outlook.com
- (2603:1096:400:2b1::6) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F30246BB2;
+	Mon, 27 Oct 2025 12:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761569700; cv=none; b=quDOwU3p0eR7mVs7uGHcbvUhe9sfbcy5JGXWOS3LchtBmoZAlUVgZoLrQt1zYfV1iXQ+hh7tuPt3uiENv+Wc2qUoDlhud1f+yWW60QTcswmE+W5sdsEdz9jyf77ZhruxNAKHALJlUWNgSTQZCFuTyrwYxJUM2/yHICY36Gl6ZxY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761569700; c=relaxed/simple;
+	bh=Zo3WzSvN0e3ILn9HzIXd8XWmjxIogwS7WwLULDxDHsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbGT3UAjZ3uHvpI+qV0x9z7QE0aCTxJlqHF+zAMDikVrvQqyMuu0cxiiW8u7vQKSIeqDhD/4ikRvKZRu4vMINKZe2aR4aH4gbgOi9O/QAct+fbBXsYwZTjKOJiFGcSbxtvVnJb86Wck7+yvjPUCbY1LnE537ATDCB3xURhAsddg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UqHOB+Mi; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=1/pRdP1OS0w6bkRPnJhijcyXdYtZEIPUwdPKV+esprE=; b=UqHOB+MiMuBkxJANZU/HyRKI1n
+	8crzelEU+yzNOd7HGbPK7ZEcIeUI0Hs2AZjtW6MBLaFwp2VEw4LWuBHK24FkZyZaN9GRvB34QeBpq
+	NIKTrwa1rwykvbj9tlqgBH8unTFCIZYbzUtiWAsnMZuLaWcWd1JG6iS9+GtjZw4iSGV/yGtq9q7DQ
+	gFHsC2lwArZ74tnNw0+D396/1tNaWczlzBaHcnN3XvF2uIH5JrdeJbW5egTqTESEl/GSv1VF0uF+5
+	EC3LDeqBAvLcS74Y9lpP/1ZtaBwZgfUt9Z+EtzD/MR+S9LosNuwHVvgAW48Es1gCzmnNGaa2SW5c2
+	+RXiETsA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDLsg-000000026fn-20JA;
+	Mon, 27 Oct 2025 11:59:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EA89C30049D; Mon, 27 Oct 2025 13:54:53 +0100 (CET)
+Date: Mon, 27 Oct 2025 13:54:53 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Fernand Sieber <sieberf@amazon.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [tip:sched/core] [sched/fair]  79104becf4:
+ BUG:kernel_NULL_pointer_dereference,address
+Message-ID: <20251027125453.GY4067720@noisy.programming.kicks-ass.net>
+References: <202510211205.1e0f5223-lkp@intel.com>
+ <20251021110449.GO3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB5863:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cea7356-4c17-4d2c-0d8d-08de15580c94
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b2xvRkMydFdobHhOaHoxeUNmZVhvbVh5T244ZU1hcDcvd0ZDU3BoTTA4RDNZ?=
- =?utf-8?B?a3JQaWd6VFJNZ3R3L0hqUWdZeUtwVXBRRTk2a0lJUWNSekg1Y2orNFBIdk9E?=
- =?utf-8?B?OHBVTWNXaW5nZmROR3dXM3JObjIzR1d3ODZUWFlqQUdiT3oxRGVmUEYwb21m?=
- =?utf-8?B?SmcyTGVMY0tramFzMVRMU1JqaFYvay9abER0NnZnamRHNTRFYm8vaGVhQmpv?=
- =?utf-8?B?QUtUNlhLQzZIOUFhT2t5K2d6UjN5UzlHWVdtS3ZrdXpqV251V2s4ZklyMG8y?=
- =?utf-8?B?SEtEM1VXMy9uR0twLzFWTGswNWJtOEhRSXU3RzFuRElhY0RQSXV5S1pHUFdZ?=
- =?utf-8?B?MUJQQ1lIQ2sxUVVydnBlYVhlNmw2WER6REVDTW9WeG16THl2alM5YWVGWWpv?=
- =?utf-8?B?SWx2TEwwKy9ISzZleW44bFlCRzMwMzRwTUNnQmNVUmtNakRTM3Q5STZ2UThB?=
- =?utf-8?B?RVhTVElmeEhVQ3hIKzA1QnNiMnBwNG1kRHlvTHl3VDV4TDMzbzZNaTVIdGhl?=
- =?utf-8?B?TDRUUjk0U0ZWc0sxZXNkMGRlaGdRK2dBVHZ4UVdnTEdWeUc1cmcyWmFhNVZV?=
- =?utf-8?B?SGFRbGNlRER4M2MwRHFIbW52VFZSSG43YTRTbnROb1NCOVpaaWpRQmpLT2RQ?=
- =?utf-8?B?QmdjbkNWb25GMVl2RkJXb0hCenFIUTBoVDZ4USt6Tk52b0VldnFiMEYwNHYw?=
- =?utf-8?B?cUJKZUx1RXVBU2lCeEJ5TXYwajZKL1dPRXVYclNPbEk5RXZiU3paMHF1MEcy?=
- =?utf-8?B?WnlzQVpwYytNcU1FaHgvVmNuRDhwbXUrQ0RRYnMySXR1MTgwdURxOFJHaXYr?=
- =?utf-8?B?MTBIUFptWkNaNmd3ZzVhSjFManFxTVNtYktmeUxoblFsa1BXUmdTbVBSK1VN?=
- =?utf-8?B?SWVFTHpScmVDZURWbU45c0dTcm94cUdzZzJ2VVNkVUE3NWo0VVFqckYrUUxD?=
- =?utf-8?B?THhyeExWSlM2Q09wRzRrdDlkbHMvRDMrNTZYOEZTSXg0dHZ3WmsxZEViU2l4?=
- =?utf-8?B?cDFaTjc3ZDNRNU01RGh4MFdXRXZmRWtkVnZSVGt6Q21kZzN3N0FLd1dqN1FN?=
- =?utf-8?B?aUI5NGdwb0FMV2dlNmRNK3QxdmQ1c2VsYWhQMjh2U2RjeldyYmhDU0JzdVcz?=
- =?utf-8?B?QkdrMldpUjhDRFRLME9OZVZZcktjaWQ2bWlpa09XQXg1OVNMM3hkc0l2ZWhH?=
- =?utf-8?B?QlJqTjE2QlFRVmZUZ2FvalBXL1EwaFR4K09XRFc5UnRibUVWUFlyNzlRRG9S?=
- =?utf-8?B?UHd1d0hwbzVuNnFKOGNZTzFsTmQvME1heUJvRjM4bTR0Ry9mL28rYS9QMkRu?=
- =?utf-8?B?RGRiVHA4QmJlTWpWRk5FWW5VVFRIWW5OTnBQRmUxMEpMb2t0M0RxSUhab3dQ?=
- =?utf-8?B?OThIdW9kZlNlSklDRSt1bWJrVDhHalQvWEFDZXBmTmltTEFDSDJxZFJES1JE?=
- =?utf-8?B?cnFXVWdOVUh4MFVMbDI2MXdPQmlycTNxOEpWYnUzRFQrV3lZNGNKeWdsdWRh?=
- =?utf-8?B?SGs2amdNMFdhQlo3QVJnaE9taVRIclhmczh3b2pZYlpkOHpYU3pHNS9CS2k5?=
- =?utf-8?B?dXNrcitsZXQ4MVV0YjlHR3BOREl4eTZ0Q24vK093ejdwb0lVSVJYZ0oxQStK?=
- =?utf-8?B?UkRzV1NqUHZqcmFHSVR5YWJBQzZxMEgrblpvRmg3S01sVVk5WGpZR2VYNmRB?=
- =?utf-8?B?ZUdYNHoyWnUwajZGOGcwRlAwRGJTK3ZmaUthT3NIekdkTng0Nk9yZ2YrM3li?=
- =?utf-8?B?TGNUdTRiSFBTVVVRbHpzOHQrTHpSM3ZoYWFVWjJSTUdacTM5S3B3WTFBaFpn?=
- =?utf-8?B?WXRtZmdvckxDQ0JBaTltcTI2ZVR0aXVRa0RERTVacncyb3Rqd1pQUEdjWGo0?=
- =?utf-8?B?NEFrQ1hPOVZZYk1nY2pSZWYwd3N6bEF4RTlSUURnWGkzbTYxOWFid3dhdW9F?=
- =?utf-8?B?MzF1SzZtQk1zMzVZTG85SlZvaUIvWWozQ1NCcVVVU1dPQlJXOUFjZkMwVkdF?=
- =?utf-8?B?a0VZM1V1WDZiNmZuWmhCcVN3VTRsWmh0SG9Eb3NReEUyY0dxc2ZQL2VFSHpy?=
- =?utf-8?Q?b2XF8r?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MDFacXg0RmpKT1h1eTM3TFZZdjhVQW1SV3dNaE5jcTVDOHlvRlh3bGVLVEQ5?=
- =?utf-8?B?aEdoK015NURuUXpuU2lGTTJGSm5hNThIZmJGdFVkVFBmQ0dkVDExMWN5Sm85?=
- =?utf-8?B?ZW5QRCtwazhUWjRuRGkvZjZtMlZyWTZKU0NsbUp2ajc5eFNLdTh3L0VCYzFJ?=
- =?utf-8?B?YTYwQjMwZTdpd0lXVjZ3eXJvYzdtOFkvR01OdEY1dDRnVjZLQS9HZHdzZHRp?=
- =?utf-8?B?Z0hQZGtGVW5pWFV4RWV4Uk91SEZicHlxam1lekpUMUN6NUtWdlJ5aGxTM1k4?=
- =?utf-8?B?aUNrR2JQbEN2OU5MbjF5djJlZzRSMitWSjJRUERjbDhhR0Vtb0ZCeDBBRVNa?=
- =?utf-8?B?aFMybzExckJicm5QbURYcWh4bnpCaVdKM3VwUHFpUTZ0ZDR6aFFic3hTZk90?=
- =?utf-8?B?dmJkQzVkUWxzTmdSQUFobXZSMExTeTVhazd4STVpK29LWStYR1JHSHgwRVVD?=
- =?utf-8?B?K0tXK3dpTkdka1h6Q2t4RmQ2T056em9objNnejdMSk5tWktKSlkrZ3IyM1Z2?=
- =?utf-8?B?NElQb1pGMEp4ZG44K3c3UDFrcTlSUjlHUFo2T1hOQXR0R3BxdTVOZVRJTVFU?=
- =?utf-8?B?S2pSMFZXYUtWUEh6MGlwbDQ5cy9ySHlVcWowc2FPcXBQcEtEM0RHK1JCNW01?=
- =?utf-8?B?NlkwakhLK0NXQldtWE51TWpCKzJiamdKSzNBSHlxL0Q5Q2Z6S0ZSbUVvTEl1?=
- =?utf-8?B?TXNtUmg0ZXRxRElLS2NSZFRXNUsrVDhDc0VaWjJUZHE5TjhrZWtDTkFwUG84?=
- =?utf-8?B?NGVjQ3QzNkF3ckRlRWtDam5rQ0VJNjdiajU3MEY0UEhrOUl4b0xiMy9EUEV2?=
- =?utf-8?B?bzhUTFBHSTYzc2pYckJJbGpjTVZrTDE2Q0h5cFA3VzdRaDN1OVlOZFNkcHl3?=
- =?utf-8?B?eEh3WVVEdUM1OTlNOHlmSGhjVGovSFowMW5rYVFIZG51Q01xVG90aEtBdXNy?=
- =?utf-8?B?T0RvOTR0cUhzU3IxZnIvZmVjVEtzTk44NGxScWswb2Y3L253U2lEVTNqTm43?=
- =?utf-8?B?ZldtVk1FNitpd2ZFYzgvZm80bXd2UFdEd2M0RW1HNkd2MXprK1ZHQUV4ZmpE?=
- =?utf-8?B?N2lWcURQZUpyU3VQWEpma0NzSG1YQlA5QVhNS3Jsd0RFMGwrOXJ5ZXNGdEh1?=
- =?utf-8?B?c2RvVDdINHNzTWVVbUJpUlF4Y1hWMDZMemI0dXBJZlFzbndTNURac2RTakw4?=
- =?utf-8?B?OVlybWRPNzBlNGhpaEFLM3A4OHd3M1E3ald3RkE4QUNSd2J3YXhTNW9RUUJE?=
- =?utf-8?B?bFVaS2VDdXhsSGFtVkw2bmIvS1lzRzZLZEFGRlZkTEhLbTBndHRTWDY1b0d6?=
- =?utf-8?B?Y1ltNzU3eXB6OVIwbHpHMzMvWFo5bU9vU0t5Z3duNmI3Yk9SR0JxRjZGUjZ6?=
- =?utf-8?B?VmRCYlpZU3JKOXh6S3oxUGhuRWgzQVlXRW41WDM0WmlFYkMxc04vUlg4WFdV?=
- =?utf-8?B?S2liZXNCekR6bStuOEpvT1ZISkt4aElkZ2ZhT0VjczdTRG5vcDBEdFgzK0Jr?=
- =?utf-8?B?Q0huTmJyYk9qR1pMNXFOYVg3OG4rV00zYmxodm91Z01hZUdmS3FqeFNqNnd2?=
- =?utf-8?B?UTdwL2xTZzF4Vm5JZ0UreXRCRktNeHNGb1krK3RpZDNPWk5xVlRJbkFuOEpt?=
- =?utf-8?B?Sm9ibEV6SEVUSEhRVVkzUkF0bW55TXZ3MVdtRW0vRVcrMWNTblJmU1ROUkJq?=
- =?utf-8?B?WjVTMnVKb1hNeCtZSDlHUUxNTU9NQmNUT0RsUnlGY0o2cWhYOENxMXA5YWRo?=
- =?utf-8?B?TFNOcjhjNFltSFF3THFuNndKcnhRK05JV1dOSWUxTzRUWEx0YUlneVJSYzZh?=
- =?utf-8?B?c0lIT3JkN1E1ZnZ1dFhxMTRvL2hicTN0cktvRDJ1MDFzR1ZqTEJHU05XT3ha?=
- =?utf-8?B?b1FoanYvL3VkQ3MrSGVTMlN6TFkxSGhkMXBpTXhTQWlRMmR0QlNhN2tybnlX?=
- =?utf-8?B?bmtIeC9TNDZQNXNKNGM5cHMxYTI3c25nVmhMZytVcDdrb3oweDZvNnI1K1hK?=
- =?utf-8?B?SHZISiswNGFDZHpLMm5kRTBpb3Jpb3pZUGlIMlpIV1Z4T2NubzVIV25OL3Zn?=
- =?utf-8?B?d2gxYXF1V2NrVVFab3hvNFA5elhkVXJibGh6aE9QUndpZjZXYVRPM08ycVh2?=
- =?utf-8?B?RXdpUW03TmdLSDBsWXVKZXdEdWFhdVZNMGJEUVNTRTFyVGh3dUppM0pKUnlD?=
- =?utf-8?Q?Jw7UULpts9CaEq0DtsZvcPImjjIUGn6gB0X2JDDMnulB?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cea7356-4c17-4d2c-0d8d-08de15580c94
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 12:55:04.6978
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2cxg/oGg908+s18r8HBvi+IQW0oFGuJZQI+lvnu80Nh7qo8SzirMj8AoBGSCeLLg1VuGnAvJ93lqMHTepvG9kA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5863
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251021110449.GO3245006@noisy.programming.kicks-ass.net>
 
-The core library's `From` implementations do not cover conversions
-that are not portable or future-proof. For instance, even though it is
-safe today, `From<usize>` is not implemented for `u64` because of the
-possibility to support larger-than-64bit architectures in the future.
+On Tue, Oct 21, 2025 at 01:04:49PM +0200, Peter Zijlstra wrote:
+> On Tue, Oct 21, 2025 at 01:14:36PM +0800, kernel test robot wrote:
+> >=20
+> >=20
+> > Hello,
+> >=20
+> > kernel test robot noticed "BUG:kernel_NULL_pointer_dereference,address"=
+ on:
+> >=20
+> > commit: 79104becf42baeeb4a3f2b106f954b9fc7c10a3c ("sched/fair: Forfeit =
+vruntime on yield")
+> > https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git sched/core
+> >=20
+> > [test failed on linux-next/master 606da5bb165594c052ee11de79bf05bc38bc1=
+aa6]
+> >=20
+> > in testcase: trinity
+> > version:=20
+> > with following parameters:
+> >=20
+> > 	runtime: 300s
+> > 	group: group-04
+> > 	nr_groups: 5
+> >=20
+> >=20
+> >=20
+> > config: x86_64-randconfig-121-20251020
+> > compiler: gcc-13
+> > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m=
+ 16G
+> >=20
+>=20
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20251021/202510211205.1e0f5223-=
+lkp@intel.com
+>=20
+>=20
+> I'm failing at running the kernel as described in:
+>=20
+>   https://download.01.org/0day-ci/archive/20251021/202510211205.1e0f5223-=
+lkp@intel.com/reproduce
+>=20
+>=20
+> I then start the test as:
+>=20
+> root@spr:/usr/local/src/lkp-tests# bin/lkp qemu -k /usr/src/linux-2.6/tmp=
+-build/arch/x86/boot/bzImage -m /usr/src/linux-2.6/tmp-build/modules.cgz /u=
+sr/src/linux-2.6/tmp-build/job-script
+> result_root: /root/.lkp//result/trinity/group-04-5-300s/vm-snb/quantal-i3=
+86-core-20190426.cgz/x86_64-randconfig-121-20251020/gcc-13/79104becf42baeeb=
+4a3f2b106f954b9fc7c10a3c/4
+> downloading initrds ...
+> use local modules: /root/.lkp/cache/modules.cgz
+> skip downloading /root/.lkp/cache/osimage/quantal/quantal-i386-core-20190=
+426.cgz
+> 153636 blocks
+> skip downloading /root/.lkp/cache/osimage/pkg/quantal-i386-core.cgz/trini=
+ty-static-i386-x86_64-f93256fb_2019-08-28.cgz
+> 48101 blocks
+> exec command: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -fsdev loca=
+l,id=3Dtest_dev,path=3D/root/.lkp//result/trinity/group-04-5-300s/vm-snb/qu=
+antal-i386-core-20190426.cgz/x86_64-randconfig-121-20251020/gcc-13/79104bec=
+f42baeeb4a3f2b106f954b9fc7c10a3c/4,security_model=3Dnone -device virtio-9p-=
+pci,fsdev=3Dtest_dev,mount_tag=3D9p/virtfs_mount -kernel /usr/src/linux-2.6=
+/tmp-build/arch/x86/boot/bzImage -append root=3D/dev/ram0 RESULT_ROOT=3D/re=
+sult/trinity/group-04-5-300s/vm-snb/quantal-i386-core-20190426.cgz/x86_64-r=
+andconfig-121-20251020/gcc-13/79104becf42baeeb4a3f2b106f954b9fc7c10a3c/1 BO=
+OT_IMAGE=3D/pkg/linux/x86_64-randconfig-121-20251020/gcc-13/79104becf42baee=
+b4a3f2b106f954b9fc7c10a3c/vmlinuz-6.18.0-rc1-00001-g79104becf42b branch=3Dl=
+inux-devel/devel-hourly-20251019-154855 job=3D/lkp/jobs/scheduled/vm-meta-2=
+91/trinity-group-04-5-300s-quantal-i386-core-20190426.cgz-x86_64-randconfig=
+-121-20251020-79104becf42b-20251020-124904-8548hu-1.yaml user=3Dlkp ARCH=3D=
+x86_64 kconfig=3Dx86_64-randconfig-121-20251020 commit=3D79104becf42baeeb4a=
+3f2b106f954b9fc7c10a3c intremap=3Dposted_msi vmalloc=3D256M initramfs_async=
+=3D0 page_owner=3Don carrier_timeout=3D60 rcupdate.rcu_self_test=3D0 max_up=
+time=3D7200 LKP_LOCAL_RUN=3D1 selinux=3D0 debug apic=3Ddebug sysrq_always_e=
+nabled rcupdate.rcu_cpu_stall_timeout=3D100 net.ifnames=3D0 printk.devkmsg=
+=3Don panic=3D-1 softlockup_panic=3D1 nmi_watchdog=3Dpanic oops=3Dpanic loa=
+d_ramdisk=3D2 prompt_ramdisk=3D0 drbd.minor_count=3D8 systemd.log_level=3De=
+rr ignore_loglevel console=3Dtty0 earlyprintk=3DttyS0,115200 console=3DttyS=
+0,115200 vga=3Dnormal rw  ip=3Ddhcp result_service=3D9p/virtfs_mount -initr=
+d /root/.lkp/cache/final_initrd -smp 2 -m 16384M -no-reboot -device i6300es=
+b -rtc base=3Dlocaltime -device e1000,netdev=3Dnet0 -netdev user,id=3Dnet0 =
+-display none -monitor null -serial stdio
 
-However, the kernel supports a narrower set of architectures, and in the
-case of Nova we only support 64-bit. This makes it helpful and desirable
-to provide more infallible conversions, lest we need to rely on the `as`
-keyword and carry the risk of silently losing data.
+> [    5.650807][    T1] Starting init: /bin/sh exists but couldn't execute=
+ it (error -8)
+> [    5.651481][    T1] Kernel panic - not syncing: No working init found.=
+  Try passing init=3D option to kernel. See Linux Documentation/admin-guide=
+/init.rst for guidance.
+> [    5.652784][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6=
+=2E18.0-rc2-00182-gbab99e58f91f #35 PREEMPT=20
+> [    5.653668][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 19=
+96), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [    5.654582][    T1] Call Trace:
+> [    5.654873][    T1]  <TASK>
+> [    5.655137][    T1]  dump_stack_lvl+0x3a/0x70
+> [    5.655536][    T1]  dump_stack+0x10/0x20
+> [    5.655911][    T1]  vpanic+0x104/0x2c0
+> [    5.656256][    T1]  ? rest_init+0x140/0x140
+> [    5.656652][    T1]  panic+0x51/0x60
+> [    5.656989][    T1]  kernel_init+0x111/0x120
+> [    5.657360][    T1]  ret_from_fork+0x25/0x140
+> [    5.657741][    T1]  ? rest_init+0x140/0x140
+> [    5.658130][    T1]  ret_from_fork_asm+0x11/0x20
+> [    5.658563][    T1]  </TASK>
+> [    5.658841][    T1] Kernel Offset: disabled
+>=20
 
-Thus, introduce a new module `num` that provides safe const functions
-performing more conversions allowed by the build target, as well as
-`FromAs` and `IntoAs` traits that are just extensions of `From` and
-`Into` to conversions that are known to be lossless.
-
-Suggested-by: Danilo Krummrich <dakr@kernel.org>
-Link: https://lore.kernel.org/rust-for-linux/DDK4KADWJHMG.1FUPL3SDR26XF@kernel.org/
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/nova-core/nova_core.rs |   1 +
- drivers/gpu/nova-core/num.rs       | 158 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 159 insertions(+)
-
-diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-index e130166c1086..9180ec9c27ef 100644
---- a/drivers/gpu/nova-core/nova_core.rs
-+++ b/drivers/gpu/nova-core/nova_core.rs
-@@ -13,6 +13,7 @@
- mod gfw;
- mod gpu;
- mod gsp;
-+mod num;
- mod regs;
- mod vbios;
- 
-diff --git a/drivers/gpu/nova-core/num.rs b/drivers/gpu/nova-core/num.rs
-new file mode 100644
-index 000000000000..adb5a92f0d51
---- /dev/null
-+++ b/drivers/gpu/nova-core/num.rs
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Numerical helpers functions and traits.
-+//!
-+//! This is essentially a staging module for code to mature until it can be moved to the `kernel`
-+//! crate.
-+
-+use kernel::{build_error, macros::paste};
-+
-+macro_rules! impl_lossless_as {
-+    ($from:ty as { $($into:ty),* }) => {
-+        $(
-+        paste! {
-+            #[doc = ::core::concat!(
-+                "Losslessly converts a [`",
-+                ::core::stringify!($from),
-+                "`] into a [`",
-+                ::core::stringify!($into),
-+                "`].")]
-+            ///
-+            /// This conversion is allowed as it is always lossless. Prefer this over the `as`
-+            /// keyword to ensure no lossy conversions are performed.
-+            ///
-+            /// This is for use from a `const` context. For non `const` use, prefer the [`FromAs`]
-+            /// and [`IntoAs`] traits.
-+            ///
-+            /// # Examples
-+            ///
-+            /// ```
-+            /// use crate::num;
-+            ///
-+            #[doc = ::core::concat!(
-+                "assert_eq!(num::",
-+                ::core::stringify!($from),
-+                "_as_",
-+                ::core::stringify!($into),
-+                "(1",
-+                ::core::stringify!($from),
-+                "), 1",
-+                ::core::stringify!($into),
-+                ");")]
-+            /// ```
-+            #[allow(unused)]
-+            pub(crate) const fn [<$from _as_ $into>](value: $from) -> $into {
-+                kernel::static_assert!(size_of::<$into>() >= size_of::<$from>());
-+
-+                value as $into
-+            }
-+        }
-+        )*
-+    };
-+}
-+
-+impl_lossless_as!(u8 as { u16, u32, u64, usize });
-+impl_lossless_as!(u16 as { u32, u64, usize });
-+impl_lossless_as!(u32 as { u64, usize } );
-+// `u64` and `usize` have the same size on 64-bit platforms.
-+#[cfg(CONFIG_64BIT)]
-+impl_lossless_as!(u64 as { usize } );
-+
-+// A `usize` fits into a `u64` on 32 and 64-bit platforms.
-+#[cfg(any(CONFIG_32BIT, CONFIG_64BIT))]
-+impl_lossless_as!(usize as { u64 });
-+
-+// A `usize` fits into a `u32` on 32-bit platforms.
-+#[cfg(CONFIG_32BIT)]
-+impl_lossless_as!(usize as { u32 });
-+
-+/// Extension trait providing guaranteed lossless conversion to `Self` from `T`.
-+///
-+/// The standard library's `From` implementations do not cover conversions that are not portable or
-+/// future-proof. For instance, even though it is safe today, `From<usize>` is not implemented for
-+/// [`u64`] because of the possibility to support larger-than-64bit architectures in the future.
-+///
-+/// The workaround is to either deal with the error handling of [`TryFrom`] for an operation that
-+/// technically cannot fail, or to use the `as` keyword, which can silently strip data if the
-+/// destination type is smaller than the source.
-+///
-+/// Both options are hardly acceptable for the kernel. It is also a much more architecture
-+/// dependent environment, supporting only 32 and 64 bit architectures, with some modules
-+/// explicitly depending on a specific bus width that could greatly benefit from infallible
-+/// conversion operations.
-+///
-+/// Thus this extension trait that provides, for the architecture the kernel is built for, safe
-+/// conversion between types for which such conversion is lossless.
-+///
-+/// In other words, this trait is implemented if, for the current build target and with `t: T`, the
-+/// `t as Self` operation is completely lossless.
-+///
-+/// Prefer this over the `as` keyword to ensure no lossy conversions are performed.
-+///
-+/// If you need to perform a conversion in `const` context, use [`u64_as_usize`],
-+/// [`u32_as_usize`], [`usize_as_u64`], etc.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use crate::num::FromAs;
-+///
-+/// assert_eq!(usize::from_as(0xf00u32), 0xf00u32 as usize);
-+/// ```
-+pub(crate) trait FromAs<T> {
-+    /// Create a `Self` from `value`. This operation is guaranteed to be lossless.
-+    fn from_as(value: T) -> Self;
-+}
-+
-+impl FromAs<usize> for u64 {
-+    fn from_as(value: usize) -> Self {
-+        usize_as_u64(value)
-+    }
-+}
-+
-+#[cfg(CONFIG_32BIT)]
-+impl FromAs<usize> for u32 {
-+    fn from_as(value: usize) -> Self {
-+        usize_as_u32(value)
-+    }
-+}
-+
-+impl FromAs<u32> for usize {
-+    fn from_as(value: u32) -> Self {
-+        u32_as_usize(value)
-+    }
-+}
-+
-+#[cfg(CONFIG_64BIT)]
-+impl FromAs<u64> for usize {
-+    fn from_as(value: u64) -> Self {
-+        u64_as_usize(value)
-+    }
-+}
-+
-+/// Counterpart to the [`FromAs`] trait, i.e. this trait is to [`FromAs`] what [`Into`] is to
-+/// [`From`].
-+///
-+/// See the documentation of [`FromAs`] for the motivation.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use crate::num::IntoAs;
-+///
-+/// assert_eq!(0xf00u32.into_as(), 0xf00u32 as usize);
-+/// ```
-+pub(crate) trait IntoAs<T> {
-+    /// Convert `self` into a `T`. This operation is guaranteed to be lossless.
-+    fn into_as(self) -> T;
-+}
-+
-+/// Reverse operation for types implementing [`FromAs`].
-+impl<S, T> IntoAs<T> for S
-+where
-+    T: FromAs<S>,
-+{
-+    fn into_as(self) -> T {
-+        T::from_as(self)
-+    }
-+}
-
--- 
-2.51.0
-
+Any clues how I can get this thing to actually run the trinity required
+to reproduce instead of panic?
 
