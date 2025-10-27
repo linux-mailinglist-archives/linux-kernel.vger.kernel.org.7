@@ -1,240 +1,205 @@
-Return-Path: <linux-kernel+bounces-872070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6E1C0F312
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:13:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C56C0F2F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F37DA4F9BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7421890888
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEAD311957;
-	Mon, 27 Oct 2025 16:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6513C3101C0;
+	Mon, 27 Oct 2025 16:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kC9k2C1i"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="rHXjaTS6"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1903430CD9D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4732433B3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761581367; cv=none; b=fUYjIPisbH94ucZcDk1mASiulnvkjMToZpbU7YWJ/ful0fLb/u4u7Aob3sNCl3THLE6j7iXRnU3Pvi8EyhJ94MhexBmka54RY3WBdnJ9NthEtxCj1svMArpEXnjCe/D37x4qOX/TrzCUgOZD/XoyRcHn+KydrDKEX7tDNoUJJIM=
+	t=1761581452; cv=none; b=ZVvltAK/1zjXlK4TzCKdFNSXu6IhYbG9hhKYDv06qLYVJAYIrvIRkRwE3hQ0AZ2d5L9X1qmm2hAQ95OV8XuEYc370tLolgZ8iAxTPwMxy0qQ5lYIqpRe1zYBM8fxnpQ8siG2OxJ5dTCUm45M/HY9usa7XXibkITnLvmrPqtFrtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761581367; c=relaxed/simple;
-	bh=Ip6risDW9tTbsO2jqPpdXFWuol17OZMU9AeN0DDZC0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=laLS/4oOFJXc3KcHdAVlPLZpY8QHMiQvrKbE4RCCAcavSh5RANF0TzKSM555+2cPgpaJ3QX68E8BHjcZnm/qR09jTPJI10RUqlJWjyQgy+/MWIMFH/yKczWPKDGbrn+AfkGJmIvXyBe81HE4gxzq2pYioLfjiMLhI/Kc1ZDyNns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kC9k2C1i; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-893c373500cso493734185a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:09:25 -0700 (PDT)
+	s=arc-20240116; t=1761581452; c=relaxed/simple;
+	bh=q0KsMgAElv0vgdV5eooiTkRZl79F0ej2oBY71GeUUCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bx0kibdUdkO/deaH13ebrEI67/bi4JXJ4NTW684piNb807pendmq8i5U+TKwb7bk1eugy0F3WCHJoHizUhtUNTaOtQiwic18XEIJE9MxRNus6C3xqzO4hkVbnqPxLmeU1pTasBvrg322z0bRiHuOZFA9hlA+Qbz1wCLintMm3CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=rHXjaTS6; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b4f323cf89bso1157779966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:10:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761581365; x=1762186165; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=anSGbOUh9PRDsyCb0fgwZTMvbpzdcHnK6psdZLJfHyQ=;
-        b=kC9k2C1ipB0+8n0nDWV75bFcRvL16rGr//zO4g2ezNYzc8ibboc9Zs5rmRW7okfp9v
-         KopeJr+kws+jhfq0fZmMCiBiRti6OMf9RdiPLOcmUZAqpS63TxOtRtGWXWE8Q5lqfpE0
-         NrM673GKnBk5KHQAuN4kS1BmUvuiUs47eQ2Zvtzi1vK3bAzGm8xeKcwwhe0L/5uQmQER
-         QA/S9+XxULInuMBS0xIGXOZDPwhZDsE59jnGgg7KSs5iete7eY5t0xIHXWJWXUi9kWg0
-         aJyKPS7GRYfHJS9hlMnkVvENbtR/hTzMszY4O/KuBknMNAg0XqetkaokiwRVA98WqbgI
-         dK4g==
+        d=amarulasolutions.com; s=google; t=1761581449; x=1762186249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Veu3Rsq4FjpOJipbhAFeCCYDWDFK0CBkfMfLFx9DhXQ=;
+        b=rHXjaTS6zBnOuruVi35Mn64k5VsG+F8CFgdToVCwCpzU4gcRfvG5h8yrxIA0kjlU9u
+         bxyJd4SsusfOPO4Z+/du4tWDBGAemSyPp1zsOTPHf6teTCReg1vQV0wOsLYn46M+GQdF
+         5NWw7+sMg/TLv7RHD1O6ooRJNoIPCCu+3c0o8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761581365; x=1762186165;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=anSGbOUh9PRDsyCb0fgwZTMvbpzdcHnK6psdZLJfHyQ=;
-        b=EhqMBSMP6jFkUW0MFzKxle0UYTLvtqYq2disScJi5CKlOuGRRFxJS1QFhL0Vgw4jKt
-         6mEwulULpxSPPfap1IOLUYfIzAlWMw/W8S7hlmEd8dGiG/ouRrOXsTr3GBOqMsyrMwpR
-         Bwzp6n9XAwUkcousWyBG7rHy/HAnWeA3FwFtjLoDR2wCE8jpDR5CEHBMPNrxO8wryWBd
-         NtLxhmKZS7JeaBu2fNOD+V3LHvOsUxn7F75Lfa1W0YPeAX6FWccYFePBwM/CXFqCoRVG
-         jil1nkDtQuN3luTjS1XgaSH0wGPpKzC5W9BrFRvgFliiVC4Mz4m8ibsUvmjZjQ3ZOqaO
-         MEvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFgyhATwoBSKZhzRKkOeLzqNG2wYhCT0iaj1shHCX4oTxm/Pk8bvlgPvXlSegPMnTqT+MlySfmB/T30ao=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ZTQHzOS/zji8zER1un4T0ILoPDjZFJSmXAsAQ4n+B1IRBASm
-	aK//8Be5GxU3UbfYP3fGCfy2jAtYuX/r7PCFy5G4+89fpgoD1Mk5m2v3GSbVrVSzxn4=
-X-Gm-Gg: ASbGnct4qmPdTF6zSoSeh4I0tR/fkFWFkm7vz1DMgTbEKlVFU5ayv8050elhnd5VrqM
-	m3Es64tE8zdxzWX/0UXcfujE4ksOu9+CSIfV+2iqrydR40IoGRpCwNOPiYijdWe6lINtBhJYP23
-	VCmWkKxKPJ2QkjnjkhPmbXAAK0/pYbhZUs858V53jbCXPBlY2xqrI5raIeW6rpXBI+mcoY81Tvd
-	6C7yth9JCp+NMPplu8FjsF62Qw2PaV9G8o5A/ZdTy9tmdmE6ubWvJ5Ja9QQs0Jtefz94ykboNfB
-	D/FcziO9eE/8AmXF1MuhKxDh4+whk5tpRmbZWIA4AAtjhjrFnemul6NRcAYstEL+gW2KYuS2jRi
-	4zUEAz8s/dWC/p4E6uutvYeMWSE7nl1bkP+yzUqJcCSQmEoI6RQnSy9fwyKYQtROaGEHerNd8VN
-	iOHkFPghTFEVwAnGA7NWjCZfvAc8fFfmJWGWmdUqlLOJYam6QR/F9k+7xU
-X-Google-Smtp-Source: AGHT+IHlNcX7M4ho1Hgm07pKSXRDLSWwAqfcPM4p2At44BY4PwXR6XnbKFaciXa2MkD0JUoTO3ORTg==
-X-Received: by 2002:a05:620a:1aa1:b0:8a3:9a05:ec15 with SMTP id af79cd13be357-8a6d072570emr95429085a.19.1761581364508;
-        Mon, 27 Oct 2025 09:09:24 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25c8a34dsm624408985a.48.2025.10.27.09.09.23
+        d=1e100.net; s=20230601; t=1761581449; x=1762186249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Veu3Rsq4FjpOJipbhAFeCCYDWDFK0CBkfMfLFx9DhXQ=;
+        b=YhWoWBRILjaCb2/E+HF7UGDhWOEC93lMxa+xE64rMtBDzCTDgrJmT3aSrcja6gr781
+         GZhIH2p64xs1mWuSOSph2/YtB1MGZa+bjRGSIxnx+Njdcwap/Zo6U74WimkW9JG9Zalx
+         5cbaJPZyO1chRb1mouSoCINtX5HwnjrSS1VBjJnTP2JvAObciyqHbs+MGO+r/4qy16w+
+         Sx76Ej98eb9AEQb2uG6VB0rkKLs2kv9CUhIWdQGSOF+ddax9NHKU0FNNIuaynRpW9UXo
+         dZLmLNpHJtaifteFGgsCIWYbXwnvYPEerAvsRnfygYWpISqWC+axZcVHy3xDz6qYg+x8
+         BGBQ==
+X-Gm-Message-State: AOJu0YzBIIkKbwl6E+gsqHOXHMG5COV/VX8LuQClihKNEqK2/O4jJa7y
+	+dJnXyNGsVZh+moYM/BNRkolzjnJoEpndminNCX/2TCSB50s5segw4zWEuWpjx6ODdemvtqeZnP
+	7o03F
+X-Gm-Gg: ASbGncsepv9bXrvQxqc254jrCi/CCKS4VfK7GRncHrL+Y15j8/57oyB2AwGzg6LH726
+	HUtWJ+np7DII3CCF233oICthzX9mi39a2eygkC1FyG5klGuBw57imv4TENeLqsx5ucTICeKOUlX
+	XRqipv/YfdGiq3ZJt2xFan/EMPzdZpLQnu9TLxa4aJMjCLmIDCTr+edYOnSCo2tSfW95h/xqZeT
+	6NujdaZHmndIRgm5uWh9CmPzIan7cz47cWU70HsmE2JCsPgc12J/6kCIlrY96I2GY03qJjsAGqk
+	zSHREsDCz51gv1kOkrakFm6rtMnj6vFYJnlEbkRMa5XaYcfIZYuVAD7SvdHXnpjk8Q/iEUgTQ34
+	mgn7kJiRb6YuWxITUYDwgJJaZjc/owPa3jirewCkt2LvOUHJCedn1NXRsVruGAwdMyjOtr+r8w4
+	v/qrUMDMqgFm3FEnzLyIJGou/Oq1pcEgjw5jHSz/2uS9773U27A4xQfM3HdGsfuWRBLPPAHDDho
+	zrZ+gQYob91s7YlKY2QTn0FwWe2TVrdoSS/Qwr1nNvxY9pp7lwvjgc=
+X-Google-Smtp-Source: AGHT+IHNVBcPF4r1uhIP+zj56hLjLDUq4AexzJeI5WwqZEYSfzmRjyop2h3ZCez24VELoNyVU95XiQ==
+X-Received: by 2002:a17:907:86a0:b0:b0b:f228:25a with SMTP id a640c23a62f3a-b6dba5f0b7cmr39405266b.64.1761581448554;
+        Mon, 27 Oct 2025 09:10:48 -0700 (PDT)
+Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-82-50-34-170.retail.telecomitalia.it. [82.50.34.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8ceeaffasm742437466b.45.2025.10.27.09.10.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 09:09:23 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vDPmd-00000004HT9-1p2Z;
-	Mon, 27 Oct 2025 13:09:23 -0300
-Date: Mon, 27 Oct 2025 13:09:23 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
- confusion
-Message-ID: <20251027160923.GF760669@ziepe.ca>
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+        Mon, 27 Oct 2025 09:10:48 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	linux-amarula@amarulasolutions.com,
+	Mark Brown <broonie@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/2] ARM: dts: imx28-amarula-rmm: add I2S audio
+Date: Mon, 27 Oct 2025 17:10:23 +0100
+Message-ID: <20251027161040.2020623-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 08:41:16AM +0100, Lorenzo Stoakes wrote:
-> There's an established convention in the kernel that we treat leaf page
-> tables (so far at the PTE, PMD level) as containing 'swap entries' should
-> they be neither empty (i.e. p**_none() evaluating true) nor present
-> (i.e. p**_present() evaluating true).
+Add support for I2S audio on Amarula rmm board. Audio codec
+TLV320AIC3X is connected as slave to SAIF0, which provides
+bitclock, frame and MCLK.
 
-I have to say I've never liked the none-vs-present naming either.
+Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-> This is deeply confusing, so this series goes further and eliminates the
-> non_swap_entry() predicate, replacing it with is_non_present_entry() - with
-> an eye to a new convention of referring to these non-swap 'swap entries' as
-> non-present.
+---
 
-I'm not keen on is_non_present_entry(), it seems confusing again.
+Changes in v2:
+- Rename the codec node to audio-codec@18
+- Drop an unnecessary newline
 
-It looks like we are stuck with swp_entry_t as the being the handle
-for a non-present pte. Oh well, not a great name, but fine..
+ .../boot/dts/nxp/mxs/imx28-amarula-rmm.dts    | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-So we think of that swp_entry_t having multiple types: swap, migration,
-device private, etc, etc
-
-Then I'd think the general pattern should be to get a swp_entry_t:
-
-    if (pte_present(pte))
-        return;
-    swpent = pte_to_swp_entry(pte);
-
-And then evaluate the type:
-
-    if (swpent_is_swap()) {
-    }
-
-
-If you keep the naming as "swp_entry" indicates the multi-type value,
-then "swap" can mean a swp_entry which is used by the swap subsystem.
-
-That suggests functions like this:
-
-swpent_is_swap()
-swpent_is_migration()
-..
-
-and your higher level helpers like:
-
-/* True if the pte is a swpent_is_swap() */
-static inline bool swpent_get_swap_pte(pte_t pte, swp_entry_t *entryp)
-{
-   if (pte_present(pte))
-        return false;
-   *swpent = pte_to_swp_entry(pte);
-   return swpent_is_swap(*swpent);
-}
-
-I also think it will be more readable to keep all these things under a
-swpent namespace instead of using unstructured english names.
-
-> * pte_to_swp_entry_or_zero() - allows for convenient conversion from a PTE
->   to a swap entry if present, or an empty swap entry if none. This is
->   useful as many swap entry conversions are simply checking for flags for
->   which this suffices.
-
-I'd expect a safe function should be more like
-
-   *swpent = pte_to_swp_entry_safe(pte);
-   return swpent_is_swap(*swpent);
-
-Where "safe" means that if the PTE is None or Present then
-swpent_is_XX() == false. Ie it returns a 0 swpent and 0 swpent is
-always nothing.
-
-> * get_pte_swap_entry() - Retrieves a PTE swap entry if it truly is a swap
->   entry (i.e. not a non-present entry), returning true if so, otherwise
->   returns false. This simplifies a lot of logic that previously open-coded
->   this.
-
-Like this is still a tortured function:
-
-+static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
-+{
-+       if (pte_present(pte))
-+               return false;
-+       if (pte_none(pte))
-+               return false;
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts b/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
+index af59211842fb..ddb64f3d0471 100644
+--- a/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
+@@ -112,6 +112,29 @@ reg_usb1_vbus: regulator-usb1-vbus {
+ 		enable-active-high;
+ 		regulator-always-on;
+ 	};
 +
-+       *entryp = pte_to_swp_entry(pte);
-+       if (non_swap_entry(*entryp))
-+               return false;
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "imx28-mrmmi-tlv320aic3x-audio";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&cpu_dai>;
++		simple-audio-card,frame-master = <&cpu_dai>;
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPROUT",
++			"Headphone Jack", "HPRCOM";
++		simple-audio-card,mclk-fs = <512>;
 +
-+       return true;
-+}
++		cpu_dai: simple-audio-card,cpu {
++			sound-dai = <&saif0>;
++			clocks = <&saif0>;
++		};
 +
++		codec_dai: simple-audio-card,codec {
++			sound-dai = <&tlv320aic3x>;
++		};
++	};
+ };
+ 
+ &auart0 {
+@@ -154,6 +177,19 @@ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins_a>;
+ 	status = "okay";
+ 
++	tlv320aic3x: audio-codec@18 {
++		compatible = "ti,tlv320aic3x";
++		pinctrl-names = "default";
++		pinctrl-0 = <&tlv320aic3x_pins>;
++		reg = <0x18>;
++		reset-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		DVDD-supply = <&reg_1v8>;
++		IOVDD-supply = <&reg_3v3>;
++		AVDD-supply = <&reg_3v3>;
++		DRVDD-supply = <&reg_3v3>;
++	};
++
+ 	touchscreen: touchscreen@38 {
+ 		compatible = "edt,edt-ft5306";
+ 		reg = <0x38>;
+@@ -246,6 +282,14 @@ MX28_PAD_PWM1__GPIO_3_17
+ 		fsl,voltage = <MXS_VOLTAGE_HIGH>;
+ 	};
+ 
++	tlv320aic3x_pins: tlv320aic3x-pins@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <MX28_PAD_SSP0_DATA4__GPIO_2_4>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,pull-up = <MXS_PULL_ENABLE>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++	};
++
+ 	usb0_vbus_enable_pin: usb0-vbus-enable@0 {
+ 		reg = <0>;
+ 		fsl,pinmux-ids = <MX28_PAD_SSP0_DATA5__GPIO_2_5>;
+@@ -269,6 +313,12 @@ &pwm {
+ 	status = "okay";
+ };
+ 
++&saif0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&saif0_pins_a>;
++	status = "okay";
++};
++
+ /* microSD */
+ &ssp0 {
+ 	compatible = "fsl,imx28-mmc";
+-- 
+2.43.0
 
-static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
-{
-   return swpent_is_swap(*swpent = pte_to_swp_entry_safe(pte));
-}
-
-Maybe it doesn't even need an inline at that point?
-
-> * is_huge_pmd() - Determines if a PMD contains either a present transparent
->   huge page entry or a huge non-present entry. This again simplifies a lot
->   of logic that simply open-coded this.
-
-is_huge_or_swpent_pmd() would be nicer, IMHO. I think it is surprising
-when any of these APIs accept swap entries without being explicit
-
-Jason
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+branch: imx28-amarula-rmm-audio
 
