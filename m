@@ -1,94 +1,112 @@
-Return-Path: <linux-kernel+bounces-872478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59244C114A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:58:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D80C114BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7A21A64DC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:58:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0695F5011BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B519A314A99;
-	Mon, 27 Oct 2025 19:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F952DCF46;
+	Mon, 27 Oct 2025 19:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJvqHj6e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpR5Uy6w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D1E308F35;
-	Mon, 27 Oct 2025 19:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAE8317711
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761595082; cv=none; b=IS1NrOR1B0AeznaiEywoV99npLSPNdc8rsb28k4dl0Txugi5nzOaA4NxoGUIaFwOTxl60JFAX3URKS9k+zOD5Pab33jIQbUBZ9n1+l0p6Vg6LaW/7AW+UFovQNe8gvQ5EX8KvrFEnxSy6blZDYmjnUGFSlnGLTswCwXLfdycxdc=
+	t=1761595096; cv=none; b=NzlNv2wT0Jg88tGyb12d0fi4/K4/317dE+D3AGkfgSwcLZA+Fg1V6AHSzVow+7Bz8lZ3MdWqpPR96kqzh6Z6/nN5UsE/8fSDAHr4/cDIMD0azpYKUqrQtHZyn0OsWq9xJ4Jg6G5/Ppi5Phjef6LupKXpoMIoChY2Psoj2ZC4zgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761595082; c=relaxed/simple;
-	bh=Ng03B/maD6lMR0eaS2eBOidLYRkO4OlY8lz6H+r3S1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WhxyZCwentvhmtAAbZmw5bYEsJnpO/C/+AfRvv2tbKFx3qSFGlbek9M6LpCCnl6f/8Mm7eUS9NTAznB5VqGfEV76poRYAOQm6utUPW7F/Z8KbsHpGon8+V3GR3RHAkE+bdHsv5rxj9HNLEx6Px44GrqrcYHYUhXXYV5GpGWsDAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJvqHj6e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED466C4CEF1;
-	Mon, 27 Oct 2025 19:57:59 +0000 (UTC)
+	s=arc-20240116; t=1761595096; c=relaxed/simple;
+	bh=21xoq8e2YTTavQ6QdYsPHyalJVLnJhPRkenyLIv5SbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nz/uzkwGvtUh5/kDJwPsl6jjOkN8t34qVZeOssqsEL+kR/h1TbW7sTXMNKfCBAg/nVpMGKwgzeKRe32Vww/zCfRMKy8ukHScV3D81VEJoUsFdi3Y4WzOpss9vz2kwSPi9YzMlE8mCE0/J5LphlbsyqxuBt6WzGkM6cGCgQNfh/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpR5Uy6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4890CC116B1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761595080;
-	bh=Ng03B/maD6lMR0eaS2eBOidLYRkO4OlY8lz6H+r3S1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KJvqHj6eCZIvK/j801mk6loSMVFfz+73xGSV9F/6C5GACsNIvN8j9wVhlD5iU8Fwm
-	 GDuOZl4oKQHF0NxK2f9fjXBwhjIwFtJXuJ5EZbQufuYvythkjOczTP3fn422curGn8
-	 X3hkvN1HHHf8/6zAVoF4TTP2CLmh94wRcHqzTofN0YrdNcABmAMyKAPQtbcxd5jq/q
-	 E7YZmft5vKbQdd9pXln7+vgY18uSObfbUcFWFj2RPOYXP9sW4WEBcT/tW05nMDO9Z1
-	 JsgiU17LcIJW5gV+MPIwdnyhTx5ZtNCI8fu5dL4QIppKgcy4lAyOx5syLevlS2JvDV
-	 /VD3xjYfuoWkg==
-Date: Mon, 27 Oct 2025 21:57:56 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] keys: Annotate struct asymmetric_key_id with __counted_by
-Message-ID: <aP_OxDIHanHij4q2@kernel.org>
-References: <20251023174810.75805-2-thorsten.blum@linux.dev>
+	s=k20201202; t=1761595096;
+	bh=21xoq8e2YTTavQ6QdYsPHyalJVLnJhPRkenyLIv5SbM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UpR5Uy6w6hBiFRCVd27VosrKk88eElfQrSGG6pc+age10GdCLj4gzRE9ZPR1Has+4
+	 gvGujHlRoFvY0COjbnouzE2OyQPFt8qmNKHDu5cMvUQlhXkVvlmRlpw2xF8vJa7VbP
+	 4lcZeSrUxXlx2a89CPsFfj1vZV6oI3tF+GaeFaxiKVqsKazEPQE/sIm1aMp+25k2sZ
+	 ER7JQKFke0h/V0tvBJB05gy4sFeXuwZVVz/mnBxKp7Iiw4IFR5PkG337kioI8PBBho
+	 WBt8rHR2YS56734GG/1/mVDuteJtI00FwnDnohH1mlyG95Ul8o1ghkbieV9hI/dpOm
+	 n/FpyR8VnV7ew==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-65051376edbso1250954eaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:58:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSQygoOMTD9jlX6lYvACpth1O8sYl8A1TIFHNvucWLV9r6rTPAWBRTywtknA2S0dVLRl1l9FggYGEVCNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmRAjIekFvtXCruYHWfkuFoJFnPyY10h+k1G8R2UfmChiuuq21
+	/EinwEkZaQKQ0mR6LsQZ3tPnlJWVkuGaSAXLcZ3HwvYmI//d4lVHkReyxXDDFf1VVgo0sjqa/eO
+	TUA1lA6fDaBrDRepmgBQdu6GT0tfBZzc=
+X-Google-Smtp-Source: AGHT+IG7XzLriJJDxti4WCeIyZqCbp7IJ2wjld9yaoPJNtGQuTuKHIfgD/v32caY4BObbIP3IC6kx5ThRh1gk5Vcww0=
+X-Received: by 2002:a05:6808:3006:b0:43f:6790:f150 with SMTP id
+ 5614622812f47-44f6b9c7ff8mr445463b6e.9.1761595095640; Mon, 27 Oct 2025
+ 12:58:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023174810.75805-2-thorsten.blum@linux.dev>
+References: <20251024183824.5656-1-W_Armin@gmx.de>
+In-Reply-To: <20251024183824.5656-1-W_Armin@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 27 Oct 2025 20:58:04 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0juvqnn0A7pwpijhWkLDZB8U31T3J96a_Cr_RPN8C88iw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkk3K32kC2ieLv1aZ8czfnAIizdnOXET_I2Hmzs7y-FnaivqLxBwSS5abE
+Message-ID: <CAJZ5v0juvqnn0A7pwpijhWkLDZB8U31T3J96a_Cr_RPN8C88iw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] ACPI fan _DSM support
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 07:48:11PM +0200, Thorsten Blum wrote:
-> Add the __counted_by() compiler attribute to the flexible array member
-> 'data' to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  include/keys/asymmetric-type.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/keys/asymmetric-type.h b/include/keys/asymmetric-type.h
-> index 69a13e1e5b2e..1b91c8f98688 100644
-> --- a/include/keys/asymmetric-type.h
-> +++ b/include/keys/asymmetric-type.h
-> @@ -49,7 +49,7 @@ enum asymmetric_payload_bits {
->   */
->  struct asymmetric_key_id {
->  	unsigned short	len;
-> -	unsigned char	data[];
-> +	unsigned char	data[] __counted_by(len);
->  };
->  
->  struct asymmetric_key_ids {
-> -- 
-> 2.51.0
-> 
+On Fri, Oct 24, 2025 at 8:38=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> Microsoft has designed a _DSM interface for the ACPI fan device [1]
+> that allows the OS to set fan speed trip points. The ACPI firmware
+> will notify the ACPI fan device when said trip points are triggered.
+>
+> Unfortunately some device manufacturers (like HP) blindly assume that
+> the OS will use this _DSM interface and thus only update the fan speed
+> value returned by the _FST control method when sending a notification
+> to the ACPI fan device. This results in stale fan speed values being
+> reported by the ACPI fan driver [2].
+>
+> The first two patches add support for the ACPI fan notifications as
+> specified in ACPI 11.2.3. The last patch finally adds support for the
+> Microsoft _DSM interface.
+>
+> All patches where tested with a custom SSDT [3] and the acpi_call [4]
+> kernel module and appear to work just fine.
+>
+> [1] https://learn.microsoft.com/en-us/windows-hardware/design/device-expe=
+riences/design-guide
+> [2] https://github.com/lm-sensors/lm-sensors/issues/506
+> [3] https://github.com/Wer-Wolf/acpi-fan-ssdt/blob/master/ssdt-dsm.asl
+> [4] https://github.com/nix-community/acpi_call
+>
+> Changes since v2:
+> - drop already merged patches
+> - add links to the MSFT documentation in patch 3
+>
+> Changes since v1:
+> - use acpi_evaluate_dsm_typed() during _DSM initialization
+> - send ACPI netlink event when after handling a ACPI notification
+>
+> Armin Wolf (3):
+>   ACPI: fan: Add basic notification support
+>   ACPI: fan: Add hwmon notification support
+>   ACPI: fan: Add support for Microsoft fan extensions
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
+All applied as 6.19 material, thanks!
 
