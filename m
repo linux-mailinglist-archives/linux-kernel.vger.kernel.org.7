@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-872295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AECC0FD81
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:05:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A26C0FD8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4274F341DD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:05:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C479F4E297B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23775319843;
-	Mon, 27 Oct 2025 18:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91463168EC;
+	Mon, 27 Oct 2025 18:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7SlGX81"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tD9SBQWj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3EF230D35;
-	Mon, 27 Oct 2025 18:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8533081AE;
+	Mon, 27 Oct 2025 18:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588293; cv=none; b=GnNk56wvyZL9ZI+MfJCx1QB+lOBEpOblYDLtp452mrTj1D/zmU0xWaPArXmbFDUI91mQImDSRfA6RBouAjk0fvxlV7Ib56gkrGqPl0X7IRWbc1vBMJ+MrCzgq/4IhSVZnPwBc7bRkm++NGI5kQ78sAsBCmTOHuBg3S+mZxneNds=
+	t=1761588344; cv=none; b=SgVlyvTOQu44yX+ThA8TeHQaXgcE62q0IVBTPnDBG+BS2NEk6XAFgRrzaZbAX/BJ3R0n34ChjEGBSuI69WabQr9CrmGuGGlrOCMC1kRfzKWsGdhh9U6TBJO9tFDh1PpiR8a7s+KCQ2HPOuyRo/UU76Lsw274TmlLlZvpIJhTkqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588293; c=relaxed/simple;
-	bh=wC3dF4Z/2TLP6nYVtiNgty+OuO6sR3fKRJSKrIGVSQI=;
+	s=arc-20240116; t=1761588344; c=relaxed/simple;
+	bh=wgCi9Ns6pB1FTZmXRyJMfiJCFeTw2qdaAWD8i3X6+3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJnGdNMLY1sGloi0A4419PNkTgWKGbSFmzaa/Sxov3evNW0EygaTsBtxcsmg/atCGLfIoS/ES6RCjurykVZkgGbLn0G85+/nMeUOGHRY3mD46pDfuOHS2KDKqHrwII1F+jwd5mioWyo1TbzgtLxh4S1eit6rjb2WP/YDGGAD6t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7SlGX81; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB18C4CEF1;
-	Mon, 27 Oct 2025 18:04:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZIkF4mHC2PXV8Lj6+da54TokySUE64D66bV6qRXwcC1SBSWu3DGU4vESkwldZaC2KLuVc50h88P8/EgO1BuIPgsFHisrMi8zwRCSwlSj0ErWEthzrhgaRXNOV3u5nHHnaY3wbCx0YO23ViwKfNE/NP6e++LPQhDBEDYnLI3TV5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tD9SBQWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8E5C4CEF1;
+	Mon, 27 Oct 2025 18:05:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761588290;
-	bh=wC3dF4Z/2TLP6nYVtiNgty+OuO6sR3fKRJSKrIGVSQI=;
+	s=k20201202; t=1761588343;
+	bh=wgCi9Ns6pB1FTZmXRyJMfiJCFeTw2qdaAWD8i3X6+3E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e7SlGX81jMR6yj1IeJWwwVYQ3+3tPTmCK831vU1PnUIt/iyPj3GDmL9XiYKXpNDQ2
-	 Z/LRHnTrpEIFm63gcu23hvDSaBvb82i2geNIvK4sey3zIvfbtoBKF2HX15Mb64mP1H
-	 81WWYU6T9B1ikykq2fnt3FSFoX+2h0A+ih/98aLlfjn6aGOO2h1g7gGYFT/6Q7aTAw
-	 oILKlawFztGueWsy1Fqu1lVYO9XvG15dNOuHf4Hm5aGkdfStrLGi39FfRz6paFKUvk
-	 sjbjjOs/5XEoKmxLLxO7nuYcFWMhILxQe6vS5CFaSHHqsyg8dqQL681CX7/X9jaXPs
-	 Aikt7gxqowQ4A==
-Date: Mon, 27 Oct 2025 13:04:49 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.li@nxp.com>,
-	Frank Li <frank.li@nxp.com>, imx@lists.linux.dev,
-	Xu Yang <xu.yang_2@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: perf: fsl-imx-ddr: Add compatible
- string for i.MX8QM, i.MX8QXP and i.MX8DXL
-Message-ID: <176158828675.1280181.1101688513107475187.robh@kernel.org>
-References: <20251024-qm_dts-v2-0-7a7e07022ed6@nxp.com>
- <20251024-qm_dts-v2-1-7a7e07022ed6@nxp.com>
+	b=tD9SBQWjeGLzTQ0V0fy/F5g6P0M7mpQhxtv48ZD1BUZYmVA+CAfI6FdaAmBRMU+mv
+	 bWXgRTuLYzmNNOTTRQz/dvilHw9YmuN+1prbpvn+o06FvQqP2YWhq2s7k+XRHNCob+
+	 PowKNv6neni87VctfY8gZMsRXnLcSWNP4SG5Bmkq4GKV50TRrN4NHZC5j7mIHNmJsF
+	 3zsLgqsNe5TeT4Qf0v7IIDKtVjO9y8Z7b2LKjEkJxfTk19IcaMDBccp36me3Xt0I6F
+	 fjAvcOwGYraZKPWTgNyBiQNy/TuyN/GOaYYmOV0p5yXKJQvUuZtJ/H+DvjeW4FO/0g
+	 fpoxCwZ7gF10Q==
+Date: Mon, 27 Oct 2025 08:05:42 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: David Vernet <void@manifault.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
+Subject: Re: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
+ called from anywhere
+Message-ID: <aP-0dkIQa7iwHv5e@slm.duckdns.org>
+References: <20251025001849.1915635-1-tj@kernel.org>
+ <20251025001849.1915635-4-tj@kernel.org>
+ <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
+ <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
+ <20251027174953.GB3419281@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,25 +63,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251024-qm_dts-v2-1-7a7e07022ed6@nxp.com>
+In-Reply-To: <20251027174953.GB3419281@noisy.programming.kicks-ass.net>
 
-
-On Fri, 24 Oct 2025 14:17:11 -0400, Frank Li wrote:
-> Add compatible string fsl,imx8qm-ddr-pmu, fsl,imx8qxp-ddr-pmu, which
-> fallback to fsl,imx8-ddr-pmu and fsl,imx8dxl-db-pmu (for data bus fabric).
+On Mon, Oct 27, 2025 at 06:49:53PM +0100, Peter Zijlstra wrote:
+> > That's what I thought too and the gap between balance() and pick_task() can
+> > be closed that way. However, while plugging that, I realized there's another
+> > bigger gap between ttwu() and pick_task() because ttwu() can directly
+> > dispatch a task into the local DSQ of a CPU. That one, there's no way to
+> > close without a global hook.
 > 
-> Add clocks, clock-names for fsl,imx8dxl-db-pmu and keep the same
-> restriction for existing compatible strings.
+> This would've been prime Changelog material. As is the Changelog was so
+> vague I wasn't even sure it was that particular problem.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> changes in v2
-> - move fsl,imx8qm-ddr-pmu, fsl,imx8qxp-ddr-pmu under enum
-> ---
->  .../devicetree/bindings/perf/fsl-imx-ddr.yaml      | 29 +++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
+> Please update the changelog to be clearer.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Oh yeah, good point.
 
+> Also, why is this patch already in a pull request to Linus? what's the
+> hurry.
+
+Hmmm? It shouldn't be. Let me check again. No, it isn't. What are you
+looking at?
+
+Thanks.
+
+-- 
+tejun
 
