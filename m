@@ -1,171 +1,118 @@
-Return-Path: <linux-kernel+bounces-871660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1DBC0E006
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:25:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393B4C0E012
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:26:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1A61889373
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A0B188A214
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F177319ADBA;
-	Mon, 27 Oct 2025 13:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E128296BDC;
+	Mon, 27 Oct 2025 13:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZU8Krlld"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihRsIql2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D4023EAA7;
-	Mon, 27 Oct 2025 13:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEDE21C9EA;
+	Mon, 27 Oct 2025 13:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761571525; cv=none; b=nUfya5vyR+4y/L/QrZhCsGM/N3gK1LypPcWzHrDqLBpi3a0JetAWk2N7/XdNyQJE7vXLpyV+vo734ajUJGF9sl8nEf6hCUpHeq5cgw7uOGnBenk1KqT0RO/UxvD/oLe+sHvZfI+eOHN+uTrsFwKT4ZaVdRxOc4glct124BQZkPs=
+	t=1761571548; cv=none; b=BC8rF8WWq5+mvt2go/9Z5+huFywzjpmZNkMqlCgUmCBCTU63hw/l2TDy8Q+/ZbPKeaXf54Cd+mTHRckJ+O4+3jI+uiGNjMfiNTe9cC0dQPvJIsr1ZRBeMGBP0Q09A5j/Dzv65pcngi8DRCJcuQpqi6lk2wiI7xlkUt4asxY1itE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761571525; c=relaxed/simple;
-	bh=dFkgoufaNMPNcNu22JUe9K6hYmvZv9p3G2j09geRwu0=;
+	s=arc-20240116; t=1761571548; c=relaxed/simple;
+	bh=zNGpOEoYqx7xy5cROnhdp1a4nB6KZU1eGaURTKMN9ME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usLj1YNp2LlEjAqq+qQZYJHu9sTXe8UY0ZbpP0fNSky4DGuaedO0Kex5yGOkNyjKu1u02wJ5B6u3XNuzP1SRPeEH6z4VRbi3B4Tr0ZQDB1kgTTOOCmzq060mGwcwLqRbuZexMHH3ZycO5VSb6y2kfEvPHKyHjOBemM7YJCLi3E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZU8Krlld; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=6yAaSpVe7rlneuNUMCQd/n4cqFTVCZP+SQLMX8bewCo=; b=ZU
-	8KrlldZNgql/8qkwAb9uhuNxVsd5I1H7INbVtNN/MzB1LIReTVz+0ZlxgBninTWx9NT36V/aLO4U3
-	WG1xe+i6zNumIz/YFU5KxbMOXwo2Jdkt+qYxAxgXo5jVaFy8IujCr3MAmfCmZieSlG4YGEQFnm88/
-	im47h56njpZ39sw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDNDk-00CCDQ-R4; Mon, 27 Oct 2025 14:25:12 +0100
-Date: Mon, 27 Oct 2025 14:25:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1] net: phy: dp83867: Disable EEE support as not
- implemented
-Message-ID: <df3aac25-e8e9-46cb-bd92-637822665080@lunn.ch>
-References: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
- <ae723e7c-f876-45ef-bc41-3b39dc1dc76b@lunn.ch>
- <664ef58b-d7e6-4f08-b88f-e7c2cf08c83c@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHyn4w1cmIhhpu2CIDkdbiHqmJ3AZ9CIyH+ynNlV0wjMlT3NmPCi0a7adOJAro/2NOcpCHTI2Ku8iAD14zbYT1UEnAjp3aXaelZOEOfPsCHgxSgrDChptt2bGaK1kkJZcPRfADaRPUYl4K3LWy+a7feoj5dCJ9F9dbhYE5OeLfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihRsIql2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735D4C4CEF1;
+	Mon, 27 Oct 2025 13:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761571547;
+	bh=zNGpOEoYqx7xy5cROnhdp1a4nB6KZU1eGaURTKMN9ME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ihRsIql2mINFsL666nVwdasscR0qhrmzn7orDsLo4NkORvVAozkZweHJ2dTrgAOrq
+	 OuVH8alQ4Aqs6rBDcnJ8SZwrHeIl05V5xyja45x3YdzIJssQ4usT/CtGFI6p2wx2/4
+	 3U3B+Rv86/nd/Hdnb1/gTsWKcgZk+elgPAM+KZezXaSmVxD8w1RBloWwYjp2dY5yxr
+	 SW2qBemry5Nv/TWLV5GNerxZVeg5VBNNaNnyTc2hutKctEEFoP+S2Ss7ePftZqhCmG
+	 Ub+J1osOQfVOZ/gOSKPSmHtF3hmNeb2gtuAo/m3m1yFEULeitbyduwncDwfqOc3VqJ
+	 8GbNj/GhG3Rjg==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vDNEM-0000000004y-3FQc;
+	Mon, 27 Oct 2025 14:25:50 +0100
+Date: Mon, 27 Oct 2025 14:25:50 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	"David E . Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+	Han Jingoo <jingoohan1@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
+Message-ID: <aP9y3nK0FlgINa0o@hovoldconsulting.com>
+References: <20251024210514.1365996-1-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <664ef58b-d7e6-4f08-b88f-e7c2cf08c83c@gmail.com>
+In-Reply-To: <20251024210514.1365996-1-helgaas@kernel.org>
 
-On Mon, Oct 27, 2025 at 01:57:48PM +0100, Emanuele Ghidoli wrote:
+On Fri, Oct 24, 2025 at 04:04:57PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
+> This reverts commit a729c16646198872e345bf6c48dbe540ad8a9753.
 > 
-> On 27/10/2025 00:45, Andrew Lunn wrote:
-> >> Since the introduction of phylink-managed EEE support in the stmmac driver,
-> >> EEE is now enabled by default, leading to issues on systems using the
-> >> DP83867 PHY.
-> > 
-> > Did you do a bisect to prove this?
-> Yes, I have done a bisect and the commit that introduced the behavior on our
-> board is 4218647d4556 ("net: stmmac: convert to phylink managed EEE support").
+> Prior to a729c1664619 ("PCI: qcom: Remove custom ASPM enablement code"),
+> the qcom controller driver enabled ASPM, including L0s, L1, and L1 PM
+> Substates, for all devices powered on at the time the controller driver
+> enumerates them.
 > 
-> > 
-> >> Fixes: 2a10154abcb7 ("net: phy: dp83867: Add TI dp83867 phy")
-> > 
-> > What has this Fixes: tag got to do with phylink?
-> I think that the phylink commit is just enabling by default the EEE support,
-> and my commit is not really fixing that. It is why I didn't put a Fixes: tag
-> pointing to that.
+> ASPM was *not* enabled for devices powered on later by pwrctrl (unless the
+> kernel was built with PCIEASPM_POWERSAVE or PCIEASPM_POWER_SUPERSAVE, or
+> the user enabled ASPM via module parameter or sysfs).
 > 
-> I’ve tried to trace the behavior, but it’s quite complex. From my testing, I
-> can summarize the situation as follows:
+> After f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for
+> devicetree platforms"), the PCI core enabled all ASPM states for all
+> devices whether powered on initially or by pwrctrl, so a729c1664619 was
+> unnecessary and reverted.
 > 
-> - ethtool, after that patch, returns:
-> ethtool --show-eee end0
-> EEE settings for end0:
->         EEE status: enabled - active
->         Tx LPI: 1000000 (us)
->         Supported EEE link modes:  100baseT/Full
->                                    1000baseT/Full
->         Advertised EEE link modes:  100baseT/Full
->                                     1000baseT/Full
->         Link partner advertised EEE link modes:  100baseT/Full
->                                                  1000baseT/Full
-> - before that patch returns, after boot:
-> EEE settings for end0:
->         EEE status: disabled
->         Tx LPI: disabled
->         Supported EEE link modes:  100baseT/Full
->                                    1000baseT/Full
->         Advertised EEE link modes:  Not reported
->         Link partner advertised EEE link modes:  100baseT/Full
->                                                  1000baseT/Full
-> - Enabling EEE manually using ethtool, triggers the problem too (and ethtool
-> -show-eee report eee status enabled):
-> ethtool --set-eee end0 eee on tx-lpi on
-> ethtool --show-eee end0
-> EEE settings for end0:
->         EEE status: enabled - active
->         Tx LPI: 1000000 (us)
->         Supported EEE link modes:  100baseT/Full
->                                    1000baseT/Full
->         Advertised EEE link modes:  100baseT/Full
->                                     1000baseT/Full
->         Link partner advertised EEE link modes:  100baseT/Full
->                                                  1000baseT/Full
+> But f3ac2ff14834 was too aggressive and broke platforms that didn't support
+> CLKREQ# or required device-specific configuration for L1 Substates, so
+> df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> enabled only L0s and L1.
 > 
-> I understand Russell point of view but from my point of view EEE is now
-> enabled by default, and before it wasn't, at least on my setup.
+> On Qualcomm platforms, this left L1 Substates disabled, which was a
+> regression.  Revert a729c1664619 so L1 Substates will be enabled on devices
+> that are initially powered on.  Devices powered on by pwrctrl will be
+> addressed later.
+> 
+> Fixes: df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-We like to try to understand what is going on, and give accurate
-descriptions. You have given us important information here, which at
-minimum should go into the commit message, but more likely, it will
-help lead us to the correct fix.
+This indeed re-enables L1SS for the X13s NVMe:
 
-So, two things here. You say:
+Reported-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/lkml/aPuXZlaawFmmsLmX@hovoldconsulting.com/
+Tested-by: Johan Hovold <johan@kernel.org>
 
-> I think that the phylink commit is just enabling by default the EEE support,
-
-That needs confirming, because you are blaming the conversion to
-phylink, not that phylink now enabled EEE by default. Russell also
-tries to avoid behaviour change, which this clearly is. We want a
-better understanding what caused this behaviour change.
-
-Also:
-
-> - Enabling EEE manually using ethtool, triggers the problem too (and ethtool
-> -show-eee report eee status enabled):
-
-This indicates EEE has always been broken. This brokenness has been
-somewhat hidden in the past, and it is the change in behaviour in
-phylink which exposed this brokenness. A commit message using these
-words would be much more factually correct, and it would also fit with
-the Fixes: tag you used.
-
-So, please work with Russell. I see two things which would be good to
-understand before a new version of the patch is submitted:
-
-What cause the behaviour change such that EEE is now enabled? Was it
-deliberate? Should something be change to revert that behaviour
-change?
-
-Given that EEE has always been broken, do we understand it
-sufficiently to say it is not fixable? Is there an errata? Are we sure
-it is the PHY and not the MAC which is broken?
-
-	Andrew
+Johan
 
