@@ -1,164 +1,393 @@
-Return-Path: <linux-kernel+bounces-871416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2C5C0D2D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35FCC0D308
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94F2404558
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:38:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C61A24F369B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89442FC00E;
-	Mon, 27 Oct 2025 11:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A502FB098;
+	Mon, 27 Oct 2025 11:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VGo7/+Ys"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e+a9nc01"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EEF2FBE18
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D282FB62C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565082; cv=none; b=LAeUJEmw9gIqxkvFsBRj9wTdtrBtEWytwNFLIKkboGrkC++ez6YNKn9sXnwa9pO9Xz/jdJnethG53uStHxc4qukmo2XYJNxubjF2GhDeQpTEWsVVyiC3CrDZVpxjFoan2Pc/+gazbvcoo/iR7rMfgeK+PRpC9oixswWqE2vnf80=
+	t=1761565105; cv=none; b=V15Ay/Vxraqmuz7L0hi+N99AHPKMuCOKoGbtptXKduZM0vrA3hq3nsKwMJtPxDoXTjNKoK043spqv/Fy1QcyN+CBag8v0aSwqrKuDGJj1ChFVjoBByZVmlVUDA+lDT7aRC6rz0d+hIuIr+p885yrdZDVyKuaQ9hqjmfTNNQtbWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565082; c=relaxed/simple;
-	bh=JtPobr8U8OyEtWz0+PGGaZRwq4swI0tEr8EEUNz/8Bo=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=TG1O339IaFVbU/RXa0rZfCQwswfSHNooo95dxP4vyHxMvR7x51bZFo1xWlIgnPtqcsDpyMpyOAi8RtmcGPVJ9NnOYX+r+aByjViJBnrTfvy9nJrpGyDf38XwlUXwYf0WqrtyLRb966rKSXZGdc0UQwZRkrtkklMozPdZz2NiZ1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VGo7/+Ys; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761565079;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=0IYenQhIa9PZj00vW7IIruD0UnAnXJ3V9tGf3ph9/f0=;
-	b=VGo7/+Ys5Dd3Pzzf8dyqsznvrnmthjtvQpStb3yzJ0GONnh63DaqEGsY8V5YNqOT/OqjP3
-	dNgBECqsl7SbV+21uZ6hij5v7+wrj6gU2ZJjc5EfI7t/qNe6+ss4gp90Qr5FpDmWfiuqI2
-	6EMR/Tu3bpt7nIVsBZREh6HNGZHiBQA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-570-Ef3ZD4NdMJOuwTQB_JW2Bg-1; Mon, 27 Oct 2025 07:37:58 -0400
-X-MC-Unique: Ef3ZD4NdMJOuwTQB_JW2Bg-1
-X-Mimecast-MFC-AGG-ID: Ef3ZD4NdMJOuwTQB_JW2Bg_1761565077
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-4256fae4b46so3221648f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:37:57 -0700 (PDT)
+	s=arc-20240116; t=1761565105; c=relaxed/simple;
+	bh=MFRb+tw0VjFkBFmO6U3kt1GaIjDLVNtMZCPIqv16Yjk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ERgM5vZqrD27hDB+gFg0hm6G0/ccy5hniz9/JZa30MmkfqRd15/GkbM5v52OTpQ5q1s5NK/gUOoryM99McbrZ+F1QWoAZaglkNF1PQ+58n5pRzHmayFFiH66w5Og0x4GA1BKscUBE+9GSj7J47cuvUkCYcl3FVSRixWPiq0KFBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e+a9nc01; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7817c2d909cso50294377b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761565103; x=1762169903; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kM2IZ9cwj+UJLgsANeLqvUwZb/NBB1zAaY/ie/RunGc=;
+        b=e+a9nc01AGSA8Lvua+96yaabk/eXuxnPnhUAzDu/AjWwCOmeX8lJFj3En/+QrtP/rj
+         rFqquYO9mSAD+7Zfzf8V/Rze2lMQS6S/gR9Tjb7YRHKRbYmCJ/dn7uGRQADsXnoi0+vx
+         LhEGjDkh6Apc0t81WeOs933tBimoAvVpAfJotului54NhjItlJXQwjnMrCP7srTx2XQR
+         bYmA7yFNU4qYb5nRpB17KvCDiI924u1EIy1vCnoGGzmZCbFMYeNBqyslPPhFitWU20dl
+         TTwIbNZWz1VH3qpowHdP588+yFCvPHzmRuRTd+5/bdAiVEezaQoC6+TBJ2xVy67BvaWf
+         1jWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761565077; x=1762169877;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0IYenQhIa9PZj00vW7IIruD0UnAnXJ3V9tGf3ph9/f0=;
-        b=oklBGGcFL56OtvODC5aKUqgdLz0ZpVMrwB2v0FXK31E/dsuYrLwylPjXpD0B7c7Sxi
-         hk/+/zdggutSyynkmOrxs4zZxDqd+r2AnK1JFzVWQmfLIkSeZvphobn72kVSFdDry3bu
-         dHHrs8lRVcVw6J8s/c6JCfhwbAJT2vPrnG4yXpqVnAuvysmLyyC2XwItWtHnSeZdZVjs
-         x56IMrkOiETTN5+SXepRq9J1syUg5w1FPe0qGb/F1L4fY4HmIahLd/bXoNPjJCyfCVtu
-         UWSM9K6LQu4gWWJwfly5Wt30xGM9FFjVXZ0oyKXvyvbqVtcDNFsWF7i647FmOt3tgsvW
-         Rf0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXUsK9jOR3S3kWIMr0iH1bcNxF+AOW3XSB8U0Aj1YfMGrH2DqIk6+9bOCIterRZorbTqiMQqK6EYeMIQ44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu0FyDNde1bcjmEJTjdTxR3nEsdazACaEULM3LsjyhiZHxpm9F
-	F4g6h0VzkOGQd0WheR/ZXosXvWXHWaW9zr75FyZJhjXzDkk3NIuWtcLtiW49EAs20lXvnEQMNuH
-	cXpkcsqWZBcIrGdssboaS6D5FPNLU+dPqKGjQFhY4qA1XwMHyGLzdlD/3f8n4RYuyOw==
-X-Gm-Gg: ASbGncsjUGQ2p34mmCAQssbyLXHa/6iYVkkmmB9krf9HMIGhQ+tLpYtw15yAHMBfMsd
-	v1eefeEEUbNRASE4NbIOlR5pZh1zOiNZ4e93E/boBSe9v+T4lyAjt7qJDVIdoT2AxJTtMelPhop
-	1QtmxSz6nhlQ9StOREfzjv2EKjJNowUM8ty3DpUCZkaHlFqm3GWDB1uThLMGZqAun2lOaZtNNIb
-	pxNKapvKYbmtjdU2UOv5/NDa/PJL6PyMY691pY1kO4UQpsaEdUyVDOtFLkMblIMryQdxH4gdRoQ
-	Ca7HyJzY9KAMj4UZtxbNbPBD60lBOZnWciKVrMdewL49vB7FmMWVkhoiHgGM8V7rUDuQHNL97mT
-	pqzqZZCXtRU1mgIDb2/5d2dB6sGhKR/sEEq0Qptt8YzgKrO7o
-X-Received: by 2002:a5d:5c89:0:b0:425:7406:d298 with SMTP id ffacd0b85a97d-42704d7e9ebmr30407494f8f.5.1761565076785;
-        Mon, 27 Oct 2025 04:37:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGx4uKgsYoM0fU52HYyWEvQMrYgypwVSrAUmI9lNjcwUX5i2uMZCdkDcF1SDu586SVN9WApQ==
-X-Received: by 2002:a5d:5c89:0:b0:425:7406:d298 with SMTP id ffacd0b85a97d-42704d7e9ebmr30407464f8f.5.1761565076305;
-        Mon, 27 Oct 2025 04:37:56 -0700 (PDT)
-Received: from rh (p200300f6af131a0027bd20bfc18c447d.dip0.t-ipconnect.de. [2003:f6:af13:1a00:27bd:20bf:c18c:447d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb7e8sm14108931f8f.19.2025.10.27.04.37.55
+        d=1e100.net; s=20230601; t=1761565103; x=1762169903;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kM2IZ9cwj+UJLgsANeLqvUwZb/NBB1zAaY/ie/RunGc=;
+        b=JaJZ6uBM1JIyCJmdhImTP9TyHNDrPHUg8oCicovV0tedkt6ygcj4gaTQ6uvrwmpuvw
+         D6mjin6vyDjqMPFk0bagvWQ1bITNLGXk8S2riMh6RKtFTuARp+NpSN0o+eTyUYjL/w5L
+         JJlomfub+jgrjWCzR2IU98l91Nteec3nmzYz6Cz1+87qBJ9kKp2LPAvTgRQH1dGnFcjq
+         EWjmYz2gvDNhUd2Eoalhkz4XJEKv9Mr+efN7asd507LI93Q17XCdR2G33I9Zbhti6sJY
+         TVqvhGdKUfgXtj3+ZiykKgkPgeh1S2EF/dB5bLzRCad+OQqdvNM8KOIui7KSRF3dL9Ry
+         w2dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVn77xOzBjkEykGfp08uRaS7ntuj+UNuvlr4ZoxceNKxdhNFCQQhBHqOuVksZuhXAaBLapBHzYyv0Q+Es0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwofO1NwTOxeDUItX2eb9nHyQPLifUjWDS8cIT7A+lGWEFQbUF0
+	+eniQRoDADdCQj4po+xXiyn2GxOF8bYGRmAxrAWoCp/P13FhHC3UFjZyb8noyJiLtA==
+X-Gm-Gg: ASbGncuP9GbFHjDDWBq9Iina7K7EioKY/1Ou0RjX6IWOmKxMeOeCvrbEdCKr8iWUXgy
+	i1aWnKVjciDWMVNxUXoOovKA+4AvxRCdpvytv+6M0vdrqdMNKzGA8PsOV1bWKD1l1zG1oAi97iC
+	L9mASnl+j75C4ErL9UTp4Y6GPICG5snTqW4EtFvelS0stdzKOC5druXRBOQv4HUyco3L+FKntOr
+	f/oXz5kwt8mCJj/uQ+Dpvv1UKaYNGg++2rxiP7h2c3k2l/zS1lB7/halFmZzy5pTGubnplHbibi
+	wAI+dHAPA/zy++UjxB/KXFIkPwa0CAbCuaajT9vA2txIQtWsE+9mjkPM28Op9TXS32a0Z46SSGH
+	iyHJt4TpRprbIsp22IDK4SC4ErK3PoHP5CGITexIp3m9TF6pGhdIxJhnUPDN23Gy+LjefVAieNp
+	y+gKHlPOgh04TApMJpClPCxhnThBvcUC72NK491AxtbzMK6LtB7NnbZTDNxpb8
+X-Google-Smtp-Source: AGHT+IE4Ub7ALPlx8peQtM84EXgIvuQeQhQB62WRPzDKnIKsnig9v60A6eNZIkmhT0CWSJohULobMg==
+X-Received: by 2002:a05:690c:4806:b0:784:8c2c:320e with SMTP id 00721157ae682-7848c2c3fe4mr478987887b3.34.1761565102322;
+        Mon, 27 Oct 2025 04:38:22 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63f4c4724b9sm2225325d50.27.2025.10.27.04.38.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 04:37:55 -0700 (PDT)
-Date: Mon, 27 Oct 2025 12:37:54 +0100 (CET)
-From: Sebastian Ott <sebott@redhat.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-    Sascha Bischoff <Sascha.Bischoff@arm.com>
-cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-    Zenghui Yu <yuzenghui@huawei.com>, Joey Gouly <joey.gouly@arm.com>, 
-    Joey Gouly <joey.gouly@arm.com>, Will Deacon <will@kernel.org>, 
-    linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Failing no-vgic-v3 test
-Message-ID: <f9c7fffa-53ba-a506-b48b-07e3df2d1d5a@redhat.com>
+        Mon, 27 Oct 2025 04:38:21 -0700 (PDT)
+Date: Mon, 27 Oct 2025 04:38:18 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
+cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
+    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Tvrtko Ursulin <tursulin@ursulin.net>, 
+    Boris Brezillon <boris.brezillon@collabora.com>, 
+    Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
+    Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>, 
+    =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+    Hugh Dickins <hughd@google.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Al Viro <viro@zeniv.linux.org.uk>, 
+    =?UTF-8?Q?Miko=C5=82aj_Wasiak?= <mikolaj.wasiak@intel.com>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Nitin Gote <nitin.r.gote@intel.com>, 
+    Andi Shyti <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Christopher Healy <healych@amazon.com>, 
+    Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+    linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+    intel-gfx@lists.freedesktop.org, linux-mm@kvack.org, 
+    linux-doc@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v5 04/12] drm/gem: Introduce drm_gem_get_unmapped_area()
+ fop
+In-Reply-To: <20251021113049.17242-5-loic.molinari@collabora.com>
+Message-ID: <f34bd4ef-5779-b364-0df6-e52f8377b461@google.com>
+References: <20251021113049.17242-1-loic.molinari@collabora.com> <20251021113049.17242-5-loic.molinari@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="-1463770367-2004846092-1761565101=:3513"
 
-Hey,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-on an ampere altra I've got a sad selftest:
+---1463770367-2004846092-1761565101=:3513
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-[root@virtlab-arm11 kvm]# ./arm64/no-vgic-v3
-Random seed: 0x6b8b4567
-==== Test Assertion Failure ====
-   arm64/no-vgic-v3.c:66: handled
-   pid=3793 tid=3793 errno=4 - Interrupted system call
-      1  0x0000000000402feb: test_run_vcpu at no-vgic-v3.c:128
-      2  0x000000000040214f: test_guest_no_gicv3 at no-vgic-v3.c:155 (discriminator 17)
-      3   (inlined by) main at no-vgic-v3.c:174 (discriminator 17)
-      4  0x0000ffff873eb587: ?? ??:0
-      5  0x0000ffff873eb65f: ?? ??:0
-      6  0x00000000004022af: _start at ??:?
-   ICC_PMR_EL1 no read trap
+On Tue, 21 Oct 2025, Lo=C3=AFc Molinari wrote:
 
-This is a guest without VGICv3 on GICv3 HW. The test expects UNDEF on reg
-access - which is not happening since:
+> mmap() calls on the DRM file pointer currently always end up using
+> mm_get_unmapped_area() to get a free mapping region. On builds with
+> CONFIG_TRANSPARENT_HUGEPAGE enabled, this isn't ideal for GEM objects
+> backed by shmem buffers on mountpoints setting the 'huge=3D' option
+> because it can't correctly figure out the potentially huge address
+> alignment required.
+>=20
+> This commit introduces the drm_gem_get_unmapped_area() function which
+> is meant to be used as a get_unmapped_area file operation on the DRM
+> file pointer to lookup GEM objects based on their fake offsets and get
+> a properly aligned region by calling shmem_get_unmapped_area() with
+> the right file pointer. If a GEM object isn't available at the given
+> offset or if the caller isn't granted access to it, the function falls
+> back to mm_get_unmapped_area().
+>=20
+> This also makes drm_gem_get_unmapped_area() part of the default GEM
+> file operations so that all the DRM drivers can benefit from more
+> efficient mappings thanks to the huge page fault handler introduced in
+> previous commit 'drm/shmem-helper: Add huge page fault handler'.
+>=20
+> The shmem_get_unmapped_area() function needs to be exported so that
+> it can be used from the DRM subsystem.
+>=20
+> v3:
+> - add missing include: 'linux/sched/mm.h'
+> - forward to shmem layer in builds with CONFIG_TRANSPARENT_HUGEPAGE=3Dn
+>=20
+> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
 
-3193287ddffb KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3 guests
+Seems reasonable, but a couple of minor remarks below.
 
-As a local fix I've done:
-diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
-index 6fbb4b099855..1fe53a021926 100644
---- a/arch/arm64/kvm/vgic/vgic-v3.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3.c
-@@ -297,11 +297,15 @@ void vcpu_set_ich_hcr(struct kvm_vcpu *vcpu)
-  {
-  	struct vgic_v3_cpu_if *vgic_v3 = &vcpu->arch.vgic_cpu.vgic_v3;
+> ---
+>  drivers/gpu/drm/drm_gem.c | 107 ++++++++++++++++++++++++++++++--------
+>  include/drm/drm_gem.h     |   4 ++
+>  mm/shmem.c                |   1 +
+>  3 files changed, 90 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index a1a9c828938b..a98d5744cc6c 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -36,6 +36,7 @@
+>  #include <linux/module.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/pagevec.h>
+> +#include <linux/sched/mm.h>
+>  #include <linux/shmem_fs.h>
+>  #include <linux/slab.h>
+>  #include <linux/string_helpers.h>
+> @@ -1187,36 +1188,27 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, =
+unsigned long obj_size,
+>  }
+>  EXPORT_SYMBOL(drm_gem_mmap_obj);
+> =20
+> -/**
+> - * drm_gem_mmap - memory map routine for GEM objects
+> - * @filp: DRM file pointer
+> - * @vma: VMA for the area to be mapped
+> - *
+> - * If a driver supports GEM object mapping, mmap calls on the DRM file
+> - * descriptor will end up here.
+> - *
+> - * Look up the GEM object based on the offset passed in (vma->vm_pgoff w=
+ill
+> - * contain the fake offset we created when the GTT map ioctl was called =
+on
+> - * the object) and map it with a call to drm_gem_mmap_obj().
+> - *
+> - * If the caller is not granted access to the buffer object, the mmap wi=
+ll fail
+> - * with EACCES. Please see the vma manager for more information.
+> +/*
+> + * Look up a GEM object in offset space based on the exact start address=
+=2E The
+> + * caller must be granted access to the object. Returns a GEM object on =
+success
+> + * or a negative error code on failure. The returned GEM object needs to=
+ be
+> + * released with drm_gem_object_put().
+>   */
+> -int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> +static struct drm_gem_object *
+> +drm_gem_object_lookup_from_offset(struct file *filp, unsigned long start=
+,
+> +=09=09=09=09  unsigned long pages)
+>  {
+>  =09struct drm_file *priv =3D filp->private_data;
+>  =09struct drm_device *dev =3D priv->minor->dev;
+>  =09struct drm_gem_object *obj =3D NULL;
+>  =09struct drm_vma_offset_node *node;
+> -=09int ret;
+> =20
+>  =09if (drm_dev_is_unplugged(dev))
+> -=09=09return -ENODEV;
+> +=09=09return ERR_PTR(-ENODEV);
+> =20
+>  =09drm_vma_offset_lock_lookup(dev->vma_offset_manager);
+>  =09node =3D drm_vma_offset_exact_lookup_locked(dev->vma_offset_manager,
+> -=09=09=09=09=09=09  vma->vm_pgoff,
+> -=09=09=09=09=09=09  vma_pages(vma));
+> +=09=09=09=09=09=09  start, pages);
+>  =09if (likely(node)) {
+>  =09=09obj =3D container_of(node, struct drm_gem_object, vma_node);
+>  =09=09/*
+> @@ -1235,14 +1227,85 @@ int drm_gem_mmap(struct file *filp, struct vm_are=
+a_struct *vma)
+>  =09drm_vma_offset_unlock_lookup(dev->vma_offset_manager);
+> =20
+>  =09if (!obj)
+> -=09=09return -EINVAL;
+> +=09=09return ERR_PTR(-EINVAL);
+> =20
+>  =09if (!drm_vma_node_is_allowed(node, priv)) {
+>  =09=09drm_gem_object_put(obj);
+> -=09=09return -EACCES;
+> +=09=09return ERR_PTR(-EACCES);
+>  =09}
+> =20
+> -=09ret =3D drm_gem_mmap_obj(obj, drm_vma_node_size(node) << PAGE_SHIFT,
+> +=09return obj;
+> +}
+> +
+> +/**
+> + * drm_gem_get_unmapped_area - get memory mapping region routine for GEM=
+ objects
+> + * @filp: DRM file pointer
+> + * @uaddr: User address hint
+> + * @len: Mapping length
+> + * @pgoff: Offset (in pages)
+> + * @flags: Mapping flags
+> + *
+> + * If a driver supports GEM object mapping, before ending up in drm_gem_=
+mmap(),
+> + * mmap calls on the DRM file descriptor will first try to find a free l=
+inear
+> + * address space large enough for a mapping. Since GEM objects are backe=
+d by
+> + * shmem buffers, this should preferably be handled by the shmem virtual=
+ memory
+> + * filesystem which can appropriately align addresses to huge page sizes=
+ when
+> + * needed.
+> + *
+> + * Look up the GEM object based on the offset passed in (vma->vm_pgoff w=
+ill
+> + * contain the fake offset we created) and call shmem_get_unmapped_area(=
+) with
+> + * the right file pointer.
+> + *
+> + * If a GEM object is not available at the given offset or if the caller=
+ is not
+> + * granted access to it, fall back to mm_get_unmapped_area().
+> + */
+> +unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long=
+ uaddr,
+> +=09=09=09=09=09unsigned long len, unsigned long pgoff,
+> +=09=09=09=09=09unsigned long flags)
+> +{
+> +=09struct drm_gem_object *obj;
+> +=09unsigned long ret;
+> +
+> +=09obj =3D drm_gem_object_lookup_from_offset(filp, pgoff, len >> PAGE_SH=
+IFT);
+> +=09if (IS_ERR(obj))
+> +=09=09return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
+> +=09=09=09=09=09    flags);
+> +
+> +=09ret =3D shmem_get_unmapped_area(obj->filp, uaddr, len, 0, flags);
+> +
+> +=09drm_gem_object_put(obj);
+> +
+> +=09return ret;
+> +}
+> +EXPORT_SYMBOL(drm_gem_get_unmapped_area);
 
-  	if (!vgic_is_v3(vcpu->kvm))
-  		return;
+Not something I'll make an issue of, but this does look rather like
+a drm EXPORT_SYMBOL() of a shmem EXPORT_SYMBOL_GPL().
 
-  	/* Hide GICv3 sysreg if necessary */
--	if (vcpu->kvm->arch.vgic.vgic_model == KVM_DEV_TYPE_ARM_VGIC_V2) {
-+	if (!kvm_has_gicv3(vcpu->kvm) ||
-+	    vcpu->kvm->arch.vgic.vgic_model == KVM_DEV_TYPE_ARM_VGIC_V2) {
-  		vgic_v3->vgic_hcr |= (ICH_HCR_EL2_TALL0 | ICH_HCR_EL2_TALL1 |
-  				      ICH_HCR_EL2_TC);
-  		return;
+Not your intention, I think, and a quick look around suggests some
+inconsistency as to whether symbols here are exported _GPL() or not.
 
+Maybe there's good (historical?) reason for which is which, or
+maybe it's something maintainers would like to clean up one day.
 
-but following the intention of the patch above maybe we should do smth
-like:
-diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
-index 6fbb4b099855..1fe53a021926 100644
---- a/arch/arm64/kvm/vgic/vgic-v3.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3.c
-@@ -297,11 +297,15 @@ void vcpu_set_ich_hcr(struct kvm_vcpu *vcpu)
-  {
-  	struct vgic_v3_cpu_if *vgic_v3 = &vcpu->arch.vgic_cpu.vgic_v3;
+Please make this one EXPORT_SYMBOL_GPL() if you can.
 
-  	if (!vgic_is_v3(vcpu->kvm))
-  		return;
+> +
+> +/**
+> + * drm_gem_mmap - memory map routine for GEM objects
+> + * @filp: DRM file pointer
+> + * @vma: VMA for the area to be mapped
+> + *
+> + * If a driver supports GEM object mapping, mmap calls on the DRM file
+> + * descriptor will end up here.
+> + *
+> + * Look up the GEM object based on the offset passed in (vma->vm_pgoff w=
+ill
+> + * contain the fake offset we created) and map it with a call to
+> + * drm_gem_mmap_obj().
+> + *
+> + * If the caller is not granted access to the buffer object, the mmap wi=
+ll fail
+> + * with EACCES. Please see the vma manager for more information.
+> + */
+> +int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> +{
+> +=09struct drm_gem_object *obj;
+> +=09int ret;
+> +
+> +=09obj =3D drm_gem_object_lookup_from_offset(filp, vma->vm_pgoff,
+> +=09=09=09=09=09=09vma_pages(vma));
+> +=09if (IS_ERR(obj))
+> +=09=09return PTR_ERR(obj);
+> +
+> +=09ret =3D drm_gem_mmap_obj(obj,
+> +=09=09=09       drm_vma_node_size(&obj->vma_node) << PAGE_SHIFT,
+>  =09=09=09       vma);
+> =20
+>  =09drm_gem_object_put(obj);
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index 8d48d2af2649..7c8bd67d087c 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -469,6 +469,7 @@ struct drm_gem_object {
+>  =09.poll=09=09=3D drm_poll,\
+>  =09.read=09=09=3D drm_read,\
+>  =09.llseek=09=09=3D noop_llseek,\
+> +=09.get_unmapped_area=09=3D drm_gem_get_unmapped_area,\
+>  =09.mmap=09=09=3D drm_gem_mmap, \
+>  =09.fop_flags=09=3D FOP_UNSIGNED_OFFSET
+> =20
+> @@ -506,6 +507,9 @@ void drm_gem_vm_close(struct vm_area_struct *vma);
+>  int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+>  =09=09     struct vm_area_struct *vma);
+>  int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> +unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long=
+ uaddr,
+> +=09=09=09=09=09unsigned long len, unsigned long pgoff,
+> +=09=09=09=09=09unsigned long flags);
+> =20
+>  /**
+>   * drm_gem_object_get - acquire a GEM buffer object reference
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b9081b817d28..612218fc95cb 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2851,6 +2851,7 @@ unsigned long shmem_get_unmapped_area(struct file *=
+file,
+>  =09=09return addr;
+>  =09return inflated_addr;
+>  }
+> +EXPORT_SYMBOL_GPL(shmem_get_unmapped_area);
 
-  	/* Hide GICv3 sysreg if necessary */
--	if (vcpu->kvm->arch.vgic.vgic_model == KVM_DEV_TYPE_ARM_VGIC_V2) {
-+	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, GIC, NI) ||
-+	    vcpu->kvm->arch.vgic.vgic_model == KVM_DEV_TYPE_ARM_VGIC_V2) {
-  		vgic_v3->vgic_hcr |= (ICH_HCR_EL2_TALL0 | ICH_HCR_EL2_TALL1 |
-  				      ICH_HCR_EL2_TC);
-  		return;
+As you have it, that export comes under #ifdef CONFIG_SHMEM.
 
-Thoughts?
-Sebastian
+I know parts of drm do "select SHMEM" these days, but you might not
+be covered by those: maybe you need a "select SHMEM" in the relevant
+Kconfig, or maybe you prefer to duplicate that export line after the
+later !CONFIG_SHMEM definitiion of shmem_get_unmapped_area().
 
+Or better, make no export here at all, but drm_gem_get_unmapped_area()
+use obj->filp->f_op->get_unmapped_area()?
+
+> =20
+>  #ifdef CONFIG_NUMA
+>  static int shmem_set_policy(struct vm_area_struct *vma, struct mempolicy=
+ *mpol)
+> --=20
+> 2.47.3
+---1463770367-2004846092-1761565101=:3513--
 
