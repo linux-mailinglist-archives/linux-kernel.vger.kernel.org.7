@@ -1,107 +1,91 @@
-Return-Path: <linux-kernel+bounces-871311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72B0C0CE43
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:10:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39146C0CE10
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0413E4219F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B85494E7044
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E882E6116;
-	Mon, 27 Oct 2025 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB672F12DA;
+	Mon, 27 Oct 2025 10:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WD1KCBdt"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cX+PXi9/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5FC2D3EE0
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478D023EAB9;
+	Mon, 27 Oct 2025 10:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559477; cv=none; b=iulgQwQPyZa3B5VxNhPCk94pYpDF6xhbHbOXlXPMnkMKWXIx85+msIxtSvk1BD3lHF22zcf9QhVwvywhfNlKSsMIfMgExRpELQ1JOW3wGlr505/kz2saNsPwOUhLJIEA2zbUf+/bObmQDYhX0gB3lrTSkYexOAPWVFjGj0KCOSo=
+	t=1761559669; cv=none; b=hKsexPFCGMfPSGBaUOrpA5312g1dyxf0D7mLTXRF8Nd67Yhaas9PkzPs7WwXkFCWyHqN5UFTAPzeY00uJIndXqpRjMbNNs2KQGvxx8Hn0wvM8WyfLZi/16QN6vTwdva0DvwLHZ3oXflvSswHe0AXIBMW34bIVbcMze4gB9J65dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559477; c=relaxed/simple;
-	bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cocPfV0BbHwcXJ0RbYCjqzmridJFEvzCglLG9cyByHliucBwLD3rTxITpBLknFoZ6R0egfkOh4xdrGdzhQ/IIE8q+LifwUP8s+Cnbn2RY0n+Y6wqozf7GN4aXvoGO4XkEj60uxDLuo/iZox/8nlKi7Vsqan+ds6kxjNSkN1c87Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WD1KCBdt; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b6ceb3b68eeso3334175a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761559475; x=1762164275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
-        b=WD1KCBdtVr6Uaf9+9XtB5USN+vvFfrFollNT/kQurwRdF5GgPxZU6Piej6sbf/Nmso
-         pS3WSR2v5QqFrKbcDiAWkIf6U5tgqeh2lJ3tNNAsToEv7ldL0UerM22oPjbPXurjPPKy
-         Zfh9h48ml1aDyZoqIwPT8djKKyIGTTg8iNowpKfnZ4/qWLgPq72lNYYFbu152iDyUgjO
-         zyOq9DUHZUfTg0U/SLqr/LAfqxg8x+pGcheMMrfV7kR6fzZOSGG7vE1GiXHC2IZD+UTG
-         MfDj/5pDUVv5aVrizCoakLxOHa8njkfTRA5kk8mTbz1nxtqF5NmyKqIXGd+8TJFPoWtI
-         iqsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761559475; x=1762164275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
-        b=DNcge6HVctIfQegjsi/l4XjV9f9zL21P3U4gwGwprSxoPxoOq4Hy0GTRtBnEmZ8cIO
-         OBR/aavYIHThzVkdbtwBWp2FgTx0DFKNAg+z7RjnEntRWKty0yNbXRRELKpPSjYn52lI
-         vmLweCY9HpsHTWpdNXpD1PsVaZPqWARbgiO8SObyaCMnCsED6wmkHxc0RyCf6R22mzQb
-         KXwdwNY+pDzkRcIyDYWfStwBsBz7vEJgahzj7BOrWvsf7Sk+SFSfpAWi3rebvVFO9YI7
-         SG//leZGJrM0D3IXDzK57cbPUmG8Ro1NEYPhQg0rv0X6nlUbSJxUlVnK18GPn6bzJqvv
-         0f4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVNR3oSL0wz8flNeVLjGRx/6in1anRi9LDubNyluip+K1P4GLuxU8oRPyI4xRMcAi4gOml+xeNZ5aDp/Bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFUyqqb7g7zJueyzIZ92P3S+uVCFCHYHeHJBk6SFqrnJpYbW5d
-	zw/f6wOwceP4RVy/sH676dCPD1/d4LnKNQFyl7eLoiXDPzn1qcpj5XMsuHhkMY1Mi1GAZvzqy42
-	U5YSgqSL5NTBIx6e4XDAzwCHwdHdrLfU=
-X-Gm-Gg: ASbGnctHcJ6TGwwAdafX9wpu+Sj6jyFmdLo38Gs5nI8q8IQDKyy83sBmgl2b3Py7xNN
-	uIJbfe0DdMV6mOT5ft8CeREplkp/bemN/6YD/SD8HcsGBAcrC3TB0xn/dkoofq/bvD7EvvfyS04
-	J9qksv2seXiVUAoA1bK7yDAlhbNB2kjnGtGbyaZa7r131Z1/CReCzsWVFd2Qr9QLJmmxaBSWa66
-	ahj1yGRIXORuTAJe7MHTiul/ygdg/f54VmgZLGQbaWfMvPwO9j1FvnVd/YQgEp8+70nbTLEseqw
-	tIK1+pl11P+8ZQ==
-X-Google-Smtp-Source: AGHT+IGw9d1pKeseKB3lkBBW02LMj7kEUpU+h4+fmOwbWm1TH6VnLmuaWiTPpQmTwuE7imUFGIVOUC22U7kWNosjmns=
-X-Received: by 2002:a17:902:ec88:b0:293:57e:cd70 with SMTP id
- d9443c01a7336-293057ecfddmr246648875ad.28.1761559475507; Mon, 27 Oct 2025
- 03:04:35 -0700 (PDT)
+	s=arc-20240116; t=1761559669; c=relaxed/simple;
+	bh=gYH15C0Zx3xImMUg00MAivmQVJErsxHFY89b2ystD7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TE3FriCOKoYxuHQOYXOkbxu9nC9mlsErX1UwHqCSNTr/WhUh8RVPKhVWnIFVXIWi8ZABDF9hpYkPYHct7UHCqgcyqlwZ03+uYkZVPIZXYUQNkRfzTJIUZu9mFMtR7d32nRJGAm7iCrVmOMYNt/DhMj5wplbiaCvA1qfgMrzvVpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cX+PXi9/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5675C4CEF1;
+	Mon, 27 Oct 2025 10:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761559668;
+	bh=gYH15C0Zx3xImMUg00MAivmQVJErsxHFY89b2ystD7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cX+PXi9/8m1/+zRXnI4SGanJoiQTLozQT7QNvV+sOaNOo1/NXBrK9++7PqqprT2nQ
+	 qaoSJYkdZdf1v9WM9+SstKga4E2/LyJ+UO4dNNqpBONKc0E8aBfneM58niYtzE+0mj
+	 NwTxaj22tH/bx5Km47rCI0mJC1Bvo9mswORntpZPWBQZKfdW/H7EH318rFuWvRVtkB
+	 UbFMqGVrOftWv/gof1OpHIo8cGptU56/dTySfYwMX6NE/CTXqJYugNqwGrFsNJqofr
+	 W/9A3QNg/KqkH4qP3glxaME1FrAeabbT1kRdEIj2hkVt0yJ9GwD0ADyKYQ011T+byP
+	 dwVPpm82nFVwA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vDK8l-000000006fl-2vmW;
+	Mon, 27 Oct 2025 11:07:51 +0100
+Date: Mon, 27 Oct 2025 11:07:51 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	"David E . Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+	Han Jingoo <jingoohan1@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
+Message-ID: <aP9Ed1Y1lcayFn7Q@hovoldconsulting.com>
+References: <rc4ydm2c3c4gqipaorr2ndrlwufay3ocfc2rq7llskkg7npe6x@53eztxy5v3gt>
+ <20251026193754.GA1432729@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com> <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 27 Oct 2025 12:07:00 +0200
-X-Gm-Features: AWmQ_bkbCiTHPHYYWScVXCVLYPxiC042hgQVGHC_daQ-QvhcSia1ZdA6dYYMWm4
-Message-ID: <CAEnQRZAN0Kn=3hnw6dvCDsXXrQc17E87_hRT1R78ueKh+PzKjw@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] arm64: dts: imx8ulp: add sim lpav node
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026193754.GA1432729@bhelgaas>
 
-On Fri, Oct 17, 2025 at 2:24=E2=80=AFPM Laurentiu Mihalcea
-<laurentiumihalcea111@gmail.com> wrote:
->
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->
-> Add DT node for the SIM LPAV module.
->
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Sun, Oct 26, 2025 at 02:37:54PM -0500, Bjorn Helgaas wrote:
+> On Sun, Oct 26, 2025 at 08:58:29PM +0530, Manivannan Sadhasivam wrote:
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> As far as I know, it's L1SS that has catastrophic effects.  I haven't
+> seen anything for L0s or L1.
+
+Enabling L0s unconditionally certainly blew up on some Qualcomm
+machines. See commit d1997c987814 ("PCI: qcom: Disable ASPM L0s for
+sc8280xp, sa8540p and sa8295p").
+
+Johan
 
