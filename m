@@ -1,260 +1,118 @@
-Return-Path: <linux-kernel+bounces-872046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9B0C0F231
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:03:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4D5C0F373
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50DB189E20C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BDD426CA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD2731196F;
-	Mon, 27 Oct 2025 15:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F119730BF66;
+	Mon, 27 Oct 2025 16:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fxtYLifd"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FCiAbTRk"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C531158A;
-	Mon, 27 Oct 2025 15:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4192D63F2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580401; cv=none; b=KDXG54Iy2dvWzgY+tTAqO9gJuIHUpzZfjR1GlQu+fzlsnZaJYaEHa+0c0O3/upP9mu5npzn3VMRe7qpR5d1Kdp9vhlgKtKq920405YGjTFK29eMP7U5uBBEF7RHDNdIpMrdtspdp5bmjFDoZ4voesjxLWSQP/nthAOWct9Z7rIw=
+	t=1761580935; cv=none; b=DvvARPh+liOFqAOS4GgYx1Ckvj2rV/nRTCKNnTavdNIEProGQ0GY3NGQYfd55x6ILSM8E6xwccOLnyku4BQNlbrx3suqfe0U8+Zs1P0TMNCTKdW5YdmjglQNrnmPXz3D6Veex0qk4FfjvS90/eg8De1zvD2fACxrp/jZuPjoAM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580401; c=relaxed/simple;
-	bh=9ed2/B1CeLkGWer5c7mQhrYP3akCLNHeBkJT0wY9xRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZWOlPbobAljHPLeS1dA7UGCI0a5g4cJkDSjUSk7Z5x1xoIo/ZED1U1gPPv9RdTxwrtQWRpil8QLl1SjAy8v1N5NNwwpdDSVDlXVDzmkXLiSaKiIJUhEFbR+B3hbxzFRaJhw68e1tQy4CrdB87pFx6r1rm5f3kHtLs8f3rLDBta8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fxtYLifd; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E75D51A16C3;
-	Mon, 27 Oct 2025 15:53:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BA2F36062C;
-	Mon, 27 Oct 2025 15:53:14 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 50D1D102F2428;
-	Mon, 27 Oct 2025 16:53:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761580394; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=GlTdPc7pj5urAwGu8OzGWrkdJwvba9a2IKrizTjf7Z8=;
-	b=fxtYLifdMq7FnKTctd0vCyJbBvk1UIIKaV9xFiPnWp4yyLWNdP1x0PkyKbMa2lMwfdYhU0
-	jcXBlYEiXH1zJXMZ4/yMPhPS0kW3AiuASbetTmOZZsl39JfrOdGXAWQslEzc52c0GcYb7l
-	vdWNBBLYVFq12yqranYSyGJCoR4A8uoSjJaHEXy/nm1bg/fvpwFESGHNjK0upxh+rL9IlX
-	FTopSU7VaXlIxjR8MbPJiQWzptbUvC9Hdf00QiAS8AsToxSUdvFDw7NY6HcHcQMxViKW69
-	thd/ZDL7KK6wPr3hNsWgFO6Sd9CnUVL/m+wqkTPZzh7oVfM6mOwBqVNpVRDOhw==
-Message-ID: <0dac7c85-0b44-4a6c-b1e1-5833649e6413@bootlin.com>
-Date: Mon, 27 Oct 2025 16:53:03 +0100
+	s=arc-20240116; t=1761580935; c=relaxed/simple;
+	bh=3vakKTarVQ1LmVyja0G1VxJygmwKNqNAyvUgHSG/kHE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p7GqyDGabSACi+vNQbCBoYG47UdFzrMf7cHUb7e3NnuJXHU0cdmbWySARPhbdSl2CKiSO5Sr5DvPxnnNzrbOTXANjzuEiwHIFb2j7i7Qyo6L74EiYtgGXrq0qTdjbXJ7bBq+mPcyd9siedSrTldWJtFjSi/OHPLnTUFehvilH9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FCiAbTRk; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso6264684e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1761580930; x=1762185730; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lyo3P6jUrO11oV/07r7VEk3+sHuM/zfcTZIIBqJLkxg=;
+        b=FCiAbTRkKR7K7Netno9M+9dcRlZjGVPq2WutfmMcy6p5JvMXIgZ4+Al9NkOcgE1nmH
+         F/br7pwfnkbN5T7Yg/vTVMwCAzgwq4e2AtxiOoNnyDNREkqaPok+tBAOQNx6mPJQI8WT
+         AhwTBzAG0KwNQBE050XdKNhFoSCPaMhyoFr9c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761580930; x=1762185730;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lyo3P6jUrO11oV/07r7VEk3+sHuM/zfcTZIIBqJLkxg=;
+        b=PKi4Pvvya2WoWVoh92l2X1J6DBco27PerUIlo2lGHQx3qSagU7VW4heX8WhNqb83Ad
+         C0OSVis3pS8abYxfoVEb13aE5ejmbaR4TlGjCoGzKOIRbIFowebPUSEHecmgdXngYuxB
+         MreiIzLHrtzbCmXZeJXIvfhEFTnwtYf5Sk1Fqlksy3SJfM56f9ePMBHQlkbMYOMRHAO+
+         r/EA0IJNsMni6k7mbhH8IMAOoJJYlRIfFr4/FwNIUneeFWjZrI8xeNH6ByEaewmnSB/J
+         pzqnNGf9Zn29pzXtgcD4SUhHwkWM+5vClzQ5ppfcmmnqOKKKKnWRQ3LFo9GF4ffg5Kgm
+         PE5w==
+X-Gm-Message-State: AOJu0YwV/cLIQWRFXmAWusV66dQEQEyDvhMigibYYQ+GHUkt/oWdTXHv
+	3FVFC5PmLoIRUTEP1BgV0h0H9Qi78ITSJwb3vVMNv3CTv+gpL9TuN4nSzu0CGsiz4mJ611sbeIJ
+	FNa2xILM=
+X-Gm-Gg: ASbGncvsZ5ZBCzE4/kbGYoj06cp0IBnGwZX8ickVGAOcjwi57xLodvR0XRf8YUkpFuW
+	bhTYnx05O6KJmdXEWC9FcxLuK+L5kdSnb+/UQBacnH50vnztBivNF+r/VFP6XLOQ92jYaR9UqSA
+	7XA2Zqcq+0XwcFGwUv9sqbPxpVQLJsUmdvVjA9caKgSD51qIXJJHXT+8CiijI2oO0koj9S+dK5/
+	Fzawx29i6f9IxIVbZnEmIaBu35al5cDALAUfGpfxqrWVj0C+kEEjlFZOLuGsWsaVw3ScK/gIBs6
+	9u47iM9zm8AkUzQ9wTgusYDe2mAkYHj3qNFM4fJTpjxo72AxbzatUMwna1fo/NKCs+nljqMSOLv
+	nowb1ifG8Qe6HHahAYw+auojcTE9R/LGMX0Jwj6c/ISg2KwaBbc+VzTpdzRrkeo1FcmCRk4tsYd
+	Wu+gLSFVqqgAJdYWbLIF2jJ0f5mzASev90XvV5Y8cgCTXVNP/55PvALE1nyrPW
+X-Google-Smtp-Source: AGHT+IHTxm7o6s8+qVcTNdIAeIrEaVoswkdbpS1PpV43DvkedxQyS8UiDTTan2HmKaw1jR25cvzcIg==
+X-Received: by 2002:a05:6512:3ca6:b0:591:ec83:3183 with SMTP id 2adb3069b0e04-5930e9e1168mr138123e87.57.1761580929850;
+        Mon, 27 Oct 2025 09:02:09 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f50996sm2371501e87.36.2025.10.27.09.02.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 09:02:09 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso6264636e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:02:09 -0700 (PDT)
+X-Received: by 2002:a05:6402:4412:b0:628:b619:49bd with SMTP id
+ 4fb4d7f45d1cf-63ed84db9e2mr369134a12.25.1761580437926; Mon, 27 Oct 2025
+ 08:53:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/22] VKMS: Introduce multiple configFS attributes
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- victoria@system76.com, sebastian.wick@redhat.com,
- thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
- <aP-OLNFQA0M16xuy@fedora>
-Content-Language: en-US, fr
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <aP-OLNFQA0M16xuy@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251027083700.573016505@linutronix.de>
+In-Reply-To: <20251027083700.573016505@linutronix.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 27 Oct 2025 08:53:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiZ0RdDzpafUUduCn3gOVX3a=ZmGOw7wu1s-jqe8KypDA@mail.gmail.com>
+X-Gm-Features: AWmQ_blZNXFTqWGx07mPO-qNDyYJc9sRx0MxijvPg_spVplnaBKcigb1OKRcACM
+Message-ID: <CAHk-=wiZ0RdDzpafUUduCn3gOVX3a=ZmGOw7wu1s-jqe8KypDA@mail.gmail.com>
+Subject: Re: [patch V5 00/12] uaccess: Provide and use scopes for user access
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	David Laight <david.laight.linux@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
+	Nicolas Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 27 Oct 2025 at 01:43, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> This is a follow up on the V4 feedback:
 
+This series looks all sane to me, and I think the naming etc now all
+makes perfect sense.
 
-Le 27/10/2025 à 16:22, José Expósito a écrit :
-> Hey Louis,
-> 
-> On Sat, Oct 18, 2025 at 04:01:00AM +0200, Louis Chauvet wrote:
->> VKMS have a wide range of options. The aim of this series is to introduce
->> many configfs attribute so VKMS can be used to test a wide range of
->> configurations.
->>
->> This series depends on [1] that should be applied soon.
->>
->> PATCH 1-13 are for configuring planes
->> - name
->> - rotation
->> - color encoding
->> - color range
->> - plane formats
->> - zpos
->> PATCH 14-19 are for configuring the connector
->> - type
->> - supported colorspace
->> - edid
->> PATCH 20-22 are to enable dynamic connectors
->>
->> [1]:https://lore.kernel.org/all/20251016175618.10051-1-jose.exposito89@gmail.com
->>
->> PS: Each pair of config/configfs patch are independant. I could
->> technically create ≈10 different series, but there will be a lot of
->> (trivial) conflicts between them. I will be happy to reordoer, split and
->> partially apply this series to help the review process.
-> 
-> I just finished reviewing the series.
-
-Thanks a lot, I started to apply your suggestions (I agree to most of them).
-
-> Amazing work, thanks a lot for adding all of these new properties!!
-> 
-> I'd like to see KUnit and IGT coverage to test coner cases and, since this
-> is uAPI, to have a mechanishm to catch regressions without lots of manual
-> testing.
-
-I started to add some Kunits for vkms_config.c, for the format parsing too.
-
-> Let's talk so we can start working on them on v2, I'll be able to help in
-> that front if needed.
-
-I finish to apply your suggestions and I will send the v2 soon, so we 
-can discuss on the same ground. I think we can add a little bit of 
-vkms_config.c testing, but for vkms_configfs I need to see if we can 
-mock configfs interations from kunit tests.
-
-Have a nice week,
-Louis Chauvet
-
-> Best wishes,
-> Jose
->   
->> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->> ---
->> Louis Chauvet (22):
->>        drm/vkms: Introduce config for plane name
->>        drm/vkms: Introduce configfs for plane name
->>        drm/vkms: Introduce config for plane rotation
->>        drm/vkms: Introduce configfs for plane rotation
->>        drm/vkms: Introduce config for plane color encoding
->>        drm/vkms: Introduce configfs for plane color encoding
->>        drm/vkms: Introduce config for plane color range
->>        drm/vkms: Introduce configfs for plane color range
->>        drm/vkms: Introduce config for plane format
->>        drm/vkms: Introduce configfs for plane format
->>        drm/vkms: Properly render plane using their zpos
->>        drm/vkms: Introduce config for plane zpos property
->>        drm/vkms: Introduce configfs for plane zpos property
->>        drm/vkms: Introduce config for connector type
->>        drm/vkms: Introduce configfs for connector type
->>        drm/vkms: Introduce config for connector supported colorspace
->>        drm/vkms: Introduce configfs for connector supported colorspace
->>        drm/vkms: Introduce config for connector EDID
->>        drm/vkms: Introduce configfs for connector EDID
->>        drm/vkms: Store the enabled/disabled status for connector
->>        drm/vkms: Allow to hot-add connectors
->>        drm/vkms: Allows the creation of connector at runtime
->>
->>   Documentation/gpu/vkms.rst                    |  42 +-
->>   drivers/gpu/drm/vkms/tests/vkms_config_test.c |  18 +
->>   drivers/gpu/drm/vkms/vkms_config.c            | 183 ++++++
->>   drivers/gpu/drm/vkms/vkms_config.h            | 524 +++++++++++++++
->>   drivers/gpu/drm/vkms/vkms_configfs.c          | 893 +++++++++++++++++++++++++-
->>   drivers/gpu/drm/vkms/vkms_connector.c         | 137 +++-
->>   drivers/gpu/drm/vkms/vkms_connector.h         |  36 +-
->>   drivers/gpu/drm/vkms/vkms_crtc.c              |  11 +-
->>   drivers/gpu/drm/vkms/vkms_drv.h               |   6 +-
->>   drivers/gpu/drm/vkms/vkms_output.c            |  19 +-
->>   drivers/gpu/drm/vkms/vkms_plane.c             |  73 +--
->>   11 files changed, 1865 insertions(+), 77 deletions(-)
->> ---
->> base-commit: b291e4f1a4951204ce858cd01801291d34962a33
->> change-id: 20251017-vkms-all-config-bd0c2a01846f
->> prerequisite-message-id: 20251016175618.10051-1-jose.exposito89@gmail.com
->> prerequisite-patch-id: 74083a8806b1f26d9b4cd2a5107c756b971c4d11
->> prerequisite-patch-id: f982390487699921b625b413e8460d67ca7a74c9
->> prerequisite-patch-id: 0afca639e43c8fbfea2af1bc395e489efc8e1f10
->> prerequisite-patch-id: 6285108b2fd90d30d15d4cb4fdddfef953fad51b
->> prerequisite-patch-id: 2eacf5ad4f25f54a60958aa7a2df633d5642ce2f
->> prerequisite-patch-id: 81e98ac3aeb3b6128098ab7bab56d3446a3a2705
->> prerequisite-patch-id: 973f94c4edb4a5822c84a57d4479ca40e9cf25de
->> prerequisite-patch-id: 0efbaf1b0e962a1c40bf5a744b5089d8be696f62
->> prerequisite-patch-id: afa0cff94085e6ab216ffd9b99cd3dc882a0a687
->> prerequisite-patch-id: 3561347f2b586392985a8e3af9ed1c5c7d3eefd5
->> prerequisite-patch-id: 94030044ae8d404f7cdaed9137bddd59cfb22e79
->> prerequisite-patch-id: a54b483797d5ffb7ce13b56a8943025181cd0d7a
->> prerequisite-patch-id: f148fe7f445cb42437e7e2ba8b59e7e0fd40da8b
->> prerequisite-patch-id: 1ef2045872843670c452816c5d6187b713c9258c
->> prerequisite-patch-id: 3b9963ea3ae3455ae15ee36b67042c06a2ef6006
->> prerequisite-patch-id: 519ee42dfabb4de734e41e59bd07d7a723d810bb
->>
->> Best regards,
->> -- 
->> Louis Chauvet <louis.chauvet@bootlin.com>
->>
-
--- 
---
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+                  Linus
 
