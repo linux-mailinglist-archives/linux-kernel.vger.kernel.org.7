@@ -1,275 +1,454 @@
-Return-Path: <linux-kernel+bounces-871746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92486C0E3B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:04:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6975DC0E39B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B2E421A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:57:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 468E25000FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4224307AEC;
-	Mon, 27 Oct 2025 13:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5836306B0C;
+	Mon, 27 Oct 2025 13:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QZHXls19"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013042.outbound.protection.outlook.com [40.93.196.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LujNBJd1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28D02874FB
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573406; cv=fail; b=E95QDiaceuZ3n9Ps1y4UXi/yETpX1/j9heBveHAvjtSdZEcV447jzYLkOp5/xt6YPCwNS8Kgj37CXdU4ph0v/1cMP0/MeEfYp8PmZ/6f1RNLrMzl6vDlvlINk1yDR6qZm4yUYT05EpQsjkj7IDf17bpGe4WDwQZFAgf1+At7nvI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573406; c=relaxed/simple;
-	bh=ljU4WOr9LQS+FjiUpd8E1WAzDSdQLR4PE5uNlNFwm+c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=s2uCK+Y5tfK8woqeI/MAEFEb1vAR+ZCkK4FiDBggctcidSWMSduYT4xL3HYMoWE7Y9derlho3b4/NM89gOagP03iWI6Q2XmKiCZoJ+BQmu2ZoYRaD4Fy+tsjkspW+H+dNc0JeyPD+O/fkDo2U1pyKteyDJ2bU5BFFfw/E/T9XDo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QZHXls19; arc=fail smtp.client-ip=40.93.196.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d+t7Sk1xGjaduw5usT3BqvYA9fIh4YSqTjhGPgmdUFJDnfZogMEjnwiOuAyneVp3J9AcJ3bSd0bHXW3FtdgmCc813VGfaxW41pAzmPh47oJ2doQEN610aO8YNhNBuZTUGHdWzol4BVAYfDILv07kltaH4YHHuELbbd00AJGDYkN/llQMUmeQvoCRqjI96ZMvgpk7k+rUeNAge9q68CYqasLQrTSOlXxL1SwjY3BbNMdbeEbSesT+eZ0OK9C+W5TsJ2wel6fr1z0yfOYEc8LPIrJyZ1ClN6gxUZzJmDrrANpBQRZLtQGVyJnCDk6GDepizpEC5zyW/VqEMVj2SyQ3TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ljU4WOr9LQS+FjiUpd8E1WAzDSdQLR4PE5uNlNFwm+c=;
- b=JuGkq0CT0fBrN3WZ1ncnHGtpGg0WI15w8g0EvhbUmVEsDEkQoaljooRMAySpa6fOWGz3lK8L2JFzVXDkyotMeNKgDz8yjUNh78zaHayUbiHGCZqVqVpM02Cn/82+nBfTFW9a4i1sufnvfBKpjvIoJ4ySKIxdqJDFBK+9vfp6hUnAlN640k4KKNHNGqhRnDyVFWrDLB04hz7akYF24of77gqF9WDlNZQEIMpERqBUnN8iifweaFWBlPU2BFPnDlRJuQFmjC4b9uuinYTWsZkimrepqQwa7ghUUEHtc5o7nV3pwNZQR22bb0xa9554k4SWhYic9r7Sl/qeMlUpaytg0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ljU4WOr9LQS+FjiUpd8E1WAzDSdQLR4PE5uNlNFwm+c=;
- b=QZHXls19CV2EbSYp29o8bSDyg5KyKCVTKVOhuw54mqPh1+U6esB58v2gJgi8yWgrL4i76xxwkmF4HRj8yG59tzkFJ8w0uaiTL2B/uhuslA7d9X74dZesrkQfp7rguqUIzh6a1xvNHKuTa1C0y8n2DEzokIl0kVlZb2vIM0JjX0s=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by SJ2PR12MB8829.namprd12.prod.outlook.com (2603:10b6:a03:4d0::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
- 2025 13:56:40 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427%5]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 13:56:40 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: Nikolay Borisov <nik.borisov@suse.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter Zijlstra
-	<peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H .
- Peter Anvin" <hpa@zytor.com>
-CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
-	<boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH 52/56] x86/bugs: Support parsing mitigation options
-Thread-Topic: [RFC PATCH 52/56] x86/bugs: Support parsing mitigation options
-Thread-Index: AQHcRzU79PUsP8XVakC2b/0R2Iq7YrTWA7IQ
-Date: Mon, 27 Oct 2025 13:56:39 +0000
-Message-ID:
- <LV3PR12MB926557B2FC8316392BD5B96994FCA@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-53-david.kaplan@amd.com>
- <23c26b13-f195-4363-bfc1-92282459f1bb@suse.com>
-In-Reply-To: <23c26b13-f195-4363-bfc1-92282459f1bb@suse.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-10-27T13:53:21.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|SJ2PR12MB8829:EE_
-x-ms-office365-filtering-correlation-id: e5c0c090-b854-4776-c960-08de1560a734
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SXFheFBBZmpRRkd6Tk02cktVck9WbU1NdHBjWDZKQnl3TXR2ZVFzVWJYcTBj?=
- =?utf-8?B?VFdsYXlhdHlqYXJMVWh2dkJtZkFkbkN6cEo1UFhFSHRGZS85ZUtkQjB4NDRt?=
- =?utf-8?B?TlJza1d4RllLY0VodWdzTnhFWmxyZ292TkM5YktRdmZuOEJ4SHhMSWhUZFhs?=
- =?utf-8?B?TUYzcGhRMlpITnl0LytJdjR1WlFRL1BSNXpLV3JDcG5CeUdyclhXdDJpbkNQ?=
- =?utf-8?B?YmZsaCtuWUFzR2hwSkNhL3BodVBzYzFPQ3NBRGNXMEJFS3JzRW5MTHUrMDZm?=
- =?utf-8?B?ZzllblczYmkvUWMvMUxRd2ZBcE5TaFg2RXk0bDRLdDA2bHovdCt5OEVDWlJh?=
- =?utf-8?B?NjJ3bVhzZ1ZnUkwvbDRHdzJDc2pSRldXYlExTnBla1pzVE84b2FQKzNJaUkr?=
- =?utf-8?B?eXdRK0NSbGVBTjJ1aUdzV0NjMDB5Q29tQmdvTUQ1TkU3MDZseXJodXJUVnNs?=
- =?utf-8?B?KzN6cGRXNlhhUTdpZUR3UE1ZWGdzcjVtL09vU1V0ZW5IMmZNaE5iTTlRUWhY?=
- =?utf-8?B?YmhCVFduMmVFMnRPOVIyUVQ0NkI1YVFJakZiWVBaZytLSFRaNnZGcG9pZ0dx?=
- =?utf-8?B?MnVtNkozM3ZwQzVTZmJzWjJBSlp0UWlvR2thWUpJcjdsNS8vbU9rZUpydXd0?=
- =?utf-8?B?OHYwNENNbHVxL0hqenJKSytQdnZsK1FaM3lvdmxYKzhqNVV5N0t5amNxd1Ro?=
- =?utf-8?B?VGlOakdLd1huTUdIVm1yOENHUnZvZlJJdWhQeFFSd0Q2aElwL3VNMzNpUURk?=
- =?utf-8?B?elJJejdxZUNsbVZjdnVZVldTdVJyTVpiVDBzMnNacFlncTNwejA1cjR4N1hT?=
- =?utf-8?B?aEl6cWs4NzZwWmRyZW5jYnI2RkJHYnBVN0ZrQWtxbzY1eGQxUy9BRTNRamNp?=
- =?utf-8?B?bTNzQStha3hOVXp1Z2IzZVp5MDdWWmZOZ2hqOERWZ0FhU3E5UnZMbjE0YkFW?=
- =?utf-8?B?bkk3WDdBODkreURBcjdhK3BENHRsc3l3cHZta3RWRVRmTDlmcCs5bDNrWXZv?=
- =?utf-8?B?WUdEL0N3TUlBRENkZm96ME9BcGVobVlFa1l2NHlnd0dsVks1RXNpbDk1cFBi?=
- =?utf-8?B?L2NoWDYrbEZvTDVFVm1aM1FiakNrMFhJem40bENYSXZjdWxvc2tvS0Z5czdn?=
- =?utf-8?B?MVBMRVVrK2xWTWsyUnFHOVdTUjVZdGVIVkJHWnRrUE5qUzRJY1ZMOU1qRjR2?=
- =?utf-8?B?a2xZREdmRHNQRVRBcWY1RTk1NFdTamNmMFM3amxnZzVLQWI0cXdhdEROM1VP?=
- =?utf-8?B?RVJMSEs3L0MybHJjWGx6RzN6R0IzeVd5ZTBEYm5qYlJ0aCs5REQ2UTFBbnRo?=
- =?utf-8?B?REs0OG9XaG9NaWhkODJPUHFvcG5DN0t5cDh2VUIyeGlPamJuZk1jZFJJUVVC?=
- =?utf-8?B?WlNjcHBDNGxpOHUrSWdIVUxCbXZTb3FIbEd6VUtsMVloYk9temJEektIN09i?=
- =?utf-8?B?RU03YWFuSFFSeUR6bHA2cktnRTE3R2t5QUdiZDFCYk9lVEh4eUtEMFV2SnNh?=
- =?utf-8?B?TWFLekUzcE8wcVh2QlI5MmJkeVR4UUdNOGJWZXdMTG85NGxSekN6OG5qK0Iw?=
- =?utf-8?B?Z1Vra1ltNHpvYTlCWU5wTjNmWTVSVmdSYzUvamt0WURmdUtRRjJiQzdDcnNQ?=
- =?utf-8?B?NVlKT2RhYVpEbmowc0Z2aTd0SlFzL3UzT3M5ZUdPVUZ1aEdlc2Y2WFYwT3RO?=
- =?utf-8?B?bDcwVVNsM1RNY05DZW5OVkhLSUNMb2dOcFdla3dCUU9pSUg4VCtDTVB6TjJp?=
- =?utf-8?B?eU9nbFp2dTJsa3lPdnVQWTFjMG1IWGU1dnd1dHBCOTlWR1Y2d2RGZ1hzOFN4?=
- =?utf-8?B?NERxd3RtQ0Q4dXFaUGJlTi9qOW5MUzJHWUhjR09tU21adUxjYlROOTJDOS9k?=
- =?utf-8?B?RzhqV0NaaGx6ektGK2lMR3EraFAwTVRtYi9pYUxtLzVzdklpcGh4Y1NhT1Ru?=
- =?utf-8?B?WldiaHVIc293NFladkJOeFpEalJySDJFTHZyRkQxSzdZUkd4RVp1dmJKb0dQ?=
- =?utf-8?B?NGhWb2c5dzJOYnRwNnZMUUpFU3B4Zm9CYWtFaTVTWGw4Y1ozWEowcUFjeXVP?=
- =?utf-8?B?K0hJRUFCbEVPTEFnUUEwclFqTER2Zm02blhYUT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WTdNMkF3RFFMTDc3MHBzRDhkL1JnUEtYRG5ocEJKSXV3NDdlZ3JQL3lLenVZ?=
- =?utf-8?B?LzVnVHhrWGNNdzZmNEkzSlFRZUppOEl0emlHcTdRR0lFOWRFMEVlV3JUb2JF?=
- =?utf-8?B?STA5ZjZyTHRla2thZ1VXQVR2SndZdlBkTFZBOU5YWVRyTW9pL1JHY1FkSDl4?=
- =?utf-8?B?cEl2QWFxRFFNTitxRXR3MXBFc1FtT0ZWSVJFWENZb3F3N1hwOGtidDN5V3hD?=
- =?utf-8?B?ZVFsNmdSUk9NODAxb3ZTSWpidDBHeEZGV3JsYUoyaDVWVzJyUU1lR1lDblcv?=
- =?utf-8?B?bXlpUzV3LzN6NWRDK3pPVXJ1THhyME8yYk9vSWx5OURRM3RKY0htMnJFVzJY?=
- =?utf-8?B?Y3VvYXRWS2hOOGQ3VUVOMXFvN2Ixb3RzYlJrTzRTRWZEZjMreE5SUDRYR2pR?=
- =?utf-8?B?ZDZJK1AxUkhXTVl4U0tidU5nTDF0b3RTU2dVMXc1WUVNTzBlYzBValhmejZr?=
- =?utf-8?B?d0F0VHQ5bTZkRzhRRWk2K3VPVnJGUFVRb0c4RXNzb3F1QjI2SUpTMXkzN0lr?=
- =?utf-8?B?bzZCeUd5QllsaDFCeTNvRWpxRTVTMlVyUENndHBjNHdEN0ZnS2REb1NMUW9X?=
- =?utf-8?B?KzBRV00rQmgzTk96eWhXYmtBMzJjckJSd210K0ZnWno3ZTFxckV3R3AvNjhW?=
- =?utf-8?B?ZG1ZcWVnenVXS3dxUVpOYjZ3ZmtDNlRqTnVlUllwTUs3cWt5VjRUNXJrcTB3?=
- =?utf-8?B?WHZ0a1YrN0pmakJSNmhBbUhPV2NvdkFocXFBK1pKWTZCQjg5OGo2MmphRXBT?=
- =?utf-8?B?RXpHUUNjK2hHZVV3RDZWQU9YaFBaTDA4T29VdVBDenV5a1oxMnFTU2VTWVFQ?=
- =?utf-8?B?dHhFRU5IL2JSVHJ0clYwU242cXlrSzYxQXdqS256MDFMSHRvVnRpNXo3dUZI?=
- =?utf-8?B?MXBPQkg3VVI0OVB3T21CV3FuNFZ3QktYcjVXcTRIUjBCUXVVbTB1bDFOWFYw?=
- =?utf-8?B?ZDZwTGNNWC8vM3ZZK28xbmlNc1JRbHZkcWxLZ0pDRE9kYlU4UlpKM1haZDZk?=
- =?utf-8?B?YWx1YlUwRzZ6UWcwY3VKS0V0K29SUFc3elFudnFKWmFiL3YxUW9ZTDZ4Q2E2?=
- =?utf-8?B?R3daa2lnWEFzQVBqN0dyNnZ5dEsrMVJ5WmxTUUVoZkNuRENxSUlla0s2UVZK?=
- =?utf-8?B?cm0vMXNoQzlJNy93SXZ0QzJlSWo2T00wSFdyTjJlTWZ5QzJtN0VmdmxmUWl3?=
- =?utf-8?B?bzNIU3ZiVWdxbVlOYzBIVS82Q2dnNDlQV3czUjdJdHFJaFIwM0hpUkNjRTVi?=
- =?utf-8?B?SGp1YTlQbWZrQ0NhdjlET3NhZFdqcjZOTVhDTU9sRldwaGpVREtRT0QxdVMx?=
- =?utf-8?B?OWlIYUZNQUZDVmFLbEJZM1lEWXo5OUVIT3lSWUs1VTJ4VXRmaDkvL3ZIcHJC?=
- =?utf-8?B?cUV4VG9vOXdUTmQ5bGsyWDZ3aStnYkNUS3NPZWhLSjN4ZDBQZWtrMWpVY2Zt?=
- =?utf-8?B?ay8xSlZpL2NwTVQrb1NxaHBCb2F4YkEzaE85V3VYVmJGclp3YkN6OXZwdmYy?=
- =?utf-8?B?SDFEaVM3aFJOemh4ZGpaOWlMYWNuT05jWk4xZ1NLUW5QUmJVYlAyWWxiRkNN?=
- =?utf-8?B?K0ViZ3JoWUFnTXIwaW12RXZSaWZKQ1lrWXZPaFA1RFFzcUt2R1dmZHR0SCtm?=
- =?utf-8?B?c0JqWk9DU29HTUhGTE1USHNUV2FHSDlEQUttc1NKakdxQ1Y3dElBSjlIckNS?=
- =?utf-8?B?Q0VlbXJOZ2luQXNnZVFmcUtpaThsUmZiNm84Ky9jbnJkLzJ0Mm1mUWVuWHFV?=
- =?utf-8?B?WitEOXpTZjZJaXlVZ2FKcU1VMThwazk5SWRyN1E1M0J1eHZ4TGVCYWVBb3NL?=
- =?utf-8?B?REVkcDdrSlZEOWdPSzBBdVQwWk1Vc3hBOWlqbys4SVIrVjhaNFdWL05WVlNo?=
- =?utf-8?B?MmRGTjBrU1U1aGIrMldFU3VZQ08yS1Rpck44amJaNEdGY3YyZ0lwTXVLYjZ1?=
- =?utf-8?B?K3paWHJmazR1bWFuQmlqdlpSLzY4MTg0aGhUcnZDM1BhZnJlZjdKNDRiMGNs?=
- =?utf-8?B?QkRqS1lvZHA2UGlQNk1zdGZyNVR0emJVOEYyanV5UTZpSVJkeklGTHRhK2Zy?=
- =?utf-8?B?V1o0WGZFMFptWGdGeG4yM2ZZMTFTWXpoalVzTC9ZeW1CVjNEanZIL2dGajBu?=
- =?utf-8?Q?mftY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79EE26058D;
+	Mon, 27 Oct 2025 13:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761573417; cv=none; b=jfTaTdOf+PEY+KY/IzfBCCciScmhi334I6ErhgHZH5Emahmz8NSjO/q3i/oaaoEcy3nEA4x4m8WWN2ZtrFaPfa2qbDhjuGXSK1gfJHJGS0QOhTnd8KPT+iGYvPv0PHoECDYjlhpAXObp0BqROnkYWcPgee8pi0FtOb3XQbYuW3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761573417; c=relaxed/simple;
+	bh=Mc8cNAQNqvdNfAtteeqYiJJR7a8S9DEjXo/VfHN7Ek8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SxZId4xXM4BlmkRwTRShBrym7XemVMXC8vCMHFCss3ooj26Kgta3mSyDHCZpt7+kfp0MojOPD7g60PBBhl4OC1o6xB0zjCEEnexyPyiIOW8Lylogjj1ksCVPSIHyZiKImnvM4DBXGFOMmJAUfG/sxFCsQYkMf/2PnrkGRgAt0xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LujNBJd1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1919DC4CEF1;
+	Mon, 27 Oct 2025 13:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761573417;
+	bh=Mc8cNAQNqvdNfAtteeqYiJJR7a8S9DEjXo/VfHN7Ek8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LujNBJd1QRoZmzg6RKXb+BdvJ9q3RWCTfXzn2GEmef6+sXGzodIfjl7e4MBU7ADiM
+	 srXEmrNbAy2DP533e+gyFgXndwc5e7kS1Ff8eDunhd+afFePIaBfjrGSSxFtklreG3
+	 VrZ1tfKYVOIOS6uN3TmoaI5Ivu2oyhHiBy5/5HDXkFc/gAZ+/0dvhFQGLUf6LgECIp
+	 tvAcGA8U8g4rRfVCnDDJ3uKsNav2kcMO1rrPV2KZ0anNGk/WADHgnY/NxNyX9/ipWH
+	 5KX2E6vSwnONxucnCX08Nb1PbNfrc4CzaPntAGaG5vfzf8VKd9oPPVkqTcfb79U87y
+	 MtKtr4XARf88Q==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Maarten Lankhorst <dev@lankhorst.se>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4.y] devcoredump: Fix circular locking dependency with devcd->mutex.
+Date: Mon, 27 Oct 2025 09:56:54 -0400
+Message-ID: <20251027135654.496095-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <2025102625-cringing-unstuck-790a@gregkh>
+References: <2025102625-cringing-unstuck-790a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5c0c090-b854-4776-c960-08de1560a734
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Oct 2025 13:56:39.9304
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JVhobKMuCKG61zdvW52ZaJwHes1TtiON6MFOvP78jt0Zrw2KXgvM2SKQ8KfuSix1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8829
+Content-Transfer-Encoding: 8bit
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBOaWtvbGF5IEJvcmlzb3Yg
-PG5pay5ib3Jpc292QHN1c2UuY29tPg0KPiBTZW50OiBNb25kYXksIE9jdG9iZXIgMjcsIDIwMjUg
-NjozMSBBTQ0KPiBUbzogS2FwbGFuLCBEYXZpZCA8RGF2aWQuS2FwbGFuQGFtZC5jb20+OyBUaG9t
-YXMgR2xlaXhuZXINCj4gPHRnbHhAbGludXRyb25peC5kZT47IEJvcmlzbGF2IFBldGtvdiA8YnBA
-YWxpZW44LmRlPjsgUGV0ZXIgWmlqbHN0cmENCj4gPHBldGVyekBpbmZyYWRlYWQub3JnPjsgSm9z
-aCBQb2ltYm9ldWYgPGpwb2ltYm9lQGtlcm5lbC5vcmc+OyBQYXdhbiBHdXB0YQ0KPiA8cGF3YW4u
-a3VtYXIuZ3VwdGFAbGludXguaW50ZWwuY29tPjsgSW5nbyBNb2xuYXIgPG1pbmdvQHJlZGhhdC5j
-b20+OyBEYXZlDQo+IEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tPjsgeDg2QGtl
-cm5lbC5vcmc7IEggLiBQZXRlciBBbnZpbg0KPiA8aHBhQHp5dG9yLmNvbT4NCj4gQ2M6IEFsZXhh
-bmRlciBHcmFmIDxncmFmQGFtYXpvbi5jb20+OyBCb3JpcyBPc3Ryb3Zza3kNCj4gPGJvcmlzLm9z
-dHJvdnNreUBvcmFjbGUuY29tPjsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJq
-ZWN0OiBSZTogW1JGQyBQQVRDSCA1Mi81Nl0geDg2L2J1Z3M6IFN1cHBvcnQgcGFyc2luZyBtaXRp
-Z2F0aW9uIG9wdGlvbnMNCj4NCj4gQ2F1dGlvbjogVGhpcyBtZXNzYWdlIG9yaWdpbmF0ZWQgZnJv
-bSBhbiBFeHRlcm5hbCBTb3VyY2UuIFVzZSBwcm9wZXIgY2F1dGlvbg0KPiB3aGVuIG9wZW5pbmcg
-YXR0YWNobWVudHMsIGNsaWNraW5nIGxpbmtzLCBvciByZXNwb25kaW5nLg0KPg0KPg0KPiBPbiAx
-MC8xMy8yNSAxNzozNCwgRGF2aWQgS2FwbGFuIHdyb3RlOg0KPiA+IEFkZCBhcmNoLXNwZWNpZmlj
-IGZ1bmN0aW9uIGZvciBkZXRlcm1pbmluZyBpZiBhbiBvcHRpb24gaXMgcmVsYXRlZCB0byBhDQo+
-ID4gbWl0aWdhdGlvbiBhbmQgcGFyc2luZyBpdC4gIFRoZXNlIHdpbGwgYmUgdXNlZCBmb3IgcGFy
-c2luZyBhIHN0cmluZyBvZg0KPiA+IG9wdGlvbnMgZm9yIHJlLWV2YWx1YXRpbmcgY3B1IG1pdGln
-YXRpb25zLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRGF2aWQgS2FwbGFuIDxkYXZpZC5rYXBs
-YW5AYW1kLmNvbT4NCj4gPiAtLS0NCj4gPiAgIGFyY2gveDg2L2luY2x1ZGUvYXNtL2J1Z3MuaCB8
-ICAyICsrDQo+ID4gICBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyAgfCA1Ng0KPiArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gICAyIGZpbGVzIGNoYW5nZWQsIDU4
-IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2Fz
-bS9idWdzLmggYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9idWdzLmgNCj4gPiBpbmRleCAyZTFhN2Qy
-ODJlNTEuLjFlMTQyYTY3NjMzNSAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2Fz
-bS9idWdzLmgNCj4gPiArKysgYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9idWdzLmgNCj4gPiBAQCAt
-MTMsNSArMTMsNyBAQCBzdGF0aWMgaW5saW5lIGludCBwcHJvX3dpdGhfcmFtX2J1Zyh2b2lkKSB7
-IHJldHVybiAwOyB9DQo+ID4gICBleHRlcm4gdm9pZCBjcHVfYnVnc19zbXRfdXBkYXRlKHZvaWQp
-Ow0KPiA+ICAgdm9pZCBhcmNoX2NwdV9yZXNldF9taXRpZ2F0aW9ucyh2b2lkKTsNCj4gPiAgIHZv
-aWQgY3B1X2J1Z3NfdXBkYXRlX3NwZWN1bGF0aW9uX21zcnModm9pZCk7DQo+ID4gK2Jvb2wgYXJj
-aF9pc19taXRpZ2F0aW9uX29wdChjaGFyICpwYXJhbSk7DQo+ID4gK2ludCBhcmNoX3BhcnNlX21p
-dGlnYXRpb25fb3B0KGNoYXIgKnBhcmFtLCBjaGFyICp2YWwpOw0KPiA+DQo+ID4gICAjZW5kaWYg
-LyogX0FTTV9YODZfQlVHU19IICovDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9j
-cHUvYnVncy5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCj4gPiBpbmRleCAyZjgyMjYx
-ZDAzM2QuLjI2Y2ViNDJlMGNmYiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1
-L2J1Z3MuYw0KPiA+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVncy5jDQo+ID4gQEAgLTM5
-OTEsNiArMzk5MSw2MiBAQCB2b2lkIF9fd2Fybl90aHVuayh2b2lkKQ0KPiA+ICAgfQ0KPiA+DQo+
-ID4gICAjaWZkZWYgQ09ORklHX0RZTkFNSUNfTUlUSUdBVElPTlMNCj4gPiArc3RydWN0IG1pdGln
-YXRpb25faW5mbyB7DQo+ID4gKyAgICAgY2hhciAqcGFyYW07DQo+ID4gKyAgICAgaW50ICgqcGFy
-c2UpKGNoYXIgKnN0cik7DQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgc3RydWN0IG1pdGln
-YXRpb25faW5mbyBtaXRpZ2F0aW9uX3BhcnNlcnNbXSA9IHsNCj4gPiArICAgICB7Im1kcyIsIG1k
-c19jbWRsaW5lfSwNCj4gPiArICAgICB7InRzeF9hc3luY19hYm9ydCIsIHRzeF9hc3luY19hYm9y
-dF9wYXJzZV9jbWRsaW5lfSwNCj4gPiArICAgICB7Im1taW9fc3RhbGVfZGF0YSIsIG1taW9fc3Rh
-bGVfZGF0YV9wYXJzZV9jbWRsaW5lfSwNCj4gPiArICAgICB7InJlZ19maWxlX2RhdGFfc2FtcGxp
-bmciLCByZmRzX3BhcnNlX2NtZGxpbmV9LA0KPiA+ICsgICAgIHsic3JiZHMiLCBzcmJkc19wYXJz
-ZV9jbWRsaW5lfSwNCj4gPiArICAgICB7ImdhdGhlcl9kYXRhX3NhbXBsaW5nIiwgZ2RzX3BhcnNl
-X2NtZGxpbmV9LA0KPiA+ICsgICAgIHsibm9zcGVjdHJlX3YxIiwgbm9zcGVjdHJlX3YxX2NtZGxp
-bmV9LA0KPiA+ICsgICAgIHsicmV0YmxlZWQiLCByZXRibGVlZF9wYXJzZV9jbWRsaW5lfSwNCj4g
-PiArICAgICB7ImluZGlyZWN0X3RhcmdldF9zZWxlY3Rpb24iLCBpdHNfcGFyc2VfY21kbGluZX0s
-DQo+ID4gKyAgICAgeyJzcGVjdHJlX3YyX3VzZXIiLCBzcGVjdHJlX3YyX3VzZXJfcGFyc2VfY21k
-bGluZX0sDQo+ID4gKyAgICAgeyJub3NwZWN0cmVfdjIiLCBub3NwZWN0cmVfdjJfcGFyc2VfY21k
-bGluZX0sDQo+ID4gKyAgICAgeyJzcGVjdHJlX3YyIiwgc3BlY3RyZV92Ml9wYXJzZV9jbWRsaW5l
-fSwNCj4gPiArICAgICB7InNwZWN0cmVfYmhpIiwgc3BlY3RyZV9iaGlfcGFyc2VfY21kbGluZX0s
-DQo+ID4gKyAgICAgeyJub3NwZWNfc3RvcmVfYnlwYXNzX2Rpc2FibGUiLCBub3NzYl9wYXJzZV9j
-bWRsaW5lfSwNCj4gPiArICAgICB7InNwZWNfc3RvcmVfYnlwYXNzX2Rpc2FibGUiLCBzc2JfcGFy
-c2VfY21kbGluZX0sDQo+ID4gKyAgICAgeyJsMXRmIiwgbDF0Zl9jbWRsaW5lfSwNCj4gPiArICAg
-ICB7InNwZWNfcnN0YWNrX292ZXJmbG93Iiwgc3Jzb19wYXJzZV9jbWRsaW5lfSwNCj4gPiArICAg
-ICB7InRzYSIsIHRzYV9wYXJzZV9jbWRsaW5lfSwNCj4gPiArICAgICB7InZtc2NhcGUiLCB2bXNj
-YXBlX3BhcnNlX2NtZGxpbmV9DQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgc3RydWN0IG1p
-dGlnYXRpb25faW5mbyAqZ2V0X21pdGlnYXRpb25faW5mbyhjaGFyICpwYXJhbSkNCj4gPiArew0K
-PiA+ICsgICAgIGludCBpOw0KPiA+ICsNCj4gPiArICAgICBmb3IgKGkgPSAwOyBpIDwgQVJSQVlf
-U0laRShtaXRpZ2F0aW9uX3BhcnNlcnMpOyBpKyspIHsNCj4gPiArICAgICAgICAgICAgIGlmIChw
-YXJhbWVxKHBhcmFtLCBtaXRpZ2F0aW9uX3BhcnNlcnNbaV0ucGFyYW0pKQ0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICByZXR1cm4gJm1pdGlnYXRpb25fcGFyc2Vyc1tpXTsNCj4gPiArICAgICB9
-DQo+ID4gKw0KPiA+ICsgICAgIHJldHVybiBOVUxMOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtib29s
-IGFyY2hfaXNfbWl0aWdhdGlvbl9vcHQoY2hhciAqcGFyYW0pDQo+ID4gK3sNCj4gPiArICAgICBy
-ZXR1cm4gZ2V0X21pdGlnYXRpb25faW5mbyhwYXJhbSk7DQo+DQo+IG5pdDogVGhpcyBoYXMgYW4g
-aW1wbGllZCBjb252ZXJzaW9uIGZyb20gYSBwb2ludGVyIHRvIGEgYm9vbCwgc2hvdWxkIGl0DQo+
-IGJlIHJldHVybiBnZXRfbWl0aWdhdGlvbl9pbmZvICE9IE5VTEwNCj4NCj4gSXQgd291bGQgd29y
-ayBlaXRoZXIgd2F5cyBidXQgYmVpbmcgZXhwbGljaXQgaXMgYmV0dGVyPw0KDQpBY2sNCg0KPg0K
-PiA+ICt9DQo+ID4gKw0KPiA+ICtpbnQgYXJjaF9wYXJzZV9taXRpZ2F0aW9uX29wdChjaGFyICpw
-YXJhbSwgY2hhciAqdmFsKQ0KPiA+ICt7DQo+ID4gKyAgICAgc3RydWN0IG1pdGlnYXRpb25faW5m
-byAqaW5mbyA9IGdldF9taXRpZ2F0aW9uX2luZm8ocGFyYW0pOw0KPiA+ICsNCj4gPiArICAgICBp
-ZiAoIWluZm8pIHsNCj4gPiArICAgICAgICAgICAgIHByX3dhcm4oIklnbm9yaW5nIG5vbi1taXRp
-Z2F0aW9uIG9wdGlvbiAlc1xuIiwgcGFyYW0pOw0KPg0KPiBuaXQ6IERvIHdlIHdhbnQgdG8gYmUg
-dGhhdCB2ZXJib3NlPw0KDQpNeSB0aGlua2luZyB3YXMgdGhhdCB0aGUgYWRtaW4gaXMgd3JpdGlu
-ZyBhIHNlcmllcyBvZiBjbWRsaW5lIG9wdGlvbnMgdG8gdGhpcyBpbnRlcmZhY2UsIGJ1dCB0aGUg
-aW50ZXJmYWNlIG9ubHkgcmVjb2duaXplcyBhIHNtYWxsIG51bWJlciBvZiBzcGVjaWZpYyBjbWRs
-aW5lIG9wdGlvbnMgKHRoZSBvbmVzIHJlbGF0ZWQgdG8gbWl0aWdhdGlvbiBzZXR0aW5ncykuICBJ
-dCB0aGVyZWZvcmUgbWF5IG1ha2Ugc2Vuc2UgdG8gd2FybiB0aGVtIGlmIHRoZXkndmUgd3JpdHRl
-biBhbiBvcHRpb24gKHRoaW5raW5nIGl0IHdpbGwgaGF2ZSBhbiBlZmZlY3QpIGJ1dCBpdCBpcyBu
-b3Qgc3VwcG9ydGVkIGJ5IHRoaXMgaW50ZXJmYWNlLiAgSXQncyBhbHNvIGEgd2F5IHRvIG5vdGlm
-eSB0aGVtIGlmIHRoZXkgbWFkZSBhIHR5cG8gb24gYW4gb3B0aW9uLg0KDQpUaGF0IHNhaWQsIG9w
-ZW4gdG8gb3RoZXIgaWRlYXMgaGVyZS4NCg0KVGhhbmtzDQotLURhdmlkIEthcGxhbg0KDQoNCg==
+From: Maarten Lankhorst <dev@lankhorst.se>
+
+[ Upstream commit a91c8096590bd7801a26454789f2992094fe36da ]
+
+The original code causes a circular locking dependency found by lockdep.
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 Tainted: G S   U
+------------------------------------------------------
+xe_fault_inject/5091 is trying to acquire lock:
+ffff888156815688 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}, at: __flush_work+0x25d/0x660
+
+but task is already holding lock:
+
+ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
+which lock already depends on the new lock.
+the existing dependency chain (in reverse order) is:
+-> #2 (&devcd->mutex){+.+.}-{3:3}:
+       mutex_lock_nested+0x4e/0xc0
+       devcd_data_write+0x27/0x90
+       sysfs_kf_bin_write+0x80/0xf0
+       kernfs_fop_write_iter+0x169/0x220
+       vfs_write+0x293/0x560
+       ksys_write+0x72/0xf0
+       __x64_sys_write+0x19/0x30
+       x64_sys_call+0x2bf/0x2660
+       do_syscall_64+0x93/0xb60
+       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+-> #1 (kn->active#236){++++}-{0:0}:
+       kernfs_drain+0x1e2/0x200
+       __kernfs_remove+0xae/0x400
+       kernfs_remove_by_name_ns+0x5d/0xc0
+       remove_files+0x54/0x70
+       sysfs_remove_group+0x3d/0xa0
+       sysfs_remove_groups+0x2e/0x60
+       device_remove_attrs+0xc7/0x100
+       device_del+0x15d/0x3b0
+       devcd_del+0x19/0x30
+       process_one_work+0x22b/0x6f0
+       worker_thread+0x1e8/0x3d0
+       kthread+0x11c/0x250
+       ret_from_fork+0x26c/0x2e0
+       ret_from_fork_asm+0x1a/0x30
+-> #0 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}:
+       __lock_acquire+0x1661/0x2860
+       lock_acquire+0xc4/0x2f0
+       __flush_work+0x27a/0x660
+       flush_delayed_work+0x5d/0xa0
+       dev_coredump_put+0x63/0xa0
+       xe_driver_devcoredump_fini+0x12/0x20 [xe]
+       devm_action_release+0x12/0x30
+       release_nodes+0x3a/0x120
+       devres_release_all+0x8a/0xd0
+       device_unbind_cleanup+0x12/0x80
+       device_release_driver_internal+0x23a/0x280
+       device_driver_detach+0x14/0x20
+       unbind_store+0xaf/0xc0
+       drv_attr_store+0x21/0x50
+       sysfs_kf_write+0x4a/0x80
+       kernfs_fop_write_iter+0x169/0x220
+       vfs_write+0x293/0x560
+       ksys_write+0x72/0xf0
+       __x64_sys_write+0x19/0x30
+       x64_sys_call+0x2bf/0x2660
+       do_syscall_64+0x93/0xb60
+       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+other info that might help us debug this:
+Chain exists of: (work_completion)(&(&devcd->del_wk)->work) --> kn->active#236 --> &devcd->mutex
+ Possible unsafe locking scenario:
+       CPU0                    CPU1
+       ----                    ----
+  lock(&devcd->mutex);
+                               lock(kn->active#236);
+                               lock(&devcd->mutex);
+  lock((work_completion)(&(&devcd->del_wk)->work));
+ *** DEADLOCK ***
+5 locks held by xe_fault_inject/5091:
+ #0: ffff8881129f9488 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x72/0xf0
+ #1: ffff88810c755078 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x123/0x220
+ #2: ffff8881054811a0 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x55/0x280
+ #3: ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
+ #4: ffffffff8359e020 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x72/0x660
+stack backtrace:
+CPU: 14 UID: 0 PID: 5091 Comm: xe_fault_inject Tainted: G S   U              6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 PREEMPT_{RT,(lazy)}
+Tainted: [S]=CPU_OUT_OF_SPEC, [U]=USER
+Hardware name: Micro-Star International Co., Ltd. MS-7D25/PRO Z690-A DDR4(MS-7D25), BIOS 1.10 12/13/2021
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ dump_stack+0x10/0x20
+ print_circular_bug+0x285/0x360
+ check_noncircular+0x135/0x150
+ ? register_lock_class+0x48/0x4a0
+ __lock_acquire+0x1661/0x2860
+ lock_acquire+0xc4/0x2f0
+ ? __flush_work+0x25d/0x660
+ ? mark_held_locks+0x46/0x90
+ ? __flush_work+0x25d/0x660
+ __flush_work+0x27a/0x660
+ ? __flush_work+0x25d/0x660
+ ? trace_hardirqs_on+0x1e/0xd0
+ ? __pfx_wq_barrier_func+0x10/0x10
+ flush_delayed_work+0x5d/0xa0
+ dev_coredump_put+0x63/0xa0
+ xe_driver_devcoredump_fini+0x12/0x20 [xe]
+ devm_action_release+0x12/0x30
+ release_nodes+0x3a/0x120
+ devres_release_all+0x8a/0xd0
+ device_unbind_cleanup+0x12/0x80
+ device_release_driver_internal+0x23a/0x280
+ ? bus_find_device+0xa8/0xe0
+ device_driver_detach+0x14/0x20
+ unbind_store+0xaf/0xc0
+ drv_attr_store+0x21/0x50
+ sysfs_kf_write+0x4a/0x80
+ kernfs_fop_write_iter+0x169/0x220
+ vfs_write+0x293/0x560
+ ksys_write+0x72/0xf0
+ __x64_sys_write+0x19/0x30
+ x64_sys_call+0x2bf/0x2660
+ do_syscall_64+0x93/0xb60
+ ? __f_unlock_pos+0x15/0x20
+ ? __x64_sys_getdents64+0x9b/0x130
+ ? __pfx_filldir64+0x10/0x10
+ ? do_syscall_64+0x1a2/0xb60
+ ? clear_bhb_loop+0x30/0x80
+ ? clear_bhb_loop+0x30/0x80
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x76e292edd574
+Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+RSP: 002b:00007fffe247a828 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000076e292edd574
+RDX: 000000000000000c RSI: 00006267f6306063 RDI: 000000000000000b
+RBP: 000000000000000c R08: 000076e292fc4b20 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00006267f6306063
+R13: 000000000000000b R14: 00006267e6859c00 R15: 000076e29322a000
+ </TASK>
+xe 0000:03:00.0: [drm] Xe device coredump has been deleted.
+
+Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # v6.1+
+Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20250723142416.1020423-1-dev@lankhorst.se
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ replaced disable_delayed_work_sync() with cancel_delayed_work_sync() ]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/base/devcoredump.c | 138 ++++++++++++++++++++++---------------
+ 1 file changed, 84 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
+index e9398bcffab69..7c62b397f1348 100644
+--- a/drivers/base/devcoredump.c
++++ b/drivers/base/devcoredump.c
+@@ -30,50 +30,46 @@ struct devcd_entry {
+ 	void *data;
+ 	size_t datalen;
+ 	/*
+-	 * Here, mutex is required to serialize the calls to del_wk work between
+-	 * user/kernel space which happens when devcd is added with device_add()
+-	 * and that sends uevent to user space. User space reads the uevents,
+-	 * and calls to devcd_data_write() which try to modify the work which is
+-	 * not even initialized/queued from devcoredump.
++	 * There are 2 races for which mutex is required.
+ 	 *
++	 * The first race is between device creation and userspace writing to
++	 * schedule immediately destruction.
+ 	 *
++	 * This race is handled by arming the timer before device creation, but
++	 * when device creation fails the timer still exists.
+ 	 *
+-	 *        cpu0(X)                                 cpu1(Y)
++	 * To solve this, hold the mutex during device_add(), and set
++	 * init_completed on success before releasing the mutex.
+ 	 *
+-	 *        dev_coredump() uevent sent to user space
+-	 *        device_add()  ======================> user space process Y reads the
+-	 *                                              uevents writes to devcd fd
+-	 *                                              which results into writes to
++	 * That way the timer will never fire until device_add() is called,
++	 * it will do nothing if init_completed is not set. The timer is also
++	 * cancelled in that case.
+ 	 *
+-	 *                                             devcd_data_write()
+-	 *                                               mod_delayed_work()
+-	 *                                                 try_to_grab_pending()
+-	 *                                                   del_timer()
+-	 *                                                     debug_assert_init()
+-	 *       INIT_DELAYED_WORK()
+-	 *       schedule_delayed_work()
+-	 *
+-	 *
+-	 * Also, mutex alone would not be enough to avoid scheduling of
+-	 * del_wk work after it get flush from a call to devcd_free()
+-	 * mentioned as below.
+-	 *
+-	 *	disabled_store()
+-	 *        devcd_free()
+-	 *          mutex_lock()             devcd_data_write()
+-	 *          flush_delayed_work()
+-	 *          mutex_unlock()
+-	 *                                   mutex_lock()
+-	 *                                   mod_delayed_work()
+-	 *                                   mutex_unlock()
+-	 * So, delete_work flag is required.
++	 * The second race involves multiple parallel invocations of devcd_free(),
++	 * add a deleted flag so only 1 can call the destructor.
+ 	 */
+ 	struct mutex mutex;
+-	bool delete_work;
++	bool init_completed, deleted;
+ 	struct module *owner;
+ 	ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+ 			void *data, size_t datalen);
+ 	void (*free)(void *data);
++	/*
++	 * If nothing interferes and device_add() was returns success,
++	 * del_wk will destroy the device after the timer fires.
++	 *
++	 * Multiple userspace processes can interfere in the working of the timer:
++	 * - Writing to the coredump will reschedule the timer to run immediately,
++	 *   if still armed.
++	 *
++	 *   This is handled by using "if (cancel_delayed_work()) {
++	 *   schedule_delayed_work() }", to prevent re-arming after having
++	 *   been previously fired.
++	 * - Writing to /sys/class/devcoredump/disabled will destroy the
++	 *   coredump synchronously.
++	 *   This is handled by using disable_delayed_work_sync(), and then
++	 *   checking if deleted flag is set with &devcd->mutex held.
++	 */
+ 	struct delayed_work del_wk;
+ 	struct device *failing_dev;
+ };
+@@ -102,14 +98,27 @@ static void devcd_dev_release(struct device *dev)
+ 	kfree(devcd);
+ }
+ 
++static void __devcd_del(struct devcd_entry *devcd)
++{
++	devcd->deleted = true;
++	device_del(&devcd->devcd_dev);
++	put_device(&devcd->devcd_dev);
++}
++
+ static void devcd_del(struct work_struct *wk)
+ {
+ 	struct devcd_entry *devcd;
++	bool init_completed;
+ 
+ 	devcd = container_of(wk, struct devcd_entry, del_wk.work);
+ 
+-	device_del(&devcd->devcd_dev);
+-	put_device(&devcd->devcd_dev);
++	/* devcd->mutex serializes against dev_coredumpm_timeout */
++	mutex_lock(&devcd->mutex);
++	init_completed = devcd->init_completed;
++	mutex_unlock(&devcd->mutex);
++
++	if (init_completed)
++		__devcd_del(devcd);
+ }
+ 
+ static ssize_t devcd_data_read(struct file *filp, struct kobject *kobj,
+@@ -129,12 +138,12 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
+ 	struct device *dev = kobj_to_dev(kobj);
+ 	struct devcd_entry *devcd = dev_to_devcd(dev);
+ 
+-	mutex_lock(&devcd->mutex);
+-	if (!devcd->delete_work) {
+-		devcd->delete_work = true;
+-		mod_delayed_work(system_wq, &devcd->del_wk, 0);
+-	}
+-	mutex_unlock(&devcd->mutex);
++	/*
++	 * Although it's tempting to use mod_delayed work here,
++	 * that will cause a reschedule if the timer already fired.
++	 */
++	if (cancel_delayed_work(&devcd->del_wk))
++		schedule_delayed_work(&devcd->del_wk, 0);
+ 
+ 	return count;
+ }
+@@ -162,11 +171,21 @@ static int devcd_free(struct device *dev, void *data)
+ {
+ 	struct devcd_entry *devcd = dev_to_devcd(dev);
+ 
++	/*
++	 * To prevent a race with devcd_data_write(), cancel work and
++	 * complete manually instead.
++	 *
++	 * We cannot rely on the return value of
++	 * cancel_delayed_work_sync() here, because it might be in the
++	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
++	 *
++	 * devcd->mutex here guards against multiple parallel invocations
++	 * of devcd_free().
++	 */
++	cancel_delayed_work_sync(&devcd->del_wk);
+ 	mutex_lock(&devcd->mutex);
+-	if (!devcd->delete_work)
+-		devcd->delete_work = true;
+-
+-	flush_delayed_work(&devcd->del_wk);
++	if (!devcd->deleted)
++		__devcd_del(devcd);
+ 	mutex_unlock(&devcd->mutex);
+ 	return 0;
+ }
+@@ -190,12 +209,10 @@ static ssize_t disabled_show(struct class *class, struct class_attribute *attr,
+  *                                                                 put_device() <- last reference
+  *             error = fn(dev, data)                           devcd_dev_release()
+  *             devcd_free(dev, data)                           kfree(devcd)
+- *             mutex_lock(&devcd->mutex);
+  *
+  *
+- * In the above diagram, It looks like disabled_store() would be racing with parallely
+- * running devcd_del() and result in memory abort while acquiring devcd->mutex which
+- * is called after kfree of devcd memory  after dropping its last reference with
++ * In the above diagram, it looks like disabled_store() would be racing with parallelly
++ * running devcd_del() and result in memory abort after dropping its last reference with
+  * put_device(). However, this will not happens as fn(dev, data) runs
+  * with its own reference to device via klist_node so it is not its last reference.
+  * so, above situation would not occur.
+@@ -357,7 +374,7 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 	devcd->read = read;
+ 	devcd->free = free;
+ 	devcd->failing_dev = get_device(dev);
+-	devcd->delete_work = false;
++	devcd->deleted = false;
+ 
+ 	mutex_init(&devcd->mutex);
+ 	device_initialize(&devcd->devcd_dev);
+@@ -366,8 +383,14 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 		     atomic_inc_return(&devcd_count));
+ 	devcd->devcd_dev.class = &devcd_class;
+ 
+-	mutex_lock(&devcd->mutex);
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, true);
++
++	/* devcd->mutex prevents devcd_del() completing until init finishes */
++	mutex_lock(&devcd->mutex);
++	devcd->init_completed = false;
++	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
++	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
++
+ 	if (device_add(&devcd->devcd_dev))
+ 		goto put_device;
+ 
+@@ -381,13 +404,20 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, false);
+ 	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
+-	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
+-	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
++
++	/*
++	 * Safe to run devcd_del() now that we are done with devcd_dev.
++	 * Alternatively we could have taken a ref on devcd_dev before
++	 * dropping the lock.
++	 */
++	devcd->init_completed = true;
+ 	mutex_unlock(&devcd->mutex);
+ 	return;
+  put_device:
+-	put_device(&devcd->devcd_dev);
+ 	mutex_unlock(&devcd->mutex);
++	cancel_delayed_work_sync(&devcd->del_wk);
++	put_device(&devcd->devcd_dev);
++
+  put_module:
+ 	module_put(owner);
+  free:
+-- 
+2.51.0
+
 
