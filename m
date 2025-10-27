@@ -1,205 +1,202 @@
-Return-Path: <linux-kernel+bounces-871596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CA3C0DC01
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:01:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D020C0DC80
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40E744FA993
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:52:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEA7E500A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D671A24678E;
-	Mon, 27 Oct 2025 12:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E992641CA;
+	Mon, 27 Oct 2025 12:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmLRDG7+"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o+X/eNhL"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A46823BCFD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA242512FC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569459; cv=none; b=OYtfL9q/BhF8tamsUfcSLllkE08wx5/T3kW4JortXXgnRPH1Q1yXFO9U9GslhMBmuHL3zxvK/6E/gEYsA0Jnc73Eif4d+tl7jFYg8SiaZxb0onXbU1nhpFnH3xTEMo689pJsx3oqkE3seihiE8jPQzAfGvnGEn2M9TRuGjzDguE=
+	t=1761569475; cv=none; b=NlCtX+1+J8dXBPa/dRT1CXBmsrYjF9CJLIv2Fzsz5vA0fEXyeeSpDUKvJCu8g75kis1Eo6aUAeUlh/fFoFlQpX5U/RKbTZ1ZhSZrFi9AX7EptJm1YgYopxTY76HwLtZ3qoOYhRCtTYypap//zvz8aWkLkGiHfUvm/JkIbyVxD6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569459; c=relaxed/simple;
-	bh=4O6Fak0YkFyyHEXpPlXp+5rEysQmXbAYc8epUwyT5wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=juXCyCsl1HL7KI407m85Jiux6l6OCwYHYI2cgWCMPawVqDjNAwpixFDa1R6dAr2Jh49UEEkvKxwrApAQtKPbmGayV3IWtbp04RK7awCqUgMPMW6wBFcjhGny8Q5cGy9vxnbvURoYSrIrxlXcTbcieoJxmymcn+D9dlNvbf5QmKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmLRDG7+; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-592ee9a16adso7911857e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:50:57 -0700 (PDT)
+	s=arc-20240116; t=1761569475; c=relaxed/simple;
+	bh=IdPC9YfGWevFoR/dZEXyXJZ/l9vGGOMt1FuwCMwOERE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MQetQKXKzwCjz3iCH5KyD3XKNRPKe79qOfkF97aGUGSft+iFdA2TYLkSFtoPRBxRYl1ANinSa526kl+6LVqmJUeAjnxtdAV53leDpjlbe0WAh+/OX6TXbVyhyYVWSNdK1DruQAsi8pCVbzo2ea7LhipaD9Rc3cXs1uiXv5eO0WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o+X/eNhL; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-340054800dcso1752278a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761569456; x=1762174256; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=37O4qKRJBc2jvfDWrKiGmX8gYqkd2w99cpfcHZsHVNk=;
-        b=DmLRDG7+dBAadk4y3T5UrL1KgFeJl9Jm+BJn9ux52dn/YoH88WWsHFkHq98ZVevNhl
-         rvoM4baTFyShRb7IPxLaO6oNMOtF/mUnWrLzHbIoJe39d34v/6Yh9vG55GDGyOZKqZfH
-         I2JrQoHXyiTfJd3HkBB1vL40pd6gxCfsu7YX0cquXGHFopkfnQP3UcBeZxCxUbFDt3SB
-         9CvIciMCHBSzjqMpQMx1l62+Isp8rCa2uldTEhLcSCHzn2I9EuqX/w26qFgQvQOjRtDB
-         mCDfxFW2LV5PFZtESzo0QDgkfyXwjqoNno852AjXcSXddgOH5lUiuvaGwHcpR2A3uO+g
-         lTtA==
+        d=google.com; s=20230601; t=1761569473; x=1762174273; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyFD6g3VBvR49cMfgS8niFKClPpT1OiUWbHICnlNzwM=;
+        b=o+X/eNhL+8Dze7uoRWYx5BwWklNaYiRtEDdNz8UjGzcESjQ1CWyjuWZmoXakGbGgQu
+         yOU2e24UqX011jKq+QwKdstbQDKkCTVW+TNDCVRCbZrwzD+rHRv+3qdNH2DJIjyXUh2H
+         VGoG7V26mZ5ji3jaXTA/+noNjeElwK+4sdKJcMYxCV57kM8Z2YwCICfgJ43b7BuWcNuo
+         3W4qn6uTm3qWnWOrGMWegQjeEvOUPgntJQt3JT2dT4/JtojgaMoIrt5JvzueFovc6E1G
+         bw/jgu8rahvFe51OEjGk+GGF4vPVoAha6QZ2+OZo5h5t+6dqSRpmNUn2STpeirQSbZ+q
+         FZIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761569456; x=1762174256;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37O4qKRJBc2jvfDWrKiGmX8gYqkd2w99cpfcHZsHVNk=;
-        b=bskgHhJsmIWP6MT6KByygeo5d8/UyFNNTVm33YtscDRad29TCv473oSHUuJXMmrx7O
-         6TMAHl80bnjPqMv/9hjSZd30HhvP+Sj4WCPQW1l1HBLQc/9jKrp2tcKTCbe8EYpkvoE8
-         CxzneCSfil27w7cTfgOi7GZXWVpF9eASNXTbW+7/dEf1c0ZiMOpTdSRcUE80sfnNBoX0
-         xIQGfwanBkOt7Xkv0Ll7m0OtJhtCaR4xCPXbnKzz5u+Jwkjnc4Fnbr07ihtThfihy6ZU
-         8wDUY3icnHtxRIv+nKDrF7TMcC8M5Rd7NKNI9/Md+iJh8eX1f6u/UdurvHmvh0eChdgx
-         TwZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoEeR7KyJrZhWW9eXidpF6zoy/gcEb2Qj9fvpb4MwlMzSw4dRJYT3qNJyVGvXFw1gxVDR6qW/pAALrkLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSJVb1HNIgqXUCcv6AgJDC5IyNh8XfyDkqtXSeezXx3iYgiq4r
-	21DHGJvR4yP1TcGI3DY4mWiuFG4P6ZM7JbAcJYO1uK03XX01xiCe7wbg
-X-Gm-Gg: ASbGncv3xwvSX8iJwDF87eUNsedo6jn3vGr0bAu3UMaw+lfrGUP6yOTQ2EH/oabHZwg
-	/+EI/fqgS4y/2m/w6Fn7Zp7MoS767Gm2b3hf3DoQqe/dyOt3arVYW/cfnDBV2s+pJg2uqyySasc
-	0+dX+PbrLb4d0W7LeHhNdR/k8cMQC7+LLSbhlaKXyv2fsTw92bwFL7Igqe/ZgwN/asCcXQWpgMw
-	4uiMfVunD7X74oNAtVpchP9xJC5Kt1jZTMr/ct8+/e3kxs1tupPvaLQYsfzbGusDweVbt23B90J
-	6oXvHPDOCff9Da634GI6XlcdYwma4F6EfaFHu5o0QDJi0wt3PMaxnUrJGMowkkrbvsIdSJS61R7
-	QDdY2s9tyY+JaAYZtd97MRsjsppAQOTP4BgLMOjbO6M462I4h0Yb0WbeR5TfRoJ/86lRQgZlQV/
-	F2xQGYcBWD70s2WUX4NA==
-X-Google-Smtp-Source: AGHT+IGv221R2iQIFs9R9mJVke8SKeb9zlIfzVvYe4ptw8r4RsNh+khkFd+dY8VHpRKJmHlBDQQaxA==
-X-Received: by 2002:a05:6512:b01:b0:592:f855:2d15 with SMTP id 2adb3069b0e04-592f8552dd1mr5297716e87.46.1761569455430;
-        Mon, 27 Oct 2025 05:50:55 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f41bdasm2260394e87.16.2025.10.27.05.50.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 05:50:54 -0700 (PDT)
-Date: Mon, 27 Oct 2025 14:50:51 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] iio: adc: rohm-bd79124: Use regmap_reg_range()
-Message-ID: <7e5d8edca0d77ce3f4e8327501c78efe4da806e6.1761569177.git.mazziesaccount@gmail.com>
-References: <cover.1761569177.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1761569473; x=1762174273;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyFD6g3VBvR49cMfgS8niFKClPpT1OiUWbHICnlNzwM=;
+        b=M6wzfbxClPKM7POZobc4snE//W4cXvCrx9jI+RT+/O3XL0KoK5H8c1veayyog39QJ8
+         qga+sv+aE0F+qXIcboqwjpMbDNbym493hun9BcvIZBqg7veObE3coMh7i+IVoG+1QABK
+         TzAOZucMvLNCXxi0fWRbsG4EtocCHma4Ep8g8HN1OR0wCmAzdS8C9Hfk2gQEjbhchtre
+         VJVNvMbFqwmVdWj0rZmOAGXhu1Qv8xoep0xllVU8oLF4AGNkoaDKd3Q49hL9b+MYV2Uy
+         u3wBEkPpx2RCMUrTvpMrsEcgurqCpxFELH76dDF7UdbJagHTgeLsWTwZFh/guTQZgeRD
+         O2FA==
+X-Forwarded-Encrypted: i=1; AJvYcCViwtQH1W3hOb/VdMfE+tL8s+CevExJYkgidD/aRsKSxsVV4lS0eCk5tD9hpr9Z6XnDOK6+B9KWbidbikA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz31Fn2fpE87Ov2VXne5ljXSJBLIgPcX0ToPjehRZmh4xN4umaF
+	SrmI1KKB32aqyUCEbZRPTKQcbP2E5RhEZT9b9BbwV/4+iOtwf4rTu7tdSFzijT0BbMBVK2AUQkv
+	rKG195aM74daNVuiEOa9H8z+sOA==
+X-Google-Smtp-Source: AGHT+IHpzLMnxvGPeWk8f7xz/g/ATtWvyisZTfCa5aljb0u8eC/vwPSWrWHsFNePjKreSc0j11QMICkHErRNy2JiYA==
+X-Received: from pjbcp12.prod.google.com ([2002:a17:90a:fb8c:b0:339:ee99:5e9b])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:2d8f:b0:335:2eee:19dc with SMTP id 98e67ed59e1d1-33bcf8f94b6mr44662881a91.28.1761569472526;
+ Mon, 27 Oct 2025 05:51:12 -0700 (PDT)
+Date: Mon, 27 Oct 2025 05:51:10 -0700
+In-Reply-To: <aPvDEl0kGdZfcAD9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TTVG05uvdQ/2lkyW"
-Content-Disposition: inline
-In-Reply-To: <cover.1761569177.git.mazziesaccount@gmail.com>
+Mime-Version: 1.0
+References: <cover.1760731772.git.ackerleytng@google.com> <727482ec42baa50cb1488ad89d02e732defda3db.1760731772.git.ackerleytng@google.com>
+ <diqzldl0dz5f.fsf@google.com> <aPvDEl0kGdZfcAD9@google.com>
+Message-ID: <diqza51cjyo1.fsf@google.com>
+Subject: Re: [RFC PATCH v1 16/37] KVM: selftests: Add support for mmap() on
+ guest_memfd in core library
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, akpm@linux-foundation.org, 
+	binbin.wu@linux.intel.com, bp@alien8.de, brauner@kernel.org, 
+	chao.p.peng@intel.com, chenhuacai@kernel.org, corbet@lwn.net, 
+	dave.hansen@intel.com, dave.hansen@linux.intel.com, david@redhat.com, 
+	dmatlack@google.com, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	haibo1.xu@intel.com, hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com, 
+	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
+	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
+Sean Christopherson <seanjc@google.com> writes:
 
---TTVG05uvdQ/2lkyW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Fri, Oct 24, 2025, Ackerley Tng wrote:
+>> Ackerley Tng <ackerleytng@google.com> writes:
+>> 
+>> > From: Sean Christopherson <seanjc@google.com>
+>> >
+>> > Accept gmem_flags in vm_mem_add() to be able to create a guest_memfd within
+>> > vm_mem_add().
+>> >
+>> > When vm_mem_add() is used to set up a guest_memfd for a memslot, set up the
+>> > provided (or created) gmem_fd as the fd for the user memory region. This
+>> > makes it available to be mmap()-ed from just like fds from other memory
+>> > sources. mmap() from guest_memfd using the provided gmem_flags and
+>> > gmem_offset.
+>> >
+>> > Add a kvm_slot_to_fd() helper to provide convenient access to the file
+>> > descriptor of a memslot.
+>> >
+>> > Update existing callers of vm_mem_add() to pass 0 for gmem_flags to
+>> > preserve existing behavior.
+>> >
+>> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+>> > [For guest_memfds, mmap() using gmem_offset instead of 0 all the time.]
+>> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> > ---
+>> >  tools/testing/selftests/kvm/include/kvm_util.h |  7 ++++++-
+>> >  tools/testing/selftests/kvm/lib/kvm_util.c     | 18 ++++++++++--------
+>> >  .../kvm/x86/private_mem_conversions_test.c     |  2 +-
+>> >  3 files changed, 17 insertions(+), 10 deletions(-)
+>> >
+>> > 
+>> > [...snip...]
+>> > 
+>> > @@ -1050,13 +1049,16 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+>> >  	}
+>> >  
+>> >  	region->fd = -1;
+>> > -	if (backing_src_is_shared(src_type))
+>> > +	if (flags & KVM_MEM_GUEST_MEMFD && gmem_flags & GUEST_MEMFD_FLAG_MMAP)
+>> > +		region->fd = kvm_dup(gmem_fd);
+>> > +	else if (backing_src_is_shared(src_type))
+>> >  		region->fd = kvm_memfd_alloc(region->mmap_size,
+>> >  					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
+>> >  
+>> 
+>> Doing this makes it hard to test the legacy dual-backing case.
+>> 
+>> It actually broke x86/private_mem_conversions_test for the legacy
+>> dual-backing case because there's no way to mmap or provide a
+>> userspace_address from the memory provider that is not guest_memfd, as
+>> determined by src_type.
+>
+> Yes there is.  This patch is a giant nop.  The only thing that the core library
+> doesn't support is mmap() on guest_memfd *and* the other src_type, and IMO that
+> is big "don't care", because KVM doesn't even support that combination:
+>
+> 	if (kvm_gmem_supports_mmap(inode))
+> 		slot->flags |= KVM_MEMSLOT_GMEM_ONLY;
+>
 
-Initializing the regmap_ranges using direct assignment to the range_min
-and range_max members is slightly verbose. We can make it a tad cleaner
-when using the regmap_reg_range() macro.
+Makes sense.
 
-Clean up the code using regmap_reg_range() when initializing the
-regmap_range structure.
+> I mean, we _could_ test that KVM ignores the hva for mapping, but that's a
+> different and unique test entirely.
+>
+> I did break x86/private_mem_conversions_test (I could have sworn I tested, *sigh*),
+> but the bug is in:
+>
+>   KVM: selftests: Provide function to look up guest_memfd details from gpa
+>
+> not here.  And it's a trivial /facepalm-style fix:
+>
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index ee5b63f7cb50..23a8676fee6d 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -1680,7 +1680,7 @@ int kvm_gpa_to_guest_memfd(struct kvm_vm *vm, vm_paddr_t gpa, off_t *fd_offset,
+>         gpa_offset = gpa - region->region.guest_phys_addr;
+>         *fd_offset = region->region.guest_memfd_offset + gpa_offset;
+>         *nr_bytes = region->region.memory_size - gpa_offset;
+> -       return region->fd;
+> +       return region->region.guest_memfd;
+>  }
+>  
+>  /* Create an interrupt controller chip for the specified VM. */
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Compile tested only.
----
- drivers/iio/adc/rohm-bd79124.c | 39 ++++++++--------------------------
- 1 file changed, 9 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/iio/adc/rohm-bd79124.c b/drivers/iio/adc/rohm-bd79124.c
-index 06c55c8da93f..fc0452749b79 100644
---- a/drivers/iio/adc/rohm-bd79124.c
-+++ b/drivers/iio/adc/rohm-bd79124.c
-@@ -126,13 +126,8 @@ struct bd79124_data {
- };
-=20
- static const struct regmap_range bd79124_ro_ranges[] =3D {
--	{
--		.range_min =3D BD79124_REG_EVENT_FLAG,
--		.range_max =3D BD79124_REG_EVENT_FLAG,
--	}, {
--		.range_min =3D BD79124_REG_RECENT_CH0_LSB,
--		.range_max =3D BD79124_REG_RECENT_CH7_MSB,
--	},
-+	regmap_reg_range(BD79124_REG_EVENT_FLAG, BD79124_REG_EVENT_FLAG),
-+	regmap_reg_range(BD79124_REG_RECENT_CH0_LSB, BD79124_REG_RECENT_CH7_MSB),
- };
-=20
- static const struct regmap_access_table bd79124_ro_regs =3D {
-@@ -141,22 +136,11 @@ static const struct regmap_access_table bd79124_ro_re=
-gs =3D {
- };
-=20
- static const struct regmap_range bd79124_volatile_ranges[] =3D {
--	{
--		.range_min =3D BD79124_REG_RECENT_CH0_LSB,
--		.range_max =3D BD79124_REG_RECENT_CH7_MSB,
--	}, {
--		.range_min =3D BD79124_REG_EVENT_FLAG,
--		.range_max =3D BD79124_REG_EVENT_FLAG,
--	}, {
--		.range_min =3D BD79124_REG_EVENT_FLAG_HI,
--		.range_max =3D BD79124_REG_EVENT_FLAG_HI,
--	}, {
--		.range_min =3D BD79124_REG_EVENT_FLAG_LO,
--		.range_max =3D BD79124_REG_EVENT_FLAG_LO,
--	}, {
--		.range_min =3D BD79124_REG_SYSTEM_STATUS,
--		.range_max =3D BD79124_REG_SYSTEM_STATUS,
--	},
-+	regmap_reg_range(BD79124_REG_RECENT_CH0_LSB, BD79124_REG_RECENT_CH7_MSB),
-+	regmap_reg_range(BD79124_REG_EVENT_FLAG, BD79124_REG_EVENT_FLAG),
-+	regmap_reg_range(BD79124_REG_EVENT_FLAG_HI, BD79124_REG_EVENT_FLAG_HI),
-+	regmap_reg_range(BD79124_REG_EVENT_FLAG_LO, BD79124_REG_EVENT_FLAG_LO),
-+	regmap_reg_range(BD79124_REG_SYSTEM_STATUS, BD79124_REG_SYSTEM_STATUS),
- };
-=20
- static const struct regmap_access_table bd79124_volatile_regs =3D {
-@@ -165,13 +149,8 @@ static const struct regmap_access_table bd79124_volati=
-le_regs =3D {
- };
-=20
- static const struct regmap_range bd79124_precious_ranges[] =3D {
--	{
--		.range_min =3D BD79124_REG_EVENT_FLAG_HI,
--		.range_max =3D BD79124_REG_EVENT_FLAG_HI,
--	}, {
--		.range_min =3D BD79124_REG_EVENT_FLAG_LO,
--		.range_max =3D BD79124_REG_EVENT_FLAG_LO,
--	},
-+	regmap_reg_range(BD79124_REG_EVENT_FLAG_HI, BD79124_REG_EVENT_FLAG_HI),
-+	regmap_reg_range(BD79124_REG_EVENT_FLAG_LO, BD79124_REG_EVENT_FLAG_LO),
- };
-=20
- static const struct regmap_access_table bd79124_precious_regs =3D {
---=20
-2.51.0
-
-
---TTVG05uvdQ/2lkyW
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmj/aqsACgkQeFA3/03a
-ocWnVwgAh8x3JHPb5/YGIWJXONYVYMYvwo9z7ZCQUv6gya+4UjMeTE7ZWxXHpIRL
-LysmyXt3wWB3qVBKTz6H8jqmKgGLJ7yklUNQF+jShuBUZllgHLxt9YzTcGdubB5X
-nGdnq26PicZtaqsa+YzjmmbVKsOkDFCa3mEITPWzF9rz84lgpowujERB/6DtTdiR
-tkCXk3WZrtV/mbPUkAHQOf/VKvaylS/hNb2hNXh7zvhuS8x1FrHFSnztdJKUz63B
-lN8yxG7qDc7vI/kE7ZSPE9oSWWtMj9nQQlQOmAyH1FZhqvWyie9Vh93B/xV8uHdi
-/ELm+j8YKecqCvZA7b8RGQOB5l1cQQ==
-=2Aaa
------END PGP SIGNATURE-----
-
---TTVG05uvdQ/2lkyW--
+This works. Thanks!
 
