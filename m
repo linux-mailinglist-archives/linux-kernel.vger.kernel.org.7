@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-872648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6FC0C11ACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:24:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CA9C11AB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:23:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B148C3BE4C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:22:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15CD84F5B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FF932C933;
-	Mon, 27 Oct 2025 22:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1A032C30D;
+	Mon, 27 Oct 2025 22:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKn+D6Zm"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nA/MqK24"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4C625F7B9
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6781925F7B9;
+	Mon, 27 Oct 2025 22:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761603736; cv=none; b=rYCZ/m1P62ICIeDt725QRvW9PnbGhqcBdJBV60wtH1dSbxBc344+kRm1jnT9CjPt1l+UukjrkeFPR3rGalXp9gp40WilgMjh5dLgqPmEfZcbvQUkwFI8/HcAhPwQJv1GilPH53I3I+Ic//PeskHgbukDET+r6jArtAfAFYj83tE=
+	t=1761603751; cv=none; b=t8UszH5i0TqM+4+ATmNhzwrtpiY5i+FCJpRwc/DjCNTHwUt2aafVrdr4QhDomHIkkZTznDa7+aOCaTyx7L+m0tWF0QhaQLQd/NGNdgm6OZDJCZMe19yKr+3SQuNM9o93YwZHt+4RhHBeq+v3EF7aXBaAIDnqiTqSYUEBfCFuidc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761603736; c=relaxed/simple;
-	bh=Egn4cV5CnJgU9OUEpru5VJybNcrGCiO3dvs+v1/WofY=;
+	s=arc-20240116; t=1761603751; c=relaxed/simple;
+	bh=WzcYbo984hVH2IxD77QcvHr4Djfe8H3bMUqVa5YOGtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pISjbFM5Wps0uEVLotyUSFiK8anjeBjlnY9/EBQB0QYm1GU9LXwsKK+bKxQS9o7M228i8PL+XM5SJj2R2ew4MggIHdFWIM3DA+T4qbqX9y+onkue+OD+Ze+/dJ2q/t+cQuU93Q0/k4kkieX1SSh4Xvhdz4rkKZWNmw+stzZuvdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKn+D6Zm; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42992e68ea3so228658f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:22:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761603733; x=1762208533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPQWg8YodwV0TasyiuBuXsJUnrrwoBhVKhLf4m0cFkM=;
-        b=XKn+D6ZmrbjLYeIS1bPp384GMSDSjoL+g8iKdKDsVAiAIEEGPFrSnY2wHpBgLkKU67
-         eiM3Jit2aSSDfo6RY2MOd9AwOqfeJwYCLUaqMa0VsA+fVH2nvMgElFywzPL/t8I6+XaM
-         cAhEKh0xQLqrvo93Enns9/FxP2e/xRPyKGixLZTDc0p2K3KpLL8wQJImD562SrH1dFGP
-         bfihBsG3hEGSsHRBT+ekebUWcwX//EC7KZZELM10ghtWywr97YLJ4j47y/JnH855EV6u
-         JBomQzI0+qbugCP6IZY9sInLVtIeABgZckFjEO1pUH4sFYaZ9cB7FP/xfzG+NTWYitFT
-         DWFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761603733; x=1762208533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TPQWg8YodwV0TasyiuBuXsJUnrrwoBhVKhLf4m0cFkM=;
-        b=Yhjjk9xTvlKZuzxYEa2pgPbhFCCw6BP6ODcWsPNdkuLQQZsztHTCj89UgIjIMxJMz0
-         JjbGF65D9nYMqqiLzaq9BjeeRV9kg8UnBAuTWu6hGqu9ElQMgByclNu7KZ1gTLuFB9bK
-         zaFFrq4247C1KU0xN4ilAbGtDH2eJdGutIGqx8nKHZy9PD053wIcLU1/p7Lj0b6IRvqi
-         TkTC6gAL4yNYsbZGNEm5wbcpKM6bXLse1C+WhyU3J8EbVvXYH1LQmcaNVYdy84FyzYPA
-         KpuWjTRliQGYJDwVRdkL8W4vr0xaWNDojyoEdwIriY3NCHLshUFWBJrHaILilcCmgWyZ
-         wmVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWn5L65vfrcbfWNTGx+PO8hgESvTKKwhEoEdgiQrDwmFca2kFUiA1Q2bZlr+2l/ZQgzh1fRd0LClh7Awn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFrwQdafmsqn8xQID70VNaMB8SS/Gwj/7Jjlf3mznYCJKZBwfZ
-	XosOEx25YpsFz1+mRg1cenHIQ9hneKWSjTDSZshYcKf8mkVofDbdmOao
-X-Gm-Gg: ASbGncsoDg4earMeAMZsplAAEXHqaqdhutOvNaIhNBgGm/krsVYH2aRToV44rv1NOYF
-	028qe/nh3N1Txcg2O6R0cdtmxuEeWmYW0yKeq6i3ECO6QBQDaqYOu8BXLMxkBEG48bz12z2i5Yj
-	oEqUeVrl9ngrHs9mvCwqOeedbQhjPvp4J0a7s7BFiFQTcLVlZSFNuDqFXr8upKTuZ4mXL7lOLb8
-	PBg7hurk6LbJ0D+9FXwt3Y03TOf2N8ngxakBV9yohX4VtpNDYWYNU2rZnnbsoBdhzDybjwjqVLi
-	812bcACwoBSh3kNc45beuDw0tkINXeZGkIRjNydC+g5c+/VHZPteNvCn11tOy2CHp38nR+sP9K0
-	fHYZf28OwzoEbn5Yj8OVAmZBBHzW9EEUhDlhliPKBxoJlyPy8mg4Grt2dQM21/Vr8Ql8iHeNq+P
-	XSY0U=
-X-Google-Smtp-Source: AGHT+IFKML31j6wnI6vGTYle4J1PHdCjOW/A3I5JFdqfSeewCWVjPwljp6TGGzZv8i+BCRDqH3AhJQ==
-X-Received: by 2002:a05:600c:1987:b0:471:703:c206 with SMTP id 5b1f17b1804b1-47717e6c391mr5547955e9.5.1761603732680;
-        Mon, 27 Oct 2025 15:22:12 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d406:ee00:3eb9:f316:6516:8b90])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4924e2sm159570265e9.8.2025.10.27.15.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 15:22:11 -0700 (PDT)
-Date: Tue, 28 Oct 2025 00:22:08 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v3 01/12] net: dsa: lantiq_gswip: split into
- common and MMIO parts
-Message-ID: <20251027222208.yrbqt5n3mseslu5d@skbuf>
-References: <cover.1761521845.git.daniel@makrotopia.org>
- <cover.1761521845.git.daniel@makrotopia.org>
- <ab056e0761db65483e30c0830ba919c09bc101aa.1761521845.git.daniel@makrotopia.org>
- <ab056e0761db65483e30c0830ba919c09bc101aa.1761521845.git.daniel@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SnMdWl+TI9nAxybuXSESO0EXFUWFYNJgLd3c61YKc06vcPs9DMN6z5Xtkyg11465mu7pyMbacquPfvje05vAVHcINe5UlF4OMkRFr8QJ4Fm1qLI2Qdq2FmvMMJiTiaHMipg/YJIO6SlHeYMEa6VaedteNNzZ+/QONDSSPk/s++A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nA/MqK24; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E10C4CEF1;
+	Mon, 27 Oct 2025 22:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761603750;
+	bh=WzcYbo984hVH2IxD77QcvHr4Djfe8H3bMUqVa5YOGtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nA/MqK24j5asByktAZbYpWATRsFhwk3bNCS7t8MpQdXV0hUBwbfq/eUBv5IGVGcoV
+	 QDBdt1vHbMk9w7kf2qjIJCA8EABdpqTD1QsTNpgsJ6wWHwL/RL8srjzE/GPglvVS45
+	 IIhRFQsjTV6nujpdRg7vK5gQoHzPp7xFBxwfhn4NlT4O8HBMiH7AkVLZ3ySeEuvnYy
+	 VaUOUeEnvPo0MpmPbT0w51WiiwpQ2LfiGdrUMTnnqPtYgt0Fr+RPc0qPvwc4B2Kg7F
+	 JyxX4Cto5EjWYgEeumI4h2oK6hrUPV80hnu/xlFYPNvAwS8imHxC91dFWmkbwiB1zP
+	 HC+IgZmtmvjpg==
+Date: Mon, 27 Oct 2025 15:22:28 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, 
+	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
+	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
+	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
+	Puranjay Mohan <puranjay@kernel.org>, Dylan Hatch <dylanbhatch@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4 49/63] objtool/klp: Add --checksum option to generate
+ per-function checksums
+Message-ID: <5an6r3jzuifkm2b7scmxv4u3suygr77apgue6zneelowbqyjzr@5g6mbczbyk5e>
+References: <cover.1758067942.git.jpoimboe@kernel.org>
+ <1bc263bd69b94314f7377614a76d271e620a4a94.1758067943.git.jpoimboe@kernel.org>
+ <SN6PR02MB41579B83CD295C9FEE40EED6D4FCA@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ab056e0761db65483e30c0830ba919c09bc101aa.1761521845.git.daniel@makrotopia.org>
- <ab056e0761db65483e30c0830ba919c09bc101aa.1761521845.git.daniel@makrotopia.org>
+In-Reply-To: <SN6PR02MB41579B83CD295C9FEE40EED6D4FCA@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Sun, Oct 26, 2025 at 11:43:54PM +0000, Daniel Golle wrote:
-> Move all parts specific for the MMIO/SoC driver into a module of its own
-> to prepare for supporting MDIO-connected switch ICs.
-> Modify gswip_probe() functions by splitting it into a common function
-> gswip_probe_common() which covers allocating, initializing and registering
-> the DSA switch, while keeping transport-specific regmap initialization as
-> well as PHY firmware loading in the new MMIO/SoC-specific gswip_probe()
-> function.
+On Mon, Oct 27, 2025 at 01:19:10AM +0000, Michael Kelley wrote:
+> It turns out that Ubuntu 20.04 installed the 0.7.3-1 version of libxxhash. But from a
+> quick look at the README on the xxhash github site, XXH3 is first supported by the
+> 0.8.0 version, so the compile error probably makes sense. I found a PPA that offers
+> the 0.8.3 version of xxhash for Ubuntu 20.04, and that solved the problem.
 > 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
+> So the Makefile steps above that figure out if xxhash is present probably aren't
+> sufficient, as the version of xxhash matters. And the "--checksum not supported"
+> error message should be more specific about the required version.
+> 
+> I reproduced the behavior on two different Ubuntu 20.04 systems, but
+> someone who knows this xxhash stuff better than I do should confirm
+> my conclusions. Maybe the way to fix the check for the presence of xxhash is
+> to augment the inline test program to include a reference to XXH3_state, but
+> I haven't tried to put together a patch to do that, pending any further discussion
+> or ideas.
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Thanks for reporting that.  I suppose something like the below would work?
+
+Though, maybe the missing xxhash shouldn't fail the build at all.  It's
+really only needed for people who are actually trying to run klp-build.
+I may look at improving that.
+
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index 48928c9bebef1..8b95166b31602 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -12,7 +12,7 @@ ifeq ($(SRCARCH),loongarch)
+ endif
+ 
+ ifeq ($(ARCH_HAS_KLP),y)
+-	HAVE_XXHASH = $(shell echo "int main() {}" | \
++	HAVE_XXHASH = $(shell echo -e "#include <xxhash.h>\nXXH3_state_t *state;int main() {}" | \
+ 		      $(HOSTCC) -xc - -o /dev/null -lxxhash 2> /dev/null && echo y || echo n)
+ 	ifeq ($(HAVE_XXHASH),y)
+ 		BUILD_KLP	 := y
+diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+index 1e1ea8396eb3a..aab7fa9c7e00a 100644
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -164,7 +164,7 @@ static bool opts_valid(void)
+ 
+ #ifndef BUILD_KLP
+ 	if (opts.checksum) {
+-		ERROR("--checksum not supported; install xxhash-devel/libxxhash-dev and recompile");
++		ERROR("--checksum not supported; install xxhash-devel/libxxhash-dev (version >= 0.8) and recompile");
+ 		return false;
+ 	}
+ #endif
 
