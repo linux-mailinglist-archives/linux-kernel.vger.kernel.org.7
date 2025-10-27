@@ -1,90 +1,82 @@
-Return-Path: <linux-kernel+bounces-872253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F84C0FBC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:44:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4AAC0FBD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E303188C7AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0607840391F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707513191BC;
-	Mon, 27 Oct 2025 17:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40247319604;
+	Mon, 27 Oct 2025 17:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="EwRWcjft"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JttcTmr3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9320030F543;
-	Mon, 27 Oct 2025 17:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897FE3191C6;
+	Mon, 27 Oct 2025 17:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761587076; cv=none; b=ZvmBK4GZtM0/Cys2OUVGp2sfn/u72gdUP9qYAs4hpbYXYD84l4kYmginn/YG/Kz/OQcJPUYzrwE7DSyn7hfu2g7nfquIWNZdkMnFShtXfWa0MEvcA7iGgAUP7nMofX5zvJrWRe14A7La57QnM7+e8Nq7oMP9Y0iKTRp8Iqmgdh8=
+	t=1761587108; cv=none; b=lPNfzuJM7zmj3CjlKpkTSnRIZk1fVmGhJsWnFWLIfQUGmnWc5cn1rkOAj2zxFWDMHH8GnnAwlGNqiKUZrsIe/1BABWMMhludjTxGAAKmfUGCOYmFLwfCmp8mUxYXx0dH5+N0hOrQ1Nz1etU0G5ArN/Vua67kyjw4qVveAB7khTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761587076; c=relaxed/simple;
-	bh=RfDe/lk36tQ9ZdGPDwQ02XQAHmaEu1Gz4r8TGZV+Q48=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fDSOf6GLvMTKrDDLipzciIl72U7BmAfd+NN1qGx+yRsRR6yvn4mG5ff0m48pDClhg2XWvai3BMUZQUZ6Z2Oj7Fu/Y6Xq46ePEXfli48RfT3UbNLNmVj+skuf/oPS3Zz1/9hz4vLVFA042KpoSZ6IEKTs4McPmoMqz4FTBvtS5js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=EwRWcjft; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E62B540B18
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761587074; bh=EkrU6qdStYnXfZpqvAS9tlf6vDNj3y10mTd/12SI7So=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EwRWcjft/wYue7JisKvKQGpG6X7FZJ5d9pgR+itMqbVoja+8pedYQuBnwqU5Qu0mu
-	 MRisTn5GAWr/VtJd2EY3eGH9Cg26xNVlIR2bEd/L/S9JIwD4CNMqox0Nq1o8aEP+s+
-	 JB5hltbxWkrtx84EaJB/J7QEQxOAYEdS1uTaWL8Gt0WZXz37vnlXmHay11nec5Ak32
-	 fn+o5PhQ7d1kFewIW5k2m/LvHjD40oRplT9Yzh6YkzPESPMu3zN392YJ9n6UjxS2t3
-	 YBBV6qgcVcNLjTlH1ZbFb7hpU/QPsZLmj+hOSyzUEOm9/vIkrld+UbJ16M/ZCJWuoK
-	 63c9BSS6rzlBw==
-Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E62B540B18;
-	Mon, 27 Oct 2025 17:44:33 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 05/30] docs: reporting-issues: outline why reporting
- is complicated
-In-Reply-To: <a6704ef5b3a8dcbaf645ddb5407e8f13553502b0.1761481839.git.linux@leemhuis.info>
-References: <cover.1761481839.git.linux@leemhuis.info>
- <a6704ef5b3a8dcbaf645ddb5407e8f13553502b0.1761481839.git.linux@leemhuis.info>
-Date: Mon, 27 Oct 2025 11:44:33 -0600
-Message-ID: <87ecqonsse.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761587108; c=relaxed/simple;
+	bh=NWEXKXz2vEy8waTgkm17FAAos0fLHKsZSP4LsWRCesU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JI59+Q87LL5PTs+dqi5BnpVVhRbx6wudspX9gW0CxuRaxjuNspKru0EMugykzcM5bMDFnPdG1yZay1i89YrVDRAedc/dvcDaHOHyH53PNOGMrk9o7X1Qmr/4r0XVVzVqnghSpAEtdPUF0WrvErX+FYwU6EnS76m/l+GEp/edfkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JttcTmr3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38EEAC4CEF1;
+	Mon, 27 Oct 2025 17:45:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761587108;
+	bh=NWEXKXz2vEy8waTgkm17FAAos0fLHKsZSP4LsWRCesU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JttcTmr3+oOdFn75ULd9fw8jo/LvERiDwJBnM2xxLnK0W3Zw/c6b4sT2lBA7ejZPm
+	 H+aPlt9XAWSVJtvC4Mq0dW4Ho2PpMCg5vULPfnpRHQTn/R6e4B93Iy9fCs/uFVMGdJ
+	 WZL0fMNXxw+cNICz+btSd6JJYE0x12m9hCMn0e/C78eHWAEZRH79cyXQVRMbFeG3Kf
+	 WY0iLi3txVR6pU/xBUP5NzCB2ijCnnVtihASPdprfO8oK38nEIuC492oylH8seA8j8
+	 sO3YqfL6/slyBFOO95k3R66VzIZHX3BtAFItQBwLXN0iJTv0PShb96a1zfKtMaKieY
+	 3zcCzBWMQiJYQ==
+Date: Mon, 27 Oct 2025 17:45:03 +0000
+From: Simon Horman <horms@kernel.org>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next 09/12] selftests/vsock: add BUILD=0 definition
+Message-ID: <aP-vn8opteOTvlTh@horms.kernel.org>
+References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
+ <20251022-vsock-selftests-fixes-and-improvements-v1-9-edeb179d6463@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022-vsock-selftests-fixes-and-improvements-v1-9-edeb179d6463@meta.com>
 
-Thorsten Leemhuis <linux@leemhuis.info> writes:
+On Wed, Oct 22, 2025 at 06:00:13PM -0700, Bobby Eshleman wrote:
+> From: Bobby Eshleman <bobbyeshleman@meta.com>
+> 
+> Add the definition for BUILD and initialize it to zero. This avoids
+> 'bash -u vmtest.sh` from throwing 'unbound variable' when BUILD is not
+> set to 1 and is later checked for its value.
+> 
+> Fixes: a4a65c6fe08b ("selftests/vsock: add initial vmtest.sh for vsock")
+> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 
-> Replace the closing words with a section that describes why reporting
-> Linux kernel bugs is more complicated than in other FLOSS projects.
->
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
-> ---
->  .../admin-guide/reporting-issues.rst          | 67 ++++++++++++++++---
->  1 file changed, 59 insertions(+), 8 deletions(-)
+Hi Bobby,
 
-So the text is OK but ... this is now the second section that is
-essentially a long apology for the kernel process being so difficult.
-It seems redundant with the other text, and I'm not convinced we need
-it.
+I think that if this is a fix for the cited commit,
+which is present in net, then this patch should
+be targeted at net rather than net-next.
 
-Again, length is an impediment to getting people to actually read this
-stuff; we should be trying to be as concise as we can.  Do we really
-need this?
-
-Thanks,
-
-jon
+...
 
