@@ -1,98 +1,126 @@
-Return-Path: <linux-kernel+bounces-872613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7CBC11934
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:47:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0536CC1193D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8226A4E5AF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F7D18949B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF2D2DE71B;
-	Mon, 27 Oct 2025 21:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E79C2E0925;
+	Mon, 27 Oct 2025 21:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="a+DGzPiT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3rMXqmj"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525F22741DA;
-	Mon, 27 Oct 2025 21:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0DF2DE71C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761601623; cv=none; b=s3CuSBtsDxYLq0M2t0WLLw3zV82hnRnzvW856fs/liNLk4QXSmbcVbRudD399kex3XZBzMKP76BxcSbIfgAOw8F5Fmx8t+irsgjlSk8gIss3pRez0Vu/cZcUJtR7gWIUlqkb+xDj+Y76f+bMu0ULI00wMjE3EuH02N5JKps9UqA=
+	t=1761601867; cv=none; b=tdW7d6Xf5imMwYMCUdunHApBr9FOQZQnHjEGAkjs7sFqlMyu3RAXa0reA+t+nfTV2/H84m9ySx47OBk8sjdfMA4xZmp0a7mwKSgH7hn8bb8DQILgt1B+3bm/uf3rdL5lZIE8H4lzn7SIk+Y7sQYV0+bR7rZlR55aV5TA4Co1Ge0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761601623; c=relaxed/simple;
-	bh=osOrtDpU7pZC66nxRP4PGkWRMoZiqRS6T2PAo0SDPLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oCC0GlypR2HufN8wk9K96l5WjPp5TrRSlL1vbdLWog8KnVjZdHFanqYETwRW1oDk3ea7fUgIaEkqoUuqi9MWh8Zzl+WrHB1twPQGAr3nnpmhz+xx9mBR/SX7ODkDRgjHJpIQNP0qmt7UbXOsLKY5980d6JqojPEimTLcnzQzO2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=a+DGzPiT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=SLOXmimtKRZScvvlqQxZfzkysLB99aDx6hb5bo1wlp0=; b=a+DGzPiThC+REygfARXSFfiuQb
-	PMc8nF8WUUNzZuxziK1mT/8A0R7hIdkeEn1AWI5GC29+yc05NrDreDw+b+hfpXXuly3m8rLG0CJRn
-	XQYejtGUT2rZ/hnZkuphaiW1NFOxOUwiGglzEDC6f7w3iqqN/PcPHFoVUm+nv9s4Kipo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDV3G-00CEdF-Tk; Mon, 27 Oct 2025 22:46:54 +0100
-Date: Mon, 27 Oct 2025 22:46:54 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Steffen Jaeckel <sjaeckel@suse.de>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@kernel.org>, anthony.l.nguyen@intel.com,
-	Vitaly Lifshits <vitaly.lifshits@intel.com>,
-	dima.ruinskiy@intel.com, Mikael Wessel <post@mikaelkw.online>,
-	Mor Bar-Gabay <morx.bar.gabay@intel.com>, davem@davemloft.net,
-	kuba@kernel.org, pabeni@redhat.com, edumazet@google.com,
-	andrew+netdev@lunn.ch
-Subject: Re: CVE-2025-39898: e1000e: fix heap overflow in e1000_set_eeprom
-Message-ID: <a42d374f-22e8-466f-a7a5-ef1d51ef6635@lunn.ch>
-References: <2025100116-CVE-2025-39898-d844@gregkh>
- <db92fcc8-114d-4e85-9d15-7860545bc65e@suse.de>
+	s=arc-20240116; t=1761601867; c=relaxed/simple;
+	bh=c0b2t3qnr5HsGsKFjLxBwS4JC9oQ+YneowGykdOhJkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+q9HNnrA19m+FJ9UUATaqBdNYLdZsrELiOzOhYEBaVPU/mFp++rYjNbyKrD2P0lw8B3M1YYT62cXf0mIqTpVp8pgu7UBV3Pzmj12KfXft/yj7IhlM/LINmT6XrKoKqh0rfR0mGSBGJjO8UAgN88+OmC0n1b0vglQcCsNzWbQb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3rMXqmj; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-79599d65f75so46555346d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761601864; x=1762206664; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OrREd7iHeiHOSpPNpoHh/ywRu6TBc92FEkyLuBrGSa8=;
+        b=k3rMXqmjMAXg1XE+pGT4zs7rFBSsjfh5H3TBBy535PWnwreRSYGMiaG5dfUKIdq/Ov
+         rxU4ir5oeFc8EzFK7eN/Z1NllUnG1RCXSVB1qxE4d3EoAjUCMzQdctjrpxuwL0+rpMxI
+         +Kb6Q22Iyk0Sc/NhUpF3FgjQ6kDU0ppUQ8zYAFEDWnq5vC8dp5PSJgC441jMTbaahCSV
+         wIeZQpn2S9NUcJuBMiokOdvq6mIhTkPOm7eUrUhhV49M12IcTDoftDUa8A/+BeB3Lj0K
+         K1kVhbxUu4knCF2f6qBeUFCHv3uGfbT6athxeU0SSolA2zX1SBpKzjdfZw+0vUSh2IUG
+         lI9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761601864; x=1762206664;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrREd7iHeiHOSpPNpoHh/ywRu6TBc92FEkyLuBrGSa8=;
+        b=JJX7MlImRAoz5Gik8HFJIcRVOzZfKmPAwtaEPMdgujKXrW13x8FwBWIeaEk1nxilOM
+         dEomspThUJ0i7sqYCTA4OXuFw+mWjVmSho2oDMmYwWX1Am2UfEXruAzazuN2m3xfn6qQ
+         hEhFWVZ0ddt/5EtwUq3B2LVsx//C0M91pIKKRSW1SjRtAZd/t8YLSSw97qZbVp2W/FTV
+         7v3GCLzzr9hZ0k9zw+aUqqCXoUPAY4PYockExxDa72S9ZuMjm1ACu7x5I8qX/ZcYmIEf
+         i5r0MEwgrXjI/SqynXeIyPVeoGDCCCZHKUzjU051EkevGyee2PkrAiq6koO0sevO0rak
+         Z1Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCTRmlppGU9HyFjpjqhbgxEFbQQnV9UAXujQKtJWLWJxGU/r8fD8BmD0VnSjOSdPDTAcRvQi+iEeITcbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO3RI+KTYanVHqqp4SIfgsYaC1BVLpuN4qomMm5OqCv/sz0FO/
+	oBsyWSyDlArQYaTh68cFLqE5pZGRmx0r8RirJ9dASAw3wJgnHvOJ5Sq9
+X-Gm-Gg: ASbGncvThq4pBJdM19PTVuBkduNVxLZi5vvB1smkA0PCrhiNKjZVjF3uJz39iPmKAqS
+	3mA8fFGZUYW3UfdWALdEEzHHuwKEnQgU8PhuAph/FNrnr9mTvAcxjJSeAkxYcVG57V8c0cFueUf
+	oE9Pjohr0kJ+oQpaEyuVzhg9kFepIRxYt+mukZT8AgXirhZy4BsJV8vExGN/VF06yersNvH6ajV
+	AzUU8SkhvMJx6NT09Y85LkVPsYsM8osVOoZjAXJu+AjL4K9iE65aKsPo38c7m6zhMi05nt5YPsg
+	b+aKoayGAoMoNAa1p70kZmbj+rIR+dQ9E6jjpPnF7zGbkKEr2NKYUfYWDlxKSOC0SqJEJDLlFK9
+	Ec/GOc2MCdJ1Uga1DLGiJup5TyLBESKeIZIx00WXm/A0FwONEQxzK//iqYee+jDXp4ViyJJ/EYy
+	Ku/HDzPu9gDBJhd7T/X8U6te5KlHikGftbU9rbHA==
+X-Google-Smtp-Source: AGHT+IEwMMAsl472wJTKvmKmtOeEVAzkmf55c6RANBm4nkhvEStvP0PtCn8QQl45Mv31CE6MfxiCZg==
+X-Received: by 2002:a05:6214:2122:b0:87a:aa4:4b47 with SMTP id 6a1803df08f44-87ffb119637mr15831806d6.53.1761601863876;
+        Mon, 27 Oct 2025 14:51:03 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48f7323sm63559206d6.29.2025.10.27.14.51.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 14:51:03 -0700 (PDT)
+Message-ID: <7cc00d0e-1cf6-4abb-a3f2-e96e30cd9128@gmail.com>
+Date: Mon, 27 Oct 2025 14:50:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db92fcc8-114d-4e85-9d15-7860545bc65e@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/84] 6.6.115-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+ sr@sladewatkins.com
+References: <20251027183438.817309828@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251027183438.817309828@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> we believe that this CVE is invalid since the sole caller is
-> `net/ethtool/ioctl.c:ethtool_set_eeprom()`, which already does all the
-> necessary checks before invoking a driver specific implementation.
+On 10/27/25 11:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.115 release.
+> There are 84 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.115-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-It is either invalid, or the fix is only fixing e1000, and very
-likely, the same issue exists in lots of other drivers, so the fix is
-wrong and should be done somewhere else...
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-This fix adds to the e1000e driver:
-
-+       if (check_add_overflow(eeprom->offset, eeprom->len, &total_len) ||
-+           total_len > max_len)
-+               return -EFBIG;
-
-In the core, ethtool_set_eeprom() we have:
-
-       /* Check for wrap and zero */
-        if (eeprom.offset + eeprom.len <= eeprom.offset)
-                return -EINVAL;
-
-        /* Check for exceeding total eeprom len */
-        if (eeprom.offset + eeprom.len > ops->get_eeprom_len(dev))
-                return -EINVAL;
-
-Are they equivalent? Is the core broken?
-
-I will leave it to somebody who understands wraparound to decide.
-
-	Andrew
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
