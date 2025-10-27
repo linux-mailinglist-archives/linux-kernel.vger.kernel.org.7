@@ -1,80 +1,54 @@
-Return-Path: <linux-kernel+bounces-870799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DCCC0BB82
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:54:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DEAC0BB8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85E734E4B38
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5057F189CA85
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C462C3769;
-	Mon, 27 Oct 2025 02:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25DB2D3737;
+	Mon, 27 Oct 2025 02:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOFPk/sl"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="c/3+pTM4"
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049AC2040B6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E882A274B59;
+	Mon, 27 Oct 2025 02:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761533639; cv=none; b=SEIrBrnqJELbkrRq051mmkKgltQBkzvejDNS4OnEr2l1tEiiw+4shvgfwIKcJwkqGsRn5kmLTlVi0061KImtaaLYHJC7EpiIntzn5gzR2SbBUjgszCThdDoxejLFSdnOxM0evnN6NbCogAVR6sPsL+Zo2Y8R3B/FeIdGA5Kvkng=
+	t=1761533844; cv=none; b=gvKhgO8wtyR5whADvQnW4H6XgxPbiJqtPtB4P+xUvf+hN9x1Nv7okSt8FCeFLdZucwEUb8RuRORnSsLuHlXAHZ6KRj7EXJ2XojKE6yGijzdHYo+YICYYDnGQ6gH4HvjDVQYiqCYKTglsXWKYad8My4gzJlzkejqxnmLVEQDMu2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761533639; c=relaxed/simple;
-	bh=9ToB783q04/ZLjbD/gt5wlM14tABvZc8zQTEnpTtNAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V6bIOyQ+cWgEKBXrNpGaZHYtEyB8smO59iqEy9JrnE2L3sFfHGykHrnzKUEcP7AvwwiX8hLJDvGrrxKtGE2IvG9YPkb5xQ6mhEzFSsZx6NlO1Xz+O6nh0KajC9NZUMORlRebqOyKqIIz1EGdtyNqXOXdPzTFiUGd+BTI8DvnXvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOFPk/sl; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7833765433cso5183482b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761533637; x=1762138437; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cVlahTxS7jRPwvwryBn2WGTgohPafv3ZR8htDrtjHFs=;
-        b=QOFPk/slUi/x+4+/KhrtjT2MbZHeg+aAklo7Mt3oDZF1D2N15a6L5F3ie2XdjjbKyb
-         CtTk7bKIkLDKxHLgNYMyaGZsXnVKpMGtAq6DwQKN7vf7N7yjuIEYVUwg0rjxizPTurZP
-         VsdSbth5LPVc399fitGEXQlVbPN4i3jN6pkq+jsccVRuGqDT3xWQvQfG2Ei6j/I2HIBX
-         uLHWisV51wA1MNlzTlhfbkMBj/yk41qIzMPGSfqodxmlaxrMGEhSaLyvQMUmV5YH8cVS
-         uhdD6rSjJ0rwGvno6Pefg1lTkOSUPkudLWzHw6Jb4oS/knwp3u2iwaZAuq4u+IXcRc4B
-         1eXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761533637; x=1762138437;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cVlahTxS7jRPwvwryBn2WGTgohPafv3ZR8htDrtjHFs=;
-        b=E7J9yn3klVJxSkRrCxx2lh5pDgVJtwQFfncV9YV7uVVbuT9XxFbsMJJudBJoF8q7ce
-         iAFTzA9WMvm8/r25a/+/U0zqLw+7n6MunrgUuYynhE3I1j3Hmlv6P3GZ3ely2kbpNF0j
-         YZrAHm0ptVXlfZJtOcvonsJzjEGQtAzqzA/5J4PkIPKvn0ya1QNpOcJR2F0kbzXvXttt
-         7fX2SAGiGCReegMCsPUm2WEPkLPoTmQNlIa2FYDs1EV38FB3iZVpw1XOJI7b5FE/69i+
-         9uf30wBZA5qTX/DeBfzbYghtF6RA25YzkvFQa3jn4Q/zjGcXQ09KzQRLhuHiPayMjYSw
-         UIBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd9dwp7NapWOx9oU8fmuUJeTM9JKDAIvp65mx6oG/NpN8EOvJQqfkjONmPWpLAjznOXinM39CfR5AhWhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxrVCgbhrOYBtD0q2zfR1jHY5lNSfnoO2V5SPk+wGSYB+RvGuY
-	9lvrQ0z/5UNGpjdXKqYAK6mjfBAjhVP3uy2OAajyG/ycMdCpUsAOwtrU
-X-Gm-Gg: ASbGncuL98wWSF2/+O5Uy7av3nwjOTZbPDA6wJe9AZwopWBv03Ybq0nQiD125tO/4OP
-	12jhBUAK0z2x6YwwTn/f1X6Xu+nqt5LUsYfNNUV9IWYglzEJoLM4uxtnI8vvJvXdWYSDsxhMuaQ
-	9qFFG/wBEOeWjJbrSg3JnmxapxAmbqxsQp6cm0aiXq9T231KAeb5OcZwtZT7rbLlZYz5tU4P++D
-	AM2AT6hb266AVVKWOST8GoAAUtYXScVeqx0onhwWIcq6voBI/NmMmCRyFjJDvWalUrrryqt6JUS
-	MxDZMST6wzDqj5SS1BaXOWpe7XXMVgphB0oTK5ZtJAZ/YADjXjjTa7PgVqx8hbfxj0lEwvmTpAY
-	u34k0eZfxk6sTTWRe4drtsru2DdoyoWRmlCKXgXQ2MbmytebvNTRXUqIDLh3xA2wMZJ/T0VjGNY
-	rd4kL1frDmdNKJ1cIiIcFD92RrGHsvTH+Ue4sJO0xOAX+nzQ==
-X-Google-Smtp-Source: AGHT+IHkbhlxjiyHB6Qfk8vz4b8fB+Snb1xTbuTgkveEGfECpKJAS/t70w4tpgOAyldU8hd5twy89w==
-X-Received: by 2002:a17:902:cf4b:b0:27e:ed0d:f4ef with SMTP id d9443c01a7336-290cb27eec7mr452422025ad.41.1761533637186;
-        Sun, 26 Oct 2025 19:53:57 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d429c6sm65101965ad.85.2025.10.26.19.53.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Oct 2025 19:53:56 -0700 (PDT)
-Message-ID: <67d1cfd2-a3e3-4a3f-89f5-38e822321578@gmail.com>
-Date: Mon, 27 Oct 2025 11:53:54 +0900
+	s=arc-20240116; t=1761533844; c=relaxed/simple;
+	bh=vicwMSkBC8SiYCHGfcE17HKJUhro6jph1byqn8KWXZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VwLAsgKidVH1XHu6nMWAqWAy/o3znZ8FVuXqKFmmlXed8cZcINujok03QfhhXpDVzNdxQSyh994irw+/1WCNsUVg4Ah3LpV2ZP8T+3SVyH6EympO4BaiqCIEBsQClxHGe/smD0B2yi72OxzRQ/f/h2fx1PWsu0SYdNGg/C8Up+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=c/3+pTM4; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=bmKr3gs2o9uU3aOUtwCT4DF/FX3VA2tgiedTv3vuvRk=;
+	b=c/3+pTM4U8FSRw10vA2AeHj0gabjZulb7wdAhA8uw2gblZ2Xp2TjEkoUjwO2h2EJUch1F74Wk
+	4c6X7APTEccLl4DMvNL07Efjc/z1nregFeU9v5LLEOPDUERXQTKtIMAtfWklCzxu86uf2xUk+dt
+	zN85c0VETcO4PEJuTWDpGSo=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cvynY2VLYz1T4Fg;
+	Mon, 27 Oct 2025 10:56:17 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 15FA21400C8;
+	Mon, 27 Oct 2025 10:57:18 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Oct
+ 2025 10:57:16 +0800
+Message-ID: <2d5ee2b9-e348-4d4e-a514-6c698f19f7e5@huawei.com>
+Date: Mon, 27 Oct 2025 10:57:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,179 +56,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Subject: [PATCH] docs: ja_JP: Move submitting-patches to
- process/ and add to build
-To: Akiyoshi Kurita <weibu@redadmin.org>, corbet@lwn.net
-Cc: shibata@linuxfoundation.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-References: <20251024235437.801625-1-weibu@redadmin.org>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20251024235437.801625-1-weibu@redadmin.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
+ __alloc_pages_slowpath() when BS > PS
+Content-Language: en-GB
+To: Matthew Wilcox <willy@infradead.org>
+CC: "Darrick J. Wong" <djwong@kernel.org>, <linux-ext4@vger.kernel.org>,
+	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<catherine.hoang@oracle.com>, Baokun Li <libaokun@huaweicloud.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-23-libaokun@huaweicloud.com>
+ <aPxV6QnXu-OufSDH@casper.infradead.org>
+ <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
+ <aP0PachXS8Qxjo9Q@casper.infradead.org>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <aP0PachXS8Qxjo9Q@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Hi Kurita-san,
+On 2025-10-26 01:56, Matthew Wilcox wrote:
+> On Sat, Oct 25, 2025 at 02:32:45PM +0800, Baokun Li wrote:
+>> On 2025-10-25 12:45, Matthew Wilcox wrote:
+>>> On Sat, Oct 25, 2025 at 11:22:18AM +0800, libaokun@huaweicloud.com wrote:
+>>>> +	while (1) {
+>>>> +		folio = __filemap_get_folio(mapping, index, fgp_flags,
+>>>> +					    gfp & ~__GFP_NOFAIL);
+>>>> +		if (!IS_ERR(folio) || !(gfp & __GFP_NOFAIL))
+>>>> +			return folio;
+>>>> +
+>>>> +		if (PTR_ERR(folio) != -ENOMEM && PTR_ERR(folio) != -EAGAIN)
+>>>> +			return folio;
+>>>> +
+>>>> +		memalloc_retry_wait(gfp);
+>>>> +	}
+>>> No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
+>>> The right way forward is for ext4 to use iomap, not for buffer heads
+>>> to support large block sizes.
+>> ext4 only calls getblk_unmovable or __getblk when reading critical
+>> metadata. Both of these functions set __GFP_NOFAIL to ensure that
+>> metadata reads do not fail due to memory pressure.
+> If filesystems actually require __GFP_NOFAIL for high-order allocations,
+> then this is a new requirement that needs to be communicated to the MM
+> developers, not hacked around in filesystems (or the VFS).  And that
+> communication needs to be a separate thread with a clear subject line
+> to attract the right attention, not buried in patch 26/28.
 
-Thank for your continued work on this!
+EXT4 is not the first filesystem to support LBS. I believe other
+filesystems that already support LBS, even if they manage their own
+metadata, have similar requirements. A filesystem cannot afford to become
+read-only, shut down, or enter an inconsistent state due to memory
+allocation failures in critical paths. Large folios have been around for
+some time, and the fact that this warning still exists shows that the
+problem is not trivial to solve.
 
-On Sat, 25 Oct 2025 08:54:37 +0900, Akiyoshi Kurita wrote:
-> As requested by Jonathan, move the Japanese translation of
-> 'SubmittingPatches' to its proper location under 'process/' and
-> convert it to reStructuredText.
+Therefore, following the approach of filesystems that already support LBS,
+such as XFS and the soon-to-be-removed bcachefs, I avoid adding
+__GFP_NOFAIL for large allocations and instead retry internally to prevent
+failures.
 
-In https://lore.kernel.org/87jz0xbk6f.fsf@trenco.lwn.net/, Jon said:
+I do not intend to hide this issue in Patch 22/25. I cc’d linux-mm@kvack.org
+precisely to invite memory management experts to share their thoughts on
+the current situation.
 
->> That said ... this is not an RST file, and won't be pulled into the docs
->> build.  I would *love* to see a patch that moves this file into its
->> proper location under .../process/ and brings it into the build.
+Here is my limited understanding of the history of __GFP_NOFAIL:
 
-This patch does the *minimal* thing, namely the rename of the file,
-with minor changes near the top of the doc.
+Originally, in commit 4923abf9f1a4 ("Don't warn about order-1 allocations
+with __GFP_NOFAIL"), Linus Torvalds raised the warning order from 0 to 1,
+and commented,
+    "Maybe we should remove this warning entirely."
 
-Yes, the resulting .rst doesn't cause any *new* warnings from Sphinx,
-but looking at the resulting HTML (or PDF), I don't think the rendered
-page looks nice.
+We had considered removing this warning, but then saw the discussion below.
 
-I'm wondering if this is what Jon would love to see. (Well, Jon doesn't
-read Japanese and would not mind.)
+Previously we used WARN_ON_ONCE_GFP, which meant the warning could be
+suppressed with __GFP_NOWARN. But with the introduction of large folios,
+memory allocation and reclaim have become much more challenging.
+__GFP_NOFAIL can still fail, and many callers do not check the return
+value, leading to potential NULL pointer dereferences.
 
-Of course, I understand you are going to do both translation and reST markup
-updates as follow-up changes.  But I'd rather refrain from exposing
-work-in-progress doc in the translations docs.
+Linus also noted that __GFP_NOFAIL is heavily abused, and even said in [1]:
+“Honestly, I'm perfectly fine with just removing that stupid useless flag
+ entirely.”
+"Because the blame should go *there*, and it should not even remotely look
+ like "oh, the MM code failed". No. The caller was garbage."
 
-Please read on in-line comments below:
+[1]:
+https://lore.kernel.org/linux-mm/CAHk-=wgv2-=Bm16Gtn5XHWj9J6xiqriV56yamU+iG07YrN28SQ@mail.gmail.com/
 
-> 
-> This patch also wires the new file into the Japanese documentation's
-> toctree, allowing it to be included in the Sphinx build.
-> 
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
-> ---
->  Documentation/translations/ja_JP/index.rst    |  1 +
->  .../submitting-patches.rst}                   | 61 ++++++++++---------
->  2 files changed, 32 insertions(+), 30 deletions(-)
->  rename Documentation/translations/ja_JP/{SubmittingPatches => process/submitting-patches.rst} (96%)
-> 
-> diff --git a/Documentation/translations/ja_JP/index.rst b/Documentation/translations/ja_JP/index.rst
-> index 4159b417bfdd..8e01619d4170 100644
-> --- a/Documentation/translations/ja_JP/index.rst
-> +++ b/Documentation/translations/ja_JP/index.rst
-> @@ -11,6 +11,7 @@
->  .. toctree::
->     :maxdepth: 1
->  
-> +   process/submitting-patches
 
-This should come below process/howto. Still, as I said above, I think this
-addition is premature.  One option would be to put a fat warning at the top
-of the doc saying "This section is work-in-progress!!", or so.
+From this, my understanding is that handling or retrying large allocation
+failures in the caller is the direction going forward.
 
->     disclaimer-ja_JP
->     process/howto
->     process/submit-checklist
-> diff --git a/Documentation/translations/ja_JP/SubmittingPatches b/Documentation/translations/ja_JP/process/submitting-patches.rst
-> similarity index 96%
-> rename from Documentation/translations/ja_JP/SubmittingPatches
-> rename to Documentation/translations/ja_JP/process/submitting-patches.rst
-> index b950347b5993..4bfa84cc705d 100644
-> --- a/Documentation/translations/ja_JP/SubmittingPatches
-> +++ b/Documentation/translations/ja_JP/process/submitting-patches.rst
-> @@ -1,33 +1,34 @@
-> -NOTE:
-> -This is a version of Documentation/process/submitting-patches.rst into Japanese.
-> -This document is maintained by Keiichi KII <k-keiichi@bx.jp.nec.com>
-> -and the JF Project team <http://www.linux.or.jp/JF/>.
-> -If you find any difference between this document and the original file
-> -or a problem with the translation,
-> -please contact the maintainer of this file or JF project.
-> -
-> -Please also note that the purpose of this file is to be easier to read
-> -for non English (read: Japanese) speakers and is not intended as a
-> -fork. So if you have any comments or updates of this file, please try
-> -to update the original English file first.
-> -
-> -Last Updated: 2011/06/09
-> -
-> -==================================
-> -これは、
-> -linux-2.6.39/Documentation/process/submitting-patches.rst の和訳
-> -です。
-> -翻訳団体： JF プロジェクト < http://www.linux.or.jp/JF/ >
-> -翻訳日： 2011/06/09
-> -翻訳者： Keiichi Kii <k-keiichi at bx dot jp dot nec dot com>
-> -校正者： Masanari Kobayashi さん <zap03216 at nifty dot ne dot jp>
-> -         Matsukura さん <nbh--mats at nifty dot com>
-> -         Takeshi Hamasaki さん <hmatrjp at users dot sourceforge dot jp>
-> -==================================
-> -
-> -        Linux カーネルに変更を加えるための Howto
-> -        又は
-> -        かの Linus Torvalds の取り扱い説明書
-> +..
-> +   NOTE:
-> +     This is a version of Documentation/process/submitting-patches.rst into Japanese.
-> +     This document is maintained by Keiichi KII <k-keiichi@bx.jp.nec.com>
-> +     and the JF Project team <http://www.linux.or.jp/JF/>.
-> +     If you find any difference between this document and the original file
-> +     or a problem with the translation,
-> +     please contact the maintainer of this file or JF project.
-> +
-> +     Please also note that the purpose of this file is to be easier to read
-> +     for non English (read: Japanese) speakers and is not intended as a
-> +     fork. So if you have any comments or updates of this file, please try
-> +     to update the original English file first.
-> +
-> +     Last Updated: 2011/06/09
-> +
-> +     ==================================
-> +     これは、
-> +     linux-2.6.39/Documentation/process/submitting-patches.rst の和訳
-> +     です。
-> +     翻訳団体： JF プロジェクト < http://www.linux.or.jp/JF/ >
-> +     翻訳日： 2011/06/09
-> +     翻訳者： Keiichi Kii <k-keiichi at bx dot jp dot nec dot com>
-> +     校正者： Masanari Kobayashi さん <zap03216 at nifty dot ne dot jp>
-> +           Matsukura さん <nbh--mats at nifty dot com>
-> +           Takeshi Hamasaki さん <hmatrjp at users dot sourceforge dot jp>
-> +     ==================================
+As for why retries are done in the VFS, there are two reasons: first, both
+ext4 and jbd2 read metadata through blkdev, so a unified change is simpler.
+Second, retrying here allows other buffer-head-based filesystems to support
+LBS more easily.
 
-This historic contribution record can be removed.  The same happened in
-howto.rst when Shibata-san did the conversion in commit f012733894d3
-("Documentation: Add HOWTO Japanese translation into rst based build
-system").
+For now, until large memory allocation and reclaim are properly handled,
+this approach serves as a practical workaround.
 
-Instead, please put a translation note referencing the disclaimer
-under the document title as is done in (ja_JP's) howto.rst and
-submit-checklist.rst.
+> For what it's worth, I think you have a good case.  This really is
+> a new requirement (bs>PS) and in this scenario, we should be able to
+> reclaim page cache memory of the appropriate order to satisfy the NOFAIL
+> requirement.  There will be concerns that other users will now be able to
+> use it without warning, but I think eventually this use case will prevail.
+Yeah, it would be best if the memory subsystem could add a flag like
+__GFP_LBS to suppress these warnings and guide allocation and reclaim to
+perform optimizations suited for this scenario.
+>> Both functions eventually call grow_dev_folio(), which is why we
+>> handle the __GFP_NOFAIL logic there. xfs_buf_alloc_backing_mem()
+>> has similar logic, but XFS manages its own metadata, allowing it
+>> to use vmalloc for memory allocation.
+> The other possibility is that we switch ext4 away from the buffer cache
+> entirely.  This is a big job!  I know Catherine has been working on
+> a generic replacement for the buffer cache, but I'm not sure if it's
+> ready yet.
+>
+The key issue is not whether ext4 uses buffer heads; even using vmalloc
+with __GFP_NOFAIL for large allocations faces the same problem. 
+ 
+As Linus also mentioned in the link[1] above:  
+"It has then expanded and is now a problem. The cases using GFP_NOFAIL
+ for things like vmalloc() - which is by definition not a small
+ allocation - should be just removed as outright bugs."
 
-> +
-> +========================================
-> +Linux カーネルに変更を加えるための Howto
-> +========================================
 
-Title of the original now reads:
-
-  Submitting patches: the essential guide to getting your code into the kernel
-
-Back in 2005, it read:
-
-  How to Get Your Change Into the Linux Kernel
-          or
-  Care And Operation Of Your Linus Torvalds
-
-And the Japanese translation has never had the title updated ...
-
-Probably you can align the title with the current one.
-
-As before, if you are not sure of the way to do, please ask me
-before submitting a next version.
-
-        Thanks, Akira
-
->  
->  Linux カーネルに変更を加えたいと思っている個人又は会社にとって、パッ
->  チの投稿に関連した仕組みに慣れていなければ、その過程は時々みなさんを
-
+Thanks,
+Baokun
 
 
