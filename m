@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-872398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213D3C10B6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:16:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A58AC10BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:17:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF851892DF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:11:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9837504803
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7F23233F5;
-	Mon, 27 Oct 2025 19:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C0B32A3C5;
+	Mon, 27 Oct 2025 19:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVSwdn4J"
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVDAqVFe"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C58329C7B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAF032D7F1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592136; cv=none; b=Nfit1T2WCs1XTzlq6HWVtR8EWr7sK8fHYEG7DrNH1z+WtbIJJpII0DKLfF/diU+19JtFElTiPdKDyQ2hSZAN++FeDyelEQUdWoXAaf9EKfzkJqnqxRTqwD4dn5OqvrYB2pFk3EbsVEBGYM8Uwkt+aSX3Hra33RbUYqfuboUd4wo=
+	t=1761592139; cv=none; b=BB4tzzHTD4YMtBHhUY7n9OLNu531NSGGHQlSSlS+516CrpM+Jnn+DXKplXsOP0TB/mv2c4PfnpLGSJ99mBF44NHfCgBE+CzfEN3YwvzHyXBn19L3iPwXY8OQSSPN0GA+7nSmlG/EON63617mdo/ZG0Te+HSwJzjEXDJmXxHe4Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592136; c=relaxed/simple;
-	bh=LwAmk/7MTnIWI2oZ7HDPyu3lp0S1pBrNDG9x+kH9r9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1IR0KqGPMLIbLJSLVE1dJIMqqc/LE2aI64575PrLYFV/56GvD/Uk1A3o1cJ0uLmagzyhfjw96SdXPfOb7gxtlid1r5t265ezdxl38hcTe8DKDFhfyFguyTvX6gXWMdDygy+q7AdD6Cd/Te49geXSJJ2AnJFLkmyot0ccgX+DNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVSwdn4J; arc=none smtp.client-ip=74.125.224.45
+	s=arc-20240116; t=1761592139; c=relaxed/simple;
+	bh=QxAPAArJ2hq4vlV57zKRp02JLjE4TuXvuBh4ghAfuXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ARvGU5V1k7eXwsMPfGl43c9cEmSPCq6N4AYCw7rH8CRCU1w9CFA6u79RkyqsnDPYQTgqjp6HjTN/7DjAp+kuJUMqB2+lwdPK7u4uLS/DBjzUhutJGGYeLSPcKb2shEz0mWZEmY71gUcmnUuKJMSad6e1Y2SbgKmjoY+zG1BtkcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVDAqVFe; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-63cf0df1abbso5698754d50.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:08:53 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47103b6058fso37111625e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:08:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761592132; x=1762196932; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lBa16o2HS8qCHNhSfYkAhXZ4L9FP6XeHVGIquo4j2vI=;
-        b=hVSwdn4JOcoqaHNLFfLQxTu7eWx01Rgqd59pBAURulTcRJlYT9XZil8D64vaoIKaOU
-         gfhxXps4MOYzdEvxMaV1knXwOsJHCSSn408048iYjmlqbWP/0AcrxiPSiyjj1Ssa8OPP
-         p7Lio09UtU4OeVO4jyJOTDKLcTpqHqFVjBhsUNQ0nesJO4M46fw4zBeXMfl5M8TyZhOg
-         E0/Zy38JkAphtr6W7H6oRnKX5ujQ/DAJqP9JlL8+Fmhd5ptzzNnOOqmaIhKJqyuKwyWy
-         9X146AywMJ0HzBTfXY5bZettFAhXL5zRIs/afSJUQRFwHucVtfLCnF7+aGlI4DkFiRGW
-         XE3g==
+        d=gmail.com; s=20230601; t=1761592136; x=1762196936; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xrrBuaV/kWzQy3h0bP5iIsIcB+cyHk6dwoM0ppsVeCg=;
+        b=AVDAqVFexAXuywH6VVGtaRJVIJi2WR+acsspYhpLIhrthz3pfUqj3mM8XULAofhDRl
+         qgaxXrfU91EClNffpX0sk/uSm7110B6UbZ92j3KmKmreZ9eyi8lciaQ7Ub5NyBy/9pbv
+         Qqkg64Jtb57Z87Rv39efksoK0Lur3wLKIWcqCVPPANkpJCQansOznMFnuj+U7PQ8iTca
+         Ka0h9aMVhN6cyClwuU6keEnuW48Dh5qi64tNGIoJzTunUt0gYdczcJtSbj/aSSpluJOe
+         PpXzAYC4NmOUOPoDVvnsza3MfySQAi/3QnrU+SSH0JqZiSsLi0D28nqZ3bvhWj0Pet/s
+         e0EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761592132; x=1762196932;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lBa16o2HS8qCHNhSfYkAhXZ4L9FP6XeHVGIquo4j2vI=;
-        b=XlIiKV2VYufWH8743gjxwME784BHtXJ4Kmxdej5/kwlOnfmjd3//hMvrMdI3VDeHWy
-         hqZ3KVSdDCXK3F3PPkmeTHLKOfZ8yySWFc6zCooTLyA/qUVMFAxLzv+LOqHvO2IFJsiY
-         ZFFGwjpmGli3+wCdvdh53TO4+DaKGCups+XmioOto/bA+aMJqmxMXgYKQUHCS+cwc5kH
-         cmqP8/zlx3VZxpFlfc5d11mUXFtPJbHfaclp8nGPtHvieypMO5P79/cHI0EGOnT8Ct8T
-         yH6eiAtsmK9axDfqBtMhvuKDp59H5/BcKJ4zPA2ZbKM+TEFxKXifqqKfSMsTnx565EbE
-         xSxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8/98PRmAzFlBbesLI4ZOe9VWlm7KA5a3HbhMdXjgZIw/cNv6bcItPVsRZQ7wBbvOoGr6prZxLjwOhxKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4yyWxNcNPJWdB/tXRddcRhS6LhmNDWiWTEhypR5bKmO2QCJeC
-	M7D87e9yeyg9/V2IEKvxVcep2BwWU6vOt20MxA4xXrK7ZVmI4keQc1Rk
-X-Gm-Gg: ASbGncuXEH5KrdXBoDgZkFoRGk82oS+/eE74HJNkozX3OUhKV5m/uE1K3qgPMvlS2ep
-	Vs7/7oyNlW7xlM9ZAqZkBV5VnxfROt6eCk7XA+i5v81eDZhari2jVzON7x+DFumfSjH17tBMe4u
-	c4EWCxqOrUigjc6kVeXxdj0JsIdAqPOMmMknHfeVNy8WzmISOohN4O2ek3yE8YUGA5LuAA5iEV8
-	XHATaZd96f2yUeM2pC/uo1tkqYogY6MqeoZ+Qyv76PAm570NwB+Is1MsPXXvbUP+4Poi5QrLX9K
-	yWewk4pV8EIlttWjV295MY6mVfPRJ0Zgahj5L5tQMncqybGg5hhE0wgJU6UB5T/ZtWAkpXa6ugR
-	p1dZCrja2ugxhF4Sn4IeuDkyUGBZ1PThJp+zCz9kRyAsd3N5VtgrwQ5gOWPPLxkjVTpBN4YzpKW
-	0elBtKjwsRJgYcSoBCeOC9vgl3gThGuun7cFRKwK0e+aotiyw=
-X-Google-Smtp-Source: AGHT+IGyyVhNMyFPJ1iH6VB3LobfrBQTkhvZ12vnfHgjuauZlHjFnodUEDbnz8J1VMMlZEjH/eQK1A==
-X-Received: by 2002:a53:cd41:0:b0:63c:f5a6:f2ef with SMTP id 956f58d0204a3-63f6bab5662mr707347d50.65.1761592130958;
-        Mon, 27 Oct 2025 12:08:50 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:56::])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63f4c441fe2sm2525648d50.15.2025.10.27.12.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 12:08:50 -0700 (PDT)
-Date: Mon, 27 Oct 2025 12:08:48 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next 03/12] selftests/vsock: reuse logic for
- vsock_test through wrapper functions
-Message-ID: <aP/DQLcX9uaY6kXN@devvm11784.nha0.facebook.com>
-References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
- <20251022-vsock-selftests-fixes-and-improvements-v1-3-edeb179d6463@meta.com>
- <aP-kmqhvo4AFv1qm@horms.kernel.org>
- <aP+zgF7zF9T3ovuS@devvm11784.nha0.facebook.com>
+        d=1e100.net; s=20230601; t=1761592136; x=1762196936;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrrBuaV/kWzQy3h0bP5iIsIcB+cyHk6dwoM0ppsVeCg=;
+        b=sG5Dirk//k0svtllWUTTHMqroxJATSbEnipSGRltcXvc2aaOJ6qJVqQkRmg/fecyJq
+         UrPx1Q5DVoxXj0alX5oDgoTwiDsvSvUN+aTnOkX7C34xe9eqUcGVyrQwFtRs4+T3RAJc
+         MvRChH/aTtb0RDRms9nCSHkHHfNqsI6lkTGJc3E4jKK8jeiUSmUPMNkdp1oBkc8jtV51
+         eN3byi15ui7CxVnIWOjEIhHIZZi+r8aa4zMCnlLueiFWTaNxrfLemvwi/Pi8FLT3Eu/s
+         l1hb3HBHAj+VHadtKs56HvdidJ+MQszBpdTjkTQjioUMy8CqLmYuGLJxV3P2lVkX7EC3
+         wnFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfnvJpp/XXpCZg68mxPGGHFJsmq12FDfRQM4UKjpaoT9MT6aCsufOybOyQsY5lTc32ifniNhnxqw9M1QU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYDMQ8HtaUPBeVDfvZzJIB9RAJOPGu6mQHmNP9PqLoUOvHejat
+	45JkdyXWhFBinfb5pOJK2BhQTeLf1Zw0SmO5Fsf77gj2RGrAmMGel6iR
+X-Gm-Gg: ASbGncvhYCldV5BybxdCfzcz5OMM535Ve4LwFuXLl0k2/ZzwhugixuArca4BnaNQZMv
+	0mRNnHWWq8d7UmSCu/wCz5Z/ZM+KsPki/O6FJnSDtEpNs38c26zWTkxtK24jJNnaJ8A3ejzVx0t
+	ixYYxcOKxd572YouTC+pVw57AJFZTWPcWQ8/XQIyOCnLMjoBSsIyOrqGLrggjBi1NB6NZW8p1bj
+	3UCG1D07l2CQvSHvsZY+q1Z30wplAouCDTzPIu9oJtbEfIYg+VaF6d+6/q/tiCF28kmg189iLu9
+	j/PTCUKPfM032rB0PvSWo7KsV3gBGBeu/3eNXwFS7bYCyVlXRI6u0IaQ9oJb5dw5fjuPxZ9/vDW
+	uiD6AZpLL8xgahlauzrvnITEjzo0nArLYJ4HH4/5KAkYZRiC7mqS8Q5T7JeQQk59Ddt8+zXhmXQ
+	xSfNEr0LKGxmVZNEVdZlisSmH7s9lNGl3wREF5EamURkIrXefIZ7rJeebZC8QRHFX2F+X+L4TSH
+	6pwgAeDixrZUoipjLVa
+X-Google-Smtp-Source: AGHT+IHQpujKOrXJVzT+iAH4rHZKqaP7yZUXY5b+4r1SO7Gypfz170ZMy3c7//TDLo+TKI0txclzNA==
+X-Received: by 2002:a05:600c:871b:b0:45f:29eb:2148 with SMTP id 5b1f17b1804b1-47718d7bfa0mr665135e9.7.1761592136000;
+        Mon, 27 Oct 2025 12:08:56 -0700 (PDT)
+Received: from ?IPV6:2a02:8010:6606:0:1cb3:1c74:2f0b:e9ac? ([2a02:8010:6606:0:1cb3:1c74:2f0b:e9ac])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477184e4006sm2064515e9.5.2025.10.27.12.08.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 12:08:55 -0700 (PDT)
+Message-ID: <d583ee43-38c4-40fb-b33b-ce3153c9723b@gmail.com>
+Date: Mon, 27 Oct 2025 19:08:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP+zgF7zF9T3ovuS@devvm11784.nha0.facebook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: pwm-fan overlay for NanoPC-T6
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251026194858.92461-1-sigmaris@gmail.com>
+ <CABjd4YxsfxwEbic8QEabX1h9j0B3DBw9LWwctJx7SzdvXZdDhA@mail.gmail.com>
+Content-Language: en-GB
+From: Hugh Cole-Baker <sigmaris@gmail.com>
+In-Reply-To: <CABjd4YxsfxwEbic8QEabX1h9j0B3DBw9LWwctJx7SzdvXZdDhA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 11:01:36AM -0700, Bobby Eshleman wrote:
-> On Mon, Oct 27, 2025 at 04:58:02PM +0000, Simon Horman wrote:
-> > On Wed, Oct 22, 2025 at 06:00:07PM -0700, Bobby Eshleman wrote:
-> > > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> > > 
-> > > Add wrapper functions vm_vsock_test() and host_vsock_test() to invoke
-> > > the vsock_test binary. This encapsulates several items of repeat logic,
-> > > such as waiting for the server to reach listening state and
-> > > enabling/disabling the bash option pipefail to avoid pipe-style logging
-> > > from hiding failures.
-> > > 
-> > > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> > 
-> > shellcheck has some (new) things to say about this patch too.
-> > Could you take a look over them?
-> > 
-> > ...
+On 27/10/2025 09:14, Alexey Charkov wrote:
+> Hi Hugh,
 > 
+> On Mon, Oct 27, 2025 at 1:09 PM Hugh Cole-Baker <sigmaris@gmail.com> wrote:
+>>
+>> FriendlyELEC offers an optional heatsink and fan addon for the NanoPC-T6
+>> and T6 LTS. Add an overlay which can be applied if the fan is fitted and
+>> configures the fan as an active cooling device for the SoC package.
+>>
+>> Signed-off-by: Hugh Cole-Baker <sigmaris@gmail.com>
+>> ---
+>> FriendlyELEC heatsink with fan addon:
+>> https://www.friendlyelec.com/index.php?route=product/product&product_id=305
+>> Vendor DT with trip points and PWM duty cycle values:
+>> https://github.com/friendlyarm/kernel-rockchip/blob/4944602540b62f5aad139fe602a76cf7c3176128/arch/arm64/boot/dts/rockchip/rk3588-nanopi6-rev01.dts#L75-L90
 
-It looks like the errors are SC2317 and SC2119, but are false-positives.
-Invoking a program as a variable (e.g., "${VSOCK_TEST}") is tripping
-SC2317 (command unreachable), and SC2119 is due to log_{guest,host}()
-being passed zero arguments (logging its stdin instead).
+Hi Alexey,
 
-I also see that SC2317 has many other false positives elsewhere in the
-file (80+), reporting even lines like `rm "${QEMU_PIDFILE}"` as
-unreachable. I wonder if we should add a patch to this series to disable
-this check at the file-level?
+> Is there any downside to enabling this unconditionally in the board
+> .dts?
 
-Best,
-Bobby
+Only that it goes against the principle that the DT should describe the
+hardware; the board .dts would describe a cooling device that doesn't
+actually exist on the base board.
+
+I guess then in theory, an OS might allow the SoC to reach undesirably high
+temperatures if it's relying on the nonexistent fan to cool it down. But I
+don't think this would be an issue on Linux, at least, in practice.
+
+> Overlays require more user configuration, and not all
+> bootloaders support them directly (e.g. systemd-boot users would
+> struggle). Compiling with overlays enabled also makes .dtb's a lot
+> larger due to added symbols information.
+
+Nowadays (on Debian at least) using overlays is pretty easy, I'm using the
+u-boot-menu package in Debian, I just copy the overlay(s) to /boot/dtbo/ and
+it detects them automatically and adds them to extlinux.conf for u-boot to
+apply.
+
+Couldn't systemd-boot users just use rk3588-nanopc-t6-(lts-)with-fan.dtb as
+their single DT to load, if it doesn't support applying overlays and they
+want to use the fan addon?
+
+FWIW, I haven't noticed any problems with having a larger .dtb (using mainline
+U-Boot to load it) and several other RK3588 boards are also compiled with
+symbols enabled already, and I haven't seen any issues reported with them.
+
+Best regards,
+Hugh
 
