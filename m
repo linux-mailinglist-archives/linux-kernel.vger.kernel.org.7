@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-872626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749A9C119C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:05:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C01C119DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F46819C7401
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:05:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10C9F4EB148
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3769C31BCBC;
-	Mon, 27 Oct 2025 22:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A7324B30;
+	Mon, 27 Oct 2025 22:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AY1Ok+NS"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qae6kQ5X"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45DB2DEA6E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CAD2F99BE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761602705; cv=none; b=es566yPLne9e/REea/txiRRh/hH+iv4B4SsuPs5rxaYtcXuMpLqA8l10Yj6Kc6CdD1bLhVMmUXicCyPxnWCXA9ReESseoR6xD0DIKlh4ROouzPLvMMINrwT/ZNqr6X1suWjEpEQFwjc/H5cyhTf5VJNdovUTMGGZLmO5tT3uZt4=
+	t=1761602961; cv=none; b=CU8F7iBVpZ4SmTgSlwHFf7SVjs6MvIQkyUZCPU1ApJ2WVDOQ4anKIJCqNk7fg5T35xd6ziqFLleZCS2PXegQRpTBMZInhRxo5QxbfqxfNKwoNTQDCTAQqBzckzzHUX5OWXTc6gQkCqOso+Ieu93YHoTY+928jGfI5aByantpjCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761602705; c=relaxed/simple;
-	bh=881iDkPEZh85ObsSmrMAZ48Htve0Wj9g+gfovyJ15uM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VYIsM5Lv0BLv2uXHy8lDOxbRzenusKMCfU4MeGpsCRxljQDQaa3OlxHpGEbOHekXLiqkdR7rO89veqLP1osz5aPO6MTcfdkMdjQ0nFAZwKE6aMwkWEuBuNJcZOmkG6TvGfQCkc9OCoeZjpS1VBnn2bkJdVi+HHqyfHoQEjxrVoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AY1Ok+NS; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-592fdbeb7b2so5081561e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:05:02 -0700 (PDT)
+	s=arc-20240116; t=1761602961; c=relaxed/simple;
+	bh=yXfJZ9u3Fbjfd2gJx08sRzobL8zpTJ5hQcZOUZCTRdw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PAZgbgxHWtkJ3z9Spw2BhZOin9WbaPxPFMO8Zo9LAfvHMU3xUJEntT6olBnoOnZtvd78rOkkLyWLEWERIXOJ20PwZxQmCsmVPiPfiDFa9eLaJ78fqPhRMCc6BZGy7ioOIiFQhzV7P+KQZkfavd4fQvezH/yp8n9/IewuqzBuZZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qae6kQ5X; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-34029b3dbfeso154660a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:09:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761602701; x=1762207501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=881iDkPEZh85ObsSmrMAZ48Htve0Wj9g+gfovyJ15uM=;
-        b=AY1Ok+NSj05rf5B6Qk9YA4ZHIYVjoSO1m2vXDJeJK5UNKe9mRGKsXW5EnjQ0+JwY6L
-         bInfp+u8gcsWJtvLp6SYv5te/smbG06Hrx7cLF85ElCL1bWXT+uTCn2Emih0ODIR7t5x
-         HBLmm0G33Xx1mX8/lmv2UH6YLP6fZytuQTv/frdf3MnQz/QHmHrt64Q4OKtAeUiMcezu
-         L15qNzUqKfgFWdeS37d+PdpwXF/5wVxbb4ohDQ3FbZjiZQrnXPF2TR+NQX126RWOO054
-         7y+dcqJ0DhZBbZ+k2auEkaEG2j0cyzAOyMEnGX8Qpw21DUJCAz4NXickpHwIsoEl0lXr
-         +NXA==
+        d=google.com; s=20230601; t=1761602959; x=1762207759; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dSGfQMNjri/IzdLNzyd+71NlCYDzISAHz9ggAxICGTk=;
+        b=Qae6kQ5XvSUFsXrXJlpvJ7L/xGUDSCqpqCfTK79SSLUYie0oYiOMfaHOnvaCVIKq8K
+         U4qCj+3+C9zZxX6xvqwgVv1lE3yJsghz68vGKOlPHMGr4V6UAaftb7XktT/EW0chv3eh
+         BmgQi0HZXAUBq30x2fGx4peV7We/EbSMlGXEOHdGvhLz3SDjatmfzkIpkgRXQscuqIs1
+         bf0+oePL6A4/T9r/yiXNBHx3ED3WB01Xf8FXn6fnLzPRgGzOYV7zBgZBimJUtvtN3eZD
+         +Xqoia6UtIUK+IK/fjVNsAP9f3otHZqgdu9ChlmThknhQ/IhjmVer8JvZxQrAe1NA4yG
+         TNPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761602701; x=1762207501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=881iDkPEZh85ObsSmrMAZ48Htve0Wj9g+gfovyJ15uM=;
-        b=UZhr2dmozpfT/Jp5hgaFiXAQr0q3V1yKA9YIMILjmB/OCby6Y2J1VJchUKAZUEtKEZ
-         d1mlZxCaNDNUfH3INpy7LCEe+oGgzqi6XLbNYBK8P7d9Cs/bPbBrpxRsp1EGLYdHfoPb
-         sy3ndLe6pCC412ypATSynlPZEVg1FglNk+f5ow6l5YqrSXZ3Cik7Ep24SxRpEhJMstfE
-         FNiGnxBZwTtloA+aVXaCY5aejzDravUcNCZZpLs7EDEpluX+WpRF6IfPFa+Xi3GodtH6
-         NnYNK+InEjRXzN9Mkud1VdwtdC8RU+FVNt3m62TGdinUp5PWsSqd/lwQwhY5cjQ/Hics
-         CKjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9lnELqzpuezx2XnepydXSZ9Ou0QmKgjgbAcPYSeghwzLg4SnGi4UCGtqTVLC8Xk+aLkp7ZZds7DCOZnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt3Aa7B0apitAbHynTdzHDa61kpyDqJTxRufBzfCvZpILhvCZW
-	+rCe9dFRc6/BrWL71YLGYM8j9WkECqS+1syI963TkdniKM0BmYhPRJXFzUgqcBGOkYHQreMn4nk
-	rDETYpg+JnVAosIjwPTZHk3bcdWB5Zni+FkO57Gy2mhsv27izHorK
-X-Gm-Gg: ASbGncs1dgGa8PpTdQhrVly0FXBfmr7wHn0Kbhho3epITtEx1AmyksMmwD+3LwR/IVF
-	qcjcBiY77zm5GUllo+y8NBeDnWuRZmNwda3kpSeDK5hxnbKd9IT1t1EbiYiuOSNBHVYLCr1f9lf
-	rwSmHtM4en5STan0R43hBkyJfCXZ4L4sacQ/xwtLXKMJJ1y4XZj6rrrXuXi/65sNyvkXDWSw+pl
-	RSztW9Zz9g0SwC/QrC9k6cFtYquOfDL8yr6+ZZ1/sna0s2ppUd9Yii+qeceBNn29jeCpVg=
-X-Google-Smtp-Source: AGHT+IHoUF4RHiTK1ixTbcpPhI4tBBI8uNgdSo0LDy74WVyTiTCN+lBwjm/Roz3VFn6Yvs6CWMINeSQ/2LwI3eIrZ6o=
-X-Received: by 2002:a2e:ac13:0:b0:378:d757:d307 with SMTP id
- 38308e7fff4ca-379076bc3a7mr3168981fa.11.1761602701023; Mon, 27 Oct 2025
- 15:05:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761602959; x=1762207759;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dSGfQMNjri/IzdLNzyd+71NlCYDzISAHz9ggAxICGTk=;
+        b=LIOclFM+X93+1Xt7F32jqehTabbgZumBfL97yOB5jHjDOpSoVPr9N/8xxnzYqcHw6J
+         S3RVfZDw/IN5lu1pAZ4JsCBaZiKws79DV8KGwNO0aRT470DnZaeiB9jOL/5U7Uu5Gfd1
+         f3B1qQq67E4QDXoiGYmJ2IAwo7qNvQV61PAocg+M/RrvidwX7CLcZogiR6W3T3NK0nbe
+         nIOHu5NGkZtJKyUut6WpA+eOrz5UZ7d4+ABp7zq0lKpthgrLeXKeJTDh4d254sXnMnpy
+         4XlojIoFAwYAwMz54dzWldzNgTXM4VAQ6rZA0HoRj0kYd9vc+V6VlNXxHA6VaKHEMIId
+         zvDw==
+X-Gm-Message-State: AOJu0YyzYzH5Ion+wPWmrZamWjq66G4FMVqgSq7Mz89hbRYffJLYBQEp
+	rIKBQq52UKp6nae5zkqKiSVsbOrt4tjnBRPl1Ypj5oqHn5vDStixxrulcfaE44fE7Hp4eA==
+X-Google-Smtp-Source: AGHT+IGS7xK7WB6H01wrhC/DTJJJdKCdhMHqBiqf2jyYVcEgqsh6sEw0yU2tcp1RCB979UO3Psy6Cak=
+X-Received: from pjboi5.prod.google.com ([2002:a17:90b:3a05:b0:32b:65c6:661a])
+ (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:280c:b0:32b:bac7:5a41
+ with SMTP id 98e67ed59e1d1-34027c1c55cmr1350654a91.37.1761602959448; Mon, 27
+ Oct 2025 15:09:19 -0700 (PDT)
+Date: Mon, 27 Oct 2025 22:09:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251023132700.1199871-1-antonio.borneo@foss.st.com> <20251023132700.1199871-2-antonio.borneo@foss.st.com>
-In-Reply-To: <20251023132700.1199871-2-antonio.borneo@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 Oct 2025 23:04:49 +0100
-X-Gm-Features: AWmQ_bkqvtHBv2ihzMqbHUb5leNu-ZCVXzL1Rr2PRCeRlwPcmd2dgcjDCOHd-pw
-Message-ID: <CACRpkdYUt3mZX_KjFps_BSRQVrPcn70SrwEJGKRQUjHq3VXcDw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/12] pinctrl: pinconf-generic: Fix minor typos in comments
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, 
-	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.838.g19442a804e-goog
+Message-ID: <20251027220914.2665978-1-xur@google.com>
+Subject: [PATCH v4 0/2] kbuild: distributed build support for Clang ThinLTO
+From: xur@google.com
+To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Rafael Aquini <aquini@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Stafford Horne <shorne@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Piotr Gorski <piotrgorski@cachyos.org>, Rong Xu <xur@google.com>, 
+	Teresa Johnson <tejohnson@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 3:27=E2=80=AFPM Antonio Borneo
-<antonio.borneo@foss.st.com> wrote:
+From: Rong Xu <xur@google.com>
 
-> s/specyfying/specifying/
-> s/propertity/property/
->
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+This V4 is based on the reimplementation provided by Masahiro Yamada
+on May 26. The difference is that this version now saves the compiler
+flags (_c_flags) from the Front-End (FE) compilation and re-uses them
+for the subsequent Back-End (BE) compilation.
 
-Patch applied!
+Rong Xu (2):
+  kbuild: move vmlinux.a build rule to scripts/Makefile.vmlinux_a
+  kbuild: distributed build support for Clang ThinLTO
 
-Yours,
-Linus Walleij
+ .gitignore                 |  2 +
+ Makefile                   | 25 +++++-------
+ arch/Kconfig               | 19 +++++++++
+ scripts/Makefile.lib       |  7 ++++
+ scripts/Makefile.thinlto   | 40 ++++++++++++++++++
+ scripts/Makefile.vmlinux_a | 83 ++++++++++++++++++++++++++++++++++++++
+ scripts/mod/modpost.c      | 15 +++++--
+ 7 files changed, 174 insertions(+), 17 deletions(-)
+ create mode 100644 scripts/Makefile.thinlto
+ create mode 100644 scripts/Makefile.vmlinux_a
+
+
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+-- 
+2.51.1.838.g19442a804e-goog
+
 
