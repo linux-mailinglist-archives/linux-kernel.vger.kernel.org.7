@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-872636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284F2C11A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F2FC11A2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01C1F4E4384
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:12:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 183B04E566D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A25329C64;
-	Mon, 27 Oct 2025 22:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403E432ABEC;
+	Mon, 27 Oct 2025 22:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcOFMDw5"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mcFFAINK"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0622D94A3
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9852F99BE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761603174; cv=none; b=X4ebNhKq2hzt/phEagcDylD5vEx5aIpOREyQDMkJifUx36rD/zZLqdZZpvY0/t3k0f+Qsp6nxlFVl8mZE0QKRxkFXVSY0Gb0Gnst+x4AwenTuDgaPRpMevRtkQAf7T8qfpkw85Gv8LcXI97/okgS6zSXtSqo/bFqBZQv5rKzGRs=
+	t=1761603217; cv=none; b=ai7kqwfItpeoviaW51o+AFYFbaUUy3rok0BPb4GzZgtT15/9J7wT56v0sPAXP0nalBF4QIpypEUX7i2Tnm7Vtw/lfrwNB8poPGC5ELysJP7wPh6N2IK4XdupooWJjwADq8eULznXCi9NPCByQVphztkD6v+7lC+KCJlRHGiCyZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761603174; c=relaxed/simple;
-	bh=p0VYuTzD+pw6O+ffSIwOFLJ+utPOn6Ed1+UK3H7oZ0A=;
+	s=arc-20240116; t=1761603217; c=relaxed/simple;
+	bh=mQTKJScatLYjbszW8Nmlz+tuTFmWhnW9yYaJmefda44=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fs6nmeTFBoKaB19WKnu592/frrerVQwpzIHydkmQBMuLnDFfBJ9VtbOaoOl3Xm6Xq3jPR8/8ylXQ0t6pUl4mBar2C5B2dC4g5TeDSdHgn66Ga2gF0DNAQC8Aa91eDcdE+fdKxi6PsaI9YgGznm9dp+NOAng3CzNRlt52FaZMdjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OcOFMDw5; arc=none smtp.client-ip=209.85.208.174
+	 To:Cc:Content-Type; b=mnbXrBIwd2YwWMs8Hu0ziZqG/N2hWBwCJILogEEcwXg3eQ0XT+N53SJmXkOh9D7gxgap24Hnrls3aA6c6JXn5o8amj/Jt/3suLlrzclO4merHqUoOESLn5ruHJm7SUzR2R1HbwIZcEZcKe+gYM3GO8HfUAVTRYyQoeZsIBfCt98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mcFFAINK; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3737d09d123so73583081fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:12:52 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-591c9934e0cso7492727e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761603171; x=1762207971; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761603214; x=1762208014; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p0VYuTzD+pw6O+ffSIwOFLJ+utPOn6Ed1+UK3H7oZ0A=;
-        b=OcOFMDw5WE1VvjjLIvOIMrhOr8poXBK1twid9BTAVaxS0GykGPg3DDgQiZKPovawj2
-         3ler2GJ3PHtwNzxKNYmraXmuEQWGq7eMqgfg2tNpl4/oYIrX/QdVllqsFEUptunEx4uL
-         bpYPn343NQjsZqSNBIGQVNYLDsjVeFHlk7hPXVi3ceK2H0OFSIUZqf/FvR96jXYQUfGC
-         zpp+M7u2+ThyBMTdlW0uSMEnDVXNpdEiNL9m76SZ4jihOACza8ojFuyyUshb4QZUShu5
-         4zKYfYG2VPxmWQNS7Q+/Ca1BCL0XmiSK889PtjuTzyEu2okOYu/ln+0AgB4a2kGT81n/
-         gBOw==
+        bh=mQTKJScatLYjbszW8Nmlz+tuTFmWhnW9yYaJmefda44=;
+        b=mcFFAINKBKl1oFJOdmUNYBj3q0Z1Yl5W5xNtzDyJBzoffk0hginF+vLPh24NCDWDwE
+         7BW7Sz5S5UAt0c3nr/huh+Npyudh+fU6MefMLr4HCsZmSggcy3zfdqUq7cy9kvBAZYXc
+         +VlhYJsFznVt4mNLVehv19PGbi5dt2QiT2rhQP/+vSmY61MBGhaI41xV/+N/ZG9b/4pD
+         Red9o0IXhGjODfW5KXfvdowtp6RDKPmLTHUkxdFkktAMo7+TZQOjFXFqaA4w43rB5HvE
+         2cJIEN+ccBR5x6Dbxy46Dj9zwwaAif+dLSlsGdGOSM9kisYlKYnctm9/CuKD83KP0v7M
+         lYQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761603171; x=1762207971;
+        d=1e100.net; s=20230601; t=1761603214; x=1762208014;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p0VYuTzD+pw6O+ffSIwOFLJ+utPOn6Ed1+UK3H7oZ0A=;
-        b=Y980cBWs222ivrIb6h7qMphseQZXIsBg7uM41PDAH0pNN6OwZCpI9lge/wGgqmIprC
-         3vwhTG8r6H4kF3s7WYw3IsSheAGY8iCsYxwYWZRuv2Gye98yA2zTfdi9zjHJKfjijRtH
-         6xeT7Mt2LEVqw3Z/Eg117Isgj1YDCxwULqqwrXpruqsb06cinVRaRG+N0TFI0qIVfBBT
-         IQlWccXw4as+EmlfilLXsolK0ASrGJEP8ywyayyyLmn98EkIuO2IZzx31F2hDGTtVpB7
-         rj8apJgBblKSxGxBppfpTK4Ne42Gh9PI6CCteLj42pvrS7j1BJAcsc4EmTJImsMuofih
-         7YtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDaR5atSMxjkuxob1d8DBgeoouoD166zmPcCwWwagsN+GrsgXJck4H6irIMfzMsFE0eo2THQH2tnusgJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4BWU7qvXKHjbX91Gtm3L8r3mqlA3FGXn8vXhuVu9P+M/EhtrT
-	hArASx86fWyZyuu0KO2rY+3dzdQMy1yUOSLZE0/lgrD4fRYovOMB1Wtv/t9MzO4ywRu4QEATcG8
-	zDRsm6qQPvQ8fK0R1Ncy9bq098bfYHuVxJhRtG+kACw==
-X-Gm-Gg: ASbGncssoXAJjrW/WK54h030bNPPsABU2MIkfvstkbuLROjR3qUQS1jpFjuoc96nG25
-	YvZ2c63c6onkIfM4GVLDa/XOkyXdV36clImHhejVQcCZL5prgIVnRT+R7QA1kbRqTqFJEamUT9w
-	KGqCKx46dvOCcz/NArlP3MDcso70CLlUaOh10BYJlODFIMn0qbrWOthW6x9WlXmu4+l0ltQjY8P
-	AzPam8Bqpvm0VO+McH/mBkm55QvQAH/avMlFkOSjCH36klXuNKJnfioUMNi
-X-Google-Smtp-Source: AGHT+IEO4OBX6LOPY6n+Kwj2RHxhOjz2+JIoc8GL2mJCp5ePHLtyDD4AZKAQpVBpjKroBtS/M17W9y9jzhmN3enwix8=
-X-Received: by 2002:a05:651c:4406:20b0:378:e437:904f with SMTP id
- 38308e7fff4ca-3790774c7cdmr3152661fa.40.1761603171396; Mon, 27 Oct 2025
- 15:12:51 -0700 (PDT)
+        bh=mQTKJScatLYjbszW8Nmlz+tuTFmWhnW9yYaJmefda44=;
+        b=e//cnn1FWnrsgc6Mn4K6Qlb7hPqwuP9g1/8eT2CX7PUoFBDNG6eeAD3sONXqYXuA0o
+         HygmpCUM7v/G1VsbKsu3HZOxokN2BWe1sRvcJgrjPjGHXcvEMdi/WrWYJMmn71Wa1nr4
+         a8SPf4jH9Ohe5hrIkRsFfHq9BDtEU/5s+9mDQBJEtqzPGxeqbn9gabT+IJuxbbjNxZAX
+         KPSR4zWdPWySu/Xk2JWAyXJAUPgjqmzLbaMyn295LGe8oxotNh1bm3MssAtOULhaBi0s
+         q9pGvggbKR2aC37a4bfbkxGwf8iVpbcSSqmqOha5/8xtiRatnpYb0vkKAK7HiK1i5PL/
+         NO/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfEWAnkleFdtUpWrChUJGSo1TL8GNjqX3LoOa3RuiFpLpZhORX8idSMfe0jKSRNLMs3C1jUm/AxpvaAK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd1oNjVGRFWR6dnX0YC9R3AcA+Dkpt/qs6A50m4B/6rQf0XqgA
+	rIiPTkvyfxdOskzHoVngn/TvUYLuXIwTn+Dil5NwBLPr7U7aiWQV/HR8MOYr/qAOB3xpaQjmZrt
+	ky7NodmDYOH8lqTIVIb24LcbJ0mNpXkG1rRohAEemXQ==
+X-Gm-Gg: ASbGnctICp+6YQ9wZNkWx0kBQyKpjxrC7aQKkNiTn9ZpzvNESIA61CIErtcSdYjxJd5
+	gAi0m/PaB+2G9AisWylMoORHcR2eSyq1p1dg5+qGgntbf7AQr2PBntLjWL8Z7mLe1nF3vjwO5T5
+	7B47BW4uIMHLiaBQQm6NX+BWUN3BD+3kl1ia+uzB6NGnh9sVg68MwgBCMGyjLjhK9Rza3jilLo8
+	Kkw/fCXrif53seZPuWMgLtKhMZINaZy0P6jw+SS83OHlwZZRZFqkj1VC1bX0GhmMixdXbc9YOBj
+	NUeTow==
+X-Google-Smtp-Source: AGHT+IGiyuhAd/g3j8DFK8VW5m7bOjesol+1DXV+h5pePcwa0TlxwvPOrfmVLR7Li8szmQf8I82fLHqa33iH+2F8eRE=
+X-Received: by 2002:a05:6512:ea1:b0:586:8a68:9c4d with SMTP id
+ 2adb3069b0e04-5930e9dd17cmr516262e87.52.1761603214129; Mon, 27 Oct 2025
+ 15:13:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023132700.1199871-1-antonio.borneo@foss.st.com> <20251023132700.1199871-7-antonio.borneo@foss.st.com>
-In-Reply-To: <20251023132700.1199871-7-antonio.borneo@foss.st.com>
+References: <20251023132700.1199871-1-antonio.borneo@foss.st.com> <20251023132700.1199871-8-antonio.borneo@foss.st.com>
+In-Reply-To: <20251023132700.1199871-8-antonio.borneo@foss.st.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 Oct 2025 23:12:40 +0100
-X-Gm-Features: AWmQ_bmFZYqcGNF8COoxdkJmlFz45N7cHtmhxRN-kPjjoyKz6dQA3AfG9pT2B40
-Message-ID: <CACRpkdaSvKiGaOMbp5cmH=cCCzmi=cbUf+=4GvMZ-e-NbJT=+w@mail.gmail.com>
-Subject: Re: [PATCH v4 06/12] pinctrl: stm32: Simplify handling of backup pin status
+Date: Mon, 27 Oct 2025 23:13:23 +0100
+X-Gm-Features: AWmQ_bnPVCXY1Dpjano01hZ_Z8pqJmAtt3_jZEXugTZ4oHs4-VjsvtZbv--6EHg
+Message-ID: <CACRpkda1d+WquYsUq-ntWRC0J37w6=UBcSSAwL_nroS4_h_dZw@mail.gmail.com>
+Subject: Re: [PATCH v4 07/12] pinctrl: stm32: Drop useless spinlock save and restore
 To: Antonio Borneo <antonio.borneo@foss.st.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
@@ -96,9 +97,9 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Oct 23, 2025 at 3:27=E2=80=AFPM Antonio Borneo
 <antonio.borneo@foss.st.com> wrote:
 
-> Use C bit-field to keep the backup of the pin status, instead of
-> explicitly handling the bit-field through shift and mask of a u32
-> container.
+> There is no need to acquire a spinlock to only read a register for
+> debugfs reporting.
+> Drop such useless spinlock save and restore.
 >
 > Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
