@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-871753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0935DC0E434
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:10:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D07DC0E3B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7E6C4F7EF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A85E1897136
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B61D2C0265;
-	Mon, 27 Oct 2025 14:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSINh/R2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F54A2797B5;
-	Mon, 27 Oct 2025 14:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DB828A701;
+	Mon, 27 Oct 2025 14:04:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89A2306D37
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573653; cv=none; b=Y28RaD26/dGDceN5azyQJKVtFBUhuZlGc7gTXoZMQxo3CSTAmakCiW/AItKHNyLaTgdLufncl4hZktvI+zvhNw5yUw+nF+MfGBHCJuQArKfz+iF2nBkq45rQN1XZ/0EpuBHw5S3e9L5OX6W1Z4UNJOcna6Ln0ocMO8/+BY2nrn4=
+	t=1761573882; cv=none; b=Gre6UhMIW4uL4egOQNKuVD2hqjAUf6H/tSv29ZcQn7NZ/TcDkbp/rsicmeEmPYWTFeJ74nK+zwvtRBLdfCynTu7UFc9swu51WKLGhwN3FBDe3mSs7MxpVYP3w0Q2sbXMJU+KDmJwqTTS9lypC3F2hPL1+7MTYXRRFBsWVGWQKQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573653; c=relaxed/simple;
-	bh=cI5UkVL9m1fqP/3JizSr2bZRNqQZcgW7vO6CVyE+9Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJYYWSVA65eNGtWNEfx579viho+MvJtvONKwSaVncRO6qaqW/t8+P8ufMAGIyOlbL5CkMZF6RcjiSF/5R+iQODdy36g53YdtPlIg2La0kazqoyksBOmTTxc8ptLeqwjywIEXwKReplP565PL9WHKrctgCj/nVX3wFnQnxh+jTok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSINh/R2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAAF4C4CEF1;
-	Mon, 27 Oct 2025 14:00:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761573653;
-	bh=cI5UkVL9m1fqP/3JizSr2bZRNqQZcgW7vO6CVyE+9Wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KSINh/R2b6K7gZt5irOCjtem5/v7uYotuid7sjdJj8puKg2oqclwuQ7a9Zy9NzEKz
-	 xTX3fdgYsaqv2duSGgpPY845Yd6q2Cq10b9O6brBVkSPds6exrqdKbTcc0+E8Q2yRi
-	 vBUy79UV6ckACiS7f2ZAGNwWbsrY8ITNuQGrhwS7PuAee6Fg+XGPIsMOP3NdCw+ZVC
-	 rUqLESPU0DSewSjl2kW16iHsA9x2m5rY94hisKWwHsB2dgKG6hkfEAgRguDLbgSAQj
-	 MW61LctI+aeC/FAS8H/Wb61Ri5NgOBZwddAp8IpFZ7KtHUS80QI/qQ1Ww47gdqPMjU
-	 OcdCbE16Ja+Fg==
-Date: Mon, 27 Oct 2025 09:00:50 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Simona Vetter <simona@ffwll.ch>, Jessica Zhang <jesszhan0024@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>, Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
+	s=arc-20240116; t=1761573882; c=relaxed/simple;
+	bh=9zxjz9NOhoRdOTYGuUCKAVqb/6KCrud23EzmthKL0OU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YHkR+tz17uOysGlTR90FlYzb0cySAo4TFbqwSCgAqhn/AUfbyWG72PIGr6usagrLqSTGZ/PuwF3POZbZOJsazWA/LSAya6fpOedRbGBW9R8Q6L9+80SrXCRSektJnf+2FSQrjAaYUcaig20/vBt61T8R46YX7Xaf0nZos/9v4oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28304169E;
+	Mon, 27 Oct 2025 07:04:32 -0700 (PDT)
+Received: from e120398-lin.trondheim.arm.com (e120398-lin.trondheim.arm.com [10.40.16.110])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B6973F63F;
+	Mon, 27 Oct 2025 07:04:37 -0700 (PDT)
+From: Ketil Johnsen <ketil.johnsen@arm.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org,
+	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	dri-devel@lists.freedesktop.org, phone-devel@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Casey Connolly <casey.connolly@linaro.org>,
-	linux-arm-msm@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v5 1/6] dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC
- with panel
-Message-ID: <176157364786.341627.9808596288039785278.robh@kernel.org>
-References: <20251023-s6e3fc2x01-v5-0-8f8852e67417@ixit.cz>
- <20251023-s6e3fc2x01-v5-1-8f8852e67417@ixit.cz>
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Ketil Johnsen <ketil.johnsen@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] drm/panthor: Fix UAF race between device unplug and FW event processing
+Date: Mon, 27 Oct 2025 15:02:15 +0100
+Message-ID: <20251027140217.121274-1-ketil.johnsen@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023-s6e3fc2x01-v5-1-8f8852e67417@ixit.cz>
+Content-Transfer-Encoding: 8bit
 
+The function panthor_fw_unplug() will free the FW memory sections.
+The problem is that there could still be pending FW events which are yet
+not handled at this point. process_fw_events_work() can in this case try
+to access said freed memory.
 
-On Thu, 23 Oct 2025 22:24:25 +0200, David Heidelberg wrote:
-> Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
-> 
-> Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
-> 
-> This panel has three supplies, while panel-simple-dsi is limited to one.
-> There is no user of this compatible, nor the compatible make sense.
-> Remove it from simple DSI panel definitions.
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  .../bindings/display/panel/panel-simple-dsi.yaml   |  3 -
->  .../bindings/display/panel/samsung,s6e3fc2x01.yaml | 81 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 ++
->  3 files changed, 86 insertions(+), 3 deletions(-)
-> 
+Simply call disable_work_sync() to both drain and prevent future
+invocation of process_fw_events_work().
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
+---
+v2:
+- Followed Boris's advice and handle the race purely within the
+  scheduler block (by adding a destroyed state)
+
+v3:
+- New approach, one single call to disable_work_sync()
+---
+ drivers/gpu/drm/panthor/panthor_sched.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index 0cc9055f4ee52..b7595beaa0205 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -3880,6 +3880,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
+ 	struct panthor_scheduler *sched = ptdev->scheduler;
+ 
+ 	cancel_delayed_work_sync(&sched->tick_work);
++	disable_work_sync(&sched->fw_events_work);
+ 
+ 	mutex_lock(&sched->lock);
+ 	if (sched->pm.has_ref) {
+-- 
+2.47.2
 
 
