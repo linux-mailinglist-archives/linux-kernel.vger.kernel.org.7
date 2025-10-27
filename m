@@ -1,291 +1,122 @@
-Return-Path: <linux-kernel+bounces-871582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A577AC0DAF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:52:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2398C0DA38
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F69D3BBCA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2311885B35
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1C822F772;
-	Mon, 27 Oct 2025 12:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB932F49F2;
+	Mon, 27 Oct 2025 12:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Jy3oKCA2"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cLOCMcSp"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFDA226CFD;
-	Mon, 27 Oct 2025 12:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3190921FF3B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569176; cv=none; b=kwLft0q1BE+W2tFeiUJyunX/z8QzhbuWChTU0zA87UPHpLHkcB++g6ulLFHOVSQ3DmlJzSCUCvicLxF4SCBE7//gsoBPFqte/9UBRD2tLKT4o9QRFzv+5SWuAznnVcEBRjY7pQxPYJswpO/4hfMM1ieGyrCy6RYGf9BC0T5hSyw=
+	t=1761568881; cv=none; b=ugkrxJ9VvznGlz3LeHvTtlJmyG3Y3srG5F9N8nu1iIOTnInK/f+6wi5LB99FRP9+AkXNfHu3I+VHWoWNDqk66hJtn+VAzce0DZhtq+510Nbyln1xiSCQHnO8h8DNTesFt8AevHLIm6+AIaa6XgppGH7FXpHULNFswSJN8BGXEnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569176; c=relaxed/simple;
-	bh=TdxuPqLZziFnxsPOgN04mmsgtUByweKcrhEQE8hk0ok=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eRViZIJzOQdkvibf40gEtH8wHQeGenG0mDgeYFPYD+vEfIP5usMLrxXahqpi8YGODxYmbxnWaPxz2nHj39eENZq7mjDcAumOT32+1VJc+rp6dxFVabZQuybNWfTy15dw5NCypaQ3i7/AS8GGFwINDfFE7sr83E32VlmP6/5SSSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Jy3oKCA2; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761569175; x=1793105175;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TdxuPqLZziFnxsPOgN04mmsgtUByweKcrhEQE8hk0ok=;
-  b=Jy3oKCA2noVmg7nRXyXIVjhuqYjCmVBLxOAtNgxF5plaKMJ/nCpVOCwN
-   wTF/T6lDjn93LYFteqo7Vqh9xJpkfewvEKKNEWAEmMzB/+USdUuGV7NbF
-   glGBEOhr0dSWsH2vp1uYv0qe3/eO26/osUE5Yp+qZew4AaXpDeLVG/p0m
-   mOc7kuAv+mRZK1AUcfdfKq8lju1RMrSOkrXOs1ZVxTjCXRbl3NKin3GPL
-   LJP0Uu1kwhOq6qz/Nqo2iOAbJffc/UwZSoOfCfn8fnSUKt1EQLhzIx1Q6
-   kzXrnN63WY87xjzIFFH/f5w0E1W+uKXbK8UXe78AKiwC+SuV/zrvo4I9P
-   w==;
-X-CSE-ConnectionGUID: CRg2JnddQXqvHrHDe8eZOQ==
-X-CSE-MsgGUID: p1KyY9n1TaCHml4dmxlesg==
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="279676605"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Oct 2025 05:46:08 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 27 Oct 2025 05:45:45 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 27 Oct 2025 05:45:43 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next] net: phy:  micrel: lan8842 erratas
-Date: Mon, 27 Oct 2025 13:40:26 +0100
-Message-ID: <20251027124026.64232-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761568881; c=relaxed/simple;
+	bh=zIA7CYP7MP7otslNuxA8EJWMnrgrr6UbF5Y/fLvRKoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBpsVkJ6JVkzf3BKqEKJjAbfK+xjbmM3z9VjGefwBr6pdZ5TFsgkWN+LVsaIbUTokM6QH8jiX/yQWL9zq3p6egUov02we4ySkCHbFhJi/ktGM10Gyjtjx2lr9s9ptmd3EllyCpkACJpjvJzjKaPJzhRHaC42nd+jqoRyZRIuGCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cLOCMcSp; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0474640E019F;
+	Mon, 27 Oct 2025 12:41:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 40bnCv3Bee17; Mon, 27 Oct 2025 12:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761568864; bh=8tAYZy7U1ebgZ3yufSzji3+OjzI4Ta9GIJ0Mp53XepI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cLOCMcSpphagQ/E8zZJ4nwI0tBJjuQTdiOb/vIzlznfJeOOvDsy2YVYqWtr48MfYz
+	 lU/Ss9HLzDyCGqdYMjdhlQoK8+0hZVgs4jSjT33UN0qEM7wrf50SYn/IAbNyd5aean
+	 E1Dau6r+CNCYGedw1F4Z0NIatNsUo7eI93K8zQ97pqOcbND8whNBoC5vRd3psEhoLp
+	 fdqaKH2hAujRXmcbtX64nwXxUmCexkZPedEt/lT5C1DEAjbhsUfczldCcG9FYkRaSc
+	 EpWIhbXyKBIb7LQcfknNrccaX/LrHlnZ1Rk5+BooLngMY6kQK4OOtX34he11qQl5o5
+	 xzGpuGGMUjyOWeU4SNoENX7f0B5VdR6397CTW5RO3GAKhf4SkxMspPrpaGb/LlfYnp
+	 oF48jBjqj3QYh4P+gcAJwb0flZuwNvsKg/PUFpgY9MXusL8UF6Dz677bh20yxb5aME
+	 UnB6qQrtYppfgXs5+QWJ3p361DadSSFJdRfUmXWNTAUq/j2qppYBy3umpxhdWnVOYN
+	 eVlnb4zfPGf01Vz1GMcUiuWU3IFRYuiCG7tvGuLLR0XKuj9+7/7+gl7xiW4aZG2AKf
+	 IZoLU5RDmlh3NPAXRjkQ6jsDgJGpSQfOFNJAzL02as9g/dzA1xIa3GHijHLcoSmIgl
+	 XwIjsm1uA62U7r4PFG2uemUs=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 53A9240E016D;
+	Mon, 27 Oct 2025 12:40:57 +0000 (UTC)
+Date: Mon, 27 Oct 2025 13:40:49 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, Leyvi Rose <leyvirose@gmail.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: x86: Disable SSE4A
+Message-ID: <20251027124049.GAaP9oUaUtzzHUK4j4@fat_crate.local>
+References: <20251027114059.GJ3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251027114059.GJ3245006@noisy.programming.kicks-ass.net>
 
-Add two erratas for lan8842. The errata document can be found here [1].
-This is fixing the module 2 ("Analog front-end not optimized for
-PHY-side shorted center taps") and module 7 ("1000BASE-T PMA EEE TX wake
-timer is non-compliant")
+On Mon, Oct 27, 2025 at 12:40:59PM +0100, Peter Zijlstra wrote:
+> Leyvi Rose reported that his X86_NATIVE_CPU=y build is failing because
+> our instruction decoder doesn't support SSE4A and the AMDGPU code seems
+> to be generating those with his compiler of choice (CLANG+LTO).
+> 
+> Now, our normal build flags disable SSE MMX SSE2 3DNOW AVX, but then
+> CC_FLAGS_FPU re-enable SSE SSE2.
+> 
+> Since nothing mentions SSE3 or SSE4, I'm assuming that -msse (or its
+> negative) control all SSE variants -- but why then explicitly enumerate
+> SSE2 ?
+> 
+> Anyway, until the instruction decoder gets fixed, explicitly disallow
+> SSE4A (an AMD specific SSE4 extension).
+> 
+> Fixes: ea1dcca1de12 ("x86/kbuild/64: Add the CONFIG_X86_NATIVE_CPU option to locally optimize the kernel with '-march=native'")
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+> 
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 4db7e4bf69f5..8fbff3106c56 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -75,7 +75,7 @@ export BITS
+>  #
+>  #    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53383
+>  #
+> -KBUILD_CFLAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx
+> +KBUILD_CFLAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -mno-sse4a
+>  KBUILD_RUSTFLAGS += --target=$(objtree)/scripts/target.json
+>  KBUILD_RUSTFLAGS += -Ctarget-feature=-sse,-sse2,-sse3,-ssse3,-sse4.1,-sse4.2,-avx,-avx2
 
-[1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/Errata/LAN8842-Errata-DS80001172.pdf
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/micrel.c | 166 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 166 insertions(+)
-
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index edca0024b7c73..60788dba3ee8d 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -2837,6 +2837,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
-  */
- #define LAN8814_PAGE_PCS_DIGITAL 2
- 
-+/**
-+ * LAN8814_PAGE_EEE - Selects Extended Page 3.
-+ *
-+ * This page contains EEE registers
-+ */
-+#define LAN8814_PAGE_EEE 3
-+
- /**
-  * LAN8814_PAGE_COMMON_REGS - Selects Extended Page 4.
-  *
-@@ -2855,6 +2862,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
-  */
- #define LAN8814_PAGE_PORT_REGS 5
- 
-+/**
-+ * LAN8814_PAGE_POWER_REGS - Selects Extended Page 28.
-+ *
-+ * This page contains analog control registers and power mode registers.
-+ */
-+#define LAN8814_PAGE_POWER_REGS 28
-+
- /**
-  * LAN8814_PAGE_SYSTEM_CTRL - Selects Extended Page 31.
-  *
-@@ -5918,6 +5932,153 @@ static int lan8842_probe(struct phy_device *phydev)
- 	return 0;
- }
- 
-+#define LAN8814_POWER_MGMT_MODE_3_ANEG_MDI		0x13
-+#define LAN8814_POWER_MGMT_MODE_4_ANEG_MDIX		0x14
-+#define LAN8814_POWER_MGMT_MODE_5_10BT_MDI		0x15
-+#define LAN8814_POWER_MGMT_MODE_6_10BT_MDIX		0x15
-+#define LAN8814_POWER_MGMT_MODE_7_100BT_TRAIN		0x15
-+#define LAN8814_POWER_MGMT_MODE_8_100BT_MDI		0x15
-+#define LAN8814_POWER_MGMT_MODE_9_100BT_EEE_MDI_TX	0x15
-+#define LAN8814_POWER_MGMT_MODE_10_100BT_EEE_MDI_RX	0x15
-+#define LAN8814_POWER_MGMT_MODE_11_100BT_MDIX		0x1b
-+#define LAN8814_POWER_MGMT_MODE_12_100BT_EEE_MDIX_TX	0x15
-+#define LAN8814_POWER_MGMT_MODE_13_100BT_EEE_MDIX_RX	0x15
-+#define LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX	0x1e
-+
-+#define LAN8814_POWER_MGMT_DLLPD_D			BIT(0)
-+#define LAN8814_POWER_MGMT_ADCPD_D			BIT(1)
-+#define LAN8814_POWER_MGMT_PGAPD_D			BIT(2)
-+#define LAN8814_POWER_MGMT_TXPD_D			BIT(3)
-+#define LAN8814_POWER_MGMT_DLLPD_C			BIT(4)
-+#define LAN8814_POWER_MGMT_ADCPD_C			BIT(5)
-+#define LAN8814_POWER_MGMT_PGAPD_C			BIT(6)
-+#define LAN8814_POWER_MGMT_TXPD_C			BIT(7)
-+#define LAN8814_POWER_MGMT_DLLPD_B			BIT(8)
-+#define LAN8814_POWER_MGMT_ADCPD_B			BIT(9)
-+#define LAN8814_POWER_MGMT_PGAPD_B			BIT(10)
-+#define LAN8814_POWER_MGMT_TXPD_B			BIT(11)
-+#define LAN8814_POWER_MGMT_DLLPD_A			BIT(12)
-+#define LAN8814_POWER_MGMT_ADCPD_A			BIT(13)
-+#define LAN8814_POWER_MGMT_PGAPD_A			BIT(14)
-+#define LAN8814_POWER_MGMT_TXPD_A			BIT(15)
-+
-+#define LAN8814_POWER_MGMT_C_D		(LAN8814_POWER_MGMT_DLLPD_D | \
-+					 LAN8814_POWER_MGMT_ADCPD_D | \
-+					 LAN8814_POWER_MGMT_PGAPD_D | \
-+					 LAN8814_POWER_MGMT_DLLPD_C | \
-+					 LAN8814_POWER_MGMT_ADCPD_C | \
-+					 LAN8814_POWER_MGMT_PGAPD_C)
-+
-+#define LAN8814_POWER_MGMT_B_C_D	(LAN8814_POWER_MGMT_C_D | \
-+					 LAN8814_POWER_MGMT_DLLPD_B | \
-+					 LAN8814_POWER_MGMT_ADCPD_B | \
-+					 LAN8814_POWER_MGMT_PGAPD_B)
-+
-+#define LAN8814_POWER_MGMT_VAL1		(LAN8814_POWER_MGMT_C_D | \
-+					 LAN8814_POWER_MGMT_ADCPD_B | \
-+					 LAN8814_POWER_MGMT_PGAPD_B | \
-+					 LAN8814_POWER_MGMT_ADCPD_A | \
-+					 LAN8814_POWER_MGMT_PGAPD_A)
-+
-+#define LAN8814_POWER_MGMT_VAL2		LAN8814_POWER_MGMT_C_D
-+
-+#define LAN8814_POWER_MGMT_VAL3		(LAN8814_POWER_MGMT_C_D | \
-+					 LAN8814_POWER_MGMT_DLLPD_B | \
-+					 LAN8814_POWER_MGMT_ADCPD_B | \
-+					 LAN8814_POWER_MGMT_PGAPD_A)
-+
-+#define LAN8814_POWER_MGMT_VAL4		(LAN8814_POWER_MGMT_B_C_D | \
-+					 LAN8814_POWER_MGMT_ADCPD_A | \
-+					 LAN8814_POWER_MGMT_PGAPD_A)
-+
-+#define LAN8814_POWER_MGMT_VAL5		LAN8814_POWER_MGMT_B_C_D
-+
-+#define LAN8814_EEE_WAKE_TX_TIMER			0x0e
-+#define LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL		0x1f
-+
-+static int lan8842_erratas(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Magjack center tapped ports */
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_3_ANEG_MDI,
-+				    LAN8814_POWER_MGMT_VAL1);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_4_ANEG_MDIX,
-+				    LAN8814_POWER_MGMT_VAL1);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_5_10BT_MDI,
-+				    LAN8814_POWER_MGMT_VAL1);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_6_10BT_MDIX,
-+				    LAN8814_POWER_MGMT_VAL1);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_7_100BT_TRAIN,
-+				    LAN8814_POWER_MGMT_VAL2);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_8_100BT_MDI,
-+				    LAN8814_POWER_MGMT_VAL3);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_9_100BT_EEE_MDI_TX,
-+				    LAN8814_POWER_MGMT_VAL3);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_10_100BT_EEE_MDI_RX,
-+				    LAN8814_POWER_MGMT_VAL4);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_11_100BT_MDIX,
-+				    LAN8814_POWER_MGMT_VAL5);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_12_100BT_EEE_MDIX_TX,
-+				    LAN8814_POWER_MGMT_VAL5);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_13_100BT_EEE_MDIX_RX,
-+				    LAN8814_POWER_MGMT_VAL4);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
-+				    LAN8814_POWER_MGMT_VAL4);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Refresh time Waketx timer */
-+	return lanphy_write_page_reg(phydev, LAN8814_PAGE_EEE,
-+				     LAN8814_EEE_WAKE_TX_TIMER,
-+				     LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL);
-+}
-+
- static int lan8842_config_init(struct phy_device *phydev)
- {
- 	int ret;
-@@ -5930,6 +6091,11 @@ static int lan8842_config_init(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
- 
-+	/* Apply the erratas for this device */
-+	ret = lan8842_erratas(phydev);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Even if the GPIOs are set to control the LEDs the behaviour of the
- 	 * LEDs is wrong, they are not blinking when there is traffic.
- 	 * To fix this it is required to set extended LED mode
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
