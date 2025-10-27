@@ -1,72 +1,151 @@
-Return-Path: <linux-kernel+bounces-871025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39668C0C41A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:14:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19ED9C0C422
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C9644E61DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:14:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 909F0348D24
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CC52E7BD6;
-	Mon, 27 Oct 2025 08:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCBA2E7BBA;
+	Mon, 27 Oct 2025 08:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="DPFITrDN"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjY2ucJk"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C102E7623;
-	Mon, 27 Oct 2025 08:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080F12E7192
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761552842; cv=none; b=FKDfp3cN7Xym5F1dqk3HzAFPrApicsBQTiNRApIwRNUPtCECun7bW2gkdASzBYcwJWvZHq3RNGgdPYr+EHJHfxVq+qrm/7HziwUuWllaJD41Bmor1AZsw2ITYboxv9ueSpRP7UmKgxC7VtyBZj4BPbSOXsRMfr2CLyj4yV8tumA=
+	t=1761552855; cv=none; b=ISeUxSOxoAOMREdLIyxweDcDR+gaCeCUujaRHROcpehzWpV04NYpqhY2rsgeBXTyTMUuhohuxXjkCBx069vXsNq0JkaELkQQ5ppDbCbvi3/ToQ+o4EaXtMy5KHJG4EEPZqgM563cGbVDiO+Imxx0vqlNU0QKB3dnE9KlLFCttqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761552842; c=relaxed/simple;
-	bh=sLfCF0gWJSlrd2m8niFA+KulGKUdyPVyBZ7NplIcZSk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mF8pkgNrlvy63HlUXRfGDvX4b2zHq7FXc7eo0IbVawUmWn+FIdVm8xzdymQd4rUmsQphTpjx1rAkVaf5fA1cOlNrnH5rDKBv9g68RLPPM1cSpyYALRjK75YAtd3uOTmCi7bmnNNRJAV+dzPG21nIM/es0vU4y8CbSy5STdc53TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=DPFITrDN; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=sLfCF0gWJSlrd2m8niFA+KulGKUdyPVyBZ7NplIcZSk=;
-	t=1761552841; x=1762762441; b=DPFITrDNexkCYHQwIaC0RdBhJPCf4jskVoFQGY1eI87lOnE
-	nT8SxmwiaZja+FWRkyswqnX5YsXOztY7tAIBjSZh7decMuFPMeUZR2D3NRoOeLWMsa7S4LdAMxJaf
-	mKrOpzwr6SSDzbixAihdQja1Hfckm8SsNOGFwNecMTl28rnADDGdQ/Bq+bRY3QKWFF7CkYLeuLsZ8
-	DKiEK0uPmQVF3iiTOZNc9u2yUBVBlsdCE9Yq8MNvfX9nIwwo4KxQSDZ99HiyQe69LmCLT38NP1tO6
-	W0Het/6AFLouf6hRXdr0OnnFR5lB0/DcUWCweY+VZn3UVp5mqA3NY2clQLP2bKtw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vDIMY-0000000AE18-3OKf;
-	Mon, 27 Oct 2025 09:13:58 +0100
-Message-ID: <b725672aab8c5a006603110b46e6e15495acccbc.camel@sipsolutions.net>
-Subject: Re: [PATCH] wifi: rt2x00: add nvmem eeprom support
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
-Cc: Stanislaw Gruszka <stf_xl@wp.pl>, open list
- <linux-kernel@vger.kernel.org>
-Date: Mon, 27 Oct 2025 09:13:58 +0100
-In-Reply-To: <20251024203046.42275-1-rosenp@gmail.com>
-References: <20251024203046.42275-1-rosenp@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761552855; c=relaxed/simple;
+	bh=etqLAq7gFst0cSiu6SvH9Ue38STXBB7ceWx2V9z48vY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpOE2vcWw3rWH6qQp0Ru5G/8VFD7L/buzJYlA3j6LptsC1QNKJ07rayGNZjBwacRMdo8EEJLMJ9Eg+x3bjQuIDN3qLWJ+gbqRIs09QrYczB0TfXjVnHL7lfGFgZieJ4ZXf0/vCjoaxRUmZjmc7+VoCdf++xuvxAXb0yZBOUzYT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjY2ucJk; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42557c5cedcso2885407f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761552852; x=1762157652; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LSHu/ivuk7OTgOMQRpfxc8sNj6kHssvRHTUG1SNhELU=;
+        b=ZjY2ucJknPEr5TZb0i7UYyZcYgeYNPXQGodRT4eu7TGRopOFA0AWlOi8AVTlsaTB4o
+         V2RiziNFJwmQOHqu1DwDye9JY9Jukubo2DeawpB5RC7yMIFvTk9SUiK47mkLMCn9/Bn7
+         aSyybIFMzED2MSXcW6DjGc2M8cm0cOgh7bJGKFQ9vRUMjvXHbEKjsfgFNAAXLhlPbFBy
+         FBd5+zsZEIVyWGdOm9L4ArbqSSK7BXt/AXIY9vurTR+CxEZGXJWkK1RgxYhlOInayRe0
+         B9lrUw+NEMnqy431MnKpYrJVoU6Ezg7Tywuhq10ai6iTTmip3Ce4JKcFiqMSqgR8yvhS
+         pgug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761552852; x=1762157652;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LSHu/ivuk7OTgOMQRpfxc8sNj6kHssvRHTUG1SNhELU=;
+        b=u8KGuRWwF5uqXBkTXdx9rTlGrlhwo3pVlvvkv4TlnFNAOLX4nNgKBnUoA0/TxNbZXJ
+         H7ebwLWS9fWIblPoUg8SH7nBioOeopDCxH/gBpNetj1D2jG56Nw8fq8fx3ZRJwQW5SbE
+         cd/UxKE7ra9PbnJpGfc0p+DkfgCspNZTWhjeZIJv0s+LH6uS8vn1eCdjvqUXXWW8cwXK
+         g2BECm7hEmY2jigeiJaeLpVa8tM50GtFDq9z2g8JretKpZUJk0deGENr16o7hnO8CPgj
+         cwzs906MFyNS1nJoOnO6WY1CG3iSUIqmBtWQPU+i0X9B9kQcGNHOzChHjhyZE2MpavhI
+         ylEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMEvchQ/KQhNxogXGNyuoMfMji8LaYONrZzUdqZBaljtwTucKhzznjr/YrpTvUnICLjr9zXs4k3j2z89o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6fGfA5IDXp8C5I1wjS/j6H+uDcbJh9W/fxCScXw3r36XlWpuu
+	X7Qb7eorXhIICyM2cs8PDI6ALvnwUOOFFqVqKqgYEbpgEPlVYSUc0SNy
+X-Gm-Gg: ASbGnctpSOQKlMbdoZBpqF8C6rM9+C+llnQoWHyLdE7pmRLJo/LDPGNExlTz2CMauKk
+	6/RHNOuyJ47mlFKqZZ+aEyJps/EmXG03GgHlIiZdmX1iyCtPEh5UeHH30ad99lEupMAQthEYOL7
+	YqWNzrqcUdEW2lBAoxxWu/Avsv2tM16Rvg4yifjBGal37iOPpK2O4sPCy8ojqXaSE19tvdq5MLy
+	pTJG8UqI+R9Lkyj/txf/RnjeE1kEE6Qi205vYWXe350siT1RPDOO5RohO6xE1GqyzBwnzkhO1o3
+	PWrCORRJMpbLHSuVcikZQtvKyOScVbfYEHeKIIza4U2DAvNU8kVBQyCbT9W3U/yFiTObYqC3lpd
+	bEG+3DvvOmYwvHRQtjl4AYCOrH+vlXriVLjt9PbFESizYg1NLChdBk2pe0Sv82DhSYAgariE=
+X-Google-Smtp-Source: AGHT+IFFKQfLGx2QdYO29wjJqWg+dPw9x5/f0UKf4PSXFO3HYbVj3gV1HeTpZudQpFAVTpuMJ53ygg==
+X-Received: by 2002:a05:6000:4a09:b0:427:62b:7f3 with SMTP id ffacd0b85a97d-427062b07f9mr28406369f8f.33.1761552852032;
+        Mon, 27 Oct 2025 01:14:12 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::b44f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d5768sm13058047f8f.24.2025.10.27.01.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 01:14:11 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 27 Oct 2025 09:14:09 +0100
+To: Nirbhay Sharma <nirbhay.lkd@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, llvm@lists.linux.dev, khalid@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Jiri Olsa <olsajiri@gmail.com>, sam@gentoo.org
+Subject: Re: [PATCH v2] selftests/seccomp: fix pointer type mismatch in
+ UPROBE test
+Message-ID: <aP8p0Td0LLa6Odit@krava>
+References: <aP0-k3vlEEWNUtF8@krava>
+ <20251026091232.166638-2-nirbhay.lkd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026091232.166638-2-nirbhay.lkd@gmail.com>
 
-Please always tag patches with the tree they should apply to (e.g.
-'[PATCH wireless-next]') and make sure they actually _do_ apply.
+On Sun, Oct 26, 2025 at 02:42:33PM +0530, Nirbhay Sharma wrote:
+> Fix compilation error in UPROBE_setup caused by pointer type mismatch
+> in the ternary expression when compiled with -fcf-protection. The
+> probed_uprobe function pointer has the __attribute__((nocf_check))
+> attribute, which causes the conditional operator to fail when combined
+> with the regular probed_uretprobe function pointer:
+> 
+>   seccomp_bpf.c:5175:74: error: pointer type mismatch in conditional
+>   expression [-Wincompatible-pointer-types]
+> 
+> Cast both function pointers to 'const void *' to match the expected
+> parameter type of get_uprobe_offset(), resolving the type mismatch
+> while preserving the function selection logic.
+> 
+> This error appears with compilers that enable Control Flow Integrity
+> (CFI) protection via -fcf-protection, such as Clang 19.1.2 (default
+> on Fedora).
+> 
+> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
 
-johannes
+Reviwed-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
+
+> ---
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index 874f17763536..e13ffe18ef95 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -5172,7 +5172,8 @@ FIXTURE_SETUP(UPROBE)
+>  		ASSERT_GE(bit, 0);
+>  	}
+>  
+> -	offset = get_uprobe_offset(variant->uretprobe ? probed_uretprobe : probed_uprobe);
+> +	offset = get_uprobe_offset(variant->uretprobe ?
+> +		(const void *)probed_uretprobe : (const void *)probed_uprobe);
+>  	ASSERT_GE(offset, 0);
+>  
+>  	if (variant->uretprobe)
+> -- 
+> 2.48.1
+> 
 
