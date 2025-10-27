@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-872054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A769C0F2BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:08:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AA1C0F330
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4063562D57
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9432F563180
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B683D25B311;
-	Mon, 27 Oct 2025 16:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFsTBW2C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A403B1E5B7B;
+	Mon, 27 Oct 2025 16:00:27 +0000 (UTC)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CCC30C626;
-	Mon, 27 Oct 2025 16:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458A52475CF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580803; cv=none; b=ZqtV9IbGC4ZDElxQV2foggTKa1MjGXpe/xIAtRqnKk0XlPShfiUKOUbfgY/0fjV+0ur7PtZIDXAckzB0KeHOx9dy0n2Of/IsqvGLTcqE2sp6uSmpxrqaUIIHq0GTBmdZCyAqsMy5PIuRg2SpLOKbONYbK3jMQDQsHZvjO/VDEbc=
+	t=1761580827; cv=none; b=hAt4foUfGq/Ps8v0JO6JWknt8tigB5T01jYegBO/8jEoUjIoQ1gzx7NV/VBKxuZBTlclKEhgHx8ybkEHaW+8K6hOGSdMCBAIkCLyFAZ6myQY6M1+tfrvaEUO5u1k/OU/OdoEbnyXIG8KqTbkG3Uh3VTHSKIifKsT0bKW/LqVnNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580803; c=relaxed/simple;
-	bh=ejD04F6BBTL81Vl9OTdY/7AZFnDCRgB6UMngRZW8YUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXa34CT7+OuW9poD97654c1iGA6w5ffAF+fhMIQjTDKEHz81n5dTfDRPx02IcUFYT2HPTP0PlVoUXf4ouhfbhGuPL6Ly4ZXgK81Hpa+Vj7sVqbLIXgTKaLYTC/+rigyFxS77vmYtvUjT0jilFBTfzHrDVeSmzmSnG16IEg+BHfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFsTBW2C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6522BC4CEFD;
-	Mon, 27 Oct 2025 16:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761580802;
-	bh=ejD04F6BBTL81Vl9OTdY/7AZFnDCRgB6UMngRZW8YUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PFsTBW2ClFo4KaZoAgxKJ/Ql7FGjAW3NKmJlXFyyXWUTCqQYFofvgLGxUJE79NGH8
-	 R/wc43y4WCKLXdmsijS4u2ghiubxItq9pCYQ0vkn8Wzgumi9bycjoD86ES4E3Te21J
-	 DUKugKhr0CCj+v6j5QYNpYvCoiSL7k0FhNf2iRVVmIReuFXDuNTvwlhV5XNT9I3rZd
-	 UZUMGrnYdys1R+pFEvAUOYLDdwSlmCldx2UikSZZU33mzwUt2FpqbSLCnxeXY0T1nl
-	 cde/9sKwe4cvKB2b+zTns+865jtRdyIbZbBBUEcKGTC2Ys90pdr6xc7wRq4c4WDfYC
-	 3aBHmyIdomW+Q==
-Date: Mon, 27 Oct 2025 06:00:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
-Subject: Re: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
- called from anywhere
-Message-ID: <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
-References: <20251025001849.1915635-1-tj@kernel.org>
- <20251025001849.1915635-4-tj@kernel.org>
- <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761580827; c=relaxed/simple;
+	bh=TruC5Rz7hFXrB8am5aWkkTb/6jKbCZdXFPpjwUZibfA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RaWaPCvctxsdQxAvlMoc2uJ5HNSzvlMi5rUnzw0VHoPGWzTMU5OC7PWc8QSlhk/CIwnKZGGKYaEVRbgxomw+5YZg4oURp3PAtshuc4JFu+21eAkZHI0E44ag33BTVmcwA4An6c8bwnuVvoDT3ioyHJEaFakq2LAB+OSh1j+vxFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-592f1988a2dso5453063e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:00:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761580821; x=1762185621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6YwhOXZKSbw/QgDI8R5plvx25chz++lg8tg98IFV5D8=;
+        b=oY6GG4XGyD2M5xFQRkdSfBkoJIL0jhTc7J5cZUQECODYWjlL8DHZGI5XKVLFfBRqgF
+         iI6c2X03kA+aD/4FO4/7sV5Aojsn9eKDXwv0SBVKoBlVK0TsE4Uv0iShfMAhWk1czZs2
+         d+1t1guTSVGQ8ILxY8Zmisy1Z073rr6ubgNiPTOy48VcPoLs4d4vZm7FdhTlecVmmFdG
+         44LPNwYzN3yXnl+GeqH1tUvabqeSA/WO3Ti8ysqJgNdFqlOImfRAK7awVVMlC7JhGoNz
+         DJWqjz0zDhwJN8ecef/otV5vNEqOGxAtD9mhuavoasnbEOyptyG2+bwY0b2YGx/oQ/ZT
+         c23w==
+X-Forwarded-Encrypted: i=1; AJvYcCUyJyg8E90PM57dHCvKMv5daCOYMMfQtDvzvg8QDmJxWZZQPQTftt1dxW9CqJH8FGjx2u6ejtY4TZYi80s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoRewijGRhpVoIG2Lcl5lIE3JfEgJr3NBiY1j1NJsXhZkvmexm
+	jhWS6MwTKbVx59QwfIERn6ULckbRygOCri9oln8v5QlvrhsARw82dzJksFfJnmir2u0=
+X-Gm-Gg: ASbGncthwBuXmrlE/RlCki5ooinTK49yTGM0NjqjfJWVT2uayzm+PnjqBdNL6tHgVML
+	HvIWIsgPLkO/IY/duaZJMrwMfylQAl2IkKaFC7t/QIqm+0ts6Qn8PQpUhReekiZz0L9Y8JpEXae
+	FfAhStNpbpss6trE+JtXB5UA9Stnqv85oe7E/PkR9UXrsHFwva/aVYZvYWauQRruMwkcAsvluyD
+	7ewba2JUdaJm73PxOVtTBwCg7Lr1V6NqKv8uWSW3mieb1DCShNaUFoSFMfv8VhJMqaSz77U+eu9
+	5RvQQ5FgyFOJ/wzycrp9cTZvKaKmjZwPU+Dh+iV6OC0mRh3xdCXvyL+9cKxXIRUfQk/R3DC+eaF
+	IGRi4wpOnRhUr4tNow6IDOic0oShjwE1tdQoiNOMLyPH2CVkgkXsYrM9Ivo7nqOR0GQBZLtFlhx
+	+VedPkwe+JlMNg08P7frn2Ba0HQ4GDH1DnFCon4j+ukX8=
+X-Google-Smtp-Source: AGHT+IEBwqqBg3FlY1bTl5bN0hgDtJS6l82OIAQP6iwUSUkCwm92NiY5p9baNmylwCflohy5sn9dow==
+X-Received: by 2002:a05:6512:224e:b0:57e:575f:145d with SMTP id 2adb3069b0e04-592fc137487mr4119457e87.22.1761580820512;
+        Mon, 27 Oct 2025 09:00:20 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-593097eb2d4sm763297e87.66.2025.10.27.09.00.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 09:00:19 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-378f010bf18so20738471fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:00:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNDgipw5sltUNZcpNcX6i1TXdmPQEAy6zfbg/ohoRKomoH8Y53QiXpqvrKisUgrasIm/j+9bFBCUL14TY=@vger.kernel.org
+X-Received: by 2002:a2e:a7ca:0:b0:377:d151:c090 with SMTP id
+ 38308e7fff4ca-378e3e0adfdmr38098431fa.1.1761580819015; Mon, 27 Oct 2025
+ 09:00:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-8-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-8-jernej.skrabec@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 28 Oct 2025 00:00:05 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65KEKPtg=WZw9su_DBc5JKsjjYV3DmpUD+LXGhX96sEfA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkrUs29MfoNSjd071G9lNzBwjNkUIcpLZfwjGgRDO3VQYGwungCMVXDTOo
+Message-ID: <CAGb2v65KEKPtg=WZw9su_DBc5JKsjjYV3DmpUD+LXGhX96sEfA@mail.gmail.com>
+Subject: Re: [PATCH 07/30] drm/sun4i: Move blender config from layers to mixer
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> With upcoming DE33 support, layer management must be decoupled from
+> other operations like blender configuration. There are two reasons:
+> - DE33 will have separate driver for planes and thus it will be harder
+>   to manage different register spaces
 
-On Mon, Oct 27, 2025 at 10:18:22AM +0100, Peter Zijlstra wrote:
-...
-> > The main use case for cpu_release() was calling scx_bpf_reenqueue_local() when
-> > a CPU gets preempted by a higher priority scheduling class. However, the old
-> > scx_bpf_reenqueue_local() could only be called from cpu_release() context.
-> 
-> I'm a little confused. Isn't this the problem where balance_one()
-> migrates a task to the local rq and we end up having to RETRY_TASK
-> because another (higher) rq gets modified?
+So if I understand correctly:
 
-That's what I thought too and the gap between balance() and pick_task() can
-be closed that way. However, while plugging that, I realized there's another
-bigger gap between ttwu() and pick_task() because ttwu() can directly
-dispatch a task into the local DSQ of a CPU. That one, there's no way to
-close without a global hook.
+- the "layer" is from DMA up to CSC, which is the last stage before routing
+- in DE30 and before, routing was limited to within one mixer
+- in DE33 and onward, routing is global
 
-> Why can't we simply re-queue the task in the RETRY_TASK branch --
-> effectively undoing balance_one()?
-> 
-> Relying on hooking into tracepoints seems like a gruesome hack.
+> - Architecturaly it's better to split access by modules. Blender is now
+>   exclusively managed by mixer.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-From a BPF scheduler's POV, it's just using a more generic mechanism.
-Multiple schedulers already make use of other BPF attach points - timers,
-TPs, fentry/fexit's, so this doesn't make things less congruent.
-
-Thanks.
-
--- 
-tejun
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
