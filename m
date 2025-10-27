@@ -1,157 +1,92 @@
-Return-Path: <linux-kernel+bounces-872426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE79EC11075
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:30:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF886C10F2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6473189985C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:26:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BA36353327
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EEC32AAD4;
-	Mon, 27 Oct 2025 19:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1151A32D7F8;
+	Mon, 27 Oct 2025 19:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMp/sCcu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFzBCiD2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D80328B77;
-	Mon, 27 Oct 2025 19:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DA81BC4E;
+	Mon, 27 Oct 2025 19:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761593088; cv=none; b=nchqTMsFJTqa3W8YKhe9p3YBqZw/U/XOGf0pnNJiKysTQTxAhT6JC/8ZxwFGtBRoPlFhez8DigdV2GQpc7kmwVgR57FmmkiVKxpErs18N2Oln8ZVPm+WKzcl7+y1wLKdzkQKIpMG4rSZln4EUAeQvrdeze7iw5YJGisoieOIXQA=
+	t=1761593106; cv=none; b=aV+3xMBpCEY6vmoipRw3Fx4AlaPQCXxXPUxN43OumUeq+dFOQ+TpxHSdxo7TMBSIIocXGLmIA1pWKxY2T4UzDA5GWU79O2mihIzby4hp3unWZl2n9yfBnmqVCRNjb9dMM5zcmNf+FHhjNJVqw5s1tSmiTaG92t7zOsiOQn34diA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761593088; c=relaxed/simple;
-	bh=blBWTCT+SIFaa8+odPy1K2NT/1/JwxUEuNBKMUHBGBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PbOWGdJPC4hOoE/jzOmtQ+6vsQD5qHMQcQkR0gOP+ZQ4uAbC0z6dyJ2zeKxGXlrOMIAqnEeCRNFNsXC6VJYlPZAxpPdWw5sDGBXrWdHxXAm9RbC2dzD6/54F9q16eMUY/ARf1Uyf15tZ77wv26o/RTLIMJY0CVlBiS1EOYd9nVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMp/sCcu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D133C4CEF1;
-	Mon, 27 Oct 2025 19:24:43 +0000 (UTC)
+	s=arc-20240116; t=1761593106; c=relaxed/simple;
+	bh=EMFYNTxqqtbeWG7w/xTxHN65hWaPaOm53UuixA0S/bI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EEqP/8hBcdrAtDRJTj+ZKBLBzzZoNn2JGJ9CZEIhNMyiqYYAUq2FVAue85NFeYMVPKLSI6m5UbMLEJrBMFb5IaAyEaZvbgQkxzWEzS/6YriJUIi/CUqi9GII5R16FnAu/S4V7ygnDLwPNPHC3fvh96MSNNLYi9lSDdtgKzvv3cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vFzBCiD2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB041C4CEFD;
+	Mon, 27 Oct 2025 19:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761593087;
-	bh=blBWTCT+SIFaa8+odPy1K2NT/1/JwxUEuNBKMUHBGBU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=iMp/sCcuj8WkwVMinkWWHH+1WE5wIOctkxm4WmKkGOpFB3tlL6dXbKLgjwApaqArE
-	 H/00yx5LviCcddxMag8atyGdVYKVM8VcWEWhgOgiaaZbqc59TqNWXtibCQ9CJJzVd2
-	 feIQMAR10vkDBV3ppruablnt24+Set2AftOQwXDEWLy4rgVCbUNBjgHIMTf8AIkLlE
-	 yl1M4m9ZBgjeF6YxKl2yGqKFQnMXi13P7ipQnSVbC8zaAk/xsLiLL+RADk4SUEF88j
-	 shnLsfHydVzjrwO6xQJ9eVMpGrk072ybXcWmo90tJSLurE/uo95Fk2aVAFyl59DNkl
-	 wp2ymHAgNiEGA==
-Message-ID: <f08b1078-fc8c-4834-984c-813e01291033@kernel.org>
-Date: Mon, 27 Oct 2025 20:24:41 +0100
+	s=k20201202; t=1761593105;
+	bh=EMFYNTxqqtbeWG7w/xTxHN65hWaPaOm53UuixA0S/bI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vFzBCiD2TaGdMk3IXuYjzLamws536+Bz7hp5DNvEo0KE381bf4hAOkl5BzMilVSs9
+	 TbmuMCnTuI1Nu8la8KjABQ7QF3fXE6UfG6JWQju64rvNpMTH3zfqgWqB7cgKS2Uybt
+	 ZCdMY4B7jNzlxocCvEv+YByAgfXaOQEKh/c1LAL9cJAVClnvQGSgmyIPFxWSbYqtGQ
+	 8VNGtmcBXuUUK/h6u/rRyaqejErpjwuU8bUFXKABeof3vMkEe2PgpgbdQmsIhRW920
+	 omf1N+UlcXgua/pw0KZ+3N4DwiviNcgyPXFDHx/hvI8+457eASfDU4bXE9lukwcSwx
+	 p5wKjifUBK6/A==
+Date: Mon, 27 Oct 2025 14:25:03 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: linux-pm@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Balsam CHIHI <bchihi@baylibre.com>, devicetree@vger.kernel.org,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Mason Chang <mason-cw.chang@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v1 2/5] dt-bindings: thermal: mediatek: Add LVTS thermal
+ controller definition for MT7987
+Message-ID: <176159310054.1448869.17678673857769151951.robh@kernel.org>
+References: <20251026122143.71100-1-linux@fw-web.de>
+ <20251026122143.71100-3-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 3/4] i2c: ast2600: Add controller driver for new
- register layout
-To: Ryan Chen <ryan_chen@aspeedtech.com>, bmc-sw@aspeedtech.com,
- benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
- jk@codeconstruct.com.au, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com,
- linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
- <20251027061240.3427875-4-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251027061240.3427875-4-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 27/10/2025 07:12, Ryan Chen wrote:
-> Add i2c-ast2600 new register mode driver to support AST2600
-> i2c new register mode. This i2c-ast2600 new driver and the
-> legacy i2c-aspeed driver both match the same compatible string
-> "aspeed,ast2600-i2c-bus" because they target the same I2C
-> controller IP on AST2600. However, AST2600 SoCs may configure
-
-Where did you document ABI compatibility of new driver with old DTS,
-which do not have required properties and uses old reg?
-
-I don't see that. I actually clearly see:
-
-> +	i2c_bus = devm_kzalloc(dev, sizeof(*i2c_bus), GFP_KERNEL);
-> +	if (!i2c_bus)
-> +		return -ENOMEM;
-> +
-> +	i2c_bus->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(i2c_bus->reg_base))
-> +		return PTR_ERR(i2c_bus->reg_base);
-> +
-> +	rst = devm_reset_control_get_shared_deasserted(dev, NULL);
-> +	if (IS_ERR(rst))
-> +		return dev_err_probe(dev, PTR_ERR(rst), "Missing reset ctrl\n");
-> +
-> +	i2c_bus->global_regs =
-> +		syscon_regmap_lookup_by_phandle(dev_of_node(dev), "aspeed,global-regs");
-> +	if (IS_ERR(i2c_bus->global_regs))
-> +		return PTR_ERR(i2c_bus->global_regs);
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026122143.71100-3-linux@fw-web.de>
 
 
-ABI break. No explanation of that ABI break, not even mentioning it.
+On Sun, 26 Oct 2025 13:21:31 +0100, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Add thermal controller definition for MT7987.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>  .../devicetree/bindings/thermal/mediatek,lvts-thermal.yaml     | 1 +
+>  include/dt-bindings/thermal/mediatek,lvts-thermal.h            | 3 +++
+>  2 files changed, 4 insertions(+)
+> 
 
-There is no reason to break the ABI. Your new driver *must* support both
-interfaces and both DTB. You *cannot* (please listen carefully, because
-in the past we wasted a lot of time discussing simple statements) rely
-on legacy driver binding to old DTB, because it is the same compatible.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-You need to rewrite all this to handle both DTBs in backwards compatible
-way.
-
-NAK
-
-Best regards,
-Krzysztof
 
