@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-871891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E131C0EA45
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:56:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC832C0EC88
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746BF19C28C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:55:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D6295023B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440BA2C21D3;
-	Mon, 27 Oct 2025 14:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0721E30C60C;
+	Mon, 27 Oct 2025 14:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWJqeX83"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2IonNmH"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881A219EEC2;
-	Mon, 27 Oct 2025 14:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3CF30C609
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761576897; cv=none; b=h0ZN1zUt/bqPK0Wy4uMlDVACa4OyqM+gK13rwvWqZifaX/izuW0huGWPzSI5tkk7AAQ/OBzw+Z2k5Wt+P3ThkMX2CVsRfMv8oDAid4GFDEDi/D0Hj6HhlVVHIaaXX+ba/HgxsgLKeSmMqCFsrNCUX/3wnEE8cmjIXcgWe9h0afU=
+	t=1761576972; cv=none; b=WY/G5QiQWtYCEvV/uX18X9Z51/Ie/ZlOJjLEanlnLjUb6OU3Ic+YFc2rGFtn5vG/jtgVdNRQam3+9FRhzFiLfio/6YLcH/9ulaZN8Yi3yugc7XTLAhIYksdWz7VKjjTC0PFhTAY4bTXlS+SY7uq73GFT2tOQsVEBOoR5O/r28xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761576897; c=relaxed/simple;
-	bh=55ciiXLhwxIAPj+42X+cECg3QUXl4PQE2uVMq1Zw59A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zpg/zuskch3GaUqibC5IDUAxvpbi9iALFcodY5NOa8NwpakUA0y4J4H8w4KXHJkbyVbA3l9dlZyTjaUloINgYAFgccX6wU7q/8ZqQh0wOHAFvFYXhwOblrV/6QvegHN2+DgNNlIiJ6bcR5YThr6GfEGz2NE2Srx9E40QXGoruMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWJqeX83; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B909C4CEF1;
-	Mon, 27 Oct 2025 14:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761576897;
-	bh=55ciiXLhwxIAPj+42X+cECg3QUXl4PQE2uVMq1Zw59A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GWJqeX837ZMlOjKwluohi0pGWxQV5CGd4PmwWrfaezb0pfpFPdpL24iDVoYrF/2Qa
-	 IDI1Ti2mLFwWrK8Qs640Tp61ieNACXJdCnyOaR1R0BljFsP7J0SOTrmonwKmSqwK7F
-	 K+TieD7E8BONx96RRDjc4fTMqErmyC65SzEspooNLhLiICr+HLO0IH2qDkhieJ0bAD
-	 ULKXjwpjpiD7DbifEnhZqLusF/IaERB36Zjv+1vaakoUAlFrCwJNPMbQeOezInbz/4
-	 9agszMQYUlsl88qrGCrVQ9ft0tbnAR6JETqxS5HO93/GbVtSaLRv/c0HG1eSfnB6FD
-	 I2g6giA7WXJ8g==
-Date: Mon, 27 Oct 2025 14:54:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] iio: accel: rohm: use regmap_reg_range()
-Message-ID: <20251027145451.43e05bcd@jic23-huawei>
-In-Reply-To: <cover.1761569177.git.mazziesaccount@gmail.com>
-References: <cover.1761569177.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761576972; c=relaxed/simple;
+	bh=JQ2Eg/fxzgQwaU0erBgyehxjwvhanKuWBXC39MUZvkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UA8wLnbH7ePAfk+935yHjk7qFxL/YACcHuFIjDjuQWq+uJZ8Qd5ZkExt/9WoV4mG1m2Wkc9nck+kqtVkJMz0D9yKGzMGZNsAVBroELkAE7QnCfxLuXOhwJ7XCmIy4LT9PvenNvs5v4Af2SHe6ifdD24OI0qH8E36RNYZVOql/9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2IonNmH; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7a435a3fc57so928537b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761576970; x=1762181770; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8yVMi7V8qTRELGGfV+IcZ9w9BuBp+eY7s7IocvDD4Ig=;
+        b=e2IonNmHnm5w6HS+St6D0v35hy7/3yisM8VKUesngmTpdBvpCdCFcV3p52Z0I0Ouam
+         USsY9KfytMQ3SV+KK3J/HoGllCTEtT8NBEUaDiY2tw+MaEMhSFkngOejGidqgRWX6a/o
+         ZefxMXngBMVtsxPu+W6fBZhnnzBxAndZ+NrmKsoefM7PlzfCXdaRCyg5UiIxddFS/zYO
+         f91ppe0YhGMdK8m6IzGwULhtlQldiPRbNFK6z1f5JpC5Ts/E0RAWoh3LT8NhVLSn6Ume
+         YHgdSKEKv3HPK2dxLwh4dpdL7tyScNxdN28q9BP+8I9vF0rLPHcid08iLXnEEKZR+mZt
+         hslA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761576970; x=1762181770;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8yVMi7V8qTRELGGfV+IcZ9w9BuBp+eY7s7IocvDD4Ig=;
+        b=JdUfojXXw7JmJSg1Wg+qHBjMboKgbGLD4Pvb9QLKAQ3ggZ13flYaB06FT+w23ZfWL+
+         ENOlKeoEVSLxIWNF2EbdOiRLzU+JQd5CAPyykAbVvIq1M356PbMxHzYTFLuK6fof0pdj
+         hJ+lBBL6TCMPbxyojBFu4/Ne54HuBsY/jot+/n0BxUzAi7R6xHnpyFvouwpIoCFJ0oK8
+         IjuoENlebqC0CE53JaEN+XhAyoZEubQ63WOIQqdYXub2FB9SI3G6NuzFboCy8QFe8INQ
+         CEc52Fvvvt8W1Lmv3k9L5gQ5BKStu+nsyR46dUBty7V3Lo2UDbBRruJBw4optGfNh5iX
+         OHUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUojaQB/uoUDEvneQMohUp+E/qpdKKepUqHJ868hjmzoExM/3aK97GDYSKiK3k2x9ELhGPLb9/qrExAxfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNNiOvCwYCFSN2nIyO+OdmjEG5LBZ6R8QWunxgpC6L0PchmUAx
+	7Mq6+myg4CTJgwQq6hkXLmerEI2DKKuBxjH5IBL4FEx9+ErUtKyrLj3v
+X-Gm-Gg: ASbGnct5q8IOylTA3RBp5Z1RhaTm+JFB4EShrkj1Qeyid9W/vNZDYlvKd/FhxsTcaYJ
+	0gmicxuokjT5wp+AhnlabtMBVdVbjaA+qnBY11O98Z0qxvN2Oy/sZI2cPNg9ZcnCCyBN0N3CzAk
+	1ixXB0qvId3OpDJ83fYy3jOsxFKTs2py3cc8SP7uEcfIrcuEGWuid2j6k1DIGlCGF+c6IgZdJB/
+	tM2AzcDVsXg/TS38C1u5lm7xnek9kkDbU4W8tr3RwBQ440IJV3rnGtAcev6kUDOVcZLLxOJWhXa
+	gnXQ4IgEAOZtrBbNHyDoejs8qaW/wq890z1tEjzth9bDICYsfBJPjMj4mPt2uwrqlo5kPNS+YfA
+	O7MbVOEFjBNdLtqnNPZWwwjav9XvOPfRtQ5NXfejHTujvqCic5HeudyWjMwUw1hhobi+82CO3ou
+	xDJBV3rrLo/Xo+NOBulXc=
+X-Google-Smtp-Source: AGHT+IFNNRsqOAD0ej4MkP02YIZHAarj1O7wDlGaz+jF0eTKJU0nb26xxgTWECACFe3NIf0baZUBNA==
+X-Received: by 2002:a05:6a00:c86:b0:77f:324a:6037 with SMTP id d2e1a72fcca58-7a441b7aa11mr318696b3a.7.1761576970098;
+        Mon, 27 Oct 2025 07:56:10 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.108])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012b19sm8373372b3a.12.2025.10.27.07.56.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 07:56:09 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Niklas Cassel <cassel@kernel.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Hans Zhang <18255117159@163.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-pci@vger.kernel.org (open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1 0/2] Add runtime PM support to Rockchip DW PCIe driver
+Date: Mon, 27 Oct 2025 20:25:28 +0530
+Message-ID: <20251027145602.199154-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 27 Oct 2025 14:50:07 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Introduce runtime power management support in the Rockchip DesignWare PCIe
+controller driver.  These changes allow the PCIe controller to suspend and
+resume dynamically, improving power efficiency on supported platforms.
 
-> Use regmap_reg_range() when initializing regmap_range arrays
-> 
-> Clean-up couple of ROHM drivers which assign the reg_ranges directly.
-> This reduces couple of lines of code.
-> 
-> NOTE: Changes are compile-tested only.
-> 
-Seem fine, so applied.
+Can Patch 1 can be backpoted to stable? It helps clean shutdown of PCIe.
 
-Thanks,
+Clarification: the series is based on
 
-Jonathan
+git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
+branch : controller/dw-rockchip
 
-> ---
-> 
-> Matti Vaittinen (2):
->   iio: adc: rohm-bd79112: Use regmap_reg_range()
->   iio: adc: rohm-bd79124: Use regmap_reg_range()
-> 
->  drivers/iio/adc/rohm-bd79112.c | 13 ++++--------
->  drivers/iio/adc/rohm-bd79124.c | 39 ++++++++--------------------------
->  2 files changed, 13 insertions(+), 39 deletions(-)
-> 
+Thanks
+-Anand
+
+Anand Moon (2):
+  PCI: dw-rockchip: Add remove callback for resource cleanup
+  PCI: dw-rockchip: Add runtime PM support to Rockchip PCIe driver
+
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+
+base-commit: 7ad31f88429369ada44710176e176256a2812c3f
+-- 
+2.50.1
 
 
