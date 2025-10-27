@@ -1,114 +1,143 @@
-Return-Path: <linux-kernel+bounces-871152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1743C0C875
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8B0C0C87B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734734F6C54
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:01:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7E694F5D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08912F25FD;
-	Mon, 27 Oct 2025 08:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274E22F25F6;
+	Mon, 27 Oct 2025 08:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3nkzana"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YsmeIQP8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oSFIPMt9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7732ED844
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3AA2F3632
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555271; cv=none; b=BkMJGdce2nATZYczmiBcYLV67gjB2F8qZj2J6dXmdHIks12uTnirzx8EMII87rKqhk/BjeDtZVYeASCz8rJJBzayyv57XcAhlN/GQ8nY7I2irl8TRnidD24guL2+AqsG5koIGm1tMFHumQxM9gMXmAXo0o00vz+jgdgJ3ib2PTo=
+	t=1761555281; cv=none; b=k1uKvXn4oLdtDHrGMxdXar+wz5VjWG5X7Obf70oK1kydvIrPS9EqOjzJgiZev6mXIOgajANI+sV9KxIZaGjoa7kczrdKhKHvpvGBwEllh1v4Ukpu6VDmhU8H/zkGsXSVXZZysmiAi16iz9AilwhooZDpJQhTHfBlRY0vlNrdRsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555271; c=relaxed/simple;
-	bh=FylS99QsA9gxDMDoBp+srgkQTQf25jWk722m3FG0juU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FVqUKexy5GSwgkPbOfz+lOtx3N0/wwhW3argEvhQegejJicKzI1jGIii1cVkGFSvzyGJodCj3ACN5OYrBChFYbjh9KyVGh16aBUll3igp3eNygLaPiNJnZiPQQM1QuorKQ3MnTNx2mA5UG3jEKTbT6EFSeRLnLAG/RxXNPAc6dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3nkzana; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c1413dbeeso7107520a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761555268; x=1762160068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FylS99QsA9gxDMDoBp+srgkQTQf25jWk722m3FG0juU=;
-        b=B3nkzanaTS+DCfJQQdTa9/I8Bw/9RQEZandVY4kuTqat0+LCgUjY8hJYQovj8rRxgK
-         unfwJ9eu2+A3c9UTGMG4Hkm/NcaO57Lfm/6HREEUbRFZMYfDA7ujWLrKA1rlA1oa8RnZ
-         VN8Ae2qIp16R43Z0H+k3FotvDr+qBOiYHbe6vnJkkTCteBtiHdAOAkG3vFdJ/9D5UCVs
-         tPOigPLMWOJMwf0wbfA3a3AQSKlpxAhA5+xIpxFR3Ia/z8ntNjo3HnjS4SOovWOMvqD3
-         JBIMaWd4gsJVnScBRAR6lAtkeDFESAnxSKwQ5dRSHhpeyqVI8d5QQc0ZykA21y8xZ1V3
-         UyvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761555268; x=1762160068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FylS99QsA9gxDMDoBp+srgkQTQf25jWk722m3FG0juU=;
-        b=a05z94P7wipMV0bR263v9zz42yGY1E+2eAiqA+Y26pZ0x1aOwqPXzaR2jDAPc5WieX
-         1vsaKH3CmBZZA9QMeEofXiElRu6rQ6mmswl6OYp2cxK/5p7/l+wOEy7/29YJsqi53MrC
-         FJlej82myGl2UUErPpeQ0DcAlPzp1jlJVrv+3nH3i0CmAHJ+R4SBJsq1W8NFXmlRwsiO
-         7wOdtVtxARF2Ypm0IFgue3Sd/68j5wnq5Gq3/bmYN2k0LkepZfbc3Pn3RROgGs1+/PNI
-         MIF8U1dOO2WIOqI++mXUSqU0CfwR36GF2KOCHVlimFLBm8/t54JvajHtqjqV0kweZln3
-         ighQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3wJRcXyGK5G727RdvfUlzLGhI9IJ73YXIh2S+jPc1KwvJwLwU0y3EbTHEhH/AIiMIvrTTm6LDwt6EYgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc+Vi1LSIykfqzT9Y68M70kKZG2k8WzgtcOHp6PgxfbuXePeMS
-	Gswa4VZku3uThcrERqrw98CtrO5wC+uCTV6azbuT3O3UaPvvnwT71FSh18BoWacvwWliz7ByZ6b
-	NDWvE7XU9ABgtAtmTv1Whcojl4Tdq/FU=
-X-Gm-Gg: ASbGncsp+IpRAO+4mmgJMC84IgT3u+yrPUL3hXRZBrKaF2DLdR+3bufWm5IrYMHByHc
-	7UTwX7ay+rGLsS7Iu5Lvtuy5TVVpaQZnjyTjpwEG8jl+jb7sgTVNKEOBHoiWulucgjNhJ6fAg0C
-	WEXeJuJC1/HPm5QzaDEDndG20OcZxff4+lrB4/7BwRkIOvu1z1UuCV59vIVNCnLZJ+BM0hNfmhx
-	EbuCXUputq9MoAKW/1r4MCya/4Yo0yFtFmRevulNrYySNhfAUBDDPOXM5Z8osKg9UDICHzE
-X-Google-Smtp-Source: AGHT+IEEwsR8ydlzzYHSrluue6vFNPLtag30nDyQMzqddTjn2d1HRqClZfBAQvsrpP8VYxX+CJLuItx4f2kKSyEP5D4=
-X-Received: by 2002:a17:906:c14f:b0:b6d:604a:b89d with SMTP id
- a640c23a62f3a-b6d6ff25f30mr1222691966b.33.1761555267505; Mon, 27 Oct 2025
- 01:54:27 -0700 (PDT)
+	s=arc-20240116; t=1761555281; c=relaxed/simple;
+	bh=YBmwTIvn4p00rYbr/pLTzquF/LQGyMuikin2At+knsA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YATf/eEcR2LgWcXN1SI+zVzJcpAmfosQR8BB8wqnIRQSYEVCFypML5jyfrQdwyDiacUUlT+BQDvstbh4vp21gq5dc0LsHvJHSr9zdP5isQAwhS3WGG+R2fh2UYbmrtw6f3him85w++Ozk6/UHX69aaHGcPiQJZjqV7G+VYP+nfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YsmeIQP8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oSFIPMt9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761555278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wADVRJvytaaWYRB+ePAV85hnF5m9541y74Pe50E1fZI=;
+	b=YsmeIQP8S5/E25k3rwutuq+qQsolOVlhOTHUnDexDGFCkFrHdxhoqTT3j4HSbjWO/eh3bh
+	ws51Q5qDygFbUuo9tkbjwBPSyDMCe7ZduKzOsVawUkjTHIVQ0SGfBb0WK+GaAGv/Q3j5rH
+	QbE7eR6KkenDzVeTCiEc9aiVvHER+zUJJ9sZz/hpZweEJ9/q6Ud0ZpQ0F9lNcMEtRosSQc
+	nsP6h/NOsI6hq2iYLLdgDgO/MPXa8gIwYj2RiIjZVLQepB2mgtUrjeggM4hqUj9K+Zw2ER
+	1/zXoGSDqOvFmIBy0/WHQck8aQpTlOXvnIp3D4ruoF6dMeLf4TQpJTGPwpOv9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761555278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wADVRJvytaaWYRB+ePAV85hnF5m9541y74Pe50E1fZI=;
+	b=oSFIPMt9Z1bsEXRk4Vnk69ZGkKjQvDEd3BNgP5hBFPT/ptpcHdW4WkGr7AjAEYIF46zjmZ
+	p6nXBMQn7vCpeiDA==
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, LKML
+ <linux-kernel@vger.kernel.org>, linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
+ <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
+ <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [patch V2 16/20] sched/mmcid: Provide new scheduler CID mechanism
+In-Reply-To: <9076c353-a22b-4c38-bd30-fb10eb0ae851@linux.ibm.com>
+References: <20251022104005.907410538@linutronix.de>
+ <20251022110556.399477196@linutronix.de>
+ <9076c353-a22b-4c38-bd30-fb10eb0ae851@linux.ibm.com>
+Date: Mon, 27 Oct 2025 09:54:36 +0100
+Message-ID: <87ldkwwwqb.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251025102008.253566-1-kriish.sharma2006@gmail.com>
- <CAHp75Vc=LeYEowm4HOa4iPJSMQmu75ch-wbKT4WNOyWvYH3u9A@mail.gmail.com> <CAL4kbRPy67Vkq1A_H_E=B99+M-09s7xWMYHCMPYFaCG0nMWWnA@mail.gmail.com>
-In-Reply-To: <CAL4kbRPy67Vkq1A_H_E=B99+M-09s7xWMYHCMPYFaCG0nMWWnA@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 27 Oct 2025 10:53:50 +0200
-X-Gm-Features: AWmQ_bkG2lho3tGefkbYnxp0Rg5zaX9UQwGIMCg14KvNjAU9MvWOzf6DdMthcZw
-Message-ID: <CAHp75VcB9yLZq31zHa8wuE2DtxJ0j5hoco3q=F4WG8yDuTrtkg@mail.gmail.com>
-Subject: Re: [PATCH] iio: document @chan parameter in iio_backend_oversampling_ratio_set
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25, 2025 at 5:12=E2=80=AFPM Kriish Sharma
-<kriish.sharma2006@gmail.com> wrote:
-> On Sat, Oct 25, 2025 at 7:05=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > Is this the only issue with the kernel-doc? Can you run manually
-> > scripts/kernel-doc against this file (with -Wall) and check, please?
-> > The change itself is okay, FWIW,
-> > Reviewed-by: Andy Shevchenko <andy@kernel.org>
+On Mon, Oct 27 2025 at 10:41, Shrikanth Hegde wrote:
+> On 10/22/25 6:25 PM, Thomas Gleixner wrote:
+>> The MM CID management has two fundamental requirements:
+>>=20
+>>    1) It has to guarantee that at no given point in time the same CID is
+>>       used by concurrent tasks in userspace.
+>>=20
+>>    2) The CID space must not exceed the number of possible CPUs in a
+>>       system. While most allocators (glibc, tcmalloc, jemalloc) do not
+>>       care about that, there seems to be at least some LTTng library
+>>       depending on it.
+>>=20
+>> The CID space compaction itself is not a functional correctness
+>> requirement, it is only a useful optimization mechanism to reduce the
+>> memory foot print in unused user space pools.
+>>=20
 >
-> Thanks for the review!
-> Looks like I missed another warning in the latest linux-next:
-> Warning: drivers/iio/industrialio-backend.c:1069 No description found
-> for return value of 'iio_backend_get_priv'
-> I can send another patch to address this if you=E2=80=99d like.
+> Just wondering, if there is no user space request for CID, this whole mec=
+hanism
+> should be under a static check to avoid any overhead?
 
-You can combine in one patch, there are no strict objections for
-fixing all (small) kernel-doc issues in one file at once.
+The problem is that CID has been introduced unconditionally with RSEQ
+and there is no mechanism to opt-in. So we could go and change the ABI,
+but as you know that's generally frowned upon.
 
---=20
-With Best Regards,
-Andy Shevchenko
+I thought about adding a static key, but that'd be systemwide and
+would probably required to be opt-out for the same reason.
+
+>> +static inline unsigned int mm_get_cid(struct mm_struct *mm)
+>> +{
+>> +	unsigned int cid =3D __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+>> +
+>> +	for (; cid =3D=3D MM_CID_UNSET; cpu_relax())
+>
+> This triggers an compile error on ppc64le.
+>
+> In file included from ./include/vdso/processor.h:10,
+>                   from ./arch/powerpc/include/asm/processor.h:9,
+>                   from ./include/linux/sched.h:13,
+>                   from ./include/linux/sched/affinity.h:1,
+>                   from kernel/sched/sched.h:8,
+>                   from kernel/sched/rq-offsets.c:5:
+> kernel/sched/sched.h: In function =E2=80=98mm_get_cid=E2=80=99:
+> ./arch/powerpc/include/asm/vdso/processor.h:26:9: error: expected express=
+ion before =E2=80=98asm=E2=80=99
+>     26 |         asm volatile(ASM_FTR_IFCLR(                             =
+        \
+>        |         ^~~
+> kernel/sched/sched.h:3615:37: note: in expansion of macro =E2=80=98cpu_re=
+lax=E2=80=99
+>   3615 |         for (; cid =3D=3D MM_CID_UNSET; cpu_relax())
+>
+
+Duh. Did not notice because x86 implements cpu_relax() as a static
+inline while PPC has it as a plain macro define. Let me move it out of
+the for() then.
+
+Thanks,
+
+        tglx
+
 
