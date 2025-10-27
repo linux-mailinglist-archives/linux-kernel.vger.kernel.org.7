@@ -1,109 +1,157 @@
-Return-Path: <linux-kernel+bounces-872751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DB6C11F10
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:13:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70694C11F37
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86849420E75
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7ADD3ADAE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E82232ABF6;
-	Mon, 27 Oct 2025 23:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B31432D0D8;
+	Mon, 27 Oct 2025 23:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CccYhQBm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UlwTH5R5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAF72E88BD;
-	Mon, 27 Oct 2025 23:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE1326CE3A;
+	Mon, 27 Oct 2025 23:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761606791; cv=none; b=kJ/OwiIWTg9Nf6/KMSD1ocWIcRKkZfvz+5dN2TEd4nk+2EPtknbsMirSMiWgfonMPIZ79LG1EOcQUPZzQA4M6HDLtI3d0LSd7BhsGiHivHgBYk0SjsnXBZ8LNKOtuvl31YqoB3Yv7RiFY9l5bYqscba8Lk8XpMgg6J3knP6h6hM=
+	t=1761606952; cv=none; b=uxdmJfw7Q9xz4gDyrAIFZCgoLKSTBvvGNK0oC3HQqQEJkCYh//zrkQRuAgn5cC2TamRkRUvwKApahhIFnS6ikijbdhPSnwM0JTG8W2IdfYQw1RsVOiYnwpewkldh/Fr27/CwYDEbSemdS7qZFE7WM60LSrmBg8yEUZyJD+ffj+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761606791; c=relaxed/simple;
-	bh=eQiGzLMt98XNx4v/lnpj++1SjVFZR5EtYynqO+z/lIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jTHlMmqhMpP1k/fqvp4cq+VES1XwhJ3+YPotjSIm9lveYzyqm9UVo+mGmwe6rQI6/rKR4rR+sXrnjxYMD2amq2XogQlYvn7SFGHi5cbFmG+vnlrRltgdhhuOERjvXenVmzGFYh3mbgKsPy5HxkPBc8VmPq/G8aS7qOErEm0TW7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CccYhQBm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CE2C4CEF1;
-	Mon, 27 Oct 2025 23:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761606790;
-	bh=eQiGzLMt98XNx4v/lnpj++1SjVFZR5EtYynqO+z/lIw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CccYhQBm65FdVVX64bQU9yCWSdqWHnCe2wXVw/eUCYEATBSpLp+2KemBMeanovKcM
-	 Utg6qvYHHJ3xYCYKXno0zoTBFMFF957dcQHNo5zMjVAHHmWuPhOMV/jEQCmrSK50od
-	 bLbSLkBavJuG8t7eCQoaykuKseyS7up/MHJrE1iz3OqirtSYjeYy/0HWFEosSbNZPB
-	 P0bQxvVaxvEXvqSNSrxe/qn5+XB+7oo/eUsl8oH0/+UkLtdJSLWG2WthxgwtRedfLk
-	 Kh+mtS3dZbnXNeCQ8aMDyjHDVd0DJc1IkDBJYVxIWbur/QfI5wr0AAhuQNzlxddxee
-	 Y9Tpi1Ujc1oTg==
-Date: Mon, 27 Oct 2025 16:13:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Wilfred Mallawa <wilfred.opensource@gmail.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Simon Horman <horms@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next v8 1/2] net/tls: support setting the maximum
- payload size
-Message-ID: <20251027161309.7fd96bae@kernel.org>
-In-Reply-To: <aP9YMiW9V7Dkhu_1@krikkit>
-References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
-	<20251023184404.4dd617f0@kernel.org>
-	<cd557c5b11b04da060f07d3849dc46e7b3625ed1.camel@gmail.com>
-	<20251024163336.5fba5cd1@kernel.org>
-	<aP9YMiW9V7Dkhu_1@krikkit>
+	s=arc-20240116; t=1761606952; c=relaxed/simple;
+	bh=/j7DHDKpN0QX4vOUNDCfZHeNcGCANMg6sfqJnKXSq4Q=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jhUsQQbp+p18gUZAbD7iF2eEVokI4TP8qnGJ/+MAQ54hAoDVo2e56cXxozCAJczCBg1Wl2DBhvLbJM95pxJzMH7GwhzDQdY6t5YolgroPDq174YM+HCrh5cJs+tKyDFlJQ8Cb0zP6G0wBVZr2/gsEktjh4+ALThQsajIJdYcdvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UlwTH5R5; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761606950; x=1793142950;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/j7DHDKpN0QX4vOUNDCfZHeNcGCANMg6sfqJnKXSq4Q=;
+  b=UlwTH5R5HZj6ChXGd+ax1rIrMXNK6O/mwEcG3LZlGEMJXGPheqFzcdja
+   bw4Ntk2VRpip7AHF2fk/x0IfVOalsoXrt31fZibmcrj7Vqz5Zkx2Dk3mh
+   nvG7CP878dSZMWyfRt589Lbwp0/PdWjVBtAIefj8PrbPLm5NS0ZA9v5GW
+   XFx2tkPQjUdQtbrlYdmFl6Ewj2ckk+T55zh8DZJ7XBNumIKQgqp3SXPAh
+   pf0+iQiUQsh4TAdRba4RLUGSR5nZMolS7Zcwnv0bADNdxa/NORzuAR1g8
+   RoQNDjcG7gIrW1Ma7KBOPBfTqkHT8p+uiOWOIF5nkBxKeMyuF9p3N+VtO
+   A==;
+X-CSE-ConnectionGUID: t50zm6drQQmacMrj6IlCjQ==
+X-CSE-MsgGUID: l4rzHaHpSAeoS75B9qXpTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67563738"
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="67563738"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:15:49 -0700
+X-CSE-ConnectionGUID: 5uVDLYkVRxWzGSlc8SEoMA==
+X-CSE-MsgGUID: Yeo9UPLbTPSbR7oTvH/Nnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="185086939"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.85])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:15:47 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 28 Oct 2025 01:15:43 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Klaus Kudielka <klaus.kudielka@gmail.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] PCI: Do not size non-existing prefetchable window
+In-Reply-To: <20251027231222.GA1487591@bhelgaas>
+Message-ID: <f397a048-e0a8-2bb1-f18b-64ad98bf83a3@linux.intel.com>
+References: <20251027231222.GA1487591@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-798074588-1761606943=:982"
 
-On Mon, 27 Oct 2025 12:32:02 +0100 Sabrina Dubroca wrote:
-> > But we haven't managed to avoid that completely:
-> > 
-> > +	if (value < TLS_MIN_RECORD_SIZE_LIM - (tls_13 ? 1 : 0) ||  
-> 
-> We could, by taking a smaller minimum payload size than what the RFC
-> says (anything that allows us to make progress, maybe 8B?). ie, I
-> don't think we have to be as strict as rfc8449 (leave the userspace
-> library in charge of rejecting bogus values during negotiation of this
-> extension).
-> 
-> > I understand the motivation, the kernel code is indeed simpler.  
-> 
-> Also more consistent: the kernel syscalls work with record payload (at
-> the send()/recv() level). The rest is hidden. Userspace could try an
-> approximation by sending max_payload-sized chunks with MSG_EOR.
-> 
-> > Last night I read the RFC and then this patch, and it took me like
-> > 10min to get all of it straight in my head.  
-> 
-> I don't find this stuff very clear either tbh, but maybe that's a
-> problem in the RFC itself.
-> 
-> >  Maybe I was tried but
-> > I feel like the user space developers will judge us harshly for 
-> > the current uAPI.  
-> 
-> But userspace libraries have to do the same computations on their side
-> if they want to implement this RFC. They have to figure out what the
-> max payload size is as they're building the record, they can't just
-> chop off a bit at the end after filling it.
-> 
-> Quick grepping through gnutls got me to this:
-> https://gitlab.com/gnutls/gnutls/-/blob/eb3c9febfa9969792b8ac0ca56ee9fbd9b0bd7ee/lib/ext/record_size_limit.c#L104-106
-> 
-> So I have a slight preference for not being tied to a (kind of
-> confusing) RFC.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Alright :)
+--8323328-798074588-1761606943=:982
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Mon, 27 Oct 2025, Bjorn Helgaas wrote:
+
+> On Mon, Oct 27, 2025 at 03:24:23PM +0200, Ilpo J=C3=A4rvinen wrote:
+> > pbus_size_mem() should only be called for bridge windows that exist but
+> > __pci_bus_size_bridges() may point 'pref' to a resource that does not
+> > exist (has zero flags) in case of non-root buses.
+> >=20
+> > When prefetchable bridge window does not exist, the same
+> > non-prefetchable bridge window is sized more than once which may result
+> > in duplicating entries into the realloc_head list. Duplicated entries
+> > are shown in this log and trigger a WARN_ON() because realloc_head had
+> > residual entries after the resource assignment algorithm:
+> >=20
+> > pci 0000:00:03.0: [11ab:6820] type 01 class 0x060400 PCIe Root Port
+> > pci 0000:00:03.0: PCI bridge to [bus 00]
+> > pci 0000:00:03.0:   bridge window [io  0x0000-0x0fff]
+> > pci 0000:00:03.0:   bridge window [mem 0x00000000-0x000fffff]
+> > pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02]=
+ add_size 200000 add_align 200000
+> > pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02]=
+ add_size 200000 add_align 200000
+> > pci 0000:00:03.0: bridge window [mem 0xe0000000-0xe03fffff]: assigned
+> > pci 0000:00:03.0: PCI bridge to [bus 02]
+> > pci 0000:00:03.0:   bridge window [mem 0xe0000000-0xe03fffff]
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 1 at drivers/pci/setup-bus.c:2373 pci_assign_unass=
+igned_root_bus_resources+0x1bc/0x234
+> >=20
+> > Check resource flags of 'pref' and only size the prefetchable window if
+> > the resource has the IORESOURCE_PREFETCH flag.
+> >=20
+> > Fixes: ae88d0b9c57f ("PCI: Use pbus_select_window_for_type() during mem=
+ window sizing")
+> > Link: https://lore.kernel.org/linux-pci/51e8cf1c62b8318882257d6b5a9de7f=
+daaecc343.camel@gmail.com/
+> > Reported-by: Klaus Kudielka <klaus.kudielka@gmail.com>
+> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+> Since ae88d0b9c57f appeared in v6.18-rc1, this looks like v6.18
+> material, right?
+>
+> Applied to pci/for-linus for v6.18 on that assumption, thanks!
+
+Yes, it's for-linus material.
+
+--=20
+ i.
+
+> >  drivers/pci/setup-bus.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > index 362ad108794d..7cb6071cff7a 100644
+> > --- a/drivers/pci/setup-bus.c
+> > +++ b/drivers/pci/setup-bus.c
+> > @@ -1604,7 +1604,7 @@ void __pci_bus_size_bridges(struct pci_bus *bus, =
+struct list_head *realloc_head)
+> >  =09=09pbus_size_io(bus, realloc_head ? 0 : additional_io_size,
+> >  =09=09=09     additional_io_size, realloc_head);
+> > =20
+> > -=09=09if (pref) {
+> > +=09=09if (pref && (pref->flags & IORESOURCE_PREFETCH)) {
+> >  =09=09=09pbus_size_mem(bus,
+> >  =09=09=09=09      IORESOURCE_MEM | IORESOURCE_PREFETCH |
+> >  =09=09=09=09      (pref->flags & IORESOURCE_MEM_64),
+> >=20
+> > base-commit: 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
+> > --=20
+> > 2.39.5
+> >=20
+>=20
+--8323328-798074588-1761606943=:982--
 
