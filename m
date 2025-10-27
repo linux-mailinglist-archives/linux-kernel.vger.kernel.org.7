@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-872044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B2CC0F306
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:13:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D6C0F264
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D524E56064B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:57:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412735005B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D840B31062C;
-	Mon, 27 Oct 2025 15:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F7A310768;
+	Mon, 27 Oct 2025 15:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h4lV+2Ed"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JcW83xkO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E12530B518
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886AC30C63B;
+	Mon, 27 Oct 2025 15:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580296; cv=none; b=bOU/MWJDfPZJ2/vAVnFQgKsKziQYVeoEp8RKlDD2diyQQ87CJmWdOaMEEb3s8Nj1N0qrh5xdlz7ZNeyikiSWzgGpvEJkP+1A4VKEAv5d0kGqRffAVFgC96+RlDclrUFoBfCPC73yZNlXG3X+vbR27bLpTneyWhWD4t5G4x5x3oU=
+	t=1761580378; cv=none; b=FvWTmqaJ36gR3bm8go6ETFBGZNTAKkHihxvJg5ZeqK8oAGX1R76e/208THduVcNRDjKuqJtRyItZb98zjDcTLoB3D/kjzIZ7EakRqEWdMkOnAg+jCfXQDFkkkWY/NZCTar4Kd1jhPANpShAlvNcNflQ7e5VEqrToe2Qqj9+BXic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580296; c=relaxed/simple;
-	bh=eFzlaxy03OkylLEsT3hFax4Zyxh5cXxd99ItnpPuKL0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WwDD7GuzxbLzlSXc+pkXneXgEa0HdWBf0Iar5DrfEHNx3gpQjhVFePVaaJrTpfjfCYovYDxQ8roKHD2iUtlX2L4h/hEofsAEMDMuK3BjXzr/fGrh0286B3YIOm3+GXtV/yXlcXtxBBTzfIaxpDWR3KlVXWI6hAMg0ynOciPHjRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h4lV+2Ed; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761580290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/MS10e7yIxOn6BqiiQzXU5LRaQWFGzhy1OFHDfAgar4=;
-	b=h4lV+2EdifuX3tC5nWuMdkfrhdLOHVokPIz0ZuQ+eQPpPXxAj5GmUcL91SPGKPO5hSly+i
-	oX29mbwLgLM1mkMbF9LDuDyyAxhn7lk/q6bIWKmNtivTGlyg2hx5KCZ6Uob0HeSef/XCY8
-	iLANEwv46QMyNj7pztvJLn/BUijOo/4=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Thomas Huth <thuth@redhat.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Zheyun Shen <szy0127@sjtu.edu.cn>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Li Chen <chenl311@chinatelecom.cn>,
-	Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Ingo Molnar <mingo@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/smpboot: Mark native_play_dead() as __noreturn
-Date: Mon, 27 Oct 2025 16:51:02 +0100
-Message-ID: <20251027155107.183136-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761580378; c=relaxed/simple;
+	bh=0FD8jE3r3BQAd8qLv61nGNeltiMZUGuEGNj1kE2QHCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eOy/aac2cASwAfs0Q4vTn2TUjaQgIKiWkrezeG/WP/fjan7HZs5xRU8jcS20vuHJFzvzlSMK+4rOH1V0F8N4UzeUefKpZYLnYiCjNc9zOAQsggRuu96hGDr5OWWqTwUomL30iBALjZSUBVrYDOx9oMWcmMETeafONSx8jYi5OtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JcW83xkO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761580376; x=1793116376;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0FD8jE3r3BQAd8qLv61nGNeltiMZUGuEGNj1kE2QHCQ=;
+  b=JcW83xkOJuL0HNcAahoKM6m4IpbztLthDVnGHOu0p/LKmkYqhri3u7FU
+   k+doAnAD3Tw2bTydQjsI/RCPZ4tVbYcC5FNlIJegq7oA0OgZaqcsqEjEK
+   +lpki6FgnOfkrza3Fi+woe3vLTEZEdlShOdC0CRYqdZEwI50M/SU85XAM
+   aRxgvIEC5v0FlcTuEHfSs3F6wxaKQdH1tb116cIPDzsi98vkkKWiTByZ+
+   3fc/u3r7XyGrJQBN1dXPMmO2JzJ9W//VasA7p49wCYE7cdwUPnYFCL/wS
+   lVrMxrtEscQT32WnPAu28Q0iHnZXAWrc4Mii7M1NnSilZ23lSVmAmfrAI
+   g==;
+X-CSE-ConnectionGUID: UtFlwR7GQV6Axdv7Yk4ooA==
+X-CSE-MsgGUID: YZF7BvzxSx6i8FBHAEc2cA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66278297"
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="66278297"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 08:52:56 -0700
+X-CSE-ConnectionGUID: G6bvje5XSum7S3DOyyrGBQ==
+X-CSE-MsgGUID: 7uM8cH15Q+eBpWxUiT2sTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="222288557"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.111]) ([10.125.109.111])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 08:52:55 -0700
+Message-ID: <380c7a65-109f-43ef-be1d-fc7735d5fe6e@intel.com>
+Date: Mon, 27 Oct 2025 08:52:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] dax: add PROBE_PREFER_ASYNCHRONOUS to all the dax
+ drivers
+To: Michal Clapinski <mclapinski@google.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
+References: <20251024210518.2126504-1-mclapinski@google.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251024210518.2126504-1-mclapinski@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-native_play_dead() ends by calling the non-returning function
-hlt_play_dead() and therefore also never returns.
 
-The !CONFIG_HOTPLUG_CPU stub version of native_play_dead()
-unconditionally calls BUG() and does not return either.
 
-Add the __noreturn attribute to both function definitions and their
-declaration to document this behavior and to potentially improve
-compiler optimizations.
+On 10/24/25 2:05 PM, Michal Clapinski wrote:
+> Comments in linux/device/driver.h say that the goal is to do async
+> probing on all devices. The current behavior unnecessarily slows down
+> the boot by synchronously probing dax devices, so let's change that.
+> 
+> For thousands of devices, this change saves >1s of boot time.
+> 
+> Michal Clapinski (5):
+>   dax: add PROBE_PREFER_ASYNCHRONOUS to the pmem driver
+>   dax: add PROBE_PREFER_ASYNCHRONOUS to the kmem driver
+>   dax: add PROBE_PREFER_ASYNCHRONOUS to the cxl driver
+>   dax: add PROBE_PREFER_ASYNCHRONOUS to the hmem drivers
+>   dax: add PROBE_PREFER_ASYNCHRONOUS to the dax device driver
+> 
+>  drivers/dax/cxl.c       | 1 +
+>  drivers/dax/device.c    | 3 +++
+>  drivers/dax/hmem/hmem.c | 2 ++
+>  drivers/dax/kmem.c      | 3 +++
+>  drivers/dax/pmem.c      | 1 +
+>  5 files changed, 10 insertions(+)
+> 
 
-Remove the obsolete comment, and add native_play_dead() to the objtool's
-list of __noreturn functions.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/x86/include/asm/smp.h | 2 +-
- arch/x86/kernel/smpboot.c  | 8 ++------
- tools/objtool/noreturns.h  | 1 +
- 3 files changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index 22bfebe6776d..84951572ab81 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -109,7 +109,7 @@ int common_cpu_up(unsigned int cpunum, struct task_struct *tidle);
- int native_kick_ap(unsigned int cpu, struct task_struct *tidle);
- int native_cpu_disable(void);
- void __noreturn hlt_play_dead(void);
--void native_play_dead(void);
-+void __noreturn native_play_dead(void);
- void play_dead_common(void);
- void wbinvd_on_cpu(int cpu);
- void wbinvd_on_all_cpus(void);
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index eb289abece23..a4ba735842a8 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1328,11 +1328,7 @@ void __noreturn hlt_play_dead(void)
- 		native_halt();
- }
- 
--/*
-- * native_play_dead() is essentially a __noreturn function, but it can't
-- * be marked as such as the compiler may complain about it.
-- */
--void native_play_dead(void)
-+void __noreturn native_play_dead(void)
- {
- 	if (cpu_feature_enabled(X86_FEATURE_KERNEL_IBRS))
- 		__update_spec_ctrl(0);
-@@ -1351,7 +1347,7 @@ int native_cpu_disable(void)
- 	return -ENOSYS;
- }
- 
--void native_play_dead(void)
-+void __noreturn native_play_dead(void)
- {
- 	BUG();
- }
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index 802895fae3ca..14f8ab653449 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -36,6 +36,7 @@ NORETURN(machine_real_restart)
- NORETURN(make_task_dead)
- NORETURN(mpt_halt_firmware)
- NORETURN(mwait_play_dead)
-+NORETURN(native_play_dead)
- NORETURN(nmi_panic_self_stop)
- NORETURN(panic)
- NORETURN(vpanic)
--- 
-2.51.0
-
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+for the series
 
