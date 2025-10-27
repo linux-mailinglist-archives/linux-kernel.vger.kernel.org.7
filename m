@@ -1,220 +1,330 @@
-Return-Path: <linux-kernel+bounces-871051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C69C0C53A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:35:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 995E1C0C549
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 282D44F05DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD91A188BDE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282C72E8B8D;
-	Mon, 27 Oct 2025 08:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2382E7198;
+	Mon, 27 Oct 2025 08:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="LY/BGv6n"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qoKZhMCt"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013028.outbound.protection.outlook.com [40.93.201.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A33D189F5C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554079; cv=none; b=sX39tIApqyQWPDXTrkKv10Fg7LwHCWi+qCrdaCxwbNXq5Q6b+R7/SpmyxWnHljeUmUIbpYcwXqfaNTG+K4F9Lq0bGb6Im1hk6SPdvk9Fb52J4icRjO+YoOWED0Wi1KSMcJJzr3/uTJOXYKEKHeBcC3nZQNfPRDGx7rQ4xykKpq0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554079; c=relaxed/simple;
-	bh=C6DuS6khdSzTLBc1qnT3CBBz4b9mTwrsccfpDKu/4lE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AcnYrbQnJ+1AqtcZC+xf7SAp75Vqmy8y5kqCmF2gSPEcmtgAMa7ntGY22Rsb/sNKj5B+dYg+Zj1ObeIfoLghY3C1n/5kSe+NEeTM29A0CcnszlFQCNvqMPVZxoGBk9HgspV6D4ksrllPa6Ii4AQtd3Cebq0wWeigs9CWeC56PK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=LY/BGv6n; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id D33E9BDBF7
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:34:35 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 1D587BDA44
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:34:35 +0200 (EET)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 95616200BE0
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:34:34 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761554074;
-	bh=o245JY/HeDSM3dcCLVqmKK/Oj4MHPHb0LGkJmADaEF0=;
-	h=Received:From:Subject:To;
-	b=LY/BGv6nkhOCJAnKCzQyA74vJa4oU5Z9HpkrrSgPqoF1l2W5/F6G/4uCOhBC4ClEs
-	 s6jfZ1NazB0Z3xPM+nee+IwrI7Llk512K20HTXJ7nTCfQYyqcNvcKnSdzkTPck6PQ4
-	 tcUC38IeEJZ68+8pNaFEphcVntJpDUWYASmKF4mqFIAJ1CR7P6knDN/J5pbQVZ8qoD
-	 BQqrVvGj/Wglq0kRB/sBI6XUeJ63YjA65DhJYDCA5y5zj6tDKbmCG0LBw8bgwi7NOd
-	 T1hfoZ+kyMgiCsSusp9OUhFf8Z7IZE2GPTwj33avFBqv6IXqKdh+hgP7VUXS6A+HOm
-	 NOFAmCtgPcY3A==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-3696f1d5102so38817631fa.3
-        for <linux-kernel@vger.kernel.org>;
- Mon, 27 Oct 2025 01:34:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCXPKvaPvyj4ynm1l+fG+kkUFztFIyWeIZeR1E1FF5N1GduNIzwR+jeB3g+Xc9GTuHNn66e7/GjX1E5znu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbXqOP0nhmS1XNyYfW4Ef6ghgJQkmMkNuyce03sdnoohQHnB5j
-	KE9d6sjhXziNCMOL00PZnrV5z/XQrT6XscjuSXMAdm2d4gykZzDMx4eWTRyjQ9nkbgUUKojvpcS
-	fgabPhfxc1wDDS3Lo7Kk5XKyEjFFC/DQ=
-X-Google-Smtp-Source: 
- AGHT+IH0CBaIS6dsKE6LFWhp6Pd2Rr/eQNT5RTffVCMTh2qW4zMR0Pd9VQ9fUchPl9B2w9m99WZ7CniJpzj8vao/+yk=
-X-Received: by 2002:a2e:a801:0:b0:36c:7a76:d17a with SMTP id
- 38308e7fff4ca-3779782d1e8mr108927001fa.9.1761554073908; Mon, 27 Oct 2025
- 01:34:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF39E1E51EB;
+	Mon, 27 Oct 2025 08:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761554194; cv=fail; b=hJ6/REpe8x8NYIqRQ4noOdSN9hW3YoEBlFjtSqf++8SkXfd/+IDf+bNcCrQprtGkxaIWbKV9Up3ine1WSrxW82I61qrq5rmcdNWWLzDAZIGu6k4a9U8hsN56GwWGN6Lzbm3Xe17BvY+z7669Ls42RI1i1x5NQ0p3y28Ykv4OzbE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761554194; c=relaxed/simple;
+	bh=1f2N8abPkNNtHhrpBr0iQARiEh6SZDIND8/USxa2Nbo=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BPSDKu9sFADm9KuP1n15ba5uOzj/uMbYRzcbtBZP+Fdts4AJ5hOjqiSSvxfiV5cl6gFKAeVL8AMEyCJP5A6MjHZmCaM0QXJ1qURhR7KucUjI1YhqYc9775VhLYoloKL4wxhppItj7fEd0DeGopwhyikFCLgtw8v9g4YqDdWO8nk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qoKZhMCt; arc=fail smtp.client-ip=40.93.201.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DVFVW7qNmi6LM4B1wYeJUKmXgmzv4dbuKuINiSbcx1+5P7iDM/szZmfzf8a+jB+7WA+kWkmpNsUJ8zNsvNEY4iErxeiWPlEsyNiHaG7W9JFbp5HnKtI2tSFAxlEPJJjsoQsto/cDF65/Y2XVyg7JEPGFHnHQbI/K2SB/evgrz5+LWwIrQdqTTg3j5VrRX6wmK6+Z8KxDlAWQx5lSz3ZleSeSRZqM471ytsEAIt+x4Z100AW9EjagYGxT2OynogR1MlronY15Z8EuYwuAgO6AZMIHPpl4Z2vnG4kM9lK+wfBDogQTsL2PGqyLnoDNeJMI8Ro4RAGzY3+07yVObzEatA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KJMlApntBUZBLGWfQtcRU6B9xi/4ghf/Cz4qX1Fc/rI=;
+ b=IFT88Aw77uEAueszake5lmGTJ5QsgVP0Qzq3Plz/4JRPoS9qzBrm3uO8HvtEyBqjMCCkJL/dXf9bk89vp4ue0vO4wmO6XNdfAgEtRdwstiENCag3TVL4oxmWami2DO1s67qCw/NMw1lKs7sNalOoJXfj0RTBISdHyJIO5GnyunDyKnWnhEVqqX0uaZszZ+QJs63kGeM9t/p7bI4BcuJpC1XlQOHykAtPPPfwSxBHL6VpMYTAvNYoEMTTMDSjPCiol++xxPxrepb0vvXR1LyXFGAqiUBz9+Rlwcd0logXCFq0jLOWdwTJ3xbQKFQsrBjSfMiTEA5ZkNCuRrz58Wb/bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KJMlApntBUZBLGWfQtcRU6B9xi/4ghf/Cz4qX1Fc/rI=;
+ b=qoKZhMCtqFeoMvMNovHWHdyJfm2vnGWfKwRYs7vy8CWAYwe061ks/l4bZOqY1Gp5sbj7Rqq9qjrhvlKEMOZ47jCZlUT7wFmNNifJl5w8eW73W+ILCL5hXTFbXEVqilOjMGIwpl9k3ReNuBkxRUCsZpoVABPznDGZnDFnZ3IbROE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by IA0PR12MB9012.namprd12.prod.outlook.com (2603:10b6:208:485::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
+ 2025 08:36:28 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 08:36:28 +0000
+Message-ID: <13fd3b12-03a0-457f-a5da-fe018b032211@amd.com>
+Date: Mon, 27 Oct 2025 14:06:21 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] platform/x86/amd/pmc: Add support for Van Gogh SoC
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Antheas Kapenekakis <lkml@antheas.dev>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Perry Yuan
+ <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
+References: <20251024152152.3981721-1-lkml@antheas.dev>
+ <20251024152152.3981721-2-lkml@antheas.dev>
+ <3792db59-7dc1-4e34-9436-84df4b6c3e10@amd.com>
+ <CAGwozwFTDD2QrHy37axhanwQYv6ty9K_hfhxS05djKpv8HfY6g@mail.gmail.com>
+ <2684d3ab-d7cf-4eab-acd4-91bdd5debb6b@amd.com>
+ <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
+Content-Language: en-US
+In-Reply-To: <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA5PR01CA0134.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1d5::11) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026191635.2447593-1-lkml@antheas.dev>
- <20251026191635.2447593-2-lkml@antheas.dev>
- <CAGwozwEwPj9VRRo2U50ccg=_qSM7p-1c_hw2y=OYA-pFc=p13w@mail.gmail.com>
- <35A5783A-CA60-4B10-8C7B-5820B65307FE@linux.dev>
- <CAGwozwFtah66p=5oy9rf5phVGdDTiWg0WuJBT3qGpWdP3A62Pg@mail.gmail.com>
-In-Reply-To: 
- <CAGwozwFtah66p=5oy9rf5phVGdDTiWg0WuJBT3qGpWdP3A62Pg@mail.gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 27 Oct 2025 09:34:21 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwE0gu1f+EQ9_xN_hQj3OCRRNd8t3F0BpDau9V8Au04Tqg@mail.gmail.com>
-X-Gm-Features: AWmQ_bm85B0TDchtQOOa1HpwV5i2MowPnQPS2FAHdClALsEjFj_SH97joL4-pYM
-Message-ID: 
- <CAGwozwE0gu1f+EQ9_xN_hQj3OCRRNd8t3F0BpDau9V8Au04Tqg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] ALSA: hda/realtek: Add match for ASUS Xbox Ally
- projects
-To: Matthew Schwartz <matthew.schwartz@linux.dev>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Baojun Xu <baojun.xu@ti.com>,
-	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <176155407481.33189.9444459761479487415@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|IA0PR12MB9012:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb30bdb2-7441-4680-b65b-08de1533ec2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WWZoMUc2MlFvKzUyaVk5SEZaUE1Xdlo1c3pmRUE2RXh6NURaRWhpSG9xdnFO?=
+ =?utf-8?B?OHVRdjNSOTJ5RXBTZXkwbDFXMmFsYUdjeDBwejNKMWNTbzZPcTBlcXhMRjZR?=
+ =?utf-8?B?b3F6WU1sN203a1d2R1RnOFg1Q2ZBMEpnNE9vNm1IRm5kVW9ETGxSRmdoNHRZ?=
+ =?utf-8?B?KzM5RktyeC96U1BpUVA3QlhPRlE0ZmhrTTFqSS9KTWwzOUh1VVpXbVdRSTRG?=
+ =?utf-8?B?UWVRSElyT04xaFhoSHpteUJyWWFJWC9aV0YwdU9jMGh0cDY3WloySHNWc1or?=
+ =?utf-8?B?MDRVQXA5U01iUUJFMFBzd3REZ1IrYmwrZ3FNUU5hdllCZ1V1OXZSeE9qTEVO?=
+ =?utf-8?B?Y3d4L0h4aG9IMTgzWHpsSVpJai9yYXcyWWprb2h3VldkQWVyd1pNd3FUZ0Qx?=
+ =?utf-8?B?OUlleHBBYUNEb0dpMG5ORm8rVDFvVG9MdFFNQTF6R25mcyt6Q1FjRkNtYjdT?=
+ =?utf-8?B?UUFlbjh5cFVQL0FNOEpaUUdCZmo2TXp4VDZLU0dsYzIwZSt6SDBzaHd1b2Jj?=
+ =?utf-8?B?R0Z6cjhkTjNnb0JiUzdYZCtmaEU3Zk0yeTBDd29IZVBXL3BudVVGMWh6UXQr?=
+ =?utf-8?B?d3BNMmhBay9mZmUzQVcvRWcxMmE3aWhjYUpwekZiMDhpM3J4WjFVajVnU29I?=
+ =?utf-8?B?eXh6MUx3OXA2QVlhYUg2Um81Y0RpZ0FIeHFZd2dxTXRUaFFJdTBVbnFmV29Q?=
+ =?utf-8?B?S2RoVXVGcFdKaWtpZkdQM2VvbXk3aWtudFpNRWxNOXBLZ3hEdnJsOWVZVzhz?=
+ =?utf-8?B?Z0NtSXJIQ0lYQW5wU1ByN1VCVWpTRzNiWEtRL210dVpCRHNobjVaajVKblQ5?=
+ =?utf-8?B?bHk0VDhtTi9wcUN2dFNJOFIwd0RIM1ZJOFcwU2w3Z2hZaTBqOGlUd2dLRFpG?=
+ =?utf-8?B?a1FCV2FzQWtvRnRPTFduNWRsL2RLWTNiN3QycTRkTXFOUWFyck5mUDBrT1BM?=
+ =?utf-8?B?c2pIcVVlTGxmSnlDS21YV2RZN3o4U2ttS0F2NURUZ005TnZUVG1pQXIwWlRY?=
+ =?utf-8?B?ZDJsVDhHTWRYdzlVS0daRlhnWmd2N0s4UkwrTWViL2lycXRWdEFKZ0JOSEk0?=
+ =?utf-8?B?cjc1VldaSko2TmxzUjVWclM0R3hDdnFpdUZmK3dEM0g4cE0rZzk2VmlXNXJB?=
+ =?utf-8?B?SDFQaVRMaTVackVjVzZKMmwwZEJNK3FDTEFJaDl1dUpvRVdYLzR6c3V1L1Yr?=
+ =?utf-8?B?d2d5b3RXY1crTHNqckVUaTZNSGpjK3UxR2Y4bUdyMzEvakVCaXhLWm1BMXpR?=
+ =?utf-8?B?M01VWWYybFJkL3I0SEkrcU9CZUhEdUpvQis1T3Nuckk3Zk5TWE9kTnZCcUJ4?=
+ =?utf-8?B?dEFOc2FpMzhBd1kxdTRwc3pxM1JQcXRkQmg0SFoyeXZ2c2t5bXp2WEJqc3N1?=
+ =?utf-8?B?aE9BNW55YTYvMUEwdjBSMnVDTVBibzB5QjVKNExGd3I3ZyszbE5BRGRzWFZy?=
+ =?utf-8?B?a3MxUFVvZUtPSTBpNFNwbGozUjFXVHFQMzcwQ1FQTEtUaDBHV2htL0RXeXhI?=
+ =?utf-8?B?RHl2NGxZemNFSlFFZ1pyR0UxOWxJanAzdmpsQkc1cElhU3dsZVVUUUNpb2ZS?=
+ =?utf-8?B?QmpteFZvbnBpbWk4azRzSmNPUmdCNlBHQzk4V1B5eVdlWHh4SHp3ZXFOdkZm?=
+ =?utf-8?B?WlBHR3pDUzQvR242TGx6Y25RQmpiZ0JTSVJXVVBHQkpGRFBjNjkyMGs2ZjBx?=
+ =?utf-8?B?RWw2Skd6T2NYS0NzZzFaQlZHTGVEckh2VllVN1liK2hUeHJQRlpEc2t2Rk9G?=
+ =?utf-8?B?c3dTMUtlcHkxcldLNW1aclhnU28rejBGWWwwUFNHQXc5TnBKY0VHQi95ajdw?=
+ =?utf-8?B?YlM2ME8ybzhVUXBBcVdLODNHSE1RazdIak1tSEVmQnJmeGEwcTBSVEVjSFNZ?=
+ =?utf-8?B?cU9SV2hXNW13ZDE3bmJRam9DV095M2Npc0FSMkUzTjhzY3ZIWG5EdGVSd3Q0?=
+ =?utf-8?Q?xv3q5DWjEY5/ENnYYyDw7suAgXBL+vpu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ODdDN2p4akpKM1h0eHNuK2NLeTR0T05YMXZvdllHNEVXMjR0c3hkZWI2N0tx?=
+ =?utf-8?B?VWloTDI1WG9BcUNGYTRreUYwV1JocjFYYkhkWEUyRXVIbHJrMTk3bkhKMTJW?=
+ =?utf-8?B?VXRUa0FxN2xVUGxaUEZOVTRibFcvK2JvVllDbElTWXFJeGtUVzR5bXQ1dVkx?=
+ =?utf-8?B?WExmcEFHRDRnVDQybkl2Z1dycGtQNnQ2SFo5ZzJqTGR0Umt3UEEzRmJEMkI0?=
+ =?utf-8?B?YXlTajFZelZ0MzJIZ0VrcEt6NEs1MnlKSmFYSXRlTGlLZXQvUjc1d2dXUG1S?=
+ =?utf-8?B?SWxiOVd6amMzTWw2V2E5b0NVdGJZM0lzYzBoL1czOFQvVWZqSVozczNwRHNH?=
+ =?utf-8?B?cE4zZ0tBSU9uWVZ6aTZGZkJ2U1p3QTF1am5XcHovT3ZlZWdQaWZldmlSUlJv?=
+ =?utf-8?B?NnMxZDh1N0RHa3B2VDR6d1k4clJMamMxbVRuQ05hc1VNVnhtTHhlaGk2SEFz?=
+ =?utf-8?B?MDBGelQ4djF5V1JTSExVcks3UEtVcTFJRk5CVFpxK1pOZ1U0NStIZ2ZLdXI4?=
+ =?utf-8?B?VC9ETGFEVnRTdWlxMzBzSEp6S0gvdXZYdXFBRTdJNkQra3prYW5HcDRIZkpY?=
+ =?utf-8?B?R1FtUmx5UitpczBjMnJiM0FWdkd5M2lTMU5wN3RkeHZRZUd5QlVoVjAwaHlU?=
+ =?utf-8?B?bnp2NUNSVlJVb2N0ckNrMVFmKzN5RnhQVWZQRTF4dDRBVlJrbVVEeVpLTk9P?=
+ =?utf-8?B?WEs3OEhxOUVac2xWY3VLNm9BSjAxN3l2ckpIdEJTZk9OUGt5MnZnWjZDaXZH?=
+ =?utf-8?B?aUJKdlRRZGVsbmI1N2pvZHBrUWYyM09NMFJWNktGSGNQSGppUEJoSEwrUk5j?=
+ =?utf-8?B?OVFvSjNIWGlzdlJRa3VFbW1YcGg2TW10cEFxb09iZGdpWGZNR1psYUhBV1Ji?=
+ =?utf-8?B?aUtRWmpoeURaV1VXVnlIVmNLS21kcm5tMTRJeTNOTE1XaittOWdLTDlZdm85?=
+ =?utf-8?B?UldsZ0gwcmhaNWloVlcrNE5tdnNUdWlNQjd3QU0zZmhxdVRVTFdmajZoWnM0?=
+ =?utf-8?B?Q1lSRWVoMGovcWlJUCtXdFlaeGdkbEQ1cVMrZHgwN1BPb2RzZlBtOXl5UzBo?=
+ =?utf-8?B?V1poemtSTysyMVBnaEttamtvSTdhZytneVJoczRHSmk5a1BmM2hHbEZ0NndZ?=
+ =?utf-8?B?bHpJWTd6OTViL0Z5eSt0d1AwR1crelByRm82VVRYS1U4NERCMUdqVDl4NENM?=
+ =?utf-8?B?ckRURVpOU3lFMUFyVU05Vk5jdFIwMlBHaXRqdGVTai9CT0JnTlZjU1hwQ21K?=
+ =?utf-8?B?V05VSUZ6dzQyM0F5My9EM0hXUjAwVUhNa2w3a2lqZ3c4RmlMdVdNeWJqa1J1?=
+ =?utf-8?B?TVNMOHJOM0dieWFtQWxLdjRrZkp1dVhqSG1FdTBtSHd6czBUU2pPcFQvM3da?=
+ =?utf-8?B?emMwMlg4K2FjSHBtUVhiWTNseXRnckFXaFB0ZXhKdDVheEZqZUVDem5MSHJP?=
+ =?utf-8?B?R0QxdTI2aXdxNjY4WkdVNndha1lsZUpDMnNES0c1L3NrbUZhWVRZaFo5TEVv?=
+ =?utf-8?B?dmVqZmtzWjBRTDhIbVArTWRGYTJsSUFUMm44TnNNRjZhdlppVUczblJaN1dQ?=
+ =?utf-8?B?dlowdDQyZ3NuRWtkVDlmWG5CZUg3bUp0MjN6SDgrY1dIdmtrSHUxTWtsaDk2?=
+ =?utf-8?B?d1dNMjE0TG1KODFFcWVTZG1KN1BWRGNIOWVhTDFKdlVKS3Q1S2F0YVErWEJW?=
+ =?utf-8?B?LzVNZUZCS2tFdXNGRFQwUkY2YzdKR0Z5clJUakgrYjZmMlozeEMwc3VqTFF0?=
+ =?utf-8?B?ZENsRTU2RTN3M3laRHdzVU55VzFYUCtmY3phak81bWpVaUxjejJHa3U5Ujh5?=
+ =?utf-8?B?ZEtuRnFOaHFTM21vTHlwTml5c3ZLSHlDem5Xc1ZIRGNveFVHQ3F5NmxuWXNB?=
+ =?utf-8?B?aCtNY0dkN0gvbFYyVjhKQ2pSMFh0N1ZlUFJSL2FRMHNFZnpPRnFXckZJMzlJ?=
+ =?utf-8?B?a28xZnIvMDJDaWFwczB5L3ZDRVF2d3puUFpRdnFjRFJ0cWl5TmtlY3VwK1lY?=
+ =?utf-8?B?SXdWSTN1SjY0MGxOZVBNZDRtcXdheFlyM2lTOWtpanU1aFJmSFZFQnBiczVo?=
+ =?utf-8?B?RGhjVmJuelNDY2VySW9QOXk0UU56dHVPanpBMlArUWZsamdhRzk3Kzd2WHVh?=
+ =?utf-8?Q?5BpKEHQibEZTSlL4HNqjC1bH1?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb30bdb2-7441-4680-b65b-08de1533ec2b
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:36:28.7904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Pifp8VilW8a0PPGLGWoRYLKaKOEYXIyqSfe1aPJaofanlWc98YqQf40C5nB9By6x0PBLwb3xeUHPT0HDCfANfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB9012
 
-On Mon, 27 Oct 2025 at 09:23, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->
-> On Mon, 27 Oct 2025 at 07:02, Matthew Schwartz
-> <matthew.schwartz@linux.dev> wrote:
-> >
-> >
-> >
-> > > On Oct 26, 2025, at 12:19=E2=80=AFPM, Antheas Kapenekakis <lkml@anthe=
-as.dev> wrote:
-> > >
-> > > On Sun, 26 Oct 2025 at 20:16, Antheas Kapenekakis <lkml@antheas.dev> =
-wrote:
-> > >>
-> > >> Bind the realtek codec to TAS2781 I2C audio amps on ASUS Xbox Ally
-> > >> projects. While these projects work without a quirk, adding it incre=
-ases
-> > >> the output volume significantly.
-> > >
-> > > Also, if you can upstream the firmware files:
-> > > TAS2XXX13840.bin
-> > > TAS2XXX13841.bin
-> > > TAS2XXX13940.bin
-> > > TAS2XXX13941.bin
-> >
-> > This is the firmware at [1], correct? I=E2=80=99m testing the series wi=
-th that firmware on my ROG Xbox Ally X, and I found something interesting.
-> >
-> > By default, with just your kernel patches and the firmware files hosted=
- at [1], my unit is loading:
-> >
-> > tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840.bin,=
- sha256: 58cffa36ae23a2d9b2349ecb6c1d4e89627934cd79218f6ada06eaffe6688246
-> >
-> > However, with this firmware file,  TAS2XXX13840.bin, there is significa=
-nt audio clipping above 75% speaker level on my individual unit.
-> >
-> > Then, I tried renaming the other firmware file, TAS2XXX13841.bin, into =
-TAS2XXX13840.bin. Now my unit is loading:
-> >
-> > tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840.bin,=
- sha256: 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4b8c
-> >
-> > With this firmware file, audio is perfect all the way to 100% speaker l=
-evel.
-> >
-> > If I recall, there have been other ASUS products that required matching=
- amplifier hardware with firmware correctly, right? It looks like this migh=
-t be another case of since it seems my unit is loading the wrong firmware f=
-or its amplifiers.
->
-> The original Ally X had a similar setup, yes.
->
-> First patch might not be perfect and your speaker pin might be 1. My
-> Xbox Ally's pin is 1. It loads:
-> Loaded FW: TAS2XXX13941.bin, sha256:
-> 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4b8c
->
-> And it sounds loud and crisp. So the pin is read.
->
-> I had multiple users verify the X works, but perhaps it is not perfect
-> yet. Make sure you are not using a dsp that might be interfering
->
-> Antheas
->
-> > Matt
-> >
-> > [1]: https://github.com/hhd-dev/hwfirm
 
-[1] is straight from the windows driver with no renaming
 
-> > >
-> > > That would be great :)
-> > >
-> > > Antheas
-> > >
-> > >> Cc: stable@vger.kernel.org # 6.17
-> > >> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > >> ---
-> > >> sound/hda/codecs/realtek/alc269.c | 2 ++
-> > >> 1 file changed, 2 insertions(+)
-> > >>
-> > >> diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/re=
-altek/alc269.c
-> > >> index 8ad5febd822a..d1ad84eee6d1 100644
-> > >> --- a/sound/hda/codecs/realtek/alc269.c
-> > >> +++ b/sound/hda/codecs/realtek/alc269.c
-> > >> @@ -6713,6 +6713,8 @@ static const struct hda_quirk alc269_fixup_tbl=
-[] =3D {
-> > >>        SND_PCI_QUIRK(0x1043, 0x12f0, "ASUS X541UV", ALC256_FIXUP_ASU=
-S_MIC_NO_PRESENCE),
-> > >>        SND_PCI_QUIRK(0x1043, 0x1313, "Asus K42JZ", ALC269VB_FIXUP_AS=
-US_MIC_NO_PRESENCE),
-> > >>        SND_PCI_QUIRK(0x1043, 0x1314, "ASUS GA605K", ALC285_FIXUP_ASU=
-S_GA605K_HEADSET_MIC),
-> > >> +       SND_PCI_QUIRK(0x1043, 0x1384, "ASUS RC73XA", ALC287_FIXUP_TX=
-NW2781_I2C),
-> > >> +       SND_PCI_QUIRK(0x1043, 0x1394, "ASUS RC73YA", ALC287_FIXUP_TX=
-NW2781_I2C),
-> > >>        SND_PCI_QUIRK(0x1043, 0x13b0, "ASUS Z550SA", ALC256_FIXUP_ASU=
-S_MIC_NO_PRESENCE),
-> > >>        SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_=
-FIXUP_ASUS_ZENBOOK),
-> > >>        SND_PCI_QUIRK(0x1043, 0x1433, "ASUS GX650PY/PZ/PV/PU/PYV/PZV/=
-PIV/PVV", ALC285_FIXUP_ASUS_I2C_HEADSET_MIC),
-> > >> --
-> > >> 2.51.1
-> > >>
-> > >>
-> > >
-> > >
-> >
-> >
+On 10/27/2025 13:52, Shyam Sundar S K wrote:
+> 
+> 
+> On 10/24/2025 22:02, Mario Limonciello wrote:
+>>
+>>
+>> On 10/24/2025 11:08 AM, Antheas Kapenekakis wrote:
+>>> On Fri, 24 Oct 2025 at 17:43, Mario Limonciello
+>>> <mario.limonciello@amd.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
+>>>>> The ROG Xbox Ally (non-X) SoC features a similar architecture to the
+>>>>> Steam Deck. While the Steam Deck supports S3 (s2idle causes a crash),
+>>>>> this support was dropped by the Xbox Ally which only S0ix suspend.
+>>>>>
+>>>>> Since the handler is missing here, this causes the device to not
+>>>>> suspend
+>>>>> and the AMD GPU driver to crash while trying to resume afterwards
+>>>>> due to
+>>>>> a power hang.
+>>>>>
+>>>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
+>>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>>>>> ---
+>>>>>    drivers/platform/x86/amd/pmc/pmc.c | 3 +++
+>>>>>    drivers/platform/x86/amd/pmc/pmc.h | 1 +
+>>>>>    2 files changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/
+>>>>> platform/x86/amd/pmc/pmc.c
+>>>>> index bd318fd02ccf..cae3fcafd4d7 100644
+>>>>> --- a/drivers/platform/x86/amd/pmc/pmc.c
+>>>>> +++ b/drivers/platform/x86/amd/pmc/pmc.c
+>>>>> @@ -106,6 +106,7 @@ static void amd_pmc_get_ip_info(struct
+>>>>> amd_pmc_dev *dev)
+>>>>>        switch (dev->cpu_id) {
+>>>>>        case AMD_CPU_ID_PCO:
+>>>>>        case AMD_CPU_ID_RN:
+>>>>> +     case AMD_CPU_ID_VG:
+>>>>>        case AMD_CPU_ID_YC:
+>>>>>        case AMD_CPU_ID_CB:
+>>>>>                dev->num_ips = 12;
+>>>>> @@ -517,6 +518,7 @@ static int amd_pmc_get_os_hint(struct
+>>>>> amd_pmc_dev *dev)
+>>>>>        case AMD_CPU_ID_PCO:
+>>>>>                return MSG_OS_HINT_PCO;
+>>>>>        case AMD_CPU_ID_RN:
+>>>>> +     case AMD_CPU_ID_VG:
+>>>>>        case AMD_CPU_ID_YC:
+>>>>>        case AMD_CPU_ID_CB:
+>>>>>        case AMD_CPU_ID_PS:
+>>>>> @@ -717,6 +719,7 @@ static const struct pci_device_id
+>>>>> pmc_pci_ids[] = {
+>>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
+>>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SP) },
+>>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SHP) },
+>>>>> +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_VG) },
+>>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
+>>>>> PCI_DEVICE_ID_AMD_1AH_M20H_ROOT) },
+>>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
+>>>>> PCI_DEVICE_ID_AMD_1AH_M60H_ROOT) },
+>>>>>        { }
+>>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.h b/drivers/
+>>>>> platform/x86/amd/pmc/pmc.h
+>>>>> index 62f3e51020fd..fe3f53eb5955 100644
+>>>>> --- a/drivers/platform/x86/amd/pmc/pmc.h
+>>>>> +++ b/drivers/platform/x86/amd/pmc/pmc.h
+>>>>> @@ -156,6 +156,7 @@ void amd_mp2_stb_deinit(struct amd_pmc_dev *dev);
+>>>>>    #define AMD_CPU_ID_RN                       0x1630
+>>>>>    #define AMD_CPU_ID_PCO                      AMD_CPU_ID_RV
+>>>>>    #define AMD_CPU_ID_CZN                      AMD_CPU_ID_RN
+>>>>> +#define AMD_CPU_ID_VG                        0x1645
+>>>>
+>>>> Can you see if 0xF14 gives you a reasonable value for the idle mask if
+>>>> you add it to amd_pmc_idlemask_read()?  Make a new define for it
+>>>> though,
+>>>> it shouldn't use the same define as 0x1a platforms.
+>>>
+>>> It does not work. Reports 0. I also tested the other ones, but the
+>>> 0x1a was the same as you said. All report 0x0.
+>>
+>> It's possible the platform doesn't report an idle mask.
+>>
+>> 0xF14 is where I would have expected it to report.
+>>
+>> Shyam - can you look into this to see if it's in a different place
+>> than 0xF14 for Van Gogh?
+> 
+> Van Gogh is before Cezzane? I am bit surprised that pmc is getting
+> loaded there.
+> 
+> Antheas - what is the output of
+> 
+> #lspci -s 00:00.0
+
+OK. I get it from the diff.
+
++#define AMD_CPU_ID_VG                        0x1645
+
+S0 its 0x1645 that indicates SoC is 17h family and 90h model.
+
+What is the PMFW version running on your system?
+amd_pmc_get_smu_version() tells you that information.
+
+Can you see if you put the scratch information same as Cezzane and if
+that works? i.e.
+
+AMD_PMC_SCRATCH_REG_CZN(0x94) instead of AMD_PMC_SCRATCH_REG_1AH(0xF14)
+
+Thanks,
+Shyam
+
+
+> 
+> 0xF14 index is meant for 1Ah (i.e. Strix and above)
+> 
+>>
+>>>
+>>> Any idea why the OS hint only works 90% of the time?
+> 
+> What is the output of amd_pmc_dump_registers() when 10% of the time
+> when the OS_HINT is not working?
+> 
+> What I can surmise is, though pmc driver is sending the hint PMFW is
+> not taking any action (since the support in FW is missing)
+> 
+>>
+>> If we get the idle mask reporting working we would have a better idea
+>> if that is what is reported wrong.
+>>
+> 
+> IIRC, The concept of idlemask came only after cezzane that too after a
+> certain PMFW version. So I am not sure if idlemask actually exists.
+> 
+> 
+>> If I was to guess though; maybe GFX is still active.
+>>
+>> Depending upon what's going wrong smu_fw_info might have some more
+>> information too.
+> 
+> That's a good point to try it out.
+> 
+> Thanks,
+> Shyam
+> 
 
 
