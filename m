@@ -1,187 +1,251 @@
-Return-Path: <linux-kernel+bounces-872653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C07CC11AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:26:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6C5C11B78
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26904004A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:25:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A6071A63E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1EC32C30D;
-	Mon, 27 Oct 2025 22:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0DB32C92A;
+	Mon, 27 Oct 2025 22:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="oFeCEzmC"
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bK+S7cqf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DF8326D4C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684F82E092D;
+	Mon, 27 Oct 2025 22:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761603924; cv=none; b=NAdGEy17EWeE2D4+CZxahxanNWySdbjwa6hshUCVAJkFMl+RRymNqfe6c1aLjmQH9WdclHCIdq4oe2zH7b0viA5s5BW7K5YRnEZaDQ2oKLJODcrY+lW41gw34eYfbk5IFVVsryt2shTuqzMK080IPdE41YNArzMjYZBSjjjHwew=
+	t=1761604234; cv=none; b=YCAa64ghOeYtasgi4BxvVj0js6DLwcoT9Mo0bTGocE+EX3jIT7Dl2fs16As/o2YuBCfwTUfH6H6/4bZUwahe+M65rgGOK18GBUxxZ6k9beVjAdDLATA0ns9NnnLAAc2TS+ZIMYMzr2qA4ND3sY4E8dvwhqJ8oDJqKJ5Uv7QkLKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761603924; c=relaxed/simple;
-	bh=MELHpoyhMTTXFykzovF1NFj4Zq0xGpBjRy1THLoS1XY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aHZ13Dr5tgENtMptiKFeURf3KepO2Ij83Zc8OtWzk75Ms3Yz1IFcy+19FO8bR/CU5AUzrdBoPFCk3pTwEMri35AxIY0gNKRgEdOJxW29m4ZzV8dcNW8TSBN7eDBujU+GsHzFV96tyeUeQWOBM3Ubfa2KaU6z27EBL43X0skjo1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=oFeCEzmC; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1761603916;
-	bh=KU8eaWv3UWgjIS0haPDbDcSIMTD4VtMtuJtJYn2tKsI=;
-	h=From:Subject:Date:Message-ID;
-	b=oFeCEzmC27unMoBIphjgreFLAgnwg/HHuogwBGL7wM+/STMQbwYXLQHYTwWra3GDC
-	 ZzsOCMtMLyDuFr+B3DYHiNBiCOArkhEgh80kRogns+aHQ+QcEUbriIUWv3zvCAF7b3
-	 KpVtfC3+ZWXehLoJJa3cuBa5V7StmVMvof1IKr5E=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68FFF1400000573B; Mon, 28 Oct 2025 06:25:06 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5945856685317
-X-SMAIL-UIID: 8575833BC49644AEBAC5C0D7E5682E20-20251028-062506-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+10a9b495f54a17b607a6@syzkaller.appspotmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_uring_del_tctx_node (5)
-Date: Tue, 28 Oct 2025 06:24:53 +0800
-Message-ID: <20251027222454.8795-1-hdanton@sina.com>
-In-Reply-To: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
-References: 
+	s=arc-20240116; t=1761604234; c=relaxed/simple;
+	bh=PUExZlzelglFJnu5PzrDtAcNO1FsDeFqop202nIj9Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyj1RDAfUNxOqiJUKloRlV7a3ADSZ3Xst6v93dYdmlq92rY5G9Rt3KYBjLtEi4yN49uP2oxNwjYKDbpC0PpJhnNPnB8lX9Zf+dyEO5gukmcd94Q1tR1Xjqnr0B1ZSRmEpQCkNSszv3eL0vMmHPB7TI4iJejwKvsg2hjHUO1Nemg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bK+S7cqf; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761604232; x=1793140232;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PUExZlzelglFJnu5PzrDtAcNO1FsDeFqop202nIj9Ms=;
+  b=bK+S7cqfhOj0ZdfYCFo2OCqxbHJJrIDFJcaX2iXTdest5IgokESWO5tw
+   vy91dJJ4AcR3NbLMMGCQ+7nQ2Gn+G3DuE8QNTYwZXjJhlxmfsGuIjs6Zm
+   rtIoZ9/a8F64A/zfqp+W212sI0zULYxfrGxh7NGj6iOUnCn2WcsR95U6c
+   siHEQO9TbVTx4XIFqTqNd5au0HfklCJwt7BS1o66FOXFgA+FS8VvG8qXt
+   wCrjBQodLC59f7Xbdhvhx5bNqDdNUuVi8NtA5ciRHS0FiqWeftssSGzFB
+   aeFchReCWZuESFywB6K0hZo5nt9Gz6y0/WPpCDNlF8B5DVUPMIrP4tsb0
+   A==;
+X-CSE-ConnectionGUID: Rpo9Deg+TcaFx+Ibruc7rQ==
+X-CSE-MsgGUID: QpuVQpymSwWSwrfY0wLOXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63733661"
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="63733661"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 15:30:32 -0700
+X-CSE-ConnectionGUID: PZO6RrJGQQqqhiaIGvhGog==
+X-CSE-MsgGUID: 9pRK8rJ5TIOUDoUppIYEYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="222378959"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 27 Oct 2025 15:30:29 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDVjO-000IWr-1x;
+	Mon, 27 Oct 2025 22:30:26 +0000
+Date: Tue, 28 Oct 2025 06:27:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nick Hudson <nhudson@akamai.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, Nick Hudson <nhudson@akamai.com>,
+	Max Tottenham <mtottenh@akamai.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vhost: add a new ioctl VHOST_GET_VRING_WORKER_INFO and
+ use in net.c
+Message-ID: <202510280631.i6odx2RJ-lkp@intel.com>
+References: <20251027102644.622305-1-nhudson@akamai.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027102644.622305-1-nhudson@akamai.com>
 
-On Mon, 27 Oct 2025 16:04:05 -0600 Jens Axboe wrote:
-> On 10/27/25 3:07 PM, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    72fb0170ef1f Add linux-next specific files for 20251024
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13087be2580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=e812d103f45aa955
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=10a9b495f54a17b607a6
-> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14725d2f980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11233b04580000
-> 
-> [snip]
-> 
-> > RAX: ffffffff82431501 RBX: 0000000000000018 RCX: ffffffff824315fd
-> > RDX: 0000000000000001 RSI: 0000000000000018 RDI: ffffc9000383f880
-> > RBP: 0000000000000000 R08: ffffc9000383f897 R09: 1ffff92000707f12
-> > R10: dffffc0000000000 R11: fffff52000707f13 R12: 0000000000000003
-> > R13: ffff888079527128 R14: fffff52000707f13 R15: 1ffff92000707f10
-> > FS:  00007f4e567906c0(0000) GS:ffff888125cdc000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000055db9a726918 CR3: 000000002ec48000 CR4: 00000000003526f0
-> > Call Trace:
-> >  <TASK>
-> >  __asan_memset+0x22/0x50 mm/kasan/shadow.c:84
-> >  seq_printf+0xad/0x270 fs/seq_file.c:403
-> >  __io_uring_show_fdinfo io_uring/fdinfo.c:142 [inline]
-> >  io_uring_show_fdinfo+0x734/0x17d0 io_uring/fdinfo.c:256
-> >  seq_show+0x5bc/0x730 fs/proc/fd.c:68
-> >  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
-> >  seq_read+0x369/0x480 fs/seq_file.c:162
-> >  vfs_read+0x200/0xa30 fs/read_write.c:570
-> >  ksys_read+0x145/0x250 fs/read_write.c:715
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Keith, I'm pretty sure your change:
-> 
-> commit 1cba30bf9fdd6c982708f3587f609a30c370d889
-> Author: Keith Busch <kbusch@kernel.org>
-> Date:   Thu Oct 16 11:09:38 2025 -0700
-> 
->     io_uring: add support for IORING_SETUP_SQE_MIXED
-> 
-> leaves fdinfo open up to being broken. Before, we had:
-> 
-> sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
-> 
-> as a cap for the loop, now you just have:
-> 
-> while (sq_head < sq_tail) {
-> 
-> which seems like a bad idea. It's also missing an sq_head increment if
-> we hit this condition:
-> 
-> if (sq_idx > sq_mask)
-> 	continue;
-> 
-> which is also something you can trigger, and which would also end up in
-> an infinite loop.
+Hi Nick,
 
-Test Jens's fix.
+kernel test robot noticed the following build errors:
 
-#syz test
+[auto build test ERROR on mst-vhost/linux-next]
+[also build test ERROR on linus/master v6.18-rc3 next-20251027]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Totally untested, but how about something like the below:
+url:    https://github.com/intel-lab-lkp/linux/commits/Nick-Hudson/vhost-add-a-new-ioctl-VHOST_GET_VRING_WORKER_INFO-and-use-in-net-c/20251027-182919
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
+patch link:    https://lore.kernel.org/r/20251027102644.622305-1-nhudson%40akamai.com
+patch subject: [PATCH] vhost: add a new ioctl VHOST_GET_VRING_WORKER_INFO and use in net.c
+config: csky-randconfig-002-20251028 (https://download.01.org/0day-ci/archive/20251028/202510280631.i6odx2RJ-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510280631.i6odx2RJ-lkp@intel.com/reproduce)
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 7fb900f1d8f6..3f254ae0ad61 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -66,6 +66,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 	unsigned int cq_head = READ_ONCE(r->cq.head);
- 	unsigned int cq_tail = READ_ONCE(r->cq.tail);
- 	unsigned int sq_shift = 0;
-+	unsigned int sq_entries;
- 	int sq_pid = -1, sq_cpu = -1;
- 	u64 sq_total_time = 0, sq_work_time = 0;
- 	unsigned int i;
-@@ -88,17 +89,18 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 	seq_printf(m, "CqTail:\t%u\n", cq_tail);
- 	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
- 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
--	while (sq_head < sq_tail) {
-+	sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
-+	for (i = 0; i < sq_entries; i++) {
-+		unsigned int entry = i + sq_head;
- 		struct io_uring_sqe *sqe;
- 		unsigned int sq_idx;
- 		bool sqe128 = false;
- 		u8 opcode;
- 
- 		if (ctx->flags & IORING_SETUP_NO_SQARRAY)
--			sq_idx = sq_head & sq_mask;
-+			sq_idx = entry & sq_mask;
- 		else
--			sq_idx = READ_ONCE(ctx->sq_array[sq_head & sq_mask]);
--
-+			sq_idx = READ_ONCE(ctx->sq_array[entry & sq_mask]);
- 		if (sq_idx > sq_mask)
- 			continue;
- 
-@@ -140,7 +142,6 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 			}
- 		}
- 		seq_printf(m, "\n");
--		sq_head++;
- 	}
- 	seq_printf(m, "CQEs:\t%u\n", cq_tail - cq_head);
- 	while (cq_head < cq_tail) {
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510280631.i6odx2RJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/vhost/vhost.c: In function 'vhost_dev_ioctl':
+>> drivers/vhost/vhost.c:2403:17: error: 'worker' undeclared (first use in this function)
+    2403 |                 worker = rcu_dereference_check(vq->worker,
+         |                 ^~~~~~
+   drivers/vhost/vhost.c:2403:17: note: each undeclared identifier is reported only once for each function it appears in
+   In file included from include/linux/rbtree.h:24,
+                    from include/linux/mm_types.h:11,
+                    from include/linux/mmzone.h:22,
+                    from include/linux/gfp.h:7,
+                    from include/linux/mm.h:7,
+                    from include/linux/scatterlist.h:8,
+                    from include/linux/virtio.h:7,
+                    from include/linux/virtio_config.h:7,
+                    from include/uapi/linux/vhost_types.h:16,
+                    from include/uapi/linux/vhost.h:14,
+                    from drivers/vhost/vhost.c:14:
+>> drivers/vhost/vhost.c:2403:48: error: 'vq' undeclared (first use in this function); did you mean 'rq'?
+    2403 |                 worker = rcu_dereference_check(vq->worker,
+         |                                                ^~
+   include/linux/rcupdate.h:532:17: note: in definition of macro '__rcu_dereference_check'
+     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
+         |                 ^
+   drivers/vhost/vhost.c:2403:26: note: in expansion of macro 'rcu_dereference_check'
+    2403 |                 worker = rcu_dereference_check(vq->worker,
+         |                          ^~~~~~~~~~~~~~~~~~~~~
+>> drivers/vhost/vhost.c:2404:65: error: 'dev' undeclared (first use in this function); did you mean 'cdev'?
+    2404 |                                                lockdep_is_held(&dev->mutex));
+         |                                                                 ^~~
+   include/linux/rcupdate.h:483:52: note: in definition of macro 'RCU_LOCKDEP_WARN'
+     483 | #define RCU_LOCKDEP_WARN(c, s) do { } while (0 && (c))
+         |                                                    ^
+   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
+     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~
+   drivers/vhost/vhost.c:2403:26: note: in expansion of macro 'rcu_dereference_check'
+    2403 |                 worker = rcu_dereference_check(vq->worker,
+         |                          ^~~~~~~~~~~~~~~~~~~~~
+   drivers/vhost/vhost.c:2404:48: note: in expansion of macro 'lockdep_is_held'
+    2404 |                                                lockdep_is_held(&dev->mutex));
+         |                                                ^~~~~~~~~~~~~~~
+>> drivers/vhost/vhost.c:2406:25: error: 'ret' undeclared (first use in this function); did you mean 'net'?
+    2406 |                         ret = -EINVAL;
+         |                         ^~~
+         |                         net
+>> drivers/vhost/vhost.c:2410:25: error: 'ring_worker_info' undeclared (first use in this function); did you mean 'print_worker_info'?
+    2410 |                 memset(&ring_worker_info, 0, sizeof(ring_worker_info));
+         |                         ^~~~~~~~~~~~~~~~
+         |                         print_worker_info
+>> drivers/vhost/vhost.c:2411:42: error: 'idx' undeclared (first use in this function); did you mean 'ida'?
+    2411 |                 ring_worker_info.index = idx;
+         |                                          ^~~
+         |                                          ida
+>> drivers/vhost/vhost.c:2413:60: error: implicit declaration of function 'vhost_get_task'; did you mean 'vhost_get_desc'? [-Wimplicit-function-declaration]
+    2413 |                 ring_worker_info.worker_pid = task_pid_vnr(vhost_get_task(worker->vtsk));
+         |                                                            ^~~~~~~~~~~~~~
+         |                                                            vhost_get_desc
+
+
+vim +/worker +2403 drivers/vhost/vhost.c
+
+  2352	
+  2353		/* You must be the owner to do anything else */
+  2354		r = vhost_dev_check_owner(d);
+  2355		if (r)
+  2356			goto done;
+  2357	
+  2358		switch (ioctl) {
+  2359		case VHOST_SET_MEM_TABLE:
+  2360			r = vhost_set_memory(d, argp);
+  2361			break;
+  2362		case VHOST_SET_LOG_BASE:
+  2363			if (copy_from_user(&p, argp, sizeof p)) {
+  2364				r = -EFAULT;
+  2365				break;
+  2366			}
+  2367			if ((u64)(unsigned long)p != p) {
+  2368				r = -EFAULT;
+  2369				break;
+  2370			}
+  2371			for (i = 0; i < d->nvqs; ++i) {
+  2372				struct vhost_virtqueue *vq;
+  2373				void __user *base = (void __user *)(unsigned long)p;
+  2374				vq = d->vqs[i];
+  2375				mutex_lock(&vq->mutex);
+  2376				/* If ring is inactive, will check when it's enabled. */
+  2377				if (vq->private_data && !vq_log_access_ok(vq, base))
+  2378					r = -EFAULT;
+  2379				else
+  2380					vq->log_base = base;
+  2381				mutex_unlock(&vq->mutex);
+  2382			}
+  2383			break;
+  2384		case VHOST_SET_LOG_FD:
+  2385			r = get_user(fd, (int __user *)argp);
+  2386			if (r < 0)
+  2387				break;
+  2388			ctx = fd == VHOST_FILE_UNBIND ? NULL : eventfd_ctx_fdget(fd);
+  2389			if (IS_ERR(ctx)) {
+  2390				r = PTR_ERR(ctx);
+  2391				break;
+  2392			}
+  2393			swap(ctx, d->log_ctx);
+  2394			for (i = 0; i < d->nvqs; ++i) {
+  2395				mutex_lock(&d->vqs[i]->mutex);
+  2396				d->vqs[i]->log_ctx = d->log_ctx;
+  2397				mutex_unlock(&d->vqs[i]->mutex);
+  2398			}
+  2399			if (ctx)
+  2400				eventfd_ctx_put(ctx);
+  2401			break;
+  2402		case VHOST_GET_VRING_WORKER_INFO:
+> 2403			worker = rcu_dereference_check(vq->worker,
+> 2404						       lockdep_is_held(&dev->mutex));
+  2405			if (!worker) {
+> 2406				ret = -EINVAL;
+  2407				break;
+  2408			}
+  2409	
+> 2410			memset(&ring_worker_info, 0, sizeof(ring_worker_info));
+> 2411			ring_worker_info.index = idx;
+  2412			ring_worker_info.worker_id = worker->id;
+> 2413			ring_worker_info.worker_pid = task_pid_vnr(vhost_get_task(worker->vtsk));
+  2414	
+  2415			if (copy_to_user(argp, &ring_worker_info, sizeof(ring_worker_info)))
+  2416				ret = -EFAULT;
+  2417			break;
+  2418		default:
+  2419			r = -ENOIOCTLCMD;
+  2420			break;
+  2421		}
+  2422	done:
+  2423		return r;
+  2424	}
+  2425	EXPORT_SYMBOL_GPL(vhost_dev_ioctl);
+  2426	
+
 -- 
-Jens Axboe
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
