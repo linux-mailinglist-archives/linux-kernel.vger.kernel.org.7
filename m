@@ -1,129 +1,206 @@
-Return-Path: <linux-kernel+bounces-872541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F85C11688
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E15FC1168B
 	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 999074EABC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602584679D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD83531B830;
-	Mon, 27 Oct 2025 20:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8AA320A32;
+	Mon, 27 Oct 2025 20:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7dndVWK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="imLC85TG"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181662FE057;
-	Mon, 27 Oct 2025 20:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BD52E88AB
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761597398; cv=none; b=ELowErp57h1KMnQryksX+Mkg7/+ihSJPoWG1In/z3OqGIiKfXYpvNfUNCcGch0cAHhvXkm2EVAzBrf903Dvc5YWEjKr0KOL9RPmGxLs8pMlFsB+qEVJGHOP7+zD2+NnpG/KociN0cZCjTiHrhU6/CRKaB/ULJcUEIftVqjMX14I=
+	t=1761597399; cv=none; b=aqxyilH8xzFA4XcI8fzIVgy3e49rhffp0Kv270bEHfUqb1c/gNdxxWbaGNBENgL9pOhxLjwdxEZpkNBzU7p7sqlYAsvlPAtodxSNZvHtjT19vb0+vhfcPy3MbF6sYHVf1qE2ahsnJZPNlcclYgGujm8MiCUL2L7ZuHaeZt0QyYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761597398; c=relaxed/simple;
-	bh=7vYNu/V+yB8ESbhKG+qhmi2rqh8DEHzZMx+plWdaAhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6JOyky9vLq1UR3uLYOLOqJcm3LY9mr7lXEC3kbreZAFdRv6mnLPCUb/3GFnL7hDevcoBNTLdoFWqdUGmGVF31GOTvxmAzBvYviAUPfvGuUcBsCnEDv+QMPrFOtYL/tttbbncf7z7KAFABCshHPH+N3ycYKaBDUVFg/SebYc9nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7dndVWK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57184C113D0;
-	Mon, 27 Oct 2025 20:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761597397;
-	bh=7vYNu/V+yB8ESbhKG+qhmi2rqh8DEHzZMx+plWdaAhk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D7dndVWKprOCSRBJDcOURDGTFrK7JuobTF+mTzjIHZk72c4FARzR4jiOUh37UXyUp
-	 /G1kAYzF29MRtsLosHiivhVYIUnVCPfYWzE8tUmrwxfizg8yY061hr7lAcWDNF42JY
-	 8yDvgvY4Qw/Mnf2dHilSANLgUvWmn+g4eRVLTD4C+8g83DRqj2QXyQd8a/mwpGhZ0z
-	 iWjcs7LSlcBGsu6BIyQWIBcKaq7SJc2pqvi5gzHCPAi5pKHDpbphrVZP0+thl9N3Si
-	 kcQ6g2jZ50aJLx0bC1jsEePTNV73o1C+SpRJ/2HGONCGVDnTjWtF6gmKZekOYJ7hJf
-	 cakXPLlCr953A==
-Date: Mon, 27 Oct 2025 13:36:30 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH 3/3] libeth: xdp: Disable generic kCFI pass for
- libeth_xdp_tx_xmit_bulk()
-Message-ID: <20251027203630.GA3183341@ax162>
-References: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
- <20251025-idpf-fix-arm-kcfi-build-error-v1-3-ec57221153ae@kernel.org>
- <fa4487d0-a077-4582-80aa-2deeccee6270@intel.com>
+	s=arc-20240116; t=1761597399; c=relaxed/simple;
+	bh=/r2MfbgwYvoichm3JC/D/FFVTkLEq2beh9dnGy2yNG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NzAM9xyUgVMJETkErLet3jGXT1lTibWbP+i8/dqEeRNOGnq7D+8qf/gi7qknFLqRxBXIc7tKsAaCXKlIqBMKcnU92e45KxHya0XFu0ujOMbwBAmASf+1d/C4cYDYdGeaDdAGeHRDt8gvDV5WQZ0D5cSmJXV9fWlQ63Cspn+UD+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=imLC85TG; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-44d9d7aacc5so813767b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761597396; x=1762202196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=miYvjijH+yAVme5tPHTAIByBBOWcjgVoClU7HRgNuqk=;
+        b=imLC85TG9Lf+kvx4n1uUtp6jTuFWoxZJx/oaIU1zbOs/Lvcra2Cam/pWIEj5Cn/QFM
+         BnNxseLtp4ysettSwXYwhogXbmQvxz/f9m38A58g2CRE831ZZfuatoUTsfnYDr/hbW8L
+         Gd+MF046NdmPvxiJargU+PGOGOrGzw6s3xIYzlYKdqbNwW4ienXEYJndgv7Vt9R+rk/z
+         J5cF3jjR20eHcTHPIhcQ5S0j0N2/7CJgvcP9YUQMYjM2yW+VogjcvRJrRspUQzBkUT9k
+         ISEpqSA8ComJL+Vx+AKPs1SMoqgn/pVAp+d1aZLr8UX+q6hdc/AiFALxacurdXUDgYxK
+         CL/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761597396; x=1762202196;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=miYvjijH+yAVme5tPHTAIByBBOWcjgVoClU7HRgNuqk=;
+        b=ebrNcLnm8HobBJOxVenFCMX2d+H+hgIZuAO1jeG5Ro9wrC3qL5OeLz1RcSmbedbQcp
+         LKdL+J8LTn9+UJqrZGfw+ehJvDFyaATkV0mzCO4/I+zac9eNQiWc59YNzHDLQqCszw7I
+         irse+pk1JdI1fsg0Wd3ftZh0toXlwXSTkcs9YYNT2ioP16SjNyan/HF5rkxxNcRBHTTT
+         HrnjkVeg+dOb2JVoFQaYlI183KVs167mIjLqwZKmTq9/0mVQBirusKCtUcZ8++2YA4lA
+         ey2AEs1OcRS3ZZIwwlgPrWrnQFIAO7Ma74jkmNmsX865/5+OgL328uF5ZEmfGrLwEas5
+         8qHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4foa8S6K6jDfAUa8poWs/fHo6bzpR9AUD0waW9L9EipLndD93WiXgH8I0fwwlnqStmeLlM/cOCAC1NXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOqVwiYfWwQ5Qp/tBCKQF/SuMu70V6KbfTU0AngKL632hqZ+5f
+	zPqGolmua7y0iwFMujYP3jY0UumTYrdVvnxO/UjcMRZyc1VXm/l5zTx9Uc4WtZLHP2Q=
+X-Gm-Gg: ASbGncveDsYmiwAsPsoXRX6Am/02BLDAzGX/RMzN8xXYdayt79m0qybtI0eolzQ0b4M
+	j7VkfaIpwg78Ar4dnpJWZHm165rOR0T61WUU9mPXfKoQrqdTRKi6ThAtxoRwjVYQAzms9LNMA5n
+	wEpINx03Kdzr5FI7IQJbgZJBe2OH2GlvdaYfRhIkX39+GoC3GtJ1gMcNNrUqUIyzA6nBVyEW53c
+	UFaZ0LDjxgN6jCH01+Y6aXFUeddW1mCgq+NVsrZ75388Kckpl3jwa7DdrHIcAKlEa6lQiMohNwm
+	Z5gP+R48+pQ0RfO4shkHHOAYS94JjDtlt/f1YPHLEM4oDnZgZQoE8rYC69UufNUKT56MPJWsIyH
+	VFvaRwEJ7BAJ+7buaMIAqFXSj97l1MDwB6ODrXBLZ/4oprofq2RhzGyNOeNbFgHS0uIMM6LB9LD
+	amglNknROKVdO0+Gp41dByn3zAYEMVwbmmqXitH2Ow7R/FRXCbDQ==
+X-Google-Smtp-Source: AGHT+IG9JEEg1mNWi+tFl2h+MpCVt+cH7Rf89qYUiLcNyweFqHAapC6agRl2IVJ0aTJuqK1Md9c7Ew==
+X-Received: by 2002:a05:6808:1a09:b0:442:e596:1189 with SMTP id 5614622812f47-44f6bb3e516mr563791b6e.45.1761597395041;
+        Mon, 27 Oct 2025 13:36:35 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:46d5:c880:64c8:f854? ([2600:8803:e7e4:500:46d5:c880:64c8:f854])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-44da3e48249sm2013281b6e.5.2025.10.27.13.36.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 13:36:34 -0700 (PDT)
+Message-ID: <506feaa8-5808-48d4-8cc7-baadd8f43976@baylibre.com>
+Date: Mon, 27 Oct 2025 15:36:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa4487d0-a077-4582-80aa-2deeccee6270@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: adc: qcom-pm8xxx-xoadc: fix incorrect
+ calibration values
+To: Antony Kurniawan Soemardi <linux@smankusors.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251028-pm8xxx-xoadc-fix-v1-0-b000e1036e41@smankusors.com>
+ <20251028-pm8xxx-xoadc-fix-v1-2-b000e1036e41@smankusors.com>
+ <0eea7e4c-ec3b-421c-8522-aa3f52b5cb13@baylibre.com>
+ <003c5cf7-2498-4ff3-a8b4-2911941b1464@smankusors.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <003c5cf7-2498-4ff3-a8b4-2911941b1464@smankusors.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Przemek,
+On 10/27/25 2:53 PM, Antony Kurniawan Soemardi wrote:
+> On 10/28/2025 1:35 AM, David Lechner wrote:
+>> On 10/27/25 12:29 PM, Antony Kurniawan Soemardi wrote:
+>>> On msm8960 phones, the XOADC driver was using incorrect calibration
+>>> values:
+>>> absolute calibration dx = 625000 uV, dy = 4 units
+>>> ratiometric calibration dx = 1800, dy = -29041 units
+>>>
+>>> As a result, reading from the IIO bus returned unexpected results:
+>>> in_voltage_7 (USB_VBUS): 0
+>>> in_voltage_10 (125V): 0
+>>>
+>>> The issue was caused by not setting the ratiometric scale (amux_ip_rsv)
+>>> from the predefined channels. Additionally, the downstream code always
+>> Mentioning downstream kernels is usually a red flag. :-)
+>>
+>> We can justify it here though by saying that there is no documentation
+>> available other than downstream source code, so we are just using it
+>> as a reference.
+> ah ok, rewording needed then
+>>> set the ADC_ARB_USRP_DIG_PARAM register to PM8XXX_ADC_ARB_ANA_DIG [1].
+>>> That value does not include the SEL_SHIFT0 and SEL_SHIFT1 bits. Enabling
+>>> those bits caused calibration errors too, so they were removed.
+>>>
+>>> With these fixes, calibration now uses the correct values:
+>>> absolute calibration dx = 625000 uV, dy = 6307 units
+>>> ratiometric calibration dx = 1800, dy = 18249 units
+>>>
+>>> Reading from the IIO bus now returns expected results:
+>>> in_voltage_7 (USB_VBUS): 4973836
+>>> in_voltage_10 (125V): 1249405
+>> Would be useful to mention which hardware you tested with in case
+>> it turns out that there is some other hardware that does require the
+>> SHIFT0/1 bits to be set.
+> I did mention Sony Xperia SP from cover letter, but I haven't
+> referenced it in this commit yet. Also I tried to search on Github for
+> SHIFT0/1 bits, but couldn't find any usage of them...
+>>> [1] https://github.com/LineageOS/android_kernel_sony_msm8960t/blob/93319b1e5aa343ec1c1aabcb028c5e88c7df7c01/drivers/hwmon/pm8xxx-adc.c#L407-L408
+>>>
+>> Since this is a fix, it should have a Fixes: tag. And it sounds like
+>> possibly two separate fixes. In that case, it should be two separate
+>> patches.
+> Fixes into 63c3ecd946d4ae2879ec0d8c6dcb90132a74d831?
 
-On Mon, Oct 27, 2025 at 12:09:47PM +0100, Przemek Kitszel wrote:
-> sorry, but from regular driver developer perspective, just after reading
-> your commit messages, I'm unable to tell what the fix is about, and from
-> that follows a bigger issue: how to write code in the future to avoid
-> such issues (it would be infeasible to always wait for a LLVM specialist
-> to come up with a fix ;))
+The correct format is:
 
-Sorry about that! To be fair, I am not sure most driver developers would
-write something as subtle as this code to get themselves into a
-situation where I or another LLVM person would need to come along to fix
-it.
+Fixes: 63c3ecd946d4 ("iio: adc: add a driver for Qualcomm PM8xxx HK/XOADC")
 
-> was the tricky case to call __always_inline func from another that was
-> marked the same? Would it be also the case if one of the functions would
-> not be marked with __always_inline attribute, but still end up inlined?
+See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-changes
 
-No, I think the tricky case here is that the code depends on the
-compiler being able to turn all these indirect calls, as the (*xmit)()
-and (*prep)() parameters in libeth_xdp_tx_xmit_bulk(), into direct calls
-through inlining. I find that depending on optimizations for correctness
-(i.e., passing the assertion that the result of a equality test can be
-proven true or false at compile time) is risky because it can result in
-flexible but performant code but it is also sensitive to interactions
-with other compiler internals and optimizations, resulting in changes
-such as these.
+>>> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+>>> ---
+>>>   drivers/iio/adc/qcom-pm8xxx-xoadc.c | 10 ++++++----
+>>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/iio/adc/qcom-pm8xxx-xoadc.c b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
+>>> index 8555f34036fb13c41ac720dc02c1dc39876e9198..a53d361456ec36b66d258041877bd96ab37838c4 100644
+>>> --- a/drivers/iio/adc/qcom-pm8xxx-xoadc.c
+>>> +++ b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
+>>> @@ -503,10 +503,11 @@ static int pm8xxx_read_channel_rsv(struct pm8xxx_xoadc *adc,
+>>>           goto unlock;
+>>>         /* Decimation factor */
+>>> -    ret = regmap_write(adc->map, ADC_ARB_USRP_DIG_PARAM,
+>>> -               ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT0 |
+>>> -               ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT1 |
+>>> -               ch->decimation << ADC_DIG_PARAM_DEC_SHIFT);
+>>> +    ret = regmap_update_bits(adc->map,
+>>> +                 ADC_ARB_USRP_DIG_PARAM,
+>>> +                 ADC_ARB_USRP_DIG_PARAM_DEC_RATE0 |
+>>> +                 ADC_ARB_USRP_DIG_PARAM_DEC_RATE1,
+>>> +                 ch->decimation << ADC_DIG_PARAM_DEC_SHIFT);
+>> As a follow-up patch, it would be nice to update the driver to use FIELD_PREP().
+>>
+>> I.e. remove ADC_ARB_USRP_DIG_PARAM_DEC_RATE0, ADC_ARB_USRP_DIG_PARAM_DEC_RATE1
+>> and ADC_DIG_PARAM_DEC_SHIFT macros and replace them with one macro:
+>>
+>> #define ADC_ARB_USRP_DIG_PARAM_DEC_RATE        GENMASK(6, 5)
+>>
+>> Then use it like:
+>>
+>>     ret = regmap_update_bits(adc->map,
+>>                  ADC_ARB_USRP_DIG_PARAM,
+>>                  ADC_ARB_USRP_DIG_PARAM_DEC_RATE,
+>>                  FIELD_PREP(ADC_ARB_USRP_DIG_PARAM_DEC_RATE,
+>>                         ch->decimation));
+>>
+>> This should be done for all of the similar multi-bit fields.
+> as a follow up patch, you mean next version of this patch series, or
+> separate patch series?
 
-> what would be the cost of the alternative naive solution, to always add
-> __nocfi_generic to functions marked __always_inline?
-> (technically you would redefine __always_inline to have also
-> __nocfi_generic for the config combinations that require that)
+Either way is fine. It's just a "nice to have" change.
 
-No, you would not want to do this because if any indirect call remained
-in the inlining chain, there would be no caller side CFI code generation
-and that indirect call would automatically fail (if I understand
-correctly), which is why commit 894af4a1cde6 ("objtool: Validate kCFI
-calls") now validates this rule at compile time for x86_64 (which is not
-affected by this issue since it does not use the generic LLVM kCFI pass
-like ARM prior to 22.0.0 does).
+>>>       if (ret)
+>>>           goto unlock;
+>>>   @@ -783,6 +784,7 @@ static int pm8xxx_xoadc_parse_channel(struct device *dev,
+>>>       ch->calibration = VADC_CALIB_ABSOLUTE;
+>>>       /* Everyone seems to use default ("type 2") decimation */
+>>>       ch->decimation = VADC_DEF_DECIMATION;
+>>> +    ch->amux_ip_rsv = hwchan->amux_ip_rsv;
+>>>         if (!fwnode_property_read_u32(fwnode, "qcom,ratiometric", &rsv)) {
+>>>           ch->calibration = VADC_CALIB_RATIOMETRIC;
+>>>
+> 
 
-> sorry for my ignorance of not reading any of the attached URLs
-
-No worries, I am not sure how much more they would help with
-understanding the problem, which is subtle. If I can clarify anything
-further, please me know but I am not sure it will matter too much since
-we will likely just forbid using the generic kCFI pass to avoid this
-issue, rather than applying __nocfi_generic.
-
-Cheers,
-Nathan
 
