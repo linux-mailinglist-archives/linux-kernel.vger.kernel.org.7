@@ -1,104 +1,270 @@
-Return-Path: <linux-kernel+bounces-871058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521EEC0C58C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:41:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD241C0C59E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC83189C796
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:41:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 961514F0A7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932A2E8B7E;
-	Mon, 27 Oct 2025 08:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10612E8B86;
+	Mon, 27 Oct 2025 08:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rufVP4OS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="H10tG5z6"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9502D24A7;
-	Mon, 27 Oct 2025 08:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369372D24A7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554474; cv=none; b=QP9DRe/TXcZkmSh2zIoAW1Xp1mJHBrwHZPbGABT8CWGHcGTJKJWYPtKdd+3HYe3dwO+nQdvrP0+o4OGl2e4K4KAyQApaUvgz7zl55ksJu2RLMw0jGO7WhfqgL0RWfAwwdejbkAQMQRjmdO0u99rDgimfv8VDkg55Ahb7borKIe0=
+	t=1761554500; cv=none; b=q3uojbQO4Gqp13/MjXj/fFOY5fRmcfokWJdN6x3Bd1ou0WP4ZAAlEedUnh0ru2n/zS15FCnhqUaLrYiECK8zO0qN0xwj4trAST8fHyHak1cI8VLCp3YmJ4du2Kez0GY3JKqFth6f+bx5XYDcyFlH92stGllFg9mychrix0K7Bqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554474; c=relaxed/simple;
-	bh=p7L1ppdjpTPK5vdV3Mi+mMZfy8PqxfrJ0ZCIY6BoM3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jirHwokdigZ1MccY1q3t7ulQe0K8hzt4ncQYg5r2ad0meM/RPr8gXY5Mf0v9R7xD9ldcBhx/RCyKFJ6/Kq8fVnOgN3EM1P91330beAmSVvJevcbcZA2xq7aXbCHVZenVSpCGel8nSAU2CeBE38iTsQP/Wsx7CGdS20PglIz16do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rufVP4OS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADEC6C4CEF1;
-	Mon, 27 Oct 2025 08:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761554473;
-	bh=p7L1ppdjpTPK5vdV3Mi+mMZfy8PqxfrJ0ZCIY6BoM3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rufVP4OSJtQ3/mqTsI9HPHrUO+OB+vlQGbAQqIDt1z1/AZr7oI74LCqffPdj8vLew
-	 JW1i1LFS8BrXSqZRhEm8DGIdLLQVtvMjlTR4+W3Nd5kmSFHSa0+5cnJLiMCDqe1zZi
-	 BZNURd+k0QiE1zTDpsPp4znfOXhDST9Y3ZAdAzHCG4QUeEz2dKvoj2FRR+7KtARw0K
-	 x93tfow3vIZdl4w3bnKt+Aq0n8eljgp5LLbcx8nSChwFpPFXxJxXmmuBeEl5qZ6Ewt
-	 QStYGjeV2llAJvn5SGcXYs1zeEWXAMkH7z30MF1MUyoV1y4kbm/N2jrDV4GJAx84ZL
-	 F0pZYbv/EemuQ==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vDImy-000000000Gc-2Ow9;
-	Mon, 27 Oct 2025 09:41:16 +0100
-Date: Mon, 27 Oct 2025 09:41:16 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	CK Hu <ck.hu@mediatek.com>, Ma Ke <make24@iscas.ac.cn>,
-	Sjoerd Simons <sjoerd@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/mediatek: fix device use-after-free on unbind
-Message-ID: <aP8wLMrFTsJI-Lr3@hovoldconsulting.com>
-References: <20251006093937.27869-1-johan@kernel.org>
+	s=arc-20240116; t=1761554500; c=relaxed/simple;
+	bh=UnwT6nX+iSHwG1CknWdK6VTh1JOdWQ1tUhJA2KfVfT4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BwKkF2DsMJE72f/k6U1HdAiumXrIOTmj41eBH5QgMevkGjnNg/IZabmLAnsSrqFyz+UwueBvIrqTwcNsLjIPxbrkwdFCboDly11uk+anm4LYXPgabWH0+Mx9bbkE5O1bBXYCVqyHaqgcs2kaleG0vlNjOXjcPzsKGIQGHLOz3qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=H10tG5z6; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id 88CF9427FC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:41:36 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id 7907442894
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:41:35 +0200 (EET)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id A041C1FEDE0
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:41:34 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761554495;
+	bh=7bgq8scNhrB3Jg+UhfmEUiMsC76/nwmnGV6s5QJWkBA=;
+	h=Received:From:Subject:To;
+	b=H10tG5z6nbuXwWYggEBx2uiSCtnSpjNseymbHeA+WxnW5vcioObxkh0uv1rbro8dr
+	 ECMwvCfho5c4FYbeGLSKC46xFlxeOS5LVt7fGJJ4B9UNwMPeMSqDj+5BBTGQT92AND
+	 mixbkaCHBASgoWUvRQPUindueYAanjcEJydlibkznxrIvu3ZjT6vurSLTpin4n8syx
+	 tat4e+ZZwqNamKfmoBdNzHWb4d01qjkVj1dOLS+NRKmUdJ/uSPokzRuvsBogMXz2MY
+	 MclMe46mSTKZ94F36+bircyf0ibgL64duuu5SofFMHKa43c4jn93vreOAylbdKt51c
+	 x/s8jv/+ZCR9Q==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.171) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f171.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f171.google.com with SMTP id
+ 38308e7fff4ca-378ddb31efaso51645961fa.3
+        for <linux-kernel@vger.kernel.org>;
+ Mon, 27 Oct 2025 01:41:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUSqlE256YK16Tr5VfDe+QWZgljgvb+Wp8MxeuO12ZC74/kOAoN9tLfavdMSO4JtcrcFVh6u3Q3nFedIJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+kv+9+u8jBs+W+YVYTMsIWDWVelrhxDcSilcUlvJ0AUctiAky
+	2Hy19FkJfD9OLbYaJ9dhG9srTv81yOZmpfNv1S1jirg7vAb+uxquzgtUYM0eYmcVFWJCEDNcUpI
+	QFt5fEM/9NazJbbopdJ1QTerqCQJQ6ak=
+X-Google-Smtp-Source: 
+ AGHT+IHQrnWhGSRKKWzvZYeImwBcHAM+gDl49kuOa35hnvx7oyBlnaIVQ+Sq6FuvfFsTVRdbbwTudFAhJBdtsJzwEZM=
+X-Received: by 2002:a05:651c:1595:b0:364:f7e2:3908 with SMTP id
+ 38308e7fff4ca-37797a1439bmr102634311fa.26.1761554494137; Mon, 27 Oct 2025
+ 01:41:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006093937.27869-1-johan@kernel.org>
+References: <20251024152152.3981721-1-lkml@antheas.dev>
+ <20251024152152.3981721-2-lkml@antheas.dev>
+ <3792db59-7dc1-4e34-9436-84df4b6c3e10@amd.com>
+ <CAGwozwFTDD2QrHy37axhanwQYv6ty9K_hfhxS05djKpv8HfY6g@mail.gmail.com>
+ <2684d3ab-d7cf-4eab-acd4-91bdd5debb6b@amd.com>
+ <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
+ <13fd3b12-03a0-457f-a5da-fe018b032211@amd.com>
+In-Reply-To: <13fd3b12-03a0-457f-a5da-fe018b032211@amd.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 27 Oct 2025 09:41:22 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGLfcYdpetwTk=QH+k29u8SdroFxfkxb-KbAXh36sr1XQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bmPAVmdP3bYKUv3LzGXCwTY0wQJciqhi0ctU4JYKLg0UaCVGWdkVe6fI_U
+Message-ID: 
+ <CAGwozwGLfcYdpetwTk=QH+k29u8SdroFxfkxb-KbAXh36sr1XQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] platform/x86/amd/pmc: Add support for Van Gogh SoC
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <176155449491.58134.7968195886350881399@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Hi Chun-Kuang,
+On Mon, 27 Oct 2025 at 09:36, Shyam Sundar S K <Shyam-sundar.S-k@amd.com> wrote:
+>
+>
+>
+> On 10/27/2025 13:52, Shyam Sundar S K wrote:
+> >
+> >
+> > On 10/24/2025 22:02, Mario Limonciello wrote:
+> >>
+> >>
+> >> On 10/24/2025 11:08 AM, Antheas Kapenekakis wrote:
+> >>> On Fri, 24 Oct 2025 at 17:43, Mario Limonciello
+> >>> <mario.limonciello@amd.com> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
+> >>>>> The ROG Xbox Ally (non-X) SoC features a similar architecture to the
+> >>>>> Steam Deck. While the Steam Deck supports S3 (s2idle causes a crash),
+> >>>>> this support was dropped by the Xbox Ally which only S0ix suspend.
+> >>>>>
+> >>>>> Since the handler is missing here, this causes the device to not
+> >>>>> suspend
+> >>>>> and the AMD GPU driver to crash while trying to resume afterwards
+> >>>>> due to
+> >>>>> a power hang.
+> >>>>>
+> >>>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
+> >>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >>>>> ---
+> >>>>>    drivers/platform/x86/amd/pmc/pmc.c | 3 +++
+> >>>>>    drivers/platform/x86/amd/pmc/pmc.h | 1 +
+> >>>>>    2 files changed, 4 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/
+> >>>>> platform/x86/amd/pmc/pmc.c
+> >>>>> index bd318fd02ccf..cae3fcafd4d7 100644
+> >>>>> --- a/drivers/platform/x86/amd/pmc/pmc.c
+> >>>>> +++ b/drivers/platform/x86/amd/pmc/pmc.c
+> >>>>> @@ -106,6 +106,7 @@ static void amd_pmc_get_ip_info(struct
+> >>>>> amd_pmc_dev *dev)
+> >>>>>        switch (dev->cpu_id) {
+> >>>>>        case AMD_CPU_ID_PCO:
+> >>>>>        case AMD_CPU_ID_RN:
+> >>>>> +     case AMD_CPU_ID_VG:
+> >>>>>        case AMD_CPU_ID_YC:
+> >>>>>        case AMD_CPU_ID_CB:
+> >>>>>                dev->num_ips = 12;
+> >>>>> @@ -517,6 +518,7 @@ static int amd_pmc_get_os_hint(struct
+> >>>>> amd_pmc_dev *dev)
+> >>>>>        case AMD_CPU_ID_PCO:
+> >>>>>                return MSG_OS_HINT_PCO;
+> >>>>>        case AMD_CPU_ID_RN:
+> >>>>> +     case AMD_CPU_ID_VG:
+> >>>>>        case AMD_CPU_ID_YC:
+> >>>>>        case AMD_CPU_ID_CB:
+> >>>>>        case AMD_CPU_ID_PS:
+> >>>>> @@ -717,6 +719,7 @@ static const struct pci_device_id
+> >>>>> pmc_pci_ids[] = {
+> >>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
+> >>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SP) },
+> >>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SHP) },
+> >>>>> +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_VG) },
+> >>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
+> >>>>> PCI_DEVICE_ID_AMD_1AH_M20H_ROOT) },
+> >>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
+> >>>>> PCI_DEVICE_ID_AMD_1AH_M60H_ROOT) },
+> >>>>>        { }
+> >>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.h b/drivers/
+> >>>>> platform/x86/amd/pmc/pmc.h
+> >>>>> index 62f3e51020fd..fe3f53eb5955 100644
+> >>>>> --- a/drivers/platform/x86/amd/pmc/pmc.h
+> >>>>> +++ b/drivers/platform/x86/amd/pmc/pmc.h
+> >>>>> @@ -156,6 +156,7 @@ void amd_mp2_stb_deinit(struct amd_pmc_dev *dev);
+> >>>>>    #define AMD_CPU_ID_RN                       0x1630
+> >>>>>    #define AMD_CPU_ID_PCO                      AMD_CPU_ID_RV
+> >>>>>    #define AMD_CPU_ID_CZN                      AMD_CPU_ID_RN
+> >>>>> +#define AMD_CPU_ID_VG                        0x1645
+> >>>>
+> >>>> Can you see if 0xF14 gives you a reasonable value for the idle mask if
+> >>>> you add it to amd_pmc_idlemask_read()?  Make a new define for it
+> >>>> though,
+> >>>> it shouldn't use the same define as 0x1a platforms.
+> >>>
+> >>> It does not work. Reports 0. I also tested the other ones, but the
+> >>> 0x1a was the same as you said. All report 0x0.
+> >>
+> >> It's possible the platform doesn't report an idle mask.
+> >>
+> >> 0xF14 is where I would have expected it to report.
+> >>
+> >> Shyam - can you look into this to see if it's in a different place
+> >> than 0xF14 for Van Gogh?
+> >
+> > Van Gogh is before Cezzane? I am bit surprised that pmc is getting
+> > loaded there.
+> >
+> > Antheas - what is the output of
+> >
+> > #lspci -s 00:00.0
+>
+> OK. I get it from the diff.
+>
+> +#define AMD_CPU_ID_VG                        0x1645
+>
+> S0 its 0x1645 that indicates SoC is 17h family and 90h model.
+>
+> What is the PMFW version running on your system?
+> amd_pmc_get_smu_version() tells you that information.
 
-On Mon, Oct 06, 2025 at 11:39:37AM +0200, Johan Hovold wrote:
-> A recent change fixed device reference leaks when looking up drm
-> platform device driver data during bind() but failed to remove a partial
-> fix which had been added by commit 80805b62ea5b ("drm/mediatek: Fix
-> kobject put for component sub-drivers").
-> 
-> This results in a reference imbalance on component bind() failures and
-> on unbind() which could lead to a user-after-free.
-> 
-> Make sure to only drop the references after retrieving the driver data
-> by effectively reverting the previous partial fix.
-> 
-> Note that holding a reference to a device does not prevent its driver
-> data from going away so there is no point in keeping the reference.
-> 
-> Fixes: 1f403699c40f ("drm/mediatek: Fix device/node reference count leaks in mtk_drm_get_all_drm_priv")
-> Reported-by: Sjoerd Simons <sjoerd@collabora.com>
-> Link: https://lore.kernel.org/r/20251003-mtk-drm-refcount-v1-1-3b3f2813b0db@collabora.com
-> Cc: stable@vger.kernel.org
-> Cc: Ma Ke <make24@iscas.ac.cn>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+cat /sys/devices/platform/AMDI0005:00/smu_fw_version
+63.18.0
+cat /sys/devices/platform/AMDI0005:00/smu_program
+7
 
-This patch fixes a regression in 6.17-rc4 that apparently breaks boot
-for some users. To make things worse, the offending commit was also
-backported to the stable trees.
+> Can you see if you put the scratch information same as Cezzane and if
+> that works? i.e.
+>
+> AMD_PMC_SCRATCH_REG_CZN(0x94) instead of AMD_PMC_SCRATCH_REG_1AH(0xF14)
 
-You need to get this one into mainline as soon as possible, that is,
-this week and into 6.18-rc4.
+I tried all idle masks and they return 0
 
-Johan
+Antheas
+
+> Thanks,
+> Shyam
+>
+>
+> >
+> > 0xF14 index is meant for 1Ah (i.e. Strix and above)
+> >
+> >>
+> >>>
+> >>> Any idea why the OS hint only works 90% of the time?
+> >
+> > What is the output of amd_pmc_dump_registers() when 10% of the time
+> > when the OS_HINT is not working?
+> >
+> > What I can surmise is, though pmc driver is sending the hint PMFW is
+> > not taking any action (since the support in FW is missing)
+> >
+> >>
+> >> If we get the idle mask reporting working we would have a better idea
+> >> if that is what is reported wrong.
+> >>
+> >
+> > IIRC, The concept of idlemask came only after cezzane that too after a
+> > certain PMFW version. So I am not sure if idlemask actually exists.
+> >
+> >
+> >> If I was to guess though; maybe GFX is still active.
+> >>
+> >> Depending upon what's going wrong smu_fw_info might have some more
+> >> information too.
+> >
+> > That's a good point to try it out.
+> >
+> > Thanks,
+> > Shyam
+> >
+>
+>
+
 
