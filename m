@@ -1,107 +1,89 @@
-Return-Path: <linux-kernel+bounces-871787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05312C0E4F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:14:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DA3C0E58B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B777119A3F7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:12:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292FC3BF3D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0F5307481;
-	Mon, 27 Oct 2025 14:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDBE30CDA0;
+	Mon, 27 Oct 2025 14:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eQCUVehM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZAIdGAs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E283306B15
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6640630CDA1;
+	Mon, 27 Oct 2025 14:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761574165; cv=none; b=Wm0ulrmWYMw9oIlyJ0tBKE25+m1ysmrN+Z0Dv0zYcuXqewFRMiDogdhTbPcPwC4bgMzb4T8vINzevN7jXUsjO06OaCKVl5/zzkh5m7UwJNhF3NEGLXFqRjw7u/5+ZaLXQJQoyvGI/at7nWcl/0XBiVb1jsQMlub04P9n4MVSmUk=
+	t=1761573999; cv=none; b=jZ8Lqc/l3l27Hq0PavIGkZmMmnzjXtkrejN2YP8zKOJJ4j0s/Jl4VDhVkbIxc9wNUQzjH8xo3gw8CUZN2wHBYFdQIHLmHNA0/l7YtBypzy6HdYIoTEj8mt8rBl2k0xvndC4QG1sMXnUy2GXEATqRf8Wvq/YbfLFif9oRgrAda18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761574165; c=relaxed/simple;
-	bh=ohFeWLqPsM8ga2STusY4gb1aFRLI4XhV6ujvnxl2FGo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sd93OHeGr6YDdSzGm6DvkYhHwP/PvHB1VnY2xA75PlkbbK2t3PxW0T6lkNR0+EmDYU3e89Jn9RCG5Nrg4jTqYKYFQhPjs22EmpSthsODi/enEcON+vYqHElyGSskrohdib2T6S5DQX5Bq3zk2KMvoeCW89pwOoIWdnlM4wiVeuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eQCUVehM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761574162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pRPv3WhCuVa4kMdSJmgycflYd8utKoBdcV1pgALpUJE=;
-	b=eQCUVehMPE7cV7cqoxb0FG+bONxBpjaqUifmz04c1lM3fcT7EZRxUDmI3C96AJVb9/2u/3
-	31nchu47DzkLVALEiopFQZhAlneZ4RNybkeEdVVBoC75AmUjCJG3+ttKzethH0ZckQniZb
-	ZjNtGM4qyTWyNbzfvrUs9RTnY1hwSHc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-3wjmptQJPqKuBaEbV15d-w-1; Mon,
- 27 Oct 2025 10:09:19 -0400
-X-MC-Unique: 3wjmptQJPqKuBaEbV15d-w-1
-X-Mimecast-MFC-AGG-ID: 3wjmptQJPqKuBaEbV15d-w_1761574158
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B48D31808997;
-	Mon, 27 Oct 2025 14:09:17 +0000 (UTC)
-Received: from p16v.redhat.com (unknown [10.45.225.43])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E13AB1800452;
-	Mon, 27 Oct 2025 14:09:13 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Petr Oros <poros@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Jakub Kicinski <kuba@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] dpll: zl3073x: Fix output pin registration
-Date: Mon, 27 Oct 2025 15:09:12 +0100
-Message-ID: <20251027140912.233152-1-ivecera@redhat.com>
+	s=arc-20240116; t=1761573999; c=relaxed/simple;
+	bh=ajdSt/VN7DwxOuvIAMdaxC/1GZpCtf2LDYR86Bbwwlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K7QN+D0UP7flGp43zzGjsQ9gaH8P0a26UC3a01jSSsed9Xc0hGaNruIor15rqRtYR4ozo8mhDFkumc4jCe+y+ImAQ5DAYKJ4JzWx4Q4kLf8t0HGgXZPjBtc+ObkY+A09YRq8rnhRIzquMCUCPcNab3x0X5CwvofVo5FVEBVdZQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZAIdGAs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 214E0C116B1;
+	Mon, 27 Oct 2025 14:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761573998;
+	bh=ajdSt/VN7DwxOuvIAMdaxC/1GZpCtf2LDYR86Bbwwlo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SZAIdGAsgTu49ocgW+ky7MKsgNXoeHQN/bYDMuB2IfxF8PA/0OmjpGuUltn0xc2FQ
+	 NOHyodqDsRZpMSRtb3GvjP9oRDrXotnRMm8iaoY4K+VoRO4kmYNwUax5uBJYmeUUfR
+	 AERFD09t8NrOyuKw/IVY9CMAI2cUjoDyaOZa0Aj6m61tB+bRzDi4PsRijocnxAdjir
+	 pAaA9NVk7GvF91c9MRzVLoXwxmBedm50+OEcU1JEjHmtnTc5hsdEiP55wOvxtXkbK7
+	 Ziy7d0Xjpk+kx+GR7304maFTQXk0gSaAs3wmbuemPqfyFA1kFmIl1qKxHRbYGURoFb
+	 MPHVX6mfjn6hg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/3] Add MDSS_CORE reset for SM6350 MDSS
+Date: Mon, 27 Oct 2025 09:09:12 -0500
+Message-ID: <176157405444.8818.14943292514319691118.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
+References: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Currently, the signal format of an associated output is not considered
-during output pin registration. As a result, the driver registers output
-pins that are disabled by the signal format configuration.
 
-Fix this by calling zl3073x_output_pin_is_enabled() to check whether
-a given output pin should be registered or not.
+On Fri, 19 Sep 2025 11:57:22 +0200, Luca Weiss wrote:
+> With v6.17-rc kernel, the display stack needs reference to the
+> MDSS_CORE, otherwise display init becomes quite broken.
+> 
+> Add the resets into the dispcc driver and add a reference to the dts.
+> 
+> 
 
-Fixes: 75a71ecc2412 ("dpll: zl3073x: Register DPLL devices and pins")
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
- drivers/dpll/zl3073x/dpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/dpll/zl3073x/dpll.c b/drivers/dpll/zl3073x/dpll.c
-index 93dc93eec79e..f93f9a458324 100644
---- a/drivers/dpll/zl3073x/dpll.c
-+++ b/drivers/dpll/zl3073x/dpll.c
-@@ -1904,7 +1904,7 @@ zl3073x_dpll_pin_is_registrable(struct zl3073x_dpll *zldpll,
- 		}
- 
- 		is_diff = zl3073x_out_is_diff(zldev, out);
--		is_enabled = zl3073x_out_is_enabled(zldev, out);
-+		is_enabled = zl3073x_output_pin_is_enabled(zldev, index);
- 	}
- 
- 	/* Skip N-pin if the corresponding input/output is differential */
+[2/3] clk: qcom: dispcc-sm6350: Add MDSS_CORE & MDSS_RSCC resets
+      commit: 502099e9c832c95b485835ff58a5f735d9d956a1
+
+Best regards,
 -- 
-2.51.0
-
+Bjorn Andersson <andersson@kernel.org>
 
