@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-872048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19AFC0F249
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:03:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A558C0F2A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A851519C3D40
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:59:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC08A4FE5B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A76D313263;
-	Mon, 27 Oct 2025 15:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812EB3081AC;
+	Mon, 27 Oct 2025 15:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KSjIdFqO"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="NsxXLJec"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F4B3128C8
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4482A1E1C22
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580469; cv=none; b=eOR8a258jJY/wFju3R/fzz76rXEt38rlNGk1lNccZtdtiI1NxekNpYWhK2SkaTI9EZaRzSCdEB+pyHlAl6EkOq34Vdr7ydAKcuqv4kOPmqOM3gdCtCXsY8DfC385azHW0QnuK/+Zmi17kS9TuHLeSHIgt7iq68ReZ1tzqBAISw4=
+	t=1761580669; cv=none; b=mwdfZSqpd9HzjxPN6bo2IgxBTi6yv3brwAzmDteI1BW/02kHxDqpRHlURoE8/M2SOMBPGGXxnE1hRvpAZ/yJgNfjbxCHzcmSYqGxBtIzvzeZBqtEiUxvHrNmt9FRLRqpp57N+/ySzgDgx/34sphxq2TrkmGuuJ1jGy1ZGtdFO8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580469; c=relaxed/simple;
-	bh=VrcGekrA0V4MeKOK1C3SdiVffncJbm6tZX8UDVo5Re8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NtKtds5P3hU4O56V+DPb6tMal99AtvbaIywED43QxQzuUJPcfg7EYtCN5MN3bZgiA2WTKMZGDNSfEh7q5uAUs1OY7+uIwp2OWlU6JkcOjYVM4uDEgrRRwLRVpCkWt82quvqfQoEm7RxG3S8NtDYc2gcGpCbvl26hLo+0GVn8/fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KSjIdFqO; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27eeafd4882so427905ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761580467; x=1762185267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TOV2usxAVtrzpjNrsCDY6+oTbSzm7HQ0OagyrYKBhwU=;
-        b=KSjIdFqOe/MCbCS1S8E1ShV7EwZ6B9Xct+/1VqAOiFwfYRVGFGGJU5LpJqlNmeopxs
-         Xt2bDvTfovAyE1q2eZmGQCW2f50j1dHma/hTKMCo/NkoAjTDhvzZwmRXpyj/cdkh+bpI
-         arT4Ke9r85cPXF1Oyt0YE6iILlV4BlCdBkV4FYOc2HI7vuoUTx81r9Iv46JHW7GUoSTL
-         3m69QTJmyP8ft23JyVSDU13hY+Y8FjKVc1DCja7FKIiXSflegGMWb5KXEK0QfEbQfEEA
-         hd15ZOHqan/iWXsC6f3LzdDLLx1OvXhJU4+NFVyA5kNFzsnaNBSaRMkUpYh6YmG0xfHg
-         x3iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761580467; x=1762185267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TOV2usxAVtrzpjNrsCDY6+oTbSzm7HQ0OagyrYKBhwU=;
-        b=QqWaO//nfR4oXO2QjTLB5On3UZCuePyrPb/42hJDV2/FPZB7HnJoLQqSmnqQBDEJng
-         ZPKp4+IIuexEdZu18MjBKA1wYqcL6VYuaNgK/ZPfXKY/pKBcLHwHqPfvKFRnwO1vyEzj
-         WwbZRBXWMtLAge39zBoe62rd47RWVPvGofuRWpccGC0/V/pIs7PXIhOqrURGD6BNHHcn
-         VsoUvPE3NYDlFtDHNezHzJKQNvi1OL0qH3KIYdt7aMBKaLWfKzpDTMoGz/NDbTCIVazm
-         SEVCW2qytywUkDJoGW74/qxgcV4wzvW36DFCSxbOLbHbo/UY0vZPulC5DVtxBC2JmOMt
-         s6Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsLYLxn3ZgMJdeOA8GCKJOrBhuJJdj3XzeAYy/5mwXKHsUsKUekr7lUvappKgFj89t0IBRddSOceVeL3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo9Mkp3DDXxOltmxBL7WI5SLwXi/3LZh73aQ0sabsdKsgOL0p7
-	FD0fzsN1+m1tEC/wKZ33FHOXPpsW5NhsRMcHnRV+LgwVq5C0hQIFzaaLHwsoVlC0EbDIEQ1hV7j
-	ltGz4hAG/ODk5VFBlzUzsq5dMgSVChGuJvkQ92aPD
-X-Gm-Gg: ASbGncvV8+390Y3rFsFD1q8LWesIQCHp3AIt0Sxjk8Py4hF2etUcCTVALXkRDboB9cG
-	/i5ZcWphHqlwSKoG8jzLqvpvga96DkEneQTVvNvTjPxGPntUrOI2olRhjGfO0s9FaVGfYBrjaI7
-	/iuO6qKdFSPYYdwgy3GRIxJi0cIugjXJPQP+RHe8m8U+3eOsEVGSTwZK1QowqZhuY/6tfbkbitm
-	TQ9b/4gK+xo95YKzXigJQJjQH68mGNxkISRpMGDEzEm5zyClV+2NW0Cq1YdWjdTzV7H
-X-Google-Smtp-Source: AGHT+IGd2VC+1ri7Tm8Icu43HfhHP31Eha9krNlCyWKJpXSqm52Nv3U4r4IDiw+4iGHBWYRgukstDdR1FrBi6TFHiUE=
-X-Received: by 2002:a17:902:c40c:b0:25b:d970:fe45 with SMTP id
- d9443c01a7336-294ca876b46mr835215ad.1.1761580466893; Mon, 27 Oct 2025
- 08:54:26 -0700 (PDT)
+	s=arc-20240116; t=1761580669; c=relaxed/simple;
+	bh=cNeEoNZMNjs7g8eJeKWktT8oOWjoRNKkmyvCV4rbGdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pUcNhQ/tRH+7LCvHXa5rtiGaE1o25v5t3pRMQfF720mkbFqraoLMEl0Qjbaz2EVkj6BkKvwu4itvMET6VfDZjGyaf6XdiJvaXrHu+ZcGo/TpFL751gwt6EmgbBXg5Kci2ES0CUQh/lEmzOYnZqmCSSdRUy+2GS1oAOtbpDQDPxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=NsxXLJec; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1761580664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7DktUCNizUthk/eVYWcphe4sD34yOq87O4J/7ILxNWI=;
+	b=NsxXLJecBlL5+cyKyvFiI6hida+cTbMcscYIDDa4jS3yYGcrOfZXzB2o/c4EGF/VFrf8PB
+	bKQNj9HmzilsHCag2fRU+g6lVGv519KVy4+QcBPsO8hIReP20iDjiVBC4qVtGKvOgAq7zA
+	VzlG45KebSh6HL5QLDqD2pjnofyLBr6hTW/DslhwLyxrgK5TgEgBC05eKNAuj5NWuRZ6BB
+	TdXrukHsYWbyaCJE2rCJi9AkS4343Q9Lec/GXs/N9YOjXdJe5GOw0XOURI1fhQCqt7FfvC
+	4UKvRaZ2p3K4H2bV+KfaNN8R1GMa16fMEVwhkhRLjVOKqTYbGPLzFGTpX0lP/A==
+From: Diederik de Haas <diederik@cknow-tech.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dragan Simic <dsimic@manjaro.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <diederik@cknow-tech.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: rockchip: Fix vccio4-supply on rk3566-pinetab2
+Date: Mon, 27 Oct 2025 16:54:28 +0100
+Message-ID: <20251027155724.138096-1-diederik@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
- <20251025-idpf-fix-arm-kcfi-build-error-v1-2-ec57221153ae@kernel.org>
-In-Reply-To: <20251025-idpf-fix-arm-kcfi-build-error-v1-2-ec57221153ae@kernel.org>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Mon, 27 Oct 2025 08:53:49 -0700
-X-Gm-Features: AWmQ_bkZ-boZ1PO-DZE1ghKe_XcmKdU5EzkIpPpXzyaf8mX9qkr6Gzs7ALPdxQ0
-Message-ID: <CABCJKuesdSH2xhm_NZOjxHWpt5M866EL_RUBdQNZ54ov7ObH-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ARM: Select ARCH_USES_CFI_GENERIC_LLVM_PASS
-To: Nathan Chancellor <nathan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Kees Cook <kees@kernel.org>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Russell King <linux@armlinux.org.uk>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Michal Kubiak <michal.kubiak@intel.com>, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
-	intel-wired-lan@lists.osuosl.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Nathan,
+Page 13 of the PineTab2 v2 schematic dd 20230417 shows VCCIO4's power
+source is VCCIO_WL. Page 19 shows that VCCIO_WL is connected to
+VCCA1V8_PMU, so fix the PineTab2 dtsi to reflect that.
 
-On Sat, Oct 25, 2025 at 1:53=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> Prior to clang 22.0.0 [1], ARM did not have an architecture specific
-> kCFI bundle lowering in the backend, which may cause issues. Select
-> CONFIG_ARCH_USES_CFI_GENERIC_LLVM_PASS to enable use of __nocfi_generic.
->
-> Link: https://github.com/llvm/llvm-project/commit/d130f402642fba3d065aacb=
-506cb061c899558de [1]
-> Link: https://github.com/ClangBuiltLinux/linux/issues/2124
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  arch/arm/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 2e3f93b690f4..4fb985b76e97 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -44,6 +44,8 @@ config ARM
->         select ARCH_USE_BUILTIN_BSWAP
->         select ARCH_USE_CMPXCHG_LOCKREF
->         select ARCH_USE_MEMTEST
-> +       # https://github.com/llvm/llvm-project/commit/d130f402642fba3d065=
-aacb506cb061c899558de
-> +       select ARCH_USES_CFI_GENERIC_LLVM_PASS if CLANG_VERSION < 220000
+Fixes: 1b7e19448f8f ("arm64: dts: rockchip: Add devicetree for Pine64 PineTab2")
+Cc: stable@vger.kernel.org
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+Signed-off-by: Diederik de Haas <diederik@cknow-tech.com>
+---
+Changes since v1:
+- Added Fixes tag (Dragan)
+- Added R-b tag
 
-Instead of working around issues with the generic pass, would it make
-more sense to just disable arm32 CFI with older Clang versions
-entirely? Linus, any thoughts?
+ arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sami
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
+index d0e38412d56a..08bf40de17ea 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
+@@ -789,7 +789,7 @@ &pmu_io_domains {
+ 	vccio1-supply = <&vccio_acodec>;
+ 	vccio2-supply = <&vcc_1v8>;
+ 	vccio3-supply = <&vccio_sd>;
+-	vccio4-supply = <&vcc_1v8>;
++	vccio4-supply = <&vcca1v8_pmu>;
+ 	vccio5-supply = <&vcc_1v8>;
+ 	vccio6-supply = <&vcc1v8_dvp>;
+ 	vccio7-supply = <&vcc_3v3>;
+-- 
+2.51.0
+
 
