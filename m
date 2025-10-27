@@ -1,162 +1,187 @@
-Return-Path: <linux-kernel+bounces-872340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096F6C101CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:47:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32013C0FFCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B8674FD4C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:45:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F8184F7B4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC5431C58A;
-	Mon, 27 Oct 2025 18:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA8E31B127;
+	Mon, 27 Oct 2025 18:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XrqSVjkZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkmMJuKP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC1D2BD033;
-	Mon, 27 Oct 2025 18:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D04319611;
+	Mon, 27 Oct 2025 18:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761590610; cv=none; b=VGsBrJ3ifUS5MR6sONzXbIQrc7w220ZOnA8awoJ2ituSU0KH2Q7CP57qftUNk5EoU7xj+33vrZcz/kDuxKYRjbl4F6yk3xLHjjsWnRqzFwdmJ4WFRE2A4zIoYBOdTbn7gwn3/WX3RMsH+YHQ5w0VE9TXf5Fj2T2mal0JCSRt8Bc=
+	t=1761590477; cv=none; b=GepTFZqkvhdNsM6K7HzrZLOMOvBX0MgWL59eDq1Q9nMaaahciwW6CxWOYrMK5S0DSb3oOlR+mQcsSYgDl9yfxQfNxRTGrPaZgF7q9fTPmacX6u6IfMjsEHObUR5iMb8wkmGEirXX88xfyPBMnTYTvI500ZkrP12FvRlfzc/vMHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761590610; c=relaxed/simple;
-	bh=So8NP6f8CaWcwExTfv/Wr0A00X17Unsc7FQQ3al+beQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I4dNDHuHXCSw1Eo+4LpkWkpvtP+iQl7yzRk8mpF+Z9yBNjeGLmn+j6ZKdxBt43DAgFLcFzCGV1lZoCjRrltBnCqZdl1hFrlrtRAqnpmRBhzyk79caRcIF0tXkp1QnZ1UH7w9u54G5ojl4mI0KBZ0fQtJJ7HXYADgYYwOU1+RPAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XrqSVjkZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=kuIVSUiix3AgqKsXyCQ0motbBK2F3l1jAUwSf8sfp9Q=; b=XrqSVjkZVoL8la0GFf6b7aMJTC
-	YX2uv1YcOntDybx1GKPTQdO8VoX880cF2WLnXF3mY/YslDiUSc0/jJk6OwQI270BEGo5KnL/lbBWO
-	HGnyD+oxyhcvVM/EjVblqIorjpuBif05+Mf8FlJpO2nbKgbaZlQR0L9QJeMvTaUYvhxnqK6ZpDyEj
-	liN6Haa9gxbkNKGQ03wW2In6J9p5K+szn6eeWTePNGIg/R0brxKDJP/Cq8lYhNxoW3UhQCDS01q/V
-	mBYjbR9S0adudlN7M3Qrtb4tWTEsL1+8/BFHC+Q9f1VZfhXC6zP/9XWG3XsAjcLzT74BJF0UbpbLn
-	K4CRRBtQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDSBj-0000000EYtK-2mcO;
-	Mon, 27 Oct 2025 18:43:27 +0000
-Message-ID: <2ab04392-f133-4ebe-943a-c58050b36f13@infradead.org>
-Date: Mon, 27 Oct 2025 11:43:27 -0700
+	s=arc-20240116; t=1761590477; c=relaxed/simple;
+	bh=1lLY6d0MKyfiGfV93rULKwdDF9mSEE/eTixRy0YpQoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQ8iRm9UAarNV3GSVv602o8yL2QvuFs9PCMi3YeNnA/JkJRdoDNL4WZ6cssGAMU6hsERYuh3nTxX0HAvMh27g19IciZJ3n6qZ28vUWKcD7CBSeZid/NWw/Oh9r1qeCkXyUfvx7yJJRHcLnO9yu3iCvq5EBrtKMpHKSRnheXpacQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkmMJuKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1B6C4CEF1;
+	Mon, 27 Oct 2025 18:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761590477;
+	bh=1lLY6d0MKyfiGfV93rULKwdDF9mSEE/eTixRy0YpQoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dkmMJuKPCMl5JjhaOrVEVK8FOQzmB9B0rf6/QB6MRxxLglrVyannxhcJDgKm+DhFm
+	 0JPMiKviTckp7wdL8vB+2X+Rh4iIbypOZFjSfwRezuL5wNzow5zae+2ZQXOB/5Fc0j
+	 lIPF5AgS5zOigi/Yfgnh1+LHgGZfUpYrBsxS/0RF0gQ0LWxEKu6P7mr4Adtuku1VZm
+	 5HiOy9XudA2PY/fll8mkBNqePwDNJxxdETW3Rod/YAGwrccvpzZ08EFGCWbxlM0EfK
+	 QcDYHEBr7dH4CeAb7k1ZztOM3GP4Z02iL6Mm25HzOfFTZmd8UUycYaKJKT36/AhunN
+	 G/3pDXKL8lY5g==
+Date: Mon, 27 Oct 2025 13:44:10 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Eugen Hristev <eugen.hristev@linaro.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
+ compatible
+Message-ID: <ygqgzflpavwgd43e5zedgcijm3lz27nqlzprttalgcroedz45u@ztqkppajpyry>
+References: <20251022-knp-soc-binding-v2-0-3cd3f390f3e2@oss.qualcomm.com>
+ <20251022-knp-soc-binding-v2-1-3cd3f390f3e2@oss.qualcomm.com>
+ <g2iviaqetgxf5ycz2otzkpmmc4goo7xuyjmttuu254bfzqqvkf@4vybjh4eghpm>
+ <4eebcb7d-1eca-4914-915a-d42232233f9f@oss.qualcomm.com>
+ <dwfvko3hszsoh4ihnz3qdpsugmocbkrbhosijdw5q3bxh64kuo@o74as2li74px>
+ <lz4sbvzfiij3qsa4d7jeblmi2vfubc4ltf435sh6tcs53l6fbq@7f3tfm7yiyjc>
+ <mwin3lfvpcwxxhsub2whcpibuayk36f4ljrodvithfygqad5w4@cg4h6peh4v4a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/21] Docs: add Functions parameters order section
-To: Jani Nikula <jani.nikula@intel.com>,
- "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20251025162858.305236-1-yury.norov@gmail.com>
- <20251025163305.306787-14-yury.norov@gmail.com>
- <723c936f92352352c3b1a84b858d684f5b7a0834@intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <723c936f92352352c3b1a84b858d684f5b7a0834@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mwin3lfvpcwxxhsub2whcpibuayk36f4ljrodvithfygqad5w4@cg4h6peh4v4a>
 
-
-
-On 10/27/25 2:02 AM, Jani Nikula wrote:
-> On Sat, 25 Oct 2025, "Yury Norov (NVIDIA)" <yury.norov@gmail.com> wrote:
->> Standardize parameters ordering in some typical cases to minimize
->> confusion.
->>
->> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
->> ---
->>  Documentation/process/coding-style.rst | 48 ++++++++++++++++++++++++++
->>  1 file changed, 48 insertions(+)
->>
->> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
->> index d1a8e5465ed9..dde24148305c 100644
->> --- a/Documentation/process/coding-style.rst
->> +++ b/Documentation/process/coding-style.rst
->> @@ -523,6 +523,54 @@ below, compared to the **declaration** example above)::
->>  	...
->>   }
->>  
->> +6.2) Function parameters order
->> +------------------------------
->> +
->> +The order of parameters is important both for code generation and readability.
->> +Passing parameters in an unusual order is a common source of bugs. Listing
->> +them in standard widely adopted order helps to avoid confusion.
->> +
->> +Many ABIs put first function parameter and return value in R0. If your
->> +function returns one of its parameters, passing it at the very beginning
->> +would lead to a better code generation. For example::
->> +
->> +        void *memset64(uint64_t *s, uint64_t v, size_t count);
->> +        void *memcpy(void *dest, const void *src, size_t count);
->> +
->> +If your function doesn't propagate a parameter, but has a meaning of copying
->> +and/or processing data, the best practice is following the traditional order:
->> +destination, source, options, flags.
->> +
->> +for_each()-like iterators should take an enumerator the first. For example::
->> +
->> +        for_each_set_bit(bit, mask, nbits);
->> +                do_something(bit);
->> +
->> +        list_for_each_entry(pos, head, member);
->> +                do_something(pos);
->> +
->> +If function operates on a range or ranges of data, corresponding parameters
->> +may be described as ``start - end`` or ``start - size`` pairs. In both cases,
->> +the parameters should follow each other. For example::
->> +
->> +        int
->> +        check_range(unsigned long vstart, unsigned long vend,
->> +                    unsigned long kstart, unsigned long kend);
->> +
->> +        static inline void flush_icache_range(unsigned long start, unsigned long end);
->> +
->> +        static inline void flush_icache_user_page(struct vm_area_struct *vma,
->> +                                            struct page *page,
->> +                                            unsigned long addr, int len);
->> +
->> +Both ``start`` and ``end`` of the interval are inclusive.
->> +
->> +Describing intervals in order ``end - start`` is unfavorable. One notable
->> +example is the ``GENMASK(high, low)`` macro. While such a notation is popular
->> +in hardware context, particularly to describe registers structure, in context
->> +of software development it looks counter intuitive and confusing. Please switch
->> +to an equivalent ``BITS(low, high)`` version.
->> +
+On Thu, Oct 23, 2025 at 03:06:00AM +0300, Dmitry Baryshkov wrote:
+> On Wed, Oct 22, 2025 at 05:42:58PM -0500, Bjorn Andersson wrote:
+> > On Wed, Oct 22, 2025 at 12:34:58PM +0300, Dmitry Baryshkov wrote:
+> > > On Wed, Oct 22, 2025 at 05:05:30PM +0800, Jingyi Wang wrote:
+> > > > 
+> > > > 
+> > > > On 10/22/2025 4:49 PM, Dmitry Baryshkov wrote:
+> > > > > On Wed, Oct 22, 2025 at 12:28:41AM -0700, Jingyi Wang wrote:
+> > > > >> Document qcom,kaanapali-imem compatible.
+> > > > >>
+> > > > >> Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
+> > > > >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > > > >> ---
+> > > > >>  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 1 +
+> > > > >>  1 file changed, 1 insertion(+)
+> > > > >>
+> > > > >> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> > > > >> index 6a627c57ae2f..1e29a8ff287f 100644
+> > > > >> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> > > > >> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> > > > >> @@ -19,6 +19,7 @@ properties:
+> > > > >>        - enum:
+> > > > >>            - qcom,apq8064-imem
+> > > > >>            - qcom,ipq5424-imem
+> > > > >> +          - qcom,kaanapali-imem
+> > > > > 
+> > > > > Can you use mmio-sram instead?
+> > > > > 
+> > > > 
+> > > > Here is the node: 
+> > > > 
+> > > > 		sram@14680000 {
+> > > > 			compatible = "qcom,kaanapali-imem", "syscon", "simple-mfd";
+> > > > 			reg = <0x0 0x14680000 0x0 0x1000>;
+> > > > 			ranges = <0 0 0x14680000 0x1000>;
+> > > > 
+> > > > 			#address-cells = <1>;
+> > > > 			#size-cells = <1>;
+> > > > 
+> > > > 			pil-reloc@94c {
+> > > > 				compatible = "qcom,pil-reloc-info";
+> > > > 				reg = <0x94c 0xc8>;
+> > > > 			};
+> > > > 		};
+> > > > 
+> > > > other qualcomm are also using imem, could you please give more details on why
+> > > > we should use mmio-sram here?
+> > > 
+> > > https://lore.kernel.org/linux-arm-msm/e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org/
+> > > 
+> > 
+> > I considered exactly this when I wrote the binding back then...
+> > 
+> > But the binding defines mmio-sram as "Simple IO memory regions to be
+> > managed by the genalloc API." and the Linux sram driver follows that and
+> > registers a gen_pool across the sram memory region.
+> > 
+> > I believe IMEM is SRAM (it's at least not registers), but its memory
+> > layout is fixed, so it's not a pool in any form.
+> > 
+> > 
+> > What Krzysztof says makes sense, but rather than just throwing a yak at
+> > Jingyi, it would be nice if you provided some guidance on how you would
+> > like to see this turn out.
 > 
-> GENMASK when used for defining hardware registers is completely fine,
-> and *much* easier to deal with when you cross check against the specs
-> that almost invariably define high:low.
+> I tested, pretty same approach seems to work:
 > 
-> Which other parts of coding style take on specific interfaces and tell
-> you to switch? Weird. I for one don't want to encourage an influx of
-> trivial patches doing GENMASK to BITS conversions, and then keep
-> rejecting them. It's just a huge collective waste of time.
+
+Now you're shaving at random ;)
+
+> 	sram@14680000 {
+> 		compatible = "mmio-sram";
+
+You can put "pil-reloc-sram" wherever, because it will perform a
+of_find_compatible_node() to dig up some node with the compatible
+"qcom,pil-reloc-info" .
+
+In other words, this line created a genpool for something that really
+isn't a genpool, but luckily that didn't have any side effects.
+
+
+There are however other users of IMEM, such as the "reboot-mode", which
+relies on the "sram" device probing child devices, and is implemented by
+"syscon-reboot-mode".
+
+Perhaps the solution is to not support any new users of that?
+
+
+But no matter what, the definition "Simple IO memory regions to be
+managed by the genalloc API" will never be true for IMEM.
+
+And as this isn't a syscon, simple-mfd, or mmio-sram...how about making
+the fallback "qcom,imem" (in this same binding) and omitting any
+implementation until we need one)?
+
+Regards,
+Bjorn
+
+> 		reg = <0x0 0x14680000 0x0 0x1000>;
+> 		ranges = <0 0 0x14680000 0x1000>;
 > 
-> Anyway, that's a lot of text on "function parameter order" to justify
-> BITS(), but completely skips more important principles such as "context
-> parameter first", or "destination first".
-
-and usually flags or gfp_t last (if they are used).
-
-There are several exceptions to these, but consistency helps and
-lack of it has caused some argument problems in the past.
-
--- 
-~Randy
-
+> 		#address-cells = <1>;
+> 		#size-cells = <1>;
+> 
+> 		pil-reloc-sram@94c {
+> 			compatible = "qcom,pil-reloc-info";
+> 			reg = <0x94c 0xc8>;
+> 		};
+> 	};
+> 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
