@@ -1,62 +1,60 @@
-Return-Path: <linux-kernel+bounces-872712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF56C11DDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:48:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA80C11DA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B48F566915
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:45:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B69474FA651
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D407A34F261;
-	Mon, 27 Oct 2025 22:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C98934F497;
+	Mon, 27 Oct 2025 22:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBmHPsdE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM5A2Yoa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2366734EEF5;
-	Mon, 27 Oct 2025 22:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A9C34F482;
+	Mon, 27 Oct 2025 22:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604539; cv=none; b=l/MtCg/ddqpOVBBVY+hqs9NGL5LT/1iSUEpY7L+fvJyoZbThgpwN9pQUaaXVTdegmEfL95IderF1+d2nsGEbrPzSX1WfikOaJKhIvkqRSDsmn70XWcLsYKHsc0dO0Vb2VWbJ5Arpkcf/Z9RvpKQj98F9DptRj4pTqYsBFJrcH2Q=
+	t=1761604540; cv=none; b=LYMquGhqPTWtb4vEnvQsq40Zlg5Wwx+U6/fHv6szy754JaNhmN/ee65V2FgW9AQexGn4rldkvk0bAcdN05p0VRut2+8Rq5QUCKUIoQOIceOYCYmfoUn+0nBbRjsPD3ODSFyXnLtb4itHTtc/bBuZTRb04avkLfJe1IlHKN8F3L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604539; c=relaxed/simple;
-	bh=4hZxjw9hTVJwN7eRbm2f8QhxFCjKK69ub1xTCfd302o=;
+	s=arc-20240116; t=1761604540; c=relaxed/simple;
+	bh=MMrcN0wI+ucYsl6GnqH5HDjP7snycQh/GDxnc7xCIns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pASVsql7qkPV0WUOFVyPX8nhyX33w/ieBSlDiu/rmatzs+C5AzYbzLXFRCJxGhTiVXBLxe+zEJS/jbgniApPQrlvFULCf1/cDgnz5VrElKz8VRt5njhxjpLlTCGJa4X5/CY6KiennPjWLPwls5tOlq7zp4QbcyNZrfUBlyf7k58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBmHPsdE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B054C113D0;
-	Mon, 27 Oct 2025 22:35:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rBan2qS/U/gyD71SLHdWjd2autkd6s4d2r5cnnghbwPLTk96ri91D0eu2RnogyGzYe48myrNW8t1roNQCzr/KPwuOAuV0mWeSh3sgDuQmXDHZ2qNS2Oa9r6LO8b2wBH7sBvDLtdhWGjebdoROK2Sbr3Xe1br3wtcpW8Yl8oVu2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cM5A2Yoa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003FEC4CEF1;
+	Mon, 27 Oct 2025 22:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761604539;
-	bh=4hZxjw9hTVJwN7eRbm2f8QhxFCjKK69ub1xTCfd302o=;
+	s=k20201202; t=1761604540;
+	bh=MMrcN0wI+ucYsl6GnqH5HDjP7snycQh/GDxnc7xCIns=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uBmHPsdEvRjPjZNHYr5eAsnlfKBjQ1aCbKrbrQKNTLJMUcTp/bII4C7OxRaAwSqwe
-	 RGxyQSz53VXsY0zgo+6dnost6vnML7KWDN/jYBSY8DM5NiNoEAPB8zla5dPgIQ9G+1
-	 h5aX62nyy6reun1cHMzdQUcfwhEy6w9vjESqrZxEKM7sg23nh9sJwlbgeUr2M+2BqR
-	 x3KCqTCSwDWju7bbn631vcum5g4E5gHEaYNCZvOlSPXdh8zEoahkCO82M+0ZbV1AOh
-	 RbDgiNbBOgl0CIE8BljAwNDrKbM9A0C4u6bGYV6Q87tBnCDKd/co1uL/vLuOfQnq0f
-	 XRZfS4gBoFBSg==
+	b=cM5A2YoaEtLx+yVb1UsCtcH6TexFPWJomGYMdHvxacA9nPubmJGMuoBTDgrsRheyy
+	 +CTk5aPghVo/A32fYxM6++Qc/I5/BYEYPnxBKxeVWE9gbeifKju8E7HecSLoR0a11H
+	 zj+CfeUzexIUMDW92WIVk0+id6HjD5Ry7Yq1YE+AJeICgf0UUeHkukBYz8mjYx0po4
+	 cY97u1huKWheXqenoAKb1s+WAa9qaKPZNmL24Xup8y9h1b+EHBHitvNdreqREqvdve
+	 eb5XODa3VuHKBDsKirH/eHXbX2lfW9TbdGq8yHaAaPTWnHtUIiOM35+P9e60jyKUHZ
+	 GcgA4shOzXg6w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wojciech Slenska <wojciech.slenska@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Cc: mukesh.savaliya@oss.qualcomm.com,
-	anup.kulkarni@oss.qualcomm.com
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: Add firmware-name to QUPv3 nodes
-Date: Mon, 27 Oct 2025 17:37:31 -0500
-Message-ID: <176160465191.73268.12812879194194737096.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qcm2290: Add uart1 and uart5 nodes
+Date: Mon, 27 Oct 2025 17:37:33 -0500
+Message-ID: <176160465211.73268.6368335507849227435.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250923161107.3541698-1-viken.dadhaniya@oss.qualcomm.com>
-References: <20250923161107.3541698-1-viken.dadhaniya@oss.qualcomm.com>
+In-Reply-To: <20251009090858.32911-1-wojciech.slenska@gmail.com>
+References: <20251009090858.32911-1-wojciech.slenska@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,23 +65,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 23 Sep 2025 21:41:07 +0530, Viken Dadhaniya wrote:
-> Traditionally, firmware loading for Serial Engines (SE) in the QUP hardware
-> of Qualcomm SoCs has been managed by TrustZone (TZ). While this approach
-> ensures secure SE assignment and access control, it limits flexibility for
-> developers who need to enable various protocols on different SEs.
+On Thu, 09 Oct 2025 11:08:58 +0200, Wojciech Slenska wrote:
+> Add nodes to support uart1 and uart5.
 > 
-> Add the firmware-name property to QUPv3 nodes in the device tree to enable
-> firmware loading from the Linux environment. Handle SE assignments and
-> access control permissions directly within Linux, removing the dependency
-> on TrustZone.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: qcom: qcs6490-rb3gen2: Add firmware-name to QUPv3 nodes
-      commit: 5af8a9e8430ce62a4e12e58c687c43bae0d5863f
+[1/1] arm64: dts: qcom: qcm2290: Add uart1 and uart5 nodes
+      commit: 89e4902ac7262f368dfb03afd76d71e6bbb4424d
 
 Best regards,
 -- 
