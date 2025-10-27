@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-872539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512B3C11673
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:33:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C41CC11679
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:33:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4678019C74D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:33:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 352104E1740
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DA12FE057;
-	Mon, 27 Oct 2025 20:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2074B314A99;
+	Mon, 27 Oct 2025 20:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvqfUfAn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S/5lrswk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959EC2798E5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFDC2798E5;
+	Mon, 27 Oct 2025 20:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761597175; cv=none; b=NB0OePjtyDXe7wvIGYUAKsiykVIj1Dn045dDQpquzCgyz4+6tlTVKbGe07LwLX1dYVqAV31LhqHkXjTci0KFIwapKGV7UM4Qr3Emv3RA+tV6u7YrWlo6zuZV/jf5DGX+qeX2kyjWRaB/OAixHGTWr+ElUDXv0RY1/TAxtdtLGbQ=
+	t=1761597233; cv=none; b=KqWXyqNhj72aIy0m3GjiBkYSbX5I6Ykk2qCHh7/bxTnUKc/oLEW/5z9Ul3MoRpcysYr9VNFcwVBGAM42YfBHqHsb6gGwEND0aCcbdfNK8dnP0N7f+9+6OYSaEPT/54NW+JxD0jrEB7N7vI2x92IE7jo5b6WQ5hJRCYqrW/UPHso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761597175; c=relaxed/simple;
-	bh=BtAlgxNZjGGgI/dxScVsmUb+YMCXiamkahS9o1su6Vs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fb1As4MjP4FtECRwZz5dDf7gS4E8cECFUZYUsGJS3NeIw5/UT/IRW4Zdp71KxvvUa1t579b7wMq91Pi3y+hkH+zH5reKTY1/mJ1nxJA9lrRKX3oTjdXeaRCesEPcJOLyvgJq0fCETk7I7ZSJIrYEw1798juxJwu56ZxRin2Arjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvqfUfAn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6285FC4CEF1;
-	Mon, 27 Oct 2025 20:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761597175;
-	bh=BtAlgxNZjGGgI/dxScVsmUb+YMCXiamkahS9o1su6Vs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OvqfUfAnZpQv9hgmUcq15ioZ3sj2uORjN1rlJkEsYXADWIZiG1I9VtQWM9lgavfeP
-	 HmQo2Et/eGUm4Bo1D8wtUwOOOA6sr+IOp6EFh6ZSysT7HEFN57QeMJ9UMB87/0Yu0a
-	 Ov+3capPs1knvmOgbuOz4b7pTakTx0QMa1PZJaZyO/4Ob1pgvYObCKn34dR/ftaagl
-	 kztoibdVbuzu3I6VGWvNeD936a7Zjqh3ggveAE+Y0cqhaDCeAs3f9bzMMx3QfL2b+z
-	 uwhj3pUiFpyrMiCGFsfI5lrs3o46IX/tuVBgIeoi0VmYkLisj0rMRMBz7eB3TZucWE
-	 qgIRWc5bRc46A==
-Date: Mon, 27 Oct 2025 13:32:52 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>, Brian Gerst <brgerst@gmail.com>, 
-	Thomas Huth <thuth@redhat.com>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, 
-	Zheyun Shen <szy0127@sjtu.edu.cn>, Kevin Loughlin <kevinloughlin@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Li Chen <chenl311@chinatelecom.cn>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Ingo Molnar <mingo@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Kevin Brodsky <kevin.brodsky@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/smpboot: Mark native_play_dead() as __noreturn
-Message-ID: <s54pjvfbalaoklswugeft2ikjyrdz7oqvwybztinphde2thz7x@vtlr6ctocfbx>
-References: <20251027155107.183136-1-thorsten.blum@linux.dev>
- <i4o6cr4x364xsk7ftas5guggjt4xdvawurrohveahi75iba5aj@dl6plusoxtin>
- <EA25BB49-DCF0-4868-878D-8BC5217380A1@linux.dev>
+	s=arc-20240116; t=1761597233; c=relaxed/simple;
+	bh=b5H+F37/o9lsYiGVraQlhoBZ6eD/dJKpuvYEJQehGoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ffsmj98gkXF0P6OogKK21fxWTqh0GwGnpxn7IvYsI55OYClEf7CBAoa4Zq2wPDr70CCsSGElt72iX7p5ij2g+GuHnUI5wPMoS3UP/A/5+378xRGc0yPDagtOFpG4rQ06Eu/SKlOSAQJ/XfSmrlB6XnKHJr77NHRY1Tk+pRjQQ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=S/5lrswk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761597227;
+	bh=WpFOgQ3IxrsnuvBh57s4oQBCb1X/url4lH7l5vfSbf4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=S/5lrswkPf/MgdDhFfK36jIv6m+bUuZNhrQKaWR06E4Iw752tIKXboQ5a/MRH/BG5
+	 1dDRHKZA67Ov8KCLlgtsginHbOoqb5Rc8z2MndSfNWAon5zBgDYk1ksXPjAGbClZ7A
+	 wUkmfgEpkJLIk0KfvK+lEr3FJ5FPQIpoQ6HOYJoK82tMz+KCOGXouHfurzkuDi2LNj
+	 qJjLVf+O3WBJqyEFrgyMVzcf95Xq+B+KJE1AYDpTlmJMQcvxWMRLYP8pVizWXjROw6
+	 6DBRXyP45HRLZ9hSxPjVCt9dkpGQ3BVnMrdY6YvcZy3FVi+nD9NOW2vE1k222AuENv
+	 cJExYdttKW2Og==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cwQFk6L5Fz4w0q;
+	Tue, 28 Oct 2025 07:33:46 +1100 (AEDT)
+Date: Tue, 28 Oct 2025 07:33:46 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the imx-mxs tree
+Message-ID: <20251028073346.4b8d68ce@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <EA25BB49-DCF0-4868-878D-8BC5217380A1@linux.dev>
+Content-Type: multipart/signed; boundary="Sig_/shv1UqIrD6BGI6trRWfPnKM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Oct 27, 2025 at 08:56:18PM +0100, Thorsten Blum wrote:
-> On 27. Oct 2025, at 20:28, Josh Poimboeuf wrote:
-> > On Mon, Oct 27, 2025 at 04:51:02PM +0100, Thorsten Blum wrote:
-> >> native_play_dead() ends by calling the non-returning function
-> >> hlt_play_dead() and therefore also never returns.
-> >> 
-> >> The !CONFIG_HOTPLUG_CPU stub version of native_play_dead()
-> >> unconditionally calls BUG() and does not return either.
-> >> 
-> >> Add the __noreturn attribute to both function definitions and their
-> >> declaration to document this behavior and to potentially improve
-> >> compiler optimizations.
-> >> 
-> >> Remove the obsolete comment, and add native_play_dead() to the objtool's
-> >> list of __noreturn functions.
-> >> 
-> >> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> > 
-> > Is there an objtool warning that this fixes?  If so, it would be helpful
-> > to put it in the description above.
-> 
-> Not that I'm aware of.
+--Sig_/shv1UqIrD6BGI6trRWfPnKM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ok.
+Hi all,
 
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+In commit
 
--- 
-Josh
+  9bab9019faa5 ("arm64: dts: imx8mp-kontron: Fix USB OTG role switching")
+
+Fixes tag
+
+  Fixes: 827c007db5f2 ("arm64: dts: Add support for Kontron OSM-S i.MX8MP S=
+oM and BL carrier board")
+
+has these problem(s):
+
+Maybe you meant
+
+Fixes: 946ab10e3f40 ("arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM=
+ and BL carrier board")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/shv1UqIrD6BGI6trRWfPnKM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj/1yoACgkQAVBC80lX
+0GwqKAf/SribIHPRJh8f9B9QbbstR43K0w4Woev3/vdvxUG+7JwKHw2ONLqY8qfe
+higyiiWBz1jz5QvP9ilRrIQgywoArcxLWweeZi79ZFcPNfFabK5zPZnBpfj9ZDTN
+2slzQV4dmXDS15PbDjV5b3jqWX5qLTD5+/4nkZhasDV9tD1I4yQtgyRaxf8SUIhw
+Ii5YInI46lhh+yqlv0PWrS0ktmxoZk1CwpP0sxgTSY1Z+VcUvPQnZ6nizTO6o29U
+ZGlcBYhkjLsUUx0CjHetfc/eZNAM3ctjnFENL4z+O+kLcaHEGCCkH6/k5+caALov
+sSp7RoYL2vSy9cnq5tsK+AtPJpyd5Q==
+=2l7d
+-----END PGP SIGNATURE-----
+
+--Sig_/shv1UqIrD6BGI6trRWfPnKM--
 
