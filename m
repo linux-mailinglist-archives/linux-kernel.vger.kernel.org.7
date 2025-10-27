@@ -1,159 +1,120 @@
-Return-Path: <linux-kernel+bounces-872770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3594DC1201D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:26:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49B4C11FE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35523AE4E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:22:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F0C84FEFAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DC332D440;
-	Mon, 27 Oct 2025 23:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BE0330B36;
+	Mon, 27 Oct 2025 23:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ufgn7wwv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gB4ypSMQ"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E0532D0D8;
-	Mon, 27 Oct 2025 23:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2500732E68C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607335; cv=none; b=SLhNiCj5tTocTz2FKy/52G/vEoA4a+yeJJNDTXTiCXYTAdKhXc4N4uIagAUeg80fNwpqcYLY7vCdfgkR0ui38/KuQDn82/gnXhgfxVoY4sUfcpdxWQ/RHNszAJTPrFmk9iDExpZnuv7Ha5noa+Pc7eun8jP+lESLB+/Mz8l3HFg=
+	t=1761607355; cv=none; b=SiZI16dxz7PkLQoKnwYpFew+HVmTYApn0chu1hh8Z9Z7o771kzwz/hPftNs/jzklJR1qrMAOeA52YD5xNkZQYif58GB69eMWXgNrjvNr4526Auzv7FCiTu7ZNLTbLIBf/i/ENMV5mKO9/gVa6+NofkIW/eFKWjvtEetMPJPs5k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607335; c=relaxed/simple;
-	bh=onxRzI4qOeKxeNuAcJ0ae/Pha4L/2LJ+E+8mbQS1rjs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RHOtD0TLrF8otszBH6STXgoqypxX42vTYJ03OGAOvh31fOLOFMn+/Xai22fdteFMrQrsoihQObDuFka1emi5JzG79uzlBbNKSl1i/fxu4/cWh3NGasV6WRhGbKT613Ezwe+Rae6GcfTu8ify8l34Cl5/IhHXSjQi819MSU6kNZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ufgn7wwv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4548BC116B1;
-	Mon, 27 Oct 2025 23:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761607335;
-	bh=onxRzI4qOeKxeNuAcJ0ae/Pha4L/2LJ+E+8mbQS1rjs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Ufgn7wwvyEHJcYZm2u94ouAm/8OKru7xfw5V091ddfWYr9FvF3m1ze4nwm6AThnD6
-	 C1u9dzYYCuQtC0mSexKvqflAl7SCsTBjBri8Skl6CMxU/9b7Ya/v7w41p2kcjgocxm
-	 fOSwm6lrPaBd824qX26A6KQohob1A4m5OXX6Jt9GPHPPG6+x2waM4q3npwFYOSldsZ
-	 JHpQE7yU9RhHmHInFAIYurnyLmj03wHwJRgTg07GHb0Eyj7KvEqhRD1GDYWY9oW9j/
-	 gwynTtyxW3Q0/NRAS8NJnG3rG0bTcQ7gyExWms1Ml87HO3eKasgcO9+dwUyvTB1p3m
-	 vYu1RiebHn/pQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C993CCF9E0;
-	Mon, 27 Oct 2025 23:22:15 +0000 (UTC)
-From: Dave Vasilevsky via B4 Relay <devnull+dave.vasilevsky.ca@kernel.org>
-Date: Mon, 27 Oct 2025 19:21:47 -0400
-Subject: [PATCH] powerpc: Fix mprotect on book3s32
+	s=arc-20240116; t=1761607355; c=relaxed/simple;
+	bh=rvBnlpSPPGg1WSwfWe+3xqHeiki+o6krSuToPEsBGSU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iqm70wfYmUN2WqUpD0JQMC1j2XdEcjWCwJuwLpy1azgAO0qcPyky3H9tzQdyPLeNm2CBQdgsb+Crpm2aNZkUfxxHQ/MuQ50uzA0dtFSubiS9lw2ETsZdHkNdG5/bYsv0h9vWmbt1K+CzelQjVyGu1KNAPWPzVMSIcPGdoiZT1ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gB4ypSMQ; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761607338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o7ByHM6pY3dwFpR4UtrzDg2GMclAcsB3OodRq+P8j4Q=;
+	b=gB4ypSMQDUypAYKV6HJ2XH2WemmIfiZB0UwMhQh9wTXb8BbGcyiiR1K9n9hpLOKXNWEkwP
+	nhyxWRKMYpek8xquzwYKQrw/M7A8GEGbUtzSP7j/uuts8Rz78K6a8p5MdvlijJYhcsgACc
+	Mix3hlPaeGpHRHuDTGBqMGLQcM0R6kg=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH v2 11/23] mm: introduce BPF kfunc to access memory events
+Date: Mon, 27 Oct 2025 16:21:54 -0700
+Message-ID: <20251027232206.473085-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251027-vasi-mprotect-g3-v1-1-3c5187085f9a@vasilevsky.ca>
-X-B4-Tracking: v=1; b=H4sIAIr+/2gC/x3MQQqAIBBA0avErBtQS5SuEi0ix5pFKhoRhHdPW
- r7F/y8UykwFpu6FTDcXjqFB9h1sxxp2QnbNoITSUiiD91oYz5TjRduF+4Deeq2MdaMcBbQsZfL
- 8/Mt5qfUDcHtzDGIAAAA=
-X-Change-ID: 20251027-vasi-mprotect-g3-f8f5278d4140
-To: Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Nadav Amit <nadav.amit@gmail.com>, 
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Dave Vasilevsky <dave@vasilevsky.ca>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761607334; l=2972;
- i=dave@vasilevsky.ca; s=20251027; h=from:subject:message-id;
- bh=E1aBGzZxrKFyEjSh5tyf0kwyoQ+SazFw/xbQmkHQC8c=;
- b=stXn+ddNorVpT4m4xv4DpE0jTKLzbB53xuvhLM3AsQqN7nWd+GkbidV1wVWZ/ynrPTQgsSvxj
- RF8akzSsGFIAuOfxrGVn1gCyHKBiUqsfRdMLRLPFG2DkjhzYuR0HhW/
-X-Developer-Key: i=dave@vasilevsky.ca; a=ed25519;
- pk=Jsd1btZeqqg6x6y73Dx0YrleQb3A3pCBnUeE0qmoKq4=
-X-Endpoint-Received: by B4 Relay for dave@vasilevsky.ca/20251027 with
- auth_id=556
-X-Original-From: Dave Vasilevsky <dave@vasilevsky.ca>
-Reply-To: dave@vasilevsky.ca
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Dave Vasilevsky <dave@vasilevsky.ca>
+From: JP Kobryn <inwardvessel@gmail.com>
 
-On 32-bit book3s with hash-MMUs, tlb_flush() was a no-op. This was
-unnoticed because all uses until recently were for unmaps, and thus
-handled by __tlb_remove_tlb_entry().
+Introduce BPF kfunc to access memory events, e.g.:
+MEMCG_LOW, MEMCG_MAX, MEMCG_OOM, MEMCG_OOM_KILL etc.
 
-After commit 4a18419f71cd ("mm/mprotect: use mmu_gather") in kernel 5.19,
-tlb_gather_mmu() started being used for mprotect as well. This caused
-mprotect to simply not work on these machines:
-
-  int *ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE,
-                  MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-  *ptr = 1; // force HPTE to be created
-  mprotect(ptr, 4096, PROT_READ);
-  *ptr = 2; // should segfault, but succeeds
-
-Fixed by making tlb_flush() actually flush TLB pages. This finally
-agrees with the behaviour of boot3s64's tlb_flush().
-
-Fixes: 4a18419f71cd ("mm/mprotect: use mmu_gather")
-Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
+Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
 ---
- arch/powerpc/include/asm/book3s/32/tlbflush.h | 8 ++++++--
- arch/powerpc/mm/book3s32/tlb.c                | 6 ++++++
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ mm/bpf_memcontrol.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/book3s/32/tlbflush.h b/arch/powerpc/include/asm/book3s/32/tlbflush.h
-index e43534da5207aa3b0cb3c07b78e29b833c141f3f..b8c587ad2ea954f179246a57d6e86e45e91dcfdc 100644
---- a/arch/powerpc/include/asm/book3s/32/tlbflush.h
-+++ b/arch/powerpc/include/asm/book3s/32/tlbflush.h
-@@ -11,6 +11,7 @@
- void hash__flush_tlb_mm(struct mm_struct *mm);
- void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
- void hash__flush_range(struct mm_struct *mm, unsigned long start, unsigned long end);
-+void hash__flush_gather(struct mmu_gather *tlb);
- 
- #ifdef CONFIG_SMP
- void _tlbie(unsigned long address);
-@@ -28,9 +29,12 @@ void _tlbia(void);
-  */
- static inline void tlb_flush(struct mmu_gather *tlb)
- {
--	/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
--	if (!mmu_has_feature(MMU_FTR_HPTE_TABLE))
-+	if (mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
-+		hash__flush_gather(tlb);
-+	} else {
-+		/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
- 		_tlbia();
-+	}
+diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
+index 387255b8ab88..458ad022b036 100644
+--- a/mm/bpf_memcontrol.c
++++ b/mm/bpf_memcontrol.c
+@@ -99,6 +99,23 @@ __bpf_kfunc unsigned long bpf_mem_cgroup_usage(struct mem_cgroup *memcg)
+ 	return page_counter_read(&memcg->memory);
  }
  
- static inline void flush_range(struct mm_struct *mm, unsigned long start, unsigned long end)
-diff --git a/arch/powerpc/mm/book3s32/tlb.c b/arch/powerpc/mm/book3s32/tlb.c
-index 9ad6b56bfec96e989b96f027d075ad5812500854..3da95ecfbbb296303082e378425e92a5fbdbfac8 100644
---- a/arch/powerpc/mm/book3s32/tlb.c
-+++ b/arch/powerpc/mm/book3s32/tlb.c
-@@ -105,3 +105,9 @@ void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr)
- 		flush_hash_pages(mm->context.id, vmaddr, pmd_val(*pmd), 1);
- }
- EXPORT_SYMBOL(hash__flush_tlb_page);
-+
-+void hash__flush_gather(struct mmu_gather *tlb)
++/**
++ * bpf_mem_cgroup_events - Read memory cgroup's page state counter
++ * bpf_mem_cgroup_memory_events - Read memory cgroup's memory event value
++ * @memcg: memory cgroup
++ * @event: memory event id
++ *
++ * Returns current memory event count.
++ */
++__bpf_kfunc unsigned long bpf_mem_cgroup_memory_events(struct mem_cgroup *memcg,
++						enum memcg_memory_event event)
 +{
-+	hash__flush_range(tlb->mm, tlb->start, tlb->end);
++	if (event >= MEMCG_NR_MEMORY_EVENTS)
++		return (unsigned long)-1;
++
++	return atomic_long_read(&memcg->memory_events[event]);
 +}
-+EXPORT_SYMBOL(hash__flush_gather);
-
----
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-change-id: 20251027-vasi-mprotect-g3-f8f5278d4140
-
-Best regards,
++
+ /**
+  * bpf_mem_cgroup_page_state - Read memory cgroup's page state counter
+  * @memcg: memory cgroup
+@@ -133,6 +150,7 @@ BTF_ID_FLAGS(func, bpf_get_mem_cgroup, KF_ACQUIRE | KF_RET_NULL | KF_RCU)
+ BTF_ID_FLAGS(func, bpf_put_mem_cgroup, KF_RELEASE)
+ 
+ BTF_ID_FLAGS(func, bpf_mem_cgroup_vm_events, KF_TRUSTED_ARGS)
++BTF_ID_FLAGS(func, bpf_mem_cgroup_memory_events, KF_TRUSTED_ARGS)
+ BTF_ID_FLAGS(func, bpf_mem_cgroup_usage, KF_TRUSTED_ARGS)
+ BTF_ID_FLAGS(func, bpf_mem_cgroup_page_state, KF_TRUSTED_ARGS)
+ BTF_ID_FLAGS(func, bpf_mem_cgroup_flush_stats, KF_TRUSTED_ARGS | KF_SLEEPABLE)
 -- 
-Dave Vasilevsky <dave@vasilevsky.ca>
-
+2.51.0
 
 
