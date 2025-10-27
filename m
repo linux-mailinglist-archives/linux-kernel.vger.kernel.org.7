@@ -1,46 +1,51 @@
-Return-Path: <linux-kernel+bounces-872590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29520C1185E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:19:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB7FC1186E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 026784EB98A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:19:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 282474EC7CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B99A31B83D;
-	Mon, 27 Oct 2025 21:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7944732A3C1;
+	Mon, 27 Oct 2025 21:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oUsxudKL"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715022E6CA6;
-	Mon, 27 Oct 2025 21:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nBl+hOJt"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728A314A8D;
+	Mon, 27 Oct 2025 21:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599974; cv=none; b=JvIXl2fyJ0CY2v3xo1GkyCRTnnBC6Nbs92yU4ck8CJCq2PoyaPAzi15cPM5M17fKTa0/B0DnBKmjWpJoImwoey2rOrfiIolgAi5nHRJSenB8+YABnlNfNuFqdnneJKbQLv1zxT70BJ3QF95ROKbbpFSFiuXb+KMglQs8ejZeeY0=
+	t=1761599999; cv=none; b=aghSMD/d3sasozkGg2G5vfZ1JJrBsY4O7Nzm7ilNi2MiJ0ymRIfS7sTrkL1+DUDsB4dilgWAYv9P6es7R5oDD4mA3Hd8d9WjuFnIVyOVyybam2bIXXM8UJRr55AP/OO3+5JoVpxxz3s10zi6Ybr7HSP8wCyiwHQrxRucxEx6p5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599974; c=relaxed/simple;
-	bh=6TCiXmKZmHvlxUnmjyYUaqLbN9oZjycAy1AqgqBs7EI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Dz/EPgdiUUKiFMGb118uJQgMsxvMygNnoBCmOWb96LxQeqNiGQ9nELuolmYcuVIDNHFcBKjoktV6n2UYqe8xFfN2Qd6GY9jxQtKSpNxY6vPi5PNnwVT0WflUSWHjpRI1MXqmpmQ6vKvSZxqAmtDnnwgpZtFjoSHXnVnmRlwdbIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oUsxudKL; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.201.246] (unknown [4.194.122.162])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7D639200FE4F;
-	Mon, 27 Oct 2025 14:19:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D639200FE4F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761599972;
-	bh=f33z+NeSbMiTM7slCE3zWmMDaC5DHvqCgfHYGeaDfJo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=oUsxudKLw8X7oPli2lri3x/P9MYBYDiwdXeJsxSrCsJZ8j+lSItOp7bgNpAF6D3yH
-	 bmbBmrcQ72pqREWHK3H/NgkSce640KnZ8aS+rRCcnJwqsyus0LFmbTJxweiz9l+tPN
-	 Ss8AbbVNDxzHdjafT7F+YFpH5fJDyecjSTWaAklQ=
-Message-ID: <accc901b-999c-46fe-9c44-07cbb4301769@linux.microsoft.com>
-Date: Mon, 27 Oct 2025 14:19:21 -0700
+	s=arc-20240116; t=1761599999; c=relaxed/simple;
+	bh=IaKAlAq36x6FQovo76KHJGi2+lwcn8LjsjjqBNZdne4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f32cqM9Az41qCLB78G/Dih5kLqcL3GXNdkX4QhKIE3UVCpmaG7q0wYB5y18pZyyhsM/jm3I90yJAQDImcfhC8UT9SeBrz/fr3StTJA4eS+YWBg6HejX9M8vYfZhfZYbSoiApr1SE744LtnA2gtUcZJC4y2y6Klrn+/wINYmMkHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nBl+hOJt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=9Iv+ffZpjEZjAYosvgj1AxYfj8Ex0TWhrhWzH//VRvQ=; b=nBl+hOJtJiTxm7KhGiNJ/Q71dn
+	T9DUH3zO9MGalAUW4ruw7kg0OdrzIJoDdR5Egq17KkEjUo0tdXIp3flaqD5ZKGjhqpn27Qj3/ehpC
+	FcRYP6yofjDMNPd0VycSu6PaJurniVxvcYo43iWQwGpDDcxmPtmC0r+qqg7Yr7Im5R6RChjNTIgiK
+	ALQ194/8LCHUjX8neIBt/tdRkr+/Q/7oXGoANAtNxkziBF8kayvNFYbj18ENYhlhGwQyvWm6NjncX
+	zF7KHIvIlSlxpiNZjeqmh+u5aOh7Jpv65BFnJUYly7U53K4m71Ks6rj+6tSlu6hVGtbHxC9bSLNCz
+	OAkFcj5g==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDUd8-0000000EmzQ-37s7;
+	Mon, 27 Oct 2025 21:19:54 +0000
+Message-ID: <09faee6c-4075-4eb7-bb2b-1c6650e3f053@infradead.org>
+Date: Mon, 27 Oct 2025 14:19:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,52 +53,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de,
- easwar.hariharan@linux.microsoft.com, anbelski@linux.microsoft.com,
- nunodasneves@linux.microsoft.com, skinsburskii@linux.microsoft.com
-Subject: Re: [PATCH v3 2/2] hyperv: Enable clean shutdown for root partition
- with MSHV
-To: Praveen K Paladugu <prapal@linux.microsoft.com>
-References: <20251027202859.72006-1-prapal@linux.microsoft.com>
- <20251027202859.72006-3-prapal@linux.microsoft.com>
-From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+Subject: Re: [PATCH v1 01/30] docs: reporting-issues: mention text is best
+ viewed rendered
+To: Thorsten Leemhuis <linux@leemhuis.info>, Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <cover.1761481839.git.linux@leemhuis.info>
+ <4f7e2de2a2336c52e55cc49dcda627a4e86b8793.1761481839.git.linux@leemhuis.info>
 Content-Language: en-US
-In-Reply-To: <20251027202859.72006-3-prapal@linux.microsoft.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <4f7e2de2a2336c52e55cc49dcda627a4e86b8793.1761481839.git.linux@leemhuis.info>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/27/2025 1:28 PM, Praveen K Paladugu wrote:
-> Without configuing sleep state info within mshv, if a root partition is
-> shut down, it will try to shutdown by writing to ACPI regions. These
-> writes are intercepted by mshv and will result in a Machine Check
-> Exception (MCE).
-> 
-> Root eventually panics with a trace similar to:
-> 
-> [   81.306348] reboot: Power down
-> [   81.314709] mce: [Hardware Error]: CPU 0: Machine Check Exception: 4 Bank 0: b2000000c0060001
-> [   81.314711] mce: [Hardware Error]: TSC 3b8cb60a66 PPIN 11d98332458e4ea9
-> [   81.314713] mce: [Hardware Error]: PROCESSOR 0:606a6 TIME 1759339405 SOCKET 0 APIC 0 microcode ffffffff
-> [   81.314715] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-> [   81.314716] mce: [Hardware Error]: Machine check: Processor context corrupt
-> [   81.314717] Kernel panic - not syncing: Fatal machine check
-> 
-> To prevent this, properly configure sleep states within MSHV, enable a
-> reboot notifier, allowing the root partition to cleanly shut down without
-> any panics. Only S5 sleep state is enabled for now.
-> 
-> Signed-off-by: Praveen K Paladugu <prapal@linux.microsoft.com>
-> Co-developed-by: Anatol Belski <anbelski@linux.microsoft.com>
-> Signed-off-by: Anatol Belski <anbelski@linux.microsoft.com>
-> ---
->  arch/x86/hyperv/hv_init.c       |   8 +++
->  arch/x86/include/asm/mshyperv.h |   2 +
->  drivers/hv/mshv_common.c        | 103 ++++++++++++++++++++++++++++++++
->  3 files changed, 113 insertions(+)
-> 
 
-Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+
+On 10/26/25 5:41 AM, Thorsten Leemhuis wrote:
+> Add a comment before the step-by-step guide explaining that the document
+> is best viewed in the rendered form, as there the internal links will
+> work that later patches will add.
+> 
+> While at it change the double quotes in the license hint at the end of
+> the document into single quotes, which is the preferred style.
+> 
+> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+> ---
+>  Documentation/admin-guide/reporting-issues.rst | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
+> index a68e6d90927471..3bc47afaf85ea0 100644
+> --- a/Documentation/admin-guide/reporting-issues.rst
+> +++ b/Documentation/admin-guide/reporting-issues.rst
+> @@ -48,6 +48,16 @@ Once the report is out, answer any questions that come up and help where you
+>  can. That includes keeping the ball rolling by occasionally retesting with newer
+>  releases and sending a status update afterwards.
+>  
+> +..
+> +   Note: If you see this note, you are reading the text's source file. You
+> +   might want to switch to a rendered version: It makes it a lot easier to
+> +   read and navigate this document -- especially when you want to look something
+> +   up in the reference section, then jump back to where you left off.
+> +..
+> +   Find the latest rendered version of this text here:
+> +   https://docs.kernel.org/admin-guide/reporting-issues.html
+> +
+> +
+>  Step-by-step guide how to report issues to the kernel maintainers
+>  =================================================================
+>  
+> @@ -1748,13 +1758,13 @@ art will lay some groundwork to improve the situation over time.
+>     you spot a typo or small mistake, feel free to let him know directly and
+>     he'll fix it. You are free to do the same in a mostly informal way if you
+>     want to contribute changes to the text, but for copyright reasons please CC
+> -   linux-doc@vger.kernel.org and "sign-off" your contribution as
+> -   Documentation/process/submitting-patches.rst outlines in the section "Sign
+> -   your work - the Developer's Certificate of Origin".
+> +   linux-doc@vger.kernel.org and 'sign-off' your contribution as
+> +   Documentation/process/submitting-patches.rst outlines in the section 'Sign
+> +   your work - the Developer's Certificate of Origin'.
+
+Can you have a single quote (Developer's) inside single quotes?
+Anyway, nack on the quote marks changes.
+
+>  ..
+>     This text is available under GPL-2.0+ or CC-BY-4.0, as stated at the top
+>     of the file. If you want to distribute this text under CC-BY-4.0 only,
+> -   please use "The Linux kernel developers" for author attribution and link
+> +   please use 'The Linux kernel developers' for author attribution and link
+>     this as source:
+>     https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/admin-guide/reporting-issues.rst
+>  ..
+
+-- 
+~Randy
+
 
