@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-872396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF66EC10A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:14:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213D3C10B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C315A1A24425
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF851892DF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D545328B46;
-	Mon, 27 Oct 2025 19:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7F23233F5;
+	Mon, 27 Oct 2025 19:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpNZaHmt"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVSwdn4J"
+Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C8A31CA4E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C58329C7B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761591995; cv=none; b=c3CiT4VWgdiRpImm3Ra1ZixwbIBZa/AHJeIuYsH/mYKyZRGiHgSmrdsTj1A4EVG8M4niGHWbehd8XoFpXsMxIEwOZpEvMVGn541xvvaV6n0ztrpfZZaQX6euYyGcIdBzR2CBH2vCkjGAkJ9qY8PBnvP1yZncGLOcEkJQdQaWL3I=
+	t=1761592136; cv=none; b=Nfit1T2WCs1XTzlq6HWVtR8EWr7sK8fHYEG7DrNH1z+WtbIJJpII0DKLfF/diU+19JtFElTiPdKDyQ2hSZAN++FeDyelEQUdWoXAaf9EKfzkJqnqxRTqwD4dn5OqvrYB2pFk3EbsVEBGYM8Uwkt+aSX3Hra33RbUYqfuboUd4wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761591995; c=relaxed/simple;
-	bh=Ojab5OSl+WBm4Mxevged5V2m1wa5Eh7wWc+uU4tFvHo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UvZzfTmO79qdzIqn+zFglo+kUXKfNqEHLnf996rA9Z3jUZ3XT17GSXv+JJzVQO5VioB2hx3i2Nl5f5dWTjVfHC/+1U8pilPTnAArYmG9ziR9nFN2xiQmTPw9J6z6Cpf/0ZyfpJygG/mLYmfmjqdjHKFesQJxMz0F9KJ0eg9FGV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpNZaHmt; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1761592136; c=relaxed/simple;
+	bh=LwAmk/7MTnIWI2oZ7HDPyu3lp0S1pBrNDG9x+kH9r9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1IR0KqGPMLIbLJSLVE1dJIMqqc/LE2aI64575PrLYFV/56GvD/Uk1A3o1cJ0uLmagzyhfjw96SdXPfOb7gxtlid1r5t265ezdxl38hcTe8DKDFhfyFguyTvX6gXWMdDygy+q7AdD6Cd/Te49geXSJJ2AnJFLkmyot0ccgX+DNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVSwdn4J; arc=none smtp.client-ip=74.125.224.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-28a5b8b12a1so52516165ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:06:34 -0700 (PDT)
+Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-63cf0df1abbso5698754d50.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761591994; x=1762196794; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H0gDu/cEgextMGhJSkPKVqZRF+SRP309HWbX9UskMTw=;
-        b=FpNZaHmt0odBOsrqTv+Trwtyb6bLCm/w8nEropD4Wq4StY/vEzeYELnNe9dhMWBIQ8
-         hZQ4t9Cx491q8xoQeGVGteQy+dY0u70s/MBx1io3zMeGnti5HohIjwQCshVTJJaJBboU
-         tLVHHzFBJFaPXX0OMBUprr2DRhLQxr4pau22spnX1ejsbp+Yu45f1JAKVdhw3keMYis+
-         Q8WtdeSiEN5qg6TJ172XK9hr8+QVuSMVN+FtLO8eYmslAqHiXaCz7imP/HusMJTxh3Cr
-         ueNrHeABVtXTenkUx4n3g654xHye+UQOpU7VFWB5syHKc2QjWHZPm32Cz1YvF/SiJkue
-         g3tw==
+        d=gmail.com; s=20230601; t=1761592132; x=1762196932; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lBa16o2HS8qCHNhSfYkAhXZ4L9FP6XeHVGIquo4j2vI=;
+        b=hVSwdn4JOcoqaHNLFfLQxTu7eWx01Rgqd59pBAURulTcRJlYT9XZil8D64vaoIKaOU
+         gfhxXps4MOYzdEvxMaV1knXwOsJHCSSn408048iYjmlqbWP/0AcrxiPSiyjj1Ssa8OPP
+         p7Lio09UtU4OeVO4jyJOTDKLcTpqHqFVjBhsUNQ0nesJO4M46fw4zBeXMfl5M8TyZhOg
+         E0/Zy38JkAphtr6W7H6oRnKX5ujQ/DAJqP9JlL8+Fmhd5ptzzNnOOqmaIhKJqyuKwyWy
+         9X146AywMJ0HzBTfXY5bZettFAhXL5zRIs/afSJUQRFwHucVtfLCnF7+aGlI4DkFiRGW
+         XE3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761591994; x=1762196794;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H0gDu/cEgextMGhJSkPKVqZRF+SRP309HWbX9UskMTw=;
-        b=ocGok8/9P3jZSQQDOS9z29hbEDi2CY66YTtbmbY+BriF5SnZJkfvjB0t8cx8wkqaYt
-         VagVe/SgE/6EcYnbBR/b1Nlghgh3FUWEXzf9UiSxYpRiNNiSZT8NrVnJK7Z4tUK9tJVh
-         NatjwLs3H4FTXOUc0/6nNLl2vRna81Sf9O+5/gsaqyBSKzZt6Q1Q9NDNOZEWYjA50Clu
-         nnXk2vZQvCNrtpW0dgXWpLRKGWUfF+QzRLFhjp27o4dhHuRXZInnuSgkiD2DGA3QlL2i
-         vcRiL20u/07KdXsBSX9ci2z5V04U4/KwcPHB5R7caS3K5XzkR45yRYFe9nX1MBb2BO6l
-         MW0w==
-X-Gm-Message-State: AOJu0Yw5Qs1twCLm4hDwmyWwmOpWrza+OlFwrPIeg9oLBYw2+n/hZfB7
-	1hYyI7gA8jok/NlNpn3z3VuOoi4wh/kfPGJR1Xp3+xf2IDSaSTtQ6jeq
-X-Gm-Gg: ASbGncvtbOKIhsYcI9uKEtQ/Pkjy3z+fYWt1Yfdl0utjERTgNWBw5QJFwJy48sp3y4E
-	n6tutwDXzEsc18ElMprXMgLXommw4ok5Af2rtLR8+RTUk+9cb4E7REWyn3j+CG+XDfrBe79rQjF
-	vSkAR/k5qS58/ARf+T+nrUWyh31gPcL/1ff+FOeVLZ3M6EWLY1p6WqclfeD3zvonghbfEZxqV9+
-	q0z6vYnqBMnaRqBW6jJaWnaoi75sqCDZnSn3R8M/LMgC8VI08lktnhqGBorAjMcWMosbP+UL/dy
-	KsNd13ryswBai7JlCEv4fMNzbbh2E+yecJ65WK50i8DKUpWgbW65irgqeMBjCKkooAAOp12mr83
-	Bk3w+1aafZtN9sr1k5cOMXEQ8aJ0myrP/KDFJVB4krvQmscceqWI1GOtAbjD77BkyzgcEXBUSKC
-	4kC4cquRNL
-X-Google-Smtp-Source: AGHT+IFWIi8PKVygJ7gwEknuigRMUvmTlJAQjGlxiILEK6ZS4jJsAMvu5S/hQi+KS+QRppuNDN8ALA==
-X-Received: by 2002:a17:902:d50c:b0:24c:965a:f97e with SMTP id d9443c01a7336-294cb395b49mr10271245ad.2.1761591993581;
-        Mon, 27 Oct 2025 12:06:33 -0700 (PDT)
-Received: from [192.168.0.226] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed81ca93sm9366998a91.19.2025.10.27.12.06.32
+        d=1e100.net; s=20230601; t=1761592132; x=1762196932;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lBa16o2HS8qCHNhSfYkAhXZ4L9FP6XeHVGIquo4j2vI=;
+        b=XlIiKV2VYufWH8743gjxwME784BHtXJ4Kmxdej5/kwlOnfmjd3//hMvrMdI3VDeHWy
+         hqZ3KVSdDCXK3F3PPkmeTHLKOfZ8yySWFc6zCooTLyA/qUVMFAxLzv+LOqHvO2IFJsiY
+         ZFFGwjpmGli3+wCdvdh53TO4+DaKGCups+XmioOto/bA+aMJqmxMXgYKQUHCS+cwc5kH
+         cmqP8/zlx3VZxpFlfc5d11mUXFtPJbHfaclp8nGPtHvieypMO5P79/cHI0EGOnT8Ct8T
+         yH6eiAtsmK9axDfqBtMhvuKDp59H5/BcKJ4zPA2ZbKM+TEFxKXifqqKfSMsTnx565EbE
+         xSxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8/98PRmAzFlBbesLI4ZOe9VWlm7KA5a3HbhMdXjgZIw/cNv6bcItPVsRZQ7wBbvOoGr6prZxLjwOhxKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4yyWxNcNPJWdB/tXRddcRhS6LhmNDWiWTEhypR5bKmO2QCJeC
+	M7D87e9yeyg9/V2IEKvxVcep2BwWU6vOt20MxA4xXrK7ZVmI4keQc1Rk
+X-Gm-Gg: ASbGncuXEH5KrdXBoDgZkFoRGk82oS+/eE74HJNkozX3OUhKV5m/uE1K3qgPMvlS2ep
+	Vs7/7oyNlW7xlM9ZAqZkBV5VnxfROt6eCk7XA+i5v81eDZhari2jVzON7x+DFumfSjH17tBMe4u
+	c4EWCxqOrUigjc6kVeXxdj0JsIdAqPOMmMknHfeVNy8WzmISOohN4O2ek3yE8YUGA5LuAA5iEV8
+	XHATaZd96f2yUeM2pC/uo1tkqYogY6MqeoZ+Qyv76PAm570NwB+Is1MsPXXvbUP+4Poi5QrLX9K
+	yWewk4pV8EIlttWjV295MY6mVfPRJ0Zgahj5L5tQMncqybGg5hhE0wgJU6UB5T/ZtWAkpXa6ugR
+	p1dZCrja2ugxhF4Sn4IeuDkyUGBZ1PThJp+zCz9kRyAsd3N5VtgrwQ5gOWPPLxkjVTpBN4YzpKW
+	0elBtKjwsRJgYcSoBCeOC9vgl3gThGuun7cFRKwK0e+aotiyw=
+X-Google-Smtp-Source: AGHT+IGyyVhNMyFPJ1iH6VB3LobfrBQTkhvZ12vnfHgjuauZlHjFnodUEDbnz8J1VMMlZEjH/eQK1A==
+X-Received: by 2002:a53:cd41:0:b0:63c:f5a6:f2ef with SMTP id 956f58d0204a3-63f6bab5662mr707347d50.65.1761592130958;
+        Mon, 27 Oct 2025 12:08:50 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:56::])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63f4c441fe2sm2525648d50.15.2025.10.27.12.08.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 12:06:33 -0700 (PDT)
-Message-ID: <6e7ef94cb4e2d7fbc82676b2af1a165cac620aae.camel@gmail.com>
-Subject: Re: [RFC PATCH v3 1/3] btf: implement BTF type sorting for
- accelerated lookups
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org, Andrii Nakryiko
-	 <andrii.nakryiko@gmail.com>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Alan Maguire
-	 <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, pengdonglin
-	 <pengdonglin@xiaomi.com>
-Date: Mon, 27 Oct 2025 12:06:30 -0700
-In-Reply-To: <20251027135423.3098490-2-dolinux.peng@gmail.com>
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
-	 <20251027135423.3098490-2-dolinux.peng@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Mon, 27 Oct 2025 12:08:50 -0700 (PDT)
+Date: Mon, 27 Oct 2025 12:08:48 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next 03/12] selftests/vsock: reuse logic for
+ vsock_test through wrapper functions
+Message-ID: <aP/DQLcX9uaY6kXN@devvm11784.nha0.facebook.com>
+References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
+ <20251022-vsock-selftests-fixes-and-improvements-v1-3-edeb179d6463@meta.com>
+ <aP-kmqhvo4AFv1qm@horms.kernel.org>
+ <aP+zgF7zF9T3ovuS@devvm11784.nha0.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP+zgF7zF9T3ovuS@devvm11784.nha0.facebook.com>
 
-On Mon, 2025-10-27 at 21:54 +0800, Donglin Peng wrote:
+On Mon, Oct 27, 2025 at 11:01:36AM -0700, Bobby Eshleman wrote:
+> On Mon, Oct 27, 2025 at 04:58:02PM +0000, Simon Horman wrote:
+> > On Wed, Oct 22, 2025 at 06:00:07PM -0700, Bobby Eshleman wrote:
+> > > From: Bobby Eshleman <bobbyeshleman@meta.com>
+> > > 
+> > > Add wrapper functions vm_vsock_test() and host_vsock_test() to invoke
+> > > the vsock_test binary. This encapsulates several items of repeat logic,
+> > > such as waiting for the server to reach listening state and
+> > > enabling/disabling the bash option pipefail to avoid pipe-style logging
+> > > from hiding failures.
+> > > 
+> > > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> > 
+> > shellcheck has some (new) things to say about this patch too.
+> > Could you take a look over them?
+> > 
+> > ...
+> 
 
-[...]
+It looks like the errors are SC2317 and SC2119, but are false-positives.
+Invoking a program as a variable (e.g., "${VSOCK_TEST}") is tripping
+SC2317 (command unreachable), and SC2119 is due to log_{guest,host}()
+being passed zero arguments (logging its stdin instead).
 
-Question to Andrii, I think.
-It looks a bit asymmetrical, that there is btf_check_sorted() in
-libbpf, but library does not provide comparison or sorting function.
-Wdyt?
+I also see that SC2317 has many other false positives elsewhere in the
+file (80+), reporting even lines like `rm "${QEMU_PIDFILE}"` as
+unreachable. I wonder if we should add a patch to this series to disable
+this check at the file-level?
 
-> +static void btf_check_sorted(struct btf *btf, int start_id)
-> +{
-> +	const struct btf_type *t;
-> +	int i, n, nr_sorted_types;
-> +
-> +	n =3D btf__type_cnt(btf);
-> +	if (btf->nr_types < BTF_CHECK_SORT_THRESHOLD)
-> +		return;
-> +
-> +	n--;
-> +	nr_sorted_types =3D 0;
-> +	for (i =3D start_id; i < n; i++) {
-> +		int k =3D i + 1;
-> +
-> +		if (btf_compare_type_kinds_names(&i, &k, btf) > 0)
-> +			return;
-> +
-> +		t =3D btf_type_by_id(btf, k);
-> +		if (!str_is_empty(btf__str_by_offset(btf, t->name_off)))
-> +			nr_sorted_types++;
-> +	}
-> +
-> +	t =3D btf_type_by_id(btf, start_id);
-> +	if (!str_is_empty(btf__str_by_offset(btf, t->name_off)))
-> +		nr_sorted_types++;
-> +
-> +	if (nr_sorted_types < BTF_CHECK_SORT_THRESHOLD)
-> +		return;
-
-Nit: Still think that this is not needed.  It trades a couple of CPU
-     cycles for this check and a big comment on the top, about why
-     it's needed.
-
-> +
-> +	btf->nr_sorted_types =3D nr_sorted_types;
-> +}
-
-[...]
+Best,
+Bobby
 
