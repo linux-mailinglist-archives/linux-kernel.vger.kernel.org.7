@@ -1,183 +1,104 @@
-Return-Path: <linux-kernel+bounces-871563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C43C0D9F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:42:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81B8C0DA8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737E11896C86
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA849422E85
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E673112B2;
-	Mon, 27 Oct 2025 12:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F592E6CAA;
+	Mon, 27 Oct 2025 12:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mwEN3QEb"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiGe9bio"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21B23115B8
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F33F2AD32;
+	Mon, 27 Oct 2025 12:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568611; cv=none; b=UlfiQEpVW5TUH+A5OB/ww/VjWGsKesnVd4mJthynJt4TbQacdQlG7pBbICub76SupgKGUcwtxbhZC5kR3D8tzKtybav3mgVAZvqYhU0zzlYN1hRb+v44jbS53Awpvhza7yJ/foN98+zn/R8EuVpGjYVvNKCcatZ394p7HwMlDAw=
+	t=1761568625; cv=none; b=f7vBqqhtBTJKlSx1mtpVdDLJc2CSbIUpsxdCRWoKIpUGY8Ytawxlpp/4tmQFjsLMO38AEXcsP4LJHUglqIrG29ts02ft+xq8RWXZYm7AltIbhcELLqDCTuC7EoqVI9AkT3QySXL2WDGlGifp9KfUdI3lWA0n5mDkuEGGi4Zie4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568611; c=relaxed/simple;
-	bh=2L21Qopfly/U4b9yKtsDB4jlN3j5TDLRZmMl98kJ+LM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zk31inMaPSdNpQhjmmPZLY5pyoRCxjoTu3EJSvISMyBTOQUaqkg4WTkC50iMs8CrYwLtAuFXoPVSSdSQhiAHSfhOYmkHTXodVt2uUBfO7ugPBb/PaFdekW5Ex/mXghO3604NYA0r3ig/iAm6MqW7H0bxKJGzRS4F+oxbpBbBBoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mwEN3QEb; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 492911A16B4;
-	Mon, 27 Oct 2025 12:36:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1E78D6062C;
-	Mon, 27 Oct 2025 12:36:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4ED0102F24F1;
-	Mon, 27 Oct 2025 13:36:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761568606; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+v8XTZeq0pOdpvOANy27ZmijoxF+wc+fMdKurB1Y/rc=;
-	b=mwEN3QEbaR1sVd6IE9qAiYG8m2pXn+mFP5RqyGYHe+7L/tjL6Y37fQuX46y5an7o0XP+tP
-	rEu8e3cjNG7loWcsZrih58a/nBGOcPUKDQEghfVWpJHJa3vb8jIj4bH/kUS6usgAexhG6s
-	+dCe18ghI+N8qA7zRnH5i2jAc5o9+JpG5ITJ/cuoiFE78oWjjg7rYKv6KH9XJB+3oBASaE
-	MrHSPbJ81QjcZDhVOXrnfKrGB0tcsW6OePyCSUqtfyKXPgTaN+c7sxcHo7PbX70YpAmSmv
-	GEiXC+0Uga+l3lxNstQnkt4XwbEFCSItPeJjFa7qkAEBUHRE1Cwdb8PAeZtMGA==
-From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v6 8/8] ARM: dts: r9a06g032: Add support for GPIO interrupts
-Date: Mon, 27 Oct 2025 13:36:00 +0100
-Message-ID: <20251027123601.77216-9-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251027123601.77216-1-herve.codina@bootlin.com>
-References: <20251027123601.77216-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1761568625; c=relaxed/simple;
+	bh=redh+vh8l4GMLQmHYsINwMcHjcch2Bk0h1hWDsj/HHc=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Lz43eubSCJIAHbghV8LGYryHe/wKRtyzcQry5KOS8NtpWq5+6g9ZP5EUf/oZgNl1jShyB652XPuhXxdQrtkq4Bbd0vqbnx6EvKF7tlyo787FNJZh18ksSGHHUIJxY8sQGgzhwR2O0zqv7B3899JAN9kUh92OnuNG75QBgzKO45Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiGe9bio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45DAC4CEF1;
+	Mon, 27 Oct 2025 12:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761568623;
+	bh=redh+vh8l4GMLQmHYsINwMcHjcch2Bk0h1hWDsj/HHc=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=kiGe9bio/BCXg1Mz24lBo+4pYFrQzTCfydQGdSfCxckn8Ix03lFLFb0GoxxgTOXsD
+	 NifB3Erz440S0iRhzyKdg7zeQIXzPGE75SnEg0fX1uqDeksklPJzTdhvgw8SpmNSn1
+	 aZroYI2BaRy7CI9ZQS4q2FH0qfRg7OTNc7ZL9+rmwet6pi43ORSSrK/9gxc5kDstlK
+	 uJ7VGJy7Orx01z9y1mwo9keT7xRnqhkqT7UIlD0Z5BmPHSm/Wz595Bg0fwpjJloO2g
+	 gdgThxiHdKR7OHWSlAlK1zxEM9RthfrufIyiIFFF8tT8DsK3IwzIowoLLWJM1Rju47
+	 /m7VWp59VEqGg==
+From: Mark Brown <broonie@kernel.org>
+To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
+In-Reply-To: <20251023064538.368850-1-shengjiu.wang@nxp.com>
+References: <20251023064538.368850-1-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH 0/2] ASoC: fsl: correct the bit order issue for DSD
+Message-Id: <176156862139.24382.1000390767821381636.b4-ty@kernel.org>
+Date: Mon, 27 Oct 2025 12:37:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-In the RZ/N1 SoC, the GPIO interrupts are multiplexed using the GPIO
-Interrupt Multiplexer.
+On Thu, 23 Oct 2025 14:45:36 +0800, Shengjiu Wang wrote:
+> The DSD little endian format requires the msb first, the previous
+> understanding is not correct. The issue is found by testing with
+> pipewire.
+> 
+> Shengjiu Wang (2):
+>   ASoC: fsl_sai: fix bit order for DSD format
+>   ASoC: fsl_micfil: correct the endian format for DSD
+> 
+> [...]
 
-Add the multiplexer node and connect GPIO interrupt lines to the
-multiplexer.
+Applied to
 
-The interrupt-map available in the multiplexer node has to be updated in
-dts files depending on the GPIO usage. Indeed, the usage of an interrupt
-for a GPIO is board dependent.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Up to 8 GPIOs can be used as an interrupt line (one per multiplexer
-output interrupt).
+Thanks!
 
-Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 41 ++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+[1/2] ASoC: fsl_sai: fix bit order for DSD format
+      commit: d9fbe5b0bf7e2d1e20d53e4e2274f9f61bdcca98
+[2/2] ASoC: fsl_micfil: correct the endian format for DSD
+      commit: ba3a5e1aeaa01ea67067d725710a839114214fc6
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index da977cdd8487..c7196e720c6c 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -534,6 +534,14 @@ gpio0a: gpio-port@0 {
- 				#gpio-cells = <2>;
- 				snps,nr-gpios = <32>;
- 				reg = <0>;
-+
-+				interrupt-controller;
-+				interrupt-parent = <&gpioirqmux>;
-+				interrupts = < 0  1  2  3  4  5  6  7
-+					       8  9 10 11 12 13 14 15
-+					      16 17 18 19 20 21 22 23
-+					      24 25 26 27 28 29 30 31 >;
-+				#interrupt-cells = <2>;
- 			};
- 
- 			/* GPIO0b[0..1]   connected to pins GPIO1..2   */
-@@ -576,6 +584,14 @@ gpio1a: gpio-port@0 {
- 				#gpio-cells = <2>;
- 				snps,nr-gpios = <32>;
- 				reg = <0>;
-+
-+				interrupt-controller;
-+				interrupt-parent = <&gpioirqmux>;
-+				interrupts = < 32 33 34 35 36 37 38 39
-+					       40 41 42 43 44 45 46 47
-+					       48 49 50 51 52 53 54 55
-+					       56 57 58 59 60 61 62 63 >;
-+				#interrupt-cells = <2>;
- 			};
- 
- 			/* GPIO1b[0..1]   connected to pins GPIO55..56 */
-@@ -608,6 +624,14 @@ gpio2a: gpio-port@0 {
- 				#gpio-cells = <2>;
- 				snps,nr-gpios = <32>;
- 				reg = <0>;
-+
-+				interrupt-controller;
-+				interrupt-parent = <&gpioirqmux>;
-+				interrupts = < 64 65 66 67 68 69 70 71
-+					       72 73 74 75 76 77 78 79
-+					       80 81 82 83 84 85 86 87
-+					       88 89 90 91 92 93 94 95 >;
-+				#interrupt-cells = <2>;
- 			};
- 
- 			/* GPIO2b[0..9] connected to pins GPIO160..169 */
-@@ -620,6 +644,23 @@ gpio2b: gpio-port@1 {
- 			};
- 		};
- 
-+		gpioirqmux: interrupt-controller@51000480 {
-+			compatible = "renesas,r9a06g032-gpioirqmux", "renesas,rzn1-gpioirqmux";
-+			reg = <0x51000480 0x20>;
-+			#interrupt-cells = <1>;
-+			#address-cells = <0>;
-+			interrupt-map-mask = <0x7f>;
-+
-+			/*
-+			 * Example mapping entry. Board DTs need to overwrite
-+			 * 'interrupt-map' with their specific mapping. Check
-+			 * the irqmux binding documentation for details.
-+			 */
-+			interrupt-map = <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			status = "disabled";
-+		};
-+
- 		can0: can@52104000 {
- 			compatible = "renesas,r9a06g032-sja1000", "renesas,rzn1-sja1000";
- 			reg = <0x52104000 0x800>;
--- 
-2.51.0
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
