@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-872760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA4EC11FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:21:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D2EC11F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:19:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C844228EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:18:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B777500D50
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D43B33032D;
-	Mon, 27 Oct 2025 23:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661E2330B20;
+	Mon, 27 Oct 2025 23:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pacyHFTh"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DChI+nOh"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2811E32F777
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4887B32E139
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607076; cv=none; b=MGKrTKshLZLI3NH4dSOuTOGbkNAGsWF5CquWDRLliknhNE4AQf4oBMs/R6ChrlAzdp55+HAMQ8JrBMWLyEaF/LvGNvq8aEW+Cd3gODczJGnOn9eNIuMR9EbHgsq99H0ctWY9DMe2BNkCvt9k3whCk/UiUKKQbnbVI+FsKE6FJ7I=
+	t=1761607080; cv=none; b=d/xMdGOK167r/bYgKAG3XLXnWTrsTWJCZ3Fos3YRKwq7ZzJhodPfBcq3WjrvayiDl3Xd5ylKTq4M8HUlXQc/mVxES7kvrAONQLE3EPSVvW/rgZXW8c/IltyAWfqQS3FdfyD6/Zh5MhLkNx7g7dzuR/lxVnQ9echpTcxxS4trjYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607076; c=relaxed/simple;
-	bh=0B+X9FpNu4kGkQG0w7cX0dsTwpSio7rx+GX3WF0gOvE=;
+	s=arc-20240116; t=1761607080; c=relaxed/simple;
+	bh=j8cURuTw2UB7s4I3cGS52HkEzNvtVptK0sqwh1Hfb6E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XYlBx4UInnqs1NDw7pr9AEsvhuvrffCXgeecyj2pXBiYMTyXio9ypXcH3yI4uzUld2t06wwMM5dZkmtSUGYqBelT9wUxusEweaOneMkypTqEpEkJfLuUnU8sE9KPDrfJByxCt+EjKV2+kiI6AOYMK+aKxDnyl7wCzyKpj0dZPLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pacyHFTh; arc=none smtp.client-ip=95.215.58.180
+	 MIME-Version; b=DWlYb2svS5iG54Byf2X3pYjQ4o0jaB/WB69ZWjh4skkT6SGyZYH9Bg3C2ESGHHIawjMDEVUQ/6tO1Uj452ZHpbIZ8UiuFmt7+uzAHZz+5m3Wm5tJS78QXygMQDxFbWC9+7v82lrJt0tDJKwOPajcIOGYlZQYO2QEqDfIE1n90zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DChI+nOh; arc=none smtp.client-ip=95.215.58.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761607073;
+	t=1761607077;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e0l0t2z6jhNE2z17NKK8gjaGASdsEhVg9kL49c/ISKE=;
-	b=pacyHFThuJC47YY9Mr3wRKzrbF0AwB6lU0s2BdtV2dFfiEDufmHfV5ZwlzRWX/d/23k/L0
-	F4AO04GiE/rOnYDt8ohD7rimZelbe8iL0wtlTpOTeuFb0KitV8nTFwjwZVnA+9F9krd2qV
-	c7mmNiUB9zx4dMX/t50olXVyoMx0Szs=
+	bh=0vZi5Lm6HCXIvJj/q+L10BffcrsXOVY7/TA959BCzAY=;
+	b=DChI+nOhg5pm0r/ehW0aA7Na275GkEkntqDZcK3b1Dwod6J7Mzy4LWhPA9pDr9SZZlW2FP
+	O/X9pKzumDkjOjsl0o10KvMl3obEFu91NSz4LHU+7mRfQDrjEm7Hw1/2POKAkt7x9TQD4K
+	Ybq7JocSIOeCr0DjI3Vf2lO0N+b5ny4=
 From: Roman Gushchin <roman.gushchin@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
 	Tejun Heo <tj@kernel.org>,
 	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH v2 04/23] mm: define mem_cgroup_get_from_ino() outside of CONFIG_SHRINKER_DEBUG
-Date: Mon, 27 Oct 2025 16:17:07 -0700
-Message-ID: <20251027231727.472628-5-roman.gushchin@linux.dev>
+Subject: [PATCH v2 05/23] mm: declare memcg_page_state_output() in memcontrol.h
+Date: Mon, 27 Oct 2025 16:17:08 -0700
+Message-ID: <20251027231727.472628-6-roman.gushchin@linux.dev>
 In-Reply-To: <20251027231727.472628-1-roman.gushchin@linux.dev>
 References: <20251027231727.472628-1-roman.gushchin@linux.dev>
 Precedence: bulk
@@ -73,64 +73,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-mem_cgroup_get_from_ino() can be reused by the BPF OOM implementation,
-but currently depends on CONFIG_SHRINKER_DEBUG. Remove this dependency.
+To use memcg_page_state_output() in bpf_memcontrol.c move the
+declaration from v1-specific memcontrol-v1.h to memcontrol.h.
 
 Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- include/linux/memcontrol.h | 4 ++--
- mm/memcontrol.c            | 2 --
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ include/linux/memcontrol.h | 1 +
+ mm/memcontrol-v1.h         | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 873e510d6f8d..9af9ae28afe7 100644
+index 9af9ae28afe7..50d851ff3f27 100644
 --- a/include/linux/memcontrol.h
 +++ b/include/linux/memcontrol.h
-@@ -832,9 +832,9 @@ static inline unsigned long mem_cgroup_ino(struct mem_cgroup *memcg)
- {
- 	return memcg ? cgroup_ino(memcg->css.cgroup) : 0;
- }
-+#endif
- 
- struct mem_cgroup *mem_cgroup_get_from_ino(unsigned long ino);
--#endif
- 
- static inline struct mem_cgroup *mem_cgroup_from_seq(struct seq_file *m)
- {
-@@ -1331,12 +1331,12 @@ static inline unsigned long mem_cgroup_ino(struct mem_cgroup *memcg)
- {
- 	return 0;
- }
-+#endif
- 
- static inline struct mem_cgroup *mem_cgroup_get_from_ino(unsigned long ino)
- {
- 	return NULL;
- }
--#endif
- 
- static inline struct mem_cgroup *mem_cgroup_from_seq(struct seq_file *m)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4deda33625f4..5d27cd5372aa 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3618,7 +3618,6 @@ struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
- 	return xa_load(&mem_cgroup_ids, id);
+@@ -949,6 +949,7 @@ static inline void mod_memcg_page_state(struct page *page,
  }
  
--#ifdef CONFIG_SHRINKER_DEBUG
- struct mem_cgroup *mem_cgroup_get_from_ino(unsigned long ino)
- {
- 	struct cgroup *cgrp;
-@@ -3639,7 +3638,6 @@ struct mem_cgroup *mem_cgroup_get_from_ino(unsigned long ino)
+ unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx);
++unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
+ unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx);
+ unsigned long lruvec_page_state_local(struct lruvec *lruvec,
+ 				      enum node_stat_item idx);
+diff --git a/mm/memcontrol-v1.h b/mm/memcontrol-v1.h
+index 6358464bb416..a304ad418cdf 100644
+--- a/mm/memcontrol-v1.h
++++ b/mm/memcontrol-v1.h
+@@ -27,7 +27,6 @@ unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
+ void drain_all_stock(struct mem_cgroup *root_memcg);
  
- 	return memcg;
- }
--#endif
+ unsigned long memcg_events(struct mem_cgroup *memcg, int event);
+-unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
+ int memory_stat_show(struct seq_file *m, void *v);
  
- static void free_mem_cgroup_per_node_info(struct mem_cgroup_per_node *pn)
- {
+ void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
 -- 
 2.51.0
 
