@@ -1,79 +1,98 @@
-Return-Path: <linux-kernel+bounces-872592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4015CC1187D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:20:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B85C1188F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C9164E9D8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:20:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F22354F8868
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D555329C55;
-	Mon, 27 Oct 2025 21:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C3032AADD;
+	Mon, 27 Oct 2025 21:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="ZzCJ2mvl"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="e3aTg1F2"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F61B2DCC1A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF372D12EB;
+	Mon, 27 Oct 2025 21:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761600030; cv=none; b=shPEuse+b4Q3Z7ku3ag43DB/c6xRNPG0VbOYdtC7B8O/GQnBbHastPseqJfOP2R+AGL/3oK4Hv9anGStnEGGae0/U3VLHBIKDCy6y8xWosgRXOiz0mXVfoc4trj8mx+5H30Wn42dbFVnjzSdIa201HkifpDBiH1A4tiZLK4Q6rA=
+	t=1761600048; cv=none; b=i3C8uvVKQkWWfh28EASEland1k1oOjCr1QWQoYrq0Mgq8u3gwYGMqGJk3vQw+gMNL2aQUVkG8O4h0LU1vnFu0RC2VnLm46LQYfzwzqhqConB1VjeCVmVcTmN7AYu5UaPeuW7oR+gZs1M52JsxeqhsLMCCNx7OOSXzBIZ09yr0x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761600030; c=relaxed/simple;
-	bh=5xdpCgI9+Y6cN5MSmGFBKONZOL4IJqg+NR9Qk85kt80=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=cqy0BNA5LkWcizT8QoiAoWJ5bRU+NqJemlJv57f9QVY/FPo5zWIXW59mDpPmHGuvNT51rKQ7ojSslgv5tyABpm9xqfdv7WSv9G7vb25QJJ4OcTZs3UgmrXChp6v0cBK2svOe15eAfK+gksWRlG3rD7s4Duo8gXO5sgLEHvlrtnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=ZzCJ2mvl; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1761600048; c=relaxed/simple;
+	bh=WdB03435Zh9oOe8E/xtnII4LlDCfPD1BB+UpVU/QVcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XsocM5/aJEUT6fWQmFWafn7wSLV0/DLR0TM27RMOl9PVVW8vHGg7c7lhD0aZaXcAgjypd5OVu84N1ARrlaOYdVJatmtLx1g7m0bZg+kCWSQ3I4GRV8dQadlLxk5o4k9V1R8s6GsOC0PM1wSjckdSVAxodDQvvBx9/SFWZ6vcVfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=e3aTg1F2; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=BbTTW4ZryieMhzoDKkZ0R/XcaSkMUIf9Zm/D+nSMP0c=; b=e3aTg1F2EmnARg+p4YrNnlxjDU
+	HKu7S/7SIIVSul5g3RVRZ4lsErNmPkPv13WiObugYbaG1Q6zgXX6CFCu30+U5cGWXx31ClPq0mxJR
+	O6ZAWHOXTT9t4JjXun+cy3t4T33ZM+xZAMXyfQMGdv6YeFmwiUajfSSwH1xSf4wYFj6H8Zi3it+Eg
+	kI+NeHTDBY18M+bImUbkpF98yceVUnfkQA8FQEsfsx2ph0Emhy3WmRDDogxRkYoevu5UIshbhVcoJ
+	K3VGATU+2qJR6lPaA//igBcOgbBQBPe7oulUGGwduxOmenYYtCBkbnKciTuNHzRVuIBpBhIEpsZdD
+	z6ZkWRqA==;
+Date: Mon, 27 Oct 2025 22:20:30 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones
+ <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 04/15] dt-bindings: mfd: ROHM BD72720
+Message-ID: <20251027222030.560def67@kemnade.info>
+In-Reply-To: <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+	<a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1761600021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5xdpCgI9+Y6cN5MSmGFBKONZOL4IJqg+NR9Qk85kt80=;
-	b=ZzCJ2mvlyM+oBKlKupVVpGp9PaleFmZxoOk6obZmhBvosz4iw+2eUciwBFZLxJZ4DVMsYo
-	aOS84kkPO+Wfv6bKDUrlWJhAAEhk6X8TOp79J3xdxG/PhfCUWA+dCMvQAyhFHY0oaaH5dJ
-	ylyBWIddMlEyQlCHODpPizWU2DVVELpXFUDVzORSZLltmiFNtab4+ATRxiXFbPJw3RwE4V
-	0wXb5+3/B2oYfw3NBxOsCXqCEWLjD51LN+aPmurrE3vUAx/YYhU3SwjOCV0QRUj7FriQGc
-	mI8bxn+QAE+UU9PmFZ9/HH28MR/bFpnTmpHQ6Ds9rnTFy4N9vXe8fMmM1NcbWQ==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Oct 2025 22:20:15 +0100
-Message-Id: <DDTF376168GE.27A08H5NLTCRF@cknow-tech.com>
-Cc: <sigmaris@gmail.com>, <conor+dt@kernel.org>,
- <devicetree@vger.kernel.org>, <heiko@sntech.de>, <krzk+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, <robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: pwm-fan overlay for NanoPC-T6
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Dragan Simic" <dsimic@manjaro.org>, "Alexey Charkov"
- <alchark@gmail.com>
-References: <d583ee43-38c4-40fb-b33b-ce3153c9723b@gmail.com>
- <20251027200213.1821809-1-dsimic@manjaro.org>
- <CABjd4Yzfx-4xBHVB=W_r6nEdbwNJKdpHYB6bN3Xsk8dZOegJWw@mail.gmail.com>
- <2cfeeb0c-f7e0-b101-62c4-3b6eae40a30b@manjaro.org>
-In-Reply-To: <2cfeeb0c-f7e0-b101-62c4-3b6eae40a30b@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon Oct 27, 2025 at 10:15 PM CET, Dragan Simic wrote:
-> FWIW, the most user-friendly SBC family in the world, Raspberry
-> Pi, :) requires manual enabling of the fan on Raspberry Pi 4.
-> I haven't researched what's the background for that, perhaps the
+On Mon, 27 Oct 2025 13:45:46 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-RPi's have been using DT overlays basically from their start (ie way
-before it became practically usable on the upstream kernel).
+> The ROHM BD72720 is a power management IC integrating regulators, GPIOs,
+> charger, LEDs, RTC and a clock gate.
+> 
+> Add dt-binding doc for ROHM BD72720.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+[...]
+> +
+> +  rohm,charger-sense-resistor-milli-ohms:
+> +    minimum: 10
+> +    maximum: 50
+> +    description: |
+> +      BD72720 has a SAR ADC for measuring charging currents. External sense
+> +      resistor (RSENSE in data sheet) should be used. If some other but
+> +      30 mOhm resistor is used the resistance value should be given here in
+> +      milli Ohms.
+> +
+rohm,bd71828.yaml has rohm,charger-sense-resistor-micro-ohms, lets
+keep that unified.
 
+Regards,
+Andreas
 
