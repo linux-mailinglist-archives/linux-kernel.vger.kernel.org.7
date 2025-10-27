@@ -1,246 +1,121 @@
-Return-Path: <linux-kernel+bounces-872766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902E3C11F8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:20:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C41C11F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D0D550132A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:19:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F97D3AD869
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE08330338;
-	Mon, 27 Oct 2025 23:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E34B32C326;
+	Mon, 27 Oct 2025 23:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tqupITNo"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jWFpn1j8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6320332F743
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F851DED64;
+	Mon, 27 Oct 2025 23:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607105; cv=none; b=Eb6Yu4gicp/iHd2pBFTzMLsfePKqD490FbfX/AzokQr+MB+S/mxkd/lITeX2gd2EG/3alNeFhxIPdPjY9iuu95GpCjX05gkGMTWFnxD+HOM8xZbZA2QmXZBCOSNCANOtku7+MKsHiPtsU09Bk7EwEQ/TFiyJ50ZBECkTDm7mQGU=
+	t=1761607050; cv=none; b=QHnpHws10QBjhjRhvM9eQqgiDWLiWLsbPsT5MvJrhXTVolTxUjG6L8CYLivbzFxhCDmmMo6wVGR4mHq9zUFuE1k/s+YRiQDvrd+lmL9KKCTwtPtXBQd2N+QhMFxhvxo026ANt3tAn0JC+M5NBzfE0lgFIUb2JuOX8NmVVBjGkSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607105; c=relaxed/simple;
-	bh=PQKs+Pwtyt4D+sPPl43y0nAsmrLM4kQBlkqhwwye3CY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=utkUkUo3VdA3KEZUf31EYdIRpUNR128TN/477mOkf46jARBSpf4UkLHoUxtnOuJgAqG/Kxro9kac131OZBtR5+yn6Qtimb9tH7KFfxZmL9znQ0nunonYEVMREXLuiP0dq2b4jqdlBe+9Mhi3MPU1GXRUISrBY5nmmEbLpF6/Khg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tqupITNo; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761607101;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RGNhnHhDztEBZDrNzEjV2cb6TNW+GcgGJqFKk02+7Oc=;
-	b=tqupITNoxhfGoV/jU5uxGa72WRtEc2MA2UUuBBuLyiYcN9KJcfKECP8OssfhuVWBK4P+Gg
-	Gzo6bxS3AXK3JdfZpr2vpG4kLq6jv3fvy0VV3a/aLxB10cHsxyDp32h/lgkpsh2zQUY+q2
-	/jigg7DGq1xMN2v9D4FMpi3kfCIlBDw=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH v2 10/23] mm: introduce BPF kfuncs to access memcg statistics and events
-Date: Mon, 27 Oct 2025 16:17:13 -0700
-Message-ID: <20251027231727.472628-11-roman.gushchin@linux.dev>
-In-Reply-To: <20251027231727.472628-1-roman.gushchin@linux.dev>
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1761607050; c=relaxed/simple;
+	bh=6OtgfqIRdZsgR1vejKSr5be3N8OY5BHziSmvSqV5jpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DlJ65NmOkJVhFrHlUQh7cdTi48C1N09ISpbAfS9PGsMc+0rEf4jlyLoHuDZVeUxxDixm60iJKTl67wd8NsooRMlD34fWf6pSOzdClT2Nl3RakhillpaPFgpLKLp9rkNw7otfMOQgMSPot7F+7UOwN4rHli5MiHc7NKDYVd1iKjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jWFpn1j8; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761607049; x=1793143049;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=6OtgfqIRdZsgR1vejKSr5be3N8OY5BHziSmvSqV5jpg=;
+  b=jWFpn1j8EOYaY9pL0j5R1OMILl6SfE0/BthX65xbJpQXjiWR5exYac/e
+   RQkt253LerDlFJB9UzNF8L8P7yHeyRksHzLaNwtf4ytRXjw/ZKq3JtzG9
+   BG8+/Zl9LrAAy/xo16DvRo3ELgH1+JLQghO4HbMwo3GHwglyrvPJjgdlu
+   burCvOsHIhlmDOI0OG4L9gRJoWF2UxpKZABPRDG6n/G/ZY0O2EkBInVmX
+   Z674pVZIwzcU3fc7nmv5XVvui9zxXkaAb1TTbvyRJc95AeK/CGfx4Y2PG
+   +83dEkbOAh2B9NL5cjMUBsDm+87Dk/bGm+vGLZoBP0l7kqmF7eCjWhvI4
+   g==;
+X-CSE-ConnectionGUID: xqxbQppmSgO7YwGvxKXctw==
+X-CSE-MsgGUID: NMdzvI8BTt60fFzy4QVHMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63736746"
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="63736746"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:17:28 -0700
+X-CSE-ConnectionGUID: CvC83en+Q7Ccr1143GwIyA==
+X-CSE-MsgGUID: jgNyviWIS6+sq/55QdfWAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
+   d="scan'208";a="184882532"
+Received: from jjgreens-desk15.amr.corp.intel.com (HELO desk) ([10.124.222.186])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:17:28 -0700
+Date: Mon, 27 Oct 2025 16:17:21 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D
+ cache flush is skipped
+Message-ID: <20251027231721.irprdsyqd2klt4bf@desk>
+References: <20251016200417.97003-1-seanjc@google.com>
+ <20251016200417.97003-2-seanjc@google.com>
+ <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
+ <aPe5XpjqItip9KbP@google.com>
+ <20251021233012.2k5scwldd3jzt2vb@desk>
+ <20251022012021.sbymuvzzvx4qeztf@desk>
+ <CALMp9eRpP0LvMJ=aYf45xxz1fRrx5Sf9ZrqRE8yKRcMX-+f4+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CALMp9eRpP0LvMJ=aYf45xxz1fRrx5Sf9ZrqRE8yKRcMX-+f4+A@mail.gmail.com>
 
-Introduce BPF kfuncs to conveniently access memcg data:
-  - bpf_mem_cgroup_vm_events(),
-  - bpf_mem_cgroup_usage(),
-  - bpf_mem_cgroup_page_state(),
-  - bpf_mem_cgroup_flush_stats().
+On Mon, Oct 27, 2025 at 03:03:23PM -0700, Jim Mattson wrote:
+> On Tue, Oct 21, 2025 at 6:20 PM Pawan Gupta
+> <pawan.kumar.gupta@linux.intel.com> wrote:
+> >
+> > ...
+> > Thinking more on this, the software sequence is only invoked when the
+> > system doesn't have the L1D flushing feature added by a microcode update.
+> > In such a case system is not expected to have a flushing VERW either, which
+> > was introduced after L1TF. Also, the admin needs to have a very good reason
+> > for not updating the microcode for 5+ years :-)
+> 
+> KVM started reporting MD_CLEAR to userspace in Linux v5.2, but it
+> didn't report L1D_FLUSH to userspace until Linux v6.4, so there are
+> plenty of virtual CPUs with a flushing VERW that don't have the L1D
+> flushing feature.
 
-These functions are useful for implementing BPF OOM policies, but
-also can be used to accelerate access to the memcg data. Reading
-it through cgroupfs is much more expensive, roughly 5x, mostly
-because of the need to convert the data into the text and back.
+Shouldn't only the L0 hypervisor be doing the L1D_FLUSH?
 
-JP Kobryn:
-An experiment was setup to compare the performance of a program that
-uses the traditional method of reading memory.stat vs a program using
-the new kfuncs. The control program opens up the root memory.stat file
-and for 1M iterations reads, converts the string values to numeric data,
-then seeks back to the beginning. The experimental program sets up the
-requisite libbpf objects and for 1M iterations invokes a bpf program
-which uses the kfuncs to fetch all available stats for node_stat_item,
-memcg_stat_item, and vm_event_item types.
-
-The results showed a significant perf benefit on the experimental side,
-outperforming the control side by a margin of 93%. In kernel mode,
-elapsed time was reduced by 80%, while in user mode, over 99% of time
-was saved.
-
-control: elapsed time
-real    0m38.318s
-user    0m25.131s
-sys     0m13.070s
-
-experiment: elapsed time
-real    0m2.789s
-user    0m0.187s
-sys     0m2.512s
-
-control: perf data
-33.43% a.out libc.so.6         [.] __vfscanf_internal
- 6.88% a.out [kernel.kallsyms] [k] vsnprintf
- 6.33% a.out libc.so.6         [.] _IO_fgets
- 5.51% a.out [kernel.kallsyms] [k] format_decode
- 4.31% a.out libc.so.6         [.] __GI_____strtoull_l_internal
- 3.78% a.out [kernel.kallsyms] [k] string
- 3.53% a.out [kernel.kallsyms] [k] number
- 2.71% a.out libc.so.6         [.] _IO_sputbackc
- 2.41% a.out [kernel.kallsyms] [k] strlen
- 1.98% a.out a.out             [.] main
- 1.70% a.out libc.so.6         [.] _IO_getline_info
- 1.51% a.out libc.so.6         [.] __isoc99_sscanf
- 1.47% a.out [kernel.kallsyms] [k] memory_stat_format
- 1.47% a.out [kernel.kallsyms] [k] memcpy_orig
- 1.41% a.out [kernel.kallsyms] [k] seq_buf_printf
-
-experiment: perf data
-10.55% memcgstat bpf_prog_..._query [k] bpf_prog_16aab2f19fa982a7_query
- 6.90% memcgstat [kernel.kallsyms]  [k] memcg_page_state_output
- 3.55% memcgstat [kernel.kallsyms]  [k] _raw_spin_lock
- 3.12% memcgstat [kernel.kallsyms]  [k] memcg_events
- 2.87% memcgstat [kernel.kallsyms]  [k] __memcg_slab_post_alloc_hook
- 2.73% memcgstat [kernel.kallsyms]  [k] kmem_cache_free
- 2.70% memcgstat [kernel.kallsyms]  [k] entry_SYSRETQ_unsafe_stack
- 2.25% memcgstat [kernel.kallsyms]  [k] __memcg_slab_free_hook
- 2.06% memcgstat [kernel.kallsyms]  [k] get_page_from_freelist
-
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-Co-developed-by: JP Kobryn <inwardvessel@gmail.com>
-Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
----
- include/linux/memcontrol.h |  2 ++
- mm/bpf_memcontrol.c        | 57 +++++++++++++++++++++++++++++++++++++-
- 2 files changed, 58 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 39a6c7c8735b..b9e08dddd7ad 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -953,6 +953,8 @@ static inline void mod_memcg_page_state(struct page *page,
- 	rcu_read_unlock();
- }
- 
-+unsigned long memcg_events(struct mem_cgroup *memcg, int event);
-+unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
- unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx);
- unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
- unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx);
-diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
-index 76c342318256..387255b8ab88 100644
---- a/mm/bpf_memcontrol.c
-+++ b/mm/bpf_memcontrol.c
-@@ -75,6 +75,56 @@ __bpf_kfunc void bpf_put_mem_cgroup(struct mem_cgroup *memcg)
- 	css_put(&memcg->css);
- }
- 
-+/**
-+ * bpf_mem_cgroup_vm_events - Read memory cgroup's vm event counter
-+ * @memcg: memory cgroup
-+ * @event: event id
-+ *
-+ * Allows to read memory cgroup event counters.
-+ */
-+__bpf_kfunc unsigned long bpf_mem_cgroup_vm_events(struct mem_cgroup *memcg,
-+						enum vm_event_item event)
-+{
-+	return memcg_events(memcg, event);
-+}
-+
-+/**
-+ * bpf_mem_cgroup_usage - Read memory cgroup's usage
-+ * @memcg: memory cgroup
-+ *
-+ * Returns current memory cgroup size in bytes.
-+ */
-+__bpf_kfunc unsigned long bpf_mem_cgroup_usage(struct mem_cgroup *memcg)
-+{
-+	return page_counter_read(&memcg->memory);
-+}
-+
-+/**
-+ * bpf_mem_cgroup_page_state - Read memory cgroup's page state counter
-+ * @memcg: memory cgroup
-+ * @idx: counter idx
-+ *
-+ * Allows to read memory cgroup statistics. The output is in bytes.
-+ */
-+__bpf_kfunc unsigned long bpf_mem_cgroup_page_state(struct mem_cgroup *memcg, int idx)
-+{
-+	if (idx < 0 || idx >= MEMCG_NR_STAT)
-+		return (unsigned long)-1;
-+
-+	return memcg_page_state_output(memcg, idx);
-+}
-+
-+/**
-+ * bpf_mem_cgroup_flush_stats - Flush memory cgroup's statistics
-+ * @memcg: memory cgroup
-+ *
-+ * Propagate memory cgroup's statistics up the cgroup tree.
-+ */
-+__bpf_kfunc void bpf_mem_cgroup_flush_stats(struct mem_cgroup *memcg)
-+{
-+	mem_cgroup_flush_stats(memcg);
-+}
-+
- __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(bpf_memcontrol_kfuncs)
-@@ -82,6 +132,11 @@ BTF_ID_FLAGS(func, bpf_get_root_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_get_mem_cgroup, KF_ACQUIRE | KF_RET_NULL | KF_RCU)
- BTF_ID_FLAGS(func, bpf_put_mem_cgroup, KF_RELEASE)
- 
-+BTF_ID_FLAGS(func, bpf_mem_cgroup_vm_events, KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_mem_cgroup_usage, KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_mem_cgroup_page_state, KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_mem_cgroup_flush_stats, KF_TRUSTED_ARGS | KF_SLEEPABLE)
-+
- BTF_KFUNCS_END(bpf_memcontrol_kfuncs)
- 
- static const struct btf_kfunc_id_set bpf_memcontrol_kfunc_set = {
-@@ -93,7 +148,7 @@ static int __init bpf_memcontrol_init(void)
- {
- 	int err;
- 
--	err = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-+	err = register_btf_kfunc_id_set(BPF_PROG_TYPE_UNSPEC,
- 					&bpf_memcontrol_kfunc_set);
- 	if (err)
- 		pr_warn("error while registering bpf memcontrol kfuncs: %d", err);
--- 
-2.51.0
+kvm_get_arch_capabilities()
+{
+...
+        /*
+         * If we're doing cache flushes (either "always" or "cond")
+         * we will do one whenever the guest does a vmlaunch/vmresume.
+         * If an outer hypervisor is doing the cache flush for us
+         * (ARCH_CAP_SKIP_VMENTRY_L1DFLUSH), we can safely pass that
+         * capability to the guest too, and if EPT is disabled we're not
+         * vulnerable.  Overall, only VMENTER_L1D_FLUSH_NEVER will
+         * require a nested hypervisor to do a flush of its own.
+         */
+        if (l1tf_vmx_mitigation != VMENTER_L1D_FLUSH_NEVER)
+                data |= ARCH_CAP_SKIP_VMENTRY_L1DFLUSH;
 
 
