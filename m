@@ -1,130 +1,90 @@
-Return-Path: <linux-kernel+bounces-872178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32FDC0F7A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:55:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79729C0F7A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0ABCA4FA07B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:51:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2407B4E4FA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E545A313547;
-	Mon, 27 Oct 2025 16:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE7A313526;
+	Mon, 27 Oct 2025 16:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0N7dVIx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iwct5VBP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D633126B3;
-	Mon, 27 Oct 2025 16:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A6D312815
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583906; cv=none; b=KKqnAufJE9RiXdPt1E1EO0YXW+OOEI/5BjdSwDwr7cFh9aEXoOvLQ4SftZGcuNnKnDF0YOsqBKYg+E+Yw3iWfFHqHX9R29E2qywByVVqHimhc3bhkmwwfn7KODHNr1EYLLpyA4y2SmGO8kLDm6dPQ3Fr7PFWZqWctXtqWGPYVb0=
+	t=1761583929; cv=none; b=UuC7ad+2BrLeEaZWKrKVXNiOikbVMSJaliKKcORumsLoqofjdcnw6tDlaPT6D+UzupN7soPk1gj54odG9Q28GKhYvC3uIdDFzto5Gv6mnnriLKhO1Dx6zJhUFECwB0JWhBX/WryHdH+TEpiFhYG2N03vxN3idB79r1Vpf4FYPFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583906; c=relaxed/simple;
-	bh=bu/lKpmMPWH4T4b2scw9A8ku2NQlDdZsGjrmXtEeFCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1Kuj2T9gq/HXvIfePVG87b5uL74QfFBcPciVMkN4fKTNdDEi4xCZgSr0gQNEHhC6/RjarO6xv4EjkkHvfKTtPcQSWQe15QvDGHFvCL0Txj8QSaGsegMS/sKezFlI4nw5DZZVYR5PDytaBoQ9K8+83H72e6/EkF9kkjQgYt2l7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0N7dVIx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566DEC116B1;
-	Mon, 27 Oct 2025 16:51:43 +0000 (UTC)
+	s=arc-20240116; t=1761583929; c=relaxed/simple;
+	bh=qXSUYkzcaxBwT7PR3VqEg24D+wripCaqvcwPYVLA5qI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gleLdXLUbtwRUam1dccmSCklDowZN0O88w8etsrgIK6WBcO1+xIdmz0S0Yb3zYq0NpvwJpGlhRDHQ20l/o06Weqyhbt5ry7jr4Za4OpEF2Xkcm/hxf76kHHwJz5ndERfEhbRERqYqc711UvGUin78gt37onFthX0+/EpEP/tmkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iwct5VBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40759C113D0
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761583905;
-	bh=bu/lKpmMPWH4T4b2scw9A8ku2NQlDdZsGjrmXtEeFCI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e0N7dVIxW3H5gN2pyjSsDsfNPiXgjx766SAXrI8ledXe2VJ2lMPjUqpgcy0z5cRGS
-	 kgIHo6F7APQLaYfucRkbBvvJLgAeWGhXoiYIVQLLLWanw7xjwioYvtYL43YusmRm1h
-	 z99ObIGGqefScff7FnhiMfa+OPm5N/VUaOqjeL9npaJryV/h4LrV6PaArOi222Jmxp
-	 PfEv12M4KiHnEBB+iGTKTDyDQ3zP+S8wyN72sxPggZ9WE7it1dANyVI36xAc8AVThQ
-	 NDL2CdmvMXAZw8tOhaD30rhkmeFXUgnXPg00pdEm3sKrmIbv9FNuI+KOxVN562mvW/
-	 Latd97tc90Sgg==
-Date: Mon, 27 Oct 2025 16:51:41 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jun Guo <jun.guo@cixtech.com>
-Cc: peter.chen@cixtech.com, fugang.duan@cixtech.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
-	linux-spi@vger.kernel.org, michal.simek@amd.com,
-	cix-kernel-upstream@cixtech.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: spi: spi-cadence: update DT binding
- docs to support cix sky1 SoC
-Message-ID: <20251027-strangely-reverence-6f47d87efca5@spud>
-References: <20251027084239.2610141-1-jun.guo@cixtech.com>
- <20251027084239.2610141-3-jun.guo@cixtech.com>
+	s=k20201202; t=1761583929;
+	bh=qXSUYkzcaxBwT7PR3VqEg24D+wripCaqvcwPYVLA5qI=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=Iwct5VBPLz0VkdkDSWA+HrPfq9WSIDgOiBU1SFjAF1AcNrlIMqb/K6BJEIAGdqnDo
+	 nSYm5SFwJ0O3gfuFSQuRtXlC8uvgpY9QZVV/RqPJlFRUdoiTZ0OKMcG76JmTNCyhtL
+	 WbbrviiIdewI9HQpiX1ojEqgxxlwT3YuG1d1NxPvTzKPrix72aQsZI6VhdLrmi6S6V
+	 FaOb6ftKOOF809X6BKto2rZEPE5roKhFJmZ0V3/pOEkikBV+jYcTxfhbXqLmYjhBzV
+	 09iymB7lCmWV2jWUt2Oiacanu77v+Gm2HVuxvqIRJc/VbiYEJ3g63piplTXo9niAXS
+	 PDsb9hJOVP+ng==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-378d50e1cccso51576821fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:52:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXIoemJXLhpyqb7uDQuB0f7ZDU+MUiQUnGP9CFloScRTJdgepC6TTAiGxXh1z8ONMBRVMc0iCJFX1h3ejc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMNcQQiqnJjk7c1nw+ECjtI6KE/JbPLhpF3RQEEkVPttp6NNJp
+	OoBZ+PWk9qYW4uFtxVvxKX6a66u9P5yWhQCaLlilJ+fhaMnJGnUv9HlJl2DyIazhDxSgT3yVKvT
+	dhXw/dMZfWhsdkxzrflR2cvXf4W5ZXt4=
+X-Google-Smtp-Source: AGHT+IFBPJYi1S4vop7Gb683MwdHCr7hm0ZlNxSJGBcGt42mr3LXF0sb06/EOe6oCAtgC1Lcmldr3eesncU595uaptE=
+X-Received: by 2002:a2e:320b:0:b0:36d:1f0e:1c02 with SMTP id
+ 38308e7fff4ca-3790778cbc4mr742181fa.39.1761583927610; Mon, 27 Oct 2025
+ 09:52:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qZ7N/F0wEws9F2Jt"
-Content-Disposition: inline
-In-Reply-To: <20251027084239.2610141-3-jun.guo@cixtech.com>
-
-
---qZ7N/F0wEws9F2Jt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-13-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-13-jernej.skrabec@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 28 Oct 2025 00:51:53 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66hnO5ZQHR8US=TdCY=o2TJRgntCDFonKY4=aQi69oSBg@mail.gmail.com>
+X-Gm-Features: AWmQ_bkqru6Db363dehTH0eyDlHZatRKL_5iBGTqBIvG6dXZWDY255VHS1_NOZM
+Message-ID: <CAGb2v66hnO5ZQHR8US=TdCY=o2TJRgntCDFonKY4=aQi69oSBg@mail.gmail.com>
+Subject: Re: [PATCH 12/30] drm/sun4i: csc: Simplify arguments with taking
+ plane state
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 04:42:38PM +0800, Jun Guo wrote:
-> - Add new compatible strings to the DT binding documents to support
->  cix sky1 SoC;
-> - Adjust the configuration of the compatible property to support both
->  single-item and two-items cases.=E2=80=8B=E2=80=8B
->=20
-> Signed-off-by: Jun Guo <jun.guo@cixtech.com>
-> ---
->  .../devicetree/bindings/spi/spi-cadence.yaml          | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/spi-cadence.yaml b/Doc=
-umentation/devicetree/bindings/spi/spi-cadence.yaml
-> index 8de96abe9da1..e75b142a1368 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-cadence.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-cadence.yaml
-> @@ -14,9 +14,14 @@ allOf:
-> =20
->  properties:
->    compatible:
-> -    enum:
-> -      - cdns,spi-r1p6
-> -      - xlnx,zynq-spi-r1p6
-> +    oneOf:
-> +      - enum:
-> +          - cdns,spi-r1p6
-> +          - xlnx,zynq-spi-r1p6
-> +      - items:
-> +          - enum:
-> +              - cix,sky1-spi-r1p6
-> +          - const: cdns,spi-r1p6
+On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> Taking plane state directly reduces number of arguments, avoids copying
+> values and allows making additional decisions. For example, when plane
+> is disabled, CSC should be turned off.
+>
+> This is also cleanup for later patches which will move call to another
+> place.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-This doesn't apply, probably needs a rebase on spi/for-next?
-Approach is correct though, but it'll be a more minimal patch when
-rebased.
-pw-bot: changes-requested
-
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.34.1
->=20
-
---qZ7N/F0wEws9F2Jt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaP+jHAAKCRB4tDGHoIJi
-0lwvAP9dIvvZKdNHcniRy6tvBX0PUWhJlaEexqHWrbXPKt0FTAEAkY8vPORYUHc7
-VeoJdBGzXyTRjF7Wkm5YpF+RkT5zZwY=
-=HLOL
------END PGP SIGNATURE-----
-
---qZ7N/F0wEws9F2Jt--
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
