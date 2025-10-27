@@ -1,85 +1,68 @@
-Return-Path: <linux-kernel+bounces-872553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D91C11700
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:51:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1763C11745
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9045665A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:51:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEAD74EE7D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9363128C4;
-	Mon, 27 Oct 2025 20:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25422323403;
+	Mon, 27 Oct 2025 20:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R9EVhyCS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1yBFjqe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D552652AF;
-	Mon, 27 Oct 2025 20:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7873C31E0E1;
+	Mon, 27 Oct 2025 20:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761598257; cv=none; b=H6YkXTXsvyZtEWD916rctj1Iy0Cwuc5X5XLEyfF3OkUEzPRd1+O9tleiPcW5iP3KLgH3vwVNUbFVFRYJKK+r4aR+/I4J4yjI7OPBBglV6hSb54WTNR212PluUi4qRNb8Rh0v0PFGpGUrM/JZFjq9M6H5yP85TvNFC/uYByQ7Lwg=
+	t=1761598753; cv=none; b=pek+iikVKneZ9598uwazCjqux2crAPxUCmXiwS5TYC+IjjBzJsXcWUFjtgUQP7/qwUGODM2dhb43AarPHjGClgQ906HxPs0moZ0Gox5GvylPNTfn+auyR3SejUx+ueFoHftJaI6nsXyQDylNF0bZnPY5xxVlrgZMAxFdbul47GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761598257; c=relaxed/simple;
-	bh=z+FDoogTKU9c2WL40dpjz8cNG7A5GjItH6nzMZSkZxw=;
+	s=arc-20240116; t=1761598753; c=relaxed/simple;
+	bh=yprLLzu/23+hltQ8hDoRSGSE9VYBXZzoi6lRcgP6GUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL3kVjc1wP5yRrbGtJVCEinkdiW2Db/OjkRnYEKPUs26Cvf/0yHm7wiXbDQghp/v/ZAVRuzzuctggeImsOMG4M2mg6XPHiPIf2hmpiGwsp/LyG4ryA+3ebplNTghUMbfgxVSRgpskULnt8OvV3BDVmE9XhZOOrc9i3jbV2qtZrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R9EVhyCS; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761598256; x=1793134256;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z+FDoogTKU9c2WL40dpjz8cNG7A5GjItH6nzMZSkZxw=;
-  b=R9EVhyCSu7tRsHzkr6GD9jwefFKyRI3uHjYNF3+8Xn1fm80c/kL2IPIu
-   ZHbR8WkxuGyc1uFQ/WogJ0HKdbTYp0KJpkbhQeIxzt0/2kC2fdCOJ8/I3
-   HsPO0V2oZCxO43+oStrP1SCBjtLq/+Nzs+JwTozNL5rks6TE5AozX9EMv
-   lE7WjZk89MfERHeTkqd2mxOlkBkH3CRbdmcoJwPEs/WojWspomas7fN0F
-   1jyfQFqTQufasN9WhHJZo76M+XSUoGAe3yhDeDCohAjHWFNwhGesWgavy
-   6kxVrURzlLOIy/dugefUzBq4tl2b3+q9aNscLn6PFVcZqjBbFCpFkz/WX
-   A==;
-X-CSE-ConnectionGUID: VZvgDS6ZRIWnYtVz3lwNoA==
-X-CSE-MsgGUID: wdqFpfIkQJSzq4QqAnGBIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75133326"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="75133326"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 13:50:55 -0700
-X-CSE-ConnectionGUID: P97fmo4ATamgPOVbmizedg==
-X-CSE-MsgGUID: LKd5bah5QcWJEkcg/3BWVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="190351070"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 13:50:55 -0700
-Date: Mon, 27 Oct 2025 13:58:16 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, "Kirill A. Shutemov" <kas@kernel.org>,
-	linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Yunhong Jiang <yunhong.jiang@linux.intel.com>
-Subject: Re: [PATCH v6 02/10] x86/acpi: Move acpi_wakeup_cpu() and helpers to
- smpwakeup.c
-Message-ID: <20251027205816.GB14161@ranerica-svr.sc.intel.com>
-References: <20251016-rneri-wakeup-mailbox-v6-0-40435fb9305e@linux.intel.com>
- <20251016-rneri-wakeup-mailbox-v6-2-40435fb9305e@linux.intel.com>
- <20251027141835.GYaP9_O1C3cms6msfv@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VgksaA3gZSPPTYUOLSwNTiwneSvAucNRxO14yQx+H+Ivk5tIJ5XWBSRETQUJyevxoln0rY0teRhihgbpB1dg/8mEHC9C1H1gRcV5UBLvcOKnylyWar30UJXKCLZDI4RXw6eiMbPnX3Uj8/bqk+Vr/G758Vcz5zKFlOVdgk+sxr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1yBFjqe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16BB8C4CEF1;
+	Mon, 27 Oct 2025 20:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761598752;
+	bh=yprLLzu/23+hltQ8hDoRSGSE9VYBXZzoi6lRcgP6GUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b1yBFjqe7L7wiSakMaFxsykOaqlqtoXS31LKAHj3epXm3lgg8XIkT42EhxqZMwgO3
+	 YE7454XpIAkuPSYsGIFN/QE3es/tu2qd9U+QkuR3owshZPsToFp83dDaCtkCVgoRzO
+	 35KmyTDhGtTE2j+vKr6oONd4rMigXy3t7Mz/aWAaFUSWnkXbr3O2K/CfP3fGUjZjVR
+	 ocs11llI7nRErN6nMomsXTtegUW8LQSEQwpUWBFap/NFEJuaM5hZR/g+S8dZg0YoP4
+	 kMd/jISG6W4xXr1WRJwsmFiTwkZDgYkTmhOkqHuSDGeAngmyCunnKdLx+yPfkVqrjL
+	 S34035HO3C3Gw==
+Date: Mon, 27 Oct 2025 13:59:06 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <kees@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH 2/3] ARM: Select ARCH_USES_CFI_GENERIC_LLVM_PASS
+Message-ID: <20251027205906.GC3183341@ax162>
+References: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
+ <20251025-idpf-fix-arm-kcfi-build-error-v1-2-ec57221153ae@kernel.org>
+ <CABCJKuesdSH2xhm_NZOjxHWpt5M866EL_RUBdQNZ54ov7ObH-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,28 +71,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027141835.GYaP9_O1C3cms6msfv@fat_crate.local>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CABCJKuesdSH2xhm_NZOjxHWpt5M866EL_RUBdQNZ54ov7ObH-Q@mail.gmail.com>
 
-On Mon, Oct 27, 2025 at 03:18:35PM +0100, Borislav Petkov wrote:
-> On Thu, Oct 16, 2025 at 07:57:24PM -0700, Ricardo Neri wrote:
-> >  arch/x86/kernel/acpi/madt_wakeup.c | 76 ----------------------------------
-> >  arch/x86/kernel/smpwakeup.c        | 83 ++++++++++++++++++++++++++++++++++++++
-> 
-> How does ACPI-related code belong in the arch/x86/kernel/ hierarchy?
-> 
-> Not to mention that arch/x86/kernel/ is a dumping ground for everything *and*
-> the kitchen sink so we should not put more crap in there...
+Hi Sami,
 
-Right. All the functions in the file start with the acpi_ prefix. It could
-be kept under arch/x86/kernel/acpi/. The Kconfig symbol X86_MAILBOX_WAKEUP
-would have to live in arch/x86/Kconfig as there is no Kconfig file under
-arch/x86/kernel/acpi. ACPI_MADT_WAKEUP is arch/x86/Kconfig.
+On Mon, Oct 27, 2025 at 08:53:49AM -0700, Sami Tolvanen wrote:
+> Instead of working around issues with the generic pass, would it make
+> more sense to just disable arm32 CFI with older Clang versions
+> entirely? Linus, any thoughts?
 
-Does that sound acceptable?
+That would certainly get to the heart of the problem. I have no real
+strong opinion about keeping these older versions working, especially
+since we have no idea how many people are actively using CONFIG_CFI on
+ARM. I will say that this particular issue is rather exceptional (i.e.,
+I don't know how often this would really come up in the future) because
+this code is relying on the fact that these indirect calls will be made
+direct by the compiler and checking for it, which does not seem like it
+would be really common in the kernel otherwise. We would likely have to
+forbid future use of the generic pass as well.
 
-Thank you for your feedback, Boris,
-
-Best,
-Ricardo
+Cheers,
+Nathan
 
