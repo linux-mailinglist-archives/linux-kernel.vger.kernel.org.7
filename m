@@ -1,177 +1,204 @@
-Return-Path: <linux-kernel+bounces-871455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0168DC0D4A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:52:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0076DC0D611
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D07F734D01A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1A153BFD6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94772DE6F5;
-	Mon, 27 Oct 2025 11:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A8C2EF66A;
+	Mon, 27 Oct 2025 11:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J3XNqeZl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xi/iZA5L"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573E329408
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC8C366
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565950; cv=none; b=m5m66PY4nHUvgsdUp5GMLSQV3qf/Z1lpP/utkjHMRsMHDHg+5Gv4Id/JRRSd6AtEXHmHm92/kU26584nCB70BbTlDLWRfhp6ZSMSBmPwDOfssNCuMs3cQw8r3DTSpVJXe83ektv92FrCysmju+PxE8Dx25BCXRF81cs7Yta4J9Q=
+	t=1761566027; cv=none; b=ToVL/kD2PyJkDdWCqIixwKUZ7471tTQLs6qfxRWm6nedbbzuaNbESRWzRWfHkDELnIy8vFHpUMPxGYh7xdycnny89mQdNX8211Qovs4OHcSB1xTZWlbAnFupTxbsfMv4LPDvGkfoyu8FgCFAPre3eOVwk49ZzKXxUt49YOC8uEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565950; c=relaxed/simple;
-	bh=mdgrf+DBgyuvAY2JdB7oZkiPY7ecJmiVFeBaofrEzOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtNfetcH+3S2eS7PvhQq5Pp+1p7fhD8zqvlkUdxrXK6XYlodnEHirQzMEdDuF3Y0wPu0wDLXi2KI4POLoqbpaebuvcLEFwoJzwdHw6yAOXaylbxXb4u5IqYZfYRpbHdtS6s0vfB74xswSHiEX7r8Yoa2FWTiuZAh62PgBpyniTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J3XNqeZl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R7jJCN1033987
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:52:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=MBKzjZaWWFsbgsj3/CgK2NUT
-	dutBHRTWeINDHOpYMbw=; b=J3XNqeZlhxkCJvGfLJNTlPaBfV9/CW2HtblJjmTw
-	wRroR/5jC4L6SPeM6hu8dYCPr1YG1PXcthaPvEdK2Jo4qWv81iMEJj6NPj5fG+n3
-	jdoYOH5HUR2Bh5T6y1joAqTgpaC2Fh1g/Gl3j/FIxQn+RM7vZI0rXXiWyxaln6f5
-	8g35D0fOza4qFPToCFXn8QLjTnpjb+EpY25xi/g8/21RKwhhy6pk/ODcOG6WoCIA
-	tTkUkE/QT0GgW64m+E2bhl/mlL62BRgFJLym3vufLyOiYHwfEMlgUNyjIVp4qNiF
-	gELwQnCsr1HALvmHLuBcD51VX1h/0tj8VhDV4tLukeR+ug==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a0px6mc86-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:52:28 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e892acc0b3so151284701cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:52:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761565948; x=1762170748;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1761566027; c=relaxed/simple;
+	bh=7BjcZ05zih1jpYLlSr+edVVRV3ZK4520Ony0YbCJSws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p2pFSCDA2PAGbPQTujoBPoGYXTBSJgnyl32gYhAn/66umAU8z/plb/+J8xO1D6fFV83X34E0+dMXA0/5iulYYYflwmcZtARg/9OC9avo6aukUGpQT+KwAiLbJl4zW61SE7yS/O2BQiJrbBB49rIOPKpof0ef6stNQ/pFJTYPVE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xi/iZA5L; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-654f03136c4so1167151eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761566024; x=1762170824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MBKzjZaWWFsbgsj3/CgK2NUTdutBHRTWeINDHOpYMbw=;
-        b=ONDctxl6voePiAA1tUVclAefgclcTmgJIB7RM5VuSnjxWzZxy5A6wzFjwN56gky/aj
-         WjmNo6abYwDh7PE67R7VpCxZ2/s2aSfHNuZ/z7wsgjEZL+qf3XCdRj4E370gt9Ojf5Bz
-         4OWG8KWC9kR61hT5r1bOtiiXpTdmsuDZqhuM+NjZ7KMpLowP3bEsIBQvlrUkVBnNbhJ5
-         H8bmnKtYrc1iyagd1+tZYc1uvGqAqTy4gJwLpeRbZol1UVVbygWQ9mj4dy1/eIEnxSwY
-         pTP5BTRicXGlL4zRUM6LY0W+o/38NliYiH4byUPMKlEa99OC3/gPjnJt2EQiqul2oQGs
-         MiSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8VBXzu2YvR11BJoj5gbobb8nnWgGBfX6jzgiU+4MqhCL4JLlDUJAhAONqGh3zRofwnDXx+9xkcKKxkhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMeuBame3TbGw5LUR+3pSfAb3fEw40eij4/4+x3US0Zsz+KMLY
-	K3ZHf0DIpDcwp5A/sAaeApirsIS2LVMU9afJCd4O3BqnUykkFCDb1GSsjLhhc+ni4nBBYjKPjFn
-	bqi6T99+QULLa6nBCpNAO7c+XH07C/YRFlx/xs6KLnmqdKjA5poWpt+sT+ruIZCyt76c=
-X-Gm-Gg: ASbGncsQZzT1k+GQBpLUiFWrkSSTAe1x1pucQU4uYslecpYgTjSruZf2+1zMM2pmuJN
-	j0Qg4lleHy6oHh9giJy/wEkSz7AiRXRPkzOXcIFTDHCvHa9oJb15ls0BIw6MgOhnnKVM/GF3XBM
-	oQAAlTxYUap1laSPxQSGRwSjVVqyapG9jR6MiK/bCSiMTM29KPCCMZyGEMn/wnj9lMFW0qO77gc
-	wqzQXGJqDd5Yu7EvHmZ+migh0K6FBDytnMlgQkCjD9IiHlpLhHsJxMtT7WSz+d2qWg65qFU6kBI
-	5dK55p6A4nxfZKvja8905KInfg2V2+vbqJ6qIL026I+Z7nw3q0yaiaMjExjmG+ETQIY0GDevDeL
-	L4hIqbNBkrSlY38yOK0btPvQwnJf9weJ0ywPemE0APk6DkEsCSFFbTpqcroyMECDY9MNcbKLmwp
-	5ez1wV4OrMfO1m
-X-Received: by 2002:a05:622a:1920:b0:4b7:a62d:ef6f with SMTP id d75a77b69052e-4e89d3a4691mr416787231cf.64.1761565947278;
-        Mon, 27 Oct 2025 04:52:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGavpCWYKjWaaA8w0dxfApMsNHDEaRffgbBB7gQqEAsTlkalhABoijtu8cBYGS8qrORyH9nbw==
-X-Received: by 2002:a05:622a:1920:b0:4b7:a62d:ef6f with SMTP id d75a77b69052e-4e89d3a4691mr416786941cf.64.1761565946775;
-        Mon, 27 Oct 2025 04:52:26 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f41c3csm2271056e87.15.2025.10.27.04.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 04:52:25 -0700 (PDT)
-Date: Mon, 27 Oct 2025 13:52:24 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yongxing Mou <yongxing.mou@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
- QCS8300
-Message-ID: <drmrkeukgua3w4p3jixdwq6dvj4xj36vvgk2kvwvhpqfk6le5g@tschh7rpsg4a>
-References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
- <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
- <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
- <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
- <6c195b42-d994-4d24-9c40-48d8069304e3@kernel.org>
- <rkuihu3pmhexeahfch6j7bvwn5rn4ecccbhamluh7fas5qgaup@av2foeiwmcz3>
- <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
- <cwuecyparlinhtdqckff7vdqpkio2kk7dwemzfao6qkhnuzhul@mfyqdphfvbdg>
+        bh=r+JCIx9N9UMsFHoni9806vgCcOX0IuOoBw4ayA9zElg=;
+        b=Xi/iZA5LrMo02Ru7qhvyShPGjupfB7AWE1Ohmrvz6h3asuyiA/Kc0hOsM3l+X8JzEN
+         scF5rxLlULrb8bToDVaKCKk5ZsJIz2dp/67Myj/6JeQT6w2Fgxt7YFlVr0q7IV4SYxr/
+         k+/vA3aFuj5ipJs7W7hjlKp6qY+A8azt4udrEJzsIzRApiACBZRSR25gWqQfp/WtwDy7
+         He917/CwLUKlPnzCOqHM29j2JR2kyIVIoNd9JJqTPHQ/iv6Z5Y1vwbNSkldQMsZbg2Cd
+         Up1rLqFQrn7kBqRjOb5mBCOtF6MBMRmpt8I0gy9dHGuZVErJU3hEy6c793dYaB4a344Z
+         r29g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761566024; x=1762170824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r+JCIx9N9UMsFHoni9806vgCcOX0IuOoBw4ayA9zElg=;
+        b=YmgcbTnuw0eI+ROQipmLjVFyDxrPrSwE/ghd4EuJvIdCp21UQTjVFSV9Jz5kawk2TN
+         IniQRjRlgeT48CCvlraySHfCcLjLtguczrpccS0ncd2X4hhAkgoCPiqLXBnuEOC7qNj0
+         11Dn+hF+RRYI1VOG/pfcwXZ1UnfqQfkAFsjffQiMDLI+4yL6jfz+QZniekc13cmGYhbn
+         jG/on0qMbE5CfFttzehR29enMe9tLGxIqrbIJoznY4lEMB24hMva00/Lrrl3FCoDN4ea
+         UlYogmPQCNHbZpSlyq58usv8S9afYSe0YQTHgb2gKCP7Obw5uX38TRwFfl9tGwENNy5O
+         b8/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUvmw5snk6uzz3OOr3OzwKQ91sX4mh1yMAtzyYpcsmrSy9a7odYaGU0Yw25fYdM+MeilijM2bAr5S1iUWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp9l72Mi6qF/GvlgewBS/LmgHAA6XenyJVTWYQzGLLAmj9l1pI
+	awye7Cd2DQJ263DU3wEJ31O5dm1tbvVhuv2blmUuzRpKgA1RXweQfQ5x/6M+BMTUtfbYRYyFl7d
+	3bcbnfGna0HYTqnw16JNDVJ0ouAVk3+5CQFnYY45+bEkZ
+X-Gm-Gg: ASbGncs0xfnsV1xLARdWwe9PZhYrqN1x0jAjvH9AeDcaN2uGRBZNwsFw2/pZlixlOQY
+	0lz3dmbphG52vhll8a707MqI7+icOS84l18DKdEmGiU6C+UK4ieZvhfNeOykDSvEfO8lJw5LLVz
+	A5xeAZJ0O90UPy6q+yb8jrD/veWBBFGD+JC/+TQGcT3jmYpNNmk9eGzkoUqoDvpCk5NBF89qbWr
+	UZS2BjFTAe+J580z5rdv//JvoN0KcECnj8tQ7nOfZE/lqVx9JRafIkgDJ67wsKQwHI8rcgAPBC/
+	u7w3D1U=
+X-Google-Smtp-Source: AGHT+IH0iPJMGQvhOuM8mY0VFND0YjjgxyBg4rxvudWNKZ8wuD0Q5l+0cNUItegjBjtjC9hU+uux9lD/gtOpDc0CMps=
+X-Received: by 2002:a05:6820:2918:b0:654:fd90:bdcb with SMTP id
+ 006d021491bc7-654fd90c601mr1447002eaf.5.1761566023690; Mon, 27 Oct 2025
+ 04:53:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cwuecyparlinhtdqckff7vdqpkio2kk7dwemzfao6qkhnuzhul@mfyqdphfvbdg>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDExMSBTYWx0ZWRfX+t9iX3rjH1R/
- QM2JTk3DyUHrLe8NfIUTxBVJYpGe0fMzZsAFWF13SdinLR7DJKveHKTU2PEsqo/u4cj2VYGSW26
- NRRKueq4FMBw92t2nBIjxLVOyG/DTFUkOoVoGAZGzPuNIkPy+Ik3QlxfK/8Sl0KUZMVyHMNnlr7
- nyyz3BWa4HzzIrVUeKcZ/VWKLFqD76QGs84sVjItjS4KAQiH124Gu5rlcvXVaesMChlsSY2GEla
- Jk3ZbKd1JC4DvA0W5UR1/Buoe20aejOAwjihzhek75eLTgz0HBMtWpJtBvbUNGW8fbLMQ8xglME
- NLMcGIzSt2bRqEBDEeP7kV3Df6R9jYRqbVU1yRSk96ppcTlV5ZHG8lP7v2w+v728VeCbddWn/0U
- hkG5XbF5CmGXb1N/5YZLXiJ6UPF51w==
-X-Proofpoint-ORIG-GUID: aUcqK-lp3Prk6azWvBAFjkk8fgEaqzeg
-X-Proofpoint-GUID: aUcqK-lp3Prk6azWvBAFjkk8fgEaqzeg
-X-Authority-Analysis: v=2.4 cv=WqMm8Nfv c=1 sm=1 tr=0 ts=68ff5cfc cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=CcKo3yaoeUO6NfmZTnEA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0
- suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510270111
+References: <20251026091351.36275-1-linmq006@gmail.com> <20251027101451.14551A49-hca@linux.ibm.com>
+In-Reply-To: <20251027101451.14551A49-hca@linux.ibm.com>
+From: =?UTF-8?B?5p6X5aaZ5YCp?= <linmq006@gmail.com>
+Date: Mon, 27 Oct 2025 19:53:25 +0800
+X-Gm-Features: AWmQ_blk3uq_5rtQV412EY7V2h_deFBjeohYtVY_FLPkTWCodoGGNeoKyoGDHBc
+Message-ID: <CAH-r-ZG8vP=6qH42ew26BMBL9dRB3OtLUeFmMmKXzp1tnKvkxQ@mail.gmail.com>
+Subject: Re: [PATCH] s390/mm: Fix memory leak in add_marker() when kvrealloc fails
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 08, 2025 at 10:40:39PM +0300, Dmitry Baryshkov wrote:
-> On Tue, Oct 07, 2025 at 03:43:56PM +0900, Krzysztof Kozlowski wrote:
-> > On 27/09/2025 08:26, Dmitry Baryshkov wrote:
-> > > On Fri, Sep 19, 2025 at 01:34:39PM +0900, Krzysztof Kozlowski wrote:
-> > >> On 18/09/2025 13:14, Yongxing Mou wrote:
-> > >>>
-> > > process in other patchsets and in my understanding on how to describe
-> > > the particular hardware block. The changes were reflected in the
-> > > changelog. If you plan to review this patchset once you get back from
-> > > your vacation, that's fine. If you don't plan to, I can ask Yongxing to
-> > > send v20 just for that number.
-> > 
-> > Solution for me could be to ignore Qualcomm patches till they reach some
-> > sort of maturity.
-> > 
-> > I am not planning to review this patch, because:
-> > 1. I already reviewed it, so not really necessary, but even if I wanted:
-> > 2. It is gone from my inbox...
-> 
-> So... Should it be resent to get it back to your inbox or should
-> Yongxing just restore your tag on the grounds that the changes were not
-> significant enough to drop it?
+Hi, Heiko
 
-Granted the lack of response, Yongxing, please send the new iteration of
-the patchset.
+Thank you for the feedback.
 
--- 
-With best wishes
-Dmitry
+Heiko Carstens <hca@linux.ibm.com> =E4=BA=8E2025=E5=B9=B410=E6=9C=8827=E6=
+=97=A5=E5=91=A8=E4=B8=80 18:15=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sun, Oct 26, 2025 at 05:13:51PM +0800, Miaoqian Lin wrote:
+> > When kvrealloc() fails, the original markers memory is leaked
+> > because the function directly assigns the NULL to the markers pointer,
+> > losing the reference to the original memory.
+> >
+> > As a result, the kvfree() in pt_dump_init() ends up freeing NULL instea=
+d
+> > of the previously allocated memory.
+> >
+> > Fix this by using a temporary variable to store kvrealloc()'s return
+> > value and only update the markers pointer on success.
+> >
+> > Found via static anlaysis and this is similar to commit 42378a9ca553
+> > ("bpf, verifier: Fix memory leak in array reallocation for stack state"=
+)
+> >
+> > Fixes: d0e7915d2ad3 ("s390/mm/ptdump: Generate address marker array dyn=
+amically")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> > ---
+> >  arch/s390/mm/dump_pagetables.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/s390/mm/dump_pagetables.c b/arch/s390/mm/dump_pagetab=
+les.c
+> > index 9af2aae0a515..0f2e0c93a1e0 100644
+> > --- a/arch/s390/mm/dump_pagetables.c
+> > +++ b/arch/s390/mm/dump_pagetables.c
+> > @@ -291,16 +291,19 @@ static int ptdump_cmp(const void *a, const void *=
+b)
+> >
+> >  static int add_marker(unsigned long start, unsigned long end, const ch=
+ar *name)
+> >  {
+> > +     struct addr_marker *new_markers;
+> >       size_t oldsize, newsize;
+> >
+> >       oldsize =3D markers_cnt * sizeof(*markers);
+> >       newsize =3D oldsize + 2 * sizeof(*markers);
+> >       if (!oldsize)
+> > -             markers =3D kvmalloc(newsize, GFP_KERNEL);
+> > +             new_markers =3D kvmalloc(newsize, GFP_KERNEL);
+> >       else
+> > -             markers =3D kvrealloc(markers, newsize, GFP_KERNEL);
+> > -     if (!markers)
+> > +             new_markers =3D kvrealloc(markers, newsize, GFP_KERNEL);
+> > +     if (!new_markers)
+> >               goto error;
+> > +
+> > +     markers =3D new_markers;
+>
+> This is not better to the situation before. If the allocation fails,
+> markers_cnt will be set to zero, but the old valid markers pointer will s=
+tay,
+> which means that the next call to add_marker() will allocate a new area v=
+ia
+> kvmalloc() instead of kvrealloc(), and thus leaking the old area too.
+>
+> add_marker() needs to changes to return in a manner that both marker and
+> marker_cnt correlate with each other. And I guess it is also easily possi=
+ble
+> to get rid of the two different allocation paths.
+>
+> Care to send a new version?
+
+I'm not sure if I can make it right.
+Do you think this way can fix the leak correctly? Thanks.
+
+```diff
+static int add_marker(unsigned long start, unsigned long end, const char *n=
+ame)
+ {
+-       size_t oldsize, newsize;
+-
+-       oldsize =3D markers_cnt * sizeof(*markers);
+-       newsize =3D oldsize + 2 * sizeof(*markers);
+-       if (!oldsize)
+-               markers =3D kvmalloc(newsize, GFP_KERNEL);
+-       else
+-               markers =3D kvrealloc(markers, newsize, GFP_KERNEL);
+-       if (!markers)
+-               goto error;
++       struct addr_marker *new_markers;
++       size_t newsize;
++
++       newsize =3D (markers_cnt + 2) * sizeof(*markers);
++       new_markers =3D kvrealloc(markers, newsize, GFP_KERNEL);
++       if (!new_markers)
++               return -ENOMEM;
++
++       markers =3D new_markers;
+        markers[markers_cnt].is_start =3D 1;
+        markers[markers_cnt].start_address =3D start;
+        markers[markers_cnt].size =3D end - start;
+@@ -312,9 +311,6 @@ static int add_marker(unsigned long start,
+unsigned long end, const char *name)
+        markers[markers_cnt].name =3D name;
+        markers_cnt++;
+        return 0;
+-error:
+-       markers_cnt =3D 0;
+-       return -ENOMEM;
+ }
 
