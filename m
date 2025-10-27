@@ -1,110 +1,107 @@
-Return-Path: <linux-kernel+bounces-872312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F34DC0FE30
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:19:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9D8C0FE3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 390374E6031
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:19:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 59ADD34E601
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D139C2D6E66;
-	Mon, 27 Oct 2025 18:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BE02D839A;
+	Mon, 27 Oct 2025 18:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GSgRno/X"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="hqARmNiw"
+Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192E619D07A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588332D7806;
+	Mon, 27 Oct 2025 18:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761589162; cv=none; b=P+ytAFBecZ2j5SpiDkMTzOFCfvD/wMsHwNgGMt7PCS6IoFMO+M6Xje6murb6rdZLw1NOdu8PuEaVGbzGFKlDgxO/uq6iIqZU41FIkTmoHjjkLrhw2yVhYHRpdCbr1xp4K4CE7CotmvNt4KZAURoj2kmF8Rhu0Mwb5dJm9mWu2Tw=
+	t=1761589188; cv=none; b=IKLhPaduEOtaFl+4E4wztN8AdSI/WZ/zWMrPWcvcX8YLfQ6tVUJ9Qrt+m8n9hVY51dSxxlJyAH+N6US1+HV3vsNcOlogyUW4lOoOZNhGyOhDJZrQGpgDvXdqyR92WVBTTUcPuhkYN5hubbWDxo6TTkW9xmZgBD0YbqIKK9/TEQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761589162; c=relaxed/simple;
-	bh=WHUBBuQ92AB0Pvm/bWJC4HM7jOvJMDQLeQJKDyM79nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gv00z5wjUxiBFtBDDxLTdRzSOlMq9Z+jZWZy+592ioj8tKkA9IxOSEl04pN8g8uGFMvZBg7k8OxSP7xrG9knLbBUKI9CaR+CI6BZyoxr6WkpcPjb//LZxVoMhvIzE/de5S8oBd33rSkJM/Mpy4DQiDUfLiIu41cc2rgDNS16QOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GSgRno/X; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761589160; x=1793125160;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=WHUBBuQ92AB0Pvm/bWJC4HM7jOvJMDQLeQJKDyM79nc=;
-  b=GSgRno/X1SxQ06y5cdJOG2kNIUhpbizbwX9CUThVlsws6qHHKslcISrC
-   ybwyLzHllwFowCNUYFDnJ7KeZWaQGOYi5mpkG/kgsQvP7NWfbSDW+mAwX
-   6rbGgGd4ha9K+BeVS4UTB+DvwT1+Bp8GRgw87h2dObxTozkUNJ2qGVgZF
-   aYXcj1P1h/R7mZUGPXQzIxOdhqxvrRTmVYdQlQgRCPjG1PUyyl2R+IouL
-   isjpzj1a2ukcxoIatTHab/ulhuo1eoW4SZYp+7q/a5ZBV2a8HB96rfPTr
-   FBoTZxWslPIsi0H/h/IYf8CFtPw5DBRM/6KmAzFseBX5e/iGg/HH2raTm
-   Q==;
-X-CSE-ConnectionGUID: H6K+AWOnT1i3yk0Z2ud8xw==
-X-CSE-MsgGUID: mrakobmFSBWO7gNYoA0wzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63585580"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="63585580"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 11:19:20 -0700
-X-CSE-ConnectionGUID: DE8nyPA1S6SJyuGJpeOcrw==
-X-CSE-MsgGUID: plXIBNdHQwGYJTFt3uKExQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="185465951"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 27 Oct 2025 11:19:18 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDRoK-000H53-0R;
-	Mon, 27 Oct 2025 18:19:16 +0000
-Date: Tue, 28 Oct 2025 02:18:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: LiangCheng Wang <zaq14760@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: ERROR: modpost: "vmf_insert_pfn"
- [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
-Message-ID: <202510280213.0rlYA4T3-lkp@intel.com>
+	s=arc-20240116; t=1761589188; c=relaxed/simple;
+	bh=11CBatggCCItYnQkkvuhnAvNnafMsLqpFZJIH0JJMsY=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=RRB3pg14Z+KJDyQvcrXpPTpFVsz4Ot9C1teB6lj0sOvBPb+Zi+Nv+FG8zvDsoFIOtq+EXmjWMm5/Q9mKhfEMDxud29iTHRwxKxeurkLU26CLZHplMEDCiVq0ZUr4HgAySZ++v/Nqakw4REhlH8cPiC3hzghnxx7W4BYBpwuZnVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=hqARmNiw; arc=none smtp.client-ip=142.132.176.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 9416840D1B;
+	Mon, 27 Oct 2025 19:19:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
+	t=1761589178; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=36Cbfb/vjeQ/MuEIGnK6bEu0FQjCPhD4xvsTx+U2YiI=;
+	b=hqARmNiwPpusSwZKYVqiX/9ApyoiqEQ34kuYnR5OGtVLZuJCUemXxsuyCtUKGlv3pq5bo0
+	VVnO2r9zlxTW1PAB6V1GeVc62DBZvqYa9UnFy0MwiAcHnEXFnHM05jUkspAdBO7fWYaP+y
+	urmSrkx/NUvm5Z6HBpzFwW2itsn+taP8SA28E8tHErXq4vUisZrUWn+M/umpX6vzHe408F
+	W3eqbHZWCfFvHz6QDWNTNIvaRvs5EeFKviSmsv0bPFZFLnZpdGgEwTYPRatYYhMsubajif
+	YjeqZ7OWCAGIRsKDHG4McORglLhhQK3i5cdkFLGwJyEe6Z0TnQup9qGF9TW7Jw==
+From: "Dragan Simic" <dsimic@manjaro.org>
+In-Reply-To: <60a1046c-437e-400a-8e2c-391cd471c358@kwiboo.se>
+Content-Type: text/plain; charset="utf-8"
+References: <20251027154517.136976-1-diederik@cknow-tech.com> <60a1046c-437e-400a-8e2c-391cd471c358@kwiboo.se>
+Date: Mon, 27 Oct 2025 19:19:36 +0100
+Cc: "Diederik de Haas" <diederik@cknow-tech.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Johan Jonker" <jbx6244@gmail.com>
+To: "Jonas Karlman" <jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Message-ID: <7dc31259-c172-de0e-554c-2563014b9c2c@manjaro.org>
+Subject: =?utf-8?q?Re=3A?= [PATCH v2] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
+ =?utf-8?q?_rockchip=3A?= Harmonize regulator formatting for Pine64 rk3566 
+ devices
+User-Agent: SOGoMail 5.12.3
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: None
 
-Hi LiangCheng,
+Hello Jonas and Heiko,
 
-First bad commit (maybe != root cause):
+On Monday, October 27, 2025 19:06 CET, Jonas Karlman <jonas@kwiboo.se> =
+wrote:
+> On 10/27/2025 4:39 PM, Diederik de Haas wrote:
+> > The regulator node properties in Pine64 rk3566 devices were formatt=
+ed
+> > rather inconsistently. To name a few:
+> > - 'name' was sometimes put at the top of the list, while at other t=
+imes
+> >   it was (mostly) sorted in alphabetical order
+>=20
+> Personally I prefer to list the regulator-name as the first property,=
+ I
+> think it makes it visually easier/quicker to identify a regulator wit=
+h
+> the name prop at top.
+>=20
+> I typically try to use the following prop ordering for regulators on
+> board DTs I submit (and review):
+>=20
+> - regulator-name as the first prop (to quickly identify the regulator=
+)
+> - regulator-min-* before regulator-max-* (natural order)
+> - regulator-* in alphabetical/natural order
+>=20
+> Maybe this preference just comes from a long history of always puttin=
+g
+> id/primary key/unique identifiers at top or beginning of data tables,
+> classes, structs etc ;-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-commit: 0c4932f6ddf815618fa34f7403df682aed7862b5 drm/tiny: pixpaper: Fix missing dependency on DRM_GEM_SHMEM_HELPER
-date:   5 weeks ago
-config: riscv-randconfig-r072-20251027 (https://download.01.org/0day-ci/archive/20251028/202510280213.0rlYA4T3-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510280213.0rlYA4T3-lkp@intel.com/reproduce)
+Oh, I actually agree with your and Heiko's preferences when
+it comes to the ordering, regardless of that being personal
+preference, tribal knowledge or just common sense. :)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510280213.0rlYA4T3-lkp@intel.com/
+However, that's quite conflicting with the current official
+rules for writing DT files, which don't recognize such exceptions
+at all.  Perhaps we should attempt to incorporate such preferences
+into the official rules, because such non-standard ordering does
+make DTs more readable?  Following the rules is good, unless it
+makes the end results worse, IMHO.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "vmf_insert_pfn" [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM_HELPER
-   Depends on [n]: HAS_IOMEM [=y] && DRM [=y] && MMU [=n]
-   Selected by [m]:
-   - DRM_PIXPAPER [=m] && HAS_IOMEM [=y] && DRM [=y] && SPI [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
