@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-872205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74B7C0F900
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:13:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDD2C0F99C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5706419C3329
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF80462215
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98457315D2A;
-	Mon, 27 Oct 2025 17:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B913168FC;
+	Mon, 27 Oct 2025 17:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="oEnRC4Db"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqZr+eK4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB0F30FC05
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912BD316905
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585174; cv=none; b=Np6pRmmRdHiY0UE7XQchzH8HPzuqmK1iedcQ3RIx6EaZMfoaZb728WX9wqKtTuHAgXl8pVY2yo8NxJ2owdSLSeA7ngs3w5Vn+G3yWVtbePTZ4J62AplJRX8tbt4JGM3nYxpvqc2dBRwKng+XGsNGMYsYpqw1+2HhL92PEWVl9m8=
+	t=1761585312; cv=none; b=dyfVhiczoVsLGIgrPmIfVdb4VKtm8l/p28Bl8Gm9Wy6967AUulxv6/8hhRdB5Zwpl0QgekcEfBPClLWGzwHPcrO/bpv2z2eWpGkUG0zKirqy2F4h+ZdbSZQmmho2oSWbqhO4lUI6TIltgHdlyo11FpFgasZHH19SwD8EVHm911M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585174; c=relaxed/simple;
-	bh=DDUOz6pjS0RFP4FR/CFhn3TMmkuBCJmIvoPoMyDYCzk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KlE1UHCiQKjuyJgvJs7+SjFLiTXqhwTI2dTfYkv6I1z5CrzCZRadYm4s5DRER8lbjSKR2XU6lfa+wDb6r5JLK0ypluTzdSPQ7kqIR+QMadcr3c95qRWPvud7tckaVsOuj8WEbDCjURDLdxnL6pCgj8egeynouYPDTXmwQuidsTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=oEnRC4Db; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id 473BA68ECC7;
-	Mon, 27 Oct 2025 18:12:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1761585164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rVfZIHqcFGwmFDGY9gRpKS0fz36XexTpMSYfxIv3Xkk=;
-	b=oEnRC4DbwPWXDWKFgpZ2SqaFL6q2n3B9p09ycmim6OYvGhAlaE9MQOgiWEwJb6c7Zk3rCG
-	MFtxPFH1b8oQVln1BUNDF1APUQw2Yx0ED809EhFic6EqWzHcSLMKp7kxtO7ZAPgFyxYF5k
-	JLQmTrkCXevghrQDat0EAMltxXGxs3OvcNJN+aQea0qhjjch5TFdKtPWdHdx7WF1BKhxtn
-	TCOzoa6XPJTqbNwNvXUVoNlwkep6RYZ1hIbV1koR4a6QKnmMR5Ki/DJQK/SK4JVVaGYOsd
-	MJpCrW4Mf2NErbdeD5SjnRQBBfwkqjDNOpX7XteeZ3zFk89Q4V6AicRLh4F/xQ==
-Message-ID: <7d1bf3eacd59a3cea1330a16bf7a9a328cd6d806.camel@svanheule.net>
-Subject: Re: [PATCH v6 3/8] dt-bindings: leds: Binding for RTL8231 scan
- matrix
-From: Sander Vanheule <sander@svanheule.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Walle <mwalle@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>,  Bartosz Golaszewski	 <brgl@bgdev.pl>,
- linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek
- <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 27 Oct 2025 18:12:43 +0100
-In-Reply-To: <20251026215957.GA2994223-robh@kernel.org>
-References: <20251021142407.307753-1-sander@svanheule.net>
-	 <20251021142407.307753-4-sander@svanheule.net>
-	 <20251026215957.GA2994223-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761585312; c=relaxed/simple;
+	bh=n10NlR5AQZVuyebRk7B2SUL8HffpvVGuK0dPunXc6Is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MFpOKdAGh4Ydj0/ScvwGLetZ1xuSwooTsmA70mbOxqdFX266ZTnMBMsSCVdltUPdxzmrr2KhjFfUFJTOmcQRNbVxH9CGqRYK9utftmHvajmWLJLsZDdpQeGrpbbztMvMlFLtSdaiUl60wE1cz3cqEtTIWU3AdyS6tkQnnUSIN7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HqZr+eK4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12AE2C4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761585311;
+	bh=n10NlR5AQZVuyebRk7B2SUL8HffpvVGuK0dPunXc6Is=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=HqZr+eK4r0DzyGqvmeYi5mqxzyyqHWBykNMpoMfE03X5z6pt5O8eOzMRYd9U8ZUQh
+	 eYITan5jDOYW+kPveVqXTdkK4/68+CF7oh5DF96MzpETlIk0uh4aLwwmhsahp6rIJn
+	 hb9MZzElerUW3qdZGtZinkVPXmRKFFox7+oXIB2S4M/pqJ4Ql57IqzMoKRgUaT6FkK
+	 jOYZyLvn00EyjpiJgUwyHOibmTJxoa1uwMGwn7D4dhkQA2/m62ejGggHXJUpSlXPII
+	 kuefpXpMvSLts30670r1p/D5DybsVniH/C5X0jaqa2xC7Rx2pLw3QgoPR/rDlC8ft3
+	 9Jha6fJS1+a+A==
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-430ce2c7581so21427955ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:15:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqaOouWELuh2YwmFuI3YcmPFKElFId/WsVfFiWDbzaW7WxFjQGJZzl4LXBqOycM9wh/X4SHtUE9Or9zQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz78/H/CYV0vzp4fC0UJliV7kO3P5FNqTLia6Ut+HZu+FQFEoRH
+	3QwGJD/NE82CiTlzsw1MCz2gozjq3xEwuidj5i1Y2ymf0i7BZkbSTQtY638P/Ved7Upc1e1g/H6
+	A8c44N9HbUtTWyJ398vob/y5C3C4k3yw=
+X-Google-Smtp-Source: AGHT+IHX7Cu0cAsXytC3RTDyLGsbQ6D3nuir1yy3lnzLJPUDYwnFPuEpRZmXHsx20REcyJQHIoGh74zShF/YlLRFw2s=
+X-Received: by 2002:a05:6e02:1686:b0:430:a4ba:d098 with SMTP id
+ e9e14a558f8ab-4320f6e72b5mr13684325ab.14.1761585309545; Mon, 27 Oct 2025
+ 10:15:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-14-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-14-jernej.skrabec@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 28 Oct 2025 01:14:55 +0800
+X-Gmail-Original-Message-ID: <CAGb2v654iKx+2_GrFAJYF0VGXSd=ssxE6UYpN3jSAspEC9t3LQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bldcoQqUG3m9k_m37cYhHNBmzCyQWdekxIPdWuxn4IqUUTfMQc9GRDtYCo
+Message-ID: <CAGb2v654iKx+2_GrFAJYF0VGXSd=ssxE6UYpN3jSAspEC9t3LQ@mail.gmail.com>
+Subject: Re: [PATCH 13/30] drm/sun4i: de2/de3: Move plane type determination
+ to mixer
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> Plane type determination logic inside layer init functions doesn't allow
+> index register to be repurposed to plane sequence, which it almost is.
+>
+> So move out the logic to mixer, which allows furter rework for DE33
 
-On Sun, 2025-10-26 at 16:59 -0500, Rob Herring wrote:
-> On Tue, Oct 21, 2025 at 04:23:58PM +0200, Sander Vanheule wrote:
-> > +=C2=A0 realtek,led-scan-mode:
-> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/string
-> > +=C2=A0=C2=A0=C2=A0 description: |
->=20
-> You don't need '|' if there is no formatting to preserve.
+                                               ^ further
 
-Will drop it.
+Otherwise,
 
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Specify the scanning mode the chip shou=
-ld run in. See general
-> > description
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for how the scanning matrices are wired=
- up.
-> > +=C2=A0=C2=A0=C2=A0 enum: [single-color, bi-color]
->=20
-> Wouldn't 'single' and 'bi' be sufficient?
-
-I used these values to align with the datasheet:
-
-   En_bicolor
-   1'b0: Uses single-color LED when in Scan LED mode
-   1'b1: Uses bi-color LED when in Scan LED mode
-
-If you would like a single word, I would prefer [single, dual] and mention =
-the
-single-color/bi-color mapping in the description.
-
->=20
-> > +
-> > +patternProperties:
-> > +=C2=A0 "^led@":
->=20
-> You need to define the unit-address format:
->=20
-> "^led@([1-2]?[0-9]|3[0-1]),[0-2]$"
-
-Hadn't considered that yet. I'll update this too.
-
-
-Best,
-Sander
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
