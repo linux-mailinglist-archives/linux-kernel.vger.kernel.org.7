@@ -1,97 +1,67 @@
-Return-Path: <linux-kernel+bounces-870841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD77BC0BD17
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54364C0BD1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB75E4E4B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:27:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3746F4E4E44
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6442D5410;
-	Mon, 27 Oct 2025 05:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DBF2D4B61;
+	Mon, 27 Oct 2025 05:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BgtQPv99"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="kTU3L11y"
+Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9035C267386
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEA5267386;
+	Mon, 27 Oct 2025 05:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761542863; cv=none; b=D0e2vD6HQYRb+v9BklfvBC6+Rh0JlZsvq3kijkcFo0gystR3fPqJ38RJ9jxddvlbkdMujGDyfnl80BwezcxyvLHXkNawBzTtXJCbCFxuh1kl1HHKe67T7g8xYkU8AG5LUf/M6gnjk7nR+dFSUZ/1oU1AOoJEykHaidgGg6F6ZN4=
+	t=1761542872; cv=none; b=bvcy2ScJakXvghHFx+gjsHknya57MWrS8UX1UGDkoAF187wMLTefn4WQX8nHzIEYhbLSqo2u8tiiev+1G929Xl7F4m3OojcDaFGhwMKQZqo6xEayEslni4V02JAwjhAF9zd+6B101UJwPqwdt7g8lJs4ozlgU0am+8Ckq2c4ECg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761542863; c=relaxed/simple;
-	bh=qh79cjfHvrOLCxvcq4oI/lS6q5OmL9Fn6ODduBM4yG8=;
+	s=arc-20240116; t=1761542872; c=relaxed/simple;
+	bh=Awy4ce0HvlHevMpAawicSrxtE5vQmpxQBetCDOKBd1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vxopun2zHmbJKvyCa0ERto+h7FNPH0KbSXqeOJ0hT8vvdVaukd/qCRe4+T2ZoyZuPq/BcOs7w2LnN07h4GPJ1yot/Bx4ObVyJKN+ftpkmM4/LFr7ye1xkPVLP8qm3ZJ7em38iFsiOdCH3cpWP0uuP7prVRrWdKxGYHaP5dsJ1c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BgtQPv99; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso2005826f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761542859; x=1762147659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sMQm/qKPeH1g9CIR6f10NMelAH+jy5bqtx5lzdYvSPI=;
-        b=BgtQPv991ykr+JyI16mc3aazZKz2nKl6PYyuef43uLMaE9Lcyrf+UABekbyHVgC7f5
-         H0lwbIbmFVFp/s4rGvsSOqeFSftOIlbzlLmpQRZurbiYMW2nBMawSBIVf84QV0IW4FVI
-         C/IPOxPeG5VGoL4KPUp6EHkINw2cOCGTB+vT0DG+fhh1oSVGrAVIq/cvqJwWeTvSc6o3
-         zySvJcNWYa1D7S6xnvfR7UZ1MWCr/2xB6UODCDHdBdLx5ynu+i0tpKuu9KZBhGuGv4hl
-         uwdVR7BMMXuI3+cbDwTxS0ml/w42LF8meAZuIVu0wFmTTUajmOi9Lc98fN8G9glhuKBJ
-         S8Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761542859; x=1762147659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sMQm/qKPeH1g9CIR6f10NMelAH+jy5bqtx5lzdYvSPI=;
-        b=luyD8bXEXFTMdqe7Ls6jBvkcNsxZfjjvPeOhuVnn6nRuWOU/YTcRpkW4jLrZ0XbvRq
-         sJOhUMmXV6JckeafPfUUi+UGNrY6aGDdCDz7P9CBTLPA/5GVLoGHUS3Sjl7pTYY24hD3
-         bqDOOU2cX4Nqpy38zgu+QhVbPYbOSsanzNDcAHt1n74zpZKXFnp81VRHUI0C4ijv5I3M
-         KvrwgFlLE1JAOqlqGZOQAm5pg8/QbTMpD4Gc/hEk2U/ei80XnzMDocDMx58R+/KLWaDg
-         9zZXLjo2QwQX4AMRstqVUm54J6mlgydFl+M21JI36Iglbi8bLalz2bJbNC5tU3Edw/5y
-         ojmw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2eWTkXjzW0tAArOJohI3tvuF6cOMYKm+vRLkTorBQSP0I6XjzTZ8EaIpSMKqf7M1ub1OyQM6+1fvK7Ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3szogLimDi/r2xIeq4HNdnI/sSsKJPAG318ouJddVNG1XtW9x
-	EPhHT4CMoji/rRvLaLy+5T15Z10rr3F9WJZx1Dk9Is59IuPhuZ87ImabVKDDY8xxHZg=
-X-Gm-Gg: ASbGnctbKxsZrm6EPsL21XcvtJ8oiY6283+vSsGyW/knDs3vKr77akENWfCPtTokTxl
-	hSmm0rDtz+oYE2ZBh4g9gKnPCoGvJ3mnqj/EPN0NydynuL3986BZD5m87s1VFartqfpEzTT8ldu
-	jidYnuEU2BSU8O4M4Yi5IBuBNI970csESn5FnJ76CeZsImlsXIzprcs1jnjwy+CpWPyi/59sh7l
-	noK34wL8y86EXnncgIUTDNT8NL3safkqj9SgY6Lb/ETZajKYTMsbfTLo50+jKGVM/3Wv5JTuWOm
-	PreHCaT4bzCiaSiFh/SRfpC4n4VBN/axSgAjGWH3Fr6LB2FQRtOumpbOVps+D/KdhchaDEY3dp7
-	XM6V/qPkbB1kdgYMn83FVuh4R+NBE6O6qgKRu9oth2CArSgiEANcs0SKJPYECvChatxr8Cibbxc
-	Q5f+2LjdRoznIoVJeyv3kPFoPNOaM=
-X-Google-Smtp-Source: AGHT+IGGMWIW5dTfslm/6ukE4iyqbFwa7B8xtQ/z5FIOwZZue/OCt475nBYcheMy53fO8smuBJDifQ==
-X-Received: by 2002:a05:6000:2c0b:b0:427:84a:6dc9 with SMTP id ffacd0b85a97d-427084a6ff0mr24497662f8f.59.1761542858724;
-        Sun, 26 Oct 2025 22:27:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952b7b43sm12237102f8f.6.2025.10.26.22.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 22:27:38 -0700 (PDT)
-Date: Mon, 27 Oct 2025 08:27:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: ally heev <allyheev@gmail.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andy Whitcroft <apw@canonical.com>, workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Hunter <david.hunter.linux@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-pm <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
-Subject: Re: [PATCH v2 2/2] add check for pointers with __free attribute
- initialized to NULL
-Message-ID: <aP8CxkXYAitKB3vx@stanley.mountain>
-References: <20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com>
- <20251024-aheev-checkpatch-uninitialized-free-v2-2-16c0900e8130@gmail.com>
- <aPvAm1E7CvQfOIuS@stanley.mountain>
- <81e6af8eea5b0399d1685797d0ea6a6ebc273270.camel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qb7MVDI8kEm57bYWm6zd0ArBAEGcYqK6lX+m3iS/JQbpM75lm/Xnh5sZEVQ5wSHn0IIGnPerPMtKGWF73a+P4e3VHeDAHYKKZEXkOyssReViO+42Xgp2nSvQm8vFMROkgL34hd21yocA7D0h6uN1z0j/kLYKFDIyK86oNEM4f0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=kTU3L11y; arc=none smtp.client-ip=172.105.74.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
+Received: from sunspire.home.arpa (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.subdimension.ro (Postfix) with ESMTPSA id 316B6160209;
+	Mon, 27 Oct 2025 07:27:38 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
+	s=mail; t=1761542858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/iKH1TKrzGmY5KwdEN+igCoenmbB4AdbiIJJBSZeAVQ=;
+	b=kTU3L11yw9v3NK/o1ko4Fdk8kzycsOwWBF+GtirAp4FqI3IaXzlEufT0RKCcyBHZkevm4M
+	ObhFwxpQcV1qe6vfnOcQ3FEAHfRUXA6yOdXUeHSMIGz+mmbXxGUL2dBExh+Rze3ogTOgzP
+	UbPI8Jg44YKVbxZ823pVX3/e79ummmzAAQk3L6a0f7YO0oaG5o4NNZrOA5yYdHyfu7ljN6
+	QP7/8Dq+DISWYulA41eU6gIP46ZfOYLAMltHyunc1lkHZiIUhBU7GMPlBJPLaGrJkwXCLg
+	u0i4VOeUlsRR5ki9XWT9ocVC+rxXmYJr3rt/UMMrBtv3zeVbnNnbrLKTQ/VW/w==
+Date: Mon, 27 Oct 2025 07:27:35 +0200
+From: Petre Rodan <petre.rodan@subdimension.ro>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iio: accel: bma220: move set_wdt() out of bma220_core
+Message-ID: <aP8Cx7gMxGfpfb6n@sunspire.home.arpa>
+References: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
+ <aPjE-n0wKNIJd2-M@smile.fi.intel.com>
+ <20251023182318.00004319@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,50 +70,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <81e6af8eea5b0399d1685797d0ea6a6ebc273270.camel@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251023182318.00004319@huawei.com>
 
-On Sat, Oct 25, 2025 at 11:53:56AM +0530, ally heev wrote:
-> On Fri, 2025-10-24 at 21:08 +0300, Dan Carpenter wrote:
-> > On Fri, Oct 24, 2025 at 10:59:16PM +0530, Ally Heev wrote:
-> > > pointers with __free attribute initialized to NULL
-> > > pose potential cleanup issues [1] when a function uses
-> > > interdependent variables with cleanup attributes
-> > > 
-> > > Link: https://docs.kernel.org/core-api/cleanup.html [1]
-> > > Link: https://lore.kernel.org/all/68f7b830ec21a_10e910070@dwillia2-mobl4.notmuch/
-> > > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > > Signed-off-by: Ally Heev <allyheev@gmail.com>
-> > > ---
-> > 
-> > I don't think this patch is a good idea...  There are two issues to
-> > consider 1) The absolute number over warnings.  500+ is too high.
-> > 2) The ratio of bugs to false positives and we don't have any data on
-> > that but I bet it's low.  It needs to be at least 5%.  For anything
-> > lower than that, you're better off just reviewing code at random
-> > instead of looking through warnings.
-> > 
-> > regards,
-> > dan carpenter
-> 
-> makes sense
-> 
-> General question about the process for my understanding:
-> Is checkpatch run on full tree by CI or someone and results reported
-> regularly ?
 
-Newbies run it regularly.  Otherwise it gets run on subsystem CIs and
-the zero-day bot runs it on new patches but it will report the old
-warnings as well under the "Old warnings" section.
+Hello Jonathan.
 
-> My understanding was that we would run it only on patches
-> before submitting them Or we just run it on full tree before adding
-> new checks to understand if they are catching real issues
+On Thu, Oct 23, 2025 at 06:23:18PM +0100, Jonathan Cameron wrote:
+> On Wed, 22 Oct 2025 14:50:18 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>=20
+> > On Tue, Oct 21, 2025 at 01:31:49PM +0300, Petre Rodan wrote:
+> > > Move bma220_set_wdt() into bma220_i2c.c instead of using a conditional
+> > > based on i2c_verify_client() in bma220_core.c that would make core
+> > > always depend on the i2c module. =20
+> >=20
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >=20
+> > But Kconfig for this driver is a bit strange. Usually we do other way a=
+round,
+> > i.e. make user visible selection of the glue drivers, while core is sel=
+ected if
+> > at least one of the leaf driver selected by the user.
+> >=20
+> This comes up from time to time.  There kind of isn't a right answer
+> to my mind in the trade off between complexity of configuration=20
+> and desire for minimum useful set of Kconfig symbols and people wanting
+> to build only exactly what they want.  So we've ended up with a mix.
+>=20
+> I don't mind setting a policy on this for new code going forwards, but
+> that means we need to decide which approach we prefer and document
+> it somewhere.
 
-Eventually someone will look at all the warnings.  And probably it's
-going to be a newbie and so we need to be careful with warning where
-newbies might introduce bugs with their changes.
+I will come back with a new patch to Kconfig once you decide what is the be=
+st way to handle dependecies, but in the meantime can you please accept thi=
+s current patch?
 
-regards,
-dan carpenter
+I keep getting automated errors that would be fixed by it:
 
+https://lore.kernel.org/oe-kbuild-all/202510210604.mAtgE54g-lkp@intel.com/
+https://lore.kernel.org/oe-kbuild-all/202510222324.SxYlIaLW-lkp@intel.com/
+https://lore.kernel.org/oe-kbuild-all/202510271347.115BMnsC-lkp@intel.com/
+
+If the current patch does not correctly reference the automated 0day-ci rep=
+orts please tell me what I should change within my b4 workflow.
+
+thank you,
+peter
 
