@@ -1,109 +1,209 @@
-Return-Path: <linux-kernel+bounces-872624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0B7C119B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:03:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB42C119BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3B6422691
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:03:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B7E84EE29E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D407B313E21;
-	Mon, 27 Oct 2025 22:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89E72FE057;
+	Mon, 27 Oct 2025 22:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eeXom3uw"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="10LKB9LC"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956A22D7812
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A256C2EF65F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761602619; cv=none; b=gilRdjLBpIr+mdAAwXX9U590yBffxt3Jk8Ejcu5TSNfXbPUf8cKlGs/o0uZGQrnfKuDCXMhHoxVusKkgz7h41zaIWEO1DRtZflL1ZsN9C8HywXK6sq1Az5PxP0eni7wwRrbU9DHHVLGiMb6NKqHZPcJxzHLgTatZPfm/mrdyYwc=
+	t=1761602653; cv=none; b=gctzMuKQiVZ4D+wqnuoQQ2DmPN7fMlbreFWHFA0sSn3PK2hY6lhj1+RMzoitxcS0tk3kKNrFlhVsJM56MlvrNxwoFl+SMwDRmovbiIsPH9SGn31OFIq4fOxvA0i5uxpRkbWvDXq7b5wkfv1BS0+zZsQ5MoDsZp/1feJE+UZCQVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761602619; c=relaxed/simple;
-	bh=o2yvo08Ip4ydQArcoPeQZZ9iA6ySykeNGAN58HBmLGI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hkE+Z7ihDwdPiF1F4THd3DzlNAxZ5+UWgCKDeCF7imSTvB82CciF+ggU+mNxYi4lvE8W4CI4etoKtVTbFyyD9tdGrgQG08Vo3IraBmqFjTuUbuXwSBiTq9JQ/9vcuosMmScBBfbJEUbJSYhOrWU0g/U43ZfNHGxuOcSzbeKp1Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eeXom3uw; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-63c44ea68f6so3991a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:03:37 -0700 (PDT)
+	s=arc-20240116; t=1761602653; c=relaxed/simple;
+	bh=mDNBf9VaT4m5FDUFI/a6dWRitHA6UrUSUcgu24qbcLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eqfa6Jniw6w4Dbu+cwzF3SxhzmDKXjlJs9XBo08j9BPeIJZ2O5Zgp+zgbfN18W9E2xJwqzJV0Ss1jHmBggM0uy7mTMVT7WSAxI51Lxi+CE3eI/DxOWQfVoUDov0avOQyHRrlHu0qj6EhCejrbnLtp59Ml2BnC9jNr9U+TOGcYRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=10LKB9LC; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-430d06546d3so47345375ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:04:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761602616; x=1762207416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o2yvo08Ip4ydQArcoPeQZZ9iA6ySykeNGAN58HBmLGI=;
-        b=eeXom3uwT4g+9P/RhdrWTyKuQqPL14o6Hn0xHj0OX8dE3hSqjc0mcRVpOIRTRaM7es
-         aRmVPWQHXgUAproPolF7ok25yMyA/1SMR8Gnj1vPDPeUWWr7myJ7vugSW9ZsW9LxY0/I
-         ehvHAWqb07lxGTsUBtDWRsMJk4zLRZzoECnMwjNHvHnI96ob4D06JjR6Nkf2iDRDB1eT
-         w2gfRp/Ztm3PIbm1w+Hc2xMp2OzTOnWfvLyFdjGy+LrJMmPSN2hrZpOzLiGqG3HQAcHv
-         BYh9tSuPuU+NeEIKJXPMydPLphOtTsWgww+skVviZXL359zQtS5qDScob1PWcN/xiAHe
-         Nx8A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761602648; x=1762207448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1DGwtRYivJI/9/ePCg3GK9WG1nAdTuerTKUBAFg18NU=;
+        b=10LKB9LCjIN7c3rosnYfByTEVePrQUIcefh4WzavGXEHZRSfHPgXQ6qPnJ+jkBV1TR
+         0qYLCODk2zpYtqi/6f0HHn19qbw0VN99ZFLiFU4T5EmCZ6T5cleCtcV40GHV0qnzSBPH
+         Ay5PjO06PrUc/zEX6Me4/gvkmoCnTQoJ9HEe4vx4vJPW5S8h6zEuNAFNdMSH6t7eLilg
+         PxdIjQo6F6F9s+gOlpWULtApazDaAVeCQKxqENlDASLzNx3cO4qaS7DtBMNGY1hIq5Vk
+         5BY4wdbY5Y/fmp3Tkxo+o2Me8+8wjNF3K+m5sOws7xpNZ4CCrPj7ZynRcnlIQCFM8sHJ
+         suKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761602616; x=1762207416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o2yvo08Ip4ydQArcoPeQZZ9iA6ySykeNGAN58HBmLGI=;
-        b=jILwf4SdG34+RbxF7seZ6D5eT7kvLDlfRU7Aye3ypqq2BQDmgLDYvB9o+K26+NQ+7A
-         +pYRDmyyoPmUcSvJOix9H/M7iGhQzmHMdFI3Yjv+T3Ko6XPEy1ddoaJ907xFPEN0Qd2R
-         H4cdrMAWh76WjVDexubZBTUhkuk2UmWQUJnWn8ZX1EjZK2vBcs3KMS9SIob1raoWRA1m
-         ZKjTuV1oeHp26rofY6o9xvFZ2zlQB9iKccweMoU9YIocrE50rOcd7uFlE3+wik+PkZeP
-         zWPP6GAXdI2PhOQXZ201H0SoQOwfvmssP4IVsXB+x+vNZ5W3ywxadv5KoTsQWiIOcN08
-         hiJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxunTYV43w+YTiA1euCmtgnQlA/KgbF0MaYzDlF+XIu3qERLTaNbWPilbMr9e3Yb4xq+89dymglgfhfj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKE5MGJHVqTAujYvD7P0uuAp3YKpd4nTAESaiH7Ek7NxXu/cDj
-	g0TTaOvx2NoBlIkHc6xBLmKeYuur/fFnCBBIhGtnNoBuWqyKMIEk9ZqB01yR49pmyy2ijgCKina
-	R9fKfmBfRmYhmAkSnQv0qTL7TddnRjfOvFev4It4m
-X-Gm-Gg: ASbGncuxdzdKDPC2M8/JXL9N69SlB4O5JGJAucj9RAgvtYGlRjy52dI6pZDbKLxiUW2
-	IQFIkJERwSH/U49lazywSP/AK4AWHCnH8QNCXQrH6zWrP3eD1zi6V7N3l/EvHRfp8Pefhb2IAC9
-	WSHWXq+p9o/mWcPmgQ/M6hn2urWK8WyiVjBpqHu6uRtt7X3uc2jO3Ctpp4BbXGkghvnZjPxp+ex
-	Paw1WStEH4lK/awL7aylKnuiLND5FuUDQ5oWsPrDwae1EdrBjgqKNZT2PxiOUFdZX5S0E4=
-X-Google-Smtp-Source: AGHT+IEmQpmkPe9yoXOjQqwkeSYWcEwxmIwno18/dHKODLPNMJTY4Qfi6Uf3STcl/iHL8V6tAR93s5hrkHsVZz2OBcw=
-X-Received: by 2002:aa7:c495:0:b0:63e:11ae:ff2e with SMTP id
- 4fb4d7f45d1cf-63fdc443d68mr12253a12.3.1761602615812; Mon, 27 Oct 2025
- 15:03:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761602648; x=1762207448;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1DGwtRYivJI/9/ePCg3GK9WG1nAdTuerTKUBAFg18NU=;
+        b=AuLQp8rL5GJmW5PSL7LcICfrt0LaoBAJguwJx0UyIoNPY2sw1fxbyAgxSyOV+GyRUe
+         g9eNhP/UY9muv17q9Zepv37aZ4dK4teEiF9eQMmej/4iGLpyC5dmxl3tOyhqUFvcT/ZH
+         JU1efbaFy13VG0nuFpiFRNQ+cU80NNg84yt8SeUsdQRwI4wJcY5MmPYgXuOv1D2iMjb7
+         RF6qKDOl4ipt7VCM3NiQ2rZUsVa7Kt7jP87raFLVFAdF7TlOyCZRjZ24zlSQiJspTh+n
+         8G9KhauFhtjQRqDf9HMO/8LuJhc/nez09Qsyb6JHn2KCSxqqy6wtuQvqFCV7EFo+vA04
+         vMpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyU1CRZssC1rpg8EJ9cXjLm1BLxLKCon7M3ySLVLRI7QZFUe9IENQQSWS0SfVLHEHHUjegSUMgaIW0VUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1iiqd7CwUO5Mk7aa0mAqHcMe213XdlGLQjY2Tdi8G6NT2mCip
+	oQ0R5eUBUSmtgYMO+OH+1mIDJnHWi4yVBCGZ6Rjb18KDnAKTDMxQNTNIXiEVgvEVkME=
+X-Gm-Gg: ASbGncv/ZIQOBGjW7hj6mIXttLIZVQVTE8fncuBvg1WoBRa4YmQWb4bnWVk9npjCy34
+	OOwRInUD4uHHma3V7lUzEhgHJG7/uBodT3Fk4nSnOB1tTwGD9T6FHPHvRdwIl7iOgLTNSWc22IM
+	kOR/HBqEb8eUTOvruqobz1l2BT+eBAeJiblLdNpLyQnwFpILJxRppGr2nV2ZywVybRzR5py3+Uu
+	nyDan5TYgfxVNt0L4JuN7xI3LkhlBH9cQF6ck2TrqQmC6v5gtYHL/HZZy/Z6aub8FSSdeitSFFz
+	NXo8qDMIUQwuiUpFqyaO5WgGQH9UMOGJDmynWP0BYmgauypDdnNzpHQ2qt8cQo6KH1kVYTiLy7E
+	RA0zjutwuaMexdoK1eyY6tFnppERy+As4DESn3TZOJmAQOm8gdxV/PEzJh4DF0Eb05YryjX0AQg
+	==
+X-Google-Smtp-Source: AGHT+IGEqsw+ql+25KlKysVMbdQvsh8plbbkD4ishSElZSeGl+KywOGvbUA62Fk7G5E/px3LHD70Sg==
+X-Received: by 2002:a05:6e02:1fca:b0:430:ab29:e75b with SMTP id e9e14a558f8ab-4320f8382f4mr21545175ab.17.1761602647606;
+        Mon, 27 Oct 2025 15:04:07 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431f67dcae3sm36275455ab.3.2025.10.27.15.04.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 15:04:06 -0700 (PDT)
+Message-ID: <d0cd8a65-b565-4275-b87d-51d10e88069f@kernel.dk>
+Date: Mon, 27 Oct 2025 16:04:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016200417.97003-1-seanjc@google.com> <20251016200417.97003-2-seanjc@google.com>
- <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com> <aPe5XpjqItip9KbP@google.com>
- <20251021233012.2k5scwldd3jzt2vb@desk> <20251022012021.sbymuvzzvx4qeztf@desk>
-In-Reply-To: <20251022012021.sbymuvzzvx4qeztf@desk>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 27 Oct 2025 15:03:23 -0700
-X-Gm-Features: AWmQ_blpuvtqRlYpWMPesPOu7B07-0aNn7e54b89gCEZ2S--g3Rb0i2EBbNBq0M
-Message-ID: <CALMp9eRpP0LvMJ=aYf45xxz1fRrx5Sf9ZrqRE8yKRcMX-+f4+A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D cache
- flush is skipped
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, Brendan Jackman <jackmanb@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_uring_del_tctx_node
+ (5)
+To: syzbot <syzbot+10a9b495f54a17b607a6@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Keith Busch <kbusch@kernel.org>
+References: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 6:20=E2=80=AFPM Pawan Gupta
-<pawan.kumar.gupta@linux.intel.com> wrote:
->
-> ...
-> Thinking more on this, the software sequence is only invoked when the
-> system doesn't have the L1D flushing feature added by a microcode update.
-> In such a case system is not expected to have a flushing VERW either, whi=
-ch
-> was introduced after L1TF. Also, the admin needs to have a very good reas=
-on
-> for not updating the microcode for 5+ years :-)
+On 10/27/25 3:07 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    72fb0170ef1f Add linux-next specific files for 20251024
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13087be2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e812d103f45aa955
+> dashboard link: https://syzkaller.appspot.com/bug?extid=10a9b495f54a17b607a6
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14725d2f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11233b04580000
 
-KVM started reporting MD_CLEAR to userspace in Linux v5.2, but it
-didn't report L1D_FLUSH to userspace until Linux v6.4, so there are
-plenty of virtual CPUs with a flushing VERW that don't have the L1D
-flushing feature.
+[snip]
+
+> RAX: ffffffff82431501 RBX: 0000000000000018 RCX: ffffffff824315fd
+> RDX: 0000000000000001 RSI: 0000000000000018 RDI: ffffc9000383f880
+> RBP: 0000000000000000 R08: ffffc9000383f897 R09: 1ffff92000707f12
+> R10: dffffc0000000000 R11: fffff52000707f13 R12: 0000000000000003
+> R13: ffff888079527128 R14: fffff52000707f13 R15: 1ffff92000707f10
+> FS:  00007f4e567906c0(0000) GS:ffff888125cdc000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055db9a726918 CR3: 000000002ec48000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  __asan_memset+0x22/0x50 mm/kasan/shadow.c:84
+>  seq_printf+0xad/0x270 fs/seq_file.c:403
+>  __io_uring_show_fdinfo io_uring/fdinfo.c:142 [inline]
+>  io_uring_show_fdinfo+0x734/0x17d0 io_uring/fdinfo.c:256
+>  seq_show+0x5bc/0x730 fs/proc/fd.c:68
+>  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
+>  seq_read+0x369/0x480 fs/seq_file.c:162
+>  vfs_read+0x200/0xa30 fs/read_write.c:570
+>  ksys_read+0x145/0x250 fs/read_write.c:715
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Keith, I'm pretty sure your change:
+
+commit 1cba30bf9fdd6c982708f3587f609a30c370d889
+Author: Keith Busch <kbusch@kernel.org>
+Date:   Thu Oct 16 11:09:38 2025 -0700
+
+    io_uring: add support for IORING_SETUP_SQE_MIXED
+
+leaves fdinfo open up to being broken. Before, we had:
+
+sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
+
+as a cap for the loop, now you just have:
+
+while (sq_head < sq_tail) {
+
+which seems like a bad idea. It's also missing an sq_head increment if
+we hit this condition:
+
+if (sq_idx > sq_mask)
+	continue;
+
+which is also something you can trigger, and which would also end up in
+an infinite loop.
+
+Totally untested, but how about something like the below:
+
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index 7fb900f1d8f6..3f254ae0ad61 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -66,6 +66,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 	unsigned int cq_head = READ_ONCE(r->cq.head);
+ 	unsigned int cq_tail = READ_ONCE(r->cq.tail);
+ 	unsigned int sq_shift = 0;
++	unsigned int sq_entries;
+ 	int sq_pid = -1, sq_cpu = -1;
+ 	u64 sq_total_time = 0, sq_work_time = 0;
+ 	unsigned int i;
+@@ -88,17 +89,18 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 	seq_printf(m, "CqTail:\t%u\n", cq_tail);
+ 	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
+ 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
+-	while (sq_head < sq_tail) {
++	sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
++	for (i = 0; i < sq_entries; i++) {
++		unsigned int entry = i + sq_head;
+ 		struct io_uring_sqe *sqe;
+ 		unsigned int sq_idx;
+ 		bool sqe128 = false;
+ 		u8 opcode;
+ 
+ 		if (ctx->flags & IORING_SETUP_NO_SQARRAY)
+-			sq_idx = sq_head & sq_mask;
++			sq_idx = entry & sq_mask;
+ 		else
+-			sq_idx = READ_ONCE(ctx->sq_array[sq_head & sq_mask]);
+-
++			sq_idx = READ_ONCE(ctx->sq_array[entry & sq_mask]);
+ 		if (sq_idx > sq_mask)
+ 			continue;
+ 
+@@ -140,7 +142,6 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 			}
+ 		}
+ 		seq_printf(m, "\n");
+-		sq_head++;
+ 	}
+ 	seq_printf(m, "CQEs:\t%u\n", cq_tail - cq_head);
+ 	while (cq_head < cq_tail) {
+
+-- 
+Jens Axboe
 
