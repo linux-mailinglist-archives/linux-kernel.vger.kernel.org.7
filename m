@@ -1,144 +1,467 @@
-Return-Path: <linux-kernel+bounces-871700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C63C0E19A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF5BC0E1C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E593E189CAF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BBDC188E1B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500103064A0;
-	Mon, 27 Oct 2025 13:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AD03074A7;
+	Mon, 27 Oct 2025 13:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P8vvbycA"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pn/gSnBj"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010002.outbound.protection.outlook.com [52.101.201.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFF7305E2F
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572143; cv=none; b=GgzGqVTXMXgQGRIP6VK1JLZqG+ZXNeXp9A7xqwBETVWUjtqtdth1drMA8UlVj/+n+C0OlfKJ5e+FgONxUBev9iykXH/adRCiHA0GX0tbCOWxk+paZjV+3Wc02mam6DdhF2Hex4LBiW6cRfXTOI8dxwtFwUdzYcnZBwoyIuBhKNQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572143; c=relaxed/simple;
-	bh=q1xHjAi6E4wi3oQoijyEgXm7p5tzOjAHqmVcqhQq0wg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c1rjQ+WoAFcqFzPSEwg4oap6q7bo+5oUSDvQHU6UHLQYI6cUlf1Pt5hhFwSRdoQGHJPrRWUa2HtuhJ4GSK5lKvF+29G8o25qn3IQ8+3V7N97vqXjC6xH8elwfudXG0s7sIosmwAyMMnPT6G6xBA72yMXFUiS9X7hvyZuH1K/IG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P8vvbycA; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so26140115e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761572139; x=1762176939; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=coMQJHEII5UHdUF+Ekj+pHGgsN6WEYzWi8tdyRdD9tw=;
-        b=P8vvbycAR7YrdLbLsZK9MsF8LIJaG1AUecd4CONxCa9Bm256AZZujM2MjtVUVQwh2L
-         wjQw2Ag/XcnrUCu0xW/eCq7E24V2QsqnyvDwPRGhJds5NXMWizxT7liQy3yEsgbR4Ec/
-         j9eubyUMw46E0Pvqq7iVHqbXUzUJ3dipvKZjSSHHEJ5n6NWZN/8HX5+topoMXgIOf0lx
-         BUO3FgFdVYkKygha3VYXZaoHz2yrqYEBGnzBZeWVKPBxSWfiSp8hoKuvsOmrpctvoXUI
-         MFpPyCPhjYLyJRTaaDxdCeieFvXjKWq2vsMV/wJ4FAMFQfPziPMvHN81/W6NEDdRPwvw
-         lXGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761572139; x=1762176939;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=coMQJHEII5UHdUF+Ekj+pHGgsN6WEYzWi8tdyRdD9tw=;
-        b=sqZ3gEtqSqEqzVHLBb3CO80YMLfq6hX3VtHFg2n+NCTBBGYE8kNco6pqgOQ8zi9qkv
-         1HJOlDrRlzMOAAzfhLvTWiXctshbdRbLLKPuQn+4hjh5nU39UFPA/zROBtLIISsE6z6e
-         lGBF4OpC0GfD1OLU4MWcXbSmDa8wMoKSSSVqcLoJq+Wr+tBcGvbeYnO5WfOx532FHoBK
-         wplu9st5N2byhQvVNqoWKQK7QxurIXzhqPc1ZZN2vY3EZp32R/Y0TmTAABnOpbOc5ES7
-         Csk8Nfv0ZS8V+fk/pmETfYGgaWwOQXYh3i2KPhixbWw9FbLqlXhimxN+0V5s/AftSYhV
-         E/cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRJ9riZj3kB/hD25Y12W+vBWqLzVlqWI7sdxtzbuvH6dXycma0IJsWunYC9C9HhzqQZ47WneQ22jwyEZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMT7rOdAde+42bNIxV7BYorSfsOwSWW57OSvFqXj5JBI72H523
-	gJGnTpNa38Vur9lESD9fbkAjL8jb1K5kDZ1fJT0t37BVKALMZsiSMvZe0Al/rcqffvAOzj012U7
-	HDW/v
-X-Gm-Gg: ASbGncs0b/sYD8hmDnpi3ASPA+jZIaaefKauECB+wNfLB+fTzM/j45SBCpbssF829YX
-	CCuNyeYV16RjBtTitDWDmfrOMIWfolkFMztpMr8t1rKBxHLxkcJWd2sgBaGx9c2aFuFKwmUDI/2
-	lGRQsk8u1bUgqIB0AbPqnjgrAx1A5FvAxkOPn2kUZ5W40N7MYK8Vqk1N2MEZRKD4R+mntsQ5qKc
-	rUsL9IkVy0DWAzrHo9DJBa9V/EnjZsIusz0Ucwj3DQBUo/ugX/xbLOBvOgNqpijJP1yonZQ0CDo
-	iP2q0a2bg4dT+R1sICZx0JgZZdueEUyArVyiOoCBFy9su/qRTC3ZG9DcywnjGX4wqo0j3VtIwLr
-	XI+rEjeLjCJKB0HRDxLbUX1SH0m9e33sYbFucl6O2a8kzLg9l03YD1fhQ/2kaLCf/eXPt3JZ3bD
-	j0wDL2RnTA7q0PO14FvCydCUNQOkBCBbZQLjtwoU4u6zRwjXjtom0BBpxqX19JrcKIkQ==
-X-Google-Smtp-Source: AGHT+IHqAIVjFyYDoJjqcp/dMd7ZvxXUjRECSaszUpt0012U8VY/hZ9NeJngEtVEdLXk+JU1qrULHQ==
-X-Received: by 2002:a05:600c:3b82:b0:475:daa7:ec60 with SMTP id 5b1f17b1804b1-475daa7ee4amr74939795e9.21.1761572139493;
-        Mon, 27 Oct 2025 06:35:39 -0700 (PDT)
-Received: from ?IPV6:2a02:3033:263:99eb:3ee8:c1a0:6fbf:4510? ([2a02:3033:263:99eb:3ee8:c1a0:6fbf:4510])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cbc16sm13967859f8f.15.2025.10.27.06.35.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 06:35:38 -0700 (PDT)
-Message-ID: <8de18ee2-ccdd-4cdd-ae49-48600ad30ed4@suse.com>
-Date: Mon, 27 Oct 2025 14:35:37 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21666304BDD;
+	Mon, 27 Oct 2025 13:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761572152; cv=fail; b=o251f2Z1MA+ONY4P8DlGf0/RcVmPBb/RqKCYU2U15rUPWB3UKQmq9Jyy39IB5NKwarQDMwX3gYMAPPTInjtjrDz6unYQ/56L0M7QLR50tv9ClUogI41mhIVysTTqSunj+AcioWE1P7Dl5blWUtDw9TZs9VmsTerSFT8GoZkVjts=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761572152; c=relaxed/simple;
+	bh=h9U4CSOr65l0QkLZbgPBoE9Bq8rAnwBpk+a9Kzj2Kkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aH7QiJ/zcS7Bg8BeiSyrFrh0vWOBbqDdOIuwf6aYrZUnvuhbxTRU6aquLN4DXzdG+6B4m46xIRktUC1Fc59CpQrnEm4Pkolr/lPWMY5HJrOsgPZXOG/lzfQtNszOtvdP20i6czheRf2FZGedkisQ+WPxN4fyXSfDF1FRPTCVf48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pn/gSnBj; arc=fail smtp.client-ip=52.101.201.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DgtrIVFiv/n0V/rum4eB9ETwp8I1Ei7kD3IOySLfAGPkgcsr9Jeuk94gMdeKcPiPvKJYbihyu7SELiXuazJpYLu/Cn7KXk/oB+PNeMD/GjGuzArCsnjLhjl/MlbW2n85U8NJiq3vYvfJBcr6uYfM9wUwlz/9i4HL2ZAPpoVx7Ml3UJIKJCKMQ/2JlYyTg7ZHymnZANu6yFnn0aRmyBWPVMXQAquGw+aMg45t2C/7k00ZJQ/PSjiMVUr/SJkHrvp8RV0+vRZo+o+1JUvMDUVTar0BJlif0xSAQi6rJgGAUDUM+vIfLI4yd1yauZ3wXhl69ap2NZSCz9DPMWSb4Im7rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sy4dUH2ayrOouBOlHa9UynWRmUtN7FvcZCY5j2q+ZKA=;
+ b=NALwGJZXFQgA10muYnNnyl+5XSe55wbX2UaTNLz9z7zM/qEb9+NwpbsCmIFdtfjbNypxktkrlsqeNak70vdgZ0wSU2YQ60yiqMOLsl1CesDSjMjDScs/dp5JVaMHFHhUVQmMb2G7oO9RO+R0k2iKQ4PMU8QJWQD1Fjxi0gOVCGZID8Vkd4gYs29EJRsfl64WS4N/5ELyAMrECu+UaEeAqo9/Y9IdyzWbt5gp2K/ljn2KHztRQu/6BcEdQHo5Dfq/1IP4khQ/J7HnaiWzSRmToBTiSzJrYsO+y4E+Lood54Z5OB9WCibaWrDs8VuXBYDt5Jkl4Q1kLJBQgwbanMfn/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sy4dUH2ayrOouBOlHa9UynWRmUtN7FvcZCY5j2q+ZKA=;
+ b=pn/gSnBjyWTjcCe0GCsBg+a5+SSSlEkaCFXjenXZfkmaacnn0vDwc1UWL8Uj25gmKPu4lNVjIVsxMukihHup84pAIyzyPsZtLrxbHQGlP/imzXysybIT69UEnQnyANSlilgr75qPfMPXKZEuHW7jvTAb9PqXTt3275hmDKM2WwE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ CYXPR12MB9279.namprd12.prod.outlook.com (2603:10b6:930:d5::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.18; Mon, 27 Oct 2025 13:35:47 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9253.018; Mon, 27 Oct 2025
+ 13:35:47 +0000
+Date: Mon, 27 Oct 2025 09:35:42 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] x86/mce: Unify AMD DFR handler with MCA Polling
+Message-ID: <20251027133542.GA8279@yaz-khff2.amd.com>
+References: <20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com>
+ <20251016-wip-mca-updates-v7-2-5c139a4062cb@amd.com>
+ <20251024150333.GSaPuVRQYxH92zyrmO@fat_crate.local>
+ <20251024203012.GA251815@yaz-khff2.amd.com>
+ <20251024212723.GGaPvvO3l2OlUEG7Xn@fat_crate.local>
+ <20251025150304.GXaPzmqFawI0NrCC-0@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025150304.GXaPzmqFawI0NrCC-0@fat_crate.local>
+X-ClientProxiedBy: MN2PR03CA0014.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::19) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: uas: fix urb unmapping issue when the uas device
- is remove during ongoing data transfer
-To: Owen Gu <guhuinan@xiaomi.com>, Oliver Neukum <oneukum@suse.com>,
- Alan Stern <stern@rowland.harvard.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org,
- usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
- Yu Chen <chenyu45@xiaomi.com>, Michal Pecio <michal.pecio@gmail.com>
-References: <20251015153157.11870-1-guhuinan@xiaomi.com>
- <aP8Llz04UH8Sbq5Q@oa-guhuinan-2.localdomain>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <aP8Llz04UH8Sbq5Q@oa-guhuinan-2.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|CYXPR12MB9279:EE_
+X-MS-Office365-Filtering-Correlation-Id: db40c8a6-e46f-4757-6f84-08de155dbc48
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IZ+c2A7D3TMte8ZaSEY+u+Ot18W4hR/U2B9C+5JKp0Y0Av2fckwOKSVbF2lK?=
+ =?us-ascii?Q?EAcYofReLqpVeuiTr/rWx4Tg6fuNNA+1aYGLz6EIAoJ8YQnpSF225ESD41eg?=
+ =?us-ascii?Q?cm45FMBA3z2KT57iq6LIfNgFQvHJ4mAQ8DmBNF2yIM+WtEDaS/B5aELto775?=
+ =?us-ascii?Q?yfAztEdemtWvvSZ9PO9IxrfG+wc5/Nfgbvpa6YapptIrZi90CKSJNT2LgEWo?=
+ =?us-ascii?Q?4/fe+q7OGTVbrX4TcV4GMNOd31pMeS1EtHJ+iOch+eAB2GuvjKMtIzfvMjku?=
+ =?us-ascii?Q?0yySjUVMj9MkSrE3vSEpCkban9i/o2BykjHKW9j8Y3Itdbgd64lXsHNMgM51?=
+ =?us-ascii?Q?oroHAWk1Cu6H6mTNFRUc56vkJl7dvqutpXIMcLLgA6UM5F6PDxmf7+yL83xi?=
+ =?us-ascii?Q?dYDlB+MYUb1Cw4SGEt6BWLzk9ow366izeewYaAPMhskLEsja1Dfe6P/2zf5f?=
+ =?us-ascii?Q?XpubderIBbUa8oCJJ/PyX6QASKInrVd56xaFh2NttXIrf0GRmq+RS7gbO8MU?=
+ =?us-ascii?Q?MQPrSqnvXe3D0TT677sgNkn9XfeyS7pKQ2/YEYZytfJVWPueTvyWmWuzDtQu?=
+ =?us-ascii?Q?a3YRfl4VN/g9SyVxemVFMXNboi5CDwJIQzqgO++opVYk/QvuuWNrYMWPv9qZ?=
+ =?us-ascii?Q?XzIBwe1HTW/lXoTSRm9jO9aNrjD8ybXrNXtNxWBjjASaazNMW3a5rjjCqd9j?=
+ =?us-ascii?Q?NOFW+J/6PddJGBC3oaOrfiQ4F+v3gYluzHTm/F9Qa/ldg0QGM7JD0NVyjCLJ?=
+ =?us-ascii?Q?T+nEZ7/fsj0I2b0iWmY18i0ihBk3ZYKIrQ5mK625uJgjeMSZk6U/y2pYBHQq?=
+ =?us-ascii?Q?ZGf4EVtlukkQUs53ZpALsg00E4fzC4AjCFvnvtFbjOk0sTnmJSGquWSDoax/?=
+ =?us-ascii?Q?4vLNnt5VCBGFZuXpoTNr6W3slznZ7RNgDB84KDnpJ6J+9Fs0W+NQsMH0atdn?=
+ =?us-ascii?Q?HkAUUkj8WoY+7PUbpCQz+VZG6Umk7YiQAd9f0OV5yryMdSUGQjhXLnmO3Ocn?=
+ =?us-ascii?Q?V02Isk0vI2wqQZtj58U0wK7MdHRjncQLChpPzHIALs+tSCBMCaUOAhf1Bu8k?=
+ =?us-ascii?Q?pIzyIbdnbnPMIIY+yptkqtl/VRXjmOc1JLhWftSrvsPQUWqsCiKDJEte/M0v?=
+ =?us-ascii?Q?WydDKQuGgxuwT+CG+1SlSf0ia1pV6OxsO3YiLtPi7D4OhUGoKxj3M4Tx8gjs?=
+ =?us-ascii?Q?cSt2iLUXYFksk9tdybfPiQ7GcbywN082+3dIQ7zhHuf1EqvF+t3cUFv72dcu?=
+ =?us-ascii?Q?KNuMueJGvZLXn7FBiDJQ3d2DDey2rFvBwiSZDNdBIkiKD3deWhO/TDZdUeEO?=
+ =?us-ascii?Q?gJXTT49F9zqHbtUrRVVw1J62+rFUNLHnocJzIlxCvdwlE5JgvtzvXC8qJc7A?=
+ =?us-ascii?Q?Cr/K8ZhyyAZ/o42ICb1iuL0hltyVHYlnvA2/Kzk0zvvb59Z39A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?K7kXfJoCBjWhFY94RticgVsI6/tz1CoKki441TLT+cfvOGnMt5OTQIpvv7NP?=
+ =?us-ascii?Q?DvFXy6sLP1cADIkhjjXcUs6oztLzQSCOnVjUvaWsZvHH922B2Ab6QNJVUlYK?=
+ =?us-ascii?Q?I7XPWn4KLWQjE+gRDLK7I4VVrngf4baPKiw57bgtvRO0s+whODLzXWJot1OT?=
+ =?us-ascii?Q?0MzVotLjCNWT4OKrsfQXGtorLnZjto8zflR4UGM5gc/p/fiC/xfeRNkPRV8u?=
+ =?us-ascii?Q?zCGfiOHDHpp7DHKFitjnUzBRkQ8l0lb1zSrq6ivKYsmJexQUopxUnI66bBLf?=
+ =?us-ascii?Q?6AtcUrBBeXfLsz3HtRnVnmxhf7qlF1Dfe5M4uH6/ZLpI6245oXjl/621Wr5u?=
+ =?us-ascii?Q?mfmjZF//8tC2MKuPDPurOPfyBlyY5VbNkxXVTD+sVAsblR/TfigU84RAAWlf?=
+ =?us-ascii?Q?Ni2zm/9h02uEG7goiPdZC1x+ax/9ieM7wtlTzQ7g1TRDNCpZ9d5TmL9/tTTJ?=
+ =?us-ascii?Q?dQXqoBEyV+3D96PXOIAnO7vSYq2yMlzriKXv2kHQ3DpDOjlHlUxoD4kUwNPG?=
+ =?us-ascii?Q?NKBZkS4CrWS8BmCDWKZwKoiZ6HCZDY8OvMmqZof1pUYz1z8ZG7CBoTVHseFT?=
+ =?us-ascii?Q?ouqD4uVwTMpfYGGIwb5GHtjH7hNgCKCV+6yeSTQdU5x1SH2syJ8Pb2ueGwtF?=
+ =?us-ascii?Q?499X6thrtHeUDXSm5wkXtu9QwAXh4DPyVqZQvR2GWQt97cgkgZb4JPbX5wMh?=
+ =?us-ascii?Q?kckwy+NpVsOXbzsof01ZG/4B+pw+1ZeKu1uhY1B3WLuhQqoi+SUz1SFYz/9f?=
+ =?us-ascii?Q?44fK8+JEUyJ0NQFOW3Lfj7CkeUWFaB/SnnAMDPmEF/J3JPKsrA21gxCeTGeV?=
+ =?us-ascii?Q?FOF50aNa18rKOBWuD779Wm5QgwFDzE5qAE0zR9mguz9SgjwnZyQepYbOI0nF?=
+ =?us-ascii?Q?rMPRrq3DeXs9uJHfJSIyIHV9sk1pxBX2KtCh6KeC3iuy2bhzOHR/drhZpIF4?=
+ =?us-ascii?Q?WCV6coDIK6p/eY/4uh5qIbtJOkhEimEWUfdo2JhHfHdBNafUQKFI9Akod33o?=
+ =?us-ascii?Q?kXVvZVuIGXwV03P08AXaSnIBt1O+70o9vwwuciccXGVeZnxZ1bxleJN3JOVS?=
+ =?us-ascii?Q?l6PgpZILMu8K8+xYrE+ANwFrE1MU03qL2MTWLj7rW0/yr0Qdi7MpvgdRFPnE?=
+ =?us-ascii?Q?k3nc45qdpr6rCabjoPEOojkVsIWEwLHR5YPnnRvTXJ+HExGNPIQcvMvqUGCI?=
+ =?us-ascii?Q?5SVzGM5j8UsQjMXo//iuIdLai3QFlsQWyJiPudBwdh05GjXmHpiCQ/cILBb3?=
+ =?us-ascii?Q?upo4X5DCQv60Di4l23tP3D7Bo5KKH7CFFs9hDZ8L6uSAXLnb0fxjQyLrfEGm?=
+ =?us-ascii?Q?RGWfdicoGI9gfUm+AtUMaehOKsZxTWegvpQXprRJ1Ye8/AG89HHHlLx9itU5?=
+ =?us-ascii?Q?8jlhY5nJI29bs92zMroxHbOAkhXXopHkJ8DfvroGu8FuVAunCy3z8y/8vgWF?=
+ =?us-ascii?Q?U+QSpaRBkPcFzsa8rKFKIX1rb+AAnuI1CK0adAyCvPVHkwcUIWFuALP7PQk0?=
+ =?us-ascii?Q?mK8IAq4RxkUkZCyAN+HC+adSsifgK2OoUJ1Xw925HKK/BwgUD0//X02Or3Ry?=
+ =?us-ascii?Q?N54bilXI6lBM5+R9tAwvw6zyIC03o6D9CCSUb1JR?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db40c8a6-e46f-4757-6f84-08de155dbc48
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 13:35:47.1445
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CenoMm9C2U1BRWzrjgpVwgdwzQhCnCaF/jQGLGxB+MAjHyOSnYI6ifSV+2sEUKogUkBRF4YMGW3bWd5t7TDFjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9279
 
-Hi,
-
-I think I was unclear the first time.
-Sorry for that.
-
-On 27.10.25 07:05, Owen Gu wrote:
-> Hi Oliver,
+On Sat, Oct 25, 2025 at 05:03:04PM +0200, Borislav Petkov wrote:
+> On Fri, Oct 24, 2025 at 11:27:23PM +0200, Borislav Petkov wrote:
+> > On Fri, Oct 24, 2025 at 04:30:12PM -0400, Yazen Ghannam wrote:
+> > > Should I send another revision?
+> > 
+> > Nah, I'm not done simplifying this yet. :-P
 > 
+> Yeah, no, looks ok now:
+> 
+> ---
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> Date: Thu, 16 Oct 2025 16:37:47 +0000
+> Subject: [PATCH] x86/mce: Unify AMD DFR handler with MCA Polling
+> 
+> AMD systems optionally support a deferred error interrupt. The interrupt
+> should be used as another signal to trigger MCA polling. This is similar to
+> how other MCA interrupts are handled.
+> 
+> Deferred errors do not require any special handling related to the interrupt,
+> e.g. resetting or rearming the interrupt, etc.
+> 
+> However, Scalable MCA systems include a pair of registers, MCA_DESTAT and
+> MCA_DEADDR, that should be checked for valid errors. This check should be done
+> whenever MCA registers are polled. Currently, the deferred error interrupt
+> does this check, but the MCA polling function does not.
+> 
+> Call the MCA polling function when handling the deferred error interrupt. This
+> keeps all "polling" cases in a common function.
+> 
+> Add an SMCA status check helper. This will do the same status check and
+> register clearing that the interrupt handler has done. And it extends the
+> common polling flow to find AMD deferred errors.
+> 
+> Clear the MCA_DESTAT register at the end of the handler rather than the
+> beginning. This maintains the procedure that the 'status' register must be
+> cleared as the final step.
+> 
+>   [ bp: Zap commit message pieces explaining what the patch does;
+>         zap unnecessary special-casing of deferred errors. ]
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Link: https://lore.kernel.org/all/20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com
+> ---
+>  arch/x86/include/asm/mce.h     |   6 ++
+>  arch/x86/kernel/cpu/mce/amd.c  | 111 ++++-----------------------------
+>  arch/x86/kernel/cpu/mce/core.c |  44 ++++++++++++-
+>  3 files changed, 62 insertions(+), 99 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+> index 31e3cb550fb3..7d6588195d56 100644
+> --- a/arch/x86/include/asm/mce.h
+> +++ b/arch/x86/include/asm/mce.h
+> @@ -165,6 +165,12 @@
+>   */
+>  #define MCE_IN_KERNEL_COPYIN	BIT_ULL(7)
+>  
+> +/*
+> + * Indicates that handler should check and clear Deferred error registers
+> + * rather than common ones.
+> + */
+> +#define MCE_CHECK_DFR_REGS	BIT_ULL(8)
+> +
+>  /*
+>   * This structure contains all data related to the MCE log.  Also
+>   * carries a signature to make it easier to find from external
+> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+> index ac6a98aa7bc2..d9f9ee7db5c8 100644
+> --- a/arch/x86/kernel/cpu/mce/amd.c
+> +++ b/arch/x86/kernel/cpu/mce/amd.c
+> @@ -56,6 +56,7 @@ static bool thresholding_irq_en;
+>  
+>  struct mce_amd_cpu_data {
+>  	mce_banks_t     thr_intr_banks;
+> +	mce_banks_t     dfr_intr_banks;
+>  };
+>  
+>  static DEFINE_PER_CPU_READ_MOSTLY(struct mce_amd_cpu_data, mce_amd_data);
+> @@ -300,8 +301,10 @@ static void smca_configure(unsigned int bank, unsigned int cpu)
+>  		 * APIC based interrupt. First, check that no interrupt has been
+>  		 * set.
+>  		 */
+> -		if ((low & BIT(5)) && !((high >> 5) & 0x3))
+> +		if ((low & BIT(5)) && !((high >> 5) & 0x3)) {
+> +			__set_bit(bank, this_cpu_ptr(&mce_amd_data)->dfr_intr_banks);
+>  			high |= BIT(5);
+> +		}
+>  
+>  		this_cpu_ptr(mce_banks_array)[bank].lsb_in_status = !!(low & BIT(8));
+>  
+> @@ -792,37 +795,6 @@ bool amd_mce_usable_address(struct mce *m)
+>  	return false;
+>  }
+>  
+> -static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
+> -{
+> -	struct mce_hw_err err;
+> -	struct mce *m = &err.m;
+> -
+> -	mce_prep_record(&err);
+> -
+> -	m->status = status;
+> -	m->misc   = misc;
+> -	m->bank   = bank;
+> -	m->tsc	 = rdtsc();
+> -
+> -	if (m->status & MCI_STATUS_ADDRV) {
+> -		m->addr = addr;
+> -
+> -		smca_extract_err_addr(m);
+> -	}
+> -
+> -	if (mce_flags.smca) {
+> -		rdmsrq(MSR_AMD64_SMCA_MCx_IPID(bank), m->ipid);
+> -
+> -		if (m->status & MCI_STATUS_SYNDV) {
+> -			rdmsrq(MSR_AMD64_SMCA_MCx_SYND(bank), m->synd);
+> -			rdmsrq(MSR_AMD64_SMCA_MCx_SYND1(bank), err.vendor.amd.synd1);
+> -			rdmsrq(MSR_AMD64_SMCA_MCx_SYND2(bank), err.vendor.amd.synd2);
+> -		}
+> -	}
+> -
+> -	mce_log(&err);
+> -}
+> -
+>  DEFINE_IDTENTRY_SYSVEC(sysvec_deferred_error)
+>  {
+>  	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
+> @@ -832,75 +804,10 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_deferred_error)
+>  	apic_eoi();
+>  }
+>  
+> -/*
+> - * Returns true if the logged error is deferred. False, otherwise.
+> - */
+> -static inline bool
+> -_log_error_bank(unsigned int bank, u32 msr_stat, u32 msr_addr, u64 misc)
+> -{
+> -	u64 status, addr = 0;
+> -
+> -	rdmsrq(msr_stat, status);
+> -	if (!(status & MCI_STATUS_VAL))
+> -		return false;
+> -
+> -	if (status & MCI_STATUS_ADDRV)
+> -		rdmsrq(msr_addr, addr);
+> -
+> -	__log_error(bank, status, addr, misc);
+> -
+> -	wrmsrq(msr_stat, 0);
+> -
+> -	return status & MCI_STATUS_DEFERRED;
+> -}
+> -
+> -static bool _log_error_deferred(unsigned int bank, u32 misc)
+> -{
+> -	if (!_log_error_bank(bank, mca_msr_reg(bank, MCA_STATUS),
+> -			     mca_msr_reg(bank, MCA_ADDR), misc))
+> -		return false;
+> -
+> -	/*
+> -	 * Non-SMCA systems don't have MCA_DESTAT/MCA_DEADDR registers.
+> -	 * Return true here to avoid accessing these registers.
+> -	 */
+> -	if (!mce_flags.smca)
+> -		return true;
+> -
+> -	/* Clear MCA_DESTAT if the deferred error was logged from MCA_STATUS. */
+> -	wrmsrq(MSR_AMD64_SMCA_MCx_DESTAT(bank), 0);
+> -	return true;
+> -}
+> -
+> -/*
+> - * We have three scenarios for checking for Deferred errors:
+> - *
+> - * 1) Non-SMCA systems check MCA_STATUS and log error if found.
+> - * 2) SMCA systems check MCA_STATUS. If error is found then log it and also
+> - *    clear MCA_DESTAT.
+> - * 3) SMCA systems check MCA_DESTAT, if error was not found in MCA_STATUS, and
+> - *    log it.
+> - */
+> -static void log_error_deferred(unsigned int bank)
+> -{
+> -	if (_log_error_deferred(bank, 0))
+> -		return;
+> -
+> -	/*
+> -	 * Only deferred errors are logged in MCA_DE{STAT,ADDR} so just check
+> -	 * for a valid error.
+> -	 */
+> -	_log_error_bank(bank, MSR_AMD64_SMCA_MCx_DESTAT(bank),
+> -			      MSR_AMD64_SMCA_MCx_DEADDR(bank), 0);
+> -}
+> -
+>  /* APIC interrupt handler for deferred errors */
+>  static void amd_deferred_error_interrupt(void)
+>  {
+> -	unsigned int bank;
+> -
+> -	for (bank = 0; bank < this_cpu_read(mce_num_banks); ++bank)
+> -		log_error_deferred(bank);
+> +	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->dfr_intr_banks);
+>  }
+>  
+>  static void reset_block(struct threshold_block *block)
+> @@ -952,6 +859,14 @@ void amd_clear_bank(struct mce *m)
+>  {
+>  	amd_reset_thr_limit(m->bank);
+>  
+> +	/* Clear MCA_DESTAT for all deferred errors even those logged in MCA_STATUS. */
+> +	if (m->status & MCI_STATUS_DEFERRED)
+> +		mce_wrmsrq(MSR_AMD64_SMCA_MCx_DESTAT(m->bank), 0);
+> +
+> +	/* Don't clear MCA_STATUS if MCA_DESTAT was used exclusively. */
+> +	if (m->kflags & MCE_CHECK_DFR_REGS)
+> +		return;
+> +
+>  	mce_wrmsrq(mca_msr_reg(m->bank, MCA_STATUS), 0);
+>  }
+>  
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 460e90a1a0b1..7be062429ce3 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -687,7 +687,10 @@ static noinstr void mce_read_aux(struct mce_hw_err *err, int i)
+>  		m->misc = mce_rdmsrq(mca_msr_reg(i, MCA_MISC));
+>  
+>  	if (m->status & MCI_STATUS_ADDRV) {
+> -		m->addr = mce_rdmsrq(mca_msr_reg(i, MCA_ADDR));
+> +		if (m->kflags & MCE_CHECK_DFR_REGS)
+> +			m->addr = mce_rdmsrq(MSR_AMD64_SMCA_MCx_DEADDR(i));
+> +		else
+> +			m->addr = mce_rdmsrq(mca_msr_reg(i, MCA_ADDR));
+>  
+>  		/*
+>  		 * Mask the reported address by the reported granularity.
+> @@ -714,6 +717,42 @@ static noinstr void mce_read_aux(struct mce_hw_err *err, int i)
+>  
+>  DEFINE_PER_CPU(unsigned, mce_poll_count);
+>  
+> +/*
+> + * We have three scenarios for checking for Deferred errors:
+> + *
+> + * 1) Non-SMCA systems check MCA_STATUS and log error if found.
+> + * 2) SMCA systems check MCA_STATUS. If error is found then log it and also
+> + *    clear MCA_DESTAT.
+> + * 3) SMCA systems check MCA_DESTAT, if error was not found in MCA_STATUS, and
+> + *    log it.
+> + */
+> +static bool smca_should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
+> +{
+> +	struct mce *m = &err->m;
+> +
+> +	/*
+> +	 * If the MCA_STATUS register has a deferred error, then continue using it as
+> +	 * the status register.
+> +	 *
+> +	 * MCA_DESTAT will be cleared at the end of the handler.
+> +	 */
+> +	if ((m->status & MCI_STATUS_VAL) && (m->status & MCI_STATUS_DEFERRED))
+> +		return true;
+> +
+> +	/*
+> +	 * If the MCA_DESTAT register has a deferred error, then use it instead.
+> +	 *
+> +	 * MCA_STATUS will not be cleared at the end of the handler.
+> +	 */
+> +	m->status = mce_rdmsrq(MSR_AMD64_SMCA_MCx_DESTAT(m->bank));
+> +	if ((m->status & MCI_STATUS_VAL) && (m->status & MCI_STATUS_DEFERRED)) {
+> +		m->kflags |= MCE_CHECK_DFR_REGS;
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
 
->> This patch modifies the error condition check in the uas_submit_urbs()
->> function. When a UAS device is removed but one or more URBs have already
->> been successfully submitted to USB, it avoids immediately invoking
->> scsi_done() and save the cmnd to devinfo->cmnd array. If the successfully
->> submitted URBs is completed before devinfo->resetting being set, then
->> the scsi_done() function will be called within uas_try_complete() after
+No, this still isn't right. Sorry, I had a brain freeze before.
 
-This requires that uas_try_complete() is called.
+This function only returns true for valid deferred errors. Other errors
+return false.
 
-And I am afraid uas_stat_cmplt() cannot guarantee that in the error case.
-I think the following sequence of events is possible:
+>  /*
+>   * Newer Intel systems that support software error
+>   * recovery need to make additional checks. Other
+> @@ -740,6 +779,9 @@ static bool should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
+>  {
+>  	struct mce *m = &err->m;
+>  
+> +	if (mce_flags.smca)
+> +		return smca_should_log_poll_error(flags, err);
+> +
 
-CPU A						CPU B
+This will never find corrected errors or uncorrected (non-deferred)
+errors. That's one of the reasons to add the MCP_DFR flag.
 
-uas_queuecommand_lck() calls uas_submit_urbs()
-COMMAND_INFLIGHT is set and URB submitted
-						URB gets an error
-						status = -EBABBLE (just an example)
-						uas_stat_cmplt is called
-						resetting is not set
-						if (status)
-							goto out;
+Otherwise, we'd need to include some of the same checks from below.
 
-						uas_try_complete _not_ called
+>  	/* If this entry is not valid, ignore it. */
+>  	if (!(m->status & MCI_STATUS_VAL))
+>  		return false;
+> -- 
 
-The scsi command runs for indeterminate amount of time.
-It seems to me that if you want to use your approach you also
-need to change error handling in uas_stat_cmplt()
-
-	Regards
-		Oliver
-
-
+Thanks,
+Yazen
 
