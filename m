@@ -1,154 +1,167 @@
-Return-Path: <linux-kernel+bounces-872441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8126EC11303
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:40:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EB9C11273
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E573F506DCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D49189725C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA02E313E17;
-	Mon, 27 Oct 2025 19:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DAE32BF41;
+	Mon, 27 Oct 2025 19:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAjQmF8Q"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="Kkm2QTIP"
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC78E23EA92
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8459E32548D;
+	Mon, 27 Oct 2025 19:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761593510; cv=none; b=oC80pOkyaDsmmbOkvt8MONeo6jYwIH9hyQplUOcUSKDPw4LHQKME5UMFKdlfUrBv9FkVsnDeCdN4c5KGGBRnmn3USR5q+pTkFZH0AGKDWMYgKBjYS74D8u5w0G1j1g//wJi6M47+D9mRV2ugYS1PcooaSUos7+JEKwsxlEZruv0=
+	t=1761593535; cv=none; b=Ei+rS1wO7ovHscaWba/1shgArd1lCkovzIGDYq1vNDhPOTQZKmYv9pQrb+OIGN2U6Zx5pXACkS9jbUnKOZ5krRJ/yEgPbk+CMy+m2SRybp2VjD7x5av1WecVCMX/Rz/U55P13+MEumFhxhWfZHKLKgeZaNquEZUBlHUbhETuepI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761593510; c=relaxed/simple;
-	bh=Wfw586FZsQVYuyKx2zTL0/KlV8MshdPbK8gyqOvNcfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nlutPiXYHHxiO/4lH29w5h+0jCNRc04e/jkMcsAMYNUIZJjYKFIxL3x91v5G5OXxpkQjL2lz4yMR+ylsHMcaULzLRQOL4ePBpUv1/YyvDIRs6WwFvNcP87GCJiekUeJjMkSwhe+KxCeDwZkT1Q/8VWyCOXblSWThRipTdJjj7H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAjQmF8Q; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a27053843bso7022779b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761593508; x=1762198308; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aQIEre2ri1pN3eJbczeUY9nkqkn0UVxrRDPMJROpfpI=;
-        b=FAjQmF8QEaMq/4sEvxiPtMVlGIDHw71iK1Z/aBQchBBLxUv9aIzjJzAN8+P0cYwOe/
-         5KmSx/F8uIgpx70W5l4Z9B5tZqGkCBkP4R0Ih/PjEJbSFp4cRK/NPkHagw50ZgQJbGom
-         AfsBJRR7mKuWf266I+sJsaY1W8s4Ox18oZft5tMW5rZy+A9DeheLyykIq+yMJN3VBD4a
-         zKKsH6SOWAvBhWqqs7SLViQJWnUipLnKWxFlU/lbgu8ElgHmAgDcUK9TrdS6BFlqJ+Wm
-         D5V1MBeBJpJAHaCKnkeGTC9wnVia6ZP+2eded35AMd0ZU2on90RmIHyCuvIHzyNRofoq
-         fDuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761593508; x=1762198308;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQIEre2ri1pN3eJbczeUY9nkqkn0UVxrRDPMJROpfpI=;
-        b=BYORdHgT3r3lWyP/SLj7aRkbZJaHGtKW5ifcnBpt1PfJ5ztLeeZEAfPbfuK2rzewC8
-         30/ZNCJszRvAsVgZjX1ol+dFi+Um8auO6RMTr1JzrEvBN2s7+aetWPi24ZcEKm5tF/6n
-         oIfaM+xSGXtpxrHeiFl6ETwr27OS4dL29ZsnGsDg8l5IYtwAEL3g3qXzTyy32yyW7oZA
-         m4YqXRtMUtsJYkgB3Y/on+qdiYYbjbsdmwjtHVP+5KQrlSsSbo0RASKa6uq4vNKN6j+p
-         graBCILu1DT8q1jkSlqj8OeILniXg3/579dpVdZ79+p8Owx8vqrKlwD9UpZ8g6K2+/qP
-         1l6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXW3T79D98p8xww+lj3/5O1us0wXAdhbneq4iQIb4v7xH9g7+TgU0c9tJyMiNOPsi31zsZDr6wK+j3+Rc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbGZHlSrx3bRhi/Rg6BpMtaXIAoVmEWfrZA6v/Rs9tCwxDWN8D
-	vGs8sk/Gfi/f+h7aIkbyBS1JhM2ovpG/g8QSctQ+V63wyXXsEa9JL+iZ
-X-Gm-Gg: ASbGnct2/ob/ziHZRqeBVECzqSY4gILmUZlY5MYU0zEEiMjzyO79mECN9wBrc/PVs2T
-	znqd4+jHUEBUbSvhsjdg1D3UDykgU2utKoaUgkbQsBAnjSPu6HHWP/c6GmYF7bx/kMxxsG7W3mb
-	12HaOdHc5MYg238MUf2NrKvnnlQFRM6UWmVVmL6WYCLaCZ50hH0Dvt4GRlwrQr4Ett7e4eFrQDr
-	kNHSUmHYmG/1f2fAzsMyXQFvgylMB3CwUZBDUeHJQxSanSjk1OJ3a+W8j32xu7Ye3Q+AZYMrClP
-	id+ilFVqTeueDbE0DbckdqQxWg+ZJHVtraI7BmsGiwTYBihWKDKSlj59GnuxGpX3AUzF9BfIZil
-	RVW+6mlarCNQgGhDTgbmt+rFW5TBDFwar0FKYQSg7S4ENVvarQj2OAV6xvFThFm3pgSQ7yCE8jl
-	qcWxdlEVHi7j6aTs8gyMLj/th9a9FiW0gNsKtG9A==
-X-Google-Smtp-Source: AGHT+IEkosWML/wG8WDCCZZJB7OEe7Pbs33Ch34uBEMhw66C9EPkEPTbWzwlAuneyQFI3gppfP9HKQ==
-X-Received: by 2002:a05:6a20:914f:b0:334:a72c:806e with SMTP id adf61e73a8af0-344d441f72fmr848282637.43.1761593507941;
-        Mon, 27 Oct 2025 12:31:47 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712f0c0b1asm8203659a12.32.2025.10.27.12.31.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 12:31:47 -0700 (PDT)
-Message-ID: <eb241eee-2b51-410a-b13b-9511202a68f7@gmail.com>
-Date: Mon, 27 Oct 2025 12:31:45 -0700
+	s=arc-20240116; t=1761593535; c=relaxed/simple;
+	bh=2wy2OdMalM6zRMFQ3M0yh4G9RN9YvEwRgDcTo+gcfcc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M1cVQvSi/KSpLS2aTj01pLKG/5MP4wT4eM9D3upAyBNVmabjAkpW4AAIw85V1OvyJ+LAAi1Q8vD10BOBoH7Rt2g2mbwsWz/hQ08hEiPvUWL5U2TXPZUZT3OGCbjRzopx8HLt790o7Idq+qcJTWd9+lJJODqDH/yJPc56uEH/Xp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=Kkm2QTIP; arc=none smtp.client-ip=91.103.66.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1761593525;
+	bh=ROb6l0esQuEFMG0ONS9trNOcFqKanMbtjSg64V55ITE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=Kkm2QTIP+APmb1lWTFbiC33JTqXdsEvG5B3i/ZuhOW1nQdrko/2ij7dr8dtatYgfy
+	 hqzdR6UpYdSq7hibshNSU4nx2gE6s9EeDVroaRNghUohTqxNfIqbjooJbYXuG0OyTZ
+	 hz93vnvB7bG+6aXqEmjLzyVMNjiG+29JuMQbRqf9g+iDsgshQkNoWxeIog59KMp8Ah
+	 sDX10he711NrqQLUjLQIrlcx/3EWm+ZrHpNHik3kPdrTOjNlkmzj0+szcduuBXmIxG
+	 BZ2HLjJyAwhFY4iLsYGf8aCjnoF8Qzj/mAv54QnFg9ddVfxjOL2WToWL2x/W4btNNc
+	 3Lwalcp2sD2QQ==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 3B5C43E273E;
+	Mon, 27 Oct 2025 22:32:05 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 7AAAB3E26EC;
+	Mon, 27 Oct 2025 22:32:04 +0300 (MSK)
+Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Mon, 27 Oct
+ 2025 22:32:03 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] usb: mtu3: fix possible NULL pointer dereference in ep0_rx_state()
+Date: Mon, 27 Oct 2025 22:31:50 +0300
+Message-ID: <20251027193152.3906497-1-Pavel.Zhigulin@kaspersky.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 000/224] 5.4.301-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- sr@sladewatkins.com
-References: <20251027183508.963233542@linuxfoundation.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20251027183508.963233542@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/27/2025 19:22:10
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 197495 [Oct 27 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 72 0.3.72
+ 80ff96170b649fb7ebd1aa4cb544c36c109810bd
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:7.1.1,5.0.1;kaspersky.com:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 10/27/2025 19:24:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/27/2025 6:00:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/27 14:30:00 #27802224
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-On 10/27/25 11:32, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.301 release.
-> There are 224 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.301-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The function 'ep0_rx_state()' accessed 'mreq->request' before verifying
+that mreq was valid. If 'next_ep0_request()' returned NULL, this could
+lead to a NULL pointer dereference. The return value of
+'next_ep0_request()' is checked in every other code path except
+here. It appears that the intended 'if (mreq)' check was mistakenly
+written as 'if (req)', since the req pointer cannot be NULL when mreq
+is not NULL.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Initialize 'mreq' and 'req' to NULL by default, and switch 'req'
+NULL-checking to 'mreq' non-NULL check to prevent invalid memory access.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-There is a new warning showing up with 
-b27e16c9e625465fe9ea9955bd8ab095498de9e3 ("tcp: fix 
-tcp_tso_should_defer() vs large RTT") , but since 5.4 does not have the 
-full minmax backports this is expected:
+Fixes: df2069acb005 ("usb: Add MediaTek USB3 DRD driver")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+---
+ drivers/usb/mtu3/mtu3_gadget_ep0.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-In file included from ./include/linux/list.h:9,
-                  from ./include/net/tcp.h:19,
-                  from net/ipv4/tcp_output.c:40:
-net/ipv4/tcp_output.c: In function 'tcp_tso_should_defer':
-./include/linux/kernel.h:843:43: warning: comparison of distinct pointer 
-types lacks a cast
-   843 |                 (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-       |                                           ^~
-./include/linux/kernel.h:857:18: note: in expansion of macro '__typecheck'
-   857 |                 (__typecheck(x, y) && __no_side_effects(x, y))
-       |                  ^~~~~~~~~~~
-./include/linux/kernel.h:867:31: note: in expansion of macro '__safe_cmp'
-   867 |         __builtin_choose_expr(__safe_cmp(x, y), \
-       |                               ^~~~~~~~~~
-./include/linux/kernel.h:876:25: note: in expansion of macro '__careful_cmp'
-   876 | #define min(x, y)       __careful_cmp(x, y, <)
-       |                         ^~~~~~~~~~~~~
-net/ipv4/tcp_output.c:2028:21: note: in expansion of macro 'min'
-  2028 |         threshold = min(srtt_in_ns >> 1, NSEC_PER_MSEC);
-       |                     ^~~
+diff --git a/drivers/usb/mtu3/mtu3_gadget_ep0.c b/drivers/usb/mtu3/mtu3_gadget_ep0.c
+index e4fd1bb14a55..ee7466ca4d99 100644
+--- a/drivers/usb/mtu3/mtu3_gadget_ep0.c
++++ b/drivers/usb/mtu3/mtu3_gadget_ep0.c
+@@ -508,8 +508,8 @@ static int handle_standard_request(struct mtu3 *mtu,
+ /* receive an data packet (OUT) */
+ static void ep0_rx_state(struct mtu3 *mtu)
+ {
+-	struct mtu3_request *mreq;
+-	struct usb_request *req;
++	struct mtu3_request *mreq = NULL;
++	struct usb_request *req = NULL;
+ 	void __iomem *mbase = mtu->mac_base;
+ 	u32 maxp;
+ 	u32 csr;
+@@ -519,10 +519,11 @@ static void ep0_rx_state(struct mtu3 *mtu)
 
-I don't think this should hold off the release though.
--- 
-Florian
+ 	csr = mtu3_readl(mbase, U3D_EP0CSR) & EP0_W1C_BITS;
+ 	mreq = next_ep0_request(mtu);
+-	req = &mreq->request;
+
+ 	/* read packet and ack; or stall because of gadget driver bug */
+-	if (req) {
++	if (mreq) {
++		req = &mreq->request;
++
+ 		void *buf = req->buf + req->actual;
+ 		unsigned int len = req->length - req->actual;
+
+--
+2.43.0
+
 
