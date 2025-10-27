@@ -1,104 +1,168 @@
-Return-Path: <linux-kernel+bounces-871881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EE4C0EB23
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:58:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F43CC0EA76
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60DD402E19
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:51:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 812D74F58AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF922C21DC;
-	Mon, 27 Oct 2025 14:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B20D2C11D7;
+	Mon, 27 Oct 2025 14:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FtFWNiIj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="did5QFqQ"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E23239567
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D651749C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761576689; cv=none; b=cK10xOjNNifKEeAutfHWD3GQo7PkGrC1QhKywLN3G89u00lm+blj5n26869A26uMUKAE6aWLNnuw0BYWwKNmlMcF3iGMlCEEv0RtH19Oc+ZIYl/XqobKJdIMeeJh+wUpFPmfWiAThWJ/ZGXhj6ntiSKha3w+00YklRIpvxCdtkM=
+	t=1761576739; cv=none; b=my2UXpahfAlkYNJWGC5bJHgFdg096N4ic5j0of7jcXX9aIDO0ZP0Q6/AM6uTR2dB6ZO2xRdUr4ouDEhjSP+kzcP41vYHxyLtshBqilGM9QgewSC9mRyWXtFv+GnAubgC6RT1uCYuwopIx7+xzmhNAz7yfltkAQkr1lsc059HhMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761576689; c=relaxed/simple;
-	bh=8gtdnZQS1Ze1qnxybqPNZWNI8ysmJonaCunUbf97yJI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=OR9NUUp8wHt4ujF7Wgpe3SjaMJXL7SUuSYj1h3gUAXVnHAz7TvdwwvexxUYnWbOZReucuQ5mgFHffC1STtyAKqWDwL/Ii46JyAcg9Ss8NKutJt7Nd0CO3hkttLDmqS49FebMFkmUOoHeZq3IgmxtRTVgDD//k1vXqzEJvA2yE24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FtFWNiIj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761576686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a60wg3eS8XmeyLBfFoANHgeIYJM0c1Dc4IZk/cK3IZk=;
-	b=FtFWNiIjDbZ/xdVjLtKQ80BhR79LHxDIMFM6y0y9bzhKmvdRKHcJsYtfAdVMDlmDEXf+y+
-	kH7BP4VWn0AZPcFx3UTer6A5Iv9z4/sF37scU61Gwedm7ZCNTeQw31TtG8rZSOH/by+v9h
-	At/C8BVMH7UWLPzIPFDbFHuY8Hg7/+I=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-288-mDZsaDckMve3E3Wib_fsTw-1; Mon,
- 27 Oct 2025 10:51:22 -0400
-X-MC-Unique: mDZsaDckMve3E3Wib_fsTw-1
-X-Mimecast-MFC-AGG-ID: mDZsaDckMve3E3Wib_fsTw_1761576681
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 890161800D85;
-	Mon, 27 Oct 2025 14:51:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B962E1800577;
-	Mon, 27 Oct 2025 14:51:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251026143140.GA22463@redhat.com>
-References: <20251026143140.GA22463@redhat.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: dhowells@redhat.com, Alexey Gladkov <legion@kernel.org>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Mateusz Guzik <mjguzik@gmail.com>,
-    "Paul E. McKenney" <paulmck@kernel.org>,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] release_task: kill unnecessary rcu_read_lock() around dec_rlimit_ucounts()
+	s=arc-20240116; t=1761576739; c=relaxed/simple;
+	bh=5ORSopPHzqT+JQMXOWN/QIYFeXx9NCSwHQ9+XUHA56c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rycb131l4n3WOUvLoQZx8uuSKr/LzBXd9cB7s91h1dU580sL1wUDxrzggoIdpf0jx0zZ0rIKQ2MCSYai8bc8waGvyAcJGf04Th61S+fzKG2ivICLI3p7f3mQ/UlMKrAO7QIbh7m/lOSSlkHvqIcWhGeFEmcJ5ylQVivsthac7sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=did5QFqQ; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 029E2C0BE84;
+	Mon, 27 Oct 2025 14:51:55 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 26D0A6062C;
+	Mon, 27 Oct 2025 14:52:15 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 42DA2102F24D3;
+	Mon, 27 Oct 2025 15:52:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761576733; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=DuHkXePUk6nSfSYEkcrN/kO/hmAFgCdpDzG5ZHaMNZ4=;
+	b=did5QFqQfV5fK6c2kzfEr3hbeKkU8TwiRbH00ElBxOpHW2BuT+Npt1XOUVgROzKpev9sik
+	gAPLEeVsQMGWgrh0bm40vLcYI9Ej5m+FU3R+h2G9mCWGky7RUAaYCZN8dBx+zpLy+MEbdg
+	6dEKUp+7c1Jkllp2seQoO0ZVO/c6dYBE0K6K1TbUNALyCWeELcRtMUA5Ev+dXYgd/Aj7XV
+	M42s48u0ifdS6YvbbXy1unf4pJaBdaymKUYjAu4au7Qlm3drW8u4eQ7tWocMA8AfVhYsLp
+	2OlUDpB/QIM3kOYj/xwRRoyVk1upMG0l3AwMj7Zp1DPtYfhvHxBinpQ1dzfdCg==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Subject: [PATCH bpf-next v3 0/4] selftests/bpf: convert test_tc_tunnel.sh
+ to test_progs
+Date: Mon, 27 Oct 2025 15:51:52 +0100
+Message-Id: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2258819.1761576678.1@warthog.procyon.org.uk>
-Date: Mon, 27 Oct 2025 14:51:18 +0000
-Message-ID: <2258820.1761576678@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAmH/2gC/12NywrCMBBFf6XM2khm+jC68j9EpElTG6hJSWKol
+ P67saviZuBy7zmzQNDe6ACXYgGvkwnG2RzKQwFqaO1TM9PlDMSp5gKRRfWIb2v1yFSDZUWNKHs
+ UkPeT172ZN9cN5NQzq+cI99wMJkTnP9uThFv/8yHH086XkHFGnWgEF/lKukrn4mjsUbnX5km0Y
+ 4n2LGW2raqWy66mM/9j13X9As7eAbTqAAAA
+X-Change-ID: 20250811-tc_tunnel-c61342683f18
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Oleg Nesterov <oleg@redhat.com> wrote:
+Hello,
+this is the v3 of test_tc_tunnel conversion into test_progs framework.
+This new revision:
+- fixes a few issues spotted by the bot reviewer
+- removes any test ensuring connection failure (and so depending on a
+  timout) to keep the execution time reasonable
 
-> rcu_read_lock() was added to shut RCU-lockdep up when this code used
-> __task_cred()->rcu_dereference(), but after the commit 21d1c5e386bc
-> ("Reimplement RLIMIT_NPROC on top of ucounts") it is no longer needed:
-> task_ucounts()->task_cred_xxx() takes rcu_read_lock() itself.
-> 
-> NOTE: task_ucounts() returns the pointer to another rcu-protected data,
-> struct ucounts. So it should either be used when task->real_cred and thus
-> task->real_cred->ucounts is stable (release_task, copy_process, copy_creds),
-> or it should be called under rcu_read_lock(). In both cases it is pointless
-> to take rcu_read_lock() to read the cred->ucounts pointer.
+test_tc_tunnel.sh tests a variety of tunnels based on BPF: packets are
+encapsulated by a BPF program on the client egress. We then check that
+those packets can be decapsulated on server ingress side, either thanks
+to kernel-based or BPF-based decapsulation. Those tests are run thanks
+to two veths in two dedicated namespaces.
 
-Yeah, accessing the pointer that task_ucounts() gives you isn't RCU safe
-unless you're holding the rcu_read_lock() or are in a context where RCU safety
-is irrelevant.  The task doing the dismantling in release_task() would seem to
-qualify for that.
+- patches 1 and 2 are preparatory patches
+- patch 3 introduce tc_tunnel test into test_progs
+- patch 4 gets rid of the test_tc_tunnel.sh script
 
-David
+The new test has been executed both in some x86 local qemu machine, as
+well as in CI:
+
+  # ./test_progs -a tc_tunnel
+  #454/1   tc_tunnel/ipip_none:OK
+  #454/2   tc_tunnel/ipip6_none:OK
+  #454/3   tc_tunnel/ip6tnl_none:OK
+  #454/4   tc_tunnel/sit_none:OK
+  #454/5   tc_tunnel/vxlan_eth:OK
+  #454/6   tc_tunnel/ip6vxlan_eth:OK
+  #454/7   tc_tunnel/gre_none:OK
+  #454/8   tc_tunnel/gre_eth:OK
+  #454/9   tc_tunnel/gre_mpls:OK
+  #454/10  tc_tunnel/ip6gre_none:OK
+  #454/11  tc_tunnel/ip6gre_eth:OK
+  #454/12  tc_tunnel/ip6gre_mpls:OK
+  #454/13  tc_tunnel/udp_none:OK
+  #454/14  tc_tunnel/udp_eth:OK
+  #454/15  tc_tunnel/udp_mpls:OK
+  #454/16  tc_tunnel/ip6udp_none:OK
+  #454/17  tc_tunnel/ip6udp_eth:OK
+  #454/18  tc_tunnel/ip6udp_mpls:OK
+  #454     tc_tunnel:OK
+  Summary: 1/18 PASSED, 0 SKIPPED, 0 FAILED
+
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+Changes in v3:
+- remove systematic "connection must fail" test part of each subtest
+- also remove kernel-based decap test for subtests supposed to fail on
+  kernel side
+- fix potential fd leak if connection structure allocation fails
+- fix wrong early return in run_test
+- Link to v2: https://lore.kernel.org/r/20251022-tc_tunnel-v2-0-a44a0bd52902@bootlin.com
+
+Changes in v2:
+- declare a single tc_prog_attach helper rather than multiple,
+  intermediate helpers
+- move the new helper to network_helpers.c rather than a dedicated
+  file
+- do not rename existing tc_helpers.c/h pair (drop patch)
+- keep only the minimal set of needed NS switches
+- Link to v1: https://lore.kernel.org/r/20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com
+
+---
+Alexis Lothoré (eBPF Foundation) (4):
+      selftests/bpf: add tc helpers
+      selftests/bpf: make test_tc_tunnel.bpf.c compatible with big endian platforms
+      selftests/bpf: integrate test_tc_tunnel.sh tests into test_progs
+      selftests/bpf: remove test_tc_tunnel.sh
+
+ tools/testing/selftests/bpf/Makefile               |   1 -
+ tools/testing/selftests/bpf/network_helpers.c      |  45 ++
+ tools/testing/selftests/bpf/network_helpers.h      |  16 +
+ .../selftests/bpf/prog_tests/test_tc_tunnel.c      | 674 +++++++++++++++++++++
+ .../testing/selftests/bpf/prog_tests/test_tunnel.c | 107 +---
+ tools/testing/selftests/bpf/progs/test_tc_tunnel.c |  95 ++-
+ tools/testing/selftests/bpf/test_tc_tunnel.sh      | 320 ----------
+ 7 files changed, 790 insertions(+), 468 deletions(-)
+---
+base-commit: ecdeefe65eaeb82a1262e20401ba750b8c9e0b97
+change-id: 20250811-tc_tunnel-c61342683f18
+
+Best regards,
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
