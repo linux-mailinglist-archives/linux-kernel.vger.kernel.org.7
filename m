@@ -1,169 +1,215 @@
-Return-Path: <linux-kernel+bounces-870792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2454C0BB25
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:42:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0E7C0BB1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:42:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0363AAD5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:42:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B794C34A0D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AF62D3ECA;
-	Mon, 27 Oct 2025 02:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66C02D3A60;
+	Mon, 27 Oct 2025 02:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="cqupaV5z"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="aLirn0An"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022095.outbound.protection.outlook.com [52.101.126.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92F82D24B8;
-	Mon, 27 Oct 2025 02:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761532932; cv=none; b=lpzgAxTl6ETwT6908GJjkpU1Qc1YU9Q2rkMAlPjQQqjATS6AsrLIjm+08l3V4I0taVSDwEdOsomRuvcCNH5kUngMxk1ESxqRyPTCw++N9xlsJF5+nHhU1lm1on2eGQf0SKHcaWHguklOgfkCdvrhslsnC6zOfZKUBSAROGxTeB8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761532932; c=relaxed/simple;
-	bh=6ajdjtDvJ9TPhiIgC2lfAsB/99n0oP7GTZig7ku7xF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aWc+wX1nhMLPpjMSUfugI5ezwP5ygwbxjYehab5rZoNTsBL80A/aXaXTnR072AhiN3eL2lMrshMbtfjK2EtCXZEUxCdoWO32mD55Z1ypi+WdH+fuTb/ifUcfH6xKIWPK1m2QmIl8/huwx1TJk3nWxsS3sn12+UshH1sdM4Lte1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=cqupaV5z; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1761532792;
-	bh=9tmLjtcs2eyDxRfT51jIz66kx3WBptin9RD3Ln0ghU4=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=cqupaV5zoN1VuTKxrUsez/sADxaV43IncBVI5GP6alESV6/9oQ0P7UiyXu1D/Har9
-	 WbB9n4J957fGob5h223Ljyx60BYJaVvWUdQ5lfaAEXRlwo2sdk43pPpLVxDBUG03dM
-	 iKW/Irdid3D4bAQg2To/42t1FdqI4FtlvFEOQczs=
-X-QQ-mid: zesmtpgz1t1761532785t724140c3
-X-QQ-Originating-IP: bsapEcVVlFgEffV0ZewBuqyVBdoWgWC9dSN4wU3DT6I=
-Received: from = ( [183.48.247.177])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 27 Oct 2025 10:39:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15698116009631844435
-EX-QQ-RecipientCnt: 8
-Date: Mon, 27 Oct 2025 10:39:43 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Randy Dunlap <rdunlap@infradead.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Jinmei Wei <weijinmei@linux.spacemit.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the sound-asoc tree
-Message-ID: <CC98F1397C1BC467+aP7bb005VjZNJmS3@kernel.org>
-References: <20251022141705.714b19b5@canb.auug.org.au>
- <D5657B8E8DB8995E+aPt-p1EXhoFLm9aW@troy-wujie14pro-arch>
- <b436e795-188a-4b62-95f5-1b11d2d10c77@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E706D2D24BC;
+	Mon, 27 Oct 2025 02:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761532931; cv=fail; b=lq/U574cJG6ia7RZU+sbugLb8AZVtavxKRwJ44i22nD5SnI2UuMhSJlvvyH2UTxoj/Wwn05RytWWWdGMClrIkWc6qsHAqeAhQvAXHWNQiDMDc3QahvXyvfpenCwWfE5D0AZw/HtsoOQfQ9hji658MsvkmEeXNT4mRzUjglVL3eM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761532931; c=relaxed/simple;
+	bh=EnITEGSudbzAtd98mJZIemrpHI6iuhdJmTuzizRMeYw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=taUFefRiL2QID5+LxY477K7Gq65w82SyqAVakjQYvxUDz5WO0Ae/gc2jzd5VaJRHShlsRiBmUXtd0QfLJG9pkUJwvm7D5P/Jk7hpEhDnKTEQ+A5Ha3pY5W9wN5QnpLn5FlcZO9URQZ2MoZXgrso2vPr650vm3muYlMIDm7BcP6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=aLirn0An; arc=fail smtp.client-ip=52.101.126.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kR4SGxq4BoCbIN3QR8maDdluuxd2RsgfvfrH4gROBXydFSNURhCdusXV3Jg5jsLlJM0d18GMuNvept6AEEXWe9aP7KeAFgGappvtgS/nLmuqfbtK7P6PWFBndtEi2qV5OOP0it2odrO9bS6ZYrRvMBruHKUgsl3X3pP6wADXh3Wt0HoH7L2MSEW0r0dPk1cFPVyparvK73dmnSdDp3aC/WDReyUK0zY955sTcr6WfAnrcRu8+6KQwHVcT/efaFbJQ37ZfXrWPBbWCWlTJW6GB8ScT6hB1yYpNqLls+uvXfxVSfYc6w4sKIG7ONLJI3r/xkaWNuGGibdlJTqh1f18/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y8RgaXGdrWb3i5yVy1EbV3V726G4vTwIPPqIqMKmyGw=;
+ b=ELtZiMJnICVp9tO5CqlYxKNjSHUdvp3nVVe5qlIXmY+x//yyxVOiT42vz92rl+QMa4BX1NGst27vMYFUp9L75NFylnt9P1xEY4DWLkgVGzhRyt/trfZrMrKUM8ZXrUj88mwr5eGqusaVXIkwXD9B1Q1C6XZVChSZ8/bdpuf26bXCRLzNoONE2EHu7AMkQKy29Xv7h1+NNQ2QGQdruJdsReYkZ62bnCjHAJmyjv6+rIotMcdKAcTfvpN5V2n5dcl2iBGTmHEAyW2piNBtFaQAXzoDnJ8LfEsalnE6jjG5CDKf5+BlMq6d/fTmkOcVo3eT2m8ROk5sTM7Bh7Z6JXpr2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y8RgaXGdrWb3i5yVy1EbV3V726G4vTwIPPqIqMKmyGw=;
+ b=aLirn0AnBBzFFE9+iEkVwEQwq3plua89WadCTIpgiz8QB+42wlUp7DFT25RPomsIAbvfjDuaQmydqcCMTa/YTLqEVrUYUCciN7qVuN+dw46PGJ74NqgPFEvdDC3eB1RlsNSCYYHGiIoRXwtiuielm1ykSS4tM4oA3xwtxcq7yldw+tMHkosrNkpfUuKGoO0wYTr5FulU3uDnu1/ZPesjjACvmHYQhC3rnDSx1b6V61UdLCBz1hzvZYxHX1oGrEzfMCBOdEJLdBe/yNM+b2h+7j+QWp7P3+iPynmJfLL6vkwFgMfkfN9kv+I4W+1mFUq3VlPhtevpEyeKyKFElydWOQ==
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
+ by TYZPR06MB6935.apcprd06.prod.outlook.com (2603:1096:405:3c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 02:42:01 +0000
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9253.011; Mon, 27 Oct 2025
+ 02:42:01 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Arnd Bergmann <arnd@arndb.de>, BMC-SW <BMC-SW@aspeedtech.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Jeremy Kerr <jk@codeconstruct.com.au>, Lee
+ Jones <lee@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
+	Taniya Das <quic_tdas@quicinc.com>, "Lad, Prabhakar"
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device
+ tree
+Thread-Topic: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC
+ device tree
+Thread-Index:
+ AQHcQyJQr8Cg3wF4TE29hMu8e6S4P7TOr5mAgACf3YCAANyZAIAAeR6AgACX8gCAAPRVAIADDnEAgAAO3MA=
+Date: Mon, 27 Oct 2025 02:42:01 +0000
+Message-ID:
+ <TY2PPF5CB9A1BE6DD93D0F397C961D5CB5AF2FCA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
+ <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
+ <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
+ <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <71df9bdf-53b2-45e2-a9e3-5b00a556f957@lunn.ch>
+ <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch>
+In-Reply-To: <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|TYZPR06MB6935:EE_
+x-ms-office365-filtering-correlation-id: 0fddbe53-4761-4d7c-39fe-08de15026821
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?bsxe2v947W3PrfMVwNshkA9HIMZPLvxCYBBgU0J1BAJ9p0a0Ai+srxGByx?=
+ =?iso-8859-1?Q?2OeVUfEfAjBoW+zxAMCPODnCfr5ILwLzcJG2JOy4igWA5TLxW9oEVHytUh?=
+ =?iso-8859-1?Q?90EMbU625HpwRwC94Vk6zpjyURqbPbOrrXvVHIqufHHG0dtSp6VZhu/ikU?=
+ =?iso-8859-1?Q?nF+Tn0tG6NDT7cz9KkU79vBDPK9VkU9/j4pAmn/iVZF6OOYpiW/WQTzIfI?=
+ =?iso-8859-1?Q?FR1ihuKHRpH9BzRLaPbLlwgUY7p4+y9+FVqzwx0sQJPOXex8WSQhTLBagX?=
+ =?iso-8859-1?Q?J8mtjO4vxOe7XN4qjhOh6HohlGNDclp/KKww0WjYbNZk70rQNIs9HeZbLE?=
+ =?iso-8859-1?Q?adRijK8AUscJggg1EgpUz/paX8zfXnV+X247SO7vBBiEydgkjeJxYWexs8?=
+ =?iso-8859-1?Q?I6Nwfms2gZT+3ndkgxkWaflqYYROsydPqfYME4Gbd4KNNrnNwA/yWtJwbh?=
+ =?iso-8859-1?Q?ZWinLARFj+F7A8RsIvLl9SGGCMQtIRWowMZb8FOVarGUWFXbh+/9jFiHaB?=
+ =?iso-8859-1?Q?qmOw/mNl3+OBOTzDrs7lGD4JhB5uLX2e6wyxBbfv3qs6XaBGn89bW+Ho3m?=
+ =?iso-8859-1?Q?yZBeB0CW2eXRA/SdTVMtJQbNlEvkezdoNRnYXV+smJndRdatg9TRSC569T?=
+ =?iso-8859-1?Q?tgpusmQOkc6/1CtTft2UmfrReAI91mlRUGJt0raq4XTCDnDi4pchL7NBTw?=
+ =?iso-8859-1?Q?6ZJxrZtsnLwMxWRiTaaJV3d+yEg6CKseOdKW5juaG3OEcMw7BaL3plpz0C?=
+ =?iso-8859-1?Q?i7NXgzOjuXyElZeAKErnH4aJEcuuKLWFHpZsQbQPklZlzKEmRkpG75m1Rz?=
+ =?iso-8859-1?Q?wYtvWjei101KXC0P5bcEsgZEqr1sn3nYYo6REvB1TfG1AlZeMSYHBlx9YJ?=
+ =?iso-8859-1?Q?1t1yJ2nJJFIZb6WqbiahZc6HBnLH6F813g1wVGN40Ba391zLcWViHJ1Saf?=
+ =?iso-8859-1?Q?Nh85nPVl9Sby6NHLdHTeHGJ3azMP9r7OLGkiRLR/tzCgoL9cEyn5qKvLSg?=
+ =?iso-8859-1?Q?qhyMhFSgV/UjADGKFgc4GkCdHe95F9wBdwv1L6lkST/bNJMGsW2htssnRf?=
+ =?iso-8859-1?Q?oJrwxBS+92QFQxFd7dhxomz9UHVzihgLhkejpJyfXDHSDh9NWQXGSPaiVJ?=
+ =?iso-8859-1?Q?01QA9iWhmq2bfbm5rC4NxvN2WCvL58FlqKeFQp0fsSEasKc8mB97VY5wln?=
+ =?iso-8859-1?Q?ZxIz2NKLCBXvi0LOcHBwEjdyTAOODX/elJZEL6TcsGR8txvROpMKGM+JSR?=
+ =?iso-8859-1?Q?wm4ynMbIMz7PhdwdeMVRmLliOYT1M171uHKYDY/Yi0CC5Mj2CgZ3hyHHK2?=
+ =?iso-8859-1?Q?IjQW1iCht+0ieHFCMTP+BMrugkE42bjM8OEaxU+Djd/77AA7hSRiDME/CB?=
+ =?iso-8859-1?Q?k2pYkh7LXQxRzOIwqDl48YYjCYsxRzP4TY4epKZ6SFTrUkqZLFG14W1A2z?=
+ =?iso-8859-1?Q?nMuwyH46jUMjgn3xcWR5IoqznMgWjSDKaT4bVAKffkyz6Ys30REPgyn7aO?=
+ =?iso-8859-1?Q?bHiILQXt9pYCaX56XC0o9HP7CKq48cyyTw2rmG66z2hlWR0opY30saBVuK?=
+ =?iso-8859-1?Q?SJ7UlOWntPfSbtyikyi4vQPaqMyO?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?znt69szmm8RHPpp0AwuQ7m/16vJJ60zxTQTY1/zEPpqwnpoKcj3jGqFeVF?=
+ =?iso-8859-1?Q?o6em3WGtdkWhgid87KxmMqoC+sy9JLGK6Oba+zzRQl+XZVZvUMhUi/4C2R?=
+ =?iso-8859-1?Q?UY7AY8CjCTGj6kJw2Ql5UZbjVktX4M9DbaE0z91pzM4oEy4edjqHO691r7?=
+ =?iso-8859-1?Q?bYXtmIEztGgHaaLV1xD9ODT8zMQhLcqMMW0pE1AyGV6LhrvIp5QNBDb3nA?=
+ =?iso-8859-1?Q?ov4iBVDtwOOGlN7+6/04Kf845spE23oWSk+vN26kzQ2CcnVmURRW1UyAtx?=
+ =?iso-8859-1?Q?tM2+CUeJeq/ZzbHq1wXPcmTnXjxoB52PPw+wemztuVTBgYMdKVhym0UoC/?=
+ =?iso-8859-1?Q?2Sd+mySla6luEvuKegO8XfrFVGs2fibEFjRh/SOLpomLpahrG/ZYTmG116?=
+ =?iso-8859-1?Q?apM7YdN6FFU25eg27HUUjtBAvlxUBCF7wiuSupYTNdmb8NBNqIlzabQCYy?=
+ =?iso-8859-1?Q?nia6ysRCV7sjpb1PLaV53RqmGyhzGxfxF+u/Nis2qGt8bIUHbBPZHXviJb?=
+ =?iso-8859-1?Q?FANHEFG03gkyX2z84YhSOZ7ZZkPPsty8+TxAfcKhItJaPlAuho6FYaRV09?=
+ =?iso-8859-1?Q?yzr97znmlVUePEg3NI9+F07SIKneQozh8gyai9RH/7pcHMf8FKYPPeCCKp?=
+ =?iso-8859-1?Q?3u9Ul41YmWWU1LZE8/DJQ9CfsexwjKLvy1k3nw6a31v0hTXOdYcOnl6FgF?=
+ =?iso-8859-1?Q?zM1XiOeCw1a6UH0fPLzbTegKSIdmNnJWtNJl/eBlr0JnM+LDTCn6liPlJH?=
+ =?iso-8859-1?Q?czxeB+6FliU4WIbJOilkv7/xz2331Cx8Um5zs0Ac9URAh2PcQFscqJisiV?=
+ =?iso-8859-1?Q?Z4C1oqTcKoyrNyMfa3ZuCefz7UPCIW4SJQLRQcegyOYcqC9ufGl0JszbYk?=
+ =?iso-8859-1?Q?+asg/P3bRbAkSVADTlwFkMqTOoQ2jKdA+6rjC0tdo9UdaAf2q+HsoaVjnx?=
+ =?iso-8859-1?Q?hb+GzcuvG+YPyFqUv1e63BDtvNWw7tvJQfQ2H3RPv84C8ZU9VmKAa9/n/t?=
+ =?iso-8859-1?Q?ZNK+LFu/UqZmFMwZUPa53kHIsRI0iP5my68pSG5M1LsiyQawhjc+0/uOfl?=
+ =?iso-8859-1?Q?EopbHjQecT3uXhQaVBi2XB+HjWJU+sWbWIoRUt9kOmy4kjIpKnLSFU9NDr?=
+ =?iso-8859-1?Q?bD8L4U43f2DMjtMt4NhKv5CfUHzTte15HKqYAKMIjDcg/YOJ6AX7VBIVkK?=
+ =?iso-8859-1?Q?74fri5QJw7hhqq0/OdWCCoHbKS3cqCFBttdfJOC5amWJDHOrHJh0l1qxmU?=
+ =?iso-8859-1?Q?5DYyjRyM1MpYh3nCcid5CiW5aIwRD7yuSi05D3SUj29l0qeqG/MbomfQjp?=
+ =?iso-8859-1?Q?VuNPJ8/3dY0bAXljmUnrLMwbTw8Grx3y6gap5wOKOi2rwLwwNrKNN6NyM7?=
+ =?iso-8859-1?Q?KVq5dQQjlmsorpl3PkElSpDPw5PtDwT7bRqEklP2MObSxt86gKFbldx/YP?=
+ =?iso-8859-1?Q?bmEiqxCM8M5W1KDVCecac4VB5bn+sL6GZQ2Qi8b6I6fpV1q7AxnNGUEfxq?=
+ =?iso-8859-1?Q?PppIHbOCfIqyF/D+e+UnQ2wwQ0X/snvZo2RXPPnAxD5b4kEhgOs80XRY6K?=
+ =?iso-8859-1?Q?sb3idSlh6Ke96anYsnsJ8BHa/wEqZUCfdNd89+Zxf6eB4kipUa9RbQQRDH?=
+ =?iso-8859-1?Q?iw9HaB5maoPmhqhPHp7HCWovaVjCvQyVAc?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b436e795-188a-4b62-95f5-1b11d2d10c77@infradead.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NrrGCwiNZLLZ9AedfdakARrtPIKUj/zEjlbOL9VkeQ30xi9qKyC+lFNM
-	vKVLnPQBL3j5vOBA3yODIBSVWUav1L0ZEVcHt6NsI9duKmhsyXlIfCgF3cyutKUMCnU9Oed
-	WU2oWYNvn+dji+olMDdHgTVtLl/2BMfoRvu5eiQyowIMijhy2QEegQq6Wu2dbDCL7LK4Rnq
-	6x54fam0vujbsnZFSucJ1ZS6G44aPz1Oi8AnrBkdH4YjoKKLTaEoie7ICcDCZiSNCmgbPMI
-	SJXhB4ajteN/Qhw7cbGeTHqguy+kmgIB3Os/9pnZ8EYNml2oyg6fIW+DgFFA/59D99ILNRh
-	fBP+SRbzEx2X8xruMINwkZnAiixV4no16M256xXd/6IcSchDSYiervQ9oRwbQE59LxewWPE
-	HADRheIFQ8+su4c/R1FIH0ULLRCt92vr1VIYDH+mUCKCRmQvU6oxTMpQLOyEpQtuEU9Pl64
-	eIreQ9jkcxPBLuB0Cp/KrQ0Dv/L0d7We0/30Gh1pCY0+GDXIa1fOFutxHt0SIxxRVtQIljh
-	OM8bM9800XA0cfe8rwa81WiHx5qySZUBSfMMvtPiNBA+pcJhYTFD6lejzDR0DpyPFXFa5VU
-	ar14m7maqnUfZ0ZrtqCN/pqhLhIEoizRhkuqQcl9ItXqp1hCcyzwBFyWUSjzpWZN3uTXNvd
-	YcDI9+CCtq/z0p8AlQDZJMbOYA57vdnxnQdVQKF5kxcMuKTaqk07rRiTPJVwOvF/GAWGa0a
-	Y2zJbCoT15Mvo3gM3mpdWBISlz9/dbQwRpPGTiTrAG8MNcp7tQuTzVLdbXCbwiVhcXhQb3C
-	D1oTu+h1dwFodDr9ubj5/KYmmbLwOMW3DV8J5T3CJE5jPQ8yoBk1b3Eu299yxPMYr38OKOa
-	bIocdqGMagPuOYKd040PoqX4LFtZgTDqzaBBGRUBiKRA+eN4fRHQ6Tfl59GTZ1C4fBW96qI
-	XeiMSy0HqeqKRJuanEDOAdy042WcMR601aOle6Pa+OjRpzJXeYfq880YGRQlC26o5OUX34O
-	4XXbJMXOWsxxg3QnVju5VZeTUtf2lGPPvzigLwciRsn/owqFZ+4jljHAKuwJw=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fddbe53-4761-4d7c-39fe-08de15026821
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Oct 2025 02:42:01.3751
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5OsCS7zsmfJgLEffcJZBkbTkYUKJiEchrcb/EBgQRN8X/hk+ROAMz74KqBJB7YmIj44VEv1nzCCNj8ZKFHe5JJNC5LuMJ4tVr5ncP4p60eA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6935
 
-On Fri, Oct 24, 2025 at 12:40:07PM -0700, Randy Dunlap wrote:
-> 
-> 
-> On 10/24/25 6:27 AM, Troy Mitchell wrote:
-> > On Wed, Oct 22, 2025 at 02:17:05PM +1100, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> After merging the sound-asoc tree, today's linux-next build (powercp
-> >> allyesconfig) produced this warning:
-> >>
-> >> WARNING: unmet direct dependencies detected for DMA_CMA
-> >>   Depends on [n]: HAVE_DMA_CONTIGUOUS [=n] && CMA [=y]
-> >>   Selected by [y]:
-> >>   - SND_SOC_K1_I2S [=y] && SOUND [=y] && SND [=y] && SND_SOC [=y] && (COMPILE_TEST [=y] || ARCH_SPACEMIT) && HAVE_CLK [=y]
-> >>
-> >> Probably introduced by commit
-> >>
-> >>   fce217449075 ("ASoC: spacemit: add i2s support for K1 SoC")
-> > Sorry, I didn't realize that this email ended up in my spam folder,
-> > and I just saw it today.
-> > 
-> > I am considering directly selecting `HAVE_DMA_CONTIGUOUS`,
-> > but another possibility is to make it depend on `DMA_CMA`.
-> > Can anyone advise which approach would be better?
-> > If there are no objections, I plan to send a patch on Monday:
-> > select `HAVE_DMA_CONTIGUOUS`
-> 
-> Hi,
-> 
-> My read of how HAVE_DMA_CONTIGUOUS is used is that an arch or
-> platform selects it to show that it has this capability.
-> Drivers don't do that.
-Oh yes, that's true.
-> 
-> Possibly ARCH_SPACEMIT should select HAVE_CONTIGUOUS_DMA but that
-> wouldn't help here since this is COMPILE_TEST=y, which did
-> its job here.
-> 
-> I think this driver should
-> 	depend on DMA_CMA
-> That will take care of being dependent on both CMA and
-> HAVE_CONTIGUOUS_DMA.
-> 
-> Or IF the driver can operate without DMA_CMA being enabled,
-> the driver Kconfig could do
-> 	select DMA_CMA if HAVE_DMA_CONTIGUOUS && CMA
-> and then have alternate code paths for whatever is
-> enabled.
-> 
-> This driver could
-> 	select CMA if MMU
-> 
-> or it could do
-> 	depends on MMU
-> 	depends on HAVE_CONTIGUOUS_DMA
-> 	select CMA
-> 
-> but
-> 	depends on DMA_CMA
-> wraps all of driver dependencies into one statement.
-> But no, not
-> 	select HAVE_CONTIGUOUS_DMA
-Yes, thank you for the clarification.
-I will go with using depends on.
+> Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC d=
+evice
+> tree
+>=20
+> > SoC0, referred to as the CPU die, contains a dual-core Cortex-A35
+> > cluster and two Cortex-M4 cores, along with its own clock/reset
+> > domains and high-speed peripheral set.
+>=20
+> > SoC1, referred to as the I/O die, contains the Boot MCU and its own
+> > clock/reset domains and low-speed peripheral set, and is responsible
+> > for system boot and control functions.
+>=20
+> So is the same .dtsi file shared by both systems?=20
 
-I also think I no longer need to select HAVE_DMA_CONTIGUOUS
-in ARCH_SPACEMIT, as it is handled here:
-arch/riscv/Kconfig +154
+This .dtsi represents the Cortex-A35 view only and is not shared
+with the Cortex-M4 or the Boot MCU side, since they are separate
+32-bit and 64-bit systems running independent firmware.
 
-                          - Troy
-> 
-> -- 
-> ~Randy
-> 
-> 
+> How do you partition devices
+> so each CPU cluster knows it has exclusive access to which peripherals?
+
+Before the system is fully brought up, Boot MCU configure hardware=20
+controllers handle the resource partitioning to ensure exclusive access.
+
+>=20
+> Seems like a fun system to play core wars on.
+>=20
+> 	Andrew
 
