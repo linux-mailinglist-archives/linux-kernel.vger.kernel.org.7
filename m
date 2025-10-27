@@ -1,119 +1,88 @@
-Return-Path: <linux-kernel+bounces-871715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134FCC0E23F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:46:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8675C0E248
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADD474F7916
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:41:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CCBB4FA78F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCA4302CB8;
-	Mon, 27 Oct 2025 13:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348EC2FFFB1;
+	Mon, 27 Oct 2025 13:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T/jNZQi3"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="LBzTFsqx"
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F4C212562;
-	Mon, 27 Oct 2025 13:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDDE28853A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572386; cv=none; b=JtvOLvo8fr/xfhNhEAmQAXvEYZL2ABb3lbe32ya0wGFS8+Rln3KYrCNoCMEjOOZy6OeGeQ8lXZFpPGlzUFQEh9q4JdUOhVZLF4ShA36CI3U2LwI1r8TesVv9SMZ86AnezZos11US1fy8mPxi0+qihQOctMorPStAS/17UAFX8i4=
+	t=1761572410; cv=none; b=UvB9P8TjHwwiAkb3TOe8y/BZELESVRj5zhw1ps/qldiek/Ju71WynYbLjryG7Q54t5Te7Zz8hnJ/JNxRV+7D5/4DvWPkKgDMHnGnIBosgH1SzsfQgjSlZn/47GKTdu6K4dFOX/W0RFIO21T66do7VUb/rPyI6ivgAGMsWVZiCMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572386; c=relaxed/simple;
-	bh=F88Mqi1IYE4ZB8FjWzZRJOZCliQhSjDt6+Vbvnc0pWc=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=So7zP+2tukfRgjmmXMbi7M856uwFYoTj8eOkZnSWS2ghO5cWKahxXQ/9I2RPWfnNwcfcWXB6t4qy33zU0g3/SspzEC8aNBEInaypApnHl/WeGscTv34esbpWQUygC5SXkwUsRoLyA5HzrQWDaAipB8hYCFHUVgZya66G+OkCXE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=T/jNZQi3; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59RDdGXM1290306;
-	Mon, 27 Oct 2025 08:39:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761572356;
-	bh=F88Mqi1IYE4ZB8FjWzZRJOZCliQhSjDt6+Vbvnc0pWc=;
-	h=Subject:From:To:CC:Date:In-Reply-To:References;
-	b=T/jNZQi3mz7QMv2F/V60x7xSZb6IaRnpxcYW0MkCdJxOIAdTGJdl3aAcdHvAXm7XF
-	 QjeJAhFl+1LoJ7cz/bCmKb/diHLTLEL+XIDC3cD/u6YHfRkktNa8CnhSzP2dpwss/B
-	 3gN8CwXFE8P5s/7ULIsvUF/1ry5D7F5LY4QvauKk=
-Received: from DFLE200.ent.ti.com (dfle200.ent.ti.com [10.64.6.58])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59RDdG3K1265503
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 Oct 2025 08:39:16 -0500
-Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Oct
- 2025 08:39:16 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 27 Oct 2025 08:39:16 -0500
-Received: from [10.24.73.74] (uda0492258.dhcp.ti.com [10.24.73.74])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59RDdC6R727568;
-	Mon, 27 Oct 2025 08:39:13 -0500
-Message-ID: <c2a22a2b7fa709349c509b685f7c050957d3b5d3.camel@ti.com>
-Subject: Re: [PATCH v3 1/2] PCI: j721e: Use devm_clk_get_optional_enabled()
- to get the clock
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Anand Moon <linux.amoon@gmail.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
-	<kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        "open
- list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-omap@vger.kernel.org>,
-        "open
- list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-pci@vger.kernel.org>,
-        "moderated
- list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Markus Elfring
-	<Markus.Elfring@web.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>
-Date: Mon, 27 Oct 2025 19:09:23 +0530
-In-Reply-To: <20251027090310.38999-2-linux.amoon@gmail.com>
-References: <20251027090310.38999-1-linux.amoon@gmail.com>
-	 <20251027090310.38999-2-linux.amoon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761572410; c=relaxed/simple;
+	bh=SB2FDnfbtovS0okN3D8Phob/I7gqy2eIwcfr7V3NBIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A8Of85EK//JuvbhMn292x5xksFCTKTiHEpKy0Ss6Z6JVDdMwmFMSpXoBjHQ+5AKxpM/erFx+41fAxOZMVLrvCq4si3RvXWxQs2LTKpnlfQrmjRM1oOIppTePkF/1fqT8ijVcyS1fmCXveOMTJr9uwX2OehY+LoucJZDdsFKuS2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=LBzTFsqx; arc=none smtp.client-ip=178.154.239.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:290e:0:640:f317:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 229FD806A2;
+	Mon, 27 Oct 2025 16:39:55 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ldcRbH3LwOs0-v9Zc6SPf;
+	Mon, 27 Oct 2025 16:39:54 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1761572394; bh=wYsIfMMq5RfuE0e0wT9zIIj7BzR16D/8JKR1dbNwbBg=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=LBzTFsqxTj4+VLMT+Dd4fRdFwLuP2wTCHOPlC4kxCEc/8Pi2i6k2YkBXSWtj02YoB
+	 Ge/A4RnlWokP20QGZD0VwGSGbIeXlIT57B1YJ1yCbeNJpF7eRVJMkgWxD4hrh4i1r+
+	 G7+prEBsHECpRyHlPso7wHDQXlDwwfBCbAX9hkcU=
+Authentication-Results: mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: James Morse <james.morse@arm.com>
+Cc: Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Dmitry Antipov <dmantipov@yandex.ru>
+Subject: [PATCH] fs/resctrl: avoid redundant call to strlen() in schemata_list_add()
+Date: Mon, 27 Oct 2025 16:39:26 +0300
+Message-ID: <20251027133926.218500-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-10-27 at 14:33 +0530, Anand Moon wrote:
-> Use devm_clk_get_optional_enabled() helper instead of calling
-> devm_clk_get_optional() and then clk_prepare_enable(). It simplifies
-> the clk_prepare_enable() and clk_disable_unprepare() with proper error
-> handling and makes the code more compact.
-> The result of devm_clk_get_optional_enabled() is now assigned directly
-> to pcie->refclk. This removes a superfluous local clk variable,
-> improving code readability and compactness. The functionality
-> remains unchanged, but the code is now more streamlined.
->=20
-> Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v3: Clock needs to be disabled on Suspend and enabled on Resume.
+Since 'snprintf()' returns the number of characters emitted and an
+overflow case is handled explicitly, an extra call to 'strlen()' in
+'schemata_list_add()' may be dropped. Compile tested only.
 
-Thank you for updating the patch.
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ fs/resctrl/rdtgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 0320360cd7a6..6f6ef6c4cac3 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -2646,7 +2646,7 @@ static int schemata_list_add(struct rdt_resource *r, enum resctrl_conf_type type
+ 		return -EINVAL;
+ 	}
+ 
+-	cl = strlen(s->name);
++	cl = ret;
+ 
+ 	/*
+ 	 * If CDP is supported by this resource, but not enabled,
+-- 
+2.51.0
 
-Regards,
-Siddharth.
 
