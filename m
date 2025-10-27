@@ -1,158 +1,229 @@
-Return-Path: <linux-kernel+bounces-871364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76C1C0D0A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:03:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1FCC0D0AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:04:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3428519A0113
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:04:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 636704F06B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2E22F8BC1;
-	Mon, 27 Oct 2025 11:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24AD2F8BDC;
+	Mon, 27 Oct 2025 11:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNINivob"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="A7blTARr"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F1B2DE6F5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761563024; cv=none; b=hE/LhY8YChNZQxxrkgYLTz0Urfz/8l8VdRjHThPOR/OsGdiq/GWPKCcrNS2ACHzE5fMAgz4mVC9Ll50t1bbr+tzuuxhFgGfgTDRzjOUkgKFCpEtKh/7N2/EWAIwvPxDcJXzd5L7IXqzv+nuvqgbuzRY4lWUHniQ2P87zrT//PT8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761563024; c=relaxed/simple;
-	bh=FQUTq9ZXSCgVx23iqCYFyJL669q4J09vkrWBnh/Ata0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r8fCz3WvorpqBGojERu3qTzFSJxRNjEOFQ1FEpAViXr2XD/DDcyzpTMWnxgyFoyphDn7nQHT8Hm6kdfoyTRiWSvjFYPvI3pXEQhvQYRVVG61JEBLDWv8OToGSv64/M8FEmx+jxHTxnPp3Eh9ZH92Iu7sBdvQFiXqHswP8O5IPWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNINivob; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761563022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3VOA8iwb+iUQs8ydqbBHXT4w/Fw9C+W1CtV9KYqI4ew=;
-	b=dNINivob9BIUhE5Cg1n7CA6GKxGI0GhRNTOZ9Cm62hCJBKTtnsNuCS+7jJdrwj86yPO4nT
-	0OPeGUDaGP8lt0TyIp7mgqio3zEQyplQ1p0q0aZNZk+eVru2dd9F0aJbIyoYk6XjcypZOA
-	B2kQWpP0InVk5C0SR7roboL75sxLsxo=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-gP6nU4oxP9ucyBA2BI0Q2g-1; Mon, 27 Oct 2025 07:03:36 -0400
-X-MC-Unique: gP6nU4oxP9ucyBA2BI0Q2g-1
-X-Mimecast-MFC-AGG-ID: gP6nU4oxP9ucyBA2BI0Q2g_1761563015
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d69801188so316796566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:03:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761563015; x=1762167815;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3VOA8iwb+iUQs8ydqbBHXT4w/Fw9C+W1CtV9KYqI4ew=;
-        b=Ep+2Ay0RBtrxSbPSv5okjaTu25G9O26i5ktF4MrD7fL8fcTaH79LMZMTCeOHdtsFac
-         wLiHXS4WGHCMoRylwcgdGvhUsHQ5Ym1uDvieYYoca0m0WhZkjBPMCkJnM94TtuTsx5gl
-         Qz951FUlEclW2OzAPZi+StZX0E+UO5prAW4ovb3ac0KliL9L7iBy4RJ+FOL8Jd3O1JfC
-         nlmgwE9eJ0ta/AWc3dxXB0X/2FD+5ToyYkRlWLihay6JqcGKdWzaXMi8ZdbLMEa8DI6b
-         tltSHRAddJa1GWOCXNyncxStJf64fL5tnGD++NdWAhkuZ5HGe6TB8Gaej+lQw0Wt1Kj+
-         X4FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcsfIcjeaqBBMLHi0a9Nkwl+kCeO7G6VAehHUCCLuM7AW3ai388mJV+W/aUSEUXxeM3pgVr8HfoBjRJqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFOHJlX8cu7xwb/wb50diorNRydqdi3Fe2qWmbHjKl8xbHxJ44
-	GgjOlmPzwP5rr/u2D8ZJRHIqg5sMjKA2HtWAGsapOdpZUDWLKPzrdhxciu3kPzDNTYFPp54Gcex
-	3sXYnTGaXSrIRnVq4UfOuGAjoM6tIyAGJKogGQPaDyEGMl+AElWJroPmP1XFI6yGqcg==
-X-Gm-Gg: ASbGncsHOe6bRJAudfpnXFdYJWy3je/b2riQVb3zOIeOGqdr61+KvMJfEua4YCri0wa
-	Jlvi3CsIGDL+3+SXvBHkSSeTtNG37wMvRhwfYECW9pEM4zsE/+ub0cVbuBt5g3P6AfmjUz8Js4O
-	vAW+JsGW25bXFh2pm3bEEG2IsdIo4xq1N+hnGHKgdjl36Er/OGxjO38DC+65gyqcGS68pKriggx
-	NwwaylBLD1+aAEmiRIkGDngjZiL5bthqSzMS/CFMyUZ8cCmODvnkiygt3jUOKVZkzS/CVvFseAa
-	zKFaWVMdD58adlaWpe3hphqZPpMCUf19OAdDgNDj1P1KjUVpcRJvR/sXloPX5oUTN2EAES1h6j5
-	hTBMr2bJ/UpwU+HIDieFJenqo4LcuD6ktnyk4JjtjlRbgfA==
-X-Received: by 2002:a17:907:9481:b0:b6d:7231:3276 with SMTP id a640c23a62f3a-b6d723137b3mr1153497166b.19.1761563015429;
-        Mon, 27 Oct 2025 04:03:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUFMg6uHtWQ6nsuokdIYUmtrDteINde4b5Wb2IzCEGU0OYXwFstexCQN3pMUgJ+f03YLyzNw==
-X-Received: by 2002:a17:907:9481:b0:b6d:7231:3276 with SMTP id a640c23a62f3a-b6d723137b3mr1153494666b.19.1761563015048;
-        Mon, 27 Oct 2025 04:03:35 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:3d68:200:6e75:6a50:1d0f:8f29? ([2001:16b8:3d68:200:6e75:6a50:1d0f:8f29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8533e7c6sm715209066b.16.2025.10.27.04.03.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 04:03:34 -0700 (PDT)
-Message-ID: <2336a1282aa6a44f23a9100d2553b8032f44f3bd.camel@redhat.com>
-Subject: Re: [RFC PATCH 2/3] drm/sched: Taint workqueues with reclaim
-From: Philipp Stanner <pstanner@redhat.com>
-To: Matthew Brost <matthew.brost@intel.com>, intel-xe@lists.freedesktop.org,
-  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: jiangshanlai@gmail.com, tj@kernel.org, simona.vetter@ffwll.ch, 
-	christian.koenig@amd.com, dakr@kernel.org
-Date: Mon, 27 Oct 2025 12:03:33 +0100
-In-Reply-To: <20251021213952.746900-3-matthew.brost@intel.com>
-References: <20251021213952.746900-1-matthew.brost@intel.com>
-	 <20251021213952.746900-3-matthew.brost@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4DC2DE6F5;
+	Mon, 27 Oct 2025 11:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761563069; cv=fail; b=GDMy3pZULfBuvuxdQB1CNzkTrwWPrevsO7Yjv7fXbf42xwWSfTaTnsMXwWkxH5lhOTbe3v865CUe07/XVgxk/mnLqHm5zj/ugCGOZ4koy1kqtZTFnwlZPYK0cIck4EaX84zB/osWWW+PAIZt82x3bZcMF/znPax9EYeBXFevNYk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761563069; c=relaxed/simple;
+	bh=KEPsNHEVaSrAMFLHjvzSwBfgE8fwxgDdRheRaKvFoJk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=IsnKnHscLx8Eg9CiU8umpN50mtPuGzqzyysENTrmkPzkqQY3CKTSr13vq8u80a5mOj1Opkb8cq9lCzO1fR0daEtkAcUfuEpAw0BYY6m/lGoLFf0jmFNSvtEBQebUTG8qZTcKbtJ0ClqRl/xdzoVrWiiaepDQ2OKO4chGk52HLk0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=A7blTARr; arc=fail smtp.client-ip=52.101.72.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oWrzEr7YYoicMzd6Xf2cnt3m2OtLDWedHlS4Q4WO0hutSpN5+vwRqiw3q1S0psj7DE22qke2rVZJrnr4zrwlhN2X6AdXtgJvPxuPLjVfvghmXOj1SV5oMOYlDIzEBMb6tMdszTJtoccg7971qgZCHXqaSggc+c3SXizgmmVAQsSSbO3aVBjVQqMT6y+IeAiKSfG3ysb7UWNDCbVtJWXGO5oMLnZ40jzWKQJIR8YQhWI91g8ina4F1U0caKPpynEPqrZUkf22ZasYSiRyIMBtMJFjzHbhH8y7wGVVOHv11YXMDD32pOO32DA378dO93a9VydMpuvsxYurQ7APfsc7dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FY8KTf/SKIloNouMH5CvNEIHgJ6dIEi51RFyjpJNQss=;
+ b=Fy6PdfprlnFKnV+XnTUwGql1A4VOHOAVMkpbWtI/jI0clPsNpmke8Tr4FcIDALiFaYMf4Rtd55bvWkBS12zVvx1+VtEINudtA6RWeb2eL59q2qV0hb6RJ95pi8DCd+Q6d65CDwjmUuu0anAjQgQTAGThXKwQWOcgV+4E6VXh/AnSvD/29+A0wUK6WEFXWWODUgWscTsC8YLaOKZ4Ac7urHKttHD7fey+JFYbZFqdEvDHIrHkaN2R3UAboOjgT/oMwHqcS4P+FgrhlWEcnhSU2119DdC2xyuALZxnKOQQVa3Z731ruciqvdc7Bs76xxn/QSY4OwPmpwfftz+u8qJq7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FY8KTf/SKIloNouMH5CvNEIHgJ6dIEi51RFyjpJNQss=;
+ b=A7blTARrPqJTAUcQSCFY8vLi8in/VulY/fuyDKHyQoTQREhGeKFex3BUb8+KMc7iVwIgugXctvlAPflmkPC/zS/gl+hJWL4MlKCFOHHGjG41z6MZYS/R+BBEM00BLOJIktNk7KY0p+obXt+nVqbOCq6YwPOHBW7keulJ5JNuIEC1HpIzMzm+/oBqGuSuYDASV04eX2GevH1nhY37m9OkGGhuE2sPM3mV4FOJshNJKMc0agBnV7osGPje3BP/xhqKc1Rj6PajL+BWYDTAyq9xWQNm1eSfjf7e56LHN6NjNwQ1HzjXnET0UN1iyKXFPZ/WsX4/6l7HiJeRq/HOStgFFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
+ (2603:10a6:800:293::14) by VI0PR04MB11955.eurprd04.prod.outlook.com
+ (2603:10a6:800:31f::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.16; Mon, 27 Oct
+ 2025 11:04:24 +0000
+Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
+ ([fe80::75ad:fac7:cfe7:b687]) by VI2PR04MB11147.eurprd04.prod.outlook.com
+ ([fe80::75ad:fac7:cfe7:b687%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 11:04:24 +0000
+From: carlos.song@nxp.com
+To: frank.li@nxp.com,
+	broonie@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-spi@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] spi: imx: keep dma request disabled before dma transfer setup
+Date: Mon, 27 Oct 2025 19:04:06 +0800
+Message-Id: <20251027110406.543370-1-carlos.song@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P189CA0013.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d7::16) To VI2PR04MB11147.eurprd04.prod.outlook.com
+ (2603:10a6:800:293::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI2PR04MB11147:EE_|VI0PR04MB11955:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f799f68-01f8-4626-ec4c-08de154896a4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?THqGuEx/pfCqE8nzEv0vIOUq1m1V9BbIIiWWxIoEDRJJdIVgT2l9E1aEQdZK?=
+ =?us-ascii?Q?b30T5RLqgf/5oY5k4phx9SliccY4m4UrqY9z/W8KVR35A/mKw7JG3vQznrBa?=
+ =?us-ascii?Q?xNqeJStkmam2s11cX/fS/iPs20yydJwWm7XCrtWwzj1JycIypbanXNKmQDXw?=
+ =?us-ascii?Q?u8ca/awu3G5prBVdLgH3bzqo1O7UzpqhYp9K0B+TZUgdhPiHIwSq3aNf4NMy?=
+ =?us-ascii?Q?3XjaeidxSQ7hOTlaVpOLLJ3QGvpI26aYl6SIV504a77k1nFiVHCl89oL6EEE?=
+ =?us-ascii?Q?9O/fFKnmQeTmZtQ/rrvcQo+x7CeqhOCDAdQGi1Smzl3wzSl5WAdQT00IEwrY?=
+ =?us-ascii?Q?DiC/oGn4tXNFCaaf1u1wAdfcbVu+je5coHpc4ZezQDzJp4NqIU/B3bvweb/l?=
+ =?us-ascii?Q?e2Hb9KyRTkEK7x04Yk8OrERMu+ov8qC6nB52pFOEg2JfiAoViwhfc/TzxSPc?=
+ =?us-ascii?Q?Tgj0qdRAtBuGi1Tm57qOwDG/jNJQyidOASgomAah9mhf/gRwmFMx8E448cKz?=
+ =?us-ascii?Q?vs+AHI4agMMuaiv4C6isMKnkqbnKd9UmHilLyS0gVWE6CyuYGD4wd3Iwy+O/?=
+ =?us-ascii?Q?OdqkXGAKlzK1BvUNfe8FJe13ZVtKtqZMVcvSurfdnaOVikLVrcpjR+HV9CrF?=
+ =?us-ascii?Q?pdNnGIiVUjNrNsqQNiwdpcorMSolcCNiAbsVf5Q25Oql7LO+QxSnMgVH9s/y?=
+ =?us-ascii?Q?eiW14QfLydVcrevvIMO3ytiYaFVFbwu+fZ6JrNOvthY8F4ToiWDT+CLeGtNA?=
+ =?us-ascii?Q?+SG8YUqK4VI4tMwquktQm5I6//35s3YKcmhebA/+MIT95qJtfgkEbv3o7jeL?=
+ =?us-ascii?Q?bgvw++HNctBBDb9GTIwhMmqXjfB7HqXGSDxOtYg5dfSU1lR006x+mpgCYvCM?=
+ =?us-ascii?Q?P4VkblArRViVdkTPRdoNkBW/SONYke4MgVVn0ZZjI0RBfBHu9++c9j3wFRb/?=
+ =?us-ascii?Q?stR1MrSuMrkQqysTSqSRsnbV4GhsLDU5ya2NErRYj+N2imxA3ryx5JXKzz6Q?=
+ =?us-ascii?Q?ZNxbzQwvvk0ed5BRml1evog/kK9nao/eZo3kY5+ta/zCSEhBrR3ew3oYTRbj?=
+ =?us-ascii?Q?M7H7marPuS6/i1UvCpSmarSxwEzTpBdzOaEdO+c4TUd3oORs+SffxJ2HJO5s?=
+ =?us-ascii?Q?KIfNonU7DJ6B7NFvm4j8PsiiOOhdWmMpCRuhTR9cfZxvAYK53bQa7LtUUMJK?=
+ =?us-ascii?Q?WnJP8w/Khghw7z+yYwHaCp7A3ww4uUqzG54svcP7NgY+bThmzV7u90L20/iZ?=
+ =?us-ascii?Q?ksyFTrmPhRp07gc6Lpq7N8wLayv6TCSvoPFPSd+rmeDnW5uvxDHFjy9b53RI?=
+ =?us-ascii?Q?iU+PSa73K7hRjz3gz7OWy/49rOZwLbnqG/36bdgwv6f7iG8txTHdtNb5P8pf?=
+ =?us-ascii?Q?hHYXsCayizKtzeQxU12RkngYToItc0Bt4yhw963TiKWX6QcsT3voFc/RpwgK?=
+ =?us-ascii?Q?Jrbfil6rlNba/VW2NpuO6jjQCrQZMR0wkj1wmBTfmyiVu6VnRbKVsN4qXW1i?=
+ =?us-ascii?Q?KWm+aThMp4c1hY5SUAkzbro3qTfi7bem5oYY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI2PR04MB11147.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Zn/7+WjoOw/81O47MPdetGEQXi73QARhy6q6oCP0KjrVwQ8S2jtoT1STivrQ?=
+ =?us-ascii?Q?gNsMf9WuhrrDsDPlJJtvAz+dor5i+Mrn3I53I46A0mSLLUSmRHfbGdbev3P8?=
+ =?us-ascii?Q?Ir07n9u/1i+LEJZdDXL57e8ceXCfQXkKtEZyOtlzaihGvbBuLg39VEGKpAuy?=
+ =?us-ascii?Q?2ktT5X6Ap3+h0aPLZMEoZVuyzWgVe+tpZu2PEwkFE9DMxrsymthkxIrTNGMQ?=
+ =?us-ascii?Q?1JP3HY5y5xb3ynbHvj1ZV1AZ8zCmPQiRmNIaqdijLgtIpnuXkbGeAqWs1GUw?=
+ =?us-ascii?Q?8cYNQRan3fIVNuNZsMEAcVUlIXPvbX25tsZtqhTPzdDCXNh9PvxhZLGssE2h?=
+ =?us-ascii?Q?OkF3pOgWbw6V7uffzf/zWZML7bnoRBJPQi3bIUBKby/BF2GvtyXLPIpVAxQA?=
+ =?us-ascii?Q?6+DgDl292grYlgLCoFjhBZjZnr5IQ+YkZ56zi+nqf5smk16UwtzsZUpso/0s?=
+ =?us-ascii?Q?S9NjJSgvAtnJvFQ/wxrGeOeiRJlqu/8PwYgp67de989zPqAW1dw3h3ml88f2?=
+ =?us-ascii?Q?1aCC1tmI1K4H7rwktsVwNSCyUL6sXg2fN1WQjkqenUaAjNVSA+mZeRudbT+w?=
+ =?us-ascii?Q?TVZMOrKpOTrOqy5+sxCD3XEGanL6NczuxZe0BLnzTrdzubcKPs78+JINr5sy?=
+ =?us-ascii?Q?09mq0yNtEhcHtbdu7XEwpMAc93/TavoFwRFhi+LshU+2etAWN7BSUWp1izJw?=
+ =?us-ascii?Q?BU8iXrelj1DVnqTqKQHqRcoM6+IuBcNCGqzJqjxc+b9yp2Hf/reHufAV/yvG?=
+ =?us-ascii?Q?sDfOpVUFjAF9hK2iYgxvh29VJ9yp3ZmLWMybJJj9UDLQ+Nvx9CT3X6DO0Qkj?=
+ =?us-ascii?Q?48xQJe4F9nYOZVZ/dYGDenESzWGrThdK87oaF7frJrXVTkr93N3m9v+n/aPa?=
+ =?us-ascii?Q?9QPF0ThbsjXHuTgsl5CvfGYDJ0k16s+DG2PIzAZIn3kJa1HwPT3s3Nin/zNO?=
+ =?us-ascii?Q?MpqAtgJ3bcBrQsdyykkVoRxhQgH2EmhLY59X6JC34ppsxS5lJ9dIWj5WP6lJ?=
+ =?us-ascii?Q?NRUHBdk23nRcNjTEJwiHmbzDdGC0VMgDqe4pbyy/RE2ZL/0+TKxtQ+OsNu4o?=
+ =?us-ascii?Q?l15sB95jethoaGW8cuz6qJNoW5Mh9A5BZarfUOSsZMzwZkNAFP9mZ2xThjJm?=
+ =?us-ascii?Q?bDmvlbVnhj09Ard0xzYzb4eiqtDrkJ1tXcfSVxSk3TNHKJZEB8hL10emhiId?=
+ =?us-ascii?Q?LQTgXc9YXuMY6skvsVPg6G6+S+RVmtK3U52J263SpgzTyDb44ZbLspnR7cMU?=
+ =?us-ascii?Q?stiSsw9UcwgLuKQF2pGf5+Fx2eSLYPK8tRGGA1E39VABxWQdNR475JkViA1r?=
+ =?us-ascii?Q?fKVAgKKwpStuWdMG9re9sQQ7oc9r0/jwBQeEylJxbyoEn2euWT2vUZXM9k4N?=
+ =?us-ascii?Q?d+KudWGYfLzv1C/upekNV5LLkgwn0FOo6/zXlLKZTZwn9b4F2kSmZPTPXwPU?=
+ =?us-ascii?Q?PI40QxOZFFJJ0oVq6dm//i7HZdBWBJ4XgbyXno35t5IhgZo5jMJgr8iXkGno?=
+ =?us-ascii?Q?ONwx36JNrv2qhHYqWHTP+oDXurp8Uxz75tfWgl+uv0RnLLppiIXhW9O2stJ5?=
+ =?us-ascii?Q?OfB211heMkXuf7vIcku3fR1FCCMxmkmX9aForpA6?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f799f68-01f8-4626-ec4c-08de154896a4
+X-MS-Exchange-CrossTenant-AuthSource: VI2PR04MB11147.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 11:04:24.8213
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FKPArF7ASMDx3Hrvarg81fd6uIsihhrmu40fxRj7M8s1kx3qEvmSmDj6tDJN3WloV8wRkwAMWUwOZjBfU0EsFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11955
 
-On Tue, 2025-10-21 at 14:39 -0700, Matthew Brost wrote:
-> Multiple drivers seemingly do not understand the role of DMA fences in
-> the reclaim path. As a result,=C2=A0
->=20
+From: Robin Gong <yibin.gong@nxp.com>
 
-result of what? The "role of DMA fences"?
+Due to a hardware limitation on SDMA event enable (ENBLn), the DMA request
+must remain disabled until the DMA transfer setup is complete.
 
-> DRM scheduler workqueues, which are part
-> of the fence signaling path, must not allocate memory.
->=20
+Refer SDMA 2.6.28 Channel Enable RAM (SDMAARMx_CHNENBLn) section:
 
-Should be phrased differently. The actual rule here is "The GPU
-scheduler's workqueues can be used for memory reclaim. Because of that,
-work items on these queues must not allocate memory."
+"
+It is thus essential for the Arm platform to program them before any DMA
+request is triggered to the SDMA, otherwise an unpredictable combination
+of channels may be started.
+"
 
---
+SDMA hardware configuration is postponed to transfer phase, so enabling
+the DMA request too early may cause unpredictable channel activation.
+Then keep dma request disabled before dma transfer setup.
 
-In general, I often read in commits or discussions about this or that
-"rule", especially "DMA fence rules", but they're often not detailed
-very much.
+Signed-off-by: Carlos Song <carlos.song@nxp.com>
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+---
+Change for V2:
+- Change commit log with spec doc
+---
+ drivers/spi/spi-imx.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-
-P.
-
->  This patch
-> teaches lockdep to recognize these rules in order to catch driver-side
-> bugs.
->=20
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Philipp Stanner <phasta@kernel.org>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 3 +++
-> =C2=A01 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
-eduler/sched_main.c
-> index c39f0245e3a9..676484dd3ea3 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1368,6 +1368,9 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,=
- const struct drm_sched_init_
-> =C2=A0	atomic64_set(&sched->job_id_count, 0);
-> =C2=A0	sched->pause_submit =3D false;
-> =C2=A0
-> +	taint_reclaim_workqueue(sched->submit_wq, GFP_KERNEL);
-> +	taint_reclaim_workqueue(sched->timeout_wq, GFP_KERNEL);
-> +
-> =C2=A0	sched->ready =3D true;
-> =C2=A0	return 0;
-> =C2=A0Out_unroll:
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 9a1113ea4ba2..00132f300e38 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -528,9 +528,15 @@ static void mx51_ecspi_trigger(struct spi_imx_data *spi_imx)
+ {
+ 	u32 reg;
+ 
+-	reg = readl(spi_imx->base + MX51_ECSPI_CTRL);
+-	reg |= MX51_ECSPI_CTRL_XCH;
+-	writel(reg, spi_imx->base + MX51_ECSPI_CTRL);
++	if (spi_imx->usedma) {
++		reg = readl(spi_imx->base + MX51_ECSPI_DMA);
++		reg |= MX51_ECSPI_DMA_TEDEN | MX51_ECSPI_DMA_RXDEN;
++		writel(reg, spi_imx->base + MX51_ECSPI_DMA);
++	} else {
++		reg = readl(spi_imx->base + MX51_ECSPI_CTRL);
++		reg |= MX51_ECSPI_CTRL_XCH;
++		writel(reg, spi_imx->base + MX51_ECSPI_CTRL);
++	}
+ }
+ 
+ static void mx51_ecspi_disable(struct spi_imx_data *spi_imx)
+@@ -771,7 +777,6 @@ static void mx51_setup_wml(struct spi_imx_data *spi_imx)
+ 	writel(MX51_ECSPI_DMA_RX_WML(spi_imx->wml - 1) |
+ 		MX51_ECSPI_DMA_TX_WML(tx_wml) |
+ 		MX51_ECSPI_DMA_RXT_WML(spi_imx->wml) |
+-		MX51_ECSPI_DMA_TEDEN | MX51_ECSPI_DMA_RXDEN |
+ 		MX51_ECSPI_DMA_RXTDEN, spi_imx->base + MX51_ECSPI_DMA);
+ }
+ 
+@@ -1535,6 +1540,8 @@ static int spi_imx_dma_transfer(struct spi_imx_data *spi_imx,
+ 	reinit_completion(&spi_imx->dma_tx_completion);
+ 	dma_async_issue_pending(controller->dma_tx);
+ 
++	spi_imx->devtype_data->trigger(spi_imx);
++
+ 	transfer_timeout = spi_imx_calculate_timeout(spi_imx, transfer->len);
+ 
+ 	/* Wait SDMA to finish the data transfer.*/
+-- 
+2.34.1
 
 
