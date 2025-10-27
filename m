@@ -1,1261 +1,249 @@
-Return-Path: <linux-kernel+bounces-871201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425E9C0CA05
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:23:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BB5C0C8AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C0D3A6402
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52665401EF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4212E7F1E;
-	Mon, 27 Oct 2025 09:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6412F5A1F;
+	Mon, 27 Oct 2025 08:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bw2YDbZL"
-Received: from mail-m49228.qiye.163.com (mail-m49228.qiye.163.com [45.254.49.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="esx73EiQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YndzDRSn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="esx73EiQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YndzDRSn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B280D1EB9FA;
-	Mon, 27 Oct 2025 09:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7961330F533
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556662; cv=none; b=ZL2Gw0jU/FxjfwC0BQbMsau9X1fP41YSfROna2WeQAokvfvyXBcKoITqm0SR/xIR70ZosBTDmysjS3eqOQCMmgqHo8lYizORktRn5KLRVqzFJ/FHWXF97FatDD1T983odzsaEz81LpaLvCKd5f8aYJ4FkCCwQdHTV+X8CBWxPWY=
+	t=1761554958; cv=none; b=I8mwlMLUcHoYsGJGWHeAnd3bLUBdNWEjm8C1gX578+Q9nqulkJGPY9aEKJhTBn6RLYlhkKVfTsv4CbmVf8nNlF9ejPnlJDC64M4tasbjCcplr16OU5wiTks/Z7HmG2VevkSPQ9ERV0a8iPyeQ2RSgIuRBI4Rc+S6v9y/Ttw/XKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556662; c=relaxed/simple;
-	bh=5QGoqfhipNuauG6h1KH4UQVueOlom+L0u6VT4aTIkW4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mWbQacErA6j8CgwvlcFb/94dIh8AmQt0oFdTCR1s2zQTl28MpbA6/+sfmPyXDy68OyiUiyqc5J8M00BIXGGQN0l1IeEqOkmTs5trDdPc/VPv3DA58Fmjtgoi7vwPTEfGV/lV2pCAnVEL8J6pqENLa0JH5bk0edsrVn/aTrlwBdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bw2YDbZL; arc=none smtp.client-ip=45.254.49.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 275050010;
-	Mon, 27 Oct 2025 16:42:00 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	sugar.zhang@rock-chips.com,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com,
-	finley.xiao@rock-chips.com
-Subject: [PATCH v5 7/7] clk: rockchip: Add clock and reset driver for RK3506
-Date: Mon, 27 Oct 2025 16:41:47 +0800
-Message-Id: <20251027084147.4148739-8-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251027084147.4148739-1-zhangqing@rock-chips.com>
-References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
+	s=arc-20240116; t=1761554958; c=relaxed/simple;
+	bh=Hld0uQ9wTpxSMnQq5Pn/w7WRy0JDV+lN78jkdItIoK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJuDSXt7A8ST0V9kqMm9ykbNHBIRAN/utYqJyEq4D3OX4pUmCcadnwGqQNkWUuIKmm0tWslK/qX0WzS1PqGL3RKM9kvy8+3dVVXb7a5oxtOle8l8LFBxprrZfvoVxMY0AhaT/7qX65Q9VLpfY70lnn6jwVqjHB9/9WT1PQ5/X2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=esx73EiQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YndzDRSn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=esx73EiQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YndzDRSn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6ADCD2196E;
+	Mon, 27 Oct 2025 08:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761554954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Yyxr9E6daeyxr44lXx9XG6WlT32Nx+oAxIZiH+HSQqA=;
+	b=esx73EiQ/cQZiGKornX/VxS3BXZdevN6KadrXJPN23ll2ziAdiXn5ydu0JJSznvnxBqefP
+	IxTfnIXUoyLFRdwGwgCyKJOxIY2jagqJ+VIevlipb9uJVb5wiaIiVos6mYiAyBcV8TWeC3
+	tQcRijiEv7yNQlZ9rzF6vOHPAhF4WB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761554954;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Yyxr9E6daeyxr44lXx9XG6WlT32Nx+oAxIZiH+HSQqA=;
+	b=YndzDRSnsQGq/gwnSOmmwPFq80k1jE0S1Hl/985hautMyPjGbC3EyhnlD6So6mRf8/A2rn
+	CTpRhICYeUrrrQDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=esx73EiQ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YndzDRSn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761554954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Yyxr9E6daeyxr44lXx9XG6WlT32Nx+oAxIZiH+HSQqA=;
+	b=esx73EiQ/cQZiGKornX/VxS3BXZdevN6KadrXJPN23ll2ziAdiXn5ydu0JJSznvnxBqefP
+	IxTfnIXUoyLFRdwGwgCyKJOxIY2jagqJ+VIevlipb9uJVb5wiaIiVos6mYiAyBcV8TWeC3
+	tQcRijiEv7yNQlZ9rzF6vOHPAhF4WB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761554954;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Yyxr9E6daeyxr44lXx9XG6WlT32Nx+oAxIZiH+HSQqA=;
+	b=YndzDRSnsQGq/gwnSOmmwPFq80k1jE0S1Hl/985hautMyPjGbC3EyhnlD6So6mRf8/A2rn
+	CTpRhICYeUrrrQDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3052913693;
+	Mon, 27 Oct 2025 08:49:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D3dNCQoy/2gKNQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 27 Oct 2025 08:49:14 +0000
+Message-ID: <16aabaa7-0b1f-4653-b365-b4525b452cf5@suse.de>
+Date: Mon, 27 Oct 2025 09:49:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/vblank: downgrade vblank wait timeout from WARN to
+ error
+To: Chintan Patel <chintanlike@gmail.com>, maarten.lankhorst@linux.intel.com,
+ maxime.ripard@kernel.org, airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+References: <20251003032303.16518-1-chintanlike@gmail.com>
+ <65f8a544-175a-4021-aa2a-9a9faf2f4254@suse.de>
+ <f30cee98-1069-4f71-9aa9-613967f9922a@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <f30cee98-1069-4f71-9aa9-613967f9922a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a24d4db1c03a3kunmca0e4b6150f693
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhgZGlZNQh8YGB4ZTk9MSEJWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=bw2YDbZLla+uvfJoqznI1rMzALxVazDk36OTfmM7u1cDX5aD9p25Ua0x9zWQK04XvB8LXW6qXa5Ye98BkgwQ4blQYNvZ9n1I4XI5YfF6/+Bx8b3sR82qJGfK9Y0fx0L6gmD12GZgRig0jgnRliB+57UKyJ+yheJnlkdJb0JeLM8=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=LBhea3vyM3cj2ABojWR0dVHyMXEVLi26htNYDltLcWg=;
-	h=date:mime-version:subject:message-id:from;
+X-Rspamd-Queue-Id: 6ADCD2196E
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[147ba789658184f0ce04];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-Add the clock and reset tree definitions for the new
-RK3506 SoC.
+Hi
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
----
- drivers/clk/rockchip/Kconfig      |   7 +
- drivers/clk/rockchip/Makefile     |   1 +
- drivers/clk/rockchip/clk-rk3506.c | 869 ++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h        |  13 +
- drivers/clk/rockchip/rst-rk3506.c | 226 ++++++++
- 5 files changed, 1116 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-rk3506.c
- create mode 100644 drivers/clk/rockchip/rst-rk3506.c
+Am 25.10.25 um 01:40 schrieb Chintan Patel:
+> Hi Thomas,
+>
+> Thank you Thomas for suggestions!
+>
+> On 10/24/25 06:58, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 03.10.25 um 05:23 schrieb Chintan Patel:
+>>> When wait_event_timeout() in drm_wait_one_vblank() times out, the
+>>> current WARN can cause unnecessary kernel panics in environments
+>>> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
+>>> under heavy scheduling pressure or in rare cases of delayed vblank
+>>> handling, and are not always a kernel bug.
+>>>
+>>> Replace the WARN with drm_err() messages that report the timeout
+>>> without crashing the system. Developers can still enable drm.debug
+>>> to diagnose genuine problems.
+>>>
+>>> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+>>> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+>>> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
+>>>
+>>> v2:
+>>>   - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
+>>>   - Remove else branch, only log timeout case
+>>>
+>>> v3:
+>>>   - Use drm_err() instead of drm_dbg_kms() (suggested by Ville Syrjälä)
+>>>   - Remove unnecessary curr = drm_vblank_count() (suggested by 
+>>> Thomas Zimmermann)
+>>>   - Fix commit message wording (“invalid userspace calls” → “delayed 
+>>> vblank handling”)
+>>> ---
+>>>   drivers/gpu/drm/drm_vblank.c | 3 ++-
+>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_vblank.c 
+>>> b/drivers/gpu/drm/drm_vblank.c
+>>> index 46f59883183d..0664aea1b924 100644
+>>> --- a/drivers/gpu/drm/drm_vblank.c
+>>> +++ b/drivers/gpu/drm/drm_vblank.c
+>>> @@ -1305,7 +1305,8 @@ void drm_wait_one_vblank(struct drm_device 
+>>> *dev, unsigned int pipe)
+>>>                    last != drm_vblank_count(dev, pipe),
+>>>                    msecs_to_jiffies(100));
+>>
+>> Instead of replacing the drm_WARN(), could you please try to increase 
+>> the timeout? Let's say 1000 msec to be on the safe side.
+>>
+>
+> I tried it locally and also tested with syzbot after increasing the 
+> timeout to 1000 msec. The issue no longer reproduces with this change.
+>
+> I’ll send v4 shortly with the updated timeout.
 
-diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
-index e1ea0a098ca9..5cf1e0fd6fb3 100644
---- a/drivers/clk/rockchip/Kconfig
-+++ b/drivers/clk/rockchip/Kconfig
-@@ -100,6 +100,13 @@ config CLK_RK3399
- 	help
- 	  Build the driver for RK3399 Clock Driver.
- 
-+config CLK_RK3506
-+	bool "Rockchip RK3506 clock controller support"
-+	depends on ARM || COMPILE_TEST
-+	default y
-+	help
-+	  Build the driver for RK3506 Clock Driver.
-+
- config CLK_RK3528
- 	bool "Rockchip RK3528 clock controller support"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 82b4b29ad036..4d8cbb2044c7 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_CLK_RK3308)        += clk-rk3308.o
- obj-$(CONFIG_CLK_RK3328)        += clk-rk3328.o
- obj-$(CONFIG_CLK_RK3368)        += clk-rk3368.o
- obj-$(CONFIG_CLK_RK3399)        += clk-rk3399.o
-+obj-$(CONFIG_CLK_RK3506)	+= clk-rk3506.o rst-rk3506.o
- obj-$(CONFIG_CLK_RK3528)	+= clk-rk3528.o rst-rk3528.o
- obj-$(CONFIG_CLK_RK3562)	+= clk-rk3562.o rst-rk3562.o
- obj-$(CONFIG_CLK_RK3568)	+= clk-rk3568.o
-diff --git a/drivers/clk/rockchip/clk-rk3506.c b/drivers/clk/rockchip/clk-rk3506.c
-new file mode 100644
-index 000000000000..dd59bd60382e
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-rk3506.c
-@@ -0,0 +1,869 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/syscore_ops.h>
-+#include <dt-bindings/clock/rockchip,rk3506-cru.h>
-+#include "clk.h"
-+
-+#define PVTPLL_SRC_SEL_PVTPLL		(BIT(7) | BIT(23))
-+
-+enum rk3506_plls {
-+	gpll, v0pll, v1pll,
-+};
-+
-+/*
-+ * [FRAC PLL]: GPLL, V0PLL, V1PLL
-+ *   - VCO Frequency: 950MHz to 3800MHZ
-+ *   - Output Frequency: 19MHz to 3800MHZ
-+ *   - refdiv: 1 to 63 (Int Mode), 1 to 2 (Frac Mode)
-+ *   - fbdiv: 16 to 3800 (Int Mode), 20 to 380 (Frac Mode)
-+ *   - post1div: 1 to 7
-+ *   - post2div: 1 to 7
-+ */
-+static struct rockchip_pll_rate_table rk3506_pll_rates[] = {
-+	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
-+	RK3036_PLL_RATE(1896000000, 1, 79, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1800000000, 1, 75, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1704000000, 1, 71, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1608000000, 1, 67, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1512000000, 1, 63, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1416000000, 1, 59, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1350000000, 4, 225, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1296000000, 1, 54, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1200000000, 1, 50, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1188000000, 1, 99, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(1179648000, 1, 49, 1, 1, 0, 2550137),
-+	RK3036_PLL_RATE(1008000000, 1, 84, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(1000000000, 3, 125, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(993484800, 1, 41, 1, 1, 0, 6630355),
-+	RK3036_PLL_RATE(983040000, 1, 40, 1, 1, 0, 16106127),
-+	RK3036_PLL_RATE(960000000, 1, 80, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(912000000, 1, 76, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(903168000, 1, 75, 2, 1, 0, 4429185),
-+	RK3036_PLL_RATE(816000000, 1, 68, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(800000000, 3, 200, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(600000000, 1, 50, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(594000000, 2, 99, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(408000000, 1, 68, 2, 2, 1, 0),
-+	RK3036_PLL_RATE(312000000, 1, 78, 6, 1, 1, 0),
-+	RK3036_PLL_RATE(216000000, 1, 72, 4, 2, 1, 0),
-+	RK3036_PLL_RATE(96000000, 1, 48, 6, 2, 1, 0),
-+	{ /* sentinel */ },
-+};
-+
-+#define RK3506_DIV_ACLK_CORE_MASK	0xf
-+#define RK3506_DIV_ACLK_CORE_SHIFT	9
-+#define RK3506_DIV_PCLK_CORE_MASK	0xf
-+#define RK3506_DIV_PCLK_CORE_SHIFT	0
-+
-+#define RK3506_CLKSEL15(_aclk_core_div)					\
-+{									\
-+	.reg = RK3506_CLKSEL_CON(15),					\
-+	.val = HIWORD_UPDATE(_aclk_core_div, RK3506_DIV_ACLK_CORE_MASK,	\
-+			     RK3506_DIV_ACLK_CORE_SHIFT),		\
-+}
-+
-+#define RK3506_CLKSEL16(_pclk_core_div)					\
-+{									\
-+	.reg = RK3506_CLKSEL_CON(16),					\
-+	.val = HIWORD_UPDATE(_pclk_core_div, RK3506_DIV_PCLK_CORE_MASK,	\
-+			     RK3506_DIV_PCLK_CORE_SHIFT),		\
-+}
-+
-+/* SIGN-OFF: aclk_core: 500M, pclk_core: 125M, */
-+#define RK3506_CPUCLK_RATE(_prate, _aclk_core_div, _pclk_core_div)	\
-+{									\
-+	.prate = _prate,						\
-+	.divs = {							\
-+		RK3506_CLKSEL15(_aclk_core_div),			\
-+		RK3506_CLKSEL16(_pclk_core_div),			\
-+	},								\
-+}
-+
-+static struct rockchip_cpuclk_rate_table rk3506_cpuclk_rates[] __initdata = {
-+	RK3506_CPUCLK_RATE(1608000000, 3, 12),
-+	RK3506_CPUCLK_RATE(1512000000, 3, 12),
-+	RK3506_CPUCLK_RATE(1416000000, 2, 11),
-+	RK3506_CPUCLK_RATE(1296000000, 2, 10),
-+	RK3506_CPUCLK_RATE(1200000000, 2, 9),
-+	RK3506_CPUCLK_RATE(1179648000, 2, 9),
-+	RK3506_CPUCLK_RATE(1008000000, 1, 7),
-+	RK3506_CPUCLK_RATE(903168000, 1, 7),
-+	RK3506_CPUCLK_RATE(800000000, 1, 6),
-+	RK3506_CPUCLK_RATE(750000000, 1, 5),
-+	RK3506_CPUCLK_RATE(589824000, 1, 4),
-+	RK3506_CPUCLK_RATE(400000000, 1, 3),
-+	RK3506_CPUCLK_RATE(200000000, 1, 1),
-+};
-+
-+PNAME(mux_pll_p)				= { "xin24m" };
-+PNAME(gpll_v0pll_v1pll_parents_p)		= { "gpll", "v0pll", "v1pll" };
-+PNAME(gpll_v0pll_v1pll_g_parents_p)		= { "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(gpll_v0pll_v1pll_div_parents_p)		= { "clk_gpll_div", "clk_v0pll_div", "clk_v1pll_div" };
-+PNAME(xin24m_gpll_v0pll_v1pll_g_parents_p)	= { "xin24m", "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(xin24m_g_gpll_v0pll_v1pll_g_parents_p)	= { "xin24m_gate", "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(xin24m_g_gpll_v0pll_v1pll_div_parents_p)	= { "xin24m_gate", "clk_gpll_div", "clk_v0pll_div", "clk_v1pll_div" };
-+PNAME(xin24m_400k_32k_parents_p)		= { "xin24m", "clk_rc", "clk_32k" };
-+PNAME(clk_frac_uart_matrix0_mux_parents_p)	= { "xin24m", "gpll", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(clk_timer0_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai0_mclk_in", "sai0_sclk_in" };
-+PNAME(clk_timer1_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai1_mclk_in", "sai1_sclk_in" };
-+PNAME(clk_timer2_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai2_mclk_in", "sai2_sclk_in" };
-+PNAME(clk_timer3_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai3_mclk_in", "sai3_sclk_in" };
-+PNAME(clk_timer4_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "mclk_asrc0" };
-+PNAME(clk_timer5_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "mclk_asrc1" };
-+PNAME(sclk_uart_parents_p)			= { "xin24m", "clk_gpll_gate", "clk_v0pll_gate", "clk_frac_uart_matrix0", "clk_frac_uart_matrix1",
-+						    "clk_frac_common_matrix0", "clk_frac_common_matrix1", "clk_frac_common_matrix2" };
-+PNAME(clk_mac_ptp_root_parents_p)		= { "gpll", "v0pll", "v1pll" };
-+PNAME(clk_pwm_parents_p)			= { "clk_rc", "sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in", "sai0_sclk_in", "sai1_sclk_in",
-+						    "sai2_sclk_in", "sai3_sclk_in", "mclk_asrc0", "mclk_asrc1" };
-+PNAME(clk_can_parents_p)			= { "xin24m", "gpll", "clk_v0pll_gate", "clk_v1pll_gate", "clk_frac_voice_matrix1",
-+						    "clk_frac_common_matrix0", "clk_frac_common_matrix1", "clk_frac_common_matrix2" };
-+PNAME(clk_pdm_parents_p)			= { "xin24m_gate", "clk_int_voice_matrix0", "clk_int_voice_matrix1", "clk_int_voice_matrix2",
-+						    "clk_frac_voice_matrix0", "clk_frac_voice_matrix1", "clk_frac_common_matrix0", "clk_frac_common_matrix1",
-+						    "clk_frac_common_matrix2", "sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in", "clk_gpll_div" };
-+PNAME(mclk_sai_asrc_parents_p)			= { "xin24m_gate", "clk_int_voice_matrix0", "clk_int_voice_matrix1", "clk_int_voice_matrix2",
-+						    "clk_frac_voice_matrix0", "clk_frac_voice_matrix1", "clk_frac_common_matrix0", "clk_frac_common_matrix1",
-+						    "clk_frac_common_matrix2", "sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in" };
-+PNAME(lrck_asrc_parents_p)			= { "mclk_asrc0", "mclk_asrc1", "mclk_asrc2", "mclk_asrc3", "mclk_spdiftx", "clk_spdifrx_to_asrc", "clkout_pdm",
-+						    "sai0_fs", "sai1_fs", "sai2_fs", "sai3_fs", "sai4_fs" };
-+PNAME(cclk_src_sdmmc_parents_p)			= { "xin24m_gate", "gpll", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(dclk_vop_parents_p)			= { "xin24m_gate", "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate", "dummy_vop_dclk",
-+						    "dummy_vop_dclk", "dummy_vop_dclk", "dummy_vop_dclk" };
-+PNAME(dbclk_gpio0_parents_p)			= { "xin24m", "clk_rc", "clk_32k_pmu" };
-+PNAME(clk_pmu_hp_timer_parents_p)		= { "xin24m", "gpll_div_100m", "clk_core_pvtpll" };
-+PNAME(clk_ref_out_parents_p)			= { "xin24m", "gpll", "v0pll", "v1pll" };
-+PNAME(clk_32k_frac_parents_p)			= { "xin24m", "v0pll", "v1pll", "clk_rc" };
-+PNAME(clk_32k_parents_p)			= { "xin32k", "clk_32k_rc", "clk_32k_frac" };
-+PNAME(clk_ref_phy_pmu_mux_parents_p)		= { "xin24m", "clk_ref_phy_pll" };
-+PNAME(clk_vpll_ref_parents_p)			= { "xin24m", "clk_pll_ref_io" };
-+PNAME(mux_armclk_p)				= { "armclk_pll", "clk_core_pvtpll" };
-+
-+#define MFLAGS CLK_MUX_HIWORD_MASK
-+#define DFLAGS CLK_DIVIDER_HIWORD_MASK
-+#define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
-+
-+static struct rockchip_pll_clock rk3506_pll_clks[] __initdata = {
-+	[gpll] = PLL(pll_rk3328, PLL_GPLL, "gpll", mux_pll_p,
-+		     CLK_IS_CRITICAL, RK3506_PLL_CON(0),
-+		     RK3506_MODE_CON, 0, 2, 0, rk3506_pll_rates),
-+	[v0pll] = PLL(pll_rk3328, PLL_V0PLL, "v0pll", mux_pll_p,
-+		     CLK_IS_CRITICAL, RK3506_PLL_CON(8),
-+		     RK3506_MODE_CON, 2, 0, 0, rk3506_pll_rates),
-+	[v1pll] = PLL(pll_rk3328, PLL_V1PLL, "v1pll", mux_pll_p,
-+		     CLK_IS_CRITICAL, RK3506_PLL_CON(16),
-+		     RK3506_MODE_CON, 4, 1, 0, rk3506_pll_rates),
-+};
-+
-+static struct rockchip_clk_branch rk3506_armclk __initdata =
-+	MUX(ARMCLK, "armclk", mux_armclk_p, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
-+			RK3506_CLKSEL_CON(15), 8, 1, MFLAGS);
-+
-+static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
-+	/*
-+	 * CRU Clock-Architecture
-+	 */
-+	/* top */
-+	GATE(XIN24M_GATE, "xin24m_gate", "xin24m", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(0), 1, GFLAGS),
-+	GATE(CLK_GPLL_GATE, "clk_gpll_gate", "gpll", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(0), 2, GFLAGS),
-+	GATE(CLK_V0PLL_GATE, "clk_v0pll_gate", "v0pll", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(0), 3, GFLAGS),
-+	GATE(CLK_V1PLL_GATE, "clk_v1pll_gate", "v1pll", 0,
-+			RK3506_CLKGATE_CON(0), 4, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_GPLL_DIV, "clk_gpll_div", "clk_gpll_gate", CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(0), 6, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 5, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_GPLL_DIV_100M, "clk_gpll_div_100m", "clk_gpll_div", 0,
-+			RK3506_CLKSEL_CON(0), 10, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 6, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_V0PLL_DIV, "clk_v0pll_div", "clk_v0pll_gate", CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(1), 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 7, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_V1PLL_DIV, "clk_v1pll_div", "clk_v1pll_gate", 0,
-+			RK3506_CLKSEL_CON(1), 4, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 8, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_INT_VOICE_MATRIX0, "clk_int_voice_matrix0", "clk_v0pll_gate", 0,
-+			RK3506_CLKSEL_CON(1), 8, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 9, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_INT_VOICE_MATRIX1, "clk_int_voice_matrix1", "clk_v1pll_gate", 0,
-+			RK3506_CLKSEL_CON(2), 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 10, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_INT_VOICE_MATRIX2, "clk_int_voice_matrix2", "clk_v0pll_gate", 0,
-+			RK3506_CLKSEL_CON(2), 5, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 11, GFLAGS),
-+	MUX(CLK_FRAC_UART_MATRIX0_MUX, "clk_frac_uart_matrix0_mux", clk_frac_uart_matrix0_mux_parents_p, 0,
-+			RK3506_CLKSEL_CON(3), 9, 2, MFLAGS),
-+	MUX(CLK_FRAC_UART_MATRIX1_MUX, "clk_frac_uart_matrix1_mux", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(3), 11, 2, MFLAGS),
-+	MUX(CLK_FRAC_VOICE_MATRIX0_MUX, "clk_frac_voice_matrix0_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(3), 13, 2, MFLAGS),
-+	MUX(CLK_FRAC_VOICE_MATRIX1_MUX, "clk_frac_voice_matrix1_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 0, 2, MFLAGS),
-+	MUX(CLK_FRAC_COMMON_MATRIX0_MUX, "clk_frac_common_matrix0_mux", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 2, 2, MFLAGS),
-+	MUX(CLK_FRAC_COMMON_MATRIX1_MUX, "clk_frac_common_matrix1_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 4, 2, MFLAGS),
-+	MUX(CLK_FRAC_COMMON_MATRIX2_MUX, "clk_frac_common_matrix2_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 6, 2, MFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_UART_MATRIX0, "clk_frac_uart_matrix0", "clk_frac_uart_matrix0_mux", 0,
-+			RK3506_CLKSEL_CON(5), 0,
-+			RK3506_CLKGATE_CON(0), 13, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_UART_MATRIX1, "clk_frac_uart_matrix1", "clk_frac_uart_matrix1_mux", 0,
-+			RK3506_CLKSEL_CON(6), 0,
-+			RK3506_CLKGATE_CON(0), 14, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_VOICE_MATRIX0, "clk_frac_voice_matrix0", "clk_frac_voice_matrix0_mux", 0,
-+			RK3506_CLKSEL_CON(7), 0,
-+			RK3506_CLKGATE_CON(0), 15, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_VOICE_MATRIX1, "clk_frac_voice_matrix1", "clk_frac_voice_matrix1_mux", 0,
-+			RK3506_CLKSEL_CON(9), 0,
-+			RK3506_CLKGATE_CON(1), 0, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_COMMON_MATRIX0, "clk_frac_common_matrix0", "clk_frac_common_matrix0_mux", 0,
-+			RK3506_CLKSEL_CON(11), 0,
-+			RK3506_CLKGATE_CON(1), 1, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_COMMON_MATRIX1, "clk_frac_common_matrix1", "clk_frac_common_matrix1_mux", 0,
-+			RK3506_CLKSEL_CON(12), 0,
-+			RK3506_CLKGATE_CON(1), 2, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_COMMON_MATRIX2, "clk_frac_common_matrix2", "clk_frac_common_matrix2_mux", 0,
-+			RK3506_CLKSEL_CON(13), 0,
-+			RK3506_CLKGATE_CON(1), 3, GFLAGS),
-+	GATE(CLK_REF_USBPHY_TOP, "clk_ref_usbphy_top", "xin24m", 0,
-+			RK3506_CLKGATE_CON(1), 4, GFLAGS),
-+	GATE(CLK_REF_DPHY_TOP, "clk_ref_dphy_top", "xin24m", 0,
-+			RK3506_CLKGATE_CON(1), 5, GFLAGS),
-+
-+	/* core */
-+	COMPOSITE_NOGATE(0, "armclk_pll", gpll_v0pll_v1pll_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(15), 5, 2, MFLAGS, 0, 5, DFLAGS),
-+	COMPOSITE_NOMUX(ACLK_CORE_ROOT, "aclk_core_root", "armclk", CLK_IGNORE_UNUSED,
-+			RK3506_CLKSEL_CON(15), 9, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
-+			RK3506_CLKGATE_CON(2), 11, GFLAGS),
-+	COMPOSITE_NOMUX(PCLK_CORE_ROOT, "pclk_core_root", "armclk", CLK_IGNORE_UNUSED,
-+			RK3506_CLKSEL_CON(16), 0, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
-+			RK3506_CLKGATE_CON(2), 12, GFLAGS),
-+	GATE(PCLK_DBG, "pclk_dbg", "pclk_core_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 1, GFLAGS),
-+	GATE(PCLK_CORE_GRF, "pclk_core_grf", "pclk_core_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 4, GFLAGS),
-+	GATE(PCLK_CORE_CRU, "pclk_core_cru", "pclk_core_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 5, GFLAGS),
-+	GATE(CLK_CORE_EMA_DETECT, "clk_core_ema_detect", "xin24m_gate", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 6, GFLAGS),
-+	GATE(PCLK_GPIO1, "pclk_gpio1", "aclk_core_root", 0,
-+			RK3506_CLKGATE_CON(3), 8, GFLAGS),
-+	GATE(DBCLK_GPIO1, "dbclk_gpio1", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(3), 9, GFLAGS),
-+
-+	/* core peri */
-+	COMPOSITE(ACLK_CORE_PERI_ROOT, "aclk_core_peri_root", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(18), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 0, GFLAGS),
-+	GATE(HCLK_CORE_PERI_ROOT, "hclk_core_peri_root", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 1, GFLAGS),
-+	GATE(PCLK_CORE_PERI_ROOT, "pclk_core_peri_root", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 2, GFLAGS),
-+	COMPOSITE(CLK_DSMC, "clk_dsmc", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(18), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 4, GFLAGS),
-+	GATE(ACLK_DSMC, "aclk_dsmc", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 5, GFLAGS),
-+	GATE(PCLK_DSMC, "pclk_dsmc", "pclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 6, GFLAGS),
-+	COMPOSITE(CLK_FLEXBUS_TX, "clk_flexbus_tx", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(19), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 7, GFLAGS),
-+	COMPOSITE(CLK_FLEXBUS_RX, "clk_flexbus_rx", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(19), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 8, GFLAGS),
-+	GATE(ACLK_FLEXBUS, "aclk_flexbus", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 9, GFLAGS),
-+	GATE(HCLK_FLEXBUS, "hclk_flexbus", "hclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 10, GFLAGS),
-+	GATE(ACLK_DSMC_SLV, "aclk_dsmc_slv", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 11, GFLAGS),
-+	GATE(HCLK_DSMC_SLV, "hclk_dsmc_slv", "hclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 12, GFLAGS),
-+
-+	/* bus */
-+	COMPOSITE(ACLK_BUS_ROOT, "aclk_bus_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(21), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(5), 0, GFLAGS),
-+	COMPOSITE(HCLK_BUS_ROOT, "hclk_bus_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(21), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(5), 1, GFLAGS),
-+	COMPOSITE(PCLK_BUS_ROOT, "pclk_bus_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(22), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(5), 2, GFLAGS),
-+	GATE(ACLK_SYSRAM, "aclk_sysram", "aclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(5), 6, GFLAGS),
-+	GATE(HCLK_SYSRAM, "hclk_sysram", "aclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(5), 7, GFLAGS),
-+	GATE(ACLK_DMAC0, "aclk_dmac0", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 8, GFLAGS),
-+	GATE(ACLK_DMAC1, "aclk_dmac1", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 9, GFLAGS),
-+	GATE(HCLK_M0, "hclk_m0", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 10, GFLAGS),
-+	GATE(ACLK_CRYPTO_NS, "aclk_crypto_ns", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 14, GFLAGS),
-+	GATE(HCLK_CRYPTO_NS, "hclk_crypto_ns", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 15, GFLAGS),
-+	GATE(HCLK_RNG, "hclk_rng", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 0, GFLAGS),
-+	GATE(PCLK_BUS_GRF, "pclk_bus_grf", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(6), 1, GFLAGS),
-+	GATE(PCLK_TIMER, "pclk_timer", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 2, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH0, "clk_timer0_ch0", clk_timer0_parents_p, 0,
-+			RK3506_CLKSEL_CON(22), 7, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 3, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH1, "clk_timer0_ch1", clk_timer1_parents_p, 0,
-+			RK3506_CLKSEL_CON(22), 10, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 4, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH2, "clk_timer0_ch2", clk_timer2_parents_p, 0,
-+			RK3506_CLKSEL_CON(22), 13, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 5, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH3, "clk_timer0_ch3", clk_timer3_parents_p, 0,
-+			RK3506_CLKSEL_CON(23), 0, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 6, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH4, "clk_timer0_ch4", clk_timer4_parents_p, 0,
-+			RK3506_CLKSEL_CON(23), 3, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 7, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH5, "clk_timer0_ch5", clk_timer5_parents_p, 0,
-+			RK3506_CLKSEL_CON(23), 6, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 8, GFLAGS),
-+	GATE(PCLK_WDT0, "pclk_wdt0", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 9, GFLAGS),
-+	GATE(TCLK_WDT0, "tclk_wdt0", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(6), 10, GFLAGS),
-+	GATE(PCLK_WDT1, "pclk_wdt1", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 11, GFLAGS),
-+	GATE(TCLK_WDT1, "tclk_wdt1", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(6), 12, GFLAGS),
-+	GATE(PCLK_MAILBOX, "pclk_mailbox", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 13, GFLAGS),
-+	GATE(PCLK_INTMUX, "pclk_intmux", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 14, GFLAGS),
-+	GATE(PCLK_SPINLOCK, "pclk_spinlock", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 15, GFLAGS),
-+	GATE(PCLK_DDRC, "pclk_ddrc", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 0, GFLAGS),
-+	GATE(HCLK_DDRPHY, "hclk_ddrphy", "hclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 1, GFLAGS),
-+	GATE(PCLK_DDRMON, "pclk_ddrmon", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 2, GFLAGS),
-+	GATE(CLK_DDRMON_OSC, "clk_ddrmon_osc", "xin24m_gate", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 3, GFLAGS),
-+	GATE(PCLK_STDBY, "pclk_stdby", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 4, GFLAGS),
-+	GATE(HCLK_USBOTG0, "hclk_usbotg0", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 5, GFLAGS),
-+	GATE(HCLK_USBOTG0_PMU, "hclk_usbotg0_pmu", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 6, GFLAGS),
-+	GATE(CLK_USBOTG0_ADP, "clk_usbotg0_adp", "clk_32k", 0,
-+			RK3506_CLKGATE_CON(7), 7, GFLAGS),
-+	GATE(HCLK_USBOTG1, "hclk_usbotg1", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 8, GFLAGS),
-+	GATE(HCLK_USBOTG1_PMU, "hclk_usbotg1_pmu", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 9, GFLAGS),
-+	GATE(CLK_USBOTG1_ADP, "clk_usbotg1_adp", "clk_32k", 0,
-+			RK3506_CLKGATE_CON(7), 10, GFLAGS),
-+	GATE(PCLK_USBPHY, "pclk_usbphy", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 11, GFLAGS),
-+	GATE(ACLK_DMA2DDR, "aclk_dma2ddr", "aclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(8), 0, GFLAGS),
-+	GATE(PCLK_DMA2DDR, "pclk_dma2ddr", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(8), 1, GFLAGS),
-+	COMPOSITE_NOMUX(STCLK_M0, "stclk_m0", "xin24m_gate", 0,
-+			RK3506_CLKSEL_CON(23), 9, 6, DFLAGS,
-+			RK3506_CLKGATE_CON(8), 2, GFLAGS),
-+	COMPOSITE(CLK_DDRPHY, "clk_ddrphy", gpll_v0pll_v1pll_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(4), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 10, GFLAGS),
-+	FACTOR(CLK_DDRC_SRC, "clk_ddrc_src", "clk_ddrphy", 0, 1, 4),
-+	GATE(ACLK_DDRC_0, "aclk_ddrc_0", "clk_ddrc_src", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(10), 0, GFLAGS),
-+	GATE(ACLK_DDRC_1, "aclk_ddrc_1", "clk_ddrc_src", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(10), 1, GFLAGS),
-+	GATE(CLK_DDRC, "clk_ddrc", "clk_ddrc_src", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(10), 3, GFLAGS),
-+	GATE(CLK_DDRMON, "clk_ddrmon", "clk_ddrc_src", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(10), 4, GFLAGS),
-+
-+	/* ls peri */
-+	COMPOSITE(HCLK_LSPERI_ROOT, "hclk_lsperi_root", gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(29), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 0, GFLAGS),
-+	GATE(PCLK_LSPERI_ROOT, "pclk_lsperi_root", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 1, GFLAGS),
-+	GATE(PCLK_UART0, "pclk_uart0", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 4, GFLAGS),
-+	GATE(PCLK_UART1, "pclk_uart1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 5, GFLAGS),
-+	GATE(PCLK_UART2, "pclk_uart2", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 6, GFLAGS),
-+	GATE(PCLK_UART3, "pclk_uart3", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 7, GFLAGS),
-+	GATE(PCLK_UART4, "pclk_uart4", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 8, GFLAGS),
-+	COMPOSITE(SCLK_UART0, "sclk_uart0", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(29), 12, 3, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 9, GFLAGS),
-+	COMPOSITE(SCLK_UART1, "sclk_uart1", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(30), 5, 3, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 10, GFLAGS),
-+	COMPOSITE(SCLK_UART2, "sclk_uart2", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(30), 13, 3, MFLAGS, 8, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 11, GFLAGS),
-+	COMPOSITE(SCLK_UART3, "sclk_uart3", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(31), 5, 3, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 12, GFLAGS),
-+	COMPOSITE(SCLK_UART4, "sclk_uart4", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(31), 13, 3, MFLAGS, 8, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 13, GFLAGS),
-+	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 14, GFLAGS),
-+	COMPOSITE(CLK_I2C0, "clk_i2c0", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(32), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 15, GFLAGS),
-+	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 0, GFLAGS),
-+	COMPOSITE(CLK_I2C1, "clk_i2c1", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(32), 10, 2, MFLAGS, 6, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 1, GFLAGS),
-+	GATE(PCLK_I2C2, "pclk_i2c2", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 2, GFLAGS),
-+	COMPOSITE(CLK_I2C2, "clk_i2c2", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(33), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 3, GFLAGS),
-+	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 4, GFLAGS),
-+	COMPOSITE(CLK_PWM1, "clk_pwm1", gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(33), 10, 2, MFLAGS, 6, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 5, GFLAGS),
-+	GATE(CLK_OSC_PWM1, "clk_osc_pwm1", "xin24m", 0,
-+			RK3506_CLKGATE_CON(12), 6, GFLAGS),
-+	GATE(CLK_RC_PWM1, "clk_rc_pwm1", "clk_rc", 0,
-+			RK3506_CLKGATE_CON(12), 7, GFLAGS),
-+	COMPOSITE_NODIV(CLK_FREQ_PWM1, "clk_freq_pwm1", clk_pwm_parents_p, 0,
-+			RK3506_CLKSEL_CON(33), 12, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(12), 8, GFLAGS),
-+	COMPOSITE_NODIV(CLK_COUNTER_PWM1, "clk_counter_pwm1", clk_pwm_parents_p, 0,
-+			RK3506_CLKSEL_CON(34), 0, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(12), 9, GFLAGS),
-+	GATE(PCLK_SPI0, "pclk_spi0", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 10, GFLAGS),
-+	COMPOSITE(CLK_SPI0, "clk_spi0", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(34), 8, 2, MFLAGS, 4, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 11, GFLAGS),
-+	GATE(PCLK_SPI1, "pclk_spi1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 12, GFLAGS),
-+	COMPOSITE(CLK_SPI1, "clk_spi1", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(34), 14, 2, MFLAGS, 10, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 13, GFLAGS),
-+	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 14, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO2, "dbclk_gpio2", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 0, 2, MFLAGS,
-+			RK3506_CLKGATE_CON(12), 15, GFLAGS),
-+	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 0, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO3, "dbclk_gpio3", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 2, 2, MFLAGS,
-+			RK3506_CLKGATE_CON(13), 1, GFLAGS),
-+	GATE(PCLK_GPIO4, "pclk_gpio4", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 2, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO4, "dbclk_gpio4", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 4, 2, MFLAGS,
-+			RK3506_CLKGATE_CON(13), 3, GFLAGS),
-+	GATE(HCLK_CAN0, "hclk_can0", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 4, GFLAGS),
-+	COMPOSITE(CLK_CAN0, "clk_can0", clk_can_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 11, 3, MFLAGS, 6, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 5, GFLAGS),
-+	GATE(HCLK_CAN1, "hclk_can1", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 6, GFLAGS),
-+	COMPOSITE(CLK_CAN1, "clk_can1", clk_can_parents_p, 0,
-+			RK3506_CLKSEL_CON(36), 5, 3, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 7, GFLAGS),
-+	GATE(HCLK_PDM, "hclk_pdm", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 8, GFLAGS),
-+	COMPOSITE(MCLK_PDM, "mclk_pdm", clk_pdm_parents_p, 0,
-+			RK3506_CLKSEL_CON(37), 5, 4, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 9, GFLAGS),
-+	COMPOSITE(CLKOUT_PDM, "clkout_pdm", clk_pdm_parents_p, 0,
-+			RK3506_CLKSEL_CON(38), 10, 4, MFLAGS, 0, 10, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 10, GFLAGS),
-+	COMPOSITE(MCLK_SPDIFTX, "mclk_spdiftx", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(39), 5, 4, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 11, GFLAGS),
-+	GATE(HCLK_SPDIFTX, "hclk_spdiftx", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 12, GFLAGS),
-+	GATE(HCLK_SPDIFRX, "hclk_spdifrx", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 13, GFLAGS),
-+	COMPOSITE(MCLK_SPDIFRX, "mclk_spdifrx", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(39), 14, 2, MFLAGS, 9, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 14, GFLAGS),
-+	COMPOSITE(MCLK_SAI0, "mclk_sai0", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(40), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 15, GFLAGS),
-+	GATE(HCLK_SAI0, "hclk_sai0", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 0, GFLAGS),
-+	GATE(MCLK_OUT_SAI0, "mclk_out_sai0", "mclk_sai0", 0,
-+			RK3506_CLKGATE_CON(14), 1, GFLAGS),
-+	COMPOSITE(MCLK_SAI1, "mclk_sai1", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(41), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(14), 2, GFLAGS),
-+	GATE(HCLK_SAI1, "hclk_sai1", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 3, GFLAGS),
-+	GATE(MCLK_OUT_SAI1, "mclk_out_sai1", "mclk_sai1", 0,
-+			RK3506_CLKGATE_CON(14), 4, GFLAGS),
-+	GATE(HCLK_ASRC0, "hclk_asrc0", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 5, GFLAGS),
-+	COMPOSITE(CLK_ASRC0, "clk_asrc0", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(42), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(14), 6, GFLAGS),
-+	GATE(HCLK_ASRC1, "hclk_asrc1", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 7, GFLAGS),
-+	COMPOSITE(CLK_ASRC1, "clk_asrc1", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(42), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(14), 8, GFLAGS),
-+	GATE(PCLK_CRU, "pclk_cru", "pclk_lsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(14), 9, GFLAGS),
-+	GATE(PCLK_PMU_ROOT, "pclk_pmu_root", "pclk_lsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(14), 10, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC0, "mclk_asrc0", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 0, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 0, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC1, "mclk_asrc1", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 4, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 1, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC2, "mclk_asrc2", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 8, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 2, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC3, "mclk_asrc3", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 12, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 3, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC0_SRC, "lrck_asrc0_src", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 0, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 4, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC0_DST, "lrck_asrc0_dst", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 4, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 5, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC1_SRC, "lrck_asrc1_src", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 8, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 6, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC1_DST, "lrck_asrc1_dst", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 12, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 7, GFLAGS),
-+
-+	/* hs peri */
-+	COMPOSITE(ACLK_HSPERI_ROOT, "aclk_hsperi_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(49), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 0, GFLAGS),
-+	GATE(HCLK_HSPERI_ROOT, "hclk_hsperi_root", "aclk_hsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(17), 1, GFLAGS),
-+	GATE(PCLK_HSPERI_ROOT, "pclk_hsperi_root", "hclk_hsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(17), 2, GFLAGS),
-+	COMPOSITE(CCLK_SRC_SDMMC, "cclk_src_sdmmc", cclk_src_sdmmc_parents_p, 0,
-+			RK3506_CLKSEL_CON(49), 13, 2, MFLAGS, 7, 6, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 6, GFLAGS),
-+	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 7, GFLAGS),
-+	GATE(HCLK_FSPI, "hclk_fspi", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 8, GFLAGS),
-+	COMPOSITE(SCLK_FSPI, "sclk_fspi", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(50), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 9, GFLAGS),
-+	GATE(PCLK_SPI2, "pclk_spi2", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 10, GFLAGS),
-+	GATE(ACLK_MAC0, "aclk_mac0", "aclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 11, GFLAGS),
-+	GATE(ACLK_MAC1, "aclk_mac1", "aclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 12, GFLAGS),
-+	GATE(PCLK_MAC0, "pclk_mac0", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 13, GFLAGS),
-+	GATE(PCLK_MAC1, "pclk_mac1", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 14, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_MAC_ROOT, "clk_mac_root", "gpll", 0,
-+			RK3506_CLKSEL_CON(50), 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 15, GFLAGS),
-+	GATE(CLK_MAC0, "clk_mac0", "clk_mac_root", 0,
-+			RK3506_CLKGATE_CON(18), 0, GFLAGS),
-+	GATE(CLK_MAC1, "clk_mac1", "clk_mac_root", 0,
-+			RK3506_CLKGATE_CON(18), 1, GFLAGS),
-+	COMPOSITE(MCLK_SAI2, "mclk_sai2", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(51), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(18), 2, GFLAGS),
-+	GATE(HCLK_SAI2, "hclk_sai2", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 3, GFLAGS),
-+	GATE(MCLK_OUT_SAI2, "mclk_out_sai2", "mclk_sai2", 0,
-+			RK3506_CLKGATE_CON(18), 4, GFLAGS),
-+	COMPOSITE(MCLK_SAI3_SRC, "mclk_sai3_src", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(52), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(18), 5, GFLAGS),
-+	GATE(HCLK_SAI3, "hclk_sai3", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 6, GFLAGS),
-+	GATE(MCLK_SAI3, "mclk_sai3", "mclk_sai3_src", 0,
-+			RK3506_CLKGATE_CON(18), 7, GFLAGS),
-+	GATE(MCLK_OUT_SAI3, "mclk_out_sai3", "mclk_sai3_src", 0,
-+			RK3506_CLKGATE_CON(18), 8, GFLAGS),
-+	COMPOSITE(MCLK_SAI4_SRC, "mclk_sai4_src", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(53), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(18), 9, GFLAGS),
-+	GATE(HCLK_SAI4, "hclk_sai4", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 10, GFLAGS),
-+	GATE(MCLK_SAI4, "mclk_sai4", "mclk_sai4_src", 0,
-+			RK3506_CLKGATE_CON(18), 11, GFLAGS),
-+	GATE(HCLK_DSM, "hclk_dsm", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 12, GFLAGS),
-+	GATE(MCLK_DSM, "mclk_dsm", "mclk_sai3_src", 0,
-+			RK3506_CLKGATE_CON(18), 13, GFLAGS),
-+	GATE(PCLK_AUDIO_ADC, "pclk_audio_adc", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 14, GFLAGS),
-+	GATE(MCLK_AUDIO_ADC, "mclk_audio_adc", "mclk_sai4_src", 0,
-+			RK3506_CLKGATE_CON(18), 15, GFLAGS),
-+	FACTOR(MCLK_AUDIO_ADC_DIV4, "mclk_audio_adc_div4", "mclk_audio_adc", 0, 1, 4),
-+	GATE(PCLK_SARADC, "pclk_saradc", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(19), 0, GFLAGS),
-+	COMPOSITE(CLK_SARADC, "clk_saradc", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(54), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(19), 1, GFLAGS),
-+	GATE(PCLK_OTPC_NS, "pclk_otpc_ns", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(19), 3, GFLAGS),
-+	GATE(CLK_SBPI_OTPC_NS, "clk_sbpi_otpc_ns", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(19), 4, GFLAGS),
-+	FACTOR(CLK_USER_OTPC_NS, "clk_user_otpc_ns", "clk_sbpi_otpc_ns", 0, 1, 2),
-+	GATE(PCLK_UART5, "pclk_uart5", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(19), 6, GFLAGS),
-+	COMPOSITE(SCLK_UART5, "sclk_uart5", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(54), 11, 3, MFLAGS, 6, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(19), 7, GFLAGS),
-+	GATE(PCLK_GPIO234_IOC, "pclk_gpio234_ioc", "pclk_hsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(19), 8, GFLAGS),
-+	COMPOSITE(CLK_MAC_PTP_ROOT, "clk_mac_ptp_root", clk_mac_ptp_root_parents_p, 0,
-+			RK3506_CLKSEL_CON(55), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(19), 9, GFLAGS),
-+	GATE(CLK_MAC0_PTP, "clk_mac0_ptp", "clk_mac_ptp_root", 0,
-+			RK3506_CLKGATE_CON(19), 10, GFLAGS),
-+	GATE(CLK_MAC1_PTP, "clk_mac1_ptp", "clk_mac_ptp_root", 0,
-+			RK3506_CLKGATE_CON(19), 11, GFLAGS),
-+	COMPOSITE(ACLK_VIO_ROOT, "aclk_vio_root", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(58), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 0, GFLAGS),
-+	COMPOSITE(HCLK_VIO_ROOT, "hclk_vio_root", gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(58), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 1, GFLAGS),
-+	GATE(PCLK_VIO_ROOT, "pclk_vio_root", "hclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 2, GFLAGS),
-+	GATE(HCLK_RGA, "hclk_rga", "hclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 6, GFLAGS),
-+	GATE(ACLK_RGA, "aclk_rga", "aclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 7, GFLAGS),
-+	COMPOSITE(CLK_CORE_RGA, "clk_core_rga", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(59), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 8, GFLAGS),
-+	GATE(ACLK_VOP, "aclk_vop", "aclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 9, GFLAGS),
-+	GATE(HCLK_VOP, "hclk_vop", "hclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 10, GFLAGS),
-+	COMPOSITE(DCLK_VOP, "dclk_vop", dclk_vop_parents_p, 0,
-+			RK3506_CLKSEL_CON(60), 8, 3, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 11, GFLAGS),
-+	GATE(PCLK_DPHY, "pclk_dphy", "pclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 12, GFLAGS),
-+	GATE(PCLK_DSI_HOST, "pclk_dsi_host", "pclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 13, GFLAGS),
-+	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 14, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_TSADC, "clk_tsadc", "xin24m_gate", 0,
-+			RK3506_CLKSEL_CON(61), 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 15, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_TSADC_TSEN, "clk_tsadc_tsen", "xin24m_gate", 0,
-+			RK3506_CLKSEL_CON(61), 8, 3, DFLAGS,
-+			RK3506_CLKGATE_CON(22), 0, GFLAGS),
-+	GATE(PCLK_GPIO1_IOC, "pclk_gpio1_ioc", "pclk_vio_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(22), 1, GFLAGS),
-+
-+	/* pmu */
-+	GATE(CLK_PMU, "clk_pmu", "xin24m", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 1, GFLAGS),
-+	GATE(PCLK_PMU, "pclk_pmu", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 2, GFLAGS),
-+	GATE(PCLK_PMU_CRU, "pclk_pmu_cru", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 4, GFLAGS),
-+	GATE(PCLK_PMU_GRF, "pclk_pmu_grf", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 5, GFLAGS),
-+	GATE(PCLK_GPIO0_IOC, "pclk_gpio0_ioc", "pclk_pmu_root", CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKGATE_CON(0), 7, GFLAGS),
-+	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pmu_root", 0,
-+			RK3506_PMU_CLKGATE_CON(0), 8, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO0, "dbclk_gpio0", dbclk_gpio0_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(0), 0, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(0), 9, GFLAGS),
-+	GATE(PCLK_GPIO1_SHADOW, "pclk_gpio1_shadow", "pclk_pmu_root", 0,
-+			RK3506_PMU_CLKGATE_CON(0), 10, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO1_SHADOW, "dbclk_gpio1_shadow", dbclk_gpio0_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(0), 2, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(0), 11, GFLAGS),
-+	GATE(PCLK_PMU_HP_TIMER, "pclk_pmu_hp_timer", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 12, GFLAGS),
-+	MUX(CLK_PMU_HP_TIMER, "clk_pmu_hp_timer", clk_pmu_hp_timer_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(0), 4, 2, MFLAGS),
-+	GATE(PCLK_PWM0, "pclk_pwm0", "pclk_pmu_root", 0,
-+			RK3506_PMU_CLKGATE_CON(0), 15, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_PWM0, "clk_pwm0", "clk_gpll_div_100m", 0,
-+			RK3506_PMU_CLKSEL_CON(0), 6, 4, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 0, GFLAGS),
-+	GATE(CLK_OSC_PWM0, "clk_osc_pwm0", "xin24m", 0,
-+			RK3506_PMU_CLKGATE_CON(1), 1, GFLAGS),
-+	GATE(CLK_RC_PWM0, "clk_rc_pwm0", "clk_rc", 0,
-+			RK3506_PMU_CLKGATE_CON(1), 2, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_MAC_OUT, "clk_mac_out", "gpll", 0,
-+			RK3506_PMU_CLKSEL_CON(0), 10, 6, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 3, GFLAGS),
-+	COMPOSITE(CLK_REF_OUT0, "clk_ref_out0", clk_ref_out_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(1), 6, 2, MFLAGS, 0, 6, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 4, GFLAGS),
-+	COMPOSITE(CLK_REF_OUT1, "clk_ref_out1", clk_ref_out_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(1), 14, 2, MFLAGS, 8, 6, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 5, GFLAGS),
-+	MUX(CLK_32K_FRAC_MUX, "clk_32k_frac_mux", clk_32k_frac_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(3), 0, 2, MFLAGS),
-+	COMPOSITE_FRAC(CLK_32K_FRAC, "clk_32k_frac", "clk_32k_frac_mux", 0,
-+			RK3506_PMU_CLKSEL_CON(2), 0,
-+			RK3506_PMU_CLKGATE_CON(1), 6, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_32K_RC, "clk_32k_rc", "clk_rc", CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKSEL_CON(3), 2, 5, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 7, GFLAGS),
-+	COMPOSITE_NODIV(CLK_32K, "clk_32k", clk_32k_parents_p, CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKSEL_CON(3), 7, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 8, GFLAGS),
-+	COMPOSITE_NODIV(CLK_32K_PMU, "clk_32k_pmu", clk_32k_parents_p, CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKSEL_CON(3), 9, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 9, GFLAGS),
-+	GATE(CLK_PMU_32K, "clk_pmu_32k", "clk_32k_pmu", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 3, GFLAGS),
-+	GATE(CLK_PMU_HP_TIMER_32K, "clk_pmu_hp_timer_32k", "clk_32k_pmu", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 14, GFLAGS),
-+	GATE(PCLK_TOUCH_KEY, "pclk_touch_key", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(1), 12, GFLAGS),
-+	GATE(CLK_TOUCH_KEY, "clk_touch_key", "xin24m", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(1), 13, GFLAGS),
-+	COMPOSITE(CLK_REF_PHY_PLL, "clk_ref_phy_pll", gpll_v0pll_v1pll_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(4), 13, 2, MFLAGS, 6, 7, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 14, GFLAGS),
-+	MUX(CLK_REF_PHY_PMU_MUX, "clk_ref_phy_pmu_mux", clk_ref_phy_pmu_mux_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(4), 15, 1, MFLAGS),
-+	GATE(CLK_WIFI_OUT, "clk_wifi_out", "xin24m", 0,
-+			RK3506_PMU_CLKGATE_CON(2), 0, GFLAGS),
-+	MUX(CLK_V0PLL_REF, "clk_v0pll_ref", clk_vpll_ref_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(6), 0, 1, MFLAGS),
-+	MUX(CLK_V1PLL_REF, "clk_v1pll_ref", clk_vpll_ref_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(6), 1, 1, MFLAGS),
-+
-+	/* secure ns */
-+	GATE(CLK_CORE_CRYPTO_NS, "clk_core_crypto_ns", "clk_core_crypto", 0,
-+			RK3506_CLKGATE_CON(5), 12, GFLAGS),
-+	GATE(CLK_PKA_CRYPTO_NS, "clk_pka_crypto_ns", "clk_pka_crypto", 0,
-+			RK3506_CLKGATE_CON(5), 13, GFLAGS),
-+
-+	/* io */
-+	GATE(CLK_SPI2, "clk_spi2", "clk_spi2_io", 0,
-+			RK3506_CLKGATE_CON(20), 0, GFLAGS),
-+};
-+
-+static void __init rk3506_clk_init(struct device_node *np)
-+{
-+	struct rockchip_clk_provider *ctx;
-+	unsigned long clk_nr_clks;
-+	void __iomem *reg_base;
-+
-+	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3506_clk_branches,
-+						   ARRAY_SIZE(rk3506_clk_branches)) + 1;
-+
-+	reg_base = of_iomap(np, 0);
-+	if (!reg_base) {
-+		pr_err("%s: could not map cru region\n", __func__);
-+		return;
-+	}
-+
-+	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
-+	if (IS_ERR(ctx)) {
-+		pr_err("%s: rockchip clk init failed\n", __func__);
-+		iounmap(reg_base);
-+		return;
-+	}
-+
-+	rockchip_clk_register_plls(ctx, rk3506_pll_clks,
-+				   ARRAY_SIZE(rk3506_pll_clks),
-+				   0);
-+
-+	rockchip_clk_register_armclk_multi_pll(ctx, &rk3506_armclk,
-+					       rk3506_cpuclk_rates,
-+					       ARRAY_SIZE(rk3506_cpuclk_rates));
-+
-+	rockchip_clk_register_branches(ctx, rk3506_clk_branches,
-+				       ARRAY_SIZE(rk3506_clk_branches));
-+
-+	rk3506_rst_init(np, reg_base);
-+
-+	rockchip_register_restart_notifier(ctx, RK3506_GLB_SRST_FST, NULL);
-+
-+	rockchip_clk_of_add_provider(np, ctx);
-+
-+	/* pvtpll src init */
-+	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RK3506_CLKSEL_CON(15));
-+}
-+
-+CLK_OF_DECLARE(rk3506_cru, "rockchip,rk3506-cru", rk3506_clk_init);
-+
-+struct clk_rk3506_inits {
-+	void (*inits)(struct device_node *np);
-+};
-+
-+static const struct clk_rk3506_inits clk_rk3506_cru_init = {
-+	.inits = rk3506_clk_init,
-+};
-+
-+static const struct of_device_id clk_rk3506_match_table[] = {
-+	{
-+		.compatible = "rockchip,rk3506-cru",
-+		.data = &clk_rk3506_cru_init,
-+	},
-+	{ }
-+};
-+
-+static int clk_rk3506_probe(struct platform_device *pdev)
-+{
-+	const struct clk_rk3506_inits *init_data;
-+	struct device *dev = &pdev->dev;
-+
-+	init_data = device_get_match_data(dev);
-+	if (!init_data)
-+		return -EINVAL;
-+
-+	if (init_data->inits)
-+		init_data->inits(dev->of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver clk_rk3506_driver = {
-+	.probe		= clk_rk3506_probe,
-+	.driver		= {
-+		.name	= "clk-rk3506",
-+		.of_match_table = clk_rk3506_match_table,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver_probe(clk_rk3506_driver, clk_rk3506_probe);
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 87f09320b942..b2fff1d13a4a 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -275,6 +275,18 @@ struct clk;
- #define RK3399_PMU_CLKGATE_CON(x)	((x) * 0x4 + 0x100)
- #define RK3399_PMU_SOFTRST_CON(x)	((x) * 0x4 + 0x110)
- 
-+#define RK3506_PMU_CRU_BASE		0x10000
-+#define RK3506_PLL_CON(x)		((x) * 0x4 + RK3506_PMU_CRU_BASE)
-+#define RK3506_CLKSEL_CON(x)		((x) * 0x4 + 0x300)
-+#define RK3506_CLKGATE_CON(x)		((x) * 0x4 + 0x800)
-+#define RK3506_SOFTRST_CON(x)		((x) * 0x4 + 0xa00)
-+#define RK3506_PMU_CLKSEL_CON(x)	((x) * 0x4 + 0x300 + RK3506_PMU_CRU_BASE)
-+#define RK3506_PMU_CLKGATE_CON(x)	((x) * 0x4 + 0x800 + RK3506_PMU_CRU_BASE)
-+#define RK3506_MODE_CON			0x280
-+#define RK3506_GLB_CNT_TH		0xc00
-+#define RK3506_GLB_SRST_FST		0xc08
-+#define RK3506_GLB_SRST_SND		0xc0c
-+
- #define RK3528_PMU_CRU_BASE		0x10000
- #define RK3528_PCIE_CRU_BASE		0x20000
- #define RK3528_DDRPHY_CRU_BASE		0x28000
-@@ -1329,6 +1341,7 @@ static inline void rockchip_register_softrst(struct device_node *np,
- }
- 
- void rv1126b_rst_init(struct device_node *np, void __iomem *reg_base);
-+void rk3506_rst_init(struct device_node *np, void __iomem *reg_base);
- void rk3528_rst_init(struct device_node *np, void __iomem *reg_base);
- void rk3562_rst_init(struct device_node *np, void __iomem *reg_base);
- void rk3576_rst_init(struct device_node *np, void __iomem *reg_base);
-diff --git a/drivers/clk/rockchip/rst-rk3506.c b/drivers/clk/rockchip/rst-rk3506.c
-new file mode 100644
-index 000000000000..f6a833ee2f5c
---- /dev/null
-+++ b/drivers/clk/rockchip/rst-rk3506.c
-@@ -0,0 +1,226 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <dt-bindings/reset/rockchip,rk3506-cru.h>
-+#include "clk.h"
-+
-+/* 0xFF9A0000 + 0x0A00 */
-+#define RK3506_CRU_RESET_OFFSET(id, reg, bit) [id] = (0 + reg * 16 + bit)
-+
-+/* mapping table for reset ID to register offset */
-+static const int rk3506_register_offset[] = {
-+	/* CRU-->SOFTRST_CON00 */
-+	RK3506_CRU_RESET_OFFSET(SRST_NCOREPORESET0_AC, 0, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCOREPORESET1_AC, 0, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCOREPORESET2_AC, 0, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCORESET0_AC, 0, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCORESET1_AC, 0, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCORESET2_AC, 0, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_NL2RESET_AC, 0, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_CORE_BIU_AC, 0, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_M0_AC, 0, 10),
-+
-+	/* CRU-->SOFTRST_CON02 */
-+	RK3506_CRU_RESET_OFFSET(SRST_NDBGRESET, 2, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_CORE_BIU, 2, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_PMU, 2, 15),
-+
-+	/* CRU-->SOFTRST_CON03 */
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DBG, 3, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_POTRESETN_DBG, 3, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_CORE_GRF, 3, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_CORE_EMA_DETECT, 3, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_REF_PVTPLL_CORE, 3, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_GPIO1, 3, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_DBRESETN_GPIO1, 3, 9),
-+
-+	/* CRU-->SOFTRST_CON04 */
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_CORE_PERI_BIU, 4, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DSMC, 4, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DSMC, 4, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_FLEXBUS, 4, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_FLEXBUS, 4, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_FLEXBUS, 4, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DSMC_SLV, 4, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_DSMC_SLV, 4, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_DSMC_SLV, 4, 13),
-+
-+	/* CRU-->SOFTRST_CON05 */
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_BUS_BIU, 5, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_BUS_BIU, 5, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_BUS_BIU, 5, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_SYSRAM, 5, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SYSRAM, 5, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DMAC0, 5, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DMAC1, 5, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_M0, 5, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_M0_JTAG, 5, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_CRYPTO, 5, 15),
-+
-+	/* CRU-->SOFTRST_CON06 */
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_RNG, 6, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_BUS_GRF, 6, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_TIMER0, 6, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TIMER0_CH0, 6, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TIMER0_CH1, 6, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TIMER0_CH2, 6, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TIMER0_CH3, 6, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TIMER0_CH4, 6, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TIMER0_CH5, 6, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_WDT0, 6, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_TRESETN_WDT0, 6, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_WDT1, 6, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_TRESETN_WDT1, 6, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_MAILBOX, 6, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_INTMUX, 6, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_SPINLOCK, 6, 15),
-+
-+	/* CRU-->SOFTRST_CON07 */
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DDRC, 7, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_DDRPHY, 7, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DDRMON, 7, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_DDRMON_OSC, 7, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DDR_LPC, 7, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_USBOTG0, 7, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBOTG0_ADP, 7, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_USBOTG1, 7, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBOTG1_ADP, 7, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_USBPHY, 7, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBPHY_POR, 7, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBPHY_OTG0, 7, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBPHY_OTG1, 7, 14),
-+
-+	/* CRU-->SOFTRST_CON08 */
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DMA2DDR, 8, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DMA2DDR, 8, 1),
-+
-+	/* CRU-->SOFTRST_CON09 */
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBOTG0_UTMI, 9, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USBOTG1_UTMI, 9, 1),
-+
-+	/* CRU-->SOFTRST_CON10 */
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DDRC_0, 10, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DDRC_1, 10, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_DDR_BIU, 10, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_DDRC, 10, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_DDRMON, 10, 4),
-+
-+	/* CRU-->SOFTRST_CON11 */
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_LSPERI_BIU, 11, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_UART0, 11, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_UART1, 11, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_UART2, 11, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_UART3, 11, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_UART4, 11, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_UART0, 11, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_UART1, 11, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_UART2, 11, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_UART3, 11, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_UART4, 11, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_I2C0, 11, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_I2C0, 11, 15),
-+
-+	/* CRU-->SOFTRST_CON12 */
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_I2C1, 12, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_I2C1, 12, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_I2C2, 12, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_I2C2, 12, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_PWM1, 12, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_PWM1, 12, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_SPI0, 12, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SPI0, 12, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_SPI1, 12, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SPI1, 12, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_GPIO2, 12, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_DBRESETN_GPIO2, 12, 15),
-+
-+	/* CRU-->SOFTRST_CON13 */
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_GPIO3, 13, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_DBRESETN_GPIO3, 13, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_GPIO4, 13, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_DBRESETN_GPIO4, 13, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_CAN0, 13, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_CAN0, 13, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_CAN1, 13, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_CAN1, 13, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_PDM, 13, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_PDM, 13, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_PDM, 13, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SPDIFTX, 13, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SPDIFTX, 13, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SPDIFRX, 13, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SPDIFRX, 13, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_SAI0, 13, 15),
-+
-+	/* CRU-->SOFTRST_CON14 */
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SAI0, 14, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_SAI1, 14, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SAI1, 14, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_ASRC0, 14, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_ASRC0, 14, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_ASRC1, 14, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_ASRC1, 14, 8),
-+
-+	/* CRU-->SOFTRST_CON17 */
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_HSPERI_BIU, 17, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SDMMC, 17, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_FSPI, 17, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_SRESETN_FSPI, 17, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_SPI2, 17, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_MAC0, 17, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_MAC1, 17, 12),
-+
-+	/* CRU-->SOFTRST_CON18 */
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_SAI2, 18, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SAI2, 18, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SAI3, 18, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_SAI3, 18, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_SAI4, 18, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_SAI4, 18, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_DSM, 18, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_DSM, 18, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_AUDIO_ADC, 18, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_MRESETN_AUDIO_ADC, 18, 15),
-+
-+	/* CRU-->SOFTRST_CON19 */
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_SARADC, 19, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SARADC, 19, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SARADC_PHY, 19, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_OTPC_NS, 19, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_SBPI_OTPC_NS, 19, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_USER_OTPC_NS, 19, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_UART5, 19, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_UART5, 19, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_GPIO234_IOC, 19, 8),
-+
-+	/* CRU-->SOFTRST_CON21 */
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_VIO_BIU, 21, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_VIO_BIU, 21, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_RGA, 21, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_RGA, 21, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_CORE_RGA, 21, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_ARESETN_VOP, 21, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_HRESETN_VOP, 21, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_VOP, 21, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DPHY, 21, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_DSI_HOST, 21, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_TSADC, 21, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_RESETN_TSADC, 21, 15),
-+
-+	/* CRU-->SOFTRST_CON22 */
-+	RK3506_CRU_RESET_OFFSET(SRST_PRESETN_GPIO1_IOC, 22, 1),
-+};
-+
-+void rk3506_rst_init(struct device_node *np, void __iomem *reg_base)
-+{
-+	rockchip_register_softrst_lut(np,
-+				      rk3506_register_offset,
-+				      ARRAY_SIZE(rk3506_register_offset),
-+				      reg_base + RK3506_SOFTRST_CON(0),
-+				      ROCKCHIP_SOFTRST_HIWORD_MASK);
-+}
+Ville asked for other approaches before merging the change to the 
+warning. Great that it worked.
+
+Best regards
+Thomas
+
+>
+>
+
 -- 
-2.34.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
