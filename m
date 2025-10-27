@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-870800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DEAC0BB8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2FDC0BB90
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 04:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5057F189CA85
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355FF3AD416
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25DB2D3737;
-	Mon, 27 Oct 2025 02:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BDB24A079;
+	Mon, 27 Oct 2025 03:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="c/3+pTM4"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="YMLO6AAk"
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E882A274B59;
-	Mon, 27 Oct 2025 02:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9594126ACB;
+	Mon, 27 Oct 2025 03:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761533844; cv=none; b=gvKhgO8wtyR5whADvQnW4H6XgxPbiJqtPtB4P+xUvf+hN9x1Nv7okSt8FCeFLdZucwEUb8RuRORnSsLuHlXAHZ6KRj7EXJ2XojKE6yGijzdHYo+YICYYDnGQ6gH4HvjDVQYiqCYKTglsXWKYad8My4gzJlzkejqxnmLVEQDMu2s=
+	t=1761534095; cv=none; b=KJSWAYT47Gt8wlIvmzxTvhVMtBCNeyHeeulyEUBvQK1Dpo5ZhCgS2z0F68U2bSp+kaCG3/LfAI15feqjvRHIG7KPluU2z5oLRRWWVkJVm0gb8oWF/nOAdtK9ITcuT2vrg6Qsr5myp4ngA4at328+NZHqKI6ZU4oCKbhVbTcZEPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761533844; c=relaxed/simple;
-	bh=vicwMSkBC8SiYCHGfcE17HKJUhro6jph1byqn8KWXZo=;
+	s=arc-20240116; t=1761534095; c=relaxed/simple;
+	bh=dt62QxfoVcCfUEWcExjNknKuLr2ooHpOBIUQIjjHA4w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VwLAsgKidVH1XHu6nMWAqWAy/o3znZ8FVuXqKFmmlXed8cZcINujok03QfhhXpDVzNdxQSyh994irw+/1WCNsUVg4Ah3LpV2ZP8T+3SVyH6EympO4BaiqCIEBsQClxHGe/smD0B2yi72OxzRQ/f/h2fx1PWsu0SYdNGg/C8Up+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=c/3+pTM4; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	 In-Reply-To:Content-Type; b=gKLXJNP65N++RsgcFObetyETh6IcRVD67XHTrECzmWxVtIhNc0IVlICsnEbXIekvgYMXpQp+3qRSjYwsD8H7PR0i1MH9JXNa8i1FEpQxbBoW69Zf+uL/ikXTFMHcIl8MZWK0MnHsRqVNaENnVYvF5JxrLhVfP3y3hWElWp50zac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=YMLO6AAk; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=bmKr3gs2o9uU3aOUtwCT4DF/FX3VA2tgiedTv3vuvRk=;
-	b=c/3+pTM4U8FSRw10vA2AeHj0gabjZulb7wdAhA8uw2gblZ2Xp2TjEkoUjwO2h2EJUch1F74Wk
-	4c6X7APTEccLl4DMvNL07Efjc/z1nregFeU9v5LLEOPDUERXQTKtIMAtfWklCzxu86uf2xUk+dt
-	zN85c0VETcO4PEJuTWDpGSo=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cvynY2VLYz1T4Fg;
-	Mon, 27 Oct 2025 10:56:17 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 15FA21400C8;
-	Mon, 27 Oct 2025 10:57:18 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+	bh=wGGj2Xbnf/KJ+AicjY3f8n/PBiq49kjQ+SBvrDCHTWw=;
+	b=YMLO6AAknM64lTu+Hk9tq2HHHUt2cMdB8+GBdQIQbnrO2SFMKtEtDvyy/kjYFY0V8X8OMtjK3
+	rKp85qRTOdn15I8S4ZC4TzQYLGBeapidWFwpjRxOXIPWUBDA5H2MlH+CcxJlp0XB7dM/y/rkBCj
+	orQmHMIDs6U5x0YJ5Qq+f1k=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cvytw2Tj5zRhVK;
+	Mon, 27 Oct 2025 11:00:56 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 191031800B1;
+	Mon, 27 Oct 2025 11:01:24 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 27 Oct 2025 11:01:23 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Oct
- 2025 10:57:16 +0800
-Message-ID: <2d5ee2b9-e348-4d4e-a514-6c698f19f7e5@huawei.com>
-Date: Mon, 27 Oct 2025 10:57:15 +0800
+ 2025 11:01:23 +0800
+Message-ID: <dfd9a4a0-f74a-4359-b028-e8e3276769fd@huawei.com>
+Date: Mon, 27 Oct 2025 11:01:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,136 +60,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
- __alloc_pages_slowpath() when BS > PS
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>
-CC: "Darrick J. Wong" <djwong@kernel.org>, <linux-ext4@vger.kernel.org>,
-	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
-	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
-	<catherine.hoang@oracle.com>, Baokun Li <libaokun@huaweicloud.com>, Linus
- Torvalds <torvalds@linux-foundation.org>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-23-libaokun@huaweicloud.com>
- <aPxV6QnXu-OufSDH@casper.infradead.org>
- <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
- <aP0PachXS8Qxjo9Q@casper.infradead.org>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <aP0PachXS8Qxjo9Q@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v1 6/9] ACPI: processor: idle: Do not change power states
+ if get power info failed
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
+References: <20250929093754.3998136-1-lihuisong@huawei.com>
+ <20250929093754.3998136-7-lihuisong@huawei.com>
+ <CAJZ5v0jBqPLjK2v7A-8Qd6ERhwz47jP3YCiTHJhD8vAgRHVjcQ@mail.gmail.com>
+ <e1d440bd-23c0-434c-a771-5c0907c5d3ab@huawei.com>
+ <CAJZ5v0h64UoWY=Zkpc4g2UH+ii8K6APDSV2qLp==yHuRQz+fsQ@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0h64UoWY=Zkpc4g2UH+ii8K6APDSV2qLp==yHuRQz+fsQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500013.china.huawei.com (7.185.36.188)
-
-On 2025-10-26 01:56, Matthew Wilcox wrote:
-> On Sat, Oct 25, 2025 at 02:32:45PM +0800, Baokun Li wrote:
->> On 2025-10-25 12:45, Matthew Wilcox wrote:
->>> On Sat, Oct 25, 2025 at 11:22:18AM +0800, libaokun@huaweicloud.com wrote:
->>>> +	while (1) {
->>>> +		folio = __filemap_get_folio(mapping, index, fgp_flags,
->>>> +					    gfp & ~__GFP_NOFAIL);
->>>> +		if (!IS_ERR(folio) || !(gfp & __GFP_NOFAIL))
->>>> +			return folio;
->>>> +
->>>> +		if (PTR_ERR(folio) != -ENOMEM && PTR_ERR(folio) != -EAGAIN)
->>>> +			return folio;
->>>> +
->>>> +		memalloc_retry_wait(gfp);
->>>> +	}
->>> No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
->>> The right way forward is for ext4 to use iomap, not for buffer heads
->>> to support large block sizes.
->> ext4 only calls getblk_unmovable or __getblk when reading critical
->> metadata. Both of these functions set __GFP_NOFAIL to ensure that
->> metadata reads do not fail due to memory pressure.
-> If filesystems actually require __GFP_NOFAIL for high-order allocations,
-> then this is a new requirement that needs to be communicated to the MM
-> developers, not hacked around in filesystems (or the VFS).  And that
-> communication needs to be a separate thread with a clear subject line
-> to attract the right attention, not buried in patch 26/28.
-
-EXT4 is not the first filesystem to support LBS. I believe other
-filesystems that already support LBS, even if they manage their own
-metadata, have similar requirements. A filesystem cannot afford to become
-read-only, shut down, or enter an inconsistent state due to memory
-allocation failures in critical paths. Large folios have been around for
-some time, and the fact that this warning still exists shows that the
-problem is not trivial to solve.
-
-Therefore, following the approach of filesystems that already support LBS,
-such as XFS and the soon-to-be-removed bcachefs, I avoid adding
-__GFP_NOFAIL for large allocations and instead retry internally to prevent
-failures.
-
-I do not intend to hide this issue in Patch 22/25. I cc’d linux-mm@kvack.org
-precisely to invite memory management experts to share their thoughts on
-the current situation.
-
-Here is my limited understanding of the history of __GFP_NOFAIL:
-
-Originally, in commit 4923abf9f1a4 ("Don't warn about order-1 allocations
-with __GFP_NOFAIL"), Linus Torvalds raised the warning order from 0 to 1,
-and commented,
-    "Maybe we should remove this warning entirely."
-
-We had considered removing this warning, but then saw the discussion below.
-
-Previously we used WARN_ON_ONCE_GFP, which meant the warning could be
-suppressed with __GFP_NOWARN. But with the introduction of large folios,
-memory allocation and reclaim have become much more challenging.
-__GFP_NOFAIL can still fail, and many callers do not check the return
-value, leading to potential NULL pointer dereferences.
-
-Linus also noted that __GFP_NOFAIL is heavily abused, and even said in [1]:
-“Honestly, I'm perfectly fine with just removing that stupid useless flag
- entirely.”
-"Because the blame should go *there*, and it should not even remotely look
- like "oh, the MM code failed". No. The caller was garbage."
-
-[1]:
-https://lore.kernel.org/linux-mm/CAHk-=wgv2-=Bm16Gtn5XHWj9J6xiqriV56yamU+iG07YrN28SQ@mail.gmail.com/
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
 
-From this, my understanding is that handling or retrying large allocation
-failures in the caller is the direction going forward.
-
-As for why retries are done in the VFS, there are two reasons: first, both
-ext4 and jbd2 read metadata through blkdev, so a unified change is simpler.
-Second, retrying here allows other buffer-head-based filesystems to support
-LBS more easily.
-
-For now, until large memory allocation and reclaim are properly handled,
-this approach serves as a practical workaround.
-
-> For what it's worth, I think you have a good case.  This really is
-> a new requirement (bs>PS) and in this scenario, we should be able to
-> reclaim page cache memory of the appropriate order to satisfy the NOFAIL
-> requirement.  There will be concerns that other users will now be able to
-> use it without warning, but I think eventually this use case will prevail.
-Yeah, it would be best if the memory subsystem could add a flag like
-__GFP_LBS to suppress these warnings and guide allocation and reclaim to
-perform optimizations suited for this scenario.
->> Both functions eventually call grow_dev_folio(), which is why we
->> handle the __GFP_NOFAIL logic there. xfs_buf_alloc_backing_mem()
->> has similar logic, but XFS manages its own metadata, allowing it
->> to use vmalloc for memory allocation.
-> The other possibility is that we switch ext4 away from the buffer cache
-> entirely.  This is a big job!  I know Catherine has been working on
-> a generic replacement for the buffer cache, but I'm not sure if it's
-> ready yet.
+在 2025/10/26 20:34, Rafael J. Wysocki 写道:
+> On Fri, Oct 24, 2025 at 11:10 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>
+>> 在 2025/10/22 3:49, Rafael J. Wysocki 写道:
+>>> On Mon, Sep 29, 2025 at 11:38 AM Huisong Li <lihuisong@huawei.com> wrote:
+>>>> Driver will update power states when processor power states have been
+>>>> changed. To prevent any other abnormal issues, here add the verification
+>>>> for the result of getting power information, don't change power states
+>>>> and one error log when get power information failed.
+>>> But the old states may not be usable any more in that case.
+>> Yes
+>>> If you want to check the acpi_processor_get_power_info(), it should
+>>> disable ACPi idle entirely on failures.
+>>   From the modification of this patch, this cpuidle device will be
+>> disabled if the acpi_processor_get_power_info(）fails to get on this device.
+>> And the cpuidle of the device will be disabled according to the
+>> definition of cpuidle_not_available().
+>> We should not call disable_cpuidle() to disable cpuidle of all CPUs.
+> Since the same idle state data is used for all CPUs, I'd say cpuidle
+Yes.
+ From the current implementation perspective, the idle state is 
+initialized by the first available CPU.
+If there is one CPU get power management information failed later, the 
+ACPI idle driver doesn't disable cpuidle of all CPUs and
+just doesn't register cpudile_device and enable cpuidle_device.
+> should be disabled for all of them in that case.
+I can understand this. I think it is reasonable.
+What do you think how to disable cpuidle of all CPUs here?
+How about call disable_cpuidle() and disable all cpuidle devices?
 >
-The key issue is not whether ext4 uses buffer heads; even using vmalloc
-with __GFP_NOFAIL for large allocations faces the same problem. 
- 
-As Linus also mentioned in the link[1] above:  
-"It has then expanded and is now a problem. The cases using GFP_NOFAIL
- for things like vmalloc() - which is by definition not a small
- allocation - should be just removed as outright bugs."
+> Alternatively, check if it works for any of them and apply the data
+> from the CPU where it works to all of them.  If it doesn't work for
+> any of them, there's nothing to apply.
 
+How should we check if the idle states can work to all of CPUs?
 
-Thanks,
-Baokun
-
+>
+>> So the modification in this patch is enough, right?
+>>>> Fixes: f427e5f1cf75 ("ACPI / processor: Get power info before updating the C-states")
+>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>>>> ---
+>>>>    drivers/acpi/processor_idle.c | 15 ++++++++++-----
+>>>>    1 file changed, 10 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>>>> index b0d6b51ee363..92b231f5d514 100644
+>>>> --- a/drivers/acpi/processor_idle.c
+>>>> +++ b/drivers/acpi/processor_idle.c
+>>>> @@ -1315,6 +1315,7 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+>>>>           int cpu;
+>>>>           struct acpi_processor *_pr;
+>>>>           struct cpuidle_device *dev;
+>>>> +       int ret = 0;
+>>>>
+>>>>           if (disabled_by_idle_boot_param())
+>>>>                   return 0;
+>>>> @@ -1344,16 +1345,20 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+>>>>                   }
+>>>>
+>>>>                   /* Populate Updated C-state information */
+>>>> -               acpi_processor_get_power_info(pr);
+>>>> -               acpi_processor_setup_cpuidle_states(pr);
+>>>> +               ret = acpi_processor_get_power_info(pr);
+>>>> +               if (ret)
+>>>> +                       pr_err("Get processor-%u power information failed.\n",
+>>>> +                              pr->id);
+>>>> +               else
+>>>> +                       acpi_processor_setup_cpuidle_states(pr);
+>>>>
+>>>>                   /* Enable all cpuidle devices */
+>>>>                   for_each_online_cpu(cpu) {
+>>>>                           _pr = per_cpu(processors, cpu);
+>>>>                           if (!_pr || !_pr->flags.power_setup_done)
+>>>>                                   continue;
+>>>> -                       acpi_processor_get_power_info(_pr);
+>>>> -                       if (_pr->flags.power) {
+>>>> +                       ret = acpi_processor_get_power_info(_pr);
+>>>> +                       if (!ret && _pr->flags.power) {
+>>>>                                   dev = per_cpu(acpi_cpuidle_device, cpu);
+>>>>                                   acpi_processor_setup_cpuidle_dev(_pr, dev);
+>>>>                                   cpuidle_enable_device(dev);
+>>>> @@ -1363,7 +1368,7 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+>>>>                   cpus_read_unlock();
+>>>>           }
+>>>>
+>>>> -       return 0;
+>>>> +       return ret;
+>>>>    }
+>>>>
+>>>>    void acpi_processor_register_idle_driver(void)
+>>>> --
+>>>> 2.33.0
+>>>>
 
