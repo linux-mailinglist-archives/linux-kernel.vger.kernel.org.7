@@ -1,92 +1,126 @@
-Return-Path: <linux-kernel+bounces-872296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A26C0FD8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:05:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4ACC0FD90
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C479F4E297B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE15D188BCC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91463168EC;
-	Mon, 27 Oct 2025 18:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194EA314D16;
+	Mon, 27 Oct 2025 18:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tD9SBQWj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="HUTQt7fl"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8533081AE;
-	Mon, 27 Oct 2025 18:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510A23128CF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588344; cv=none; b=SgVlyvTOQu44yX+ThA8TeHQaXgcE62q0IVBTPnDBG+BS2NEk6XAFgRrzaZbAX/BJ3R0n34ChjEGBSuI69WabQr9CrmGuGGlrOCMC1kRfzKWsGdhh9U6TBJO9tFDh1PpiR8a7s+KCQ2HPOuyRo/UU76Lsw274TmlLlZvpIJhTkqU=
+	t=1761588392; cv=none; b=Z3fXXt3ogwPBH4yemiUVYginwiWgIX2YdQg59Tw209pZqSZHnkZx1sbTH1gMi8DrZkSUY8GCsTVvwPJYmV+KOsX4av8tiFhdhZr2ookm50BYAIkL1soHZ1WQMaOBCr6kSFEHEdJvbr48JGkWu/ntVJDcnkCwIbYzMxZsO9NltAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588344; c=relaxed/simple;
-	bh=wgCi9Ns6pB1FTZmXRyJMfiJCFeTw2qdaAWD8i3X6+3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIkF4mHC2PXV8Lj6+da54TokySUE64D66bV6qRXwcC1SBSWu3DGU4vESkwldZaC2KLuVc50h88P8/EgO1BuIPgsFHisrMi8zwRCSwlSj0ErWEthzrhgaRXNOV3u5nHHnaY3wbCx0YO23ViwKfNE/NP6e++LPQhDBEDYnLI3TV5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tD9SBQWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8E5C4CEF1;
-	Mon, 27 Oct 2025 18:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761588343;
-	bh=wgCi9Ns6pB1FTZmXRyJMfiJCFeTw2qdaAWD8i3X6+3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tD9SBQWjeGLzTQ0V0fy/F5g6P0M7mpQhxtv48ZD1BUZYmVA+CAfI6FdaAmBRMU+mv
-	 bWXgRTuLYzmNNOTTRQz/dvilHw9YmuN+1prbpvn+o06FvQqP2YWhq2s7k+XRHNCob+
-	 PowKNv6neni87VctfY8gZMsRXnLcSWNP4SG5Bmkq4GKV50TRrN4NHZC5j7mIHNmJsF
-	 3zsLgqsNe5TeT4Qf0v7IIDKtVjO9y8Z7b2LKjEkJxfTk19IcaMDBccp36me3Xt0I6F
-	 fjAvcOwGYraZKPWTgNyBiQNy/TuyN/GOaYYmOV0p5yXKJQvUuZtJ/H+DvjeW4FO/0g
-	 fpoxCwZ7gF10Q==
-Date: Mon, 27 Oct 2025 08:05:42 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
-Subject: Re: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
- called from anywhere
-Message-ID: <aP-0dkIQa7iwHv5e@slm.duckdns.org>
-References: <20251025001849.1915635-1-tj@kernel.org>
- <20251025001849.1915635-4-tj@kernel.org>
- <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
- <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
- <20251027174953.GB3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761588392; c=relaxed/simple;
+	bh=AA5GCYZEMbP5Ax3pEn1tSHgHevbczi1rQeQ8fcw0kZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=orUPhBf6ldYhpQl1VbLUMbAx+fHTx1X8Z6LEe7yT7SHUFRSQk2OWxky4TsfDxz2aThPaQry/kZhtGzALIJZg1n81snohgS+8Yq/gGq+YQMdQdhYCTbGrcHEim0PleHYsThSsMEww6LvAzYybsBSa2hO+wJx1GOE9nqgEzobK2SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=HUTQt7fl; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1761588384;
+ bh=rNoZEKs9Jg0ddWQ/rYT/Dj9yW6JSQLSPRrnwijVeGws=;
+ b=HUTQt7flup4EuJ+ysPhxPwjlOECrhf0OxdtIh4hF0y7q5FW3OyCNmSPgd6VrRKkAs91D0nCmd
+ RZiRRmXDNyiSR/jHdP7zZJRo6+i5X6946RWqakhgxB8rMAM3QbiEUjJf6Qa4CSX1H+r9mcmccdK
+ ffqV4FvvkwXUubJIGPBmI81wDTPoIRVsOfl0PZw0IoHf65g5FGmhBQYqTKSzyKjRA4YhnmEmwZ6
+ eNirGkI8gxUsWwxveEYQ3Dblp4kVCbu4qc86g4YgyS0kZuxC8dmRPGZ59eom+7Wz3skeoOxd7Gq
+ 7pJ/u25EdMFrpVN6Hr9gjSNzKxvVTrUAunOjnintwB1A==
+X-Forward-Email-ID: 68ffb499e1d8d448afcc7519
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.4.0
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <60a1046c-437e-400a-8e2c-391cd471c358@kwiboo.se>
+Date: Mon, 27 Oct 2025 19:06:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027174953.GB3419281@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Harmonize regulator formatting
+ for Pine64 rk3566 devices
+To: Diederik de Haas <diederik@cknow-tech.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>
+References: <20251027154517.136976-1-diederik@cknow-tech.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20251027154517.136976-1-diederik@cknow-tech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 06:49:53PM +0100, Peter Zijlstra wrote:
-> > That's what I thought too and the gap between balance() and pick_task() can
-> > be closed that way. However, while plugging that, I realized there's another
-> > bigger gap between ttwu() and pick_task() because ttwu() can directly
-> > dispatch a task into the local DSQ of a CPU. That one, there's no way to
-> > close without a global hook.
+Hi Diederik,
+
+On 10/27/2025 4:39 PM, Diederik de Haas wrote:
+> The regulator node properties in Pine64 rk3566 devices were formatted
+> rather inconsistently. To name a few:
+> - 'name' was sometimes put at the top of the list, while at other times
+>   it was (mostly) sorted in alphabetical order
+
+Personally I prefer to list the regulator-name as the first property, I
+think it makes it visually easier/quicker to identify a regulator with
+the name prop at top.
+
+I typically try to use the following prop ordering for regulators on
+board DTs I submit (and review):
+
+- regulator-name as the first prop (to quickly identify the regulator)
+- regulator-min-* before regulator-max-* (natural order)
+- regulator-* in alphabetical/natural order
+
+Maybe this preference just comes from a long history of always putting
+id/primary key/unique identifiers at top or beginning of data tables,
+classes, structs etc ;-)
+
+Regards,
+Jonas
+
+> - 'always-on' and 'boot-on' were sometimes at the top of the list,
+>   sometimes not
+> - 'state-mem' nodes sometimes had a preceding blank line, as they
+>   should, but sometimes not
+> - other properties seem to have been added to the end of the list, not
+>   in their alphabetical/natural order
 > 
-> This would've been prime Changelog material. As is the Changelog was so
-> vague I wasn't even sure it was that particular problem.
+> So harmonize the formatting by making all properties sorted
+> alphabetically/naturally. And harmonize the formatting of the
+> 'state-mem' nodes so they all have a preceding blank line. While at it,
+> also fix 2 incorrectly indented nodes.
 > 
-> Please update the changelog to be clearer.
+> No functional changes.
+> 
+> Signed-off-by: Diederik de Haas <diederik@cknow-tech.com>
+> ---
+> No outright NACKs and one positive response (thanks!), so here's v2.
+> 
+> Changes in v2:
+> - Found more regulators at the beginning of the pinetab2 dtsi file
+> - Missed a 'regulator-always-on' on regulator-vcc3v3-sys in q64b dts
+> Link to v1:
+> https://lore.kernel.org/all/20251026153805.107774-1-diederik@cknow-tech.com/
 
-Oh yeah, good point.
-
-> Also, why is this patch already in a pull request to Linus? what's the
-> hurry.
-
-Hmmm? It shouldn't be. Let me check again. No, it isn't. What are you
-looking at?
-
-Thanks.
-
--- 
-tejun
+[snip]
 
