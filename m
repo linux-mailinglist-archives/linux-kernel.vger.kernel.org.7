@@ -1,201 +1,148 @@
-Return-Path: <linux-kernel+bounces-871423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC76C0D35C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:43:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7D4C0D37A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C562C403DA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:41:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8466A4F4242
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57BF2FB975;
-	Mon, 27 Oct 2025 11:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14C42FBE18;
+	Mon, 27 Oct 2025 11:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NXAcYIUR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyNmwHfM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478E1C861D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D46C2F49E4;
+	Mon, 27 Oct 2025 11:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565284; cv=none; b=i3UlYve0B05+siQekiSEuoEBFgSgI4diKpAZ/7gTXzb6ojHrxw9FtUmTiTvhdDuWSM7Oucjx8UpSBbFCj1ZWqTuwGkZe+LAJloSMTfr0tmElyzA2GpDmj2Hsgp+/I6v0hBBoXc2VtG7fmn3oWUfxkZgR1iVWsXmLIxzHq2EBWmA=
+	t=1761565301; cv=none; b=WYwQc05lMhCnS9QEo8CtOJrVTubBAhIGZ6j4yDJYDkgqZnz88ItUTGVl625i3Gcc/sqgAIw+VXcQZgzyzTNo0niJLnuSiNPZsGwzWm+tujSELi4C1XOnM4gFEwiYX9Gje4QlGkTTZmi+kA8tX0mpOZgY3PoBoRX71gRPQGccNDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565284; c=relaxed/simple;
-	bh=C1os0nVHtXRwt9BMyfjrMM3Csgl5ES/7g62ugKPD+ow=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GfLRJse8orqgFRsEviG2Yg9ZSk+Bc/oZYwkOPjq3XVPPhqlWHb1wygqCEP0p1tAztO3ZyP+RN26xM8Hat1i0c3cpmSx+kobMKEREbz+3O5u7B9H1C2wP6ucgQ+R4p4IqNE6UWdlvbPcamC7/Os3LnPks/8XTYbuBC/48RwJfvo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NXAcYIUR; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761565282; x=1793101282;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=C1os0nVHtXRwt9BMyfjrMM3Csgl5ES/7g62ugKPD+ow=;
-  b=NXAcYIURLCcu+VPIN67BIwPvEclnL5BPfetibWN6c9iLbCnvf/8YIcSK
-   AYE+PNqwKt5auswjoN2srMvZsQi2qdnmDihOQj7N+iqbI24z2qknAyG09
-   bBwGmZeHHeOoCWBjbmbd319TSBsCtkulqiRRXbDY3kVG3atWPhe0qz675
-   8qlt+0FD8vOyMYcCxUynxgczDJXqrgpPmyXUsxD6Sa8ufkBSjWxseHP0J
-   pRDTc02+osmNpNvyobcyCyxIPGQ/42FrNbQuZMuI65DKMODq1cowW+QVq
-   KIlRCjvC+xFuY+h7t/fnIJ2UA8UDbxp/xETpfmgRGUAE8J/citZAX/gfJ
-   A==;
-X-CSE-ConnectionGUID: 5qPuWA4xSSW2gF4n9e8Vhg==
-X-CSE-MsgGUID: hDAklK1/SxeoMgpYBkpAtQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86269872"
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="86269872"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 04:41:22 -0700
-X-CSE-ConnectionGUID: aobMIM/sSzKGYfd/bfB3zw==
-X-CSE-MsgGUID: x2oaKL2yRsSBocvEx6aJRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="185106471"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.31])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 04:41:21 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 72C5A121E63;
-	Mon, 27 Oct 2025 13:41:18 +0200 (EET)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1vDLbC-00000001df1-1gUY;
-	Mon, 27 Oct 2025 13:41:18 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 1/1] mei: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Mon, 27 Oct 2025 13:41:18 +0200
-Message-ID: <20251027114118.390775-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1761565301; c=relaxed/simple;
+	bh=hqOtHiTgvGyahBvfgpDyyjTxNtrg8WZgPXVUnJTBT1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k8GAzyJ/U6z0Cm/z0jEAcHc0y2l1TLYlZzH45rgrrMStz1n70/rmr6FtKIaTXGwU2+Wd6sDCxdRh5wUayXKos29sfmlHZVW24JHYV2vtIzSMxCb7/k+5fF1WiLqBrxwbtRL2C0FREL/4TI6VQchy2CxBFRtEr0awfaSmOcNsnBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyNmwHfM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D8DC4CEF1;
+	Mon, 27 Oct 2025 11:41:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761565300;
+	bh=hqOtHiTgvGyahBvfgpDyyjTxNtrg8WZgPXVUnJTBT1Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PyNmwHfMZ/HugRAt2N0HGvQ9PTdCqocdLymPmG13jN9ErSVBmFe5Ren9EQDgIPlcg
+	 Svqsz6X9CJJTnS59NPHV4UAg35CbxTohCk3zPT241MhxQcCW/9sUtQsY5+ubwWsI36
+	 +MjsXNkylvftJ+dxA1ihnVLriMysDPc+Pym+QowDxff0WSifJRKZlCN/ZR74kul87N
+	 5rVIjR+bNPlXPCEJHIzLEY5/PSMzF+iJ5cC6Sn5v9dwdV+80nkDNLjU1CRN2/wpsie
+	 8mM2bdjF3jS5QLW+S61kQv27K+hjJ3IPBatE49yV9yK4hJy6bx1K7S7KbBCNGGeO4o
+	 gIaXjdTld3wCw==
+Message-ID: <b6d13746-7921-4825-97cc-7136cdccafde@kernel.org>
+Date: Mon, 27 Oct 2025 12:41:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net V1 1/3] veth: enable dev_watchdog for detecting
+ stalled TXQs
+To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ netdev@vger.kernel.org, makita.toshiaki@lab.ntt.co.jp
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, ihor.solodrai@linux.dev,
+ toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
+ <176123157173.2281302.7040578942230212638.stgit@firesoul>
+ <877bwkfmgr.fsf@toke.dk>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <877bwkfmgr.fsf@toke.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/misc/mei/client.c    | 14 ++------------
- drivers/misc/mei/interrupt.c |  2 --
- 2 files changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
-index 159e8b841564..5dc665515263 100644
---- a/drivers/misc/mei/client.c
-+++ b/drivers/misc/mei/client.c
-@@ -709,7 +709,6 @@ void mei_host_client_init(struct mei_device *dev)
- 
- 	schedule_work(&dev->bus_rescan_work);
- 
--	pm_runtime_mark_last_busy(dev->parent);
- 	dev_dbg(&dev->dev, "rpm: autosuspend\n");
- 	pm_request_autosuspend(dev->parent);
- }
-@@ -991,7 +990,6 @@ int mei_cl_disconnect(struct mei_cl *cl)
- 	rets = __mei_cl_disconnect(cl);
- 
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- 
- 	return rets;
-@@ -1167,7 +1165,6 @@ int mei_cl_connect(struct mei_cl *cl, struct mei_me_client *me_cl,
- 	rets = cl->status;
- out:
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- 
- 	mei_io_cb_free(cb);
-@@ -1554,7 +1551,6 @@ int mei_cl_notify_request(struct mei_cl *cl,
- 
- out:
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- 
- 	mei_io_cb_free(cb);
-@@ -1702,7 +1698,6 @@ int mei_cl_read_start(struct mei_cl *cl, size_t length, const struct file *fp)
- 
- out:
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- nortpm:
- 	if (rets)
-@@ -2092,7 +2087,6 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
- 	rets = buf_len;
- err:
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- free:
- 	mei_io_cb_free(cb);
-@@ -2116,12 +2110,10 @@ void mei_cl_complete(struct mei_cl *cl, struct mei_cl_cb *cb)
- 	case MEI_FOP_WRITE:
- 		mei_tx_cb_dequeue(cb);
- 		cl->writing_state = MEI_WRITE_COMPLETE;
--		if (waitqueue_active(&cl->tx_wait)) {
-+		if (waitqueue_active(&cl->tx_wait))
- 			wake_up_interruptible(&cl->tx_wait);
--		} else {
--			pm_runtime_mark_last_busy(dev->parent);
-+		else
- 			pm_request_autosuspend(dev->parent);
--		}
- 		break;
- 
- 	case MEI_FOP_READ:
-@@ -2366,7 +2358,6 @@ int mei_cl_dma_alloc_and_map(struct mei_cl *cl, const struct file *fp,
- 		mei_cl_dma_free(cl);
- 
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- 
- 	mei_io_cb_free(cb);
-@@ -2444,7 +2435,6 @@ int mei_cl_dma_unmap(struct mei_cl *cl, const struct file *fp)
- 		mei_cl_dma_free(cl);
- out:
- 	cl_dbg(dev, cl, "rpm: autosuspend\n");
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_runtime_put_autosuspend(dev->parent);
- 
- 	mei_io_cb_free(cb);
-diff --git a/drivers/misc/mei/interrupt.c b/drivers/misc/mei/interrupt.c
-index 3aa66b6b0d36..3f210413fd32 100644
---- a/drivers/misc/mei/interrupt.c
-+++ b/drivers/misc/mei/interrupt.c
-@@ -229,7 +229,6 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 		cl_dbg(dev, cl, "completed read length = %zu\n", cb->buf_idx);
- 		list_move_tail(&cb->list, cmpl_list);
- 	} else {
--		pm_runtime_mark_last_busy(dev->parent);
- 		pm_request_autosuspend(dev->parent);
- 	}
- 
-@@ -310,7 +309,6 @@ static int mei_cl_irq_read(struct mei_cl *cl, struct mei_cl_cb *cb,
- 		return ret;
- 	}
- 
--	pm_runtime_mark_last_busy(dev->parent);
- 	pm_request_autosuspend(dev->parent);
- 
- 	list_move_tail(&cb->list, &cl->rd_pending);
--- 
-2.47.3
+On 24/10/2025 15.39, Toke Høiland-Jørgensen wrote:
+> Jesper Dangaard Brouer <hawk@kernel.org> writes:
+> 
+>> The changes introduced in commit dc82a33297fc ("veth: apply qdisc
+>> backpressure on full ptr_ring to reduce TX drops") have been found to cause
+>> a race condition in production environments.
+>>
+>> Under specific circumstances, observed exclusively on ARM64 (aarch64)
+>> systems with Ampere Altra Max CPUs, a transmit queue (TXQ) can become
+>> permanently stalled. This happens when the race condition leads to the TXQ
+>> entering the QUEUE_STATE_DRV_XOFF state without a corresponding queue wake-up,
+>> preventing the attached qdisc from dequeueing packets and causing the
+>> network link to halt.
+>>
+>> As a first step towards resolving this issue, this patch introduces a
+>> failsafe mechanism. It enables the net device watchdog by setting a timeout
+>> value and implements the .ndo_tx_timeout callback.
+>>
+>> If a TXQ stalls, the watchdog will trigger the veth_tx_timeout() function,
+>> which logs a warning and calls netif_tx_wake_queue() to unstall the queue
+>> and allow traffic to resume.
+>>
+>> The log message will look like this:
+>>
+>>   veth42: NETDEV WATCHDOG: CPU: 34: transmit queue 0 timed out 5393 ms
+>>   veth42: veth backpressure stalled(n:1) TXQ(0) re-enable
+>>
+>> This provides a necessary recovery mechanism while the underlying race
+>> condition is investigated further. Subsequent patches will address the root
+>> cause and add more robust state handling in ndo_open/ndo_stop.
+>>
+>> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
+>> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+>> ---
+>>   drivers/net/veth.c |   16 +++++++++++++++-
+>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+>> index a3046142cb8e..7b1a9805b270 100644
+>> --- a/drivers/net/veth.c
+>> +++ b/drivers/net/veth.c
+>> @@ -959,8 +959,10 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
+>>   	rq->stats.vs.xdp_packets += done;
+>>   	u64_stats_update_end(&rq->stats.syncp);
+>>   
+>> -	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq)))
+>> +	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
+>> +		txq_trans_cond_update(peer_txq);
+>>   		netif_tx_wake_queue(peer_txq);
+>> +	}
+> 
+> Hmm, seems a bit weird that this call to txq_trans_cond_update() is only
+> in veth_xdp_recv(). Shouldn't there (also?) be one in veth_xmit()?
+> 
 
+The veth_xmit() call (indirectly) *do* update the txq_trans start
+timestamp, but only for return code NET_RX_SUCCESS / NETDEV_TX_OK.
+As .ndo_start_xmit = veth_xmit and netdev_start_xmit[1] will call
+txq_trans_update on NETDEV_TX_OK.
+
+This call to txq_trans_cond_update() isn't strictly necessary, as
+veth_xmit() call will update it later, and the netif_tx_stop_queue()
+call also updates trans_start.
+
+I primarily added it because other drivers that use BQL have their
+helper functions update txq_trans.  As I see the veth implementation as
+a simplified BQL, that we hopefully can extend to become more dynamic
+like BQL.
+
+Do you prefer that I remove this?  (call to txq_trans_cond_update)
+
+--Jesper
+
+
+[1] 
+https://elixir.bootlin.com/linux/v6.17.5/source/include/linux/netdevice.h#L5222-L5233
 
