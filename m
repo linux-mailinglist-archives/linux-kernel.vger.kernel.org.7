@@ -1,180 +1,151 @@
-Return-Path: <linux-kernel+bounces-871934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D29C0EE12
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:17:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3667BC0EE08
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3935619C2E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFBFA19C34A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9439E307AFB;
-	Mon, 27 Oct 2025 15:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EA4611E;
+	Mon, 27 Oct 2025 15:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FR43UlQ8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAzgYODE"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21A013AD26;
-	Mon, 27 Oct 2025 15:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE17B23958A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577752; cv=none; b=AMuXlS5uz2i1a515EbVPmRyoEsEQPm9r2fHQbRCR2lTgBix+C4dxfegojdIwxC2joAiqlcwukCgMbLiPNJ3T+NQ6MqGeagY4P99fCdU464j8rEM2A6thK9pcxDTyePq7yDcSWRXVFOU5dabWW+9donyo6BzztUSM61MDtw2DoF8=
+	t=1761577773; cv=none; b=arlF5X/QLkL2mYu1eCuadjso4Yzl2M4/DfpbRB0NjgoPOVl6tzxq6UD8xcFxFhElEeqO3KU4G6hEWxeZPvWLM9Tydff/Qq6V6EL1l8xNG/sEFoZSUTjQrCNoZtr3UmAhUp1sUwJik07N0mbWb8lU2dGbeSH1acUR/ST1kGcYJeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577752; c=relaxed/simple;
-	bh=r/sfwrGirfIxpbp9Gat6aGb+IK4Rnj9iHAHnwh9wiD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGcCtOx7NTX4ytyxe8enxNeSX+Udd3D6MWMZvLXnXmH/yAvRYhLRXKCBSXFTTaK05sKl6dLQQb9DVyYlCI2EXVyaU0BEmXnsD3rErBcbTVw6TpOA64y8EPl9xgD1MIveJBE61ZnZSDb6xSmje/nbgPBRm3Qag+PowZ3LVe/LETg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FR43UlQ8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC0DC4CEF1;
-	Mon, 27 Oct 2025 15:09:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761577751;
-	bh=r/sfwrGirfIxpbp9Gat6aGb+IK4Rnj9iHAHnwh9wiD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FR43UlQ8MwKZyJyyW/T2FDWKhfO5p7J1eT/6yw/sGCmcWuRDyKvKvMO6kxhCh+pBo
-	 sCAR6uiORIpCQxEszW9RjTcIJgyIMWwy6CY+4ravx1fojOSCQnBuISLYk9QTmCp84a
-	 d7Y6ZtODQkFj1PCkNG7ppIInx67aDnxJed9cxmbpYqEvOQfFM7pouDmc5VhLbnBClD
-	 zeuDPIJBVGPKgmFGespC4iukLup+VMf6qih7meWTThY7vqL+J2+46h9J3GBWjdbqqr
-	 BwGnmto+IITrlxDOXB3Uz99KIinBq6/3RVp3c4wxN3HZGMx3I7jdZ4VxcQOaxsQONM
-	 mAiq+QxHhdnbA==
-Date: Mon, 27 Oct 2025 12:09:07 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Anton Protopopov <a.s.protopopov@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: pahole next->master. Was: [PATCH bpf-next v1] selftests/bpf:
- Guard addr_space_cast code with __BPF_FEATURE_ADDR_SPACE_CAST
-Message-ID: <aP-LE7ssid10iKw-@x1>
-References: <20251022071825.238909-1-jiayuan.chen@linux.dev>
- <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
- <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
- <84906f32-955d-4fda-b87d-56c052ddfd87@linux.dev>
- <8a94c764c5fa4ff04fa7dd69ed47fcdf782b814e@linux.dev>
- <CAADnVQKNpd8SCawQbW69ALWNZMoOvxwRbBQELqzh0P52iXG=kw@mail.gmail.com>
- <aP-InycOjSO8EqcO@x1>
+	s=arc-20240116; t=1761577773; c=relaxed/simple;
+	bh=eIQuMzndX2IaXQQgsZY7X9rDiT2WkLqj/57iQwR1pfI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TrjVCujMiDMH5hwGk6bvK535pXO8fb35lxaoAFboJHI+CK5/48dZr7FnQEDYHHZ8cyEYQDyfitSTiEOGc8EbvbWNdzACTvyvyLAF5vU3Hohbf5E7Ao2gu8n8lxunQ8Xc1gEN3QUkRcwlnWioKvibuHm2dSz9OBYvUpfmUw2SMc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZAzgYODE; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7a26dab3a97so2904179b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761577771; x=1762182571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=du5oJpRBhJlPxSiwoBeavUKOwQ5aDhNDZOqlYr8mmsc=;
+        b=ZAzgYODEEsVcYhLKjQrvV+DCv995CnSx7BzeDU552u5LZtpXxRnB0cmT3d+N9EmvAc
+         IYGDKITFlrCwxBHAppQL0SWpZHv5zi14fsEa1XiPHtBcxuUw1Szq6CBSdesnWlPZO9gh
+         ZgLsCY4UZvnRlscVp+aBmmY6xOZLoI1YPNzqIuN10HmgjDKdpWecc7Ki23iGxcsRvp5U
+         /JbLSdu9IRsztd8K1bne3+WM0n9Q7k20Q7mxecZqS8WJ4n5msdGbb2pM0pSQsHHwBw1j
+         Ep68pWKqdS3tFnsTEy5gCPYndNSfIHsljQ0H/mnlNWhZARHnQ5+PTPBpSQoxfIFyzQXp
+         qN+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761577771; x=1762182571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=du5oJpRBhJlPxSiwoBeavUKOwQ5aDhNDZOqlYr8mmsc=;
+        b=HbObpGurv7WHgi2sKhDR+SYu41gyVQt8IS0byd36aJWT4Y6L077jPlMGXr6kyTgy9P
+         6UUWImgKL0HDGJb4Ek1gAL/gBaR2D8iK/C/kUPRNF1B/et7xUoQ/7MvYsUcakdTH+OIO
+         d60dv19upZxHMzH+awAtuYWbLKI6//VJc68fFVPddm16qvOuBF/67xakTtB3fJ22vLxv
+         Mi5wkT6eLTY4d8JqnM16tlMsO3Nc/prawLhtt9M18mWFvn1h0cTWPKAhyrbUhRf8AMk7
+         0R8Fp3l07TglZzh5cfUUI5E/R6+sQ2mG/p6k0NMjEo4X9sg8YfyUHMpB2LWgN1zi7vj0
+         MoDA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6tf0QipsR3dDOhIJ7WglDqPzfVToRRneSG6y7t4D0AUFX7cDjchxStoCGk7yZ2Lxj14F6CYLo5JH1WTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5Xhk9c4RGIuOw6Bx9z1eii4KZRDXH49SdCN+t5fAzsVl1gjyl
+	XlWTwfa5Sm8Kc/kSe1JfNNsbiMQKmNsIm8rCyCEH0V5Py5J+65tG5L2a
+X-Gm-Gg: ASbGncvH/uYy+Hf5i5e7RXeXkcQgFUtNJocGP8Ra7u59PTk+MCofK8NzuT9PiTM1tYa
+	lcoEr6CVI+ang7G0FD9ydQbtN/qd0fM2H29a1gqrMUgkTP7ABdduhtE76whgXhDsLrLy3k+Oen0
+	khCDDw990wtZ32VH+EC+TgKDpzvXwvV7Jms5ExAFJGXN/UnrPdggHNiccXOsZz7+75vNqAYgszT
+	oC325heZsCaPew9qyBmVEBsoW/Fu0tMmqeek34CHujHiDYVfF9RVR1P2cVHUYg4GqKuQ6k14uW9
+	suREDZLWZOaNYZOi8I6D5SjYAB1xbyLc7c086bcqlZvmWPoUGqgvP47ewSSfbgCeJrI57hHV6o5
+	51RTXddAIXumJ7toTbuJBxoftC8xAL1cJNYxDEVfO8rKGVhC6Yrkfy3RbCjcFZd1h7X5TehvJ7X
+	DbAbL9IBp3DM2I2sURxcaOhw==
+X-Google-Smtp-Source: AGHT+IFScmYX6R3rthmA7m7QRURybKZunKqeR6Hr6fFU6rVxiKPR6zlKhkOB5h4TP+qYA1pWCaz3NA==
+X-Received: by 2002:a05:6a00:390b:b0:7a3:455e:3fa5 with SMTP id d2e1a72fcca58-7a441a6b2d6mr397621b3a.0.1761577770926;
+        Mon, 27 Oct 2025 08:09:30 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41c70ea64sm6929565b3a.3.2025.10.27.08.09.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 08:09:29 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Albert Herranz <albert_herranz@yahoo.es>,
+	Grant Likely <grant.likely@secretlab.ca>,
+	Segher Boessenkool <segher@kernel.crashing.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] powerpc/flipper-pic: Fix device node reference leak in flipper_pic_init
+Date: Mon, 27 Oct 2025 23:09:11 +0800
+Message-Id: <20251027150914.59811-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aP-InycOjSO8EqcO@x1>
 
-On Mon, Oct 27, 2025 at 11:58:43AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Oct 23, 2025 at 08:42:34AM -0700, Alexei Starovoitov wrote:
-> > On Thu, Oct 23, 2025 at 12:50 AM Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
-> > > thanks, but version 1.30 didn't work in my tests - even pahole's master branch fails, only the next branch works...
-> > >
-> 
-> > > It seems that the 'old' pahole parses some kfuncs incorrectly, for example bpf_dynptr_slice().
-> l
-> > Alan,
->  
-> > the introduction of the 'next' branch screwed up the workflow for many people.
-> > Let's remove it and merge everything into master.
-> > People expect master branch to be the one where active development
-> > is happening and the source of truth for the latest features.
-> 
-> My bad, I've been away for too long, next is supposed to be with things
-> for a short while, testing for a few days, for CI consumption, then move
-> to master, rinse repeat.
-> 
-> I think we should go back to that model.
+The flipper_pic_init() function calls of_get_parent() which increases
+the device node reference count, but fails to call of_node_put() to
+balance the reference count.
 
-The difference is small but can explain as has changes to the btf
-loader, and the reporter, as I now checked the whole thread, says that
-'next' works for him, so I'll move what is in 'next' to 'master' now.
+Add calls to of_node_put() in all paths to fix the leak.
 
-Just for reference since I had done it, my investigation is below.
+Found via static analysis.
 
-- Arnaldo
+Fixes: 028ee972f032 ("powerpc: gamecube/wii: flipper interrupt controller support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ arch/powerpc/platforms/embedded6xx/flipper-pic.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-⬢ [acme@toolbx pahole]$ git remote update korg
-Fetching korg
-⬢ [acme@toolbx pahole]$ 
-⬢ [acme@toolbx pahole]$ git remote -v | grep korg
-korg	https://git.kernel.org/pub/scm/devel/pahole/pahole.git (fetch)
-korg	https://git.kernel.org/pub/scm/devel/pahole/pahole.git (push)
-⬢ [acme@toolbx pahole]$ git diff --stat korg/master korg/next 
-warning: refname 'korg/next' is ambiguous.
- .github/scripts/build-pahole.sh      | 23 +++++++++++++++++++++++
- .github/scripts/compare-functions.sh | 30 ++++++++++++++++++++++++++++++
- .github/workflows/test.yml           |  4 ++--
- .github/workflows/vmtest.yml         |  4 ++++
- CMakeLists.txt                       |  5 -----
- README                               |  4 ++++
- btf_loader.c                         | 23 ++++++++++++++++++++---
- dwarves_fprintf.c                    |  2 +-
- 8 files changed, 84 insertions(+), 11 deletions(-)
-⬢ [acme@toolbx pahole]$
-
-Related to btf bitfields:
-
-diff --git a/btf_loader.c b/btf_loader.c
-index f4f9f65289b5acac..64ea68022ab04e60 100644
---- a/btf_loader.c
-+++ b/btf_loader.c
-@@ -645,9 +645,15 @@ static int class__fixup_btf_bitfields(const struct conf_load *conf, struct tag *
-                pos->byte_size = tag__size(type, cu);
-                pos->bit_size = pos->byte_size * 8;
+diff --git a/arch/powerpc/platforms/embedded6xx/flipper-pic.c b/arch/powerpc/platforms/embedded6xx/flipper-pic.c
+index 91a8f0a7086e..cf6f795c8d76 100644
+--- a/arch/powerpc/platforms/embedded6xx/flipper-pic.c
++++ b/arch/powerpc/platforms/embedded6xx/flipper-pic.c
+@@ -135,13 +135,13 @@ static struct irq_domain * __init flipper_pic_init(struct device_node *np)
+ 	}
+ 	if (!of_device_is_compatible(pi, "nintendo,flipper-pi")) {
+ 		pr_err("unexpected parent compatible\n");
+-		goto out;
++		goto out_put_node;
+ 	}
  
--               /* if BTF data is incorrect and has size == 0, skip field,
--                * instead of crashing */
-+               /* If the BTF data is incorrect and has size == 0, skip field
-+                * instead of crashing. However the field can be a zero or
-+                * variable-length array and we still need to infer alignment.
-+                */
-                if (pos->byte_size == 0) {
-+                       pos->alignment = class__infer_alignment(conf,
-+                                                               pos->byte_offset,
-+                                                               tag__natural_alignment(type, cu),
-+                                                               smallest_offset);
-                        continue;
-                }
+ 	retval = of_address_to_resource(pi, 0, &res);
+ 	if (retval) {
+ 		pr_err("no io memory range found\n");
+-		goto out;
++		goto out_put_node;
+ 	}
+ 	io_base = ioremap(res.start, resource_size(&res));
  
-@@ -672,7 +678,18 @@ static int class__fixup_btf_bitfields(const struct conf_load *conf, struct tag *
-                                                        pos->byte_offset,
-                                                        tag__natural_alignment(type, cu),
-                                                        smallest_offset);
--               smallest_offset = pos->byte_offset + pos->byte_size;
-+
-+               /* Compute the smallest offset between this field and the next
-+                * one.
-+                *
-+                * In case of bitfields we need to take into account the
-+                * actual size being used instead of the underlying type one as
-+                * it could be larger, otherwise we could miss a hole.
-+                */
-+               smallest_offset = pos->byte_offset;
-+               smallest_offset += pos->bitfield_size ?
-+                       (pos->bitfield_offset + pos->bitfield_size + 7) / 8 :
-+                       pos->byte_size;
-        }
+@@ -154,9 +154,12 @@ static struct irq_domain * __init flipper_pic_init(struct device_node *np)
+ 					      &flipper_irq_domain_ops, io_base);
+ 	if (!irq_domain) {
+ 		pr_err("failed to allocate irq_domain\n");
++		of_node_put(pi);
+ 		return NULL;
+ 	}
  
-        tag_type->alignment = class__infer_alignment(conf,
++out_put_node:
++	of_node_put(pi);
+ out:
+ 	return irq_domain;
+ }
+-- 
+2.39.5 (Apple Git-154)
+
 
