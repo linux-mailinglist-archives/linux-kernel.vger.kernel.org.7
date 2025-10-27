@@ -1,137 +1,163 @@
-Return-Path: <linux-kernel+bounces-872281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D82EC0FCEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF62C0FD00
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29B824FBDB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:55:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8724C4F663C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B8F316911;
-	Mon, 27 Oct 2025 17:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E75319858;
+	Mon, 27 Oct 2025 17:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LMoqbr6O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNv7Tnmo"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488903191A8;
-	Mon, 27 Oct 2025 17:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D2C31812E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761587713; cv=none; b=i007xuXxPRV18RaIWi0r0w2KPLzxjPEFGYCiS9kyfIWQvfrZMh9yOhTdr8y9xCDrY2AGwq/uAIUVwWhIgZUU/5Fprxb1C5zD2kxWItw56KbpcMbkRUkITBQOUfKhH/TLwvDyQFO24wAuIUBxuFXYPUzXtSHF/DED3gWS+pnHCaU=
+	t=1761587757; cv=none; b=ZQ8qT6N521o1Hafm4iN+yVTdu5aP0t5w+ZK5+FsXBMcCDlZc7BgXjLgZH9jV8MWNmeUDXwMSxoFj3khjAIFo61wysL6GmrsV8v71ZzCuuWH/UC7miAufmxxONHXjDgP4Noz9e/h//DPwytQAbxSs4zKIMjLV7idH8y2UkSJQvHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761587713; c=relaxed/simple;
-	bh=ZaItOhZSphnIQu+yUj94PFShpAr5muKFCTY7ve8Z1Xw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pADcHLyZ3Fs4QI7sd17C0GridEHzGXj5mGA9LPYwAP0mUOkXkOGYDRtz97FQiXZGjOAmwPmeunJh3GTUV64AqhLFtfRdX5Adtyh6Iook/+4GbmBnKYBxXW/NA/XILeouX0OPdndZI5OLtzxh2EZLJQpKqZ78LyUoEca+ZXwGpEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LMoqbr6O; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761587712; x=1793123712;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ZaItOhZSphnIQu+yUj94PFShpAr5muKFCTY7ve8Z1Xw=;
-  b=LMoqbr6OVBffQQ8EdFfbL6C26OWOWKxiPl2Z+99SxTFI8MLEgXS5lUXi
-   smpfJ/UXfu6a3Yq0mmNRbwFKLjgBmuFqSd3USS6CY2W+WqNlXsKyG63ZP
-   V60U5ZYTRy+AJrRVJNJ4DqSphHo1ghdsZc06fvEnRXeFDAC8MQ3Ue1+Ez
-   zwIZF/CJ1+1NB6LMDSlWdhElG9i9A6xMknAk2poVZyvoVA71+Mpsqumx+
-   cxtgMpRxAa0hqwF6kqRcnDQEIYDEIuaZmJ14UQAsYyf5/PP+rwBHh+Eet
-   RLB7r4UAE0Q8wHv0CQqmG5Un7C+44eyVtyfTzBgHEd+X7RWYlzmclxWah
-   Q==;
-X-CSE-ConnectionGUID: 938WK7CdSQSLTZc/F8GaeA==
-X-CSE-MsgGUID: 1S+Dlb+zRN+d5d8qQ9Ze1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63378809"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="63378809"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 10:55:11 -0700
-X-CSE-ConnectionGUID: 7vZFIvX0SQywQyFzvNHmRA==
-X-CSE-MsgGUID: Ld1zGVsRQFK5UMS6LeRRdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="190319204"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.85])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 10:55:08 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 27 Oct 2025 19:55:05 +0200 (EET)
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] PCI: Do not size non-existing prefetchable window
-In-Reply-To: <4419385c114b344ba5c1d5b0a817a322b37624cc.camel@gmail.com>
-Message-ID: <5b6d7dfb-b2d2-a596-1f41-0428426a791f@linux.intel.com>
-References: <20251027132423.8841-1-ilpo.jarvinen@linux.intel.com> <4419385c114b344ba5c1d5b0a817a322b37624cc.camel@gmail.com>
+	s=arc-20240116; t=1761587757; c=relaxed/simple;
+	bh=s0NTkuxgo9nTW1wwUPyDTmWbVEsjdGmA1omaFkoHwoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ku+MvvZkpDBPEy9fsqR15aQV0QIOUTRsRshY/BblcvULhFVTHhPcz0URXYUSbRVWk9VdVRAhSXuOFg/ZRkgSgPgoXYfbx12ORlgsGKhP4aXhRGKuGzk0eBgQFjbXRwjOo3fIVfgAxHuajz95nZ9f8pkERDR2HuTSEzhNpyvwNJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNv7Tnmo; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7861978aca2so1072437b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761587754; x=1762192554; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t90v++bIrJi1Md65JkXT8gm2ApX72FdJn0ubPYfRRrY=;
+        b=NNv7Tnmo+Azwrh0iUS0X2c0KZzVe6HOnkbfCcP3tFCY4MGEDOpb3X4nL4ifDr45dA0
+         EUcN5oQ6VdOxfOzZLS54nVnP7eXTd1Jl7oUrQiNbUlz+b/vF5XilYSc2ERfpX/LW4dNa
+         d9XEAbxlFydDrVh9Lps/H05SNJhrQxRcPXwmPu3Pgy8CAJlv18lbjo6Tfsb8O13GSxEP
+         6D4zYfFjd3xfcWtsB8QzTFIWhXKR74WsX6ZB9NNWoCHvGdf8QqJ6014YOcZ99tSrLIZu
+         rfdOBSw9WQyV+L9HTcgBnzvs33YsBCtPg2Tt6crbteGRjvBwwpTbAoObyHN/kkBOPcbT
+         /GFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761587754; x=1762192554;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t90v++bIrJi1Md65JkXT8gm2ApX72FdJn0ubPYfRRrY=;
+        b=hC8G1sjrvNCdte0zLR0vuv2e3+OSvftjPoOtWQWjD53EqcLaobxRn/vRVeW/RFGHeB
+         F6YYOi3vDXj093HF5ISEVbZRjP9mJBPTVO/PzIXrGLqncMBNxBs/8gXejpgUyZkrcswi
+         X25cjduo3bL5s4dT472QYusfsdmHePA4NEM81rmcJp+TyxHFlA9wZbbTpzvmmKiJl+CU
+         ceqOYpiFDpPnNi3MdICNEs5Wn1MewlW48ss224zlmJg3WiSc8x1ENmyYQsUklh0UkO3f
+         AHd5adaTBSgrlz8hiXkLghHOT3qIDPdi+wbTsdsoabi/ZaCawb1BclChx9sHXFHaXvcp
+         O4ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWcDRiBr44rlUzWvukxOBlr9k8Kf1o2+F11x2dI7C+tfkVmSX/ildJnsyS7+OyEqzc5Hqi4el3IpmBeTVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPxdroGeDPIboqloBe4q1Zq2x7lmzLjGRYxb0xsX++srRQGNjT
+	/uv0jhWjNAkR4fy6Z+sWCywRWGZCbhvIgRjRRFdPTMz2fZ2Y4ESb8d3j
+X-Gm-Gg: ASbGncsLFdWRs45ZiP31d0Dz52/Y1wWYgeGu1EZB2QyHghdl0bBJLJeRmZZASyYmk6v
+	O0HhXEzynTMAUFqSI0Y6k8Sbi8Biz6EMnENapKtP1JRst8Qobc13BMd1myWQ7C5aa7QC63Y+PDH
+	PzPXLfNslBHsywQWVCWFfLdLs3QM2gZVtnvf73nRqsb0QoDN5YhIspxmSid8ADprDhl5kHWF5E9
+	z+sY5oX20oNVHdggaJ+CxG2Ooy4JNUnrQtW5XWG8Du/0rOPEaaBkamH02tx54jI0r2apSF43Jnk
+	cnrrSi2aomLzEZa2sKJ1ozIRKMpp9BLGZK/L9YemsePAWOLWtdSIhr/o7KnoNGAUmmdSkNS/Z92
+	D/CuVusKH0CVLUREk6GBMycYh0UPZonQx3b4LlRT82HmoZFkU0xHaUcvUXVkm46hrB7TuoCerBy
+	guOuqnR5A7twMQhvkn44mDwxuTyf3qVXzfPB9SEkaQQf5G7jU=
+X-Google-Smtp-Source: AGHT+IEnq7T6tW6sESfh2/pS/VtVB6j5wsUZrO0cK7EA3RoMmtv5EedE7kUOtkxVYgtnLyJeX69FZg==
+X-Received: by 2002:a05:690c:3510:b0:781:64f:2b74 with SMTP id 00721157ae682-786191bda08mr3102477b3.29.1761587754496;
+        Mon, 27 Oct 2025 10:55:54 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:59::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed1f2457sm20784977b3.58.2025.10.27.10.55.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 10:55:54 -0700 (PDT)
+Date: Mon, 27 Oct 2025 10:55:52 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next 02/12] selftests/vsock: make wait_for_listener()
+ work even if pipefail is on
+Message-ID: <aP+yKDYZR6+/kzI2@devvm11784.nha0.facebook.com>
+References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
+ <20251022-vsock-selftests-fixes-and-improvements-v1-2-edeb179d6463@meta.com>
+ <aP-iXJQVPBCjfPHi@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1914371039-1761587705=:982"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP-iXJQVPBCjfPHi@horms.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Oct 27, 2025 at 04:48:28PM +0000, Simon Horman wrote:
+> On Wed, Oct 22, 2025 at 06:00:06PM -0700, Bobby Eshleman wrote:
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+> > 
+> > Save/restore pipefail to not mistakenly trip the if-condition
+> > in wait_for_listener().
+> > 
+> > awk doesn't gracefully handle SIGPIPE with a non-zero exit code, so grep
+> > exiting upon finding a match causes false-positives when the pipefail
+> > option is used. This will enable pipefail usage, so that we can losing
+> > failures when piping test output into log() functions.
+> > 
+> > Fixes: a4a65c6fe08b ("selftests/vsock: add initial vmtest.sh for vsock")
+> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> > ---
+> >  tools/testing/selftests/vsock/vmtest.sh | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
+> > index 561600814bef..ec3ff443f49a 100755
+> > --- a/tools/testing/selftests/vsock/vmtest.sh
+> > +++ b/tools/testing/selftests/vsock/vmtest.sh
+> > @@ -243,6 +243,7 @@ wait_for_listener()
+> >  	local port=$1
+> >  	local interval=$2
+> >  	local max_intervals=$3
+> > +	local old_pipefail
+> >  	local protocol=tcp
+> >  	local pattern
+> >  	local i
+> > @@ -251,6 +252,13 @@ wait_for_listener()
+> >  
+> >  	# for tcp protocol additionally check the socket state
+> >  	[ "${protocol}" = "tcp" ] && pattern="${pattern}0A"
+> > +
+> > +	# 'grep -q' exits on match, sending SIGPIPE to 'awk', which exits with
+> > +	# an error, causing the if-condition to fail when pipefail is set.
+> > +	# Instead, temporarily disable pipefail and restore it later.
+> > +	old_pipefail=$(set -o | awk '/^pipefail[[:space:]]+(on|off)$/{print $2}')
+> > +	set +o pipefail
+> > +
+> >  	for i in $(seq "${max_intervals}"); do
+> >  		if awk '{print $2" "$4}' /proc/net/"${protocol}"* | \
+> >  		   grep -q "${pattern}"; then
+> 
+> Hi Bobby,
+> 
+> I agree this is a problem. But I'm wondering if you considered
+> moving the pattern matching into the awk script. I'm no awk expert.
+> But suspect that would lead to a more elegant solution.
+> 
 
---8323328-1914371039-1761587705=:982
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+I bet you are right.
 
-On Mon, 27 Oct 2025, Klaus Kudielka wrote:
+Playing around with awk, I find that this seems to work:
 
-> On Mon, 2025-10-27 at 15:24 +0200, Ilpo J=C3=A4rvinen wrote:
-> > pbus_size_mem() should only be called for bridge windows that exist but
-> > __pci_bus_size_bridges() may point 'pref' to a resource that does not
-> > exist (has zero flags) in case of non-root buses.
-> >=20
-> > When prefetchable bridge window does not exist, the same
-> > non-prefetchable bridge window is sized more than once which may result
-> > in duplicating entries into the realloc_head list. Duplicated entries
-> > are shown in this log and trigger a WARN_ON() because realloc_head had
-> > residual entries after the resource assignment algorithm:
-> >=20
-> > pci 0000:00:03.0: [11ab:6820] type 01 class 0x060400 PCIe Root Port
-> > pci 0000:00:03.0: PCI bridge to [bus 00]
-> > pci 0000:00:03.0:=C2=A0=C2=A0 bridge window [io=C2=A0 0x0000-0x0fff]
-> > pci 0000:00:03.0:=C2=A0=C2=A0 bridge window [mem 0x00000000-0x000fffff]
-> > pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02]=
- add_size 200000 add_align 200000
-> > pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02]=
- add_size 200000 add_align 200000
-> > pci 0000:00:03.0: bridge window [mem 0xe0000000-0xe03fffff]: assigned
-> > pci 0000:00:03.0: PCI bridge to [bus 02]
-> > pci 0000:00:03.0:=C2=A0=C2=A0 bridge window [mem 0xe0000000-0xe03fffff]
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 1 at drivers/pci/setup-bus.c:2373 pci_assign_unass=
-igned_root_bus_resources+0x1bc/0x234
->=20
-> With this patch on top of v6.18-rc3, the boot log looks clean again:
->=20
-> pci 0000:00:03.0: [11ab:6820] type 01 class 0x060400 PCIe Root Port
-> pci 0000:00:03.0: PCI bridge to [bus 00]
-> pci 0000:00:03.0:   bridge window [io  0x0000-0x0fff]
-> pci 0000:00:03.0:   bridge window [mem 0x00000000-0x000fffff]
-> pci 0000:00:03.0: bridge configuration invalid ([bus 00-00]), reconfiguri=
-ng
-> pci 0000:00:03.0: bridge window [mem 0x00200000-0x003fffff] to [bus 02] a=
-dd_size 200000 add_align 200000
-> pci 0000:00:03.0: bridge window [mem 0xe0000000-0xe03fffff]: assigned
-> pci 0000:00:03.0: PCI bridge to [bus 02]
-> pci 0000:00:03.0:   bridge window [mem 0xe0000000-0xe03fffff]
->=20
-> (and no WARNING thereafter)
-> Thanks a lot!
->=20
-> Tested-by: Klaus Kudielka <klaus.kudielka@gmail.com>
+$ pattern=":$(printf '%04X' ${port}) 0A"
+$ awk -v pattern="${pattern}" 'BEGIN {rc=1} $2" "$4 ~ pattern {rc=0}
+	END {exit rc}' /proc/net/tcp && echo FOUND
 
-Thanks for testing.
+I think it beats doing the save/restore on pipefail?
 
---=20
- i.
-
---8323328-1914371039-1761587705=:982--
+Best,
+Bobby
 
