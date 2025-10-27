@@ -1,143 +1,354 @@
-Return-Path: <linux-kernel+bounces-871159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDC7C0C8A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:07:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27463C0C8F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC051188B6A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF111405E65
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C662FB63B;
-	Mon, 27 Oct 2025 08:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD07C2FC00E;
+	Mon, 27 Oct 2025 08:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YLd+k9jD"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bDwNXqDM"
+Received: from mail-m3291.qiye.163.com (mail-m3291.qiye.163.com [220.197.32.91])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6E12F5A29
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513882FBE0E;
+	Mon, 27 Oct 2025 08:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555411; cv=none; b=i90wKcFsnNeNm8ylxhN2CDUsodPKsCbcfWH8TNVkdVP89eqXM/MmKK4uy18b66NT9sfEdh4OKmZ8C7kYNo57Rj4WrwmnQ3/0CqOKyEjTDYfH+zt0LfFraGcHyYuTFHYhFkkNkIfgmZIZBccw3vWHDTAP7zlm/SJXlSTNugH1Zi0=
+	t=1761555440; cv=none; b=q1Qc58RwiVsnxjJ+462LsD56e8VGV8Ra9eFRxW8ulBrrD0UnLwshCQpJM4lNnYCAOIrzeQtjUkKimrNxMRB5N4fpk/jrmI1fK7naYmkwqrQijGVLc+2pPWBMWrmHKLUzZEp5sPREUGLzWxqWxKbc2uRCrsOrZgyEOYFptoYbw8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555411; c=relaxed/simple;
-	bh=GfH5HSIKG5vJgzEj+X68rTPCf27ssZ6UVJw48ldkXy8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=riwFBHYNLM4x+CdbzWSor2tj5V9y4YoNuZRyro/BI8EGIEHAnGb3a6De6PcNQauEIz022gVfKVe7RkTUgimxMi0FTNUt2n+kyZR1TL//vXl65gd84fars/43V6creA3vbWsVfDK4iUDMHw7VWwdv/zP09sWtWu+Oaj/WS8C4/Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YLd+k9jD; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b6329b6e3b0so4474618a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761555409; x=1762160209; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KEKtCxt8nIo5AAXBRjH/5vryo/ZaVKRjuXDR6Hi5YuE=;
-        b=YLd+k9jDPiOR4DzlenemRWEPjXu5rvR+N92/VxDysU48igMFAHnJVOuYMFIhgVwKIi
-         JDkjact4QSihlJI4X+7+Fq69eSZ6A7eQvy/2e94VhCiUP7OpxuVjy9MsOhc4d5Vi8Vd/
-         eIYq29In1UHG4OXTZrKvSN2nbLPremJVDlPbNoXc0mNbgRt2zR47fB+WcMPGreODHHP4
-         5nDlUUt/kRRTizDXEXnOfyH6KU9vw+v8AjILFDb5lGkBOTWSLErxL07xnNYiCwjCfCRH
-         GEOEMajWlhs2jelTiEPlh+24a59nqDVIM7vLSslsGSX0WXmjO2dBhImIs1U+yi8Pn3E1
-         Jtvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761555409; x=1762160209;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KEKtCxt8nIo5AAXBRjH/5vryo/ZaVKRjuXDR6Hi5YuE=;
-        b=GLI4vKDGnMV1ouehJEh2ZEZ6mbX24kIsroD/3uFj83gqMn1rPI0Rm8vFdiTkZ9ltw+
-         N7VrQehGLffgC613g7q/KMWqJUtWd+8JZGUDpYUydinmyEom6KVbFnCteXBPGWrX+FiD
-         GwMCUdQ8V3bsHQKy/A6ZqS9IKFHJek+KMVsts8r4ICgikOBj7Uya3525J4WYyO5pZUsg
-         VDp/2/qIiBRoIEnJFXsLzyYOHLwcjeiFouijV9OE10rVE2jWR15Aj8QT/lxCffaJFKE0
-         zgt+zsmFEHU1WEUHGVZyR780B1GIWC4oOzEbg5poFyt6JRc8urWCjAkLsWJ7jtZMm8nP
-         bBuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP2qmeJK4UMGBzLcgoxjeO+wPGTBwHWdtZIji77fwBHeWPTVy5Wc+GKxtJT9+B4kpC/6bIvog+fJWfueU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5qcEL4B4Ji40ILKYBuvxqdOmICTsSAC4whF5qABklymL0YfNd
-	6fFO0T3z35iRYpg7VOvgxf6mV3yesg+nNHIREb4CaxHrtwIF9IL1OaQi9R4UMjoLCTf7bvZsNlk
-	Cx61Ny/2DVWf98vs2NsO2CvKPuAvrB5Z32z75YcwU4Q==
-X-Gm-Gg: ASbGncsWVnU7RaBlowou6VcBnEBllx9Rlv+kI/DFDwu9SqPA/io+YrOtZSEOTmq5OaZ
-	TjFNm6NioRtcxDBVcTbhCasZASY9UmXPHT03VaH38THGo9+1ah+AVARJ5bxOVI2BwDwRLa3+yCt
-	sX70cJdK6tYrKf5YgzQ0fFxUpPPcf/bEpKAzKRVWv+2Mca48qi4Z6WfR8ArozcK+bDFyakb7tBi
-	W7o62gODxWb9oM/CvxUZFHsudZSpwWFsCceSngxFUybFVBAEjfK+rm7xO6ofrM4RE3bicyIEOqs
-	NLeX09ji9B3BDfU+0d3cQYaErNuoaYXApa21ZNjF1DJ4qqs7eZQi1cyPBStzOg==
-X-Google-Smtp-Source: AGHT+IHMTIIFLA5mgk1HP2tn5C+IZfCTCdQhL9lHvE1auNKQlgk4Tb9Ecb84rLUsDS+i/shyTUFa12dikG6jGXBHIh4=
-X-Received: by 2002:a17:903:244c:b0:267:c1ae:8f04 with SMTP id
- d9443c01a7336-29489e15ea4mr133599525ad.20.1761555409385; Mon, 27 Oct 2025
- 01:56:49 -0700 (PDT)
+	s=arc-20240116; t=1761555440; c=relaxed/simple;
+	bh=EhdkYAZpvq92qEuzwBPeEULq8Eb6F4v8ckyLbH1yC70=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iwjn/uXAX6//eC26LMSPtJPVDgMis2UEKKcxGpDZW20kJHtrJXOsFWH7pArWrScKibCzFlBBti95/jgMHJRQwoqmu9TVcJMKA3FgCadOsz6hJKkdbzp4Ymmdw+CAXw0XeL63Mqj5VqD/O5TChBmVpBN0XjkCZsMxaTerOBPpLA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bDwNXqDM; arc=none smtp.client-ip=220.197.32.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 27504ffd8;
+	Mon, 27 Oct 2025 16:41:50 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v5 1/7] clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+Date: Mon, 27 Oct 2025 16:41:41 +0800
+Message-Id: <20251027084147.4148739-2-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251027084147.4148739-1-zhangqing@rock-chips.com>
+References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 27 Oct 2025 14:26:37 +0530
-X-Gm-Features: AWmQ_blJuZ42rueT3RfdCwJIhx-741RLJJ31SSl37TaWRIG6sy6Xm1B0UeYV3a4
-Message-ID: <CA+G9fYsL+w_XaOPaBaN5xMr6Ssrq_hh2_g8AgNxNmu0jCpjwxg@mail.gmail.com>
-Subject: next-20251027: s390: pf1550-onkey.c:154:12: error:
- 'pf1550_onkey_resume' defined but not used [-Werror=unused-function]
-To: linux-s390@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Samuel Kayode <samuel.kayode@savoirfairelinux.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sean Nyekjaer <sean@geanix.com>, Lee Jones <lee@kernel.org>, Heiko Carstens <hca@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a24d4b3b103a3kunmca0e4b6150f5a3
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpIHVZJT0MfSExMSktJT0xWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=bDwNXqDMDuMDx1WX2SGjdFz8RVOoQSAPOLUU/y/s45RiR2GQNWAlkkc+J8mkM1U8QL1Kd+KkkCWYhy+cx0qXROGc22VehcDp1CVwqX9QyK3Muif2IjoenMB/iL/uvPLMd6E7W1ZanZ0rkxT4Sek+Sxhn5h5iTxXev/gd+C6L+lQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=Vt1xPRkUMcE8svXTy4dUISsmpUifWdbpaIRSmoEuGbY=;
+	h=date:mime-version:subject:message-id:from;
 
-The following S390 allyesconfig build regressions noticed on the
-Linux next-20251027 tag with gcc-14.
+The current path will have an independent PLL(LPLL\BPLL)
+exclusively for the CPU to use.
+As follows:
 
-* S390, build
-  - gcc-14-allyesconfig
+            |-\
+    --lpll--|  \
+            |mux|--[gate]--[div]--clk_core--
+    --gpll--|  /
+            |-/
 
-First seen on next-20251027
-Good: next-20251024
-Bad: next-20251027
+The new chip does not have a dedicated PLL for the cpu;
+it is distributed nearby from the common PLL.
+If there are special frequency requirements that require the
+use of pvtpll, explanations will be submitted later.
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+The clock path of new soc CPU simplified as follows:
 
-Build regression: next-20251027: pf1550-onkey.c:154:12: error:
-'pf1550_onkey_resume' defined but not used [-Werror=unused-function]
+    --gpll--|--\
+            |   \
+            |    \
+            |     \
+   --v0pll--| mux |--[gate]--[div]--clk_core--
+            |     /
+            |    /
+   --v1pll--|   /
+            |--/
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-cpu.c | 165 +++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c     |  24 +++++
+ drivers/clk/rockchip/clk.h     |  15 +++
+ 3 files changed, 204 insertions(+)
 
-## Build error
-drivers/input/misc/pf1550-onkey.c:154:12: error: 'pf1550_onkey_resume'
-defined but not used [-Werror=unused-function]
-  154 | static int pf1550_onkey_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~
-drivers/input/misc/pf1550-onkey.c:133:12: error:
-'pf1550_onkey_suspend' defined but not used [-Werror=unused-function]
-  133 | static int pf1550_onkey_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[6]: *** [/builds/linux/scripts/Makefile.build:287:
-drivers/input/misc/pf1550-onkey.o] Error 1
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index dcc9dcb597ae..6e91a3041a03 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -396,3 +396,168 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 	kfree(cpuclk);
+ 	return ERR_PTR(ret);
+ }
++
++static int rockchip_cpuclk_multi_pll_pre_rate_change(struct rockchip_cpuclk *cpuclk,
++						     struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate > ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_post_rate_change(struct rockchip_cpuclk *cpuclk,
++						      struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate < ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_notifier_cb(struct notifier_block *nb,
++						 unsigned long event, void *data)
++{
++	struct clk_notifier_data *ndata = data;
++	struct rockchip_cpuclk *cpuclk = to_rockchip_cpuclk_nb(nb);
++	int ret = 0;
++
++	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
++		 __func__, event, ndata->old_rate, ndata->new_rate);
++	if (event == PRE_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_pre_rate_change(cpuclk, ndata);
++	else if (event == POST_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_post_rate_change(cpuclk, ndata);
++
++	return notifier_from_errno(ret);
++}
++
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates)
++{
++	struct rockchip_cpuclk *cpuclk;
++	struct clk_hw *hw;
++	struct clk_mux *mux = NULL;
++	struct clk_divider *div = NULL;
++	const struct clk_ops *mux_ops = NULL, *div_ops = NULL;
++	int ret;
++
++	if (num_parents > 1) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++
++		mux->reg = base + muxdiv_offset;
++		mux->shift = mux_shift;
++		mux->mask = BIT(mux_width) - 1;
++		mux->flags = mux_flags;
++		mux->lock = lock;
++		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
++							: &clk_mux_ops;
++	}
++
++	if (div_width > 0) {
++		div = kzalloc(sizeof(*div), GFP_KERNEL);
++		if (!div) {
++			ret = -ENOMEM;
++			goto free_mux;
++		}
++
++		div->flags = div_flags;
++		if (div_offset)
++			div->reg = base + div_offset;
++		else
++			div->reg = base + muxdiv_offset;
++		div->shift = div_shift;
++		div->width = div_width;
++		div->lock = lock;
++		div_ops = (div_flags & CLK_DIVIDER_READ_ONLY)
++						? &clk_divider_ro_ops
++						: &clk_divider_ops;
++	}
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux ? &mux->hw : NULL, mux_ops,
++				       div ? &div->hw : NULL, div_ops,
++				       NULL, NULL, flags);
++	if (IS_ERR(hw)) {
++		ret = PTR_ERR(hw);
++		goto free_div;
++	}
++
++	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
++	if (!cpuclk) {
++		ret = -ENOMEM;
++		goto unregister_clk;
++	}
++
++	cpuclk->reg_base = base;
++	cpuclk->lock = lock;
++	cpuclk->clk_nb.notifier_call = rockchip_cpuclk_multi_pll_notifier_cb;
++	ret = clk_notifier_register(hw->clk, &cpuclk->clk_nb);
++	if (ret) {
++		pr_err("%s: failed to register clock notifier for %s\n",
++		       __func__, name);
++		goto free_cpuclk;
++	}
++
++	if (nrates > 0) {
++		cpuclk->rate_count = nrates;
++		cpuclk->rate_table = kmemdup(rates,
++					     sizeof(*rates) * nrates,
++					     GFP_KERNEL);
++		if (!cpuclk->rate_table) {
++			ret = -ENOMEM;
++			goto free_cpuclk;
++		}
++	}
++
++	return hw->clk;
++
++free_cpuclk:
++	kfree(cpuclk);
++unregister_clk:
++	clk_hw_unregister_composite(hw);
++free_div:
++	kfree(div);
++free_mux:
++	kfree(mux);
++
++	return ERR_PTR(ret);
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 19caf26c991b..2601df3b1066 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -722,6 +722,30 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk);
+ 
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates)
++{
++	struct clk *clk;
++
++	clk = rockchip_clk_register_cpuclk_multi_pll(list->name, list->parent_names,
++						     list->num_parents, ctx->reg_base,
++						     list->muxdiv_offset, list->mux_shift,
++						     list->mux_width, list->mux_flags,
++						     list->div_offset, list->div_shift,
++						     list->div_width, list->div_flags,
++						     list->flags, &ctx->lock, rates, nrates);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register clock %s: %ld\n",
++		       __func__, list->name, PTR_ERR(clk));
++		return;
++	}
++
++	rockchip_clk_set_lookup(ctx, clk, list->id);
++}
++EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk_multi_pll);
++
+ void rockchip_clk_protect_critical(const char *const clocks[],
+ 				   int nclocks)
+ {
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 7c5e74c7a2e2..23653a942403 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -622,6 +622,17 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock);
+ 
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates);
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg,
+@@ -1208,6 +1219,10 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates);
+ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 					unsigned int reg, void (*cb)(void));
+-- 
+2.34.1
 
-
-## Source
-* Kernel version: 6.18.0-rc2-next-20251027
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: next-20251027
-* Git commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
-* Architectures: S390
-* Toolchains: gcc-14
-* Kconfigs: allyesconfig
-
-## Build
-* Test log:  https://storage.tuxsuite.com/public/linaro/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o/build.log
-* Test details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20251027/log-parser-build-kernel/gcc-compiler-_drivers_input_misc_pf-onkey_c_error_pf_onkey_resume_defined_but_not_used/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o/config
-
---
-Linaro LKFT
 
