@@ -1,136 +1,88 @@
-Return-Path: <linux-kernel+bounces-871720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896D6C0E2CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:52:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CFAAC0E2CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ABD4427C79
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462FA4602BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCE227F4E7;
-	Mon, 27 Oct 2025 13:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F09C23AB87;
+	Mon, 27 Oct 2025 13:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOTrgcaT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJThxuyr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DD5212562;
-	Mon, 27 Oct 2025 13:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B5C1C3F0C;
+	Mon, 27 Oct 2025 13:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572635; cv=none; b=NpNrmoZ/rXRtdt7k+zVM3aEy07wUSdKO6X/0XESbDTmkSmAT5uURgCqHTFVWB2UCF4Dt6w3DkjbcLXLxsG0ehWlrCZmB6ilF5oJemAFu84Y+uzlf5vChmQegAw3H19R5afm+EOXVq++XdrtXemaH17agWXcTQdM75Zuv+/FUHis=
+	t=1761572717; cv=none; b=XehqhsFtRW6FgoAfndxYaNgM2Luqowly0FVXxw5R27/A3Y0eWre3EIyHEi8Vap/MRjvKYXnKIUTObkaMyn2a5bDk0tNW669DJ0z7Bd5lF6LVRe74cQpFgGGgQKQWTtbW/PbqmazaXxOaPxMytrIqWt9ioblI2nOB2/ta4DG5UUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572635; c=relaxed/simple;
-	bh=igDNAhFHKqtSgQ0qZDaeaIsIItKRa96qIdeht8uHaII=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=BJarpINVzFOzVB4RRfZbnM0rz6JgpiSYyGCLrBO3kStMCD6RkqBW2GcLqFPNi9sGk9/s1k6BhcBwvOOwm800FvVSJBxyoCedHqq9Wo2wNYEkxJaIoGcVqqFPBb78kh4PbC7A6fqX2lfLOAyL9CvM1tlgc4b7jRi/dbpHLx/ohGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOTrgcaT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 401E8C4CEF1;
-	Mon, 27 Oct 2025 13:43:50 +0000 (UTC)
+	s=arc-20240116; t=1761572717; c=relaxed/simple;
+	bh=ZefZPxlvHHfA6SOviuZmeM9TORsIaavGiKKEyD0zNuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rnjQFFxIVhK2Y0lT6EltjGpQViBrVKOm3HQso8spDRac44YvYacFY7/lNo4fK0fmgrE8piUs4QQqrdCOXTXf7q42S2M3ZvIl+tqBsi+QVVbPdIwkSKLIP3x4ZYIS0gugGNDlDeWrreeaKDUjQH/17KSE7yekEhFAa42NjDNCkpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJThxuyr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B522FC4CEF1;
+	Mon, 27 Oct 2025 13:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761572634;
-	bh=igDNAhFHKqtSgQ0qZDaeaIsIItKRa96qIdeht8uHaII=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eOTrgcaTVMN3otzXTXqXybj2AvCx+1qQ6Yhz9GwBemKPHyBTESC4PYFXOYIfUGnIN
-	 pkji8zUTWYbxFsb/DGW9DET0slCXn7fH7jaFqt90XdltmDZ8WnVD283vGxX5Eo07wq
-	 ol/xSiCK+EcCRCA7oYhz24n9fiE01TWBhOPet39iAnqoqRbxkdLG4+iuGbCkLwC0R6
-	 RsXipc2z3N/XFPVOD/TjAly2T19Geg7TVM91gVIsrvMmutCOJCcRSyeSazpE7iGsqv
-	 BH+aHdixULzn4YwAyASxF/Bdv4DBapwURqY5G7ufNN25I6Fnav9vieA/iwVEHREgqp
-	 HnBi1IZYRCaXg==
-Date: Mon, 27 Oct 2025 22:43:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
- Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
- wprobe
-Message-Id: <20251027224347.4c887cc956df63602f377550@kernel.org>
-In-Reply-To: <aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
-References: <175859019940.374439.7398451124225791618.stgit@devnote2>
-	<175859026716.374439.14852239332989324292.stgit@devnote2>
-	<aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1761572717;
+	bh=ZefZPxlvHHfA6SOviuZmeM9TORsIaavGiKKEyD0zNuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cJThxuyrAA6NnVbZ04OMCGBpbWHSlbyxpJqw9Sa8rkJYd1AYcw6/QWzpOc0JjArbO
+	 s5GfSW284I8/uE5fiJ723z4w9WGvBFb+bfBNlCh9jajzNKEKVTmn1FlUEV5ibcHH6X
+	 y77aSNyM+6UktDaB8bXpml1X+KvpIfM5/we7+jJnCWhR60V54ngwY3bM5fz1mmrq64
+	 wIQJaJ8x7OhN/pMTnL+r8bQdEYAvOhT5r9CccpMcwqp8TfV4w8klptH0LEryijwVrh
+	 0TSVdCq0bsZ05Uf5nLUD21kUOEtDUlfPCW2qrgaqL2wZx3JzNrT9d8m0a/Stx+RDWi
+	 YZ9b/NonygKnQ==
+Date: Mon, 27 Oct 2025 08:45:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: mmc: ti,da830-mmc: convert to DT schema
+Message-ID: <176157271074.266503.15503173472867753188.robh@kernel.org>
+References: <20251023-davinci-mmc-v3-1-5b27b9c9ecc4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023-davinci-mmc-v3-1-5b27b9c9ecc4@gmail.com>
 
-On Fri, 24 Oct 2025 22:31:06 +0100
-Mark Brown <broonie@kernel.org> wrote:
 
-> On Tue, Sep 23, 2025 at 10:17:47AM +0900, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Add 'add_remove_wprobe.tc' testcase for testing wprobe event that
-> > tests adding and removing operations of the wprobe event.
+On Thu, 23 Oct 2025 13:19:43 +0000, Charan Pedumuru wrote:
+> Convert TI Highspeed MMC host controller binding to YAML format. Define
+> 'clocks' and 'interrupts' properties to resolve errors identified by
+> 'dt_check' and 'dtb_check'.
 > 
-> Since this series has landed in -next we've been seeing hangs on a range
-> of arm64 platforms running the ftrace tests, it looks like it's all of
-> them.  Unfortunately the systems lock up with no output as soon as they
-> start trying to do something with wprobes:
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+> ---
+> Changes in v3:
+> - Change the maintainer for the binding to "Kishon Vijay Abraham I".
+> - Link to v2: https://lore.kernel.org/r/20251011-davinci-mmc-v2-1-355da3e25123@gmail.com
 > 
-> # ok 19 Generic dynamic event - add/remove kprobe events
-> # ok 20 Generic dynamic event - add/remove synthetic events
-> # ok 21 Generic dynamic event - add/remove tracepoint probe events
-> # ok 22 Generic dynamic event - add/remove tracepoint probe events on module
-> # ok 23 Generic dynamic event - add/remove/test uprobe events
+> Changes in v2:
+> - Modified the commit message.
+> - Removed 'interrupts' from required properties following the old binding.
+> - Changed the maintainer for the binding to "Conor Dooley".
+> - Link to v1: https://lore.kernel.org/r/20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com
+> ---
+>  .../devicetree/bindings/mmc/davinci_mmc.txt        | 32 ------------
+>  .../devicetree/bindings/mmc/ti,da830-mmc.yaml      | 61 ++++++++++++++++++++++
+>  2 files changed, 61 insertions(+), 32 deletions(-)
 > 
-> the next test being add_remove_wprobe.tc, which doesn't seem to
-> complete.  Full log (for what little it's worth):
-> 
->    https://lava.sirena.org.uk/scheduler/job/2000440#L1860
-> 
-> I turned on -vvv logging and that generated the rather spectacularly
-> more verbose:
-> 
->    https://lava.sirena.org.uk/scheduler/job/2000676/log_file/plain
-> 
-> (in a somewhat processed format unfortunately.).  Looking at that log I
-> do notice a bunch of "unexpected operators" reported by the shell, these
-> systems are running dash not bash, though that doesn't seem related.  It
-> looks like the script hangs in reset_trigger_file while grepping the
-> trigger files rather than actually trying to do the test.
-> 
-> Sorry about the delay in reporting this.
 
-OK, eventually, I confirmed it is stopped on enabling wprobe
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-+ . /mnt/ftrace/test.d/dynevent/add_remove_wprobe.tc
-+ echo 0
-+ echo
-+ TARGET=jiffies
-+ echo 'w:my_wprobe w@jiffies'
-+ grep -q my_wprobe dynamic_events
-+ '[' 0 -ne 0 ]
-+ test -d events/wprobes/my_wprobe
-+ '[' 0 -ne 0 ]
-+ echo 1
-
-I also confirmed:
-
-~ # cd /sys/kernel/tracing/
-/sys/kernel/tracing # echo 'w:my_wprobe w@jiffies' >> dynamic_events 
-/sys/kernel/tracing # echo 1 > events/wprobes/my_wprobe/enable 
-
-Freeze the machine.
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
