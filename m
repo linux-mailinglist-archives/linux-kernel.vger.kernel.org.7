@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-871324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF01C0CEB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:18:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2D7C0CEFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77C314EBEB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:18:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6919F4EA6C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0A92F363F;
-	Mon, 27 Oct 2025 10:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="pkKQHn3n"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049ED2E972C;
+	Mon, 27 Oct 2025 10:22:17 +0000 (UTC)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8D7134BD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8C019E7E2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761560277; cv=none; b=kKLI5BM7GpOEGkye6PXTCydcRRQaTfBb3TbyzyRlIZ57FqM6Al5srEXEh5ZGcy2tXrGlj0b7cV7QyPHEcAGVAbV89gYtUM/H7vNIobBUaKAviGy5ZU0if5d/uTPKl8xRVhCEwYhUB/ocOW8md1Y7wY8LOuZI0Z0MMrLwugbbZA8=
+	t=1761560536; cv=none; b=HUnof83VEUZhP5mruxdN7f+1Xkxn7J8uLR52bh+CnP9TRGAAS/f3zGLX8y/dOWV9VplGsF+pn0QLScooW9bFA5UzGvJCcMVi2oVQY/PddklPGiLg4JSa4TRg35pdlPtSNjdUR+6ub5nEb6czd4beRDMyhovFgqSV7AO+VjC/oYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761560277; c=relaxed/simple;
-	bh=VlS7+HlKBSECYTt1bDBOxvEU+ZOLlEUucB1RHUNo4pI=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJZXS0nG7U79HnRBd5ZBibEtUhPBrCPjgR+uSF09djBWo0ycL5nirHh4x7GtwfL1Puc/8CDr0Ekzg760wEI1f4jXulLKBhyIKUMefsAh+b1MikuYS0KftOcWDR6u/9LJmj3a+2HXessYBGJf9mOOY5oN4iDut11qzk52hE2W+t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=pkKQHn3n; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B4FB041966
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1761560266;
-	bh=9DhDySVvD7mdReEgfjhQfxSVU5DcbAQWOe9Vkh93eqY=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=pkKQHn3nqe04ZTRnWokHhu+DGeHofYpmTTQ+7uiaGOvTOvFFZW/uyGN3aYqtqy4NC
-	 IhYFt/HShMGy+LH43TQ/J+rs6XzTn0z/Ld7TVz+wphNs01NabFT/HSK5azJpMJVNai
-	 0PKuNJpWCj9PHydibPPT1lVIjWJdoqEuHLGatxAI9jMOvqQdagHd66QABeBXvZ3M7a
-	 2OxYBSaDLHX/O8WzlsCfKtlKyQ8Y6o1hXITggJ6kbWVjpfWrIHOa3xg+GIOzNAUbgD
-	 /8Mosg7qudpZiLEeii+Ms6WETZUPtVya4VwYWSLiwTsS7c1Jh5Wrq/R5vFP4ERS90C
-	 InCp+53xv969t8n6z9mKDE/acnNhI160yjWnRxvgCtnvNVEJAHS4R8m3Y2eJPeqBZY
-	 eZsX7UT2O4BeQk0dHJspZ1LAzGdLJyLXrrJy7bNxdpLuaIj4PKI4AzKrvnx3WJpPYn
-	 JtYQBe36PJNuajL9wlda6l3IFGP9ZjXSTfF4NIjGdqL8FwoJWoJvh0Zw5j2wMM0rki
-	 0JGzZd3g9V+gHcjv6TiuvKX5QpJO6d5cqjtJXeFbRI5SsxNk9eTugBDzrsq/kq31zb
-	 iCFOTM9b6zTzDTPra2ZkFbV7unzpinT//cgR7eN+8X8Ll3hlX+/YjWQtLLlLon0nR4
-	 CYtaxJzbaji+fYHeRjvwHyRQ=
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-5db24da6d69so10647107137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:17:46 -0700 (PDT)
+	s=arc-20240116; t=1761560536; c=relaxed/simple;
+	bh=hA4Y5y9eyPbbNJjw3lWOGza4GJyLBBv2tFQmIILKANU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BR+VuoUbHwcjWALHeFOF1cDmWpNO8nJUPsK38uE1nk/6uoLzr4el8HpIqj8Tk5T8wIZwN092fGOTLkDDEOYgWOJow4zI4k0ich5RzwJothsl2J4x9pCzAdkpZJNjggkeV3LHyXi+8TUYwcx8a3jawd37vQwtC9PhrUZjWmtSr9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-932dfe14b2eso3778183241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:22:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761560264; x=1762165064;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9DhDySVvD7mdReEgfjhQfxSVU5DcbAQWOe9Vkh93eqY=;
-        b=xPgHzzNvlc/ZQ6yB8x1JaAhuod2R05w+hmP7fxK+cf/S/3bQH/B69Zf0CPD5MXpiN/
-         zSJRJ+wfYi9Tx7mHucE/AwR1QXzK0veiysAx6kP9/1Mtyw1tk93XKRQ5UCDEq2uDDENc
-         TY01sy/0NOLhC+tICebo0EJY9bPEKM4uimEL0dDphVuOfkhdrwd9hAtlhK1CouswU+2F
-         1ABxw/wkWSvE/910o/RK9tHIwLT4h7QrO+MRkMzs9m3V7BI6w7bYFPrVg33NIODM0kj8
-         r+K1QyMFqsxw9J5SDgKtgpoX3d2dJKKP1NzqYclCnkuN94Cx86GqJop5joUcuajHDz/G
-         FY9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWuzztbgb3ogbtxjDZijTdS98IIPpFG4nV3jNbTtaZv8aWCueiYdmGhv36gqn6qs7G4jUDSllJPlPI2ShA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq2BPrrAAhOgxnEUSdKtGKYf1BurYIj8RX/Was9O+1nlEighWZ
-	Qr5eTireZ2DGx3Y8yWHzP+Cz/IHUsH13Ut0LxRYW0iSB4M7J+ZUIEfCKCtQV2f59bAPe1EkozeS
-	/K+Yw45V0g72u5NyoZKI5npFN9HNTz5FA5fGLS8/WbN6DG0ME8/aD2QAU5W6R3Re9J/A7I0U92a
-	kqhbs9m/ZYcym8lipehezA96x2LkwO8h+0XdlXV2vbGoTEROvHMiVfOk1H
-X-Gm-Gg: ASbGncsMHwDBerYq6YhQCSNS98jaeCE0DfBOGR4ZaiPkC6NlCkPNjSbu3IYyDgdz4D+
-	zIWnNA2Zv0W6v9bO0VR6aqxsXhWyx89sJc4zOed6ZqO3BV95iwkxcypqq7zaKLhq1BmoH4m+4v1
-	G+Yt74IcIp7FPBjSjzlRGXCqJIs86rzPdP1deOxR0Qv6qcv59WM5Kn6A==
-X-Received: by 2002:a05:6102:954:b0:5d5:f40d:28cc with SMTP id ada2fe7eead31-5d7dd6a1b92mr14555707137.34.1761560264189;
-        Mon, 27 Oct 2025 03:17:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdPvzfUWy+KzTQx0NZKC+viVyDjrKZWPq/ag/aFPbstdqmRZATfbto1tMny89+DUKS+pVIxA5PrA3lQ+wZpqk=
-X-Received: by 2002:a05:6102:954:b0:5d5:f40d:28cc with SMTP id
- ada2fe7eead31-5d7dd6a1b92mr14555692137.34.1761560263720; Mon, 27 Oct 2025
- 03:17:43 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 27 Oct 2025 03:17:43 -0700
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 27 Oct 2025 03:17:43 -0700
+        d=1e100.net; s=20230601; t=1761560533; x=1762165333;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VpRhztl5yGUADah2U0CZ74pjALefcmDaH74Bx7Y9Njk=;
+        b=UIrsuDKGG8EBI+QxYOs4iBtI37WG0K4IybKZZk5t5lyzxVB4aPv2PUH6mqP2K/6UfN
+         FTI4YmG+Sw2NyB98VJdi9iK7+l9bgTH3h6GNzXM9C4BhVx1FiA1SiyknngNbAdvqB51h
+         plft0A7MHMD8KtTK8neAO0JufFavq+Zwo8VxzQtZmqYSapCc+MhTShCwCPhTEIvZ3ZcK
+         2gtfy7nxPW4aHZVFwmG7WTL3Qly4vtKgC/kN7hr7S0GyAn5SRd/pAxtsWvRjW8DHOYCQ
+         C/qr/DoBgPIPxLP4kYCH8a5Dpi+1f8piBYP7gC6uPhq/76Zfc2Ymy+X4lJqzC3WCRTlf
+         akBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV93Fy3gDK+Abs5je9p+JovZ9B8+M4iNwMmBxNpbd7UalC9ooVu70e3R7IuvGq0c0fA39qbGyiWz+dLX90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV208iFCaBPsvOfFwKZTXMZNgNW3DYxUqCajvc8MhlQ3z1whuJ
+	RMf2CVjrzfnQ9u6y+HNZkD41bJZ+VTdZS5c9JDzdsLwZSSts8j7IzYq4jLq1NCXf
+X-Gm-Gg: ASbGnctHvm7nL1qsGbU01+BSGXhb6neicXkq6WkzxV1wCUsiVl3EXZ8mYajFw8MUSj/
+	2sIR852Y9yJQGyoND4PwVXv2++EIwuuwct8KTbQYXfGKmXeqnUa7WS293QjU0LobwLKj3IOh3Hy
+	ImJpoX/F7F6vHVYI0bDVoly1656HjDJYlhPPCRMWDYjaStOPMgjrMs9oOGkOgyzlOuVlzMNXrpn
+	WSN8W5Gcd4RtOMEzWyix4XI0yYb1TxLs7MfRjAhRP41EzYchM6EVtiISgJ+fKCWmW+ZB6NHzfSv
+	KeQhb3jmwqP1xdPlkezNqRPiwaQ564BX5E/WnsX+JdARrMoU1N0lrkbfyhkrTj3Hy+RLAQNe6Rl
+	yfqRnTauTpyw4tItEcrexaK1ZTMuccuY0Mq4MZYhMi8pp8eGtLofaYpbjhiihizU4fVLuHYnjHn
+	xatS8i9lwU3ez+4Yye8EAmnbZg31EdCB2phKoPBvw82eC0HmmD
+X-Google-Smtp-Source: AGHT+IEmDGjIT99dBf5Y5efmHb9M+rtVWgFUuAcBIeEvC/ECCVK5PuFBbIUP8J/HVUN2lOR/eqXiWA==
+X-Received: by 2002:a05:6102:5a8d:b0:5db:37d4:1cb7 with SMTP id ada2fe7eead31-5db37d41ebcmr5230016137.32.1761560532836;
+        Mon, 27 Oct 2025 03:22:12 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934c3f40036sm2721342241.7.2025.10.27.03.22.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 03:22:12 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-934a3f11a44so4075114241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:22:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPkhbUomr3QbhYWCLNcHdsfN1CQEZEhQlLnbjJiyWU+LEbilm4oLx4ZSYgAp/jXfmEZyNmZFS+nuTUzQ4=@vger.kernel.org
+X-Received: by 2002:a05:6102:4243:b0:5db:350f:2c69 with SMTP id
+ ada2fe7eead31-5db350f2e78mr4456633137.10.1761560532379; Mon, 27 Oct 2025
+ 03:22:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aP86TltQ2uqeK6FY@pie>
-References: <20251026224424.1891541-1-aurelien@aurel32.net>
- <20251026224424.1891541-2-aurelien@aurel32.net> <A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org>
- <aP8QHwsYDlbQxQJo@pie> <mvmh5vk67in.fsf@suse.de> <aP86TltQ2uqeK6FY@pie>
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-User-Agent: alot/0.0.0
-Date: Mon, 27 Oct 2025 03:17:43 -0700
-X-Gm-Features: AWmQ_bkt48PMnhkCO0H9qLGejhLpBvvYCPQTMfZ0eF7vE7Bd7Gc1hHCSa_6NREU
-Message-ID: <CAJM55Z9w0pnFmVjJKJNMs1iqOxoL=YpkBu0L7NuUZ_0ipMtQAQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-To: Andreas Schwab <schwab@suse.de>, Yao Zi <ziyao@disroot.org>
-Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>, Aurelien Jarno <aurelien@aurel32.net>, 
-	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-pm@vger.kernel.org
+References: <202510240817.vt3eQ3qL-lkp@intel.com> <265B8FE9306198E5+0131c750-3995-4158-84e7-ad73792e6934@uniontech.com>
+In-Reply-To: <265B8FE9306198E5+0131c750-3995-4158-84e7-ad73792e6934@uniontech.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Oct 2025 11:22:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUeE3xQKkyLWDxoaA_E=cukZSz6UvvjJF0vsbRtt0fVgw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkGtOS6n5Tt95yA4b1F79G6tzC66mnufa9EUYGGpFJKzTdqD0y2RmwXxEM
+Message-ID: <CAMuHMdUeE3xQKkyLWDxoaA_E=cukZSz6UvvjJF0vsbRtt0fVgw@mail.gmail.com>
+Subject: Re: drivers/hwmon/gpd-fan.c:231:9: error: implicit declaration of
+ function 'outb'
+To: Cryolitia PukNgae <cryolitia@uniontech.com>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
 Content-Type: text/plain; charset="UTF-8"
 
-Quoting Yao Zi (2025-10-27 10:24:30)
-> On Mon, Oct 27, 2025 at 10:03:44AM +0100, Andreas Schwab wrote:
-> > On Okt 27 2025, Yao Zi wrote:
-> > > On Mon, Oct 27, 2025 at 11:20:33AM +0800, Troy Mitchell wrote:
-> > >> On Sun, Oct 26, 2025 at 11:41:14PM +0100, Aurelien Jarno wrote:
-> > >> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> > >> > index 8248895ca9038..61c16f3d5abc7 100644
-> > >> > --- a/drivers/power/reset/Kconfig
-> > >> > +++ b/drivers/power/reset/Kconfig
-> > >> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
-> > >> >          help
-> > >> >            Reboot support for the KEYSTONE SoCs.
-> > >> >
-> > >> > +config POWER_RESET_SPACEMIT_P1
-> > >> > +        tristate "SpacemiT P1 poweroff and reset driver"
-> > >> > +        depends on ARCH_SPACEMIT || COMPILE_TEST
-> > >> > +        depends on MFD_SPACEMIT_P1
-> > >> > +        default m
-> > >> default m if ARCH_SPACEMIT? Or default ARCH_SPACEMIT?
-> > >> I believe that reboot and shutdown are actually essential functionalities,
-> > >> so it might make more sense: default ARCH_SPACEMIT?
-> > >
-> > > I don't think there's anything preventing it to be built as module by
-> > > default: even though it's "essential", it's unnecessary during kernel
-> > > and userspace startup, thus I see no reason to build it in the image.
+Hi Cryolitia,
+
+On Sat, 25 Oct 2025 at 15:49, Cryolitia PukNgae <cryolitia@uniontech.com> wrote:
+> > FYI, the error/warning still remains.
 > >
-> > Wouldn't it be needed in a reboot-on-panic situation?
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > head:   266ee584e55eed108583ab4f45b5de734522502d
+> > commit: 0ab88e2394392f475b8857ac82c0c987841217f8 hwmon: add GPD devices sensor driver
+> > date:   6 weeks ago
+> > config: i386-buildonly-randconfig-002-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240817.vt3eQ3qL-lkp@intel.com/config)
+> > compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240817.vt3eQ3qL-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202510240817.vt3eQ3qL-lkp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    drivers/hwmon/gpd-fan.c: In function 'gpd_ecram_read':
+> >>> drivers/hwmon/gpd-fan.c:231:9: error: implicit declaration of function 'outb' [-Wimplicit-function-declaration]
+> >      231 |         outb(0x2E, addr_port);
+> >          |         ^~~~
+> >>> drivers/hwmon/gpd-fan.c:244:16: error: implicit declaration of function 'inb' [-Wimplicit-function-declaration]
+> >      244 |         *val = inb(data_port);
+> >          |                ^~~
+> >
 >
-> Oops, yeah, I missed this stuff. Seems systemd automatic boot assessment
-> could switch to another boot option if one fails to boot. And if it's
-> caused by a (very early) kernel panic, then reboot support does play a
-> part here.
+> I don't understand...... I have already added CONFIG_HAS_IOPORT to depends. If this is not enough, what else should I do?
 
-But if systemd is running then you've at least got as far as the initramfs,
-and have the module available. So I don't see the problem.
+Missing #include <linux/io.h>?
 
-/Emil
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
