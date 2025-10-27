@@ -1,190 +1,168 @@
-Return-Path: <linux-kernel+bounces-871908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4397C0ECC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:07:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717F8C0ECEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:08:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DD9424ECE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E7A64269ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E3230AAA9;
-	Mon, 27 Oct 2025 14:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845FE30EF67;
+	Mon, 27 Oct 2025 14:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="osLnZf5y"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CyFhS6Cj"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05C22EC096
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8172030E824
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577169; cv=none; b=RfUpl/tPoFrMp8W8DRVTAmlYI3wQpfGY1CLy1ngCKkMICG2FFhmwFNj6aFoiw7Q3ml/cjrNoPhcx4xpwya23opjRiKyRUi1OZ9jAsP+O9FguBkbolNgdFwXHWD+b2ZJwN71TokEMTsvTrGJ4wEKED6YxI23AksagttxIFs5Jpbw=
+	t=1761577193; cv=none; b=iaUos249QnLVC9v/BBwnsPMr3/DdympxBHZll7JsbYzp271WAsD+dHCwdopPZaLb+DSOoJCDMFgbZK8s0tUlhNpSD8Yvp4vi0aYZt4b3fluBspyp2/SPzyA6i4yTap6EsCspLSsNG6dfD7P7WVpyEQhJMXZMrNx/rOQSNRSMfY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577169; c=relaxed/simple;
-	bh=dsIofV2hg8J/vd9r6puEBMQ1q589TPT1cMJ02OTgt8U=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D/QWrEpyLoDVTG0kCdJer1sJkA6EV5UybNAUnqiHF4aLwjVCPWHXz2Sj1/T8kVI1shNDN7GcQMe53v8W3eBIBIc0qPq560VLqOmytinuij42726i1Plq/j16P3sQO6NoYvg0TgEysjXWCFHNy0t7j4kNbRkkyumfsrXnYux6RQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=osLnZf5y; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1761577193; c=relaxed/simple;
+	bh=BDhxfQSATkvz5PZ4qM3SXapXE8VjPOJ1bFOc4+xtjJc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qif1RAZRmhLFxZtwqkAiotnIHwgbSNzgvmyywCPlfbUR1IEUXE4yK3TprmArGeO9bJegMIjqV6Z9kr3RsLdo5XfvxYoNMNGBoKV4LyQZM7VzfyPNY80YVEu+M93iLTcVOJ7L/0GqdyPXKpxuwXXqee2vhlxH34Dhk6JknmEHvsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CyFhS6Cj; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso13067055e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:59:26 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso13072365e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:59:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761577165; x=1762181965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1761577190; x=1762181990; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=laKL0Cr/PvBcX2XD9BKXgno90RHOh9IUPRrWnIXmsZ8=;
-        b=osLnZf5yWEDLCq86m0xSYnEwPYXL9Ba2h5fXLTTG+ySWdYwqtfuO6fVHz/nkzhfa+r
-         Db+8ahyQpu9jdT56LkNJC4vLBaGTf+Rs4O2MkiqQjbH1dRWG3GFa1j+gpKJrU2q2Phxl
-         HM1zBVIOreyB0mxjU2a8XY5mF9sE+VZQXK2gydd2iSTVydy9auHgH4OudNMK0z316+Yf
-         okf6PdtsDMOs33tDI73iAL93UKRwl/VkrKGRYDT/HTxCORFH+SIuf2Ed8Ut4MBEIyL/A
-         W44CEt3fqrz5dXXyAiDD2R9nckRn82QwEhxYTqcEvRI0Vla3LcoyegZirQG2d1oLGpBY
-         v+8g==
+        bh=sxgfIdENtrsIjMM2UdQCTeBKGZOKjcZiEo3cUFxAXcY=;
+        b=CyFhS6CjTJxQ15iNbOHgJoeqMj9cvI6N/aw6GA3fTKlIxRbtpPmULLDpi1/e6XnDvh
+         Wrbc6Wcua5vdqc8b4LM81tiV1KCxJULb1fxMNUGiAZNYC2A/IlXgQkBIZwgQYxMnHjIA
+         Iq0IGOlPNuKPG9ARZvuNxEzLW6LDPcX8I1MPhqsmnkXoyYCwBKMcFJMA1CJeYsHg+0vK
+         PyEv6ak2DfAeH2NP99Wp0V4CRPAbpEcr03WT9fXaxSLbeeRVWYDevsFiN9v5Jifg5brK
+         ZrJw8VZeQwuCzjBNpWljHAopvW9dYIfEoXzIKX1Y/AmCuDdiAcP21RTS90KBCGJl3YD4
+         mQWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761577165; x=1762181965;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=laKL0Cr/PvBcX2XD9BKXgno90RHOh9IUPRrWnIXmsZ8=;
-        b=MfIGBGjkdnmhn29t6O86HlskG7cD+OqVyqcE6vq+FCuuaB1/fXd8cuIxly0sQENY1h
-         2Z4KXO3OqXZjm8tr17g5O0gOVheOtTffdkYYDTgXRiZOsUoH8cEE9i9rFolWMoQ5Ud6D
-         yTTI25UwNzdC/7BmdaSCzPgwt6w/u4u/slJk8m8LsklzfIV2SKl+kVB+Eu4jG4TaUNGv
-         C4Yg3gLtlVW7PUDHrGRg1VkOgWvd7/okW1PCe3MWCFB5ghKblOMIAF6jX0M6kpPX9vpQ
-         4bvK52cg/XDNE9pUlQ25ITeHLqYsZfID1AiEPHTcN/H3LeaIb5HOL251chxxeWnBKq24
-         tQUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtlQMQVogoHlH+daGEu74OIEsAAHcwGm0sZXhumqeFenNkbxOl9Mb1Jhfg6cprtiuDQkAynOV8NIwtaJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoeXiGL3wh65x8x5MwKUD292WP0QS5RLWIro2NAo+gxLyYz87y
-	KUauBC0AxEZU6SqRkSJyEprNyS/2qcAFKx/6Nvmu1IB9bLN4KjFr6swFXc8+YW4+prw=
-X-Gm-Gg: ASbGnctPN3yz/3Kbe7gxZEbLXgs/Y+57cbSVXvM2ghby7CHiSczesBJDPYp8v98nr0e
-	ivCaFhXvkeQiet53yekAMX89rN/a/8vjY/YoxdLV3bV6h3zQ1ju8AxYsgcZLOFHy9mtDjXkW/AT
-	ZHc3BKhlLxCsk/1JuMyDwDQc1blZZGRguDZxeO0m8r9Z0tIbL191o0XErCKl8fm+plJDRvaYP0j
-	Q44dQFSnapuVR6GwfxUEEmjLPh+GV6H9WRp8QGwZrwhniLzEzyWim16g78Nl+Xo22TQDF317YwD
-	AYaZ8GLAlgbnY0d48xPcIJ4IAxCMilVu24HTRq1xPW9LSOsLHDxh7/rCg7D279ORQ15WxqjmA1y
-	eAGn/V/QNq9ObWILnwckQwm48oDWoj/qylVmBt+i/jXelUJI/EoF3yuoKr2wyRRxYgwe9HwwN5r
-	TUiEZ14Egff+/Hd6IAUyfgH/0Roa3e6+NN8ijomkHkIspC0WFE9Ec0VMiJpIG1
-X-Google-Smtp-Source: AGHT+IElF8SC2vVdQK/QFZgy2NHu5E0/X0JUE+sv3DRcp+JfPQbQgA4erKf68h2HmmDBO0TizuxmTw==
-X-Received: by 2002:a05:600d:41d0:b0:45b:47e1:ef6d with SMTP id 5b1f17b1804b1-4711792590bmr289777715e9.36.1761577165046;
-        Mon, 27 Oct 2025 07:59:25 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:9a4:ec5a:4022:b507? ([2a01:e0a:cad:2140:9a4:ec5a:4022:b507])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd47794asm158313935e9.1.2025.10.27.07.59.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 07:59:24 -0700 (PDT)
-Message-ID: <4a22b05d-24f8-44dc-affa-5cc28201fb53@linaro.org>
-Date: Mon, 27 Oct 2025 15:59:23 +0100
+        d=1e100.net; s=20230601; t=1761577190; x=1762181990;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sxgfIdENtrsIjMM2UdQCTeBKGZOKjcZiEo3cUFxAXcY=;
+        b=af+xPkn9ixtYNPKCyvGmxBl/6wBaHjI5ZgHU9Cks8okUlhC+G+DgdcjUTpXzBfMZoz
+         U+ZxByfk0hPNEbrx4TKWMADfEXHRp3U5pHo67cQGSWr6WPAN2kCLqzJTH5fjwaiLzvUP
+         unzYJDI3/FaoLatIxm6973rGaPipEHxDIC32b5LCCj03KQJ7T/403oMA4Mlvx9BGi2OM
+         PArINsSeRpxqOd+04uvjX40HhnG4OgW2cl94K0nCC4HBbUNur9e4zTqUAZxFeUncqkpm
+         9HnSb2YuykPDYDaW1DH2RoCK5JTyU9snXjorrV61DK5UQlW2Kb/rx6tQ3f0kgNGvIUgV
+         xxsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJAsInWFlWroLEwFhYB7ZSzt3ITTo6vnI3HR4YEyTvkmbwLfyddhee33Xa9l3Nxd7QDbQmhiSqSjruwRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfFgJQVQWORsopjR4VhBhh2a8J4kUYnaPS5viBKBVNwG+kFP8y
+	FgSRjvTwwaJqQVvhJQSY2rnuhXId/GwwNv9rxbqE8ZHbmK2n856YbXwdPltcHzj3Plk=
+X-Gm-Gg: ASbGncvjEVg7ryRWhEIga2YUIiod/6g1Pdw1HFI3DEJhCtE6wVUW+POvdVaK+sL52c9
+	I5G+yrMveA9vC8VKT1RcfkVDTEPbx5s7XFn4LX8Sy11uZ0BE7oSbj36AkyNeaKeccfWLratcGdm
+	P2nEHHcaSpAxSTtL6BvkyqJxB6x/UoptIr2e86gZBNjEdALsC6whzF822JEr2sFo71SvT8NXLgD
+	9JAaKOtBvV/i1fZ3hqiBF+/2/T/KuP6rP8eWjZmQ3RbRXThRwhrMI5iB+lSeS8Fta9cq9leABmJ
+	nhTlyIBAeFeoNQXeu7bPbFqz12F/hULeG1nCsXUo7zsDT05mV2lQslSXLoxKZYNDa/OscrOldW4
+	GBns2seLkgcPn04Jc24pQ75WJoasgc87tLAX4v+eWCgZiSR22oK5Zw/mbiPJqpjaUOKp0BOhFCg
+	==
+X-Google-Smtp-Source: AGHT+IFI4cGNdhTLrO5Qc68eGANNKGWaZMi+SP3ROTN0APpf5MvdfI+OdXOP5hYM78+QFJFoWJtOIA==
+X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr291640995e9.33.1761577189636;
+        Mon, 27 Oct 2025 07:59:49 -0700 (PDT)
+Received: from hackbox.lan ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df682sm14624801f8f.43.2025.10.27.07.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 07:59:48 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 27 Oct 2025 16:59:23 +0200
+Subject: [PATCH v3 6/7] drm/msm/dp: Add support for Glymur
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 0/3] Input: add initial support for Goodix GTX8
- touchscreen ICs
-To: Jens Reidel <adrian@mainlining.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux@mainlining.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250918-gtx8-v1-0-cba879c84775@mainlining.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250918-gtx8-v1-0-cba879c84775@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251027-glymur-display-v3-6-aa13055818ac@linaro.org>
+References: <20251027-glymur-display-v3-0-aa13055818ac@linaro.org>
+In-Reply-To: <20251027-glymur-display-v3-0-aa13055818ac@linaro.org>
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1827; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=BDhxfQSATkvz5PZ4qM3SXapXE8VjPOJ1bFOc4+xtjJc=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo/4jSsNQdfZaJPuhDANBhKWGrGuBai9h3fb5GV
+ MTF71NO5USJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaP+I0gAKCRAbX0TJAJUV
+ Vm8qD/wNEZMmVJpLmnjuh7sjJSc9hUiNL+mYlGlFqUULl7omP5nSihGm4XLWF0qNFdOx3P84WT6
+ UqlANYEjYW2GXOMhs6dbn8jGHwQKpN7rQwWZJEDIWktZfhZ8zwj9FEB+vjz1Ve99neltqNF8pTl
+ 90iwDmK84agODV99T+u0TmV4vrdaCx+n4H08dwDoimXabcjRAs8REBSw9S2H/NVwOE7syyYD+cY
+ ARAiN6jIkkPKB58gFiWg8pa5CsGKFM2Bj3LxROf5nX88iT5LiwBXwP6PgIHd7OuYXhr6BnYONhA
+ siLyu645x1ibQ9sHQCT0IjyJQGYHdU27xejBgVirPi2bDhXfK+aRD6yyAHVxaXVma7wRYtN/Vf9
+ 9iTbegXtr7Bin4b7mD1vin+ve7bDSWJ7AWOoyyfvOXrhwTmj5IAzaPbKiIHNFq5jUSna7ecSie9
+ pNXh5FPrEBGBQhEWo7KXEWzYWl9roN2Qa2+ce/u00uzfDbIpiVS2/CsiH4XAWCxpcd5PO78U3Ul
+ PqQRVzYex+DAvPqhJkvMu2q8LfMgvq/I7Ii3zQH79uhhA8ayH1IO57Imaiio39bG2C30WAf9iXh
+ eNLA8mRxyX9POZyWbX0yEEgxhR845VvyJJADb968LzciDmRR/YMoFjgjoYB3bqQOoCFXjC2tf8o
+ snHhBwsIOVs7Ckw==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Hi,
+The Qualcomm Glymur platform comes with 4 DisplayPort controllers, which
+have a different core revision compared to all previous platforms.
 
-On 9/18/25 16:02, Jens Reidel wrote:
-> These ICs support SPI and I2C interfaces, up to 10 finger touch, stylus
-> and gesture events.
-> 
-> This driver is derived from the Goodix gtx8_driver_linux available at
-> [1] and only supports the GT9886 and GT9896 ICs present in the Xiaomi
-> Mi 9T and Xiaomi Redmi Note 10 Pro smartphones.
-> 
-> The current implementation only supports Normandy and Yellowstone type
-> ICs, aka only GT9886 and GT9896. It is also limited to I2C only, since I
-> don't have a device with GTX8 over SPI at hand. Adding support for SPI
-> should be fairly easy in the future, since the code uses a regmap.
+Describe them and add the compatible.
 
-You didn't explain why you didn't integrate with goodix_berlin or at least
-try to reuse part of the code.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/gpu/drm/msm/dp/dp_display.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Neil
+diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+index d87d47cc7ec3eb757ac192c411000bc50b824c59..9bd9cd5c1e03cc17598b222177b6682bbcd89f0c 100644
+--- a/drivers/gpu/drm/msm/dp/dp_display.c
++++ b/drivers/gpu/drm/msm/dp/dp_display.c
+@@ -130,6 +130,14 @@ struct msm_dp_desc {
+ 	bool wide_bus_supported;
+ };
+ 
++static const struct msm_dp_desc msm_dp_desc_glymur[] = {
++	{ .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
++	{ .io_start = 0x0af5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
++	{ .io_start = 0x0af64000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
++	{ .io_start = 0x0af6c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported = true },
++	{}
++};
++
+ static const struct msm_dp_desc msm_dp_desc_sa8775p[] = {
+ 	{ .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+ 	{ .io_start = 0x0af5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
+@@ -187,6 +195,7 @@ static const struct msm_dp_desc msm_dp_desc_x1e80100[] = {
+ };
+ 
+ static const struct of_device_id msm_dp_dt_match[] = {
++	{ .compatible = "qcom,glymur-dp", .data = &msm_dp_desc_glymur },
+ 	{ .compatible = "qcom,sa8775p-dp", .data = &msm_dp_desc_sa8775p },
+ 	{ .compatible = "qcom,sc7180-dp", .data = &msm_dp_desc_sc7180 },
+ 	{ .compatible = "qcom,sc7280-dp", .data = &msm_dp_desc_sc7280 },
 
-> 
-> Support for advanced features like:
-> - Firmware updates
-> - Stylus events
-> - Gesture events
-> - Nanjing IC support
-> is not included in current version.
-> 
-> The current support requires a previously flashed firmware to be
-> present.
-> 
-> As I did not have access to datasheets for these ICs, I extracted the
-> addresses from a couple of config files using a small tool [2]. The
-> addresses are identical for the same IC families in all configs I
-> observed, however not all of them make sense and I stubbed out firmware
-> request support due to this.
-> 
-> [1] https://github.com/goodix/gtx8_driver_linux
-> [2] https://github.com/sm7150-mainline/goodix-cfg-bin
-> 
-> Signed-off-by: Jens Reidel <adrian@mainlining.org>
-> ---
-> Jens Reidel (3):
->        dt-bindings: input: document Goodix GTX8 Touchscreen ICs
->        Input: add support for Goodix GTX8 Touchscreen ICs
->        MAINTAINERS: add an entry for Goodix GTX8 Touchscreen driver
-> 
->   .../bindings/input/touchscreen/goodix,gt9886.yaml  |  71 +++
->   MAINTAINERS                                        |   7 +
->   drivers/input/touchscreen/Kconfig                  |  15 +
->   drivers/input/touchscreen/Makefile                 |   1 +
->   drivers/input/touchscreen/goodix_gtx8.c            | 562 +++++++++++++++++++++
->   drivers/input/touchscreen/goodix_gtx8.h            | 137 +++++
->   6 files changed, 793 insertions(+)
-> ---
-> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
-> change-id: 20250918-gtx8-59a50ccd78a5
-> 
-> Best regards,
+-- 
+2.48.1
 
 
