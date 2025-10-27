@@ -1,188 +1,146 @@
-Return-Path: <linux-kernel+bounces-872750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251F4C11F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:13:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F23FC11F22
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F286C3AFF4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:12:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5223AA02A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BAB32C94B;
-	Mon, 27 Oct 2025 23:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8990832D43F;
+	Mon, 27 Oct 2025 23:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJn6tTZB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o4thHGD1"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C664C2F692C;
-	Mon, 27 Oct 2025 23:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7E62E88BD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761606770; cv=none; b=IzE+C8O/ql/Ij7ma2ctxE8Bteqs7LVjrgSRwbECnr6lmbwBVpPifNkOcRze0wvsrQ1qvKTRGchypZ/23+NuravnUH0HYw+Za9XVDURBB6/pwjzYnUsTjQp/m1qMLjROeqLea2k2TDV+lJhih0XgTR2A8o/rX9bLsF3qqYS25W5g=
+	t=1761606817; cv=none; b=Oprn8FI4vzBF1+iiCZKCv77REpErExovmZ9nAF+byB3nCSKWWOg0/eW1oofj4gOARIwnadMJoQQzONM9NaiEI3aIDX8UBapusUz66HbW2sGgGkVTABpgjAlQ6Ihxgw9480nyC5t4jLUAqqDPJ4/VVzdSanO5AHUtfE5DLXSCLuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761606770; c=relaxed/simple;
-	bh=Mx3p5zNalpC9MUWdOnA7g5eVCMu0dog1BvFeTo03sQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=J1GWicIPRWWY4dpWTjUbvli+c3HWDgqs2ZFjfnFCHnQUcT8kvBh2hqXmxWVmdgscWRGpBExAVow9eRi0b8wZrGWjHUhnHdsWkn4iiD2hlssb3V6lxMUFlbYy35zUZDGzQ/uMTEMKVG5PvdwlRVty2fTnfwKbICFVjVf+aLE/X00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJn6tTZB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37729C4CEF1;
-	Mon, 27 Oct 2025 23:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761606770;
-	bh=Mx3p5zNalpC9MUWdOnA7g5eVCMu0dog1BvFeTo03sQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qJn6tTZBrzolhoGPvFDtIMzFB4iWvXJA/2UHzeT3Ip4aLUEHQa1JMyhfKp9wdOOmr
-	 /DYMeI7gNoJfP8lJGQjJmcFL2AT908Jk4TaFewYx8n0XPmdJVVopb3QUIbItrD8ooc
-	 3pCW/P/DIRXyiYpxHMhCi9bZSzPWmlL2z72nbl+AScIwJI2sBNs4l9ev7Wmnt+t4vr
-	 1u2nPeYe2UpMdy49ymoycuiSiLJ+8k2HIQRMI2BzbQrPLTPrOBSQX2IUqTnVkst7ip
-	 15vOByQbFaFX/gPMEwh5QrPJaxKd63AlGZGQ4y6oqzix50oec6x1Tv7I4/+QiaCYZ5
-	 xiYB1Ur0hkprQ==
-Date: Mon, 27 Oct 2025 18:12:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Johan Hovold <johan@kernel.org>, Frank Li <Frank.li@nxp.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	"David E . Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-	Han Jingoo <jingoohan1@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
-Message-ID: <20251027231249.GA1487641@bhelgaas>
+	s=arc-20240116; t=1761606817; c=relaxed/simple;
+	bh=Mox7WVrx2nsqFbNnAMpCHXjsIB1mhexPun4YkmTSVd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zqd8aumsNiFObzBSG71NJIp/g8UFSBsOiesNZhsyLIOr5QmU1XaXYS49ppPMl8SnpsQz4qZEQrerAf9OI1CZAZAE5xwuQCmAR6dXhbqyU7no01o60PI83wowoC5T3BMBP1vRV9dxPtOWFG01At4NehabbBqG22wFn3UHciexuyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o4thHGD1; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-591eb980286so5485117e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:13:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761606814; x=1762211614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cVb3sBQg3S7kfhJuRLHfxPiQ08+Bc1FaH34bvysQgyo=;
+        b=o4thHGD1/OUIjggnndqTnwnlW10eAEpX/HB4h+bHLKvOx8B1TxlHznc4je/pXuHVJb
+         KUWtUQR1veipMr2Rmi2ifY0nHaQJE4SOZsgGUYvgroxjQaBNPA4fc8tIJjVWU+P5ydbN
+         NMUJ0wQsP36BKbBPsDSPRE7pBO2mpYQgI0W6TZleqsHMtObXMIq70gyxPDxYUJwNLxh8
+         XlEkLw2+Qf2apLB06O5B0unQU9dZVLF2iZhswvxbkKJ9L9OijIDYQO/dP7G6zUwDGVKX
+         XkCJBuLbYSDWcFoYhBoM28SI/CUXMs1s/NHilUSaIj2p9npeD+I+8mm5i9UUiERiMfDH
+         VQCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761606814; x=1762211614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cVb3sBQg3S7kfhJuRLHfxPiQ08+Bc1FaH34bvysQgyo=;
+        b=Qx71SP7wpizuggke5RPQqU53WLfXX8jF/ysm0rOkE3xA2gMJEavLr2teTO/6cJlMlM
+         onFU5zlRnCY9jwwTjaQHv50R0yymwnJyaqsVOxAGbH5cvjeimGhJT3E1iqBtNBagmH9N
+         kmM6YnE14nBjp9IS3BBcq/zdwDCzPY7TkATieEDbnDuQvwUzbnxgW5Ry7pAMhPZFn1F3
+         eC6GNPEq8MEkQzn3UieMX7CP+8W+7q5aYkuSUeQtZCtTb58zSqPG1QqVPD8cfK73Mra3
+         qZBbGRzKU5L3sDERJV7cgrqJ/juUuE5LCVQAYGukg+XNExLYF7zA+KiuNnbrevK6cYTJ
+         bChA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAOHW3JjajhtackTFjE+4ZDdQaURlb7vyWSJG7hP06ZlWky9Udjn5iBdl4JgS1MY5+skgmnsNon5zMsJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyiHvJEL3GWFbDmk+IiK6Q1+RpCX74HjaVTguMlx1svrLDaeRS
+	xSgvapM76MMI+UVFYxLR6yluQ8rgae34GhxTWOjxe8QfavtfrvDYbz6xQX1vqBzjA8iSBXxF1jS
+	JVfndYy+vTZDieA0sMrnp8kQv2p2r63rdQNyvBdHL
+X-Gm-Gg: ASbGncv1TYwEgkaxaQb8zZAka9v4fmvd8TdvWQsiqJJ8aVCwlX3fXC/TlAWVhHimKs0
+	JJHKkQD1KQF/2SNf4gfxVwON0fMsLwiw9azTvj07Iek7AtRZnSy/kqMYfH5D5dRUPmAgKFuDKMr
+	lreZ9O+rZqZvre5tJZXrqMY7lvmljGA1iwQWFBItD00zqlgcjDFdlzE3eF/fnwouHLPOljF7WVG
+	fmNCG/WK8bZXJG8qVauOR7bqdV3Uuf/7d4lPcDYTOK0olc8B4zo4V1nvhfrJeSqCwYLipY=
+X-Google-Smtp-Source: AGHT+IGl3ca765JSYQeeeNWnOc4ez61Rh9cYHuTu2Z8wbfu4++aeMX3ejm6+mpCGbnxLweY96XJw4Qd/Jsw/gJioL2Q=
+X-Received: by 2002:a05:6512:39ce:b0:585:c51e:e99d with SMTP id
+ 2adb3069b0e04-5930e98f2bbmr555951e87.3.1761606813913; Mon, 27 Oct 2025
+ 16:13:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024210514.1365996-1-helgaas@kernel.org>
+References: <cover.1760368250.git.leon@kernel.org> <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+In-Reply-To: <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+From: David Matlack <dmatlack@google.com>
+Date: Mon, 27 Oct 2025 16:13:05 -0700
+X-Gm-Features: AWmQ_blG76O58dB2_ktM5H7ZDlww5WUOcPernLo2oZm94nuYAfy2S9NihsUA1rg
+Message-ID: <CALzav=cj_g8ndvbWdm=dukW+37cDh04k1n7ssFrDG+dN3D+cbw@mail.gmail.com>
+Subject: Re: [PATCH v5 9/9] vfio/pci: Add dma-buf export support for MMIO regions
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>, Leon Romanovsky <leonro@nvidia.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, 
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, 
+	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+	Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025 at 04:04:57PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> This reverts commit a729c16646198872e345bf6c48dbe540ad8a9753.
-> 
-> Prior to a729c1664619 ("PCI: qcom: Remove custom ASPM enablement code"),
-> the qcom controller driver enabled ASPM, including L0s, L1, and L1 PM
-> Substates, for all devices powered on at the time the controller driver
-> enumerates them.
-> 
-> ASPM was *not* enabled for devices powered on later by pwrctrl (unless the
-> kernel was built with PCIEASPM_POWERSAVE or PCIEASPM_POWER_SUPERSAVE, or
-> the user enabled ASPM via module parameter or sysfs).
-> 
-> After f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for
-> devicetree platforms"), the PCI core enabled all ASPM states for all
-> devices whether powered on initially or by pwrctrl, so a729c1664619 was
-> unnecessary and reverted.
-> 
-> But f3ac2ff14834 was too aggressive and broke platforms that didn't support
-> CLKREQ# or required device-specific configuration for L1 Substates, so
-> df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
-> enabled only L0s and L1.
-> 
-> On Qualcomm platforms, this left L1 Substates disabled, which was a
-> regression.  Revert a729c1664619 so L1 Substates will be enabled on devices
-> that are initially powered on.  Devices powered on by pwrctrl will be
-> addressed later.
-> 
-> Fixes: df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Oct 13, 2025 at 8:44=E2=80=AFAM Leon Romanovsky <leon@kernel.org> w=
+rote:
+>
+> From: Leon Romanovsky <leonro@nvidia.com>
+>
+> Add support for exporting PCI device MMIO regions through dma-buf,
+> enabling safe sharing of non-struct page memory with controlled
+> lifetime management. This allows RDMA and other subsystems to import
+> dma-buf FDs and build them into memory regions for PCI P2P operations.
 
-Applied to pci/for-linus for v6.18.
+> +/**
+> + * Upon VFIO_DEVICE_FEATURE_GET create a dma_buf fd for the
+> + * regions selected.
+> + *
+> + * open_flags are the typical flags passed to open(2), eg O_RDWR, O_CLOE=
+XEC,
+> + * etc. offset/length specify a slice of the region to create the dmabuf=
+ from.
+> + * nr_ranges is the total number of (P2P DMA) ranges that comprise the d=
+mabuf.
+> + *
+> + * Return: The fd number on success, -1 and errno is set on failure.
+> + */
+> +#define VFIO_DEVICE_FEATURE_DMA_BUF 11
+> +
+> +struct vfio_region_dma_range {
+> +       __u64 offset;
+> +       __u64 length;
+> +};
+> +
+> +struct vfio_device_feature_dma_buf {
+> +       __u32   region_index;
+> +       __u32   open_flags;
+> +       __u32   flags;
+> +       __u32   nr_ranges;
+> +       struct vfio_region_dma_range dma_ranges[];
+> +};
 
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 32 ++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 6948824642dc..c48a20602d7f 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -247,6 +247,7 @@ struct qcom_pcie_ops {
->  	int (*get_resources)(struct qcom_pcie *pcie);
->  	int (*init)(struct qcom_pcie *pcie);
->  	int (*post_init)(struct qcom_pcie *pcie);
-> +	void (*host_post_init)(struct qcom_pcie *pcie);
->  	void (*deinit)(struct qcom_pcie *pcie);
->  	void (*ltssm_enable)(struct qcom_pcie *pcie);
->  	int (*config_sid)(struct qcom_pcie *pcie);
-> @@ -1038,6 +1039,25 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
->  	return 0;
->  }
->  
-> +static int qcom_pcie_enable_aspm(struct pci_dev *pdev, void *userdata)
-> +{
-> +	/*
-> +	 * Downstream devices need to be in D0 state before enabling PCI PM
-> +	 * substates.
-> +	 */
-> +	pci_set_power_state_locked(pdev, PCI_D0);
-> +	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
-> +
-> +	return 0;
-> +}
-> +
-> +static void qcom_pcie_host_post_init_2_7_0(struct qcom_pcie *pcie)
-> +{
-> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
-> +
-> +	pci_walk_bus(pp->bridge->bus, qcom_pcie_enable_aspm, NULL);
-> +}
-> +
->  static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
->  {
->  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-> @@ -1312,9 +1332,19 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
->  	pcie->cfg->ops->deinit(pcie);
->  }
->  
-> +static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> +
-> +	if (pcie->cfg->ops->host_post_init)
-> +		pcie->cfg->ops->host_post_init(pcie);
-> +}
-> +
->  static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
->  	.init		= qcom_pcie_host_init,
->  	.deinit		= qcom_pcie_host_deinit,
-> +	.post_init	= qcom_pcie_host_post_init,
->  };
->  
->  /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
-> @@ -1376,6 +1406,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
->  	.get_resources = qcom_pcie_get_resources_2_7_0,
->  	.init = qcom_pcie_init_2_7_0,
->  	.post_init = qcom_pcie_post_init_2_7_0,
-> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->  	.deinit = qcom_pcie_deinit_2_7_0,
->  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->  	.config_sid = qcom_pcie_config_sid_1_9_0,
-> @@ -1386,6 +1417,7 @@ static const struct qcom_pcie_ops ops_1_21_0 = {
->  	.get_resources = qcom_pcie_get_resources_2_7_0,
->  	.init = qcom_pcie_init_2_7_0,
->  	.post_init = qcom_pcie_post_init_2_7_0,
-> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->  	.deinit = qcom_pcie_deinit_2_7_0,
->  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->  };
-> -- 
-> 2.43.0
-> 
+This uAPI would be a good candidate for a VFIO selftest. You can test
+that it returns an error when it's supposed to, and a valid fd when
+it's supposed to. And once the iommufd importer side is ready, we can
+extend the test and verify that the fd can be mapped into iommufd.
+
+It will probably be challenging to meaningfully exercise device P2P
+through a selftest, I haven't thought about how to extend the driver
+framework for that yet... But you can at least test that all the
+ioctls behave like they should.
 
