@@ -1,82 +1,121 @@
-Return-Path: <linux-kernel+bounces-871707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A6FC0E26F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:49:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2F8C0E278
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AC0406D68
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2837E426C44
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24FD305051;
-	Mon, 27 Oct 2025 13:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRs8YjiL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F2923BF9F;
-	Mon, 27 Oct 2025 13:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779D304976;
+	Mon, 27 Oct 2025 13:38:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D7B2FC01A;
+	Mon, 27 Oct 2025 13:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572250; cv=none; b=h2aIHl3wUXxNk6CrEQPZF8ZYMoriuWTnyRj5bz++lkgS70rGMG981zbQvJVa9VCUHPcCDvIoOtpd9Z3GjXJXHb2iOHM4Qkb2zuD2REwScdBTktE0/izdGr8TZoQPd5oTfO4OjFZHIWSWiPxYfuhzOHbgq7U7wME4ewCWyoptL4I=
+	t=1761572296; cv=none; b=G9SL6bu6QLWOz0TxGcXPKalqLNsaKtwhPgjmzEa8rSdIy1/IhjtaiEHvmuW2lqmdUhbHlFumeDmWPcxS3scLQifBWlDraOHIORC6JxerODTX9COIQ3SB6bp+B+I1puo6Cn49TOWSTwoK+BiWwZjDgP83eWKdJyEzi6jyMY6IEIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572250; c=relaxed/simple;
-	bh=sDzyF2CI4Ve7jNRefYb/GwI6Wxad7x3z6YmDoIi8foo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqnItdSFBjNHyaRu/PKR99QKImjqtjzpEDcv2ere5PL9PDZEiHsimt9eBnej07o19CUAbWi8VtLuMp8qg/wSF+OQf7ftILJyB3WT8R+PPgt3U7p/Dj8kNlwjCTWKix5d2iYge66fo6Y3wAvXc6NdwRjN0IkRkK0SGOFKk3xGD2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRs8YjiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43E0C4CEF1;
-	Mon, 27 Oct 2025 13:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761572250;
-	bh=sDzyF2CI4Ve7jNRefYb/GwI6Wxad7x3z6YmDoIi8foo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oRs8YjiL/vupq7FSOVRNEacfhBQcf1T9IF239ohLVyns22THLQIQ9BXfdWQCcNKSr
-	 0GB6ETuVxjbeBGQbf4RpFbrrhoB9kk7PRCvKnSDFb6lN2zyATw6bGBB4vRYVXE0IGK
-	 ALOpRiHpDyPi1N/kZoShILXepKHMBlA/enKdVhyZfT2VKyKkUqmJWBsNAHsf6UWJYk
-	 2pL43uvQsT1HO/AI1dL8fhiRRPXun2lTqRven8udzlAyxhKpNS6eIgP3Xgx2gZ2lK1
-	 Kkzau+qsaMFg4AjcJxlq0Qe6mr5iphzHUfNZWPKWiyvHtQtq+MtdXodtRc7WRfwfP9
-	 2Uq2br7Mufr+Q==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vDNPh-000000000Jg-2TyV;
-	Mon, 27 Oct 2025 14:37:33 +0100
-Date: Mon, 27 Oct 2025 14:37:33 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] media: mediatek: fix VPU device leaks on probe
-Message-ID: <aP91nfnpShIhXcVQ@hovoldconsulting.com>
-References: <20250924133552.28841-1-johan@kernel.org>
+	s=arc-20240116; t=1761572296; c=relaxed/simple;
+	bh=Yg4tHkrWB8iD6I0E177EhXaJTLbrmVH+67p7EVU8ik0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KEJtbprONvRvGYGXGGVZcRBNm/zToYCHQXxBVo/q17HEKsUHtbYVdFo2u4u9HERD+ypA2+2lhcJOrtUUYcD4POgHBTH4POgCqURi4/pxQuw/nBG3BQNyEUfd4IUemkEUZ+Ydav0wGYBMP9il+gr2vQnwXz0VHJqM7N6KwebceeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 593A4175D;
+	Mon, 27 Oct 2025 06:38:02 -0700 (PDT)
+Received: from [10.57.68.196] (unknown [10.57.68.196])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FD233F673;
+	Mon, 27 Oct 2025 06:38:02 -0700 (PDT)
+Message-ID: <1db69026-199c-4cee-bb3b-1217f8a3afad@arm.com>
+Date: Mon, 27 Oct 2025 14:38:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924133552.28841-1-johan@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
+ context-switching
+To: David Woodhouse <dwmw2@infradead.org>,
+ David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-12-kevin.brodsky@arm.com>
+ <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
+ <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
+ <6ed9f404-9939-4e9f-b5aa-4253bef46df1@arm.com>
+ <7324616a8d2631aa8132f725f9f6551e3e6b21dd.camel@infradead.org>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <7324616a8d2631aa8132f725f9f6551e3e6b21dd.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 24, 2025 at 03:35:49PM +0200, Johan Hovold wrote:
-> This series fixes VPU device leaks during probe of the mdp and two codec
-> drivers.
-> 
-> Included is also a minor documentation update to make it clear that the
-> VPU lookup helper returns the device with an incremented refcount.
+On 24/10/2025 17:17, David Woodhouse wrote:
+> On Fri, 2025-10-24 at 17:05 +0200, Kevin Brodsky wrote:
+>> On 24/10/2025 16:47, David Woodhouse wrote:
+>>> On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
+>>>> On 15.10.25 10:27, Kevin Brodsky wrote:
+>>>>> We currently set a TIF flag when scheduling out a task that is in
+>>>>> lazy MMU mode, in order to restore it when the task is scheduled
+>>>>> again.
+>>>>>
+>>>>> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
+>>>>> mode in task_struct::lazy_mmu_state. We can therefore check that
+>>>>> state when switching to the new task, instead of using a separate
+>>>>> TIF flag.
+>>>>>
+>>>>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>>>>> ---
+>>>> Looks ok to me, but I hope we get some confirmation from x86 / xen
+>>>> folks.
+>>> I know tglx has shouted at me in the past for precisely this reminder,
+>>> but you know you can test Xen guests under QEMU/KVM now and don't need
+>>> to actually run Xen? Has this been boot tested?
+>> I considered boot-testing a Xen guest (considering the Xen-specific
+>> changes in this series), but having no idea how to go about it I quickly
+>> gave up... Happy to follow instructions :)
+> https://qemu-project.gitlab.io/qemu/system/i386/xen.html covers booting
+> Xen HVM guests, and near the bottom PV guests too (for which you do
+> need a copy of Xen to run in QEMU with '--kernel xen', and your
+> distro's build should suffice for that).
+>
+> Let me know if you have any trouble. Here's a sample command line which
+> works here...
+>
+> qemu-system-x86_64 -display none --accel kvm,xen-version=0x40011,kernel-irqchip=split -drive file=/var/lib/libvirt/images/fedora28.qcow2,if=xen -kernel ~/git/linux-2.6/arch/x86/boot/bzImage -append "root=/dev/xvda1 console=ttyS0" -serial mon:stdio
 
-Can these be picked up for 6.19?
+Thanks this is helpful! Unfortunately lazy_mmu is only used in the PV
+case, so I'd need to run a PV guest. And the distro I'm using (Arch
+Linux) does not have a Xen package :/ It can be built from source from
+the AUR but that looks rather involved. Are there some prebuilt binaries
+I could grab and just point QEMU to?
 
-Johan
+- Kevin
 
