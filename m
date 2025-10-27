@@ -1,101 +1,265 @@
-Return-Path: <linux-kernel+bounces-872052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A558C0F2A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:06:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0488AC0F252
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC08A4FE5B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1957A19C5470
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812EB3081AC;
-	Mon, 27 Oct 2025 15:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2EE30C356;
+	Mon, 27 Oct 2025 15:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="NsxXLJec"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApZqaUo9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4482A1E1C22
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1271C3128C8;
+	Mon, 27 Oct 2025 15:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580669; cv=none; b=mwdfZSqpd9HzjxPN6bo2IgxBTi6yv3brwAzmDteI1BW/02kHxDqpRHlURoE8/M2SOMBPGGXxnE1hRvpAZ/yJgNfjbxCHzcmSYqGxBtIzvzeZBqtEiUxvHrNmt9FRLRqpp57N+/ySzgDgx/34sphxq2TrkmGuuJ1jGy1ZGtdFO8o=
+	t=1761580487; cv=none; b=DFuZ5KpkwyVFX3MWYdsN7u3c+6sAMEQ+yam9on18fkdtDTTpG2yfPXRqHevZIl/UdKus3w7opwdyIEt/qzBHLuQvTFJ2iGIYEpJXG1w2/D6lsJEYF4wY1WJ2rqDG8DQOXAlEzsbI6RKvMr5DdZr0RlEXn6oHYN65kemNLDn+15s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580669; c=relaxed/simple;
-	bh=cNeEoNZMNjs7g8eJeKWktT8oOWjoRNKkmyvCV4rbGdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pUcNhQ/tRH+7LCvHXa5rtiGaE1o25v5t3pRMQfF720mkbFqraoLMEl0Qjbaz2EVkj6BkKvwu4itvMET6VfDZjGyaf6XdiJvaXrHu+ZcGo/TpFL751gwt6EmgbBXg5Kci2ES0CUQh/lEmzOYnZqmCSSdRUy+2GS1oAOtbpDQDPxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=NsxXLJec; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1761580664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7DktUCNizUthk/eVYWcphe4sD34yOq87O4J/7ILxNWI=;
-	b=NsxXLJecBlL5+cyKyvFiI6hida+cTbMcscYIDDa4jS3yYGcrOfZXzB2o/c4EGF/VFrf8PB
-	bKQNj9HmzilsHCag2fRU+g6lVGv519KVy4+QcBPsO8hIReP20iDjiVBC4qVtGKvOgAq7zA
-	VzlG45KebSh6HL5QLDqD2pjnofyLBr6hTW/DslhwLyxrgK5TgEgBC05eKNAuj5NWuRZ6BB
-	TdXrukHsYWbyaCJE2rCJi9AkS4343Q9Lec/GXs/N9YOjXdJe5GOw0XOURI1fhQCqt7FfvC
-	4UKvRaZ2p3K4H2bV+KfaNN8R1GMa16fMEVwhkhRLjVOKqTYbGPLzFGTpX0lP/A==
-From: Diederik de Haas <diederik@cknow-tech.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dragan Simic <dsimic@manjaro.org>,
-	Johan Jonker <jbx6244@gmail.com>,
-	Diederik de Haas <diederik@cknow-tech.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: rockchip: Fix vccio4-supply on rk3566-pinetab2
-Date: Mon, 27 Oct 2025 16:54:28 +0100
-Message-ID: <20251027155724.138096-1-diederik@cknow-tech.com>
+	s=arc-20240116; t=1761580487; c=relaxed/simple;
+	bh=PC/Key79mxSwwFYItT5YNmVyruW8yPwSdYrSrBB7DY4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Jfy+7KMV8GBNw3A/TdHPG2Wb/eQKz8im+QEld1+/5so5X0i6Fpvi/LVgm/Oyr2KsPR/PsY/dywvflp0Y8KZjafHtsvve2ehK4Yco+ypEpt98Fy9gTrG+OSSckP3zs5ilaZ5vSAuYWxTHl3k5RsABilWbqZxaueG7G75rWs9yFxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApZqaUo9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDB9C4CEF1;
+	Mon, 27 Oct 2025 15:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761580486;
+	bh=PC/Key79mxSwwFYItT5YNmVyruW8yPwSdYrSrBB7DY4=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=ApZqaUo9L25GA8s/FDGqyMbTH+5YIOXSOAWerWPYho5MTuMWFcQ7Urg8Io97zW13m
+	 JtBn30Lt/3wYf98gTdzaYPzfHfNHc8vSk8JCUxTAXEN3FVI09cyrVjfq0cqE+TXDLD
+	 BfDq6rxsy+a/FCQPbTuOVbZ327TFMNP+xXf24B2dm2o3/s0RASuU4g5cxslJO7sGhc
+	 pf/nDp/iETMB51U1AbsSUxKwPwNSBJ7sf65YB01Kr+QzqNB76fhEaKlc4PloJjicuw
+	 PfUgYzJmKrzrjX8Eha7cLmM9iegdNPMmqqkLQFlMHy3rIad7ZN2n+hZkrjbpoYegUM
+	 e/wEABfWy2cVw==
+Message-ID: <3a565e1b-4d73-4d7d-a6bd-1dd8b7b973b3@kernel.org>
+Date: Mon, 27 Oct 2025 16:54:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in
+ validate_av1_sequence()
+To: opensource india <opensource206@gmail.com>
+Cc: jc@kynesim.co.uk, mchehab@kernel.org, hverkuil@kernel.org,
+ ribalda@chromium.org, laurent.pinchart@ideasonboard.com, yunkec@google.com,
+ sakari.ailus@linux.intel.com, james.cowgill@blaize.com,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250913105252.26886-1-opensource206@gmail.com>
+ <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org>
+ <CAKPKb8-s96v+Nh29Z5E0wgyXYgoFHJT2SHA_WpZshXspo0WY0w@mail.gmail.com>
+ <f9001f98-80d6-49d5-8665-d42fcef7b07d@kernel.org>
+ <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
+ <7fc65c85-f75e-419c-aa1b-0c85376373d4@kernel.org>
+ <CAKPKb88Tov27+c227p8k0KAuZtm_LNNxDkf=5YBfDYw94afFPw@mail.gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <CAKPKb88Tov27+c227p8k0KAuZtm_LNNxDkf=5YBfDYw94afFPw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Page 13 of the PineTab2 v2 schematic dd 20230417 shows VCCIO4's power
-source is VCCIO_WL. Page 19 shows that VCCIO_WL is connected to
-VCCA1V8_PMU, so fix the PineTab2 dtsi to reflect that.
+On 27/10/2025 16:36, opensource india wrote:
+> 
+> 
+> On Thu, Oct 23, 2025 at 6:44 PM Hans Verkuil <hverkuil+cisco@kernel.org <mailto:hverkuil%2Bcisco@kernel.org>> wrote:
+>>
+>> On 23/10/2025 15:03, John Cox wrote:
+>> > On Thu, 23 Oct 2025 at 11:44, Hans Verkuil <hverkuil+cisco@kernel.org <mailto:hverkuil%2Bcisco@kernel.org>> wrote:
+>> >>
+>> >> On 23/10/2025 12:32, opensource india wrote:
+>> >>> On Wed, Oct 22, 2025 at 12:44 PM Hans Verkuil <hverkuil+cisco@kernel.org <mailto:hverkuil%2Bcisco@kernel.org>> wrote:
+>> >>>>
+>> >>>> Hi Pavan,
+>> >>>>
+>> >>>> On 13/09/2025 12:52, Pavan Bobba wrote:
+>> >>>>> Complete the "TODO: PROFILES" by enforcing profile-specific and
+>> >>>>> monochrome constraints as defined by the AV1 specification
+>> >>>>> (Section 5.5.2, "Color config syntax").
+>> >>>>>
+>> >>>>> The validator now checks:
+>> >>>>>
+>> >>>>>  - Flags: reject any unknown bits set in sequence->flags
+>> >>>>>  - Profile range: only profiles 0..2 are valid
+>> >>>>>  - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=1, sy=1),
+>> >>>>>    monochrome allowed
+>> >>>>>  - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=0, sy=0),
+>> >>>>>    monochrome forbidden
+>> >>>>>  - Profile 2:
+>> >>>>>     * 8/10-bit: only 4:2:2 allowed (sx=1, sy=0)
+>> >>>>>     * 12-bit: 4:4:4 (sx=0, sy=0), 4:2:2 (sx=1, sy=0), or 4:2:0 (sx=1, sy=1)
+>> >>>>>       allowed
+>> >>>>>  - Monochrome path (all profiles except 1): forces subsampling_x=1,
+>> >>>>>    subsampling_y=1, separate_uv_delta_q=0
+>> >>>>>
+>> >>>>> These checks prevent userspace from providing invalid AV1 sequence
+>> >>>>> headers that would otherwise be accepted, leading to undefined driver
+>> >>>>> or hardware behavior.
+>> >>>>
+>> >>>> This patch was merged in our media-committers next branch, but I noticed that
+>> >>>> it now fails the v4l2-compliance test for the visl driver.
+>> >>>>
+>> >>>> The cause is that the new validation now fails with the default values for
+>> >>>> this control as set in std_init_compound().
+>> >>>>
+>> >>>> You can test this yourself by loading the visl driver and then running
+>> >>>> v4l2-compliance -d /dev/videoX -E --verbose
+>> >>>> (-E stops at the first error)
+>> >>>>
+>> >>>> Can you provide a patch to initialize this control with sane values?
+>> >>>>
+>> >>>> Apologies for not noticing this before: there are some issues with the automatic
+>> >>>> regression tests in our CI, so the tests weren't run.
+>> >>>>
+>> >>>> Regards,
+>> >>>>
+>> >>>>         Hans
+>> >>>>
+>> >>>
+>> >>> Hi Hans Verkuil,
+>> >>>
+>> >>> Thank you so much for the review.
+>> >>> yes, v4l2-compliance expected to fail indeed since it is sending
+>> >>> default values which, our newly added code rejects as per
+>> >>> specification
+>> >>>
+>> >>> when you say patch, you mean patch for v4l2-compliance tool with
+>> >>> proper values so that v4l2 core driver can accept?
+>> >>
+>> >> No, std_init_compound() in the kernel needs to be patched so the initial
+>> >> value of this control passes the new validation tests. The initial control
+>> >> values should always be sane.
+>> >
+>> > Whilst that is a good principle it makes almost no sense in this
+>> > context. There is almost no chance that a given bitstream will decode
+>> > against a default sequence header and failing to set it explicitly is
+>> > going to be a mistake on the users part. It seems to me that it is
+>> > better to have something that is detectable as unset rather than
+>> > something that is valid but wrong.
+>> >
+>> > I accept that it is the V4L2 way to require "valid" default values for
+>> > all supported ctrls, but it seems to me to be actively unhelpful for
+>> > things like SPS / VPS / Tile Group Entry where if not set correctly
+>> > from bits of the bitstream that the kernel doesn't get to see they
+>> > will break the stream decode.
+>>
+>> I agree, but the V4L2 design (not just controls, but also formats etc.) is
+>> that they have valid values, even if it makes no sense in the bigger picture.
+>>
+>> Now, is that the right design or not? You could argue either way, but the
+>> fact is that that's how it was designed many years ago.
+>>
+>> Changing this for just a single control is worse than just initing with the
+>> minimum you can get away with. Bonus points if it is somewhat sane :-)
+>>
+>> The advantage of always reporting valid values is that the application never
+>> has to explicitly check if the format/control/etc. has invalid values.
+>>
+>> Regards,
+>>
+>>         Hans
+>>
+>> >
+>> > I'm not going to argue this point but I felt that I wanted to make it.
+>> >
+>> > Regards
+>> >
+>> > John Cox
+>> >> Regards,
+>> >>
+>> >>         Hans
+>> >>
+>> >
+>>
+> Thank you Hans and John.
+> 
+> actually i have tested with v4l2-compliance tool of version - 1.31
 
-Fixes: 1b7e19448f8f ("arm64: dts: rockchip: Add devicetree for Pine64 PineTab2")
-Cc: stable@vger.kernel.org
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
-Signed-off-by: Diederik de Haas <diederik@cknow-tech.com>
----
-Changes since v1:
-- Added Fixes tag (Dragan)
-- Added R-b tag
+Always compile v4l2-compliance from the git repo https://git.linuxtv.org/v4l-utils.git/
+1.31 is old, and it is important to test with the latest version since it will be kept
+in sync with the head of the media-committers git repo.
 
- arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> i can see below log
+> 
+> info: checking v4l2_query_ext_ctrl of control 'HEVC Decode Mode' (0x00a40a95)
+> info: checking v4l2_query_ext_ctrl of control 'HEVC Start Code' (0x00a40a96)
+> info: checking v4l2_query_ext_ctrl of control 'HEVC Entry Point Offsets' (0x00a40a97)
+> info: checking v4l2_query_ext_ctrl of control 'AV1 Sequence Parameters' (0x00a40af4)
+> info: checking v4l2_query_ext_ctrl of control 'AV1 Tile Group Entry' (0x00a40af5)
+> info: checking v4l2_query_ext_ctrl of control 'AV1 Frame Parameters' (0x00a40af6)
+> info: checking v4l2_query_ext_ctrl of control 'AV1 Film Grain' (0x00a40af9)
+> test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+> test VIDIOC_QUERYCTRL: OK
+> info: checking control 'Stateless Codec Controls' (0x00a40001)
+> info: checking control 'H264 Decode Mode' (0x00a40900)
+> info: checking control 'H264 Start Code' (0x00a40901)
+> info: checking control 'HEVC Decode Mode' (0x00a40a95)
+> info: checking control 'HEVC Start Code' (0x00a40a96)
+> test VIDIOC_G/S_CTRL: OK
+> info: checking extended control 'Stateless Codec Controls' (0x00a40001)
+> info: VIDIOC_TRY_EXT_CTRLS1 on node:
+> *fail: v4l2-test-controls.cpp(971): invalid error index read only control*
+> 
+> AV1 Sequence Parameters test is passing(this is where api has our patch invoked).
+> 
+> std_init_compound() is assigning profile 0 with bit depth 8, which is acceptable as per specification.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
-index d0e38412d56a..08bf40de17ea 100644
---- a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
-@@ -789,7 +789,7 @@ &pmu_io_domains {
- 	vccio1-supply = <&vccio_acodec>;
- 	vccio2-supply = <&vcc_1v8>;
- 	vccio3-supply = <&vccio_sd>;
--	vccio4-supply = <&vcc_1v8>;
-+	vccio4-supply = <&vcca1v8_pmu>;
- 	vccio5-supply = <&vcc_1v8>;
- 	vccio6-supply = <&vcc1v8_dvp>;
- 	vccio7-supply = <&vcc_3v3>;
--- 
-2.51.0
+Testing with visl and v4l2-compliance -E --verbose gives me:
 
+test VIDIOC_G/S_CTRL: OK
+info: checking extended control 'Stateless Codec Controls' (0x00a40001)
+info: checking extended control 'H264 Decode Mode' (0x00a40900)
+info: checking extended control 'H264 Start Code' (0x00a40901)
+info: checking extended control 'H264 Sequence Parameter Set' (0x00a40902)
+info: checking extended control 'H264 Picture Parameter Set' (0x00a40903)
+info: checking extended control 'H264 Scaling Matrix' (0x00a40904)
+info: checking extended control 'H264 Prediction Weight Table' (0x00a40905)
+info: checking extended control 'H264 Slice Parameters' (0x00a40906)
+info: checking extended control 'H264 Decode Parameters' (0x00a40907)
+info: checking extended control 'FWHT Stateless Parameters' (0x00a40964)
+info: checking extended control 'VP8 Frame Parameters' (0x00a409c8)
+info: checking extended control 'MPEG-2 Sequence Header' (0x00a409dc)
+info: checking extended control 'MPEG-2 Picture Header' (0x00a409dd)
+info: checking extended control 'MPEG-2 Quantisation Matrices' (0x00a409de)
+info: checking extended control 'VP9 Frame Decode Parameters' (0x00a40a2c)
+info: checking extended control 'VP9 Probabilities Updates' (0x00a40a2d)
+info: checking extended control 'HEVC Sequence Parameter Set' (0x00a40a90)
+info: checking extended control 'HEVC Picture Parameter Set' (0x00a40a91)
+info: checking extended control 'HEVC Slice Parameters' (0x00a40a92)
+info: checking extended control 'HEVC Scaling Matrix' (0x00a40a93)
+info: checking extended control 'HEVC Decode Parameters' (0x00a40a94)
+info: checking extended control 'HEVC Decode Mode' (0x00a40a95)
+info: checking extended control 'HEVC Start Code' (0x00a40a96)
+info: checking extended control 'HEVC Entry Point Offsets' (0x00a40a97)
+info: checking extended control 'AV1 Sequence Parameters' (0x00a40af4)
+fail: v4l2-test-controls.cpp(939): try_ext_ctrls returned an error (22)
+
+Debugging a bit in validate_av1_sequence() shows it fails here:
+
+        /* 4. Profile-specific rules */
+        switch (s->seq_profile) {
+        case 0:
+                /* Profile 0: only 8/10-bit, subsampling=4:2:0 (sx=1, sy=1) */
+                if (s->bit_depth != 8 && s->bit_depth != 10)
+                        return -EINVAL;
+                if (!(sx && sy))
+                        return -EINVAL;
+		^^^^^^^^^^^^^^^^ This is the test that fails the validation
+                break;
+
+Regards,
+
+	Hans
 
