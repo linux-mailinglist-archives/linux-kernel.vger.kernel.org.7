@@ -1,175 +1,145 @@
-Return-Path: <linux-kernel+bounces-872768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B3FC11FE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:24:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABB7C11FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5B13AF1A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3283A67C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9919632D438;
-	Mon, 27 Oct 2025 23:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9004032A3C1;
+	Mon, 27 Oct 2025 23:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y7H62rYD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ux06wiQM"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E462BF013
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DBA32D0D8
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607265; cv=none; b=g6vCKPoWk4GgUSO4leZaabOe+k6+6XAHDmTA4LVapKY3sUVMmd5p2hw6tZAgtjlO02HBL4tEMX639OaWt3mHfOECDspgXmktfuibaKpkJW8owznQcZY/k5dMl9lFT3l5MPwyYFaBNTQ8yo3hOMfeAz4mAB30wAHpxexkOsix3yU=
+	t=1761607332; cv=none; b=OsWUhlREac8WjeWfMjMt/MvpLsue1lZIYTLsJ5jNi7CbTO9S7lwvQRqZvsy4/ap/xTYdVKk3mgiR+rR19kStJ5yCX/vXLzUy2UCGACgnk8lAt/+PE3pn9NcbJbSwRAaWAOT5Ai5r7nRbito7WXJyv3U8GUglerFM5t74VG2vgZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607265; c=relaxed/simple;
-	bh=9Z1tsm5WzfAjfglpCW3jAH/SXzxrfkpCJID/buJJ9sY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b4bRXBYnaOx17PoUBKYtTv5AjLo5Ko3vAuVulvbx/U7/M5nREs8PTX/2bhZcpyxen9iwahDSFds7y7efVOKlcgx3Lur5F6ikLkJRNtZhokU/1Rtq0vnqGhTh2RTT/u8+dOQooX0Bups9hkzD1c+WiswSP+LZkgkZ9HDcqXvrvEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y7H62rYD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761607261; x=1793143261;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=9Z1tsm5WzfAjfglpCW3jAH/SXzxrfkpCJID/buJJ9sY=;
-  b=Y7H62rYDMwkLJMcON1+UBIE7aqf/pzhVsmll7toc2QAfW8ISBQi8DKwv
-   Oon3nqN4q/ulciPZ71fn6bR4STTX+s9MkRhJ35EKzUgwXaEneS2RS2ZYD
-   1kPtNpcbU6r8vZDRbsXrem1G98jBs9KNELjS21JSLAffQqiQuEA7Ph4of
-   ez14w7dt2Vb3mZpUWGh5800Y0ulieW7NnnejovgMaO+JR1JBcXr80sKFq
-   x6Fytz+evFLgI6BjJv7be5qMPTw/hve/mjjtcpay4hCyvF5uFzI+jyjVf
-   5GjeNu3iSuXY1clt+nNvYeKJ2Dkyp2K8loicF9Gb3JfZKubiNI5CaJeoc
-   A==;
-X-CSE-ConnectionGUID: HQpWCkJDRDiQtToKrMgCVw==
-X-CSE-MsgGUID: yxKHOlfBT32yDHjNRDarPQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75144186"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="75144186"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:19:18 -0700
-X-CSE-ConnectionGUID: htdw4M5qQP+yDp6ipJ+34A==
-X-CSE-MsgGUID: EpPcvYSES0Kobx1z3X7KUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="185941647"
-Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 16:19:17 -0700
-Message-ID: <c81fd23152d07775dc0482353a01ca6b56f20f85.camel@linux.intel.com>
-Subject: Re: [PATCH 09/19] sched/fair: Count tasks prefering each LLC in a
- sched group
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra	
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Gautham R .
- Shenoy"	 <gautham.shenoy@amd.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
- <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
- <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
- <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
- <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
- <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Chen Yu	
- <yu.c.chen@intel.com>, Libo Chen <libo.chen@oracle.com>, Adam Li	
- <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 27 Oct 2025 16:19:17 -0700
-In-Reply-To: <aa850892-b172-449d-ae81-d974bb7f4a96@amd.com>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
-	 <00e5f2cb6eadc3738e33858d3c4563a0775ee1c0.1760206683.git.tim.c.chen@linux.intel.com>
-	 <aa850892-b172-449d-ae81-d974bb7f4a96@amd.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761607332; c=relaxed/simple;
+	bh=P7ysm4/FJD4mR6EucRcT1c5Y9QYG15DBwqirU3YA+CU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CHkbWpyr1DSHepA+WRbvH53qBdfU48Btw9w8GGqckwwKfj4XnaJZBIKmwvmyCoj7M+TOfOlDrHPRMEjt8/SNBK6k5cmnZVd5lvGCfafpaa8VWP4ycrxhBPepKreMQA7fYAVYVVP1/8AqUvrTIVpj3Lu/gk/AAguqMNM9DfhvSwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ux06wiQM; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27ee41e0798so75273955ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761607330; x=1762212130; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iiPQWeIHeevsOV0YNnrSX+B9LNP43U3Api7ejFSH8cQ=;
+        b=Ux06wiQMhR90R7GZzc6ZESmOZG04sDLPUxaS4AUbGNgHfP9FNgWI4K/Cgnfer83yL+
+         3u/rWp29WSs2Y21ZTsf5yYMurgrBul22soGUjPAFI5+XmWStkD+OOAxFZzHNErfvWQh4
+         CYhq/C+ubgGBoiSOa2x3OJ0o4e6Ls7l5UgwwqWSGWiIrV5Zu/27aUQjUtP8BJFW9GZ4E
+         XLQlOFE7sTqCmMf+kIduyAXUw5oZElhYKTrSTtxiNNstk836PDxZ+pp8myWSQ1u9dbla
+         kQkEnlLgp2ScHBXssg/IwoPGprMe6nFvbamzG1bz4tzSdz0nKPHKKqVLMdwGrWr7quBL
+         UvXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761607330; x=1762212130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iiPQWeIHeevsOV0YNnrSX+B9LNP43U3Api7ejFSH8cQ=;
+        b=vHpCdbTfooYoGQ5+cwm+VhqlIDq9CQVb6J0Vs6815pV0NFZg4+YvxuMmpKuC1En2yX
+         n+genIaegKE++OJ48iFPAW7vKMW0LKZnb6tHCCIPVg0HoVMXwi5Eh7nIL8bMkz2QgGJ7
+         eeWoIl6l+/hUH7lcpvAt64tgmuP3/0RsUBFIVYzQ6MKiZZIzqtKzD2PctDsy/JEbhrPr
+         cKQdq2nH5lSVoCmYWfyOEq9xXS4+dO1J7RDfX2x5GO+cfsQ1Fba/19PZVMPnN79Fm/hH
+         +xBqPdWRhZKUUbcp3BdUzFfrX6zNae+Xl5Doiqq+9s6XD31zBDTlmX4brN/+xsjzVa7r
+         X0Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeclO+K1RYPWytTT09rnW9KdWTtt74kjwkOHJf5gl/dkLzHEsNSaTJ4Isfdxqa8HvOQJFRlliShSCOMMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0FXCwPp42ykq+o8RIE6RBWep8htAgmr4jcC7+Abpb9+1cBeJG
+	9wuSmMLuIakVpNYN8nwxBNyYKPMrJHqxVtFiWOAVotSYIqMQTJaC5cf4ZNGnmwmLAOPZQX9AeSs
+	Vw8t7/8yfwwctmTerpIi0B84kqNr4rEeSlWrAyRNI
+X-Gm-Gg: ASbGncvWKgu0CU3sAvrcCTDwrPw4LaKtkJ48IC/v0NJB36Y+KmWlcEeZ/kqyvyGbhkn
+	anPJhQWWMbWFEok/92LVYLb0EVPeap8gYAE59B+caDnp/bXBokvkMlql1cVyRstOV0nYUegUHL3
+	lIuLLDfRLeNRojIwCAnxkTqrAsEruiV5XTRo/0OK5ey5vrSQN6X8asXElmioxfePqxxiaEGZdjY
+	bMNrk8Wtkoo+Gml40FdXRUHpS3d9lWhecmNbZ74aU3LCs/h30s8a4GvMmFojWg9CkIAoI0lRNWo
+	BXC53XpZ2ogNRMwDOg==
+X-Google-Smtp-Source: AGHT+IFw/jdLBZAkI7aI48cv68geMt8046dhZdRqyhbPorbEN5vUOHFP9Zbu6h+jTvEqQPeotPAALO6GhBMyaapG0Vg=
+X-Received: by 2002:a17:902:f609:b0:290:ad27:c1fc with SMTP id
+ d9443c01a7336-294cb6893fcmr16828025ad.55.1761607329339; Mon, 27 Oct 2025
+ 16:22:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251017235159.2417576-1-royluo@google.com> <20251017235159.2417576-2-royluo@google.com>
+ <20251023-collie-of-impossible-plenty-fc9382@kuoka> <CA+zupgwQTLEs8_7i-VsGbGV7O2Y3XFA1C3aV7iuv2HLOwKns3w@mail.gmail.com>
+ <8e4c8875-10bc-4f4c-a675-a7cefc68c863@kernel.org>
+In-Reply-To: <8e4c8875-10bc-4f4c-a675-a7cefc68c863@kernel.org>
+From: Roy Luo <royluo@google.com>
+Date: Mon, 27 Oct 2025 16:21:32 -0700
+X-Gm-Features: AWmQ_bnZfP-h63jIJfnjGht1z_4tHKDRepUQGmMIkJ_dLhOGQfclonH0qtun2RU
+Message-ID: <CA+zupgzzkX2CEicrLaW7oGB08qNVqF=5Jpfgcw5HWS1kDW72qg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-10-27 at 14:03 +0530, K Prateek Nayak wrote:
-> Hello Tim,
->=20
-> On 10/11/2025 11:54 PM, Tim Chen wrote:
-> > +#ifdef CONFIG_SCHED_CACHE
-> > +		if (sched_cache_enabled()) {
-> > +			int j;
-> > +
-> > +			for (j =3D 0; j < max_llcs; ++j)
-> > +				sgs->nr_pref_llc[j] +=3D rq->nr_pref_llc[j];
-> > +		}
-> > +#endif
->=20
-> If I'm not mistaken, we only compare
-> "sds->nr_pref_llc[llc_idx(env->dst_cpu)]"
-> and the destination LLC is always fixes. Do we need to aggregate the
-> data for all the LLCs? Is a single "nr_pref_llc_dest" enough?
+On Mon, Oct 27, 2025 at 7:02=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 24/10/2025 00:22, Roy Luo wrote:
+> >>> +
+> >>> +  clocks:
+> >>> +    items:
+> >>> +      - description: USB2 PHY clock.
+> >>> +      - description: USB2 PHY APB clock.
+> >>> +
+> >>> +  clock-names:
+> >>> +    items:
+> >>> +      - const: usb2_phy
+> >>
+> >> core
+> >>
+> >>> +      - const: u2phy_apb
+> >>
+> >> apb
+> >>
+> >
+> > Just to provide the full context, these two clocks/resets
+> > (usb2_phy and u2phy_apb) are specifically for eUSB2 PHY.
+> > USB3/DP combo PHY has its own clock/reset that hasn't
+> > been added yet, we would have to differentiate them once
+>
+> That's confusing a bit. You must add all clocks, all resets, all power
+> domains, all pins etc. Bindings are supposed to be complete, see writing
+> bindings doc.
+>
+>
+> Best regards,
+> Krzysztof
 
-Yes. Only the nr_pref_llc entry corresponding to the destination
-LLC is going to be used later to find either the LLC or run queue
-to be chosen for balancing.  We can skip accounting for the other LLCs and =
-save
-some memory here.
+Ok found this in the writing binding doc:
+"DO attempt to make bindings complete even if a driver doesn=E2=80=99t
+support some features. For example, if a device has an interrupt,
+then include the =E2=80=98interrupts=E2=80=99 property even if the driver i=
+s only
+polled mode."
 
-Tim
+I will add all the clocks and resets inclusive of usb3 in the
+next version.
 
->=20
-> >  		/*
-> >  		 * No need to call idle_cpu() if nr_running is not 0
-> >  		 */
+Thanks,
+Roy Luo
 
