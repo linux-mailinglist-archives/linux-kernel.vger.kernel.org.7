@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-871026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19ED9C0C422
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:14:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859A1C0C43E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 909F0348D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:14:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 39F9634A7C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCBA2E7BBA;
-	Mon, 27 Oct 2025 08:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F032E7645;
+	Mon, 27 Oct 2025 08:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjY2ucJk"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wYafJsDS"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080F12E7192
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE11946DA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761552855; cv=none; b=ISeUxSOxoAOMREdLIyxweDcDR+gaCeCUujaRHROcpehzWpV04NYpqhY2rsgeBXTyTMUuhohuxXjkCBx069vXsNq0JkaELkQQ5ppDbCbvi3/ToQ+o4EaXtMy5KHJG4EEPZqgM563cGbVDiO+Imxx0vqlNU0QKB3dnE9KlLFCttqY=
+	t=1761552946; cv=none; b=Vm39yZWhWKiP4fhW7scKWM/7RPuYKW+d1ILAKI/I/r9A7tPwObwtLNU662eb2XbbdbuuHzV/pndIgvDz8z9MiX7M9nU7QpGW5iouxPzMVB/Eo3BcbWoSKGFmw0reINMo7itYQn9io0kAf/3yupOvkbPj8FbwCdF0kD6ObFCKnzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761552855; c=relaxed/simple;
-	bh=etqLAq7gFst0cSiu6SvH9Ue38STXBB7ceWx2V9z48vY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpOE2vcWw3rWH6qQp0Ru5G/8VFD7L/buzJYlA3j6LptsC1QNKJ07rayGNZjBwacRMdo8EEJLMJ9Eg+x3bjQuIDN3qLWJ+gbqRIs09QrYczB0TfXjVnHL7lfGFgZieJ4ZXf0/vCjoaxRUmZjmc7+VoCdf++xuvxAXb0yZBOUzYT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjY2ucJk; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42557c5cedcso2885407f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:14:13 -0700 (PDT)
+	s=arc-20240116; t=1761552946; c=relaxed/simple;
+	bh=WwKDAtuQ20D01jVdtRfvMGKLaalNFcjLEA1dkVK4nu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Easrzb0E5SNiKVDH64hErVxpTcNO/9yMMjgHqpNFVGEuwEPo5DUti48YCIJrt+/KKUfaRhKcBMgMg4lkWh7KE1fylQeFZdjte6hhYW0Gu71b0TJM9a84aeyO+xh8ssD6y2sRPI1M+B36OgwugaRxadaDKjnpZyoWA6eTAY4cfNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wYafJsDS; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47710acf715so3902965e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761552852; x=1762157652; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761552942; x=1762157742; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSHu/ivuk7OTgOMQRpfxc8sNj6kHssvRHTUG1SNhELU=;
-        b=ZjY2ucJknPEr5TZb0i7UYyZcYgeYNPXQGodRT4eu7TGRopOFA0AWlOi8AVTlsaTB4o
-         V2RiziNFJwmQOHqu1DwDye9JY9Jukubo2DeawpB5RC7yMIFvTk9SUiK47mkLMCn9/Bn7
-         aSyybIFMzED2MSXcW6DjGc2M8cm0cOgh7bJGKFQ9vRUMjvXHbEKjsfgFNAAXLhlPbFBy
-         FBd5+zsZEIVyWGdOm9L4ArbqSSK7BXt/AXIY9vurTR+CxEZGXJWkK1RgxYhlOInayRe0
-         B9lrUw+NEMnqy431MnKpYrJVoU6Ezg7Tywuhq10ai6iTTmip3Ce4JKcFiqMSqgR8yvhS
-         pgug==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1VCBeTLhApGGiqkKyRfbUgLkYILC1Vq+3fS3KeJIjhg=;
+        b=wYafJsDSV92CJvQavoZNvekebvfzD9WTLdm2D7FuRY3r6li+BWhqpWFUvKWO4aVCCt
+         3/1zfmRM86NWta6cMcxa+9R0+DUNPdmhTYSnFZksSmfYyUVbWUjK61dORA2Y5HlhWCa7
+         je/gtyM2BdcfffIsi7pIsb6pYwjpI2Pi8OBfW8PJA4XUCErqxome+PR8xPLi/NSbQkVm
+         vl9zizyAmBT0J1PrY2+4j1QE4XYlMehsvp2V+x0eVYU8m2AuwYY1JKwTKzjXLBZ+YcO8
+         d+WIV2wQM8M6hG9ZgGDE/j8vHDsX1DDFK90jSzYymsKZ9oUPqM0gerpOtYUOkbE/fay4
+         HDBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761552852; x=1762157652;
+        d=1e100.net; s=20230601; t=1761552942; x=1762157742;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LSHu/ivuk7OTgOMQRpfxc8sNj6kHssvRHTUG1SNhELU=;
-        b=u8KGuRWwF5uqXBkTXdx9rTlGrlhwo3pVlvvkv4TlnFNAOLX4nNgKBnUoA0/TxNbZXJ
-         H7ebwLWS9fWIblPoUg8SH7nBioOeopDCxH/gBpNetj1D2jG56Nw8fq8fx3ZRJwQW5SbE
-         cd/UxKE7ra9PbnJpGfc0p+DkfgCspNZTWhjeZIJv0s+LH6uS8vn1eCdjvqUXXWW8cwXK
-         g2BECm7hEmY2jigeiJaeLpVa8tM50GtFDq9z2g8JretKpZUJk0deGENr16o7hnO8CPgj
-         cwzs906MFyNS1nJoOnO6WY1CG3iSUIqmBtWQPU+i0X9B9kQcGNHOzChHjhyZE2MpavhI
-         ylEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMEvchQ/KQhNxogXGNyuoMfMji8LaYONrZzUdqZBaljtwTucKhzznjr/YrpTvUnICLjr9zXs4k3j2z89o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6fGfA5IDXp8C5I1wjS/j6H+uDcbJh9W/fxCScXw3r36XlWpuu
-	X7Qb7eorXhIICyM2cs8PDI6ALvnwUOOFFqVqKqgYEbpgEPlVYSUc0SNy
-X-Gm-Gg: ASbGnctpSOQKlMbdoZBpqF8C6rM9+C+llnQoWHyLdE7pmRLJo/LDPGNExlTz2CMauKk
-	6/RHNOuyJ47mlFKqZZ+aEyJps/EmXG03GgHlIiZdmX1iyCtPEh5UeHH30ad99lEupMAQthEYOL7
-	YqWNzrqcUdEW2lBAoxxWu/Avsv2tM16Rvg4yifjBGal37iOPpK2O4sPCy8ojqXaSE19tvdq5MLy
-	pTJG8UqI+R9Lkyj/txf/RnjeE1kEE6Qi205vYWXe350siT1RPDOO5RohO6xE1GqyzBwnzkhO1o3
-	PWrCORRJMpbLHSuVcikZQtvKyOScVbfYEHeKIIza4U2DAvNU8kVBQyCbT9W3U/yFiTObYqC3lpd
-	bEG+3DvvOmYwvHRQtjl4AYCOrH+vlXriVLjt9PbFESizYg1NLChdBk2pe0Sv82DhSYAgariE=
-X-Google-Smtp-Source: AGHT+IFFKQfLGx2QdYO29wjJqWg+dPw9x5/f0UKf4PSXFO3HYbVj3gV1HeTpZudQpFAVTpuMJ53ygg==
-X-Received: by 2002:a05:6000:4a09:b0:427:62b:7f3 with SMTP id ffacd0b85a97d-427062b07f9mr28406369f8f.33.1761552852032;
-        Mon, 27 Oct 2025 01:14:12 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::b44f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d5768sm13058047f8f.24.2025.10.27.01.14.10
+        bh=1VCBeTLhApGGiqkKyRfbUgLkYILC1Vq+3fS3KeJIjhg=;
+        b=fE358/cTqnfq+X3I/e9Li/VqZOZYPMO46pI6kQo60amwamwP9gBOyhG/sXcoTMG1d9
+         l5VbF1HT/UGU6cPE0eq4SZzhqTuPatWoBo7qnaEzqvaDRGjblGcgJpBobAYEvOcLa29I
+         1zY+53ivVRmy7TZl8ynrqQM9ziDBcPFeEPBe3fmnsH3yTm26p8vohGxoJgSH4q/7Azi/
+         VsrK/+JpGXlr+L8fcMMtYH3jlaFizkgMblr1qIJOzoMzZ5xmxbXx83Inq2m8jfIoFYkh
+         frJKGjln6RNYhHsshILWQL+OOxXD4yllLTNirso6mvGFBDCndqgMEQ5lsIgvTrDbbfd3
+         M+NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSvUlkyf74hw1c+jGNQYO3aTW79T7mjpCI53yuHP58KfYdAR3/Tl6Ijho/JhDq9Od7P/hFdxbnwQnYVVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvKZ4OXnNv0OOVJZCKeYKBOfIqWgmTRKof2UE15DC7wvzBNJOx
+	sGO2CHpDu7wSDn1APPm3CmRX6+12jbAHHjOmmlgzQuaWZ1AKjBofEgpUxrlLqqGTv1U=
+X-Gm-Gg: ASbGncu1YnAoLWZgcct0qpWE1agpXvFxRv1MZXd0a8+rS29EZgdsgVTqSqmm4jA+HRa
+	Pcai19LgFjj++RyOV8de9z9uHssxtLA/IfSM9nH4hbuj05TBUcSV7kkhkz1hg7SiVoackdEAk2q
+	PNOOXblBCGCpczCKwBk11x1Z5eoH9ZYhYG5fXIIt0IVOh7xnyQtqsfIfeK2MC/fhZ85xc0i/bQV
+	jdAc3f2hkx6y0ArmsM2oP8JTr/gTj+D1CWziBnCBCAaFdJBWDPqNgpD/iILqVuwN3kOchuPjpm8
+	LMGQZL73k1ORWXFFCKkkKmQ14e3bcTXCUs9Df9zqla4cMcpaMTEOApjp2njDBRD1M/FLJ81Qk82
+	kAgdPYFyFAE7jDuS5fU5HtYfeMdDAcce/QckE4ik0UZ0JjQKb+JT5omRJczXYIjvHgwVAbyMYjE
+	kpUCOw4DEx5Cecb2/7
+X-Google-Smtp-Source: AGHT+IGIWZ+lmA7GDak4870XTiv3Yj8BU4Bmg1GQHYPOkEGe2jc+lTeJlZIP+IYjxTa6CteNWBl2Dw==
+X-Received: by 2002:a05:600c:548a:b0:471:ff3:7514 with SMTP id 5b1f17b1804b1-47117877736mr281675505e9.12.1761552942082;
+        Mon, 27 Oct 2025 01:15:42 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475dd4a36easm122063665e9.10.2025.10.27.01.15.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 01:14:11 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 27 Oct 2025 09:14:09 +0100
-To: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, llvm@lists.linux.dev, khalid@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Jiri Olsa <olsajiri@gmail.com>, sam@gentoo.org
-Subject: Re: [PATCH v2] selftests/seccomp: fix pointer type mismatch in
- UPROBE test
-Message-ID: <aP8p0Td0LLa6Odit@krava>
-References: <aP0-k3vlEEWNUtF8@krava>
- <20251026091232.166638-2-nirbhay.lkd@gmail.com>
+        Mon, 27 Oct 2025 01:15:41 -0700 (PDT)
+Date: Mon, 27 Oct 2025 11:15:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
+Cc: sudip.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
+	gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: sm750fb: make g_fbmode0 an array of const
+ pointers
+Message-ID: <aP8qKZkEA0FUkaYC@stanley.mountain>
+References: <20251026233432.1707-1-cristiandelgobbo87@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,52 +90,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251026091232.166638-2-nirbhay.lkd@gmail.com>
+In-Reply-To: <20251026233432.1707-1-cristiandelgobbo87@gmail.com>
 
-On Sun, Oct 26, 2025 at 02:42:33PM +0530, Nirbhay Sharma wrote:
-> Fix compilation error in UPROBE_setup caused by pointer type mismatch
-> in the ternary expression when compiled with -fcf-protection. The
-> probed_uprobe function pointer has the __attribute__((nocf_check))
-> attribute, which causes the conditional operator to fail when combined
-> with the regular probed_uretprobe function pointer:
+On Mon, Oct 27, 2025 at 12:34:32AM +0100, Cristian Del Gobbo wrote:
+> Change g_fbmode0 from 'static const char *' to 'static const char * const'
+> so that both the array and its elements are const. This addresses a
+> checkpatch warning and matches intended usage.
 > 
->   seccomp_bpf.c:5175:74: error: pointer type mismatch in conditional
->   expression [-Wincompatible-pointer-types]
+> No functional change intended.
 > 
-> Cast both function pointers to 'const void *' to match the expected
-> parameter type of get_uprobe_offset(), resolving the type mismatch
-> while preserving the function selection logic.
-> 
-> This error appears with compilers that enable Control Flow Integrity
-> (CFI) protection via -fcf-protection, such as Clang 19.1.2 (default
-> on Fedora).
-> 
-> Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-
-Reviwed-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
-
+> Signed-off-by: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
 > ---
->  tools/testing/selftests/seccomp/seccomp_bpf.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/staging/sm750fb/sm750.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> index 874f17763536..e13ffe18ef95 100644
-> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> @@ -5172,7 +5172,8 @@ FIXTURE_SETUP(UPROBE)
->  		ASSERT_GE(bit, 0);
->  	}
->  
-> -	offset = get_uprobe_offset(variant->uretprobe ? probed_uretprobe : probed_uprobe);
-> +	offset = get_uprobe_offset(variant->uretprobe ?
-> +		(const void *)probed_uretprobe : (const void *)probed_uprobe);
->  	ASSERT_GE(offset, 0);
->  
->  	if (variant->uretprobe)
-> -- 
-> 2.48.1
-> 
+> diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+> index 3659af7e519d..ceb89ee99ce0 100644
+> --- a/drivers/staging/sm750fb/sm750.c
+> +++ b/drivers/staging/sm750fb/sm750.c
+> @@ -33,7 +33,7 @@
+>  static int g_hwcursor = 1;
+>  static int g_noaccel;
+>  static int g_nomtrr;
+> -static const char *g_fbmode[] = {NULL, NULL};
+> +static const char * const g_fbmode[] = {NULL, NULL};
+
+This breaks the build.  Please, at least try compiling your patches.
+
+regards,
+dan carpenter
+
+
 
