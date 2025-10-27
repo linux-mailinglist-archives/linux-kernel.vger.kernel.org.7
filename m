@@ -1,193 +1,167 @@
-Return-Path: <linux-kernel+bounces-871932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471D8C0EE30
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6DDC0EE4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AFD460204
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2523A516C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951E2302772;
-	Mon, 27 Oct 2025 15:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FF03019A3;
+	Mon, 27 Oct 2025 15:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="io+ZDnGE"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtT8YkLa"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424742566DD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11890749C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577681; cv=none; b=pKH5/TIbdkGKPumiYUmjxPMST1ykC+tWtOXuIyEBX/ljmIlVkCmVCPMhQKqM2vozB5d1lSLOlpoiWbKcaD0JrrynnLtFvV3VtuCsGOqHvWBJ19THDWs9X28iXovpwaWiVMm8WhpBKHshB8YTLPM8ZFSc6+f4mkfgxBlVjujjbpQ=
+	t=1761577738; cv=none; b=qlAW5YN46g5nx7Z05OARBsZd6DZbj2m3xjkNysc+hzHHYqzvldE8aWEMTY5OMDDGt1sNQlW6esYzIumXvvoIbrURSyIeRc15nkK7xFAS49wBG2hFhWn5zgTInAccYm+XNI4eQUVtFBcQ0/EI7TyhNZY28LS0mE+15gzN8mmg5D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577681; c=relaxed/simple;
-	bh=Hj0l0j5fI+kXzEXNngd9fmM+TUubJmytvIAHFMvoWdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IkG6fKrzYOBaOp0EIvP8ToG/6iARf6GFKowk4EqumuA563BjUjIYLG3xNzVLQ6294W8MtFlTb7YXUrsAEcAF6uzgmWd0aoMgbrRYPtmKcX97nw12GsUf0f8USSRizr7cgJinZmFmNXn1mmJIGFjSpfJMbbKqaw01whUUiii/I1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=io+ZDnGE; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ea12242d2eso724331cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:07:59 -0700 (PDT)
+	s=arc-20240116; t=1761577738; c=relaxed/simple;
+	bh=E6TanHOEWRAN+pm6bYT8hZApuV50k09I3qBAuiVZgYY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cgxBbEvzu+ikl9bsAplB5nzF+OVMST+Kf46OikY8xjCfi94NMbSHddVRdCBhiaAUS6BuUCEKEpzWhivhXqhf1dV9DjtaJu6qewJAIEcJk2JTPi+6SFQwc9jHkthJsLT2pKA7vnd0wWBVTOMM3XlmtEF9ybUMU9J/gp4foI1SfcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtT8YkLa; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-26a0a694ea8so34160625ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:08:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761577679; x=1762182479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VFmNRNpiYRbSyKjivx5b46rxwRPMOYECqNZ5ldemnk4=;
-        b=io+ZDnGE8DzB6jBf8IrNiggYJVzU+ivn0hd8no3mx0BSFH6yjcRj7JouWB9s8xRAKQ
-         C/YzB0yf2pSHtm3Jj03nChPY3fxE0JiLvTWhywi2VgAGNfp0dWeLu3RqKmTMebGIx11K
-         mT7VqaadNwiib9D3CSkTbAEqXMQq7fYeUBYFCm1vJ/ry7jOKFqJC52CXdB3pg7LSmr4f
-         KAxLxH+MG7KutQTSuDnNwL+CAf2dCYo1n7nhvdlRx+zXlWUlFPqWQo7WAA4rDyjV8bpC
-         8D72pbUMWY+Vn0qZM9ZkPwlA/JixPDU4ZclKLHnhXyg2fFhHWnGj/7X9jlTnUIRHckCs
-         TKrw==
+        d=gmail.com; s=20230601; t=1761577736; x=1762182536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWC5gkPdxGSTgxFMIx5rrToJ8P8ezVw3vUIN7VkwkFM=;
+        b=mtT8YkLaF20/D627XKTVaexicqyuPSry97S638w8M3Pv6rEIFZb52oEHUiI97c1cS2
+         gzkRyuVa5qhodO48bqXGfRmN40FNV7+OUZeeKs5Uku+5sTjSeGHXeFnbnKsQS11MLYCm
+         LM4/neskhqzXvSDnUdWRKs46yz/glsqfd5WdH1nuRvt16KGgpRc9JUbi7jD7VsMOUMP5
+         XOLXY+2TVyrKcpuBe516tYlVF/fsQjxflUe/4OR6aVtINDLrlDZbjYGIATpqD5MHZjIB
+         fgCr9VnHMAO4CJ0K6uq0riu812ZaXAd2dpzjsAl839oyme0old1ZTHQSu7gKZutQ0pcK
+         K1TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761577679; x=1762182479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VFmNRNpiYRbSyKjivx5b46rxwRPMOYECqNZ5ldemnk4=;
-        b=s28MpR6K0LA8qaC0wsm/qZgekZyl/sZUbAxerWomY/W3hlE9Vgq+vsCFsFQPWLp0CL
-         G+kjEBrR8jASHmfWedhcvLxbVLFYxdQH/G7ykrWTnjLALot0jf494D9rhnPkdfTKHGTm
-         W4NZKOmApGzDiWdzNfCyC56AjMANNKzBpxJiHG8sCmXRt8X72aM5EnxE0SnMdTXreeSP
-         Hu1UI+fbASiRZ3W3f75rsdzFvizPTHtpGXn+4nuIyayE/Ioxw3dn9SFQhLKyO3O+/y1i
-         WcJy2TgWSERXwypPbS+IZ+p5TUE7rQFAoYYvoFuIg6JYeGfE1ifOPYv+6J4CXaUh4Qu4
-         Q/Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5edg18aBinLXbDvPhnPdZ9PP1sGvpBZIaaVXs6gNTTAUh0zC9Vnb93hTxz1za8EGw6WaT9Eyt4d2ByVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSgMShLlBHg6oGNjvFTxT1IiT0C52e0mxk5Tn4LeetDN8+EHES
-	GT8168WYQapNRaRjbCW+vQ1y0WBze4tkkdQotrEWWHDVww2bORQuLvsADqcCS7+vnDLux3rFkkb
-	R34s2uo9+gVj1CVCuOqijg/X4Z+Oxga+kbY2VoEBA
-X-Gm-Gg: ASbGnctUxnEkvyvf/6EWbb7i5UF4iO6T+pGhSKPOPH2QDGCuJ5EQLNLc/U0ImzilrRS
-	a5XhWQ4RYn0mdHOzSuILSL5rh45Qht3VH1KXWn+JrYGDF2UIy6gkibrQYRulFHhZU99aT9yn4np
-	bXooYW05/MrxNMBqgEZyjf03jC1YQVnhH0hSnaYg2q3LP83heRxPdAS0lAkqw7riWT/Z3ZZoXPL
-	PX4Pjx3uu1J/RaTkFAAcKsc51L19T9UgZVhefeE8I76hI+NWVTSCv/X/TVAC3ZbAeNOaKz5NGSk
-	mUsMQWkGlbOrHUPHVQ==
-X-Google-Smtp-Source: AGHT+IE/VRXLeFnFj7efFctBux16bp+sFLD27Fv9XqtJYX3+YZY6I8ih1yzTjHgLLfWUWhd+g5Oo5nCtGKvoCiF7y+A=
-X-Received: by 2002:a05:622a:2b05:b0:4b3:1617:e617 with SMTP id
- d75a77b69052e-4ed06efff0cmr823271cf.11.1761577677167; Mon, 27 Oct 2025
- 08:07:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761577736; x=1762182536;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CWC5gkPdxGSTgxFMIx5rrToJ8P8ezVw3vUIN7VkwkFM=;
+        b=w6td45yAw1OGg1+JxcRNn3SjXdxRXLYA75L6/RAx9lsSitTvATD5xAwwpCLxfzM/IQ
+         kEX1H1HvYx0Bp9UEHngo1qpVL2I0zn8MXVfQiGzbPuZSMWb4ERb+UfQopph8bN0Qukr5
+         ECvDe48DUa8IZVS1077/9SKjchtY7BFOcqXchAnSpF3I4CFwCioQ/F2dkJeD8ecrL/94
+         dEMOYk0/5yfcFWgT4P7y3iF75Hmqpx2LSSk7fCHJ2ZUVEyyxMBm+f1NcDU84084aOuCK
+         Uu39RlgHS3M2K3wLLk8ZWhSEFqs2O4s+HRRZz0B26klxl8yFvvjagIsgWeOltr7Khuhi
+         DS2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWvAC8dQS95hPY99s6cUPEsk1msvdgr7lf6WvihIbsvTob4GBDdURpH3V/fu0I56g5ggPZMdQh2nDZW04Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykwfmmRPTdKJJb/fFXJGE9y9JTDNyUjaVomhXqhgvwB7yEugs5
+	iozsD9bSuS6IFzDqGkysvMI6BzxdiXFmNi3t5JIbGRJecGvp+7gyGvF2
+X-Gm-Gg: ASbGncstY/IO2dedyUehqF25EVQKAb91nwr+gaFHjxEC6GjeYKBml4uUkgn57iMFVm4
+	cuvmwMSFxgrMtdVoKVxUaQweGi1Jhvj+92QKBUaALOAYDiByKpQAzS0eXUxiS8Zg6hWHGL9ecCZ
+	Rs5sz0EGFiHgj+3kvMxABrmZiSLjTNSSoqjcjqJiKaADegYEoF88u21dQy4r70ApyZyq2rraY0k
+	7x6lcxoQ3jo7yDSJmiOL0H+75JiASYxuqwDXN2iMtoWF7It8XWi3qFI6vMQLqbPDGUO702TBRiQ
+	g4fYhrawQ11NFU8BRiqiWRDdWt5a8xg01sKd/YI1qVR2vBK4zGtMH8hadgzj9UcPbOWUEJgIk3n
+	A8hD334y+Cau1IkajiiABA03yfhzAs40UZM2oTxAfsBLYWkfhkajkp8kcfKMvfE+FNyx8PpFeo6
+	g9L1G33MvaAQGAXLDdoiZeEMZIxMYbu/1j
+X-Google-Smtp-Source: AGHT+IFHIscxo7imWnRY5urYdW89HjcRlzIelV1JJZA81YcKKcZ25FMolijoFKaqSlkIM5bdPfTYvw==
+X-Received: by 2002:a17:902:f68b:b0:27e:f1d1:74e0 with SMTP id d9443c01a7336-294cb37a547mr2902695ad.17.1761577736199;
+        Mon, 27 Oct 2025 08:08:56 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498cf358fsm84405955ad.20.2025.10.27.08.08.51
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 08:08:54 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2] s390/mm: Fix memory leak in add_marker() when kvrealloc fails
+Date: Mon, 27 Oct 2025 23:08:38 +0800
+Message-Id: <20251027150838.59571-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAVpQUC7qk_1Dj+fuC-wfesHkUMQhNoVdUY9GXo=vYzmJJ1WdA@mail.gmail.com>
- <20251027141542.3746029-1-wokezhong@tencent.com> <20251027141542.3746029-3-wokezhong@tencent.com>
-In-Reply-To: <20251027141542.3746029-3-wokezhong@tencent.com>
-From: Neal Cardwell <ncardwell@google.com>
-Date: Mon, 27 Oct 2025 11:07:40 -0400
-X-Gm-Features: AWmQ_bm-jSbBd_NCN3Fm-69xCK7y8NSPpwczuYFYDkOIScJKpoudLfKYwGsdrS0
-Message-ID: <CADVnQynj=5GQbwhiFXFe2gWzodH802ijvFk55xgzxLa6ipRoow@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] net/tcp: add packetdrill test for FIN-WAIT-1
- zero-window fix
-To: HaiYang Zhong <wokezhong@gmail.com>
-Cc: kuniyu@google.com, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	wokezhong@tencent.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 10:15=E2=80=AFAM HaiYang Zhong <wokezhong@gmail.com=
-> wrote:
->
-> Move the packetdrill test to the packetdrill directory and shorten
-> the test duration.
->
-> In the previous packetdrill test script, the long duration was due to
-> presenting the entire zero-window probe backoff process. The test has
-> been modified to only observe the first few packets to shorten the test
-> time while still effectively verifying the fix.
->
-> - Moved test to tools/testing/selftests/net/packetdrill/
-> - Reduced test duration from 360+ seconds to under 4 seconds
->
-> Signed-off-by: HaiYang Zhong <wokezhong@tencent.com>
-> ---
->  .../packetdrill/tcp_fin_wait1_zero_window.pkt | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 tools/testing/selftests/net/packetdrill/tcp_fin_wait1=
-_zero_window.pkt
->
-> diff --git a/tools/testing/selftests/net/packetdrill/tcp_fin_wait1_zero_w=
-indow.pkt b/tools/testing/selftests/net/packetdrill/tcp_fin_wait1_zero_wind=
-ow.pkt
-> new file mode 100644
-> index 000000000000..854ede56e7dd
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/packetdrill/tcp_fin_wait1_zero_window.p=
-kt
-> @@ -0,0 +1,34 @@
-> +// Test for permanent FIN-WAIT-1 state with continuous zero-window adver=
-tisements
-> +// Author: HaiYang Zhong <wokezhong@tencent.com>
-> +
-> +
-> +0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 3
-> +0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) =3D 0
-> +0.000 bind(3, ..., ...) =3D 0
-> +0.000 listen(3, 1) =3D 0
-> +
-> +0.100 < S 0:0(0) win 65535 <mss 1460>
-> +0.100 > S. 0:0(0) ack 1 <mss 1460>
-> +0.100 < . 1:1(0) ack 1 win 65535
-> +0.100 accept(3, ..., ...) =3D 4
-> +
-> +// Send data to fill receive window
-> +0.200 write(4, ..., 5) =3D 5
-> +0.200 > P. 1:6(5) ack 1
-> +
-> +// Advertise zero-window
-> +0.200 < . 1:1(0) ack 6 win 0
-> +
-> +// Application closes connection, sends FIN (but blocked by zero window)
-> +0.200 close(4) =3D 0
-> +
-> +//Send zero-window probe packet
-> ++0.200 > . 5:5(0) ack 1
-> ++0.400 > . 5:5(0) ack 1
-> ++0.800 > . 5:5(0) ack 1
-> +
-> ++1.000 < . 1:1(0) ack 6 win 0
-> +
-> +// Without fix: This probe won't match - timer was reset, probe will be =
-sent 2.600s after the previous probe
-> +// With fix: This probe matches - exponential backoff continues (1.600s =
-after previous probe)
-> ++0.600~+0.700 > . 5:5(0) ack 1
-> --
+The function has a memory leak when kvrealloc() fails.
+The function directly assigns NULL to the markers pointer, losing the
+reference to the previously allocated memory. This causes kvfree() in
+pt_dump_init() to free NULL instead of the leaked memory.
 
-Thanks for this test!
+Fix by:
+1. Using kvrealloc() uniformly for all allocations
+2. Using a temporary variable to preserve the original pointer until
+   allocation succeeds
+3. Removing the error path that sets markers_cnt=0 to keep
+   consistency between markers and markers_cnt
 
-Kuniyuki rightly raised a concern about the test execution time.
+Found via static analysis and this is similar to commit 42378a9ca553
+("bpf, verifier: Fix memory leak in array reallocation for stack state")
 
-But IMHO it was very nice that the original version of the test
-verified that the connection would eventually be timed out. With this
-shorter version of the test, AFAICT the test does not verify that the
-connection actually times out eventually.
+Fixes: d0e7915d2ad3 ("s390/mm/ptdump: Generate address marker array dynamically")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+changes in v2:
+- update the fixing logic to prevent memory leak in v1
+v1 link: https://lore.kernel.org/all/20251026091351.36275-1-linmq006@gmail.com/
+---
+ arch/s390/mm/dump_pagetables.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-Perhaps if we tune the timeout settings we can achieve both (a) fast
-execution (say, less than 10 secs?), and (b) verify that the
-connection does time out?
+diff --git a/arch/s390/mm/dump_pagetables.c b/arch/s390/mm/dump_pagetables.c
+index 9af2aae0a515..ab0c1fcf2782 100644
+--- a/arch/s390/mm/dump_pagetables.c
++++ b/arch/s390/mm/dump_pagetables.c
+@@ -291,16 +291,15 @@ static int ptdump_cmp(const void *a, const void *b)
+ 
+ static int add_marker(unsigned long start, unsigned long end, const char *name)
+ {
+-	size_t oldsize, newsize;
+-
+-	oldsize = markers_cnt * sizeof(*markers);
+-	newsize = oldsize + 2 * sizeof(*markers);
+-	if (!oldsize)
+-		markers = kvmalloc(newsize, GFP_KERNEL);
+-	else
+-		markers = kvrealloc(markers, newsize, GFP_KERNEL);
+-	if (!markers)
+-		goto error;
++	struct addr_marker *new_markers;
++	size_t newsize;
++
++	newsize = (markers_cnt + 2) * sizeof(*markers);
++	new_markers = kvrealloc(markers, newsize, GFP_KERNEL);
++	if (!new_markers)
++		return -ENOMEM;
++
++	markers = new_markers;
+ 	markers[markers_cnt].is_start = 1;
+ 	markers[markers_cnt].start_address = start;
+ 	markers[markers_cnt].size = end - start;
+@@ -312,9 +311,6 @@ static int add_marker(unsigned long start, unsigned long end, const char *name)
+ 	markers[markers_cnt].name = name;
+ 	markers_cnt++;
+ 	return 0;
+-error:
+-	markers_cnt = 0;
+-	return -ENOMEM;
+ }
+ 
+ static int pt_dump_init(void)
+-- 
+2.39.5 (Apple Git-154)
 
-Perhaps you can try:
-
-+ setting net.ipv4.tcp_orphan_retries to something small, like 3 or 4
-(instead of the default of 0, which dynamically sets the retry count
-to 8 in tcp_orphan_retries())
-
-+ setting net.ipv4.tcp_rto_max_ms to something small, like 5000
-(instead of the default of 120000, aka 120 secs)
-
-Another thought: the original test injected a lot of extra rwin=3D0 ACKs
-that AFAICT a real remote peer would not have sent. IMHO it's better
-to keep the test simpler and more realistic by not having the test
-inject those extra rwin=3D0 ACKs.
-
-Thanks,
-neal
 
