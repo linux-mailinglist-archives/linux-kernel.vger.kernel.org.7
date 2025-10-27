@@ -1,91 +1,135 @@
-Return-Path: <linux-kernel+bounces-872692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE79FC11D1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:43:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910BFC11DC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F11B580B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:41:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA7504FD3B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03F34572B;
-	Mon, 27 Oct 2025 22:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650E532ED2B;
+	Mon, 27 Oct 2025 22:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwXtzCLu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9frTLYR"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E773451A9;
-	Mon, 27 Oct 2025 22:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D339632E120
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604519; cv=none; b=K/dJkhxrhyZ7pgnTGpmg9Up3OHEZ2LO65lhaXp3A2p2USUWUZFBTILwnWJk4WDeyuzfZF37lRdZhRdVe7rQaCAhC3VGmnls5mGcc5hN/gYBe+6FhWckUcLq/pL4OpQ/bhBKy33sTm4AQPYvDGNGta9ohDFqyNObe7OFsjAEv2pE=
+	t=1761604553; cv=none; b=RUrEg49gORkUsAq6x28uImlLEUTA4ZFMBToSsH5BZb/v65yfQaMbOqhy7ZV3LuM/mifCouHHozi7yKjz7dm/FgsTeT/72BqTyzjExOfI971ydp9oc5qULwP7Tscdte+724HHIxUyqgvzZNfnd4C0IYdeBTww8BE5oNCJeqYIeO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604519; c=relaxed/simple;
-	bh=5VghR/NlRdD4hFwfZJEs1wHDzZ2/GT/7qljl5uZwHlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aUNiwTVpYblh5cgzJHDwcBny5SckT4/E/PFY+dLdVbP5Sg9qDVhIGwe7k4Eq51qOrhYCk44QI9ZzoD+vi4ozRSMVBbWQtXz/9vKJxw6QyEK9+AgvWmZBBWKKGw2MJYaf5qlNbWwAg4yfOkFlezdtlorqeyHZXk48w12qcIb7fGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwXtzCLu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A020C4CEFB;
-	Mon, 27 Oct 2025 22:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761604519;
-	bh=5VghR/NlRdD4hFwfZJEs1wHDzZ2/GT/7qljl5uZwHlY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HwXtzCLuhgRMR0TNFUUEstGhaKhQvTxspAltPuTlnb4ivZjGChz/zsPuXmXYtlOaJ
-	 5kepQbbF6t6VThTxCeqngQJgTEA6fVx5U2lgzUzX9D6zhnV3pEgnF+A+xMeKaMVTve
-	 pUIeCC1GYi0M5A3TDn0fzEzXFPa8pw/6T9cGa3l8BNpX7O5i56ATXcjTkQK+zk+kj8
-	 zFm1FFCRdMBRabo2IFyKMFsVhpv0stP2xOeEH7ixkhHbPzmYGLL1Vb1uc7r1EEGPHH
-	 4b5tJDGc2Vj13slMxKk+yaJ5eQ+R79azmxhOwxr/Fp9m+xFdMwrhF805mWADzMV1Nj
-	 MHN4ISH/ygtAQ==
-Date: Mon, 27 Oct 2025 17:35:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Frank Li <Frank.li@nxp.com>, Shawn Lin <shawn.lin@rock-chips.com>,
-	Rob Herring <robh@kernel.org>,
-	"David E . Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-	Han Jingoo <jingoohan1@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
-Message-ID: <20251027223517.GA1484052@bhelgaas>
+	s=arc-20240116; t=1761604553; c=relaxed/simple;
+	bh=SKtvE2cUsj0TClOJo7lTtn7TGqhHQ7WvgKoBUrEBgbU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=onRVp3J08xJv59QhNUNHMlCfEJn9sPJwXKapqhDm8Ui4/11lP1aRKoiDANqUz0VHwNBk68wEjkp0TIFu1fB8ntjDXmcHbrVOYvmPFINQ/GnPRdn+re/ZdPvW7KayT1QKMs2Mzew3D2HtyBYgPW3bgfMIQ7Y55I0hpCZwMMO2Cck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9frTLYR; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-475dbc3c9efso19939675e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761604550; x=1762209350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1A/LVcxwDpEvr0Gd6ktMDjyv/wP+ObMnSP73Nfx0djA=;
+        b=S9frTLYRqGBy1Mi7u1t40O8hpwFG0kc1UqWup25TwNpcTEdbiIIcfqka4KU4MkEPDf
+         bGseeHhpYy4v1plwmjc5Qc/ZFrcuG1od+EWpb0BK+rzCICRA3TNmKKcw5o7toWUpoiHZ
+         x0XmIFnNps4xBKDwWSq6jTz00HK6HvS2i51G14FbKT9lJJemKbU9/oCFkdqBPtOZH86o
+         uNNTPrwPCUZJbKNx8j0FcE6bF6GD9nvJ/ZxAgTKXwhcSskMiJJ4nv4ivRY6NotcnwhUB
+         phrj7Dk/pTixSFKvtB2/GRXxJsb2Dmb1a2A94Ymy74OUeB7CfBJ+ebTETcwVgVi/ff7o
+         Fxiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761604550; x=1762209350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1A/LVcxwDpEvr0Gd6ktMDjyv/wP+ObMnSP73Nfx0djA=;
+        b=TQIXD2TbVqwqoyFEOtVCt0Dua0VU8sVG93/OZrkymipkAXI5NOMhvvKZCWvpoXklyQ
+         1ZN7pmD48YYccC4Vnk6fxHa5Sqc8otDJgz1k+7P1NM7iH0qxndccKqB4rZVNFlTh33fO
+         QgGe+U3V2bdUmt+SfZAD4Corf07T98RDwlSsKmtIAKV71IIuSLCO5qHdbHhzg3e6gqHH
+         UUuFysb6DdV3eap43gy/z+7K4Sx+eoKKXp661t/w57aQiMRgte5AmlS4C9pyj09al9Iw
+         zSdckI5fKvGwvjpAeftYaCjIs1104toLVhnXkv0MP8oujFX3ro2IBCRIZzJCdbgnzb01
+         FIBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCrH/aXlmm7d9SWW4xh5Dq4bXYSUMW7q1gjR135dGYyvem12cTxPUB73g51zkxJhukPGyNgoFDH+3BJRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgmkddwAKss4MmwPP6A8rx2N+MHS1DfFwQGzK8POQDLFOmaAgg
+	qJ3etj3g+rc0t4ywZIsNMUvAs6JkhuWyA/H1+WYOQpNZtwS/HUoVYi4xBNVNYS8I/4o=
+X-Gm-Gg: ASbGnctd6CG6KAg3bhsifsGI77/OD8sguumETpcJHnA/6HvkXsG+qAZ3XlJ/XVYpdfj
+	Gh7qS8LxRv8LVhW2Gj1b/B4L9tQpBA833eDZELiFcra9p+Pd17li6LPLA7AB9VgUt0/s5U9oAkH
+	RBbGuK6+RweE6SDHbjfWLua6AXPO8uT2/eKbcY/MnVtTrhRC7Opd1WvkVlMPe4ymrEs8MMD42tL
+	NdWEgb28c9TxAl4eghpdff95N0aZq0CST02CHVs7L9AK2Zp8/WdGWkGnW5IDZrIo5uANQYgDxnI
+	MbLFOAapbxv6vSydJKRtfipdfePn+S/ijQZcUQvy3o4nTI3pVFL3H2v9fA5/wWE5GnxyHBEnv43
+	+o+hd7LTTQt1DxnDHDfv5YBGm0C6DPzkItbhKaR5277JCpQSHO10qd1KIoahL+9nuidZggq1zAP
+	BUxc1akRrAUocdIOhfZ5za/PglNdYLoF2mkPsCIk569XslwG/C3uUhnKcfzkgorry9+/0KdL4uA
+	QnhLwpGuEhdhwVLIdpUJ8GIey3PCvlemIt9QfE=
+X-Google-Smtp-Source: AGHT+IHNgeLqcQIQBIBat/dcUh1iIM3JbO5kFkHctU5a6hvBLpM7+lnvBMICPcm0MwMUNylncZpsPw==
+X-Received: by 2002:a05:600c:4446:b0:477:bb0:5e0e with SMTP id 5b1f17b1804b1-47717e3036fmr8362885e9.20.1761604550213;
+        Mon, 27 Oct 2025 15:35:50 -0700 (PDT)
+Received: from linaro.org (host86-130-206-17.range86-130.btcentralplus.com. [86.130.206.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475ddad455fsm79826845e9.2.2025.10.27.15.35.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 15:35:49 -0700 (PDT)
+From: Mike Leach <mike.leach@linaro.org>
+To: coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: suzuki.poulose@arm.com,
+	leo.yan@arm.com,
+	james.clark@linaro.org,
+	Mike Leach <mike.leach@linaro.org>
+Subject: [PATCH v2 0/1] coresight: fix issue with insufficient claim tags
+Date: Mon, 27 Oct 2025 22:35:44 +0000
+Message-Id: <20251027223545.2801-1-mike.leach@linaro.org>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP9Ed1Y1lcayFn7Q@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 11:07:51AM +0100, Johan Hovold wrote:
-> On Sun, Oct 26, 2025 at 02:37:54PM -0500, Bjorn Helgaas wrote:
-> > On Sun, Oct 26, 2025 at 08:58:29PM +0530, Manivannan Sadhasivam wrote:
-> 
-> > As far as I know, it's L1SS that has catastrophic effects.  I haven't
-> > seen anything for L0s or L1.
-> 
-> Enabling L0s unconditionally certainly blew up on some Qualcomm
-> machines. See commit d1997c987814 ("PCI: qcom: Disable ASPM L0s for
-> sc8280xp, sa8540p and sa8295p").
+All CoreSight compliant components have an implementation defined number
+of 0 to 8 claim tag bits in the claim tag registers.
 
-Ah, right, thanks for that reminder.
+These are used to claim the CoreSight resources by system agents.
 
-IIUC the qcom_pcie_clear_aspm_l0s() quirk that removes L0s from the
-advertised Link Capabilities is still there and prevents df5192d9bb0e
-("PCI/ASPM: Enable only L0s and L1 for devicetree platforms") from
-being a problem on those platforms, right?
+ARM recommends implementions have 4 claim tag registers.
+
+The CoreSight drivers implement a 2 claim tag bit protocol to allow
+self hosted and external debug agents to manage access to the hardware.
+
+However, if there are less than 2 claim tags available the protocol
+incorrectly returns an error on device claim, as no checks are made.
+
+If insufficient claim tags are present in a component then the protocol
+must return success on claim / disclaim to allow components to be used
+normally.
+
+Changes read the CLAIMSET bits to establish the number of available tags,
+and adjust the claim returns accordingly.
+
+Cache the claimtag protocol availablity in the coresight_device to reduce
+reads for the main claim/disclaim api.
+
+changes since v1:
+1) Added claim tag availability cache into coresight_device when using the
+main coresight_claim_device() / coresight_disclaim_device() API.
+
+Applies to coresight/next
+
+Mike Leach (1):
+  coresight: fix issue where coresight component has no claimtags
+
+ drivers/hwtracing/coresight/coresight-core.c | 46 ++++++++++++++++++--
+ drivers/hwtracing/coresight/coresight-priv.h | 10 +++++
+ include/linux/coresight.h                    | 15 +++++++
+ 3 files changed, 68 insertions(+), 3 deletions(-)
+
+-- 
+2.32.0
+
 
