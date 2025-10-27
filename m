@@ -1,214 +1,109 @@
-Return-Path: <linux-kernel+bounces-872198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3124CC0F864
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:06:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80752C0F869
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7808619A7011
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:06:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B633C4EC814
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D597F314A74;
-	Mon, 27 Oct 2025 17:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E752367B3;
+	Mon, 27 Oct 2025 17:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hte+cO7N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XIKUsAiR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pMhrivgT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3A12D23B9;
-	Mon, 27 Oct 2025 17:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC3530FC05
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761584778; cv=none; b=uEYeWcS8OcbcH78vZEG+lD0jyVSYqflfiLWOkQXtFSSVnsTTWoG0T/pROtnltjTI4O7iQv+iWRAdaoNqdhv/EDWHDW5fzFTf+0MShQWEe3qfOxIDfUv8bpomUPY2jUv9X9q6aRG2mdaVlXRg6mmHZWc44V6pOAO4kc8nTLxblgY=
+	t=1761584795; cv=none; b=Te05TCRuDhDSznJ+TKPIyOTU/dyk+vkKpa0HMP4hB9S/6mP7cfBbwOtj21wj45F/giYe9mXj5oi571HV8JPkrCjGsG+xs3VIaulh0tJMK66LwZUzuhYhiDEyU91E1N3IgCvX/k91eKj2qFfRi7o58jJy3PJ1MRIYy/SsMI3lHlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761584778; c=relaxed/simple;
-	bh=s/IT6TeCl+sjf5XvyVpD9Mw0igDSnNsMN5YXPmOt6ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSqenoTcnSS9Q9hs4EI0SLuR5FjTdj37iFumKwyFWzoQ+WKf919hgqXJj2RAUi6EuEhCz/1k9XNM2Zs1p4Cdh8WX1Ro+KVI8qjFpvAlFIWrQpT+LhZ/+1tXMeQeAuWFrxNmzueMSuL7KjzK91HR3iDmI3qNTMvWlbr7LiTKa3u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hte+cO7N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9FDC113D0;
-	Mon, 27 Oct 2025 17:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761584777;
-	bh=s/IT6TeCl+sjf5XvyVpD9Mw0igDSnNsMN5YXPmOt6ZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hte+cO7NPhaVJDDIfAVKI1hV2qvWp/BZOrVn4nCx8EITZsHbJfvwFspfHqo9MUAjL
-	 ytrWPOsN3g7xsVML/nD92R9CWhzUz8wwNy5UeBt9BbcFAtYlYyY1UBVN1hGoU2YzS5
-	 FXPIPG0iuPbf9Lg5l6i2TPd2IICLwxtQ4K33iiMfIyb3QYCZ0IMTfnhI1eQuV+JFSA
-	 X261Gjluf2siziuhSfJhIaHZr0JQinCWu7N7yTXW9R3F9jUlnZ/ofVIDrhHflH/q83
-	 iSTC6EyUvWK3SThUgxgKsa+wpjqxi16zzTaWqeTrp/m+GUXXQiQHhzXiCnyG7rNznG
-	 sjuEa2T47zbYg==
-Date: Mon, 27 Oct 2025 17:06:11 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	Frank Li <frank.li@nxp.com>,
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 2/3] dt-bindings: PCI: pci-imx6: Add external
- reference clock input
-Message-ID: <20251027-marbles-tarot-92533cb36e1b@spud>
-References: <20251024024013.775836-1-hongxing.zhu@nxp.com>
- <20251024024013.775836-3-hongxing.zhu@nxp.com>
- <20251024-unburned-lip-6f142d83ed76@spud>
- <AS8PR04MB8833DEEA9CB4CE4968B2B5F18CFCA@AS8PR04MB8833.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1761584795; c=relaxed/simple;
+	bh=guGA+zl679L6+9h1x55GihZkKLSlBHlEFgVM8Z7SdRg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Lh1B4lUbtn4Cj+7jOzEAkQfkg3oAs8xj67vnd08YIwlNl63eFOgebCyJ3FD+O2W/9MJZBf4j4H9BT/U7uodTFJmMZ84CFzJKcrd/Airk/AV08d1okmLmLsCPyDiFtk1p41qbvj5FubnGxIIUEOx4t2KbgVvh+MQezKfpAtjsRqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XIKUsAiR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pMhrivgT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761584792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ly9lHTV7pGY90o2gDvQwQAclp/mCDZvMngSMfxYBzBs=;
+	b=XIKUsAiRLj71JSTXYtA2mvzg6OMGGpuSU8qzaHKQUJZ0ab4AQFETnXDP2GVyChQeLFzf3g
+	WwzI6+5+I4uQYFF2jU9T+wLerdcq7aGP2o2AnlV7KpYy6sbUd2yHt6hxe4faLYrs9TUA/f
+	2VWLXjNTUR8RwGsyWEFiKxuWlQj02Bu6tj1hPkqUgvDITwXLKBZxwb7hslyjH8M0K1vnCf
+	2mZB22hTiYKODkWAPmRDG+2L5WVoTBTnRbuHC7faUWspZjcIZs9V+GUHefKCdC3+cY2sgf
+	5nA+Cxhmgysw9/aT9aAjiB+Lx1cbezKHzcJIMQSlLOO6QCESy30k/VcZNwJkxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761584792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ly9lHTV7pGY90o2gDvQwQAclp/mCDZvMngSMfxYBzBs=;
+	b=pMhrivgTZh57ymMKQy8Hd6JF87LtmQ3sUEJmyqMg4YHzO/xjHuYYrFs6VrupPkvWdFjteF
+	a3C8TxB+WyvqmMBw==
+To: Pingfan Liu <piliu@redhat.com>, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: Pingfan Liu <piliu@redhat.com>, Waiman Long <longman@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Pierre Gondois <pierre.gondois@arm.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Ingo Molnar
+ <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar
+ Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>, "Rafael J. Wysocki"
+ <rafael.j.wysocki@intel.com>, Joel Granados <joel.granados@kernel.org>
+Subject: Re: [RFC 2/3] kernel/cpu: Mark nonboot cpus as inactive when
+ shutting down nonboot cpus
+In-Reply-To: <20251022121345.23496-3-piliu@redhat.com>
+References: <20251022121345.23496-1-piliu@redhat.com>
+ <20251022121345.23496-3-piliu@redhat.com>
+Date: Mon, 27 Oct 2025 18:06:32 +0100
+Message-ID: <877bwgw9yf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EsVnFdp8eh5fFMn5"
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB8833DEEA9CB4CE4968B2B5F18CFCA@AS8PR04MB8833.eurprd04.prod.outlook.com>
+Content-Type: text/plain
 
+On Wed, Oct 22 2025 at 20:13, Pingfan Liu wrote:
+> The previous patch lifted the deadline bandwidth check during the kexec
 
---EsVnFdp8eh5fFMn5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Once this is applied 'The previous patch' is meaningless.
 
-On Mon, Oct 27, 2025 at 06:36:32AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: 2025=E5=B9=B410=E6=9C=8825=E6=97=A5 1:07
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > bhelgaas@google.com; Frank Li <frank.li@nxp.com>; l.stach@pengutronix.d=
-e;
-> > lpieralisi@kernel.org; kwilczynski@kernel.org; mani@kernel.org;
-> > shawnguo@kernel.org; s.hauer@pengutronix.de; kernel@pengutronix.de;
-> > festevam@gmail.com; linux-pci@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > imx@lists.linux.dev; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v8 2/3] dt-bindings: PCI: pci-imx6: Add external re=
-ference
-> > clock input
-> >=20
-> > On Fri, Oct 24, 2025 at 10:40:12AM +0800, Richard Zhu wrote:
-> > > i.MX95 PCIes have two reference clock inputs: one from internal PLL,
-> > > the other from off chip crystal oscillator. The "extref" clock refers
-> > > to a reference clock from an external crystal oscillator.
-> > >
-> > > Add external reference clock input for i.MX95 PCIes.
-> > >
-> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > > b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > > index ca5f2970f217c..b4c40d0573dce 100644
-> > > --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > > +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > > @@ -212,14 +212,17 @@ allOf:
-> > >      then:
-> > >        properties:
-> > >          clocks:
-> > > +          minItems: 4
-> > >            maxItems: 5
-> > >          clock-names:
-> > > +          minItems: 4
-> > >            items:
-> > >              - const: pcie
-> >=20
-> > 1
-> >=20
-> > >              - const: pcie_bus
-> >=20
-> > 2
-> >=20
-> > >              - const: pcie_phy
-> >=20
-> > 3
-> >=20
-> > >              - const: pcie_aux
-> >=20
-> > 4
-> >=20
-> > >              - const: ref
-> >=20
-> > 5
-> >=20
-> > > +            - const: extref  # Optional
-> >=20
-> > 6
-> >=20
-> > There are 6 clocks here, but clocks and clock-names in this binding do =
-not
-> > permit 6:
-> > |  clocks:
-> > |    minItems: 3
-> > |    items:
-> > |      - description: PCIe bridge clock.
-> > |      - description: PCIe bus clock.
-> > |      - description: PCIe PHY clock.
-> > |      - description: Additional required clock entry for imx6sx-pcie,
-> > |           imx6sx-pcie-ep, imx8mq-pcie, imx8mq-pcie-ep.
-> > |      - description: PCIe reference clock.
-> > |
-> > |  clock-names:
-> > |    minItems: 3
-> > |    maxItems: 5
-> >=20
-> > AFAICT, what this patch actually did is make "ref" an optional clock, b=
-ut the
-> > claim in the patch is that extref is optional. With this patch applied,=
- you can
-> > have a) no reference clocks or b) only "ref". "extref"
-> > is never allowed.=20
-> Hi Conor:
-> Thanks for your review comments.
-> Just same to "extref", the "ref" should be marked as optional clock too.
+> process, which raises a potential issue: as the number of online CPUs
+> decreases, DL tasks may be crowded onto a few CPUs, which may starve the
+> CPU hotplug kthread. As a result, the hot-removal cannot proceed in
+> practice.  On the other hand, as CPUs are offlined one by one, all tasks
+> will eventually be migrated to the kexec CPU.
+>
+> Therefore, this patch marks all other CPUs as inactive to signal the
 
-Right, your commit message should then mention that.
+git grep "This patch" Documentation/process/
 
-> > Is it supposed to be possible to have "ref" and "extref"?
-> > Or "extref" without "ref"?
-> > Neither "ref" or "extref"?
-> "ref" and "extref" have an exclusive relationship of choosing one of the =
-two,
->  and they cannot all exist simultaneously.
+> scheduler to migrate tasks to the kexec CPU during hot-removal.
 
-Right, please go test what you've produced, because extref is never
-permitted by this binding.
+I'm not seeing what this solves. It just changes the timing of moving
+tasks off to the boot CPU where they compete for the CPU for nothing.
 
-> > I don't know the answer to that question because you're doing things th=
-at
-> > are contradictory in your patch and the commit message isn't clear.
-> >=20
-> Sorry for causing you confusion.
+When kexec() is in progress, then running user space tasks at all is a
+completely pointless exercise.
 
+So the obvious solution to the problem is to freeze all user space tasks
+when kexec() is invoked. No horrible hacks in the deadline scheduler and
+elsewhere required to make that work. No?
 
---EsVnFdp8eh5fFMn5
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaP+mgwAKCRB4tDGHoIJi
-0vsPAP4/9G1yr5mqtW4MMNEsBBmPhvBRbfc5pGtMSd6csOWCmQD+NIs3jfUzO2eC
-odBrXrqWr/VCwksII7RTlqmdC42I+QM=
-=+M2s
------END PGP SIGNATURE-----
-
---EsVnFdp8eh5fFMn5--
+        tglx
 
