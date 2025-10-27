@@ -1,87 +1,137 @@
-Return-Path: <linux-kernel+bounces-871734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BE4C0E329
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:57:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68098C0E344
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 742BC4F8D08
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AE6423C90
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152E6302748;
-	Mon, 27 Oct 2025 13:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA572309BE;
+	Mon, 27 Oct 2025 13:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0RNgoZW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xs3/lL0L";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WLHnlkM4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE412D8773;
-	Mon, 27 Oct 2025 13:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B556F303CBB;
+	Mon, 27 Oct 2025 13:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572999; cv=none; b=irn3YOgjmInZcWRa3vfeAQYKctlNxl81QTPUaqjEhk25LXys1DJKPvjDt/qsA96wHnE3X9b3D2byow0ZdEC/t+HRiXg5ybE2WtNivhsl5lyS+pjRop0oCa4YprWRv15/FCIwFDmrVeE2SjQ/GUv1TZL4Q6rz6zbFonQF1bh09jI=
+	t=1761573112; cv=none; b=tNRUoxLZoQhkpVZ1yGbllnFhBaw3WERFx67+aajq9AhIsxbDuR1Z8o1J/3PuKDL54FbzDFHeADG7mPaxovPAj4FPy9XmL/BT1ru5eEnVCsipVlug5iZCkveN6g9gltx4tRmeISkiad68/ihUfzHJ1xsNQaPNZOk8oPB1TFVi8yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572999; c=relaxed/simple;
-	bh=4CEtMduq3jdDdtBZbu4z30jJnelSXvuUtTmmAVK0YKY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Vqulzise/aap8gPk1/nu1TEN0Tf+f0r/rJX29FNXuGR3mI1iuGp9znYqS9COcv53qv46h7bnwRK1MeZZDw8RGaV26gP+N+ku3la5IlLbo8B6tQNGeMkt/CpB7hghEFcM/eJmFv7PIGVp8AtoOABsbiioVWfH+dyoKxoCGTMkjFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0RNgoZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692FEC113D0;
-	Mon, 27 Oct 2025 13:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761572999;
-	bh=4CEtMduq3jdDdtBZbu4z30jJnelSXvuUtTmmAVK0YKY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=X0RNgoZWFysNfSmQfpTmgO9QI2k2LNJw3ht+7e0vbiodZxe5iVJlyXsJI4ZGjF84Q
-	 inbY8TYNHy/20dnnbAwhZ08ahadPZw/5t61WJ6aep5UEK022ymxrvWI+bYWq1g2dHG
-	 SuOXuEO6kmdiUHXClXbiCl4ARyOxrBTp3zjWy51EdSuugJ/ZoRjQ1kf2aXSr4DrJwI
-	 lNX152+SzEry7yvXLzUrh1wbuw0JDe4T2CCI2FCA3uz/JgH7wDwlN6fbs5hPsQq/V6
-	 JsWdp05ZNZQqG5aMH6Zh8zkolUezTSrkkj3CADi5w65LVc8RnF1FPOOJxYzyHTRoCR
-	 5SwY1ZKavbe1g==
+	s=arc-20240116; t=1761573112; c=relaxed/simple;
+	bh=dKXFxi9uY0k5yVjlqeQwn8clNgwSrBI6UnyGSznsrY0=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=bdraSq7Q+vt9mdUA+vAWPJxjokZKmUtIf9UGK6W89qmLWN5dCQz6TM49vkgL1c2u4aiILgjHf2vSdRhRw1xmNKtrHTnAfZ24Yu4fU1roRhFed1TIG0t2g5l6rs327WW2lLbsy5PhEAhNBGt0Lc9L8yyHU2RfWZwftswF223htlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xs3/lL0L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WLHnlkM4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 27 Oct 2025 13:51:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761573108;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=8nJasAAcTeVqTX51l8EAYWv8mQMJQmZQuHANfuv3jYc=;
+	b=Xs3/lL0L+ftJ2w1x0I8ppL4ntMBLEPKnLkwFo7vEAq34DYIhH+Kz2F2KGnuRt2ObDZtxpa
+	Usi6pWxtmR7gMMsvwtbHLNGm0OAL4i77gBU9LyNBujXWSImN3orcdB3cnLq97M0AA4f17B
+	eLihCiy1064wSACfh29+HwKzzSN4JiTqGJyTAAcANaLVKPCN9pDRFWyKO0wTiP8wlJF21i
+	41RNQddBTJEBSt7mXV9qPmKFe1Af9Uw5u+Nwr2rqDTIh45uX9mZ0RSW/jCQDkCmWHCl/Ko
+	EMITegGGjrpB8CW6SP/ZDnjfaKnYb2REBVcO+S9589iJ2CyQRfPJHyNYl4MtJw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761573108;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=8nJasAAcTeVqTX51l8EAYWv8mQMJQmZQuHANfuv3jYc=;
+	b=WLHnlkM4BobWwIwfCdWEeKkDrirbRGSMMkvDQ1jc8yEd6eJl/gkDfT+5cS6XVePYW1oTmd
+	l2y6KMw7ee5uDBAg==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/microcode/AMD: Limit Entrysign signature
+ checking to known generations
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Message-ID: <176157310666.2601451.1829123270158335667.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Oct 2025 14:49:54 +0100
-Message-Id: <DDT5IDT0GI4H.4GBFX9U17WU3@kernel.org>
-Subject: Re: linux-next: build failure after merge of the pwm tree
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Michal Wilczynski"
- <m.wilczynski@samsung.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Peter Colberg"
- <pcolberg@redhat.com>, "Lyude Paul" <lyude@redhat.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Viresh
- Kumar" <viresh.kumar@linaro.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Stephen Rothwell" <sfr@canb.auug.org.au>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251027125148.7f7d8ed6@canb.auug.org.au>
- <22fl35khmbf6ufyjzbfvxor7b6nohqakqovjoya3v4mmlenz5c@6wbdednrd2pb>
- <yohdkizrcgfyspfj5a4zarcu5b327aiskwwjth2k42q5q7p76l@qspcmydjnxk6>
-In-Reply-To: <yohdkizrcgfyspfj5a4zarcu5b327aiskwwjth2k42q5q7p76l@qspcmydjnxk6>
 
-On Mon Oct 27, 2025 at 2:40 PM CET, Uwe Kleine-K=C3=B6nig wrote:
-> To make it easy for Linus to merge my pwm tree during the next merge
-> window, it would be great if it could contain the conflict resolution.
-> Can I assume that this commit is stable, will be part of your next MR
-> and are you ok if I merge it into my tree with the fix for the conflict?
+The following commit has been merged into the x86/urgent branch of tip:
 
-I think the conflict is trivial enough to resolve, so I don't think Linus w=
-ould
-mind.
+Commit-ID:     9e954398cebcc72779798dc1bae03b746ee1ef98
+Gitweb:        https://git.kernel.org/tip/9e954398cebcc72779798dc1bae03b746ee=
+1ef98
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Thu, 23 Oct 2025 14:46:29 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 27 Oct 2025 14:43:15 +01:00
 
-Anyways, the commit is stable, so feel free to go ahead. Also note, when I =
-send
-the PR (which I will likely do) I usually send a very early PR to Linus, ri=
-ght
-before the merge window opens.
+x86/microcode/AMD: Limit Entrysign signature checking to known generations
 
-- Danilo
+Limit Entrysign sha256 signature checking to CPUs in the range Zen1-Zen5.
+
+X86_BUG cannot be used here because the loading on the BSP happens way
+too early, before the cpufeatures machinery has been set up.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://patch.msgid.link/all/20251023124629.5385-1-bp@kernel.org/
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microc=
+ode/amd.c
+index 28ed8c0..2a573fa 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -233,13 +233,31 @@ static bool need_sha_check(u32 cur_rev)
+ 	return true;
+ }
+=20
++static bool cpu_has_entrysign(void)
++{
++	unsigned int fam   =3D x86_family(bsp_cpuid_1_eax);
++	unsigned int model =3D x86_model(bsp_cpuid_1_eax);
++
++	if (fam =3D=3D 0x17)
++		return true;
++
++	if (fam =3D=3D 0x19) {
++		if (model <=3D 0x2f ||
++		    (0x40 <=3D model && model <=3D 0x4f) ||
++		    (0x60 <=3D model && model <=3D 0x6f))
++			return true;
++	}
++
++	return false;
++}
++
+ static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, =
+unsigned int len)
+ {
+ 	struct patch_digest *pd =3D NULL;
+ 	u8 digest[SHA256_DIGEST_SIZE];
+ 	int i;
+=20
+-	if (x86_family(bsp_cpuid_1_eax) < 0x17)
++	if (!cpu_has_entrysign())
+ 		return true;
+=20
+ 	if (!need_sha_check(cur_rev))
 
