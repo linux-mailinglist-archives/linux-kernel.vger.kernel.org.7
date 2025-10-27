@@ -1,77 +1,164 @@
-Return-Path: <linux-kernel+bounces-871636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAA9C0DDEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D08C0DE10
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EBF1896B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3A11884F3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7146525742F;
-	Mon, 27 Oct 2025 13:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248542580EE;
+	Mon, 27 Oct 2025 13:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nxnmg1W5"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Xde0PFN1"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529FA2472A4;
-	Mon, 27 Oct 2025 13:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0662472BA;
+	Mon, 27 Oct 2025 13:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570327; cv=none; b=JfcmFCjdV5JwZD7AroBGZa+GonbpIBr5H+OkeoA4uRjj8Oqet4v7HK/jUugVkaT/2Xg+4dwfB3qADHRxdgVqsq7TatPUQ6NJx3DUQehKxD7uAHrZSDGjxRROewJ8JLI+4Rg0od4abUrHyZNxhlV5ZyeuAEjH5Z2TfR2LZeqBbN8=
+	t=1761570399; cv=none; b=Qd1oa+NQOVc4GHrQpR5Xxqp+RZ2afWbCe0iA6mSXrzSYHhCnGhAtrCx7mAc0YvSGezdXXaSGroN+lDNxkGeavoI8babTdFlXOuVwqPa97Hr5bZ3PMyViNIIRomcWUxVWBIvs4cha0zOCQNiW+dxl4EJ11Q80VEZLVxGguFrx3mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570327; c=relaxed/simple;
-	bh=839TfhD20YSqqudkpHJzMhqGHXtXzKSSSBLgn4ksVsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rXxXJOFknSaUPrT1Mv50DAjiGMTq3eW906WzgJ+l+W9kCckh17vk8qt+ogYCfL39XuEZA6gSoU4kl4YiT6F+huGi/cf3U9Iyp4mZi5MQ823pmiqYot+gszEzZNPjc9y/Cr0pg9YsDHfeYr19ScwDTfX3FzSjlwkDSaUlxHq52Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nxnmg1W5; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ncp/PVaBA/Q9U0SIqwEEOoFT7L5ChKq9+lSgFL39a+c=; b=nxnmg1W5k1LWT2WsVzfgD4yPeh
-	IGsDt3RI2gcp73LUnZEQBZXZLyfqtjKcwPAn6bAYga7ZCy2Z5klEHtl/F728i9H4NdNCNH9zaH55O
-	e1mOWdcmH7WQ/lYxhV6y4pe0YubZNWKuZGjCoscatzjAO8tDGcyP9hl9Fk21Cy1HQZng=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDMuS-00CC5r-PB; Mon, 27 Oct 2025 14:05:16 +0100
-Date: Mon, 27 Oct 2025 14:05:16 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy:  micrel: lan8842 erratas
-Message-ID: <4eefecbe-fa8f-41de-aeae-4d261cce5c1f@lunn.ch>
-References: <20251027124026.64232-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1761570399; c=relaxed/simple;
+	bh=1Ri9tuaEYe1o+uXAbO+nneWbFihzlLd5zFi/vArGwI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lMN5oKXZit9z0sNJiJo9HQ26F2+Y4xcxQvtHavYQPqXMxEnJ4iHcQ4WSZMo5c3BxSwqw2BsqXQKzH5yde5XRKM246ZvmXXd/CMThYqXd1Ba2d5pmHfEOEXLfGdN5UvZWu9fc8bIBMLUrKX8pjBFvvf3490O0LaYdj5XHE0GM4Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Xde0PFN1; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1761570359;
+	bh=B5duYsCPkK8oa0cCny8J8MEAD0ZkSluVzWoA9pUDJxw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Xde0PFN1oI0O5ydpP0ZoRG2NJQQPtV7XkdZAk+3rINQknGQVRSr0oKtCn9zWTDSvF
+	 hXPzLAy450RMr3MekFvhANVwOk8eXN6VibBwJPzbdGZc8XGK67mmHVMx8VHs/Sj0/d
+	 TtNnpKTl8UuJ1H7fHTh577t9lXlTq2vudg9OJzbU=
+X-QQ-mid: zesmtpip2t1761570342t3c4c53a4
+X-QQ-Originating-IP: xn+d9YI6i5s0mfuGNgC+mIwtyxvbwxeqAS1waYQObro=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 27 Oct 2025 21:05:37 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 107945356980905378
+EX-QQ-RecipientCnt: 7
+From: hongao <hongao@uniontech.com>
+To: naveen@kernel.org,
+	anil.s.keshavamurthy@intel.com,
+	davem@davemloft.net,
+	mhiramat@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	hongao <hongao@uniontech.com>
+Subject: [PATCH] kprobes: retry pending optprobe after freeing blocker
+Date: Mon, 27 Oct 2025 21:05:35 +0800
+Message-ID: <2B0BC73E9D190B7B+20251027130535.2296913-1-hongao@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027124026.64232-1-horatiu.vultur@microchip.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: NmbAG95z1FKVx867xqkdOP/zfVLXiVqAIR6jWlyNgLxupKVnpGBDY5Et
+	ZGV0+fuKvjFgABzRLwLGvJHZ+suOjM20gV75AZQhmCGeOWN+pmxAAXr4RjMRbE0pmWhvVAj
+	mUryJuPlLyoeOtjOsQU2dbwrPqWmxnDnNlJB+/tz5KT/LIeC9oGoBLoDKiTJPy1qpmpaxvF
+	lY9QM1nBohsi7EMCKdXS7/bbd+oKm63+NlrM+xFLeJxjLQYCfnciFAv/QBgVau9CfXrMXLl
+	vb291CBq3wynQEG5ii8wRBTZ6vSSkd7AKrBCgmuqOxbRzNVeP5nqhEdHF/y6j/etkc2BCOX
+	iwKss1dYDx50fsK91SCte4pxsknzKWp4AgBgR3V1beiaBMydegvcoO6NkRy0dYcb7gKGAgA
+	iEEh6sx/epiWBvb/SsAW/YGb8s3aWlBzJ/SZKoAw4SWiXcyi6RMxdylsD6NBhJwYmuIzN1l
+	hhzXAEvIMqnsecWSGmp50RhNRmeQkqfdv/D9h/6XOTMN7K7lmGW5AvO9M0VMtx1lGAz1GV8
+	R8Jfsyzuv7vY+7KMNzb5SUrXKzn56HO60S+fJ1OUbAm7e8FjBZ/omvfEILog8z71VVi5RFJ
+	dj76ShMpgLj/pIlBDmS9akPZyiIXlOrPRl7kDLVqY8LAqQ7cI5UZEvBIejI9d8vVJHpkmKo
+	l+KI6f+mmYAM74OQ4kinn+CmcgamQYVSZkn3VlRat8FTagtKlcOV3E+esDOSkpBGGb4KS4/
+	jota5V4ysJX3+3jTcSNIcRPjoNBAL3drpnS+SFVF3VF1VuPFBo6aTfNBJA+uqynDD8zM9kn
+	ijrTyLdALOunzykeOQeQd7Kf7+b2taa9eHS32r/KO8CHS12A+sIE8R/JTsSi7oF7CyrOsn/
+	wrvopcoREYCENHWYwboKDYUOg+rPPbv7v29JGosBDR/y5P++ujBtKMdI2VCvfCKgtjF2pkB
+	BU60EqH0oD3fvpZzaxwomrh+qpNyQj2irl+w0xeThZTkH1BnCValc6iJwZQnlwPp3crk+lJ
+	lRo+/nstUcMc/FS6+A54YJsSjBgrW0Tl32CIn7wcNzbPdTjtlK7qQj7Ek4nkvwo5BqlTEEx
+	AktnDou/wTnV6decFaiSzzU5Ym34EcIWi36REI5NZj9
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Oct 27, 2025 at 01:40:26PM +0100, Horatiu Vultur wrote:
-> Add two erratas for lan8842. The errata document can be found here [1].
-> This is fixing the module 2 ("Analog front-end not optimized for
-> PHY-side shorted center taps") and module 7 ("1000BASE-T PMA EEE TX wake
-> timer is non-compliant")
+The freeing_list cleanup now retries optimizing any sibling probe that was
+deferred while this aggregator was being torn down.  Track the pending
+address in struct optimized_kprobe so __disarm_kprobe() can defer the
+retry until kprobe_optimizer() finishes disarming.
 
-Hi Horatiu
+Signed-off-by: hongao <hongao@uniontech.com>
 
-Could this be split into two patches, since there are two erratas?
+diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+index 8c4f3bb24..33d65b008 100644
+--- a/include/linux/kprobes.h
++++ b/include/linux/kprobes.h
+@@ -338,6 +338,7 @@ DEFINE_INSN_CACHE_OPS(insn);
+ struct optimized_kprobe {
+ 	struct kprobe kp;
+ 	struct list_head list;	/* list for optimizing queue */
++	kprobe_opcode_t *pending_reopt_addr;	/* addr that should trigger re-optimization */
+ 	struct arch_optimized_insn optinsn;
+ };
+ 
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index da59c68df..0976ab57d 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -514,6 +514,7 @@ static LIST_HEAD(freeing_list);
+ 
+ static void kprobe_optimizer(struct work_struct *work);
+ static DECLARE_DELAYED_WORK(optimizing_work, kprobe_optimizer);
++static void optimize_kprobe(struct kprobe *p);
+ #define OPTIMIZE_DELAY 5
+ 
+ /*
+@@ -591,6 +592,20 @@ static void do_free_cleaned_kprobes(void)
+ 			 */
+ 			continue;
+ 		}
++		if (op->pending_reopt_addr) {
++			struct kprobe *blocked;
++
++			/*
++			 * The aggregator was holding back another probe while it sat on the
++			 * unoptimizing/freeing lists.  Now that the aggregator has been fully
++			 * reverted we can safely retry the optimization of that sibling.
++			 */
++
++			blocked = get_optimized_kprobe(op->pending_reopt_addr);
++			if (unlikely(blocked))
++				optimize_kprobe(blocked);
++		}
++
+ 		free_aggr_kprobe(&op->kp);
+ 	}
+ }
+@@ -1009,13 +1024,13 @@ static void __disarm_kprobe(struct kprobe *p, bool reopt)
+ 		_p = get_optimized_kprobe(p->addr);
+ 		if (unlikely(_p) && reopt)
+ 			optimize_kprobe(_p);
++	} else if (reopt && kprobe_aggrprobe(p)) {
++		struct optimized_kprobe *op =
++			container_of(p, struct optimized_kprobe, kp);
++
++		/* Defer the re-optimization until the worker finishes disarming. */
++		op->pending_reopt_addr = p->addr;
+ 	}
+-	/*
+-	 * TODO: Since unoptimization and real disarming will be done by
+-	 * the worker thread, we can not check whether another probe are
+-	 * unoptimized because of this probe here. It should be re-optimized
+-	 * by the worker thread.
+-	 */
+ }
+ 
+ #else /* !CONFIG_OPTPROBES */
+-- 
+2.47.2
 
-I notice there is no Fixes: tag. So you don't think these are worth
-back porting?
-
-	Andrew
 
