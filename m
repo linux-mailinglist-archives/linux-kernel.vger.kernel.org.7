@@ -1,431 +1,150 @@
-Return-Path: <linux-kernel+bounces-871888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10A5C0EC27
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:01:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE448C0EA83
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75275424D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13BC40584D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3E2C3749;
-	Mon, 27 Oct 2025 14:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B682D0C9A;
+	Mon, 27 Oct 2025 14:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FRgC2bRH"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbBxtZHl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1730AAC7
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657CF296BB6;
+	Mon, 27 Oct 2025 14:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761576749; cv=none; b=pMni+INcKEP8Oz9FKsIDuQAM/30qvbUFC0Cu0yRL2+wWUJeNOelMlBy+B+k1nPBkrOEvVwwBieZ9NTjcb5N/DpjAttCnILmZx8KJA9CBDCogaNZPW1hsJHGU+XgJXSuw+7A4fm3HA/P/sKzpF0XwISSDSaBqE4OXrDeeIFPYD3M=
+	t=1761576554; cv=none; b=C/ns/iT4f9/YtTMWKflcnihNondq9D4WxBtVQ7HSevJL/0Glo7bqQ0ECANDRQFi8dAm5rhqBu7Q4yYKE2asXTWX2I5sUGlNeo6XCw//ImakflGLtbwwQgTN5zzgx+U+w47Y0LqZZFQx2LFY0Q51Y+eggN0O3GoGV8zZHJyw0j4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761576749; c=relaxed/simple;
-	bh=KiRSOF3OOrsxvzo+yuMtQq2G7cJM1JSbJDnGxb09sIw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LQ6qt2sUJelcqxw3seqXLqsxK29B7Ma6QKky8ck26Qw+fMZdE7rfYnMyux7agiUYzG0zQkMdWe3oQGdeEs2MOj1EYiMd6jj1XBJ8/L1/MXB+xe0VelACD10FKnP21TXijg8LREiBAPikykm/STi70geAt0udFgRRP7x4hdhed6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FRgC2bRH; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B2CB41A16DB;
-	Mon, 27 Oct 2025 14:52:25 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 870496062C;
-	Mon, 27 Oct 2025 14:52:25 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9D65E102F250D;
-	Mon, 27 Oct 2025 15:52:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761576744; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=p7oawS9hVUC6Bin3gyXF90d8vu9Rzrmey9VBjW3Y7a4=;
-	b=FRgC2bRH3cgDNHZwBf/TavoGfh5shGiQARcRP7ZE4nM4u7kVOEMTdKlvTsAcuOlP3hFE07
-	t2D5OeTta5346vCts0mvI5ELJBcFllEek4EIhdvJ2CFdRrM0uII9kkYoWP4S4k4zLdqVfd
-	d9T7D59gzRO08FM8xeXCVMRNl+L2gg8tB0Wiz0HPazWq4dS2SE8UF3s91aMZWYgGCcM4vI
-	JwK4OQmUxAm72pdH9dz0s6I6I3ynM6PjMcmLjQLhBJaN6Lsh8QErsIA7VwgUkuOAThxi8D
-	66fPORV55tvoUujAvq6VRjMzeA760N3pmHWaKavJ2YJzlxVTvZ7u0EzCsc7ANw==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Mon, 27 Oct 2025 15:51:56 +0100
-Subject: [PATCH bpf-next v3 4/4] selftests/bpf: remove test_tc_tunnel.sh
+	s=arc-20240116; t=1761576554; c=relaxed/simple;
+	bh=LKPXVhbMLyJFUAhnFO5LZpjuc3Rzz6MeJrFVEJFp7mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XbXmIkaG/6vWqgCg4rrgjeTPRZoQZv3/3Zdtew7yB8gEU92MXQVDTALKCbAJEs+A38km2cJhrl1kIOPzZR0oxOVAAorc0q5K+f1G15GIs6p9G304F1Wb0oMpUNZdW7XuLuY7tgEccgv0khb7wNcsswbwLxHQFtKYUhLCJE6PUJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbBxtZHl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3858C4CEFF;
+	Mon, 27 Oct 2025 14:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761576553;
+	bh=LKPXVhbMLyJFUAhnFO5LZpjuc3Rzz6MeJrFVEJFp7mA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PbBxtZHlvX/bylN0gO7RmgmI1dJ6TVW/yV6mzrZWNpynfqPhTZR7w1rQHJeKICXh/
+	 UGBdvZI6obJHTrEqqiFRO3IgxxPU9bt2jPQBVWLxaQGxMgJY1OFkigiE94tqhx2sqp
+	 rmDp8Y1v3g6y2x6ajwN2A76WojDYI/ck1l3t12c+yJrKa65Jg4SARDjvtviAVCy5tA
+	 9MJp4a3/SXseyXzwUS860jqERdID2eSU2zt6OjEuCuhXZqYlqMfA5cUez7k+3SX5GF
+	 opGzvvC4/hkZMWW0PEeCwVTzrXX3aMiZomZlqivHX54FGqm5HIUbAuFay5h4+vfcYp
+	 90cLX1ygDjgrA==
+Date: Mon, 27 Oct 2025 09:52:06 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: david@ixit.cz
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	Gergo Koteles <soyer@irl.hu>
+Subject: Re: [PATCH v6 1/2] Input: add ABS_SND_PROFILE
+Message-ID: <rdryhql5vrjckh2yvcgbdcnlu2f4aiq6hbokgfzvrtdu33lp5u@fctqxdftabsy>
+References: <20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz>
+ <20250731-op6-tri-state-v6-1-569c25cbc8c2@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251027-tc_tunnel-v3-4-505c12019f9d@bootlin.com>
-References: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
-In-Reply-To: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731-op6-tri-state-v6-1-569c25cbc8c2@ixit.cz>
 
-Now that test_tc_tunnel.sh scope has been ported to the test_progs
-framework, remove it.
+On Thu, Jul 31, 2025 at 11:17:01PM +0200, David Heidelberg via B4 Relay wrote:
+> From: Gergo Koteles <soyer@irl.hu>
+> 
+> ABS_SND_PROFILE used to describe the state of a multi-value sound profile
+> switch. This will be used for the alert-slider on OnePlus phones or other
+> phones.
+> 
+> Profile values added as SND_PROFLE_(SILENT|VIBRATE|RING) identifiers
+> to input-event-codes.h so they can be used from DTS.
+> 
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile          |   1 -
- tools/testing/selftests/bpf/test_tc_tunnel.sh | 320 --------------------------
- 2 files changed, 321 deletions(-)
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 7437c325179e..bed43fd3d5d7 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -105,7 +105,6 @@ TEST_FILES = xsk_prereqs.sh $(wildcard progs/btf_dump_test_case_*.c)
- # Order correspond to 'make run_tests' order
- TEST_PROGS := test_kmod.sh \
- 	test_lirc_mode2.sh \
--	test_tc_tunnel.sh \
- 	test_tc_edt.sh \
- 	test_xdping.sh \
- 	test_bpftool_build.sh \
-diff --git a/tools/testing/selftests/bpf/test_tc_tunnel.sh b/tools/testing/selftests/bpf/test_tc_tunnel.sh
-deleted file mode 100755
-index cb55a908bb0d..000000000000
---- a/tools/testing/selftests/bpf/test_tc_tunnel.sh
-+++ /dev/null
-@@ -1,320 +0,0 @@
--#!/bin/bash
--# SPDX-License-Identifier: GPL-2.0
--#
--# In-place tunneling
--
--BPF_FILE="test_tc_tunnel.bpf.o"
--# must match the port that the bpf program filters on
--readonly port=8000
--
--readonly ns_prefix="ns-$$-"
--readonly ns1="${ns_prefix}1"
--readonly ns2="${ns_prefix}2"
--
--readonly ns1_v4=192.168.1.1
--readonly ns2_v4=192.168.1.2
--readonly ns1_v6=fd::1
--readonly ns2_v6=fd::2
--
--# Must match port used by bpf program
--readonly udpport=5555
--# MPLSoverUDP
--readonly mplsudpport=6635
--readonly mplsproto=137
--
--readonly infile="$(mktemp)"
--readonly outfile="$(mktemp)"
--
--setup() {
--	ip netns add "${ns1}"
--	ip netns add "${ns2}"
--
--	ip link add dev veth1 mtu 1500 netns "${ns1}" type veth \
--	      peer name veth2 mtu 1500 netns "${ns2}"
--
--	ip netns exec "${ns1}" ethtool -K veth1 tso off
--
--	ip -netns "${ns1}" link set veth1 up
--	ip -netns "${ns2}" link set veth2 up
--
--	ip -netns "${ns1}" -4 addr add "${ns1_v4}/24" dev veth1
--	ip -netns "${ns2}" -4 addr add "${ns2_v4}/24" dev veth2
--	ip -netns "${ns1}" -6 addr add "${ns1_v6}/64" dev veth1 nodad
--	ip -netns "${ns2}" -6 addr add "${ns2_v6}/64" dev veth2 nodad
--
--	# clamp route to reserve room for tunnel headers
--	ip -netns "${ns1}" -4 route flush table main
--	ip -netns "${ns1}" -6 route flush table main
--	ip -netns "${ns1}" -4 route add "${ns2_v4}" mtu 1450 dev veth1
--	ip -netns "${ns1}" -6 route add "${ns2_v6}" mtu 1430 dev veth1
--
--	sleep 1
--
--	dd if=/dev/urandom of="${infile}" bs="${datalen}" count=1 status=none
--}
--
--cleanup() {
--	ip netns del "${ns2}"
--	ip netns del "${ns1}"
--
--	if [[ -f "${outfile}" ]]; then
--		rm "${outfile}"
--	fi
--	if [[ -f "${infile}" ]]; then
--		rm "${infile}"
--	fi
--
--	if [[ -n $server_pid ]]; then
--		kill $server_pid 2> /dev/null
--	fi
--}
--
--server_listen() {
--	ip netns exec "${ns2}" nc "${netcat_opt}" -l "${port}" > "${outfile}" &
--	server_pid=$!
--}
--
--client_connect() {
--	ip netns exec "${ns1}" timeout 2 nc "${netcat_opt}" -w 1 "${addr2}" "${port}" < "${infile}"
--	echo $?
--}
--
--verify_data() {
--	wait "${server_pid}"
--	server_pid=
--	# sha1sum returns two fields [sha1] [filepath]
--	# convert to bash array and access first elem
--	insum=($(sha1sum ${infile}))
--	outsum=($(sha1sum ${outfile}))
--	if [[ "${insum[0]}" != "${outsum[0]}" ]]; then
--		echo "data mismatch"
--		exit 1
--	fi
--}
--
--wait_for_port() {
--	for i in $(seq 20); do
--		if ip netns exec "${ns2}" ss ${2:--4}OHntl | grep -q "$1"; then
--			return 0
--		fi
--		sleep 0.1
--	done
--	return 1
--}
--
--set -e
--
--# no arguments: automated test, run all
--if [[ "$#" -eq "0" ]]; then
--	echo "ipip"
--	$0 ipv4 ipip none 100
--
--	echo "ipip6"
--	$0 ipv4 ipip6 none 100
--
--	echo "ip6ip6"
--	$0 ipv6 ip6tnl none 100
--
--	echo "sit"
--	$0 ipv6 sit none 100
--
--	echo "ip4 vxlan"
--	$0 ipv4 vxlan eth 2000
--
--	echo "ip6 vxlan"
--	$0 ipv6 ip6vxlan eth 2000
--
--	for mac in none mpls eth ; do
--		echo "ip gre $mac"
--		$0 ipv4 gre $mac 100
--
--		echo "ip6 gre $mac"
--		$0 ipv6 ip6gre $mac 100
--
--		echo "ip gre $mac gso"
--		$0 ipv4 gre $mac 2000
--
--		echo "ip6 gre $mac gso"
--		$0 ipv6 ip6gre $mac 2000
--
--		echo "ip udp $mac"
--		$0 ipv4 udp $mac 100
--
--		echo "ip6 udp $mac"
--		$0 ipv6 ip6udp $mac 100
--
--		echo "ip udp $mac gso"
--		$0 ipv4 udp $mac 2000
--
--		echo "ip6 udp $mac gso"
--		$0 ipv6 ip6udp $mac 2000
--	done
--
--	echo "OK. All tests passed"
--	exit 0
--fi
--
--if [[ "$#" -ne "4" ]]; then
--	echo "Usage: $0"
--	echo "   or: $0 <ipv4|ipv6> <tuntype> <none|mpls|eth> <data_len>"
--	exit 1
--fi
--
--case "$1" in
--"ipv4")
--	readonly addr1="${ns1_v4}"
--	readonly addr2="${ns2_v4}"
--	readonly ipproto=4
--	readonly netcat_opt=-${ipproto}
--	readonly foumod=fou
--	readonly foutype=ipip
--	readonly fouproto=4
--	readonly fouproto_mpls=${mplsproto}
--	readonly gretaptype=gretap
--	;;
--"ipv6")
--	readonly addr1="${ns1_v6}"
--	readonly addr2="${ns2_v6}"
--	readonly ipproto=6
--	readonly netcat_opt=-${ipproto}
--	readonly foumod=fou6
--	readonly foutype=ip6tnl
--	readonly fouproto="41 -6"
--	readonly fouproto_mpls="${mplsproto} -6"
--	readonly gretaptype=ip6gretap
--	;;
--*)
--	echo "unknown arg: $1"
--	exit 1
--	;;
--esac
--
--readonly tuntype=$2
--readonly mac=$3
--readonly datalen=$4
--
--echo "encap ${addr1} to ${addr2}, type ${tuntype}, mac ${mac} len ${datalen}"
--
--trap cleanup EXIT
--
--setup
--
--# basic communication works
--echo "test basic connectivity"
--server_listen
--wait_for_port ${port} ${netcat_opt}
--client_connect
--verify_data
--
--# clientside, insert bpf program to encap all TCP to port ${port}
--# client can no longer connect
--ip netns exec "${ns1}" tc qdisc add dev veth1 clsact
--ip netns exec "${ns1}" tc filter add dev veth1 egress \
--	bpf direct-action object-file ${BPF_FILE} \
--	section "encap_${tuntype}_${mac}"
--echo "test bpf encap without decap (expect failure)"
--server_listen
--wait_for_port ${port} ${netcat_opt}
--! client_connect
--
--if [[ "$tuntype" =~ "udp" ]]; then
--	# Set up fou tunnel.
--	ttype="${foutype}"
--	targs="encap fou encap-sport auto encap-dport $udpport"
--	# fou may be a module; allow this to fail.
--	modprobe "${foumod}" ||true
--	if [[ "$mac" == "mpls" ]]; then
--		dport=${mplsudpport}
--		dproto=${fouproto_mpls}
--		tmode="mode any ttl 255"
--	else
--		dport=${udpport}
--		dproto=${fouproto}
--	fi
--	ip netns exec "${ns2}" ip fou add port $dport ipproto ${dproto}
--	targs="encap fou encap-sport auto encap-dport $dport"
--elif [[ "$tuntype" =~ "gre" && "$mac" == "eth" ]]; then
--	ttype=$gretaptype
--elif [[ "$tuntype" =~ "vxlan" && "$mac" == "eth" ]]; then
--	ttype="vxlan"
--	targs="id 1 dstport 8472 udp6zerocsumrx"
--elif [[ "$tuntype" == "ipip6" ]]; then
--	ttype="ip6tnl"
--	targs=""
--else
--	ttype=$tuntype
--	targs=""
--fi
--
--# tunnel address family differs from inner for SIT
--if [[ "${tuntype}" == "sit" ]]; then
--	link_addr1="${ns1_v4}"
--	link_addr2="${ns2_v4}"
--elif [[ "${tuntype}" == "ipip6" ]]; then
--	link_addr1="${ns1_v6}"
--	link_addr2="${ns2_v6}"
--else
--	link_addr1="${addr1}"
--	link_addr2="${addr2}"
--fi
--
--# serverside, insert decap module
--# server is still running
--# client can connect again
--ip netns exec "${ns2}" ip link add name testtun0 type "${ttype}" \
--	${tmode} remote "${link_addr1}" local "${link_addr2}" $targs
--
--expect_tun_fail=0
--
--if [[ "$tuntype" == "ip6udp" && "$mac" == "mpls" ]]; then
--	# No support for MPLS IPv6 fou tunnel; expect failure.
--	expect_tun_fail=1
--elif [[ "$tuntype" =~ "udp" && "$mac" == "eth" ]]; then
--	# No support for TEB fou tunnel; expect failure.
--	expect_tun_fail=1
--elif [[ "$tuntype" =~ (gre|vxlan) && "$mac" == "eth" ]]; then
--	# Share ethernet address between tunnel/veth2 so L2 decap works.
--	ethaddr=$(ip netns exec "${ns2}" ip link show veth2 | \
--		  awk '/ether/ { print $2 }')
--	ip netns exec "${ns2}" ip link set testtun0 address $ethaddr
--elif [[ "$mac" == "mpls" ]]; then
--	modprobe mpls_iptunnel ||true
--	modprobe mpls_gso ||true
--	ip netns exec "${ns2}" sysctl -qw net.mpls.platform_labels=65536
--	ip netns exec "${ns2}" ip -f mpls route add 1000 dev lo
--	ip netns exec "${ns2}" ip link set lo up
--	ip netns exec "${ns2}" sysctl -qw net.mpls.conf.testtun0.input=1
--	ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.lo.rp_filter=0
--fi
--
--# Because packets are decapped by the tunnel they arrive on testtun0 from
--# the IP stack perspective.  Ensure reverse path filtering is disabled
--# otherwise we drop the TCP SYN as arriving on testtun0 instead of the
--# expected veth2 (veth2 is where 192.168.1.2 is configured).
--ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.all.rp_filter=0
--# rp needs to be disabled for both all and testtun0 as the rp value is
--# selected as the max of the "all" and device-specific values.
--ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.testtun0.rp_filter=0
--ip netns exec "${ns2}" ip link set dev testtun0 up
--if [[ "$expect_tun_fail" == 1 ]]; then
--	# This tunnel mode is not supported, so we expect failure.
--	echo "test bpf encap with tunnel device decap (expect failure)"
--	! client_connect
--else
--	echo "test bpf encap with tunnel device decap"
--	client_connect
--	verify_data
--	server_listen
--	wait_for_port ${port} ${netcat_opt}
--fi
--
--# serverside, use BPF for decap
--ip netns exec "${ns2}" ip link del dev testtun0
--ip netns exec "${ns2}" tc qdisc add dev veth2 clsact
--ip netns exec "${ns2}" tc filter add dev veth2 ingress \
--	bpf direct-action object-file ${BPF_FILE} section decap
--echo "test bpf encap with bpf decap"
--client_connect
--verify_data
--
--echo OK
+Regards,
+Bjorn
 
--- 
-2.51.1.dirty
-
+> Signed-off-by: Gergo Koteles <soyer@irl.hu>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  Documentation/input/event-codes.rst    | 6 ++++++
+>  drivers/hid/hid-debug.c                | 1 +
+>  include/uapi/linux/input-event-codes.h | 9 +++++++++
+>  3 files changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
+> index b4557462edd7b3fef9e9cd6c2c3cb2d05bb531ab..d43336e64d6aa4fe8a41b7e9947f4f214df6e1ab 100644
+> --- a/Documentation/input/event-codes.rst
+> +++ b/Documentation/input/event-codes.rst
+> @@ -241,6 +241,12 @@ A few EV_ABS codes have special meanings:
+>      emitted only when the selected profile changes, indicating the newly
+>      selected profile value.
+>  
+> +* ABS_SND_PROFILE:
+> +
+> +  - Used to describe the state of a multi-value sound profile switch.
+> +    An event is emitted only when the selected profile changes,
+> +    indicating the newly selected profile value.
+> +
+>  * ABS_MT_<name>:
+>  
+>    - Used to describe multitouch input events. Please see
+> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+> index 7107071c7c516af48c0c5fc1206c1e01bae3889f..c58500d8b94b581e41ae098d6ce99db7783986b7 100644
+> --- a/drivers/hid/hid-debug.c
+> +++ b/drivers/hid/hid-debug.c
+> @@ -3513,6 +3513,7 @@ static const char *absolutes[ABS_CNT] = {
+>  	[ABS_DISTANCE] = "Distance",	[ABS_TILT_X] = "XTilt",
+>  	[ABS_TILT_Y] = "YTilt",		[ABS_TOOL_WIDTH] = "ToolWidth",
+>  	[ABS_VOLUME] = "Volume",	[ABS_PROFILE] = "Profile",
+> +	[ABS_SND_PROFILE] = "SoundProfile",
+>  	[ABS_MISC] = "Misc",
+>  	[ABS_MT_SLOT] = "MTSlot",
+>  	[ABS_MT_TOUCH_MAJOR] = "MTMajor",
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 08cb157ab59364a41ac425fc9a4ea8eb2fae0e86..f443f61f9bb8e3c212da522d9b99a386a13c4475 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -875,6 +875,7 @@
+>  
+>  #define ABS_VOLUME		0x20
+>  #define ABS_PROFILE		0x21
+> +#define ABS_SND_PROFILE		0x22
+>  
+>  #define ABS_MISC		0x28
+>  
+> @@ -984,4 +985,12 @@
+>  #define SND_MAX			0x07
+>  #define SND_CNT			(SND_MAX+1)
+>  
+> +/*
+> + * ABS_SND_PROFILE values
+> + */
+> +
+> +#define SND_PROFILE_SILENT	0x00
+> +#define SND_PROFILE_VIBRATE	0x01
+> +#define SND_PROFILE_RING	0x02
+> +
+>  #endif
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
