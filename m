@@ -1,245 +1,283 @@
-Return-Path: <linux-kernel+bounces-872102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815F7C0F40D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:25:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A5AC0F440
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D0D1897843
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:25:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55AD54E4265
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D372312837;
-	Mon, 27 Oct 2025 16:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC583128DC;
+	Mon, 27 Oct 2025 16:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QeidNnQY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLa74pib"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA308311977
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE2C25392D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582307; cv=none; b=t6lQPz+OvBl9udPHrzyB4lH+baUFQTw2V8yAzY4RicUZ7xP9FNIF8z9CiMTaBrATGqTOhjmajFnThLkV7i8zKZ1aKLLNWh8j+hYIczTeSCHebqu8OXGR+xJ+8DaLHLZjewtQVBvJktRUzEjJwickznJcjSF1b3HK7Tnmo8vWY/8=
+	t=1761582386; cv=none; b=NFdBKTYlwGuS2W/zxKaOHgLOUC1z3DlH+C8ZC6+/brsLuO4TqKhK5ZaR+yMj5PW9NO949ZbXqVKtoikNjwa53sOti6fJd3VzfhOc5FDDe0nCQHxI/cRDZsI91DjHlkOeADsivm8WT9+IMqlPDvuXHlwgGh4XllE+C7iX5botvlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582307; c=relaxed/simple;
-	bh=y02/AtkDsIqEhEZhlF1G83YBkQiApyyUcaAYo8+NE3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CaWkiPymA2OK0n2JylNije5cLeGcZk5XZ1WcWMrMGhdvAslJjMWHIHFhGv+F2DVGiH/oNSNQWwYAEARQGDg0Ctun3CRm/vXWs2b+Cv7LRrR7kTZHt0lsy2CfMxGrJvL3APL0HkTljuQI37RGajsYB9oZ5g+yqditPGBBJ+ytqsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QeidNnQY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761582304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EJ5VPlj4otrH6ErEHjuzGdU9BRwHQ8d9NMaXu6e9vKY=;
-	b=QeidNnQYyHxSTWWki/8j887F6dE8Wx3bcqfniLlnnmd02KFgmwLEkU+pkPY4t3VrV3OVFG
-	Oti+Y+m+c6yJk6B81lVe14CsKqyN+OdHBz36X8u1rh6UFT+VR6L15G2EX+2ebbgxmfOGW+
-	ZSdD1R+uWjiGBCrOPa+QXq6N/tjXA0A=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-CfHzzclnMHmtpZliMNIydw-1; Mon, 27 Oct 2025 12:25:03 -0400
-X-MC-Unique: CfHzzclnMHmtpZliMNIydw-1
-X-Mimecast-MFC-AGG-ID: CfHzzclnMHmtpZliMNIydw_1761582302
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-476b8c02445so18365815e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:25:02 -0700 (PDT)
+	s=arc-20240116; t=1761582386; c=relaxed/simple;
+	bh=Bs4B8/uykKw1jcppFuo9rBAa0l4UHhlbTVgzfpm/mNc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FocAvHmmnr3tRoSP1RoSy3JFDoXfADMw4KChUtoY8yLJHCQuGTeHHBTl1QsJRYHcRbfmCjUYURrkWcVqXBS7L4L1+EUsdsspX/Gpr5ZW+UqvYbHh4wFc6XR5VAQ9oMnJIolKcbzi5CCCc/cnCp8bt4SP1B2D4BxTkh4xV0/QU08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLa74pib; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4285169c005so2248502f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761582383; x=1762187183; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5SrTb8IVi1M+UPh4x4SyPxsMBzZTSdlA/Lo+QiBLzFo=;
+        b=WLa74pibiOKry6Zo3ZBWIm22nFO5FMxyQ4eMt2zdr697we6dHC8IwN1IMjiTm7PmCM
+         z744oQ/9G7pEnhcjH4S/jYrnTVYHVyljCxJt1TmYr6ZrUk6EhGHGdTgWYeczesQMAsds
+         B/pPs+z1owWXKXx+PPYbvmS49Auejbk0/S4xA9n6t6kdn8g7VeP1wSR6X4HGLP3opEn1
+         6+Ifte9S+4cZKN4lTiBwzPxKjuRG/DTH5ZWoPlQWvnxBVtuZ0XGZ09YuM5+4FzUK6rhb
+         iBCMAZXSzBnll4fL4aYOJxxKBb2E/g5w4me0XnfDa8cn5BshdkF4RlZsLoqYxQa+wV71
+         B04g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761582302; x=1762187102;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EJ5VPlj4otrH6ErEHjuzGdU9BRwHQ8d9NMaXu6e9vKY=;
-        b=eaQbTuPJC2RJTfiwDtmybzMejFc0okwZgujrlpE2Io4nIZy+o9o3aYZ3zgjnMx/l7n
-         CdPPokcjFbrRJc4a1NOBZY8p1cqHU6RMnHiHGd0qpYBnC8v7/WDFAVttY0lEsg4F7NNy
-         231m0o2ZtP+flPVrFug1VzHVoVNQKZDPCz9rQcRM/nieOSY50fl6VNX13MVHO5Zh1Zcm
-         66UkqV2St5HqXLolBEV95ExqYH8kyDKxLgQgwkKjQmakKnQ5gbvtJrl8QTTr3fsZPmpp
-         frv1k2DORlWs4gb5zpalo3tEmcnhs/P1wCp8nM271ff3GeX6IasLBfwlem7DJlRG2CBM
-         P1Mg==
-X-Gm-Message-State: AOJu0YzfrUc7MF2/YKXP9nLQK68GvsUShG7E818fDhFqNsAK1zm7Ntfd
-	X7JkDR9keXT5PZvCOSbXH9b1BKaNUMjj5rkMs/ayz1Xif4Rafnlc8Pg0V++WU4jxKDk6Yi3rlXW
-	RFA0C35AMogbNBK25MVNDi5hf8r05fZR3aJ8/awKuVSkOkXDsO2/snxPClKHF7c3MOQ==
-X-Gm-Gg: ASbGncvVJaNiceEnI21c4TW3N/1uTQcGBqI8XY+PGKfeeOLXzNdoPRuABgwXFAmQS6I
-	Q+BKxbWgRCUeUUXlOC2TKYEGlXAols1CGjOyObo4BhjvlnALiTZD8MSMKEzadmQMAZr9D5AH8dj
-	J3hzZqj70QGeKcE7paNQrmvc1Vwslr/dEBG1utGOQD603ztRcsq0ZSUNATjba9a2wVvGYF6MgiJ
-	XKaIjihG0/8XENGFuxoHRI+BtGqLtESb8OY6xd3hpvL2xNmv9HchfdHU8C5WqV5xDweRTrw5xzJ
-	4uTqu/9MRPQcjIcAmJtiSGK7S6M0jYWZcDNLot4oIq12uksW3JFneoIHudEDwNI7VW886RGnZZF
-	3NA2/YXy0tVLc1bzS8PBolQpzw6PcUQXcWaOKeUQb+pyU2IIlksetu7TyAVFJuz6slt0MVnpz6T
-	xUWi5z5QUCosdCfXnwyJbMeUiDcn0=
-X-Received: by 2002:a05:600c:3e8d:b0:475:dd89:ac7 with SMTP id 5b1f17b1804b1-47717df7ef0mr2442705e9.1.1761582301727;
-        Mon, 27 Oct 2025 09:25:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcpfk6BDA32rXrYsquQ4cz9qgC2WRauB7zTOhtVhTNHZoQZbKrXzlM5wPgRBa5cEga5fDZQQ==
-X-Received: by 2002:a05:600c:3e8d:b0:475:dd89:ac7 with SMTP id 5b1f17b1804b1-47717df7ef0mr2442105e9.1.1761582301286;
-        Mon, 27 Oct 2025 09:25:01 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd01c07fsm74064275e9.2.2025.10.27.09.24.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 09:25:00 -0700 (PDT)
-Message-ID: <14030818-52e7-41eb-8ad7-602f3476d448@redhat.com>
-Date: Mon, 27 Oct 2025 17:24:57 +0100
+        d=1e100.net; s=20230601; t=1761582383; x=1762187183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5SrTb8IVi1M+UPh4x4SyPxsMBzZTSdlA/Lo+QiBLzFo=;
+        b=PbyUacQxvf8R99X4P13KgXn0GB74LHfGmSBjs2DhtL2GOdUhXjzN3NEw0pcbojxX8A
+         6fLgfzpuweSWMhwQAarckFk7BKxcHiY/rIEGiBD5kASJbGjNcWRKWIGq6llA0d3g5RxX
+         yYRSwOTL856iEpBUxwhEak7oKKEbEDd/y2MYVZeuMrdpP2ofUAo4xQ9CoxilqTgWgxIx
+         3BNUR0O0MlVm/A/c6BX0BtXIXibw14NXLMbt/BveysnVWHesDSDhXBxAQWnLFnBkhk/x
+         1l45JTrgtuvUWumdpOCAttvgCwQeKV6eQTk0qn5AzAOCG5CAPPs59396TaM0ubDyN/T8
+         1wsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIu4G2uHVWO9zt+po1vz28mcZn5dmion2qRkghAAYVHM1albFKh/V0OxQoIj5Lj82bE1qx+9Gfz4sBvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt8ODeFasGUtg9bJv+/P84zcWVKa9PUzaeL832AGN2cRmrlFoN
+	VSbFSItzCzhrfKHGK7VW26UGD4sOUFbsZcaQghwwdHBNPvmYJ5R0lRftUu7pzo8JypdwAMALHOV
+	qQ2vxFplehbV0Y/onkNGxasDJnlXCHr4=
+X-Gm-Gg: ASbGncuKJSpPsqim18WvsWZhn7OPMTK+BqQgptvBQ3jhDzclYqIu0qdrazpoSrpiRL/
+	9h0+yTywxMG8hDIqCkthY4JV/okx0psoQaOl4DabOiXshbXgwXVFFm3lIAGdfA0cy9jHvpqA/Hv
+	sSNuCvxMG+8FV+ADQaSBrYYQUpBmvJs5ggs5wqaxnJQQfki+60OheMrtNMaTq8FaF/eswc0vOTU
+	kFWs1Y7Adf3ziA8iM3h9X4jzV+ohKUHYsrKCSUIyUEL9t5X8C3rZ928QURvXV+si4Egep+A
+X-Google-Smtp-Source: AGHT+IHFJxRu5qBnlqFAzxiFl/DfUrP65/+IhuceL8h0odWrzhYK3yEz43INR8RoomWFqZX8ENb8Yl5j8aUnmvnmeyI=
+X-Received: by 2002:a05:6000:22c1:b0:429:8d8b:fef7 with SMTP id
+ ffacd0b85a97d-429a7e8af59mr280669f8f.49.1761582382833; Mon, 27 Oct 2025
+ 09:26:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-7-kevin.brodsky@arm.com>
- <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
- <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
- <f8d22ae0-4e36-4537-903f-28164c850fdb@redhat.com>
- <28bf77c0-3aa9-4c41-aa2b-368321355dbb@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <28bf77c0-3aa9-4c41-aa2b-368321355dbb@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251022142051.70400-1-clamor95@gmail.com> <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
+In-Reply-To: <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 27 Oct 2025 18:26:11 +0200
+X-Gm-Features: AWmQ_bndZ_UMW04Dj_5iuem6GBL-JfBmCI1w73hLOMnrt2c_rPQxhjX1IsYuHlw
+Message-ID: <CAPVz0n1aj8A5L50WcO-W4jSH2t6kfi6qXN-2FkmZxiAYJUN3vg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
+To: Hans Verkuil <hverkuil+cisco@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24.10.25 16:32, Kevin Brodsky wrote:
-> On 24/10/2025 15:27, David Hildenbrand wrote:
->> On 24.10.25 14:13, Kevin Brodsky wrote:
->>> On 23/10/2025 21:52, David Hildenbrand wrote:
->>>> On 15.10.25 10:27, Kevin Brodsky wrote:
->>>>> [...]
->>>>>
->>>>> * madvise_*_pte_range() call arch_leave() in multiple paths, some
->>>>>      followed by an immediate exit/rescheduling and some followed by a
->>>>>      conditional exit. These functions assume that they are called
->>>>>      with lazy MMU disabled and we cannot simply use pause()/resume()
->>>>>      to address that. This patch leaves the situation unchanged by
->>>>>      calling enable()/disable() in all cases.
->>>>
->>>> I'm confused, the function simply does
->>>>
->>>> (a) enables lazy mmu
->>>> (b) does something on the page table
->>>> (c) disables lazy mmu
->>>> (d) does something expensive (split folio -> take sleepable locks,
->>>>       flushes tlb)
->>>> (e) go to (a)
->>>
->>> That step is conditional: we exit right away if pte_offset_map_lock()
->>> fails. The fundamental issue is that pause() must always be matched with
->>> resume(), but as those functions look today there is no situation where
->>> a pause() would always be matched with a resume().
->>
->> We have matches enable/disable, so my question is rather "why" you are
->> even thinking about using pause/resume?
->>
->> What would be the benefit of that? If there is no benefit then just
->> drop this from the patch description as it's more confusing than just
->> ... doing what the existing code does :)
-> 
-> Ah sorry I misunderstood, I guess you originally meant: why would we use
-> pause()/resume()?
-> 
-> The issue is the one I mentioned in the commit message: using
-> enable()/disable(), we assume that the functions are called with lazy
-> MMU mode is disabled. Consider:
-> 
->    lazy_mmu_mode_enable()
->    madvise_cold_or_pageout_pte_range():
->      lazy_mmu_mode_enable()
->      ...
->      if (need_resched()) {
->        lazy_mmu_mode_disable()
->        cond_resched() // lazy MMU still enabled
->      }
-> 
-> This will explode on architectures that do not allow sleeping while in
-> lazy MMU mode. I'm not saying this is an actual problem - I don't see
-> why those functions would be called with lazy MMU mode enabled. But it
-> does go against the notion that nesting works everywhere.
+=D0=BF=D0=BD, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 18:0=
+8 Hans Verkuil <hverkuil+cisco@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Hi Svyatoslav,
+>
+> On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
+> > Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+> > with a set of changes required for that.
+>
+> Other than patch 06/23 that looked iffy (although the original code was i=
+ffy as
+> already), for which I posted a review, this series looks almost ready.
 
-I would tackle it from a different direction: if code calls with lazy 
-MMU enabled into random other code that might sleep, that caller would 
-be wrong.
+06/23 addresses issue I have encountered while testing with mt9m114 I
+will add detailed explanation later in the 06/23 commit discussion.
 
-It's not about changing functions like this to use pause/resume.
+>
+> Should the clk patches be merged together with the media patches? Or can =
+those
+> go in via the clk subsystem? If it is the latter, then I'll need an Acked=
+-by from the
+> clk subsystem maintainer.
+>
 
-Maybe the rule is simple: if you enable the lazy MMU, don't call any 
-functions that might sleep.
+I suppose this should be discussed between staging and clk subsystem
+maintainers I am fine with any conclusion.
 
-Maybe we could support that later by handling it before/after sleeping, 
-if ever required?
+> Regarding the bindings: all except 21/23 are Acked.
 
-Or am I missing something regarding your point on pause()/resume()?
+Maybe you did not notice, but 21/23 has reviewed-by from Rob Herring.
 
--- 
-Cheers
+>
+> I have one question regarding testing: in the past I tested this driver w=
+ith a
+> Jetson TX1 devkit and a camera sensor. One of the main reasons this drive=
+r is still
+> in staging is that I never got that to work reliably: after 10-30 minutes=
+ it would
+> lose sync and streaming would stop.
+>
+> Unfortunately I never had the time to dig deeper into that.
+>
+> So have you tested this with a camera sensor? And if so, does it stream r=
+eliably?
+> I.e. just let it stream for 24 hours and see if that works.
+>
+> If it is reliable for you, then I think this driver should be moved to dr=
+ivers/media.
 
-David / dhildenb
+Streaming works but I did not tested for such prolonged periods of
+time. Scope of this patchset is bringing CSI support for
+Tegra20/Tegra30, extended testing and move to media can be done in
+followup.
 
+>
+> Regards,
+>
+>         Hans
+>
+> >
+> > ---
+> > Changes in v2:
+> > - vi_sensor gated through csus
+> > - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+> > - adjusted commit titles and messages
+> > - clk_register_clkdev dropped from pad clock registration
+> > - removed tegra30-vi/vip and used tegra20 fallback
+> > - added separate csi schema for tegra20-csi and tegra30-csi
+> > - fixet number of VI channels
+> > - adjusted tegra_vi_out naming
+> > - fixed yuv_input_format to main_input_format
+> > - MIPI calibration refsctored for Tegra114+ and added support for
+> >   pre-Tegra114 to use CSI as a MIPI calibration device
+> > - switched ENOMEM to EBUSY
+> > - added check into tegra_channel_get_remote_csi_subdev
+> > - moved avdd-dsi-csi-supply into CSI
+> > - next_fs_sp_idx > next_fs_sp_value
+> > - removed host1x_syncpt_incr from framecounted syncpoint
+> > - csi subdev request moved before frame cycle
+> >
+> > Changes in v3:
+> > - tegra20 and tegra30 csi schema merged
+> > - removed unneeded properties and requirements from schema
+> > - improved vendor specific properties description
+> > - added tegra20 csus parent mux
+> > - improved commit descriptions
+> > - redesigned MIPI-calibration to expose less SoC related data into head=
+er
+> > - commit "staging: media: tegra-video: csi: add support for SoCs with i=
+ntegrated
+> >   MIPI calibration" dropped as unneeded
+> > - improved tegra_channel_get_remote_device_subdev logic
+> > - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+> > - software syncpoint counters switched to direct reading
+> > - adjusted planar formats offset calculation
+> >
+> > Changes in v4:
+> > - removed ifdefs from tegra_mipi_driver
+> > - document Tegra132 MIPI calibration device
+> > - switched to use BIT macro in tegra114-mipi
+> > - pinctrl changes moved to a separate patch
+> > - ERESTARTSYS workaround preserved for now
+> > - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
+> > - reworked bytesperline and sizeimage calculaion
+> >
+> > Changes in v5:
+> > - dropped patch 1/24 of v4 since it was picked to pinctrl tree
+> > - added reasoning for tegra132 comaptible into commit desctiption
+> > - moved clocks into common section in tegra20-csi schema
+> > - added note regarding ERESTARTSYS
+> > ---
+> >
+> > Svyatoslav Ryhel (23):
+> >   clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
+> >     Tegra114
+> >   dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+> >   clk: tegra30: add CSI pad clock gates
+> >   dt-bindings: display: tegra: document Tegra30 VI and VIP
+> >   staging: media: tegra-video: expand VI and VIP support to Tegra30
+> >   staging: media: tegra-video: vi: adjust get_selection op check
+> >   staging: media: tegra-video: vi: add flip controls only if no source
+> >     controls are provided
+> >   staging: media: tegra-video: csi: move CSI helpers to header
+> >   gpu: host1x: convert MIPI to use operation function pointers
+> >   dt-bindings: display: tegra: document Tegra132 MIPI calibration devic=
+e
+> >   staging: media: tegra-video: vi: improve logic of source requesting
+> >   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+> >     CSI
+> >   arm64: tegra: move avdd-dsi-csi-supply into CSI node
+> >   staging: media: tegra-video: tegra20: set correct maximum width and
+> >     height
+> >   staging: media: tegra-video: tegra20: add support for second output o=
+f
+> >     VI
+> >   staging: media: tegra-video: tegra20: adjust format align calculation=
+s
+> >   staging: media: tegra-video: tegra20: set VI HW revision
+> >   staging: media: tegra-video: tegra20: increase maximum VI clock
+> >     frequency
+> >   staging: media: tegra-video: tegra20: expand format support with
+> >     RAW8/10 and YUV422/YUV420p 1X16
+> >   staging: media: tegra-video: tegra20: adjust luma buffer stride
+> >   dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
+> >   ARM: tegra: add CSI nodes for Tegra20 and Tegra30
+> >   staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
+> >
+> >  .../display/tegra/nvidia,tegra114-mipi.yaml   |   1 +
+> >  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 +++
+> >  .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
+> >  .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
+> >  arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
+> >  arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
+> >  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
+> >  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
+> >  drivers/clk/tegra/clk-tegra114.c              |   7 +-
+> >  drivers/clk/tegra/clk-tegra20.c               |  20 +-
+> >  drivers/clk/tegra/clk-tegra30.c               |  21 +-
+> >  drivers/gpu/drm/tegra/dsi.c                   |   1 +
+> >  drivers/gpu/host1x/Makefile                   |   1 +
+> >  drivers/gpu/host1x/mipi.c                     | 525 ++---------
+> >  drivers/gpu/host1x/tegra114-mipi.c            | 483 +++++++++++
+> >  drivers/staging/media/tegra-video/Makefile    |   1 +
+> >  drivers/staging/media/tegra-video/csi.c       |  70 +-
+> >  drivers/staging/media/tegra-video/csi.h       |  16 +
+> >  drivers/staging/media/tegra-video/tegra20.c   | 820 +++++++++++++++---
+> >  drivers/staging/media/tegra-video/vi.c        |  56 +-
+> >  drivers/staging/media/tegra-video/vi.h        |   6 +-
+> >  drivers/staging/media/tegra-video/video.c     |   8 +-
+> >  drivers/staging/media/tegra-video/vip.c       |   4 +-
+> >  include/dt-bindings/clock/tegra30-car.h       |   3 +-
+> >  include/linux/host1x.h                        |  10 -
+> >  include/linux/tegra-mipi-cal.h                |  57 ++
+> >  26 files changed, 1657 insertions(+), 670 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvi=
+dia,tegra20-csi.yaml
+> >  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+> >  create mode 100644 include/linux/tegra-mipi-cal.h
+> >
+>
 
