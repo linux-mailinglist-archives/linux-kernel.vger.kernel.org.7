@@ -1,170 +1,203 @@
-Return-Path: <linux-kernel+bounces-871748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F94FC0E3AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:04:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF51C0E3BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFF964F4005
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02A6422A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188BD307491;
-	Mon, 27 Oct 2025 13:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="UxWmaxyU"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F400307AE5;
+	Mon, 27 Oct 2025 13:57:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E237024DCEF;
-	Mon, 27 Oct 2025 13:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CD7231A23
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573446; cv=none; b=i8gw4AwN4WS24ltwZlLhz5LN/JSYqlQDZRjRfLoQqswLn/INDeLQ1Rlt7dHDhVqMYMlaxKT9HH5UwaN0c8x62PVgKcp0T2TYCaTTaaqYSF6T97ghHmzbR3YyuQO83pX56Ny4WdqTqUo5tc5lIdOJ4FHnYI+DflN6VWIkMlvWayM=
+	t=1761573459; cv=none; b=dIRZtR6EAIVe+IRZGm8RbC8YSisEQAYgsb6NylIp0cxU3lfrf6aY0yRqGdr5qFyGicSbTJDE1q3RaEH19Fmhvv8b6tz44hAzHlW/VeGuWUwzv6Da4heJPcoumRGe/zBPEYl+ICwugxzY9d/rWcd0dnHG7SFLqCVMri5+NV4NhRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573446; c=relaxed/simple;
-	bh=FMYpihiQvFiI/NsGZPv8NF/yKtgNXE0Gdue0oLn+0xQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwbRHnSxaYP5+ig+X6y3MOM00I0NrNK4LysJ0H6B3QqXaW1HIkALr38q7k9EQzM7cdCFSCWfufP5fx6l0MW1D6JR7ph7kelzdyA3n6iStPuo1L5F4OqsnQ8fiTa1cOHym9dNU47vnR//lybqD6lZ9b/2a+VUiBMsmR03nxl5jcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=UxWmaxyU; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1761573425;
-	bh=GOXJjc2R6gLa1S92DIipgJyO9ajzHcGqwyH0ghoII7E=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=UxWmaxyUPyF5729L823AUNUkLnl/a5Fqg2XtdYzmb+Ba71DDr7PEOB5xCiLb7aeHC
-	 cuvEnVb/RhT8enXobX04x/lyvVD6vdXuY3QwVFfBleIGTdJBKI2WqOwUMrZFpxPU0k
-	 aOI7s3+Ir8Nh9Wk+g6YwwmnjZD6sdXzqJt6ZtyUM=
-X-QQ-mid: zesmtpip2t1761573420te99bac9d
-X-QQ-Originating-IP: x1+tmePdSRc0FAZX9Ga7DFEbiQ13Tyh9xloMBXd4/2o=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 27 Oct 2025 21:56:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14346178185621163239
-EX-QQ-RecipientCnt: 15
-Date: Mon, 27 Oct 2025 21:56:58 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Yixun Lan <dlan@gentoo.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Andreas Schwab <schwab@suse.de>, Yao Zi <ziyao@disroot.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] driver: reset: spacemit-p1: add driver for
- poweroff/reboot
-Message-ID: <DAA41086C5EBCCFD+aP96KqT06FswX1uN@troy-wujie14pro-arch>
-References: <20251026224424.1891541-1-aurelien@aurel32.net>
- <20251026224424.1891541-2-aurelien@aurel32.net>
- <A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org>
- <aP8QHwsYDlbQxQJo@pie>
- <mvmh5vk67in.fsf@suse.de>
- <aP86TltQ2uqeK6FY@pie>
- <CAJM55Z9w0pnFmVjJKJNMs1iqOxoL=YpkBu0L7NuUZ_0ipMtQAQ@mail.gmail.com>
- <20251027103147-GYA1541054@gentoo.org>
- <aP906fAZZfFXp-2D@aurel32.net>
+	s=arc-20240116; t=1761573459; c=relaxed/simple;
+	bh=s5ydlXE4nNlwua1OJy3Gc8lsdx7wWBSAUSvBSEnAlgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7P4KLzpHeM3rfWqf2wtyNjpr2FA77cmBgQClph+CWPtv51P58QpgxmD8GcvQ7sdPAwTfK7vjw0g1EmPk582uQ1eEhAual5N5BwIEvW+mBccrGsvKlCl40bqe8OfQFjm/7y+WdZnIWbS+tJnLljvSt87PDR1L4fBiCg4br+lUTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vDNiw-0003CX-Tf; Mon, 27 Oct 2025 14:57:26 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vDNiv-005iVn-2K;
+	Mon, 27 Oct 2025 14:57:25 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vDNiv-003COV-1v;
+	Mon, 27 Oct 2025 14:57:25 +0100
+Date: Mon, 27 Oct 2025 14:57:25 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] net: phy: dp83867: Disable EEE support as not
+ implemented
+Message-ID: <aP96RVclYQaoBxSO@pengutronix.de>
+References: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
+ <ae723e7c-f876-45ef-bc41-3b39dc1dc76b@lunn.ch>
+ <664ef58b-d7e6-4f08-b88f-e7c2cf08c83c@gmail.com>
+ <df3aac25-e8e9-46cb-bd92-637822665080@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aP906fAZZfFXp-2D@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: METBPFwEUDZ+Q4LaD7aOIDb5kTZzutCbw9FTL72zaXAtJYVZORmcRWZI
-	4OHS4TsPLT6B34qbZwbKfpPsj5+Q3tbmLePv9sDMRmDzKV+mx6uICkfwVDn5EEBO8yteEee
-	sQPvf4ghhd4cY7ysEdrvj+vb8xs760kzdo6pUs3c0GV3+vBLJVdXGXchHEJhZR2DI40C0Cu
-	Y2BkKOujlhsUDbYL9zjN7BbIFiO24/4Pmga6VTiJrWCZL1Vo57i3XnMBh7dFJo2d/604y4/
-	zb4ZdfMSGVNs22BfHPAxBsyJ5lRWF3qAqJh+LHwdtkXveRKSKPGLdfNSAzTMIPyyIp0lYbc
-	VZwZsac015VbtIC9FfmN/ZzHWyIc9Y5HVL3ra9lsBOfrlTD0uz8Xi6B7xSnhA8o33mai7Zw
-	lB5YD1RCQ3j5DTI6rKvVKtmYST8DgnvcISxSP6z25euzLkrHxMVFtr7juPreANU21i05+zh
-	2xc4+74mo+cIaePnzfxUvGkMe1coZgGZgVVGs/IWj/xQbXvU7ik6Wr84O7/LftKiDMf2Pbn
-	xmVkMYyPL9sXfofYEeAj955QvUqxPyi/Mqj7z+srBlUSgYFpgKS2PaRUvbDMKICfPzrTcFX
-	AuT8Pr30tQLwWcjZXJsVryf2P3hyEkaaKxrT4OZTVSkFrvyFu1s+9qMscMvnEXx8nMc+aCY
-	bHjtFCkPPYbvCa9R0mJf/Qfop9Whz9elrquZ058HnOJz7qE/4Zxi6BmYpQ/xl9GKzj9I02B
-	OYkDRmbzuzg10pGs5foWqBxcEIUotRdlNgGkHenak0CbaHVmRWKPhgzVYOSxrbMm7CELdO+
-	TRz0rFX1etXa2dPI4Eolosni7izMXMwZvXPGDySukwCo1ABtqjlUMOQIkOZtKSfEZ6YVoxd
-	P1FHrWFyqO2tExusZd/Q9nxPwHNJHedDoS5yn31+hlPRCtP5l0F5y/WqX3AqPppZxPkaeyM
-	NiKXQldTTcaM3/GBbXzOE0gmcmBatjR6rAZ3T0BuI0RMfcUIsi0GN1OuTooWU9wdnuFuctu
-	uljw+SW/1ZVF7dSxZ1keFCD0CmeWElPLKVaKuWQeas9S+Z1iB6rpm00ljVd0Z7cKT2U3PJ+
-	YfV+I356HRnSPZSFgoMhVjI6ZYmjPckQJj0uDes/GuB66IYMMQ0hSxx3cpdYq1EIlArlCUF
-	q+oZ6I1pXbU4fvb84th45j9eXhNPaspidPG6
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <df3aac25-e8e9-46cb-bd92-637822665080@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Oct 27, 2025 at 02:34:33PM +0100, Aurelien Jarno wrote:
-> On 2025-10-27 18:31, Yixun Lan wrote:
-> > Hi 
+On Mon, Oct 27, 2025 at 02:25:12PM +0100, Andrew Lunn wrote:
+> On Mon, Oct 27, 2025 at 01:57:48PM +0100, Emanuele Ghidoli wrote:
 > > 
-> > On 03:17 Mon 27 Oct     , Emil Renner Berthing wrote:
-> > > Quoting Yao Zi (2025-10-27 10:24:30)
-> > > > On Mon, Oct 27, 2025 at 10:03:44AM +0100, Andreas Schwab wrote:
-> > > > > On Okt 27 2025, Yao Zi wrote:
-> > > > > > On Mon, Oct 27, 2025 at 11:20:33AM +0800, Troy Mitchell wrote:
-> > > > > >> On Sun, Oct 26, 2025 at 11:41:14PM +0100, Aurelien Jarno wrote:
-> > > > > >> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> > > > > >> > index 8248895ca9038..61c16f3d5abc7 100644
-> > > > > >> > --- a/drivers/power/reset/Kconfig
-> > > > > >> > +++ b/drivers/power/reset/Kconfig
-> > > > > >> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
-> > > > > >> >          help
-> > > > > >> >            Reboot support for the KEYSTONE SoCs.
-> > > > > >> >
-> > > > > >> > +config POWER_RESET_SPACEMIT_P1
-> > > > > >> > +        tristate "SpacemiT P1 poweroff and reset driver"
-> > > > > >> > +        depends on ARCH_SPACEMIT || COMPILE_TEST
-> > > > > >> > +        depends on MFD_SPACEMIT_P1
-> > > > > >> > +        default m
-> > > > > >> default m if ARCH_SPACEMIT? Or default ARCH_SPACEMIT?
-> > > > > >> I believe that reboot and shutdown are actually essential functionalities,
-> > > > > >> so it might make more sense: default ARCH_SPACEMIT?
-> > > > > >
-> > > > > > I don't think there's anything preventing it to be built as module by
-> > > > > > default: even though it's "essential", it's unnecessary during kernel
-> > > > > > and userspace startup, thus I see no reason to build it in the image.
-> > > > >
-> > > > > Wouldn't it be needed in a reboot-on-panic situation?
-> > > >
-> > > > Oops, yeah, I missed this stuff. Seems systemd automatic boot assessment
-> > > > could switch to another boot option if one fails to boot. And if it's
-> > > > caused by a (very early) kernel panic, then reboot support does play a
-> > > > part here.
-> > > 
-> > > But if systemd is running then you've at least got as far as the initramfs,
-> > > and have the module available. So I don't see the problem.
-> > > 
-> > In rare case, if got kernel panic before load this module, then we
-> > should really fix it instead.. Besides, there is no restriction to prevent
-> > user to make this driver as built-in, right?
 > > 
-> > So I think this isn't really a big problem either
+> > On 27/10/2025 00:45, Andrew Lunn wrote:
+> > >> Since the introduction of phylink-managed EEE support in the stmmac driver,
+> > >> EEE is now enabled by default, leading to issues on systems using the
+> > >> DP83867 PHY.
+> > > 
+> > > Did you do a bisect to prove this?
+> > Yes, I have done a bisect and the commit that introduced the behavior on our
+> > board is 4218647d4556 ("net: stmmac: convert to phylink managed EEE support").
+> > 
+> > > 
+> > >> Fixes: 2a10154abcb7 ("net: phy: dp83867: Add TI dp83867 phy")
+> > > 
+> > > What has this Fixes: tag got to do with phylink?
+> > I think that the phylink commit is just enabling by default the EEE support,
+> > and my commit is not really fixing that. It is why I didn't put a Fixes: tag
+> > pointing to that.
+> > 
+> > I’ve tried to trace the behavior, but it’s quite complex. From my testing, I
+> > can summarize the situation as follows:
+> > 
+> > - ethtool, after that patch, returns:
+> > ethtool --show-eee end0
+> > EEE settings for end0:
+> >         EEE status: enabled - active
+> >         Tx LPI: 1000000 (us)
+> >         Supported EEE link modes:  100baseT/Full
+> >                                    1000baseT/Full
+> >         Advertised EEE link modes:  100baseT/Full
+> >                                     1000baseT/Full
+> >         Link partner advertised EEE link modes:  100baseT/Full
+> >                                                  1000baseT/Full
+> > - before that patch returns, after boot:
+> > EEE settings for end0:
+> >         EEE status: disabled
+> >         Tx LPI: disabled
+> >         Supported EEE link modes:  100baseT/Full
+> >                                    1000baseT/Full
+> >         Advertised EEE link modes:  Not reported
+> >         Link partner advertised EEE link modes:  100baseT/Full
+> >                                                  1000baseT/Full
+> > - Enabling EEE manually using ethtool, triggers the problem too (and ethtool
+> > -show-eee report eee status enabled):
+> > ethtool --set-eee end0 eee on tx-lpi on
+> > ethtool --show-eee end0
+> > EEE settings for end0:
+> >         EEE status: enabled - active
+> >         Tx LPI: 1000000 (us)
+> >         Supported EEE link modes:  100baseT/Full
+> >                                    1000baseT/Full
+> >         Advertised EEE link modes:  100baseT/Full
+> >                                     1000baseT/Full
+> >         Link partner advertised EEE link modes:  100baseT/Full
+> >                                                  1000baseT/Full
+> > 
+> > I understand Russell point of view but from my point of view EEE is now
+> > enabled by default, and before it wasn't, at least on my setup.
 > 
-> A possible compromise here might be to use "default MFD_SPACEMIT_P1". 
-> This would defer the decision to another level, but I think it makes 
-> sense to have all parts of the MFD either built-in or as modules.
-I think both the regulator and shutdown/reboot drivers should be
-`default MFD_SPACEMIT_P1`.
+> We like to try to understand what is going on, and give accurate
+> descriptions. You have given us important information here, which at
+> minimum should go into the commit message, but more likely, it will
+> help lead us to the correct fix.
+> 
+> So, two things here. You say:
+> 
+> > I think that the phylink commit is just enabling by default the EEE support,
+> 
+> That needs confirming, because you are blaming the conversion to
+> phylink, not that phylink now enabled EEE by default. Russell also
+> tries to avoid behaviour change, which this clearly is. We want a
+> better understanding what caused this behaviour change.
+> 
+> Also:
+> 
+> > - Enabling EEE manually using ethtool, triggers the problem too (and ethtool
+> > -show-eee report eee status enabled):
+> 
+> This indicates EEE has always been broken. This brokenness has been
+> somewhat hidden in the past, and it is the change in behaviour in
+> phylink which exposed this brokenness. A commit message using these
+> words would be much more factually correct, and it would also fit with
+> the Fixes: tag you used.
+> 
+> So, please work with Russell. I see two things which would be good to
+> understand before a new version of the patch is submitted:
+> 
+> What cause the behaviour change such that EEE is now enabled? Was it
+> deliberate? Should something be change to revert that behaviour
+> change?
+> 
+> Given that EEE has always been broken, do we understand it
+> sufficiently to say it is not fixable? Is there an errata?
 
-Otherwise, enabling MFD_SPACEMIT_P1 alone doesn't make much sense,
-right?
+None of following TI Gbit PHYs claim EEE support:
+dp83867cr/ir  https://www.ti.com/de/lit/gpn/dp83867cr
+dp83867e/cs/is  https://www.ti.com/de/lit/gpn/dp83867cs
+dp83869hm https://www.ti.com/lit/gpn/dp83869hm
 
-                              - Troy
-> 
-> Regards
-> Aurelien
-> 
-> -- 
-> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-> aurelien@aurel32.net                     http://aurel32.net
-> 
+For comparison, TI 100Mbit PHYs list EEE as supported:
+dp83826a*  https://www.ti.com/de/lit/gpn/dp83826ae
+dp83826i https://www.ti.com/de/lit/gpn/dp83826i
+
+If vendor do not see it as selling point, or it is just broken beyond
+repair, there is nothing we can do here. I guess it is ok to sync the
+driver with vendors claim.
+
+> Are we sure it is the PHY and not the MAC which is broken?
+
+I personally still do not have suitable reference board for testing.
+There are some with Realtek or TI PHYs. It will be good to find board
+with iMX8MP + KSZ9131 on both MACs (FEC and STMMAC).
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
