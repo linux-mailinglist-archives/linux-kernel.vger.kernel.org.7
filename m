@@ -1,291 +1,163 @@
-Return-Path: <linux-kernel+bounces-870796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46E0C0BB61
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:48:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192E3C0BB70
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D69C3B5C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:48:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 585724E90D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747DD29D28B;
-	Mon, 27 Oct 2025 02:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650D02C325C;
+	Mon, 27 Oct 2025 02:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fzGjV8Db"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NlRqLj2y"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD551553AA;
-	Mon, 27 Oct 2025 02:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456C629BD96
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761533283; cv=none; b=OLvqHaq9ZrQNDuwvDMkenZpSEDempZ+hfOR/fGFtvcft2MsrLsVsFEMQy++oPnfNVhBv0n+X+ydtZjtIGIodOEoQG7Sg/qHPrGTSKxN8spnMp7O5psJPX/uArGTkgXLujzA/Ku9whSZyAJx61V+JDScYmUpxUQxK7igfyKo32jo=
+	t=1761533543; cv=none; b=TDJvqAVvdi6CqeaOLf+BD9E9jefZOWiq6b8w6v39L58MBnaTml1OMcZDPdFZsZvewfnogTLIBR1TaP81onY+hlFqDN9g+oF0BZYABCP5Ioe0k9hidy96mlyHy3j2wcIAVRk0CEwW6HKNIyIfGuqFfCPqbCBCSN4u367BKy9SXG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761533283; c=relaxed/simple;
-	bh=87YXqWkqmRdgKXvUlDcyVyhlq8MY6wrZYt0oUKKBvKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NUcnYKvk65tlp1rfhhuX35vQcDQBAq+/q+8+vkZCDjCMJHzhQia5ZdzbQ/pDsUeI5MT5Pl+kEKpGQVBTo7tvlFzG3p4wh0QuP0bsT+YENb04GYUhx5caNtA+XntJLrzEbcyKVVdpdJ7FawML2jRF3W84GoRzUPvF7pZFyCzLNeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fzGjV8Db; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2C65B7FA;
-	Mon, 27 Oct 2025 03:46:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761533172;
-	bh=87YXqWkqmRdgKXvUlDcyVyhlq8MY6wrZYt0oUKKBvKs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fzGjV8DbwhAhwb/Jkc+Yz3YBVRyI8y5kJNkzrolvNxbsWjVBeEslWypi2NMPnwhPK
-	 0QT2eLO/SfFDeDydhQB8ytQdeApwfP2sPzYyzK45koOgwmgJpyvvyAsmT/Nf5LXGJM
-	 gO+F5KhCfz19i1VPHrefdiE5j+uA+oyI+gLTEqoY=
-Date: Mon, 27 Oct 2025 04:47:45 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Create a specific id namespace for
- output entities
-Message-ID: <20251027024745.GB6330@pendragon.ideasonboard.com>
-References: <CANiDSCvtqe8MKpb=O-=Mv28dK+g=REi7kpdr-eyAD-mLLpzQJw@mail.gmail.com>
- <20251022124937.GE727@pendragon.ideasonboard.com>
- <CANiDSCscZgwUM0VCpdMvNKq0U2a6kOPbJmd4G8iY3EpsPQvZNw@mail.gmail.com>
- <20251022131236.GG19043@pendragon.ideasonboard.com>
- <CANiDSCsVOsCDjg_KU8Y82h9Ujfro4nQ=f4B1BezAkQtJUKFczg@mail.gmail.com>
- <20251023112459.GJ19043@pendragon.ideasonboard.com>
- <CANiDSCuex8w8GvMuKMyZw5sBCeW0wLteRJy97LG5Z_TDbWZ71w@mail.gmail.com>
- <20251024105441.GB13023@pendragon.ideasonboard.com>
- <CANiDSCuFP=HRu1JUnyomFOYUt-8=SA679dLy+eC8c8Yk0PNxLw@mail.gmail.com>
- <20251027024648.GA6330@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1761533543; c=relaxed/simple;
+	bh=ixZLGZjFry1T0cmh+FTStMPELYyw70sUjLfToqyoKUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JI3uneiQhVyc8MevzxiC8fNhqThGBRJJTAD9oJNkw3vFHFoFeHjQ84ISQfiIE79Lq0hxFALopAEmg2olhUJZQA8ctzn8rjxhCy6CWPAePG6Uhsimx/b3MMcSU6B5ZfKpyAmGYNgWUtpGLy1FZ8OdVzMtbhvHIXuurpuF5LPVK0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NlRqLj2y; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-93bccd4901aso402630139f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 19:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761533541; x=1762138341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tE6y7O8WL73HJ3QvP/fJ3zDTO1kKIXbhxHyXNZ11HVg=;
+        b=NlRqLj2y+VcuPpXF88Cdu51N3iaMtTqeTgYkkBy2qzw5FLugAAkyNP7t5tJiafmthS
+         en6MT7fMf6OOhJatSE/enfjkLVxmILVFzg2c5DnDUjBsBPptRGZ9aM6Nyhg0fsEtdRh1
+         wyKmYeuhdMS/fGvNxxkJ+DVyXmoK9+5EhVs4iiK6Q67WOucD5XZgVRmXUR7h5TSisXmD
+         0noVH5DKNbECnCzT8b7KK8bcVRqPhskILePB/F96PpnolC4sKns3CJbC4pfE6VwzJdwz
+         gIGONx7a05o64AXCGV0UXfeKtoDORKXp5tLCMZZN2eJaNGOX0DyfJdDyajO00zISTBlU
+         4X3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761533541; x=1762138341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tE6y7O8WL73HJ3QvP/fJ3zDTO1kKIXbhxHyXNZ11HVg=;
+        b=WsmV0/mxlQN2UuDadp3cP1gCoVQd3yf/nK5luSE5Nv0W1bLW9G60K+K5fnBKEyNYAn
+         45k3dgPfsSgqh02hQVgrGZB216MqyWtuKnOrLEkwShuRD0E48P8/j/RZ/p9LYdFTtBUG
+         FVL1O/j3Mw5aa4hUa2Zrh+OVpuV0jvwzo419urXnuIha/nzBStdjbeiiXqgbajAAVYnv
+         Ty3YZvHbhCIWmmuUBX7D7mCzaowNeKS8WD+S0z7KMIF9HQoh7P6KTh7U2QwlZ9929RrV
+         YKlrmGPEpfGJFEpWuwPwWZ5RIeTa3xzao3xplrkYi9pNRo2ULDzLpH8wNCi9Ot5Wkvee
+         AFuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWv1Y5fhTaIqjGxYO+tY3VwZrnKSlZbv6S0Y1gTjOsFp8Ln5j6NqtT+YKTYdeB4YqRz27OinS5bIVRZbMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc39RJBFRuk76uHXBNiu72b9BLLcU4/mR+owZMslPrdv7p4TMU
+	95C+0tAvQxpOEWbQ6fKUIKqKmq4TTjDTuBQBM6jChiQ9RbfFuGjv0SUGVwVA9rtvjJgucUH1cJm
+	UvmOj20yBrk4AdihbTs3LzR4RMvKQ4us=
+X-Gm-Gg: ASbGncuvz0Yc7fQY3AB7XGk04S0JYVQp2QvOaO+dGNwdgKspz0aaA+vINyWVHvC1McL
+	x8apWy3bsn9N614yqI9fZ7rOVAkBwWzYY8fhIr4jE7yvzWyEzIDtlriMCRU4GxmzNzwBwciuk6h
+	pUprthZK4sc3bPWhtSmIMWCnlJindS72JDCgUQY+7GUAvE9E/PjGLo3PIROybHZrcr4Qh8g9/kD
+	BDSQeZS65ms4EOtKl4pluQiEAJ7Q65DN45rRMwzeFHsbyonDEYNM+HRMra1p2pikW5VM8wneBtg
+	kngbp6cw
+X-Google-Smtp-Source: AGHT+IG10Fz0lVpen9pTnjXcu8h81Dafdgs54J6+i61Y49zuCOckPnrbt30eiGcCoPzXPId17xhv8r975Vzt26iCPxs=
+X-Received: by 2002:a05:6602:1508:b0:945:abea:9f6a with SMTP id
+ ca18e2360f4ac-945abeaa434mr218426339f.19.1761533541221; Sun, 26 Oct 2025
+ 19:52:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027024648.GA6330@pendragon.ideasonboard.com>
+References: <20251025171314.1939608-1-mmyangfl@gmail.com> <20251025171314.1939608-2-mmyangfl@gmail.com>
+ <cc89ca15-cfb4-4a1a-97c9-5715f793bddd@lunn.ch>
+In-Reply-To: <cc89ca15-cfb4-4a1a-97c9-5715f793bddd@lunn.ch>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Mon, 27 Oct 2025 10:51:45 +0800
+X-Gm-Features: AWmQ_bmoPfYcUgstOTVsBidY-HlYrCdpiI4nXRFeg3ioqHavZdYa2xUj2m6lvcA
+Message-ID: <CAAXyoMOa1Ngze9VwwUJy0E7U52=w=fQE8cxwAviGm53MSQXVEA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/2] net: dsa: yt921x: Fix MIB overflow
+ wraparound routine
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, David Laight <david.laight.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 04:46:50AM +0200, Laurent Pinchart wrote:
-> On Fri, Oct 24, 2025 at 01:00:53PM +0200, Ricardo Ribalda wrote:
-> > On Fri, 24 Oct 2025 at 12:54, Laurent Pinchart wrote:
-> > > On Thu, Oct 23, 2025 at 01:47:39PM +0200, Ricardo Ribalda wrote:
-> > > > On Thu, 23 Oct 2025 at 13:25, Laurent Pinchart wrote:
-> > > > > On Wed, Oct 22, 2025 at 03:14:09PM +0200, Ricardo Ribalda wrote:
-> > > > > > On Wed, 22 Oct 2025 at 15:12, Laurent Pinchart wrote:
-> > > > > > > On Wed, Oct 22, 2025 at 03:08:58PM +0200, Ricardo Ribalda wrote:
-> > > > > > > > On Wed, 22 Oct 2025 at 14:49, Laurent Pinchart wrote:
-> > > > > > > > > On Wed, Oct 22, 2025 at 02:29:15PM +0200, Ricardo Ribalda wrote:
-> > > > > > > > > > On Wed, 22 Oct 2025 at 14:09, Laurent Pinchart wrote:
-> > > > > > > > > > > On Wed, Oct 22, 2025 at 11:55:16AM +0000, Ricardo Ribalda wrote:
-> > > > > > > > > > > > Nothing can be connected from an output entity. Which means that no
-> > > > > > > > > > >
-> > > > > > > > > > > s/output entity/output terminal. Same below.
-> > > > > > > > > > >
-> > > > > > > > > > > Did you mean s/from an/to an/ ?
-> > > > > > > > > > >
-> > > > > > > > > > > > other entity can reference an output entity as baSourceId.
-> > > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > Some output terminals have controls, so we need to preserve their ID.
-> > > > > > > > > > > That's why my proposal only set the UVC_TERM_OUTPUT bit for the
-> > > > > > > > > > > *streaming* output terminals, not for all output terminals.
-> > > > > > > > > > >
-> > > > > > > > > > > > Use this fact to move all the output entities to a different namespace
-> > > > > > > > > > > > id.
-> > > > > > > > > > > >
-> > > > > > > > > > > > The output entities are usually named after the dev_name() of the usb
-> > > > > > > > > > > > device, so there should not be any uAPI change from this change.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Although with this change we can handle some id collisions
-> > > > > > > > > > > > automagically, change the logic of uvc_alloc_new_entity() to keep
-> > > > > > > > > > > > showing a warning when a camera has invalid descriptors. Hopefully this
-> > > > > > > > > > > > message will help vendors fix their invalid descriptors.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > > > > > > > > > ---
-> > > > > > > > > > > > Hi, this patch fixes support for some devices with invalid USB
-> > > > > > > > > > > > descriptor.
-> > > > > > > > > > > >
-> > > > > > > > > > > > It is orthogonal to:
-> > > > > > > > > > > > https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
-> > > > > > > > > > > >
-> > > > > > > > > > > > Some devices will be fixed by the other patch, other devices will be
-> > > > > > > > > > > > fixed by this. In my opinion is worth to land both patches.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >  drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
-> > > > > > > > > > > >  1 file changed, 19 insertions(+), 4 deletions(-)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > > > > > > > > > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
-> > > > > > > > > > > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > > > > > > > > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > > > > > > > > > > @@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
-> > > > > > > > > > > >       return NULL;
-> > > > > > > > > > > >  }
-> > > > > > > > > > > >
-> > > > > > > > > > > > +#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
-> > > > > > > > > > >
-> > > > > > > > > > > This needs a UVC_ prefix, and should probably go to uvcvideo.h. You can
-> > > > > > > > > > > also & 0xff, as the UVC descriptors store IDs in 8-bit fields.
-> > > > > > > > > > >
-> > > > > > > > > > > > +
-> > > > > > > > > > > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
-> > > > > > > > > > > >  {
-> > > > > > > > > > > >       struct uvc_streaming *stream;
-> > > > > > > > > > > >
-> > > > > > > > > > > > +     id = ENTITY_HARDWARE_ID(id);
-> > > > > > > > > > > > +
-> > > > > > > > >
-> > > > > > > > > Another comment, I would have done this in the (single) caller, to keep
-> > > > > > > > > operating on real ids in this function. Or we could pass a struct
-> > > > > > > > > uvc_entity instead of an int id and rename the function to
-> > > > > > > > > uvc_stream_for_terminal(), which could better encapsulate the purpose.
-> > > > > > > >
-> > > > > > > > Like the second option better.
-> > > > > > >
-> > > > > > > I think I do too.
-> > > > > > >
-> > > > > > > > > > > >       list_for_each_entry(stream, &dev->streams, list) {
-> > > > > > > > > > > >               if (stream->header.bTerminalLink == id)
-> > > > > > > > > > > >                       return stream;
-> > > > > > > > > > > > @@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
-> > > > > > > > > > > >       }
-> > > > > > > > > > > >
-> > > > > > > > > > > >       /* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
-> > > > > > > > > > > > -     if (uvc_entity_by_id(dev, id)) {
-> > > > > > > > > > > > -             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
-> > > > > > > > > > > > +     if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
-> > > > > > > > > > > > +             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
-> > > > > > > > > > > > +                     ENTITY_HARDWARE_ID(id));
-> > > > > > > > > > >
-> > > > > > > > > > > It's not an error anymore if there's no collision of the full 16-bit ID,
-> > > > > > > > > > > right ? Should it be demoted to a dev_warn() ?
-> > > > > > > > > >
-> > > > > > > > > > if it is OK with you I'd rather keep the dev_err(). If an ISP
-> > > > > > > > > > manufacturer tests their camera in Linux I want them to really notice
-> > > > > > > > > > that there is an error.
-> > > > > > > > >
-> > > > > > > > > Yes I'm OK with that. It shouldn't happen. We want a dev_err_and_blame()
-> > > > > > > > > that prints a message to the kernel log and posts messages on social
-> > > > > > > > > networks to blame the hardware manufacturer.
-> > > > > > > > >
-> > > > > > > > > > Besides that, I have implemented all your proposed changes.
-> > > > > > > > > >
-> > > > > > > > > > I cannot test it until tomorrow in real hardware. But the changes are
-> > > > > > > > > > trivial, let me know if I shall send the v2 right now or wait til it
-> > > > > > > > > > is tested.
-> > > > > > > > >
-> > > > > > > > > Up to you, I don't mind either way.
-> > > > > > > > >
-> > > > > > > > > If we merge "[PATCH v2] media: uvcvideo: Use heuristic to find stream
-> > > > > > > > > entity" first, do you plan to revert it to get this patch merged ?
-> > > > > > > >
-> > > > > > > > I think they solve two different issues:
-> > > > > > > >
-> > > > > > > > - Output terminal id collides with another entity id.
-> > > > > > > > - Incorrect bTerminalLink
-> > > > > > >
-> > > > > > > Do we know of any device affected by that issue ?
-> > > > > >
-> > > > > > I bet you there is one :)
-> > > > >
-> > > > > I'd rather be cautious and address that if the issue arises. Enabling
-> > > > > non-compliant behaviour has the drawback of making issues less visible
-> > > > > to vendors, so I would prefer not working around problems unless we know
-> > > > > they exist.
-> > > >
-> > > > My main goal right now is to solve the regression.
-> > > >
-> > > > If you think that this approach is best, please add your review-by and
-> > > > the following tags to the patch. And let's start landing into upstream
-> > > > asap.
-> > >
-> > > I've done so in v2. Could you check if you're OK with the proposed
-> > > changes for the commit message and comment ? I'll then send a v3 with
-> > > all the tags (or you can do so yourself to ack the proposed changes),
-> > > and Hans or Mauro can pick the patch up as a fix.
-> > 
-> > I am fine with you sending the v3.
-> > 
-> > HansV has already landed the other patch in /fixes
-> > 
-> > So I think the best approach here is:
-> > 
-> > 1) Wait until the fix is in media-commiters/next (*)
-> > 2) Add a revert in uvc/next
-> > 3) Add this patch in uvc/next
-> 
-> The fix hasn't been merged in v6.18-rc3 yet. If it doesn't land in -rc4
-> we'll need a different strategy.
-> 
-> > (*) If after 1 you have not posted v3 I will do it with your changes and tags.
-> 
-> I've just posted v3.
+On Mon, Oct 27, 2025 at 10:30=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote=
+:
+>
+> On Sun, Oct 26, 2025 at 01:13:10AM +0800, David Yang wrote:
+> > Reported by the following Smatch static checker warning:
+> >
+> >   drivers/net/dsa/yt921x.c:702 yt921x_read_mib()
+> >   warn: was expecting a 64 bit value instead of '(~0)'
+> >
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/netdev/aPsjYKQMzpY0nSXm@stanley.mountai=
+n/
+> > Suggested-by: David Laight <david.laight.linux@gmail.com>
+> > Signed-off-by: David Yang <mmyangfl@gmail.com>
+> > ---
+> >  drivers/net/dsa/yt921x.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/net/dsa/yt921x.c b/drivers/net/dsa/yt921x.c
+> > index ab762ffc4661..97a7eeb4ea15 100644
+> > --- a/drivers/net/dsa/yt921x.c
+> > +++ b/drivers/net/dsa/yt921x.c
+> > @@ -687,21 +687,22 @@ static int yt921x_read_mib(struct yt921x_priv *pr=
+iv, int port)
+> >               const struct yt921x_mib_desc *desc =3D &yt921x_mib_descs[=
+i];
+> >               u32 reg =3D YT921X_MIBn_DATA0(port) + desc->offset;
+> >               u64 *valp =3D &((u64 *)mib)[i];
+> > -             u64 val =3D *valp;
+> > +             u64 val;
+> >               u32 val0;
+> > -             u32 val1;
+> >
+> >               res =3D yt921x_reg_read(priv, reg, &val0);
+> >               if (res)
+> >                       break;
+> >
+> >               if (desc->size <=3D 1) {
+> > -                     if (val < (u32)val)
+> > -                             /* overflow */
+> > -                             val +=3D (u64)U32_MAX + 1;
+> > -                     val &=3D ~U32_MAX;
+> > -                     val |=3D val0;
+> > +                     u64 old_val =3D *valp;
+> > +
+> > +                     val =3D (old_val & ~(u64)U32_MAX) | val0;
+> > +                     if (val < old_val)
+> > +                             val +=3D 1ull << 32;
+> >               } else {
+> > +                     u32 val1;
+> > +
+>
+> What David suggested, https://lore.kernel.org/all/20251024132117.43f39504=
+@pumpkin/ was
+>
+>                 if (desc->size <=3D 1) {
+>                         u64 old_val =3D *valp;
+>                         val =3D upper32_bits(old_val) | val0;
+>                         if (val < old_val)
+>                                 val +=3D 1ull << 32;
+>                 }
+>
+> I believe there is a minor typo here, it should be upper_32_bits(),
+> but what you implemented is not really what David suggested.
+>
+>         Andrew
 
-Which I forgot to tag as v3 :-( So sorry about that.
-
-https://lore.kernel.org/linux-media/20251027024640.7205-1-laurent.pinchart@ideasonboard.com/T/#u
-
-> > > Thanks for testing the proposed change, I appreciate it.
-> > >
-> > > > We can discuss later if we want an extra patch or if we want to wait
-> > > > for another report.
-> > > >
-> > > > Reported-by: Angel4005 <ooara1337@gmail.com>
-> > > > Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
-> > > > Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id
-> > > > UVC_INVALID_ENTITY_ID")
-> > > >
-> > > > > > > >  We can have the two patches in.  If there is any conflict because we
-> > > > > > > > land one and then the other I can send a v3 fixing the conflict. Or a
-> > > > > > > > maintainer can do that, they should be trivial conflicts.
-> > > > > > > >
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +     if (uvc_entity_by_id(dev, id))
-> > > > > > > > > > > >               id = UVC_INVALID_ENTITY_ID;
-> > > > > > > > > > > > -     }
-> > > > > > > > > > > >
-> > > > > > > > > > > >       extra_size = roundup(extra_size, sizeof(*entity->pads));
-> > > > > > > > > > > >       if (num_pads)
-> > > > > > > > > > > > @@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
-> > > > > > > > > > > >       struct usb_host_interface *alts = dev->intf->cur_altsetting;
-> > > > > > > > > > > >       unsigned int i, n, p, len;
-> > > > > > > > > > > >       const char *type_name;
-> > > > > > > > > > > > +     unsigned int id;
-> > > > > > > > > > > >       u16 type;
-> > > > > > > > > > > >
-> > > > > > > > > > > >       switch (buffer[2]) {
-> > > > > > > > > > > > @@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
-> > > > > > > > > > > >                       return 0;
-> > > > > > > > > > > >               }
-> > > > > > > > > > > >
-> > > > > > > > > > > > +             /*
-> > > > > > > > > > > > +              * Nothing can be connected from an output terminal. To avoid
-> > > > > > > > > > > > +              * entity-id's collisions in devices with invalid USB
-> > > > > > > > > > > > +              * descriptors, move the output terminal id to its own
-> > > > > > > > > > > > +              * namespace.
-> > > > > > > > > > > > +              */
-> > > > > > > > > > > > +             id = buffer[3] | UVC_TERM_OUTPUT;
-> > > > > > > > > > > > +
-> > > > > > > > > > > >               term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
-> > > > > > > > > > > > -                                         buffer[3], 1, 0);
-> > > > > > > > > > > > +                                         id, 1, 0);
-> > > > > > > > > > > >               if (IS_ERR(term))
-> > > > > > > > > > > >                       return PTR_ERR(term);
-> > > > > > > > > > > >
-> > > > > > > > > > > >
-> > > > > > > > > > > > ---
-> > > > > > > > > > > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> > > > > > > > > > > > change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
-
--- 
-Regards,
-
-Laurent Pinchart
+I didn't find the definition for upper32_bits, so...
 
