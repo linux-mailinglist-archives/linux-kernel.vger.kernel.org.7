@@ -1,148 +1,96 @@
-Return-Path: <linux-kernel+bounces-872406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0849CC10D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:21:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E0EC10EE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397111A252D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:16:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBAB65082DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947CA2DC33D;
-	Mon, 27 Oct 2025 19:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17232D5C95;
+	Mon, 27 Oct 2025 19:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGN4T1t1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg5tvawN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DE231BCBC;
-	Mon, 27 Oct 2025 19:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BD91E47CA;
+	Mon, 27 Oct 2025 19:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592491; cv=none; b=VZ2jNDxhqykZ/KPNhHdd6p0iDT2gDtgtjFQNjRuySoMPpQvji+ur5+3mmswm/GsL3PFgPZsybDQmLQxIc/aqQxUVmKU5qYe101QbdnWyQNqlFMOdrXSjVvvx5w8qx3wI+G7BueNp1ly9Tup8r2jnigTSI8vxj+lBylaKQ0kSMQc=
+	t=1761592636; cv=none; b=FsRtVbA7NJlbSV51i+uWwSo0X5ejmd1ZxCmvxD/+ipwhEYkaRDWcFAc4/UZ/ph4D+NIjk29KzqdPNhCtiHygXUuudz+luDVawZMhrsvp1XIXl4m5sDFsRgE1/7YAeOeW9neRtJ28nzgBaDYCz9jnulA7sXUpUxylnui8IPjF47A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592491; c=relaxed/simple;
-	bh=UmjC+XeU6cvmCC2kxiH/o29POC8JmoxbEXi0rQcEvtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DhDZrPh8wisEOVMU9eu3B0k7o4aFG6VPbC3t19ac4AsQxSuKFvYBuyp478ZFZsc5SGL0h68ShpcHzbNJfnLDE28mGTogCi4LmnGYIVKbCRa8aX21eOfukBaN+/NrLhS/KYzlHFvYBm0CJDmPehy27yFHkNB88ewNbdeSdEFA8+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGN4T1t1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985C7C4CEF1;
-	Mon, 27 Oct 2025 19:14:47 +0000 (UTC)
+	s=arc-20240116; t=1761592636; c=relaxed/simple;
+	bh=mmWNVH8Z0wkoOiWVvjxfBmmdO0OIAoLLR/+tC4OGlGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXeSl79RodJ5kcAstsQ+ru4zDedR4570Ydiu83LjnnUkpoioFEqgxY3G7qcbev/A2U+LExbGXFuetkknCwvueCb28OfWKeYGG3Ecf8DRj6Iu+sNuk2g1uqmxtLFkqvycblhrJAz9K9kp1pt08h5ezTzT597wAPdGexD+FxMTD8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg5tvawN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 833DEC4CEF1;
+	Mon, 27 Oct 2025 19:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761592491;
-	bh=UmjC+XeU6cvmCC2kxiH/o29POC8JmoxbEXi0rQcEvtM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=tGN4T1t1nWKQzfOAgL6XV6X/ZmM8w6NVxI9LH7pkbpE8CkhW9vGu3YUsTzcxyN9hq
-	 Q0PYNhgYY7gMmYkrCwOybee6FjBNbbnZpjLg5S9w9E8gBq9maFEnrdBCA9vQaCbfBy
-	 FlHQzvZPkf9gc3Vz/h98nekiYBAEFp4WJdKLPd7GcRq0rOQ0equ0V6+iUBzuOTm873
-	 DQK+L7x3mQMM09CmQoWmxemTeonPbcG9/GKm7x30Ktb2JN2VOVVoLIDbpKSR9EdwJJ
-	 BtlUpkFXP4ffjYu9FPyKgvtR3K+uiPBYbENapC1A8cjSFLviQAkivnvU+euU8Und3m
-	 ZeeKx9vWGS59w==
-Message-ID: <93a2ff5f-2f8e-494b-9652-b93bc243c229@kernel.org>
-Date: Mon, 27 Oct 2025 20:14:45 +0100
+	s=k20201202; t=1761592635;
+	bh=mmWNVH8Z0wkoOiWVvjxfBmmdO0OIAoLLR/+tC4OGlGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fg5tvawNQQxKOnGSc2B355zaBy1wf+dUNWGGaKWpOfFCsBx1AYXKLA5NrP0zB5WUB
+	 p00fp06Q4LoCtStQwnKmyFGQ2WqTqmQqYcKvxAVFtb72Cavt5zLXq30rX1DPFIZkzP
+	 ISwdQgADdznR1/S5ZJPqRYdzrEO1wRTTS96pqYTBY5YpN1O83nJoqyX45Ooxc2XXO2
+	 +5NmQrKOSxsu9OCCfW45dQ05DQFExtyfLD1gkoPht6ICeK7WAoGBElpiO0aU4kwP2h
+	 F0vuo9hTw6nX92Pw8z82P6MhtDPnX9L9zEseLoGlv6bdgm8Z72D2vsS5WdBTjQ5R91
+	 kjQhAlGxWseRw==
+Date: Mon, 27 Oct 2025 14:17:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, UNGLinuxDriver@microchip.com,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Lars Povlsen <lars.povlsen@microchip.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH net v2] dt-bindings: net: sparx5: Narrow properly LAN969x
+ register space windows
+Message-ID: <176159263113.1438645.11402990432058741672.robh@kernel.org>
+References: <20251026101741.20507-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add
- global-regs and transfer-mode properties
-To: Ryan Chen <ryan_chen@aspeedtech.com>, bmc-sw@aspeedtech.com,
- benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
- jk@codeconstruct.com.au, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com,
- linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
- <20251027061240.3427875-3-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251027061240.3427875-3-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026101741.20507-2-krzysztof.kozlowski@linaro.org>
 
-On 27/10/2025 07:12, Ryan Chen wrote:
-> The AST2600 I2C controller supports three transfer modes: byte,
-> buffer, and DMA. To allow board designers and firmware to
-> explicitly select the preferred transfer mode for each controller
-> instance. "aspeed,transfer-mode" to allow device tree to specify
-> the desired transfer method used by each I2C controller instance.
+
+On Sun, 26 Oct 2025 11:17:42 +0100, Krzysztof Kozlowski wrote:
+> Commit 267bca002c50 ("dt-bindings: net: sparx5: correct LAN969x register
+> space windows") said that LAN969x has exactly two address spaces ("reg"
+> property) but implemented it as 2 or more.  Narrow the constraint to
+> properly express that only two items are allowed, which also matches
+> Linux driver.
 > 
-> And AST2600 i2c controller have two register mode, one is legacy
-> register layout which is mix controller/target register control
-> together, another is new mode which is separate controller/target
-> register control.
+> Fixes: 267bca002c50 ("dt-bindings: net: sparx5: correct LAN969x register space windows")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> No in-kernel DTS using it.
+> 
+> Changes in v2:
+> 1. Fix typo in commit msg.
+> ---
+>  .../devicetree/bindings/net/microchip,sparx5-switch.yaml      | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 
-This implies your "reg" properties have now completely different meaning
-and this would be quite an ABI break. We discussed this probably 15
-revisions ago. Where did you document the resolution of that discussion?
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
->  
->  unevaluatedProperties: false
->  
-> @@ -57,10 +85,12 @@ examples:
->        #address-cells = <1>;
->        #size-cells = <0>;
->        compatible = "aspeed,ast2600-i2c-bus";
-> -      reg = <0x40 0x40>;
-> +      reg = <0x80 0x80>, <0xc00 0x20>;
-
-Not relevant to this patch. You just added this line in patch #1, so did
-you add incorrect code just to fix it right away?
-
-No, fix your example when creating it.
-
-
-Best regards,
-Krzysztof
 
