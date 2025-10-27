@@ -1,224 +1,188 @@
-Return-Path: <linux-kernel+bounces-872503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4DDC11594
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:15:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1ADC11588
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40765617A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22DE4560750
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD9331D749;
-	Mon, 27 Oct 2025 20:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EFE320A05;
+	Mon, 27 Oct 2025 20:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oBZW4aEo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="MqNaE0TN"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B38D31D75C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFFF2DFA5B;
+	Mon, 27 Oct 2025 20:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761595983; cv=none; b=aA8fvdvdqg0FS6vfuMAcsw4OKXNJCmK/V4/zguqyExgn0L6h2w/Q6TNRXBuu99fTsp48MP5wEGutjYEzyyUXLuItAIU2i9MVmxm3T2jd/uE1gGSJGYYhuPkspm2zpy2mqYgkNOqJ8p48FM95mtUzNwFPAh4XC5N94w3xCbNhgIE=
+	t=1761595979; cv=none; b=HNNr+cW4JnXmja7wWPM3njBRPiPjEDhfr82lZN3eWqpW5PIgZ6S1yXvEjREskVAHwjn/uWMlM+Wc1hEQbPfK8nzS8250/b4ZAcPfRACeW8zeSzmZc1E1iCVXlBCd2/aLUcy+kura9o4gdCYRBUzzpjZuCr5FFAas+sVJDksD1t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761595983; c=relaxed/simple;
-	bh=4UBw7aiqjq1jkpFNuS2ywr6GozO/Ts3eh3c3uvkiJfg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HbQpNJY+gDE+WYGIw7CTP57ex9DEO8P9gLjingXAi9+8mavWLBwv14vxW3W9oBIKXBcMpQxUHjhc8UK7ADrJpgAkC/rzLr5xwK3mNDgpyI2j7uqL91ZaIV7Eds8WN0dQfTJ04WsL6Qp4x+MDYFAWSKBKFovZzzHBVEB1aIfTLwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oBZW4aEo; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761595981; x=1793131981;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4UBw7aiqjq1jkpFNuS2ywr6GozO/Ts3eh3c3uvkiJfg=;
-  b=oBZW4aEookTw4s+5PBrNkhQjEWtBjxo0EvSNqL5oVrz/r+JTfVHExMLL
-   1dxhXTDa0bM1/H8VIgoTvuiW7mBF20ERNYBUCn//Mp78PaQR00E9Onxdl
-   KcknXBDmHp9nLKJueCq3wdpGPNtqIDMEroN0j+xwfhHejOwgoH4d1wjcm
-   ogKHUkep157COjasTNRWV1tecdYiNAVaF0YK6fMiZD+cxuEU99h3cg3lB
-   QCL0dJJi0KYPKWC9X7jb6tRgq7/z3S3o9z1TrKcgVdr0WxOwVekXohZVB
-   0x/DXq4w7Q00t6bR1PoPhv2stctgFt1N06gD8LPgGJRHHGBGs/tFjwz7A
-   Q==;
-X-CSE-ConnectionGUID: Mpx9FR6XSfS/oOXiLGn3+w==
-X-CSE-MsgGUID: CudCXf+QR4610Xzbvh3YlQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63388503"
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="63388503"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 13:13:00 -0700
-X-CSE-ConnectionGUID: RxpenxMNT0CfOtyqbqm6og==
-X-CSE-MsgGUID: u07pw1GgTAukRS+mjAYn1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,259,1754982000"; 
-   d="scan'208";a="185042087"
-Received: from davehans-spike.ostc.intel.com (HELO ray2.jf.intel.com) ([10.165.164.11])
-  by orviesa007.jf.intel.com with ESMTP; 27 Oct 2025 13:13:01 -0700
-From: Dave Hansen <dave.hansen@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Sasha Levin <sashal@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kees Cook <kees@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Shuah Khan <shuah@kernel.org>
-Subject: [PATCH] Documentation: Provide guidelines for kernel development tools
-Date: Mon, 27 Oct 2025 13:12:04 -0700
-Message-Id: <20251027201204.352890-1-dave.hansen@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761595979; c=relaxed/simple;
+	bh=Aw+BybLNrwuSpQ7MDJf/UWP1PG7FAZGChvgePU/sTOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P5DTujSMYNuqAFSSM/JA0ZF66L+lY2PBw21oba7TDzpRm2g4MKRxeXpN+WE1QXLfTGHusjBK0ShXEmKUcYRfdg50arx4T/0DksD2kKI2+Pj7PCeZPv5QraNRqqiF+MmAUmc782cBv/wuSe7VNb6yaj8iXxq7SHoVdIE4x/PRV74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=MqNaE0TN; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=l2PjZvXIFPMAjJ5YwND+QOEeX0npuRmwWMZdLM/srTU=; b=MqNaE0TN6zVuqXY3csSAobBvxW
+	laVLaisOBusHIbeCbzrA17uvH+FqF70LpfvTVWMHpBEoxp0CN52E3kNTisbKoVf3n24d7ADUX5Zvl
+	gGbLcBrwKUHjQ3qp8Z9f1xhRlfQgPfQtz+m6OwQb65i57E6xkOcOp+/rGSNzDYg56GVuSHY0c1mX2
+	l3ERuDzPK/+SjKpyPILpTCPfydVMH7rWpDFB1Yk5GaUqAGB3pui+iMbKtflCyJ6f+2oSptOWCn5eH
+	9GgfZDbhLaNHU51Gp27XH3wG82xsKw21FDOrVlWFayJ/QBMCZa0DvSDeMTILj5Ui0P1dA5dO64ek7
+	79Ab1HXg==;
+Date: Mon, 27 Oct 2025 21:12:43 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
+ jdelvare@suse.com, lgirdwood@gmail.com, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alistair Francis <alistair@alistair23.me>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
+ subdevices
+Message-ID: <20251027211243.0bc3d769@kemnade.info>
+In-Reply-To: <20250927193945.787eb1a5@jic23-huawei>
+References: <20250920114311.291450-1-andreas@kemnade.info>
+	<20250920114311.291450-2-andreas@kemnade.info>
+	<79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
+	<20250920233307.0c425863@kemnade.info>
+	<473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
+	<20250924090023.282ae450@kemnade.info>
+	<b68d40d9-6ea9-49a9-8a2e-8b899f33340d@roeck-us.net>
+	<20250924195358.16bbd90c@kemnade.info>
+	<e6c8f022-ebfc-459c-806b-f75618f65916@roeck-us.net>
+	<20250927193945.787eb1a5@jic23-huawei>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In the last few years, the capabilities of coding tools have exploded.
-As those capabilities have expanded, contributors and maintainers have
-more and more questions about how and when to apply those
-capabilities.
+On Sat, 27 Sep 2025 19:39:45 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-The shiny new AI tools (chatbots, coding assistants and more) are
-impressive.  Add new Documentation to guide contributors on how to
-best use kernel development tools, new and old.
+> On Wed, 24 Sep 2025 12:16:14 -0700
+> Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+> > On 9/24/25 10:53, Andreas Kemnade wrote:  
+> > > On Wed, 24 Sep 2025 00:17:48 -0700
+> > > Guenter Roeck <linux@roeck-us.net> wrote:
+> > >     
+> > >> On 9/24/25 00:00, Andreas Kemnade wrote:    
+> > >>> On Sat, 20 Sep 2025 23:18:59 +0100
+> > >>> Mark Brown <broonie@kernel.org> wrote:
+> > >>>        
+> > >>>> On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
+> > >>>>       
+> > >>>>> Just for learning, yes, it is an abuse of the _optional for non-optional
+> > >>>>> things, so a dirty hack which should not go in, therefore RFC. But what
+> > >>>>> happens more than having the hwmon device endlessly deferred at worst?    
+> > >>>>
+> > >>>> There's also the fact that this API is so frequently abused for bad and
+> > >>>> broken reasons that I regularly audit users and try to fix them, I'd
+> > >>>> rather not see any new users that don't have a really strong reason to
+> > >>>> use it.
+> > >>>>       
+> > >>>>> The wanted regulator is the one defined in sy7636a-regulator.c. So it
+> > >>>>> is all an issue internal to the sy7636a.    
+> > >>>>       
+> > >>>>> Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
+> > >>>>> I see several other solutions:
+> > >>>>> a) call device_is_bound() on every other children of dev->parent, if not
+> > >>>>> bound defer.
+> > >>>>> b) do not care about the regulator api at all, just check whether
+> > >>>>>      the corresponding bit is set before reading temperature, return
+> > >>>>>      -ENODATA if not, some mutex is probably needed.
+> > >>>>> c) do not care about the regulator api at all, just set the
+> > >>>>>      corresponding bit (together with some mutex locking and counting).    
+> > >>>>
+> > >>>> I assume this is using the regulator API because someone might use an
+> > >>>> external regulator in a system design for some reason (better quality,
+> > >>>> power efficiency or a shared reference between multiple devices I
+> > >>>> guess?), or because the supply might also be used by external devices?
+> > >>>>       
+> > >>>>> d) copy the of_node pointer from the parent, add a regulator phandle property
+> > >>>>>      to the node pointing to the regulator in the node itself.
+> > >>>>>      That sounds like your idea but is against the current dt binding for
+> > >>>>>      this device and afaik it is uncommon to have mfd-internal things wired
+> > >>>>>      up this way
+> > >>>>>
+> > >>>>> e) something clean, simple I miss    
+> > >>>>
+> > >>>> The idea is that the relationship between the devices should be
+> > >>>> registered before the devices, that's how the regulator knows to defer.
+> > >>>> We used to have an API for doing this for board files which might fit
+> > >>>> here, but it got removed since nobody wants board files any more.  If
+> > >>>> you're allocating the devices dynamically that's annoying to implement
+> > >>>> though...    
+> > >>>
+> > >>> looking a bit around:
+> > >>> max5970-regulator.c has hwmon integrated and no extra device. That would
+> > >>> simplify things. Although it does not report temperature. Some
+> > >>> touchscreens have temperature via hwmon, some others have temperature
+> > >>> via iio, directly in one device without mfd. Maybe that is also
+> > >>> the better way here?
+> > >>>        
+> > >>
+> > >> Touchscreens reporting temperature via iio is in general the wrong thing to do.
+> > >> Touchscreens report the temperature for monitoring reasons, after all.
+> > >> But then, sure, if you insist. I am getting tired of arguing.
+> > >>    
+> > > I apparently did not make clear what my question refers to. It was more about separate
+> > > hwmon device + mfd vs. integrating everything into the regulator driver.
+> > >     
+> > 
+> > What I keep failing to understand is why people keep avoiding the potential of
+> > implementing auxiliary device drivers, since that would be the perfect solution
+> > and match the intended use case for auxiliary devices.
+> >   
+> > > But since you brought up the topic hwmon vs. iio for temperature. I do not have
+> > > a strong opinion here as long as I can somehow live with it. Nothing I want to
+> > > fight for. One sensor I use for measuring room temperature is hwmon, another
+> > > one is iio. So it is all not that consistent.
+> > >     
+> > 
+> > That doesn't mean what exists is consistent or even makes sense. Some driver support
+> > for chips intended for reporting the environment or chip temperature are pushed into iio.  
+> 
+> There might be some that have slipped through but when it's monitoring specific chip
+> as opposed to part of of a SoC ADC where some channels are for monitoring and others
+> very much not (e.g. the touchscreen ADC channels), I do direct people to provide
+> reasons and +CC hwmon. There are a few odd corner cases where we had a driver for
+> a mems device or similar that doesn't fit in hwmon come along and there is a
+> variant of that silicon that only has the temp part enabled.
+> 
+> Without specific part numbers I don't know why it happened here.
+> 
+HIH6130 (humidity + temperature via hwmon) vs bme280
+(humidity + temperature + pressure via iio).
 
-Note, though, there are fundamentally no new or unique rules in this
-new document. It clarifies expectations that the kernel community has
-had for many years. For example, researchers are already asked to
-disclose the tools they use to find issues in
-Documentation/process/researcher-guidelines.rst. This new document
-just reiterate existing best practices for development tooling.
+So maybe the very basic thing: What does "monitor" mean in this context?
+Checking the state of the hardware (what temperature) to take
+safety/emergency measures or to tune things to work optimally at the given
+conditions? 
 
-In short: Please show your work and make sure your contribution is
-easy to review.
+But when monitoring is about the health of the system... well in
+a drone e.g. probably everything which can be iio can be considered part of the
+system health and like the temperature, things can be controlled by some actors.
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>
+Well as long as I do not need anything specific to one or the other api, I can
+live with things. I am a bit curious about the background.
 
---
-
-This document was a collaborative effort from all the members of
-the TAB. I just reformatted it into .rst and wrote the changelog.
----
- Documentation/process/development-tools.rst | 92 +++++++++++++++++++++
- 1 file changed, 92 insertions(+)
- create mode 100644 Documentation/process/development-tools.rst
-
-diff --git a/Documentation/process/development-tools.rst b/Documentation/process/development-tools.rst
-new file mode 100644
-index 0000000000000..ab6596cc595ac
---- /dev/null
-+++ b/Documentation/process/development-tools.rst
-@@ -0,0 +1,92 @@
-+============================================
-+Kernel Guidelines for Tool Generated Content
-+============================================
-+
-+Purpose
-+=======
-+
-+Kernel contributors have been using tooling to generate contributions
-+for a long time. These tools are constantly becoming more capable and
-+undoubtedly improve developer productivity. At the same time, reviewer
-+and maintainer bandwidth is a very scarce resource. Understanding
-+which portions of a contribution come from humans versus tools is
-+critical to maintain those resources and keep kernel development
-+healthy.
-+
-+The goal here is to clarify community expectations around tools. This
-+lets everyone become more productive while also maintaining high
-+degrees of trust between submitters and reviewers.
-+
-+Out of Scope
-+============
-+
-+These guidelines do not apply to tools that make trivial tweaks to
-+preexisting content. Nor do they pertain to AI tooling that helps with
-+menial tasks. Some examples:
-+
-+ - Spelling and grammar fix ups, like rephrasing to imperative voice
-+ - Typing aids like identifier completion, common boilerplate or
-+   trivial pattern completion
-+ - Purely mechanical transformations like variable renaming
-+ - Reformatting, like running scripts/Lindent.
-+
-+Even if your tool use is out of scope you should still always consider
-+if it would help reviewing your contribution if the reviewer knows
-+about the tool that you used.
-+
-+In Scope
-+========
-+
-+These guidelines apply when a meaningful amount of content in a kernel
-+contribution was not written by a person in the Signed-off-by chain,
-+but was instead created by a tool.
-+
-+Some examples:
-+ - “checkpatch.pl --fix” output, or any tool suggested fix.
-+ - coccinelle scripts
-+ - ChatGPT generated a new function in your patch to sort list entries.
-+ - A .c file in the patch was originally generated by Gemini but cleaned
-+   up by hand.
-+ - The changelog was generated by handing the patch to a generative AI
-+   tool and asking it to write the changelog.
-+ - The changelog was translated from another language.
-+ - Detection of a problem is also a part of the development process; if
-+   a tool was used to find a problem addressed by a change, that should
-+   be noted in the changelog. This not only gives credit where it is
-+   due, it also helps fellow developers find out about these tools.
-+
-+If in doubt, choose transparency and assume these guidelines apply to
-+your contribution.
-+
-+Guidelines
-+==========
-+
-+First, read the Developer's Certificate of Origin:
-+``Documentation/process/submitting-patches.rst`` Its rules are simple
-+and have been in place for a long time. They have covered many
-+tool-generated contributions.
-+
-+Second, when making a contribution, be transparent about the origin of
-+content in cover letters and changelogs. You can be more transparent
-+by adding information like this:
-+
-+ - What tools were used?
-+ - The input to the tools you used, like the coccinelle source script.
-+ - If code was largely generated from a single or short set of
-+   prompts, include those prompts in the commit log. For longer
-+   sessions, include a summary of the prompts and the nature of
-+   resulting assistance.
-+ - Which portions of the content were affected by that tool?
-+
-+As with all contributions, individual maintainers have discretion to
-+choose how they handle the contribution. For example, they might:
-+
-+ - Treat it just like any other contribution
-+ - Reject it outright
-+ - Review the contribution with extra scrutiny
-+ - Suggest a better prompt instead of suggesting specific code changes
-+ - Ask for some other special steps, like asking the contributor to
-+   elaborate on how the tool or model was trained
-+ - Ask the submitter to explain in more detail about the contribution
-+   so that the maintainer can feel comfortable that the submitter fully
-+   understands how the code works.
--- 
-2.34.1
+Regards,
+Andreas
 
 
