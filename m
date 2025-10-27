@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-872177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93089C0F755
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:52:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32FDC0F7A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:55:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0061886BA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:52:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0ABCA4FA07B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01DE313549;
-	Mon, 27 Oct 2025 16:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E545A313547;
+	Mon, 27 Oct 2025 16:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHcBwXRl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0N7dVIx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC7E23EAA1;
-	Mon, 27 Oct 2025 16:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D633126B3;
+	Mon, 27 Oct 2025 16:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583890; cv=none; b=XkTG/1w0otC6VWoJbFYyqi36MDVkhrRfwW3wvxEgVYlTYL3XeqlDHPHMLWzcqSJ0MJlqZnK7s82aBa57410rkvjk22lKGIQsgAYKWj7zQeduJlC6OjB4rXB6wqEmlNh7tNv5sBr52cbagctSzwo/KXkKCnX4mBofaW86+YRePSI=
+	t=1761583906; cv=none; b=KKqnAufJE9RiXdPt1E1EO0YXW+OOEI/5BjdSwDwr7cFh9aEXoOvLQ4SftZGcuNnKnDF0YOsqBKYg+E+Yw3iWfFHqHX9R29E2qywByVVqHimhc3bhkmwwfn7KODHNr1EYLLpyA4y2SmGO8kLDm6dPQ3Fr7PFWZqWctXtqWGPYVb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583890; c=relaxed/simple;
-	bh=RDmvO9UFbT/B6ZnxOAcif5m6qwax2YE/VP1el5dfD2s=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=Se462GQhD8c8OhRpT0SXMFRXZFh421gDFnXl+uEMluayh+J/8GScbnrXj16PzTylrnKXjxvPxcZBiAjWf7CbLjoajm0cx/BSoIrfqhx0v+IHs+DtyMyr7stUYDk/XgewIaE36O/IE7EMNXPR0Pmdm3IezOnI8f3TwqgCV68OaKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHcBwXRl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B457EC116B1;
-	Mon, 27 Oct 2025 16:51:29 +0000 (UTC)
+	s=arc-20240116; t=1761583906; c=relaxed/simple;
+	bh=bu/lKpmMPWH4T4b2scw9A8ku2NQlDdZsGjrmXtEeFCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1Kuj2T9gq/HXvIfePVG87b5uL74QfFBcPciVMkN4fKTNdDEi4xCZgSr0gQNEHhC6/RjarO6xv4EjkkHvfKTtPcQSWQe15QvDGHFvCL0Txj8QSaGsegMS/sKezFlI4nw5DZZVYR5PDytaBoQ9K8+83H72e6/EkF9kkjQgYt2l7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0N7dVIx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566DEC116B1;
+	Mon, 27 Oct 2025 16:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761583889;
-	bh=RDmvO9UFbT/B6ZnxOAcif5m6qwax2YE/VP1el5dfD2s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LHcBwXRlsqB147SUjBMBJ3NDFAUmkpoke1OLpDYwvBTYN9aU2rZWJphsiHxxpuNBl
-	 teRo3FsapkRVW2TbnkH1MsMLUX1ML6SoBoHAX8mSIfbDh16RAw99Q3Mh4royUGsMEO
-	 sPdvHXyFPLlf3ZHx0mwLglCuUjODxMmJ9/Fs36TuPxDStXX8cAs5Ck+Wj2fXH+3nTx
-	 MoZfwqGPnzHH28rc0I7lRnhUKBrV2nrwDa3JYKB1Hc+6w1XWFRfpNTTvsk5ij2/0bV
-	 yNIDx77b2kLwY4MrRygsKCOp7/RZK1ktpjmWvJLuS1NLOKNHicjZE+veYroHcnSBtd
-	 1DziWintaegHw==
-Date: Mon, 27 Oct 2025 06:51:28 -1000
-Message-ID: <36450bebbc782be498d762fcbcd99451@kernel.org>
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
-Subject: [GIT PULL] sched_ext: Fixes for v6.18-rc3
+	s=k20201202; t=1761583905;
+	bh=bu/lKpmMPWH4T4b2scw9A8ku2NQlDdZsGjrmXtEeFCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e0N7dVIxW3H5gN2pyjSsDsfNPiXgjx766SAXrI8ledXe2VJ2lMPjUqpgcy0z5cRGS
+	 kgIHo6F7APQLaYfucRkbBvvJLgAeWGhXoiYIVQLLLWanw7xjwioYvtYL43YusmRm1h
+	 z99ObIGGqefScff7FnhiMfa+OPm5N/VUaOqjeL9npaJryV/h4LrV6PaArOi222Jmxp
+	 PfEv12M4KiHnEBB+iGTKTDyDQ3zP+S8wyN72sxPggZ9WE7it1dANyVI36xAc8AVThQ
+	 NDL2CdmvMXAZw8tOhaD30rhkmeFXUgnXPg00pdEm3sKrmIbv9FNuI+KOxVN562mvW/
+	 Latd97tc90Sgg==
+Date: Mon, 27 Oct 2025 16:51:41 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jun Guo <jun.guo@cixtech.com>
+Cc: peter.chen@cixtech.com, fugang.duan@cixtech.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
+	linux-spi@vger.kernel.org, michal.simek@amd.com,
+	cix-kernel-upstream@cixtech.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: spi: spi-cadence: update DT binding
+ docs to support cix sky1 SoC
+Message-ID: <20251027-strangely-reverence-6f47d87efca5@spud>
+References: <20251027084239.2610141-1-jun.guo@cixtech.com>
+ <20251027084239.2610141-3-jun.guo@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qZ7N/F0wEws9F2Jt"
+Content-Disposition: inline
+In-Reply-To: <20251027084239.2610141-3-jun.guo@cixtech.com>
 
-Hi Linus,
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+--qZ7N/F0wEws9F2Jt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+On Mon, Oct 27, 2025 at 04:42:38PM +0800, Jun Guo wrote:
+> - Add new compatible strings to the DT binding documents to support
+>  cix sky1 SoC;
+> - Adjust the configuration of the compatible property to support both
+>  single-item and two-items cases.=E2=80=8B=E2=80=8B
+>=20
+> Signed-off-by: Jun Guo <jun.guo@cixtech.com>
+> ---
+>  .../devicetree/bindings/spi/spi-cadence.yaml          | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/spi/spi-cadence.yaml b/Doc=
+umentation/devicetree/bindings/spi/spi-cadence.yaml
+> index 8de96abe9da1..e75b142a1368 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-cadence.yaml
+> +++ b/Documentation/devicetree/bindings/spi/spi-cadence.yaml
+> @@ -14,9 +14,14 @@ allOf:
+> =20
+>  properties:
+>    compatible:
+> -    enum:
+> -      - cdns,spi-r1p6
+> -      - xlnx,zynq-spi-r1p6
+> +    oneOf:
+> +      - enum:
+> +          - cdns,spi-r1p6
+> +          - xlnx,zynq-spi-r1p6
+> +      - items:
+> +          - enum:
+> +              - cix,sky1-spi-r1p6
+> +          - const: cdns,spi-r1p6
 
-are available in the Git repository at:
+This doesn't apply, probably needs a rebase on spi/for-next?
+Approach is correct though, but it'll be a more minimal patch when
+rebased.
+pw-bot: changes-requested
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git tags/sched_ext-for-6.18-rc3-fixes
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.34.1
+>=20
 
-for you to fetch changes up to a3c4a0a42e61aad1056a3d33fd603c1ae66d4288:
+--qZ7N/F0wEws9F2Jt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  sched_ext: fix flag check for deferred callbacks (2025-10-16 08:34:00 -1000)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-sched_ext: Fixes for v6.18-rc3
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaP+jHAAKCRB4tDGHoIJi
+0lwvAP9dIvvZKdNHcniRy6tvBX0PUWhJlaEexqHWrbXPKt0FTAEAkY8vPORYUHc7
+VeoJdBGzXyTRjF7Wkm5YpF+RkT5zZwY=
+=HLOL
+-----END PGP SIGNATURE-----
 
-- Fix scx_kick_pseqs corruption when multiple schedulers are loaded
-  concurrently
-
-- Allocate scx_kick_cpus_pnt_seqs lazily using kvzalloc() to handle systems
-  with large CPU counts
-
-- Defer queue_balance_callback() until after ops.dispatch to fix callback
-  ordering issues
-
-- Sync error_irq_work before freeing scx_sched to prevent use-after-free
-
-- Mark scx_bpf_dsq_move_set_[slice|vtime]() with KF_RCU for proper RCU
-  protection
-
-- Fix flag check for deferred callbacks
-
-----------------------------------------------------------------
-Andrea Righi (1):
-      sched_ext: Fix scx_kick_pseqs corruption on concurrent scheduler loads
-
-Emil Tsalapatis (2):
-      sched_ext: defer queue_balance_callback() until after ops.dispatch
-      sched_ext: fix flag check for deferred callbacks
-
-Tejun Heo (3):
-      sched_ext: Mark scx_bpf_dsq_move_set_[slice|vtime]() with KF_RCU
-      sched_ext: Sync error_irq_work before freeing scx_sched
-      sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily using kvzalloc()
-
- kernel/sched/ext.c   | 126 +++++++++++++++++++++++++++++++++++++++++++++------
- kernel/sched/sched.h |   1 +
- 2 files changed, 112 insertions(+), 15 deletions(-)
-
-Thanks.
-
---
-tejun
+--qZ7N/F0wEws9F2Jt--
 
