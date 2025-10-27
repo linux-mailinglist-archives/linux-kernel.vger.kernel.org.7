@@ -1,354 +1,127 @@
-Return-Path: <linux-kernel+bounces-871115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7B1C0C78D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:57:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75852C0C7C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166364053E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1410C4020DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0D3313558;
-	Mon, 27 Oct 2025 08:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8106431618E;
+	Mon, 27 Oct 2025 08:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bIYoMBUA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4dcHjZSN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrWhnroA"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF692F25E5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAD12F3C3E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554721; cv=none; b=LWmYkWFy2IrHuxaJbQsJz2LuUrmZXdDicZdWhCgcVU6F4VpDGQD45VpY+fBlaGOaYEIKyIKjdkkcPmbcSUy6JqX01IL6M00ZLu4Q5hS8kcdRJ4eyhl9lYlgz70XV8CmsX4MZjIkEwj/N/THR9JZOZDzytnQRas36P6htzpAq+gc=
+	t=1761554737; cv=none; b=hdUMKv6b1N4Ie2tG/oYudnHyy4b9I5lVVLCIGPFV3Hp3r1x4e+2VvNi6Jkk+mRXhP/9UwtEWq7tRECio8hi5YR6dVGcAlTCnkspCUIx6NkvE35NWTlIEhBmGBV25F9KsCPMlyM1rComUBw0UWfinNclU/ZoAQ5JAroAFFMbFINQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554721; c=relaxed/simple;
-	bh=tRAJ7ZMT0FvPIRbMa502d26tSX9QUGmX6eA7S8pGOKM=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=mGz1tYeId8l85qQ0ADVqBLopBPWgnzLa9r7XJd4PravI2h23/ZYAx9TCsb4XrAmgt2LgsZrBJmNUVchulILFixXfaBlNGqJYUCUnYzNUa7H6iu7qBOfhlXpw1VsVVwp7+ifUsNDARznu77Rmhk48n6rJphItqjiXe6+lEwY1FXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bIYoMBUA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4dcHjZSN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251027084307.638929615@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761554718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=iTJ/KAO1Q3zifuyglGiReNy4Rfi/QRoj5B7NBJRjQ8g=;
-	b=bIYoMBUAwgTxZSFE6fnKfGCZZJtQagzaLp6ny69/yKaDzrzEMRtDOJAMpyOh/bIm4QI+FI
-	abP+ImbpEkEaa2GBynr+w89SkhfaKuFoOVeVaznqqmQAeRMNX1T0M+8MG3xu9NOYgkyYDJ
-	VmPsXFt2dw2enSr3oeKGzOkD8Sj9txnI/GtSI2mnz8we8LXydIUTLkG3cQ+H54AZ1SGEqP
-	Xq8eE+XdN2ocKEvUUl7eRmOBCFlLRu+qAfjrdH8tGViEksinOrdXm5CgLDxlRA9W3tCHNF
-	fDRrBGlz9SRr8RU3dOlMksgDauUxMm740iToNFg2pgM3kGVJaScnR3OK6t7p7Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761554718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=iTJ/KAO1Q3zifuyglGiReNy4Rfi/QRoj5B7NBJRjQ8g=;
-	b=4dcHjZSN7C5E74UQUWPNBoPJDr9KV/VpzJ2F4YGVBrzYQB5Xhenu3YC1fzv7gxkhWljULK
-	C92MvQRAEsF0MMAg==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
- Jens Axboe <axboe@kernel.dk>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- x86@kernel.org,
- Sean Christopherson <seanjc@google.com>,
- Wei Liu <wei.liu@kernel.org>
-Subject: [patch V6 27/31] rseq: Implement fast path for exit to user
-References: <20251027084220.785525188@linutronix.de>
+	s=arc-20240116; t=1761554737; c=relaxed/simple;
+	bh=ly8Hr2ywwPol+OOs8cEqDSSykysMh6TpsVP/PGQVACo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SjDUc5sVT8WXlsUHSR3wxa6tkfuH1ZyJiEHoWL7gocWJCmgrEb5EjUB7wy4U8klBP7THvAqkxbVor6eHkLNZhvD44GqOXHN/ikIZNn2QUUhxEntKGygBD46noA8ET00VkSDho5+gEMnWjZOMJzLQh+6j9zKhZvX1vqjGij/Cb5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrWhnroA; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7a27c67cdc4so3194952b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761554735; x=1762159535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DU0KscrGihyZoXJMago0IWkiGUoidqfLwL76Wss1j/4=;
+        b=QrWhnroAXJlnaAQd1X6cggmCZDoDH7RHA8A2ZmAoKtPCphlb9vz9UPcqaf1dHcGEo1
+         fjEyZOPDELWIcVFSluUH8SiqDgmyUUGyZohlD/cb+VfG718TavzbW+UiBx0piw7LqOpm
+         lEKAnlDOtCGB3M+Ul6GjA31wW+TjZZPJCtFo0ilYBo0gbb7aeClVajhz0vFXGbqNYyKU
+         x0wiWwVS4NxmguXDKcv5ZegdZLHLriCfcMNEuyI9+qVaPzeURGMs80Kc50w+B3j+BoCF
+         WVooy1brKc0tyMO0GO/hXmO/ZW+NiNp4p1sG4OlcM/VT83r37bLNxrp5CqnzXkc5OIKG
+         VcMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761554735; x=1762159535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DU0KscrGihyZoXJMago0IWkiGUoidqfLwL76Wss1j/4=;
+        b=OEArzt8M+n6O0kYKnHyqNGrR8AZ6XDGGq5OkM/oAaD/keOhk5xXFIE9iGE5rgXa4GX
+         yWCwlKgH30CJxgJPZiTbwFubIv7F3RWO9OUTRHPdMUCbn6e184RKpajnZU+u5EsZIDwq
+         pB9Uwy8QBYAKZA03K9zksiBScRGTQtTkyIxMZ73aLOdcqljsEqUEcCTep42ahrVhp7aS
+         cyMY+IiH5kGRebFZBAVQswJk77eVVGJ/P17q2R4E0A/Mos7QfwW7xM29EIBC6fWdtRXo
+         JjeeSQFmM8BNrPb/G+JyPMA5b8LqI9qavsDNKzKGqTbHtC47+u21E8s/HCRyUed/tSAw
+         e87g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUla2OVrVXaharO1iTgU9bI33xjByJoSlrGGiF/5cJu8snaGPZBtnIcd33lYU/nde1wGHWsBatLBOeFYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEMSOc42e4mUq9LLQemiqOSny4q9ZynURrQSKkMTEnjgbks5sW
+	xk48E2Fe12WqIpbemHojdPhoWBShw+mFnd/SKDZ2Vf3IpUNsfL8nx2K4s+uXX0LDf7EHGQ==
+X-Gm-Gg: ASbGncu3iSP1whS6a2QZxiP4MfMUz6Qi4BItVDoh1RpSMJi+y5HcapD2s77E0nyI5dr
+	fZwLIAdzbP+NE3doFVauLZz+XCWGt9mvHELcfbdkTLjturGxnfF6N/rPj212VwHFVvRd5OY4nL6
+	KE4T9BQDuC0pWKTZXjLYxznWbJvMab5WyQ7Ds2ObEjJXLcgIfa6VRrP5XkCH7feW24UqT76r+qP
+	qlzPMXE1KTnkcWJvF56gi16O+RfrIt8u5t7lgfqjMJgsifZ8AKy7zBYGQzXBz8oa8wr4mUfUwfL
+	7NFecx5FV/Y1x4f8pZFBEqwthDGtenEyakSTz1gk7fg1SAu+D6FHq4Ie1cupw33UVk3ZjF4Zj2M
+	uJM5EsBT7HzLH/8wN7cY7zUaL1tGwtWNEfVx//RQZlemwS/V1qGlVVjVgcP7zMoKhq134pM7G61
+	I5UUpSGvpFMvMSwcO+aWHjvkcie5ch8RAN
+X-Google-Smtp-Source: AGHT+IFlSNyx/m40xKYC6OWXlqmRmI+SM7/L6vothAHVO/hXw1MzPva0O5TbGE0SIfNFUBdqckDGkQ==
+X-Received: by 2002:a05:6a00:2d1d:b0:7a2:73a9:96c with SMTP id d2e1a72fcca58-7a273a90b4cmr13811317b3a.3.1761554735303;
+        Mon, 27 Oct 2025 01:45:35 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41404dddcsm7300209b3a.38.2025.10.27.01.45.31
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 01:45:34 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/tegra: Fix reference count leak in tegra_dc_couple
+Date: Mon, 27 Oct 2025 16:45:18 +0800
+Message-Id: <20251027084519.80009-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Oct 2025 09:45:17 +0100 (CET)
+Content-Transfer-Encoding: 8bit
 
-Implement the actual logic for handling RSEQ updates in a fast path after
-handling the TIF work and at the point where the task is actually returning
-to user space.
+The driver_find_device() function returns a device with its reference
+count incremented. The caller is responsible for calling put_device()
+to release this reference when done. Fix this leak by adding the missing
+put_device() call.
 
-This is the right point to do that because at this point the CPU and the MM
-CID are stable and cannot longer change due to yet another reschedule.
-That happens when the task is handling it via TIF_NOTIFY_RESUME in
-resume_user_mode_work(), which is invoked from the exit to user mode work
-loop.
+Found via static analysis.
 
-The function is invoked after the TIF work is handled and runs with
-interrupts disabled, which means it cannot resolve page faults. It
-therefore disables page faults and in case the access to the user space
-memory faults, it:
-
-  - notes the fail in the event struct
-  - raises TIF_NOTIFY_RESUME
-  - returns false to the caller
-
-The caller has to go back to the TIF work, which runs with interrupts
-enabled and therefore can resolve the page faults. This happens mostly on
-fork() when the memory is marked COW.
-
-If the user memory inspection finds invalid data, the function returns
-false as well and sets the fatal flag in the event struct along with
-TIF_NOTIFY_RESUME. The slow path notify handler has to evaluate that flag
-and terminate the task with SIGSEGV as documented.
-
-The initial decision to invoke any of this is based on one flags in the
-event struct: @sched_switch. The decision is in pseudo ASM:
-
-      load	tsk::event::sched_switch
-      jnz	inspect_user_space
-      mov	$0, tsk::event::events
-      ...
-      leave
-
-So for the common case where the task was not scheduled out, this really
-boils down to three instructions before going out if the compiler is not
-completely stupid (and yes, some of them are).
-
-If the condition is true, then it checks, whether CPU ID or MM CID have
-changed. If so, then the CPU/MM IDs have to be updated and are thereby
-cached for the next round. The update unconditionally retrieves the user
-space critical section address to spare another user*begin/end() pair.  If
-that's not zero and tsk::event::user_irq is set, then the critical section
-is analyzed and acted upon. If either zero or the entry came via syscall
-the critical section analysis is skipped.
-
-If the comparison is false then the critical section has to be analyzed
-because the event flag is then only true when entry from user was by
-interrupt.
-
-This is provided without the actual hookup to let reviewers focus on the
-implementation details. The hookup happens in the next step.
-
-Note: As with quite some other optimizations this depends on the generic
-entry infrastructure and is not enabled to be sucked into random
-architecture implementations.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Fixes: f68ba6912bd2 ("drm/tegra: dc: Link DC1 to DC0 on Tegra20")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
-V5: Reduce the decision to event::sched_switch - Mathieu
----
- include/linux/rseq_entry.h |  131 +++++++++++++++++++++++++++++++++++++++++++--
- include/linux/rseq_types.h |    3 +
- kernel/rseq.c              |    2 
- 3 files changed, 133 insertions(+), 3 deletions(-)
---- a/include/linux/rseq_entry.h
-+++ b/include/linux/rseq_entry.h
-@@ -10,6 +10,7 @@ struct rseq_stats {
- 	unsigned long	exit;
- 	unsigned long	signal;
- 	unsigned long	slowpath;
-+	unsigned long	fastpath;
- 	unsigned long	ids;
- 	unsigned long	cs;
- 	unsigned long	clear;
-@@ -245,12 +246,13 @@ rseq_update_user_cs(struct task_struct *
- {
- 	struct rseq_cs __user *ucs = (struct rseq_cs __user *)(unsigned long)csaddr;
- 	unsigned long ip = instruction_pointer(regs);
-+	unsigned long tasksize = TASK_SIZE;
- 	u64 start_ip, abort_ip, offset;
- 	u32 usig, __user *uc_sig;
+ drivers/gpu/drm/tegra/dc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 59d5c1ba145a..6c84bd69b11f 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -3148,6 +3148,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+ 		dc->client.parent = &parent->client;
  
- 	rseq_stat_inc(rseq_stats.cs);
- 
--	if (unlikely(csaddr >= TASK_SIZE)) {
-+	if (unlikely(csaddr >= tasksize)) {
- 		t->rseq.event.fatal = true;
- 		return false;
+ 		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
++		put_device(companion);
  	}
-@@ -287,7 +289,7 @@ rseq_update_user_cs(struct task_struct *
- 		 * in TLS::rseq::rseq_cs. An RSEQ abort would then evade ROP
- 		 * protection.
- 		 */
--		if (abort_ip >= TASK_SIZE || abort_ip < sizeof(*uc_sig))
-+		if (unlikely(abort_ip >= tasksize || abort_ip < sizeof(*uc_sig)))
- 			goto die;
  
- 		/* The address is guaranteed to be >= 0 and < TASK_SIZE */
-@@ -397,6 +399,126 @@ static rseq_inline bool rseq_update_usr(
- 	return rseq_update_user_cs(t, regs, csaddr);
- }
- 
-+/*
-+ * If you want to use this then convert your architecture to the generic
-+ * entry code. I'm tired of building workarounds for people who can't be
-+ * bothered to make the maintenance of generic infrastructure less
-+ * burdensome. Just sucking everything into the architecture code and
-+ * thereby making others chase the horrible hacks and keep them working is
-+ * neither acceptable nor sustainable.
-+ */
-+#ifdef CONFIG_GENERIC_ENTRY
-+
-+/*
-+ * This is inlined into the exit path because:
-+ *
-+ * 1) It's a one time comparison in the fast path when there is no event to
-+ *    handle
-+ *
-+ * 2) The access to the user space rseq memory (TLS) is unlikely to fault
-+ *    so the straight inline operation is:
-+ *
-+ *	- Four 32-bit stores only if CPU ID/ MM CID need to be updated
-+ *	- One 64-bit load to retrieve the critical section address
-+ *
-+ * 3) In the unlikely case that the critical section address is != NULL:
-+ *
-+ *     - One 64-bit load to retrieve the start IP
-+ *     - One 64-bit load to retrieve the offset for calculating the end
-+ *     - One 64-bit load to retrieve the abort IP
-+ *     - One 64-bit load to retrieve the signature
-+ *     - One store to clear the critical section address
-+ *
-+ * The non-debug case implements only the minimal required checking. It
-+ * provides protection against a rogue abort IP in kernel space, which
-+ * would be exploitable at least on x86, and also against a rouge CS
-+ * descriptor by checking the signature at the abort IP. Any fallout from
-+ * invalid critical section descriptors is a user space problem. The debug
-+ * case provides the full set of checks and terminates the task if a
-+ * condition is not met.
-+ *
-+ * In case of a fault or an invalid value, this sets TIF_NOTIFY_RESUME and
-+ * tells the caller to loop back into exit_to_user_mode_loop(). The rseq
-+ * slow path there will handle the fail.
-+ */
-+static __always_inline bool rseq_exit_user_update(struct pt_regs *regs, struct task_struct *t)
-+{
-+	/*
-+	 * Page faults need to be disabled as this is called with
-+	 * interrupts disabled
-+	 */
-+	guard(pagefault)();
-+	if (likely(!t->rseq.event.ids_changed)) {
-+		struct rseq __user *rseq = t->rseq.usrptr;
-+		/*
-+		 * If IDs have not changed rseq_event::user_irq must be true
-+		 * See rseq_sched_switch_event().
-+		 */
-+		u64 csaddr;
-+
-+		if (unlikely(!get_user_inline(csaddr, &rseq->rseq_cs)))
-+			return false;
-+
-+		if (static_branch_unlikely(&rseq_debug_enabled) || unlikely(csaddr)) {
-+			if (unlikely(!rseq_update_user_cs(t, regs, csaddr)))
-+				return false;
-+		}
-+		return true;
-+	}
-+
-+	struct rseq_ids ids = {
-+		.cpu_id = task_cpu(t),
-+		.mm_cid = task_mm_cid(t),
-+	};
-+	u32 node_id = cpu_to_node(ids.cpu_id);
-+
-+	return rseq_update_usr(t, regs, &ids, node_id);
-+}
-+
-+static __always_inline bool __rseq_exit_to_user_mode_restart(struct pt_regs *regs)
-+{
-+	struct task_struct *t = current;
-+
-+	/*
-+	 * If the task did not go through schedule or got the flag enforced
-+	 * by the rseq syscall or execve, then nothing to do here.
-+	 *
-+	 * CPU ID and MM CID can only change when going through a context
-+	 * switch.
-+	 *
-+	 * rseq_sched_switch_event() sets the rseq_event::sched_switch bit
-+	 * only when rseq_event::has_rseq is true. That conditional is
-+	 * required to avoid setting the TIF bit if RSEQ is not registered
-+	 * for a task. rseq_event::sched_switch is cleared when RSEQ is
-+	 * unregistered by a task so it's sufficient to check for the
-+	 * sched_switch bit alone.
-+	 *
-+	 * A sane compiler requires three instructions for the nothing to do
-+	 * case including clearing the events, but your mileage might vary.
-+	 */
-+	if (unlikely((t->rseq.event.sched_switch))) {
-+		rseq_stat_inc(rseq_stats.fastpath);
-+
-+		if (unlikely(!rseq_exit_user_update(regs, t)))
-+			return true;
-+	}
-+	/* Clear state so next entry starts from a clean slate */
-+	t->rseq.event.events = 0;
-+	return false;
-+}
-+
-+static __always_inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
-+{
-+	if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
-+		current->rseq.event.slowpath = true;
-+		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
-+		return true;
-+	}
-+	return false;
-+}
-+
-+#endif /* CONFIG_GENERIC_ENTRY */
-+
- static __always_inline void rseq_exit_to_user_mode(void)
- {
- 	struct rseq_event *ev = &current->rseq.event;
-@@ -421,9 +543,12 @@ static inline void rseq_debug_syscall_re
- 	if (static_branch_unlikely(&rseq_debug_enabled))
- 		__rseq_debug_syscall_return(regs);
- }
--
- #else /* CONFIG_RSEQ */
- static inline void rseq_note_user_irq_entry(void) { }
-+static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
-+{
-+	return false;
-+}
- static inline void rseq_exit_to_user_mode(void) { }
- static inline void rseq_debug_syscall_return(struct pt_regs *regs) { }
- #endif /* !CONFIG_RSEQ */
---- a/include/linux/rseq_types.h
-+++ b/include/linux/rseq_types.h
-@@ -18,6 +18,8 @@ struct rseq;
-  * @has_rseq:		True if the task has a rseq pointer installed
-  * @error:		Compound error code for the slow path to analyze
-  * @fatal:		User space data corrupted or invalid
-+ * @slowpath:		Indicator that slow path processing via TIF_NOTIFY_RESUME
-+ *			is required
-  *
-  * @sched_switch and @ids_changed must be adjacent and the combo must be
-  * 16bit aligned to allow a single store, when both are set at the same
-@@ -42,6 +44,7 @@ struct rseq_event {
- 				u16		error;
- 				struct {
- 					u8	fatal;
-+					u8	slowpath;
- 				};
- 			};
- 		};
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -133,6 +133,7 @@ static int rseq_stats_show(struct seq_fi
- 		stats.exit	+= data_race(per_cpu(rseq_stats.exit, cpu));
- 		stats.signal	+= data_race(per_cpu(rseq_stats.signal, cpu));
- 		stats.slowpath	+= data_race(per_cpu(rseq_stats.slowpath, cpu));
-+		stats.fastpath	+= data_race(per_cpu(rseq_stats.fastpath, cpu));
- 		stats.ids	+= data_race(per_cpu(rseq_stats.ids, cpu));
- 		stats.cs	+= data_race(per_cpu(rseq_stats.cs, cpu));
- 		stats.clear	+= data_race(per_cpu(rseq_stats.clear, cpu));
-@@ -142,6 +143,7 @@ static int rseq_stats_show(struct seq_fi
- 	seq_printf(m, "exit:   %16lu\n", stats.exit);
- 	seq_printf(m, "signal: %16lu\n", stats.signal);
- 	seq_printf(m, "slowp:  %16lu\n", stats.slowpath);
-+	seq_printf(m, "fastp:  %16lu\n", stats.fastpath);
- 	seq_printf(m, "ids:    %16lu\n", stats.ids);
- 	seq_printf(m, "cs:     %16lu\n", stats.cs);
- 	seq_printf(m, "clear:  %16lu\n", stats.clear);
+ 	return 0;
+-- 
+2.39.5 (Apple Git-154)
 
 
