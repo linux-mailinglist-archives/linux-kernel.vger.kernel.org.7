@@ -1,161 +1,341 @@
-Return-Path: <linux-kernel+bounces-871180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22AB3C0C95C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:14:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9F8C0C989
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13B5F188AB33
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA1D3BFBAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713F2F49F7;
-	Mon, 27 Oct 2025 09:05:27 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2AE2FB99D;
+	Mon, 27 Oct 2025 09:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1R5w7d2"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427062F4A10
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F642F747C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555927; cv=none; b=gkf1xKki9RdnN2usD1kvSePNF1yHpONYr9kA0i5shYhtCAXnG9yqJ7S7K6DHHot18ilTM2xn4ZjP7und9ISHh3xvCNBq3ofvA6FJiSewPN/qyzz7z9IFVb/S4b3nuKyPbIVfyzoNs0r0a6bg9ZgjqMncPnw/RT8FpjjNHFOynig=
+	t=1761555954; cv=none; b=U6GqwSGEzC6uPDsYb8LsQ7JGWi1+LPEXkWB1OGRC5M0c4clROwDNFSotLjVUIOoxMe7uK7e1smVEqdJzENEbNifAnKaonKoFNpUAkHdQos2rqDXiF5iYyHPaHMfEsi41YS5wSOmKmP9iEYuGE8fuSUCm6/N9EVRjpw4jSCc68QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555927; c=relaxed/simple;
-	bh=WN7JmBbMhnhmgm/t+Z5YXXVpvW73Fd5nCOl4uzqYrJ0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lK+k2k8DnnSVhYBTHIfvotUp/i/GUOYRJOEzCDcbmWhYovqiCV4gLc7vWdDgJsYEGBNRXyfFItHKBMZ/XAcoORKXTWWOmniZ7GMV5BNxYJyg1Pu90gibTknXbKarrKVth4+m5uRshain1zYtPsxycPmfcyp31Q4ojb7vMcbew8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430e1a4a129so56328765ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:05:25 -0700 (PDT)
+	s=arc-20240116; t=1761555954; c=relaxed/simple;
+	bh=oul0jZSe8DZMg2Vf99BequirPHeOW7ztguFfZ4hF4Fk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eR4UpRAZCHkb42CoTGNsWmTwjc3BmCb0isM9R9edm6fZeDwVDvJrMaGV7b1PlmjZNGhEzUiBSXUJgs2h2N3UC0wAJ7qm1GCflDjxAOBDzHmkgW0dh3C3tG8WZUC0SOICagvPMZaER/Xp62E8xIXUbHyn3PoIrnp2wX8u4mMAIHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1R5w7d2; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33bda2306c5so3935707a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761555949; x=1762160749; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a4wHmSedHOVJ0abx0lQLwOEdfc7uev2BduRo0/8vTOM=;
+        b=C1R5w7d2tYGv+0B5ja43cTp4nrnUIzDEfGmZRhXyZ4gtIgbkvIRNOMVFG1asDj4tDK
+         5Q3VBqqRm4axCRl4XEsKCdJSXoMZKo62IZsj3iwIAfsnt1QvJ98rbqtcWl4yCKQUabuw
+         bLxk6Wj+jwgD4meH2QAu7ZZSSAASCdS898AVQjp39TFn3N9f2J8GIleKnSVJ2eX34PON
+         lYXG+IfduExD/DBMM0z+EVBT/IJHv2EFS4zYCf9606YZ5jWe8loV4UJB5hJXBCLH87dz
+         934yVSqKbSSF2lHSe5i5PMK9YSoEPY2Q9cIJLzmGGjlSL6+z8fVPhuxnMAckKhlCgLEH
+         eGWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761555924; x=1762160724;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4348gTcAqcyYWGcqdLHPY+sADMiypVC1sIHy52muuig=;
-        b=BCiba5a9+Ndp9xWuIHkwRhHLtzaYYxwq+JYIJeZBOtcnOFhDaT4R/m0JUZgvg7T+7i
-         XpOTQdSMZDWj1MXsueicp94vZ+OXD1Fyog4J+vix/zkEmUM3rOSnBrkaUg2WjDSFn4xR
-         T0NSNDv/+FxfqsbGEAEQs014YyZ9+3ibzseINzFzFPk/fkis5+a6uNNOfS6jynSdLImp
-         wIdzCCMYWIYpiO3w7Yh4yMcNnn2r79xXvVpTCrHu6lv2SMOZVw6ItndpKXEyCTNQsM++
-         3H/vLuFaWL1Kl8kTZGKsq3zAjT0to89DdPbCBJM62cgg/5LgoBjRny3pBHAIGEKWbkNV
-         Z/1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXy+wc8irGKXxHCOx72P8rYolt0UjrLqB27HPyb/z6di+CAYOtsx5rY3sdVZa9C8WVnV1sPdmIlCpuwSjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxdrXgTeyGo8I9lsdzg/GERXONLkaa78jBfSs1yOi5yYhf6gGn
-	7RsmD+U6tTX4lDO1DjkKaGAL/neCglxgcuh0PI+Hoq0Y2dZEzyM0i8tcXxOkeLx3DsM4vL+Fh5y
-	KPBSN+mtIr3NNBWokOOhYAdxpLYlLD9Tn2+2em7TsOTdiCZp1r4EaHXPowmQ=
-X-Google-Smtp-Source: AGHT+IHxMi6PV+TDJc3vwkPLg41bpxh9geXRcKNug531WUUS2N+LETudRT3A12NLxoo+XYJXQfcqdF95VBEZ6J0FerovQSBhMd3y
+        d=1e100.net; s=20230601; t=1761555949; x=1762160749;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a4wHmSedHOVJ0abx0lQLwOEdfc7uev2BduRo0/8vTOM=;
+        b=cn1dJsh19xvFmuPkDY1eeUZS6SDKxsYAf21+NH2AljijEZHV9NbEhELpP0vYC908Bu
+         WHRPzEIc8e2mJrM3DX0o3V6NtpW9O8u1c7bdKct3cVwCkKZyA1+6/WRNQWijjZwb3CPq
+         m3plVWR7RUidYg9ujIh9XkWS7hl6NI5Weg3wth9OgshGAjW2yqu4BXby7h+JCYGKK0Bl
+         Rchb1WfvtCXWo+LQNNuFTI3f4hQb3zxj0+iKlA8k5PSVY5xP66bxACOOzhh5qB3lsSdv
+         NUoSvZaU3WzmZ+Q0CJPkawiSjBK/ltl6x454CerUPCt+Cuitp3yzvReURTpNUBYtLoRY
+         GoKw==
+X-Gm-Message-State: AOJu0Yyi86ivugER88bzL5MSe1/DHTUvjmJAManEnhIHZLue06tniWCN
+	30SKBlhPbPZeZi2qIxLSC5ccZvtTAozous5aQdlmMgVC7A2wflmSLV66
+X-Gm-Gg: ASbGncv42S15R87fUzLXi1a2VPel68VCOUGd1i1eJnKMykxPxWs1mbe12sabDFX2qgD
+	BVz8S00dN0vZSUhYkMg6eJe4mt7hlFkukuuzUqAhxHcadRnxFZf1yK3BFhGkrh4EzEz2o8C7k3E
+	/hkik7Bm0yd/5Xl0Fs1+GbfO35o/ZJbH4hUx+MjOD4Ijkljny6+lZBqdBnfvBCRJ1zSRfbGpa7D
+	txl/V3A6ZWKXi8TdhtL610uUy22g9YDsuQeRus2FO7BKl3utXWMEkNTaOvP5jSqXDWGUX2TJo0I
+	1jf7Zno/X5mECW4tXD+J8A8seie2N8GSmMn6I+DFFKhmPF5x19kFz9HzJ1PLFim0DnbmorsDaS1
+	z4oQl6drkti12JPnJkXFtEXyGt0N2Q2U8JpaZ3q0pCnmq/dji3bK2i/GKyi3C1pKW/SizEWktOm
+	7k72J8/3SHTFpu+DBzDSEI5BfnLr+kc0V1aKVIFE5S0JkczPlIkA==
+X-Google-Smtp-Source: AGHT+IGEh5PwXkKYOsE9IFOp/s3AN4rJ2W+Bb6J0giqW6jlisReetI4oQsXib+G8lUxfjA9EAcah4w==
+X-Received: by 2002:a17:90b:2788:b0:32e:2059:ee83 with SMTP id 98e67ed59e1d1-33bcf85aa00mr49444906a91.7.1761555948530;
+        Mon, 27 Oct 2025 02:05:48 -0700 (PDT)
+Received: from localhost.localdomain ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fee458463sm3821430a91.6.2025.10.27.02.05.42
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 02:05:47 -0700 (PDT)
+From: Hao Jia <jiahao.kernel@gmail.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	mingo@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	kprateek.nayak@amd.com
+Cc: linux-kernel@vger.kernel.org,
+	Hao Jia <jiahao1@lixiang.com>,
+	Aaron Lu <ziqianlu@bytedance.com>
+Subject: [PATCH v2] sched/fair: Fix non-empty throttled_limbo_list warning in tg_throttle_down()
+Date: Mon, 27 Oct 2025 17:05:34 +0800
+Message-Id: <20251027090534.94429-1-jiahao.kernel@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2143:b0:42f:96ec:50a5 with SMTP id
- e9e14a558f8ab-431ebea144emr104006355ab.20.1761555924284; Mon, 27 Oct 2025
- 02:05:24 -0700 (PDT)
-Date: Mon, 27 Oct 2025 02:05:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ff35d4.050a0220.32483.0015.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in lookup_inline_extent_backref (2)
-From: syzbot <syzbot+b0e66d3779134f468156@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Hao Jia <jiahao1@lixiang.com>
 
-syzbot found the following issue on:
+Aaron Lu and I hit a non-empty throttled_limbo_list warning in
+tg_throttle_down() during testing.
 
-HEAD commit:    dbfc6422a34d Merge tag 'x86_urgent_for_v6.18_rc3' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d993cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25811b07889c90db
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0e66d3779134f468156
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-dbfc6422.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/73c799811c6a/vmlinux-dbfc6422.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e1bb4619e00f/bzImage-dbfc6422.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b0e66d3779134f468156@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5319 at fs/btrfs/extent-tree.c:836 lookup_inline_extent_backref+0x12c7/0x17f0 fs/btrfs/extent-tree.c:836
-Modules linked in:
-CPU: 0 UID: 0 PID: 5319 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:lookup_inline_extent_backref+0x12c7/0x17f0 fs/btrfs/extent-tree.c:836
-Code: 05 fe 26 a5 0e 48 3b 84 24 e0 01 00 00 0f 85 8e 04 00 00 89 d8 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 5b 4b 81 07 cc 90 <0f> 0b 90 48 8b 44 24 78 42 80 3c 30 00 74 0a 48 8b 7c 24 20 e8 90
-RSP: 0000:ffffc9000d23e820 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: ffff888000784900 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000d23ea48 R08: 0000000000000000 R09: 1ffffd40002891c8
-R10: dffffc0000000000 R11: fffff940002891c9 R12: 1ffff1100a23a242
-R13: 00000000000000b2 R14: dffffc0000000000 R15: ffff8880110e2000
-FS:  00007f1616ed56c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7e2ed37000 CR3: 000000003f2e0000 CR4: 0000000000352ef0
+WARNING: kernel/sched/fair.c:5975 at tg_throttle_down+0x2bd/0x2f0, CPU#20: swapper/20/0
 Call Trace:
- <TASK>
- insert_inline_extent_backref+0xa8/0x2f0 fs/btrfs/extent-tree.c:1205
- __btrfs_inc_extent_ref+0x263/0x9e0 fs/btrfs/extent-tree.c:1503
- run_one_delayed_ref fs/btrfs/extent-tree.c:-1 [inline]
- btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:1972 [inline]
- __btrfs_run_delayed_refs+0xebd/0x4130 fs/btrfs/extent-tree.c:2047
- btrfs_run_delayed_refs+0xe6/0x3b0 fs/btrfs/extent-tree.c:2159
- btrfs_start_dirty_block_groups+0xd3d/0x10a0 fs/btrfs/block-group.c:3534
- btrfs_commit_transaction+0x674/0x3950 fs/btrfs/transaction.c:2241
- btrfs_sync_file+0xd30/0x1160 fs/btrfs/file.c:1818
- generic_write_sync include/linux/fs.h:3046 [inline]
- btrfs_do_write_iter+0x59a/0x710 fs/btrfs/file.c:1469
- iter_file_splice_write+0x975/0x10e0 fs/splice.c:738
- do_splice_from fs/splice.c:938 [inline]
- direct_splice_actor+0x101/0x160 fs/splice.c:1161
- splice_direct_to_actor+0x5a8/0xcc0 fs/splice.c:1105
- do_splice_direct_actor fs/splice.c:1204 [inline]
- do_splice_direct+0x181/0x270 fs/splice.c:1230
- do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
- __do_sys_sendfile64 fs/read_write.c:1431 [inline]
- __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1615f8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1616ed5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f16161e6090 RCX: 00007f1615f8efc9
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000008
-RBP: 00007f1616011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 000000007ffff000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f16161e6128 R14: 00007f16161e6090 R15: 00007fff32122a28
- </TASK>
+ ? __pfx_tg_nop+0x10/0x10
+ walk_tg_tree_from+0x39/0xd0
+ ? __pfx_tg_throttle_down+0x10/0x10
+ throttle_cfs_rq+0x176/0x1f0
+ enqueue_task_fair+0x4f5/0xd30
+ ? unthrottle_cfs_rq+0x2f7/0x3a0
+ tg_unthrottle_up+0x10c/0x2f0
+ ? __pfx_tg_unthrottle_up+0x10/0x10
+ walk_tg_tree_from+0x66/0xd0
+ ? __pfx_tg_nop+0x10/0x10
+ unthrottle_cfs_rq+0x16b/0x3a0
+ __cfsb_csd_unthrottle+0x1f0/0x250
+ ? __pfx___cfsb_csd_unthrottle+0x10/0x10
+ __flush_smp_call_function_queue+0x104/0x440
+ ? tick_nohz_account_idle_time+0x4c/0x80
+ flush_smp_call_function_queue+0x3b/0x80
+ do_idle+0x14f/0x240
+ cpu_startup_entry+0x30/0x40
+ start_secondary+0x128/0x160
+ common_startup_64+0x13e/0x141
 
+cgroup hierarchy:
 
+          root
+        /      \
+        A*     ...
+     /  |  \   ...
+        B* ...
+
+Debugging shows the following:
+A and B are configured with relatively small quota and large period.
+
+At some point, cfs_rq_A is throttled. Due to the throttling of cfs_rq_A,
+the tasks on cfs_rq_B are added to cfs_rq_B's throttled_limbo_list.
+
+Resetting task_group B quota will set cfs_rq_B runtime_remaining to 0 in
+tg_set_cfs_bandwidth().
+Since task_group A is throttled, Therefore, task on cfs_rq_B cannot run,
+and runtime_remaining stays 0. With task_group B has a small quota,
+tasks on other CPUs in task_group B quickly consume all of
+cfs_b_B->runtime, causing cfs_b_B->runtime to be 0.
+
+When cfs_rq_A is unthrottled later, tg_unthrottle_up(cfs_rq_B) will
+re-queues task. However, because cfs_rq_B->runtime_remaining still 0,
+and it cannot obtain runtime from cfs_b_B->runtime either. Therefore,
+the task will be throttled in
+enqueue_task_fair()->enqueue_entity()->check_enqueue_throttle(),
+triggering a non-empty throttled_limbo_list warning in tg_throttle_down().
+
+Root Cause:
+In unthrottle_cfs_rq(), we only checked cfs_rq_A->runtime_remaining, but
+enqueue_task_fair() requires that the runtime_remaining of each cfs_rq
+level be greater than 0.
+
+Solution:
+One way to fix this warning is to add a runtime_remaining check for
+each cfs_rq level of the task in unthrottle_cfs_rq(), but this makes code
+strange and complicated.
+Another straightforward and simple solution is to add a new enqueue flag
+to ensure that enqueue in tg_unthrottle_up() will not immediately trigger
+throttling. This may enqueue sched_entity with no remaining runtime, which
+is not a big deal because the current kernel also has such situations [1].
+
+We still retain the runtime_remaining check in unthrottle_cfs_rq() for
+higher-level cfs_rq to avoid enqueuing many entities with
+runtime_remaining < 0.
+
+Also remove the redundant assignment to se in tg_throttle_down().
+
+[1]: https://lore.kernel.org/all/20251015084045.GB35@bytedance
+
+Fixes: e1fad12dcb66 ("sched/fair: Switch to task based throttle model")
+Suggested-by: Aaron Lu <ziqianlu@bytedance.com>
+Suggested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Reported-by: Aaron Lu <ziqianlu@bytedance.com>
+Closes: https://lore.kernel.org/all/20251016065438.GA32@bytedance
+Signed-off-by: Hao Jia <jiahao1@lixiang.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v2:
+  1.Fix the issue where enqueue flags were overwritten in enqueue_task_fair(),
+  ensuring that the ENQUEUE_THROTTLE flag can be propagated through the hierarchy.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  2.As suggested by Aaron Lu, check ENQUEUE_THROTTLE in check_enqueue_throttle()
+  to optimize for scenarios without quota set, and pair the
+  ENQUEUE_THROTTLE / DEQUEUE_THROTTLE flags.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+  3.Prateek suggested placing the ENQUEUE_THROTTLE check after account_cfs_rq_runtime()
+  to prevent a possible missed start of the bandwidth timer.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+ kernel/sched/fair.c  | 31 ++++++++++++++++++++++---------
+ kernel/sched/sched.h |  7 ++++++-
+ 2 files changed, 28 insertions(+), 10 deletions(-)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 273e2871b59e..67ce46c532e2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5229,7 +5229,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	se->deadline = se->vruntime + vslice;
+ }
+ 
+-static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
++static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags);
+ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+ 
+ static void
+@@ -5287,7 +5287,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	se->on_rq = 1;
+ 
+ 	if (cfs_rq->nr_queued == 1) {
+-		check_enqueue_throttle(cfs_rq);
++		check_enqueue_throttle(cfs_rq, flags);
++
+ 		list_add_leaf_cfs_rq(cfs_rq);
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 		if (cfs_rq->pelt_clock_throttled) {
+@@ -5912,7 +5913,7 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
+ 	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list, throttle_node) {
+ 		list_del_init(&p->throttle_node);
+ 		p->throttled = false;
+-		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
++		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP | ENQUEUE_THROTTLE);
+ 	}
+ 
+ 	/* Add cfs_rq with load or one or more already running entities to the list */
+@@ -6029,15 +6030,18 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	 * unthrottled us with a positive runtime_remaining but other still
+ 	 * running entities consumed those runtime before we reached here.
+ 	 *
+-	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
++	 * We can't unthrottle this cfs_rq without any runtime remaining
+ 	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
+ 	 * throttle, which is not supposed to happen on unthrottle path.
++	 *
++	 * Although the ENQUEUE_THROTTLE flag ensures that enqueues in
++	 * tg_unthrottle_up() do not trigger a throttle, we still retain the check
++	 * for cfs_rq->runtime_remaining. This prevents the enqueueing of many
++	 * entities whose runtime_remaining is less than 0.
+ 	 */
+ 	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
+ 		return;
+ 
+-	se = cfs_rq->tg->se[cpu_of(rq)];
+-
+ 	cfs_rq->throttled = 0;
+ 
+ 	update_rq_clock(rq);
+@@ -6403,7 +6407,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+  * expired/exceeded, otherwise it may be allowed to steal additional ticks of
+  * runtime as update_curr() throttling can not trigger until it's on-rq.
+  */
+-static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
++static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags)
+ {
+ 	if (!cfs_bandwidth_used())
+ 		return;
+@@ -6418,6 +6422,13 @@ static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
+ 
+ 	/* update runtime allocation */
+ 	account_cfs_rq_runtime(cfs_rq, 0);
++	/*
++	 * Do not attempt to throttle on the cfs_rq unthrottle path.
++	 * and it must be placed after account_cfs_rq_runtime() to
++	 * prevent a possible missed start of the bandwidth timer.
++	 */
++	if (flags & ENQUEUE_THROTTLE)
++		return;
+ 	if (cfs_rq->runtime_remaining <= 0)
+ 		throttle_cfs_rq(cfs_rq);
+ }
+@@ -6724,7 +6735,7 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
+ 
+ static void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec) {}
+ static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq) { return false; }
+-static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
++static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags) {}
+ static inline void sync_throttle(struct task_group *tg, int cpu) {}
+ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
+ static void task_throttle_setup_work(struct task_struct *p) {}
+@@ -6926,6 +6937,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	int h_nr_runnable = 1;
+ 	int task_new = !(flags & ENQUEUE_WAKEUP);
+ 	int rq_h_nr_queued = rq->cfs.h_nr_queued;
++	int throttle_flag = flags & ENQUEUE_THROTTLE;
+ 	u64 slice = 0;
+ 
+ 	if (task_is_throttled(p) && enqueue_throttled_task(p))
+@@ -6983,7 +6995,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		if (cfs_rq_is_idle(cfs_rq))
+ 			h_nr_idle = 1;
+ 
+-		flags = ENQUEUE_WAKEUP;
++		/* Ensure ENQUEUE_THROTTLE flag can be propagated through the hierarchy */
++		flags = ENQUEUE_WAKEUP | throttle_flag;
+ 	}
+ 
+ 	for_each_sched_entity(se) {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index e7718f12bc55..468013d860a6 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2364,6 +2364,10 @@ extern const u32		sched_prio_to_wmult[40];
+  * CLASS - going to update p->sched_class; makes sched_change call the
+  *         various switch methods.
+  *
++ * THROTTLE - invoke in throttle_cfs_rq_work() to ensure task dequeue
++ *            during throttling, and in tg_unthrottle_up() to ensure
++ *            task enqueue during unthrottling.
++ *
+  * ENQUEUE_HEAD      - place at front of runqueue (tail if not specified)
+  * ENQUEUE_REPLENISH - CBS (replenish runtime and postpone deadline)
+  * ENQUEUE_MIGRATED  - the task was migrated during wakeup
+@@ -2381,9 +2385,9 @@ extern const u32		sched_prio_to_wmult[40];
+ #define DEQUEUE_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
+ #define DEQUEUE_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
+ #define DEQUEUE_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
++#define DEQUEUE_THROTTLE	0x0080 /* Matches ENQUEUE_THROTTLE */
+ 
+ #define DEQUEUE_SPECIAL		0x00010000
+-#define DEQUEUE_THROTTLE	0x00020000
+ 
+ #define ENQUEUE_WAKEUP		0x0001
+ #define ENQUEUE_RESTORE		0x0002
+@@ -2393,6 +2397,7 @@ extern const u32		sched_prio_to_wmult[40];
+ #define ENQUEUE_MIGRATING	0x0010
+ #define ENQUEUE_DELAYED		0x0020
+ #define ENQUEUE_CLASS		0x0040
++#define ENQUEUE_THROTTLE	0x0080
+ 
+ #define ENQUEUE_HEAD		0x00010000
+ #define ENQUEUE_REPLENISH	0x00020000
+-- 
+2.34.1
 
-If you want to undo deduplication, reply with:
-#syz undup
 
