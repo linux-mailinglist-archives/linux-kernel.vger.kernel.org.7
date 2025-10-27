@@ -1,305 +1,197 @@
-Return-Path: <linux-kernel+bounces-870992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D4EC0C2C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:43:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B29C0C2D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C10D3A51F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB0018931BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F1F2DF706;
-	Mon, 27 Oct 2025 07:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794882E1C64;
+	Mon, 27 Oct 2025 07:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cPrbPUzb"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010054.outbound.protection.outlook.com [40.93.198.54])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="In2uTG/Q"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2D32DFA28;
-	Mon, 27 Oct 2025 07:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761550915; cv=fail; b=q6BRcfod4AYLMCEQ1w3lyQHHozPhkeqgR0KpNMcL+4Ipk9h2wGtaGJOeirAq7TVwclm0Sdv+Y89rppnHOgwINEhOF8KDQNFbMhhIGTmhvEtVeYOvfIzs1ws2XHLsTn2Yjb9Ep0fhVh75uOnyAqkQmbpAmTElCmwTqaz5HIhl+iU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761550915; c=relaxed/simple;
-	bh=pevkSyTzWgfpYeoHuuynZ7ESQAeTCorI7E8lLMdAc1o=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iI6sDx5rwRFpTkydlJ60LagyrjXjZajURhyxXzNecDuiwuJkIJ3j2e2RUGt4x1h1eX0nr3sNDwoQzPGnYFqUNdxjBf6bW/LhYLsR3P0mhBkdIvxPnKSQlWosmPCB3c0/uwBjzhw/ipz4jFdXKzG45zLyI7NGrdhXVNe7G1Rybio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cPrbPUzb; arc=fail smtp.client-ip=40.93.198.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YGJOHbrq8tTwyGwtSEOV+bZnqu+947JOhQT1nWEyVCJbTYK2jQXqLAmgsuxsn4hyJ7bDh61NLx71VBXqfrwz4pHAJVKSknWijfl+f4jHhg2yH+ayjenMZQy70neWmLh+jp/PuRd3uvTbvWRZ2fexDWdLfx4Ww6cixcDm/+Il8U0Lmeqde5rbP1yX5e/7EqgGZTzfNIziJxsecPUjFLvUJHiNkvACLQiL80qs/bWbiG/X8K6tNobb3/bhA2DwFC5hnoxTQ54Gk2mubBIfR+VqHOwJekqhdPUM20kIJrCyypyCOGA8gaSSuhvHmaWTVl792S9HkrYCkKQpxtJJTwUvfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qbgsrjunrc1uN/Ez/FcFpDbxwvyBQkSMJM/WPzeoe0U=;
- b=wbsJqnvgpClATNegTcCb1fY+xZqMBqNyd7cVXk3sovPZfouP5ptzz1x/U2qsguLs5+oYBx3YLtWpor71ZzXShv/51owtQa7sdubmadO6EFY1QSO2x8DUU2/bAaot26RhiuZFcrgDh63XKVkINn1v6xf1UcS1LnuBmraAsu+9dVvtRk1nS5XzaKf0xuiWB2ToDVjB8CB89whu3fcaOS3TofPLPrVFUIGfg2Sd7M41oL2MLjfre2/exLnvkBfqqnUcwSZh/iKJUBaCCvsgjNeoJJvlkPmoGCKSZL4SY+2FbedjA5bH/jpvlj7mJ5FVfTBf7gDQWPdvJhu/Yle3rULH1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qbgsrjunrc1uN/Ez/FcFpDbxwvyBQkSMJM/WPzeoe0U=;
- b=cPrbPUzbWgWAgB4A7A8h1pGzWnAPu5092FkfYMrbMTiGWOo3o+buUuI7DyK1hq009qsD2TOUbcTah0l2MmMDCRNV4xwGX3/TzipAFMaSoVrJfThwJTNd62wmiZmO6JrA/Cd/Y3jYjeAWDfvLL4F13hlgzUWwt59Vq7km0dPUiJU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ0PR12MB5673.namprd12.prod.outlook.com (2603:10b6:a03:42b::13)
- by DM4PR12MB8474.namprd12.prod.outlook.com (2603:10b6:8:181::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 07:41:49 +0000
-Received: from SJ0PR12MB5673.namprd12.prod.outlook.com
- ([fe80::ec7a:dd71:9d6c:3062]) by SJ0PR12MB5673.namprd12.prod.outlook.com
- ([fe80::ec7a:dd71:9d6c:3062%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 07:41:49 +0000
-Message-ID: <b66c5faa-1664-424d-9b32-c5e0729f3976@amd.com>
-Date: Mon, 27 Oct 2025 08:41:44 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] dma-fence: Remove 64-bit flag
-To: Matthew Brost <matthew.brost@intel.com>, phasta@kernel.org
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
- Gustavo Padovan <gustavo@padovan.org>, tursulin@ursulin.net,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20251017093146.169996-2-phasta@kernel.org>
- <aPK04r1E7IbAZ9QY@lstrano-desk.jf.intel.com>
- <7b53f502aa0eaee4ffe4350621ddbcbfaafcad06.camel@mailbox.org>
- <aPYabivOBSJ1UChg@lstrano-desk.jf.intel.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <aPYabivOBSJ1UChg@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN9PR03CA0532.namprd03.prod.outlook.com
- (2603:10b6:408:131::27) To SJ0PR12MB5673.namprd12.prod.outlook.com
- (2603:10b6:a03:42b::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EB72E0B6E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761551213; cv=none; b=ZQ72ocPN3jDWbEYgy2Kjlq2NRTESeswa1xA5prK4VNvSI8l7H7c9kmEP1Iust+y3N2t2OYDEaNGZMu7MJEzg7SBxC+Tzwmk64dtNEZHL2kZ1zIcPww0C6a5zaehA64ddl6EiH9JorLVreHeK7KidFouEFFEVhIL4dBH1NiNu83U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761551213; c=relaxed/simple;
+	bh=m+/OpNmk9RjLKoKA8PTUeAPj9b8IhzIlOjvj/YC7iGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+2NELeiq4cfv4MohP++KXuToG/U+vS9Xwj+LTZIzBkFNh8L3NuZSpLL7ijuvZlniUbpE5Wk28ZhxiDhBGdpqmxdhOIa/TSID0BJKzhP4GcgPyJ0eimN+b2WJblDt8tUIbzXpq9Tkdl1Jo89FohFtl4p/9qvKq0qwY8YIzQNSQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=In2uTG/Q; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59QKrBJq009936;
+	Mon, 27 Oct 2025 07:46:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0Y6BSf
+	aXtj7eGt7emfZsnVlTLYftCSxA9NJ9tCnZ7Po=; b=In2uTG/QqQZw6G3At9CEW1
+	o5ceaYJD3iPLGGHMz3C4F66zaSCcquNvfvqtVFG3oFtLLxEmA8ag8/maj0wBGW5m
+	Sp3MoSpr/pR9Zs8acm6kZxjngjgLMHcWP3xxEvklW7K1v574FqYHKAb7HGXyLDwq
+	eLWepCA/aRdlF2fvCmTsImCMjSoVtHlNSFaMsNAgfJTywkgoBa4sPi2n9sqiWRKq
+	Wwp/zYWm2NFLIq1ToHS51zqq/ulUAU3o8nQ1QqQ4SCU8PTUI6SZPl4WuxLGb1gn2
+	Ojb7Uy94v+d4bVFYSGRm4q9FqpZqPWovOeDGhANiuhuTIBU3O5qu3jhfyF7rwxTg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0myrwn13-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 07:46:32 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59R7k8sl024040;
+	Mon, 27 Oct 2025 07:46:32 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0myrwn10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 07:46:31 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59R4ILBv009477;
+	Mon, 27 Oct 2025 07:46:31 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a1b3hv7na-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 07:46:30 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59R7kTI829557190
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 07:46:29 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4EBC72004B;
+	Mon, 27 Oct 2025 07:46:29 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9695F20040;
+	Mon, 27 Oct 2025 07:46:26 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.39.25.223])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 27 Oct 2025 07:46:26 +0000 (GMT)
+Date: Mon, 27 Oct 2025 13:16:23 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] powerpc/vmlinux.lds: Drop .interp description
+Message-ID: <aP8jT3XY3kQUCwFQ@linux.ibm.com>
+References: <20251018-ppc-fix-lld-interp-v1-1-a083de6dccc9@kernel.org>
+ <aPdBpqhm3JHvKIWJ@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB5673:EE_|DM4PR12MB8474:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3265d3e3-723f-41fc-92d3-08de152c4986
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bXpkTzZxOWJ3QXdmdEs0RVBQM0ZaVmt2MjNIN0pGY0E2N09TS3pmbUxZWFBN?=
- =?utf-8?B?b21iNGRyQnRLcTdmQ0RvMkVvS2tuTjBXb1hVR012cFpCT1U3MFdWSmJsU2px?=
- =?utf-8?B?aUFpUzJ5dFg4RWUwdGJFZFRuVXk5cThsM0ErVmFkWklrdHhTSHFqTlBSaGFz?=
- =?utf-8?B?SXNyR0hSU2paOE5aYWhtbzJFNm8ySlc4WUtBbUlWVWRmUjQzanIvWnlnSzlU?=
- =?utf-8?B?SVBVaEpxZDhMNS9iNTNrMFpWZklNOUsyOWFwa2M0T3dvUmRjWGhWYWdmbHpK?=
- =?utf-8?B?elFzN2pTelVZcEVGbTNqQUsweEI3MklsT3FucCt3VW1DYlVxRFFDQWZUNEYx?=
- =?utf-8?B?UXZ3TW40emtCZXJ2c003VFI5NlAwRWRkenBiSm5EUnB1RHJsTlRPT29ZUHkw?=
- =?utf-8?B?MSs2SlVxNWJvaW1wcUtDRFpZV1pyNFQ4Z3NmeVhXT3Z4WnpEVWtrZndtL2ZU?=
- =?utf-8?B?a0hzT2Jmb2gyUkdCOHVFTnBORjdJYU5DOFVqdFVGbUp1Q0dXV3k0Tzh1MlVT?=
- =?utf-8?B?MlAvWFNwOXNFOTVJalBKQ3hhMEoyMVZPSVZPbWxNM1lzZHA1NzFISVp2NTZo?=
- =?utf-8?B?Z1BqRTZWbmo0bEdPQU90SEJ1VHR0b3lLSlNvSk1vRDVCZ2xCNWhId3k3blRL?=
- =?utf-8?B?cDZabDZDbWhiMHhjb2k1NTI2MVB5TGtGK2lBcnAwQUgrVzczM0g1Z0R1Y2dl?=
- =?utf-8?B?VXIvNUFGaXZDTlBDQW1jQVBSb05McTJJYmsyUXREeVRXbEtTT0xZdjgxOEVK?=
- =?utf-8?B?Q2F2ekJ5K05kdnRuQ0YzU0gzeSt6RzlpUnFsekl5TnFsczZPcmgydG90Wnh4?=
- =?utf-8?B?TStJbm5JeHhwV2k3a25xRmlVTFY0ZkdtY3RFR3RXZzNPK3NhRnFzdnd3bWlk?=
- =?utf-8?B?S0lXWWRSWXBXY0I4b2Y3Sno4NS9zTU9TSWlYS1hiSGFWdjU1ZmFkZ2JVSThM?=
- =?utf-8?B?ZldjTG1VYWJ1NmZPcWVCcExRTkdYWm5WVkcvZ1lTU2crazNscC9UaHkwUytk?=
- =?utf-8?B?RFNJWUMwUFg0VFZJcXRmQWJRS0xtTGRERDB2SXJHOUdlZ1ZhV1locU1xOHBM?=
- =?utf-8?B?UUxQeDVYdmFUZkkrT2dSZkpBZktsdnE2RW1IM3lTNXVWSDlCV1ZzYXdZSUpB?=
- =?utf-8?B?bWVMTG5xODRkakRpZTFQK0dXOHRJaVdyem9KWjNXT0VjTkd6OGlmK004M3l2?=
- =?utf-8?B?UmNzYTdYejhhc2xGTkZtMnBUY3JDY3hKc2JIL1hKeHNMQ05RQ24wQ2JkOWhv?=
- =?utf-8?B?L09WNWswWk9yL1NQZVJiK00wc1FDa2tkbzJudW9zdDZpUVI0TStKOE9Odk9H?=
- =?utf-8?B?eHIyY0ZvSUQyQ1pLUjhvM1RJdlBNZU9uOG1nWmRJWUloNG9SZTRPdFRPNWpv?=
- =?utf-8?B?Snh2VW5iZVFYUFB6ZWgwV2ZLUTRIMGdXKzVmRVE4Q0xLc3FGRWlpWEdyT2pY?=
- =?utf-8?B?V1RkQTFLZXZaSUVMcTdCNVR2ZGNqZDllRXpYeWlWa1ZaTno0R0hJSWVaR3V2?=
- =?utf-8?B?UW9uUENaZGF4WFdIR3NqUDFiRXRMV080VnAwdHpFTDEwTXkzQS9NWHZveFRW?=
- =?utf-8?B?emNFV2EvQUU3TGxPVGRPYXRiT2dNSzZQdytnNVJnL3R2TWpreTUxL0hqRlFy?=
- =?utf-8?B?dU1hck9kMXJtY25CZDZzRzhHemxibVJSSHBxaVNWTS93QnByVGhUYmwwWXlC?=
- =?utf-8?B?M0xmNTNNZlNUcHgweWtEbFc1UTlJMDg0TEYzL1lRd2hjelVScW80YTlVMnEv?=
- =?utf-8?B?NHJlVnU4SXg0UlFVcWpNSEZoRzcxZFpWVXZDRGpzcXVOeWFSd0paWnNReVR5?=
- =?utf-8?B?SENXazE4dFdXWTJWbWpHTmE0ZExVS1p6TlkwOEpjaGh0Y04zU1RDODQ2ZVRD?=
- =?utf-8?B?em9sOUdxTXlCTktMZnFlNHJCelNTRmluRWxCSmxvTDExb2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5673.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L2tLOStqcEpLdDZ0eUkwaER5VjQvN1JpTmdRYnA0R2RVTHNXVEZ6SHJmaHdy?=
- =?utf-8?B?eDBSb1hRY3hjTUFwakREUlRkQmR5ZThJRnE2K08rdDhGQm13MUg3NnVzZFFi?=
- =?utf-8?B?L0YrZHRyMHVtWkxRSk9vbVpGZnRKSlJuM1RjZ1dTMmhBK3o0Z3duU3pNZVZu?=
- =?utf-8?B?VnVRSFFnQks2em05eDE0c2xUcGsrbVNZNnhOSXlNS0dvL2VuS215NUJjSnFF?=
- =?utf-8?B?NlRiZ2ZOQlk2UlY5LzJTSGQ4eXcyUklxSGNtTWxlcWIyaFhXdUU4VFdaOEUr?=
- =?utf-8?B?Zi9MRmpsenZFSjFFV2lqVnBQRER5OUpDZnZKNGgvUDlPMHpZVUd3eG1Bazdm?=
- =?utf-8?B?NThLeEp0UUhTNnBxSERtc05oUmh0UmZDb2JPWkVQRWxFT3hNamZ1NkxxcTA3?=
- =?utf-8?B?UFlJK0JnR1NaU0srd0RFT1VTWVJYUmxjNklsdXNZYmZJdHRJMVd0WTlaYlU4?=
- =?utf-8?B?b3FRcVRRY09IN25OSGtPT2VreW1XRWQrMlgrei9nS09WNnZod1d0RW1LUzJz?=
- =?utf-8?B?RTliUkZWazdLNk5oVXVOLy9XTSsvOXUvRlJ1eVZIL2JsSTJVZmVPVkV4MGt3?=
- =?utf-8?B?VnhOOGRzVENpQkd3UjdWR2piY2hmUFM3aVU0Q09NT3dOMDhTakNGdDMvQVdZ?=
- =?utf-8?B?d1ZyRlVnb0gwRUJpWU95bVVyQStFOWtMMjVCUmU3cndMWm5sanRnRVBCcG9J?=
- =?utf-8?B?TUVTWGFLalJnNGVnTkFkU2dBai9DVzQxRU1RbHA5TnhTVEl5alF5L3ByMWEv?=
- =?utf-8?B?M1EzMnpWSWQvdmdmS3hRZjREa0g2OW9hZjlqSzU2SmtpTWJub0xReW9mb2h5?=
- =?utf-8?B?a2lTUFdIYzFqcG5IWW1RNnpmRlU3dFQxdTVaTE83NkRNS3RJNGtoVERuY1cz?=
- =?utf-8?B?N21PTWF6aUF3bXBvOVVscWJ5MHJNeUtnWlNmYlprb0hVVzJTVWpyMDdCQVVy?=
- =?utf-8?B?Q0R3Yi9hNVdXYWdxejR1aEpqckw5cGdyVS9VMUo0TlZ0WXpyVDN5L1dOR2Y1?=
- =?utf-8?B?VWtTczFjdkIycE52U1ZrL0RLbFpHd0VncDRIdTJ1UzdCNmE5MFFIZW9idUZC?=
- =?utf-8?B?ZzZ6VC9VMklxVExZZ3Mzd0IrRklZN2kreUZDeXBqa3hFRzlFN1RPZ3Y2UXov?=
- =?utf-8?B?WDBCQXVueEFtNjd6elZid0x6UmJqeStnSm0vQkZIa3pNYkMyeHAzZkJVck5I?=
- =?utf-8?B?MEh6RWtncDBSekFMUlU1cUtqQ25QeXo1MldxQUpDOGNGeDQ0Q08yL05EcGRI?=
- =?utf-8?B?bCs5V1FpNkUyY1FINk4rMnMrK0dCSlU0ODFuNEFUUmhFczR3a0Z3WUFRTmxm?=
- =?utf-8?B?dXdIOTRVN2poVWVNMG5rSGNKa1JEM3NvcURObnV2N1R1RStkUDNMTEtxUjlL?=
- =?utf-8?B?VE1VUENhVlRoV3pHTHlaS1FMOWFqeWhmeTBrTHpmZ1Vqc3F3TmpBWkpYMGJH?=
- =?utf-8?B?cU51ZjdsL0xpNVgrejdISUd2V2l6dnNqS3FsSTNaS25DRlYyYXN6R3FFN2Z1?=
- =?utf-8?B?eG05Vk1ZUjYrTVp6LytOcnZLM1hpSHZVUlNITWZYb0MrWWNUY0hkaFlseFY3?=
- =?utf-8?B?K0x2L3ZtYndoQWs3NTVUam4wcXQzMks4ZUw1Yml5RFRRRkREdG1XeDBYbWJw?=
- =?utf-8?B?RlU1STRNRWRhUEs1UzZ6YVNlcWUrZElKL3pQSnBzYVVMTUYwcWJHSE5MZEdr?=
- =?utf-8?B?c1RtaXVjZWZPK3ZzYUNjSTVsb3I0aVFwc3kvTHdGYTdMNzNhZVNuNSt3R0Q4?=
- =?utf-8?B?TUZnRGVNc1IzNWRhUzFESVlJaFErL01VOXFCYzMxeHJKdU9rRUdnUVVRZk5a?=
- =?utf-8?B?N1lkS09CUWRacVRXRm9ESGpLSmxiZ0EyVU1Ya3NHWkRDL213RnRxckZ2MEZ2?=
- =?utf-8?B?VTVTSkJEZld2N2VIdmNwUks4YWQxVGtQVFc0R2pVc24xaG52YndxNG5rKzFj?=
- =?utf-8?B?RSs5Yk9pcU5kY3M4V3dCU2RmL0FRaHRZYjI1ZWRJaHRtektMU3RDdE1VOUZL?=
- =?utf-8?B?SWZ3bFhjZjFtazd0dk14Z3d4clpNOEQ2eTVGbjZqMmgvMUsrNnIwdGFmN2Vw?=
- =?utf-8?B?VzAzQ2pvYSsyR1ZRSTV2MUhONFpNY0hILzNoOUp0WjlHUkF2bUtzL2plRlBy?=
- =?utf-8?Q?3Rb+PLI/sZDSGVpyg0Oo2lxxm?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3265d3e3-723f-41fc-92d3-08de152c4986
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5673.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 07:41:49.1517
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: e2oA/vJpEYBgkH5Rqa48FVyF8opQkBL1D75/ilHhouua5rrSD9dkxJ6BmfBfbB8J
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8474
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPdBpqhm3JHvKIWJ@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: e3amaIqOg-r1xy8SBw8NhMwTtJVzHPB9
+X-Authority-Analysis: v=2.4 cv=ct2WUl4i c=1 sm=1 tr=0 ts=68ff2358 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=CCpqsmhAAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=oRvyBlM1FexuHqL2RKMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=ul9cdbp4aOFLsgKbc677:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxMCBTYWx0ZWRfX6r4Z30l7F8Ic
+ IWvJWfnaL7SNrgqgZOVWGD3V19dcWtzpr4zSgECiRKSCnm9XZnXzIXv2TN7CeoLYKR3M/KWC4RF
+ QPMx3hoMR9hZOrqs21/9Q/8tRg8BKLrAjgY8eYB0BUoZFGfiixqRQv4S+FfaXcuqk3Pw7yHqoiD
+ 4xEir7NihCXSIZ/I0ihi8D7hH1SBidXsnMgWhZY1gWSJNZ/sCJ5c2jsRRSXdT17qEzD7qUogffI
+ KGLPLQCrhoUERQqhEhJMCPshGUrwTnD9niBZw7xzo3Y7qvvNsqSirSO8Qm7BhQ2wcFHy4d+RW2a
+ 2J5e3NfejNarpBmvKNP7S7lTEcdExym9RvtOEM9ts7Aj02cT+tcduu5HqsKUXre8qdaIObS/Bxb
+ Jf9K59fwH1PLOhxZ/lAuZ2v3jjLYog==
+X-Proofpoint-GUID: EmA_x7nIdtsKpHamxbrwTQrjfcKv5Wq6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ spamscore=0 adultscore=0 priorityscore=1501 clxscore=1011 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250010
 
-On 10/20/25 13:18, Matthew Brost wrote:
-> On Mon, Oct 20, 2025 at 10:16:23AM +0200, Philipp Stanner wrote:
->> On Fri, 2025-10-17 at 14:28 -0700, Matthew Brost wrote:
->>> On Fri, Oct 17, 2025 at 11:31:47AM +0200, Philipp Stanner wrote:
->>>> It seems that DMA_FENCE_FLAG_SEQNO64_BIT has no real effects anymore,
->>>> since seqno is a u64 everywhere.
->>>>
->>>> Remove the unneeded flag.
->>>>
->>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
->>>> ---
->>>> Seems to me that this flag doesn't really do anything anymore?
->>>>
->>>> I *suspect* that it could be that some drivers pass a u32 to
->>>> dma_fence_init()? I guess they could be ported, couldn't they.
->>>>
->>>
->>> Xe uses 32-bit hardware fence sequence numbers—see [1] and [2]. We could
->>> switch to 64-bit hardware fence sequence numbers, but that would require
->>> changes on the driver side. If you sent this to our CI, I’m fairly
->>> certain we’d see a bunch of failures. I suspect this would also break
->>> several other drivers.
->>
->> What exactly breaks? Help me out here; if you pass a u32 for a u64,
-> 
-> Seqno wraps.
-> 
->> doesn't the C standard guarantee that the higher, unused 32 bits will
->> be 0?
-> 
-> 	return (int)(lower_32_bits(f1) - lower_32_bits(f2)) > 0;
-> 
-> Look at the above logic.
-> 
-> f1 = 0x0;
-> f2 = 0xffffffff; /* -1 */
-> 
-> The above statement will correctly return true.
-> 
-> Compared to the below statement which returns false.
-> 
-> 	return f1 > f2;
-> 
-> We test seqno wraps in Xe by setting our initial seqno to -127, again if
-> you send this patch to our CI any test which sends more than 127 job on
-> queue will likely fail.
+ping.
 
-Yeah, exactly that's why this flag is needed for quite a lot of things.
+what's the status for this patch?
 
-Question is what is missing in the documentation to make that clear?
+vishalc
 
-Regards,
-Christian.
 
+On Tue, Oct 21, 2025 at 01:48:31PM +0530, Vishal Chourasia wrote:
+> On Sat, Oct 18, 2025 at 06:52:40PM +0100, Nathan Chancellor wrote:
+> > Commit da30705c4621 ("arch/powerpc: Remove .interp section in vmlinux")
+> > intended to drop the .interp section from vmlinux but even with this
+> > change, relocatable kernels linked with ld.lld contain an empty .interp
+> > section, which ends up causing crashes in GDB [1].
+> > 
+> >   $ make -skj"$(nproc)" ARCH=powerpc LLVM=1 clean pseries_le_defconfig vmlinux
+> > 
+> >   $ llvm-readelf -S vmlinux | grep interp
+> >     [44] .interp           PROGBITS        c0000000021ddb34 21edb34 000000 00   A  0   0  1
+> > 
+> > There appears to be a subtle difference between GNU ld and ld.lld when
+> > it comes to discarding sections that specify load addresses [2].
+> > 
+> > Since '--no-dynamic-linker' prevents emission of the .interp section,
+> > there is no need to describe it in the output sections of the vmlinux
+> > linker script. Drop the .interp section description from vmlinux.lds.S
+> > to avoid this issue altogether.
+> > 
+> > Link: https://sourceware.org/bugzilla/show_bug.cgi?id=33481 [1]
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/2137 [2]
+> > Reported-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> > Closes: https://lore.kernel.org/20251013040148.560439-1-vishalc@linux.ibm.com/
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> >  arch/powerpc/kernel/vmlinux.lds.S | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
+> > index de6ee7d35cff..15850296c0a9 100644
+> > --- a/arch/powerpc/kernel/vmlinux.lds.S
+> > +++ b/arch/powerpc/kernel/vmlinux.lds.S
+> > @@ -330,7 +330,6 @@ SECTIONS
+> >  	}
+> >  	.hash : AT(ADDR(.hash) - LOAD_OFFSET) { *(.hash) }
+> >  	.gnu.hash : AT(ADDR(.gnu.hash) - LOAD_OFFSET) { *(.gnu.hash) }
+> > -	.interp : AT(ADDR(.interp) - LOAD_OFFSET) { *(.interp) }
+> >  	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET)
+> >  	{
+> >  		__rela_dyn_start = .;
+> > 
+> > ---
+> > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > change-id: 20251018-ppc-fix-lld-interp-1a78c361cd42
+> > 
 > 
-> Matt
+> With this patch, I don't see .interp section being emitted the final
+> vmlinux binary.
 > 
->>
->> Because the only thing the flag still does is do this lower_32 check in
->> fence_is_later.
->>
->> P.
->>
->>>
->>> As I mentioned, all Xe-supported platforms could be updated since their
->>> rings support 64-bit store instructions. However, I suspect that very
->>> old i915 platforms don’t support such instructions in the ring. I agree
->>> this is a legacy issue, and we should probably use 64-bit sequence
->>> numbers in Xe. But again, platforms and drivers that are decades old
->>> might break as a result.
->>>
->>> Matt
->>>
->>> [1] https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/xe/xe_hw_fence.c#L264
->>> [2] https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/xe/xe_hw_fence_types.h#L51
->>>
->>>> P.
->>>> ---
->>>>  drivers/dma-buf/dma-fence.c |  3 +--
->>>>  include/linux/dma-fence.h   | 10 +---------
->>>>  2 files changed, 2 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
->>>> index 3f78c56b58dc..24794c027813 100644
->>>> --- a/drivers/dma-buf/dma-fence.c
->>>> +++ b/drivers/dma-buf/dma-fence.c
->>>> @@ -1078,8 +1078,7 @@ void
->>>>  dma_fence_init64(struct dma_fence *fence, const struct dma_fence_ops *ops,
->>>>  		 spinlock_t *lock, u64 context, u64 seqno)
->>>>  {
->>>> -	__dma_fence_init(fence, ops, lock, context, seqno,
->>>> -			 BIT(DMA_FENCE_FLAG_SEQNO64_BIT));
->>>> +	__dma_fence_init(fence, ops, lock, context, seqno, 0);
->>>>  }
->>>>  EXPORT_SYMBOL(dma_fence_init64);
->>>>  
->>>> diff --git a/include/linux/dma-fence.h b/include/linux/dma-fence.h
->>>> index 64639e104110..4eca2db28625 100644
->>>> --- a/include/linux/dma-fence.h
->>>> +++ b/include/linux/dma-fence.h
->>>> @@ -98,7 +98,6 @@ struct dma_fence {
->>>>  };
->>>>  
->>>>  enum dma_fence_flag_bits {
->>>> -	DMA_FENCE_FLAG_SEQNO64_BIT,
->>>>  	DMA_FENCE_FLAG_SIGNALED_BIT,
->>>>  	DMA_FENCE_FLAG_TIMESTAMP_BIT,
->>>>  	DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
->>>> @@ -470,14 +469,7 @@ dma_fence_is_signaled(struct dma_fence *fence)
->>>>   */
->>>>  static inline bool __dma_fence_is_later(struct dma_fence *fence, u64 f1, u64 f2)
->>>>  {
->>>> -	/* This is for backward compatibility with drivers which can only handle
->>>> -	 * 32bit sequence numbers. Use a 64bit compare when the driver says to
->>>> -	 * do so.
->>>> -	 */
->>>> -	if (test_bit(DMA_FENCE_FLAG_SEQNO64_BIT, &fence->flags))
->>>> -		return f1 > f2;
->>>> -
->>>> -	return (int)(lower_32_bits(f1) - lower_32_bits(f2)) > 0;
->>>> +	return f1 > f2;
->>>>  }
->>>>  
->>>>  /**
->>>> -- 
->>>> 2.49.0
->>>>
->>
-
+> ```
+> (i) ❯ make LLVM=1 vmlinux
+> (i) ❯ llvm-readelf -p .comment vmlinux
+> 
+> String dump of section '.comment':
+> [     1] clang version 22.0.0git (https://github.com/llvm/llvm-project.git 7314565281ec28b745502c3f429fd431e16673eb)
+> [    6d] Linker: LLD 22.0.0 (https://github.com/llvm/llvm-project.git 7314565281ec28b745502c3f429fd431e16673eb)
+> 
+> (i) ❯ llvm-readelf -p .interp vmlinux
+> llvm-readelf: warning: 'vmlinux': could not find section '.interp'
+> ```
+> 
+> Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
 
