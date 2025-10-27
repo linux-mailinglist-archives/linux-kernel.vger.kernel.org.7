@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-872271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC95C0FC70
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:50:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44ED7C0FC8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11CB519A880D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B253B468433
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE332FF65F;
-	Mon, 27 Oct 2025 17:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC6B31A562;
+	Mon, 27 Oct 2025 17:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmDs5Ea2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UyuvtGk1"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457572BE647
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7763195FE;
+	Mon, 27 Oct 2025 17:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761587371; cv=none; b=j4ipO9BVYCzNWICMBzO1GIxp/0kQAgVqKFfwdnz/Pd0SBZQVl2Vg0QO+WoYxdYFK3E3C60RvJ0nC2vkAyUv1GIT9NcfVQbJt7m1YZdiRU/41aDck0Yy+QptQMXaSDQRwfqeFJO9onfh7wej5TG4ouI/qTxgrqz+iNkZfnosUhE4=
+	t=1761587406; cv=none; b=DLHraR+jemGsERNFg6PLGjB3i+I70R3IxCKpcVpnr/kmIxTBOuOoLe5s0CoAUEMFr/N6HWHps75hT3R1eAGt7aIUB2H/dsDOzsPdlHq/g3/ZHuDs5MVB7j8c6rdOLZE0VOyZDUqB2bWrSzFOEA4fQAChBcDWSjZq4spiMIO5T9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761587371; c=relaxed/simple;
-	bh=jc/356FpIO5fq3wbVBLhYJF7QyfRlww33yCqXERm6yM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O8WsQYJ4LHV9arY/n1SA5MwhbHVhZyOLSvJSjNTr1cOdwyhrX2YTHopIOw/a0nwpRqBzkJh/vrHUIuiONoIoAknzB0x5LtR3QX+F/yg4gI7U5zE/4tQm22Q8RqFMKmGzVAmeDDZWYrzet7LBrV7htzUpAU1sFFtUp+G9AOXOfsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmDs5Ea2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C0FC4AF09
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761587370;
-	bh=jc/356FpIO5fq3wbVBLhYJF7QyfRlww33yCqXERm6yM=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=nmDs5Ea2BJ0QWZz2Fnj6YnJCwAGH9ivTFSEKB7hbsxg40ESYbuLp5lADWA+AVBpAI
-	 yt3wp0PEAGmkqI0b9jM1OEM115cLxrFqjqAADUnRlb4lCnM4qxEOhBG50l4Ht6QJoH
-	 dPGJjWkTO+ZdnKTxP4Kr542JJT2c0n6l/hXpRMNsrK1UhiHuAYpCx/n+DNSh7fneiQ
-	 Xz71EBZIifFB8BGItaAtKMD982nX1dWQP7diMxUr8JpHi/7iL9EtY6An6BUSDDg6uw
-	 pPF1l5md43z77yxjTWXZLF6zRcHg0m25WL5tXIR2qgz3nf8MDh3xga2Jx7QEOhWMtc
-	 kLpCppO/X+xlQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-378cfbf83f2so54766621fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:49:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkdJVBBnTULXfWgXMfbO84AmkQhxXjllOHm10Fz8u/98PYB9dEP3URdCdpxD0+lhBwlZu2hAq6ZO3wbLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrDwV7xAA5b2oAg+fcI4htuK7c4vf3BBC73QonNjzzFdRLjPM/
-	lXrIzMl+aU9UrLzndo2+e1LLB+PejZ4cCluOC6EucTmGUefpsDFmoHJosNtk0aSkx0MDp9Ibhxb
-	67YZfD3Fdogv70GxC1O65H0vL7SfA73I=
-X-Google-Smtp-Source: AGHT+IGvL3+rmUcT/vmlGB6JqgMLiakuW0wtgocLdITSs5J6YhIhu+bJ3QUjjP/Dh4NLN0bmdcv0CpnIkj1evrKbsNk=
-X-Received: by 2002:a05:651c:234c:10b0:378:e097:e16e with SMTP id
- 38308e7fff4ca-3790777de3cmr1218271fa.36.1761587369224; Mon, 27 Oct 2025
- 10:49:29 -0700 (PDT)
+	s=arc-20240116; t=1761587406; c=relaxed/simple;
+	bh=ML4Zbq7pgwMKMFkw+kohK1LhsbPJGd+tAqes06vWZck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZ4oLsTAak8ItCR/uAD1pabywsWHLyoehpAr9jtuNPuyVa9/ISMpM4NNYQd/pY8UkwXnThoag8PZj21h1bkQYxA4737SxU+Lh1ezDfKCDZoW4iiwknsJVgxpggnKVQlVng0X9gekmJWk3/+Y0QUHFVMm6UtQaa5ItF3iIjnfAbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UyuvtGk1; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MmdzWYIHrQBywyvqVb/dJ5qHfDuXNYE/IdRhHxcX4MI=; b=UyuvtGk1xM6wL+qRdGOBDUMKHD
+	jYKxHZpU2qil5wiLQAiUqUwiG14KIwmE52M7zmxI9imbP4wrQY6QwBzNp3MUTZYYqgb5xh2ujLqY8
+	1tCcDhSnPsq2e+Q/x7vk1Hj2c4GltenKW3SANEcH6Dxgbb+/lVzsxgvM377zQtfxnTVaf4gCVQ0m6
+	j5k/0bS1jcfnYo3H4+utyAGR0pTg5S6en7j5vTpCyKsA4K6Jc89J8xmWyJMVMIYGbvMKhLbpMj/ao
+	j/r3ieZnMVaMHI1bR/pE2sW8G/B4LoasKAUSmjr2PDm9eSGnpiFTco2aJgLEEYxhMN+YnPtEq9IPz
+	YCZDL0ng==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDRLt-00000008PDt-3DNL;
+	Mon, 27 Oct 2025 17:49:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 885B0300323; Mon, 27 Oct 2025 18:49:53 +0100 (CET)
+Date: Mon, 27 Oct 2025 18:49:53 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
+Subject: Re: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
+ called from anywhere
+Message-ID: <20251027174953.GB3419281@noisy.programming.kicks-ass.net>
+References: <20251025001849.1915635-1-tj@kernel.org>
+ <20251025001849.1915635-4-tj@kernel.org>
+ <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
+ <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-19-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-19-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 28 Oct 2025 01:49:15 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65aY11Hi5JN1PEMyFCoYK9Z11V=xYXLcSLqQizwdVOarA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkqzQW934j8vgxNIiz1K6pixo4CW7R1IQZPgknoWpc_MwhACwyMTj6ZI0U
-Message-ID: <CAGb2v65aY11Hi5JN1PEMyFCoYK9Z11V=xYXLcSLqQizwdVOarA@mail.gmail.com>
-Subject: Re: [PATCH 18/30] drm/sun4i: ui_scaler: use layer instead of mixer
- for args
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
 
-On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> Layer related peripherals should take layer struct as a input. This
-> looks cleaner and also necessary for proper DE33 support later.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+On Mon, Oct 27, 2025 at 06:00:00AM -1000, Tejun Heo wrote:
+> Hello,
+> 
+> On Mon, Oct 27, 2025 at 10:18:22AM +0100, Peter Zijlstra wrote:
+> ...
+> > > The main use case for cpu_release() was calling scx_bpf_reenqueue_local() when
+> > > a CPU gets preempted by a higher priority scheduling class. However, the old
+> > > scx_bpf_reenqueue_local() could only be called from cpu_release() context.
+> > 
+> > I'm a little confused. Isn't this the problem where balance_one()
+> > migrates a task to the local rq and we end up having to RETRY_TASK
+> > because another (higher) rq gets modified?
+> 
+> That's what I thought too and the gap between balance() and pick_task() can
+> be closed that way. However, while plugging that, I realized there's another
+> bigger gap between ttwu() and pick_task() because ttwu() can directly
+> dispatch a task into the local DSQ of a CPU. That one, there's no way to
+> close without a global hook.
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+This would've been prime Changelog material. As is the Changelog was so
+vague I wasn't even sure it was that particular problem.
+
+Please update the changelog to be clearer.
+
+Also, why is this patch already in a pull request to Linus? what's the
+hurry.
 
