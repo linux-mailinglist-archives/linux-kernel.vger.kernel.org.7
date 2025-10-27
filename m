@@ -1,80 +1,87 @@
-Return-Path: <linux-kernel+bounces-871037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E759C0C4A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:25:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A3EC0C4A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:26:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42C8E4F00D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:25:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A931A4F0565
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2562C237C;
-	Mon, 27 Oct 2025 08:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7FD2E7BCB;
+	Mon, 27 Oct 2025 08:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="VDF5QpUH"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mfUx5/xt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB3C199FAB
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F842E7BC0
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761553519; cv=none; b=PyOQMpoIYCEfnE15ivF6mmSSM/s0soSDR2aWxv5PQ8UBCMPLPCLsGf9bUN3Bic9BgKfUN9FtYHWjWpKXqorfXjPGP87MzbOgu3EE/gCi4jwdQahM9BMvyWEWKDQgNW1F03mj1MymfN//Ut94E/FTv/LYZFf+0ty6Ym6fkiuzg2Y=
+	t=1761553544; cv=none; b=HYM9fLVMwwfB3HagX4jMm3ArxsML3pKMMxEEO+jVstOw9soKkgmneccmruES02whruQUH/khmKUPie1R/Oe40OLbjVUTpAZy2GSVAolQmgV1romx5/xyT0siN2Oq4ghwRaFnoPlW6WyE7jhxKSYER6HpSzS7QzTyRLrgaSbFLpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761553519; c=relaxed/simple;
-	bh=YEMuGajLqulzG7g1ez4ySx+ZR4yxEfovxM/N86/L6I0=;
+	s=arc-20240116; t=1761553544; c=relaxed/simple;
+	bh=s4/hEnLDptpri3LLhBNbmPdbIKv3lBAyCY4x+nkms1A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eaQWo6t4a5A+9h3QvkKxlu9NxoFG3+POtsC6n96ES9v50AitpQlZiJKx+yNmV+DwQ+wX7zAAPC7++pRIuKXm/WlqkS6K9b4OJYpn1malTlhX/qgfWgtvO2WP+jKMt+bViWod3htRcXCZv498EcZtR0ejz5r+x7td/ZCuBHQzb/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=VDF5QpUH; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so4469637f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1761553514; x=1762158314; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wQiwH+OvbFTBoj72eUutGsOx8rbXagJFuaPZSdZrxLI=;
-        b=VDF5QpUHzRqZy/8QBLWSrr17Y2s3ow/29w7pXSxDUvEZlo7vPS9GIJkdkXq+nZ6vqt
-         YRjNfavLc9TbUeWc9CVqkQbeIOhLGNgeuSs9brcAmXXuu7pLvtaSGoR9uwObyULkBYWf
-         CYF/YXL2mHfY4tSy1wLd+rrpARvz6ZuVGpj9QND7v9Pmffc1UwvSTrXK0NskYcYJbfOr
-         epO1gFIl7htdbrggkbv011mR1d/Kj4tzvcPUy1BGCIOExrpEtiZEPkqmkVPpSd8k4HA7
-         ZNAzSFnmyl7/wklpipcgZbc8yceerOrAQ2eu5FJIxOkwi8BOj3mlUVhTA2Zcz7EzcMnQ
-         9OTQ==
+	 In-Reply-To:Content-Type; b=AO6qC/oxYoAMj1KgOtLjL+/2SacjT/Pojr8GmWSnqJAOWRqK6fxpFhKY4vdq2q6tAZ5aeIzAh1r25oMJJJoYoZYH9C1rZNtp0hTr4n0+sjKejwgdLI8SIBB0Gt3YEfGHLPkx9FechI7RwJz8UBCmG/Jzug42Ihf5NE/bDHoQ0I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mfUx5/xt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59R84otW2232270
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:25:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Rsb5IoKjQNN5TuHEex46Q/ZW+nK+3INVuz35ePkitGI=; b=mfUx5/xtkaV10vGm
+	8STGARjNiwYeRqX0bwBI6nbAxM1A0AsGAuM5ibwEdS3wHqDp56/oQMXN56nSVWMI
+	I6x4oEnzNHDHxrQxp/mpGIBJJFbbr1lpJrzzbJMU4n3MkwmOYorWC05mvEU7NVOp
+	W+BTO0vjq9MDUsCzpAHIGoB8Ee783w59+dU0t5Sq8eaOz1ihkQgkUWKDnjxBy7/S
+	QzQoMbfCxcAiE7xu25oUYgwBv1UqWOMjG0oqBbFj1W1eR8bP9/4lChyZcri5lEwI
+	Bm0elhYmdACDw/b6xCBLRxZZt4ab8gjLOkaHqVudwBJNVzphNAhI+bs1CX5BzWF4
+	9/zZ9Q==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a24wn81x5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:25:41 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-7f5798303b3so11186296d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:25:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761553514; x=1762158314;
+        d=1e100.net; s=20230601; t=1761553541; x=1762158341;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQiwH+OvbFTBoj72eUutGsOx8rbXagJFuaPZSdZrxLI=;
-        b=sItGM9HWGYOwUuxoEyyj+ghedc9PDJ50F/8guEQwGp6ZnSuNfKw8Q1PQyPNIku07CB
-         wa0xGPfbqDhlWb/EZCV1DN1KvzjvuMJX9ZuDdo32VwOVpbwkpM9LKmVYcWx+/Uuhq+jC
-         hAgu9vkW8OtX8+ttS8zuZUYBucAiYJl1cfCoV4KLUHpJWTLngj5SGBzmc+BTX1/AGPVu
-         YHCeW2F2G8YStWur3cyT71AHPc+4PBJz8eP7DaGy8Q/FNMhs4dVAgI3dZWiV5fVc1Jzn
-         ipKxoJJw1rAwJ6j4gv9+FNhx78WzRGWoIEdN+zOp41PpbTnHhuEEh0w7pnMkHfRet9pw
-         IeOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKdGqHp22FkdFfeV9e+PCtgnJVHDNg06ADkCTdMhzoIeYtVwn6/wXjn0O4E6IkVv0uc6AL0fPHEARVdOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyCy3zDUIjSF4wdeBdSa2nCGs6aGGc8qkDYvbZfoGJaNLvJ2E2
-	62edXJrFHm+nM6CQoTWayToc9F8rV3WZBGctBIlieMZfQVHaFTIc99HWuCggBGebOMc=
-X-Gm-Gg: ASbGncuyksB3atmI6N5sKDDAAEUMMXPXQL78orTcMV5tJBnUOwWwDXLDXMWSUzal3cV
-	eo08PvC9k5gVfhgC2RN4IdoCVBIgBAt6HVHYk21QwwdhqgXsHFnqtPLOL+8D4n6sKYXdR9Ly1mi
-	tdAort8Pisa+WXECa1RJplh4xfGuZPdg+68qz7jWVuSqNeXBl3oDz5I4tXVx7O85AkmcKeco/F/
-	ZWU3CO23YQPcIAz4urwt3Or1j7XqSP949/WfydujR/2tPP568zVFG+qpST+RO7GjHT9JKJyuoKs
-	iGvn9+FyMGAWTsRxfw8jr2qaQY1M0Az5Ag+J6fL5MXI0ojM9bKm8XtaWFQ6oe4mU1LeqZLB/SD3
-	g+8OJvf3z7WjE0u/TBfVNBR9TSEHZo0qRSExdyr8AGdynWIXfpNFGCRw7XsyWARalSU1m3mJOxA
-	GcKpViBSAJBUh6WwQ3sqC01uU1W6BKfk1RH6XGs2o5YIWHFw==
-X-Google-Smtp-Source: AGHT+IGmEJgtOcG3TZDABRu2VDBPSubFzhWhz9sfmcicC9Qluv/yYZI9pxJD5vJuhvZHQji+iVBBlQ==
-X-Received: by 2002:a05:6000:2485:b0:426:f40a:7179 with SMTP id ffacd0b85a97d-42704d8f12emr27628951f8f.26.1761553514327;
-        Mon, 27 Oct 2025 01:25:14 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b43sm13101111f8f.6.2025.10.27.01.25.13
+        bh=Rsb5IoKjQNN5TuHEex46Q/ZW+nK+3INVuz35ePkitGI=;
+        b=Vv0dVGY8f18klQZipUPM+07lwNGHzgyUkdPhj+fEr81S4jj++CYiwG5sjcntt2UCBW
+         z7atK9IMnkXYkZrfAdG3YG07dezmzva5s3kIxovLw8w8jHqr6ucLXqTR7xIjMRbu27cD
+         MtotZ8gWUejomfsDkTLMmCmRbb4yR2Brfp1dN07qyvbqf8te+jZm3Zzc+nFf49U5zLED
+         Bf77+3WURmlybDwzRtfGYns9OT9NRiSBEK0n5mDm20ksB8O1L1ljnjLhuf/OIE7crqtw
+         DJ+hIxl1YI2xb0NV3qcB2uz9A/oAXCIxyGXI3vmKfS5jNKMLKExrNVbuakmpt7MbEch6
+         Sksw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9sSZNLhums2WfL/PpQ5nOVjgbLgqV8UyGEnTXWrYLDPxQ4fKGjMNdTjxYs8ivaf9j3haGBq88DVVnIQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/VjbreLIs4jMCDNxwlkymalc++PcPAbKtLcr+N0YmCXeBG59O
+	l2ffRS6C1s9wcI+94ngaOzevIt0RAIuwSEILdvKH3AZVRHDLJthLxVJEDiAWM39a8EdONthROvJ
+	ryOnFzErOKMw2u7Dc8YrJcFXZXyVcRlqk4iD5dPMhSnw0TNexONolYlup5y3rnayjsDE=
+X-Gm-Gg: ASbGncv4i9Q1Lla7ljr0rpo42hirWJ5cgASSk/CONkoLLF0YzCatMipOk2EbitzrETD
+	nj5z2P2ZUBR5/kba6/N0oDVzyScpCoanP6N4D0SnA/UJQxGCMb3jH/1s18efC19pDkSzgt+ADvr
+	4VvPNhqwfRhjz/blbt4I/FIzoNnqCDRTPNweqaVDIX7EcZuuAfCo9LPvfa6DbOEcxC2hNdtS8w9
+	MGwYcFnt9z20zKyQ3hI/0IeCX2PSuxE2pEiVkk1XL8WTgIkW4IPt7MqneB8BFCm1+lhmR0SanCP
+	nqb42NZXyutbQvw39a/CJHxLXbdoAzjMzPn42wcgc9zpXmnNpKHRN4yZvH/9RGd2eP90r/nZdF0
+	KvvF1uMNJk8hmc004on5jqE4jo5P2J/hXrWU2d7PzZx6YfTRjGfCEBm2Z
+X-Received: by 2002:a05:6214:f05:b0:81f:3abf:dc1f with SMTP id 6a1803df08f44-87c206aa6f8mr294428586d6.8.1761553540837;
+        Mon, 27 Oct 2025 01:25:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWO4UfxTU1BX5oTeeqL0Gs4K66cPeHuRqQeCNBm97cuVqGohCsQt/0ok7E7/fOVHrIRAJiJg==
+X-Received: by 2002:a05:6214:f05:b0:81f:3abf:dc1f with SMTP id 6a1803df08f44-87c206aa6f8mr294428506d6.8.1761553540138;
+        Mon, 27 Oct 2025 01:25:40 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85359c0bsm704420366b.24.2025.10.27.01.25.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 01:25:13 -0700 (PDT)
-Message-ID: <f2f95bc5-a107-481d-ad66-56db68cd143a@rivosinc.com>
-Date: Mon, 27 Oct 2025 09:25:12 +0100
+        Mon, 27 Oct 2025 01:25:39 -0700 (PDT)
+Message-ID: <daf0055b-7caf-4ace-8a06-071468273a37@oss.qualcomm.com>
+Date: Mon, 27 Oct 2025 09:25:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,236 +89,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [External] [PATCH v7 0/5] riscv: add support for SBI Supervisor
- Software Events
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Himanshu Chauhan <hchauhan@ventanamicro.com>,
- Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
- Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>
-References: <20250908181717.1997461-1-cleger@rivosinc.com>
- <CAEEQ3w=6F-QHvvA-tEhM2CnYqumQfobLje--d7i61-EdK6uxZw@mail.gmail.com>
+Subject: Re: [PATCH] phy: qualcomm: m31-eusb2: Add runtime pm ops
+To: Prashanth K <prashanth.k@oss.qualcomm.com>, Vinod Koul
+ <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20251027062458.1411096-1-prashanth.k@oss.qualcomm.com>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <CAEEQ3w=6F-QHvvA-tEhM2CnYqumQfobLje--d7i61-EdK6uxZw@mail.gmail.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251027062458.1411096-1-prashanth.k@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=XIY9iAhE c=1 sm=1 tr=0 ts=68ff2c85 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=k3wdqr90-_sLWsnx9DcA:9 a=QEXdDO2ut3YA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-GUID: WCKJcJvsneRVoWHrT_pQFRbQ12nAvXlB
+X-Proofpoint-ORIG-GUID: WCKJcJvsneRVoWHrT_pQFRbQ12nAvXlB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA3NyBTYWx0ZWRfXzdPhCAziyxOc
+ T+POj6rlrhBY6QrNMcZ7JFIH92n2pOb1gb5f7FXoou4FamZsOnSn80mD0bg4DRdl83N4sB8061J
+ DzN6awqwb3IhIZp7DY1AyakULPpohlrW3oqNePEgy055QFf6bu5obmuoXYv/3aBUbwahDExlcFJ
+ EVR9bDbHhqbHBml7NPq+aWwCIuote6cQJRSR+iZ8zInp++J9anhHg2g2ku5Qt430BRg3xE8MQ+V
+ btCRY7wl54q+wNL8MGrh7zUJYtVUekbA/1sS+cVrMcNAJcMm8mqVFDR+wOFadmu2MAD1KGV9skP
+ kKvaNdHeMuxAMVoSEXshKI+C6k/2CC7BXZXJVqHSOgggVHKOG93JviyCh8Is6BIbjA7D6zCQVtZ
+ 9QZtjVhnY2KzhPXGoBzSdCQBgbZKZw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_04,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 spamscore=0 malwarescore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
+ definitions=main-2510270077
 
-
-
-On 10/27/25 02:47, yunhui cui wrote:
-> Hi Clément,
+On 10/27/25 7:24 AM, Prashanth K wrote:
+> Add runtime power management operation callbacks for M31 EUSB2 PHY.
+> Enable/disable the clocks based on the runtime suspend/resume calls.
 > 
-> On Tue, Sep 9, 2025 at 2:19 AM Clément Léger <cleger@rivosinc.com> wrote:
->>
->> The SBI Supervisor Software Events (SSE) extensions provides a mechanism
->> to inject software events from an SBI implementation to supervisor
->> software such that it preempts all other supervisor level traps and
->> interrupts. This extension is introduced by the SBI v3.0 specification[1].
->>
->> Various events are defined and can be send asynchronously to supervisor
->> software (RAS, PMU, DEBUG, Asynchronous page fault) from SBI as well
->> as platform specific events. Events can be either local (per-hart) or
->> global. Events can be nested on top of each other based on priority and
->> can interrupt the kernel at any time.
->>
->> First patch adds the SSE definitions. Second one adds support for SSE
->> at arch level (entry code and stack allocations) and third one at driver
->> level. Finally, the last patch add support for SSE events in the SBI PMU
->> driver. Additional testing for that part is highly welcomed since there
->> are a lot of possible path that needs to be exercised.
->>
->> Amongst the specific points that needs to be handle is the interruption
->> at any point of the kernel execution and more specifically at the
->> beginning of exception handling. Due to the fact that the exception entry
->> implementation uses the SCRATCH CSR as both the current task struct and
->> as the temporary register to switch the stack and save register, it is
->> difficult to reliably get the current task struct if we get interrupted
->> at this specific moment (ie, it might contain 0, the task pointer or tp).
->> A fixup-like mechanism is not possible due to the nested nature of SSE
->> which makes it really hard to obtain the original interruption site. In
->> order to retrieve the task in a reliable manner, add an additional
->> __sse_entry_task per_cpu array which stores the current task. Ideally,
->> we would need to modify the way we retrieve/store the current task in
->> exception handling so that it does not depend on the place where it's
->> interrupted.
->>
->> Contrary to pseudo NMI [2], SSE does not modifies the way interrupts are
->> handled and does not adds any overhead to existing code. Moreover, it
->> provides "true" NMI-like interrupts which can interrupt the kernel at
->> any time (even in exception handling). This is particularly crucial for
->> RAS errors which needs to be handled as fast as possible to avoid any
->> fault propagation.
->>
->> A test suite is available as a separate kselftest module. In order to
->> build it, you can use the following command:
->>
->> $ KDIR=<build_dir> make O=build TARGETS="riscv/sse"-j $(($(nproc)-1)) -C tools/testing/selftests
->>
->> Then load the module using:
->>
->> $ sh run_sse_test.sh
->>
->> A KVM SBI SSE extension implementation is available at [2].
->>
->> Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0-rc7/riscv-sbi.pdf [1]
->> Link: https://github.com/rivosinc/linux/tree/dev/cleger/sse_kvm [2]
->>
->> ---
->>
->> Changes in v7:
->>  - Check return values of sse_on_each_cpu()
->>  - Fix typos in commit
->>  - Rename SBI_SSE_EVENT_SIGNAL to SBI_SSE_EVENT_INJECT
->>  - Rename SBI_SSE_EVENT_HART_UNMASK/MASK to SBI_SSE_HART_UNMASK/MASK
->>  - Add tlb flush for vmap stack to avoid taking exception during sse
->>    handler upon stack access. (Alex)
->>  - Move some assembly instruction to slow path
->>  - Renamed sse.c to sbi_sse.c, ditto for other files
->>  - Renamed RISCV_SSE to RISCV_SBI_SSE
->>  - Renamed sse_event_handler to sse_event_handler_fn
->>  - Put ifdef around sse_evt in PMU SBI driver
->>
->> Changes in v6:
->>  - Fix comment in assembly argument
->>  - Check hart id to be the expected one in order to skip CPU id
->>    matching in sse assembly.
->>
->> Changes in v5:
->>  - Added a SSE test module in kselftests
->>  - Removed an unused variable
->>  - Applied checkpatch.pl --strict and fix all errors
->>  - Use scope_guard(cpus_read_lock) instead of manual cpus_read_lock()
->>  - Fix wrong variable returned in sse_get_event
->>  - Remove useless init of events list
->>  - Remove useless empty for loop on cpus
->>  - Set sse_available as  __ro_after_init
->>  - Changed a few pr_debug to pr_warn
->>  - Fix event enabled stated updated in case of failure
->>  - Change no_lock to nolock
->>  - Rename attr_buf to attr
->>  - renamed sse_get_event_phys() to sse_event_get_attr_phys() and removed
->>    the second argument
->>  - Simplify return value in sse_event_attr_set_nolock()
->>  - Remove while loop(-EINVAL) for event cpu set call
->>  - Renamed interrupted_state_phys to interrupted_phys
->>  - Use scoped_guards/guard for sse_mutex
->>  - Remove useless struct forward declaration in sse.h
->>  - Add more explanations as to why we set SIE bit in IP
->>  - Unconditionnally set SIE in SIP
->>  - Move SSE_STACK_SIZE adjustement in sse_stack_alloc/free()
->>  - Replace move instructions with mv
->>  - Rename NR_CPUS asm symbol to ASM_NR_CPUS
->>  - Restore SSTATUS first in sse_entry return path so that it works for
->>    double trap without any modification later.
->>  - Implement proper per cpu revert if enable/register fails
->>
->> Changes in v4:
->>  - Fix a bug when using per_cpu ptr for local event (Andrew)
->>  - Add sse_event_disable/enable_local()
->>  - Add pmu_disable/pmu_enable() to disable/enable SSE event
->>  - Update event ID description according to the latest spec
->>  - Fix comment about arguments in handle_sse()
->>  - Added Himanchu as a SSE reviewer
->>  - Used SYM_DATA_*() macros instead of hardcoded labels
->>  - Invoke softirqs only if not returning to kernel with irqs disabled
->>  - Remove invalid state check for write attribute function.
->>  - Remove useless bneq statement in sse_entry.S
->>
->> Changes in v3:
->>  - Split arch/driver support
->>  - Fix potential register failure reporting
->>  - Set a few pr_err as pr_debug
->>  - Allow CONFIG_RISCV_SSE to be disabled
->>  - Fix build without CONFIG_RISCV_SSE
->>  - Remove fixup-like mechanism and use a per-cpu array
->>  - Fixed SSCRATCH being corrupted when interrupting the kernel in early
->>    exception path.
->>  - Split SSE assembly from entry.S
->>  - Add Himanchu SSE mask/unmask and runtime PM support.
->>  - Disable user memory access/floating point/vector in SSE handler
->>  - Rebased on master
->>
->> v2: https://lore.kernel.org/linux-riscv/20240112111720.2975069-1-cleger@rivosinc.com/
->>
->> Changes in v2:
->>  - Implemented specification v2
->>  - Fix various error handling cases
->>  - Added shadow stack support
->>
->> v1: https://lore.kernel.org/linux-riscv/20231026143122.279437-1-cleger@rivosinc.com/
->>
->> Clément Léger (5):
->>   riscv: add SBI SSE extension definitions
->>   riscv: add support for SBI Supervisor Software Events extension
->>   drivers: firmware: add riscv SSE support
->>   perf: RISC-V: add support for SSE event
->>   selftests/riscv: add SSE test module
->>
->>  MAINTAINERS                                   |  15 +
->>  arch/riscv/include/asm/asm.h                  |  14 +-
->>  arch/riscv/include/asm/sbi.h                  |  61 ++
->>  arch/riscv/include/asm/scs.h                  |   7 +
->>  arch/riscv/include/asm/sse.h                  |  47 ++
->>  arch/riscv/include/asm/switch_to.h            |  14 +
->>  arch/riscv/include/asm/thread_info.h          |   1 +
->>  arch/riscv/kernel/Makefile                    |   1 +
->>  arch/riscv/kernel/asm-offsets.c               |  14 +
->>  arch/riscv/kernel/sbi_sse.c                   | 174 +++++
->>  arch/riscv/kernel/sbi_sse_entry.S             | 178 +++++
->>  drivers/firmware/Kconfig                      |   1 +
->>  drivers/firmware/Makefile                     |   1 +
->>  drivers/firmware/riscv/Kconfig                |  15 +
->>  drivers/firmware/riscv/Makefile               |   3 +
->>  drivers/firmware/riscv/riscv_sbi_sse.c        | 701 ++++++++++++++++++
->>  drivers/perf/Kconfig                          |  10 +
->>  drivers/perf/riscv_pmu.c                      |  23 +
->>  drivers/perf/riscv_pmu_sbi.c                  |  71 +-
->>  include/linux/perf/riscv_pmu.h                |   5 +
->>  include/linux/riscv_sbi_sse.h                 |  57 ++
->>  tools/testing/selftests/riscv/Makefile        |   2 +-
->>  tools/testing/selftests/riscv/sse/Makefile    |   5 +
->>  .../selftests/riscv/sse/module/Makefile       |  16 +
->>  .../riscv/sse/module/riscv_sse_test.c         | 513 +++++++++++++
->>  .../selftests/riscv/sse/run_sse_test.sh       |  44 ++
->>  26 files changed, 1979 insertions(+), 14 deletions(-)
->>  create mode 100644 arch/riscv/include/asm/sse.h
->>  create mode 100644 arch/riscv/kernel/sbi_sse.c
->>  create mode 100644 arch/riscv/kernel/sbi_sse_entry.S
->>  create mode 100644 drivers/firmware/riscv/Kconfig
->>  create mode 100644 drivers/firmware/riscv/Makefile
->>  create mode 100644 drivers/firmware/riscv/riscv_sbi_sse.c
-> 
-> These newly added files use different GPL-xxx licenses respectively:
-> arch/riscv/kernel/sbi_sse.c: // SPDX-License-Identifier: GPL-2.0-or-later
-> drivers/firmware/riscv/riscv_sbi_sse.c: // SPDX-License-Identifier: GPL-2.0-only
-> arch/riscv/include/asm/sse.h: /* SPDX-License-Identifier: GPL-2.0-only */
-> Should they be consistent, or is this by design?
+> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+> ---
 
-Hi Yunhui,
+[...]
 
-That is not intended, I'll fix it.
+>  static int m31eusb2_phy_probe(struct platform_device *pdev)
+>  {
+>  	struct phy_provider *phy_provider;
+> @@ -270,6 +298,17 @@ static int m31eusb2_phy_probe(struct platform_device *pdev)
+>  		return dev_err_probe(dev, PTR_ERR(phy->clk),
+>  				     "failed to get clk\n");
+>  
+> +	dev_set_drvdata(dev, phy);
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +
+> +	/*
+> +	 * Prevent runtime pm from being ON by default. Users can enable
+> +	 * it using power/control in sysfs.
+> +	 */
+> +	pm_runtime_forbid(dev);
 
-Thanks,
+This screams "this patch is broken" or "there are bad issues" which
+you did not describe at all.
 
-Clément
-
-> 
-> 
->>  create mode 100644 include/linux/riscv_sbi_sse.h
->>  create mode 100644 tools/testing/selftests/riscv/sse/Makefile
->>  create mode 100644 tools/testing/selftests/riscv/sse/module/Makefile
->>  create mode 100644 tools/testing/selftests/riscv/sse/module/riscv_sse_test.c
->>  create mode 100644 tools/testing/selftests/riscv/sse/run_sse_test.sh
->>
->> --
->> 2.43.0
->>
-> 
-> Thanks,
-> Yunhui
-
+Konrad
 
