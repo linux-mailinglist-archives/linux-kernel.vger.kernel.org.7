@@ -1,179 +1,155 @@
-Return-Path: <linux-kernel+bounces-870824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F111BC0BC4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 04:47:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF88C0BC44
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 04:47:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8EC189E5A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1CB4189E206
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044E61FF1AD;
-	Mon, 27 Oct 2025 03:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270A01DF265;
+	Mon, 27 Oct 2025 03:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="kE5CTSl9"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVwPOi0i"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9DF2D47E2;
-	Mon, 27 Oct 2025 03:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201918F40
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761536852; cv=none; b=DeYToQDi/A5/sQFIk0NJm1omPnOp+hfRrj8PvDwv8a8UjT3TzCD+aUrfTZGz9Nj4D5cdQ96LSGNIPVe+slIga8DYii836FheOMTskhNUrpcktkOuTOIl1n+vNi2NHsd7pqupiNjvLcnNEUeZgE1FO/6P8r4erA3SEcN+bLBK2Ew=
+	t=1761536843; cv=none; b=Jvpe53LIEKlHtSL9czO8rDhhI44GJKZEfP7Dz5NmOx1Mv1CDud1+JbG5x27M93Ucgd1O62wGQqeyHQhUeGBHI/AJE9065ViDU7GgAytq7w3NTKk4ivZ1JTnNb6dRW8WUzzpXBfu1SuWS/f/FksZIXWKlC8/x62fc7UtyeH+flsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761536852; c=relaxed/simple;
-	bh=CTxwTyAC6s0EAwA33SpwEti8j0LogCEECO/bQ3HrAd0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ei78cO9YX9TXRd04pnvAAtzMlrGzadU6qUyftNymPIIcZHCN5bCXJOOXBUDgQ616o5+Je80EhJXtIAV+7syzrQHVXwQND87EPHQftACwLirCdeMqQS2kgkzWZG3P+Zp/5/gVnHW9wnWTS8YVFSQ5yt0dg1treHmw/YLT0F3VcOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=kE5CTSl9; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1761536765;
-	bh=GH1rp1IvB9GX2JiwW5ZpYAb3JZ2Tf3hU3x3vAETwZOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=kE5CTSl9qHgVEE1xcvfg90p7ywuDJhzErjasbRGHBR27iY9HNQpQOQzkvduqlTnvV
-	 Ov6w/Gx81jsqKprdhbEwxSUkwjE83bMt9F4r1WpLTDGoheKNjeYtdeGVjpeNzzt9tU
-	 f7N0/qAPV1XG64bnSUe3kWbtlRdRPDAdyPqe50fA=
-X-QQ-mid: zesmtpgz3t1761536758tae45e91c
-X-QQ-Originating-IP: 5faAr8goJjyzbCyUMsccEbc0vjz64JAT+lkSY6B33kw=
-Received: from [10.10.74.117] ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 27 Oct 2025 11:45:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4447698992672488604
-Message-ID: <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
-Date: Mon, 27 Oct 2025 11:45:56 +0800
+	s=arc-20240116; t=1761536843; c=relaxed/simple;
+	bh=bPmRYGClCjWImOKQE6pPmi2I/cLUk7pdJ5I6ps2ojLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LWBRdxatvs76ilXoHqtdaNUvUe1fK2CFN1bAwXd5UtORIKFSZbIm8N0olvEfp/jrjw3rQ+k29Ni/p5TnIPBAzXs4IUZHMHnH4DrUWTmQEQLK48EPEJCi76Nvc5IymJjfEUnggqZZWArGwoZLP6VLkiDNqimCsBb1dRz86VQahNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVwPOi0i; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b6ce696c18bso3831118a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761536841; x=1762141641; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CxQovh9eMpHejPQRZH3kbXNMIwm3B/L8EVHuJgLjyZA=;
+        b=GVwPOi0i4dK6/Y3sJamQKB96ADUmxvmm1OpE4UEFawVETzjKK8eENsPHwktmBCRDl5
+         ZXx7Y5KrbHcdxJPgfEK23m4Ci8sIQmzg+ZHoBhbMDL55fDfqBG1uNUVsrEjoZwHGX52u
+         JQkvj4UuUAiR5BpFfk0nbbzW17Z3W0HOy1Pcz0nJ6ZWRzqq9o6rVkaPlSyAPGRDhKU/t
+         +YLpqGfae+CZLWnBxZNdNo/B7OvHgf4/Pjv4vneg6TNT99tiaL7mdRMdqYDd56U/FYp7
+         LQHLF2yaXV0dNxkRxBW8y1cT3Yz4KbFIFDtxayK/DaeEkMRlr56+EeKIxjoiKR+Tqv2X
+         1yMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761536841; x=1762141641;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CxQovh9eMpHejPQRZH3kbXNMIwm3B/L8EVHuJgLjyZA=;
+        b=CLwl3r3/KBcjjYi/MXcoPK1Hou4IoIyClo/6ujqwndN/Z4QW2ZIaVz/0JvTzVBmPGt
+         w6xhLrqMBCQhza4Y2sygzSs/e3es5EucyjFs+pRgAK9m4DBi77c9tCe3lTuSCWvyZD6U
+         2vPSG8UAtfzeU/K9V0XgxhUwcTUtFE3XcmoJgQNKUsfLevcOKZWiMISL1Dmh7N9MJJnQ
+         EfNhKgE/oHomhX46XaX1jyEYTsoGoKW8Jh0KAv27OATUYYgYFPQ3gFqr4z0xj0Fx69sp
+         24lOS1OkDchJKtJezxyT9Cot9QnnvBW664KAjpSdCkEPBFQQ3Vei3RcxBbN7evHpD0vG
+         jEBA==
+X-Gm-Message-State: AOJu0Yzl3MzMG6vFVlxr49Fmk71JokU3IjCXh90VHmhTTCWN1L77k8Cc
+	FeQOESrW+awuRWmsBJQwS9iOKrumLyDnR1YrSl5SkVbT56d62OFCJA/y
+X-Gm-Gg: ASbGncs6qVV0GgBQM0eJxCWp1c2SzK/Pl6XrBZIVlXyQIpIMEVWg4GcQM/cz/Y9lmlm
+	V3Q5woM5dmtxCCENxX2VbmRJD1/rCzFAVLJAMDdQpbfKRzH328szh1C5plmJNXS8AXVbCpHFtJk
+	Xz0uaOl3Mq0JYrRbBhJ5zlecwDxJIKEPNOoVvMgTDoTmPipq3viRSvYk7ZBKl4ZeRS4r0h31Vc7
+	NaY+sXAbE+F+zJM/xOxFtNvVcsnK8EnCRan7VrJRSRW+TGIKe7mCEQqOgUwh+IW5ql3KCRMFgOE
+	b6XmYmbgwoG3orPJxIEtNG7+GIhgVUKFuhisEvs3ed2B5+GJFNEOmIKsxHk41KqVxx83T9X951e
+	wSl+HaBPUVXiSAL41of1i/QRCLkMzTexsksQF84fegVNxcPwI3gjR/BH0MbQDq/XDK5bEZ3KXUC
+	1LjFbtC5wv+QVyVRpQqJoH
+X-Google-Smtp-Source: AGHT+IG7mgnceqMZanZPDI1w2t5pzxRJNT+htUoM4mb2kcMgZdM1p1lZkOwKbk4NvSUfMv8tqi2X9Q==
+X-Received: by 2002:a17:902:f68c:b0:25c:d4b6:f119 with SMTP id d9443c01a7336-290c9c89ce1mr477448905ad.12.1761536841341;
+        Sun, 26 Oct 2025 20:47:21 -0700 (PDT)
+Received: from cs20-buildserver.. ([2402:7500:402:b3a0:5492:7724:1128:1af1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdd50sm5997929a12.0.2025.10.26.20.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Oct 2025 20:47:21 -0700 (PDT)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v2 1/1] i3c: master: svc: Prevent incomplete IBI transaction
+Date: Mon, 27 Oct 2025 11:47:15 +0800
+Message-Id: <20251027034715.708243-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20251023082129.75612-1-maqianga@uniontech.com>
- <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
-Content-Language: en-US
-From: Qiang Ma <maqianga@uniontech.com>
-In-Reply-To: <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: NvjhxCSDgXIC1vjyXzfCUUD28uX6thRu0yRvJdVZlrrhgKumJz5F8RCD
-	+1RIhmVkvLiUIebNUcRcMyeNjNlTHQvdfOjvBN4tQWBGrbjr8Lv3OVqdQEUI4r3v/1qrNn3
-	6R/Hs+UZp3htX1qOuQ9BiUIMwHx98AR1oqiBPZQaHuEVw9Sma/lY5uurqWGnUTqBLXghsLH
-	gQA5zyrpr43pC7BZmt+FpwVbrhK6JZQPZRfYu3PlVoUvQrZ+s5Bl2JB2i20fdm+hsZA8ZSc
-	+73p9TfOsZqRnEOSmj509SDP1zysl+m9DkHpatoRxUV1B5hok1X2KESX/Oo0ek/L6r81r/h
-	IxcSGj+FIXxvRY2C2jmU+9im4+f28lkZludhTIkbsLMM/IG03hZFXUruoRUyIC4CY77RR5W
-	pT4ob4Ocz8qQOu9HW9Z3oARfZ642ac+Dbd6rGKuCuBHcDnu7VmiWhCzI5y3H8wqPRtpXH88
-	Or2JqnOUFVuwUgfbdBZM11ZDiZSM9NSsx0xCr0+ouzhGTxkuIfb5EJBHR227nMabOKQtN0e
-	OUPjztFGc4Xvvcj5qwX4cX4kap6OLhXgEmpBbbmha477v0qnUgPPpQS1fyTpPp6nC2duinF
-	2mSj2Jvyv0bpTVWqht+1kSxg73LQlah+Y4zovrTR9HUNKhhkRa/dqMrCS8TiQU/wFJMOU4g
-	ZOHIzHgQ2IO5AD9MX7jykHdDmfnhh8OQEvWNzIgg2TMsdRLbHL8vr8PzwsSUixRk//8KOjJ
-	dhA0ShnqdV5/MD3NrHwoz0OtCS/bb7jTmu9uo0seO5Ez8OR/ZbXL5sE0hlmzvaIWXq/bRfS
-	c/gGtAGDVPUutjrETJVrCgkmqs0ctBmCDis8uSEU/J7hEbpKsO1Zu2SksgJIrm6ibc3/k2J
-	XgfN1Pp26XxRfDoIIK3qRXdb7pPTOtxyQ2sm+LKeXzsISSY036sj5OKp4f3sC6In/SdlJKQ
-	2tXBje6jxxmWxkg1/8TmKvntfxOGy4OYUdomK8VGEFk/fErNwBUNuaPhOmiZHi6YNfiqla9
-	Tp0nrgBCoe7t4gHmXq
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
 
+From: Stanley Chu <yschu@nuvoton.com>
 
-在 2025/10/23 16:30, Ard Biesheuvel 写道:
-> On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> wrote:
->> In the efi_virtmap_init(), permission settings have been applied:
->>
->> static bool __init efi_virtmap_init(void)
->> {
->>          ...
->>          for_each_efi_memory_desc(md)
->>                  ...
->>                  efi_create_mapping(&efi_mm, md);
->>          ...
->>          efi_memattr_apply_permissions(&efi_mm, efi_set_mapping_permissions);
->>          ...
->> }
->>
->> Therefore, there is no need to apply it again in the efi_create_mapping().
->>
->> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI Runtime Services regions")
->>
->> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
-> No, efi_memattr_apply_permissions() uses the /optional/ memory
-> attributes table, whereas efi_create_mapping() uses the permission
-> attributes in the EFI memory map. The memory attributes table is
-> optional, in which case any RO/XP attributes from the memory map
-> should be used.
->
-I see.
+If no free IBI slot is available, svc_i3c_master_handle_ibi returns
+immediately. This causes the STOP condition to be missed because the
+EmitStop request is sent when the transfer is not complete. To resolve
+this, svc_i3c_master_handle_ibi must wait for the transfer to complete
+before returning.
 
-Then, can it be modified like this?
---- a/arch/arm/kernel/efi.c
-+++ b/arch/arm/kernel/efi.c
-@@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct *mm, 
-efi_memory_desc_t *md)
-                 desc.type = MT_MEMORY_RWX_NONCACHED;
-         else if (md->attribute & EFI_MEMORY_WC)
-                 desc.type = MT_DEVICE_WC;
-+       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
-+               desc.type = MT_MEMORY_RO;
-         else
-                 desc.type = MT_DEVICE;
+Fixes: dd3c52846d59 ("i3c: master: svc: Add Silvaco I3C master driver")
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+---
+Changes since v1:
+ * do not touch coding style change
+---
+ drivers/i3c/master/svc-i3c-master.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-         create_mapping_late(mm, &desc, true);
-
--       /*
--        * If stricter permissions were specified, apply them now.
--        */
--       if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
--               return efi_set_mapping_permissions(mm, md, false);
-         return 0;
-  }
-
-The create_mapping_late() finds the corresponding page table attribute 
-from mem_types through type.
-Here it is MT_MEMORY_RO, and its corresponding prot_pte is:
-       ...
-         [MT_MEMORY_RO] = {
-                 .prot_pte  = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY |
-                              L_PTE_XN | L_PTE_RDONLY,
-       ...
-
-Finally, the page table is also set through the set_pte_ext().
-
-
-Thanks.
-
->> ---
->>   arch/arm/kernel/efi.c | 5 -----
->>   1 file changed, 5 deletions(-)
->>
->> diff --git a/arch/arm/kernel/efi.c b/arch/arm/kernel/efi.c
->> index 6f9ec7d28a71..d2fca20d912e 100644
->> --- a/arch/arm/kernel/efi.c
->> +++ b/arch/arm/kernel/efi.c
->> @@ -70,11 +70,6 @@ int __init efi_create_mapping(struct mm_struct *mm, efi_memory_desc_t *md)
->>
->>          create_mapping_late(mm, &desc, true);
->>
->> -       /*
->> -        * If stricter permissions were specified, apply them now.
->> -        */
->> -       if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
->> -               return efi_set_mapping_permissions(mm, md, false);
->>          return 0;
->>   }
->>
->> --
->> 2.20.1
->>
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 9641e66a4e5f..e70a64f2a32f 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -406,21 +406,27 @@ static int svc_i3c_master_handle_ibi(struct svc_i3c_master *master,
+ 	int ret, val;
+ 	u8 *buf;
+ 
+-	slot = i3c_generic_ibi_get_free_slot(data->ibi_pool);
+-	if (!slot)
+-		return -ENOSPC;
+-
+-	slot->len = 0;
+-	buf = slot->data;
+-
++	/*
++	 * Wait for transfer to complete before returning. Otherwise, the EmitStop
++	 * request might be sent when the transfer is not complete.
++	 */
+ 	ret = readl_relaxed_poll_timeout(master->regs + SVC_I3C_MSTATUS, val,
+ 						SVC_I3C_MSTATUS_COMPLETE(val), 0, 1000);
+ 	if (ret) {
+ 		dev_err(master->dev, "Timeout when polling for COMPLETE\n");
+-		i3c_generic_ibi_recycle_slot(data->ibi_pool, slot);
+ 		return ret;
+ 	}
+ 
++	slot = i3c_generic_ibi_get_free_slot(data->ibi_pool);
++	if (!slot) {
++		dev_dbg(master->dev, "No free ibi slot, drop the data\n");
++		writel(SVC_I3C_MDATACTRL_FLUSHRB, master->regs + SVC_I3C_MDATACTRL);
++		return -ENOSPC;
++	}
++
++	slot->len = 0;
++	buf = slot->data;
++
+ 	while (SVC_I3C_MSTATUS_RXPEND(readl(master->regs + SVC_I3C_MSTATUS))  &&
+ 	       slot->len < SVC_I3C_FIFO_SIZE) {
+ 		mdatactrl = readl(master->regs + SVC_I3C_MDATACTRL);
+-- 
+2.34.1
 
 
