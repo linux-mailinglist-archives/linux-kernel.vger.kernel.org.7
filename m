@@ -1,175 +1,121 @@
-Return-Path: <linux-kernel+bounces-870751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDED9C0B977
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:19:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75690C0B980
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D3114ED7BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:19:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F7604EC2A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D53274B27;
-	Mon, 27 Oct 2025 01:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EA526FA5B;
+	Mon, 27 Oct 2025 01:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cSr4M6GX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Zn2iSZVO"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268192459C5;
-	Mon, 27 Oct 2025 01:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED63122129B;
+	Mon, 27 Oct 2025 01:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761527985; cv=none; b=Ty2/PCT4qtzHc+npmyjuL+mvF7cA/28L72389I0UHNMIyoFlc7hjatIOekF5rfGQ+s9lcgtDmt3HvZPlNvW1zmn6cW5MhltWicqsJ+TkLyPR2Qc2j4fEkre00J4lAtoAoWGRf59bxarg65IkmyYVA6+hCLGvR0ya+UwACn3CSt4=
+	t=1761528185; cv=none; b=NhZ7I2FnOPnmeOoTaTvsBLGKXcKs/6NUKExN2Vvrd0vHAITRLu4ZHSYLMtlMTrBOTw78FmOLoX8p7yjZmXEAYGylSB+mO+oz7xyYzZmli7oq0mZjXgpe5Akb/fso9lud89ZMwMu2p8gVHOA61/NpowcCUp6T7WSqjQY3ABy3CJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761527985; c=relaxed/simple;
-	bh=FS+KlOZTayfUweHo35RYfizlXiiTS/dCMqOAye4j6/s=;
+	s=arc-20240116; t=1761528185; c=relaxed/simple;
+	bh=2NVjVK98UhB3Y21CFxnmh/3oR38w9ufdRbfalTn5BRg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJGPq10OVDgKqpc+hSiarMZn1QFFdfe8tot/58wSCenIcl109MdccldGbr0SlYelsd06EMPlomFBNkMG/dHy1qXDzHSV3EsyD/bYp/CUvh+esW8MIkv41bGcEKyGsgN82cx1MCDxWxi0qcY7CfLZXie/wj2h8n3QuWla1Mn/amc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cSr4M6GX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8594D14A6;
-	Mon, 27 Oct 2025 02:17:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761527873;
-	bh=FS+KlOZTayfUweHo35RYfizlXiiTS/dCMqOAye4j6/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cSr4M6GXYmVqXJ9DNbAIsvskO1G8IzD4w5TqPONHF5q/NBWj+wASYuTLdhVHb38C2
-	 7YKeykbbg0p9Y3WWXgQjfVYQejOJXz1HsTyGjxy1DTjXtadyc/uwMysXRqBDDPCp/p
-	 1q1pdqj5EsuYsjtJ1H0vlJ1rVgpwGLaEfTbbQTHY=
-Date: Mon, 27 Oct 2025 03:19:27 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQItbB250PRXqsiaX0MNNddpgnF/ykeRv6NVyXeX2kcg9Genku25rnfOeUokXU+DxtS0IvuSSk+k0u3c/PFUG+EyEz33ulQW+I8FYsRfrUHriq2Up8Z04zfYagZXlga5q4m8rJFaU0q/37O5GmBs3vQ96i4zsoZiaZPbvQtED7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Zn2iSZVO; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1761528144;
+	bh=YFqnaQXbGn6xdpcNOP814zAlTHleVU+KgUL5SVGaMpQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=Zn2iSZVOMGKCMCIrlqbX47mDEBSdSWKQDLrpXpijLy8IV/gXgDFHrTgCadW6m42gU
+	 /Joi1frrfTu5Bi2dEMGPf/gULXGb8PTRgJFsoYuXRgIo1iG3mk6Z07ql+EMzhzse0I
+	 PueuHILhxM13QOUR68VCJNqeFxXvjhudFK4AqlKQ=
+X-QQ-mid: zesmtpsz5t1761528136ta7becb60
+X-QQ-Originating-IP: Qzn6Gh3dF5mQyqK/6O3ihXXcFnqBQdYjHjd+FkTWnwk=
+Received: from = ( [183.48.247.177])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 27 Oct 2025 09:22:14 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13636534776712087437
+EX-QQ-RecipientCnt: 17
+Date: Mon, 27 Oct 2025 09:22:14 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v3 02/31] media: v4l2-common: Add helper function
- v4l_get_required_align_by_bpp()
-Message-ID: <20251027011927.GS13023@pendragon.ideasonboard.com>
-References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
- <20250821-95_cam-v3-2-c9286fbb34b9@nxp.com>
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 0/6] clk/reset: anlogic: add support for DR1V90 SoC
+Message-ID: <0E60AA15166FED21+aP7JRmPzDIq2WhWw@kernel.org>
+References: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821-95_cam-v3-2-c9286fbb34b9@nxp.com>
+In-Reply-To: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: N+/GyfuFbcLi0yesWPY/w8SSsQTT4ZUmo8kWT9abRFNYSwRm+J+l2MRV
+	q+AxTMB0a/xvOWKW49aFyy2U7RcHsbJEjeDkYCAyKwneTlcOOF4muRpVuIiijuiGLnPw5KR
+	uX5Fp0CaX/l2cowEzpze9nPRco8R6i3j5+/Zd8xhkz3/ZPNHhIUVj6WKbyJRW5DJR4gVJrD
+	zqoR88dc1kLKULG6mp9R/qcQ8spmmipOoJLZCuB0+cow/NsfHXUxeMyJPB3AxDvi2jNs0px
+	npY+ORtW39JJsMkJrnbpPu9vpNAAQnw3twPHCTH9Kn4f6OTC6t6m7jnAXyqoLezMUbgwIeZ
+	O48sbZKK04wsBJdLLJk3FXh+bPhyN4jfdKgptrhHWODTu0kdSPPjlCyFQo1mkDdvhqoU2fv
+	/yslAgxrZtsLA5VXLzqmXyyW9MlCW+w4M+bb4+fpgKNVd7roN4PRkyrT9tX2a5ehYmAkZkW
+	WlsMW6rLUeDr17+lqf2ZFE1y3e/EFmc/d11YujXkX1WAnpV8uBFG3KhxOWHcHfkEyVmifGi
+	wJa+2hpiCbQXPzqWDdAluilnmR+pQFJ3BmBJA3F1X9TTXkKfhdRxbFQmKh4Z71GHv3fdSGh
+	GCzfZDCVHkWb7nbOxq03QIKkQoEw0aCpKKo/MJWZ/AQ7WzpIBCrcvfJvl1E60/cWmbqcXkh
+	TDcLoLjOmnKZMWP5O29aoNhszk/2CdzWB9l1cObGr/WsCJPGVdqHWC4bmmN+amocB1VMwNW
+	8gDzE+6UQI2bTRcVQTLbgEZTsLUnzIFNsx+ffA/jghL/5E/P4q36MASazckLFCh+JMsE2MO
+	YGOaMTE/ncKRadQJArj2FvqK46nG6P9G7559kQD6ZcUfZwpN8b2kr3GE6X0Xv/dsj0eftYh
+	UDrSGkIgKV+hOPf/jabZVs2eNU++US9clQ725Hgr5BCy1W2bzEBFhGkOsV/XUbKElC35D0F
+	CqLEdSa3WXWMkXWedbY0US0LjpCB5M/z6XWKYBC+G6z/ebIHGXzr+0x+NQ4foIzyb+tvx1E
+	dEUikEzlomI9hG3oKUD6FAAR/54BGkd16lDew9nB1VEDFKGoXvEgROHarYn+w=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Aug 21, 2025 at 04:15:37PM -0400, Frank Li wrote:
-> Add helper v4l_get_required_align_by_bpp() to help get width alignment
-> requirement. Basic replace below logic and enhance to any 2^[0..31] in
-> drivers/media/platform/nxp/imx-mipi-csis.c
+On Sun, Oct 26, 2025 at 10:00:40PM +0800, Junhui Liu wrote:
+> This adds Clock and Reset Unit (CRU) support for the Anlogic DR1V90 SoC,
+> as well as corresponding dts bindings and dts integration.
 > 
-> mipi_csis_set_fmt(
-> {
->         ...
+> The CRU driver framework is built around the clock controller as the
+> primary device, with the reset controller implemented as an auxiliary
+> device. The clock part refers to the vendor's code [1] to determine the
+> structure of the clock tree.
 > 
->         switch (csis_fmt->width % 8) {
->         case 0:
->                 align = 0;
->                 break;
->         case 4:
->                 align = 1;
->                 break;
->         case 2:
->         case 6:
->                 align = 2;
->                 break;
->         default:
->                 /* 1, 3, 5, 7 */
->                 align = 3;
->                 break;
->         }
-> 	...
-> }
+> The Anlogic DR1 series includes not only the DR1V90 (based on the Nuclei
+> UX900 RISC-V core), but also the DR1M90 (based on the Cortex-A35 ARM64
+> core). Most of the clock tree and CRU design can be shared between them.
+> This series only adds CRU support for DR1V90. Nevertheless, the driver
+> is structured to make future extension to other DR1 variants like
+> DR1M90.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> This depends on the basic dt series for DR1V90 SoC [2].
+> 
+> Link: https://gitee.com/anlogic/linux/blob/anlogic-6.1.54/drivers/clk/anlogic/anl_dr1x90_crp.c [1]
+> Link: https://lore.kernel.org/all/20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech/ [2]
 > ---
-> The same patch will be see at https://lore.kernel.org/imx/20250729-imx8qxp_pcam-v4-2-4dfca4ed2f87@nxp.com/
-> dw csi2 patch also this
-> ---
->  include/media/v4l2-common.h | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
-> index 39dd0c78d70f7b935c2e10f9767646d2cedd3079..0a9da5e8daaddf26903d9ff4bed08b283dcd38b2 100644
-> --- a/include/media/v4l2-common.h
-> +++ b/include/media/v4l2-common.h
-> @@ -704,4 +704,34 @@ static inline bool v4l2_is_quant_valid(__u8 quantization)
->  	       quantization == V4L2_QUANTIZATION_LIM_RANGE;
->  }
->  
-> +/**
-> + * v4l_get_required_align_by_bpp - get align requirement for
-> + *	v4l_bound_align_image(). (bpp * width) % (1 << align) have to be 0.
-> + *	given number bpp, get width's alignment requirement. For example,
-> + *	if align is 3, means require bpp * width must be multiples of 8.
-> + *	    bpp     return  width's requirememnt
-> + *	    0       0       none
-> + *	    1       3       8 (need 3 zero bits)
-> + *	    2       2       4
-> + *	    3       3       8
-> + *	    4       1       2
-> + *	    5       3       8
-> + *	    6       2       4
-> + *	    7       3       8
+Do we really need a cover-letter? Since you only have one patch, Is it
+better to put the above information below the --- line in the actual patch?
 
-This is supposed to be a brief one-line description. The rest of the
-documentation goes after the argument.
-
-Also, have checked the formatting of the generated documentation ?
-
-> + * @bpp: input bpp
-
-I have no idea if this is a bits per pixel or bytes per pixel value. I'm
-actually not sure what the function is even supposed to do. It feels
-it's really a ad-hoc helper, I would like to see it being used in
-multiple drivers to see if it makes sense.
-
-> + * @align: expected alignment, 2^(align).
-> + *
-> + * return: required alignment.
-> + */
-> +static inline u32 v4l_get_required_align_by_bpp(u32 bpp, u32 align)
-> +{
-> +	int pos;
-> +
-> +	if (bpp == 0)
-> +		return 0;
-> +
-> +	pos = ffs(bpp) - 1;
-> +	return pos > align ? 0 : align - pos;
-> +}
-> +
->  #endif /* V4L2_COMMON_H_ */
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+                                      - Troy
 
