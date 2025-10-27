@@ -1,311 +1,374 @@
-Return-Path: <linux-kernel+bounces-871204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EE6C0C9F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:22:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61506C0CA14
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCBF618852F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DBF3AE1DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5692EA464;
-	Mon, 27 Oct 2025 09:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a7VpjxJd"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDF62E6CAA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248882E7F22;
+	Mon, 27 Oct 2025 09:17:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212D42E5B08;
+	Mon, 27 Oct 2025 09:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556683; cv=none; b=Y7MaAEkSwgvwLHA3xEUNybiE+zQfqMTdQxtUXMGguO9DYsdCLgVJH11QYP5IpNRNRyifLGczg3GQTlHovZ8Mri35zWOlr564qFgmwWhej4RYOWpfd70HQ/1VSejgFNePk0sGyL/ny6akYQihy4T+nIBpJj37YkIR29QKkRWeRmc=
+	t=1761556671; cv=none; b=b4zkIuf/SWyR6Y2Hy8bnvAERbn87uJe5YPTvUwTg39st8mWaFZkvWOil2ptkt12wEckbdMLlz2fBOIyz5mN5pFFuzIooWYYpYYvJOnulx/FvlV9PmZGIRNFvKamh5z52RtbJS4P4vPAhg/Nt3yuUfx0+KsW7G7bqBueyG26+rzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556683; c=relaxed/simple;
-	bh=pr8lCbKq73Mp4PrFh0ihuLm1jAkJ+1oxPzb2i9xJmGQ=;
+	s=arc-20240116; t=1761556671; c=relaxed/simple;
+	bh=Ji4Uwjn20gTBKi5wEvNP5QqkXuIJtkJ0QnbDWWDd1mk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hos6Cw/Mt36cqDtdLdj0IufL2J+DyXodoQAXGUjNeUTZsqag4U5aHVznPIxky6T/AwgftCK1YsTeHbENSX0sja8Bmh13AVqaRFL5HCbbhLXiCLK982ustMZTcrwB90uCbBH0d/cYE0Tw15GJYPgQDTwh7A6pzov+Q3IN+gWakOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a7VpjxJd; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <703b22dc-0123-42ba-9984-074b9cda468c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761556668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dm/mUbcMAMZo9wS8DsBcQxN0CKzM7e2WXj+TwSYfMcs=;
-	b=a7VpjxJdsAE7IaId8HUK0fWulHLBBBlPdBgisXLI8HsC5jSpnqn0RWI3TOiFJ+HoLyFGKb
-	fOsLV6/nyVa7CRopxslpJS2jE6iPH3Y7UVgkHeh1oxU5h/DTMIp9n83ksu3aSf5DB9BdIe
-	AAPk02rr8BVzg6VEVgfCPY6Y71vljfo=
-Date: Mon, 27 Oct 2025 17:17:28 +0800
+	 In-Reply-To:Content-Type; b=rVKfFqNmi5iHi3RbogtyHFtHAUfXfBrCymfsFWwLDIDdMjb4nPeoZeDCPsn7kqkXQIOZfziCx7SZv4+xZ0Sgn/02AK5Qed2/vO92Fp0q6b8AggiAd9aTC7kKZXXEQKRK5yHkDIicdbTlLjYkt8jXcpx0v7wOJITbbARdWiIs+H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75B5D1764;
+	Mon, 27 Oct 2025 02:17:40 -0700 (PDT)
+Received: from [10.57.67.85] (unknown [10.57.67.85])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 669873F673;
+	Mon, 27 Oct 2025 02:17:45 -0700 (PDT)
+Message-ID: <7386e009-2d53-4a0b-8c83-a84f51b4b79a@arm.com>
+Date: Mon, 27 Oct 2025 09:17:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v12 mm-new 05/15] khugepaged: generalize
- __collapse_huge_page_* for mTHP support
-Content-Language: en-US
-To: Nico Pache <npache@redhat.com>
-Cc: david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, linux-mm@kvack.org,
- usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- vbabka@suse.cz, rppt@kernel.org, jannh@google.com, pfalcato@suse.de,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-6-npache@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251022183717.70829-6-npache@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] coresight: tpdm: add static tpdm support
+Content-Language: en-GB
+To: Jie Gan <jie.gan@oss.qualcomm.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+ Mao Jinlong <jinlong.mao@oss.qualcomm.com>,
+ Tao Zhang <tao.zhang@oss.qualcomm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251013-add-static-tpdm-support-v3-0-a720b73e83db@oss.qualcomm.com>
+ <20251013-add-static-tpdm-support-v3-2-a720b73e83db@oss.qualcomm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20251013-add-static-tpdm-support-v3-2-a720b73e83db@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-
-
-On 2025/10/23 02:37, Nico Pache wrote:
-> generalize the order of the __collapse_huge_page_* functions
-> to support future mTHP collapse.
+On 13/10/2025 07:11, Jie Gan wrote:
+> The static TPDM function as a dummy source, however, it is essential
+> to enable the port connected to the TPDA and configure the element size.
+> Without this, the TPDA cannot correctly receive trace data from the
+> static TPDM. Since the static TPDM does not require MMIO mapping to
+> access its registers, a clock controller is not mandatory for its
+> operation.
 > 
-> mTHP collapse will not honor the khugepaged_max_ptes_shared or
-> khugepaged_max_ptes_swap parameters, and will fail if it encounters a
-> shared or swapped entry.
-
-Yeah, IMHO, it's the right call to avoid the complexity of potential
-"collapse creep" at this stage and get the core functionality right first ;)
-
-> 
-> No functional changes in this patch.
-> 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Co-developed-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
 > ---
-
-Cool! LGTM.
-
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
-
-
->   mm/khugepaged.c | 78 ++++++++++++++++++++++++++++++-------------------
->   1 file changed, 48 insertions(+), 30 deletions(-)
+>   drivers/hwtracing/coresight/coresight-tpda.c |   9 ++
+>   drivers/hwtracing/coresight/coresight-tpdm.c | 148 +++++++++++++++++++++------
+>   drivers/hwtracing/coresight/coresight-tpdm.h |   8 ++
+>   3 files changed, 131 insertions(+), 34 deletions(-)
 > 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 36ee659acfbb..4ccebf5dda97 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -537,25 +537,25 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
->   }
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 333b3cb23685..4e93fa5bace4 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -68,6 +68,15 @@ static int tpdm_read_element_size(struct tpda_drvdata *drvdata,
+>   	int rc = -EINVAL;
+>   	struct tpdm_drvdata *tpdm_data = dev_get_drvdata(csdev->dev.parent);
 >   
->   static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
-> -					unsigned long start_addr,
-> -					pte_t *pte,
-> -					struct collapse_control *cc,
-> -					struct list_head *compound_pagelist)
-> +		unsigned long start_addr, pte_t *pte, struct collapse_control *cc,
-> +		unsigned int order, struct list_head *compound_pagelist)
+> +	if (coresight_is_static_tpdm(csdev)) {
+> +		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+> +					      "qcom,dsb-element-bits", &drvdata->dsb_esize);
+> +		rc &= fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+> +					       "qcom,cmb-element-bits", &drvdata->cmb_esize);
+> +
+
+This doesn't match the "dynamic" tpdm case ? We mandate that static
+TPDMs have DSB and CMB. I would rather set the appropriate flags in
+
+tpdm_drvdata->dsb/cmb in the TPDM driver for static tpdms and not
+let the "static" vs "dynamic" creep into the TPDA and other users.
+
+e.g., in TPDM driver:
+
+if (static_tpdm()) {
+   tpdm_data->dsb = has_dsb_element_bits_property;
+   tpdm_data->cmb = has_cmb_element_bits_property;
+}
+
+
+> +		goto out;
+> +	}
+> +
+>   	if (tpdm_data->dsb) {
+>   		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+>   				"qcom,dsb-element-bits", &drvdata->dsb_esize);
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+> index 7214e65097ec..1766b0182819 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+> @@ -495,7 +495,9 @@ static int tpdm_enable(struct coresight_device *csdev, struct perf_event *event,
+>   		return -EBUSY;
+>   	}
+>   
+> -	__tpdm_enable(drvdata);
+> +	if (!coresight_is_static_tpdm(csdev))
+> +		__tpdm_enable(drvdata);
+> +
+>   	drvdata->enable = true;
+>   	spin_unlock(&drvdata->spinlock);
+>   
+> @@ -551,7 +553,9 @@ static void tpdm_disable(struct coresight_device *csdev,
+>   		return;
+>   	}
+>   
+> -	__tpdm_disable(drvdata);
+> +	if (!coresight_is_static_tpdm(csdev))
+> +		__tpdm_disable(drvdata);
+
+minor nit: It is much safer to do this check in __tpdm_xxable() and
+return early.
+
+> +
+>   	coresight_set_mode(csdev, CS_MODE_DISABLED);
+>   	drvdata->enable = false;
+>   	spin_unlock(&drvdata->spinlock);
+> @@ -1342,10 +1346,9 @@ static const struct attribute_group *tpdm_attr_grps[] = {
+>   	NULL,
+>   };
+>   
+> -static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
+> +static int tpdm_probe(struct device *dev, struct resource *res)
 >   {
->   	struct page *page = NULL;
->   	struct folio *folio = NULL;
->   	unsigned long addr = start_addr;
->   	pte_t *_pte;
->   	int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
-> +	const unsigned long nr_pages = 1UL << order;
-> +	int max_ptes_none = khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER - order);
+>   	void __iomem *base;
+> -	struct device *dev = &adev->dev;
+>   	struct coresight_platform_data *pdata;
+>   	struct tpdm_drvdata *drvdata;
+>   	struct coresight_desc desc = { 0 };
+> @@ -1354,32 +1357,33 @@ static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
+>   	pdata = coresight_get_platform_data(dev);
+>   	if (IS_ERR(pdata))
+>   		return PTR_ERR(pdata);
+> -	adev->dev.platform_data = pdata;
+> +	dev->platform_data = pdata;
 >   
-> -	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
-> +	for (_pte = pte; _pte < pte + nr_pages;
->   	     _pte++, addr += PAGE_SIZE) {
->   		pte_t pteval = ptep_get(_pte);
->   		if (pte_none_or_zero(pteval)) {
->   			++none_or_zero;
->   			if (!userfaultfd_armed(vma) &&
->   			    (!cc->is_khugepaged ||
-> -			     none_or_zero <= khugepaged_max_ptes_none)) {
-> +			     none_or_zero <= max_ptes_none)) {
->   				continue;
->   			} else {
->   				result = SCAN_EXCEED_NONE_PTE;
-> @@ -583,8 +583,14 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->   		/* See collapse_scan_pmd(). */
->   		if (folio_maybe_mapped_shared(folio)) {
->   			++shared;
-> -			if (cc->is_khugepaged &&
-> -			    shared > khugepaged_max_ptes_shared) {
-> +			/*
-> +			 * TODO: Support shared pages without leading to further
-> +			 * mTHP collapses. Currently bringing in new pages via
-> +			 * shared may cause a future higher order collapse on a
-> +			 * rescan of the same range.
-> +			 */
-> +			if (order != HPAGE_PMD_ORDER || (cc->is_khugepaged &&
-> +			    shared > khugepaged_max_ptes_shared)) {
->   				result = SCAN_EXCEED_SHARED_PTE;
->   				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
->   				goto out;
-> @@ -677,18 +683,18 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->   }
+>   	/* driver data*/
+>   	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+>   	if (!drvdata)
+>   		return -ENOMEM;
+> -	drvdata->dev = &adev->dev;
+> +	drvdata->dev = dev;
+>   	dev_set_drvdata(dev, drvdata);
 >   
->   static void __collapse_huge_page_copy_succeeded(pte_t *pte,
-> -						struct vm_area_struct *vma,
-> -						unsigned long address,
-> -						spinlock_t *ptl,
-> -						struct list_head *compound_pagelist)
-> +		struct vm_area_struct *vma, unsigned long address,
-> +		spinlock_t *ptl, unsigned int order,
-> +		struct list_head *compound_pagelist)
->   {
-> -	unsigned long end = address + HPAGE_PMD_SIZE;
-> +	unsigned long end = address + (PAGE_SIZE << order);
->   	struct folio *src, *tmp;
->   	pte_t pteval;
->   	pte_t *_pte;
->   	unsigned int nr_ptes;
-> +	const unsigned long nr_pages = 1UL << order;
+> -	base = devm_ioremap_resource(dev, &adev->res);
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> +	if (res) {
+> +		base = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR(base))
+> +			return PTR_ERR(base);
 >   
-> -	for (_pte = pte; _pte < pte + HPAGE_PMD_NR; _pte += nr_ptes,
-> +	for (_pte = pte; _pte < pte + nr_pages; _pte += nr_ptes,
->   	     address += nr_ptes * PAGE_SIZE) {
->   		nr_ptes = 1;
->   		pteval = ptep_get(_pte);
-> @@ -741,13 +747,11 @@ static void __collapse_huge_page_copy_succeeded(pte_t *pte,
->   }
+> -	drvdata->base = base;
+> +		drvdata->base = base;
+> +		ret = tpdm_datasets_setup(drvdata);
+> +		if (ret)
+> +			return ret;
 >   
->   static void __collapse_huge_page_copy_failed(pte_t *pte,
-> -					     pmd_t *pmd,
-> -					     pmd_t orig_pmd,
-> -					     struct vm_area_struct *vma,
-> -					     struct list_head *compound_pagelist)
-> +		pmd_t *pmd, pmd_t orig_pmd, struct vm_area_struct *vma,
-> +		unsigned int order, struct list_head *compound_pagelist)
->   {
->   	spinlock_t *pmd_ptl;
+> -	ret = tpdm_datasets_setup(drvdata);
+> -	if (ret)
+> -		return ret;
+> +		if (drvdata && tpdm_has_dsb_dataset(drvdata))
+> +			of_property_read_u32(drvdata->dev->of_node,
+> +					     "qcom,dsb-msrs-num", &drvdata->dsb_msr_num);
+>   
+> -	if (drvdata && tpdm_has_dsb_dataset(drvdata))
+> -		of_property_read_u32(drvdata->dev->of_node,
+> -			   "qcom,dsb-msrs-num", &drvdata->dsb_msr_num);
 > -
-> +	const unsigned long nr_pages = 1UL << order;
->   	/*
->   	 * Re-establish the PMD to point to the original page table
->   	 * entry. Restoring PMD needs to be done prior to releasing
-> @@ -761,7 +765,7 @@ static void __collapse_huge_page_copy_failed(pte_t *pte,
->   	 * Release both raw and compound pages isolated
->   	 * in __collapse_huge_page_isolate.
->   	 */
-> -	release_pte_pages(pte, pte + HPAGE_PMD_NR, compound_pagelist);
-> +	release_pte_pages(pte, pte + nr_pages, compound_pagelist);
+> -	if (drvdata && tpdm_has_cmb_dataset(drvdata))
+> -		of_property_read_u32(drvdata->dev->of_node,
+> -			   "qcom,cmb-msrs-num", &drvdata->cmb_msr_num);
+> +		if (drvdata && tpdm_has_cmb_dataset(drvdata))
+> +			of_property_read_u32(drvdata->dev->of_node,
+> +					     "qcom,cmb-msrs-num", &drvdata->cmb_msr_num);
+> +	}
+>   
+>   	/* Set up coresight component description */
+>   	desc.name = coresight_alloc_device_name(&tpdm_devs, dev);
+> @@ -1388,34 +1392,51 @@ static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
+>   	desc.type = CORESIGHT_DEV_TYPE_SOURCE;
+>   	desc.subtype.source_subtype = CORESIGHT_DEV_SUBTYPE_SOURCE_TPDM;
+>   	desc.ops = &tpdm_cs_ops;
+> -	desc.pdata = adev->dev.platform_data;
+> -	desc.dev = &adev->dev;
+> +	desc.pdata = dev->platform_data;
+> +	desc.dev = dev;
+>   	desc.access = CSDEV_ACCESS_IOMEM(base);
+> -	desc.groups = tpdm_attr_grps;
+> +	if (res)
+> +		desc.groups = tpdm_attr_grps;
+>   	drvdata->csdev = coresight_register(&desc);
+>   	if (IS_ERR(drvdata->csdev))
+>   		return PTR_ERR(drvdata->csdev);
+>   
+>   	spin_lock_init(&drvdata->spinlock);
+>   
+> -	/* Decrease pm refcount when probe is done.*/
+> -	pm_runtime_put(&adev->dev);
+> -
+>   	return 0;
+>   }
+>   
+> -static void tpdm_remove(struct amba_device *adev)
+> +static int tpdm_remove(struct device *dev)
+>   {
+> -	struct tpdm_drvdata *drvdata = dev_get_drvdata(&adev->dev);
+> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev);
+>   
+>   	coresight_unregister(drvdata->csdev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dynamic_tpdm_probe(struct amba_device *adev,
+> +			      const struct amba_id *id)
+> +{
+> +	int ret;
+> +
+> +	ret = tpdm_probe(&adev->dev, &adev->res);
+> +	if (!ret)
+> +		pm_runtime_put(&adev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void dynamic_tpdm_remove(struct amba_device *adev)
+> +{
+> +	tpdm_remove(&adev->dev);
 >   }
 >   
 >   /*
-> @@ -781,16 +785,16 @@ static void __collapse_huge_page_copy_failed(pte_t *pte,
+>    * Different TPDM has different periph id.
+>    * The difference is 0-7 bits' value. So ignore 0-7 bits.
 >    */
->   static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
->   		pmd_t *pmd, pmd_t orig_pmd, struct vm_area_struct *vma,
-> -		unsigned long address, spinlock_t *ptl,
-> +		unsigned long address, spinlock_t *ptl, unsigned int order,
->   		struct list_head *compound_pagelist)
->   {
->   	unsigned int i;
->   	int result = SCAN_SUCCEED;
-> -
-> +	const unsigned long nr_pages = 1UL << order;
->   	/*
->   	 * Copying pages' contents is subject to memory poison at any iteration.
->   	 */
-> -	for (i = 0; i < HPAGE_PMD_NR; i++) {
-> +	for (i = 0; i < nr_pages; i++) {
->   		pte_t pteval = ptep_get(pte + i);
->   		struct page *page = folio_page(folio, i);
->   		unsigned long src_addr = address + i * PAGE_SIZE;
-> @@ -809,10 +813,10 @@ static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
+> -static const struct amba_id tpdm_ids[] = {
+> +static const struct amba_id dynamic_tpdm_ids[] = {
+>   	{
+>   		.id	= 0x001f0e00,
+>   		.mask	= 0x00ffff00,
+> @@ -1423,17 +1444,76 @@ static const struct amba_id tpdm_ids[] = {
+>   	{ 0, 0, NULL },
+>   };
 >   
->   	if (likely(result == SCAN_SUCCEED))
->   		__collapse_huge_page_copy_succeeded(pte, vma, address, ptl,
-> -						    compound_pagelist);
-> +						    order, compound_pagelist);
->   	else
->   		__collapse_huge_page_copy_failed(pte, pmd, orig_pmd, vma,
-> -						 compound_pagelist);
-> +						 order, compound_pagelist);
->   
->   	return result;
->   }
-> @@ -985,13 +989,12 @@ static int check_pmd_still_valid(struct mm_struct *mm,
->    * Returns result: if not SCAN_SUCCEED, mmap_lock has been released.
->    */
->   static int __collapse_huge_page_swapin(struct mm_struct *mm,
-> -				       struct vm_area_struct *vma,
-> -				       unsigned long start_addr, pmd_t *pmd,
-> -				       int referenced)
-> +		struct vm_area_struct *vma, unsigned long start_addr,
-> +		pmd_t *pmd, int referenced, unsigned int order)
->   {
->   	int swapped_in = 0;
->   	vm_fault_t ret = 0;
-> -	unsigned long addr, end = start_addr + (HPAGE_PMD_NR * PAGE_SIZE);
-> +	unsigned long addr, end = start_addr + (PAGE_SIZE << order);
->   	int result;
->   	pte_t *pte = NULL;
->   	spinlock_t *ptl;
-> @@ -1022,6 +1025,19 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->   		if (!is_swap_pte(vmf.orig_pte))
->   			continue;
->   
-> +		/*
-> +		 * TODO: Support swapin without leading to further mTHP
-> +		 * collapses. Currently bringing in new pages via swapin may
-> +		 * cause a future higher order collapse on a rescan of the same
-> +		 * range.
-> +		 */
-> +		if (order != HPAGE_PMD_ORDER) {
-> +			pte_unmap(pte);
-> +			mmap_read_unlock(mm);
-> +			result = SCAN_EXCEED_SWAP_PTE;
-> +			goto out;
-> +		}
+> -static struct amba_driver tpdm_driver = {
+> +MODULE_DEVICE_TABLE(amba, dynamic_tpdm_ids);
 > +
->   		vmf.pte = pte;
->   		vmf.ptl = ptl;
->   		ret = do_swap_page(&vmf);
-> @@ -1142,7 +1158,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   		 * that case.  Continuing to collapse causes inconsistency.
->   		 */
->   		result = __collapse_huge_page_swapin(mm, vma, address, pmd,
-> -						     referenced);
-> +						     referenced, HPAGE_PMD_ORDER);
->   		if (result != SCAN_SUCCEED)
->   			goto out_nolock;
->   	}
-> @@ -1190,6 +1206,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   	pte = pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
->   	if (pte) {
->   		result = __collapse_huge_page_isolate(vma, address, pte, cc,
-> +						      HPAGE_PMD_ORDER,
->   						      &compound_pagelist);
->   		spin_unlock(pte_ptl);
->   	} else {
-> @@ -1220,6 +1237,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+> +static struct amba_driver dynamic_tpdm_driver = {
+>   	.drv = {
+>   		.name   = "coresight-tpdm",
+>   		.suppress_bind_attrs = true,
+>   	},
+> -	.probe          = tpdm_probe,
+> -	.id_table	= tpdm_ids,
+> -	.remove		= tpdm_remove,
+> +	.probe          = dynamic_tpdm_probe,
+> +	.id_table	= dynamic_tpdm_ids,
+> +	.remove		= dynamic_tpdm_remove,
+>   };
 >   
->   	result = __collapse_huge_page_copy(pte, folio, pmd, _pmd,
->   					   vma, address, pte_ptl,
-> +					   HPAGE_PMD_ORDER,
->   					   &compound_pagelist);
->   	pte_unmap(pte);
->   	if (unlikely(result != SCAN_SUCCEED))
+> -module_amba_driver(tpdm_driver);
+> +static int tpdm_platform_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	int ret;
+> +
+> +	pm_runtime_get_noresume(&pdev->dev);
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +
+> +	ret = tpdm_probe(&pdev->dev, res);
+> +	pm_runtime_put(&pdev->dev);
+> +	if (ret)
+> +		pm_runtime_disable(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void tpdm_platform_remove(struct platform_device *pdev)
+> +{
+> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(&pdev->dev);
+> +
+> +	if (WARN_ON(!drvdata))
+> +		return;
+> +
+> +	tpdm_remove(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+> +}
+> +
+> +static const struct of_device_id static_tpdm_match[] = {
+> +	{.compatible = "qcom,coresight-static-tpdm"},
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, static_tpdm_match);
+> +
+> +static struct platform_driver static_tpdm_driver = {
+> +	.probe		= tpdm_platform_probe,
+> +	.remove		= tpdm_platform_remove,
+> +	.driver		= {
+> +		.name	= "coresight-static-tpdm",
+> +		.of_match_table = static_tpdm_match,
+> +		.suppress_bind_attrs = true,
+> +	},
+> +};
+> +
+> +static int __init tpdm_init(void)
+> +{
+> +	return coresight_init_driver("tpdm", &dynamic_tpdm_driver, &static_tpdm_driver,
+> +				     THIS_MODULE);
+> +}
+> +
+> +static void __exit tpdm_exit(void)
+> +{
+> +	coresight_remove_driver(&dynamic_tpdm_driver, &static_tpdm_driver);
+> +}
+> +
+> +module_init(tpdm_init);
+> +module_exit(tpdm_exit);
+>   
+>   MODULE_LICENSE("GPL");
+>   MODULE_DESCRIPTION("Trace, Profiling & Diagnostic Monitor driver");
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
+> index b11754389734..9f52c88ce5c1 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.h
+> @@ -343,4 +343,12 @@ struct tpdm_dataset_attribute {
+>   	enum dataset_mem mem;
+>   	u32 idx;
+>   };
+> +
+> +static inline bool coresight_is_static_tpdm(struct coresight_device *csdev)
+> +{
+> +	struct device_node *node = csdev->dev.parent->of_node;
+> +
+> +	return (csdev &&
+> +		of_device_is_compatible(node, "qcom,coresight-static-tpdm"));
 
+Why do we have to go check the firmware table all the time ? Could we 
+not cache this in drvdata ? Or even better, we can use the csdev->access
+
+by using :  coresight_device_is_tpdm()
+
+return (coresight_device_is_tpdm(csdev) && !csdev->access->base);
+
+Suzuki
 
