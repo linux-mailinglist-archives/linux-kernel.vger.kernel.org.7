@@ -1,207 +1,206 @@
-Return-Path: <linux-kernel+bounces-871399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCEFC0D230
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:21:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50721C0D25A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C403BCC10
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:21:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A25C44E9E2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D64A22A4D6;
-	Mon, 27 Oct 2025 11:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lnUfIaIT"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012014.outbound.protection.outlook.com [52.101.53.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581082F83B8;
+	Mon, 27 Oct 2025 11:29:15 +0000 (UTC)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C442E2FA0CC
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761564092; cv=fail; b=BOZ5M9lEaFjBKhbuwJcakjTbo+s8IfJjbpAv/irrgcHcUGYbC8Ws1QIkbJkt70Zae8HlCgn3hF8WvKBwuzaNpp0TGnvGOQ4thnCSRur3ZsdMKAAdz3LBk3w1qtm2mJNpaqFfs2LRr+f4pld+Mg94NYQwosgUQh3FdyNOSwFeGUA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761564092; c=relaxed/simple;
-	bh=tICJ0laPuZlWTPPjMCMJZK3cEqoVZ3Gx/Z5F8rZs0xg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JCJv0xcs7qpBVEw3ZfoS7qSjmHjyYaQdDfmswdUCI6HVR/gNgPHCwTUuDhwSe+ue2djJ8Mf3AlS7ikz6qMFV3pcI4dUnyM0idMUTV/zQHNBZe/lLetTipT8XVgcAyQUhtKYci/357Z7WenZaYjE1/JsZZxTaLBUqN81vjsf1sV0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lnUfIaIT; arc=fail smtp.client-ip=52.101.53.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bo5KaRNW9otqwuZMiULGyzzPXHrLQA6RfEM/I4D0nLrJ8702IN9WckVCsfPpgSNC0D9hvsyy3Gm25uXt8bPCTN2rUcnfUcjLg3lD4L9JMpMmlMtIJ5umwsxynbZ0L4OnCAM2FJ2llddFf4/YyQKyqVPy9HDeoVd+dyau1e18Skkicvcy6DiA5V1xl7r65EtJQHEYA1WvKZHon/aJaRhWvMJduWmc1FevtXEH91PQVqoSffA4MDtrOMeBkG+EMHNWvjij0jMptTY4qUPJdxMczEOniIAIDOkGoRlQUMxYafQKMp1tmuGO0UfaAr6FUyYeJxt0jaCUpLGimNhpAvmZRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UFvMc1/6N8FSDHN5pYiCwLaNbx1OiYm2VRqg0jHMbVs=;
- b=ZPX779MxB4qWTi4hj8KQ6+6OZgR1fRo415alzV8epq57YdztAipa90LqTs5xcxHxxLAMF5paPlbDDuO4b86d3V0VXvo1W66J/DLuRcKmwXjHk+nvllQmya0oQmvyABF7OIIab7PqBjk5JjumSh8wu2qkA0yObh4+quxSZ/ogjlDdeLWno/vVjPjUtqgmdGw3MzcX4MOhS89+ViZ9sdujlvV+/n5BEh+3LfrNUGoBlJicFFmHJwQQ+Trm3+IGEd1zHnp+82xPFhmsipcoHP1tuUlKRzI9hw//9i3zDA0fdAtrF3Ur0y15aV1L/ENwyhkD0qRY2LdvkSxpanFW3zanNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UFvMc1/6N8FSDHN5pYiCwLaNbx1OiYm2VRqg0jHMbVs=;
- b=lnUfIaITX3D+mke95hIogWylFEpHslBhnzaOSmyAyJV1YpUFjqgCr4vWw7XDZ92BuJ7+qcU9m3AdIFhMWBs+kJzn25ttrzxRmrB3THHlHt0o5urpSwac6tTtA91Fl31z9nCLNz3XigrMNb1mCZehfRj6qyID+KNfDdm6hokryBQ=
-Received: from MW4PR03CA0154.namprd03.prod.outlook.com (2603:10b6:303:8d::9)
- by DS7PR12MB8276.namprd12.prod.outlook.com (2603:10b6:8:da::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
- 2025 11:21:25 +0000
-Received: from BY1PEPF0001AE19.namprd04.prod.outlook.com
- (2603:10b6:303:8d:cafe::eb) by MW4PR03CA0154.outlook.office365.com
- (2603:10b6:303:8d::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Mon,
- 27 Oct 2025 11:21:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BY1PEPF0001AE19.mail.protection.outlook.com (10.167.242.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Mon, 27 Oct 2025 11:21:24 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 27 Oct
- 2025 04:21:22 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 27 Oct
- 2025 06:21:22 -0500
-Received: from [10.252.200.251] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 27 Oct 2025 04:21:20 -0700
-Message-ID: <7d28fa51-0c1d-46da-9372-031ddc20874a@amd.com>
-Date: Mon, 27 Oct 2025 16:51:19 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDF3145B16
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761564554; cv=none; b=bfPu8iIwJNGqHVdclayoNO4e8Jo+UYYLljgq1zyrSlOVQAAarIdndo1Juef2Klvjgq9lO0oZHDJ6ZzDgKx8UP2uiIPBllNmNRTkxoHFXcDFNnsP+AFnt2693N01pXUd8cPVznuvxjdcRpK2SAzrYuGnB9mLMvWmBeoddlkPAcf4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761564554; c=relaxed/simple;
+	bh=LCFinbYaaa5T1vbOy/YjHc9/jV/eLUmsdTmf3uq5Qlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFwp5HSsL7ofKWikgkDo92sohV7EXzHphh9Mw6adCpXdxcZlIM8oGo3lQmPsotFLiuphP6WnG2byEhdNNYFaTtri16iefs31MU/K5VBHJoz8vujbU87zqcuN56W7nojW6w9VCR4jMRBIy0uFzfOwbnz3p8mL4QDTZ8XXzmnktOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e89ac45e61so44543901cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:29:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761564552; x=1762169352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HgNtIcnn6eENaUFz3K0ARDS/soEXQSArUyONWZnfjlQ=;
+        b=E9Ry7DaP9KNYiR5/SL0PXD4vPq/y1IZ1qbeWJn4ckp99REwx/8UkFmM8Rj6C99p6k6
+         jg2AA+qrzZ/OIAX2HS/QfE+xZhBZEtTRKaqOgUQ+pGU0O8NOfi6Xan18GX1e4natRFAB
+         p8LLO5BOyN9oGOgAnO5p0PzijxMiHnXt9vOC1w2sKRq8cq18wxVR8W3Chuh9EseyClKa
+         o+IkVxP3kq3ZCZZ7Tf3YydIH2NesE/CXpbedr8t3Wup9BaWAwGADJt6GC2Sg4/OrPEks
+         nXHz6E8tiDld6ILB+aQpPOCHUwuO0iL02XNZsqJlzcPLO3N7EAeXnCjoy8BwrLnSLqpe
+         zeUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNyryegR5h8zKxWhTsa3Ha/yfjqJ++3M9PkOP+FlMyn9IxUwHhLPgw2hS+av3xSLz22JswgdEnUJNl1x8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbe+sWDXkyvVWTWpAJmdE7Ren3zUs5A3WnsJBEGGPhuBZdC35Z
+	xrh+y45Jpl7ZHqoERjZBebZr8Hqht91PruFaiPgEHZqfCKCg7mtCnW4tT3zVGZH8
+X-Gm-Gg: ASbGncumV0LgOo6Hj7j7SR+7a+9WDyOymKeD1tpbNqXGM3ZYl11OCb9ak2qnKCkNdcC
+	n0AbzooAvD/uH5ZZoomoXFznBu5/6GX1KixMRUKBZfanDnuXnJFhZKawum6S4XBBwYGDnM5/ZtE
+	pCwgqpMIXjnAAYn92rthfMDCu/SyhcSC/VpRRUo7y4a8rCpHXZty1zEQrgKiW+em9YTdcFwyPAV
+	qdgXxNllCZC1HrFe1g1m0HKvKe21Xxp1ji9f8Kipx/wEpCsEI1a2Ae0rKqQSKT9ugGvU6Mln24Z
+	SguO1oy6m+bFHlzxbh7KFrtw9ID4Jd54ebaGiSUmr3XAlpyGXjnanZIS5tQ/QeCFQooCrdBjtSd
+	41fI5+m9t661Oh+tv0s1snJ5V/vIlDRZGIVvDBYb3YcJeZgCBlotwPmrBTN6OnklerrxVx4fUen
+	LC2rlwuvkywV7ZGTpBjOOeFQncV0uXS0SEdgeMoKfIeQ==
+X-Google-Smtp-Source: AGHT+IEar5vAwI8HCMVurgwLZH9ZBx4gWKu2Iu7OXQWJHR7llZ0+3a9KTao6MXFmRcGis8+T8E+3Iw==
+X-Received: by 2002:a05:622a:138a:b0:4e8:838d:1992 with SMTP id d75a77b69052e-4eb81580e3cmr183442731cf.63.1761564551947;
+        Mon, 27 Oct 2025 04:29:11 -0700 (PDT)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f243142b5sm590294085a.8.2025.10.27.04.29.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 04:29:11 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-89ead335934so282648385a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:29:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKlKpFCJMjim8M7zmUE2tB0MiqU3c2xXEEHxVUB52htZKlS+PfTk/0B6vZ/A4ieMuroa07sZaYs7AMWEs=@vger.kernel.org
+X-Received: by 2002:a05:6102:2921:b0:59d:458d:b629 with SMTP id
+ ada2fe7eead31-5db2e58fe50mr3946640137.30.1761564193435; Mon, 27 Oct 2025
+ 04:23:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/amd: Fix potential out-of-bounds read in
- iommu_mmio_show
-To: Songtang Liu <liusongtang@bytedance.com>, <joro@8bytes.org>,
-	<will@kernel.org>
-CC: <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-References: <CAA=HWd3_nKzKguK4JAs3aX7MhyX3mxFPLNLzEqwRPiSPTwvm6Q@mail.gmail.com>
-Content-Language: en-US
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-In-Reply-To: <CAA=HWd3_nKzKguK4JAs3aX7MhyX3mxFPLNLzEqwRPiSPTwvm6Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE19:EE_|DS7PR12MB8276:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50793a00-079c-4392-7721-08de154af6cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mnk4bXR6NzVBeHRibHlMUG9NT01hcnRydC9LeFpLalk5enZUMWJPYWJvOHpU?=
- =?utf-8?B?MWpIc054VVpiQ2hjYjg0cDhyNHRNRWlhMzZFKzdUN3dIRDlEY05mSDYxQ0pW?=
- =?utf-8?B?TUpveDc4SjNwRG10ZG1xcVBXZnZpakhUWHRTSWdDTU4vWU0waGJzcitFQU5p?=
- =?utf-8?B?eDRjM0I5KytKeTVwakRMUjhTVkJSMTR5SVNiV3c4MzBCME5kZnFWdk00bkdS?=
- =?utf-8?B?QXJXNGpUTFpBU3BOTVNjdnZ2c0h2WklNN0M2MkZqUVpPY0VZTnFybm40QXc2?=
- =?utf-8?B?TE4reWlWMkdNRTQ4S3Q4WGNpcU04THc1Q0ZCTEV4bGg3WXBXcHQyQTNoVlZv?=
- =?utf-8?B?L01qbFRTM1p6S3JXTlZoVWhzVFRZenlhMmN4M3VNWi9FZk16Z2pPN0NxVnVU?=
- =?utf-8?B?d2piS3lFNXpSM0kwOG9hTjBScVZxMmZ5ZGJETFF1Z3hKcGZ2eUlHRGZiVlpy?=
- =?utf-8?B?Qmc5TEZDbVNhYWt5RnBpOXFtT3VzQVF6VFpiTk51Yis2MFlVczJ4MTIvQlIw?=
- =?utf-8?B?Y1BocGs0S01VcGdHRm5tWEZZVnBOM1AyV3U4VWQ5Zy9xamRMSFovei9zZG1P?=
- =?utf-8?B?QUc5M1lvemlVQUZCenpRa0tlVTZGRWQvWWU2MTlDZmljMlRRQ2lxcWUvWTcz?=
- =?utf-8?B?NEJRMjJ6WlI5QjUxQ1NGSnh3R3BjWnlxSHFndzhhLzNHbHhaTm1GZm5HanBh?=
- =?utf-8?B?ZzUvRkF0WExNeFVJT21nendvVW1QZTdMU1IvZTA4OFV2bkJ6UFI4Qm5kcVQw?=
- =?utf-8?B?dDNnWTZtYlNKb1BJaUpYNVBTQ1J0MSt6b3p2MUNIZWNtV01ibTNPemE3VDd6?=
- =?utf-8?B?Vy9ONlpVMnZQajE0WHdzRklIYzdRdkV3dTNza2VBMis3eFNXWjhUeHRsZHVt?=
- =?utf-8?B?cWJ4NGJtOFo3UEoyeEYvSkh4ZHRhclVVRVpPVU05TFZtanA1TGhmWGlkOC85?=
- =?utf-8?B?R3VEOUl1WncvRjJDNDBObngxRTZVTi8xVkh2WERKVHBPOERPWGM3VkRMVUFn?=
- =?utf-8?B?YTVUSFFIY0dGYW5OK0dXYXhoR2xnRGI4YWUvd0wrdXVnaC9HcmVnUG5mbmc4?=
- =?utf-8?B?ZFBWYXNaZ2V2aE1lcWZ2MjNPdE1qTjNvKzVieE9rSXRmb1k1WjF6dzN2SnI5?=
- =?utf-8?B?a2ZQOUEwd0V6WUFNQzlQWVE1SjRucTE2NitEUEF6TFlEWmo0b0tGazc2WkVv?=
- =?utf-8?B?cEZCc2txOXBldlJSblpjZFB4N1hNa3hFVzc0TERtTnkydm0yek9XcTNJeUJQ?=
- =?utf-8?B?WEwxdFVLTWsxNXNKYWNYb0hpQmk5bS9rZnRyNTRaTzFqRTIwK3JQRWlXS1Ri?=
- =?utf-8?B?SkxxemVNM0FLVGtVVWdFUzdLM21LSE81bjJWNVU3ZDNHaEozY3dQZ00wcGxE?=
- =?utf-8?B?N08xellFcWVOYlN4NGQ1L1o0ekI5dnA0YlE4c3M1TGtySGU0YnFTOHBuSnRu?=
- =?utf-8?B?SGhXWEh5QWJUeWNJc1FCalVTYU5TelJ6eU5zdmtVczJwcVhNVlVzU3IyUzVQ?=
- =?utf-8?B?RzZTendZY0xVTkpzTU5kaHlhajU5cERlOFFsNklOcHV2aGU0dThTSVZSeERM?=
- =?utf-8?B?SGlCU1B3KzRTK2V2V3FXaGVnRExCb3E1K2kxR2FBN3RsSEYrMGFTVkFIVU9D?=
- =?utf-8?B?b00zNmN6OVVnSC9ET1FGWEgzWDcwSEJ6b0dRRk54UmdWTW5mSHZqM1hIV3N1?=
- =?utf-8?B?MHBXdXNoeWFBc25sK0lrcTA4OFV6d2c2N0YxUXloTWlmbk53ZmRJc1NCT2Jy?=
- =?utf-8?B?SWJzVFlvcjg5MzFmbUhTQjBwSDRqamthbzRSckhBUWRLTDRkK3ovOWxucTlP?=
- =?utf-8?B?SkM5OC9DYnhnNG9BSWoxY2p0eW16SWNCTllQdy80TU13L0w4YkhwZHdBcEpz?=
- =?utf-8?B?aFZoajNnQXFkdWtCNUxVMWxNaDVDeFRuN3F3czY0MDJ3RjRGUXgwcEN6UUVZ?=
- =?utf-8?B?U25tRkxWK0FUckNocEVJbEZMOWI5T29YM2dEWnI2cGxFcDNYa2J1NysrUzdC?=
- =?utf-8?B?MW5GNE1UV3NzcFE3RFA3azBvYnVqQTJuRWEwR0VCeko2a1NlZzJMZ1h2OFpL?=
- =?utf-8?B?WG9CR0FjTHFQSUhubkN3UTlsaFp6ZElRZXRZY1pCTi8rbGtqZS9lS3VyUk50?=
- =?utf-8?Q?yWjY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 11:21:24.4211
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50793a00-079c-4392-7721-08de154af6cc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE19.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8276
+References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
+ <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com> <20251021184502.GD19043@pendragon.ideasonboard.com>
+In-Reply-To: <20251021184502.GD19043@pendragon.ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Oct 2025 12:23:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVrfVP1XZbQVNwEEP8L69mVzNN2yLSjNyHO7o2zqBuY0w@mail.gmail.com>
+X-Gm-Features: AWmQ_blPQXHDdcv3HEZmR70Xe3WDxqjStucPirJolGtaGc9WMslN79O8Z1NYVMM
+Message-ID: <CAMuHMdVrfVP1XZbQVNwEEP8L69mVzNN2yLSjNyHO7o2zqBuY0w@mail.gmail.com>
+Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
+ support for the Renesas RZ/V2H(P) SoC
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, 21 Oct 2025 at 20:45, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tue, Oct 21, 2025 at 07:26:49PM +0100, Lad, Prabhakar wrote:
+> > On Tue, Oct 21, 2025 at 11:26=E2=80=AFAM Geert Uytterhoeven wrote:
+> > > On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> =
+wrote:
+> > > > This patch series adds DU/DSI clocks and provides support for the
+> > > > MIPI DSI interface on the RZ/V2H(P) SoC.
+> > > >
+> > > > v10->v11:
+> > > > - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
+> > > > - Updated rzv2h_cpg_plldsi_div_determine_rate()
+> > > >   while iterating over the divider table
+> > > > - Added Acked-by tag from Tomi for patch 2/7 and 3/7
+> > > > - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
+> > >
+> > > I think this series is ready for merging.
+> >
+> > \o/
+> >
+> > > > Lad Prabhakar (7):
+> > > >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
+> > > >   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
+> > > >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
+> > > >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and =
+LCDC
+> > > >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+> > > >     RZ/V2N
+> > > >   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
+> > > >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+> > >
+> > > As this touches both clk and drm, let's discuss the merge strategy.
+> > > My proposal:
+> > >   1. I queue patches 1-3 in an immutable branch with a signed tag,
+> > >      to be used as a base for the remaining patches,
 
-On 10/24/2025 1:32 PM, Songtang Liu wrote:
-> In iommu_mmio_write(), it validates the user-provided offset with the
-> check: `iommu->dbg_mmio_offset > iommu->mmio_phys_end - 4`.
-> This assumes a 4-byte access. However, the corresponding
-> show handler, iommu_mmio_show(), uses readq() to perform an 8-byte
-> (64-bit) read.
-> 
-> If a user provides an offset equal to `mmio_phys_end - 4`, the check
-> passes, and will lead to a 4-byte out-of-bounds read.
-> 
-> Fix this by adjusting the boundary check to use sizeof(u64), which
-> corresponds to the size of the readq() operation.
-> 
-> Fixes: 7a4ee419e8c1 ("iommu/amd: Add debugfs support to dump IOMMU
-> MMIO registers")
-> Signed-off-by: Songtang Liu <liusongtang@bytedance.com>
-> ---
->   drivers/iommu/amd/debugfs.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/amd/debugfs.c b/drivers/iommu/amd/debugfs.c
-> index 8b4d7db7869a4..5d85c47478a57 100644
-> --- a/drivers/iommu/amd/debugfs.c
-> +++ b/drivers/iommu/amd/debugfs.c
-> @@ -37,7 +37,7 @@ static ssize_t iommu_mmio_write(struct file *filp,
-> const char __user *ubuf,
->   	if (ret)
->   		return ret;
-> 
-> -	if (iommu->dbg_mmio_offset > iommu->mmio_phys_end - 4) {
-> +	if (iommu->dbg_mmio_offset > iommu->mmio_phys_end - sizeof(u64)) {
+Done:
 
-LGTM.
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787=
+:
 
-Reviewed-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-Tested-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-Thanks
-Dheeraj
+are available in the Git repository at:
 
->   		iommu->dbg_mmio_offset = -1;
->   		return  -EINVAL;
->   	}
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+tags/clk-renesas-rzv2h-plldsi-tag
 
+for you to fetch changes up to f864e4b721e386be132cc973eadefe5d52cdfd94:
 
+  clk: renesas: rzv2h: Add support for DSI clocks (2025-10-27 11:58:03 +010=
+0)
+
+----------------------------------------------------------------
+clk: renesas: rzv2h: Add support for DSI clocks
+
+RZ/V2H Clock Pulse Generator PLLDSI API, shared by clock and MIPI DSI
+driver source files.
+
+----------------------------------------------------------------
+Lad Prabhakar (3):
+      clk: renesas: rzv2h: Add instance field to struct pll
+      clk: renesas: rzv2h: Use GENMASK for PLL fields
+      clk: renesas: rzv2h: Add support for DSI clocks
+
+ drivers/clk/renesas/rzv2h-cpg.c | 512 ++++++++++++++++++++++++++++++++++++=
++++-
+ drivers/clk/renesas/rzv2h-cpg.h |  26 +-
+ include/linux/clk/renesas.h     | 145 ++++++++++++
+ 3 files changed, 672 insertions(+), 11 deletions(-)
+
+> > >   2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
+
+Done.
+
+> > >   3. The DRM people queue patches 5-7 on top of 1.
+> > >
+> > > Does that sound fine for you?
+> > Sounds good to me.
+> >
+> > Biju/Tomi, are you OK with the above?
+>
+> The plan seems good to me. Note that you won't be able to push this
+> yourself to drm-misc as committers are limited to pushing linear
+> branches. We need an ack from the drm-misc maintainers, and one of them
+> will need to merge the branch (either branch 1. as prepared by Geert, on
+> top of which you can them push patches 5-7 yourself, or a branch you'll
+> prepare on top of 1. with patches 5-7).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
