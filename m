@@ -1,88 +1,149 @@
-Return-Path: <linux-kernel+bounces-872156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F790C0F647
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:42:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C026EC0F61D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CB31892AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:40:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 738794F8F13
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9543A31354E;
-	Mon, 27 Oct 2025 16:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C083148C1;
+	Mon, 27 Oct 2025 16:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g8iGTxdW"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0WnMzga"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF570308F26
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C662D46D0;
+	Mon, 27 Oct 2025 16:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583166; cv=none; b=Quo+xWUnaLjV8IXlR7lwuxI5zDAyM2Vysgrb5AQwgtYZP51wm45XauQw+Vm+Mpj5EY2p/EX9KONYIw3IZNnV2D/Y3VK3I0NzloWusJZNjnBQMSQcBhlQHj4HU0+GVUEnc9XsujNqrarWHU8dua2AV32LUohT+MBZ3mVQEvvV+jI=
+	t=1761582985; cv=none; b=c/c5bzKoTxxLCIeIAKhMRx9MkrkCRwxPduH/de0e203sEiXuOoAgKTTkJOMGIkqlOqE/LaXc8x0Oud8tQt0DTObNcDfI/I1044+5BK14xPu5IrOzulS5wHf6GKKNMQzbtUpZxePdCnw7M8UclfKVrxjeILWi30D0f0IGiXOPonY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583166; c=relaxed/simple;
-	bh=Be5QKlB3ucCGPljf5TzeXWg3vuhXfK/eO1AzyQTYrdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rXSt4Re1tBQMYQ3aVvuRSN0nUlMu2BgpSQRQUvra0Miz25Dp3JNojIMzeLXtd68Zyrk1cGVWNwZlHYBGUPOM6Vsx64KT4LoiNuxefe1Fq1bAKN3d/MezKbI5Is7fIlpvJMyDdOPOuQ6FJCjrUHU4zE6FBnEJ8NLKX8xeR8l0Iek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g8iGTxdW; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761583161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lrmaKxUS2WXVIok7XCApX8mmODfYJ7Tl/+25KX1yE2Q=;
-	b=g8iGTxdWMNCrRYVcKrgTUS/g47VjqbtzuLt53eNJq62k9tQM3hDda+vDA+b3zb98LhS0OJ
-	kSi0DBZuIOe9tEKkIGgWcBG3z4AnLvkXB7DWixrX/bwiyAFDf0fehZKjrSi1b73/j3yQXv
-	GPFfiFEnJ7bjsddnw9p5cJKeSS4eNO8=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miroslav Benes <mbenes@suse.cz>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] objtool: Re-add resume_play_dead() to noreturn list
-Date: Mon, 27 Oct 2025 17:39:07 +0100
-Message-ID: <20251027163907.184681-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761582985; c=relaxed/simple;
+	bh=5bkUbFX9gMJW4tdihtLae66ry9QAZ8utSkoN+9IssC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jV+YRD8jzU1H+xJ4WdrDZbE3O3xNbOk7RVnU1Cr/GZvSDWPU124mwFFC1TE03WK39fzyykCVob4LcYeJL6RPlSWheg72+8WOiubgq/nK6vl0fBMx48wd5Hv+NTHoT9sY+Xq10188VohVS+QUrPuGhHgCa2PLi2USKGxUNIhhGvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0WnMzga; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB38C4CEF1;
+	Mon, 27 Oct 2025 16:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761582984;
+	bh=5bkUbFX9gMJW4tdihtLae66ry9QAZ8utSkoN+9IssC0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V0WnMzga6sKwHdBCgsLdugWHbaVkz2FuL79z6EUUqQfj3H+58lpV1b9CED7L6YQyt
+	 zsuLAQQyQKzb/TqOh29bSZuQ1JMWE5FcUr5lnbOVTB+DKwa5KY2kDMkXlmDIzKJHKw
+	 BLtylgkl74+I8oq/9DLZfjcd6okZ32Ct4UjX8+fKTdlZuMYq0PosUF2KhfR8HhkU+P
+	 vsZWnp0fhPLgzb5qWBbhA6fSy9DEytBgLQTpvTUUUevhhdDiRz7Yq2TS+tPIHclZAI
+	 kown3/Vsp7Qma0N8P4PhDEZMC8w9KOftikgIIhyBbMNsckHIShExFIEUxhcrkauoVj
+	 wtwF4+buAurhA==
+Date: Mon, 27 Oct 2025 11:39:17 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: george.moussalem@outlook.com
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Baruch Siach <baruch@tkos.co.il>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Devi Priya <quic_devipriy@quicinc.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Baruch Siach <baruch.siach@siklu.com>
+Subject: Re: [PATCH v17 1/9] dt-bindings: pwm: add IPQ6018 binding
+Message-ID: <r7revm7tle6nh6kggf2kjwdz2pnpfdrn7web4ckqcbkorjodkq@ujl5mfh5eous>
+References: <20251008-ipq-pwm-v17-0-9bd43edfc7f7@outlook.com>
+ <20251008-ipq-pwm-v17-1-9bd43edfc7f7@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008-ipq-pwm-v17-1-9bd43edfc7f7@outlook.com>
 
-resume_play_dead() was added to the noreturn list in commit 52668badd34b
-("x86/cpu: Mark {hlt,resume}_play_dead() __noreturn"), but was dropped
-in commit 6245ce4ab670 ("objtool: Move noreturn function list to
-separate file") when the list was moved to noreturns.h.
+On Wed, Oct 08, 2025 at 07:32:53PM +0400, George Moussalem via B4 Relay wrote:
+> From: Devi Priya <quic_devipriy@quicinc.com>
+> 
+> DT binding for the PWM block in Qualcomm IPQ6018 SoC.
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Co-developed-by: Baruch Siach <baruch.siach@siklu.com>
+> Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 
-Fix this by adding resume_play_dead() to the list again.
+Thanks for your work on this, George.
 
-Fixes: 6245ce4ab670 ("objtool: Move noreturn function list to separate file")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- tools/objtool/noreturns.h | 1 +
- 1 file changed, 1 insertion(+)
+We need your Signed-off-by here as well though.
 
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index 14f8ab653449..e63d85968f83 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -42,6 +42,7 @@ NORETURN(panic)
- NORETURN(vpanic)
- NORETURN(panic_smp_self_stop)
- NORETURN(rest_init)
-+NORETURN(resume_play_dead)
- NORETURN(rewind_stack_and_make_dead)
- NORETURN(rust_begin_unwind)
- NORETURN(rust_helper_BUG)
--- 
-2.51.0
+How about squashing the later additions to this same file, to avoid
+repeatedly changing the file you introduce here, in this same series?
+You can document your contribution by adding a line [george: Added
+compatibles for X, Y, Z] before your signed-off-by.
 
+Regards,
+Bjorn
+
+> ---
+>  .../devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml  | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml b/Documentation/devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1172f0b53fadc140482f9384a36020260df372b7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/qcom,ipq6018-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm IPQ6018 PWM controller
+> +
+> +maintainers:
+> +  - Baruch Siach <baruch@tkos.co.il>
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,ipq6018-pwm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  "#pwm-cells":
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#pwm-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-ipq6018.h>
+> +
+> +    pwm: pwm@1941010 {
+> +        compatible = "qcom,ipq6018-pwm";
+> +        reg = <0x01941010 0x20>;
+> +        clocks = <&gcc GCC_ADSS_PWM_CLK>;
+> +        assigned-clocks = <&gcc GCC_ADSS_PWM_CLK>;
+> +        assigned-clock-rates = <100000000>;
+> +        #pwm-cells = <2>;
+> +    };
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
