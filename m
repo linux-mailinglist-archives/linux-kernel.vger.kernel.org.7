@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-872482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A62C114FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:08:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E835CC114D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D2564E6DCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:02:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9527B352119
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4D1233155;
-	Mon, 27 Oct 2025 20:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7627431E0FB;
+	Mon, 27 Oct 2025 20:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="s+Er8bD0"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXEvNlGu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CFB2D63F6;
-	Mon, 27 Oct 2025 20:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC7B1CDFAC;
+	Mon, 27 Oct 2025 20:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761595356; cv=none; b=QnQuCcqWTty5amxx81FF8a0VQA5TzppVFCV1Km470VUKSeLq9tTxpGOKUeztMhYgfHOje+6at9hgqh9LNR1ZYTvljCQ8hqi1LbMt2n3B+tO8931Lc05z6peMwTwnsd9F0oMbYPAl45DERKMHh31zjcH+GREOLb73HkKCppENOBQ=
+	t=1761595532; cv=none; b=YHvIfTOdTJjPnNZPfM07yEuDBaGA5P7z9F/UtHuwcwBfB4icATJNUwaYc0UkX8DJs3ZQGiDO85ngEqAouvFj43UpwJs8b00ThVWrz/0U2wBjIEg+kziBYox1kFk+K3GpUHQoWFR7Eh/+I7d6KKdsXxiy0XBE215HVIG4KrrTkjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761595356; c=relaxed/simple;
-	bh=uZM06T+w1ikMeWwyZNy/+H/hwOfViLTy9qKNMRqlBMI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nKRxSmIg7znB4noSmv3O1c85oVgy05xKCokzgLQFQLUjLxvxXNJ85mJT05NfLrtYo4Ijb/tHo4jlweAJvWnu7ox0aXUZfhfmb1YLncCfOLGlufK1rNDgdm5q6OAozDaDpvXaoIibORUtVlobzPgjCH43I2161d5HQRGDZZgo514=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=s+Er8bD0; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1B47740467;
-	Mon, 27 Oct 2025 21:02:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1761595351; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Wlz4c6idBHgoakGdogx07IHOxQ08Zrz28QTnBsOB96g=;
-	b=s+Er8bD00Vh0zoFn1jyeFeDozj4hRXhzbJySMH1fBS4fpcF+R/hRSjBYDDQ8A418n6f5d7
-	UAbllmRWq1YZfRBjDizPOfTxF0c2uzyacC/4PRUSFDWoEoiDPmOxE9ygOBGyxPobAx4EPS
-	M0vaQFwmPcvidS6cWLk6Q4oejdCPxbepVGNkEVfgJfLDbFeejOP6lnPVV/w9B/M7xxFqfV
-	Tbq1Qt0++TTEniW4WEj5A8ZtFnVJvdhhYO8yLaqLQZ8X8MztfasawpW6h8a9bGp4tCrvoe
-	EMdi9kYJZVQ7CMhGn8LuGGANIr1yaiokCBht15DHYQRrkaaRRd8aV0xxNXCM3w==
-From: Dragan Simic <dsimic@manjaro.org>
-To: sigmaris@gmail.com
-Cc: alchark@gmail.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: pwm-fan overlay for NanoPC-T6
-Date: Mon, 27 Oct 2025 21:02:13 +0100
-Message-Id: <20251027200213.1821809-1-dsimic@manjaro.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <d583ee43-38c4-40fb-b33b-ce3153c9723b@gmail.com>
-References: <d583ee43-38c4-40fb-b33b-ce3153c9723b@gmail.com>
+	s=arc-20240116; t=1761595532; c=relaxed/simple;
+	bh=1XlzM+jAXF2KkKQm0DOR3UvVjTCMQIwuND6ijwUR7xY=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=uv7crseSLPvz5hXslla3VNYLQY3GASFmyzwKgpLGH4vKRbXS/MCv3gZvRUF1U4bZK8reWKZfhQTMRzMD9QJbiOD0R+JmJtmkeX8vz5UQwbPHN+yHou2lM/AZ8SYiatncILipsLodTBI8+36TO3WDqoGFr/U0p8suAIIOlZpVmAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXEvNlGu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC3CC4CEF1;
+	Mon, 27 Oct 2025 20:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761595531;
+	bh=1XlzM+jAXF2KkKQm0DOR3UvVjTCMQIwuND6ijwUR7xY=;
+	h=Subject:From:To:Cc:Date:From;
+	b=EXEvNlGui5KgTr+ppiMJGdRJoLOwgsQlTuA1qHK4sJtKWZ1IotN3MQD7NrWqvRkz7
+	 4Lre7J+H82DLsM3RP95GQnA4uChAJ3oEqqkDFMFqs6C7XFzvIuxwVEi5lmqvrTWItU
+	 xhOZYUH4Y+6YyIM3mfA7urNlgaU2Ti8pQTxn4cuiVJ72iw2O2gJ3HZml9AdXxkaq+F
+	 sdUeV1OwYNIGHdi73T8lC7aLP2fYoSoqng3QRmG1L212L0SU0w4MT/6N83c/oU5p4W
+	 W9brh4mTXgzBbyRdxlvnZ2on8xP3H8iunN3r4JT9mDzcu+8dXDyFimPKU49s+DanMM
+	 jZr1S+JvDq9gQ==
+Subject: [PATCH net V2 0/2] veth: Fix TXQ stall race condition and add
+ recovery
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+To: netdev@vger.kernel.org,
+ =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
+ Eric Dumazet <eric.dumazet@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, ihor.solodrai@linux.dev,
+ "Michael S. Tsirkin" <mst@redhat.com>, makita.toshiaki@lab.ntt.co.jp,
+ toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel-team@cloudflare.com
+Date: Mon, 27 Oct 2025 21:05:25 +0100
+Message-ID: <176159549627.5396.15971398227283515867.stgit@firesoul>
+User-Agent: StGit/1.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello Hugh and Alexey,
+This patchset addresses a race condition introduced in commit dc82a33297fc
+("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops"). In
+production, this has been observed to cause a permanently stalled transmit
+queue (TXQ) on ARM64 (Ampere Altra Max) systems, leading to a "lost wakeup"
+scenario where the TXQ remains in the QUEUE_STATE_DRV_XOFF state and traffic
+halts.
 
-On Mon, Oct 27, 2025 at 7:08 PM Hugh Cole-Baker <sigmaris@gmail.com> wrote:
-> On 27/10/2025 09:14, Alexey Charkov wrote:
->
->> Is there any downside to enabling this unconditionally in the board
->> .dts?
->
-> Only that it goes against the principle that the DT should describe the
-> hardware; the board .dts would describe a cooling device that doesn't
-> actually exist on the base board.
+The root cause, which is fixed in patch 2, is a racy use of the
+__ptr_ring_empty() API from the producer side (veth_xmit). The producer
+stops the queue and then checks the ptr_ring consumer's head, but this is
+not guaranteed to be correct, when observed from the producer side,
+when the NAPI consumer on another CPU has just finished consuming.
 
-Having a separate DT overlay is perfectly fine if we want to
-describe a board absolutely correctly: if the fan actually isn't
-present, the operating system shouldn't be made to think it is
-there, especially if there's no fan RPM feedback, which is the
-case on almost all Rockchip boards that support a fan.
+This series fixes the bug and make the driver more resilient to recover.
+The patches are ordered to first add recovery mechanisms, then fix the
+underlying race.
 
-Preventing the kernel from managing a non-existent fan might even
-save some CPU cycles, ending up producing a bit less heat, which
-can only help in passively cooled setups.
+V2:
+ - Drop patch that changed up/down NDOs
+ - For race fix add a smb_rmb and improve commit message reasoning for race cases
 
-However, the practice so far has been to describe the fans in the
-main board dts files, if the board provides fan support, regardless
-of the fan being present in a particular board setup or not.
+V1: https://lore.kernel.org/all/176123150256.2281302.7000617032469740443.stgit@firesoul/
 
-> I guess then in theory, an OS might allow the SoC to reach undesirably high
-> temperatures if it's relying on the nonexistent fan to cool it down. But I
-> don't think this would be an issue on Linux, at least, in practice.
+---
 
-We're safe, a thermal runaway isn't going to happen when the fan is
-defined in a board DT but actually isn't present.  Thermal CPU and
-GPU throttling will prevent the overheating from happening.
+Jesper Dangaard Brouer (2):
+      veth: enable dev_watchdog for detecting stalled TXQs
+      veth: more robust handing of race to avoid txq getting stuck
 
->> Overlays require more user configuration, and not all
->> bootloaders support them directly (e.g. systemd-boot users would
->> struggle). Compiling with overlays enabled also makes .dtb's a lot
->> larger due to added symbols information.
->
-> Nowadays (on Debian at least) using overlays is pretty easy, I'm using the
-> u-boot-menu package in Debian, I just copy the overlay(s) to /boot/dtbo/ and
-> it detects them automatically and adds them to extlinux.conf for u-boot to
-> apply.
->
-> Couldn't systemd-boot users just use rk3588-nanopc-t6-(lts-)with-fan.dtb as
-> their single DT to load, if it doesn't support applying overlays and they
-> want to use the fan addon?
 
-Yes, that's an option.  However, that in general doesn't resolve
-the issues arising from systemd-boot users wanting to apply more
-than a single DT overlay.
+ drivers/net/veth.c | 53 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 19 deletions(-)
 
-> FWIW, I haven't noticed any problems with having a larger .dtb (using mainline
-> U-Boot to load it) and several other RK3588 boards are also compiled with
-> symbols enabled already, and I haven't seen any issues reported with them.
-
-After thinking a bit about it, I'd support the extraction of fan
-definitions into separate DT overlays.  As I wrote above already,
-not managing the non-existent fan might actually help a bit with
-passively cooled board setups, which is a good enough reason for
-me to support separate DT overlays.
-
-If we end up agreeing to accept this DT overlay, I'll have some
-comments on the way cooling maps are defined.  I think there's
-quite a bit of redundancy there.
+--
 
 
