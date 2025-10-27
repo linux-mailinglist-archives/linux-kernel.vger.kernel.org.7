@@ -1,180 +1,454 @@
-Return-Path: <linux-kernel+bounces-871733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB1CC0E32D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:57:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99331C0E2A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C03421D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC5391894960
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD193054E4;
-	Mon, 27 Oct 2025 13:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7A3302178;
+	Mon, 27 Oct 2025 13:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I3c5tLKZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx8fxxy2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3D02F616B;
-	Mon, 27 Oct 2025 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F6F30171F;
+	Mon, 27 Oct 2025 13:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572964; cv=none; b=P/b/w6ArxijGbw3L3KwHuHAJSilRvj9NbCyM2X25X9X47iKiMjoCV69JBPmTCDAt/zfdl7CsOFLtR0WuVCSXXWId+Rqf853rvSiMaFY4McnCvyvK3WlhoNYWBEpJbHi+dzJsqz2kcs2+Ce/AMQVzaKzmqwgqEwnAiyR93A5qj/Q=
+	t=1761572960; cv=none; b=gPy0ioIL5m7Zin6yQtVXFWvglNo6rJ9J/8mdhCLeOLvPfkaByZPDyXr18lygokMqpAj6JLGzmmTIp4WR44gXgYfJLzd7nC7PoD9IiBKWkP9XEZUIBCeDoGjVEQOxP5yczqWos9eeFW/5XZZu/cwFEPunY5lSfWLH35J5RusZ8kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572964; c=relaxed/simple;
-	bh=CL3sxj2TOJ4ssp9gpSjQGlP6IRcPbLwIs43eMoTBK3A=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MOk0XB/30HzSdEAD8ec1WQ+jorKDT1EkHGqtjTx7xSGEB+u5oNDL9ps58DGFIlE83HHtocYNBg0JhSosVWOknmVPlI0bQn8rppI8WCfqcjKwxm5k6BXP2dJnB8Tr0/D9LCXcf8Phm6dI07gsENWsNqsYnb1WRH0mR1X7fOixTac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I3c5tLKZ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761572963; x=1793108963;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=CL3sxj2TOJ4ssp9gpSjQGlP6IRcPbLwIs43eMoTBK3A=;
-  b=I3c5tLKZEHAjlWlV6U/t/9lvMlKCKLbMIX/OZQH+cHzuFTbOAHTYgKsf
-   McYhnjNyEIkDRYDZpCuB/aPxo1VJXPK0XcUeQmIqt5I5xKZrx9CHVFprc
-   SMpHS62LcUlK63pCgU/UniCLvVm5wTbD9w+1SNZXX3ODXWHgpA+tAhgQ8
-   /vUEWI+c0B7khaH+QZUhtq+J1odiuG8QuqpvytM2OWp+po5iJwANE07dB
-   pnFt1cC+LAQvpSDn5hS3KOveGrY2auvQeSkxRYgQFUELwsIZg30ENi6BK
-   lw3e2uvLEZzb+OYIdrfvhJqS7UIdjr3mPwYxHnfihLV3d3HVrJwg37Yek
-   g==;
-X-CSE-ConnectionGUID: RU5nkiIJS2qRFJomah7DIw==
-X-CSE-MsgGUID: 0eap5wEdTEGSIjM9Yp9TZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63574863"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63574863"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 06:49:22 -0700
-X-CSE-ConnectionGUID: E7bQscSiT1CELxF72xsJzg==
-X-CSE-MsgGUID: jcklHb9tSlStkEjQP/FhKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; 
-   d="scan'208";a="184942814"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.41])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 06:49:18 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 27 Oct 2025 15:49:14 +0200 (EET)
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com, kw@linux.com, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
-    lucas.demarchi@intel.com, rafael.j.wysocki@intel.com, 
-    Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-In-Reply-To: <81fd91f2-638c-466d-9b27-705a44632713@gmail.com>
-Message-ID: <3d626c68-8e63-7e5b-a08a-c47845ee06eb@linux.intel.com>
-References: <20251017185246.GA1040948@bhelgaas> <702c4ad7-508b-42de-9dc3-40e4a0fe7bd7@gmail.com> <b3a49920-1cff-4ea2-519a-318030ba8797@linux.intel.com> <81fd91f2-638c-466d-9b27-705a44632713@gmail.com>
+	s=arc-20240116; t=1761572960; c=relaxed/simple;
+	bh=EN+iBnroKVniAZhpDuI/2nYH0ZNF3nnaF1oS68q/mIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y9wOtDtp+dvlWsAj/iXYHweTz3plLprdWocnM8HypdLFv30L22uPoYa+9u8BHiyk0byD/itVzm6TMLTBOoAlDmiBOMI9uoqexsMB4TteZkCkIC7e0TDEZYfXQGEKkrK80+/Q1a8HKQaZbmql2k4PlF/eIqe+AdkO+/NFdgcZff0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx8fxxy2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE406C4CEF1;
+	Mon, 27 Oct 2025 13:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761572960;
+	bh=EN+iBnroKVniAZhpDuI/2nYH0ZNF3nnaF1oS68q/mIE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tx8fxxy26N+P3THCze9CKdqB+vKlG5MXijEyzff41NMWcCkYpXIQbJO2hhZoQZFuu
+	 i0SvlfgsY81vg7Xn5iCtU2+x6rHVvFq2CSr0kABMKiQdDF/vsRLryk3U6dc4fM5XbH
+	 3GFw9UzaO2TAiBrF1iUqUbdudzJWOZnG87DoFBwAa94rctNYkTb6PKap1MTJbk0jiU
+	 fuXSD047a7rPTL9Qjp1CAv3Cetjw/RPg8Zt7Zcoi/c0LnPaoM7hGaMWacxXOzLWJoK
+	 AvK+QIxZax8x6N4rQd+ASXm+L/S7yWVYlOFuPj8NVWBZQ7+uBvV1lUCzKNsOcHutK0
+	 q50pNhBp5j9dA==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Maarten Lankhorst <dev@lankhorst.se>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.10.y] devcoredump: Fix circular locking dependency with devcd->mutex.
+Date: Mon, 27 Oct 2025 09:49:17 -0400
+Message-ID: <20251027134917.491617-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <2025102624-aspect-stumble-aea9@gregkh>
+References: <2025102624-aspect-stumble-aea9@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1426142950-1761572954=:970"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Maarten Lankhorst <dev@lankhorst.se>
 
---8323328-1426142950-1761572954=:970
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+[ Upstream commit a91c8096590bd7801a26454789f2992094fe36da ]
 
-On Mon, 27 Oct 2025, Bhanu Seshu Kumar Valluri wrote:
-> On 21/10/25 00:16, Ilpo J=C3=A4rvinen wrote:
-> > On Sat, 18 Oct 2025, Bhanu Seshu Kumar Valluri wrote:
-> >=20
-> >> On 18/10/25 00:22, Bjorn Helgaas wrote:
-> >>> On Fri, Oct 17, 2025 at 11:52:58PM +0530, Bhanu Seshu Kumar Valluri w=
-rote:
-> >>>>
-> >>>> I want to report that this PATCH also break PCI RC port on TI-AM64-E=
-VM.
-> >>>>
-> >>>> I did git bisect and it pointed to the a43ac325c7cb ("PCI: Set up br=
-idge resources earlier")
-> >>>>
-> >>>> Happy to help if any testing or logs are required.
-> >>>
-> >>> Thanks for the report!  Can you test this patch?
-> >>>
-> >>>   https://patch.msgid.link/20251014163602.17138-1-ilpo.jarvinen@linux=
-=2Eintel.com
-> >>>
-> >>> That patch is queued up as
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?i=
-d=3D469276c06aff
-> >>> and should appear in v6.18-rc2 on Sunday if all goes well.
-> >>>
-> >>> If that doesn't work, let us know and we'll debug this further.
-> >>
-> >> I applied above patch on top of commit f406055cb18c ("Merge tag 'arm64=
--fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux")
-> >>
-> >> Did pci rescan and run kselftest (pci_endpoint_test). It is working.
-> >>
-> >> Thanks for the patch.
-> >=20
-> > Thanks for testing the revert.
-> >=20
-> >> Happy to help if any testing or logs are required.
-> >=20
-> > I'd be interested to understand what goes wrong with the change I was=
-=20
-> > trying to make as I want to attempt the same change later, but with all=
-=20
-> > known issues solved by supporting changes, obviously :-).
-> >=20
-> > The log snippets you provided are unfortunately too short to contain al=
-l=20
-> > the necessary information (missing e.g. root bus resources and possibly=
-=20
-> > other helpful details).
-> >=20
-> > So if you could provide dmesg and /proc/iomem contents from broken and
-> > working (with the revert) cases to let me easily compare them, that wou=
-ld=20
-> > help. Please take the dmesg with dyndbg=3D"file drivers/pci/*.c +p" on=
-=20
-> > kernel's cmdline.
-> >=20
-> > No further actions needed beyond that until later if I need to test som=
-e=20
-> > of those supporting changes before retrying all this in the mainline. I=
-t=20
-> > may take some time, even more than one kernel cycle as there have been=
-=20
-> > quite many regressions.
-> >=20
-> >=20
-> Hi
->=20
-> I captured logs with dyndbg=3D"file drivers/pci/*.c +p. See the links bel=
-ow.
->=20
-> Working kernel logs
-> https://github.com/bhanuseshukumar/kernel_logs/blob/main/working_log
->=20
-> Non Working kernel logs
-> https://github.com/bhanuseshukumar/kernel_logs/blob/main/not_working_log
->=20
-> Happy to help if any testing or logs are required.
+The original code causes a circular locking dependency found by lockdep.
 
-Could you try if booting with pci=3Drealloc helps? (It might be that it is=
-=20
-ineffective like I saw in some other case.)
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 Tainted: G S   U
+------------------------------------------------------
+xe_fault_inject/5091 is trying to acquire lock:
+ffff888156815688 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}, at: __flush_work+0x25d/0x660
 
-And also test if this old size removal patch helps:
+but task is already holding lock:
 
-https://lore.kernel.org/linux-pci/922b1f68-a6a2-269b-880c-d594f9ca6bde@linu=
-x.intel.com/
+ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
+which lock already depends on the new lock.
+the existing dependency chain (in reverse order) is:
+-> #2 (&devcd->mutex){+.+.}-{3:3}:
+       mutex_lock_nested+0x4e/0xc0
+       devcd_data_write+0x27/0x90
+       sysfs_kf_bin_write+0x80/0xf0
+       kernfs_fop_write_iter+0x169/0x220
+       vfs_write+0x293/0x560
+       ksys_write+0x72/0xf0
+       __x64_sys_write+0x19/0x30
+       x64_sys_call+0x2bf/0x2660
+       do_syscall_64+0x93/0xb60
+       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+-> #1 (kn->active#236){++++}-{0:0}:
+       kernfs_drain+0x1e2/0x200
+       __kernfs_remove+0xae/0x400
+       kernfs_remove_by_name_ns+0x5d/0xc0
+       remove_files+0x54/0x70
+       sysfs_remove_group+0x3d/0xa0
+       sysfs_remove_groups+0x2e/0x60
+       device_remove_attrs+0xc7/0x100
+       device_del+0x15d/0x3b0
+       devcd_del+0x19/0x30
+       process_one_work+0x22b/0x6f0
+       worker_thread+0x1e8/0x3d0
+       kthread+0x11c/0x250
+       ret_from_fork+0x26c/0x2e0
+       ret_from_fork_asm+0x1a/0x30
+-> #0 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}:
+       __lock_acquire+0x1661/0x2860
+       lock_acquire+0xc4/0x2f0
+       __flush_work+0x27a/0x660
+       flush_delayed_work+0x5d/0xa0
+       dev_coredump_put+0x63/0xa0
+       xe_driver_devcoredump_fini+0x12/0x20 [xe]
+       devm_action_release+0x12/0x30
+       release_nodes+0x3a/0x120
+       devres_release_all+0x8a/0xd0
+       device_unbind_cleanup+0x12/0x80
+       device_release_driver_internal+0x23a/0x280
+       device_driver_detach+0x14/0x20
+       unbind_store+0xaf/0xc0
+       drv_attr_store+0x21/0x50
+       sysfs_kf_write+0x4a/0x80
+       kernfs_fop_write_iter+0x169/0x220
+       vfs_write+0x293/0x560
+       ksys_write+0x72/0xf0
+       __x64_sys_write+0x19/0x30
+       x64_sys_call+0x2bf/0x2660
+       do_syscall_64+0x93/0xb60
+       entry_SYSCALL_64_after_hwframe+0x76/0x7e
+other info that might help us debug this:
+Chain exists of: (work_completion)(&(&devcd->del_wk)->work) --> kn->active#236 --> &devcd->mutex
+ Possible unsafe locking scenario:
+       CPU0                    CPU1
+       ----                    ----
+  lock(&devcd->mutex);
+                               lock(kn->active#236);
+                               lock(&devcd->mutex);
+  lock((work_completion)(&(&devcd->del_wk)->work));
+ *** DEADLOCK ***
+5 locks held by xe_fault_inject/5091:
+ #0: ffff8881129f9488 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x72/0xf0
+ #1: ffff88810c755078 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x123/0x220
+ #2: ffff8881054811a0 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x55/0x280
+ #3: ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
+ #4: ffffffff8359e020 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x72/0x660
+stack backtrace:
+CPU: 14 UID: 0 PID: 5091 Comm: xe_fault_inject Tainted: G S   U              6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 PREEMPT_{RT,(lazy)}
+Tainted: [S]=CPU_OUT_OF_SPEC, [U]=USER
+Hardware name: Micro-Star International Co., Ltd. MS-7D25/PRO Z690-A DDR4(MS-7D25), BIOS 1.10 12/13/2021
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ dump_stack+0x10/0x20
+ print_circular_bug+0x285/0x360
+ check_noncircular+0x135/0x150
+ ? register_lock_class+0x48/0x4a0
+ __lock_acquire+0x1661/0x2860
+ lock_acquire+0xc4/0x2f0
+ ? __flush_work+0x25d/0x660
+ ? mark_held_locks+0x46/0x90
+ ? __flush_work+0x25d/0x660
+ __flush_work+0x27a/0x660
+ ? __flush_work+0x25d/0x660
+ ? trace_hardirqs_on+0x1e/0xd0
+ ? __pfx_wq_barrier_func+0x10/0x10
+ flush_delayed_work+0x5d/0xa0
+ dev_coredump_put+0x63/0xa0
+ xe_driver_devcoredump_fini+0x12/0x20 [xe]
+ devm_action_release+0x12/0x30
+ release_nodes+0x3a/0x120
+ devres_release_all+0x8a/0xd0
+ device_unbind_cleanup+0x12/0x80
+ device_release_driver_internal+0x23a/0x280
+ ? bus_find_device+0xa8/0xe0
+ device_driver_detach+0x14/0x20
+ unbind_store+0xaf/0xc0
+ drv_attr_store+0x21/0x50
+ sysfs_kf_write+0x4a/0x80
+ kernfs_fop_write_iter+0x169/0x220
+ vfs_write+0x293/0x560
+ ksys_write+0x72/0xf0
+ __x64_sys_write+0x19/0x30
+ x64_sys_call+0x2bf/0x2660
+ do_syscall_64+0x93/0xb60
+ ? __f_unlock_pos+0x15/0x20
+ ? __x64_sys_getdents64+0x9b/0x130
+ ? __pfx_filldir64+0x10/0x10
+ ? do_syscall_64+0x1a2/0xb60
+ ? clear_bhb_loop+0x30/0x80
+ ? clear_bhb_loop+0x30/0x80
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x76e292edd574
+Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+RSP: 002b:00007fffe247a828 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000076e292edd574
+RDX: 000000000000000c RSI: 00006267f6306063 RDI: 000000000000000b
+RBP: 000000000000000c R08: 000076e292fc4b20 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00006267f6306063
+R13: 000000000000000b R14: 00006267e6859c00 R15: 000076e29322a000
+ </TASK>
+xe 0000:03:00.0: [drm] Xe device coredump has been deleted.
 
+Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # v6.1+
+Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20250723142416.1020423-1-dev@lankhorst.se
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ replaced disable_delayed_work_sync() with cancel_delayed_work_sync() ]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/base/devcoredump.c | 138 ++++++++++++++++++++++---------------
+ 1 file changed, 84 insertions(+), 54 deletions(-)
 
---=20
- i.
+diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
+index 4d725d1fd61ae..0b7220e1ff567 100644
+--- a/drivers/base/devcoredump.c
++++ b/drivers/base/devcoredump.c
+@@ -30,50 +30,46 @@ struct devcd_entry {
+ 	void *data;
+ 	size_t datalen;
+ 	/*
+-	 * Here, mutex is required to serialize the calls to del_wk work between
+-	 * user/kernel space which happens when devcd is added with device_add()
+-	 * and that sends uevent to user space. User space reads the uevents,
+-	 * and calls to devcd_data_write() which try to modify the work which is
+-	 * not even initialized/queued from devcoredump.
++	 * There are 2 races for which mutex is required.
+ 	 *
++	 * The first race is between device creation and userspace writing to
++	 * schedule immediately destruction.
+ 	 *
++	 * This race is handled by arming the timer before device creation, but
++	 * when device creation fails the timer still exists.
+ 	 *
+-	 *        cpu0(X)                                 cpu1(Y)
++	 * To solve this, hold the mutex during device_add(), and set
++	 * init_completed on success before releasing the mutex.
+ 	 *
+-	 *        dev_coredump() uevent sent to user space
+-	 *        device_add()  ======================> user space process Y reads the
+-	 *                                              uevents writes to devcd fd
+-	 *                                              which results into writes to
++	 * That way the timer will never fire until device_add() is called,
++	 * it will do nothing if init_completed is not set. The timer is also
++	 * cancelled in that case.
+ 	 *
+-	 *                                             devcd_data_write()
+-	 *                                               mod_delayed_work()
+-	 *                                                 try_to_grab_pending()
+-	 *                                                   del_timer()
+-	 *                                                     debug_assert_init()
+-	 *       INIT_DELAYED_WORK()
+-	 *       schedule_delayed_work()
+-	 *
+-	 *
+-	 * Also, mutex alone would not be enough to avoid scheduling of
+-	 * del_wk work after it get flush from a call to devcd_free()
+-	 * mentioned as below.
+-	 *
+-	 *	disabled_store()
+-	 *        devcd_free()
+-	 *          mutex_lock()             devcd_data_write()
+-	 *          flush_delayed_work()
+-	 *          mutex_unlock()
+-	 *                                   mutex_lock()
+-	 *                                   mod_delayed_work()
+-	 *                                   mutex_unlock()
+-	 * So, delete_work flag is required.
++	 * The second race involves multiple parallel invocations of devcd_free(),
++	 * add a deleted flag so only 1 can call the destructor.
+ 	 */
+ 	struct mutex mutex;
+-	bool delete_work;
++	bool init_completed, deleted;
+ 	struct module *owner;
+ 	ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+ 			void *data, size_t datalen);
+ 	void (*free)(void *data);
++	/*
++	 * If nothing interferes and device_add() was returns success,
++	 * del_wk will destroy the device after the timer fires.
++	 *
++	 * Multiple userspace processes can interfere in the working of the timer:
++	 * - Writing to the coredump will reschedule the timer to run immediately,
++	 *   if still armed.
++	 *
++	 *   This is handled by using "if (cancel_delayed_work()) {
++	 *   schedule_delayed_work() }", to prevent re-arming after having
++	 *   been previously fired.
++	 * - Writing to /sys/class/devcoredump/disabled will destroy the
++	 *   coredump synchronously.
++	 *   This is handled by using disable_delayed_work_sync(), and then
++	 *   checking if deleted flag is set with &devcd->mutex held.
++	 */
+ 	struct delayed_work del_wk;
+ 	struct device *failing_dev;
+ };
+@@ -102,14 +98,27 @@ static void devcd_dev_release(struct device *dev)
+ 	kfree(devcd);
+ }
+ 
++static void __devcd_del(struct devcd_entry *devcd)
++{
++	devcd->deleted = true;
++	device_del(&devcd->devcd_dev);
++	put_device(&devcd->devcd_dev);
++}
++
+ static void devcd_del(struct work_struct *wk)
+ {
+ 	struct devcd_entry *devcd;
++	bool init_completed;
+ 
+ 	devcd = container_of(wk, struct devcd_entry, del_wk.work);
+ 
+-	device_del(&devcd->devcd_dev);
+-	put_device(&devcd->devcd_dev);
++	/* devcd->mutex serializes against dev_coredumpm_timeout */
++	mutex_lock(&devcd->mutex);
++	init_completed = devcd->init_completed;
++	mutex_unlock(&devcd->mutex);
++
++	if (init_completed)
++		__devcd_del(devcd);
+ }
+ 
+ static ssize_t devcd_data_read(struct file *filp, struct kobject *kobj,
+@@ -129,12 +138,12 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
+ 	struct device *dev = kobj_to_dev(kobj);
+ 	struct devcd_entry *devcd = dev_to_devcd(dev);
+ 
+-	mutex_lock(&devcd->mutex);
+-	if (!devcd->delete_work) {
+-		devcd->delete_work = true;
+-		mod_delayed_work(system_wq, &devcd->del_wk, 0);
+-	}
+-	mutex_unlock(&devcd->mutex);
++	/*
++	 * Although it's tempting to use mod_delayed work here,
++	 * that will cause a reschedule if the timer already fired.
++	 */
++	if (cancel_delayed_work(&devcd->del_wk))
++		schedule_delayed_work(&devcd->del_wk, 0);
+ 
+ 	return count;
+ }
+@@ -162,11 +171,21 @@ static int devcd_free(struct device *dev, void *data)
+ {
+ 	struct devcd_entry *devcd = dev_to_devcd(dev);
+ 
++	/*
++	 * To prevent a race with devcd_data_write(), cancel work and
++	 * complete manually instead.
++	 *
++	 * We cannot rely on the return value of
++	 * cancel_delayed_work_sync() here, because it might be in the
++	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
++	 *
++	 * devcd->mutex here guards against multiple parallel invocations
++	 * of devcd_free().
++	 */
++	cancel_delayed_work_sync(&devcd->del_wk);
+ 	mutex_lock(&devcd->mutex);
+-	if (!devcd->delete_work)
+-		devcd->delete_work = true;
+-
+-	flush_delayed_work(&devcd->del_wk);
++	if (!devcd->deleted)
++		__devcd_del(devcd);
+ 	mutex_unlock(&devcd->mutex);
+ 	return 0;
+ }
+@@ -190,12 +209,10 @@ static ssize_t disabled_show(struct class *class, struct class_attribute *attr,
+  *                                                                 put_device() <- last reference
+  *             error = fn(dev, data)                           devcd_dev_release()
+  *             devcd_free(dev, data)                           kfree(devcd)
+- *             mutex_lock(&devcd->mutex);
+  *
+  *
+- * In the above diagram, It looks like disabled_store() would be racing with parallely
+- * running devcd_del() and result in memory abort while acquiring devcd->mutex which
+- * is called after kfree of devcd memory  after dropping its last reference with
++ * In the above diagram, it looks like disabled_store() would be racing with parallelly
++ * running devcd_del() and result in memory abort after dropping its last reference with
+  * put_device(). However, this will not happens as fn(dev, data) runs
+  * with its own reference to device via klist_node so it is not its last reference.
+  * so, above situation would not occur.
+@@ -357,7 +374,7 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 	devcd->read = read;
+ 	devcd->free = free;
+ 	devcd->failing_dev = get_device(dev);
+-	devcd->delete_work = false;
++	devcd->deleted = false;
+ 
+ 	mutex_init(&devcd->mutex);
+ 	device_initialize(&devcd->devcd_dev);
+@@ -366,8 +383,14 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 		     atomic_inc_return(&devcd_count));
+ 	devcd->devcd_dev.class = &devcd_class;
+ 
+-	mutex_lock(&devcd->mutex);
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, true);
++
++	/* devcd->mutex prevents devcd_del() completing until init finishes */
++	mutex_lock(&devcd->mutex);
++	devcd->init_completed = false;
++	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
++	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
++
+ 	if (device_add(&devcd->devcd_dev))
+ 		goto put_device;
+ 
+@@ -381,13 +404,20 @@ void dev_coredumpm(struct device *dev, struct module *owner,
+ 
+ 	dev_set_uevent_suppress(&devcd->devcd_dev, false);
+ 	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
+-	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
+-	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
++
++	/*
++	 * Safe to run devcd_del() now that we are done with devcd_dev.
++	 * Alternatively we could have taken a ref on devcd_dev before
++	 * dropping the lock.
++	 */
++	devcd->init_completed = true;
+ 	mutex_unlock(&devcd->mutex);
+ 	return;
+  put_device:
+-	put_device(&devcd->devcd_dev);
+ 	mutex_unlock(&devcd->mutex);
++	cancel_delayed_work_sync(&devcd->del_wk);
++	put_device(&devcd->devcd_dev);
++
+  put_module:
+ 	module_put(owner);
+  free:
+-- 
+2.51.0
 
---8323328-1426142950-1761572954=:970--
 
