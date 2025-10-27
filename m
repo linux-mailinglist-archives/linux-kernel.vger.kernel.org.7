@@ -1,102 +1,100 @@
-Return-Path: <linux-kernel+bounces-872789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59F1C12098
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:30:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE839C12044
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2024F502E4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA442188CE79
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4306132E720;
-	Mon, 27 Oct 2025 23:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F45330B2B;
+	Mon, 27 Oct 2025 23:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="p8Wf8c+3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMgQzw5k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7466A32779A;
-	Mon, 27 Oct 2025 23:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0C032ED2B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607523; cv=none; b=Ql8P8PxFJZZrYQc75v3WGBvdOeYu9xpCTEHpt9p3QUQglVrFHjhWhrAsQY5LUWOWAF4hfFYWO1SGL3kUk70OAvSkqgGLloqSNWt21G7LeXC8iKTpCB8jhBMNt8QbGmDhlDJjA2gOSLmegWtu+mfTVJ7Bt7mI9jrZhWJCtKl96RY=
+	t=1761607568; cv=none; b=W8y+9eDICu6bC0/rYrCKYBFcNuHurUROUKEG+DU80KeF5/esViqp7UdX3AEfj0tSQA/Ghqt6BryhsZOc75nJhUum9Hc+BxEu8NyB+ix+WRgn/jaNm9SUwNlWQqBUjnZDHGN9rAqZe6p4lHv/tWp/yxx3dr5nyWFAYlOPx0qbaz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607523; c=relaxed/simple;
-	bh=1ZAtv1k7qLg8MgQOvSbxTtTfacA9rWU661BgI+pDVq4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AIPhTS4pW52xGtKqnMB2ZTBM+PCi+SZwAKWFPdAX2gUVdLd0g+pTKMvVz0jv6+E5/jx7dhWhCf1wi3en6sP9Q78fVpJ/3UuiP5WyIZgwO9B9PAIwMeJdwH1PqTU/TGczYVhJKCeO80tYzZuY+6gpzNIi2XyBqOMX3wvCu3KBkyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=p8Wf8c+3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C715C4CEF1;
-	Mon, 27 Oct 2025 23:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761607522;
-	bh=1ZAtv1k7qLg8MgQOvSbxTtTfacA9rWU661BgI+pDVq4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=p8Wf8c+3emDUEx/LKVNdgfy7OmdSHq8XWZ6wFAuaK1FwwE4aWRE5ucLMWzj4UouZG
-	 /34e/TnVpdrTlsD1PWMyzRg0VDxDMkVEYHyPNBW+lsL+tamb4jIR2A3LTpLCB/5Y6O
-	 n3lwF4kGPjgZRHinYZasxHvUwi1icLTF2VMUFhgc=
-Date: Mon, 27 Oct 2025 16:25:21 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>, Wei Yang
- <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, Steven Rostedt
- <rostedt@goodmis.org>
-Subject: Re: [PATCH] selftests/user_events: Avoid taking address of packed
- member in perf_test
-Message-Id: <20251027162521.c56c7f89f6ad4e3d639c408c@linux-foundation.org>
-In-Reply-To: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
-References: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761607568; c=relaxed/simple;
+	bh=LP08PxMOy3+q7wsXIRxd+k6qF4bhNukjRqN2R7SnbJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hjcvGDllIdoxnVfAlgxLzRtYdgyBRE++jHuAswM2H9eMb5sc2XrzS2LjR45NR5R3Vg366QsVSBEaqBehb5KIQISn7wKfuHv8xAepRj4kzKFzTQDKGIaORezJmoipWHxxZJpoBlGOGFLgMLO2+aKzaeV2hPV5Ut4OmlWz3vGixWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMgQzw5k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529E3C19421
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761607568;
+	bh=LP08PxMOy3+q7wsXIRxd+k6qF4bhNukjRqN2R7SnbJo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YMgQzw5ktHHkIoZDDp8fmeIIxPhW3KmOp1ndU12agoAwMolAYuds0tzDxoZ3lLwvi
+	 90D8GNBcJ5MR9tZIXs60SeU1xedeWKwJkcxCo+fnrKG3wubGnSvNPIS+HfWrdLYQNg
+	 +QSePw5bDWFRgOUuvQNlInvHah694lOFOQ+Je4wFctkGmNBKJjadfuhUTLtiAP5aRu
+	 Et+cYmW/xRrC7IqJAPdd45iUVRI44kgi1zY/VHtGQLamY389aw1FUk6hzrog1UZ21F
+	 x0I3LxUKX8UbrDXDNuKXePMos3odZblAdMODdYIFLTVqc/zNEk1eMhBxdxThXcNTRA
+	 WeDELGSbTY49w==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c3d913b3bso9042484a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:26:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMaTgcyCh7WXtOCYz0idcej0w5ao8Eql/GAF0Zwhg7m6R70iioCTViE82GQoLORfi1O3Rz15zJB9Xr93A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHJYj2hPOuD/PHC3+IjBFW3C3yGXaUTJVHBYhwyxcIFghYgLYD
+	Nk4RmewLOi1mbpI58oQ3C7iEY3aMFvyRo8af8v4t+lNIgx5vCEMZdTYQ/jNEKrjwQ6Yg7LmxzR0
+	Zy6DfuHZVtYGswp6EJiqCHAy0wlBCdA==
+X-Google-Smtp-Source: AGHT+IEX1xGnmtwVGoDLaZVp4aFh7ruN9LkPKkhMyM+i6wHN4ucAhYDTaXvbn65T7tutgmjdp+KLABvK7KA+7GmnR/0=
+X-Received: by 2002:a05:6402:5cd:b0:63b:ee26:5449 with SMTP id
+ 4fb4d7f45d1cf-63ed84b8529mr1554449a12.32.1761607566727; Mon, 27 Oct 2025
+ 16:26:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20251022165509.3917655-2-robh@kernel.org> <CACRpkdYioyktQ5is6TJnkgX=MHk2-zf-XO-gx6sKcST2GABNiA@mail.gmail.com>
+In-Reply-To: <CACRpkdYioyktQ5is6TJnkgX=MHk2-zf-XO-gx6sKcST2GABNiA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 27 Oct 2025 18:25:55 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJh=ccCR_TR2sgMJJ9ChkBC4zx0d0s_imGjHNt0Mbp=Bg@mail.gmail.com>
+X-Gm-Features: AWmQ_bnoPPjAhNXAPXCoKnPtawt5o6d_64F1B37jF33JCalDTEepaJ4EpcJjEG4
+Message-ID: <CAL_JsqJh=ccCR_TR2sgMJJ9ChkBC4zx0d0s_imGjHNt0Mbp=Bg@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: arm: Convert Marvell CP110 System
+ Controller to DT schema
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025 17:04:39 +0530 Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
-
-> Accessing 'reg.write_index' directly triggers a -Waddress-of-packed-member
-> warning due to potential unaligned pointer access:
-> 
-> perf_test.c:239:38: warning: taking address of packed member 'write_index'
-> of class or structure 'user_reg' may result in an unaligned pointer value 
-> [-Waddress-of-packed-member]
->   239 |         ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
->       |                                             ^~~~~~~~~~~~~~~ 
-> 
-> Use memcpy() instead to safely copy the value and avoid unaligned pointer
-> access across architectures.
-> 
-> ...
+On Mon, Oct 27, 2025 at 4:58=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
 >
-> --- a/tools/testing/selftests/user_events/perf_test.c
-> +++ b/tools/testing/selftests/user_events/perf_test.c
-> @@ -201,6 +201,7 @@ TEST_F(user, perf_empty_events) {
->  	struct perf_event_mmap_page *perf_page;
->  	int page_size = sysconf(_SC_PAGESIZE);
->  	int id, fd;
-> +	__u32 write_index;
->  	__u32 *val;
->  
->  	reg.size = sizeof(reg);
-> @@ -236,7 +237,8 @@ TEST_F(user, perf_empty_events) {
->  	ASSERT_EQ(1 << reg.enable_bit, self->check);
->  
->  	/* Ensure write shows up at correct offset */
-> -	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
-> +	memcpy(&write_index, &reg.write_index, sizeof(reg.write_index));
-> +	ASSERT_NE(-1, write(self->data_fd, &write_index,
->  	                    sizeof(reg.write_index)));
+> On Wed, Oct 22, 2025 at 6:56=E2=80=AFPM Rob Herring (Arm) <robh@kernel.or=
+g> wrote:
+>
+> > Convert the Marvell CP110 System Controller binding to DT schema
+> > format.
+> >
+> > There's not any specific compatible for the whole block which is a
+> > separate problem, so just the child nodes are documented. Only the
+> > pinctrl and clock child nodes need to be converted as the GPIO node
+> > already has a schema.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> Patch applied!
 
-Simply casting &write_index to void* would fix this?
+I already applied as it is clock and pinctrl.
 
->  	val = (void *)(((char *)perf_page) + perf_page->data_offset);
->  	ASSERT_EQ(PERF_RECORD_SAMPLE, *val);
+Rob
 
