@@ -1,155 +1,110 @@
-Return-Path: <linux-kernel+bounces-872464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302D4C113D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2BEC113EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA20D18993A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8037C19C371A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCAD31B80E;
-	Mon, 27 Oct 2025 19:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B681FA859;
+	Mon, 27 Oct 2025 19:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LjIWPXx6"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Erki/gED"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD892D7D47
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4810A2C08D7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761594298; cv=none; b=Au1OewUKuIaZxh2UPTjs12CFLgAKX0yQJcT+CDfyApJGoA/QKV/vkI1p0ZZxy+hYNouMJNBIclSIsl179nTkkvQzpOuNLYG8pA6TInbkkKaO9gqRuWpory09/gSkcBDvUcrbvKEmCOQj9xM9xKKcCLr9KDzmyvI7xHH80TOrKYA=
+	t=1761594362; cv=none; b=b548mVoMmfgP/WNFfQHB3UpB91caVUZFcbg+v280t/2T0/Rq+hC9+/NEvdM8Cq4uXWKeTHZb153kNqjgqwB0SIbyuAxuz18OFG9IWoi0CHGNdPcQIYFWuQBxDRSqi/h9ehWZR1bZ1KH/oTJkCay3iVlG2mvIkZJJskbOQc8uGQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761594298; c=relaxed/simple;
-	bh=2+B45/rPs1MVjTtFKAmg7Mxr3EYanBlo2Mo3UvbIz5Q=;
+	s=arc-20240116; t=1761594362; c=relaxed/simple;
+	bh=nYf37d39Da9tD1c6nGhltl2lfPK+pJBRUuWPj00VhQE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uFcVKPWjXs/NOZQ/zaQYD/EFLXZZVpkEDEaZAl/MIRzH7fZ/Iqjg96Q00Mn68mvpWndqb5s7fHWhYPJa5ci0XPZMvorkpB+xXDcSkIvsrJWllVnh9g9auPTIFfUa7Ug7iMFRoA9eh9oqIx7Y/p1os9dDqGVUgUT+fOcBxKufn+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LjIWPXx6; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ea12242d2eso12551cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761594295; x=1762199095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JptCkBXsHjZlBBzRnLae/mJJEFh3aB9VIqvSzCz+zbA=;
-        b=LjIWPXx6jIZTrKELLV+28UuoInLQN8U33wINOfUenzAV4XuK+X4G+CBVYzJNuQBpc+
-         hzjiJUoriBgCmd6zVPnDHiXlCsJ7ZhiTWDsstf/rhKQ/oePwHBN16dpvIAEqJFy8qan+
-         Shd8B3NUygWiy6cOhhM2rof5L3BbVz5xwU4KYvEuwnAcvPD5fkhg1y5bmj9WVyUQQ+g9
-         5CcCRsj6IQVP+sQOpL7jHXfNkXrTU7DqJtxVKEiDRABkm8ImWV9yUA9XEtMEN6UjP0Ed
-         /6qT4+2cbZglcloRqn6/biWjxzF/mGCHxov2bA+/JRmjQQriUWz3NKmDtWpAsWJvhvY4
-         EdGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761594295; x=1762199095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JptCkBXsHjZlBBzRnLae/mJJEFh3aB9VIqvSzCz+zbA=;
-        b=ScCfPdQJVVXMpMOduKmTasCe45d2DqFvzDi1FKdTnY+qvN4izxCm3ELDzNQkhGmckc
-         NeoXggRkeyEyYs2wK6lY/mFzZGR4cHpiP612x0+iKI6R+uPp9xOZhJ1Ype06sAABQK54
-         Ik+i8u0pDCJz/Il+bK1gYnsXmAYMr5VEjKfjF2VU61NSc6hXD+Mdzn4jIMT0LVybvWA3
-         GILQb+lxQ6MPNCjHtIP0pWQqjKbqp+vNIZY97EpWJnrHrgkRhQUjcsoYfjmnN8d8Hivy
-         q7tqgIRUg1d4WzNCm/HhIuE9kBJ1pJF1lKfT5P7a/qsxmi0rLsto32f9Q2Y4oV+8QP3W
-         JLAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUozcsoz0A3rsezL7AFQh9hAPGwFZeyyXpMa6dLwov9LZIvOSaLK+JbX5ooWkd7KB+mqaabs71HIoI3ahA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlQCC+/M2/6ZehjRu60fJIZVWA8AkIL2OOm8LxgTtwWgzOkZ59
-	v3vUwVxUQPC8CClAlp8ejbeHf0+2/k1wM6n06hCHulQtirQRDRegWrGysMDlgwGS4DCtKXxqMKt
-	n/ee7Jmk+LMQbLyAjV5KZrnJ5ux8+Bpm0H7nCIvxA
-X-Gm-Gg: ASbGncsvc2MHwoCju++AYfzLS4XCoox7FAqSEWHaTupBgV0kWJjhZR7+chcq8FC7l6w
-	UbxkRYwyxqyXlcVJ2T5xZVg67wm6HbqA/EZSGGapXerRcSMnuBFcXkSwZ5NvYegfwK52X3SKYmW
-	71r7uXzUInWHAC+vqOFkU3X+euhv2qRUJvl2k0RWVIYWHLXDA2LvVwMKB2P+Dlgwk8X1Nek4LyC
-	GrfQPrQzCqAvy2SvGusFIAXvKarFFGPHphULsbuB2yDDXkyTBps77Da5MA=
-X-Google-Smtp-Source: AGHT+IEDRWjZQdkoQn4JOV8IDsTmIW0+zMctax/00G1Ot311AEaKU+dlsGs5ioPlepPWCTlzahP9mAEfzBcRuEnpQFk=
-X-Received: by 2002:a05:622a:145:b0:4eb:75cb:a267 with SMTP id
- d75a77b69052e-4ed08f87205mr1488091cf.12.1761594295008; Mon, 27 Oct 2025
- 12:44:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=pOcDGa8JDTuiiGVwF+tg8Z1k76kbmGHsjClcRLhg2oN6mpZNG/bj9xQwCVQEDIhCVREOjmKEmUBhD2wMBrrqeaX+0YNRbElTOd3STRmQHLJY5ZOVqsdQPRPZsy0A1WoV2FVMwczVDOn5ztau+wQJjQI+lAw+72hf3CQe8IxhdMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Erki/gED; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F201CC116C6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761594362;
+	bh=nYf37d39Da9tD1c6nGhltl2lfPK+pJBRUuWPj00VhQE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Erki/gEDXPoAiSM2sZmiZQwbEg3fuwhiM5qEuepYn4JtBzt5ir9YIDzEeC4A0InbR
+	 YHGHLhlO64DT1vzS/Ui/KONQd6aMmDDkKJhd4yyKtUAMpd8xRyNrmoOovtB144zUEI
+	 jNPS5Mt1dpBpYZpX8C53UjE7LDVCWWuiAh/fUT4zZefoUDfp1IJeQR0DL2aRBuyO5w
+	 FwnqNpy2j5tITOG26hYevyWdrBrcZQO7rooUHqp/rTykM33s9Y3spDIDdYU+dRymLJ
+	 P6AQTeOZBNkphd7JYfAzIcalNF1qUUGARCPyIcrzPIRDi7nFOTsd3b9LnFAFXpxx5m
+	 5FKdekjILG3Rw==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-654fb0921a6so451274eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:46:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV850NFgLhzHT5xByeQXXDw9vRguUTkqqhEaeVeQk7M6+UECVUwkvwE8RCFIC+nrkoeFZz3PpIS3tpmGZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjHJGFmWcqyOyr/xw5X9LRMsfc1zU+iNt28Uwacy1tK1hoiGeH
+	B1Ieh0B9k7nMh+qyMN99FTsm8ImnoIVZJ6xQFIjgOyDRZjhn1WFGOnUNhwAX0osIsqHLGrPqwwP
+	vb43n0tBQ+ysbsLqXRXTKobc9jWJi5EQ=
+X-Google-Smtp-Source: AGHT+IHX7zeTaM01SXUeWCj6P/wH9oQC6auwoVN7RODP41DySirMt4DRUR/bGSNbaW/i/xL5CLMgdumnOSw7pAJ1wvU=
+X-Received: by 2002:a05:6820:2295:b0:654:f7cc:b181 with SMTP id
+ 006d021491bc7-6566f20a4eemr569428eaf.3.1761594361268; Mon, 27 Oct 2025
+ 12:46:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027085214.184672-1-hao.ge@linux.dev>
-In-Reply-To: <20251027085214.184672-1-hao.ge@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 27 Oct 2025 12:44:44 -0700
-X-Gm-Features: AWmQ_blDdOyc-tNIULuWANg5xz4Mu6a22Tyq-1C42xlGGDpEiRSKathUjbCucF4
-Message-ID: <CAJuCfpF+0ok85A1ZhbptSzrB-X6CUj=TMj9ZvwzjV1tO5PqFbA@mail.gmail.com>
-Subject: Re: [PATCH] codetag: debug: Handle existing CODETAG_EMPTY in
- mark_objexts_empty for slabobj_ext
-To: Hao Ge <hao.ge@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Hao Ge <gehao@kylinos.cn>
+References: <20251024123125.1081612-1-punit.agrawal@oss.qualcomm.com>
+In-Reply-To: <20251024123125.1081612-1-punit.agrawal@oss.qualcomm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 27 Oct 2025 20:45:49 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jB0ziP8RQBiLN_7s9seGqdoQAiP3t7dZg3e+Skd4JovA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnp2Lfd-Cm21FCeviqCT7l6FJRZID2RJ-YvfdlbQYb8GyFMojR-dL2wBtM
+Message-ID: <CAJZ5v0jB0ziP8RQBiLN_7s9seGqdoQAiP3t7dZg3e+Skd4JovA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: SPCR: Check for table version when using precise baudrate
+To: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
+Cc: rafael@kernel.org, lenb@kernel.org, cp0613@linux.alibaba.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 1:53=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wrote:
+On Fri, Oct 24, 2025 at 2:31=E2=80=AFPM Punit Agrawal
+<punit.agrawal@oss.qualcomm.com> wrote:
 >
-> From: Hao Ge <gehao@kylinos.cn>
+> Commit 4d330fe54145 ("ACPI: SPCR: Support Precise Baud Rate field")
+> added support to use the precise baud rate available since SPCR
+> 1.09 (revision 4) but failed to check the version of the table
+> provided by the firmware. Accessing an older version of SPCR table
+> causes accesses beyond the end of the table and can lead to garbage
+> data to be used for the baud rate.
 >
-> Even though obj_exts was created with the __GFP_NO_OBJ_EXT flag,
-> objects in the same slab may have their extensions allocated via
-> alloc_slab_obj_exts, and handle_failed_objexts_alloc may be called
-> within alloc_slab_obj_exts to set their codetag to CODETAG_EMPTY.
+> Check the version of the firmware provided SPCR to ensure that the
+> precise baudrate is vaild before using it.
 >
-> Therefore, both NULL and CODETAG_EMPTY are valid for the codetag of
-> slabobj_ext, as we do not need to re-set it to CODETAG_EMPTY if it
-> is already CODETAG_EMPTY. It also resolves the warning triggered when
-> the codetag is CODETAG_EMPTY during slab freeing.
-
-I'm not sure what scenario leads to handle_failed_objexts_alloc() and
-mark_objexts_empty() being used against the same codetag reference.
-Could you please explain the exact scenario you hit?
-
-handle_failed_objexts_alloc() assigns CODETAG_EMPTY to the elements of
-the obj_exts vector while mark_objexts_empty() assigns CODETAG_EMPTY
-to the obj_ext of the obj_exts vector itself. In what case do these
-two calls operate on the same reference?
-
->
-> Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mar=
-k failed slab_ext allocations")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> Fixes: 4d330fe54145 ("ACPI: SPCR: Support Precise Baud Rate field")
+> Signed-off-by: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
 > ---
->  mm/slub.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  drivers/acpi/spcr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/mm/slub.c b/mm/slub.c
-> index d4367f25b20d..cda8f75b72e7 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2046,7 +2046,17 @@ static inline void mark_objexts_empty(struct slabo=
-bj_ext *obj_exts)
->         if (slab_exts) {
->                 unsigned int offs =3D obj_to_index(obj_exts_slab->slab_ca=
-che,
->                                                  obj_exts_slab, obj_exts)=
-;
-> -               /* codetag should be NULL */
-> +
-> +               /*
-> +                * codetag should be either NULL or CODETAG_EMPTY.
-> +                * When the same slab calls handle_failed_objexts_alloc,
-> +                * it will set us to CODETAG_EMPTY.
-> +                *
-> +                * If codetag is already CODETAG_EMPTY, no action is need=
-ed here.
-> +                */
-> +               if (unlikely(is_codetag_empty(&slab_exts[offs].ref)))
-> +                       return;
-> +
->                 WARN_ON(slab_exts[offs].ref.ct);
->                 set_codetag_empty(&slab_exts[offs].ref);
->         }
+> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+> index d4d52d5e9016..73cb933fdc89 100644
+> --- a/drivers/acpi/spcr.c
+> +++ b/drivers/acpi/spcr.c
+> @@ -155,7 +155,7 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool=
+ enable_console)
+>          * Baud Rate field. If this field is zero or not present, Configu=
+red
+>          * Baud Rate is used.
+>          */
+> -       if (table->precise_baudrate)
+> +       if (table->header.revision >=3D 4 && table->precise_baudrate)
+>                 baud_rate =3D table->precise_baudrate;
+>         else switch (table->baud_rate) {
+>         case 0:
 > --
-> 2.25.1
->
+
+Applied as 6.18-rc material, thanks!
 
