@@ -1,100 +1,144 @@
-Return-Path: <linux-kernel+bounces-872796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F0CC1210F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:35:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602AAC120FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CEC83BF89B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C6119C81F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5DE32ED2B;
-	Mon, 27 Oct 2025 23:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DDE32ED2E;
+	Mon, 27 Oct 2025 23:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzG7dIlp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="XPfEVKpA"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF57D2DF142;
-	Mon, 27 Oct 2025 23:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A28A32A3C1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761607855; cv=none; b=VukC+Y9QMxrrgPX13UQ9yr/UDaM0TNHwS/4pmJKbHp+OH+IE9+ZopFxwxRL56LdlYCNcy0lyWXfW9VhXpJY9uriZfR6iAMydFi3CWEA8afatl0D4oTxj+FInaE4JJONalBfj999n+i+8wMbkWfJqF297bSeLX2ulcLPw1fXCTiI=
+	t=1761607984; cv=none; b=gXLax9s+3ILuXd/o+DgYJaXvbldDTFNPHhX3gVm8tvSH36xBcmA64wV2gQ4dWyYB0Lsp8jYYcTW00wdnr4p27xTscuvWMTv/9nU003MxTISMQK5JU8FcHH5SHeSpfXuHssoMvxMQbGjOGx/VMW88jh72DqulJ7TOTySDrQPaAjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761607855; c=relaxed/simple;
-	bh=DZtb8nMuR4LRUryhRIxP3SPx7YfdAW9zS2Vt0rWR0q0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Unq/pi6XYDEJC1BD+lHloirC8foUx1lvu/gni/WFhHiFUahpLBARZojoWelTp5Oru0ovD8nxyX4JHjMCYc4Cz0U8BytTuKqdrLiV7gvzClZjIMDgV0cavEDG4Th4au5b+DQlQT3NsPu49YtPv+acKrDnwaFUsyCI79mHjAniqck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzG7dIlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC8FC4CEF1;
-	Mon, 27 Oct 2025 23:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761607855;
-	bh=DZtb8nMuR4LRUryhRIxP3SPx7YfdAW9zS2Vt0rWR0q0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=JzG7dIlpFXzdRRKUnGr7y3ZLsZMYiN5SbzVqR0nTq1Iq1EjWjw560Exh/nHCIooMw
-	 UOjOe2FL262VFOWlAi7PDGwlskuz6jZ1QUhD6sRZcFdzFfYvJOx/meNxbdKsb8sHbT
-	 d1ruuBKjUITMnCvGm2kKYtAn8TDCjyYkOG5vdfGYcP+roXU/ONpdiAqMd5HMUsph/p
-	 +6wFeXsBwmanHIzwT+iqg+ioO+pgMaAhdo6ZkQexOQYMXKB2v0S4TRfWJUVOcLyFAg
-	 FQ9JmWP7H5vwl30r95wEieehoniuyFCQies2ik2nE6I9vX8z/O54fWDt3w6ToLKcwO
-	 z/bIXWHO8E6Ig==
-Date: Mon, 27 Oct 2025 18:30:53 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1761607984; c=relaxed/simple;
+	bh=ya34dnXBkVMZ4acUVB749ZaVXuLYyX25Ei5hDiCldOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8U5RxEX2hNy+nhxccupXOPEjfphmu5Ea+i9qV+cZCKk/o6THrSIoCYMNRrbcpB1dO1uMC5/ZFaUX1DnkcMVxUETofXLtsBAvPW8y52JaTfezVueLe2HuoxJxPa+kLZe4qChjSGvR9wh3M/4BJ+hjawk2kYdh1mHjfaFK6kxopU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=XPfEVKpA; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-81efcad9c90so63849916d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1761607981; x=1762212781; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SeBkBGZ09M3QB76OpujQtXgjWBBtrpYzqcpEmFvCTi4=;
+        b=XPfEVKpAkz0EqqJlblUgrQ2PbfAJJwC+FFil/Vd5htXfHTtIAt0AcJCsl4NmBxKXRJ
+         eIW5UeA7107giYfaQifJ5a/gcKAR8VZ9z0golFJy5Hb23kycJSDDiGo9zpEv9kL7Qk7s
+         w7zRqTxUMrIW23T1nvKpH2c36Y7Gmc+zKGLLJpUtGCt5fPfRM1WTsbfA/tTdW9nn2aUs
+         ftNj7HpeKguvAOHG0jEjFwpWYouZrm59oAzF2CNPOw8w7oeCkLSrBScDF73Fz4cxKAC8
+         hjTanLd8/LkCYdg+DpDtdHCnEdUb1gxr4DzFdHDnJdW+eZ6Z/hxItchsfPdz1TLQ2R8w
+         4aIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761607981; x=1762212781;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SeBkBGZ09M3QB76OpujQtXgjWBBtrpYzqcpEmFvCTi4=;
+        b=f+aHp6Zj+8c7ZOApiyKUoqZQAY7PYvHyyXoNi6yrUxFE1qAhj3M5MwI6X5Cm7YcW7d
+         lQON09PdEHyf86vxrYZNiayrvIFsJmB9IkfCQfs0CWP1bgh6RMRdRSSdN608xIMuN/p/
+         jvTs8ch5kbt7JUVKB0CjpKgIgy5ESY72GM7OKU1hC0jRZ1A6Cavvk3iFXr2xcoLNSU60
+         aKwea9M9dCi4P7uCdC7LNh03nqPPsZCbnLjanRMtH+mc+yxMEfuUD5UkNbf/X2VRTqkq
+         +tSQuib9+T65JpmuFXrgSF9eOtZMoYHJKSXjR63idh+7YIGiHN27cgPHTFjeuieOMRu6
+         ipUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+pkNgwIGL7CQKiIwTnEKyHuMV6NDYpqbqjxPuAwHGBYexSX9aHTYP1Ctzhl67vCbAyI5XIPlMToRk6Cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+a0+7g1yB0ZZzDuIPcyVBHmsaRLEaHMBWpZ8E3pYkDJisqYZT
+	Kmx4Rr6mOibcJ4z9+ZFLdSgk3Sn0aVy0kCn91p9DOE0UgJIW8Zv8aBF0lGnu75RF/w4=
+X-Gm-Gg: ASbGnct8DNw9l4nmh2C70YNT7GUe+5kV+RbqAnmUxT9U23NyIrDgwv37koDwbDtmshA
+	w8ZACcyMlN5oRTPheDJZQfUvWHtnNcZ5mdfFYFOHiPYXlb42Ne5zVSJUI2VxDR6miDkwBG9fZKz
+	RoKP8HB7fK/dmDnDDrMYbDF80xZW4OgGxhv/los/gLU9+EScd97ykPfKmUP6cmcChitfObiwdq7
+	FXFns1zcVriSeDLV4uxhOP61lqYqVfwCIFSuEcDSbXd+8vel4tsd9u3aMm/3iTCpfbW4D3BkA4y
+	maQYHBL5uCZAXIm6FDSKqaHf6sDVcW68tksOQj8lssTjDNz9wadsFjXgEgZtGMKVfRvngHkKzYb
+	tP6ih4+BwUclj5fbKn4mk8+wx3ve9gNFNm2nqzBjjIcyE7PLRbBIOWKkfmUbo2Upb3spyjdv1WZ
+	A6cdD/6wUMRwr5NkXZxU8/vg8nFuDLM0GCsRIsHViYq4ow7R/vfChkjxDr7IM=
+X-Google-Smtp-Source: AGHT+IGY0mnN3CFDP7vaLRad7aeAt7RbVIUmDhfxoFPsiCMHR/zS0q6YLuuynQuqtuF/1igQEZd8Tg==
+X-Received: by 2002:ad4:5cad:0:b0:87c:2b03:c776 with SMTP id 6a1803df08f44-87ffb0f3094mr20891046d6.47.1761607981318;
+        Mon, 27 Oct 2025 16:33:01 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48ea92fsm64277606d6.24.2025.10.27.16.32.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 16:33:00 -0700 (PDT)
+Date: Mon, 27 Oct 2025 19:32:58 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
+ confusion
+Message-ID: <aQABKgQYfVkO7n9m@gourry-fedora-PF4VCD3F>
+References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+ <20251027160923.GF760669@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-input@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Hendrik Noack <hendrik-noack@gmx.de>
-In-Reply-To: <20251027212535.4078-1-hendrik-noack@gmx.de>
-References: <20251027164050.113623-1-hendrik-noack@gmx.de>
- <20251027212535.4078-1-hendrik-noack@gmx.de>
-Message-Id: <176160785382.1849306.4204971054170991705.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: Input: Add Wacom W9000-series
- penabled touchscreens
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027160923.GF760669@ziepe.ca>
 
-
-On Mon, 27 Oct 2025 22:25:34 +0100, Hendrik Noack wrote:
-> Add bindings for two Wacom W9007 variants which can be found in tablets.
+On Mon, Oct 27, 2025 at 01:09:23PM -0300, Jason Gunthorpe wrote:
 > 
-> Signed-off-by: Hendrik Noack <hendrik-noack@gmx.de>
-> ---
->  .../input/touchscreen/wacom,w9000-series.yaml | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/wacom,w9000-series.yaml
+> I'm not keen on is_non_present_entry(), it seems confusing again.
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The confusion stems from `present` referring to the state of the hardware
+PTE bits, instead of referring to the state of the entry.
 
-yamllint warnings/errors:
+But even if we're stuck with "non-present entry", it's still infinitely
+more understandable (and teachable) than "non_swap_swap_entry".
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/input/touchscreen/wacom,w9000-series.example.dtb: /example-0/i2c/digitizer@56: failed to match any schema with compatible: ['wacom,wacom,w9007a_v1']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251027212535.4078-1-hendrik-noack@gmx.de
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+So even if we never get to the point of replacing swp_entry_t, this is a
+clear and obvious improvement.
+~Gregory
 
