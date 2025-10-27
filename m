@@ -1,173 +1,194 @@
-Return-Path: <linux-kernel+bounces-871234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C2FC0CB73
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:39:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE87C0CB13
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:36:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090F04004F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:34:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5400C4F47D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C272F12B7;
-	Mon, 27 Oct 2025 09:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775042F1FD8;
+	Mon, 27 Oct 2025 09:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5zB+tJs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jED3ioSl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488162F0689;
-	Mon, 27 Oct 2025 09:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265AB245012
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557659; cv=none; b=T3gEZgQgKovehscrZ9sME3JK14QA6l6h+o3VngBzqr7MGdzXNhwvW1jG0xipC6I3vLlDwoLeHfKUIRxIA3CNiNHVrHoXCidCbQ7sIO5UFK1tJTVgkNLK9d7tJcR5gNgvoRk7GYRcxRPNX5ZazuDW+HOyQWT9bsdygDWK9VBmwGQ=
+	t=1761557692; cv=none; b=lIx7+BBXCt0JSCwdBRo0r70g+FPHyxUsFbHrZjbEFxeKCd1bXR8TaHfGmwvyfhDFfuJhjmQr6HKbc5aAn8HWepiZ6XTXt+/QwhGkKdZGcLI6g4eg2PCMt3NVL69mVjMIVfbqMYJDnl+j6COf7k65RYHO87v3/0IO6SLEj3371Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557659; c=relaxed/simple;
-	bh=jNY7vyah/H0XlZOl9k3qgI+ts9k9GGcIuJnN4Nfa3WI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kg8Ml3kc+09rZxww5v9o71GPTO1jq+fCwea4jgpO3popL/eLQow8eoITacolWPkgQHpf5SqjhU0URja+1R1/Y5nXub6BhN6B8pZg6/LVLBTZXZ4Vhk7NG9HdahnsBGFs1WYxD15s1648FA4QqQKG+da99mNfBCqgyp+ylbOrG50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5zB+tJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416BFC4CEFB;
-	Mon, 27 Oct 2025 09:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761557658;
-	bh=jNY7vyah/H0XlZOl9k3qgI+ts9k9GGcIuJnN4Nfa3WI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n5zB+tJs7ztrUbF52xo2zNWKbTb7K8pN7/5gc0IzjRfkStU/Vexx40f4TYt1IwSzU
-	 nvEEywQG6h217t0r2wFgUwmmRlb9HkiqtRQiy99DroL2CWB+rsNMygzCjmaP8jgj7j
-	 +hyUxM5sRynlpWf6qxkmjRYSFLlfEpqTMDAb8wZWn6zOr/mHTgfYvTNzESGzFvSixd
-	 PxPQqUu7gWznMmDlL/1kv4W4JCm9oXUgF5KEQx3h1u10AEjeLG+yc0UMvrlPTDPJFI
-	 Ns3rrLJQ+g0Z47ZNI04RJ6LOHHTGrXTyn3a2qle61T7FMfD7/m5W61L8rICaBLxxtd
-	 7QjHoWLHQkQPA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>
-Subject: [PATCH mlx5-next 2/2] net/mlx5: Add direct ST mode support for RDMA
-Date: Mon, 27 Oct 2025 11:34:02 +0200
-Message-ID: <20251027-st-direct-mode-v1-2-e0ad953866b6@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251027-st-direct-mode-v1-0-e0ad953866b6@nvidia.com>
-References: <20251027-st-direct-mode-v1-0-e0ad953866b6@nvidia.com>
+	s=arc-20240116; t=1761557692; c=relaxed/simple;
+	bh=c7pWnfUI5l93xQMWezruXtzU0006jy+k7UTgGV61vbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iW5jCiHuLpLhxc2GG3NpeA6X7b+e1gZbopbN7ecmFBYQuHVWnku4SSxAvmAq7zFfNVOPJPEKb9RvLgj8rZbOIGgRcwhcYGqVPJIRVfg5+IESRa5Qdl+eAe4zFuXgExYFteDQJuedvku1PXT3rjw6zxuJPwRoHuFZF/MpQYmsVBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jED3ioSl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761557690;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=enI7LZNpEoEgG2kCIqkqYuUnATtEoWBy7Pep0LNgBPY=;
+	b=jED3ioSlNDzyRnVlA5d2JKz84s4Hx+gvlGp9us1FkFfvvA0nR4IdNdhwhoZJw9IaxX6c7H
+	yRk8G49Th6EAoXmzQ2pGQQnyCMdx2/yGpLu5tOV11I7Q8Xbm60z6exI73whe1XVyAUNRCg
+	Rw76/i/CM6l3bliE7qpGew5dO/0qLvw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-206-HPEByvRJOnyFhOTTYdFQzA-1; Mon, 27 Oct 2025 05:34:48 -0400
+X-MC-Unique: HPEByvRJOnyFhOTTYdFQzA-1
+X-Mimecast-MFC-AGG-ID: HPEByvRJOnyFhOTTYdFQzA_1761557687
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso11790185e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:34:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761557687; x=1762162487;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=enI7LZNpEoEgG2kCIqkqYuUnATtEoWBy7Pep0LNgBPY=;
+        b=E5HQqgGQvfBALm29LFMSb8IN78cmvt2HgEVKOmsui1MAcucft72/wwYw+Z5vgWCMbp
+         ozp/ecqjrVhERGN+TB4UFKfmd9hOnV4itKn/ElXCj5FPz7CF0obPelKk7nkw8YXcssN/
+         +Ev4BatSbcwiwmFMN6p7zV2yLq4Sd5ueaME/OXgqf17cD05KTr+FFZut7pPtb6H6nGHp
+         hNRvZcIOU5g/pHtvb/HLuhNjdkIBXiXeKpw48CFuo6mn4gQ6y78d97BcZnFMSif5eDWT
+         SF+bKacJhi6ev8hzYaUZANjkgEQxQh7cnpgU4ae4fDszOlgS/x8zqzk9gTjkl9d9Tfgy
+         Vi2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWTfzz4xveapDRJNawv6GuVnOhKEY2rgwN387agQHMLjF/C2FjCAusOwIHg2mPvh9x2Khq2p2dXoDZURso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI1STlmlw1uUh8yFkjHSgUNOtZak0NaClgJ/OUcZxu7akvyzmM
+	mn7hO+NnEQhpYVoH3fHpLCQta1JnBTgseXe5BYDiY84DOVtyybFlY1NkL3H3pvCutPQH/sNJwNE
+	RJH8/hK8dSlNZ0DTB5DGvVlxHbh9hnivHtQqFdhWcNd0kRXYCv2mDZ5SS98dD6b5PFQ==
+X-Gm-Gg: ASbGnctMnrtfGDkJMbtpUc+7vtaZ1GgdM720Rg/kaOPev34+Os8eaKcTpEtiwaT/TPR
+	RiiG0c/nvdwdz3+ikNCeh77EQNi3YqpyS1GCjBoEMAiR8eeHdRl4QjWJiaCATPPuVQyPJbGqhWo
+	GaecbD7iT91rwCFRq8kmezyp4iKjKP1TGFT3DcRixHcmZlv3GC2BXbQkBrgMN5xMxbAf55l+Ubk
+	59RfD1EBzzisG1s71wK8WXj4+IaF8HR1D3kQ0++lfbGVPRGPGuMXT19ehg5WPxrCfTr2FW4SSKq
+	LjsIAeYjFBF5Gsr3kStgCDH3AIiRHvFIYWj9QLwE0xTdzyy0zsdom4yIlGfGdLUTInP3GS+xV8d
+	kO6T+yGa6eskvpz7yLlpoJyKPRQk9Cw28olphIeH5UUpHJneoOlxbatKZLsRT2RKjh35qBIqkTo
+	CxdjaJfmI7IieI+P5baMopmhK2ZrA=
+X-Received: by 2002:a05:600c:800f:b0:471:672:3486 with SMTP id 5b1f17b1804b1-475d2e7e9c3mr74954745e9.15.1761557687239;
+        Mon, 27 Oct 2025 02:34:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbYhXBdD/2sb21JkRwYqN4qMp1O+MlBYVpVhQAmAEtPEi4yKtKC4y56wL69hYkHpXzsclqsw==
+X-Received: by 2002:a05:600c:800f:b0:471:672:3486 with SMTP id 5b1f17b1804b1-475d2e7e9c3mr74954495e9.15.1761557686886;
+        Mon, 27 Oct 2025 02:34:46 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dcbe5587sm146578635e9.0.2025.10.27.02.34.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 02:34:46 -0700 (PDT)
+Message-ID: <0fd86682-0679-48ee-8622-d9d7a977d69c@redhat.com>
+Date: Mon, 27 Oct 2025 10:34:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+To: "Kirill A. Shutemov" <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ linux-mm <linux-mm@kvack.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ Kiryl Shutsemau <kas@kernel.org>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-2-kirill@shutemov.name>
+ <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
+ <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Yishai Hadas <yishaih@nvidia.com>
+On 24.10.25 21:32, Kirill A. Shutemov wrote:
+> 
+> 
+> On Fri, Oct 24, 2025, at 16:42, David Hildenbrand wrote:
+>> On 23.10.25 11:32, Kiryl Shutsemau wrote:
+>>>    	addr0 = addr - start * PAGE_SIZE;
+>>>    	if (folio_within_vma(folio, vmf->vma) &&
+>>> -	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
+>>> +	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
+>>
+>> Isn't this just testing whether addr0 is aligned to folio_size(folio)?
+>> (given that we don't support folios > PMD_SIZE), like
+>>
+>> 	IS_ALIGNED(addr0, folio_size(folio))
+> 
+> Actually, no. VMA can be not aligned to folio_size().
 
-Add support for direct ST mode where ST Table Location equals
-PCI_TPH_LOC_NONE.
+Ah, I missed that we can also have folio sizes besides PMD_SIZE here.
 
-In that case, no steering table exists, the steering tag itself will be
-used directly by the SW, FW, HW from the mkey.
+So it's all about testing whether the complete folio would be mapped by 
+a single page table.
 
-This enables RDMA users to use the current exposed APIs to work in
-direct mode.
-
-Signed-off-by: Yishai Hadas <yishaih@nvidia.com>
-Signed-off-by: Edward Srouji <edwards@nvidia.com>
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/lib/st.c | 29 ++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/st.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/st.c
-index 47fe215f66bf..ef06fe6cbb51 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/lib/st.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/st.c
-@@ -19,13 +19,16 @@ struct mlx5_st {
- 	struct mutex lock;
- 	struct xa_limit index_limit;
- 	struct xarray idx_xa; /* key == index, value == struct mlx5_st_idx_data */
-+	u8 direct_mode : 1;
- };
- 
- struct mlx5_st *mlx5_st_create(struct mlx5_core_dev *dev)
- {
- 	struct pci_dev *pdev = dev->pdev;
- 	struct mlx5_st *st;
-+	u8 direct_mode = 0;
- 	u16 num_entries;
-+	u32 tbl_loc;
- 	int ret;
- 
- 	if (!MLX5_CAP_GEN(dev, mkey_pcie_tph))
-@@ -40,10 +43,16 @@ struct mlx5_st *mlx5_st_create(struct mlx5_core_dev *dev)
- 	if (!pdev->tph_cap)
- 		return NULL;
- 
--	num_entries = pcie_tph_get_st_table_size(pdev);
--	/* We need a reserved entry for non TPH cases */
--	if (num_entries < 2)
--		return NULL;
-+	tbl_loc = pcie_tph_get_st_table_loc(pdev);
-+	if (tbl_loc == PCI_TPH_LOC_NONE)
-+		direct_mode = 1;
-+
-+	if (!direct_mode) {
-+		num_entries = pcie_tph_get_st_table_size(pdev);
-+		/* We need a reserved entry for non TPH cases */
-+		if (num_entries < 2)
-+			return NULL;
-+	}
- 
- 	/* The OS doesn't support ST */
- 	ret = pcie_enable_tph(pdev, PCI_TPH_ST_DS_MODE);
-@@ -56,6 +65,10 @@ struct mlx5_st *mlx5_st_create(struct mlx5_core_dev *dev)
- 
- 	mutex_init(&st->lock);
- 	xa_init_flags(&st->idx_xa, XA_FLAGS_ALLOC);
-+	st->direct_mode = direct_mode;
-+	if (st->direct_mode)
-+		return st;
-+
- 	/* entry 0 is reserved for non TPH cases */
- 	st->index_limit.min = MLX5_MKC_PCIE_TPH_NO_STEERING_TAG_INDEX + 1;
- 	st->index_limit.max = num_entries - 1;
-@@ -96,6 +109,11 @@ int mlx5_st_alloc_index(struct mlx5_core_dev *dev, enum tph_mem_type mem_type,
- 	if (ret)
- 		return ret;
- 
-+	if (st->direct_mode) {
-+		*st_index = tag;
-+		return 0;
-+	}
-+
- 	mutex_lock(&st->lock);
- 
- 	xa_for_each(&st->idx_xa, index, idx_data) {
-@@ -145,6 +163,9 @@ int mlx5_st_dealloc_index(struct mlx5_core_dev *dev, u16 st_index)
- 	if (!st)
- 		return -EOPNOTSUPP;
- 
-+	if (st->direct_mode)
-+		return 0;
-+
- 	mutex_lock(&st->lock);
- 	idx_data = xa_load(&st->idx_xa, st_index);
- 	if (WARN_ON_ONCE(!idx_data)) {
+(a helper would be nice, but cannot immediately come up with a good name)
 
 -- 
-2.51.0
+Cheers
+
+David / dhildenb
 
 
