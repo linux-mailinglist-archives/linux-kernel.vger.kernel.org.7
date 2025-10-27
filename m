@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-871998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F9CC0F07E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF8FC0F07B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8520019C40A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73EFE19C3C8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18055311C07;
-	Mon, 27 Oct 2025 15:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33E430DD09;
+	Mon, 27 Oct 2025 15:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="EVRfl0WY"
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="RFaogUd+"
 Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDB630C35E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D0F3112DC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579872; cv=none; b=F+lj7lOahhIKwyi/JzNfER+MmUnnDj2sXE+9yb3ero/cr6IXTXXv6mXoJ6EaAMf0IKbI2zugozxL1RV/qmzyfdaFEkd+pBJSWvombAqhgYDBEZVDekc0b5sziQ6XtJKkTnW1rFj0YDGJZc4FO9qkVOul/1TikoCZ648ZTYsDPns=
+	t=1761579869; cv=none; b=PSF9jOvLJJLTZMiL1dMqnv4i0KSOaIjeU9jPBnl/+geMDKR4p1xa6k3/ke2g/8ZkrIVEEsGkP5mo7qyFbyOykMbbkJ0k5BNep9KIzoIdhueKNGpGxVUBYCSstQQwBiBYs+J4yVsHKvedUqJYMcc3r0d6VR4Ey+2LPT+/XtSp8iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579872; c=relaxed/simple;
-	bh=dSny0q8Vpr/7wchAfKqnsLC1CPOwBAyvKvG9yt4alcM=;
+	s=arc-20240116; t=1761579869; c=relaxed/simple;
+	bh=OH15Aq+Clj5xSexBAO1h+CHcIuQr2ufEWKDyJyyneYI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NLGsLxY1lDl9t/9K0KZkuEVWafPnlpgOwypn61W5+YPci+l8P8+JEzzrlP1FaM5e8fxAb455ZRIZXv6NS6mOKLuy/xftVy+ee0P/VVX1434q3GNSVYkum+Ni6UAm6G/BJcvvCj4qSD10rcgCly/nIRjyGB4Br8euMsyokhG7Wgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=EVRfl0WY; arc=none smtp.client-ip=133.167.8.150
+	 MIME-Version; b=u2seCE7tHy7rE5zS6rymcSkjlNPkhpu+Zfl/X/lzIX+lLUWoCm8Ick9AIO+IMTYs8qTZPFqCxYtCujigQSdswAMDz79nQQ9MkDnnMOzq+ohSoM55U1+o4sCd+A29fSY8JyefkSqoBMwhxOH3bMqOjf9jglQ1elCC6mb2iP4mP4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=RFaogUd+; arc=none smtp.client-ip=133.167.8.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
 Received: from fedora (p3796170-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [180.53.173.170])
 	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59RF4hAl090988
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59RF4hAm090988
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Tue, 28 Oct 2025 00:04:46 +0900 (JST)
 	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=FgA+SMwL9yI/ePad9bDVhfEqymOfjz+gNzLHUmDWcLo=;
+DKIM-Signature: a=rsa-sha256; bh=sjnrPdwTQvOQOWTy7vKYqQILbsOONjoFMJ39ZWT0xhI=;
         c=relaxed/relaxed; d=mgml.me;
         h=From:To:Subject:Date:Message-ID;
         s=rs20250315; t=1761577486; v=1;
-        b=EVRfl0WYA1819y3N75Clc+TFE9hCot/EwuHA/qRGKz+NEMRVRipIh3IARExWJfjb
-         25ouHdK4orElRc+eYFgDkt24xTOAuVmu9F92olaN3I6wRLej/AaL1hEfAO7JCuYX
-         pSff+zdvkx8T/V9x7YPsdQv7CO5r83NBySZtOKVyl6zMpesxq+XhQk7apvXyczyG
-         uILDneeDmMBrSzZ+WAbvxWxNN0wCZ5JOF02tSt07sCP62OxhD4A3g01nAxihJsv3
-         AGgJLpYYolrMb48CFCV+kstYZU9W4FFpjORpnVZkYNQaW2hyHIJCAWI4xgZWRDPy
-         BX9lp5CE+iGLW0j34y9z8Q==
+        b=RFaogUd+fZM4Sn/bLWPJd/YtyKeu6pDdVB9qfvbQWGVgYeS2Gy7f6yNcbRcZoujb
+         /dfA3nuhuj/kv1cBy6O0IAX14AuFRr27IYLB18f5z3tbtjx0Juvv6fvisZoWV62P
+         2GJJuUfb6yPdviUAujSLQlzKHlrlc8GV1sAIoW1RwDiJvPKk0C9EXRV2hVdx1bW4
+         CnD4wFwz/eMUkTHYFOvomllPnQ/8lRAn9p+bpI4tyXalYue68Ttf5nFXDBOXpPsO
+         PwMqKgfSA7kJZjH7yleTXMNPAKjCRhJaASuj7BjBkHpjWhK4H93ApPYaXKqHcdJ4
+         kXzyjl37xbQ9R61rpteUvA==
 From: Kenta Akagi <k@mgml.me>
 To: Song Liu <song@kernel.org>, Yu Kuai <yukuai@fnnas.com>,
         Shaohua Li <shli@fb.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
         Guoqing Jiang <jgq516@gmail.com>
 Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kenta Akagi <k@mgml.me>
-Subject: [PATCH v5 11/16] md/raid1: Prevent set MD_BROKEN on failfast bio failure
-Date: Tue, 28 Oct 2025 00:04:28 +0900
-Message-ID: <20251027150433.18193-12-k@mgml.me>
+Subject: [PATCH v5 12/16] md/raid10: Prevent set MD_BROKEN on failfast bio failure
+Date: Tue, 28 Oct 2025 00:04:29 +0900
+Message-ID: <20251027150433.18193-13-k@mgml.me>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251027150433.18193-1-k@mgml.me>
 References: <20251027150433.18193-1-k@mgml.me>
@@ -123,55 +123,53 @@ fixed in the previous commit.
 
 Signed-off-by: Kenta Akagi <k@mgml.me>
 ---
- drivers/md/raid1.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/md/raid10.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index a70ca6bc28f3..bf96ae78a8b1 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -470,7 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
- 		    (bio->bi_opf & MD_FAILFAST) &&
- 		    /* We never try FailFast to WriteMostly devices */
- 		    !test_bit(WriteMostly, &rdev->flags)) {
--			md_error(r1_bio->mddev, rdev);
-+			md_cond_error(r1_bio->mddev, rdev, bio);
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 1dd27b9ef48e..aa9d328fe875 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -497,7 +497,7 @@ static void raid10_end_write_request(struct bio *bio)
+ 			dec_rdev = 0;
+ 			if (test_bit(FailFast, &rdev->flags) &&
+ 			    (bio->bi_opf & MD_FAILFAST)) {
+-				md_error(rdev->mddev, rdev);
++				md_cond_error(rdev->mddev, rdev, bio);
+ 			}
+ 
+ 			/*
+@@ -2434,7 +2434,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
+ 				continue;
+ 		} else if (test_bit(FailFast, &rdev->flags)) {
+ 			/* Just give up on this device */
+-			md_error(rdev->mddev, rdev);
++			md_cond_error(rdev->mddev, rdev, r10_bio->devs[i].bio);
+ 			continue;
  		}
- 
- 		/*
-@@ -2177,8 +2177,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
- 	if (test_bit(FailFast, &rdev->flags)) {
- 		/* Don't try recovering from here - just fail it
- 		 * ... unless it is the last working device of course */
--		md_error(mddev, rdev);
--		if (test_bit(Faulty, &rdev->flags))
-+		if (md_cond_error(mddev, rdev, bio))
- 			/* Don't try to read from here, but make sure
- 			 * put_buf does it's thing
- 			 */
-@@ -2671,20 +2670,20 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+ 		/* Ok, we need to write this bio, either to correct an
+@@ -2877,19 +2877,19 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
+ 	 * frozen.
  	 */
- 
- 	bio = r1_bio->bios[r1_bio->read_disk];
+ 	bio = r10_bio->devs[slot].bio;
 -	bio_put(bio);
- 	r1_bio->bios[r1_bio->read_disk] = NULL;
+ 	r10_bio->devs[slot].bio = NULL;
  
- 	rdev = conf->mirrors[r1_bio->read_disk].rdev;
  	if (mddev->ro) {
- 		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+ 		r10_bio->devs[slot].bio = IO_BLOCKED;
  	} else if (test_bit(FailFast, &rdev->flags)) {
 -		md_error(mddev, rdev);
 +		md_cond_error(mddev, rdev, bio);
  	} else {
  		freeze_array(conf, 1);
- 		fix_read_error(conf, r1_bio);
+ 		fix_read_error(conf, mddev, r10_bio);
  		unfreeze_array(conf);
  	}
  
 +	bio_put(bio);
- 	rdev_dec_pending(rdev, conf->mddev);
- 	sector = r1_bio->sector;
- 
+ 	rdev_dec_pending(rdev, mddev);
+ 	r10_bio->state = 0;
+ 	raid10_read_request(mddev, r10_bio->master_bio, r10_bio, false);
 -- 
 2.50.1
 
