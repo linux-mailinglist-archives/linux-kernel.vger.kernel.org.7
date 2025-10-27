@@ -1,82 +1,184 @@
-Return-Path: <linux-kernel+bounces-871435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774CCC0D395
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:46:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A57C0D3F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043D818899C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:46:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602DF1885309
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BF92FF14A;
-	Mon, 27 Oct 2025 11:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9356F2FE597;
+	Mon, 27 Oct 2025 11:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="b3xKaH3H"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48D42FE575;
-	Mon, 27 Oct 2025 11:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565566; cv=none; b=k26qd0xbjyOb+vYrS3o+pgRBeF2zmB1t/M1x0PCc7Q7egs59ZrWC9sRCZisdreHa+lhyf92qBWVXP4RXFEmLm8UiQNz7zYGXglwKBwIE35U8D/Fme0L79YVQadsCQEs6loEBbmfne230Gi+KiMV6KYb4IiWpNmVcmKrKdxL3se0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565566; c=relaxed/simple;
-	bh=0kFQ3vvotzBg63RutfyUDjSc729Pvux23b7TJTDNuI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3H/r8Bb6fBI96OY1A4BFKqfrfYBg29pDMGpw3jllR52orTCf6L4EaQ+gFiGNDHWDvnrewdtO+FgJYwkslp5bqpy9KgP8i4Sgt0yQIPz7dlWSvdN2RBLkSPZdNGQas8Ke7g3MxFGsObAJrMx2lJAC+n60iEMkKwseC5a0BMCMVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=b3xKaH3H; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549214ac.dip0.t-ipconnect.de [84.146.20.172])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHAh0e/6"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 6712359947;
-	Mon, 27 Oct 2025 12:46:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1761565563;
-	bh=0kFQ3vvotzBg63RutfyUDjSc729Pvux23b7TJTDNuI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b3xKaH3HIudsEnOPgSqaPsxNHCv9VETGXSvTt3can61L0gC0FNaMQ/HyGWLblVxA3
-	 txbYg9DFCxLEFFAtT4pKKju3Fmc4dGtOkPpX/GYPwTk3102HYnqfE757wa20vkD2Oz
-	 dL6ZKWVy0WvmtbbhxTchW+b9gMz1surolQgcgEvMSSGplxLiS5t6rHpAwWx1g+A2ZH
-	 YP1KzLYZt+BOVBBC8j1a9h2lBoHR6nZMYhMYA77Or6QMl4fgwgBBH0Lj907vGrZDBl
-	 JxPqVPXf+SwI6dqcq84JT7+zKj0w82jVFYelzVOUFGxX1U2rViC3o8+3m3McFb/Int
-	 gHnhbE4h5uFQw==
-Date: Mon, 27 Oct 2025 12:46:02 +0100
-From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-mm@kvack.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net, will@kernel.org, 
-	robin.murphy@arm.com, akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com, 
-	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	rppt@kernel.org
-Subject: Re: [RFC PATCH 3/4] drivers/iommu-debug: Track IOMMU pages
-Message-ID: <3ajy2xcjo3t6xdrbeo5xinlwtxzujvx4plzk3vqj3za7ren2rv@wdmwpjlaq6ql>
-References: <20251003173229.1533640-1-smostafa@google.com>
- <20251003173229.1533640-4-smostafa@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021B02FF17F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761565573; cv=none; b=jwWnbRiaX747uMKCndXilMB5VxW6DqeQ+r16JOt5HzLt3/TmdUZNaTqIhMxt2CqHnGq9BZYR5Ny7gu6vGsWPTnU/2Ljhkz/hJtcGUQ/o5c2aUnHbZPKxxqKiNRHKFrn/IT1HXw3CV5GlZpFm8ZO+Nv+aT0BPNwMTJ8JwkDo6Dpc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761565573; c=relaxed/simple;
+	bh=o5X3qid/yfHH+BoyJqJHvmRGKTTPXZaHJ8WFRZQcNlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNlYIUvYgTm+6Q/Kd3v5ZRXZ+40xaqnO+pYXAGo/KL4NmnvcR8rHyE7JHvkMYWB9MMlpwWRZHwmx0fWIn+JuTJg6JJ9yhXNTmoX3x1a97Xxvf+3/3cjI2H0BExReRU1bUo8DH2ILZFi3EZXWtI2Fq6uHZGlBElOSqi/SkgZ9BqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHAh0e/6; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-586883eb9fbso5518138e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761565569; x=1762170369; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5wthRWPyiVp8yh4VwotqDPqYh//R/kAW37sGEOtokSs=;
+        b=UHAh0e/6RVCghKxy6if56ZY65mQbkLTGI+qrMbV4hqVAxukBmuRSvZtNf/fs+Afw61
+         qJslBlMXM31vuLRC14d6QIz6Cg2TVOeINjbjITwCU2hfQo9jel9cFBbbaa4UTY4wLCkp
+         rp1ytV8xR46a9YoCFPjMm2mnTEdtUCWKCOtcr6gnj92T4/3UNloEdwwEA5dN4k1lmgUe
+         diWXbfRr1w5zsRPEATqhEDZIgW8DM1xx6CQBxh6r8E2y4PvAYWSf0hBWABXuDDCj7cjz
+         KMIf4c2R9lMbQcYUzKjRyEp+FriZUEFcGLul+avSMf0e4N3uQlMQYyBahw82MI2nHFZ1
+         2s+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761565569; x=1762170369;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5wthRWPyiVp8yh4VwotqDPqYh//R/kAW37sGEOtokSs=;
+        b=AiBD4YhjQ7DaLuH/AXHF71ryE9NZgA2CjTNWKAB7vRxeS3ABZGKO0/XhkfK6TqJ/R8
+         MEyMYsYfUhk5xIfY1JuhU1w8rbpEquQsDoexO4Uv8Emy3Fb+IiJ0BjblZODGtYVwxDXo
+         8PSDYFXkibIYtrGzdq93vtWyEQySRx4F68/GDTZ0gobtKJbScNP7sNRseyTQ/jSzMNeH
+         GLYFQjhDXHpmwYg1ushnu9X7gKbu9IFyFMoT4S54Hlq1W6zCsz4GdgITvvCMX6tvomoN
+         dD8+Fa8LpBg5+KvZyIt/DUgPxgP1JVCFrnJwHaqpI1dtrzMVrPgjKmhPCIJA+jql4Ti7
+         RqjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZp9wRD7Z3KK15oMv0Viqsv2CqKvV7iACqMJsCRGJVR2T4B/GOX0MhLiRdo4R80BqCaLy4cgZ1o0GHNeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTktDsMVOY3qgGHVtCILFt+8rZ0GGBqPQeFhWmBIIQHy8rgL+g
+	fMIQZMq4fE34tqMSuhNcRrGSGkyCfsGtpFX7Yk4zGFQf4lukbo9Tj3pB
+X-Gm-Gg: ASbGnctuk6ODTRiZqG9pgY8BnxIJBFbHCZRW+YqOulzsNCHRx750nOATBH7Y9znysaf
+	/NUWfmP9QX+UC0ua9/rVfHyaGTbMODHPoh59TnSYQ7CmOtU3jRNVWVBDEhbbviHQfiA4u9FYmfK
+	+OHGbCL0JriENa7aFlq6E8jALQ2A1k1frZ9FrQ9ybgpmam3qihcwrO//wcf58LdUK8lPM0fcXfR
+	I2b5quVI+hR2au4edpNSEWjkjNTaTXQsY/ZMflvKId1U1OK8vHqm8DAex82/7BMDwJWA0cqGRHH
+	IWITnY+yLvqnoyVHR5CCf4DgUn2pnWtXlYD9rrK04eDThcR3rIzZjGjJWghjY8hi0SRIa2uJoLX
+	nKkzQxwXYp6ha2EcE6hOHp3JcWEsqxQjTHVzqmsZij8f/ntu4Uq1fLpsmbDKNyeg+UOy9iT+hI1
+	yXSgBkpx4=
+X-Google-Smtp-Source: AGHT+IGpx5VaEstHr/dfUOeY/sT/AIsaR48RyvzDra31HtwNJ+UB6/DopkQBca9Vf1sT5NaznaxtPQ==
+X-Received: by 2002:a05:6512:4047:20b0:591:eab5:d8dc with SMTP id 2adb3069b0e04-591eab5dd39mr5211536e87.35.1761565568841;
+        Mon, 27 Oct 2025 04:46:08 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f558a3sm2221582e87.51.2025.10.27.04.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 04:46:07 -0700 (PDT)
+Date: Mon, 27 Oct 2025 13:46:04 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: [PATCH v2 05/15] dt-bindings: leds: bd72720: Add BD72720
+Message-ID: <fae1285b43acdd19cebfcfbcf4530bf90064f601.1761564043.git.mazziesaccount@gmail.com>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4hcLA+ux7eVKOsxx"
+Content-Disposition: inline
+In-Reply-To: <cover.1761564043.git.mazziesaccount@gmail.com>
+
+
+--4hcLA+ux7eVKOsxx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003173229.1533640-4-smostafa@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 05:32:28PM +0000, Mostafa Saleh wrote:
->  void iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size_t size)
->  {
-> +	size_t off;
-> +	size_t page_size = iommu_debug_page_size(domain);
-> +
-> +	if (!static_branch_likely(&iommu_debug_initialized))
-> +		return;
+Add the ROHM BD72720 documentation to the binding documents.
 
-This still adds function call overhead even in cases where iommu-debugging is
-disabled. Move the static_branches to the header files as well.
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+---
 
+NOTE: The Linux LED driver does currently have: values
+bd72720-grnled and bd72720-ambled for the rohm,led-compatible. These are
+handled identically to the existing bd71828-grnled and bd71828-ambled
+and should be removed from the driver. Thus they are not documented in
+the binding document.
+
+Furthermore, the BD72720 Linux driver does not use the compatible property
+=66rom the LED node. The Linux driver is load and probed based on the PMIC
+compatible in the MFD node. Thus no compatible string for the BD72720
+LED node is added.
+
+---
+Revision history:
+ RFCv1 =3D>:
+ - No changes
+---
+ .../devicetree/bindings/leds/rohm,bd71828-leds.yaml        | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml =
+b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+index b7a3ef76cbf4..64cc40523e3d 100644
+--- a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
++++ b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+@@ -10,11 +10,12 @@ maintainers:
+   - Matti Vaittinen <mazziesaccount@gmail.com>
+=20
+ description: |
+-  This module is part of the ROHM BD71828 MFD device. For more details
+-  see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml.
++  This module is part of the ROHM BD71828 and BD72720 MFD device. For more
++  details see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
++  and Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
+=20
+   The LED controller is represented as a sub-node of the PMIC node on the =
+device
+-  tree.
++  tree. This should be located under "leds" - node in PMIC node.
+=20
+   The device has two LED outputs referred as GRNLED and AMBLED in data-she=
+et.
+=20
+--=20
+2.51.0
+
+
+--4hcLA+ux7eVKOsxx
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmj/W3sACgkQeFA3/03a
+ocW9fgf/RpKlDcHIMKbMyCIcpDbELXKdqHFVQmRDH0oXD++RG0QLz4MUO5Meanix
+Lrn+YT27QBVb307Hptc/7Ui9Ot+0VgjqhoF8Kam4X5M7ZTI2GFD9oIDIzzUv6G7s
+zbax4mKZSypJulHy0njs+VSFo37GrNcXe3oEzgEUxs7kkSz6vQEAvm6lrRZQd6Gm
+0KE3eVgWb8y0ImoU9FBdjOfc6cvE0irhzNKx1POEAnePyzqwo1OlVB9p3WI9IB7c
+D1k3RxGwMXtl6Ze18F06LcJvEpkZUH597P+JODLa3ks12bveEQ1ncLgRlgoe6vZt
+jq5wDk7fUJq9ysDNwnZpCtWENVcbcw==
+=m6hY
+-----END PGP SIGNATURE-----
+
+--4hcLA+ux7eVKOsxx--
 
