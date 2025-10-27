@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-871776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BB3C0E59D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:18:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A22C0E42E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63C774F9B0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80ED719A2F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12D30F95F;
-	Mon, 27 Oct 2025 14:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50293101CD;
+	Mon, 27 Oct 2025 14:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPkphYtw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjvchMdj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7123430F804;
-	Mon, 27 Oct 2025 14:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CF30FF20;
+	Mon, 27 Oct 2025 14:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761574003; cv=none; b=aaPjV8gYx+yRNDLRRNEG4ZC+c8cC9SQQRAvnlPlHnG9ljwf03tT9fNGjsZ7ySFp/wv68SKLGkyIEjVqsHiZ4MFUhcX0A+X6ZCafyJn8EqYjFBFilYALCrbEQfZuwu3aqSKu+TuVoxlqlh2xw9z/Lv4Aok9pxX5iTilJpaLiAZkw=
+	t=1761574005; cv=none; b=DcvGKG1Uz5C4hJRAcoPBK0gB2GGv9FSfNq02pKJXT3B6EwLCggIXV0V5vy9I9VpKgcBM2PSiq8R9wuYWu2a9EGpWvl2ZNAxGPVX1EiCIkq2e6QkfLjVMfGSwv9uoZyYCObV7Ktc5IZ3PnPcEWelqJXAzyme1fyM2ZZziOP8S/SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761574003; c=relaxed/simple;
-	bh=bU7F16V6leO5Nl+gH+Y4bZunGQ9wiVde4z6wqPcFhh0=;
+	s=arc-20240116; t=1761574005; c=relaxed/simple;
+	bh=GzpiT56KBSBWsUtFmdMudRRj8LdJ2oSQeEs0Kv5Wqj0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X7tHPizbhNuCoo821DVQjwGyCzPnszDyysWKTmFJINQ+lV5+aWR0NwlbGMoM40RvK0Q9aknCdXyd88r+JX+Y3pxrE8ceNWZWf6Tqnyn+DTqYnDxjzMLT2q18TPWeh75dV0Al7XqiHoZUr772XZvWpRFYZO7PEY+Ycj2Li+aangs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPkphYtw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82FADC113D0;
-	Mon, 27 Oct 2025 14:06:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oOS90cthnUpzzf0M71CFO1p1PZe4V/mDaKRW7tUaAvnG/m0D62GxYxPLiGDJoSsCWmtM+7gLcC5hiGdDgvM0PHbLhf1uVzx3vz/MYaeU5vXGF9Ofo6uzPUtX4QIE/+kjHmsVgjIh/UMrcp1LCRkzMMVFOmZ1u8fZAnQlTlHm3gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjvchMdj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821C4C113D0;
+	Mon, 27 Oct 2025 14:06:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761574003;
-	bh=bU7F16V6leO5Nl+gH+Y4bZunGQ9wiVde4z6wqPcFhh0=;
+	s=k20201202; t=1761574005;
+	bh=GzpiT56KBSBWsUtFmdMudRRj8LdJ2oSQeEs0Kv5Wqj0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kPkphYtwAd+IkcDx1sUw9x6p7QKWN461B1Gqc5UKiLe3a3ZnH34zMR8C0XeuWQ+e/
-	 Gm0SxJHsqSqhlGwmSCvqm0oizhQta+pSu41iP2JExlS1gCMs6CxpL8raxFNJVSFP11
-	 bGSbE5Fhcv4Fsl6QW6VP1xGAMurSWJcuzkw4ZOZEGH49blawTJVSWwkCrVduRNdbiO
-	 RS3OpnstPCKn4exvjv9DzerFLQEAAwRbyxFg4IYl189dECIulTlql+ljusKkPGckCq
-	 w5OvuznxfExntYbfJ2HGcVya6UVR9x9qvhwhjVea5HqU9ZPxtK34WtC9QCS1VZzlAr
-	 pCUV++Nc9sYZQ==
+	b=NjvchMdjV0/NhVM6waJAAI0tG7qolGqH7YLhBIFbLZPQsso66EU66+h7/KsMfHv/R
+	 sQmhnJZmK4xXF9PbeY33iusG2+VjUb1cEvX2JvnRtT0CVmtowOHp9AM7loPa+nTGr8
+	 ZU6HzkDc41vaQD98NIsTJSejtZPpFJDQB91azQYrft3VRusnyx7mVdIcaEGIdRfLqz
+	 nlCsToxznHTNakqtJVmyyFjzJ0btmX6ktSTVqDDS43NlYJe5m5FPfS+1A2sKROoNTv
+	 l3rmfBiSp2iorrcZzJlLHOA+DZDv/bgqQvoD3knj9lUSfWlYRKKFQ0pyJ20T2y4D1C
+	 uXYGPOojSRYeA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: gcc-glymur: Update the halt check flags for pipe clocks
-Date: Mon, 27 Oct 2025 09:09:16 -0500
-Message-ID: <176157405451.8818.9660246400192455172.b4-ty@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: gsbi: fix double disable caused by devm
+Date: Mon, 27 Oct 2025 09:09:18 -0500
+Message-ID: <176157405469.8818.1747544601110229644.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250925-glymur_gcc_usb_fixes-v2-1-ee4619571efe@oss.qualcomm.com>
-References: <20250925-glymur_gcc_usb_fixes-v2-1-ee4619571efe@oss.qualcomm.com>
+In-Reply-To: <20251020160215.523-1-vulab@iscas.ac.cn>
+References: <20251020160215.523-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,21 +62,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 25 Sep 2025 15:49:00 +0530, Taniya Das wrote:
-> The pipe clocks for PCIE and USB are externally sourced and they should
-> not be polled by the clock driver. Update the halt_check flags to 'SKIP'
-> to disable polling for these clocks.
+On Tue, 21 Oct 2025 00:02:15 +0800, Haotian Zhang wrote:
+> In the commit referenced by the Fixes tag, devm_clk_get_enabled() was
+> introduced to replace devm_clk_get() and clk_prepare_enable(). While
+> the clk_disable_unprepare() call in the error path was correctly
+> removed, the one in the remove function was overlooked, leading to a
+> double disable issue.
 > 
-> This helps avoid the clock status stuck at 'off' warnings, which are
-> benign, since all consumers of the PHYs must initialize a given instance
-> before performing any operations.
+> Remove the redundant clk_disable_unprepare() call from gsbi_remove()
+> to fix this issue. Since all resources are now managed by devres
+> and will be automatically released, the remove function serves no purpose
+> and can be deleted entirely.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-glymur: Update the halt check flags for pipe clocks
-      commit: 18da820eb632fbd99167f3fc6650a30db714ddfd
+[1/1] soc: qcom: gsbi: fix double disable caused by devm
+      commit: 2286e18e3937c69cc103308a8c1d4898d8a7b04f
 
 Best regards,
 -- 
