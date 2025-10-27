@@ -1,105 +1,202 @@
-Return-Path: <linux-kernel+bounces-872050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46524C0F25B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:04:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4ACC0F294
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:06:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2C61A215FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:00:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9AAA4F3B93
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F7230DEA2;
-	Mon, 27 Oct 2025 15:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C5D158545;
+	Mon, 27 Oct 2025 15:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flKOZA2+"
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="Q846CXW6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rsZnjkcW"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E1B158545
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D061E5B72;
+	Mon, 27 Oct 2025 15:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761580607; cv=none; b=A+xX84z9/qji9SXxRAn7cBozbbXLiwDPILrv463XYOvxl9h7vTV+xjkgHlOGWRKPBfOW8atoSBu8Kjw5OER4zG7RWoJhDwVrtzk8BGMAf8kFN9OnB/THFVMFg4P0VMzuW1iD4YP6WVn3aeiqzPcZMj7DdkgcffCKybxrdID4LuQ=
+	t=1761580613; cv=none; b=GlyjYXxG1Inrsz6DQXBZKCcigypojJS5F8Qo7/zOOcPQgb6t57SwokY4aeoRSoUhMoEcSOgv00FM3pE9TEJkiUJqGgV2dhspcjABn4E+eRRZtpmrgf+QCZiXcRYGBgbFMkqpp9aQk6Ig2msI4XdhzQSgF59RTODQQ1O1T9ZRUN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761580607; c=relaxed/simple;
-	bh=jiym7E4Dmqh94R6ZPzH9fLGO2aY5UFNCKNdF8kfE4Nk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s9cwcVL/o2+9fcnalYcIMuKiiqNaMF3Gl/xqmuhxEWh9Q5I2bzv4v0aIGx6+ieqYxCOR+5xfbtoZjzyYVNfj8mweJJ2y/oCCrFnLJvL5b2B2+k57rX7StmEMs/OhA1W1gTDRVfHH3SoqyF2YtxtuvY7udGUuVvUhpUH07AOtAg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=flKOZA2+; arc=none smtp.client-ip=74.125.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-637d39f35ffso849924d50.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761580605; x=1762185405; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jiym7E4Dmqh94R6ZPzH9fLGO2aY5UFNCKNdF8kfE4Nk=;
-        b=flKOZA2+TFHN8mVHaz+ipuRORQ7XJRibXSU24Zl1QIoHCzrrasv0XXe/A+PLqnOltr
-         Gq+W5aP4Ln5hCBMsuPf6rRh7Vn+XfYEwflR3joFscfznk+UFZw/eFfe53YsK8UboPCQV
-         Rp9vhaTLk8irNxzMWtewRQJ5P2qkI8Q5FQk6RF3Ah6VsiW23Ihe1DUKdkh2pV18u8usA
-         fgR+mMTcnbBVly6v/CtPjEOkpO9tZj5I2zTlCRvxJXnH/MejN4cprHb6MQOHGYNFog9A
-         wxiSdyOyVzmu2ZJ6RCKRwOGpvABt6gyP+VMK4Lic/WHnC+FSfp1NEFUx8h22gtsCYcHq
-         DS8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761580605; x=1762185405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jiym7E4Dmqh94R6ZPzH9fLGO2aY5UFNCKNdF8kfE4Nk=;
-        b=tnL5UlFstcEwCD40T0h4rfLTVoz2orIxeFxisd/02JX4So0yZK7zC2WoJ0RAFgg8es
-         1i6Dk/or3Lg4F0B26NfVcoBlK+d4Gc1oWu0muzSYOCfRbgWcpiaG4Ihti6ZBmyGgF5lq
-         CwN9rnr+7bH2r0QhOp6QuY5/K+DMzJQ35OVQe7nzpUcI17v3L3rc/czn2hfG+z1/yWh2
-         PZFBoxcjmMxg81LIXLQBtsjfoRHM5qsABlaumlDArLsD652SeAzMuDPhpJar1Sw5Kwnw
-         XeAc4GBUAW1md8am761Sg+im5gMhys07+fL5qTCsyuzQ/VnYjyEOUKxdqOPcJM9eBs4V
-         ZlSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu/Eop+6tYnnGtg2Ra6+8MuDoeLF/suppC2w9W0RwmYlMXScIase0bVaIRt61MVF73tNmHj8EsZfN7dsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZNpKFcclXiKfL2ziUlYxOMNT3zG64KCnQs+wxw3kJMXua+Xx7
-	1bDsKdgTkJExUxjF1dOyL3p1UdBoL50qN/BA/WdgkXAVtdmVYDYilddUh45mLbEMi7SFEA27H/O
-	eQQbgY7lo5kjXTJaiLbrCkyQtJs5cacg=
-X-Gm-Gg: ASbGncuTO9aKbICPDGGA7F81RyU+qN0KEcvkek3hq9Nw03H4GMhyH2k2GWAOWMy4BKD
-	t/O9QzDjmIcjPHraSkPVii882mGP10CmRFa3EnM5XjNRH3td1bdJlChABaIOpyLlJ16hCZHH/cs
-	3kVMDvMOCLybtXtXG/HROJzqrZ5s/HfaeH83yhJbvH7myDCFwnTLfMR0olMWgKM/02+XNI3+/ee
-	IBz83AVBqX+JlnWVEUxb8VDCgP+ndRT5GedPKRjr3jqeZnjXFVSJjCf5kOH4/ksR5Q2QFztfa54
-	NtAh3To=
-X-Google-Smtp-Source: AGHT+IFjOmYnS2xYaM0HCnIHZRcjA28iEqAsz9PYX968JpJQQJnvJYxUKIDW6M7qduZDcvbJ3707IkAmn+4FttWYgBg=
-X-Received: by 2002:a05:690c:4b81:b0:781:593:edd1 with SMTP id
- 00721157ae682-78617fb4d2amr1702807b3.7.1761580604915; Mon, 27 Oct 2025
- 08:56:44 -0700 (PDT)
+	s=arc-20240116; t=1761580613; c=relaxed/simple;
+	bh=S61BcdhjBlE8pNb7rtr3ZXpVmmZWi1rq36Z7ilkFXxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mfEKZfpxrD5oPkILjoMOADAagA6nZ/HeXZUtWihv4Yo6/4cjUcz7EWMcSnRLKfBsw3ZOTJYeAF31cN+M178nPR29vvS6bIjkW9W5i9y2SaZ/DPxrW0wzRwcXoBMrvtispQeSx3ia6czrNs723ZGidTePUMs6Ew5Uo0Omt55ZoKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=Q846CXW6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rsZnjkcW; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 27364EC014C;
+	Mon, 27 Oct 2025 11:56:50 -0400 (EDT)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-06.internal (MEProxy); Mon, 27 Oct 2025 11:56:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1761580610; x=1761667010; bh=tb
+	eSHzXOk4TJB/30tlejhrTtGiyHoE1uNSmxqwrDiV4=; b=Q846CXW6XBYBoJW4vR
+	VvQIYuuWOdguH6g4GxNpx9/GQUd6wGpSW0NTYbtpnVnuvU6//JL9PDKkYDIGxUD9
+	YheB/wbG8KmK13nd/ea7Mf5eoPrskuJS+igMeCb4uZ4HLAycTGc9MSdViXQxjZYr
+	DHEY5uVP89hGTLQ57UbjQmgnW6vMJSd71pMASGlr+erWKzuyE4ThXH6az0ce+SoA
+	SprfllNQ9b8ibvW0nf1pZiT9ZYJ3Tjpv5gKAk92wKyGtFZepoLiJaBAZr0xfjV8j
+	1EnoorSKHKEpTBiZqQr+0isqpdv4i91adZsrjxnI5N2R/tlq7p4GozCBMIYbn6Rh
+	hQ7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1761580610; x=1761667010; bh=tbeSHzXOk4TJB/30tlejhrTtGiyH
+	oE1uNSmxqwrDiV4=; b=rsZnjkcWbWsZtb5rt/tCcY2H0Fn9qjqCprnWUvMkjFNX
+	R+G3VlECWVXEeQBGRZ9EQWANNvUYd3zUixJDL4fAUdfAAMbO1+L4yUvo+vMZT9bY
+	psAYn7RPJ4E1aq4ma76UG/RprIKrSrRzw9qAEVjwp1v1c73FS7Z0VL2Sf7YqHTG+
+	U9K+Liab9+Z1NUKtB+wTlP9YKOLUFcTwyZVN/7lJBXF6YJ37824UKIgh8aQgZFGr
+	U0TVqM0MA97BPCyxItrYSKNFetN/Of34KCkhcDb5tMwtG+QVNFjXp2/30f5RP0i4
+	B75mpIIGa96Ddjj4wzw3BMeen5QR/96GY9CQJr3A+w==
+X-ME-Sender: <xms:QZb_aASbP_KoH_gsLN9cfaZoDvxesUU4NOSxnNG0BUnvHbKObdXv6g>
+    <xme:QZb_aPTCqy_ypJb6sKZi4XiI_Xv1TJJ7r5kyI76O_KwvMOrU94b39kjCqp4n_5EvM
+    FstIqxYbZbDTu13ymutLbNZOzjIY0iSd17CuvP9EVGJbRkerK0D7uI>
+X-ME-Received: <xmr:QZb_aN72TiPN3hWxM2JbqjB0hPWuK0eMHXMu1AoeTrweS98r4ctFZf0PXJKStLArS_TqAwGdTQcWp6oENNF9jNBdVrqB4z4d7-w8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheekfeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufgffkfggtgfgsehtkeertddtreejnecuhfhrohhmpefluhhnihhoucev
+    ucfjrghmrghnohcuoehgihhtshhtvghrsehpohgsohigrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeduvdeludeiteeikeejveeifeeltdffgfegteelhfdvgeehfeejieeljeffgeel
+    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgohhoghhlvghsohhurhgtvgdrtg
+    homhdpohhrrdgtiidpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptden
+    ucfrrghrrghmpehmrghilhhfrhhomhepghhithhsthgvrhesphhosghogidrtghomhdpnh
+    gspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghhithes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgihhtqdhprggtkhgrghgv
+    rhhssehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehlfihnsehlfihnrd
+    hnvghtpdhrtghpthhtohepghhithhsthgvrhesphhosghogidrtghomh
+X-ME-Proxy: <xmx:QZb_aD3qDhcOv9A-A9CvSO0GNixWe5a3RGjMtD_5fzKsoVu3mh0pHg>
+    <xmx:QZb_aADSQWTbg_ExIUi923jYAJ-yP49V5rSKx0NkpFLO5zvJeCYPaA>
+    <xmx:QZb_aGOrI2Lzzcal1YEAn3xoEtAX3Og06yverqA6-0lF5SaXmstzfQ>
+    <xmx:QZb_aNZFMvftvXj3WDCCTFx510kW6zfeKCJSIpLr7ev7w23OW2MQLw>
+    <xmx:Qpb_aHoH7BR5uzK-BQPqBIU8gXRXGgOB90P6naCdy_4_RYBpUNhwh0tN>
+Feedback-ID: if26b431b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 27 Oct 2025 11:56:49 -0400 (EDT)
+From: Junio C Hamano <gitster@pobox.com>
+To: git@vger.kernel.org
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+    git-packagers@googlegroups.com
+Subject: [ANNOUNCE] Git v2.51.2
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Mon, 27 Oct 2025 08:56:48 -0700
+Message-ID: <xmqqo6psjq2n.fsf@gitster.g>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022-netconsole-fix-race-v2-0-337241338079@meta.com>
- <20251022180107.3a7d1198@kernel.org> <CAGSyskWm=jDOSPAh3LWEQQzjAxvc-Od7DkQyP7W9EynoMdDnMg@mail.gmail.com>
- <20251024164207.3062ea9e@kernel.org>
-In-Reply-To: <20251024164207.3062ea9e@kernel.org>
-From: Gustavo Luiz Duarte <gustavold@gmail.com>
-Date: Mon, 27 Oct 2025 12:56:32 -0300
-X-Gm-Features: AWmQ_bmFQCqeshpa-lYwQ-k8GODXN7uKyqnNwg-U_bm1yTiNYDMbv1R8W4iv7rs
-Message-ID: <CAGSyskWwDqng6TFGrmr1jWDhS_-PExen+fCVEm-8vDBUEy1uLQ@mail.gmail.com>
-Subject: Re: [PATCH net v2 0/2] netconsole: Fix userdata race condition
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andre Carvalho <asantostc@gmail.com>, Simon Horman <horms@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Matthew Wood <thepacketgeek@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 8:42=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> Frankly I'm not sure this test is worth the compute cycles it will burn.
-> It's a direct repro for a very specific problem. The changes it will
-> occur again for the same field a pretty low. Maybe just repost patch 1?
+The latest maintenance release Git v2.51.2 is now available at
+the usual places.
 
-Fair enough. I will repost with only patch 1 then.
+The tarballs are found at:
+
+    https://www.kernel.org/pub/software/scm/git/
+
+The following public repositories all have a copy of the 'v2.51.2'
+tag and the 'maint' branch that the tag points at:
+
+  url = https://git.kernel.org/pub/scm/git/git
+  url = https://kernel.googlesource.com/pub/scm/git/git
+  url = git://repo.or.cz/alt-git.git
+  url = https://github.com/gitster/git
+
+----------------------------------------------------------------
+
+Git 2.51.2 Release Notes
+========================
+
+In addition to fixes for an unfortunate regression introduced in Git
+2.51.1 that caused "git diff --quiet -w" to be not so quiet when there
+are additions, deletions and conflicts, this maintenance release merges
+more fixes/improvements that have landed on the master front, primarily
+to make the CI part of the system a bit more robust.
+
+
+Fixes since Git 2.51.1
+----------------------
+
+ * Recently we attempted to improve "git diff -w --quiet" and friends
+   to handle cases where patch output would be suppressed, but it
+   introduced a bug that emits unnecessary output, which has been
+   corrected.
+
+ * The code to squelch output from "git diff -w --name-status"
+   etc. for paths that "git diff -w -p" would have stayed silent
+   leaked output from dry-run patch generation, which has been
+   corrected.
+
+ * Windows "real-time monitoring" interferes with the execution of
+   tests and affects negatively in both correctness and performance,
+   which has been disabled in Gitlab CI.
+
+ * An earlier addition to "git diff --no-index A B" to limit the
+   output with pathspec after the two directories misbehaved when
+   these directories were given with a trailing slash, which has been
+   corrected.
+
+ * The "--short" option of "git status" that meant output for humans
+   and "-z" option to show NUL delimited output format did not mix
+   well, and colored some but not all things.  The command has been
+   updated to color all elements consistently in such a case.
+
+ * Unicode width table update.
+
+ * Recent OpenSSH creates the Unix domain socket to communicate with
+   ssh-agent under $HOME instead of /tmp, which causes our test to
+   fail doe to overly long pathname in our test environment, which has
+   been worked around by using "ssh-agent -T".
+
+Also contains various documentation updates, code cleanups and minor fixups.
+
+----------------------------------------------------------------
+
+Changes since v2.51.1 are as follows:
+
+Jacob Keller (1):
+      diff --no-index: fix logic for paths ending in '/'
+
+Jeff King (2):
+      diff: restore redirection to /dev/null for diff_from_contents
+      status: make coloring of "-z --short" consistent
+
+Johannes Schindelin (5):
+      refs: forbid clang to complain about unreachable code
+      build(deps): bump actions/download-artifact from 4 to 5
+      build(deps): bump actions/checkout from 4 to 5
+      build(deps): bump actions/setup-python from 5 to 6
+      build(deps): bump actions/github-script from 7 to 8
+
+Junio C Hamano (2):
+      diff: make sure the other caller of diff_flush_patch_quietly() is silent
+      Git 2.51.2
+
+Kristoffer Haugsbakk (1):
+      doc: fix accidental literal blocks
+
+Patrick Steinhardt (2):
+      gitlab-ci: disable realtime monitoring to unbreak Windows jobs
+      t7528: work around ETOOMANY in OpenSSH 10.1 and newer
+
+Solly (1):
+      t2401: update path checks using test_path helpers
+
+Torsten Bögershausen (1):
+      unicode: update the width tables to Unicode 17
+
 
