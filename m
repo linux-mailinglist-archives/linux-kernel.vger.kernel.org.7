@@ -1,374 +1,141 @@
-Return-Path: <linux-kernel+bounces-871203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61506C0CA14
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:24:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF9EC0C9E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DBF3AE1DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:18:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 987694E5D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248882E7F22;
-	Mon, 27 Oct 2025 09:17:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212D42E5B08;
-	Mon, 27 Oct 2025 09:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6CC2F25F4;
+	Mon, 27 Oct 2025 09:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L6Wo+c1U"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA462EC08F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556671; cv=none; b=b4zkIuf/SWyR6Y2Hy8bnvAERbn87uJe5YPTvUwTg39st8mWaFZkvWOil2ptkt12wEckbdMLlz2fBOIyz5mN5pFFuzIooWYYpYYvJOnulx/FvlV9PmZGIRNFvKamh5z52RtbJS4P4vPAhg/Nt3yuUfx0+KsW7G7bqBueyG26+rzQ=
+	t=1761556692; cv=none; b=NFSVelU5atDphy7dPEOigl5jlRk2eUuCI5tzsgadGTyU3e+zVMGryZk2zpjC8qHLmmM72JaGsfGODEfRANrtcNJQK3eZ5nu5/5LD1TaGVkrWbqgPyuH9ZXb+4/rMZBuIsR0wVo3xsHpQQ/j++vxBWEKftSkUQn3p0MmqxbX3W20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556671; c=relaxed/simple;
-	bh=Ji4Uwjn20gTBKi5wEvNP5QqkXuIJtkJ0QnbDWWDd1mk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rVKfFqNmi5iHi3RbogtyHFtHAUfXfBrCymfsFWwLDIDdMjb4nPeoZeDCPsn7kqkXQIOZfziCx7SZv4+xZ0Sgn/02AK5Qed2/vO92Fp0q6b8AggiAd9aTC7kKZXXEQKRK5yHkDIicdbTlLjYkt8jXcpx0v7wOJITbbARdWiIs+H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75B5D1764;
-	Mon, 27 Oct 2025 02:17:40 -0700 (PDT)
-Received: from [10.57.67.85] (unknown [10.57.67.85])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 669873F673;
-	Mon, 27 Oct 2025 02:17:45 -0700 (PDT)
-Message-ID: <7386e009-2d53-4a0b-8c83-a84f51b4b79a@arm.com>
-Date: Mon, 27 Oct 2025 09:17:43 +0000
+	s=arc-20240116; t=1761556692; c=relaxed/simple;
+	bh=fPskHNpEnASinQ2bx7vkp4RFIOTfzZ4Tr1rU4FC5YBg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j6WZcXNaIn7SrF6MYM6/7Ke5Qlw0NpkVhGhdbiRHzk1gmBYwuztmAJ2uQFwXvaYKa83jixzwbT9o6AXvCTBI/CeH+aTjnh1mDe1dhdZTakjxk/TTbDqXGf74IcTl5sNvwmY8Gu44Gm4pLXzO8rKcXSu/OOz7EqyC6g4q8BH6iU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L6Wo+c1U; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4eb861a8e66so36463681cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761556689; x=1762161489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JjuXaDF4nyYws2bQ+7X3zoKeqLCyOBsQRJF/6yWZXpk=;
+        b=L6Wo+c1UGYfbusRJKURqQ7YfENnRCvFkLp/MFu+ehh8E2a8uym9+d8rGA+jEpgdBBf
+         7RKXqCEBMoUvp0Zegr7yZK0aHf2wTqcc8Fh1kciWnN46aH4nnN7RmTJQ9/d3MKtRV6dn
+         lq1ZPCh3qJ674HAmXT9plsZ+GnPo7C1G9EZq/gteJOs7Fex+6/b1wACviXmT0YDR9qoV
+         PsrDJswL4U/4UgQypHbBxPZ1sgQh48V1PYFpW2/lwmNQpDwY4xuiUR9yLSMPJkD3NQv0
+         tryZwm8gOqbSxhb2z3EuI0axV3gdeDT1VJSIPOWlVvbuH8AKL6LG2PlVPoeFOM20yphn
+         nP2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761556689; x=1762161489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JjuXaDF4nyYws2bQ+7X3zoKeqLCyOBsQRJF/6yWZXpk=;
+        b=joUyP7jExdDyv8FCaIqRC9EUPclJRL+zDkPqyZr6uAVZrose/sOPu8iMkeTKDFCj/h
+         FsdeRdd8qCU2EkmExELczdol9qWUSVkXOstY3r78F026E/Q5sIPHtarS6gq5mTFm3b2O
+         iYySxieYxu1amVaBYu81JdVAPYTYXSkq47NQ4i85ycQtJy3mmfqJ8oVA8q3SyJ6ZlXE2
+         Q9HvYFAjTOKlEfYFF/2FXD6pnpat9bNVRzoNMWAYu6K3rPO4iBDhHu9GKhVVTv/0G5Mi
+         nW0fZBRqwgkKawvQqfW/7fBjyF+FP+gmRpMU4boNGg3ipIOQUO4ibQ+ExVsY2M9RH6Y7
+         DAWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaTEXLv3xEgJE1fCPXsSfiMZ74NxKqlQbsPiCCFlVTBJiErH+A3ljLv+mqrpnOwJK8nyXfGQr5vdewQdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI2lVo3WpI706rvhW43aqGIG40Zvz4mc1afCYDo5oSVDC+LfjP
+	OqNsujvgWFnfs7rkbRypHBptqRLaGTiMcPcgeoDvW/wxYfgeLxOZEvhu6moQWF0kBRbzVlEZDtb
+	MYw1k1c5B1M6i6aUM9NvhvAuD7MS+DC3SuGupgu5x
+X-Gm-Gg: ASbGncv9xrnsr0NRJcxmO/N0GIPI5/UMWx6Ryh5+WU4wILOwCxtWHkIOwzbe0bmOG9R
+	rg/CHGHGrKP5JsNuf8BGMsq/ejhO7CxXp8uTdLElaeWS1KUMr9EL31h08cKNjFtk2QazwiEayNI
+	LvBGYfCTnjWlKAq5XI0ZNpo2bgXU5WAVAfoW+XL+2jqmB8Z4jaNP9ZIpkEgjg14r3DnFRQrlRdI
+	rpeX7b4nAH4XNvZrIYPo/1BQOOxLVxyck0hq2UFEewARDWa2ECJA/cRjTFyLK9CSzcXDa0=
+X-Google-Smtp-Source: AGHT+IGn9kiXC6v55wZ2Z6kE1uL4cTaogteQRe65Qan4CvgMr20ojg1DZQnSbG0o49HMvVhY7LnDKeEAhavDJCrNcCY=
+X-Received: by 2002:ac8:5a43:0:b0:4ec:f1e5:1b21 with SMTP id
+ d75a77b69052e-4ecf1e51cc1mr36707271cf.59.1761556688706; Mon, 27 Oct 2025
+ 02:18:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] coresight: tpdm: add static tpdm support
-Content-Language: en-GB
-To: Jie Gan <jie.gan@oss.qualcomm.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
- Mao Jinlong <jinlong.mao@oss.qualcomm.com>,
- Tao Zhang <tao.zhang@oss.qualcomm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251013-add-static-tpdm-support-v3-0-a720b73e83db@oss.qualcomm.com>
- <20251013-add-static-tpdm-support-v3-2-a720b73e83db@oss.qualcomm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20251013-add-static-tpdm-support-v3-2-a720b73e83db@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251027085007.2259265-1-stefan.wiehler@nokia.com>
+In-Reply-To: <20251027085007.2259265-1-stefan.wiehler@nokia.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 27 Oct 2025 02:17:57 -0700
+X-Gm-Features: AWmQ_bnwJIlS1v6l9rdALIdpQrpckWaD6-kZUS-gDcLcLrRu9vSgbv1vyX_nN2c
+Message-ID: <CANn89iKbLadNizRB28AoNw8McQXgqtknbH3zdhErDku-m5rjqQ@mail.gmail.com>
+Subject: Re: [PATCH net] sctp: Hold sock lock while iterating over address list
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: Xin Long <lucien.xin@gmail.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/10/2025 07:11, Jie Gan wrote:
-> The static TPDM function as a dummy source, however, it is essential
-> to enable the port connected to the TPDA and configure the element size.
-> Without this, the TPDA cannot correctly receive trace data from the
-> static TPDM. Since the static TPDM does not require MMIO mapping to
-> access its registers, a clock controller is not mandatory for its
-> operation.
-> 
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+We need a changelog.
+
+On Mon, Oct 27, 2025 at 1:50=E2=80=AFAM Stefan Wiehler <stefan.wiehler@noki=
+a.com> wrote:
+>
+> Fixes: 8f840e47f190 ("sctp: add the sctp_diag.c file")
+> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
 > ---
->   drivers/hwtracing/coresight/coresight-tpda.c |   9 ++
->   drivers/hwtracing/coresight/coresight-tpdm.c | 148 +++++++++++++++++++++------
->   drivers/hwtracing/coresight/coresight-tpdm.h |   8 ++
->   3 files changed, 131 insertions(+), 34 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-> index 333b3cb23685..4e93fa5bace4 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpda.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
-> @@ -68,6 +68,15 @@ static int tpdm_read_element_size(struct tpda_drvdata *drvdata,
->   	int rc = -EINVAL;
->   	struct tpdm_drvdata *tpdm_data = dev_get_drvdata(csdev->dev.parent);
->   
-> +	if (coresight_is_static_tpdm(csdev)) {
-> +		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
-> +					      "qcom,dsb-element-bits", &drvdata->dsb_esize);
-> +		rc &= fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
-> +					       "qcom,cmb-element-bits", &drvdata->cmb_esize);
+>  net/sctp/diag.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/net/sctp/diag.c b/net/sctp/diag.c
+> index 996c2018f0e6..7f7e2773e047 100644
+> --- a/net/sctp/diag.c
+> +++ b/net/sctp/diag.c
+> @@ -223,14 +223,15 @@ struct sctp_comm_param {
+>         bool net_admin;
+>  };
+>
+> -static size_t inet_assoc_attr_size(struct sctp_association *asoc)
+> +static size_t inet_assoc_attr_size(struct sock *sk,
+> +                                  struct sctp_association *asoc)
+>  {
+>         int addrlen =3D sizeof(struct sockaddr_storage);
+>         int addrcnt =3D 0;
+>         struct sctp_sockaddr_entry *laddr;
+>
+>         list_for_each_entry_rcu(laddr, &asoc->base.bind_addr.address_list=
+,
+> -                               list)
+> +                               list, lockdep_sock_is_held(sk))
+>                 addrcnt++;
+>
+>         return    nla_total_size(sizeof(struct sctp_info))
+> @@ -256,11 +257,12 @@ static int sctp_sock_dump_one(struct sctp_endpoint =
+*ep, struct sctp_transport *t
+>         if (err)
+>                 return err;
+>
+> -       rep =3D nlmsg_new(inet_assoc_attr_size(assoc), GFP_KERNEL);
+> +       lock_sock(sk);
 > +
+> +       rep =3D nlmsg_new(inet_assoc_attr_size(sk, assoc), GFP_KERNEL);
+>         if (!rep)
+>                 return -ENOMEM;
 
-This doesn't match the "dynamic" tpdm case ? We mandate that static
-TPDMs have DSB and CMB. I would rather set the appropriate flags in
+If -ENOMEM is returned, the lock needs to be released ?
 
-tpdm_drvdata->dsb/cmb in the TPDM driver for static tpdms and not
-let the "static" vs "dynamic" creep into the TPDA and other users.
-
-e.g., in TPDM driver:
-
-if (static_tpdm()) {
-   tpdm_data->dsb = has_dsb_element_bits_property;
-   tpdm_data->cmb = has_cmb_element_bits_property;
-}
-
-
-> +		goto out;
-> +	}
-> +
->   	if (tpdm_data->dsb) {
->   		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
->   				"qcom,dsb-element-bits", &drvdata->dsb_esize);
-> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
-> index 7214e65097ec..1766b0182819 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
-> @@ -495,7 +495,9 @@ static int tpdm_enable(struct coresight_device *csdev, struct perf_event *event,
->   		return -EBUSY;
->   	}
->   
-> -	__tpdm_enable(drvdata);
-> +	if (!coresight_is_static_tpdm(csdev))
-> +		__tpdm_enable(drvdata);
-> +
->   	drvdata->enable = true;
->   	spin_unlock(&drvdata->spinlock);
->   
-> @@ -551,7 +553,9 @@ static void tpdm_disable(struct coresight_device *csdev,
->   		return;
->   	}
->   
-> -	__tpdm_disable(drvdata);
-> +	if (!coresight_is_static_tpdm(csdev))
-> +		__tpdm_disable(drvdata);
-
-minor nit: It is much safer to do this check in __tpdm_xxable() and
-return early.
-
-> +
->   	coresight_set_mode(csdev, CS_MODE_DISABLED);
->   	drvdata->enable = false;
->   	spin_unlock(&drvdata->spinlock);
-> @@ -1342,10 +1346,9 @@ static const struct attribute_group *tpdm_attr_grps[] = {
->   	NULL,
->   };
->   
-> -static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
-> +static int tpdm_probe(struct device *dev, struct resource *res)
->   {
->   	void __iomem *base;
-> -	struct device *dev = &adev->dev;
->   	struct coresight_platform_data *pdata;
->   	struct tpdm_drvdata *drvdata;
->   	struct coresight_desc desc = { 0 };
-> @@ -1354,32 +1357,33 @@ static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
->   	pdata = coresight_get_platform_data(dev);
->   	if (IS_ERR(pdata))
->   		return PTR_ERR(pdata);
-> -	adev->dev.platform_data = pdata;
-> +	dev->platform_data = pdata;
->   
->   	/* driver data*/
->   	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->   	if (!drvdata)
->   		return -ENOMEM;
-> -	drvdata->dev = &adev->dev;
-> +	drvdata->dev = dev;
->   	dev_set_drvdata(dev, drvdata);
->   
-> -	base = devm_ioremap_resource(dev, &adev->res);
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> +	if (res) {
-> +		base = devm_ioremap_resource(dev, res);
-> +		if (IS_ERR(base))
-> +			return PTR_ERR(base);
->   
-> -	drvdata->base = base;
-> +		drvdata->base = base;
-> +		ret = tpdm_datasets_setup(drvdata);
-> +		if (ret)
-> +			return ret;
->   
-> -	ret = tpdm_datasets_setup(drvdata);
-> -	if (ret)
-> -		return ret;
-> +		if (drvdata && tpdm_has_dsb_dataset(drvdata))
-> +			of_property_read_u32(drvdata->dev->of_node,
-> +					     "qcom,dsb-msrs-num", &drvdata->dsb_msr_num);
->   
-> -	if (drvdata && tpdm_has_dsb_dataset(drvdata))
-> -		of_property_read_u32(drvdata->dev->of_node,
-> -			   "qcom,dsb-msrs-num", &drvdata->dsb_msr_num);
-> -
-> -	if (drvdata && tpdm_has_cmb_dataset(drvdata))
-> -		of_property_read_u32(drvdata->dev->of_node,
-> -			   "qcom,cmb-msrs-num", &drvdata->cmb_msr_num);
-> +		if (drvdata && tpdm_has_cmb_dataset(drvdata))
-> +			of_property_read_u32(drvdata->dev->of_node,
-> +					     "qcom,cmb-msrs-num", &drvdata->cmb_msr_num);
-> +	}
->   
->   	/* Set up coresight component description */
->   	desc.name = coresight_alloc_device_name(&tpdm_devs, dev);
-> @@ -1388,34 +1392,51 @@ static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
->   	desc.type = CORESIGHT_DEV_TYPE_SOURCE;
->   	desc.subtype.source_subtype = CORESIGHT_DEV_SUBTYPE_SOURCE_TPDM;
->   	desc.ops = &tpdm_cs_ops;
-> -	desc.pdata = adev->dev.platform_data;
-> -	desc.dev = &adev->dev;
-> +	desc.pdata = dev->platform_data;
-> +	desc.dev = dev;
->   	desc.access = CSDEV_ACCESS_IOMEM(base);
-> -	desc.groups = tpdm_attr_grps;
-> +	if (res)
-> +		desc.groups = tpdm_attr_grps;
->   	drvdata->csdev = coresight_register(&desc);
->   	if (IS_ERR(drvdata->csdev))
->   		return PTR_ERR(drvdata->csdev);
->   
->   	spin_lock_init(&drvdata->spinlock);
->   
-> -	/* Decrease pm refcount when probe is done.*/
-> -	pm_runtime_put(&adev->dev);
-> -
->   	return 0;
->   }
->   
-> -static void tpdm_remove(struct amba_device *adev)
-> +static int tpdm_remove(struct device *dev)
->   {
-> -	struct tpdm_drvdata *drvdata = dev_get_drvdata(&adev->dev);
-> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev);
->   
->   	coresight_unregister(drvdata->csdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dynamic_tpdm_probe(struct amba_device *adev,
-> +			      const struct amba_id *id)
-> +{
-> +	int ret;
-> +
-> +	ret = tpdm_probe(&adev->dev, &adev->res);
-> +	if (!ret)
-> +		pm_runtime_put(&adev->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static void dynamic_tpdm_remove(struct amba_device *adev)
-> +{
-> +	tpdm_remove(&adev->dev);
->   }
->   
->   /*
->    * Different TPDM has different periph id.
->    * The difference is 0-7 bits' value. So ignore 0-7 bits.
->    */
-> -static const struct amba_id tpdm_ids[] = {
-> +static const struct amba_id dynamic_tpdm_ids[] = {
->   	{
->   		.id	= 0x001f0e00,
->   		.mask	= 0x00ffff00,
-> @@ -1423,17 +1444,76 @@ static const struct amba_id tpdm_ids[] = {
->   	{ 0, 0, NULL },
->   };
->   
-> -static struct amba_driver tpdm_driver = {
-> +MODULE_DEVICE_TABLE(amba, dynamic_tpdm_ids);
-> +
-> +static struct amba_driver dynamic_tpdm_driver = {
->   	.drv = {
->   		.name   = "coresight-tpdm",
->   		.suppress_bind_attrs = true,
->   	},
-> -	.probe          = tpdm_probe,
-> -	.id_table	= tpdm_ids,
-> -	.remove		= tpdm_remove,
-> +	.probe          = dynamic_tpdm_probe,
-> +	.id_table	= dynamic_tpdm_ids,
-> +	.remove		= dynamic_tpdm_remove,
->   };
->   
-> -module_amba_driver(tpdm_driver);
-> +static int tpdm_platform_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	int ret;
-> +
-> +	pm_runtime_get_noresume(&pdev->dev);
-> +	pm_runtime_set_active(&pdev->dev);
-> +	pm_runtime_enable(&pdev->dev);
-> +
-> +	ret = tpdm_probe(&pdev->dev, res);
-> +	pm_runtime_put(&pdev->dev);
-> +	if (ret)
-> +		pm_runtime_disable(&pdev->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tpdm_platform_remove(struct platform_device *pdev)
-> +{
-> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(&pdev->dev);
-> +
-> +	if (WARN_ON(!drvdata))
-> +		return;
-> +
-> +	tpdm_remove(&pdev->dev);
-> +	pm_runtime_disable(&pdev->dev);
-> +}
-> +
-> +static const struct of_device_id static_tpdm_match[] = {
-> +	{.compatible = "qcom,coresight-static-tpdm"},
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, static_tpdm_match);
-> +
-> +static struct platform_driver static_tpdm_driver = {
-> +	.probe		= tpdm_platform_probe,
-> +	.remove		= tpdm_platform_remove,
-> +	.driver		= {
-> +		.name	= "coresight-static-tpdm",
-> +		.of_match_table = static_tpdm_match,
-> +		.suppress_bind_attrs = true,
-> +	},
-> +};
-> +
-> +static int __init tpdm_init(void)
-> +{
-> +	return coresight_init_driver("tpdm", &dynamic_tpdm_driver, &static_tpdm_driver,
-> +				     THIS_MODULE);
-> +}
-> +
-> +static void __exit tpdm_exit(void)
-> +{
-> +	coresight_remove_driver(&dynamic_tpdm_driver, &static_tpdm_driver);
-> +}
-> +
-> +module_init(tpdm_init);
-> +module_exit(tpdm_exit);
->   
->   MODULE_LICENSE("GPL");
->   MODULE_DESCRIPTION("Trace, Profiling & Diagnostic Monitor driver");
-> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
-> index b11754389734..9f52c88ce5c1 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpdm.h
-> +++ b/drivers/hwtracing/coresight/coresight-tpdm.h
-> @@ -343,4 +343,12 @@ struct tpdm_dataset_attribute {
->   	enum dataset_mem mem;
->   	u32 idx;
->   };
-> +
-> +static inline bool coresight_is_static_tpdm(struct coresight_device *csdev)
-> +{
-> +	struct device_node *node = csdev->dev.parent->of_node;
-> +
-> +	return (csdev &&
-> +		of_device_is_compatible(node, "qcom,coresight-static-tpdm"));
-
-Why do we have to go check the firmware table all the time ? Could we 
-not cache this in drvdata ? Or even better, we can use the csdev->access
-
-by using :  coresight_device_is_tpdm()
-
-return (coresight_device_is_tpdm(csdev) && !csdev->access->base);
-
-Suzuki
+Please do not rush patches like this.
 
