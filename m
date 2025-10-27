@@ -1,645 +1,207 @@
-Return-Path: <linux-kernel+bounces-871149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B22CC0C863
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9E5C0C854
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DB2189A53F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:00:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAEB74EF310
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF0A30F943;
-	Mon, 27 Oct 2025 08:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA1330F818;
+	Mon, 27 Oct 2025 08:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=erik.faye-lund@collabora.com header.b="kS2O+6IE"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="RfbgPh/m"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011014.outbound.protection.outlook.com [52.101.70.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967EB30F930
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C282E3B1C;
+	Mon, 27 Oct 2025 08:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555030; cv=pass; b=tntcBzqiv7FYBy6/S/pkvu6RVkJ8ga9573XyermRO8hSGvY48H8vWh/Tj7vM8uoMypyTfPiPQv/3adfpC/HYjwgm0i//Tee9RIDu1JumpxFNnhUzFkx5su6mjjKp5c5Ep9sfs5lqcC3/KERMlgo0wF396c0xHF3x1WIUDhv+gQQ=
+	t=1761555023; cv=fail; b=VbgD0uH/nWff21oNpPvfBmhZBSV5fsSdsZbkakmpP1c+gdis/Cd20eQPNvcKuWYlNcV8FnAUenG8VNehTT/X9qLy8WhsFh5MAEQk9v6/5qqptfa7+SHAhpznNokluFQ+IxkqkNgVJ7CJLdO+tVXwR1/dyl7a6meSbiYi/18+IOY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555030; c=relaxed/simple;
-	bh=m3VZp9YSylPqLelhrLuZ5xxieZuOy8MY/kabaGpmhcU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e57IGXgylQVAZWvsxSHNBDq86AIwNzJ1zNxfh0N1mE8DlBn1VUvFICyVyQLg20ImphFsR6OI+FBnppkvYCh9QmOKiDo2KXp6jsG70P2vOAFREIUVlAmA3eT+wSl3x3lkj7/46BZlQtdPekG9sgrYDXK4m3Vi+3EO49WcSNM7ATc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=erik.faye-lund@collabora.com header.b=kS2O+6IE; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761555008; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VvqASYriyXeZcqKMMJ7V/Qgq2FEip03qQi0CvyYmE9MEjHS5cfp6TScYedT8KjE0z+GY5O231DmDVsK/vXN6lkqk1GZ2NF7KiwQfmiSQbKSxz/uREj9yTmjBKXGyFOe9ylTl/meNthMweIe6+74fPIJXtXIrNQmzfpxLg+KxPW4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761555008; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JIowyNHMdDhVK/3NnczVgQntH0ERfxLdGqqxIX6HlEQ=; 
-	b=fgsKJf80LUtk+QIsmjpAUwaMBGBtOlUQLfYqJsqaRhev+TNrrhW9nKAE7j2yzC84Y6jbueC7gr3lnRVQaNldGqNIiZ9tsOXNgSFnlj6hkGjKG0K3+5uZij1y+pbchTHPU5qUszRQaQTUG1YOvcxAldP07gLDuX1rcgUgJguJG0E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=erik.faye-lund@collabora.com;
-	dmarc=pass header.from=<erik.faye-lund@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761555008;
-	s=zohomail; d=collabora.com; i=erik.faye-lund@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=JIowyNHMdDhVK/3NnczVgQntH0ERfxLdGqqxIX6HlEQ=;
-	b=kS2O+6IElaTFmNfcOmJriICCP2BYj+0br+o1UMM8q4j8/UIt8/SXlWtl6JkVU0dp
-	l8NJpegjwLxln07y7bjdJZ7DdgbSZJSvkh+/rI+v5OjgW/sibAgxK1rjQ/uhoz6VYTw
-	naVWMkZs9/mUCjywfd4jMwmO/we68/pAoO5AdBIE=
-Received: by mx.zohomail.com with SMTPS id 1761555004914101.78322787146067;
-	Mon, 27 Oct 2025 01:50:04 -0700 (PDT)
-Message-ID: <e4134813f828a33a06f720f9162d3c11c181f44b.camel@collabora.com>
-Subject: Re: [PATCH v2 4/8] drm/panthor: Implement L2 power on/off via
- PWR_CONTROL
-From: Erik Faye-Lund <erik.faye-lund@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>, Steven
- Price	 <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst	 <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 27 Oct 2025 09:50:00 +0100
-In-Reply-To: <20251024202117.3241292-5-karunika.choo@arm.com>
-References: <20251024202117.3241292-1-karunika.choo@arm.com>
-	 <20251024202117.3241292-5-karunika.choo@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 (by Flathub.org) 
+	s=arc-20240116; t=1761555023; c=relaxed/simple;
+	bh=jfySb+SEqIoIofl2b3mCapa2Zxha/u9HH14lbU4q0HU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XyngazkUrUJ7ZPPsN1ZYOcMlQTFBuAIYMagNw0APMdEa6iVFMgb3gtmLNZt8B1gSpgSLaxdwD9kTjigh14rYhreoyF2Qp6+cMNt7XiPOZmCWakpHo5d8M/tu0sFc5H8XBVLgb03uiDOG4Rf93hOtLFknDxHsI/VzU7p81PThcR8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=RfbgPh/m; arc=fail smtp.client-ip=52.101.70.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sy8dIoE/Gt4QxPu3zuivIBm92wyZFOlYEtncgptEZRpHjaRSg/lROlO7ScMJt0CP41bOa+rHwPtpCbI7njHdjATXgq1PKDKZUGe5r4JEF5eTVuO4vPcJMo8o9alJKhq6g6SGt5zYM3C9eso7dR/CMmOPWjNBQhI5cizXFrNagE8NhfGQKRaHVXTy7dStoHsY7sHEa6GbR0X5JQp8qrdWjhwuhKUrSIEWUlp0oXuQ3hY3puAo/sBnb6+oBlbmSeISR0VGrMFCqPnnQH9QkBoxc2rTPG9ysq5noj/4uCLJKnNmGYZSRDjACnASHGcLsl34VQXxuFBPteFj7zPRJ4Iocw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4gzeqEGj63yXK9Rf/v99FuswmdroQXSKxtG+IWtPlnM=;
+ b=ijmFwRz3+h7KIQofcsZ0xsFrSkpiN2N8hEdLSJ1X3FOVvaq6OhBwrKb78kkcF+mF28QXLl7Mqd7oApiwkO0YG35xE8vGFMmlg/b0N9hmtU8FGQhNEuaCld9h2PHCiLdrjORUBN9rD6mezKjyynPrZ8ekQyTUhzEeQ7PkQNZWXVANvyZF8+WuqP0P2PWCbopWMEBS3ead7khiYuoxvS7iAkm2qIASSVsFpCgfGIA30yn8ZIozwv58aO67BH2TfGQF7fTzqCr9WLVo5o7Nn9jzHR+jk7w3KqK6HT+b5engjvP0YiAk6rFsyp6YW+f3r5F5pUBCrAPL32/a9cJV+AnD5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4gzeqEGj63yXK9Rf/v99FuswmdroQXSKxtG+IWtPlnM=;
+ b=RfbgPh/mZP8UfXyEVmitGmYtdGVq7igCIGKeA5YR2Hcgi1APtoMHG3Mj+l0c2JOJUoFVHNv38B7d0hKiKsA9HoBN9TPiwbS20JoDI9Ua7WU2s3DMKW3nkQisqgkFCtkXJf1OhvXphEhpwW/L88Z/e8QyKXAZrjliGtADOK0tl/o7dA0/low+h+2/xmSU6IJPsk6sCYHfwy2scmIve+0lU7dhPPXxQnLgJ52BrNw/+PYhNi40KHYTnvyTqlbz6OUE31vtkr/Nb4NjAvTG5N23N4WcK4W+/5JWgi6YMB5gxYSVkFjt+DFOBJpn2lb0rZf4+B30n942+CXaQ0x4fIdOZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nokia.com;
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com (2603:10a6:102:383::17)
+ by AM7PR07MB6611.eurprd07.prod.outlook.com (2603:10a6:20b:18f::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 27 Oct
+ 2025 08:50:19 +0000
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::3a2d:5997:c1c7:3809]) by PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::3a2d:5997:c1c7:3809%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 08:50:18 +0000
+From: Stefan Wiehler <stefan.wiehler@nokia.com>
+To: Xin Long <lucien.xin@gmail.com>,
+	"David S . Miller " <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: linux-sctp@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wiehler <stefan.wiehler@nokia.com>
+Subject: [PATCH net] sctp: Hold sock lock while iterating over address list
+Date: Mon, 27 Oct 2025 09:50:07 +0100
+Message-ID: <20251027085007.2259265-1-stefan.wiehler@nokia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0182.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ab::13) To PAWPR07MB9688.eurprd07.prod.outlook.com
+ (2603:10a6:102:383::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAWPR07MB9688:EE_|AM7PR07MB6611:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8867b5b-79ac-4003-e230-08de1535db02
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+wXlo3aKvI6ajXoA51GZ1mhGNB4g9ACW1+37iQGc2gnVPUW4bmN4CrmpfMg0?=
+ =?us-ascii?Q?TZtadGWNVb2Ln3wKz0i1T6BJpvY+apsLvC0Z1GlSjM6FtWSWaknlNkWzuMxB?=
+ =?us-ascii?Q?2r2hQOqeyUZBVJcRd3Kvg1qkPD/W6V504c9dUl6WO+oBwBgViPiH1vIilLSh?=
+ =?us-ascii?Q?E3K4UiaBPbZYDbUquVVFA3fyg9+fPeoSAMe2hld82+FCo7byufn9orAUi6hm?=
+ =?us-ascii?Q?CZAv1Of5C3znMNW4ZRmBa3nZCkcdTUNH085XIyknWDHiHS6y15kBr4FJiqcw?=
+ =?us-ascii?Q?CJE3TFSVD0fgglCoprsb3Q0lguPw6KOwvYX85MVTVrmO1b06VYxZ5v0y++rw?=
+ =?us-ascii?Q?Ru+8Oip6zvyjtzOcxoCgkctkxr4iJ3HESZBtF5fDkgH6K6LcIwXycERWIrqu?=
+ =?us-ascii?Q?TPPZ0lUO4tHxjzGlAseloS4pDvKecR1XF6UGdMGrvLW8n6g4w66gnbozTJ4a?=
+ =?us-ascii?Q?/oLAgkmtAYGXML9v7bS6HmX5tQGvQ/SjYR01CQ78hJ8/DAH8USDQoEQuZqTR?=
+ =?us-ascii?Q?NhWmBQKkKjb5ADzcLHo//IdJbbi2fG0KLfWhorHxh57+3LD37Jtm2ucukTCj?=
+ =?us-ascii?Q?djisZlj1nyojW44dwglGJWRKEnhYg/9QEshsMkBevq5QQ6wPLKIHts8rHemb?=
+ =?us-ascii?Q?RTAjDU9rCkSeySknF1KflVxmwJ7wLEHv/oICUjP7HIJWKsL4oFjWJDGSbLPc?=
+ =?us-ascii?Q?X2J8nM0kfYi2kNIBb7WYieQltatXoTfBPkMtNsJpqjNM3TQmnM0n6RDeLoXf?=
+ =?us-ascii?Q?pDNuXjy62naBVmzIJgwrtDja9DWsy7owK1F93zq9Q9jko3p/x8R5A5NGeWHO?=
+ =?us-ascii?Q?zdVotY2kOoCkMwJW1dtERVN4okpXPe23ZsJUdmHovxgg6aoOORBDV3q1LAIT?=
+ =?us-ascii?Q?rJx1x4swEQR2yxV7DFFN1ulQkx2W3CVgek1RwZo+3ifFf9naVFAs/6i4i6gK?=
+ =?us-ascii?Q?9lP2huRlLDnD6zHc0Gh59SvMuK1oRt2nanpucT/ThLcCIQsbWO63uJkoEmUH?=
+ =?us-ascii?Q?V6pO7Eqbhxycj7PsKBsddPej68ZToBhqj41UYLshxS64TRQ6DSplb+giaFng?=
+ =?us-ascii?Q?0IVe8A/Wbq7qKNXnLyr+DG8KZmLtqWuF7VwsMilh17yT9k7fb4CniDaISa05?=
+ =?us-ascii?Q?PhhN6m21alJ7klgNBHcnq7wu1XBuZ/F1neXRMaMzYQ9oVEK+IuE0Mz2E96b3?=
+ =?us-ascii?Q?nc2rw0CShUbv4g/EH7/b4TApuEiyvgkcnsfSFlZrJR2mJd0uPCGuxNnWFUXo?=
+ =?us-ascii?Q?Z4ze2B9SNKnGNmhdIP61R18cSGeFU7iuwNqEwx46jS6VwUVpocYgMC4tPBJf?=
+ =?us-ascii?Q?hkQpopKuVlzwstwv+ZpVvep8QaBOhWITNR9p/O3AccnmyVENBCbWZIbMmFfg?=
+ =?us-ascii?Q?GSpLWMqaXhvt9mlwdebjDrMKEXRlcCJ0wEfcSyxgK0H9aUsQMgCPKPu8b3B4?=
+ =?us-ascii?Q?uM2Wk2J12MXQxP5o7WMjY21Zmsf0MYJ2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR07MB9688.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eviWALoVBBhQaH6x9GJhE0bDenAh7PPc7Hj08uvNM05f3JVaD7wPHe0uVMgl?=
+ =?us-ascii?Q?y+GjhoCJfTTLw/OCKykkTupsu7QMVaKmT6euNcY0wtC6ENry1+7gxLK7fU6p?=
+ =?us-ascii?Q?VEM/XT+i137dEntufiU4ePYDei57nbgZ5PGMmOf9YDD8N+ASW4TcO9UVtIqF?=
+ =?us-ascii?Q?Nigvaeg3JdJ5hjyXbth1OIiP9kNOF3XigJHFVE73m1OzdsG0f6zNBgCKqFjk?=
+ =?us-ascii?Q?elWKNp8j15ZcDZG6QGokHpawFf6o9zgVoBaDGSjd4CVeytous51q1ao3KbjN?=
+ =?us-ascii?Q?WmYsJhH8y0+f2IHDC5Fi9GlwiJev49s2DvSfk1ktV+Cn8/8pSsCw2P5YjQUl?=
+ =?us-ascii?Q?gqfjp4DQKGWVNO+gortqvPLReoL94RZRet9tjIqkqRvUMdViG0yzuzXS/y37?=
+ =?us-ascii?Q?kk8En/x+IoRIHSIcVENxNzZAiGEcqN6WfgSk4I3pXOWxhPx0IZGlY6uzDJ9+?=
+ =?us-ascii?Q?UpQ9FJo5CZ3imuZVKw34sHGi97rwOeSDPI0latyRtC6tkrI6DUjZrMWKi/As?=
+ =?us-ascii?Q?nU211kDhpOsxR79Dity6EEkiDnNKWafgN7fROutufnZjdCs+TaAaj2gI1qmU?=
+ =?us-ascii?Q?fWIG7gtCPp9KwQ4fXCQlHqbHJcZ6CuMDKaMXL3NKTmje6kw4eGGRPM6cwW8c?=
+ =?us-ascii?Q?E1JonJgHaLb98F0Z+VtJj+4+vF325HFR05Di257ptvqO9nMIb2TTJKXkjy/Y?=
+ =?us-ascii?Q?7ThlDt/1yIA3lefq/9wDiJ9muciwEAoJcDTwA6b6D4cAnuEGu3UnGc+giGu6?=
+ =?us-ascii?Q?PGqqnu0FF0HoHjVSV2AdSkhA0OrlkOZNm07zL80lgJPuiXd0B8qRr1bBYcU6?=
+ =?us-ascii?Q?66dpp2vay5UgM7PiYgvVN2FtI158utHZDVj4foiXWUkmYTTkhh9BBQBfUoqw?=
+ =?us-ascii?Q?Za5fPXdbGQQAy+E3RQRdvO+7YO8JLVMPv7c+MKl1/QB9Id844sUHlKjudnV4?=
+ =?us-ascii?Q?kNxwiTK173QVxVTO1uRgeqIiPG7o6Nn6Ta1sjbDvp0xsFb4INIkDLU1G47je?=
+ =?us-ascii?Q?HSEkXY1uJUkfOT3p0wXHpSFCFfhovxJvTeGrL2NewOEWX6NW/SapnPsCykFV?=
+ =?us-ascii?Q?4DgH58LzULEF29D4dvQP4XB+jNxhHUTOpwNcqRD/9EWF+R+nubZRcvZD4qPo?=
+ =?us-ascii?Q?clk7sR9GXgMYKakXVoPW4uMwSoeXHEOZ0svmp/2MSLwFeKjLcnm9BrCxl8pu?=
+ =?us-ascii?Q?Ququax2Ris+YjYSXU0svedntwbdW+69+z/a1fh4Kp7FKi6mg9cBVxo4NE5Ko?=
+ =?us-ascii?Q?To0NdNWqO6Qa+u48CmGEcNGgbadbs1BqwgszHAteJhKev7rAUWnklJR8SuCo?=
+ =?us-ascii?Q?QtgajFrz2FyshqpakaU4Djuon38eCz+FUmFxLe5keJEvO/t2w8Qd8Y6uF+Eo?=
+ =?us-ascii?Q?5Yj/q7fB++sAgjvkpXBzITSRdGeocefzWwEX+3aUyybw2I6ZNnLS8ASxWzP8?=
+ =?us-ascii?Q?cNn6FM0bj/MHBxb42l12YBogcQSpPH4CGGRxWhTk/iQH1Ijbur3uN3oYNL6o?=
+ =?us-ascii?Q?VVJot1PVe6L/dgNbFfghIxuL6syBn9sZTtkDwmhF8kGalvzuEuDbIo4UrKJ5?=
+ =?us-ascii?Q?e9xXX3Wy16IcU8+Wh36RWbYxLcIVbMCQEiepaCSleVIDK1/Qd/V7XGvus2zq?=
+ =?us-ascii?Q?MZCd8F7ZnfCCm3HbPww8vsrjSD4vf5SDYWVLK4E0OXeJhSKlIrhCL651T4lZ?=
+ =?us-ascii?Q?4MweWA=3D=3D?=
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8867b5b-79ac-4003-e230-08de1535db02
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR07MB9688.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:50:18.8086
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2x7EwzsTqlefwcCNoJNkmbQfVLfDVUGa0FKLkXVkYGfz1XA5t9HW9MZom5NDE9e5MoFM+N6qwzBN3parhQZtsbzD+lH8ssDWRTX7D6QE8Ho=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR07MB6611
 
-On Fri, 2025-10-24 at 21:21 +0100, Karunika Choo wrote:
-> This patch adds common helpers to issue power commands, poll
-> transitions, and validate domain state, then wires them into the L2
-> on/off paths.
->=20
-> The L2 power-on sequence now delegates control of the SHADER and
-> TILER
-> domains to the MCU when allowed, while the L2 itself is never
-> delegated.
-> On power-off, dependent domains beneath the L2 are checked, and if
-> necessary, retracted and powered down to maintain proper domain
-> ordering.
->=20
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
-> v2:
-> =C2=A0* Updated GENMASK to GENMASK_U64 to address kernel test robot
-> warnings
-> =C2=A0=C2=A0 for 32-bit systems.
-> =C2=A0* Removed panthor_pwr_read_status() in favour of a simple
-> gpu_read64()
-> =C2=A0=C2=A0 operation on the PWR_STATUS register.
-> =C2=A0* Renamed panthor_pwr_info_show() to panthor_pwr_debug_info_show()
-> for
-> =C2=A0=C2=A0 more clarity.
-> =C2=A0* Added additional WARN_ON for an invalid domain when requesting
-> power
-> =C2=A0=C2=A0 domain transition.
-> =C2=A0* Made panthor_pwr_domain_transition()'s expected val logic more
-> =C2=A0=C2=A0 readable and clearer.
-> =C2=A0* Wait on domain power transition instead of failing the operation.
-> =C2=A0* Fixed inconsistent error return value vs kerneldoc.
-> =C2=A0* Removed confusing drm_dbg in delegate_domain() in favor of a
-> comment.
-> =C2=A0* Add unwind to panthor_pwr_delegate_domains().
-> =C2=A0* Moved child domain handling logic from panthor_pwr_l2_power_off()
-> =C2=A0=C2=A0 into panthor_pwr_domain_force_off().
-> =C2=A0* Added additional clarification regarding delegation and retractio=
-n
-> of
-> =C2=A0=C2=A0 power domains.
-> =C2=A0* Minor formatting and readability changes and remove unnecessary
-> =C2=A0=C2=A0 checks.
-> ---
-> =C2=A0drivers/gpu/drm/panthor/panthor_pwr.c=C2=A0 | 378
-> +++++++++++++++++++++++++
-> =C2=A0drivers/gpu/drm/panthor/panthor_pwr.h=C2=A0 |=C2=A0=C2=A0 4 +
-> =C2=A0drivers/gpu/drm/panthor/panthor_regs.h |=C2=A0=C2=A0 1 +
-> =C2=A03 files changed, 383 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_pwr.c
-> b/drivers/gpu/drm/panthor/panthor_pwr.c
-> index da64fe006a8b..cd529660a276 100644
-> --- a/drivers/gpu/drm/panthor/panthor_pwr.c
-> +++ b/drivers/gpu/drm/panthor/panthor_pwr.c
-> @@ -23,6 +23,14 @@
-> =C2=A0	 PWR_IRQ_COMMAND_NOT_ALLOWED | \
-> =C2=A0	 PWR_IRQ_COMMAND_INVALID)
->=20
-> +#define PWR_ALL_CORES_MASK		GENMASK_U64(63, 0)
-> +
-> +#define PWR_DOMAIN_MAX_BITS		16
-> +
-> +#define PWR_TRANSITION_TIMEOUT_US	(2ULL * USEC_PER_SEC)
-> +
-> +#define PWR_RETRACT_TIMEOUT_US		(2ULL * USEC_PER_MSEC)
-> +
-> =C2=A0/**
-> =C2=A0 * struct panthor_pwr - PWR_CONTROL block management data.
-> =C2=A0 */
-> @@ -59,6 +67,323 @@ static void panthor_pwr_irq_handler(struct
-> panthor_device *ptdev, u32 status)
-> =C2=A0}
-> =C2=A0PANTHOR_IRQ_HANDLER(pwr, PWR, panthor_pwr_irq_handler);
->=20
-> +static void panthor_pwr_write_command(struct panthor_device *ptdev,
-> u32 command, u64 args)
-> +{
-> +	if (args)
-> +		gpu_write64(ptdev, PWR_CMDARG, args);
-> +
-> +	gpu_write(ptdev, PWR_COMMAND, command);
-> +}
-> +
-> +static const char *get_domain_name(u8 domain)
-> +{
-> +	switch (domain) {
-> +	case PWR_COMMAND_DOMAIN_L2:
-> +		return "L2";
-> +	case PWR_COMMAND_DOMAIN_TILER:
-> +		return "Tiler";
-> +	case PWR_COMMAND_DOMAIN_SHADER:
-> +		return "Shader";
-> +	case PWR_COMMAND_DOMAIN_BASE:
-> +		return "Base";
-> +	case PWR_COMMAND_DOMAIN_STACK:
-> +		return "Stack";
-> +	}
-> +	return "Unknown";
-> +}
-> +
-> +static u32 get_domain_base(u8 domain)
-> +{
-> +	switch (domain) {
-> +	case PWR_COMMAND_DOMAIN_L2:
-> +		return PWR_L2_PRESENT;
-> +	case PWR_COMMAND_DOMAIN_TILER:
-> +		return PWR_TILER_PRESENT;
-> +	case PWR_COMMAND_DOMAIN_SHADER:
-> +		return PWR_SHADER_PRESENT;
-> +	case PWR_COMMAND_DOMAIN_BASE:
-> +		return PWR_BASE_PRESENT;
-> +	case PWR_COMMAND_DOMAIN_STACK:
-> +		return PWR_STACK_PRESENT;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static u32 get_domain_ready_reg(u32 domain)
-> +{
-> +	return get_domain_base(domain) + (PWR_L2_READY -
-> PWR_L2_PRESENT);
-> +}
-> +
-> +static u32 get_domain_pwrtrans_reg(u32 domain)
-> +{
-> +	return get_domain_base(domain) + (PWR_L2_PWRTRANS -
-> PWR_L2_PRESENT);
-> +}
-> +
-> +static bool is_valid_domain(u32 domain)
-> +{
-> +	return get_domain_base(domain) !=3D 0;
-> +}
-> +
-> +static bool has_rtu(struct panthor_device *ptdev)
-> +{
-> +	return ptdev->gpu_info.gpu_features &
-> GPU_FEATURES_RAY_TRAVERSAL;
-> +}
-> +
-> +static u8 get_domain_subdomain(struct panthor_device *ptdev, u32
-> domain)
-> +{
-> +	if ((domain =3D=3D PWR_COMMAND_DOMAIN_SHADER) && has_rtu(ptdev))
-> +		return PWR_COMMAND_SUBDOMAIN_RTU;
-> +
-> +	return 0;
-> +}
-> +
-> +static int panthor_pwr_domain_wait_transition(struct panthor_device
-> *ptdev, u32 domain,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 timeout_us)
-> +{
-> +	u32 pwrtrans_reg =3D get_domain_pwrtrans_reg(domain);
-> +	u64 val;
-> +	int ret =3D 0;
-> +
-> +	ret =3D gpu_read64_poll_timeout(ptdev, pwrtrans_reg, val,
-> !(PWR_ALL_CORES_MASK & val), 100,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 timeout_us);
-> +	if (ret) {
-> +		drm_err(&ptdev->base, "%s domain power in
-> transition, pwrtrans(0x%llx)",
-> +			get_domain_name(domain), val);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void panthor_pwr_debug_info_show(struct panthor_device
-> *ptdev)
-> +{
-> +	drm_info(&ptdev->base, "GPU_FEATURES:=C2=A0=C2=A0=C2=A0 0x%016llx",
-> gpu_read64(ptdev, GPU_FEATURES));
-> +	drm_info(&ptdev->base, "PWR_STATUS:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x%01=
-6llx",
-> gpu_read64(ptdev, PWR_STATUS));
-> +	drm_info(&ptdev->base, "L2_PRESENT:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x%01=
-6llx",
-> gpu_read64(ptdev, PWR_L2_PRESENT));
-> +	drm_info(&ptdev->base, "L2_PWRTRANS:=C2=A0=C2=A0=C2=A0=C2=A0 0x%016llx"=
-,
-> gpu_read64(ptdev, PWR_L2_PWRTRANS));
-> +	drm_info(&ptdev->base, "L2_READY:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 0x%016llx",
-> gpu_read64(ptdev, PWR_L2_READY));
-> +	drm_info(&ptdev->base, "TILER_PRESENT:=C2=A0=C2=A0 0x%016llx",
-> gpu_read64(ptdev, PWR_TILER_PRESENT));
-> +	drm_info(&ptdev->base, "TILER_PWRTRANS:=C2=A0 0x%016llx",
-> gpu_read64(ptdev, PWR_TILER_PWRTRANS));
-> +	drm_info(&ptdev->base, "TILER_READY:=C2=A0=C2=A0=C2=A0=C2=A0 0x%016llx"=
-,
-> gpu_read64(ptdev, PWR_TILER_READY));
-> +	drm_info(&ptdev->base, "SHADER_PRESENT:=C2=A0 0x%016llx",
-> gpu_read64(ptdev, PWR_SHADER_PRESENT));
-> +	drm_info(&ptdev->base, "SHADER_PWRTRANS: 0x%016llx",
-> gpu_read64(ptdev, PWR_SHADER_PWRTRANS));
-> +	drm_info(&ptdev->base, "SHADER_READY:=C2=A0=C2=A0=C2=A0 0x%016llx",
-> gpu_read64(ptdev, PWR_SHADER_READY));
-> +}
-> +
-> +static int panthor_pwr_domain_transition(struct panthor_device
-> *ptdev, u32 cmd, u32 domain,
-> +					 u64 mask, u32 timeout_us)
-> +{
-> +	u32 ready_reg =3D get_domain_ready_reg(domain);
-> +	u32 pwr_cmd =3D PWR_COMMAND_DEF(cmd, domain,
-> get_domain_subdomain(ptdev, domain));
-> +	u64 expected_val =3D 0;
-> +	u64 val;
-> +	int ret =3D 0;
-> +
-> +	if (drm_WARN_ON(&ptdev->base, !is_valid_domain(domain)))
-> +		return -EINVAL;
-> +
-> +	switch (cmd) {
-> +	case PWR_COMMAND_POWER_DOWN:
-> +		expected_val =3D 0;
-> +		break;
-> +	case PWR_COMMAND_POWER_UP:
-> +		expected_val =3D mask;
-> +		break;
-> +	default:
-> +		drm_err(&ptdev->base, "Invalid power domain
-> transition command (0x%x)", cmd);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret =3D panthor_pwr_domain_wait_transition(ptdev, domain,
-> timeout_us);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* domain already in target state, return early */
-> +	if ((gpu_read64(ptdev, ready_reg) & mask) =3D=3D expected_val)
-> +		return 0;
-> +
-> +	panthor_pwr_write_command(ptdev, pwr_cmd, mask);
-> +
-> +	ret =3D gpu_read64_poll_timeout(ptdev, ready_reg, val, (mask &
-> val) =3D=3D expected_val, 100,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 timeout_us);
-> +	if (ret) {
-> +		drm_err(&ptdev->base,
-> +			"timeout waiting on %s power domain
-> transition, cmd(0x%x), arg(0x%llx)",
-> +			get_domain_name(domain), pwr_cmd, mask);
-> +		panthor_pwr_debug_info_show(ptdev);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +#define panthor_pwr_domain_power_off(__ptdev, __domain, __mask,
-> __timeout_us)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 \
-> +	panthor_pwr_domain_transition(__ptdev,
-> PWR_COMMAND_POWER_DOWN, __domain, __mask, \
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __timeout_us)
-> +
-> +#define panthor_pwr_domain_power_on(__ptdev, __domain, __mask,
-> __timeout_us) \
-> +	panthor_pwr_domain_transition(__ptdev, PWR_COMMAND_POWER_UP,
-> __domain, __mask, __timeout_us)
-> +
-> +/**
-> + * retract_domain() - Retract control of a domain from MCU
-> + * @ptdev: Device.
-> + * @domain: Domain to retract the control
-> + *
-> + * Retracting L2 domain is not expected since it won't be delegated.
-> + *
-> + * Return: 0 on success or retracted already.
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -EPERM if domain is L=
-2.
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 A negative error code=
- otherwise.
-> + */
-> +static int retract_domain(struct panthor_device *ptdev, u32 domain)
-> +{
-> +	const u32 pwr_cmd =3D PWR_COMMAND_DEF(PWR_COMMAND_RETRACT,
-> domain, 0);
-> +	const u64 pwr_status =3D gpu_read64(ptdev, PWR_STATUS);
-> +	const u64 delegated_mask =3D
-> PWR_STATUS_DOMAIN_DELEGATED(domain);
-> +	const u64 allow_mask =3D PWR_STATUS_DOMAIN_ALLOWED(domain);
-> +	u64 val;
-> +	int ret;
-> +
-> +	if (drm_WARN_ON(&ptdev->base, domain =3D=3D
-> PWR_COMMAND_DOMAIN_L2))
-> +		return -EPERM;
-> +
-> +	ret =3D gpu_read64_poll_timeout(ptdev, PWR_STATUS, val,
-> !(PWR_STATUS_RETRACT_PENDING & val),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0, PWR_RETRACT_TIMEOUT_US);
-> +	if (ret) {
-> +		drm_err(&ptdev->base, "%s domain retract pending",
-> get_domain_name(domain));
-> +		return ret;
-> +	}
-> +
-> +	if (!(pwr_status & delegated_mask)) {
-> +		drm_dbg(&ptdev->base, "%s domain already retracted",
-> get_domain_name(domain));
-> +		return 0;
-> +	}
-> +
-> +	panthor_pwr_write_command(ptdev, pwr_cmd, 0);
-> +
-> +	/*
-> +	 * On successful retraction
-> +	 * allow-flag will be set with delegated-flag being cleared.
-> +	 */
-> +	ret =3D gpu_read64_poll_timeout(ptdev, PWR_STATUS, val,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((delegated_mask | allow_mask)
-> & val) =3D=3D allow_mask, 10,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PWR_TRANSITION_TIMEOUT_US);
-> +	if (ret) {
-> +		drm_err(&ptdev->base, "Retracting %s domain timeout,
-> cmd(0x%x)",
-> +			get_domain_name(domain), pwr_cmd);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * delegate_domain() - Delegate control of a domain to MCU
-> + * @ptdev: Device.
-> + * @domain: Domain to delegate the control
-> + *
-> + * Delegating L2 domain is prohibited.
-> + *
-> + * Return:
-> + * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0 on success or delegated alrea=
-dy.
-> + * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -EPERM if domain is L2.
-> + * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 A negative error code otherwise=
-.
-> + */
-> +static int delegate_domain(struct panthor_device *ptdev, u32 domain)
-> +{
-> +	const u32 pwr_cmd =3D PWR_COMMAND_DEF(PWR_COMMAND_DELEGATE,
-> domain, 0);
-> +	const u64 pwr_status =3D gpu_read64(ptdev, PWR_STATUS);
-> +	const u64 allow_mask =3D PWR_STATUS_DOMAIN_ALLOWED(domain);
-> +	const u64 delegated_mask =3D
-> PWR_STATUS_DOMAIN_DELEGATED(domain);
-> +	u64 val;
-> +	int ret;
-> +
-> +	if (drm_WARN_ON(&ptdev->base, domain =3D=3D
-> PWR_COMMAND_DOMAIN_L2))
-> +		return -EPERM;
-> +
-> +	/* Already delegated, exit early */
-> +	if (pwr_status & delegated_mask)
-> +		return 0;
-> +
-> +	/* Check if the command is allowed before delegating. */
-> +	if (!(pwr_status & allow_mask)) {
-> +		drm_warn(&ptdev->base, "Delegating %s domain not
-> allowed", get_domain_name(domain));
-> +		return -EPERM;
-> +	}
-> +
-> +	ret =3D panthor_pwr_domain_wait_transition(ptdev, domain,
-> PWR_TRANSITION_TIMEOUT_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	panthor_pwr_write_command(ptdev, pwr_cmd, 0);
-> +
-> +	/*
-> +	 * On successful delegation
-> +	 * allow-flag will be cleared with delegated-flag being set.
-> +	 */
-> +	ret =3D gpu_read64_poll_timeout(ptdev, PWR_STATUS, val,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((delegated_mask | allow_mask)
-> & val) =3D=3D delegated_mask,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 10,
-> PWR_TRANSITION_TIMEOUT_US);
-> +	if (ret) {
-> +		drm_err(&ptdev->base, "Delegating %s domain timeout,
-> cmd(0x%x)",
-> +			get_domain_name(domain), pwr_cmd);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int panthor_pwr_delegate_domains(struct panthor_device
-> *ptdev)
-> +{
-> +	int ret;
-> +
-> +	if (!ptdev->pwr)
-> +		return 0;
-> +
-> +	ret =3D delegate_domain(ptdev, PWR_COMMAND_DOMAIN_SHADER);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D delegate_domain(ptdev, PWR_COMMAND_DOMAIN_TILER);
-> +	if (ret)
-> +		goto err_retract_shader;
-> +
-> +	return 0;
-> +
-> +err_retract_shader:
-> +	retract_domain(ptdev, PWR_COMMAND_DOMAIN_SHADER);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * panthor_pwr_domain_force_off - Forcefully power down a domain.
-> + * @ptdev: Device.
-> + * @domain: Domain to forcefully power down.
-> + *
-> + * This function will attempt to retract and power off the requested
-> power
-> + * domain. However, if retraction fails, the operation is aborted.
-> If power off
-> + * fails, the domain will remain retracted and under the host
-> control.
-> + *
-> + * Return: 0 on success or a negative error code on failure.
-> + */
-> +static int panthor_pwr_domain_force_off(struct panthor_device
-> *ptdev, u32 domain)
-> +{
-> +	const u64 domain_ready =3D gpu_read64(ptdev,
-> get_domain_ready_reg(domain));
-> +	int ret;
-> +
-> +	/* Domain already powered down, early exit. */
-> +	if (!domain_ready)
-> +		return 0;
-> +
-> +	/* Domain has to be in host control to issue power off
-> command. */
-> +	ret =3D retract_domain(ptdev, domain);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return panthor_pwr_domain_power_off(ptdev, domain,
-> domain_ready, PWR_TRANSITION_TIMEOUT_US);
-> +}
-> +
-> =C2=A0void panthor_pwr_unplug(struct panthor_device *ptdev)
-> =C2=A0{
-> =C2=A0	unsigned long flags;
-> @@ -103,6 +428,59 @@ int panthor_pwr_init(struct panthor_device
-> *ptdev)
-> =C2=A0	return 0;
-> =C2=A0}
->=20
-> +void panthor_pwr_l2_power_off(struct panthor_device *ptdev)
-> +{
-> +	const u64 l2_allow_mask =3D
-> PWR_STATUS_DOMAIN_ALLOWED(PWR_COMMAND_DOMAIN_L2);
-> +	const u64 pwr_status =3D gpu_read64(ptdev, PWR_STATUS);
-> +
-> +	/* Abort if L2 power off constraints are not satisfied */
-> +	if (!(pwr_status & l2_allow_mask)) {
-> +		drm_warn(&ptdev->base, "Power off L2 domain not
-> allowed");
-> +		return;
-> +	}
-> +
-> +	/* It is expected that when halting the MCU, it would power
-> down its
-> +	 * delegated domains. However, an unresponsive or hung MCU
-> may not do
-> +	 * so, which is why we need to check and retract the domains
-> back into
-> +	 * host control to be powered down in the right order before
-> powering
-> +	 * down the L2.
-> +	 */
-> +	if (panthor_pwr_domain_force_off(ptdev,
-> PWR_COMMAND_DOMAIN_TILER))
-> +		return;
-> +
-> +	if (panthor_pwr_domain_force_off(ptdev,
-> PWR_COMMAND_DOMAIN_SHADER))
-> +		return;
-> +
-> +	panthor_pwr_domain_power_off(ptdev, PWR_COMMAND_DOMAIN_L2,
-> ptdev->gpu_info.l2_present,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 PWR_TRANSITION_TIMEOUT_US);
-> +}
-> +
-> +int panthor_pwr_l2_power_on(struct panthor_device *ptdev)
-> +{
-> +	const u32 pwr_status =3D gpu_read64(ptdev, PWR_STATUS);
-> +	const u32 l2_allow_mask =3D
-> PWR_STATUS_DOMAIN_ALLOWED(PWR_COMMAND_DOMAIN_L2);
-> +	int ret;
-> +
-> +	if ((pwr_status & l2_allow_mask) =3D=3D 0) {
-> +		drm_warn(&ptdev->base, "Power on L2 domain not
-> allowed");
-> +		return -EPERM;
-> +	}
-> +
-> +	ret =3D panthor_pwr_domain_power_on(ptdev,
-> PWR_COMMAND_DOMAIN_L2, ptdev->gpu_info.l2_present,
-> +					=C2=A0
-> PWR_TRANSITION_TIMEOUT_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Delegate control of the shader and tiler power domains to
-> the MCU as
-> +	 * it can better manage which shader/tiler cores need to be
-> powered up
-> +	 * or can be powered down based on currently running jobs.
-> +	 *
-> +	 * If the shader and tiler domains are already delegated to
-> the MCU,
-> +	 * this call would just return early.
-> +	 */
-> +	return panthor_pwr_delegate_domains(ptdev);
-> +}
-> +
-> =C2=A0void panthor_pwr_suspend(struct panthor_device *ptdev)
-> =C2=A0{
-> =C2=A0	if (!ptdev->pwr)
-> diff --git a/drivers/gpu/drm/panthor/panthor_pwr.h
-> b/drivers/gpu/drm/panthor/panthor_pwr.h
-> index b325e5b7eba3..3c834059a860 100644
-> --- a/drivers/gpu/drm/panthor/panthor_pwr.h
-> +++ b/drivers/gpu/drm/panthor/panthor_pwr.h
-> @@ -10,6 +10,10 @@ void panthor_pwr_unplug(struct panthor_device
-> *ptdev);
->=20
-> =C2=A0int panthor_pwr_init(struct panthor_device *ptdev);
->=20
-> +void panthor_pwr_l2_power_off(struct panthor_device *ptdev);
-> +
-> +int panthor_pwr_l2_power_on(struct panthor_device *ptdev);
-> +
-> =C2=A0void panthor_pwr_suspend(struct panthor_device *ptdev);
->=20
-> =C2=A0void panthor_pwr_resume(struct panthor_device *ptdev);
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h
-> b/drivers/gpu/drm/panthor/panthor_regs.h
-> index 5469eec02178..18702d7001e2 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -72,6 +72,7 @@
->=20
-> =C2=A0#define GPU_FEATURES					0x60
-> =C2=A0#define=C2=A0=C2=A0
-> GPU_FEATURES_RAY_INTERSECTION			BIT(2)
-> +#define=C2=A0=C2=A0 GPU_FEATURES_RAY_TRAVERSAL			BIT(5)
+Fixes: 8f840e47f190 ("sctp: add the sctp_diag.c file")
+Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
+---
+ net/sctp/diag.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-This seems out of place in this commit, which is about power stuff...
+diff --git a/net/sctp/diag.c b/net/sctp/diag.c
+index 996c2018f0e6..7f7e2773e047 100644
+--- a/net/sctp/diag.c
++++ b/net/sctp/diag.c
+@@ -223,14 +223,15 @@ struct sctp_comm_param {
+ 	bool net_admin;
+ };
+ 
+-static size_t inet_assoc_attr_size(struct sctp_association *asoc)
++static size_t inet_assoc_attr_size(struct sock *sk,
++				   struct sctp_association *asoc)
+ {
+ 	int addrlen = sizeof(struct sockaddr_storage);
+ 	int addrcnt = 0;
+ 	struct sctp_sockaddr_entry *laddr;
+ 
+ 	list_for_each_entry_rcu(laddr, &asoc->base.bind_addr.address_list,
+-				list)
++				list, lockdep_sock_is_held(sk))
+ 		addrcnt++;
+ 
+ 	return	  nla_total_size(sizeof(struct sctp_info))
+@@ -256,11 +257,12 @@ static int sctp_sock_dump_one(struct sctp_endpoint *ep, struct sctp_transport *t
+ 	if (err)
+ 		return err;
+ 
+-	rep = nlmsg_new(inet_assoc_attr_size(assoc), GFP_KERNEL);
++	lock_sock(sk);
++
++	rep = nlmsg_new(inet_assoc_attr_size(sk, assoc), GFP_KERNEL);
+ 	if (!rep)
+ 		return -ENOMEM;
+ 
+-	lock_sock(sk);
+ 	if (ep != assoc->ep) {
+ 		err = -EAGAIN;
+ 		goto out;
+-- 
+2.51.0
+
 
