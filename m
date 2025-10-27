@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-872108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CBBC0F467
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:28:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FB2C0F543
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773FE188D6DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FF1462E50
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A512312829;
-	Mon, 27 Oct 2025 16:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AA8313269;
+	Mon, 27 Oct 2025 16:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DB8oq497"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFQew1pO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE01730ACF4;
-	Mon, 27 Oct 2025 16:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5385B3101CD;
+	Mon, 27 Oct 2025 16:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582529; cv=none; b=eJ45mmivlMuSQmRfTB/ExKWOLzzujl/Wb93ZiZMNjP2t8iDFHNGZ+K1ghRFgfwGl2cebv1SK8hmYyC9wcu+0TkbHfv0PkrhX9cOilYZPJGu21rouaZh0rDyDH5SgUyVjGUeIlFpqHzsLPUmZO7LmCJJuyOAPH9c2tygeaYAZ/nE=
+	t=1761582542; cv=none; b=tynnmPkCVuPGTXdnp/uDvwKHOxA80cqcgNcat36owXb3bsvZrGTQY4KytOsq3f7e9LFTFHm+cRddXGRuhQqKa+enKpADvt8n0L6Lg8of/ImOIfpRPSa+6BPmS9yuFnP91SDeHhU6spf8LV5Nja4LTJfPMxuly7x5e0SaJwh589U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582529; c=relaxed/simple;
-	bh=K3sPGBBKqtRTD0tT/nQEB5JeUJR4KU4m1T94OlqJ8Gc=;
+	s=arc-20240116; t=1761582542; c=relaxed/simple;
+	bh=NfHPlwWsM9eAJ+QfU9nW2b0sBCED7mfiC4nhVZZCd5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndghmigEkWnPEIq4SKngg9EhUUget75EHbxhWcObRrS38u5NEYGdWqYA7p2Xazc9/47dhbyFmeaPalnkCrgll9YL3jxowLeAnEFvyf/4hBi+HY9Hv+YxO8RlqnW5kwvww5Z+y98Gxvw0/eoajx5gRgsUvbZV6buR/MFrc39Lkck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DB8oq497; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFF1C4CEF1;
-	Mon, 27 Oct 2025 16:28:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0mFj7RVF818oLTSNQlHg2wtDhk8ka/My1KJfIGGnlyGi99gVT8pi7UxCRalaLB+/ZxdP7UByLpMGm9Aw2Qr+hyfZKv66FBEOXS1h0fIpr3Pg8gTXo7qjaErN5CSQgq/rI52gPlhrDaF6sxM663cg1bRjR7JhNTFywYU+BwRUfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFQew1pO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4A1C4CEFD;
+	Mon, 27 Oct 2025 16:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761582527;
-	bh=K3sPGBBKqtRTD0tT/nQEB5JeUJR4KU4m1T94OlqJ8Gc=;
+	s=k20201202; t=1761582541;
+	bh=NfHPlwWsM9eAJ+QfU9nW2b0sBCED7mfiC4nhVZZCd5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DB8oq497j3C+s/tckbNNLiaAC38F3nm60fF+QYhLP9eIzSD8hH4nTVqJjsgaMh7hj
-	 GPEnRdmscIWI7d804qnXPMQoXUCBsmF3WUSQWyoj7Ab34EBe+EHOneBSboVRwdBa5s
-	 fM+vPYJmtvXg+UVYh/Ys+O5hcASf6yCr8n3GrnpS+cugwup47ol7XpjJjLbhtL9XeD
-	 1827RGgBy9fW9r4926FtFpwljgVeD8ONmqyV8fqg9S2qkRkHGdHFFNDIOYGa2YSiDa
-	 erJEn4e7qmag45LtE6Br0fqANNhmaFq2qMHN8dCjWoPhWTodxn8gtZV8QmFWsah3Mj
-	 ikxpogqDj7XgQ==
-Date: Mon, 27 Oct 2025 17:28:42 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v9 1/3] i2c: pcf8584: Move 'ret' variable inside for
- loop, goto out if ret < 0.
-Message-ID: <okcyigt326pn7b4vjo5jir37ppyb6zhb3z7e4irkyykjpjqjot@adqmu3hr4gf2>
-References: <20251023120043.8661-1-chiru.cezar.89@gmail.com>
- <20251023120043.8661-2-chiru.cezar.89@gmail.com>
- <dnjved3kd3awdseclr56mbwxkbuysxcezzbebrk7fjpuq2kf2p@rhat4xhdao52>
- <CANvS2vX2+ZRA_sT8gzmLmw9r7Z1aPEn9d+c=0QigPpeUYb3=sQ@mail.gmail.com>
+	b=lFQew1pOQYiPwFcplM/5FHAetlC7c6d06JiP3BvU7Le1oLw8gdUTBAXcLIIY0BGEa
+	 rWKLN5tEVCTO5dqMeXS5Yac3Yc1v8FFPc3QcyaVTqmVb7SQAgZUp6LYkPF02FQeaPn
+	 YbYXHGQ1/FNxMXk/SMRhOaE69BY9WBRGp3hsBboVSHDW8XkU/Z6ZTGYMx1RsVrj8yn
+	 e21E0d5BS7R8KmGEAKNaKAljdg+n29M3txpIrDSDL4KsTtdUl33+wPxs7qxWyNQWpw
+	 n+56HHnbBbJhvhbbkQNZLmNmEAonlSPtrINGV3/lMSz0CBP0OYsr5KP8mo6Ucf9+mE
+	 4hn+Y961Xukrg==
+Date: Mon, 27 Oct 2025 17:28:58 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
+	Francesco Valla <francesco@valla.it>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Corbet <corbet@lwn.net>, Jocelyn Falempe <jfalempe@redhat.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-embedded@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+Message-ID: <i7xxy33do4q4odvxxb77xv4ri5jgr6dup5kvfsjfs4h7mbmhrj@h3ke7h5whyvx>
+References: <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
+ <yq4btdc5qqukuqps7y53dratmu64ghyifgprlndnk5rbgml4of@rvca75sncvsm>
+ <3edea192-6a3f-44f5-b570-7033776e2ce4@suse.de>
+ <5ff10f7d-e9d4-4d4d-ae82-8986dc28d14b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="7awwfwoj7c6l6xia"
 Content-Disposition: inline
-In-Reply-To: <CANvS2vX2+ZRA_sT8gzmLmw9r7Z1aPEn9d+c=0QigPpeUYb3=sQ@mail.gmail.com>
+In-Reply-To: <5ff10f7d-e9d4-4d4d-ae82-8986dc28d14b@amd.com>
 
-Hi Cezar,
 
-On Fri, Oct 24, 2025 at 04:55:28PM +0300, Cezar Chiru wrote:
-> > > Require spaces around '=' and '<'. Add spaces around binary operators.
-> > > Enforce error fixing based on checkpatch.pl output on file.
-> > > Move 'ret' variable inside for loop. Then check if (ret < 0) goto out. This
-> > > improves usage of ret variable.
-> > >
-> > > Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> > > Suggested-by: Andi Shyti <andi.shyti@kernel.org>
-> > > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> >
-> > you don't really need to resend patches for updating the tag
-> > list. Anyway, that's OK, better to send than not to send, when in
-> > doubt, ask.
-> 
-> Anyways I had to resend as I grouped 3 patches into 1 patch series
-> 
-> > For this patch I think neither me or Andy have been suggesting
-> > the change. The change came from you, we made observation which
-> > you applied, this is the normal review process.
-> 
-> Can you please let me know the process of tagging with Suggested-by
-> without resending the patch. I don't know how people add reviewed-by
-> or ACK-ed-by or Suggested-by other than resend the patch?
-> I've seen it but have yet to figure how to do it.
+--7awwfwoj7c6l6xia
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+MIME-Version: 1.0
 
-with Reviewed-by I understand that you have carefully reviewed
-the code line by line, agree with everything written, and do not
-see any issues or major improvements to be made.
+On Mon, Oct 27, 2025 at 11:01:55AM -0500, Mario Limonciello wrote:
+> On 10/27/25 7:35 AM, Thomas Zimmermann wrote:
+> > > > =A0=A0 - a very simple progress bar, which can be driven through sy=
+sfs;
+> >=20
+> > Once you have options to control these settings from user space, you
+> > should do it in user space entirely. As Maxime suggested, please improve
+> > plymouth for anything with animation.
+> >=20
+> > > > =A0=A0 - a static image (optional).
+> >=20
+> > Board vendors often provide an image, see /sys/firmware/acpi/bgrt/. This
+> > is a candidate for display, or the penguin or a custom image. Please
+> > make it configurable by Kconfig. Again, if you need policy and
+> > heuristics for deciding what to display, you better do this in user
+> > space.
+>=20
+> I'd actually argue that the static image from BGRT should be the preferred
+> priority.  This can make for a nice hand off to Plymouth.
+>=20
+> The (UEFI) BIOS already will show this image as soon as the GOP driver is
+> loaded.  Bootloaders like GRUB by default will avoid showing anything or
+> will overwrite with the exact same image in the same location.  This can =
+let
+> the kernel do the same, and then the moment Plymouth takes over it could =
+do
+> the same.
 
-With Acked-by I understand that you have read the change and
-agree with it, but you may not have gone into the fine details.
-You are simply OK with the patch being applied.
+And BGRT isn't typically found on embedded systems at all, so I'm not
+sure it's a sensible default, let alone a priority. At most a possible
+fallback.
 
-With Suggested-by I understand that someone has proposed the
-entire idea behind the patch, not just smaller improvements or
-changes made during review. For example, if I tell you that 'ret'
-does not need to be initialised and can be moved inside the for
-loop, that comes from review. However, if I suggest sending a new
-patch changing the function type, that would justify a
-Suggested-by tag.
+Maxime
 
-Then there are other tags, such as Reported-by when someone
-reports an issue, and many more that you will learn if you stay
-in the community (and I hope you will).
+--7awwfwoj7c6l6xia
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Everything is more or less documented in
-Documentation/process/submitting-patches.rst, and when in doubt,
-asking is always the right thing to do.
+-----BEGIN PGP SIGNATURE-----
 
-Again, thank you for your patches,
-Andi
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaP+dygAKCRAnX84Zoj2+
+dsfaAYDY9ovUiQP79ROQRhKc7BCKdMp1L3VkbIgTj4bwXt2PF9rSnPcEwQZKoNYw
+zY78exEBgMDy2VGrw+RfaBKQ2UDubn6n6yMCh1ALbHFbSTM4Q8WYXU+6Znzf5awl
+u8Sy5EOIyg==
+=eXcr
+-----END PGP SIGNATURE-----
+
+--7awwfwoj7c6l6xia--
 
