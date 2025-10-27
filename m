@@ -1,82 +1,88 @@
-Return-Path: <linux-kernel+bounces-872180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF90C0F7AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:56:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E56C0F779
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 632074F46D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63AA119A2DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEAA3148B3;
-	Mon, 27 Oct 2025 16:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F165C313520;
+	Mon, 27 Oct 2025 16:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVi8eGW5"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQjGyIYE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3546C31354C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F1616DC28
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761583980; cv=none; b=HmlCPzy/V9EN46M4daHy8Dak2y0vlJCEpMaNbgUEr+3Nv+tT3Qu1+rsW2+xuOazAPxClOxttV2B7hvR5c/FUXvEUjg+CxdjX8ldUOxaTqbDvXYCAZ9hzfLCx/UT2+FbfmdJuhbn0mKKYuf9b26c/5M1ktXMz87tu4fo1jbof3pA=
+	t=1761584008; cv=none; b=SbgRNXU6ouOe5aap3622rNQhYJa8QkIqMSeDgvyCVhEHo0w7Opqc+sO4qM6P9pdyB3jEpH4oGhjGAwwfQdFSPx6rk46FWj1SH/bIW0vThszZzJngaWGco94Uy6emYM/dKoahFJ4qzW1ktjDysy0dCbEMnmdFyPGSFe2u8bMliaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761583980; c=relaxed/simple;
-	bh=ez/mIQCI0gAsepx7KDmrGjw1VRoEx13dA304T/Eyp0g=;
+	s=arc-20240116; t=1761584008; c=relaxed/simple;
+	bh=k21mR1kjjuCUY2QQ14L6o4TJ1+uo5urhzwqkf666nZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a1ruiNJSzyrobr8oS9dFzj5yPxG/Os4W7vkykmg461WBccjSD9u96unx1JVtTwALiiOw7vtZYqDkcCNZxJKTZHTr/oEM1tCkFR+I0Z6rSTUjFCLsX2Bmu07ZdugLL1aie5YInJGYVc2lTNdYsDfJBMQgWV9johfa627NQK+fJeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVi8eGW5; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781206cce18so4867948b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761583977; x=1762188777; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=1UjUmi5Ka+7gfU5ZG8hAL+hkQbUFpTtINYP7f5ILrSk=;
-        b=jVi8eGW55EGjyrRsXjvBSfyxC/oQYt7Yj6/g+YsyXkn3KA32KIQlrFnNVarbEqBI3s
-         Yx4qQf/bkbAXK1z4QPBiwV8UDOPdwPfsjbIsJZh9egQXn2X5XjhK5foAUzLDDKEtJ5p8
-         IJrLrRQSfJTHWIJPhsWxyFj4A3/EiX0qhpiQBSb+qVO+X/63EumKBAWNheMKLiPULTIt
-         Z9ADbTY4erHT9TGVeiCK4AU+JEK4dRfILsZclYxw7qVDAR6SYcH2s3lK+DjY1MsLmGYC
-         neojcLp6c8ZFgJGOBZmoSsBTevZNq1b7YZ9uEDiW+/zN0VRFK++ccqShGPeAbSWkshYk
-         WqMw==
+	 In-Reply-To:Content-Type; b=ErVZz7tfZGL0+Z02qKMaYWl1xSguNsezdWKKOQTd7fyWBQxbMXGvvXK5wd9I+UrwLGo4AQK/uuaCFrhZDqB2F8xpwnGM5zmAm7EWgpQBmr4OlqVBhSzhkdt/nhbAZkyARNuDwaiT3Eo0+yCR1qz9z1KYQ+B4PvBHGfVKFxQLot0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQjGyIYE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761584005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yyrxsbS4pWA34fFEqr8sYK1KnLCfuGgdwv61SrYMo2M=;
+	b=bQjGyIYEayVTb7MCFV1Wsy8mpdR0kFQ8sCeXG+JDqv+9ivkZtqYJJa5dPQy1qqNHlzT9hx
+	LBrG+/0M/G3TkYAT5MwCLA29o8KRAO+aZBehnTUUVFOUFVRBNrrn6cLfqSVt+pbaAGITKi
+	2w2QTscF7YVMXXcztUm8kGRtM2wjSSE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-sxe2_1ocNOWrc2fvC5oSIw-1; Mon, 27 Oct 2025 12:53:23 -0400
+X-MC-Unique: sxe2_1ocNOWrc2fvC5oSIw-1
+X-Mimecast-MFC-AGG-ID: sxe2_1ocNOWrc2fvC5oSIw_1761584002
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-40cfb98eddbso3287420f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:53:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761583977; x=1762188777;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1UjUmi5Ka+7gfU5ZG8hAL+hkQbUFpTtINYP7f5ILrSk=;
-        b=BozxKT1zajB9lIuYsIyeQJ1pdOQzAvkDaixaK5SJFS2YpHZQGkFN78rou60ZBi2mDP
-         L1BbTPk+c+G6StXZv4FHP9ztYhfQ7nycM+ikuNrC8XZ2BMku6RGeN/tWqJKTp9HECvRE
-         0jg4bZoJGti/0CjULarq0gm+10Xf4bPdF6/EKjkElFhqxPPZqK3quVe4W3daeCyIp2YX
-         gyCAVKDvyqPM1PhrIV6LhAcrYz+GzybJqvcso0MAlw1pdQP1icBA1mWk/KUlxQ4dGvCw
-         0S5Ktx8/NKyMRddBMEw4drIrTiA6NHhXzK9NWN4ua89hn9Hft+g6rNXp3RY9IQA8hGtX
-         c7GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO5IlI9o0NFnplU8gb8NWu1SjuczThXhJsgt80NEZQ6MVjeb99Dc7v+S9puQhfemTENh1bsy9RbOQ6H3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVfS9yygE64bbRcBGnmrzY41nnL5SmUWssYLTB/o4VbINx4p9E
-	zFcdUttdUn/9xEyVdKsQ+m7tzRbtBDWEOeOmyF2Pianil5NA5OzcFCxt
-X-Gm-Gg: ASbGncsWmzsawPhZtfPtbNHuFajoDia/tcu0bQ8t76APBtikwkaRvViJJsUnUmss/vg
-	deO40KJ0miMVGWSyfVUHcq0Qvr1inlh+OsLWWwTnj/HLlgYSXJ2uaCJdmm5rxctqgL0MpvXNTwE
-	ih3YO84N7dhxXR+265fsT+9dZN1u1McxcgkqMORv548YIvzB2wNyG5GpqeN2LGv1bT+8KEJ9hGB
-	pCmw0mNq2ieFJd6awjoJns8GbmKIeH9rn4cnAViEf1IjvooWlF88yG5Sw3U37cAnXur7HU/nQlV
-	X3Hgfzr8OIQyHc1LjLxU5Meb7d99bqK7YQzoIKEqpLbx0ejQPFxlUwqwD/qvgyC/S1T8jzCHcN3
-	RYJoyVviN7CIajFW4ohwDQCC10+L/aBAbsg129OjyTw27LqrVzcd/5oX9nBgIUqHLKOYLG4QG5+
-	qFkHjQfDnxv+GVGwmgaJ3qpcfZgWwZJGpEU4ccAMRKO05loL2jnM+ciXNQ7VI=
-X-Google-Smtp-Source: AGHT+IFq+QgzAYa0Pzepb131iFTCn1+g6011G4/2bAwqtv01tirsdxRlxBcZ2qwcf9EHIL7uZdLTBg==
-X-Received: by 2002:a05:6a20:430b:b0:246:3a6:3e47 with SMTP id adf61e73a8af0-344de5ddc8cmr202153637.12.1761583977229;
-        Mon, 27 Oct 2025 09:52:57 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414012bcesm8972989b3a.8.2025.10.27.09.52.55
+        d=1e100.net; s=20230601; t=1761584002; x=1762188802;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yyrxsbS4pWA34fFEqr8sYK1KnLCfuGgdwv61SrYMo2M=;
+        b=p2Apy89LGCpK2glDLx+xtfxTPtaYQfjfVXLNW74pi6twGjcaniz26VfYcwvA/xzh9B
+         DfJ0jMIqJ8eSiwCTUR8a+yx45rwtfc62tAXcncMGbdcYuu6yXJ8wDbXAy3c384uTHg7X
+         gGCgxhbXSNoZWWQtOcxq7Mnxyxllz3/pnxkOIT7dDXkpMOLTmBt6TqSp4LFpFn4NscQ9
+         7C2DYgX3SVEQ1ivq7SFdRkkYo4FbNf6X1xvD+s34sIyTbl6EOHND73THuGTBinf83Byg
+         yEX3vXM6ftNmeLYx0s5RVzHLyhmiK+5DdYODW8BmuNPz3mlEeWKWPRqYHb4rjK5XEysS
+         VhlA==
+X-Forwarded-Encrypted: i=1; AJvYcCViBoNlpuPJJLLBOTfSCF0NvC34X83r0ZI9fkpV1mgUODcILfcp2HppAJOaZUFIdBPmy2FTk9sGBrKB7GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDvDjx+pecKYZ8Kc/5MFXTa8gRKBgM9Kh3h3Nqw+iOOdlYNfg6
+	wfzb0/MJfzy4/5ny+FDlYCe1nuP6f0RVMMlSMEpP1VdPZG2t+Zj8dsztN6IpbHx2dJJnomf4DHB
+	bMWrSBvETzTf/051lG9q7pHhLjyZM46KkTEjVFSSH6/NYfFYt91hBPc9T8SDIH6munQ==
+X-Gm-Gg: ASbGncuv+aVWkoHhcOZINYcY9YW8QYJ2tKpeN5odD5iPlZarFVnOD1r3W2NDilnTdF4
+	QaZo4WLrrBscGij4xlmpdK416v8lk0gRP9MIgnBJ38Egd/UHVMrzeeln/SZgWG6OZrZTcgzer9q
+	4fUmZ0uJpLVWgeCr3lo3VswyAhyVLJNkuISqqab5dSjTa4yebJpFk55Rkwxj1+p2W/PgygQiPD9
+	WHJUEeUilV8AJlNG8r+ombEdpZY3ELRntXiwj4iBKqYhPvB8X41VMtWMkB1NMhI06iFrvTSr8cp
+	x0DaT44LdJ16+V/wpm82HGI6hlRFEs3tuamckNbRtJSAeiayDGikMTeVdqGvF52dv9PvM6esY1T
+	+xlgndFMPCvUcF3IYml0hk6/Zpgh8kz5U9N1hVWhKaF2bPP3bNf98T29Kwkk1fBXyBZHKMetwlm
+	nCy+GxK+U2DlV7jD9ymViAjwo4jto=
+X-Received: by 2002:a05:6000:2085:b0:428:56c5:b305 with SMTP id ffacd0b85a97d-429a81a8444mr148343f8f.6.1761584001719;
+        Mon, 27 Oct 2025 09:53:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoK/qb57I2ph/yRYVVzOerbIGxBbhgWC3n/pibQjUkUWrAUSSMmKLj0i7DtxPcapcs/6SEdA==
+X-Received: by 2002:a05:6000:2085:b0:428:56c5:b305 with SMTP id ffacd0b85a97d-429a81a8444mr148311f8f.6.1761584001271;
+        Mon, 27 Oct 2025 09:53:21 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df6b9sm15906933f8f.44.2025.10.27.09.53.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 09:52:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <afe3f2e6-703b-4d9f-ae88-99da1321d1fc@roeck-us.net>
-Date: Mon, 27 Oct 2025 09:52:53 -0700
+        Mon, 27 Oct 2025 09:53:20 -0700 (PDT)
+Message-ID: <b49e12b1-acc1-4150-9ab8-63c05d45ea90@redhat.com>
+Date: Mon, 27 Oct 2025 17:53:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,135 +90,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] hwmon: Add TSC1641 I2C power monitor driver
-To: Igor Reznichenko <igor@reznichenko.net>
-Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
- devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- skhan@linuxfoundation.org
-References: <d3365f32-dc92-4a55-91a1-c4a446558c5a@roeck-us.net>
- <20251027064127.648712-1-igor@reznichenko.net>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Hugh Dickins <hughd@google.com>, Kiryl Shutsemau <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Yang Shi <shy828301@gmail.com>, Dave Chinner <david@fromorbit.com>,
+ Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+ <CAHbLzkpx7iv40Tt+CDpbSsOupkGXKcix0wfiF6cVGrLFe0dvRQ@mail.gmail.com>
+ <b8e56515-3903-068c-e4bd-fc0ca5c30d94@google.com>
+ <CAHk-=wiWmTpQwz5FZ_=At_Tw+Nm_5Fcy-9is_jXCMo9T0mshZQ@mail.gmail.com>
+ <7bfd0822-5687-4ddc-9637-0cedd404c34e@redhat.com>
+ <CAHk-=wjgm=xTvbu4zEn3kFRC8bF8XXrOdK5fZj8iNbDn5bGB2g@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20251027064127.648712-1-igor@reznichenko.net>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAHk-=wjgm=xTvbu4zEn3kFRC8bF8XXrOdK5fZj8iNbDn5bGB2g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/26/25 23:41, Igor Reznichenko wrote:
->> In some way this is inconsistent: It accepts a shunt resistor value of, say, 105
->> even though the chip can only accept multiples of 10 uOhm. In situations like this
->> I suggest to expect devicetree values to be accurate and to clamp values entered
->> through sysfs. More on that below.
+On 27.10.25 17:48, Linus Torvalds wrote:
+> On Mon, 27 Oct 2025 at 09:06, David Hildenbrand <david@redhat.com> wrote:
 >>
->>> +	return 0;
->>> +}
->>> +
->>> +static int tsc1641_set_shunt(struct tsc1641_data *data, u32 val)
->>> +{
->>> +	struct regmap *regmap = data->regmap;
->>> +	long rshunt_reg;
->>> +
->>> +	if (tsc1641_validate_shunt(val) < 0)
->>> +		return -EINVAL;
->>> +
->>> +	data->rshunt_uohm = val;
->>> +	data->current_lsb_ua = DIV_ROUND_CLOSEST(TSC1641_VSHUNT_LSB_NVOLT * 1000,
->>> +						 data->rshunt_uohm);
->>> +	/* RSHUNT register LSB is 10uOhm so need to divide further*/
->>> +	rshunt_reg = DIV_ROUND_CLOSEST(data->rshunt_uohm, TSC1641_RSHUNT_LSB_UOHM);
->>
->> This means that all calculations do not use the actual shunt resistor values used
->> by the chip, but an approximation. I would suggest to store and use the actual shunt
->> resistor value instead, not the one entered by the user.
+>> So I really wish that we can defer optimizing this to freeing folios
+>> under RCU instead.
 > 
-> By "actual shunt" you mean defined in devicetree? Then does it mean disabling
-> writing value by user via sysfs and making "shunt_resistor" read-only or leaving it
-> writable and clamping to devicetree value, thus discarding the user provided value?
+> So just to see, I dug around when we started to do the rcu-protected
+> folio lookup (well, it was obviously not a folio at the time).
 > 
-
-I said "used by the chip", and referred to the value written into TSC1641_RSHUNT_LSB_UOHM.
-
->> See below - clamping is insufficient for negative values, and it is not clear to me if
->> the limit register is signed or unsigned.
+> Mainly because we actually had a lot more of those subtle
+> folio_try_get() users than I expected us to have,
 > 
->> Also, the datasheet doesn't say that the limit value would be signed. Did you verify
->> that negative temperature limit values are actually treated as negative values ?
+> It goes back to July 2008 (commit e286781d5f2e: "mm: speculative page
+> references" being the first in the series).
 > 
-> SUL, SOL, TOL are signed, I verified. The negative limits for current and temperature
-> work well based on my testing.
+> I do have to say that the original naming was better: we used to call
+> the "try_get" operation "page_cache_get_speculative()", which made it
+> very clear that it was doing something speculative and different from
+> some of our other rcu patterns, where if it's successful it's all
+> good.
 > 
+> Because even when successful, the folio in folio_try_get() is still
+> speculative and needs checking.
 
-Please add a respective comment into the code.
+Right, and we only access its content after verifying that (a) it is the 
+one we wanted to access and (b) stabilizing it, so it will stay that way.
 
->> This doesn't work as intended for negative values. regmap doesn't expect to see
->> negative register values and returns an error if trying to write one, so clamping
->> against SHRT_MIN and SHRT_MAX is insufficient. You also need to mask the result
->> against 0xffff.
 > 
-> I was under impression regmap would handle this masking correctly when defining
-> .val_bits = 16. E.g. in regmap.c:973 it selects formatting function for 16bit values.
-> I can mask explicitly if it's required.
-> It certainly doesn't throw error since negative alerts work as mentioned.
-> 
+> Not all of our current users seem to re-verify the source of the folio
+> afterwards (deferred_split_scan() makes me go "Uhh - you seem to rely
+> on folio_try_get() as some kind of validity check" for example).
 
-My unit test code bails out on negative values, returning an error from regmap when
-trying to write negative values. I had seen that before. Masking the value passed
-to regmap with 0xffff solved the problem.
+Note that deferred_split_scan() only operates with anon folios and has 
+some nasty NASTY interaction with folio freeing. :)
 
->> Why did you choose lcrit/crit attributes instead of min/max ? If there is only
->> one alert limit, that usually means the first level of alert, not a critical level.
->> Raising an alert does not mean it is a critical alert. Please reconsider.
-> 
-> I used hwmon/ina2xx.c as a reference. It covers many similar power monitors which
-> have single threshold alerts and defines only lcrit/crit. If this is a wrong approach
-> I'll change to min/max.
+-- 
+Cheers
 
-Isn't that great ? You can always find an example for everything in the Linux kernel
-if you are looking for it.
-
-Guenter
+David / dhildenb
 
 
