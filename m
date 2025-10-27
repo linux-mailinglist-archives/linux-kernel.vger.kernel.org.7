@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-872798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E87C12109
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:35:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE6AC12112
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 949CC4E5178
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE9E1A2051C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A908314A84;
-	Mon, 27 Oct 2025 23:35:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834B1314A84;
+	Mon, 27 Oct 2025 23:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DsgRW1CV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A039B2D877C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCBC246BB7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761608105; cv=none; b=uuU1oM//85ZR3YPakJ8QeLcaUiGqiKERuaObON98/95/xujUcYm6SbhQS+3N9RGicaEwN4k6EkulAMt6u2Tje51gvSb5sVoxIGNPFIOgBFpcSrMifc2jKTQYXfAi3CYB7JUyUOkLhXRSlnLiAjjYC9gBHXXpy4vkSIkWmhivFq0=
+	t=1761608144; cv=none; b=T0j3vMJfU1veVrYSYGOAA+Wrb/HiQNNuui0GcqOuVVQqayKUFTxioNkycm4w1MAy2naaJtouObeCKIqlqAaJG8vVzXxlnwUtLlxlPpbtw2H99jujPuGlhexrKSLrTC/DHDkj4IypIAdNB1bcxDu/HhW8nyJQF4yQzXjW8ed6jFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761608105; c=relaxed/simple;
-	bh=ScNSGL9voJZweKqS8/XctUHcL4COAxrZGQB8C1S6bAc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=quKLnXB40claYk5it0ir6dGfCkmJUtSsNIyiGmBx1g79DWCI2fFpJV7vzGNQiTRXdj9I3spetN3vPZYqBYN4oPpTKurzeOmTjvCcntgtiyEsJ3iRTzC+JCe9SyF1T4uhq0rDD+lNCSLVLqpQsmBmR/K7s4Wzg/T1jihzV5rrEQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430ce62d138so66611615ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761608103; x=1762212903;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q5tt23mHTI/pAxK8zRJ17pQl3G2BjBuYhUrzhZ6k7xs=;
-        b=ZrpSRaRwsIulNcejPOIn+nmn+LyldzNRvuWMNqROsRfQvhi8K62SVvtAFq6x3YZ/bY
-         ZYDKaAviKewclVZtZj8bAAUWkTo6mPqDN6L7Yi97svnJ/lz+MU6Y1arC/KyCz761yFfY
-         ygbogUWQ2sFAQoM9HKCEk579C9mOTN9bJNK3wbMQkUfvB6kLnB7s1JG51cnvRFmNqr+A
-         gspGtcxTIhhZ98Z/MpZUqF1A+DXWAiYWcS+Iq6FSUvDewl9fSyVSCW+gZkh52v2rUSOu
-         QOoghDjgtaKMttMIstU4C24eQ5eMB1HsCYSUQF+6h+WHQJpuFORxr7vmmVUMfjHsb2pR
-         mfbQ==
-X-Gm-Message-State: AOJu0Yz/njPFV8azyMRsKbzC+FgG970bDbjCB2LY4L3/BteSLcbv5DuU
-	s+KiMKAq+y06Yn5mDMoygSI6oeSzUJD4JhDieRSkTCCbwZ8PmgB1Rb0kgiAc6TpiX2USYMjzHsD
-	6ZOeMMlpbE9e86jsPWcf4GcREDbmBX4qXPAHOAF/aFVrlMpsFhEgxrh3tJpo=
-X-Google-Smtp-Source: AGHT+IE/r8IsrIs+jAIO1tX8a7b4PKzDWnNcOhao5MFS9ZBqhuIoumvWOJ3o5H0Lwde0VImNSD00ToWUCDwWfk2jTaO8i7VCiaX7
+	s=arc-20240116; t=1761608144; c=relaxed/simple;
+	bh=hwP/ISptcED0C3gyAgZ7TO//hrJsL4mtGE0vyK8MMKY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AB/ONqurFtDGz3LkV/tAIiYmyjpIGWfnyvd653nvCpwQCfSqzsa7Rw+tDf9FBj9hudnCJxgaD9Fcz9RO7rssTuCWKnmoHQvi9G7h2+7eOiKTLOL16mfaXbSFIkP0mBITkYbpPCyFuzYjiMxa40krsg0NPaGQ7OoBhWFleTXjzm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DsgRW1CV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB11C4CEF1;
+	Mon, 27 Oct 2025 23:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761608144;
+	bh=hwP/ISptcED0C3gyAgZ7TO//hrJsL4mtGE0vyK8MMKY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DsgRW1CVuz7pf/7lDWSQnSrE5lGx71T5LIt5ghrJXhpQ0KVQ23X8tAhdxcLFSfPvN
+	 7909z9taUvPExsiFMmji6rakj7APUszplZBRGGnGCRr5e3EuRfldu+w6U61snmkSD/
+	 M4CgCrfH8raUQ+gz3eGYh6/lUUi+I9KknzqBEWt0=
+Date: Mon, 27 Oct 2025 16:35:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: bajing <bajing@cmss.chinamobile.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix the problem that kunit cannot run
+Message-Id: <20251027163543.bbf0f6bf9f81c3a61afa48a2@linux-foundation.org>
+In-Reply-To: <20251027091231.1770-1-bajing@cmss.chinamobile.com>
+References: <20251027091231.1770-1-bajing@cmss.chinamobile.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8e:b0:430:ab21:8c4d with SMTP id
- e9e14a558f8ab-4320f7bb713mr26392635ab.11.1761608102860; Mon, 27 Oct 2025
- 16:35:02 -0700 (PDT)
-Date: Mon, 27 Oct 2025 16:35:02 -0700
-In-Reply-To: <CAHjv_auu8L45PK56xgpFZPUb4CuqCRg+xdS4LFZ-0fU1ujfnPA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690001a6.050a0220.3344a1.03a9.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry (2)
-From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zlatistiv@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On Mon, 27 Oct 2025 17:12:30 +0800 bajing <bajing@cmss.chinamobile.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> When running ./tools/testing/kunit/kunit.py run,the error for mm/swap.h
+> is as follows:
+> ERROR:root:In file included from ../mm/shmem.c:43:
+> ../mm/swap.h: In function ‘non_swapcache_batch’:
+> ../mm/swap.h:66:19: error: implicit declaration of function ‘swp_offset’;
+> did you mean ‘pud_offset’? [-Werror=implicit-function-declaration]
+>    66 |  pgoff_t offset = swp_offset(entry);
+>       |                   ^~~~~~~~~~
+>       |                   pud_offset
+> In file included from ../mm/shmem.c:68:
+> ../include/linux/swapops.h: At top level:
+> ../include/linux/swapops.h:107:23: error: conflicting types for ‘swp_offset’
+>   107 | static inline pgoff_t swp_offset(swp_entry_t entry)
+>       |                       ^~~~~~~~~~
+> In file included from ../mm/shmem.c:43:
+> ../mm/swap.h:66:19: note: previous implicit declaration of ‘swp_offset’ was here
+>    66 |  pgoff_t offset = swp_offset(entry);
+>       |                   ^~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [../scripts/Makefile.build:243: mm/shmem.o] Error 1
+> make[3]: *** [../scripts/Makefile.build:480: mm] Error 2
+> make[3]: *** Waiting for unfinished jobs....
+> make[2]: *** [/home/openeuler/kernel/Makefile:1924: .] Error 2
+> make[1]: *** [/home/openeuler/kernel/Makefile:234: __sub-make] Error 2
+> make: *** [Makefile:234: __sub-make] Error 2
+> 
+> ...
+>
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -4,6 +4,7 @@
+>  
+>  #ifdef CONFIG_SWAP
+>  #include <linux/blk_types.h> /* for bio_end_io_t */
+> +#include <linux/swapops.h>
+>  
+>  /* linux/mm/page_io.c */
+>  int sio_pool_init(void);
 
-Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Thanks, but I suspect you're using an older kernel.  6.18-rc3 doesn't
+look like the above and it already has
 
-Tested on:
 
-commit:         b98c94ee arm64: mte: Do not warn if the page is alread..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1219ef34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d60b6f0d339ca06f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=106bd614580000
+: #ifdef CONFIG_SWAP
+: #include <linux/swapops.h> /* for swp_offset */
+: #include <linux/blk_types.h> /* for bio_end_io_t */
+:
+: static inline unsigned int swp_cluster_offset(swp_entry_t entry)
 
-Note: testing is done by a robot and is best-effort only.
 
