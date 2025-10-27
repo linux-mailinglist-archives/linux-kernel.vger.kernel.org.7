@@ -1,268 +1,199 @@
-Return-Path: <linux-kernel+bounces-871539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70DDC0D939
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:37:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2B8C0D9FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD9318924F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:32:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20BE44F8DAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BBD311C05;
-	Mon, 27 Oct 2025 12:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8056B284898;
+	Mon, 27 Oct 2025 12:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Zdav9Am2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BNz1kuk0"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE21311955;
-	Mon, 27 Oct 2025 12:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AC3312823
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568190; cv=none; b=BwIthot1w/eCkrNPRA7fYNFi04XoXQUgFSpCV/7xsyxLm7MLsT2GJgRO7KnuuVHTQnfLvPyxtqYhAmNjj7/DvHV45WbvAlRGDGFoijOI2neUeWnhb6R2i7Gqc/RV0x3HcaTGj8f97G/HD+SXNgQyqfhglXDnni5oMAJRnh9M0Xk=
+	t=1761568204; cv=none; b=frryn/6QdFupctzwhnIwURXOYuEnI6UZXbBLaaPc5lJdC6ShWuwphTntpSrmh3rNLDx9BvjqgDsyZKPQitMlMZY06vkmsPaWaVj4Ta9uW+pEq8Uy6J7b1VaMsr56OwCUTmYFY3TDvpoqkvrD2RAEct3Xftc+vkH1g3iFceG13nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568190; c=relaxed/simple;
-	bh=7Je6lJRTzVybFGA3zHQ739rKcyvXzeRsZFL0c51Mzjg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XaSY9owK+ryF7lsIXm5anBalBpHoBZQF5LYwra/ZZqBvTMZ+eWv4qwwsDonnCJUd+XyO8mJ/3l+yoQs8FDXWNzOG1L8op+uxLSrgQqeeQixZQT3xG6HgVrWxshaNQAjD73OnM6+o0AEolh9ulzt15UWHy1ulWNLvHnVCDhnMTF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Zdav9Am2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59QME1KF018636;
-	Mon, 27 Oct 2025 12:29:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ItbSC0
-	3yyhrCbzRRdb4MImfe34nqCTQUGBQZXncdSEI=; b=Zdav9Am2mmUI0AvrdEvO1W
-	WS/2fLSa2CWobO8w/AytWdccmVcB4+cqMOofG7TZMvjX3+ophOkJXRMYXW/Spkvs
-	6p+ZW72C8TJJLKXOe7WFhoWyy2+4drap+jFfQaisLQoz1+YZS/hzjN/hEUreGyyE
-	oElTL/1lALM1ub7BpgQL+pWLbjvJBLYICISrMBhdajllXluo1+Xvnx+4azi/m/el
-	axQl6g430ZiyhbrvICNgkxI5kL3EVSjTstKhmXwNmGtRETI7N/Hv1sUrMfvb7FQ1
-	vjHzxckDE4jHdcbWm1AVn8u9kP3Psv8upoSpFksQc8oaGAwNhW5GLA9EzWfk0vzQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81pptx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 12:29:41 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59RB0OZ4021604;
-	Mon, 27 Oct 2025 12:29:40 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a18vrwmjb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Oct 2025 12:29:40 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59RCTcvs32244304
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Oct 2025 12:29:38 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 64AB858061;
-	Mon, 27 Oct 2025 12:29:38 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1AA425803F;
-	Mon, 27 Oct 2025 12:29:36 +0000 (GMT)
-Received: from [9.111.45.227] (unknown [9.111.45.227])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 27 Oct 2025 12:29:35 +0000 (GMT)
-Message-ID: <e5a5d582a75c030a63c364d553c13baf373663ac.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/2] PCI: Allow per function PCI slots
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: helgaas@kernel.org, mjrosato@linux.ibm.com, bblock@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
-        stable@vger.kernel.org, Tianrui Zhao <zhaotianrui@loongson.cn>,
-        Bibo Mao
-	 <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 27 Oct 2025 13:29:35 +0100
-In-Reply-To: <20251022212411.1989-2-alifm@linux.ibm.com>
-References: <20251022212411.1989-1-alifm@linux.ibm.com>
-	 <20251022212411.1989-2-alifm@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761568204; c=relaxed/simple;
+	bh=HJ/2dqyU/Acjvu+mZzB033wWiO44mlaL5jzI8+GPiaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ibh7sCWd9PWcYG6UepnsROGQ7w/OsSpvJ/KaeEtQ2hPh1SUtBFykRUlLjxYxCdTQeEC0EMuEaxGlRs+VeZiYnYJAFNWJwZ9IpiKPOssBHJa73DzpqwQo+4Jual+9oE/XbH3xX4jDzZTxboWv92jcWjEjmp2XUKG4NhKQtLqq5E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BNz1kuk0; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4770e7062b5so9850975e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761568200; x=1762173000; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3PWBISQV3ncuBoZdb9QUM1ePMIWUZ1r8Gjge94TDN1c=;
+        b=BNz1kuk0GSBrNNbU3TxrZScfPwkhxSksnvKApJoWAkDwYXCj8nRF0UajUDcP2Myljf
+         bszdtgrGFQM8ELSJYwZJwAe219KU0ojjlxagO6UyWUiy8RvacNB4+axSdOxdju3A2gKk
+         gtJW1V2IfZewLdGK6QtkTiY3H2yXTNL8x/fBzU0u0dUn1Vyi0i+Ll6gfkLqSL8mTmqr3
+         qtROjPHsZdGALhbTOtNXlxtm0xcZbDPbtVVeGNpwK6D40gbgA+0ZgJE0pIAz/KtLTBRy
+         oTIU07HHuuRWVa8SvnaKshNjt++ueP2C9Bwzu/tuCIjTeL4UshYSO1UyQj6bFqHbmFX3
+         2DSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761568200; x=1762173000;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3PWBISQV3ncuBoZdb9QUM1ePMIWUZ1r8Gjge94TDN1c=;
+        b=txjFgKas7c6VasVZ6wKS4K7KRjvsOgBpggRKpOa9hGWIEJ/E7CW/wtjlOryClsxJLf
+         d9DPdliwooqZTueISSzqsbp5C0kIJX6Urnjd1JPD/rw4Ia2H36V7rr3tPlI0DgWLQrIX
+         2G0kitU6A8/hHpBN4wz9pYGyW4luBBlSamTRq70SJLtP4FrTx8tfzfBR75fr7kBmsAYb
+         scmHr6RvR/RNMePbR661ApgcnP62B431lGOfaleBihpiqpvndDQtXjpzL00807Y5X1li
+         4Aqm6Zi3iRArN6FggYBAGOnzG4UvDCEnx/D0lm7eyo0aAgiK9mJeKrE/L9JSTREUOhvo
+         W6Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlGSI7vzDjusS4dxjvHGJAQC9waVzGua0IBV4gspHIScg/xWFEnJi6IA1NnRUCdgZCHSuGmSpDEpnvfSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzHMZutTCF2Xfb8PVfEHLzj/ZZBDH+5zz1xxLxRNSd6kX1S972
+	LOJ4fxG9MMHkyWcq+p6aKe+svS1QHy4QqHOKdWclV6GhYV1hB9gRXj/RQ2MqM7vcWX0=
+X-Gm-Gg: ASbGncvCXUZZ0KZR+z1W956NZ2EJ7JGrW+K6fS2qVW1AByGXql3vJedfBWCa5tG46LE
+	LvB+DYCclooOxJ4QyAw8I+HcqrzAAivm9kgZfpdEesRCcF/audriZCokPp9jMi+xvUTz8syE/jh
+	f1bHAnmgvrsPDexk/Wrupwh3XoJhdWz++34o2Gw03GPX075AQH83r+Ma05AhP4mPUYu7FiZLqNH
+	lx+XLDm+s3eqeaWthg/2Wia/eRcsNvBMunG38TuhjdWObpiArGvBI5L6lgUm4xZ7WM8yKsGoV2o
+	WdcCAkXclkH0eG8WO5YKBkZ1wry4l/FMzGjp2K//Z14/1MhjzbiiapUDIxxQqnPiEs8v5EuSkWB
+	COQuw8GZ++4EzTrxFtlu1WFZb2G3dYx94199nOtUCuiierw+yGNro9bfkOc5zrru9YyGYLDfcx1
+	gmzTptQ59ShHP9SykN6tdRd08cahi+fi1F5QvlLw==
+X-Google-Smtp-Source: AGHT+IESSdoIje4LFM44NkmkZF81vbk3INubkipM1Uq1eqT0mefzc6gYereDtjtfa+LLk945nxK7+Q==
+X-Received: by 2002:a05:600c:540b:b0:46e:7247:cbc0 with SMTP id 5b1f17b1804b1-475d2e95fe2mr100898525e9.18.1761568200589;
+        Mon, 27 Oct 2025 05:30:00 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.142.122])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475ddade9eesm63558295e9.11.2025.10.27.05.29.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 05:30:00 -0700 (PDT)
+Message-ID: <9ff5551d-79e8-4358-bbdb-cbc7e5c7c36d@suse.com>
+Date: Mon, 27 Oct 2025 14:29:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=fIQ0HJae c=1 sm=1 tr=0 ts=68ff65b5 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=haNJBbb0vfJ8gEqE9DAA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: cDAq5HsdiP5JusLCv-gGE1TZ7xurvbyY
-X-Proofpoint-GUID: cDAq5HsdiP5JusLCv-gGE1TZ7xurvbyY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAyNCBTYWx0ZWRfX1Vjh2Dt9rhi4
- TwNOI5KSkBoBQzJRo16orDU7CN4uWz/FU0Gkonilzqla6hlAE6lEzWIy19OgUOy4rYax6uMtU57
- t8st+5iEb3q+MtmzpGc5LBuFnlmEuLxeq0CnSXiR1+Ej50HmAtEtcM99Hx0+Bv17plWe7DoB50X
- VHayFIYQSd4uKDxVsN/6HBlmvWQPjb67BVFgEy2pY4Sez6y+mLPkiVsw1BDgGW/5qwOVnSq4GV1
- e5QOEBnOgEFaqM7TMfHSxtzvx2vHfvbK+3xN8IzPP8a/wltYNM2lfku9gxDeVI80afkgwXvKE6W
- CA+WLKRWZ8tzSjYC1BNoLeSiQ3dE37AuPpomj/wRwe4fAASahh2Qd9z7EIh+n1z581zgJUDR2pw
- oCMFpIFrzL2uq/VNDBtEnpSRm6UhzQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-27_05,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- clxscore=1011 bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250024
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 55/56] x86/debug: Show return thunk in debugfs
+To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Graf <graf@amazon.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-56-david.kaplan@amd.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20251013143444.3999-56-david.kaplan@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-22 at 14:24 -0700, Farhan Ali wrote:
-> On s390 systems, which use a machine level hypervisor, PCI devices are
-> always accessed through a form of PCI pass-through which fundamentally
-> operates on a per PCI function granularity. This is also reflected in the
-> s390 PCI hotplug driver which creates hotplug slots for individual PCI
-> functions. Its reset_slot() function, which is a wrapper for
-> zpci_hot_reset_device(), thus also resets individual functions.
->=20
-> Currently, the kernel's PCI_SLOT() macro assigns the same pci_slot object
-> to multifunction devices. This approach worked fine on s390 systems that
-> only exposed virtual functions as individual PCI domains to the operating
-> system.  Since commit 44510d6fa0c0 ("s390/pci: Handling multifunctions")
-> s390 supports exposing the topology of multifunction PCI devices by
-> grouping them in a shared PCI domain. When attempting to reset a function
-> through the hotplug driver, the shared slot assignment causes the wrong
-> function to be reset instead of the intended one. It also leaks memory as
-> we do create a pci_slot object for the function, but don't correctly free
-> it in pci_slot_release().
->=20
-> Add a flag for struct pci_slot to allow per function PCI slots for
-> functions managed through a hypervisor, which exposes individual PCI
-> functions while retaining the topology.
 
-I wonder if LoongArch which now also does per PCI function pass-through
-might need this too. Adding their KVM maintainers.
 
->=20
-> Fixes: 44510d6fa0c0 ("s390/pci: Handling multifunctions")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+On 10/13/25 17:34, David Kaplan wrote:
+> Make the value of x86_return_thunk visible in debugfs to support user-space
+> testing.
+> 
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+
 > ---
->  drivers/pci/pci.c   |  5 +++--
->  drivers/pci/slot.c  | 25 ++++++++++++++++++++++---
->  include/linux/pci.h |  1 +
->  3 files changed, 26 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b14dd064006c..36ee38e0d817 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -4980,8 +4980,9 @@ static int pci_reset_hotplug_slot(struct hotplug_sl=
-ot *hotplug, bool probe)
-> =20
->  static int pci_dev_reset_slot_function(struct pci_dev *dev, bool probe)
->  {
-> -	if (dev->multifunction || dev->subordinate || !dev->slot ||
-> -	    dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET)
-> +	if (dev->subordinate || !dev->slot ||
-> +	    dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET ||
-> +	    (dev->multifunction && !dev->slot->per_func_slot))
->  		return -ENOTTY;
-> =20
->  	return pci_reset_hotplug_slot(dev->slot->hotplug, probe);
-> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-> index 50fb3eb595fe..ed10fa3ae727 100644
-> --- a/drivers/pci/slot.c
-> +++ b/drivers/pci/slot.c
-> @@ -63,6 +63,22 @@ static ssize_t cur_speed_read_file(struct pci_slot *sl=
-ot, char *buf)
->  	return bus_speed_read(slot->bus->cur_bus_speed, buf);
->  }
-> =20
-> +static bool pci_dev_matches_slot(struct pci_dev *dev, struct pci_slot *s=
-lot)
+>   arch/x86/kernel/cpu/bugs.c | 44 ++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 44 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 26ceb42e0cfb..8365448b3aef 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -16,6 +16,7 @@
+>   #include <linux/sched/smt.h>
+>   #include <linux/pgtable.h>
+>   #include <linux/bpf.h>
+> +#include <linux/debugfs.h>
+>   
+>   #include <asm/spec-ctrl.h>
+>   #include <asm/cmdline.h>
+> @@ -4065,6 +4066,49 @@ void arch_cpu_reset_mitigations(void)
+>   	tsa_reset_mitigation();
+>   	vmscape_reset_mitigation();
+>   }
+> +
+> +static int rethunk_debug_show(struct seq_file *m, void *p)
 > +{
-> +	if (slot->per_func_slot)
-> +		return dev->devfn =3D=3D slot->number;
-> +
-> +	return PCI_SLOT(dev->devfn) =3D=3D slot->number;
-> +}
-> +
-> +static bool pci_slot_enabled_per_func(void)
-> +{
-> +	if (IS_ENABLED(CONFIG_S390))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
---- snip ---
-> =20
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index d1fdf81fbe1e..6ad194597ab5 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -78,6 +78,7 @@ struct pci_slot {
->  	struct list_head	list;		/* Node in list of slots */
->  	struct hotplug_slot	*hotplug;	/* Hotplug info (move here) */
->  	unsigned char		number;		/* PCI_SLOT(pci_dev->devfn) */
-> +	unsigned int		per_func_slot:1; /* Allow per function slot */
->  	struct kobject		kobj;
->  };
-> =20
+> +	if (x86_return_thunk == __x86_return_thunk)
+> +		seq_puts(m, "__x86_return_thunk\n");
+> +	else if (x86_return_thunk == retbleed_return_thunk)
+> +		seq_puts(m, "retbleed_return_thunk\n");
+> +	else if (x86_return_thunk == call_depth_return_thunk)
+> +		seq_puts(m, "call_depth_return_thunk\n");
+> +	else if (x86_return_thunk == its_return_thunk)
+> +		seq_puts(m, "its_return_thunk\n");
+> +	else if (x86_return_thunk == srso_alias_return_thunk)
+> +		seq_puts(m, "srso_alias_return_thunk\n");
+> +	else if (x86_return_thunk == srso_return_thunk)
+> +		seq_puts(m, "srso_return_thunk\n");
+> +	else
+> +		seq_puts(m, "unknown\n");
 
-Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+nit: This might be better suited for a switch construct but it's fine 
+either way.
+
+<snip>
+
 
