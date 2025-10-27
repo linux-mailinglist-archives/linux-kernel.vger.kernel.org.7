@@ -1,140 +1,193 @@
-Return-Path: <linux-kernel+bounces-871931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AFFC0EDCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:15:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471D8C0EE30
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43361895F34
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AFD460204
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0E12ECE80;
-	Mon, 27 Oct 2025 15:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951E2302772;
+	Mon, 27 Oct 2025 15:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tbz1cVqZ"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="io+ZDnGE"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9091E3074B4
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424742566DD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577656; cv=none; b=JNSq2HHe/lKI+AO5VSObSJSJUASPbWXH0oPNAWsX4gcwbhll9hHAEe1QuCf7m+DgRaq5K9tfPwgEHlF/hSZsLaB+281L97j5e3AkxIF/7GkHy2ZAdqnsjV6JyX8XfKMWLL1SVHt93TlYrOSoA6ekg8ziZnmsIJ3hdHNrqL++Ruk=
+	t=1761577681; cv=none; b=pKH5/TIbdkGKPumiYUmjxPMST1ykC+tWtOXuIyEBX/ljmIlVkCmVCPMhQKqM2vozB5d1lSLOlpoiWbKcaD0JrrynnLtFvV3VtuCsGOqHvWBJ19THDWs9X28iXovpwaWiVMm8WhpBKHshB8YTLPM8ZFSc6+f4mkfgxBlVjujjbpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577656; c=relaxed/simple;
-	bh=4KYywOgTHGEIz3ZCocUr/rj1P+mUN7k7cfPlJwv4luk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s5DFyZ2dYwFB/dv3+/WHuhesZwn7qcqAmvW6Bx+Nx/CoLFxAt6TQ2IIXIATW/wPvCYhO8VGw3t7TcQLfkOBsNQZWZtBTd+/eQDE7lykipOdHtH8s8ij/tI4LivgFpPsjIR5r/bu+fQScOg8GsHWfVnr7wvIYO4Cx1wHVh6JA4TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tbz1cVqZ; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b6cf1a95273so3507337a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:07:34 -0700 (PDT)
+	s=arc-20240116; t=1761577681; c=relaxed/simple;
+	bh=Hj0l0j5fI+kXzEXNngd9fmM+TUubJmytvIAHFMvoWdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IkG6fKrzYOBaOp0EIvP8ToG/6iARf6GFKowk4EqumuA563BjUjIYLG3xNzVLQ6294W8MtFlTb7YXUrsAEcAF6uzgmWd0aoMgbrRYPtmKcX97nw12GsUf0f8USSRizr7cgJinZmFmNXn1mmJIGFjSpfJMbbKqaw01whUUiii/I1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=io+ZDnGE; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ea12242d2eso724331cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761577654; x=1762182454; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qz3ecQyWxC7VNS5GAYBhcfKzMJ8mPoJ6wolDlF8Nh4U=;
-        b=Tbz1cVqZGseSwkIvYl/wlayY15FjFoE2rDnTwV0OruwzSlj4x4LuWngEEAf3cMNaK4
-         M/SCCf0W0Awo57RdGfDSyBh4L7DeUPJPkEB4KgV/okxGDwIp8imcBeNDmnw0JtDGLL4i
-         Otj6XBGoOk1Tp0QNr2hkAyDRh3Aaw7DTBPlLj5DXcXnlVYyhUUTGJt2lpnoPB1QPf+Qp
-         /bdKfs2N6qrJ5QCWNmpgQaNeYT+GrLLSz151I4TUNdxReaMpzsGt7Df0Mmu1rvYKlTA0
-         V3YeB5qM5SaOvhOOkJ3xYgRH6sv1ffXOncYMPE8tKKY2lElCwfi+YTQRIx7nifmZ8Fc/
-         NjeQ==
+        d=google.com; s=20230601; t=1761577679; x=1762182479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VFmNRNpiYRbSyKjivx5b46rxwRPMOYECqNZ5ldemnk4=;
+        b=io+ZDnGE8DzB6jBf8IrNiggYJVzU+ivn0hd8no3mx0BSFH6yjcRj7JouWB9s8xRAKQ
+         C/YzB0yf2pSHtm3Jj03nChPY3fxE0JiLvTWhywi2VgAGNfp0dWeLu3RqKmTMebGIx11K
+         mT7VqaadNwiib9D3CSkTbAEqXMQq7fYeUBYFCm1vJ/ry7jOKFqJC52CXdB3pg7LSmr4f
+         KAxLxH+MG7KutQTSuDnNwL+CAf2dCYo1n7nhvdlRx+zXlWUlFPqWQo7WAA4rDyjV8bpC
+         8D72pbUMWY+Vn0qZM9ZkPwlA/JixPDU4ZclKLHnhXyg2fFhHWnGj/7X9jlTnUIRHckCs
+         TKrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761577654; x=1762182454;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qz3ecQyWxC7VNS5GAYBhcfKzMJ8mPoJ6wolDlF8Nh4U=;
-        b=qN3RWQ4wZLuivl1amJRgpfpbAK1pQJkb2wcwYdDodBtkGh5ZOrWMIevIMTdYkgBue1
-         BCDgwPocAGuSQjaBntwDPip9hHfdMmPAkAdvj6XQhl7kz/NG2NhoV8rg/yUI+sqbgy3c
-         2Vm5ZXgCQj90OzjHHQux/i6NhtZgH+d/6p5KrN9jhdGyWG4Fus1n+vBCTqKroaifgfp7
-         rvUzf2G/RfYg/byVH66ByQCP8Wk/cQp4dNbb7HpANv/5VrnZG7Eta1jZCnN42On43V40
-         z/jN9KbNMjd239t8hdTzpVoyzlq42Gt+9ZS9uj34kJjuTpmys0Pjs+V3NTOsUMCDZ9ya
-         Mbng==
-X-Forwarded-Encrypted: i=1; AJvYcCVfVkaO+snwIfmw7d8ikPFPo2hxnf/JLLP4DvC7WhIFzeLyR+g9nkHplOWtm17liXPlonT1d3YxtQdprK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCVftYR5AKvb5fW5aqhtuu+slJeWW86pD2VmLWngavVSPWa+HA
-	J1JepsRaJxKFCDhWIAYdX/H9RkSmrWy9pkP8nHajUKe7exCHX6JKh2Ap
-X-Gm-Gg: ASbGncsm4+6KHw79hV5hlvvEyF2TssJYELQ8KJ7JA9Y6qn2m+UyGEXbrIa1nCcmpzBO
-	/LTPVi+QLZKdV9aR1Q0P5jq+dcirkUMtBEhdCP0Sd98Td4nGj7iDfoggD5+anTFlgdCsrfeTBn0
-	3/XOOGk4rYwUnA2WU7Xf0pA7gT4wJh2ZVrn21VGthLB2PL1huWyj9natYwwt1pI2epmLGY9WQwE
-	gw5KT737rJ0NmB663A0FJQVBnn5etsuXgH2TZ5C9JqWHY6ggDvPLpkjUsIw8xn/TWh6fMNPGbKT
-	vks5Dj5j2bRKHnvat/rJo8edvegCwyxthBnJxQvDZd+to9RXHWOeyA0uNzOnywhIoXAErebeEjS
-	IFaJXmoAQ4qj06yBYqxtfecwZrSuvZvwgEMgoSiCfx5IvVG+psVnuD+RPymn+88GoTan9/UaPsE
-	ApnlkFGeGkCHCMX77QuzFrux8It+nr8Mdc
-X-Google-Smtp-Source: AGHT+IHFy+IMljdrhVQ66DQvOfteh6iHx3cumDuMAgc7JMxc9hldJM3AHM32ikGVgmmr//G+ptdz1g==
-X-Received: by 2002:a17:902:e805:b0:24c:cc32:788b with SMTP id d9443c01a7336-294cb3693b5mr2991405ad.3.1761577653775;
-        Mon, 27 Oct 2025 08:07:33 -0700 (PDT)
-Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498d44db4sm86422035ad.86.2025.10.27.08.07.26
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 27 Oct 2025 08:07:30 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Angelo Dureghello <adureghello@baylibre.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in ad3552r_hs_write_data_source
-Date: Mon, 27 Oct 2025 23:07:13 +0800
-Message-Id: <20251027150713.59067-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1761577679; x=1762182479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VFmNRNpiYRbSyKjivx5b46rxwRPMOYECqNZ5ldemnk4=;
+        b=s28MpR6K0LA8qaC0wsm/qZgekZyl/sZUbAxerWomY/W3hlE9Vgq+vsCFsFQPWLp0CL
+         G+kjEBrR8jASHmfWedhcvLxbVLFYxdQH/G7ykrWTnjLALot0jf494D9rhnPkdfTKHGTm
+         W4NZKOmApGzDiWdzNfCyC56AjMANNKzBpxJiHG8sCmXRt8X72aM5EnxE0SnMdTXreeSP
+         Hu1UI+fbASiRZ3W3f75rsdzFvizPTHtpGXn+4nuIyayE/Ioxw3dn9SFQhLKyO3O+/y1i
+         WcJy2TgWSERXwypPbS+IZ+p5TUE7rQFAoYYvoFuIg6JYeGfE1ifOPYv+6J4CXaUh4Qu4
+         Q/Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5edg18aBinLXbDvPhnPdZ9PP1sGvpBZIaaVXs6gNTTAUh0zC9Vnb93hTxz1za8EGw6WaT9Eyt4d2ByVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSgMShLlBHg6oGNjvFTxT1IiT0C52e0mxk5Tn4LeetDN8+EHES
+	GT8168WYQapNRaRjbCW+vQ1y0WBze4tkkdQotrEWWHDVww2bORQuLvsADqcCS7+vnDLux3rFkkb
+	R34s2uo9+gVj1CVCuOqijg/X4Z+Oxga+kbY2VoEBA
+X-Gm-Gg: ASbGnctUxnEkvyvf/6EWbb7i5UF4iO6T+pGhSKPOPH2QDGCuJ5EQLNLc/U0ImzilrRS
+	a5XhWQ4RYn0mdHOzSuILSL5rh45Qht3VH1KXWn+JrYGDF2UIy6gkibrQYRulFHhZU99aT9yn4np
+	bXooYW05/MrxNMBqgEZyjf03jC1YQVnhH0hSnaYg2q3LP83heRxPdAS0lAkqw7riWT/Z3ZZoXPL
+	PX4Pjx3uu1J/RaTkFAAcKsc51L19T9UgZVhefeE8I76hI+NWVTSCv/X/TVAC3ZbAeNOaKz5NGSk
+	mUsMQWkGlbOrHUPHVQ==
+X-Google-Smtp-Source: AGHT+IE/VRXLeFnFj7efFctBux16bp+sFLD27Fv9XqtJYX3+YZY6I8ih1yzTjHgLLfWUWhd+g5Oo5nCtGKvoCiF7y+A=
+X-Received: by 2002:a05:622a:2b05:b0:4b3:1617:e617 with SMTP id
+ d75a77b69052e-4ed06efff0cmr823271cf.11.1761577677167; Mon, 27 Oct 2025
+ 08:07:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAAVpQUC7qk_1Dj+fuC-wfesHkUMQhNoVdUY9GXo=vYzmJJ1WdA@mail.gmail.com>
+ <20251027141542.3746029-1-wokezhong@tencent.com> <20251027141542.3746029-3-wokezhong@tencent.com>
+In-Reply-To: <20251027141542.3746029-3-wokezhong@tencent.com>
+From: Neal Cardwell <ncardwell@google.com>
+Date: Mon, 27 Oct 2025 11:07:40 -0400
+X-Gm-Features: AWmQ_bm-jSbBd_NCN3Fm-69xCK7y8NSPpwczuYFYDkOIScJKpoudLfKYwGsdrS0
+Message-ID: <CADVnQynj=5GQbwhiFXFe2gWzodH802ijvFk55xgzxLa6ipRoow@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] net/tcp: add packetdrill test for FIN-WAIT-1
+ zero-window fix
+To: HaiYang Zhong <wokezhong@gmail.com>
+Cc: kuniyu@google.com, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	wokezhong@tencent.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When simple_write_to_buffer() succeeds, it returns the number of bytes
-actually copied to the buffer, which may be less than the requested
-'count' if the buffer size is insufficient. However, the current code
-incorrectly uses 'count' as the index for null termination instead of
-the actual bytes copied, leading to out-of-bound write.
+On Mon, Oct 27, 2025 at 10:15=E2=80=AFAM HaiYang Zhong <wokezhong@gmail.com=
+> wrote:
+>
+> Move the packetdrill test to the packetdrill directory and shorten
+> the test duration.
+>
+> In the previous packetdrill test script, the long duration was due to
+> presenting the entire zero-window probe backoff process. The test has
+> been modified to only observe the first few packets to shorten the test
+> time while still effectively verifying the fix.
+>
+> - Moved test to tools/testing/selftests/net/packetdrill/
+> - Reduced test duration from 360+ seconds to under 4 seconds
+>
+> Signed-off-by: HaiYang Zhong <wokezhong@tencent.com>
+> ---
+>  .../packetdrill/tcp_fin_wait1_zero_window.pkt | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 tools/testing/selftests/net/packetdrill/tcp_fin_wait1=
+_zero_window.pkt
+>
+> diff --git a/tools/testing/selftests/net/packetdrill/tcp_fin_wait1_zero_w=
+indow.pkt b/tools/testing/selftests/net/packetdrill/tcp_fin_wait1_zero_wind=
+ow.pkt
+> new file mode 100644
+> index 000000000000..854ede56e7dd
+> --- /dev/null
+> +++ b/tools/testing/selftests/net/packetdrill/tcp_fin_wait1_zero_window.p=
+kt
+> @@ -0,0 +1,34 @@
+> +// Test for permanent FIN-WAIT-1 state with continuous zero-window adver=
+tisements
+> +// Author: HaiYang Zhong <wokezhong@tencent.com>
+> +
+> +
+> +0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 3
+> +0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) =3D 0
+> +0.000 bind(3, ..., ...) =3D 0
+> +0.000 listen(3, 1) =3D 0
+> +
+> +0.100 < S 0:0(0) win 65535 <mss 1460>
+> +0.100 > S. 0:0(0) ack 1 <mss 1460>
+> +0.100 < . 1:1(0) ack 1 win 65535
+> +0.100 accept(3, ..., ...) =3D 4
+> +
+> +// Send data to fill receive window
+> +0.200 write(4, ..., 5) =3D 5
+> +0.200 > P. 1:6(5) ack 1
+> +
+> +// Advertise zero-window
+> +0.200 < . 1:1(0) ack 6 win 0
+> +
+> +// Application closes connection, sends FIN (but blocked by zero window)
+> +0.200 close(4) =3D 0
+> +
+> +//Send zero-window probe packet
+> ++0.200 > . 5:5(0) ack 1
+> ++0.400 > . 5:5(0) ack 1
+> ++0.800 > . 5:5(0) ack 1
+> +
+> ++1.000 < . 1:1(0) ack 6 win 0
+> +
+> +// Without fix: This probe won't match - timer was reset, probe will be =
+sent 2.600s after the previous probe
+> +// With fix: This probe matches - exponential backoff continues (1.600s =
+after previous probe)
+> ++0.600~+0.700 > . 5:5(0) ack 1
+> --
 
-Add a check for the count and use the return value as the index.
+Thanks for this test!
 
-Found via static analysis. This is similar to the
-commit da9374819eb3 ("iio: backend: fix out-of-bound write")
+Kuniyuki rightly raised a concern about the test execution time.
 
-Fixes: b1c5d68ea66e ("iio: dac: ad3552r-hs: add support for internal ramp")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/iio/dac/ad3552r-hs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+But IMHO it was very nice that the original version of the test
+verified that the connection would eventually be timed out. With this
+shorter version of the test, AFAICT the test does not verify that the
+connection actually times out eventually.
 
-diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-index 41b96b48ba98..a9578afa7015 100644
---- a/drivers/iio/dac/ad3552r-hs.c
-+++ b/drivers/iio/dac/ad3552r-hs.c
-@@ -549,12 +549,15 @@ static ssize_t ad3552r_hs_write_data_source(struct file *f,
- 
- 	guard(mutex)(&st->lock);
- 
-+	if (count >= sizeof(buf))
-+		return -ENOSPC;
-+
- 	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf,
- 				     count);
- 	if (ret < 0)
- 		return ret;
- 
--	buf[count] = '\0';
-+	buf[ret] = '\0';
- 
- 	ret = match_string(dbgfs_attr_source, ARRAY_SIZE(dbgfs_attr_source),
- 			   buf);
--- 
-2.39.5 (Apple Git-154)
+Perhaps if we tune the timeout settings we can achieve both (a) fast
+execution (say, less than 10 secs?), and (b) verify that the
+connection does time out?
 
+Perhaps you can try:
+
++ setting net.ipv4.tcp_orphan_retries to something small, like 3 or 4
+(instead of the default of 0, which dynamically sets the retry count
+to 8 in tcp_orphan_retries())
+
++ setting net.ipv4.tcp_rto_max_ms to something small, like 5000
+(instead of the default of 120000, aka 120 secs)
+
+Another thought: the original test injected a lot of extra rwin=3D0 ACKs
+that AFAICT a real remote peer would not have sent. IMHO it's better
+to keep the test simpler and more realistic by not having the test
+inject those extra rwin=3D0 ACKs.
+
+Thanks,
+neal
 
