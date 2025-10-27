@@ -1,218 +1,194 @@
-Return-Path: <linux-kernel+bounces-872133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0579BC0F54B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:35:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340D5C0F5E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F7D934F3DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF4048255D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E124631CA54;
-	Mon, 27 Oct 2025 16:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6133431961C;
+	Mon, 27 Oct 2025 16:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jx8SoAN5"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012018.outbound.protection.outlook.com [40.93.195.18])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="325jgcMW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iCCFqU2w"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D4331B812;
-	Mon, 27 Oct 2025 16:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582680; cv=fail; b=JrdsZH73ul8fatId3PzPNRN3wbZJSPnjlFNotJmw54ZHEsL6C2lTAEpmPoiL1ZoMulg9UvzviG/91NI7szibW8v4WS4QdYSNsCCPjXlQLX/HhkAG2wryT3Wl9Nj6ZC6kDfvuD5cr9UEpJUvWh7cVMAQgkD1kvIs9MDXr7Ds+Kvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582680; c=relaxed/simple;
-	bh=I4bBNIIGIYEqrL/Gp4rv1XBnC6nYHRRcESVl6LYi/jc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=E/hhnbnNUBwHtqWP3nHzMVguCugVLa8AtXsq6hp9dA0+znoFwapdr5mIPnNsJZZEzKJ+GguOY18hJNFxH3C1ZoakVxI1J3v6BnnxeLHN6QywyF/1OLl0OHP6Uym+VtLg8O6BBM8TMp6PNk4ZKhq3RtffmaoiKwljjx5PJVF+H5o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jx8SoAN5; arc=fail smtp.client-ip=40.93.195.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k0hDchJ06btvDN49fuVGa+MjN70wUdxyGH+ntQHnf02rQbggkYcAkCdFh3hsiloFdh2ksnQRkr6are3f05rJimdcyiwh6KYRmHbP+R5oRXG9DAZSxogFA82B9JvftQCW9bBfIIWB20/eS7+U7saEze96bpaaUvPp7QZZx2puSmysleROUyZpERI/lE0tMdKnSVLvQbzNf29AXS3l6uWKI/IrVoh59uzOHB1QzI0USCw+tFlIrhzLSfFq/3jmSI3LiUD8yLq5RsqmcmWUZEWTzG1HX7TzHntQjU9sgMPS3iqpDsWTHgIjhN3+A3M9LmL/x0tyObnKhMOh7urrjL26Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y9ridu7xzi98u/ufrISovQd57BLjj/Q7sOmg1czLy9Y=;
- b=rAtScOAOR/WAuKjlzzExcvufveYCU4fb9TPle2ZFGk9gYWIVn81ie4zVjVICg0/ZS8c2fglc1r5OmD0CFgqzk7fXpgAJ3qG37/Qv8cbwo68WfB0SCHa1nS4dRb2exTFwnkIHpOBv9wtyCe1prYJWFfNGg2QP1DuNyGsdYPReKuwPRpCuZ9aIGVuTKg1e3ucjob5uAtNCqAxw2cY+61pe2SndWbzgRMyW4rHuRjmy5FbayHzxo1D649ikqiaf7n9vFrX0A8s0vVG+kWIRSck1f9HQHeHJlHACuNACZ9fzoXapdZtQiwJF0iTH/dkUyUCBZtlIpzKWOtF4emgZnN0wVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y9ridu7xzi98u/ufrISovQd57BLjj/Q7sOmg1czLy9Y=;
- b=jx8SoAN5eaMDX5uXRrJHnKEAIKJ4q3QLCV8dQxEPbXj7Vpb0W9/TT0LKZ4pH5ZlKhxgbTnaJkxRrXLT5xHTrzEGwO95qkmgJv/wJ1u44aLFgHmxFBk0xs0P9+lE5YDE3hHc34mgSXtYf8Acm5W3JxDRyMtjtE7eeIz7PZ2WckIU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by LV2PR12MB5918.namprd12.prod.outlook.com (2603:10b6:408:174::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 16:31:16 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 16:31:16 +0000
-Message-ID: <93cbbaef-918f-4300-aa5b-11f098e217b2@amd.com>
-Date: Mon, 27 Oct 2025 11:31:06 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] Add splash DRM client
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
- Francesco Valla <francesco@valla.it>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Corbet <corbet@lwn.net>, Jocelyn Falempe <jfalempe@redhat.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-embedded@vger.kernel.org
-References: <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
- <yq4btdc5qqukuqps7y53dratmu64ghyifgprlndnk5rbgml4of@rvca75sncvsm>
- <3edea192-6a3f-44f5-b570-7033776e2ce4@suse.de>
- <5ff10f7d-e9d4-4d4d-ae82-8986dc28d14b@amd.com>
- <i7xxy33do4q4odvxxb77xv4ri5jgr6dup5kvfsjfs4h7mbmhrj@h3ke7h5whyvx>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <i7xxy33do4q4odvxxb77xv4ri5jgr6dup5kvfsjfs4h7mbmhrj@h3ke7h5whyvx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR11CA0090.namprd11.prod.outlook.com
- (2603:10b6:806:d2::35) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C813191BC;
+	Mon, 27 Oct 2025 16:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761582672; cv=none; b=rHvnzkKowOK8rVz0fPm0jWNN1in957A/m5pF6/n06Jylt+xjNrnVmZQaDBagXHlKKsWRGcLRRKQkBkjO4sYn+cn2iihSKslKHwl/xNb0Z7BWBk4AgwkKnb7exDEGOw0+bSmvkpsfYPfnodD1jN0a+r8UbQxOdQ4e5E+PqAovBXk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761582672; c=relaxed/simple;
+	bh=yljfzHftsI8vWs+kC5byP5H20IdWLsZ+6I3VnkvSuvs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PJSTbbDAWpsi7qZU7JOuQ9z/7VHMp4cSvjzETmgKiILjiXTLjvxyhjOAj2lrKTcTJ3rTVTynlmz8bMicECtco0shzZAXCG18qAcTTCWvhGpnIE/fzB7pop5IrdptXcWD0nG0aUhBZunjNIRknIWXzL9PZJFMbYgDQuHA41TEr/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=325jgcMW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iCCFqU2w; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 27 Oct 2025 16:31:07 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761582669;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qquZdUKnflHg6HElTJDkDYarbGZxtfYbPq8glJfKzLs=;
+	b=325jgcMWVe2r4WzFOAKoQ6IEP6jE90CmGyj2OohJFgtX8pkTLSUmVoS1X7izfKpOVntlXz
+	6UMBJsYwjzLTUoOr4T2+OkTdhC7xu1SFHhd2G+2g5To+NRZIgtEAkM6LppyOGGalArcJlD
+	7KgulPyWhhCuStjAt9AZeNxgeoOigonGCukgFj8SDvGzBnn6k3FhXIFCPuxuXJRouWGDM/
+	/gdEfRDFpON45y/RfLHxnf+20WJwXQg5fMB8I1lgDy2oRMm+Ncc/6CbDFvXvA0JUgg7FZZ
+	35rB4mkwdkr3PZSpPzuvoVjbC6WetYylnNwoy4Fxr2/2gtcIr0RKHqLQWDpwrw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761582669;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qquZdUKnflHg6HElTJDkDYarbGZxtfYbPq8glJfKzLs=;
+	b=iCCFqU2wMzl0N+X+SZgy0GcfODxk9n24ga3J0cpEodEeYmd4AcAhYO4kJFQzhj4V3Yn44B
+	Zk6QIYgLbXP+z9Cg==
+From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq: Factor-in percpu irqaction creation
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251020122944.3074811-14-maz@kernel.org>
+References: <20251020122944.3074811-14-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|LV2PR12MB5918:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04ec4b18-829e-4cda-fa43-08de15764012
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SG1SVWtqeG5UcU8rSDZRaU9VeVFOZ2VGYUFTNy9mS3VCQ3VPZ09GNDhvUmU2?=
- =?utf-8?B?VGFmalhKSVNybHJuRDBwczZjS0dnTDRpTSs2dUNUZ0tVNXlmWm9kbldPNUpi?=
- =?utf-8?B?YWdOWTNPVThkMzZRWFJUSkp2aTlvekRwczB3YnVQT055RjQ4VUs2dHowQ2VJ?=
- =?utf-8?B?aXUvZTIwcmwzWkEvdnlOVXpYVll6SzkxVCtxdVRzcXB2TmdhY2c3U0pXRE42?=
- =?utf-8?B?cDdxODFTZXIrZG9rUEYvRlU4WVQvM0FmK1haYkthZGxKdktOcWhBa2ZBQVY2?=
- =?utf-8?B?OUJQdEZDL2I2SXZBc3hETmNacVl0QllvVlhIb0k4YUs5UE5aYVl0a0dRaXNK?=
- =?utf-8?B?eVhJc3RwSXIrQ3I5TXBxTGlzVXcyajdpV3crSUUwWThoUHBieEZoUSt5cUtD?=
- =?utf-8?B?SENoRHJISEVoTU13UDl0dTNTQzIzMFlLWlhHNWlCVUhYL05IMzdnQU9HV2FF?=
- =?utf-8?B?eFRINVNnRTNKMXRCak5Hd2Q4RjJJeDhjbFZjVDZkTWNGT2JNNGxiU01NY2RP?=
- =?utf-8?B?bmZONEZacDkrWnZBejM0V2gzdzlvM2JqLzE1akhHVUxJOEROTlEzS0lIUUtv?=
- =?utf-8?B?RjhjeC8wYzdsdVYvSUtKSnZnQXp4Y2JaQ09JNFJhdGppb1Bha045S3BkZTA5?=
- =?utf-8?B?RmJSVXhjb0YzTzdMNElrb0ZnQjVwaTVxbzF6SzZsanpHU2VpVEtCQ29PRFIv?=
- =?utf-8?B?OWpER25nRmRYQTliekFSemtUMDE0YWozWG1Ub3RjSVUwaGhaeUpxTklIZTVr?=
- =?utf-8?B?RlBTVUNnanNCUkw2TmRyTllPcE5xOFJEMnJYaVZvOVNHQkVtd3U0c0srTUNW?=
- =?utf-8?B?UVM1dUdyUktpNW80aURrODd5b1hSTE5OWldLQnBJNGlZVlRBU0FTaHpVZVVW?=
- =?utf-8?B?MFhHckdrTDA3UEVWZ2hJS3dqNVEyeXA2NWNFRVI2RkZZdzBzTys4Z0czWisv?=
- =?utf-8?B?M29rQ0NwUUFWVHNDUkZTQi9ST2FaSjVXcERpMXo0MlkxTGpjdGk0anBwV1ND?=
- =?utf-8?B?THM3Q24xYThkcHBlOVI5bWoxVFpMT2szREdNUWJCSERSbkxZMUg4MnFpeEVo?=
- =?utf-8?B?eUhWQ2tsVFlXZnQ5eG1pQUtITEFJdVIwRGFlZ2o1T0RreTc5SGo1RDFySzdv?=
- =?utf-8?B?OHF5Mys4TEpXWmMxWndDOTBxL3NBSHdTMjhPUlhNZExXWTRzay9sVjBYb2pT?=
- =?utf-8?B?MXhOdzV3bEdpbFdmd2dXZldDWkIwWjZUdWRnZGFRQzJ1UUFXQ3F6aSs2bHJw?=
- =?utf-8?B?L2RkcUU2NVV6UUxaS0dSR2VkUFFHWXhGU0dObnhYdlgvQXBoR0lmWS9MYzZL?=
- =?utf-8?B?SDZOY2NuSW1id3dPdnl1dTk4eG5rM0tPYmpWWlBKZ1RlZndYek5vL3ZzRmRS?=
- =?utf-8?B?N3dGVWNHbkNici9JazQrNWpOQld1clBwVVhqQk5CMy9WZTQxUWNqWHM0YkFa?=
- =?utf-8?B?aGRXQnE2MmZCRk9FWHN2QlRjWmUwdDlrTnp1S1RCbXBiM0lHUW55TFJ1eTNU?=
- =?utf-8?B?T0ZobHJuN3VibFBpRGhwTHZJZUM2S3pVMEhIRi9uNWcvMm9JNXBUNUJiN2JH?=
- =?utf-8?B?dHFxbE9CMGNHKzBpU3psWmZmOEpGSVo1U2pzRjdYU012T3Rvbm8weVppcnVF?=
- =?utf-8?B?NGVEVWYxWGNCWkdjQnk2aFpBUUdGTmJUd1BGb3I3ZENkMThPSzBxWWZkMHpC?=
- =?utf-8?B?TGp2SWw3UENDZ1hNdXpITjlEdDJ3UStOazR5R0N3ck1SUmovVk4yK3VaRFlK?=
- =?utf-8?B?S3Rndm40dFpqcnhrMmpablhTT0xPWmRNdHZPR21lZXFpcExYV2k4Nk1rUzFZ?=
- =?utf-8?B?aUtaMkhTZ0Y5Z2RJT1B1UmdiMTJVT25MYmpWSlZLRUtSSTgxN0dJL2JJSzE1?=
- =?utf-8?B?NGYwdUV5VEczbmhTM0IxNkV0T1hHT1E5TmZ4bGMvREhHVFFCbFMwVUt4NlBV?=
- =?utf-8?Q?kJAEf5g9+aQ+JyGowLGcrvJQF7ybWwaH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WDFDMk9GektJdVFYVVhJVmF5aGRGSW5zOG44UjYrRTliRmlFQXhhaXhkbml1?=
- =?utf-8?B?ZGxORitSSWVpbjF3K0pKQVhEMEgrbXZxZFlDVDE5cXEyTE9hVXpaN0VRNjQ3?=
- =?utf-8?B?VStzTTg1OGFKSkpPWmlLK3p1TlJXOTBFT2c1Vm1QQzZ0VitjaUExbkV4VWdx?=
- =?utf-8?B?RmZtR0tLQzBySXYxckoxd2tWMWc0RVpCMGlZdDJtaFU1R2Zva29KSzh5YXg4?=
- =?utf-8?B?dVhBODB4c0dGVFpSVFZzSldKK253M1luY2dwNnZJR2NoUW11MWU5VDNCTlZx?=
- =?utf-8?B?c2F2WTRkTnJoNUJZS3pYTUN3ZGRVYlN5S1p0OXphN1RYeWFOdmNBRXU3a3F4?=
- =?utf-8?B?OXhkRkVLQ2pVU3lYUWV2ZUdyc2lVK1FWSEVYcVcvLzVHajVJSEFhS1llRnFm?=
- =?utf-8?B?T0pSY3I3alk2KzYwYjdpK2w0NnhCUzFTUkJLMGFTS2srL3pIOHBSYllBaW5y?=
- =?utf-8?B?Yy9wSml4dlJnV3JDSzJxakZEbVJscGkxQ1hRZHpyak53VVlmS3BjRUR5THdl?=
- =?utf-8?B?R01YNTU1QzVYdnorTHdVeWNsc3dVUTJQZ01JSGVUbGpjZlJOMGxqUjRVdmp2?=
- =?utf-8?B?ajVVZHRZMkQ5Y1k3ZDdrVnNUTkdOODZiZ1lGQzFFQmgxNHFTSTdhK1VYbUd1?=
- =?utf-8?B?bUl2RC81R00rb3VQR1FEcTNXaitVQlRBWWVrOGVyeTRMR0JPRkNvUFhjWU9u?=
- =?utf-8?B?NVBxcmlMcGl6NXJTenA4cHUwQ2hQbnRqMEJzYVliWkFaZmRCUEk4ZENpeDh5?=
- =?utf-8?B?Qk5BQWlxUzBrMEczdGpmY1Z6Q05RMVZuWm9zSnIzd29xUzRqMGs1MGhycngx?=
- =?utf-8?B?Z25Db050K0p0Vm04TjBzcndPSzZhTEpleHJBbXJGb3NCdFRDWWh3WTZ6eUZ1?=
- =?utf-8?B?WCtxNnVCRmNiQkhpYndUL1VYQVpLTUFkMVBSODdpdWtPUHc1UGR5MExMYjYx?=
- =?utf-8?B?SjRqMlpRZkNPYS9UR0RVUW5rNXZLRGlMd2xzVmdwbnhqZERiMEhvVnRseko1?=
- =?utf-8?B?S1RKM081T1VXKzhienRmY1VHRTlCM0JpZzI5UjFpMVF3N2RoUXgrYUE4c2dq?=
- =?utf-8?B?WG45a0gxcDdEdk1SL3ExNHBYUXM0NURpMEdVdTQyYTZYcDhlNzhia3IxaXdH?=
- =?utf-8?B?MDd1ME9kT1NTQjNoV2YvRkJYTlpNNnMySHJpMUxkWFREMW9lbHFMMzdnVHFE?=
- =?utf-8?B?RW1WbDkyQmpGb1haWnVzSGkwL25vOGtta0xNRVA2Ym9xVnJUN3BWY01pdGVT?=
- =?utf-8?B?VmJIN1hZRTdEa25TUldKM3JwVDVqMVNVWk84TkI2YU1NL0x4KzJmZVpzZys4?=
- =?utf-8?B?VW93U2tCdEluRnl5blZOazcrMUJYODRDOFJLSVpyTFd1bDNqbW13NzhzQnVL?=
- =?utf-8?B?NEVvSVRUMHZCSDRrQm02MXFoK2xJb1J0WXI5a0RFNGlJTkhOdldrT0dZSGlm?=
- =?utf-8?B?ei9pWTNZbG82UzQvZzZQclArZkFqZlFJS1MzSm0rTXB6UWJtVWt2bjY1MDRq?=
- =?utf-8?B?b0NySDBpc3hpQ1ZidXRxY2Z4cDVCYXdGYnczbFI3TTNYSUo4QlNGN1VaeGp6?=
- =?utf-8?B?Q09jbzdrSWU4OUwrbGREeU02MWYyZHA2REwzbUxnbFd2cWlUME8wbkdDSnd5?=
- =?utf-8?B?a3lnMlJFTWVxZ1h1Q2tUQThMR1QwVjRBZnJmVnFxSWxrV1E1UTFRRVN6bmtu?=
- =?utf-8?B?SnV1RWlzSnJlS1RJZTliTFdOdnpPNHRHK3NVb3FSOUVGUHp3YTZ3eTNwZTVr?=
- =?utf-8?B?Sk9CRlBnYTlLVVRCNGVMU25HekdqVkZRZ2ZESFc4K20wR25PbHBGWFJEb1Vz?=
- =?utf-8?B?UEpEREx4cjlpZ1dJSUxyVjdzdFZFWTBYcyt5WmFzZlNsbmovQmVNN0NmZUdx?=
- =?utf-8?B?blZLSzlyRHcwOTFDWWJHaUNRbUxqUGZDU2FacWN2K1c3cHo3clBBd3hHMUdr?=
- =?utf-8?B?cTVDbWdQaUZJWkdmVHpzcVZIclRkZjlZNFpKc1d5ZzRwdTJCME1FZDNQTmNG?=
- =?utf-8?B?QU5FMU44MVA1a2RFeUhMWFA1a21TTTMwNFlLYVNXSkF0MVNCSzVGb2RpeWg4?=
- =?utf-8?B?SzUrUWw2S2xZMDJFeEZUVGFRaTBTTFZRRGVZVlFPZjNhNkkzZ1FCbGZQYitq?=
- =?utf-8?Q?ntGUQp2nneS5z3vJilV4MBToV?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04ec4b18-829e-4cda-fa43-08de15764012
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 16:31:16.2279
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: a4cs9UcMVt1W39GvxgUV8kp2bvexuDVNVqvoAI0jlB0H5expVops2OJUm55/+uxBg+q9ptHs9RTcdLN3R5eApw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5918
+Message-ID: <176158266775.2601451.16980101553960468233.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/27/25 11:28 AM, Maxime Ripard wrote:
-> On Mon, Oct 27, 2025 at 11:01:55AM -0500, Mario Limonciello wrote:
->> On 10/27/25 7:35 AM, Thomas Zimmermann wrote:
->>>>>     - a very simple progress bar, which can be driven through sysfs;
->>>
->>> Once you have options to control these settings from user space, you
->>> should do it in user space entirely. As Maxime suggested, please improve
->>> plymouth for anything with animation.
->>>
->>>>>     - a static image (optional).
->>>
->>> Board vendors often provide an image, see /sys/firmware/acpi/bgrt/. This
->>> is a candidate for display, or the penguin or a custom image. Please
->>> make it configurable by Kconfig. Again, if you need policy and
->>> heuristics for deciding what to display, you better do this in user
->>> space.
->>
->> I'd actually argue that the static image from BGRT should be the preferred
->> priority.  This can make for a nice hand off to Plymouth.
->>
->> The (UEFI) BIOS already will show this image as soon as the GOP driver is
->> loaded.  Bootloaders like GRUB by default will avoid showing anything or
->> will overwrite with the exact same image in the same location.  This can let
->> the kernel do the same, and then the moment Plymouth takes over it could do
->> the same.
-> 
-> And BGRT isn't typically found on embedded systems at all, so I'm not
-> sure it's a sensible default, let alone a priority. At most a possible
+The following commit has been merged into the irq/core branch of tip:
 
-There are certainly embedded machines using UEFI and that have a BGRT.
+Commit-ID:     9047a39daa7832e40a9ae2d190ae5e7b351a9121
+Gitweb:        https://git.kernel.org/tip/9047a39daa7832e40a9ae2d190ae5e7b351=
+a9121
+Author:        Marc Zyngier <maz@kernel.org>
+AuthorDate:    Mon, 20 Oct 2025 13:29:30 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 27 Oct 2025 17:16:34 +01:00
 
-How about "Sensible default the top of the priority list if it exists"
+genirq: Factor-in percpu irqaction creation
 
-Just like Plymouth will start out with graphical splash and fallback to 
-text if problems.
+Move the code creating a per-cpu irqaction into its own helper, so that
+future changes to this code can be kept localised.
+
+At the same time, fix the documentation which appears to say the wrong
+thing when it comes to interrupts being automatically enabled
+(percpu_devid interrupts never are).
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Will Deacon <will@kernel.org>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Link: https://patch.msgid.link/20251020122944.3074811-14-maz@kernel.org
+---
+ kernel/irq/manage.c | 40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
+
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index c948373..d9ddc30 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -2442,6 +2442,24 @@ int setup_percpu_irq(unsigned int irq, struct irqactio=
+n *act)
+ 	return retval;
+ }
+=20
++static
++struct irqaction *create_percpu_irqaction(irq_handler_t handler, unsigned lo=
+ng flags,
++					  const char *devname, void __percpu *dev_id)
++{
++	struct irqaction *action;
++
++	action =3D kzalloc(sizeof(struct irqaction), GFP_KERNEL);
++	if (!action)
++		return NULL;
++
++	action->handler =3D handler;
++	action->flags =3D flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
++	action->name =3D devname;
++	action->percpu_dev_id =3D dev_id;
++
++	return action;
++}
++
+ /**
+  * __request_percpu_irq - allocate a percpu interrupt line
+  * @irq:	Interrupt line to allocate
+@@ -2450,9 +2468,9 @@ int setup_percpu_irq(unsigned int irq, struct irqaction=
+ *act)
+  * @devname:	An ascii name for the claiming device
+  * @dev_id:	A percpu cookie passed back to the handler function
+  *
+- * This call allocates interrupt resources and enables the interrupt on the
+- * local CPU. If the interrupt is supposed to be enabled on other CPUs, it
+- * has to be done on each CPU using enable_percpu_irq().
++ * This call allocates interrupt resources, but doesn't enable the interrupt
++ * on any CPU, as all percpu-devid interrupts are flagged with IRQ_NOAUTOEN.
++ * It has to be done on each CPU using enable_percpu_irq().
+  *
+  * @dev_id must be globally unique. It is a per-cpu variable, and
+  * the handler gets called with the interrupted CPU's instance of
+@@ -2477,15 +2495,10 @@ int __request_percpu_irq(unsigned int irq, irq_handle=
+r_t handler,
+ 	if (flags && flags !=3D IRQF_TIMER)
+ 		return -EINVAL;
+=20
+-	action =3D kzalloc(sizeof(struct irqaction), GFP_KERNEL);
++	action =3D create_percpu_irqaction(handler, flags, devname, dev_id);
+ 	if (!action)
+ 		return -ENOMEM;
+=20
+-	action->handler =3D handler;
+-	action->flags =3D flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
+-	action->name =3D devname;
+-	action->percpu_dev_id =3D dev_id;
+-
+ 	retval =3D irq_chip_pm_get(&desc->irq_data);
+ 	if (retval < 0) {
+ 		kfree(action);
+@@ -2546,16 +2559,11 @@ int request_percpu_nmi(unsigned int irq, irq_handler_=
+t handler,
+ 	if (irq_is_nmi(desc))
+ 		return -EINVAL;
+=20
+-	action =3D kzalloc(sizeof(struct irqaction), GFP_KERNEL);
++	action =3D create_percpu_irqaction(handler, IRQF_NO_THREAD | IRQF_NOBALANCI=
+NG,
++					 name, dev_id);
+ 	if (!action)
+ 		return -ENOMEM;
+=20
+-	action->handler =3D handler;
+-	action->flags =3D IRQF_PERCPU | IRQF_NO_SUSPEND | IRQF_NO_THREAD
+-		| IRQF_NOBALANCING;
+-	action->name =3D name;
+-	action->percpu_dev_id =3D dev_id;
+-
+ 	retval =3D irq_chip_pm_get(&desc->irq_data);
+ 	if (retval < 0)
+ 		goto err_out;
 
