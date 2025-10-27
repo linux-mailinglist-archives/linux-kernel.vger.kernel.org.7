@@ -1,78 +1,90 @@
-Return-Path: <linux-kernel+bounces-871158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610CCC0C8E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:10:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BCFC0C8B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A1D3BFCFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43C4319A2346
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D1F2F5A1C;
-	Mon, 27 Oct 2025 08:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DFB2FB98A;
+	Mon, 27 Oct 2025 08:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bphR9Cho"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hQR4/MBP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DUACJbDY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248698462;
-	Mon, 27 Oct 2025 08:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3632F5A33
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555404; cv=none; b=SSz43za3P0t7iAkvOoR96aHGXNLpI/F8B0F+Ex7s5aOMyyaYAj696m8VTG/YeWRHruHLXeeq3K+R50HLw/KCDiIgQ9g0QHY9RVMSLfbMRb5XsMmNrQb3daaBViSX17U9duSTLzgtemj/8MF2yGX9TOrTbUnrAx41izSyziAj2JU=
+	t=1761555433; cv=none; b=sUxfzo+hzQz7SO5hhi9mFN3tPZcpuhIBg78qncnBAKAa0+2DvQUFrj0k23R404fd4KlI+ui43OyEHQmEcG2xnOa69zvZzAD5P8la6MWsR41538kFZ6cBRPMiToF3oRlDznt7dx0c3OSfRO/WWKTVz/xMeBS+iz9U+vOJ7+jQdA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555404; c=relaxed/simple;
-	bh=9b6W0QmRzkeUAu1Ghtwfl9cBm2zwM2JBNGAe03YlNio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndWRfx3UyBOmzQP6KyUZzEpSmC2QaZm8dGYSOjcFpMT2vbqCRYfcJ0WQmpzJvwSuebQsJToXWPZfuF00Nys7Hd0uUzcgLigseE22fu0KxDR6dNu21hcVWHg2ML6ISuHyz65XpCLAho7aamzRfKAT3z2DPaGqQW6R5BKIr2QYRDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bphR9Cho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D82C4CEF1;
-	Mon, 27 Oct 2025 08:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761555403;
-	bh=9b6W0QmRzkeUAu1Ghtwfl9cBm2zwM2JBNGAe03YlNio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bphR9Cho3h94IZ5FoT8jp0VL71d6r+Plg4vTODLijrEdWWLVUCNMoMhSEeedtsXWX
-	 a0FKQWxuFdVj+jib2zqO/1glnI39HxMPXneyYb/HpQPAEJM0h7fa+16wsifkYBnlfR
-	 zK07Yh8l0ULaxWVLEu7yqkss6WB0ViUYzGUaqvO6MF641WYRMS8lJAg3Vk6vdX713Y
-	 +wYNKaQWGLAmhn1dBCmPvNyG7XiuoXND0q5oxmdOeQ1frxpa+XQCSBBvxZrvwu7Zxx
-	 yqZnKL3TbZgVd5kks3Ze9ROP3KTG5WrYPAUx5dXXByNnMGjdwdVrJEDwb27E0vhn/t
-	 VENwJqSON8LjA==
-Date: Mon, 27 Oct 2025 09:56:41 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: crypto: amd,ccp-seattle-v1a: Allow 'iommus'
- property
-Message-ID: <20251027-asp-of-great-art-e20ae9@kuoka>
-References: <20251022230403.421699-1-robh@kernel.org>
+	s=arc-20240116; t=1761555433; c=relaxed/simple;
+	bh=XzUzgNsWzAH8d86T0v4DRLsaxZqRLfMHXw8J2RV8+Tc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GU+GBT5VMdowivkaRQ8+cOHBR5dpc9I+9hMY4Y/K9S3SI1/agaFHbantQjA28ynb5JZaFe4nXUGuqgmWIgotvZ1CjI4Wj96tYvEanEakSYBkUbJW0qlhEUZEuxOlQtV/fgaK4Hxt5MFz39vlIV1QW79SUnIXrCHF0EVH8wAJoVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hQR4/MBP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DUACJbDY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761555430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C+yDgn6Ck5Kv94QtFEuwA9qgOSpLSx1YBLJbSeKWqig=;
+	b=hQR4/MBPvj4U5IB9emN+mI1hry0d8HFyYJQLoFvPj73LfxC14LCXAb6mNLOtA5RexGOMfU
+	7ij5GXXMVkDn+H6XdN0cvyxeJT16Hiku3B4QK6KCc+xmdNBCLUlUrzYvdp8ZSL3ykGceSa
+	jdNnSrsP/ya82XGsGl5E18y6WObi8Rg3UvnSuqKB5bS0+lmNwlZV+A/AWyw0BAqJ5fFWx2
+	uhNbez4wjkbZEEJR1dfYbVPRZOYkNq0jWpVbiQAJUOiHNETLsVPxWTAQvkoZTk0PXIsGs+
+	DyPrv99ktsbV1VXI3bDvOreYHmgbHhrnMjRIsAEsXfPT4Fc/cc1JF6thYAraug==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761555430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C+yDgn6Ck5Kv94QtFEuwA9qgOSpLSx1YBLJbSeKWqig=;
+	b=DUACJbDY8xR3k5+skrdlDIwF5V3s/FYPzOkMstHNuZOVNW9N5lgm0pWORdnXTK7SY03B7g
+	TqwixIi7h4yeboAg==
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
+ <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
+ <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>
+Subject: Re: [patch V2 10/20] sched/mmcid: Convert mm CID mask to a bitmap
+In-Reply-To: <6f7b0688-6c92-4901-ab18-d348e667703e@linux.ibm.com>
+References: <20251022104005.907410538@linutronix.de>
+ <20251022110556.029862568@linutronix.de>
+ <6f7b0688-6c92-4901-ab18-d348e667703e@linux.ibm.com>
+Date: Mon, 27 Oct 2025 09:57:09 +0100
+Message-ID: <87ikg0wwm2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251022230403.421699-1-robh@kernel.org>
+Content-Type: text/plain
 
-On Wed, Oct 22, 2025 at 06:04:03PM -0500, Rob Herring (Arm) wrote:
-> The AMD Seattle CCP is behind an IOMMU and has 4 entries, so add
-> the 'iommus' property.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/crypto/amd,ccp-seattle-v1a.yaml        | 3 +++
->  1 file changed, 3 insertions(+)
+On Mon, Oct 27 2025 at 11:15, Shrikanth Hegde wrote:
+> On 10/22/25 6:25 PM, Thomas Gleixner wrote:
+>>   static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
+>> @@ -1363,7 +1363,7 @@ static inline void mm_init_cid(struct mm
+>>   	mm->mm_cid.nr_cpus_allowed = p->nr_cpus_allowed;
+>>   	raw_spin_lock_init(&mm->mm_cid.lock);
+>>   	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
+>> -	cpumask_clear(mm_cidmask(mm));
+>> +	bitmap_zero(mm_cidmask(mm), cpumask_size());
+>
+> Could use num_possible_cpus() here? CID are bound to be less than it no?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Probably.
 
