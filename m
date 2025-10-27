@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-872220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C170C0F9A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A33C0F981
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FE9F4F70C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878BA19C3C11
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1F31691D;
-	Mon, 27 Oct 2025 17:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAA73168FA;
+	Mon, 27 Oct 2025 17:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="S6bRuYh5"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="urmwCXI+"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1B123315A;
-	Mon, 27 Oct 2025 17:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585505; cv=pass; b=fZeoqPjygxIRsoSpwt4cGTxZa7ptyUapLGdq6aIP8Esa2xwwlEIp7iLwjyCfQNrAbRegFbp9jn/NbrHw+cYwky0MceNY2wHmUShGhiE9fRGGhMnXzGs0Qta+zeW/GTmBXUbyfdHnlU/4sXTEqk0wJqz20FlkHyfQd7uSGWnyaJw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585505; c=relaxed/simple;
-	bh=0j+sx1U/dtxtACHyjk6jN8uOJ9uo/XDr3w3aGWyKD8w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tDXFscDB0aggK9KMVk6VaEV0NzTmVcqhspJIHImticx3usWtciBu0sQtmgNfR3JqIdl3jXqiPsuFzRMCYlcbmg+7AlBuVGSu6Z0Rc5WrBre+JolTF89jto7YGuU1caSGwHE9RkxITSEmnpFd9xZrUxj97VVLV5EoJLDErd0yYv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=S6bRuYh5; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761585485; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=X1gBeOXii1Wsijnw7Xu6bo8M4CrnCviOuvVZYWbFXBr1aczrloVhMYFB+MikS7pjy2qbb60tvRhENSnwzDgH6J6P1fQkI7A25H+TFVYDrRRki8ysfvS8nl3ZLS0GtRPZ9jD9w6BXOqEhTtTBD3uD0wqNMUIkZauQN5j8Mgb+5ww=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761585485; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZNW4fieYkSA2lBxgemD0NgMNnHAiHnhoG3/C5j4275U=; 
-	b=UNU5V48pqwdNROdHla4ojkPzWnjIVdCJco+lukvORCdLcK0YkTQni+DxtavsNlNxkqw/knoWPPsYVNV0yUgaXBqmz9RG4N5rLNHE1XXMIRHPtHN0LxKLw1g/fdgVmgqnvwhXK55DgkvrNxLle/5qcJT6AYDX3gpwh4c8dJI8wVY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761585485;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=ZNW4fieYkSA2lBxgemD0NgMNnHAiHnhoG3/C5j4275U=;
-	b=S6bRuYh5DomXJIJWsJQZRBcZ07/nhdm8EK2gY1MDPYCkTD3dEQEs7p1JJmolgssh
-	xNj/Mepmd8VCF1afEJF9O2i/lRT3gfGy3mv5lkuJcHQzsTqYMuIWcYD154ZxDihIhPH
-	6wWRJWvxeNxcAuvgvUvncXRL/Clwhw+dKenajAdQ=
-Received: by mx.zohomail.com with SMTPS id 1761585483468132.07412147907223;
-	Mon, 27 Oct 2025 10:18:03 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
- Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
- Hans Zhang <18255117159@163.com>,
- "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>,
- "moderated list:ARM/Rockchip SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
-Date: Mon, 27 Oct 2025 18:17:58 +0100
-Message-ID: <14087628.uLZWGnKmhe@workhorse>
-In-Reply-To:
- <CANAwSgTmOvOZ35=3XjhrKu2iPCMOU8c8prK5XVAkf3cF1DHekQ@mail.gmail.com>
-References:
- <20251027145602.199154-1-linux.amoon@gmail.com>
- <5235617.GXAFRqVoOG@workhorse>
- <CANAwSgTmOvOZ35=3XjhrKu2iPCMOU8c8prK5XVAkf3cF1DHekQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710153161BD;
+	Mon, 27 Oct 2025 17:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761585500; cv=none; b=jBgVlaoiTeTkdu/e3nxThaWGup8XBhNb4zieMHHuHh8kCMDh7r/5zfO42SH/TRxFG9+CDgxgsfbLDu6dupMyM03PUNiehg0BBqRoDrfjNfrqlgCtMR4yoNyKhERBvFy2TD7z3XPotBv5vPyaNCJWBrFFtkSXt+QNIl/o/lQO3/0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761585500; c=relaxed/simple;
+	bh=q3+UUee6NjTzNjSLDHwWJbhFuDGP/50LJwD0evnMWfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lvB0n8lGkzdmxgVFF3aKzdYIP+uQwz4SLD0a7DLm+zQtt1WJQuD/QcL+bIQNrQZSZctbyxtJ0A687bkLw0i5DkLEgDWRA1S/Ai0f8dWnWMOIFLVDKMzUOG/87qWMiIVFvZ7IFtggb5XbN2g1YwMPpOG6Se6LHw+ExZy1bLgT4AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=urmwCXI+; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 30E3F9550E9;
+	Mon, 27 Oct 2025 18:18:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1761585495; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=5v858IqBCKzHdFBFJSrUXXRl+m6ZWDsQE2+Wy791NHk=;
+	b=urmwCXI+p6sTAzM1plgPvyAbITmXVecUPt/MUVnrt3yVBRIzQ5O89xXzvoMReMtJ1zpFpg
+	3MatFg0stEc/zmY2tiRDvV15O0s32oEkCZokP5LsQpdKQUWHg3PRZolErNZO3j7kDHbILp
+	np45K7feborSAdT7f67w88TI3zpTuWMmB64j0wtWb29fJYPr7S2PzBcCSOf0odx0XBKREs
+	1/GSeZmiHgj1n+myAew/mamlotbALtmKZg1lAqlRTmNoVdlxzN+wHrC2k5X+7Q1zSN7ZjG
+	IhUTdGkF1nErt8tvGGeXdcmoOls+ZX7egl/qxhdpXkQlOpvpY/F63nJL6uiVXQ==
+From: Caleb James DeLisle <cjd@cjdns.fr>
+To: nbd@nbd.name,
+	lorenzo@kernel.org
+Cc: ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Caleb James DeLisle <cjd@cjdns.fr>
+Subject: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
+Date: Mon, 27 Oct 2025 17:17:59 +0000
+Message-Id: <20251027171759.1484844-1-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Monday, 27 October 2025 17:31:23 Central European Standard Time Anand Moon wrote:
-> Hi Nicolas,
-> 
-> Thanks for your review comments.
-> 
-> On Mon, 27 Oct 2025 at 20:42, Nicolas Frattaroli
-> <nicolas.frattaroli@collabora.com> wrote:
-> >
-> > On Monday, 27 October 2025 15:55:29 Central European Standard Time Anand Moon wrote:
-> > > Introduce a .remove() callback to the Rockchip DesignWare PCIe
-> > > controller driver to ensure proper resource deinitialization during
-> > > device removal. This includes disabling clocks and deinitializing the
-> > > PCIe PHY.
-> > >
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > > index 87dd2dd188b4..b878ae8e2b3e 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > > @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
-> > >       return ret;
-> > >  }
-> > >
-> > > +static void rockchip_pcie_remove(struct platform_device *pdev)
-> > > +{
-> > > +     struct device *dev = &pdev->dev;
-> > > +     struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
-> > > +
-> > > +     /* Perform other cleanups as necessary */
-> > > +     clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
-> > > +     rockchip_pcie_phy_deinit(rockchip);
-> >
-> > You may want to add a
-> >
-> >     if (rockchip->vpcie3v3)
-> >             regulator_disable(rockchip->vpcie3v3);
-> >
-> > here, since it's enabled in the probe function if it's found.
-> >
-> > Not doing so means the regulator core will produce a warning
-> > splat when devres removes it I'm fairly sure.
-> >
-> I've removed the dependency on vpcie3v3 in the following commit:
->  c930b10f17c0 ("PCI: dw-rockchip: Simplify regulator setup with
-> devm_regulator_get_enable_optional()")
-> Please review this commit and confirm if everything looks good.
+When on a Big Endian machine, PCI swaps words to/from LE when
+reading/writing them. This presents a problem when we're trying
+to copy an opaque byte array such as firmware or encryption key.
 
-I see. In that case, your code is indeed correct, thank you for
-pointing this out.
+Byte-swapping during copy results in two swaps, but solves the
+problem.
 
-Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Fixes:
+mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+mt76x2e 0000:02:00.0: Build: 1
+mt76x2e 0000:02:00.0: Build Time: 201607111443____
+mt76x2e 0000:02:00.0: Firmware failed to start
+mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -145
 
-Kind regards,
-Nicolas Frattaroli
+Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+---
+ drivers/net/wireless/mediatek/mt76/mmio.c | 34 +++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-> 
-> > Kind regards,
-> > Nicolas Frattaroli
-> >
-> Thanks
-> -Anand
-> 
-
-
-
+diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net/wireless/mediatek/mt76/mmio.c
+index cd2e9737c3bf..776dbaacc8a3 100644
+--- a/drivers/net/wireless/mediatek/mt76/mmio.c
++++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+@@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u32 offset, u32 mask, u32 val)
+ 	return val;
+ }
+ 
++static void mt76_mmio_write_copy_portable(void __iomem *dst,
++					  const u8 *src, int len)
++{
++	__le32 val;
++	int i = 0;
++
++	for (i = 0; i < ALIGN(len, 4); i += 4) {
++		memcpy(&val, src + i, sizeof(val));
++		writel(cpu_to_le32(val), dst + i);
++	}
++}
++
+ static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
+ 				 const void *data, int len)
+ {
++	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
++		mt76_mmio_write_copy_portable(dev->mmio.regs + offset, data,
++					      len);
++		return;
++	}
+ 	__iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(len, 4));
+ }
+ 
++static void mt76_mmio_read_copy_portable(u8 *dst,
++					 const void __iomem *src, int len)
++{
++	u32 val;
++	int i;
++
++	for (i = 0; i < ALIGN(len, 4); i += 4) {
++		val = le32_to_cpu(readl(src + i));
++		memcpy(dst + i, &val, sizeof(val));
++	}
++}
++
+ static void mt76_mmio_read_copy(struct mt76_dev *dev, u32 offset,
+ 				void *data, int len)
+ {
++	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
++		mt76_mmio_read_copy_portable(data, dev->mmio.regs + offset,
++					     len);
++		return;
++	}
+ 	__ioread32_copy(data, dev->mmio.regs + offset, DIV_ROUND_UP(len, 4));
+ }
+ 
+-- 
+2.39.5
 
 
