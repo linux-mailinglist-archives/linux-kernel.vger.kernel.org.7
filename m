@@ -1,172 +1,140 @@
-Return-Path: <linux-kernel+bounces-872303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B47C0FDCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:11:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F2B5C0FDE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB33F3A4EAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:11:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DF504E97C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F5B31A044;
-	Mon, 27 Oct 2025 18:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B192195FE8;
+	Mon, 27 Oct 2025 18:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HuCGleei"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGX2uF5d"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545DF316911
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FEA3101DF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588654; cv=none; b=c7U2bZZIiaLGQAhJSFirejQQrnLCAoS6T4/KDJq+5qecJ2dUSQCC6W8t4u6NUYtM1i/yBWnJTUt42NGawQET3bpzBNVXzHIGaN+Rg8JYP20NbOyM/b2Wjw9yWqfQHzapgeJwGCB3YscgguLMbCSR6IIJKJpzpFZX05PyA+F5FyU=
+	t=1761588717; cv=none; b=mHmoNneQdWUsN+/sZ6AJAFo/OoYHvcrJdoRdj3oCgc5k5weTCz/QE7ugsGJwhqZc88DZzWdx6Zy2WIXYo+cc0iW0jVw+RtIsO/f63Gm/jmIF9AzQab3EdLsLMNzgyzrv1xmmSZaZiqeQpSRiY7PFy2Ktm8K945QDtz8wEKDglxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588654; c=relaxed/simple;
-	bh=qWDqTHSGtqyDCU4AAlHRJ9mq1s1hvPRErQWu8I/AXzI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=besXoQUZaBo8GS3xm2VXQhcCfANbS6INj1lQk0ZunNDFX8ODKQOsofRFao5xdz+z18ZozcuyMpC6JknBfkbaeB8vLTh70lgQ5b5/QzNJ/Kngod0z6llQPRqNzkoby3gtnC6jcBe3BzwMxz5SVExPEUxhYrfW+y3+hmjsqYQ0gXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HuCGleei; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bcb779733so4316407a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:10:52 -0700 (PDT)
+	s=arc-20240116; t=1761588717; c=relaxed/simple;
+	bh=0K4nXT5/Js7e6nb85QjbFOWa38zA+AS+tQP3Aiw5h+0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AlqD0DMYSsyqh8nH3OnlJxK/Z/e0zWnVdnP8QOo08XvbNgTPj5XiPiv7szpxN3GyWLbCUOgHJgSCmgkLoZclr28dTYZS0a1sgs6stYZKwqmO29TL2iGA0KZnNMVVf+y44scv3XTaahzxkENDxnnWEJceTOp+EozgrpXuvQ5dp30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGX2uF5d; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so50134365e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761588652; x=1762193452; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bO0HNahSQ0zli7kg4xL2kKu/rPaiGOzpKxwGHDcn9b4=;
-        b=HuCGleeiQ5Vxy5Vm6iVJmpzhZDeJqlXsJ4ydurVEc9/ZGzkVMS4db2w0kFx5bkp/U8
-         3gR7DX2O+HFR0p19vdYCebpHLNlkyGiR4JU01K6YP5KmrV4ULoCZui6X30jTohAs1pR5
-         S8y1o315i2d1AHoziPTQ6hNOKr1UWSBVZDUaedQC+XAfG9WiRhHrACSpjtwPAbYpGjod
-         rh7auUeEvfA/zOpnenjrJy0niGuH+NNaqewEcSB4YsA4uUOqvI8d9v6LFzMBHXzqXWtb
-         8ugXSA423oiRRcjmHFyCZb8qhHiMaEzygqYmtwBbfTI0I9CEYpBbWUCvEKDuQt4wzijK
-         9iyA==
+        d=gmail.com; s=20230601; t=1761588714; x=1762193514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h/tr4wNuP/viUV2bLwDGJ/MFnyH+q9BQY2mO1mUn+Lc=;
+        b=FGX2uF5dgjoCBzO2V8QzR5tHbSMFjqtBjypzh8aNg9Fd8CxIr3x/sfixcphY8KDQzY
+         XUUR0KaAETnhe2Ih6731OIiUo1StqKcbhqB4zeiKyPp1PtBGd4Twf27ukGksnnrag1SG
+         wlGMju8F42a6yo7u6DMo2kiIpMESwQ8NdcPwSC65zjBGTA7Dbugo/UGE52AA8CwJDiyO
+         YtxikUOdgsHnFmB6Q0vNb0X8+0/jgMdVAW6o4skGiGV9T+KQRMDZxgt6HTl6Hrn6IWwl
+         /qM9bVWaBTyG1LZKzy7LkyyaZlLRurWeP/JEfWwESqa4HZsdBjcvezps4a3Fb0x9pUQu
+         g7IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761588652; x=1762193452;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bO0HNahSQ0zli7kg4xL2kKu/rPaiGOzpKxwGHDcn9b4=;
-        b=PdDEYONsJ2Riub9AMJ569ElLpomNpGpaMvlrmMXFKf6VRMc4zDk0Qh5HvcfVXIUQNu
-         9tK6Z+T2YYg5aaXzVEF0naKC87M8yFZw89sYPRpk4t37xrI4UIqoOfHJwaTLluFnIa2i
-         tIm4wLJOr+TBar6rk7r1fydRaG2jZPHdl2DsqAiRWeic5KCeugIPELe6VfEWsHBtAsBa
-         0yucl1cx7l7tFEHbktKKyx7o6NsY0LgEVGcSW52UsnN0DRfWoJlSMLfBwn8puGeY395m
-         M7rdpZ9EscevfqhOYvKik8SPXAUOcWv5/hVY8CxQ1T6tBZzQbwMAcpkXfNv8VfbA7CVa
-         PPug==
-X-Forwarded-Encrypted: i=1; AJvYcCUsqcKFe9VrP/uR7rw0FDB0gnKEucaETWxm0cRK5KzHHvdJfPbs7PBqf3HFvwbgjJ4UdKtAOOunSUQiXvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxyIkl9pE93MOPtZjxjM6S4IWKOFPsNcxi0230LNDf2Lmwc/j1
-	PMgia+KLpCeCCO7yN5cIlJGi9C3hwZRNe/6GNGXldIAbgKA1LliPnuno409MFkOyMXQpsWWj6pZ
-	Z9aNZSg==
-X-Google-Smtp-Source: AGHT+IFYM0pQ56UGeUzsOnJj3+Ow3Uhx6HMXZ6WjKUcRvfRsyB3bsUItowqHfr7m0JixZWoiV89rDaaCMlA=
-X-Received: from pjbrs15.prod.google.com ([2002:a17:90b:2b8f:b0:33b:51fe:1a73])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f81:b0:32e:52aa:3973
- with SMTP id 98e67ed59e1d1-340279e5fc5mr862252a91.8.1761588651707; Mon, 27
- Oct 2025 11:10:51 -0700 (PDT)
-Date: Mon, 27 Oct 2025 11:10:50 -0700
-In-Reply-To: <77d8a0d9541ce3fc2b2c76b58add50d152b52e39.camel@intel.com>
+        d=1e100.net; s=20230601; t=1761588714; x=1762193514;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h/tr4wNuP/viUV2bLwDGJ/MFnyH+q9BQY2mO1mUn+Lc=;
+        b=t/45zFn2GUj29jim8kNMTqe4T5/fouxAJVeHa3eCjXZESVW3wLaZX+uOEgNO8LohSm
+         JYe7JOKkjJ9nMlSsTYQzJyKUMRpCjbW334MHIR3ckOideO+EuI+oVbAGxcMO6OMU51rF
+         Jce3bt7l6Lqslub53MDpQh75E0oxHIWaRpB4xKN/WfaK8DFnJ6P4LRotVGWD+0x8d/Ut
+         ZXtQEnQz1qtChluD/LDjdD+YEREfKBK+d/zZ7fZyN5dCh2hlFtmV8UBDPD0IyF0z5P2/
+         28Z6s2PXgjgPwJlrgUiogvKzlWefqexfBZN0il7ghZlukY525AVha1f++kPLoshHEuZ3
+         HsqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaUE/SBXcEVbj87/8K6kUB0zyLw6SNk4Bc+SEULKNagp1TUO8/JYXOGr0Szcz0ktb0RJDsXh2lbMoQbzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+3ESFUTGN0GEG2J9Q2fPcUjzS9i9aWyq4sR3kGRtpR9CicGOO
+	BRbv4A7HaqfFOdADtca5sIfEkEW7q64skVoR70dzUYgaSLYuGYCEvXr8
+X-Gm-Gg: ASbGnctaWh1hwvuITed04y1pzGLi7QdhANO+yMMa6PfaiwmkLenfttopXDg0W3B7a8t
+	0qCIXeDsM+Psnzp+e94U9KTNrD3KiSnMZFeYJpJUB36MODLeJtmfFwYe5P5DbPRL/f3Ijd6eQKW
+	Xmb2+fabvF3SYUf/6f6/KAtu4deh5HBZOJcxjBB/jdYZcJkj2ZuT7QKBaHxdtJw5s8maoLg8XX9
+	+tiFzEmseYaWXSM6RvYeOuDFizoTDr2jErc8/8PSrudpGrJkaP0/FrDjIb2LPN7EK4MA+UVdz5r
+	xV/RJksZGErQ+TPcd5y/QqJmKPRbXVe5J0bxp/EziMBA/7xcj3EiNw4u/QcqpMBLU2bNnL60LLM
+	18oDpU22jD0Dvn0skqKpeVd033Vw2T/i6QJqQ3Qyaym9Oiqw2/q7vE0mEKm0dE68Osl5CfpFAmF
+	FmuXb4GuQlMjgqO1z4dPId1GMErjADJKxh9fRniKHOFvkCyuzzGKNZQJOOagVQC8yZrsnB
+X-Google-Smtp-Source: AGHT+IGXaCcfOwLIrQj9yH9WMbrO4UAf1AZg1ch/afDpC4pXgTmkjf1NdqvThLXtmMqqXSWGbWSmXg==
+X-Received: by 2002:a05:600c:4446:b0:46e:4a30:2b0f with SMTP id 5b1f17b1804b1-47717e6ab4bmr5964995e9.29.1761588713974;
+        Mon, 27 Oct 2025 11:11:53 -0700 (PDT)
+Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952da645sm14913054f8f.30.2025.10.27.11.11.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 11:11:53 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: wens@csie.org
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/30] drm/sun4i: Move blender config from layers to mixer
+Date: Mon, 27 Oct 2025 19:11:52 +0100
+Message-ID: <3382705.44csPzL39Z@jernej-laptop>
+In-Reply-To:
+ <CAGb2v65KEKPtg=WZw9su_DBc5JKsjjYV3DmpUD+LXGhX96sEfA@mail.gmail.com>
+References:
+ <20251012192330.6903-1-jernej.skrabec@gmail.com>
+ <20251012192330.6903-8-jernej.skrabec@gmail.com>
+ <CAGb2v65KEKPtg=WZw9su_DBc5JKsjjYV3DmpUD+LXGhX96sEfA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-25-seanjc@google.com>
- <aPtOtzGLigbY0Vqw@yzhao56-desk.sh.intel.com> <aPuv8F8iDp3SLb9q@google.com>
- <aP86sdBZxXm5I17f@yzhao56-desk.sh.intel.com> <77d8a0d9541ce3fc2b2c76b58add50d152b52e39.camel@intel.com>
-Message-ID: <aP-1qlTkmFUgTld-@google.com>
-Subject: Re: [PATCH v3 24/25] KVM: TDX: Guard VM state transitions with "all"
- the locks
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
-	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Vishal Annapurve <vannapurve@google.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
-	"maobibo@loongson.cn" <maobibo@loongson.cn>, "maz@kernel.org" <maz@kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "anup@brainfault.org" <anup@brainfault.org>, 
-	Kai Huang <kai.huang@intel.com>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
-	"pjw@kernel.org" <pjw@kernel.org>, "zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ira Weiny <ira.weiny@intel.com>, 
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
-	"imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, "kas@kernel.org" <kas@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Oct 27, 2025, Rick P Edgecombe wrote:
-> On Mon, 2025-10-27 at 17:26 +0800, Yan Zhao wrote:
-> > > Ugh, I'd rather not?=C2=A0 Refresh me, what's the story with "v1"?=C2=
-=A0 Are we now on
-> > > v2?
-> > No... We are now on v1.
-> > As in [1], I found that TDX module changed SEAMCALL TDH_VP_INIT behavio=
-r to
-> > require exclusive lock on resource TDR when leaf_opcode.version > 0.
-> >=20
-> > Therefore, we moved KVM_TDX_INIT_VCPU to tdx_vcpu_unlocked_ioctl() in p=
-atch
-> > 22.
-> >=20
-> > [1] https://lore.kernel.org/all/aLa34QCJCXGLk%2Ffl@yzhao56-desk.sh.inte=
-l.com/
+Dne ponedeljek, 27. oktober 2025 ob 17:00:05 Srednjeevropski standardni =C4=
+=8Das je Chen-Yu Tsai napisal(a):
+> On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gm=
+ail.com> wrote:
+> >
+> > With upcoming DE33 support, layer management must be decoupled from
+> > other operations like blender configuration. There are two reasons:
+> > - DE33 will have separate driver for planes and thus it will be harder
+> >   to manage different register spaces
 >=20
-> Looking at the PDF docs, TDR exclusive locking in version =3D=3D 1 is cal=
-led out at
-> least back to the oldest ABI docs I have (March 2024). Not sure about the
-> assertion that the behavior changed, but if indeed this was documented, i=
-t's a
-> little bit our bad. We might consider being flexible around calling it a =
-TDX ABI
-> break?
+> So if I understand correctly:
 >=20
-> Sean, can you elaborate why taking mmu_lock is objectionable here, though=
-?
+> - the "layer" is from DMA up to CSC, which is the last stage before routi=
+ng
+> - in DE30 and before, routing was limited to within one mixer
+> - in DE33 and onward, routing is global
 
-It's not, I was just hoping we could avoid yet more complexity.
+If you mean routing layers, then yes.
 
-Assuming we do indeed need to take mmu_lock, can you send a patch that appl=
-ies
-on top?  I'm not planning on sending any of this to stable@, so I don't see=
- any
-reason to try and juggle patches around.
+=46or example, you have pool of 4 UI planes and 3 VI planes. You can assign=
+ them
+in any combination to both mixers. Later you have additional Z-pos routing =
+too
+within mixer.
 
-> Note, myself (and I think Yan?) determined the locking by examining TDX m=
-odule
-> source. For myself, it's possible I misread the locking originally.
 >=20
-> Also, I'm not sure about switching gears at this point, but it makes me w=
-onder
-> about the previously discussed option of trying to just duplicate the TDX=
- locks
-> on the kernel side.
+> > - Architecturaly it's better to split access by modules. Blender is now
+> >   exclusively managed by mixer.
+> >
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+>=20
+> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+>=20
 
-Please no.  At best that will yield a pile of effectively useless code.  At=
- worst,
-it will make us lazy and lead to real bugs because we don't propery guard t=
-he *KVM*
-flows that need exclusivity relative to what is going on in the TDX-Module.
+Thanks.
 
-> Or perhaps make some kind of debug time lockdep type thing to document/ch=
-eck
-> the assumptions in the kernel. Something along the lines of this patch, b=
-ut
-> to map the TDX locks to KVM locks or something. As we add more things (DP=
-AMT,
-> etc), it doesn't seem like the TDX locking is getting tamer...
+Best regards,
+Jernej
 
-Hmm, I like the idea, but actually getting meaningful coverage could be qui=
-te
-difficult.
+
 
