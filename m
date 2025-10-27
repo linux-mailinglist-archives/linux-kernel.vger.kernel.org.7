@@ -1,96 +1,159 @@
-Return-Path: <linux-kernel+bounces-871918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B44C0ECD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:07:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE976C0ED39
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB41D1891EFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2789462C06
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BBD2C21DC;
-	Mon, 27 Oct 2025 15:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F4B30B51B;
+	Mon, 27 Oct 2025 15:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="0OA03ObG"
-Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cnbGfecW"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D172C0F91
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12EE2C0F91
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577251; cv=none; b=Pdpgq/Gs+lYths7/GqZ3rGgAO/ehLUnuF4ndGNJiYS5FpmgQ9bGqcRcxjROD1lDAwEIK5EWHLdnVDVgd6JIDqkBUOm3xZhlOHk+s9BnHn97IW/0h78IwQJ0BFbj1txY58yJvzYaPAWvlgoGUaBnXfJKc37l3e3Q91kvRjs6Bs8g=
+	t=1761577262; cv=none; b=u52bagvOmkMSD+qj5f3gLS0n9/Yyws2BK2Y0+C2m5bQ9bnruRrCLYc9X/9H3vQL4kXSWQXVmxJyyAuZDJay6Ni5kKOF0BXWyOkla+r4HyAH2QivO4QC/wukPoEM/fvyTGD1Ukv6EgrfjSSUdT2di71sl8X5kt7KnDmgWiF/AYQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577251; c=relaxed/simple;
-	bh=WYoVqdGGgU4dBUZg/kZ3a2piuxkOHNOjy/8KF8CKI/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nr+xzgHQjTJoKKp7BX5D/MT41qfN7z9VveQvgtBITV70YsAXOIh0V58QC5c+YfYpolg2CDGCZtmyeMR8vAzETc4jJjNQAK0zgWIt/DXOsnsNNQFupUTO4bQyrf5zfFdupi5KdVzWYdm1JQ20g+X/v4FnW1IvTnAimH5eSPeevO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=0OA03ObG; arc=none smtp.client-ip=178.62.254.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
-Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
-	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id 313B39AFCD;
-	Mon, 27 Oct 2025 15:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
-	s=mail; t=1761577242;
-	bh=CN7U7He+kRo4ITOtEJtKAVIRmgMIfl0h1hsDAJ7PytY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=0OA03ObG2z0vmHiOHSt7uFjNLbluACjBfJof0coJZCaG0d1E/N7GCIB4ruTan95J3
-	 z8XmIo1uk+5nMlNK2Mnc58vapMPFO8tqjJi847snLlw0gzXM8iCI0RoClPgjE2q31x
-	 GOtbNu37pGeJMnukJRCaWHflXNmQ3+9+wUF+VvBA=
-Date: Mon, 27 Oct 2025 15:00:38 +0000
-From: Dmitry Ilvokhin <d@ilvokhin.com>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kiryl Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
-Message-ID: <aP-JFqlCE6ee5_Ln@shell.ilvokhin.com>
-References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
- <5dt6roxyx3h4zojls7cvr4nyjtahi33ti2sir2ijr3w4wjliyz@fl32rra6phll>
+	s=arc-20240116; t=1761577262; c=relaxed/simple;
+	bh=Oqb/ykPQwKXmqMnKoREOo5RxBIsJusI36AyJHETL69A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZiUHN/VsTQ3tXPAe/9NZwD0KggzC3OYp4/cwaDXgAhdCt+RMbpOyxrkXhZMuwBP5WgIIBHEPaz/vsJ7hcFvDxlDMr0ELDpbsMztMNmabWcV+h5ZEoXdPFY0asTi8ZxmrFMVJkcBjUzFtHuSNDMs0R3PSESVx5QpygVIj7ZJA1hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cnbGfecW; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33d8970ae47so4266454a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761577260; x=1762182060; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SDs1a8nS3uTGahV0ZmYqOOZW+k9DRkyEi9pQqEh63xk=;
+        b=cnbGfecWXEm1EXBJlUZQhiclh5T3OcflWu9CXoCkyO9/4CpDSLBlltKWD1P+RKvJDD
+         dBZt7VckYQk9DPF1txN4Y2CrRmp6AaYzY2lL+lp0dD5okUbqw9p+6AKlYrxmWy0b8HXQ
+         geuhYSuu/MS5S5tdnrpcw0OPcSD5ZroGWh9vBlro+1ELhsQIs9h57fFWFOEFkQRIhLQ6
+         5LrjK+8Ejye9YWW4SEfEqo1sBM0JFo/S1sGK/MCzC3dSx2R8PCDH/4/t+ihgZfM06dm4
+         i3HI7PfqVC/oEMSax9Z48eeu8AMKrWQc7uwNu3ETactNANTIjiPFVKx7ZzanL5NfRdD3
+         T4/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761577260; x=1762182060;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SDs1a8nS3uTGahV0ZmYqOOZW+k9DRkyEi9pQqEh63xk=;
+        b=XFZ9MSd0+VPjgG/Ntw1l5UqJQqh6UvIwVhE6wWgwm1ARgJKbZfe8jdL/HqiBuPewtn
+         awsAxj6a8kJyWF0BIWsQPx6hQKrjsUA6RLHMok/s0/F3sqA7/Hs2PUBh2PBZqSvAS88J
+         lVgSofVavSclFZv5O+VibWSGTaTPSjiqSkf92LCr4U5+RCqHco1zpfJj0uNjrSGA2/dk
+         112ocSaMqTLBIiWNZIF0tsglIhcjv/AJSDwl3qM559CnpTH+9OHa5oKw/H2uBPikDePu
+         40tR5DqnFBqVV4GCQbaHkprBmXj4Ir6pR0MLooPqelachNcFq97/GbPS79oiUILfz6ua
+         /k6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWc95u2kHFMn9Zm35VXjLxNfOP4nV3rq/4ovmVKoNSaO+A0CQNKG/5kLQwDyXHqLAz31130B6zR8bz/h0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFOIrqd8PuPQSrSG8UxYgBZOISVEaHHam6Ts7ObdBSNW51UVID
+	0inHrwYVisy2zpmUj4zYoXjSAPwpMFX4eLsiBTl84jJp4mM3CxCGira4PIq38y5H8SZ0oiXac59
+	8OZ+Yaw==
+X-Google-Smtp-Source: AGHT+IFcTWECwsglXqgobA0NsEiSDzF8ic7uavux6KREgbBRTlsyfPZPh/tOYTH76scS6QSMy9xpZ6I4YFg=
+X-Received: from pjbbd5.prod.google.com ([2002:a17:90b:b85:b0:330:49f5:c0b1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:58f0:b0:32e:2059:ee83
+ with SMTP id 98e67ed59e1d1-340279e5f8bmr164106a91.7.1761577260155; Mon, 27
+ Oct 2025 08:01:00 -0700 (PDT)
+Date: Mon, 27 Oct 2025 08:00:58 -0700
+In-Reply-To: <aNMpz96c9JOtPh-w@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dt6roxyx3h4zojls7cvr4nyjtahi33ti2sir2ijr3w4wjliyz@fl32rra6phll>
+Mime-Version: 1.0
+References: <20250813192313.132431-1-mlevitsk@redhat.com> <20250813192313.132431-3-mlevitsk@redhat.com>
+ <7c7a5a75-a786-4a05-a836-4368582ca4c2@redhat.com> <aNLtMC-k95pIYfeq@google.com>
+ <23f11dc1-4fd1-4286-a69a-3892a869ed33@redhat.com> <aNMpz96c9JOtPh-w@google.com>
+Message-ID: <aP-JKkZ400TERMSy@google.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Fix a semi theoretical bug in kvm_arch_async_page_present_queued
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, 
+	Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Oct 24, 2025 at 09:27:39PM +0100, Pedro Falcato wrote:
-> On Thu, Oct 23, 2025 at 06:12:02PM +0000, Dmitry Ilvokhin wrote:
-> > Allow to override defaults for shemem and tmpfs at config time. This is
-> > consistent with how transparent hugepages can be configured.
+On Tue, Sep 23, 2025, Sean Christopherson wrote:
+> On Tue, Sep 23, 2025, Paolo Bonzini wrote:
+> > On 9/23/25 20:55, Sean Christopherson wrote:
+> > > On Tue, Sep 23, 2025, Paolo Bonzini wrote:
+> > > > On 8/13/25 21:23, Maxim Levitsky wrote:
+> > > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > > > index 9018d56b4b0a..3d45a4cd08a4 100644
+> > > > > --- a/arch/x86/kvm/x86.c
+> > > > > +++ b/arch/x86/kvm/x86.c
+> > > > > @@ -13459,9 +13459,14 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+> > > > >    void kvm_arch_async_page_present_queued(struct kvm_vcpu *vcpu)
+> > > > >    {
+> > > > > -	kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> > > > > -	if (!vcpu->arch.apf.pageready_pending)
+> > > > > +	/* Pairs with smp_store_release in vcpu_enter_guest. */
+> > > > > +	bool in_guest_mode = (smp_load_acquire(&vcpu->mode) == IN_GUEST_MODE);
+> > > > > +	bool page_ready_pending = READ_ONCE(vcpu->arch.apf.pageready_pending);
+> > > > > +
+> > > > > +	if (!in_guest_mode || !page_ready_pending) {
+> > > > > +		kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> > > > >    		kvm_vcpu_kick(vcpu);
+> > > > > +	}
+> > > > 
+> > > > Unlike Sean, I think the race exists in abstract and is not benign
+> > > 
+> > > How is it not benign?  I never said the race doesn't exist, I said that consuming
+> > > a stale vcpu->arch.apf.pageready_pending in kvm_arch_async_page_present_queued()
+> > > is benign.
 > > 
-> > Same results can be achieved with the existing
-> > 'transparent_hugepage_shmem' and 'transparent_hugepage_tmpfs' settings
-> > in the kernel command line, but it is more convenient to define basic
-> > settings at config time instead of changing kernel command line later.
+> > In principle there is a possibility that a KVM_REQ_APF_READY is missed.
 > 
-> Why do you need these options instead of using CONFIG_CMDLINE?
-> They should pull off exactly what you want, but without changing the kernel?
-
-Thanks for the suggestion, Pedro. I think CONFIG_CMDLINE could work, but
-for this purpose it doesn't seem ideal. Relying on CONFIG_CMDLINE isn't
-a very scalable solution, since over time it tends to accumulate into a
-long, unstructured string that isn't validated at build time. It also
-mixes configuration layers: build-time policy and boot-time setup, which
-makes the resulting behavior a bit harder to maintain in the long run.
-So this approach is mainly about improving long-term maintainability and
-operational clarity. I hope that makes sense.
-
+> I think you mean a kick (wakeup or IPI), is missed, not that the APF_READY itself
+> is missed.  I.e. KVM_REQ_APF_READY will never be lost, KVM just might enter the
+> guest or schedule out the vCPU with the flag set.
 > 
-> -- 
-> Pedro
+> All in all, I think we're in violent agreement.  I agree that kvm_vcpu_kick()
+> could be missed (theoretically), but I'm saying that missing the kick would be
+> benign due to a myriad of other barriers and checks, i.e. that the vCPU is
+> guaranteed to see KVM_REQ_APF_READY anyways.
+> 
+> E.g. my suggestion earlier regarding OUTSIDE_GUEST_MODE was to rely on the
+> smp_mb__after_srcu_read_{,un}lock() barriers in vcpu_enter_guest() to ensure
+> KVM_REQ_APF_READY would be observed before trying VM-Enter, and that if KVM might
+> be in the process of emulating HLT (blocking), that either KVM_REQ_APF_READY is
+> visible to the vCPU or that kvm_arch_async_page_present() wakes the vCPU.  Oh,
+> hilarious, async_pf_execute() also does an unconditional __kvm_vcpu_wake_up().
+> 
+> Huh.  But isn't that a real bug?  KVM doesn't consider KVM_REQ_APF_READY to be a
+> wake event, so isn't this an actual race?
+> 
+>   vCPU                                  async #PF
+>   kvm_check_async_pf_completion()
+>   pageready_pending = false
+>   VM-Enter
+>   HLT
+>   VM-Exit
+>                                         kvm_make_request(KVM_REQ_APF_READY, vcpu)
+>                                         kvm_vcpu_kick(vcpu)  // nop as the vCPU isn't blocking, yet
+>                                         __kvm_vcpu_wake_up() // nop for the same reason
+>   vcpu_block()
+>   <hang>
+> 
+> On x86, the "page ready" IRQ is only injected from vCPU context, so AFAICT nothing
+> is guarnateed wake the vCPU in the above sequence.
+
+Gah, KVM checks async_pf.done instead of the request.  So I don't think there's
+a bug, just weird code.
+
+  bool kvm_vcpu_has_events(struct kvm_vcpu *vcpu)
+  {
+	if (!list_empty_careful(&vcpu->async_pf.done))  <===
+		return true;
 
