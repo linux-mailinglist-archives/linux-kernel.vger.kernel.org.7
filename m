@@ -1,182 +1,144 @@
-Return-Path: <linux-kernel+bounces-872822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F244C121E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:58:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CC7C121DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 765494FC5C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52DC46701D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12CF330321;
-	Mon, 27 Oct 2025 23:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F8B328610;
+	Mon, 27 Oct 2025 23:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJ/KUmyJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JKkpqAPF"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1BE2E7F29;
-	Mon, 27 Oct 2025 23:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654CE2DE709
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761609443; cv=none; b=TT/3IGYfA5aMC2J0wRfzbHEmv+XFLKMlzPoCd7hfwJC2CiwvWnQvJbkwvK58RFoJLoZ9Y/SbrBb+zrQxqzimvBcS9nIn0u7us1a9jefyPHatKUW/XBc9C9GnpZd61VZTT36Y7dJLUiT/P1jTnjXY2W0rlylXVn4H0SPCmo0Dv5A=
+	t=1761609506; cv=none; b=OK1nPa0QldknivaBN+sC8trvgNJ6YGSSwrfXUzb+4KEYiMJ+obNKTd0vMZlp1kf3DT5eAqBQa6Ov8FegDNM5gjq4Oemkfe2mr/mNdQQ03A5jfheoU1aJ46nT/l9OhNOiU8aMilRpcx2L0TDQ8IDDMc0MQI0ofCOiK25hC/myGKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761609443; c=relaxed/simple;
-	bh=jXLAtIGL3t3Eeivlb10T/oIzaKMtHVUOwyi8U5Ge+jA=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=ntO0xGY0f2rDTgJzWMvsZeHfa4BVadM/WoXT9dQe7AHwJznRFzNSyMuEhiluSSA98QHvetceZxtpM2g+jsKMdPt7nVljbzI+aLmMeecC9RO2RmDKV0CNCP7993Sctc5WasPEMVpN2GypHNB9SpFsms7wxMSbdKf6pwlsfgkE0Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJ/KUmyJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1076EC4CEFB;
-	Mon, 27 Oct 2025 23:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761609442;
-	bh=jXLAtIGL3t3Eeivlb10T/oIzaKMtHVUOwyi8U5Ge+jA=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=lJ/KUmyJsclpDQQ2M+QMnXvOZZC6krQiFKX8sOxfOpoaqG4LjkXXRw347U0yA/XVL
-	 Rey0uasO7GpRSs56MfV8SO/NJ2mhK21qIXIQDLmbdzJ2+MjYXzmAD2ySoASlOgr5WZ
-	 qI6vVen1gQRkaKqCiQHBrMuinOcBpybHtrxPdFPBA5k84RpmR84/2G2c3NfktLDXQj
-	 fL5lj8pzXbT6Q5LPKIkdl4K4tCUYoR3e3CDY/Sukgi/Pg7WcUvXpgtx3WwcOAY7S9H
-	 Gl8/cAJIBIOuHsiYgiz1WYIYG0ofPZnG52T6c3hXqIEUHthM1bXhSA6SkrY2an/ZhX
-	 IoAhcgPK/opuw==
-Content-Type: multipart/mixed; boundary="===============5693088593246735983=="
+	s=arc-20240116; t=1761609506; c=relaxed/simple;
+	bh=B3mpFVAR6ZmcNWLBi88Xta8WGYLy+I86D02flIVttrI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XGSwvriTsrzPJ/G33GtJDCJD02sXJUM+NvVjLNUENb7iyeyzwE2vnjz49Er1DLwf7H5wcwED8DO7/ESUgnOfIuHTDT6hFaZxA5h3Thaw7g+Mywz0attfSYB+SYizL0mECuUV5Vr58ytUVksRVTP7NaEBpuhM1WzVXJ/D6fOIzx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JKkpqAPF; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c44ea68f6so4725a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761609503; x=1762214303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k9F1wSsSxhw2D505fXHUdjLY9NdHqh0zXhSCGVR/itg=;
+        b=JKkpqAPF2K0zQPqB6mLPQdzCvXG3z9KleGjfprAjVFPvnTyU79PccWGIckYtl5eqPt
+         WBhZcrTWIFxDBax5bhpNbLvNk/lDuwE0T14uiLre4McmpbHnY8bi9aKyMwbrYcj3KQLR
+         Jq+yez/2IUM5pK/4HBqeHyBDEnEnLDuDehTQLfp+vtQSXoQ2KBDu/MecyHYzXUAFBmsm
+         MCm1kOv59mrPEweqLxUhqLs2yee+6r8K/ts7JL0CaW4Aw2/IZ2cMBvB1yVk1gNsO29BD
+         RhSV2uuoDIB1AiyWqoWPRyxD5BLXbmNqpP1EpGSHA4SH5kcCM8S/cV+FjRP5fyX1Ur4W
+         B/hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761609503; x=1762214303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k9F1wSsSxhw2D505fXHUdjLY9NdHqh0zXhSCGVR/itg=;
+        b=qTmdtmiDWT2zr6FyY59LvrTylObyKyj8q51dFaYlIYSRJ3EV4Q+QfdoW83bN9AGKmk
+         IFvMTtL9Zb9ayf9/ZCBJ4peNy5r5QQABvSLTkmCIZxPzJPqKYeuis8SUOU9o1EHFtdzU
+         S45v7OIvCL9xiXRncRd4m6W/ZjmGP+0samdBnzzJIiAwWaYRSnzTJvmug2yC8GqxQxqy
+         fUkk6EYceKnlAD2sKVHHsf6SLX/aXn6nnL4IRlU3EmGL0psQE2T15neea2quB9GmWp6x
+         qW3UzS41tediaJvKIH+lBhTiSsP+3zSlI8yMapcxLxIURV0MqAI5mvGHGKvnv/z8soEO
+         VAiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+nL2aNGtPeQui71zsqDnKlDN/BOSBcR5IuOPaq6I/ghT+lr7eArygsthZuGuSa6xMv1a0LbBaLovEtoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdHSYb39DC8WMhLcjvvJckK6n8rKDUA5YR3iNYz4eVp0ixBcbA
+	Xq5UyqiNnfIlP3opR61N5WOh0RqKKafq4H56WJsu9auVitHIvS+d5FOUg2ALa+0GP+n6kYcgNfP
+	GT+TZSOn/1M1s/tRSJkMLguelRAoPpkWrbYV/PYOM
+X-Gm-Gg: ASbGncu+ZVpc+3OK8l00VNfBezYmHWwMGlO2CNFk9lnzaW2ALqh1CH8ZHqHMRQG8rhN
+	NFMECIXeSi7yX99gz+pkp2GjFURLjs8Tg7xAbnzL8pDTdfU+/vviE10CgwdeyCL3SRG8tQuB+6o
+	YYxyhU1CTDgwoIP1iyPM0jxnV0rlHVmtAagSIeYERo7qpRCC/b3P4UKhK8c7b9dBB3I0soQgP+K
+	NYHr5oHv4sCWtmpBfjTjZBosJKyFVUWCQxQ29xAq5tXzFtjh2Ap4jmnYXnhZTPfQK/yKgc=
+X-Google-Smtp-Source: AGHT+IFI7RbCRSrkZ+26mAjogVrTWudlWrC8fSNj8O9PmlVdQ7Csv0X4ZvVnTgaBHpL6T+OSCphRK3ecNFW9+faxMrM=
+X-Received: by 2002:a05:6402:206:b0:634:b4b5:896f with SMTP id
+ 4fb4d7f45d1cf-63f6f88db75mr39252a12.4.1761609502550; Mon, 27 Oct 2025
+ 16:58:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <2b04ce21d82f2118c291c49ace22d685bcbbd45d203b2f676556d3e5a90eebd1@mail.kernel.org>
-In-Reply-To: <20251027232206.473085-3-roman.gushchin@linux.dev>
-References: <20251027232206.473085-3-roman.gushchin@linux.dev>
-Subject: Re: [PATCH v2 13/23] mm: introduce bpf_out_of_memory() BPF kfunc
-From: bot+bpf-ci@kernel.org
-To: roman.gushchin@linux.dev,akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,ast@kernel.org,surenb@google.com,mhocko@kernel.org,shakeel.butt@linux.dev,hannes@cmpxchg.org,andrii@kernel.org,inwardvessel@gmail.com,linux-mm@kvack.org,cgroups@vger.kernel.org,bpf@vger.kernel.org,martin.lau@kernel.org,song@kernel.org,memxor@gmail.com,tj@kernel.org,roman.gushchin@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Mon, 27 Oct 2025 23:57:21 +0000 (UTC)
+References: <20251016200417.97003-1-seanjc@google.com> <20251016200417.97003-2-seanjc@google.com>
+ <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com> <aPe5XpjqItip9KbP@google.com>
+ <20251021233012.2k5scwldd3jzt2vb@desk> <20251022012021.sbymuvzzvx4qeztf@desk>
+ <CALMp9eRpP0LvMJ=aYf45xxz1fRrx5Sf9ZrqRE8yKRcMX-+f4+A@mail.gmail.com> <20251027231721.irprdsyqd2klt4bf@desk>
+In-Reply-To: <20251027231721.irprdsyqd2klt4bf@desk>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 27 Oct 2025 16:58:10 -0700
+X-Gm-Features: AWmQ_bk2eMNKxzyzah9DPVxHOoXxsYy6Xljo8QBDtIqM98MaTcgTmbgiB2zzshM
+Message-ID: <CALMp9eSVt22PW+WyfNvnGcOciDQ8MkX9vDmDZ+-Q2QJUH_EvHw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D cache
+ flush is skipped
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, Brendan Jackman <jackmanb@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---===============5693088593246735983==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-
-
-```
-commit bce57b9b96e05731a14c7e10a364fdd9b733cda2
-Author: Roman Gushchin <roman.gushchin@linux.dev>
-
-mm: introduce bpf_out_of_memory() BPF kfunc
-
-This patch introduces bpf_out_of_memory() BPF kfunc to allow BPF programs
-to declare OOM events and trigger the kernel OOM handling mechanism. The
-function accepts a nullable memcg pointer for system-wide or memcg-scoped
-OOMs.
-
-> diff --git a/include/linux/oom.h b/include/linux/oom.h
-> index 721087952..3cbdcd013 100644
-> --- a/include/linux/oom.h
-> +++ b/include/linux/oom.h
-> @@ -21,6 +21,11 @@ enum oom_constraint {
->  	CONSTRAINT_MEMCG,
->  };
+On Mon, Oct 27, 2025 at 4:17=E2=80=AFPM Pawan Gupta
+<pawan.kumar.gupta@linux.intel.com> wrote:
 >
-> +enum bpf_oom_flags {
-> +	BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK = 1 << 0,
-> +	BPF_OOM_FLAGS_LAST = 1 << 1,
-> +};
-> +
->  /*
->   * Details of the page allocation that triggered the oom killer that are used to
->   * determine what should be killed.
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 3c86cd755..d7fca4bf5 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
+> On Mon, Oct 27, 2025 at 03:03:23PM -0700, Jim Mattson wrote:
+> > On Tue, Oct 21, 2025 at 6:20=E2=80=AFPM Pawan Gupta
+> > <pawan.kumar.gupta@linux.intel.com> wrote:
+> > >
+> > > ...
+> > > Thinking more on this, the software sequence is only invoked when the
+> > > system doesn't have the L1D flushing feature added by a microcode upd=
+ate.
+> > > In such a case system is not expected to have a flushing VERW either,=
+ which
+> > > was introduced after L1TF. Also, the admin needs to have a very good =
+reason
+> > > for not updating the microcode for 5+ years :-)
+> >
+> > KVM started reporting MD_CLEAR to userspace in Linux v5.2, but it
+> > didn't report L1D_FLUSH to userspace until Linux v6.4, so there are
+> > plenty of virtual CPUs with a flushing VERW that don't have the L1D
+> > flushing feature.
+>
+> Shouldn't only the L0 hypervisor be doing the L1D_FLUSH?
+>
+> kvm_get_arch_capabilities()
+> {
+> ...
+>         /*
+>          * If we're doing cache flushes (either "always" or "cond")
+>          * we will do one whenever the guest does a vmlaunch/vmresume.
+>          * If an outer hypervisor is doing the cache flush for us
+>          * (ARCH_CAP_SKIP_VMENTRY_L1DFLUSH), we can safely pass that
+>          * capability to the guest too, and if EPT is disabled we're not
+>          * vulnerable.  Overall, only VMENTER_L1D_FLUSH_NEVER will
+>          * require a nested hypervisor to do a flush of its own.
+>          */
+>         if (l1tf_vmx_mitigation !=3D VMENTER_L1D_FLUSH_NEVER)
+>                 data |=3D ARCH_CAP_SKIP_VMENTRY_L1DFLUSH;
+>
 
-[ ... ]
+Unless L0 has chosen L1D_FLUSH_NEVER. :)
 
-> +/**
-> + * bpf_out_of_memory - declare Out Of Memory state and invoke OOM killer
-> + * @memcg__nullable: memcg or NULL for system-wide OOMs
-> + * @order: order of page which wasn't allocated
-> + * @flags: flags
-> + * @constraint_text__nullable: custom constraint description for the OOM report
-> + *
-> + * Declares the Out Of Memory state and invokes the OOM killer.
-> + *
-> + * OOM handlers are synchronized using the oom_lock mutex. If wait_on_oom_lock
-> + * is true, the function will wait on it. Otherwise it bails out with -EBUSY
-> + * if oom_lock is contended.
-> + *
-> + * Generally it's advised to pass wait_on_oom_lock=false for global OOMs
-> + * and wait_on_oom_lock=true for memcg-scoped OOMs.
-> + *
-> + * Returns 1 if the forward progress was achieved and some memory was freed.
-> + * Returns a negative value if an error occurred.
-> + */
-> +__bpf_kfunc int bpf_out_of_memory(struct mem_cgroup *memcg__nullable,
-> +				  int order, u64 flags)
-> +{
-> +	struct oom_control oc = {
-> +		.memcg = memcg__nullable,
-> +		.order = order,
-> +	};
+On GCE's L1TF-vulnerable hosts, we actually do an L1D flush at ASI
+entry rather than VM-entry. ASI entries are two orders of magnitude
+less frequent than VM-entries, so we get comparable protection to
+L1D_FLUSH_ALWAYS at a fraction of the cost.
 
-Can bpf_out_of_memory() work correctly for system-wide OOMs with
-uninitialized gfp_mask?
-
-Looking at out_of_memory():
-
-    if (!(oc->gfp_mask & __GFP_FS) && !is_memcg_oom(oc))
-        return true;
-
-With gfp_mask=0 and memcg=NULL (system-wide OOM), this evaluates to:
-!(0 & __GFP_FS) && !false = true, causing an early return without
-invoking the OOM killer. The comment in out_of_memory() explains this
-check is about allocation context: "The OOM killer does not compensate
-for IO-less reclaim."
-
-All other callers of out_of_memory() initialize gfp_mask:
-- mm/page_alloc.c: .gfp_mask = gfp_mask
-- mm/memcontrol.c: .gfp_mask = gfp_mask
-
-For memcg OOMs, the code works because is_memcg_oom(oc) is true,
-bypassing the check. But for system-wide OOMs (NULL memcg), won't this
-cause the function to return immediately without killing any process?
-
-> +	int ret;
-> +
-> +	if (flags & ~(BPF_OOM_FLAGS_LAST - 1))
-> +		return -EINVAL;
-> +
-> +	if (oc.order < 0 || oc.order > MAX_PAGE_ORDER)
-> +		return -EINVAL;
-> +
-> +	if (flags & BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK) {
-> +		ret = mutex_lock_killable(&oom_lock);
-> +		if (ret)
-> +			return ret;
-> +	} else if (!mutex_trylock(&oom_lock))
-> +		return -EBUSY;
-> +
-> +	ret = out_of_memory(&oc);
-> +
-> +	mutex_unlock(&oom_lock);
-> +	return ret;
-> +}
-
-[ ... ]
-
-
-```
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-In-Reply-To-Subject: `mm: introduce bpf_out_of_memory() BPF kfunc`
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18859027430
-
---===============5693088593246735983==--
+At the moment, we still do an L1D flush on emulated VM-entry, but
+that's just because we have historically advertised
+IA32_ARCH_CAPABILITIES.SKIP_L1DFL_VMENTRY to L1.
 
