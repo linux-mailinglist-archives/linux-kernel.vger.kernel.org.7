@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-871100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BCFC0C739
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:53:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F842C0C6F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20CE14F1D9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:49:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3292334B925
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59130FF3B;
-	Mon, 27 Oct 2025 08:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9A32F1FD0;
+	Mon, 27 Oct 2025 08:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kg9yAJCX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FFs6yROI"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ip6vB+oQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0EJj9wPZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E542F12C5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B07A3101B4
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554687; cv=none; b=Gp5YcnnYzBosVwJdPl5OYPF00XuSghdfLJQ8x7m3brUQAXXKn++R7HtUAcxMHOK72A/TbJa2XEWjlm1KjdeCsFc2YADnjZy0ZTYdpQcdSNHbDsNXfa3GisSvb8mPbHgP0H/GVDwH5GrMiPDc/YPSR6THUgNmftWLo3PspToSsng=
+	t=1761554689; cv=none; b=K5+9NoZYq+XNK/iG6DVyQKaP6afXsEtdH1ckfjDqKJDhm9SnY0X61MnllWgYjsdvjCQQIoGWOORn3eS0yXtYEGu7N3H/KxDOTfe4svTEUHf1Axq/eCDN0L1v1SMr2xhpmi8sPaMN2VB1l9DkzDk5IofwZ8VmQeMmYfu0ScxxS0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554687; c=relaxed/simple;
-	bh=WGDqby2sqkwgvULx3HGAainFv6gztqVnqcLqL+xhWdA=;
+	s=arc-20240116; t=1761554689; c=relaxed/simple;
+	bh=GG5Bv0Y2h1NKF25hTLaz2kxBPCflNHAcQQRA1XAgEwg=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=PLi3F4o9foYLKus+s1e/jeRxICgVLJPZd5Tt9KI96NhWWrIcM5pFxLLEduEILi0crYUxJ8eZ0vacXLc3f5dsDvW5hhtxcfsSiuOSumsSrwt7mT2+p6aIfFdICgGWgkTj2UlSFB/qMutR8ItaydDeqZeyeLCMTjIRsrYnl2TVlgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kg9yAJCX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FFs6yROI; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=elxXEpQjWQzzRwyhbsYRVC3yOH2GCtRwq452TIDRO+ZK+4GIXJ9dq1j3FUQhT28vaVBm/5uqA4GlniJfyHKLMzlEKGYMzx56I1lem8hlkRuZRpqRd1fh2sibzxKlraamZrm8AqszxTuHiIhUfaNUROwAYHYyC6r6D+CMaxPqb4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ip6vB+oQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0EJj9wPZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251027084306.778457951@linutronix.de>
+Message-ID: <20251027084306.841964081@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761554684;
+	s=2020; t=1761554687;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=HN07IaFgPRsBdcqOPnZoi/IbPDXu/kN5yAfZuOw92y0=;
-	b=Kg9yAJCXbTFeZedIyxcY15p/uTlkhRZ0c/T2axPzGuF3a8d4D84wFgV4Q38qVBsGyFjvcl
-	FRS89g8EvCx/pB4BlDVglHIYLyubRjP5mxknU//gPi7G9BG3R5wthR9CTgJ3lmitJZPJMX
-	TMM35lzfr4cgQfls56wkcGvGY2SluhpxQBjY/9SF3ng/bIuRQlbSk004USffozPtP0CBM7
-	IzYklXJNSQG/GpmcH8Su9bCPmQY4g+bu7LGvz4FKRYfN9ioyHHQNRkgOVbhyP+biPRGhOL
-	JOItz/NEfdB1cllSekJ/MGsMnQuUPX4x4HWg5UPKFoa/bRf6pgWxomLfWC5Uxw==
+	 references:references; bh=zCmxAB/ZIVgxIt9ekfQ3JOgTrp6uLH4pflx9bdIF0b4=;
+	b=Ip6vB+oQjQmq5iVlFrJjE0zFOpB2ec3WSLDIqcEiN5K695uaQRmzJM7EWunISswmPoi3R7
+	3Qk8yBYmUYZjIzSjBCB3FBtEyxtzCXpmQPC2C7S4QCz/WaDJx8y6I47pB6lFadTCUqtdzR
+	0kLdgegsaLeToAR5+PnuH8jhLELxeINCqFwkiSIqTkFZUJAswJzm6SpHYUWMT8vBSQ2KVr
+	3uXlWWE61hMZ0R9aTsoKarCpG5ZbIbXUrzi0GZZkeyvN2lmO5+FaHPN786tPDUeqMpB+pu
+	ZZKyaOoqrZB+KWd0VOoRvqheRiBnfDrs1wboaF4VnZ2HV3OlHgqhfY8EEYnqiA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761554684;
+	s=2020e; t=1761554687;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=HN07IaFgPRsBdcqOPnZoi/IbPDXu/kN5yAfZuOw92y0=;
-	b=FFs6yROI6egPXN8nWOiGawcwL6lmdLlQJrsgVgFmt6EdJZmH1Xrkish0Qgp632Q1FEhjX+
-	Jpff3RP21axzZIAw==
+	 references:references; bh=zCmxAB/ZIVgxIt9ekfQ3JOgTrp6uLH4pflx9bdIF0b4=;
+	b=0EJj9wPZdhshATLHn5uDDHmj3z/gaaK98xEzoV3v86zApzXYNXQY4dAMZOMaBtoE17W9EG
+	dpmz/Ym8snfupvBg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -59,7 +59,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  x86@kernel.org,
  Sean Christopherson <seanjc@google.com>,
  Wei Liu <wei.liu@kernel.org>
-Subject: [patch V6 13/31] sched: Move MM CID related functions to sched.h
+Subject: [patch V6 14/31] rseq: Cache CPU ID and MM CID values
 References: <20251027084220.785525188@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,86 +68,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Oct 2025 09:44:42 +0100 (CET)
+Date: Mon, 27 Oct 2025 09:44:45 +0100 (CET)
 
-There is nothing mm specific in that and including mm.h can cause header
-recursion hell.
+In preparation for rewriting RSEQ exit to user space handling provide
+storage to cache the CPU ID and MM CID values which were written to user
+space. That prepares for a quick check, which avoids the update when
+nothing changed.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 ---
- include/linux/mm.h    |   25 -------------------------
- include/linux/sched.h |   26 ++++++++++++++++++++++++++
- 2 files changed, 26 insertions(+), 25 deletions(-)
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2401,31 +2401,6 @@ struct zap_details {
- /* Set in unmap_vmas() to indicate a final unmap call.  Only used by hugetlb */
- #define  ZAP_FLAG_UNMAP              ((__force zap_flags_t) BIT(1))
+ include/linux/rseq.h        |    7 +++++--
+ include/linux/rseq_types.h  |   21 +++++++++++++++++++++
+ include/trace/events/rseq.h |    4 ++--
+ kernel/rseq.c               |    4 ++++
+ 4 files changed, 32 insertions(+), 4 deletions(-)
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -57,6 +57,7 @@ static inline void rseq_virt_userspace_e
+ static inline void rseq_reset(struct task_struct *t)
+ {
+ 	memset(&t->rseq, 0, sizeof(t->rseq));
++	t->rseq.ids.cpu_cid = ~0ULL;
+ }
  
--#ifdef CONFIG_SCHED_MM_CID
--void sched_mm_cid_before_execve(struct task_struct *t);
--void sched_mm_cid_after_execve(struct task_struct *t);
--void sched_mm_cid_fork(struct task_struct *t);
--void sched_mm_cid_exit_signals(struct task_struct *t);
--static inline int task_mm_cid(struct task_struct *t)
--{
--	return t->mm_cid;
--}
--#else
--static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
--static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
--static inline void sched_mm_cid_fork(struct task_struct *t) { }
--static inline void sched_mm_cid_exit_signals(struct task_struct *t) { }
--static inline int task_mm_cid(struct task_struct *t)
--{
--	/*
--	 * Use the processor id as a fall-back when the mm cid feature is
--	 * disabled. This provides functional per-cpu data structure accesses
--	 * in user-space, althrough it won't provide the memory usage benefits.
--	 */
--	return raw_smp_processor_id();
--}
--#endif
--
- #ifdef CONFIG_MMU
- extern bool can_do_mlock(void);
- #else
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2310,6 +2310,32 @@ static __always_inline void alloc_tag_re
- #define alloc_tag_restore(_tag, _old)		do {} while (0)
- #endif
+ static inline void rseq_execve(struct task_struct *t)
+@@ -70,10 +71,12 @@ static inline void rseq_execve(struct ta
+  */
+ static inline void rseq_fork(struct task_struct *t, u64 clone_flags)
+ {
+-	if (clone_flags & CLONE_VM)
++	if (clone_flags & CLONE_VM) {
+ 		rseq_reset(t);
+-	else
++	} else {
+ 		t->rseq = current->rseq;
++		t->rseq.ids.cpu_cid = ~0ULL;
++	}
+ }
  
-+/* Avoids recursive inclusion hell */
-+#ifdef CONFIG_SCHED_MM_CID
-+void sched_mm_cid_before_execve(struct task_struct *t);
-+void sched_mm_cid_after_execve(struct task_struct *t);
-+void sched_mm_cid_fork(struct task_struct *t);
-+void sched_mm_cid_exit_signals(struct task_struct *t);
-+static inline int task_mm_cid(struct task_struct *t)
-+{
-+	return t->mm_cid;
-+}
-+#else
-+static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
-+static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
-+static inline void sched_mm_cid_fork(struct task_struct *t) { }
-+static inline void sched_mm_cid_exit_signals(struct task_struct *t) { }
-+static inline int task_mm_cid(struct task_struct *t)
-+{
-+	/*
-+	 * Use the processor id as a fall-back when the mm cid feature is
-+	 * disabled. This provides functional per-cpu data structure accesses
-+	 * in user-space, althrough it won't provide the memory usage benefits.
-+	 */
-+	return task_cpu(t);
-+}
-+#endif
+ #else /* CONFIG_RSEQ */
+--- a/include/linux/rseq_types.h
++++ b/include/linux/rseq_types.h
+@@ -31,17 +31,38 @@ struct rseq_event {
+ };
+ 
+ /**
++ * struct rseq_ids - Cache for ids, which need to be updated
++ * @cpu_cid:	Compound of @cpu_id and @mm_cid to make the
++ *		compiler emit a single compare on 64-bit
++ * @cpu_id:	The CPU ID which was written last to user space
++ * @mm_cid:	The MM CID which was written last to user space
++ *
++ * @cpu_id and @mm_cid are updated when the data is written to user space.
++ */
++struct rseq_ids {
++	union {
++		u64		cpu_cid;
++		struct {
++			u32	cpu_id;
++			u32	mm_cid;
++		};
++	};
++};
 +
- #ifndef MODULE
- #ifndef COMPILE_OFFSETS
++/**
+  * struct rseq_data - Storage for all rseq related data
+  * @usrptr:	Pointer to the registered user space RSEQ memory
+  * @len:	Length of the RSEQ region
+  * @sig:	Signature of critial section abort IPs
+  * @event:	Storage for event management
++ * @ids:	Storage for cached CPU ID and MM CID
+  */
+ struct rseq_data {
+ 	struct rseq __user		*usrptr;
+ 	u32				len;
+ 	u32				sig;
+ 	struct rseq_event		event;
++	struct rseq_ids			ids;
+ };
  
+ #else /* CONFIG_RSEQ */
+--- a/include/trace/events/rseq.h
++++ b/include/trace/events/rseq.h
+@@ -21,9 +21,9 @@ TRACE_EVENT(rseq_update,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->cpu_id = raw_smp_processor_id();
++		__entry->cpu_id = t->rseq.ids.cpu_id;
+ 		__entry->node_id = cpu_to_node(__entry->cpu_id);
+-		__entry->mm_cid = task_mm_cid(t);
++		__entry->mm_cid = t->rseq.ids.mm_cid;
+ 	),
+ 
+ 	TP_printk("cpu_id=%d node_id=%d mm_cid=%d", __entry->cpu_id,
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -184,6 +184,10 @@ static int rseq_update_cpu_node_id(struc
+ 	rseq_unsafe_put_user(t, node_id, node_id, efault_end);
+ 	rseq_unsafe_put_user(t, mm_cid, mm_cid, efault_end);
+ 
++	/* Cache the user space values */
++	t->rseq.ids.cpu_id = cpu_id;
++	t->rseq.ids.mm_cid = mm_cid;
++
+ 	/*
+ 	 * Additional feature fields added after ORIG_RSEQ_SIZE
+ 	 * need to be conditionally updated only if
 
 
