@@ -1,103 +1,228 @@
-Return-Path: <linux-kernel+bounces-870761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58032C0B9D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:44:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A1DC0B9DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 03C9F34A84E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB051896D79
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2355829C35A;
-	Mon, 27 Oct 2025 01:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D9C2BD5BC;
+	Mon, 27 Oct 2025 01:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vqKT+cw7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DmTIN/95"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548329BDA2;
-	Mon, 27 Oct 2025 01:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7491E29C33F;
+	Mon, 27 Oct 2025 01:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761529451; cv=none; b=Lq12efr/y0YRhRnTw+fTkvxddCT8UjEF5LiELAkVh1H/Gy4iWCI/NFde7/AyF42qowUXKYSqT+vOc3Ot94+qwUY6VL4OG5XOU1WvxPbJRV/ZVJWIGkncAX3+KZKVWhXsPPLhhHxx+4sqlr0uIWkAWHMUj+NPjAiXi/9AODcbrSI=
+	t=1761529507; cv=none; b=U8Rfz7slB5GLY/pquifyly5S19TOxcCpB1QzjNKve0LFvacx4Nfr0XSYyijsT7lmt5PkIxvsPrByOUHluGY1qkitRxq0cSb+OKWau4pxJVvTDhqUBonS5oJq02FM0PZrpnlrNHauPny4CrE1ECMnxTEx5QO5okn9nsvJqfyFM4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761529451; c=relaxed/simple;
-	bh=E+QMND24/WP/zTvdXff8gp6hTMK1AKq41bsw0S6dp8w=;
+	s=arc-20240116; t=1761529507; c=relaxed/simple;
+	bh=Hk/Cv0JH4I2/bc25Mtk3P330bEAkbyQwBrU4iJ+LcR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KuuxdwhnbT3c/kxNgdsNbD4PYAe4+rAq4+nkDV3FdKfb+StbzHvdlQBravoiqlMk1NsiEhA4F28+WO6+3lS7u3vKlf8HqJkP8xkDXpnixEAgZXtgz/nsjAAskxMSwwdzX2rNaJ9aWhcQVPA3NUJVhUVgkdD3aLO0X+7ccmufKfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vqKT+cw7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7a/EwuumQpo2swNq1SpUCucENGWBvUDAitJ2riFGT+Q=; b=vqKT+cw7qfCksSfiPz3S4iHhrx
-	VA30MsXAzH6jQu6JS9fR8f45Gp3ooOLXKwGx4yGeJiduyc1fWA+bZflGabd8ESumpM+8PMl/qaSGX
-	uoGN3n/PJTTN/Ovs+5D16m3RoKgoPXO3stpKVCzTFxGasaOu5qvgLwseqVQbSNm4OKMI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDCGa-00C9BP-I8; Mon, 27 Oct 2025 02:43:24 +0100
-Date: Mon, 27 Oct 2025 02:43:24 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, BMC-SW <BMC-SW@aspeedtech.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=bG4e0RfLhTKNFYTIqGlUj50rZn6H/epUuLJYUSbdnxBp2iHc0U8m857k/FYz7ptYbjbXBln/UzIOD+wqRdT2yPeV7vbo9U1f2r5s3t16kaPKWKFxW65/5HOA34Dx2UPH9pwh5IC4qlzHn64IwII6zAYrnUYQn40COzlLQDPI+Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DmTIN/95; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A6FF01661;
+	Mon, 27 Oct 2025 02:43:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761529394;
+	bh=Hk/Cv0JH4I2/bc25Mtk3P330bEAkbyQwBrU4iJ+LcR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DmTIN/959mBfIT+SM6ajcFq7f1gtKFOU1XBpuVR9S5nMNJAfTME+ec9eVlp/IrWpZ
+	 jnhQpBCdBl3dBL2OQsmBcFjLIrAAgHT11G0ROsI9kpfcxBJ+5LGmQv5Ksyhy9cRwGw
+	 ldoeuI7N0ZfgwF0zLYsD1QT3Cmqwr3+/+ocVbQlc=
+Date: Mon, 27 Oct 2025 03:44:48 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Jeremy Kerr <jk@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Nishanth Menon <nm@ti.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC
- device tree
-Message-ID: <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch>
-References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
- <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
- <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
- <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
- <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
- <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
- <71df9bdf-53b2-45e2-a9e3-5b00a556f957@lunn.ch>
- <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 12/31] media: staging: media: imx6-mipi-csi2: move sd
+ imx6's specific initialization into imx6-sci2.c
+Message-ID: <20251027014448.GV13023@pendragon.ideasonboard.com>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-12-c9286fbb34b9@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+In-Reply-To: <20250821-95_cam-v3-12-c9286fbb34b9@nxp.com>
 
-> SoC0, referred to as the CPU die, contains a dual-core Cortex-A35
-> cluster and two Cortex-M4 cores, along with its own clock/reset
-> domains and high-speed peripheral set.
+On Thu, Aug 21, 2025 at 04:15:47PM -0400, Frank Li wrote:
+> Move imx6's specific sd's owner, name, csi2_internal_ops, grp_id into
 
-> SoC1, referred to as the I/O die, contains the Boot MCU and its own
-> clock/reset domains and low-speed peripheral set, and is responsible
-> for system boot and control functions.
+grp_id needs to go. It's specific to the i.MX6 IPUv3 framework, and is
+the main part hindering splitting the CSI-2 receiver driver from the
+rest of the code.
 
-So is the same .dtsi file shared by both systems? How do you partition
-devices so each CPU cluster knows it has exclusive access to which
-peripherals?
+> imx6-sci2.c.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/staging/media/imx/imx6-csi2.c      | 23 +++++++++++++++++++++++
+>  drivers/staging/media/imx/imx6-mipi-csi2.c | 29 ++++++-----------------------
+>  include/media/dw-mipi-csi2.h               |  4 ++++
+>  3 files changed, 33 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/staging/media/imx/imx6-csi2.c b/drivers/staging/media/imx/imx6-csi2.c
+> index 72eff685fad99b3def46cf2866565191b7de9a8b..66274d8d73b67b35682bb82a9eb745bb24da7ae4 100644
+> --- a/drivers/staging/media/imx/imx6-csi2.c
+> +++ b/drivers/staging/media/imx/imx6-csi2.c
+> @@ -19,6 +19,29 @@ struct imx6_csi2 {
+>  	struct dw_mipi_csi2_dev dw;
+>  };
+>  
+> +static int csi2_registered(struct v4l2_subdev *sd)
+> +{
+> +	struct dw_mipi_csi2_dev *csi2 = sd_to_dw_mipi_csi2_dev(sd);
+> +
+> +	/* set a default mbus format  */
+> +	return imx_media_init_mbus_fmt(&csi2->format_mbus,
+> +				      IMX_MEDIA_DEF_PIX_WIDTH,
+> +				      IMX_MEDIA_DEF_PIX_HEIGHT, 0,
+> +				      V4L2_FIELD_NONE, NULL);
+> +}
+> +
+> +static const struct v4l2_subdev_internal_ops csi2_internal_ops = {
+> +	.init_state = imx_media_init_state,
+> +	.registered = csi2_registered,
+> +};
+> +
+> +static const struct dw_mipi_csi2_config imx6_config = {
+> +	.module = THIS_MODULE,
+> +	.name = "imx6-mipi-csi2",
+> +	.internal_ops = &csi2_internal_ops,
+> +	.grp_id = IMX_MEDIA_GRP_ID_CSI2,
+> +};
+> +
+>  static int csi2_probe(struct platform_device *pdev)
+>  {
+>  	struct imx6_csi2 *csi2;
+> diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging/media/imx/imx6-mipi-csi2.c
+> index b5911a37972be868e10c115ada1910fa04b2765c..ff06a739b957b305625d145c04c06999d0c13cae 100644
+> --- a/drivers/staging/media/imx/imx6-mipi-csi2.c
+> +++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
+> @@ -15,11 +15,11 @@
+>  #include <linux/platform_device.h>
+>  #include <media/dw-mipi-csi2.h>
+>  #include <media/v4l2-common.h>
+> +#include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-device.h>
+>  #include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-mc.h>
+>  #include <media/v4l2-subdev.h>
+> -#include "imx-media.h"
+>  
+>  /*
+>   * The default maximum bit-rate per lane in Mbps, if the
+> @@ -44,8 +44,6 @@ struct dw_csi2_regs {
+>  	u32	phy_tst_ctrl1;
+>  };
+>  
+> -#define DEVICE_NAME "imx6-mipi-csi2"
+> -
+>  /* Help check wrong access unexisted register at difference IP version */
+>  #define DW_REG_EXIST		0x80000000
+>  #define DW_REG(x)		(DW_REG_EXIST | (x))
+> @@ -544,17 +542,6 @@ static int csi2_set_fmt(struct v4l2_subdev *sd,
+>  	return 0;
+>  }
+>  
+> -static int csi2_registered(struct v4l2_subdev *sd)
+> -{
+> -	struct dw_mipi_csi2_dev *csi2 = sd_to_dev(sd);
+> -
+> -	/* set a default mbus format  */
+> -	return imx_media_init_mbus_fmt(&csi2->format_mbus,
+> -				      IMX_MEDIA_DEF_PIX_WIDTH,
+> -				      IMX_MEDIA_DEF_PIX_HEIGHT, 0,
+> -				      V4L2_FIELD_NONE, NULL);
+> -}
+> -
+>  /* --------------- CORE OPS --------------- */
+>  
+>  static int csi2_log_status(struct v4l2_subdev *sd)
+> @@ -605,11 +592,6 @@ static const struct v4l2_subdev_ops csi2_subdev_ops = {
+>  	.pad = &csi2_pad_ops,
+>  };
+>  
+> -static const struct v4l2_subdev_internal_ops csi2_internal_ops = {
+> -	.init_state = imx_media_init_state,
+> -	.registered = csi2_registered,
+> -};
+> -
+>  static int csi2_notify_bound(struct v4l2_async_notifier *notifier,
+>  			     struct v4l2_subdev *sd,
+>  			     struct v4l2_async_connection *asd)
+> @@ -709,14 +691,15 @@ int dw_mipi_csi2_init(struct platform_device *pdev, struct dw_mipi_csi2_dev *csi
+>  	csi2->regs = &dw_csi2_v0;
+>  	v4l2_subdev_init(&csi2->sd, &csi2_subdev_ops);
+>  	v4l2_set_subdevdata(&csi2->sd, &pdev->dev);
+> -	csi2->sd.internal_ops = &csi2_internal_ops;
+>  	csi2->sd.entity.ops = &csi2_entity_ops;
+>  	csi2->sd.dev = &pdev->dev;
+> -	csi2->sd.owner = THIS_MODULE;
+>  	csi2->sd.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+> -	strscpy(csi2->sd.name, DEVICE_NAME, sizeof(csi2->sd.name));
+>  	csi2->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> -	csi2->sd.grp_id = IMX_MEDIA_GRP_ID_CSI2;
+> +
+> +	csi2->sd.owner = config->module;
+> +	strscpy(csi2->sd.name, config->name, sizeof(csi2->sd.name));
+> +	csi2->sd.internal_ops = config->internal_ops;
+> +	csi2->sd.grp_id = config->grp_id;
+>  
+>  	for (i = 0; i < CSI2_NUM_PADS; i++) {
+>  		csi2->pad[i].flags = (i == CSI2_SINK_PAD) ?
+> diff --git a/include/media/dw-mipi-csi2.h b/include/media/dw-mipi-csi2.h
+> index 4e656f09c81db9dc9f232ed061f70803a5478c85..dfd25e23ea93fd53b064471b6a9557ef9c070fe7 100644
+> --- a/include/media/dw-mipi-csi2.h
+> +++ b/include/media/dw-mipi-csi2.h
+> @@ -10,6 +10,10 @@
+>  #include <media/v4l2-subdev.h>
+>  
+>  struct dw_mipi_csi2_config {
+> +	struct module *module;
+> +	const char *name;
+> +	int grp_id;
+> +	const struct v4l2_subdev_internal_ops *internal_ops;
+>  };
+>  
+>  /*
 
-Seems like a fun system to play core wars on.
+-- 
+Regards,
 
-	Andrew
+Laurent Pinchart
 
