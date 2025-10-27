@@ -1,181 +1,155 @@
-Return-Path: <linux-kernel+bounces-872461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219B9C113A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:44:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97853C11393
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:43:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2C43B2AB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27941899743
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7553E302158;
-	Mon, 27 Oct 2025 19:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDC530C630;
+	Mon, 27 Oct 2025 19:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJYILTyz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xu0NuXtl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABC21DED64
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A544302CB9;
+	Mon, 27 Oct 2025 19:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761594061; cv=none; b=qVMaHjzEfESk51gDWUDaOkoyDeEeymARZLC3Ymoz5SCPoZbAJiWD34j7XEx4S4CEXX8mSYVoosGJb73zF089sPWdRKl4z8LtjS6t2HHcozm7EqMz9WTKPsAdGYu7g8IA5hmoO9u1kPbsTGc9LFEZc4EYKUJ+VAb4/4Ow7Rc0OkM=
+	t=1761594066; cv=none; b=AvsREHt4sWviT23sIa5zXCgE9dvIqpUICjnvA4tOxz2p/mXbtPwII/V8Ve2mbPVbaxZI2HvipAZf34QxLETZeO7E5e+eFeA9lW7cxlhMiepwgsXbELzZXYdVNbCX2sgR+0r7n5vIOHdC94/m2ozr6aY0gmGUg1Vft2YfOGjjpDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761594061; c=relaxed/simple;
-	bh=MDpco140EYHJnzIZmyl84zfrZwv8MADjK5W7/0qLrKE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tdtiXxlvMo4BOXFk7c4iBAKkE1IsfTXl/BpzkmZcma0YtAaSlEFqm7NwU4JGs4BvNjyrVUbkiR3vrh8zB+RFp0wV8uykLif7jtpd9x/y1Uy52PYKzCzCRbTgrYc+GbeIUUbxU1eF/dk8EAjuy7DH65W5JAkCS9/Bt12wR/N0l3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJYILTyz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1A7C116C6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:41:01 +0000 (UTC)
+	s=arc-20240116; t=1761594066; c=relaxed/simple;
+	bh=TKSDAfKOKm2YDmGWIYXR8qtfSeiualYoO13eweUbLZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IflS2874eHV91ilxVke22TWX6mJqtiaIry+j6Ssaii7VO+Wg8N/Zjc4oCknfLwqgR1zM5j2ovLvUg2nd+2z3KMlD5TyKYHkwbW3OydSimsK97ox+asMwbG4W1h1I6eQboQOt5lHrkyhoHNmUChiBFe1aqhhfNgckV1JZjvPKESY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xu0NuXtl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DE5C116B1;
+	Mon, 27 Oct 2025 19:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761594061;
-	bh=MDpco140EYHJnzIZmyl84zfrZwv8MADjK5W7/0qLrKE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fJYILTyz/7h4rPMWRJhk0Rh2VYt8AZbDcwYbrHYurq4DYgQD2DjPdh5HG+uugxNTz
-	 x7123G08554Cc8iPNAhfoL4mt+w84QCzMYcuJXLeHw9T7hqcI80G9yvsEU7DG1eAqV
-	 uF/5CNPpHF3Wn9ainrxPwPeKtHzWVGMkHpK54ffaQs11h96kBKRkKyYr3hGpIoC943
-	 2hNlE+fjZSvAs1gs+QKGHrTgY3zYsTZ5GvIE/6H/JYXxrUzHDa8rpENbARsdWxOLzw
-	 xH/51dw73sdp0Q6jaR1ItvYgyDnByyCROPri4W9fUXd02TUiNr4tJSXuKq88n9Wr9M
-	 2yVnINmGG+8kg==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7c51f56f3fdso2775132a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:41:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXFhcYYpYwKhLvNkN5A7IIFfj5PgYxfetFl9N0RwHx+Jgnb0Od2EmN8ZxVuvrmqYUjSv3cB9RUkOJeBI58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNYWgkOy1fivhru0x3XnRwsJWaCqXv/IYKujvg8MZDZePMgg+w
-	x84Dyn5HvPjC9htvMXCTHrq7RLvUF23g2v8DDXLNoi9J3HaiwORyA8q4h471jO/1hjlCm+V12nf
-	WGMhtZpbAUMh1AU3TU9x9cDAImEkAmCQ=
-X-Google-Smtp-Source: AGHT+IEBgYaGMef3W1iGMJpqdA0ZG8CMABKhFKsCxja1XTApdIIjx+hlUQbv+lCioaXAiOzYpoDeh9fqTixQ61UktBo=
-X-Received: by 2002:a05:6808:1986:b0:43f:1c5d:8db with SMTP id
- 5614622812f47-44f6b9c8228mr477987b6e.6.1761594060621; Mon, 27 Oct 2025
- 12:41:00 -0700 (PDT)
+	s=k20201202; t=1761594065;
+	bh=TKSDAfKOKm2YDmGWIYXR8qtfSeiualYoO13eweUbLZU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xu0NuXtlHPaDOa1jpDcq2QGX8LB/1THbJMF1bv9EAiaiUl4P7yYq6yDjuBmb9g8nu
+	 8U5VRzKcr/eMYPkTVJmpB8igdYdAiwmDHdmp0T3PphWpn0o+W2dsxJOSGJVioZPifK
+	 bHIk3wsD6LUInLh6lOwIwmzPiNBO3Bo9HspIKf/nTQLdYaF00Jr7eexLqL4xhVV+JI
+	 2y60O7eDZMXd84HDLCZMhbQCGb2GUrGRaMSuyGKaoa8aRkIfzRHOZellw4WZ/VyLra
+	 o5ueOlx3JHHjlHiKIRyhAGv4iq4xH0ZS18PrwmNAEuK43ntbrASYnorAjWvlFJ9qbd
+	 zOUyjPB7p/oEQ==
+Date: Mon, 27 Oct 2025 21:41:02 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Jonathan McDowell <noodles@earth.li>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] pm: Ensure exclusive userspace access when using
+ /dev/tpm<n>
+Message-ID: <aP_KzjRwZQBXPcXB@kernel.org>
+References: <cover.1758646791.git.noodles@meta.com>
+ <cover.1760958898.git.noodles@meta.com>
+ <aPvLtt7a7X0Y1LBI@kernel.org>
+ <6fe4fb1126f2d45b77637c34bf274bef4205a427.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
-In-Reply-To: <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 27 Oct 2025 20:40:49 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0h22pPnwPnkbd5HfP02aTbiK22nHCGtGKn1eR2KDM4Yhw@mail.gmail.com>
-X-Gm-Features: AWmQ_blpJP4rFQ3BH0tPZYsDJPnselHHXgoaG2rNNVBgBQ9UQYhzqXwIRJ0dTXw
-Message-ID: <CAJZ5v0h22pPnwPnkbd5HfP02aTbiK22nHCGtGKn1eR2KDM4Yhw@mail.gmail.com>
-Subject: Re: [PATCH 0/6 v6] Make ELOG and GHES log and trace consistently
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: linux-cxl@vger.kernel.org, Len Brown <lenb@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	"Oliver O'Halloran" <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	Guo Weikang <guoweikang.kernel@gmail.com>, Xin Li <xin@zytor.com>, 
-	Will Deacon <will@kernel.org>, Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan <gshan@redhat.com>, 
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Li Ming <ming.li@zohomail.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Karolina Stolarek <karolina.stolarek@oracle.com>, Jon Pan-Doh <pandoh@google.com>, 
-	Lukas Wunner <lukas@wunner.de>, Shiju Jose <shiju.jose@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fe4fb1126f2d45b77637c34bf274bef4205a427.camel@linux.ibm.com>
 
-On Thu, Oct 23, 2025 at 2:26=E2=80=AFPM Fabio M. De Francesco
-<fabio.m.de.francesco@linux.intel.com> wrote:
->
-> When Firmware First is enabled, BIOS handles errors first and then it
-> makes them available to the kernel via the Common Platform Error Record
-> (CPER) sections (UEFI 2.10 Appendix N). Linux parses the CPER sections
-> via one of two similar paths, either ELOG or GHES.
->
-> Currently, ELOG and GHES show some inconsistencies in how they print to
-> the kernel log as well as in how they report to userspace via trace
-> events.
->
-> Make the two mentioned paths act similarly for what relates to logging
-> and tracing.
->
-> --- Changes for v6 ---
->
->         - Rename the helper that copies the CPER CXL protocol error
->           information to work struct (Dave)
->         - Return -EOPNOTSUPP (instead of -EINVAL) from the two helpers if
->           ACPI_APEI_PCIEAER is not defined (Dave)
->
-> --- Changes for v5 ---
->
->         - Add 3/6 to select ACPI_APEI_PCIEAER for GHES
->         - Add 4,5/6 to move common code between ELOG and GHES out to new
->           helpers use them in 6/6 (Jonathan).
->
-> --- Changes for v4 ---
->
->         - Re-base on top of recent changes of the AER error logging and
->           drop obsoleted 2/4 (Sathyanarayanan)
->         - Log with pr_warn_ratelimited() (Dave)
->         - Collect tags
->
-> --- Changes for v3 ---
->
->     1/4, 2/4:
->         - collect tags; no functional changes
->     3/4:
->         - Invert logic of checks (Yazen)
->         - Select CONFIG_ACPI_APEI_PCIEAER (Yazen)
->     4/4:
->         - Check serial number only for CXL devices (Yazen)
->         - Replace "invalid" with "unknown" in the output of a pr_err()
->           (Yazen)
->
-> --- Changes for v2 ---
->
->         - Add a patch to pass log levels to pci_print_aer() (Dan)
->         - Add a patch to trace CPER CXL Protocol Errors
->         - Rework commit messages (Dan)
->         - Use log_non_standard_event() (Bjorn)
->
-> --- Changes for v1 ---
->
->         - Drop the RFC prefix and restart from PATCH v1
->         - Drop patch 3/3 because a discussion on it has not yet been
->           settled
->         - Drop namespacing in export of pci_print_aer while() (Dan)
->         - Don't use '#ifdef' in *.c files (Dan)
->         - Drop a reference on pdev after operation is complete (Dan)
->         - Don't log an error message if pdev is NULL (Dan)
->
-> Fabio M. De Francesco (6):
->   ACPI: extlog: Trace CPER Non-standard Section Body
->   ACPI: extlog: Trace CPER PCI Express Error Section
->   acpi/ghes: Make GHES select ACPI_APEI_PCIEAER
->   acpi/ghes: Add helper for CPER CXL protocol errors validity checks
->   acpi/ghes: Add helper to copy CPER CXL protocol error information to
->     work struct
->   ACPI: extlog: Trace CPER CXL Protocol Error Section
->
->  drivers/acpi/Kconfig       |  1 +
->  drivers/acpi/acpi_extlog.c | 60 ++++++++++++++++++++++++++++++++++++
->  drivers/acpi/apei/Kconfig  |  1 +
->  drivers/acpi/apei/ghes.c   | 62 +++++++++++++++++++++++++-------------
->  drivers/cxl/core/ras.c     |  6 ++++
->  drivers/pci/pcie/aer.c     |  2 +-
->  include/cxl/event.h        | 22 ++++++++++++++
->  7 files changed, 132 insertions(+), 22 deletions(-)
->
->
-> base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
-> --
+On Mon, Oct 27, 2025 at 07:50:46AM -0400, Mimi Zohar wrote:
+> On Fri, 2025-10-24 at 21:55 +0300, Jarkko Sakkinen wrote:
+> > On Mon, Oct 20, 2025 at 12:30:32PM +0100, Jonathan McDowell wrote:
+> > > I hit a problem where ~ 1% of TPM firmware upgrades were failing.
+> > > Investigating revealed the issue was that although the upgrade tool uses
+> > > /dev/tpm0 this does not actually prevent access via /dev/tpmrm0, nor
+> > > internal kernel users. It *does* prevent access to others via /dev/tpm0
+> > > 
+> > > So the upgrade process started, the HW RNG came in to get some
+> > > randomness in the middle, did the HMAC context dance, and confused
+> > > everything to the point the TPM was no longer visible to the OS even
+> > > after a reboot.
+> > > 
+> > > Thankfully I've been able to recover those devices, but really what I'd
+> > > like is the ability for a userspace tool to exclusively access the TPM
+> > > without something coming in behind it. Given the lightweight attempt at
+> > > locking that already exists I think this was the original intention.
+> > > 
+> > > I've reworked this series based on feedback received.
+> > > 
+> > > Firstly, it's been reordered TPM sharing functionality doesn't break
+> > > during bisection.
+> > > 
+> > > Secondly, the O_EXCL check has been tightend up to ensure the caller is
+> > > also opening the device O_RDWR. Callers shouldn't really be opening the
+> > > TPM except for reading + writing, but this should help guard against
+> > > unexpected flags usage a bit more.
+> > > 
+> > > Finally, this revision keeps the prohibition on more than one user of
+> > > /dev/tpm#, to avoid unexpected breakages for clients that expect this to
+> > > guard against multiple invocations. A client only then needs to use
+> > > O_EXCL if it wants to prevent *all* other access, even with
+> > > ContextSaves, such as the firmware upgrade case.
+> > > 
+> > > (I've sent a separate standalone patch that allows the TPM HW RNG to be
+> > > disabled at run time, and it's now in -next, but even with that I think
+> > > something like this is a good idea as well.)
+> > > 
+> > > Jonathan McDowell (4):
+> > >   tpm: Remove tpm_find_get_ops
+> > >   tpm: Add O_EXCL for exclusive /dev/tpm access
+> > >   tpm: Include /dev/tpmrm<n> when checking exclusive userspace TPM
+> > >     access
+> > >   tpm: Allow for exclusive TPM access when using /dev/tpm<n>
+> > > 
+> > >  drivers/char/tpm/tpm-chip.c       | 90 +++++++++++++++----------------
+> > >  drivers/char/tpm/tpm-dev-common.c |  8 +--
+> > >  drivers/char/tpm/tpm-dev.c        | 35 ++++++++++--
+> > >  drivers/char/tpm/tpm-dev.h        |  1 +
+> > >  drivers/char/tpm/tpm-interface.c  | 20 +++++--
+> > >  drivers/char/tpm/tpm.h            |  3 +-
+> > >  drivers/char/tpm/tpm2-space.c     |  5 +-
+> > >  drivers/char/tpm/tpm_tis_core.c   |  3 +-
+> > >  drivers/char/tpm/tpmrm-dev.c      | 20 ++++++-
+> > >  include/linux/tpm.h               |  4 +-
+> > >  10 files changed, 124 insertions(+), 65 deletions(-)
+> > > 
+> > > -- 
+> > > 2.51.0
+> > > 
+> > 
+> > I will put to queue with my tags but I just want to make first sure that we do not
+> > break anything.
+> > 
+> > I'll upgrade my test suite first to have TPM 1.2 tests (which is also
+> > needed for my own series) and run it in bunch of configurations.  And on
+> > TPM2 I check the behavior with TSS2 daemon on / off.
+> > 
+> > I have no doubts on the code changes, and it is most importantly a
+> > security improvement, given that "who has the access and how long" 
+> > can be deduced for a system configuration. I just feel that with
+> > this code change it is better to check and verify everything :-)
+> 
+> Roberto has already commented on this patch set, saying it would affect IMA[1].
+> I still need to look at the patch set, but please don't break IMA.
 
-I need ACKs or equivalent for patches [3-5/6] from the designated APEI
-reviewers.  Tony?
+See my response in that thread.
+
+> 
+> [1]https://lore.kernel.org/linux-integrity/cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com/
+> 
+> -- 
+> thanks,
+> 
+> Mimi
+
+BR, Jarkko
 
