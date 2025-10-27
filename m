@@ -1,174 +1,219 @@
-Return-Path: <linux-kernel+bounces-871362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE17C0D08F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:01:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7DEC0D09B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 159034F0329
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAB23B8D22
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652DB2F7AC2;
-	Mon, 27 Oct 2025 11:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221252F8BDC;
+	Mon, 27 Oct 2025 11:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OZQ4cnvM"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PnkgtcBE"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010006.outbound.protection.outlook.com [52.101.84.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1F921257A;
-	Mon, 27 Oct 2025 11:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761562908; cv=none; b=Ft3QXXWqQV4uAu2ihTSVFmIwt2s9z2bHsAMw3hcuiBjILjnNUoLmGDdjwNXohc+FUVhXKhZoNRj9/O7FyJV1AVIJtNKFJhZgHV9MHp/03GUZXuEQ/B4sx6Yu4PNDzvfevXZv5lQemj04BpoB9h7Lwl13eBJDevRJK+AJjWrEmcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761562908; c=relaxed/simple;
-	bh=+YWIDYtWbyxkhyEDXclXTSkiH5uY+GXBlwBY1kWhUWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kif5VAVRh//2fsRbDx03iWjUDxFUvgwmdvBhaMO4FvfrhYTavzjTxHtMASMZM27ayZ5W4p7Tx+EMA2W0dvfoP8azT6xHcUi9Zm1Y3GNynIuc3eMRfOA+WFWJ6XdF6tAzP69b+tqUNtemf/Ojw+hacHKiqYk6mtskR5S3hzTjYjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OZQ4cnvM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p/Yj+ABsI/8hmPjw795q+QpQX9cApBNlo4YWlmG2Vus=; b=OZQ4cnvMkRl2gAugW1M1ngTToc
-	zqBvNFy1f0um3HLOIjB+xqSm02ZKIFqjdrWW35X5nLk9pG1VOPpqK1JvMwdY7Kf8y8zRUvFy6kRKK
-	v/oK4ZECXZ3ZBbXHVZoYxLZTBxUbYmm3k/374rdDB6RkQ6gLNv+z/mb6pV4q92m7aKPhc40p9i65s
-	Yxhng/0RGVdH1oi4f16dfzo5L5CKQFMxBLR0vXj9aXRlDcIShBuiMCvaQONVblumV93CHMsZsq2Hf
-	9XemYneHEJg+kx3VHHczgLLKKAiNZ7GrSP48VN7NK72EsRJdMBoD0291vxmBrT+e5E86Co/oxPIRg
-	YaW2uV7Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDKyj-0000000Gixk-3JBY;
-	Mon, 27 Oct 2025 11:01:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F28EA300220; Mon, 27 Oct 2025 12:01:33 +0100 (CET)
-Date: Mon, 27 Oct 2025 12:01:33 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <oliver.sang@intel.com>, japo@linux.ibm.com
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	cgroups@vger.kernel.org, aubrey.li@linux.intel.com,
-	yu.c.chen@intel.com
-Subject: Re: [tip:sched/core] [sched]  b079d93796:
- WARNING:possible_recursive_locking_detected_migration_is_trying_to_acquire_lock:at:set_cpus_allowed_force_but_task_is_already_holding_lock:at:cpu_stopper_thread
-Message-ID: <20251027110133.GI3245006@noisy.programming.kicks-ass.net>
-References: <202510271206.24495a68-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0651224E4B4;
+	Mon, 27 Oct 2025 11:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761563005; cv=fail; b=EARinHkPP5dTHUTnPRzZy8v07APfAg+m6FXgJ9OWW7puQ7jyqQA/n/hkfS2cYVZ4c6PvLLb0FQrp0FL3Utp53ZvERPwZf3MBkfvjpEKNnMKBPwdMwwbUO0m/h3otnrgoCjPl0eGGOz0Jj9TQvdvri/5uyK9aHV97DILNOery7X0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761563005; c=relaxed/simple;
+	bh=4NG6GuAHdERBznfOGqSKirIT0kKLYWtpVXwxFt3GmI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HD8dO8zNit9PJ0ALsd25QKbipV1xDbIQxK0SVTKPzHhzp0g7V9hsy+UftmQLkxnk83kQjO7Eju1gFNJ9+z6vgZCE/DEucMrI0JMWJp4FIbPEdXiHJpcQTAoSq6t+wsqHLbgzjkvVu9c2FEkw1i0qPSstY0EmtastH/cdM8AxntY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PnkgtcBE; arc=fail smtp.client-ip=52.101.84.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PR/xGNhg/Q6UY0JpPV3ik/GeTBURkptp2Pnx5d/6m5TgrTVoWwQBmH3spLl8wj/XVfUJ/n7Cn89w56VSXacWcqo7sIC7mhSv8s5vb0NIV7kajRmzNguVs7B/PXglrrRWggaZSzilHAoNivKLqbMa7KEGLd1xnK3FFasOMMC7LnmTgdYMxdx/LUOfff5UweQoSfa2K8gFuqD8WK0+ok+u1gIDDNPItByvzUMYQDo2tqPsHEAM33Lpc8DhUPcVcWuuadHRSGUkLtTs7uCb8zNDGR7VXLKFfOG2HfymDGmeEeQn6nqbA8QOF7yvS5DTPF01EoFD+6yE2cj98PVxVsL8qA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sDZTOEDmPmZPull6hPj0t9GD5g3xM8zEmpRPi9oD0C8=;
+ b=o16yDWzFhFFPyqNHkp5sRWhS19BFw/czcOR4Cs29dA3cSc4yqF6DnpJnjI72qM7wAIw0n+bfYXq1l5qMkqRsJopzanH1WDJxV4yNYclsMm9/GYZfExAoGjzjTSOQm9Rs6uLIGiTHwSa3eC/0ghdYqxFnj4fe+zeX1DiiaXsgu+q21jjr2nrIA/NcHp6VsQgooTxmGraLRvP5NaqJUgcGo1ihx13u//yjUttZYISg74yy22Vs6L5LpzBOtLvUbZrtCzd2y5hRKlnm3oK9z1+yUVlWYgpEPngXqiKTQhHrLso/+lzdG0OIFpSVVCVpqR07cPY5O3BTmUP6i6R+2cOE0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sDZTOEDmPmZPull6hPj0t9GD5g3xM8zEmpRPi9oD0C8=;
+ b=PnkgtcBEEsCrbILCixkjxwATgvZuzI39vK2d+5Q2xfIgcEJs1uQQWaQA/2L4jxLlUK7RNbBUcCnX9hWOA5nCi4MfEc2xegMGO1qt3b2t7uNiT6yAr+0Zibz4B2VJ/lLoLJhfs6lvgu0PsIviGj0ORUOcCjiUhhpKtXVepGW7hgVPi2Fta+P0m7rXaVBB/UtLtnlksZ1QsOG5NA3aG/loGfEbfIhV7DawA61qw0aCNSu2yBr3jL/Oa78hCvlm+Vee1g7snCU7d2hzFTPg7lioJWnUcZc5uIk/5CETmWfl3og9y1Jxzbrm0f1eGApAIYwB9oTlVX2LVjP3ekHyTpMM+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
+ (2603:10a6:800:293::14) by AS8PR04MB7830.eurprd04.prod.outlook.com
+ (2603:10a6:20b:2ac::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 11:03:20 +0000
+Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
+ ([fe80::75ad:fac7:cfe7:b687]) by VI2PR04MB11147.eurprd04.prod.outlook.com
+ ([fe80::75ad:fac7:cfe7:b687%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 11:03:20 +0000
+From: carlos.song@nxp.com
+To: mkl@pengutronix.de,
+	frank.li@nxp.com,
+	broonie@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-spi@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] spi: imx: add i.MX51 ECSPI target mode support
+Date: Mon, 27 Oct 2025 19:02:56 +0800
+Message-Id: <20251027110256.543314-1-carlos.song@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR10CA0011.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:17c::21) To VI2PR04MB11147.eurprd04.prod.outlook.com
+ (2603:10a6:800:293::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202510271206.24495a68-lkp@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI2PR04MB11147:EE_|AS8PR04MB7830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0acff2ea-572a-4d7d-973c-08de15487001
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SEajAo+QL0pnsvrsUPAw3bPkLdSKCTBS6IPRBqvHlchnGX6FIyc5uwQk+t6P?=
+ =?us-ascii?Q?JqaLeQcyxg1xxYDOikdilFL9FMjG1awb1ob8y2nj3SC/R8HW7rkf9UmEgrAD?=
+ =?us-ascii?Q?kujMP7KIRUrrCqx7xQYoAUiTOBxCczYJHpkE9LKVfT9TTH9CEqYnCKIKnzXZ?=
+ =?us-ascii?Q?S4zUCYH69u5z5x/D7TQ1X7MNg049q70fqGz9wk6txygMl7kDxAJ6ASBw+6p/?=
+ =?us-ascii?Q?b8gwWsYyskvqT9nWM9d6HJtiMD/oW6MvVYiXVVAROV5iY+8BdtEzXrNnjPAx?=
+ =?us-ascii?Q?N7mCXdLzIcCGVC7N+IaMCple8szBeCeDatQoEKQGre2rjcatf7ZbuNVa5pke?=
+ =?us-ascii?Q?U0xLa9Ph/D+7daVtyOOZ3DJ2yfwEZap106ADBOIxydJfzeZD2rGy3cuGuOOJ?=
+ =?us-ascii?Q?TCtE++UBTBMh8Zkl1w6Ox/HTCisMFCBqvDTpZjGADERaXxo2NEX7Dku3zjsq?=
+ =?us-ascii?Q?9W6xssLrRh0KdAWzXK9enizNnz6NtBSt2AO2Bf7EmKRC04GtM9RNSBCxX4B+?=
+ =?us-ascii?Q?PXohmEWj1sTHmzCEJlFGBPY5Ngik2ZC8946YmFna1erP9D6tsI043PM2+1Ma?=
+ =?us-ascii?Q?LkDcFRecOk0+JPnPcYOLBpz8XO/7QLkTcI5bihbQ7FnlqradVtbjxI8/6zju?=
+ =?us-ascii?Q?cIXN8YKNKTNMWUroQH26zaot+F1usn+qg0PdH+PVVQ2THrM6VKDAkIsdUrxX?=
+ =?us-ascii?Q?9U2Lo3yQVMrpCL/uvVtsF88eFVQOxcsHnIFSZGv3SjudHhLdWhjRcKkMihfz?=
+ =?us-ascii?Q?ThvQbIE7v+tNu2ZXNUP8uc8Cgw17E2S0zC0Ar7CZmwo+5EqcOc/UwxAmJ5TH?=
+ =?us-ascii?Q?oQoifj2bogury2xga1pz7tE0gjoBF0IJqtx2L266IvSjRR4dqcuT0W2c/znG?=
+ =?us-ascii?Q?F0tqqNEveqExDY4BLMHBCInfbvQJlnaf12ILNCa811EfTvwT8o4fp4fzlU+A?=
+ =?us-ascii?Q?zSIrx/u0i3rDnZz963zSZqqIVVQpCgRxzCP2o4MceNScCL60GoOClc55Xesa?=
+ =?us-ascii?Q?kSMEoc4B1k37fWRk4W5Ae0EVl5y2nVkVJTTUFvHpkFEoh6u7n5YyIGjC5WaD?=
+ =?us-ascii?Q?k5sEDspJOvkjvfu8HUzywVQ6gh4XHC2YNu8B7R8W6ODlYHEjbskYHMoLDDjx?=
+ =?us-ascii?Q?zfRzWTFTYDE8aitIMHCCaScbOHxpWI+jWWrM8S8N4M6plONu6JDrhvY18kgD?=
+ =?us-ascii?Q?LAQ6L8HB4Fk35XwHGasPcqGYZEtvnx/bzJHW41yNl26BLjpoog4xR4BG47jt?=
+ =?us-ascii?Q?0uWv5zjFK2CA8Ix19trv2XbdTY44meRuYo8hCoKlOXWSuiRLF6CLWr+4mMAS?=
+ =?us-ascii?Q?LbMK9p01Ghm8aC8iqqJBtc3+XA9JsfJdwFFwzFl+J7vqia/aCoRWY08kzqMu?=
+ =?us-ascii?Q?JQUkIxLMChhYHt13JH5hUtZWhYqIPfartUHY9oDLBDucH6Us3w/YtmcdxC9i?=
+ =?us-ascii?Q?kTKkuq0jgOsT5iKa4sgWHhE9fuuBQadn9n1XF4BXTHkuOO1RYoR9O2Uwvgqe?=
+ =?us-ascii?Q?Kn7A14VvGfM6yfHo4vsXff5INdRERU8zLlg7?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI2PR04MB11147.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MqJNe50hm4hOyKvG702e27iK78R2ADaJo5QFlOhYxZsoUwOkv0OVAi+TB2OS?=
+ =?us-ascii?Q?B5f7LZwiMH1LBsLpPy/CsNTkQq21HbI7YJEgSxDM8+LB2sVCVgBrxEcW9nha?=
+ =?us-ascii?Q?cpfWhr5vKNI6XR/PxFnOfy6ggdX458JYetsokXDtLpwPyQYl4gVh4N9EzUEG?=
+ =?us-ascii?Q?r78JQkWKilSzaR9BHXW3NLPMlN2VhdmJ/ThHL0H1s/icxlzSpb/frb93SnAb?=
+ =?us-ascii?Q?Ir6HoVTwjY9RVJ0Z0qA7J08Dnk9fJJY6+vrd4yDqUQVGMMS56+RrU6UPpLHc?=
+ =?us-ascii?Q?tZfee/r2+E7WIV/rHgW4+tS1nJ/7473ITZkVioMj3845ahKYhfUkW69xV9pv?=
+ =?us-ascii?Q?O8nZB7XbWAQEvbIMcH67IBr3kkGlHhI3FcgjVndrnGbEV0+NX9oJHRl407Py?=
+ =?us-ascii?Q?mw5AMOn5IeUDUK19cRinE/eRmlOre1P/7kaze/cCXsRcaJh50d9ZJWeI7l4r?=
+ =?us-ascii?Q?SfYrtUL2ErdOtIiLlAHXowQx7Eq3CjqzCT/TeyyMudljM3i2eRTtVIjuzH1+?=
+ =?us-ascii?Q?upfsrHroUkUfDPWJ3HMUbahMu1ysNhzSh573JVrMjj5Yg8/9395ACQ5M5oRj?=
+ =?us-ascii?Q?TaCXWTzKe3pur724YHrWQm+MkULlE8hVHZ82blQR2yBRhMNTWX62/U5RxLDs?=
+ =?us-ascii?Q?wKz2TS2Pqc+8bChSEXFf6nt2LqO1NOnu2KKlkRHOkTSZ/fDsD0EROIdV2MVS?=
+ =?us-ascii?Q?+qqpsB9g9wnVxOFs0LFDsuq1Q8wwlFvJVAKz7O6HOEFbqjGe/nVPesJLCSAh?=
+ =?us-ascii?Q?Ed5LjnBkUp1PURcqtVZ6su+tJJ+g8BW957YPBn76YJfrNK1InOCXzTb7V3Qx?=
+ =?us-ascii?Q?HJhRyMo6l4BZX5XqUsUYuysHt9AAfAXj4M/LRAZf5/ZKgVD6d0GqVsaNiQgu?=
+ =?us-ascii?Q?5wTx0CE972kwy2WxjNkXplLQuEyj75cL//aEG/ds/lhJtflMwBvHzZRVzR/g?=
+ =?us-ascii?Q?bE57JI00lJHAVzVP0wRxAGpj1+4oi626v+qPu9qySpQMCEX5QFEzBwKgMzjP?=
+ =?us-ascii?Q?wF/i5jNplhsrf9U+k9Lva2nrg5ri/53qsgJRCTIYTDbVpWPAXBKgCqjTa0RB?=
+ =?us-ascii?Q?p7BM8XMk68XMdoYaYop9wOGnOYx3aTfHbJXJYn0WVfCYWbWj0pMfMYOwrQLu?=
+ =?us-ascii?Q?DBnXTH830/CFc174AThyEdyp6qzTGu1ISQu3ruYthxnVOkOuiTh3BANM+QFv?=
+ =?us-ascii?Q?8nJOatXdjZE+PXNpUdIfq93GKhq+JLbXc3ee4OvKeW5qtJKBg1Ho0clVSqH5?=
+ =?us-ascii?Q?FGs46YEMN/aiwt8wxTpD2B61rF7Mrwt/zauXi6Oe7hbmruSPVYpzT0XyPXiL?=
+ =?us-ascii?Q?w3lg9eYv4+kj0YcOt3w8EpoUXrQWJgpvnRh6328if0NMiQxRvx0zS3cmAUmF?=
+ =?us-ascii?Q?/Jfo6P+rH6fIKMp6WsfLizj1UgxC783NexnoAz8+yqt44cfGWtVWDDXqRX/y?=
+ =?us-ascii?Q?XuQOR9XocE3r8yspKgLEiGlEZysyR7HCXYcR3n/b3IJV4F/lZ1WE0ZEfr3RA?=
+ =?us-ascii?Q?4sDQzMIeHHrbiMozS6NGzOlaRYTtFNAj9gvBzKDYhZP57naj0ec7dfu/xdnQ?=
+ =?us-ascii?Q?LMgbtEDudebeoFH0RyiLd0BCHZoQWhAJ/DH0L5ds?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0acff2ea-572a-4d7d-973c-08de15487001
+X-MS-Exchange-CrossTenant-AuthSource: VI2PR04MB11147.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 11:03:19.9198
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6FfO9eEXJ6aMUak4Iq2rflAS1+O+eOMvPbfo2Lpx4cj4NFSlQiaFMaVw1ez7+GiP0BTr484hS9HHzIwZfSuCiA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7830
 
-On Mon, Oct 27, 2025 at 01:14:09PM +0800, kernel test robot wrote:
+From: Carlos Song <carlos.song@nxp.com>
 
-> kernel test robot noticed "WARNING:possible_recursive_locking_detected_migration_is_trying_to_acquire_lock:at:set_cpus_allowed_force_but_task_is_already_holding_lock:at:cpu_stopper_thread" on:
-> 
-> commit: b079d93796528053cde322f2ca838c2d21c297e7 ("sched: Rename do_set_cpus_allowed()")
-> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git sched/core
+ECSPI in i.MX51 and i.MX53 support target mode. Current code only support
+i.MX53. Remove is_imx53_ecspi() check for target mode to support i.MX51.
 
-Your biscect went sideways, it is, as Jan correctly found:
-
-  abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-
-
-Anyway, this was helpful:
-
-> [  116.814488][   T21] ============================================
-> [  116.815227][   T21] WARNING: possible recursive locking detected
-> [  116.815957][   T21] 6.18.0-rc1-00014-gb079d9379652 #1 Tainted: G S                 
-> [  116.816878][   T21] --------------------------------------------
-> [  116.817602][   T21] migration/1/21 is trying to acquire lock:
-> [  116.818301][   T21] ee7f1930 (&rq->__lock){-.-.}-{2:2}, at: set_cpus_allowed_force+0x3c/0xc0
-> [  116.820432][   T21] 
-> [  116.820432][   T21] but task is already holding lock:
-> [  116.821314][   T21] ee7f1930 (&rq->__lock){-.-.}-{2:2}, at: cpu_stopper_thread+0x93/0x170
-
-> [  116.841003][   T21] 
-> [  116.842427][   T21] 2 locks held by migration/1/21:
-> [  116.843393][   T21]  #0: b92d06dc (&p->pi_lock){-.-.}-{2:2}, at: __balance_push_cpu_stop+0x28/0x2b0
-> [  116.845044][   T21]  #1: ee7f1930 (&rq->__lock){-.-.}-{2:2}, at: cpu_stopper_thread+0x93/0x170
-> [  116.846669][   T21] 
-> [  116.846669][   T21] stack backtrace:
-> [  116.847890][   T21] CPU: 1 UID: 0 PID: 21 Comm: migration/1 Tainted: G S                  6.18.0-rc1-00014-gb079d9379652 #1 NONE  6d63d2e836521c1c681a07c673117fb98e4815ab
-> [  116.847897][   T21] Tainted: [S]=CPU_OUT_OF_SPEC
-> [  116.847898][   T21] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  116.847901][   T21] Stopper: __balance_push_cpu_stop+0x0/0x2b0 <- finish_lock_switch+0x7d/0xd0
-> [  116.847909][   T21] Call Trace:
-
-> [  116.847939][   T21]  ? lock_acquire+0xc3/0x1f0
-> [  116.847943][   T21]  ? set_cpus_allowed_force+0x3c/0xc0
-> [  116.847947][   T21]  ? lock_acquire+0xc3/0x1f0
-> [  116.847952][   T21]  ? __task_rq_lock+0x73/0x1d0
-> [  116.847955][   T21]  ? set_cpus_allowed_force+0x3c/0xc0
-> [  116.847959][   T21]  ? set_cpus_allowed_force+0x3c/0xc0
-> [  116.847962][   T21]  ? __balance_push_cpu_stop+0x136/0x2b0
-> [  116.847966][   T21]  ? select_fallback_rq+0x148/0x230
-> [  116.847970][   T21]  ? __balance_push_cpu_stop+0x163/0x2b0
-> [  116.847974][   T21]  ? cpu_stopper_thread+0x93/0x170
-
-Clearly I missed that case :/
-
+Signed-off-by: Carlos Song <carlos.song@nxp.com>
 ---
-Subject: sched: Fix the do_set_cpus_allowed() locking fix
-
-Commit abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-overlooked that __balance_push_cpu_stop() calls select_fallback_rq()
-with rq->lock held. This makes that set_cpus_allowed_force() will
-recursively take rq->lock and the machine locks up.
-
-Run select_fallback_rq() earlier, without holding rq->lock. This opens
-up a race window where a task could get migrated out from under us, but
-that is harmless, we want the task migrated.
-
-select_fallback_rq() itself will not be subject to concurrency as it
-will be fully serialized by p->pi_lock, so there is no chance of
-set_cpus_allowed_force() getting called with different arguments and
-selecting different fallback CPUs for one task.
-
-Fixes: abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-Reported-by: Jan Polensky <japo@linux.ibm.com>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Closes: https://lore.kernel.org/oe-lkp/202510271206.24495a68-lkp@intel.com
+Change for V2:
+- Change patch name and commit log
+- Remove target_max_transfer_bytes from devtype_data
 ---
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1842285eac1e..67b5f2faab36 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8044,18 +8044,15 @@ static int __balance_push_cpu_stop(void *arg)
- 	struct rq_flags rf;
- 	int cpu;
+ drivers/spi/spi-imx.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 64b7e977dcc1..9a1113ea4ba2 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -594,7 +594,7 @@ static int mx51_ecspi_prepare_message(struct spi_imx_data *spi_imx,
+ 	 * is not functional for imx53 Soc, config SPI burst completed when
+ 	 * BURST_LENGTH + 1 bits are received
+ 	 */
+-	if (spi_imx->target_mode && is_imx53_ecspi(spi_imx))
++	if (spi_imx->target_mode)
+ 		cfg &= ~MX51_ECSPI_CONFIG_SBBCTRL(channel);
+ 	else
+ 		cfg |= MX51_ECSPI_CONFIG_SBBCTRL(channel);
+@@ -682,7 +682,7 @@ static int mx51_ecspi_prepare_transfer(struct spi_imx_data *spi_imx,
  
--	raw_spin_lock_irq(&p->pi_lock);
--	rq_lock(rq, &rf);
--
--	update_rq_clock(rq);
--
--	if (task_rq(p) == rq && task_on_rq_queued(p)) {
-+	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
- 		cpu = select_fallback_rq(rq->cpu, p);
--		rq = __migrate_task(rq, &rf, p, cpu);
--	}
+ 	/* Clear BL field and set the right value */
+ 	ctrl &= ~MX51_ECSPI_CTRL_BL_MASK;
+-	if (spi_imx->target_mode && is_imx53_ecspi(spi_imx))
++	if (spi_imx->target_mode)
+ 		ctrl |= (spi_imx->target_burst * 8 - 1)
+ 			<< MX51_ECSPI_CTRL_BL_OFFSET;
+ 	else {
+@@ -1375,7 +1375,7 @@ static int spi_imx_setupxfer(struct spi_device *spi,
+ 	spi_imx->rx_only = ((t->tx_buf == NULL)
+ 			|| (t->tx_buf == spi->controller->dummy_tx));
  
--	rq_unlock(rq, &rf);
--	raw_spin_unlock_irq(&p->pi_lock);
-+		rq_lock(rq, &rf);
-+		update_rq_clock(rq);
-+		if (task_rq(p) == rq && task_on_rq_queued(p))
-+			rq = __migrate_task(rq, &rf, p, cpu);
-+		rq_unlock(rq, &rf);
-+	}
+-	if (is_imx53_ecspi(spi_imx) && spi_imx->target_mode) {
++	if (spi_imx->target_mode) {
+ 		spi_imx->rx = mx53_ecspi_rx_target;
+ 		spi_imx->tx = mx53_ecspi_tx_target;
+ 		spi_imx->target_burst = t->len;
+@@ -1649,8 +1649,7 @@ static int spi_imx_pio_transfer_target(struct spi_device *spi,
+ 	struct spi_imx_data *spi_imx = spi_controller_get_devdata(spi->controller);
+ 	int ret = 0;
  
- 	put_task_struct(p);
- 
+-	if (is_imx53_ecspi(spi_imx) &&
+-	    transfer->len > MX53_MAX_TRANSFER_BYTES) {
++	if (transfer->len > MX53_MAX_TRANSFER_BYTES) {
+ 		dev_err(&spi->dev, "Transaction too big, max size is %d bytes\n",
+ 			MX53_MAX_TRANSFER_BYTES);
+ 		return -EMSGSIZE;
+-- 
+2.34.1
+
 
