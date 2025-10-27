@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-871616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6AD6C0DCBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:05:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A0AC0DCB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5D343B6063
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B21189011B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B06270568;
-	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9879030100A;
+	Mon, 27 Oct 2025 12:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/brPLd2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8WqVO9e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5365925C838;
-	Mon, 27 Oct 2025 12:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1466F29A9FA;
+	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569820; cv=none; b=tXJrDHQqd76M5DxLUiKNyXguZC08ouHlcP1rtKOKX1z4zuKimA1fuIzPpBMDN/oO4qWVjxlKyyj29cpT6djx+P8UgJ6effC9AtbBdDAohwkvGzqCKX5LW1xE857Mt9jxHQlR0lLQhFuZOJEdecvoOF/tMFYBbp136SVhKreXsQQ=
+	t=1761569822; cv=none; b=kOzW6YV6TfQUPijZzakd8PeJNjZOFqoHJX8ycPEvBOEUvRQQTTqW3/Jh+7doOQOqvV0ogxxvGXCzQulburSiGde1PfnKw2zEd/QWstYNs7Q2lo0RAHHwp9bDB+6DrAjIbGxUTqbI9kEO+IBPoFaVw/xg93QN/8evrXAiAM0XmsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569820; c=relaxed/simple;
-	bh=tZng3pvLf5NVIYjrv5Cdlkb3kjII1JMSXNhC/Cdf7Og=;
+	s=arc-20240116; t=1761569822; c=relaxed/simple;
+	bh=6zf3HJ4SFn/da8903S5Ji6WZxaAKcw0a+EFVvyPIafQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tal9yfGAaSgWkcWy3b5Crzyo5vyuiqAHzU+iOlnaTEpa+ryAxgIGRyvAjFMS9/kyF8O8S3gCQRw8k7yOYQz6OpoPynCmDYMldh4JMQxvE3A1f9NFYJtdkYeWMkQNh/C9Bn3QZWAGGCMmNkKxjCO/hipmL4iwR8z847wwbpCpfWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/brPLd2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F34C16AAE;
-	Mon, 27 Oct 2025 12:56:59 +0000 (UTC)
+	 MIME-Version; b=riQ0Sr4cq27yRKY5mKDvphJ7qF3WVOzraP+BHmA6uq3oWn5YEOLzqqIs4y49ardhyjrw71wuLNsqtS/ZqiC1o1EPOAq2/0bUgPAgU6u0JOAs49gz+GZpNEDcpXvpSI6OeRqGyDjjZ9vvVcBu6Rgv7stNCf8hUKogIELK7QqDxOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8WqVO9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0CBC4CEFF;
+	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761569819;
-	bh=tZng3pvLf5NVIYjrv5Cdlkb3kjII1JMSXNhC/Cdf7Og=;
+	s=k20201202; t=1761569821;
+	bh=6zf3HJ4SFn/da8903S5Ji6WZxaAKcw0a+EFVvyPIafQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W/brPLd27LQxkag5GvBdnPPh7bFVokQlJWK6AREvtkOXp7m0Ter+XyZTQafVICWIL
-	 XNX5HD29gmuENvJOFkRAgzO8W8T5Wx7bBHckFOOaw0cU+f2qwGBMWKLmuxrmJOQ+DZ
-	 IhcY1MQaGv+x7kE6ys2jMpKouNNg/GOKrYDpWWQqVc6YN9pFkGke5Hs4+Hn9Gqwj+g
-	 1gCSFNx7NPhZ3+vZFRHiuw1KOTbP+8JdtiXQgxe0zCCsuZ0YRx1cnoGkBWlz252F7q
-	 zuciNLynCA+ngLHjDc9AKQa5SdAeUEZq5kbHMhur97m7r4LaqVUYRE6CTowG1o/QiK
-	 uY7FEv03zbb9g==
+	b=d8WqVO9ewM2f4dpadJXwH1G+wsCxcKw+wOJe7fbd8xZMraDijIwwWQJwC0V9Go5Lh
+	 4vK02KElzkfrDwK1vZhMHZ5llNawWQZumn5YFXJ4quAz4mBIgNF5zG4aTM/TQz4cXs
+	 GUXF84eXaQVjeoWxqOW509eQtGbWJAhI3t1ow1bkZvCduTMC/wZRyo6Vc3bcDa7qPC
+	 YJzJOQW280WqEtSGg5mYR8Yb7+1TRtAmOqZKZHXKU2TQyck8DwKpZz3RtITkg+ZY5C
+	 ACYpBno32losPmltjPYDo+5no/FlkpPBRAvi5BVTXg4O8XfISPeOABN9teHdWiZ04Q
+	 XCJEEeDHWJL6g==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 8455C5FEEE; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
+	id 933FB5FF71; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej@kernel.org>,
@@ -57,10 +57,10 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 03/10] ASoC: dt-bindings: allwinner,sun4i-a10-spdif: Add compatible for A523
-Date: Mon, 27 Oct 2025 20:56:44 +0800
-Message-ID: <20251027125655.793277-4-wens@kernel.org>
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: [PATCH v2 05/10] arm64: dts: allwinner: a523: Add DMA controller device nodes
+Date: Mon, 27 Oct 2025 20:56:46 +0800
+Message-ID: <20251027125655.793277-6-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251027125655.793277-1-wens@kernel.org>
 References: <20251027125655.793277-1-wens@kernel.org>
@@ -72,99 +72,194 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SPDIF hardware block in the A523 SoC has the same layout as the
-H616 for the transmitter side. However unlike previous generations,
-the hardware block now takes separate module clocks for the TX and RX
-sides. This presumably allows the hardware to send and receive audio
-streams at different sample rates. The new hardware also gained RX
-insertion detection, and some extra information registers.
+The A523 has two DMA controllers. Add device nodes for both. Also hook
+up DMA for existing devices.
 
-Add a new compatible for it without any fallbacks.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 ---
- .../sound/allwinner,sun4i-a10-spdif.yaml      | 44 ++++++++++++++++---
- 1 file changed, 38 insertions(+), 6 deletions(-)
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml
-index aa32dc950e72..1d089ba70f45 100644
---- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml
-+++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml
-@@ -23,6 +23,7 @@ properties:
-       - const: allwinner,sun8i-h3-spdif
-       - const: allwinner,sun50i-h6-spdif
-       - const: allwinner,sun50i-h616-spdif
-+      - const: allwinner,sun55i-a523-spdif
-       - items:
-           - const: allwinner,sun8i-a83t-spdif
-           - const: allwinner,sun8i-h3-spdif
-@@ -37,14 +38,12 @@ properties:
-     maxItems: 1
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+index a9e051a8bea3..8edbd3873199 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+@@ -241,6 +241,8 @@ uart0: serial@2500000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART0>;
+ 			resets = <&ccu RST_BUS_UART0>;
++			dmas = <&dma 14>, <&dma 14>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
  
-   clocks:
--    items:
--      - description: Bus Clock
--      - description: Module Clock
-+    minItems: 2
-+    maxItems: 3
+@@ -252,6 +254,8 @@ uart1: serial@2500400 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART1>;
+ 			resets = <&ccu RST_BUS_UART1>;
++			dmas = <&dma 15>, <&dma 15>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
  
-   clock-names:
--    items:
--      - const: apb
--      - const: spdif
-+    minItems: 2
-+    maxItems: 3
+@@ -263,6 +267,8 @@ uart2: serial@2500800 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART2>;
+ 			resets = <&ccu RST_BUS_UART2>;
++			dmas = <&dma 16>, <&dma 16>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
  
-   # Even though it only applies to subschemas under the conditionals,
-   # not listing them here will trigger a warning because of the
-@@ -65,6 +64,7 @@ allOf:
-               - allwinner,sun8i-h3-spdif
-               - allwinner,sun50i-h6-spdif
-               - allwinner,sun50i-h616-spdif
-+              - allwinner,sun55i-a523-spdif
+@@ -274,6 +280,8 @@ uart3: serial@2500c00 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART3>;
+ 			resets = <&ccu RST_BUS_UART3>;
++			dmas = <&dma 17>, <&dma 17>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
  
-     then:
-       required:
-@@ -98,6 +98,38 @@ allOf:
-             - const: rx
-             - const: tx
+@@ -285,6 +293,8 @@ uart4: serial@2501000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART4>;
+ 			resets = <&ccu RST_BUS_UART4>;
++			dmas = <&dma 18>, <&dma 18>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - allwinner,sun55i-a523-spdif
+@@ -296,6 +306,8 @@ uart5: serial@2501400 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART5>;
+ 			resets = <&ccu RST_BUS_UART5>;
++			dmas = <&dma 19>, <&dma 19>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -307,6 +319,8 @@ uart6: serial@2501800 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART6>;
+ 			resets = <&ccu RST_BUS_UART6>;
++			dmas = <&dma 20>, <&dma 20>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -318,6 +332,8 @@ uart7: serial@2501c00 {
+ 			reg-io-width = <4>;
+ 			clocks = <&ccu CLK_BUS_UART7>;
+ 			resets = <&ccu RST_BUS_UART7>;
++			dmas = <&dma 21>, <&dma 21>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -329,6 +345,8 @@ i2c0: i2c@2502000 {
+ 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_BUS_I2C0>;
+ 			resets = <&ccu RST_BUS_I2C0>;
++			dmas = <&dma 43>, <&dma 43>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -342,6 +360,8 @@ i2c1: i2c@2502400 {
+ 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_BUS_I2C1>;
+ 			resets = <&ccu RST_BUS_I2C1>;
++			dmas = <&dma 44>, <&dma 44>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -355,6 +375,8 @@ i2c2: i2c@2502800 {
+ 			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_BUS_I2C2>;
+ 			resets = <&ccu RST_BUS_I2C2>;
++			dmas = <&dma 45>, <&dma 45>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -368,6 +390,8 @@ i2c3: i2c@2502c00 {
+ 			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_BUS_I2C3>;
+ 			resets = <&ccu RST_BUS_I2C3>;
++			dmas = <&dma 46>, <&dma 46>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -381,6 +405,8 @@ i2c4: i2c@2503000 {
+ 			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_BUS_I2C4>;
+ 			resets = <&ccu RST_BUS_I2C4>;
++			dmas = <&dma 47>, <&dma 47>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -394,6 +420,8 @@ i2c5: i2c@2503400 {
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_BUS_I2C5>;
+ 			resets = <&ccu RST_BUS_I2C5>;
++			dmas = <&dma 48>, <&dma 48>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -408,6 +436,19 @@ syscon: syscon@3000000 {
+ 			ranges;
+ 		};
+ 
++		dma: dma-controller@3002000 {
++			compatible = "allwinner,sun55i-a523-dma",
++				     "allwinner,sun50i-a100-dma";
++			reg = <0x03002000 0x1000>;
++			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_DMA>, <&ccu CLK_MBUS_DMA>;
++			clock-names = "bus", "mbus";
++			dma-channels = <16>;
++			dma-requests = <54>;
++			resets = <&ccu RST_BUS_DMA>;
++			#dma-cells = <1>;
++		};
 +
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Bus Clock
-+            - description: TX Clock
-+            - description: RX Clock
+ 		sid: efuse@3006000 {
+ 			compatible = "allwinner,sun55i-a523-sid",
+ 				     "allwinner,sun50i-a64-sid";
+@@ -729,6 +770,8 @@ r_i2c0: i2c@7081400 {
+ 			reg = <0x07081400 0x400>;
+ 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&r_ccu CLK_BUS_R_I2C0>;
++			dmas = <&dma 49>, <&dma 49>;
++			dma-names = "rx", "tx";
+ 			resets = <&r_ccu RST_BUS_R_I2C0>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&r_i2c_pins>;
+@@ -775,6 +818,19 @@ mcu_ccu: clock-controller@7102000 {
+ 			#reset-cells = <1>;
+ 		};
+ 
++		mcu_dma: dma-controller@7121000 {
++			compatible = "allwinner,sun55i-a523-mcu-dma",
++				     "allwinner,sun50i-a100-dma";
++			reg = <0x07121000 0x1000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mcu_ccu CLK_BUS_MCU_DMA>, <&mcu_ccu CLK_MCU_MBUS_DMA>;
++			clock-names = "bus", "mbus";
++			dma-channels = <16>;
++			dma-requests = <15>;
++			resets = <&mcu_ccu RST_BUS_MCU_DMA>;
++			#dma-cells = <1>;
++		};
 +
-+        clock-names:
-+          items:
-+            - const: apb
-+            - const: tx
-+            - const: rx
-+    else:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Bus Clock
-+            - description: Module Clock
-+
-+        clock-names:
-+          items:
-+            - const: apb
-+            - const: spdif
-+
- required:
-   - "#sound-dai-cells"
-   - compatible
+ 		npu: npu@7122000 {
+ 			compatible = "vivante,gc";
+ 			reg = <0x07122000 0x1000>;
 -- 
 2.47.3
 
