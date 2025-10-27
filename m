@@ -1,144 +1,205 @@
-Return-Path: <linux-kernel+bounces-872140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A638FC0F58A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:36:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B7AC0F5F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B4B434F4EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8AB1894B23
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E8E3148DC;
-	Mon, 27 Oct 2025 16:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81AC314D12;
+	Mon, 27 Oct 2025 16:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hWOm3s/p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DZvBofbd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9PenzX7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B817C2C3242;
-	Mon, 27 Oct 2025 16:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C938314B75
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582704; cv=none; b=nhGTC0fv2NEeCGRG+yqHcaL+q7IwLI1nCe+D1oKV1M9FJjsi5zkugBrLqu5CaaAO8hH5TVDWl4wfsk5tZsxSpz3E2AL98GMliFj8sNfX/o7/N3SkAMzoII7zfAB0rOAiu4VoBuxWjRXbHCz0MSD5prQjmXYZWJnhgS5YQ3+NVw4=
+	t=1761582723; cv=none; b=AGTEcplpL9tvE28vDISGFwiGgJl9IHUgIyM9cmacqqIG7r2/NFPfAPn/BGP0bUZcrpOI0NznkUHn9RYG7J8KRkydZ9wsJQs6G5uRJuXbRL/PwA/W7eDI86R3NFfFYY0d7/OJrJgNhHlay+TBnm8ELj9xlUCFs5c08AgfZGpAHs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582704; c=relaxed/simple;
-	bh=UErrFuj6ytgAMTjdGWk12FeZlPomKBeuBtGu+NEN8QE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=EReiYFgGKWJG6gTSCs+Jnnbh45k7TfXgzexfjZsGPnuoVX6T3sYF6P6p4UINOvuVTQdoT9S0hpzFLWWfLYpPYkX40hkgdpp5FEfdWc4rZnwI1SrYstKDhPeP2CukxJuUJ5lucPtT+2GDutMXJS15trTFJrP51lnjZGv7W9H8kFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hWOm3s/p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DZvBofbd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 16:31:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761582701;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1761582723; c=relaxed/simple;
+	bh=iNeib+L/sv3iKHk1dJkrzOT6vJ28kpHPaFmhxbuhswo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Chv8Yf5Lzccn9c/Kuc/+dtDxMadryq/CTeheEBChBz4+aXjQ2QYl2xirfo5nU5qVcJpqsJUAomkEAAhY/UdDEHrknz+oIy1rnlv4eYj3nDgh0GZRYN9gmhmGagHXiDnu5GLCzH81K4QRPuluJuRpWMQA9A9qE1MM44MOBjfOr4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9PenzX7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761582721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7iz6wsi08YjwTmOPs+NclMtmKa1EjkQAcuy+5M2SCE=;
-	b=hWOm3s/pjUh4wW3cVfiz4GRG0gq03phBltnfe7XUZ0GqY61Lqocn3fMN9o0CsUpbyt0Kpz
-	mqS0yg1La3NFKUAxRwJnURePm7YuRLRpCL/uNY3Uq5I0qRIn2njPDjI3CB0MUZ9mU0yqQe
-	LLLQ5nx3cG57lbDQ5oDIYyPN7f+zayelyEqyWivtUH6gm0ZH7vx2Ov+3qBx25XETNCZSD8
-	ygDJFp8VKZKVTtQVy/Ha035EU8cYXTS8/C+xFXQpKn1VDGjjQQkLA0/dyEhb+7YV+7m2Rz
-	Anbx1p6bUOUgaDRSWPiP58au2FLJj1kS4TWrpdtEt2V5MCkPgXJCgd2b0pGZXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761582701;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7iz6wsi08YjwTmOPs+NclMtmKa1EjkQAcuy+5M2SCE=;
-	b=DZvBofbdRoWr3xhd1hC8DIadzg20LqPEhU0TH8sefmNMij1JZt+nTR3oPXLZmg+W1Tzl3Y
-	vQLtaK2JaLvIaDBA==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/microcode/AMD: Limit Entrysign signature
- checking to known generations
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251023124629.5385-1-bp@kernel.org>
-References: <20251023124629.5385-1-bp@kernel.org>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=a4SSBM/POjfRiBE6DHhiqMi9Y8mKWaQroye8KGKfKMM=;
+	b=f9PenzX7LuspTkC1lFgjl3Isvvqw2B2mBkJhPZQpp8lxnElTL3VSnt/5HhGlND6jAhAMZa
+	WxMg4zam7K5CJnQ/cSFjDdEZTiWa5wQKyYtIeFKHyw+8ntzwHlRkd/JMPqyPBXmbLzK4mm
+	bDb5SA5PLSGEvNBInncDeojle0Vs8fg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-E1su7EpCOwOvkn_yVuExkQ-1; Mon, 27 Oct 2025 12:31:59 -0400
+X-MC-Unique: E1su7EpCOwOvkn_yVuExkQ-1
+X-Mimecast-MFC-AGG-ID: E1su7EpCOwOvkn_yVuExkQ_1761582718
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso34199245e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:31:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761582718; x=1762187518;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a4SSBM/POjfRiBE6DHhiqMi9Y8mKWaQroye8KGKfKMM=;
+        b=mRbKrE5kKbiOHo5G8ahID+H3oKcZj+yYC9hN3xxuiZ7GZmfp9wxK77I78pddO6xdCO
+         9KCzqdFBp1mgaSiwfiJsmYAJSQ1yUyys/Keamq27u5GC3/dwXlv9lDYlwvsm8KsNux+M
+         B0mUCJXGJ0X/6KdJyX05tzRCKSAjuR2sJ1I9Wtr5laGpIJrA1e0UD264U+z1L0SxBWEN
+         ulbN8DE5elDKE+aH32Ik2orLdePBzCl1MeLURnr9BVNaN4CmS9m4F1C69vkpvirhONpZ
+         EwmyY59s5ESyazULRjB4LPSLQOcq5NMJV+e7UtYK11mmfZlpbvPEOBuJ4l+a3XOKXUUx
+         yb4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2EabzJB0a9VtgRjtiKQjHj9SOoe+VxctrHSIZYMCRKFRAozofSJTHpASfbXkMxe346L1ns879EgMK4Nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9zT+7lqgwNNeC+xzVe9ce9VDoN4oUPIRIGQ3T3abAnZ/hVyOC
+	7YeQ2Fhyd1Dei0CDtxb5o+PwdPOya5gFSRa3ylx2aPu6u2iV0sZq9mZ7VSVX+30U6azT0XTyqTF
+	iUAk6mkNdoZFxtRki1FXwLdNtil6cEzPxv1Yif/ITVPOkcRND7JNaOcnRLfNqkO8q2A==
+X-Gm-Gg: ASbGnct+rUMjoeRu1vNWNoFXE9mm8xWdGqguz0dIUEzlMYBMIvG08qTaK6o/dOL9vj5
+	H65kzFQnDG2SAexrhC6swNC0EioJUCCiTztBEv9Xc35/6i0vd2qvdVlr69BHeRGHE0NdnajdfKW
+	K+lspBjy2HCjnujDaYJLNTwrU8WsnPJSZgVOIL8O4njoeCexE4zha8IUAdIzj92GyjpXfkj7/t7
+	ntSDmUqEn9iNaUc7i6YmhhxbpMWZjDbMjxfYu7zL0Yb+bprvJXH/o9VqMtAJWarGrug02/0m/5p
+	WREe0cXvh6FSP8YhjLV1BClp2wvUrt/1snvg8ihE4bjOsKhpyxwzxEbvswoFRspahcW8YwCRKBP
+	E758O2Q8JZdGGNmTGjzsEh36I0dRZGD3s7Jg4fnXPfBiUuYQqW2Zz+Ie9LXAJvEc9j0y3aI0lzi
+	d/tOzsJcahxAMZPQHrBqfj/FpHEhc=
+X-Received: by 2002:a05:600c:540d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-47717e6ae77mr2486395e9.40.1761582718002;
+        Mon, 27 Oct 2025 09:31:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9hBUduL/K2sJ2VMSMKpTvh6O7vT8Cwrl1/5Mssg7iiqgi3rWLBvdxmliRcG5sUi4pRS1k8Q==
+X-Received: by 2002:a05:600c:540d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-47717e6ae77mr2485705e9.40.1761582717529;
+        Mon, 27 Oct 2025 09:31:57 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4894c9sm141374155e9.5.2025.10.27.09.31.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 09:31:56 -0700 (PDT)
+Message-ID: <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
+Date: Mon, 27 Oct 2025 17:31:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176158269992.2601451.1416800166481248088.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Gregory Price <gourry@gourry.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+ Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ Leon Romanovsky <leon@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+ <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
+ <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
+ <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+ <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
+ <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
+ <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F> <20251027161146.GG760669@ziepe.ca>
+ <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+> 
+> I don't love the union.
+> 
+> How would we determine what type it is, we'd have to have some
+> generic_leaf_entry_t type or something to contain the swap type field and then
+> cast and... is it worth it?
+> 
+> Intent of non-present was to refer to not-swap swapentry. It's already a
+> convention that exists, e.g. is_pmd_non_present_folio_entry().
 
-Commit-ID:     8a9fb5129e8e64d24543ebc70de941a2d77a9e77
-Gitweb:        https://git.kernel.org/tip/8a9fb5129e8e64d24543ebc70de941a2d77=
-a9e77
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Thu, 23 Oct 2025 14:46:29 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 27 Oct 2025 17:07:17 +01:00
+Just noting that this was a recent addition (still not upstream) that 
+essentially says "there is a folio here, but it's not in an ordinary 
+present page table entry.
 
-x86/microcode/AMD: Limit Entrysign signature checking to known generations
+So we could change that to something better.
 
-Limit Entrysign sha256 signature checking to CPUs in the range Zen1-Zen5.
+-- 
+Cheers
 
-X86_BUG cannot be used here because the loading on the BSP happens way
-too early, before the cpufeatures machinery has been set up.
+David / dhildenb
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://patch.msgid.link/all/20251023124629.5385-1-bp@kernel.org
----
- arch/x86/kernel/cpu/microcode/amd.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microc=
-ode/amd.c
-index 28ed8c0..b7c797d 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -233,13 +233,31 @@ static bool need_sha_check(u32 cur_rev)
- 	return true;
- }
-=20
-+static bool cpu_has_entrysign(void)
-+{
-+	unsigned int fam   =3D x86_family(bsp_cpuid_1_eax);
-+	unsigned int model =3D x86_model(bsp_cpuid_1_eax);
-+
-+	if (fam =3D=3D 0x17 || fam =3D=3D 0x19)
-+		return true;
-+
-+	if (fam =3D=3D 0x1a) {
-+		if (model <=3D 0x2f ||
-+		    (0x40 <=3D model && model <=3D 0x4f) ||
-+		    (0x60 <=3D model && model <=3D 0x6f))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, =
-unsigned int len)
- {
- 	struct patch_digest *pd =3D NULL;
- 	u8 digest[SHA256_DIGEST_SIZE];
- 	int i;
-=20
--	if (x86_family(bsp_cpuid_1_eax) < 0x17)
-+	if (!cpu_has_entrysign())
- 		return true;
-=20
- 	if (!need_sha_check(cur_rev))
 
