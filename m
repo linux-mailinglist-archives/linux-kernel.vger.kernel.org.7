@@ -1,124 +1,85 @@
-Return-Path: <linux-kernel+bounces-872109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FB2C0F543
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:34:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85553C0F488
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FF1462E50
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:29:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3175434F164
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AA8313269;
-	Mon, 27 Oct 2025 16:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB3130ACF4;
+	Mon, 27 Oct 2025 16:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFQew1pO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDQrWuXh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5385B3101CD;
-	Mon, 27 Oct 2025 16:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76184307AFC;
+	Mon, 27 Oct 2025 16:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582542; cv=none; b=tynnmPkCVuPGTXdnp/uDvwKHOxA80cqcgNcat36owXb3bsvZrGTQY4KytOsq3f7e9LFTFHm+cRddXGRuhQqKa+enKpADvt8n0L6Lg8of/ImOIfpRPSa+6BPmS9yuFnP91SDeHhU6spf8LV5Nja4LTJfPMxuly7x5e0SaJwh589U=
+	t=1761582569; cv=none; b=GrczWMN0e8WbgRGoNLA95mUhaoFIdOGc8t2++BetTko3WcPSnvfu7bsqMr7XMdnu+pVLLNTartvClrSOGZzovZy+NFwviHAgMrtnOmr//5R9K3JMNYw9j+UdbbYocWRJeVIkwv3+ATkbvvri9ujyKVrX3xLcj0VpnweC1XsqtAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582542; c=relaxed/simple;
-	bh=NfHPlwWsM9eAJ+QfU9nW2b0sBCED7mfiC4nhVZZCd5E=;
+	s=arc-20240116; t=1761582569; c=relaxed/simple;
+	bh=+HEMJU04coowWSBBpHsy//YjtgafjGHYeOQzFMvBlwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0mFj7RVF818oLTSNQlHg2wtDhk8ka/My1KJfIGGnlyGi99gVT8pi7UxCRalaLB+/ZxdP7UByLpMGm9Aw2Qr+hyfZKv66FBEOXS1h0fIpr3Pg8gTXo7qjaErN5CSQgq/rI52gPlhrDaF6sxM663cg1bRjR7JhNTFywYU+BwRUfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFQew1pO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4A1C4CEFD;
-	Mon, 27 Oct 2025 16:29:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=owrXJM20+EEqQjAtel0VGihShzW+5BCvFj9YmzG1/5MVK17H1pVKrM3sy2bcZo0rPhclzw3TXBJ72ahYRwP/NFx/WAe7AQOepCkRBpniKjiv9yVSUJdNAeWaGMUkRN3JVLpyafG4jwENVxKbKDxcPvsQuDNdq1iRSKnwzWnq3dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tDQrWuXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0329C4CEF1;
+	Mon, 27 Oct 2025 16:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761582541;
-	bh=NfHPlwWsM9eAJ+QfU9nW2b0sBCED7mfiC4nhVZZCd5E=;
+	s=k20201202; t=1761582569;
+	bh=+HEMJU04coowWSBBpHsy//YjtgafjGHYeOQzFMvBlwY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFQew1pOQYiPwFcplM/5FHAetlC7c6d06JiP3BvU7Le1oLw8gdUTBAXcLIIY0BGEa
-	 rWKLN5tEVCTO5dqMeXS5Yac3Yc1v8FFPc3QcyaVTqmVb7SQAgZUp6LYkPF02FQeaPn
-	 YbYXHGQ1/FNxMXk/SMRhOaE69BY9WBRGp3hsBboVSHDW8XkU/Z6ZTGYMx1RsVrj8yn
-	 e21E0d5BS7R8KmGEAKNaKAljdg+n29M3txpIrDSDL4KsTtdUl33+wPxs7qxWyNQWpw
-	 n+56HHnbBbJhvhbbkQNZLmNmEAonlSPtrINGV3/lMSz0CBP0OYsr5KP8mo6Ucf9+mE
-	 4hn+Y961Xukrg==
-Date: Mon, 27 Oct 2025 17:28:58 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
-	Francesco Valla <francesco@valla.it>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Corbet <corbet@lwn.net>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-embedded@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] Add splash DRM client
-Message-ID: <i7xxy33do4q4odvxxb77xv4ri5jgr6dup5kvfsjfs4h7mbmhrj@h3ke7h5whyvx>
-References: <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
- <yq4btdc5qqukuqps7y53dratmu64ghyifgprlndnk5rbgml4of@rvca75sncvsm>
- <3edea192-6a3f-44f5-b570-7033776e2ce4@suse.de>
- <5ff10f7d-e9d4-4d4d-ae82-8986dc28d14b@amd.com>
+	b=tDQrWuXh9Aj335gu+t4ZhJjDyHzvZYI4+WkBaLG3wz70kPaoMmZTkxFSh2J02bwxk
+	 /m9Nkgp8pf9E7xvBa9cfdr/7UcZ5rbFVVL/kyrAoHNztXGffM4zBAgRekjzu8nyAIs
+	 9dUYv625GNG2Sx7MJDaayaFI8U2RSZftNHIkXuQTRB7S4xgSxzr514iXkf5XKLDR/U
+	 OHJ85Vn5U8vjtwxJmLcZTT5zA+R6F76A6cUxmGKm7s+rGqbVJIhrzZveeShB8oYJ71
+	 OpmHtgM0mOprMuWJiSeVjbA2eDZh2RNkLfGWbQ80viMXP3R2yjgn+SMUgQzTk0O4WO
+	 zQ56jWKe4eNJQ==
+Date: Mon, 27 Oct 2025 11:29:27 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org,
+	David Collins <david.collins@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, kamal.wadhwa@oss.qualcomm.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	jingyi.wang@oss.qualcomm.com, Stephen Boyd <sboyd@kernel.org>,
+	aiqun.yu@oss.qualcomm.com, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: spmi: split out common QCOM SPMI
+ PMIC arbiter properties
+Message-ID: <176158256441.1074210.9426995798199315066.robh@kernel.org>
+References: <20251024-pmic_arb_v8-v3-0-cad8d6a2cbc0@oss.qualcomm.com>
+ <20251024-pmic_arb_v8-v3-1-cad8d6a2cbc0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="7awwfwoj7c6l6xia"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5ff10f7d-e9d4-4d4d-ae82-8986dc28d14b@amd.com>
+In-Reply-To: <20251024-pmic_arb_v8-v3-1-cad8d6a2cbc0@oss.qualcomm.com>
 
 
---7awwfwoj7c6l6xia
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 0/3] Add splash DRM client
-MIME-Version: 1.0
+On Fri, 24 Oct 2025 15:03:21 +0530, Jishnu Prakash wrote:
+> Split out the common SPMI PMIC arbiter properties for QCOM devices into a
+> separate file so that it can be included as a reference for devices
+> using them. This will be needed for the upcoming PMIC v8 arbiter
+> support patch, as the v8 arbiter also uses these common properties.
+> 
+> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+> ---
+>  .../bindings/spmi/qcom,spmi-pmic-arb-common.yaml   | 35 ++++++++++++++++++++++
+>  .../bindings/spmi/qcom,spmi-pmic-arb.yaml          | 17 +----------
+>  .../bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml | 21 +++----------
+>  3 files changed, 40 insertions(+), 33 deletions(-)
+> 
 
-On Mon, Oct 27, 2025 at 11:01:55AM -0500, Mario Limonciello wrote:
-> On 10/27/25 7:35 AM, Thomas Zimmermann wrote:
-> > > > =A0=A0 - a very simple progress bar, which can be driven through sy=
-sfs;
-> >=20
-> > Once you have options to control these settings from user space, you
-> > should do it in user space entirely. As Maxime suggested, please improve
-> > plymouth for anything with animation.
-> >=20
-> > > > =A0=A0 - a static image (optional).
-> >=20
-> > Board vendors often provide an image, see /sys/firmware/acpi/bgrt/. This
-> > is a candidate for display, or the penguin or a custom image. Please
-> > make it configurable by Kconfig. Again, if you need policy and
-> > heuristics for deciding what to display, you better do this in user
-> > space.
->=20
-> I'd actually argue that the static image from BGRT should be the preferred
-> priority.  This can make for a nice hand off to Plymouth.
->=20
-> The (UEFI) BIOS already will show this image as soon as the GOP driver is
-> loaded.  Bootloaders like GRUB by default will avoid showing anything or
-> will overwrite with the exact same image in the same location.  This can =
-let
-> the kernel do the same, and then the moment Plymouth takes over it could =
-do
-> the same.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-And BGRT isn't typically found on embedded systems at all, so I'm not
-sure it's a sensible default, let alone a priority. At most a possible
-fallback.
-
-Maxime
-
---7awwfwoj7c6l6xia
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaP+dygAKCRAnX84Zoj2+
-dsfaAYDY9ovUiQP79ROQRhKc7BCKdMp1L3VkbIgTj4bwXt2PF9rSnPcEwQZKoNYw
-zY78exEBgMDy2VGrw+RfaBKQ2UDubn6n6yMCh1ALbHFbSTM4Q8WYXU+6Znzf5awl
-u8Sy5EOIyg==
-=eXcr
------END PGP SIGNATURE-----
-
---7awwfwoj7c6l6xia--
 
