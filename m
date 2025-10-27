@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-870842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54364C0BD1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:28:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E9CC0BD1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3746F4E4E44
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A062189FE9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 05:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DBF2D4B61;
-	Mon, 27 Oct 2025 05:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1DD2D63EF;
+	Mon, 27 Oct 2025 05:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="kTU3L11y"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvM0PHbF"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEA5267386;
-	Mon, 27 Oct 2025 05:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFBE2D5C83
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 05:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761542872; cv=none; b=bvcy2ScJakXvghHFx+gjsHknya57MWrS8UX1UGDkoAF187wMLTefn4WQX8nHzIEYhbLSqo2u8tiiev+1G929Xl7F4m3OojcDaFGhwMKQZqo6xEayEslni4V02JAwjhAF9zd+6B101UJwPqwdt7g8lJs4ozlgU0am+8Ckq2c4ECg=
+	t=1761542877; cv=none; b=ZFBb8OT6w7CsFIjVKUZ2rlRRSl5datUbt7xQ18w379D3AVsP/VsX2SR3jCoFwCac8piv0L5GjlCMD63blfVW8w86op1KKbfKq8LnYuaMATIGN8nc4nUhz/ad512lmeK36Ivj4OZxwOer3zBWpHSr54Aof4Sq0Fv0CmUBtiCu6wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761542872; c=relaxed/simple;
-	bh=Awy4ce0HvlHevMpAawicSrxtE5vQmpxQBetCDOKBd1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qb7MVDI8kEm57bYWm6zd0ArBAEGcYqK6lX+m3iS/JQbpM75lm/Xnh5sZEVQ5wSHn0IIGnPerPMtKGWF73a+P4e3VHeDAHYKKZEXkOyssReViO+42Xgp2nSvQm8vFMROkgL34hd21yocA7D0h6uN1z0j/kLYKFDIyK86oNEM4f0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=kTU3L11y; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from sunspire.home.arpa (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id 316B6160209;
-	Mon, 27 Oct 2025 07:27:38 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1761542858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/iKH1TKrzGmY5KwdEN+igCoenmbB4AdbiIJJBSZeAVQ=;
-	b=kTU3L11yw9v3NK/o1ko4Fdk8kzycsOwWBF+GtirAp4FqI3IaXzlEufT0RKCcyBHZkevm4M
-	ObhFwxpQcV1qe6vfnOcQ3FEAHfRUXA6yOdXUeHSMIGz+mmbXxGUL2dBExh+Rze3ogTOgzP
-	UbPI8Jg44YKVbxZ823pVX3/e79ummmzAAQk3L6a0f7YO0oaG5o4NNZrOA5yYdHyfu7ljN6
-	QP7/8Dq+DISWYulA41eU6gIP46ZfOYLAMltHyunc1lkHZiIUhBU7GMPlBJPLaGrJkwXCLg
-	u0i4VOeUlsRR5ki9XWT9ocVC+rxXmYJr3rt/UMMrBtv3zeVbnNnbrLKTQ/VW/w==
-Date: Mon, 27 Oct 2025 07:27:35 +0200
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] iio: accel: bma220: move set_wdt() out of bma220_core
-Message-ID: <aP8Cx7gMxGfpfb6n@sunspire.home.arpa>
-References: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
- <aPjE-n0wKNIJd2-M@smile.fi.intel.com>
- <20251023182318.00004319@huawei.com>
+	s=arc-20240116; t=1761542877; c=relaxed/simple;
+	bh=inJww/Ob/vbUK/5lqAm9xN5xYDYWYeHnIJvj2WLxyEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DTwYZVgp4OkkEVNuA0I+/JQKWgyxfnUEtRye5FxDPf1unAL554Gc5LM8VtygFDn3ZEIBkWaluSFmVJ6qGAFeoYZWLHo8jntdFLmGHAH21sY4eUd32iYSjJV3nejIgcuY/WfGPlfSS0lDnS7Yl56Cqt9zjYQLiAJHoBLJQ1MQWTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvM0PHbF; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a27c67cdc4so3063012b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 22:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761542875; x=1762147675; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C/RAYqHmH1h4sjp1gNfQ9pppA/esaFm9GV+1pQeVlcQ=;
+        b=DvM0PHbFMTjqnUsL8+H1k6xdPpEpf3qrCeZCus9XI+2Erew75ylAmIQPL+R7WNiwtk
+         o19eqXvJ4j0clrSeLSrgxMHq/IRk6XVLRoCh9XCZ22WrGNH/e++6Xaj4xxp3d2SIiju1
+         0r/5v47b/RGVJaVk3yT12nDFS3ODFIAEoTxBHY9tn/YHsGdfoYGdxsVVdo1R3JaqrnFH
+         QcRgADRi9NogflcD10uKq2mx+zIgpISFaj5EsoSdrBr1swa9gE0Z2JvoguyvDch6q0w0
+         7Kyjsx/Rpx6prYhl+oEnKVkCPc+XVnI7gs9y7rMXT2o0PlXFPvfIaDACbjOBTgaw4RYh
+         HzCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761542875; x=1762147675;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/RAYqHmH1h4sjp1gNfQ9pppA/esaFm9GV+1pQeVlcQ=;
+        b=FCCXeO20yLX+VyfBZkzZy4JYPdLg4BZMoFvWhHbts9Yf2lGZpeOHVvRnDR8CZbPiJ+
+         0EvTD3LLsqQftt9abRX6wWJL5cHkjOkkG+YXX63zRcp5SV3ZRQqC0yX3xq4nuA7jP/N3
+         IedDMw9UAb21LtSN/q6AfnU1FDZQcjroJwZ+h3TJ2uaJLSbIRkLDMDL+07upeI3piKTt
+         tetRStbzbnmmncIpfpPeUKSGWO8FLFVl8g6jk2HivyZhxBirKAAqCG+nIIQOvGm+sO6a
+         ujEKxxJDYzYVOlId4tqDKhSX486OfBTB/oVVbyyyCJw4DlRBaQczoyk6KTlj99sIZMlE
+         hlRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXa4uu6JE9y+TcmYWgRLjTYo7Dk988y5W83CvsMTC3XiWBTvNEvUCvLs1NEhYpCAbsI3NqlDKJouopLg2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKDXIStL0RNYZQbdBECfOT1UA0E8fm4zKlW0x9HRLDa1rdexlu
+	SJjTK2yHZZfQ7MP6NH6+bxze+LvRnxKxkS8E09L3W63jyEl7XE+d4dDM
+X-Gm-Gg: ASbGncudtQL9ecUvsxm8B9qCAZYmN7zxkk5TFeGT3jRWkz6xSg1t9EvCXfDkp71A761
+	4wdMHSUGraLp7EcHMdcPDRHku+V5JX8al7dkA+xZeBkssC54vdPvZoyrJOswhJAHZajUQanD8OT
+	AFKk5jrDjBXNi5JCerLpV4cIZ5px1mbGK0jSHqag0iB0TNS0kr6K5nQJQ8XPBxgwOnHwpGC3zfQ
+	gMqpX+o31qqp3wDeCX/q8l5a1bZFda3b+uN6h5ragiaTCd9cxxUSTvI1/sLQgiqPYsqyf7I1gMz
+	Qr6OUvo24V1R/9iImRLLikWj/lyXFX8WoM5N2KD9kPc4HeNnaI8FytnVTRP9M/twCLu+h/CspJ7
+	p+f/7+yUs6MVmweN3Ff2PfrQnH89GrS2+2EVLUbig7rISR1vHggcoKgSPWvFzjMVJ8b8hdFHcoo
+	39FaVWMOWTryAvxDwDMH1brPariHnUwys=
+X-Google-Smtp-Source: AGHT+IEMUesQIHcuQu4FxPZyWoemXbk+ksDyGhqzHexxaBE/vxFXq0kjagvpHbM0Q/C8rA9lLvDSWQ==
+X-Received: by 2002:a05:6a00:27a0:b0:7a2:7f87:7ae7 with SMTP id d2e1a72fcca58-7a27f877cdfmr12402808b3a.19.1761542875391;
+        Sun, 26 Oct 2025 22:27:55 -0700 (PDT)
+Received: from [10.0.2.15] ([14.98.178.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414072487sm6601511b3a.52.2025.10.26.22.27.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Oct 2025 22:27:55 -0700 (PDT)
+Message-ID: <47844424-302b-4a99-9cce-82924c7b7ebb@gmail.com>
+Date: Mon, 27 Oct 2025 10:57:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251023182318.00004319@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: Makefile: Sort Documentation targets
+ case-insensitively in make help
+To: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+References: <20251015012922.19467-1-bhanuseshukumar@gmail.com>
+Content-Language: en-US
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <20251015012922.19467-1-bhanuseshukumar@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 15/10/25 06:59, Bhanu Seshu Kumar Valluri wrote:
+> Avoid case-sensitive sorting when listing Documentation targets in make help.
+> Previously, targets like PCI and RCU appeared ahead of others due to uppercase
+> names.
+> 
+> Normalize casing during _SPHINXDIRS generation to ensure consistent and
+> intuitive ordering.
+> 
+> Fixes: 965fc39f7393 ("Documentation: sort _SPHINXDIRS for 'make help'")
+> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+> ---
+>  Notes
+>  - Patch is tested with make help command.
+>  - Verified case-insensitive sorting.
+> 
+>  Documentation/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index 3609cb86137b..00c81e7947a9 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -23,7 +23,7 @@ SPHINXOPTS    =
+>  SPHINXDIRS    = .
+>  DOCS_THEME    =
+>  DOCS_CSS      =
+> -_SPHINXDIRS   = $(sort $(patsubst $(srctree)/Documentation/%/index.rst,%,$(wildcard $(srctree)/Documentation/*/index.rst)))
+> +_SPHINXDIRS   = $(shell printf "%s\n" $(patsubst $(srctree)/Documentation/%/index.rst,%,$(wildcard $(srctree)/Documentation/*/index.rst)) | sort -f)
+>  SPHINX_CONF   = conf.py
+>  PAPER         =
+>  BUILDDIR      = $(obj)/output
+Hi,
 
-Hello Jonathan.
+I just wanted to check if you had a chance to review the patch or if any changes are needed from my side.
 
-On Thu, Oct 23, 2025 at 06:23:18PM +0100, Jonathan Cameron wrote:
-> On Wed, 22 Oct 2025 14:50:18 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->=20
-> > On Tue, Oct 21, 2025 at 01:31:49PM +0300, Petre Rodan wrote:
-> > > Move bma220_set_wdt() into bma220_i2c.c instead of using a conditional
-> > > based on i2c_verify_client() in bma220_core.c that would make core
-> > > always depend on the i2c module. =20
-> >=20
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >=20
-> > But Kconfig for this driver is a bit strange. Usually we do other way a=
-round,
-> > i.e. make user visible selection of the glue drivers, while core is sel=
-ected if
-> > at least one of the leaf driver selected by the user.
-> >=20
-> This comes up from time to time.  There kind of isn't a right answer
-> to my mind in the trade off between complexity of configuration=20
-> and desire for minimum useful set of Kconfig symbols and people wanting
-> to build only exactly what they want.  So we've ended up with a mix.
->=20
-> I don't mind setting a policy on this for new code going forwards, but
-> that means we need to decide which approach we prefer and document
-> it somewhere.
-
-I will come back with a new patch to Kconfig once you decide what is the be=
-st way to handle dependecies, but in the meantime can you please accept thi=
-s current patch?
-
-I keep getting automated errors that would be fixed by it:
-
-https://lore.kernel.org/oe-kbuild-all/202510210604.mAtgE54g-lkp@intel.com/
-https://lore.kernel.org/oe-kbuild-all/202510222324.SxYlIaLW-lkp@intel.com/
-https://lore.kernel.org/oe-kbuild-all/202510271347.115BMnsC-lkp@intel.com/
-
-If the current patch does not correctly reference the automated 0day-ci rep=
-orts please tell me what I should change within my b4 workflow.
-
-thank you,
-peter
+Regards,
+Bhanu Seshu Kumar Valluri
 
