@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-872410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A903CC10ED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:25:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA34C10C35
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912675646D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:18:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C208352559
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36BE274FD0;
-	Mon, 27 Oct 2025 19:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287E32AACD;
+	Mon, 27 Oct 2025 19:17:37 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB2A17F4F6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A6E3090CC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592656; cv=none; b=e/OHKXMJytKGg3YSHCUtRFIeKM+347HD3IZsuiR54TKrw7yKarSi/OLdCNCQzgDMI2UqyA6sYho6SUgDpOEmjk57oOgocbTqwic0HbkwFBmycKnZnv6wfmZVTqbix83RnFYf2qi1LyJy+lQ4akfz2K9IHHTir0yq5djJphMxo3w=
+	t=1761592657; cv=none; b=N60KrxhFGHgnTFiDeNLl0Rdnxw8cY58ntp9vI6wD5YvMEQ4iN4ybHKAqhleq+St4+epQrJ/BKCibC0Ev8YQY812L8Rx9V4HGmNt4nCL4rEf7AvVhjCW2xHbMqIKBXgnkoL5xYjoBOLDVwFTgxxUznTR2XabEMtCobEuKTWC2fbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592656; c=relaxed/simple;
-	bh=YQ3CEdiME4l7INBeC7ifJ0qoBqJo++fsrzCxtPoPAEY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Kv+0RXBKLa2xRD8wRTAmoYFXmdCEq5qjWVfr1LiH9AWHzL4c0Gk9pMU9YRI/8B+cjVEnwrd/YUcTlOzNIvn8rTRLsHiVudmbsA7JNb0XU268p2+u3rCfeNLNW9B1Q/g/m18lJ1WMgGe/PxcrHHTDR6xZFD4SWkfqtaGQr2PzwKQ=
+	s=arc-20240116; t=1761592657; c=relaxed/simple;
+	bh=uylQ8N0Tj3MThIcXCRxuc9igscliSHHERr3Sag3b2eI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QMXSlKDazj6AZRnsokgKV1a+L9p4HkbLp5+6wYrit+ew39+1qSPCTHmqYzcFjpA/YOo4K4sWw+wIMm0NC3l4MPEljCuKFSsWQ+FFnZIu5KuX+DENbeZY+AZewyb6owevKZhjZiq9sicnGdjLiWOpKEfiMRROXIpADE61O+BGCnw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53633169E;
-	Mon, 27 Oct 2025 12:17:25 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 799381DB5;
+	Mon, 27 Oct 2025 12:17:27 -0700 (PDT)
 Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 393153F63F;
-	Mon, 27 Oct 2025 12:17:31 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 69D843F63F;
+	Mon, 27 Oct 2025 12:17:33 -0700 (PDT)
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: maz@kernel.org,
 	oliver.upton@linux.dev,
@@ -45,10 +46,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 0/2] use TPM device with CRB over FF-A when kernel boot with pkvm
-Date: Mon, 27 Oct 2025 19:17:27 +0000
-Message-Id: <20251027191729.1704744-1-yeoreum.yun@arm.com>
+Subject: [PATCH 1/2] KVM: arm64: fix FF-A call failure when ff-a driver is built-in
+Date: Mon, 27 Oct 2025 19:17:28 +0000
+Message-Id: <20251027191729.1704744-2-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251027191729.1704744-1-yeoreum.yun@arm.com>
+References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,30 +61,56 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-To use TPM device iwth CRB over FF-A, it would be good to be compiled:
-  - CONFIG_ARM_FFA_TRANSPORT as bulit-in
-  - CONFIG_TCG_ARM_CRB_FFA as built-in
+Until has_version_negotiated is set to true,
+all FF-A function calls fail except FFA_VERSION.
+The has_version_negotiated flag is set to true when
+the first FFA_VERSION call is made after init_hyp_mode().
 
-to integrate with IMA subsystem otherwise, it couldn't generate the
-boot_aggreate log with the PCR value.
+This works fine when the FF-A driver is built as a module,
+since ffa_init() is invoked after kvm_arm_init(), allowing do_ffa_version()
+to set has_version_negotiated to true.
 
-Unfortuately, kernel fails to probe the TPM device
-when it boots with kvm-arm.mode=protected since the FF-A calls
-(FFA_SEND_DIRECT_MSG/MSG2) are failed when CONFIG_ARM_FFA_TRANSPORT=y.
+However, when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y),
+all FF-A calls fail. This happens because ffa_init() runs before
+kvm_arm_init() — the init level of ffa_init() is rootfs_initcall.
+As a result, the hypervisor cannot set has_version_negotiated,
+since the FFA_VERSION call made in ffa_init() does not trap to the hypervisor
+(HCR_EL2.TSC is cleared before kvm_arm_init()).
 
-This patch series resolves failure of the TPM device when
-kernel boots with kvm-arm.mode=protected and based on v6.18-rc3.
+Consequently, this causes failures when using EFI variable services
+with secure partitions that rely on FFA_SEND_DIRECT_MSG.
 
-Yeoreum Yun (2):
-  KVM: arm64: fix FF-A call failure when ff-a driver is built-in
-  KVM: arm64: support optional calls of FF-A v1.2
+To fix this, call hyp_ffa_post_init() and set has_version_negotiated
+during hyp_ffa_init() when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y).
 
- arch/arm64/kvm/hyp/nvhe/ffa.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
---
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index 4e16f9b96f63..0ae87ff61758 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -984,5 +984,17 @@ int hyp_ffa_init(void *pages)
+ 	};
+ 
+ 	version_lock = __HYP_SPIN_LOCK_UNLOCKED;
++
++	if (IS_BUILTIN(CONFIG_ARM_FFA_TRANSPORT)) {
++		hyp_spin_lock(&version_lock);
++		if (hyp_ffa_post_init()) {
++			hyp_spin_unlock(&version_lock);
++			return -EOPNOTSUPP;
++		}
++
++		smp_store_release(&has_version_negotiated, true);
++		hyp_spin_unlock(&version_lock);
++	}
++
+ 	return 0;
+ }
+-- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
