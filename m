@@ -1,96 +1,156 @@
-Return-Path: <linux-kernel+bounces-872207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED0FC0F91A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:14:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C170C0F9A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E3219C347B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:14:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FE9F4F70C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A0314D3D;
-	Mon, 27 Oct 2025 17:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1F31691D;
+	Mon, 27 Oct 2025 17:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCiqRJDA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="S6bRuYh5"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0BF1E1C22;
-	Mon, 27 Oct 2025 17:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585261; cv=none; b=L38z9UC+ia734L4AryMcpoCgWwpWCHEooAwzNA8hpar9mWSwoft+Y1JPhjxElmMcbEHz8sogOt4JoudGo5OUleJ2F45eTLC+03l7/fDYI1bfSL/urhNFEum9WRnRrDz21e2YrTW+Wo10/+mByH5QnSd4gcsVN3pEPSzNTfWkt4s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585261; c=relaxed/simple;
-	bh=riL/1ZLw+rZSAzmG3LWiquvYVubXh4lPo2gMuGTnZhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcX0jRa8YE+xFfAr0E1vYMBzAw4pPbiE8wpiqHlyr+x1nup771qHRf+WF5mWx+vxxVmFf5qS1zZY5unyKrwzrsejiWuFZ3M7cM6yM/2RoYDY/HnaQxCNGCbAyUgAlKzwHZe0Czr+FePAEPjyi0zeJtDMDt9bq+4ByeN8TxcmOCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCiqRJDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB6DC4CEF1;
-	Mon, 27 Oct 2025 17:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761585260;
-	bh=riL/1ZLw+rZSAzmG3LWiquvYVubXh4lPo2gMuGTnZhY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCiqRJDA+4na9AVF0xFYjv6wnEWRHoQPE+dft2faZhJ63T6bpbH3T7/P7P2CP1ptH
-	 ibAvGV3SZKL2+jereFKam6Uhk+MeqCT54fH5vgyTDRnHVPH8sOAhMI8VrotdngPsQ8
-	 MmasD/CkXAAIEh0BPlq8efTYyN398eGNq/1gxjQ6koLjidYgy5GwE8PkVyFXdPLvC6
-	 UnJjQUOnVJurn1sRi3mWnnyI+4x42aiWa5+no/2eStIhgZNbgVaO2t3xPFh5iVPkkc
-	 aFpMszJ1c+sf/S0kFumGn4PI3EFNRKgx2+QtplTloxwFflMZF6LPCIfzSSMwCwvsil
-	 d6hOlrNPl3CHQ==
-Date: Mon, 27 Oct 2025 12:17:13 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Abel Vesa <abel.vesa@linaro.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] soc: qcom: ubwc: Add configuration Glymur platform
-Message-ID: <ump2gq7hta5dzul7bwjmb45dtrxezkbticdwis7opl2drmnuyz@wwlanncd6xlb>
-References: <20251014-glymur-display-v2-0-ff935e2f88c5@linaro.org>
- <20251014-glymur-display-v2-7-ff935e2f88c5@linaro.org>
- <7dxq62ltoeerb4g2fgchb2hd7eomvlexfgyvamxsuuirblavtn@4bg3dy2bukdq>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1B123315A;
+	Mon, 27 Oct 2025 17:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761585505; cv=pass; b=fZeoqPjygxIRsoSpwt4cGTxZa7ptyUapLGdq6aIP8Esa2xwwlEIp7iLwjyCfQNrAbRegFbp9jn/NbrHw+cYwky0MceNY2wHmUShGhiE9fRGGhMnXzGs0Qta+zeW/GTmBXUbyfdHnlU/4sXTEqk0wJqz20FlkHyfQd7uSGWnyaJw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761585505; c=relaxed/simple;
+	bh=0j+sx1U/dtxtACHyjk6jN8uOJ9uo/XDr3w3aGWyKD8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tDXFscDB0aggK9KMVk6VaEV0NzTmVcqhspJIHImticx3usWtciBu0sQtmgNfR3JqIdl3jXqiPsuFzRMCYlcbmg+7AlBuVGSu6Z0Rc5WrBre+JolTF89jto7YGuU1caSGwHE9RkxITSEmnpFd9xZrUxj97VVLV5EoJLDErd0yYv4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=S6bRuYh5; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761585485; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X1gBeOXii1Wsijnw7Xu6bo8M4CrnCviOuvVZYWbFXBr1aczrloVhMYFB+MikS7pjy2qbb60tvRhENSnwzDgH6J6P1fQkI7A25H+TFVYDrRRki8ysfvS8nl3ZLS0GtRPZ9jD9w6BXOqEhTtTBD3uD0wqNMUIkZauQN5j8Mgb+5ww=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761585485; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZNW4fieYkSA2lBxgemD0NgMNnHAiHnhoG3/C5j4275U=; 
+	b=UNU5V48pqwdNROdHla4ojkPzWnjIVdCJco+lukvORCdLcK0YkTQni+DxtavsNlNxkqw/knoWPPsYVNV0yUgaXBqmz9RG4N5rLNHE1XXMIRHPtHN0LxKLw1g/fdgVmgqnvwhXK55DgkvrNxLle/5qcJT6AYDX3gpwh4c8dJI8wVY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761585485;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=ZNW4fieYkSA2lBxgemD0NgMNnHAiHnhoG3/C5j4275U=;
+	b=S6bRuYh5DomXJIJWsJQZRBcZ07/nhdm8EK2gY1MDPYCkTD3dEQEs7p1JJmolgssh
+	xNj/Mepmd8VCF1afEJF9O2i/lRT3gfGy3mv5lkuJcHQzsTqYMuIWcYD154ZxDihIhPH
+	6wWRJWvxeNxcAuvgvUvncXRL/Clwhw+dKenajAdQ=
+Received: by mx.zohomail.com with SMTPS id 1761585483468132.07412147907223;
+	Mon, 27 Oct 2025 10:18:03 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
+ Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
+ Hans Zhang <18255117159@163.com>,
+ "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>,
+ "moderated list:ARM/Rockchip SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+Subject:
+ Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
+Date: Mon, 27 Oct 2025 18:17:58 +0100
+Message-ID: <14087628.uLZWGnKmhe@workhorse>
+In-Reply-To:
+ <CANAwSgTmOvOZ35=3XjhrKu2iPCMOU8c8prK5XVAkf3cF1DHekQ@mail.gmail.com>
+References:
+ <20251027145602.199154-1-linux.amoon@gmail.com>
+ <5235617.GXAFRqVoOG@workhorse>
+ <CANAwSgTmOvOZ35=3XjhrKu2iPCMOU8c8prK5XVAkf3cF1DHekQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7dxq62ltoeerb4g2fgchb2hd7eomvlexfgyvamxsuuirblavtn@4bg3dy2bukdq>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Oct 27, 2025 at 02:29:01PM +0200, Dmitry Baryshkov wrote:
-> On Tue, Oct 14, 2025 at 03:38:32PM +0300, Abel Vesa wrote:
-> > Describe the Universal Bandwidth Compression (UBWC) configuration
-> > for the new Glymur platform.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >  drivers/soc/qcom/ubwc_config.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
+On Monday, 27 October 2025 17:31:23 Central European Standard Time Anand Moon wrote:
+> Hi Nicolas,
 > 
-> Bjorn, do you indent to pick up this patch on your own or would you ack
-> merging it through the drm/msm tree?
+> Thanks for your review comments.
+> 
+> On Mon, 27 Oct 2025 at 20:42, Nicolas Frattaroli
+> <nicolas.frattaroli@collabora.com> wrote:
+> >
+> > On Monday, 27 October 2025 15:55:29 Central European Standard Time Anand Moon wrote:
+> > > Introduce a .remove() callback to the Rockchip DesignWare PCIe
+> > > controller driver to ensure proper resource deinitialization during
+> > > device removal. This includes disabling clocks and deinitializing the
+> > > PCIe PHY.
+> > >
+> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > > index 87dd2dd188b4..b878ae8e2b3e 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > > @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+> > >       return ret;
+> > >  }
+> > >
+> > > +static void rockchip_pcie_remove(struct platform_device *pdev)
+> > > +{
+> > > +     struct device *dev = &pdev->dev;
+> > > +     struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
+> > > +
+> > > +     /* Perform other cleanups as necessary */
+> > > +     clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+> > > +     rockchip_pcie_phy_deinit(rockchip);
+> >
+> > You may want to add a
+> >
+> >     if (rockchip->vpcie3v3)
+> >             regulator_disable(rockchip->vpcie3v3);
+> >
+> > here, since it's enabled in the probe function if it's found.
+> >
+> > Not doing so means the regulator core will produce a warning
+> > splat when devres removes it I'm fairly sure.
+> >
+> I've removed the dependency on vpcie3v3 in the following commit:
+>  c930b10f17c0 ("PCI: dw-rockchip: Simplify regulator setup with
+> devm_regulator_get_enable_optional()")
+> Please review this commit and confirm if everything looks good.
+
+I see. In that case, your code is indeed correct, thank you for
+pointing this out.
+
+Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
+Kind regards,
+Nicolas Frattaroli
+
+> 
+> > Kind regards,
+> > Nicolas Frattaroli
+> >
+> Thanks
+> -Anand
 > 
 
-As there's no dependencies between the trees, I can pick these through
-the qcom tree now.
 
-Regards,
-Bjorn
 
-> -- 
-> With best wishes
-> Dmitry
+
 
