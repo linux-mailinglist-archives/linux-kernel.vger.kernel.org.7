@@ -1,90 +1,103 @@
-Return-Path: <linux-kernel+bounces-872215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FDD2C0F99C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:20:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93FAC0F968
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF80462215
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:15:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B2794F6EA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B913168FC;
-	Mon, 27 Oct 2025 17:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA7F315D4E;
+	Mon, 27 Oct 2025 17:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqZr+eK4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S+1joJJK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RCyckc7o"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912BD316905
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A51E3168EB;
+	Mon, 27 Oct 2025 17:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585312; cv=none; b=dyfVhiczoVsLGIgrPmIfVdb4VKtm8l/p28Bl8Gm9Wy6967AUulxv6/8hhRdB5Zwpl0QgekcEfBPClLWGzwHPcrO/bpv2z2eWpGkUG0zKirqy2F4h+ZdbSZQmmho2oSWbqhO4lUI6TIltgHdlyo11FpFgasZHH19SwD8EVHm911M=
+	t=1761585309; cv=none; b=MEvReKAhrauUG44mf7eYdxc7ca3etg28kvnpG8Vx8hMZc6kguHCJ5++LkIh/SEx5tmRsvqGEJ13HPzKdjWakjLXDlsJKXQvNCwmoyb4w0h84jFpZcB+nJkRx//94sz29s6TAeSUqL5nDOSxLb9Hz9KCEoCEFPwv1cMWB98Nhzro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585312; c=relaxed/simple;
-	bh=n10NlR5AQZVuyebRk7B2SUL8HffpvVGuK0dPunXc6Is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MFpOKdAGh4Ydj0/ScvwGLetZ1xuSwooTsmA70mbOxqdFX266ZTnMBMsSCVdltUPdxzmrr2KhjFfUFJTOmcQRNbVxH9CGqRYK9utftmHvajmWLJLsZDdpQeGrpbbztMvMlFLtSdaiUl60wE1cz3cqEtTIWU3AdyS6tkQnnUSIN7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HqZr+eK4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12AE2C4CEFD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761585311;
-	bh=n10NlR5AQZVuyebRk7B2SUL8HffpvVGuK0dPunXc6Is=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=HqZr+eK4r0DzyGqvmeYi5mqxzyyqHWBykNMpoMfE03X5z6pt5O8eOzMRYd9U8ZUQh
-	 eYITan5jDOYW+kPveVqXTdkK4/68+CF7oh5DF96MzpETlIk0uh4aLwwmhsahp6rIJn
-	 hb9MZzElerUW3qdZGtZinkVPXmRKFFox7+oXIB2S4M/pqJ4Ql57IqzMoKRgUaT6FkK
-	 jOYZyLvn00EyjpiJgUwyHOibmTJxoa1uwMGwn7D4dhkQA2/m62ejGggHXJUpSlXPII
-	 kuefpXpMvSLts30670r1p/D5DybsVniH/C5X0jaqa2xC7Rx2pLw3QgoPR/rDlC8ft3
-	 9Jha6fJS1+a+A==
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-430ce2c7581so21427955ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:15:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqaOouWELuh2YwmFuI3YcmPFKElFId/WsVfFiWDbzaW7WxFjQGJZzl4LXBqOycM9wh/X4SHtUE9Or9zQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz78/H/CYV0vzp4fC0UJliV7kO3P5FNqTLia6Ut+HZu+FQFEoRH
-	3QwGJD/NE82CiTlzsw1MCz2gozjq3xEwuidj5i1Y2ymf0i7BZkbSTQtY638P/Ved7Upc1e1g/H6
-	A8c44N9HbUtTWyJ398vob/y5C3C4k3yw=
-X-Google-Smtp-Source: AGHT+IHX7Cu0cAsXytC3RTDyLGsbQ6D3nuir1yy3lnzLJPUDYwnFPuEpRZmXHsx20REcyJQHIoGh74zShF/YlLRFw2s=
-X-Received: by 2002:a05:6e02:1686:b0:430:a4ba:d098 with SMTP id
- e9e14a558f8ab-4320f6e72b5mr13684325ab.14.1761585309545; Mon, 27 Oct 2025
- 10:15:09 -0700 (PDT)
+	s=arc-20240116; t=1761585309; c=relaxed/simple;
+	bh=bbg2yU5WDCd/y1piJqwaFFX8rwD+L6pzaMgcKs8Sy9E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=umVeAjtc4lQSx2SfsOtLIioTmOnxb3p6DDmVe0AHfs2qqr6VPf41DJwKqbJVhzygS4wYtxWGMCTglYP5OAJ93OWoxyxmP3lw4R0InWBBcpfk2XY4POJaOFz6EwNvD9Q5FZnljx6RPNIWO8BNH1dSExffeuzQVyvJFds+oeSVtM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S+1joJJK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RCyckc7o; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761585306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a0Kmg0M/pihg+3mchefRKJW/8qhO0EXT2ncDeCzUrSc=;
+	b=S+1joJJKL5HOP2QI7bePmaQsErjZHts/8tAjGua3A3++P+uxwhzP6Fx+CgA+saMowyM/Un
+	qF1s+8Z1CTSJc278sFPw14sZSSoNPm71h0PyF/0QKybtsp+jpWQPmjC4zruRYx0vkSIFvy
+	UWhtf5ww4Zpghxxms4sRdmPlCamm85FHT9I1E+9CpPa2boPNMt2j3JjdgppUSlh1Sn1bNR
+	FmzEyEDDyPeq7kQKP/vw2ziBPXIDOqE3QlkAYQCKJeOmJf5nSl66AotEtUGLuhrOdu3wzs
+	JDiizpLx+fpfP8M8doVAcRU9Vj/rT8NqbqjYG4J6tCYaCDxF4BmEUlPc/ZDVMA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761585306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a0Kmg0M/pihg+3mchefRKJW/8qhO0EXT2ncDeCzUrSc=;
+	b=RCyckc7oww7LF/Ey96p7Gohn/JMg7811PjAJquXTWtNmny2y8jawDxqgoepfeTcokWQ1pv
+	GYPaiP3kZRgFcxBg==
+To: Ulf Hansson <ulf.hansson@linaro.org>, Ben Horgan <ben.horgan@arm.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>, Maulik Shah
+ <quic_mkshah@quicinc.com>, Sudeep Holla <sudeep.holla@arm.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] smp: Introduce a helper function to check for
+ pending IPIs
+In-Reply-To: <CAPDyKFrY5kOsoOH-mcWFiaiggV4q84xOtiKHdNN4bMfFmYOQPQ@mail.gmail.com>
+References: <20251020141718.150919-1-ulf.hansson@linaro.org>
+ <20251020141718.150919-2-ulf.hansson@linaro.org>
+ <a0120876-0f00-4e1a-aa17-5fe7c3512276@arm.com>
+ <CAPDyKFrY5kOsoOH-mcWFiaiggV4q84xOtiKHdNN4bMfFmYOQPQ@mail.gmail.com>
+Date: Mon, 27 Oct 2025 18:15:04 +0100
+Message-ID: <874irkw9k7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-14-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-14-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 28 Oct 2025 01:14:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v654iKx+2_GrFAJYF0VGXSd=ssxE6UYpN3jSAspEC9t3LQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bldcoQqUG3m9k_m37cYhHNBmzCyQWdekxIPdWuxn4IqUUTfMQc9GRDtYCo
-Message-ID: <CAGb2v654iKx+2_GrFAJYF0VGXSd=ssxE6UYpN3jSAspEC9t3LQ@mail.gmail.com>
-Subject: Re: [PATCH 13/30] drm/sun4i: de2/de3: Move plane type determination
- to mixer
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
+On Tue, Oct 21 2025 at 12:08, Ulf Hansson wrote:
+
+> On Mon, 20 Oct 2025 at 21:11, Ben Horgan <ben.horgan@arm.com> wrote:
+>>
+>> Hi Ulf,
+>>
+>> Only a comment on the naming rather than a full review.
+>>
+>> On 10/20/25 15:17, Ulf Hansson wrote:
+>> > When governors used during cpuidle, tries to find the most optimal
+>> > idlestate for a CPU or a group of CPUs, they are known to quite often fail.
+>> > One reason for this, is that we are not taking into account whether there
+>> > has been an IPI scheduled for any of the CPUs that are affected by the
+>> > selected idlestate.
+>> >
+>> > To enable pending IPIs to be taken into account for cpuidle decisions,
+>> > let's introduce a new helper function, cpus_may_have_pending_ipi().
+>>
+>> To me, "may" indicates permission, i.e. is allowed, rather than
+>> correctness. Would "likely" be better here, cpus_likely_have_pending_ipi()?
 >
-> Plane type determination logic inside layer init functions doesn't allow
-> index register to be repurposed to plane sequence, which it almost is.
->
-> So move out the logic to mixer, which allows furter rework for DE33
+> Sure, that sounds better to me too.
 
-                                               ^ further
-
-Otherwise,
-
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+cpus_peek_for_pending_ipis() perhaps?
+  
 
