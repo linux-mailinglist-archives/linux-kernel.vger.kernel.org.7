@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-872013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E067C0F1C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:59:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 117E2C0F11A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:53:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3423407821
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E5719C82C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2974D3191D0;
-	Mon, 27 Oct 2025 15:45:21 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418433164D3
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5561830CDAE;
+	Mon, 27 Oct 2025 15:46:32 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6064F2620E4;
+	Mon, 27 Oct 2025 15:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579920; cv=none; b=BC6IlOAV/Nx7c9QvJK+UhaSvCNKJEK5BhCsBtVNaLZjxiujcKXShaKfnTM++gb8XPe+JFmd45Lhc8ukIk7ftEfZfGmti4v6NbnCaL4JKNFBSdvLxMQ1Ou3/wNEnJH3S8tGBhuuqPY53LFccqFG3IojWl0KlPjVSlOrROrnmsFlI=
+	t=1761579991; cv=none; b=KjSmKgvu9k6PF2Zb9AZcTHA99PGGR2ACJ2OP5P1/WZ9EtJb5n0/LwKVMIhQJVPJXSeJa2MOB4mWQMurj8DxE8ecBKDPEn9QY3fPiLqbvTIRDGAgddzJjciF0pIR3IShDvenq+y66F3u9D077vk1km233TngO3steNAQOCId/5nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579920; c=relaxed/simple;
-	bh=Ips81UNHQeAq7E5Rs9d1fFKA3vURdlckpWHsB5DgE2k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k9hgVd/8NTSrdkjCcmLfLazRaDLpuSNqUtBvubpA3B4HlQcZ2k55NoBTDj/4yQIRBoeHRD7qzpCN0lEHSleg/fAZ13A/p13borzB5JpG1SRkQn4hS2Q6ladTbf9Lara0Z1nR9S6NbMNsh9IdjwS6/gyrPmrHNdbQ3KT8or8Aqwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 53B891299B2;
-	Mon, 27 Oct 2025 15:45:11 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id 2FF5720028;
-	Mon, 27 Oct 2025 15:45:09 +0000 (UTC)
-Message-ID: <4484f1dfe22c9ca6dcad52d915a92f600d0088e1.camel@perches.com>
-Subject: Re: [PATCH v3 1/1] checkpatch: Don't warn on "orhapned" DT schema
- file
-From: Joe Perches <joe@perches.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-kernel@vger.kernel.org
-Cc: Andy Whitcroft <apw@canonical.com>, Dwaipayan Ray
- <dwaipayanray1@gmail.com>,  Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Date: Mon, 27 Oct 2025 08:45:08 -0700
-In-Reply-To: <20251027093818.1806010-1-andriy.shevchenko@linux.intel.com>
-References: <20251027093818.1806010-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761579991; c=relaxed/simple;
+	bh=+R8Fsz9b7HwEmtTFzrmf82rkmoqpGC3iY/+mfGTaS6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VN9nktlLmVfgstzgkSGq4I49HZKn8YwZLSfR1LLUyqBP6f+6dD2vf5nReBMmPak4Q9ItQK9rBt6aGWnU/0OpUwIN5rmNkaSCfKDA8uzuId+4gVsaQLT5hSSSxc1PfyvS+BsbcEML3z8F3YhBlRaHPVhmEhdfxQwRTE2+6OiM7cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: hSyxVqzPRR+ycZ0we476xA==
+X-CSE-MsgGUID: G0eqT3DaTD2btkYnuvHU4Q==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 28 Oct 2025 00:46:22 +0900
+Received: from localhost.localdomain (unknown [10.226.93.103])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4184E4003EA1;
+	Tue, 28 Oct 2025 00:46:18 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Nam Cao <namcao@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 00/19] Add RZ/G3E RSCI support
+Date: Mon, 27 Oct 2025 15:45:47 +0000
+Message-ID: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 2FF5720028
-X-Stat-Signature: qas7hfqaxdnz84haphxjm7cwhfpb4553
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX198wwacD3y2LBkpyPlYL0HGwOlRhncclvQ=
-X-HE-Tag: 1761579909-979015
-X-HE-Meta: U2FsdGVkX1+zInxPIGHxRBZoHkDQrj1+F1E+sTi6N39gKkSJnoYNyXdejWyPaSfUDImXDbRxemXAEcYFa/YTihS0Z32neWFV0L5DmKp2SOenHrjbUIG1o6ME+uVAlgGXDSTE9KXtG6+9ebQg1a18a4xRYSkYtULsfJ8Fmot9kzG67Xi57PxnRPV8SC4M4cXSrA+QEn1vppE9RMt7Djt6vLZjo70HNV6fUiqvi36+KL1y5Aaffhypjpr6m+O8hspeLu1InjuruPEEV+nA6icgLGV5qzgucGkcn8XsDEbQhZnqRDhVuvAil6gqfzgQg7jaBQjrXeJ6j5zraDdoAT/WXGNuRhmQD3sop+WCtpsQKFwJVixn+tB1sA==
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-10-27 at 10:36 +0100, Andy Shevchenko wrote:
-> Currently checkpatch warns is the DT schema file is absent in MAINTAINERS=
-.
-> However the DT schema files are self-contained in this sense and
-> have embedded information about maintainers of it. This is a requirement.
-> Hence, avoid checkpatch warning about it.
->=20
-> Tested-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Add RZ/G3E RSCI support for FIFO and non-FIFO mode. RSCI IP found on
+RZ/G3E SoC is similar to one on RZ/T2H, but has 32-stage fifo. RZ/G3E has
+5 module clocks compared to 2 on RZ/T2H, and it has multiple resets.
+Add support for hardware flow control.
 
-nackish.
+Biju Das (19):
+  clk: renesas: r9a09g047: Add RSCI clocks/resets
+  dt-bindings: serial: rsci: Drop "uart-has-rtscts: false"
+  dt-bindings: serial: renesas,rsci: Document RZ/G3E support
+  serial: sh-sci: Fix deadlock during RSCI FIFO overrun error
+  serial: rsci: Drop rsci_clear_CFC()
+  serial: sh-sci: Drop extra line
+  serial: rsci: Drop unused macro DCR
+  serial: rsci: Drop unused TDR register
+  serial: sh-sci: Use devm_reset_control_array_get_exclusive()
+  serial: sh-sci: Add RSCI_PORT_{SCI,SCIF} port IDs
+  serial: sh-sci: Add sci_is_rsci_type()
+  serial: sh-sci: Add support for RZ/G3E RSCI clks
+  serial: sh-sci: Make sci_scbrr_calc() public
+  serial: sh-sci: Add finish_console_write() callback
+  serial: sh-sci: Add support for RZ/G3E RSCI SCIF
+  serial: sh-sci: Add support for RZ/G3E RSCI SCI
+  arm64: dts: renesas: r9a09g047: Add RSCI nodes
+  arm64: dts: renesas: renesas-smarc2: Move aliases to board DTS
+  arm64: dts: renesas: renesas-smarc2: Enable rsci{2,4,9} nodes
 
-Perhaps it'd be better to make checkpatch and get_maintainer have
-some list of filename suffixes that are expected to have embedded
-maintainer email addresses
+ .../bindings/serial/renesas,rsci.yaml         |  84 +++-
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 190 ++++++++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  46 ++
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |  18 +-
+ drivers/clk/renesas/r9a09g047-cpg.c           | 126 ++++++
+ drivers/tty/serial/rsci.c                     | 413 +++++++++++++++---
+ drivers/tty/serial/rsci.h                     |   2 +
+ drivers/tty/serial/sh-sci-common.h            |  10 +
+ drivers/tty/serial/sh-sci.c                   |  65 ++-
+ 9 files changed, 869 insertions(+), 85 deletions(-)
 
-Maybe something like:
-
-our $maintainer_in_file_types =3D '\.(?:yaml|dts.?|rst)$';
+-- 
+2.43.0
 
 
