@@ -1,120 +1,149 @@
-Return-Path: <linux-kernel+bounces-872319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569ABC0FEA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:25:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D764EC0FEB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183E3402B78
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:23:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0592E4ED258
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0282D8797;
-	Mon, 27 Oct 2025 18:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A39D2D876B;
+	Mon, 27 Oct 2025 18:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TU/PrIb2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnzzAYeY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0860A2D7DF4;
-	Mon, 27 Oct 2025 18:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB710433B3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761589370; cv=none; b=Qh1ZhxTqeIb220Ted83BgAxaQIyHJtgZgam4TG/JM5OODj1S/Jw3kll4E+p3tr2iB3EMVuigViI0EbkCCNsd3zLYhC7FBuIMEA1LSTQgtzF0KiS2lRGQ2GfPfsMa4Hv98K5pp0lAKkgfIh0KSTUuwmEEBuNSoIYMRv2mTIPfV+M=
+	t=1761589556; cv=none; b=QusJM7hErQtJ95JdBjUIhEVP7vKovW3WCIyWo2gQl5i3uWxQggvcbyy665ZF88Ayyng0N+2C33DKYHgLHNK/qq6E7ZcyA4iw33Ag8zfbXc+oR6JsJHfrSReopD9MTNJRVgdTjQ7hXnZV17vq1ovxod6uqvBpdsKsvyGLWM75Fa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761589370; c=relaxed/simple;
-	bh=h0Akxevv1FwFzTjlo4aljOnkFihbhJJn9CePtpMBHU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdFcO4jdf8aWLEUQbdtwxJNy72l2GQJIZq2qzVmgMRhgr+QNuBnZprYAtfjRKXbQJdW95g008VylFHzXCEr5Xi8RzrY5MW0ROufP4Vhk9Ns1hWb8hZiRAItlMOuMK1R7ZM5Y2ve50vHsWHn8IkLGCqI7aeD6a1Epr+Iod275zlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TU/PrIb2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D48C4CEF1;
-	Mon, 27 Oct 2025 18:22:49 +0000 (UTC)
+	s=arc-20240116; t=1761589556; c=relaxed/simple;
+	bh=x0GdLq5oDT2bsye4+zTGepjhdJueRV6Y+YQZ4kwiQjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uFmfNxFHKZV8526pJfmv+PsBg3u9irhwSTiLxv2IJhxGIS6Y422WtbUBIBp+YKRaNezEvyb9qidwksv1YlCPPH8H/QbAyquyupCHvwyQ2kjLIPV2P4Xpu6QoHkbgLOWa7ESU6OaBj+kd/ZKkDBDojIvohA9JS9OTvXElIHLsggQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnzzAYeY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CC2C4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761589369;
-	bh=h0Akxevv1FwFzTjlo4aljOnkFihbhJJn9CePtpMBHU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TU/PrIb2xo7EWam6dX1GZpobXpr8na62zyME1zrIQgmyzyS4dA+yPG9MQuLWIQdlM
-	 73XzFcnx7gpqtLv06j29NUuec09shTXfnLrFy3WMXn5lsGbncv4iCqcukSqzFKcgRy
-	 7zUtaHF5oIUk+TKenVBMO+StwH4UVbjoQTpmR34kZSOfrBn4WQwlHlQIpofgMqthJx
-	 M/KXYj3W2cn/lvRn2aD2nUMfueeWZ/kJQnprH6uAcMC6dwo0xzZfls4eOkK7kzMQWF
-	 o+yVeur7X3wGZHlH231jjtG7znLkhx2eaatY1reYrTDmgW/k+FDL9Ah4SE/hSFbRG8
-	 UoaBdqpOJB6pg==
-Date: Mon, 27 Oct 2025 13:22:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, srini@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	horatiu.vultur@microchip.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, daniel.machon@microchip.com,
-	luka.perkov@sartura.hr
-Subject: Re: [PATCH 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
-Message-ID: <20251027182248.GA1281416-robh@kernel.org>
-References: <20251024192532.637563-1-robert.marko@sartura.hr>
- <f3bd99c8-eb70-40d3-9b43-fba56546f591@kernel.org>
- <CA+HBbNGZ3FwrGCtHX=mc8LQR9DCU84jqfhjFRGVDCJWtt+gdkA@mail.gmail.com>
+	s=k20201202; t=1761589556;
+	bh=x0GdLq5oDT2bsye4+zTGepjhdJueRV6Y+YQZ4kwiQjI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gnzzAYeYRz3Mqb8WaFg/u8kWKIHC/9wtZNUsL4sZFO0qmlko7bbcQ5ilEk18RYcCN
+	 LMG90WoISGQMs1krcPexq6q4y92QG+z9J+f3in7KMugAUCKqZhExUxSCj0pG4E649y
+	 KUXbjdGTiyAgfKEKoD6swr13seSDIgUh5H9i6X9iRJk4F2JJ9kEGD2SKR9gMDdHENQ
+	 JAw7PKzgHEgQniBjIVBL96yyHNDWGtVLaP6CJQnfD6d2S83uAPlJGAPefNSGzpHFqt
+	 7uL6o8q9/8nSAAYvvOfZd6XZO9B8beUEIgdyEd+MbRlL74heJiEQhNWSCsQao9JcLz
+	 nxDz1foQ+lTiQ==
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7c0e357ab51so4707026a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:25:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXaG/l70Hnjda/PjM77OSv41hjdHuGSgNaTtmD2acIDMpiMknkHQXDgKkj6xhp+DhXfSSUJ5GFyb2crsek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1WdoP07qm+Fp9CpgEiSPMTK+daJO62Tx+VoGnnviWJuQaepM7
+	jqKsv8nz/rcyzNpaTmgt+6GECDwwjYTBzrXFS+j6836E83pM+RyqJMMOGat3QVF6w/yvHEMjqZ9
+	ffleL1fTlkUIsg6+K8PFOGgccSZgAZq8=
+X-Google-Smtp-Source: AGHT+IH+/v+LQw9DzQQ8Vvjc8o5cD0s9vYZfdVPNB6aKtMkLpGObabhiy1PrnQHxjpgsbBapAIOim4OcgWEv0zzMosQ=
+X-Received: by 2002:a05:6808:f89:b0:44b:1f75:dee7 with SMTP id
+ 5614622812f47-44f6b911a0cmr399801b6e.8.1761589555767; Mon, 27 Oct 2025
+ 11:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+HBbNGZ3FwrGCtHX=mc8LQR9DCU84jqfhjFRGVDCJWtt+gdkA@mail.gmail.com>
+References: <tencent_EAFBEC2D1967D73F4F76B8048D2F59BB1105@qq.com>
+In-Reply-To: <tencent_EAFBEC2D1967D73F4F76B8048D2F59BB1105@qq.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 27 Oct 2025 19:25:43 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0httK0xmvA5zcYruU1Ypsw1YXHBOaPQxwCai8YDLsGkvA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkhyJQvdvhTfLeogaWPxZqKwt3rdWh3HYbs3GEZYZulKc9_EJEohW0F2fg
+Message-ID: <CAJZ5v0httK0xmvA5zcYruU1Ypsw1YXHBOaPQxwCai8YDLsGkvA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ACPI: PRM: Skip the initialization when boot from
+ legacy BIOS
+To: "Shang song (Lenovo)" <shangsong2@foxmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shangsong2@lenovo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 01:23:20PM +0100, Robert Marko wrote:
-> On Sun, Oct 26, 2025 at 11:10 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On 24/10/2025 21:24, Robert Marko wrote:
-> > > LAN969x series also has the same HW block, its just 16KB instead of 8KB
-> > > like on LAN966x series.
-> > >
-> > > So, document compatibles for the LAN969x series.
-> > >
-> > > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > > ---
-> > >  .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml  | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-> > > index f97c6beb4766..f8c68cf22c1c 100644
-> > > --- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-> > > +++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-> > > @@ -23,8 +23,15 @@ properties:
-> > >        - items:
-> > >            - const: microchip,lan9668-otpc
-> > >            - const: microchip,lan9662-otpc
-> > > +          - const: microchip,lan9691-otpc
-> > > +          - const: microchip,lan9692-otpc
-> > > +          - const: microchip,lan9693-otpc
-> > > +          - const: microchip,lan9694-otpc
-> > > +          - const: microchip,lan9696-otpc
-> > > +          - const: microchip,lan9698-otpc
-> >
-> > Why are you changing lan9668? Nothing on this is explained in commit
-> > msg. Also, list of more than 3 items is not really useful.
-> 
-> I am not chaning lan9668 but rather lan9698.
-> I agree that a list of all possible SoC models is not ideal but I was
-> just following the current
-> style in the binding.
-> 
-> As far as I know, the whole LAN969x series has identical OTP so just
-> using a single
-> microchip,lan9691-otpc compatible is enough.
+On Mon, Oct 13, 2025 at 10:38=E2=80=AFAM Shang song (Lenovo)
+<shangsong2@foxmail.com> wrote:
+>
+> To address the confusion caused by the misleading "Failed to find VA for =
+GUID..."
+> message during legacy BIOS boot, making 'EFI_RUNTIME_SERVICES's earlier j=
+udgment
+> can prevent this false alert.
+>
+> Signed-off-by: Shang song (Lenovo) <shangsong2@foxmail.com>
+> ---
+>  drivers/acpi/prmt.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+> index 6792d4385eee..ec367d322ab2 100644
+> --- a/drivers/acpi/prmt.c
+> +++ b/drivers/acpi/prmt.c
+> @@ -305,11 +305,6 @@ static acpi_status acpi_platformrt_space_handler(u32=
+ function,
+>         efi_status_t status;
+>         struct prm_context_buffer context;
+>
+> -       if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
+> -               pr_err_ratelimited("PRM: EFI runtime services no longer a=
+vailable\n");
+> -               return AE_NO_HANDLER;
+> -       }
+> -
 
-The above is a *list* of what a "compatible" entry must contain.
+The check removed by this change addresses a different case than the
+similar check in init_prmt(), so removing it when relocating the other
+check is questionable.
 
-> 
-> >
-> > >        - enum:
-> > >            - microchip,lan9662-otpc
-> > > +          - microchip,lan9691-otpc
+Please limit this patch to the init_prmt() changes.
 
-"enum" on the other hand is a list of possible values for 1 entry in 
-"compatible".
+>         /*
+>          * The returned acpi_status will always be AE_OK. Error values wi=
+ll be
+>          * saved in the first byte of the PRM message buffer to be used b=
+y ASL.
+> @@ -388,6 +383,14 @@ void __init init_prmt(void)
+>         acpi_status status;
+>         int mc;
+>
+> +       /*
+> +        * Return immediately if EFI_RUNTIME_SERVICES is not enabled.
+> +        */
 
-Rob
+One-line comment would be sufficient here.
+
+> +       if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
+> +               pr_info("PRM: EFI runtime services unavailable, can not i=
+nitialize.\n");
+> +               return;
+> +       }
+> +
+>         status =3D acpi_get_table(ACPI_SIG_PRMT, 0, &tbl);
+>         if (ACPI_FAILURE(status))
+>                 return;
+> @@ -404,11 +407,6 @@ void __init init_prmt(void)
+>
+>         pr_info("PRM: found %u modules\n", mc);
+>
+> -       if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
+> -               pr_err("PRM: EFI runtime services unavailable\n");
+> -               return;
+> -       }
+> -
+>         status =3D acpi_install_address_space_handler(ACPI_ROOT_OBJECT,
+>                                                     ACPI_ADR_SPACE_PLATFO=
+RM_RT,
+>                                                     &acpi_platformrt_spac=
+e_handler,
+> --
 
