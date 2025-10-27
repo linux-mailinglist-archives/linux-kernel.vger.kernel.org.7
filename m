@@ -1,295 +1,221 @@
-Return-Path: <linux-kernel+bounces-872571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7D2C11794
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA05C117AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D00E1A60829
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343D71A6281D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7556327798;
-	Mon, 27 Oct 2025 21:07:40 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB372652AF;
+	Mon, 27 Oct 2025 21:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jl7iaCs8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975E42D8377
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E131062D;
+	Mon, 27 Oct 2025 21:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599259; cv=none; b=nk1Sgx+BdmKexn0/CpB2RYdO5j1fxAevAR+ey7+Zh0+F+IN7TVj7AltgyCPzuSJOqh52f2IiSumIS7a03DYqnwSV+7bLtq0fmvqN4xgwjAHb3m2JVVK8YOgPVybVYGazLX55CRVGqpB+EXrWTtYWxneXfpNUVdJQU5rEsdvB1zY=
+	t=1761599298; cv=none; b=s01HyFu3LQeTpRgUat/Ve4j2OucdMNso0sGuDTxh0A9234Jx8fqYbv8pthu/qYZP7MI4FyxoFAjhVOX+Po2fzri7IY2t+MLCQ5k0bMuc18OIVIUCjvgnir4ipYQ1Xi/K3a99NwgyR9ULhk8PrutCQGrPA4ri46fXv9ptguJhMp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599259; c=relaxed/simple;
-	bh=Cz1eSevpD/I1LrsIrUBNouhdxHno4nqx0TPkX3bxatk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XKKnF0qdGjBhtT3xq4lzPIk9zjGRJ9O+6Hz9VgOlLjV9aSgiuw5hculesaT/ObSkkBNHtYqmJQ6smEo6tAExM154CpzF8ZKvxNt4Sm1PFRRLLFFHVBn9JB1ttoTH2IZGhbhgveJBM4f+rxf5ZK5Llk2z5o7ZUIuWv7GxJVeiU2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-945a4849260so656877539f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:07:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761599257; x=1762204057;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yJd309KA2t9tYlphuKW1GClsIxItIY6mqSvUQYS2sUs=;
-        b=rtXAaQ8CMUqbR/bAMXf0A9hG7GZayBu/IbbfGAArdJKUu2FphLfhTX4CiGan/s5arN
-         n6fTr+joBdCzcMyPhF3KUFUWkhzdfQA3piI2Njy57tLbfXOBZ2cMQFxzg2Ea7dCnT3Fd
-         SCBVvISfkT3GZlcHM6xp3cmYKpMASB2sIrj2Efap4vXwtb1q9z3OQ3F1y5y4bppH7mtH
-         C7UiRFDAlNfQwah+EN49P/NuOL/rZdWEaRDiW9tA5Ye3YAt1H726QtxtDsF1ZOePxClZ
-         4/VYUTpGqUi/cxpVlkhlA+NNKFAbzzztUrQ6zSiEUuAX893veNsnGN9BhFNZoxPcAh9I
-         lmwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+01sFnUo5ELDMp68PtVbjyp4hGw0swtbpPNi6ml9QFLRhgp/5OCUch+xwrvcKdTOztXvZhx+RFcAKRZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7qpZp5yiaqa7B3AQEOI5pHEha70NAJKlaU7dIPca3nxvn7jzx
-	/xzM/hde0Ir7WHL1h1IJs9UWVq+zTHdn/2fTyk53dr6gIDDLhoS1+8ICcK9SJTamoS0pB89NVBq
-	gmUCzOJIqr6Kf3YHPfrvweC7TU1lxSO/4ncwGhy0Vt3iStDk+G54blYjmnpA=
-X-Google-Smtp-Source: AGHT+IHtrFJtB1irmumn5zkk/+lgIGRIIa8XaCwkJxPDXeOqp5K9BJ4Wwid1E2uNB6608tP8V/0rswSH123NiE1cwuSJBd1iG3H2
+	s=arc-20240116; t=1761599298; c=relaxed/simple;
+	bh=ma+k8nldqJngQini1R8j787y6UpbAMZD6PHdP4b+ilU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pp8Gkvx0hCKjhreYlGa2mBQD+M/mUiTKi3pgRCavAZcvOTp2JU0YAM/dMGnnY4zgW4lN7C/wzP9h4J8ksa60GxNyuHNFuxbXz3SzY35i092o0c/1o8W5Awvz1tgn9OQLMNU9B65BZd1g7fnYpDdl+G6PxROALyMI1o6m3qdJJYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jl7iaCs8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BEFAC4CEF1;
+	Mon, 27 Oct 2025 21:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761599297;
+	bh=ma+k8nldqJngQini1R8j787y6UpbAMZD6PHdP4b+ilU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jl7iaCs8Q/W05FCWMpt5JBolxcz4wFF64dKoBRAh5fVrVlJ+/EsrIOf7ioNgK1QXc
+	 WdsZjLMaZ0/yDnCatimSNRhdvrt3r2AzuVhFZIQnUPpZXLUNvwByaqCEv0IeBjJ71k
+	 kyn2W5Ic6Kr88x/f01dOPrd/RdxHPh6q33grRot0gbXArIUJn+9KXJcflzJa0dnXnL
+	 OymRKx4LXpUm/4+s9CMYLqnIATkp6Ci2GtCKPEGlOA+5cl6UY4rTNMLzob3nNgY92y
+	 JoJNv5RBsTCVSem6xmtAxyqx3doHWQNMuEGkB3/6HcRveaMrV96oKbhGC8oKLPx6ma
+	 cknD2Iobo5lpA==
+Date: Mon, 27 Oct 2025 16:08:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 03/15] dt-bindings: power: supply: BD72720 managed
+ battery
+Message-ID: <20251027210816.GB1565353-robh@kernel.org>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdab:0:b0:431:d951:ab9b with SMTP id
- e9e14a558f8ab-4320f685ff3mr22239925ab.0.1761599256723; Mon, 27 Oct 2025
- 14:07:36 -0700 (PDT)
-Date: Mon, 27 Oct 2025 14:07:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
-Subject: [syzbot] [io-uring?] INFO: task hung in io_uring_del_tctx_node (5)
-From: syzbot <syzbot+10a9b495f54a17b607a6@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
 
-Hello,
+On Mon, Oct 27, 2025 at 01:45:23PM +0200, Matti Vaittinen wrote:
+> The BD72720 PMIC has a battery charger + coulomb counter block. These
+> can be used to manage charging of a lithium-ion battery and to do fuel
+> gauging.
+> 
+> ROHM has developed a so called "zero-correction" -algorithm to improve
+> the fuel-gauging accuracy close to the point where battery is depleted.
+> This relies on battery specific "VDR" tables, which are measured from
+> the battery, and which describe the voltage drop rate. More thorough
+> explanation about the "zero correction" and "VDR" parameters is here:
+> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohmeurope.com/
+> 
+> Document the VDR zero-correction specific battery properties used by the
+> BD72720 and some other ROHM chargers.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+> Revision history:
+>  RFCv1 => v2:
+>  - Add units to rohm,volt-drop-soc (tenths of %)
+>  - Give real temperatures matching the VDR tables, instead of vague
+>    'high', 'normal', 'low', 'very low'. (Add table of temperatures and
+>    use number matching the right temperature index in the VDR table name).
+>  - Fix typoed 'algorithm' in commit message.
+> 
+> The parameters are describing the battery voltage drop rates - so they
+> are properties of the battery, not the charger. Thus they do not belong
+> in the charger node.
+> 
+> The right place for them is the battery node, which is described by the
+> generic "battery.yaml". I was not comfortable with adding these
+> properties to the generic battery.yaml because they are:
+>   - Meaningful only for those charger drivers which have the VDR
+>     algorithm implemented. (And even though the algorithm is not charger
+>     specific, AFAICS, it is currently only used by some ROHM PMIC
+>     drivers).
+>   - Technique of measuring the VDR tables for a battery is not widely
+>     known. AFAICS, only folks at ROHM are measuring those for some
+>     customer products. We do have those tables available for some of the
+>     products though (Kobo?).
+> ---
+>  .../power/supply/rohm,vdr-battery.yaml        | 80 +++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml b/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+> new file mode 100644
+> index 000000000000..1ab3418d4338
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+> @@ -0,0 +1,80 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/rohm,vdr-battery.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Battery managed by the BD72720 PMIC
+> +
+> +maintainers:
+> +  - Matti Vaittinen <mazziesaccount@gmail.com>
+> +
+> +description:
+> +  A battery which has VDR parameters measuerd for ROHM chargers.
+> +
+> +allOf:
+> +  - $ref: battery.yaml#
+> +
+> +properties:
+> +  rohm,voltage-vdr-thresh-microvolt:
+> +    description: Threshold for starting the VDR correction
 
-syzbot found the following issue on:
+No constraints? Is 4000V okay?
 
-HEAD commit:    72fb0170ef1f Add linux-next specific files for 20251024
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13087be2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e812d103f45aa955
-dashboard link: https://syzkaller.appspot.com/bug?extid=10a9b495f54a17b607a6
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14725d2f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11233b04580000
+> +
+> +  rohm,volt-drop-soc:
+> +    description: Table of capacity values matching the values in VDR tables.
+> +      The value should be given as tenths of a percentage.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be1fa3d1f761/disk-72fb0170.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/57302bf7af40/vmlinux-72fb0170.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/91c806bb2a2b/bzImage-72fb0170.xz
+We have a standard unit for this too. '-bp' or basis points (1/100 of 
+percent).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+10a9b495f54a17b607a6@syzkaller.appspotmail.com
-
-INFO: task syz.0.17:6027 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:25752 pid:6027  tgid:6026  ppid:5955   task_flags:0x400548 flags:0x00080000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5254 [inline]
- __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
- __schedule_loop kernel/sched/core.c:6944 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6959
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
- io_uring_clean_tctx+0xd4/0x1a0 io_uring/tctx.c:195
- io_uring_cancel_generic+0x6ca/0x7d0 io_uring/io_uring.c:3363
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x345/0x2300 kernel/exit.c:912
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
- get_signal+0x1285/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0xa0/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x72/0x130 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f887d98efc9
-RSP: 002b:00007f887e743038 EFLAGS: 00000246 ORIG_RAX: 000000000000010e
-RAX: fffffffffffffdfe RBX: 00007f887dbe5fa0 RCX: 00007f887d98efc9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007f887da11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f887dbe6038 R14: 00007f887dbe5fa0 R15: 00007ffda9831b38
- </TASK>
-INFO: task syz.1.18:6058 blocked for more than 145 seconds.
-      Not tainted syzkaller #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.18        state:D stack:28104 pid:6058  tgid:6057  ppid:6038   task_flags:0x400548 flags:0x00080000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5254 [inline]
- __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
- __schedule_loop kernel/sched/core.c:6944 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6959
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
- io_uring_clean_tctx+0xd4/0x1a0 io_uring/tctx.c:195
- io_uring_cancel_generic+0x6ca/0x7d0 io_uring/io_uring.c:3363
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x345/0x2300 kernel/exit.c:912
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
- get_signal+0x1285/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0xa0/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x72/0x130 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f37d438efc9
-RSP: 002b:00007f37d5232038 EFLAGS: 00000246 ORIG_RAX: 000000000000010e
-RAX: fffffffffffffdfe RBX: 00007f37d45e5fa0 RCX: 00007f37d438efc9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007f37d4411f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f37d45e6038 R14: 00007f37d45e5fa0 R15: 00007ffc85237d08
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13d5a0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13d5a0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #0: ffffffff8e13d5a0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-3 locks held by kworker/u8:3/37:
- #0: ffff88813fe69948 ((wq_completion)events_unbound#2){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe69948 ((wq_completion)events_unbound#2){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc90000ad7ba0 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc90000ad7ba0 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
- #2: ffffffff8f4edb48 (rtnl_mutex){+.+.}-{4:4}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:303
-3 locks held by kworker/u8:7/3579:
- #0: ffff88802f51d148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88802f51d148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc9000c717ba0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc9000c717ba0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
- #2: ffffffff8f4edb48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
- #2: ffffffff8f4edb48 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_dad_work+0x112/0x14b0 net/ipv6/addrconf.c:4194
-2 locks held by getty/5585:
- #0: ffff8880344d50a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc900036bb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-1 lock held by syz.0.17/6027:
- #0: ffff888031ece0a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.0.17/6030:
-1 lock held by syz.1.18/6058:
- #0: ffff88802faa20a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.1.18/6059:
-1 lock held by syz.2.19/6082:
- #0: ffff88802840c0a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.2.19/6083:
-1 lock held by syz.3.20/6106:
- #0: ffff8880338140a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.3.20/6107:
-1 lock held by syz.4.21/6142:
- #0: ffff8880611da0a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.4.21/6143:
-1 lock held by syz.5.22/6172:
- #0: ffff88801f7c00a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.5.22/6173:
-1 lock held by syz.6.23/6204:
- #0: ffff88805b6440a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.6.23/6205:
-1 lock held by syz.7.24/6242:
- #0: ffff8880301c60a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_del_tctx_node+0xf0/0x2c0 io_uring/tctx.c:179
-3 locks held by syz.7.24/6243:
-3 locks held by syz-executor/6246:
- #0: ffffffff8f4edb48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #0: ffffffff8f4edb48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #0: ffffffff8f4edb48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8e9/0x1c80 net/core/rtnetlink.c:4064
- #1: ffff88807b9c1528 (&wg->device_update_lock){+.+.}-{4:4}, at: wg_open+0x227/0x420 drivers/net/wireguard/device.c:50
- #2: ffffffff8e143038 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:311 [inline]
- #2: ffffffff8e143038 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x2f6/0x730 kernel/rcu/tree_exp.h:957
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:337 [inline]
- watchdog+0xfa9/0xff0 kernel/hung_task.c:500
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 6107 Comm: syz.3.20 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:kasan_check_range+0x1d4/0x2c0 mm/kasan/generic.c:200
-Code: 01 f3 49 8d 5c 24 07 4d 85 e4 49 0f 49 dc 48 83 e3 f8 49 29 dc 74 12 41 80 3b 00 0f 85 b8 00 00 00 49 ff c3 49 ff cc 75 ee 5b <41> 5c 41 5d 41 5e 41 5f 5d e9 4e d8 2e 09 cc 45 84 ff 75 63 41 f7
-RSP: 0018:ffffc9000383f7b0 EFLAGS: 00000256
-RAX: ffffffff82431501 RBX: 0000000000000018 RCX: ffffffff824315fd
-RDX: 0000000000000001 RSI: 0000000000000018 RDI: ffffc9000383f880
-RBP: 0000000000000000 R08: ffffc9000383f897 R09: 1ffff92000707f12
-R10: dffffc0000000000 R11: fffff52000707f13 R12: 0000000000000003
-R13: ffff888079527128 R14: fffff52000707f13 R15: 1ffff92000707f10
-FS:  00007f4e567906c0(0000) GS:ffff888125cdc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055db9a726918 CR3: 000000002ec48000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __asan_memset+0x22/0x50 mm/kasan/shadow.c:84
- seq_printf+0xad/0x270 fs/seq_file.c:403
- __io_uring_show_fdinfo io_uring/fdinfo.c:142 [inline]
- io_uring_show_fdinfo+0x734/0x17d0 io_uring/fdinfo.c:256
- seq_show+0x5bc/0x730 fs/proc/fd.c:68
- seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
- seq_read+0x369/0x480 fs/seq_file.c:162
- vfs_read+0x200/0xa30 fs/read_write.c:570
- ksys_read+0x145/0x250 fs/read_write.c:715
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4e5598efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4e56790038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007f4e55be6090 RCX: 00007f4e5598efc9
-RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
-RBP: 00007f4e55a11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f4e55be6128 R14: 00007f4e55be6090 R15: 00007ffd5d16a678
- </TASK>
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +  rohm,volt-drop-temperatures-millicelsius:
+> +    description: An array containing the temperature in milli celsius, for each
+> +      of the VDR lookup table.
+> +
+> +patternProperties:
+> +  '^rohm,volt-drop-[0-9]-microvolt':
+> +    description: Table of the voltage drop rate (VDR) values. Each entry in the
+> +      table should match a capacity value in the rohm,volt-drop-soc table.
+> +      Furthermore, the values should be obtained for the temperature given in
+> +      rohm,volt-drop-temperatures-millicelsius table at index matching the
+> +      number in this table's name.
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    power {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      battery: battery {
+> +        compatible = "simple-battery";
+> +
+> +        ocv-capacity-celsius = <25>;
+> +        ocv-capacity-table-0 = <4200000 100 4184314 100 4140723 95 4099487 90
+> +          4060656 85 4024350 80 3991121 75 3954379 70 3913265 65 3877821 60
+> +          3855577 55 3837466 50 3822194 45 3809012 40 3795984 35 3780647 30
+> +          3760505 25 3741532 20 3718837 15 3696698 10 3690594 5 3581427 0>;
+> +
+> +        rohm,volt-drop-soc = <1000 1000 950 900 850 800 750 700 650 600 550 500
+> +          450 400 350 300 250 200 150 100 50 00 (-50)>;
+> +
+> +        rohm,volt-drop-temperatures-millicelsius = <45000 25000 5000 0>;
+> +
+> +        rohm,volt-drop-0-microvolt =  <100 100 102 104 106 109 114 124
+> +          117 107 107 109 112 116 117 108 109 109 108 109 122 126 130>;
+> +
+> +        rohm,volt-drop-1-microvolt = <100 100 102 105 98 100 105 102
+> +          101 99 98 100 103 105 109 117 111 109 110 114 128 141 154>;
+> +
+> +        rohm,volt-drop-2-microvolt = <100 100 98 107 112 114 118 118 112
+> +          108 108 110 111 113 117 123 131 144 157 181 220 283 399>;
+> +
+> +        rohm,volt-drop-3-temp-microvolt = <86 86 105 109 114 110 115 115
+> +          110 108 110 112 114 118 124 134 136 160 177 201 241 322 403>;
+> +
+> +        rohm,voltage-vdr-thresh-microvolt = <4150000>;
+> +
+> +        charge-full-design-microamp-hours = <1799000>;
+> +        voltage-max-design-microvolt = <4200000>;
+> +        voltage-min-design-microvolt = <3500000>;
+> +        degrade-cycle-microamp-hours = <131>;
+> +      };
+> +    };
+> -- 
+> 2.51.0
+> 
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
