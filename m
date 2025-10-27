@@ -1,746 +1,190 @@
-Return-Path: <linux-kernel+bounces-871914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2913BC0ED84
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:13:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4397C0ECC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 865574FE511
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DD9424ECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0407030E0D2;
-	Mon, 27 Oct 2025 14:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E3230AAA9;
+	Mon, 27 Oct 2025 14:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="he9y2x3s"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="osLnZf5y"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EE93093CD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05C22EC096
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761577191; cv=none; b=oxpEB4BNuAM0ktgTZVvubwoTEP++cCcCU2vWqNNDKQpeJQkO6J67fC20g42IZN+dSbPSgtsnsqLbTBz56Jj/oupbYoy5XISZspWqJUgUqTe1I8tIVI1tLAhTzoIEY5h57+cVoXF4ReRMleonQbVMI2xTn/lrllkr2qWuOVjs4jE=
+	t=1761577169; cv=none; b=RfUpl/tPoFrMp8W8DRVTAmlYI3wQpfGY1CLy1ngCKkMICG2FFhmwFNj6aFoiw7Q3ml/cjrNoPhcx4xpwya23opjRiKyRUi1OZ9jAsP+O9FguBkbolNgdFwXHWD+b2ZJwN71TokEMTsvTrGJ4wEKED6YxI23AksagttxIFs5Jpbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761577191; c=relaxed/simple;
-	bh=8ujTO8kESXkKER5rihSjybuS5+BATF2FawKO2HqELJU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mJ2SsCluQ9Z3PkTwpDc7CoRVgClk1pgWPdkFFJmWNJkZAgrpiyQXMGJNbjzA1AM2EYepbamjXsBCI7CtvzFigktkscE72A0S4I1QEdPSI73vX8+/IsCHLX1x2Cz1SilKUdhYRqA1jKFlmu7IREbtppWSPSl/NiZYEceqlcALltI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=he9y2x3s; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1761577169; c=relaxed/simple;
+	bh=dsIofV2hg8J/vd9r6puEBMQ1q589TPT1cMJ02OTgt8U=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=D/QWrEpyLoDVTG0kCdJer1sJkA6EV5UybNAUnqiHF4aLwjVCPWHXz2Sj1/T8kVI1shNDN7GcQMe53v8W3eBIBIc0qPq560VLqOmytinuij42726i1Plq/j16P3sQO6NoYvg0TgEysjXWCFHNy0t7j4kNbRkkyumfsrXnYux6RQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=osLnZf5y; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42421b1514fso3373192f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:59:48 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso13067055e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:59:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761577187; x=1762181987; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1761577165; x=1762181965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IXLN42Vf30P7vl88JjPiEjmOW38pV3UPxM/mBliZwEQ=;
-        b=he9y2x3s5SnLEUmJ4RJpHjoDZMZ3ArWsa7Fm8VIsQiaToUrB+V2X/daxQ7Wm2D6a4M
-         WNYS3xsnzmUikYT2lwnUo77PBbhBo9f3JdvpdUTIG//CtMIjJE1QSGR0hr0tEisA7fTV
-         cBUIcQJaY2t3/CMy+qGMTzhdm6lbmOJGDGROrKKsVjA+6KBwVTW/VotcKfjQzgQR3vlQ
-         6mHPk3JOKK1MJKK+yoqaCQQe/RtmvhR9toJ1gBJXVtA5J8Hu7pT5A9K1hM/4rR9DTX2g
-         h0ED/6NLDCStH11zagQvhX/XzbZfst9l53XZxxEgeDhCQGEu1HSJ96Pkkzt4QedgDHWI
-         WObw==
+        bh=laKL0Cr/PvBcX2XD9BKXgno90RHOh9IUPRrWnIXmsZ8=;
+        b=osLnZf5yWEDLCq86m0xSYnEwPYXL9Ba2h5fXLTTG+ySWdYwqtfuO6fVHz/nkzhfa+r
+         Db+8ahyQpu9jdT56LkNJC4vLBaGTf+Rs4O2MkiqQjbH1dRWG3GFa1j+gpKJrU2q2Phxl
+         HM1zBVIOreyB0mxjU2a8XY5mF9sE+VZQXK2gydd2iSTVydy9auHgH4OudNMK0z316+Yf
+         okf6PdtsDMOs33tDI73iAL93UKRwl/VkrKGRYDT/HTxCORFH+SIuf2Ed8Ut4MBEIyL/A
+         W44CEt3fqrz5dXXyAiDD2R9nckRn82QwEhxYTqcEvRI0Vla3LcoyegZirQG2d1oLGpBY
+         v+8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761577187; x=1762181987;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IXLN42Vf30P7vl88JjPiEjmOW38pV3UPxM/mBliZwEQ=;
-        b=u134NZhntojdEw7m1aRX1T4hGESS3zDQEIMXS0d4e3bJ8zKax6ADn/11PJjul1ESTD
-         q9R0Z1BWClhDemQqBJn6zdqbn32YTUIUvEwofqyX2tjdZLpsdWiDdqygTJ4DLDglVe5L
-         kOSDWinMeU3dLcsSqneHz8p+oCYOyuYSYd2EvrSnv1EAZa6YL7VcjyvFsq4aFR4ZXHey
-         UtmdeVnbc1Jb6d9tdgmySgo+CfWSSauW1gil0QpxMH8DvN+Bmuq0A3HrY4ryDIVRd5iw
-         TJKpU54BgDrTVfTkvYU7vs3K3dVbuPR7SM3N7RkPPYJXIVwDDH1KigcX7Yk35dIlFWnK
-         a4qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiuotX8inhjDHFhIIoI05nHfOvQOhFgCm3VkIj/ZQyKpUe8FeNKUEu1lHU8qXljxmk/oqfG0anjQukn0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrPdreASRriRkxnze4+04xcBMTO3r5e06BfT6+Ym3lsJK1MXLR
-	1tgJOFhalAjWo0efB527c9hrn0D+P2M4kU7RTxKvuCOa8UvhXrpfWOSGsGIt0zWPc1I=
-X-Gm-Gg: ASbGnctjn+1KkLR8EXid4gQ00m4Or196f70XX6oRIkcyYJUy22gWopCXLSNx/3cyIfX
-	qOs7IVtX0H4HnnAWgEqvpj1uIgUl26iGVSeQ0GLiMoP/r5p6xHCMuRnHpqsNOiWHE/+x94Xqv9I
-	HgowFl8GW7DSSwn0Tac4zoVCMLEhztEo958GgZvWC8pmYJRaOsk0FjwGi5FwPGLRjCVY/UzqmvW
-	bmXde1Bkz00TZP89MkOptqhbdoHj/q22jsAAqHPLy+fWpAwrsfRHHnGPfJ/9cf92BFZ+dh+0e0B
-	mIGq+hoiy01cYM7PyNiswwxciwjcGm9G53it6TuICidf3RclA5cIjiNobRCndUugRSJqkTYQUjR
-	gbB6nIuJRHyH4cw3J+dON2bJkYKf1uhHW9nHHHcPxSlbcqzH/dqVogg8b3taWoa2YMmVUFo5tBw
-	==
-X-Google-Smtp-Source: AGHT+IHvbiqiaE9BGfDBUSTRvydN/vzRuP3ZcnZz2lw7HK6fcvufKRDfKe0pywBnSHjmBlHiLUyAuw==
-X-Received: by 2002:a05:6000:2dc6:b0:428:bb7:174f with SMTP id ffacd0b85a97d-429a7e519efmr21497f8f.26.1761577187143;
-        Mon, 27 Oct 2025 07:59:47 -0700 (PDT)
-Received: from hackbox.lan ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df682sm14624801f8f.43.2025.10.27.07.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 07:59:46 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 27 Oct 2025 16:59:22 +0200
-Subject: [PATCH v3 5/7] drm/msm/dpu: Add support for Glymur
+        d=1e100.net; s=20230601; t=1761577165; x=1762181965;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=laKL0Cr/PvBcX2XD9BKXgno90RHOh9IUPRrWnIXmsZ8=;
+        b=MfIGBGjkdnmhn29t6O86HlskG7cD+OqVyqcE6vq+FCuuaB1/fXd8cuIxly0sQENY1h
+         2Z4KXO3OqXZjm8tr17g5O0gOVheOtTffdkYYDTgXRiZOsUoH8cEE9i9rFolWMoQ5Ud6D
+         yTTI25UwNzdC/7BmdaSCzPgwt6w/u4u/slJk8m8LsklzfIV2SKl+kVB+Eu4jG4TaUNGv
+         C4Yg3gLtlVW7PUDHrGRg1VkOgWvd7/okW1PCe3MWCFB5ghKblOMIAF6jX0M6kpPX9vpQ
+         4bvK52cg/XDNE9pUlQ25ITeHLqYsZfID1AiEPHTcN/H3LeaIb5HOL251chxxeWnBKq24
+         tQUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtlQMQVogoHlH+daGEu74OIEsAAHcwGm0sZXhumqeFenNkbxOl9Mb1Jhfg6cprtiuDQkAynOV8NIwtaJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoeXiGL3wh65x8x5MwKUD292WP0QS5RLWIro2NAo+gxLyYz87y
+	KUauBC0AxEZU6SqRkSJyEprNyS/2qcAFKx/6Nvmu1IB9bLN4KjFr6swFXc8+YW4+prw=
+X-Gm-Gg: ASbGnctPN3yz/3Kbe7gxZEbLXgs/Y+57cbSVXvM2ghby7CHiSczesBJDPYp8v98nr0e
+	ivCaFhXvkeQiet53yekAMX89rN/a/8vjY/YoxdLV3bV6h3zQ1ju8AxYsgcZLOFHy9mtDjXkW/AT
+	ZHc3BKhlLxCsk/1JuMyDwDQc1blZZGRguDZxeO0m8r9Z0tIbL191o0XErCKl8fm+plJDRvaYP0j
+	Q44dQFSnapuVR6GwfxUEEmjLPh+GV6H9WRp8QGwZrwhniLzEzyWim16g78Nl+Xo22TQDF317YwD
+	AYaZ8GLAlgbnY0d48xPcIJ4IAxCMilVu24HTRq1xPW9LSOsLHDxh7/rCg7D279ORQ15WxqjmA1y
+	eAGn/V/QNq9ObWILnwckQwm48oDWoj/qylVmBt+i/jXelUJI/EoF3yuoKr2wyRRxYgwe9HwwN5r
+	TUiEZ14Egff+/Hd6IAUyfgH/0Roa3e6+NN8ijomkHkIspC0WFE9Ec0VMiJpIG1
+X-Google-Smtp-Source: AGHT+IElF8SC2vVdQK/QFZgy2NHu5E0/X0JUE+sv3DRcp+JfPQbQgA4erKf68h2HmmDBO0TizuxmTw==
+X-Received: by 2002:a05:600d:41d0:b0:45b:47e1:ef6d with SMTP id 5b1f17b1804b1-4711792590bmr289777715e9.36.1761577165046;
+        Mon, 27 Oct 2025 07:59:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:9a4:ec5a:4022:b507? ([2a01:e0a:cad:2140:9a4:ec5a:4022:b507])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd47794asm158313935e9.1.2025.10.27.07.59.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 07:59:24 -0700 (PDT)
+Message-ID: <4a22b05d-24f8-44dc-affa-5cc28201fb53@linaro.org>
+Date: Mon, 27 Oct 2025 15:59:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RFC 0/3] Input: add initial support for Goodix GTX8
+ touchscreen ICs
+To: Jens Reidel <adrian@mainlining.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Henrik Rydberg <rydberg@bitmath.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@mainlining.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20250918-gtx8-v1-0-cba879c84775@mainlining.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250918-gtx8-v1-0-cba879c84775@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251027-glymur-display-v3-5-aa13055818ac@linaro.org>
-References: <20251027-glymur-display-v3-0-aa13055818ac@linaro.org>
-In-Reply-To: <20251027-glymur-display-v3-0-aa13055818ac@linaro.org>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kuogee Hsieh <quic_khsieh@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19086; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=8ujTO8kESXkKER5rihSjybuS5+BATF2FawKO2HqELJU=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo/4jRp2U49WdlfSdRoiZr7xkhdYAzBJJvxwyT3
- nHqCLhEOXiJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaP+I0QAKCRAbX0TJAJUV
- VulaEACBSL1pDDyR+d7BS2tceFNXW4LivuNGLhNT1RCm5BgwC43KnwWYZKhadULarHGa/HcTSFr
- +6qDcU4TeY6YHUBc8nOHD70v12E0UQPCYEJHMuRCyWtlkCcBHxEE7hm712iurXgS7w7Rg7fJgxU
- tKOrWbUQErNJvubuY8ifNhWB0OHeuQODR0wsBJxUHCTWBLl/9YEnkCwRxmvOvUDE8UFVRlQKXjd
- sPJjt2049waISolbAVX4eXrtu6bokfYqONdpk67tAmndQ+gS2sWM4KJF3kMGZCZilT3qKMThuhs
- nL8dOS61CcvQLLmGWY2x8M/C0FynmVPnuxd8xRNWIsOSiaeMjaoZkhnOUu+sRvEpM2eSsCu+qPR
- NT73wnXcnpJHF0rvXpQCrtOgE8hXisiIQ6gwJOBNxb7f/mS2R+3ErsVBMNOZMjSvPIADiSaGwVF
- QZh/GNuVYhhoa8SIBDwX5jG78zG3wkVff0QUqAL6hCgZIfz6cJC1nEUeI4LHNzMVYy4Q9zmerz+
- 0MKNHsFHgtT7rHysuyH05R1Mo4kHLmT77H8rV9o7ro8Hkp06t3cR8TJUOAWBSgWPAI70tBpMgoL
- DJO9t6Vt7XWTqdVikBw6wx/wjSRWerTDTjXEjriWmip29tEOeSRCWtn1Vay1cyV7jIX+92xYQUv
- 0iUq4GlOPHl59+Q==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Add DPU version v12.2 support for the Glymur platform.
+Hi,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- .../drm/msm/disp/dpu1/catalog/dpu_12_2_glymur.h    | 541 +++++++++++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |   6 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
- 5 files changed, 550 insertions(+)
+On 9/18/25 16:02, Jens Reidel wrote:
+> These ICs support SPI and I2C interfaces, up to 10 finger touch, stylus
+> and gesture events.
+> 
+> This driver is derived from the Goodix gtx8_driver_linux available at
+> [1] and only supports the GT9886 and GT9896 ICs present in the Xiaomi
+> Mi 9T and Xiaomi Redmi Note 10 Pro smartphones.
+> 
+> The current implementation only supports Normandy and Yellowstone type
+> ICs, aka only GT9886 and GT9896. It is also limited to I2C only, since I
+> don't have a device with GTX8 over SPI at hand. Adding support for SPI
+> should be fairly easy in the future, since the code uses a regmap.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_12_2_glymur.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_12_2_glymur.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..13bb43ba67d3f4f63ac492e0e1c5757b55e7b61b
---- /dev/null
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_12_2_glymur.h
-@@ -0,0 +1,541 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2025 Linaro Limited
-+ */
-+
-+#ifndef _DPU_12_2_GLYMUR_H
-+#define _DPU_12_2_GLYMUR_H
-+
-+static const struct dpu_caps glymur_dpu_caps = {
-+	.max_mixer_width = DEFAULT_DPU_OUTPUT_LINE_WIDTH,
-+	.max_mixer_blendstages = 0xb,
-+	.has_src_split = true,
-+	.has_dim_layer = true,
-+	.has_idle_pc = true,
-+	.has_3d_merge = true,
-+	.max_linewidth = 8192,
-+	.pixel_ram_size = DEFAULT_PIXEL_RAM_SIZE,
-+};
-+
-+static const struct dpu_mdp_cfg glymur_mdp = {
-+	.name = "top_0",
-+	.base = 0, .len = 0x494,
-+	.clk_ctrls = {
-+		[DPU_CLK_CTRL_REG_DMA] = { .reg_off = 0x2bc, .bit_off = 20 },
-+	},
-+};
-+
-+static const struct dpu_ctl_cfg glymur_ctl[] = {
-+	{
-+		.name = "ctl_0", .id = CTL_0,
-+		.base = 0x15000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
-+	}, {
-+		.name = "ctl_1", .id = CTL_1,
-+		.base = 0x16000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
-+	}, {
-+		.name = "ctl_2", .id = CTL_2,
-+		.base = 0x17000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 11),
-+	}, {
-+		.name = "ctl_3", .id = CTL_3,
-+		.base = 0x18000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 12),
-+	}, {
-+		.name = "ctl_4", .id = CTL_4,
-+		.base = 0x19000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 13),
-+	}, {
-+		.name = "ctl_5", .id = CTL_5,
-+		.base = 0x1a000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 23),
-+	}, {
-+		.name = "ctl_6", .id = CTL_6,
-+		.base = 0x1b000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 14),
-+	}, {
-+		.name = "ctl_7", .id = CTL_7,
-+		.base = 0x1c000, .len = 0x1000,
-+		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 15),
-+	},
-+};
-+
-+static const struct dpu_sspp_cfg glymur_sspp[] = {
-+	{
-+		.name = "sspp_0", .id = SSPP_VIG0,
-+		.base = 0x4000, .len = 0x344,
-+		.features = VIG_SDM845_MASK_SDMA,
-+		.sblk = &dpu_vig_sblk_qseed3_3_4,
-+		.xin_id = 0,
-+		.type = SSPP_TYPE_VIG,
-+	}, {
-+		.name = "sspp_1", .id = SSPP_VIG1,
-+		.base = 0x6000, .len = 0x344,
-+		.features = VIG_SDM845_MASK_SDMA,
-+		.sblk = &dpu_vig_sblk_qseed3_3_4,
-+		.xin_id = 4,
-+		.type = SSPP_TYPE_VIG,
-+	}, {
-+		.name = "sspp_2", .id = SSPP_VIG2,
-+		.base = 0x8000, .len = 0x344,
-+		.features = VIG_SDM845_MASK_SDMA,
-+		.sblk = &dpu_vig_sblk_qseed3_3_4,
-+		.xin_id = 8,
-+		.type = SSPP_TYPE_VIG,
-+	}, {
-+		.name = "sspp_3", .id = SSPP_VIG3,
-+		.base = 0xa000, .len = 0x344,
-+		.features = VIG_SDM845_MASK_SDMA,
-+		.sblk = &dpu_vig_sblk_qseed3_3_4,
-+		.xin_id = 12,
-+		.type = SSPP_TYPE_VIG,
-+	}, {
-+		.name = "sspp_8", .id = SSPP_DMA0,
-+		.base = 0x24000, .len = 0x344,
-+		.features = DMA_SDM845_MASK_SDMA,
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 1,
-+		.type = SSPP_TYPE_DMA,
-+	}, {
-+		.name = "sspp_9", .id = SSPP_DMA1,
-+		.base = 0x26000, .len = 0x344,
-+		.features = DMA_SDM845_MASK_SDMA,
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 5,
-+		.type = SSPP_TYPE_DMA,
-+	}, {
-+		.name = "sspp_10", .id = SSPP_DMA2,
-+		.base = 0x28000, .len = 0x344,
-+		.features = DMA_SDM845_MASK_SDMA,
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 9,
-+		.type = SSPP_TYPE_DMA,
-+	}, {
-+		.name = "sspp_11", .id = SSPP_DMA3,
-+		.base = 0x2a000, .len = 0x344,
-+		.features = DMA_SDM845_MASK_SDMA,
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 13,
-+		.type = SSPP_TYPE_DMA,
-+	}, {
-+		.name = "sspp_12", .id = SSPP_DMA4,
-+		.base = 0x2c000, .len = 0x344,
-+		.features = DMA_CURSOR_SDM845_MASK_SDMA,
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 14,
-+		.type = SSPP_TYPE_DMA,
-+	}, {
-+		.name = "sspp_13", .id = SSPP_DMA5,
-+		.base = 0x2e000, .len = 0x344,
-+		.features = DMA_CURSOR_SDM845_MASK_SDMA,
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 15,
-+		.type = SSPP_TYPE_DMA,
-+	},
-+};
-+
-+static const struct dpu_lm_cfg glymur_lm[] = {
-+	{
-+		.name = "lm_0", .id = LM_0,
-+		.base = 0x44000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_1,
-+		.pingpong = PINGPONG_0,
-+		.dspp = DSPP_0,
-+	}, {
-+		.name = "lm_1", .id = LM_1,
-+		.base = 0x45000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_0,
-+		.pingpong = PINGPONG_1,
-+		.dspp = DSPP_1,
-+	}, {
-+		.name = "lm_2", .id = LM_2,
-+		.base = 0x46000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_3,
-+		.pingpong = PINGPONG_2,
-+		.dspp = DSPP_2,
-+	}, {
-+		.name = "lm_3", .id = LM_3,
-+		.base = 0x47000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_2,
-+		.pingpong = PINGPONG_3,
-+		.dspp = DSPP_3,
-+	}, {
-+		.name = "lm_4", .id = LM_4,
-+		.base = 0x48000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_5,
-+		.pingpong = PINGPONG_4,
-+	}, {
-+		.name = "lm_5", .id = LM_5,
-+		.base = 0x49000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_4,
-+		.pingpong = PINGPONG_5,
-+	}, {
-+		.name = "lm_6", .id = LM_6,
-+		.base = 0x4a000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_7,
-+		.pingpong = PINGPONG_6,
-+	}, {
-+		.name = "lm_7", .id = LM_7,
-+		.base = 0x4b000, .len = 0x400,
-+		.features = MIXER_MSM8998_MASK,
-+		.sblk = &sm8750_lm_sblk,
-+		.lm_pair = LM_6,
-+		.pingpong = PINGPONG_7,
-+	},
-+};
-+
-+static const struct dpu_dspp_cfg glymur_dspp[] = {
-+	{
-+		.name = "dspp_0", .id = DSPP_0,
-+		.base = 0x54000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_1", .id = DSPP_1,
-+		.base = 0x56000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_2", .id = DSPP_2,
-+		.base = 0x58000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_3", .id = DSPP_3,
-+		.base = 0x5a000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_4", .id = DSPP_4,
-+		.base = 0x5c000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_5", .id = DSPP_5,
-+		.base = 0x5e000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_6", .id = DSPP_6,
-+		.base = 0x60000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	}, {
-+		.name = "dspp_7", .id = DSPP_7,
-+		.base = 0x62000, .len = 0x1800,
-+		.sblk = &sm8750_dspp_sblk,
-+	},
-+};
-+
-+static const struct dpu_pingpong_cfg glymur_pp[] = {
-+	{
-+		.name = "pingpong_0", .id = PINGPONG_0,
-+		.base = 0x69000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_0,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 8),
-+	}, {
-+		.name = "pingpong_1", .id = PINGPONG_1,
-+		.base = 0x6a000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_0,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 9),
-+	}, {
-+		.name = "pingpong_2", .id = PINGPONG_2,
-+		.base = 0x6b000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_1,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 10),
-+	}, {
-+		.name = "pingpong_3", .id = PINGPONG_3,
-+		.base = 0x6c000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_1,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 11),
-+	}, {
-+		.name = "pingpong_4", .id = PINGPONG_4,
-+		.base = 0x6d000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_2,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 30),
-+	}, {
-+		.name = "pingpong_5", .id = PINGPONG_5,
-+		.base = 0x6e000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_2,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 31),
-+	}, {
-+		.name = "pingpong_6", .id = PINGPONG_6,
-+		.base = 0x6f000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_3,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 20),
-+	}, {
-+		.name = "pingpong_7", .id = PINGPONG_7,
-+		.base = 0x70000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_3,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 21),
-+	}, {
-+		.name = "pingpong_cwb_0", .id = PINGPONG_CWB_0,
-+		.base = 0x66000, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_4,
-+	}, {
-+		.name = "pingpong_cwb_1", .id = PINGPONG_CWB_1,
-+		.base = 0x66400, .len = 0,
-+		.sblk = &sc7280_pp_sblk,
-+		.merge_3d = MERGE_3D_4,
-+	},
-+};
-+
-+static const struct dpu_merge_3d_cfg glymur_merge_3d[] = {
-+	{
-+		.name = "merge_3d_0", .id = MERGE_3D_0,
-+		.base = 0x4e000, .len = 0x1c,
-+	}, {
-+		.name = "merge_3d_1", .id = MERGE_3D_1,
-+		.base = 0x4f000, .len = 0x1c,
-+	}, {
-+		.name = "merge_3d_2", .id = MERGE_3D_2,
-+		.base = 0x50000, .len = 0x1c,
-+	}, {
-+		.name = "merge_3d_3", .id = MERGE_3D_3,
-+		.base = 0x51000, .len = 0x1c,
-+	},
-+};
-+
-+/*
-+ * NOTE: Each display compression engine (DCE) contains dual hard
-+ * slice DSC encoders so both share same base address but with
-+ * its own different sub block address.
-+ */
-+static const struct dpu_dsc_cfg glymur_dsc[] = {
-+	{
-+		.name = "dce_0_0", .id = DSC_0,
-+		.base = 0x80000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_0,
-+	}, {
-+		.name = "dce_0_1", .id = DSC_1,
-+		.base = 0x80000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_1,
-+	}, {
-+		.name = "dce_1_0", .id = DSC_2,
-+		.base = 0x81000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_0,
-+	}, {
-+		.name = "dce_1_1", .id = DSC_3,
-+		.base = 0x81000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_1,
-+	}, {
-+		.name = "dce_2_0", .id = DSC_4,
-+		.base = 0x82000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_0,
-+	}, {
-+		.name = "dce_2_1", .id = DSC_5,
-+		.base = 0x82000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_1,
-+	}, {
-+		.name = "dce_3_0", .id = DSC_6,
-+		.base = 0x83000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_0,
-+	}, {
-+		.name = "dce_3_1", .id = DSC_7,
-+		.base = 0x83000, .len = 0x8,
-+		.features = BIT(DPU_DSC_NATIVE_42x_EN),
-+		.sblk = &sm8750_dsc_sblk_1,
-+	},
-+
-+};
-+
-+static const struct dpu_wb_cfg glymur_wb[] = {
-+	{
-+		.name = "wb_2", .id = WB_2,
-+		.base = 0x65000, .len = 0x2c8,
-+		.features = WB_SDM845_MASK,
-+		.format_list = wb2_formats_rgb_yuv,
-+		.num_formats = ARRAY_SIZE(wb2_formats_rgb_yuv),
-+		.xin_id = 6,
-+		.vbif_idx = VBIF_RT,
-+		.maxlinewidth = 4096,
-+		.intr_wb_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 4),
-+	},
-+};
-+
-+static const struct dpu_cwb_cfg glymur_cwb[] = {
-+	{
-+		.name = "cwb_0", .id = CWB_0,
-+		.base = 0x66200, .len = 0x20,
-+	},
-+	{
-+		.name = "cwb_1", .id = CWB_1,
-+		.base = 0x66600, .len = 0x20,
-+	},
-+	{
-+		.name = "cwb_2", .id = CWB_2,
-+		.base = 0x7e200, .len = 0x20,
-+	},
-+	{
-+		.name = "cwb_3", .id = CWB_3,
-+		.base = 0x7e600, .len = 0x20,
-+	},
-+};
-+
-+static const struct dpu_intf_cfg glymur_intf[] = {
-+	{
-+		.name = "intf_0", .id = INTF_0,
-+		.base = 0x34000, .len = 0x400,
-+		.type = INTF_DP,
-+		.controller_id = MSM_DP_CONTROLLER_0,
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 24),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 25),
-+	}, {
-+		.name = "intf_1", .id = INTF_1,
-+		.base = 0x35000, .len = 0x400,
-+		.type = INTF_DSI,
-+		.controller_id = MSM_DSI_CONTROLLER_0,
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 26),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 27),
-+		.intr_tear_rd_ptr = DPU_IRQ_IDX(MDP_INTF1_TEAR_INTR, 2),
-+	}, {
-+		.name = "intf_2", .id = INTF_2,
-+		.base = 0x36000, .len = 0x400,
-+		.type = INTF_DSI,
-+		.controller_id = MSM_DSI_CONTROLLER_1,
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 28),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 29),
-+		.intr_tear_rd_ptr = DPU_IRQ_IDX(MDP_INTF2_TEAR_INTR, 2),
-+	}, {
-+		.name = "intf_3", .id = INTF_3,
-+		.base = 0x37000, .len = 0x400,
-+		.type = INTF_NONE,
-+		.controller_id = MSM_DP_CONTROLLER_0,	/* pair with intf_0 for DP MST */
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 30),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 31),
-+	}, {
-+		.name = "intf_4", .id = INTF_4,
-+		.base = 0x38000, .len = 0x400,
-+		.type = INTF_DP,
-+		.controller_id = MSM_DP_CONTROLLER_1,
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 20),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 21),
-+	}, {
-+		.name = "intf_5", .id = INTF_5,
-+		.base = 0x39000, .len = 0x400,
-+		.type = INTF_DP,
-+		.controller_id = MSM_DP_CONTROLLER_3,
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 22),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 23),
-+	}, {
-+		.name = "intf_6", .id = INTF_6,
-+		.base = 0x3A000, .len = 0x400,
-+		.type = INTF_DP,
-+		.controller_id = MSM_DP_CONTROLLER_2,
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 16),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 17),
-+	}, {
-+		.name = "intf_7", .id = INTF_7,
-+		.base = 0x3b000, .len = 0x400,
-+		.type = INTF_NONE,
-+		.controller_id = MSM_DP_CONTROLLER_2,	/* pair with intf_6 for DP MST */
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 18),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 19),
-+	}, {
-+		.name = "intf_8", .id = INTF_8,
-+		.base = 0x3c000, .len = 0x400,
-+		.type = INTF_NONE,
-+		.controller_id = MSM_DP_CONTROLLER_1,	/* pair with intf_4 for DP MST */
-+		.prog_fetch_lines_worst_case = 24,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 12),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 13),
-+	},
-+};
-+
-+static const struct dpu_perf_cfg glymur_perf_data = {
-+	.max_bw_low = 18900000,
-+	.max_bw_high = 28500000,
-+	.min_core_ib = 2500000,
-+	.min_llcc_ib = 0,
-+	.min_dram_ib = 800000,
-+	.min_prefill_lines = 35,
-+	.danger_lut_tbl = {0x3ffff, 0x3ffff, 0x0},
-+	.safe_lut_tbl = {0xfe00, 0xfe00, 0xffff},
-+	.qos_lut_tbl = {
-+		{.nentry = ARRAY_SIZE(sc7180_qos_linear),
-+		.entries = sc7180_qos_linear
-+		},
-+		{.nentry = ARRAY_SIZE(sc7180_qos_macrotile),
-+		.entries = sc7180_qos_macrotile
-+		},
-+		{.nentry = ARRAY_SIZE(sc7180_qos_nrt),
-+		.entries = sc7180_qos_nrt
-+		},
-+		/* TODO: macrotile-qseed is different from macrotile */
-+	},
-+	.cdp_cfg = {
-+		{.rd_enable = 1, .wr_enable = 1},
-+		{.rd_enable = 1, .wr_enable = 0}
-+	},
-+	.clk_inefficiency_factor = 105,
-+	.bw_inefficiency_factor = 120,
-+};
-+
-+static const struct dpu_mdss_version glymur_mdss_ver = {
-+	.core_major_ver = 12,
-+	.core_minor_ver = 2,
-+};
-+
-+const struct dpu_mdss_cfg dpu_glymur_cfg = {
-+	.mdss_ver = &glymur_mdss_ver,
-+	.caps = &glymur_dpu_caps,
-+	.mdp = &glymur_mdp,
-+	.cdm = &dpu_cdm_5_x,
-+	.ctl_count = ARRAY_SIZE(glymur_ctl),
-+	.ctl = glymur_ctl,
-+	.sspp_count = ARRAY_SIZE(glymur_sspp),
-+	.sspp = glymur_sspp,
-+	.mixer_count = ARRAY_SIZE(glymur_lm),
-+	.mixer = glymur_lm,
-+	.dspp_count = ARRAY_SIZE(glymur_dspp),
-+	.dspp = glymur_dspp,
-+	.pingpong_count = ARRAY_SIZE(glymur_pp),
-+	.pingpong = glymur_pp,
-+	.dsc_count = ARRAY_SIZE(glymur_dsc),
-+	.dsc = glymur_dsc,
-+	.merge_3d_count = ARRAY_SIZE(glymur_merge_3d),
-+	.merge_3d = glymur_merge_3d,
-+	.wb_count = ARRAY_SIZE(glymur_wb),
-+	.wb = glymur_wb,
-+	.cwb_count = ARRAY_SIZE(glymur_cwb),
-+	.cwb = sm8650_cwb,
-+	.intf_count = ARRAY_SIZE(glymur_intf),
-+	.intf = glymur_intf,
-+	.vbif_count = ARRAY_SIZE(sm8650_vbif),
-+	.vbif = sm8650_vbif,
-+	.perf = &glymur_perf_data,
-+};
-+
-+#endif
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-index 6641455c4ec6a2d082644f1488ea5f5605ccc208..64e2f8a765530c7181292b3b3a7d54c4e9431963 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-@@ -726,3 +726,4 @@ static const struct dpu_qos_lut_entry sc7180_qos_nrt[] = {
- 
- #include "catalog/dpu_10_0_sm8650.h"
- #include "catalog/dpu_12_0_sm8750.h"
-+#include "catalog/dpu_12_2_glymur.h"
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index f0768f54e9b3d5a3f5a7bec4b66127f2e2284cfd..4964e70610d1b6a2bf6456e767cc30a8ea653349 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -749,6 +749,7 @@ struct dpu_mdss_cfg {
- 	const struct dpu_format_extended *vig_formats;
- };
- 
-+extern const struct dpu_mdss_cfg dpu_glymur_cfg;
- extern const struct dpu_mdss_cfg dpu_msm8917_cfg;
- extern const struct dpu_mdss_cfg dpu_msm8937_cfg;
- extern const struct dpu_mdss_cfg dpu_msm8953_cfg;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index 175639c8bfbb9bbd02ed35f1780bcbd869f08c36..1ca22971aa9cb684648e492b4c538fdfbfa6b5e3 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -149,6 +149,10 @@ enum dpu_dspp {
- 	DSPP_1,
- 	DSPP_2,
- 	DSPP_3,
-+	DSPP_4,
-+	DSPP_5,
-+	DSPP_6,
-+	DSPP_7,
- 	DSPP_MAX
- };
- 
-@@ -159,6 +163,8 @@ enum dpu_ctl {
- 	CTL_3,
- 	CTL_4,
- 	CTL_5,
-+	CTL_6,
-+	CTL_7,
- 	CTL_MAX
- };
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 4e5a8ecd31f7570beb45fd1629a131e70aaefea8..f4c9767c418d38eb487934da03b352ce7063df16 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1505,6 +1505,7 @@ static const struct dev_pm_ops dpu_pm_ops = {
- };
- 
- static const struct of_device_id dpu_dt_match[] = {
-+	{ .compatible = "qcom,glymur-dpu", .data = &dpu_glymur_cfg, },
- 	{ .compatible = "qcom,msm8917-mdp5", .data = &dpu_msm8917_cfg, },
- 	{ .compatible = "qcom,msm8937-mdp5", .data = &dpu_msm8937_cfg, },
- 	{ .compatible = "qcom,msm8953-mdp5", .data = &dpu_msm8953_cfg, },
+You didn't explain why you didn't integrate with goodix_berlin or at least
+try to reuse part of the code.
 
--- 
-2.48.1
+Neil
+
+> 
+> Support for advanced features like:
+> - Firmware updates
+> - Stylus events
+> - Gesture events
+> - Nanjing IC support
+> is not included in current version.
+> 
+> The current support requires a previously flashed firmware to be
+> present.
+> 
+> As I did not have access to datasheets for these ICs, I extracted the
+> addresses from a couple of config files using a small tool [2]. The
+> addresses are identical for the same IC families in all configs I
+> observed, however not all of them make sense and I stubbed out firmware
+> request support due to this.
+> 
+> [1] https://github.com/goodix/gtx8_driver_linux
+> [2] https://github.com/sm7150-mainline/goodix-cfg-bin
+> 
+> Signed-off-by: Jens Reidel <adrian@mainlining.org>
+> ---
+> Jens Reidel (3):
+>        dt-bindings: input: document Goodix GTX8 Touchscreen ICs
+>        Input: add support for Goodix GTX8 Touchscreen ICs
+>        MAINTAINERS: add an entry for Goodix GTX8 Touchscreen driver
+> 
+>   .../bindings/input/touchscreen/goodix,gt9886.yaml  |  71 +++
+>   MAINTAINERS                                        |   7 +
+>   drivers/input/touchscreen/Kconfig                  |  15 +
+>   drivers/input/touchscreen/Makefile                 |   1 +
+>   drivers/input/touchscreen/goodix_gtx8.c            | 562 +++++++++++++++++++++
+>   drivers/input/touchscreen/goodix_gtx8.h            | 137 +++++
+>   6 files changed, 793 insertions(+)
+> ---
+> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> change-id: 20250918-gtx8-59a50ccd78a5
+> 
+> Best regards,
 
 
