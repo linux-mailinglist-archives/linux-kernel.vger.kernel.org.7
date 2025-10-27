@@ -1,229 +1,185 @@
-Return-Path: <linux-kernel+bounces-871796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1225AC0E66C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:26:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DC0C0E624
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410064273C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:14:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BA894F4272
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70430ACF7;
-	Mon, 27 Oct 2025 14:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AFE30B52B;
+	Mon, 27 Oct 2025 14:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcQXI3Tf"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ioQ9+LDF"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817E93054C4
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC16D30B526
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 14:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761574325; cv=none; b=KOfesbCIYrUq9BrUURGDKXniYFKA6g5R2CVPQj9nwMGthkWATgNY6fcQ5o88j9mudYBOczciEBmMUlIg8kQtTJ75pocSd8JJH1ago6jkENsgJPjYtoKzFwegCgw5vD2r23iT5oPRSwaSygUlghLXT92/75tIFQBG1Bz4EJrfGxY=
+	t=1761574329; cv=none; b=gcOht+8mCghwslpdjzjfIjgNjGJahofLvHRDjRHpUt2rw85na1Bq5K/NPZtan7w42kbIz/laC7C+utKPLV8kZ2rqK7ypE0+/DPf5SbM1fAPzYCdvr2yXFlERbvgPMYZ/4IuCogQRv0EIUEVBkP2kxrh8MjkQYb+qLQtFy7ugMgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761574325; c=relaxed/simple;
-	bh=s5fi0aix74dhXeUfiX707igJJq83gWDg5mUZws693ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eyEiTCLmWaEUOrh+dasNHYVNP1cU9wbe8XE6vX2fwfI+Sfo4QfeALObxYUykuXCGVTaQzV2/H7HcmkV8q+lXT/6bP1lr+J8Vka3uZRm77E62Jhq5CeaeBlUU8Vm2H+CwSC3xHyZXEJDvJtlCq6cpHVBXuFC6l6MbczN8K9L2m9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CcQXI3Tf; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so4691651a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:12:03 -0700 (PDT)
+	s=arc-20240116; t=1761574329; c=relaxed/simple;
+	bh=JpmhN5vbyn+/p8nihnTmv+9yFuL+VOmYXxPDQe6s8Bo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=geBsKsCQa5IBRt7XkkgXfXLAZnARPwAsx+FzWhNsK5D8GSB7HHUFhR+4l7/vUW/7aETtRT5K/0pqOHYvNnlg1UwI5bgAitBxLfYYC0ARViuaDZaegvxvzBal6LYrTBFrHW3sKC014qqFfbf4WZFKSchQL+PdEVbCgZDZvneX9GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ioQ9+LDF; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso2294107f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761574323; x=1762179123; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/bIMvual/DCfbHFKLhMc6KNvRa8c9RJirQTWe6ek/vw=;
-        b=CcQXI3Tfgt7ipYZ+0nPYI9mFjQl1CH1rbS7bGXPmFt5GFvQLR+oj7SSHdSJoDIo+we
-         cTccAfFNZpEOvRJYloD4+2WHfssBJawdXio/5IdWpaRGmodqn12bOjfOoKiPoIjcno/J
-         Rx2sl/Je5YVZoSySe1ZwAlDm3UiCV3r9lqbAYv6Dit5E8Gf8CZcch/GiMYf6pFv7ihsH
-         XJZWbtXHSOXtE4XBmtIG+ZSOGziEVFQg7pfcImntTQPd2fH2FSrKYyGuZ10oJcxtWOtJ
-         F4glpfx5ps155vyZ9VV3c3uHcl+MMGn9JfM12JQCQM2CctcMuUwj5LmV3rX4rgLAFMPW
-         qcOA==
+        d=linaro.org; s=google; t=1761574325; x=1762179125; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4gIfIP5yihC7vTlY9itbu2GFZv1/1E7yjILDIsozZj0=;
+        b=ioQ9+LDF0eLXQ92RE8LZZ/puO+osM5BXTSWxDCUIU5qPmulrAKwBNMX8QUGHrgOX2x
+         eyTDN+3av1F2LqNaCA8rJbPvG2MDUdxZtyRaN3uIrhV4wY3uB5SwJYh34XbcZS2OJHYT
+         gpGCRyL09UvXTYlVEz8CABLOoqcZf5dzs4fewMxQXL4o4Us2IMZOw0E91gSNxg1wDw78
+         XqZJ16/TahbV5iJOTs9+fJeHOnqRekuxRm2Zz/RuT+x9+XNUeTlHlKLVdL97Yb3JV1+s
+         yZ+omOIsZFrlNULX+kpf8af+lQ84vYIWFn4Dz7PSeQPIH+jaKQAXcx2o5T+ijzGODg/I
+         WDKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761574323; x=1762179123;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/bIMvual/DCfbHFKLhMc6KNvRa8c9RJirQTWe6ek/vw=;
-        b=D2kfpG38uE4Oe7yQwrZ14MqSqNSRdfgs0JG1VAy0mF6l/pYCJsLQEBAIRONvkPgLQX
-         RujU4QrZZu+vQLZGtZ+U2NQat4h9ypzmqfT69R2y8mkN6s6e+nn2xVV2WP8ES3yMqEwm
-         u4BbUFNj7uxkwxqjFCB2XiJQxQfPfDvMASb8Dn9kM30qi9i8a715JHCQ7lpMeIVZ+Kn4
-         qFgIttvMOI3sdqtFf2sMMEYS6S/T8rtadaBLHIeXfDbNTu6DLchNBh76t7EYfK3O/PA+
-         7bxNdKCKcKc0Gu3P8pvvW66FetCbRYtEhZ6hGd9SYvxUWQxJU6XsUYpoDzmdF1D7USTV
-         5PgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVsA26m29662R1W20NePbNqMCBph6TyXtooOy6wK/MYxq96lobMKyx8wuCodLLECoyv2BSWBW6VOjHWuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/dtUG/OcHgdHSrVvVuWhZA8kYC2OIJRjTqiKIetx110HPwO5m
-	0tWI/OEjHoJhstWKGC+ENyOUH2FQrM+nv+usw8K4fPexY3vTW2nV7KYf
-X-Gm-Gg: ASbGnctMfvbjq8EzMAP8Kxbu5CuINe7X2Q0h9bDVRfzEzpQgZKIMVtbhtUuwQTsU1Y7
-	pBr0HVkn8HVLcQVbMnHu00OvyK8YuU/uCcgMrty5u3u0azEa/qIrI13+pbYFZz/vy8PiCpAH1yu
-	j4xQ+an1/hNbo6XnTjs4YvX0cqQLNp05ww+I6KjCyaFp7FjsgXKQIBT0EZYgM0KYTNhH8ErvxNy
-	OXgFjVzyaiCd0N/kx+9CropeOOGKuxnt1y1MTXxOVYUrfAGqX2hXoxuOPXERcG1WAcsfAYX57zU
-	sRbQO85O4sW9DAo1+LqBn+Aicjot0VPBQZ8ulhBhdVxHhhSMk31Zv186d89wnz4bFfg5aFGYdPX
-	Z5VAlc21y2s/NyMfkrErq0Kh+m55+bMlVG/rlJjhgqx0fbSYwvtkD3KW3d5nTjHEdF0Xqku/76C
-	0Vg4yisypKCVIJNnT/KhYar7ISMcwVUr0k
-X-Google-Smtp-Source: AGHT+IH5yXGx+LupzIOPczjiiLlR5YgFAp1+QvWwv8ZLoofxPfnSc2zQ+LY35y3vpNkMMUH1Hauifg==
-X-Received: by 2002:a17:90b:1dc3:b0:338:2c90:1540 with SMTP id 98e67ed59e1d1-33fd66b4230mr14770603a91.20.1761574321988;
-        Mon, 27 Oct 2025 07:12:01 -0700 (PDT)
-Received: from [192.168.1.5] ([27.7.191.116])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f604dsm8788404a91.15.2025.10.27.07.11.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 07:12:01 -0700 (PDT)
-Message-ID: <b6486799-9e46-4b6b-bf95-001e11e958e4@gmail.com>
-Date: Mon, 27 Oct 2025 19:41:56 +0530
+        d=1e100.net; s=20230601; t=1761574325; x=1762179125;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4gIfIP5yihC7vTlY9itbu2GFZv1/1E7yjILDIsozZj0=;
+        b=lhGgGZxs1yU8p42pxu8STukwsz4iVXFCWFpqdYkxN0PfQiVG1ZEhKIi+a4IvnwzkBf
+         T5rJQBLumbTtxeccPF9l+NvHKncRJGP6dvyrYXkyYRNOoyDeaN9QZsTfTTqT+A7Kn9CZ
+         IBzzqGnEaZFpOeLgwqrVqJwrwpjRAK65FChH/mZj+5r0voEI8UX1+yQgzsYX7vfReBzm
+         gp1YVfEUetTsowHeRVDIFaxxoOk9OgT1z1tLio0lZ13Cnp79GiasdJFMpKGZsfxafg8Z
+         NbRwMFS4M/yUVW2ENxcR72mIwZTjO+xR+lp8exqC7G/+aMDPrtQ82Z+SBFazE0zB9mW5
+         wO8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDf5f4dMmzyN31XhNDTd+eE4DvwgDC+k6PTTn+JmzldYpCASPbqp8YkjZawvCoT3fd3eKvpP8Mu6Lz/2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRUefWISjW404c8aT206IxYGwGDv15ovdDwRVNR2La6ikw3sTq
+	5VFaAVjBR+NTC8QKer2FUPCUWWLRmakbSZtoQG4faZAih8HGeNI5kwN2MtB+E4uN7u0=
+X-Gm-Gg: ASbGncv29qBF/K0lZkyhDpG/dA5a9CDn8ArJ/u13s/nk3OnZp0F9nbNPdAOmwxNLYqr
+	k+rbWl6Rx59sJOVwN3sZq763EzxGFmph5F3QNlX3Xw09P6JgCaONDtmQaiXwUsIyFGxrcUEEMiN
+	FlruXHyPNkdA7O3RB4FatjybEcNUDg91BvpsxKGW7RSk/A/scvIB0IQgTi65IBbzhNA9bubqNgK
+	YesLKhNquVtLPw2qL7X8HcPLur0Q0XPb4qsO86VD2esOPYR0kj1/AX3w/K2S9W/WxVNNASJtXuS
+	pZtZMS4x8omVU7ntv9T8vt/WtCW1ehsfmoD4JczlyJAG9MJgq4U459+YvKtSFbthsIAN8NYQPh+
+	pTCy6YBxfpcfk+TsG2+BWmkndLo+QYweBnfjRa0h+K+y0fX09PFKEH8oQzV3UZ/g5dGtSBVwRKR
+	lKIAz0Bw==
+X-Google-Smtp-Source: AGHT+IHkgsBRbcOjdNG+k37q1tq3tc5u8M0EcaQ7C9q9qeqrzjsLZXgNXLI2c+3id09MIjkEvP860Q==
+X-Received: by 2002:a05:6000:1865:b0:425:8bd2:24de with SMTP id ffacd0b85a97d-42704d145c9mr21310881f8f.9.1761574324747;
+        Mon, 27 Oct 2025 07:12:04 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952da12dsm14731146f8f.29.2025.10.27.07.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 07:12:03 -0700 (PDT)
+Date: Mon, 27 Oct 2025 17:12:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Pengjie Zhang <zhangpengjie2@huawei.com>,
+	myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+	cw00.choi@samsung.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhanjie9@hisilicon.com,
+	zhenglifeng1@huawei.com, lihuisong@huawei.com, yubowen8@huawei.com,
+	linhongye@h-partners.com, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, zhangpengjie2@huawei.com
+Subject: Re: [PATCH] PM / devfreq: use _visible attribute to replace
+ create/remove_sysfs_files()
+Message-ID: <202510272106.x7zgW7pK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mmc: socionext,milbeaut-m10v-sdhci-3.0:
- convert to DT schema
-To: Rob Herring <robh@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taichi Sugaya <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251023-milbeaut-v1-1-3e4ff67110ad@gmail.com>
- <20251027135752.GA316916-robh@kernel.org>
-Content-Language: en-US
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-In-Reply-To: <20251027135752.GA316916-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025135238.3576861-1-zhangpengjie2@huawei.com>
 
+Hi Pengjie,
 
+kernel test robot noticed the following build warnings:
 
-On 27-10-2025 19:27, Rob Herring wrote:
-> On Thu, Oct 23, 2025 at 05:37:36PM +0000, Charan Pedumuru wrote:
->> Convert SOCIONEXT Milbeaut SDHCI controller binding to YAML format.
->> Add a new property "voltage-ranges" to resolve dt_check errors.
->>
->> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
->> ---
->>  .../devicetree/bindings/mmc/sdhci-milbeaut.txt     | 30 ---------
->>  .../mmc/socionext,milbeaut-m10v-sdhci-3.0.yaml     | 78 ++++++++++++++++++++++
->>  2 files changed, 78 insertions(+), 30 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt b/Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt
->> deleted file mode 100644
->> index 627ee89c125b..000000000000
->> --- a/Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt
->> +++ /dev/null
->> @@ -1,30 +0,0 @@
->> -* SOCIONEXT Milbeaut SDHCI controller
->> -
->> -This file documents differences between the core properties in mmc.txt
->> -and the properties used by the sdhci_milbeaut driver.
->> -
->> -Required properties:
->> -- compatible: "socionext,milbeaut-m10v-sdhci-3.0"
->> -- clocks: Must contain an entry for each entry in clock-names. It is a
->> -  list of phandles and clock-specifier pairs.
->> -  See ../clocks/clock-bindings.txt for details.
->> -- clock-names: Should contain the following two entries:
->> -	"iface" - clock used for sdhci interface
->> -	"core"  - core clock for sdhci controller
->> -
->> -Optional properties:
->> -- fujitsu,cmd-dat-delay-select: boolean property indicating that this host
->> -  requires the CMD_DAT_DELAY control to be enabled.
->> -
->> -Example:
->> -	sdhci3: mmc@1b010000 {
->> -		compatible = "socionext,milbeaut-m10v-sdhci-3.0";
->> -		reg = <0x1b010000 0x10000>;
->> -		interrupts = <0 265 0x4>;
->> -		voltage-ranges = <3300 3300>;
->> -		bus-width = <4>;
->> -		clocks = <&clk 7>, <&ahb_clk>;
->> -		clock-names = "core", "iface";
->> -		cap-sdio-irq;
->> -		fujitsu,cmd-dat-delay-select;
->> -	};
->> diff --git a/Documentation/devicetree/bindings/mmc/socionext,milbeaut-m10v-sdhci-3.0.yaml b/Documentation/devicetree/bindings/mmc/socionext,milbeaut-m10v-sdhci-3.0.yaml
->> new file mode 100644
->> index 000000000000..6b67bef30347
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mmc/socionext,milbeaut-m10v-sdhci-3.0.yaml
->> @@ -0,0 +1,78 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mmc/socionext,milbeaut-m10v-sdhci-3.0.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: SOCIONEXT Milbeaut SDHCI controller
->> +
->> +maintainers:
->> +  - Taichi Sugaya <sugaya.taichi@socionext.com>
->> +  - Takao Orito <orito.takao@socionext.com>
->> +
->> +description:
->> +  The SOCIONEXT Milbeaut SDHCI controller is a specialized SD Host
->> +  Controller found in some of Socionext's Milbeaut image processing SoCs.
->> +  It features a dedicated "bridge controller." This bridge controller
->> +  implements special functions like reset control, clock management for
->> +  various SDR modes (SDR12, SDR25, SDR50) and physical pin property settings.
->> +
->> +allOf:
->> +  - $ref: sdhci-common.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: socionext,milbeaut-m10v-sdhci-3.0
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 2
->> +
->> +  clock-names:
->> +    items:
->> +      - const: core
->> +      - const: iface
->> +
->> +  fujitsu,cmd-dat-delay-select:
->> +    description:
->> +      Its presence indicates that the controller requires a specific command
->> +      and data line delay selection mechanism for proper operation, particularly
->> +      when dealing with high-speed SD/eMMC modes.
->> +    type: boolean
->> +
->> +  voltage-ranges:
->> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> 
-> Sounds more like a uint32-array.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Okay, I will change that.
+url:    https://github.com/intel-lab-lkp/linux/commits/Pengjie-Zhang/PM-devfreq-use-_visible-attribute-to-replace-create-remove_sysfs_files/20251025-215510
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git devfreq-testing
+patch link:    https://lore.kernel.org/r/20251025135238.3576861-1-zhangpengjie2%40huawei.com
+patch subject: [PATCH] PM / devfreq: use _visible attribute to replace create/remove_sysfs_files()
+config: loongarch-randconfig-r072-20251026 (https://download.01.org/0day-ci/archive/20251027/202510272106.x7zgW7pK-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project e1ae12640102fd2b05bc567243580f90acb1135f)
 
-> 
->> +    description:
->> +      Two cells are required, first cell specifies minimum slot voltage (mV),
->> +      second cell specifies maximum slot voltage (mV).
->> +    maxItems: 1
-> 
-> You can better describe it like this:
-> 
-> items:
->   - description: minimum slot voltage (mV)
->   - description: maximum slot voltage (mV)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202510272106.x7zgW7pK-lkp@intel.com/
 
-Sure.
+smatch warnings:
+drivers/devfreq/devfreq.c:1927 timer_store() warn: inconsistent returns 'global &devfreq_list_lock'.
+
+vim +1927 drivers/devfreq/devfreq.c
+
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1874  static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1875  			      const char *buf, size_t count)
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1876  {
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1877  	struct devfreq *df = to_devfreq(dev);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1878  	char str_timer[DEVFREQ_NAME_LEN + 1];
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1879  	int timer = -1;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1880  	int ret = 0, i;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1881  
+88ea5f098ddcf4 Pengjie Zhang 2025-10-25  1882  	mutex_lock(&devfreq_list_lock);
+88ea5f098ddcf4 Pengjie Zhang 2025-10-25  1883  	if (!df->governor || !df->profile ||
+88ea5f098ddcf4 Pengjie Zhang 2025-10-25  1884  	    !IS_SUPPORTED_ATTR(df->governor->attrs, TIMER)) {
+88ea5f098ddcf4 Pengjie Zhang 2025-10-25  1885  		mutex_unlock(&devfreq_list_lock);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1886  		return -EINVAL;
+88ea5f098ddcf4 Pengjie Zhang 2025-10-25  1887  	}
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1888  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1889  	ret = sscanf(buf, "%16s", str_timer);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1890  	if (ret != 1)
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1891  		return -EINVAL;
+
+mutex_unlock(&devfreq_list_lock);
+
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1892  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1893  	for (i = 0; i < DEVFREQ_TIMER_NUM; i++) {
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1894  		if (!strncmp(timer_name[i], str_timer, DEVFREQ_NAME_LEN)) {
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1895  			timer = i;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1896  			break;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1897  		}
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1898  	}
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1899  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1900  	if (timer < 0) {
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1901  		ret = -EINVAL;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1902  		goto out;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1903  	}
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1904  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1905  	if (df->profile->timer == timer) {
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1906  		ret = 0;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1907  		goto out;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1908  	}
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1909  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1910  	mutex_lock(&df->lock);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1911  	df->profile->timer = timer;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1912  	mutex_unlock(&df->lock);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1913  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1914  	ret = df->governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1915  	if (ret) {
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1916  		dev_warn(dev, "%s: Governor %s not stopped(%d)\n",
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1917  			 __func__, df->governor->name, ret);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1918  		goto out;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1919  	}
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1920  
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1921  	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1922  	if (ret)
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1923  		dev_warn(dev, "%s: Governor %s not started(%d)\n",
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1924  			 __func__, df->governor->name, ret);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1925  out:
+88ea5f098ddcf4 Pengjie Zhang 2025-10-25  1926  	mutex_unlock(&devfreq_list_lock);
+4dc3bab8687f1e Chanwoo Choi  2020-07-02 @1927  	return ret ? ret : count;
+4dc3bab8687f1e Chanwoo Choi  2020-07-02  1928  }
 
 -- 
-Best Regards,
-Charan.
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
