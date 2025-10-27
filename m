@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-872660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF71C11B9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:34:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F5CC11BA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BB25627BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:34:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E16C7352841
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6469B2F12A0;
-	Mon, 27 Oct 2025 22:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6081232D0E0;
+	Mon, 27 Oct 2025 22:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5q5hdt1"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cQ6voZcy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90C92E2667
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2ED239E7E;
+	Mon, 27 Oct 2025 22:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604462; cv=none; b=hIYoz2jJgzS8Lhkosmc5zsSG2ZNCG/y/EXf5qvfl6/5R/o72e4fOH4Zi3ijp0yUoNarPsWngxbecCaIjyXJwz0S2pGzW+XCVjGrzROVIE/O/HYIptyWKJCyz8Wt8xAkmTcKJT+6qVZI9NptBRDSRdm0WYrEcbl3BDjdP/Jgd3p8=
+	t=1761604467; cv=none; b=IQXrLwZ2mBwmI30dmUSR6Ym1E0F+jP8GNDCN1OS0To8dQEhZuv499LJmuFzUyRquO+ST1KXqveP+FZ2tgik265Xd6vTlx/622LSE3xCdYGtCKxG6X5PNWKuyY69Pny5s1zhV6ovSB5/VBxisIsDNqLR9eR9+WNF+CRXMdUPv4Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604462; c=relaxed/simple;
-	bh=6FK4Cywp2kPqN6IZB7Pn8a9qrx5ElGyAJ2bbf8tmYpc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lsl9VgrOjGuebvBAYTQIfV1SBjuhdREVYW9uXG0QlBlM9KexwVdMuJaVKxIuM/9Qe77srro/f7+pOMsI55EDTeuGrgCZ7KeE7pq2VOXR9N/gXEW4n4ZT6jeEszCOBf1bWkyjVYu0Tn1pRdGPo3NHoVWI11CxaEL3Ide9fjojCDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b5q5hdt1; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-78617e96ae1so5533947b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761604460; x=1762209260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6FK4Cywp2kPqN6IZB7Pn8a9qrx5ElGyAJ2bbf8tmYpc=;
-        b=b5q5hdt1cL9wVjYbAkH1AYKzJIgDa5TsWEjX8dyjivJOfapORAREYYvKyA/iPWm2tj
-         jdLTg/5lfN55rkoJPgsEVGdUUKXpnBalcjBCv9TtrNcFVVjF7GtDNvgnSNmVkkIaYPXX
-         hpudTMw0ZlFb0tm9eSu2JnJQUikJ6zvK8L86g2qIJIf79h3o34sKAoMSgGLTUlqpgwX3
-         1TlTTn4jYV6lUjIyYNmvhByncI+JbC3ej7P1WNKFYhjzWg0Nrp8AEllBjroEKywayMr6
-         C7hDksahGiwpPgmSCsPbroAyx8bvOirouB7KbQG7gjXbTgpmTH4QdM/Hwct/DAefQ9No
-         nbvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761604460; x=1762209260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6FK4Cywp2kPqN6IZB7Pn8a9qrx5ElGyAJ2bbf8tmYpc=;
-        b=GysobnggwtoN+KJRbFwOycH9daUa+l1TJlaQm+QUtFf/9kppHE5OyxoidlvFinJ4oU
-         4TvCsl9I8Jov+1rpmNZb5lIvP+1soH1Q2iOhC6TRz+z2/hSspNGhwKt8dTeZ1hRPluOS
-         J+a0dKt19XYFKLko/fdSzMAqqvUXGzm2ZfnxIdqIgseWkmnIOOVmUZJDmTjLxN4vjeHL
-         RislcOPV5z2gYuPk08EOVzvTHBE8FgwgGm6CkOKXNrXln5Z4e2KHfQerPcD5BHg11gn1
-         AJ4Z+quuiFDrC9UBWddjkH+1fiQR5CvyZS87dwm+IJ7QnKLNrK8Lydztgdl5mnxInOZ9
-         TM4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXhKRiglFrSREN6Z0dZwc/pEvJd5sMbOSfWmq38xelryCafCaShqpX4Aetgp6IuQoHHQRQZBK2glBXboA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx33DVp7LaqEOUaeMrbPRLj35r5Q0Z+fctvKBTHOL4DFLVYiVh6
-	l/ErHfEswuCqXJ4tNtY2ezRC0RKxf8tWmWvZ5opOC8dacgzNecGyWRdnTUn+i9DHT9gJgDy0/Km
-	M93kX5CBVtpgb1Ftebt3H7PPt0p18/L/dd1f/qDhzcw==
-X-Gm-Gg: ASbGncvy6/DsGitPFyCHuoDzTFz1jLbHai1b5+n9TACeHtAoRdPdDjeOmdaW/Its4n3
-	xE7a7C/nb2Fg2S55jMCohbzVOD0M+QNypj9x3V7SlV05D8xUbf/hGYkiw2/jlNlgjURUU226LuR
-	23XjV56GgH1QbsfL42z+9ty168XZR1LJfuFA3iR/RVf9z0rMbPlid59+dg2E3xEF3pTdJTLVehA
-	dlgHIk6EJTY/ybwEF1RYIa0YbV/bKXCV3CDHLm/KZOe+Uxcu5PCFJQFQdvv
-X-Google-Smtp-Source: AGHT+IHFxrQwcIAfHl/EDjyJgU4+jEXTaSyjinBJCcTfFFs/TuXmdRuhxaYs6OB/9vERDl+26CgqDxFOu0ooMCeyJi8=
-X-Received: by 2002:a05:690c:a00e:b0:781:1c1a:98f0 with SMTP id
- 00721157ae682-78617e5fb66mr12794187b3.18.1761604459817; Mon, 27 Oct 2025
- 15:34:19 -0700 (PDT)
+	s=arc-20240116; t=1761604467; c=relaxed/simple;
+	bh=qU2VxRpbuNiTyHE0Yc8cSi6C0ZRyvAMmh9JzIi0UzHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=keb9MITpiwM+ZKuzIQOQgSCIMgZl42SKCbkrhZ8Y6KLRdF0NNnjCzGp4Rc9Fz7Fw1Dt6CeSEIufK3G9TtKPon7UyXBwmbQg7hY2evELx5dIijbRm0FXwWAQ66e+WlbcxfD8Z+nMNcyjutj+tC8ZnvizaCl8pPpJ1VYqFLkjegjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cQ6voZcy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761604454;
+	bh=MOJvda80GwZKDsl4dcpCDAKcPw5mUM2zrPfFiHahJfw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cQ6voZcy8cFhrsYBqh+IDupU3wIltkSO8UaRFAZ0efRxbMn5mxm+iKOInwsdjN1n5
+	 NN0zqmECOHSyayC4P4SVJJxobijY+SElIkH/IlUJ5YaXbW5X+dlIoa6+kXfCaw1Y4m
+	 gs7JKN8bJq82T8PqnqjNVXXZJsNi7OjLLP5OcabLwFY9pupXeeyow7gz1BHuxsFxzx
+	 uzQ97dLyWdy3YFJyQgvst4d0ou0AWpwQMnUrHb5qzSEx4FZID7AJqHoxi4fpGyymko
+	 nCeIzk/TnGwtNdw/5fgtQ5XUW6po24N3M/WJQGyBKmTHchXgnJKEVipHQSAuWdsBXm
+	 ln/zObVq7U9+w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cwSwj0YzZz4w1h;
+	Tue, 28 Oct 2025 09:34:13 +1100 (AEDT)
+Date: Tue, 28 Oct 2025 09:34:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Bard Liao
+ <yung-chuan.liao@linux.intel.com>, Shuming Fan <shumingf@realtek.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc-fixes
+ tree
+Message-ID: <20251028093411.605431d0@canb.auug.org.au>
+In-Reply-To: <20251024120920.23f707f5@canb.auug.org.au>
+References: <20251024101931.49f46027@canb.auug.org.au>
+	<86578286-39f7-4d08-a41b-cd7e15f1bfaa@sirena.org.uk>
+	<20251024120920.23f707f5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761564043.git.mazziesaccount@gmail.com> <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
-In-Reply-To: <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 Oct 2025 23:34:05 +0100
-X-Gm-Features: AWmQ_bmCeM1hCEpCcloBtHCP-z98b1djEaHpBG8dS_Pa6X6P_LL8sPGseuESUz4
-Message-ID: <CACRpkdbfjqbmy5EbLApee3p9TEsEzBKOcGMrbspeWxqUc_niiw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/15] dt-bindings: power: supply: BD72720 managed battery
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/YWTe7oIVrMAEcYYA6F4uqR=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/YWTe7oIVrMAEcYYA6F4uqR=
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 12:45=E2=80=AFPM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
+Hi all,
 
-> The BD72720 PMIC has a battery charger + coulomb counter block. These
-> can be used to manage charging of a lithium-ion battery and to do fuel
-> gauging.
+On Fri, 24 Oct 2025 12:09:20 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> ROHM has developed a so called "zero-correction" -algorithm to improve
-> the fuel-gauging accuracy close to the point where battery is depleted.
-> This relies on battery specific "VDR" tables, which are measured from
-> the battery, and which describe the voltage drop rate. More thorough
-> explanation about the "zero correction" and "VDR" parameters is here:
-> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohme=
-urope.com/
->
-> Document the VDR zero-correction specific battery properties used by the
-> BD72720 and some other ROHM chargers.
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> On Fri, 24 Oct 2025 00:49:11 +0100 Mark Brown <broonie@kernel.org> wrote:
+> >
+> > On Fri, Oct 24, 2025 at 10:19:31AM +1100, Stephen Rothwell wrote: =20
+> > > Hi all,
+> > >=20
+> > > After merging the sound-asoc-fixes tree, today's linux-next build
+> > > (x86_64 allmodconfig) failed like this:
+> > >=20
+> > > sound/soc/sdw_utils/soc_sdw_utils.c:316:18: error: 'struct asoc_sdw_c=
+odec_info' has no member named 'name_prefix'
+> > >   316 |                 .name_prefix =3D "rt1320",
+> > >       |                  ^~~~~~~~~~~
+> > > sound/soc/sdw_utils/soc_sdw_utils.c:316:32: error: initialization of =
+'int' from 'char *' makes integer from pointer without a cast [-Wint-conver=
+sion]
+> > >   316 |                 .name_prefix =3D "rt1320",
+> > >       |                                ^~~~~~~~   =20
+> >=20
+> > And I do x86 allmodconfig builds which should stop something that breaks
+> > getting published... =20
+>=20
+> Yeah, so there must be an interaction with something merged before your
+> tree ... but I couldn't find anything obvious, sorry.
 
-From my PoV this looks good, and makes it easy for engineers
-to read the DTS file and understand what is going on, so after
-addressing Rob's final comments you can add:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I am still getting this failure.  I cannot find anything that would
+have interacted with this addition of name_prefix.  I can only
+speculate that maybe this file was not built in the past for an x86_64
+allmodconfig (i.e. some KCONFIG change) or an update to an include file
+has messed being committed.
 
-Yours,
-Linus Walleij
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YWTe7oIVrMAEcYYA6F4uqR=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj/82MACgkQAVBC80lX
+0GzeNAf/Soo1yTx9xBQBE7bMbVDQPiaUoSq1Ou9liCak/a+ul8gk07kezfSERbPx
+C3k7+f0jN0qch76T7SS2SJQgXg38qwNYuzceKqJNVNW/1Pk2nFAl6Lt+DLKkTZQU
+qmiwsZIUyaDEmPLpWkVHxqnH8947NqK+Bx95RQW/6epV3fNbyObPf+rwC5E4T2oH
+Dvrpctwky4yKAWp/CYtRGy7q1iHp68LQAbenvM3tv35lXMNuOAcvnFcVgYbo/bGm
+sAJ90/jJCY5qiiSQHyFVXh8XQMGHx1mxWUH6JyQqKt6fdDj6dhlRFXGO2Xu0SxBd
+RbdpCnx/QzFxyqP3z+eQNnKkhewpNA==
+=IY6g
+-----END PGP SIGNATURE-----
+
+--Sig_/YWTe7oIVrMAEcYYA6F4uqR=--
 
