@@ -1,227 +1,210 @@
-Return-Path: <linux-kernel+bounces-871002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3ECC0C366
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:58:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6C2C0C35A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09B374F15F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:57:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 94EC834882E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B232E54B2;
-	Mon, 27 Oct 2025 07:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331242E5B08;
+	Mon, 27 Oct 2025 07:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SgEMFB0N"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010064.outbound.protection.outlook.com [52.101.193.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KqHI9Mfl"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303472E540B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761551832; cv=fail; b=ZDXzGWBhNf2X60mXlrhy6K2sturv5TLEb07vf2j9JIrP5c81Kd9S9b/KtzMS4gGUUBCzV8OVQixl/SyrE0Y1wLU0E7yL5VAy9J0yf5UQ7UtzySwhHcwpDyYlzx3ID4qqlN1f2sXGh3AX7L/rCdVAu5EQCQF+hh+2/MIJbbbtj94=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761551832; c=relaxed/simple;
-	bh=SbdR4h2kWeuw9WfVUnjeixXQptGrD+/Q4gbEjGaRjZ8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=l/8OU0J8CINCD0FsKZmd1DRgD1kAaDBQRHSzC7UAtWaSZerBhLsH53eeGWg2K+VxnkS6MHxVzZ9ydGXqVkAm2belsjssLtOHPr4DXrAeVqSkSad9PxWLer4wc1tvO/1v1QPt58DxKVA5+Y5t+rjODSrcptnTRoUTf+tkuAjh8n4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SgEMFB0N; arc=fail smtp.client-ip=52.101.193.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bLof7EOYUEan314eh2S9H7/pzsjGFXlU4FeO59kVeS80C5F6bZpcBTyxpV7vfNwblohJwE3jKNChHeqz8MEj7S3jeS3WB3XzhbD2X3hgnNhKNc0Eqzpo50ROB8fQIyMbLtjOQSXAkrGEABxic9xgAZ8Cs+/XISlLuxl1y6eRhipS/qwGV3IktjRjyMAPguEjR9XcUkbFsGMDHrDd+ICXmxdvmb6HQnorJ+jSca6HipAJ0BxB8hxbvoN10gy9P3+E00cvOqC0eZbmZijoCrElJRTvA/jFCnwTvJvRCWZKrqcbwEJnypa/9gPuD800+a/njaUP+/VtuvsDdaj7SnGR7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qno9+APPqy23oBcZ4d/YricwSA/pHWOans9ByyMOCqo=;
- b=FmHCw4Imypi9NYersIpTtk49hfuuhKFvuqUfHNQ1cswGm+r2BFIjQpKJz2oI597I7aShiuJ9cEE5wghOlC/7bxlnzB+zbeOusJuBn+YKwjpdIxwwJ3Np4A/c6ckUD6Jyep5hF1dRmmeGcO/uGGxnR+vr8rHLE1v9RDF88n8PliFCPvV6VIJhLlo5pRx+MMGDyu2QbpsWUXz7CHnjD3aSM2mjP5X07L7DU0HmPkOLaCdDsbBDZCJA1kOA5z2jC6g7PJCLW4sIvSvHHXppDZ52K+AlY92XcUHfFf4COXgmF+6EH3fhyQXSdJIjNTLJsYzP+KqJezM06P+pL8I7U1Uzgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qno9+APPqy23oBcZ4d/YricwSA/pHWOans9ByyMOCqo=;
- b=SgEMFB0NzEDYqbhR16wlh9KM63Y64/9ad9ZqdmplBqKFT/GF5rdgSN1NjLqonke+EaCrk5DXtluM0eCoBsRX7qnkXMTtsCt1KMxOs30PVIOtiXI4KF8WOhZ3pwrb8R8SJR7PbVHX+ZUFuFIX3+qSFsZPm39n/x7B3YDfnzIFyxM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ0PR12MB5673.namprd12.prod.outlook.com (2603:10b6:a03:42b::13)
- by CH1PPFC596BECF8.namprd12.prod.outlook.com (2603:10b6:61f:fc00::621) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 07:57:06 +0000
-Received: from SJ0PR12MB5673.namprd12.prod.outlook.com
- ([fe80::ec7a:dd71:9d6c:3062]) by SJ0PR12MB5673.namprd12.prod.outlook.com
- ([fe80::ec7a:dd71:9d6c:3062%4]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 07:57:06 +0000
-Message-ID: <dff6216d-b4a4-4d5d-89e3-e393dc018dec@amd.com>
-Date: Mon, 27 Oct 2025 08:56:58 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/ttm: add pgprot handling for RISC-V
-To: Icenowy Zheng <uwu@icenowy.me>, Huang Rui <ray.huang@amd.com>,
- Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Han Gao <rabenda.cn@gmail.com>,
- Vivian Wang <wangruikang@iscas.ac.cn>, Inochi Amaoto <inochiama@gmail.com>,
- Yao Zi <ziyao@disroot.org>
-References: <20251020053523.731353-1-uwu@icenowy.me>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20251020053523.731353-1-uwu@icenowy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN8PR04CA0043.namprd04.prod.outlook.com
- (2603:10b6:408:d4::17) To SJ0PR12MB5673.namprd12.prod.outlook.com
- (2603:10b6:a03:42b::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE1A2DF710
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761551854; cv=none; b=QrNPEiHR60G3vufNeHZyBoK9OVR7VZ2DPeQ4/4lmZPwidjcCiYLc5oa3slO2tiD6PZfOLd6Wh12R+vasQmri1c/PcozWcuCw8baax/WPXvYgBONlkC6/FJeH37raHWPlSdHuUSXLj0sTh2kU831BH4H8GneuXjcdozS+C69T5ck=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761551854; c=relaxed/simple;
+	bh=Z1okCuulMLIr1YTQJjrqsE4HKq0fhd6AoRVUWKoq970=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f5eruMgw9cYX4jEz8w6u80mw7y4lP54ORmDm0QJNumHZaEeRyi6z9+xnWB4Fnb+hVxuYUyAh0YvbBtnpvcxfRQWHy6jVS9hRaBdEx1E3uiw8YGNMpFeRsnEvgpQFOBYf8xY+0tm3VQcyN3zh1ong5wHAzh9OkIPuTd8HdCvxAIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KqHI9Mfl; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-592f9400b04so3730318e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761551851; x=1762156651; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ayv+21ceSp1bYlkzspFJkEJSM3a78Z5afjxNdRx5mpY=;
+        b=KqHI9MflLL6rhxXRmmhN8cCDpF1OhBONpUcgsCZyAOJtPauJQsFt1gH6jY/1m3pRsv
+         1prLq+PszT25li4BJ5qp9KwBXchLGS5D7MdJ/a8t4A3Ps1/S2cEzDYyuatz+6fcsJgTW
+         xJTyzk1L7vdN0htVBTv2BVjT+HPjvxaE+zWfs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761551851; x=1762156651;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ayv+21ceSp1bYlkzspFJkEJSM3a78Z5afjxNdRx5mpY=;
+        b=PX3fpupBt4FBQLL5Qe1EOpOnjuXOHyfQ89xwiW2+/WbuLJe1eVu17mqhKwU2lA/Y6S
+         w7cpIFNkT2qkBbGWyn3pVRjKToVrCRduaf7aJyjLYFmz8QjSsf8PCnHyqIOSGK5nTQKi
+         8Ujzmt6O2bUw78tIJe1ECSEHtCzbD0rhISrDpLOZFU3L+2nF5AB206AsNu6TC3oV7srf
+         iN6Yp/gjFLKWp6uYdwR9KmscPZw1ecDB1MVuSW/7n50GHZ9BMnhANvD0TY/+vOL8xJkq
+         CsfKb1fC98bFHfh8pmCUnWWAYh4fMaatvUpBUZSuxyc+9poldzum2u9N8BFvOJVVERa/
+         Uvlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUB0dXiTbHtXVaOIWvR4NPUSaOjXRDyyO0kRqqRDTED3xQqxSxaKfV6eCiaB4g6Ct95FLgppi43Y87gYLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNHiLwDUCIfCM6d8X2NLlnkgcsafyNRuuk2ywupeo+NupFJscv
+	+7WSZRUdXIsBYc3i+mhOtAbEnqYnZ1GEklb6x4+WfjV0Kc2LnTRMwwJZYgNvP1JHRPcDMv+FwNA
+	+5VM=
+X-Gm-Gg: ASbGncu77aC6DcXMnlQSJigqvSJ1XcJ4UsGRbFcYJBqbL2AL50yzMjSon26paRuPr7X
+	zn8XVfHbS8ng32Vt1v5ZmK4ZlJxKM99j5Kxlt83vYvPrUPZfiA5qRz1tu+vgJHcFSUefuGXrWSS
+	a5KcxtWLP+db9BFNJpwW5o/vajiW4aRQuaL51UXx+giCkoYQVmAuc+jvZDJkeTISSXfxO8zHDDD
+	9+qRKgq/y4opeI+rD2iwU5itH/PpWfAUJfgVWwkuGXHrNXiZEP7RAwjJ+LyT6hpsY4rWOY3IpNC
+	WvLUic5TJeNxN00i4c4jsd4a55raz8Uni5bOrooZ9ajyCZc9EMA6W4Ob5n3PZbeZJOMJrt0h44K
+	XLg98y0JnQZT9wd0+y1B5e9/Tr0OVDI1w0JlFyYVn4ydJlWtnbpTHK3YxCPT/rmCJQGqoy733X9
+	daZdRHI79A+w2GZl0q+4R2bcDELtWVnW9fPncjgzm9p56VmtlErJDI
+X-Google-Smtp-Source: AGHT+IFdTmRJUn7P7rE+ZuiymmvBerTnrd4+CuT/SOOizgyUqJDXXM77ZnDWIxEhdDLFvPgLFnXIrw==
+X-Received: by 2002:a05:6512:3e27:b0:571:1bdc:14d9 with SMTP id 2adb3069b0e04-591d84fc6f6mr11527027e87.24.1761551850643;
+        Mon, 27 Oct 2025 00:57:30 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f41d14sm2178776e87.9.2025.10.27.00.57.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 00:57:30 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-378e603f7e4so33054291fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 00:57:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWJgsAtxrjIml1o+1YwC78Q5ea2K8e0/WARn+81EJ2Zs38jly9pu+oLwcpx8sokYWuVOiif1gBuXmIX4M=@vger.kernel.org
+X-Received: by 2002:a2e:b8d6:0:b0:378:e108:7b5b with SMTP id
+ 38308e7fff4ca-378e1087e28mr31341341fa.5.1761551849708; Mon, 27 Oct 2025
+ 00:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB5673:EE_|CH1PPFC596BECF8:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6b80aa0-0499-4fb8-b521-08de152e6c32
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q1dEY2p3cVlxalRVS1ZBUFVwV1dHY1hWOUIzVlBONGZuZWUxWWc5L1k5QzJ2?=
- =?utf-8?B?OURhd1RidUF2bTVZTEFsaVFPSm8raklwMW9DLzZvdGNMTzQzbENPakxpQ3hH?=
- =?utf-8?B?U2M5QmZkWGZaN2krS2RLczVmVWhkYjM1eWxWVThuRjlzK3BuZDBBb2xNNENI?=
- =?utf-8?B?STE3YzNPRGtVM2x2UGZnRGJzVlBSNXozSVVUUXF6SHlEaTczbE4yaU44dDVh?=
- =?utf-8?B?VXRPTlVDblkxMEY4dWtiSXBCOEN3c3dvWHhzaHk3QVZRQ3pSOGxEWjVTaHBY?=
- =?utf-8?B?VE9DVWxKbG9RZWpJenZCdkpySTBXR2xSM1JjVnN1WUpRVnpyZExzVk4yS1dl?=
- =?utf-8?B?cnFXM2hiSi92M1g1cjc4QW1aeWJsRW1paHNVQ2I4OVk3VGFzQ0JlOVI0S0Jq?=
- =?utf-8?B?K0o4N2NWZHZ2eHVLQlNWTWYrbjRyeUVoU1kzV0lZbThkM1M2alJMVU9ONXJD?=
- =?utf-8?B?bGNvcHhVMG4wbDJDbGZ3RHhQcEE1L0lhK05zUy80S01RL2FobDF6NjkvaGhS?=
- =?utf-8?B?WDRKb0g2djlrVGl1Yzk1NUNIK0pIZ1plY2xPWi9HVkZnQ1YySVRTbDZDYi92?=
- =?utf-8?B?cncvc2NvamVFU2d3aTVFN3JXemJPbDh3NzQxM01wM0xpQ1A3QjFNMFBUaEkr?=
- =?utf-8?B?K3FLZ1duSXdhc3hWcjhHWEV4M0FtZjdXOWVqNVBNYk1kUzZ3alBpeFA3UFZi?=
- =?utf-8?B?SjlCVk5IN3pzKzk5TCtLcFd2bTNya3ZHd2UxajlRa0ZVdHRKeE5HNzlGckFM?=
- =?utf-8?B?ZkZVZkhQVzV2N2RjVzhwWDFRVCsxMUJGL0lwc2o1N0tPN25oU2RHSllUUlQr?=
- =?utf-8?B?Sy85RFFScUFVdFdBN2R1dFF2ekpwUXZHV1hMU3VDZzZ1eE0vYzFYbDJ1L0dj?=
- =?utf-8?B?WVVmUmFnYThKaEM5c090Z1B6ZDllVzNrL1RQUnNGMUVvSml2ZU1Yek9ta29K?=
- =?utf-8?B?NnQ2L2k0UER3Zml4U3pOdEc3RGFWUnNWWXk5VFBtTEhrc1JINFQ2WUdOa0ZU?=
- =?utf-8?B?QlhIVlV1WHYyNmVHVndMZmcyaFl2UUdHajRKNmx2Vm5kdjNSYzd2bitGbzVC?=
- =?utf-8?B?SExXQWJtTDkreVRuemsrNEEya1VmMXZjVzE4TG5sOFFpRjBOeTZVTXNNRFor?=
- =?utf-8?B?WE5kODRqSy9hN3dIZEo4dE5ReDVTbEtHdEdDeFpqSGtIQnNTQ1N4VlVBK0Vq?=
- =?utf-8?B?TnZyNE1mUGkwNmZBS0p0NVRMaHhJSDZBL2NVaEx4VE1Na0JIMDRZR2lTdGhi?=
- =?utf-8?B?WGxjTjFyMG05SHNFMTErSXFDcHR5ZnNONS94VGJIc1pwOWdKa0dJV1djRFdu?=
- =?utf-8?B?dXIyRTcwVEJqSXlhNU9IVW8ySlZPOExBWElzdzFjNVV0VDk2eFRKWE9NdCtB?=
- =?utf-8?B?VXFaYmJKT1BwTG9KM0srOEswS3FMVlhDcyt1cHhieTd4RjZqanB1S3I3dk8r?=
- =?utf-8?B?RTNSRFFkQ2Urb3gwNFFVUUNpRmVoQStiUTVrcDg0bzBMUmwwMmZQK21hTEgy?=
- =?utf-8?B?UUhnUmtlcFBNNjZUVXExL2JOa1VwUitmV0pXM2VuYzJnZkR1czFjZjJOdmdE?=
- =?utf-8?B?R3Z4SjRWbldzZjNHQm0yVFEwQ0R6UER2U0huZXVvU2I4U2VRZit2bHZsSmNq?=
- =?utf-8?B?dk8wZU1rRmRDeWZVbndUL1ZtRGVYckw1YVc3czVFYW5NT1dFaWtOc1E2VTkz?=
- =?utf-8?B?eXpOVGdBazY2NHh3c3BjaXZhK2trS1NJRjBVRVVlUjNaK2xRNU0xQ1VIeHdo?=
- =?utf-8?B?VlZaV25KeVd5VEZBSTJHQ1EvUHorNlRhbWdoQlQ4S1dQRzRyb2lxa3ZWWVFm?=
- =?utf-8?B?YkxNaStyV0hDdDlkbndud21mbGxvbmZrK3hJdTVwZ2FPdzQrdzNGRzNyelpj?=
- =?utf-8?B?amFweUZaVEU3TjVDVlRFQUx2T1FvTjBtZHdFWXNIQldab2x4R1JlaG1RempJ?=
- =?utf-8?B?OGFGMmpqSkR4LzNJN1pwQXhKRGgxcDJJdFgrR2hiTTJlaFZuNlVlTnc0M3Jm?=
- =?utf-8?Q?SUgX4XtmTwp0uG9dtDm6FMpExg/QL0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5673.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a0ZFSjZ4UFQ1L09VNThuM3E0cVZSeWtDWWNwNGpUUkFjazRZM054YUttMzlv?=
- =?utf-8?B?L1Y2ckZHamZkT2E0YjFrRVUzUnZwcGJtVGhTVjR3ZHZRWHhTZ2JId1hxVFVj?=
- =?utf-8?B?eHVzclprdkJQcG1RRW5PMDNPWnRxR3J2V2g1SlRFc3p2c1k2Y2VUYzk0S1Bp?=
- =?utf-8?B?T2VCU2R4MWdaVFhOK3NNTVZXdGN1M2UxRnJhL3Bsc2t2aUgrOGJLcElxS0Vn?=
- =?utf-8?B?bGRzV0JtclRYZGROT0lmcHNFd2JCNkQ4bXRGWHlkcktZeTl5OVArMVRRQ1Z3?=
- =?utf-8?B?KzJUYzZXbUhnSlpHbVMrQ3pPVE5hN2k3a1k1K0FhMmlROXgzZEdrcFR1cFFu?=
- =?utf-8?B?Wlo4WFdjUE10VWZoaDUwdm0zb1NDaTFTR0paRkpOZnl6NGJEOXJBVTJxbHQ4?=
- =?utf-8?B?alJMZ09sVHNsVnZMNDEydlRRVzlWR2FhcC9Za2ordHJrU0NSaTVpUDZUT2Fv?=
- =?utf-8?B?djlkeVM0UDRaVHE1UWFRTk45bEVYeWlnL09sYUFQSFZQQm1qaDVuMUhvVlM5?=
- =?utf-8?B?V3BMTUF6K1JXN1hOMVkrZHA2SUkydmRGT2hMRFhhZDJYNVNHWTZrNWNJWGJz?=
- =?utf-8?B?ZHFTUUcxbjBsSE1lM01FYzhlWGI2OGRBWUJucVRDZ3BwMGxOb01DZDRCTGlG?=
- =?utf-8?B?QThlaFREUW5xUlJaTXFWQmwvd3NBZVFUeTFTd21UZHdtQ1lWRU5RZjBkdFAw?=
- =?utf-8?B?ZmJoN2F0RGdXTjVBa2RiOWRxRzN5eVhma0JaRTFmZm10MFFFdVRBRVBFaGI4?=
- =?utf-8?B?bXEyVFFsbzlzOXFJZGE1M3dyc2RIdnZYbmwrcldGbUJ6aVdiNjE0aHM3Z2R4?=
- =?utf-8?B?K1E0T2FmYmlSdHc2a05JNHJHbzBOMmJOSmM4dlR6VW5uT0MxT3ZQTTJKNlpj?=
- =?utf-8?B?MlpidTlVWUMyWHpWcmIrVFNGd0RXMVNvWGJCZFdZRXBQZ1MwK3AyWng5VUYr?=
- =?utf-8?B?UUFxNFpFQXRGMEphMSs3RGo1ZjVqQzBCd3ZnOGpWcWdRVis2QmRNQ1F6K3J5?=
- =?utf-8?B?SVhSMndWMUNkZDROeTVLUjhDQjJZaENoR3RPWXVBNDB0N2VtRU9MQ2dTS1dt?=
- =?utf-8?B?cWI4K2FycmhnTGhFOVZCWWhvNERFUENzQTdlVThleGJZNWlBRzE0MzI2ODlZ?=
- =?utf-8?B?Ny9kWGpvV3pPc3BGdTlvaUlpbERXL0wxUXNFdDZHdEt0a2ZnS2dHSURmbWFy?=
- =?utf-8?B?WDhaODZueTZOR2V4dGMvM2tKWmhjaUw3b3liV0tiUUFSQ3RDeGV1MUxlRWg1?=
- =?utf-8?B?UXVMV2VYWkZwNWR4RDlOZ2VERHl2WlNpK21qcElORjlCMnZpd3JXUFllZCtH?=
- =?utf-8?B?MHJBcVM4aHpkdkpPQ2t0OTdLK2w0dGtodHYzMm9IWEQ1YjAvVFprdzRLZzB6?=
- =?utf-8?B?TUlUUHJoQ3hsNDZ0ZlpuclNmRlF1Q2tTdDJEcXJXZFZkdmo1ZWNZbTVzcWdL?=
- =?utf-8?B?QTBDV3ZjeW13YlNnVXRUWXY2aTd6S3BLSDEwU2YwSE85QjRhbDhEVlc5dU9C?=
- =?utf-8?B?blhwZTdrUitDUFhielo0bGlFVVUzczJXMU1EclRRa1BiQVZZYXhNVWdNaVZF?=
- =?utf-8?B?d2hqeUVDdmY2V0I1ZGZDeXk4d1RKZS9kL2RrU3duQUpHK0QrSm1uZFU3aDI2?=
- =?utf-8?B?dEE5R01lRTFzVXM3TFdEdyt2WUI0QmpFYVRiTU1xZThKMG9vd3VkVHQ0cVJJ?=
- =?utf-8?B?RHdWREcyYlJRNC8yMFQyQjhTOHZNanBpSlhPY1Z6VXl3QXhCdU9QYUxLVy9i?=
- =?utf-8?B?U09nTCtJeStjaHV0QW1wUnIyOVFvblBvOUkybXcrRlBYR3piR05sMmEzYTBQ?=
- =?utf-8?B?NjRtMlZLck9pMmxjN2t0UHBpbFR0dU82NWZqL3g0eGwxcTNzeDBJMG9lY01q?=
- =?utf-8?B?a3Fzc2xDSmlpVG1rNEFtWSswQlNEdjE2cHh5Ym92YlppVUxYQjNrb1JBU2JM?=
- =?utf-8?B?ZXQyNjRpUWtacnBUeFZZMWxOeXd3WWZDRktqMTlmZll1UUswRjByZWNHVkl1?=
- =?utf-8?B?Uk9wQkxONE9ZTkc3dnZQNGV2a21FaENBMXBuS1JnaFhBd0FzazFwbE5xdnZr?=
- =?utf-8?B?SUZscXZFeGdHMUQzMjNkSFZNTnVpNGRxQnMvMGN4dDc2UUJhS2o0U1hrNmxV?=
- =?utf-8?Q?+0mCxcgUv5iI2DCHo1JX4qSti?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6b80aa0-0499-4fb8-b521-08de152e6c32
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5673.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 07:57:06.3634
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: el8AeYIItWOQ8yc1oVxZGJcWdf1rg01z9DmvaKGCNtR5U7cJc689hZiz1eGQ/3Sr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFC596BECF8
+References: <20251026-fix-uvc-v4-0-610eb1329600@realsenseai.com> <20251026-fix-uvc-v4-1-610eb1329600@realsenseai.com>
+In-Reply-To: <20251026-fix-uvc-v4-1-610eb1329600@realsenseai.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 27 Oct 2025 08:57:14 +0100
+X-Gmail-Original-Message-ID: <CANiDSCshOoYXh_HzCQyw_NMKs46vXb1LQhtwhM-OK7z7yz_nvQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bk_LATzLIgwIcd_8DVJum-MIVKytMBTGVubUq-bnzBKxTtqI7cwC8Qub7A
+Message-ID: <CANiDSCshOoYXh_HzCQyw_NMKs46vXb1LQhtwhM-OK7z7yz_nvQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] media: uvcvideo: change comment to 'Intel RealSense'
+To: yogev.modlin@realsenseai.com
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hansg@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 10/20/25 07:35, Icenowy Zheng wrote:
-> The RISC-V Svpbmt privileged extension provides support for overriding
-> page memory coherency attributes, and, along with vendor extensions like
-> Xtheadmae, supports pgprot_{writecombine,noncached} on RISC-V.
-> 
-> Adapt the codepath that maps ttm_write_combined to pgprot_writecombine
-> and ttm_noncached to pgprot_noncached to RISC-V, to allow proper page
-> access attributes.
-> 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> Tested-by: Han Gao <rabenda.cn@gmail.com>
+On Sun, 26 Oct 2025 at 17:43, ymodlin via B4 Relay
+<devnull+yogev.modlin.realsenseai.com@kernel.org> wrote:
+>
+> From: ymodlin <yogev.modlin@realsenseai.com>
+>
+> RealSense branding is now independent of Intel. Update all driver
+> comments referencing "Intel" to "Intel RealSense" to reflect
+> current ownership. No code logic changes.
+>
+> Signed-off-by: ymodlin <yogev.modlin@realsenseai.com>
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
-> Changes in v2:
-> - Added Han Gao's test tag.
-> 
->  drivers/gpu/drm/ttm/ttm_module.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/ttm/ttm_module.c b/drivers/gpu/drm/ttm/ttm_module.c
-> index b3fffe7b5062a..aa137ead5cc59 100644
-> --- a/drivers/gpu/drm/ttm/ttm_module.c
-> +++ b/drivers/gpu/drm/ttm/ttm_module.c
-> @@ -74,7 +74,8 @@ pgprot_t ttm_prot_from_caching(enum ttm_caching caching, pgprot_t tmp)
->  #endif /* CONFIG_UML */
->  #endif /* __i386__ || __x86_64__ */
->  #if defined(__ia64__) || defined(__arm__) || defined(__aarch64__) || \
-> -	defined(__powerpc__) || defined(__mips__) || defined(__loongarch__)
-> +	defined(__powerpc__) || defined(__mips__) || defined(__loongarch__) || \
-> +	defined(__riscv)
+>  drivers/media/usb/uvc/uvc_driver.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index fb6afb8e84f0..dbdacc64ea6b 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -3142,7 +3142,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_DISABLE_AUTOSUSPEND) },
+> -       /* Intel D410/ASR depth camera */
+> +       /* Intel Realsense D410/ASR depth camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3151,7 +3151,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D415/ASRC depth camera */
+> +       /* Intel Realsense D415/ASRC depth camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3160,7 +3160,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D430/AWG depth camera */
+> +       /* Intel Realsense D430/AWG depth camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3169,7 +3169,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel RealSense D4M */
+> +       /* Intel Realsense RealSense D4M */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3178,7 +3178,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D435/AWGC depth camera */
+> +       /* Intel Realsense D435/AWGC depth camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3187,7 +3187,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D435i depth camera */
+> +       /* Intel Realsense D435i depth camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3196,7 +3196,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D405 Depth Camera */
+> +       /* Intel Realsense D405 Depth Camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3205,7 +3205,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D455 Depth Camera */
+> +       /* Intel Realsense D455 Depth Camera */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+> @@ -3214,7 +3214,7 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -       /* Intel D421 Depth Module */
+> +       /* Intel Realsense D421 Depth Module */
+>         { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+>                                 | USB_DEVICE_ID_MATCH_INT_INFO,
+>           .idVendor             = 0x8086,
+>
+> --
+> 2.43.0
+>
+>
+>
 
-Looks reasonable, but does that work on all RISC-V variants?
 
-And while at it maybe please fix the indentation, using a tab here is probably not very adequate. In other words make the defined() match the one on the first line.
-
-Regards,
-Christian.
-
->  	if (caching == ttm_write_combined)
->  		tmp = pgprot_writecombine(tmp);
->  	else
-
+-- 
+Ricardo Ribalda
 
