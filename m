@@ -1,80 +1,101 @@
-Return-Path: <linux-kernel+bounces-872545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F34C116B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:39:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D709C116C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B35E44FDD71
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:37:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A2DF4E17B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1755320CAC;
-	Mon, 27 Oct 2025 20:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F04231BC8F;
+	Mon, 27 Oct 2025 20:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZusT7sM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adPyGM1X"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBD524E4B4
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC222E62C4
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761597462; cv=none; b=K6mNSoBbCHRRwGdMqkkLY9LTaeue+wqLpYX6Ru+6yAM3lT0ec9eKebiUT3eC3hXCIg/nX4GoCWR8KWdCc5YQQOmaDRPimRp3yZ96U/cDpCZ+MyrToCGWk7bH7h714uWFBXbOJTnG3PrQY2sO5GX2Y8UaRN7ta6lM5K5tyeyNtes=
+	t=1761597697; cv=none; b=u8WyL4huMeHLQ57YeTHme+m4BNBePWWeTHdclfRTQNrZFAx4/QxDZVLqsAZQcG7GaCa1dlJo6w6S6ZnxqragkhfDaBfToJ6Yb8eWBtD9QO1dg1K2JRrULUQQBI5+UY+TT+vXac9SWjk7xBtdUYU1AcevubCsGC3MueJZAYRASJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761597462; c=relaxed/simple;
-	bh=U1D99bM1CnrwEWxaa8wnWt3+xJpm3kjMIoPiNA3azUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCYcDvCyJSM37LpfuFRa5Cvl38PA3Vdlu+wMaCtKvuhGG6ZyD/TF7hY7VleH/2v5SIQN/aDlrvnaDEXqnHoWj3AziEZUbARD5aMmJEUq7yGGUi5ZHnWW/UMP0kT0lG3vIxE4AcQ0GdlGrQbTfYtYNUclEPJxWiZqLT30YHGpSfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZusT7sM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41813C113D0;
-	Mon, 27 Oct 2025 20:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761597461;
-	bh=U1D99bM1CnrwEWxaa8wnWt3+xJpm3kjMIoPiNA3azUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZusT7sM0fNKFwmGUTNmGSC+s3RlDzK/CEDg0mDkNXYeAOeyZ8vGagQ9uc9S/qnvh
-	 i9QhHPDaWkuZCZ0et+ZKfdUnxuPWa3hY2+EDoHCE5oIEMbqfmcvxUEtD5U7pHIOzEU
-	 iPb1fkR/VJkImn2BBeVfteuSi0nh8SrxIw9Uvfb5wvhHWtIr4duqNj1yqdByqA9qmy
-	 aToN1GKRfWvKS4QLSPgdv6Hg/66HHP+9tSNJWk2pnKSSgL4z3JRX8B8kwO5LHUtl8X
-	 0C6NgXEh6M2YH0APl5DDPtCerJGwKP/6KgPs+/dURsv3am1w3ocEC+mZuS+1Og36QB
-	 /QBEmyjxrN84A==
-Date: Mon, 27 Oct 2025 13:37:39 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Peter Zijlstra <peterz@infradead.org>, Miroslav Benes <mbenes@suse.cz>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] objtool: Re-add resume_play_dead() to noreturn list
-Message-ID: <rpvygldy2s2ybabzsoylbitpn5o7w6vustbox4jd22pwznydwe@6v36xs6vxo64>
-References: <20251027163907.184681-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761597697; c=relaxed/simple;
+	bh=Bl32hd8+nZYs/Ek7MiWS9IBWG7+TZXS4JVZHy9gRrcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nhoJ6UzC4blU1BlAW6ueIueBQsPgPOY4K/wpMsO+FwHy9hs2CJlqiHMA/v+25hR4optG6BfGl53FUp3Fmjn5nX0ZvkOV581F4Ik0z229GbzkHcr27hz6KEwJIynrs9mU3L8/t7laREgr0RuT6JAhixCSrK9JuAOO9SuvtMeEhdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adPyGM1X; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-93e7ece3025so198511939f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761597695; x=1762202495; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=V33D0O4zi9GNuJTw8vBA+/b7xPb0jr7CJbcC2/UPqBU=;
+        b=adPyGM1Xx0Nj8+txk+x51KcgGxn06jsv3kG++ASxjvenokGtNRroEPOrlMW1jDlMCA
+         Nf70uJ8hBCqNnS5GuKeWy5PFp704bF5Rqp9u7e4eI6qK4QP9RrFlFshBp6bR0D8w0jLu
+         n+gl012JLgflqqtZ/fWqsxCSSWAmOSlb+u/Ytzu6ptZynBF4TsKCddLNsEcgbGBqGrbu
+         9zpmk4BpGBp/vTF7l0QGHXWSiSTRBVouu1l/1vRdQGydr5bQzuDmd+RZHOSxHmBAEQ2N
+         8zw8o7vdOZuE5CL+ykSWUXQ+fqZWy2mmWOPweFcJftQI7Ku0QbZXyGSi7JBy00xPnjU8
+         thRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761597695; x=1762202495;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V33D0O4zi9GNuJTw8vBA+/b7xPb0jr7CJbcC2/UPqBU=;
+        b=F/rH22hK94Fol2YKCLwtkesJiLefJoHVcnZv53ox9aNYXtilEAWCbNauur1AoKxn52
+         pHcYHvUhOjvPZJXiNBCXEu/tt/9W6lP1/JCLjYnoSqN2GeC9gSERkRneU7RmOVsE6hf7
+         Veo1h1NPfGV0esJjqHXM6yW8TuTupIzXEPXb7vl6j1z70FTSZ5os/YmnGdgFKl8HSRAz
+         LN8TWE0+LFGUkJ+HM7442fycvBkaDbg2rdggwQqUoV2a+Rb9+dkZuXghlpU2iZ2xr0ur
+         58sjrLsXiicWLN0j+l7h9pQ2X0HEsjS7deqGGb2EOwVqCbsrE5QtxL+C/QxEAnMz6mtt
+         kpcw==
+X-Gm-Message-State: AOJu0YyYYmCouWHIcmhnbRyIxKtJYD0j9Hli7Cj26Ezk1VolT1jUDKgf
+	EkagFzbJiy8bhbOiDHosKT6YmxLB8lj9xK1tPKGDzgOdBOmBEuVX5SwQVhRyDID56+DQsHeN/5W
+	Vu9kP8oPD+K8fqiIGJ5ceXINH59MmJwAjMbK2
+X-Gm-Gg: ASbGnctGpez9XXK/Yq1Zg3xXlC8h8FRel/xQt0MPYhCaGMqp4IVxhhhtp7bOdR7HQFB
+	+VEAfWuzB/Fr2OLNxqLnoNYq4jFte2+kMtvMuNia2upBoyRmWS6QSnEDdX9MVDO0l4HAMv3TICg
+	idmv81+k2Ma0/VARJEdr4f+li3grNLwHlDjgfTvfZHGpjAzGcwMiBu480i5C8EHM+J09pQ7vUYI
+	VjqyAo5CFeKmGRtptXACPAF47AW8I1fX6ID0E601/EHuauCBuIWUu2M192wbqdmwb2HSZjd9nZe
+	2CdismWSLRQjrbJljQ==
+X-Google-Smtp-Source: AGHT+IEZ+DZIZJ1CWo7CsrWyrGXK9IS7GuBDjbaYE1wEOR4WP9a33jOKRpIRTU18adKB6jZVbBnCpfWYdpXo5X0p0xo=
+X-Received: by 2002:a05:6602:3fc7:b0:945:aa01:bab7 with SMTP id
+ ca18e2360f4ac-945bb350edemr148478139f.5.1761597695479; Mon, 27 Oct 2025
+ 13:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027163907.184681-1-thorsten.blum@linux.dev>
+References: <CAB95QARfqSUNJCCgyPcTPu0-hk10e-sOVVMrnpKd6OdV_PHrGA@mail.gmail.com>
+ <20251026211334.GA1659905@ax162> <CAB95QASG1pZJT7HyqxM90_FExhSVjoHmPqYHeQWXnrAzCNErmA@mail.gmail.com>
+In-Reply-To: <CAB95QASG1pZJT7HyqxM90_FExhSVjoHmPqYHeQWXnrAzCNErmA@mail.gmail.com>
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+Date: Mon, 27 Oct 2025 21:41:25 +0100
+X-Gm-Features: AWmQ_bkzaHhB9CkmlReafi23CmCyQOI92OWB-Z9nDZJfXxx_hcQyxHwdSOVafLc
+Message-ID: <CAB95QARmr9b-jVdgDLpA4Qq=3WN7CYS46YEH4Ok4gpSdZHpq5A@mail.gmail.com>
+Subject: Re: Can't boot kernel 6.17.4+ via rEFInd
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 27, 2025 at 05:39:07PM +0100, Thorsten Blum wrote:
-> resume_play_dead() was added to the noreturn list in commit 52668badd34b
-> ("x86/cpu: Mark {hlt,resume}_play_dead() __noreturn"), but was dropped
-> in commit 6245ce4ab670 ("objtool: Move noreturn function list to
-> separate file") when the list was moved to noreturns.h.
-> 
-> Fix this by adding resume_play_dead() to the list again.
-> 
-> Fixes: 6245ce4ab670 ("objtool: Move noreturn function list to separate file")
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Hi Nathan,
 
-Hm?  There's no "resume_play_dead" in the diff for 6245ce4ab670.
+On Mon, 27 Oct 2025 at 20:35, Eugene Shalygin <eugene.shalygin@gmail.com> wrote:
+> Neither the patch nor 6.18-rc3 work. I'm going to try to revert
+> 5b5cdb1fe434e8adc97d5037e6d05dd386c4c4c6 together with anything that
+> is needed to apply the reversing patch.
 
-That was actually done intentionally with a different commit:
+Replacing CONFIG_KERNEL_ZSTD with  CONFIG_KERNEL_GZIP made the kernel
+bootable. What does that mean?
 
-  34245659debd ("objtool: Remove superfluous global_noreturns entries")
-
--- 
-Josh
+Cheers,
+Eugene
 
