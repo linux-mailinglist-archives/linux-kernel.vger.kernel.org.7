@@ -1,194 +1,137 @@
-Return-Path: <linux-kernel+bounces-871408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0D3C0D299
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:35:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0292C0D29F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41C1403DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8917E3A5C10
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240612FB98B;
-	Mon, 27 Oct 2025 11:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C16B2FAC06;
+	Mon, 27 Oct 2025 11:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IRXwgraK"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfUk1juL"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404B72FAC06
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817882F7ADB
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761564875; cv=none; b=MP5WNXR+2TNTqwV6YLeZQxrCq+SQZhAUUbjT1+Fvx6Lwcn+BLwwK+pnAm2pgrLV1C+BI3THujVCDnHBUuqMPOkY3ged43tGL3g21OAXspRxj+WVJBbGsyC7/D9zMvBV7ij3Lgyoz4tASPYM63pqRTBgGyBKfBNmbh9eJ9pBjEG8=
+	t=1761564895; cv=none; b=G1ZPdedQMoSLJW6zys2MQLkzQlux/kETinD4QolZNrgGcc/yaSAn6ojCwEJ1+Eu502M7yVeLt6biYb122d3JrT3RcvAuE+74kpSvIg3CIG5a0Eabajm+Gh1YDfO0VPhxbIEQYD+jihfksvw4yHFHMSn/4523AD6AJoBrb50Zw1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761564875; c=relaxed/simple;
-	bh=YTeqLExdPZq47+Pk0ggUHT4a3r1pcc+0L54VXSjBGtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qX4qzl1TKPTd4xB0rtjqfqUt9WuaAM/7CMftkmxo1EHL4EGe9tRS6SLEY8xt5OX6xEqugRFnh4OeNCPbBV8DZSMlXOxiaIyNj2/ZF522ps+Ht4mPzaRyfNc+mnpgDCkUdR5IWuKXvfK3/2m7goUQyAQ9vKp10mGJQYdVeH+2kCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IRXwgraK; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47710acf715so5231845e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:34:32 -0700 (PDT)
+	s=arc-20240116; t=1761564895; c=relaxed/simple;
+	bh=5TBB1dS0xdm96UtguSy0r3N+8c94aYIZTQ5p5Qhj/p8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jz21lhNrjys5bKoJRQz4ED72hwOyxmIRn2zVMz/qXBZdXgqSO1s8dMBr8xoB8qBpXS7qDGAeKWoIbcJEMrzISgHpv4LWoxmXJH2AnaYPSUMqwwAbSCw8588mwsRFwLxpMRY2Xkv0FHCo2stMLM2iAx+pmDuznsxKNKheNHuac6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfUk1juL; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b550a522a49so3721797a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 04:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761564871; x=1762169671; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1C2VZ+aguVyMj3y/gHMKgvySgctkd7TNCLz329jWwaY=;
-        b=IRXwgraKxGS9IusTFroTtnqO18h8mMlXohrGDkJRLYsmFLkSjUCX+EcSNnkJ746NBv
-         JYSEzaa9zLasF9gomrBTZP1k+xVYOaE2X/EWDuGZzF8l9X/43HKOHDHq5/4dqjuG5BA6
-         EKquYSSl0iiayd/Twiy80dSKs6M0AYNZwbVyY5cLI5sQ9kuN5KkeoCwfRLz5KUK6vasS
-         W+CuIlO8aExCC0wXgoueddp90bs3ArlRdGF/qogBTzbQGz+QRhnSeocOYSBJhasFd1ZF
-         9oKH/U+dw5R6IkgzX5316mWfYsXJgGOua430QXa8uLls1vwdYhyxjyJ7TqTb8Ey0bpg8
-         4nDQ==
+        d=gmail.com; s=20230601; t=1761564893; x=1762169693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+bbEtFgvtdD4nIW4Ki4K8L2rFFyWkm5SaPEHBXu2tU4=;
+        b=dfUk1juLHkT8khrl2rfPRj/9bV1U7GNpn0ugRjQtcLwJsf9myJ6OXMTgXV9q5M9LyZ
+         u+WeCjwmXo3oqPwLRPb9gPMwisK0EPSPSGueIQ2ph1K9G4jDdsdJn/WiHBJvkwFAidt/
+         fnPiARrn8BJl7Ujxk4KdFlefz1ckXaDH0G/EDmt9GON9fwNTOSCaaNQ993+bFQ/1OnpY
+         g39pJre/LSDS8JKilExBcUgpzDY+B4248fKYveRQuV9/ISZnLXonmLVGFQld4dLRItZ/
+         ZdAf8SsZ9VafgvuUGqtJ6x/Cz84s5vvoAhENz6r5f97GdYPyeOwILdhkQZ7efGT1jaD4
+         jGBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761564871; x=1762169671;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761564893; x=1762169693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1C2VZ+aguVyMj3y/gHMKgvySgctkd7TNCLz329jWwaY=;
-        b=Zng+4HVXOpYdGtPS3+v/wP+P7adK4EkLwpjEunnkq1s+s4QHzaCDNH3RDXvIRaHquF
-         pCuV860DrkMQOxVX0jPcTh/sO/O2Fysl7c2QwSN6FSAx/CfhGSbuH1mG2UE9HM0jYqZH
-         /nt6YOyQjl7QszGq0+adeLhXYY3+mZBTEJ1a7mJm82pAkTTiLwEj5JpIwAAOBT+yj/y0
-         rdXeCDlqg7tDhRA+w/y4FjkLMAg2h+ZVUKgWfiOmep4M5+ifn6+h5P2WP3e6R3zJgVEe
-         I90tGqku9vj6PTV5V99SgQ1Y4Jx4FXvgXKPWCjn33bqMLye1qD454WNBvNQwnu369Oih
-         ZDmw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7pzKG2B0M8ih/Y6ORgfj+u1yWCA6TuTFlqBhbKblfAseZAjn3IbE5+kWks0TIBlC8KyY7nu8Vej0Xa5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV15qFj261UZosjrc/3dLDqpzLK/dRsTDV5Br6c4pUncOr5f9O
-	2zIKD5DpwQqk+4o8ibQGFVLXw3IfSPhBbQU/gDQXS/dFOCyuxDKpTHRH3BdhvgSV28wY5TaTzVr
-	zjLR2
-X-Gm-Gg: ASbGncvTxfJ5lHTbPro1tsEd7Rz5MzC8D8gAS/vFogw06zWWUVsT0NnS02e4QCqlsh3
-	WA96bs7EHjyDLaZeLkjV57YzSC1517aGkDNO+Q+Papg4lllHqz4wSfar1Q1o0YEh+f4ljKJcn38
-	wIkv5JRN+MhpR9AnFhkjNBLYbnk4HAA+xr2EnaiV7+zPY0n/uTBBWvavP9pJqnliw9B20y6nonw
-	YXGrLztKeTA7Zdnw8FjAO+Qos8o+2OFDIypxw2cvpXLoQKN126/EDGSYoiHVH2PzXJ2/IaD6v4r
-	AuakkvvVZ1XtIqyhUTsCjlYiAmZtTBzaS4PcvpDfCShUtROPgngXV5FU17tn1SKstpEK5r70rob
-	EEVdaqeiCxPhqiD7ZW9gsLQKzdSyCvR2VRAeLCYvqRZ7sDjTRBwjfcf6DIRZhCnrG98gmXORnAF
-	WoXjer7FJF8FqPY9Zl6QG8V0+pqxQ=
-X-Google-Smtp-Source: AGHT+IGY6AXsbYm++jssbQuNMr7ZsaUxdk1xycKt6CVdnC3MskK8bFE6cI4QYwa7tTae7itRv+/G7g==
-X-Received: by 2002:a05:6000:200f:b0:401:5ad1:682 with SMTP id ffacd0b85a97d-42704d521e8mr28986464f8f.14.1761564871552;
-        Mon, 27 Oct 2025 04:34:31 -0700 (PDT)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.142.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952e3201sm13899375f8f.47.2025.10.27.04.34.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 04:34:31 -0700 (PDT)
-Message-ID: <754ee3ec-8819-47df-8251-dec2906a020b@suse.com>
-Date: Mon, 27 Oct 2025 13:34:30 +0200
+        bh=+bbEtFgvtdD4nIW4Ki4K8L2rFFyWkm5SaPEHBXu2tU4=;
+        b=RZkSDrmXNES90qPt6pII5aAITLMD0CE4vEKtBPkpoRJW4aa1tsvauMFgkeRVt/H0bz
+         6mropkUkJmUwIVMoA0YbiCd9tUphLMKlYxKCwfVPVAdoQl6z2FZo9ODSgT3jfW9V4Hmw
+         pE+d6+WNEKycBHaDl2GaEGSXd/gbX1EYauUjeBWrBeGSIgNIFzNguXlg9LDIE25M5zxx
+         vnMdCF5hL9IbHaepMcY3/QLrLIt+6OR/RUqUfLzsO9vZTZYqL9mY2gs7uEHhcowvlemW
+         bw6vuyXlzOgKjMqqsdZdXY9ZobuwgBp5Cbd8kuYay/a/UczCeq9xnkGhOalMdw778GDh
+         9pBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYQ6omaPyFlqW9LqF9YtAHhVCiq+KLO8mX2YM3HJB7SYni2Uy4wcMsVogd2Jgxu1eT40IOhgBBCDNAsls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw42qxo+bquEtDIJJI2Ex7Aw/OawpCapBmM/iUTD/YtXyPVpnd/
+	qE1kq2XS92ynm7BdlcRxyZXtuHjUuQAyF03SzkkA/kDiT8o5992YoNgl
+X-Gm-Gg: ASbGncuwJlx674ORl5erkW7l160EeiPq6T/IMhkvyPyD+V/m5Qp90VOfm52i8R82uWs
+	pmNOgXcImy2eoXzhPiquffF0vhOidJED/F4wAJGEXm7pHyF+Nc8XucrICV3sYsbjPGucMN3XMdj
+	pn9Wi9Azum9plIinEdtuK0J7ezFB0JL18MwqFmLCXzAR7haLvMti63amaiFjcdHcRAiHMaaAt9c
+	+PcG0utmcRIof2kD/uvqvZMSgmkqicnqYAPR9Rfzfd3F7edX9ZQgx5CAEPL0FrCLCaomrptJQzO
+	Zp/tjZvOS1urY0yzaFwGG4SuUbXF5zCp9a+0RgnBZ968kNC+96GSM42/wHoDzmB/UZpdQvlOkqS
+	eemHsryocS+VXZDMU+78v62im+blds1jt7DeT6sYjRGXzYWrzK3dFc1f0vuz8hxa/MSdsAcRRmf
+	m4US0hPz7OHJ9Pcx7wwrJD6eW5NqjEYH06/ckbVPGT
+X-Google-Smtp-Source: AGHT+IEXotOiXJpTCp/puthxXvnmCrnF43T4sh9Ukdwx3XQqsIiiaQDtaOtYzH9OodVVaE5Vc6YsYQ==
+X-Received: by 2002:a17:902:ec90:b0:293:a10:12ee with SMTP id d9443c01a7336-2930a1018a5mr217124005ad.15.1761564892811;
+        Mon, 27 Oct 2025 04:34:52 -0700 (PDT)
+Received: from fedora ([103.120.31.122])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf33f9sm78216485ad.22.2025.10.27.04.34.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 04:34:52 -0700 (PDT)
+From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+To: linux-kselftest@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>
+Cc: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Subject: [PATCH] selftests/user_events: Avoid taking address of packed member in perf_test
+Date: Mon, 27 Oct 2025 17:04:39 +0530
+Message-ID: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 34/56] x86/alternative: Save old bytes for
- alternatives
-To: "Kaplan, David" <David.Kaplan@amd.com>, Juergen Gross <jgross@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
-Cc: Alexander Graf <graf@amazon.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-35-david.kaplan@amd.com>
- <d897be07-ed59-4538-aceb-53c6512aeccf@suse.com>
- <LV3PR12MB9265295ABF26898CA59B86D594E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <LV3PR12MB9265295ABF26898CA59B86D594E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Accessing 'reg.write_index' directly triggers a -Waddress-of-packed-member
+warning due to potential unaligned pointer access:
 
+perf_test.c:239:38: warning: taking address of packed member 'write_index'
+of class or structure 'user_reg' may result in an unaligned pointer value 
+[-Waddress-of-packed-member]
+  239 |         ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+      |                                             ^~~~~~~~~~~~~~~ 
 
-On 10/15/25 16:45, Kaplan, David wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
->> -----Original Message-----
->> From: Juergen Gross <jgross@suse.com>
->> Sent: Wednesday, October 15, 2025 5:38 AM
->> To: Kaplan, David <David.Kaplan@amd.com>; Thomas Gleixner
->> <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>; Peter Zijlstra
->> <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@kernel.org>; Pawan Gupta
->> <pawan.kumar.gupta@linux.intel.com>; Ingo Molnar <mingo@redhat.com>; Dave
->> Hansen <dave.hansen@linux.intel.com>; x86@kernel.org; H . Peter Anvin
->> <hpa@zytor.com>
->> Cc: Alexander Graf <graf@amazon.com>; Boris Ostrovsky
->> <boris.ostrovsky@oracle.com>; linux-kernel@vger.kernel.org
->> Subject: Re: [RFC PATCH 34/56] x86/alternative: Save old bytes for alternatives
->>
->> On 13.10.25 16:34, David Kaplan wrote:
->>> Save the existing instruction bytes at each alternative site when patching.
->>> This is only done the first time, and these will be used later to help
->>> restore the code back to its original form.
->>>
->>> Signed-off-by: David Kaplan <david.kaplan@amd.com>
->>
->> Instead of saving the original instructions at runtime, why don't you
->> expand struct alt_instr to have an additional offset to a saved copy
->> of the original instruction, located in .altinstr_replacement?
->>
->> The new field should be guarded with #ifdef CONFIG_DYNAMIC_MITIGATIONS,
->> of course, like the added handling in the ALTERNATIVE() macros.
->>
-> 
-> That's an interesting idea, I think that could work.  That would make the kernel image on disk (slightly) larger though, as the original bytes will essentially be duplicated (at the original location and in .altinstr_replacement).  I'm not sure which is the better trade-off (kernel image bytes on disk vs runtime memory usage).  Although I think we're talking about a relatively small amount of memory regardless.  Most of the runtime overhead of dynamic mitigations comes from remembering the call sites/returns.
+Use memcpy() instead to safely copy the value and avoid unaligned pointer
+access across architectures.
 
-It's not just about memory usage per-se but also memory pressure from 
-allocation and the resulting fragmentation, though I'd think that 
-majority of the allocation will fit into kmalloc-32 bucket, still having 
-them as part of the kernel image eliminates the additional allocs.
-> 
-> Thanks
-> --David Kaplan
+Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+---
+ tools/testing/selftests/user_events/perf_test.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/user_events/perf_test.c b/tools/testing/selftests/user_events/perf_test.c
+index 201459d8094d..e4385f4aa231 100644
+--- a/tools/testing/selftests/user_events/perf_test.c
++++ b/tools/testing/selftests/user_events/perf_test.c
+@@ -201,6 +201,7 @@ TEST_F(user, perf_empty_events) {
+ 	struct perf_event_mmap_page *perf_page;
+ 	int page_size = sysconf(_SC_PAGESIZE);
+ 	int id, fd;
++	__u32 write_index;
+ 	__u32 *val;
+ 
+ 	reg.size = sizeof(reg);
+@@ -236,7 +237,8 @@ TEST_F(user, perf_empty_events) {
+ 	ASSERT_EQ(1 << reg.enable_bit, self->check);
+ 
+ 	/* Ensure write shows up at correct offset */
+-	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
++	memcpy(&write_index, &reg.write_index, sizeof(reg.write_index));
++	ASSERT_NE(-1, write(self->data_fd, &write_index,
+ 	                    sizeof(reg.write_index)));
+ 	val = (void *)(((char *)perf_page) + perf_page->data_offset);
+ 	ASSERT_EQ(PERF_RECORD_SAMPLE, *val);
+-- 
+2.51.0
 
 
