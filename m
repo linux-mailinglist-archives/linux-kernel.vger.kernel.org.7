@@ -1,121 +1,84 @@
-Return-Path: <linux-kernel+bounces-871710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2F8C0E278
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:50:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A28C0E218
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2837E426C44
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5483719C4E47
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779D304976;
-	Mon, 27 Oct 2025 13:38:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D7B2FC01A;
-	Mon, 27 Oct 2025 13:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621A81DFCB;
+	Mon, 27 Oct 2025 13:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7rTHVOu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABE522D4DC;
+	Mon, 27 Oct 2025 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761572296; cv=none; b=G9SL6bu6QLWOz0TxGcXPKalqLNsaKtwhPgjmzEa8rSdIy1/IhjtaiEHvmuW2lqmdUhbHlFumeDmWPcxS3scLQifBWlDraOHIORC6JxerODTX9COIQ3SB6bp+B+I1puo6Cn49TOWSTwoK+BiWwZjDgP83eWKdJyEzi6jyMY6IEIM=
+	t=1761572288; cv=none; b=QABNZmDfKLrSf59wmOImbC/wiDNaMKFRnhITInSaer+5UDR2zcOEluN6VwJyfi4hOHt+y32KVcA3wYru7nTR9jnP4LBRcEZkhtG4blTYc+C6SYiQ7Tw7O6ffsWQpETOU7EXmpcz5HP8NcW0Gd4Ug28lHL/WGCV1EyoTWiYpcVik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761572296; c=relaxed/simple;
-	bh=Yg4tHkrWB8iD6I0E177EhXaJTLbrmVH+67p7EVU8ik0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEJtbprONvRvGYGXGGVZcRBNm/zToYCHQXxBVo/q17HEKsUHtbYVdFo2u4u9HERD+ypA2+2lhcJOrtUUYcD4POgHBTH4POgCqURi4/pxQuw/nBG3BQNyEUfd4IUemkEUZ+Ydav0wGYBMP9il+gr2vQnwXz0VHJqM7N6KwebceeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 593A4175D;
-	Mon, 27 Oct 2025 06:38:02 -0700 (PDT)
-Received: from [10.57.68.196] (unknown [10.57.68.196])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FD233F673;
-	Mon, 27 Oct 2025 06:38:02 -0700 (PDT)
-Message-ID: <1db69026-199c-4cee-bb3b-1217f8a3afad@arm.com>
-Date: Mon, 27 Oct 2025 14:38:00 +0100
+	s=arc-20240116; t=1761572288; c=relaxed/simple;
+	bh=gqvuTK2airj61pCPi99n7PP0OTEYVHFTeCG5nZFFdzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgKraQE3nQAzntcW4Lw6I10YBpg/HiZpLqkQLLzQFYT7uce71ghoDCZ4sC2xGh8gPhoSAYbNGgjlCLDLWLcV0rSY4vWI7v8U0xE9qdEDCFOtdEn/lM2dHogsK0hoKtqn4j7a/fib3UkZ5SNyNivh9shKvr2YvhLOwxv4Ypb+kvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7rTHVOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 099C1C4CEF1;
+	Mon, 27 Oct 2025 13:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761572287;
+	bh=gqvuTK2airj61pCPi99n7PP0OTEYVHFTeCG5nZFFdzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n7rTHVOu0MVumBdZo9ViIt/dHyGzHfHHi7pdbUP3eF9Ubg5CmW/X3t9S6LGI3OYtB
+	 UZoPhdl+Rj1NpD2KiIAbMnTJCiju0ZtQDG7RSZx2uPhTZ0M0+zfHYTOXTFE691Cufb
+	 mMcsmB21miV4uJmANZCj/Gm0GLo1wz3rTUBQw9HA+DSCA7zZ1N3dLiKKXYBL1f+iww
+	 Yuu3bcc7JGpNmd3+TyrXQuqGdmIgqlKTs/lovY3DiqLlQnY9sqJO+qZcB5bBNDh+ZN
+	 qFKX4DKjEHU4BZosKAnG/SMyoQV9AVb86ozyRx2HfeT3kX9GG6JYt1hq/hlogpm7p2
+	 Ye2JjJC7I1LZw==
+Date: Mon, 27 Oct 2025 08:38:04 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Randolph Lin <randolph@andestech.com>
+Cc: kwilczynski@kernel.org, aou@eecs.berkeley.edu,
+	thippeswamy.havalige@amd.com, jingoohan1@gmail.com,
+	palmer@dabbelt.com, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, randolph.sklin@gmail.com, namcao@linutronix.de,
+	tim609@andestech.com, linux-riscv@lists.infradead.org,
+	alex@ghiti.fr, bhelgaas@google.com, lpieralisi@kernel.org,
+	shradha.t@samsung.com, conor+dt@kernel.org, ben717@andestech.com,
+	devicetree@vger.kernel.org, inochiama@gmail.com,
+	linux-pci@vger.kernel.org, mani@kernel.org,
+	paul.walmsley@sifive.com, pjw@kernel.org
+Subject: Re: [PATCH v9 1/4] dt-bindings: PCI: Add Andes QiLai PCIe support
+Message-ID: <176157228191.240954.997388702686594192.robh@kernel.org>
+References: <20251023120933.2427946-1-randolph@andestech.com>
+ <20251023120933.2427946-2-randolph@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
- context-switching
-To: David Woodhouse <dwmw2@infradead.org>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-12-kevin.brodsky@arm.com>
- <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
- <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
- <6ed9f404-9939-4e9f-b5aa-4253bef46df1@arm.com>
- <7324616a8d2631aa8132f725f9f6551e3e6b21dd.camel@infradead.org>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <7324616a8d2631aa8132f725f9f6551e3e6b21dd.camel@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023120933.2427946-2-randolph@andestech.com>
 
-On 24/10/2025 17:17, David Woodhouse wrote:
-> On Fri, 2025-10-24 at 17:05 +0200, Kevin Brodsky wrote:
->> On 24/10/2025 16:47, David Woodhouse wrote:
->>> On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
->>>> On 15.10.25 10:27, Kevin Brodsky wrote:
->>>>> We currently set a TIF flag when scheduling out a task that is in
->>>>> lazy MMU mode, in order to restore it when the task is scheduled
->>>>> again.
->>>>>
->>>>> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
->>>>> mode in task_struct::lazy_mmu_state. We can therefore check that
->>>>> state when switching to the new task, instead of using a separate
->>>>> TIF flag.
->>>>>
->>>>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->>>>> ---
->>>> Looks ok to me, but I hope we get some confirmation from x86 / xen
->>>> folks.
->>> I know tglx has shouted at me in the past for precisely this reminder,
->>> but you know you can test Xen guests under QEMU/KVM now and don't need
->>> to actually run Xen? Has this been boot tested?
->> I considered boot-testing a Xen guest (considering the Xen-specific
->> changes in this series), but having no idea how to go about it I quickly
->> gave up... Happy to follow instructions :)
-> https://qemu-project.gitlab.io/qemu/system/i386/xen.html covers booting
-> Xen HVM guests, and near the bottom PV guests too (for which you do
-> need a copy of Xen to run in QEMU with '--kernel xen', and your
-> distro's build should suffice for that).
->
-> Let me know if you have any trouble. Here's a sample command line which
-> works here...
->
-> qemu-system-x86_64 -display none --accel kvm,xen-version=0x40011,kernel-irqchip=split -drive file=/var/lib/libvirt/images/fedora28.qcow2,if=xen -kernel ~/git/linux-2.6/arch/x86/boot/bzImage -append "root=/dev/xvda1 console=ttyS0" -serial mon:stdio
 
-Thanks this is helpful! Unfortunately lazy_mmu is only used in the PV
-case, so I'd need to run a PV guest. And the distro I'm using (Arch
-Linux) does not have a Xen package :/ It can be built from source from
-the AUR but that looks rather involved. Are there some prebuilt binaries
-I could grab and just point QEMU to?
+On Thu, 23 Oct 2025 20:09:30 +0800, Randolph Lin wrote:
+> Add the Andes QiLai PCIe node, which includes 3 Root Complexes.
+> Only one example is required in the DTS bindings YAML file.
+> 
+> Signed-off-by: Randolph Lin <randolph@andestech.com>
+> ---
+>  .../bindings/pci/andestech,qilai-pcie.yaml    | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+> 
 
-- Kevin
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
