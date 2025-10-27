@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-872803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945F9C12136
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:41:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AC3C1213F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6F354E242E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975DB188B30F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320C132E720;
-	Mon, 27 Oct 2025 23:41:27 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48D632E68C;
+	Mon, 27 Oct 2025 23:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eEke48V5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60CA39ACF;
-	Mon, 27 Oct 2025 23:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D732D0FA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761608486; cv=none; b=JPaneRDXYx+RKSkbHJPY05y64km6eidg4A+FgDfYjdF00WNF5UVrEuSuSp0qRJ+0t7QDPonAKqNQVi9yWr6aMRrO8bMmT1XQzc1vLwAZI/bcsLWi2H4RSG1m+nujKh+/6KuY+uAkemlx9wQ4eahIoVvJTf2jBrmEB0HEUlFj6K4=
+	t=1761608534; cv=none; b=SkKsO76xAFaQcg0DdUVv9DCnWvMGe8dlQbgQcgVF3vVu8a2nOM7sDesT6s57Y4tzPeFFSterJcnMv/zUGRPcrBV/3NteLyc9FJ2g+PJ5NSvKDSEIwjjLcaiX+wECIlM9O4SoblsbUcQ/s2d0Y3OY6hkcJwIhAXzf6ZFsZ75XH6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761608486; c=relaxed/simple;
-	bh=32fYWnaIMPU9AkYqGR9xgWgNQ7QLYLvhQjbl9a1CEps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rALs5pvlFJP04uj0Vc/slH6005g3B6EGx7PYa7gYQx91fypiORb4bvSz73Ugfip5RTE1tEXhYonriHXK1n105eWO/kH4M0S4tgd9BA2fgztP5OnQZPBp3ec1W42PDA27qbH6b4YMmZ90nZj6LgB3YFA3Br676q0GvtyvC+bTKbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vDWpt-000000005gg-3ylV;
-	Mon, 27 Oct 2025 23:41:14 +0000
-Date: Mon, 27 Oct 2025 23:41:10 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v3 06/12] dt-bindings: net: dsa: lantiq,gswip:
- add support for MII delay properties
-Message-ID: <aQADFttLJeUXRyRF@makrotopia.org>
-References: <cover.1761521845.git.daniel@makrotopia.org>
- <cover.1761521845.git.daniel@makrotopia.org>
- <e7a4dadf49c506ff71124166b7ca3009e30d64d8.1761521845.git.daniel@makrotopia.org>
- <e7a4dadf49c506ff71124166b7ca3009e30d64d8.1761521845.git.daniel@makrotopia.org>
- <20251027230439.7zsi3k6da3rohrfo@skbuf>
+	s=arc-20240116; t=1761608534; c=relaxed/simple;
+	bh=puF+aGtYO5s2MYsxCALFC+9nUczVh0W5+txcOclIcsU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gGRsb9QIvSziz43A9lsDCvLrd4XH8hKCjs/Udc8Yd1BzUGXiYKfTrxuJ9wbbEBy+sC9/8XytdUFzjJT1TMAw+XJcyWf/Y5hOtXKO6uMJQaax2veomBlmSVXZWUsgq9DDhoEPaOiKkd/APkUtGsX/QqTnxdfd/yGTyDm8BXTn0kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eEke48V5; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2909e6471a9so35093675ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761608532; x=1762213332; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAmis02MY/SPD0Hs7vo+GbkUlTOrf3bzWV+l6BGfls8=;
+        b=eEke48V5ZE0jhBVHEC/ccmKP3wDct2lr3Lvu8bqRt7zfaCaJuThWKsJHTR+qtijNeq
+         DuixpMZmeuKSetJhIL6dw2CwQYA1gPKglpZjb0EjfC9BUU3w11W6SaUfc0IyPtTW5jZa
+         4pKUAqPKfKx6AjqcBNW3ACGhWf8zsVl3BtOnM9bdwPYrRGvPIY1UZ5GqiIpQn1/ehcaR
+         HZlRnXryedMm2mMD8OEBy+ofbacFCyBpBS7mx8rWh2d+Wly93gkORQzpTwGNMHEO1rjY
+         yiQEGOOa8C8io3r5E1GnhFx9Ao+slthWdciaDJMZ4aeBik8yD0CTWEl/v09IujpTTHX2
+         2POA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761608532; x=1762213332;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAmis02MY/SPD0Hs7vo+GbkUlTOrf3bzWV+l6BGfls8=;
+        b=VLdt8qvZw0Lj7GGpjrUVWQ9LQtbk8s3bRz6XjbZ8oh6Fz2BxtKVw/GDJ3QUtW/3oP/
+         AgIf7ZYEl3gzdHP2j9Uyy6yzNo9HekiNF/irihZNqUssfEhoYaMRMUIBs8YivIZ4zqz7
+         mYpAiDKjGY2ZZ9guqeY6ltFey7AxSKulBLf9XQiR9avkY/LWPQjdV/YKWnF1d4IcSDcF
+         i65qoBFCuc3C+89qp2KaIkRJzMv5H/FL/N2U8jdFoFEo9GwrBvGUGG1IP7dvCs10VNr5
+         nboOkot8hYAYoC9QoqaNS8joMicnUcaRd8hCDveLwd3d3ou5NeaUEhy4v3exr1N0br3R
+         amrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiTPTCUbba9oEPkt0pjuWTT2mNgJEOPBSnksJqUoEw4lVGmwsrYdwHLYjWhqTyMEqN2Szyo12BSGPe+KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTyVA9/YP87l+oB4o88sYUbFbt0/nLIShUh9/OYwFbR90Dnq5w
+	fC2ezggzr3ceByStY/nv8L8UyQ9+zXKXpb67Ii6CSiQ0Dse35BBYlEacBHzqw7PDrZU29tlt7Ku
+	9AQBV3g==
+X-Google-Smtp-Source: AGHT+IGYp8OSEh6n3uju+4I19uY+Q2quGSWM2e9It+MGilW2heCNkxOdmfwFxaiUgOrbP7KksK/kXcOhiO4=
+X-Received: from pjbsd4.prod.google.com ([2002:a17:90b:5144:b0:33b:51fe:1a93])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c40c:b0:290:bd15:24a8
+ with SMTP id d9443c01a7336-294cb35eae8mr19734005ad.11.1761608531946; Mon, 27
+ Oct 2025 16:42:11 -0700 (PDT)
+Date: Mon, 27 Oct 2025 16:42:10 -0700
+In-Reply-To: <68fff9328b74_1ffdeb100d8@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027230439.7zsi3k6da3rohrfo@skbuf>
+Mime-Version: 1.0
+References: <20250925172851.606193-1-sagis@google.com> <20250925172851.606193-22-sagis@google.com>
+ <aPum5qJjFH49YVyy@google.com> <68fff9328b74_1ffdeb100d8@iweiny-mobl.notmuch>
+Message-ID: <aQADUmrDSRAydBhI@google.com>
+Subject: Re: [PATCH v11 21/21] KVM: selftests: Add TDX lifecycle test
+From: Sean Christopherson <seanjc@google.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Sagi Shahar <sagis@google.com>, linux-kselftest@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Oct 28, 2025 at 01:04:39AM +0200, Vladimir Oltean wrote:
-> On Sun, Oct 26, 2025 at 11:45:19PM +0000, Daniel Golle wrote:
-> > Add support for standard tx-internal-delay-ps and rx-internal-delay-ps
-> > properties on port nodes to allow fine-tuning of RGMII clock delays.
-> > 
-> > The GSWIP switch hardware supports delay values in 500 picosecond
-> > increments from 0 to 3500 picoseconds, with a default of 2000
-> > picoseconds for both TX and RX delays.
-> > 
-> > This corresponds to the driver changes that allow adjusting MII delays
-> > using Device Tree properties instead of relying solely on the PHY
-> > interface mode.
-> > 
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > ---
-> > v3:
-> >  * redefine ports node so properties are defined actually apply
-> >  * RGMII port with 2ps delay is 'rgmii-id' mode
-> > 
-> >  .../bindings/net/dsa/lantiq,gswip.yaml        | 29 +++++++++++++++++--
-> >  1 file changed, 26 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > index f3154b19af78..b0227b80716c 100644
-> > --- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > @@ -6,8 +6,29 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+On Mon, Oct 27, 2025, Ira Weiny wrote:
+> Sean Christopherson wrote:
+> > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+> > index af52cd938b50..af0b53987c06 100644
+> > --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> > @@ -210,6 +210,20 @@ kvm_static_assert(sizeof(struct vm_shape) == sizeof(uint64_t));
+> >  	shape;					\
+> >  })
 > >  
-> >  title: Lantiq GSWIP Ethernet switches
+> > +#define __VM_TYPE(__mode, __type)		\
+> > +({						\
+> > +	struct vm_shape shape = {		\
+> > +		.mode = (__mode),		\
+> > +		.type = (__type)		\
+> > +	};					\
+> > +						\
+> > +	shape;					\
+> > +})
+> > +
+> > +#define VM_TYPE(__type)				\
+> > +	__VM_TYPE(VM_MODE_DEFAULT, __type)
+> 
+> We already have VM_SHAPE()?  Why do we need this as well?
+
+VM_SHAPE() takes the "mode", and assumes a default type.  The alternative would
+be something like __VM_SHAPE(__type, __mode), but that's annoying, especially on
+x86 which only has one mode.
+
+And __VM_SHAPE(__type) + ____VM_SHAPE(__type, __mode) feels even more weird.
+
+I'm definitely open to more ideas, VM_TYPE() isn't great either, just the least
+awful option I came up with.
+
+> >  #if defined(__aarch64__)
 > >  
-> > -allOf:
-> > -  - $ref: dsa.yaml#/$defs/ethernet-ports
-> > +$ref: dsa.yaml#
-> > +
-> > +patternProperties:
-> > +  "^(ethernet-)?ports$":
-> > +    type: object
-> > +    patternProperties:
-> > +      "^(ethernet-)?port@[0-6]$":
-> > +        $ref: dsa-port.yaml#
-> > +        unevaluatedProperties: false
-> > +
-> > +        properties:
-> > +          tx-internal-delay-ps:
-> > +            enum: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500]
-> > +            default: 2000
+> >  extern enum vm_guest_mode vm_mode_default;
+> > diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
+> > index 51cd84b9ca66..dd21e11e1908 100644
+> > --- a/tools/testing/selftests/kvm/include/x86/processor.h
+> > +++ b/tools/testing/selftests/kvm/include/x86/processor.h
+> > @@ -362,6 +362,10 @@ static inline unsigned int x86_model(unsigned int eax)
+> >  	return ((eax >> 12) & 0xf0) | ((eax >> 4) & 0x0f);
+> >  }
+> >  
+> > +#define VM_SHAPE_SEV		VM_TYPE(KVM_X86_SEV_VM)
+> > +#define VM_SHAPE_SEV_ES		VM_TYPE(KVM_X86_SEV_ES_VM)
+> > +#define VM_SHAPE_SNP		VM_TYPE(KVM_X86_SNP_VM)
 > 
-> No. This is confusing and wrong. I looked at the driver implementation
-> code, wanting to note that it has the potential of being a breaking
-> change for device trees without the "tx-internal-delay-ps" and
-> "rx-internal-delay-ps" properties.
-> 
-> But then I saw that the driver implementation is subtly different.
-> "tx-internal-delay-ps" defaults to 2000 only if "rx-internal-delay-ps" is set, and
-> "rx-internal-delay-ps" defaults to 2000 only if "tx-internal-delay-ps" is set.
-> 
-> So when implemented in this way, it won't cause the regressions I was
-> concerned about, but it is misrepresented in the schema.
-> 
-> Why overcomplicate this and just not set a default? Modify the RX clock
-> skew if set, and the TX clock skew if set.
+> FWIW I think the SEV bits should be pulled apart from the TDX bits and the
+> TDX bits squashed back into this series with the SEV as a per-cursor patch.
 
-The problem is that before adding support for both *-internal-delay-ps
-properties the internal delays would be set exclusively based on the
-interface mode -- and are inverted logic:
-
-```
-         switch (state->interface) {
-         case PHY_INTERFACE_MODE_RGMII_ID:
-                 gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_TXDLY_MASK |
-                                           GSWIP_MII_PCDU_RXDLY_MASK, 0, port);
-                 break;
-         case PHY_INTERFACE_MODE_RGMII_RXID:
-                 gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_RXDLY_MASK, 0, port);
-                 break;
-         case PHY_INTERFACE_MODE_RGMII_TXID:
-                 gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_TXDLY_MASK, 0, port);
-                 break;
-         default:
-                 break;
-         }
-```
-
-As you can see the delays are set to 0 in case of the interface mode
-being RGMII_ID (and the same for RGMII_RXID and RGMII_TXID
-respectively).
-
-This is probably the result of the delays being initialized to 2000ps by
-default, and if the **PHY connected to the switch port** is set to take
-care of the clk/data delay then the switch port RGMII interface doesn't
-have to do it.
-
-From my understanding this is a bit awkward as "internal delay" usually
-means the delay is taken care of by the PHY rather than by discrete
-parts of the board design. Here, however, it is *never* part of the
-board design and always handled by either the switch RGMII interface
-(MAC side) or the connected PHY.
-
-So in order to not break existing board device trees expecting this
-behavior I've decided to only fall-back to adjust the delay based on the
-interface mode in case both properties are missing.
-
-Please correct me if that's the wrong thing to do or if my understanding
-is flawed in any way.
+Ya, that's my intent, "officially" post and land this SEV+ change, then have the
+TDX series build on top.  Or did you mean something else?
 
