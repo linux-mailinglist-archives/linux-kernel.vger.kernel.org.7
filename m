@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-872752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F23FC11F22
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DB6C11F10
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5223AA02A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86849420E75
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 23:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8990832D43F;
-	Mon, 27 Oct 2025 23:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E82232ABF6;
+	Mon, 27 Oct 2025 23:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o4thHGD1"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CccYhQBm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7E62E88BD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAF72E88BD;
+	Mon, 27 Oct 2025 23:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761606817; cv=none; b=Oprn8FI4vzBF1+iiCZKCv77REpErExovmZ9nAF+byB3nCSKWWOg0/eW1oofj4gOARIwnadMJoQQzONM9NaiEI3aIDX8UBapusUz66HbW2sGgGkVTABpgjAlQ6Ihxgw9480nyC5t4jLUAqqDPJ4/VVzdSanO5AHUtfE5DLXSCLuA=
+	t=1761606791; cv=none; b=kJ/OwiIWTg9Nf6/KMSD1ocWIcRKkZfvz+5dN2TEd4nk+2EPtknbsMirSMiWgfonMPIZ79LG1EOcQUPZzQA4M6HDLtI3d0LSd7BhsGiHivHgBYk0SjsnXBZ8LNKOtuvl31YqoB3Yv7RiFY9l5bYqscba8Lk8XpMgg6J3knP6h6hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761606817; c=relaxed/simple;
-	bh=Mox7WVrx2nsqFbNnAMpCHXjsIB1mhexPun4YkmTSVd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zqd8aumsNiFObzBSG71NJIp/g8UFSBsOiesNZhsyLIOr5QmU1XaXYS49ppPMl8SnpsQz4qZEQrerAf9OI1CZAZAE5xwuQCmAR6dXhbqyU7no01o60PI83wowoC5T3BMBP1vRV9dxPtOWFG01At4NehabbBqG22wFn3UHciexuyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o4thHGD1; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-591eb980286so5485117e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 16:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761606814; x=1762211614; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cVb3sBQg3S7kfhJuRLHfxPiQ08+Bc1FaH34bvysQgyo=;
-        b=o4thHGD1/OUIjggnndqTnwnlW10eAEpX/HB4h+bHLKvOx8B1TxlHznc4je/pXuHVJb
-         KUWtUQR1veipMr2Rmi2ifY0nHaQJE4SOZsgGUYvgroxjQaBNPA4fc8tIJjVWU+P5ydbN
-         NMUJ0wQsP36BKbBPsDSPRE7pBO2mpYQgI0W6TZleqsHMtObXMIq70gyxPDxYUJwNLxh8
-         XlEkLw2+Qf2apLB06O5B0unQU9dZVLF2iZhswvxbkKJ9L9OijIDYQO/dP7G6zUwDGVKX
-         XkCJBuLbYSDWcFoYhBoM28SI/CUXMs1s/NHilUSaIj2p9npeD+I+8mm5i9UUiERiMfDH
-         VQCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761606814; x=1762211614;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cVb3sBQg3S7kfhJuRLHfxPiQ08+Bc1FaH34bvysQgyo=;
-        b=Qx71SP7wpizuggke5RPQqU53WLfXX8jF/ysm0rOkE3xA2gMJEavLr2teTO/6cJlMlM
-         onFU5zlRnCY9jwwTjaQHv50R0yymwnJyaqsVOxAGbH5cvjeimGhJT3E1iqBtNBagmH9N
-         kmM6YnE14nBjp9IS3BBcq/zdwDCzPY7TkATieEDbnDuQvwUzbnxgW5Ry7pAMhPZFn1F3
-         eC6GNPEq8MEkQzn3UieMX7CP+8W+7q5aYkuSUeQtZCtTb58zSqPG1QqVPD8cfK73Mra3
-         qZBbGRzKU5L3sDERJV7cgrqJ/juUuE5LCVQAYGukg+XNExLYF7zA+KiuNnbrevK6cYTJ
-         bChA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAOHW3JjajhtackTFjE+4ZDdQaURlb7vyWSJG7hP06ZlWky9Udjn5iBdl4JgS1MY5+skgmnsNon5zMsJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyiHvJEL3GWFbDmk+IiK6Q1+RpCX74HjaVTguMlx1svrLDaeRS
-	xSgvapM76MMI+UVFYxLR6yluQ8rgae34GhxTWOjxe8QfavtfrvDYbz6xQX1vqBzjA8iSBXxF1jS
-	JVfndYy+vTZDieA0sMrnp8kQv2p2r63rdQNyvBdHL
-X-Gm-Gg: ASbGncv1TYwEgkaxaQb8zZAka9v4fmvd8TdvWQsiqJJ8aVCwlX3fXC/TlAWVhHimKs0
-	JJHKkQD1KQF/2SNf4gfxVwON0fMsLwiw9azTvj07Iek7AtRZnSy/kqMYfH5D5dRUPmAgKFuDKMr
-	lreZ9O+rZqZvre5tJZXrqMY7lvmljGA1iwQWFBItD00zqlgcjDFdlzE3eF/fnwouHLPOljF7WVG
-	fmNCG/WK8bZXJG8qVauOR7bqdV3Uuf/7d4lPcDYTOK0olc8B4zo4V1nvhfrJeSqCwYLipY=
-X-Google-Smtp-Source: AGHT+IGl3ca765JSYQeeeNWnOc4ez61Rh9cYHuTu2Z8wbfu4++aeMX3ejm6+mpCGbnxLweY96XJw4Qd/Jsw/gJioL2Q=
-X-Received: by 2002:a05:6512:39ce:b0:585:c51e:e99d with SMTP id
- 2adb3069b0e04-5930e98f2bbmr555951e87.3.1761606813913; Mon, 27 Oct 2025
- 16:13:33 -0700 (PDT)
+	s=arc-20240116; t=1761606791; c=relaxed/simple;
+	bh=eQiGzLMt98XNx4v/lnpj++1SjVFZR5EtYynqO+z/lIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jTHlMmqhMpP1k/fqvp4cq+VES1XwhJ3+YPotjSIm9lveYzyqm9UVo+mGmwe6rQI6/rKR4rR+sXrnjxYMD2amq2XogQlYvn7SFGHi5cbFmG+vnlrRltgdhhuOERjvXenVmzGFYh3mbgKsPy5HxkPBc8VmPq/G8aS7qOErEm0TW7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CccYhQBm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CE2C4CEF1;
+	Mon, 27 Oct 2025 23:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761606790;
+	bh=eQiGzLMt98XNx4v/lnpj++1SjVFZR5EtYynqO+z/lIw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CccYhQBm65FdVVX64bQU9yCWSdqWHnCe2wXVw/eUCYEATBSpLp+2KemBMeanovKcM
+	 Utg6qvYHHJ3xYCYKXno0zoTBFMFF957dcQHNo5zMjVAHHmWuPhOMV/jEQCmrSK50od
+	 bLbSLkBavJuG8t7eCQoaykuKseyS7up/MHJrE1iz3OqirtSYjeYy/0HWFEosSbNZPB
+	 P0bQxvVaxvEXvqSNSrxe/qn5+XB+7oo/eUsl8oH0/+UkLtdJSLWG2WthxgwtRedfLk
+	 Kh+mtS3dZbnXNeCQ8aMDyjHDVd0DJc1IkDBJYVxIWbur/QfI5wr0AAhuQNzlxddxee
+	 Y9Tpi1Ujc1oTg==
+Date: Mon, 27 Oct 2025 16:13:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Wilfred Mallawa <wilfred.opensource@gmail.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Simon Horman <horms@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH net-next v8 1/2] net/tls: support setting the maximum
+ payload size
+Message-ID: <20251027161309.7fd96bae@kernel.org>
+In-Reply-To: <aP9YMiW9V7Dkhu_1@krikkit>
+References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
+	<20251023184404.4dd617f0@kernel.org>
+	<cd557c5b11b04da060f07d3849dc46e7b3625ed1.camel@gmail.com>
+	<20251024163336.5fba5cd1@kernel.org>
+	<aP9YMiW9V7Dkhu_1@krikkit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1760368250.git.leon@kernel.org> <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
-In-Reply-To: <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
-From: David Matlack <dmatlack@google.com>
-Date: Mon, 27 Oct 2025 16:13:05 -0700
-X-Gm-Features: AWmQ_blG76O58dB2_ktM5H7ZDlww5WUOcPernLo2oZm94nuYAfy2S9NihsUA1rg
-Message-ID: <CALzav=cj_g8ndvbWdm=dukW+37cDh04k1n7ssFrDG+dN3D+cbw@mail.gmail.com>
-Subject: Re: [PATCH v5 9/9] vfio/pci: Add dma-buf export support for MMIO regions
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Leon Romanovsky <leonro@nvidia.com>, 
-	Jason Gunthorpe <jgg@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, 
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, 
-	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
-	Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 13, 2025 at 8:44=E2=80=AFAM Leon Romanovsky <leon@kernel.org> w=
-rote:
->
-> From: Leon Romanovsky <leonro@nvidia.com>
->
-> Add support for exporting PCI device MMIO regions through dma-buf,
-> enabling safe sharing of non-struct page memory with controlled
-> lifetime management. This allows RDMA and other subsystems to import
-> dma-buf FDs and build them into memory regions for PCI P2P operations.
+On Mon, 27 Oct 2025 12:32:02 +0100 Sabrina Dubroca wrote:
+> > But we haven't managed to avoid that completely:
+> > 
+> > +	if (value < TLS_MIN_RECORD_SIZE_LIM - (tls_13 ? 1 : 0) ||  
+> 
+> We could, by taking a smaller minimum payload size than what the RFC
+> says (anything that allows us to make progress, maybe 8B?). ie, I
+> don't think we have to be as strict as rfc8449 (leave the userspace
+> library in charge of rejecting bogus values during negotiation of this
+> extension).
+> 
+> > I understand the motivation, the kernel code is indeed simpler.  
+> 
+> Also more consistent: the kernel syscalls work with record payload (at
+> the send()/recv() level). The rest is hidden. Userspace could try an
+> approximation by sending max_payload-sized chunks with MSG_EOR.
+> 
+> > Last night I read the RFC and then this patch, and it took me like
+> > 10min to get all of it straight in my head.  
+> 
+> I don't find this stuff very clear either tbh, but maybe that's a
+> problem in the RFC itself.
+> 
+> >  Maybe I was tried but
+> > I feel like the user space developers will judge us harshly for 
+> > the current uAPI.  
+> 
+> But userspace libraries have to do the same computations on their side
+> if they want to implement this RFC. They have to figure out what the
+> max payload size is as they're building the record, they can't just
+> chop off a bit at the end after filling it.
+> 
+> Quick grepping through gnutls got me to this:
+> https://gitlab.com/gnutls/gnutls/-/blob/eb3c9febfa9969792b8ac0ca56ee9fbd9b0bd7ee/lib/ext/record_size_limit.c#L104-106
+> 
+> So I have a slight preference for not being tied to a (kind of
+> confusing) RFC.
 
-> +/**
-> + * Upon VFIO_DEVICE_FEATURE_GET create a dma_buf fd for the
-> + * regions selected.
-> + *
-> + * open_flags are the typical flags passed to open(2), eg O_RDWR, O_CLOE=
-XEC,
-> + * etc. offset/length specify a slice of the region to create the dmabuf=
- from.
-> + * nr_ranges is the total number of (P2P DMA) ranges that comprise the d=
-mabuf.
-> + *
-> + * Return: The fd number on success, -1 and errno is set on failure.
-> + */
-> +#define VFIO_DEVICE_FEATURE_DMA_BUF 11
-> +
-> +struct vfio_region_dma_range {
-> +       __u64 offset;
-> +       __u64 length;
-> +};
-> +
-> +struct vfio_device_feature_dma_buf {
-> +       __u32   region_index;
-> +       __u32   open_flags;
-> +       __u32   flags;
-> +       __u32   nr_ranges;
-> +       struct vfio_region_dma_range dma_ranges[];
-> +};
-
-This uAPI would be a good candidate for a VFIO selftest. You can test
-that it returns an error when it's supposed to, and a valid fd when
-it's supposed to. And once the iommufd importer side is ready, we can
-extend the test and verify that the fd can be mapped into iommufd.
-
-It will probably be challenging to meaningfully exercise device P2P
-through a selftest, I haven't thought about how to extend the driver
-framework for that yet... But you can at least test that all the
-ioctls behave like they should.
+Alright :)
 
