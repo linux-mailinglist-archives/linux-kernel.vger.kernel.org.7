@@ -1,63 +1,87 @@
-Return-Path: <linux-kernel+bounces-871991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA50C0F069
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:45:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63BFC0ED81
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 16:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A478619C38EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23358464880
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A63330F92C;
-	Mon, 27 Oct 2025 15:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E385A2EDD76;
+	Mon, 27 Oct 2025 15:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="CqJzhg7V"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9P7A7SE"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2A230EF84
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FDE2EC096
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 15:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579854; cv=none; b=j3MluWPZl7WBYvnCPRJEt5k19mmp010260hiirI3Oag9y20Q5Aeo/LuBXzxKoeNU3SOqXubWNTVRkrG26LlSB/sx00OFw6BaEibnhOHR6/kzu/JCzt7p1dbgB0uQ7ffbHOm3jg2Vgsb5GBcumEhpVmjlPKIOArsf0NsGkTS3xvA=
+	t=1761577505; cv=none; b=gMSWr+a9jvjrJ2StZ4G4Mbv+s1Pyw71SI66jLxkdixrCZnPg6vK2JO5CIPVF1rPDXaRNXnriwGz18at2sXcZZidBAg3+b9sBxtSqsRZN2vtAzQJ3J4kV71CEqVNR3/dfK7fBKY2Jsx0JqAtHAA8QY58iniONTHLClNE5wnootcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579854; c=relaxed/simple;
-	bh=oMLUyHl2uZUJ8iKbejsBHgq428Z/NETxc5vWqBZWsbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=frpw+TqsskoStxk23P/4qPyT7frMhOcl7ZN8DdLqqjWK5P9OYcA/l1m92Igrwu5HWieGg5v7KDku7A9SSe4TPSaVYnaoW/A+eehuzjseNct23S/9GemUdo92ktaINg7Da8nbqZePppoRqGLKFadqWm8IIQZ7itxrALbrf9tI+7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=CqJzhg7V; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
-Received: from fedora (p3796170-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [180.53.173.170])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59RF4hAq090988
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 28 Oct 2025 00:04:47 +0900 (JST)
-	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=mKOpuXkFl04B6nJz7GlXTCVis5sGgEKZn5b7ybDr4b8=;
-        c=relaxed/relaxed; d=mgml.me;
-        h=From:To:Subject:Date:Message-ID;
-        s=rs20250315; t=1761577487; v=1;
-        b=CqJzhg7VLz45NOm+u5Bv3EQob29i3Qj/hprXVy1c6Tj9igyl3NxMK3XaQXOXSAGV
-         EN01X0o3g+ZTUR9SKsM/W8kxf2yVYS27IoercU8HXvCuFcYc/Qay88V43EZTM06d
-         ZsiDSJuugOdIM3Oqijy0nz4P7nOgPVgcgv3sWNjJ/PsulvABms/ENfygIkY1KpWH
-         HFCCm8CF+sDIUJy6U9Nskok1cW+CLOv2DkSPi/3nz0UWe/8OQDLQwHAxBoBj9sxA
-         rlX1iM/rzCw+mbmKrujahifATvaca8b+6vMH+iZNJKV9V6lzYT8exraU2cPvHzYn
-         d5D3/sXKLHAkiekTWL1rzw==
-From: Kenta Akagi <k@mgml.me>
-To: Song Liu <song@kernel.org>, Yu Kuai <yukuai@fnnas.com>,
-        Shaohua Li <shli@fb.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
-        Guoqing Jiang <jgq516@gmail.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kenta Akagi <k@mgml.me>
-Subject: [PATCH v5 16/16] md: Improve super_written() error logging
-Date: Tue, 28 Oct 2025 00:04:33 +0900
-Message-ID: <20251027150433.18193-17-k@mgml.me>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251027150433.18193-1-k@mgml.me>
-References: <20251027150433.18193-1-k@mgml.me>
+	s=arc-20240116; t=1761577505; c=relaxed/simple;
+	bh=T6j5pJIXxBFsaGqyk9NT2RfkOVr+/me2qdWz0yBnXMM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSpRBImkuJrpIFh+dG5YqP1MEONJDL1+Gcsh4juUp97Pj0cXkfuOc2SL1r8Xm34Ex3DxK3Tsg/mFlt9b8SzslO0kUemWlqojmleBFDr9GfSP7ObYnkl6q3a5qCk6B87Gn79voHGFPUe/kAHmOshn2/BJNu62yo9/k1vR0DE+/Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9P7A7SE; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27ee41e0798so68488985ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761577503; x=1762182303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kTupaOgzH6gbHMiWqxU5N/avQRrB+TsM9DGFdEjR8ho=;
+        b=G9P7A7SE0cYKcuVk8MuBwcRcI74Kjl6yzR2cI8MhocDmNulu+Blaqelp6KgoHbWxwd
+         t9rYTdRhIHyK6aOGUHGhOMHNx5T6Y81wndqXyjJzh1/UqPAI7Iuy6LRwc5sVvCgrrcYT
+         Gq0Z9o7x61LaU28+avucYFU3C66Y2Mo165wSpT4RflfEKbZbc1iwyk8d+42cjp0YEJNB
+         fI2UEMxUNKqvCoVDCBaKZ/61wftDhyd8sDtxcHtxBcv4OsBpIHjtW7fl35QzaJ51PVvk
+         qg/4MpzUX3zBaHBRB7GESPKtRHWZyAB271XnUW2zuBEnJbtccpKBDJCzW4UTvxIzLKmt
+         hsfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761577503; x=1762182303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kTupaOgzH6gbHMiWqxU5N/avQRrB+TsM9DGFdEjR8ho=;
+        b=l9P6GuYv9VZNlJCK4WyR0CuhSJPWR7lQk/L2/RTO86MK8oEteT5PBKB5a97IqhiEbT
+         ss/zwoXA78oUcg7F7fE67aNpCfsNJjpPL+PRIl9TSabmEhy9xvbIFXcgnhNzWyYLkJLP
+         jvDx5P1fcEquMxQ8k8HyRVKzq4OBCwmDEdgjxe0G0wlOY2mhJ46xf0koKr8xwbzVQMC0
+         ZlmK5P6hH+YQ9o4wBygtYTxaU9nHH0IY1t0hczOoneK2K9irxzeNetwVcALXj/mv5y2X
+         QlkiPGIG2nQf1B6+c+ZAkFNlSURkBVEAFRGrjpImWYlnRBuf4mAic9op3lez+TUAY8oX
+         RPDg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+fMiKx98K0gC4u3PQGyK14tXUW47un9Na8ueA3ANfzEVd0neIg2rv1RTb/EdBva0EMIgRt/S3LRKZjTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Ivs4WEP7bw/pZxiVhM9kQfYPhLb7WDZ2wsdXsfrPEPQwb7eJ
+	CxPiduT1EheDVfRfI2igT40sw91/BAALa858HDh9xvg0E5ejQ2g24/gK
+X-Gm-Gg: ASbGncuW8bVrQjHeYRFD9qpD3uC3lZX/j10bXwHRFbvJs3dj+8/NBcznMHRw03BrxY/
+	UfmDqtgR4h7uYisnauN26+6YZHbR18MTalQTtfOnTgv3IusYTz1xrPvXFJkSKikrXoi4WBRduLL
+	icMCBGktMSNxqeY/7SZwdW3WbE4CDXusIttEy8kSKY7xtFDBzbMOdrV5xt8Qqjkuey8JAz/NMEg
+	T4VkfYza7EZQRsbzXod+56z4lA/gLOtYzr5Tmek8YwLWRRH/pE27q33yXXNGecIpjdQkROFkp7T
+	SRcr89mDI2NEb9SzPzmAX3/o08M/vOD5bZQCImCIc3Q1zLgXgtDRkTvUX1bhLf3/6Kr+U8zI0vy
+	tS2X17XVKojJLIJSKGzpyDnZnlTZwSfYxkosidB9jrb0zcdRqAGP/KgVBDWbgZXqkAmPKrMNugV
+	4hcaJ9CrFduC2+Nk8k1QO2YzRMkrxPVzvD
+X-Google-Smtp-Source: AGHT+IHo5ASx3suVa6f8wqaFBDyQtbbs8qUYAB4N9R32si782j8k4P1cTG8u6ANyizohrN8+sMLTeg==
+X-Received: by 2002:a17:902:eccc:b0:27e:f07c:8413 with SMTP id d9443c01a7336-294cb378960mr2882435ad.9.1761577502931;
+        Mon, 27 Oct 2025 08:05:02 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498d273a2sm84808825ad.60.2025.10.27.08.05.00
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 08:05:02 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] cpufreq: nforce2: fix reference count leak in nforce2
+Date: Mon, 27 Oct 2025 23:04:45 +0800
+Message-Id: <20251027150447.58433-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +90,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the current implementation, when super_write fails, the output log
-will be like this:
- md: super_written gets error=-5
+There are two reference count leaks in this driver:
 
-It is unless combined with other logs - e.g. I/O error message from blk,
-it's impossible to determine which md and rdev are causing the problem,
-and if the problem occurs on multiple devices, it becomes completely
-impossible to determine from the logs where the super_write failed.
+1. In nforce2_fsb_read(): pci_get_subsys() increases the reference count
+   of the PCI device, but pci_dev_put() is never called to release it,
+   thus leaking the reference.
 
-Also, currently super_written does not output logs when retrying
-metadata write.  If the metadata write fails, the array may be
-corrupted, but if it is retried and successful, then it is not.
-The user should be informed if a retry was attempted.
+2. In nforce2_detect_chipset(): pci_get_subsys() gets a reference to the
+   nforce2_dev which is stored in a global variable, but the reference
+   is never released when the module is unloaded.
 
-This commit adds output to see which array and which device had the
-problem, and adds a message to indicate when a metadata write retry is
-scheduled.
+Fix both by:
+- Adding pci_dev_put(nforce2_sub5) in nforce2_fsb_read() after reading
+  the configuration.
+- Adding pci_dev_put(nforce2_dev) in nforce2_exit() to release the
+  global device reference.
 
-Signed-off-by: Kenta Akagi <k@mgml.me>
+Found via static analysis.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- drivers/md/md.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq-nforce2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 1cbb4fd8bbc0..4cbb31552486 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1058,10 +1058,13 @@ static void super_written(struct bio *bio)
- 	struct mddev *mddev = rdev->mddev;
+diff --git a/drivers/cpufreq/cpufreq-nforce2.c b/drivers/cpufreq/cpufreq-nforce2.c
+index fedad1081973..fbbbe501cf2d 100644
+--- a/drivers/cpufreq/cpufreq-nforce2.c
++++ b/drivers/cpufreq/cpufreq-nforce2.c
+@@ -145,6 +145,8 @@ static unsigned int nforce2_fsb_read(int bootfsb)
+ 	pci_read_config_dword(nforce2_sub5, NFORCE2_BOOTFSB, &fsb);
+ 	fsb /= 1000000;
  
- 	if (bio->bi_status) {
--		pr_err("md: %s gets error=%d\n", __func__,
-+		pr_err("md: %s: %pg: %s gets error=%d\n",
-+		       mdname(mddev), rdev->bdev, __func__,
- 		       blk_status_to_errno(bio->bi_status));
- 		if (!md_cond_error(mddev, rdev, bio)
- 		    && (bio->bi_opf & MD_FAILFAST)) {
-+			pr_warn("md: %s: %pg: retrying metadata write\n",
-+				mdname(mddev), rdev->bdev);
- 			set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
- 			set_bit(RetryingSBWrite, &rdev->flags);
- 		}
++	pci_dev_put(nforce2_sub5);
++
+ 	/* Check if PLL register is already set */
+ 	pci_read_config_byte(nforce2_dev, NFORCE2_PLLENABLE, (u8 *)&temp);
+ 
+@@ -426,6 +428,7 @@ static int __init nforce2_init(void)
+ static void __exit nforce2_exit(void)
+ {
+ 	cpufreq_unregister_driver(&nforce2_driver);
++	pci_dev_put(nforce2_dev);
+ }
+ 
+ module_init(nforce2_init);
 -- 
-2.50.1
+2.39.5 (Apple Git-154)
 
 
