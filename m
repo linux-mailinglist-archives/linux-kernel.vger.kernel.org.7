@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-871222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C808AC0CA89
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:31:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DCDC0CA8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D8B94F297D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:29:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E06384EE7FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768692F0C6E;
-	Mon, 27 Oct 2025 09:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J2p2qfnG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bpj003fp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D61EEA6;
-	Mon, 27 Oct 2025 09:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A412F1FDE;
+	Mon, 27 Oct 2025 09:30:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0012F0C6E;
+	Mon, 27 Oct 2025 09:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761557346; cv=none; b=l3JxB6OcBfnKa25HGHS76H24RAbwaDfxbIZq+CExsNJ3mpvAiLvbMED7h7EK5Mp2OkNjUIaDMPeW7SkpSYgmkGOxMq7Gyk2SK5KGNw+Sv+8S4YmcuPCkp3GCdP8st7BhLr07/gBkWCZaZoG+bvTgtCL1RCY/ywUzaihQeRxpmd8=
+	t=1761557404; cv=none; b=eSyIZwFPrsBSyU+f3t3AN30D9Gs/D4Yer6bSt4fuv0NMPe3miopcjZ3uFk313oezHfZSoDOrRDzduZI2EhrJuHpq79NSApBydpo6+ZE+AyEV1ufAX+OrR9lKj/cjjBINdwPx47P/tr7vDR1uL/TAvtmzmEx1Nfepb7bAvXWe5es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761557346; c=relaxed/simple;
-	bh=+BWwjSsK3LJJOmiDFTF+Hy6QpGnroVjKs/vRRZ/rk30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBVGUMkHNiXoPNOoI2eoqH8TrJOAHBeTNJV4c6JPqpm+IaA58koDHVVMVeF3hFtqr59K9dmM4UQZBvTcs3hOM3wN3QwaS5/1yf1yFVzidp4xzy0wfTee/XoDrH1VRPDuV5qlXyQ/V/7ycBCwnAdtWCc9zylM3YOQ3BW+c8cq6Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J2p2qfnG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bpj003fp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 10:29:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761557343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dN2WGLKJLTILaSCeVMwVxkFyJlJGIPBlamDv+nHPaTc=;
-	b=J2p2qfnGHgRJ3BvgvsnniZWuDKdN+t9UQe7q4baD2L2nnbqDikUapSl1P6FZSGcvqNRLS+
-	x8wnvprs+MGbc2jGrhGGxYjNsClpyoyGJLbeP9kqDTFsEDqR1wae9tQYwuXu7w0fk6P8RY
-	dbAgASIJ9m1YBdkHfHUspT0OFzTVGLWS1z6FxGdaCn2WF1uZg8xEkcydqPY18TiZb0hVOI
-	G4m2/IJAxWXHgBOcZID72toNFdi2QJaue4xbqXXAkx/1pS4VV7aJUIrd1lELzXF49CqfHv
-	i1pEmcmJiqRPvAMpkW8+27dAO6SFDD2/Vz1OihXdYzKekwWybodGnZjp9ZOpRA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761557343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dN2WGLKJLTILaSCeVMwVxkFyJlJGIPBlamDv+nHPaTc=;
-	b=Bpj003fprKxxi7SMLMy6A7fyp99rPfNgf0JgjIx7iLe5+S5sd2jP/xu6dFbELSsb7J+cAm
-	yEwDhi4EmySkHBBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org
-Subject: Re: [patch V2 03/12] rseq: Provide static branch for time slice
- extensions
-Message-ID: <20251027092901.fm5D-9TX@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.091502763@linutronix.de>
+	s=arc-20240116; t=1761557404; c=relaxed/simple;
+	bh=o5LqZy0ZroT8YS7VapnrsnlMnIJMMjuiF1ifrK8fs3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mFjpSyNJ10gjgc7HTuMjpnTaPPUSvcknNcg7Jac26fmU36mXCCp4seT6XNu7ZeAWx1FBEZ7Oj4vIW5Jf+gHQM31dgWlZP9IUumUrq1/muIJsJltKIRN8FtmIWIOeNZySScxp2v3nSFpxUTG8qfkXPbrX9l/JAqoaGakgUeyz3N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0D7C1764;
+	Mon, 27 Oct 2025 02:29:54 -0700 (PDT)
+Received: from [10.57.67.85] (unknown [10.57.67.85])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D50373F673;
+	Mon, 27 Oct 2025 02:30:00 -0700 (PDT)
+Message-ID: <d71e09ff-c063-46d9-8d02-f69c18b6efe5@arm.com>
+Date: Mon, 27 Oct 2025 09:29:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251022121427.091502763@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] add sysfs nodes to configure TPDA's registers
+Content-Language: en-GB
+To: Jie Gan <jie.gan@oss.qualcomm.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250827105545.7140-1-jie.gan@oss.qualcomm.com>
+ <b5762a05-8b63-4354-925e-fa3c8296e19f@oss.qualcomm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <b5762a05-8b63-4354-925e-fa3c8296e19f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-22 14:57:32 [+0200], Thomas Gleixner wrote:
-> Guard the time slice extension functionality with a static key, which can
-> be disabled on the kernel command line.
+On 27/10/2025 01:14, Jie Gan wrote:
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
+> 
+> On 8/27/2025 6:55 PM, Jie Gan wrote:
+>> Patchset 1 introduces configuration of the cross-trigger registers with
+>> appropriate values to enable proper generation of cross-trigger packets.
+>>
+>> Patchset 2 introduces a logic to configure the TPDA_SYNCR register,
+>> which determines the frequency of ASYNC packet generation. These packets
+>> assist userspace tools in accurately identifying each valid packet.
+>>
+>> Patchset 3 introduces a sysfs node to initiate a flush request for the
+>> specific port, forcing the data to synchronize and be transmitted to the
+>> sink device.
+>>
+> 
+> Gentle reminder.
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Please could you fix the dates and version to v6.19 ?
 
-Might want to fold:
+Suzuki
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 6c42061ca20e5..34325cf61b8de 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6482,6 +6482,10 @@
- 
- 	rootflags=	[KNL] Set root filesystem mount option string
- 
-+	rseq_slice_ext= [KNL] RSEQ slice extension
-+			Disable the slice extension at boot time by
-+			setting it to "off". Default is "on".
-+
- 	initramfs_options= [KNL]
-                         Specify mount options for for the initramfs mount.
- 
+> 
+> Thanks,
+> Jie
+> 
+>> Changes in V3:
+>> 1. Optimizing codes according to James's comment.
+>> Link to V2 - https://lore.kernel.org/all/20250827042042.6786-1- 
+>> jie.gan@oss.qualcomm.com/
+>>
+>> Changes in V2:
+>> 1. Refactoring the code based on James's comment for optimization.
+>> Link to V1 - https://lore.kernel.org/all/20250826070150.5603-1- 
+>> jie.gan@oss.qualcomm.com/
+>>
+>> Tao Zhang (3):
+>>    coresight: tpda: add sysfs nodes for tpda cross-trigger configuration
+>>    coresight: tpda: add logic to configure TPDA_SYNCR register
+>>    coresight: tpda: add sysfs node to flush specific port
+>>
+>>   .../testing/sysfs-bus-coresight-devices-tpda  |  50 ++++
+>>   drivers/hwtracing/coresight/coresight-tpda.c  | 278 ++++++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-tpda.h  |  33 ++-
+>>   3 files changed, 360 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight- 
+>> devices-tpda
+>>
+> 
 
-Sebastian
 
