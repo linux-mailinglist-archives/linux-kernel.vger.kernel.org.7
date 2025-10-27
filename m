@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel+bounces-872475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE67CC114B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:59:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8F8C11496
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 20:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CA2C4FEE9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538974215B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2A8304BDD;
-	Mon, 27 Oct 2025 19:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8307430FC1C;
+	Mon, 27 Oct 2025 19:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YCWrZn+X"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqdsHKOg"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92024175BF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5F730C60C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761595035; cv=none; b=K8tAwNbBPa8ODgDfWb5aLI57YaaRv76h86SeQWyzkLVuJfwRrSxfATDbljsvEOJ7uciJ7P0rg1kb+NWZTpPs29LeHvbHkMGtLeFVBsOseHvTupdO53KJffOAO9DOQLHkVK86HPTTavh87q2slgB4vfJHjJwOi7WBLVyQ1WJ7zNg=
+	t=1761595007; cv=none; b=fbz9z7NAjvFUoNhVHDoUQZ3Yn2oBg2FEmsu/PIJFt+8Vpbwe6PkDBGpqd+dtd7DvYMYV70W1iUHW1cFyj5UFTXKVIoRV30x7hEbD3XWAS8jGpWA1N22NhNxML2t7K0NB7ikoKJt7X+gxwsbdfUHekbfVXuTcxn7nWYCBSM7zDEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761595035; c=relaxed/simple;
-	bh=qAPZZex0lVUhqdgvO2+gS+2GyG7nqZeqDTQDdU5S9vo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Fr3Xtk/feu4i97T8DrBLYqOo9U0+2/hgqd0gLCBcrvqG2URPnRGpIxIOwyf2j5s3NbubsrZt4BIUnxtf5stFgkMqVm75XKFIQsO8YsnO2N0xlPv/61gVxf8kiIp5bWwTYN38JR1qoXIfrZLKJYwEvLatYhL0AnorZ+H/b4LvWxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YCWrZn+X; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761595028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l3Azl3a9SNX0GoOWOneAU2iKMSfUOpvleOE0L4lf+CU=;
-	b=YCWrZn+X5Jo3XCCmcY/VjxSa2nEnbNv831sE8IWd23Aao0H4O9vaHhBUcbhaaF6xvhOB6j
-	0XNOSL7SbImfCucK00i3RR9jYegS8K8pcwRwwsZXmVHpzl9YIBq8QE1MvhiazltPKpz2sh
-	Pgr/pf7cSk5S9ejJxt1179vzFKb5/uw=
+	s=arc-20240116; t=1761595007; c=relaxed/simple;
+	bh=UZZhAbmAkKv+FTP5GhIDbZHPDxG4xE0BfY9TmDHhbOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VdgttTtqPUT4RUtv+BAUYELowmfbO3ok7edqtxZpEsvrrUceQYeijWowhpyISUS2IrgkjytQp8WyiPAG5HOR0W8gHJR1p0x0BCbn1iNDnX4GZ4LdmjwR+c7itNQB+9wTedQokTL1bYIutc/m2C3JHVEYOAcmWYAnjWsjJIwwZd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bqdsHKOg; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-93e2d42d9b4so213821439f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 12:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761595005; x=1762199805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hLhpczMr/qRNQs1RGJCHlSNtk+HMp4BppJDnLUYfVFc=;
+        b=bqdsHKOgsbb9uMVYJyDBRfsNwR1bNCUznTlOLW6TlPn7ilViEIiEkOYZrEkbgEjuFV
+         /0jSAKraXz9FZtlEjM4dyy6QfuadfYPSXV1epLh0YTwc+y4OMmJOvKj4qxvployBaXlL
+         L4m3URglKZt3LVHDbDaG+CKfC0Ix4OBE18S9ga8Dq/SnOkiwZG3PLN+Lp0lnE/cwMrcX
+         fUtg7bnt8c6V9CtyeSo7yrRBUt7RUUXh+wuVdzG00tglLFVKlZ2hNsVKYpfG2jrigD4o
+         4hSibgzK2dOqCpgT8oyn3Xh96cD4vdQfFQRTyaB2R4T4kQn9nddYSuPGpawuObpkNLlf
+         ntLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761595005; x=1762199805;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hLhpczMr/qRNQs1RGJCHlSNtk+HMp4BppJDnLUYfVFc=;
+        b=egsNGGDaqQ5yyycXCcY9imKFwx50oR1uvdJbelP7kCa3DNjtdXkV3YvQ1Kt/XcCtEp
+         zCH9iz2GfGShGrQ0LpOekm/Kcb0Yrt0nmPW7/qZ84PgpKuHHlI6uPDAHitA9sG67oHrh
+         IVCSqkmHLFJ7Y+G0aoRt1hhCRMgrm4hQTWCKxcz26onjU5DOiihgm4u7NBdPUhXTPF8V
+         mBQpcXpfBfs2H5Mk+s2jXLQ00xmVWKLXixz8V7ueMjKbbndjkyrso8/kg2OKk7ucdYWl
+         PswJbo/DrupntWipkWQwu7cE8PrA2p3pr3lZWY7KJYxFDz8TxrDzWS3Rkt2R/IE/RBgF
+         jGNg==
+X-Gm-Message-State: AOJu0YzNZ/azOqtaXSS0RgHx898tFDxBayk9j0nEw7KAIRhWbqxicsVm
+	AqsWBOpFJS6gNWIMGd0qNfbsgpULtN7hjMLwgBaZ21iFgLXOZ++eg/uM
+X-Gm-Gg: ASbGncvnrzXQAqK1tuNbrF25ZYqeGqqZ4vRjumA+318IYtDvS2MVJ/1UOIkwhDTGc8D
+	hsQ31Ufh9TyStYyfMWH96vqVyWeJXyX0tFf+onXGUPaecUww7rjm8Ukj8J30QHkjnOrXfYwuI34
+	9X5Y6b4h/dsr4M1Q+QGP3KbhXpjjVN6JdI5ja/ELnHao0SEFMvDob7apekfQfjCXpC9Ng7IKVsx
+	jk5zVBe6z5cGerwoYxmPhGef4s0BOJrTkAGG2Q8/fxlx8XpgMlpXmUkWLg8nCqa1w6LFY2kDcum
+	l4dN3QkvKs7ZnlPQfw4rbQ0V5nPlX4zCMZxeN5RZEXXlRM3/U40mCNiwTG//2RprksN3KgaGx6i
+	cRHp7ZDCvnJXPlIZwadsqyWDtkftyIw6ZE7+jg4KXPgc/g+G7d+AGLxRSZgw8MclhT7Wf1Ngilk
+	KYxfoPWUGXD2OAbMsfjuS0fJN92mtt0F4MVvjQtayQdp/81MAaI+/iRYzjgyOh9cc=
+X-Google-Smtp-Source: AGHT+IHH+n6qnh06CjvonKm65cHZGMxYdSEgMYDvgDnSsw6DnedswB1L838R+C1gHzhYrTwaneJdHQ==
+X-Received: by 2002:a05:6e02:2488:b0:431:d95c:83d6 with SMTP id e9e14a558f8ab-4320f6ccafemr20938425ab.11.1761595005094;
+        Mon, 27 Oct 2025 12:56:45 -0700 (PDT)
+Received: from princess (76-224-4-192.lightspeed.clmboh.sbcglobal.net. [76.224.4.192])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea9e37cd4sm3482853173.60.2025.10.27.12.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 12:56:44 -0700 (PDT)
+From: Ben Hoff <hoff.benjamin.k@gmail.com>
+To: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	mchehab@kernel.org,
+	hverkuil@kernel.org,
+	lukas.bulwahn@redhat.com,
+	hoff.benjamin.k@gmail.com
+Subject: [RFC PATCH v1 0/2] media: pci: AVMatrix HWS capture driver refresh
+Date: Mon, 27 Oct 2025 15:56:34 -0400
+Message-ID: <20251027195638.481129-1-hoff.benjamin.k@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] x86/smpboot: Mark native_play_dead() as __noreturn
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <i4o6cr4x364xsk7ftas5guggjt4xdvawurrohveahi75iba5aj@dl6plusoxtin>
-Date: Mon, 27 Oct 2025 20:56:18 +0100
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Sean Christopherson <seanjc@google.com>,
- Kai Huang <kai.huang@intel.com>,
- Brian Gerst <brgerst@gmail.com>,
- Thomas Huth <thuth@redhat.com>,
- Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
- Zheyun Shen <szy0127@sjtu.edu.cn>,
- Kevin Loughlin <kevinloughlin@google.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Li Chen <chenl311@chinatelecom.cn>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <EA25BB49-DCF0-4868-878D-8BC5217380A1@linux.dev>
-References: <20251027155107.183136-1-thorsten.blum@linux.dev>
- <i4o6cr4x364xsk7ftas5guggjt4xdvawurrohveahi75iba5aj@dl6plusoxtin>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 27. Oct 2025, at 20:28, Josh Poimboeuf wrote:
-> On Mon, Oct 27, 2025 at 04:51:02PM +0100, Thorsten Blum wrote:
->> native_play_dead() ends by calling the non-returning function
->> hlt_play_dead() and therefore also never returns.
->> 
->> The !CONFIG_HOTPLUG_CPU stub version of native_play_dead()
->> unconditionally calls BUG() and does not return either.
->> 
->> Add the __noreturn attribute to both function definitions and their
->> declaration to document this behavior and to potentially improve
->> compiler optimizations.
->> 
->> Remove the obsolete comment, and add native_play_dead() to the objtool's
->> list of __noreturn functions.
->> 
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> 
-> Is there an objtool warning that this fixes?  If so, it would be helpful
-> to put it in the description above.
+Hi all,
 
-Not that I'm aware of.
+This RFC series significantly refactors the downstream AVMatrix HWS PCIe
+capture driver so it is maintainable in-tree and aligns with upstream
+media driver expectations. The new implementation follows V4L2 and ALSA
+subsystem patterns, splits the hardware plumbing across focused source
+files, and introduces proper runtime PM and interrupt handling. The goal
+is to keep future maintenance manageable while providing a direct path for
+existing users of the vendor tree.
 
+Current status / open items:
+  - Audio capture paths have been refactored from the vendor driver but have
+    not yet been validated on real hardware. I would appreciate guidance
+    on whether you would prefer that I drop the ALSA pieces from the
+    initial submission and stage them as a follow-up once I finish
+    validation.
+  - `v4l2-compliance` passes for each video node, and I have exercised
+    basic capture in OBS. I still plan to do heavier soak testing across
+    all inputs and audio channels, as well as cover the suspend/resume
+    paths.
+
+Any feedback on the overall structure, subsystem integration, and in
+particular the best way to stage the audio support would be very welcome.
+Once I hear back on the preferred direction I will respin this as a
+formal v1 submission.
+
+Thanks for taking a look!
+
+Ben
+
+Ben Hoff (2):
+  media: pci: add AVMatrix HWS capture driver
+  MAINTAINERS: add entry for AVMatrix HWS driver
+
+ MAINTAINERS                            |    6 +
+ drivers/media/pci/Kconfig              |    1 +
+ drivers/media/pci/Makefile             |    1 +
+ drivers/media/pci/hws/Kconfig          |   13 +
+ drivers/media/pci/hws/Makefile         |    4 +
+ drivers/media/pci/hws/hws.h            |  194 +++
+ drivers/media/pci/hws/hws_audio.c      |  571 +++++++++
+ drivers/media/pci/hws/hws_audio.h      |   22 +
+ drivers/media/pci/hws/hws_irq.c        |  281 +++++
+ drivers/media/pci/hws/hws_irq.h        |   12 +
+ drivers/media/pci/hws/hws_pci.c        |  708 +++++++++++
+ drivers/media/pci/hws/hws_reg.h        |  142 +++
+ drivers/media/pci/hws/hws_v4l2_ioctl.c |  576 +++++++++
+ drivers/media/pci/hws/hws_v4l2_ioctl.h |   32 +
+ drivers/media/pci/hws/hws_video.c      | 1542 ++++++++++++++++++++++++
+ drivers/media/pci/hws/hws_video.h      |   24 +
+ 16 files changed, 4129 insertions(+)
+ create mode 100644 drivers/media/pci/hws/Kconfig
+ create mode 100644 drivers/media/pci/hws/Makefile
+ create mode 100644 drivers/media/pci/hws/hws.h
+ create mode 100644 drivers/media/pci/hws/hws_audio.c
+ create mode 100644 drivers/media/pci/hws/hws_audio.h
+ create mode 100644 drivers/media/pci/hws/hws_irq.c
+ create mode 100644 drivers/media/pci/hws/hws_irq.h
+ create mode 100644 drivers/media/pci/hws/hws_pci.c
+ create mode 100644 drivers/media/pci/hws/hws_reg.h
+ create mode 100644 drivers/media/pci/hws/hws_v4l2_ioctl.c
+ create mode 100644 drivers/media/pci/hws/hws_v4l2_ioctl.h
+ create mode 100644 drivers/media/pci/hws/hws_video.c
+ create mode 100644 drivers/media/pci/hws/hws_video.h
+
+-- 
+2.51.0
 
