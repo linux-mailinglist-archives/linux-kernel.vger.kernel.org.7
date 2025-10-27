@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-870765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0141EC0BA18
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:50:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B1C0B99F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D8E18A16F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:51:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E410A4EA26A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FCA2C11CB;
-	Mon, 27 Oct 2025 01:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SFY3HsTq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC9418C02E;
-	Mon, 27 Oct 2025 01:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A7A28934F;
+	Mon, 27 Oct 2025 01:37:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BA016F288
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761529826; cv=none; b=kuP22l7rSYTek7b3rcovEYjQNtlD53apUojadl4r4UyC01Gg5dCUMB47Pn6GHwNq3xirgID/EJw+iXuYPFzhit8VzdF5tvgfO4LhsNwfhnSoXd80IIzEwbSH6Fl5Lg5YsrK1PpUV68NkHBTc6WRukPH+wqDEeoAwffuhK3X1BzA=
+	t=1761529019; cv=none; b=TTUDyquP8UwCdF6O6GZ96LQwhzo0cWfSFq+n5g68LHyA/5bL4QMopzKPLHo1wBx5n3ZntirEPgJUdW1z+WTPHbhhwW6YGVubSAf6HSoHojYdrX5+l1x9rZUgk1ZNAg3CHDUg5EI4atGvPyeWvqHQuuM78u98yI1TF35+hCqAmCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761529826; c=relaxed/simple;
-	bh=T3pkaI/GJuOsGFoVg5/R4SNriMbvV6bNB454qQaWZQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQAtezO5/4R5PaFcURhdb+93yXLU+udan6DUbahneHDgX/tNmJex+Mke+1RBYEhRPCdTQtpFYVYGW3k9xfSjG6MMT3IG2qPcZH8u8Y5hYyWMc4lpOmj2P73Rc39u6BD9t3mIJRCkwzeaPMTfrHZTzOfKeXirCwGEodO4oyF1bIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SFY3HsTq; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761529825; x=1793065825;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T3pkaI/GJuOsGFoVg5/R4SNriMbvV6bNB454qQaWZQ8=;
-  b=SFY3HsTqY2Ry2NQd3zO0yKdoJsln+nTLaiUb4zzF60W8D3fRq3fTXODw
-   vIBdycM9zJwvlhYvqOcGxcNv44Wqhmf9fou4m9uCosnAOkm6KckOTJUSi
-   nkN927iyFhYV3TRCynZEFAVQPkqrYSO/6TtlB7mDEjtvQ1U9lSgvnIdzd
-   XwnRRWL2OjwRSPQ87xHjhLVEbaRdYK45rUr66pRQNTdKsHayxukAQ/5wc
-   dIM67bUNf8kclm4K6Kwww5CDKvMH3gHlYXHgnPehlNFFU8HvWh+phtlbm
-   QuCapYO8U12dwTIYM86QRSxqOuwZLqOC3cCInr5Mx/LWbufk48meZkVPf
-   w==;
-X-CSE-ConnectionGUID: 6YWLrCLOQ/Gu/IAQzfBJ+Q==
-X-CSE-MsgGUID: UMt8ChPkQUa81pml1bmMLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75050337"
-X-IronPort-AV: E=Sophos;i="6.19,257,1754982000"; 
-   d="scan'208";a="75050337"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2025 18:50:24 -0700
-X-CSE-ConnectionGUID: RqD3PVgcSpO3hdFc8HdBsw==
-X-CSE-MsgGUID: bAZX7S5kQLGkCNKy4yStdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,257,1754982000"; 
-   d="scan'208";a="188967609"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa003.jf.intel.com with ESMTP; 26 Oct 2025 18:50:09 -0700
-Date: Mon, 27 Oct 2025 09:36:28 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
-Message-ID: <aP7MnJ8mIlZhT//S@yilunxu-OptiPlex-7050>
-References: <20251023143957.2899600-1-robh@kernel.org>
+	s=arc-20240116; t=1761529019; c=relaxed/simple;
+	bh=FkJ17JdOa8kqwodupoeKU/kTXkVHWDiswetLtJd7TJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d5uAJvsI1oqiCJMx2xinFNoOYfmulI/a3aJVxemF6lp3XPrMQYtSYP340mUE8eru4qTEgZgkqjfIob/AoAcA/NCaeAdQWEZosbbhWVyQdByYTBaePbysbHpTpPifYQcYocQTRkd6zWdQlTgdBJvMzXyqvn9vMbPn+1T6BUZa7jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC97F175D;
+	Sun, 26 Oct 2025 18:36:43 -0700 (PDT)
+Received: from [10.163.70.164] (unknown [10.163.70.164])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A48F3F673;
+	Sun, 26 Oct 2025 18:36:48 -0700 (PDT)
+Message-ID: <6e7d0bf3-ddf1-44a0-a0cb-7dc994101878@arm.com>
+Date: Mon, 27 Oct 2025 07:06:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-arm-kernel@lists.infradead.org, ben.horgan@arm.com,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+References: <20251024040207.137480-1-anshuman.khandual@arm.com>
+ <20251024040207.137480-3-anshuman.khandual@arm.com>
+ <20251024120014.000020af@huawei.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20251024120014.000020af@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 09:37:56AM -0500, Rob Herring (Arm) wrote:
-> Generally at most 1 blank line is the standard style for DT schema
-> files. Remove the few cases with more than 1 so that the yamllint check
-> for this can be enabled.
+
+
+On 24/10/25 4:30 PM, Jonathan Cameron wrote:
+> On Fri, 24 Oct 2025 05:02:07 +0100
+> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
+>> While here replace hard coded page size based shifts but with derived ones
+>> via ilog2() thus adding some required context.
+>>
+>> TLBI_TTL_MASK has been split into separate TLBI_TTL_MASK and TLBI_TG_MASK
+>> as appropriate because currently it simultaneously contains both page size
+>> and translation table level information. KVM on arm64 has been updated to
+>> accommodate these changes to TLBI_TTL_MASK.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: Oliver Upton <oliver.upton@linux.dev>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: kvmarm@lists.linux.dev
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
+>>  arch/arm64/kvm/nested.c           |  8 +++++---
+>>  2 files changed, 23 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+>> index 131096094f5b..cf75fc2a06c3 100644
+>> --- a/arch/arm64/include/asm/tlbflush.h
+>> +++ b/arch/arm64/include/asm/tlbflush.h
+>> @@ -57,9 +57,10 @@
+>>  /* This macro creates a properly formatted VA operand for the TLBI */
+>>  #define __TLBI_VADDR(addr, asid)				\
+>>  	({							\
+>> -		unsigned long __ta = (addr) >> 12;		\
+>> -		__ta &= GENMASK_ULL(43, 0);			\
+>> -		__ta |= (unsigned long)(asid) << 48;		\
+>> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
+>> +		__ta &= TLBI_BADDR_MASK;			\
+>> +		__ta &= ~TLBI_ASID_MASK;			\
+>> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\
+> I think you can replace the two lines above with
+> 		FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);
+> 
+> It's a small reduction in code but I don't mind much either way.
 
-[...]
+Right. FIELD_MODIFY() might be appropriate in this scenario but
+there will be some additional code churn needed. I don't have a
+strong opinion either way.
 
->  Documentation/devicetree/bindings/fpga/fpga-region.yaml      | 5 -----
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -55,13 +55,12 @@
+ } while (0)
 
-Acked-by: Xu Yilun <yilun.xu@intel.com>
+ /* This macro creates a properly formatted VA operand for the TLBI */
+-#define __TLBI_VADDR(addr, asid)                               \
+-       ({                                                      \
+-               unsigned long __ta = (addr) >> ilog2(SZ_4K);    \
+-               __ta &= TLBI_BADDR_MASK;                        \
+-               __ta &= ~TLBI_ASID_MASK;                        \
+-               __ta |= FIELD_PREP(TLBI_ASID_MASK, asid);       \
+-               __ta;                                           \
++#define __TLBI_VADDR(addr, asid)                                       \
++       ({                                                              \
++               unsigned long __ta = (addr) >> ilog2(SZ_4K);            \
++               __ta &= TLBI_BADDR_MASK;                                \
++               __ta |= FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);      \
++               __ta;                                                   \
+        })
+ > 
+>>  		__ta;						\
+>>  	})
+>>  
+>> @@ -100,8 +101,17 @@ static inline unsigned long get_trans_granule(void)
+>>   *
+>>   * For Stage-2 invalidation, use the level values provided to that effect
+>>   * in asm/stage2_pgtable.h.
+>> + *
+>> + * +----------+------+-------+--------------------------------------+
+>> + * |   ASID   |  TG  |  TTL  |                 BADDR                |
+>> + * +-----------------+-------+--------------------------------------+
+>> + * |63      48|47  46|45   44|43                                   0|
+>> + * +----------+------+-------+--------------------------------------+
+>>   */
+>> -#define TLBI_TTL_MASK		GENMASK_ULL(47, 44)
+>> +#define TLBI_ASID_MASK		GENMASK_ULL(63, 48)
+>> +#define TLBI_TG_MASK		GENMASK_ULL(47, 46)
+>> +#define TLBI_TTL_MASK		GENMASK_ULL(45, 44)
+>> +#define TLBI_BADDR_MASK		GENMASK_ULL(43, 0)
+>>  
+>>  #define TLBI_TTL_UNKNOWN	INT_MAX
+>>  
+>> @@ -110,10 +120,10 @@ static inline unsigned long get_trans_granule(void)
+>>  									\
+>>  	if (alternative_has_cap_unlikely(ARM64_HAS_ARMv8_4_TTL) &&	\
+>>  	    level >= 0 && level <= 3) {					\
+>> -		u64 ttl = level;					\
+>> -		ttl |= get_trans_granule() << 2;			\
+>> +		arg &= ~TLBI_TG_MASK;					\
+>> +		arg |= FIELD_PREP(TLBI_TG_MASK, get_trans_granule());	\
+>>  		arg &= ~TLBI_TTL_MASK;					\
+>> -		arg |= FIELD_PREP(TLBI_TTL_MASK, ttl);			\
+>> +		arg |= FIELD_PREP(TLBI_TTL_MASK, level);		\
+> 
+> Similar potential to use FIELD_MODIFY for these.
+> 
+> Jonathan
+> 
+
 
