@@ -1,120 +1,156 @@
-Return-Path: <linux-kernel+bounces-871282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DA9C0CCC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:58:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D76C0CD6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A07188BC4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:58:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66D344F3944
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7622F99A8;
-	Mon, 27 Oct 2025 09:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852D2FD7BE;
+	Mon, 27 Oct 2025 09:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTmPnrk7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="LSSge2FT";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="RdN1USwS"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E2A2F547D;
-	Mon, 27 Oct 2025 09:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E9E2FCBF3;
+	Mon, 27 Oct 2025 09:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559009; cv=none; b=Hv6ubjZPTOV0ITEUZ2HYRpotHgLa0cgSQISgQMx7PrkHwPWbgwWDyXxT3iA1nCmphrb28v4QeBtGSDrmNGTwMOxZ84oR+HQU0HwlWhAAQvytVzQTHJv7w7Lsfla22EeDSBSbycXkyESGRuM08sR6WSUgpabknSbRS5xzAAlxqh8=
+	t=1761559042; cv=none; b=DpI7ZVsMDpeOLDPld9i4CtEVuWQtQ5BvNTAbN7OcKr+d4ySG87pWl1G2dR/YGck8S7MX8HPR0YiIikRohPB6BoHfhUzV4wRV1Cp82b8zp9XW0WQZuPYcunpyvH1O+inPM1k5KDOktvxqlY+el14aYyaWFfz+q7fIcejohCtfKDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559009; c=relaxed/simple;
-	bh=Lxu5cscL1HwCBzlPnIr1BaQwvaRrU0uoXTu5LjXze2o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=dvoQX1ICegdPbYNp9whFNCI+UwsR01rcHbJo/P4/F9/BB4g48RD6gcuke6RCp6MrmPttvNab0qKiPjWw+LF1VDjlspmwBnGHsxV2VqACuFmZYcDXDhaYWsTFl6KMrr5elg4y8WUS9im8QhBZU+xJ8YLLhSmEhlkjvi5D07LoydE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTmPnrk7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE62C4CEFF;
-	Mon, 27 Oct 2025 09:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761559008;
-	bh=Lxu5cscL1HwCBzlPnIr1BaQwvaRrU0uoXTu5LjXze2o=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=BTmPnrk79MH8XqKW5zleIBNMoiZ+DkrLxXgRoVKSk8GlvqP+QgS6PiCze6RdRBesb
-	 kXJZfDFiMQA4aL0u+6nB99Ro7nPXzm/fC+IFPzu8ELy8bBu9384TzYVCuLqP7o7ZIa
-	 EHm9srXvTGeIFfvlXaHyl14MK3KB86liYqmsclni6sL+QnKKyWxWfy9KccKAyMXZ0d
-	 4VpkCvtqtDWbtiKhX22Uu72chUrLISHb7dRMfBmNA9uDJj36tyXdgR3EpwGxkzOxb6
-	 BHPjvgXER+dkfuQaoJYMz57olyW2cj4Tp4pBXUxEbaEk3hc8sUmfADuM4U1M1b3mrw
-	 VeJ/Bsejy9Ilg==
+	s=arc-20240116; t=1761559042; c=relaxed/simple;
+	bh=thirantOH4kH3f0r2QU+U/UTNUm7Zfvr0Y+urH7YorI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bf2qw02qAin8FpbS6hFFbqbPTrvva6ohaEl9PBB0QtQzGKSceZxwq13Lon9i27IN2VJgiaXb3CGelP7vE+vrk1+kVBAEpDskGAPyTnehVqKj0voCimOnyb10GqfT7uvwMgAqVQJN8M8aiR/T1SBMLUDOT3QxhU5kbn9WhQUJ6og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=LSSge2FT; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=RdN1USwS; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1761559028; bh=thirantOH4kH3f0r2QU+U/UTNUm7Zfvr0Y+urH7YorI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LSSge2FTR6D3qKRjJ42E13VxBPQKSOpHvoA6MooKqxpc9rN2bpRis+EqbJsuKkkIv
+	 9zFH+yK4V3WFUphrnp/VTs9J9sdyGd3LKWAH6dhwVR3WB/yyG05vsCupYVUNK+ryrR
+	 vJsq25+RrpYP1YB2YjffZscbOox7bmmhkjHpa5/hfXYp4VkkQn1e1NnGaEnlGJoeDQ
+	 4CpCX4YhV0k4LnUWtGHZCOWXtiy9hVvhALxvlaLa9AhKSkhXJExQvXUjfGpAY7xMJk
+	 UGA67PKFTzk/LmRowxyivmVpO2xjcRFQWY+n/ngdOq5VjOZosnbqv+B1Gu8we4o8eo
+	 7wCz1Q9juQkDQ==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id 9D9D9FB03;
+	Mon, 27 Oct 2025 10:57:08 +0100 (CET)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id xOcFvBNfwfNH; Mon, 27 Oct 2025 10:57:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1761559027; bh=thirantOH4kH3f0r2QU+U/UTNUm7Zfvr0Y+urH7YorI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RdN1USwSr30UpaEyXrknx1J/RlMsNcJW1D+1SgQDqvblndSztBpFLTKWwqGDVYfP+
+	 6gGRNsWD0+asBilsu/M4X7I4BAAcWHPDKebpmcn00ZniJ5AQQq5MfSeikbMe5wSfTP
+	 bxulgTShhIRWA/7A50RBUnXU68pmRzaJbwHsKhw6ZUfkburhzwd2M5zzOBPfYOdg0f
+	 e2fQMnpqgzaKyYO7VABXRkKEbGc3H8W0fs5rPdLeLsNH13oatacn6bh/UIfOrOJjHy
+	 DlAofM7w6pCwgcFaKCONz4UHRxVKqbiRRN+R1Xum1hR6MwNtY2YeipAMUQMPG2dwAk
+	 UY2IbbSFcXSkQ==
+Date: Mon, 27 Oct 2025 10:57:05 +0100
+From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To: david@ixit.cz
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Casey Connolly <casey.connolly@linaro.org>,
+	linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+	Gergo Koteles <soyer@irl.hu>, Casey Connolly <casey@connolly.tech>
+Subject: Re: [PATCH v7 0/3] Add support for sound profile switching and
+ leverage for OnePlus slider
+Message-ID: <aP9B8fPs7y2-dGJi@quark2.heme.sigxcpu.org>
+References: <20251014-op6-tri-state-v7-0-938a6367197b@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Oct 2025 10:56:41 +0100
-Message-Id: <DDT0JTP91GO3.1EHF6L8MX4I3T@kernel.org>
-To: "Beata Michalska" <beata.michalska@arm.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v6 4/5] rust: Move register and bitfield macros out of
- Nova
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- "joel@joelfernandes.org" <joel@joelfernandes.org>, "Elle Rhumsaa"
- <elle@weathered-steel.dev>, "Yury Norov" <yury.norov@gmail.com>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, "nouveau@lists.freedesktop.org"
- <nouveau@lists.freedesktop.org>
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <20251003154748.1687160-5-joelagnelf@nvidia.com> <aPklNydcTdOeXtdU@arm.com>
- <ACAA327A-AE2B-4D21-B8C5-C66BB5E09B7C@nvidia.com>
- <aPozw8TGp85YdmNU@arm.com>
- <47d6ab72-1526-457d-990a-928088ba7022@nvidia.com>
- <aP82DHvLC7zAEojN@arm.com>
-In-Reply-To: <aP82DHvLC7zAEojN@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014-op6-tri-state-v7-0-938a6367197b@ixit.cz>
 
-On Mon Oct 27, 2025 at 10:06 AM CET, Beata Michalska wrote:
-> It's more theoretical at this point, but there are drivers that do rely o=
-n
-> information from either DT or ACPI tables for the base address and size o=
-f the
-> MMIO region: anything that uses devm_platform_ioremap_resource() or
-> devm_platform_ioremap_resource_byname() I guess.
+Hi,
+On Tue, Oct 14, 2025 at 11:20:32AM +0200, David Heidelberg via B4 Relay wrote:
+> This series add initial support for OnePlus 6 and 6T, but other OnePlus
+> phones contains same mechanism to switch sound profiles.
+> 
+> This code was tested for two years within the downstream Snapdragon 845 tree.
+> It is now perfectly integrated with feedbackd in the Phosh environment.
+> 
+> The series is also available (until merged) at
+>   git@gitlab.com:dhxx/linux.git b4/op6-tri-state
+> 
+> Changes in v7:
+> - Separated GPIO number fix from the original commit
+>   "arm64: dts: qcom: sdm845-oneplus: Add alert-slider"
+> - Rebased again next-20251008
+> - Link to v6: https://lore.kernel.org/r/20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz
+> 
+> Changes in v6:
+> - Rebased again next-20250731, otherwise just a resent.
+> - Link to v5: https://lore.kernel.org/r/20250419-op6-tri-state-v5-0-443127078517@ixit.cz
+> 
+> Changes in v5:
+> - Dropped merged
+>   "Input: gpio-keys - add support for linux,input-value DTS property"
+> - Link to v4: https://lore.kernel.org/all/cover.1677022414.git.soyer@irl.hu/
+> 
+> Changes in v4:
+> - DTS: use default debounce-interval, order alphabetically
+> - Link to v3: https://lore.kernel.org/lkml/cover.1676850819.git.soyer@irl.hu/
+> 
+> Changes in v3:
+> - rename tri-state-key to alert-slider, fix DTS warnings,
+> 
+> Changes in v2:
+> - rebase to qcom/for-next
+> add SND_PROFILE_* identifiers to input-event-codes.h
+> 
+> ---
+> Gergo Koteles (3):
+>       Input: add ABS_SND_PROFILE
+>       arm64: dts: qcom: sdm845-oneplus: Correct gpio used for slider
+>       arm64: dts: qcom: sdm845-oneplus: Add alert-slider
 
-Don't get confused, those are two different things: The size of the MMIO re=
-gion
-(or a PCI BAR) and the const SIZE generic in Io<SIZE> are two different thi=
-ngs.
+feedbackd has support for this since 0.5.0 so it would be nice to see
+that mainlined.
 
-The former is the actual size of an MMIO region, whereas the latter is the
-minimum size requested by a driver for proper operation.
+Tested-by: Guido Günther <agx@sigxcpu.org> # oneplus,fajita & oneplus,enchilada
+Reviewed-by: Guido Günther <agx@sigxcpu.org> 
 
-For instance, let's assume your driver requests ten contiguous 32-bit regis=
-ters
-starting at offset zero of an MMIO region.
+Cheers,
+ -- Guido
 
-In this case you can call req.iomap_sized<0x28>(), because you know that yo=
-ur
-driver is not able to properly work without an MMIO region with at least a =
-width
-of 0x28 bytes.
-
-The actual size of the MMIO region returned by req.iomap_sized<0x28>() may
-indeed be smaller or larger than that, depending on what is defined in the =
-DT,
-ACPI or PCI BAR.
-
-If smaller than the const SIZE generic, the call to req.iomap_sized<0x28>()=
- will
-fail, otherwise it will be successful. The actual size of the MMIO region i=
-s not
-influenced by the const SIZE generic.
+> 
+>  Documentation/input/event-codes.rst                |  6 ++++
+>  .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 39 ++++++++++++++++++++--
+>  drivers/hid/hid-debug.c                            |  1 +
+>  include/uapi/linux/input-event-codes.h             |  9 +++++
+>  4 files changed, 53 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 52ba76324a9d7c39830c850999210a36ef023cde
+> change-id: 20250419-op6-tri-state-ed1a05a11125
+> 
+> Best regards,
+> -- 
+> David Heidelberg <david@ixit.cz>
+> 
+> 
 
