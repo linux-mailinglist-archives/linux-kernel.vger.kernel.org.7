@@ -1,131 +1,299 @@
-Return-Path: <linux-kernel+bounces-871335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A8CC0CF5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2F1C0CF74
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 11:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C9054F17C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:28:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE2B24E49CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01082F656F;
-	Mon, 27 Oct 2025 10:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E2E2D5C68;
+	Mon, 27 Oct 2025 10:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aZZlNJof"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hd33ZkFi"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A942F3C3D;
-	Mon, 27 Oct 2025 10:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D2E33F9
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761560913; cv=none; b=bqGEGUC66NEx5Q7lecwE7fCJhHQwtzrpyFRwHcClJX5I1jEABSQgVSu0yVnnLFJYkjvD3pM2BQrSJNi7oOzc944xvqNHU+iIt9kaO1YLR+0p3IPdVRsjpbYENiQyJW2MILyA7U/UMXGcXlzbjd+f3hYYzBGGXKx5enIm4Pt2dHQ=
+	t=1761561042; cv=none; b=aLboyhk3xvVYUgD70mDej7IWeDFnuldrods0v0HqzfXyjKd01jYBlNxaz7DMV4+BqBqU3ubg/LeTFuuu36MQc7LyEuu8fxRbyOTFiTsBGWkSKttXlAJN8FR1e/wh701TAu2neT0qKEr1k/pkJGM74C0sk2kkmbJ1urMCLwGVoRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761560913; c=relaxed/simple;
-	bh=80A5WGzXwOBAEhYFN6darwmjlsAVc8wuGY5F609g7q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gkbi2y8/ED/oTFl8aj8+aUV4no/OZvhaQx8Hco0zrdtUsUNMIscSFEvwgxBt/J4YeBOHU3El2ub4yg6oDTfENaRNPg1cz5rWIpgA0acanbiUgvqlljfEapWDYnhiyvlHfV5oDQO0ORTA+QAsRqKNKFZJw9PuevS5wIRIiaO510U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aZZlNJof; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761560908;
-	bh=80A5WGzXwOBAEhYFN6darwmjlsAVc8wuGY5F609g7q4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aZZlNJof71hPdQNaI1GKLmACWl8FA8kgZfqROQqPUpXu5eCCn03YIcePo/4oBB11c
-	 KEsELY43p8d+Mz1tsz3cz/j9v7oxNWFx3c8nUCIaI/VG6iMJ3ieBTIKP0caEr5vrk9
-	 +MQ2ccGqkOsBl6uNiB5ZOHvCTAB90Cmhc9DI/4A1cmmbatp3OOGisVd8orYyw9CmM+
-	 dMSdbEUqPES4LhcGhTtXGhnxbQH7bOE6twHtMiBXEKk8sJm2BVDNDcZbaN5rvRF6gK
-	 63L5ATtY1XTYWJ+2S3eYOsM4uklK/tg9pc5PE0a/SiHaFoAJXTQJh9ILrL1ToS5Sqa
-	 CUKaHUhlUsksQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8333617E10F4;
-	Mon, 27 Oct 2025 11:28:27 +0100 (CET)
-Message-ID: <dc619e4b-78fc-4306-8aa0-83d8d87a11cf@collabora.com>
-Date: Mon, 27 Oct 2025 11:28:27 +0100
+	s=arc-20240116; t=1761561042; c=relaxed/simple;
+	bh=SqZ0Ub745WWb3ZeyhwmiHZeS8d01xTOY/Qojh9ScUdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JeZmO17WxS4eEFB8Af3/o07y9HVLUdp4aqyB5eQ++aq+mBe5G+ICSKPouImTeeMj/+UilsZRCMiIFminyHdmqGS9p1t/Wl+mDSeyKxrfK+5Auw0KTGG0AZdpntZsPRsS5GLAM0UesHJP9+T4VstdomEd4DOAS82gJbR7eyovDgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hd33ZkFi; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b6d5c59f2b6so652603766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761561039; x=1762165839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r+t/oTmZjxhzW3SWsg5D/3k7ryEIEHaxHipwLWpbI60=;
+        b=hd33ZkFiXaYLiNJgs5vod1PJuWbeOcQHlPTdmM9XNSHMiGobxPQbFR1WJoaclcbOH6
+         LmAq06mazq8ByagF6BVAoUodPtdWAiglBKxE67DFh6Jn5ecbZLUbeXabQgbWMRDk7ChE
+         IfPqbChGH2kSAI0LKrU0kwfM9uodJp8DRQvP18IGFwwZe4WP0N/bhhg0MSif8t0CiY4W
+         0Rw7R41AXT+f3TXhN3OGcvdlCHh07poD4DylE2vKLRAq1FLIFbkKHE6ZjoD3/+yED1sq
+         +Oky2aKwK2QFgzJ7SAnAZGB7DJ/jbhni56Q7hvoLpeU/8SENae4PdNw6t9hG9Vyn//kG
+         yXNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761561039; x=1762165839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r+t/oTmZjxhzW3SWsg5D/3k7ryEIEHaxHipwLWpbI60=;
+        b=TkQPf+gVBeLyDOeY7AUKdc6aNYRSiJQ42lEysdfkkVMQNRFxRtZ7NSl9mZ6Eka54Vn
+         gR/6nGSjhqOnjB56ZpTgilZDjjjavZCEMzk/D+qBulwkDH6HW5ZuqDCq6IBER58VDmX3
+         ISn3/w/miy5FfC/vghibTGuewgDDVH2nsNtrIW5929Wsxs8uNoC8lpEFPPDiUHH5aGYl
+         WPY41cvLkIi6al/VtW2uKMgA1EBbhuboJv11BTuuuE4+mTUShqOrZp+s6acifqbF6mJX
+         BjmKUxTmITsBXOowbcgLfwkIrPECE5EwI4d2149zY1839FDYPhf0sVyuod8xvg5XpNqu
+         cpVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLGXWw5kBy2BPzmBsImuMbpKA0ruiMUZIrqJ6rPB0IUFsawF8t1ShrzDZ2hGK3wVmGxmYWadNtuo+7/dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQtvbKcwXwjUYORGIecQcNQ9S5UHpy7WC41wydSlYyxqMy6vcV
+	d/o2Lcn9jISZfdO3THIh6mWsQRmOo0xHGn4p/BT0JjW1QYirLpeBY8VNv1W3caaerpszSvMrtoC
+	nEiQauS9Yjsi+WSpqONVSr50dmcku4Zk=
+X-Gm-Gg: ASbGncuM+c9JjHIPI8XdMcVY/9Pcq2T8+V72he1fsWTImJCyQXjEo2xXr1FWhzIw0Bp
+	IkgEIfWQow0XzyJeXXoK064bHsA4mdb2poiSgxrfmmRxP4sBFgSf3CZd47iGXdukFi/UOBFYsVS
+	pRPL2J4ggWEM2ElWgKcZVTTtkJVVsE7I9bI2QzIQMzd4T9FsqUE8+uM9FoXT1oe7JoeJ3Bi2ih7
+	W7s6L1JHtsGmk4KUfnS/+CD8sGyiRVq8edjcmND/ngLxpjegR/Maj406/vHenGBpwzaXgU=
+X-Google-Smtp-Source: AGHT+IHLxFJ3SPEDNoyMay98zhNlSRUKkyfFmuSirmfTIVuYNM52PHBBa3Zie8g2ZOnRY/ZMCMowauQRHmA5eHcm2CY=
+X-Received: by 2002:a17:907:9448:b0:b04:626e:f43d with SMTP id
+ a640c23a62f3a-b64751284f6mr3751346266b.47.1761561038573; Mon, 27 Oct 2025
+ 03:30:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 0/9] Add thermal sensor driver support for
- Mediatek MT8196
-To: Laura Nao <laura.nao@collabora.com>, srini@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- matthias.bgg@gmail.com
-Cc: nfraprado@collabora.com, arnd@arndb.de, colin.i.king@gmail.com,
- u.kleine-koenig@baylibre.com, andrew-ct.chen@mediatek.com,
- lala.lin@mediatek.com, bchihi@baylibre.com, frank-w@public-files.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20251016142158.740242-1-laura.nao@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251016142158.740242-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251026123923.1531727-1-caojunjie650@gmail.com>
+ <20251026123923.1531727-2-caojunjie650@gmail.com> <c17c10d4-cc1f-46fd-8719-e7bb9ffa91ba@kernel.org>
+ <CAK6c68gqHMR-FpH3MY9E_9R+V0J75V9zOii=x81e+bRcnBYOig@mail.gmail.com> <c32970a8-c1d1-4130-839b-981bca5373f3@kernel.org>
+In-Reply-To: <c32970a8-c1d1-4130-839b-981bca5373f3@kernel.org>
+From: Junjie Cao <caojunjie650@gmail.com>
+Date: Mon, 27 Oct 2025 18:29:01 +0800
+X-Gm-Features: AWmQ_bmSyDTyEE0NzC1P6-5KqVAikLVF9X2J_Ed-gcKZn6A6nKVOVFcs4LVP9Cc
+Message-ID: <CAK6c68iV2qUFEp_ujWwKYFmgt261rvQNK8Jo5Wjt-dCRbG_BVw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: leds: backlight: Add Awinic AW99706 backlight
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 16/10/25 16:21, Laura Nao ha scritto:
-> This patch series extends the MediaTek LVTS thermal driver to support the
-> MT8196 SoC.
-> 
-> MT8196 requires a different implementation of the lvts_temp_to_raw()
-> function.
-> 
-> To support this, the series introduces:
-> 
-> - A new struct lvts_platform_ops to allow platform-specific
->    conversion logic between raw sensor values and temperature
-> - A variant of the lvts_temp_to_raw() implementation
-> - Platform data and controller definitions for MT8196
-> 
-> Link to v2: https://lore.kernel.org/all/20250730152128.311109-1-laura.nao@collabora.com/
-> 
-> Changes in v3:
-> - Make ops in struct lvts_data a pointer to const struct lvts_platform_ops
-> - Changed mediatek,mt8188-efuse const entry in eFuse binding to an enum
-> with mediatek,mt8196-efuse and mediatek,mt8188-efuse, dropped mediatek,mt8196-efuse
-> const entry
-> 
+On Mon, Oct 27, 2025 at 4:38=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 27/10/2025 07:58, Junjie Cao wrote:
+> > On Sun, Oct 26, 2025 at 9:48=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+> >> On 26/10/2025 13:39, Junjie Cao wrote:
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  enable-gpios:
+> >>> +    description: GPIO to use to enable/disable the backlight (HWEN p=
+in).
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  awinic,dim-mode:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: >
+> >>> +      Select dimming mode of the device.
+> >>> +        0 =3D Bypass mode.
+> >>> +        1 =3D DC mode.
+> >>> +        2 =3D MIX mode.
+> >>> +        3 =3D MIX-26k.
+> >>> +    enum: [0, 1, 2, 3]
+> >>> +    default: 1
+> >>> +
+> >>> +  awinic,sw-freq:
+> >>
+> >> Please use proper units, see:
+> >> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas=
+/property-units.yaml
+> >> and other examples
+> >>
+> >> Same everywhere else.
+> >>
+> >
+> > ACK
+> >
+> >>
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: Boost switching frequency in kHz.
+> >>> +    enum: [300, 400, 500, 600, 660, 750, 850, 1000, 1200, 1330, 1500=
+, 1700]
+> >>> +    default: 750
+> >>> +
+> >>> +  awinic,sw-ilmt:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: Switching current limitation in mA.
+> >>> +    enum: [1500, 2000, 2500, 3000]
+> >>> +    default: 3000
+> >>> +
+> >>> +  awinic,iled-max:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: Maximum LED current setting in uA.
+> >>> +    minimum: 5000
+> >>> +    maximum: 50000
+> >>> +    multipleOf: 500
+> >>> +    default: 20000
+> >>> +
+> >>> +  awinic,uvlo-thres:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: UVLO(Under Voltage Lock Out) in mV.
+> >>> +    enum: [2200, 5000]
+> >>> +    default: 2200
+> >>> +
+> >>> +  awinic,fade-time:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: Fade In/Out Time(per step) in us.
+> >>> +    enum: [8, 16, 32, 64, 128, 256, 512, 1024]
+> >>
+> >> Why would this be fixed setting? This really looks like runtime, drop.
+> >>
+> >
+> > Yes, it is fixed. I am quoting this from the datasheet.
+>
+> Fixed per board.
+>
+>
+> > AW99706B provides Fade in/out mode to transform backlight from one brig=
+htness
+> > to another or turn on/off backlight with a fixed slope. Writing 0b00 in=
+to
+> > RAMP_CTR (CFG 0x06) to enter Fade in/out mode, and the the slope of cur=
+rent
+> > transition can be set in FADE_TIME (CFG 0x06).
+> >
+> >>> +    default: 16
+> >>> +
+> >>> +  awinic,slope-time:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: Slope time in ms.
+> >>
+> >> Slope of what?
+> >>
+> >
+> > Ramp time in slope mode, it is retained from downstream drivers, it wil=
+l
+> > be more clear in the next version.
+> >
+> >>> +    enum: [8, 24, 48, 96, 200, 300, 400, 500]
+> >>> +    default: 300
+> >>> +
+> >>> +  awinic,ramp-ctl:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: >
+> >>> +      Select ramp control and filter of the device.
+> >>> +        0 =3D Fade in/fade out.
+> >>> +        1 =3D Light filter.
+> >>> +        2 =3D Medium filter.
+> >>> +        3 =3D Heavy filter.
+> >>> +    enum: [0, 1, 2, 3]
+> >>> +    default: 2
+> >>> +
+> >>> +  awinic,brt-mode:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: >
+> >>> +      Select brightness control of the device.
+> >>> +        0 =3D PWM.
+> >>> +        1 =3D IIC.
+> >>> +        2 =3D IIC x PWM.
+> >>> +        3 =3D IIC x PWM(P-ramp).
+> >>> +    enum: [0, 1, 2, 3]
+> >>> +    default: 1
+> >>> +
+> >>> +  awinic,onoff-time:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    description: Turn on/off time(per step) in ns.
+> >>> +    enum: [250, 500, 1000, 2000, 4000, 8000, 16000]
+> >>
+> >> Not a DT property.
+> >>
+> >
+> > It is mandatory in the downstream driver, I keep it.
+>
+> Huh? I don't care about downstream driver. Again, not a DT property. You
+> cannot add here runtime properties and when, we tell you that, you just
+> ignore our review.
+>
+> NAK
+>
 
-I think this series is ready to be picked.
+My apologies for the misunderstanding and my poorly worded previous
+comment. I absolutely did not intend to ignore your review.
 
-Please don't let this slip through the cracks.
+I mentioned the "downstream driver" only to explain why I had originally
+included the property.
+
+I now understand your point clearly. I will remove them in the next
+version.
+
+Thanks for your fast reviews and for clarifying this principle for me.
+
+>
+> >
+> > The following is the description about it,
+> >
+> > If the value in ONOFF_CTR(CFG 0x08 [4:3]) is 0b00, the turning on/off r=
+amp of
+> > AW99706B is soft start and fast end. In this mode, the ramp time can be
+> > programmed by ONOFF_TIME (CFG 0x08 [2:0]).
+> >
+> >>> +    default: 2000
+> >>> +
+> >>> +required:
+> >>> +  - compatible
+> >>> +  - reg
+> >>> +  - enable-gpios
+> >>> +
+> >>> +unevaluatedProperties: false
+> >>> +
+> >>> +examples:
+> >>> +  - |
+> >>> +    #include <dt-bindings/gpio/gpio.h>
+> >>> +
+> >>> +    i2c {
+> >>> +        #address-cells =3D <1>;
+> >>> +        #size-cells =3D <0>;
+> >>> +
+> >>> +        aw99706@76 {
+> >>> +            compatible =3D "awinic,aw99706";
+> >>> +            reg =3D <0x76>;
+> >>> +            enable-gpios =3D <&tlmm 88 GPIO_ACTIVE_HIGH>;
+> >>
+> >> Where are other properties from common.yaml? Looks like you re-invente=
+d
+> >> some parts.
+> >>
+> >
+> > Sorry, I forgot it, when writing the bindings, I used ktz8866.yaml as a
+> > template. I  should have dropped the common.yaml. This driver does
+> > not require other properties in common.yaml.
+>
+>
+> I don't care about driver much, but anyway it should use common.yaml.
+> Please read the feedback very carefully.
+>
+
+ACK
 
 Regards,
-Angelo
-
-> Laura Nao (9):
->    dt-bindings: thermal: mediatek: Add LVTS thermal controller support
->      for MT8196
->    thermal/drivers/mediatek/lvts: Make number of calibration offsets
->      configurable
->    thermal/drivers/mediatek/lvts: Guard against zero temp_factor in
->      lvts_raw_to_temp
->    thermal: mediatek: lvts: Add platform ops to support alternative
->      conversion logic
->    thermal/drivers/mediatek/lvts: Add lvts_temp_to_raw variant
->    thermal/drivers/mediatek/lvts: Add support for ATP mode
->    thermal/drivers/mediatek/lvts: Support MSR offset for 16-bit
->      calibration data
->    thermal/drivers/mediatek/lvts_thermal: Add MT8196 support
->    dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
-> 
->   .../bindings/nvmem/mediatek,efuse.yaml        |   4 +-
->   .../thermal/mediatek,lvts-thermal.yaml        |   2 +
->   drivers/thermal/mediatek/lvts_thermal.c       | 305 ++++++++++++++++--
->   .../thermal/mediatek,lvts-thermal.h           |  26 ++
->   4 files changed, 314 insertions(+), 23 deletions(-)
-> 
-
+Junjie
 
