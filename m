@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-872206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDD9C0F8F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:13:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74B7C0F900
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D5213476F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5706419C3329
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B7C314D16;
-	Mon, 27 Oct 2025 17:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98457315D2A;
+	Mon, 27 Oct 2025 17:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="SL0hpBWp"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="oEnRC4Db"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6EF30C62D;
-	Mon, 27 Oct 2025 17:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.164
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761585207; cv=pass; b=g94ngc3iw7kqr1EJEeu4IdiCfcXCzgR+wb/SWWprBhsp59b1KGYmdVMypRoWhpsZSVZd89FtCax1L5or3a7KmN/EFe4v1lrQecc+/d4+Ivhn0oJ/XEbJ5EbpjJSWGVsFePvDt/Hy3Td949kiNAub7fG4rVk/iI2qNu26+UKLe6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761585207; c=relaxed/simple;
-	bh=04iCvrZIlceUJNdaDAwAdOObmTgIe0zCKRadwa5hDAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZbdUiQAbxR16U9RCtMns+Rggr8zKYKcxyeSKAv/Sj5eatJgixSPSUu95sNAQYGh6V86jInQLs5upaWxyQ9Vwd7x2F4ICW5bd0DSPEWv+vnfNRpP2C7228D120LPbcidXINhdxhj2P06No61LNMGmpCm7AqxZdxX+I2g8kIRp6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=SL0hpBWp; arc=pass smtp.client-ip=81.169.146.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1761585147; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=iSFk4OiuvL8e8Pzfi5fiJdD+jKLneJKnfcb8lL0E4JI+uUuy1Dc59tRlf7grT56CJT
-    hlPyr8x6uZ9wvbSOB80yDuVVNpWPf4RkOI4kEHnhoidJqSTf6lcfnpf2ukt+tGQxLoYD
-    jeZHGQAPVFmGHiRKMmDsblVWgAJyx7vw4VSzqeR/pQRqrn7uYmmbftwgSFZrdv8iWXVC
-    q9iagLSBh/HqG87tvPHzK1HxVjARZXcw2DcBJRUVGEqqsMv5neueDvzNNjkuNxU9uQDK
-    nLmu46nl0yqeqNQ2r84soFghuhnQVwfpksSAIrk3BdwpuS+oSO4KhL47VjNfkgFYLOcZ
-    W65A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1761585147;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=13Eh27o4UqsOQ34xi8S2wPYjOon2zusfqlo4MpiYA2k=;
-    b=cc/uHztL9qfmFGxvFRvXRx9jH9UoYtEnUjx4QioYc9Nt13EoyGJqXMHwJhZW/c/JBy
-    X7ZHV8VNKQOezLsU6FCNK3UwxfL2RYp78dhXRQM4/hYjbZ+JyEQoqN721lE0Y0ZAG8rn
-    93yzMW8gXVidoAQpQ03pbFb94doSwTvzsKT+lmBSa7jdOFJrAAMliXK58sJ4BlL7yLxS
-    B2jXtAnT37s5BV0a8Rq+F5K4CavuJubSleN7dQC/3g33mRoSfFLweLgrAiCC9mH/FZTj
-    Dz2CY4Xdpd4qVm8kDuOxT20SSQJjDWApdzGH5m/o+6JwVR3tx6C/x8A1PG6SQDeeHJej
-    hrOA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1761585147;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=13Eh27o4UqsOQ34xi8S2wPYjOon2zusfqlo4MpiYA2k=;
-    b=SL0hpBWp9K5XPn08SzhMWLoaM3HAMUicwwKckYD30tB43wSmf3e8dn4uXATn4kLlPh
-    RZFVde1tdkEbWD+9/aFM65RhN1Oqlqj05eOTEj9gSBl/M98fgVd+6XZsb0Zt1ThPhoCQ
-    GUh74HjFHdCj0MPQH9fmMCbFi4+qh+dWi/rzHqyXWIlf++BrJwg7nn0b+X6/cvMo865i
-    IrQAEjPI50xpcmTl6TnDQTjpmFXwN9hw0JZ7DwMombbaCRVOjr0+IL53zlOMl2dD7XRw
-    uFWbnY0UPYH0sfXJE1+4QJ6bxd7tlG2hHGjlQL9JBnyyEtbYDgBh9tMmJyoaqnKLVawI
-    Y7VQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr4thIFiqT9BURIy+l7Rng"
-Received: from [192.168.178.48]
-    by smtp.strato.de (RZmta 53.4.2 DYNA|AUTH)
-    with ESMTPSA id e2886619RHCPBv7
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 27 Oct 2025 18:12:25 +0100 (CET)
-Message-ID: <3aa95b26-7801-476e-840f-5976b0ee11c1@xenosoft.de>
-Date: Mon, 27 Oct 2025 18:12:24 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB0F30FC05
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761585174; cv=none; b=Np6pRmmRdHiY0UE7XQchzH8HPzuqmK1iedcQ3RIx6EaZMfoaZb728WX9wqKtTuHAgXl8pVY2yo8NxJ2owdSLSeA7ngs3w5Vn+G3yWVtbePTZ4J62AplJRX8tbt4JGM3nYxpvqc2dBRwKng+XGsNGMYsYpqw1+2HhL92PEWVl9m8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761585174; c=relaxed/simple;
+	bh=DDUOz6pjS0RFP4FR/CFhn3TMmkuBCJmIvoPoMyDYCzk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KlE1UHCiQKjuyJgvJs7+SjFLiTXqhwTI2dTfYkv6I1z5CrzCZRadYm4s5DRER8lbjSKR2XU6lfa+wDb6r5JLK0ypluTzdSPQ7kqIR+QMadcr3c95qRWPvud7tckaVsOuj8WEbDCjURDLdxnL6pCgj8egeynouYPDTXmwQuidsTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=oEnRC4Db; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 473BA68ECC7;
+	Mon, 27 Oct 2025 18:12:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761585164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rVfZIHqcFGwmFDGY9gRpKS0fz36XexTpMSYfxIv3Xkk=;
+	b=oEnRC4DbwPWXDWKFgpZ2SqaFL6q2n3B9p09ycmim6OYvGhAlaE9MQOgiWEwJb6c7Zk3rCG
+	MFtxPFH1b8oQVln1BUNDF1APUQw2Yx0ED809EhFic6EqWzHcSLMKp7kxtO7ZAPgFyxYF5k
+	JLQmTrkCXevghrQDat0EAMltxXGxs3OvcNJN+aQea0qhjjch5TFdKtPWdHdx7WF1BKhxtn
+	TCOzoa6XPJTqbNwNvXUVoNlwkep6RYZ1hIbV1koR4a6QKnmMR5Ki/DJQK/SK4JVVaGYOsd
+	MJpCrW4Mf2NErbdeD5SjnRQBBfwkqjDNOpX7XteeZ3zFk89Q4V6AicRLh4F/xQ==
+Message-ID: <7d1bf3eacd59a3cea1330a16bf7a9a328cd6d806.camel@svanheule.net>
+Subject: Re: [PATCH v6 3/8] dt-bindings: leds: Binding for RTL8231 scan
+ matrix
+From: Sander Vanheule <sander@svanheule.net>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Walle <mwalle@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>,  Bartosz Golaszewski	 <brgl@bgdev.pl>,
+ linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek
+ <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 27 Oct 2025 18:12:43 +0100
+In-Reply-To: <20251026215957.GA2994223-robh@kernel.org>
+References: <20251021142407.307753-1-sander@svanheule.net>
+	 <20251021142407.307753-4-sander@svanheule.net>
+	 <20251026215957.GA2994223-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-To: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>
-Cc: linux-pci@vger.kernel.org,
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
- FUKAUMI Naoki <naoki@radxa.com>, Herve Codina <herve.codina@bootlin.com>,
- Diederik de Haas <diederik@cknow-tech.com>, Dragan Simic
- <dsimic@manjaro.org>, linuxppc-dev@lists.ozlabs.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, Shawn Lin <shawn.lin@rock-chips.com>,
- Frank Li <Frank.li@nxp.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
- mad skateman <madskateman@gmail.com>, hypexed@yahoo.com.au
-References: <20251024203924.GA1361677@bhelgaas>
-Content-Language: de-DE
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-In-Reply-To: <20251024203924.GA1361677@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi All,
+Hi Rob,
 
-I activated CONFIG_PCIEASPM and CONFIG_PCIEASPM_DEFAULT again for the 
-RC3 of kernel 6.18. Unfortunately my AMD Radeon HD6870 doesn't work with 
-the latest patches.
+On Sun, 2025-10-26 at 16:59 -0500, Rob Herring wrote:
+> On Tue, Oct 21, 2025 at 04:23:58PM +0200, Sander Vanheule wrote:
+> > +=C2=A0 realtek,led-scan-mode:
+> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/string
+> > +=C2=A0=C2=A0=C2=A0 description: |
+>=20
+> You don't need '|' if there is no formatting to preserve.
 
-But that doesn't matter because we disable the above kernel options by 
-default. We don't need power management for PCI Express because of boot 
-issues and performance issues.
+Will drop it.
 
-Cheers,
-Christian
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Specify the scanning mode the chip shou=
+ld run in. See general
+> > description
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for how the scanning matrices are wired=
+ up.
+> > +=C2=A0=C2=A0=C2=A0 enum: [single-color, bi-color]
+>=20
+> Wouldn't 'single' and 'bi' be sufficient?
+
+I used these values to align with the datasheet:
+
+   En_bicolor
+   1'b0: Uses single-color LED when in Scan LED mode
+   1'b1: Uses bi-color LED when in Scan LED mode
+
+If you would like a single word, I would prefer [single, dual] and mention =
+the
+single-color/bi-color mapping in the description.
+
+>=20
+> > +
+> > +patternProperties:
+> > +=C2=A0 "^led@":
+>=20
+> You need to define the unit-address format:
+>=20
+> "^led@([1-2]?[0-9]|3[0-1]),[0-2]$"
+
+Hadn't considered that yet. I'll update this too.
+
+
+Best,
+Sander
 
