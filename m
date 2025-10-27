@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-870946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8CFC0C0DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:16:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB1EC0C0E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:16:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C65354EC30A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:16:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EF28634AC65
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2748C23507C;
-	Mon, 27 Oct 2025 07:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239632DEA67;
+	Mon, 27 Oct 2025 07:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GFxIemBq"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hMAMY1ca"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529C32DCF6F
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C712DE1FA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 07:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761549331; cv=none; b=igT91qmkjDFiQR4xrAfP6noF2alNzSaXVuKDvobSGqkyOu2+RsVFN/oytU0MzxKqxyBUWR5L3aBU7eNPS82wUWEfAsUbh/jDSIjASvEeCOlnzi7JOPUkjkHK+3QqNGz9GJbvBkIPJiHagrkYn14xL6DkhzLxUgeau9f403YlwIk=
+	t=1761549333; cv=none; b=jN4KfgWVDD3DNUKDzM+1S5m6vVt28ZoyHUKXUcKRqma9fYLOy8NMN8ThPW0EmADjnRfcycQ18mfbwYuuDrk1q6spnAu36UlzFn2JXd5ZYA8TuNmvD9UzClNM+JMyw32yEeVsP703JzMi/zgzro5SAHYENTN2jsWL+hNhpcp3ufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761549331; c=relaxed/simple;
-	bh=1xqSfIjhARIvhD1NRTu1KpharM50stBLYEec9APWDUw=;
+	s=arc-20240116; t=1761549333; c=relaxed/simple;
+	bh=GI8sZqXt3KCf55k3GW8kAFhfrSAAlqp6DwxYahiWZR0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=prorbZds2+3Yvh894a01lIDZsLcNgjqf7JXkw4jMYkojCwuSR86er03FtMhIY27UicqiR33nn8Y2hox3eg4G7mlTg529BTRWApwyv3PcmMk2K7jvpZj7MqffllnbomcAe1mjzT1k/z2ti6Ca/jsS4lGp6Jofcdh7ivFwgeOKJno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GFxIemBq; arc=none smtp.client-ip=95.215.58.176
+	 MIME-Version; b=s2BknW7UXt4EXk/CTJTSs039L3jyDxknysRUU9sgQR8nRkoTJ34rE0DiQ5Lk8CaXhUTLcrECmhrsYig0XX63yS5pyO7grVnYW+kRqTJfPuO79ynEHFyJ0IK9UFeFro+fckq5QX4bs0eUGxK5DdK4NFr5qTmiT+TrDNn4ufjBAZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hMAMY1ca; arc=none smtp.client-ip=95.215.58.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761549327;
+	t=1761549329;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Bklfkdd+gUBn/KFfd53LyvTdVPQUPZ3+XSb7opj3rSA=;
-	b=GFxIemBqpVVhSqYyRlmCkb+QgrP/KSM3t3oL3/8Xhxiu4rlQpkHBqIRw2bDpQr+KBec6gv
-	dNxF+CG+K8uHOF64bFFDk/I6QvHgMC1WyEByds/nqokRVx9hsN0Iv8RM2cVEMgQ+1l7N/N
-	U/QT2gy8w6I0S+1rF7Cr10HpJL5UbA0=
+	bh=o+zbYQSRYbpuT9HfdZ1yegnfGPQwfg9RHt4r+8oTMtI=;
+	b=hMAMY1cahDZgyg1+Rv8G4lE+ytC2BOtz+S6sdcQpHkG3pJxaSVIXxsu/v8Jw/aAbC1K1lr
+	BAi1fxFT4rMM6EQvCYBwaSl27rSTehlFsBmCk3ijpzCoinknp3DYfzSuKWyFn2ty60Bmdv
+	Dq1yBTAYxo5cugpKn0ZTB1w30BH6U/0=
 From: chenxiaosong.chenxiaosong@linux.dev
 To: sfrench@samba.org,
 	smfrench@gmail.com,
@@ -51,9 +51,9 @@ Cc: linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	ZhangGuoDong <zhangguodong@kylinos.cn>,
 	ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: [PATCH v4 03/24] smb: move get_rfc1002_len() to common/smbglob.h
-Date: Mon, 27 Oct 2025 15:12:55 +0800
-Message-ID: <20251027071316.3468472-4-chenxiaosong.chenxiaosong@linux.dev>
+Subject: [PATCH v4 04/24] smb: move SMB1_PROTO_NUMBER to common/smbglob.h
+Date: Mon, 27 Oct 2025 15:12:56 +0800
+Message-ID: <20251027071316.3468472-5-chenxiaosong.chenxiaosong@linux.dev>
 In-Reply-To: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
 References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
 Precedence: bulk
@@ -67,152 +67,57 @@ X-Migadu-Flow: FLOW_OUT
 
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 
-Rename get_rfc1002_length() to get_rfc1002_len(), then move duplicate
-definitions to common header file.
+Replace the constant of client with SMB1_PROTO_NUMBER, then move the
+macro definition from server/smb_common.h to common/smbglob.h.
 
 Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/smb/client/cifsglob.h      | 6 ------
- fs/smb/client/cifssmb.c       | 6 +++---
- fs/smb/client/cifstransport.c | 8 ++++----
- fs/smb/client/connect.c       | 2 +-
- fs/smb/common/smbglob.h       | 5 +++++
- fs/smb/server/smb_common.h    | 5 -----
- 6 files changed, 13 insertions(+), 19 deletions(-)
+ fs/smb/client/misc.c       | 2 +-
+ fs/smb/common/smbglob.h    | 2 ++
+ fs/smb/server/smb_common.h | 1 -
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index accca43f7af5..4d0aca8097c1 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -670,12 +670,6 @@ struct cifs_mnt_data {
- 	int flags;
- };
- 
--static inline unsigned int
--get_rfc1002_length(void *buf)
--{
--	return be32_to_cpu(*((__be32 *)buf)) & 0xffffff;
--}
--
- struct TCP_Server_Info {
- 	struct list_head tcp_ses_list;
- 	struct list_head smb_ses_list;
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 7da194f29fef..703c5a8ed924 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -614,7 +614,7 @@ CIFSSMBEcho(struct TCP_Server_Info *server)
- 
- 	iov[0].iov_len = 4;
- 	iov[0].iov_base = smb;
--	iov[1].iov_len = get_rfc1002_length(smb);
-+	iov[1].iov_len = get_rfc1002_len(smb);
- 	iov[1].iov_base = (char *)smb + 4;
- 
- 	rc = cifs_call_async(server, &rqst, NULL, cifs_echo_callback, NULL,
-@@ -1443,7 +1443,7 @@ cifs_async_readv(struct cifs_io_subrequest *rdata)
- 	rdata->iov[0].iov_base = smb;
- 	rdata->iov[0].iov_len = 4;
- 	rdata->iov[1].iov_base = (char *)smb + 4;
--	rdata->iov[1].iov_len = get_rfc1002_length(smb);
-+	rdata->iov[1].iov_len = get_rfc1002_len(smb);
- 
- 	rc = cifs_call_async(tcon->ses->server, &rqst, cifs_readv_receive,
- 			     cifs_readv_callback, NULL, rdata, 0, NULL);
-@@ -1808,7 +1808,7 @@ cifs_async_writev(struct cifs_io_subrequest *wdata)
- 	/* 4 for RFC1001 length + 1 for BCC */
- 	iov[0].iov_len = 4;
- 	iov[0].iov_base = smb;
--	iov[1].iov_len = get_rfc1002_length(smb) + 1;
-+	iov[1].iov_len = get_rfc1002_len(smb) + 1;
- 	iov[1].iov_base = (char *)smb + 4;
- 
- 	rqst.rq_iov = iov;
-diff --git a/fs/smb/client/cifstransport.c b/fs/smb/client/cifstransport.c
-index e98b95eff8c9..4c4f5befb6d3 100644
---- a/fs/smb/client/cifstransport.c
-+++ b/fs/smb/client/cifstransport.c
-@@ -165,7 +165,7 @@ SendReceiveNoRsp(const unsigned int xid, struct cifs_ses *ses,
- 	int resp_buf_type;
- 
- 	iov[0].iov_base = in_buf;
--	iov[0].iov_len = get_rfc1002_length(in_buf) + 4;
-+	iov[0].iov_len = get_rfc1002_len(in_buf) + 4;
- 	flags |= CIFS_NO_RSP_BUF;
- 	rc = SendReceive2(xid, ses, iov, 1, &resp_buf_type, flags, &rsp_iov);
- 	cifs_dbg(NOISY, "SendRcvNoRsp flags %d rc %d\n", flags, rc);
-@@ -177,7 +177,7 @@ int
- cifs_check_receive(struct mid_q_entry *mid, struct TCP_Server_Info *server,
- 		   bool log_error)
+diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+index e10123d8cd7d..340c44dc7b5b 100644
+--- a/fs/smb/client/misc.c
++++ b/fs/smb/client/misc.c
+@@ -318,7 +318,7 @@ static int
+ check_smb_hdr(struct smb_hdr *smb)
  {
--	unsigned int len = get_rfc1002_length(mid->resp_buf) + 4;
-+	unsigned int len = get_rfc1002_len(mid->resp_buf) + 4;
- 
- 	dump_smb(mid->resp_buf, min_t(u32, 92, len));
- 
-@@ -370,7 +370,7 @@ SendReceive(const unsigned int xid, struct cifs_ses *ses,
- 		goto out;
- 	}
- 
--	*pbytes_returned = get_rfc1002_length(midQ->resp_buf);
-+	*pbytes_returned = get_rfc1002_len(midQ->resp_buf);
- 	memcpy(out_buf, midQ->resp_buf, *pbytes_returned + 4);
- 	rc = cifs_check_receive(midQ, server, 0);
- out:
-@@ -554,7 +554,7 @@ SendReceiveBlockingLock(const unsigned int xid, struct cifs_tcon *tcon,
- 		goto out;
- 	}
- 
--	*pbytes_returned = get_rfc1002_length(midQ->resp_buf);
-+	*pbytes_returned = get_rfc1002_len(midQ->resp_buf);
- 	memcpy(out_buf, midQ->resp_buf, *pbytes_returned + 4);
- 	rc = cifs_check_receive(midQ, server, 0);
- out:
-diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-index dd12f3eb61dc..22f37ae7a66a 100644
---- a/fs/smb/client/connect.c
-+++ b/fs/smb/client/connect.c
-@@ -1299,7 +1299,7 @@ cifs_demultiplex_thread(void *p)
- 		 * The right amount was read from socket - 4 bytes,
- 		 * so we can now interpret the length field.
- 		 */
--		pdu_length = get_rfc1002_length(buf);
-+		pdu_length = get_rfc1002_len(buf);
- 
- 		cifs_dbg(FYI, "RFC1002 header 0x%x\n", pdu_length);
- 		if (!is_smb_response(server, buf[0]))
+ 	/* does it have the right SMB "signature" ? */
+-	if (*(__le32 *) smb->Protocol != cpu_to_le32(0x424d53ff)) {
++	if (*(__le32 *) smb->Protocol != SMB1_PROTO_NUMBER) {
+ 		cifs_dbg(VFS, "Bad protocol string signature header 0x%x\n",
+ 			 *(unsigned int *)smb->Protocol);
+ 		return 1;
 diff --git a/fs/smb/common/smbglob.h b/fs/smb/common/smbglob.h
-index 84aa6826c3ea..b258199b0d75 100644
+index b258199b0d75..fa3d30dc6022 100644
 --- a/fs/smb/common/smbglob.h
 +++ b/fs/smb/common/smbglob.h
-@@ -40,6 +40,11 @@ struct smb_version_values {
- 	size_t		create_posix_size;
- };
+@@ -9,6 +9,8 @@
+ #ifndef _COMMON_SMB_GLOB_H
+ #define _COMMON_SMB_GLOB_H
  
-+static inline unsigned int get_rfc1002_len(void *buf)
-+{
-+	return be32_to_cpu(*((__be32 *)buf)) & 0xffffff;
-+}
++#define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
 +
- static inline void inc_rfc1001_len(void *buf, int count)
- {
- 	be32_add_cpu((__be32 *)buf, count);
+ struct smb_version_values {
+ 	char		*version_string;
+ 	__u16		protocol_id;
 diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-index 50235c7cca57..f126c61c7275 100644
+index f126c61c7275..c3258a3231e4 100644
 --- a/fs/smb/server/smb_common.h
 +++ b/fs/smb/server/smb_common.h
-@@ -423,9 +423,4 @@ unsigned int ksmbd_server_side_copy_max_chunk_size(void);
- unsigned int ksmbd_server_side_copy_max_total_size(void);
- bool is_asterisk(char *p);
- __le32 smb_map_generic_desired_access(__le32 daccess);
--
--static inline unsigned int get_rfc1002_len(void *buf)
--{
--	return be32_to_cpu(*((__be32 *)buf)) & 0xffffff;
--}
- #endif /* __SMB_COMMON_H__ */
+@@ -151,7 +151,6 @@
+ 		FILE_EXECUTE | FILE_DELETE_CHILD | \
+ 		FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES)
+ 
+-#define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
+ #define SMB_COM_NEGOTIATE		0x72
+ #define SMB1_CLIENT_GUID_SIZE		(16)
+ 
 -- 
 2.43.0
 
