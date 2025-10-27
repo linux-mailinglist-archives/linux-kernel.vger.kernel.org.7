@@ -1,121 +1,163 @@
-Return-Path: <linux-kernel+bounces-872298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3943BC0FDB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:10:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE110C0FDAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 19:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DBFB3A1D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:06:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46A6C4FC20C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077B031960D;
-	Mon, 27 Oct 2025 18:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D30D31B800;
+	Mon, 27 Oct 2025 18:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="ca9S0yEC"
-Received: from mail13.out.titan.email (mail13.out.titan.email [18.198.78.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbNT1tbW"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B6A314D16
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.198.78.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006E031AF30
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 18:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588417; cv=none; b=F4MjNkzCa+yB+TQcP68yHslycS9NyUNKAW3lLGUvSegc6NszwVFVRl3lDJxvNLbkgHCiRKZj9itNGLwD5YCR7KmBv7YPgdspQTdMPI8pjw89du5EmuC4gjgv9vqOR1tHriPBeZyyIz9jDWoYuZZYT8vFIKCFYHtfrtsb+hv80j0=
+	t=1761588422; cv=none; b=REr/9KHswAc0ePxdFLZ3EAfMa+1DYOTJR21FtarQnvNC9dtXoH20Wsw3602Yi6VwdVq8PdAwDcYtjxXp5tkTfAyO8xT2OhbQwVzm/aVuJ8STR4+KznsgoYsj2EcXPdqvFpC5oo7iopqZ5psZFzVOiKCE6iYx5G3R6OiH6lET4ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588417; c=relaxed/simple;
-	bh=+hd9bb6phLoMieUc1q8gJN1P3JIvM7ZNg0Jv2rbCBAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pL+8VUKDXnSnpVcsWNBxFIg96wZBcGq0cslzKRQpFo578ka6oF0nZvQq6d7qUgtmGblnv2vvRBCspCebLy+5411yGh4FFI2JvTi0ZekomX5I2sihXGv280wmRoI1sSP/35WP33PrXDF7gZ2yoOhAv6OGnzkxM4orEQSaTBIqewU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=ca9S0yEC; arc=none smtp.client-ip=18.198.78.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out0101.titan.email (Postfix) with ESMTP id 4cwM063xGGz4vxJ;
-	Mon, 27 Oct 2025 18:06:46 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=lhqpZ1rlvY7nHMufUQetHLF9pj/jPmf9pd4VX3Kixhc=;
-	c=relaxed/relaxed; d=techsingularity.net;
-	h=mime-version:date:message-id:references:from:cc:in-reply-to:to:subject:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1761588406; v=1;
-	b=ca9S0yECM8Hyjvt96IDdCxmb4tkYmBsdHdS6swXKF2JyP3JPLYzCvBCOMMrLQ79H/3g+plC1
-	r18Wj1Vqfh+qRI7VA0RYtZAg6OCd7M/N7aipY85jKVzbxQ4kagU48FrtuxVUebqk4mDPnkHefcE
-	el7jp34ahZWJR9zu1OnVYRaE=
-Received: from techsingularity.net (ip-84-203-16-53.broadband.digiweb.ie [84.203.16.53])
-	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4cwM054yFQz4vxD;
-	Mon, 27 Oct 2025 18:06:45 +0000 (UTC)
-Date: Mon, 27 Oct 2025 18:06:39 +0000
-Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>, 
-	Doug Nelson <doug.nelson@intel.com>, Mohini Narkhede <mohini.narkhede@intel.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
- load balance is not due
-Message-ID: <4gvjwli7prddt5xkvqmbhrrcbpjph7b7dd6xcbbz7fudotgfib@5ytyxeo3b4ej>
-References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
- <CAKfTPtA7sLeddYsRU=uftcYt4RpEbWNHWx36tBDzGuPxu8oEmg@mail.gmail.com>
+	s=arc-20240116; t=1761588422; c=relaxed/simple;
+	bh=S5EJ9XcCqpHYV/G/pMTycm1y6FReoUK/jP8Ub0QdsKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ueJF7ETtVTxBVMrGSZhjqczcfhun8IB6h7uWtWJFpLiM73kIPOXX2VYNTk/gdm9bre1bS6RPYzir2GrO1/JXTymyU/o7IwiU2v3PTGBXTsFBEYWvUI0CYN12f90rbKNY1wq9C4JEWNXO79j6m57uoK36cx7VWaYJdKxaws7hyvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbNT1tbW; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4eb75e8e47eso56890341cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 11:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761588420; x=1762193220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K5tB+vgwG5bHZ8tPheIQQmyuiY0H1S/f7NnZas1yCE8=;
+        b=JbNT1tbWx5SDhJF2vPZ8GVYO+ZUKNMq14e8BD3gPZWNn2D1GnNq4KKGWi0iYlQpDqq
+         036PYCOwKj1e8h9cp77b2TYa1ev/3F2f8KpzX1AeiyvsR7hkEt2vXGlTTWo0q+tIM/ld
+         uuyEljbtGY+ZH/qmja3hlWpt+dRqkpZOIK/wJioJ73EaK1GCbiXgFpGABnv9dRyuiCoN
+         9lz9Wg/QM+ST33aLk2MFHl0UDUAGP61ovm/a3M+vA9bcoyNVd07zakGGu9yFMGLRLsZn
+         L45SCt0wsuZXnw4XW0cE3bOwTJrlVi3ULf/ilE/7GfqTrty5JUWPvsFvbVETJjaS4wwc
+         ccnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761588420; x=1762193220;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K5tB+vgwG5bHZ8tPheIQQmyuiY0H1S/f7NnZas1yCE8=;
+        b=cW71dYzE0De55mFaRRUicFVHNrR0odyuB/jhBZucj1I8f/6Jov4t8HH7zky/CO4oRN
+         XsPnGagUyNWXXdnCcjJjdTgei1Ox9QE6V0/25GhFsf/sX93XE2wcVBb9y5lKgXaFzwKj
+         HAJ/D6gYp3ouT7QSxFzjb7SphMpBoTl5Wk+QOM3cfiFkHuTIniYbuVuzV3d9NIe/Beid
+         nhc12XsrdedqFtzslzacAugE6ALhJ6JE9wW2QGXo1urCBl0b8SC9Pfov5yTCTMs7C1tt
+         PpTYZHN3MHDSnDXng+4AGkoqbEH9WAQGFlCbx/csFT7KpODIV8sjteJ6aM36TaWvGNxD
+         uNTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULZVpxhcXi41M7aVXaqPj0HdIooztWFS+7vltTgD1sV9uLTOfVeCJ9wU2CQmGo7vT0UMQZT7PEQw5Ce9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5WrUGbzImUB/o+KhEe8m/KtOWCtVosotbAgOSrIhTNV/et5P2
+	VSMBN89R1F4d87zVuqfnkdBo76cos6w2IrGTQLyusevmRfm2FO5VUf8F
+X-Gm-Gg: ASbGnctvXb9IjSjCGfa5gX6Q8kP1UWegdqcofJrBzoxyP7dvMpllHFdD5VB63AHEy/J
+	lKO4WEw+zcX4tC85LERI4QWSleKbemwhOIfUwxPKgnr8CjPuVD7AuM1GAFayOZ8+WLsunmPz/kT
+	H06oE0F+OUKMCTgxYCuI4+qoQtAJQsGdQy4dsVwYjTuCaeeK+nlVj2LdyuIyIUJRdL2sDtWs7xa
+	HZM3N6ERX/7p0yKkjNRN5vyIKREJfnBt7u4oWAZltng3sVNj0Z1iRvxmmODb11w61V8RbM1aVXT
+	n5IzgAgHOGICMAObWf0ct6pAmJItetzvEcM8rLQDVN9U6WoNujNhJvTlfIT/Y566yWjJR6oxZri
+	SCaT/WXTXTsDnnEfGOajkLgpHVsThJ1gFQ0Y+eQJL2eWbyjOaFPsX/lLQLA==
+X-Google-Smtp-Source: AGHT+IEHn9rjC5GIZfbJaC/Wtg4QIixDKg5Hpt/C2qQW9ZsqfAuXCErSqKYeOZ7HcP2rIQpvBj+Z5Q==
+X-Received: by 2002:a05:622a:1b20:b0:4ec:f017:9e26 with SMTP id d75a77b69052e-4ed089db331mr4530611cf.26.1761588419829;
+        Mon, 27 Oct 2025 11:06:59 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:8e26::ea0])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba37fa7b9sm55446871cf.17.2025.10.27.11.06.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 11:06:59 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Stanislaw Gruszka <stf_xl@wp.pl>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 wireless-next] wifi: rt2x00: check retval for of_get_mac_address
+Date: Mon, 27 Oct 2025 11:06:39 -0700
+Message-ID: <20251027180639.3797-2-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251027180639.3797-1-rosenp@gmail.com>
+References: <20251027180639.3797-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtA7sLeddYsRU=uftcYt4RpEbWNHWx36tBDzGuPxu8oEmg@mail.gmail.com>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1761588406345317458.2237.4472037527126828400@prod-euc1-smtp-out1002.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=Rqw/LDmK c=1 sm=1 tr=0 ts=68ffb4b6
-	a=SAet2ifMzLisiRUXZwfs3w==:117 a=SAet2ifMzLisiRUXZwfs3w==:17
-	a=Q9fys5e9bTEA:10 a=CEWIc4RMnpUA:10 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8
-	a=R_Myd5XaAAAA:8 a=jD4jJHs5_3joPnLVgjoA:9 a=PUjeQqilurYA:10
-	a=cvBusfyB2V15izCimMoJ:22 a=L2g4Dz8VuBQ37YGmWQah:22
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 06, 2025 at 03:51:34PM +0200, Vincent Guittot wrote:
-> On Wed, 16 Apr 2025 at 05:51, Tim Chen <tim.c.chen@linux.intel.com> wrote:
-> >
-> > At load balance time, balance of last level cache domains and
-> > above needs to be serialized. The scheduler checks the atomic var
-> > sched_balance_running first and then see if time is due for a load
-> > balance. This is an expensive operation as multiple CPUs can attempt
-> > sched_balance_running acquisition at the same time.
-> >
-> > On a 2 socket Granite Rapid systems enabling sub-numa cluster and
-> > running OLTP workloads, 7.6% of cpu cycles are spent on cmpxchg of
-> > sched_balance_running.  Most of the time, a balance attempt is aborted
-> > immediately after acquiring sched_balance_running as load balance time
-> > is not due.
-> >
-> > Instead, check balance due time first before acquiring
-> > sched_balance_running. This skips many useless acquisitions
-> > of sched_balance_running and knocks the 7.6% CPU overhead on
-> > sched_balance_domain() down to 0.05%.  Throughput of the OLTP workload
-> > improved by 11%.
-> >
-> > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > Reported-by: Mohini Narkhede <mohini.narkhede@intel.com>
-> > Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
-> 
-> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> 
+of_get_mac_address can return -EPROBE_DEFER when nvmem is not probed yet
+for whatever reason. In this case, nvmem mac assignments will not work.
 
-Reviewed-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+---
+ v2: add wireless-next tag. delete misleading function path comment.
+ drivers/net/wireless/ralink/rt2x00/rt2800lib.c |  4 +++-
+ drivers/net/wireless/ralink/rt2x00/rt2x00.h    |  2 +-
+ drivers/net/wireless/ralink/rt2x00/rt2x00dev.c | 10 ++++++++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
-I've been missing for a while and even now on reduced workload so I'm
-only looking at this patch now. It was never merged, but why? It looks
-like a no-brainer to avoid an atomic operation with minimal effort even
-if it only applies to balancing across NUMA domains.
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+index b264ed0af923..f07152fa3725 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+@@ -11011,7 +11011,9 @@ static int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
+ 	 * Start validation of the data that has been read.
+ 	 */
+ 	mac = rt2800_eeprom_addr(rt2x00dev, EEPROM_MAC_ADDR_0);
+-	rt2x00lib_set_mac_address(rt2x00dev, mac);
++	retval = rt2x00lib_set_mac_address(rt2x00dev, mac);
++	if (retval)
++		return retval;
 
-Performance looks better for a small number of workloads on multi-socket
-machines including some Zen variants. Most results were neutral which is
-not very surprising given the path affected. I made no effort to determine
-how hot this particular path is for any of the tested workloads but nothing
-obviously superceded this patch or made it irrelevant.
+ 	word = rt2800_eeprom_read(rt2x00dev, EEPROM_NIC_CONF0);
+ 	if (word == 0xffff) {
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00.h b/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+index 09b9d1f9f793..665887e9b118 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+@@ -1427,7 +1427,7 @@ static inline void rt2x00debug_dump_frame(struct rt2x00_dev *rt2x00dev,
+  */
+ u32 rt2x00lib_get_bssidx(struct rt2x00_dev *rt2x00dev,
+ 			 struct ieee80211_vif *vif);
+-void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr);
++int rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr);
 
--- 
-Mel Gorman
-SUSE Labs
+ /*
+  * Interrupt context handlers.
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+index f8a6f9c968a1..778a478ab53a 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+@@ -988,14 +988,20 @@ static void rt2x00lib_rate(struct ieee80211_rate *entry,
+ 		entry->flags |= IEEE80211_RATE_SHORT_PREAMBLE;
+ }
+
+-void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
++int rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
+ {
+-	of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
++	int ret;
++
++	ret = of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+
+ 	if (!is_valid_ether_addr(eeprom_mac_addr)) {
+ 		eth_random_addr(eeprom_mac_addr);
+ 		rt2x00_eeprom_dbg(rt2x00dev, "MAC: %pM\n", eeprom_mac_addr);
+ 	}
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(rt2x00lib_set_mac_address);
+
+--
+2.51.1
+
 
