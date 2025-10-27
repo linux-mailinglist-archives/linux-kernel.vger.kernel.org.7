@@ -1,121 +1,149 @@
-Return-Path: <linux-kernel+bounces-871274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D8EC0CC7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:56:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81199C0CC8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9DF19A3F87
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C71D3B7D48
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14042F9C37;
-	Mon, 27 Oct 2025 09:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6F02F4A04;
+	Mon, 27 Oct 2025 09:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NU2xlnB8"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iI2jRpv0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22AD2F619F
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5026463A;
+	Mon, 27 Oct 2025 09:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761558711; cv=none; b=k7MIdw6F4rIW5ahTdCfHFKm89h25iKfsHFavzbULxD2puSd7I3mEYrDHsO42U+J0s+xGwhMNttQEHCNPY0pWN/OgLfn7IxMHkRML2Lpb+C466w7uj03ggN8gS9UycAAbaSIRa4/nAYsowZwfKT61QrA1/39+zx4CZ2+jLwDGmWg=
+	t=1761558987; cv=none; b=WMIkXmJTY0l/OXuliGii9l84YTYReZewrbV76S7SaqUmlK7ckxnd3z6UbOsp5IRE4y0Su8aMobAwkqqaLfYkHyAVNNeSKcJBYwaOoIaBBc6oOpBoWVdjKaqn0ImooOV/2NjPVB7ZHltWVXidP+NU67Gt+uuFahvGp0KuteDY9a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761558711; c=relaxed/simple;
-	bh=xIlMXVZM7u5N4GC7/QPTBmuvnR/eWVEU2XMt5zd3xvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dKSuid99bTUGgQ4QynV779YKASSkwGJwFRqKWgIiNeb+UWK223MYLmnTHYbM3NCgEiJOV5r3iER0d6sHxFnJ2kJOEOCS/rwVDcbJW/trkx9GRjj4Tyhr6F4B63/0zDopexbwxcCbpOsNoUshPuoMT129+UqfqcPGSUKJLKNS/vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NU2xlnB8; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so55951735ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:51:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761558709; x=1762163509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xIlMXVZM7u5N4GC7/QPTBmuvnR/eWVEU2XMt5zd3xvk=;
-        b=NU2xlnB8jPVF2UDNNhtDK+3QMQfQi8vXnjbpOh/Kcf9UCYBGzqRSdDYnb37CEvTcws
-         i/K9A5FYCx/kUYdM5l16IpqmKvmrC9sfM55e6xOX2r6qwDm7XQGRd+vhla46Y5Oefvm9
-         2vXfxxkdMgazL2DNn2YgUC7etK6NK6Si8PsKEuwIi+PgddqsGpFwvPtx1R8sLMVJz/+3
-         bZRFRBInAYzd3/sAFdLL6hXmVFp02N3Ce0QNYWKf9VJDvdOvIp2jWp3dl+zlt36NRDK3
-         r5mmX1o4ik+jSfxMKjrdEh2DA8T58WmyLGKYB4Ql3oHM/LsgvFg+lUd0JlWpkju3R8Qp
-         vccw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761558709; x=1762163509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xIlMXVZM7u5N4GC7/QPTBmuvnR/eWVEU2XMt5zd3xvk=;
-        b=UBajKw20c3HvbNmxMKUeyIcwxrdcWUxnbZ2H3HIk2uzHej+oURaYgiN1MmFkF1Gv14
-         K6TWWc9hIPmK8c6jD7QMjVwFqWkb3UyHahiyuUv+ug+HK8E3xMXvnRM1aCgsA+Xbkjc7
-         SRupSP8vA8q9KvlL5Vgq0WTvnwzSHG92LxOlUHe0RYt3X5FeaUWwB2GyCbPSDLZGsPlA
-         QEbtvMEyDZ2zU9LPd6wQLwJvfC66hkI9TB+s2F7lb3ibNlMS6JSpjr4M2HBT7cR4nuZk
-         5276xbd8qZIXFKzXE+uH8kcmS960L74MQ+MvOmDMOpXAZTR61J5F10q7LjaFO4H9XjAW
-         YwEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8No9zP6UPNPSDiKoYMrJ+XL9J2ICseqnU8vXKnuWVLRgch7XxEsRrkHELNNwTfpvtcu9GXf7IW1U+D20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4clLihgUyOHJnJ7anDVcCyFjQaEuc8GhNn1mge4todZ9ksD/J
-	H07FH35D+B80vmxwyiYi/K19W4tG7Et3O6xdBkKsR1/+/TtftG4QBwdq5QG0dO3giHbHNal7MRG
-	Ju3SyRFGvMnuMWmnslkRPsXnZRbqUgmc=
-X-Gm-Gg: ASbGncswDzj0DYSk+2oey6YuzocBJvGZtbsQn9rb3r6B6lmYL58xpZvH/crHy8Lv7wi
-	/kNQ9Z+5ktmetDBiudbFkJDNGKFiKNf91qQu4ggyscLlbxuxjchQ3NcnKNPMLNCQjyiL6tPBrdp
-	BC39XnYMMnYDqksrDmOUmDqNRVLXJfm69mS+hlglBhK1bBRNyZqizNwCP6dlE7kzExU3EuhpCax
-	jI4zna/bqOgoqyhnWM1UYjMY5tcaZUqvAjJKltukWlIkDzBLcFoqT/rl4anqis5TNWctrUPueEC
-	wt0iZWyEgXUnpNnbzLVw2MVM
-X-Google-Smtp-Source: AGHT+IFRzbIzqFV7pKBghEkL/y5mdil9BPJteZ22VTJLWtgkr233BhWTD9Jj/7BDpxsKVDDIAx7A2JjJcaX7rlq1vtg=
-X-Received: by 2002:a17:903:2f82:b0:290:26fb:2b91 with SMTP id
- d9443c01a7336-2948b8366cbmr145344475ad.0.1761558708890; Mon, 27 Oct 2025
- 02:51:48 -0700 (PDT)
+	s=arc-20240116; t=1761558987; c=relaxed/simple;
+	bh=VtYaHMiYOI41iVO6PbnIRqdgE5U85cpa3lKCCqndkfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fdiVnZ8xAQ8fIrw5Jgf4o0KPm0kw8NT5eSEITNi5KoHkpsrVdgTWz7Tqu+NXDhi5wszwKJAcTJJKW0XfDLj59/BBs0Gh2ALyeklvlCkBJx3MloXIdnBedAMFbFclA4fN5P4/tg3/LB17ii2SD/e9Ao4dEE9isWxv82AvW2NRjL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iI2jRpv0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39D8C4CEF1;
+	Mon, 27 Oct 2025 09:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761558986;
+	bh=VtYaHMiYOI41iVO6PbnIRqdgE5U85cpa3lKCCqndkfk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iI2jRpv0TybqIFs+Au8L50DedmK5jJopzR+a8XmcHF3i0hiaNzUNaa8lwikWKW/PT
+	 Fi2pQMxYr7vueFdcTcMO1F5vCFK1PxtW85IRyf5ibfTkMR1ihE83LT32Rwlj5GZJZD
+	 0eq0lUEQBm3AuKZr432WO0vIMRE7mPewjKSYhzyN9TaKl1RRw4leMkxxkq9Onho/FD
+	 62FjRlbUn7JO41ktDjMgaD5K4xbFrNJxUMEF5WViKl0PX0Chw3hHRWFZa9VWZtKmnN
+	 Gidy3nQ6Tz3Nk640KogEH6u79TR+MQec9BbyttN9+10jp9D4RatXaZqRmUuvuQHK65
+	 HhTy7HFVh2xtg==
+From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+To: linux-coco@lists.linux.dev,
+	kvmarm@lists.linux.dev
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dan.j.williams@intel.com,
+	aik@amd.com,
+	lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Subject: [PATCH RESEND v2 00/12] coc: tsm: Implement ->connect()/->disconnect() callbacks for ARM CCA IDE setup
+Date: Mon, 27 Oct 2025 15:25:50 +0530
+Message-ID: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com> <20251017112025.11997-2-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20251017112025.11997-2-laurentiumihalcea111@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 27 Oct 2025 11:54:15 +0200
-X-Gm-Features: AWmQ_blOtiRFVXUmTtN1O1lNjloemNSQ0tmWC3j2G4npOc3ifmBMtfeWO07HwwM
-Message-ID: <CAEnQRZDFkQ80TGvpCDRZgVtKF9oUVoKQsaAtyhYHWHAZsg0fHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] reset: imx8mp-audiomix: Fix bad mask values
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 2:22=E2=80=AFPM Laurentiu Mihalcea
-<laurentiumihalcea111@gmail.com> wrote:
->
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->
-> As per the i.MX8MP TRM, section 14.2 "AUDIO_BLK_CTRL", table 14.2.3.1.1
-> "memory map", the definition of the EARC control register shows that the
-> EARC controller software reset is controlled via bit 0, while the EARC PH=
-Y
-> software reset is controlled via bit 1.
->
-> This means that the current definitions of IMX8MP_AUDIOMIX_EARC_RESET_MAS=
-K
-> and IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK are wrong since their values woul=
-d
-> imply that the EARC controller software reset is controlled via bit 1 and
-> the EARC PHY software reset is controlled via bit 2. Fix them.
->
-> Fixes: a83bc87cd30a ("reset: imx8mp-audiomix: Prepare the code for more r=
-eset bits")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+This patch series implements the TSM ->connect() and ->disconnect() callbacks
+required for the ARM CCA IDE setup described in the RMM ALP17 specification [1].
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+The series builds upon the TSM framework patches posted at [2] and depends on
+the KVM CCA patchset [3]. A git repository containing all the related changes is
+available at [4].
+
+Testing / Usage
+
+To initiate the IDE setup:
+echo tsm0 > /sys/bus/pci/devices/$DEVICE/tsm/connect
+
+To disconnect:
+echo tsm0 > /sys/bus/pci/devices/$DEVICE/tsm/disconnect
+
+[1] https://developer.arm.com/-/cdn-downloads/permalink/Architectures/Armv9/DEN0137_1.1-alp17.zip
+[2] https://lore.kernel.org/all/20251024020418.1366664-1-dan.j.williams@intel.com
+[3] https://lore.kernel.org/all/461fa23f-9add-40e5-a0d0-759030e7c70b@arm.com
+[4] https://git.gitlab.arm.com/linux-arm/linux-cca.git cca/topics/cca-ide-setup-upstream-v2
+
+
+Aneesh Kumar K.V (Arm) (9):
+  KVM: arm64: RMI: Export kvm_has_da_feature
+  firmware: smccc: coco: Manage arm-smccc platform device and CCA
+    auxiliary drivers
+  coco: guest: arm64: Drop dummy RSI platform device stub
+  coco: host: arm64: Add host TSM callback and IDE stream allocation
+    support
+  coco: host: arm64: Build and register RMM pdev descriptors
+  coco: host: arm64: Add RMM device communication helpers
+  coco: host: arm64: Add helper to stop and tear down an RMM pdev
+  coco: host: arm64: Instantiate RMM pdev during device connect
+  coco: host: arm64: Register device public key with RMM
+
+Lukas Wunner (3):
+  X.509: Make certificate parser public
+  X.509: Parse Subject Alternative Name in certificates
+  X.509: Move certificate length retrieval into new helper
+
+ arch/arm64/include/asm/kvm_rmi.h              |   1 +
+ arch/arm64/include/asm/rmi_cmds.h             |  78 +++
+ arch/arm64/include/asm/rmi_smc.h              | 180 +++++-
+ arch/arm64/include/asm/rsi.h                  |   2 +-
+ arch/arm64/kernel/rsi.c                       |  15 -
+ arch/arm64/kvm/rmi.c                          |   6 +
+ crypto/asymmetric_keys/x509_cert_parser.c     |   9 +
+ crypto/asymmetric_keys/x509_loader.c          |  38 +-
+ crypto/asymmetric_keys/x509_parser.h          |  40 +-
+ drivers/firmware/smccc/Kconfig                |   1 +
+ drivers/firmware/smccc/smccc.c                |  56 ++
+ drivers/virt/coco/Kconfig                     |   2 +
+ drivers/virt/coco/Makefile                    |   1 +
+ drivers/virt/coco/arm-cca-guest/Kconfig       |   1 +
+ drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+ .../{arm-cca-guest.c => arm-cca.c}            |  57 +-
+ drivers/virt/coco/arm-cca-host/Kconfig        |  23 +
+ drivers/virt/coco/arm-cca-host/Makefile       |   5 +
+ drivers/virt/coco/arm-cca-host/arm-cca.c      | 261 ++++++++
+ drivers/virt/coco/arm-cca-host/rmi-da.c       | 608 ++++++++++++++++++
+ drivers/virt/coco/arm-cca-host/rmi-da.h       | 111 ++++
+ include/keys/asymmetric-type.h                |   2 +
+ include/keys/x509-parser.h                    |  55 ++
+ 23 files changed, 1457 insertions(+), 97 deletions(-)
+ rename drivers/virt/coco/arm-cca-guest/{arm-cca-guest.c => arm-cca.c} (85%)
+ create mode 100644 drivers/virt/coco/arm-cca-host/Kconfig
+ create mode 100644 drivers/virt/coco/arm-cca-host/Makefile
+ create mode 100644 drivers/virt/coco/arm-cca-host/arm-cca.c
+ create mode 100644 drivers/virt/coco/arm-cca-host/rmi-da.c
+ create mode 100644 drivers/virt/coco/arm-cca-host/rmi-da.h
+ create mode 100644 include/keys/x509-parser.h
+
+-- 
+2.43.0
+
 
