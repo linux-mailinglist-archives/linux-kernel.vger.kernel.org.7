@@ -1,134 +1,86 @@
-Return-Path: <linux-kernel+bounces-870935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9244CC0C03C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:58:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614E8C0C05B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BB5B4EF9D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E553BBAC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 06:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5472F2BEFF2;
-	Mon, 27 Oct 2025 06:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791FF2D7DC3;
+	Mon, 27 Oct 2025 06:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgYHd1gR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="IaT5bG8/"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DDF28682;
-	Mon, 27 Oct 2025 06:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A05F2D8376;
+	Mon, 27 Oct 2025 06:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761548298; cv=none; b=dK8wbTQ4j5UshwzjIs5dKKc12O7U/qC2LdQp1J+qzEJjRAVlQrBYgISsGks5Tjpy24C+ybmgqYthLnvds7ggkerFklPdS0CEkCLu3EizJg/RQ4YpSAueF1TB6qR7eRCdrxM8zqHIgujXUiv8aUtCx6KCRUBHIEUJcPNWz2ol3QM=
+	t=1761548356; cv=none; b=PzE7LZMaZqWk+tM+2yA9IMwBYrkdHcLHLybPJbVdmREnjKkC99OOtbge75VJEx6vQc22s5p5TeB3ZmZhspx2+DjWKLhpM8fSXnyGLceFJ20WL4U5yYv43UxUYr6fwnKOdy05XigSCYsNDxnDDWmGj8+G7knVqHns1E307r1O/D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761548298; c=relaxed/simple;
-	bh=lbGgWupkovq81DImc+Wfj/Z+qTggpqUzQ5AribnsI4Q=;
+	s=arc-20240116; t=1761548356; c=relaxed/simple;
+	bh=OB1Cik7udfraEKjwtubanodFIkXelNdkrRiK/NPvAOA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dV5ZvtJOA8Kthu4Uha+i/2ASB06y7EJlu2XZlqC0R4MpKloeESiBCGaP6bDtAnhOUDGRhVzqoODh5QzGmf+RdOth+TLqdqfjCsEkePOQaPCADpbt2g/rTl1PJFHJyUsMWQD3xc75sXmYsoIPEAhqHD3CN1JRaxwBL8CUTjxybls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgYHd1gR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97AD3C4CEF1;
-	Mon, 27 Oct 2025 06:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761548297;
-	bh=lbGgWupkovq81DImc+Wfj/Z+qTggpqUzQ5AribnsI4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WgYHd1gRoMxFqKfxyVNMKdMBnx9LTmiWGz9jsusgML8qyb1cDoittaMKbRXdbKibm
-	 p3C6RKP/o0JYKQ2ITDj2QPCNF+39qqS3oj+PCGUyAR+Qa7GI0Pd45iPt0aSo3fcOZ1
-	 bOEXHU78SCT2qDR5iScbhySSNt4n9IdSiyHghmqANQwbeVeQK9P9Smyu58ciepIfJR
-	 nQLa6zLLFJMopTremXr7vWdGvhdPZL0ze/KJXCQz9zywcVPNoviWG+SMNVygDaaw96
-	 Q8/6D7q2pMOfzkBj6yg1KTjt2J2zW9q4x1RKZ6mXMyH7ijGHy1jJOMEAUGEwZyNbxV
-	 ohhV4WLdQZxlw==
-Date: Mon, 27 Oct 2025 08:58:08 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org
-Subject: Re: [PATCH v8 8/8] memblock: Unpreserve memory in case of error
-Message-ID: <aP8YADj4ha3trjJn@kernel.org>
-References: <20251024161002.747372-1-pasha.tatashin@soleen.com>
- <20251024161002.747372-9-pasha.tatashin@soleen.com>
- <aP5Mcr9WCt5CHon6@kernel.org>
- <CA+CK2bCUc5Q5PxCy3jGN9CC48Zz_evq51d7Hps7=r9g28z7tig@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9I9ZIlBo0T6XE/Mr19Nsmoc+0apAwcgCrSfk2CaiswUE1tj6AXUOuwvHb5CGEK6q8AOQY56l0ohRajL83kjklejw9Plimi4JdF5CXqUNgzcU59dqve5bWzGU6nmKWH57hoY6jLYJ/MAATwwgHSpLJFhW7b0TLuoIFJWwkuHMEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=IaT5bG8/; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=izvswgULjVKnMNc8RRs/u+xF9sef1u7J/UdDKN2xSwA=;
+	b=IaT5bG8/Npswm9/cwt+6r5pTKpEdnOb/4ZzS398oWoPIqr8N1ljh55/QnVLNpd
+	pq+47fW2DbALWK59ineCZBUfjecluVRrZ921mmhVO4QH4MCsyqEsjDZbwLHnxyl0
+	Pf+s/j0hJSuiSPxEMrPMwe0gD830HgAT3KbNZByG9fKjI=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with UTF8SMTPSA id Mc8vCgD3N58gGP9o0rg_AA--.50610S3;
+	Mon, 27 Oct 2025 14:58:42 +0800 (CST)
+Date: Mon, 27 Oct 2025 14:58:40 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] arm64: dts: fsl-ls1028a: fix USB node compatible
+Message-ID: <aP8YIIQG6uT7bLEA@dragon>
+References: <20251020133754.304387-1-alexander.stein@ew.tq-group.com>
+ <aPaXaFigEh50sdZC@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bCUc5Q5PxCy3jGN9CC48Zz_evq51d7Hps7=r9g28z7tig@mail.gmail.com>
+In-Reply-To: <aPaXaFigEh50sdZC@lizhi-Precision-Tower-5810>
+X-CM-TRANSID:Mc8vCgD3N58gGP9o0rg_AA--.50610S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU2b18DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNwIojWj-GCKfngAA38
 
-On Sun, Oct 26, 2025 at 01:41:30PM -0400, Pasha Tatashin wrote:
-> On Sun, Oct 26, 2025 at 12:29 PM Mike Rapoport <rppt@kernel.org> wrote:
+On Mon, Oct 20, 2025 at 04:11:20PM -0400, Frank Li wrote:
+> On Mon, Oct 20, 2025 at 03:37:53PM +0200, Alexander Stein wrote:
+> > usb/fsl,ls1028a.yaml says the compatible is just a simple
+> > 'fsl,ls1028a-dwc3'
 > >
-> > > @@ -2462,12 +2463,14 @@ static int __init prepare_kho_fdt(void)
-> > >
-> > >       err |= fdt_begin_node(fdt, "");
-> > >       err |= fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NODE_COMPATIBLE);
-> > > -     for (i = 0; i < reserved_mem_count; i++) {
-> > > +     for (i = 0; !err && i < reserved_mem_count; i++) {
-> > >               struct reserve_mem_table *map = &reserved_mem_table[i];
-> > >               struct page *page = phys_to_page(map->start);
-> > >               unsigned int nr_pages = map->size >> PAGE_SHIFT;
-> > >
-> > > -             err |= kho_preserve_pages(page, nr_pages);
-> > > +             err = kho_preserve_pages(page, nr_pages);
-> > > +             if (err)
-> > > +                     break;
-> >
-> > Please
-> >
-> >         goto err_unpreserve;
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 > 
-> While we can do that, we loose some symmetry of not performing
-> fdt_end_node() and fdt_finish() if fdt lib ever adds some debugging
-> facility to make sure that open nodes/trees are properly clodes, this
-> is going to flag that. I prefer my current implementation.
-
-Why do we care about fdt that we are never going to use and that's freed a
-few lines below?
-
-> > >               err |= fdt_begin_node(fdt, map->name);
-> > >               err |= fdt_property_string(fdt, "compatible", RESERVE_MEM_KHO_NODE_COMPATIBLE);
-> > >               err |= fdt_property(fdt, "start", &map->start, sizeof(map->start));
-> >
-> >         if (err)
-> >                 goto err_unpreserve;
-> >
-> > and drop !err from the loop condition.
+> Thanks, but it is similar with last patches of
 > 
-> That is going to miss one 'nr_preserved++' . We cannot do that, we
-> could move it to the beginning of the loop, but I prefer keeping err
-> right in the condition.
- 
-I very much dislike the error handling after this patch. From a single
+> https://lore.kernel.org/imx/20250929-ls_dma_coherence-v5-4-2ebee578eb7e@nxp.com/
+> 
+> Waiting for shanw pick dts part.
 
-	if (err)
-		put_page()
+I'm waiting for the usb binding change in the series to be applied first.
 
-it grew into a complex beast with special variables just for the sake of
-it.
+Shawn
 
-What I'd like to see is something like
-
-err_unpreserve_fdt:
-	kho_unpreserve_folio(page_folio(fdt_page));
-err_unpreserve_mems:
-	for (unsigned int i = 0; i < nr_preserved; i++) {
-		/* unpreserve mem[i] */
-	}
-err_free_fdt:
-	put_page(fdt_page);
-	return err;
-
--- 
-Sincerely yours,
-Mike.
 
