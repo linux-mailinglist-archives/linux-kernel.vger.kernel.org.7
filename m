@@ -1,318 +1,220 @@
-Return-Path: <linux-kernel+bounces-871634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9977DC0DE49
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:12:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32753C0DDD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 803904F7298
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50F7188F8B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373EE25F97C;
-	Mon, 27 Oct 2025 13:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE190257831;
+	Mon, 27 Oct 2025 13:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AP2G+gny"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEiQnkdu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231152472BA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 13:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2676B15ECD7;
+	Mon, 27 Oct 2025 13:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761570205; cv=none; b=Q0kHlsS+hAmQycysEigfa850fV+Nzc2j5K400IqK7x6IqpqYT2lrJ+KYdJTPYJBGOO7LXGf0bnxslUdsZgbIW/2dPBVbr7sQankUv11/Up70unntGqhs2VzlFHukSbGxa+km0FDLU7tycumEP+v6GSdp0re67g29H5deH/Yham0=
+	t=1761570314; cv=none; b=FFiwwSjEWb0yUBVztCEhuosd2OzsslqtPfrItxknqxqmM4YTNPALlzRPtSKur9rdYpkVZU+n7WJkgnXfV4X2V2YdnsSVj/EajiuMbf4kVRjcT6Pex0UV9L9j9wIsMtNF32mikBL1vSH3/JtC4wiAvym4gHSjA9zm/ECWZlWO7jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761570205; c=relaxed/simple;
-	bh=f3k/z3I0y5Ok43lqfeNHh7kQLWGPGLB7Q+pEbC0I+SQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LOxbqGfzZX81V9KeIaTzXKDGuYplY+umzo4QsvavsyW3Y630TfBD/4HBIpaW4XaK45+DQYM2kktqqNY5SvySVRZzKRmmY5UJch7eLcUcz+LACj4fMn9Yx/tIj0hCG7hNMhPM6UqVBw3Q0FDDRuRkESFSKYLGgRog6Slk55nwLJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AP2G+gny; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee130237a8so3001244f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 06:03:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761570200; x=1762175000; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=N31s0m6iPpe/D8ht+rzuSz/UgKSh2B3HnxendLz+41M=;
-        b=AP2G+gnyoMx/xh0SQDVkdJ+Yf++GzuAignKEoFQxXBU2IUkRMgzoa3/5oolOslS+5Z
-         NkYVJLjcbR+VNJQiDWrPO56SRsp9R9JgAaAxJnwKBaT8AoF9WWTv9IKv92aH6Th77LI+
-         V9uxjEdLgqO5fM+2h8b/MzqBKEtAOYxY7AD47ReLP9EiFo3bTKBcqeAl7ARPsZEw+s9Z
-         BNMfKzpKa+9laGMxjHJgoO51oonCNwQy4hyN5T58cBZMXU1ouBuszADyydLHdTqxt4gE
-         eIQR2mwi+m9RiuKSOGhhrPiCm8VhY74E1TN/F/Nv6SFBJ+DOtgc4uVulb2bn051QBSen
-         mRKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761570200; x=1762175000;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N31s0m6iPpe/D8ht+rzuSz/UgKSh2B3HnxendLz+41M=;
-        b=vw4PPuc2OpvS7wKGYUMA+9U6ky+TFLWowSpIASpvnzg8KYZMMEf9e5Awn2PIDacpo1
-         ghEEaC3PMEBCbV2l56xyQoyT6lOdru5UQnm5plactFvhWc0m0jrdijPJsVYM18Igsg5h
-         3sY3Eoim2SqddG26TGTyUSjBzN2InOXUG0RCdCX8jzQNGT1yxN9gmHAzhtuceMKK8KT2
-         B16f4hXRue7zO/UcIdmipFVeBeczmXW5WgequFkMNyyXPt9gwP8CVje8Zb3iArcg1C2i
-         0tdtruGzYwkmiCKDURwI2NsDVZV65wN1TqZ4RWpEfcRmGUJa2wctVCxklEPF8Fbk9rc0
-         m9ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaSWsAdb5nEikZBa5iuCbEINEYKwxmNK+e4Vz8D7E3zGeztjYz3MpQFE071LHsZWttxmpZy/cubCeBU5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEZ0vJbD+P2u9NVWzt6A3zFO+w66Yue/z5pzPvaEH8V67Bbcs6
-	wGHv1hQ4hGfThKIYTBcJd2v34Y9jLJfRPED7LN05I/k0aIHOz57sQq+M
-X-Gm-Gg: ASbGncs1/M29DrvrN/6IG2mnXl3d8rlUzeYeomJj/iqeYoalpr7tQzOGpR5wApk4RfT
-	3FPufedboC9T9QPtVR2lvu2FPExfFFXgRdjz06F7x199/8odxk79kgE3fUMV0U+1gETkfwUotiN
-	dLkmOJekJS5Q+4T+lL12BZGieUtpFwJnaPt3apA2YJ+t29+C0YYRBFwSvhfaIGvd0Oar5ALyrWT
-	jfiUJ3bihlJ4GxcO03+e74yd/5jTaOxdEXAH6F56kh0gP0TsOIBaY3VJSUST+xB1arRWUV7SWsE
-	19N8B1LsPAOlqAThAEOcOFmYJ95hTVy+QoQASEu1bKWCSfruMdyw2V9/5T5mxzuvwhtHfBlQIKz
-	OF1ZbNN+gMjltoj4gjf5kTeKAwyoW/KHQgvSZlQVF58cWvwLL63tsmokIvBVNzCyzipyIJ7EQXL
-	qelu+JQnbq
-X-Google-Smtp-Source: AGHT+IFy4lHfZKYAUxpChiM/+pJgD0sz9c2mg6bmQSCoUd2BbEXzPK96ZbwUpKX3z8ifK+plNRNF8Q==
-X-Received: by 2002:a05:6000:22c7:b0:426:ff8f:a0a3 with SMTP id ffacd0b85a97d-4299072c0femr9120280f8f.34.1761570200163;
-        Mon, 27 Oct 2025 06:03:20 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df3c7sm14013153f8f.40.2025.10.27.06.03.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 06:03:19 -0700 (PDT)
-Message-ID: <ff1af8b4d43ce31cbf94623e36b721b057ca4077.camel@gmail.com>
-Subject: Re: [PATCH] iio: imu: adis: fix all kernel-doc warnings in header
- file
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, 	linux-iio@vger.kernel.org
-Date: Mon, 27 Oct 2025 13:03:54 +0000
-In-Reply-To: <20251026024759.433956-1-rdunlap@infradead.org>
-References: <20251026024759.433956-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	s=arc-20240116; t=1761570314; c=relaxed/simple;
+	bh=TuHEym0B6rKM3/jxEON5qYqiU4gHzQV0bZqW68U9z38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j3T1W5Fb5/hgwRDoyvVh696eKzUZlI5Jl6m+ByutRoJwiHBVatYAi9y6W6m7b8rijLbodAaLRrqJIbFc4ofmeLvIzM1Y5waEwwOxXklqrwNgLiEoI25W8EDnEgnZs87RsisF8jwjryhT6K8vXzBxxcNEtr1cc7hYdA3+ikvr5n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEiQnkdu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4889C4CEF1;
+	Mon, 27 Oct 2025 13:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761570314;
+	bh=TuHEym0B6rKM3/jxEON5qYqiU4gHzQV0bZqW68U9z38=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BEiQnkdu8BCMG3ckTNZo7brBJgg8rYBk1aCqjp9Nooq04D9gr6uY3Zu+ND8hF4MeO
+	 /oWq2gymN1M8J7bqbxhV/l/1zwdlvu6KveSWgmOebbKpP2BRnX0NbXRVLZA7apuPXB
+	 Ce59oUD7xB4R+JES7NBy1m7yauJqUQ8E+bkIhetDB6s+mEMrMv2XO/YbX0IN9rRtpn
+	 9eRd+UOX0M+Lyss3qD9oX5c9uYyvpsd4NSBJfUFapgqBbuwUUI5ddXy+ishgcDTUqP
+	 KPLPeTSAf11b7f3jt19g7jxqHhHmSZDtUBMYCeuqxEnYAl91wnWYMrRAf3doF7+iNG
+	 94CLWI22Pbsdw==
+Message-ID: <b989fba3-223d-498a-8efe-7a60e26cf0db@kernel.org>
+Date: Mon, 27 Oct 2025 14:05:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: vdec: Add binding document of Amlogic
+ decoder accelerator
+To: zhentao.guo@amlogic.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+References: <20251027-b4-s4-vdec-upstream-v1-0-620401813b5d@amlogic.com>
+ <20251027-b4-s4-vdec-upstream-v1-1-620401813b5d@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251027-b4-s4-vdec-upstream-v1-1-620401813b5d@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2025-10-25 at 19:47 -0700, Randy Dunlap wrote:
-> Correct and add to adis.h to resolve all kernel-doc warnings:
->=20
-> - add a missing struct member description
-> - change one non-kernel-doc comment to use /* instead of /**
-> - correct function parameter @value to @val (7 locations)
-> - add function return value comments (13 locations)
->=20
-> Warning: include/linux/iio/imu/adis.h:97 struct member 'has_fifo'
-> =C2=A0not described in 'adis_data'
-> Warning: include/linux/iio/imu/adis.h:139 Incorrect use of kernel-doc
-> =C2=A0format: * The state_lock is meant to be used during operations that
-> =C2=A0require
-> Warning: include/linux/iio/imu/adis.h:158 struct member '"__adis_"'
-> =C2=A0not described in 'adis'
-> Warning: include/linux/iio/imu/adis.h:264 function parameter 'val'
-> =C2=A0not described in 'adis_write_reg'
-> Warning: include/linux/iio/imu/adis.h:371 No description found for
-> =C2=A0return value of 'adis_update_bits_base'
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+On 27/10/2025 06:42, Zhentao Guo via B4 Relay wrote:
+> From: Zhentao Guo <zhentao.guo@amlogic.com>
+> 
+> Add dt-binding of the Amlogic hardware decoder accelerator.
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+A nit, subject: drop second/last, redundant "binding document for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+> 
+> Signed-off-by: Zhentao Guo <zhentao.guo@amlogic.com>
 > ---
+>  .../bindings/media/amlogic,vcodec-dec.yaml         | 96 ++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/amlogic,vcodec-dec.yaml b/Documentation/devicetree/bindings/media/amlogic,vcodec-dec.yaml
+> new file mode 100644
+> index 000000000000..6cea8af72639
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/amlogic,vcodec-dec.yaml
 
-Thanks!
+Filename matching compatible.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> @@ -0,0 +1,96 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2025 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/amlogic,vcodec-dec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic Video Decode Accelerator
+> +
+> +maintainers:
+> +  - Zhentao Guo <zhentao.guo@amlogic.com>
+> +
+> +description: |
 
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: David Lechner <dlechner@baylibre.com>
-> Cc: Nuno S=C3=A1 <nuno.sa@analog.com>
-> Cc: Andy Shevchenko <andy@kernel.org>
-> Cc: linux-iio@vger.kernel.org
-> ---
-> =C2=A0include/linux/iio/imu/adis.h |=C2=A0=C2=A0 45 +++++++++++++++++++++=
-+++++-------
-> =C2=A01 file changed, 36 insertions(+), 9 deletions(-)
->=20
-> --- linux-next-20251024.orig/include/linux/iio/imu/adis.h
-> +++ linux-next-20251024/include/linux/iio/imu/adis.h
-> @@ -57,6 +57,7 @@ struct adis_timeout {
-> =C2=A0 * @enable_irq: Hook for ADIS devices that have a special IRQ enabl=
-e/disable
-> =C2=A0 * @unmasked_drdy: True for devices that cannot mask/unmask the dat=
-a ready
-> pin
-> =C2=A0 * @has_paging: True if ADIS device has paged registers
-> + * @has_fifo: True if ADIS device has a hardware FIFO
-> =C2=A0 * @burst_reg_cmd:	Register command that triggers burst
-> =C2=A0 * @burst_len:		Burst size in the SPI RX buffer. If @burst_max_len =
-is
-> defined,
-> =C2=A0 *			this should be the minimum size supported by the
-> device.
-> @@ -136,7 +137,7 @@ struct adis {
-> =C2=A0	const struct adis_data	*data;
-> =C2=A0	unsigned int		burst_extra_len;
-> =C2=A0	const struct adis_ops	*ops;
-> -	/**
-> +	/*
-> =C2=A0	 * The state_lock is meant to be used during operations that requi=
-re
-> =C2=A0	 * a sequence of SPI R/W in order to protect the SPI transfer
-> =C2=A0	 * information (fields 'xfer', 'msg' & 'current_page') between
-> @@ -166,7 +167,7 @@ int __adis_reset(struct adis *adis);
-> =C2=A0 * adis_reset() - Reset the device
-> =C2=A0 * @adis: The adis device
-> =C2=A0 *
-> - * Returns 0 on success, a negative error code otherwise
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_reset(struct adis *adis)
-> =C2=A0{
-> @@ -183,7 +184,9 @@ int __adis_read_reg(struct adis *adis, u
-> =C2=A0 * __adis_write_reg_8() - Write single byte to a register (unlocked=
-)
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the register to be written
-> - * @value: The value to write
-> + * @val: The value to write
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int __adis_write_reg_8(struct adis *adis, unsigned in=
-t reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 u8 val)
-> @@ -195,7 +198,9 @@ static inline int __adis_write_reg_8(str
-> =C2=A0 * __adis_write_reg_16() - Write 2 bytes to a pair of registers (un=
-locked)
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> - * @value: Value to be written
-> + * @val: Value to be written
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int __adis_write_reg_16(struct adis *adis, unsigned i=
-nt reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 val)
-> @@ -207,7 +212,9 @@ static inline int __adis_write_reg_16(st
-> =C2=A0 * __adis_write_reg_32() - write 4 bytes to four registers (unlocke=
-d)
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the four register
-> - * @value: Value to be written
-> + * @val: Value to be written
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int __adis_write_reg_32(struct adis *adis, unsigned i=
-nt reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 val)
-> @@ -220,6 +227,8 @@ static inline int __adis_write_reg_32(st
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> =C2=A0 * @val: The value read back from the device
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int __adis_read_reg_16(struct adis *adis, unsigned in=
-t reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 u16 *val)
-> @@ -239,6 +248,8 @@ static inline int __adis_read_reg_16(str
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> =C2=A0 * @val: The value read back from the device
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int __adis_read_reg_32(struct adis *adis, unsigned in=
-t reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 u32 *val)
-> @@ -257,8 +268,10 @@ static inline int __adis_read_reg_32(str
-> =C2=A0 * adis_write_reg() - write N bytes to register
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> - * @value: The value to write to device (up to 4 bytes)
-> + * @val: The value to write to device (up to 4 bytes)
-> =C2=A0 * @size: The size of the @value (in bytes)
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_write_reg(struct adis *adis, unsigned int re=
-g,
-> =C2=A0				 unsigned int val, unsigned int size)
-> @@ -273,6 +286,8 @@ static inline int adis_write_reg(struct
-> =C2=A0 * @reg: The address of the lower of the two registers
-> =C2=A0 * @val: The value read back from the device
-> =C2=A0 * @size: The size of the @val buffer
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static int adis_read_reg(struct adis *adis, unsigned int reg,
-> =C2=A0			 unsigned int *val, unsigned int size)
-> @@ -285,7 +300,9 @@ static int adis_read_reg(struct adis *ad
-> =C2=A0 * adis_write_reg_8() - Write single byte to a register
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the register to be written
-> - * @value: The value to write
-> + * @val: The value to write
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_write_reg_8(struct adis *adis, unsigned int =
-reg,
-> =C2=A0				=C2=A0=C2=A0 u8 val)
-> @@ -297,7 +314,9 @@ static inline int adis_write_reg_8(struc
-> =C2=A0 * adis_write_reg_16() - Write 2 bytes to a pair of registers
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> - * @value: Value to be written
-> + * @val: Value to be written
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_write_reg_16(struct adis *adis, unsigned int=
- reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0 u16 val)
-> @@ -309,7 +328,9 @@ static inline int adis_write_reg_16(stru
-> =C2=A0 * adis_write_reg_32() - write 4 bytes to four registers
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the four register
-> - * @value: Value to be written
-> + * @val: Value to be written
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_write_reg_32(struct adis *adis, unsigned int=
- reg,
-> =C2=A0				=C2=A0=C2=A0=C2=A0 u32 val)
-> @@ -322,6 +343,8 @@ static inline int adis_write_reg_32(stru
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> =C2=A0 * @val: The value read back from the device
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_read_reg_16(struct adis *adis, unsigned int =
-reg,
-> =C2=A0				=C2=A0=C2=A0 u16 *val)
-> @@ -341,6 +364,8 @@ static inline int adis_read_reg_16(struc
-> =C2=A0 * @adis: The adis device
-> =C2=A0 * @reg: The address of the lower of the two registers
-> =C2=A0 * @val: The value read back from the device
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_read_reg_32(struct adis *adis, unsigned int =
-reg,
-> =C2=A0				=C2=A0=C2=A0 u32 *val)
-> @@ -366,6 +391,8 @@ int __adis_update_bits_base(struct adis
-> =C2=A0 * @size: Size of the register to update
-> =C2=A0 *
-> =C2=A0 * Updates the desired bits of @reg in accordance with @mask and @v=
-al.
-> + *
-> + * Returns: %0 on success, a negative error code otherwise
-> =C2=A0 */
-> =C2=A0static inline int adis_update_bits_base(struct adis *adis, unsigned=
- int reg,
-> =C2=A0					const u32 mask, const u32 val, u8
-> size)
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The Video Decoder Accelerator present on Amlogic SOCs.
+> +  It supports stateless h264 decoding.
+> +
+> +properties:
+> +  compatible:
+> +    const: amlogic,s4-vcodec-dec
+> +
+> +  reg:
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dosbus
+> +      - const: dmcbus
+
+Is "bus" really name of this in datasheet?
+
+> +
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: mailbox_0
+> +      - const: mailbox_1
+> +      - const: mailbox_2
+
+Useless names, so just drop interrupt-names property.
+
+> +
+> +  clocks:
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: vdec
+> +      - const: clk_vdec_mux
+> +      - const: clk_hevcf_mux
+> +
+> +  power-domains:
+> +    maxItems: 2
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: pwrc-vdec
+
+Drop pwrc
+
+> +      - const: pwrc-hevc
+
+Drop pwrc
+
+Missing iommus. I really doubt hardware works without IOMMU.
+
+
+
+Best regards,
+Krzysztof
 
