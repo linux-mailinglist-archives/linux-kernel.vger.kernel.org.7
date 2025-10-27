@@ -1,466 +1,223 @@
-Return-Path: <linux-kernel+bounces-871272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452A7C0CC96
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:56:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3C9C0CC63
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A2914F899F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:53:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49CC64F6185
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6A62F99A8;
-	Mon, 27 Oct 2025 09:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12632FB978;
+	Mon, 27 Oct 2025 09:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlXEG4HZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G13we1Ia"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4B126463A;
-	Mon, 27 Oct 2025 09:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0B82FB09E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761558698; cv=none; b=CldjFQaXtNZAKEzuahU921hsGQjP7h0Prw2mUlU1QqSYuonASzpKUVi96Xh2FW+7kcfL2jR7r2zqIB0kkI6HPzqXzqkSe44/GbvbfyJEhBBKrVYXhsR3Y+RaBN0MAe5blxIopu5y3whfXUM26coPue9Aq+TV6U7uv/8avzK48Kk=
+	t=1761558665; cv=none; b=LCPDRq0FpLi3mtSZr3H/mQI+AGPF7eedUC439pl4Efs9Q0LVOvauK6qK/cDP6oRC+cQSa7tm6/Z7zw4cx2UOT/Bf5v36EMkAJ+QQLHj8+U4vz5N4TCzR+hvgaR7eaDw6EsIMTVyOXKxFc2b3BadeZqQ8lxs/fIc2GOk+Bl0gNPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761558698; c=relaxed/simple;
-	bh=gBvpmEpy6YyVBCSVn6cH5J7g2XLImTLNf6qfNZEbRhg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N9qOaa/sBUdBKMmNrdliTSdB2QSYMlWCN1ToA7/rDVQrg8O9PCkbqOnQ5+ye9ECDXqO7pX45AX67c9ekMdMrbRsUO7Aev2es+GFqwoLZxA/Sremy2bFTnGpyAhBe71OO2vM5DcqE0zTKt6NOGtJwCDgplkiiuTVUFzRYoTSSwco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlXEG4HZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4D5C16AAE;
-	Mon, 27 Oct 2025 09:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761558698;
-	bh=gBvpmEpy6YyVBCSVn6cH5J7g2XLImTLNf6qfNZEbRhg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LlXEG4HZacr5cnh9T1qexKRd48RHaItH4xBDc65H06/Y4eFXpBFhlb6gqu2WGdEQR
-	 QAoVPWgMeAV0dpSgjee4iQtYIU9xxoShEo67/R0zm/nM+n8TXJOLYPPhgQ/JKydXH4
-	 647OBoHanMQku2vFR5aEec9skojjDDOSyjKpa8+WifGbjOBqrzk39nu8WRyBhvm1RZ
-	 I9Bk3y0pJE9twL6XyNJJYKQi0JtzMDnhpBZKupiitBgqslUIhxggVtMM4AVr0or5VL
-	 qFAWrn+z5tilLG9dRahX40J+r7UkXNLMkG+VvSm44MupmI6/FAovLDvIgIzBdZCNin
-	 uHJCHI2Igd6Lg==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dan.j.williams@intel.com,
-	aik@amd.com,
-	lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Subject: [PATCH v2 04/12] coco: host: arm64: Add host TSM callback and IDE stream allocation support
-Date: Mon, 27 Oct 2025 15:19:08 +0530
-Message-ID: <20251027094916.1153143-17-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251027094916.1153143-1-aneesh.kumar@kernel.org>
-References: <20251027094916.1153143-1-aneesh.kumar@kernel.org>
+	s=arc-20240116; t=1761558665; c=relaxed/simple;
+	bh=9KuN2Xm5jw7TgRZXPSk3P9TAJLH7k2ZyHKs1la0a+4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BJ5BlH6+PJ2FuqT5Qc9GcNR6iIhD9QI9Lt5/MKR6Vf7Ql8Wm8QVzkP0lHkgpY8Qf7zVhKEb4ooCFwiva1BvYGCGjeACZJiHcwZ8ZuK6B5nkZuBjdM7ssAGzs78th0Am4GrU9x0KdGGDB3gADSLDoy1v7myZzw/t56BoVKBXuED4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G13we1Ia; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso332246a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761558661; x=1762163461; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mw12YdzTi9NB3y1kJkoK+Kxt9YSNjct8ry46vaendzw=;
+        b=G13we1IaFJGFCltdOonHjJqbkNUxhdvAb8xA1SPfRYVfyQ48kbPr3F4Qej/teyDd9+
+         6AwzTSZEut0clR1zyY4wuowDwgfugm5K/8xdvTGIttkWYsvzW98zY+6gI19OATaEN/aj
+         3VdeBfjvEG+7VJemRR6Q/QkXnsP4gIZGUF1k8rKEMW1+5ImgR3Fil/L5V9CbcaIKMa47
+         yW71RgJNAhXI0e9s+xQkO4iah5orSkyu+b7alEm3j/ykUpk9JQ9bgAvYIoUWC8ixer6U
+         rxJ5I4qaTYh6m7vXN9oSLu9+8Rgx32QTCjDJyO5BSUZe4CWjKZ51VCOIBMGFUdFgpYTc
+         ESIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761558661; x=1762163461;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mw12YdzTi9NB3y1kJkoK+Kxt9YSNjct8ry46vaendzw=;
+        b=BnhF+uX77YsQPX9V1lo0DuIIty653hRy1XF7e66urxyPiVQWRcPPTuXx9fr+Xq6KOc
+         RvDNTada3riusb9vG8/6zxiFQrdr6m9tqXAyWJRDJDqFlBP2R4YzKcRNim23UZywozRw
+         6D9at577MKv6oSom247fK8s1aG+8NXpZJWs1gB6BBTcPGcRphlxILW5Sqm3tVUSXqh/h
+         NbD4US39TJ5aiYBeOIHy4SsFtIgr06B6PqDjl/4jAJkk97fV8lSSw6YF7aLrsJspXUuE
+         4To0FsroLVgUZVdpSOqFzxcGKPzYsW+B/UDjMyK4BTPioF9YBARcrX1ZLzNjKYo/ZkMo
+         GlhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzD5zC4OBKl5oHNt3xDvkGgXp3rx+7zO9SS3u8ZRlYCyvpF9Gk2clh08bj3PnZr3Vi6nlYJt01De43Fkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9JkrUVaifQdY1JxTiBjf13A56VVAKH+MJhOOjuqnlDVdFkoQO
+	Pzbd06RUXdpSJ+WMBH6leQkDE1Cb1hMpJZG0AdcwLGK7/Km4uZBu/ELX
+X-Gm-Gg: ASbGncuXMhQ/HIcyqrA8Lo7Q/grZha+rVLuqGHh2/Anku9Xy64eflumagm67JG5B+Y6
+	BRa7DD3bDuoAGxd0OnvK8+Ni9xqNFo+/aRpNMTw1oVAx4YaOwQB55yYxRPkh7IZlDSS0P8P+Kdm
+	NkqIEctEnZFfm7yff0BOtbMKjlSPJZ7LcaZbZ0wnOxozAi3m6piYmITfgrTIOw3kujFnsIt4qjS
+	ZWyP01AVmmc/dia+nlIgEo2+andyGQIi274AXXjMC+aoxUgQ512208AG/ICMc5qDjd05/vY0gwf
+	DM+Yl1zl4l783vbvNDXZahbrFCYz4ItKr8EKEUe1QmnJ87EzYCXDaApVE0iOEhUc5QDY+wJsVw1
+	AC3bTq6HeOspxg2yR8lzp+lBFOHVlss0aBaZ4H6NDK02a1egiJoBF+lrVVwooz/IYmNHrUpWfEG
+	hxBpJdFgRniyqZeTEhTUW2doJNNyCeug==
+X-Google-Smtp-Source: AGHT+IERBzNr1pRW9aQQMHx51xdoW3UzXmbId6nlUYrZzGZ0Z6AgDbAWku/q0c+3JyA6dFoSGcQW5w==
+X-Received: by 2002:a05:6402:2787:b0:63b:d7f0:d940 with SMTP id 4fb4d7f45d1cf-63c1f6300fbmr32209099a12.1.1761558661210;
+        Mon, 27 Oct 2025 02:51:01 -0700 (PDT)
+Received: from [10.25.208.2] ([128.77.115.157])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef82907sm5888719a12.12.2025.10.27.02.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 02:51:00 -0700 (PDT)
+Message-ID: <9e5f5166-75c3-4c7c-804a-8cb24c67f416@gmail.com>
+Date: Mon, 27 Oct 2025 02:50:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+ <20251022140315.GA11174@nxa18884-linux.ap.freescale.net>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20251022140315.GA11174@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Register the TSM callback when the DA feature is supported by KVM.
 
-This driver handles IDE stream setup for both the root port and PCIe
-endpoints. Root port IDE stream enablement itself is managed by RMM.
+On 10/22/2025 7:03 AM, Peng Fan wrote:
+> Hi Laurentiu,
+>
+> On Fri, Oct 17, 2025 at 04:20:20AM -0700, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> The i.MX8ULP System Integration Module (SIM) LPAV module is a block
+>> control module found inside the LPAV subsystem, which offers some clock
+>> gating options and reset line assertion/de-assertion capabilities.
+>>
+>> Therefore, the clock gate management is supported by registering the
+>> module's driver as a clock provider, while the reset capabilities are
+>> managed via the auxiliary device API to allow the DT node to act as a
+>> reset and clock provider.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+> ....
+>> +struct clk_imx8ulp_sim_lpav_data {
+>> +	void __iomem *base;
+>> +	struct regmap *regmap;
+>> +	spinlock_t lock; /* shared by MUX, clock gate and reset */
+>> +	unsigned long flags; /* for spinlock usage */
+> This does not need to be here, put it as function local variable should
+> be fine.
+>
+>> +	struct clk_hw_onecell_data clk_data; /*  keep last */
+>> +};
+>> +
+>> +struct clk_imx8ulp_sim_lpav_gate {
+>> +	const char *name;
+>> +	int id;
+>> +	const struct clk_parent_data parent;
+>> +	u8 bit;
+>> +};
+>> +
+>> +static struct clk_imx8ulp_sim_lpav_gate gates[] = {
+>> +	IMX8ULP_HIFI_CLK_GATE("hifi_core", CORE, "hifi_core", 17),
+>> +	IMX8ULP_HIFI_CLK_GATE("hifi_pbclk", PBCLK, "lpav_bus", 18),
+>> +	IMX8ULP_HIFI_CLK_GATE("hifi_plat", PLAT, "hifi_plat", 19)
+> For the parent name, my understanding is they should be the one
+> from clk-imx8ulp.c, but I not find them, or may I miss something?
 
-In addition, the driver registers `pci_tsm_ops` with the TSM subsystem.
 
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
----
- arch/arm64/include/asm/rmi_smc.h         |   2 +
- drivers/firmware/smccc/smccc.c           |  19 +++
- drivers/virt/coco/Kconfig                |   2 +
- drivers/virt/coco/Makefile               |   1 +
- drivers/virt/coco/arm-cca-host/Kconfig   |  19 +++
- drivers/virt/coco/arm-cca-host/Makefile  |   5 +
- drivers/virt/coco/arm-cca-host/arm-cca.c | 192 +++++++++++++++++++++++
- drivers/virt/coco/arm-cca-host/rmi-da.h  |  41 +++++
- 8 files changed, 281 insertions(+)
- create mode 100644 drivers/virt/coco/arm-cca-host/Kconfig
- create mode 100644 drivers/virt/coco/arm-cca-host/Makefile
- create mode 100644 drivers/virt/coco/arm-cca-host/arm-cca.c
- create mode 100644 drivers/virt/coco/arm-cca-host/rmi-da.h
+we want to use parent names local to the SIM LPAV provider (i.e. names specified via clock-names)
 
-diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-index 2ea657a87402..fe1c91ffc0ab 100644
---- a/arch/arm64/include/asm/rmi_smc.h
-+++ b/arch/arm64/include/asm/rmi_smc.h
-@@ -12,6 +12,8 @@
- 
- #include <linux/arm-smccc.h>
- 
-+#define RMI_DEV_NAME "arm-rmi-dev"
-+
- #define SMC_RMI_CALL(func)				\
- 	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,		\
- 			   ARM_SMCCC_SMC_64,		\
-diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
-index 3dbf0d067cc5..9cabe750533c 100644
---- a/drivers/firmware/smccc/smccc.c
-+++ b/drivers/firmware/smccc/smccc.c
-@@ -15,6 +15,7 @@
- #include <asm/archrandom.h>
- #ifdef CONFIG_ARM64
- #include <asm/rsi_cmds.h>
-+#include <asm/rmi_smc.h>
- #endif
- 
- static u32 smccc_version = ARM_SMCCC_VERSION_1_0;
-@@ -99,10 +100,27 @@ static void __init register_rsi_device(struct platform_device *pdev)
- 					"arm_cca_guest", RSI_DEV_NAME, NULL, 0);
- 
- }
-+
-+static void __init register_rmi_device(struct platform_device *pdev)
-+{
-+	struct arm_smccc_res res;
-+	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
-+						     RMI_ABI_MINOR_VERSION);
-+
-+	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
-+	if (res.a0 == RMI_SUCCESS)
-+		__devm_auxiliary_device_create(&pdev->dev,
-+					"arm_cca_host", RMI_DEV_NAME, NULL, 0);
-+}
- #else
- static void __init register_rsi_device(struct platform_device *pdev)
- {
- 
-+}
-+
-+static void __init register_rmi_device(struct platform_device *pdev)
-+{
-+
- }
- #endif
- 
-@@ -120,6 +138,7 @@ static int __init smccc_devices_init(void)
- 		 * the required SMCCC function IDs at a supported revision.
- 		 */
- 		register_rsi_device(pdev);
-+		register_rmi_device(pdev);
- 	}
- 
- 	if (smccc_trng_available) {
-diff --git a/drivers/virt/coco/Kconfig b/drivers/virt/coco/Kconfig
-index bb0c6d6ddcc8..65b284c59b96 100644
---- a/drivers/virt/coco/Kconfig
-+++ b/drivers/virt/coco/Kconfig
-@@ -15,5 +15,7 @@ source "drivers/virt/coco/arm-cca-guest/Kconfig"
- 
- source "drivers/virt/coco/guest/Kconfig"
- 
-+source "drivers/virt/coco/arm-cca-host/Kconfig"
-+
- config TSM
- 	bool
-diff --git a/drivers/virt/coco/Makefile b/drivers/virt/coco/Makefile
-index cb52021912b3..c06b66041a49 100644
---- a/drivers/virt/coco/Makefile
-+++ b/drivers/virt/coco/Makefile
-@@ -9,3 +9,4 @@ obj-$(CONFIG_INTEL_TDX_GUEST)	+= tdx-guest/
- obj-$(CONFIG_ARM_CCA_GUEST)	+= arm-cca-guest/
- obj-$(CONFIG_TSM) 		+= tsm-core.o
- obj-$(CONFIG_TSM_GUEST)		+= guest/
-+obj-$(CONFIG_ARM_CCA_HOST)	+= arm-cca-host/
-diff --git a/drivers/virt/coco/arm-cca-host/Kconfig b/drivers/virt/coco/arm-cca-host/Kconfig
-new file mode 100644
-index 000000000000..1febd316fb77
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-host/Kconfig
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# TSM (TEE Security Manager) host drivers
-+#
-+config ARM_CCA_HOST
-+	tristate "Arm CCA Host driver"
-+	depends on ARM64
-+	depends on PCI_TSM
-+	depends on KVM
-+	select TSM
-+	select AUXILIARY_BUS
-+
-+	help
-+	  ARM CCA RMM firmware is the trusted runtime that enforces memory
-+	  isolation and security for confidential computing on ARM. This driver
-+	  provides the interface for communicating with RMM to support secure
-+	  device assignment.
-+
-+	  If you choose 'M' here, this module will be called arm-cca-host.
-diff --git a/drivers/virt/coco/arm-cca-host/Makefile b/drivers/virt/coco/arm-cca-host/Makefile
-new file mode 100644
-index 000000000000..ad353b07e95a
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-host/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+obj-$(CONFIG_ARM_CCA_HOST) += arm-cca-host.o
-+
-+arm-cca-host-$(CONFIG_TSM) +=  arm-cca.o
-diff --git a/drivers/virt/coco/arm-cca-host/arm-cca.c b/drivers/virt/coco/arm-cca-host/arm-cca.c
-new file mode 100644
-index 000000000000..18e5bf6adea4
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-host/arm-cca.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 ARM Ltd.
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/pci-tsm.h>
-+#include <linux/pci-ide.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/tsm.h>
-+#include <linux/vmalloc.h>
-+#include <linux/cleanup.h>
-+#include <linux/kvm_host.h>
-+
-+#include "rmi-da.h"
-+
-+/* Total number of stream id supported at root port level */
-+#define MAX_STREAM_ID	256
-+
-+
-+static struct pci_tsm *cca_tsm_pci_probe(struct tsm_dev *tsm_dev, struct pci_dev *pdev)
-+{
-+	int rc;
-+
-+	if (!is_pci_tsm_pf0(pdev)) {
-+		struct cca_host_fn_dsc *fn_dsc __free(kfree) =
-+			kzalloc(sizeof(*fn_dsc), GFP_KERNEL);
-+
-+		if (!fn_dsc)
-+			return NULL;
-+
-+		rc = pci_tsm_link_constructor(pdev, &fn_dsc->pci, tsm_dev);
-+		if (rc)
-+			return NULL;
-+
-+		return &no_free_ptr(fn_dsc)->pci;
-+	}
-+
-+	if (!pdev->ide_cap)
-+		return NULL;
-+
-+	struct cca_host_pf0_dsc *pf0_dsc __free(kfree) =
-+					kzalloc(sizeof(*pf0_dsc), GFP_KERNEL);
-+	if (!pf0_dsc)
-+		return NULL;
-+
-+	rc = pci_tsm_pf0_constructor(pdev, &pf0_dsc->pci, tsm_dev);
-+	if (rc)
-+		return NULL;
-+
-+	pci_dbg(pdev, "tsm enabled\n");
-+	return &no_free_ptr(pf0_dsc)->pci.base_tsm;
-+}
-+
-+static void cca_tsm_pci_remove(struct pci_tsm *tsm)
-+{
-+	struct pci_dev *pdev = tsm->pdev;
-+
-+	if (is_pci_tsm_pf0(pdev)) {
-+		struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(pdev);
-+
-+		pci_tsm_pf0_destructor(&pf0_dsc->pci);
-+		kfree(pf0_dsc);
-+	} else {
-+		struct cca_host_fn_dsc *fn_dsc = to_cca_fn_dsc(pdev);
-+
-+		kfree(fn_dsc);
-+		return;
-+	}
-+}
-+
-+/* For now global for simplicity. Protected by pci_tsm_rwsem */
-+static DECLARE_BITMAP(cca_stream_ids, MAX_STREAM_ID);
-+
-+static int cca_tsm_connect(struct pci_dev *pdev)
-+{
-+	struct pci_dev *rp = pcie_find_root_port(pdev);
-+	struct cca_host_pf0_dsc *pf0_dsc;
-+	struct pci_ide *ide;
-+	int rc, stream_id;
-+
-+	/* Only function 0 supports connect in host */
-+	if (WARN_ON(!is_pci_tsm_pf0(pdev)))
-+		return -EIO;
-+
-+	pf0_dsc = to_cca_pf0_dsc(pdev);
-+	/* Allocate stream id */
-+	stream_id = find_first_zero_bit(cca_stream_ids, MAX_STREAM_ID);
-+	if (stream_id == MAX_STREAM_ID)
-+		return -EBUSY;
-+	set_bit(stream_id, cca_stream_ids);
-+
-+	ide = pci_ide_stream_alloc(pdev);
-+	if (!ide) {
-+		rc = -ENOMEM;
-+		goto err_stream_alloc;
-+	}
-+
-+	pf0_dsc->sel_stream = ide;
-+	ide->stream_id = stream_id;
-+	rc = pci_ide_stream_register(ide);
-+	if (rc)
-+		goto err_stream;
-+
-+	pci_ide_stream_setup(pdev, ide);
-+	pci_ide_stream_setup(rp, ide);
-+
-+	rc = tsm_ide_stream_register(ide);
-+	if (rc)
-+		goto err_tsm;
-+
-+	/*
-+	 * Once ide is setup, enable the stream at the endpoint
-+	 * Root port will be done by RMM
-+	 */
-+	pci_ide_stream_enable(pdev, ide);
-+	return 0;
-+
-+err_tsm:
-+	pci_ide_stream_teardown(rp, ide);
-+	pci_ide_stream_teardown(pdev, ide);
-+	pci_ide_stream_unregister(ide);
-+err_stream:
-+	pci_ide_stream_free(ide);
-+err_stream_alloc:
-+	clear_bit(stream_id, cca_stream_ids);
-+
-+	return rc;
-+}
-+
-+static void cca_tsm_disconnect(struct pci_dev *pdev)
-+{
-+	int stream_id;
-+	struct pci_ide *ide;
-+	struct cca_host_pf0_dsc *pf0_dsc;
-+
-+	pf0_dsc = to_cca_pf0_dsc(pdev);
-+	if (!pf0_dsc)
-+		return;
-+
-+	ide = pf0_dsc->sel_stream;
-+	stream_id = ide->stream_id;
-+	pf0_dsc->sel_stream = NULL;
-+
-+	pci_ide_stream_release(ide);
-+	clear_bit(stream_id, cca_stream_ids);
-+}
-+
-+static struct pci_tsm_ops cca_link_pci_ops = {
-+	.probe = cca_tsm_pci_probe,
-+	.remove = cca_tsm_pci_remove,
-+	.connect = cca_tsm_connect,
-+	.disconnect = cca_tsm_disconnect,
-+};
-+
-+static void cca_link_tsm_remove(void *tsm_dev)
-+{
-+	tsm_unregister(tsm_dev);
-+}
-+
-+static int cca_link_tsm_probe(struct auxiliary_device *adev,
-+			      const struct auxiliary_device_id *id)
-+{
-+	if (kvm_has_da_feature()) {
-+		struct tsm_dev *tsm_dev;
-+
-+		tsm_dev = tsm_register(&adev->dev, &cca_link_pci_ops);
-+		if (IS_ERR(tsm_dev))
-+			return PTR_ERR(tsm_dev);
-+
-+		return devm_add_action_or_reset(&adev->dev,
-+					cca_link_tsm_remove, tsm_dev);
-+	}
-+	return -ENODEV;
-+}
-+
-+static const struct auxiliary_device_id cca_link_tsm_id_table[] = {
-+	{ .name =  KBUILD_MODNAME "." RMI_DEV_NAME },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(auxiliary, cca_link_tsm_id_table);
-+
-+static struct auxiliary_driver cca_link_tsm_driver = {
-+	.probe = cca_link_tsm_probe,
-+	.id_table = cca_link_tsm_id_table,
-+};
-+module_auxiliary_driver(cca_link_tsm_driver);
-+MODULE_IMPORT_NS("PCI_IDE");
-+MODULE_AUTHOR("Aneesh Kumar <aneesh.kumar@kernel.org>");
-+MODULE_DESCRIPTION("ARM CCA Host TSM driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/virt/coco/arm-cca-host/rmi-da.h b/drivers/virt/coco/arm-cca-host/rmi-da.h
-new file mode 100644
-index 000000000000..01dfb42cd39e
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-host/rmi-da.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2025 ARM Ltd.
-+ */
-+
-+#ifndef _VIRT_COCO_RMM_DA_H_
-+#define _VIRT_COCO_RMM_DA_H_
-+
-+#include <linux/pci.h>
-+#include <linux/pci-ide.h>
-+#include <linux/pci-tsm.h>
-+#include <asm/rmi_smc.h>
-+
-+/* dsc = device security context */
-+struct cca_host_pf0_dsc {
-+	struct pci_tsm_pf0 pci;
-+	struct pci_ide *sel_stream;
-+};
-+
-+struct cca_host_fn_dsc {
-+	struct pci_tsm pci;
-+};
-+
-+static inline struct cca_host_pf0_dsc *to_cca_pf0_dsc(struct pci_dev *pdev)
-+{
-+	struct pci_tsm *tsm = pdev->tsm;
-+
-+	if (!tsm || pdev->is_virtfn || !is_pci_tsm_pf0(pdev))
-+		return NULL;
-+
-+	return container_of(tsm, struct cca_host_pf0_dsc, pci.base_tsm);
-+}
-+
-+static inline struct cca_host_fn_dsc *to_cca_fn_dsc(struct pci_dev *pdev)
-+{
-+	struct pci_tsm *tsm = pdev->tsm;
-+
-+	return container_of(tsm, struct cca_host_fn_dsc, pci);
-+}
-+
-+#endif
--- 
-2.43.0
+instead of the global ones. See definition of "struct clk_parent_data".
 
+
+while we're at it, maybe it would be a good idea to drop the ".name = pname" assignment bit
+
+as that won't work anyways since we're relying on local parent names?
+
+
+>
+>> +};
+>> +
+>> +#ifdef CONFIG_RESET_CONTROLLER
+>> +static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device *dev)
+>> +{
+>> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>> +
+>> +	kfree(adev);
+>> +}
+>> +
+>> +static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data)
+>> +{
+>> +	struct auxiliary_device *adev = data;
+>> +
+>> +	auxiliary_device_delete(adev);
+>> +	auxiliary_device_uninit(adev);
+>> +}
+>> +
+>> +static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
+>> +{
+>> +	struct auxiliary_device *adev __free(kfree) = NULL;
+>> +	int ret;
+>> +
+>> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+>> +	if (!adev)
+>> +		return -ENOMEM;
+>> +
+>> +	adev->name = "reset";
+>> +	adev->dev.parent = &pdev->dev;
+>> +	adev->dev.release = clk_imx8ulp_sim_lpav_aux_reset_release;
+>> +
+>> +	ret = auxiliary_device_init(adev);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to initialize aux dev\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = auxiliary_device_add(adev);
+>> +	if (ret) {
+>> +		auxiliary_device_uninit(adev);
+>> +		dev_err(&pdev->dev, "failed to add aux dev\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return devm_add_action_or_reset(&pdev->dev,
+>> +					clk_imx8ulp_sim_lpav_unregister_aux_reset,
+>> +					no_free_ptr(adev));
+> clk_imx8ulp_sim_lpav_unregister_aux_reset() clean up the resources, if
+> moving this before auxiliary_device_add(), then no need
+> auxiliary_device_uninit() when add fails?
+
+
+the whole chunk guarded by the #ifdef CONFIG_RESET_CONTROLLER should go away
+
+anyways once I switch to devres as Frank suggested
+
+
+>
+>> +}
+> Regards
+> Peng
 
