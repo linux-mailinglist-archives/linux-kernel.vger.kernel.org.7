@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-871173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1448C0C93E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:13:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DF4C0C935
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E80D24F13A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE1C3A1EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDE92FB0A5;
-	Mon, 27 Oct 2025 09:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3922F6930;
+	Mon, 27 Oct 2025 09:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SXI77pie"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzNWtaWR"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE762FABE3
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D382EF667
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761555817; cv=none; b=uxLTD8/zqdUgSA9DtKh972+7PZFX3CWaPr2vX8RYDD7PWxbWVECS8t3f3M9FnZKhEm+e8ocoGNDXZSDqGoWRHZPzzEkWT6qaWvKK5+rQRB4gDUyR7WjLaMGUqP1jOmKKSCwbdDADy40+mVdY6ouQQ6imSBcxBdLblH8nUcpaWHc=
+	t=1761555800; cv=none; b=l43ns7Na2hg0c932/DaDdZyxmrHaI5+uPDeUN3TpYH/HNI/geJJkwZRY3R90PqYilSaSLiHLjeH+1MwOUOrOmoKM2Odf6yJaDXJUpMzLCuHz+ACq11mWQacYePl7dHfybU17zlPRFP6s88wiQH+4LAcNbFDZAND94cS9MXtMeNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761555817; c=relaxed/simple;
-	bh=88+iBNZgvVpyohQ9kPzFpsIXI4y2JOvGnxidYf7LqAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cFDLUizLZEvE6znDSCgzoihVdDnfFyUCqzAMV5UxhHDPMZTJCgfVtgtZeiczQ9RJSuux7jAbQRyqQRXgZYumc5Tkxa133pxg4TuOjX0hkY6ViFueQQ9+NsMiQg6lJiVt7yLTKXjueWVUIbiXhuCbDfUgCOaR4U4UTym3V64BVoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SXI77pie; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bbadcbfa-0250-4d53-975e-97b81559c6ad@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761555812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lV8YyUI50b9YTzBcIMKZgPznygfBMpGKiWQNdsbpj0o=;
-	b=SXI77pieU9uobUn+uaGz12VeYJLIB8q+z5LXhhnSmvbtcqjcLAupoE56fQ6yyy/zD+RCXp
-	0TcGiSKcLO8IuwWlvFsoK3fGn3qdNwM2DryuFyrejF81na/PPHQi7m476EIvr7z4TYp/7R
-	sl3s7OAZ8xOGeh9E/aEq96cG+CNFdUM=
-Date: Mon, 27 Oct 2025 17:02:54 +0800
+	s=arc-20240116; t=1761555800; c=relaxed/simple;
+	bh=39JSbHmlk2Zr3lfvER7UAMC1eMXf7kaYCS5xIFrjxks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RbRIdXWlGVu/SNiCq0n0KfmlodzPudbM4X7Yhvn/I4xD5oQbMQnynANXWk6toi62yZq+5nYDDvvqZ06nohxH0felGxolf3ieoHYKsO8z5qJJZlYXpEGvn5LxYWhh0kHWsaYh4k4TLxU++9gR6E6OOlFEp7TjCLX/1KGc/Cdus9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzNWtaWR; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27d3540a43fso44634245ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 02:03:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761555798; x=1762160598; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2Xvuh0I/opmY/ziCGQafTK7nM7PxgpGRf3XOAE2Yhw=;
+        b=ZzNWtaWRYmLgwI9k3YBLb+T1N9jJdjYIVjdts5PR7spwERLViiQHh4NkjoGOEQMdsc
+         zSL4EoO0CB+Nysc7i7sPhJ6iaj4vUtyvgFTD+xEiYxUAuRnlEC4tU+pCmVU8UwwX7mYD
+         sk4B+eSjiZPoC5/UHbiJQienmXvZIDXThBv2TdDBBxFnU19OWM+WhKnAJby/T7AbMG8a
+         FDdq1oPMfP+pT6jb5PiLF/+pzTUK4HM+99BZhYtUFCHgXePuU+TDb8byyKvO+2FCch7w
+         6ck/QzLriJeCEx/7menunNc/DBqfobox3lYU7i6nnOumer7Ed3WZQMvInKWNKMI++ruT
+         xFfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761555798; x=1762160598;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G2Xvuh0I/opmY/ziCGQafTK7nM7PxgpGRf3XOAE2Yhw=;
+        b=Rx4//5rJu1a04O2mP4RhSHT4mG3cUzlfbwJ1/8b7MS4YD+YuQ/DBnxu8vBX5M02xda
+         mYRZKYbbBX4E2gOnV9rLV8oNApbMlT5hAErWP0sxwEv3df4zE0z3duNMm7EzW2Ebgs0Q
+         TkkI29cd5o0OG7LWV+Pkb2cscpu9h2iwhEdP+4Dd1rcuugUN/UUKHPvqhiimwcNhFZUm
+         cREVr9cA+jP4R4GXuRVPFEflqShfeqdpc1d0Ylkc5aicGL2XEytEw0mJr/lzbg0AEf13
+         MOx266az3pZzkRf4KN4rc9S82tIVk84r4PIZ93+pBD0qx7HosrGtxvuWLu/fJWsW4+1Z
+         X9dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsUpTTMx2YXxqwjUQO1gOTieICoZPyaVNzEkSn8h+QttRW4P4JtNLUOOsmjfKX0z2uxaIATcRN1FOocWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhG6nlaJiMFLOs5GsQg18yZtJvEj/vC0TdpjAWw7loi7Kw6ti0
+	7f895tmd9MS320JIkDvMGsgvwyJ+1NzHnVsg+L+ZXMyEqjEuJJLWDP1m
+X-Gm-Gg: ASbGncvuFmtzvWs5JlPhHqhYD7C7CAgZf2RK/aw3h6Tafwbem5hhCLtnhSeJ2wNieS0
+	l60hxvLMOvdDXFLoeouyf0tMhKlOCquzzqP4CkHKS09luCF2dL7E5PHSPrLpDMlqai7HdrbazMp
+	s122eEH1I+/PUBkt/9kX2q1VzucB2rsXS+9+rkyRLdNIQ+tsjC6o2waNKaxftjcNQZpJBkmLo5E
+	lMCB0DYisie8qbubdFyQ6rwnghExpzFZmy7TeSTC8qC2aAvicpHAucMGu1c6xW6QZMNDrL880Ml
+	jN4kKG2ieTiUW/aqP2EtqWIoSPtp1fwuW1CFEY+TI7pgTK675ueHt7FsiJxTMat1Of4y6pmv9JE
+	SzJ9YA+I5vWRZhjoRiBwg/k+u9gVVIfrJu8mOiZ0SNrHi/7zoPbmKp4BrjBFYHRtqnz3rODMoH6
+	PLjIvLothK
+X-Google-Smtp-Source: AGHT+IGxRWBU+fTBAW0RgqmP8oSsQAfOzUEn3iCBlYhHwERcOsccVd8fAGBDoZpy6feb1Z5JjqF9+g==
+X-Received: by 2002:a17:902:e5c2:b0:26d:72f8:8d0a with SMTP id d9443c01a7336-290c9c8c7c2mr441668685ad.12.1761555798089;
+        Mon, 27 Oct 2025 02:03:18 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.108])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3433sm73881335ad.21.2025.10.27.02.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 02:03:17 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-omap@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-arm-kernel@lists.infradead.org (moderated list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v3 0/2] PCI: j721e: A couple of cleanups
+Date: Mon, 27 Oct 2025 14:33:04 +0530
+Message-ID: <20251027090310.38999-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v12 mm-new 03/15] khugepaged: generalize
- hugepage_vma_revalidate for mTHP support
-Content-Language: en-US
-To: Nico Pache <npache@redhat.com>
-Cc: david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- linux-kernel@vger.kernel.org, sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kas@kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- vbabka@suse.cz, rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-4-npache@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251022183717.70829-4-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+
+Refactor the J721e probe function to use devres helpers for resource
+management. This replaces manual clock handling with
+devm_clk_get_optional_enabled() and assigns the reset GPIO directly
+to the struct members, eliminating unnecessary local variables.
+
+These patches have been compile-tested only, as I do not have access
+to the hardware for runtime verification.
+
+v2  : https://lore.kernel.org/all/20251025074336.26743-1-linux.amoon@gmail.com/
+v1  : https://lore.kernel.org/all/20251014113234.44418-1-linux.amoon@gmail.com/
+RFC : https://lore.kernel.org/all/20251013101727.129260-1-linux.amoon@gmail.com/
+
+Changes
+v2  Drop the dev_err_probe return patch.
+    Fix small issue address issue by Dan and Markus.
+v1:
+   Add new patch for dev_err_probe return.
+   dropped unsesary clk_disable_unprepare as its handle by
+   devm_clk_get_optional_enabled.
+
+Thanks
+-Anand
+
+*** BLURB HERE ***
+
+Anand Moon (2):
+  PCI: j721e: Use devm_clk_get_optional_enabled() to get the clock
+  PCI: j721e: Use inline reset GPIO assignment and drop local variable
+
+ drivers/pci/controller/cadence/pci-j721e.c | 33 ++++++++--------------
+ 1 file changed, 11 insertions(+), 22 deletions(-)
 
 
-
-On 2025/10/23 02:37, Nico Pache wrote:
-> For khugepaged to support different mTHP orders, we must generalize this
-> to check if the PMD is not shared by another VMA and that the order is
-> enabled.
-> 
-> No functional change in this patch. Also correct a comment about the
-> functionality of the revalidation.
-> 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Co-developed-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
-
-LGTM!
-
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
-
->   mm/khugepaged.c | 20 +++++++++++---------
->   1 file changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 36e31d99e507..6cf8700823f9 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -893,14 +893,13 @@ static int collapse_find_target_node(struct collapse_control *cc)
->   
->   /*
->    * If mmap_lock temporarily dropped, revalidate vma
-> - * before taking mmap_lock.
-> + * after taking the mmap_lock again.
->    * Returns enum scan_result value.
->    */
->   
->   static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
-> -				   bool expect_anon,
-> -				   struct vm_area_struct **vmap,
-> -				   struct collapse_control *cc)
-> +		bool expect_anon, struct vm_area_struct **vmap,
-> +		struct collapse_control *cc, unsigned int order)
->   {
->   	struct vm_area_struct *vma;
->   	enum tva_type type = cc->is_khugepaged ? TVA_KHUGEPAGED :
-> @@ -913,15 +912,16 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
->   	if (!vma)
->   		return SCAN_VMA_NULL;
->   
-> +	/* Always check the PMD order to ensure its not shared by another VMA */
->   	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
->   		return SCAN_ADDRESS_RANGE;
-> -	if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORDER))
-> +	if (!thp_vma_allowable_orders(vma, vma->vm_flags, type, BIT(order)))
->   		return SCAN_VMA_CHECK;
->   	/*
->   	 * Anon VMA expected, the address may be unmapped then
->   	 * remapped to file after khugepaged reaquired the mmap_lock.
->   	 *
-> -	 * thp_vma_allowable_order may return true for qualified file
-> +	 * thp_vma_allowable_orders may return true for qualified file
->   	 * vmas.
->   	 */
->   	if (expect_anon && (!(*vmap)->anon_vma || !vma_is_anonymous(*vmap)))
-> @@ -1117,7 +1117,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   		goto out_nolock;
->   
->   	mmap_read_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
-> +					 HPAGE_PMD_ORDER);
->   	if (result != SCAN_SUCCEED) {
->   		mmap_read_unlock(mm);
->   		goto out_nolock;
-> @@ -1151,7 +1152,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   	 * mmap_lock.
->   	 */
->   	mmap_write_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
-> +					 HPAGE_PMD_ORDER);
->   	if (result != SCAN_SUCCEED)
->   		goto out_up_write;
->   	/* check if the pmd is still valid */
-> @@ -2792,7 +2794,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
->   			mmap_read_lock(mm);
->   			mmap_locked = true;
->   			result = hugepage_vma_revalidate(mm, addr, false, &vma,
-> -							 cc);
-> +							 cc, HPAGE_PMD_ORDER);
->   			if (result  != SCAN_SUCCEED) {
->   				last_fail = result;
->   				goto out_nolock;
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+-- 
+2.50.1
 
 
