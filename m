@@ -1,330 +1,154 @@
-Return-Path: <linux-kernel+bounces-871052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995E1C0C549
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C835CC0C54F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD91A188BDE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CCD188C76D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2382E7198;
-	Mon, 27 Oct 2025 08:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0542E7198;
+	Mon, 27 Oct 2025 08:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qoKZhMCt"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013028.outbound.protection.outlook.com [40.93.201.28])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="p/rNVq55"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF39E1E51EB;
-	Mon, 27 Oct 2025 08:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554194; cv=fail; b=hJ6/REpe8x8NYIqRQ4noOdSN9hW3YoEBlFjtSqf++8SkXfd/+IDf+bNcCrQprtGkxaIWbKV9Up3ine1WSrxW82I61qrq5rmcdNWWLzDAZIGu6k4a9U8hsN56GwWGN6Lzbm3Xe17BvY+z7669Ls42RI1i1x5NQ0p3y28Ykv4OzbE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554194; c=relaxed/simple;
-	bh=1f2N8abPkNNtHhrpBr0iQARiEh6SZDIND8/USxa2Nbo=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BPSDKu9sFADm9KuP1n15ba5uOzj/uMbYRzcbtBZP+Fdts4AJ5hOjqiSSvxfiV5cl6gFKAeVL8AMEyCJP5A6MjHZmCaM0QXJ1qURhR7KucUjI1YhqYc9775VhLYoloKL4wxhppItj7fEd0DeGopwhyikFCLgtw8v9g4YqDdWO8nk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qoKZhMCt; arc=fail smtp.client-ip=40.93.201.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DVFVW7qNmi6LM4B1wYeJUKmXgmzv4dbuKuINiSbcx1+5P7iDM/szZmfzf8a+jB+7WA+kWkmpNsUJ8zNsvNEY4iErxeiWPlEsyNiHaG7W9JFbp5HnKtI2tSFAxlEPJJjsoQsto/cDF65/Y2XVyg7JEPGFHnHQbI/K2SB/evgrz5+LWwIrQdqTTg3j5VrRX6wmK6+Z8KxDlAWQx5lSz3ZleSeSRZqM471ytsEAIt+x4Z100AW9EjagYGxT2OynogR1MlronY15Z8EuYwuAgO6AZMIHPpl4Z2vnG4kM9lK+wfBDogQTsL2PGqyLnoDNeJMI8Ro4RAGzY3+07yVObzEatA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KJMlApntBUZBLGWfQtcRU6B9xi/4ghf/Cz4qX1Fc/rI=;
- b=IFT88Aw77uEAueszake5lmGTJ5QsgVP0Qzq3Plz/4JRPoS9qzBrm3uO8HvtEyBqjMCCkJL/dXf9bk89vp4ue0vO4wmO6XNdfAgEtRdwstiENCag3TVL4oxmWami2DO1s67qCw/NMw1lKs7sNalOoJXfj0RTBISdHyJIO5GnyunDyKnWnhEVqqX0uaZszZ+QJs63kGeM9t/p7bI4BcuJpC1XlQOHykAtPPPfwSxBHL6VpMYTAvNYoEMTTMDSjPCiol++xxPxrepb0vvXR1LyXFGAqiUBz9+Rlwcd0logXCFq0jLOWdwTJ3xbQKFQsrBjSfMiTEA5ZkNCuRrz58Wb/bA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KJMlApntBUZBLGWfQtcRU6B9xi/4ghf/Cz4qX1Fc/rI=;
- b=qoKZhMCtqFeoMvMNovHWHdyJfm2vnGWfKwRYs7vy8CWAYwe061ks/l4bZOqY1Gp5sbj7Rqq9qjrhvlKEMOZ47jCZlUT7wFmNNifJl5w8eW73W+ILCL5hXTFbXEVqilOjMGIwpl9k3ReNuBkxRUCsZpoVABPznDGZnDFnZ3IbROE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
- by IA0PR12MB9012.namprd12.prod.outlook.com (2603:10b6:208:485::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
- 2025 08:36:28 +0000
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 08:36:28 +0000
-Message-ID: <13fd3b12-03a0-457f-a5da-fe018b032211@amd.com>
-Date: Mon, 27 Oct 2025 14:06:21 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] platform/x86/amd/pmc: Add support for Van Gogh SoC
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Antheas Kapenekakis <lkml@antheas.dev>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Perry Yuan
- <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
-References: <20251024152152.3981721-1-lkml@antheas.dev>
- <20251024152152.3981721-2-lkml@antheas.dev>
- <3792db59-7dc1-4e34-9436-84df4b6c3e10@amd.com>
- <CAGwozwFTDD2QrHy37axhanwQYv6ty9K_hfhxS05djKpv8HfY6g@mail.gmail.com>
- <2684d3ab-d7cf-4eab-acd4-91bdd5debb6b@amd.com>
- <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
-Content-Language: en-US
-In-Reply-To: <058eda7c-ab93-40a5-b387-54f7a18f3922@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA5PR01CA0134.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1d5::11) To BL1PR12MB5176.namprd12.prod.outlook.com
- (2603:10b6:208:311::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811881E51EB
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761554203; cv=none; b=o+K8rZBsJcheETkSdmWlv+R1eC+3zJBdYzKWmaQqZ1F4IYi2aqd2l4BEVy2jLyQHdi5NUQqfqcYeo8hxn8ejPH5aJUaSWe+KJzcCXpJm9L85PALOWU0HK8mLAZo4iqpliUz9Bd8DXW0l4ZewF5RT8EiQARo/v7JXXfgVu1Z3q54=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761554203; c=relaxed/simple;
+	bh=OHJoJm1w9nF6f+uXWZekSb2w4XxFMvVh6TIEKNomyvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=blxmEwQxfQE+jC7gHC79LgCAvbQHlEyTHtf7bchl1An5/mx8uxu0aYC35SJI9CPRtaByTF1ZLFHEtX6qNkh37Z+5j4idkahQWV55Icu4nFww3DIM+UuCt0m1UWu+pKFw5dV3vVfCsdd1xP565NwQX8xCG8xdIwIdJ9h5BoFiyiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=p/rNVq55; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251027083633euoutp0256933032df5e20b80948641bdc8ac822~yTDSfcK332602126021euoutp02w
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:36:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251027083633euoutp0256933032df5e20b80948641bdc8ac822~yTDSfcK332602126021euoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761554193;
+	bh=GDGC8uUu63JMe8QRZvn607R80kUDIHwPrRJNpeAHqEM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=p/rNVq55LrUzibYQ9+OQV5ZpJ8wb7/IwdFL2Tt4jeSfsN4FO1/mrboCaRvwWhvq6N
+	 AOxv6+boN3SRN95PR3AxqE1W4Ykvau7q3tKgaiGWSl/ylH/OBecOY8GeXeEBAbHMM+
+	 SS1KTFKq/d1SCHycEhbjAl9xUbpRiSsnMCUf5Z2M=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251027083632eucas1p22bb444c70987522a5601a2c2725199cb~yTDSOTEYo0953409534eucas1p2g;
+	Mon, 27 Oct 2025 08:36:32 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251027083632eusmtip18ae16c04c9155f397db1d7adf1c68321~yTDRyZLbN0599805998eusmtip1Y;
+	Mon, 27 Oct 2025 08:36:32 +0000 (GMT)
+Message-ID: <b81e9451-f363-4adf-9b20-e2e9bb55b92d@samsung.com>
+Date: Mon, 27 Oct 2025 09:36:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|IA0PR12MB9012:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb30bdb2-7441-4680-b65b-08de1533ec2b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WWZoMUc2MlFvKzUyaVk5SEZaUE1Xdlo1c3pmRUE2RXh6NURaRWhpSG9xdnFO?=
- =?utf-8?B?OHVRdjNSOTJ5RXBTZXkwbDFXMmFsYUdjeDBwejNKMWNTbzZPcTBlcXhMRjZR?=
- =?utf-8?B?b3F6WU1sN203a1d2R1RnOFg1Q2ZBMEpnNE9vNm1IRm5kVW9ETGxSRmdoNHRZ?=
- =?utf-8?B?KzM5RktyeC96U1BpUVA3QlhPRlE0ZmhrTTFqSS9KTWwzOUh1VVpXbVdRSTRG?=
- =?utf-8?B?UWVRSElyT04xaFhoSHpteUJyWWFJWC9aV0YwdU9jMGh0cDY3WloySHNWc1or?=
- =?utf-8?B?MDRVQXA5U01iUUJFMFBzd3REZ1IrYmwrZ3FNUU5hdllCZ1V1OXZSeE9qTEVO?=
- =?utf-8?B?Y3d4L0h4aG9IMTgzWHpsSVpJai9yYXcyWWprb2h3VldkQWVyd1pNd3FUZ0Qx?=
- =?utf-8?B?OUlleHBBYUNEb0dpMG5ORm8rVDFvVG9MdFFNQTF6R25mcyt6Q1FjRkNtYjdT?=
- =?utf-8?B?UUFlbjh5cFVQL0FNOEpaUUdCZmo2TXp4VDZLU0dsYzIwZSt6SDBzaHd1b2Jj?=
- =?utf-8?B?R0Z6cjhkTjNnb0JiUzdYZCtmaEU3Zk0yeTBDd29IZVBXL3BudVVGMWh6UXQr?=
- =?utf-8?B?d3BNMmhBay9mZmUzQVcvRWcxMmE3aWhjYUpwekZiMDhpM3J4WjFVajVnU29I?=
- =?utf-8?B?eXh6MUx3OXA2QVlhYUg2Um81Y0RpZ0FIeHFZd2dxTXRUaFFJdTBVbnFmV29Q?=
- =?utf-8?B?S2RoVXVGcFdKaWtpZkdQM2VvbXk3aWtudFpNRWxNOXBLZ3hEdnJsOWVZVzhz?=
- =?utf-8?B?Z0NtSXJIQ0lYQW5wU1ByN1VCVWpTRzNiWEtRL210dVpCRHNobjVaajVKblQ5?=
- =?utf-8?B?bHk0VDhtTi9wcUN2dFNJOFIwd0RIM1ZJOFcwU2w3Z2hZaTBqOGlUd2dLRFpG?=
- =?utf-8?B?a1FCV2FzQWtvRnRPTFduNWRsL2RLWTNiN3QycTRkTXFOUWFyck5mUDBrT1BM?=
- =?utf-8?B?c2pIcVVlTGxmSnlDS21YV2RZN3o4U2ttS0F2NURUZ005TnZUVG1pQXIwWlRY?=
- =?utf-8?B?ZDJsVDhHTWRYdzlVS0daRlhnWmd2N0s4UkwrTWViL2lycXRWdEFKZ0JOSEk0?=
- =?utf-8?B?cjc1VldaSko2TmxzUjVWclM0R3hDdnFpdUZmK3dEM0g4cE0rZzk2VmlXNXJB?=
- =?utf-8?B?SDFQaVRMaTVackVjVzZKMmwwZEJNK3FDTEFJaDl1dUpvRVdYLzR6c3V1L1Yr?=
- =?utf-8?B?d2d5b3RXY1crTHNqckVUaTZNSGpjK3UxR2Y4bUdyMzEvakVCaXhLWm1BMXpR?=
- =?utf-8?B?M01VWWYybFJkL3I0SEkrcU9CZUhEdUpvQis1T3Nuckk3Zk5TWE9kTnZCcUJ4?=
- =?utf-8?B?dEFOc2FpMzhBd1kxdTRwc3pxM1JQcXRkQmg0SFoyeXZ2c2t5bXp2WEJqc3N1?=
- =?utf-8?B?aE9BNW55YTYvMUEwdjBSMnVDTVBibzB5QjVKNExGd3I3ZyszbE5BRGRzWFZy?=
- =?utf-8?B?a3MxUFVvZUtPSTBpNFNwbGozUjFXVHFQMzcwQ1FQTEtUaDBHV2htL0RXeXhI?=
- =?utf-8?B?RHl2NGxZemNFSlFFZ1pyR0UxOWxJanAzdmpsQkc1cElhU3dsZVVUUUNpb2ZS?=
- =?utf-8?B?QmpteFZvbnBpbWk4azRzSmNPUmdCNlBHQzk4V1B5eVdlWHh4SHp3ZXFOdkZm?=
- =?utf-8?B?WlBHR3pDUzQvR242TGx6Y25RQmpiZ0JTSVJXVVBHQkpGRFBjNjkyMGs2ZjBx?=
- =?utf-8?B?RWw2Skd6T2NYS0NzZzFaQlZHTGVEckh2VllVN1liK2hUeHJQRlpEc2t2Rk9G?=
- =?utf-8?B?c3dTMUtlcHkxcldLNW1aclhnU28rejBGWWwwUFNHQXc5TnBKY0VHQi95ajdw?=
- =?utf-8?B?YlM2ME8ybzhVUXBBcVdLODNHSE1RazdIak1tSEVmQnJmeGEwcTBSVEVjSFNZ?=
- =?utf-8?B?cU9SV2hXNW13ZDE3bmJRam9DV095M2Npc0FSMkUzTjhzY3ZIWG5EdGVSd3Q0?=
- =?utf-8?Q?xv3q5DWjEY5/ENnYYyDw7suAgXBL+vpu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ODdDN2p4akpKM1h0eHNuK2NLeTR0T05YMXZvdllHNEVXMjR0c3hkZWI2N0tx?=
- =?utf-8?B?VWloTDI1WG9BcUNGYTRreUYwV1JocjFYYkhkWEUyRXVIbHJrMTk3bkhKMTJW?=
- =?utf-8?B?VXRUa0FxN2xVUGxaUEZOVTRibFcvK2JvVllDbElTWXFJeGtUVzR5bXQ1dVkx?=
- =?utf-8?B?WExmcEFHRDRnVDQybkl2Z1dycGtQNnQ2SFo5ZzJqTGR0Umt3UEEzRmJEMkI0?=
- =?utf-8?B?YXlTajFZelZ0MzJIZ0VrcEt6NEs1MnlKSmFYSXRlTGlLZXQvUjc1d2dXUG1S?=
- =?utf-8?B?SWxiOVd6amMzTWw2V2E5b0NVdGJZM0lzYzBoL1czOFQvVWZqSVozczNwRHNH?=
- =?utf-8?B?cE4zZ0tBSU9uWVZ6aTZGZkJ2U1p3QTF1am5XcHovT3ZlZWdQaWZldmlSUlJv?=
- =?utf-8?B?NnMxZDh1N0RHa3B2VDR6d1k4clJMamMxbVRuQ05hc1VNVnhtTHhlaGk2SEFz?=
- =?utf-8?B?MDBGelQ4djF5V1JTSExVcks3UEtVcTFJRk5CVFpxK1pOZ1U0NStIZ2ZLdXI4?=
- =?utf-8?B?VC9ETGFEVnRTdWlxMzBzSEp6S0gvdXZYdXFBRTdJNkQra3prYW5HcDRIZkpY?=
- =?utf-8?B?R1FtUmx5UitpczBjMnJiM0FWdkd5M2lTMU5wN3RkeHZRZUd5QlVoVjAwaHlU?=
- =?utf-8?B?bnp2NUNSVlJVb2N0ckNrMVFmKzN5RnhQVWZQRTF4dDRBVlJrbVVEeVpLTk9P?=
- =?utf-8?B?WEs3OEhxOUVac2xWY3VLNm9BSjAxN3l2ckpIdEJTZk9OUGt5MnZnWjZDaXZH?=
- =?utf-8?B?aUJKdlRRZGVsbmI1N2pvZHBrUWYyM09NMFJWNktGSGNQSGppUEJoSEwrUk5j?=
- =?utf-8?B?OVFvSjNIWGlzdlJRa3VFbW1YcGg2TW10cEFxb09iZGdpWGZNR1psYUhBV1Ji?=
- =?utf-8?B?aUtRWmpoeURaV1VXVnlIVmNLS21kcm5tMTRJeTNOTE1XaittOWdLTDlZdm85?=
- =?utf-8?B?UldsZ0gwcmhaNWloVlcrNE5tdnNUdWlNQjd3QU0zZmhxdVRVTFdmajZoWnM0?=
- =?utf-8?B?Q1lSRWVoMGovcWlJUCtXdFlaeGdkbEQ1cVMrZHgwN1BPb2RzZlBtOXl5UzBo?=
- =?utf-8?B?V1poemtSTysyMVBnaEttamtvSTdhZytneVJoczRHSmk5a1BmM2hHbEZ0NndZ?=
- =?utf-8?B?bHpJWTd6OTViL0Z5eSt0d1AwR1crelByRm82VVRYS1U4NERCMUdqVDl4NENM?=
- =?utf-8?B?ckRURVpOU3lFMUFyVU05Vk5jdFIwMlBHaXRqdGVTai9CT0JnTlZjU1hwQ21K?=
- =?utf-8?B?V05VSUZ6dzQyM0F5My9EM0hXUjAwVUhNa2w3a2lqZ3c4RmlMdVdNeWJqa1J1?=
- =?utf-8?B?TVNMOHJOM0dieWFtQWxLdjRrZkp1dVhqSG1FdTBtSHd6czBUU2pPcFQvM3da?=
- =?utf-8?B?emMwMlg4K2FjSHBtUVhiWTNseXRnckFXaFB0ZXhKdDVheEZqZUVDem5MSHJP?=
- =?utf-8?B?R0QxdTI2aXdxNjY4WkdVNndha1lsZUpDMnNES0c1L3NrbUZhWVRZaFo5TEVv?=
- =?utf-8?B?dmVqZmtzWjBRTDhIbVArTWRGYTJsSUFUMm44TnNNRjZhdlppVUczblJaN1dQ?=
- =?utf-8?B?dlowdDQyZ3NuRWtkVDlmWG5CZUg3bUp0MjN6SDgrY1dIdmtrSHUxTWtsaDk2?=
- =?utf-8?B?d1dNMjE0TG1KODFFcWVTZG1KN1BWRGNIOWVhTDFKdlVKS3Q1S2F0YVErWEJW?=
- =?utf-8?B?LzVNZUZCS2tFdXNGRFQwUkY2YzdKR0Z5clJUakgrYjZmMlozeEMwc3VqTFF0?=
- =?utf-8?B?ZENsRTU2RTN3M3laRHdzVU55VzFYUCtmY3phak81bWpVaUxjejJHa3U5Ujh5?=
- =?utf-8?B?ZEtuRnFOaHFTM21vTHlwTml5c3ZLSHlDem5Xc1ZIRGNveFVHQ3F5NmxuWXNB?=
- =?utf-8?B?aCtNY0dkN0gvbFYyVjhKQ2pSMFh0N1ZlUFJSL2FRMHNFZnpPRnFXckZJMzlJ?=
- =?utf-8?B?a28xZnIvMDJDaWFwczB5L3ZDRVF2d3puUFpRdnFjRFJ0cWl5TmtlY3VwK1lY?=
- =?utf-8?B?SXdWSTN1SjY0MGxOZVBNZDRtcXdheFlyM2lTOWtpanU1aFJmSFZFQnBiczVo?=
- =?utf-8?B?RGhjVmJuelNDY2VySW9QOXk0UU56dHVPanpBMlArUWZsamdhRzk3Kzd2WHVh?=
- =?utf-8?Q?5BpKEHQibEZTSlL4HNqjC1bH1?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb30bdb2-7441-4680-b65b-08de1533ec2b
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:36:28.7904
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Pifp8VilW8a0PPGLGWoRYLKaKOEYXIyqSfe1aPJaofanlWc98YqQf40C5nB9By6x0PBLwb3xeUHPT0HDCfANfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB9012
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the pwm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>, Peter Colberg
+	<pcolberg@redhat.com>, Lyude Paul <lyude@redhat.com>, Miguel Ojeda
+	<ojeda@kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20251027125148.7f7d8ed6@canb.auug.org.au>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251027083632eucas1p22bb444c70987522a5601a2c2725199cb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251027015241eucas1p1784b974d0c150e8c3513f32401205669
+X-EPHeader: CA
+X-CMS-RootMailID: 20251027015241eucas1p1784b974d0c150e8c3513f32401205669
+References: <CGME20251027015241eucas1p1784b974d0c150e8c3513f32401205669@eucas1p1.samsung.com>
+	<20251027125148.7f7d8ed6@canb.auug.org.au>
 
 
 
-On 10/27/2025 13:52, Shyam Sundar S K wrote:
+On 10/27/25 02:51, Stephen Rothwell wrote:
+> Hi all,
 > 
+> After merging the pwm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> On 10/24/2025 22:02, Mario Limonciello wrote:
->>
->>
->> On 10/24/2025 11:08 AM, Antheas Kapenekakis wrote:
->>> On Fri, 24 Oct 2025 at 17:43, Mario Limonciello
->>> <mario.limonciello@amd.com> wrote:
->>>>
->>>>
->>>>
->>>> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
->>>>> The ROG Xbox Ally (non-X) SoC features a similar architecture to the
->>>>> Steam Deck. While the Steam Deck supports S3 (s2idle causes a crash),
->>>>> this support was dropped by the Xbox Ally which only S0ix suspend.
->>>>>
->>>>> Since the handler is missing here, this causes the device to not
->>>>> suspend
->>>>> and the AMD GPU driver to crash while trying to resume afterwards
->>>>> due to
->>>>> a power hang.
->>>>>
->>>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
->>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->>>>> ---
->>>>>    drivers/platform/x86/amd/pmc/pmc.c | 3 +++
->>>>>    drivers/platform/x86/amd/pmc/pmc.h | 1 +
->>>>>    2 files changed, 4 insertions(+)
->>>>>
->>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/
->>>>> platform/x86/amd/pmc/pmc.c
->>>>> index bd318fd02ccf..cae3fcafd4d7 100644
->>>>> --- a/drivers/platform/x86/amd/pmc/pmc.c
->>>>> +++ b/drivers/platform/x86/amd/pmc/pmc.c
->>>>> @@ -106,6 +106,7 @@ static void amd_pmc_get_ip_info(struct
->>>>> amd_pmc_dev *dev)
->>>>>        switch (dev->cpu_id) {
->>>>>        case AMD_CPU_ID_PCO:
->>>>>        case AMD_CPU_ID_RN:
->>>>> +     case AMD_CPU_ID_VG:
->>>>>        case AMD_CPU_ID_YC:
->>>>>        case AMD_CPU_ID_CB:
->>>>>                dev->num_ips = 12;
->>>>> @@ -517,6 +518,7 @@ static int amd_pmc_get_os_hint(struct
->>>>> amd_pmc_dev *dev)
->>>>>        case AMD_CPU_ID_PCO:
->>>>>                return MSG_OS_HINT_PCO;
->>>>>        case AMD_CPU_ID_RN:
->>>>> +     case AMD_CPU_ID_VG:
->>>>>        case AMD_CPU_ID_YC:
->>>>>        case AMD_CPU_ID_CB:
->>>>>        case AMD_CPU_ID_PS:
->>>>> @@ -717,6 +719,7 @@ static const struct pci_device_id
->>>>> pmc_pci_ids[] = {
->>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
->>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SP) },
->>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SHP) },
->>>>> +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_VG) },
->>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
->>>>> PCI_DEVICE_ID_AMD_1AH_M20H_ROOT) },
->>>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD,
->>>>> PCI_DEVICE_ID_AMD_1AH_M60H_ROOT) },
->>>>>        { }
->>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.h b/drivers/
->>>>> platform/x86/amd/pmc/pmc.h
->>>>> index 62f3e51020fd..fe3f53eb5955 100644
->>>>> --- a/drivers/platform/x86/amd/pmc/pmc.h
->>>>> +++ b/drivers/platform/x86/amd/pmc/pmc.h
->>>>> @@ -156,6 +156,7 @@ void amd_mp2_stb_deinit(struct amd_pmc_dev *dev);
->>>>>    #define AMD_CPU_ID_RN                       0x1630
->>>>>    #define AMD_CPU_ID_PCO                      AMD_CPU_ID_RV
->>>>>    #define AMD_CPU_ID_CZN                      AMD_CPU_ID_RN
->>>>> +#define AMD_CPU_ID_VG                        0x1645
->>>>
->>>> Can you see if 0xF14 gives you a reasonable value for the idle mask if
->>>> you add it to amd_pmc_idlemask_read()?  Make a new define for it
->>>> though,
->>>> it shouldn't use the same define as 0x1a platforms.
->>>
->>> It does not work. Reports 0. I also tested the other ones, but the
->>> 0x1a was the same as you said. All report 0x0.
->>
->> It's possible the platform doesn't report an idle mask.
->>
->> 0xF14 is where I would have expected it to report.
->>
->> Shyam - can you look into this to see if it's in a different place
->> than 0xF14 for Van Gogh?
+> error[E0277]: the trait bound `core::result::Result<core::pin::Pin<Box<Th1520PwmPlatformDriver, Kmalloc>>, kernel::error::Error>: PinInit<Th1520PwmPlatformDriver, kernel::error::Error>` is not satisfied
+>    --> drivers/pwm/pwm_th1520.rs:331:10
+>     |
+> 331 |     ) -> Result<Pin<KBox<Self>>> {
+>     |          ^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+>     |
+>     = help: the trait `PinInit<Th1520PwmPlatformDriver, kernel::error::Error>` is not implemented for `Result<Pin<Box<Th1520PwmPlatformDriver, Kmalloc>>, Error>`
+>             but trait `PinInit<core::pin::Pin<Box<Th1520PwmPlatformDriver, Kmalloc>>, kernel::error::Error>` is implemented for it
+>     = help: for that trait implementation, expected `core::pin::Pin<Box<Th1520PwmPlatformDriver, Kmalloc>>`, found `Th1520PwmPlatformDriver`
+> note: required by a bound in `kernel::platform::Driver::{synthetic#0}`
+>    --> rust/kernel/platform.rs:196:15
+>     |
+> 196 |     ) -> impl PinInit<Self, Error>;
+>     |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `Driver::{synthetic#0}`
 > 
-> Van Gogh is before Cezzane? I am bit surprised that pmc is getting
-> loaded there.
+> error: aborting due to 1 previous error
 > 
-> Antheas - what is the output of
+> For more information about this error, try `rustc --explain E0277`.
 > 
-> #lspci -s 00:00.0
-
-OK. I get it from the diff.
-
-+#define AMD_CPU_ID_VG                        0x1645
-
-S0 its 0x1645 that indicates SoC is 17h family and 90h model.
-
-What is the PMFW version running on your system?
-amd_pmc_get_smu_version() tells you that information.
-
-Can you see if you put the scratch information same as Cezzane and if
-that works? i.e.
-
-AMD_PMC_SCRATCH_REG_CZN(0x94) instead of AMD_PMC_SCRATCH_REG_1AH(0xF14)
-
-Thanks,
-Shyam
-
-
+> Caused by commit
 > 
-> 0xF14 index is meant for 1Ah (i.e. Strix and above)
+>   fb3957af9ec6 ("pwm: Add Rust driver for T-HEAD TH1520 SoC")
 > 
->>
->>>
->>> Any idea why the OS hint only works 90% of the time?
+> presumably interacting with something merged earlier in my tree.
+> If someone could provide me with an appropriate merge resolution, I will
+> apply it.
 > 
-> What is the output of amd_pmc_dump_registers() when 10% of the time
-> when the OS_HINT is not working?
-> 
-> What I can surmise is, though pmc driver is sending the hint PMFW is
-> not taking any action (since the support in FW is missing)
-> 
->>
->> If we get the idle mask reporting working we would have a better idea
->> if that is what is reported wrong.
->>
-> 
-> IIRC, The concept of idlemask came only after cezzane that too after a
-> certain PMFW version. So I am not sure if idlemask actually exists.
-> 
-> 
->> If I was to guess though; maybe GFX is still active.
->>
->> Depending upon what's going wrong smu_fw_info might have some more
->> information too.
-> 
-> That's a good point to try it out.
-> 
-> Thanks,
-> Shyam
+> I have used the pwm tree from next-20251024 for today.
 > 
 
+Hi,
+I believe this would fix the problem:
+diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+index 0ad38b78be85..dd554574adc8 100644
+--- a/drivers/pwm/pwm_th1520.rs
++++ b/drivers/pwm/pwm_th1520.rs
+@@ -328,7 +328,7 @@ impl platform::Driver for Th1520PwmPlatformDriver {
+     fn probe(
+         pdev: &platform::Device<Core>,
+         _id_info: Option<&Self::IdInfo>,
+-    ) -> Result<Pin<KBox<Self>>> {
++    ) -> impl PinInit<Self, Error> {
+         let dev = pdev.as_ref();
+         let request = pdev.io_request_by_index(0).ok_or(ENODEV)?;
+ 
+@@ -365,7 +365,7 @@ fn probe(
+ 
+         pwm::Registration::register(dev, chip)?;
+ 
+-        Ok(KBox::new(Th1520PwmPlatformDriver, GFP_KERNEL)?.into())
++        Ok(Th1520PwmPlatformDriver)
+     }
+ }
+ 
+
+This is caused by change in fn probe, caused by this commit [1].
+
+[1] - https://lore.kernel.org/all/20251016125544.15559-1-dakr@kernel.org/
+
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
