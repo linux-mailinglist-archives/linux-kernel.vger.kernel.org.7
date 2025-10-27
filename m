@@ -1,518 +1,203 @@
-Return-Path: <linux-kernel+bounces-871481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E38C0D66B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:07:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7219EC0D70A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 13:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E06684E57E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A415420C06
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EAA3002D3;
-	Mon, 27 Oct 2025 12:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164202FFF9D;
+	Mon, 27 Oct 2025 12:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hb6PTjvS"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ezy5J+le"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010046.outbound.protection.outlook.com [52.101.56.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B15B2FE595;
-	Mon, 27 Oct 2025 12:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761566853; cv=none; b=WcObJ7f1ohxrCEtlgl1HY8hDfZozpsFXCfgEOa/hBCF3VN1EeLOhiyjM2Fp318oPykynrvQgY4UVZUdFo0NALIpRJWdQp2lkO16qjIYL43chdN6C1wjj19AA2JMqLpZPDPllX6x/Fu5xw6euM3znR4AXV7o95gZZrQx0QSRMydU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761566853; c=relaxed/simple;
-	bh=1+aBDmajQg/B2yCFQc/2ByMaF+ih0V/qdAtNnNicWQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNZsjY9k/WdR5w64+dSu2S5GqVsAhpjJyzf1tKDUTPic1AtlbMLc0ePuJC5AvXnfViAUoHum0OKMhn88ScL/lkK2QBsuLIr8t11lcAIIPOfuRP7EgL2O1h8HekaMERGlkaTTyoth/bdD7jeaFc2d4BxxwVdZww1EgDIoRz4UIqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hb6PTjvS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=b2s7I9GGNFgDr0lnQJQktZOYPEn4uNejSSlno1ll/NY=; b=hb6PTjvSbMA9+G4lC2NiF1ZBDT
-	Biypbx9f4KRwKfRjvvbTeuCBlL/6UI+l7PXTUHa6HorJDZATV9WLcs1AdTwW2T9NLGQhTBXsQ9lWE
-	vebcdTT5Va4Tpvbu6hBXh08MYgxmALoDt0txgWBcgRo4eutibhhhk64u/VpxKYfmHIvP25H/Tde3R
-	ZW2KLw2olrWKhcaf4Mdp2j6kb3KXABl1K/oASwrdPiOratiNJEHTA/h6QVerWdAfTRIzvN8OBAgyT
-	kUq/p2AUh6a7Gdjj4abD6xS52EX/+Wg1LM3dOBh8CErHcKBx6xGaFpqHAHpGmstGdpVZiBG9ouyHI
-	rBIQRbjg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDM01-00000000V71-0Wvw;
-	Mon, 27 Oct 2025 12:06:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D27E6300220; Mon, 27 Oct 2025 13:06:57 +0100 (CET)
-Date: Mon, 27 Oct 2025 13:06:57 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-ID: <20251027120657.GW4067720@noisy.programming.kicks-ass.net>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9958D2FF173;
+	Mon, 27 Oct 2025 12:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761566851; cv=fail; b=S4npETTHSsEiLduIc4jtLz/kfHicayKNJzkJzz4Lan1PPwmW9Bs832BFv9yRaHdF3RvjrsFF8L1x/ytQxGdKbe/AZ+d4CUxh9lUifzcdeZuLKiSD7aSah6VtHXQ8jY/bUZqQ7a3CzC23+rzgFCerhTsUOkavz+oMv6jLIR/JElw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761566851; c=relaxed/simple;
+	bh=XKUz4THO3AkWs6VSjbktwKFvxUwHyvGAvxYlFbaffNk=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=LThkC28nRmgOR9usu+pW8movdn+XZbiG/Pnli8Uxy/YpzAn4E2gRIE+pLedVNo+9XeV4bN89EniPfvgRkLbSxwkOiKUtYsQ7D6O4k/BgpKXVjlQ6yh4twGOs3qgulJtRgTWazNq8VtNKRdb9HAdaz7fTnHRBXLpvIwR8hQARCGw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ezy5J+le; arc=fail smtp.client-ip=52.101.56.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yK5BDZ75/ToPS32qjT3m70QfscEX/xeY1W5XffvkLLR/qz58WG1gTzpy4h1NPCTMkH04OYZ40/lCd30EBaez4ARj//hnUAWHqp6prUwcYpJrfn+SlZjd0cbC/eIM0lwkaO/TfKIHQIPjmYryhJkAIWrezzFyikeWX++FjlAOelyGCdzguk/xc4bD+ePO+3ocyvnwJ451KN0kBclimItccXFq+RUr4FBbhXY4VFGQb1NysPMzjHxfvpXIxzXeYIyAmjhMs69Z50I14+XLmEyDzOidOYg2svHltDHZt9L9QDBTtB7zsk+lAc9gH4vZaGfAIQIeue5z6MULhRux9yw+Hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E7eDIMYf4gd0p4S+PTzQB48BQHCXJEXRrktO2CxGWCk=;
+ b=yIOgm5xgbktppb+a/U/he74gWUbReNoPDCuoPu/nCovh3bkxXfqUWDFMgeW7a3Ud0xa+GwW3Ryt78ma1d7DjLR8AxhToaUBoI8zCxhUU+kQV3aOM0HM9+M0BgSML1sX51jMCSzjiiK7RFvT2Tdo4oKRIgm3ghdwBqIGO8/w3aBo/ypGPLr5lv3V8W79eunFr+aFlbT4Tdnk6KVJ7LIoQjtGG8SkQ2az8nb8cWYPA5gbvlNZSY5JnfTLVfsvRaDs5NYB5MebL68f4Thl8dms67CeyS96NcBko8vJfqXpn/59BjRVtQrc51u2bQ4rsZTH7yzf9pHeUoWO68FMaTqExuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E7eDIMYf4gd0p4S+PTzQB48BQHCXJEXRrktO2CxGWCk=;
+ b=Ezy5J+leDfU+YfukB7aaanxUn79McKx7z8CkCIV0KKIqvpekxwfUdRJoUOOteJ09HukNm+Ub9l4CYHzQCPlUINwfj1QQMtzGGTaWWxisd5jwDLuw6FJQVhXVkpiDmZTzJwp5Zeaw8QPYBnieSi0TrA+8QPrcsXwKsfFNbTi8NIZUrndTv79hvo/0ejc+4nYvoiu9kEDozLwPjC84MVZhCfxDz6yNgaorq22WxVHf02HuuTrtpr/s5puSA1Wk+L1KNMtUrtME2jnDPzIKUjU1P0Ak5gVvakeT++r8ZPSeq8JhzUcB2/J7nj6rG0vzdkGuf4Js6eldP2dYaqZMYDL8sQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by IA1PR12MB6602.namprd12.prod.outlook.com (2603:10b6:208:3a2::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 12:07:26 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 12:07:24 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 27 Oct 2025 21:07:17 +0900
+Message-Id: <DDT3BTI26XFE.1Z5E9QZZJCPHQ@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "John Hubbard" <jhubbard@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Edwin Peer" <epeer@nvidia.com>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Danilo
+ Krummrich" <dakr@kernel.org>, "dri-devel"
+ <dri-devel-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 7/7] gpu: nova-core: justify remaining uses of `as`
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251026-nova-as-v1-0-60c78726462d@nvidia.com>
+ <20251026-nova-as-v1-7-60c78726462d@nvidia.com>
+ <CANiq72m9ms-OznWQ5+4_JvAs4yruwgBRcm1u0gCAnasqO8uJOA@mail.gmail.com>
+In-Reply-To: <CANiq72m9ms-OznWQ5+4_JvAs4yruwgBRcm1u0gCAnasqO8uJOA@mail.gmail.com>
+X-ClientProxiedBy: TY4P301CA0110.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:37b::19) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA1PR12MB6602:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce6ff4de-2142-463c-82d7-08de155161e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ODhzZnpkTjhtanE0NHUvTWdmeGJJb0YxdGlybFpwa0RJcG0yNnJJbWhSQnJG?=
+ =?utf-8?B?UHRjZWU0Zm5EdmgvMi9RQTY2WDFSbGJXcy80QWlEYVFXVGhyTTk1YVgwMlZp?=
+ =?utf-8?B?ZkplQngremRuYXVCNk9qbjhJaldzQ011Y3ZaR0tTT3dnWExoQzROTGxwRnd2?=
+ =?utf-8?B?ZG1CNTg1WE1oaUJ4emJ1R0RlZkFNclhhWklOZnk0TmxNd3MrbTU2aXRDanBL?=
+ =?utf-8?B?SlJvT2FydlBNdTRweUIxVVpneHdPRXRlSG04cEcvN2x1dkt0SUtRajB1dklQ?=
+ =?utf-8?B?dXVVMjJORGhudVczVVZ5N0VhRlMrMkp2WDBvRzAvTTdheldpbE13V2EvVVY1?=
+ =?utf-8?B?VkM1dFBZYTZiN3ZnQXlPZm96clJVM1QzVndnOUJ5Wmx6QXd2cG14cDZyNDV1?=
+ =?utf-8?B?dkJlZ0RRRFNJSjBXRE5HbUtXZHh3c2xqRlpFZUpVRlZMQUtqdHhieGN1WHo3?=
+ =?utf-8?B?OTJ5a3VGKzNTR3JMdGtrODJjeHhtV1BrSWlpd0JLLzZlYnl4bkJPSzJaMzQ3?=
+ =?utf-8?B?OUVxMEIxWnVJYkNrYWlGWWRRZnJtbGthd05sQTJaZ056QmNkWllKZlJiSFhw?=
+ =?utf-8?B?WUorT2s0bjlyTnpBNXA1c3RZemRDM1Z3Y0NLWDgrNThWMU5FdGJnazgxUy9H?=
+ =?utf-8?B?YjJjVk9kaWhzMENwWmlSTUdaZHlGclFub0RVQUtqTURwVjB2ampCMmQ1QkVr?=
+ =?utf-8?B?c0dYSDJza29oU2JXVGpXbGd3SzZpRlZlR0tpaGI2bkVjSjluSHQ5STA3MkNz?=
+ =?utf-8?B?ZWlaM3c1TWZLRkJ2dG5nK044TkxZSXJEVGJIYSsrVFFVWUlMOHVUc1ZnRUpY?=
+ =?utf-8?B?NFovYkJQK3M5NWg3Z216ZWJQV0kyQ0l2UVduWlhhRmhRQnFFcGdobG9nQUhR?=
+ =?utf-8?B?VnpoeUdMTnB6REFDSGxNVjl3aUxWRGpJek1BVWxmOTdnVGE0ZEdPcW9uaXBl?=
+ =?utf-8?B?Q0g0VkFteWMxSVBsT2R5Y3FiZk95aFNtNzVHL0tpS2xKWGFHVWVGNHJCSjk4?=
+ =?utf-8?B?QmhIZkdaTTY5T05sY0RxTml0VnVQZEgvSmxJVDRBTW5wamlRZEtTbjEwMC9n?=
+ =?utf-8?B?L1hmV3QrdGZZQU5RSjVUakQ2YWtDSktFZ0VMNXkzeE9aOGdRcmEvVjlnZ1JO?=
+ =?utf-8?B?VS9vMlJtQTh0ajhjc2dJN0RRZzgvbXZrM2xMTnRBMkhmcnJVOFIzMGJyQjkv?=
+ =?utf-8?B?ZjByK0ZxZ2FnZlpMUW1LdHQ4eGhvNHlHSk9JcFQwdmRNZERiQ3RkdXpmbFlj?=
+ =?utf-8?B?bUZ4c3pWMVlIOVQ0ZXc3K3RGTTdnMTBnNW10c0JaaSs2NlBmNUNhekZ2VEZh?=
+ =?utf-8?B?R1BVTzRhODJKMUxZUko1emRuOTVOMkg2UjhuYVlOUlNSczEyNmo3WEQ2WFJN?=
+ =?utf-8?B?c1hXUmZtMEE3dFYzeVFoSldzZjV4Q2RwRDNvUi9ReXVWZlB6T0R0bUQ5NWpv?=
+ =?utf-8?B?UGRMNjRXbjlRM0xyQ1kxNlU0cEF3R3FlQTBlL1p6dFFnYmJRbGJEMDBJajd3?=
+ =?utf-8?B?U2FkdWFFRG43d0pwR2pTUGJvcUdXckdYRmJUb0oxamNYc3Jrdk1TOFkvZnd4?=
+ =?utf-8?B?YTRzUkh2Q2pUOHUvejdGQWFMV3RjdUtONGdKczdyNHhHeGx2YWQyNkJTQUhM?=
+ =?utf-8?B?dXJLNk5vaWhqcnZEb1R0djJjeTBnOVYxT04zdzVhamdKSW9VMDVjUjE1OHph?=
+ =?utf-8?B?RnpUMm9rcElOdXFsNEI5MUZZM2ppcEtaVkxZQytPNFlONXpSWlhIUmdxR24w?=
+ =?utf-8?B?cGVHalpzREo4NVdxcEU4SHR6aDZHdG9PZVR2M3ZOVzY5M2xxWXgxSTdFdW9j?=
+ =?utf-8?B?S2YxQzNXSWplSWNKMHFwN2IyeE8vTEc5QWQvY0ZKeDFtdlIvRGptWmEwZDZI?=
+ =?utf-8?B?YlIyMnRXOEswcjFpZVJOQUczYnFUNHRYdS82WFdLMnEya2p0eC9MRktaVE0y?=
+ =?utf-8?Q?rxWfYLmLkdwTv9NV6/EgffM7l9RkLYqV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZHd0Y2htSDBlY20xUjkwc0JNTFpHSUZSVnQrdW1LTndENmJ5ejFDdUFYSmds?=
+ =?utf-8?B?K0NxTmlTK1M4bGJqakRXb1RacU5iSzcyZHlCYkVrSlVjb0VMaFVJZGFQWFhV?=
+ =?utf-8?B?ZmozYUJNU1p5b2NqMVdSdXJ2Q2dPMmU3U0V2WkUrT1RXdmxxUGxuYWxTajhh?=
+ =?utf-8?B?ZHpCaVArQlNrREk2VjZUT3cvUWJ3TVBXWlh0R1dwc0wrelF2RDdpaUZRZko0?=
+ =?utf-8?B?UVJ2bHRDdkhaMGpwN1RoTExvc0RuL0JjZklid1l4UmVnVHpnMnN0NWhpN1hZ?=
+ =?utf-8?B?akswdXZoYmlrQUZMVk1PQUdRVS9WckU4QjA5UmZuN3JIMW81MHhkL2dTSm9F?=
+ =?utf-8?B?WXlFalVKZU00dzN1b0RlckxNa2F1cVBnYkdNUHljeVNzM2tkNldxR2VTVnRr?=
+ =?utf-8?B?OVpINVRQWElxd1BnMGZyYXhDV1QwTUNpdkxhOHMzd3RmUGdGOW91RXBMeTlz?=
+ =?utf-8?B?RDIySkE1NTJKR2NzUk5ZbXFHb0FrenhGT1Fva0pOMXhuOXBFemw5cDZEVjMv?=
+ =?utf-8?B?SURKQzhJanRWbDVPaFZkU2E5SGFUV0QrMy9NNXNlcGcwb2ZOVVNhK1ZRSE1j?=
+ =?utf-8?B?emNxUFgrM01QSERPMForOFdWRHc1T0NxRkRHUWNiVDY0eExzbloxdE43V0ZO?=
+ =?utf-8?B?VWFqOHZrQ2hnTVhHRW5iSG1CbDEvbmt0YjBic2kvRS9Halk0STlVNnRkV3ds?=
+ =?utf-8?B?VkpLK1did0R3RHg2eVdOeFp4ZmhOTU9EMEVkbkhWRmlxSHNWQUptTGJUNDlC?=
+ =?utf-8?B?QmEyQ2kzdDdZZzF6NUxWcjdKVDVKalFzS2lnelJUUmV3ZDVrZnYyZEFxanEw?=
+ =?utf-8?B?N1prd2JmTkpZV04vTlhvaE52N3I4N2wydVdoVU12cHpJbTNUSTRiSWtzMm1C?=
+ =?utf-8?B?Z0xEVElOekdNMnZLVEhXZXlCOTBWb0NlTTNWUGI2M2pOVlVRYTFWOWF3R2xM?=
+ =?utf-8?B?M3MzU1pkaW5qZHQ4WVpZS1ppc1hIbXFXeDJjS0E1eFpGVTlRdUdSc1RvUVZF?=
+ =?utf-8?B?dUJPRzgvUkNmNHRoamFqN250T2FWSHVvTlZ1d0lKMG1JbWhLTkZvNTlvMjNW?=
+ =?utf-8?B?SmVoZkhKZkJIckhLcjB6WDV5MUZNZ1NGa0pmdUM2QklGakVpaEQwL0x4U0hI?=
+ =?utf-8?B?clpYL0ZnVklNNDBjd2tVQm5OaVZ5YXA5WnVYNkpPZktSdjZubVkvZU54L09V?=
+ =?utf-8?B?NUYvOXRicWd1S3V4bEg0TVZiTFpWSzVycmlpci9nNmNaMyt0eW42Mm1iLzRB?=
+ =?utf-8?B?R0grNkZ5R3lSQWV5L05NZm4vODY0VW5xc2E3Njg2dW5pcDVIZW9TdGVmczdK?=
+ =?utf-8?B?V1FWbWVldWpVNzcvbWhZdkYxMVVUMGFlZXEvemhJNGt0Y1ZNZFdJV2JHcmV2?=
+ =?utf-8?B?ZGN5TzVJUUcyU3NLTExwTURMTWJDdmdzajZQVkFySk1SSzkvMTV3OFlzUmtW?=
+ =?utf-8?B?RHFwTGYvL3c0RU9sN3RUVUh5YldReFFidlBTTUoxSUVpRk10WlN5cHlLdEhy?=
+ =?utf-8?B?eERWaFpOQS83SUNETm40Tm1zd1U3VjVnckVPRUhZQ2pJbHBVNkV0dkM2anlw?=
+ =?utf-8?B?RHl4amRqb2RuSjVOU1pDd0hrdmNaOUIzMGltMXVKbEttR0h0YjVQelJsVytT?=
+ =?utf-8?B?bEZET0pORHQxT2NrTXJDbU5KTkVZTElUUlNqOUx5dVdxcUE2VDVlM0VsNDla?=
+ =?utf-8?B?WE8wZG9WTGU4MkVDdXo1aGlLZ3Z1ZEkxeW5JL3prQzFObVoxa3FLR042YU4z?=
+ =?utf-8?B?S0F2UTQyV2VmMG1hUTlqSGtOWmpWVTJpM3dGeDRJcHlsTG42blRCb2FCbERo?=
+ =?utf-8?B?N21vcnNGVXp1b0pRSjFUR05rL2JZNzFJYjF0ZzJkeEZLNkRIWUF0aG1YUnhx?=
+ =?utf-8?B?aWc0K29GUVl4OVRVcHdEVklrR08yQnp0emFCYlRRRTczRXBkdTkyMW5uajhx?=
+ =?utf-8?B?VWdFcDRLRk94RWtVdit0NXF0TlgzQmZrUWhBZEpNdE5XcTNRRFpWU2QxWHBt?=
+ =?utf-8?B?UkJOQjdIS0d6cEduZGl1Z2Qrb2VTMkc1RjZWYWdPamtvOHkrdFd6SjJadGxs?=
+ =?utf-8?B?Tlh5ZjQyV1pPOGp2MHB0alBNMDZnYzZjbXB5elQxSnVxSlY2QlozNmdUUHdz?=
+ =?utf-8?B?SC9STnJFdXhGci9Zd3N5WUowV0hsdmVNSmkweUs5UXVKNThBNjNVblM0cmhY?=
+ =?utf-8?Q?mAdR9TDlrofDL9U2RpJob6pKKkOF3yQUaf9KRrE0HkU6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce6ff4de-2142-463c-82d7-08de155161e8
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 12:07:24.7214
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ab1nKdVongLQAUeJWglBH5CuZvaZduc72BSH0FEaizA1GaIpKnK0i/odcq8rrONYWADjbkjxXGm6oaeTg6SZNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6602
 
-On Thu, Aug 21, 2025 at 07:34:58PM +0200, Bernd Edlinger wrote:
+On Mon Oct 27, 2025 at 1:11 AM JST, Miguel Ojeda wrote:
+> On Sun, Oct 26, 2025 at 3:40=E2=80=AFPM Alexandre Courbot <acourbot@nvidi=
+a.com> wrote:
+>>
+>> +            // `as u32` is used on purpose since we do want to strip th=
+e upper bits, which will be
+>> +            // written to `NV_PFALCON_FALCON_DMATRFBASE1`.
+>>              .set_base((dma_start >> 8) as u32)
+>>              .write(bar, &E::ID);
+>
+> We are not very consistent on this yet, but I would suggest using `//
+> CAST:`. We are working on getting `// PANIC:` in Clippy, and we could
+> get others like this one eventually.
 
-> The solution is to detect this situation and allow
-> ptrace_attach to continue by temporarily releasing the
-> cred_guard_mutex, while de_thread() is still waiting for
-> traced zombies to be eventually released by the tracer.
-> In the case of the thread group leader we only have to wait
-> for the thread to become a zombie, which may also need
-> co-operation from the tracer due to PTRACE_O_TRACEEXIT.
-> 
-> When a tracer wants to ptrace_attach a task that already
-> is in execve, we simply retry the ptrace_may_access
-> check while temporarily installing the new credentials
-> and dumpability which are about to be used after execve
-> completes.  If the ptrace_attach happens on a thread that
-> is a sibling-thread of the thread doing execve, it is
-> sufficient to check against the old credentials, as this
-> thread will be waited for, before the new credentials are
-> installed.
-> 
-> Other threads die quickly since the cred_guard_mutex is
-> released, but a deadly signal is already pending.  In case
-> the mutex_lock_killable misses the signal, the non-zero
-> current->signal->exec_bprm makes sure they release the
-> mutex immediately and return with -ERESTARTNOINTR.
-
-
-
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 2a1e5e4042a1..31c6ceaa5f69 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -905,11 +905,13 @@ static int exec_mmap(struct mm_struct *mm)
->  	return 0;
->  }
->  
-> -static int de_thread(struct task_struct *tsk)
-> +static int de_thread(struct task_struct *tsk, struct linux_binprm *bprm)
->  {
->  	struct signal_struct *sig = tsk->signal;
->  	struct sighand_struct *oldsighand = tsk->sighand;
->  	spinlock_t *lock = &oldsighand->siglock;
-> +	struct task_struct *t;
-> +	bool unsafe_execve_in_progress = false;
->  
->  	if (thread_group_empty(tsk))
->  		goto no_thread_group;
-> @@ -932,6 +934,19 @@ static int de_thread(struct task_struct *tsk)
->  	if (!thread_group_leader(tsk))
->  		sig->notify_count--;
->  
-> +	for_other_threads(tsk, t) {
-> +		if (unlikely(t->ptrace)
-> +		    && (t != tsk->group_leader || !t->exit_state))
-
-&& goes at the end of the previous line
-
-> +			unsafe_execve_in_progress = true;
-> +	}
-> +
-> +	if (unlikely(unsafe_execve_in_progress)) {
-> +		spin_unlock_irq(lock);
-> +		sig->exec_bprm = bprm;
-> +		mutex_unlock(&sig->cred_guard_mutex);
-> +		spin_lock_irq(lock);
-
-I'm not clear why we need to drop and re-acquire siglock here.
-
-And I would like a very large comment here explaining why it is safe to
-drop cred_guard_mutex here.
-
-> +	}
-> +
->  	while (sig->notify_count) {
->  		__set_current_state(TASK_KILLABLE);
->  		spin_unlock_irq(lock);
-> @@ -1021,6 +1036,11 @@ static int de_thread(struct task_struct *tsk)
->  		release_task(leader);
->  	}
->  
-> +	if (unlikely(unsafe_execve_in_progress)) {
-> +		mutex_lock(&sig->cred_guard_mutex);
-> +		sig->exec_bprm = NULL;
-> +	}
-> +
->  	sig->group_exec_task = NULL;
->  	sig->notify_count = 0;
->  
-> @@ -1032,6 +1052,11 @@ static int de_thread(struct task_struct *tsk)
->  	return 0;
->  
->  killed:
-> +	if (unlikely(unsafe_execve_in_progress)) {
-> +		mutex_lock(&sig->cred_guard_mutex);
-> +		sig->exec_bprm = NULL;
-> +	}
-> +
->  	/* protects against exit_notify() and __exit_signal() */
->  	read_lock(&tasklist_lock);
->  	sig->group_exec_task = NULL;
-> @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
->  	 */
->  	trace_sched_prepare_exec(current, bprm);
->  
-> +	/* If the binary is not readable then enforce mm->dumpable=0 */
-> +	would_dump(bprm, bprm->file);
-> +	if (bprm->have_execfd)
-> +		would_dump(bprm, bprm->executable);
-> +
-> +	/*
-> +	 * Figure out dumpability. Note that this checking only of current
-> +	 * is wrong, but userspace depends on it. This should be testing
-> +	 * bprm->secureexec instead.
-> +	 */
-> +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-> +	    is_dumpability_changed(current_cred(), bprm->cred) ||
-> +	    !(uid_eq(current_euid(), current_uid()) &&
-> +	      gid_eq(current_egid(), current_gid())))
-> +		set_dumpable(bprm->mm, suid_dumpable);
-> +	else
-> +		set_dumpable(bprm->mm, SUID_DUMP_USER);
-> +
-
-I feel like moving this dumpable stuff around could be a separate patch.
-Which can explain how that is correct and why it is needed and all that.
-
->  	/*
->  	 * Ensure all future errors are fatal.
->  	 */
->  	bprm->point_of_no_return = true;
->  
->  	/* Make this the only thread in the thread group */
-> -	retval = de_thread(me);
-> +	retval = de_thread(me, bprm);
->  	if (retval)
->  		goto out;
->  	/* see the comment in check_unsafe_exec() */
-> @@ -1144,11 +1187,6 @@ int begin_new_exec(struct linux_binprm * bprm)
->  	if (retval)
->  		goto out;
->  
-> -	/* If the binary is not readable then enforce mm->dumpable=0 */
-> -	would_dump(bprm, bprm->file);
-> -	if (bprm->have_execfd)
-> -		would_dump(bprm, bprm->executable);
-> -
->  	/*
->  	 * Release all of the old mmap stuff
->  	 */
-> @@ -1210,18 +1248,6 @@ int begin_new_exec(struct linux_binprm * bprm)
->  
->  	me->sas_ss_sp = me->sas_ss_size = 0;
->  
-> -	/*
-> -	 * Figure out dumpability. Note that this checking only of current
-> -	 * is wrong, but userspace depends on it. This should be testing
-> -	 * bprm->secureexec instead.
-> -	 */
-> -	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-> -	    !(uid_eq(current_euid(), current_uid()) &&
-> -	      gid_eq(current_egid(), current_gid())))
-> -		set_dumpable(current->mm, suid_dumpable);
-> -	else
-> -		set_dumpable(current->mm, SUID_DUMP_USER);
-> -
->  	perf_event_exec();
->  
->  	/*
-> @@ -1361,6 +1387,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
->  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
->  		return -ERESTARTNOINTR;
->  
-> +	if (unlikely(current->signal->exec_bprm)) {
-> +		mutex_unlock(&current->signal->cred_guard_mutex);
-> +		return -ERESTARTNOINTR;
-> +	}
-
-#1
-
-> +
->  	bprm->cred = prepare_exec_creds();
->  	if (likely(bprm->cred))
->  		return 0;
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 62d35631ba8c..e5bcf812cee0 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2838,6 +2838,12 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->  	if (rv < 0)
->  		goto out_free;
->  
-
-Comment explaining why this needs checking goes here.
-
-> +	if (unlikely(current->signal->exec_bprm)) {
-> +		mutex_unlock(&current->signal->cred_guard_mutex);
-> +		rv = -ERESTARTNOINTR;
-> +		goto out_free;
-> +	}
-> +
->  	rv = security_setprocattr(PROC_I(inode)->op.lsmid,
->  				  file->f_path.dentry->d_name.name, page,
->  				  count);
-> diff --git a/include/linux/cred.h b/include/linux/cred.h
-> index a102a10f833f..fb0361911489 100644
-> --- a/include/linux/cred.h
-> +++ b/include/linux/cred.h
-> @@ -153,6 +153,7 @@ extern const struct cred *get_task_cred(struct task_struct *);
->  extern struct cred *cred_alloc_blank(void);
->  extern struct cred *prepare_creds(void);
->  extern struct cred *prepare_exec_creds(void);
-> +extern bool is_dumpability_changed(const struct cred *, const struct cred *);
->  extern int commit_creds(struct cred *);
->  extern void abort_creds(struct cred *);
->  extern struct cred *prepare_kernel_cred(struct task_struct *);
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index 1ef1edbaaf79..3c47d8b55863 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -237,9 +237,27 @@ struct signal_struct {
->  	struct mm_struct *oom_mm;	/* recorded mm when the thread group got
->  					 * killed by the oom killer */
->  
-> +	struct linux_binprm *exec_bprm;	/* Used to check ptrace_may_access
-> +					 * against new credentials while
-> +					 * de_thread is waiting for other
-> +					 * traced threads to terminate.
-> +					 * Set while de_thread is executing.
-> +					 * The cred_guard_mutex is released
-> +					 * after de_thread() has called
-> +					 * zap_other_threads(), therefore
-> +					 * a fatal signal is guaranteed to be
-> +					 * already pending in the unlikely
-> +					 * event, that
-> +					 * current->signal->exec_bprm happens
-> +					 * to be non-zero after the
-> +					 * cred_guard_mutex was acquired.
-> +					 */
-> +
->  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
->  					 * credential calculations
->  					 * (notably. ptrace)
-> +					 * Held while execve runs, except when
-> +					 * a sibling thread is being traced.
->  					 * Deprecated do not use in new code.
->  					 * Use exec_update_lock instead.
->  					 */
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index 9676965c0981..0b2822c762df 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -375,6 +375,30 @@ static bool cred_cap_issubset(const struct cred *set, const struct cred *subset)
->  	return false;
->  }
->  
-> +/**
-> + * is_dumpability_changed - Will changing creds affect dumpability?
-> + * @old: The old credentials.
-> + * @new: The new credentials.
-> + *
-> + * If the @new credentials have no elevated privileges compared to the
-> + * @old credentials, the task may remain dumpable.  Otherwise we have
-> + * to mark the task as undumpable to avoid information leaks from higher
-> + * to lower privilege domains.
-> + *
-> + * Return: True if the task will become undumpable.
-> + */
-> +bool is_dumpability_changed(const struct cred *old, const struct cred *new)
-> +{
-> +	if (!uid_eq(old->euid, new->euid) ||
-> +	    !gid_eq(old->egid, new->egid) ||
-> +	    !uid_eq(old->fsuid, new->fsuid) ||
-> +	    !gid_eq(old->fsgid, new->fsgid) ||
-> +	    !cred_cap_issubset(old, new))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
->  /**
->   * commit_creds - Install new credentials upon the current task
->   * @new: The credentials to be assigned
-> @@ -403,11 +427,7 @@ int commit_creds(struct cred *new)
->  	get_cred(new); /* we will require a ref for the subj creds too */
->  
->  	/* dumpability changes */
-> -	if (!uid_eq(old->euid, new->euid) ||
-> -	    !gid_eq(old->egid, new->egid) ||
-> -	    !uid_eq(old->fsuid, new->fsuid) ||
-> -	    !gid_eq(old->fsgid, new->fsgid) ||
-> -	    !cred_cap_issubset(old, new)) {
-> +	if (is_dumpability_changed(old, new)) {
->  		if (task->mm)
->  			set_dumpable(task->mm, suid_dumpable);
->  		task->pdeath_signal = 0;
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index 75a84efad40f..230298817dbf 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -20,6 +20,7 @@
->  #include <linux/pagemap.h>
->  #include <linux/ptrace.h>
->  #include <linux/security.h>
-> +#include <linux/binfmts.h>
->  #include <linux/signal.h>
->  #include <linux/uio.h>
->  #include <linux/audit.h>
-> @@ -453,6 +454,28 @@ static int ptrace_attach(struct task_struct *task, long request,
->  				return retval;
->  		}
->  
-> +		if (unlikely(task == task->signal->group_exec_task)) {
-> +			retval = down_write_killable(&task->signal->exec_update_lock);
-> +			if (retval)
-> +				return retval;
-
-This could be written like:
-
-			ACQUIRE(rwsem_write_kill, guard)(&task->signal->exec_update_lock);
-			retval = ACQUIRE_ERR(rwsem_write_kill, guard);
-			if (retval)
-				return retval;
-
-> +
-> +			scoped_guard (task_lock, task) {
-> +				struct linux_binprm *bprm = task->signal->exec_bprm;
-> +				const struct cred __rcu *old_cred = task->real_cred;
-> +				struct mm_struct *old_mm = task->mm;
-> +
-> +				rcu_assign_pointer(task->real_cred, bprm->cred);
-> +				task->mm = bprm->mm;
-> +				retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
-> +				rcu_assign_pointer(task->real_cred, old_cred);
-> +				task->mm = old_mm;
-> +			}
-> +
-> +			up_write(&task->signal->exec_update_lock);
-
-And then this goes away ^
-
-> +			if (retval)
-> +				return retval;
-> +		}
-> +
->  		scoped_guard (write_lock_irq, &tasklist_lock) {
->  			if (unlikely(task->exit_state))
->  				return -EPERM;
-> @@ -488,6 +511,14 @@ static int ptrace_traceme(void)
->  {
->  	int ret = -EPERM;
->  
-
-This needs comments.
-
-> +	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-> +		return -ERESTARTNOINTR;
-> +
-> +	if (unlikely(current->signal->exec_bprm)) {
-> +		mutex_unlock(&current->signal->cred_guard_mutex);
-> +		return -ERESTARTNOINTR;
-> +	}
-
-#2
-
-> +
->  	write_lock_irq(&tasklist_lock);
->  	/* Are we already being traced? */
->  	if (!current->ptrace) {
-> @@ -503,6 +534,7 @@ static int ptrace_traceme(void)
->  		}
->  	}
->  	write_unlock_irq(&tasklist_lock);
-> +	mutex_unlock(&current->signal->cred_guard_mutex);
->  
->  	return ret;
->  }
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index 41aa761c7738..d61fc275235a 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -1994,9 +1994,15 @@ static long seccomp_set_mode_filter(unsigned int flags,
->  	 * Make sure we cannot change seccomp or nnp state via TSYNC
->  	 * while another thread is in the middle of calling exec.
->  	 */
-> -	if (flags & SECCOMP_FILTER_FLAG_TSYNC &&
-> -	    mutex_lock_killable(&current->signal->cred_guard_mutex))
-> -		goto out_put_fd;
-> +	if (flags & SECCOMP_FILTER_FLAG_TSYNC) {
-> +		if (mutex_lock_killable(&current->signal->cred_guard_mutex))
-> +			goto out_put_fd;
-> +
-> +		if (unlikely(current->signal->exec_bprm)) {
-> +			mutex_unlock(&current->signal->cred_guard_mutex);
-> +			goto out_put_fd;
-> +		}
-
-#3, and after typing this same pattern 3 times, you didn't think it
-needed a helper function ?
-
-> +	}
->  
->  	spin_lock_irq(&current->sighand->siglock);
->  
+Sounds great, will do!
 
