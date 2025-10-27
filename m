@@ -1,101 +1,153 @@
-Return-Path: <linux-kernel+bounces-871246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8F4C0CBA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:41:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DDDC0CBA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C2754E44B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9360189C995
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14F283C8E;
-	Mon, 27 Oct 2025 09:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7F42E7631;
+	Mon, 27 Oct 2025 09:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iZWe9Ehr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z0MeAO7Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gf+K7lgw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33751A2547;
-	Mon, 27 Oct 2025 09:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF771A2547
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 09:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761558025; cv=none; b=M5Wboe3SLir2lfvEqGNEGMp4ZWQCRPp+WWFi1MPYhjHoiCuWNNllssiCGKocOZTyxDL8oq01WdWbLhSyOoBm4aUS0w3ZFn2PtyHjauA2QkuqGzoH0iBNcaee23QobVBW0PEOKRb3VDmtQ6FMo3Wr/TBE0KyURHeZ/bx8IUsCN1M=
+	t=1761558076; cv=none; b=rb8DJFTN+xG6cUo7DDXpQ/qe5QxFe9nR7f5F6grl4kZbPe1E64l2JS8EqlILiQdc1MFxNkbElCcC/35A15O/JFlxIvyH3PFHQt4F+LWZC3NivmrVIRBaFOchoIwk867R01E9NhhKZG4Jl+GqT4mkG6O97iMKb6JlHT9J8+1tSlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761558025; c=relaxed/simple;
-	bh=/2xr/VTYXXffOJMMGSVhNyVlfRnEybe/oSAvYrqIhpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Anbg9rPyLBF/bHBYpqI9PAfL9EET8so0QgGxJogMPNLs4YXFTBjEuflJYQp6J1Ay48eHLbIS3fOb+YTn7gFHTia15VsJgOd07MKlHuDXb6tf2mpV3QTPPqZhA40tzsdt/+r0d7p5rbjEC41UHXwEw8dhEPloIoU+iuvAkcO8UoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iZWe9Ehr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z0MeAO7Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 Oct 2025 10:40:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761558021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=al41PRhuMv92E4hy7sTVqHUK2Lm7i8edcdRrAQO9r/o=;
-	b=iZWe9EhrIlTTEWAL59SUfZEol4VyuXx9Bm9SCcbc9q2Q573ri5wCIGwdg/UGoXZRS1dwLF
-	CdqK+W8Jj9i3x9/mR3RbtP3TPByAC1RdcjAeWeq0yChjWLpuaHs0YncC0YaepD4Z2PaApZ
-	brEVZuPLx5LeWVsy8O8oTzavJo+NxX+Al/CobRK4JivXzQYeOjB9sbZ7+gT3td+TMjsW16
-	O7mSRQOHGX3SaKheqGNRsnunUW1/VlRjGhsF0uscXzfVXFFXwa2gllo8fPAtd4oH9NpuVc
-	6JwA/xpBaHkuuBVg9Ev9WEVokPxAEtl8aq6SbpCCZajXSzzNSK98jJZKWZRchw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761558021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=al41PRhuMv92E4hy7sTVqHUK2Lm7i8edcdRrAQO9r/o=;
-	b=Z0MeAO7YVm+h4NFGJTXOJ3DBi5EqkEWzEkQM0/WzX+G3PIkdB8K91LzH5cntAJUal2VCPI
-	nHp24Wo5waTqX+Ag==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org
-Subject: Re: [patch V2 05/12] rseq: Add prctl() to enable time slice
- extensions
-Message-ID: <20251027094019.foWBPFO2@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.216861528@linutronix.de>
+	s=arc-20240116; t=1761558076; c=relaxed/simple;
+	bh=Pu7r1GHkuIaqec4nHbl3w+jfvYzAYfaQl+Cm0O8jCNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M8B6afbFd9LlCKv9CLE1mPz2MExlN5jmGEgKGcLKJgPhKytVhAEx6O5XESRv6saR+cIqu/GJnEIwxZkfePyjGnSExYS30e46uNoUr0S/DE8PQPg0WpZYnSaePW0EU7cGcAjhwNoVdeCWBVG2F4YtQximIvsdz0mbnLHkgp4kgd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gf+K7lgw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9A0C4CEF1;
+	Mon, 27 Oct 2025 09:41:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761558076;
+	bh=Pu7r1GHkuIaqec4nHbl3w+jfvYzAYfaQl+Cm0O8jCNc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gf+K7lgwpxzGrnsoiGawWyaOGdnnxg20zUmA+Fsi13KEOFbgmfUEL6OYkjz/WUYl2
+	 rJiviqj+V0d7M5nCBN1jqArdGeuqOZRNoKtQRNAaai8r1ebZTTCE56OGewRfFy9ilC
+	 MzYSo6sijDaUTV5sPTCGPLb5WXOoyqD6Miw4OKQfTRlkvJi1ElCjDFDehFf133WEN6
+	 wMJ8yQR8CACrlhVrNHsMm2Caok1h4u09f/5+KrbeDKrrrNbA0neCfqli5+M/fwjnvY
+	 0Wjfeipphb8oBKjZsMCcqk19LG7jHit1Q86irTE9RPLAUh9DaftYhOYjF/PERwt8hD
+	 bjlvjRYkJd8Sw==
+Message-ID: <c5b86849-b09d-4e81-b357-53f511e087ae@kernel.org>
+Date: Mon, 27 Oct 2025 10:41:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251022121427.216861528@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] checkpatch: Don't warn on "orhapned" DT schema
+ file
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+ Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+References: <20251027091742.1741742-1-andriy.shevchenko@linux.intel.com>
+ <7730d4bd-0d7a-452c-ae95-a472d8c99de5@kernel.org>
+ <aP885cVvKxE5xMBW@smile.fi.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aP885cVvKxE5xMBW@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-10-22 14:57:34 [+0200], Thomas Gleixner wrote:
-> --- a/include/linux/rseq.h
-> +++ b/include/linux/rseq.h
-> @@ -164,4 +164,13 @@ void rseq_syscall(struct pt_regs *regs);
->  static inline void rseq_syscall(struct pt_regs *regs) { }
->  #endif /* !CONFIG_DEBUG_RSEQ */
->  
-> +#ifdef CONFIG_RSEQ_SLICE_EXTENSION
-> +int rseq_slice_extension_prctl(unsigned long arg2, unsigned long arg3);
-> +#else /* CONFIG_RSEQ_SLICE_EXTENSION */
-> +static inline int rseq_slice_extension_prctl(unsigned long arg2, unsigned long arg3)
-> +{
-> +	return -EINVAL;
+On 27/10/2025 10:35, Andy Shevchenko wrote:
+> On Mon, Oct 27, 2025 at 10:25:58AM +0100, Krzysztof Kozlowski wrote:
+>> On 27/10/2025 10:17, Andy Shevchenko wrote:
+>>> Currently checkpatch warns is the DT schema file is absent in MAINTAINERS.
+>>> However the DT schema files are self-contained in this sense and
+>>> have embedded information about maintainers of it. This is a requirement.
+>>> Hence, avoid checkpatch warning about it.
+>>>
+>>> Requested-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
+>> No, that's not true.
+>>
+>> First, there is no such tag.
+> 
+> No, that's not true.
+> 
+> $ git log --oneline --grep ^Requested-by: | wc -l
 
-This should be -ENOTSUPP as in the !rseq_slice_extension_enabled() case.
-After all it is the same condition.
 
-> +}
+No, you do like this:
+git grep Requested-by
+and then find it in the list of approved tags.
 
-Sebastian
+> 357
+> 
+>> Second, I never requested it.
+>>
+>> NAK
+> 
+> Fair enough, I'll drop the tag.
+
+
+It's not even solving the problem you wanted. You claimed there is some
+sort of problem that maintainer update is one at last patch of patchset.
+I claimed that there is no, because it is standard and completely fine
+way of doing things and whatever checkpatch is reported is just false
+positive.
+
+You did not fix that false positive.
+
+Best regards,
+Krzysztof
 
