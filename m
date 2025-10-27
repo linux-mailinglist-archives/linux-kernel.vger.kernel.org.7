@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-871825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD8DC0E6D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:30:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11D0C0E6CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 15:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B02819A4431
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA7319A41D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3FC30ACEE;
-	Mon, 27 Oct 2025 14:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4723A2C0F95;
+	Mon, 27 Oct 2025 14:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Yap+wVLn"
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="L8gOJ8vK"
 Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CB6242D62;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D24279DCC;
 	Mon, 27 Oct 2025 14:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761575410; cv=none; b=r847LeVr75Uy6crD7/h5Zn1wod91jBgdVobTtBdm4X3iQmr064ExjptBA+MEr1yJZMCbzgbH6Yus9BePNi3EJN72Yvf6wZ1Zk4z79KprMIO6Xr4JMdC/RScITnTHDfOA1oJ7rey18TSSOSK9/Ptt+LwUbjVpeeiXHhFfPQDuS9U=
+	t=1761575409; cv=none; b=cCs3JXEAISBxiOspuwKQ0CLZPzg/xegFfM8Lte2VFQCOa3IDJchWdI+JgU+RZYD905sAqZC95EyUKU9ooH6cu6CmRvIBlTp20jtGgEjJkVZUUNa4f98CvWJBZ+rDAa4ummGWsFxd+vp6yA/btjAVbjBYZ4A0H1RRr9plJwU+00Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761575410; c=relaxed/simple;
-	bh=s2g6vT0oH2OvFkS2Epbp7abu2H5DMhv0EDGrCB6XNaI=;
-	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=EvEJ0gIdif5MSbmMYKVl6/IMhQktYkPlwRR+1gMmE2QDaam9N9ZhPD3W0nMLizC6q3jYhDveaXhiU6CBZpxqEL2Myy3HuJsUqmnYFsRQlvfxTPA/UaSoRWgfz1nkUakbGLKLyES/4k8B8GKtPnvVXYJOViHKv8cXJJVe5H1UGTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Yap+wVLn; arc=none smtp.client-ip=162.243.120.170
+	s=arc-20240116; t=1761575409; c=relaxed/simple;
+	bh=vRBGm9s/dyL+mafpUYppZ1yooY3Npezr9ZaoASLiS50=;
+	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
+	 Subject; b=n+7bgKkkK2RuElcppKWljVTutBWULw0zxQA+Joj4zhZc/R8jrvH/T5kPHMOXz6w7Pku0jV2sQSEjTNePJKmoFohowiIqSGGz83gQtNjgTfK2kV3ylERNn3wzs/vdMgG7ER0ykIlobddbel28JriKVAhngLNCCp+sbM5WIitqtBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=L8gOJ8vK; arc=none smtp.client-ip=162.243.120.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
 	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
 	:From:subject:date:message-id:reply-to;
-	bh=CZQRXzSOtbffBNu99447ZOxKExqm883zzc2D7w/q56M=; b=Yap+wVLnpJhNtG9s3Hu+l3SP99
-	UrkGFDN1ZSZucKJuw0Fs7qI7X8d2RPGEYDyjOcePb+qp6i2ALB5gKQ93UqNQ3UCQIx2amvWkiaf9+
-	iEWCENBPsAflDf6pHhsTHZvRHYWVxacnXS5stVeZcPBHRC0dk80guSzA/Kxj1M3MhriE=;
+	bh=9stedbZ0oenGDNSu79soTv0x9oOzbagK1AmdZRDf5wY=; b=L8gOJ8vKm/i5l7+Df1FadJceek
+	EMvP6p123RtMMQOVgVZdQQBYEhCbIPxrgdUfKo9znzr/yl2/Hp7XNHzKJZWwfvEkw+4YtRvhrcTMW
+	J4T6DcjjKDkbB/cZFnDWzluKpQjy0U/rbkmtzwuiaI2rGT2hFsKuJQMoBbhl9SEL9nUc=;
 Received: from [70.80.174.168] (port=45472 helo=pettiford.lan)
 	by mail.hugovil.com with esmtpa (Exim 4.92)
 	(envelope-from <hugo@hugovil.com>)
-	id 1vDOER-0007wg-D4; Mon, 27 Oct 2025 10:29:59 -0400
+	id 1vDOES-0007wg-Jd; Mon, 27 Oct 2025 10:30:00 -0400
 From: Hugo Villeneuve <hugo@hugovil.com>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Date: Mon, 27 Oct 2025 10:29:42 -0400
-Message-Id: <20251027142957.1032073-1-hugo@hugovil.com>
+Date: Mon, 27 Oct 2025 10:29:43 -0400
+Message-Id: <20251027142957.1032073-2-hugo@hugovil.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251027142957.1032073-1-hugo@hugovil.com>
+References: <20251027142957.1032073-1-hugo@hugovil.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,75 +63,72 @@ X-SA-Exim-Mail-From: hugo@hugovil.com
 X-Spam-Level: 
 X-Spam-Report: 
 	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH v3 00/14] serial: sc16is7xx: register access fixes and improvements
+Subject: [PATCH v3 01/14] serial: sc16is7xx: rename LCR macros to better reflect usage
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
 From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Hello,
-this patch series brings some fixes and improvements to the register
-accesses for the sc16is7xx driver.
+There is no reference to CONF_MODE_A or CONF_MODE_B in the manufacturer's
+datasheet.
 
-It also adds some minor improvements, and cleanups to uniformize code
-style accross the driver.
+Rename register set configuration macros for the LCR register, to better
+show their intended usage to select either the Special register set, or the
+Enhanced register set.
 
-I have tested the changes on a custom board with two SC16IS752 DUART over
-a SPI interface using a Variscite IMX8MN NANO SOM. The four UARTs are
-configured in RS-485 mode.
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+---
+ drivers/tty/serial/sc16is7xx.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-I did not test the change on a SC16is7xx using I2C interface, as my custom
-board is only using SPI.
-
-Thank you.
-
-Link: [v1] https://lore.kernel.org/linux-serial/20250924153740.806444-1-hugo@hugovil.com/raw
-Link: [v2] https://lore.kernel.org/linux-serial/20251002145738.3250272-1-hugo@hugovil.com/raw
-
-Changes for V3:
-- Removed patch "serial: sc16is7xx: remove useless enable of enhanced features"
-  which was sent separately to facilitate stable backporting
-
-Changes for V2:
-- Patch "change incorrect indentation": move to same line and reword (suggested
-  by Maarten Brock)
-- remove superfluous rc variable (suggested by Jiri Slaby)
-- replace guard with scoped_guard() in sc16is7xx_ms_proc()
-  (suggested by Jiri Slaby)
-- Patch "use dev_err_probe() instead of dev_err()": remove original dev_err()
-  line and reword (suggested by Jiri Slaby)
-- Patch "remove empty line": remove useless cast and reorder variables
-  for reverse xmas tree (suggested by Jiri Slaby)
-- Simplify to_sc16is7xx_one() macro
-- Reformat some multi-line comments up to 100 columns (suggested by Jiri Slaby)
-- Remove typo cleanup from patch "add/improve comments" and move to patch
-  "reformat comments to improve readability"
-
-Hugo Villeneuve (14):
-  serial: sc16is7xx: rename LCR macros to better reflect usage
-  serial: sc16is7xx: rename EFR mutex with generic name
-  serial: sc16is7xx: define common register access function
-  serial: sc16is7xx: remove unnecessary pointer cast
-  serial: sc16is7xx: use guards for simple mutex locks
-  serial: sc16is7xx: drop -ENOMEM error message
-  serial: sc16is7xx: declare SPR/TLR/XOFF2 register as volatile
-  serial: sc16is7xx: move port/channel init to separate function
-  serial: sc16is7xx: simplify to_sc16is7xx_one() with a single parameter
-  serial: sc16is7xx: Kconfig: allow building with COMPILE_TEST
-  serial: sc16is7xx: use KBUILD_MODNAME
-  serial: sc16is7xx: change conditional operator indentation
-  serial: sc16is7xx: reformat comments to improve readability
-  serial: sc16is7xx: add comments for lock requirements
-
- drivers/tty/serial/Kconfig         |   2 +-
- drivers/tty/serial/sc16is7xx.c     | 413 +++++++++++++----------------
- drivers/tty/serial/sc16is7xx.h     |   1 -
- drivers/tty/serial/sc16is7xx_i2c.c |   4 +-
- drivers/tty/serial/sc16is7xx_spi.c |   4 +-
- 5 files changed, 187 insertions(+), 237 deletions(-)
-
-
-base-commit: 4e68ae36422e85ec1a86aded26a211319649426d
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index c7435595dce13..330d95446f1d7 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -149,10 +149,12 @@
+ #define SC16IS7XX_LCR_WORD_LEN_6	(0x01)
+ #define SC16IS7XX_LCR_WORD_LEN_7	(0x02)
+ #define SC16IS7XX_LCR_WORD_LEN_8	(0x03)
+-#define SC16IS7XX_LCR_CONF_MODE_A	SC16IS7XX_LCR_DLAB_BIT /* Special
+-								* reg set */
+-#define SC16IS7XX_LCR_CONF_MODE_B	0xBF                   /* Enhanced
+-								* reg set */
++#define SC16IS7XX_LCR_REG_SET_SPECIAL	SC16IS7XX_LCR_DLAB_BIT /* Special
++								* reg set
++								*/
++#define SC16IS7XX_LCR_REG_SET_ENHANCED	0xBF                   /* Enhanced
++								* reg set
++								*/
+ 
+ /* MCR register bits */
+ #define SC16IS7XX_MCR_DTR_BIT		BIT(0)   /* DTR complement
+@@ -442,7 +444,7 @@ static void sc16is7xx_efr_lock(struct uart_port *port)
+ 	one->old_lcr = sc16is7xx_port_read(port, SC16IS7XX_LCR_REG);
+ 
+ 	/* Enable access to Enhanced register set */
+-	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG, SC16IS7XX_LCR_CONF_MODE_B);
++	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG, SC16IS7XX_LCR_REG_SET_ENHANCED);
+ 
+ 	/* Disable cache updates when writing to EFR registers */
+ 	regcache_cache_bypass(one->regmap, true);
+@@ -598,7 +600,7 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
+ 	/* Backup LCR and access special register set (DLL/DLH) */
+ 	lcr = sc16is7xx_port_read(port, SC16IS7XX_LCR_REG);
+ 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG,
+-			     SC16IS7XX_LCR_CONF_MODE_A);
++			     SC16IS7XX_LCR_REG_SET_SPECIAL);
+ 
+ 	/* Write the new divisor */
+ 	regcache_cache_bypass(one->regmap, true);
+@@ -1650,7 +1652,7 @@ int sc16is7xx_probe(struct device *dev, const struct sc16is7xx_devtype *devtype,
+ 
+ 		/* Enable EFR */
+ 		sc16is7xx_port_write(&s->p[i].port, SC16IS7XX_LCR_REG,
+-				     SC16IS7XX_LCR_CONF_MODE_B);
++				     SC16IS7XX_LCR_REG_SET_ENHANCED);
+ 
+ 		regcache_cache_bypass(regmaps[i], true);
+ 
 -- 
 2.39.5
 
