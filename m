@@ -1,94 +1,140 @@
-Return-Path: <linux-kernel+bounces-870994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7769BC0C2E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:49:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0ACC0C2E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C5A3BAAC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:49:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B5474F0CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 07:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6282E36F3;
-	Mon, 27 Oct 2025 07:49:31 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6F32E371D;
+	Mon, 27 Oct 2025 07:49:48 +0000 (UTC)
+Received: from mail.simonwunderlich.de (mail.simonwunderlich.de [23.88.38.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BC622A4D5;
-	Mon, 27 Oct 2025 07:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA632E2F0D;
+	Mon, 27 Oct 2025 07:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.38.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761551370; cv=none; b=KpT8AiGs7EsooYk4qMcKVZ/ECPsLA+vlYfvVUj5cazYKfSmnrs7y3D30HvHUi2fQQQKX6U8f377dFLhht/TIwvrvzoYKhhqM9C38Y9OEExQdP7R27WnCi0LK/l32tckLNhCdsQFTG15hXY339JF0Z5KdNdvG1//q5XEiq36INXE=
+	t=1761551388; cv=none; b=TK3LPyXZnDT4TSmQEhfyuVxdqgSOpYlWj2oD0tUhIDkxX0UyoRNvCwazLmckyfglrRgSn25zoRs6m66TcJE7wAMKDHfWb5FwKYQaX53r9XRH76KS6pVHfyQLj9BizqBNtSm7I9hKva7v9E8oA9iue5+zx5BtAqJyqWHy0NO2c+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761551370; c=relaxed/simple;
-	bh=IUDHLFdSW98VMmhJnfTZEpaoUm58u9sqZ9xYIWyIEWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfH5BPDHwgSFMuaS2+XdAmn/f2Sdr45KbLu7/8JAZVa6bCZxbrjdnj0ZqnbhenQqunCaKCDnf/9GmFMe+aoQkPE2Td3STGCay3RZGQwb05fCid6gp3pJE0y18nmWzITYOnomZqqwhAp08qHoWGfLSKlEddcwZGD2PjpmrqCvBQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 62E1D227A87; Mon, 27 Oct 2025 08:49:23 +0100 (CET)
-Date: Mon, 27 Oct 2025 08:49:22 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 2/2] block-dma: properly take MMIO path
-Message-ID: <20251027074922.GA14543@lst.de>
-References: <20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com> <20251027-block-with-mmio-v3-2-ac3370e1f7b7@nvidia.com>
+	s=arc-20240116; t=1761551388; c=relaxed/simple;
+	bh=CR1G9JPLl55SGn6CId9yfrnLZjKtbAk2nkRFfS5BcJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m70idlBniN6N3z0zzK2YX9MmZMVX0V/EnX2rOZNghEjTCuqQ1H2h2kM1M8tiGL0L50IE0xr7IukdbHTwkg2htC9XDMUhq9CAxMjFTIOcHa+VBKUgcLXt8Yut299NvmbjQRw0HYAfo69Yms5Hk8UNbNltO8BejIts7WnS85SjOqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de; spf=pass smtp.mailfrom=simonwunderlich.de; arc=none smtp.client-ip=23.88.38.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simonwunderlich.de
+Received: from ripper.localnet (p200300c597473De00000000000000C00.dip0.t-ipconnect.de [IPv6:2003:c5:9747:3de0::c00])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.simonwunderlich.de (Postfix) with ESMTPSA id 5C197FA130;
+	Mon, 27 Oct 2025 08:49:37 +0100 (CET)
+From: Sven Eckelmann <se@simonwunderlich.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, sw@simonwunderlich.de,
+ Issam Hamdi <ih@simonwunderlich.de>
+Subject: Re: [PATCH] net: phy: realtek: Add RTL8224 cable testing support
+Date: Mon, 27 Oct 2025 08:49:36 +0100
+Message-ID: <8597775.T7Z3S40VBb@ripper>
+In-Reply-To: <3b1d35d7-ed62-4351-9e94-28e614d7f763@lunn.ch>
+References:
+ <20251024-rtl8224-cable-test-v1-1-e3cda89ac98f@simonwunderlich.de>
+ <3b1d35d7-ed62-4351-9e94-28e614d7f763@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027-block-with-mmio-v3-2-ac3370e1f7b7@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: multipart/signed; boundary="nextPart10746008.nUPlyArG6x";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-> +	switch (iter.p2pdma.map) {
-> +	case PCI_P2PDMA_MAP_BUS_ADDR:
-> +		iod->flags |= IOD_DATA_P2P;
-> +		break;
-> +	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
-> +		iod->flags |= IOD_DATA_MMIO;
-> +		break;
-> +	default:
-> +		return BLK_STS_RESOURCE;
+--nextPart10746008.nUPlyArG6x
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Sven Eckelmann <se@simonwunderlich.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Date: Mon, 27 Oct 2025 08:49:36 +0100
+Message-ID: <8597775.T7Z3S40VBb@ripper>
+In-Reply-To: <3b1d35d7-ed62-4351-9e94-28e614d7f763@lunn.ch>
+MIME-Version: 1.0
 
-I almost wonder if we should just the pci_p2pdma_map_type values into
-place.  But that's a future cleanup, I'd rather get this going now.
+On Monday, 27 October 2025 01:16:12 CET Andrew Lunn wrote:
+> > +#define RTL8224_SRAM_RTCT_FAULT_BUSY		BIT(0)
+> > +#define RTL8224_SRAM_RTCT_FAULT_OPEN		BIT(3)
+> > +#define RTL8224_SRAM_RTCT_FAULT_SAME_SHORT	BIT(4)
+> > +#define RTL8224_SRAM_RTCT_FAULT_OK		BIT(5)
+> > +#define RTL8224_SRAM_RTCT_FAULT_DONE		BIT(6)
+> > +#define RTL8224_SRAM_RTCT_FAULT_CROSS_SHORT	BIT(7)
+> 
+> It is unusual these are bits. Does the datasheet say what happens if
+> the cable is both same short and cross short?
 
-> +static inline bool blk_rq_dma_unmap(struct request *req, struct device *dma_dev,
-> +		struct dma_iova_state *state, size_t mapped_len,
-> +		enum pci_p2pdma_map_type map)
->  {
-> -	if (is_p2p)
-> +	if (map == PCI_P2PDMA_MAP_BUS_ADDR)
->  		return true;
->  
->  	if (dma_use_iova(state)) {
-> +		unsigned int attrs = 0;
-> +
-> +		if (map == PCI_P2PDMA_MAP_THRU_HOST_BRIDGE)
-> +			attrs |= DMA_ATTR_MMIO;
-> +
->  		dma_iova_destroy(dma_dev, state, mapped_len, rq_dma_dir(req),
-> -				 0);
-> +				 attrs);
+Unfortunately, the datasheet doesn't say anything about cable tests.
 
-The only thing in req that is used now is the data directrion.  I'd be
-almost tempted to just pass that and lift this to dma-mapping.h.
+> 
+> > +static int rtl8224_cable_test_result_trans(u32 result)
+> > +{
+> > +	if (result & RTL8224_SRAM_RTCT_FAULT_SAME_SHORT)
+> > +		return ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
+> > +
+> > +	if (result & RTL8224_SRAM_RTCT_FAULT_BUSY)
+> > +		return ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
+> > +
+> > +	if (result & RTL8224_SRAM_RTCT_FAULT_CROSS_SHORT)
+> > +		return ETHTOOL_A_CABLE_RESULT_CODE_CROSS_SHORT;
+> 
+> I don't remember seeing a PHY able to report both same short and cross
+> short at the same time. Maybe there has been, but there is no code for
+> it. We could add such a code.
 
-But I guess we could just do that in a follow on to not drag in
-another subsystem.
+I've tried it a couple of times (with shorts at different lengths) but was not 
+able to do this. For me, it looks like the RTL8224 can represent these faults 
+in parallel but not actual detect them in parallel. I also played around with
+open + shorts. At the end, I never saw any parallel detections and left it to 
+the bit prioritization (during decoding) from RTLSDK.
 
-Otherwise looks good:
+RTL8226 in RTLSDK doesn't use (in contrast to RTL8224 in RTLSDK) the bits - 
+but there seems to be at least some connections. The codes for RTL8226 
+(according to RTLSDK) are:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+* 0x60 RTL8226_SRAM_RTCT_FAULT_OK (would be RTL8224 OK+DONE)
+* 0x48 RTL8226_SRAM_RTCT_FAULT_OPEN (would be RTL8224 OPEN+DONE)
+* 0x50 RTL8226_SRAM_RTCT_FAULT_SHORT (would be RTL8224 SAME_SHORT + DONE)
+* 0x42 RTL8226_SRAM_RTCT_FAULT_MISMATCH_OPEN (would be RTL8224 DONE + ????)
+* 0x44 RTL8226_SRAM_RTCT_FAULT_MISMATCH_SHORT (would be RTL8224 DONE + ????)
+* else: RTL8226_SRAM_RTCT_FAULT_UNKNOWN
+
+It seems like these decoding would not even have cross shorts. Don't ask me 
+what this mismatch is - couldn't find anything like this in RTL8224. The bits 
+1 + 2 are completely unused there.
+
+Regards,
+	Sven
+--nextPart10746008.nUPlyArG6x
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaP8kEAAKCRBND3cr0xT1
+y6MxAP9xn9PAEooF1J5Mih/sE05QVQvSvOTirV3C5o66UT+rVQEA1QSSMTWOSqEj
+2lkg9V4vYd2dlU5qsMwHH+OU9umcMAc=
+=DI62
+-----END PGP SIGNATURE-----
+
+--nextPart10746008.nUPlyArG6x--
+
+
+
 
