@@ -1,407 +1,207 @@
-Return-Path: <linux-kernel+bounces-872583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093A8C11812
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9DDCC1181E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 22:15:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBB014F7E81
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:14:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A93F34E3A8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 21:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D3A32ABCD;
-	Mon, 27 Oct 2025 21:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470CB32AAD8;
+	Mon, 27 Oct 2025 21:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWpOCFtb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="F/x2zxpM"
+Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC30329C7E;
-	Mon, 27 Oct 2025 21:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D03E31D753;
+	Mon, 27 Oct 2025 21:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599633; cv=none; b=FgZ3gAb4k1gDovz+EHQemkAVdHRs5uLeBhgVY134eCS7lQujB4wsdrbyjj8ohv4egmMck0CrYG7q3HX/y2eCuiD/71bxwQ/E+7caajMS0T1n+auIOBfRvHWsGhZ1wmOntY4xCUl4msPrqT85g6twa6GlDWts6PTtmn8pTrs2hJY=
+	t=1761599713; cv=none; b=bM4qNaa35ya7tpvPcvIEgt3F+raYLsSsCtD5cTDGru4J/+LUVTBwAuDNZo3Da2AJFyVRgEMd9pxjvRlfnVnGusRHwsZgGxB69D7N2AWIhULqn8X2yDxytSnKlOV6WZo01Sq9oZRdr1qNSqtWzHlVWOFdJpl5uhlKOS02Aam2VAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599633; c=relaxed/simple;
-	bh=Z2f2s6Vx/ME2R1INYuqFan+qX6ijIZlGUXiT7rj2KSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVNQiP7szEz0kdfrN4LuYFtbmgX9vcicf69AEsmOqfWTVJn2MA+LHg46qt60NhmyJLYUzW3oO+Uj4ZqFTi6ArxZTbjgix9y0S8P7nxiJukp/NKyX9YlEXYCjI84iOHW0zx5ICiX2uCSR1WbnvIPfoMIjYj86F9hdgYXYOtbR5pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWpOCFtb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ADFEC113D0;
-	Mon, 27 Oct 2025 21:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761599632;
-	bh=Z2f2s6Vx/ME2R1INYuqFan+qX6ijIZlGUXiT7rj2KSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rWpOCFtbpGNKYYb9YDxymOO1zXBoD7uCbSiz3rrDCXfMRpj9l7+3drtnBdOAk6bAD
-	 kNHccLsFJw3ETR+oBPBvkan9Mm9DAncirjkOgiBBYjVORGMC4/21DdPJO/zn6lbXTA
-	 qbBwZSQ5hlLkgP03AqUI5j15XlGk70yA92z4B8hHhlhOCEJkLpQewkhx8OEY1l19mr
-	 Em5CAWjQe8r0qjYhMSryJRcNx2lPrz2zZOw1hX0AsMuALBzPma/QxTq6MsuXBIJg3B
-	 islSq6FxpuMNkSA+UGoNvtJUaR8XAisCId06wZXWYrxNPYzoOMVVR7t230QmSjtwxQ
-	 V46+hf/MgpBpQ==
-Date: Mon, 27 Oct 2025 16:13:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 04/15] dt-bindings: mfd: ROHM BD72720
-Message-ID: <20251027211351.GC1565353-robh@kernel.org>
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1761599713; c=relaxed/simple;
+	bh=aIIISvl+2w9gMkRNXeAD6BlzEj3AzToc1TnYUAr3v0o=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=hV81cxL2Khzt9oFwFmNRT7L3oae4fhOlrtGSgoj4ldGSxY+Hen/m+2r5ec9h/jQeSo2pkfKQXqnEqkIPlCJXoPpJODXFLf2PiN4LL4aFQZKAak9/INUreJAe2Kg/UJItfMc1VJIN2WQrSn/fFHH9cLIP+go+vqA7TVWFQFxEPxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=F/x2zxpM; arc=none smtp.client-ip=142.132.176.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 6B5AD40DAC;
+	Mon, 27 Oct 2025 22:15:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
+	t=1761599706; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NsJHqtCUOKaeyUZLOt1nWUAZg2XGRpC5R7J3KADVzZQ=;
+	b=F/x2zxpML96YLUS6jmMKMg2jetatzUaTlWCQIxO+AIbDXC1LdJWlwXOAK5j/QaZ0g4NlTX
+	ixcDHZqgVKJH3G6+DSSqXmFwUI9VDyp9wMOMe3VkzUwwIP13AnMts2noOBvM/fDiEeddIP
+	5mMTVYLUuoA/dDA13yCIysFWvsvmOisrpxF1shiyZQe5DzadoQVvUzHo+RT81wfJSCqeh4
+	VJc7bU0hJCdYkL7Zc9ggXastvje7yqVMvTD4fy1HeEK1WSIESJXQuIE0kVIFNYGfmOEnTD
+	aJ+vDrnKmjC5SOygsbpRLpsuJfTwcIy7hPWuQZM965sNkq5VJd/kB/K0TCFfCA==
+From: "Dragan Simic" <dsimic@manjaro.org>
+In-Reply-To: <CABjd4Yzfx-4xBHVB=W_r6nEdbwNJKdpHYB6bN3Xsk8dZOegJWw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+References: <d583ee43-38c4-40fb-b33b-ce3153c9723b@gmail.com> <20251027200213.1821809-1-dsimic@manjaro.org> <CABjd4Yzfx-4xBHVB=W_r6nEdbwNJKdpHYB6bN3Xsk8dZOegJWw@mail.gmail.com>
+Date: Mon, 27 Oct 2025 22:15:05 +0100
+Cc: sigmaris@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, robh@kernel.org
+To: "Alexey Charkov" <alchark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
+Message-ID: <2cfeeb0c-f7e0-b101-62c4-3b6eae40a30b@manjaro.org>
+Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
+ =?utf-8?q?_rockchip=3A?= pwm-fan overlay for NanoPC-T6
+User-Agent: SOGoMail 5.12.3
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: None
 
-On Mon, Oct 27, 2025 at 01:45:46PM +0200, Matti Vaittinen wrote:
-> The ROHM BD72720 is a power management IC integrating regulators, GPIOs,
-> charger, LEDs, RTC and a clock gate.
-> 
-> Add dt-binding doc for ROHM BD72720.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> ---
-> Revision history:
->  RFCv1 => v2:
->  - Typofixes
-> ---
->  .../bindings/mfd/rohm,bd72720-pmic.yaml       | 269 ++++++++++++++++++
->  1 file changed, 269 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
-> new file mode 100644
-> index 000000000000..b0d4bc01d199
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
-> @@ -0,0 +1,269 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/rohm,bd72720-pmic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ROHM BD72720 Power Management Integrated Circuit
-> +
-> +maintainers:
-> +  - Matti Vaittinen <mazziesaccount@gmail.com>
-> +
-> +description: |
-> +  BD72720 is a single-chip power management IC for battery-powered portable
-> +  devices. The BD72720 integrates 10 bucks and 11 LDOs, and a 3000 mA
-> +  switching charger. The IC also includes a Coulomb counter, a real-time
-> +  clock (RTC), GPIOs and a 32.768 kHz clock gate.
-> +
-> +# In addition to the properties found from the charger node, the ROHM BD72720
-> +# uses properties from a static battery node. Please see the:
-> +# Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+Hello Alexey,
 
-Why is all of this a comment?
+On Monday, October 27, 2025 21:56 CET, Alexey Charkov <alchark@gmail.co=
+m> wrote:
+> On Tue, Oct 28, 2025 at 12:02=E2=80=AFAM Dragan Simic <dsimic@manjaro=
+.org> wrote:
+> > On Mon, Oct 27, 2025 at 7:08=E2=80=AFPM Hugh Cole-Baker <sigmaris@g=
+mail.com> wrote:
+> > > On 27/10/2025 09:14, Alexey Charkov wrote:
+> > >
+> > >> Is there any downside to enabling this unconditionally in the bo=
+ard
+> > >> .dts?
+> > >
+> > > Only that it goes against the principle that the DT should descri=
+be the
+> > > hardware; the board .dts would describe a cooling device that doe=
+sn't
+> > > actually exist on the base board.
+> >
+> > Having a separate DT overlay is perfectly fine if we want to
+> > describe a board absolutely correctly: if the fan actually isn't
+> > present, the operating system shouldn't be made to think it is
+> > there, especially if there's no fan RPM feedback, which is the
+> > case on almost all Rockchip boards that support a fan.
+> >
+> > Preventing the kernel from managing a non-existent fan might even
+> > save some CPU cycles, ending up producing a bit less heat, which
+> > can only help in passively cooled setups.
+>=20
+> Sounds like an overcomplication without real benefit. It's one thing
+> with overlays for functionality that can be software-incompatible
+> depending on whether an external attachment is connected or depending
+> on the type of attachment connected. Here we are looking at a plain
+> 2-pin fan which cannot be software incompatible to anything really
+> (it's not like one could repurpose the fan connector for anything
+> meaningful if a fan is not in use, and noone gets hurt if a PWM outpu=
+t
+> is left running without load).
+>=20
+> The CPU cycles spent parsing a slightly larger DTB at boot are likely
+> comparable to those spent activating a PWM output needlessly upon
+> hitting the active cooling trip point, and both are negligible for an=
+y
+> practical purpose.
 
-> +#
-> +# Following properties are used
-> +# when present:
-> +#
-> +# charge-full-design-microamp-hours: Battry capacity in mAh
-> +# voltage-max-design-microvolt:      Maximum voltage
-> +# voltage-min-design-microvolt:      Minimum voltage system is still operating.
-> +# degrade-cycle-microamp-hours:      Capacity lost due to aging at each full
-> +#                                    charge cycle.
-> +# ocv-capacity-celsius:              Array of OCV table temperatures. 1/table.
-> +# ocv-capacity-table-<N>:            Table of OCV voltage/SOC pairs. Corresponds
-> +#                                    N.th temperature in ocv-capacity-celsius
-> +#
-> +# ROHM specific properties:
-> +# rohm,voltage-vdr-thresh-microvolt: Threshold for starting the VDR correction
-> +# rohm,volt-drop-soc:                Table of capacity values matching the
-> +#                                    values in VDR tables.
-> +# rohm,volt-drop-high-temp-microvolt: VDR table for high temperature
-> +# rohm,volt-drop-normal-temp-microvolt: VDR table for normal temperature
-> +# rohm,volt-drop-low-temp-microvolt:  VDR table for low temperature
-> +# rohm,volt-drop-very-low-temp-microvolt: VDR table for very low temperature
-> +#
-> +# VDR tables are (usually) determined for a specific battery by ROHM.
-> +# The battery node would then be referred from the charger node:
-> +#
-> +# monitored-battery = <&battery>;
-> +
-> +properties:
-> +  compatible:
-> +    const: rohm,bd72720
-> +
-> +  reg:
-> +    description:
-> +      I2C slave address.
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +    description: |
+Hmm, right, I forgot for a moment that the PWM output is generated
+by dedicated hardware, so not many CPU cycles would be wasted.
 
-Don't need '|'
+BTW, with a fan PWM signal generated by a soft-GPIO output, much
+more CPU cycles would've been saved by omitting the fan definition
+if it isn't present, but that isn't the case here.
 
-> +      The first cell is the pin number and the second cell is used to specify
-> +      flags. See ../gpio/gpio.txt for more information.
+> > However, the practice so far has been to describe the fans in the
+> > main board dts files, if the board provides fan support, regardless
+> > of the fan being present in a particular board setup or not.
+> >
+> > > I guess then in theory, an OS might allow the SoC to reach undesi=
+rably high
+> > > temperatures if it's relying on the nonexistent fan to cool it do=
+wn. But I
+> > > don't think this would be an issue on Linux, at least, in practic=
+e.
+> >
+> > We're safe, a thermal runaway isn't going to happen when the fan is
+> > defined in a board DT but actually isn't present.  Thermal CPU and
+> > GPU throttling will prevent the overheating from happening.
+> >
+> > >> Overlays require more user configuration, and not all
+> > >> bootloaders support them directly (e.g. systemd-boot users would
+> > >> struggle). Compiling with overlays enabled also makes .dtb's a l=
+ot
+> > >> larger due to added symbols information.
+> > >
+> > > Nowadays (on Debian at least) using overlays is pretty easy, I'm =
+using the
+> > > u-boot-menu package in Debian, I just copy the overlay(s) to /boo=
+t/dtbo/ and
+> > > it detects them automatically and adds them to extlinux.conf for =
+u-boot to
+> > > apply.
+> > >
+> > > Couldn't systemd-boot users just use rk3588-nanopc-t6-(lts-)with-=
+fan.dtb as
+> > > their single DT to load, if it doesn't support applying overlays =
+and they
+> > > want to use the fan addon?
+>=20
+> Sure, but it's a manual configuration step, where otherwise the kerne=
+l
+> would just default to the correct dtb for the board that the firmware
+> told it about. The fan is not discoverable, so the firmware won't eve=
+r
+> offer the "-with-fan" variant, meaning users would need to supply it
+> manually in every instance.
 
-Don't add new references to old .txt bindings.
+FWIW, the most user-friendly SBC family in the world, Raspberry
+Pi, :) requires manual enabling of the fan on Raspberry Pi 4.
+I haven't researched what's the background for that, perhaps the
+need to keep the GPIO expansion header completely unoccupied by
+default, because the fan attaches to the GPIO header, instead of
+to some dedicated fan connector.
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-output-names:
-> +    const: bd71828-32k-out
-> +
-> +  rohm,clkout-open-drain:
-> +    description: clk32kout mode. Set to 1 for "open-drain" or 0 for "cmos".
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
+> > Yes, that's an option.  However, that in general doesn't resolve
+> > the issues arising from systemd-boot users wanting to apply more
+> > than a single DT overlay.
+> >
+> > > FWIW, I haven't noticed any problems with having a larger .dtb (u=
+sing mainline
+> > > U-Boot to load it) and several other RK3588 boards are also compi=
+led with
+> > > symbols enabled already, and I haven't seen any issues reported w=
+ith them.
+> >
+> > After thinking a bit about it, I'd support the extraction of fan
+> > definitions into separate DT overlays.  As I wrote above already,
+> > not managing the non-existent fan might actually help a bit with
+> > passively cooled board setups, which is a good enough reason for
+> > me to support separate DT overlays.
+>=20
+> Practical benefits sound far fetched here, while forcing users to
+> manually configure something that would have otherwise just worked.
+> Let's see what Heiko thinks.
 
-0 is already the minimum for unsigned.
+Yeah, I forgot for a moment that the PWM signal is generated
+by hardware, which means that the resulting overheads when no
+fan is present are rather small.
 
-> +    maximum: 1
-> +
-> +  rohm,charger-sense-resistor-milli-ohms:
-> +    minimum: 10
-> +    maximum: 50
-> +    description: |
+> > If we end up agreeing to accept this DT overlay, I'll have some
+> > comments on the way cooling maps are defined.  I think there's
+> > quite a bit of redundancy there.
+>=20
+> Agree. Thermal governors can figure out the fan speed ramp-up without
+> specifying each and every temperature threshold manually. Two trips
+> seem to be enough for everyone (c) - as we've done e.g. on Rock 5B an=
+d
+> others.
 
-Don't need '|'
-
-> +      BD72720 has a SAR ADC for measuring charging currents. External sense
-> +      resistor (RSENSE in data sheet) should be used. If some other but
-> +      30 mOhm resistor is used the resistance value should be given here in
-> +      milli Ohms.
-> +
-> +  regulators:
-> +    $ref: ../regulator/rohm,bd77270-regulator.yaml
-
-/schemas/regulator/...
-
-> +    description:
-> +      List of child nodes that specify the regulators.
-> +
-> +  leds:
-> +    $ref: ../leds/rohm,bd71828-leds.yaml
-
-/schemas/leds/...
-
-> +
-> +  rohm,pin-dvs0:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      BD72720 has 4 different OTP options to determine the use of dvs0-pin.
-> +      OTP0 - regulator RUN state control.
-> +      OTP1 - GPI.
-> +      OTP2 - GPO.
-> +      OTP3 - Power sequencer output.
-> +      This property specifies the use of the pin.
-> +    enum:
-> +      - dvs-input
-> +      - gpi
-> +      - gpo
-> +
-> +  rohm,pin-dvs1:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      see rohm,pin-dvs0
-> +    enum:
-> +      - dvs-input
-> +      - gpi
-> +      - gpo
-
-These 2 could be combined into a single entry in patternProperties.
-
-> +
-> +  rohm,pin-exten0:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: BD72720 has an OTP option to use exten0-pin for different
-> +      purposes. Set this property accordingly.
-> +    const: gpo
-> +
-> +  rohm,pin-exten1:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: BD72720 has an OTP option to use exten1-pin for different
-> +      purposes. Set this property accordingly.
-> +    const: gpo
-
-And these 2 also.
-
-> +
-> +  rohm,pin-fault_b:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: BD72720 has an OTP option to use fault_b-pin for different
-> +      purposes. Set this property accordingly.
-> +    const: gpo
-
-Seems like different purposes would have more than 1 option.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - "#clock-cells"
-> +  - regulators
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/leds/common.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        pmic: pmic@4b {
-> +            compatible = "rohm,bd71828";
-> +            reg = <0x4b>;
-
-Just 1 complete example in the mfd schema and drop this example.
-
-> +
-> +            interrupt-parent = <&gpio1>;
-> +            interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +            clocks = <&osc 0>;
-> +            #clock-cells = <0>;
-> +            clock-output-names = "bd71828-32k-out";
-> +
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            gpio-reserved-ranges = <0 1>, <2 1>;
-> +
-> +            rohm,charger-sense-resistor-ohms = <10000000>;
-> +
-> +            regulators {
-> +                buck1: BUCK1 {
-> +                    regulator-name = "buck1";
-> +                    regulator-min-microvolt = <500000>;
-> +                    regulator-max-microvolt = <2000000>;
-> +                    regulator-ramp-delay = <2500>;
-> +                };
-> +                buck2: BUCK2 {
-> +                    regulator-name = "buck2";
-> +                    regulator-min-microvolt = <500000>;
-> +                    regulator-max-microvolt = <2000000>;
-> +                    regulator-ramp-delay = <2500>;
-> +                };
-> +                buck3: BUCK3 {
-> +                    regulator-name = "buck3";
-> +                    regulator-min-microvolt = <1200000>;
-> +                    regulator-max-microvolt = <2000000>;
-> +                };
-> +                buck4: BUCK4 {
-> +                    regulator-name = "buck4";
-> +                    regulator-min-microvolt = <1000000>;
-> +                    regulator-max-microvolt = <1800000>;
-> +                };
-> +                buck5: BUCK5 {
-> +                    regulator-name = "buck5";
-> +                    regulator-min-microvolt = <2500000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +                buck6: BUCK6 {
-> +                    regulator-name = "buck6";
-> +                    regulator-min-microvolt = <500000>;
-> +                    regulator-max-microvolt = <2000000>;
-> +                    regulator-ramp-delay = <2500>;
-> +                };
-> +                buck7: BUCK7 {
-> +                    regulator-name = "buck7";
-> +                    regulator-min-microvolt = <500000>;
-> +                    regulator-max-microvolt = <2000000>;
-> +                    regulator-ramp-delay = <2500>;
-> +                };
-> +                ldo1: LDO1 {
-> +                    regulator-name = "ldo1";
-> +                    regulator-min-microvolt = <800000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +                ldo2: LDO2 {
-> +                    regulator-name = "ldo2";
-> +                    regulator-min-microvolt = <800000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +                ldo3: LDO3 {
-> +                    regulator-name = "ldo3";
-> +                    regulator-min-microvolt = <800000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +                ldo4: LDO4 {
-> +                    regulator-name = "ldo4";
-> +                    regulator-min-microvolt = <800000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +                ldo5: LDO5 {
-> +                    regulator-name = "ldo5";
-> +                    regulator-min-microvolt = <800000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +                ldo6: LDO6 {
-> +                    regulator-name = "ldo6";
-> +                    regulator-min-microvolt = <1800000>;
-> +                    regulator-max-microvolt = <1800000>;
-> +                };
-> +                ldo7_reg: LDO7 {
-> +                    regulator-name = "ldo7";
-> +                    regulator-min-microvolt = <800000>;
-> +                    regulator-max-microvolt = <3300000>;
-> +                };
-> +            };
-> +
-> +            leds {
-> +                compatible = "rohm,bd71828-leds";
-> +
-> +                led-1 {
-> +                    rohm,led-compatible = "bd71828-grnled";
-> +                    function = LED_FUNCTION_INDICATOR;
-> +                    color = <LED_COLOR_ID_GREEN>;
-> +                };
-> +                led-2 {
-> +                    rohm,led-compatible = "bd71828-ambled";
-> +                    function = LED_FUNCTION_CHARGING;
-> +                    color = <LED_COLOR_ID_AMBER>;
-> +                };
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.51.0
-> 
-
+Indeed, and if there are actually measurable/audible benefits
+from having those manually defined thresholds/maps, then we
+should start thinking about improving the already existing
+fan-driving logic instead.
 
 
