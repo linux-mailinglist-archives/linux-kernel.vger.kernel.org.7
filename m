@@ -1,167 +1,179 @@
-Return-Path: <linux-kernel+bounces-871016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11485C0C3E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:10:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E87C0C3ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 09:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCAD3A8FDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:10:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1912F189C2C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20362E7178;
-	Mon, 27 Oct 2025 08:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B2A2E7186;
+	Mon, 27 Oct 2025 08:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQIwRJB7"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="FMHvvs/A"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74C61DF252
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 08:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F202E54B3;
+	Mon, 27 Oct 2025 08:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761552619; cv=none; b=m+XjrtqEYAEnomK8Tb22aujNj4j7hOyp8TRJlyEtz1T1q9YXkXpiuoq8xT7kyTgFd/jfMOfY5CagOAMrreS5x8BTUTYYeXUyqlsnNxRjxJzV0sJU3cFo/RdzUJin5QGoK5ShuU1lRvpSFSsCj4aixIseeIN0e2o+rh+GD2FQxPE=
+	t=1761552641; cv=none; b=cssTYoRtE5LwB+4UYjePaKDe46SlCT5JofrmzPeu/zV2aiR50GAd34silWcy2k5vWmt0Hxd75kOIj65WRzOzSliRWKYeqruVb8GuS8HO5XzwyMdHl8q/kGCo0+AraJwJCRCQz4SX2XR4v4Ww+8fVUmdW5QN7rOd6dWiSra175Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761552619; c=relaxed/simple;
-	bh=VoRUY3ins21uu8jjVMczNJwbivQ26l6F68stddKtneg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=geKY9v27RvmXgr0Y+3keIOrhEkGq+KCal6NFtl79+ID7zE6f4IvSmUm8atkj+of5oILjZrUD1J+Apov+fmSGe7G82y+7i3vbT+XuE8oITy9t+e97iyOTIxTg8nalrLGE9irC8h92d/6qQLSqT/Jd8Y72V6Pdc9eAYhi1b4N6HjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQIwRJB7; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-78118e163e5so4552560b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761552615; x=1762157415; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T6n3f7H9R5Wq242yxZtuIsFjuAPFB3rb7ibQPNdRdRM=;
-        b=IQIwRJB7rJnAcNxe4gr9gE7yNFSLcnYfNcnkQI0otJzvUJTLgXb2Zm4X9o3jebmdVe
-         e3ppbd6cKFZFNGbsNoWt0xX7YnDnyiZ3puEg+jAo1HCVb6qeQ8JTda8fq/tl6ivIHZeL
-         Y3NexpP3631424VR+/6pMhud/JurwOmC6rMCxQQHJzmZjRYCK8BK7veUEm3ZqzuzZCh3
-         MVtoe9PIGMnagrDKpoFuv23Pvy5Mmqb2vKpBPInnMul9AQkh0viREW4CIjfjkj0cOE/R
-         cfDiKufZbGOKKJFt2NmWog5Ycpvap5zHEcDIVkE1K8CXOjfQ9D2HIhac/soD1NXj5+q0
-         mV8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761552615; x=1762157415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T6n3f7H9R5Wq242yxZtuIsFjuAPFB3rb7ibQPNdRdRM=;
-        b=UMa2RurdUk0opzq6Fp/kl65ALkv70eWyfJQ4IUgvFpu0Gv6hbM3145ZU4yhwPXpfMC
-         q0L1yLjeC36I6qWKsCXfx50wKqZDRGhIUbi9oNKF/LKbD6fcqAH2A/ZT2Ko1VuiLluDU
-         oMIGLbQ8qUFNpdBlOwwpJ/xsbatFT4Nt+063N5SVdCBJ2a7tNs7sjKsdjLR7nmR2XbZW
-         kL2ujPtoMLYZMIYD7rwFA5YNHlXEEeok+t6VN0GKM8+j9AtZ4SP4a5yuNymg+IqbEhDw
-         XNmnZEzcJ/fRglPLKolInOGbiGNZCFEelBNwpTP7f8uJ8Mo0d1WPlhyz4ZOvujg9o9Sq
-         Dg1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXhB1BkTzjBZXl07JWvVYCgqKA9l9KRh6SlJymNXMQdJSWOILGt4ESuRMzBBE7/1qLHCmSqcKk5fuAyBRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2pR5xC8cxjGjcIvmmYxC5Hjco3DDb2JvduMztq2x7M7HR6wYR
-	DDPlLhker72I0wGhGDQIO87DO3kvrVKktOjiQ5q+2kSWmHOItXDkN1Bh
-X-Gm-Gg: ASbGnctIw4ImOyuuTrv/Mm5iV98e8WUrMB3/EjfjWBkvIBXAaXnrHLhsUC45IsKzovX
-	XRrr8HVjVZzn8fEzvFZ73Lb046kMbD81eRv6j3hhpiKQgIF67wVISH+hf1TLhehhG/PI7DQgv3T
-	HSX6y/O5vu98B+hrEr4G0IivR0RjC/KFymTKKAc1Af/vA33WFx2pS7H6PWfZkyGaJTryrmwA1Nf
-	5/FexSZGkUI75BBpUrKs+BOjFNdB5sOn4DBl0IpF98CffLJqVQb6bPRceA1vofNeDMwM+hM+6ZE
-	j1eNgKVXqNFlS86cMZPe6GNawL6EiIjtdoPIjWl3usH67iDYi+HEWz5BGTS79AK1i/H4FGNvCqy
-	xMgseF2emuwTJnCaTHAbkdbITeIqrBX/d05+pLr2drfd183xrmD6bYwulriEaynWOf3ihRzdQR7
-	IgKqFGpf/1U8CqzGW8hoc0D7QkyLAqK1Q=
-X-Google-Smtp-Source: AGHT+IHSSd9fMAjmKfXljkXTyT2XUXCuCGrceY39YLK9TJKqTw964TmCldXcS6Vik91n8EMyB4Xofw==
-X-Received: by 2002:a17:902:f712:b0:294:880e:7ab6 with SMTP id d9443c01a7336-29489db6cfemr114974275ad.1.1761552614877;
-        Mon, 27 Oct 2025 01:10:14 -0700 (PDT)
-Received: from [10.0.2.15] ([14.98.178.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d274aasm71715025ad.56.2025.10.27.01.10.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 01:10:14 -0700 (PDT)
-Message-ID: <81fd91f2-638c-466d-9b27-705a44632713@gmail.com>
-Date: Mon, 27 Oct 2025 13:40:10 +0530
+	s=arc-20240116; t=1761552641; c=relaxed/simple;
+	bh=A/FHwxJSA7obBoDVFib3NuWDqj1wszSeQK+0ZKb4DtI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kY3PV+f0bK/AOGV4tkBGnzBol1zZFH4ORDocEKvLg/bhVi8h9/spurET3OD49Su0k/GtD7v2ENfq3fFjC69nNAAiek+dlQrtfCXsWIgSExRfGaJ4NwifgTf4KmVnUKKiNS1BzNehR0FahW9ekXzcSN3Z+Axea7ArgesuDGAEV4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=FMHvvs/A; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59R8AQ9R0364012, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1761552626; bh=f5bHsZ8xufRsURvv3zBK6RvKRsMoHbynFtzzCOloXLs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=FMHvvs/AHskv7hOJt80Cq363s4+RRh27+JB+p99PcU5m1L+vQRQxxslEGBk54s3T+
+	 7Vvv0xIOHBGCDm9mjpMIdjNj40Tmb5QoG9Fr9KzmORAS/3xDZqBj49E5yym1XQm6yj
+	 ttsZ9ZItMn0rYzJ2SLzUKSkkC/MSDtoZmwYhSXo8Lpnw0D7DmfLxNyPHVQTqnHJBbD
+	 dlUKg16a1a0E+m9/cMzkdgyQyLvvXm3Wn5YnEqVxokXRMl+qiSxzvlSsawmQ0dkWJ1
+	 hcIn7HeP/18zjEmRlqjItWcfp23EwC6lmXCJ3jaklYXz5nRKSBBT1MYzP9LwupmR+S
+	 fuCzlaQUTMRuQ==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59R8AQ9R0364012
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 16:10:26 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 27 Oct 2025 16:10:26 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 27 Oct 2025 16:10:25 +0800
+Received: from localhost.localhost (172.24.54.48) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server id
+ 15.2.1544.27 via Frontend Transport; Mon, 27 Oct 2025 16:10:25 +0800
+From: Max Chou <max.chou@realtek.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
+        <niall_ni@realsil.com.cn>, <zhu_qing@realsil.com.cn>,
+        Chih-Hsiang Wang
+	<wangchihhs@realtek.com>, <brenda.li@ublnx.com>,
+        Max Chou
+	<max.chou@realtek.com>
+Subject: [PATCH] Bluetooth: btrtl: Add the support for RTL8761CUV
+Date: Mon, 27 Oct 2025 16:10:44 +0800
+Message-ID: <20251027081044.11158-1-max.chou@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com, kw@linux.com,
- LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
- lucas.demarchi@intel.com, rafael.j.wysocki@intel.com,
- Manivannan Sadhasivam <mani@kernel.org>, bhanuseshukumar@gmail.com
-References: <20251017185246.GA1040948@bhelgaas>
- <702c4ad7-508b-42de-9dc3-40e4a0fe7bd7@gmail.com>
- <b3a49920-1cff-4ea2-519a-318030ba8797@linux.intel.com>
-Content-Language: en-US
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-In-Reply-To: <b3a49920-1cff-4ea2-519a-318030ba8797@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 21/10/25 00:16, Ilpo Järvinen wrote:
-> On Sat, 18 Oct 2025, Bhanu Seshu Kumar Valluri wrote:
-> 
->> On 18/10/25 00:22, Bjorn Helgaas wrote:
->>> On Fri, Oct 17, 2025 at 11:52:58PM +0530, Bhanu Seshu Kumar Valluri wrote:
->>>>
->>>> I want to report that this PATCH also break PCI RC port on TI-AM64-EVM.
->>>>
->>>> I did git bisect and it pointed to the a43ac325c7cb ("PCI: Set up bridge resources earlier")
->>>>
->>>> Happy to help if any testing or logs are required.
->>>
->>> Thanks for the report!  Can you test this patch?
->>>
->>>   https://patch.msgid.link/20251014163602.17138-1-ilpo.jarvinen@linux.intel.com
->>>
->>> That patch is queued up as
->>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=469276c06aff
->>> and should appear in v6.18-rc2 on Sunday if all goes well.
->>>
->>> If that doesn't work, let us know and we'll debug this further.
->>
->> I applied above patch on top of commit f406055cb18c ("Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux")
->>
->> Did pci rescan and run kselftest (pci_endpoint_test). It is working.
->>
->> Thanks for the patch.
-> 
-> Thanks for testing the revert.
-> 
->> Happy to help if any testing or logs are required.
-> 
-> I'd be interested to understand what goes wrong with the change I was 
-> trying to make as I want to attempt the same change later, but with all 
-> known issues solved by supporting changes, obviously :-).
-> 
-> The log snippets you provided are unfortunately too short to contain all 
-> the necessary information (missing e.g. root bus resources and possibly 
-> other helpful details).
-> 
-> So if you could provide dmesg and /proc/iomem contents from broken and
-> working (with the revert) cases to let me easily compare them, that would 
-> help. Please take the dmesg with dyndbg="file drivers/pci/*.c +p" on 
-> kernel's cmdline.
-> 
-> No further actions needed beyond that until later if I need to test some 
-> of those supporting changes before retrying all this in the mainline. It 
-> may take some time, even more than one kernel cycle as there have been 
-> quite many regressions.
-> 
-> 
-Hi
+Add the support for RTL8761CUV BT controller on USB interface.
 
-I captured logs with dyndbg="file drivers/pci/*.c +p. See the links below.
+The device info from /sys/kernel/debug/usb/devices as below.
 
-Working kernel logs
-https://github.com/bhanuseshukumar/kernel_logs/blob/main/working_log
+T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 13 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0bda ProdID=c761 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Controller
+S:  SerialNumber=10000
+C:* #Ifs= 2 Cfg#= 1 Atr=a0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
 
-Non Working kernel logs
-https://github.com/bhanuseshukumar/kernel_logs/blob/main/not_working_log
+Signed-off-by: Max Chou <max.chou@realtek.com>
+---
+ drivers/bluetooth/btrtl.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Happy to help if any testing or logs are required.
-
-Regards,
-Bhanu Seshu Kumvar Valluri
-
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 6abd962502e3..329554f23542 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -72,6 +72,7 @@ enum btrtl_chip_id {
+ 	CHIP_ID_8851B = 36,
+ 	CHIP_ID_8922A = 44,
+ 	CHIP_ID_8852BT = 47,
++	CHIP_ID_8761C = 51,
+ };
+ 
+ struct id_table {
+@@ -230,6 +231,14 @@ static const struct id_table ic_id_table[] = {
+ 	  .cfg_name = "rtl_bt/rtl8761bu_config",
+ 	  .hw_info  = "rtl8761bu" },
+ 
++	/* 8761CU */
++	{ IC_INFO(RTL_ROM_LMP_8761A, 0x0e, 0xc, HCI_USB),
++	  .config_needed = false,
++	  .has_rom_version = true,
++	  .fw_name  = "rtl_bt/rtl8761cu_fw",
++	  .cfg_name = "rtl_bt/rtl8761cu_config",
++	  .hw_info  = "rtl8761cu" },
++
+ 	/* 8822C with UART interface */
+ 	{ IC_INFO(RTL_ROM_LMP_8822B, 0xc, 0x8, HCI_UART),
+ 	  .config_needed = true,
+@@ -668,6 +677,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
+ 		{ RTL_ROM_LMP_8851B, 36 },	/* 8851B */
+ 		{ RTL_ROM_LMP_8922A, 44 },	/* 8922A */
+ 		{ RTL_ROM_LMP_8852A, 47 },	/* 8852BT */
++		{ RTL_ROM_LMP_8761A, 51 },	/* 8761C */
+ 	};
+ 
+ 	if (btrtl_dev->fw_len <= 8)
+@@ -1301,6 +1311,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+ 	case CHIP_ID_8851B:
+ 	case CHIP_ID_8922A:
+ 	case CHIP_ID_8852BT:
++	case CHIP_ID_8761C:
+ 		hci_set_quirk(hdev, HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED);
+ 
+ 		/* RTL8852C needs to transmit mSBC data continuously without
+@@ -1520,6 +1531,8 @@ MODULE_FIRMWARE("rtl_bt/rtl8761b_fw.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8761b_config.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8761bu_fw.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8761bu_config.bin");
++MODULE_FIRMWARE("rtl_bt/rtl8761cu_fw.bin");
++MODULE_FIRMWARE("rtl_bt/rtl8761cu_config.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8821a_fw.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8821a_config.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8821c_fw.bin");
+-- 
+2.43.0
 
 
