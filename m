@@ -1,119 +1,176 @@
-Return-Path: <linux-kernel+bounces-872228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1E3C0FA06
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:27:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06D8C0FA21
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 18:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8BB04E951B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:27:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7487419C67D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 17:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D833B31618E;
-	Mon, 27 Oct 2025 17:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CA63164B8;
+	Mon, 27 Oct 2025 17:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FDgk9zr8"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3RNxoTo"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4A43161A5;
-	Mon, 27 Oct 2025 17:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6887A2DA777
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761586027; cv=none; b=pYnQAS2/9eEUUbS370o3wzWbkpHeZHQBsbWSFgNW5mGyx2hM460+dRIOOB6E1bPyz0DGcuwbYaWv7z1HLF1hqsKCuJoRTlcc1eD+Pp8YZxCERFyUiPdRB/7NuOloPw3RTU5JpRhhcj9M8XCpgsnbVlx57/LfITxqK88ZBqWBg3I=
+	t=1761586124; cv=none; b=enZA38hZfV3FTAN9FDVDwxOJ3/y24M5l0iAf32Tugo8nj1Ru9El9f2pWy0LP3lYvgS7aJUpDwcyfZzi2/EryQsI7W59zW9iP1HvEttrX4n0wQcLGFSPaDUFmKuMWQpQn0oKtla4VvNJAK/9nPHq8YZudkPGNXQT2QaZEHWy5Qq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761586027; c=relaxed/simple;
-	bh=0cWFS/aHvcf6zGPoUr9HGepAntK8bTSB3I4wKAoK1Hk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sq1sJYpQkdXQXs68OFUWD70GBofGnGktAvKXZgImnm6R2mkfhtyw1SCGN5cHTHi1cq5Z8JvYEV+dG065rf1N6WBYC3Z/Mu1ttD7hN5Ajy7nVuxhDXwuZD6RcB0W+zAL9kelEHCN7qKKn+SgYe4Y24Y4JP1lGFfPUBA87DcCBv7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FDgk9zr8; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CFC35406FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761586025; bh=7M4hB0gT8f5ZWd0pSPRtSbMpf9vqmrkcHvnua6p+fBs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FDgk9zr8hgNZBzf91L7NWjqOhK5QzZhW2xhypC3RxH8Hk13A16klh+m+mWsy6NWFG
-	 b5DB31H4/RY5Ve2B7+Acm97xSst9+4TQlwFosLzR6rGSiE4Bz02OyxOxfud3DqZFGS
-	 LmokGpD+KAG4EDx/pu5aPzNv4OLZXg1ZXTlOp2loq6BNrGbSZeWx5znB02QYKrLQV6
-	 jUjyFd9WLM1rxjbVMUpqDBw2JXndYwpozr6ICkWR97hk0upoYfAGhcRmJEELY7AClp
-	 goLYtqJSIQalwnRT19e2t9l+ONyu9kJAm6ToOKNuP2VGS/T0P2YDdSzMDy2ZTkVqQW
-	 mIXWgR0ChYk7A==
-Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CFC35406FB;
-	Mon, 27 Oct 2025 17:27:04 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 02/30] docs: reporting-issues: tweak the reference
- section intro
-In-Reply-To: <d94aa32d4a1ed5ef9d0f768d05e64987f4a1ae69.1761481839.git.linux@leemhuis.info>
-References: <cover.1761481839.git.linux@leemhuis.info>
- <d94aa32d4a1ed5ef9d0f768d05e64987f4a1ae69.1761481839.git.linux@leemhuis.info>
-Date: Mon, 27 Oct 2025 11:27:04 -0600
-Message-ID: <87qzuontlj.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761586124; c=relaxed/simple;
+	bh=n15GkVGRlM82y8bsXWGWKv4Ru0ouDE1mhKQda2Lxd3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZND0E3wzzEfaL73kx45GIrbbM6f4yYBLPKFp7ZQUb+ktEZ1Kf0cUw7iXkUfJ+Fdls8ApTohcSXxXW0NjK4aBup2Pt/bjn8KloSqkzEyGYrl8ynlfM3Y4PRiOvT2EKxcmRvy84NiXMVl+YO1EUoOBCmz3Z7npoaDZXO51zCDw+gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3RNxoTo; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-783fa3aa582so56073257b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 10:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761586122; x=1762190922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gKbTf0ElmduUelZrYEJiaRrNvJO3TsTMSPfSoF30NGQ=;
+        b=W3RNxoToAcmeXPfx5Lef5kG3LqvhP2a+x4eCRJPsXpSfbugs5gw9pvySwndsflcKcg
+         /SrF0fVltryWnZcR6D4Bs4EWseD+5ykSuK/w6UAdRfwPZXWIOGzB3i7AmttfXfPdQeGH
+         ku9Gv0V3No0+pBOG6Tya++NPkhOG+m5zS+31mU4GPUR09KPCnJgiqfLnddZQdia1KPU2
+         +GxBaZ+qiLqBpvxfhw9YsvfIxsp637zlJnMfCL/jOUW9HrjKU1BqOFjvifVX7YmipqRM
+         E3aDLz5nLDvmsLKLY2Jx3XItKcViG+Q6SnACPK+9QWTvXChaG91Ae6Raq40cafssBS7s
+         q+2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761586122; x=1762190922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gKbTf0ElmduUelZrYEJiaRrNvJO3TsTMSPfSoF30NGQ=;
+        b=WEyZWKOfHu+/+z7kt/p/fkk9N12OfE8iRH0UGO68yayj9cEGPLaOspqOp6ag24Yowb
+         Y2pmvuz2NqKqFFSu/qDuo8segqCkl5w4wjPaRjqclIPXYHH2TQeV9Qhf7ehy/vBaDtF6
+         c9p1+seKwidmOAXl3aUFpXI1ZDCJ+aeX7CcbXFy30LABaoTlxNaE8gUtXpPFq3Xaol/u
+         NluPx2tj5b50jtoVk0ge03vFcAQAmQ3AOW4eQdZdxkvjD24P/jm9k7atZAtQ5RZyu2O2
+         9J8pGwNolaRAd/j9YmhwwV4LVNXvV8EqotGsVO9kIB4LQ+N/VEUMvyD/WOFjs8fmtonP
+         fmig==
+X-Forwarded-Encrypted: i=1; AJvYcCV7NeQwI9xsyaZedWgyTENpz11Bn4tq1jTNJ5dr0VsX+gQIczmlB2T2F8+xkj70euULgV4zX1J+xR1Y5bQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTBZIpDhTU8oCcsL3tBV7Ic4W0cpattF/6sVBlR/IWiMExNnpV
+	Z1VY0HDoOYK1wfIp7dDHdNN5lZdM8EwiN76dk065QgBYzIN/eC3m/Byk
+X-Gm-Gg: ASbGncv6oCChmmVNu5mt5cspL62uM+nmviNZxbYd/br5PmRX4rsnYcBytiQ26lT7vjb
+	pV7RXtnkkUiHiczBB1YVRFIC8CwtHCfKTxiaTvmTtTxnlRbTAVrGwSxDe8hjOE2sDNb7g8ZYxUT
+	9YMlg1UOITKRIC12QqQpugzeI5hXXGq8ZoJ8T5UJES7YVOtOtcZyGNyC824rxtDmMFvb4oUGH3+
+	EP5revBX3m11LcRFlGXlaLuXCNCGC7S5v1p6ARzLoYnSoxjedpT6QBEQsnYhRqdn2LMd8R4IL5x
+	ULubRMbl57ZSro/i1lLEMRrZAaxdrvWv6EncOsUQFVem2Kjbv6iPnzKTb6xiV9TOGL0lHdO7+fg
+	ulp6o1dhRnzJaUl41fUdTf/tEujotn4tgKQ86AenB8okdzFsx9bB4UPDCv3TFCDFhSqOWyzVfAS
+	+B57nPt6kU0wo4ONgnA0VLLWWFTaT9LUPW94WWvi6UKTOiBnU=
+X-Google-Smtp-Source: AGHT+IHM1NI9jlgl7YyHEw6xfZ2NvWKARzYo9jjqycdlEoc48MLVHrBBixAozXkHMEqVBYRHZIgJww==
+X-Received: by 2002:a05:690c:9312:b0:785:eb11:647b with SMTP id 00721157ae682-78618357840mr4674427b3.33.1761586122152;
+        Mon, 27 Oct 2025 10:28:42 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:5b::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed1a4391sm20417647b3.33.2025.10.27.10.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 10:28:41 -0700 (PDT)
+Date: Mon, 27 Oct 2025 10:28:40 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next 01/12] selftests/vsock: improve logging in
+ vmtest.sh
+Message-ID: <aP+ryNxS2A45WT7f@devvm11784.nha0.facebook.com>
+References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
+ <20251022-vsock-selftests-fixes-and-improvements-v1-1-edeb179d6463@meta.com>
+ <aP-hpxMgB5tN7KJ3@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP-hpxMgB5tN7KJ3@horms.kernel.org>
 
-Thorsten Leemhuis <linux@leemhuis.info> writes:
+On Mon, Oct 27, 2025 at 04:45:27PM +0000, Simon Horman wrote:
+> >  log() {
+> > -	local prefix="$1"
+> > +	local redirect
+> > +	local prefix
+> >  
+> > -	shift
+> > -	local redirect=
+> >  	if [[ ${VERBOSE} -eq 0 ]]; then
+> >  		redirect=/dev/null
+> >  	else
+> >  		redirect=/dev/stdout
+> >  	fi
+> >  
+> > +	prefix="${LOG_PREFIX:-}"
+> > +
+> >  	if [[ "$#" -eq 0 ]]; then
+> > -		__log_stdin | tee -a "${LOG}" > ${redirect}
+> > +		if [[ -n "${prefix}" ]]; then
+> > +			cat | awk -v prefix="${prefix}" '{printf "%s: %s\n", prefix, $0}'
+> 
+> FIWIIW, I would drop cat from this line.
+> 
 
-> Small improvements to the intro of the reference section.
+sgtm!
 
-That's a bit uninformative ... what is the purpose of these
-improvements?  That information would be especially helpful in a patch
-that simply replaces that section altogether.
+> > +		else
+> > +			cat
+> > +		fi
+> >  	else
+> > -		__log_args "$@" | tee -a "${LOG}" > ${redirect}
+> > -	fi
+> > -}
+> > -
+> > -log_setup() {
+> > -	log "setup" "$@"
+> > +		if [[ -n "${prefix}" ]]; then
+> > +			echo "${prefix}: " "$@"
+> > +		else
+> > +			echo "$@"
+> > +		fi
+> > +	fi | tee -a "${LOG}" > ${redirect}
+> >  }
+> >  
+> >  log_host() {
+> > -	local testname=$1
+> > -
+> > -	shift
+> > -	log "test:${testname}:host" "$@"
+> > +	LOG_PREFIX=host log $@
+> 
+> shellcheck suggests keeping the quoting of $@.
+> This seems reasonable to me. Although in practice I don't think
+> it will change the behaviour of this script.
+> 
 
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
-> ---
->  .../admin-guide/reporting-issues.rst          | 67 +++++++++----------
->  1 file changed, 31 insertions(+), 36 deletions(-)
->
-> diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-> index 3bc47afaf85ea0..90b50c27c0d2b6 100644
-> --- a/Documentation/admin-guide/reporting-issues.rst
-> +++ b/Documentation/admin-guide/reporting-issues.rst
-> @@ -244,42 +244,37 @@ The reference section below explains each of these steps in more detail.
+Ah right, makes sense to me.
 
-[...]
+> >  }
+> >  log_host
+> >  log_guest() {
+> > -	local testname=$1
+> > -
+> > -	shift
+> > -	log "test:${testname}:guest" "$@"
+> > +	LOG_PREFIX=guest log $@
+> 
+> shellcheck also points out that log_guest is never passed
+> arguments, so $@ can be dropped. If you prefer to keep
+> it then, as per log_host, it seems reasonable for it to be quoted.
+> 
 
-> +The step-by-step guide above outlines all the major steps in brief fashion,
-> +which usually covers everything required. But even experienced users will
-> +sometimes wonder how to actually realize some of those steps or why they are
-> +needed; there are also corner cases the guide ignores for readability. That is
-> +what the entries in this reference section are for, which provide additional
-> +information for each of the steps in the detailed guide.
-> +
-> +A few words of general advice:
-> +
-> +* The Linux kernel developers are well aware that reporting bugs to them is
-> +  more complicated and demanding than in other FLOSS projects. Quite a few
-> +  would love to make it simpler. But that would require convincing a lot of
-> +  developers to change their habits; it, furthermore, would require improvements
-> +  on several technical fronts and people that constantly take care of various
-> +  things. Nobody has stepped up to do or fund that work.
+Quoting it sounds best to me, in keeping with log_host().
 
-This paragraph ... essentially says "we're making it hard on you because
-kernel developers can't be bothered to work on GitHub".  But a lot of
-the complexity, as reflected in this guide, has to do with properly
-gathering the information that is needed to have a hope at tracking a
-problem down.  I'm not sure this paragraph is needed at all but, if
-you're going to keep it, have it at least reflect that the complexity of
-problem reporting has a lot to do with the complexity of the problem
-domain rather than developers who are stuck in their habits.
-
-Otherwise seems OK.
 
 Thanks,
-
-jon
+Bobby
 
