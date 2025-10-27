@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-870738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E520C0B908
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC28C0B919
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 02:08:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B3BE4E87AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:03:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E75BB4E8999
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 01:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D361E491B;
-	Mon, 27 Oct 2025 01:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7874236A73;
+	Mon, 27 Oct 2025 01:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RCfMUIpo"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d9r9KL0i"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC8D1A9FBF;
-	Mon, 27 Oct 2025 01:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C09233722
+	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 01:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761526999; cv=none; b=gRv82lgFEMy39FuqWRpp7M+1Aki98/yoR1uZoC8EC+/GQZITHd4tSOko7ehfPz9xonO96f2KnIoXJbyz6Mgo8QA8STIkssvEWQaRNPLkdy3zR+t+JHHMaMUyn+EVf4JIIryFcbLRWbrhonjvr0DQfTuw2c5yOLkb2jdOdP1T36Q=
+	t=1761527244; cv=none; b=qrwpAWs9Ux/TrUm1GNU7j4+8RLWD4Yd/jHss2dNGQbJJPmpArk5B+Sa0rvw3Xmq7yaC5bf1LsPjXJiPl84ZSK/B0I0P8uYWque3CkvV6lkN88BtAvhjx1W32Z73UzgCNDh1HnD3u/0TYwSczjj/Vs34zv/gKcL97Vp22pAjc0lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761526999; c=relaxed/simple;
-	bh=TRf7E6Wmq0Mv8cybHM8FwxOjKlKmGcf5vNcSFqxCThQ=;
+	s=arc-20240116; t=1761527244; c=relaxed/simple;
+	bh=Ooe0nZxzMsht5d6mISZP87sfL1uzhvy5l+GIeUPNI8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9AUPHps33fER8niDxgYIUzdQqJqS/tuDvvQE5lHib/OEn3VsP3u6lhRYnH4Es8kU7XwXjKBiMpbwSnS+UnbXI1a92v0aOm+2wUo++ZKAty4DWdeP8RjcBKmd7Zon5REuXx1Ngz9E3oCtFrPlAjzndxwd8OvcUPI55jn8kjTWDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RCfMUIpo; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 58884E1F;
-	Mon, 27 Oct 2025 02:01:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761526884;
-	bh=TRf7E6Wmq0Mv8cybHM8FwxOjKlKmGcf5vNcSFqxCThQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RCfMUIpoNetOTMMslAZo8oCNJc6hYAi95o22PZvksxmAUO19SFB+PB07bK1H/R2LB
-	 JoeoFI4mfyf22ZCFddAV/tPcpMTPMntNVNMXZpHnO8aEdAHzphDoacWleOlqImVTax
-	 JVA+qtIU7pdO/71BuxqZVjEiCLRvaHln3uEiqSGg=
-Date: Mon, 27 Oct 2025 03:02:57 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH v7 5/5] arm64: dts: imx8ulp: Add CSI and ISI Nodes
-Message-ID: <20251027010257.GQ13023@pendragon.ideasonboard.com>
-References: <20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com>
- <20251023-csi2_imx8ulp-v7-5-5ecb081ce79b@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rq3Pxvz7ytMU5VGZfs8syQapMxBGPjsH8DHcf/6uozavAemqv5OGCmlbey8g2e1qAigFZ0nuDZy7R2q0u1gYdsVGqZf7ixvA6114RLNtGL4cXkpto3/M0MLwWBlyWXnlbi0xYIQC4t7gYR/LAuQ7+Q4VO9F0gE0Fuj3UXUoB2+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d9r9KL0i; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761527239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C2t4mw1zSmVIWsEnWSMfaPLHnq3Vdi6wvPFKTcwFuNI=;
+	b=d9r9KL0iWMPVm/usKtsYtTaYzGXteKRsgap0IENHQAqqh5y/SndBMC7SJGg/u89DUKx7n8
+	5sPgJqDYSdcLyjlaLi2Wz0wZZmvx1BvoFQ5w9dCwhEQpKQLLIJPDncXUhWhLjXv4krvEWh
+	DKLT5KvScd3p/eAIxkvEowniw1Ee+Wg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-W5ZfyNuRMja3ZIPxS6OHuw-1; Sun,
+ 26 Oct 2025 21:07:16 -0400
+X-MC-Unique: W5ZfyNuRMja3ZIPxS6OHuw-1
+X-Mimecast-MFC-AGG-ID: W5ZfyNuRMja3ZIPxS6OHuw_1761527234
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5E81180A25D;
+	Mon, 27 Oct 2025 01:07:13 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.21])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 704B019560AD;
+	Mon, 27 Oct 2025 01:07:09 +0000 (UTC)
+Date: Mon, 27 Oct 2025 09:07:03 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH] lib/group_cpus: fix cross-NUMA CPU assignment in
+ group_cpus_evenly
+Message-ID: <aP7Ft5Y0WEMGv7jX@fedora>
+References: <20251020124646.2050459-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023-csi2_imx8ulp-v7-5-5ecb081ce79b@nxp.com>
+In-Reply-To: <20251020124646.2050459-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Oct 23, 2025 at 05:19:46PM +0800, Guoniu Zhou wrote:
-> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+On Mon, Oct 20, 2025 at 08:46:46PM +0800, Ming Lei wrote:
+> When numgrps > nodes, group_cpus_evenly() can incorrectly assign CPUs
+> from different NUMA nodes to the same group due to the wrapping logic.
+> Then poor block IO performance is caused because of remote IO completion.
+> And it can be avoided completely in case of `numgrps > nodes` because
+> each numa node may includes more CPUs than group's.
 > 
-> The CSI-2 in the i.MX8ULP is almost identical to the version present
-> in the i.MX8QXP/QM and is routed to the ISI. Add both the ISI and CSI
-> nodes and mark them as disabled by default since capture is dependent
-> on an attached camera.
+> The issue occurs when curgrp reaches last_grp and wraps to 0. This causes
+> CPUs from later-processed nodes to be added to groups that already contain
+> CPUs from earlier-processed nodes, violating NUMA locality.
 > 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 67 ++++++++++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
+> Example with 8 NUMA nodes, 16 groups:
+> - Each node gets 2 groups allocated
+> - After processing nodes, curgrp reaches 16
+> - Wrapping to 0 causes CPUs from node N to be added to group 0 which
+>   already has CPUs from node 0
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-> index 13b01f3aa2a4950c37e72e04f6bfb5995dc19178..99271d55dfb60ed2cbfe664d928be179eb257674 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-> @@ -7,6 +7,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/power/imx8ulp-power.h>
-> +#include <dt-bindings/reset/imx8ulp-pcc-reset.h>
->  #include <dt-bindings/thermal/thermal.h>
->  
->  #include "imx8ulp-pinfunc.h"
-> @@ -842,6 +843,72 @@ spdif: spdif@2dab0000 {
->  				dma-names = "rx", "tx";
->  				status = "disabled";
->  			};
-> +
-> +			isi: isi@2dac0000 {
-> +				compatible = "fsl,imx8ulp-isi";
-> +				reg = <0x2dac0000 0x10000>;
-> +				interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&pcc5 IMX8ULP_CLK_ISI>,
-> +					 <&cgc2 IMX8ULP_CLK_LPAV_AXI_DIV>;
-> +				clock-names = "axi", "apb";
-> +				power-domains = <&scmi_devpd IMX8ULP_PD_ISI>;
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						isi_in: endpoint {
-> +							remote-endpoint = <&mipi_csi_out>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +
-> +			mipi_csi: csi@2daf0000 {
-> +				compatible = "fsl,imx8ulp-mipi-csi2";
-> +				reg = <0x2daf0000 0x10000>,
-> +				      <0x2dad0000 0x10000>;
-> +				clocks = <&pcc5 IMX8ULP_CLK_CSI>,
-> +					 <&pcc5 IMX8ULP_CLK_CSI_CLK_ESC>,
-> +					 <&pcc5 IMX8ULP_CLK_CSI_CLK_UI>,
-> +					 <&pcc5 IMX8ULP_CLK_CSI_REGS>;
-> +				clock-names = "core", "esc", "ui", "pclk";
-> +				assigned-clocks = <&pcc5 IMX8ULP_CLK_CSI>,
-> +						  <&pcc5 IMX8ULP_CLK_CSI_CLK_ESC>,
-> +						  <&pcc5 IMX8ULP_CLK_CSI_CLK_UI>,
-> +						  <&pcc5 IMX8ULP_CLK_CSI_REGS>;
-> +				assigned-clock-parents = <&cgc2 IMX8ULP_CLK_PLL4_PFD1_DIV1>,
-> +							 <&cgc2 IMX8ULP_CLK_PLL4_PFD1_DIV2>,
-> +							 <&cgc2 IMX8ULP_CLK_PLL4_PFD0_DIV1>;
-> +				assigned-clock-rates = <200000000>,
-> +						       <80000000>,
-> +						       <100000000>,
-> +						       <79200000>;
-> +				power-domains = <&scmi_devpd IMX8ULP_PD_MIPI_CSI>;
-> +				resets = <&pcc5 PCC5_CSI_SWRST>,
-> +					 <&pcc5 PCC5_CSI_REGS_SWRST>;
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +
-> +						mipi_csi_out: endpoint {
-> +							remote-endpoint = <&isi_in>;
-> +						};
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		gpiod: gpio@2e200000 {
+> Fix this by adding find_next_node_group() helper that searches for the
+> next group (starting from 0) that already contains CPUs from the same
+> NUMA node. When wrapping is needed, use this helper instead of blindly
+> wrapping to 0, ensuring CPUs are only added to groups within the same
+> NUMA node.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
 
--- 
-Regards,
+Hello,
 
-Laurent Pinchart
+ping...
+
+
+Thanks,
+Ming
+
 
