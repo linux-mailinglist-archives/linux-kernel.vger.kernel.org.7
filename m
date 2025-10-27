@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-871614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329FBC0DDCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:09:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C28C0DCF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 14:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DBAA503692
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:59:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FA294FF422
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 12:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828B2652A4;
-	Mon, 27 Oct 2025 12:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACAE26FDA6;
+	Mon, 27 Oct 2025 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oxxn+ju1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDpZx8JT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB813244668;
-	Mon, 27 Oct 2025 12:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AEC25CC5E;
+	Mon, 27 Oct 2025 12:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569820; cv=none; b=JrnyS7j5KN0pHz+z3iIZ5BzLaP5cCSGSPz2LsTQStavhJdGh3NlOoPOZH7eh5gPHQ5NKRmRwjKXJwM3oYRHaL2uNVelWXFe1a7p2jjaeRkx1Z5mksaRIYXRYxTyEXJjSpdvWAgQMGk7TRFasDw7roicB9J0DFgEbOveRE809XF0=
+	t=1761569820; cv=none; b=IbsfZWjrmZMcTa3P+BfOYC14ERy3MvJdbUxahbhsoPW0AiEbyj94zECLNjo73qtxqx4tgcSVwLUfOqVxnLKzO9IqmcxNMLyk2OSVmdygl48wDIcTNQOkyaZh6A9NIka3/2CF/SAUagsXINn0ihYyyNHBUFE+ghoaDU9G5qG0OqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761569820; c=relaxed/simple;
-	bh=fHOStHU8iPV24HUnkdIweLHy8WakycAIf7e5q0yhXig=;
+	bh=C8ZaO/vclhrRJ/sXVWYmHzL2b2GlrrEHt+/9PpUhHqU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qxZPKWWoZaUhNFODR1NZx53zGMSNiKzEPQQkOn55zG7X2ZN5nguBFQolbHt/GEiYRZanAK6v8iyJwjs+JW7bQmwFASlmnXf4+KZUEYmEeT+UuFnM/odAXuTPWGOOdudsA5kpvNT4dOGQUOlJAh5vIHRc8fELkJ3X0J7oz6FWC8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oxxn+ju1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDA8C4CEFF;
+	 MIME-Version; b=H53wu900lt+EVy7NarKIr/mKEm10K2Rg4n08b9UqCZhvQqvZfrmCifpxi+svdypS8zGajXXbtiMswX3i/eetXYmqGac01uFhLAEr9bqI0NypINgEZcOWuf3NuzRJMNj+C/qlDjEllK0irIT2q8tyeeB+ngZru2R9hgBMO3sE12U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDpZx8JT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFBBAC116D0;
 	Mon, 27 Oct 2025 12:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761569819;
-	bh=fHOStHU8iPV24HUnkdIweLHy8WakycAIf7e5q0yhXig=;
+	bh=C8ZaO/vclhrRJ/sXVWYmHzL2b2GlrrEHt+/9PpUhHqU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Oxxn+ju1l1rZrihiBgso9u9BBjSAS/FhnaJRzZdarxEuKtSpRtSf5fqjjOwMBbivl
-	 NI9k+q3LmooVQs9qeRPxH8wcIKn0UodDzTuDdwdVmBw/bS9qVuDbnW/knnCpPB0gQB
-	 jiaQaV7yxOpf0ZN2//uUpAAVFI/089gonDn85pLiRkEGehvBcqhNRKBSpt2yKDUFZg
-	 OotIs24M7QPN+q+r3e448MpqaJAE4xmEZJroe62ZLaLRSUtt0y/rMr4VGyGv2Gu8w3
-	 Ac59jKopBQ5ui77x9xnBdyuS6bNDte0R8wAcodmw+d6eejMpcVJ1eWgRZGHubKuu0m
-	 kzj6eg9OOJcXw==
+	b=SDpZx8JTOCG0wRJg0weXMLzBMOKL3CC40Xm7nOBQYuKbOmthaI+FftWarXiTp+UWn
+	 02Kmhs06jxILnPOt44lobvccd9IQfQikm9RdesoQGDQuoYLGutkfPJptcQocV4HPXj
+	 NTlCbumL91ih/jBOmL5LHVV8PKoSDkI3EBxPesdU2oRdJeBIkVEDd1ONVbf4Y44uWT
+	 M4totbnOLEgSZE8p/1MSXWujDst7x/Xf4ahQL+WX79Z14KRJXYWwZjoBjM4f38z5W4
+	 Z+KOZuJSn2xXPoFANLwZBUyrH9EglolNIW7RanbsBNEclZGg5pZ08I/0etAIgDTHfm
+	 SrEJx7cPvWsCQ==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 6CF805FCB3; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
+	id 73D5F5FE34; Mon, 27 Oct 2025 20:56:57 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej@kernel.org>,
@@ -58,9 +58,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 01/10] dt-bindings: dma: allwinner,sun50i-a64-dma: Add compatibles for A523
-Date: Mon, 27 Oct 2025 20:56:42 +0800
-Message-ID: <20251027125655.793277-2-wens@kernel.org>
+Subject: [PATCH v2 02/10] ASoC: dt-bindings: allwinner,sun4i-a10-i2s: Add compatible for A523
+Date: Mon, 27 Oct 2025 20:56:43 +0800
+Message-ID: <20251027125655.793277-3-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251027125655.793277-1-wens@kernel.org>
 References: <20251027125655.793277-1-wens@kernel.org>
@@ -72,34 +72,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are two DMA controllers on the A523, one in the main system area
-and the other for the MCU. These are the same as the one found on the
-A100. The only difference is the DMA endpoint (DRQ) layout.
+As far as the author can tell, based on their respective manuals,
+the I2S interface controllers found in the Allwinner A523 SoC is the
+same as ones in the R329 SoC.
 
-Since the number of channels and endpoints are described with additional
-generic properties, just add new A523-specific compatible strings and
-fallback to the A100 one.
+Add a SoC-specific compatible for it, with a fallback to the R329's
+compatible.
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 ---
- .../devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml    | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml    | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml b/Documentation/devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml
-index 0f2501f72cca..c3e14eb6cfff 100644
---- a/Documentation/devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml
-+++ b/Documentation/devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml
-@@ -29,7 +29,10 @@ properties:
-           - const: allwinner,sun8i-r40-dma
-           - const: allwinner,sun50i-a64-dma
+diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
+index 739114fb6549..ae86cb5f0a74 100644
+--- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
+@@ -33,7 +33,9 @@ properties:
+       - const: allwinner,sun50i-h6-i2s
+       - const: allwinner,sun50i-r329-i2s
        - items:
--          - const: allwinner,sun50i-h616-dma
+-          - const: allwinner,sun20i-d1-i2s
 +          - enum:
-+              - allwinner,sun50i-h616-dma
-+              - allwinner,sun55i-a523-dma
-+              - allwinner,sun55i-a523-mcu-dma
-           - const: allwinner,sun50i-a100-dma
++              - allwinner,sun20i-d1-i2s
++              - allwinner,sun55i-a523-i2s
+           - const: allwinner,sun50i-r329-i2s
  
    reg:
 -- 
