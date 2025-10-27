@@ -1,126 +1,251 @@
-Return-Path: <linux-kernel+bounces-870806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-870808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19418C0BBBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 04:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68679C0BBC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 04:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D75189E66C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5680F3BB6BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 03:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2C3F9C1;
-	Mon, 27 Oct 2025 03:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ABC2D5937;
+	Mon, 27 Oct 2025 03:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yom07kO5"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="E1OtxS5m"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDC42C0296
-	for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 03:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AEC2D3EE3;
+	Mon, 27 Oct 2025 03:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761535220; cv=none; b=MBD+s3+DGX+z/eqVbltfPZkIbT8Z9AwbQ+YD6cPkmArdMNligHejwzIUo66dPWL2CBowpUP4OS4gCHE0FYohqVwbxBsvsPMCBvQaDPD2eeQt8vsLB6vQooISl8eVimBJjzM406gK5PEA4JYdD8wZkzmqabG/zmC8b/yMhUFMAw8=
+	t=1761535251; cv=none; b=RsdsihIkT/G+he+rX2ztLY0KIM83wVODHWTPgYY1SyB07C6S4Uvg1GoKZkd9ECRL7P+OFPG6O0zElpa30IPkq3RzprXM26eoWuyWvUyrplvLdzePVLkERx4y7NH6G1Lzzmw88+WoOR64FQsuF5ARe9mNSoIji+So9D5vhCm0q7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761535220; c=relaxed/simple;
-	bh=AuU11ztRLK+I5zI4UsmWzBs/U3j0i/HFOVRM2mlnTZI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tGsdwXo3NoqixTFbKrlvxyeuhgnDY1YmxvxoXXQUZ7gnabC9TLlOW5EKBtvi9C2QaJgtUZE9sMqYQMWnEIDWEpHpOoibRMMJ0D2OYYZp1v7hL3ucOkGDxPXAgP6P+lIXaYml83CU1lI7iNrqSVfYM6pwlGOqQoYFIKyfaTHjNtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yom07kO5; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-b6cf25c9ad5so3210206a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Oct 2025 20:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761535218; x=1762140018; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=12OL70/9rabscg9vqPO/maQtcokUUc3ZtNtaJUA8Pmw=;
-        b=Yom07kO5iWL51I3wkaPeA/kki5/G2zuxK8EBI3F273AcptEZ8CevluMrqlIq80A1K0
-         YqhNXhkkidXRj8E8XU9nSBS3ZCztAiMcR3eTII9wJObjUIqvu3Sj8uSyxJr6e11qhebj
-         wAPieB5C5GappQpzTuTPFeFz4VifG2RIu0chS9FhPrECpM2SCib2Mq4MidXtQJKbkwoK
-         Q3/Dl/DJSz067JVSkOpVsM3nUiL/oWsMjYWFHYHg2IrLMcwt9ToBgELCh5G0Uh7/Rb3t
-         jCKJGTKlic67izH6QZ+EuP9s/h6RzeDxZxSctrwP4zD/vGdVxUg0X+gQQKRnN/NfH3Q5
-         y8ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761535218; x=1762140018;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=12OL70/9rabscg9vqPO/maQtcokUUc3ZtNtaJUA8Pmw=;
-        b=LwtFoaDtwArLSSkGlatQasakxOC0JmZQYNAtJuwpKzdrTS/+Zvx0QI0ZFIwA5qDpXC
-         ru9cEzhO8y2XdpJvpF8u/yw+vsHdJcrn0hfXdrJItqrR5jjFG6NKhc5oyd2kF4SY6Zy7
-         at5RoyHI6C4ivqM6eR1Zxa1G27Euf6pZImpKAiO1V+Qir+A2Ftc1fYWqsfH1mUN0V638
-         EgR6WY+LFES6fBYltZ+GRRe4zeufQtFX9yiFZ7QpcmApHOSRoCPBhqp1A7uOQlowTzX7
-         Ul74wKlqKZMe/C9ye7orQ17hV+HG2nhz+gGWi+/ABgGFZQiK5plEzrtVQj4qEFj6AErh
-         CdVg==
-X-Gm-Message-State: AOJu0YwtTwFn82xEBhoPv+Zgp6M+wTMCGGf+hUwsjDhDyX7kAststXGv
-	EjjpRcvz2LpWovm7lS5ASVzc+01rKCUZb+iSFOZge+e5CUQIBgx55jRwMHWXzXYt
-X-Gm-Gg: ASbGncsqpdeU0MTrREKMApoCGxS0SKb0b7PzHh5mJj/wsUyQSi/hMI+axq2uB4+Ro2H
-	XwI6Vdj7RE1+dFK2PN7V0TFNluB3u+MANzfLPG+mUK+8b5JG1HzNzjm2f7om7BTuqZBatykMeWx
-	j+WNJjmZ2LXTRxpkKQiqZyW731IY18hOu0iTFAyOzBACZ+d0fa1t8/fwl7wP8vjz2DXPMh4jjfL
-	75T9zZIby4oU9zyBzi4xL1Q8PFXyN21MNn0tPc/JTtER/pyfqK6Jw4exanwRgEmw03i9ajvXeiX
-	yvIKGCqYbSu/+0rqOJEzcRBVc6C1/cNv7PcQs5Gi82oADi2FIzYgLrZ+p2DPHF+/5Adbr4sP1vN
-	5krFJmN1GaG8OkUHUlnKYo728ACQDXUptjCnyUKbvHvmQdBo4iz0H3w4doNL22PCeZ1/HKgwUZi
-	PTvmxyy1SKTXAWIXRvm/9Pavr+LtS1
-X-Google-Smtp-Source: AGHT+IHuLOPOeurzXjn4p7N7tty4UzvfTmJ8rBSm68O+2HbFxuRVi7P8jHfgVtGar/wcCIOxQ2aXrw==
-X-Received: by 2002:a17:902:d50a:b0:27d:339c:4b0 with SMTP id d9443c01a7336-290cba4efb1mr468009825ad.35.1761535217715;
-        Sun, 26 Oct 2025 20:20:17 -0700 (PDT)
-Received: from E07P150077.ecarx.com.cn ([103.52.189.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed3e8530sm3454102a91.0.2025.10.26.20.20.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 20:20:17 -0700 (PDT)
-From: Jianyun Gao <jianyungao89@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jianyun Gao <jianyungao89@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [LIBRARY] (libbpf))
-Subject: [PATCH] libbpf: fix the incorrect reference to the memlock_rlim variable in the comment.
-Date: Mon, 27 Oct 2025 11:20:08 +0800
-Message-Id: <20251027032008.738944-1-jianyungao89@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761535251; c=relaxed/simple;
+	bh=V6gLOPoyZC1Rrtb1DD9I54bfxiLa0quZq+9NVrkdgJg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6vVQJNGBx052f7axr0G79WJjUeXB6hiOS5eVNu1kceqVXaLMvrymHXsF7CwqGV3wgCKZ6+P4iEMl/HubGun2dIetNlMKRlFeMjAIcoQx1GWnmbjXlR+3JL0/rS6Qf8EkSZjbzbzDnEsMWOl6LRcfMhlmc2ma4ivtRf8egIq2hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=E1OtxS5m; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1761535237;
+	bh=56JGIU4CD1fsXCYSHVvyznt4gBt5NH3ahDq0LBsoufM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=E1OtxS5mVmZP77hAW9lJoGz1KJEGje0c7HoE+rZdbbzood82a2DwpSdFVd9iSox7o
+	 sNF7BY60rvCS/+RMPE9MmQoQIO2gNfjIa8DC+myb0YDfEx/3iI8sRtyGDTZh7xGOhf
+	 GOM0BaGPzkSKu8P68Ul5G2rHSn5wKOoKWfYTKO7k=
+X-QQ-mid: esmtpgz11t1761535235t1790e053
+X-QQ-Originating-IP: wU7tvrJ7wJKBNyTcA7+PgYwp28voDXOKAvCOskFI580=
+Received: from = ( [183.48.247.177])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 27 Oct 2025 11:20:33 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2694975293500696196
+EX-QQ-RecipientCnt: 13
+Date: Mon, 27 Oct 2025 11:20:33 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Aurelien Jarno <aurelien@aurel32.net>, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] driver: reset: spacemit-p1: add driver for
+ poweroff/reboot
+Message-ID: <A73D83A7055D782E+aP7lAdAk66slv6l7@kernel.org>
+References: <20251026224424.1891541-1-aurelien@aurel32.net>
+ <20251026224424.1891541-2-aurelien@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026224424.1891541-2-aurelien@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: Np+AlqyfvJHVPkavF2+o0FnCOHd8MEydgR6o5ybeAxfDlCVvhj8UG5rw
+	gJdvtt/BQJD7CdZyyuIbghBiJwCYvrv65i8d/KEkqh1PfR7TjKxs1dvJmKi7U7Dexb82Hn9
+	cfJwoYA/NsuTAnpyNzqwTRp8DedRTWSWnsxHxbNsrBAYCPMK9fpf4L/EMC5qmWgHOMUzaol
+	8Lzk74a40UUEn1QlqdYYAhf61n3LOzxWaOnsBw2n2YKnbAPsI/MU41WFrfAaGQgwl6hXtUz
+	RnfdzNaBIYt7xEpTMHRq8G1nRWDYPB3+kJ1i/jHJccRbSz2PFdXslaYv5bhpdingiem2EHj
+	1vfqZydeULfqjK58jU56JXoY9iFXwcmE0YzdEEleWBOCas0+micwkMuxKWhaN8QVqmNjpuc
+	eyxBZuqOeoTTpeEs/ezxNUeUlmPe4/q2Xrbe2DJeGmjsJRptZEyADb3ZpPX2uonEufXplGA
+	8AIDQGYblqOD8pBnNaat7Irua+cHrgvfMFLMoYoamEfhsp48QcgrTPDUXm3tIMrRJi0BCQT
+	78jirr/1TilXc0vVINvPdngHt2K2V0EHDu5punAUnk+3rTi097w8HlCSqiF8CJk5C8cQlge
+	897d0fMMxJUKIGMwH207nJ/ARgP99xVnuxo/vJ+nq/9h+EfLzzWy7M0o5ejW9HkbHAAQ31h
+	URAcVD+UA7Kn7Ddz0JVB42ieKKUTgMqDEtH7OQO9mzoFkDNzLR7yYLzl6XPXoSvV+NizErS
+	CqoNf+uTk7dP/NBuLg2s19566GJbHAIVwTHsTtE+1hALRAeVrln8WUxqB2ciNWRQu1pXf1+
+	qoJhXhHj/81vwoosJr9c3lZm6XjIym+DZH6XrfdwGUVBfINpwlXGr3+CTGnUphRYYjORw5+
+	Q4P0JQfj4X9EkeDt10HGI9Bnqayz5yYubgcLiusBzlGcvPb7xYJmmgwSdXidSWTBoxn0yVR
+	1d7hVer32/B6aELpFayBTi2DNorpEHTCKmuCJuWjxKWRBE5zUObfs9twFduv2MlgUuS0HBX
+	V/UmqoGTMFKX7Kt3y35ahczpjUzJYFHFnMf4TFKsXtJRw8yxASD7kQUuKb2ps=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-The variable "memlock_rlim_max" referenced in the comment does not exist.
-I think that the author probably meant the variable "memlock_rlim". So,
-correct it.
+On Sun, Oct 26, 2025 at 11:41:14PM +0100, Aurelien Jarno wrote:
+> This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
+> chip, which is commonly paired with the SpacemiT K1 SoC.
+> 
+> The SpacemiT P1 support is implemented as a MFD driver, so the access is
+> done directly through the regmap interface. Reboot or poweroff is
+> triggered by setting a specific bit in a control register, which is
+> automatically cleared by the hardware afterwards.
+> 
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> ---
+> v2:
+>  - Replace the "select" by a "depends on"
+>  - Remove outdated Reviewed-by
+> 
+>  drivers/power/reset/Kconfig              |  9 +++
+>  drivers/power/reset/Makefile             |  1 +
+>  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
+>  3 files changed, 98 insertions(+)
+>  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
+> 
+> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> index 8248895ca9038..61c16f3d5abc7 100644
+> --- a/drivers/power/reset/Kconfig
+> +++ b/drivers/power/reset/Kconfig
+> @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
+>  	help
+>  	  Reboot support for the KEYSTONE SoCs.
+>  
+> +config POWER_RESET_SPACEMIT_P1
+> +	tristate "SpacemiT P1 poweroff and reset driver"
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> +	depends on MFD_SPACEMIT_P1
+> +	default m
+default m if ARCH_SPACEMIT? Or default ARCH_SPACEMIT?
+I believe that reboot and shutdown are actually essential functionalities,
+so it might make more sense: default ARCH_SPACEMIT?
 
-Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
----
- tools/lib/bpf/bpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 339b19797237..b66f5fbfbbb2 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -154,7 +154,7 @@ int bump_rlimit_memlock(void)
- 
- 	memlock_bumped = true;
- 
--	/* zero memlock_rlim_max disables auto-bumping RLIMIT_MEMLOCK */
-+	/* zero memlock_rlim disables auto-bumping RLIMIT_MEMLOCK */
- 	if (memlock_rlim == 0)
- 		return 0;
- 
--- 
-2.34.1
-
+                                      - Troy
+> +	help
+> +	  This driver supports power-off and reset operations for the SpacemiT
+> +	  P1 PMIC.
+> +
+>  config POWER_RESET_SYSCON
+>  	bool "Generic SYSCON regmap reset driver"
+>  	depends on OF
+> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> index 51da87e05ce76..0e4ae6f6b5c55 100644
+> --- a/drivers/power/reset/Makefile
+> +++ b/drivers/power/reset/Makefile
+> @@ -24,6 +24,7 @@ obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_REGULATOR) += regulator-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+> +obj-$(CONFIG_POWER_RESET_SPACEMIT_P1) += spacemit-p1-reboot.o
+>  obj-$(CONFIG_POWER_RESET_ST) += st-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_TH1520_AON) += th1520-aon-reboot.o
+>  obj-$(CONFIG_POWER_RESET_TORADEX_EC) += tdx-ec-poweroff.o
+> diff --git a/drivers/power/reset/spacemit-p1-reboot.c b/drivers/power/reset/spacemit-p1-reboot.c
+> new file mode 100644
+> index 0000000000000..9ec3d1fff8f3d
+> --- /dev/null
+> +++ b/drivers/power/reset/spacemit-p1-reboot.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025 by Aurelien Jarno
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reboot.h>
+> +
+> +/* Power Control Register 2 */
+> +#define PWR_CTRL2		0x7e
+> +#define PWR_CTRL2_SHUTDOWN	BIT(2)	/* Shutdown request */
+> +#define PWR_CTRL2_RST		BIT(1)	/* Reset request */
+> +
+> +static int spacemit_p1_pwroff_handler(struct sys_off_data *data)
+> +{
+> +	struct regmap *regmap = data->cb_data;
+> +	int ret;
+> +
+> +	/* Put the PMIC into shutdown state */
+> +	ret = regmap_set_bits(regmap, PWR_CTRL2, PWR_CTRL2_SHUTDOWN);
+> +	if (ret) {
+> +		dev_err(data->dev, "shutdown failed: %d\n", ret);
+> +		return notifier_from_errno(ret);
+> +	}
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int spacemit_p1_restart_handler(struct sys_off_data *data)
+> +{
+> +	struct regmap *regmap = data->cb_data;
+> +	int ret;
+> +
+> +	/* Put the PMIC into reset state */
+> +	ret = regmap_set_bits(regmap, PWR_CTRL2, PWR_CTRL2_RST);
+> +	if (ret) {
+> +		dev_err(data->dev, "restart failed: %d\n", ret);
+> +		return notifier_from_errno(ret);
+> +	}
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int spacemit_p1_reboot_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		return -ENODEV;
+> +
+> +	ret = devm_register_power_off_handler(dev, &spacemit_p1_pwroff_handler,
+> +					      regmap);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to register power off handler\n");
+> +
+> +	ret = devm_register_restart_handler(dev, spacemit_p1_restart_handler,
+> +					    regmap);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to register restart handler\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct platform_device_id spacemit_p1_reboot_id_table[] = {
+> +	{ "spacemit-p1-reboot", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, spacemit_p1_reboot_id_table);
+> +
+> +static struct platform_driver spacemit_p1_reboot_driver = {
+> +	.driver = {
+> +		.name = "spacemit-p1-reboot",
+> +	},
+> +	.probe = spacemit_p1_reboot_probe,
+> +	.id_table = spacemit_p1_reboot_id_table,
+> +};
+> +module_platform_driver(spacemit_p1_reboot_driver);
+> +
+> +MODULE_DESCRIPTION("SpacemiT P1 reboot/poweroff driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.47.2
+> 
+> 
 
