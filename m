@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-871137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-871144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E3FC0C830
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:02:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F06CC0C836
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 10:02:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C2C403DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:56:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7FF54F70E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Oct 2025 08:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E69319857;
-	Mon, 27 Oct 2025 08:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258D826FA50;
+	Mon, 27 Oct 2025 08:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="Rbhu4H1s"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023090.outbound.protection.outlook.com [40.107.44.90])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e8ZW0BJ/"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010054.outbound.protection.outlook.com [52.101.84.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14233191C4;
-	Mon, 27 Oct 2025 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1844531B118;
+	Mon, 27 Oct 2025 08:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554864; cv=fail; b=b3NIoCfdhuln7+k6bS3C3l534LX20xN9PpgxmwZDfoEEXYKV2Ro3oaZSSFddvSulvMBcP2AFYA4xsKvefpt5M7NKTjEQ1rvsoaoWBoKQazmZTofV8l2MDgLfcWeo8I1JvVLiVWa5CVG2xBr3V7bnEnlwbptmigiWklLWwFolg2w=
+	t=1761554897; cv=fail; b=XS4SnL0GI4aRZlyUbPCiyM7UNcjqXxyHJCy6dHXKbJrN+OLhwy0UkvAW9KL3fAsO7hmj037zFEmcDASFZkKGPn2vawMU/PQ+hjRM+bG4oe3Fnr407V9reakctNZFDr5K3rnn0NI/8a8uhnYkt+XIuVKnEu83THN4XMvOr1cBHGQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554864; c=relaxed/simple;
-	bh=9+T1fdfYKverjItwr5Qrv2UqjKZ7b07VYzM82Cst9xU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ngygHsAEb8rXn5m+4QmC3I3VaM80AEyZA47/CCs3qHODslC7SHx4neMOo8qGOP2ugaxty8Vc9F/SJhTEHZlf0EY2sJJRFmgGe6uCidTJf9dUCUVMaE6M/BFkTURncva9X/jm9sNDVCr3IKVPT1oVO8lDVBAZEAVQovagro1wD+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=Rbhu4H1s; arc=fail smtp.client-ip=40.107.44.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	s=arc-20240116; t=1761554897; c=relaxed/simple;
+	bh=sDImsPMV921L2jhlxx1GjOLxTFOZKrT84mW3vqkUjVI=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=kXDgXiqbTMTyXMAZDyU9XV8oZdjEtehl5Mq5Oog5b0oeA/KJzwzLVYJj/nt4O509873nFwJbNimHoAktCiKc27OWSfI9Fb86Os1vESUvsojt7ZIgbBeESbUvi1fPLR0oEXls5fEaGXm8D6umQQrfP/AFkuAToOLIHLExS4+nmjo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e8ZW0BJ/; arc=fail smtp.client-ip=52.101.84.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gUSOIpH7OI8EuFETsHApxP+UBNESThumtlorOD98pLf0QxGIjmCHCHE995d345YRMvR40lRuEmc/M3iABMocp3KpiaKc6iBSz3/TM1O02uly1Q1nPswM8rCmtP/B9334zyiiKg3mshAM5SvSFUxikxzJPuwcwO270fQjjicqODXgdeZ/oFuvZIIR3LGFfB8usjMk0br64kiQp11aDbvjPYjKXugq1X87Mlzo+ONdDjJcNNSBKmkqmfEoGEv0TnQiEkAp5vgc2p19ZV1WK1gCpBHMdbeYhyy1ZixEn5zPijM1itBQSUPWd+7DmCiiTIAcF1lg+tCSAYdWFrjB0Scdpg==
+ b=xdmJkhcmVH083q3P/cQ5VFHUFZn63GEmNW8T0ttV6+5TtIKTtof8VzwYiuhUzuacg5acLwwwXhQkWB5F72egj4GPhTz+Mdthfb9MM6HCrEj0AHNDE2E9mbMcbDlDTuGeNKvdhGIZzjWSsgBi91qj6+HpJdOZNDnoxSOXTR49jiJe0L2qZLNI/9WqHQEvptcNC4KM9hliHm7a4mNkYtC5Yhcqt/ZBK8NUVlnPFxMsLzPrEp5Et1g0IowFwozMhknq2C9KRmUbq5KPAO/yob/yHAhqtHRrvGKQJktJQEA1tGJNraOv+6A6bQNYCn05oFWzKCsOcv01aJmlEwjuIYKwNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V/LwD2/UG2+N6HOaszl8a20y8EbFS1tUEw67A9Cc+Wk=;
- b=WB0Ljum5OBOucjgEdnyYX7z34FEixvBDkQ8642OlyQ0wVuHqxx0XK9AeIe/1FKYrcGe1nqbszLnot9XlFoGhWiUlEEzG+UG09yVdrBvMQRjPvaFTuOsm7lohAxThOH7meU89pjIyg0UdPbapX6lDT0c4JjXVojHR6vS2xNdce1FpSJ0uAnM88sAoylaYz4UBLX3ay0w3jluOCZmmNJcChR9Z6IJjc8R+8ZO1GTkrgNl4k6K/VBXgfpHWgqkwlavA74ttRL3V8VczrQ4o7GoDiQw2kL60cAYXzmsO/pIy1Mw/o7YiRAqRWT0mDGBxOQ/4s6o1NxTDAOExtflwtk0rug==
+ bh=yukhhkRsH82J7m7ux9G4bzAwAdach8qioarrVe1Iw0I=;
+ b=ifg05MdpOoj6XUhjBkGoySwzcf+5A5ET1cy+C07zijl25XHwUSU1I51rYwwdGdGIMVcquF8iYkoAd0rRgF2hGDnZklQNIxYSn6twRHdw9N7CsC1yjWyD5XdOr1q5Tv8hFS5qzW2Qog3hqo98o3Fi1InSZu8ex9um5s5F9yFFU4vDSbskkgyzHXbtvGtCjdGv+nZwwfq1Z8PED4+MxUgUmmLhDx1vIisrP3VCFbhenRzO2C//N/+wENGZbxfAkLj6bsOd1SSE63wU+HYQiRiX9/O+ma3uVYeyqYeDLfzfMJk0bjfz56sX3U/W/SctK+p0GVtVQFs4FHfbvXGfA4GWEA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V/LwD2/UG2+N6HOaszl8a20y8EbFS1tUEw67A9Cc+Wk=;
- b=Rbhu4H1svjtnDqncIewImjm/nDIZqtKUrViRcTN7gS6kZ2mkZIIp9E5hLyltvPZgxvDKqX52qswa2OttKzvaTg2tARlk+FY3CMARZPHosPejRAOQUUPYgkgmDmrTnHBAT11MJxXi39r042fh93ayRtoTGGS8pRo9Uz4ZznavBIeRPmEf/X0i1pLc5jTM/6eVbsAGNFozGD5OcNGfEbaqN60frlQObAGbfm+okbNr1Oyv0HoLMNZMbO2VElQEkD7/9GmGYNPSuUgkv52zuZDMo0BdydqeCXn/FFGFqxfQ2lApxOsNmhP+sLbyPVjS+KJ+ZGR0kcYCl09wJu4UKcd2jw==
+ bh=yukhhkRsH82J7m7ux9G4bzAwAdach8qioarrVe1Iw0I=;
+ b=e8ZW0BJ/bSZQV1F20QYw8oYjlAJzvATuW43zRwpI4BBEv97lxMTJxbGHrWNMue5zNU/NocjpqSVNPAyFkBy9Q9XseHCZfutfkG9PzbH4BkogB197F+1gipKT0ydAWYb6riOj8oiJX1JrZWdczvzh8X6eveYs4CHxjSBtv9OkmPcV5Zfpjotw6f/OC3td+dUOvBR/7jI+Y81rumXoxQiiJekc4MW5qxW5XHxGJlgxmn8lo/jffkyLk+ZXn3+ZD1Fmh8QuyEMIMjpJuLZDfmSEwLsUpTnneJnkfqhI2XnufN9Qf5XfYskBlQ4wjfSju6QHrJHczCWYtk9khS5VJx7mJg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB9464.apcprd03.prod.outlook.com (2603:1096:101:2d7::6) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DB9PR04MB8432.eurprd04.prod.outlook.com (2603:10a6:10:243::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
- 2025 08:47:36 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 08:47:35 +0000
-Message-ID: <803c98f4-a9a4-4b85-94d3-38bf2d1e6eac@amlogic.com>
-Date: Mon, 27 Oct 2025 16:47:02 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: divider: improve the execution efficiency of
- determine_rate()
-To: Stephen Boyd <sboyd@kernel.org>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251021-improve_efficiency_of_clk_divider-v1-0-e2bf7f625af6@amlogic.com>
- <20251021-improve_efficiency_of_clk_divider-v1-2-e2bf7f625af6@amlogic.com>
- <176144194442.3953.13998249458455926261@lazor>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <176144194442.3953.13998249458455926261@lazor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
+ 2025 08:48:10 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
+ 08:48:10 +0000
+From: Liu Ying <victor.liu@nxp.com>
+Date: Mon, 27 Oct 2025 16:47:03 +0800
+Subject: [PATCH v5 13/13] drm/imx: dc: Use prefetch engine
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2P153CA0006.APCP153.PROD.OUTLOOK.COM (2603:1096::16) To
- KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+Message-Id: <20251027-imx8-dc-prefetch-v5-13-4ecb6c6d4941@nxp.com>
+References: <20251027-imx8-dc-prefetch-v5-0-4ecb6c6d4941@nxp.com>
+In-Reply-To: <20251027-imx8-dc-prefetch-v5-0-4ecb6c6d4941@nxp.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@mailbox.org>, 
+ Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SI2PR02CA0041.apcprd02.prod.outlook.com
+ (2603:1096:4:196::20) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,158 +87,522 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB9464:EE_
-X-MS-Office365-Filtering-Correlation-Id: 421da696-aac0-4951-24c9-08de15357966
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DB9PR04MB8432:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2cfbe16-cef2-4a1b-3e89-08de15358e88
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|7416014|52116014|366016|1800799024|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UHhZVVZSd29wZERGSHV5QlpwRE9oeEphL0FIUWNuL3FjVzRBWldxRzdiOVJQ?=
- =?utf-8?B?dzJuMjZkZWo3enVvVzhkZ2ZNaDZ0R3owUkdWelkvQnhTS1kraEY4aHE5V0l2?=
- =?utf-8?B?SFBtT3VBbVcxVXpwY0UvRy9xTDVsSm9KOFE1aGkwaldIdjZudDlBOThzYkIy?=
- =?utf-8?B?NGJiUUJjaFhMeis3U2tJNjdUeWZPT3Q3UXJVK2o1U1BFNytLbUZlNDRZalNL?=
- =?utf-8?B?R3d1c0cwMU0zRnNUUHNHN3lBL0NxK21BQVNCYmVrT2RRZDV5eTI5ZmkvOEhK?=
- =?utf-8?B?czVVUGQwSTUzaHN6dHpxZE53N2RNRGNBVm1YYkRTcjNuNXZjZkRVeGo5bDc4?=
- =?utf-8?B?aGhRQ0FiK0U1RWVGMmdvWDh1WnZtb3VubkhBQ0hCMDlnUDlwM2liQTh5NkFi?=
- =?utf-8?B?bUwwaFBvQkJkbzRvU3Y1cUhELy82SnhDemNPMWJLa1pjY3EvakdZbmdHTmJq?=
- =?utf-8?B?bCtnWnNPQkxHNXFwaFVZMVlPTWZielBNV0FtLzdCMjBJQ2hBZU84d05FM2RW?=
- =?utf-8?B?MDN5cW1tKzdKOXpUb3dIUG9WbHVrMlArc0pJWHB5MlVmb25ZSWN3Y29POGVM?=
- =?utf-8?B?KzVlcWZiYjVnSzRUakhJS0tCRWs0M2cwb2V5L0QrVUV0SElxK1FIY1BLaWt4?=
- =?utf-8?B?R0lNbXYxZ3NNS3NYbGhWcDBUWDFvK2krUzgwTktva2xJVm9abXEzaHdNR0ZZ?=
- =?utf-8?B?UHpKQTJxRW5KbEs3TkZhaXl1eVlNdGdiRUtsYUwwcVg5ZjAwZmtkZVJhaHFp?=
- =?utf-8?B?RlVXd0NxeWtsOVR3WnJFZ2MzOEtsbDZ4WnZQa09KT0RQUWp2ZnBFUDYxZUFu?=
- =?utf-8?B?MnNZOStzOGpVVThoTUh6T0dmZmlrK1VzSktxYTh5Q1lzZzhBTUJnVGFLVmln?=
- =?utf-8?B?SzNtbnRwQk9OU3hEMy9vZE1XRUJyMCs0SDFhK3JLazZzdzJHb00xVDBVN3pE?=
- =?utf-8?B?R1BFQ05QTGU4alBrNmtvS3hEelFpL0t0dGJPSVdkYU02a1hYZkpDL1B6YVlM?=
- =?utf-8?B?aGEzWGtuTng0a0VYK29VemFxcmRpY0szWWFkRG11WHRsSmJMdFBSSWlmalJW?=
- =?utf-8?B?SHFGM0h0anhVd2dRTE9Ua1M1cnlWV20xUnhnT0xROEZmbHJ0SWNFM1BWWC82?=
- =?utf-8?B?bnE1dFUxYndNMVhOUVcwNmQ1N2pxYTI0NG9HNFE1VDVzWXNkcmRQR3U1WDBq?=
- =?utf-8?B?THo4MTYzVkFiYUJPdU9uUHNadDJDV1pvdHZ4WEhkQ01kK1hZZm5mTTVLdnB6?=
- =?utf-8?B?dzRYN0VtR1d1c3duT0F4RVFGNTdIbXlSbWx6cGIwTjZvVmN4QVYwTEFEdGNO?=
- =?utf-8?B?algwemxqY09MaWhZbDVDdW9aRHRCbVN4RWtzam9lUkRPU1R1WE9mdkVKQjVG?=
- =?utf-8?B?NHJXZ1BveDRNNjhOanhiMm5wWHg4TllSLzlJRlpNYlloVDlMdmRGYzFJdDlW?=
- =?utf-8?B?b29Zakl5RExsWDBpb1FDWUR4T1hHWEErSEdzN0RWWGNBQVUycm9zZEo3MFlT?=
- =?utf-8?B?dzRVRTQvTjNycHJZS3pyV2FjczJWcXZhdW9LMEM2c0NIWnc5NzVYcW5MdWRL?=
- =?utf-8?B?Wk5nbGlOWWVLZjI0UzVJc3dyUW5MZ1NPenB4cklNV3dRaXV4SUNQZDVkeWlW?=
- =?utf-8?B?NHpJZzVNWHdnVFJaUHBWTm1qbzV0VEZEVmpZV1NRZnprajFUYUFnYUNzOVN2?=
- =?utf-8?B?UGp6U0ZLTWFvSUU4S2szU21GWVFQQWpLNlpvT0ZPOFF4amMwZU5uYy9LMmlE?=
- =?utf-8?B?K25kc3ZMMXpORmdqeFZEdURhWmVoUzAwZFZBbDhhZ0tXRTRCcmhhR3M5cjBv?=
- =?utf-8?B?TFZGbU5jVXpocXFiczdLMXVLaEZMR091clFYWTRqc05CckRwOEZDcjhHRXVK?=
- =?utf-8?B?bU9sUkpIdEV3OWFsKytyRWoyMndYMzFYc09jY3ZzRlM0KzV4cURIS3k3N3FB?=
- =?utf-8?Q?1tdGxNhKN+lPB0BDGF78xfWqLrocrtnK?=
+	=?utf-8?B?SnlBR3YzVFR0aGczaWVNT1U0QVA0QUNkWlJiWDlkcDROcnpUVlY1dUo3c1VI?=
+ =?utf-8?B?eEd4S2tQTUtuSVhKaExtcVR5alhIU1QweENQVFVIK3U3bm1YRjkwczdOaGJV?=
+ =?utf-8?B?N2pDMEI1ZWc3YzB1OHhPaVlNUmdtS3hlUzFtalFhYnhJdm1ETmM4NGwrM1hz?=
+ =?utf-8?B?YzZOYXJNWWw3bkwyYUpHSGx6MEIyU2hOditMVGZKY3JORjBzQnltek4vRTZo?=
+ =?utf-8?B?cEJNR3dXT3BBUkt4TURoQUMvc0hlM0tZMXp0SVBpS2wvQVA2c1I1dCsyZWdU?=
+ =?utf-8?B?VnpRTkRZV0creDNsbHh6VStpZXZrOW1NQk5scmpINmRwK0FvVnhxM0dKNWR2?=
+ =?utf-8?B?aDVwbVJIMXVLTjFZTjk3U2JxbFQrNmU3bFVJeWs3QytYTlFwUktia3NxeEtu?=
+ =?utf-8?B?NFAvSVJnTG1ZcXRzUTU3V0pyNnFoZ0Jod2RWbDVQL0ppemloQXR2bkt6N1hy?=
+ =?utf-8?B?eXlEZmJxTFkzZC90Q01sek9MaXB1MU5mZ2VkR08yYWcwUlFtNUNpTkxqOG5x?=
+ =?utf-8?B?cmU1SmR0cTNhUVRVUnhnVXRyaytOREd1RjFIYXZZZEt6emJNSlBlUE95U3Jh?=
+ =?utf-8?B?WkVPSDR5V05RRXByR0w2Y1IrdXEwR0RRT3hHVGRlejhTVmFLNG5UQlF3QVhO?=
+ =?utf-8?B?L3dOWkQvOFgrRUphS2RFLzUvdisySXhmOFZ2KzlzcE9qV2VQa2F5ZmNCeW4v?=
+ =?utf-8?B?SEc4bUEza3FIa1JUcUduM012aEVXaTI2VE9HSDB5d0NhYVY4S1BCYU54SFBL?=
+ =?utf-8?B?K3BMejF2K2dHcElYeGVTbDJNTFp4dkNJMVpRUVpManZvY0l4Q2R3aC9GNFVB?=
+ =?utf-8?B?L2hwT0E5MWlNNlBiTTUyRm82VloyVXBMazhseWh6QWJnTDNNSDFvNXZld25w?=
+ =?utf-8?B?QVRkdS9HQkk0M2ExSDNtYTVYdm9SUVJZNGlQVWhLam9HVjFob3EwVGVqR3Vs?=
+ =?utf-8?B?OTJiWFB2QmptWEUvbG1YSmMzNHB4amN1emkvMWx4WlZGQ1d3RVloZkZock1P?=
+ =?utf-8?B?SkVDaFVpRnlyY1F5N3E4L1EvSXJmNVA1blhjVExlTVU5dHhtZUEzQVJwZnFp?=
+ =?utf-8?B?QS9MUldKNUZKZlluU1RQQ3B1WHMyb0w3YXlnZU5weFpwQThLRGdmdnJxK0kx?=
+ =?utf-8?B?VlNYZlJ1VUd5cGprS1NhV0YxNnRTemRMaDZDY2UyTUhNNndTd3cyQkpuZ0hB?=
+ =?utf-8?B?WVFZRGVncGt0U01ISkRjcDRJYmNMM1lDV3E5L1R5RHdzSmJmbUJXNkdsODJD?=
+ =?utf-8?B?Sml4Kzc4bE5NUHJnQTFnM0ZXTkVFRkhOUDFETkVibkN5UUFxZFdnS1ZwZjg5?=
+ =?utf-8?B?ZkdWWG5YbGpiRWFmS2NhcmRSc0VCYmh2R3BobFcwMzBHR01DMFRzZGd0S2Nj?=
+ =?utf-8?B?cndCb2RpNEVkWk9jTGlyalF0cDNvVnFITyttWURFS21rL2F0UU5jcWxCYVQr?=
+ =?utf-8?B?QjE4UE56d0pIR3U5SmhlazFwMTRUN3VLWFMzUVo3OXJTY2JCY282QVJRK3d0?=
+ =?utf-8?B?Y2dsWVhta1YrYzY5amdsRnlyQzJQY1hzdHNockhzN0puQ0J6RXIvWTNvZmpC?=
+ =?utf-8?B?cWVaTnFMSGVueCtJemdaWDhGa2xwMXk5cjJ1VjdMWjhoNXl3QTQ2WVlRVHBq?=
+ =?utf-8?B?QTJkeVB3T2NTVWVKc0FWOUhtSHdlMmdrWHBTcDJNWWtKcFRSU296czR5dktB?=
+ =?utf-8?B?OWdLNkp1aC9tb1E2Vy94bitzODNURGs4L25tVW5iSFN5MG1ZY1hrY2dYSFI4?=
+ =?utf-8?B?N0N2anYrelI3eDVhUkpFTmZ4VStabENxK2dSZnF0L0RITnJmMGpsVUxLTHo1?=
+ =?utf-8?B?MzhzejdWTkZ3RGZOekNoeGdKZVNYQSt6OElMRU1mZ2ttMHdlVHd0S0VmbUFE?=
+ =?utf-8?B?VnRNU2dkcFhjSHRXK0s2TklpSTNwdXBGVGNXZTJKT0N0TEQxcm5RUFFWQ2t5?=
+ =?utf-8?B?RkpwZmE5eWg5ejg4T2NlaUl6QWptUVdaRm1nYUQvbnNmKzVuejZINE9SRjIv?=
+ =?utf-8?B?RHVRRmt2V21BNmErckdWR3g3TWVZTkhneSt4UncrbjVZeFUvcTd0UFc3NThG?=
+ =?utf-8?B?R3VSaEJURmE3ZEZIank3d2tVQ3FmTGhSM1REQT09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WTc1V3JSL3hPTmRSUGY3MitDOHRLa1ErbDBmdHlXWVR0dWNmZGk0amMxNlh1?=
- =?utf-8?B?VXFTU3l2L1NqdnJERjRidDY5ZVdBUXRTUlVNWUpvY1lndFNSVEtBOW5SVWt0?=
- =?utf-8?B?WmJEbit4ZUM3TDVFTzh4TC9JQk5CZmQwZ1gwbGtMTWFqUHRHeEIzcUhaOGZv?=
- =?utf-8?B?LzYvVmtJNzlJZkNHc3JubjBYbG95UVBMWFZ4NG9KSDdhc1lsUjlid3Bhazl6?=
- =?utf-8?B?eXNMdlVERWpzcllTdFR5WFJmSEl4TEdqajIvbC9QNFhmOGFibDJGeUNJTUxn?=
- =?utf-8?B?WW4ya3dHa3JUTi9hRXl6dEF3eXN6RjZwWUdaa2VpelMxdGxFeExHaUh2MFVy?=
- =?utf-8?B?cFVaYjRjT2x0Rk5nSUJxQTF5ZU80SGhxUklKQjd2akQ3V0t1MlJkcnd2NlZD?=
- =?utf-8?B?WEQ4c0VGYVU4WEthNWt3VmlKTWU1TG9IV3ZjenVKY0tTakdhbnZNRVNmbEx3?=
- =?utf-8?B?UEdCYVpIaXE5bnUzQlVNQXArcmZTWFVnSlNSTGh2MlFKcmptLzd0d3FuU2R0?=
- =?utf-8?B?WXI5WURDZ1ByVVErVmF3cm1qMWFHZGQ5UzB2RjQ0eEdLMWhCZjdyVmZ2SXgx?=
- =?utf-8?B?aS81RWtrZUtaVG1oenBPc2crb2JFSTFrZVo1bXoyVnJSRXlyZVlOMTJYa21E?=
- =?utf-8?B?ZkFPM05FTmZrTU8zQnVHUGZELzZkR3NHTDk3dW9hRmNLNjJQK3c2Y0JJQkRz?=
- =?utf-8?B?UENTcG1RUWRhL1cwUnRTZFJjYkUzYTB2a21zeHBQbERTeW5PMmZ2Sm9vcWxF?=
- =?utf-8?B?cHpUT2ZRczhqT0drWDdFZVZ1MVZsSjQ4SXBpUXBBVFlUaE5jNGw1RkNoMURj?=
- =?utf-8?B?NTl6T2x1bzNHQWRVL3BzMVRyNHVQR01yNzh2czJNMUxKZE1JWVQyTEl4MGxT?=
- =?utf-8?B?MFVITXUrZWVTcnBadW5NRlhjeW94WGRIUTFNaE1TaURKTncwemNGalpJU0h5?=
- =?utf-8?B?dEJWaGszd0swSlpEc3RvTzFMUzc4VXJMWDdWb2pVVVlLL1I5MjJJV1dFY2sw?=
- =?utf-8?B?R1FwTlNZek9RZDR1a3RmVUVYRnN4ZXBWeTB5Qm9hU1EzNld3YkNDWWRsOWpN?=
- =?utf-8?B?a3BxQlBtdHlITUVYTVNvSVk3VXJ5NW95UVlrTnQybmhlT3ZrUUhjZ1RqOWJF?=
- =?utf-8?B?VFNiTHZHS1hRZEw3NGVBR2VFN2M5aG9BaytuNDRxUjRCcG5nd2FsNzByajFp?=
- =?utf-8?B?bDZ0TzMwNUsvU0xtYjBJZ0JhaGlzS0JFd3IvR1N3VUZCNUZkdGI4MjF2NFYy?=
- =?utf-8?B?UWN4K0s5N1NTTVNTRHpTVjVVRmMwVHlLSXcweFZKUzdyakErVmRDRWdjaWdT?=
- =?utf-8?B?cXJsaktDM0l4QVI0MmxZMURONFVXSFhKc0ppblh6MEV3YlRKUXh2b2h2Rjgr?=
- =?utf-8?B?TkZDbkpPTTVlT3FJTHM0TkZvL1JsVHA4TmhiRGREMktJZ3h3OWRQRlBFK2V5?=
- =?utf-8?B?N0ZYYVdDVkwrRnd2eStDMHgyUlEzQXJYeUd1aHZBMFJteTYxbFZuU1RJbWpq?=
- =?utf-8?B?SVBCNGRUNWIvemdtUHd0bmQwMGN1SEJHT1l3VHZGWk5PeTRKOTBhcUtIdUVX?=
- =?utf-8?B?MXZKdkJrVDVlZE1idTNyc3I3MTNDYVR1Wk9EYkZseDJ5a3NTcUtZbDM5d0tz?=
- =?utf-8?B?aDZobzB5citlcmtwUWxzQUh4dE00WTVZM054Y1BWUDlnWUFmaXgxWjhvazFN?=
- =?utf-8?B?VkNiQ0hjbllJSmh2Vzh0TDJZbzNFMUZtUysvUUdJSEhKbWJURlhnWUUrWGZt?=
- =?utf-8?B?U0ZUbVhkL0YyOSt0dWpQbjdMSS9TOTBzV2h6Zkx2SHQyRXZxb1QyM2hMUHRz?=
- =?utf-8?B?Tnd2Z3UrSWZaSkM0RWRCb2FHSERQSDBKVEFMWXM4RXMrVDFtcEJkTk1TaUFK?=
- =?utf-8?B?NC80Uzc1RnFpMXdqeXF1anl4dURFQk4rcndjSEJaVUdZRHdRdWd3bElBeWtV?=
- =?utf-8?B?blFMUEJKNUR1N0J5QmlnWW05Y3VpU2JtUU0wT2FoSkh0R0tON3ZZY0trR29j?=
- =?utf-8?B?YkdqVFNiWGxDTlBGT2h1Y0d3ZmgwZkpvODl0aVJET3ZzbDAzd21zb3Q4TjFG?=
- =?utf-8?B?NmJyMUNSOTRZTW0zclU4bWNKd2I4eXIrdHVlNnpMWVRtSTQyWTBLaGZLSFVq?=
- =?utf-8?Q?a+spURL30wbCVxtwcr1aj26FM?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 421da696-aac0-4951-24c9-08de15357966
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+	=?utf-8?B?MEFoZ0NKN2ErdVEvRmt5bzVyL2tuMVBWS3ZPYUZmQkFOVExWZjhIY2p5SXlR?=
+ =?utf-8?B?U0dCY2pSeUtJcFBTNi9qYTJMNE1vU0IwMUMwRGY4Mmh2WDAvZkNSUEk2Z3Aw?=
+ =?utf-8?B?TnpFZnVYK1FuV01DaHVlOGNtV1UyTE1Sek9VUXUzMlFQNno1UnhlLzlFdUxI?=
+ =?utf-8?B?cmpSMmlwVlhqbXJPSGNsOERKM01qaG1QTXRobHltSnc3WHJ5d3h0TkRNZVRv?=
+ =?utf-8?B?ZHZ0aGRpQTgwZzRYVG15U05mT2U1eHBQQXp3S0FNbFN5K2xXcFlEUkZqWUho?=
+ =?utf-8?B?ZERSc1BiVEYxNVRSK2dyQWg2Z2hCT1dQUXZsRGlRaDNPTnJ0MzU5czZuWXJE?=
+ =?utf-8?B?OXhJbHUrYUNDakUxQ2FuOERVc1BScElkVWk2blVhakloaGFROGRHc01OM2RX?=
+ =?utf-8?B?UnhUclprRWNlWGRwTnFJcjdoYXg2alo0QnNTaFRYRG41cGloVmNOQXJWMGc3?=
+ =?utf-8?B?NEwzMFEzMExnMVBwU1Q2azd6cjdPY2xMdmNrWDUxUDNSRmRobTBRQTBKVzFS?=
+ =?utf-8?B?Sk13OXRTMFRpNG9sajNhM005dFNWVWpZWDM3QmR3NTF0cHA5MzRkZGRoNHhT?=
+ =?utf-8?B?eFhTbmhCWkJsT3VEVGRoa3IxWVBFZjlxRXdMcWxLQlM5QmhEV3UwNTI3WkxT?=
+ =?utf-8?B?Ky92OU95RGUrOGFYb2Fzd24zZVdCSHJONnJIWEFwVEU0NktFWmQreDBlVVpL?=
+ =?utf-8?B?ZExoYldjc3hRZ2JlS3FIS3poSmlQVncyS29LUXluWWNlSURVZ1ZxdXFaVTV5?=
+ =?utf-8?B?SmtKSVA3ZFIxcXdaMEU1M3RGQUNJV2drZlhvMWJPQmZxTlZhOERPZWdrc1BD?=
+ =?utf-8?B?dzNZVlBDdHFEdEpCTW1GMVVMUGpYaTNzcUFIMStqY205dUVYZjBRbGtlUHQz?=
+ =?utf-8?B?UlBVOWw5WDh0TFBFWFEvMkdPek9HcXcvK1Vxck90L25LcW5WOGxIQkNqME5N?=
+ =?utf-8?B?Uk9acFFzdWhOdmczODhpbUZJa01mYzlGWkk1VmVNSDlqK1dLQTZaZWpVSmFj?=
+ =?utf-8?B?bmlVWDN5MWcyTHlkM1gyZGgwcjQ1dVVKOWQyd0IyM0htZ2F5dmhqYnZRQytl?=
+ =?utf-8?B?bmErd0ZQWjA0by84aVVRWkplQUpMWjFoVU4wdStWMHY1MzZ4Q1ZLRG9obWZm?=
+ =?utf-8?B?YklLMXpQb3hCMmhHeHR2bGhoY2VwSDBYbm5mTk1vSnNoREpTalUvVENaUlZj?=
+ =?utf-8?B?azR3NVo0NEF0ZGRXS29BYnlBTEVBaktuVXk5aU5ZQjNmdmlUVXZpbkd1K1Bl?=
+ =?utf-8?B?NGlSdUx3MWd3VGlFZWNBUFpvZEh2NFU0TnhXV0wrODhrWG5XWHhRcWwxWHlQ?=
+ =?utf-8?B?VWZHUmZNZnZXUGlLTytxbUZmczJkN3VkWk4rNGRHRnluZ0ZGYmFLNEt6eVZp?=
+ =?utf-8?B?ZmNrZlRsQmJ1OVhFNitxcmtNdUpNckdjWEIyNFZIQ2RGN1ZZaVVyOGtTakJp?=
+ =?utf-8?B?VlhKQUU5TjBIVFQrVGhaYlp6VXlGOU1Wc0RRQVpxZDc0OTdBZWVIdFRrL1Br?=
+ =?utf-8?B?R0lyMk50SFp2T2ZEQnpjajhZNnZhcFlIUGFlRTNYbVNQVnQvM2lkbUl2Sk9F?=
+ =?utf-8?B?MmNDc0NKN05wOGxNWXhma0tIN0M0Vnk4MTdaOWE1MC81YytvNS9jSml1K0hF?=
+ =?utf-8?B?KzJWS0J4clU2cXFWZEc5clgyV21ubU1VQVNLWGJVOWFzN043NXg4Q0d5Tm94?=
+ =?utf-8?B?d2FVVFI1R081NWtxZWc0WDFlZ2t6MHB1YkV3eEFxWllOYUR3NjJ2NklvWW1p?=
+ =?utf-8?B?VE1OMmxNR3lPWWZKczJuSVBZa05jY1NGdXQ4akNrT0J4Rk9JdkhWRWpSbk84?=
+ =?utf-8?B?NW04SzZxTnVMMkVmSlFPMmIraWhyZEFtSVRHYSt3R2llZytEWEsxRHZ1WG1D?=
+ =?utf-8?B?YmNnbVlaNFNlTElHcFZBdTBKUkNtZlQ5T3J5dnVGVldpMmJUN0o3Y1RZMzVl?=
+ =?utf-8?B?TTdBejlJQ3J1REFUaENpNkwyNEpHS0M1dU5Ta2g0S2o0M2lUaTJBVFdtSzJq?=
+ =?utf-8?B?NWVDdDZsN0FqY2l3WkFIS3pJbmdOY0htamRZQzJPZnAzcndJc1p0dEFHVFAz?=
+ =?utf-8?B?b1Z5akFSZDB0N1FBcjhLeDBhOXlrNmkyMld2cCtiTU1zSXUxODh1djErZ2Jv?=
+ =?utf-8?Q?byoeibf0PFFTKm/QUJNSIwk+s?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2cfbe16-cef2-4a1b-3e89-08de15358e88
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:47:35.1078
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:48:10.3970
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kDMhoB5isAgJaEzcY0P3l/UrjbjN1UdeQcvxIwimCfz1HcJayxqT2aJDNoHISg51rzsmz45v1PjUKLC5cAg9Rg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB9464
+X-MS-Exchange-CrossTenant-UserPrincipalName: e86Ot9hvup0QgJXWSfdcjf3ifPexnePzlE7aoV2Cf1dnIGh0nZGjueRj9W18RaevogEwsBzYqnS4G+LgG8zfNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8432
 
-Hi Stephen,
+One prefetch engine consists of one DPR channel and one or two PRGs.
+Each PRG handles one planar in a pixel format.  Every FetchUnit used
+by KMS may attach to a PRG and hence use a prefetch engine.  So, to
+simplify driver code, always use prefetch engines for FetchUnits in
+KMS driver and avoid supporting bypassing them.  Aside from configuring
+and disabling a prefetch engine along with a FetchUnit for atomic
+commits, properly disable the prefetch engine at boot and adapt burst
+size/stride fixup requirements from PRG in FetchUnit driver.
 
-Thanks for your review.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+---
+v3:
+- Collect Frank's R-b tag.
+---
+ drivers/gpu/drm/imx/dc/dc-crtc.c  | 139 +++++++++++++++++++++++++++++++++++---
+ drivers/gpu/drm/imx/dc/dc-fu.c    |  27 +++++++-
+ drivers/gpu/drm/imx/dc/dc-fu.h    |   2 +-
+ drivers/gpu/drm/imx/dc/dc-kms.h   |   5 ++
+ drivers/gpu/drm/imx/dc/dc-plane.c |  46 +++++++++++--
+ 5 files changed, 197 insertions(+), 22 deletions(-)
 
-On 10/26/2025 9:25 AM, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> Quoting Chuan Liu via B4 Relay (2025-10-21 03:12:31)
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> There is no need to evaluate further divider values once _is_best_div()
->> finds one that matches the target rate.
->>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->>   drivers/clk/clk-divider.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
->> index 2601b6155afb..b92c4f800fa9 100644
->> --- a/drivers/clk/clk-divider.c
->> +++ b/drivers/clk/clk-divider.c
->> @@ -339,6 +339,9 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
->>                          best = now;
->>                          *best_parent_rate = parent_rate;
->>                  }
->> +
->> +               if (best == rate)
->> +                       break;
-> 
-> This needs a comment. I'm not even sure if it is correct either, because
-> the other exit from this loop happens if the parent rate can be
+diff --git a/drivers/gpu/drm/imx/dc/dc-crtc.c b/drivers/gpu/drm/imx/dc/dc-crtc.c
+index 9e9e86cd5202bcb0bb4d5627dbcefcc3f4e2ead0..4c7aab360616cb1c84c31c83f16df703b1c2c6d7 100644
+--- a/drivers/gpu/drm/imx/dc/dc-crtc.c
++++ b/drivers/gpu/drm/imx/dc/dc-crtc.c
+@@ -25,6 +25,7 @@
+ #include <drm/drm_vblank.h>
+ 
+ #include "dc-de.h"
++#include "dc-dprc.h"
+ #include "dc-drv.h"
+ #include "dc-kms.h"
+ #include "dc-pe.h"
+@@ -204,7 +205,13 @@ dc_crtc_atomic_flush(struct drm_crtc *crtc, struct drm_atomic_state *state)
+ 				drm_atomic_get_old_crtc_state(state, crtc);
+ 	struct drm_crtc_state *new_crtc_state =
+ 				drm_atomic_get_new_crtc_state(state, crtc);
++	struct drm_plane_state *old_plane_state =
++			drm_atomic_get_old_plane_state(state, crtc->primary);
++	struct drm_plane_state *new_plane_state =
++			drm_atomic_get_new_plane_state(state, crtc->primary);
++	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
+ 	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
++	bool disabling_plane;
+ 	int idx;
+ 
+ 	if (drm_atomic_crtc_needs_modeset(new_crtc_state) ||
+@@ -216,13 +223,40 @@ dc_crtc_atomic_flush(struct drm_crtc *crtc, struct drm_atomic_state *state)
+ 
+ 	enable_irq(dc_crtc->irq_ed_cont_shdload);
+ 
+-	/* flush plane update out to display */
+-	dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
++	disabling_plane = drm_atomic_plane_disabling(old_plane_state,
++						     new_plane_state);
++
++	if (disabling_plane) {
++		unsigned long flags;
++
++		dc_crtc_dbg(crtc, "disabling plane\n");
++
++		/*
++		 * Don't relinquish CPU until DPRC REPEAT_EN is disabled and
++		 * sync is triggered.
++		 */
++		local_irq_save(flags);
++		preempt_disable();
++
++		DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
++		dc_dprc_disable_repeat_en(dc_plane->fu->dprc);
++		/* flush plane update out to display */
++		dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
++
++		local_irq_restore(flags);
++		preempt_enable();
++	} else {
++		/* flush plane update out to display */
++		dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
++	}
+ 
+ 	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(ed_cont_shdload_done);
+ 
+ 	disable_irq(dc_crtc->irq_ed_cont_shdload);
+ 
++	if (disabling_plane)
++		dc_dprc_disable(dc_plane->fu->dprc);
++
+ 	DC_CRTC_CHECK_FRAMEGEN_FIFO(dc_crtc->fg);
+ 
+ 	drm_dev_exit(idx);
+@@ -320,14 +354,33 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+ 	dc_crtc_queue_state_event(new_crtc_state);
+ }
+ 
+-static inline void __dc_crtc_disable_fg(struct drm_crtc *crtc)
++static inline void
++__dc_crtc_disable_fg_along_with_dprc_repeat_en(struct drm_crtc *crtc)
+ {
++	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
+ 	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
++	unsigned long flags;
+ 
+-	enable_irq(dc_crtc->irq_dec_seqcomplete);
++	/* Don't relinquish CPU until DPRC REPEAT_EN is disabled. */
++	local_irq_save(flags);
++	preempt_disable();
++
++	/*
++	 * Sync to FrameGen frame index moving so that
++	 * FrameGen can be disabled in the next frame.
++	 */
++	DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
+ 	dc_fg_disable(dc_crtc->fg);
+-	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
+-	disable_irq(dc_crtc->irq_dec_seqcomplete);
++	/*
++	 * There is one frame leftover after FrameGen disablement.
++	 * Sync to FrameGen frame index moving so that DPRC REPEAT_EN
++	 * can be disabled in the next frame.
++	 */
++	DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
++	dc_dprc_disable_repeat_en(dc_plane->fu->dprc);
++
++	local_irq_restore(flags);
++	preempt_enable();
+ }
+ 
+ static void
+@@ -335,14 +388,29 @@ dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+ {
+ 	struct drm_crtc_state *new_crtc_state =
+ 				drm_atomic_get_new_crtc_state(state, crtc);
++	struct drm_crtc_state *old_crtc_state =
++				drm_atomic_get_old_crtc_state(state, crtc);
+ 	struct dc_drm_device *dc_drm = to_dc_drm_device(crtc->dev);
++	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
+ 	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
+ 	int idx, ret;
+ 
+ 	if (!drm_dev_enter(crtc->dev, &idx))
+ 		goto out;
+ 
+-	__dc_crtc_disable_fg(crtc);
++	enable_irq(dc_crtc->irq_dec_seqcomplete);
++
++	if (old_crtc_state->plane_mask)
++		__dc_crtc_disable_fg_along_with_dprc_repeat_en(crtc);
++	else
++		dc_fg_disable(dc_crtc->fg);
++
++	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
++	disable_irq(dc_crtc->irq_dec_seqcomplete);
++
++	if (old_crtc_state->plane_mask)
++		dc_dprc_disable(dc_plane->fu->dprc);
++
+ 	dc_fg_disable_clock(dc_crtc->fg);
+ 
+ 	/* request pixel engine power-off as plane is off too */
+@@ -373,7 +441,10 @@ dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+ void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
+ {
+ 	struct dc_drm_device *dc_drm = to_dc_drm_device(crtc->dev);
++	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
+ 	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
++	enum dc_link_id ed_src, lb_sec;
++	bool disable_dprc = false;
+ 	int ret;
+ 
+ 	ret = pm_runtime_resume_and_get(dc_crtc->de->dev);
+@@ -383,13 +454,53 @@ void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
+ 		return;
+ 	}
+ 
++	ret = pm_runtime_resume_and_get(dc_drm->pe->dev);
++	if (ret) {
++		dc_crtc_err(crtc, "failed to get DC pixel engine RPM: %d\n",
++			    ret);
++		goto out1;
++	}
++
+ 	if (!dc_fg_wait_for_frame_index_moving(dc_crtc->fg)) {
+ 		dc_crtc_dbg(crtc, "FrameGen frame index isn't moving\n");
+-		goto out;
++		goto out2;
++	}
++
++	ret = dc_ed_pec_src_sel_get(dc_crtc->ed_cont, &ed_src);
++	if (ret) {
++		dc_crtc_err(crtc, "failed to get content ExtDst's source\n");
++		goto out2;
++	}
++
++	if (ed_src == LINK_ID_CONSTFRAME0 || ed_src == LINK_ID_CONSTFRAME1)
++		goto disable;
++
++	ret = dc_lb_pec_dynamic_sec_sel_get(dc_plane->lb, &lb_sec);
++	if (ret) {
++		dc_crtc_err(crtc,
++			    "failed to get primary plane LayerBlend secondary source\n");
++		goto out2;
+ 	}
+ 
+-	dc_crtc_dbg(crtc, "disabling at boot\n");
+-	__dc_crtc_disable_fg(crtc);
++	disable_dprc = true;
++
++disable:
++	enable_irq(dc_crtc->irq_dec_seqcomplete);
++
++	if (disable_dprc) {
++		dc_crtc_dbg(crtc, "disabling along with DPRC REPEAT_EN at boot\n");
++		__dc_crtc_disable_fg_along_with_dprc_repeat_en(crtc);
++	} else {
++		dc_crtc_dbg(crtc, "disabling at boot\n");
++		dc_fg_disable(dc_crtc->fg);
++	}
++
++	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
++	disable_irq(dc_crtc->irq_dec_seqcomplete);
++
++	if (disable_dprc)
++		dc_dprc_disable_at_boot(dc_plane->fu->dprc);
++
+ 	dc_fg_disable_clock(dc_crtc->fg);
+ 
+ 	if (!dc_drm->pe_clk_axi_disabled) {
+@@ -397,7 +508,13 @@ void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
+ 		dc_drm->pe_clk_axi_disabled = true;
+ 	}
+ 
+-out:
++out2:
++	ret = pm_runtime_put(dc_drm->pe->dev);
++	if (ret)
++		dc_crtc_err(crtc, "failed to put DC pixel engine RPM: %d\n",
++			    ret);
++
++out1:
+ 	ret = pm_runtime_put(dc_crtc->de->dev);
+ 	if (ret < 0)
+ 		dc_crtc_err(crtc, "failed to put DC display engine RPM: %d\n",
+diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
+index 8339f44c0091918c796c478d968e0640391781d9..28f962af697469f4ad32ca23876938792a74779f 100644
+--- a/drivers/gpu/drm/imx/dc/dc-fu.c
++++ b/drivers/gpu/drm/imx/dc/dc-fu.c
+@@ -124,13 +124,28 @@ static inline void dc_fu_set_numbuffers(struct dc_fu *fu, unsigned int num)
+ 			  SETNUMBUFFERS_MASK, SETNUMBUFFERS(num));
+ }
+ 
+-static void dc_fu_set_burstlength(struct dc_fu *fu, dma_addr_t baddr)
++static unsigned int dc_fu_burst_size_fixup(dma_addr_t baddr)
+ {
+-	unsigned int burst_size, burst_length;
++	unsigned int burst_size;
+ 
+ 	burst_size = 1 << __ffs(baddr);
+ 	burst_size = round_up(burst_size, 8);
+ 	burst_size = min(burst_size, 128U);
++
++	return burst_size;
++}
++
++static unsigned int
++dc_fu_stride_fixup(unsigned int stride, unsigned int burst_size)
++{
++	return round_up(stride, burst_size);
++}
++
++static void dc_fu_set_burstlength(struct dc_fu *fu, dma_addr_t baddr)
++{
++	unsigned int burst_size, burst_length;
++
++	burst_size = dc_fu_burst_size_fixup(baddr);
+ 	burst_length = burst_size / 8;
+ 
+ 	regmap_write_bits(fu->reg_cfg, BURSTBUFFERMANAGEMENT,
+@@ -150,8 +165,14 @@ void dc_fu_set_src_bpp(struct dc_fu *fu, enum dc_fu_frac frac, unsigned int bpp)
+ }
+ 
+ static void dc_fu_set_src_stride(struct dc_fu *fu, enum dc_fu_frac frac,
+-				 unsigned int stride)
++				 unsigned int width, int bpp, dma_addr_t baddr)
+ {
++	unsigned int burst_size = dc_fu_burst_size_fixup(baddr);
++	unsigned int stride;
++
++	stride = width * (bpp / 8);
++	stride = dc_fu_stride_fixup(stride, burst_size);
++
+ 	regmap_write_bits(fu->reg_cfg, fu->reg_sourcebufferattributes[frac],
+ 			  STRIDE_MASK, STRIDE(stride));
+ }
+diff --git a/drivers/gpu/drm/imx/dc/dc-fu.h b/drivers/gpu/drm/imx/dc/dc-fu.h
+index 9fbd7aadd26426d797e89a954e7e4cfa3e597b62..0527a7b2221ddab84dc6459a84a2cf4db834a7e0 100644
+--- a/drivers/gpu/drm/imx/dc/dc-fu.h
++++ b/drivers/gpu/drm/imx/dc/dc-fu.h
+@@ -87,7 +87,7 @@ struct dc_fu_ops {
+ 	void (*set_baseaddress)(struct dc_fu *fu, enum dc_fu_frac frac,
+ 				dma_addr_t baddr);
+ 	void (*set_src_stride)(struct dc_fu *fu, enum dc_fu_frac frac,
+-			       unsigned int stride);
++			       unsigned int width, int bpp, dma_addr_t baddr);
+ 	void (*set_src_buf_dimensions)(struct dc_fu *fu, enum dc_fu_frac frac,
+ 				       int w, int h);
+ 	void (*set_fmt)(struct dc_fu *fu, enum dc_fu_frac frac,
+diff --git a/drivers/gpu/drm/imx/dc/dc-kms.h b/drivers/gpu/drm/imx/dc/dc-kms.h
+index a25d47eebd28792e4b53b4ecc89907ce00430c2c..8b45b21a6f8a7e6e6ed2563499753200bdd42ebc 100644
+--- a/drivers/gpu/drm/imx/dc/dc-kms.h
++++ b/drivers/gpu/drm/imx/dc/dc-kms.h
+@@ -130,4 +130,9 @@ struct dc_plane {
+ 	struct dc_ed *ed;
+ };
+ 
++static inline struct dc_plane *to_dc_plane(struct drm_plane *plane)
++{
++	return container_of(plane, struct dc_plane, base);
++}
++
+ #endif /* __DC_KMS_H__ */
+diff --git a/drivers/gpu/drm/imx/dc/dc-plane.c b/drivers/gpu/drm/imx/dc/dc-plane.c
+index e40d5d66c5c1f0d579a7a1019c0f2e00489ce15e..e6bced9b716ba19cc913860744258434b3933212 100644
+--- a/drivers/gpu/drm/imx/dc/dc-plane.c
++++ b/drivers/gpu/drm/imx/dc/dc-plane.c
+@@ -17,6 +17,7 @@
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_print.h>
+ 
++#include "dc-dprc.h"
+ #include "dc-drv.h"
+ #include "dc-fu.h"
+ #include "dc-kms.h"
+@@ -44,11 +45,6 @@ static const struct drm_plane_funcs dc_plane_funcs = {
+ 	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
+ };
+ 
+-static inline struct dc_plane *to_dc_plane(struct drm_plane *plane)
+-{
+-	return container_of(plane, struct dc_plane, base);
+-}
+-
+ static int dc_plane_check_max_source_resolution(struct drm_plane_state *state)
+ {
+ 	int src_h = drm_rect_height(&state->src) >> 16;
+@@ -88,6 +84,28 @@ static int dc_plane_check_fb(struct drm_plane_state *state)
+ 	return 0;
+ }
+ 
++static int dc_plane_check_dprc(struct drm_plane_state *state)
++{
++	struct dc_plane *dplane = to_dc_plane(state->plane);
++	struct drm_framebuffer *fb = state->fb;
++	dma_addr_t baseaddr = drm_fb_dma_get_gem_addr(fb, state, 0);
++	struct dc_dprc *dprc = dplane->fu->dprc;
++	u32 src_w = drm_rect_width(&state->src) >> 16;
++
++	if (!dc_dprc_rtram_width_supported(dprc, src_w)) {
++		dc_plane_dbg(state->plane, "bad RTRAM width for DPRC\n");
++		return -EINVAL;
++	}
++
++	if (!dc_dprc_stride_supported(dprc, fb->pitches[0], src_w, fb->format,
++				      baseaddr)) {
++		dc_plane_dbg(state->plane, "fb bad pitches[0] for DPRC\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int
+ dc_plane_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state)
+ {
+@@ -123,7 +141,11 @@ dc_plane_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state)
+ 	if (ret)
+ 		return ret;
+ 
+-	return dc_plane_check_fb(plane_state);
++	ret = dc_plane_check_fb(plane_state);
++	if (ret)
++		return ret;
++
++	return dc_plane_check_dprc(plane_state);
+ }
+ 
+ static void
+@@ -131,6 +153,12 @@ dc_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
+ {
+ 	struct drm_plane_state *new_state =
+ 				drm_atomic_get_new_plane_state(state, plane);
++	struct drm_plane_state *old_state =
++				drm_atomic_get_old_plane_state(state, plane);
++	struct drm_crtc_state *new_crtc_state =
++				drm_atomic_get_new_crtc_state(state, new_state->crtc);
++	bool needs_modeset = drm_atomic_crtc_needs_modeset(new_crtc_state);
++	bool prefetch_start = needs_modeset || !old_state->fb;
+ 	struct dc_plane *dplane = to_dc_plane(plane);
+ 	struct drm_framebuffer *fb = new_state->fb;
+ 	const struct dc_fu_ops *fu_ops;
+@@ -152,7 +180,8 @@ dc_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
+ 
+ 	fu_ops->set_layerblend(fu, lb);
+ 	fu_ops->set_burstlength(fu, baseaddr);
+-	fu_ops->set_src_stride(fu, DC_FETCHUNIT_FRAC0, fb->pitches[0]);
++	fu_ops->set_src_stride(fu, DC_FETCHUNIT_FRAC0, src_w,
++			       fb->format->cpp[0] * 8, baseaddr);
+ 	fu_ops->set_src_buf_dimensions(fu, DC_FETCHUNIT_FRAC0, src_w, src_h);
+ 	fu_ops->set_fmt(fu, DC_FETCHUNIT_FRAC0, fb->format);
+ 	fu_ops->set_framedimensions(fu, src_w, src_h);
+@@ -161,6 +190,9 @@ dc_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
+ 
+ 	dc_plane_dbg(plane, "uses %s\n", fu_ops->get_name(fu));
+ 
++	dc_dprc_configure(fu->dprc, new_state->crtc->index, src_w, src_h,
++			  fb->pitches[0], fb->format, baseaddr, prefetch_start);
++
+ 	dc_lb_pec_dynamic_prim_sel(lb, dc_cf_get_link_id(dplane->cf));
+ 	dc_lb_pec_dynamic_sec_sel(lb, fu_ops->get_link_id(fu));
+ 	dc_lb_mode(lb, LB_BLEND);
 
-You're right.  Sorry, I was mainly focusing on the number of
-iterations in the for loop earlier and missed the fact that the
-parent clock directly participates in the division without changing.
-
-> unchanged. I don't think we have any KUnit tests for this file, so
-> please add some tests that deal with this case explicitly (the parent
-> rate being unchanged as the desirable part).
-
-I'll take some time to get familiar with the principles and methods
-of KUnit testing, and I'd be happy to help improve it.
-
-> 
-> A general comment: these patches have no benefit described in the commit
-> text. Do you see any performance improvement with this patch? I sorta
-> doubt this really matters because the number of dividers are typically
-> small. A single sentence commit text that only says there is no need
-> doesn't convince me that any work has been put in to research why the
-> code was written this way or even prove that making this change improves
-> anything.
-
-This patch came about because I noticed that the mux has a similar
-logic:
-- Even after finding a suitable clock source, it continues to iterate
-through and calculate other sources (and even if a later source has
-the same rate, it won't replace the current one).
-
- From there, I went on to examine the divider logic, but I missed the
-detail that the parent clock doesn't change in the divider. Sorry
-that this unreasonable patch ended up taking up your time.
+-- 
+2.34.1
 
 
