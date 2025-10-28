@@ -1,173 +1,118 @@
-Return-Path: <linux-kernel+bounces-873494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8864AC140FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:20:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056B9C140CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B8B587F4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1164B189A690
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BED725A62E;
-	Tue, 28 Oct 2025 10:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A96F2D739A;
+	Tue, 28 Oct 2025 10:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JD1RHsEV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Gja65oT6"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D029229B8E5;
-	Tue, 28 Oct 2025 10:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C046825A62E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761646693; cv=none; b=m/HBnRGO9Lsjg/3hMePosS1uskSgNcEsRp4mfc9BDex1uvAmptaotDzSLqxDCzlDfCEDmW39rp93Z2ji8vhsyARuMHTpPlS4TqGRU90gBwZdx/vRYDC94QehURiNPq5Emg5jEGg0BMoO9BK3fit8edckJKBoiigeXx5US0eHu7I=
+	t=1761646709; cv=none; b=pPtVqd9qmEjMvZg8oNHf3rKCxPZp082d2ew3FOZGP19e0h5m5EkClMlkhICBecsth4jLKtN5+mCWn05RILvj0q6Qf2ylhedS+WpbKOC9wxmH1Pw+Nz2TeaYJ4ZZ7OloLQTlZGK57VXrQOisuPDaA5re76fEMQYp9F4CFiaXjMWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761646693; c=relaxed/simple;
-	bh=DW/2v99mhM/LvduFkpug9oJAgbm5ruwCzveIULjofKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TphkGeaWTkR+FmnM1YupOHoX76pKgMiiGWRSbWK2Knas1/STVyxZxKpT2+z0RvwHIbrlbrxjNLrD1Py2a3eSuFtqUO1/xm6bk2g26bfXP3CkQ/ynA0+CsaiCAGE+Tkg3zPAzxsG0OFhkh9c5T748+OJrY6VBnuapKbTRyiZlsIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JD1RHsEV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SA3G141238177;
-	Tue, 28 Oct 2025 10:17:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MGKDPJuZtjAxrjYhGFT8RJZr9Zo2yfRsW8QGozN2CcE=; b=JD1RHsEVQMfZw6Bc
-	0ujWn82mVDZyit5vVP+3rnirjfvNrHKnQ2/D2mSoz9u1tpfEEkjF2oRh6X8BRmMd
-	fRNJONfBLsckyqgXyDnN3fL0HlDyEJffIaoU/5c6vxwZsMgWhWhwFqDFPC1zwTTb
-	BX5AJsW/7tzYm48aII9UCbJujh2uGrj86IidiMVeco5E4tsWo++xlEnlxlHaRDxB
-	8Oa1PZ0wav73WziCZOQQNdQE6GtClG594Htp0CfrtrZLs5JqUX2Zf7X2rbRRC1cs
-	AT19/6S331Doco6qH4F0hZWP2unyFDaKNGdb4/wBRtzJCRvpeVvorUBCEZ+KJ1zZ
-	1uMTmw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2ur3g14y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 10:17:55 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59SAHsS8013435
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 10:17:54 GMT
-Received: from [10.206.96.75] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 28 Oct
- 2025 03:17:45 -0700
-Message-ID: <9bddcef9-56dd-46be-9354-c47f15b900f4@quicinc.com>
-Date: Tue, 28 Oct 2025 15:47:45 +0530
+	s=arc-20240116; t=1761646709; c=relaxed/simple;
+	bh=B/F1VSmXAUmujo9KnVWkQALAbfIpdSoEp05awJyWpAM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OhWOAtnoHMvyhWxZAOXS9UoIu5lvAqriq5StWdNxntfXk4WXoBnY39J4HNiDA1TvpmdBQRbkCkiwZc4fXnTitER6kyoSS7HWIR/1EG0/AmNTcGsRHbPKs1dfof1sGDXGkuLS0ZOwfOkWizq+QQlG0S2IXYwhekbXAM36hTii8Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Gja65oT6; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761646700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CIDM+dygb2BUa46zAb+3HHz7zZDAxImWZVxBS/LTMHU=;
+	b=Gja65oT6Ej3kxXJIiBfObdJr37XT53qezfnH3LsJZAnwoVZKN2tpcLv8CNpvLYIhbaGQV8
+	qYlG2OEB/ZGBARDnNezC6stE3g2U73DKDbmDaNKrbU6L5iLqWTVVzt7rwN1anw7vmoHTxH
+	cTMZA6ZmB0/KnSUdsXeqX13lpSlfBPw=
+From: Tiwei Bie <tiwei.bie@linux.dev>
+To: linux@weissschuh.net
+Cc: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
+	johannes.berg@intel.com,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tiwei.btw@antgroup.com,
+	tiwei.bie@linux.dev
+Subject: Re: [PATCH] um: Avoid circular dependency on asm-offsets in pgtable.h
+Date: Tue, 28 Oct 2025 18:17:50 +0800
+Message-Id: <20251028101750.3263748-1-tiwei.bie@linux.dev>
+In-Reply-To: <20251028-uml-offsets-circular-v1-1-601c363cfaaa@weissschuh.net>
+References: <20251028-uml-offsets-circular-v1-1-601c363cfaaa@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: lemans: Add edp reference clock
- for edp phy
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <robin.clark@oss.qualcomm.com>, <lumag@kernel.org>,
-        <abhinav.kumar@linux.dev>, <jessica.zhang@oss.qualcomm.com>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_mahap@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <mani@kernel.org>,
-        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <vkoul@kernel.org>, <kishon@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>, <linux-phy@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <quic_vproddut@quicinc.com>
-References: <20251013104806.6599-1-quic_riteshk@quicinc.com>
- <20251013104806.6599-4-quic_riteshk@quicinc.com>
- <c4bhkhw6xlaqlwhbataveafav6jcsrgnazk72lkgtj3fygwqjc@4bp5w4q5sygh>
-From: Ritesh Kumar <quic_riteshk@quicinc.com>
-In-Reply-To: <c4bhkhw6xlaqlwhbataveafav6jcsrgnazk72lkgtj3fygwqjc@4bp5w4q5sygh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA4NyBTYWx0ZWRfX1EF3sIFgt2Qw
- TMU/4Tn9tkFVdEAs3L+ssjUakiYviKALHHiVlOr4IfSaCINBMf5FnDwmccqrwZyDdM99rsGQ91A
- tKBBqNP8ydMT2NB87zs7lD0NgMnqf/mqhiOqO7TQl+vYuuVincbQJkrE1fadsuCxAREp/wOPCa5
- s7B4XgH0SL6dPnYoEe0iWHyU7R6wi2+kD3mPlEU7z7cDFDayariqC0Sxoitlo8nhO8HsYv44Ywj
- ExRSnp4RQv/A7NUpraxui4foMafDytSkhN57HVXXR4O7OCd8WW0BmK5bPmvLwwMqXbaxXq1Z/zl
- LezFnmSyzUp7wh1RQ/5ehHjJAaTPxT2HgAmA2MzTpIaNs/GuiNpDIA3RWXLhpoF/wtR28oCao50
- 9VSg2zh8SO6NJW+s2z8nRzRVXMdLfg==
-X-Authority-Analysis: v=2.4 cv=Jub8bc4C c=1 sm=1 tr=0 ts=69009853 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=uennSmqHBHGcuoTQaU0A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=nl4s5V0KI7Kw-pW0DWrs:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: qrXBQMZvM0paN3xBsggAJcVzc11zzxeK
-X-Proofpoint-ORIG-GUID: qrXBQMZvM0paN3xBsggAJcVzc11zzxeK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 bulkscore=0 adultscore=0
- suspectscore=0 impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280087
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+On Tue, 28 Oct 2025 10:02:55 +0100, Thomas Weißschuh wrote:
+> Recent changes have added an include of as-layout.h to pgtable.h.
+> However this introduces a circular dependency during asm-offsets
+> generation as as-layout.h depends on asm-offsets and pgtable.h is an
+> input for asm-offsets.
+> 
+> Building from a clean state results in the following error:
+> 
+>   CC      arch/um/kernel/asm-offsets.s
+> In file included from arch/um/include/asm/pgtable.h:48,
+>                  from include/linux/pgtable.h:6,
+>                  from include/linux/mm.h:31,
+>                  from include/linux/pid_namespace.h:7,
+>                  from include/linux/ptrace.h:10,
+>                  from include/linux/audit.h:13,
+>                  from arch/um/kernel/asm-offsets.c:8:
+> arch/um/include/shared/as-layout.h:9:10: fatal error: generated/asm-offsets.h: No such file or directory
+>     9 | #include <generated/asm-offsets.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[4]: *** [scripts/Makefile.build:182: arch/um/kernel/asm-offsets.s] Error 1
+> 
+> As the inclusion of as-layout.h in pgtable.h is not yet needed while
+> asm-offsets are generated, break the dependency here.
+> 
+> Fixes: a7f7dbae94a5 ("um: Remove file-based iomem emulation support")
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  arch/um/include/asm/pgtable.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+> index 1a0d7405e97c..3b42b0f45bf6 100644
+> --- a/arch/um/include/asm/pgtable.h
+> +++ b/arch/um/include/asm/pgtable.h
+> @@ -45,7 +45,9 @@ extern unsigned long *empty_zero_page;
+>   * area for the same reason. ;)
+>   */
+>  
+> +#ifndef COMPILE_OFFSETS
+>  #include <as-layout.h> /* for high_physmem */
+> +#endif
 
-On 10/13/2025 6:05 PM, Dmitry Baryshkov wrote:
-> On Mon, Oct 13, 2025 at 04:18:06PM +0530, Ritesh Kumar wrote:
-> > Add edp reference clock for edp phy on lemans chipset.
->
-> eDP, PHY, Fixes:foo bar baz
+Oops, my bad. Thanks for the fix!
 
-Sure, will update in next version.
+Reviewed-by: Tiwei Bie <tiwei.btw@antgroup.com>
 
->
-> > 
-> > Signed-off-by: Ritesh Kumar <quic_riteshk@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/lemans.dtsi | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> > index cf685cb186ed..1bcf1edd9382 100644
-> > --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> > @@ -5034,9 +5034,11 @@
-> >  				      <0x0 0x0aec2000 0x0 0x1c8>;
-> >  
-> >  				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-> > -					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
-> > +					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> > +					 <&gcc GCC_EDP_REF_CLKREF_EN>;
-> >  				clock-names = "aux",
-> > -					      "cfg_ahb";
-> > +					      "cfg_ahb",
-> > +					      "ref";
-> >  
-> >  				#clock-cells = <1>;
-> >  				#phy-cells = <0>;
-> > @@ -5053,9 +5055,11 @@
-> >  				      <0x0 0x0aec5000 0x0 0x1c8>;
-> >  
-> >  				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_AUX_CLK>,
-> > -					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
-> > +					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> > +					 <&gcc GCC_EDP_REF_CLKREF_EN>;
-> >  				clock-names = "aux",
-> > -					      "cfg_ahb";
-> > +					      "cfg_ahb",
-> > +					      "ref";
-> >  
-> >  				#clock-cells = <1>;
-> >  				#phy-cells = <0>;
-> > -- 
-> > 2.17.1
-> > 
->
+Regards,
+Tiwei
 
