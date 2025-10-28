@@ -1,179 +1,150 @@
-Return-Path: <linux-kernel+bounces-872852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B245BC122FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:40:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBF2C122ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BF10565A1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:37:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1BBD64F2899
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03B120DD72;
-	Tue, 28 Oct 2025 00:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01231F4606;
+	Tue, 28 Oct 2025 00:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fgGyZuxZ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdphfSy2"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045381F4CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31741A704B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761611829; cv=none; b=FS7StRtVwI0oKbTQwZ8gWXZ3dYCo0nhhOIb2SLWkjPA+Xdf6Z0NHy6bMlDEaFmcPGiicvZre334Cn6BlBucDObYXXO+xnA7bHQhBAcXunJ6MdJi8nTLxAmmUeOwkjsblxVVtTt815h9Bwf+Vc0jUkprOyv1DwDH16eE2Vm/yu48=
+	t=1761611949; cv=none; b=VKrtRb2rSkmb5gbhUkl4Saiew9UGERE9Mv2Pbjx7Rv/soLUq8/f+cTZYHfcjz8d0wU3yxssLLJ8JHt0P9ZVnk/jmLkbE7RNV5O5Ao2yYVCgDIeD4US6Zkhh8rYXNQZCph18T850LRS0ZHS6e4IcWb8oPVs73IC6jUVggT11xmDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761611829; c=relaxed/simple;
-	bh=QdkEAMsGYBzU3fN0cne5qZg46IOFvPzz9xbD2HV7VAQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=t/3LUOjxEVrGhRtAyRd667FFNhXNHv/pd1kuPlFGJQD96/+oRt1dvSA6Q4a3rKZCa3pnUePn+HOWHl+N6Uafwp0vCKimXxqPe5dKOWJHRwNz9GnOOqGEjl0qby7pD23L9wZhRbZvWJ+MaGYti/HjAeDtRuNCKCqsaCgHUcfDzaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fgGyZuxZ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so4969845a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:37:05 -0700 (PDT)
+	s=arc-20240116; t=1761611949; c=relaxed/simple;
+	bh=92L3b4Ntl7Ogh3uo+qzMPWm7sN+t4dOvnC1FUrJY5ZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ipn8a9gfcALBGNI1+Rsqnqr/NWiTo06lv+6JFSHYka5GlXrbEk5IBhIxs20IOaBrzbhkoeUlzziF+aIGMGBhddH61+gkXFEaxc69hyS3iW5XJENfC9vg6OyxhHqMlP7JeO+umjdagTTepToE5L2s9alj/zOdKS72pkBMdRTctX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdphfSy2; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b6cfffbb1e3so3787177a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:39:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761611825; x=1762216625; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J3mxOKer4OGfyDxlfqvGDsZ/A3KYgtdet3LczK0ONqE=;
-        b=fgGyZuxZxoFhZUStZEOkgSnMD24ZyWXS2V3OZAAoEIpZKU8UWL7ea7jebGj8oXRZvS
-         ptJemZcBakmkJS9N0IfXOYbmFs227noHivg6R3O20yPkmSfN6CO3Z+ztmApH78+V4wmt
-         05pOWnwPEevb+e4h2Kj2Wd6JDa9GkI1IV2nTOjdHOibYwC0gFwibdcoXY05UV62Pw4Jt
-         R0EnzB+vHuohh8eubyLliqqfKvzIt796M3KNC4/Nk9AWUG+hg0xldQGNUzvRsLXI1D5d
-         xlbZ9Aet7yAYgIk9a05o0KkrC2b3Kd/i7/JMRWGgCcPAqXVm8r1nF3ed8R5ApIm/AU0E
-         O50Q==
+        d=gmail.com; s=20230601; t=1761611947; x=1762216747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8s7zFl+2eb3TMAz+jhCE+xRnt2/MEJ1FXnvoxEqZlz4=;
+        b=OdphfSy2Jgme1nDOPVPRgiDi/WcEMqgEj9oqJreVYWDXtWlj8j/No49Bnhk33+G/8z
+         SMv3rTF8uCbxR/87540IQ8FaSP4CtEEYboi7Pq5J0oysH++AaNmCXQOIgHXipKHZOvhH
+         xYZ6MUd+pRg9iOIVK2G/9zVOHwZS1G5FtOicFdL/AlvHMKl9Cs9wYf5aPdTgE2koAqBz
+         d53EP5jnFFhh2afZ7NlIQ50ncZ1Pl86O+luFde/Curv4XDrWC5foIHuOjPJoZbU6AO40
+         JoDk7LiffKoQNvTULTrmayaAG3dyggEgL3QslANCMQM+DDd7O+iJaq/XqhFVRaAsBkIN
+         Zm2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761611825; x=1762216625;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J3mxOKer4OGfyDxlfqvGDsZ/A3KYgtdet3LczK0ONqE=;
-        b=XXA5/5K6Sn0adJ2JImfQhntDX97OmFYIryLihBHaMGInytoa0yDp90G91knvAF1pd2
-         /MFBfXjhoja5Lx5P7MaG32IaotWC2L2GpN7BlkdZny5mnBi4WAa9PhEZa44hINIIn9Xh
-         K9UbgIxftP1yoR/XLZ5gmmHy92xS9FWyliJNbXdEUYB0EerBkL4qeQe9wiKdArBnxIB1
-         x7SC8A+5t346SYXTvsxjAhPm6mKWkDJ4f+t7aYMxELYIvNVClbkxbbk1uGNkr2kNlEcZ
-         0HmNRuYpTQs21eCKPv2U6nectszyJcwInrDys3DnLfI+Jo2pqh+a3GDTkq3G0aW6sQZQ
-         Rs6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWa/KIkn+rv1hgegs6UgTPEpM1ZrrRi+ebKMCv018PmBV6r/0OnbOwncT7mLzyTXMDsSCMY/oA3kmP8U/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy32Pp89JaF+JRtxu8mlj2xciBCYPmdqYLCKHp/KFRIvE8Oykoq
-	SrhG0EoEjuRTek1YtXVKSW6BMaxYRkwrGTvj2lYy8qRWQlKRBfsPFXeAsz5as7clcs8qgGTDelx
-	PnFSdVQ==
-X-Google-Smtp-Source: AGHT+IGoxyiEdJHjsguM4HhfYAa3a3WGl9IwGzua+OMwKu3+3dxnKcX9NeqRP2yYPcwFhiCcHGTefjSDvqI=
-X-Received: from pjcc13.prod.google.com ([2002:a17:90b:574d:b0:33d:813f:6829])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5241:b0:329:cb75:fef2
- with SMTP id 98e67ed59e1d1-340279e5c84mr1590788a91.3.1761611825209; Mon, 27
- Oct 2025 17:37:05 -0700 (PDT)
-Date: Mon, 27 Oct 2025 17:37:03 -0700
-In-Reply-To: <55461c549803e08db97528127c29e092c597adc5.camel@intel.com>
+        d=1e100.net; s=20230601; t=1761611947; x=1762216747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8s7zFl+2eb3TMAz+jhCE+xRnt2/MEJ1FXnvoxEqZlz4=;
+        b=Kcmdg/54JFxsIAIRWzzzxRrY0HhrSbiyAoXMa4RqXIAaWF2gMz1LhDhop6TL+l+dmR
+         88a+1IhzqJdpiouZ6pNfXggS06Y6viJEr0+RDdSAuUrnf7iugQQrGTAibaJv6XbGSK5d
+         PVnObHFjtBo6ooN4WI9vBA7iaraMh76YZbqaDx1zIJWCzrDbHwBJMAoLxuHeWJ0n6vbx
+         gy81zYLzC2HLIAZ3ShCxfH9gcTfm/3LjOnXnAh7Cdzsp07dFs9AHvBr/KeLE4xwk7efl
+         HjTFOBNrGPlyxbsKviv1nj5zZsOLlHQAxCVL1Y2Eizitf0k4NXs8F//LVIs+alreZh+i
+         FKuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYKFrhkFJdZ2wcKSnvJ1mfHkui57vKFzDCJN96s+c3K4ZJrCbOQQFoJqrvAUc1iQ+wrT4xY3XkEfhp5CY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyABi5ncPNbLfcVzraEi0+YgNX20pooWz6u0RHDYlm2BZSkdBJu
+	Xjio7XfFwCAFr/bKlELE2pJsUUPKSA8X3v7WyaSXcs5bq8ngliP5Y5xR
+X-Gm-Gg: ASbGncvtP0h9bksGtd8o4mPKqXgg1D1wfsha5rhLZHhi3iU+GiF9VbX0g9MgID8IJgN
+	GtxQFqqe2HU9qVpwioji6dTugur6mHWcT61iAx399Ndcz+iuX+ZcqxIYF/lOvwAtdtie3r+7LZO
+	GYtPsy7h5b7vE+r28m/sgLmH8sY0jg5+GP5FjyQ6CVM/gG6cwUYCnK3nUho20tjNYIAxkYPlUQ2
+	GQLCe/82BmZVDvKSiT4GhixoM0V9yd598kq6b06i0oe/b+ph/d1Ia537MlzZM+Ra9k0wpmR3lCG
+	ajgIXhKQQ4TvO7XpGe+yvV9JdwvEbT4OhQJUnaEOM9Sz92+XZpE4EgkdNEggb9zmZpQOJNOZxft
+	timsO3lvt0Uk7RD8P4s9ReotMmvFU6RJPtsIULqsGyF88Zac2WfdDurwZp3QydVc61jjhMed31x
+	XaNh6MQr6U9rzBDXQRc6fv
+X-Google-Smtp-Source: AGHT+IF5ghXu9jBruY6ziKGQyMSMM4oq3ugUChPGlRqBf0309+0SovNGzWf+rJoqR49uQlRPUDRaYw==
+X-Received: by 2002:a17:902:c402:b0:290:b14c:4f36 with SMTP id d9443c01a7336-294cb52db11mr21604075ad.31.1761611947142;
+        Mon, 27 Oct 2025 17:39:07 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf359asm94353925ad.12.2025.10.27.17.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 17:39:06 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Han Gao <rabenda.cn@gmail.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	Yao Zi <ziyao@disroot.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v4 0/3] net: stmmac: dwmac-sophgo: Add phy interface filter
+Date: Tue, 28 Oct 2025 08:38:55 +0800
+Message-ID: <20251028003858.267040-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-25-seanjc@google.com>
- <55461c549803e08db97528127c29e092c597adc5.camel@intel.com>
-Message-ID: <aQAQLzxyGFooGtNV@google.com>
-Subject: Re: [PATCH v3 24/25] KVM: TDX: Guard VM state transitions with "all"
- the locks
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
-	"pjw@kernel.org" <pjw@kernel.org>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	"kas@kernel.org" <kas@kernel.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, 
-	"zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, 
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, Vishal Annapurve <vannapurve@google.com>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025, Kai Huang wrote:
-> On Thu, 2025-10-16 at 17:32 -0700, Sean Christopherson wrote:
-> > @@ -2781,8 +2827,6 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *ar=
-gp)
-> > =C2=A0	if (r)
-> > =C2=A0		return r;
-> > =C2=A0
-> > -	guard(mutex)(&kvm->lock);
-> > -
-> > =C2=A0	switch (tdx_cmd.id) {
-> > =C2=A0	case KVM_TDX_CAPABILITIES:
-> > =C2=A0		r =3D tdx_get_capabilities(&tdx_cmd);
->=20
-> IIRC, this patch removes grabbing the kvm->lock in tdx_vm_ioctl() but onl=
-y
-> adds the "big hammer" to tdx_td_init() and tdx_td_finalize(), so the
-> tdx_get_capabilities() lost holding the kvm->lock.
+As the SG2042 has an internal rx delay, the delay should be remove
+when init the mac, otherwise the phy will be misconfigurated.
 
-Ooh, yeah, nice catch, that is indeed silly and unnecessary churn.
+Since this delay fix is common for other MACs, add a common helper
+for it. And use it to fix SG2042.
 
-> As replied earlier, I think we can just hold the "big hammer" in
-> tdx_vm_ioctl()?
+Change from v3:
+- https://lore.kernel.org/all/20251024015524.291013-1-inochiama@gmail.com
+1. patch 1: fix binding check error
 
-Actually, I think we can have our cake and eat it too.  With this slotted i=
-n as
-a prep patch, the big hammer can land directly in tdx_vm_ioctl(), without a=
-ny
-change in functionality for KVM_TDX_CAPABILITIES.
+Change from v2:
+- https://lore.kernel.org/all/20251020095500.1330057-1-inochiama@gmail.com
+1. patch 3: fix comment typo
+2. patch 3: add check for PHY_INTERFACE_MODE_NA.
+
+Change from v1:
+- https://lore.kernel.org/all/20251017011802.523140-1-inochiama@gmail.com
+1. Add phy-mode property to dt-bindings of sophgo,sg2044-dwmac
+2. Add common helper for fixing RGMII phy mode
+3. Use struct to hold the compatiable data.
+
+Inochi Amaoto (3):
+  dt-bindings: net: sophgo,sg2044-dwmac: add phy mode restriction
+  net: phy: Add helper for fixing RGMII PHY mode based on internal mac
+    delay
+  net: stmmac: dwmac-sophgo: Add phy interface filter
+
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 20 +++++++++
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 20 ++++++++-
+ drivers/net/phy/phy-core.c                    | 43 +++++++++++++++++++
+ include/linux/phy.h                           |  3 ++
+ 4 files changed, 85 insertions(+), 1 deletion(-)
 
 --
-From: Sean Christopherson <seanjc@google.com>
-Date: Mon, 27 Oct 2025 17:32:34 -0700
-Subject: [PATCH] KVM: TDX: Don't copy "cmd" back to userspace for
- KVM_TDX_CAPABILITIES
+2.51.1
 
-Don't copy the kvm_tdx_cmd structure back to userspace when handling
-KVM_TDX_CAPABILITIES, as tdx_get_capabilities() doesn't modify hw_error or
-any other fields.
-
-Opportunistically hoist the call to tdx_get_capabilities() outside of the
-kvm->lock critical section, as getting the capabilities doesn't touch the
-VM in any way, e.g. doesn't even take @kvm.
-
-Suggested-by: Kai Huang <kai.huang@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/tdx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 1642da9c1fa9..43c0c3f6a8c0 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -2807,12 +2807,12 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp=
-)
- 	if (r)
- 		return r;
-=20
-+	if (tdx_cmd.id =3D=3D KVM_TDX_CAPABILITIES)
-+		return tdx_get_capabilities(&tdx_cmd);
-+
- 	guard(mutex)(&kvm->lock);
-=20
- 	switch (tdx_cmd.id) {
--	case KVM_TDX_CAPABILITIES:
--		r =3D tdx_get_capabilities(&tdx_cmd);
--		break;
- 	case KVM_TDX_INIT_VM:
- 		r =3D tdx_td_init(kvm, &tdx_cmd);
- 		break;
-
-base-commit: 672537233b8da2c29dca7154bf3a3211af7f6128
---
 
