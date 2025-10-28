@@ -1,445 +1,85 @@
-Return-Path: <linux-kernel+bounces-873589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E826C14360
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:57:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5A1C1436C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCE151A60A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330BE189C632
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251A93090D5;
-	Tue, 28 Oct 2025 10:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gWTDtY/B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8612E3043C9;
+	Tue, 28 Oct 2025 10:47:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975183043C9;
-	Tue, 28 Oct 2025 10:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761648407; cv=fail; b=MDWJC3gxZZT5L1nVzt9YWcVvhYZTcCnc6BeqVh5i4zriicId0vXbo3TO/p0mZWpvBRTBV9PRmyhuDjjAE03ZpuUdAX7zyqGeJacFSiepWf8ktsuUqYbrWlm9jeRMWxLvnXVFdygfVEtFHCTLCNUa+k1pLw3aqPQBxPCi0053YGs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761648407; c=relaxed/simple;
-	bh=o1PyFavr21c9iDsW+p407G/eCP8Yrj7Cr9dxNfXK5X4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cMcMfta96XWVI3ImujTtTMh/gP4cpysRpZzDbncivafloZACNE4pOm0mqCtpDqrjcJKQOnmmOQiIZ2xjMNnqPdNUwDdOPC3GWQNb6Sn+WrIwj3nKfT7hK5UCph1IlmlqTfSktpc4vmq2E/Tgr9BPthspb9+T9rfw6jbQ0XupYTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gWTDtY/B; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761648406; x=1793184406;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=o1PyFavr21c9iDsW+p407G/eCP8Yrj7Cr9dxNfXK5X4=;
-  b=gWTDtY/Bw6b9FXXtosZNuIF7ka8iy/VQ72+cKLaSNRpvB7Avk7qLOgdt
-   c8f+ASi3vhAH07+3W/cLnqPgB5aisMcrl26Y1kQZJFnm21fDrwQjvtTIf
-   k2E2o6G+rH659yGAFHWwu9+Kb1Gh8uvEJpYRZSZcCmSOM+7ydghiBBBnH
-   ctOXPimw5xPVOzz26YekFFBFwMoogVrylST7kAOc71PD6P34ZBbsh2LXi
-   mpG9KiMLY0HRWLTlxNG7R9bINLWwPpjxQZemf5UqB84dDX7ot80wrYWFT
-   UifpudrYjW/+Vkve2udT+fqA8/W6UhgF58Px2ZtV6JwmtPEm8w3r709vR
-   w==;
-X-CSE-ConnectionGUID: wR6jfXW8RFOv/QveAmD3TA==
-X-CSE-MsgGUID: kBcXu5gXTZ2pTkkctbkNAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74419141"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="74419141"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:46:45 -0700
-X-CSE-ConnectionGUID: 5spgch72ToS+KA/xXKeh3A==
-X-CSE-MsgGUID: IhPYhDL8TZSOttsZjAZT/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="208909729"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:46:44 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 03:46:44 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 03:46:44 -0700
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.32) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 03:46:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x/QKVuREswnCgYYXsSjAcWWf/c99bZKKMLhOXFlmwD4jO1b/LcYjof+y06OcFjC33pMn15EVWCdbY0SVRa/xev83SC3JcZW+nLeTCSHIXtdXBXbI3vNDm6GWhoHE+Nb6cg6bqJhqDIcwpYQXyw9r6gQ3L3PH/Mf2TK2sUMrfAh1iP1Pmc9HM9hGEZCmzmjY1ppCN3ZxkVeLffMpo4tYej6keofH3f8uJIUGU2jJSe1S+TdW0yZ1jLhKooo98G37fjwQdEUO//4fZ0inwlfVZ69DOWbBlnxQgZCWqLdsbWwM+OPScgV1qiM2Yt6rFm7h9nUYOKDaKdswIeRGOViBP/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N3XqrNQ4l/yu/WWSUdC6dUmXxC3JUmxYWEvUj8iJzDw=;
- b=kh7ZNnv/JNT+B0uolv0X69RrIfrOGAjVwcf+KhHlriy150XLPn5SyBaByrJ2K85CPx8u5F9C/aqesqL1giDzniXhb0VP8V/hX7NNQFfTN/qYhzV15fPtT0T1kBDMirefN59gDN5nyEHLCq3JMSt49RQ+7SmohOgW6CDanJzSCzfRNb+Cav7zhI/PQbEbitkazynJNQCYQ4jx1f6+yKL0eDScGPzy/sCH0VkoEYyWSsEuzdqq6D8Py/wL50ZWwoP7SQnGLBB2Qm3hdvVmbTPDXcjQTbnj+w8kTkLuLpcosI1RtQZAdki/FFMlvhlowbq3o6RM+rmVjLGrd+t5AvXXFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
- IA1PR11MB9520.namprd11.prod.outlook.com (2603:10b6:208:59e::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
- 2025 10:46:42 +0000
-Received: from DM4PR11MB5373.namprd11.prod.outlook.com
- ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
- ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
- 10:46:42 +0000
-Date: Tue, 28 Oct 2025 11:46:39 +0100
-From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>
-CC: Alex Williamson <alex.williamson@redhat.com>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
-	<kevin.tian@intel.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
-	<matthew.brost@intel.com>, <dri-devel@lists.freedesktop.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
- Laguna" <lukasz.laguna@intel.com>
-Subject: Re: [PATCH v2 11/26] drm/xe/pf: Increase PF GuC Buffer Cache size
- and use it for VF migration
-Message-ID: <smbbl7zs7ix7ue33k52i225nwycnh2psxwc2ohqysxbvwubm7f@v5wilk7eulc6>
-References: <20251021224133.577765-1-michal.winiarski@intel.com>
- <20251021224133.577765-12-michal.winiarski@intel.com>
- <687d4d54-09d6-4e30-921b-66c0e9bd0d51@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <687d4d54-09d6-4e30-921b-66c0e9bd0d51@intel.com>
-X-ClientProxiedBy: BE1P281CA0477.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:7e::22) To DM4PR11MB5373.namprd11.prod.outlook.com
- (2603:10b6:5:394::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95341309F00
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761648425; cv=none; b=R8IIwHJdCddXTEOUHVv00myiQlFoI9oikJ8kVaUUEZdB1nf8/t1vp62/NU2YqHjAbaTPb753E1kiA1ZdLZ7HU10/XKLQc5MV1IYSdEKFXm0T+OwquqdUQWlFWlJ+ry/4g4oCJfB+8N9a6x/M/xnFinG55eeHLrDt4KWJuDuRkS0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761648425; c=relaxed/simple;
+	bh=hSYj2myRX9IwSW60+FXGnEn6hLaz6s+dKUbXgv5VwwA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YWSUnQAmVk7v60Wyb6QSZwdZVVuRLYhaey41yVeQJnBwhQP+XVZ7NrJiij/u6QsrLCLRv4JoiGcSVxFXy9g2M+arT76kYX++nZXO0TuslM1GDK349cwBZ8JB6ilcqTELa//eFG5EhdQBnoVLqH3kJE1bY5tG2Ij++V5jHbYsLRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430db5635d6so72744985ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:47:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761648423; x=1762253223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=id/yDjnQWwuH5DTA5MbrY9nrqUnWxWcXQTVt6TbiYA4=;
+        b=dr8ZxVo5Y/xI22WFq1h6kJj1AtY03R1qsbaEzr/sSalKce+/RVoWQCtL24P1kX9hPx
+         pdNe/5RL74q8iuLRS6Fuvj7TjZZhW6TCtCiFBR1O1icuRTxjON/gdZprH2LE3nnXCX8X
+         GvGGi3jWd+vCFItfVtQDvAGW1GMp1dd/uzb5X/UaLbsViw770lX0QlGpqUu7ZTi3NWax
+         gNFOr3gyTb71+PY02+dXKYHeWFh68tJae217bPvB/VdfuQ58AnZdhhzIr/c0HRgp2DyS
+         wMFf+XHzNP+gwTrvSFD1yUyRiRpr6nKk64poVQq9SCvKkIdWqInOJWlV4XHvUpNpiIjB
+         HPFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6t5irkqX4E1vRILk1J8HTkAeXQ5/K8+L2BDWWWpcMaqtPnlWaIP/rudb2dPY6bL5t40Ltr/PywWcKCyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOSOm+iKGH7+uEA5ACn14j1fkRXUpYQ8dueR7AGFs++PVtSKe8
+	MFCtS8eqpG6Q7AnPdW+KkjRJbr7zEuZVF49qYGnFNTKd1xB9/1SdOGXvkhtAUqlyplFu45V5iOM
+	vsVJs3IDHM50F+STlwsw436HZNlTDAAyjKSa9brUchzAxSqTnG6VpVks3Byk=
+X-Google-Smtp-Source: AGHT+IEc+82aXpHvSkoOA88+apnyUQHpCzH/D7i/c58qeJnbNtgwdLXWZe0wrFJgIx5d7fa40LXgZTT1IrEJJyWVYr7RL5JEIZeG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|IA1PR11MB9520:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83b25afa-6db1-4a31-4127-08de160f4805
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NlV4NWhxTk85VFdydnkySkZJaEZPQmp6dkNxaTdzUzFCdTY4WURYZWlqS252?=
- =?utf-8?B?QlQ1YVJ6aE1LRzN1RUlDQTRrMFhBMDZOMUV6Z2VMdUJFV2VjdVJ1VDRJWkd4?=
- =?utf-8?B?SWRKbnR2RXl5TFdKQStpMC9PZDNYMkZxVk9mcHV1YkRMSFJIaHZucXkySkxW?=
- =?utf-8?B?Vmx3VzdtelhPS2Y5amRNK29EZDFqL0g5bTAzT291QzdkbHppYjE2UEZ0dWpn?=
- =?utf-8?B?ZkVHd2UyRjBLK1Q4SFpPRnVHVXVPTHZLVys3QmpQdkErZHpHdTQwVjdSZW9G?=
- =?utf-8?B?eFZIZWg2bjcxcG1nNWxYcEE1Q0VLZG1DWkhMeUdIOXJoT0xpenViUnkxUU55?=
- =?utf-8?B?bVBHSjVoKzdmMmhqZUpVUUlPSUZwQndVdS90WE92TzhQZVVBQ29WRDJOU0F6?=
- =?utf-8?B?d2E5YmJSZXZiS1ZsbGdXNWRmc3A2YUhoSnZTd1VRcTVWTHJHeHhVeDdscUtD?=
- =?utf-8?B?bmZPaG0ybE4xc3lZRUc3Ujh3UmNpZG9seGQvbjhWYlZsV0R4d0MxSEtTYzh5?=
- =?utf-8?B?UUMvUEI4VGpQTFNvbnZQS3IyMUdSUTd5WnJEQmJuNUZuTnd6UnFCczR6QVFH?=
- =?utf-8?B?M3JSQVNhM0s4ZlpPUUw4K0tDdkFEOFF4dzRpMTROemt0NXJMNTUvZTN1RUJE?=
- =?utf-8?B?b2xUbVN3cUV4dnJPQVpmdXdVRGxGdTJ1cEwzUlNWK2NHSDB6a055V3FEVUJy?=
- =?utf-8?B?Zk5XME5uZTdjeFNOczgvRm5CcC9ERDZLV1Z6akR6eVdMOHdKdnlKMUZuUVV0?=
- =?utf-8?B?RCt5UGVjOVVJQm82cDh4aVkyMU9hQjNMQnVHVWVwY1RpMER2cmV0RXVGellw?=
- =?utf-8?B?Qk5IK2liRFE2OU81b3UvY2ZXRjVsTU1KRlFTMlF1MEpqYzg4YmR3bklERG8r?=
- =?utf-8?B?OFFJbFFzTHA4YjdmNjJ4V2NSQTNLRjB5WWxLNzQ2d3dHRmw3dGUxczlzK3RX?=
- =?utf-8?B?MlJOa292NGVXRzByQzlvbnJzZENDS2d2TGFSS0cvZVkwY1B6Q3RlVU9ZSU1M?=
- =?utf-8?B?ZDJEOHBITHcvdGNGSTBBQ3FlUjlXeXdlZzMvRVV0aGU3amNORTN3UzgwYnZu?=
- =?utf-8?B?Vy9WSDJ0c2tVcWNNVlNHc2NDRE1UMU15aFdFQ3Y0ZTh2SlYxMEFHNVFXbEIz?=
- =?utf-8?B?OXpnRFJEdks0WWJNWXpJR3dDTU1weFNXVVh5YmtlanFKU09TY0xUSUUwb3Mv?=
- =?utf-8?B?d29zTVZBZFVHOGlYOWZnZ3dJbmd6RncyVFQyL0U0eTQwRklCYzg0OHQ0VHFR?=
- =?utf-8?B?eGJJejVTOVJVaFpCZnVQTUhQMEZaeXpVOFEzSVFQVjFTNWJHbXlKUU5XMy9n?=
- =?utf-8?B?b0UxcW1adjhEYzVxL1I1Y0xzN0ZwN3pPeXVLMHJyODE5SllXRFhhdU5VZ2RB?=
- =?utf-8?B?eVkzcWpXdVpya2NJVEpVWWJKMFg3VndmUklkcnZraVpnU1Mzb0hFZWs3Qk8x?=
- =?utf-8?B?MWNtWUswRDVvbGNRL2wxeWk1Rnhoc2NhR0NEbTNCSjJtaXNsUjgwL3l0QytE?=
- =?utf-8?B?a0VTSGVPR1NYVDhNa1FQS3pKbHVNdFliZGhlRFRVQk0vdVBmUHRwVXI1L1N0?=
- =?utf-8?B?MlBFdEtadEVuQU4zSGxESkR4RTZDL1RXKytVb01YVUdOZWhYS3R0U0J4d1Ex?=
- =?utf-8?B?cXdOT0hJYkIyTEQzUHJXWll4bEZMSzZtcVRQeEY4TVFMZUZNc3FFR3kyUmwz?=
- =?utf-8?B?dGNUalFiQmt5MkZwR2ZKNTV3d1FCRC84YW9TS0pmNUV3RFE4RWZQdkJGZHF4?=
- =?utf-8?B?MEJobllzbVN5TSt3R3ZuK2NKSXg0TDIwaWdPbkVuRFNXbUpIUU1CQXQ5b3ov?=
- =?utf-8?B?MXFGTExldy9EUXBYOUs4WWxmSEJpL09aQWpmQ2E4c3pUS2dTMGxaRFdxWXJs?=
- =?utf-8?B?VDJTdG8vQjdHNUNoYUZEZTdGTVh1a01kZHIvL2o0SkVXVkdGc29YVisrd09B?=
- =?utf-8?Q?DBlyIknlRXIMi2aYtMdylbH4WY4b3Mvi?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SnB5ai9uRUduVFY0SVk3c2pneTluRDFBWlV0YUpoa3F5ODRTZDdvVEY5WUo5?=
- =?utf-8?B?UHZsck9kN1ZxWVFVRjVJSHhtTmtiQjNWTlNxMHRrL1k3anJid2JjeWMrUXlB?=
- =?utf-8?B?d3NZOWU0dzNIZU9qbjI3blZjbzBBZ1lEWjFLUkZLVFZ4dUtVOHYyck1aT25U?=
- =?utf-8?B?ejIxNk0rVmFjYWhacVJ4eWNqdkwySTVLRDJrRVdBZk5LUk5NY3hhbkNzVUFs?=
- =?utf-8?B?TWRNblVmWmFKWWdTbDlJNjhGaU1YQUxqV3h2dEhJQU5pY0R2NFFXTzcwWWR4?=
- =?utf-8?B?WlA0L2ZJZmZ0VjhkblA2TCtERCtFYVM3ZnpES2FtQjN6Y1BoZFBoM0VYaFhC?=
- =?utf-8?B?aUtRQ1pCRGlteGRHaEpnZ0syeVBwN3lEUTBCYUxHT1Q2TDhXU2Qyd3Rid2Ez?=
- =?utf-8?B?Y282T2MzNjNYYTdFRHZ3bERidng2ZEFHd0RsWHRodUhNUzBlK1R6ODlUVkxw?=
- =?utf-8?B?UVp2dHUxZ0xhRVZlRThZZ1RYN25NYVYvaE9nZUNOWUdUclNVVmFZZmVnVm5E?=
- =?utf-8?B?YmRVbFRKNWNXOUUxdFhmajAxOU9IdHVrS1BWRjFxQkl3c3Y1ZjZNUElTOXFE?=
- =?utf-8?B?eC9NZnFraFhlRTN1bzYxVnJPVUEzN0N4NzRCOFpvc2d0WnFVOU9ZeGZkcXJ3?=
- =?utf-8?B?bzVzVGwrWVdRb0M1MHhVWHJzSys5UGUvcTJ4emkwbFNxWEpPMHJUMlpUS0RO?=
- =?utf-8?B?VUl5VGpvRnhwWWRnM3E1T2Q1bWo3bFY2cGJ5K3pMeUlwYURFMm1iby9QQ0Ri?=
- =?utf-8?B?bjdyNWlnRWU5Z2NpSG03RTRwbUY3OHFPNU1GeGxxd09ESjZVNzZSUlk2VFdk?=
- =?utf-8?B?UjBObjhFelEzSzhjS0twM1dleTJXUlRkVUxKb0NWWEFrSWRiV1ZoSnQxVVJ3?=
- =?utf-8?B?ekZJNGFSWS9NcVBDWllQbVRYbEowclVwUk1tWGlERHBjYWhVQVVWQkV4SEdY?=
- =?utf-8?B?MlZSYUdtL2NBWUNYa3V1OFVwa1JXblQrZVhMM1ZubDhMbVJoU202THJUWFFG?=
- =?utf-8?B?ODgzMUlPdStLUFF4eWZ0NVZjRzU0QXBpbnJ5MUFOcUUrZm0rckVTNmpzMlo0?=
- =?utf-8?B?RjdkVTdJQnlyNm5QSkFpeTBwcXIxa2ZTR0RZSUxRWXQvMFZPdjBrOXRUaDVY?=
- =?utf-8?B?c2JOMFZUNHU5TUlVVjdNeHZCWm5ydmdSeDFibFgyRzB1NERrRXhtR1BhdU5n?=
- =?utf-8?B?SnN4Ly82NjJ0TUk1bGJJd0hncHZHeDRod25WZDVrZE9QZ1lvcmhEdlptU2t4?=
- =?utf-8?B?K2IwTGV6M1lNdk1pZU9JWXV0MEZyY0plaWJvSWp6N1dsdDR6WXdhbGVqN05G?=
- =?utf-8?B?bTl3cklpQVQzRmtUZWtYZXlHUHFzdmNESmtIVVQ5R0xBeGxCSWFpNkZwK0k5?=
- =?utf-8?B?cEtHNS9sSkIrbTVBakxXWThPYnArYlRqbmJkMkloZWMzdFN5ak1KenlYOGpC?=
- =?utf-8?B?Z0t3NW9ZNmlOMHEyMEZMZVMrM2dXN0llcGZ0S2NOTmxTUXBSVkxnT0NDVjJq?=
- =?utf-8?B?YmFpVU1ydDQxSlRSeDExbDMxUkl5ZHJqNVJwZW80aWNvdWQ0TGQ3dGNkRyt0?=
- =?utf-8?B?YStUb1lIUEJqRWNDNm1Ld1NsUUExV1ZqN1ltSnhJYWVSOVdnbm5SNWVLaG0v?=
- =?utf-8?B?NjdUVXVaQVExcVVTVHNrVjZySDVqanllV2RwWGJ4SWxudVEvczdobUZvRDcy?=
- =?utf-8?B?S1RiZktkcEVndlBVVUM2SW5tc1BtREV2Qk9BcnZtaFdUemdoVmRZU3lmK29Z?=
- =?utf-8?B?bnRsdC95eTZzcE1ETXhRM0ZwVEhPMlRzenlNRk83RDJMWXhQU0VFNFcxSmlK?=
- =?utf-8?B?RHpYZ0N5Zkx0ekNXUkFZdnM1cVZnSW1wcUZKNFBkV3M1UDRjRXBTeC9TR1Vy?=
- =?utf-8?B?ZGlRazROMHdiYXZ1MjdRQ2l4VDNrb1FvdlExS04yLys0RGluYm1yc1BJRmVK?=
- =?utf-8?B?N1I4clFGYWY4bFRWbEJZYzh6bStiazRSWm8zYWRNZk9BSzI2SzZPNzlnMkpE?=
- =?utf-8?B?OVVvSk5MOFZsM1FLYXBKUWNyOHlCbTBMeDFGZkJBandxSmY0UW1RN09IWmRz?=
- =?utf-8?B?bStVN3RWSHAyS1YvWUtmbVZqWEdaRDdqRGFjSVJ0WUZFNGlvN2RpVHJEOFBJ?=
- =?utf-8?B?N2ZoOTN3di9oOGNkVVpYNUVoVXdjTmZLQmpoY1lPSlBtUWFZUFVoQTRzTTNz?=
- =?utf-8?B?QUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83b25afa-6db1-4a31-4127-08de160f4805
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 10:46:42.4221
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6g5diAbR7uQrL512wZmKujtDetuvMumF3uwE7iBI0IZLYm8Bh2pIGcdxFyBABtrNyywBKmdTkHr8Obn7wHCdl3RS4KoXB/fhJSBb16guccs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB9520
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6e02:1b0c:b0:430:ad98:981f with SMTP id
+ e9e14a558f8ab-4320f6a773bmr41252165ab.4.1761648422843; Tue, 28 Oct 2025
+ 03:47:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 03:47:02 -0700
+In-Reply-To: <20251028104121.ety-O%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69009f26.050a0220.32483.0188.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
+From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 23, 2025 at 07:37:48PM +0200, Michal Wajdeczko wrote:
-> 
-> 
-> On 10/22/2025 12:41 AM, Michał Winiarski wrote:
-> > Contiguous PF GGTT VMAs can be scarce after creating VFs.
-> > Increase the GuC buffer cache size to 4M for PF so that we can fit GuC
-> > migration data (which currently maxes out at just under 4M) and use the
-> 
-> but the code below still uses 8M
+Hello,
 
-Yeah - turns out we need more than 4M (I did my math on one of the
-structs, but there's actually additional data present), so let's just
-stick to 8M for now.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> 
-> > cache instead of allocating fresh BOs.
-> > 
-> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
-> > ---
-> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 46 ++++++-------------
-> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h |  3 ++
-> >  drivers/gpu/drm/xe/xe_guc.c                   | 12 ++++-
-> >  3 files changed, 28 insertions(+), 33 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
-> > index 4e26feb9c267f..04fad3126865c 100644
-> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
-> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
-> > @@ -11,7 +11,7 @@
-> >  #include "xe_gt_sriov_pf_helpers.h"
-> >  #include "xe_gt_sriov_pf_migration.h"
-> >  #include "xe_gt_sriov_printk.h"
-> > -#include "xe_guc.h"
-> > +#include "xe_guc_buf.h"
-> >  #include "xe_guc_ct.h"
-> >  #include "xe_sriov.h"
-> >  #include "xe_sriov_migration_data.h"
-> > @@ -57,73 +57,55 @@ static int pf_send_guc_query_vf_state_size(struct xe_gt *gt, unsigned int vfid)
-> >  
-> >  /* Return: number of state dwords saved or a negative error code on failure */
-> >  static int pf_send_guc_save_vf_state(struct xe_gt *gt, unsigned int vfid,
-> > -				     void *buff, size_t size)
-> > +				     void *dst, size_t size)
-> >  {
-> >  	const int ndwords = size / sizeof(u32);
-> > -	struct xe_tile *tile = gt_to_tile(gt);
-> > -	struct xe_device *xe = tile_to_xe(tile);
-> >  	struct xe_guc *guc = &gt->uc.guc;
-> > -	struct xe_bo *bo;
-> > +	CLASS(xe_guc_buf, buf)(&guc->buf, ndwords);
-> >  	int ret;
-> >  
-> >  	xe_gt_assert(gt, size % sizeof(u32) == 0);
-> >  	xe_gt_assert(gt, size == ndwords * sizeof(u32));
-> >  
-> > -	bo = xe_bo_create_pin_map_novm(xe, tile,
-> > -				       ALIGN(size, PAGE_SIZE),
-> > -				       ttm_bo_type_kernel,
-> > -				       XE_BO_FLAG_SYSTEM |
-> > -				       XE_BO_FLAG_GGTT |
-> > -				       XE_BO_FLAG_GGTT_INVALIDATE, false);
-> > -	if (IS_ERR(bo))
-> > -		return PTR_ERR(bo);
-> > +	if (!xe_guc_buf_is_valid(buf))
-> > +		return -ENOBUFS;
-> > +
-> > +	memset(xe_guc_buf_cpu_ptr(buf), 0, size);
-> 
-> hmm, I didn't find in the GuC spec that this buffer must be zeroed, so why bother?
+failed to checkout kernel repo https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/linux-6.1.y: failed to run ["git" "fetch" "--force" "4d52a57a3858a6eee0d0b25cc3a0c9533f747d8f" "linux-6.1.y"]: exit status 128
 
-That was found during testing, GuC actually expects the buffer to be
-zeroed.
-I'll ping folks to update the spec.
 
-> >  
-> >  	ret = guc_action_vf_save_restore(guc, vfid, GUC_PF_OPCODE_VF_SAVE,
-> > -					 xe_bo_ggtt_addr(bo), ndwords);
-> > +					 xe_guc_buf_flush(buf), ndwords);
-> >  	if (!ret)
-> >  		ret = -ENODATA;
-> >  	else if (ret > ndwords)
-> >  		ret = -EPROTO;
-> >  	else if (ret > 0)
-> > -		xe_map_memcpy_from(xe, buff, &bo->vmap, 0, ret * sizeof(u32));
-> > +		memcpy(dst, xe_guc_buf_sync_read(buf), ret * sizeof(u32));
-> 
-> nit: given this usage, maybe one day we should add optimized variant that copies directly to dst?
-> 
-> 	xe_guc_buf_sync_into(buf, dst, size);
-> 
-> >  
-> > -	xe_bo_unpin_map_no_vm(bo);
-> >  	return ret;
-> >  }
-> >  
-> >  /* Return: number of state dwords restored or a negative error code on failure */
-> >  static int pf_send_guc_restore_vf_state(struct xe_gt *gt, unsigned int vfid,
-> > -					const void *buff, size_t size)
-> > +					const void *src, size_t size)
-> >  {
-> >  	const int ndwords = size / sizeof(u32);
-> > -	struct xe_tile *tile = gt_to_tile(gt);
-> > -	struct xe_device *xe = tile_to_xe(tile);
-> >  	struct xe_guc *guc = &gt->uc.guc;
-> > -	struct xe_bo *bo;
-> > +	CLASS(xe_guc_buf_from_data, buf)(&guc->buf, src, size);
-> >  	int ret;
-> >  
-> >  	xe_gt_assert(gt, size % sizeof(u32) == 0);
-> >  	xe_gt_assert(gt, size == ndwords * sizeof(u32));
-> >  
-> > -	bo = xe_bo_create_pin_map_novm(xe, tile,
-> > -				       ALIGN(size, PAGE_SIZE),
-> > -				       ttm_bo_type_kernel,
-> > -				       XE_BO_FLAG_SYSTEM |
-> > -				       XE_BO_FLAG_GGTT |
-> > -				       XE_BO_FLAG_GGTT_INVALIDATE, false);
-> > -	if (IS_ERR(bo))
-> > -		return PTR_ERR(bo);
-> > -
-> > -	xe_map_memcpy_to(xe, &bo->vmap, 0, buff, size);
-> > +	if (!xe_guc_buf_is_valid(buf))
-> > +		return -ENOBUFS;
-> >  
-> >  	ret = guc_action_vf_save_restore(guc, vfid, GUC_PF_OPCODE_VF_RESTORE,
-> > -					 xe_bo_ggtt_addr(bo), ndwords);
-> > +					 xe_guc_buf_flush(buf), ndwords);
-> >  	if (!ret)
-> >  		ret = -ENODATA;
-> >  	else if (ret > ndwords)
-> >  		ret = -EPROTO;
-> >  
-> > -	xe_bo_unpin_map_no_vm(bo);
-> >  	return ret;
-> >  }
-> >  
-> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
-> > index e2d41750f863c..4f2f2783339c3 100644
-> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
-> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
-> > @@ -11,6 +11,9 @@
-> >  struct xe_gt;
-> >  struct xe_sriov_migration_data;
-> >  
-> > +/* TODO: get this information by querying GuC in the future */
-> > +#define XE_GT_SRIOV_PF_MIGRATION_GUC_DATA_MAX_SIZE SZ_8M
-> 
-> so it's 8M or 4M ?
-> 
-> maybe wrap that into function now
-> 
->   u32 xe_gt_sriov_pf_migration_guc_data_size(struct xe_gt *gt)
->   {
->         if (xe_sriov_pf_migration_supported(gt_to_xe))
-> 		return SZ_4M; /* TODO: ... */
-> 	return 0;
->   }
+Tested on:
 
-XE_GT_SRIOV_PF_MIGRATION_GUC_DATA_MAX_SIZE disappears from this header
-as a result of previous changes, so the size calculation can be kept
-static.
+commit:         [unknown 
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git linux-6.1.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15b81f34580000
 
-> 
-> > +
-> >  int xe_gt_sriov_pf_migration_init(struct xe_gt *gt);
-> >  int xe_gt_sriov_pf_migration_save_guc_state(struct xe_gt *gt, unsigned int vfid);
-> >  int xe_gt_sriov_pf_migration_restore_guc_state(struct xe_gt *gt, unsigned int vfid);
-> > diff --git a/drivers/gpu/drm/xe/xe_guc.c b/drivers/gpu/drm/xe/xe_guc.c
-> > index 7c65528859ecb..cd6ab277a7876 100644
-> > --- a/drivers/gpu/drm/xe/xe_guc.c
-> > +++ b/drivers/gpu/drm/xe/xe_guc.c
-> > @@ -24,6 +24,7 @@
-> >  #include "xe_gt_printk.h"
-> >  #include "xe_gt_sriov_vf.h"
-> >  #include "xe_gt_throttle.h"
-> > +#include "xe_gt_sriov_pf_migration.h"
-> >  #include "xe_guc_ads.h"
-> >  #include "xe_guc_buf.h"
-> >  #include "xe_guc_capture.h"
-> > @@ -40,6 +41,7 @@
-> >  #include "xe_mmio.h"
-> >  #include "xe_platform_types.h"
-> >  #include "xe_sriov.h"
-> > +#include "xe_sriov_pf_migration.h"
-> >  #include "xe_uc.h"
-> >  #include "xe_uc_fw.h"
-> >  #include "xe_wa.h"
-> > @@ -821,6 +823,14 @@ static int vf_guc_init_post_hwconfig(struct xe_guc *guc)
-> >  	return 0;
-> >  }
-> >  
-> > +static u32 guc_buf_cache_size(struct xe_guc *guc)
-> > +{
-> > +	if (IS_SRIOV_PF(guc_to_xe(guc)) && xe_sriov_pf_migration_supported(guc_to_xe(guc)))
-> > +		return XE_GT_SRIOV_PF_MIGRATION_GUC_DATA_MAX_SIZE;
-> 
-> then
-> 	u32 size = XE_GUC_BUF_CACHE_DEFAULT_SIZE;
-> 
-> 	if (IS_SRIOV_PF(guc_to_xe(guc)))
-> 		size += xe_gt_sriov_pf_migration_guc_data_size(guc_to_gt(guc));
-> 
-> 	return size;
-
-As the cache gets reused, we don't need to add anything to the default
-(we should just replace the size with the new requirement for the
-largest object size).
-
-Thanks,
--Michał
-
-> 
-> > +	else
-> > +		return XE_GUC_BUF_CACHE_DEFAULT_SIZE;
-> > +}
-> > +
-> >  /**
-> >   * xe_guc_init_post_hwconfig - initialize GuC post hwconfig load
-> >   * @guc: The GuC object
-> > @@ -860,7 +870,7 @@ int xe_guc_init_post_hwconfig(struct xe_guc *guc)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	ret = xe_guc_buf_cache_init(&guc->buf, XE_GUC_BUF_CACHE_DEFAULT_SIZE);
-> > +	ret = xe_guc_buf_cache_init(&guc->buf, guc_buf_cache_size(guc));
-> >  	if (ret)
-> >  		return ret;
-> >  
-> 
 
