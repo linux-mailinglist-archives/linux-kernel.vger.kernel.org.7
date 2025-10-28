@@ -1,151 +1,243 @@
-Return-Path: <linux-kernel+bounces-872859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1FAC123A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:44:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83124C123B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73C43AFDBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9650F3B5DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1E620297E;
-	Tue, 28 Oct 2025 00:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5AA21CFE0;
+	Tue, 28 Oct 2025 00:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b2n7/G0E"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sjzx0oFY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2905183CC3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625931FE455
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612166; cv=none; b=agnP5MS9wYAW7z1QdTcy5Gj5p6l4rkhB6wCzSSFD6YS3n18EkGE27sWhMMdHBcvyfbzdyIDebphEUkyBLryVMAaS7JMvmx35XHS82mXgipcG8aS84p/aAbjCdTMICPr4tFm1SedkVKLwN7RzeLJ+fVwRMwR3AiGrtTWUf4WCzqQ=
+	t=1761612172; cv=none; b=t+OE96fkXtIOEhLxCNShH7RBfA55OucLGu1wM370VUHdmGWl+4QYiVaSUfuuTE2rjrRC1gMNjv01/gMwuwoCXeAeCs1CUvPZ7JFw5wtAjrfpWuaSrqWh50eh4is7+yfVWuuIz6MzKT9kj+9PJFMWjnYtVMNpcb/CWIqi2qzErpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612166; c=relaxed/simple;
-	bh=oRtsjVcJ/A8fEEsNtN0vYPNz4dkLNcetcREgBeg4ewU=;
+	s=arc-20240116; t=1761612172; c=relaxed/simple;
+	bh=Oaec4CMUKIqFFDe8IlwQUNfn1sis7V34LfNDLJjhz+M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DYEJ6HLMjeLUZQg+owe34uQ9Q2Daq3/Ie+3Bnyd0sR/csCGV7cUu/C4i5Jv/Mv4wX0gn+yLook2/H78BtR3iRc87UI13pxCbzkLJ+wbkQ7MENdUqEpvyVWAvgNco0aeON2a+zVju63dEZOcfc8cE/3Z1CiM8MaLk63mvdkuSmvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b2n7/G0E; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-587bdad8919so3618e87.0
+	 To:Cc:Content-Type; b=kcldTjVtaeIYmsiy4H159tJAnEmNnig1q8zAlzkHRdsLrTSZd26aTcBXsmUaWyo0m1jCdyZ9arXCqQ+zlkbBGfDAmOWQdeppPo+cIVghDfPIRMK9DxhsklTs1UarNmJ27a6P7PwdPiLo/WAqSuFpSLI17yqlbxjJm5g8ArYtkuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sjzx0oFY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761612167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4S4XxcpkkVefNpOn6q/1PCcyZWnz2c3jb89kMwD+Dak=;
+	b=Sjzx0oFY/6d37h76Y3JUmtwP8Bwxx6O4u0L4hvc8mthDEcfV8JjA0yf/bvfqrXuo0bcP7x
+	GxsMI20d1ggMPCN3JUa3uzmjKJUsap5Lax1iEeEZ47f8ceXycQpO7fXv1izhrAexg2cG2o
+	YcrU86LCSu2dXU5rui3+zqF9aV4JLvQ=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-p3_Unw1FOr26W3RZMiJGWA-1; Mon, 27 Oct 2025 20:42:45 -0400
+X-MC-Unique: p3_Unw1FOr26W3RZMiJGWA-1
+X-Mimecast-MFC-AGG-ID: p3_Unw1FOr26W3RZMiJGWA_1761612164
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so4256525a91.2
         for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761612163; x=1762216963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oRtsjVcJ/A8fEEsNtN0vYPNz4dkLNcetcREgBeg4ewU=;
-        b=b2n7/G0EhQn13xGHmXFb92QzbPD+J8p2VA4GfPi/0+Gak6gfq3MvZaWg9UQia3QNU3
-         d2Mm9q6LweivuPf2ri5JlB/sxfYwKXaSFM+Q5dOZQJ03mwdUyMsTZRTbDOQUKT0i+WLM
-         YxG4kgdQ0ZDj3xAAIQNNYUgmsEjkpkegrSbHXhxOKTWoLjmyBUto6BkBNoZy50o7LfOg
-         3hOy/Z9c7A7/2iKzsA3pAIaFOUBnrww8sv+KEDinZZtBQk6w6cCAWlKiGLdjujkh3HHo
-         sKvXc2xRplskBSJQEutGaWzlKLOnAiVhb1stLxwrU0fUKeIybT4ljxxBvKGg2E9YA80K
-         R4fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761612163; x=1762216963;
+        d=1e100.net; s=20230601; t=1761612164; x=1762216964;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oRtsjVcJ/A8fEEsNtN0vYPNz4dkLNcetcREgBeg4ewU=;
-        b=msrzU2Kv6xM3REjOVOAYmVMm/1GeEtjgRi2mTN+GEAs6r60/R3qp65CpXRVfZvQSmO
-         9jVW3Z1uBhCZb+CNDBLCDJsZe2wvED4Xmi3+0Gv5vbXlwhMRRfsSMeF3MmpqamwmL2hc
-         4PIqs5NI7j40BBq2es7SJZn5UWwsXczSOOO3k2K6Ifw51LCW/8C0ittK66fcyogXjeAY
-         UA1e7xpQHCOkhiQ+G7M3V/V0p80ODR0RMA4j8xjkmkvaEY7UbxU23VYXVoA8QySWGz2x
-         qWxu+VGo3BEwFukgNCAtDHV4QiIkE4OGmj3NPDg6bb/4sPpUOMRcxMxts+xyZGyoYaB9
-         VJKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqxwfkQRMvPW2joCXsW//Mnf4ogoIx6EMaPo+u5lOo4XPBWSqQWzw6R9/w/Pusl1sQfz+aZb+OBcXi8hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUrGu+3rERVxhrc30fW9Jc6fhenvDyOPTnwTqe5CUsqaVF6qZl
-	YNblrNI6evojhMIDDzY4G97BNlo2tXK2cx57qKAJ2K33CoFR7GFK5+qnOugGAHbW2UBCkWhaJ26
-	fEyJSx8eDYsH7EgunUSyhdIWMsGk80N1AOlbF66kU
-X-Gm-Gg: ASbGncvNq7H6tOx9Kr6geNZep2ZUGJxGxVTf5ii2Vo4q9MOtuuqn/V77e7Sq8Y6HCPl
-	az7RAHT6PBgFvJTvu7TPXWq9r3flKfD8YOGkOIU3YOzdlgtWMOQm4Uv7kEO1L/Y0jBxPet3AfrN
-	ioirG6wr6pJvk8ZFKRR5myGKUopvG2ET2tkZjYQ+NogCjeyniAf4V5tumBHQV6gD+Dm12Qj1HWe
-	rPcCVnPBaBSuQnyiOWOc49qcPk57ZA0vWhM7Wy1fy8AYkY4Z7Mv3it1IGUmTONNuFzbyKIyQdyZ
-	/HThFu0hVuUH5GsTfw==
-X-Google-Smtp-Source: AGHT+IFw2bXIFgS8L/YVVeC33nm+UNrZcFgq5PEguvjPBESW3pE71lH4QTQVICsX7/B6/DuEYo7ofU65s8tSDuAUZu8=
-X-Received: by 2002:ac2:4189:0:b0:591:d7cb:ac2f with SMTP id
- 2adb3069b0e04-5930ff5faafmr97301e87.7.1761612162578; Mon, 27 Oct 2025
- 17:42:42 -0700 (PDT)
+        bh=4S4XxcpkkVefNpOn6q/1PCcyZWnz2c3jb89kMwD+Dak=;
+        b=w1gREqyD5gHrkMjrE+G3NlOSjpTzlrHvxwVM+3Yua9+6YJJbQ0PswpibP/qGv7k+b2
+         aOP06DwroiokcumAc5ow1A8kqcvWPKYKEzepvHlqWPyxWHAF8Aqm1e5j3fE9VVzCWuuJ
+         V8OHSsA0YmiUc1RPMTq3jn9GCKolytgsSemxydU2H07GfXnzMmptbRwREr6AQw7RCkeM
+         //Lh9TgdG/UdTom6ObMAXfsCc6uU1LIdVspcxV0w1UJkZ4qdmkhTk6QggW1/Qly6eIlC
+         6m+k85g7HHDcbT8vFRSDQ8NH3vTNxSZop2MPnsJx7wGB4uwkPzi++IBqb4vc9cPbNXTm
+         vfsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlqYrGN9TyOjZXNAI669bsBT0793u4FULmJ3h13meIiMSDmA32OdF0M8mv2E+aK8/2kBMLyc3FutOlWJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0CSEyehfgACbJYAqKGOTfHwgGjtjlMnfUAwWLvCCtkdkXN7LE
+	ndrgrHagWtkFoyoqoavMYruRdnGwoHyUi1x8/IQdXOkQDA+gjjBTW1EqEtXBANH1PRcA87RrBBQ
+	A900PmnGWGgWx7bKxIFt+Lps2ArIo5Hufn+wBoKyHCgopMzCFr2UkkcUZ6smUVp2GNZM86NjGig
+	T5ZO5vtTs69dNK7bUKaLnqNSND69mpN6wrwFI8L/ch
+X-Gm-Gg: ASbGncvjBYrWHzrWE0ZFblcYfItUjUhDwk7H6kGHSynhZbsrgla0Ml8U0kLiXF4JlzJ
+	4xPBA/qWMHILZVYmaBMGdr/MNGr0IeZ2TsqiaEPaO70kZyIyJoLNUZ6t3jSbYA5f5gbxedADo+D
+	ru5tTV2bdZ0KY2fAW3p2gd8HETtO/QkK/Aug3Nt668GiTvucSIERyA89z/
+X-Received: by 2002:a17:90b:56cc:b0:330:6d2f:1b5d with SMTP id 98e67ed59e1d1-34027aac137mr1890122a91.26.1761612163812;
+        Mon, 27 Oct 2025 17:42:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGeNHCkzvcBmGGrJKaZzXODCr5cxEfASlCJa7QDO1rQohJ+NiOJXFwAxYkL7H35SEY2hZXkIcNLNUTEFlIZH4E=
+X-Received: by 2002:a17:90b:56cc:b0:330:6d2f:1b5d with SMTP id
+ 98e67ed59e1d1-34027aac137mr1890105a91.26.1761612163245; Mon, 27 Oct 2025
+ 17:42:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com> <IA1PR11MB94955392108F5A662D469134E7E9A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH96B5K9Hk5h0FgxSUBa-pik=E=dLrO-4oxx76dxb9=7wQ@mail.gmail.com>
- <IA1PR11MB9495BB77A4FAFBD78600416AE7F6A@IA1PR11MB9495.namprd11.prod.outlook.com>
- <CAGtprH-h_axusSLTWsEZ6QoxgmVs0nVknqNJx-iskpsg_qHKFg@mail.gmail.com>
- <aPiEakpcADuQHqQ3@intel.com> <CAGtprH8q5U6h3p5iDYtwRiyVG_xF8hDwq6G34hLt-jhe+MRNaA@mail.gmail.com>
- <CAGtprH9bLpQQ_2UOOShd15hPwMqwW+gwo1TzczLbwGdNkcJHhg@mail.gmail.com>
- <aad8ae43-a7bd-42b2-9452-2bdee82bf0d8@intel.com> <aPsuD2fbYwCccgNi@intel.com>
- <ca688bca-df3f-4d82-97e7-20fc26f7d69e@intel.com> <68fbd63450c7c_10e910021@dwillia2-mobl4.notmuch>
- <2e49e80f-fab0-4248-8dae-76543e3c6ae3@intel.com> <68fbebc54e776_10e9100fd@dwillia2-mobl4.notmuch>
- <10786082-94e0-454e-a581-7778b3a22e26@intel.com> <CAGtprH8AbW4P2t-wHVcTdfLwf3SJK5mxP1CbsMHTgMYEpLiWjQ@mail.gmail.com>
- <68fc2af6305be_10e210029@dwillia2-mobl4.notmuch> <CAGtprH8-UGFkh4NmuY1ETPYmg7Uk+bm24Er2PPxf8tUOSR_byQ@mail.gmail.com>
- <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch> <CAGtprH8g5212M26HPneyaHPq8VKS=x4TU4Q4vbDZqt_gYLO=TA@mail.gmail.com>
- <68ffbfb53f8b5_10e210078@dwillia2-mobl4.notmuch>
-In-Reply-To: <68ffbfb53f8b5_10e210078@dwillia2-mobl4.notmuch>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Mon, 27 Oct 2025 17:42:12 -0700
-X-Gm-Features: AWmQ_bkOvNOoyYYGvZvdTfXeutFda2xaA6pWnjheLCpVly0yu6n27cY5_y3tmEw
-Message-ID: <CAGtprH-rv9T1ano+ti=3eU4FO2APCOcR06buPALggAwUnka3Dg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: dan.j.williams@intel.com
-Cc: Dave Hansen <dave.hansen@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	"Reshetova, Elena" <elena.reshetova@intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"Chatre, Reinette" <reinette.chatre@intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Huang, Kai" <kai.huang@intel.com>, "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>, 
-	"sagis@google.com" <sagis@google.com>, "paulmck@kernel.org" <paulmck@kernel.org>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
+References: <20251027102644.622305-1-nhudson@akamai.com>
+In-Reply-To: <20251027102644.622305-1-nhudson@akamai.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 28 Oct 2025 08:42:32 +0800
+X-Gm-Features: AWmQ_bklpkUHU7-3U6X8wKJFt2zjBDUD0EycaiSZymIdh7dZBD-GL8V0CTdBW5Y
+Message-ID: <CACGkMEtyX6n9uLMmo7X08tFS-V6QZoDVTxhE53h9sLDPNBKnKw@mail.gmail.com>
+Subject: Re: [PATCH] vhost: add a new ioctl VHOST_GET_VRING_WORKER_INFO and
+ use in net.c
+To: Nick Hudson <nhudson@akamai.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Max Tottenham <mtottenh@akamai.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 11:53=E2=80=AFAM <dan.j.williams@intel.com> wrote:
+On Mon, Oct 27, 2025 at 6:27=E2=80=AFPM Nick Hudson <nhudson@akamai.com> wr=
+ote:
 >
-> Vishal Annapurve wrote:
-> [..]
-> > > A theoretical TDX Module change could ensure that atomicity.
-> >
-> > IIUC TDX module already supports avoiding this clobber based on the
-> > TDH.SYS.SHUTDOWN documentation from section 5.4.73 of TDX ABI Spec
-> > [1].
-> >
-> > Host kernel needs to set bit 16 of rcx when invoking TDH.SYS.SHUTDOWN
-> > is available.
-> >
-> > "If supported by the TDX Module, the host VMM can set the
-> > AVOID_COMPAT_SENSITIVE flag to request the TDX Module to fail
-> > TDH.SYS.UPDATE if any of the TDs are currently in a state that is
-> > impacted by the update-sensitive cases."
+> The vhost_net (and vhost_sock) drivers create worker tasks to handle
+> the virtual queues. Provide a new ioctl VHOST_GET_VRING_WORKER_INFO that
+> can be used to determine the PID of these tasks so that, for example,
+> they can be pinned to specific CPU(s).
 >
-> That is not a fix. That just shifts the complexity from build to update.
-> It still leaves update in a state where it is not guaranteed to make
+> Signed-off-by: Nick Hudson <nhudson@akamai.com>
+> Reviewed-by: Max Tottenham <mtottenh@akamai.com>
+> ---
+>  drivers/vhost/net.c              |  5 +++++
+>  drivers/vhost/vhost.c            | 16 ++++++++++++++++
+>  include/uapi/linux/vhost.h       |  3 +++
+>  include/uapi/linux/vhost_types.h | 13 +++++++++++++
+>  kernel/vhost_task.c              | 12 ++++++++++++
+>  5 files changed, 49 insertions(+)
+>
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index 35ded4330431..e86bd5d7d202 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -1804,6 +1804,11 @@ static long vhost_net_ioctl(struct file *f, unsign=
+ed int ioctl,
+>                 return vhost_net_reset_owner(n);
+>         case VHOST_SET_OWNER:
+>                 return vhost_net_set_owner(n);
+> +       case VHOST_GET_VRING_WORKER_INFO:
+> +               mutex_lock(&n->dev.mutex);
+> +               r =3D vhost_worker_ioctl(&n->dev, ioctl, argp);
+> +               mutex_unlock(&n->dev.mutex);
+> +               return r;
+>         default:
+>                 mutex_lock(&n->dev.mutex);
+>                 r =3D vhost_dev_ioctl(&n->dev, ioctl, argp);
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 8570fdf2e14a..8b52fd5723c3 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2399,6 +2399,22 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned=
+ int ioctl, void __user *argp)
+>                 if (ctx)
+>                         eventfd_ctx_put(ctx);
+>                 break;
+> +       case VHOST_GET_VRING_WORKER_INFO:
+> +               worker =3D rcu_dereference_check(vq->worker,
+> +                                              lockdep_is_held(&dev->mute=
+x));
+> +               if (!worker) {
+> +                       ret =3D -EINVAL;
+> +                       break;
+> +               }
+> +
+> +               memset(&ring_worker_info, 0, sizeof(ring_worker_info));
+> +               ring_worker_info.index =3D idx;
+> +               ring_worker_info.worker_id =3D worker->id;
+> +               ring_worker_info.worker_pid =3D task_pid_vnr(vhost_get_ta=
+sk(worker->vtsk));
+> +
+> +               if (copy_to_user(argp, &ring_worker_info, sizeof(ring_wor=
+ker_info)))
+> +                       ret =3D -EFAULT;
+> +               break;
+>         default:
+>                 r =3D -ENOIOCTLCMD;
+>                 break;
+> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> index c57674a6aa0d..c32aa8c71952 100644
+> --- a/include/uapi/linux/vhost.h
+> +++ b/include/uapi/linux/vhost.h
+> @@ -101,6 +101,9 @@
+>  /* Return the vring worker's ID */
+>  #define VHOST_GET_VRING_WORKER _IOWR(VHOST_VIRTIO, 0x16,               \
+>                                      struct vhost_vring_worker)
+> +/* Return the vring worker's ID and PID */
+> +#define VHOST_GET_VRING_WORKER_INFO _IOWR(VHOST_VIRTIO, 0x17,  \
+> +                                    struct vhost_vring_worker_info)
+>
+>  /* The following ioctls use eventfd file descriptors to signal and poll
+>   * for events. */
+> diff --git a/include/uapi/linux/vhost_types.h b/include/uapi/linux/vhost_=
+types.h
+> index 1c39cc5f5a31..28e00f8ade85 100644
+> --- a/include/uapi/linux/vhost_types.h
+> +++ b/include/uapi/linux/vhost_types.h
+> @@ -63,6 +63,19 @@ struct vhost_vring_worker {
+>         unsigned int worker_id;
+>  };
+>
+> +/* Per-virtqueue worker mapping entry */
+> +struct vhost_vring_worker_info {
+> +       /* vring index */
+> +       unsigned int index;
+> +       /*
+> +        * The id of the vhost_worker returned from VHOST_NEW_WORKER or
+> +        * allocated as part of vhost_dev_set_owner.
+> +        */
+> +       unsigned int worker_id;
 
-IMO, there are two problems here:
-1) Giving a consistent ABI that leaves the responsibility of ensuring
-forward progress by sequencing TD update with TD build steps with
-userspace.
-2) Ensuring that userspace can't screw up the in-progress TD VM
-metadata if userspace doesn't adhere to the sequence above.
+I'm not sure the above two are a must and exposing internal workd_id
+seems not like a good idea.
 
-Problem 2 should be solved in the TDX module as it is the state owner
-and should be given a chance to ensure that nothing else can affect
-it's state. Kernel is just opting-in to toggle the already provided
-TDX module ABI. I don't think this is adding complexity to the kernel.
+> +
+> +       __kernel_pid_t worker_pid;  /* PID/TID of worker thread, -1 if no=
+ne */
 
-> forward progress. The way to ensure forward progress is the same as
-> ensuring build consistency, i.e. sequence build with respect to update.
-> The kernel sheds complexity by ether making userspace solve that
-> problem, or motivating a real fix in the TDX Module that obviates the
-> AVOID_COMPAT_SENSITIVE case.
+Instead of exposing the worker PID, I wonder if it's simple to just
+having a better naming of the worker instead of a simple:
+
+        snprintf(name, sizeof(name), "vhost-%d", current->pid);
+
+> +};
+> +
+>  /* no alignment requirement */
+>  struct vhost_iotlb_msg {
+>         __u64 iova;
+> diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
+> index 27107dcc1cbf..aa87a7f0c98a 100644
+> --- a/kernel/vhost_task.c
+> +++ b/kernel/vhost_task.c
+> @@ -67,6 +67,18 @@ static int vhost_task_fn(void *data)
+>         do_exit(0);
+>  }
+>
+> +/**
+> + * vhost_get_task - get a pointer to the vhost_task's task_struct
+> + * @vtsk: vhost_task to return the task for
+> + *
+> + * return the vhost_task's task.
+> + */
+> +struct task_struct *vhost_get_task(struct vhost_task *vtsk)
+> +{
+> +       return vtsk->task;
+> +}
+> +EXPORT_SYMBOL_GPL(vhost_get_task);
+> +
+>  /**
+>   * vhost_task_wake - wakeup the vhost_task
+>   * @vtsk: vhost_task to wake
+> --
+> 2.34.1
+>
+
+Thanks
+
 
