@@ -1,159 +1,145 @@
-Return-Path: <linux-kernel+bounces-873338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01F9C13B62
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:09:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E579CC13B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:09:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9C01AA82B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492B31B21235
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734752E974A;
-	Tue, 28 Oct 2025 09:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948452EACEF;
+	Tue, 28 Oct 2025 09:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnj/5ZKF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X9UkrCtS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4412DEA7E;
-	Tue, 28 Oct 2025 09:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8712E8B96;
+	Tue, 28 Oct 2025 09:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642394; cv=none; b=VQxfYvTfUPr2zrLNHtupr1wgfoAk3sAjrA8VKN0zSxdw8oNUhrNw9KR4ezf85nMUslWZWriQwHDiuSwv/gDgFrRw/b8AcgZcnkgbTuY5ZOhQrz/TEZEV/zHI2A36XVW949VjbXvLWsRIIK7zcVo2hTy+UAF3AcOkO1cBCxWe+9s=
+	t=1761642431; cv=none; b=Wq7PVSrMctnwHhdtcDIF6MYI1TALBKh/+0L7DrOavVhVflM9CDA+WHZ1NvFs4BU0/nsKwef16IE4NAdhbcol1ke4jlqkZ+mYLOf7I8+T6xjaMvjHct85ckIL3BjkCVhxvpomYqVVP9oK5a+6TKp9bduuAkIrlFY6zpMM8s7q2OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642394; c=relaxed/simple;
-	bh=jV8zqoSJb4SM5zvB1qu4g9YkFqJZQ/ozJQgtDXq/xb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K/FSwM77wffDSu+xVic7iEwzmTgLACIdswBDoajYYMV88D8WCEvR4w6wTPra9O7Q1WFOMTe/wlshus+4kj/biKtxZt6ys7PNWNTN309+xtQAVQcOjr3hQjLLqX/VyY0zyn2hVf2kSEfLZYn+nZX1cgPfIMu+YEEEq+7X41SeeH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnj/5ZKF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD127C4CEE7;
-	Tue, 28 Oct 2025 09:06:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761642394;
-	bh=jV8zqoSJb4SM5zvB1qu4g9YkFqJZQ/ozJQgtDXq/xb8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tnj/5ZKFhUkDkuZWCiEXSd8FJW82wK/rhC772Fz5YyV/GZJttrwX0G+CbDW4wrn49
-	 atAWab3FTBsSGV4snjXXvsOsiuXRqgtwDBhG6JFzJpfzlA2kbo43AGFsjlm8EVbkpO
-	 9SgP6t9cIJksCWdJgCBJbYA+0k+CrYit0sljKJWwq5BcPECcXpcSjSdHxw/3mxcqHG
-	 sH8iIpmlLrAdDIQKWxT2e8Su8iUKIWcSvVhma4GE0cMOUwIdInwjyrLAapSVnbw+yR
-	 T1aHmi64orBmYWdrSWydU+j1F4YXQlBWDsMVewPcnvm5XyltRC67bba6l8vkEpj7c8
-	 sINSUc4mKogOQ==
-Message-ID: <6668e1f8-c279-4616-aaa2-02669895e623@kernel.org>
-Date: Tue, 28 Oct 2025 10:06:28 +0100
+	s=arc-20240116; t=1761642431; c=relaxed/simple;
+	bh=6sOJNyYpfxdUF4bKHa5kwY8CVFYlhF1MaSnjNBPXnAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAMzb10zJNBE+5lz/izejK+cvoF9IIlqzXt3jXsBai8ZFMYxWLC7F5vI8cHnCmY2tUok6df5MWWSr2bnNoTa//IEEFJK6SdY+wHmS/0dj3eN9tVC6CcB+cm2hmA7xyieagNHHpOCcGCoVZNWjlQbRfBJqxhnG2Yt5aAu6hD9KxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X9UkrCtS; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761642430; x=1793178430;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6sOJNyYpfxdUF4bKHa5kwY8CVFYlhF1MaSnjNBPXnAI=;
+  b=X9UkrCtS67KoVdBRzkIFW0ICuzg/bMJtRpyh3P4i/Yr4Ber5kBO6Z8GS
+   BTnNiFr8fezuMKVr9fpTo6mMkXa7ohampncKodBBNOmesTSM6Tm6vKpdC
+   zP7wMkTaABCdfLUmmC3OVCiLns216hcT+TTyRA1zXZ+Zbod+G7LOyTzzE
+   dqQGwI4osNtvXlYZUpjt06WzTqL0m+Iq2VX0BfDGPXPDBArfWvU2vMV1+
+   mMjZwE7Uk/KnKT7kbid6bVMxs7l01fAmoiXbH4RUiepboVDS6AOvuwI1O
+   tgfwp/RY7n24BXEoNWCx30YgZFHjWaMLRsc9NPKMWESdHL0icOZOIHhhm
+   A==;
+X-CSE-ConnectionGUID: wlyhL3p6SSi2FIbq/A2lpA==
+X-CSE-MsgGUID: zT208oAkS/ywx/JSw2bLjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63663586"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63663586"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:07:10 -0700
+X-CSE-ConnectionGUID: mjScgg4IS32FsBzpR4Yw5Q==
+X-CSE-MsgGUID: D1+U8ZLKTleyPWb7SyVLBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="215948786"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:07:07 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDffT-00000003GLD-3WHG;
+	Tue, 28 Oct 2025 11:07:03 +0200
+Date: Tue, 28 Oct 2025 11:07:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Miaoqian Lin <linmq006@gmail.com>, Markus Burri <markus.burri@mt.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Angelo Dureghello <adureghello@baylibre.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in
+ ad3552r_hs_write_data_source
+Message-ID: <aQCHt9JL0Bc4Pduv@smile.fi.intel.com>
+References: <20251027150713.59067-1-linmq006@gmail.com>
+ <aQB8PRlaBY_9-L8d@smile.fi.intel.com>
+ <aQB8j7Hc3b9vAT5_@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] media: platform: amd: Introduce amd isp4 capture
- driver
-To: "Du, Bin" <bin.du@amd.com>, mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sultan@kerneltoast.com
-Cc: pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
- Mario Limonciello <superm1@kernel.org>,
- Alexey Zagorodnikov <xglooom@gmail.com>
-References: <20251024090643.271883-1-Bin.Du@amd.com>
- <20251024090643.271883-2-Bin.Du@amd.com>
- <93233d51-5ff3-4f10-96f6-a2957325f1bd@kernel.org>
- <2c7ee056-546c-4891-abfc-c1d41e2c1632@amd.com>
- <3194b3d3-5158-472f-9c68-0b0187e2c145@kernel.org>
- <7b20fb08-fa96-4bd9-8240-05b7f8f31681@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <7b20fb08-fa96-4bd9-8240-05b7f8f31681@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQB8j7Hc3b9vAT5_@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 28/10/2025 10:00, Du, Bin wrote:
-> Thanks Krzysztof.
+On Tue, Oct 28, 2025 at 10:19:27AM +0200, Andy Shevchenko wrote:
+> On Tue, Oct 28, 2025 at 10:18:05AM +0200, Andy Shevchenko wrote:
+> > On Mon, Oct 27, 2025 at 11:07:13PM +0800, Miaoqian Lin wrote:
+
++Cc: Markus Burri for the da9374819eb3
+
+...
+
+> > > +	if (count >= sizeof(buf))
+> > > +		return -ENOSPC;
+> > 
+> > But this makes the validation too strict now.
+> > 
+> > >  	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf,
+> > >  				     count);
+> > 
+> > You definitely failed to read the code that implements the above.
+> > 
+> > >  	if (ret < 0)
+> > >  		return ret;
 > 
-> On 10/28/2025 4:41 PM, Krzysztof Kozlowski wrote:
->> On 28/10/2025 09:30, Du, Bin wrote:
->>>>> +	}
->>>>> +};
->>>>> +
->>>>> +module_platform_driver(isp4_capture_drv);
->>>>> +
->>>>> +MODULE_ALIAS("platform:" ISP4_DRV_NAME);
->>>>
->>>> You should not need MODULE_ALIAS() in normal cases. If you need it,
->>>> usually it means your device ID table is wrong (e.g. misses either
->>>> entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
->>>> for incomplete ID table.
->>>>
->>>
->>> Thanks for the clarification, yes, MODULE_ALIAS() does not apply in our
->>> case and should be removed.
->>
->>
->> You don't have ID table, so probably this should be fixed, unless it is
->> instantiated by some other driver, e.g. as MFD. That's the only typical
->> use case for alias in the drivers.
->>
+> > > -	buf[count] = '\0';
+> > > +	buf[ret] = '\0';
 > 
-> Yes, our device is a MFD, so alias works for it, as alternative, we can 
-> add module device table, it should work either, could you please 
-> indicate your preferred option?
->
+> Maybe this line is what we might need, but I haven't checked deeper if it's a
+> problem.
+
+So, copy_to_user() and copy_from_user() are always inlined macros.
+The simple_write_to_buffer() is not. The question here is how
+the __builit_object_size() will behave on the address given as a parameter to
+copy_from_user() in simple_write_to_buffer().
+
+If it may detect reliably that the buffer is the size it has. I believe it's
+easy for the byte arrays on stack.
+
+That said, without proof that compiler is unable to determine the destination
+buffer size, this patch and the one by Markus are simple noise which actually
+changes an error code on the overflow condition.
+
+The only line that assigns NUL character might be useful in some cases
+(definitely when buffer comes through indirect calls from a heap, etc).
+
+> > NAK.
+> > 
+> > This patch is an unneeded churn.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-So it is spawned by drivers/gpu/drm/amd/amdgpu/isp_v4_1_0.c or
-drivers/gpu/drm/amd/amdgpu/isp_v4_1_1.c ?
-
-If so, then your code is fine, that's correct use of MODULE_ALIAS.
-
-Best regards,
-Krzysztof
 
