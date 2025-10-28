@@ -1,233 +1,233 @@
-Return-Path: <linux-kernel+bounces-874237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E721FC15D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:33:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C688CC15D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA074072B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:26:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AE93B83CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B913628C035;
-	Tue, 28 Oct 2025 16:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEC92882B4;
+	Tue, 28 Oct 2025 16:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kPSilQ1w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="IFowc0kq"
+Received: from SY8PR01CU002.outbound.protection.outlook.com (mail-australiaeastazolkn19010017.outbound.protection.outlook.com [52.103.72.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FA91514E4;
-	Tue, 28 Oct 2025 16:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668779; cv=none; b=NSajrrMr8Eaqk4qcMtnKqsDwy4utiv8xWEsWCcK+u6WdeTpicMQqkYrW02v5JX7GgXwbDVyTDTKTpn3MzA0Bj1x+xU+BQI3hkUKYTXScf7ziHjYKGJ1WplYCr3SqaKDhQxstPEYvIfEiKoJxSh9JedYwatgsARchjVKv0udynIA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668779; c=relaxed/simple;
-	bh=VMA2jd9ttRLl+Xvs20kKch9qHU+XxkLKWizBy7+uAu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSXINA3jJiDHnQZN0T8e3lTCabXFtfxyd0cj6DeUPaKY4fy6G2R0HJg/iWpUcxZEUw3IQl06LhLkjBOJUK0WexM+8Ohups/HUci5igLT84CmpwaBiCm4hYIcgAmHDuNyE1igl+SeF7H//eDXG/GWyP1/ZdexdK5MgLRNIZYCa/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kPSilQ1w; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761668777; x=1793204777;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VMA2jd9ttRLl+Xvs20kKch9qHU+XxkLKWizBy7+uAu4=;
-  b=kPSilQ1w4kIKEVyhOeoZiNjIEGrB1hubrqaXsV6OE6kvS5AOsljaqZdo
-   TKJOKu1RMBB5Owf1LalslGpsPP5KUmGRqw8ooyl9hRJzNgse0rLg7q10b
-   VhqXewmh2FJ/d6FJuzHC6gi/EY48S1KfvOF4BYYWscuVLvN81iYP/GTqU
-   r3grDenHCMeci2X3IaHAaECdyACJJqBJJIGOk21QXkPfccvHT1Z6xTrJX
-   03HKumPxXgkBZMD8qztmKqem9PEaOQMeGZ6HXQ7vbf91ilOFK/sGHyhCY
-   +UtLqEUJgvAw6pJYjE08P6eWVPukov5wmQIXF0q7g1ukVKfHFwgfCaTje
-   g==;
-X-CSE-ConnectionGUID: LIov7iW8QWydZhrE63Orpw==
-X-CSE-MsgGUID: 0xfIFDwbT3SlqsM4HXdcXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67639104"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="67639104"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:26:16 -0700
-X-CSE-ConnectionGUID: Mu0yYC5ER8aGMZlQI6chnQ==
-X-CSE-MsgGUID: FWPe3wn/QNKV3PlXE/tHQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="184639110"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.104])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:26:13 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5979E121E5D;
-	Tue, 28 Oct 2025 18:26:10 +0200 (EET)
-Date: Tue, 28 Oct 2025 18:26:10 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2 RESEND] dt-bindings: media: i2c: document Sony
- IMX111 CMOS sensor
-Message-ID: <aQDuotTgvEyzgHnv@kekkonen.localdomain>
-References: <20251028092200.7003-1-clamor95@gmail.com>
- <20251028092200.7003-2-clamor95@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C320DD72;
+	Tue, 28 Oct 2025 16:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.72.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761668879; cv=fail; b=jsMNZZM+6V8xbIOVYDIHfxwczq8yfUQEwMxcJGBrhf9aQyzc3Rw81yWA5lq+ERPgtg7d4glP24Y6nOqv3ikWOuL1wgXxgQ5Aqf2gvwjebqmdKTrT0DooiDx2fYcda6gjHbCLYU9ek0f2fbqv3nJMRGZODp58qh4WcGwc1pEiG1o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761668879; c=relaxed/simple;
+	bh=8VLM/Ez7Dr9J6m/tw0wkEKTf0u2MENeGtMZrTZwEsBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ta1X0Cl7ote79gDpX6wTB2cH9gR82ToR2iIhkGA8eCNuq4b5/LK+9b87d4PORKiltLKCNm30SJGDq4DzkfJEKS6PpDtEEFJvmEi/zJsPCfHLhmIwPmoV4MiZADeSOC9MfnNu68r05RXEwEmPkT0ahsuFT0RWxhfVcfmeoOrmEck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=IFowc0kq; arc=fail smtp.client-ip=52.103.72.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CixACVl4OfMu1NJKupZdF2GuM1sz7wn/ks0gIv81D3RZfXaAY5I3QiP9TEK6IN/zUx8D1jPUNYviKFA0HLPaIm/HEjuFC6GkLAL9SGZUfizidgYCo1nbtfX6ZINXugB+Td2sIBok1xbf8HT0b+FtqbYqFjNaoCR41fWsTAV+RyEa+NAxfs5RXkiLQ0u3ODiKg9bx32PHi48moF0wGLRWjLh1zzDy7oAWLpxZVM2uNm5wRKuQxk0/yl28vAGny2S8UHbgOmEcWYlyThdiJo3tFUY46rpfsI6ziIouFF4MOK7rld3wdvcFwlZPiVW8w00gmRpDOjdv/nXmlqYuEWGA7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eR8YdU3jvu1Q/TsWebPHi+3Qg2h19I52Bia3DyufsCM=;
+ b=HzBTaECHC7tr2HmX2pFu3zVDhabnD2Ax9Hr1KL9XiqT4Nf+51Nz9Kf7f2oSOhPnQnY5ABYt+KlEMzNAtISH+/QNCrsBaukLeSU8cx6frLTAtS3Wd8oHPgcNSOENRfRlYcUrd1g5QpXnV9G7HEiPhXP5oEckRerlBMXOd/IYw+2QBOoLjaCQ7DDRH/82yLwksjB8oxPWSfc11qUIr5zX2b6GiNBOfS/fb8oaiV8PyQF1DaAxbkRSaU5cdpDOCacN7RKc/2TP6XOfBUtflqI2hd7sZUIi1XmjUY6V4MQOd5j+P9E8gJ89SbCDqFBlbQcJwOO0saja1i7TIB/+T5mbZLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eR8YdU3jvu1Q/TsWebPHi+3Qg2h19I52Bia3DyufsCM=;
+ b=IFowc0kqe7ooQqy5KSuatm007rpTc3m1+w29aIea4v0MgtLO1BTcgHqwS2o65zRmhjh+mbRRKYO7ECPATMnSkxna29Bjh9p49dbrFFPpTYKPORJ1vZ5Aftwdzrr3VXInvaCpsDrtfXCVofcG/oLd95x5LEIn2hK0kaqE9dSMXCSIuejUQwbRr01jUhHK0xZFbmTQc44Cd7925BBXyQEKLYkR4iCvXjCLKxdMbgkcMEITPmU5dGhFrTCf5trEqpDwZa/1uQ4jK3BOgoMqTWDaQpLbeiWfsRPDeIcCk4wgRHhdpOLE7Vosl3pRI+A8+6PgE69NiGD76m8Citdx3ZkvRg==
+Received: from ME2PR01MB3156.ausprd01.prod.outlook.com (2603:10c6:220:29::22)
+ by MEWPR01MB8833.ausprd01.prod.outlook.com (2603:10c6:220:1f6::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Tue, 28 Oct
+ 2025 16:27:54 +0000
+Received: from ME2PR01MB3156.ausprd01.prod.outlook.com
+ ([fe80::443d:da5:2e96:348d]) by ME2PR01MB3156.ausprd01.prod.outlook.com
+ ([fe80::443d:da5:2e96:348d%4]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 16:27:54 +0000
+From: moonafterrain@outlook.com
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Yuhao Jiang <danisjiang@gmail.com>,
+	Junrui Luo <moonafterrain@outlook.com>
+Subject: [PATCH] ALSA: wavefront: fix buffer overflow in longname construction
+Date: Wed, 29 Oct 2025 00:26:43 +0800
+Message-ID:
+ <ME2PR01MB3156CEC4F31F253C9B540FB7AFFDA@ME2PR01MB3156.ausprd01.prod.outlook.com>
+X-Mailer: git-send-email 2.51.1.dirty
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH0P220CA0024.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:d3::29) To ME2PR01MB3156.ausprd01.prod.outlook.com
+ (2603:10c6:220:29::22)
+X-Microsoft-Original-Message-ID:
+ <20251028162643.44453-1-moonafterrain@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028092200.7003-2-clamor95@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ME2PR01MB3156:EE_|MEWPR01MB8833:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5791d70-501f-4719-ef4a-08de163ef204
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799012|15080799012|41001999006|23021999003|461199028|5072599009|8060799015|5062599005|40105399003|53005399003|3412199025|440099028|3430499032|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FcSCAKgMnmyjJJ4JGgLKVeQfVM56aiUm+9Q7dHvAoh2+hL1HNWTOtI5ADm/o?=
+ =?us-ascii?Q?CZILYVH2TDDOwrPB5AQMJz2utbNQAl0bwr5B4alWiAy14YDJSGXOxpC5xB3M?=
+ =?us-ascii?Q?hm7Ijs+Fo7AanZQv/T7l7vKaiy/KeoVykTKiYHvU48cquRC1qHDoBy9p/yrZ?=
+ =?us-ascii?Q?FS276iPXC4GtWo7pH6vvG1WikYrflQqtfROcTiZch1kAWuiJ3RHDtfdhjww1?=
+ =?us-ascii?Q?7h/hVn0867RLzJOZwC1sliJw1Ib/2pJCdvs3qFCF+dRqPHSfK8WPdOxZs5Mg?=
+ =?us-ascii?Q?vVk/ubGUxXBa3PwhPq98RHHyFTSAheSro37lsfY/yHnZPY9SMZ4keXBMrZ/P?=
+ =?us-ascii?Q?CeZ8wQWL44+v0FfdHJk0QPELEhlFpfk+DhJ9vW1CVgqYhPWE0eWoE9kJRYov?=
+ =?us-ascii?Q?Vw29wTj9+TSVjaw+1ynzgEUmGY18NLtp5VIQshlQGKNSTcqL15Xr+Z+GNFoH?=
+ =?us-ascii?Q?RT5SZFqbNS0jokZFHrwYPE/zRv6YMLomv2VwxzqPBVQFZQlY5pESqeDHkhKI?=
+ =?us-ascii?Q?fXVD/A+NVlXlgmEMMEUU2dnZbGx8Vw72Mhq7ml9QECKguQOOZHzjxF/bdktI?=
+ =?us-ascii?Q?dqJd4rA2unTq0xeLxYMK4wqQV06nxsr3DDXYJ3kwHqDTlP1IZJNj1rplAQya?=
+ =?us-ascii?Q?K+Tnqy0I2SJ9gq5ClVpsUb6qbvgdBzybWRS08COAMR+/uWk0cQQtIX7V2YnY?=
+ =?us-ascii?Q?CopfjFzBeK2WPT8TP69YxFk4ZhPKb8rWRRX/as6UW21qo9GaaZr2CxOfL3ve?=
+ =?us-ascii?Q?AMtoPbPFRis5qjlLuQmj1asQp4ukN5aE4+28uFl8/l+3I3ST5kWuKBwAyM7a?=
+ =?us-ascii?Q?lswnuohtBoAW79Cwf7HP7QV9byXelqo9sC0R/gVmHu3OvDhiOCTE8pJN87/O?=
+ =?us-ascii?Q?4A2mZoRwTXGdcQxw8InCK8Q+FWgzlmjR0kS9lpSI00WTvcxr5ao/sDjhV5Tx?=
+ =?us-ascii?Q?MlscjF2UeiEhKOAOUTgJ/OfP8GPCaMf85fCbbo/WXq0lzCX5wK753xxUW7v1?=
+ =?us-ascii?Q?HpWDQmLSmVlRMQNKAJ2yMBhEGSIa6hdabdyP1PQqAnb29mJEV20kpWM63F16?=
+ =?us-ascii?Q?aZtt+ObYCI7NGyh5x5yZrjbaNJwjYdlDx+XjSG9sWObWQtuu2S+W9zLnio/X?=
+ =?us-ascii?Q?wnwEa8+qSCuz49lOkYdsh7OTis+MD/31nDob74dKDYyNj/+NT90qDEuNfMGb?=
+ =?us-ascii?Q?jOxlep7qfiSH1hVMYf8u1aENPhSxqOS2qVjyP59VGLJBF9fa3T7L+ViUR/rd?=
+ =?us-ascii?Q?uwXVsoRDHjakxkv5wHnfPASbC9YPBkAlJjI7BADnjw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PltOBdQV2IQ8DfKYrtvEy43+X5kvyr9eXdSQZ/UgthXLD2D7+qoIos+1vM0/?=
+ =?us-ascii?Q?Sr/g4Ls0P3WtY719VDqElM8fkA4v3EnGkY7la6gHo0GzZOpYUpwJ2pmvV0x0?=
+ =?us-ascii?Q?1oh/lwU3S4VpUlCKhXQifCSJfYQCJGtKRQz4t+m32f1QaXs4Koz2zPWE06FI?=
+ =?us-ascii?Q?wOyevJ627IqIMkedmpVwiskwAXfjc+Otyg22YyFokTBtU1U5xZvs5Ivl8zHK?=
+ =?us-ascii?Q?mm2jSQZVcMXuoFWKOmsLeksj1MLOD8u36kXZloHHILuBT0EbeUS8MmZNpQRs?=
+ =?us-ascii?Q?XqSnnNfhVgMES/vRleO1sjvyaFJORPjEyNETAIM0TOoMSPJ/GSp9sgE6LUpc?=
+ =?us-ascii?Q?kHpoVLX6PDUhS7eaN6It+A6iOj89a0iR+/ZVc3cELAWVvSnB4IqYlJDTrAEu?=
+ =?us-ascii?Q?cgA4waHMdEIfS23VWW2LVQ+cRB2gMlaUQzbCW1A9xkGiECo1VA80HatLr0Hk?=
+ =?us-ascii?Q?IrR0Ba/JKqWUub3zB+/psu7z17bVjNIKh4UQqJC8F4lTNfPU4EBD8Cd3NbYt?=
+ =?us-ascii?Q?QW+pWx0wjNOeD5f/j/HvMIE47gz0cw+iq+PTq8qTAmeBHZ6YX83KAe5DkLVI?=
+ =?us-ascii?Q?m1hM2HF3t6emIEqVlF+xEOKV5aqXv4oQRzDJtoyKMwRmYfoT1Vf1ENu7adZF?=
+ =?us-ascii?Q?ohLb8cC9D1et4ziMA1pbtbn2ShxmiHAKElI/hD0ksSnQRalzgABta7to5imU?=
+ =?us-ascii?Q?HlywTqI5ZEsqwBJOeZak2NW2nNDMOPnpi3mwSH3UUSc+ltVkph+5FK4hZSZ4?=
+ =?us-ascii?Q?BScknfGo7FONTOmS3ocBZ7l+amyCrHonM6sO6jJSR3YvN3Lrh5Uk6oImrsBA?=
+ =?us-ascii?Q?3u6EwVyC4Hw7S8jlESNr417ID8mGijleUWPqMSmxDLrOM1XtSnwwpqk8a7p4?=
+ =?us-ascii?Q?dOqOEyi9avVMH0TovlRhbfvoBhbtDCdcNHS17PMErFK17kNSi8Q6HsCrpPPs?=
+ =?us-ascii?Q?h17rkllEo8qn+yzvA7E45xnZX4JRKnzkJTi84Vo0k0JDCun+5CfQP5FS/atv?=
+ =?us-ascii?Q?T5LwnvDS2DGx8BWYFLpl87+Nxvgr6ipgC3Lc51OFt0gXD0uUDBHE75dcr9Di?=
+ =?us-ascii?Q?16qnqNXym7gxpAQxM++x9+1mpMlt+ohQ5TLNqIig9YLLyBe6hHc63nSGvCst?=
+ =?us-ascii?Q?3iFuhS1ve4e26EjQer5K6NeunFZLGYvXqNRBZ8sBHgp7RNVXhe9Zxxx8GDNH?=
+ =?us-ascii?Q?x+LiWCLmuLxM4Nd81GXEE5O2Y1JBQiki6tRSJPbLV/DJRtwwtsRPVhs+6q+3?=
+ =?us-ascii?Q?52PqF3ZiqweYSrh1N2lZ?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5791d70-501f-4719-ef4a-08de163ef204
+X-MS-Exchange-CrossTenant-AuthSource: ME2PR01MB3156.ausprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 16:27:54.0504
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MEWPR01MB8833
 
-Hi Svyatoslav,
+From: Junrui Luo <moonafterrain@outlook.com>
 
-On Tue, Oct 28, 2025 at 11:21:59AM +0200, Svyatoslav Ryhel wrote:
-> Add bindings for Sony IMX111 CMOS Digital Image Sensor found in LG
-> Optimus 4X (P880) and Optimus Vu (P895) smartphones.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../bindings/media/i2c/sony,imx111.yaml       | 112 ++++++++++++++++++
->  1 file changed, 112 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
-> new file mode 100644
-> index 000000000000..a70017588891
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
-> @@ -0,0 +1,112 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/sony,imx111.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sony IMX111 8MP CMOS Digital Image Sensor
-> +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> +
-> +description:
-> +  IMX111 sensor is a Sony CMOS active pixel digital image sensor with an active
-> +  array size of 2464H x 3280V. It is programmable through I2C interface. Image
-> +  data is sent through MIPI CSI-2, through 1 or 2 lanes.
-> +
-> +allOf:
-> +  - $ref: /schemas/media/video-interface-devices.yaml#
-> +  - $ref: /schemas/nvmem/nvmem-consumer.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: sony,imx111
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description: EXTCLK with possible frequency from 6 to 54 MHz
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  iovdd-supply:
-> +    description: Digital IO power supply (1.8V)
-> +
-> +  dvdd-supply:
-> +    description: Digital power supply (1.2V)
-> +
-> +  avdd-supply:
-> +    description: Analog power supply (2.7V)
-> +
-> +  port:
-> +    additionalProperties: false
-> +    $ref: /schemas/graph.yaml#/$defs/port-base
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: /schemas/media/video-interfaces.yaml#
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          data-lanes: true
-> +          bus-type: true
-> +          link-frequencies: true
-> +
-> +        required:
-> +          - data-lanes
-> +          - bus-type
+The snd_wavefront_probe() function constructs the card->longname string
+using unsafe sprintf() calls that can overflow the 80-byte buffer when
+module parameters contain large values.
 
-Can you drop bus-type? I.e. is the sensor D-PHY-only?
+The vulnerability exists at wavefront.c where multiple sprintf()
+operations append to card->longname without length checking.
 
-> +          - link-frequencies
-> +
-> +    required:
-> +      - endpoint
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - port
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interfaces.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        camera@10 {
-> +            compatible = "sony,imx111";
-> +            reg = <0x10>;
-> +
-> +            clocks = <&imx111_clk>;
-> +
-> +            iovdd-supply = <&camera_vddio_1v8>;
-> +            dvdd-supply = <&camera_vddd_1v2>;
-> +            avdd-supply = <&camera_vdda_2v7>;
-> +
-> +            orientation = <1>;
-> +            rotation = <90>;
-> +
-> +            nvmem = <&eeprom>;
-> +            flash-leds = <&led>;
-> +            lens-focus = <&vcm>;
-> +
-> +            reset-gpios = <&gpio 84 GPIO_ACTIVE_LOW>;
-> +
-> +            port {
-> +                imx111_output: endpoint {
-> +                    data-lanes = <1 2>;
-> +                    bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
-> +                    link-frequencies = /bits/ 64 <271200000>;
-> +                    remote-endpoint = <&csi_input>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +...
+Fix by replacing all sprintf() calls with scnprintf() and proper length
+tracking to ensure writes never exceed sizeof(card->longname).
 
+Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+Reported-by: Junrui Luo <moonafterrain@outlook.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Junrui Luo <moonafterrain@outlook.com>
+---
+ sound/isa/wavefront/wavefront.c | 40 ++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 15 deletions(-)
+
+diff --git a/sound/isa/wavefront/wavefront.c b/sound/isa/wavefront/wavefront.c
+index 07c68568091d..74ea3a67620c 100644
+--- a/sound/isa/wavefront/wavefront.c
++++ b/sound/isa/wavefront/wavefront.c
+@@ -343,6 +343,7 @@ snd_wavefront_probe (struct snd_card *card, int dev)
+ 	struct snd_rawmidi *ics2115_external_rmidi = NULL;
+ 	struct snd_hwdep *fx_processor;
+ 	int hw_dev = 0, midi_dev = 0, err;
++	size_t len, rem;
+ 
+ 	/* --------- PCM --------------- */
+ 
+@@ -492,26 +493,35 @@ snd_wavefront_probe (struct snd_card *card, int dev)
+ 	   length restrictions
+ 	*/
+ 
+-	sprintf(card->longname, "%s PCM 0x%lx irq %d dma %d",
+-		card->driver,
+-		chip->port,
+-		cs4232_pcm_irq[dev],
+-		dma1[dev]);
++	len = scnprintf(card->longname, sizeof(card->longname),
++			"%s PCM 0x%lx irq %d dma %d",
++			card->driver,
++			chip->port,
++			cs4232_pcm_irq[dev],
++			dma1[dev]);
+ 
+-	if (dma2[dev] >= 0 && dma2[dev] < 8)
+-		sprintf(card->longname + strlen(card->longname), "&%d", dma2[dev]);
++	if (dma2[dev] >= 0 && dma2[dev] < 8 && len < sizeof(card->longname)) {
++		rem = sizeof(card->longname) - len;
++		len += scnprintf(card->longname + len, rem, "&%d", dma2[dev]);
++	}
+ 
+ 	if (cs4232_mpu_port[dev] > 0 && cs4232_mpu_port[dev] != SNDRV_AUTO_PORT) {
+-		sprintf (card->longname + strlen (card->longname), 
+-			 " MPU-401 0x%lx irq %d",
+-			 cs4232_mpu_port[dev],
+-			 cs4232_mpu_irq[dev]);
++		if (len < sizeof(card->longname)) {
++			rem = sizeof(card->longname) - len;
++			len += scnprintf(card->longname + len, rem,
++					 " MPU-401 0x%lx irq %d",
++					 cs4232_mpu_port[dev],
++					 cs4232_mpu_irq[dev]);
++		}
+ 	}
+ 
+-	sprintf (card->longname + strlen (card->longname), 
+-		 " SYNTH 0x%lx irq %d",
+-		 ics2115_port[dev],
+-		 ics2115_irq[dev]);
++	if (len < sizeof(card->longname)) {
++		rem = sizeof(card->longname) - len;
++		scnprintf(card->longname + len, rem,
++			  " SYNTH 0x%lx irq %d",
++			  ics2115_port[dev],
++			  ics2115_irq[dev]);
++	}
+ 
+ 	return snd_card_register(card);
+ }	
 -- 
-Regards,
+2.51.1.dirty
 
-Sakari Ailus
 
