@@ -1,195 +1,151 @@
-Return-Path: <linux-kernel+bounces-874083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F62C157E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:35:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104DFC15780
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFEB93ABA69
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0490D462697
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EEF340A79;
-	Tue, 28 Oct 2025 15:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9236C341AA0;
+	Tue, 28 Oct 2025 15:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="EJYW7osJ"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hhbZFqaO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEC533EB16
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C83834027C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665404; cv=none; b=o2cu4eCcKXJ84r9ECP81D1D/sOMsqN7JTy2Qs6/NxXlFDplQbwdoFv6uxYAyhE3KJP7cXpboRknM4MCC8dTTw9QTsGbokq/pQIbfMAPkU2dkTF1bg7XcrJkS7mmqfgK3pp7xeHs9dutCs8ceuUOBj46hG+45XcQ4tE2yss/AZA0=
+	t=1761665416; cv=none; b=fcOSYAJ9YQWVf3u9w+VoLAxFW6+/M0iIHBlkC4H4scDqsqNTgdrx8o+fgxNUy3cFeYoSuktyipZOR2xZeW+ikgQb02g5ENr3Cs+Th6sy2cuiqj1G5kIOAqiC+fRm8VcC5/1+NpUs42Ok8fNbHgpY8UOLS42H2sm7ZifoJWLAQFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665404; c=relaxed/simple;
-	bh=0+JcJSZRv+5cEPbScn4cJij1GB/yKUcRRKLWCDt4cKc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNo2CaoGFtyYZSdfbk+YpxYuette0SsqosYUCN+27m+7zHVMBgEl/70Sa72W4VZfXxQPybaueHXgHQykT1GUswgxfL+wFEtT1HM3P6sBfJVI0ZibJtNh4NzSg7ViWBTo81mEPKmCkP517FOpOmdaabQF+jO6x+/bEEwtiMQ6jj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=EJYW7osJ; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SFT7253246334
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:30:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=J6s9huE7CzeVZWd+xdRL
-	81JG8jOCmMWfuJ8kW6UvvEU=; b=EJYW7osJHOsP1saNlEkBmCXNvinNXDBkHMur
-	7bqEvs/wb3YPYTIbb2hMO6DuO+vs4s88k2eHmo5A0TwYr3w+4AiX8u23cH8aigs7
-	uByPbVTnXrLeuV5hSFuRzUYAicWPDUgucrRH1hcOWgMXmpBjlwrRQOqCHkFv6G6g
-	MQf9jETx7RoV3H9716BZowd3ZwdMAetQM1eUPsz0s2wsyrc+IXSI2U2KIeRRrmHm
-	9bwGAvkcNQAmUscdaWUJgBdgIsE4vbYQiD0Dr9sYR86P+doHjAf/okO33Xseso1q
-	PUgLavOObg3yGaydoQ7JRso6xdXthKFWjiDk+s4rbV/IWmF8FA==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a30gxg08x-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:30:00 -0700 (PDT)
-Received: from twshared31684.07.ash9.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 28 Oct 2025 15:29:58 +0000
-Received: by devgpu012.nha5.facebook.com (Postfix, from userid 28580)
-	id 0511B503217; Tue, 28 Oct 2025 08:29:51 -0700 (PDT)
-Date: Tue, 28 Oct 2025 08:29:51 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, David
- Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <aQDhb7HahKWLuUG4@devgpu012.nha5.facebook.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
- <20251015132452.321477fa@shazbot.org>
- <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
- <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
- <20251016160138.374c8cfb@shazbot.org>
- <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
- <20251020153633.33bf6de4@shazbot.org>
- <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
- <aP+Xr1DrNM7gYD8v@devgpu012.nha5.facebook.com>
- <20251027195732.2b7d1d3f@shazbot.org>
+	s=arc-20240116; t=1761665416; c=relaxed/simple;
+	bh=GYKf1Zkv3JxGImNaWPJcp2l4cntA4Qaaj3JKVyCraHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HgZSnioRppUdUxz7wH0V6kWuc3kmNodLafhxGaw427kwGxBj1sH0sL534ZT/vXfIfmLUkXJdP+NGSfBaJi5vzgOfWhCaR73NuOgX603m0IUvr/k3uV84uIq+WfxbN/ZSSrH3VSC5J9m2yw8tEeIZyaaEN2p3Jcf1QvQJV1UHSkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hhbZFqaO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SEndEZ1895659
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ziHqZ26Nre+FSZRTP4tBX/uS
+	+PYMS+5i5oLrGECrPLM=; b=hhbZFqaOmXteW2bd4JXD5RuBAzvCex85WcsoAscz
+	irviZx5zBy9QjeMtoSlW03/l8K+0Qj9oJee8Q1Q9CU2SzWZxCvHm+B469muBlRmP
+	dr9IFYh9E2hUuQGkiM/KdVHIwTNaTw2YTtYYJ0/42XtTHWTQRi3rUFvMoCUCP6fv
+	k9JqtjdtbAn/TU7INUaAR/PqVcx80TpJXPFigxWnUjmKAcUG4yAICytOdx88hqGz
+	Gq25BVPyrl5jDklVoVJXPWaVa+W5zwqssdr8risfXEnQW8nMROXhuvD15R45osMo
+	NES+EPHG5LWKjEcrx0UQFUkSXUCGrXjyrtRWdKT9W6ibUw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2q5u9vpt-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:13 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4eba90c163cso79921881cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:30:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761665413; x=1762270213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ziHqZ26Nre+FSZRTP4tBX/uS+PYMS+5i5oLrGECrPLM=;
+        b=XacHCN6FaYNOjimWB8IyNrZiryksMnTT78KJ4Op4oK54zQlLwqiYzK5GygNbws9PZ3
+         c9ET4eglBQMy/xXybK76FpMOcSrpQmM/hHlTXW2lZHaT+OlxGHf9tFHTR+IfcqCMO2kR
+         hts/BBr9NEPhaN3DfxHdZnUSPlJnngsbzDBVtkQbCsXFo2X/dOCml0Ru1ls4mx6oT1J5
+         y98OSC8QMa2q1E94MIyoWspgzNpjg33JW/gyPmKBX9zooGKvU4kqs17JEjhtFZ0In3wM
+         ioaF9JajG7KQ3EGjG+WD36b7U0lRIlDYrtX6gT7OuMm3OajA7aqSD+LSPORmuiv0wssx
+         XLOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeFlkw4Gnqq/zPz9VXynzKqKCiTkWGzU+z8uKBvtHnzyDEDX9Qg8SdxLAluvOvOvAElKyVB6mb4iblJBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySS7TBa6bQVWYA14cF9z/VDxSrdhY483IQ+8l0VrV4ltlSRpj6
+	3PJI7l6gFVHk56sjLxCJKU5jsfoEnk/rUeBwJJvQQIerLyVzAPRwRnD5GyOfKoQnZS1a+Al0fJ+
+	VcY2OYuaS9lHj/ryZLFwWIoBXnTrSqVc6EUERCAEFSRa5KhV9T/WEHgg8Q2QnRf8LFrvgES1hjB
+	c=
+X-Gm-Gg: ASbGncsxRHJj+n2N6MKnmpEaAxdJh0kVux+XWRqda1B0cvwYgUX5YTv1kDvMkgDJZQu
+	BWsl6vbOaoqi5t9M9lesMAIgIm2xEm6ziu9pALvyDyBppXHHTgHiW1T6OtdTX8/262UU8ITjyPl
+	UFrUcmVpCYsROm3q7F567jUwJUBPl0UTrpolgG73IvbKeTBH04mcosSepdXK07vfSoATEn1H3c5
+	7f3rZVkO2A3boHj601GLBpBdYEAFteN16nQErn4w7bGdk/5FmiwIZilVIQY48WUqS0Qm5dsatax
+	Flf19f5RvrgEn/VWoKcxlRv+uORq85RbjRojb0S/4IYWcDivQWLi7XIqQNdyHno6JGyanCb+mu6
+	PqS6EJpgQ33OI4em9boxv8tskIY7AdlfMpe6KprkxcnvnXzip4hsRWzD7YUnQQ8Xf0QqatnYDcY
+	Q7qBgBXq897sbt
+X-Received: by 2002:a05:622a:11c5:b0:4ec:fa87:4652 with SMTP id d75a77b69052e-4ed13170110mr13343311cf.60.1761665412712;
+        Tue, 28 Oct 2025 08:30:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGg7P7iCAoIlm72fWxC4E6hnb4vx9CUyOoG5mm3iPgoXzkpB/+xZKhybNgY3uywIyNmJeQepw==
+X-Received: by 2002:a05:622a:11c5:b0:4ec:fa87:4652 with SMTP id d75a77b69052e-4ed13170110mr13341941cf.60.1761665411805;
+        Tue, 28 Oct 2025 08:30:11 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f41cbbsm3174644e87.2.2025.10.28.08.30.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 08:30:11 -0700 (PDT)
+Date: Tue, 28 Oct 2025 17:30:08 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Skip setting orientation for UCSI
+ version 2.0 and above
+Message-ID: <mjgwv3soxgdcybkoo6xglxfpusswmjoyit4z3qpbnyhatj73od@ywmnx6vyupsi>
+References: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027195732.2b7d1d3f@shazbot.org>
-X-FB-Internal: Safe
-X-Authority-Analysis: v=2.4 cv=Dp1bOW/+ c=1 sm=1 tr=0 ts=6900e178 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=FOH2dFAWAAAA:8 a=ufEAdIiS26JpeJN-8DcA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: Uo7AlnxrE7_Cd_yLWtW7Lw1i5wBfXQOs
-X-Proofpoint-GUID: Uo7AlnxrE7_Cd_yLWtW7Lw1i5wBfXQOs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEzMCBTYWx0ZWRfXwWA+/Cb9XTQe
- NYZfxC+t/IKymySJINCBV+bBT/Dk9JkaOWfQtmyYlGYsYFMJ/TBbYHDCJUmHnz2gNj1o/k9gtok
- w+lKOmlWcZZtb1j7h/IS7qhcYGy3uRS74k4aismjUiitxk8eAmCWUrbLS9KHz4G1uqi9ekE4KJ8
- HIwXD+RtWHC8XnioNp3bOrsgqzXXd7DtRSQK9MQGjlX8JP52kpg2YtekICv3Z3uMhpIZBtGnbgK
- tx+1eYbDv0qGeYvuAB5qRyNtRL9jINgwYQ2wLibPtmptVQzXHGAPINzDEZmcsOhS6gu5Vxv2jaM
- mIViWS99C+TfhMNtXICZij/SrcUpWHO6jQdCJAgjxHyo6xlgxrjma2B3hQPp0Nu69Lia0i5CUQR
- CnwpMwM0WkSZ+O/uqQ9bMobYgypsAQ==
+In-Reply-To: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEzMCBTYWx0ZWRfX9GRvxtOEWvXz
+ uHq4PvlZWnKFAsI3Ns9oD0pNQUCkSp6ttZm2TjEDWZgscD/Tusxv1F+Ccv/bMqU8apjrlF/Mu5Y
+ gtVrC+HCfEJiKlmW71y5P0UrKgTDMga4lueb61FJK+KQvN6vj6WA3/3tknyQ1RTOZmKH+oRYMf0
+ c0yFecgdCRwmTROQct2mWoneCtVCfKjU4Hzo6D+7oQG6dBKRJHl3vTxLIsFP+hIzEfnCw81Uy7p
+ Im8gzDcfq+HJtsUfE9y2nm+ETW2tJM9kXLCwCVlSFZJrgP48z41AJ3Z8+4q+GFpUmU5yLn7Acp3
+ MoGd57yuj89Y4qvpyFmdBJGiftZ2R3IQGt0Xd/W7kv29bRLYmgC54yAZD6Iclk35bhpuH2Ht5vy
+ eJLeS/iiRVorRkY9GnzDzqnAMMIOGw==
+X-Proofpoint-ORIG-GUID: m0j5__7ZsI_PU-NxMgvgyYLUycL-iebW
+X-Proofpoint-GUID: m0j5__7ZsI_PU-NxMgvgyYLUycL-iebW
+X-Authority-Analysis: v=2.4 cv=c9CmgB9l c=1 sm=1 tr=0 ts=6900e185 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8
+ a=KoMzjsMEiVGJI_OJEYAA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+ a=cvBusfyB2V15izCimMoJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-28_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280130
 
-On Mon, Oct 27, 2025 at 07:57:32PM -0600, Alex Williamson wrote:
-> On Mon, 27 Oct 2025 09:02:55 -0700
-> Alex Mastro <amastro@fb.com> wrote:
+On Tue, Oct 28, 2025 at 04:39:19PM +0200, Abel Vesa wrote:
+> In case of UCSI version 2.0 and above, if the orientation is set from
+> glink as well, it will trigger the consumers along the graph (PHYs,
+> repeaters and so on) to reconfigure a second time. This might break
+> the consumer drivers which aren't currently implemented to drop the
+> second request of setting the same orientation.
+
+Might or breaks? What happens if the driver doesn't ignore the request?
+
 > 
-> > On Tue, Oct 21, 2025 at 09:25:55AM -0700, Alex Mastro wrote:
-> > > On Mon, Oct 20, 2025 at 03:36:33PM -0600, Alex Williamson wrote:     
-> > > > Along with the tag, it would probably be useful in that same commit to
-> > > > expand on the scope of the issue in the commit log.  I believe we allow
-> > > > mappings to be created at the top of the address space that cannot be
-> > > > removed via ioctl, but such inconsistency should result in an
-> > > > application error due to the failed ioctl and does not affect cleanup
-> > > > on release.  
-> > 
-> > I want to make sure I understand the cleanup on release path. Is my supposition
-> > below correct?
-> > 
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> > index 916cad80941c..7f8d23b06680 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -1127,6 +1127,7 @@ static size_t unmap_unpin_slow(struct vfio_domain *domain,
-> >  static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
-> >  			     bool do_accounting)
-> >  {
-> > +	// end == 0 due to overflow
-> >  	dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
-> >  	struct vfio_domain *domain, *d;
-> >  	LIST_HEAD(unmapped_region_list);
-> > @@ -1156,6 +1157,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
-> >  	}
-> >  
-> >  	iommu_iotlb_gather_init(&iotlb_gather);
-> > +	// doesn't enter the loop, never calls iommu_unmap
+> So lets leave the orientation setting to the UCSI generic implementation
+> for all platform that implement UCSI spec 2.0 and above.
 > 
-> If it were only that, I think the iommu_domain_free() would be
-> sufficient, but it looks like we're also missing the unpin.  Freeing
-
-Oh, right.
-
-> the IOMMU domain isn't going to resolve that.  So it actually appears
-> we're leaking those pinned pages and this isn't as self-resolving as I
-> had thought.  I imagine if you ran your new unit test to the point where
-> we'd pinned and failed to unpin the majority of memory you'd start to
-> see system-wide problems.  Thanks,
-
-Makes sense.
-
-> Alex
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/usb/typec/ucsi/ucsi_glink.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> >  	while (iova < end) {
-> >  		size_t unmapped, len;
-> >  		phys_addr_t phys, next;
-> > @@ -1210,6 +1212,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
-> >  static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
-> >  {
-> >  	WARN_ON(!RB_EMPTY_ROOT(&dma->pfn_list));
-> > +	// go here
-> >  	vfio_unmap_unpin(iommu, dma, true);
-> >  	vfio_unlink_dma(iommu, dma);
-> >  	put_task_struct(dma->task);
-> > @@ -2394,6 +2397,8 @@ static void vfio_iommu_unmap_unpin_all(struct vfio_iommu *iommu)
-> >  	struct rb_node *node;
-> >  
-> >  	while ((node = rb_first(&iommu->dma_list)))
-> > +		// eventually, we attempt to remove the end of address space
-> > +		// mapping
-> >  		vfio_remove_dma(iommu, rb_entry(node, struct vfio_dma, node));
-> >  }
-> >  
-> > @@ -2628,6 +2633,8 @@ static void vfio_release_domain(struct vfio_domain *domain)
-> >  		kfree(group);
-> >  	}
-> >  
-> > +	// Is this backstop what saves us? Even though we didn't do individual
-> > +	// unmaps, the "leaked" end of address space mappings get freed here?
-> >  	iommu_domain_free(domain->domain);
-> >  }
-> >  
-> > @@ -2643,10 +2650,12 @@ static void vfio_iommu_type1_release(void *iommu_data)
-> >  		kfree(group);
-> >  	}
-> >  
-> > +	// start here
-> >  	vfio_iommu_unmap_unpin_all(iommu);
-> >  
-> >  	list_for_each_entry_safe(domain, domain_tmp,
-> >  				 &iommu->domain_list, next) {
-> > +		// eventually...
-> >  		vfio_release_domain(domain);
-> >  		list_del(&domain->next);
-> >  		kfree(domain);
-> 
+
+-- 
+With best wishes
+Dmitry
 
