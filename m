@@ -1,203 +1,189 @@
-Return-Path: <linux-kernel+bounces-873785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE3EC14B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:54:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D338C14B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9AE13BF66A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:52:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8BEA4FF19D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F165D32ED52;
-	Tue, 28 Oct 2025 12:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F6B32F778;
+	Tue, 28 Oct 2025 12:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t5lmB8IL"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="o7QR7l/R"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8E31770F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0B02EA72A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761655941; cv=none; b=EJwZPGRKvudbsVx1PTVgXWVDKpCF+8/gNPNqCxNFihV1/ttNTK6Pf2418Cy318ocPXLhRMXfmEbjaPspfxjPbyEjJ/bXykMobGR4WJEh1+mmcuCPsro9860lpfVELgDtQW7enT+EtaRPgBuZme1TOKzP70iAd7CU4SCQ3xWVJFk=
+	t=1761655982; cv=none; b=ix0R8eZRrwmv5kP1RUZZL4EuwEBr3Ja5vphuNhPQFOVLrj+Wh97f/fVzZHjCs1aqYV8xJEo9sCML6p92twqzKr9Wu5PKoF2DLWhVY9bROfhHy0C9zhKQTdt4/agmVDChDTZX/AUlUJqlzLsPh3c0wzDzuGFT4yDtQJfLIm1FjPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761655941; c=relaxed/simple;
-	bh=19Aw2e3syKvL7oQUEOvzHNrGapjCIBdFH4EzxMLy+/c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UbLJfzIsa+c/A+HbS99uLy87aWWqMCKJ4DI7N7f4sHYSyONrDEDRnCkdjqTGdz3xIto66u1XcVjBGXmdcGdJ1y2RkqBaiaM+BQCTS0SGIyKT90uPM3tm6GysFePtU+9DU8gL8I8KJAOg1s9uQu03ehv4XjRuAuSuuH2koHWITR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t5lmB8IL; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4710665e7deso31212545e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:52:19 -0700 (PDT)
+	s=arc-20240116; t=1761655982; c=relaxed/simple;
+	bh=+3vPaDsnNL8heSTGQITQySDS23M0o5dLkagTN8ShR9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhLGVS14eksUKCF9PXiPvU9uadrJk3zwBroCGwtr7AqnYqRta6LTSh17A71h/xBhRetO4y2TxDOA9WXF5htgd4NEQpf7B13Zr8zYFx4icEd7+8AAKTDB9sRShklRaIndpWa6g/pgx9oTKgpQzN5Rh9XNRJ/5mhN5nYXInqAPFu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=o7QR7l/R; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-7f7835f4478so42165066d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761655937; x=1762260737; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uiFbGd4UbNp+KeVPTy2XKkvgsMstWdXWxCkfgt0Ii14=;
-        b=t5lmB8ILCzcCo0kZkm/Rpy4ganugVM9zz1PxtEAQjtll187v0KRCpTJAjfQLqfVLP/
-         aMEW/QftyP3ypGLTt+2QcWKU8E2o8kpGk7B0k03zF+fWgcQJbCCgd3vZBT/s8+fCv3ZD
-         ExruTv6usUZJpSp0D9V9xRuyD+TVjVAAYKpAnVFvFMhtLrfNUYlCrq/T/DHy8YaGu70T
-         U+/rFkHXVkxNn49TZIwkQu7H9c1yqIxgXTP6R5x4NnWhmcoZxL5piwLOQe0iNC2OxaDB
-         yucy4XE1LqGtKLgpk17pLJfYfZQTgyiQ4jvRkUkDlKtulx9PkX29A1z7bMjyMc51dCql
-         wYdg==
+        d=ziepe.ca; s=google; t=1761655980; x=1762260780; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7CqgmoumiIO/LqZvmbvABjwYG8sY5r9jILlhcKrm4Ms=;
+        b=o7QR7l/RcnzhMMWrC+iO7b3J3CZ0SUbCMtZvxpEAUu6jsnUYavb8PWPeBXQ2nlFd7U
+         SnCwfRbZCGNOydBsVkw6/Q4FSnrzT8PHcUsrF4rXGf/1Ntsji7jr2ylHEvqqx+3FH/Fn
+         /dV2NQ0FyiEvm4RS6HpIAp6LiC62QKSUNtXs3+pdsHtJEaK4RUB3f1ktieiUYW9/Son8
+         03FPqQkIHNHsmlqdkKRLpwV+E0GAVAgg9sdpykFEAyCFZGVdNEZZMeirWPeo+sYb4D8H
+         UgZQ9fq0DDO00uVOp2p0iEd91CdZU/Q/MoIl4Z/4y7n2zrnGEt5EZcyWLZ2cUE5uMhQk
+         tk/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761655937; x=1762260737;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uiFbGd4UbNp+KeVPTy2XKkvgsMstWdXWxCkfgt0Ii14=;
-        b=A+x4k8bhNMa+2chlxW/kGGIEACq3y8uQpvAuPzqzsVgo3XSq8fZiDAF9nl1o3DjQf5
-         Te0yzDfLi7flrBfR0VJkxA5Q6zapl8f6k+7xee3uvzi+izQCsMSRMdiXXCkewHBYuZUW
-         pGHnlnNe+Nz5KvNjLi8ProdhIMk85V/K6lBEAEF5DmzYZMuGGP+X8vazxcsnJwRhqn5f
-         XLowuZ7KcekMrDwzjSskAXwnxeqN2GNA2tv88RuqMWf5CDGf3AdOenu0Dx+RJazG1xwo
-         R9GfCphoTVZCSKvO+2hh7xQeKktlLF71Zz7BiTbLSb3oLmqvoRGqHaqpc1O635Rfu61s
-         DvHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNAe3/wzhYcFd12GxP5tktwDMat1/aDR9hgnVNtVa918mXAkFdxeCVUnvOYbkvvAu5eZBy32he8YZiozY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiPSw3MqlfXDTxTYUNiRrvLI2Ez8yFdtgyXaa8sGMOIzmfUVCO
-	1cwGTIjSH/bFQ1XmSAEUrF+HOVWbh+w2yL3j3L1aH8OkFQ9UUHWOL3CHULWt9jwrQifblHB4VQy
-	a2rdW
-X-Gm-Gg: ASbGnctyuevhaNA3QKM0LnKiwNqT99G6fRXM7lDyZvzIef4CEW1XbFlEZlXHrpGgWII
-	pg7Nl9CLCRkGluO8u2rWz55APo2ZaovFFjgx7Vq8D3pbNiLluaaRDKFcw+qheey5tXb83lgSs4Z
-	cAD0nCpHbB06sK+Fh3EdgH3V9dXsJhqSNDKtpMxa0tYaab7WLmdKSyYdzsDDnFXkEy8fFFI5DUR
-	AVE2dxw+JsqxMzq2HLOwfbQNKLj7VSL4hBCzZaRDn2uNNzWRhjtPgKCVoSwvTThpwT1IYLPMOvW
-	Fw12sxqTYpF+ZzBpVovDQAJoVDQZJB9ubp10ys/VlgjfhWJzdgh8p7SEHoeLwi/nRQ6tCYWrxRV
-	0mcjEBPznjS+tTbDV1ZLhiaqDqxXrylpNj6ihXvqJCctnp0/YuwnFPZXHK5Y/uJpuxEUDxarcfQ
-	==
-X-Google-Smtp-Source: AGHT+IHegn1qI4Kn9PvxJhv6Hp8XHuri1BwXoTpbjFFuvvKl85oIEEM0HrKmuYa1l6KMovMnyZOCYQ==
-X-Received: by 2002:a05:600c:3b14:b0:475:dd9a:f786 with SMTP id 5b1f17b1804b1-47717e7ab64mr27833225e9.40.1761655937047;
-        Tue, 28 Oct 2025 05:52:17 -0700 (PDT)
-Received: from hackbox.lan ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd478202sm193697355e9.14.2025.10.28.05.52.15
+        d=1e100.net; s=20230601; t=1761655980; x=1762260780;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7CqgmoumiIO/LqZvmbvABjwYG8sY5r9jILlhcKrm4Ms=;
+        b=VXbokl/qcoBEx7G+65/ur8aSXuUaF38C+UIxd995WPDi6rFDz1aOhoc8tUqemFrbCE
+         NOg0Dgzz34ETtQsMn1kj3XdZ4LLXofe10CrDVHUSUmfKdvAZ8Y7j8n5JumR7sYwvx5zF
+         tbS7bEisLeugbV5/+osmr2wi8u9OQlf3tvAZVjmpB/L+EhltZa8XYVcWcd9m7Qeslj81
+         7vnhF41DafMWplrOrl6XT/rDyaz1Sjs4XgREjv8nmM75JaKzs4dMLpRRv2R9csxki+f2
+         4pka2oH7T4kDdoz4VaKj7f0yc34z0L5yvQkFMSXbbxAUcIRgQ/jlnadCkc/g2UsuS1nS
+         n2zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEZjTgfz8Lie6DnoLDL1AbkOhEUiYX63WR57nfS4cwgBp+V+O6cSERdFfOSQEW6IxHRUSLYW22Q0H0q2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCw13tyaBjqsDGVCtlzCnjwXQt9rtCOwQD3P69VqNDdCQ/9ROa
+	TkRFNWDpZH4BdlkwsK7rzxBAQEVmQSdy1V3zP7iOTp0hNtUXExtrYEnD7sb6/lgHeUM=
+X-Gm-Gg: ASbGnctgF3u5i67KprkdDvCpjEuLNpTSxyIs6CoM1SWmxjkcGVqbYhFQHD7z/J3BNW7
+	JsTY++5SumHEwYXQv4UofAPetX9UuDK5B9BM5O05JVqOCZ8zxOm3dmyrdSEQxl+D1TEaUmFSZ4g
+	wGURmBQY9go+TXVSch7aHrNj/8rlRLM+/Drjha4C0br5YWPFDNoPiDuxkWyS7ISqPJS98/0OWjc
+	/OzLf7q2IWpzvcAIyTsmD0idXp/kOhBmzNJOJXyKztAt0DDDUcN46efM4UAPI9f5UJ20nuTyxHn
+	XuEtyg5Fen53D0wQsEaWuDHcL/gMqR7qNoDL4yxdCvHb70jciQaomJdcw7n+8OwiQqfLvYjzHjL
+	Zt4W5PSrn7HfLydMz6s88GDr3YcyA2ewGNwmmlvBvwJRZdnq3Rt/uH9BjTaCrHk1PQTAOZ/Ydw9
+	IEJnQV8euVuck3nNbdc/aMXeJ6KwNmB0oqHRlXlRo7spCK0Q==
+X-Google-Smtp-Source: AGHT+IH+xZpvPIbhKx7mJgf5LQY0C/zJpDpvmdyPQ1VJnfhZtNoMsQ1XOGKSORZ38fLIo5wpD093Tw==
+X-Received: by 2002:a05:6214:262d:b0:809:5095:4153 with SMTP id 6a1803df08f44-87ffb10cd22mr39426046d6.31.1761655979645;
+        Tue, 28 Oct 2025 05:52:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48abea7sm79249956d6.0.2025.10.28.05.52.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 05:52:16 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Tue, 28 Oct 2025 14:52:12 +0200
-Subject: [PATCH v2] usb: typec: ucsi: Add support for orientation
+        Tue, 28 Oct 2025 05:52:55 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vDjBs-00000004Orq-30qI;
+	Tue, 28 Oct 2025 09:52:44 -0300
+Date: Tue, 28 Oct 2025 09:52:44 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, Gregory Price <gourry@gourry.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
+Message-ID: <20251028125244.GI760669@ziepe.ca>
+References: <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
+ <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
+ <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+ <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
+ <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
+ <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
+ <20251027161146.GG760669@ziepe.ca>
+ <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
+ <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
+ <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-usb-typec-ucsi-orientation-v2-1-9330478bb6c1@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAHu8AGkC/42NQQqDMBBFryKz7pQkRaxd9R7FRYwTHSiJJFEq4
- t079QTlr96H//4OmRJThke1Q6KVM8cgYC4VuMmGkZAHYTDK1FrpGpfcY9lmcri4zBhlHYotMsO
- mpkFZ41rvbyCCOZHnzyl/dcIT5xLTdn6t+tf+pV01Su5u0Kr1veqb55uDTfEa0wjdcRxfnmk4X
- cUAAAA=
-X-Change-ID: 20251015-usb-typec-ucsi-orientation-75ed0a2c9ff3
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3338; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=19Aw2e3syKvL7oQUEOvzHNrGapjCIBdFH4EzxMLy+/c=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBpALx+5NxQ8m+JVMkVpgW22EAhwxn4LDIWRCrrN
- 5eYiQGLQaKJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaQC8fgAKCRAbX0TJAJUV
- VmzQEADNH1s3sHmGwJIeFwm7fYJvYFBI1tWsjCUM2E84uqXBeW0hxNNyZGX6Cb+P9FdlVjHHOPJ
- JW8R+s/pZ2u/UXP2CipODaSKs2HuOolsSbn11X1TXhYIyDAHBMLbWkqp+1IsmTOkP+O1sk1Z12q
- Ifdt18jBElyKMEbgqiMlbrSxc0sAx68oBlSqiB8ifIoBbv7zr6+Hny8T12CRilDJGqv3WTmwid4
- oGh2esBl+B42NS4KD0Dd3PXC1YbJS6dUNqmW6HtqQ5Ml9l4UkiEqFzvPtek0g3Tx9BxHk4CcZhJ
- dWzq4Ka8X609tudquzkTj8tsvfRVtzP9ie6HWh59CzJ5YgBAY5yyuql594X+6+x2T60kGJlCzpI
- dw5CCLAnamfyljdTGyVZMUckf06HObHKVgsr6gBNII2awQ0INY/GoIA2azP2zrHG1B2LrnCFPhs
- mN1UgZIQx1qcKfOFmp+OGhkCJwBylVCyco1pCETsKr7/uf1kRbjFkfw99eFixj3qI6fJjMM5Zi3
- 74drFg9Ov2iBzeyUnnbVeXrJJ7w6Jk+ZMv9n9k1tkB3VVMuBDYDz72ASCFyt5kzMT7u25i8djaH
- MPspvInBJrYFfluMep98jE8Hyd11vdfjCHsHaeKsIDmYkcv2gy/AsERsALP7ejJqudybFSK6CPX
- gP1ibgMicArOwjw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
 
-According to UCSI 2.0 specification, the orientation is
-part of the connector status payload. So tie up the port
-orientation.
+On Mon, Oct 27, 2025 at 04:38:05PM +0000, Lorenzo Stoakes wrote:
+> On Mon, Oct 27, 2025 at 05:31:54PM +0100, David Hildenbrand wrote:
+> > >
+> > > I don't love the union.
+> > >
+> > > How would we determine what type it is, we'd have to have some
+> > > generic_leaf_entry_t type or something to contain the swap type field and then
+> > > cast and... is it worth it?
+> > >
+> > > Intent of non-present was to refer to not-swap swapentry. It's already a
+> > > convention that exists, e.g. is_pmd_non_present_folio_entry().
+> >
+> > Just noting that this was a recent addition (still not upstream) that
+> > essentially says "there is a folio here, but it's not in an ordinary present
+> > page table entry.
+> >
+> > So we could change that to something better.
+> 
+> Yeah but leaf_entry_t encapsulates BOTH swap and non-swap entries.
+> 
+> So that's nice.
+> 
+> What do you propose calling non-swap leaf entries? It starts spiralling down a
+> bit there.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Respinning as proper patch.
+You don't even ask that question.
 
-Changes since RFC:
-- Picked-up Hiekki's R-b tag
-- Link to v1: https://lore.kernel.org/r/20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org
----
- drivers/usb/typec/ucsi/ucsi.c | 24 ++++++++++++++++++++++++
- drivers/usb/typec/ucsi/ucsi.h |  3 +++
- 2 files changed, 27 insertions(+)
+You have a leaf entry. It has a type.
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 3995483a0aa097b822046e819f994164d6183b0d..17439ec434d41d24e8e4c7a97d7e6117fd07d950 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -1008,6 +1008,28 @@ static int ucsi_check_connector_capability(struct ucsi_connector *con)
- 	return ret;
- }
+What you are calling a "swap entry" is a "leaf entry of swap type".
+
+The union helps encode in the type system what code is operating on
+what type of the leaf entry.
+
+It seems pretty simple.
  
-+static void ucsi_orientation(struct ucsi_connector *con)
-+{
-+	if (con->ucsi->version < UCSI_VERSION_2_0)
-+		return;
-+
-+	if (!UCSI_CONSTAT(con, CONNECTED)) {
-+		typec_set_orientation(con->port, TYPEC_ORIENTATION_NONE);
-+		return;
-+	}
-+
-+	switch (UCSI_CONSTAT(con, ORIENTATION)) {
-+	case UCSI_CONSTAT_ORIENTATION_NORMAL:
-+		typec_set_orientation(con->port, TYPEC_ORIENTATION_NORMAL);
-+		break;
-+	case UCSI_CONSTAT_ORIENTATION_REVERSE:
-+		typec_set_orientation(con->port, TYPEC_ORIENTATION_REVERSE);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
- static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
- {
- 	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
-@@ -1258,6 +1280,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
- 		typec_set_pwr_role(con->port, role);
- 		ucsi_port_psy_changed(con);
- 		ucsi_partner_change(con);
-+		ucsi_orientation(con);
- 
- 		if (UCSI_CONSTAT(con, CONNECTED)) {
- 			ucsi_register_partner(con);
-@@ -1690,6 +1713,7 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
- 		typec_set_pwr_role(con->port, UCSI_CONSTAT(con, PWR_DIR));
- 		ucsi_register_partner(con);
- 		ucsi_pwr_opmode_change(con);
-+		ucsi_orientation(con);
- 		ucsi_port_psy_changed(con);
- 		if (con->ucsi->cap.features & UCSI_CAP_GET_PD_MESSAGE)
- 			ucsi_get_partner_identity(con);
-diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-index e301d9012936fb85eaff7f260a862ff099eb77c5..c85175cd001487fa9d66076e608e098d236f5275 100644
---- a/drivers/usb/typec/ucsi/ucsi.h
-+++ b/drivers/usb/typec/ucsi/ucsi.h
-@@ -360,6 +360,9 @@ struct ucsi_cable_property {
- #define   UCSI_CONSTAT_BC_SLOW_CHARGING		2
- #define   UCSI_CONSTAT_BC_TRICKLE_CHARGING	3
- #define UCSI_CONSTAT_PD_VERSION_V1_2		UCSI_DECLARE_BITFIELD_V1_2(70, 16)
-+#define UCSI_CONSTAT_ORIENTATION		UCSI_DECLARE_BITFIELD_V2_0(86, 1)
-+#define   UCSI_CONSTAT_ORIENTATION_NORMAL	0
-+#define   UCSI_CONSTAT_ORIENTATION_REVERSE	1
- #define UCSI_CONSTAT_PWR_READING_READY_V2_1	UCSI_DECLARE_BITFIELD_V2_1(89, 1)
- #define UCSI_CONSTAT_CURRENT_SCALE_V2_1		UCSI_DECLARE_BITFIELD_V2_1(90, 3)
- #define UCSI_CONSTAT_PEAK_CURRENT_V2_1		UCSI_DECLARE_BITFIELD_V2_1(93, 16)
+> And it's really common to have logic asserting it's actually a swap entry
+> vs. not etc.
 
----
-base-commit: 13863a59e410cab46d26751941980dc8f088b9b3
-change-id: 20251015-usb-typec-ucsi-orientation-75ed0a2c9ff3
+leafent_is_swap(ent) - meaning is a "leaf entry of swap type".
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+> 1. we keep the non-present terminology as a better way of referring
+>    to non-swap entries.
 
+I vastly prefer you leap ahead and start using leaf_entry
+terminology. We don't need a temporary name we are going to throw
+away.
+
+Jason
 
