@@ -1,123 +1,171 @@
-Return-Path: <linux-kernel+bounces-873436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D05C13EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:52:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146C5C13EDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC2E1A21BB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:52:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FBEE4E81AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7B43016F8;
-	Tue, 28 Oct 2025 09:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555D22EA475;
+	Tue, 28 Oct 2025 09:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XGuPwRhB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vOtcz/xM"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24ED2C3769;
-	Tue, 28 Oct 2025 09:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F182C2D8DC4
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645114; cv=none; b=IOWbofWtpjLbA0bshY0W/2sycBBSV/Y2g3PoftXhXu3WF6FHZF4iEchFUNVvsk6+xIHk53l34KIksYuDk3kneSZHL/Gyk3gn6Pj3PZd7xH6eWGEkCj/hmCmbbTu8eE5v+FJn5CtCvufj8v3nlimP50fiuYdAP0gf9m6yUM6IE/c=
+	t=1761645135; cv=none; b=U34jGpYy4q38wX7JGHT8gmFfKvyRYfCTj0Vi9QPKyjk7FOnz7b0g6f5ZgPVD8a8BvrjKTbHnIEDxvHbeFp0QcLWkSlsrxgxBDQkDCCXDfKYRD9Y8dOuP5u9hVe4n5fmM0TChsLDHcDU9gFu7POIhV+Ww/S4suMlkow458YMZ1Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645114; c=relaxed/simple;
-	bh=0aJBsF0Nh35ZXCIg0A2MFQvLvoZv/+TME8lqz/VCkLE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V3ploH79bMOFxOHTM3EfjSQOyUliNGw6VO+kL9BBBkcIw2dJQcvxN9IPHuQriciTmt3k6aF7yjn0x+Mlw1dfPgLmyOcrm+3JH65OAHOmnJtpfsxDRclNR42UhnufI71SszzBStvREWrvtH8oT20H1odCXHuOHyk/JinpNPXdfwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XGuPwRhB; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761645113; x=1793181113;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0aJBsF0Nh35ZXCIg0A2MFQvLvoZv/+TME8lqz/VCkLE=;
-  b=XGuPwRhBlwragNCqnss4es3QE0O4vN/VCR0oxq++wC+/M4FlXHvTxYSx
-   beLGMwq+EbA92IdqLqrLYBNhWh+rE/5MpZD0iCAwGb3kp0hzKc01Nt7In
-   9x637Iz9YX+oiekir0iv05rMoNs5GuU/pIYgOj/XALPp4sIt1jFUgOdS/
-   3ie3AD1e8W1osH6v74kBwzSbqf2aE9rWAk5KKpZ7LJdJJyIzA8JkS4zeK
-   4jozbwg7e72PdBrVTCc21DwdAsD/XlfFWM2MMnUjPEcUpsDjp/Bk29pz4
-   B6UOmTXDcVk6XqNHl/p6GfawLJlLy2MlRXDsA1acgi997Wihkf9Q9otcL
-   g==;
-X-CSE-ConnectionGUID: RwK1e3XyQrmj5/EK8cxiXA==
-X-CSE-MsgGUID: 3qO16LPdQPa3E20GrRd0Tg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67604836"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="67604836"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:51:51 -0700
-X-CSE-ConnectionGUID: r9XAsKgXQ0+GpTj/ryCjAA==
-X-CSE-MsgGUID: 8fTScKfZSceEzg8NXNf90w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185390454"
-Received: from junjie-nuc14rvs.bj.intel.com ([10.238.152.23])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:51:48 -0700
-From: Junjie Cao <junjie.cao@intel.com>
-To: Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Junjie Cao <junjie.cao@intel.com>,
-	syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com
-Subject: [PATCH] ptp: guard ptp_clock_gettime() if neither gettimex64 nor
-Date: Tue, 28 Oct 2025 17:51:43 +0800
-Message-ID: <20251028095143.396385-1-junjie.cao@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761645135; c=relaxed/simple;
+	bh=BcbBFf55+8HophpvdJF9R0Hd9KOcW7q4hoVEpuvZsjM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VlyeGMwFFSEN+3I+L5QwmzJSRBDhlkX4Z7yZBlUo+8DzrvipWCibLGw6X83oCgkCZ8YegmBBOdUhtiknXB/OzefE0oNGavsk89HYPl2foIf86aYLfWP6qMUN116G84KphcV0chKUlKWdM+BMH+HFphz5TB1EDpgT6zeVIhHS+KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vOtcz/xM; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso40721885e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761645132; x=1762249932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=li4we23t0sY+HaTe7D2v6NWuNOLR0K5hfC2qWnBkS/s=;
+        b=vOtcz/xMl5ckzG/qkkHWvLIT5ONyFWundR/XUWukfQNLrDlfndgY0YIkCbE6ToJNCW
+         xVgUbqUbl2gGjDGMNvQBD6XAcQ/Yc2QUqGBM/IJRZKspUvq/Yu20K0w8d4hDUKso5s+X
+         tyeL8TtllSuSbQ7r9a6bC3rVblzj2Z/oURm/0soloRoUvSo3v7QrjYDU9cCMyckChXpr
+         vNwGVBVQbYFzraAlh1H0KgV1TKzemMBrymu7WJdXYhQQeyFRQu4VsYvp/L7xK2d08RmR
+         YSsZ42gZ6jurKQ6DscKsJnJhQ5pvObs3MrnpClv/GhiE9x/DMkl5NjQCpTcHJh7b10Ov
+         Mvsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761645132; x=1762249932;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=li4we23t0sY+HaTe7D2v6NWuNOLR0K5hfC2qWnBkS/s=;
+        b=a7RKUdWJHnAh/mk9w1cidbzMUH4S/GD4AQVVHToxxmvj2k8FupLfsBkr2WPLvtLpmj
+         rscjjgKfRAqyvXmvHHptSZC1/AE04b5V6vNMQ+EZyBxN+7x7DKjrpC76N9EWFb76WQb/
+         H2IsZspFk7inE9+Z0g5Jev4inoMslQHaZVaZ8MTuT/qprV2PWfUIKyrV2K6OkU6Ssr69
+         XxT0XR+IAtk42l3fk1Aa4KS1Po9VpBYvlSIwevRLgypaGxLPjOl2465oxclzV2p1GJTG
+         gHL6+jOvRsTJXdRyORSO/zbCeb8GVT5TyYcjzJbkFJfFy3Oa/T5i/iJuZGrx0hgjTmWP
+         F1gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkO5LMfI5M/n6vcABzhP0Z2HHOxVA1czZSqsNU8FnSvqlJr4Oo927Pc9r2ju/K4PYd0auXgsqEN/1ymtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJZc0NqGS+nYsRZixjoDHYRRzetxOstn1R9NlrANPvlP2BDxZh
+	rLmNIX53hfb0dXtZ5S0arfBSQE8D4RozBAQ5MrbX+6tR5aKa539fWD1S373piSruTD9gY3zK9eH
+	JcmShINF8VRvCN8uCuw==
+X-Google-Smtp-Source: AGHT+IGpY1Fira3dlQUpQV/o9WMvtIBJxuA6SkYa4zEUp4aDR2NEmszlFqKK3XjkOBU173zsseFm5upt7EbX9rg=
+X-Received: from wmjf14.prod.google.com ([2002:a7b:cd0e:0:b0:475:c1fc:f10a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:198e:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-47717e409c9mr24424375e9.29.1761645132397;
+ Tue, 28 Oct 2025 02:52:12 -0700 (PDT)
+Date: Tue, 28 Oct 2025 09:52:11 +0000
+In-Reply-To: <22fl35khmbf6ufyjzbfvxor7b6nohqakqovjoya3v4mmlenz5c@6wbdednrd2pb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251027125148.7f7d8ed6@canb.auug.org.au> <22fl35khmbf6ufyjzbfvxor7b6nohqakqovjoya3v4mmlenz5c@6wbdednrd2pb>
+Message-ID: <aQCSS_h47zUVilno@google.com>
+Subject: Re: linux-next: build failure after merge of the pwm tree'
+From: Alice Ryhl <aliceryhl@google.com>
+To: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Peter Colberg <pcolberg@redhat.com>, 
+	Lyude Paul <lyude@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Syzbot reports a NULL function pointer call on arm64 when
-ptp_clock_gettime() falls back to ->gettime64() and the driver provides
-neither ->gettimex64() nor ->gettime64(). This leads to a crash in the
-posix clock gettime path.
+On Mon, Oct 27, 2025 at 09:11:31AM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Stephen,
+>=20
+> thanks for your report (and creating next each day!)
+>=20
+> On Mon, Oct 27, 2025 at 12:51:48PM +1100, Stephen Rothwell wrote:
+> > After merging the pwm tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > failed like this:
+> >=20
+> > error[E0277]: the trait bound `core::result::Result<core::pin::Pin<Box<=
+Th1520PwmPlatformDriver, Kmalloc>>, kernel::error::Error>: PinInit<Th1520Pw=
+mPlatformDriver, kernel::error::Error>` is not satisfied
+> >    --> drivers/pwm/pwm_th1520.rs:331:10
+> >     |
+> > 331 |     ) -> Result<Pin<KBox<Self>>> {
+> >     |          ^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+> >     |
+> >     =3D help: the trait `PinInit<Th1520PwmPlatformDriver, kernel::error=
+::Error>` is not implemented for `Result<Pin<Box<Th1520PwmPlatformDriver, K=
+malloc>>, Error>`
+> >             but trait `PinInit<core::pin::Pin<Box<Th1520PwmPlatformDriv=
+er, Kmalloc>>, kernel::error::Error>` is implemented for it
+> >     =3D help: for that trait implementation, expected `core::pin::Pin<B=
+ox<Th1520PwmPlatformDriver, Kmalloc>>`, found `Th1520PwmPlatformDriver`
+> > note: required by a bound in `kernel::platform::Driver::{synthetic#0}`
+> >    --> rust/kernel/platform.rs:196:15
+> >     |
+> > 196 |     ) -> impl PinInit<Self, Error>;
+> >     |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `Dri=
+ver::{synthetic#0}`
+> >=20
+> > error: aborting due to 1 previous error
+> >=20
+> > For more information about this error, try `rustc --explain E0277`.
+> >=20
+> > Caused by commit
+> >=20
+> >   fb3957af9ec6 ("pwm: Add Rust driver for T-HEAD TH1520 SoC")
+> >=20
+> > presumably interacting with something merged earlier in my tree.
+> > If someone could provide me with an appropriate merge resolution, I wil=
+l
+> > apply it.
+>=20
+> Having no relevant clue about Rust, I bisected that. The bisection points=
+ to
+> 0242623384c7 ("rust: driver: let probe() return impl PinInit<Self, Error>=
+").
+>=20
+> Translating the changes that commit does to
+> drivers/gpu/drm/nova/driver.rs for drivers/pwm/pwm_th1520.rs results in:
+>=20
+> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+> index 0ad38b78be85..dd554574adc8 100644
+> --- a/drivers/pwm/pwm_th1520.rs
+> +++ b/drivers/pwm/pwm_th1520.rs
+> @@ -328,7 +328,7 @@ impl platform::Driver for Th1520PwmPlatformDriver {
+>      fn probe(
+>          pdev: &platform::Device<Core>,
+>          _id_info: Option<&Self::IdInfo>,
+> -    ) -> Result<Pin<KBox<Self>>> {
+> +    ) -> impl PinInit<Self, Error> {
+>          let dev =3D pdev.as_ref();
+>          let request =3D pdev.io_request_by_index(0).ok_or(ENODEV)?;
+> =20
+> @@ -365,7 +365,7 @@ fn probe(
+> =20
+>          pwm::Registration::register(dev, chip)?;
+> =20
+> -        Ok(KBox::new(Th1520PwmPlatformDriver, GFP_KERNEL)?.into())
+> +        Ok(Th1520PwmPlatformDriver)
+>      }
+>  }
+> =20
+> which builds again.
 
-Return -EOPNOTSUPP when both callbacks are missing, avoiding the crash
-and matching the defensive style used in the posix clock layer.
+This merge resolution looks correct.
 
-Reported-by: syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c8c0e7ccabd456541612
-Signed-off-by: Junjie Cao <junjie.cao@intel.com>
----
- drivers/ptp/ptp_clock.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index ef020599b771..764bd25220c1 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -110,12 +110,14 @@ static int ptp_clock_settime(struct posix_clock *pc, const struct timespec64 *tp
- static int ptp_clock_gettime(struct posix_clock *pc, struct timespec64 *tp)
- {
- 	struct ptp_clock *ptp = container_of(pc, struct ptp_clock, clock);
--	int err;
-+	int err = -EOPNOTSUPP;
- 
- 	if (ptp->info->gettimex64)
--		err = ptp->info->gettimex64(ptp->info, tp, NULL);
--	else
--		err = ptp->info->gettime64(ptp->info, tp);
-+		return ptp->info->gettimex64(ptp->info, tp, NULL);
-+
-+	if (ptp->info->gettime64)
-+		return ptp->info->gettime64(ptp->info, tp);
-+
- 	return err;
- }
- 
--- 
-2.43.0
-
+Alice
 
