@@ -1,202 +1,262 @@
-Return-Path: <linux-kernel+bounces-874326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C27FC160A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:05:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1826C16093
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAF694E85E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:04:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1AC04EA72D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDE347FF6;
-	Tue, 28 Oct 2025 17:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D057D347FF7;
+	Tue, 28 Oct 2025 17:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FXpEb+rJ"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012050.outbound.protection.outlook.com [52.101.48.50])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j5LChewD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="F9CfUhNO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A283491C1;
-	Tue, 28 Oct 2025 17:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671057; cv=fail; b=EfLpdiZCdwzzpwWJR6ym2rCvM7FvwMYbDDEsITfdLZspOTlJzRT9SgEOREOjCv5hg9l5B3YRJz9vJF/wiQO7iiInF3AldL20mvLxtWVKRTBlX2AsWGU6LwnlTDRbPV9MkMtRCCMikc5jc+cg5Y/jPU05jRW8dHm30bnJwplNO9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671057; c=relaxed/simple;
-	bh=LQ8UH5iTp/9mtdZEAhKbEuwp8RwCx/S3xZpzX1AYNYo=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=Dcr1rBE0LinWTgHQwUgvLzm/63Qrc+BpSglzY5tc6pRtazDLqinRuCGH026Jb2mE/DGsDPwSh6t4Or/zB4apzMy7shbCOGnEFss2wPbYzbKBs+wb1scxip6i2xKzXuDFZhOxOKgdc4R6eVA4w2q5fTvegqGuD3HLvrBLLb3O0d4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FXpEb+rJ; arc=fail smtp.client-ip=52.101.48.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fgLKWzsnJLeTqsdJqGs5RoNNKew5xmDxlTmvwJeDNAi/0XyJEZmdq4zNA9n/sA9UfBLUCD1udyQX4jDChWG5QLUkj7gjwHQmF7rXr4goPpkJVN4YePfp9lpVBGYrUn0amajD8LMTtMWcdKPLx7Zy9qd57rC1FSr0Spi5qfueZckW/aHkgSVXSB9HNw5xf+0V+SV4KITXnySkdV60wERYIr3iXFFp50v+i+c5zcDIuDHmI2eAPiVcWhFmNq3ZrdVugvuF2m+kvgZixeh588WhTa+/FSWyr8Vp7vTBBiiWYW0U7hfAiCqEpEakavk32fjzp6kif9mcMTWP+oD+8kL/DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0u3czfAibSpoOeYqx+R3NIaFIUC67/nZTE10J4+W3lk=;
- b=k1jSy7CyDSWQf4pHxAjE9kpGU9J8bEPAbQdIb0OVhsbQ9iCPXa4j0FXWoC0lN5/ZFFvs1bG8etwrbJamtbqLGRnOx8Ys7B9CE6YAeu43PSm6jx6sWlsknaL0tr0J2a+/tKB0nL3Et+L5f++oOowH1bLZHXnUdsKMKLuSxpbl6w3fzz6RG8PqlTuMk8Gd48KhcSGQdKtaeXDT9b5IJ0tTUHwjrU4dCk4D/evdQCv3d0TvUGdcUvhGQv0tEkvAnf5pWXS2xahxunpPy9tAmxF0XSxIfBtDkjXazvaZtFNa9+1C0g8sM/sH7TzeWGoy/WzGtIeC0vfA3uFXvRe7vWOeDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0u3czfAibSpoOeYqx+R3NIaFIUC67/nZTE10J4+W3lk=;
- b=FXpEb+rJiCAooL02fK8+poHZ2Rd+ue/YK+Xxwo18qMIdfJHyTpMJ1rRgiy6KcBKLoDRQHIBp6HV3oLhKXRBq+5hBemIUC09i5jStpVicQw17rNFYLae8jbG3jUWcHKDJjZJEHzyH0q88Xh3B+0CMKatIp37OWoz6440BskT2cgaY5DUcesaZDTE98YhIiWNHU8yyfqLcaIZ6UuSxef61rlCoZsWv+7BFo4zL6wTZsTeG19dxkEDaWG9vLW/4EUwKymDixyTsJER8ZNVWNiAheJmG/+PGgwU4uJa39GzMXcP/8tsV/Z/O060MdQUH2KfXAha6974oRfoVdVxfOvmUbw==
-Received: from DS7PR07CA0019.namprd07.prod.outlook.com (2603:10b6:5:3af::7) by
- MN0PR12MB6003.namprd12.prod.outlook.com (2603:10b6:208:37f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
- 2025 17:04:11 +0000
-Received: from CH3PEPF00000018.namprd21.prod.outlook.com
- (2603:10b6:5:3af:cafe::79) by DS7PR07CA0019.outlook.office365.com
- (2603:10b6:5:3af::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.12 via Frontend Transport; Tue,
- 28 Oct 2025 17:04:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH3PEPF00000018.mail.protection.outlook.com (10.167.244.123) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.0 via Frontend Transport; Tue, 28 Oct 2025 17:04:11 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Tue, 28 Oct
- 2025 10:03:45 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Oct
- 2025 10:03:45 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 28 Oct 2025 10:03:44 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
-	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
-	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/117] 5.15.196-rc2 review
-In-Reply-To: <20251028092823.507383588@linuxfoundation.org>
-References: <20251028092823.507383588@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17208347FEE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761671047; cv=none; b=NLOHn5dSsjDqXNLPehU5vVY77C2TNG4oSwFB5qfLbV1vfTL2TMitj4yyuHtMbzHcTVRcJOmflDTodLcqXUPxrjJc62hsBraAUvXoOsxnCFQSnr+u29B8oI9YcfD1JHSVGqmzfVxuxOD1meSR6E0J6o650fVDxp4upTDIxzt1tYU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761671047; c=relaxed/simple;
+	bh=3kg8pm+ipozBp5qg66HN7+L4B/rkdJ2gW4sZUsIGJYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrrNNKYUOTEmoLSU9v8Zn2N1PSE+CT80ksyLPbd2rxd48U1pqgCZK/QnhNtncrGYoXslRmAuTwIufnhMrTRoxBIJUCRhXmaIHOrB4fgAwYcaQLDDSfXU7kB26DadzLuvWoKRgkM1wjXJ6OR7GmjQFZQ/zuVEbOW9JRFZRXf/8i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j5LChewD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=F9CfUhNO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SEnhgC1896042
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:04:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Gxb46NWzma98thgTgD5WIO0EG3UlYsA249URtd+Q3Cc=; b=j5LChewD1XVfder+
+	UpdEPlswdsy8nGztNGRMSTVxyAQ4T0kF5ryF4s4r4l3K3MjzNmRfLEYCpRP3v1J3
+	/FjPzlj8iFi73rn9uBzGO2PJZals+jFm7I5ZSA1Zlr1R53lIQpPTjIzCDL9N765s
+	GqAxawUXxcmfCylAfip3r3DtK74gjNyXMnsg7qzO2mCLkZFQJSlw6/vFw/3OIgTN
+	bTboCSJztQDJ55F6co6x6nzATgoSD2siiFHzaPIRFXCpucCKz40daFuP0EoSeVC3
+	Vi3H/ZokgrXlttjWp12bJUdYW15A6Hmo7NN1B6fX7mPokP3x/lmh/laehk7VXmH7
+	PlCJBw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2q5ua76b-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:04:04 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-294880e7ca4so109248145ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761671044; x=1762275844; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Gxb46NWzma98thgTgD5WIO0EG3UlYsA249URtd+Q3Cc=;
+        b=F9CfUhNOP7JiOEW3+E44EN15QPBOGhIl/+zkTszOj1jMoiudbtNiuxhwODPWkS25/Y
+         iDBHOoPXHFtCWapAPik7A0jKCchVHuVAlAXNtuPztY6xN3k4/xUx9614FZCj+x/N0CpE
+         pRs6iseWagdMapU9tF0rY8iVlawFYRNAojzk4S/U+XhtzWfyAdyfQvoWJePPfTUH9RUw
+         a04LXZTmqaEVQZXg5OsxyirH8CNQPEgNIM5mrsqQsv6zo/xE5aEOerv2Hou6ct4Q7kQT
+         S4f7OcsC03L39Qx00DY3QxC/pto5SPIeQ614uHRkIpRx0aVumYI7i1gIJ/vUASo19TbH
+         +d1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761671044; x=1762275844;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gxb46NWzma98thgTgD5WIO0EG3UlYsA249URtd+Q3Cc=;
+        b=wDN4L0EmMo+YYCgD3M13fnGuxJMftjRdJXclZMz/h79R7A+/+Je5xzynAiSRZcM+NH
+         OhUWWGopwceZ5oNDZJT2ruZ7VnCxo+Mz/86aJaAwwd43Mfi/NVtGI2+w+6pcWcSX8+bM
+         WPGupU1LZMTz+skYRYTOJTMUgYsue3NVh/nJnOh/g3ZBwTFi9crKupyYB7hCueeVUsir
+         yFpZsVa5An4KoIJyxN2Cii1TpktSXjLpAvhoDrsCEQjNupbfuKA9yrh7oMnaqGmRGunv
+         071Zmcth5cYYFFJ2l/FzzbbAeLjP2pY9EW33ispO74xD9Eq8KPJAcYzV7w+Coj+vLVdr
+         THqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGJG3xlZ8tO6RPFHcpWROwje96pdCiA1X8a2lMIuBRd/n+nSk13xbHqMhnYeIGD0A+isoiXp3UdfCm2wY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJCU0p4DTbMMoA4kL0JPJHISXqFDUrmJZHE/P8dVfiyMAGeKvr
+	kv4q7gM2CI3rj8LcwifCjz/CDeGspN5KTmgvmUvduHhZl1Zhpc4N1rfyqYxEjkMk/tYQgLXgWM+
+	8GN5vtTKpRAnbEM77TaYYXQd1tRmwZvJSAlevd4sd3Fs3ldYtMlmqdoYJx7ljjcXaXLg=
+X-Gm-Gg: ASbGncsNVamWQzj3KypgH0r8DVVQhNWPMhWDLsgVxZk4PC7FbUtnL7dTKK2xTiqJfx4
+	Em1WoX9DDW1kS1+VcHNR7YJjLYIt7U0tXjVECNvEgYkvoxlpxHq0YXzw+aELEsnPD+A/J+j8p/+
+	HRgkfa9sdojrUO1F9nPzY0NDuIk3jidnlCn5GsGIhvNa6BbmDH12pfZf/FIGzh4hv7PfuCSqJMq
+	fEljly+xu5lzAeMh+kKEQyVTt1/sXFTX3/u1+Jrc8VINCRI0fbYPGyIpRAiaL0JBcPUziwSbsZp
+	AVG9UXEtOH/Eu0vNMNN0YyEeKbIxQriL5WayIzRLTiJBKK/0i1pkznPi3P9OMu0nuBUs6uLp3YE
+	Lb/QLioMAZR2lfg68xHDFrsVj6tdlC8ce
+X-Received: by 2002:a17:902:dad2:b0:290:c5c8:941c with SMTP id d9443c01a7336-294cb524ea3mr54293855ad.29.1761671043611;
+        Tue, 28 Oct 2025 10:04:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtzDr6X5aUCAoZzurF+1ndW4gB0Y+G8nqn3G7w/pfodue5lneHQr9xHEF0fYtoNg8Eqx84kQ==
+X-Received: by 2002:a17:902:dad2:b0:290:c5c8:941c with SMTP id d9443c01a7336-294cb524ea3mr54293335ad.29.1761671042996;
+        Tue, 28 Oct 2025 10:04:02 -0700 (PDT)
+Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e4113fsm121499185ad.90.2025.10.28.10.03.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 10:04:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 22:33:56 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] watchdog: Add driver for Gunyah Watchdog
+Message-ID: <1f2f46ee-40c0-4967-9f39-fab791eff76d@quicinc.com>
+References: <20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com>
+ <25f7ff09-08ea-4969-9184-9fd01b097558@kernel.org>
+ <76479593-c47b-41a7-8349-5d7c1403f7c0@oss.qualcomm.com>
+ <73955d58-544c-4299-a099-bfd9e5912a40@kernel.org>
+ <636a1f99-acd4-4904-8fae-f159646cc1a0@kernel.org>
+ <f4d80be9-986f-4d37-9c25-725eff7bb653@quicinc.com>
+ <e03373d9-e2dd-48b6-93a6-554fcd623718@kernel.org>
+ <59a00934-cb42-43de-ac5b-a9292b08301d@quicinc.com>
+ <ad48a3d4-d0df-4581-9377-639af87f0960@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7efcf088-319a-4ca8-8338-ac936de85045@rnnvmail202.nvidia.com>
-Date: Tue, 28 Oct 2025 10:03:44 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000018:EE_|MN0PR12MB6003:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2726146-ae4c-4308-c013-08de164403fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bkVDSUVPWERsbnpQUWNuTTJzMzFWTFJ3enFKNVdiVmtBUnBmZGE0WUFTbTl5?=
- =?utf-8?B?TEs4QzIrdFJ3L29scExjQ0lOZXB3VDR6SGxQa2RDMlhCRElnVWw1azluNThY?=
- =?utf-8?B?MzBrakpNVU9WOWJKYjVGQy95SzZHMjgvR1RTUkVFazNadUw4b3NZd3NrdmRF?=
- =?utf-8?B?blRKbDB2UFNpK1FsODFBODh3RUlwejcyNUQ2NkxOWmZZMjBjWmYya3RhWXB0?=
- =?utf-8?B?Z0UxVDBmc0NneVZIS3IxT0lreGR2WmFJNW5hYU9lbWE2U09WRWh0VUUzTXJh?=
- =?utf-8?B?S1lYVUpSRHBEQ1hrRHJEanNkVUNSVVFmakhQQ2NuSklJK3NPMlYvb1Bmdzg5?=
- =?utf-8?B?Y0h0aUhjSDZwSndrb0JxTUlBRENMaHUxalVWVGdvMlJJK1llYzJrcFFHL2tF?=
- =?utf-8?B?SVpqcGlzMnRNNmt4azA0TURTbzZIeDF3TXlxR3UwRFpIZy9IZVYxNTNCeDFr?=
- =?utf-8?B?U2ZNcXBPRC9ZWkk4NTJ3dldJSTVGWEVpbFpJYXVJaENmRlpOTjY1c0JKOEpt?=
- =?utf-8?B?ZW1oUVVSTUwydnNYczVwemg5anpzUFp5ZFZWRk5YKzJmc0pxU3pQSHFkS0ZC?=
- =?utf-8?B?S0JRVkRyWmJadzdQRUNGZU5ZY0pNa1h2R3hYeGtEK1dYT1ZaYUZ4djV2d3hM?=
- =?utf-8?B?RjBZSVBWbkxQNGVhVWdrVUF0dGlCM3FkbWxRSnNUTGJNT0lVTU5jSU9WdndQ?=
- =?utf-8?B?cWZWY0JtVkpDTVAxWTdzNUY3L2IvZ0tUK1pUQjlaNnRXZmJLYWZUV3JuWTVs?=
- =?utf-8?B?Mm04clJmdjUvNG4xK2ZINlk3NlZ1VnBkR1l5VFgzMjVVM0dWdFZQTlNzTFpO?=
- =?utf-8?B?czV3Q2k3WlQ3N3A0WE9OK2pMMDgyTndvbm5qUWJlenhmN3A0c2JGcWIvd0NI?=
- =?utf-8?B?Kzcvdkh2UUY4blN1VEZLUUNyU3dzRno3bUliSUI1bWhPanZMTW03TUtaNUFl?=
- =?utf-8?B?enh4YUx6NmlFYUZtY3RMTDl3UGk2Mm9aQlNVV0xWZG53SS9CbUVFNHFSZzdE?=
- =?utf-8?B?SHQxWlA0N3ZvOGhhWGNaZ0RTL05mQkpYYUl5c3FWYTJUT3pyR3lkRjdzOTht?=
- =?utf-8?B?Qlo0U2tGZ1V0L2F5Q3VmVFRnTG9RdWwva2I4WXpSdXhlU0E5c20zM0F4U3JS?=
- =?utf-8?B?eDhjbGFwY0lENjc4Mjk2NFo1MlR4Z0hGeW84WHBxRk1DNWptTlZOYlFVVDFP?=
- =?utf-8?B?ZFczSzFia2pTOGh3WVN1KzhXMThORkVBcisrMVI1NkxnTjdvMTV1VzNRS2xF?=
- =?utf-8?B?aGhTZzhCbFBVdnl0SVpkVGI3RDVOYUg3cmNJWE8wSTMxWFpsaU5sbHA1azlR?=
- =?utf-8?B?aU15alVsZ1VXZkZOdXc1RGhSZDVHc0JxSUNsYWJ0OHlHVkhGZWM5ek5GUjBS?=
- =?utf-8?B?dEZHZkNSbnh2RS83enBhLzhMVTFYTm5qQVB3eENzU2hSRTFGdWNXLy8wQURt?=
- =?utf-8?B?T3kxUkNpbktMQ0s1Mk9qbFE1SGZhZzB6elBkMFVhdlhESVowM0xHL3dib0Nm?=
- =?utf-8?B?cHJ0OGR2TEEramx5ZjNHSDVVYThkRjdKSCtDUTZKWThqSlJoV0N4QXJieUhm?=
- =?utf-8?B?V1pSVitrdm5oUHJUdTdaN2RCK1RJaDg4bDZkWWZHc0VqTEUxenNvYTF4MVIz?=
- =?utf-8?B?ZUFNYjFwVy9BMTc0SHBFQVJKeTNWM0wyb0pTR2tkQzN1VDgxUmdHMEgrdEx5?=
- =?utf-8?B?NDlpS1ZjYk9uUHZIak5uZmZQUzVMUzNINjRnTS9PREFxU05kWlgvQ2I3OXNt?=
- =?utf-8?B?V3dlTjM3L3o4Ryt0SklrOE13SzhQakhTelZDOTNMdVFoS0NBV0xIT3gzMjlK?=
- =?utf-8?B?UGpaQTltQkpjMllrUU1jSldsU0ZjZ1RmZmY1S1RTaS80OGkwSXZEZm45YTNQ?=
- =?utf-8?B?UDRsK2o1NHhxQ3ArMnlLYUZxUW52VE90TmZLWmxSTEV4NjJtaGNCcnByUGk0?=
- =?utf-8?B?VEV0VmFVR1ZhTW5oRGpzMlV6bExGMjIxUjBxQy9USnc0dFcvYm1VK3hzZ3Q0?=
- =?utf-8?B?ZDBwNFUwWjNIUVZPZFdVclBMMktQMDBaeU9TeVlLa3N4KzJ0TnREOWtYVVdh?=
- =?utf-8?B?RE9LbldSK0hZUzQzM1d0djFPd3VCbm1uMU9uT1NCVVFPd1U3ZUdZckxYZTVn?=
- =?utf-8?Q?mnEE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 17:04:11.2070
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2726146-ae4c-4308-c013-08de164403fb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000018.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6003
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad48a3d4-d0df-4581-9377-639af87f0960@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE0NSBTYWx0ZWRfX0GMGPTzC4Tj2
+ 8MDfE4zg7WdrtnPmH2W4PIQvOsdMJISTzcvuWHOWjGhcZ97AnR/6lphFF98btlk+PAko+Q0a2KW
+ r/Ux2A3JY3WFNewRx39GXBunSraaFsrFwMl2aS4cjxQs7z4RrekHd+LvExyS6USUI3LtDbTjN2f
+ 0EzTXbE0IMk0tlzSYnfUNDcS8X23Nlw7pRmyn2BJXgDKbjccygjGcifb+HwyrtuNXY6+vwZJhxC
+ o8IfwdS0ykj4Kr5nV+w+meyWvu7DLHjnBYa4GTFav5n/joufTuXeYgM+182FhglnETyFN5wSh8p
+ HjagPRgIktWWaHc+aduFGXRlwuZoP3YHsC461FshxsaeqRzR1Is7RqritOAKAV9GKLkexO8IXSU
+ dqsv/z2rldkia4BlwahmWDWCBmhgXQ==
+X-Proofpoint-ORIG-GUID: mvscQuCYzmKjRso_axJNkmQ63Aj4uJ4c
+X-Proofpoint-GUID: mvscQuCYzmKjRso_axJNkmQ63Aj4uJ4c
+X-Authority-Analysis: v=2.4 cv=c9CmgB9l c=1 sm=1 tr=0 ts=6900f784 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=8nJEP1OIZ-IA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=tIVOHhiQxfCKmF6C710A:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=324X-CrmTo6CU4MGRt3R:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280145
 
-On Tue, 28 Oct 2025 10:29:12 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.196 release.
-> There are 117 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Oct 28, 2025 at 05:39:26PM +0100, Neil Armstrong wrote:
+> On 10/28/25 17:33, Pavan Kondeti wrote:
+> > On Tue, Oct 28, 2025 at 05:17:44PM +0100, Krzysztof Kozlowski wrote:
+> > > On 28/10/2025 13:27, Pavan Kondeti wrote:
+> > > > On Tue, Oct 28, 2025 at 12:07:40PM +0100, Krzysztof Kozlowski wrote:
+> > > > > On 28/10/2025 12:04, Krzysztof Kozlowski wrote:
+> > > > > > On 28/10/2025 11:58, Hrishabh Rajput wrote:
+> > > > > > > 
+> > > > > > > On 10/28/2025 3:10 PM, Krzysztof Kozlowski wrote:
+> > > > > > > > On 28/10/2025 10:35, Hrishabh Rajput via B4 Relay wrote:
+> > > > > > > > > +
+> > > > > > > > > +static int __init gunyah_wdt_init(void)
+> > > > > > > > > +{
+> > > > > > > > > +	struct arm_smccc_res res;
+> > > > > > > > > +	struct device_node *np;
+> > > > > > > > > +	int ret;
+> > > > > > > > > +
+> > > > > > > > > +	/* Check if we're running on a Qualcomm device */
+> > > > > > > > > +	np = of_find_compatible_node(NULL, NULL, "qcom,smem");
+> > > > > > > > I don't think you implemented my feedback. This again is executed on
+> > > > > > > > every platform, e.g. on Samsung, pointlessly.
+> > > > > > > > 
+> > > > > > > > Implement previous feedback.
+> > > > > > > 
+> > > > > > > Do you want us to add platform device from another driver which is
+> > > > > > > probed only on Qualcomm devices (like socinfo from previous discussion)
+> > > > > > > and get rid of the module init function entirely? As keeping anything in
+> > > > > > > the module init will get it executed on all platforms.
+> > > > > > 
+> > > > > > Instead of asking the same can you read previous discussion? What is
+> > > > > > unclear here:
+> > > > > > https://lore.kernel.org/all/3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org/
+> > > > > > ?
+> > > > > > 
+> > > > > > > 
+> > > > > > > 
+> > > > > > > With this patch version, we have tried to reduce the code execution on
+> > > > > > > non-Qualcomm devices (also tried the alternative as mentioned in the
+> > > > > > > cover letter). Adding platform device from another driver as described
+> > > > > > > above would eliminate it entirely, please let us know if you want us to
+> > > > > > > do that.
+> > > > > > 
+> > > > > > Why do I need to repeat the same as last time?
+> > > > > 
+> > > > > 
+> > > > > Now I see that you completely ignored previous discussion and sent THE
+> > > > > SAME approach.
+> > > > 
+> > > > Our intention is not to waste reviewers time at all. It is just a
+> > > > misunderstanding on what your comment is about. Let me elaborate further
+> > > > not to defend our approach here but to get a clarity so that we don't
+> > > > end up in the same situation when v4 is posted.
+> > > > 
+> > > > https://lore.kernel.org/all/b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org/
+> > > > 
+> > > > You mentioned here
+> > > > 
+> > > > ```
+> > > > To me socinfo feels even better. That way only, really only qcom devices
+> > > > will execute this SMC.
+> > > > ```
+> > > > 
+> > > > We interpreted this comment as `avoid executing this SMC on non qcom
+> > > > devices`. That is exactly what we have done in the current patch. since
+> > > 
+> > > 
+> > > So where did you use socinfo? Point me to the code.
+> > > 
+> > 
+> > Okay, lets go a bit deep into the socinfo part. we have used
+> > `soc_device_match()` API to detect if the device is qcom (`family =
+> > Snapdragon`). It works. However, when we built both `socinfo` and
+> > `gunyah-wdt` as modules, we do see that `gunyah-wdt` gets probed before
+> > `socinfo` because the driver that registers socinfo as platform device
+> > which is `smem` probe is getting delayed. As you may know `smem` device
+> > gets registered by `OF` core directly before the whole platform devices
+> > are populated. To make sure that any configuration works, we went with
+> > `qcom,smem` based detection. This is mentioned in the cover letter, sure
+> > it is a detail that can easily be lost. Now one might just say go and
+> > fix probe deferral problems. The problem here is that `smem` platform
+> > device creation happens differently to other devices which is leading to
+> > probe deferral. I can enumerate the problem in much detail, if that
+> > interests you.
+> > 
+> > Please help us understand what is the real concern here? we don't want
+> > to call `of_find_compatible_node()` API on non qcom devices but it is
+> > okay to register drivers. It is still not clear why would non qcom
+> > devices/platform which care about performance load all modules that gets
+> > compiled with ARM64. Needless to say it would load lots of modules and
+> > register many drivers which never gets probed.
 > 
-> Responses should be made by Thu, 30 Oct 2025 09:28:07 +0000.
-> Anything received after that time might be too late.
+> The module file will contain the devicetree compatible they match on,
+> and they will only be loaded if they match a compatible on the loaded DT.
+> Some modules which doesn't match on a compatible, PCI id, .... like yours
+> would be loaded on __all__ arm64 platforms.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> Just have a look at modinfo and the whole Linux module handling.
 > 
-> thanks,
-> 
-> greg k-h
+Thank you for the details. we touched upon modalias part here [1] but I
+did not know that the modules like this i.e no compatible match gets
+loaded automatically by user space. Thanks for the clarification.
 
-All tests passing for Tegra ...
+Thanks,
+Pavan
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    105 tests:	105 pass, 0 fail
-
-Linux version:	5.15.196-rc2-g59a59821e6b5
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+[1]
+https://lore.kernel.org/all/491de94c-e3c5-4f81-8e1a-82596413cede@quicinc.com/
 
