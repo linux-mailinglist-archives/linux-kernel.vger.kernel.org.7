@@ -1,455 +1,169 @@
-Return-Path: <linux-kernel+bounces-873757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45ECDC14A08
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:29:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741E0C14A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 318024F3CB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645CA563465
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE322303C8B;
-	Tue, 28 Oct 2025 12:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC0432E734;
+	Tue, 28 Oct 2025 12:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9dCcoQL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IN9IXmlp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74D132E6B9;
-	Tue, 28 Oct 2025 12:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E04B3176E8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761654556; cv=none; b=nQ6Av0ltngZ89/ZiHmTrbKqiqCxGL5Jc4Z7304KwEifXCly1lIteIAnvSsVbItb/9E1hc6vAS+UUxWp001NiAKPpNs+INSsrumIa/2yVn4OMgCmIlwLtvittb+bW9HEfwVwaJE3ZHdF7Uh8qqZV08Hu4FBhfgwedNLFeS8NAzIo=
+	t=1761654640; cv=none; b=g/JxzJ4w+wsyiSu5jb2TwQvt7lG3TIrPFVeVHw0l57cPW42jJ4DdHklzAi67Phiu0VRjuip1KFRn9z4EdngtzbxklgIxocApHFl/paXtAPQLJF/8Ebzlh+M5e9LraQ4htsS9++C1uIQ53ljoEg0E5+UmjL25mtcEzK04aKVI01s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761654556; c=relaxed/simple;
-	bh=M0gT9Ho8hRq1U8nIIK24mbn8lo7wtYWBXsxfZh4dd9M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HNYWiy6mb17xVuboQvp5FWhYNZ3754qkiigy9Sm9nl0KVpUMpe2mink0Bl3DHcQ+y2M3O1uqYzQcZUY33cgjNZrC7AvZDpJTbYQHZdM0o0ltcAnXTHGlOvIjOTHU7PmCs5re+i26I9DeM0odZZsUVZf2PJ9r5NrOTMzzBChF8pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9dCcoQL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C691BC4CEFD;
-	Tue, 28 Oct 2025 12:29:15 +0000 (UTC)
+	s=arc-20240116; t=1761654640; c=relaxed/simple;
+	bh=FUJwnKqupuATzqa/yUkbLMKYSmrcPHWiju1XCYAtVvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AgBjxo9YIYW8RSoTsHSocqhgGKKIG//uTeDa/C+4wxwzFfmnuZm8o/PMLarSTqUZfLBJi2H9OmBbks5dwQx3ZZpGylAHsVr2RlXVrwwJA5fJGC5OCbOYtVZytvcXguo60h8O70xLo9zzAG57UBHYrNRGJ0Bk6Fb/9DM4EGhUiqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IN9IXmlp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A80C116D0
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761654556;
-	bh=M0gT9Ho8hRq1U8nIIK24mbn8lo7wtYWBXsxfZh4dd9M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l9dCcoQLnZApXVoP15S/r745QnMwDQqHKkSFhCa4/3LJ83ad4LUnQJJtTP8U2DRrW
-	 tQl1kws46mlsJzZ4oazDyhKR/F2g3ue0GBdnrdTSXRicetX0BmmP6yljSX+F0WdIuo
-	 WROxlW/140jgmyDfNrk/qdrfhTKDf5TAq7F4TfH5Fo0ykc7NAzLxyRkp1+RLerA05x
-	 tUzV+sGVF4rjbkltLT0a6Gods+jdcCq2hSpAlqJlLqRTFvwr7dRulglhv6C634Zmrk
-	 o5q4GbTa7TDMp/73NflEKyY+ThB/SflXkNL3CENMOw94BQv6H5PX9eK0bHVVeHS38w
-	 cEypoQZlmojEg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vDip7-00000000Fpa-1Gaa;
-	Tue, 28 Oct 2025 12:29:13 +0000
-Date: Tue, 28 Oct 2025 12:29:12 +0000
-Message-ID: <86wm4fus4n.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	suzuki.poulose@arm.com,
-	joey.gouly@arm.com,
-	yuzenghui@huawei.com,
-	darren@os.amperecomputing.com,
-	cl@gentwo.org,
-	scott@os.amperecomputing.com,
-	gklkml16@gmail.com
-Subject: Re: [PATCH v2] KVM: arm64: nv: Optimize unmapping of shadow S2-MMU tables
-In-Reply-To: <060fe820-85b8-4476-be95-a0d37e53fa12@os.amperecomputing.com>
-References: <20251013065125.767779-1-gankulkarni@os.amperecomputing.com>
-	<0345c510-5db4-462f-95fb-591e71468aca@os.amperecomputing.com>
-	<87v7k53cud.wl-maz@kernel.org>
-	<060fe820-85b8-4476-be95-a0d37e53fa12@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1761654640;
+	bh=FUJwnKqupuATzqa/yUkbLMKYSmrcPHWiju1XCYAtVvU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IN9IXmlpfWmyQMe+4yoJTRjrGkXONjtInjRNNGwLDljJ1Ic7/ddFwvqAuTWuBxGEf
+	 ggNv4arOeC36FTqSclS7agsLn0giGAlgy3711NOxA7QnriWNWG0jBFLFs9N5h4BZGw
+	 Q8c+lbqvJ6pAW0kKUoegNkJhQkV8aLUg35ip0R31lA0L+fU9zQfaSwQjysXPIvBTEI
+	 3RGk17q9uhF2ESP/I0/Ie5Dm/p5vDSh3YZTnUEYOO0p2nt4xh+HbjTSvfGCK5tFXHS
+	 m7IOMOESNFONZnvFolxLiDeuUIdGtz94/CWxElVzIK1hkjq/Yf6lT+t5faKd6ehqUp
+	 6HDN0JNqG/u5Q==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3d56d0cb3dbso671978fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:30:40 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzVLIRseax7wpmcn1xiIyzkeTyD+zbnB+YLmOIQp6qpzQR5pVyD
+	wdv41VNR7LRUuCcY9ssxribrk6CU7bqIVO9HU3mqrkMqp/+ESTIf5IaIWyzhMXCcB+teMhwkd2c
+	/2ypOFZht1l1NSvO8EBt++U+QVZXg1jQ=
+X-Google-Smtp-Source: AGHT+IF4/+n4/HUbYzvmzntYRGMqRLoTUquPBb05pAoL2nb4JIDivDwVJlZRViGR0xOD6wLtOHPmiqYRVXII1LbUhvo=
+X-Received: by 2002:a05:6870:a188:b0:3d2:f6c1:1744 with SMTP id
+ 586e51a60fabf-3d5d9554f00mr1276006fac.28.1761654639396; Tue, 28 Oct 2025
+ 05:30:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+References: <20251028053136.692462-1-ankur.a.arora@oracle.com> <20251028053136.692462-8-ankur.a.arora@oracle.com>
+In-Reply-To: <20251028053136.692462-8-ankur.a.arora@oracle.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 28 Oct 2025 13:30:28 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hSvzHfsE4nrEW-Ey0dnJ+m=dSU-f1RywGNU0Xyi3jXtQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bmK2EK_uRWSBm9YaeD6TrkAr4FPkjdGF2gNL1N7yUrOkz2AUZHQBAURvQI
+Message-ID: <CAJZ5v0hSvzHfsE4nrEW-Ey0dnJ+m=dSU-f1RywGNU0Xyi3jXtQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v7 7/7] cpuidle/poll_state: Poll via smp_cond_load_relaxed_timeout()
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	bpf@vger.kernel.org, arnd@arndb.de, catalin.marinas@arm.com, will@kernel.org, 
+	peterz@infradead.org, akpm@linux-foundation.org, mark.rutland@arm.com, 
+	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, memxor@gmail.com, zhenglifeng1@huawei.com, 
+	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com, 
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, will@kernel.org, catalin.marinas@arm.com, suzuki.poulose@arm.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, cl@gentwo.org, scott@os.amperecomputing.com, gklkml16@gmail.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, 28 Oct 2025 06:02:03 +0000,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
->=20
-> On 10/23/2025 8:05 PM, Marc Zyngier wrote:
-> > On Thu, 23 Oct 2025 12:11:42 +0100,
-> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> >>=20
-> >>=20
-> >> Hi Marc, Oliver,
-> >>=20
-> >> On 10/13/2025 12:21 PM, Ganapatrao Kulkarni wrote:
-> >>> As of commit ec14c272408a ("KVM: arm64: nv: Unmap/flush shadow
-> >>> stage 2 page tables"), an unmap of a canonical IPA range mapped at L1
-> >>> triggers invalidation in L1 S2-MMU and in all active shadow (L2) S2-M=
-MU
-> >>> tables. Because there is no direct mapping to locate the corresponding
-> >>> shadow IPAs, the code falls back to a full S2-MMU page-table walk and
-> >>> invalidation across the entire L1 address space.
-> >>>=20
-> >>> For 4K pages this causes roughly 256K loop iterations (about 8M for
-> >>> 64K pages) per unmap, which can severely impact performance on large
-> >>> systems and even cause soft lockups during NV (L1/L2) boots with many
-> >>> CPUs and large memory. It also causes long delays during L1 reboot.
-> >>>=20
-> >>> This patch adds a maple-tree-based lookup that records canonical-IPA =
-to
-> >>> shadow-IPA mappings whenever a page is mapped into any shadow (L2)
-> >>> table. On unmap, the lookup is used to target only those shadow IPAs
-> >>> which are fully or partially mapped in shadow S2-MMU tables, avoiding
-> >>> a full-address-space walk and unnecessary unmap/flush operations.
-> >>>=20
-> >>> The lookup is updated on map/unmap operations so entries remain
-> >>> consistent with shadow table state. Use it during unmap to invalidate
-> >>> only affected shadow IPAs, avoiding unnecessary CPU work and reducing
-> >>> latency when shadow mappings are sparse.
-> >>>=20
-> >>> Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
-> >>> Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.co=
-m>
-> >>> ---
-> >>>=20
-> >>> Changes since v1:
-> >>> 		Rebased to 6.18-rc1.
-> >>> 		Fixed alignment issue while adding the shadow ipa range
-> >>> 		to lookup.=09
-> >>>=20
-> >>> Changes since RFC v1:
-> >>> 		Added maple tree based lookup and updated with review
-> >>> 		comments from [1].
-> >>>=20
-> >>> [1] https://lkml.indiana.edu/2403.0/03801.html
-> >>>=20
-> >>>    arch/arm64/include/asm/kvm_host.h   |   3 +
-> >>>    arch/arm64/include/asm/kvm_nested.h |   9 +++
-> >>>    arch/arm64/kvm/mmu.c                |  17 ++--
-> >>>    arch/arm64/kvm/nested.c             | 120 ++++++++++++++++++++++++=
-++--
-> >>>    4 files changed, 138 insertions(+), 11 deletions(-)
-> >>>=20
-> >>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/a=
-sm/kvm_host.h
-> >>> index b763293281c8..e774681c6ba4 100644
-> >>> --- a/arch/arm64/include/asm/kvm_host.h
-> >>> +++ b/arch/arm64/include/asm/kvm_host.h
-> >>> @@ -227,6 +227,9 @@ struct kvm_s2_mmu {
-> >>>    	 * >0: Somebody is actively using this.
-> >>>    	 */
-> >>>    	atomic_t refcnt;
-> >>> +
-> >>> +	/* For IPA to shadow IPA lookup */
-> >>> +	struct maple_tree nested_mmu_mt;
-> >>>    };
-> >>>      struct kvm_arch_memory_slot {
-> >>> diff --git a/arch/arm64/include/asm/kvm_nested.h b/arch/arm64/include=
-/asm/kvm_nested.h
-> >>> index f7c06a840963..5b7c4e7ed18f 100644
-> >>> --- a/arch/arm64/include/asm/kvm_nested.h
-> >>> +++ b/arch/arm64/include/asm/kvm_nested.h
-> >>> @@ -69,6 +69,8 @@ extern void kvm_init_nested(struct kvm *kvm);
-> >>>    extern int kvm_vcpu_init_nested(struct kvm_vcpu *vcpu);
-> >>>    extern void kvm_init_nested_s2_mmu(struct kvm_s2_mmu *mmu);
-> >>>    extern struct kvm_s2_mmu *lookup_s2_mmu(struct kvm_vcpu *vcpu);
-> >>> +extern int add_to_shadow_ipa_lookup(struct kvm_pgtable *pgt, u64 sha=
-dow_ipa, u64 ipa,
-> >>> +		u64 size);
-> >>>      union tlbi_info;
-> >>>    @@ -95,6 +97,12 @@ struct kvm_s2_trans {
-> >>>    	u64 desc;
-> >>>    };
-> >>>    +struct shadow_ipa_map {
-> >>> +	u64 shadow_ipa;
-> >>> +	u64 ipa;
-> >>> +	u64 size;
-> >>> +};
-> >>> +
-> >>>    static inline phys_addr_t kvm_s2_trans_output(struct kvm_s2_trans =
-*trans)
-> >>>    {
-> >>>    	return trans->output;
-> >>> @@ -132,6 +140,7 @@ extern int kvm_s2_handle_perm_fault(struct kvm_vc=
-pu *vcpu,
-> >>>    extern int kvm_inject_s2_fault(struct kvm_vcpu *vcpu, u64 esr_el2);
-> >>>    extern void kvm_nested_s2_wp(struct kvm *kvm);
-> >>>    extern void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block);
-> >>> +extern void kvm_nested_s2_unmap_range(struct kvm *kvm, u64 ipa, u64 =
-size, bool may_block);
-> >>>    extern void kvm_nested_s2_flush(struct kvm *kvm);
-> >>>      unsigned long compute_tlb_inval_range(struct kvm_s2_mmu *mmu,
-> >>> u64 val);
-> >>> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> >>> index 7cc964af8d30..27c120556e1b 100644
-> >>> --- a/arch/arm64/kvm/mmu.c
-> >>> +++ b/arch/arm64/kvm/mmu.c
-> >>> @@ -1872,6 +1872,10 @@ static int user_mem_abort(struct kvm_vcpu *vcp=
-u, phys_addr_t fault_ipa,
-> >>>    		ret =3D KVM_PGT_FN(kvm_pgtable_stage2_map)(pgt, fault_ipa, vma_p=
-agesize,
-> >>>    					     __pfn_to_phys(pfn), prot,
-> >>>    					     memcache, flags);
-> >>> +
-> >>> +		/* Add to lookup, if canonical IPA range mapped to shadow mmu */
-> >>> +		if (nested)
-> >>> +			add_to_shadow_ipa_lookup(pgt, fault_ipa, ipa, vma_pagesize);
-> >>>    	}
-> >>>      out_unlock:
-> >>> @@ -2094,14 +2098,15 @@ int kvm_handle_guest_abort(struct kvm_vcpu *v=
-cpu)
-> >>>      bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range
-> >>> *range)
-> >>>    {
-> >>> +	gpa_t start =3D range->start << PAGE_SHIFT;
-> >>> +	gpa_t end =3D (range->end - range->start) << PAGE_SHIFT;
-> >>> +	bool may_block =3D range->may_block;
-> >>> +
-> >>>    	if (!kvm->arch.mmu.pgt)
-> >>>    		return false;
-> >>>    -	__unmap_stage2_range(&kvm->arch.mmu, range->start <<
-> >>> PAGE_SHIFT,
-> >>> -			     (range->end - range->start) << PAGE_SHIFT,
-> >>> -			     range->may_block);
-> >>> -
-> >>> -	kvm_nested_s2_unmap(kvm, range->may_block);
-> >>> +	__unmap_stage2_range(&kvm->arch.mmu, start, end, may_block);
-> >>> +	kvm_nested_s2_unmap_range(kvm, start, end, may_block);
-> >>>    	return false;
-> >>>    }
-> >>>    @@ -2386,7 +2391,7 @@ void kvm_arch_flush_shadow_memslot(struct
-> >>> kvm *kvm,
-> >>>      	write_lock(&kvm->mmu_lock);
-> >>>    	kvm_stage2_unmap_range(&kvm->arch.mmu, gpa, size, true);
-> >>> -	kvm_nested_s2_unmap(kvm, true);
-> >>> +	kvm_nested_s2_unmap_range(kvm, gpa, size, true);
-> >>>    	write_unlock(&kvm->mmu_lock);
-> >>>    }
-> >>>    diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> >>> index 7a045cad6bdf..3a7035e7526a 100644
-> >>> --- a/arch/arm64/kvm/nested.c
-> >>> +++ b/arch/arm64/kvm/nested.c
-> >>> @@ -7,6 +7,7 @@
-> >>>    #include <linux/bitfield.h>
-> >>>    #include <linux/kvm.h>
-> >>>    #include <linux/kvm_host.h>
-> >>> +#include <linux/maple_tree.h>
-> >>>      #include <asm/fixmap.h>
-> >>>    #include <asm/kvm_arm.h>
-> >>> @@ -725,6 +726,7 @@ void kvm_init_nested_s2_mmu(struct kvm_s2_mmu *mm=
-u)
-> >>>    	mmu->tlb_vttbr =3D VTTBR_CNP_BIT;
-> >>>    	mmu->nested_stage2_enabled =3D false;
-> >>>    	atomic_set(&mmu->refcnt, 0);
-> >>> +	mt_init_flags(&mmu->nested_mmu_mt, MM_MT_FLAGS);
-> >>>    }
-> >>>      void kvm_vcpu_load_hw_mmu(struct kvm_vcpu *vcpu)
-> >>> @@ -1067,6 +1069,99 @@ void kvm_nested_s2_wp(struct kvm *kvm)
-> >>>    	kvm_invalidate_vncr_ipa(kvm, 0, BIT(kvm->arch.mmu.pgt->ia_bits));
-> >>>    }
-> >>>    +/*
-> >>> + * Store range of canonical IPA mapped to a nested stage 2 mmu table.
-> >>> + * Canonical IPA used as pivot in maple tree for the lookup later
-> >>> + * while IPA unmap/flush.
-> >>> + */
-> >>> +int add_to_shadow_ipa_lookup(struct kvm_pgtable *pgt, u64 shadow_ipa,
-> >>> +		u64 ipa, u64 size)
-> >>> +{
-> >>> +	struct kvm_s2_mmu *mmu;
-> >>> +	struct shadow_ipa_map *entry;
-> >>> +	unsigned long start, end;
-> >>> +	int ret;
-> >>> +
-> >>> +	start =3D ALIGN_DOWN(ipa, size);
-> >>> +	end =3D start + size;
-> >>> +	mmu =3D pgt->mmu;
-> >>> +
-> >>> +	entry =3D kzalloc(sizeof(struct shadow_ipa_map), GFP_KERNEL_ACCOUNT=
-);
-> >>> +
-> >>> +	if (!entry)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	entry->ipa =3D start;
-> >>> +	entry->shadow_ipa =3D ALIGN_DOWN(shadow_ipa, size);
-> >>> +	entry->size =3D size;
-> >>> +	ret =3D mtree_store_range(&mmu->nested_mmu_mt, start, end - 1, entr=
-y,
-> >>> +			  GFP_KERNEL_ACCOUNT);
-> >>> +	if (ret) {
-> >>> +		kfree(entry);
-> >>> +		WARN_ON(ret);
-> >>> +	}
-> >>> +
-> >>> +	return ret;
-> >>> +}
-> >>> +
-> >>> +static void nested_mtree_erase(struct maple_tree *mt, unsigned long =
-start,
-> >>> +		unsigned long size)
-> >>> +{
-> >>> +	void *entry =3D NULL;
-> >>> +
-> >>> +	MA_STATE(mas, mt, start, start + size - 1);
-> >>> +
-> >>> +	mtree_lock(mt);
-> >>> +	entry =3D mas_erase(&mas);
-> >>> +	mtree_unlock(mt);
-> >>> +	kfree(entry);
-> >>> +}
-> >>> +
-> >>> +static void nested_mtree_erase_and_unmap_all(struct kvm_s2_mmu *mmu,
-> >>> +		unsigned long start, unsigned long end, bool may_block)
-> >>> +{
-> >>> +	struct shadow_ipa_map *entry;
-> >>> +
-> >>> +	mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu)) {
-> >>> +		kvm_stage2_unmap_range(mmu, entry->shadow_ipa, entry->size,
-> >>> +				may_block);
-> >>> +		kfree(entry);
-> >>> +	}
-> >>> +
-> >>> +	mtree_destroy(&mmu->nested_mmu_mt);
-> >>> +	mt_init_flags(&mmu->nested_mmu_mt, MM_MT_FLAGS);
-> >>> +}
-> >>> +
-> >>> +void kvm_nested_s2_unmap_range(struct kvm *kvm, u64 ipa, u64 size,
-> >>> +		bool may_block)
-> >>> +{
-> >>> +	int i;
-> >>> +	struct shadow_ipa_map *entry;
-> >>> +
-> >>> +	lockdep_assert_held_write(&kvm->mmu_lock);
-> >>> +
-> >>> +	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
-> >>> +		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
-> >>> +		unsigned long start =3D ipa;
-> >>> +		unsigned long end =3D ipa + size;
-> >>> +
-> >>> +		if (!kvm_s2_mmu_valid(mmu))
-> >>> +			continue;
-> >>> +
-> >>> +		do {
-> >>> +			entry =3D mt_find(&mmu->nested_mmu_mt, &start, end - 1);
-> >>> +			if (!entry)
-> >>> +				break;
-> >>> +
-> >>> +			kvm_stage2_unmap_range(mmu, entry->shadow_ipa,
-> >>> +							entry->size, may_block);
-> >>> +			start =3D entry->ipa + entry->size;
-> >>> +			nested_mtree_erase(&mmu->nested_mmu_mt, entry->ipa,
-> >>> +							entry->size);
-> >>> +		} while (start < end);
-> >>> +	}
-> >>> +}
-> >>> +
-> >>>    void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block)
-> >>>    {
-> >>>    	int i;
-> >>> @@ -1076,8 +1171,10 @@ void kvm_nested_s2_unmap(struct kvm *kvm, bool=
- may_block)
-> >>>    	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
-> >>>    		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
-> >>>    -		if (kvm_s2_mmu_valid(mmu))
-> >>> -			kvm_stage2_unmap_range(mmu, 0, kvm_phys_size(mmu), may_block);
-> >>> +		if (!kvm_s2_mmu_valid(mmu))
-> >>> +			continue;
-> >>> +
-> >>> +		nested_mtree_erase_and_unmap_all(mmu, 0, kvm_phys_size(mmu), may_b=
-lock);
-> >>>    	}
-> >>>      	kvm_invalidate_vncr_ipa(kvm, 0,
-> >>> BIT(kvm->arch.mmu.pgt->ia_bits));
-> >>> @@ -1091,9 +1188,14 @@ void kvm_nested_s2_flush(struct kvm *kvm)
-> >>>      	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
-> >>>    		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
-> >>> +		struct shadow_ipa_map *entry;
-> >>> +		unsigned long start =3D 0;
-> >>>    -		if (kvm_s2_mmu_valid(mmu))
-> >>> -			kvm_stage2_flush_range(mmu, 0, kvm_phys_size(mmu));
-> >>> +		if (!kvm_s2_mmu_valid(mmu))
-> >>> +			continue;
-> >>> +
-> >>> +		mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu))
-> >>> +			kvm_stage2_flush_range(mmu, entry->shadow_ipa, entry->size);
-> >>>    	}
-> >>>    }
-> >>>    @@ -1104,8 +1206,16 @@ void kvm_arch_flush_shadow_all(struct kvm
-> >>> *kvm)
-> >>>    	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
-> >>>    		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
-> >>>    -		if (!WARN_ON(atomic_read(&mmu->refcnt)))
-> >>> +		if (!WARN_ON(atomic_read(&mmu->refcnt))) {
-> >>> +			struct shadow_ipa_map *entry;
-> >>> +			unsigned long start =3D 0;
-> >>> +
-> >>>    			kvm_free_stage2_pgd(mmu);
-> >>> +
-> >>> +			mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu))
-> >>> +				kfree(entry);
-> >>> +			mtree_destroy(&mmu->nested_mmu_mt);
-> >>> +		}
-> >>>    	}
-> >>>    	kvfree(kvm->arch.nested_mmus);
-> >>>    	kvm->arch.nested_mmus =3D NULL;
-> >>=20
-> >> Any review comments or suggestions for this patch?
-> >=20
-> > None. This patch is obviously lacking the basic requirements that such
-> > an "optimisation" should handle, such as dealing with multiple
-> > mappings to the same IPA in the shadow S2, hence will happily fail to
-> > correctly unmap stuff. There is no documentation, and no test.
-> >=20
-> Thanks for the comment.
-> How about adding list of multiple mappings ranges to the maple tree
-> entry/node while adding to the lookup and later unmapping every
-> range present in that list?
+On Tue, Oct 28, 2025 at 6:32=E2=80=AFAM Ankur Arora <ankur.a.arora@oracle.c=
+om> wrote:
+>
+> The inner loop in poll_idle() polls over the thread_info flags,
+> waiting to see if the thread has TIF_NEED_RESCHED set. The loop
+> exits once the condition is met, or if the poll time limit has
+> been exceeded.
+>
+> To minimize the number of instructions executed in each iteration,
+> the time check is done only intermittently (once every
+> POLL_IDLE_RELAX_COUNT iterations). In addition, each loop iteration
+> executes cpu_relax() which on certain platforms provides a hint to
+> the pipeline that the loop busy-waits, allowing the processor to
+> reduce power consumption.
+>
+> This is close to what smp_cond_load_relaxed_timeout() provides. So,
+> restructure the loop and fold the loop condition and the timeout check
+> in smp_cond_load_relaxed_timeout().
 
-How will that work when the various mappings don't have the same size?
+Well, it is close, but is it close enough?
 
-> I tested this patch on an AmpereOne system (2 NUMA nodes, 96 CPUs
-> per node, numa balance enabled) with large vCPU counts and large
-> memory to L1 and L2.  The current full-address-space walk caused
-> very large unmap/flush work and significant delays (exacerbated by
-> NUMA balancing / page migration activity).  The targeted unmap using
-> the list per node removes only the affected mappings and reduces the
-> unmap latency substantially in our workloads.
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> ---
+>  drivers/cpuidle/poll_state.c | 29 ++++++++---------------------
+>  1 file changed, 8 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+> index 9b6d90a72601..dc7f4b424fec 100644
+> --- a/drivers/cpuidle/poll_state.c
+> +++ b/drivers/cpuidle/poll_state.c
+> @@ -8,35 +8,22 @@
+>  #include <linux/sched/clock.h>
+>  #include <linux/sched/idle.h>
+>
+> -#define POLL_IDLE_RELAX_COUNT  200
+> -
+>  static int __cpuidle poll_idle(struct cpuidle_device *dev,
+>                                struct cpuidle_driver *drv, int index)
+>  {
+> -       u64 time_start;
+> -
+> -       time_start =3D local_clock_noinstr();
+> +       u64 time_end;
+> +       u32 flags =3D 0;
+>
+>         dev->poll_time_limit =3D false;
+>
+> +       time_end =3D local_clock_noinstr() + cpuidle_poll_time(drv, dev);
 
-I really don't care how badly things perform. The important thing is
-that this is architecturally correct, while your approach isn't.
+Is there any particular reason for doing this unconditionally?  If
+not, then it looks like an arbitrary unrelated change to me.
 
-> I booted multiple L1s, each hosting several L2s, and observed no
-> panics or failures related to missing support for multiple=E2=80=91IPA
-> mappings.
+> +
+>         raw_local_irq_enable();
+>         if (!current_set_polling_and_test()) {
+> -               unsigned int loop_count =3D 0;
+> -               u64 limit;
+> -
+> -               limit =3D cpuidle_poll_time(drv, dev);
+> -
+> -               while (!need_resched()) {
+> -                       cpu_relax();
+> -                       if (loop_count++ < POLL_IDLE_RELAX_COUNT)
+> -                               continue;
+> -
+> -                       loop_count =3D 0;
+> -                       if (local_clock_noinstr() - time_start > limit) {
+> -                               dev->poll_time_limit =3D true;
+> -                               break;
+> -                       }
+> -               }
+> +               flags =3D smp_cond_load_relaxed_timeout(&current_thread_i=
+nfo()->flags,
+> +                                                     (VAL & _TIF_NEED_RE=
+SCHED),
+> +                                                     (local_clock_noinst=
+r() >=3D time_end));
 
-I'm sorry, but Linux isn't a validation tool for the architecture. You
-have clearly designed something around Linux's own behaviour, not the
-architectural requirements.
+So my understanding of this is that it reduces duplication with some
+other places doing similar things.  Fair enough.
 
-> If you have any test cases or scenarios that would validate support
-> for multiple IPA mappings, could you please share them?
+However, since there is "timeout" in the name, I'd expect it to take
+the timeout as an argument.
 
-The onus is on *you* to provide them, not me.
-
-I've repeatedly said that I didn't care about performance when we have
-so little to validate the existing code. This still stands.
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+> +               dev->poll_time_limit =3D !(flags & _TIF_NEED_RESCHED);
+>         }
+>         raw_local_irq_disable();
+>
+> --
 
