@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-874573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C0CC169B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:27:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E85C169BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AABB84E1485
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802BE1A2616F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E95334F481;
-	Tue, 28 Oct 2025 19:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E9B34E772;
+	Tue, 28 Oct 2025 19:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvbXIFFU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Znfa7xL3"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D125033CEA7;
-	Tue, 28 Oct 2025 19:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E62233CEA7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761679619; cv=none; b=bjfdljy6Gbgg+agV9NoKu4UhKYFh3OBFe5TDt7LIgqGR29dfcKGiCMVAWbK1gKArAjKiUYprzfJ74/iILnxbBWivEgWmzYh2+4uhCkxdLKL5EASdLenaVJofywrLh29k0Aru1JdNxloBmzhFFqvttICH+a3a01BOq7rhu0Oe7ls=
+	t=1761679647; cv=none; b=tgMW0da1V/TK7PAK51vGc9WvUJ4RdAaAzrLH/emnqIPnxMQa+Qrd2+1U6+P4PhavTrdlEWN2qbNxkWz4qpe0GspJKF+NGqbPkC1WTLJBW62IYI1Jan7Nfte18jPxvoBa+C9A+oADwVgu8cr19zEzUwciWykffjEeaR5riQPMHdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761679619; c=relaxed/simple;
-	bh=W5l+ab68yytFDDqxgiQTe2mOEzh1UbDIZVUX4z6Q76s=;
+	s=arc-20240116; t=1761679647; c=relaxed/simple;
+	bh=EjQDlMKljLoLF1RNLEqNk/sJQiRMv0YG75vPjfuCAbk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d/qyJwQcCIjCnejVEg5GMB0dKZK5u1h3YroX00zIvRUTYgPB4ratYnvmzU0XWQFhBHhPCNKOHQea13GC902+BsfD3IzOwB0ZQfay05y7Owt2zNXk2WJf8aj8dIAyioP0TJ4GPqHJkDRvAVd4nX+njYFk/ykrqvP2TX+qCqOZTFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvbXIFFU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EC7C4CEE7;
-	Tue, 28 Oct 2025 19:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761679619;
-	bh=W5l+ab68yytFDDqxgiQTe2mOEzh1UbDIZVUX4z6Q76s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qvbXIFFUDaOCfVlJL9+2CIfDZ67pAoQqyuiXmgl7bQlfgqi4TWaL59+ln1CFK1iSd
-	 OOAxVusiuOJVScJlAD8jXWyaraefOQ+GOcMwNcTH+xvTFgasCHAH/Yp8p8B5x2uAFg
-	 2cisgmnOu/Uh8RLngVFoUR4irs7KzvgavFmTZA0yGTi2H4Hj7zT1Sn14pUmqG9HrX5
-	 c3LJyozCRGvtTZRZTfZSyb0ZTefVUEaQAP7jDSCjteI2daP21fL4+kELswUQAQwPdr
-	 z+zVpIKkn439br0PT5+s1la62CGo0FDsMSoeiOKMaC+Z89Ct+H5hY59/Bh28pWA5w6
-	 /UJtSVe2NW6og==
-Message-ID: <2b2e5f31-e685-4a28-ae15-f620310d509b@kernel.org>
-Date: Tue, 28 Oct 2025 20:26:53 +0100
+	 In-Reply-To:Content-Type; b=bK4NFWLKmI80KGFdwEpGSZHghGBaxK9bA7SQv69IQPEClshg8aUZKd+y4HX2g+xcl3gD4wQNi99vynilMAkNnzwMSm+xQyJQ4qgCrbbfaWisp+4FEAelM7bwlkPmSRWuIwSUQUkWvoZQ00ZJZ0n3BBF2urlN8oYsTgtBZDqjoFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Znfa7xL3; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-430bf3b7608so67529235ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:27:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1761679643; x=1762284443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GB2PFiCN2UaCVMnczPZbv8cjpS+ngdtn8TvyTng1lic=;
+        b=Znfa7xL36HVagQIIMyIoI+BujbNqgkf8NrzQIjPOKuyIVMjIafWIHa6PR1todHfHZV
+         savVsRFoOej1a0lEnYA83dfWj06cTrfMgzbTpaL5usXep6W0g2IFOb4czCYc5gOVUcuf
+         7kgibXGQ3sWTTmF9MWcUpApjKSKH0G3IATGDo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761679643; x=1762284443;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GB2PFiCN2UaCVMnczPZbv8cjpS+ngdtn8TvyTng1lic=;
+        b=DKS0LoSbH9RuBKRPO47a85ym+MZCHKPXgSXcPv/Tg9n3FXTJq8v3bftnBZCpo0YhTa
+         Da48d4KQaTJIpuSJqL99T9JmR38BZCERCraOFTbIJ6fJjpb/ZwInaEq2qksKbGzqkHJM
+         wOkkSUBjmiHQxA/BxIMiEhOGaALEDS+8rdRMn3Tq0vOSCrzR/XobAT4jx366DoRefjjk
+         rLIonKpAVkGSm3yu+69+c4zA6jvJw6D1GhEL/HNaJKtYiwLz2RqasFG6HnUPcXATrOvd
+         Frb9cQt2A7tW2EH2grrgtH69+8HKOiptJvqOriTC1JGZ+pM+kWl8KZLY1PJcyvnBBODG
+         Ghdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBRE4Fv57+FxbJs5rhcOFbnDZ4BaKGaLnY6Qxzj6qIFhmKzEZX2nJSNWMwv2X3k30idMXHYVNO/C63rs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw53rLV3tah6YwoyvWOwLSLPC6jEmnVrNdORPUFsEoBG3YQPYRi
+	Sj3ZJzTvgPvcwhv/3j16JdVo0HfVKNCwEZfsNys+D11vHTL4wja2QdN38qjTK1jcwnA=
+X-Gm-Gg: ASbGncuKaD34V+pqnGKnQ+Gq2MdwVlTU4znP/x66mzHkIXFNLsuVlDqX6go6cI+MNR5
+	MCwscNLbAfkKaBi1suGgvkficr3fJPPHxWyCyPRXDfG57PGEnppmOaR9CJhFrvqo2FaJKG5lWlI
+	/od4q2bWjDxoU0Vp5FHrWqaXQw+SlPUEfVkwqs5G+FhyaSaplJZL11mfVcla4X4iK4YzxSNuusq
+	IVG1v8ynS+QQCV/AW/73xeeHDiMUP4w3zH7q00wm0qs8SuETrUa/KrdyD253q6jPjX3GVIEqHYr
+	cwrg4fhTeYHDCeM9EsbjiOGzyOfR7VwIxedg/iWKRssC3iFxz6BZzGYFTPLjJgLayqV0XmJbQig
+	d4jNa7Xq10T/BRwQ6svqG07vuxYVp+YAgZ17aib2BJXr0p+gvIJNqyt8PzBZZhJSrni0YeoALWw
+	LPn7HfI/yCTn7D
+X-Google-Smtp-Source: AGHT+IGXVvv4lpTGzJhlhova0pWyuJ1mMuUD5kivB8hewEmKrt3ll5migY+nbLuVZH69B76ZbpExJg==
+X-Received: by 2002:a05:6e02:3c04:b0:430:b6a0:1b6a with SMTP id e9e14a558f8ab-432f9064bbfmr5094085ab.18.1761679643364;
+        Tue, 28 Oct 2025 12:27:23 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea946de41sm4714939173.40.2025.10.28.12.27.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 12:27:22 -0700 (PDT)
+Message-ID: <91fdefc0-c79d-49fc-a2f1-ecd650ede4d8@linuxfoundation.org>
+Date: Tue, 28 Oct 2025 13:27:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,34 +79,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] rust: bitmap: add BitmapVec::new_inline()
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Yury Norov <yury.norov@gmail.com>, =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?=
- <arve@android.com>, Todd Kjos <tkjos@android.com>,
- Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>,
- Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>,
- Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
- Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
- <20251028-binder-bitmap-v3-2-32822d4b3207@google.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 5.15 000/123] 5.15.196-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, sr@sladewatkins.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251027183446.381986645@linuxfoundation.org>
 Content-Language: en-US
-In-Reply-To: <20251028-binder-bitmap-v3-2-32822d4b3207@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251027183446.381986645@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/28/25 11:55 AM, Alice Ryhl wrote:
-> This constructor is useful when you just want to create a BitmapVec
-> without allocating but don't care how large it is.
+On 10/27/25 12:34, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.196 release.
+> There are 123 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> Reviewed-by: Burak Emir <bqe@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+Compiled and booted on my test system. No dmesg regressions.
+
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
