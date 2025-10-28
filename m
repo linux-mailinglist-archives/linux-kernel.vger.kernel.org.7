@@ -1,243 +1,276 @@
-Return-Path: <linux-kernel+bounces-874122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312A1C15925
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:46:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D0EC15959
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA761A21EE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:42:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57D8E4F7DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F4933469D;
-	Tue, 28 Oct 2025 15:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6E4345736;
+	Tue, 28 Oct 2025 15:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YZlIzKDI"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HHqmUaKK";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="SB1GCj3S"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F6E21883F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666133; cv=none; b=GzlT+W5tielz+u+zZGQohRvfwKibwOI3VWkp6jbgt+jeePowDsAzurIqE5j6ngIhckGU8HxjmHriO4STmDeMVLmDkiQPVpFvUDA7iz9U/G7lJJQZm7XyhjDiQUzKJW7pD1DjObchqS1LODivbxlBFRd1U4RDHabDb/IvOgBnFP8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666133; c=relaxed/simple;
-	bh=nmb9otoxS9qo4PpMlQE1HojBqVA53t1oBHFeByRsR9Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HmP1rGA9JOh8UXwEUhfrpixWqrFv3Or8DZ6v7ZcBPjYOJ0lQdhvGSa2nH5OCYEN4DwqKsJ/A0yWYkqEPudJa9K2jprePiVmi0INGVVNorviuqQa1KXja1VA7O3bk35bW8WA81ckHF4j2iHewebZ8GnNTlf2xgaK5Iz+SYhSjeVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YZlIzKDI; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 18ED3C0BEA1;
-	Tue, 28 Oct 2025 15:41:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 44E7B606AB;
-	Tue, 28 Oct 2025 15:42:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C5F77117A932D;
-	Tue, 28 Oct 2025 16:41:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761666120; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=nDSVs9lhw+F4YKSYneSSWC5JzdOFTeNiVqf0bisny44=;
-	b=YZlIzKDI2uuOlCIyIc2f7SjHrk4BtxyZB5m8F2TanV1WkB0xo4/Bl/0fnuCZqdFFWFLxVJ
-	Y6tFo4ygPXXz0LK5Db9RC/r7PvBfOfS2RSB0fJAum4Sh2GIsVUnXLuOy+4TAyEVxUVt0ng
-	r8u6miAXNCJKzQLpgWPhQm1TuF9itzKJVfNvcV4H2xhpHGbwbo8zCrSnI4fLpFfQMwDS2M
-	f3ub86hwLg7UELL40PKCVuccrdieUDLaE8U6TT/RtNeXBr8DHKDBB8xgk3YbbA7tcLR0Da
-	orq83w3vBtzziMwPNeXpYalN6/SxLjEyz5HMqz36hTPft03JfG6n5bdgBMYPMg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Santhosh Kumar K <s-k6@ti.com>
-Cc: <richard@nod.at>,  <vigneshr@ti.com>,  <broonie@kernel.org>,
-  <tudor.ambarus@linaro.org>,  <pratyush@kernel.org>,  <mwalle@kernel.org>,
-  <p-mantena@ti.com>,  <linux-spi@vger.kernel.org>,
-  <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
-  <a-dutta@ti.com>,  <u-kumar1@ti.com>,  <praneeth@ti.com>
-Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
- controller
-In-Reply-To: <cb04a4ec-c643-4b80-9288-8fd8944cb4f7@ti.com> (Santhosh Kumar
-	K.'s message of "Sat, 20 Sep 2025 23:25:31 +0530")
-References: <20250811193219.731851-1-s-k6@ti.com>
-	<20250811193219.731851-2-s-k6@ti.com> <87seguemzu.fsf@bootlin.com>
-	<cb04a4ec-c643-4b80-9288-8fd8944cb4f7@ti.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Tue, 28 Oct 2025 16:41:51 +0100
-Message-ID: <87qzunt4n4.fsf@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5858B345727;
+	Tue, 28 Oct 2025 15:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761666177; cv=fail; b=d8mvQOF9A5YzsEs2PG3o601rOoEz/1AokSmYNpCsMtWIgxMmiYgITNCSQyDgh1P72ef9hOxZqmyT+urAb77Nd6tB180ykb8NfD9i+A+YhkRNQxO7SkLVyvV0xGFPBt1aZciFXg51fJuFDBLtsTgemRilfzKSbFZRPWimPwTx7DA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761666177; c=relaxed/simple;
+	bh=Oi9bEqCA5qTPDcIzaR0Fn3QOnTcIr5DklQzU/xBRJmg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z6vrhLtfKBWI3Dg/Axl6TQY4C+1ZbpwVhZNfGLjm7XIAVzgWwd8ssrdM4lZ1TdK5piq2ZkhDLpeEeycAcuj0DZW/DM9VnhpPFkd964RV984IIUQUE1B5NfT2nl+wRWs2uHAstNjHFXwJdw/HsvNHRv4vClJPaMcu+OKY090ZU7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=HHqmUaKK; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=SB1GCj3S; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SBDd3a022414;
+	Tue, 28 Oct 2025 15:42:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=d9yiDET+VXNlM1N4OaNYxlEilj2v1dZCWaOZ4cKZ88I=; b=
+	HHqmUaKKMY9O7Cxzw2jVncddz4jja3PYn5Vaakz0cGSLE2VO36KMnzFYydNMrDc9
+	mp9wCEJKee6xD9yxPxd+UIutSZkTKCLjZzY7siwsK/hymU3e5tiSn2CIyHRH5MV8
+	Dyi6Y9H7FD1bHHEk43mLlJMt7H4rHd0zApQaWSKuuJOVX9j2gt+7KIp5At6W0C7h
+	q4fTzhmTMEe7QBl+GjGebJTOooa9FSsw1I6ZCoqbSXudTRdj19XrBgtEoWzwVYrS
+	20iL1ONAMxy/VOtCQfeXKGDR2G0IzAN1K0IXbcXX9i2acA3ChiA561tJ5RFzIecp
+	A0xz8/TMY7DRgRJS4suZyA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a232uuygx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 15:42:19 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SEgBlB009139;
+	Tue, 28 Oct 2025 15:42:17 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011029.outbound.protection.outlook.com [40.93.194.29])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n0fm7ha-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 15:42:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y+mBLwCfadr44aIuNSFT9rraH8kZbvqV9WFxxHB2Noldd2hqZGMoPE3R9Ko6OQIVVnnIt7VIEwzPC7YDwgqlZJzZq0q6cnQVTUYvg7d+YonxGZXJ0hhXLTV2+lHQMyfkn/OxdkqYXq2++TtAA+UNklyVWLOegsS/0QMxIJE+LrxdoaV6z99A71SySvzAHCKRYqDM8W6+YTtgalfyfMINjgn0fjLCI3OeEB2ExFb1+mFhNTXGcDzEZs7o5fmze6EC7nZDSbf8+vH/ksQDtKM/i5EtWq9YT/h69JXYzAPRlhMZZXje5+ebmwWp/MBhgGrzTjDk1HwatbA7W/bmxBgHyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d9yiDET+VXNlM1N4OaNYxlEilj2v1dZCWaOZ4cKZ88I=;
+ b=J1vS8uR+YuLYkymbQggK9YpuAFStidjXDpUdIqbrSK1s53tg7y3S7skRVE0evIxPxuW1kHYQRK2Klukq/l6kcThM46kfqxFtIxTxbJZ1Pr+8bIdiohH9ulxf6N3uqUPNXOQRevlMNoBAPwXefRlO3Mbw515e66yje16mWTHum6oK4jU6Ayz+BUorRtxyLjbCASPNbQBDHtKCHhIjF5TQPfvZocGnm/K8eQC8tbbdeHBw/d8OgbjAJh9z/cVgAJCDJlBrW66f20gbSr6XxnrqTXJUprt7Wfn9NoDs9umjHrc0K9ccFgEeIV2qwjWkhnAz3saoebJ4hcDvbKQ8o4DQsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d9yiDET+VXNlM1N4OaNYxlEilj2v1dZCWaOZ4cKZ88I=;
+ b=SB1GCj3STlopBkUgIEW0ULQPtYL7xdjj5A2jmzXzDtp9kFnq7TvOjAgFl+JlVoDzCLYdNLns1Qco2/O0xEYHzNT+7OIyE8pkHJ+yrXXlZY3krDqTFXwXTZn0zQLJN+8C2fqdg5QUV/Ye73cAbTeUOxPPHxCrej/iqxDWzQOoRMA=
+Received: from SJ0PR10MB5437.namprd10.prod.outlook.com (2603:10b6:a03:3aa::8)
+ by PH0PR10MB4631.namprd10.prod.outlook.com (2603:10b6:510:41::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
+ 2025 15:42:14 +0000
+Received: from SJ0PR10MB5437.namprd10.prod.outlook.com
+ ([fe80::e4e9:670b:5d8f:f2af]) by SJ0PR10MB5437.namprd10.prod.outlook.com
+ ([fe80::e4e9:670b:5d8f:f2af%5]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 15:42:14 +0000
+Message-ID: <86abc1a6-6bed-460c-80fd-a74570c98ac8@oracle.com>
+Date: Tue, 28 Oct 2025 21:11:58 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/123] 5.15.196-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+        conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+        achill@achill.org, sr@sladewatkins.com
+References: <20251027183446.381986645@linuxfoundation.org>
+Content-Language: en-US
+From: Vijayendra Suman <vijayendra.suman@oracle.com>
+In-Reply-To: <20251027183446.381986645@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0257.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:194::10) To SJ0PR10MB5437.namprd10.prod.outlook.com
+ (2603:10b6:a03:3aa::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5437:EE_|PH0PR10MB4631:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97586cc1-7fba-4158-470e-08de16389139
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R21kdTVVcDloWm5lRWJOelk4bmVHUkRVakJ4MHcvR0Y0MWtLQU1jdSthdldx?=
+ =?utf-8?B?ZmFxY085NmhCYkxDRHdYN2t5Ni96MU9Yd1U2MDJ2ODRnWGp5YUhNSWtDUi8y?=
+ =?utf-8?B?dGJkci9BZ1FHTFBBTW1qaVVCRG5sLzM1NW83clJEdm51ZUtLdUtZMjdWVXJk?=
+ =?utf-8?B?bTlRVXN0aFFHNS9IaUxjZDNmVnRLTnEzSlBCRE5hUDRtaWk4VzJkL281NVox?=
+ =?utf-8?B?WkRXbUZGcnlvMVFta1dHT3VyWFdpdkllN2s2SzI1QjJxR3NoS1BCd0c5RElX?=
+ =?utf-8?B?VVBoeTNqTUVKY2pJenFYMis5SllSbVpqaEUvci9lMHQwbDhPUkxSOGFqTGU3?=
+ =?utf-8?B?WFZPNkZaN3JwZi9Ya1V3SzdzbElHbXVEZUZsNXhRUCtXUjN5RGdEMG1KUTUz?=
+ =?utf-8?B?eFkxclN0c1B0dDBqZElqcHcyaWhLcHJ3QXJ1b3FySjc0amp3SlZpSXZqT2NS?=
+ =?utf-8?B?TjJuUVQ1Nm54UlRNaWZiaGJkVXZ2V0pCYmc1VDF1VkR5OXhzdWRjQ1k3S20w?=
+ =?utf-8?B?UzZtOWFrN1dhSTJ3Z0xWT0Jjb1Axa01BUlhmSTdwMDAyZUdQMmhlU0M5YkNu?=
+ =?utf-8?B?WWJtNUh0RDJNMXlJaVdHSnhxcU4vNmFMZ3NpelNocmNNcTBEa0RVR1V3cTJW?=
+ =?utf-8?B?ZnVKUlZxTTJZcGRBN0pBaTlaazdiZmMzemVZczdtbU02bWhTcXAwa3U0eXE4?=
+ =?utf-8?B?Tmp4UGFCQlVDSy9leGFxZzZNRDhodHpZMkEvYUVJZmt6b21kdENHMVo2ejhk?=
+ =?utf-8?B?bXhBd0FUNFQ0djhzNVd2VEJpTm03Y1FITzRIQjRLNWFHNmpCZ1JKZUlpV0Nj?=
+ =?utf-8?B?b3BjM3hpZ2J5dTdkQmQydGczNlR6UHpnN1ZMM0czUDhxcWdYNlVSUFlOTDRT?=
+ =?utf-8?B?b0FhaVpwNWN2aFhibmJpcnlJaWtWbVpqYXQyOTFFTkxiZzBLNVJYYkFMSWVh?=
+ =?utf-8?B?KzdEREtmM2JqUlJrYWQ0ckJFK0ppRS92eUhaUHJEVE5KWUplWmg1NWltdkRa?=
+ =?utf-8?B?NnFmNmlFZ3B1OVIrTkhqNjY0TzBJekw3bE1zcGNLM1NtWVUrZkhDckZ5cVB2?=
+ =?utf-8?B?WUdwMzVScFFaQmUwdEJZR3hjdHRJUlFKcmdqYWdkM252cUZLci9DcGVNQ1p1?=
+ =?utf-8?B?UWxON0lPNGNMbFlaU242MUxONnJSaXl0UGkvZDlxY3dTNmxBZmc5MTUrLzdR?=
+ =?utf-8?B?ZHE3MGp3SVV3VUl3U05BaWJNRXBRNGV1QVo0Q21lcklxL1dXNm1TaFkzSmQ2?=
+ =?utf-8?B?SXFMaUJ6QVlBb0kwVW5XRVdldy9hTFdQMklhRnM3TEdWM01Ed2tsN1pxU3B3?=
+ =?utf-8?B?REFsSDByeEdIdVIxMVpsQ2xURGt4THZMendwdEpEVFZOa3lkc0IzWXJFV1o2?=
+ =?utf-8?B?akxuRjlXV3llOW1ueGJ3VmRvYTRSUCt0dVM0clNteWF5N2p4ZkZ1ZlhZT0h4?=
+ =?utf-8?B?blU1cFphaHBhOHZ1ai95ZWNMRjd2b3pvSDIrSGh0d2FBcEp3eXhNdzJucnpU?=
+ =?utf-8?B?SXVINzJWcUFYemFCS0lOYXBibGUyMjhxOFR4SEZKaTV3VDV6MTN4ZytDUGhO?=
+ =?utf-8?B?NmdmTzBhd1c1U0hMUE9oSFVXak84R3BiYW56cHhiNWxmNmJkRlNGb29YdVVK?=
+ =?utf-8?B?Um11VUdCem5TcjVxSS81L3NvbUZvTENFb25IYmFnOFJkKy96WkZGcHFKU2ZU?=
+ =?utf-8?B?U2t2cFVxc01qYXlValFucG4ySTEvRjJiQW02a0JnRmdMRG5YNXZrL21ya2NM?=
+ =?utf-8?B?UndGRlJDa0M4Z3EyUGhLa1dVRzkxaDVHQlJaa0lQQzNxamo1WVdxeTNvK1lJ?=
+ =?utf-8?B?UTl1ZEdrM0hidGZ5ZVByOG1zUzFKR0t6MjgyeWI3eWVaWFJZaEVlVmdXc3Zu?=
+ =?utf-8?B?Mm1rQWRnYlQ2aXI5eUU4UlNhSFMyVWRQdkd3S0tndStIQmMzWE1XUjU4d3ZB?=
+ =?utf-8?B?bGdjeHZ4UFJwbmRKVWM1UXdsZUxuK0gvd2pTTmM3QlJTZnBFcHBzOEJ3M1Z0?=
+ =?utf-8?B?WlZVWjg2ZTVnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5437.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OXdjMVpFQTkrS3R1UkhFRWl1M3FScW43c0t3K0JrUVUzU1FkT0JtL3dWa0Zi?=
+ =?utf-8?B?M2JnRWo0SG5HSWZKSWJRaDhvcGovbmJ4aFZSeFVkaFI2SGdSQi8rM09HOFNN?=
+ =?utf-8?B?dEE2Z0NBRnpIK2xoeG1veWlOemxpcFUvZ3dlTW9XZ2FDNVUrbTF6a1BnSXBC?=
+ =?utf-8?B?Tk1QancwWGVBc0VrZTB3UVhmR3lVR0dWcWdvcG1rVXBrUXlVcjNqYUdmbnZI?=
+ =?utf-8?B?M3l2c3B0eHJTSHJJeGFyMXRsK1JiOEFIK0l1VWN3dVYvaGIyQ29XSThjM09s?=
+ =?utf-8?B?cGRqK2xZVHUwaEZiV1A2VE1sa2RoeFdJYnpWRUo3QmI3QWF5WUpGdWVsYkZi?=
+ =?utf-8?B?NkRrVDJuYWFZZXBYOWVmbDlrS0hQOXBiTkVyTFJlMkJLbk1yZ3RhY3UzNUdv?=
+ =?utf-8?B?ZE5yNVU0OWVKQlNGRUUwMm5WYXZzS3pydmxuMlpnaERmK3RMaDFHWFdwNjZ3?=
+ =?utf-8?B?TkwrdlRNdktzOG55QllqZnUzYTZaM05FcDV3eVJjQkdxaTBsaHBZclhSQndu?=
+ =?utf-8?B?U0gyMGcrc01kblJLU0hiREhKNHlqTDAySjVNY2NwZ0FXaGNEck5HWUF1Nmdk?=
+ =?utf-8?B?NWE1ZmFrZWdZZzRWeW9rVmtuU1N5NnhiT0JBZ0NwVzBOeWFDSHB1eS9WUkMw?=
+ =?utf-8?B?UlNDYXhOWUZFVkp3WDNvNThCWGg5Snp3NVhGVVhWRENBMFZ5eGQ0SnoxQmV4?=
+ =?utf-8?B?VzNxbWN0RFh1OGo1Q0JaYXlFRTBGdU02c3VqaUlSaTVqMWg4WXA2L3VQVGxs?=
+ =?utf-8?B?UDBjcnhhNi9naSt2QkZ6QldJMzVxT1lWT3NqY3YvRXRScm0yZ3lNWGQ2S0dO?=
+ =?utf-8?B?ejN6bjlTR3FWTGZCWlJMdjZ4YkcrOSs1V3lseWhXWUN0NWNrRXFRZXdQRmM2?=
+ =?utf-8?B?aWZhVWd5SjdKYlFXOVJDUlhNQVZGdS9ScnNZZGI5RzhQc3pvaWtYSXZsYkEz?=
+ =?utf-8?B?Z0U2UkhEOXJrdEphQUNwZXlKMmV2d1gwWjNBcXBYS00wT0J1U0txR1lSanV0?=
+ =?utf-8?B?SEdiTm1hOE80L3dwamN2SDFXaDcza3krc2JwbW9HcWxpaWdoWUx0Z1N2Mk9r?=
+ =?utf-8?B?Q1FlNml4TmJBN04rNGVFaXFVcE00Mnl2QXJRc3hZcVlHZEtrd25zUlhSNC9L?=
+ =?utf-8?B?UVRLeVhlUkd2OVNIWUJRdlNLbDVmYTkremd4SFNqRTBMVUM3TVhSSWhMY1N1?=
+ =?utf-8?B?NE91UGtZYnF1QitWVkU1UkR0OWdOVVhGVUJxRG10TS9INis5ME9udy93cFpB?=
+ =?utf-8?B?TWlKa0hjWThvd1RVRkx5bmxZK2VDSXoyS0RmY0lsZzliblZiS0ZTWjAxT0Zz?=
+ =?utf-8?B?RTByZkV1dmh4NXY5czF6c0lGb1BIN2V6RFZrenQ5VitmcEErd1Q1cDRGM3dx?=
+ =?utf-8?B?NTdqaHBURjBsSkt0MEtTSUk3ZjZWU0FReGJHQ0hOMDh0UDJYVnAyN0h0dTFE?=
+ =?utf-8?B?T21BSWpyQzRyQ1hkTGtKQ0JUNXlNRytXSWFnUmRCK3AwNytpSTV2ODhtWSs0?=
+ =?utf-8?B?eWdKWlVjTUZFbDFvcTZoV1JHQkdmZXZ6dkw0T00yUjdHT0tYV0J3M1NFditT?=
+ =?utf-8?B?REs4MjZZZWNIbTFLbTZqMzdTZFVDNzBqNndEOHB0WWh4aFAvVC9FV0pYUnpo?=
+ =?utf-8?B?UDRtMjhrZVpHTFhqS21NczI2c0pLUzNIeitudzZ2Sk9QNk9XbkViSGEzMmsz?=
+ =?utf-8?B?TXNTK1BEWWl3RWYwUS9mZU50TnNaMjZMdDlJNFJWcDBGWkx5ZnFodVpQbisw?=
+ =?utf-8?B?SW1lcG5xRmdUdmRXYUtXQ3U2c1cwODl2ZWswc0tCaEtwRWxmQjgyUHJVNjVS?=
+ =?utf-8?B?T0M1K1RBMlNzYzFtSnh5MUgvUEFTZ0p6N2NHaC8wZEJWeTdTU25PUlgybzVB?=
+ =?utf-8?B?czdYRWNUQXc4aEt6SXI2KytrbHJZTmM4bk0zaGtvZ2hOWUNWaFJFT1gycjYx?=
+ =?utf-8?B?ZG9VL1ZJa3hxb2RCMDhKRTFzVWYzR0tyM3JzUm5CaHhCMnRndzlnbEY5R05K?=
+ =?utf-8?B?K3IrWG51dHZ1bzVuWTVWeDN4NHFxMjlxckpwL0FrcVQ3ZDNkUlF3WFZHRjA5?=
+ =?utf-8?B?MlBvelNUSnQ3cUpaUW13d045WlpaV0tES0MvUzJaeGRsZkhHTVNsZmhTakNj?=
+ =?utf-8?B?VzBPZjVZbVZBM1VhRjVDaEJNRk9JVVRZSk53ckRBWVZmSERKckdQOWV1ajNB?=
+ =?utf-8?B?Nnc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	WNEwzwMEyCoFU/5UW4iHpFBUnsvLnfKnL8kiZ0YsH7AjMe+xq1an2rjKGGUcwdhMugpSq4PqmN1AEelAaFCQiq5Byor7ADPsLFCVJm/xkN2tusFDvjgef8LFSQVZs0ou4k+mKpZb0kw3dxUJ1LcuTqitKF64ZO5MVECROCsTwtTfMfAJrfsDN6URu510ndQK9EpEJ9xRNaMAIbkacdFB/8AowgCxu99SBnbE1yhCPKfjiolq8gFL2T20ZQKfbEn85sw5C6c9292mGU6zegJxfmWiPkRJVXPdurOdWCMGQ7bH5KgSBxdYVDluoDaa2/tLzcCc/ycee8M8kBJNASxOUrEEw33clZlUD7OEThU1WUPhYrSppwRJLVr2LTW2DVriLtxKEKWoHDN+HRnf9FcNZpyUo8/3Lq3XVGoKwVXisliLzIhXS3KQQB6tzt7h9mkGjwFkbNSeVWIz8wYruGQOBYKaKbu1suRb+HuzGy9ua5bA6Ydy5dbPecI9SDv6f4brgXMJ5UG/rCR8gz3ZFtAJfdnHfVWz8F+dS1NAA8LoWYQSbrOss6vxjPMMizxCclcoXtvEBaT2KY8DgU5t6t4JYxkwa6HCK8zJU/8guSVCE00=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97586cc1-7fba-4158-470e-08de16389139
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5437.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:42:14.6863
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mGkdmPMSs+NRwdXpru/EMLMpv/xlZiMfCfY36ntt9IsLtR4TSX+PPNvQCMG94vDw21C6TjnsDGBFn3+bEp+1zkqerLFFopDQhs+iONkrLtU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4631
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_05,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=959
+ adultscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510280131
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1MiBTYWx0ZWRfX21YpuRBo6Mpo
+ K3M8k3hh6DzlEZ1eOfq58AqAj9mWTdK7BrfSpOATQuh9fO8jjNH/gb+qGU2G019G8m96piJWvES
+ UQel1UUUS0805Ee75dziymxKKnWotDUqI//4hzcu/mEMZrmOO+o8b3Lh827LXkdtV6t/7ntN10z
+ xQCH3Nsg/hboXgQmrwMSERS+EZs29Xs82pCV6Nj+7QZjDgQ5G0+sXgEDNTUW7GDD1cFLf2EDyR1
+ x5cfyNQWXTJ9C12xBLs2tjwYn3EMEXkAtwHHuUK0MFbFaZNs5qjnh7V9kAIVkEF45dYMZkLdpZn
+ fOa9+/pIJ9R4fEFeeT27KC6hEYp4/6O84bl2ktKY4QNnhyBHEEsytZDbJIsC2lZ2AjulFLlqOM9
+ t6DgEd2jdNVkd1BAhGt0UrRUNPy7MGmgCOOvTaUu+iiPBtG/D1A=
+X-Proofpoint-GUID: bKoVM5AKsI0_BM8b6u5pfODQXEsUsysi
+X-Proofpoint-ORIG-GUID: bKoVM5AKsI0_BM8b6u5pfODQXEsUsysi
+X-Authority-Analysis: v=2.4 cv=abVsXBot c=1 sm=1 tr=0 ts=6900e45b b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=_-oXDqdGEXAFBEsyR_cA:9 a=QEXdDO2ut3YA:10 cc=ntf
+ awl=host:12123
 
-Hello Santhosh,
 
-On 20/09/2025 at 23:25:31 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
 
-> Hello,
->
-> On 10/09/25 13:51, Miquel Raynal wrote:
->> On 12/08/2025 at 01:02:10 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
->>=20
->>> From: Pratyush Yadav <pratyush@kernel.org>
->>>
->>> Some controllers like the Cadence OSPI controller need to perform a
->>> tuning sequence to operate at high data rates. Tuning is needs to happen
->>> once the device is switched to appropriate mode (say 8S-8S-8S or
->>> 8D-8D-8D).
->
-> Apologies for the delay in response - I started prototyping new solution
-> based on our discussions earlier, which took some additional time.
+On 28/10/25 12:04 am, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.196 release.
+> There are 123 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/ 
+> patch-5.15.196-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-My turn to apologize for the delay, especially since your feedback is
-very complete.
+perf failed to compile with following errors at compilation.
 
->> This is actually wrong. Tuning is way more generic than that :)
->> If someone wants to use a chip at a high frequency (50MHz in your
->> case,
->> but whatever, there is a threshold above which additional care must be
->> taken), it must go through the calibration step. It does not matter in
->> which mode you are. Calibration would still be relevant in single SDR
->> mode.
->> This 50MHz bothered Mark because it is too Cadence specific. Maybe
->> this
->> should be a controller parameter? If the spi-mem core (or even the spi
->> core, by extensino) sees that the design allows running at XMHz (due to
->> the SPI peripheral properties or simply the absence of any limitation),
->> and if the controller states that it requires an extra tuning step above
->> YMHz (and X > Y), then it launches the calibration.
->>  From a core perspective, I would like the calibration hook to be as
->> simple as possible, because what "calibration" means is highly
->> controller and chip specific.
->
-> I understand the concern here.
->
-> Let me point out the options for launching the tuning procedure, along
-> with the issues in each approach.
+BUILDSTDERR: tests/perf-record.c: In function 'test__PERF_RECORD':
+BUILDSTDERR: tests/perf-record.c:118:17: error: implicit declaration of 
+function 'evlist__cancel_workload'; did you mean 
+'evlist__start_workload'? [-Werror=implicit-function-declaration]
+BUILDSTDERR:   118 |                 evlist__cancel_workload(evlist);
+BUILDSTDERR:       |                 ^~~~~~~~~~~~~~~~~~~~~~~
+BUILDSTDERR:       |                 evlist__start_workload
 
-Very good summary.
 
-> Option 1: Launch tuning as part of spi_mem_exec_op()
->    - After spi_mem_access_start(), introduce a spi_mem_needs_tuning()
-> check (a new callback to SPI MEM controller) to check whether the
-> current op requires tuning
->    - If yes, we call spi_mem_execute_tuning()
->         - on success, mark tuning complete in a flag within SPI MEM
-> Controller private data
->         - on failure, we attempt a fallback by calling
-> spi_mem_adjust_op_freq() and drop to a lower supported frequency
->
-> Option 2: Launch tuning within spi_controller->exec_op() implementation
->    - Very similar to option 1, except that the spi_mem_execute_tuning()
-> is triggered from within the controller's exec_op() implementation
-> (no need for spi_mem_needs_tuning())
->
-> Drawbacks in option 1 and 2:
->    - Tuning requires multiple reads of a known pattern, but the flash
-> may not always be in a state to allow read commands
->    - No fallback on failures, can't make flash-specific adjustments in
-> case of a tuning failure
->    - No access to write_op() to write known pattern temporarily to an
-> on-die cache. Pattern needs to be always burnt into the flash
->
->    - Plus, in option 2 - we can't call spi_mem_adjust_op_freq()
+There is no definition for evlist__cancel_workload
 
-Two more significant drawbacks:
-- it adds an extra step in the "fast path" -maybe negligible?-
-- spi_mem_exec_op()/->exec_op() are called way before being ready for
-  calibration.
+Following are references of 'evlist__cancel_workload'
+tools/perf/tests/perf-record.c:118:	evlist__cancel_workload(evlist);
+tools/perf/tests/perf-record.c:130:	evlist__cancel_workload(evlist);
+tools/perf/tests/perf-record.c:142:	evlist__cancel_workload(evlist);
+tools/perf/tests/perf-record.c:155:	evlist__cancel_workload(evlist);
 
-> While the need for tuning is dictated by Controller specific
-> characteristics the ops (and state of the chip) required to complete
-> tuning is under the control of spi-mem users (spi-nand/spi-nor).
-> So, it's impossible to achieve tuning without the help of spi-mem users.
 
-Sounds like a constraint we can afford indeed, especially since the ops
-that can be optimized, are flash specific (relatively few content to
-share between spi nor and spi nand).
+Commit which need to be reverted.
+b7e5c59f3b09 perf test: Don't leak workload gopipe in PERF_RECORD_*
 
-> So, Option 3: Launch from SPI MEM clients
->                           (mtd/nand/spi or mtd/spi-nor, etc.,)
->    - Once the spi-mem chip is completely enumerated and best read and
-> write ops are chosen call spi_mem_needs_tuning(read_op, write_op) as
-> a part of .probe()
-
-This looks like a decent place, but there is one limitation to
-workaround: picking best read and write ops require knowing what the
-controller is capable of in terms of frequency, which means we must in
-advance expect to set up calibration or not. I don't think it's a
-problem, this is something we know in advance thanks to
-eg. spi-max-frequency in the DT, but I still think a controller specific
-"maximum frequency without calibration" capability must be carried for
-the controller to decide whether this step is needed or not when asked
-by the spi mem client.
-
->    - If tuning is required, call
-
-I guess "tuning being required" is a controller choice, based on the
-target frequency for both read/write ops and the controller capability
-to achieve this.
-
-> spi_mem_execute_tuning(read_op, write_op)
->         - If only read_op is provided, it implies the tuning pattern is
-> pre-flashed to the partition
-
-Interesting. I guess that lives some room for tuning PHYs during writes as
-well without more core modifications later, isn't it?
-
->    - On tuning failure, retry by re-running spi_mem_needs_tuning() with
-> the second best set of ops (max throughput - 1)
-
-I would like to challenge this need. Can the same calibration fail if
-attempted multiple times (eg. because of the heat?) If yes, then we need
-a fallback indeed. Otherwise, I'd be in favor of just failing the
-probe. Calibration is an opt-in -> users must allow a higher frequency
-than they use to in order to enable the feature?
-
-> With option 3, spi_mem users are limited to calling
-> spi_mem_needs_tuning() and spi_mem_execute_tuning().
-
-I would even go for a single spi_mem_tune_phy()? Or is there a point in
-having two helpers?
-
-> Rest is hidden
-> within the controller drivers. If spi-mem users change read/write ops,
-> the above sequence can be re-issued.
-
-I don't have use cases for that in mind, but why not.
-
-> The controller can store the read_op and write_op in case of a tuning
-> success and periodically re-run tuning, ensuring we always have valid
-> tuning parameters.
-
-You'll have to make sure you only use PHY calibration for the ops that
-have been used for the tuning though, because for example as I am
-working on octal DDR support: during S2RAM there may be the need for
-returning to SDR mode, which in turns will have to work without the
-tuning (tuning parameters will be incorrect for this mode for the time
-we run slowly). So either the controller knows which operation should
-enable PHY optimizations, or we must perform the whole calibration again
-every time we suspend (meh).
-
-> One concern with option 3 is that we may not be able to make use of
-> static data on certain flash as tuning patterns (like reading parameter
-> page or SFDP table for tuning instead of controller specific attack
-> patterns).
-
-This is true, I know some devices can send patterns during dummy cycles
-by I have no idea how powerful that is, nor if it can actually be used
-in Linux. One need a controller that is aware of these bits and can
-itself adjust/fine tune its own configuration. For now, I propose to let
-this aside until we get real hardware that can be tested.
-
-> Please let me know your thoughts on which of these directions makes the
-> most sense.
-
-Let's got for option 3. I'm eager to see this moving forward!
-
-Thanks, Miqu=C3=A8l
+thanks
+Vijay
 
