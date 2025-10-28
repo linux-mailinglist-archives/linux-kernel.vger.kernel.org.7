@@ -1,75 +1,59 @@
-Return-Path: <linux-kernel+bounces-873214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A347EC13658
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:55:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13043C13655
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98CFB504751
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:52:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A90D3506921
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B835E2C11C7;
-	Tue, 28 Oct 2025 07:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42E829A9C9;
+	Tue, 28 Oct 2025 07:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kiu7UYNS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TS/rXFHh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJ9GAhwG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7BF29A9C9;
-	Tue, 28 Oct 2025 07:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EBD86337;
+	Tue, 28 Oct 2025 07:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761637944; cv=none; b=s2vaxRTgsMRpi18BO6DvDfu7Fkh4OFyk6oR3Zedkiecw9bMQFtI6CmfeR0z0E6QpQ/diBEMGNoeJDQQ9SG8ySsSPZcBk56ODbCjvrnNe5z7Wqec6BHGRQQBh8xH99noPwtk87kk3FTquWNpntPs9mZ1OQhPg9cfx3H0kCoHE+JM=
+	t=1761637986; cv=none; b=mfG/8hNMoCVLPANtaD9/zYxotu/JKzKLJ8ZEXIFm1RR1aFHk9Cf1AFGEhISxVd7BjSaCHxgt0z0YU4ZKZwRyk4ywZAaiF+DVZmw0ffLYnPMUNG9V/iCy3Pc7oCjtWzKQEE+gZqMbAjdrBT8IX3N1KLVF+tI+Z6uQ902j1rUJPNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761637944; c=relaxed/simple;
-	bh=BlH1k/7FQlfjC1lJDoXjs5d1U9toPAOhi2tez2K7Kzg=;
+	s=arc-20240116; t=1761637986; c=relaxed/simple;
+	bh=yCeW08scrr2ACBo1vbxVy1YcULpnUDlueJqIMQ2qt7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9FWL0fncMj852YnkqlCVnFGCfiX9PwCt6NgJiNars2LSai1Npo/1fb4rtJ/UHsPVYR5gSuWWhIGFNFmYdan5I5/PAT+RyOca/LxL4N8SHAg6aPL0rVvQtnzWhzRVssAW0Rfa55mtifvt/HPk+IBlJZAFCtMrgJ0QzOIJnnp93s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kiu7UYNS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TS/rXFHh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 Oct 2025 08:52:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761637940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OHWV/31bypuym5GRXjxOlk2qZBuAxqMswHw50rJip1Q=;
-	b=Kiu7UYNSsTpAQpdqw2sVW2UvD1GqQshrx6wqHmt3innhVdRFyZU1pVblsbB4m5qBBfDp0W
-	lN8MnHStEMXA3UD13GEfJx76HHjOAb1UxoalqdxptlZOEEQzkJ5rztbNUHBIObrX9VIJiD
-	mjCm4hWNWv7+NoZ92y3/aI9bgATAD3PtkwRH7kWeYeZc4hBZbh014CPC3EyeWT09bmTh5+
-	+M/HUd5pqe+i5ckJVS6ZdIOMSgB0dhL7pP9Wle1TMXnBpnQ6zJBRRTwF+m0IAW9aedIu2q
-	TwxjO6v9tS3EsRCk4jo73UAvCJojwIHplVF37X+5LJq4MFHFWIQ3FZDk4iZmiQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761637940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OHWV/31bypuym5GRXjxOlk2qZBuAxqMswHw50rJip1Q=;
-	b=TS/rXFHhiwPMG/jXJvataZ1SJRJMP44uwocqxI6+TbbESv3cus8zaGjEMZdGKn/eRKY4dj
-	z7oADzXFJeZWgpDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: Sahil Chandna <chandna.sahil@gmail.com>,
-	syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com,
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org, listout@listout.xyz,
-	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
-	song@kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
-Message-ID: <20251028075218.aw9YABrW@linutronix.de>
-References: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
- <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
- <aPklOxw0W-xUbMEI@chandna.localdomain>
- <8dd359dd-b42f-4676-bb94-07288b38fac1@linux.dev>
- <aP5_JbddrpnDs-WN@chandna.localdomain>
- <95e1fd95-896f-4d33-956f-a0ef0e0f152c@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jajI0eYEtX5KSKgj6ZP1GiJmvsR3cPUkLEj5bQplLsjYkULLgfraAgyh+T5YcEtlmhBXtuBQKDmAYddtMe1fG3LvaFaAUQVLQHQOp6GMxpFHtx+jh3f+OS6ImPgRliUGj/24UA71797kSgsHcs+L7neA5/xSEViuEkaJEmZC/kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJ9GAhwG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEAB9C113D0;
+	Tue, 28 Oct 2025 07:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761637984;
+	bh=yCeW08scrr2ACBo1vbxVy1YcULpnUDlueJqIMQ2qt7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJ9GAhwGQiUOpcjuOp1NuWsZ3BZtwb4Eri9cttZxeRuZUm14FV9fzvpPkqAD/YJ4R
+	 2YsxmfjFSooPJ8j/dKdWTQp9CEysFOjZruputzlsYvAdBjwOi+lJWEIiz+GI8fTmze
+	 T8gOxlLywka3cT/6t1L/5aAu3EL+FsjmPEVXF80Y2eZcEdZYK9bTI+UgQmBRwe/RSC
+	 p3Sm/0khowvPb07B5bgjZSydbQnzzhWG252l2CkCmzXu6NXTv814h5FfLwhF7lZXbv
+	 e0zs3EsjocEpcO7ND3rFjhfG51I/1I7EgOtDRN3NbM4QPCNbT4BTKGaLmISZHWak+p
+	 XhqHrydapfx2g==
+Date: Tue, 28 Oct 2025 08:53:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	joel@jms.id.au, andrew@codeconstruct.com.au, vkoul@kernel.org, kishon@kernel.org, 
+	linus.walleij@linaro.org, p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, openbmc@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 4/9] ARM: dts: aspeed-g6: Add AST2600 PCIe RC PERST#
+Message-ID: <20251028-witty-nickel-pig-5bd4bc@kuoka>
+References: <20251027095825.181161-1-jacky_chou@aspeedtech.com>
+ <20251027095825.181161-5-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,17 +62,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <95e1fd95-896f-4d33-956f-a0ef0e0f152c@linux.dev>
+In-Reply-To: <20251027095825.181161-5-jacky_chou@aspeedtech.com>
 
-On 2025-10-27 20:45:25 [-0700], Yonghong Song wrote:
-> This should work, but local lock disable interrupts which could have
-> negative side effects on the system. We don't want this.
-> That is the reason we have 3 nested level for bpf_bprintf_buffers.
-> 
-> Please try my above preempt_disalbe/enable() solution.
+On Mon, Oct 27, 2025 at 05:58:20PM +0800, Jacky Chou wrote:
+> Add pinctrl support for PCIe RC PERST#.
 
-I meant to look into this yesterday but got distracted with other
-things. I try to take a look.
+This is part of PCI commit. Makes no sense on its own.
 
-Sebastian
+Best regards,
+Krzysztof
+
 
