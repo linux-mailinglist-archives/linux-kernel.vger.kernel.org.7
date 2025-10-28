@@ -1,164 +1,92 @@
-Return-Path: <linux-kernel+bounces-874524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC88FC1682E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:38:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65255C167FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C47C5505ABB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8661C207F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA78B34EEE6;
-	Tue, 28 Oct 2025 18:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnBPq+XD"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7A334B1A1;
+	Tue, 28 Oct 2025 18:34:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1789345727
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD4F29B793
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676432; cv=none; b=SQtzjE5SFDh2QAzHbrWPv3FEc+Zd04mNqsgFl68xZXDcDbvJZgimMGhclnTW23vPqqv99vKRy670QL4oGPUIdjsXNaTgjBQKjHoDfhUouOzYKCdZpl9naSxZG6dZb9kSUSqKbF60PWvBysCzCwbHQZ+hwfhFCPg64Sc7NbZMc+Q=
+	t=1761676445; cv=none; b=lYiyi9NI7sCKyHoD7fow/rAZ3tKY0YNZ9szKk1HUSIPlPnmIIl9OoV1JftYFaNu4NwmlUVI/wXL2FcT+euRvjlb/mGRuxOaAEjU+euf0B+ZoLxOJpiTSgR7xkmYCY/VOB15ryG6n39xi8+IoYtLB3zvOJ3zUWTMFRXp7hprOpJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676432; c=relaxed/simple;
-	bh=N8rKAtjbv6LE141WmroC0g0cbpM5XEtFR0xQakQ9+3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLcupXzX37kNjrr6tlTltzjhSkDaI5yCJ0cnHp3dq2xqP2W7IDcoQOhHsY8tET5WOOG9sUHH4k/NlNWKykKspxhYoW0xi3jrKG50QV1lYEMPjl7xtZnEi5ZR6YWI4LxhtkxDdUBhNA8xchvEFCh7jOYdG5L8DB9JVKG34TjH99Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnBPq+XD; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-785bf425f96so2835657b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761676429; x=1762281229; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/1XSltVjAzAnQ4Amthq/umVOWdJNZ6/4qr8PfcWtQ5I=;
-        b=GnBPq+XDDp7PPoNxsucDdmcNDWW9GmoIkdMlbEE10ZuIMpilTsifEwJl8g3bxteoaG
-         Og0h4XbAirQVaeRGc9VV8us2v/qaqKj0dcxo2d5SkTFnT02zynL+zq/ZKBN82sClhOJu
-         3/tQWjXFCgBa24YkVcINfhoe1rnz62CvBO5LYa4NNKE5MzPEv2uWx7HgzoyD2SWbyOrx
-         jXm7IgJnh2gk9s7TPH75g6gE3y0pnTn0xN2RTqIxOka9UnB42jwJe9/WW3Zfw1SOoNo3
-         gfmPhr10hmz9CAvZMi8dcYPHgD71D0K+9/vpFe6W+hOduwYjbwIU0ITOZXPeDF05E6ZJ
-         xWzw==
+	s=arc-20240116; t=1761676445; c=relaxed/simple;
+	bh=tBTU5FyjJs+JwzweZd/E1m8cXRJ50mrhpR57KVD0OEQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fEHDe7cyiTZlPrv9ooTXn4CA5D3ATA8vFwounAedbXwEyLnbq3SCLhqLXoHje+zuRHxZr8QLk/6573ddBLGQStASc020+Zc4CtFsjrLzX71ENGcz9BwWfsXInXsMvi0+AERF4m76H1govS5ZjLiy3Ju6EP8X0nXfruuZ9XUib4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-43210ca8e1dso14680125ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:34:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761676429; x=1762281229;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1761676442; x=1762281242;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/1XSltVjAzAnQ4Amthq/umVOWdJNZ6/4qr8PfcWtQ5I=;
-        b=kx6VOhUiUCuofFycsb69fAZs6WQ+WGU5Gl0ped5b0kUrnjugc2Hb0r29L1b99LzgT6
-         kQLS13YY8G+piYVm8zPZSSl9H/S/fioiP4QY1tNkdPbNUY4rvhrgVnCaS+yY5LZ+Eeel
-         +bCd1Ts1Q9VpKisFnC8sH30Glysf+r1y1fSRkQNmg5iXTV0dmD1a6nnyyxj1QQvlyYFt
-         giWFdt2UcvFdBs/jH/wZRW7HMU01YGro/xKfLgehU690SU1cp1/HKtxplfEd5gGPjWAW
-         pT23jKuHmyPZiwqW5zc9R/Sl2hvQrCIMTt5KdGcsDZj4muZ13+W8C3khnRthAOLiWHkz
-         SAsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNaZjCv0uOO7c+3Evi515An8G5fDQbZQchLUu7BzHAa/1nNtqVw5jUqSvkMoheHEfgxbAlo+3eDw/8ZhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnTNEmcNZZugAqJYocj4NX/bkoqbDRvlPk8hq0C/zphNEB9FHi
-	eCwr/tlJmAR+93FRZv+AX/zVH8xaFybKnwciU1SQaGFDFp5u2wGVjZUe
-X-Gm-Gg: ASbGncuTUw29MdGhnTlNmy0BliZAAGJt9QV3EPj14sawXxJBQy4GkUd462OsRd2aVrH
-	S98strWE6L2ubRxMUUKB6CBxAaLnj0CRjA65hlQLm9I10GHoL6euqmSR+IYPmUuzq1okjXeADtW
-	pFJjlrsULWMWhbkzQkAOlVOYUSVmcPBHvpRHE/d/2P8/Xd2WOXS0v/DU9UrujtkG1w/63lh+JDt
-	TGJdR+teg609G78ND7elqy6Ki9BnT+HnxnOQsaKZRA1t7GJttPXYY6feVZiuXPH+VkMuAjUUOpP
-	j+Dl0qZFRZB7appAufEvOMOJCMxhOKzQlnCoGTmKK1M8LY6VzpZg54QvhJ83aGRQuqcuscgvRup
-	uxLE8ZYua5fsRMmu63Nb1oNEDOWMeRW8t67X74VQxhHEbAnpAHghiXUk0Ehfz5flpdwJJIgdkuk
-	0kSmseSGjM3TGWBHVwnFP2EcbFshsihuAfbK4j
-X-Google-Smtp-Source: AGHT+IEttZ9BDz7ytrfWJAq7n0ugR4HwbpMEa8x1zfMG1He+winHmzAjdRiu+KVVA5WIcmY+KLnWfg==
-X-Received: by 2002:a05:690e:124a:b0:63e:25e7:8098 with SMTP id 956f58d0204a3-63f77331a80mr208720d50.29.1761676428601;
-        Tue, 28 Oct 2025 11:33:48 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:4e::])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63f4c4545a3sm3428991d50.22.2025.10.28.11.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 11:33:48 -0700 (PDT)
-Date: Tue, 28 Oct 2025 11:33:46 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v5 2/4] net: devmem: refactor
- sock_devmem_dontneed for autorelease split
-Message-ID: <aQEMiuOlUutoi1iw@devvm11784.nha0.facebook.com>
-References: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-0-47cb85f5259e@meta.com>
- <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-2-47cb85f5259e@meta.com>
- <CAHS8izNB6s97X8srfZQ1upUNOOx0vwj4Aa9gMUZvneoyefqdrw@mail.gmail.com>
+        bh=gW1YPOwBQbb2MOsAP96Tp6PDEGuZZ/4jbXaw39UNULk=;
+        b=QRx6/jds4L8ry7pnGg1i/F/8FJx4ko+a9xRERSbeLeOLjph5ef2vqLqADdTg/0zi1U
+         FNtaFYNcKqWtn4+Q18WPp9Em4Mtxpul1wj0kCjkjWoGisb2i18wdMp7v4EB21v7yjiEO
+         H3wwYY0jCstXkVohvJ1sJtIFYoEXgyzgYCe0fbaMtfH7RHI1TN4mdvh4I8BoPHT/wRmq
+         0d9ykJuq9DNSR7PuftzhH0Xz+1lCD0hedksFSmPDbSTltyyMpnVbxNo/JvIhE2nNXdt8
+         RPD/Me3qAl/W5NyrT9NfRE9cayJablzfOVvnrlomslZmi5NANfmXyORUQYayJDoCnRdx
+         Iqyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRHMyIPEUfHrQ833Yq90jnkvlzgviJ7Uj7XYimWtvqeE0dM9NV0JpSBGjL0EOZdHuqFp3gtbq+gVQX+X0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE/o6Z4UADgMHSKE1VLgLHL044+1U1arVCuq6QcsEsa3Vp6j4F
+	DXXyeNVmn7m2IH5alcjBaxiRXXyGdj4kp4W2/lWXcc9poG6DAD7mhQx25oX4E08lSGKON3ewBSM
+	PpEPTd2bNDWpAs7oWj/xw8TfGoRjAfnUSIepnfrQwub7cRhbkz9HqTB75+1E=
+X-Google-Smtp-Source: AGHT+IEy5RjWwY4FgkAhlhf3SFuIYuceCpk6QxILOfOhwfRUosFmETkyTT/Qb+GwussgWmK8kzQIh2+hLxhHSy8Le6QdjlhJ9tSd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izNB6s97X8srfZQ1upUNOOx0vwj4Aa9gMUZvneoyefqdrw@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1485:b0:430:9104:3894 with SMTP id
+ e9e14a558f8ab-432f906644fmr2119435ab.30.1761676442004; Tue, 28 Oct 2025
+ 11:34:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:34:01 -0700
+In-Reply-To: <20251028181936.web8g%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69010c99.050a0220.32483.01d3.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 27, 2025 at 05:36:35PM -0700, Mina Almasry wrote:
-> On Thu, Oct 23, 2025 at 2:00 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
-> >
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> >
-> > Refactor sock_devmem_dontneed() in preparation for supporting both
-> > autorelease and manual token release modes.
-> >
-> > Split the function into two parts:
-> > - sock_devmem_dontneed(): handles input validation, token allocation,
-> >   and copying from userspace
-> > - sock_devmem_dontneed_autorelease(): performs the actual token release
-> >   via xarray lookup and page pool put
-> >
-> > This separation allows a future commit to add a parallel
-> > sock_devmem_dontneed_manual_release() function that uses a different
-> > token tracking mechanism (per-niov reference counting) without
-> > duplicating the input validation logic.
-> >
-> > The refactoring is purely mechanical with no functional change. Only
-> > intended to minimize the noise in subsequent patches.
-> >
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> > ---
-> >  net/core/sock.c | 52 ++++++++++++++++++++++++++++++++--------------------
-> >  1 file changed, 32 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/net/core/sock.c b/net/core/sock.c
-> > index a99132cc0965..e7b378753763 100644
-> > --- a/net/core/sock.c
-> > +++ b/net/core/sock.c
-> > @@ -1082,30 +1082,13 @@ static int sock_reserve_memory(struct sock *sk, int bytes)
-> >  #define MAX_DONTNEED_FRAGS 1024
-> >
-> >  static noinline_for_stack int
-> > -sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
-> > +sock_devmem_dontneed_autorelease(struct sock *sk, struct dmabuf_token *tokens,
-> 
-> Kind of a misnomer. This helper doesn't seem to autorelease, but
-> really release the provided tokens, I guess. I would have
-> sock_devmem_dontneed_tokens, but naming is hard :D
-> 
-> Either way, looks correct code move,
-> 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
+Hello,
 
-Should we come up with a new name for "autorelease"? I was hoping to
-find a name that could be consistent from the uAPI down into the token
-handling code. Maybe "reap" is more clear than "release", since the real
-difference is whether or not the kernel will reap leaked references on
-close?
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Maybe NETDEV_A_DMABUF_REAP_ON_CLOSE on the netlink side, and
-sock_devmem_dontneed_tokens() and sock_devmem_dontneed_no_reap() here?
+fs/ocfs2/ocfs2_fs.h:474:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:489:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:502:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:646:26: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:659:16: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:807:37: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:943:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:1030:39: error: expected ';' at end of declaration list
 
-Best,
-Bobby
+
+Tested on:
+
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15cc432f980000
+
 
