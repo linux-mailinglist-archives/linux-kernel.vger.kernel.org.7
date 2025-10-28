@@ -1,241 +1,99 @@
-Return-Path: <linux-kernel+bounces-872923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE32C12A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:08:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00BBC12A1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45E714F5E1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:06:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 991F44E7E74
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291F01D5AC0;
-	Tue, 28 Oct 2025 02:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328A11D5151;
+	Tue, 28 Oct 2025 02:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="SvDVz/Kv"
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYVdP2MK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A90F50F;
-	Tue, 28 Oct 2025 02:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4702DF68
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761617188; cv=none; b=dj7iYegM9aT2CPV8FWc5byTc0QaciQ7bP+bisZjuTLEVQBh2qgdufUYbh+AvK1JsXCdT2NS8DaIOrMv34M7xD1YRgyLUnBxgFwyAWkh8Sq/tzYCrA4D/sTA1esZG6k7DcZJPapUdurUXb6wh/8kzFAGC/dMOAU07KQOIX8BABVk=
+	t=1761617344; cv=none; b=gSIEONDSUl3oLsGKfoj6Tqydgcc6MZpcUaLSD3zbAxBHawkXFDCld7dS78ouo429BSBEtGTWmwT7Dh05SPr0c6twI4wrX8WxrhDQK+YWxDfFgF3nZTfyJYkNxtEiosc+SRdeBdkSCq0PtTFoXR3nm6bwz1oQZeOrrFiwQ3dMKa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761617188; c=relaxed/simple;
-	bh=hB0F0f3czaGrMW/cqojaLSFWSVcNLZ93V4c7pu+q15k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VnVDGU+I9vC4U/2e6RmU3wu1DrLbFX9+Llkk5L+jeEKs6gECK481U1qX4JME441Jf7AtRuXUg/v2+p9tEs/KBuVs5+jEdDncTbHXAQy1uAnwkjxge2bpomq2ZQlayoLow/+MaZfAIFNFgrI+jblphBrlNezLtBKMGcr4v0mFLcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=SvDVz/Kv; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S0ADVC2710318;
-	Mon, 27 Oct 2025 19:06:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=Odw5CO1GMwiID/662eBOMWyp09TTAmRXFX0uj18/NiQ=; b=
-	SvDVz/KvxVmSGMb1NU2v8jrHJK+u15XNgCpAP1SC1aA8cNRgH76fGOjsGSk9jpHF
-	faemMjpur56QJh4w6GZj3AKxny4U6P5YvESNECL8y0/YnzEJAKGfdjRaAty/Uqj9
-	65ueVymPHj137NSj13ebyXnXdoPeX9Qz6j97TzI9K0CfTB+8ETN0/7CiwnpLL0IV
-	+S2038tW49tEaTKs02lHv4b1AgimQ+b2TkZIgQQ2MWJApyGr49WMRBCpAsBKtfNE
-	DWyp0FJ+U4veS3pYQPAdBz03OqM6VFyIRpyLE9nAUFTY8CKxNg7iWCyHsmAoh3BI
-	70YSADh9CAU+TiS40Hshmg==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a0su1jgtd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 27 Oct 2025 19:06:03 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Mon, 27 Oct 2025 19:06:03 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Mon, 27 Oct 2025 19:06:00 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <kuniyu@google.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-        <jreuter@yaina.de>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-        <syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH V3] net: rose: Prevent the use of freed digipeat
-Date: Tue, 28 Oct 2025 10:05:59 +0800
-Message-ID: <20251028020559.2527458-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAAVpQUA1v+LDYfpGGcTJ3sGGhmo6BCBrwWUwaj9cUbBVrw28GQ@mail.gmail.com>
-References: <CAAVpQUA1v+LDYfpGGcTJ3sGGhmo6BCBrwWUwaj9cUbBVrw28GQ@mail.gmail.com>
+	s=arc-20240116; t=1761617344; c=relaxed/simple;
+	bh=Ci3wKX9+GbtJLgrVVLH6sgxI9J3LFEptlAiQzuBfGzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Eu4CfYWDqMIpDB4t4Rv/9rqczDXsfmY4zrC3SPx8HZ6BbyW0+PGnY2OsFBe64VAjHFrNGzb8oXo8tF+z3DMH9c/0p3EBcW8pL9JZ2DmNNBd04ugz0lR8gPXpDGxXCSHMD8VZliuS6y8q5PCwOJmRzfuqIUMDBJZfPAe9zvxCp1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYVdP2MK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25996C4AF0B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761617344;
+	bh=Ci3wKX9+GbtJLgrVVLH6sgxI9J3LFEptlAiQzuBfGzY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VYVdP2MKrKlpuDWPX9DGGz7xq3AXkbRLU67SRkl4brImYlrRB9zbYA5XaD0RlhS5J
+	 yk7K77gKuO+/eOBre+kcLGqyoxQRozRCvghK7Y8mQdPSXQXR74LxXchze+rvlvAHsd
+	 fY3CwxeSIAGo6ueWTu3XPCtcDfb6CdkEzHIAPpiigfGlujOMuq3H14pjEYvoXbIFZZ
+	 mVd8688H7ZZ3w/nh+qZtk9HaBtXCVBz3Fpu3ucB0TRvE4J4mZ4C/eRpF666u2BCTQI
+	 eKjQnNzz5SZilRiXSM9XZtql4+0wLPzJ4rt3R5+TZKZY+tBY3cGKNX0IztHiFozPR0
+	 riLcvMBSTV5kQ==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63e076e24f2so2218024a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:09:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzmNcDMt314Lq/xeAGYt7EHTgzVz/0boF2t/In9SuG2RKpEAEw1pyxNAncQJOUFSdZ5pm+z3SN2OoW3hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztH2Ok0oDOlzpTTGJRmeCTqakamSPlawoPFVhbEWzZMp2i3G7+
+	+X1oT/BxF7psC+NNlOYx+wIFG3Xzm8eLZ85sY+ZBQeQmNQk3RvlQiA3creUfaivBsqxY3aMixrv
+	gfFTfPKcQBqBIOx/iyqTJMtRcKR8Z+f4=
+X-Google-Smtp-Source: AGHT+IHm6KkzkLs6ctwsQTN/W2y/IMPkRwoVU0DIJIHBOHSIX/K+TLihLpu1pfPvA1zOQz0aEA3/CX3FlCe7w/C7Ikk=
+X-Received: by 2002:a05:6402:2101:b0:63b:f4b4:a004 with SMTP id
+ 4fb4d7f45d1cf-63ed848cae0mr1801058a12.2.1761617342785; Mon, 27 Oct 2025
+ 19:09:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=SuadKfO0 c=1 sm=1 tr=0 ts=6900250b cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=1XWaLZrsAAAA:8
- a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=FmatfasXnMZaY-i_3HAA:9
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cQPPKAXgyycSBL8etih5:22
- a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
- a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDAxNyBTYWx0ZWRfXzutfacNwVav5
- 7MzKHQcfvwS60xUlrPqY65JhS0CQkSxLb79TyXvSzMxkRKjno46VgeYfrfBTmtrXCpuyxXRP/2m
- whAt66emVDE+QhBnk8CpLgw9TSFKKSxxNkoTVbMY/ef8AGIcVamMC7l4cur6ik65HRqVv3DqJ5Y
- Uz/0GrAysNy4sxaVC7mT31fMHo6CRp/xjbMSDgAP/1E2Jzc198sRb4bxyJh9/AWAUt94z15S48y
- dhq/pJ/iUr4E88RfuNMOSdGix3zwGQTbf7o4FcisiGmzXJxaoFxI/iifvUs6ORwi9+lxnQAfWN/
- G2QTIK2cqt0kvT/FdyPySmvOHCWlNljBn9xPlAmyqmk8WZj8nu0Qe48ImStksyGtCXAcL9u3qaV
- yLAmOELluM89J/VeV1MbB/Bc/6xbzw==
-X-Proofpoint-GUID: eIPEPaC6TD0wL_su1l6R_PHRRa5GQyLH
-X-Proofpoint-ORIG-GUID: eIPEPaC6TD0wL_su1l6R_PHRRa5GQyLH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 bulkscore=0 suspectscore=0 spamscore=0
- adultscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280017
+References: <OcRf3_Q--F-9@tutamail.com>
+In-Reply-To: <OcRf3_Q--F-9@tutamail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 28 Oct 2025 11:08:50 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8yo8HH2E0QWgLTBdnjVfpD_8LUPpOXbcKT4p91TLRh6A@mail.gmail.com>
+X-Gm-Features: AWmQ_blA9zoKI2SVeeGsuWipkZxgiFCqrqDbuMR0eNhCmBzwYqh32VPQiN0OKAk
+Message-ID: <CAKYAXd8yo8HH2E0QWgLTBdnjVfpD_8LUPpOXbcKT4p91TLRh6A@mail.gmail.com>
+Subject: Re: [FS-DEV][NTFSPLUS][BUGREPORT]NtfsPlus extend mft data allocation error.
+To: craftfever@tutamail.com
+Cc: Linux Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux Kernel <linux-kernel@vger.kernel.org>, Iamjoonsoo Kim <iamjoonsoo.kim@lge.com>, 
+	Cheol Lee <cheol.lee@lge.com>, Jay Sim <jay.sim@lge.com>, Gunho Lee <gunho.lee@lge.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025 10:40:34 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> On Sat, Oct 25, 2025 at 12:53 AM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> >
-> > On Sat, 25 Oct 2025 00:15:51 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> > > On Fri, Oct 24, 2025 at 11:46 PM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> > > >
-> > > > On Fri, 24 Oct 2025 21:25:20 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> > > > > On Fri, Oct 24, 2025 at 8:51 PM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> > > > > >
-> > > > > > On Fri, 24 Oct 2025 19:18:46 -0700, Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> > > > > > > On Fri, Oct 24, 2025 at 2:39 AM Lizhi Xu <lizhi.xu@windriver.com> wrote:
-> > > > > > > >
-> > > > > > > > There is no synchronization between the two timers, rose_t0timer_expiry
-> > > > > > > > and rose_timer_expiry.
-> > > > > > > > rose_timer_expiry() puts the neighbor when the rose state is ROSE_STATE_2.
-> > > > > > > > However, rose_t0timer_expiry() does initiate a restart request on the
-> > > > > > > > neighbor.
-> > > > > > > > When rose_t0timer_expiry() accesses the released neighbor member digipeat,
-> > > > > > > > a UAF is triggered.
-> > > > > > > >
-> > > > > > > > To avoid this UAF, defer the put operation to rose_t0timer_expiry() and
-> > > > > > > > stop restarting t0timer after putting the neighbor.
-> > > > > > > >
-> > > > > > > > When putting the neighbor, set the neighbor to NULL. Setting neighbor to
-> > > > > > > > NULL prevents rose_t0timer_expiry() from restarting t0timer.
-> > > > > > > >
-> > > > > > > > syzbot reported a slab-use-after-free Read in ax25_find_cb.
-> > > > > > > > BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> > > > > > > > Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17200
-> > > > > > > > Call Trace:
-> > > > > > > >  ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-> > > > > > > >  ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
-> > > > > > > >  rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
-> > > > > > > >  rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link.c:198
-> > > > > > > >  rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
-> > > > > > > >
-> > > > > > > > Freed by task 17183:
-> > > > > > > >  kfree+0x2b8/0x6d0 mm/slub.c:6826
-> > > > > > > >  rose_neigh_put include/net/rose.h:165 [inline]
-> > > > > > > >  rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
-> > > > > > > >
-> > > > > > > > Fixes: d860d1faa6b2 ("net: rose: convert 'use' field to refcount_t")
-> > > > > > > > Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com
-> > > > > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > > > > > > ---
-> > > > > > > > V1 -> V2: Putting the neighbor stops t0timer from automatically starting
-> > > > > > > > V2 -> V3: add rose_neigh_putex for set rose neigh to NULL
-> > > > > > > >
-> > > > > > > >  include/net/rose.h   | 12 ++++++++++++
-> > > > > > > >  net/rose/rose_link.c |  5 +++++
-> > > > > > > >  2 files changed, 17 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/include/net/rose.h b/include/net/rose.h
-> > > > > > > > index 2b5491bbf39a..33de310ba778 100644
-> > > > > > > > --- a/include/net/rose.h
-> > > > > > > > +++ b/include/net/rose.h
-> > > > > > > > @@ -167,6 +167,18 @@ static inline void rose_neigh_put(struct rose_neigh *rose_neigh)
-> > > > > > > >         }
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > +static inline void rose_neigh_putex(struct rose_neigh **roseneigh)
-> > > > > > > > +{
-> > > > > > > > +       struct rose_neigh *rose_neigh = *roseneigh;
-> > > > > > > > +       if (refcount_dec_and_test(&rose_neigh->use)) {
-> > > > > > > > +               if (rose_neigh->ax25)
-> > > > > > > > +                       ax25_cb_put(rose_neigh->ax25);
-> > > > > > > > +               kfree(rose_neigh->digipeat);
-> > > > > > > > +               kfree(rose_neigh);
-> > > > > > > > +               *roseneigh = NULL;
-> > > > > > > > +       }
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > >  /* af_rose.c */
-> > > > > > > >  extern ax25_address rose_callsign;
-> > > > > > > >  extern int  sysctl_rose_restart_request_timeout;
-> > > > > > > > diff --git a/net/rose/rose_link.c b/net/rose/rose_link.c
-> > > > > > > > index 7746229fdc8c..334c8cc0876d 100644
-> > > > > > > > --- a/net/rose/rose_link.c
-> > > > > > > > +++ b/net/rose/rose_link.c
-> > > > > > > > @@ -43,6 +43,9 @@ void rose_start_ftimer(struct rose_neigh *neigh)
-> > > > > > > >
-> > > > > > > >  static void rose_start_t0timer(struct rose_neigh *neigh)
-> > > > > > > >  {
-> > > > > > > > +       if (!neigh)
-> > > > > > > > +               return;
-> > > > > > > > +
-> > > > > > > >         timer_delete(&neigh->t0timer);
-> > > > > > > >
-> > > > > > > >         neigh->t0timer.function = rose_t0timer_expiry;
-> > > > > > > > @@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_list *t)
-> > > > > > > >  {
-> > > > > > > >         struct rose_neigh *neigh = timer_container_of(neigh, t, t0timer);
-> > > > > > > >
-> > > > > > >
-> > > > > > > What prevents rose_timer_expiry() from releasing the
-> > > > > > > last refcnt here ?
-> > > > > > The issue reported by syzbot is that rose_t0timer_expiry() is triggered
-> > > > > > first, followed by rose_timer_expiry().
-> > > > >
-> > > > > I don't see how you read that ordering from the report.
-> > > > > https://syzkaller.appspot.com/bug?extid=caa052a0958a9146870d
-> > > > Here's my understanding: See the two calltraces below.
-> > >
-> > > The same question still applies.
-> > >
-> > > What prevents rose_timer_expiry() from releasing the last
-> > > refcnt before [1] ?
-> > @@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_list *t)
-> >  {
-> >         struct rose_neigh *neigh = timer_container_of(neigh, t, t0timer);
-> >
-> > +       rose_neigh_hold(neigh); // [3] This prevents rose_timer_expiry() from putting neigh.
-> 
-> If you ask yourself the same question once more here,
-> you will notice the fix is broken.
-> 
-> What prevents rose_timer_expiry() from releasing the
-> last refcnt before rose_neigh_hold() ?
-The UAF issue reported by syzbot is shown below:
-	CPU0				CPU1
-	====				====
- rose_t0timer_expiry()
- rose_transmit_restart_request()
- rose_send_frame()
- ax25_send_frame()			rose_timer_expiry()
- 					rose_neigh_put()
-					kfree(neigh)
- ax25_find_cb()
-
-My patch calls rose_neigh_hold() before executing rose_transmit_restart_request()
-in rose_t0timer_expiry(). It then calls rose_neigh_putex() to release and
-set neigh to NULL before executing rose_start_t0timer(). This also prevents
-timer0 from restarting.
-
-I think the only questionable part of the patch is the expiration time of
-rose_timer. I don't know the expiration time because I don't have a reproducer.
-If the value is very small, the result may be different.
+On Sun, Oct 26, 2025 at 3:40=E2=80=AFAM <craftfever@tutamail.com> wrote:
+>
+>
+>
+> Hi, I' decided to test your new driver, as I found ntfs3 driver buggy and=
+ causing system crush under huge amount of files writing ti disk ("I'm repo=
+rted this bug already on lore.kernel maillists). The thing is ntfsplus demo=
+nstrated buggy behavior in somewhat similar situation, but without system c=
+rushing or partition corruption. When I try, for example, download many sma=
+ll files through download manager, download can interrupt, and cosole versi=
+on writes about memory allocation error. Similar error was in ntfs3 driver,=
+ but in this case with ntfsplus there is no program/system crash, just soft=
+-erroring and interrupting, but files cannot be wrote in this case. In dmes=
+g this errors follow up with this messages:
+>
+> [16952.870880] ntfsplus: (device sdc1): ntfs_mft_record_alloc(): Failed t=
+o extend mft data allocation.
+> [16954.299230] ntfsplus: (device sdc1): ntfs_mft_data_extend_allocation_n=
+olock(): Not enough space in this mft record to accommodate extended mft da=
+ta attribute extent.  Cannot handle this yet.
+>
+> I know. that driver in development now, so I'm reporting this bug in time=
+ when development is still in process. Thank you
+I will take a look and fix the next version.
+Thanks for your report!
 
