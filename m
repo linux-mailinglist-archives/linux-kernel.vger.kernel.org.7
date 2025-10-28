@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-874687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6954EC16DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:04:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8B0C16DBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D74F64FB7E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E699B188AD13
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7592BE029;
-	Tue, 28 Oct 2025 21:03:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7EF2BE7C6;
+	Tue, 28 Oct 2025 21:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jg54qwLd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4CB2045B7
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB19E27464F;
+	Tue, 28 Oct 2025 21:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761685387; cv=none; b=Bns2fuUV+u4MxwQX+nWgnRExdqfODyStggbOKB8G0lUrjYS7vegk4rGjcn1kiN8mO5Gf/SRD74/1BX+zR8nK2GnrcINwDryYzzq/i+1T7JETUrpL7vRoJYqBJuyMG4xxXgRhFsenU/8rftCgLfq/mx4+rYBDv5EvexkAQn2s/Ak=
+	t=1761685459; cv=none; b=MzJlkfBx8D3yj1qCcWNpcFgYZ7XhqC4H5MJ0K7fsL/Yd0kANHdPlgHcDip21Okk79Yqd3gJWwdTJHlgphHO/UvlkuyrTcJw3ePQ3PZSYJeezKTMHWt+jnhSSWuD+V8Tn8CW1G89O1nu/GWad+nupyXWZG3weIPPrFt7KDi+rsEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761685387; c=relaxed/simple;
-	bh=6gF04eDpE6l9eUdm+zMZJdeQvx0wV0d0xnPhHYeuAtI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tjmbtCROTReylsh6M2JKyTAjBV5AGg97aUIBCNLBdqAuIZgDk2dkHjW0GreKXWRi8m381BJxQo8z29dEIPuYbEOhBpmtio/IgGMZLPe+hybgTaX+p3QdhMigOfROEAX0j9Yz3sDKqlONSgGEyw4B9bgDbjYdocRSXjNqToTbAzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430c9176acaso5514665ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:03:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761685385; x=1762290185;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fh04tIkxxNjI62LGKXy5UvS+5SwkvjxFvz2gBwHqI0A=;
-        b=jWynuLHBjnMLJ6VfAmji4fem1X4x8Lvqo3kkonRQJXpFQ4SHW9H0VDVzwkXTl1ljqk
-         lZbOrdGzqXQ2L7wSif0h/h++hQrxa6ej5yCTgxmCF9wlkl1Cw5t6J5dHjrP3hr+vBmOY
-         4OVTFd2blR3Ys1Q1+ABC++YUh0J2O02RATxm+U8JJVr9zMWKO6JKGqm6s+DENIGbCXXr
-         qB0iFoGeKJradqXv7oQ8bIFy5ssCdCzx/aYQxJk5OU5hleyxL1oyuPg8RPA7xuzlUbkM
-         otudFONRHx+fGOv0N+eyblTrNQn1KYhKpshGQY/aRCPmEd5VDjfWQsqm5HwinUX+roCu
-         w6Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDLih2fms+PYTM5KOTdTpjyyoJX6dQB1wh8pJgmp9OD8CdrOkuCex+KuU3X/PNVX6XhOc2iEW8n4YnFLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNMcqUt45gaFMEGRjopUJ8kCO9vtDdj+ord7QAChO5yi76WBa9
-	0/4J5AwswRkrDbIUeRj337BOtpX5eRUL4kCujaHdKcdo09Jtroq6LQD/Qa9hLXGgmsBxHAwCOJN
-	fI+ehUc4iKSAMhLbPL0G5sbJLSaBpvRvaaACaoW45bCct+swrx+RKMcyiJIE=
-X-Google-Smtp-Source: AGHT+IHFtKe4LWz9vfLRYezy4QJy32wWxBY0L97eoE28LA6H5rhrMIZFcJM19LEMuqe8xtXAqtWwa+SexrUH9uFX+woVF7XTaOpl
+	s=arc-20240116; t=1761685459; c=relaxed/simple;
+	bh=yPTiSmkFy0L2ygt5n7CY9W5kU9yg9YW2BtOaGQKJYU4=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=rQ7n0Wo+GQLHDc404RWjW2N7tqVCoffn378bjpvUDKWhjhBGDLKBovb+FXlvuHYW2pvpCymBKxA1dxkv6JGL24A52uNu4QKqLVL0bdsRU7EFZH69KHnWdXQaB49O7mz+1Vce/H7VAcjoKGgGn1kw7ChMDDOnKyxu1/Dyx/n2jXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jg54qwLd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CECAC4CEE7;
+	Tue, 28 Oct 2025 21:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761685459;
+	bh=yPTiSmkFy0L2ygt5n7CY9W5kU9yg9YW2BtOaGQKJYU4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Jg54qwLdNAJ9dJQDTesLdPqUu7nTvxLTLXaM+rrsY84I0RQ1J0wW5J6/oEpRqySwK
+	 vRVnucYSAeaONpn/Sg9HWalOFfxVYy4jslI7S7FEwIonSac+9+GN1o4CMMito4XLcg
+	 QQjW2yeVV2Xxwl8WU2i9j9ZdGzzq2XbDgR00l3fe34GIa/xDMelYwOq2bhzAF5A5rd
+	 KnQ+z//eUykDXMyrJdmRP2RKKdakIEOBBh2q9tnffBqRHkrDDLnIGMNcUF43nj0SXy
+	 4xdZX/951bQyJR+l2koUS7deviTtKd/KwDoH705HGj6PMq+VaexBIzl+QBs6OuVPSV
+	 tRDIQYG5WY4lg==
+Date: Tue, 28 Oct 2025 11:04:18 -1000
+Message-ID: <31c2ba69c73dc25b022533ca00300256@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: [PATCH sched_ext/for-6.19] sched_ext: Use SCX_TASK_READY test instead of tryget_task_struct() during class switch
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e05:b0:430:c857:734e with SMTP id
- e9e14a558f8ab-432f8e2f263mr13275285ab.10.1761685384629; Tue, 28 Oct 2025
- 14:03:04 -0700 (PDT)
-Date: Tue, 28 Oct 2025 14:03:04 -0700
-In-Reply-To: <20251028182114.wDf39%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69012f88.050a0220.3344a1.03ef.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: slab-use-after-free Read in ocfs2_fault
-From: syzbot <syzbot+a49010a0e8fcdeea075f@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+ddf7233fcab6 ("sched/ext: Fix invalid task state transitions on class
+switch") added tryget_task_struct() test during scx_enable()'s class
+switching loop. The reason for the addition was to avoid enabling tasks which
+skipped prep in the previous loop due to being dead.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+While tryget_task_struct() does work for this purpose as tasks that fail
+tryget always will fail it, it's a bit roundabout. A more direct way is
+testing whether the task is in READY state. Switch to testing SCX_TASK_READY
+directly.
 
-fs/ocfs2/ocfs2_fs.h:472:40: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:487:40: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:500:43: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:644:26: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:657:16: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:805:37: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:941:43: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:1028:39: error: expected ';' at end of declaration list
+Cc: Andrea Righi <arighi@nvidia.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/sched/ext.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4662,7 +4662,7 @@ static int scx_enable(struct sched_ext_o
+ 			__setscheduler_class(p->policy, p->prio);
+ 		struct sched_enq_and_set_ctx ctx;
 
-Tested on:
+-		if (!tryget_task_struct(p))
++		if (scx_get_task_state(p) != SCX_TASK_READY)
+ 			continue;
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
-dashboard link: https://syzkaller.appspot.com/bug?extid=a49010a0e8fcdeea075f
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=103377e2580000
+ 		if (old_class != new_class && p->se.sched_delayed)
+@@ -4677,7 +4677,6 @@ static int scx_enable(struct sched_ext_o
+ 		sched_enq_and_set_task(&ctx);
 
+ 		check_class_changed(task_rq(p), p, old_class, p->prio);
+-		put_task_struct(p);
+ 	}
+ 	scx_task_iter_stop(&sti);
+ 	percpu_up_write(&scx_fork_rwsem);
 
