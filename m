@@ -1,193 +1,139 @@
-Return-Path: <linux-kernel+bounces-874123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18E4C15931
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:46:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79C0C1593D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9A41887B31
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9711A63171
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BD8342C81;
-	Tue, 28 Oct 2025 15:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05551340A6D;
+	Tue, 28 Oct 2025 15:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBSqhqpi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdOMxHPI"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5232857EA;
-	Tue, 28 Oct 2025 15:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F351333DEFF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666146; cv=none; b=CQFFFb3Kj+dAwkrd2+XF8mViyaEdbU5CHQBl8Nlo7/YMkc9FenS8IMQVwBXx2u4QJJwoHrI7pHvqY2tEQHhSKnKejb0QCqx+tWq5q2tNGH0uN0/6HINfnT2TYnvskbuYNIhi6cM7ehL80dvr9px1Jp/OPZcxAmuCO2IA3ZWtTHc=
+	t=1761666159; cv=none; b=UQkiJtIHzDH6yYr7ukwpBoIDSXj0A3BGa5MhS0FAoj9AtLgurI/UsaY519UwCLwrqkIHyMFwB0OhUu1aD0mrnRZQwJ4PZDosRAl1DDgtzihIMubxoOQsIDsEdI4Ykinwbb7+b/WD3MW2HTh6Tx20UO2RdZXVPLAPi/6MZoDdIIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666146; c=relaxed/simple;
-	bh=cTwXXNk/yazHQqObZ+jp4ZVZEgnfPcH4tyN7EE1hfbc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OB5uHf3Qo0xuwr9zvBxpK8EtkC1Cj7JUI8frCmoMiBcToiYhivV6lydruysZrI5yJo3am6xpEQs6NV6MNdisQM3K2lQpvHiXaX/g8WuXr3cGjK6jNf5EYEq9OiaNwDNK7B1eIVQ4/5XRMvaUFo5HC4Vc5pHuas/rORowwH4gQz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBSqhqpi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1BFC4CEE7;
-	Tue, 28 Oct 2025 15:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761666146;
-	bh=cTwXXNk/yazHQqObZ+jp4ZVZEgnfPcH4tyN7EE1hfbc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CBSqhqpiDvSVCBoorZfiWuqmKKOLf3RbBbvI/0ey2715+0aQIozCPcM6PtfsgkyUC
-	 Eo09m6w1VxzOLe4xj6zyETxQdPM8ZjHmRvDpPwUHN9yg6sbpY4qArB5Lvn/r02sE/5
-	 bwtxn6So0kb4uRlvXWbR5ar7ByHanVxjiObqLj1b2D2xxZAtxdawfZ739O1lTIYV/R
-	 crboLtqB/j9E9Qzb0OfsmsjDnPUBs+ypg6wiVZ3h0PJuvqSEghkyaXSTQvBkQyJNV+
-	 OFe5JcXnfCD6KoNqOJKDNZk4i2Ityaj6rYLPVQ8z5+MqW97oshY+RUqFZJtuCtp/Vk
-	 IBL5L5rVrfKzw==
-Date: Wed, 29 Oct 2025 00:42:19 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Mark Brown <broonie@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, x86@kernel.org, Jinchao Wang
- <wangjinchao600@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
- wprobe
-Message-Id: <20251029004219.dc9cda0eb56ae46c55855844@kernel.org>
-In-Reply-To: <20251028105549.ae94e8eeb42f4efc183d2807@kernel.org>
-References: <175859019940.374439.7398451124225791618.stgit@devnote2>
-	<175859026716.374439.14852239332989324292.stgit@devnote2>
-	<aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
-	<20251027224347.4c887cc956df63602f377550@kernel.org>
-	<20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
-	<20251028105549.ae94e8eeb42f4efc183d2807@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761666159; c=relaxed/simple;
+	bh=+qmujv1j2dhUiejUJ6vkuBSeYgnuFw12qWJH/G+NXcU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TvxKmio/k28mxR40Y3BaQECsiXNjGmhXTa6zkTf19ELjxuXRbwALEFF47VSOC1B1a7d9j4OxPydEbxiTTpvio+jyvOFZJg+UjW9S3n4mQ7TIAEXupkugNedttlcL0o0muLAVViwwL8klMjXGXkqoB3/hyHRT730rkVEy+1Z4W1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PdOMxHPI; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2907948c1d2so64475495ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761666157; x=1762270957; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4y0EJSogwXb/l2ctLCybder9EWKsVTxzS16PIlLrZdk=;
+        b=PdOMxHPIIz/e6kJQiTlpfEr3V5/os9F6YnV7X4b9T6lD/QoPVWEh6Fc8YGVnBK8Vje
+         1HIujHTJ74YAZKU/pkVXIMR5CBfxLAyQ9/l19U8Eq8ezH6kWMLO3YNP6ZO+KVEBqUS8N
+         ErueFhsGXFk2/B+wUr3KPkVr63iUZH+bKov84O6id7KiJzKyds4cyazK5ugbiN3gQe/f
+         pMyr0JaMXO+7gjZKymWxA2eAHspNKc7ZOs2IMSkm78TgH0AKiE6dCEMO3akIQINU4Viy
+         vSoZwnWD/PrsIhhjEY7iJgse3cG3hnqqSASG3bEAOnx/ExMS04zIPLQZTtDDnLBaLKCk
+         eE8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761666157; x=1762270957;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4y0EJSogwXb/l2ctLCybder9EWKsVTxzS16PIlLrZdk=;
+        b=hwrVmUV/zeihnoYwNuvUroO3OehDSBvtfy1eOD9NK0sx0frp73kvNOURZndJt+ZtoZ
+         kpWQGlYgneubhBmUivSwbbzM+V2D5FTJvBCXNR7B5/nqERUiUzDuURSsjO+HdeZp3zJA
+         C7nTCmqJQCYFWe8/MfzqQGoQaRa7HZCf0M0YaF7MdelHm0UTNeOQ/reDGo5wvr/bigd7
+         uwzaGcvplKmv4sUMHgxNo3KPw8wo9Y55aVhxQ+S1PQwTHg4IRCVaWcKwP9HxOXmX3nUP
+         5DoEYrMn9vAAGHKX4yxXY14opypPozLc6MUKESaqS42+1kMt4RZPnixazWOc1N+UHF9N
+         EUnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9gDYNvP6iMhM4GMPPbduA0HBZyD1eXf83QnC+/THTvxuwFnZ7eCw/GCFlWiUYkOm4/QRVujaYSEEzuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTvyJuHlwe3yP0+XahIUU2TuaRki9y0ceTmz5Gx/rHFPOwsAub
+	qaLtUTb3qcv/tlRvPaPj11QSEeHNCtmgBI+s7CeoAeT8NVD4H7N7DyR8
+X-Gm-Gg: ASbGnct87X2iivsglvTE9yrghH3ffVqb/0MidYQ4WBNoN+KlnT8mgBOsCiRkRs3DNxW
+	Oy6YIrITqaKtV3/JC/Rvd6lFqSztk1xdbN3jynSIC45OZ5F2B9+pm2x4zm/WCle7P7AGpn8ebuO
+	qDypR4a6DOm9+ubqOdxxezUWG4i1WyTOpF15jAdwk4IV2nhendr6bVQFNd3L6jiHu6i8jFMlsW9
+	xeJAiTci1lo/LNgwdSCew6uj48tBp6Bab1LcMnmWNG/g5HkJjji4g3Q01cfl/UeCAc3eS9flh58
+	MuzBR5hD6y7SIwFZKKjZ+INU1y87jOJ7ic56N+xxxKIbqAr7hpm9Ja+9708QdejiojQUWZXIQKa
+	xc/fD1siFuhpkXkQlf8KRtipuKa03Rf252HuLaTERXcfvkcGaAnBE2U1xMoyxeYx8fzFYkVAypg
+	sTDIwnM93B
+X-Google-Smtp-Source: AGHT+IEmbuhAY39zkLzLEiO4/3IEI+wJ/XdixLTlEX12sPPCwzL9L/N235oD3a/xqhHcC17poBLbbQ==
+X-Received: by 2002:a17:903:384d:b0:276:76e1:2e87 with SMTP id d9443c01a7336-294cb52558cmr46649865ad.44.1761666157092;
+        Tue, 28 Oct 2025 08:42:37 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.108])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0a4d9sm119815145ad.37.2025.10.28.08.42.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 08:42:36 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-omap@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-arm-kernel@lists.infradead.org (moderated list:PCI DRIVER FOR TI DRA7XX/J721E),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v3 0/2] PCI: j721e: A couple of cleanups
+Date: Tue, 28 Oct 2025 21:12:22 +0530
+Message-ID: <20251028154229.6774-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Oct 2025 10:55:49 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+Refactor the J721e probe function to use devres helpers for resource
+management. This replaces manual clock handling with
+devm_clk_get_optional_enabled() and assigns the reset GPIO directly
+to the struct members, eliminating unnecessary local variables.
 
-> On Tue, 28 Oct 2025 08:42:22 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> 
-> > ~ # cd /sys/kernel/tracing/
-> > /sys/kernel/tracing # echo 'w:my_wprobe w@jiffies' >> dynamic_events 
-> > /sys/kernel/tracing # echo 1 > events/wprobes/my_wprobe/enable 
-> > [   54.942288] trace_wprobe: enable_trace_wprobe called
-> > [   54.945306] trace_wprobe: trying to register wprobes
-> > [   54.947367] trace_wprobe: __register_trace_wprobe called
-> > [   54.949586] trace_wprobe: registering wprobe at addr: 0xffffb6ce429fb200, len: 4, type: 2
-> > [   54.951639] Creating wide hw breakpoint on CPU 0
-> > [   54.966390] Creating kernel counter on CPU 0 for event type 5
-> > [   54.967758] perf_install_in_context: event 00000000736da1d9 ctx 000000005d4db900 cpu 0
-> > [   54.972015] perf_install_in_context2: event 00000000736da1d9 ctx set to 000000005d4db900
-> > [   54.976697] cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2c8
-> > 
-> > What happen if the cpu calls function on itself by
-> > smp_call_function_single() on arm64?
-> > 
-> >   smp_call_function_single(this_cpu, remote_function, &data, 1);
-> 
-> Sorry, that was printk buffering issue. I used trace_printk() instead
-> and persistent ring buffer[1] to trace it.
-> 
-> [1] https://docs.kernel.org/trace/debugging.html#persistent-buffers-across-boots
-> 
-> ~ # echo 1 > /sys/kernel/tracing/instances/boot_map/options/trace_printk_dest
-> ~ # echo 'w:my_wprobe w@jiffies' >> /sys/kernel/tracing/dynamic_events 
-> ~ # echo 1 > /sys/kernel/tracing/events/wprobes/my_wprobe/enable 
-> QEMU 8.2.2 monitor - type 'help' for more information
-> (qemu) system_reset
-> ...
-> 
-> ~ # cat /sys/kernel/tracing/instances/boot_map/trace 
-> # tracer: nop
-> #
-> # entries-in-buffer/entries-written: 16/16   #P:1
-> #
-> #                                _-----=> irqs-off/BH-disabled
-> #                               / _----=> need-resched
-> #                              | / _---=> hardirq/softirq
-> #                              || / _--=> preempt-depth
-> #                              ||| / _-=> migrate-disable
-> #                              |||| /     delay
-> #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-> #              | |         |   |||||     |         |
->            <...>-63      [000] .....    21.065038: register_wide_hw_breakpoint: Creating wide hw breakpoint on CPU 0
->            <...>-63      [000] .....    21.079678: perf_event_create_kernel_counter: Creating kernel counter on CPU 0 for event type 5
->            <...>-63      [000] .....    21.080051: perf_install_in_context: perf_install_in_context: event 000000000b3ac4d3 ctx 00000000097d6337 cpu 0
->            <...>-63      [000] .....    21.080140: perf_install_in_context: perf_install_in_context2: event 000000000b3ac4d3 ctx set to 00000000097d6337
->            <...>-63      [000] .....    21.080939: cpu_function_call: cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2f0
->            <...>-63      [000] .....    21.080966: smp_call_function_single: smp_call_function_single: calling function on CPU 0, func: remote_function+0x0/0x78, wait=1
->            <...>-63      [000] ...1.    21.080973: smp_call_function_single: smp_call_function_single: running on CPU 0, call CPU 0
->            <...>-63      [000] ...1.    21.081099: smp_call_function_single: smp_call_function_single: checking for potential deadlock conditions
->            <...>-63      [000] ...1.    21.081259: generic_exec_single: generic_exec_single: preparing to call function on CPU 0, func: remote_function+0x0/0x78
->            <...>-63      [000] ...1.    21.081269: generic_exec_single: Executing smp_call_function_single on self CPU 0, func: remote_function+0x0/0x78
->            <...>-63      [000] d..1.    21.081289: csd_do_func: csd_do_func: CPU 0 executing func remote_function+0x0/0x78
->            <...>-63      [000] d..1.    21.081429: __perf_install_in_context: __perf_install_in_context: event 000000000b3ac4d3 ctx 00000000097d6337
->            <...>-63      [000] d..2.    21.083211: hw_breakpoint_control: hw_breakpoint_control: ops=0
->            <...>-63      [000] d..1.    21.084191: __perf_install_in_context: __perf_install_in_context: event 000000000b3ac4d3 done, ret=0
->            <...>-63      [000] d..1.    21.084237: csd_do_func: csd_do_func: CPU 0 finished func remote_function+0x0/0x78
->            <...>-63      [000] d..1.    21.084243: generic_exec_single: Finished csd_lock_record(NULL)
-> ~ # 
-> 
-> 
-> So the last message is right before the local_irq_restore() in
-> generic_exec_single().
-> 
-> static int generic_exec_single(int cpu, call_single_data_t *csd)
-> {
-> 	...
-> 		csd_lock_record(csd);
-> 		csd_unlock(csd);
-> 		local_irq_save(flags);
-> 		csd_do_func(func, info, NULL);
-> 		csd_lock_record(NULL);
-> 		trace_printk("Finished csd_lock_record(NULL)\n"); <- 
-> 		local_irq_restore(flags);
-> 		return 0;
-> 
-> Actually, I added another trace_printk() right after generic_exec_single().
-> 
-> 	err = generic_exec_single(cpu, csd);
-> 	trace_printk("generic_exec_single returned %d for CPU %d, func: %pS\n",
-> 		err, cpu, func);
-> 
-> This means after setting the hw_breakpoint, when enabing the IRQ,
-> the machine is frozen - but qemu is running busy.
-> 
-> Can we specify the kernel memory address to HW breakpoint on arm64?
+These patches have been compile-tested only, as I do not have access
+to the hardware for runtime verification.
 
-Hmm, it seems that jiffies related things are updated frequently
-and it may cause interrupt storm or infinit recursive call.
+v3  : https://lore.kernel.org/all/20251027090310.38999-1-linux.amoon@gmail.com/
+v2  : https://lore.kernel.org/all/20251025074336.26743-1-linux.amoon@gmail.com/
+v1  : https://lore.kernel.org/all/20251014113234.44418-1-linux.amoon@gmail.com/
+RFC : https://lore.kernel.org/all/20251013101727.129260-1-linux.amoon@gmail.com/
 
-Basically, I think it should be temporarily disabled so that the
-interrupt does not occur during the extension of the HWBP interrupt,
-but I wonder how this works in arm64?
+Changes
+v4  : Improve the commit message.
 
-If you know the path, you may be able to prohibit access to the
-related variables. But that maybe more difficult than SWBP like
-kprobes. Maybe this should add at least taint flag.
+v2  Drop the dev_err_probe return patch.
+    Fix small issue address issue by Dan and Markus.
+v1:
+   Add new patch for dev_err_probe return.
+   dropped unsesary clk_disable_unprepare as its handle by
+   devm_clk_get_optional_enabled.
 
-Thank you,
+Thanks
+-Anand
 
-> 
-> Thank you,
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Anand Moon (2):
+  PCI: j721e: Use devm_clk_get_optional_enabled() to get the clock
+  PCI: j721e: Use inline reset GPIO assignment and drop local variable
+
+ drivers/pci/controller/cadence/pci-j721e.c | 33 ++++++++--------------
+ 1 file changed, 11 insertions(+), 22 deletions(-)
 
 
+base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.50.1
+
 
