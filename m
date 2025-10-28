@@ -1,100 +1,142 @@
-Return-Path: <linux-kernel+bounces-873455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72E9C13F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:59:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A48C13FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5616C4E3C0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E4AA3AE610
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B294F2D94AF;
-	Tue, 28 Oct 2025 09:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC413301711;
+	Tue, 28 Oct 2025 09:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K65tqmKV"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="asN+qANb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62962264D3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859CF2E88A7;
+	Tue, 28 Oct 2025 09:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645408; cv=none; b=IG6AeBSdliRIUDzpZeCB3l1JnwgEVH3R1LR0EPuWWBBncRPAsKQslkvLvZDs++hO6qT3AaUHaypfCZx8I6QqTr1pz3jNSx0JJRTg/oQpWeHPim6b3JLE0VOa9DYcz49xTffjfmQoUG7z2g7fRB0EOdEbAUHr+7HswFW2+WIraGc=
+	t=1761645486; cv=none; b=j9A/DhXm0FYFSn9ABmzpbM7AG/YSuXHD0akyxCUogamafz71smFImXq6aj0vIUNY1EQ/oUX6lHhGnBHwIgPku92s16kjGUwJiIVIVU9b6kMSf+7+fW0R3RObC+T+bf2tHOqsVPYouJSI9LGTFaGVStdl84Ha2UONHMFa5mvVyDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645408; c=relaxed/simple;
-	bh=hX3arM2xiiK4Q34ajAmL+1FBdzbIGGsIsV4SUogzEq4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=g6B+wxBUenehhxHJehr7EI1g36qkXAyQ17tI23+ehitzEsvhqLIk+BRtc46Gdlw8dbNXBYjvn5Yhno/fPSsHKn6zDuqxfu6cuySdlLiMDogOSt8w1jHGhZQ+X+0gec0oe6qo38J5cnnfkpLrpJoUPj2FYWTEs4OqfBmXKiWRADI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K65tqmKV; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-4270a273b6eso4205975f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761645405; x=1762250205; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jw+QQNhXDjAHwQlCRIGKYXkkl+Ihpl9g0b/qnFHKe40=;
-        b=K65tqmKVS2/UTaw3AeZdd+g9Ceq6MrgkaERa009zODN08Zaf/6bvYG7HdNBRbffgOu
-         vUowZqJWqmJ9ihq58r+9FTe9U5+GQB+piJZdpoDXMBQPeFCMcUMWmbgutTs+8aMBkB/q
-         F0GJ8gOvPuVQyENYsZJIrxkyi8WIl3f/9zb0qCugAKDjnNpycsjXSfCnChRV0wYnPUgI
-         XxG4LIgQKrddVZm5ZOXGFMUreQAzpO32VS8RBp2Ba69vfRzVPXvd9DKStrsJZ8wvW6UP
-         e/6sPOF1oSVslOBYqKqzwHF878vw8zbPbfsE3EDk5uW/JXmv41zQl1K/gsMvRlA3uB1C
-         zM5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761645405; x=1762250205;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jw+QQNhXDjAHwQlCRIGKYXkkl+Ihpl9g0b/qnFHKe40=;
-        b=dbsN6Udpam0u2WCJ5xvM08yrXSMTmQ8G/S87ZBRAOTthIdQs6xl4Ux+yCMzDsUZNeL
-         uCr/2GORpfiL5lQpWL6oK9EUvumn+C7ROqMfhPfo1H2+oNR6kAWq7EknKFUCaFGR9iTN
-         +pKNDhsuZmANJkMwHOMPl6xzcVjSpSBK2QL1Yyb2f2lVrfHc9mTdQHhesVUqDhunPd4L
-         2oSiI4LEfXR9HcWVP5ndhURsABFd02HDQocXg62a7E/td6Jb6iD0pTPooANQEUfTASdb
-         jDtVG6akByo9zhPnVSw1zAC9Owqe/OJLWN/b6TTo/iz2zf73rKtFS2uU1hFJ/EL/tpkF
-         Um9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWax0HIaQaZ3+hmhRwLlf/1WOsmT7BxYVamOp2pA2AFIUZqJdGz2VA+RcvI+pTgMYs6Jl/pnkqlpSuTDvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFJ6U7WL7a9y/5P7r8olv4tFtfSqVdbZAdsaAVs8jUqY8QIk0f
-	BFaz8uD9Yj3DebDz8UOYeCKL5U6EFPXlSyh1CF9n28KDcr5v+3k3uN5dT23ZIDnNtqzSjwo3slC
-	awPQmbyFJiRpxb6dYvw==
-X-Google-Smtp-Source: AGHT+IGKSheu/Xc5yKyOddxTaI38qkdiTdyZI2k46808hMqrj+mZdBsGHh2ZbiuVOKReAHQyOIZMyqCAx+5qwRQ=
-X-Received: from wmsm26.prod.google.com ([2002:a05:600c:3b1a:b0:46e:3422:1fcc])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:620a:b0:471:145b:dd0d with SMTP id 5b1f17b1804b1-47717e54b01mr17567085e9.24.1761645405225;
- Tue, 28 Oct 2025 02:56:45 -0700 (PDT)
-Date: Tue, 28 Oct 2025 09:56:44 +0000
-In-Reply-To: <20251026125458.2772103-3-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1761645486; c=relaxed/simple;
+	bh=/rtrNhepHf9lMxwSk8oyaHxVN4v5zy12YxO2AaKG7zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xw+dueWsVM12dKTOIrVmduH/SxhkYuMAv+mKqpSlS0xSMHAZ9nlt6K7GatIskOA7k4D6L1f4HWPNUWOpeMncsP3WLn4PpucOv4d0XBExNlw80fZN+arkvO8gLkmGnfPRZoSc+9CEPMccvtk1D/ljKsfjdi4y+IDcjR6IDCdMh6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=asN+qANb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S31w8U353480;
+	Tue, 28 Oct 2025 09:57:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8I3o1pIujZUjMX2XAjT2u/HA+H8MX1k3r61MkoE1lWQ=; b=asN+qANbZLadMXxQ
+	HegT9DkuNWw7vHbi4aIKX1i0yQb+NwyMHm02F0lFtfz2arZPUlwgv5YSd+JDc+/7
+	Z9274ue3Cla24W8DLIjgxpg73ptkVm2a3h5asuf3atdlHvufALyjZfSUdySrNAio
+	vZOLJa7Z4XaTVsAB+Na9LFOekJks/G5q9kczp+D4HDo8vjIZJPWYKC3bSbwZas7w
+	ZgXegXuciZzZwhLrYwEyq7fQskjQChlG2KZkgJ/GclFlsLY+QD6sAQsPK18uT2md
+	rS2Lj20ZACcjFsIiRAzc1xH6TMKcZjrC7KDjTU4B1M7evb/4CoVx2GWCCWj2Otsh
+	/S44DQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2njrs5jy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 09:57:44 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59S9viZv030350
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 09:57:44 GMT
+Received: from [10.206.96.75] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 28 Oct
+ 2025 02:57:35 -0700
+Message-ID: <ef4effd5-bc43-4134-a4e5-a1e47b620549@quicinc.com>
+Date: Tue, 28 Oct 2025 15:27:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251026125458.2772103-1-fujita.tomonori@gmail.com> <20251026125458.2772103-3-fujita.tomonori@gmail.com>
-Message-ID: <aQCTXFcSyCxJ8KqD@google.com>
-Subject: Re: [PATCH v3 2/2] rust: Add read_poll_timeout_atomic function
-From: Alice Ryhl <aliceryhl@google.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, dakr@kernel.org, 
-	daniel.almeida@collabora.com, ojeda@kernel.org, anna-maria@linutronix.de, 
-	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, frederic@kernel.org, 
-	gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org, 
-	lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org, 
-	sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: qcom-edp: Add edp ref clk for
+ sa8775p
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <robin.clark@oss.qualcomm.com>, <lumag@kernel.org>,
+        <abhinav.kumar@linux.dev>, <jessica.zhang@oss.qualcomm.com>,
+        <sean@poorly.run>, <marijn.suijten@somainline.org>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_mahap@quicinc.com>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <mani@kernel.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <vkoul@kernel.org>, <kishon@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>, <linux-phy@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <quic_vproddut@quicinc.com>
+References: <20251013104806.6599-1-quic_riteshk@quicinc.com>
+ <20251013104806.6599-2-quic_riteshk@quicinc.com>
+ <xofvrsdi2s37qefp2fr6av67c5nokvlw3jm6w3nznphm3x223f@yyatwo5cur6u>
+ <20251015144349.GA3302193-robh@kernel.org>
+From: Ritesh Kumar <quic_riteshk@quicinc.com>
+In-Reply-To: <20251015144349.GA3302193-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=dqvWylg4 c=1 sm=1 tr=0 ts=69009398 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=i-1-ecsRnRnOvt_f1vAA:9 a=QEXdDO2ut3YA:10
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-GUID: 4CfEHxI0d71YWWwFAUQARagTdDCwDYdh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA4NCBTYWx0ZWRfX/wGoND2ICMMD
+ opcy1bZOgAksLQ8qu35B+9JOIQgSqgahxBfX8+2z1dOnXOE2/EFliZ3UWF+7zwu+YX/WxSrspg2
+ pEyNMlZ14VjFM2GFm994qqCLdcZ+6a9kmplaJjNJXSO2/FFG8PXSdf+dC86nfsf6F7tbcfpsblw
+ ZB3CDazV/+xVfnJNeh5Sdqkm9k28ggaKoyVCwMHgI3QU7f18kYoBQCbfQ/HePT9nQID+F3RAFN4
+ b/Lti2GxRdDUClxGtoJHv2Ns5OZ97PNyLWQfTzGkw0/AJpMRK9H34T/HMwZNbq//OOxVCmYYGlG
+ 0R58Dw4jgv6oWxCAoLkKx+IIlVH9FGbepmYGKeo3YwBf47W3x7U2PN9eml5D2KhtbEKo5jTQ4xn
+ D08Lo0YCu3qEJ/nS9a6J36J92XKCsg==
+X-Proofpoint-ORIG-GUID: 4CfEHxI0d71YWWwFAUQARagTdDCwDYdh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
+ definitions=main-2510280084
 
-On Sun, Oct 26, 2025 at 09:54:58PM +0900, FUJITA Tomonori wrote:
-> Add read_poll_timeout_atomic function which polls periodically until a
-> condition is met, an error occurs, or the attempt limit is reached.
-> 
-> The C's read_poll_timeout_atomic() is used for the similar purpose.
-> In atomic context the timekeeping infrastructure is unavailable, so
-> reliable time-based timeouts cannot be implemented. So instead, the
-> helper accepts a maximum number of attempts and busy-waits (udelay +
-> cpu_relax) between tries.
-> 
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+On 10/15/2025 8:13 PM, Rob Herring wrote:
+> On Mon, Oct 13, 2025 at 03:37:47PM +0300, Dmitry Baryshkov wrote:
+> > On Mon, Oct 13, 2025 at 04:18:04PM +0530, Ritesh Kumar wrote:
+> > > Add edp reference clock for sa8775p edp phy.
+> > 
+> > eDP, PHY.
+> > 
+> > I'd probably ask to squash both DT binding patches together, but this
+> > might cause cross-subsystem merge issues. I'll leave this to DT
+> > maintainers discretion, whether to require a non-warning-adding patch or
+> > two patches with warnings in the middle of the series.
+>
+> One patch.
+
+Sure, will update a single patch for DT bindings.
+
+> Rob
+>
 
