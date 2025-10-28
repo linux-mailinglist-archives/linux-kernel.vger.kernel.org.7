@@ -1,45 +1,80 @@
-Return-Path: <linux-kernel+bounces-873131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1334C132F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:38:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81552C13309
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15C1562F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:38:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0821834FD9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E9D2BE047;
-	Tue, 28 Oct 2025 06:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137D92C0294;
+	Tue, 28 Oct 2025 06:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="k6LzNzlV"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+D/2g1Y"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9FD2BE033
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868982C0265
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761633492; cv=none; b=VSsDcSxrPUE6JI5yM1WITMIILgjqjknUFbPhZHvpIuWkxzIAeuxuYLBAtlIiME38zxgaX1QAIQ68nXdUTqH83kCeKVVfZP0CGLbaffiVFt5CntIqbBzH4L3/KfMWkz2qWbS5IkLf2TvB9p6HKKrtkB4XZGWq43mS15bO9nSbaa0=
+	t=1761633561; cv=none; b=pN9DCuSZlq0YoqHENZIteclpBiNllNsKzbXKi9352mw1fOK+AJmJnuv3rG64BRM6/1eyfA0kamGso1XovM8kx7dJARPo2SJcrmcVTAQVU667CiJoaWVzRnzjCINylqbDM2UpG5TX66iGuqcr5WNFvO19JkJaUm0Ke7cFi++cSh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761633492; c=relaxed/simple;
-	bh=MrJTQTtaJJ/C6NroKYM2cPnVIj4v47TwhZmWoG4dI2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cyY/PBrKlNC2qSSpGpsqlrkk1W3RE1nI/vgZCDWT+tcVuGt7lW7xGQGnK545DEMF0DR1kJyeDqj1IwJfdp3TTUN1J8aVP35RyIELVbSCjGjeVcu7XtfS6uIqMk074dBSzcTh2WzVxFoyXs/OjzTMVRzXMLrbAAVYU1C/fbVXX5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=k6LzNzlV; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761633481; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=5+5/oH3gRtkklMreCNra6WAMe32tNr7/MSdCNrsy5tc=;
-	b=k6LzNzlV4G6bPWh0IsdlAwTv7jM986/Ghfna9WeaUZtK1tUkEoYQBFKpK1zMsb/jn+Y3Z9eNS0s42Ob5kq3ZRfaYcVhm8h4zfA5vHEG0T0mEFbaxPbxCZkj4R5C1O96aOGYbU65S1X3vJTuwrnh9t/xyh6W2uT3Wbb1jtW33LFc=
-Received: from 30.221.132.149(mailfrom:tianruidong@linux.alibaba.com fp:SMTPD_---0WrAvdmY_1761633480 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 28 Oct 2025 14:38:00 +0800
-Message-ID: <bfa92ecd-aef6-4712-b611-32caaf0ed993@linux.alibaba.com>
-Date: Tue, 28 Oct 2025 14:37:59 +0800
+	s=arc-20240116; t=1761633561; c=relaxed/simple;
+	bh=oe8UGTsyZQU+Sb6o4knYJm/Nl+RnNUK56OH6fcAsM64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZtzggoN01ig6bOjYWEeOZ+haYE0yCadJOnXf7vSeqR1q4MRQTCyjxPX0lum+1VddnaOsyWCEKKnjdG4VKU6buhLKnLvmBanNkiGfaHGQ+DorHHook/eqEnsfkbebfqR7qB8ZfCH/i6vh0eW5rm77RLCqw5Jexauh7iy2a3kPs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+D/2g1Y; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37775ed97daso65483081fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:39:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761633558; x=1762238358; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o2NHp9DtfBxd6wakLEvsBSL0E8nIoGL8qMdT+jYFy9w=;
+        b=T+D/2g1YRWTe3hvcE6dzlW/v7H7zmsCuzU4PeToa71WdgD5U/gfl6VOqTMxwotTjow
+         sCXyzAruCgyhUpxXWKp1rtFdo83yEFxedHO305txU/NYFxqfBqkCgc4aISU1QtjjKzf/
+         H/ANG1sxpXpAtYR3rCJtXW8V1xMAvtI1BF3sNgW97zA4wHqIsOeuScWQkGFcEGG4U9Xa
+         E7jEWWZyDAqQmxpxfh+t/8Ufp0nVLgE9RXnVuhiUvGKtK0Rn8kOxo++RufEezI+tDRBy
+         RE/Rs0OA18VTS/KlBxm6gF8W92mwUpzogHFLtbaL/aFvAIyXx1asxi0vuBAOe+q3Zid0
+         vG8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761633558; x=1762238358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o2NHp9DtfBxd6wakLEvsBSL0E8nIoGL8qMdT+jYFy9w=;
+        b=TvR+aPW6bsWL0P57eO0jYxZvoxiZhFanAtp8o+QaVkntlHGWc0FgsTlIfQ9Xsf/WDj
+         WBb7nLMVtH98UhpLtacZDtrqb4N8e08Eu3Z1z7qUlqP3Vk8f3NfDfPpmp+vTQyK3IEYJ
+         8D7oRYC8TVmWcobVtis2I0T4gMwvhoyYYK3a67rZKNEzSQobDkTEL3Q6nUObTdIKfGHr
+         seQ7p22+Rsg67fsbnDJZ0kRirhb1tOccZJelWGIJwLoepUMbaNYPP3L0mnR4NqChexKS
+         LPaaB6iQko9fCVsVdlu42gpsYXfCKXs5AOlbvAvlxyVqb89JBur4w7p/S6C8VNEY2ips
+         pzQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPZ7jsEyC+e02wgG+FBgkWCM6/M69OTMrY+YU9wTl+A4mKP61DpdXdReTh7BrLC864DAOcMItkLhkYsC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFXazpyemUdSzzt/xch56rUouT3x0SfrMbSqZ5kQgkqBZdw5MB
+	HWSy7T8GLmNWho0tzHlFIHSAptuE6FRDs4Oz8Nx8qrHFwYNLTS9guOr4
+X-Gm-Gg: ASbGnctjGRIPZ388AFTlBAFrthNRAqypxeLBRB2gH/d4ZbnYKMiR3FrnOP5JNQMEU7W
+	UccdVcJsklOTsA7RsC2+sjHjL+lQetp712SwvkNbN2KkP2UqWv5UOJHevd0F2gh2UV+MWAwLX5D
+	r6HelAgNqQ4rW7P6p4E8lniPpcuO4QTwyCWlIw3ZB9o0jcvTB79RsCaL5lumWhjtaEXE4rQZgoH
+	iSt9UrUYGcb7xoL8ALg+tFvBlK2syNtlvx/GMJlwNSynNM0CaKiq3M9VpDYg/DRszfqDnmBlv44
+	r5ndOzmMQvuQsOuM6QLNFwt8Ejdf0UO+BYB9jG+pZRFme+HMd786oBUbchAxPZvFXl+t6F+Yv27
+	VikTUsAV9/Cj3Uuh6Mu1s8xDliq0DJP+YtqYpbYjOhzeHN9+u4tAaZJW6mLHOQSAh64EIRjAILF
+	a+qB/E5UgG0UeZ7rUKorprC04myP0JWawsNa2PFuh4haIUZmS66k3bg1bKHg==
+X-Google-Smtp-Source: AGHT+IHynrA8gmQbmSsLhwg1ZIot0gtNKrvR9BYrLAUuDbg/4/iyYf4/D5eEEzFU8nZaoyRtB4Zbkg==
+X-Received: by 2002:a05:651c:2228:b0:376:3933:1d89 with SMTP id 38308e7fff4ca-37907cbd1ecmr6519691fa.24.1761633557353;
+        Mon, 27 Oct 2025 23:39:17 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee092282sm26491101fa.5.2025.10.27.23.39.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 23:39:16 -0700 (PDT)
+Message-ID: <3cd3996a-a9da-494c-b92f-a03a73d403e5@gmail.com>
+Date: Tue, 28 Oct 2025 08:39:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,147 +82,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: mm: Add proper handling for HWPOISON faults
-To: xueshuai@linux.alibaba.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250930082927.18971-1-tianruidong@linux.alibaba.com>
-From: Ruidong Tian <tianruidong@linux.alibaba.com>
-In-Reply-To: <20250930082927.18971-1-tianruidong@linux.alibaba.com>
+Subject: Re: [PATCH v2 00/15] Support ROHM BD72720 PMIC
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <cover.1761564043.git.mazziesaccount@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Gentle reminder on this patch. Thanks.
+On 27/10/2025 13:44, Matti Vaittinen wrote:
+> The ROHM BD72720 is a new power management IC for portable, battery
+> powered devices. It integrates 10 BUCKs and 11 LDOs, RTC, charger, LEDs,
+> GPIOs and a clock gate. To me the BD72720 seems like a successor to the
+> BD71828 and BD71815 PMICs.
+> 
+> This series depends on the series: "[PATCH v5 0/3] power: supply: add
+> charger for BD71828":
+> https://lore.kernel.org/all/20250918-bd71828-charger-v5-0-851164839c28@kemnade.info/
+> sent by Andreas. The power-supplly and MAINTAINERs patches (2/3 and 3/3)
+> from that serties aren't merged yet.
+> 
+> Revision history:
+>    RFCv1 => v2:
+>    - Drop RFC status
+>    - Use stacked regmaps to hide secondary map from the sub-drivers
+>    - Quite a few styling fixes and improvements as suggested by
+>      reviewers. More accurate changelog in individual patches.
+>    - Link to v1:
+>      https://lore.kernel.org/all/cover.1759824376.git.mazziesaccount@gmail.com/
 
-> From: winterddd <tianruidong@linux.alibaba.com>
->
-> Currently, the RISC-V fault handler treats memory poisoning faults
-> (VM_FAULT_HWPOISON and VM_FAULT_HWPOISON_LARGE) as a generic bus error
-> (BUS_ADRERR). This is incorrect as it loses crucial information about
-> the nature of the error.
->
-> As for describe in [0], A SIGBUS is sent with the correct machine check
-> error code (BUS_MCEERR_AR) and populates `si_addr_lsb`(log2 of the
-> corruption page size) in siginfo while there is page fault with poison
-> page.
->
-> The logic is based on the existing arm64 implementation for handling
-> HWPOISON.
->
-> Testing
-> --------------
-> ras-tools[0] is used to test.
->
-> ./einj_mem_uc -j -k single &
->
-> echo 0x107943b400 > /sys/devices/system/memory/hard_offline_page
->
-> echo trigger > ./trigger_start
->
-> before apply this patch:
-> 	signal 7 code 2 addr 0x7fff95bdc400
-> after apply this patch:
-> 	signal 7 code 4 addr 0x7fff95bdc400
->
-> [0]: https://www.man7.org/linux/man-pages/man2/sigaction.2.html
-> [1]: https://kernel.googlesource.com/pub/scm/linux/kernel/git/aegl/ras-tools/
->
-> Signed-off-by: Ruidong Tian <tianruidong@linux.alibaba.com>
-> ---
->   arch/riscv/include/asm/bug.h |  1 +
->   arch/riscv/kernel/traps.c    | 32 ++++++++++++++++++++++----------
->   arch/riscv/mm/fault.c        | 12 +++++++++++-
->   3 files changed, 34 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/bug.h b/arch/riscv/include/asm/bug.h
-> index 4c03e20ad11f..23711f2ffae3 100644
-> --- a/arch/riscv/include/asm/bug.h
-> +++ b/arch/riscv/include/asm/bug.h
-> @@ -95,5 +95,6 @@ struct task_struct;
->   void __show_regs(struct pt_regs *regs);
->   void die(struct pt_regs *regs, const char *str);
->   void do_trap(struct pt_regs *regs, int signo, int code, unsigned long addr);
-> +void riscv_force_sig_mceerr(int code, unsigned long addr, short lsb);
->   
->   #endif /* _ASM_RISCV_BUG_H */
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index d46347482509..17dad6f8d678 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -113,20 +113,32 @@ void die(struct pt_regs *regs, const char *str)
->   		make_task_dead(SIGSEGV);
->   }
->   
-> -void do_trap(struct pt_regs *regs, int signo, int code, unsigned long addr)
-> +static void riscv_show_signal(int signo, int code, unsigned long addr)
->   {
->   	struct task_struct *tsk = current;
-> +	struct pt_regs *regs = task_pt_regs(tsk);
->   
-> -	if (show_unhandled_signals && unhandled_signal(tsk, signo)
-> -	    && printk_ratelimit()) {
-> -		pr_info("%s[%d]: unhandled signal %d code 0x%x at 0x" REG_FMT,
-> -			tsk->comm, task_pid_nr(tsk), signo, code, addr);
-> -		print_vma_addr(KERN_CONT " in ", instruction_pointer(regs));
-> -		pr_cont("\n");
-> -		__show_regs(regs);
-> -		dump_instr(KERN_INFO, regs);
-> -	}
-> +	if (!show_unhandled_signals || !unhandled_signal(tsk, signo)
-> +	    || !printk_ratelimit())
-> +		return;
-> +
-> +	pr_info("%s[%d]: unhandled signal %d code 0x%x at 0x" REG_FMT,
-> +		tsk->comm, task_pid_nr(tsk), signo, code, addr);
-> +	print_vma_addr(KERN_CONT " in ", instruction_pointer(regs));
-> +	pr_cont("\n");
-> +	__show_regs(regs);
-> +	dump_instr(KERN_INFO, regs);
-> +}
->   
-> +void riscv_force_sig_mceerr(int code, unsigned long addr, short lsb)
-> +{
-> +	riscv_show_signal(SIGBUS, code, addr);
-> +	force_sig_mceerr(code, (void __user *)addr, lsb);
-> +}
-> +
-> +void do_trap(struct pt_regs *regs, int signo, int code, unsigned long addr)
-> +{
-> +	riscv_show_signal(signo, code, addr);
->   	force_sig_fault(signo, code, (void __user *)addr);
->   }
->   
-> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-> index 04ed6f8acae4..a6ccc4ab3a75 100644
-> --- a/arch/riscv/mm/fault.c
-> +++ b/arch/riscv/mm/fault.c
-> @@ -16,6 +16,7 @@
->   #include <linux/kprobes.h>
->   #include <linux/kfence.h>
->   #include <linux/entry-common.h>
-> +#include <linux/hugetlb.h>
->   
->   #include <asm/ptrace.h>
->   #include <asm/tlbflush.h>
-> @@ -128,10 +129,19 @@ static inline void mm_fault_error(struct pt_regs *regs, unsigned long addr, vm_f
->   		 */
->   		pagefault_out_of_memory();
->   		return;
-> -	} else if (fault & (VM_FAULT_SIGBUS | VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE)) {
-> +	} else if (fault & VM_FAULT_SIGBUS) {
->   		/* Kernel mode? Handle exceptions or die */
->   		do_trap(regs, SIGBUS, BUS_ADRERR, addr);
->   		return;
-> +	} else if (fault & (VM_FAULT_HWPOISON_LARGE | VM_FAULT_HWPOISON)) {
-> +		unsigned int lsb;
-> +
-> +		lsb = PAGE_SHIFT;
-> +		if (fault & VM_FAULT_HWPOISON_LARGE)
-> +			lsb = hstate_index_to_shift(VM_FAULT_GET_HINDEX(fault));
-> +
-> +		riscv_force_sig_mceerr(BUS_MCEERR_AR, addr, lsb);
-> +		return;
->   	} else if (fault & VM_FAULT_SIGSEGV) {
->   		do_trap(regs, SIGSEGV, SEGV_MAPERR, addr);
->   		return;
+As Alexandre pointed out, the 07/15 (MFD) patch was missing from the 
+series. For some reason, google's SMTP severs refused from sending it 
+with the recipient list used for all other patches, with just: "Status: 
+5.7.1". After several retries I had to give-up yesterday.
+
+Today I managed to get it through, after I dropped every direct CC 
+address, leaving only the lists. No idea what is happening :(
+
+Anyways, it's in the lore for the interested:
+https://lore.kernel.org/all/4c964cef46a396209052aa4194d08fc03f989647.1761564043.git.mazziesaccount@gmail.com/
+
+I will in any case re-spin the series with suggested changes - so 
+hopefully I can get the v3 sent correctly to all the recipients :/
+
+Yours,
+	-- Matti
 
