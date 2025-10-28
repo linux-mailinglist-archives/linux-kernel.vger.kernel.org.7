@@ -1,95 +1,90 @@
-Return-Path: <linux-kernel+bounces-873461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9E3C13FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:02:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805C3C13FBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B1319C08F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:01:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 02AE0354CE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7217301707;
-	Tue, 28 Oct 2025 10:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274BB302143;
+	Tue, 28 Oct 2025 10:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OMNEoSFP"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010026.outbound.protection.outlook.com [52.101.193.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWSimMO8"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838F526B0AE;
-	Tue, 28 Oct 2025 10:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645665; cv=fail; b=sQNdCvLvAUuRSZt3GkIYeITqtJM2qRZrGQw1wqHLsw5ojdDtktxjEYpKaL4qOyexausUs7BFg6fmM03PpxTKhqZ00gGB2DaHgxGWQz6ajaGXGwQDmmNv4Fid0lXiVG6T+aElmkreIqhNOSOIopGntJTAQ/xoDJnQNpPX6wUeqlk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645665; c=relaxed/simple;
-	bh=F1dWtavog5YYOFouetHMZMjtZ3aR/SPHArDZo1mNwdE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q0jjxVb8BdOUYMM9iBXd6WxtjY2BcZeRm9CZ/UmzFfQJeDZT6FXR3bWmuZ3x1n9HxdgwX47gADP8Bsf+1Fg9gFRRKSuSAKD4K5YoVGpHgZEZOLx8c6tTxC/FQecX4VhykZwKYxoxCr33S9ZaaxvQCC5VT+WqS2qZFDPit9NxZOY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OMNEoSFP; arc=fail smtp.client-ip=52.101.193.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j1WcoXOvYFFk+72QyeoUOKbXJzi+jyDNs+WyPHh055SolbIpzNEUmYQ1u/rFDJ1UqRX+qerGk5VhCVYf8jwf7zns4ldNXeJOFp8CDyy/da7GRxi2BX237J+71CltPIj6xIAOkHg7djatortKPWXQbVRhTGjrT0a2Wk3DBuyTIZN4rtb5a71pGfLEVvmS3ynH1t+4VUElTRchHQ4HHZX0yT9Pwo8oaMwGnGdG/dFyWx+lHvrqQiYFQRgoVhlZdnykEHmpzpjJH3dizr15FykXxsXwg/2vqEoE84SdVJrQVIvk52xYGRfwj06aeZzOmyFgiL3ZYiWFIIXuivMtfQZzUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=knrFXdRHFetaMuAWv43G3/6mSMHF7s6KeszO3tDEidI=;
- b=v+eoQSRbPoGZscYVC/hbOoSPlB8RtJnv/TVZHTFAQKI12gr1y3rIAvkq8woGe5udhrG4xpDnIM/Zpgs/e4mbzIjZEL4rd31EwMPvRaTCR4AWYheLg7f6RHLFZSKbSrg2/lEePTpPRnFXhnFPyNJmmU/7mQZ2C7J8Zz+xvK7dvwNVbqjDUq99V4F+69Vz0Mtnug0XzmpUryAV+yH+fi/KvjrO6J/K4OcbpH79Ev1y6uy/zikNaK1B8JzwWlFolpZGU4M/qpEbc8QX21U3NvT6s75QoVZV868n99Ya2tQDiE5amY8y3sggpVw+QPkzWLn/T53+IS2MHIJ01zMRVJ+H1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=knrFXdRHFetaMuAWv43G3/6mSMHF7s6KeszO3tDEidI=;
- b=OMNEoSFP4rEWu5BT2JZ/lpCc5oDt7VWvElGB62w2mVMOwb0hc/sbFbKge0/pVzNHjsvIkSfN+okEx/Q/rgOnx4ET8iy70kTsWq1BjW1higgeTxbi4KxtxIYxkoyL8YEVTItAiZi87kvsfsLf3td7AZM3u9XOjQiWm5d5BQFhdfP5zYJ/i8JqxGGxBCKj6eno9S5bFbvvvi5W6vjJUQNu0f+635h0G9YnGMK4d5gJcblDLNEun8QwWNeSoQ0LSHcKrgCpdLWCGD1RqRErLrhFE7LbVX7g8rrw+FW+AqtmquQBVE3cgmVT9uIECyNUWorNqKHvteoOWKWiMpIGvbPz1g==
-Received: from PH8PR15CA0018.namprd15.prod.outlook.com (2603:10b6:510:2d2::11)
- by PH7PR12MB6393.namprd12.prod.outlook.com (2603:10b6:510:1ff::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 10:00:56 +0000
-Received: from CY4PEPF0000EE35.namprd05.prod.outlook.com
- (2603:10b6:510:2d2:cafe::a9) by PH8PR15CA0018.outlook.office365.com
- (2603:10b6:510:2d2::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Tue,
- 28 Oct 2025 10:00:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EE35.mail.protection.outlook.com (10.167.242.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 10:00:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 28 Oct
- 2025 03:00:33 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Oct
- 2025 03:00:33 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 28 Oct 2025 03:00:29 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <jonathanh@nvidia.com>
-CC: <akhilrajeev@nvidia.com>, <andi.shyti@kernel.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <digetx@gmail.com>, <kkartik@nvidia.com>,
-	<krzk+dt@kernel.org>, <ldewangan@nvidia.com>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<robh@kernel.org>, <thierry.reding@gmail.com>
-Subject: Re: [PATCH v9 1/4] i2c: tegra: Do not configure DMA if not supported
-Date: Tue, 28 Oct 2025 15:30:28 +0530
-Message-ID: <20251028100028.67388-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <fa389b08-7ca9-4c0e-b9fb-68d9a58ce79b@nvidia.com>
-References: <fa389b08-7ca9-4c0e-b9fb-68d9a58ce79b@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120292E88A7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761645723; cv=none; b=EtWSQYtfSeOmDBDV5bu6wG9a5muloNR36J4K6lr4S0gZRbXM1iGELbaKs68MZOWzwQKNhagtGUPnim2p9KOHQsRTL/QjyObDKwdZKjl7fSwVq8Lj9oMLeRhZ42F+UUEZtNBKnoAg/N9BBSZMHITJW46rxldB3dYj3LJtxSZyWF4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761645723; c=relaxed/simple;
+	bh=g1sXxrWurwGP3WSnAqzAbey+65Dx1mpNNLuBE9CW9t0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p3RmKystZl4sxKRmFADeKBMKxxhr1aWIfpwW3C9qgmdy3HDayG2W9wRBtYUOon8nnHlfoDBccqeRV6UM8bevd96nc7SQqcVxwp5CXiExTppv6hzz6Arn3ISm/GKOoxaq5vwgh9ovGxQotgBG0M0zS+AbNnFsXxHX7WrzeRBNhgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWSimMO8; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-26e68904f0eso62083095ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761645720; x=1762250520; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjJlNaiC67jVbiD/DhPsOt3Z9Q6OZNGG2oz/0pSqa/4=;
+        b=RWSimMO881vlTjU23lI4N147wQ2uSIbNFD7ALNdQNpr/lDRCrtpxA20Uf0sXN3mYU2
+         DHjOc87kf3a9n0OyXPx4ZQIkyJ4Q4HovMk8KMvDPhJqzDj8Kdf9lUY68O9OoxlVdZ0qD
+         X+GH31bVMeECzKFxOaqrtyDTHjnfcxKAOR/ZWZ4ACLAwkwpeoLqQTJnI41xkQ+LM/N5M
+         1pbQW6aTWSKJcx6a+Bly0c9T4/C+AUGVgB4hh8QA2hy/2EDqRMkznNsNnGCg+/TsxuWI
+         vI5HPBcAnXV2dClyegk+CEfsJsTOcz6uttWZIsIQJTLqZjYLRCXhPjwWgQEa6aq24fwY
+         RDFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761645720; x=1762250520;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WjJlNaiC67jVbiD/DhPsOt3Z9Q6OZNGG2oz/0pSqa/4=;
+        b=K9gSmdVx5Rsq5+MDsaArBj935SYdD+YnWzKi+/BKP8bpgM6HnACi6PP5tGfCbNZFne
+         +n586c5Y/gKmEVir0TtVVrDB0u/znzuS85kqSAo6X+QPnINGZEqEkO2rS6m9ifggNtCX
+         wMhmsDpz6WiDd9hL9+64t01iJvwQ8aKQwKiu5pzZGLVuctbgStw9uZ+Iic9IpzQVk5wm
+         zUoLRGvr6blero/EsQFkCGW9VPldtjeHEPSqznbplSyZaSoAhx1QdUCG6wquTs9YlINL
+         HQI68x4IpNhltkpHXtG32ua700NPfFCKNaw+fEUPQ/ymEq2WCL1xIdnVTG2YxQh1D5cY
+         EFLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXS/PgK3lczdZgC5nLjX3jELA55gBPceNyMXLBhVjxqK5UXt5y5l+iRNyK8elvNu21qozryxXxk4M92gWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyDijDPZZKckaPU0K1agGfMCpBY7IN5Y1qfI1iHN7l8DcYcV1H
+	okWM0lQpwqoxfKCiXZZY611jq1/dVO8VLEzvtXElKrh/U7e9o8PYbBtv
+X-Gm-Gg: ASbGncvuONC1TscZPAAFcphlvs3OImpFp/lYjmYEKI3WjkY/rotWNcI/o5I+/Vostec
+	DAXQML7z1mGgSQcP7gI+KV+rhGc3JxnJ7gB5K2KTYUVeLaq7PIa830G5hnwTNsDAMrxTUmJcZkq
+	lZCWHEQLJOUQWqV4noamcecb5XW728Ydaf0OwGKEwoAfG3yC0auAgdq59bL7UdC30KGmMOMkzNB
+	1ukebwLSckRr9u0lOuESZ7ky4KX0miGel+LlqUqw8UksT6Y+8jBzxId5wKTKkMVBlcrpuSKmzTn
+	HyD8G8wbMg3tEZiLtQhHsBsIB6wWWgL5yqMwvqaR9r1DccFYSagWP6SZlt83mdPeYyIvVGnCvWg
+	4/unN8xwZvqZIKn6M3mKmNn9cjJcCVT0anA/pzZCINQEYFLUgyDInoa6KBQXH/R8zdz9g3SX0xT
+	FYACc72IOiSPzJybcJ463wEP1G7pJkWzwT
+X-Google-Smtp-Source: AGHT+IFBwhXgtlQjbPIQs9mfzQ/NJHBYSta+M6EJBA9khdS+EpFTEJIi51fCI9JC1hFLkRL4H7vzlw==
+X-Received: by 2002:a17:902:ea08:b0:246:7a43:3f66 with SMTP id d9443c01a7336-294cb37a907mr35672335ad.7.1761645720035;
+        Tue, 28 Oct 2025 03:02:00 -0700 (PDT)
+Received: from localhost.localdomain ([115.245.20.186])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40b1esm113298805ad.73.2025.10.28.03.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 03:01:59 -0700 (PDT)
+From: Dharanitharan R <dharanitharan725@gmail.com>
+To: sammy@sammy.net
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dharanitharan R <dharanitharan725@gmail.com>
+Subject: [PATCH] net: i825xx: replace printk() with pr_*() macros for cleaner logging
+Date: Tue, 28 Oct 2025 10:01:27 +0000
+Message-ID: <20251028100127.14839-1-dharanitharan725@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,103 +92,445 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE35:EE_|PH7PR12MB6393:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d834d02-cc6a-4718-2162-08de1608e2d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IgQlxwGsgw3upq0szYKvO7GZJMK1k6chzqUxN4t4sSwyKQHMQ5f07cKS+31k?=
- =?us-ascii?Q?bYy6pU+NY2FAvJ32FT85N1003S4kVdeeMY81Q3ZFtZmjiwlzLoqyPXmZdnKc?=
- =?us-ascii?Q?QpXCaTXjggf5quPgdZzmbfkQ4xWEAtMga/TMc4xIAEhFBWCIFqqBjW7kf85M?=
- =?us-ascii?Q?H7osTR5aVuNHArfSk5qwPidjIdfb8Pe98hQ+w+YJBToq5gHIc9UdcX+r/fGI?=
- =?us-ascii?Q?+F7gT1ZBFtB3pOeONQ6kmNc7F7M//paoehhkGtBYYD8xDrCVG0IJoiNxSe5y?=
- =?us-ascii?Q?KAUJlUQsd6pxdMqIe+EEHerVan45Wd2sXjYORISB5a/LZ4Z0Qf9dvKABy5zL?=
- =?us-ascii?Q?ebLYcKFtd+cZAQO0Iiu2ue1Lf/6jldzge5O4h5nCyDy+2uF7cU+I2+DzL79D?=
- =?us-ascii?Q?SN0qtvjdgF1Qyzc8OgSrRpABMeNVVQr1kXbreRimlwr/VmDzZr6YN6nz4noz?=
- =?us-ascii?Q?oRHxxwPDzVAuHkixQypY8pG1CSlluKQxx35I7ulBl4ECsHXFERM7l+lH+87z?=
- =?us-ascii?Q?86IocN9zVGQhKlaeTR4/xiNVgQxMRF0VTr+Ucc/vsPCGojUdvQRArxpUH1/+?=
- =?us-ascii?Q?4RY4bnBZfoJlsrUMl51VMjAVLabEbQK4FatUnvy1YGZ49Q5nl16yTO5+r0Xp?=
- =?us-ascii?Q?Pzm2bGxmVx37AEIciv5RVAWE8wrO0S8zJEoL1Y8qRx8Q9hg6E7TrVW+2LT02?=
- =?us-ascii?Q?7KDk+oEKt+/bsV+lB5H8WbT4EyzvsS/KoYTGK1IMRaw38yxxojwWxXKU54ST?=
- =?us-ascii?Q?AImHFT6a79nMe1TuPltwxtNZ1HIy0orpn2JJyMzEBJKcd2Rnve35w8XFWXQu?=
- =?us-ascii?Q?/2Ww5GtrqTxdWotMk1TGxMJvw63W0oe73PWDlopBpC46zL1gcNO06BIKmARH?=
- =?us-ascii?Q?326N+k74xG2SpiZV2qMGaVW5WS3yjVe9S3nzbu6xG7tSoIEr95Kfcyp+Jtp0?=
- =?us-ascii?Q?UYBkEb66pPxDxHFET0k7iSCUTVURVa/lidcjFfPfPdteDz74wdqLRUPEIfvc?=
- =?us-ascii?Q?/IEmZ0m5CCxhi53sNkxnfBcFTxx1yjtjPjFPuhnsqJIjRskrAKXQ6j0T2BBm?=
- =?us-ascii?Q?5x0X6VqU76Wr66DedAnU7buEX4aLnY4K7jNYjcdih7xFy4kH+M8u7xyMDK9R?=
- =?us-ascii?Q?X+i54M/JNpmOyYKF3r3zJB9Uri33dXW4LhbECHJjljRvGU1J8Wc7C92WRFnl?=
- =?us-ascii?Q?AKDLd3LZcdjo4o8ytHSQq1jrsHN5YJgiYwKz0shM7KOELpOva0vqRwI9DUxL?=
- =?us-ascii?Q?rFbVMygTrm5KrlgbWsxDXbrtFqtSYApdQW8ujbtrbe7uTEVjeL2yaYPjTUpt?=
- =?us-ascii?Q?JJMgPEZrnjHWHwEek0QqGVIn1tlEQGNwtezSkFmsQUxIGOVN5YwCLmFG22OR?=
- =?us-ascii?Q?G6Gqqh6OCodiJchOABLALNsAgoBKEaT3ecQ3gtXAsNmhLDW5O9THNcM7+0aY?=
- =?us-ascii?Q?tjWTn3XjB6S6mWLihyWDJDDnCiMabAteLvGrKJ8pcnU9azclt/HK1PTKN+0i?=
- =?us-ascii?Q?BfyfMhb27dx8tk7OayilTxrTSe4CWQ+WyU1W9tm9ILWPfoHWxJkhP08T7S15?=
- =?us-ascii?Q?b64mQQ0wSDaCgxYhEQo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 10:00:55.3259
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d834d02-cc6a-4718-2162-08de1608e2d9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE35.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6393
 
-On Fri, 24 Oct 2025 16:20:09 +0100, Jon Hunter wrote:
-> On 01/10/2025 07:47, Kartik Rajput wrote:
->>> On Tegra264, not all I2C controllers have the necessary interface to
->> GPC DMA, this causes failures when function tegra_i2c_init_dma()
->> is called.
->>
->> Ensure that "dmas" device-tree property is present before initializing
->> DMA in function tegra_i2c_init_dma().
->>
->> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
->> ---
->> v4 -> v9: Moved the condition down to have all dma checks together.
->> v2 -> v4:
->>          * Add debug print if DMA is not supported by the I2C controller.
->> v1 -> v2:
->>          * Update commit message to clarify that some I2C controllers may
->>            not have the necessary interface to GPC DMA.
->> ---
->>   drivers/i2c/busses/i2c-tegra.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index e533460bccc3..aa7c0d8c0941 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -449,6 +449,11 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
->>        if (IS_VI(i2c_dev))
->>                return 0;
->>  
->> +     if (!of_property_present(i2c_dev->dev->of_node, "dmas")) {
->> +             dev_dbg(i2c_dev->dev, "DMA not available, falling back to PIO\n");
->> +             return 0;
->> +     }
->> +
->>        if (i2c_dev->hw->has_apb_dma) {
->>                if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
->>                        dev_dbg(i2c_dev->dev, "APB DMA support not enabled\n");
->
-> What about ACPI based devices?
+This patch replaces printk() calls in sun3_82586.c with appropriate pr_*()
+macros (pr_err, pr_info, etc.) according to Linux kernel logging conventions.
 
-The of_ function returns false if using ACPI. Since these DMA drivers does
-not support ACPI enumeration currently, we would not require to proceed
-further anyway. But if required we can add an additional check with
-acpi_dma_supported() or similar. Do you suggest adding a check for ACPI?
+Signed-off-by: Dharanitharan R <dharanitharan725@gmail.com>
+---
+ drivers/net/ethernet/i825xx/sun3_82586.c | 140 +++++++++++++----------
+ 1 file changed, 79 insertions(+), 61 deletions(-)
 
-Regards,
-Akhil
+diff --git a/drivers/net/ethernet/i825xx/sun3_82586.c b/drivers/net/ethernet/i825xx/sun3_82586.c
+index 58a3d28d938c..e42d78e729fd 100644
+--- a/drivers/net/ethernet/i825xx/sun3_82586.c
++++ b/drivers/net/ethernet/i825xx/sun3_82586.c
+@@ -48,6 +48,7 @@ static int fifo=0x8;	/* don't change */
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
+ #include <linux/skbuff.h>
++#include <linux/printk.h> 
+ 
+ #include "sun3_82586.h"
+ 
+@@ -103,16 +104,18 @@ sizeof(nop_cmd) = 8;
+     if(!p->scb->cmd_cuc) break; \
+     DELAY_18(); \
+     if(i == 16383) { \
+-      printk("%s: scb_cmd timed out: %04x,%04x .. disabling i82586!!\n",dev->name,p->scb->cmd_cuc,p->scb->cus); \
+-       if(!p->reseted) { p->reseted = 1; sun3_reset586(); } } } }
++        netdev_err(dev, "scb_cmd timed out: %04x,%04x .. disabling i82586!!\n",
++           p->scb->cmd_cuc, p->scb->cus);
++		if(!p->reseted) { p->reseted = 1; sun3_reset586(); } } } }
+ 
+ #define WAIT_4_SCB_CMD_RUC() { int i; \
+   for(i=0;i<16384;i++) { \
+     if(!p->scb->cmd_ruc) break; \
+     DELAY_18(); \
+     if(i == 16383) { \
+-      printk("%s: scb_cmd (ruc) timed out: %04x,%04x .. disabling i82586!!\n",dev->name,p->scb->cmd_ruc,p->scb->rus); \
+-       if(!p->reseted) { p->reseted = 1; sun3_reset586(); } } } }
++      netdev_err(dev, "scb_cmd (ruc) timed out: %04x,%04x .. disabling i82586!!\n",
++           p->scb->cmd_ruc, p->scb->rus);
++		if(!p->reseted) { p->reseted = 1; sun3_reset586(); } } } }
+ 
+ #define WAIT_4_STAT_COMPL(addr) { int i; \
+    for(i=0;i<32767;i++) { \
+@@ -271,7 +274,7 @@ static void alloc586(struct net_device *dev)
+ 	DELAY(1);
+ 
+ 	if(p->iscp->busy)
+-		printk("%s: Init-Problems (alloc).\n",dev->name);
++		netdev_err(dev, "Init-Problems (alloc).\n");
+ 
+ 	p->reseted = 0;
+ 
+@@ -348,8 +351,7 @@ static int __init sun3_82586_probe1(struct net_device *dev,int ioaddr)
+ 	/* copy in the ethernet address from the prom */
+ 	eth_hw_addr_set(dev, idprom->id_ethaddr);
+ 
+-	printk("%s: SUN3 Intel 82586 found at %lx, ",dev->name,dev->base_addr);
+-
++	netdev_info(dev, "SUN3 Intel 82586 found at %lx\n", dev->base_addr);
+ 	/*
+ 	 * check (or search) IO-Memory, 32K
+ 	 */
+@@ -359,12 +361,14 @@ static int __init sun3_82586_probe1(struct net_device *dev,int ioaddr)
+ 	dev->mem_end = dev->mem_start + size;
+ 
+ 	if(size != 0x2000 && size != 0x4000 && size != 0x8000) {
+-		printk("\n%s: Illegal memory size %d. Allowed is 0x2000 or 0x4000 or 0x8000 bytes.\n",dev->name,size);
++		netdev_err(dev, "Illegal memory size %d. Allowed is 0x2000 or 0x4000 or 0x8000 bytes.\n",
++           size);
+ 		retval = -ENODEV;
+ 		goto out;
+ 	}
+ 	if(!check586(dev,(char *) dev->mem_start,size)) {
+-		printk("?memcheck, Can't find memory at 0x%lx with size %d!\n",dev->mem_start,size);
++		netdev_err(dev, "memcheck: Can't find memory at 0x%lx with size %d!\n",
++           dev->mem_start, size);
+ 		retval = -ENODEV;
+ 		goto out;
+ 	}
+@@ -385,7 +389,8 @@ static int __init sun3_82586_probe1(struct net_device *dev,int ioaddr)
+ 		((struct priv *)netdev_priv(dev))->num_recv_buffs =
+ 							NUM_RECV_BUFFS_32;
+ 
+-	printk("Memaddr: 0x%lx, Memsize: %d, IRQ %d\n",dev->mem_start,size, dev->irq);
++	netdev_info(dev, "Memaddr: 0x%lx, Memsize: %d, IRQ %d\n",
++            dev->mem_start, size, dev->irq);
+ 
+ 	dev->netdev_ops		= &sun3_82586_netdev_ops;
+ 	dev->watchdog_timeo	= HZ/20;
+@@ -429,7 +434,7 @@ static int init586(struct net_device *dev)
+ 	if(dev->flags & IFF_ALLMULTI) {
+ 		int len = ((char *) p->iscp - (char *) ptr - 8) / 6;
+ 		if(num_addrs > len)	{
+-			printk("%s: switching to promisc. mode\n",dev->name);
++			netdev_info(dev, "switching to promisc. mode\n");
+ 			cfg_cmd->promisc = 1;
+ 		}
+ 	}
+@@ -447,7 +452,7 @@ static int init586(struct net_device *dev)
+ 
+ 	if((swab16(cfg_cmd->cmd_status) & (STAT_OK|STAT_COMPL)) != (STAT_COMPL|STAT_OK))
+ 	{
+-		printk("%s: configure command failed: %x\n",dev->name,swab16(cfg_cmd->cmd_status));
++		netdev_err(dev, "configure command failed: %x\n", swab16(cfg_cmd->cmd_status));
+ 		return 1;
+ 	}
+ 
+@@ -471,7 +476,8 @@ static int init586(struct net_device *dev)
+ 	WAIT_4_STAT_COMPL(ias_cmd);
+ 
+ 	if((swab16(ias_cmd->cmd_status) & (STAT_OK|STAT_COMPL)) != (STAT_OK|STAT_COMPL)) {
+-		printk("%s (82586): individual address setup command failed: %04x\n",dev->name,swab16(ias_cmd->cmd_status));
++		netdev_err(dev, "(82586): individual address setup command failed: %04x\n",
++           swab16(ias_cmd->cmd_status));
+ 		return 1;
+ 	}
+ 
+@@ -494,7 +500,7 @@ static int init586(struct net_device *dev)
+ 
+ 	if(!(swab16(tdr_cmd->cmd_status) & STAT_COMPL))
+ 	{
+-		printk("%s: Problems while running the TDR.\n",dev->name);
++	    netdev_warn(dev, "Problems while running the TDR.\n");	
+ 	}
+ 	else
+ 	{
+@@ -507,16 +513,16 @@ static int init586(struct net_device *dev)
+ 		if(result & TDR_LNK_OK)
+ 			;
+ 		else if(result & TDR_XCVR_PRB)
+-			printk("%s: TDR: Transceiver problem. Check the cable(s)!\n",dev->name);
++			netdev_warn(dev, "TDR: Transceiver problem. Check the cable(s)!\n");
+ 		else if(result & TDR_ET_OPN)
+-			printk("%s: TDR: No correct termination %d clocks away.\n",dev->name,result & TDR_TIMEMASK);
++			netdev_warn(dev, "TDR: No correct termination %d clocks away.\n", result & TDR_TIMEMASK);
+ 		else if(result & TDR_ET_SRT)
+ 		{
+ 			if (result & TDR_TIMEMASK) /* time == 0 -> strange :-) */
+-				printk("%s: TDR: Detected a short circuit %d clocks away.\n",dev->name,result & TDR_TIMEMASK);
++				netdev_warn(dev, "TDR: Detected a short circuit %d clocks away.\n", result & TDR_TIMEMASK);
+ 		}
+ 		else
+-			printk("%s: TDR: Unknown status %04x\n",dev->name,result);
++			netdev_warn(dev, "TDR: Unknown status %04x\n", result);
+ 	}
+ 
+ 	/*
+@@ -542,7 +548,7 @@ static int init586(struct net_device *dev)
+ 		WAIT_4_STAT_COMPL(mc_cmd);
+ 
+ 		if( (swab16(mc_cmd->cmd_status) & (STAT_COMPL|STAT_OK)) != (STAT_COMPL|STAT_OK) )
+-			printk("%s: Can't apply multicast-address-list.\n",dev->name);
++	       netdev_err(dev, "Can't apply multicast-address-list.\n");
+ 	}
+ 
+ 	/*
+@@ -583,7 +589,7 @@ static int init586(struct net_device *dev)
+ 		ptr = (char *) ptr + sizeof(struct tbd_struct);
+ 		if(ptr > (void *)dev->mem_end)
+ 		{
+-			printk("%s: not enough shared-mem for your configuration!\n",dev->name);
++			netdev_err(dev, "not enough shared-mem for your configuration!\n");
+ 			return 1;
+ 		}
+ 		memset((char *)(p->xmit_cmds[i]) ,0, sizeof(struct transmit_cmd_struct));
+@@ -693,7 +699,7 @@ static irqreturn_t sun3_82586_interrupt(int irq,void *dev_id)
+ 	p = netdev_priv(dev);
+ 
+ 	if(debuglevel > 1)
+-		printk("I");
++		netdev_dbg(dev, "I");
+ 
+ 	WAIT_4_SCB_CMD(); /* wait for last command	*/
+ 
+@@ -707,7 +713,7 @@ static irqreturn_t sun3_82586_interrupt(int irq,void *dev_id)
+ 
+ 		if(stat & STAT_RNR) /* RU went 'not ready' */
+ 		{
+-			printk("(R)");
++			netdev_dbg(dev, "(R)");
+ 			if(p->scb->rus & RU_SUSPEND) /* special case: RU_SUSPEND */
+ 			{
+ 				WAIT_4_SCB_CMD();
+@@ -717,7 +723,8 @@ static irqreturn_t sun3_82586_interrupt(int irq,void *dev_id)
+ 			}
+ 			else
+ 			{
+-				printk("%s: Receiver-Unit went 'NOT READY': %04x/%02x.\n",dev->name,(int) stat,(int) p->scb->rus);
++				netdev_warn(dev, "Receiver-Unit went 'NOT READY': %04x/%02x.\n",
++            (int) stat, (int) p->scb->rus);
+ 				sun3_82586_rnr_int(dev);
+ 			}
+ 		}
+@@ -729,24 +736,25 @@ static irqreturn_t sun3_82586_interrupt(int irq,void *dev_id)
+ 		if(stat & STAT_CNA)	/* CU went 'not ready' */
+ 		{
+ 			if(netif_running(dev))
+-				printk("%s: oops! CU has left active state. stat: %04x/%02x.\n",dev->name,(int) stat,(int) p->scb->cus);
++		     netdev_warn(dev, "oops! CU has left active state. stat: %04x/%02x.\n",
++            (int) stat, (int) p->scb->cus);
+ 		}
+ #endif
+ 
+ 		if(debuglevel > 1)
+-			printk("%d",cnt++);
++			netdev_dbg(dev, "%d", cnt++);
+ 
+ 		WAIT_4_SCB_CMD(); /* wait for ack. (sun3_82586_xmt_int can be faster than ack!!) */
+ 		if(p->scb->cmd_cuc)	 /* timed out? */
+ 		{
+-			printk("%s: Acknowledge timed out.\n",dev->name);
++			netdev_warn(dev, "Acknowledge timed out.\n");
+ 			sun3_disint();
+ 			break;
+ 		}
+ 	}
+ 
+ 	if(debuglevel > 1)
+-		printk("i");
++		netdev_dbg(dev, "i");
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -763,7 +771,7 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 	struct priv *p = netdev_priv(dev);
+ 
+ 	if(debuglevel > 0)
+-		printk("R");
++		netdev_dbg(dev, "R");
+ 
+ 	for(;(status = p->rfd_top->stat_high) & RFD_COMPL;)
+ 	{
+@@ -798,7 +806,7 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 						totlen += rstat & RBD_MASK;
+ 						if(!rstat)
+ 						{
+-							printk("%s: Whoops .. no end mark in RBD list\n",dev->name);
++							netdev_err(dev, "Whoops .. no end mark in RBD list\n");
+ 							break;
+ 						}
+ 						rbd->status = 0;
+@@ -806,13 +814,13 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 					}
+ 					totlen += rstat & RBD_MASK;
+ 					rbd->status = 0;
+-					printk("%s: received oversized frame! length: %d\n",dev->name,totlen);
++					netdev_warn(dev, "received oversized frame! length: %d\n", totlen);
+ 					dev->stats.rx_dropped++;
+ 			 }
+ 		}
+ 		else /* frame !(ok), only with 'save-bad-frames' */
+ 		{
+-			printk("%s: oops! rfd-error-status: %04x\n",dev->name,status);
++			netdev_err(dev, "oops! rfd-error-status: %04x\n", status);
+ 			dev->stats.rx_errors++;
+ 		}
+ 		p->rfd_top->stat_high = 0;
+@@ -824,7 +832,7 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 		p->scb->rfa_offset = make16(p->rfd_top);
+ 
+ 		if(debuglevel > 0)
+-			printk("%d",cnt++);
++			netdev_dbg(dev, "%d", cnt++);
+ 	}
+ 
+ 	if(automatic_resume)
+@@ -844,7 +852,7 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 				break;
+ 			DELAY_16();
+ 			if(i == 1023)
+-				printk("%s: RU hasn't fetched next RFD (not busy/complete)\n",dev->name);
++		       netdev_warn(dev, "RU hasn't fetched next RFD (not busy/complete)\n");
+ 		}
+ 	}
+ #endif
+@@ -855,21 +863,25 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 		int i;
+ 		volatile struct rfd_struct *rfds=p->rfd_top;
+ 		volatile struct rbd_struct *rbds;
+-		printk("%s: received a FC intr. without having a frame: %04x %d\n",dev->name,status,old_at_least);
++		netdev_warn(dev, "received a FC intr. without having a frame: %04x %d\n",
++            status, old_at_least);
++
+ 		for(i=0;i< (p->num_recv_buffs+4);i++)
+ 		{
+ 			rbds = (struct rbd_struct *) make32(rfds->rbd_offset);
+-			printk("%04x:%04x ",rfds->status,rbds->status);
++			netdev_dbg(dev, "%04x:%04x ", rfds->status, rbds->status);
+ 			rfds = (struct rfd_struct *) make32(rfds->next);
+ 		}
+-		printk("\nerrs: %04x %04x stat: %04x\n",(int)p->scb->rsc_errs,(int)p->scb->ovrn_errs,(int)p->scb->status);
+-		printk("\nerrs: %04x %04x rus: %02x, cus: %02x\n",(int)p->scb->rsc_errs,(int)p->scb->ovrn_errs,(int)p->scb->rus,(int)p->scb->cus);
++		netdev_dbg(dev, "\nerrs: %04x %04x stat: %04x\n",
++            (int)p->scb->rsc_errs, (int)p->scb->ovrn_errs, (int)p->scb->status);
++		netdev_dbg(dev, "\nerrs: %04x %04x rus: %02x, cus: %02x\n",
++            (int)p->scb->rsc_errs, (int)p->scb->ovrn_errs, (int)p->scb->rus, (int)p->scb->cus);
+ 	}
+ 	old_at_least = at_least_one;
+ #endif
+ 
+ 	if(debuglevel > 0)
+-		printk("r");
++		netdev_dbg(dev, "r");
+ }
+ 
+ /**********************************************************
+@@ -890,8 +902,7 @@ static void sun3_82586_rnr_int(struct net_device *dev)
+ 	alloc_rfa(dev,(char *)p->rfd_first);
+ /* maybe add a check here, before restarting the RU */
+ 	startrecv586(dev); /* restart RU */
+-
+-	printk("%s: Receive-Unit restarted. Status: %04x\n",dev->name,p->scb->rus);
++    netdev_info(dev, "Receive-Unit restarted. Status: %04x\n", p->scb->rus);
+ 
+ }
+ 
+@@ -905,11 +916,12 @@ static void sun3_82586_xmt_int(struct net_device *dev)
+ 	struct priv *p = netdev_priv(dev);
+ 
+ 	if(debuglevel > 0)
+-		printk("X");
++		netdev_dbg(dev, "X");
++
+ 
+ 	status = swab16(p->xmit_cmds[p->xmit_last]->cmd_status);
+ 	if(!(status & STAT_COMPL))
+-		printk("%s: strange .. xmit-int without a 'COMPLETE'\n",dev->name);
++		netdev_err(dev, "strange .. xmit-int without a 'COMPLETE'\n");
+ 
+ 	if(status & STAT_OK)
+ 	{
+@@ -920,21 +932,21 @@ static void sun3_82586_xmt_int(struct net_device *dev)
+ 	{
+ 		dev->stats.tx_errors++;
+ 		if(status & TCMD_LATECOLL) {
+-			printk("%s: late collision detected.\n",dev->name);
++			netdev_warn(dev, "late collision detected.\n");
+ 			dev->stats.collisions++;
+ 		}
+ 		else if(status & TCMD_NOCARRIER) {
+ 			dev->stats.tx_carrier_errors++;
+-			printk("%s: no carrier detected.\n",dev->name);
++			netdev_err(dev, "no carrier detected.\n");
+ 		}
+ 		else if(status & TCMD_LOSTCTS)
+-			printk("%s: loss of CTS detected.\n",dev->name);
++			netdev_warn(dev, "loss of CTS detected.\n");
+ 		else if(status & TCMD_UNDERRUN) {
+ 			dev->stats.tx_fifo_errors++;
+-			printk("%s: DMA underrun detected.\n",dev->name);
++			netdev_err(dev, "DMA underrun detected.\n");
+ 		}
+ 		else if(status & TCMD_MAXCOLL) {
+-			printk("%s: Max. collisions exceeded.\n",dev->name);
++			netdev_warn(dev, "Max. collisions exceeded.\n");
+ 			dev->stats.collisions += 16;
+ 		}
+ 	}
+@@ -970,8 +982,12 @@ static void sun3_82586_timeout(struct net_device *dev, unsigned int txqueue)
+ 	{
+ 		netif_wake_queue(dev);
+ #ifdef DEBUG
+-		printk("%s: strange ... timeout with CU active?!?\n",dev->name);
+-		printk("%s: X0: %04x N0: %04x N1: %04x %d\n",dev->name,(int)swab16(p->xmit_cmds[0]->cmd_status),(int)swab16(p->nop_cmds[0]->cmd_status),(int)swab16(p->nop_cmds[1]->cmd_status),(int)p->nop_point);
++		netdev_warn(dev, "strange ... timeout with CU active?!?\n");
++		netdev_dbg(dev, "%s: X0: %04x N0: %04x N1: %04x %d\n", dev->name,
++			(int)swab16(p->xmit_cmds[0]->cmd_status),
++			(int)swab16(p->nop_cmds[0]->cmd_status),
++			(int)swab16(p->nop_cmds[1]->cmd_status),
++			(int)p->nop_point);
+ #endif
+ 		p->scb->cmd_cuc = CUC_ABORT;
+ 		sun3_attn586();
+@@ -986,9 +1002,9 @@ static void sun3_82586_timeout(struct net_device *dev, unsigned int txqueue)
+ #endif
+ 	{
+ #ifdef DEBUG
+-		printk("%s: xmitter timed out, try to restart! stat: %02x\n",dev->name,p->scb->cus);
+-		printk("%s: command-stats: %04x\n", dev->name, swab16(p->xmit_cmds[0]->cmd_status));
+-		printk("%s: check, whether you set the right interrupt number!\n",dev->name);
++		netdev_warn(dev, "xmitter timed out, try to restart! stat: %02x\n", p->scb->cus);
++        netdev_dbg(dev, "%s: command-stats: %04x\n", dev->name, swab16(p->xmit_cmds[0]->cmd_status));
++		netdev_dbg(dev, "%s: check, whether you set the right interrupt number!\n",dev->name);
+ #endif
+ 		sun3_82586_close(dev);
+ 		sun3_82586_open(dev);
+@@ -1011,7 +1027,8 @@ sun3_82586_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	if(skb->len > XMIT_BUFF_SIZE)
+ 	{
+-		printk("%s: Sorry, max. framelength is %d bytes. The length of your frame is %d bytes.\n",dev->name,XMIT_BUFF_SIZE,skb->len);
++		netdev_warn(dev, "Sorry, max. framelength is %d bytes. The length of your frame is %d bytes.\n",
++            XMIT_BUFF_SIZE, skb->len);
+ 		dev_kfree_skb(skb);
+ 		return NETDEV_TX_OK;
+ 	}
+@@ -1040,8 +1057,8 @@ sun3_82586_send_packet(struct sk_buff *skb, struct net_device *dev)
+ #ifdef DEBUG
+ 		if(p->scb->cus & CU_ACTIVE)
+ 		{
+-			printk("%s: Hmmm .. CU is still running and we wanna send a new packet.\n",dev->name);
+-			printk("%s: stat: %04x %04x\n",dev->name,p->scb->cus,swab16(p->xmit_cmds[0]->cmd_status));
++			netdev_warn(dev, "Hmmm .. CU is still running and we wanna send a new packet.\n");
++			netdev_dbg(dev, "%s: stat: %04x %04x\n", dev->name, p->scb->cus, swab16(p->xmit_cmds[0]->cmd_status));
+ 		}
+ #endif
+ 
+@@ -1067,7 +1084,8 @@ sun3_82586_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 			if(p->xmit_cmds[0]->cmd_status)
+ 				break;
+ 			if(i==15)
+-				printk("%s: Can't start transmit-command.\n",dev->name);
++				netdev_err(dev, "Can't start transmit-command.\n");
++
+ 		}
+ #	else
+ 		next_nop = (p->nop_point + 1) & 0x1;
+@@ -1175,13 +1193,13 @@ void sun3_82586_dump(struct net_device *dev,void *ptr)
+ 	WAIT_4_STAT_COMPL(dump_cmd);
+ 
+ 	if( (dump_cmd->cmd_status & (STAT_COMPL|STAT_OK)) != (STAT_COMPL|STAT_OK) )
+-				printk("%s: Can't get dump information.\n",dev->name);
++				netdev_err(dev, "Can't get dump information.\n");
+ 
+ 	for(i=0;i<170;i++) {
+-		printk("%02x ",(int) ((unsigned char *) (dump_cmd + 1))[i]);
++		netdev_dbg(dev, "%02x ", (int) ((unsigned char *) (dump_cmd + 1))[i]);
+ 		if(i % 24 == 23)
+-			printk("\n");
++			netdev_dbg(dev, "\n");
+ 	}
+-	printk("\n");
++	netdev_dbg(dev, "\n");
+ }
+-#endif
++#endif
+\ No newline at end of file
+-- 
+2.43.0
+
 
