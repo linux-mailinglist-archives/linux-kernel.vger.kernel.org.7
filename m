@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-874614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B73C16B1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BE7C16B21
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:58:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DE291B2858B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5C71B286BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308B134FF50;
-	Tue, 28 Oct 2025 19:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A680F34F49C;
+	Tue, 28 Oct 2025 19:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HiYH4lcj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klhNUQeX"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1096E339B28
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CD0332EB5
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681473; cv=none; b=VrjpPbq7SEdLkC7iBTtUReegCziJh2duTSxxvNVKQCtF1nI1H2Nf0xXXMT3hHo4MtpjGK1WidLGhy3lppYT5nbAvbrLbr5a0W7GibaMHEqkEdlCa7ehJ0iMzMXZxFD197hlCxyo3sAGbzndPS4HbNaxxTaVscxKIGPclKaChgBk=
+	t=1761681493; cv=none; b=Cq8MXqczP4DKFc5fMFGU6aRJc8aV0lt8GSu4+HwbjqAi6r7Sat0W+IvHf5UTUBeUJuA5ZpPl3V4B4e3PdtqLJcJIdZ9hX+B5y6plLckSNl3AGCA+AiruwxU1vCKb5xBi0BEa6T3ZOLYMj8b285YNN4zLwN4X5oT0+gUDkLOush4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681473; c=relaxed/simple;
-	bh=TSgFYeDSS0YK7V6PQBHcpeI98WDKiTRD7/ymTbRindk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSgi7mSriu/U5O3bhu5EsEsUa/ZHR8qAd0SpHEFp+Z2qSuU/MP0/6ThRtstis91znBQ3vACXQ/uWYEZERXkXVd4U+7GoonKExHYXjSli/tYIhgJILSBH3LV2xO7qBoQeM4Ks1vyo9ij9FlLLNBwmFxKYZUd5jmlSdgFy9uYYsRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HiYH4lcj; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761681472; x=1793217472;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TSgFYeDSS0YK7V6PQBHcpeI98WDKiTRD7/ymTbRindk=;
-  b=HiYH4lcjTYQDY3+QDbB6slDaXK56WcaN9kabSS21W+kSJAFzvQuTgFvj
-   PGMlCjZ5Pzxwto3MEtqv308dZXly2b3V4/p3RFsD330QxerA83Uhqkb2o
-   nQDs0UUk7osLEVxc8mowEJyeAM/cRPtmuV7lKh1PJ1+LqpxavoxhtHnTe
-   ZNym+JQAno/ju3RVUYueowyrw5thHWWYY4uko5UfCYaha96+9NQPoYS5h
-   THmbELHHaMhEb6ibsbLHqVaH+nP3Cubmlmq4yVxEmTst68Yp8XXzPnz9e
-   rfi72EAYRr2L+4gBL6b4/ieHrt3LqGSbh1g0oULn+XghuWIysu1w7VN6q
-   g==;
-X-CSE-ConnectionGUID: tEbHiejdQ0SBDVhgrCq15A==
-X-CSE-MsgGUID: gs4ZjltdQHWJBqoy58Oamw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81216323"
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="81216323"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 12:57:51 -0700
-X-CSE-ConnectionGUID: KFpKF4PSS+iMMlzI8N2cWg==
-X-CSE-MsgGUID: 5VqxFRi8SSWo1pISuTJKCw==
-X-ExtLoop1: 1
-Received: from ray2.jf.intel.com (HELO [10.24.80.156]) ([10.24.80.156])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 12:57:51 -0700
-Message-ID: <704189df-908d-469a-b719-4d18ce0bcdf2@intel.com>
-Date: Tue, 28 Oct 2025 12:57:51 -0700
+	s=arc-20240116; t=1761681493; c=relaxed/simple;
+	bh=81YyA1R5iz4fTfXKoVxn0FrqZs3ZkgPsIoR8QbKYtlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=coSLFzFdf4bM41ux5osjhilbFr7GCfb7O1j+UOp5h/PGeTK/P96hrlrI3taeDVn8a45MUF87xENPNxGUfxayYU9Cif0mVDZNJRb7qVOHANVio/i22X81hPuFUE9HONmSg7RgNvd/ZyYqesKbU/PjBPljRfUg8uYO2PJr8cEt2Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klhNUQeX; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4eba313770dso40434621cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761681490; x=1762286290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=81YyA1R5iz4fTfXKoVxn0FrqZs3ZkgPsIoR8QbKYtlE=;
+        b=klhNUQeXcc9P3Rds0AJN+5uFxN3wTx84ylKIs9V9/UJPDqyy0bzwnIHef4aITX1ZC3
+         czDNWpRDSQ3j5jma2KsD/xoPC6+uXu7lgqhPF1ByfIyMBADOvht2kHUqpAjRG7uCNWvl
+         LdoqHRTu119vRpbkmNy/0H1DhxcEevg2FU78WjCeV8z1fSGZy1VFV6w9RoimB0OQLCLv
+         8HM5KN3tHUuGc+FPDX7jLHVoSphuYslb/nF6i6/dMmigERrwkCoaqtILfOAsImTDPIHb
+         9Nu/xThmav3SbtN2GX7d2Lt2RdF/YaUGahTeblpr7TJIgcW2Xpza78yIxbye9VSgPY3E
+         vcSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761681490; x=1762286290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=81YyA1R5iz4fTfXKoVxn0FrqZs3ZkgPsIoR8QbKYtlE=;
+        b=mVQSxMJcmNYPLhwXuUhqgxxGyYGcSX6syO9FGkJPe1y2ATHvK3gqvHinLmDjV2ZpsM
+         SSpFU7Z12QcALskaZLoSb47B7XumoLfDP/i0zMHayLkTl++sWvomJXUILQuLBi1K+VyY
+         AV1e9TzsDffnpnPEi7NrJNQcLzmitaoPZm53MlARU1jqZJbwg7UfFksSBCM6q36b+BL5
+         YLgX8jhi2IslLZL5FcjnkJcj+6C1BFpYGHkVfWf7CyaVFyiLDV2C35FnS569dn94USh3
+         Xqm2TWMCQn/j1Ov2cbdazofsrF4wzzTUqUe2Cmjwd1e0Q46snAPUAqM99QK7OkA/TBv4
+         IhsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg2/CyeMgnTOh6JKxnfdVIvine3J8uUMhto/JWkiTuubs5g6cSdWv99p/qDquDbbGFFHefWzHy0nWoQ5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAVPuEm+giQi/rdQKvU306wulYcR0JEg25ukHT4S1Q8uEhgNjF
+	HuynHeUaanJiAGTuXCkMus1F2mh1K/vPrzxw4hGxykr9UIz+LoCBNmMra3VY5LRa8ULwngo7EEp
+	igl6qkNAmmiagGBO6729gc6ez3txlNvE=
+X-Gm-Gg: ASbGncvmlsQ4/19yd8HvXr5Kxhv8KxHMLpXdh//0fjKECvPJHHr+TYAqTJEygx18nLX
+	NFkosCEm5rTwCwD99qENZkB3jfaXPc/IklGoyBz2Rj093ZPRY5A9HdiZyCmUm/XeTl2QA0WuPrU
+	Cj2rKtpXvh1Q8NDlNMYsGX/EIktk1FaqLNNv6bagDLz+GcfzYNJdgfMHDpo8RAx90P7H2CA3KPS
+	Pv+CeUTdwb/QikuMX6SU/U9/IY5L0yWf6F7x2ahBnFNQoplvfx6F1wAjpCCztvSEFJFXdNNrmca
+	KQ/U1WRCh+N+79p0
+X-Google-Smtp-Source: AGHT+IHcPz7GLTlfScG+sYUJ1uTqk6yOB/+ttx87jCRzATu8J8QMSJqa0UraxFmcF3Kh1FSYEqsvJBW0hVJ7aPr7Kyk=
+X-Received: by 2002:a05:622a:5a09:b0:4e8:846e:2d8b with SMTP id
+ d75a77b69052e-4ed15b757eamr8256071cf.28.1761681490164; Tue, 28 Oct 2025
+ 12:58:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpu: Add/fix core comments for {Panther,Nova} Lake
-To: Tony Luck <tony.luck@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
-References: <20251028172948.6721-1-tony.luck@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251028172948.6721-1-tony.luck@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251028120900.2265511-1-xiaqinxin@huawei.com> <20251028120900.2265511-2-xiaqinxin@huawei.com>
+In-Reply-To: <20251028120900.2265511-2-xiaqinxin@huawei.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 29 Oct 2025 03:57:59 +0800
+X-Gm-Features: AWmQ_bkDIOr0dScQdWXK4F4cmyPRafg2Akhiis5ZNZevLrtuXc0fPXf9BJv5y_4
+Message-ID: <CAGsJ_4wy2B7=KwLfODySky+FADkLZYowWCNm28FBmri_Opv7ZQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dma-mapping: benchmark: Restore padding to ensure
+ uABI remained consistent
+To: Qinxin Xia <xiaqinxin@huawei.com>
+Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, prime.zeng@huawei.com, 
+	fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	wangzhou1@hisilicon.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/28/25 10:29, Tony Luck wrote:
-> -#define INTEL_NOVALAKE			IFM(18, 0x01)
-> -#define INTEL_NOVALAKE_L		IFM(18, 0x03)
-> +#define INTEL_NOVALAKE			IFM(18, 0x01) /* Coyote Cove / Arctic Wolf */
-> +#define INTEL_NOVALAKE_L		IFM(18, 0x03) /* Coyote Cove / Arctic Wolf */
+On Tue, Oct 28, 2025 at 8:09=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> w=
+rote:
+>
+> The padding field in the structure was previously reserved to
+> maintain a stable interface for potential new fields, ensuring
+> compatibility with user-space shared data structures.
+> However,it was accidentally removed by tiantao in a prior commit,
+> which may lead to incompatibility between user space and the kernel.
+>
+> This patch reinstates the padding to restore the original structure
+> layout and preserve compatibility.
+>
+> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header fil=
+e for map_benchmark definition")
 
-Is it even worth keeping the core names in there? This is an example
-where they're causing churn. If nobody cares, maybe we should just
-zap them, or at least stop putting them in there for new CPUs.
+It would be preferable to include the following as well:
+
+Reported-by: Barry Song <baohua@kernel.org>
+Closes: https://lore.kernel.org/lkml/CAGsJ_4waiZ2+NBJG+SCnbNk+nQ_ZF13_Q5FHJ=
+qZyxyJTcEop2A@mail.gmail.com/
+
+> Cc: stable@vger.kernel.org
+> Acked-by: Barry Song <baohua@kernel.org>
+> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+
+Thank you. We also need to include Jonathan=E2=80=99s tag[1]:
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+[1] https://lore.kernel.org/lkml/20250616105318.00001132@huawei.com/
+
+I assume Marek can assist with adding those tags when you apply the patch?
+
+Thanks
+Barry
 
