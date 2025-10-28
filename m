@@ -1,123 +1,84 @@
-Return-Path: <linux-kernel+bounces-873330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A04C13B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:08:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67C2C13AFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 400355080B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:05:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD365351AEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CA82E8B80;
-	Tue, 28 Oct 2025 09:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713462E8B8E;
+	Tue, 28 Oct 2025 09:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yMyvYEnz"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yOPeYmOn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235A12E7BB4;
-	Tue, 28 Oct 2025 09:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CEF2E888A;
+	Tue, 28 Oct 2025 09:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642315; cv=none; b=o7LEZWyF5U654uzMqGqCqLkaRVRBysfoqbC3IUthQ+bqf074zZJ7KRHVvpDcIFHT+q0NTg+x2XN7+Qm1J/Sbt7GGSrEGn/AEToeIdy/1DKQ92Xggs/t2zQtihGe3bFXHFh2eWX9KCr4wQUchrHL/x3BGycHxJfwUvmDCjU//+AE=
+	t=1761642325; cv=none; b=XYmKu4Bo09jZTEveIMIkzhkmJ9vzB78Qgv+7lOt/0hwy/GFMIqP9QijYxeNx48vvo3bfC0hKddxI05sC/PbrhLx7LeKFKEVKL6HDKwwfOrZWN9fg/TINvhCosIYJF9vAxPYL6E2w9201JuwnvXOObofPTjfAuwe3A74mbN2FAYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642315; c=relaxed/simple;
-	bh=V0eGMEDYNjmZcItSuYC29g2UnX0Z2vl5cwdDrIsClsE=;
+	s=arc-20240116; t=1761642325; c=relaxed/simple;
+	bh=J0Dfq9ajIylLWV13UgO/nPeci2RCcVyAESvzuDWgNMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VSMTefbTJ8shqGhQQ/pl0WqKppMcqht7oaws/Mdo8yUKYvIEFVHfm0Ui1qOMlay9h2dk+Z9aupzKNBNeXlSFY4H7rwkvN0ZCrvUNalnAvvmwa2j5qtdLcE4maOfM97noAaX4ZZm7qWv8wrDOt836n1oY/m28KjoUFqjV1VrCwU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yMyvYEnz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C599AC4CEE7;
-	Tue, 28 Oct 2025 09:05:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8Ntx6qYEOT6viYFIns4Sr9LbVT2u8lWLzqeUkkcFEauYQY0H32hCw1pwVQFg+/ZrH+esPJOlbmH6i58Gu8PoqcykHL73tIn2yiQYC6g0r4JTL3YyhXWnUWOyYZsCXZwFktZzivr13HZgIyfBJpyrNpFRbub9ynpIYLB57wMzoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yOPeYmOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54536C4CEE7;
+	Tue, 28 Oct 2025 09:05:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761642314;
-	bh=V0eGMEDYNjmZcItSuYC29g2UnX0Z2vl5cwdDrIsClsE=;
+	s=korg; t=1761642325;
+	bh=J0Dfq9ajIylLWV13UgO/nPeci2RCcVyAESvzuDWgNMU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yMyvYEnzpTp2MOjVQmTfUVy9NkK+HpZw70+IgxZWHgaUIJ/ZPNs23ySvUKz8Vw0ds
-	 McHxCRsFiSGzvztrmF88bKzDtyqYM1kU5NfT9Lu9kAaRLo1g6xbwOJ+6nxOfEycS3u
-	 17bq2xXT2unZREUCwBJASVyJnSeR3vE4vC1iQnMI=
-Date: Tue, 28 Oct 2025 09:33:17 +0100
+	b=yOPeYmOn687M4UHq8SdztLSF9+bAutwnREs89FisJIqR4hYfEJjmI17H4cxiDkot2
+	 rkVsYInkxyKq75nYBu4jrNPpRBA/zQvtw3q0yCB5oRPVhGJ+Tfx8evPQDASKWOXDV0
+	 h/ppcdj5M4E7Gm0boe+dl/i8WUiyyIlSiHuH9Eeg=
+Date: Tue, 28 Oct 2025 09:40:35 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ron Economos <re@w6rz.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	sr@sladewatkins.com
-Subject: Re: [PATCH 5.15 000/123] 5.15.196-rc1 review
-Message-ID: <2025102850-obedience-filter-efca@gregkh>
-References: <20251027183446.381986645@linuxfoundation.org>
- <d61b75c9-a6a1-452c-a2be-34959d354739@w6rz.net>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH 04/19] serial: sh-sci: Fix deadlock during RSCI FIFO
+ overrun error
+Message-ID: <2025102826-appraisal-tables-47b6@gregkh>
+References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
+ <20251027154615.115759-5-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d61b75c9-a6a1-452c-a2be-34959d354739@w6rz.net>
+In-Reply-To: <20251027154615.115759-5-biju.das.jz@bp.renesas.com>
 
-On Mon, Oct 27, 2025 at 09:49:59PM -0700, Ron Economos wrote:
-> On 10/27/25 11:34, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.196 release.
-> > There are 123 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+On Mon, Oct 27, 2025 at 03:45:51PM +0000, Biju Das wrote:
+> On RSCI IP, a deadlock occurs during a FIFO overrun error, as it uses a
+> different register to clear the FIFO overrun error status.
 > 
-> The RISC-V build fails with:
-> 
-> arch/riscv/kernel/cpu.c: In function 'riscv_of_processor_hartid':
-> arch/riscv/kernel/cpu.c:24:33: error: implicit declaration of function
-> 'of_get_cpu_hwid'; did you mean 'of_get_cpu_node'?
-> [-Werror=implicit-function-declaration]
->    24 |         *hart = (unsigned long) of_get_cpu_hwid(node, 0);
->       |                                 ^~~~~~~~~~~~~~~
->       |                                 of_get_cpu_node
-> cc1: some warnings being treated as errors
-> 
-> The function of_get_cpu_hwid() doesn't exist in Linux 5.15.x. It was
-> introduced in 5.16-rc1. The following patches should be reverted:
-> 
-> 87b94f8227b3b654ea6e7670cefb32dab0e570ed RISC-V: Don't fail in
-> riscv_of_parent_hartid() for disabled HARTs
-> 
-> 568d34c6aafa066bbdb5e7b6aed9c492d81964e8 RISC-V: Don't print details of CPUs
-> disabled in DT
-> 
-> And the stable-dep-of patches for the above should also be reverted since
-> they cause warnings:
-> 
-> 989694ece94da2bbae6c6f3f044994302f923cc8 riscv: cpu: Add 64bit hartid
-> support on RV64
-> 
-> 8c2544fd913bb7b29ee3af79e0b302036689fe7a RISC-V: Minimal parser for "riscv,
-> isa" strings
-> 
-> e0cc917db8fb7b4881ad3e8feb76cefa06f04fe6 RISC-V: Correctly print supported
-> extensions
-> 
-> c616540d6b67830bb4345130e8fa3d8e217249a0 iscv: Use of_get_cpu_hwid()
+> Cc: stable@kernel.org
+> Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks, I'll go drop all of these and push out a -rc2
+Why is patch 4/19 the only one marked for stable backports?  That feels
+really wrong as that will not show up until after 6.19-rc1 is out, AND
+the dependant patches will also not be backported.
+
+Please split up patch series to have "things that must be merged now"
+separate from "these are for the next -rc1 release"
+
+thanks,
 
 greg k-h
 
