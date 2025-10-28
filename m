@@ -1,359 +1,92 @@
-Return-Path: <linux-kernel+bounces-874512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E36C1676B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:27:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7627DC16798
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 97AB335788F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:27:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36544504AFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44433570D9;
-	Tue, 28 Oct 2025 18:23:12 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E1134DB59;
+	Tue, 28 Oct 2025 18:27:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F653563E1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9127534DB67
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761675791; cv=none; b=Vrnm7T5h4q2t+jJseCHOjMWbDSRCEV0z4EMXUrXZzfjkBE6hd5giwEjYkiqhskEcYvjGmLEYh9SsIiPVYSMsYLMVd+1ql/yaSjwL/GWp1nqezUWXbXszC77Y6fVSiWxdE5u02kdUtuZ3STQ97zBDhXQvFq2cBCbun0ozsVo29KY=
+	t=1761676027; cv=none; b=UjQhd6ts9Efhg+Nz/7EtiBKItINSUzjeGphCJX43mYCvIjG2qappznmeRHva3PRWm9ivBb0sLGbzdsGP38dnolOMpYhCTxVC6y/KEL69wdBFdV1GX2LSe3sLi6f9bSWxYHnDVwU2VF0X35LQYmq4Eakcfgs8gP6sJO1FSPUj4gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761675791; c=relaxed/simple;
-	bh=9+Rs16G9a4KRaN5OlDyXbWWvaUi6IdlxqzGSH8W+wbo=;
+	s=arc-20240116; t=1761676027; c=relaxed/simple;
+	bh=zfH+8I36S0UqgEB3vCYK8k0nfg8C1JlVSl3/iDf4JMQ=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Flf3nzJBdUzJy2sHN9o72yNqTMcQXLV5mIhV2a/H2YsLbWpqlvFRvYmWGLi2mgLZ0cZ6yO6CrKdQRi19PV8RW9R5rbgLPsCS43MQ/8i7BgAuTz5NGoBOiweFPY5yIvFZJKmFKdmICk+b1QmaOezgPNT+ad6VNv9R7DwVxu+Jo30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	 Content-Type; b=O6ld6cDm1Py2HKfLIsfeML29ZScFPWk7TaOcy3UlsQilwG1Kk1aTWH4FTaNgxs+9aKechpiQP3SQoJeVVLYg2YkCfvI3xmtg/p6d/riwFP/mk1m3Z9iR6YvVFd/03+abSYML9BfbsW9zAuV0v4oMXviGkFoaZFqmhEtB+isMfVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d83d262fso247231175ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:23:08 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431d3a4db56so262351625ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:27:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761675788; x=1762280588;
+        d=1e100.net; s=20230601; t=1761676023; x=1762280823;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KMt4K1hSuVsXX4R2lD7sh5NJ9h7Ip5nva1Ktu9PBth4=;
-        b=Pelz7DmzOEf1Qqk8P8Y8X9lsNOcvhQQHFSyHshkedgBeBZyyb0mgKA4oXHDWeqine7
-         dDD645tGsQl8ZZzoP/aa5FPfmjxfvqq0B0MdbSLaMOrwvloUlzQoMOMIJO0N+16veI2o
-         Ej3VxjKlOKnQEm0lTDvBaMhBbEn2z516x2AOQZyr53nKD5lRlfExpRsWdHf/7JoVqMNm
-         wPY0EaAqHv3NlDJlGs7XuGXiHfwX94Lx1FNJu7xcYywW0RAsqKFgMLwJcu2rcFC7zmmk
-         lQOp9EZYWOIlAP42qAN9g8FzjCce5aojvIyJf8P/f5ow1vkcypVeicIUvHDZSbL/h3Pe
-         bA6A==
-X-Gm-Message-State: AOJu0Yx8fqEHVqx7JfVPFW87XW0Ka416XSjPHWXe/nKHuK82NjxLH3+y
-	KV/g53dEUCf6NT5VBARZX8awPMpFOn4lBJRGbIoTe2wo9tU3V8q/u6NamzX5QOJ4y6qqTKTkSNs
-	GvWb621DLOCc/iczDODl4lH9aCPLCcCsuAXnEa3GLoGwNrH33r+R+LGMwBQM=
-X-Google-Smtp-Source: AGHT+IHGtM88I7+TOvAxtOMG7hW2hNj+9NQAawGTEEp7EzolMUsrjqvoxvAnHDtCK2EodUVcSSaAGR/n0JVo3Tgb+OHLtykDEhmL
+        bh=WsDWZ13/AJyWtds6RiTV5HjteRCLNAX4pOyRqC3Rdhw=;
+        b=BQt6oVFEhLYCQHeP303peQXOjn19x6gu71gY6xy29mCqdyrPGwjvPAavJLz61V8pcR
+         +QYjpEKU6cx/CR0+EygN04QSUe5GHyGqIIIuQSKw8Z4wTifKGWV2CEBWvqeEjqP29sS4
+         5WJ7co7OMcZWhb6ws0eJNkmB6vZxsNasjB0gZhLh0rR1ahPr3Tq9wd733HrWFNRzIFA/
+         AKWcjgYeDWSFfLMbiPGY4Wc68ZQYPxgZQqBKUYDZ7RqBQORZ8/Fmtw7kxcRLc+D6RzCO
+         t/OoVGLcNVfemN9FRC+kFEST0cOPD7BU7RE8AyTx1BnKklSxwVLrgkxub4fPru7tiUtm
+         ZL4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBlS7A02L9NWnfnOksPL0W1LwC6AfCSR3gfqdI2pA4OZQxf42NFXtV3OqzYBm9CKnJpZLZLX5Zv0/cQ88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJNJ2Y8fRjST6bhbuTntg/u1Nxn7yFzpPiYJOGT+Cw/yr1Iz0r
+	tHhYzys765cey3l08rqXQNXvxdRaiHQToxbsxrOe/vLuWsOHajfsEmh1hisc541bgowf3DaPUnr
+	x+X74QP0+QvXqC6HKt5ACNMilU3m8LecgUpI6GGHggA+ziY1Y/ieWq2NyDVA=
+X-Google-Smtp-Source: AGHT+IFFt9vV9fXP4b+OtlikkFNU8Z4t3MK3IVdBuZzTJEVzR28xjdc3wBa2OPsqYDA9P/ABAxBQCGOWPMOUsp9pObHujP53n/EJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4705:b0:432:10bb:4126 with SMTP id
- e9e14a558f8ab-432f9064b35mr1639995ab.19.1761675788135; Tue, 28 Oct 2025
- 11:23:08 -0700 (PDT)
-Date: Tue, 28 Oct 2025 11:23:08 -0700
-In-Reply-To: <000000000000c7e54f0621e8a14f@google.com>
+X-Received: by 2002:a05:6e02:220b:b0:430:a530:ede2 with SMTP id
+ e9e14a558f8ab-432f904495dmr2205095ab.24.1761676022789; Tue, 28 Oct 2025
+ 11:27:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:27:02 -0700
+In-Reply-To: <20251028181926.Doh7s%dmantipov@yandex.ru>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69010a0c.050a0220.3344a1.03d4.GAE@google.com>
-Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
- linux-6.12.y
-From: syzbot <syzbot+a49010a0e8fcdeea075f@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <69010af6.050a0220.3344a1.03d6.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dx_dir_lookup_rec
+From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hello,
 
-***
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-Author: dmantipov@yandex.ru
+fs/ocfs2/ocfs2_fs.h:474:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:489:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:502:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:646:26: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:659:16: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:807:37: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:943:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:1030:39: error: expected ';' at end of declaration list
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 5d9388b44e5b..b84e164c6314 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6162,6 +6162,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
- 	int status;
- 	struct inode *inode = NULL;
- 	struct buffer_head *bh = NULL;
-+	struct ocfs2_dinode *di;
-+	struct ocfs2_truncate_log *tl;
-+	unsigned int tl_count, tl_used;
- 
- 	inode = ocfs2_get_system_file_inode(osb,
- 					   TRUNCATE_LOG_SYSTEM_INODE,
-@@ -6179,6 +6182,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
- 		goto bail;
- 	}
- 
-+	di = (struct ocfs2_dinode *)bh->b_data;
-+	tl = &di->id2.i_dealloc;
-+	tl_used = le16_to_cpu(tl->tl_used);
-+	tl_count = le16_to_cpu(tl->tl_count);
-+	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
-+		     tl_count == 0 || tl_used > tl_count)) {
-+		status = -EFSCORRUPTED;
-+		iput(inode);
-+		brelse(bh);
-+		mlog_errno(status);
-+		goto bail;
-+	}
-+
- 	*tl_inode = inode;
- 	*tl_bh    = bh;
- bail:
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index 7799f4d16ce9..51e09c0c77f7 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
- 				 unsigned long offset)
- {
- 	const char *error_msg = NULL;
--	const int rlen = le16_to_cpu(de->rec_len);
--	const unsigned long next_offset = ((char *) de - buf) + rlen;
-+	unsigned long next_offset;
-+	int rlen;
-+
-+	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
-+		/* Dirent is (maybe partially) beyond the buffer
-+		 * boundaries so touching 'de' members is unsafe.
-+		 */
-+		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
-+		     "too close to end or out-of-bounds",
-+		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
-+		return 0;
-+	}
-+
-+	rlen = le16_to_cpu(de->rec_len);
-+	next_offset = ((char *) de - buf) + rlen;
- 
- 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
- 		error_msg = "rec_len is smaller than minimal";
-@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
- 	struct ocfs2_extent_block *eb;
- 	struct ocfs2_extent_rec *rec = NULL;
- 
-+	if (le16_to_cpu(el->l_count) !=
-+	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
-+		ret = ocfs2_error(inode->i_sb,
-+				  "Inode %lu has invalid extent list length %u\n",
-+				  inode->i_ino, le16_to_cpu(el->l_count));
-+		goto out;
-+	}
-+
- 	if (el->l_tree_depth) {
- 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
- 				      &eb_bh);
-@@ -3415,6 +3436,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
- 		offset += le16_to_cpu(de->rec_len);
- 	}
- 
-+	if (!last_de) {
-+		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
-+				  "is unexpectedly short",
-+				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
-+				  i_size_read(dir));
-+		goto out;
-+	}
-+
- 	/*
- 	 * We're going to require expansion of the directory - figure
- 	 * out how many blocks we'll need so that a place for the
-@@ -4096,10 +4125,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
- 	}
- 
- 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
--	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
--	       offsetof(struct ocfs2_dx_root_block, dr_list));
-+
-+	dx_root->dr_list.l_tree_depth = 0;
- 	dx_root->dr_list.l_count =
- 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
-+	dx_root->dr_list.l_next_free_rec = 0;
-+	memset(&dx_root->dr_list.l_recs, 0,
-+	       osb->sb->s_blocksize -
-+	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
-+		offsetof(struct ocfs2_extent_list, l_recs)));
- 
- 	/* This should never fail considering we start with an empty
- 	 * dx_root. */
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 4a7509389cf3..9f6daa4b256c 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1419,6 +1419,31 @@ int ocfs2_validate_inode_block(struct super_block *sb,
- 		goto bail;
- 	}
- 
-+	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
-+		struct ocfs2_chain_list *cl = &di->id2.i_chain;
-+
-+		if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb)) {
-+			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list count %u\n",
-+					 (unsigned long long)bh->b_blocknr,
-+					 le16_to_cpu(cl->cl_count));
-+			goto bail;
-+		}
-+		if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count)) {
-+			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list index %u\n",
-+					 (unsigned long long)bh->b_blocknr,
-+					 le16_to_cpu(cl->cl_next_free_rec));
-+			goto bail;
-+		}
-+	}
-+
-+	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
-+	    le32_to_cpu(di->i_clusters)) {
-+		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
-+				 (unsigned long long)bh->b_blocknr,
-+				 le32_to_cpu(di->i_clusters));
-+		goto bail;
-+	}
-+
- 	rc = 0;
- 
- bail:
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index d1aa04a5af1b..56be21c695d6 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -905,13 +905,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
- static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
- {
- 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
--	int i;
- 
- 	alloc->id1.bitmap1.i_total = 0;
- 	alloc->id1.bitmap1.i_used = 0;
- 	la->la_bm_off = 0;
--	for(i = 0; i < le16_to_cpu(la->la_size); i++)
--		la->la_bitmap[i] = 0;
-+	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
- }
- 
- #if 0
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index f9d6a4f9ca92..b10c8acd469b 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
- 
- 	rec = &el->l_recs[index];
- 
--	BUG_ON(ext_flags != rec->e_flags);
-+	if (ext_flags != rec->e_flags) {
-+		ret = ocfs2_error(inode->i_sb,
-+				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
-+				  (unsigned long long)ino, index, rec->e_flags, cpos);
-+		goto out;
-+	}
-+
- 	/*
- 	 * after moving/defraging to new location, the extent is not going
- 	 * to be refcounted anymore.
-@@ -1032,6 +1038,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
- 	if (range.me_threshold > i_size_read(inode))
- 		range.me_threshold = i_size_read(inode);
- 
-+	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
-+			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
-+		status = -EINVAL;
-+		goto out_free;
-+	}
-+
- 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
- 		context->auto_defrag = 1;
- 
-diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
-index c93689b568fe..2421ad603d24 100644
---- a/fs/ocfs2/ocfs2_fs.h
-+++ b/fs/ocfs2/ocfs2_fs.h
-@@ -468,7 +468,8 @@ struct ocfs2_extent_list {
- 	__le16 l_reserved1;
- 	__le64 l_reserved2;		/* Pad to
- 					   sizeof(ocfs2_extent_rec) */
--/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
-+					/* Extent records */
-+/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
- };
- 
- /*
-@@ -482,7 +483,8 @@ struct ocfs2_chain_list {
- 	__le16 cl_count;		/* Total chains in this list */
- 	__le16 cl_next_free_rec;	/* Next unused chain slot */
- 	__le64 cl_reserved1;
--/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
-+					/* Chain records */
-+/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
- };
- 
- /*
-@@ -494,7 +496,8 @@ struct ocfs2_truncate_log {
- /*00*/	__le16 tl_count;		/* Total records in this log */
- 	__le16 tl_used;			/* Number of records in use */
- 	__le32 tl_reserved1;
--/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
-+					/* Truncate records */
-+/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
- };
- 
- /*
-@@ -638,7 +641,7 @@ struct ocfs2_local_alloc
- 	__le16 la_size;		/* Size of included bitmap, in bytes */
- 	__le16 la_reserved1;
- 	__le64 la_reserved2;
--/*10*/	__u8   la_bitmap[];
-+/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
- };
- 
- /*
-@@ -651,7 +654,7 @@ struct ocfs2_inline_data
- 				 * for data, starting at id_data */
- 	__le16	id_reserved0;
- 	__le32	id_reserved1;
--	__u8	id_data[];	/* Start of user data */
-+	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
- };
- 
- /*
-@@ -796,9 +799,10 @@ struct ocfs2_dx_entry_list {
- 					 * possible in de_entries */
- 	__le16		de_num_used;	/* Current number of
- 					 * de_entries entries */
--	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
--							 * in a packed array of
--							 * length de_num_used */
-+					/* Indexed dir entries in a packed
-+					 * array of length de_num_used.
-+					 */
-+	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
- };
- 
- #define OCFS2_DX_FLAG_INLINE	0x01
-@@ -934,7 +938,8 @@ struct ocfs2_refcount_list {
- 	__le16 rl_used;		/* Current number of used records */
- 	__le32 rl_reserved2;
- 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
--/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
-+				/* Refcount records */
-+/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
- };
- 
- 
-@@ -1020,7 +1025,8 @@ struct ocfs2_xattr_header {
- 						    buckets.  A block uses
- 						    xb_check and sets
- 						    this field to zero.) */
--	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
-+						/* xattr entry list. */
-+	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
- };
- 
- /*
+
+Tested on:
+
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
+dashboard link: https://syzkaller.appspot.com/bug?extid=30b53487d00b4f7f0922
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1089dd42580000
+
 
