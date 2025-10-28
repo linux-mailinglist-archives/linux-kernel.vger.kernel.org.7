@@ -1,148 +1,178 @@
-Return-Path: <linux-kernel+bounces-873373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1038CC13C83
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:25:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9674BC13C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1F485053D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:23:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF6514FCF56
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9A4301477;
-	Tue, 28 Oct 2025 09:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9450F2FFF87;
+	Tue, 28 Oct 2025 09:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e1h/4f9Y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CrWjjoaz"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F3301004
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4727F29ACD1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761643362; cv=none; b=mJnUFvo699i+V/Q4ssVDqVSA5ZxduLdQrNprb4Z5v45q+pX9ILkj1lfJUNg6EsZxZ/aSEZipnfEuBfgPZattV+5H2Eic685rYzCDfdS5V4iMVKPoMuYtQzTj2kLwjPwE2OyJhAYLy41z4NYYsVHr0hzZogfjTiEoWx1HCg7Mj0w=
+	t=1761643325; cv=none; b=JwZFIcC3zvJazXUWCzkQ2umwYzYGKMYRmqnPiNfMxj8C5g7SzmRTaMWUYM+vZvCVBMIXe2+LQARQ/NxLjEglOFtxeclG+FYtyITHD2JP+T/CwyRzdExH34k1LgO1tcUz7y2y3PAZa7gwRz3IOZSr9YLN1mAGGe/vPqU2lAclXko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761643362; c=relaxed/simple;
-	bh=qsFC1t/fVaM3KdBTuNCtkaYnQArD/UtI3nrJ3KbKVlU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UMcXoHR8HHqepyCDgoz2wQ5tNsPDPMkz5V/S8gXgAgLzmYchUQauvXVuFrsgKvOZzFAiv4bmAtnO5n0TL9QBl5FpEFTcOGsEiFkbYTxXiAI1DJ6Nli8t8P/h04UrZL+qYhS0knjkvQn5HoT7mInMfxrRWiwQsMQgtYa5PK2q8W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e1h/4f9Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S4otw5589647
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:22:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IX/AJuPm2H3fYAH/Y3OWD0ONewAieu2FIaoXZk0cs+s=; b=e1h/4f9YDvRe1gvj
-	fdP5jIbAD+QDcmuvJIqaGlfuOYHhVbNbAsP0u3qaO68jCxX0MKFdSMXo7q5ZV3Wl
-	hkVigg7lyJX9nF1wFcN0c/pqyuQLa4DSqkCAaAwSTTeo+QhhgMoHt8EghrA7biQq
-	kzrrfG1yQaxTizMSZyAIsM58/g0eTwyeylLgirEuRpAEY1M1W5FczTrdubr16CH6
-	nqJCCadPsGbuZtLs2wo6M7tD5+GBfejKisOLkP0MTN5iG8WXXyVsUWGJOgIk4aQB
-	lz5Gh+aU8Rfc0DDNGw3StQAPmfE7NQhf0zOzhe598yGgYJR8YoxtClk1RtTncgZ3
-	lCvtsw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2q5u8rtn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:22:38 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87ff7511178so3156106d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:22:38 -0700 (PDT)
+	s=arc-20240116; t=1761643325; c=relaxed/simple;
+	bh=qyDtyfHUsDFrz2HvcrljCpitgV3nqN5bjNEUeswpEB4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TmYxCFMUY0ttUuum2/VcZVJ1Z4HwGB2vlDgRoD9g0ADu6bbKN6h5cET8nzQPZxxcnQeQj5sgdSScGy/j7UVzPX7jZA1vkmQsfpIdL29sg2H1Bkt0BNiMFBoaHa34fgGYjX5B3Di0O+Tw03ydMUKH/ojNeGvT6kgCRCSVuk4ZaY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CrWjjoaz; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-475dc0ed8aeso28637815e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:22:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761643322; x=1762248122; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qyDtyfHUsDFrz2HvcrljCpitgV3nqN5bjNEUeswpEB4=;
+        b=CrWjjoazv3ym7sCg25MNCrIfjwOjVeb/nNT4nlbaiDpgcHu3sLRn5MkrbAu6y6KJ46
+         WbB9EGNEouYqVy0jpFovQ9eHowyl75j/v7eKfnOk9WFzocNBTKILX5K3LBCuknqdSx11
+         mEWKiiYdDZzX20svGkr5ltrR6wIsSyXA13SYPnvF+Q9ANzDuSZf9gYAsUITcdJQNKuRa
+         My7jBYtyq7LthhngjjjCJZyo/epXk9AbISVGl0ZmINbbdkBdurNpHJEo6JrT0U7gbFBF
+         rbA5k3Lpavq6GcfUdoOeLcIJHv1hW8UVzz4R9dPCA9L19q0InMxm8DAtJ2Dxskc0tRIK
+         QJVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761643358; x=1762248158;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IX/AJuPm2H3fYAH/Y3OWD0ONewAieu2FIaoXZk0cs+s=;
-        b=vm6j+iRQGyGB4OBubCIuTYNn5AIz61T2Fqu5ie9088rZDwNFByCRM/kd9PP3Zb5KJd
-         sKDl6JN7uXip+IELcSNiRpeCAqiqYlfTp+sQNbkRNaIOfANtWl8j5nW3L4705b4hD6LN
-         OUr+6HPjuLm/sOaFRmT7YBy4qlz9JXNw6/LtnA1GuwBpG/BZr6Fjdxu1M61PvP+e2ltf
-         BWCHgjRgbzlMwTT/rTB6jNrHshMoUbB/Hp0gc3uk+UMXfLQZaGfXFNLwypSVnbJ8we7t
-         Gx7O7HhyeYaJmUbcd1+J70Ccnodt4tfgdWb+sVWtEN8DUhUA36psbqTkw8hbTvF1XVWf
-         cq1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSynqJnNUBqEDxwO7Xjz5DcN2v4WH6HfSMY+/X1CiPvPMsMeDqylfcNLmmy13CvSoW/2WkCdV7ClM2YZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1JTVWTXHgg6mb3GosWyUal3sxr6wV+lFniOwtX6uQBBgXX4NF
-	2D7Bb3bz760g7DzyNcwjr3zja0UqPmZ6kR4ZjKUJWABElVS5OQTKh9EYnXy1cNC/+lGzqW+Nnt0
-	sZAhhABdx4hJwLGxWXky8SO493U8ko2QNFruqLPeheJtiOMOxphosTK5+dmIHDCiBmuA=
-X-Gm-Gg: ASbGncvmbxV4nmgXueqc8lqKqvm6Iz30kig5uxo9MEpwxbEJKNu6NU1I+gPbbN2gDCX
-	See5ihbtabHB2DvUGSNv+yhbUUff4Uekpg3PV1clmAwTDcm+AM5lu3tzttJdWrtEd+qqQ60h34n
-	cxc3JtYAah6vxyHn2O5yrfEX4X5vvRaHgpgu/UjfQEGncaImwLWYiWMG1b/hyK3+n7gW5X0Ofd3
-	xVhVEZJUmrZPe3e8130Le6CFh4rwwtHRvBW7aDhu1GX2EVNyLW6oluTVf5STLeN/Sp+iaCKrKt6
-	l5BDxbVGu6bbWR9/HU0iL4pL/qua6Y5Bkq5OBDl+Cee4CQMo0apniUMV5HR3jmUKmF4VNsI4+ur
-	o6C418zDBgbaVeUuLPktaFpzYbs8cslENyAlTfnrqP0NhJpc8LZUuxhOr
-X-Received: by 2002:a05:6214:27e9:b0:830:4f29:a648 with SMTP id 6a1803df08f44-87ffb112d3emr22293306d6.6.1761643358055;
-        Tue, 28 Oct 2025 02:22:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1ZreXF9W3AcLutVyZajvD/Nw87lTiLoKTGKUZuS/I2lkFW6ZVkmxbJZsXQ+QjTyDQ5ip2zw==
-X-Received: by 2002:a05:6214:27e9:b0:830:4f29:a648 with SMTP id 6a1803df08f44-87ffb112d3emr22293176d6.6.1761643357549;
-        Tue, 28 Oct 2025 02:22:37 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853077e8sm1038621166b.14.2025.10.28.02.22.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 02:22:37 -0700 (PDT)
-Message-ID: <a9da8c31-fb88-4350-96a4-de61d68fd756@oss.qualcomm.com>
-Date: Tue, 28 Oct 2025 10:22:34 +0100
+        d=1e100.net; s=20230601; t=1761643322; x=1762248122;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qyDtyfHUsDFrz2HvcrljCpitgV3nqN5bjNEUeswpEB4=;
+        b=V2JNdIJx5FDTKVYt2TvdVbuznlVRcIYfFXPNHPD5UTJR6Mnbuen5kfEIgxMHXY4L0k
+         ofZQ+QppcTApyCDay3GchZl05wzyjMd0V1b30ZZLyVQ9CZ/wVARHQ82VANAuFmRskL5A
+         VblnK74rbIvBu9LonpTMXtS7CVS+umEVgivKPAEKYFtXYaaKHhoqtgS9/11k04uKqKla
+         9QPKyABgrSafeZeIazyBhwh/MSkIXIvqqsrOujaJ0/kidPx99jvOtag+xqNbOgbOXuHb
+         4E3cGBpVWvEUzWqiXcBa5jGNxR6j4oJXvLo+QHfossGWCvTuKiKl9vvtXI9p/ZrijC0F
+         zdZw==
+X-Forwarded-Encrypted: i=1; AJvYcCW60/mL3oZjr22TZBHe01Lsi23X4OlrS6wzq73SSQA2ktTnVBh1NxDOQvTdpGM/kzJkfwEAqhDlQU3l/ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAh+/9R6jpPwowx0QT8B55bU78s6/bkhojZtP7UWFa30RlQJ+8
+	LVbY9n5LNy4ZcoXFnpDakO5/pmuw7jWwM/X12QKmLnpuKEVA0v+70m/r
+X-Gm-Gg: ASbGnctVUeu1Lxp0kMFSTWnj8T6WzIVpSHiF/N1VdpFei0ECqcTszPkr1kaaR37RjTd
+	hMHuLPX8d2c450sviOkxHGRZjPJCGNCHpILDKT/MIocUcHs9H1oJrVY3/qXaxRgHsEnWHrxOLTD
+	RHWWIUm+2W3eeK8xD9QKIdwp1gYw11fEMQFzOtgoqraK7mK0atwI8XSMxNEhpbMKlWyx2ja/YIm
+	YfLoOAYL5jfsxf5i1ss7KIzng3kQUQmu1cL8As4iGCHXQ28tcd9uA39clm9vkfi3WiDRV3hrdBn
+	vTU6oVPLsLBKSB4BM+bcGlnzzKCEFZjfLFlwDQrSLbCl4IHKwU9o5WFrZqvyJ8Flp4S2XzE02vu
+	bk0geRqVoc9ELdBcSQamlQpeMY5tvRcZqjdSIo32urs22fEDHIRya5PXo+LF4bgaHHROAeoKNHg
+	uodWzd60Ne
+X-Google-Smtp-Source: AGHT+IHwdxWEuyCVgrLBxpjJGOZCTptkhpTE8tcoIQqfi03N4Kvtq0Ch1ugi5oZ8rA6JxgyVnew9Vw==
+X-Received: by 2002:a05:600c:4446:b0:475:da13:2566 with SMTP id 5b1f17b1804b1-47717e6095fmr21047585e9.35.1761643322238;
+        Tue, 28 Oct 2025 02:22:02 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd48942dsm187244135e9.4.2025.10.28.02.22.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 02:22:01 -0700 (PDT)
+Message-ID: <5e3bf0d87ae1b539d134edefee67d3e3ef3b46cb.camel@gmail.com>
+Subject: Re: [PATCH] iio: core: Use datasheet name as fallback for label
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, Jonathan Cameron
+	 <jic23@kernel.org>
+Cc: Chen-Yu Tsai <wens@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ Nuno =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 28 Oct 2025 09:22:36 +0000
+In-Reply-To: <aQB5Dw2Eg0tVdNow@smile.fi.intel.com>
+References: <20251027124210.788962-1-wens@kernel.org>
+	 <20251027144327.09f59982@jic23-huawei>
+	 <aQB5Dw2Eg0tVdNow@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] soc: qcom: pmic_glink: Add charger PDR service
- path and service name to client data
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
-        andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
- <20251027212250.3847537-3-anjelique.melendez@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251027212250.3847537-3-anjelique.melendez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA3OSBTYWx0ZWRfX5Vx1BIvigaIA
- +dWWxlbZMD9bKaJNjdKiwB9gTMe2cfSbASHlcE1oOAE2+9YqUQ+tdFsE3nJtuPbFyTK5IHawTpC
- nEYCOBDlKFptKSM3/6wsctj+pzLgpGxlrZ2WHGJ2TBCpH5WZVnIGJoj/WD4o4/XtHPLTgoHoUui
- tqNznoRr1NRqKCfirI95k0tfq0u2yZBcPOV/rRX3viORoxGbymG36eUm8k7WMo37Qrj1y38N+Xb
- XGUdSQrrLPbC804g9HMsGbB3yakNWRRPKB7NUFqR3JIh+nwu75GEcnxtMOD8DArw8ffqcGhdXSE
- XNda12GzUFSPKnwo5xrAO/sSw9NJae+Dkxjcp2xsWt92JwX0q4va/KSX4wyKqHXacIPBWMt5V4B
- cYXiPCqGucU5vVUUYE7naprfXdfMEA==
-X-Proofpoint-ORIG-GUID: nb-_Y3D0-GCHcQQC5xrlsFqz5CxYqpUw
-X-Proofpoint-GUID: nb-_Y3D0-GCHcQQC5xrlsFqz5CxYqpUw
-X-Authority-Analysis: v=2.4 cv=c9CmgB9l c=1 sm=1 tr=0 ts=69008b5e cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=WU2mBd_dA-PMypUZboQA:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280079
 
-On 10/27/25 10:22 PM, Anjelique Melendez wrote:
-> Currently, the charger PD service path and service name are hard coded
-> however these paths are not guaranteed to be the same between PMICs. For
-> example, on Kaanapali and Glymur, Charger FW runs on SOCCP(another subsystem)
-> which does not have any specific charger PDs defined.
-> 
-> Define charger PDR service path and service name as client data so that
-> each PMIC generation can properly define these paths.
-> 
-> While at it, add the qcom,kaanapali-pmic-glink and
-> qcom,glymur-pmic-glink compatible strings.
-> 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-> ---
+On Tue, 2025-10-28 at 10:04 +0200, Andy Shevchenko wrote:
+> On Mon, Oct 27, 2025 at 02:43:27PM +0000, Jonathan Cameron wrote:
+> > On Mon, 27 Oct 2025 20:42:09 +0800
+> > Chen-Yu Tsai <wens@kernel.org> wrote:
+> >=20
+> > > Some IIO drivers do not provide labels or extended names for their
+> > > channels. However they may provide datasheet names. axp20x-adc is
+> > > one such example.
+> > >=20
+> > > Use the datasheet name as a fallback for the channel label. This main=
+ly
+> > > benefits iio-hwmon by letting the produced hwmon sensors have more
+> > > meaningful names rather than in_voltageX.
+> >=20
+> > I definitely don't want to have different behaviour for in kernel reque=
+sts
+> > and for people reading the _label attributes.=C2=A0=20
+> > https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/iio/industria=
+lio-core.c#L1232
+> > would need modifying to allow for the sysfs attributes to be created.
+> >=20
+> > In general I'm not sure I want to do this.=C2=A0 Datasheet names can be
+> > exceptionally
+> > obscure which is why we've kept them hidden from userspace.=C2=A0 At le=
+ast dts
+> > writers
+> > tend to have those names on their circuit diagrams and tend to have
+> > datasheet access.
+> >=20
+> > Let's see if anyone else has feedback on this suggestion over next week=
+ or
+> > so.
+>=20
+> This is an ABI change without
 
-I think this change disqualifies Glymur from having a fallback to 8550,
-since it couldn't have worked without ignoring the PDR
+Indeed...
 
-Konrad
+> 1) proper documentation;
+> 2) backward compatibility (i.e. there is no knob to opt-out the change, o=
+r
+> make
+> it opt-in).
+>=20
+> In this form is definitely NAK.
+>=20
+> If you wish something like this, better to have a separate attribute. But=
+ the
+> problem maybe also that the same component (or 100% compatible one) made =
+by
+> different vendors and have different datasheet names. This means that the=
+ new
+> attribute may still be ambiguous. Hence I see a little sense to have it,
+> rather
+> better to have these links / names to be put in DT schema. At least there=
+ we
+> have different vendors and compatibility mappings.
+
+I mean, we already have labels for channels so this all looks like a bit of
+overlap to me (though I see the temptation of going this way). For
+extended_names, there was a reason why it came as a fallback for .label() [=
+1].
+For this, I'm not really convinced for now. There is also at least one driv=
+er
+already exporting the .datasheet_name as a label [2] so maybe we should do =
+that
+instead (again, I understand that doing it like this we only need to change=
+ one
+place...)? Otherwise we should clean up those and that should definitely be=
+ part
+of the series (if we even consider this).
+
+
+[1]: https://lore.kernel.org/linux-iio/20210618123005.49867-1-paul@crapouil=
+lou.net/
+[2]: https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/iio/adc/xili=
+nx-ams.c#L539
+
+- Nuno S=C3=A1
 
