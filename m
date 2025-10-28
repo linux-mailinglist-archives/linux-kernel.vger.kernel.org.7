@@ -1,248 +1,311 @@
-Return-Path: <linux-kernel+bounces-872992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF075C12CBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:44:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAAEC12CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1B8464011
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840351AA734D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBBF283CAF;
-	Tue, 28 Oct 2025 03:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BA328312E;
+	Tue, 28 Oct 2025 03:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iAmm2afQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ALNnieph"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1328000B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF9328002B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623069; cv=none; b=E2WfV5CNpsugEL5DpvwTVzKy5EcGIxl6F8xTeK4itacCqmOIG0INM1Yyt2bcCX7H92DmH7BjRGl4Fg8ZpYwyv9rL2DnNc+DnuLZ3DzThkxAFyxLQnm6Oy3W8xfqNOCAWyaodg8xfKnQZ16jVJq6wgLyKWc+m4vlxg1UiqMU6E74=
+	t=1761623083; cv=none; b=T4KDrC6+InFtXxjERZvfHI0Q6+Tr7HECsY6BKpUb18dmArWcAbxX/wlIXmA/T1olLVHnauqlDYUFqjEzPUqQC38mkTvlL6xyzTH2XrqsXur6iSHJjusMcCsu04Q71WWuMdtCU8tBpD54hJizWW3isznvR/LuIWTnOfuVOMxM+24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623069; c=relaxed/simple;
-	bh=DrgFTN5SAKh1Fi518Ox7qnPVRMAh1FKtSR4SGg3S7ZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IHf3j2h9lLbXJUDW1TdWJfTeLnEtS//yEI4bbyeEgq+5bM9gAmpoMZflusHSVHptNF5VyJAIbucCn1NJ/OI1VC8kNZisjgySgg3juCd7o1WVDwTCGkzdxe8cwWp7zkA2q8MXA/yBmP1dBtNTldkp934BJ5J2mk3tobnoNpLgQVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iAmm2afQ; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1761623083; c=relaxed/simple;
+	bh=pkIXgLPS067ti28/pkxAS7WedcmKZnXYQr26AX9croA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R8jtJi8wCNpSJYYL43GxJkxk9QQ6RrXLrW4HVaFeLJqw++UcqFjMbPdrE99q51rkHoPVGtyXhUn5s2iIWQ09aZ0ggxHROxzAG7jQjwEvf2M8cQEF7G1N99ARKSb/EPSNK7OxZ1zUFsYGJRrwtUnw//fQqL/f/hOCI5dk7wP85jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ALNnieph; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761623066;
+	s=mimecast20190719; t=1761623080;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YbJLFPX9piCwEK2blMA45kr+K/vXcoXA84QV3H2W/so=;
-	b=iAmm2afQP29hBk69S0u+/Vu876+l2mZg97xWtzL/r30FDwr57NhnKage3eMdm/R0eu90C2
-	TyRjHmULSx0YReEWWdfJoN3N1b+Yk7lQTjPWiFXgJFBn5toMymabeYjDmSRfjtqgkVEPdU
-	k0P1pugDckbWcwjn4cKk2lDXFGpCrOA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XsRifqcw0qam8kbmnOiIajFJpiQM+jrQfgn3lQBdMtI=;
+	b=ALNnieph7YohxWB19B9LoJHm159OZZX/JPoHTPTl4iB/2R15NjVOzID9CEFIUjDl4ORrNz
+	WevGj7cE18xwN4y/7SKX4I23YLPLUYduI9sqoOd7fd2RpvoBbjnic4mx9XDJky7uDvsz1Q
+	xW8NwX9hfuHQ9C6S/RzZflQWmfpkgAc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-P8pfH06LM26kc7LKxAegMA-1; Mon,
- 27 Oct 2025 23:44:24 -0400
-X-MC-Unique: P8pfH06LM26kc7LKxAegMA-1
-X-Mimecast-MFC-AGG-ID: P8pfH06LM26kc7LKxAegMA_1761623063
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-KWpaNaHyPs-mIOric-R6fQ-1; Mon,
+ 27 Oct 2025 23:44:36 -0400
+X-MC-Unique: KWpaNaHyPs-mIOric-R6fQ-1
+X-Mimecast-MFC-AGG-ID: KWpaNaHyPs-mIOric-R6fQ_1761623074
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B167119541AD;
-	Tue, 28 Oct 2025 03:44:23 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBDF41800C32;
+	Tue, 28 Oct 2025 03:44:33 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.72.112.84])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08EE81800451;
-	Tue, 28 Oct 2025 03:44:18 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 57C9B1800451;
+	Tue, 28 Oct 2025 03:44:23 +0000 (UTC)
 From: Pingfan Liu <piliu@redhat.com>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
 Cc: Pingfan Liu <piliu@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>,
 	Pierre Gondois <pierre.gondois@arm.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>
-Subject: [PATCHv4 1/2] sched/isolation: Split out the housekeeping part
-Date: Tue, 28 Oct 2025 11:43:55 +0800
-Message-ID: <20251028034357.11055-1-piliu@redhat.com>
+	Ingo Molnar <mingo@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide root domain when hot-unplug
+Date: Tue, 28 Oct 2025 11:43:56 +0800
+Message-ID: <20251028034357.11055-2-piliu@redhat.com>
+In-Reply-To: <20251028034357.11055-1-piliu@redhat.com>
+References: <20251028034357.11055-1-piliu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-A later patch will introduce a function in cpuset.h that refers to
-definitions in isolation.h. This would cause a circular header file
-inclusion issue.  To break the cycle, move the definitions into a
-dedicated file called 'housekeeping.h'."
+*** Bug description ***
+When testing kexec-reboot on a 144 cpus machine with
+isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
+encounter the following bug:
+
+[   97.114759] psci: CPU142 killed (polled 0 ms)
+[   97.333236] Failed to offline CPU143 - error=-16
+[   97.333246] ------------[ cut here ]------------
+[   97.342682] kernel BUG at kernel/cpu.c:1569!
+[   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+[...]
+
+In essence, the issue originates from the CPU hot-removal process, not
+limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
+program that waits indefinitely on a semaphore, spawning multiple
+instances to ensure some run on CPU 72, and then offlining CPUs 1–143
+one by one. When attempting this, CPU 143 failed to go offline.
+  bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
+
+`
+*** Issue ***
+Tracking down this issue, I found that dl_bw_deactivate() returned
+-EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
+But that is not the fact, and contributed by the following factors:
+When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
+blocked-state deadline task (in this case, "cppc_fie"), it was not
+migrated to CPU0, and its task_rq() information is stale. So its rq->rd
+points to def_root_domain instead of the one shared with CPU0.  As a
+result, its bandwidth is wrongly accounted into a wrong root domain
+during domain rebuild.
+
+The key point is that root_domain is only tracked through active rq->rd.
+To avoid using a global data structure to track all root_domains in the
+system, there should be a method to locate an active CPU within the
+corresponding root_domain.
+
+*** Solution ***
+To locate the active cpu, the following rules for deadline
+sub-system is useful
+  -1.any cpu belongs to a unique root domain at a given time
+  -2.DL bandwidth checker ensures that the root domain has active cpus.
+
+Now, let's examine the blocked-state task P.
+If P is attached to a cpuset that is a partition root, it is
+straightforward to find an active CPU.
+If P is attached to a cpuset that has changed from 'root' to 'member',
+the active CPUs are grouped into the parent root domain. Naturally, the
+CPUs' capacity and reserved DL bandwidth are taken into account in the
+ancestor root domain. (In practice, it may be unsafe to attach P to an
+arbitrary root domain, since that domain may lack sufficient DL
+bandwidth for P.) Again, it is straightforward to find an active CPU in
+the ancestor root domain.
+
+This patch groups CPUs into isolated and housekeeping sets. For the
+housekeeping group, it walks up the cpuset hierarchy to find active CPUs
+in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
 
 Signed-off-by: Pingfan Liu <piliu@redhat.com>
 Cc: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: "Michal Koutný" <mkoutny@suse.com>
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Juri Lelli <juri.lelli@redhat.com>
 Cc: Pierre Gondois <pierre.gondois@arm.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+To: cgroups@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 ---
- include/linux/sched/housekeeping.h | 67 ++++++++++++++++++++++++++++++
- include/linux/sched/isolation.h    | 65 +----------------------------
- 2 files changed, 68 insertions(+), 64 deletions(-)
- create mode 100644 include/linux/sched/housekeeping.h
+v3 -> v4:
+rename function with cpuset_ prefix
+improve commit log
 
-diff --git a/include/linux/sched/housekeeping.h b/include/linux/sched/housekeeping.h
-new file mode 100644
-index 0000000000000..99cfc8821a814
---- /dev/null
-+++ b/include/linux/sched/housekeeping.h
-@@ -0,0 +1,67 @@
-+#ifndef _LINUX_SCHED_HOUSEKEEPING_H
-+#define _LINUX_SCHED_HOUSEKEEPING_H
-+
-+enum hk_type {
-+	HK_TYPE_DOMAIN,
-+	HK_TYPE_MANAGED_IRQ,
-+	HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_MAX,
-+
-+	/*
-+	 * The following housekeeping types are only set by the nohz_full
-+	 * boot commandline option. So they can share the same value.
-+	 */
-+	HK_TYPE_TICK    = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_TIMER   = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_RCU     = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_MISC    = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_WQ      = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_KTHREAD = HK_TYPE_KERNEL_NOISE
-+};
-+
-+#ifdef CONFIG_CPU_ISOLATION
-+DECLARE_STATIC_KEY_FALSE(housekeeping_overridden);
-+extern int housekeeping_any_cpu(enum hk_type type);
-+extern const struct cpumask *housekeeping_cpumask(enum hk_type type);
-+extern bool housekeeping_enabled(enum hk_type type);
-+extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
-+extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
-+extern void __init housekeeping_init(void);
-+
-+#else
-+
-+static inline int housekeeping_any_cpu(enum hk_type type)
-+{
-+	return smp_processor_id();
-+}
-+
-+static inline const struct cpumask *housekeeping_cpumask(enum hk_type type)
-+{
-+	return cpu_possible_mask;
-+}
-+
-+static inline bool housekeeping_enabled(enum hk_type type)
-+{
-+	return false;
-+}
-+
-+static inline void housekeeping_affine(struct task_struct *t,
-+				       enum hk_type type) { }
-+
-+static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
-+{
-+	return true;
-+}
-+
-+static inline void housekeeping_init(void) { }
-+#endif /* CONFIG_CPU_ISOLATION */
-+
-+static inline bool housekeeping_cpu(int cpu, enum hk_type type)
-+{
-+#ifdef CONFIG_CPU_ISOLATION
-+	if (static_branch_unlikely(&housekeeping_overridden))
-+		return housekeeping_test_cpu(cpu, type);
-+#endif
-+	return true;
-+}
-+#endif
-diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-index d8501f4709b58..e07b2c439365d 100644
---- a/include/linux/sched/isolation.h
-+++ b/include/linux/sched/isolation.h
-@@ -5,70 +5,7 @@
- #include <linux/cpuset.h>
- #include <linux/init.h>
- #include <linux/tick.h>
--
--enum hk_type {
--	HK_TYPE_DOMAIN,
--	HK_TYPE_MANAGED_IRQ,
--	HK_TYPE_KERNEL_NOISE,
--	HK_TYPE_MAX,
--
--	/*
--	 * The following housekeeping types are only set by the nohz_full
--	 * boot commandline option. So they can share the same value.
--	 */
--	HK_TYPE_TICK    = HK_TYPE_KERNEL_NOISE,
--	HK_TYPE_TIMER   = HK_TYPE_KERNEL_NOISE,
--	HK_TYPE_RCU     = HK_TYPE_KERNEL_NOISE,
--	HK_TYPE_MISC    = HK_TYPE_KERNEL_NOISE,
--	HK_TYPE_WQ      = HK_TYPE_KERNEL_NOISE,
--	HK_TYPE_KTHREAD = HK_TYPE_KERNEL_NOISE
--};
--
--#ifdef CONFIG_CPU_ISOLATION
--DECLARE_STATIC_KEY_FALSE(housekeeping_overridden);
--extern int housekeeping_any_cpu(enum hk_type type);
--extern const struct cpumask *housekeeping_cpumask(enum hk_type type);
--extern bool housekeeping_enabled(enum hk_type type);
--extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
--extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
--extern void __init housekeeping_init(void);
--
--#else
--
--static inline int housekeeping_any_cpu(enum hk_type type)
--{
--	return smp_processor_id();
--}
--
--static inline const struct cpumask *housekeeping_cpumask(enum hk_type type)
--{
--	return cpu_possible_mask;
--}
--
--static inline bool housekeeping_enabled(enum hk_type type)
--{
--	return false;
--}
--
--static inline void housekeeping_affine(struct task_struct *t,
--				       enum hk_type type) { }
--
--static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
--{
--	return true;
--}
--
--static inline void housekeeping_init(void) { }
--#endif /* CONFIG_CPU_ISOLATION */
--
--static inline bool housekeeping_cpu(int cpu, enum hk_type type)
--{
--#ifdef CONFIG_CPU_ISOLATION
--	if (static_branch_unlikely(&housekeeping_overridden))
--		return housekeeping_test_cpu(cpu, type);
--#endif
--	return true;
--}
+ include/linux/cpuset.h  | 18 ++++++++++++++++++
+ kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
+ kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
+ 3 files changed, 68 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 2ddb256187b51..d4da93e51b37b 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -12,6 +12,7 @@
+ #include <linux/sched.h>
+ #include <linux/sched/topology.h>
+ #include <linux/sched/task.h>
 +#include <linux/sched/housekeeping.h>
+ #include <linux/cpumask.h>
+ #include <linux/nodemask.h>
+ #include <linux/mm.h>
+@@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
  
- static inline bool cpu_is_isolated(int cpu)
+ extern void cpuset_print_current_mems_allowed(void);
+ extern void cpuset_reset_sched_domains(void);
++extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
+ 
+ /*
+  * read_mems_allowed_begin is required when making decisions involving
+@@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
+ 	partition_sched_domains(1, NULL, NULL);
+ }
+ 
++static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
++		struct cpumask *cpus)
++{
++	const struct cpumask *hk_msk;
++
++	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
++	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
++		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
++			/* isolated cpus belong to a root domain */
++			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
++			return;
++		}
++	}
++	cpumask_and(cpus, cpu_active_mask, hk_msk);
++}
++
+ static inline void cpuset_print_current_mems_allowed(void)
  {
+ }
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 27adb04df675d..6ad88018f1a4e 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
+ 	mutex_unlock(&cpuset_mutex);
+ }
+ 
++/* caller hold RCU read lock */
++void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
++{
++	const struct cpumask *hk_msk;
++	struct cpuset *cs;
++
++	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
++	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
++		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
++			/* isolated cpus belong to a root domain */
++			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
++			return;
++		}
++	}
++	/* In HK_TYPE_DOMAIN, cpuset can be applied */
++	cs = task_cs(p);
++	while (cs != &top_cpuset) {
++		if (is_sched_load_balance(cs))
++			break;
++		cs = parent_cs(cs);
++	}
++
++	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
++	cpumask_and(cpus, cs->effective_cpus, hk_msk);
++}
++
+ /**
+  * cpuset_update_tasks_cpumask - Update the cpumasks of tasks in the cpuset.
+  * @cs: the cpuset in which each task's cpus_allowed mask needs to be changed
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 72c1f72463c75..a3a43baf4314e 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2884,6 +2884,8 @@ void dl_add_task_root_domain(struct task_struct *p)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 	struct dl_bw *dl_b;
++	unsigned int cpu;
++	struct cpumask msk;
+ 
+ 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
+ 	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+@@ -2891,16 +2893,32 @@ void dl_add_task_root_domain(struct task_struct *p)
+ 		return;
+ 	}
+ 
+-	rq = __task_rq_lock(p, &rf);
+-
++	/* prevent race among cpu hotplug, changing of partition_root_state */
++	lockdep_assert_cpus_held();
++	/*
++	 * If @p is in blocked state, task_cpu() may be not active. In that
++	 * case, rq->rd does not trace a correct root_domain. On the other hand,
++	 * @p must belong to an root_domain at any given time, which must have
++	 * active rq, whose rq->rd traces the valid root domain.
++	 */
++	cpuset_get_task_effective_cpus(p, &msk);
++	cpu = cpumask_first_and(cpu_active_mask, &msk);
++	/*
++	 * If a root domain reserves bandwidth for a DL task, the DL bandwidth
++	 * check prevents CPU hot removal from deactivating all CPUs in that
++	 * domain.
++	 */
++	BUG_ON(cpu >= nr_cpu_ids);
++	rq = cpu_rq(cpu);
++	/*
++	 * This point is under the protection of cpu_hotplug_lock. Hence
++	 * rq->rd is stable.
++	 */
+ 	dl_b = &rq->rd->dl_bw;
+ 	raw_spin_lock(&dl_b->lock);
+-
+ 	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
+-
+ 	raw_spin_unlock(&dl_b->lock);
+-
+-	task_rq_unlock(rq, p, &rf);
++	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+ }
+ 
+ void dl_clear_root_domain(struct root_domain *rd)
 -- 
 2.49.0
 
