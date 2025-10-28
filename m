@@ -1,87 +1,125 @@
-Return-Path: <linux-kernel+bounces-874568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A075DC1698F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:24:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70450C1698C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:24:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1781A2311F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:24:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B8AE4E8211
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028AE34E772;
-	Tue, 28 Oct 2025 19:24:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220C434F481;
+	Tue, 28 Oct 2025 19:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FOHMTueG"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21D220F08C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F6B34DB67
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761679444; cv=none; b=oongwm52tYKdf1fhYEP1WSnOU4Wh/kdlIgqw4u9X00w64PkO83HTQGEXuXIWGhU4yh7WWv+ZttIexkJW1abJA3fi1lL8HwrU6u+PUK7z7ikhZVrFvDGbAawFXPzRtU2GCyDnXSAwm5FCDPuAlHjhsKtOaP+af58CvTqmBac6j7k=
+	t=1761679466; cv=none; b=BfbAhBeBNaZ8LPTMLbVqiTnC1waETWCduuewcWeeXxXvPUQqYplCk2cSlACnLWNPM5bvrB3IVi2w5ZnxqHiAe0EIjj5scZcgGh3nK+ev1y8rQuxLPt8qncugESoaycPZfDCiUhrKkn9OHTRRp4xfyrwVQG4IM6PCPQ8ADGgZQxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761679444; c=relaxed/simple;
-	bh=9FeXmfYOJ0DvtrVZjCkjkBY3X2PjnJUyCSKfVv6gqZE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qphcGYk8WVBkiYWttlb5wRW0BHZvL/DmIO6R2lDDF2tWOLfMwD5aKPCl2J2OND7FxEJlj9iXhM/2R46g+NCRE+T2519xcpS9wnSfTjCKMRnwcVL+ZCGYItD4USVR0pzEmMNby20IaIknhsAc8fkODBDDsdcybceNKtEi99Cqv1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430c684035eso2886315ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:24:02 -0700 (PDT)
+	s=arc-20240116; t=1761679466; c=relaxed/simple;
+	bh=FNuV2ylpbQgdnCFLqngDIR4alG7qnXMuPBXZqxFBQnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UThtyCVKhipdrkXo/ETg5NDK2wH9VzJj4oh0og07nk1uPHmU4CERTHCbjP3LA7izAvGGLkwuo6sBm7X3XBLGVnIbbzBGjy1aPiXn08ucNhLheI5NS7ip/YdfUYiiROV2N0SDhU7KJfBqqNbtb6nI7T1FB/tH3XCqpLtqAdB+0fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FOHMTueG; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-430d78a15b1so60147095ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1761679463; x=1762284263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=58Awx0bGuwSF6D/6xs0Bpv4Ns1WT5VljbxJNAptjXQI=;
+        b=FOHMTueG3amuH0xkQCU6dBB8DgQfFZVa4OpUdW3wkzinGvdqqm1ZsslnKqeRZRklTH
+         QYBnyzU8pays29zoxeZ6DBaq6PCschnN9vejNdcYN8OX+5Ev6EePpbkL/OcV74No0I4j
+         2CJICanlVP51xHTPOY7feoMYVekRvtURsbIFs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761679442; x=1762284242;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1761679463; x=1762284263;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JVZ31FlbSrtscnyIGqMdR/Vz8F3ml2u5F/oqBSjLkGY=;
-        b=VD5QXT8Fg6NdV7eitHtV3EDcOqZATxLivTNesxMT9O2E6BPvabmf5YN3TH31cLvjpg
-         MOb9/OfXkjpqtdMsTyml5HWGfn8IifDmhSf+q18PJ1W0w5d3i7ClyOXxjpgSvoqVSeqm
-         yfuOZEQgkrEq9iVesWxtMEMLfQSTSsdOCeKTmjfeESbyp6hYMu9tPqjTjA7eOUs9amdx
-         QqPdmAo5moqW7c2mmgG+AFsDYwDUhI1XiyZZ6uTH/Ez/JGwqKK6kBk4vJmCdngY7j51A
-         M5iqqoqPjeCG4TIKTDmvRUjZ+CUF0WVMWn4NWQYgae868n2u+R5isDdctYoqPmFPlTLu
-         2fJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVju/ffHNMu84w+VogJRw5vrOftwuHoS+wloCsw0Jr4hrnCJtIgapC+nok6HQUjffaerxeK8iJKv7u9s9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1hnowsQyVkMtInq+p4IUEepfXdc4jWTIU9ANjubJ3KL+cdu5h
-	yPFbjmSS3mVWJ3KWmNJeNyW5ObUCsraNf1Rmpr3dDEsm74zbegoWmzQt7DXO+HI5KSPkn3zy4IJ
-	lA5r2nJNps1YSpGJdkpq7tZl2d67wg/cZOsouMWSUQOppeQK6ExATIQ7HyCQ=
-X-Google-Smtp-Source: AGHT+IHCB8JPGKROAW2FyZrI1adMWh2yGMIiLBTFvdwg+SCGN4quL8WTdmCM7F5TrkpNJFvDiR9AH0knrVFil42Uu+sLtYV9sI0r
+        bh=58Awx0bGuwSF6D/6xs0Bpv4Ns1WT5VljbxJNAptjXQI=;
+        b=eGNNBwiEKnLkKE7GZTUMwMq3OJk5k1D5BIaFCGKIjS4CTEPyo0tgxLAaJhCfRPKn3/
+         G8fVqEReJHpjulZ7+2TovPB8s3adimWNEnM32A6gyHvPaIX1dAWcQhwM0UNqizmgN9On
+         u6fpntZ2jn7WeSPFEzHJBcfUNwp9g11pHRPNOBGRZBeDa+XpPe1joaXJYWSNC3VKr2Xv
+         umUvbI4/JZ7YvLJ7nXGnzxw18Zzbu61FrmRGTwrHkSv08i67Pi7wdmOUNv2zT8AsWAEz
+         gMSiWk735mSRGqQunrUMCfVVZj90R/mpQkSDC1KLuJD1Y22VFVSegIozEPRaWuGsIFcX
+         YEyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU01vlGvHixF0c/VHyQ7JXHYaLDRqSKUpSc0JcQ6fLEpf1F1ucK56gQHuuzBbHCiubzmpSECjF3yfsiqdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZLLpmiis8mwCVOrWiKk7IMyfjKsGWeTOk14OdQ7lUK/X85EzL
+	Xdxmm5N+vLD3aJmnGp4DP8DJ2pnXBspi/ya9QO7ZLWka0WIA2Y4MBLzYrdwLgIz1K8U=
+X-Gm-Gg: ASbGnctr0CB4Qah8h10hU09cZ1GB4dHWBLZ/44uHMHbjpVEidGoYFxzWIA2zSh4Uz4d
+	AYqlVBrmyDISLqMR7MH923VKI7c+wapvHv3P1FNhprPl7Nxo+5eP+U1/O2RQTlnhnYpP5FnZSHg
+	eZp0t3moMzffClydPF2Ri6yOCEIO124IinNfybtGXRO84M8fk+kKv1z0LokSSba1aMCpMaUwBiS
+	E1wDEToFCRoLRZvGFM2G8vCgwKh0Lzucef7Hr2sIUsFjUhypkxAO7tNjD14xM2DaLVeFcQhW+aa
+	CP6NOrTkfWwm7zztoL5CwLQcFZzrsQQTC3iNLXa5ExisgaYExxZwIE+vh89CNQgVw0+sgGt0KjJ
+	/MyFUUgHfJQFSrpZSAU7w/B0NJotwV43/HeStQT4jaPrTCMak/pzOs8usHJ9AA9/joP94qlIg3u
+	PV9QKqYH19sNryCbPqXsipFrY=
+X-Google-Smtp-Source: AGHT+IGaEFpRntODdNU7RTyaoyOhPbbt53aEcNEoUCMwoRku4C5s3OW5tIb5fHWdKQylLZZKXgEf/A==
+X-Received: by 2002:a05:6e02:3983:b0:432:108f:427a with SMTP id e9e14a558f8ab-432f906651fmr5016915ab.32.1761679462694;
+        Tue, 28 Oct 2025 12:24:22 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431f688c355sm45945015ab.28.2025.10.28.12.24.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 12:24:22 -0700 (PDT)
+Message-ID: <58e41cac-eae7-474a-97ce-2f1a084383d3@linuxfoundation.org>
+Date: Tue, 28 Oct 2025 13:24:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:308f:b0:431:f39e:6bd8 with SMTP id
- e9e14a558f8ab-432103bc8bcmr66132015ab.5.1761679441882; Tue, 28 Oct 2025
- 12:24:01 -0700 (PDT)
-Date: Tue, 28 Oct 2025 12:24:01 -0700
-In-Reply-To: <20251028182253.F7MbO%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69011851.050a0220.3344a1.03de.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
-From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 000/184] 6.17.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, sr@sladewatkins.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251027183514.934710872@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251027183514.934710872@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/27/25 12:34, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.6 release.
+> There are 184 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.6-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Compiled and booted on my test system. No dmesg regressions.
 
-Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
-Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Tested on:
-
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=155b77e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d75e2b3488f52930
-dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=141e1f34580000
-
-Note: testing is done by a robot and is best-effort only.
+thanks,
+-- Shuah
 
