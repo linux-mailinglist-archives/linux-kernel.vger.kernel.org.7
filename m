@@ -1,206 +1,197 @@
-Return-Path: <linux-kernel+bounces-873362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370D1C13C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:18:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18895C13C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 78030344755
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E9B18869C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6893043DC;
-	Tue, 28 Oct 2025 09:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80773002AA;
+	Tue, 28 Oct 2025 09:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bhTSQc+M"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3Tgk/HB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916B33019C3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B56155333;
+	Tue, 28 Oct 2025 09:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761643046; cv=none; b=T4O1e4iBXKo5DLDPz6kv8FdXCWRgjcY0Qb2DXIR2BHhJANdpc94DhCWfUxAu6JUGG6Qi96vgN19EOt//wXVtrbrBLgccA0doOtMlA5ullsmYZKkJT53igHtKSNpFiziZPn5wTl9rQmm3xq9E1XOpKJhaT0a2tPBV6BWxwX8WhOE=
+	t=1761642983; cv=none; b=MrQlnY7JUiwhVVP1F/Wi11lyO4IC0Q9gTu9u495wuHFtomoLonc9AfZYg+VD1gYHXWuMCVw6rn2vRGNFYCPjI+n3DCQ8qUARE4aAgYqcnCjg7L+ZxOOq/yHX0MH4fNpVtlrbR1/KuY23Q88ot8vR/jTeDJ8Z56AAM7RxP4tqKAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761643046; c=relaxed/simple;
-	bh=jBXvd5o8xd7AxDkdev4MjEnueBp7q9FqgNwPncpJjP4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=caWij4YF6oWpQgMbl5bMWUzh+54iDORFlqdNaiYOWP8ghEeIef2FACa/WwEEIBgbxMf2Kkg0XU7wgYkl0F/bPntat3d+4xZYJ8FjX99bKIDL9Ux24zbPKTroO6RZsYM5J439zt/oqg6KHefVIuj09uYALmk3itCsTrC+Wd5Cb+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bhTSQc+M; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1761643039;
-	bh=jBXvd5o8xd7AxDkdev4MjEnueBp7q9FqgNwPncpJjP4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=bhTSQc+MY8Q4Cb+L9hfMs4rpSyUf5r09v4+C8O9IY/bbbuhUeh4np0tT66UmWWWFy
-	 a8OZaeJ8mBgHbZD8bQdIv0kZBBNNaw8+vPz9/f2gUJ41umiZ1ftofd4YJQOTG5lE7f
-	 wBsch4Zd6p/JxPiev10JnJhD5LKWA361L0jQQpNU=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 28 Oct 2025 10:15:45 +0100
-Subject: [PATCH 10/10] um: Always set up AT_HWCAP and AT_PLATFORM
+	s=arc-20240116; t=1761642983; c=relaxed/simple;
+	bh=ermaQYFhISuTCQTJxYy3b0GGBvXFWg+TgqJdvAMDq1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HlDVaZp+4EbON/YcyLVSoU3yK9Sh3DJ6cx7tzVyxl37cTvxAdYDxx7/R8wwYAnfOZWmMDab57BVOggcIKxLb15OaB6FD7vdI9lGo87u59I+K72aEl0ld9GusZ4kQdpwjl5PlE33FqM+AIY2F9yXtnbo3JM7jUzw1o2QWs5MKVv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3Tgk/HB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01154C4CEE7;
+	Tue, 28 Oct 2025 09:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761642983;
+	bh=ermaQYFhISuTCQTJxYy3b0GGBvXFWg+TgqJdvAMDq1w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T3Tgk/HBdescmQFHs3usF8C2WVr86KXVLfJnamjTg3l4wtK9tdGQ66P3OedOtJOQ9
+	 Rp9vrEynvDGQxtg2xlzIyZofGUIZMqBmm2jfREbaoJTdydu3xpRVEDTdoPtzH77Bl6
+	 sETXMpqPPeMxl+PZo/Ipuzzbj2a/wzoO8PRIn1Dewk0hrLDnZtQx/jKtCaQkBm36vo
+	 oJPZrYxot0H5Cu/D1wtCRYYF+3B+dsRFFmUOrOAjZ1Xqf3KBG+bYqSyqSAKjNwrRtU
+	 JkQmJ/KZELw8eypfR9L3RaIuPKjCB/l31MOp6hOmFSF9kI8IMEDrQXNwj84E1iIw1T
+	 /H5dmNxronwWw==
+Message-ID: <ba760468-ac41-48e0-a56e-a675c3c0d5b7@kernel.org>
+Date: Tue, 28 Oct 2025 10:16:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251028-uml-remove-32bit-pseudo-vdso-v1-10-e930063eff5f@weissschuh.net>
-References: <20251028-uml-remove-32bit-pseudo-vdso-v1-0-e930063eff5f@weissschuh.net>
-In-Reply-To: <20251028-uml-remove-32bit-pseudo-vdso-v1-0-e930063eff5f@weissschuh.net>
-To: Richard Weinberger <richard@nod.at>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Kees Cook <kees@kernel.org>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761643036; l=3821;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=jBXvd5o8xd7AxDkdev4MjEnueBp7q9FqgNwPncpJjP4=;
- b=l/5J9hB4UN4Sm4P7Sd031ZesVQaS000sV+zNJuYPMvpNlqHe+eaZ7Dhvyr9wnNWMKKghulBXM
- bI1FX/3fgRwDwcgAxTVaiUY1rpJZ2iMUr1X0NnzY9WZIKRwnVaUfC9Y
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: qcom: qcom,pmic-glink: Add
+ Kaanapali and Glymur compatibles
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
+ <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
+ <20251028-private-chirpy-earthworm-6fccfe@kuoka>
+ <4cb41e69-fb32-4331-a989-529b5af0081c@kernel.org>
+ <918fc9d3-2cd5-4442-8bc6-b930596d95c1@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <918fc9d3-2cd5-4442-8bc6-b930596d95c1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Historically the code to set up AT_HWCAP and AT_PLATFORM was only built
-for 32bit x86 as it was intermingled with the vDSO passthrough code.
+On 28/10/2025 10:04, Konrad Dybcio wrote:
+> On 10/28/25 9:36 AM, Krzysztof Kozlowski wrote:
+>> On 28/10/2025 09:29, Krzysztof Kozlowski wrote:
+>>> On Mon, Oct 27, 2025 at 02:22:49PM -0700, Anjelique Melendez wrote:
+>>>> Document the Kaanapali and Glymur compatibles used to describe the PMIC
+>>>> glink on each platform.
+>>>> Kaanapali will have the same battery supply properties as sm8550 platforms
+>>>> so define qcom,sm8550-pmic-glink as fallback for Kaanapali.
+>>>> Glymur will have the same battery supply properties as x1e80100 platforms
+>>>> so define qcom,x1e80100-pmic-glink as fallback for Glymur.
+>>>
+>>> What does it mean "battery supply properties"? Binding does not define
+>>> them, so both paragraphs do not help me understanding the logic behind
+>>> such choice at all.
+>>>
+>>> What are you describing in this binding? Battery properties? No, battery
+>>> properties go to the monitored-battery, right? So maybe you describe SW
+>>> interface...
+>>
+>> Or maybe you describe the device that it is different? >
+> 
+> Certain versions of the pmic-glink stack expose services (such as battmgr)
+> which support different features (e.g. 8550 exposes state of health and
+> charge control, x1e exposes charge control, 8280 exposes neither)
+> 
+> There seems to be a similar situation here
 
-Now that vDSO passthrough has been removed, always pass through AT_HWCAP
-and AT_PLATFORM.
+Then say that. Otherwise it feels like describing current Linux
+implementation and that would be obvious no-go. Why? Because then
+argument is: change Linux driver implementation.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- arch/um/os-Linux/Makefile  | 4 +---
- arch/um/os-Linux/elf_aux.c | 7 ++++++-
- arch/um/os-Linux/main.c    | 4 ----
- arch/x86/um/Kconfig        | 3 ---
- arch/x86/um/asm/elf.h      | 7 ++++---
- 5 files changed, 11 insertions(+), 14 deletions(-)
+> 
+>>>>
+>>>> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+>>>> ---
+>>>>  .../devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml      | 7 +++++++
+>>>>  1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+>>>> index 7085bf88afab..c57022109419 100644
+>>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+>>>> @@ -37,12 +37,19 @@ properties:
+>>>>            - const: qcom,pmic-glink
+>>>>        - items:
+>>>>            - enum:
+>>>> +              - qcom,kaanapali-pmic-glink
+>>>>                - qcom,milos-pmic-glink
+>>>>                - qcom,sm8650-pmic-glink
+>>>>                - qcom,sm8750-pmic-glink
+>>>
+>>> Why qcom,kaanapali-pmic-glink is not compatible with
+>>> qcom,sm8750-pmic-glink? If Glymur is compatible with previous
+>>> generation, I would expect that here too.
+>>
+>> And again to re-iterate:
+>>
+>> If X1E is compatible with SM8550 AND:
+>> SM8750 is compatible with SM8550 THEN
+>> WHY Glymur is compatible with previous generation but Kaanapali is not
+>> compatible with previous generation?
+> 
+> The announcement date does not directly correlate to 'generation'
+I don't know exactly this IP block/component, but in general these SoCs
+follow some sort of previous design, thus term "generation" is correct
+in many cases. Anyway don't be picky about wording.
 
-diff --git a/arch/um/os-Linux/Makefile b/arch/um/os-Linux/Makefile
-index 70c73c22f715..f8d672d570d9 100644
---- a/arch/um/os-Linux/Makefile
-+++ b/arch/um/os-Linux/Makefile
-@@ -6,7 +6,7 @@
- # Don't instrument UML-specific code
- KCOV_INSTRUMENT                := n
- 
--obj-y = execvp.o file.o helper.o irq.o main.o mem.o process.o \
-+obj-y = elf_aux.o execvp.o file.o helper.o irq.o main.o mem.o process.o \
- 	registers.o sigio.o signal.o start_up.o time.o tty.o \
- 	umid.o user_syms.o util.o skas/
- 
-@@ -14,8 +14,6 @@ CFLAGS_signal.o += -Wframe-larger-than=4096
- 
- CFLAGS_main.o += -Wno-frame-larger-than
- 
--obj-$(CONFIG_ARCH_REUSE_HOST_VSYSCALL_AREA) += elf_aux.o
--
- obj-$(CONFIG_SMP) += smp.o
- 
- USER_OBJS := $(user-objs-y) elf_aux.o execvp.o file.o helper.o irq.o \
-diff --git a/arch/um/os-Linux/elf_aux.c b/arch/um/os-Linux/elf_aux.c
-index f8927a5959d8..72f416edf252 100644
---- a/arch/um/os-Linux/elf_aux.c
-+++ b/arch/um/os-Linux/elf_aux.c
-@@ -14,12 +14,17 @@
- #include <elf_user.h>
- #include <mem_user.h>
- #include "internal.h"
-+#include <linux/swab.h>
- 
-+#if __BITS_PER_LONG == 64
-+typedef Elf64_auxv_t elf_auxv_t;
-+#else
- typedef Elf32_auxv_t elf_auxv_t;
-+#endif
- 
- /* These are initialized very early in boot and never changed */
- char * elf_aux_platform;
--extern long elf_aux_hwcap;
-+long elf_aux_hwcap;
- 
- __init void scan_elf_aux( char **envp)
- {
-diff --git a/arch/um/os-Linux/main.c b/arch/um/os-Linux/main.c
-index 730723106228..7e114862a723 100644
---- a/arch/um/os-Linux/main.c
-+++ b/arch/um/os-Linux/main.c
-@@ -21,8 +21,6 @@
- 
- #define STACKSIZE (8 * 1024 * 1024)
- 
--long elf_aux_hwcap;
--
- static void __init set_stklim(void)
- {
- 	struct rlimit lim;
-@@ -149,9 +147,7 @@ int __init main(int argc, char **argv, char **envp)
- 	install_fatal_handler(SIGINT);
- 	install_fatal_handler(SIGTERM);
- 
--#ifdef CONFIG_ARCH_REUSE_HOST_VSYSCALL_AREA
- 	scan_elf_aux(envp);
--#endif
- 
- 	change_sig(SIGPIPE, 0);
- 	ret = linux_main(argc, argv, envp);
-diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
-index 798c6cc53e82..bdd7c8e39b01 100644
---- a/arch/x86/um/Kconfig
-+++ b/arch/x86/um/Kconfig
-@@ -34,8 +34,5 @@ config X86_64
- config ARCH_HAS_SC_SIGNALS
- 	def_bool !64BIT
- 
--config ARCH_REUSE_HOST_VSYSCALL_AREA
--	def_bool !64BIT
--
- config GENERIC_HWEIGHT
- 	def_bool y
-diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
-index fdd5a612f678..22d0111b543b 100644
---- a/arch/x86/um/asm/elf.h
-+++ b/arch/x86/um/asm/elf.h
-@@ -68,9 +68,7 @@
- 	pr_reg[16] = PT_REGS_SS(regs);		\
- } while (0);
- 
--extern char * elf_aux_platform;
- #define ELF_PLATFORM_FALLBACK "i586"
--#define ELF_PLATFORM (elf_aux_platform ?: ELF_PLATFORM_FALLBACK)
- 
- #else
- 
-@@ -151,7 +149,7 @@ extern char * elf_aux_platform;
- 	(pr_reg)[25] = 0;					\
- 	(pr_reg)[26] = 0;
- 
--#define ELF_PLATFORM "x86_64"
-+#define ELF_PLATFORM_FALLBACK "x86_64"
- 
- #define ARCH_HAS_SETUP_ADDITIONAL_PAGES 1
- struct linux_binprm;
-@@ -180,6 +178,9 @@ struct task_struct;
- extern long elf_aux_hwcap;
- #define ELF_HWCAP (elf_aux_hwcap)
- 
-+extern char *elf_aux_platform;
-+#define ELF_PLATFORM (elf_aux_platform ?: ELF_PLATFORM_FALLBACK)
-+
- #define SET_PERSONALITY(ex) do {} while(0)
- 
- #endif
+You can remove the generation and statement will be the same.
 
--- 
-2.51.1.dirty
+If A is compatible with B AND
+C is compatible with B
+THEN
 
+WHY D is compatible with (A and B) but E is not
+compatible with (C and B)?
+
+Easier for you?
+
+Why nitpicking on wording "generation" instead of explaining the
+problems or issues with bindings...
+
+
+Best regards,
+Krzysztof
 
