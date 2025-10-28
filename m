@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-874253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512C6C15D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:35:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2C6C15DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2F62504105
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60BD1883A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14AB303A2D;
-	Tue, 28 Oct 2025 16:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B22628D8E8;
+	Tue, 28 Oct 2025 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UsFMAVyw"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5/hDdTC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F27B28689B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8409F26CE36;
+	Tue, 28 Oct 2025 16:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669111; cv=none; b=BRLQv7tzdmmjKtnVltEYuawaGFkh6kvwLdjYAH5QZYrhylZm5cAsTOIzz6ajh0hVMLvDCabs8RTxxYxf+URhTXoHSOTpQ3ypaVn6TmKtIDwYNZWHV3ziaKSU5jGBlpFibzkAeikkOkeVu6N50yWILZ4cX97Bu2HK2AjknY2xP+c=
+	t=1761669151; cv=none; b=qVDsGhTP0L5GYSVDKPTrlU0uc8tAIen43b9cS7FTGGrMJHG9AkNFHDcftU+0xP205b8yipuQMcd7SXoy6bnTKp0KOzVd6LWAUm0NCVzcXgDKWGaToWs2u+8LGTdh3P8m3OykcHWkfW3lhm+n2bgG4FxWMK6D+DSrzpX/GhHk9GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669111; c=relaxed/simple;
-	bh=0PucAMAox93xgjGrD5pR5CZazcj6sVnwd0fqWCdhArI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Pw1safeRG4JcaQEvYmYbGM6uXdUn+Oz83mB5WUCmykHgZIeoxpzrX2h9yXeSo9a8YoirN7ZrAcIUnkGhA2yo7EyEnglGWaza3d2fx9n2clwsSBEv6J8W4Mz2Tb1bH4Of47FrrgNqlmbOY+Xq+B/e9/Sgp3kjDc6nlYmZDPXt0dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UsFMAVyw; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761669105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HWSSRHmArf/3utDL/ehBcqRMhr+v6BRpRpOeVW9o8r8=;
-	b=UsFMAVywaT8IpkoioAmt6vXomW1hLiGke5lnfdOFm6CT75B6FrTgPwndxR0Ld4UWB+GB6Z
-	kNutJOjE/CXohXqu1fHCO5Wo3THXTOtts+MdPLoZN5i9dq8L67okdhsPKyc4EOyrIZ69wY
-	ts6Gbva7I2Aaj5nD5s2hWpcBahe3SXQ=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: bot+bpf-ci@kernel.org
-Cc: akpm@linux-foundation.org,  linux-kernel@vger.kernel.org,
- ast@kernel.org, surenb@google.com, mhocko@kernel.org,
- shakeel.butt@linux.dev, hannes@cmpxchg.org, andrii@kernel.org,
- inwardvessel@gmail.com, linux-mm@kvack.org, cgroups@vger.kernel.org,
- bpf@vger.kernel.org, martin.lau@kernel.org, song@kernel.org,
- memxor@gmail.com, tj@kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
- yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
-Subject: Re: [PATCH v2 17/23] bpf: selftests: introduce read_cgroup_file()
- helper
-In-Reply-To: <58dd6b759499f212f626e6d7658dd558b3e6a334e0780898002cb2cb84dbcb85@mail.kernel.org>
-	(bot's message of "Mon, 27 Oct 2025 23:48:24 +0000 (UTC)")
-References: <20251027232206.473085-7-roman.gushchin@linux.dev>
-	<58dd6b759499f212f626e6d7658dd558b3e6a334e0780898002cb2cb84dbcb85@mail.kernel.org>
-Date: Tue, 28 Oct 2025 09:31:38 -0700
-Message-ID: <87ms5b3s45.fsf@linux.dev>
+	s=arc-20240116; t=1761669151; c=relaxed/simple;
+	bh=JdNgZ8T1nHVUE8GPyM0NLn6jOeFU81bhy/i+g3NI+Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9bHI2xF3V5mThn8wBgszjyC6siAQvtCJVJBAdVveSYIDvICWxdpDNWvoaQQ7794G2ePkojyGkLu6PP9b8wWn+S5Ins0w1s7zuMvDEwo8586kUfvtMYz+ojfl0vmVoASH0BfHYTvQ3Pv2dcAzwoEWtx4XnMq0OKeYXx0ZIgd73Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5/hDdTC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2438EC4CEE7;
+	Tue, 28 Oct 2025 16:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761669151;
+	bh=JdNgZ8T1nHVUE8GPyM0NLn6jOeFU81bhy/i+g3NI+Iw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B5/hDdTCd8eh28z64MNb7J7i+gD6fyQgRoCm07cmOvUKD2bw3LfNNtHz0egPa06j4
+	 qa+y8sTGpB+XeV94EVtENhOC6WtgJUXusS+ZZcNf7GLPU0UewxE3sU2CCI7hTwiSq0
+	 jH/SxsTe/3l0WLhlSTn1WTxdtsiNOKRRtK7mdrfALRMfbCwW/3Csc4irgk0w7IjSa/
+	 0/BvomNJgTbHVBCDyb/SP15KN8Tk/jJkUatGIoa5Wjt0KaetJQFRJniaV104c8o/gJ
+	 91laSL/RBaJhKKuZR7mm9+LFIDUhNnAqqAgeTwdmnD25rfUzkdMTWydU4OflYW3uI5
+	 UKhKYzqaWSFDg==
+Date: Tue, 28 Oct 2025 16:32:26 +0000
+From: Simon Horman <horms@kernel.org>
+To: Rakuram Eswaran <rakuram.e96@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, hswong3i@gmail.com,
+	hlhung3i@gmail.com, khalid@kernel.org, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: tcp_lp: fix kernel-doc warnings and update outdated
+ reference links
+Message-ID: <aQDwGpQttEEsj9ik@horms.kernel.org>
+References: <20251025-net_ipv4_tcp_lp_c-v1-1-058cc221499e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025-net_ipv4_tcp_lp_c-v1-1-058cc221499e@gmail.com>
 
-bot+bpf-ci@kernel.org writes:
+On Sat, Oct 25, 2025 at 05:35:18PM +0530, Rakuram Eswaran wrote:
+> Fix kernel-doc warnings in tcp_lp.c by adding missing parameter
+> descriptions for tcp_lp_cong_avoid() and tcp_lp_pkts_acked() when
+> building with W=1.
+> 
+> Also replace invalid URLs in the file header comment with the currently
+> valid links to the TCP-LP paper and implementation page.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+> ---
+> Below W=1 build warnings:
+> net/ipv4/tcp_lp.c:121 function parameter 'ack' not described in 'tcp_lp_cong_avoid'
+> net/ipv4/tcp_lp.c:121 function parameter 'acked' not described in 'tcp_lp_cong_avoid'
+> net/ipv4/tcp_lp.c:271 function parameter 'sample' not described in 'tcp_lp_pkts_acked'
+> 
+> The new URLs were verified through archive.org to confirm they match
+> the content of the original references.
+> ---
+>  net/ipv4/tcp_lp.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp_lp.c b/net/ipv4/tcp_lp.c
+> index 52fe17167460fc433ec84434795f7cbef8144767..976b56644a8a746946e5028dcb054e4c3e249680 100644
+> --- a/net/ipv4/tcp_lp.c
+> +++ b/net/ipv4/tcp_lp.c
+> @@ -23,9 +23,9 @@
+>   * Original Author:
+>   *   Aleksandar Kuzmanovic <akuzma@northwestern.edu>
+>   * Available from:
+> - *   http://www.ece.rice.edu/~akuzma/Doc/akuzma/TCP-LP.pdf
+> + *   https://users.cs.northwestern.edu/~akuzma/doc/TCP-LP-ToN.pdf
 
-> ```
-> commit 712137918bba1b0a9c7c670bab9200b0f0d6a7e8
-> Author: Roman Gushchin <roman.gushchin@linux.dev>
->
-> bpf: selftests: introduce read_cgroup_file() helper
->
-> This patch adds a new helper function read_cgroup_file() to read from
-> cgroup control files in BPF selftests. The function opens a file,
-> reads into a buffer, and returns the result.
->
->> diff --git a/tools/testing/selftests/bpf/cgroup_helpers.c b/tools/testing/selftests/bpf/cgroup_helpers.c
->> index 20cede4db..8fb02fe4c 100644
->> --- a/tools/testing/selftests/bpf/cgroup_helpers.c
->> +++ b/tools/testing/selftests/bpf/cgroup_helpers.c
->> @@ -126,6 +126,45 @@ int enable_controllers(const char *relative_path, const char *controllers)
->>  	return __enable_controllers(cgroup_path, controllers);
->>  }
->>
->> +static size_t __read_cgroup_file(const char *cgroup_path, const char *file,
->> +				 char *buf, size_t size)
->> +{
->> +	char file_path[PATH_MAX + 1];
->> +	size_t ret;
->> +	int fd;
->> +
->> +	snprintf(file_path, sizeof(file_path), "%s/%s", cgroup_path, file);
->> +	fd = open(file_path, O_RDONLY);
->> +	if (fd < 0) {
->> +		log_err("Opening %s", file_path);
->> +		return -1;
->
-> Can __read_cgroup_file() return -1 when its return type is size_t?
->
-> The function signature declares size_t (unsigned), but returns -1 here.
-> When -1 is implicitly converted to size_t, it becomes SIZE_MAX
-> (18446744073709551615 on 64-bit systems). Callers checking for errors
-> with "if (ret < 0)" will fail because size_t is unsigned, and callers
-> checking "if (ret == -1)" will also fail after the cast.
->
->> +	}
->> +
->> +	ret = read(fd, buf, size);
->> +	close(fd);
->> +	return ret;
->
-> Does this handle read() errors correctly?
->
-> The read() syscall returns ssize_t which can be negative on error.
-> Assigning this to size_t (line 143) converts negative error codes into
-> large positive numbers. For example, read() returning -1 becomes SIZE_MAX
-> when stored in ret.
->
-> Should the return type be ssize_t instead of size_t to properly propagate
-> both success (byte count) and error (negative values) to callers?
+It's not important, but FTR, I notice that these
+seem to be different versions of the same paper.
 
-Correct, fixed to ssize_t. Thanks!
+>   * Original implementation for 2.4.19:
+> - *   http://www-ece.rice.edu/networks/TCP-LP/
+> + *   https://users.cs.northwestern.edu/~akuzma/rice/TCP-LP/linux/tcp-lp-linux.htm
+
+It's probably not important, but I think the following would
+be a better drop-in replacement. That said, perhaps your choice
+is a better one for the purposes of the comment above.
+
+   https://users.cs.northwestern.edu/~akuzma/rice/TCP-LP/
+
+That notwithstanding, this looks good to me.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
 
