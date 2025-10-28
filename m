@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-873700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E412C14792
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:54:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46406C147A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AED9B4FDC06
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E82580EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4913074A2;
-	Tue, 28 Oct 2025 11:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A9130F921;
+	Tue, 28 Oct 2025 11:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JVQ4C5d+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUQsdYLu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F79C30EF8C;
-	Tue, 28 Oct 2025 11:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA22A2E06ED;
+	Tue, 28 Oct 2025 11:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761652300; cv=none; b=sBoazyP6tLDahiiIq9uInqYEkZE6S+0oox8I5LD0FTCSPHn8DKW2ZwhEFpH3H7sFeqUL0fAKOqw6klNSxsk2VI09b2WHAofISOcyQ8DVk/LP11DYLnsVmZ0iqB3KZFIjwT1qWXjGxEK5menF5h3E41NZ2hGPpTslXktaE5cR1dE=
+	t=1761652437; cv=none; b=VZZbnwVeJqY2xTVG7s54UcVp01XCUVr3vCWzqjE/+fqxQH2dooavGu4avxoCUiwNEP5SYufByzTmpGTUYIm57YhfxCRNLB5s5yV8awax/peShTzmq+Pv3BwjlaqM0xgF7r2hDdsTRuJBLXJHuNif9CRhdfbBk2RbayAMd575ct8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761652300; c=relaxed/simple;
-	bh=XlwnLTEXDaAA9THPxSptUWk8urWs/Zft1ubjgPctUMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUvY/sXPRKq6s4vNs0YoEejJNg8lUdgyLdE1+sQAUnyJpHKLA4WVeJ/nPnGtsWKae2c3CqOyvst9Zg5FVdnqTq49Lmm6uEQCuxm/E4sWJOZlvXZxnEyqec9IwA9IbITXP9DjzT5kBrDr684HnYe/m//yKvMEWxHBPfemMHqdJ0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JVQ4C5d+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59S0bVS7003058;
-	Tue, 28 Oct 2025 11:51:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=3UFCQaEJaKcAaDn//yddwHbbu2/BdSOUSDaCpfPtN
-	Cs=; b=JVQ4C5d+FuthlAJnCJhyVH7PAn27Ych7LnI7WJiIICZxUZp1Wahl62YFW
-	X1N1ipiWr8wi+SSm0xreYqjQpK3ugJTf2LLizDTif993LstvHxvZke97kJlF0dC5
-	pgh1MMST1FAP76er2c8fnFFWsYx6O3v0EOOOHuWsq0RsEaZRL4D/BJ/aRNc0WmlB
-	nf052kJSiTrleV/YMDryoXHf5HmH8v5qnXDnnlB2w/A3DdUwL8gA0T/8C602NCVs
-	KGLKC9oRWPGZsPPtYsgvZOueguAgn3kW9P546tFFZ42+pcb5w/TKW4QPBnf+jdh+
-	3dWqlM3JjufOSB0+PL0wXtt3PPu/Q==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p993mc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 11:51:36 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59S9DHCS006884;
-	Tue, 28 Oct 2025 11:51:35 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a1bk12784-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 11:51:34 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59SBpXm734865460
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 11:51:33 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5CF4C2004B;
-	Tue, 28 Oct 2025 11:51:33 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 373D920043;
-	Tue, 28 Oct 2025 11:51:33 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 Oct 2025 11:51:33 +0000 (GMT)
-From: Peter Oberparleiter <oberpar@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Matthieu Baerts <matttbe@kernel.org>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>
-Subject: [PATCH] gcov: Add support for GCC 15
-Date: Tue, 28 Oct 2025 12:51:25 +0100
-Message-ID: <20251028115125.1319410-1-oberpar@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1761652437; c=relaxed/simple;
+	bh=fXciL9iAbpGR6MKXzs+4d4rQPN9O/stPm84VqkWZjWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tu1ITbOtEQpxiSzusbsidsrlY1Y5z3dAObbzpmge+66dsFLpNuFEMCjd9cuqiabgaZva58deUGFltBmtq109awsz2aTZey5lAySwCDHi7dBPz2j6C0u7jIw3hMZRLhoq1xvCXjVv2t8HONQb48aIxHSA1txhSpMdUfHlWG2I42s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUQsdYLu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445CEC4CEFD;
+	Tue, 28 Oct 2025 11:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761652436;
+	bh=fXciL9iAbpGR6MKXzs+4d4rQPN9O/stPm84VqkWZjWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qUQsdYLu8bddtS4iP4So2jDOaFInw/RYrDHPCTH8Vc1yJ2G0dvymnL5B7oGZ2IABI
+	 m7qu88vSwm5ZqD8UvvMlE32R1R5/QGDD/d89AlC5/0ZR028Z5JrkEXJtm1M75jrHrO
+	 ODgM3EV+5CMxdrCsTgfqiNVxNwXhsS6yHJvD9m/eagc5maSE6yY4UuzxMsnsl54SXo
+	 ed9gwWsp7Kn0SXPVU9UwaCCYqxK3t8Ix8WB2XFP1TWGtP3XEQy71Crri4AmcswzSME
+	 DuzecLPQAeOycoX6a9PMVxUjNizC71BbBN0fKJ9FG4EcZuoyFCNysPSZztaV94/z9c
+	 X4EoNn3NYqS3w==
+Date: Tue, 28 Oct 2025 11:53:48 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Shuming Fan <shumingf@realtek.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc-fixes
+ tree
+Message-ID: <731ec83a-1dd8-467e-88db-84d6ce313c72@sirena.org.uk>
+References: <20251024101931.49f46027@canb.auug.org.au>
+ <86578286-39f7-4d08-a41b-cd7e15f1bfaa@sirena.org.uk>
+ <20251024120920.23f707f5@canb.auug.org.au>
+ <20251028093411.605431d0@canb.auug.org.au>
+ <20251028093725.6e065eeb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=JqL8bc4C c=1 sm=1 tr=0 ts=6900ae48 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=5kkN_RTO9X0oWNACuksA:9
-X-Proofpoint-GUID: 4n_WuyfmTOpa3Yd-oe4i2D4s9nEqYF-I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxOSBTYWx0ZWRfX0IKWkoejrboP
- qnPYkTTIPqILEzmuWaDUoNA/z99XIQshzDxIRcNA7TZRpBwnWWqI29x/EibRpenxNB09Pbhe7jH
- hHdughHTreMFmiqGqO7nNfBfAUgZZOFILkMFR2BoKdknvAL0l7g/jXpf4u4Htq6pxYqyYOTfDea
- NHJapzz0vCx+V+kgw49D7wJjD4IE9gk50K+4Btjttajs73ayh4O6nUMl7dwmJPgpPGM4xgt3qE/
- RBc5oixTTcp5uLdbW4cvzAwbUj4QXwqgoPIbndokd7uDHbGb08YQE3vY7MhJqyCwrLWIHf8W86n
- TUUTTOE3KZo5I7tVMsWXKR4g1qX0i7dyBjl73RVMfZIEgahE6RnjC3lQoRWzZkhYstXU3ksuG4O
- Pspm7JCaDT3QDCJhIDK24nFexTVsKg==
-X-Proofpoint-ORIG-GUID: 4n_WuyfmTOpa3Yd-oe4i2D4s9nEqYF-I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250019
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NEjjOtWgl11Wa+dr"
+Content-Disposition: inline
+In-Reply-To: <20251028093725.6e065eeb@canb.auug.org.au>
+X-Cookie: I smell a wumpus.
 
-Using gcov on kernels compiled with GCC 15 results in truncated 16-byte
-long .gcda files with no usable data.  To fix this, update GCOV_COUNTERS
-to match the value defined by GCC 15.
 
-Tested with GCC 14.3.0 and GCC 15.2.0.
+--NEjjOtWgl11Wa+dr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Matthieu Baerts <matttbe@kernel.org>
-Closes: https://github.com/linux-test-project/lcov/issues/445
-Tested-by: Matthieu Baerts <matttbe@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
----
- kernel/gcov/gcc_4_7.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Tue, Oct 28, 2025 at 09:37:25AM +1100, Stephen Rothwell wrote:
+> On Tue, 28 Oct 2025 09:34:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
 
-diff --git a/kernel/gcov/gcc_4_7.c b/kernel/gcov/gcc_4_7.c
-index a08cc076f332..ffde93d051a4 100644
---- a/kernel/gcov/gcc_4_7.c
-+++ b/kernel/gcov/gcc_4_7.c
-@@ -18,7 +18,9 @@
- #include <linux/mm.h>
- #include "gcov.h"
- 
--#if (__GNUC__ >= 14)
-+#if (__GNUC__ >= 15)
-+#define GCOV_COUNTERS			10
-+#elif (__GNUC__ >= 14)
- #define GCOV_COUNTERS			9
- #elif (__GNUC__ >= 10)
- #define GCOV_COUNTERS			8
--- 
-2.48.1
+> > I am still getting this failure.  I cannot find anything that would
+> > have interacted with this addition of name_prefix.  I can only
+> > speculate that maybe this file was not built in the past for an x86_64
+> > allmodconfig (i.e. some KCONFIG change) or an update to an include file
+> > has messed being committed.
 
+> Found it!  There is commit
+
+>   ea9771390378 ("ASoC: soc_sdw_utils: add name_prefix to asoc_sdw_codec_i=
+nfo struct")
+
+> in the sound-asoc tree (which is not merged into linux-next until much
+> later).
+
+Yes, I know that.  What was bothering me was why it wasn't showing up in
+my build tests which normally include allmodconfig.  I just realised
+that I'm still suppressing those tests because mainline failed to build
+an allmodconfig due to:
+
+/build/stage/linux/drivers/dma/mmp_pdma.c:1188:14: error: shift count >=3D =
+width o
+f type [-Werror,-Wshift-count-overflow]
+ 1188 |         .dma_mask =3D DMA_BIT_MASK(64),   /* force 64-bit DMA addr =
+capabil
+ity */
+      |                     ^~~~~~~~~~~~~~~~
+/build/stage/linux/include/linux/dma-mapping.h:93:54: note: expanded from m=
+acro=20
+'DMA_BIT_MASK'
+   93 | #define DMA_BIT_MASK(n) (((n) =3D=3D 64) ? ~0ULL : ((1ULL<<(n))-1))
+      |                                                      ^ ~~~
+
+and never gets far enough into the build to show anything else.  I think
+that subsequently got fixed in mainline but I didn't merge up yet.
+
+--NEjjOtWgl11Wa+dr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkArssACgkQJNaLcl1U
+h9CwYQf/V6lwE6f0Bli99xLkXXhDyHrPpLlxq+YyD+Z6TzSWnWw/9iYn95yeyu73
+wk/ClmGOUMepgS8E14c/c73m+Oil5FBAFZy2J6TOEkQs1yme4OPsL4A2G/kbQ7Yk
+g2U8EgChfjk0nt3bRPpPgNDOpvev7aX0/RJQ00gGGFALb30zmI1rPOKuJ0ydlkIC
+PgorJN1wej4UwpvNoqtXxuXHQb1QxPgGagSNAH/MRkxwqFS5Wx3y4qhxRCUX90XX
+JUi+pZrZiKF9/kV1Ec78MPFoK5WoLUTNr7DpO+V0KD8bNOv//3FQfvVHj7J5vufZ
+7lCDCgIxHN+5QR4W/kAY1oKUBKXN5g==
+=FJU1
+-----END PGP SIGNATURE-----
+
+--NEjjOtWgl11Wa+dr--
 
