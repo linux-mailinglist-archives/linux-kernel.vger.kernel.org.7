@@ -1,222 +1,359 @@
-Return-Path: <linux-kernel+bounces-873524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4E4C14231
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:40:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2755C1423A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:40:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B6284F6F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA2358862D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0E8304BC1;
-	Tue, 28 Oct 2025 10:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZcTYS5wb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007C304BC8;
+	Tue, 28 Oct 2025 10:40:10 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370F4305E1B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3C530216A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761647993; cv=none; b=cru0U0j4K4YHPdAdaqDaBRmm/NB1/xcQ4k43b1gEtyNZm/Xvsw1JEnMmBW7oBfZ2TIBI9Ht+NtRnYTGdiCzaIotuGyealvIYOLPZTFPYjJGVg8kiASdyhRFSKbzhRvL9PEmalraCENXjZUeX9SlEckitB7XVKqRJXe3MkBHnxM8=
+	t=1761648009; cv=none; b=K0C3aohB95pZjNFLvF0vAwQIl5ML9G7If8yB0B1XjqW4QIFUWNJPFHoljbfuoFwBi2ML7tYqyPvJ/paCRsOSb5TjgAadGut/m7uDUUBPkRbqaHl0JVpeZJf3B0dnBPWpezr4r73k+vx5LGsQB3SDD4Qz2YZv1fF0rRpCm7ZutrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761647993; c=relaxed/simple;
-	bh=3NGjtgZxPgWtmH709RDRDfk7uFifY5OiY7B1EJWWpsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MHzZxkr70q1KtBuK47UMEoFFuL3wKSeikOQvo7+K92Fy/CHVgPIpjxcoKr/0LNTF3y+7mT6M75msn7alTrBFRMzYEzVhaEtAoWAXl3qsurcl6UNTRPtIRekiDeGgGTialuDW6fX6uO4IPDtFGLnlC6H9vDvxPXmoyJQgRvAX3TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZcTYS5wb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SA4Q5E353682
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:39:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hakPLjvlb1x1mh1I+hwpkg3sAPbblZiTbfuHFvfq7VE=; b=ZcTYS5wbGBjroiRs
-	Oe3hNC/poxLYE5cdIShOTQnO2ck3B0SA2YF76Q5N5TEQ66BR/0YxS5wOOA8w4vfD
-	7f4Z7RvuQ5Q7byey9tn/1RsDUCtxZPi+wqm37ILaQ7aCM6FxPHk7iVE3AaSqh0t4
-	j1UAM4l0JCpjf0AciJNZFCFJmEefjnl28zuX7j6LgwFexVYdp5v7iE3koq4rxH/y
-	WcOpX018WI6HEvGQ2AfmrNjSHvbkOYb6wPkvsHBhiEhGyxosvs6mrebZkIPebutL
-	m197HJxhnqakE2KcI88aHZvkOwSw8Ht2hGLWeXSBk24OrI9JNct1Up2N+1GbWLjH
-	PGkkVA==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2njrs9au-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:39:51 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b522037281bso3651034a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:39:51 -0700 (PDT)
+	s=arc-20240116; t=1761648009; c=relaxed/simple;
+	bh=eia3MzCulBXgWlM80LrVbombzhvBPwEgz+Dk8WeAkJM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rWBFdUunDlAlmA+fnw40TQst6b8Cs+UKGFYFeDDPU56eyZSwyg1pw2Ji8O+kiOwy81FGUGoIQ7sNwhMIF5it143qnDKpwk8qTHA9YQ3sqQThrU0cHDTept8MViXorIdyGE18aud/2fCGj+NsTVVfwRto9WXGJLHS25ipaMbJcgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430c684035eso67661715ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:40:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761647991; x=1762252791;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1761648005; x=1762252805;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hakPLjvlb1x1mh1I+hwpkg3sAPbblZiTbfuHFvfq7VE=;
-        b=Hzw/8LWQauLpyBvpM4R+kpJWs4x58mMdNv2Z3KOVIMG09mLCd1BKiven59BIQFp8s/
-         Bc5kbgDLuj4PhtP2ZtOXqasgXEKrPm+uS65F+5R9lSgbdLE9dzVL0A5kQ8pp+ydUoxS0
-         pM/7+yYo+yGJs+EK88m4dal7LDbxx5AjE0QuuENMr6PiQwyHyPO8uyKHsiVLz9tQDpej
-         lWB+mIcXabpKGnbiK4FUgbLc6W1s9elJfBVCwkBkVwvH6zPnGYmONZHHR+HlLMUxV5ip
-         PUb+ZWe5nyTxxCON2Zgec9sQE5F3C0FT9FiEAQaYSoIkJQ+621t2Llu+YoWSdWNzo7ZQ
-         I2uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwThemACd8b8zmvdE/TY0r71a0FD6eCyy29hRXm219JwGqGJGb8Ead8x7NutZ1xM/5HEP09E2UZzCRLKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl2ceAmtWn9hXS0I8ckTIkwYawaArA3BPAjEVv7Wgv6wEVQShv
-	czSNw6/IjokX8xVEThBRMMjAjyIRO+R/lHtJCH4SA2Y2Xir5vrpyn3eK0+b7e1J6HdvfHzjoZJw
-	lm9A31PYdj49deISXZcSviJv+otd7oLm3Oo5fXD60FRC5YJFdM8pRj9PpMRUR758cvSE=
-X-Gm-Gg: ASbGnctfTnkbvvk6al+Y3yZBnv1419gulOmio2z5AsNhdT7kkw8QQcZJ7myTg0cSbbl
-	Kda5DthOCuhuDFl3z3FpwFpuudjWle/DbqE5ZW8cS8haLTwBo5t9Ru0+vsLyhXAuiVsxm7fqFG2
-	hfkgiH59ZA9F9VISO3mSYMLqobi8QpokCVWe120KyCZvEdzr+Qfe6PKwHYQHwQsRESS24fsG3vq
-	7/c3YAQStMcxx05bpC1W9YYDRC4z3ab69KNRlYrs1Kb43ZX6oM9DokQuYC04qFcOMBSXyL7kEkn
-	oBq34gKDb1IeJI4nOlNDNPfP8OFBV1c9TF+ifd4QReTz9yH5o3GM7ly2N1fW+ZUd06i4zmVVCoo
-	PjCOWJ/bp4TcZQyazXgYe+yPHmOzYvU4=
-X-Received: by 2002:a05:6a21:3397:b0:2dc:40f5:3c6c with SMTP id adf61e73a8af0-344d403a01cmr3981140637.54.1761647990653;
-        Tue, 28 Oct 2025 03:39:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYuP8hwnRXCriOHq1znAqj/6unUwBm2UU+kXa9k/iRY2/grJHUUtm0DNhi4dw2IYstv7N44A==
-X-Received: by 2002:a05:6a21:3397:b0:2dc:40f5:3c6c with SMTP id adf61e73a8af0-344d403a01cmr3981110637.54.1761647990221;
-        Tue, 28 Oct 2025 03:39:50 -0700 (PDT)
-Received: from [10.206.101.41] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a4140492f9sm11100899b3a.30.2025.10.28.03.39.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 03:39:49 -0700 (PDT)
-Message-ID: <2898f1bc-c014-b196-705a-cd797be92dce@oss.qualcomm.com>
-Date: Tue, 28 Oct 2025 16:09:44 +0530
+        bh=aGCoNnu8Gzz3TZey/bkoQ4adSRU1D7w6+FPQKCfJ/6A=;
+        b=eLQ0Ro4/9Iz50BMRfR3McPls6YOsobwA/9tmEbQfuf/1BqGwp/0KWSNBhAnPQEzpJo
+         guQwYiGI3C7E4B0HKj3ka4tHIIQbjLkCCPO3RMjuUkf6xl5MmciKqeS+/rZ9I+L6WubI
+         F1lzhL9BcOxwU81p0S6rAzTGfw6RKcoeTY7ItTJuCEyEKAMDwQblb5MTDKrU4PdHyYsj
+         4brYURATuI4Z8X7DzDJK3ncRRXsspwh4TwK+VF7vUA03n9R3uEGf0w1HFqdhnB97mS8a
+         zWmW3cT+lAuCUdJwN17u/01xpoFzQhJM4wQIvRTPwe5KtBK4gboRSGDjpn4XDWRDzG5G
+         NxCA==
+X-Gm-Message-State: AOJu0YzTsSa+ejPZAApmjh/edDseyQj2Z10LM5CDKHmKIn/IstdhQ0r5
+	pSV+H/fc03miNj64nlxBrVcCSSxngu5jIDNOBUQt2mG8VUUja/qPwxOqWEX4dre2np66+kcvU0Y
+	kNnRcN1h2vsKZmW7aEVqB1odYjrep2AW47cleDR5YJ273//5WtHGnzLGccAA=
+X-Google-Smtp-Source: AGHT+IF4e6yWIqWQyPJra4ZIFj7yoBwtBPkuxJDRLa+uTPFstA/zdX6ZOXoOrNA34koEkW9oiOI2jsSo7LwbWu45MAnYr5a+2ywj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v1 1/4] media: qcom: iris: Add support for scale and
- improve format alignment
-Content-Language: en-US
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
-        dikshita.agarwal@oss.qualcomm.com, abhinav.kumar@linux.dev,
-        bod@kernel.org, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
-        quic_renjiang@quicinc.com
-References: <20251015092708.3703-1-wangao.wang@oss.qualcomm.com>
- <20251015092708.3703-2-wangao.wang@oss.qualcomm.com>
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <20251015092708.3703-2-wangao.wang@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=dqvWylg4 c=1 sm=1 tr=0 ts=69009d77 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=tP2Na-aPhhGfs1T55DUA:9 a=QEXdDO2ut3YA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: idjbx8gDPd6jkOvEAkcY3hMB5WZCAWvl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA5MCBTYWx0ZWRfX5O050r447MCv
- R96Idz/1czN2vMB7Y+kJmtnZQfZDl+ylx+4LbcS4QzDazSU6PrHzDhsCyfVSmCYm7dlEfTW/hYb
- 0VooKfuadclN5wuCHkzsOusS6y21NGJkrmtSkrohFDR0Kaw6sDkKwNzkIMYf6ivHbofAUyhK2k7
- LK3MBvp+QL/6nNKs17qhbADiX+TIaPw01BFso+ftAd/eAla+cQGstU9pj1EXJ37BsaWIFBZTyQi
- HdQRyKUj5xol/crbUXIq8ka52cRafQIwgaYt71rcJ9+coeXo1XKCUoAf0jlTg7UuUIXrUXN4Z2M
- q4/Ash6MdPuy7OVasyj6PzQM0o3Dlty4YVFEfp8tnEyFlQY9ehlhBDM5ynuXwyNy412YwdDzdMM
- dDoXKkF143c7kbaExg0UJKIu/jPL9g==
-X-Proofpoint-ORIG-GUID: idjbx8gDPd6jkOvEAkcY3hMB5WZCAWvl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
- definitions=main-2510280090
+X-Received: by 2002:a05:6e02:1c2f:b0:430:ab30:7b24 with SMTP id
+ e9e14a558f8ab-432104316bemr32766575ab.15.1761648004982; Tue, 28 Oct 2025
+ 03:40:04 -0700 (PDT)
+Date: Tue, 28 Oct 2025 03:40:04 -0700
+In-Reply-To: <68d913e1.050a0220.1696c6.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69009d84.050a0220.17b81f.0009.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ linux-5.10.y
+From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On 10/15/2025 2:57 PM, Wangao Wang wrote:
-> Add output width and height settings in iris_venc_s_fmt_output to
-> enable scaling functionality.
-> 
-> Add members enc_raw_width, enc_raw_height, enc_bitstream_width and
-> enc_bitstream_height to the struct iris_inst to support codec
-> alignment requirements.
-> 
-> HFI_PROP_CROP_OFFSETS is used to inform the firmware of the region
-> of interest, rather than indicating that the codec supports crop.
-> Therefore, the crop handling has been corrected accordingly.
-> 
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
-> ---
->  .../qcom/iris/iris_hfi_gen2_command.c         | 18 ++++++++----
->  .../media/platform/qcom/iris/iris_instance.h  |  8 ++++++
->  drivers/media/platform/qcom/iris/iris_venc.c  | 28 ++++++++++++++++---
->  3 files changed, 44 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> index 4ce71a142508..c2258dfb2a8a 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> @@ -168,9 +168,12 @@ static int iris_hfi_gen2_session_set_property(struct iris_inst *inst, u32 packet
->  
->  static int iris_hfi_gen2_set_raw_resolution(struct iris_inst *inst, u32 plane)
->  {
-> -	u32 resolution = inst->fmt_src->fmt.pix_mp.width << 16 |
-> -		inst->fmt_src->fmt.pix_mp.height;
->  	u32 port = iris_hfi_gen2_get_port(inst, plane);
-> +	u32 resolution, codec_align;
-> +
-> +	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> +	resolution = ALIGN(inst->enc_raw_width, codec_align) << 16 |
-> +		ALIGN(inst->enc_raw_height, codec_align);
+***
 
-HFI_PROP_RAW_RESOLUTION interface expects actual YUV resolution. It is not
-suppose to be aligned while configuring it to firmware.
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git linux-5.10.y
+Author: dmantipov@yandex.ru
 
->  
->  	return iris_hfi_gen2_session_set_property(inst,
->  						  HFI_PROP_RAW_RESOLUTION,
-> @@ -195,8 +198,8 @@ static int iris_hfi_gen2_set_bitstream_resolution(struct iris_inst *inst, u32 pl
->  		payload_type = HFI_PAYLOAD_U32;
->  	} else {
->  		codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> -		resolution = ALIGN(inst->fmt_dst->fmt.pix_mp.width, codec_align) << 16 |
-> -			ALIGN(inst->fmt_dst->fmt.pix_mp.height, codec_align);
-> +		resolution = ALIGN(inst->enc_bitstream_width, codec_align) << 16 |
-> +			ALIGN(inst->enc_bitstream_height, codec_align);
-
-Do we really need *bitstream variable here ? What is the concern in using the
-instance capture fmt height and width ?
-
->  		inst_hfi_gen2->dst_subcr_params.bitstream_resolution = resolution;
->  		payload_type = HFI_PAYLOAD_32_PACKED;
->  	}
-> @@ -216,8 +219,11 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->  	u32 port = iris_hfi_gen2_get_port(inst, plane);
->  	u32 bottom_offset, right_offset;
->  	u32 left_offset, top_offset;
-> +	u32 codec_align;
->  	u32 payload[2];
->  
-> +	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> +
->  	if (inst->domain == DECODER) {
->  		if (V4L2_TYPE_IS_OUTPUT(plane)) {
->  			bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-> @@ -231,8 +237,8 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->  			top_offset = inst->compose.top;
->  		}
->  	} else {
-> -		bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-> -		right_offset = (inst->fmt_src->fmt.pix_mp.width - inst->crop.width);
-> +		bottom_offset = (ALIGN(inst->enc_raw_height, codec_align) - inst->enc_raw_height);
-> +		right_offset = (ALIGN(inst->enc_raw_width, codec_align) - inst->enc_raw_width);
-
-I would suggest as below:
-S_FMT (output) -> Keep the driver fmt same as what client sets in s_fmt.
-So crop setting here could be "inst->fmt_src->fmt.pix_mp.height - inst->crop.height"
-
-without the need of additional variable ?
-
-Could you fix s_fmt and other places and run through compliance/ffmpeg to see it
-works well ?
-
-Regards,
-Vikash
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 94c7acfebe18..0e0a4742b8a6 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6155,6 +6155,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	int status;
+ 	struct inode *inode = NULL;
+ 	struct buffer_head *bh = NULL;
++	struct ocfs2_dinode *di;
++	struct ocfs2_truncate_log *tl;
++	unsigned int tl_count, tl_used;
+ 
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6172,6 +6175,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 		goto bail;
+ 	}
+ 
++	di = (struct ocfs2_dinode *)bh->b_data;
++	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
++	tl_count = le16_to_cpu(tl->tl_count);
++	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
++		     tl_count == 0 || tl_used > tl_count)) {
++		status = -EFSCORRUPTED;
++		iput(inode);
++		brelse(bh);
++		mlog_errno(status);
++		goto bail;
++	}
++
+ 	*tl_inode = inode;
+ 	*tl_bh    = bh;
+ bail:
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 195515eefd33..869cc09e86a8 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -304,8 +304,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
++
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
++		 */
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -780,6 +793,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3418,6 +3439,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
+ 	}
+ 
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+@@ -4109,10 +4138,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+ 	}
+ 
+ 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
+-	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
+-	       offsetof(struct ocfs2_dx_root_block, dr_list));
++
++	dx_root->dr_list.l_tree_depth = 0;
+ 	dx_root->dr_list.l_count =
+ 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
++	dx_root->dr_list.l_next_free_rec = 0;
++	memset(&dx_root->dr_list.l_recs, 0,
++	       osb->sb->s_blocksize -
++	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
++		offsetof(struct ocfs2_extent_list, l_recs)));
+ 
+ 	/* This should never fail considering we start with an empty
+ 	 * dx_root. */
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 7c9dfd50c1c1..17f4106a15df 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1418,6 +1418,31 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+ 		goto bail;
+ 	}
+ 
++	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
++		struct ocfs2_chain_list *cl = &di->id2.i_chain;
++
++		if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb)) {
++			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list count %u\n",
++					 (unsigned long long)bh->b_blocknr,
++					 le16_to_cpu(cl->cl_count));
++			goto bail;
++		}
++		if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count)) {
++			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list index %u\n",
++					 (unsigned long long)bh->b_blocknr,
++					 le16_to_cpu(cl->cl_next_free_rec));
++			goto bail;
++		}
++	}
++
++	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
++	    le32_to_cpu(di->i_clusters)) {
++		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
++				 (unsigned long long)bh->b_blocknr,
++				 le32_to_cpu(di->i_clusters));
++		goto bail;
++	}
++
+ 	rc = 0;
+ 
+ bail:
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index fc8252a28cb1..f60a2f286392 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -912,13 +912,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+ static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
+ {
+ 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
+-	int i;
+ 
+ 	alloc->id1.bitmap1.i_total = 0;
+ 	alloc->id1.bitmap1.i_used = 0;
+ 	la->la_bm_off = 0;
+-	for(i = 0; i < le16_to_cpu(la->la_size); i++)
+-		la->la_bitmap[i] = 0;
++	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
+ }
+ 
+ #if 0
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 98e77ea957ff..8732965760d2 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -100,7 +100,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1034,6 +1040,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index 19137c6d087b..91f660ce3098 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -470,7 +470,8 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
++					/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
+ };
+ 
+ /*
+@@ -484,7 +485,8 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
++					/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
+ };
+ 
+ /*
+@@ -496,7 +498,8 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
++					/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
+ };
+ 
+ /*
+@@ -640,7 +643,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[];
++/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
+ };
+ 
+ /*
+@@ -653,7 +656,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[];	/* Start of user data */
++	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
+ };
+ 
+ /*
+@@ -798,9 +801,10 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+-							 * in a packed array of
+-							 * length de_num_used */
++					/* Indexed dir entries in a packed
++					 * array of length de_num_used.
++					 */
++	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
+ };
+ 
+ #define OCFS2_DX_FLAG_INLINE	0x01
+@@ -935,7 +939,8 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
++				/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
+ };
+ 
+ 
+@@ -1021,7 +1026,8 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
++						/* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
+ };
+ 
+ /*
 
