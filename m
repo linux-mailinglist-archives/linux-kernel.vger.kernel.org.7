@@ -1,123 +1,234 @@
-Return-Path: <linux-kernel+bounces-873040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C4EC12E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:01:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFBCC12E5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:02:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC8B04EE95E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:01:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7675F4FCE17
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475581758B;
-	Tue, 28 Oct 2025 05:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B1C29B8D9;
+	Tue, 28 Oct 2025 05:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u+WJOpOy"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZHLqtm4C"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B10C35B121
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2355427B352
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761627680; cv=none; b=Y+A1Ejtoon+URGq7aUnNykVLdPn5s8zzpiBamtnVtOFotZ+4cRCtAvaY771lM4GNgMFZd3D/aNvu/KniYyMjuyBUk2/HiVgJY6RcWEykhHqKy0PMM1ydfZ/We7TihMzGOPPDa/Wk8KWgbW4sKq7KxaZeE3BB5GBBFCf4+FXu25c=
+	t=1761627684; cv=none; b=YvqF72PYnHE8fDdSjakKSzGecmyMXqvTQCm+hmUE1D7ljObMyx0/CDWb2MlYGS5K8cCNw+DviZEc003kG666fBaoz4NCtCNBGDCQtIA6BH0GsTEJLAJ1qdy8No8PTW37w9k7m9FHN7eOk4P97z15os8gvpTQr6dIwuCPGv6n6iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761627680; c=relaxed/simple;
-	bh=eXt+qTwvJszO8Hou+806wGDbl19YgC8YGTf1MQAwWR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXvaLYpb7gQBNu3kL6/kLQqmf9AmpmS/vZc6Lx+Qx+1tVLngA3Qgls8cdK52ZpqxZua/1NgSUWkMYSIxtiF4FMW9nFOl17XI/fwIAihT9nt2Y38CgP7xKJEg8Gy1ZsniMvkUWQXzyoM9suVB6rsicAzdJB5j2Cj4seG261aeWgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u+WJOpOy; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2697899a202so44712035ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761627678; x=1762232478; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gggGLr9hK/z0x3A0Z7RsJkNUk2lbt+1rtimRnOE0YoI=;
-        b=u+WJOpOy4SoPnd6RXj3kAOT+B6BIXZ2j3QrRX8qogv9tck7i88pMIMtQPGtUAm7fJd
-         qRtNr+6X2JAiPOzWRhu1hbUNEqg4mBfpAzL+//8FMSKouyXhmpPbKLFqe5J6UW4FmNhV
-         GaO6H/ZwtQxrQVExPVpEKBQnnj15nWpgRol9Rbcsfh2INdASamgTqolNagNAlip4my2h
-         39B168kF7MOYR5CO2PoIqBhnKgBwBGgBnmvkCA5IZfwu1EE6F4cqRg8pOn02OTbDQiug
-         khjqSI9RGYdHieihoCfCvG8bkOKo8GK00QVY/V3y9KcL+q9LVDAMVXr5Abccgr/w/V2F
-         BOeA==
+	s=arc-20240116; t=1761627684; c=relaxed/simple;
+	bh=Lq0NUp8tzDM21ME58IEDJ0ubQDaHxYD7QlhSXZX4T5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ytpw7ob0UNfjDNtnrT6djZ/TD3nW4cncMF6EZHqP/v7FjoqejvemCDyMqhLgChkY9Tqd7SgS7vXt0tizqe0/V7jNPKgt/VkHjBhVh+mr1WhoL6x2jMjqwRR4YKFEA9PkcZLkcDeYGwX3rLhch6ng8llJfFuDLxF96SMmmlwbLns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZHLqtm4C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59RKjsuW3812996
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:01:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vad+qn8RkXM2BN3TnKTIwMAAG+YIgA1CHl86YPkog10=; b=ZHLqtm4CHqai9IvB
+	qmTba2B1efr68ZmBDME+eF2GlpicIFe36gX0uz/NGyTVHbT/Pcyx1AaAYo0OUrZ8
+	BkIc0NgThPUASDXXn/S/vkgpXnYMzRs8S/mTc1ssBhl/l8DIo71qZlXruXypYmQM
+	8j49aXc/ahJzCZH/ijj8rzlEHHH4NLItqNbDI/qdetasQ5kAs+yITY5PbWVfKMuN
+	pMzihqAhhuEzc4L3E/dz5B+n4KOkMxKUB6vvRZRSG+UPDd9iv4rkwd99lE/Lud39
+	ld5h48F7z9m5JYy9SotAs2QU/kqSFGEh+l3qqTdVIraKQsqv/z6iSsiXTr5qkI/d
+	X60phA==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2g2fs2vm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:01:21 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-33bcb7796d4so5250715a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:01:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761627678; x=1762232478;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gggGLr9hK/z0x3A0Z7RsJkNUk2lbt+1rtimRnOE0YoI=;
-        b=xJ+6Pnz71NO7V+rs3wYq+tPgS3nnyPXouwJpMiErDv0Q8rDnrxpL5n0lop+1IZTv/h
-         efhIumnXfs7K3d3vJiRaxKH6Ej2e+Qw3IC0/xWA8YgSSU2nbqDJme8V6T+P/V2htN4Gu
-         uhta9KDGDiR/m+9fMj5q5IulUF27ATucc6O8lvY9i36ebbPGXc7O7UG8goVapYIzDnow
-         9yhLe2FdRCcemdPt96f9kobsXXMHxPhDrEpQso9ieci3z5SAQIrvfe4E2A42ZkGzZHyt
-         RIhhJJWCFoCE6N6F34XW7ohHbvJf3WoADAj7GU/R6y+7FPJX64Kw0QO2UIKnpFds4+wf
-         orVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC1qrT6FsynDOkdZbgZ0YEJXbPcUIV+3iUsaq76Brpj21zOszttueORZ+nVllQeyzVn8jsujAZeHW9HDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWagGshnwz8N5fZqPFXY4KPi7ZQdiv6A4BBwAsRVU7qHOY6boT
-	1BRUqfhM+iGkRUX61lQkVt5E9IW5U1BsQFD3hcsZCWekBODEkm4bWjVdeMFa5ghYLXo=
-X-Gm-Gg: ASbGncuWYC6D9ocPi6pEeGLaRZnL1uYK76tHYiyCGoWHUYZvkFQk5wuJpuUvjGqjNQS
-	BMXqa6EMW2OffPpxTX63R1KEovAFpB/jOxGFfxG/uOgwLaEkBUEdpkRNYzrJYBIfs98oWmZZtwo
-	k7xNTFYVBXOOJ4a5G3wjn9og20r+IpSSS0GkRO3ESi91LX4PtKRXqbAdDiNc/o3Atkr9+d5BAO6
-	4In+tPJ8Xxvium6PUG/oXVpctQN5JKaLOBpRAs1EvkMUQoHw0i1oJSF+c+Z18QhrrNX6aN9l22K
-	TAe8FyTJsm7cIykeAgQZ0GO1bWl4I9uyho/nR4FeD9ibhxlEzJgBMJC8BtsCFMxzfxm6SPoaiNt
-	ga/yvoMmljZIFHoGjTiEO7h8emBJml41aou5i4utTYCvpLDu40/UYVKkF3zqx6QSXwFxo3ahDzg
-	xkTA==
-X-Google-Smtp-Source: AGHT+IEbFKSVcApo2b31IgKzoejiPT54f2Ug4CUN+na1QFDYVgo35NsLKOeM5ffDDNEZ2+JecClhPA==
-X-Received: by 2002:a17:903:2443:b0:266:57f7:25f5 with SMTP id d9443c01a7336-294cc69eeefmr20200985ad.7.1761627678039;
-        Mon, 27 Oct 2025 22:01:18 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf359asm99649655ad.12.2025.10.27.22.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 22:01:17 -0700 (PDT)
-Date: Tue, 28 Oct 2025 10:31:15 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: nforce2: fix reference count leak in nforce2
-Message-ID: <v4lyy4fexh7erlokxhkm7ha3x5lqdb3fo4csuw5ltqgortapwr@dhtgpppyrwfv>
-References: <20251027150447.58433-1-linmq006@gmail.com>
+        d=1e100.net; s=20230601; t=1761627681; x=1762232481;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vad+qn8RkXM2BN3TnKTIwMAAG+YIgA1CHl86YPkog10=;
+        b=T61scvXoqYGzTZTUDN0dVtfsgdEK5M3CEVCfsFZtpEjHgo4sP0uA2nnbmZ46IuBX/f
+         SDqlOGVDf9nLBJNSRyQDnPrbdG5PjtE/YV60zIFVA1CMd7GIsjnQPRrDbDztXSi6nzWJ
+         u54q/tmveOwh3EkHlbh343fh/FRHt/qVfDQSro52ActmQzx2N+rZ8aGOLl1rI0OLWzEz
+         byGfjr1ss3oJz4fVlRS35Kbo192xCN+ubR4SCA9ub18h+rQqpUpjpOW7+hu5iaWx9gsB
+         YwyTJwf970rPK+iTUwQe8cH2jrDuZB5hNBL1b2lkuSLi3NlHWQVYDQr0byBrB1OH1owx
+         G2YA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl4cWFlcxMJ4Rg0/uhUWbTG0kmRphf1Fw39nI422TuVPzq2m1HZCt4vDMv78Mybl7bSVc/E0cUcK23Ykc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoAioTcNWK1wTSk6M+yyeP+6TLzBtZ1WvFxCtMbT2V5+AixxgB
+	gl2pb90f0xpv7YX7Ph/hfXwPLHZlged/ENTMNuBTybLw1jzspP1PhNUTZ+hprpz6sx0124KqQzA
+	ITyf3pU4DlHQRAG/Fs3LS6G2228CkLKAGs6Lo4l07eP0lw4nnyy/SYQAEocY/B6NaEDY=
+X-Gm-Gg: ASbGncuXL5B2T7M/dr7FCed2hHr9D45uXDfmhFktNCr0mzueJ8LyU8TMMdEq7xFb5fo
+	YDMIsMMhkcyGBShrPQpkT6olQka28z2fO8prtCndfM0vL1wfLIUG8RBndUbkK42gABBX8pdMzWq
+	am52TO58y4thIsSgTlUhFPwx8AiPDi69jr2Wvl1asTM/dRDKTissYpvD74jLZ/ZoDzYyzQw+fyq
+	9ZxGijI1/+iUD87VOoG4vKRqBjecEt40fwHhBcP/ScrHVJSWETHTSnnxAZpc67gNvOapdYO7SIx
+	IHmpPIoWZI0CL9VRld9vvSiwgL4aXlhUwueuE7M27X9PVIPCwDQRXEW0YNcMmLFEneV0izCEodA
+	+gpH6aFxEfzMknQTEhLGTrxzXJKSMylI=
+X-Received: by 2002:a05:6a20:6a22:b0:340:fce2:a15c with SMTP id adf61e73a8af0-344d1ba883dmr2074223637.9.1761627680746;
+        Mon, 27 Oct 2025 22:01:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdDeIRD4wAR0wRMOvJHEteHWQmjnRT05hGOov0KIeVR9og2SzmIgUQrAfBFQA0Yal7IiQhpw==
+X-Received: by 2002:a05:6a20:6a22:b0:340:fce2:a15c with SMTP id adf61e73a8af0-344d1ba883dmr2074192637.9.1761627680233;
+        Mon, 27 Oct 2025 22:01:20 -0700 (PDT)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712d7cdf28sm9039013a12.31.2025.10.27.22.01.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 22:01:19 -0700 (PDT)
+Message-ID: <68974e34-78e0-d82a-f552-044e9bae3170@oss.qualcomm.com>
+Date: Tue, 28 Oct 2025 10:31:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027150447.58433-1-linmq006@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v5 3/6] media: iris: stop encoding PIPE value into fw_caps
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251027-iris-sc7280-v5-0-5eeab5670e4b@oss.qualcomm.com>
+ <20251027-iris-sc7280-v5-3-5eeab5670e4b@oss.qualcomm.com>
+Content-Language: en-US
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <20251027-iris-sc7280-v5-3-5eeab5670e4b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA0MSBTYWx0ZWRfX+yGyKV5XlZPf
+ n/xfIcKyg1RI53e+RfjYD4ynz9noSaXKTUhHfi/w0NTv4Ekz9dgpN6FfC/BwgTXCu+pCDuJqIZf
+ qvemi0fG9MmiZvXDJgS2BvhWPOeL9K85lEh89tG8Xmarxh92M8m+tx4CGDudNULjAOS7HwgjLIn
+ WHQcqYyhvNejrICigRYkihoVKrobRvi+/adeL8MWy8qtGwFwpLUdRqWzYkqTkepfX9Ogor9HkA+
+ CWhTPmdMf2nfU9eNAT7aIP+v9gqvkE0cElLrtIZWbBQvzkSHRPZPSi6hdUdL7Lx9IEBhbvDX5am
+ n/N5Jn+9eFXmf/9Euj6giiQpZt9UxtGpDXkpny0wsDkGUzEQ9veoxPseu7VFJt/GxIalNNt3j+Z
+ 7CeIEHoPpKfuTErwsLJ31z6vrFMHAw==
+X-Proofpoint-ORIG-GUID: SRfzC_RLI4gR0PSuOoGg4SmnhOWB_sah
+X-Proofpoint-GUID: SRfzC_RLI4gR0PSuOoGg4SmnhOWB_sah
+X-Authority-Analysis: v=2.4 cv=FIMWBuos c=1 sm=1 tr=0 ts=69004e21 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=SvJZJoMY8oi3fNviAK8A:9 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 impostorscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280041
 
-On 27-10-25, 23:04, Miaoqian Lin wrote:
-> There are two reference count leaks in this driver:
+
+
+On 10/27/2025 5:57 PM, Dmitry Baryshkov wrote:
+> The value of the PIPE property depends on the number of pipes available
+> on the platform and is frequently the only difference between several
+> fw_caps. In order to reduce duplciation, use num_vpp_pipe from the
+> iris_platform_data rather than hardcoding the value into the fw_cap.
 > 
-> 1. In nforce2_fsb_read(): pci_get_subsys() increases the reference count
->    of the PCI device, but pci_dev_put() is never called to release it,
->    thus leaking the reference.
-> 
-> 2. In nforce2_detect_chipset(): pci_get_subsys() gets a reference to the
->    nforce2_dev which is stored in a global variable, but the reference
->    is never released when the module is unloaded.
-> 
-> Fix both by:
-> - Adding pci_dev_put(nforce2_sub5) in nforce2_fsb_read() after reading
->   the configuration.
-> - Adding pci_dev_put(nforce2_dev) in nforce2_exit() to release the
->   global device reference.
-> 
-> Found via static analysis.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+
+Thanks,
+Dikshita
 > ---
->  drivers/cpufreq/cpufreq-nforce2.c | 3 +++
->  1 file changed, 3 insertions(+)
-
-Applied. Thanks.
-
--- 
-viresh
+>  drivers/media/platform/qcom/iris/iris_ctrls.c            | 16 +++++++++++++---
+>  drivers/media/platform/qcom/iris/iris_platform_gen2.c    |  4 +---
+>  drivers/media/platform/qcom/iris/iris_platform_qcs8300.h |  4 +---
+>  drivers/media/platform/qcom/iris/iris_platform_sm8250.c  |  4 +---
+>  4 files changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> index 9da050aa1f7ce8152dfa46a706e2c27adfb5d6ce..c0b3a09ad3e3dfb0a47e3603a8089cf61390fda8 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -313,13 +313,23 @@ void iris_session_init_caps(struct iris_core *core)
+>  			continue;
+>  
+>  		core->inst_fw_caps_dec[cap_id].cap_id = caps[i].cap_id;
+> -		core->inst_fw_caps_dec[cap_id].min = caps[i].min;
+> -		core->inst_fw_caps_dec[cap_id].max = caps[i].max;
+>  		core->inst_fw_caps_dec[cap_id].step_or_mask = caps[i].step_or_mask;
+> -		core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+>  		core->inst_fw_caps_dec[cap_id].flags = caps[i].flags;
+>  		core->inst_fw_caps_dec[cap_id].hfi_id = caps[i].hfi_id;
+>  		core->inst_fw_caps_dec[cap_id].set = caps[i].set;
+> +
+> +		if (cap_id == PIPE) {
+> +			core->inst_fw_caps_dec[cap_id].value =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +			core->inst_fw_caps_dec[cap_id].min =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +			core->inst_fw_caps_dec[cap_id].max =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +		} else {
+> +			core->inst_fw_caps_dec[cap_id].min = caps[i].min;
+> +			core->inst_fw_caps_dec[cap_id].max = caps[i].max;
+> +			core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+> +		}
+>  	}
+>  
+>  	caps = core->iris_platform_data->inst_fw_caps_enc;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index b444e816355624bca8248cce9da7adcd7caf6c5b..fb3fa1665c523fbe01df590f14d8012da3a8dd09 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -160,10 +160,8 @@ static const struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>  	},
+>  	{
+>  		.cap_id = PIPE,
+> -		.min = PIPE_1,
+> -		.max = PIPE_4,
+> +		/* .max, .min and .value are set via platform data */
+>  		.step_or_mask = 1,
+> -		.value = PIPE_4,
+>  		.hfi_id = HFI_PROP_PIPE,
+>  		.set = iris_set_pipe,
+>  	},
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> index 87517361a1cf4b6fe53b8a1483188670df52c7e7..7ae50ab22f8c577675a10b767e1d5f3cfe16d439 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> @@ -146,10 +146,8 @@ static const struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
+>  	},
+>  	{
+>  		.cap_id = PIPE,
+> -		.min = PIPE_1,
+> -		.max = PIPE_2,
+> +		/* .max, .min and .value are set via platform data */
+>  		.step_or_mask = 1,
+> -		.value = PIPE_2,
+>  		.hfi_id = HFI_PROP_PIPE,
+>  		.set = iris_set_pipe,
+>  	},
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> index 66a5bdd24d8a0e98b0554a019438bf4caa1dc43c..805179fba0c41bd7c9e3e5de365912de2b56c182 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> @@ -20,10 +20,8 @@
+>  static const struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
+>  	{
+>  		.cap_id = PIPE,
+> -		.min = PIPE_1,
+> -		.max = PIPE_4,
+> +		/* .max, .min and .value are set via platform data */
+>  		.step_or_mask = 1,
+> -		.value = PIPE_4,
+>  		.hfi_id = HFI_PROPERTY_PARAM_WORK_ROUTE,
+>  		.set = iris_set_pipe,
+>  	},
+> 
 
